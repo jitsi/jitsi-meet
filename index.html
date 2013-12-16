@@ -1,0 +1,68 @@
+<html>
+  <head>
+    <title>WebRTC, meet the Jitsi Videobridge</title>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script src="libs/strophejingle.bundle.js"></script><!-- strophe.jingle bundle -->
+    <script src="libs/colibri.js"></script><!-- colibri focus implementation -->
+    <script src="muc.js"></script><!-- simple MUC library -->
+    <script src="app.js"></script><!-- application logic -->
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" media="screen" href="css/main.css" />
+    <link rel="stylesheet" href="css/jquery-impromptu.css">
+    <link rel="stylesheet" href="css/modaldialog.css">
+    <script src="libs/jquery-impromptu.js"></script>
+    <script src="libs/jquery.autosize.js"></script>
+    <script src="config.js"></script><!-- adapt to your needs, i.e. set hosts and bosh path -->
+  </head>
+  <body>
+    <div id="header">
+        <a href="http://jitsi.org" target="_blank"><div id="leftlogo"></div></a>
+        <a href="http://www.estos.com/" target="_blank"><div id="rightlogo"></div></a>
+        <div id="link">
+            <a class="button" onclick='buttonClick("#mute", "fa fa-microphone fa-lg fa fa-microphone-slash fa-lg");toggleAudio();'><i id="mute" title="Mute / unmute" class="fa fa-microphone fa-lg"></i></a>
+            <div class="header_button_separator"></div>
+            <a class="button" onclick='buttonClick("#video", "fa fa-video-camera fa-lg fa fa-video-camera no-fa-video-camera fa-lg");toggleVideo();'><i id="video" title="Start / stop camera" class="fa fa-video-camera fa-lg"></i></a>
+            <div class="header_button_separator"></div>
+            <a class="button" onclick="openLockDialog();"><i id="lockIcon" title="Lock/unlock room" class="fa fa-unlock fa-lg"></i></a>
+            <div class="header_button_separator"></div>
+            <a class="button" onclick="openLinkDialog();"><i title="Invite others" class="fa fa-link fa-lg"></i></a>
+            <div class="header_button_separator"></div>
+            <a class="button" onclick='openChat();'><i id="chat" title="Open chat" class="fa fa-comments fa-lg"></i></a>
+            <!--i class='fa fa-external-link'>&nbsp;</i>Others can join you by just going to <span id='roomurl'></span-->
+        </div>
+    </div>
+    <div id="settings">
+      <h1>Connection Settings</h1>
+      <form id="loginInfo">
+        <label>JID: <input id="jid" type="text" name="jid" placeholder="me@example.com"/></label>
+        <label>Password: <input id="password" type="password" name="password" placeholder="secret"/></label>
+        <label>BOSH URL: <input id="boshURL" type="text" name="boshURL" placeholder="/http-bind"/></label>
+        <input id="connect" type="submit" value="Connect" />
+      </form>
+    </div>
+
+    <div id="videospace">
+        <div class="fade_line"></div>
+        <video id="largeVideo" autoplay oncontextmenu="return false;"></video>
+        <div class="fade_line"></div>
+        <div id="remoteVideos">
+            <video id="localVideo" autoplay oncontextmenu="return false;" muted/>
+        </div>
+    </div>
+    <div id="chatspace">
+        <div id="nickname">
+            Enter a nickname in the box below
+            <form>
+                <input type='text' id="nickinput" placeholder='Choose a nickname' autofocus>
+            </form>
+        </div>
+        
+        <!--div><i class="fa fa-comments">&nbsp;</i><span class='nick'></span>:&nbsp;<span class='chattext'></span></div-->
+        <div id="chatconversation"></div>
+        <textarea id="usermsg" class= "animated" placeholder='Enter text...' autofocus></textarea>
+    </div>
+
+    <script>
+    </script>
+  </body>
+</html>

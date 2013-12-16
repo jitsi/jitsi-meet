@@ -1,0 +1,318 @@
+html, body{
+    margin:0px;
+    height:100%;
+    color: #424242;
+    font-family:'YanoneKaffeesatzLight',Verdana,Tahoma,Arial;
+	font-weight: 400;
+    background: #e9e9e9;
+}
+
+
+#videospace {
+    display: block;
+    position: absolute;
+    top: 39px;
+    left: 0px;
+    right: 0px;
+    float: left;
+}
+
+#largeVideo {
+    display:block;
+    position:relative;
+    width:1280px;
+    height:720px;
+    margin-left:auto;
+    margin-right:auto;
+    z-index: 0;
+}
+
+#remoteVideos {
+    display:block;
+    position:relative;
+    text-align:center;
+    height:196px;
+    width:auto;
+    overflow: hidden;
+    border:1px solid transparent;
+    font-size:0;
+    z-index: 2;
+}
+
+#remoteVideos video {
+    position:relative;
+    top:18px;
+    height:160px;
+    width:auto;
+    z-index:0;
+    border:1px solid #FFFFFF;
+}
+
+#remoteVideos video:hover {
+    cursor: pointer;
+    cursor: hand;
+    transform:scale(1.08, 1.08);
+    -webkit-transform:scale(1.08, 1.08);
+    transition-duration: 0.5s;
+    -webkit-transition-duration: 0.5s;
+    background-color: #FFFFFF;
+    -webkit-animation-name: greyPulse;
+    -webkit-animation-duration: 2s;
+    -webkit-animation-iteration-count: 1;
+    -webkit-box-shadow: 0 0 18px #515151;
+    border:1px solid #FFFFFF;
+    z-index: 10;
+}
+
+#chatspace {
+    display:block;
+    position:absolute;
+    float: right;
+    top: 40px;
+    bottom: 0px;
+    right: 0px;
+    width:0;
+    opacity: 0;
+    overflow: hidden;
+    background-color:#f6f6f6;
+    border-left:1px solid #424242;
+}
+
+#chatconversation {
+    display:block;
+    position:relative;
+    top: -120px;
+    float:top;
+    text-align:left;
+    line-height:20px;
+    font-size:14px;
+    padding:5px;
+    height:90%;
+    overflow:scroll;
+    visibility:hidden;
+}
+
+div.localuser {
+    color: #087dba;
+}
+
+div.remoteuser {
+    color: #424242;
+}
+
+#usermsg {
+    position:absolute;
+    bottom: 5px;
+    left: 5px;
+    right: 5px;
+    width: 95%;
+    height: 40px;
+    z-index: 5;
+    visibility:hidden;
+    max-height:150px;
+}
+
+#nickname {
+    position:relative;
+    text-align:center;
+    color: #9d9d9d;
+    font-size: 18;
+    top: 100px;
+    left: 5px;
+    right: 5px;
+    width: 95%;
+}
+
+#nickinput {
+    margin-top: 20px;
+    font-size: 14;
+}
+
+div#spacer {
+    height:5px;
+}
+
+#settings {
+    display:none;
+}
+
+#nowebrtc {
+    display:none;
+}
+
+div#header{
+	display:block;
+    position:relative;
+	width:100%;
+    height:39px;
+    z-index: 1;
+    text-align:center;
+    background-color:#087dba;
+}
+
+div#left {
+	display:block;
+    position: absolute;
+	left: 0px;
+    top: 0px;
+    width: 100px;
+    height: 39px;
+	background-image:url(../images/left1.png);
+	background-repeat:no-repeat;
+	margin: 0;
+	padding: 0;
+}
+
+div#leftlogo {
+    position:absolute;
+    top: 5px;
+    left: 15px;
+    background-image:url(../images/jitsilogo.png);
+    background-repeat:no-repeat;
+    height: 31px;
+    width: 68px;
+    z-index:1;
+}
+
+div#link {
+    display:block;
+    position:relative;
+    height:39px;
+    width:auto;
+    overflow: hidden;
+    z-index:0;
+}
+
+.button {
+    display: inline-block;
+    position: relative;
+    color: #FFFFFF;
+    top: 0;
+    padding: 10px 0px;
+    height: 19px;
+    width: 39px;
+    cursor: pointer;
+    font-size: 19px;
+    text-align: center;
+    text-shadow: 0px 1px 0px rgba(255,255,255,.3), 0px -1px 0px rgba(0,0,0,.7);
+}
+
+a.button:hover {
+    top: 0;
+    cursor: pointer;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
+    background-clip: padding-box;
+    -webkit-border-radius: 5px;
+    -webkit-background-clip: padding-box;
+}
+
+.no-fa-video-camera, .fa-microphone-slash {
+    color: #636363;
+}
+
+.fade_line {
+    height: 1px;
+    background: black;
+    background: -webkit-gradient(linear, 0 0, 100% 0, from(#e9e9e9), to(#e9e9e9), color-stop(50%, black));
+}
+
+.header_button_separator {
+    display: inline-block;
+    position:relative;
+    top: 7;
+    width: 1px;
+    height: 25px;
+    background: white;
+    background: -webkit-gradient(linear, 0 0, 0 100%, from(#087dba), to(#087dba), color-stop(50%, white));
+}
+
+div#right {
+	display:block;
+    position:absolute;
+    right: 0px;
+    top: 0px;
+	background-image:url(../images/right1.png);
+	background-repeat:no-repeat;
+	margin:0;
+	padding:0;
+	width:100px;
+    height:39px;
+}
+div#rightlogo {
+    position:absolute;
+    top: 6px;
+    right: 15px;
+    background-image:url(../images/estoslogo.png);
+    background-repeat:no-repeat;
+    height: 25px;
+    width: 62px;
+    z-index:1;
+}
+
+input, textarea {
+    border: 0px none;
+    display: inline-block;
+    font-size: 14px;
+    padding: 5px;
+    background: #f3f3f3;
+    border-radius: 3px;
+    font-weight: 100;
+    line-height: 20px;
+    height: 40px;
+    color: #333;
+    font-weight: bold;
+    text-align: left;
+    border:1px solid #ACD8F0;
+    outline: none; /* removes the default outline */
+    resize: none; /* prevents the user-resizing, adjust to taste */
+}
+
+input, textarea:focus {
+    box-shadow: inset 0 0 3px 2px #ACD8F0; /* provides a more style-able
+                                         replacement to the outline */
+}
+
+textarea {
+    overflow: hidden;
+    word-wrap: break-word;
+    resize: horizontal;
+}
+
+button.no-icon {
+    padding: 0 1em;
+}
+
+button {
+    border: none;
+    height: 35px;
+    padding: 0 1em 0 2em;
+    position: relative;
+    border-radius: 3px;
+    font-weight: bold;
+    color: #fff;
+    line-height: 35px;
+    background: #2c8ad2;
+}
+
+button, input, select, textarea {
+    font-size: 100%;
+    margin: 0;
+    vertical-align: baseline;
+}
+
+button, input[type="button"], input[type="reset"], input[type="submit"] {
+    cursor: pointer;
+    -webkit-appearance: button;
+}
+
+form {
+    display: block;
+}
+
+/* Animated text area. */
+.animated {
+    -webkit-transition: height 0.2s;
+    -moz-transition: height 0.2s;
+    transition: height 0.2s;
+}

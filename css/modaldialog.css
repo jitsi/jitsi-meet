@@ -1,0 +1,22 @@
+.jqistates h2 {
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+    font-size: 18px;
+    line-height: 25px;
+    text-align: center;
+    color: #424242;
+}
+
+.jqistates input {
+    width: 100%;
+    margin: 20px 0;
+}
+
+.jqibuttons button {
+    margin-right: 5px;
+    float:right;
+}
+
+button.jqidefaultbutton #inviteLinkRef {
+    color: #2c8ad2;
+}
