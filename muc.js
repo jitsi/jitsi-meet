@@ -23,7 +23,7 @@ Strophe.addConnectionPlugin('emuc', {
         }
 
         var join = $pres({to: this.myroomjid }).c('x', {xmlns: 'http://jabber.org/protocol/muc'});
-        if (password !== null) {
+        if (password !== undefined) {
             join.c('password').t(password);
         }
         this.connection.send(join);
