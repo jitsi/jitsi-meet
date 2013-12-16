@@ -92,11 +92,11 @@ html, body{
     visibility:hidden;
 }
 
-div.localuser {
+.localuser {
     color: #087dba;
 }
 
-div.remoteuser {
+.remoteuser {
     color: #424242;
 }
 
@@ -128,7 +128,7 @@ div.remoteuser {
     font-size: 14;
 }
 
-div#spacer {
+#spacer {
     height:5px;
 }
 
@@ -140,17 +140,15 @@ div#spacer {
     display:none;
 }
 
-div#header{
+#header{
 	display:block;
-    position:relative;
-	width:100%;
     height:39px;
     z-index: 1;
     text-align:center;
     background-color:#087dba;
 }
 
-div#left {
+#left {
 	display:block;
     position: absolute;
 	left: 0px;
@@ -163,7 +161,7 @@ div#left {
 	padding: 0;
 }
 
-div#leftlogo {
+#leftlogo {
     position:absolute;
     top: 5px;
     left: 15px;
@@ -174,7 +172,7 @@ div#leftlogo {
     z-index:1;
 }
 
-div#link {
+#link {
     display:block;
     position:relative;
     height:39px;
@@ -189,10 +187,9 @@ div#link {
     color: #FFFFFF;
     top: 0;
     padding: 10px 0px;
-    height: 19px;
     width: 39px;
     cursor: pointer;
-    font-size: 19px;
+    font-size: 11pt;
     text-align: center;
     text-shadow: 0px 1px 0px rgba(255,255,255,.3), 0px -1px 0px rgba(0,0,0,.7);
 }
@@ -227,7 +224,7 @@ a.button:hover {
     background: -webkit-gradient(linear, 0 0, 0 100%, from(#087dba), to(#087dba), color-stop(50%, white));
 }
 
-div#right {
+#right {
 	display:block;
     position:absolute;
     right: 0px;
@@ -239,7 +236,8 @@ div#right {
 	width:100px;
     height:39px;
 }
-div#rightlogo {
+
+#rightlogo {
     position:absolute;
     top: 6px;
     right: 15px;
