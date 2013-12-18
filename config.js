@@ -1,9 +1,9 @@
 var config = {
     hosts: {
-        domain: 'your.domain.example',
-        muc: 'conference.your.domain.example', // FIXME: use XEP-0030
-        bridge: 'jitsi-videobridge.your.domain.example' // FIXME: use XEP-0030
+        domain: 'lambada.jitsi.net',
+        muc: 'conference.lambada.jitsi.net', // FIXME: use XEP-0030
+        bridge: 'jitsi-videobridge.lambada.jitsi.net' // FIXME: use XEP-0030
     },
     useNicks: false,
-    bosh: '/http-bind' // FIXME: use xep-0156 for that
+    bosh: '//lambada.jitsi.net/http-bind' // FIXME: use xep-0156 for that
 };

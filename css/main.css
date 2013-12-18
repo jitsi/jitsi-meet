@@ -172,13 +172,14 @@ html, body{
     z-index:1;
 }
 
-#link {
+#toolbar {
     display:block;
     position:relative;
     height:39px;
     width:auto;
     overflow: hidden;
     z-index:0;
+    visibility: hidden;
 }
 
 .button {

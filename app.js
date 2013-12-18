@@ -162,6 +162,10 @@ $(document).bind('callterminated.jingle', function (event, sid, reason) {
 $(document).bind('joined.muc', function (event, jid, info) {
     console.log('onJoinComplete', info);
     updateRoomUrl(window.location.href);
+
+    // Once we've joined the muc show the toolbar
+    showToolbar();
+
     if (Object.keys(connection.emuc.members).length < 1) {
         focus = new ColibriFocus(connection, config.hosts.bridge);
         return;
@@ -171,6 +175,7 @@ $(document).bind('joined.muc', function (event, jid, info) {
 $(document).bind('entered.muc', function (event, jid, info) {
     console.log('entered', jid, info);
     console.log(focus);
+
     if (focus !== null) {
         // FIXME: this should prepare the video
         if (focus.confid === null) {
@@ -420,6 +425,10 @@ function openChat() {
         $('#nickinput').focus();
     else
         $('#usermsg').focus();
+}
+
+function showToolbar() {
+    $('#toolbar').css({visibility:"visible"});
 }
 
 function updateRoomUrl(newRoomUrl) {
