@@ -434,6 +434,9 @@ function dump(elem, filename){
     return false;
 }
 
+/*
+ * Appends the given message to the chat conversation.
+ */
 function updateChatConversation(nick, message)
 {
     var divClassName = '';
