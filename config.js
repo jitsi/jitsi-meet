@@ -1,7 +1,7 @@
 var config = {
     hosts: {
-        domain: 'lambada.jitsi.net',
-        muc: 'conference.lambada.jitsi.net', // FIXME: use XEP-0030
+        domain: 'guest.jit.si',
+        muc: 'meet.jit.si', // FIXME: use XEP-0030
         bridge: 'jitsi-videobridge.lambada.jitsi.net' // FIXME: use XEP-0030
     },
     useNicks: false,
