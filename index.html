@@ -5,6 +5,7 @@
     <script src="libs/strophejingle.bundle.js"></script><!-- strophe.jingle bundle -->
     <script src="libs/colibri.js"></script><!-- colibri focus implementation -->
     <script src="muc.js"></script><!-- simple MUC library -->
+    <script src="estos_log.js"></script><!-- simple stanza logger -->
     <script src="app.js"></script><!-- application logic -->
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" media="screen" href="css/main.css" />
@@ -28,7 +29,7 @@
             <a class="button" onclick="openLinkDialog();"><i title="Invite others" class="fa fa-link fa-lg"></i></a>
             <div class="header_button_separator"></div>
             <a class="button" onclick='openChat();'><i id="chat" title="Open chat" class="fa fa-comments fa-lg"></i></a>
-            <!--i class='fa fa-external-link'>&nbsp;</i>Others can join you by just going to <span id='roomurl'></span-->
+ <!--i class='fa fa-external-link'>&nbsp;</i>Others can join you by just going to <span id='roomurl'></span-->
         </div>
     </div>
     <div id="settings">
@@ -61,7 +62,7 @@
         <div id="chatconversation"></div>
         <textarea id="usermsg" class= "animated" placeholder='Enter text...' autofocus></textarea>
     </div>
-
+    <a id="downloadlog" class="fa fa-cloud-download" title="Download logfile for support" onclick="connection.logger.dump(event.target);" style="position: absolute; bottom: 5; left: 5; overflow: visible; z-index: 100;"></a>
     <script>
     </script>
   </body>
