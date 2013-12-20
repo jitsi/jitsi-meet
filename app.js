@@ -668,5 +668,4 @@ function closePageWarning() {
         return "You are the owner of this conference call and you are about to end it.";
     else
         return "You are about to leave this conversation.";
-        
 }
