@@ -8,6 +8,8 @@ var nickname = null;
 var sharedKey = '';
 var roomUrl = null;
 
+window.onbeforeunload = closePageWarning;
+
 function init() {
     RTC = setupRTC();
     if (RTC === null) {
@@ -329,6 +331,9 @@ $(window).bind('beforeunload', function () {
     }
 });
 
+/*
+ * Appends the given message to the chat conversation.
+ */
 function updateChatConversation(nick, message)
 {
     var divClassName = '';
@@ -341,10 +346,16 @@ function updateChatConversation(nick, message)
     $('#chatconversation').animate({ scrollTop: $('#chatconversation')[0].scrollHeight}, 1000);
 }
 
+/*
+ * Changes the style class of the element given by id.
+ */
 function buttonClick(id, classname) {
     $(id).toggleClass(classname); // add the class to the clicked element
 }
 
+/*
+ * Opens the lock room dialog.
+ */
 function openLockDialog() {
     if (sharedKey)
         $.prompt("Are you sure you would like to remove your secret key?",
@@ -386,6 +397,9 @@ function openLockDialog() {
         });
 }
 
+/*
+ * Opens the invite link dialog.
+ */
 function openLinkDialog() {
     $.prompt('<input id="inviteLinkRef" type="text" value="' + roomUrl + '" onclick="this.select();">',
              {
@@ -398,12 +412,18 @@ function openLinkDialog() {
              });
 }
 
+/*
+ * Locks / unlocks the room.
+ */
 function lockRoom(lock) {
     connection.emuc.lockRoom(sharedKey);
     
     buttonClick("#lockIcon", "fa fa-unlock fa-lg fa fa-lock fa-lg");
 }
 
+/*
+ * Opens / closes the chat area.
+ */
 function openChat() {
     var chatspace = $('#chatspace');
     var videospace = $('#videospace');
@@ -427,10 +447,27 @@ function openChat() {
         $('#usermsg').focus();
 }
 
+/*
+ * Shows the call main toolbar.
+ */
 function showToolbar() {
     $('#toolbar').css({visibility:"visible"});
 }
 
+/*
+ * Updates the room invite url.
+ */
 function updateRoomUrl(newRoomUrl) {
     roomUrl = newRoomUrl;
+}
+
+/*
+ * Warning to the user that the conference window is about to be closed.
+ */
+function closePageWarning() {
+    if (focus != null)
+        return "You are the owner of this conference call and you are about to end it.";
+    else
+        return "You are about to leave this conversation.";
+        
 }
