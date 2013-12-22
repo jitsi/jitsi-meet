@@ -411,6 +411,7 @@ function dump(elem, filename){
  */
 // <a onclick="dump(event.target);">my download button</a>
 function dump(elem, filename){
+    elem = elem.parentNode;
     elem.download = filename || 'xmpplog.json';
     elem.href = 'data:application/json;charset=utf-8,\n';
     var data = {};
