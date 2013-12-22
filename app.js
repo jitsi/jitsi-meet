@@ -361,9 +361,30 @@ $(window).bind('unload', function () {
     }
 });
 
-/*
- * Appends the given message to the chat conversation.
- */
+// <a onclick="dump(event.target);">my download button</a>
+function dump(elem, filename){
+    elem.download = filename || 'xmpplog.json';
+    elem.href = 'data:application/json;charset=utf-8,\n';
+    var data = {};
+    data.time = new Date();
+    data.url = window.location.href;
+    data.ua = navigator.userAgent;
+    if (connection.logger) {
+        data.xmpp = connection.logger.log;
+    }
+    if (connection.jingle) {
+        Object.keys(connection.jingle.sessions).forEach(function (sid) {
+            var session = connection.jingle.sessions[sid];
+            if (session.peerconnection && session.peerconnection.updateLog) {
+                // FIXME: should probably be a .dump call
+                data["jingle_" + session.sid] = session.peerconnection.updateLog;
+            }
+        });
+    }
+    elem.href += encodeURIComponent(JSON.stringify(data, null, '  '));
+    return false;
+}
+
 function updateChatConversation(nick, message)
 {
     var divClassName = '';

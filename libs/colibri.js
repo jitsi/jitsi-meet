@@ -72,7 +72,7 @@ ColibriFocus.prototype.makeConference = function (peers) {
         ob.channels.push([]);
     });
 
-    this.peerconnection = new RTC.peerconnection(this.connection.jingle.ice_config, this.connection.jingle.pc_constraints);
+    this.peerconnection = new TraceablePeerConnection(this.connection.jingle.ice_config, this.connection.jingle.pc_constraints);
     this.peerconnection.addStream(this.connection.jingle.localStream);
     this.peerconnection.oniceconnectionstatechange = function (event) {
         console.warn('ice connection state changed to', ob.peerconnection.iceConnectionState);

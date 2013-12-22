@@ -13,11 +13,4 @@ Strophe.addConnectionPlugin('logger', {
     log_outgoing: function (stanza) {
         this.log.push([new Date().getTime(), 'outgoing', stanza]);
     },
-    // <a onclick="connection.logger.dump(event.target);">my download button</a>
-    dump: function (what, filename){
-        what.download = filename || 'xmpplog.json';
-        what.href = 'data:application/json;charset=utf-8,\n';
-        what.href += encodeURIComponent(JSON.stringify(this.log, null, '  '));
-        return true;
-    }
 });
