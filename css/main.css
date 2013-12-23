@@ -16,14 +16,21 @@ html, body{
     float: left;
 }
 
-#largeVideo {
-    display:block;
-    position:relative;
-    width:1280px;
-    height:720px;
-    margin-left:auto;
-    margin-right:auto;
+.videocontainer {
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;
+}
+.videocontainer>video {
+    position: absolute;
+    left: 0px;
+    top: 0px;
     z-index: 0;
+    width: 100%;
+    height: 100%;
+}
+
+#largeVideo {
 }
 
 #remoteVideos {
@@ -31,6 +38,7 @@ html, body{
     position:relative;
     text-align:center;
     height:196px;
+    padding-top:10px;
     width:auto;
     overflow: hidden;
     border:1px solid transparent;
@@ -38,16 +46,16 @@ html, body{
     z-index: 2;
 }
 
+#remoteVideos span {
+    display: inline-block;
+}
+
 #remoteVideos video {
-    position:relative;
-    top:18px;
-    height:160px;
-    width:auto;
     z-index:0;
     border:1px solid #FFFFFF;
 }
 
-#remoteVideos video:hover {
+#remoteVideos>span:hover {
     cursor: pointer;
     cursor: hand;
     transform:scale(1.08, 1.08);

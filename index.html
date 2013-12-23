@@ -43,10 +43,14 @@
 
     <div id="videospace">
         <div class="fade_line"></div>
-        <video id="largeVideo" autoplay oncontextmenu="return false;"></video>
+        <div class="videocontainer">
+          <video id="largeVideo" autoplay oncontextmenu="return false;"></video>
+        </div>
         <div class="fade_line"></div>
         <div id="remoteVideos">
-            <video id="localVideo" autoplay oncontextmenu="return false;" muted/>
+            <span id="localVideoContainer" class="videocontainer">
+              <video id="localVideo" autoplay oncontextmenu="return false;" muted/>
+            </span>
         </div>
     </div>
     <div id="chatspace">
