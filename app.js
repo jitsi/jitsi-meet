@@ -317,6 +317,31 @@ $(document).bind('presence.muc', function (event, jid, info, pres) {
         //console.log(jid, 'assoc ssrc', ssrc.getAttribute('type'), ssrc.getAttribute('ssrc'));
         ssrc2jid[ssrc.getAttribute('ssrc')] = jid;
     });
+$(document).bind('passwordrequired.muc', function (event, jid) {
+    console.log('on password required', jid);
+
+    $.prompt('<h2>Password required</h2>' +
+            '<input id="lockKey" type="text" placeholder="shared key" autofocus>',
+             {
+                persistent: true,
+                buttons: { "Ok": true , "Cancel": false},
+                defaultButton: 1,
+                loaded: function(event) {
+                    document.getElementById('lockKey').focus();
+                },
+                submit: function(e,v,m,f){
+                    if(v)
+                    {
+                        var lockKey = document.getElementById('lockKey');
+
+                        if (lockKey.value != null)
+                        {
+                            setSharedKey(lockKey);
+                            connection.emuc.doJoin(jid, lockKey.value);
+                        }
+                    }
+                }
+            });
 });
 
 function toggleVideo() {
