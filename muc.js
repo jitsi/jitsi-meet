@@ -75,18 +75,6 @@ Strophe.addConnectionPlugin('emuc', {
         var from = pres.getAttribute('from');
         if ($(pres).find('>error[type="auth"]>not-authorized[xmlns="urn:ietf:params:xml:ns:xmpp-stanzas"]').length) {
             $(document).trigger('passwordrequired.muc', [from]);
-
-            // FIXME: remove once moved to passwordrequired which should reuse dojoin
-            var ob = this;
-            window.setTimeout(function () {
-                var given = window.prompt('Password required');
-                if (given != null) {
-                    // FIXME: reuse doJoin?
-                    ob.connection.send($pres({to: ob.myroomjid }).c('x', {xmlns: 'http://jabber.org/protocol/muc'}).c('password').t(given));
-                } else {
-                    // user aborted
-                }
-            }, 50);
         } else {
             console.warn('onPresError ', pres);
         }
