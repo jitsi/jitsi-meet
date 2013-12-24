@@ -198,9 +198,11 @@ ColibriFocus.prototype.createdConference = function (result) {
 
     this.confid = $(result).find('>conference').attr('id');
     var remotecontents = $(result).find('>conference>content').get();
+    var numparticipants = 0;
     for (var i = 0; i < remotecontents.length; i++) {
         tmp = $(remotecontents[i]).find('>channel').get();
         this.mychannel.push($(tmp.shift()));
+        numparticipants = tmp.length;
         for (j = 0; j < tmp.length; j++) {
             if (this.channels[j] === undefined) {
                 this.channels[j] = [];
@@ -217,7 +219,7 @@ ColibriFocus.prototype.createdConference = function (result) {
     // only do what's in the offer
     bridgeSDP.media.length = this.mychannel.length;
     // get the mixed ssrc
-    for (var channel = 0; channel < remotecontents.length; channel++) {
+    for (var channel = 0; channel < bridgeSDP.media.length; channel++) {
         tmp = $(this.mychannel[channel]).find('>source[xmlns="urn:xmpp:jingle:apps:rtp:ssma:0"]');
         // FIXME: check rtp-level-relay-type
         if (tmp.length) {
@@ -257,8 +259,7 @@ ColibriFocus.prototype.createdConference = function (result) {
         new RTCSessionDescription({type: 'answer', sdp: bridgeSDP.raw}),
         function () {
             console.log('setRemoteDescription success');
-            // remote channels == remotecontents length - 1!
-            for (var i = 0; i < remotecontents.length - 1; i++) {
+            for (var i = 0; i < numparticipants; i++) {
                 ob.initiate(ob.peers[i], true);
             }
         },
