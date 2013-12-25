@@ -293,13 +293,15 @@ ColibriFocus.prototype.initiate = function (peer, isInitiator) {
             sdp.removeMediaLines(i, 'a=fingerprint:');
             sdp.removeMediaLines(i, 'a=setup:');
 
-            // re-add all remote a=ssrcs
-            for (var jid in this.remotessrc) {
-                if (jid == peer) continue;
-                sdp.media[i] += this.remotessrc[jid][i];
+            if (i > 0) { // not for audio
+                // re-add all remote a=ssrcs
+                for (var jid in this.remotessrc) {
+                    if (jid == peer) continue;
+                    sdp.media[i] += this.remotessrc[jid][i];
+                }
+                // and local a=ssrc lines
+                sdp.media[i] += SDPUtil.find_lines(localSDP.media[i], 'a=ssrc').join('\r\n') + '\r\n';
             }
-            // and local a=ssrc lines
-            sdp.media[i] += SDPUtil.find_lines(localSDP.media[i], 'a=ssrc').join('\r\n') + '\r\n';
         }
         sdp.raw = sdp.session + sdp.media.join('');
     } else {
@@ -513,7 +515,11 @@ ColibriFocus.prototype.sendSSRCUpdate = function (sdp, exclude, isadd) {
                 sid: peersess.sid
             }
         );
+        // FIXME: only announce video ssrcs since we mix audio and dont need 
+        //      the audio ssrcs therefore
+        var modified = false;
         for (channel = 0; channel < sdp.media.length; channel++) {
+            modified = true;
             tmp = SDPUtil.find_lines(sdp.media[channel], 'a=ssrc:');
             modify.c('content', {name: SDPUtil.parse_mid(SDPUtil.find_line(sdp.media[channel], 'a=mid:'))});
             modify.c('source', { xmlns: 'urn:xmpp:jingle:apps:rtp:ssma:0' });
@@ -536,14 +542,18 @@ ColibriFocus.prototype.sendSSRCUpdate = function (sdp, exclude, isadd) {
             modify.up(); // end of source
             modify.up(); // end of content
         }
-        ob.connection.sendIQ(modify,
-            function (res) {
-                console.warn('got modify result');
-            },
-            function (err) {
-                console.warn('got modify error');
-            }
-        );
+        if (modified) {
+            ob.connection.sendIQ(modify,
+                function (res) {
+                    console.warn('got modify result');
+                },
+                function (err) {
+                    console.warn('got modify error');
+                }
+            );
+        } else {
+            console.log('modification not necessary');
+        }
     });
 };
 
@@ -565,11 +575,13 @@ ColibriFocus.prototype.setRemoteDescription = function (session, elem, desctype)
     // ACT 3: note the SSRCs
     this.remotessrc[session.peerjid] = [];
     for (channel = 0; channel < this.channels[participant].length; channel++) {
+        if (channel == 0) continue;
         this.remotessrc[session.peerjid][channel] = SDPUtil.find_lines(remoteSDP.media[channel], 'a=ssrc:').join('\r\n') + '\r\n';
     }
 
     // ACT 4: add new a=ssrc lines to local remotedescription
     for (channel = 0; channel < this.channels[participant].length; channel++) {
+        if (channel == 0) continue;
         if (!this.addssrc[channel]) this.addssrc[channel] = '';
         this.addssrc[channel] += SDPUtil.find_lines(remoteSDP.media[channel], 'a=ssrc:').join('\r\n') + '\r\n';
     }
