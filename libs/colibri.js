@@ -211,15 +211,51 @@ ColibriFocus.prototype.createdConference = function (result) {
         }
     }
     console.log('remote channels', this.channels);
+    var localSDP = new SDP(this.peerconnection.localDescription.sdp);
+    localSDP.removeSessionLines('a=group:');
+    localSDP.removeSessionLines('a=msid-semantic:');
 
     // establish our channel with the bridge
     // static answer taken from chrome M31, should be replaced by a 
     // dynamic one that is based on our offer FIXME
-    var bridgeSDP = new SDP('v=0\r\no=- 5151055458874951233 2 IN IP4 127.0.0.1\r\ns=-\r\nt=0 0\r\nm=audio 1 RTP/SAVPF 111 103 104 0 8 106 105 13 126\r\nc=IN IP4 0.0.0.0\r\na=rtcp:1 IN IP4 0.0.0.0\r\na=mid:audio\r\na=extmap:1 urn:ietf:params:rtp-hdrext:ssrc-audio-level\r\na=sendrecv\r\na=rtpmap:111 opus/48000/2\r\na=fmtp:111 minptime=10\r\na=rtpmap:103 ISAC/16000\r\na=rtpmap:104 ISAC/32000\r\na=rtpmap:0 PCMU/8000\r\na=rtpmap:8 PCMA/8000\r\na=rtpmap:106 CN/32000\r\na=rtpmap:105 CN/16000\r\na=rtpmap:13 CN/8000\r\na=rtpmap:126 telephone-event/8000\r\na=maxptime:60\r\nm=video 1 RTP/SAVPF 100 116 117\r\nc=IN IP4 0.0.0.0\r\na=rtcp:1 IN IP4 0.0.0.0\r\na=mid:video\r\na=extmap:2 urn:ietf:params:rtp-hdrext:toffset\r\na=extmap:3 http://www.webrtc.org/experiments/rtp-hdrext/abs-send-time\r\na=sendrecv\r\na=rtpmap:100 VP8/90000\r\na=rtcp-fb:100 ccm fir\r\na=rtcp-fb:100 nack\r\na=rtcp-fb:100 goog-remb\r\na=rtpmap:116 red/90000\r\na=rtpmap:117 ulpfec/90000\r\n');
+    var bridgeSDP = new SDP("");
+    // var bridgeSDP = new SDP('v=0\r\no=- 5151055458874951233 2 IN IP4 127.0.0.1\r\ns=-\r\nt=0 0\r\nm=audio 1 RTP/SAVPF 111 103 104 0 8 106 105 13 126\r\nc=IN IP4 0.0.0.0\r\na=rtcp:1 IN IP4 0.0.0.0\r\na=mid:audio\r\na=extmap:1 urn:ietf:params:rtp-hdrext:ssrc-audio-level\r\na=sendrecv\r\na=rtpmap:111 opus/48000/2\r\na=fmtp:111 minptime=10\r\na=rtpmap:103 ISAC/16000\r\na=rtpmap:104 ISAC/32000\r\na=rtpmap:0 PCMU/8000\r\na=rtpmap:8 PCMA/8000\r\na=rtpmap:106 CN/32000\r\na=rtpmap:105 CN/16000\r\na=rtpmap:13 CN/8000\r\na=rtpmap:126 telephone-event/8000\r\na=maxptime:60\r\nm=video 1 RTP/SAVPF 100 116 117\r\nc=IN IP4 0.0.0.0\r\na=rtcp:1 IN IP4 0.0.0.0\r\na=mid:video\r\na=extmap:2 urn:ietf:params:rtp-hdrext:toffset\r\na=extmap:3 http://www.webrtc.org/experiments/rtp-hdrext/abs-send-time\r\na=sendrecv\r\na=rtpmap:100 VP8/90000\r\na=rtcp-fb:100 ccm fir\r\na=rtcp-fb:100 nack\r\na=rtcp-fb:100 goog-remb\r\na=rtpmap:116 red/90000\r\na=rtpmap:117 ulpfec/90000\r\n');
     // only do what's in the offer
-    bridgeSDP.media.length = this.mychannel.length;
+    bridgeSDP.session = localSDP.session;
+    bridgeSDP.media.length = localSDP.media.length;
+    var channel;
+    for (channel = 0; channel < bridgeSDP.media.length; channel++) {
+        bridgeSDP.media[channel] = '';
+        // unchanged lines
+        bridgeSDP.media[channel] += SDPUtil.find_line(localSDP.media[channel], 'm=') + '\r\n';
+        bridgeSDP.media[channel] += SDPUtil.find_line(localSDP.media[channel], 'c=') + '\r\n';
+        if (SDPUtil.find_line(localSDP.media[channel], 'a=rtcp:')) {
+            bridgeSDP.media[channel] += SDPUtil.find_line(localSDP.media[channel], 'a=rtcp:') + '\r\n';
+        }
+        if (SDPUtil.find_line(localSDP.media[channel], 'a=mid:')) {
+            bridgeSDP.media[channel] += SDPUtil.find_line(localSDP.media[channel], 'a=mid:') + '\r\n';
+        }
+        if (SDPUtil.find_line(localSDP.media[channel], 'a=sendrecv')) {
+            bridgeSDP.media[channel] += 'a=sendrecv\r\n';
+        }
+        if (SDPUtil.find_line(localSDP.media[channel], 'a=extmap:')) {
+            bridgeSDP.media[channel] += SDPUtil.find_lines(localSDP.media[channel], 'a=extmap:').join('\r\n') + '\r\n';
+        }
+
+        // FIXME: should look at m-line and group the ids together
+        if (SDPUtil.find_line(localSDP.media[channel], 'a=rtpmap:')) {
+            bridgeSDP.media[channel] += SDPUtil.find_lines(localSDP.media[channel], 'a=rtpmap:').join('\r\n') + '\r\n';
+        }
+        if (SDPUtil.find_line(localSDP.media[channel], 'a=fmtp:')) {
+            bridgeSDP.media[channel] += SDPUtil.find_lines(localSDP.media[channel], 'a=fmtp:').join('\r\n') + '\r\n';
+        }
+        if (SDPUtil.find_line(localSDP.media[channel], 'a=rtcp-fb:')) {
+            bridgeSDP.media[channel] += SDPUtil.find_lines(localSDP.media[channel], 'a=rtcp-fb:').join('\r\n') + '\r\n';
+        }
+        // FIXME: changed lines -- a=sendrecv direction, a=setup direction
+    }
     // get the mixed ssrc
-    for (var channel = 0; channel < bridgeSDP.media.length; channel++) {
+    for (channel = 0; channel < bridgeSDP.media.length; channel++) {
         tmp = $(this.mychannel[channel]).find('>source[xmlns="urn:xmpp:jingle:apps:rtp:ssma:0"]');
         // FIXME: check rtp-level-relay-type
         if (tmp.length) {
@@ -229,6 +265,7 @@ ColibriFocus.prototype.createdConference = function (result) {
             bridgeSDP.media[channel] += 'a=ssrc:' + tmp.attr('ssrc') + ' ' + 'mslabel:mixedmslabela0' + '\r\n';
         } else {
             // make chrome happy... '3735928559' == 0xDEADBEEF
+            // FIXME: this currently appears as two streams, should be one
             bridgeSDP.media[channel] += 'a=ssrc:' + '3735928559' + ' ' + 'cname:mixed' + '\r\n';
             bridgeSDP.media[channel] += 'a=ssrc:' + '3735928559' + ' ' + 'label:mixedlabelv0' + '\r\n';
             bridgeSDP.media[channel] += 'a=ssrc:' + '3735928559' + ' ' + 'msid:mixedmslabelv0 mixedlabelv0' + '\r\n';
@@ -275,7 +312,7 @@ ColibriFocus.prototype.initiate = function (peer, isInitiator) {
     var participant = this.peers.indexOf(peer);
     console.log('tell', peer, participant);
     var sdp;
-    if (this.peerconnection != null && this.peerconnection.signalingState == 'stable') {
+    if (this.peerconnection !== null && this.peerconnection.signalingState == 'stable') {
         sdp = new SDP(this.peerconnection.remoteDescription.sdp);
         var localSDP = new SDP(this.peerconnection.localDescription.sdp);
         // throw away stuff we don't want
