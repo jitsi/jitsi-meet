@@ -33,7 +33,11 @@ function init() {
     connection.connect(jid, document.getElementById('password').value, function (status) {
         if (status == Strophe.Status.CONNECTED) {
             console.log('connected');
-            getUserMediaWithConstraints(['audio', 'video'], '360');
+            if (RTC.browser == 'firefox') {
+                getUserMediaWithConstraints(['audio']);
+            } else {
+                getUserMediaWithConstraints(['audio', 'video'], '360');
+            }
             document.getElementById('connect').disabled = true;
         } else {
             console.log('status', status);
