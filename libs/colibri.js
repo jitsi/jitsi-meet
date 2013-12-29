@@ -145,35 +145,8 @@ ColibriFocus.prototype._makeConference = function () {
             elem.up();
         }
 
-        // FIXME: should reuse code from .toJingle
-        elem.c('transport', {xmlns: 'urn:xmpp:jingle:transports:ice-udp:1'});
-        var tmp = SDPUtil.iceparams(media, localSDP.session);
-        if (tmp) {
-            elem.attrs(tmp);
-            var fingerprints = SDPUtil.find_lines(media, 'a=fingerprint:', localSDP.session);
-            fingerprints.forEach(function (line) {
-                tmp = SDPUtil.parse_fingerprint(line);
-                //tmp.xmlns = 'urn:xmpp:tmp:jingle:apps:dtls:0';
-                tmp.xmlns = 'urn:xmpp:jingle:apps:dtls:0';
-                elem.c('fingerprint').t(tmp.fingerprint);
-                delete tmp.fingerprint;
-                line = SDPUtil.find_line(media, 'a=setup:', ob.session);
-                if (line) {
-                    tmp.setup = line.substr(8);
-                }
-                elem.attrs(tmp);
-                elem.up();
-            });
-            // XEP-0176
-            if (SDPUtil.find_line(media, 'a=candidate:', localSDP.session)) { // add any a=candidate lines
-                lines = SDPUtil.find_lines(media, 'a=candidate:', localSDP.session);
-                for (j = 0; j < lines.length; j++) {
-                    tmp = SDPUtil.candidateToJingle(lines[j]);
-                    elem.c('candidate', tmp).up();
-                }
-            }
-            elem.up(); // end of transport
-        }
+        localSDP.TransportToJingle(channel, elem);
+
         elem.up(); // end of channel
         for (j = 0; j < ob.peers.length; j++) {
             elem.c('channel', {initiator: 'true', expire:'15' }).up();
@@ -489,33 +462,9 @@ ColibriFocus.prototype.updateChannel = function (remoteSDP, participant) {
             */
             change.up();
         });
-
         // now add transport
-        change.c('transport', {xmlns: 'urn:xmpp:jingle:transports:ice-udp:1'});
-        var fingerprints = SDPUtil.find_lines(remoteSDP.media[channel], 'a=fingerprint:', remoteSDP.session);
-        fingerprints.forEach(function (line) {
-            tmp = SDPUtil.parse_fingerprint(line);
-            tmp.xmlns = 'urn:xmpp:jingle:apps:dtls:0';
-            change.c('fingerprint').t(tmp.fingerprint);
-            delete tmp.fingerprint;
-            line = SDPUtil.find_line(remoteSDP.media[channel], 'a=setup:', remoteSDP.session);
-            if (line) {
-                tmp.setup = line.substr(8);
-            }
-            change.attrs(tmp);
-            change.up();
-        });
-        var candidates = SDPUtil.find_lines(remoteSDP.media[channel], 'a=candidate:', remoteSDP.session);
-        candidates.forEach(function (line) {
-            var tmp = SDPUtil.candidateToJingle(line);
-            change.c('candidate', tmp).up();
-        });
-        tmp = SDPUtil.iceparams(remoteSDP.media[channel], remoteSDP.session);
-        if (tmp) {
-            change.attrs(tmp);
+        remoteSDP.TransportToJingle(channel, change);
 
-        }
-        change.up(); // end of transport
         change.up(); // end of channel
         change.up(); // end of content
     }
