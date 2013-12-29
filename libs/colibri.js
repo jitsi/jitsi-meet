@@ -94,6 +94,12 @@ ColibriFocus.prototype.makeConference = function (peers) {
     };
     this.peerconnection.onaddstream = function (event) {
         ob.remoteStream = event.stream;
+        // search the jid associated with this stream
+        Object.keys(ob.remotessrc).forEach(function (jid) {
+            if (ob.remotessrc[jid].join('\r\n').indexOf('mslabel:' + event.stream.id) != -1) {
+                event.peerjid = jid;
+            }
+        });
         $(document).trigger('remotestreamadded.jingle', [event, ob.sid]);
     };
     this.peerconnection.onicecandidate = function (event) {
@@ -481,11 +487,11 @@ ColibriFocus.prototype.updateChannel = function (remoteSDP, participant) {
 // tell everyone about a new participants a=ssrc lines (isadd is true)
 // or a leaving participants a=ssrc lines
 // FIXME: should not take an SDP, but rather the a=ssrc lines and probably a=mid
-ColibriFocus.prototype.sendSSRCUpdate = function (sdp, exclude, isadd) {
+ColibriFocus.prototype.sendSSRCUpdate = function (sdp, jid, isadd) {
     var ob = this;
     this.peers.forEach(function (peerjid) {
-        if (peerjid == exclude) return;
-        console.log('tell', peerjid, 'about ' + (isadd ? 'new' : 'removed') + ' ssrcs from', exclude);
+        if (peerjid == jid) return;
+        console.log('tell', peerjid, 'about ' + (isadd ? 'new' : 'removed') + ' ssrcs from', jid);
         if (!ob.remotessrc[peerjid]) {
             // FIXME: this should only send to participants that are stable, i.e. who have sent a session-accept
             // possibly, this.remoteSSRC[session.peerjid] does not exist yet
@@ -650,7 +656,6 @@ ColibriFocus.prototype.terminate = function (session, reason) {
     if (!this.remotessrc[session.peerjid] || participant == -1) {
         return;
     }
-    console.log('remote ssrcs:', this.remotessrc[session.peerjid]);
     var ssrcs = this.remotessrc[session.peerjid];
     for (var i = 0; i < ssrcs.length; i++) {
         if (!this.removessrc[i]) this.removessrc[i] = '';
