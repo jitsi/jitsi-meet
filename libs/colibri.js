@@ -98,6 +98,9 @@ ColibriFocus.prototype.makeConference = function (peers) {
         Object.keys(ob.remotessrc).forEach(function (jid) {
             if (ob.remotessrc[jid].join('\r\n').indexOf('mslabel:' + event.stream.id) != -1) {
                 event.peerjid = jid;
+                if (ob.connection.jingle.jid2session[jid]) {
+                    ob.connection.jingle.jid2session[jid].remotestream = event.stream;
+                }
             }
         });
         $(document).trigger('remotestreamadded.jingle', [event, ob.sid]);
@@ -376,7 +379,7 @@ ColibriFocus.prototype.initiate = function (peer, isInitiator) {
     sess.localStream = this.connection.jingle.localStream;
     sess.media_constraints = this.connection.jingle.media_constraints;
     sess.pc_constraints = this.connection.jingle.pc_constraints;
-    sess.ice_config = this.connection.ice_config;
+    sess.ice_config = this.connection.jingle.ice_config;
 
     this.connection.jingle.sessions[sess.sid] = sess;
     this.connection.jingle.jid2session[sess.peerjid] = sess;
