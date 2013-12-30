@@ -16,28 +16,39 @@ function TraceablePeerConnection(ice_config, constraints) {
     };
     this.onicecandidate = null;
     this.peerconnection.onicecandidate = function (event) {
+        self.trace('onicecandidate', event.candidate);
         if (self.onicecandidate !== null) {
             self.onicecandidate(event);
         }
     };
     this.onaddstream = null;
     this.peerconnection.onaddstream = function (event) {
+        self.trace('onaddstream', event.stream);
         if (self.onaddstream !== null) {
             self.onaddstream(event);
         }
     };
     this.onremovestream = null;
     this.peerconnection.onremovestream = function (event) {
+        self.trace('onremovestream', event.stream);
         if (self.onremovestream !== null) {
             self.onremovestream(event);
         }
     };
     this.onsignalingstatechange = null;
     this.peerconnection.onsignalingstatechange = function (event) {
+        self.trace('onsignalingstatechange', event);
         if (self.onsignalingstatechange !== null) {
             self.onsignalingstatechange(event);
         }
     };
+    this.oniceconnectionstatechange = null;
+    this.peerconnection.oniceconnectionstatechange = function (event) {
+        self.trace('oniceconnectionstatechange', event);
+        if (self.oniceconnectionstatechange !== null) {
+            self.oniceconnectionstatechange(event);
+        }
+    }
 };
 
 TraceablePeerConnection.prototype.__defineGetter__('signalingState', function() { return this.peerconnection.signalingState; });
@@ -178,8 +189,8 @@ function setupRTC() {
             attachMediaStream: function (element, stream) {
                 element.attr('src', webkitURL.createObjectURL(stream));
             },
-//            pc_constraints: {} // FIVE-182
-            pc_constraints: {'optional': [{'DtlsSrtpKeyAgreement': 'true'}]} // enable dtls support in canary
+            // DTLS should now be enabled by default but..
+            pc_constraints: {'optional': [{'DtlsSrtpKeyAgreement': 'true'}]} 
         };
         if (navigator.userAgent.indexOf('Android') != -1) {
             RTC.pc_constraints = {}; // disable DTLS on Android
@@ -443,7 +454,7 @@ Strophe.addConnectionPlugin('jingle', {
         return true;
     },
     initiate: function (peerjid, myjid) { // initiate a new jinglesession to peerjid
-        var sess = new JingleSession(myjid,
+        var sess = new JingleSession(myjid || this.connection.jid,
                                      Math.random().toString(36).substr(2, 12), // random string
                                      this.connection);
         // configure session
