@@ -363,7 +363,7 @@ $(document).ready(function () {
     }
 });
 
-$(window).bind('unload', function () {
+$(window).bind('beforeunload', function () {
     if (connection && connection.connected) {
         // ensure signout
         $.ajax({
