@@ -147,12 +147,15 @@ html, body{
     display:none;
 }
 
-#header{
-	display:block;
+#header {
     height:39px;
-    z-index: 1;
     text-align:center;
     background-color:#087dba;
+}
+
+#toolbar {
+    visibility:hidden;
+    height:39px;
 }
 
 #left {

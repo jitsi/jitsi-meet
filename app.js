@@ -185,7 +185,6 @@ $(document).bind('callterminated.jingle', function (event, sid, reason) {
 
 
 $(document).bind('joined.muc', function (event, jid, info) {
-    console.log('onJoinComplete', info);
     updateRoomUrl(window.location.href);
 
     // Once we've joined the muc show the toolbar
@@ -193,7 +192,6 @@ $(document).bind('joined.muc', function (event, jid, info) {
 
     if (Object.keys(connection.emuc.members).length < 1) {
         focus = new ColibriFocus(connection, config.hosts.bridge);
-        return;
     }
 });
 
