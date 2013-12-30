@@ -13,19 +13,18 @@ window.onbeforeunload = closePageWarning;
 function init() {
     RTC = setupRTC();
     if (RTC === null) {
-        window.location.href = '/webrtcrequired.html';
+        window.location.href = 'webrtcrequired.html';
         return;
     } else if (RTC.browser != 'chrome') {
-        window.location.href = '/chromeonly.html';
+        window.location.href = 'chromeonly.html';
         return;
     }
     RTCPeerconnection = RTC.peerconnection;
 
     connection = new Strophe.Connection(document.getElementById('boshURL').value || config.bosh || '/http-bind');
-    /*
-    connection.rawInput = function (data) { console.log('RECV: ' + data); };
-    connection.rawOutput = function (data) { console.log('SEND: ' + data); };
-    */
+    if (connection.disco) {
+        // for chrome, add multistream cap
+    }
     connection.jingle.pc_constraints = RTC.pc_constraints;
 
     var jid = document.getElementById('jid').value || config.hosts.domain || window.location.hostname;
@@ -49,6 +48,14 @@ function doJoin() {
     var roomnode = null;
     var path = window.location.pathname;
     var roomjid;
+    /*
+     * this is making assumptions about how the URL->room mapping happens.
+     * It currently assumes deployment at root, with a rewrite like the
+     * following one (for nginx):
+    location ~ ^/([a-zA-Z0-9]+)$ {
+        rewrite ^/(.*)$ / break;
+    }
+     */
     if (path.length > 1) {
         roomnode = path.substr(1).toLowerCase();
     } else {
@@ -100,11 +107,12 @@ $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
     }
     var sess = connection.jingle.sessions[sid];
     var vid = document.createElement('video');
-    console.log(sess);
+    // FIXME: the span should not be created here but on muc join
     var span = document.createElement('span');
-    // FIXME: how to name this span? sess.peerjid is not right for jingle clients
-    //console.log('peer: ', Strophe.getResourceFromJid(sess.peerjid));
-    //span.id = 'remoteVideocontainer_' + Strophe.getResourceFromJid(sess.peerjid);
+    if (data.peerjid) {
+        // FIXME: how to name this span? data.peerjid is not set for jingle clients
+        span.id = 'participant_' + Strophe.getResourceFromJid(data.peerjid);
+    }
     span.className = 'videocontainer';
     var id = 'remoteVideo_' + sid + '_' + data.stream.id;
     vid.id = id;
@@ -123,6 +131,8 @@ $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
     data.stream.onended = function () {
         console.log('stream ended', this.id);
         var src = $('#' + id).attr('src');
+        // FIXME: likewise, the parent should not be removed here
+        // but on MUC part
         $('#' + id).parent().remove();
         if (src === $('#largeVideo').attr('src')) {
             // this is currently displayed as large
@@ -159,7 +169,6 @@ $(document).bind('callincoming.jingle', function (event, sid) {
 });
 
 $(document).bind('callactive.jingle', function (event, videoelem, sid) {
-    console.log('call active');
     if (videoelem.attr('id').indexOf('mixedmslabel') == -1) {
         // ignore mixedmslabela0 and v0
         videoelem.show();
