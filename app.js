@@ -19,7 +19,7 @@ function init() {
         window.location.href = 'chromeonly.html';
         return;
     }
-    RTCPeerconnection = RTC.peerconnection;
+    RTCPeerconnection = TraceablePeerConnection; 
 
     connection = new Strophe.Connection(document.getElementById('boshURL').value || config.bosh || '/http-bind');
     if (connection.disco) {
