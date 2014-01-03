@@ -314,7 +314,7 @@ ColibriFocus.prototype.initiate = function (peer, isInitiator) {
             sdp.removeMediaLines(i, 'a=fingerprint:');
             sdp.removeMediaLines(i, 'a=setup:');
 
-            if (i > 0) { // not for audio
+            if (1) { //i > 0) { // not for audio FIXME: does not work as intended
                 // re-add all remote a=ssrcs
                 for (var jid in this.remotessrc) {
                     if (jid == peer) continue;
@@ -572,13 +572,13 @@ ColibriFocus.prototype.setRemoteDescription = function (session, elem, desctype)
     // ACT 3: note the SSRCs
     this.remotessrc[session.peerjid] = [];
     for (channel = 0; channel < this.channels[participant].length; channel++) {
-        if (channel == 0) continue;
+        //if (channel == 0) continue; FIXME: does not work as intended
         this.remotessrc[session.peerjid][channel] = SDPUtil.find_lines(remoteSDP.media[channel], 'a=ssrc:').join('\r\n') + '\r\n';
     }
 
     // ACT 4: add new a=ssrc lines to local remotedescription
     for (channel = 0; channel < this.channels[participant].length; channel++) {
-        if (channel == 0) continue;
+        //if (channel == 0) continue; FIXME: does not work as intended
         if (!this.addssrc[channel]) this.addssrc[channel] = '';
         this.addssrc[channel] += SDPUtil.find_lines(remoteSDP.media[channel], 'a=ssrc:').join('\r\n') + '\r\n';
     }
