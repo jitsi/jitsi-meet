@@ -326,3 +326,12 @@ form {
     -moz-transition: height 0.2s;
     transition: height 0.2s;
 }
+
+#downloadlog {
+    position: absolute;
+    bottom: 5;
+    left: 5;
+    overflow: visible;
+    z-index: 100;
+}
+

@@ -59,7 +59,7 @@ function ColibriFocus(connection, bridgejid) {
 
 // creates a conferences with an initial set of peers
 ColibriFocus.prototype.makeConference = function (peers) {
-    var ob = this;
+    var self = this;
     if (this.confid !== null) {
         console.error('makeConference called twice? Ignoring...');
         // FIXME: just invite peers?
@@ -68,52 +68,53 @@ ColibriFocus.prototype.makeConference = function (peers) {
     this.confid = 0; // !null
     this.peers = [];
     peers.forEach(function (peer) {
-        ob.peers.push(peer);
-        ob.channels.push([]);
+        self.peers.push(peer);
+        self.channels.push([]);
     });
 
     this.peerconnection = new TraceablePeerConnection(this.connection.jingle.ice_config, this.connection.jingle.pc_constraints);
     this.peerconnection.addStream(this.connection.jingle.localStream);
     this.peerconnection.oniceconnectionstatechange = function (event) {
-        console.warn('ice connection state changed to', ob.peerconnection.iceConnectionState);
+        console.warn('ice connection state changed to', self.peerconnection.iceConnectionState);
         /*
-        if (ob.peerconnection.signalingState == 'stable' && ob.peerconnection.iceConnectionState == 'connected') {
+        if (self.peerconnection.signalingState == 'stable' && self.peerconnection.iceConnectionState == 'connected') {
             console.log('adding new remote SSRCs from iceconnectionstatechange');
-            window.setTimeout(function() { ob.modifySources(); }, 1000);
+            window.setTimeout(function() { self.modifySources(); }, 1000);
         }
         */
     };
     this.peerconnection.onsignalingstatechange = function (event) {
-        console.warn(ob.peerconnection.signalingState);
+        console.warn(self.peerconnection.signalingState);
         /*
-        if (ob.peerconnection.signalingState == 'stable' && ob.peerconnection.iceConnectionState == 'connected') {
+        if (self.peerconnection.signalingState == 'stable' && self.peerconnection.iceConnectionState == 'connected') {
             console.log('adding new remote SSRCs from signalingstatechange');
-            window.setTimeout(function() { ob.modifySources(); }, 1000);
+            window.setTimeout(function() { self.modifySources(); }, 1000);
         }
         */
     };
     this.peerconnection.onaddstream = function (event) {
-        ob.remoteStream = event.stream;
+        self.remoteStream = event.stream;
         // search the jid associated with this stream
-        Object.keys(ob.remotessrc).forEach(function (jid) {
-            if (ob.remotessrc[jid].join('\r\n').indexOf('mslabel:' + event.stream.id) != -1) {
+        Object.keys(self.remotessrc).forEach(function (jid) {
+            if (self.remotessrc[jid].join('\r\n').indexOf('mslabel:' + event.stream.id) != -1) {
                 event.peerjid = jid;
-                if (ob.connection.jingle.jid2session[jid]) {
-                    ob.connection.jingle.jid2session[jid].remotestream = event.stream;
+                if (self.connection.jingle.jid2session[jid]) {
+                    self.connection.jingle.jid2session[jid].remotestream = event.stream;
                 }
             }
         });
-        $(document).trigger('remotestreamadded.jingle', [event, ob.sid]);
+        $(document).trigger('remotestreamadded.jingle', [event, self.sid]);
     };
     this.peerconnection.onicecandidate = function (event) {
-        ob.sendIceCandidate(event.candidate);
+        self.sendIceCandidate(event.candidate);
     };
     this.peerconnection.createOffer(
         function (offer) {
-            ob.peerconnection.setLocalDescription(
+            self.peerconnection.setLocalDescription(
                 offer,
                 function () {
                     // success
+                    $(document).trigger('setLocalDescription.jingle', [self.sid]);
                     // FIXME: could call _makeConference here and trickle candidates later
                 },
                 function (error) {
@@ -126,17 +127,16 @@ ColibriFocus.prototype.makeConference = function (peers) {
         }
     );
     this.peerconnection.onicecandidate = function (event) {
-        console.log('candidate', event.candidate);
         if (!event.candidate) {
             console.log('end of candidates');
-            ob._makeConference();
+            self._makeConference();
             return;
         }
     };
 };
 
 ColibriFocus.prototype._makeConference = function () {
-    var ob = this;
+    var self = this;
     var elem = $iq({to: this.bridgejid, type: 'get'});
     elem.c('conference', {xmlns: 'http://jitsi.org/protocol/colibri'});
 
@@ -157,7 +157,7 @@ ColibriFocus.prototype._makeConference = function () {
         localSDP.TransportToJingle(channel, elem);
 
         elem.up(); // end of channel
-        for (j = 0; j < ob.peers.length; j++) {
+        for (j = 0; j < self.peers.length; j++) {
             elem.c('channel', {initiator: 'true', expire:'15' }).up();
         }
         elem.up(); // end of content
@@ -165,7 +165,7 @@ ColibriFocus.prototype._makeConference = function () {
 
     this.connection.sendIQ(elem,
         function (result) {
-            ob.createdConference(result);
+            self.createdConference(result);
         },
         function (error) {
             console.warn(error);
@@ -267,19 +267,21 @@ ColibriFocus.prototype.createdConference = function (result) {
                 bridgeSDP.media[channel] += 'a=fingerprint:' + tmp.attr('hash') + ' ' + tmp.text() + '\r\n';
                 if (tmp.attr('setup')) {
                     bridgeSDP.media[channel] += 'a=setup:' + tmp.attr('setup') + '\r\n';
+                } else {
+                    bridgeSDP.media[channel] += 'a=setup:active\r\n';
                 }
             }
         }
     }
     bridgeSDP.raw = bridgeSDP.session + bridgeSDP.media.join('');
 
-    var ob = this;
+    var self = this;
     this.peerconnection.setRemoteDescription(
         new RTCSessionDescription({type: 'answer', sdp: bridgeSDP.raw}),
         function () {
             console.log('setRemoteDescription success');
             for (var i = 0; i < numparticipants; i++) {
-                ob.initiate(ob.peers[i], true);
+                self.initiate(self.peers[i], true);
             }
         },
         function (error) {
@@ -406,12 +408,12 @@ ColibriFocus.prototype.initiate = function (peer, isInitiator) {
 
 // pull in a new participant into the conference
 ColibriFocus.prototype.addNewParticipant = function (peer) {
-    var ob = this;
+    var self = this;
     if (this.confid === 0) {
         // bad state
         console.log('confid does not exist yet, postponing', peer);
         window.setTimeout(function () {
-            ob.addNewParticipant(peer);
+            self.addNewParticipant(peer);
         }, 250);
         return;
     }
@@ -435,9 +437,9 @@ ColibriFocus.prototype.addNewParticipant = function (peer) {
             var contents = $(result).find('>conference>content').get();
             for (var i = 0; i < contents.length; i++) {
                 tmp = $(contents[i]).find('>channel').get();
-                ob.channels[index][i] = tmp[0];
+                self.channels[index][i] = tmp[0];
             }
-            ob.initiate(peer, true);
+            self.initiate(peer, true);
         },
         function (error) {
             console.warn(error);
@@ -491,17 +493,17 @@ ColibriFocus.prototype.updateChannel = function (remoteSDP, participant) {
 // or a leaving participants a=ssrc lines
 // FIXME: should not take an SDP, but rather the a=ssrc lines and probably a=mid
 ColibriFocus.prototype.sendSSRCUpdate = function (sdp, jid, isadd) {
-    var ob = this;
+    var self = this;
     this.peers.forEach(function (peerjid) {
         if (peerjid == jid) return;
         console.log('tell', peerjid, 'about ' + (isadd ? 'new' : 'removed') + ' ssrcs from', jid);
-        if (!ob.remotessrc[peerjid]) {
+        if (!self.remotessrc[peerjid]) {
             // FIXME: this should only send to participants that are stable, i.e. who have sent a session-accept
             // possibly, this.remoteSSRC[session.peerjid] does not exist yet
             console.warn('do we really want to bother', peerjid, 'with updates yet?');
         }
         var channel;
-        var peersess = ob.connection.jingle.jid2session[peerjid];
+        var peersess = self.connection.jingle.jid2session[peerjid];
         var modify = $iq({to: peerjid, type: 'set'})
             .c('jingle', {
                 xmlns: 'urn:xmpp:jingle:1',
@@ -538,7 +540,7 @@ ColibriFocus.prototype.sendSSRCUpdate = function (sdp, jid, isadd) {
             modify.up(); // end of content
         }
         if (modified) {
-            ob.connection.sendIQ(modify,
+            self.connection.sendIQ(modify,
                 function (res) {
                     console.warn('got modify result');
                 },
@@ -555,7 +557,7 @@ ColibriFocus.prototype.sendSSRCUpdate = function (sdp, jid, isadd) {
 ColibriFocus.prototype.setRemoteDescription = function (session, elem, desctype) {
     var participant = this.peers.indexOf(session.peerjid);
     console.log('Colibri.setRemoteDescription from', session.peerjid, participant);
-    var ob = this;
+    var self = this;
     var remoteSDP = new SDP('');
     var tmp;
     var channel;
@@ -585,9 +587,9 @@ ColibriFocus.prototype.setRemoteDescription = function (session, elem, desctype)
 
 // relay ice candidates to bridge using trickle
 ColibriFocus.prototype.addIceCandidate = function (session, elem) {
-    var ob = this;
+    var self = this;
     var participant = this.peers.indexOf(session.peerjid);
-    console.log('change transport allocation for', this.confid, session.peerjid, participant);
+    //console.log('change transport allocation for', this.confid, session.peerjid, participant);
     var change = $iq({to: this.bridgejid, type: 'set'});
     change.c('conference', {xmlns: 'http://jitsi.org/protocol/colibri', id: this.confid});
     $(elem).each(function () {
@@ -595,7 +597,7 @@ ColibriFocus.prototype.addIceCandidate = function (session, elem) {
         var channel = name == 'audio' ? 0 : 1; // FIXME: search mlineindex in localdesc
 
         change.c('content', {name: name});
-        change.c('channel', {id: $(ob.channels[participant][channel]).attr('id')});
+        change.c('channel', {id: $(self.channels[participant][channel]).attr('id')});
         $(this).find('>transport').each(function () {
             change.c('transport', {
                 ufrag: $(this).attr('ufrag'),
@@ -702,7 +704,7 @@ ColibriFocus.prototype.terminate = function (session, reason) {
 };
 
 ColibriFocus.prototype.modifySources = function () {
-    var ob = this;
+    var self = this;
     if (!(this.addssrc.length || this.removessrc.length)) return;
     if (this.peerconnection.signalingState == 'closed') return;
 
@@ -710,12 +712,12 @@ ColibriFocus.prototype.modifySources = function () {
     // https://code.google.com/p/webrtc/issues/detail?id=2688
     if (!(this.peerconnection.signalingState == 'stable' && this.peerconnection.iceConnectionState == 'connected')) {
         console.warn('modifySources not yet', this.peerconnection.signalingState, this.peerconnection.iceConnectionState);
-        window.setTimeout(function () { ob.modifySources(); }, 250);
+        window.setTimeout(function () { self.modifySources(); }, 250);
         this.wait = true;
         return;
     }
     if (this.wait) {
-        window.setTimeout(function () { ob.modifySources(); }, 2500);
+        window.setTimeout(function () { self.modifySources(); }, 2500);
         this.wait = false;
         return;
     }
@@ -738,19 +740,25 @@ ColibriFocus.prototype.modifySources = function () {
     this.removessrc = [];
 
     sdp.raw = sdp.session + sdp.media.join('');
+    /*
+     * this seems to create a number of problems...
     this.peerconnection.setRemoteDescription(
         new RTCSessionDescription({type: 'offer', sdp: sdp.raw }),
         function () {
             console.log('setModifiedRemoteDescription ok');
-            ob.peerconnection.createAnswer(
+            self.peerconnection.createAnswer(
                 function (modifiedAnswer) {
-                    console.log('modifiedAnswer created');
+                    console.log('modifiedAnswer created', modifiedAnswer.sdp);
                     // FIXME: pushing down an answer while ice connection state 
                     // is still checking is bad...
-                    console.log(ob.peerconnection.iceConnectionState);
-                    ob.peerconnection.setLocalDescription(modifiedAnswer,
+                    console.log(self.peerconnection.iceConnectionState);
+
+                    // trying to work around another chrome bug
+                    //modifiedAnswer.sdp = modifiedAnswer.sdp.replace(/a=setup:active/g, 'a=setup:actpass');
+                    self.peerconnection.setLocalDescription(modifiedAnswer,
                         function () {
                             console.log('setModifiedLocalDescription ok');
+                            $(document).trigger('setLocalDescription.jingle', [self.sid]);
                         },
                         function (error) {
                             console.log('setModifiedLocalDescription failed');
@@ -764,6 +772,33 @@ ColibriFocus.prototype.modifySources = function () {
         },
         function (error) {
             console.log('setModifiedRemoteDescription failed');
+        }
+    );
+    */
+    this.peerconnection.createOffer(
+        function (modifiedOffer) {
+            console.log('created (un)modified offer');
+            self.peerconnection.setLocalDescription(modifiedOffer,
+                function () {
+                    console.log('setModifiedLocalDescription ok');
+                    self.peerconnection.setRemoteDescription(
+                        new RTCSessionDescription({type: 'answer', sdp: sdp.raw }),
+                        function () {
+                            console.log('setModifiedRemoteDescription ok');
+                        },
+                        function (error) {
+                            console.log('setModifiedRemoteDescription failed');
+                        }
+                    );
+                    $(document).trigger('setLocalDescription.jingle', [self.sid]);
+                },
+                function (error) {
+                    console.log('setModifiedLocalDescription failed');
+                }
+            );
+        },
+        function (error) {
+            console.log('creating (un)modified offerfailed');
         }
     );
 };

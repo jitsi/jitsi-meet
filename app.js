@@ -382,7 +382,8 @@ $(window).bind('beforeunload', function () {
     }
 });
 
-function dump(elem, filename){
+function dump(elem, filename) {
+    console.log("ELEMENT", elem);
     elem = elem.parentNode;
     elem.download = filename || 'xmpplog.json';
     elem.href = 'data:application/json;charset=utf-8,\n';
@@ -487,7 +488,7 @@ function openLockDialog() {
                      if(v)
                      {
                         setSharedKey('');
-                        lockRoom();
+                        lockRoom(false);
                      }
                      }
                      });
@@ -508,7 +509,6 @@ function openLockDialog() {
                      
                      if (lockKey.value)
                      {
-                     console.log("LOCK KEY", lockKey.value);
                         setSharedKey(lockKey.value);
                         lockRoom(true);
                      }
@@ -537,7 +537,11 @@ function openLinkDialog() {
  * Locks / unlocks the room.
  */
 function lockRoom(lock) {
-    connection.emuc.lockRoom(sharedKey);
+    console.log("LOCK", sharedKey);
+    if (lock)
+        connection.emuc.lockRoom(sharedKey);
+    else
+        connection.emuc.lockRoom('');
     
     updateLockButton();
 }

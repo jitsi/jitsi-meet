@@ -2,13 +2,13 @@
   <head>
     <title>WebRTC, meet the Jitsi Videobridge</title>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
-    <script src="libs/strophejingle.bundle.js?v=1"></script><!-- strophe.jingle bundle -->
-    <script src="libs/colibri.js?v=1"></script><!-- colibri focus implementation -->
+    <script src="libs/strophejingle.bundle.js?v=2"></script><!-- strophe.jingle bundle -->
+    <script src="libs/colibri.js?v=2"></script><!-- colibri focus implementation -->
     <script src="muc.js?v=2"></script><!-- simple MUC library -->
     <script src="estos_log.js?v=1"></script><!-- simple stanza logger -->
     <script src="app.js?v=2"></script><!-- application logic -->
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" media="screen" href="css/main.css?v=1"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="css/main.css?v=2"/>
     <link rel="stylesheet" href="css/jquery-impromptu.css?v=1">
     <link rel="stylesheet" href="css/modaldialog.css?v=1">
     <script src="libs/jquery-impromptu.js"></script>
@@ -65,7 +65,7 @@
         <div id="chatconversation"></div>
         <textarea id="usermsg" class= "animated" placeholder='Enter text...' autofocus></textarea>
     </div>
-    <a id="downloadlog" class="fa fa-cloud-download" title="Download logfile for support" onclick="connection.logger.dump(event.target);" style="position: absolute; bottom: 5; left: 5; overflow: visible; z-index: 100;"></a>
+    <a id="downloadlog" onclick='dump(event.target);'><i title="Download support information" class="fa fa-cloud-download"></i></a>
     <script>
         (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
              (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
