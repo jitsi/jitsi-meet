@@ -59,9 +59,10 @@ Strophe.addConnectionPlugin('emuc', {
         } else if (this.members[from] === undefined) {
             // new participant
             this.members[from] = member;
-            $(document).trigger('entered.muc', [from, member]);
+            $(document).trigger('entered.muc', [from, member, pres]);
         } else {
             console.log('presence change from', from);
+            $(document).trigger('presence.muc', [from, member, pres]);
         }
         return true;
     },
