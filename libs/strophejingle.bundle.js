@@ -1530,6 +1530,7 @@ JingleSession.prototype.accept = function () {
     this.peerconnection.setLocalDescription(new RTCSessionDescription({type: 'answer', sdp: sdp}),
         function () {
             //console.log('setLocalDescription success');
+            $(document).trigger('setLocalDescription.jingle', [self.sid]);
         },
         function (e) {
             console.error('setLocalDescription failed', e);
@@ -1753,6 +1754,7 @@ JingleSession.prototype.createdOffer = function (sdp) {
     sdp.sdp = this.localSDP.raw;
     this.peerconnection.setLocalDescription(sdp, 
         function () {
+            $(document).trigger('setLocalDescription.jingle', [self.sid]);
             //console.log('setLocalDescription success');
         },
         function (e) {
@@ -1978,6 +1980,7 @@ JingleSession.prototype.createdAnswer = function (sdp, provisional) {
     sdp.sdp = this.localSDP.raw;
     this.peerconnection.setLocalDescription(sdp,
         function () {
+            $(document).trigger('setLocalDescription.jingle', [self.sid]);
             //console.log('setLocalDescription success');
         },
         function (e) {
@@ -2138,6 +2141,7 @@ JingleSession.prototype.modifySources = function() {
                     self.peerconnection.setLocalDescription(modifiedAnswer,
                         function() {
                             //console.log('modified setLocalDescription ok');
+                            $(document).trigger('setLocalDescription.jingle', [self.sid]);
                         },
                         function(error) {
                             console.log('modified setLocalDescription failed');

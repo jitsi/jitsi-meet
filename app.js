@@ -7,6 +7,7 @@ var RTCPeerConnection = null;
 var nickname = null;
 var sharedKey = '';
 var roomUrl = null;
+var ssrc2jid = {};
 
 window.onbeforeunload = closePageWarning;
 
@@ -114,12 +115,31 @@ $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
         }
     }
     var sess = connection.jingle.sessions[sid];
+
+    // look up an associated JID for a stream id
+    if (data.stream.id.indexOf('mixedmslabel') == -1) {
+        var ssrclines = SDPUtil.find_lines(sess.peerconnection.remoteDescription.sdp, 'a=ssrc');
+        ssrclines = ssrclines.filter(function (line) {
+            return line.indexOf('mslabel:' + data.stream.label) != -1; 
+        })
+        if (ssrclines.length) {
+            thessrc = ssrclines[0].substring(7).split(' ')[0];
+            // ok to overwrite the one from focus? might save work in colibri.js
+            console.log('associated jid', ssrc2jid[thessrc], data.peerjid);
+            if (ssrc2jid[thessrc]) {
+                data.peerjid = ssrc2jid[thessrc];
+            }
+        }
+    }
+
     var vid = document.createElement('video');
     // FIXME: the span should not be created here but on muc join
     var span = document.createElement('span');
     if (data.peerjid) {
         // FIXME: how to name this span? data.peerjid is not set for jingle clients
         span.id = 'participant_' + Strophe.getResourceFromJid(data.peerjid);
+    } else if (data.stream.id != 'mixedmslabel') {
+        console.warn('can not associate stream', data.stream.id, 'with a participant');
     }
     span.className = 'videocontainer';
     var id = 'remoteVideo_' + sid + '_' + data.stream.id;
@@ -191,6 +211,29 @@ $(document).bind('callterminated.jingle', function (event, sid, reason) {
     // FIXME
 });
 
+$(document).bind('setLocalDescription.jingle', function (event, sid) {
+    // put our ssrcs into presence so other clients can identify our stream
+    var sess = connection.jingle.sessions[sid];
+    var newssrcs = {};
+    var localSDP = new SDP(sess.peerconnection.localDescription.sdp);
+    localSDP.media.forEach(function (media) {
+        var type = SDPUtil.parse_mline(media.split('\r\n')[0]).media;
+        var ssrc = SDPUtil.find_line(media, 'a=ssrc:').substring(7).split(' ')[0];
+        // assumes a single local ssrc
+        newssrcs[type] = ssrc;
+    });
+    console.log('new ssrcs', newssrcs);
+    // just blast off presence for everything -- TODO: optimize
+    var pres = $pres({to: connection.emuc.myroomjid });
+    pres.c('x', {xmlns: 'http://jabber.org/protocol/muc'}).up();
+
+    pres.c('media', {xmlns: 'http://estos.de/ns/mjs'});
+    Object.keys(newssrcs).forEach(function (mtype) {
+        pres.c('source', {type: mtype, ssrc: newssrcs[mtype]}).up();
+    });
+    pres.up();
+    connection.send(pres);
+});
 
 $(document).bind('joined.muc', function (event, jid, info) {
     updateRoomUrl(window.location.href);
@@ -203,7 +246,7 @@ $(document).bind('joined.muc', function (event, jid, info) {
     }
 });
 
-$(document).bind('entered.muc', function (event, jid, info) {
+$(document).bind('entered.muc', function (event, jid, info, pres) {
     console.log('entered', jid, info);
     console.log(focus);
 
@@ -220,6 +263,10 @@ $(document).bind('entered.muc', function (event, jid, info) {
     else if (sharedKey) {
         updateLockButton();
     }
+    $(pres).find('>media[xmlns="http://estos.de/ns/mjs"]>source').each(function (idx, ssrc) {
+        //console.log(jid, 'assoc ssrc', ssrc.getAttribute('type'), ssrc.getAttribute('ssrc'));
+        ssrc2jid[ssrc.getAttribute('ssrc')] = jid;
+    });
 });
 
 $(document).bind('left.muc', function (event, jid) {
@@ -265,6 +312,11 @@ $(document).bind('passwordrequired.muc', function (event, jid) {
                     }
                 }
             });
+$(document).bind('presence.muc', function (event, jid, info, pres) {
+    $(pres).find('>media[xmlns="http://estos.de/ns/mjs"]>source').each(function (idx, ssrc) {
+        //console.log(jid, 'assoc ssrc', ssrc.getAttribute('type'), ssrc.getAttribute('ssrc'));
+        ssrc2jid[ssrc.getAttribute('ssrc')] = jid;
+    });
 });
 
 function toggleVideo() {
