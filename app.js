@@ -48,19 +48,27 @@ function doJoin() {
     var roomnode = null;
     var path = window.location.pathname;
     var roomjid;
-    /*
-     * this is making assumptions about how the URL->room mapping happens.
-     * It currently assumes deployment at root, with a rewrite like the
-     * following one (for nginx):
-    location ~ ^/([a-zA-Z0-9]+)$ {
-        rewrite ^/(.*)$ / break;
-    }
-     */
-    if (path.length > 1) {
-        roomnode = path.substr(1).toLowerCase();
+
+    // determinde the room node from the url
+    // TODO: just the roomnode or the whole bare jid?
+    if (config.getroomnode && typeof config.getroomnode === 'function') {
+        // custom function might be responsible for doing the pushstate
+        roomnode = config.getroomnode(path);
     } else {
-        roomnode = Math.random().toString(36).substr(2, 20);
-        window.history.pushState('VideoChat', 'Room: ' + roomnode, window.location.pathname + roomnode);
+        /* fall back to default strategy
+         * this is making assumptions about how the URL->room mapping happens.
+         * It currently assumes deployment at root, with a rewrite like the
+         * following one (for nginx):
+        location ~ ^/([a-zA-Z0-9]+)$ {
+            rewrite ^/(.*)$ / break;
+        }
+         */
+        if (path.length > 1) {
+            roomnode = path.substr(1).toLowerCase();
+        } else {
+            roomnode = Math.random().toString(36).substr(2, 20);
+            window.history.pushState('VideoChat', 'Room: ' + roomnode, window.location.pathname + roomnode);
+        }
     }
     roomjid = roomnode + '@' + config.hosts.muc;
 
