@@ -55,9 +55,6 @@ html, body{
 
 #remoteVideos span {
     display: inline-block;
-}
-
-#remoteVideos video {
     z-index:0;
     border:1px solid #FFFFFF;
 }

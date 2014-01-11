@@ -9,7 +9,7 @@ var sharedKey = '';
 var roomUrl = null;
 var ssrc2jid = {};
 
-window.onbeforeunload = closePageWarning;
+/* window.onbeforeunload = closePageWarning; */
 
 function init() {
     RTC = setupRTC();
@@ -93,8 +93,12 @@ $(document).bind('mediaready.jingle', function (event, stream) {
     document.getElementById('localVideo').autoplay = true;
     document.getElementById('localVideo').volume = 0;
 
-    document.getElementById('largeVideo').volume = 0;
-    document.getElementById('largeVideo').src = document.getElementById('localVideo').src;
+    updateLargeVideo(document.getElementById('localVideo').src, true);
+
+    $('#localVideo').click(function () {
+        updateLargeVideo($(this).attr('src'), true);
+    });
+
     doJoin();
 });
 
@@ -121,7 +125,7 @@ $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
         var ssrclines = SDPUtil.find_lines(sess.peerconnection.remoteDescription.sdp, 'a=ssrc');
         ssrclines = ssrclines.filter(function (line) {
             return line.indexOf('mslabel:' + data.stream.label) != -1; 
-        })
+                                     });
         if (ssrclines.length) {
             thessrc = ssrclines[0].substring(7).split(' ')[0];
             // ok to overwrite the one from focus? might save work in colibri.js
@@ -175,15 +179,7 @@ $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
     };
     sel.click(
         function () {
-            console.log('hover in', $(this).attr('src'));
-            var newSrc = $(this).attr('src');
-            if ($('#largeVideo').attr('src') != newSrc) {
-                document.getElementById('largeVideo').volume = 1;
-                $('#largeVideo').fadeOut(300, function () {
-                    $(this).attr('src', newSrc);
-                    $(this).fadeIn(300);
-                });
-            }
+            updateLargeVideo($(this).attr('src'), false);
         }
     );
 });
@@ -263,6 +259,7 @@ $(document).bind('entered.muc', function (event, jid, info, pres) {
     else if (sharedKey) {
         updateLockButton();
     }
+
     $(pres).find('>media[xmlns="http://estos.de/ns/mjs"]>source').each(function (idx, ssrc) {
         //console.log(jid, 'assoc ssrc', ssrc.getAttribute('type'), ssrc.getAttribute('ssrc'));
         ssrc2jid[ssrc.getAttribute('ssrc')] = jid;
@@ -287,36 +284,13 @@ $(document).bind('left.muc', function (event, jid) {
     }
 });
 
-$(document).bind('passwordrequired.muc', function (event, jid) {
-    console.log('on password required', jid);
-
-    $.prompt('<h2>Password required</h2>' +
-            '<input id="lockKey" type="text" placeholder="shared key" autofocus>',
-             {
-                persistent: true,
-                buttons: { "Ok": true , "Cancel": false},
-                defaultButton: 1,
-                loaded: function(event) {
-                    document.getElementById('lockKey').focus();
-                },
-                submit: function(e,v,m,f){
-                    if(v)
-                    {
-                        var lockKey = document.getElementById('lockKey');
-
-                        if (lockKey.value != null)
-                        {
-                            setSharedKey(lockKey);
-                            connection.emuc.doJoin(jid, lockKey.value);
-                        }
-                    }
-                }
-            });
 $(document).bind('presence.muc', function (event, jid, info, pres) {
     $(pres).find('>media[xmlns="http://estos.de/ns/mjs"]>source').each(function (idx, ssrc) {
         //console.log(jid, 'assoc ssrc', ssrc.getAttribute('type'), ssrc.getAttribute('ssrc'));
         ssrc2jid[ssrc.getAttribute('ssrc')] = jid;
     });
+});
+
 $(document).bind('passwordrequired.muc', function (event, jid) {
     console.log('on password required', jid);
 
@@ -343,6 +317,33 @@ $(document).bind('passwordrequired.muc', function (event, jid) {
                 }
             });
 });
+
+/**
+ * Updates the large video with the given new video source.
+ */
+function updateLargeVideo(newSrc, localVideo) {
+    console.log('hover in', newSrc);
+    if ($('#largeVideo').attr('src') != newSrc) {
+        if (!localVideo)
+            document.getElementById('largeVideo').volume = 1;
+        else
+            document.getElementById('largeVideo').volume = 0;
+
+        $('#largeVideo').fadeOut(300, function () {
+            $(this).attr('src', newSrc);
+
+            var videoTransform = document.getElementById('largeVideo').style.webkitTransform;
+            if (localVideo && videoTransform != 'scaleX(-1)') {
+                document.getElementById('largeVideo').style.webkitTransform = "scaleX(-1)";
+            }
+            else if (!localVideo && videoTransform == 'scaleX(-1)') {
+                document.getElementById('largeVideo').style.webkitTransform = "none";
+            }
+
+            $(this).fadeIn(300);
+        });
+    }
+}
 
 function toggleVideo() {
     if (!(connection && connection.jingle.localStream)) return;
