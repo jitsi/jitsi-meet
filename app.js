@@ -136,26 +136,41 @@ $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
         }
     }
 
-    var vid = document.createElement('video');
-    // FIXME: the span should not be created here but on muc join
-    var span = document.createElement('span');
+    var container;
+    var remotes = document.getElementById('remoteVideos');
     if (data.peerjid) {
-        // FIXME: how to name this span? data.peerjid is not set for jingle clients
-        span.id = 'participant_' + Strophe.getResourceFromJid(data.peerjid);
-    } else if (data.stream.id != 'mixedmslabel') {
-        console.warn('can not associate stream', data.stream.id, 'with a participant');
+        container  = document.getElementById('participant_' + Strophe.getResourceFromJid(data.peerjid));
+        if (!container) {
+            console.warn('no container for', data.peerjid);
+            // create for now...
+            // FIXME: should be removed
+            container = document.createElement('span');
+            container.id = 'participant_' + Strophe.getResourceFromJid(data.peerjid);
+            container.className = 'videocontainer';
+            remotes.appendChild(container);
+        } else {
+            //console.log('found container for', data.peerjid);
+        }
+    } else {
+        if (data.stream.id != 'mixedmslabel') {
+            console.warn('can not associate stream', data.stream.id, 'with a participant');
+        }
+        // FIXME: for the mixed ms we dont need a video -- currently
+        container = document.createElement('span');
+        container.className = 'videocontainer';
+        remotes.appendChild(container);
     }
-    span.className = 'videocontainer';
+    var vid = document.createElement('video');
     var id = 'remoteVideo_' + sid + '_' + data.stream.id;
     vid.id = id;
     vid.autoplay = true;
     vid.oncontextmenu = function () { return false; };
-    var remotes = document.getElementById('remoteVideos');
-    span.appendChild(vid);
+    container.appendChild(vid);
+    // TODO: make mixedstream display:none via css?
     if (id.indexOf('mixedmslabel') != -1) {
-        $(span).hide();
+        container.id = 'mixedstream';
+        $(container).hide();
     }
-    remotes.appendChild(span);
     var sel = $('#' + id);
     sel.hide();
     RTC.attachMediaStream(sel, data.stream);
@@ -163,18 +178,16 @@ $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
     data.stream.onended = function () {
         console.log('stream ended', this.id);
         var src = $('#' + id).attr('src');
-        // FIXME: likewise, the parent should not be removed here
-        // but on MUC part
-        $('#' + id).parent().remove();
         if (src === $('#largeVideo').attr('src')) {
             // this is currently displayed as large
             // pick the last visible video in the row
             // if nobody else is left, this picks the local video
-            var pick = $('#remoteVideos>span:visible:last>video').get(0);
+            var pick = $('#remoteVideos>span[id!="mixedstream"]:visible:last>video').get(0);
             // mute if localvideo
             document.getElementById('largeVideo').volume = pick.volume;
             document.getElementById('largeVideo').src = pick.src;
         }
+        $('#' + id).parent().remove();
         resizeThumbnails();
     };
     sel.click(
@@ -245,6 +258,11 @@ $(document).bind('joined.muc', function (event, jid, info) {
 $(document).bind('entered.muc', function (event, jid, info, pres) {
     console.log('entered', jid, info);
     console.log(focus);
+    var container = document.createElement('span');
+    container.id = 'participant_' + Strophe.getResourceFromJid(jid);
+    container.className = 'videocontainer';
+    var remotes = document.getElementById('remoteVideos');
+    remotes.appendChild(container);
 
     if (focus !== null) {
         // FIXME: this should prepare the video
@@ -269,7 +287,11 @@ $(document).bind('entered.muc', function (event, jid, info, pres) {
 $(document).bind('left.muc', function (event, jid) {
     console.log('left', jid);
     connection.jingle.terminateByJid(jid);
-    // FIXME: this should actually hide the video already for a nicer UX
+    var container = document.getElementById('participant_' + Strophe.getResourceFromJid(jid));
+    if (container) {
+        // hide here, wait for video to close before removing
+        $(container).hide(); 
+    }
 
     if (Object.keys(connection.emuc.members).length === 0) {
         console.log('everyone left');
