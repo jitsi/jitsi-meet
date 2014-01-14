@@ -81,7 +81,7 @@ function doJoin() {
             roomjid += '/' + Strophe.getNodeFromJid(connection.jid);
         }
     } else {
-        roomjid += '/' + Strophe.getNodeFromJid(connection.jid);
+        roomjid += '/' + Strophe.getNodeFromJid(connection.jid).substr(0,8);
     }
     connection.emuc.doJoin(roomjid);
 }
@@ -246,6 +246,9 @@ $(document).bind('setLocalDescription.jingle', function (event, sid) {
 
 $(document).bind('joined.muc', function (event, jid, info) {
     updateRoomUrl(window.location.href);
+    document.getElementById('localNick').appendChild(
+        document.createTextNode(Strophe.getResourceFromJid(jid) + ' (you)')
+    );
 
     // Once we've joined the muc show the toolbar
     showToolbar();
@@ -263,6 +266,11 @@ $(document).bind('entered.muc', function (event, jid, info, pres) {
     container.className = 'videocontainer';
     var remotes = document.getElementById('remoteVideos');
     remotes.appendChild(container);
+
+    var nickfield = document.createElement('span');
+    nickfield.appendChild(document.createTextNode(Strophe.getResourceFromJid(jid)));
+    container.appendChild(nickfield);
+    resizeThumbnails();
 
     if (focus !== null) {
         // FIXME: this should prepare the video
@@ -291,6 +299,7 @@ $(document).bind('left.muc', function (event, jid) {
     if (container) {
         // hide here, wait for video to close before removing
         $(container).hide(); 
+        resizeThumbnails();
     }
 
     if (Object.keys(connection.emuc.members).length === 0) {

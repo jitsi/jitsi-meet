@@ -29,6 +29,15 @@ html, body{
     width: 100%;
     height: 100%;
 }
+.videocontainer>span {
+    display: none; /* enable when you want nicks to be shown */
+    position: absolute;
+    left: 0px;
+    bottom: -20px;
+    z-index: 0;
+    width: 100%;
+    font-size: 10pt;
+}
 
 #largeVideo {
 }
@@ -49,11 +58,10 @@ html, body{
     width:auto;
     overflow: hidden;
     border:1px solid transparent;
-    font-size:0;
     z-index: 2;
 }
 
-#remoteVideos span {
+#remoteVideos>span {
     display: inline-block;
     z-index:0;
     border:1px solid #FFFFFF;
