@@ -499,32 +499,31 @@ $(window).bind('beforeunload', function () {
     }
 });
 
-function dump(elem, filename) {
-    console.log("ELEMENT", elem);
+function dump(elem, filename){
     elem = elem.parentNode;
-    elem.download = filename || 'xmpplog.json';
+    elem.download = filename || 'meetlog.json';
     elem.href = 'data:application/json;charset=utf-8,\n';
     var data = {};
-    data.time = new Date();
-    data.url = window.location.href;
-    data.ua = navigator.userAgent;
-    if (connection.logger) {
-        data.xmpp = connection.logger.log;
-    }
     if (connection.jingle) {
         Object.keys(connection.jingle.sessions).forEach(function (sid) {
             var session = connection.jingle.sessions[sid];
             if (session.peerconnection && session.peerconnection.updateLog) {
                 // FIXME: should probably be a .dump call
-                data["jingle_" + session.sid] = [];
-                for (var j = 0; j < session.peerconnection.updateLog.length; j++) {
-                    var val = appendsession.peerconnection.updateLog[j];
-                    val.value = JSON.stringify(val.value);
-                    data["jingle_" + session.sid].push_back(data);
-                }
+                data["jingle_" + session.sid] = {
+                    updateLog: session.peerconnection.updateLog,
+                    url: window.location.href}
+                ;
             }
         });
     }
+    metadata = {};
+    metadata.time = new Date();
+    metadata.url = window.location.href;
+    metadata.ua = navigator.userAgent;
+    if (connection.logger) {
+        metadata.xmpp = connection.logger.log;
+    }
+    data.metadata = metadata;
     elem.href += encodeURIComponent(JSON.stringify(data, null, '  '));
     return false;
 }
