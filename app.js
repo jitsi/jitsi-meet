@@ -8,6 +8,7 @@ var nickname = null;
 var sharedKey = '';
 var roomUrl = null;
 var ssrc2jid = {};
+var localVideoSrc = null;
 
 /* window.onbeforeunload = closePageWarning; */
 
@@ -93,10 +94,11 @@ $(document).bind('mediaready.jingle', function (event, stream) {
     document.getElementById('localVideo').autoplay = true;
     document.getElementById('localVideo').volume = 0;
 
-    updateLargeVideo(document.getElementById('localVideo').src, true);
+    localVideoSrc = document.getElementById('localVideo').src;
+    updateLargeVideo(localVideoSrc, true, 0);
 
     $('#localVideo').click(function () {
-        updateLargeVideo($(this).attr('src'), true);
+        updateLargeVideo($(this).attr('src'), true, 1);
     });
 
     doJoin();
@@ -184,15 +186,18 @@ $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
             // if nobody else is left, this picks the local video
             var pick = $('#remoteVideos>span[id!="mixedstream"]:visible:last>video').get(0);
             // mute if localvideo
-            document.getElementById('largeVideo').volume = pick.volume;
-            document.getElementById('largeVideo').src = pick.src;
+            var isLocalVideo = false;
+            if (pick.src === localVideoSrc)
+                 isLocalVideo = true;
+
+            updateLargeVideo(pick.src, isLocalVideo, pick.volume);
         }
         $('#' + id).parent().remove();
         resizeThumbnails();
     };
     sel.click(
         function () {
-            updateLargeVideo($(this).attr('src'), false);
+            updateLargeVideo($(this).attr('src'), false, 1);
         }
     );
 });
@@ -211,8 +216,7 @@ $(document).bind('callactive.jingle', function (event, videoelem, sid) {
         videoelem.show();
         resizeThumbnails();
 
-        document.getElementById('largeVideo').volume = 1;
-        $('#largeVideo').attr('src', videoelem.attr('src'));
+        updateLargeVideo(videoelem.attr('src'), false, 1);
     }
 });
 
@@ -286,6 +290,8 @@ $(document).bind('entered.muc', function (event, jid, info, pres) {
         updateLockButton();
     }
 
+    showFocusIndicator();
+
     $(pres).find('>media[xmlns="http://estos.de/ns/mjs"]>source').each(function (idx, ssrc) {
         //console.log(jid, 'assoc ssrc', ssrc.getAttribute('type'), ssrc.getAttribute('ssrc'));
         ssrc2jid[ssrc.getAttribute('ssrc')] = jid;
@@ -352,13 +358,11 @@ $(document).bind('passwordrequired.muc', function (event, jid) {
 /**
  * Updates the large video with the given new video source.
  */
-function updateLargeVideo(newSrc, localVideo) {
+function updateLargeVideo(newSrc, localVideo, vol) {
     console.log('hover in', newSrc);
     if ($('#largeVideo').attr('src') != newSrc) {
-        if (!localVideo)
-            document.getElementById('largeVideo').volume = 1;
-        else
-            document.getElementById('largeVideo').volume = 0;
+
+        document.getElementById('largeVideo').volume = vol;
 
         $('#largeVideo').fadeOut(300, function () {
             $(this).attr('src', newSrc);
@@ -499,39 +503,6 @@ $(window).bind('beforeunload', function () {
     }
 });
 
-function dump(elem, filename){
-    elem = elem.parentNode;
-    elem.download = filename || 'meetlog.json';
-    elem.href = 'data:application/json;charset=utf-8,\n';
-    var data = {};
-    if (connection.jingle) {
-        Object.keys(connection.jingle.sessions).forEach(function (sid) {
-            var session = connection.jingle.sessions[sid];
-            if (session.peerconnection && session.peerconnection.updateLog) {
-                // FIXME: should probably be a .dump call
-                data["jingle_" + session.sid] = {
-                    updateLog: session.peerconnection.updateLog,
-                    url: window.location.href}
-                ;
-            }
-        });
-    }
-    metadata = {};
-    metadata.time = new Date();
-    metadata.url = window.location.href;
-    metadata.ua = navigator.userAgent;
-    if (connection.logger) {
-        metadata.xmpp = connection.logger.log;
-    }
-    data.metadata = metadata;
-    elem.href += encodeURIComponent(JSON.stringify(data, null, '  '));
-    return false;
-}
-
-/*
- * Appends the given message to the chat conversation.
- */
-// <a onclick="dump(event.target);">my download button</a>
 function dump(elem, filename){
     elem = elem.parentNode;
     elem.download = filename || 'meetlog.json';
@@ -734,4 +705,20 @@ function closePageWarning() {
         return "You are the owner of this conference call and you are about to end it.";
     else
         return "You are about to leave this conversation.";
+}
+
+/*
+ * Shows a visual indicator for the focus of the conference.
+ */
+function showFocusIndicator() {
+    if (focus !== null) {
+        var localVideoToolbar = document.getElementById('localVideoToolbar');
+
+        var focusIndicator = document.createElement('i');
+        focusIndicator.className = 'fa fa-star';
+        localVideoToolbar.appendChild(focusIndicator);
+    }
+    else {
+//        console.log("FOCUS JID", connection.jingle.sessions[Object.keys(connection.jingle.sessions)].peerjid);
+    }
 }

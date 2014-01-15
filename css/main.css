@@ -347,3 +347,14 @@ form {
     z-index: 100;
 }
 
+.videocontainer>span.focusindicator {
+    display: inline-block;
+    position: absolute;
+    color: #FFFFFF;
+    top: 0;
+    padding: 5px 0px;
+    width: 25px;
+    font-size: 11pt;
+    text-shadow: 0px 1px 0px rgba(255,255,255,.3), 0px -1px 0px rgba(0,0,0,.7);
+    border: 0px;
+}
