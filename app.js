@@ -217,6 +217,8 @@ $(document).bind('callactive.jingle', function (event, videoelem, sid) {
         resizeThumbnails();
 
         updateLargeVideo(videoelem.attr('src'), false, 1);
+                 
+        showFocusIndicator();
     }
 });
 
@@ -289,8 +291,6 @@ $(document).bind('entered.muc', function (event, jid, info, pres) {
     else if (sharedKey) {
         updateLockButton();
     }
-
-    showFocusIndicator();
 
     $(pres).find('>media[xmlns="http://estos.de/ns/mjs"]>source').each(function (idx, ssrc) {
         //console.log(jid, 'assoc ssrc', ssrc.getAttribute('type'), ssrc.getAttribute('ssrc'));
@@ -709,16 +709,41 @@ function closePageWarning() {
 
 /*
  * Shows a visual indicator for the focus of the conference.
+ * Currently if we're not the owner of the conference we obtain the focus
+ * from the connection.jingle.sessions.
  */
 function showFocusIndicator() {
-    if (focus !== null) {
+    if (focus != null) {
         var localVideoToolbar = document.getElementById('localVideoToolbar');
 
-        var focusIndicator = document.createElement('i');
-        focusIndicator.className = 'fa fa-star';
-        localVideoToolbar.appendChild(focusIndicator);
+        if (localVideoToolbar.childNodes.length === 0)
+        {
+            createFocusIndicatorElement(localVideoToolbar);
+        }
     }
-    else {
-//        console.log("FOCUS JID", connection.jingle.sessions[Object.keys(connection.jingle.sessions)].peerjid);
+    else if (Object.keys(connection.jingle.sessions).length > 0) {
+        // If we're only a participant the focus will be the only session we have.
+        var session = connection.jingle.sessions[Object.keys(connection.jingle.sessions)[0]];
+        var focusId = 'participant_' + Strophe.getResourceFromJid(session.peerjid);
+        var focusContainer = document.getElementById(focusId);
+        var indicatorSpan = $('#' + focusId + ' .focusindicator');
+
+        if (!indicatorSpan || indicatorSpan.length == 0) {
+            indicatorSpan = document.createElement('span');
+            indicatorSpan.className = 'focusindicator';
+            focusContainer.appendChild(indicatorSpan);
+            
+            createFocusIndicatorElement(indicatorSpan);
+        }
     }
+}
+
+/*
+ * Creates the element indicating the focus of the conference.
+ */
+function createFocusIndicatorElement(parentElement) {
+    var focusIndicator = document.createElement('i');
+    focusIndicator.className = 'fa fa-star';
+    focusIndicator.title = "The owner of this conference"
+    parentElement.appendChild(focusIndicator);
 }
