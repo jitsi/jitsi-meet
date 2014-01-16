@@ -4,6 +4,7 @@ function TraceablePeerConnection(ice_config, constraints) {
     var RTCPeerconnection = navigator.mozGetUserMedia ? mozRTCPeerConnection : webkitRTCPeerConnection;
     this.peerconnection = new RTCPeerconnection(ice_config, constraints);
     this.updateLog = [];
+    this.stats = {};
 
     // override as desired
     this.trace = function(what, info) {
@@ -16,7 +17,7 @@ function TraceablePeerConnection(ice_config, constraints) {
     };
     this.onicecandidate = null;
     this.peerconnection.onicecandidate = function (event) {
-        self.trace('onicecandidate', JSON.stringify(event.candidate));
+        self.trace('onicecandidate', JSON.stringify(event.candidate, null, ' '));
         if (self.onicecandidate !== null) {
             self.onicecandidate(event);
         }
@@ -63,6 +64,32 @@ function TraceablePeerConnection(ice_config, constraints) {
             self.ondatachannel(event);
         }
     }
+    this.maxstats = 600; // limit to 600 values, i.e. 10 minutes
+    this.statsinterval = window.setInterval(function() {
+        self.peerconnection.getStats(function(stats) {
+            var results = stats.result();
+            for (var i = 0; i < results.length; ++i) {
+                //console.log(results[i].type, results[i].id, results[i].names())
+                var now = new Date();
+                results[i].names().forEach(function (name) {
+                    var id = results[i].id + '-' + name;
+                    if (!self.stats[id]) {
+                        self.stats[id] = {
+                            startTime: now,
+                            endTime: now,
+                            values: []
+                        };
+                    }
+                    self.stats[id].values.push(results[i].stat(name));
+                    if (self.stats[id].values.length > self.maxstats) {
+                        self.stats[id].values.shift();
+                    }
+                    self.stats[id].endTime = now;
+                });
+            }
+        });
+
+    }, 1000);
 };
 
 dumpSDP = function(description) {
@@ -126,7 +153,7 @@ TraceablePeerConnection.prototype.close = function () {
 
 TraceablePeerConnection.prototype.createOffer = function (successCallback, failureCallback, constraints) {
     var self = this;
-    this.trace('createOffer', JSON.stringify(constraints, null, " "));
+    this.trace('createOffer', JSON.stringify(constraints, null, ' '));
     this.peerconnection.createOffer(
         function (offer) {
             self.trace('createOfferOnSuccess', dumpSDP(offer));
@@ -142,7 +169,7 @@ TraceablePeerConnection.prototype.createOffer = function (successCallback, failu
 
 TraceablePeerConnection.prototype.createAnswer = function (successCallback, failureCallback, constraints) {
     var self = this;
-    this.trace('createAnswer', JSON.stringify(constraints, null, " "));
+    this.trace('createAnswer', JSON.stringify(constraints, null, ' '));
     this.peerconnection.createAnswer(
         function (answer) {
             self.trace('createAnswerOnSuccess', dumpSDP(answer));
@@ -158,7 +185,7 @@ TraceablePeerConnection.prototype.createAnswer = function (successCallback, fail
 
 TraceablePeerConnection.prototype.addIceCandidate = function (candidate, successCallback, failureCallback) {
     var self = this;
-    this.trace('addIceCandidate', JSON.stringify(candidate));
+    this.trace('addIceCandidate', JSON.stringify(candidate, null, ' '));
     this.peerconnection.addIceCandidate(candidate);
     /* maybe later
     this.peerconnection.addIceCandidate(candidate, 

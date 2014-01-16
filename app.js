@@ -513,8 +513,13 @@ function dump(elem, filename){
             var session = connection.jingle.sessions[sid];
             if (session.peerconnection && session.peerconnection.updateLog) {
                 // FIXME: should probably be a .dump call
+                var stats = JSON.parse(JSON.stringify(session.peerconnection.stats));
+                Object.keys(stats).forEach(function (name) {
+                    stats[name].values = JSON.stringify(stats[name].values);
+                });
                 data["jingle_" + session.sid] = {
                     updateLog: session.peerconnection.updateLog,
+                    stats: stats,
                     url: window.location.href}
                 ;
             }
