@@ -64,6 +64,9 @@ function TraceablePeerConnection(ice_config, constraints) {
             self.ondatachannel(event);
         }
     }
+    // FIXME: is it a good idea to automatically start it here?
+    this.statsinterval = null;
+
     this.maxstats = 600; // limit to 600 values, i.e. 10 minutes
     this.statsinterval = window.setInterval(function() {
         self.peerconnection.getStats(function(stats) {
@@ -148,6 +151,10 @@ TraceablePeerConnection.prototype.setRemoteDescription = function (description, 
 
 TraceablePeerConnection.prototype.close = function () {
     this.trace('stop');
+    if (this.statsinterval !== null) {
+        window.clearInterval(this.statsinterval);
+        this.statsinterval = null;
+    }
     this.peerconnection.close();
 };
 
@@ -204,7 +211,6 @@ TraceablePeerConnection.prototype.addIceCandidate = function (candidate, success
 TraceablePeerConnection.prototype.getStats = function(callback) {
     this.peerconnection.getStats(callback);
 };
-
 
 // mozilla chrome compat layer -- very similar to adapter.js
 function setupRTC() {
