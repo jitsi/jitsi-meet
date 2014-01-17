@@ -521,7 +521,7 @@ function dump(elem, filename){
                 */
                 data["jingle_" + session.sid] = {
                     updateLog: session.peerconnection.updateLog,
-                    stats: session.peerconnection.stats),
+                    stats: session.peerconnection.stats,
                     url: window.location.href}
                 ;
             }
