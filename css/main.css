@@ -65,6 +65,8 @@ html, body{
     display: inline-block;
     z-index:0;
     border:1px solid #FFFFFF;
+    background-image:url(../images/avatar1.png);
+    background-size: contain;
 }
 
 #remoteVideos>span:hover {

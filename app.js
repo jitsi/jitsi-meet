@@ -423,7 +423,7 @@ function resizeThumbnails() {
     var availableHeight = window.innerHeight - $('#largeVideo').height() - 79;
     var numvids = $('#remoteVideos>span:visible').length;
     // Remove the 1px borders arround videos.
-    var availableWinWidth = $('#remoteVideos').width() - 2 * numvids;
+    var availableWinWidth = $('#remoteVideos').width() - 2 * numvids - 50;
     var availableWidth = availableWinWidth / numvids;
     var aspectRatio = 16.0 / 9.0;
     var maxHeight = Math.min(160, availableHeight);
