@@ -6,14 +6,15 @@
     <script src="libs/colibri.js?v=3"></script><!-- colibri focus implementation -->
     <script src="muc.js?v=3"></script><!-- simple MUC library -->
     <script src="estos_log.js?v=1"></script><!-- simple stanza logger -->
-    <script src="app.js?v=3"></script><!-- application logic -->
+    <script src="app.js?v=10"></script><!-- application logic -->
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" media="screen" href="css/main.css?v=3"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="css/main.css?v=10"/>
     <link rel="stylesheet" href="css/jquery-impromptu.css?v=2">
     <link rel="stylesheet" href="css/modaldialog.css?v=2">
     <script src="libs/jquery-impromptu.js"></script>
     <script src="libs/jquery.autosize.js"></script>
     <script src="config.js"></script><!-- adapt to your needs, i.e. set hosts and bosh path -->
+    <script src="libs/prezi_player.js"></script>
   </head>
   <body>
     <div id="header">
@@ -29,6 +30,12 @@
             <a class="button" onclick="openLinkDialog();"><i title="Invite others" class="fa fa-link fa-lg"></i></a>
             <div class="header_button_separator"></div>
             <a class="button" onclick='openChat();'><i id="chat" title="Open chat" class="fa fa-comments fa-lg"></i></a>
+            <div class="header_button_separator"></div>
+            <a class="button" onclick='openPreziDialog();'><i title="Share prezi" class="fa fa-desktop fa-lg"></i></a>
+            <!--span id="settingsButton">
+                <div class="header_button_separator"></div>
+                <a class="button" onclick='openSettingsDialog();'><i title="Settings" class="fa fa-cog fa-lg"></i></a>
+            </span-->
         </span>
     </div>
     <div id="settings">
@@ -43,8 +50,10 @@
 
     <div id="videospace">
         <div class="fade_line"></div>
-        <div class="videocontainer">
-          <video id="largeVideo" autoplay oncontextmenu="return false;"></video>
+        <div id="largeVideoContainer" class="videocontainer">
+            <div id="reloadPresentation"><a onclick='reloadPresentation();'><i title="Reload Prezi" class="fa fa-repeat fa-lg"></i></a></div>
+            <div id="presentation"></div>
+            <video id="largeVideo" autoplay oncontextmenu="return false;"></video>
         </div>
         <div class="fade_line"></div>
         <div id="remoteVideos">

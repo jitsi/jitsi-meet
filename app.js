@@ -9,6 +9,7 @@ var sharedKey = '';
 var roomUrl = null;
 var ssrc2jid = {};
 var localVideoSrc = null;
+var preziPlayer = null;
 
 /* window.onbeforeunload = closePageWarning; */
 
@@ -140,16 +141,14 @@ $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
 
     var container;
     var remotes = document.getElementById('remoteVideos');
+
     if (data.peerjid) {
         container  = document.getElementById('participant_' + Strophe.getResourceFromJid(data.peerjid));
         if (!container) {
             console.warn('no container for', data.peerjid);
             // create for now...
             // FIXME: should be removed
-            container = document.createElement('span');
-            container.id = 'participant_' + Strophe.getResourceFromJid(data.peerjid);
-            container.className = 'videocontainer';
-            remotes.appendChild(container);
+            container = addRemoteVideoContainer('participant_' + Strophe.getResourceFromJid(data.peerjid));
         } else {
             //console.log('found container for', data.peerjid);
         }
@@ -173,6 +172,7 @@ $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
         container.id = 'mixedstream';
         $(container).hide();
     }
+
     var sel = $('#' + id);
     sel.hide();
     RTC.attachMediaStream(sel, data.stream);
@@ -187,10 +187,12 @@ $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
             var pick = $('#remoteVideos>span[id!="mixedstream"]:visible:last>video').get(0);
             // mute if localvideo
             var isLocalVideo = false;
-            if (pick.src === localVideoSrc)
+            if (pick) {
+                 if (pick.src === localVideoSrc)
                  isLocalVideo = true;
-
-            updateLargeVideo(pick.src, isLocalVideo, pick.volume);
+                 
+                 updateLargeVideo(pick.src, isLocalVideo, pick.volume);
+            }
         }
         $('#' + id).parent().remove();
         resizeThumbnails();
@@ -217,7 +219,7 @@ $(document).bind('callactive.jingle', function (event, videoelem, sid) {
         resizeThumbnails();
 
         updateLargeVideo(videoelem.attr('src'), false, 1);
-                 
+
         showFocusIndicator();
     }
 });
@@ -238,16 +240,13 @@ $(document).bind('setLocalDescription.jingle', function (event, sid) {
         newssrcs[type] = ssrc;
     });
     console.log('new ssrcs', newssrcs);
-    // just blast off presence for everything -- TODO: optimize
-    var pres = $pres({to: connection.emuc.myroomjid });
-    pres.c('x', {xmlns: 'http://jabber.org/protocol/muc'}).up();
 
-    pres.c('media', {xmlns: 'http://estos.de/ns/mjs'});
+    var i = 0;
     Object.keys(newssrcs).forEach(function (mtype) {
-        pres.c('source', {type: mtype, ssrc: newssrcs[mtype]}).up();
+        i++;
+        connection.emuc.addMediaToPresence(i, mtype, newssrcs[mtype]);
     });
-    pres.up();
-    connection.send(pres);
+    connection.emuc.sendPresence();
 });
 
 $(document).bind('joined.muc', function (event, jid, info) {
@@ -256,22 +255,19 @@ $(document).bind('joined.muc', function (event, jid, info) {
         document.createTextNode(Strophe.getResourceFromJid(jid) + ' (you)')
     );
 
-    // Once we've joined the muc show the toolbar
-    showToolbar();
-
     if (Object.keys(connection.emuc.members).length < 1) {
         focus = new ColibriFocus(connection, config.hosts.bridge);
     }
+                 
+    // Once we've joined the muc show the toolbar
+    showToolbar();
 });
 
 $(document).bind('entered.muc', function (event, jid, info, pres) {
     console.log('entered', jid, info);
     console.log(focus);
-    var container = document.createElement('span');
-    container.id = 'participant_' + Strophe.getResourceFromJid(jid);
-    container.className = 'videocontainer';
-    var remotes = document.getElementById('remoteVideos');
-    remotes.appendChild(container);
+    
+    var container = addRemoteVideoContainer('participant_' + Strophe.getResourceFromJid(jid));
 
     var nickfield = document.createElement('span');
     nickfield.appendChild(document.createTextNode(Strophe.getResourceFromJid(jid)));
@@ -304,7 +300,7 @@ $(document).bind('left.muc', function (event, jid) {
     var container = document.getElementById('participant_' + Strophe.getResourceFromJid(jid));
     if (container) {
         // hide here, wait for video to close before removing
-        $(container).hide(); 
+        $(container).hide();
         resizeThumbnails();
     }
 
@@ -318,6 +314,10 @@ $(document).bind('left.muc', function (event, jid) {
             }
             focus = new ColibriFocus(connection, config.hosts.bridge);
         }
+    }
+    
+    if (connection.emuc.getPrezi(jid)) {
+        $(document).trigger('presentationremoved.muc', [jid, connection.emuc.getPrezi(jid)]);
     }
 });
 
@@ -355,11 +355,156 @@ $(document).bind('passwordrequired.muc', function (event, jid) {
             });
 });
 
+/*
+ * Presentation has been removed.
+ */
+$(document).bind('presentationremoved.muc', function(event, jid, presUrl) {
+    console.log('presentation removed', presUrl);
+    var presId = getPresentationId(presUrl);
+    setPresentationVisible(false);
+    $('#participant_' + Strophe.getResourceFromJid(jid) + '_' + presId).remove();
+    $('#presentation>iframe').remove();
+    if (preziPlayer != null) {
+        preziPlayer.destroy();
+        preziPlayer = null;
+    }
+});
+
+/*
+ * Presentation has been added.
+ */
+$(document).bind('presentationadded.muc', function (event, jid, presUrl, currentSlide) {
+    console.log("presentation added", presUrl);
+
+    var presId = getPresentationId(presUrl);
+    var elementId = 'participant_' + Strophe.getResourceFromJid(jid) + '_' + presId;
+
+    var container = addRemoteVideoContainer(elementId);
+    resizeThumbnails();
+
+    var controlsEnabled = false;
+    if (jid === connection.emuc.myroomjid)
+        controlsEnabled = true;
+
+    setPresentationVisible(true);
+    $('#largeVideoContainer').hover(
+        function (event) {
+            if ($('#largeVideo').css('visibility') == 'hidden')
+                $('#reloadPresentation').css({display:'inline-block'});
+        },
+        function (event) {
+            if ($('#largeVideo').css('visibility') == 'visible')
+                $('#reloadPresentation').css({display:'none'});
+            else {
+                var e = event.toElement || event.relatedTarget;
+
+                while(e && e.parentNode && e.parentNode != window) {
+                    if (e.parentNode == this ||  e ==  this) {
+                        return false;
+                    }
+                    e = e.parentNode;
+                }
+                $('#reloadPresentation').css({display:'none'});
+            }
+        });
+
+    preziPlayer = new PreziPlayer(
+                'presentation',
+                {preziId: presId,
+                width: $('#largeVideoContainer').width(),
+                height: $('#largeVideoContainer').height(),
+                controls: controlsEnabled,
+                debug: true
+                });
+
+    $('#presentation>iframe').attr('id', preziPlayer.options.preziId);
+
+//    $('#presentation>iframe').load(function (){
+//        console.log("IFRAME LOADED!!!!!!!!!!!!!!!!");
+//    });
+//    $('#presentation>iframe').ready(function (){
+//        console.log("IFRAME READY!!!!!!!!!!!!!!!!");
+//    });
+                 
+    preziPlayer.on(PreziPlayer.EVENT_STATUS, function(event) {
+        console.log("prezi status", event.value);
+        if (event.value == PreziPlayer.STATUS_CONTENT_READY) {
+            if (jid != connection.emuc.myroomjid)
+                preziPlayer.flyToStep(currentSlide);
+        }
+    });
+
+    preziPlayer.on(PreziPlayer.EVENT_CURRENT_STEP, function(event) {
+        console.log("event value", event.value);
+        connection.emuc.addCurrentSlideToPresence(event.value);
+        connection.emuc.sendPresence();
+    });
+
+    $("#" + elementId).css('background-image','url(../images/avatarprezi.png)');
+    $("#" + elementId).click(
+        function () {
+            setPresentationVisible(true);
+        }
+    );
+});
+
+/*
+ * Indicates presentation slide change.
+ */
+$(document).bind('gotoslide.muc', function (event, jid, presUrl, current) {
+    if (preziPlayer) {
+        preziPlayer.flyToStep(current);
+    }
+});
+
+/**
+ * Returns the presentation id from the given url.
+ */
+function getPresentationId (presUrl) {
+    var presIdTmp = presUrl.substring(presUrl.indexOf("prezi.com/") + 10);
+    return presIdTmp.substring(0, presIdTmp.indexOf('/'));
+}
+
+/*
+ * Reloads the current presentation.
+ */
+function reloadPresentation() {
+    var iframe = document.getElementById(preziPlayer.options.preziId);
+    iframe.src = iframe.src;
+}
+
+/*
+ * Shows/hides a presentation.
+ */
+function setPresentationVisible(visible) {
+    if (visible) {
+        $('#largeVideo').fadeOut(300, function () {
+            $('#largeVideo').css({visibility:'hidden'});
+            $('#presentation>iframe').fadeIn(300, function() {
+                $('#presentation>iframe').css({opacity:'1'});
+            });
+        });
+    }
+    else {
+        if ($('#presentation>iframe')) {
+            $('#presentation>iframe').fadeOut(300, function () {
+                $('#presentation>iframe').css({opacity:'0'});
+                $('#largeVideo').fadeIn(300, function() {
+                    $('#largeVideo').css({visibility:'visible'});
+                });
+            });
+        }
+    }
+}
+
 /**
  * Updates the large video with the given new video source.
  */
 function updateLargeVideo(newSrc, localVideo, vol) {
     console.log('hover in', newSrc);
+
+    setPresentationVisible(false);
+
     if ($('#largeVideo').attr('src') != newSrc) {
 
         document.getElementById('largeVideo').volume = vol;
@@ -413,6 +558,9 @@ function resizeLarge() {
     if (availableWidth < 0 || availableHeight < 0) return;
     $('#largeVideo').parent().width(availableWidth);
     $('#largeVideo').parent().height(availableWidth / aspectRatio);
+    $('#presentation>iframe').width(availableWidth);
+    $('#presentation>iframe').height(availableWidth / aspectRatio);
+    
     resizeThumbnails();
 }
 
@@ -466,6 +614,9 @@ $(document).ready(function () {
 
     $('#usermsg').autosize();
 
+    // Set the defaults for prompt dialogs.
+    jQuery.prompt.setDefaults({persistent: false});
+
     resizeLarge();
     $(window).resize(function () {
         resizeLarge();
@@ -513,15 +664,8 @@ function dump(elem, filename){
             var session = connection.jingle.sessions[sid];
             if (session.peerconnection && session.peerconnection.updateLog) {
                 // FIXME: should probably be a .dump call
-                /* well, if I need to modify the output format anyway...
-                var stats = JSON.parse(JSON.stringify(session.peerconnection.stats));
-                Object.keys(stats).forEach(function (name) {
-                    stats[name].values = JSON.stringify(stats[name].values);
-                });
-                */
                 data["jingle_" + session.sid] = {
                     updateLog: session.peerconnection.updateLog,
-                    stats: session.peerconnection.stats,
                     url: window.location.href}
                 ;
             }
@@ -609,16 +753,16 @@ function openLockDialog() {
                      submit: function(e,v,m,f){
                      if(v)
                      {
-                     var lockKey = document.getElementById('lockKey');
+                        var lockKey = document.getElementById('lockKey');
                      
-                     if (lockKey.value)
-                     {
-                        setSharedKey(lockKey.value);
-                        lockRoom(true);
+                        if (lockKey.value)
+                        {
+                            setSharedKey(lockKey.value);
+                            lockRoom(true);
+                        }
                      }
                 }
-            }
-        });
+            });
     }
 }
 
@@ -638,10 +782,148 @@ function openLinkDialog() {
 }
 
 /*
+ * Opens the settings dialog.
+ */
+function openSettingsDialog() {
+    $.prompt('<h2>Configure your conference</h2>' +
+             '<input type="checkbox" id="initMuted"> Participants join muted<br/>' +
+             '<input type="checkbox" id="requireNicknames"> Require nicknames<br/><br/>' +
+             'Set a secrect key to lock your room: <input id="lockKey" type="text" placeholder="your shared key" autofocus>',
+             {
+                persistent: false,
+                buttons: { "Save": true , "Cancel": false},
+                defaultButton: 1,
+                loaded: function(event) {
+                    document.getElementById('lockKey').focus();
+                },
+                submit: function(e,v,m,f){
+                    if(v)
+                    {
+                        if ($('#initMuted').is(":checked"))
+                        {
+                            // it is checked
+                        }
+
+                        if ($('#requireNicknames').is(":checked"))
+                        {
+                            // it is checked                        
+                        }
+             /*
+                        var lockKey = document.getElementById('lockKey');
+             
+                        if (lockKey.value)
+                        {
+                            setSharedKey(lockKey.value);
+                            lockRoom(true);
+                        }
+              */
+                    }
+                }
+             });
+}
+
+/*
+ * Opens the Prezi dialog, from which the user could choose a presentation to load.
+ */
+function openPreziDialog() {
+    var myprezi = connection.emuc.getPrezi(connection.emuc.myroomjid);
+    if (myprezi) {
+        $.prompt("Are you sure you would like to remove your Prezi?",
+                {
+                title: "Remove Prezi",
+                buttons: { "Remove": true, "Cancel": false},
+                defaultButton: 1,
+                submit: function(e,v,m,f){
+                if(v)
+                {
+                    connection.emuc.removePreziFromPresence();
+                    connection.emuc.sendPresence();
+                }
+            }
+        });
+    }
+    else if (preziPlayer != null) {
+        $.prompt("Another participant is already sharing a Prezi. This conference allows only one Prezi at a time.",
+                 {
+                 title: "Share a Prezi",
+                 buttons: { "Ok": true},
+                 defaultButton: 0,
+                 submit: function(e,v,m,f){
+                    $.prompt.close();
+                 }
+                 });
+    }
+    else {
+        var openPreziState = {
+        state0: {
+            html:   '<h2>Share a Prezi</h2>' +
+                    '<input id="preziUrl" type="text" placeholder="e.g. http://prezi.com/wz7vhjycl7e6/my-prezi" autofocus>',
+            persistent: false,
+            buttons: { "Share": true , "Cancel": false},
+            defaultButton: 1,
+            submit: function(e,v,m,f){
+                e.preventDefault();
+                if(v)
+                {
+                    var preziUrl = document.getElementById('preziUrl');
+
+                    if (preziUrl.value)
+                    {
+                        if (preziUrl.value.indexOf('http://prezi.com/') != 0
+                            && preziUrl.value.indexOf('https://prezi.com/') != 0)
+                        {
+                            $.prompt.goToState('state1');
+                            return false;
+                        }
+                        else {
+                            var presIdTmp = preziUrl.value.substring(preziUrl.value.indexOf("prezi.com/") + 10);
+                            if (presIdTmp.indexOf('/') < 2) {
+                                $.prompt.goToState('state1');
+                                return false;
+                            }
+                            else {
+                                connection.emuc.addPreziToPresence(preziUrl.value, 0);
+                                connection.emuc.sendPresence();
+                                $.prompt.close();
+                            }
+                        }
+                    }
+                }
+                else
+                    $.prompt.close();
+            }
+        },
+        state1: {
+            html:   '<h2>Share a Prezi</h2>' +
+                    'Please provide a correct prezi link.',
+            persistent: false,
+            buttons: { "Back": true, "Cancel": false },
+            defaultButton: 1,
+            submit:function(e,v,m,f) {
+                e.preventDefault();
+                if(v==0)
+                    $.prompt.close();
+                else
+                    $.prompt.goToState('state0');
+            }
+        }
+        };
+
+        var myPrompt = jQuery.prompt(openPreziState);
+        
+        myPrompt.on('impromptu:loaded', function(e) {
+                    document.getElementById('preziUrl').focus();
+                    });
+        myPrompt.on('impromptu:statechanged', function(e) {
+                    document.getElementById('preziUrl').focus();
+                    });
+    }
+}
+
+/*
  * Locks / unlocks the room.
  */
 function lockRoom(lock) {
-    console.log("LOCK", sharedKey);
     if (lock)
         connection.emuc.lockRoom(sharedKey);
     else
@@ -695,6 +977,11 @@ function openChat() {
  */
 function showToolbar() {
     $('#toolbar').css({visibility:"visible"});
+    if (focus != null)
+    {
+//        TODO: Enable settings functionality. Need to uncomment the settings button in index.html.
+//        $('#settingsButton').css({visibility:"visible"});
+    }
 }
 
 /*
@@ -743,6 +1030,15 @@ function showFocusIndicator() {
             createFocusIndicatorElement(indicatorSpan);
         }
     }
+}
+
+function addRemoteVideoContainer(id) {
+    var container = document.createElement('span');
+    container.id = id;
+    container.className = 'videocontainer';
+    var remotes = document.getElementById('remoteVideos');
+    remotes.appendChild(container);
+    return container;
 }
 
 /*

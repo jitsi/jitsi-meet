@@ -7,13 +7,21 @@ Strophe.addConnectionPlugin('emuc', {
     roomjid: null,
     myroomjid: null,
     members: {},
+    presMap: {},
+    preziMap: {},
     joined: false,
     isOwner: false,
     init: function (conn) {
         this.connection = conn;
     },
+    initPresenceMap: function (myroomjid) {
+        this.presMap['to'] = myroomjid;
+        this.presMap['xns'] = 'http://jabber.org/protocol/muc';
+    },
     doJoin: function (jid, password) {
         this.myroomjid = jid;
+        this.initPresenceMap(this.myroomjid);
+
         if (!this.roomjid) {
             this.roomjid = Strophe.getBareJidFromJid(jid);
             // add handlers (just once)
@@ -30,11 +38,35 @@ Strophe.addConnectionPlugin('emuc', {
         this.connection.send(join);
     },
     onPresence: function (pres) {
+        console.log("PRESENCE", pres);
         var from = pres.getAttribute('from');
         var type = pres.getAttribute('type');
         if (type != null) {
             return true;
         }
+
+        var presentation = $(pres).find('>prezi');
+        if (presentation.length)
+        {
+            var url = presentation.attr('url');
+            var current = presentation.find('>current').text();
+            console.log('presentation info received from', from, url);
+
+            if (this.preziMap[from] == null) {
+                this.preziMap[from] = url;
+
+                $(document).trigger('presentationadded.muc', [from, url, current]);
+            }
+            else {
+                $(document).trigger('gotoslide.muc', [from, url, current]);
+            }
+        }
+        else if (this.preziMap[from] != null) {
+            var url = this.preziMap[from];
+            delete this.preziMap[from];
+            $(document).trigger('presentationremoved.muc', [from, url]);
+        }
+
         if ($(pres).find('>x[xmlns="http://jabber.org/protocol/muc#user"]>status[code="201"]').length) {
             // http://xmpp.org/extensions/xep-0045.html#createroom-instant
             this.isOwner = true;
@@ -110,7 +142,6 @@ Strophe.addConnectionPlugin('emuc', {
                     var formsubmit = $iq({to: ob.roomjid, type: 'set'}).c('query', {xmlns: 'http://jabber.org/protocol/muc#owner'});
                     formsubmit.c('x', {xmlns: 'jabber:x:data', type: 'submit'});
                     formsubmit.c('field', {'var': 'FORM_TYPE'}).c('value').t('http://jabber.org/protocol/muc#roomconfig').up().up();
-                    console.log("THE KEY TO SET", key);
                     formsubmit.c('field', {'var': 'muc#roomconfig_roomsecret'}).c('value').t(key).up().up();
                     // FIXME: is muc#roomconfig_passwordprotectedroom required?
                     this.connection.sendIQ(formsubmit,
@@ -129,6 +160,55 @@ Strophe.addConnectionPlugin('emuc', {
                 console.warn('setting password failed', err);
             }
         );
+    },
+    sendPresence: function () {
+        var pres = $pres({to: this.presMap['to'] });
+        pres.c('x', {xmlns: this.presMap['xns']}).up();
+        if (this.presMap['prezins']) {
+            pres.c('prezi', {xmlns: this.presMap['prezins'], 'url': this.presMap['preziurl']}).
+                            c('current').t(this.presMap['prezicurrent']).up().up();
+        }
+
+        if (this.presMap['medians'])
+        {
+            pres.c('media', {xmlns: this.presMap['medians']});
+            var sourceNumber = 0;
+            Object.keys(this.presMap).forEach(function (key) {
+                if (key.indexOf('source') >= 0) {
+                     sourceNumber++;
+                }
+            });
+            if (sourceNumber > 0)
+                for (var i = 1; i <= sourceNumber/2; i ++) {
+                    pres.c('source',
+                           {type: this.presMap['source' + i + '_type'],
+                           ssrc: this.presMap['source' + i + '_ssrc']}).up();
+                }
+        }
+        pres.up();
+        connection.send(pres);
+    },
+    addMediaToPresence: function (sourceNumber, mtype, ssrcs) {
+        if (!this.presMap['medians'])
+            this.presMap['medians'] = 'http://estos.de/ns/mjs';
+
+        this.presMap['source' + sourceNumber + '_type'] = mtype;
+        this.presMap['source' + sourceNumber + '_ssrc'] = ssrcs;
+    },
+    addPreziToPresence: function (url, currentSlide) {
+        this.presMap['prezins'] = 'http://jitsi.org/jitmeet/prezi';
+        this.presMap['preziurl'] = url;
+        this.presMap['prezicurrent'] = currentSlide;
+    },
+    removePreziFromPresence: function () {
+        delete this.presMap['prezins'];
+        delete this.presMap['preziurl'];
+        delete this.presMap['prezicurrent'];
+    },
+    addCurrentSlideToPresence: function (currentSlide) {
+        this.presMap['prezicurrent'] = currentSlide;
+    },
+    getPrezi: function (roomjid) {
+        return this.preziMap[roomjid];
     }
 });
-

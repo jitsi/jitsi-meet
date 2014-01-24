@@ -12,8 +12,11 @@
 }
 
 .jqistates input {
+    margin: 10px 0;
+}
+
+.jqistates input[type="text"] {
     width: 100%;
-    margin: 20px 0;
 }
 
 .jqibuttons button {
