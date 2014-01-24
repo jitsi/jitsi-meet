@@ -15,7 +15,7 @@
         PreziPlayer.EVENT_STATUS = "statusChange";
         PreziPlayer.EVENT_PLAYING = "isAutoPlayingChange";
         PreziPlayer.EVENT_IS_MOVING = "isMovingChange";
-        PreziPlayer.domain = "http://prezi.com";
+        PreziPlayer.domain = "https://prezi.com";
         PreziPlayer.path = "/player/";
         PreziPlayer.players = {};
         PreziPlayer.binded_methods = ['changesHandler'];
