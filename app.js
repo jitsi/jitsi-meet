@@ -288,6 +288,8 @@ $(document).bind('entered.muc', function (event, jid, info, pres) {
         updateLockButton();
     }
 
+    showFocusIndicator();
+
     $(pres).find('>media[xmlns="http://estos.de/ns/mjs"]>source').each(function (idx, ssrc) {
         //console.log(jid, 'assoc ssrc', ssrc.getAttribute('type'), ssrc.getAttribute('ssrc'));
         ssrc2jid[ssrc.getAttribute('ssrc')] = jid;
