@@ -29,6 +29,11 @@ function init() {
         // for chrome, add multistream cap
     }
     connection.jingle.pc_constraints = RTC.pc_constraints;
+    if (config.useIPv6) {
+        // https://code.google.com/p/webrtc/issues/detail?id=2828
+        if (!connection.jingle.pc_constraints.optional) connection.jingle.pc_constraints.optional = [];
+        connection.jingle.pc_constraints.optional.push({googIPv6: true});
+    }
 
     var jid = document.getElementById('jid').value || config.hosts.domain || window.location.hostname;
 
