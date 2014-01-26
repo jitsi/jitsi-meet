@@ -208,6 +208,7 @@ $(document).bind('callincoming.jingle', function (event, sid) {
     var sess = connection.jingle.sessions[sid];
     // TODO: check affiliation and/or role
     console.log('emuc data for', sess.peerjid, connection.emuc.members[sess.peerjid]);
+    sess.usedrip = true; // not-so-naive trickle ice
     sess.sendAnswer();
     sess.accept();
 });
