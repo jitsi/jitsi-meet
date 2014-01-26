@@ -35,6 +35,9 @@ function init() {
     connection.connect(jid, document.getElementById('password').value, function (status) {
         if (status == Strophe.Status.CONNECTED) {
             console.log('connected');
+            if (config.useStunTurn) {
+                connection.jingle.getStunAndTurnCredentials();
+            }
             if (RTC.browser == 'firefox') {
                 getUserMediaWithConstraints(['audio']);
             } else {
