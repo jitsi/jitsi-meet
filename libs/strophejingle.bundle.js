@@ -611,7 +611,7 @@ Strophe.addConnectionPlugin('jingle', {
                         break;
                     }
                 });
-                this.ice_config.iceServers = iceservers;
+                this.connection.jingle.ice_config.iceServers = iceservers;
             },
             function (err) {
                 console.warn('getting turn credentials failed', err);
@@ -1452,7 +1452,7 @@ function JingleSession(me, sid, connection) {
     this.stopTime = null;
     this.media_constraints = null;
     this.pc_constraints = null;
-    this.ice_config = {},
+    this.ice_config = {};
     this.drip_container = [];
 
     this.usetrickle = true;
