@@ -302,8 +302,6 @@ $(document).bind('entered.muc', function (event, jid, info, pres) {
         updateLockButton();
     }
 
-    showFocusIndicator();
-
     $(pres).find('>media[xmlns="http://estos.de/ns/mjs"]>source').each(function (idx, ssrc) {
         //console.log(jid, 'assoc ssrc', ssrc.getAttribute('type'), ssrc.getAttribute('ssrc'));
         ssrc2jid[ssrc.getAttribute('ssrc')] = jid;
@@ -574,8 +572,11 @@ function resizeLarge() {
     if (availableWidth < 0 || availableHeight < 0) return;
     $('#largeVideo').parent().width(availableWidth);
     $('#largeVideo').parent().height(availableWidth / aspectRatio);
-    $('#presentation>iframe').width(availableWidth);
-    $('#presentation>iframe').height(availableWidth / aspectRatio);
+
+    if ($('#presentation>iframe')) {
+        $('#presentation>iframe').width(availableWidth);
+        $('#presentation>iframe').height(availableWidth / aspectRatio);
+    }
     
     resizeThumbnails();
 }
@@ -586,8 +587,11 @@ function resizeThumbnails() {
     // minus the 36px space inside the remoteVideos container used for highlighting shadow.
     var availableHeight = window.innerHeight - $('#largeVideo').height() - 79;
     var numvids = $('#remoteVideos>span:visible').length;
-    // Remove the 1px borders arround videos.
-    var availableWinWidth = $('#remoteVideos').width() - 2 * numvids - 50;
+
+    var chatWidth = $('#chatspace').width();
+
+    // Remove the 1px borders arround videos and the chat width.
+    var availableWinWidth = $('#remoteVideos').width() - 2 * numvids - chatWidth - 50;
     var availableWidth = availableWinWidth / numvids;
     var aspectRatio = 16.0 / 9.0;
     var maxHeight = Math.min(160, availableHeight);
@@ -968,17 +972,16 @@ function updateLockButton() {
 function openChat() {
     var chatspace = $('#chatspace');
     var videospace = $('#videospace');
-    var chatspaceWidth = chatspace.width();
+    var onAnimationProgress = function () {
+        resizeLarge();
+        videospace.css({right:chatspace.width()});
+    };
 
     if (chatspace.css("opacity") == 1) {
-        chatspace.animate({opacity: 0}, "fast");
-        chatspace.animate({width: 0}, "slow");
-        videospace.animate({right: 0, width:"100%"}, "slow");
+        chatspace.animate({width: 0, opacity: 0}, {duration: 1000, progress: onAnimationProgress});
     }
     else {
-        chatspace.animate({width:"20%"}, "slow");
-        chatspace.animate({opacity: 1}, "slow");
-        videospace.animate({right:chatspaceWidth, width:"80%"}, "slow");
+        chatspace.animate({width:"20%", opacity: 1}, {duration: 1000, progress: onAnimationProgress});
     }
     
     // Request the focus in the nickname field or the chat input field.
