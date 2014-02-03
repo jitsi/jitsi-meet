@@ -53,6 +53,10 @@ function ColibriFocus(connection, bridgejid) {
     // ssrc lines to be removed on next update
     this.removessrc = [];
 
+    // container for candidates from the focus
+    // gathered before confid is known
+    this.drip_container = [];
+
     // silly wait flag
     this.wait = true;
 }
@@ -105,9 +109,6 @@ ColibriFocus.prototype.makeConference = function (peers) {
         });
         $(document).trigger('remotestreamadded.jingle', [event, self.sid]);
     };
-    this.peerconnection.onicecandidate = function (event) {
-        self.sendIceCandidate(event.candidate);
-    };
     this.peerconnection.createOffer(
         function (offer) {
             self.peerconnection.setLocalDescription(
@@ -116,6 +117,7 @@ ColibriFocus.prototype.makeConference = function (peers) {
                     // success
                     $(document).trigger('setLocalDescription.jingle', [self.sid]);
                     // FIXME: could call _makeConference here and trickle candidates later
+                    self._makeConference();
                 },
                 function (error) {
                     console.log('setLocalDescription failed', error);
@@ -127,10 +129,15 @@ ColibriFocus.prototype.makeConference = function (peers) {
         }
     );
     this.peerconnection.onicecandidate = function (event) {
+        //console.log('focus onicecandidate', self.confid, new Date().getTime(), event.candidate);
         if (!event.candidate) {
             console.log('end of candidates');
-            self._makeConference();
             return;
+        }
+        if (self.confid === 0) {
+            self.drip_container.push(event.candidate);
+        } else {
+            self.sendIceCandidate(candidate);
         }
     };
 };
@@ -176,6 +183,7 @@ ColibriFocus.prototype._makeConference = function () {
 // callback when a conference was created
 ColibriFocus.prototype.createdConference = function (result) {
     console.log('created a conference on the bridge');
+    var self = this;
     var tmp;
 
     this.confid = $(result).find('>conference').attr('id');
@@ -196,6 +204,11 @@ ColibriFocus.prototype.createdConference = function (result) {
     var localSDP = new SDP(this.peerconnection.localDescription.sdp);
     localSDP.removeSessionLines('a=group:');
     localSDP.removeSessionLines('a=msid-semantic:');
+
+    if (this.drip_container.length) {
+        this.sendIceCandidates(this.drip_container);
+        this.drip_container = [];
+    }
 
     // establish our channel with the bridge
     // static answer taken from chrome M31, should be replaced by a 
@@ -275,7 +288,6 @@ ColibriFocus.prototype.createdConference = function (result) {
     }
     bridgeSDP.raw = bridgeSDP.session + bridgeSDP.media.join('');
 
-    var self = this;
     this.peerconnection.setRemoteDescription(
         new RTCSessionDescription({type: 'answer', sdp: bridgeSDP.raw}),
         function () {
@@ -638,13 +650,30 @@ ColibriFocus.prototype.sendIceCandidate = function (candidate) {
         console.log('end of candidates');
         return;
     }
+    this.sendIceCandidates([candidate]);
+};
+
+// sort and send multiple candidates
+ColibriFocus.prototype.sendIceCandidates = function (candidates) {
+    var self = this;
     var mycands = $iq({to: this.bridgejid, type: 'set'});
     mycands.c('conference', {xmlns: 'http://jitsi.org/protocol/colibri', id: this.confid});
-    mycands.c('content', {name: candidate.sdpMid });
-    mycands.c('channel', {id: $(this.mychannel[candidate.sdpMLineIndex]).attr('id')});
-    mycands.c('transport', {xmlns: 'urn:xmpp:jingle:transports:ice-udp:1'});
-    tmp = SDPUtil.candidateToJingle(candidate.candidate);
-    mycands.c('candidate', tmp).up();
+    // FIXME: multi-candidate logic is taken from strophe.jingle, should be refactored there
+    var localSDP = new SDP(this.peerconnection.localDescription.sdp);
+    for (var mid = 0; mid < localSDP.media.length; mid++) {
+        var cands = candidates.filter(function (el) { return el.sdpMLineIndex == mid; });
+        if (cands.length > 0) {
+            mycands.c('content', {name: cands[0].sdpMid });
+            mycands.c('channel', {id: $(this.mychannel[cands[0].sdpMLineIndex]).attr('id')});
+            mycands.c('transport', {xmlns: 'urn:xmpp:jingle:transports:ice-udp:1'});
+            for (var i = 0; i < cands.length; i++) {
+                mycands.c('candidate', SDPUtil.candidateToJingle(cands[i].candidate)).up();
+            }
+            mycands.up(); // transport
+            mycands.up(); // channel
+            mycands.up(); // content
+        }
+    }
     this.connection.sendIQ(mycands,
         function (res) {
             console.log('got result');
