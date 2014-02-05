@@ -46,7 +46,7 @@ function init() {
             if (RTC.browser == 'firefox') {
                 getUserMediaWithConstraints(['audio']);
             } else {
-                getUserMediaWithConstraints(['audio', 'video'], config.resolution || '360');
+                getUserMediaWithConstraints(['audio', 'video'], '360');
             }
             document.getElementById('connect').disabled = true;
         } else {
@@ -99,6 +99,7 @@ function doJoin() {
 $(document).bind('mediaready.jingle', function (event, stream) {
     connection.jingle.localStream = stream;
     RTC.attachMediaStream($('#localVideo'), stream);
+    document.getElementById('localVideo').muted = true;
     document.getElementById('localVideo').autoplay = true;
     document.getElementById('localVideo').volume = 0;
 
@@ -106,13 +107,7 @@ $(document).bind('mediaready.jingle', function (event, stream) {
     updateLargeVideo(localVideoSrc, true, 0);
 
     $('#localVideo').click(function () {
-        updateLargeVideo($(this).attr('src'), true, 0);
-        $('video').each(function (idx, el) {
-            if (el.id.indexOf('mixedmslabel') != -1) {
-                el.volume = 0;
-                el.volume = 1;
-            }
-        });
+        updateLargeVideo($(this).attr('src'), true, 1);
     });
 
     doJoin();
@@ -432,13 +427,6 @@ $(document).bind('presentationadded.muc', function (event, jid, presUrl, current
                 });
 
     $('#presentation>iframe').attr('id', preziPlayer.options.preziId);
-
-//    $('#presentation>iframe').load(function (){
-//        console.log("IFRAME LOADED!!!!!!!!!!!!!!!!");
-//    });
-//    $('#presentation>iframe').ready(function (){
-//        console.log("IFRAME READY!!!!!!!!!!!!!!!!");
-//    });
                  
     preziPlayer.on(PreziPlayer.EVENT_STATUS, function(event) {
         console.log("prezi status", event.value);
@@ -554,6 +542,7 @@ function toggleAudio() {
 }
 
 function resizeLarge() {
+    resizeChat();
     var availableHeight = window.innerHeight;
     var chatspaceWidth = $('#chatspace').width();
 
@@ -588,10 +577,8 @@ function resizeThumbnails() {
     var availableHeight = window.innerHeight - $('#largeVideo').height() - 79;
     var numvids = $('#remoteVideos>span:visible').length;
 
-    var chatWidth = $('#chatspace').width();
-
     // Remove the 1px borders arround videos and the chat width.
-    var availableWinWidth = $('#remoteVideos').width() - 2 * numvids - chatWidth - 50;
+    var availableWinWidth = $('#remoteVideos').width() - 2 * numvids - 50;
     var availableWidth = availableWinWidth / numvids;
     var aspectRatio = 16.0 / 9.0;
     var maxHeight = Math.min(160, availableHeight);
@@ -599,10 +586,33 @@ function resizeThumbnails() {
     if (availableHeight < availableWidth / aspectRatio) {
         availableWidth = Math.floor(availableHeight * aspectRatio);
     }
+
     // size videos so that while keeping AR and max height, we have a nice fit
     $('#remoteVideos').height(availableHeight+26); // add the 2*18px-padding-top border used for highlighting shadow.
     $('#remoteVideos>span').width(availableWidth);
     $('#remoteVideos>span').height(availableHeight);
+}
+
+function resizeChat() {
+    var availableHeight = window.innerHeight;
+    var availableWidth = window.innerWidth;
+
+    var chatWidth = 200;
+    if (availableWidth*0.2 < 200)
+        chatWidth = availableWidth*0.2;
+
+    $('#chatspace').width(chatWidth);
+    $('#chatspace').height(availableHeight - 40);
+
+    resizeChatConversation();
+}
+
+function resizeChatConversation() {
+    var usermsgStyleHeight = document.getElementById("usermsg").style.height;
+    var usermsgHeight = usermsgStyleHeight.substring(0, usermsgStyleHeight.indexOf('px'));
+
+    $('#chatconversation').width($('#chatspace').width() - 10);
+    $('#chatconversation').height(window.innerHeight - 50 - parseInt(usermsgHeight));
 }
 
 $(document).ready(function () {
@@ -632,7 +642,11 @@ $(document).ready(function () {
         }
     });
 
-    $('#usermsg').autosize();
+    var onTextAreaResize = function() {
+        resizeChatConversation();
+        scrollChatToBottom();
+    };
+    $('#usermsg').autosize({callback: onTextAreaResize});
 
     // Set the defaults for prompt dialogs.
     jQuery.prompt.setDefaults({persistent: false});
@@ -972,18 +986,30 @@ function updateLockButton() {
 function openChat() {
     var chatspace = $('#chatspace');
     var videospace = $('#videospace');
-    var onAnimationProgress = function () {
+
+    var onShow = function () {
         resizeLarge();
-        videospace.css({right:chatspace.width()});
+        $('#chatspace').show("slide", { direction: "right", duration: 500});
+    };
+    var onHide = function () {
+        $('#chatspace').hide("slide", { direction: "right", duration: 500});
+        resizeLarge();
     };
 
-    if (chatspace.css("opacity") == 1) {
-        chatspace.animate({width: 0, opacity: 0}, {duration: 1000, progress: onAnimationProgress});
+    if (chatspace.css("display") == 'block') {
+        videospace.animate({right: 0}, {queue: false, duration: 500, progress: onHide});
     }
     else {
-        chatspace.animate({width:"20%", opacity: 1}, {duration: 1000, progress: onAnimationProgress});
+        videospace.animate({right: chatspace.width()},
+                           {queue: false,
+                            duration: 500,
+                            progress: onShow,
+                            complete: function() {
+                                scrollChatToBottom();
+                            }
+                           });
     }
-    
+
     // Request the focus in the nickname field or the chat input field.
     if ($('#nickinput').is(':visible'))
         $('#nickinput').focus();
@@ -1068,4 +1094,10 @@ function createFocusIndicatorElement(parentElement) {
     focusIndicator.className = 'fa fa-star';
     focusIndicator.title = "The owner of this conference"
     parentElement.appendChild(focusIndicator);
+}
+
+function scrollChatToBottom() {
+    setTimeout(function() {
+        $('#chatconversation').scrollTop($('#chatconversation')[0].scrollHeight);
+    }, 5);
 }

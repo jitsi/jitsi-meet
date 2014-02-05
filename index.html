@@ -4,17 +4,18 @@
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
     <script src="libs/strophejingle.bundle.js?v=7"></script><!-- strophe.jingle bundle -->
     <script src="libs/colibri.js?v=7"></script><!-- colibri focus implementation -->
+    <script src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
     <script src="muc.js?v=4"></script><!-- simple MUC library -->
-    <script src="estos_log.js?v=3"></script><!-- simple stanza logger -->
-    <script src="app.js?v=14"></script><!-- application logic -->
+    <script src="estos_log.js?v=2"></script><!-- simple stanza logger -->
+    <script src="app.js?v=11"></script><!-- application logic -->
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" media="screen" href="css/main.css?v=11"/>
-    <link rel="stylesheet" href="css/jquery-impromptu.css?v=4">
-    <link rel="stylesheet" href="css/modaldialog.css?v=4">
-    <script src="libs/jquery-impromptu.js?v=4"></script>
-    <script src="libs/jquery.autosize.js?v=4"></script>
-    <script src="config.js?v=5"></script><!-- adapt to your needs, i.e. set hosts and bosh path -->
-    <script src="libs/prezi_player.js?v=3"></script>
+    <link rel="stylesheet" href="css/jquery-impromptu.css?v=3">
+    <link rel="stylesheet" href="css/modaldialog.css?v=3">
+    <script src="libs/jquery-impromptu.js"></script>
+    <script src="libs/jquery.autosize.js"></script>
+    <script src="config.js"></script><!-- adapt to your needs, i.e. set hosts and bosh path -->
+    <script src="libs/prezi_player.js"></script>
   </head>
   <body>
     <div id="header">
@@ -74,7 +75,7 @@
         
         <!--div><i class="fa fa-comments">&nbsp;</i><span class='nick'></span>:&nbsp;<span class='chattext'></span></div-->
         <div id="chatconversation"></div>
-        <textarea id="usermsg" class= "animated" placeholder='Enter text...' autofocus></textarea>
+        <textarea id="usermsg" placeholder='Enter text...' autofocus></textarea>
     </div>
     <a id="downloadlog" onclick='dump(event.target);'><i title="Download support information" class="fa fa-cloud-download"></i></a>
     <script>

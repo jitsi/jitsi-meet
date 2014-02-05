@@ -5,6 +5,7 @@ html, body{
     font-family:'YanoneKaffeesatzLight',Verdana,Tahoma,Arial;
 	font-weight: 400;
     background: #e9e9e9;
+    overflow-x: hidden;
 }
 
 #videospace {
@@ -84,31 +85,32 @@ html, body{
 }
 
 #chatspace {
-    display:block;
+    display:none;
     position:absolute;
     float: right;
     top: 40px;
     bottom: 0px;
     right: 0px;
-    width:0;
-    opacity: 0;
+    width: 20%;
+    max-width: 200px;
     overflow: hidden;
-    background-color:#f6f6f6;
+    background-color:#dfebf1;
     border-left:1px solid #424242;
 }
 
 #chatconversation {
-    display:block;
-    position:relative;
-    top: -120px;
-    float:top;
-    text-align:left;
-    line-height:20px;
-    font-size:14px;
-    padding:5px;
-    height:90%;
-    overflow:scroll;
-    visibility:hidden;
+    position: relative;
+    top: 5px;
+    padding: 5px;
+    text-align: left;
+    line-height: 20px;
+    font-size: 10pt;
+    width: 100%;
+    height: 95%;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    word-wrap: break-word;
+    visibility: hidden;
 }
 
 .localuser {
@@ -120,20 +122,31 @@ html, body{
 }
 
 #usermsg {
-    position:absolute;
-    bottom: 5px;
-    left: 5px;
-    right: 5px;
-    width: 95%;
-    height: 40px;
+    position: relative;
+    width: 100%;
+    height: 5%;
+    padding: 5px;
     z-index: 5;
-    visibility:hidden;
     max-height:150px;
+    min-height:50px;
+    visibility:hidden;
+    border: 0px none;
+    border-top: 1px solid #cccccc;
+    background: #FFFFFF;
+    box-shadow: none;
+    border-radius:0;
+    font-size: 10pt;
+}
+
+#usermsg: hover {
+    border: 0px none;
+    border-top: 1px solid #cccccc;
+    box-shadow: none;
 }
 
 #nickname {
-    position:relative;
-    text-align:center;
+    position: absolute;
+    text-align: center;
     color: #9d9d9d;
     font-size: 18;
     top: 100px;
@@ -163,7 +176,7 @@ html, body{
     display:block;
     height:39px;
     text-align:center;
-    background-color:#087dba;
+    background-color: #2591e5;
 }
 
 #left {
@@ -272,7 +285,6 @@ a.button:hover {
 }
 
 input[type='text'], textarea {
-    border: 0px none;
     display: inline-block;
     font-size: 14px;
     padding: 5px;
@@ -329,13 +341,6 @@ button, input[type="button"], input[type="reset"], input[type="submit"] {
 
 form {
     display: block;
-}
-
-/* Animated text area. */
-.animated {
-    -webkit-transition: height 0.2s;
-    -moz-transition: height 0.2s;
-    transition: height 0.2s;
 }
 
 #downloadlog {
