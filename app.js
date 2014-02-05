@@ -700,6 +700,7 @@ function dump(elem, filename){
                 // FIXME: should probably be a .dump call
                 data["jingle_" + session.sid] = {
                     updateLog: session.peerconnection.updateLog,
+                    stats: session.peerconnection.stats,
                     url: window.location.href}
                 ;
             }
@@ -1101,3 +1102,4 @@ function scrollChatToBottom() {
         $('#chatconversation').scrollTop($('#chatconversation')[0].scrollHeight);
     }, 5);
 }
+
