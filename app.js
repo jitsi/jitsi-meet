@@ -46,7 +46,7 @@ function init() {
             if (RTC.browser == 'firefox') {
                 getUserMediaWithConstraints(['audio']);
             } else {
-                getUserMediaWithConstraints(['audio', 'video'], '360');
+                getUserMediaWithConstraints(['audio', 'video'], config.resolution || '360');
             }
             document.getElementById('connect').disabled = true;
         } else {
