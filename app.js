@@ -99,7 +99,6 @@ function doJoin() {
 $(document).bind('mediaready.jingle', function (event, stream) {
     connection.jingle.localStream = stream;
     RTC.attachMediaStream($('#localVideo'), stream);
-    document.getElementById('localVideo').muted = true;
     document.getElementById('localVideo').autoplay = true;
     document.getElementById('localVideo').volume = 0;
 
@@ -107,7 +106,13 @@ $(document).bind('mediaready.jingle', function (event, stream) {
     updateLargeVideo(localVideoSrc, true, 0);
 
     $('#localVideo').click(function () {
-        updateLargeVideo($(this).attr('src'), true, 1);
+	updateLargeVideo($(this).attr('src'), true, 0);
+        $('video').each(function (idx, el) {
+            if (el.id.indexOf('mixedmslabel') != -1) {
+                el.volume = 0;
+                el.volume = 1;
+            } 
+        });
     });
 
     doJoin();
@@ -1102,4 +1107,3 @@ function scrollChatToBottom() {
         $('#chatconversation').scrollTop($('#chatconversation')[0].scrollHeight);
     }, 5);
 }
-
