@@ -94,7 +94,8 @@ html, body{
     width: 20%;
     max-width: 200px;
     overflow: hidden;
-    background-color:#dfebf1;
+    /* background-color:#dfebf1;*/
+    background-color:#FFFFFF;
     border-left:1px solid #424242;
 }
 
