@@ -733,7 +733,10 @@ function updateChatConversation(nick, message)
         divClassName = "localuser";
     else
         divClassName = "remoteuser";
-    
+   
+    //replace links and smileys
+    message = processReplacements(message);
+
     $('#chatconversation').append('<div class="' + divClassName + '"><b>' + nick + ': </b>' + message + '</div>');
     $('#chatconversation').animate({ scrollTop: $('#chatconversation')[0].scrollHeight}, 1000);
 }
