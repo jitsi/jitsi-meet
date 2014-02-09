@@ -1119,13 +1119,12 @@ function scrollChatToBottom() {
 function toggleFullScreen() {    
     var fsElement = document.documentElement;
 
-    if (!document.mozFullScreen && !document.webkitFullScreen){
+    if (!document.mozFullScreen && !document.webkitIsFullScreen){
 
         //Enter Full Screen
         if (fsElement.mozRequestFullScreen) {
 
             fsElement.mozRequestFullScreen();
-
         } 
         else {
             fsElement.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
@@ -1137,6 +1136,7 @@ function toggleFullScreen() {
         if (document.mozCancelFullScreen) {
             document.mozCancelFullScreen();
         } else {
+            document.webkitCancelFullScreen();
             document.webkitCancelFullScreen();
         }
     }
