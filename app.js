@@ -1110,3 +1110,34 @@ function scrollChatToBottom() {
         $('#chatconversation').scrollTop($('#chatconversation')[0].scrollHeight);
     }, 5);
 }
+
+
+/*
+ * Toggles the application in and out of full screen mode 
+ * (a.k.a. presentation mode in Chrome).
+ */
+function toggleFullScreen() {    
+    var fsElement = document.documentElement;
+
+    if (!document.mozFullScreen && !document.webkitFullScreen){
+
+        //Enter Full Screen
+        if (fsElement.mozRequestFullScreen) {
+
+            fsElement.mozRequestFullScreen();
+
+        } 
+        else {
+            fsElement.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
+        }
+
+    } else {
+
+        //Exit Full Screen
+        if (document.mozCancelFullScreen) {
+            document.mozCancelFullScreen();
+        } else {
+            document.webkitCancelFullScreen();
+        }
+    }
+}
