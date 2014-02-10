@@ -249,9 +249,11 @@ $(document).bind('setLocalDescription.jingle', function (event, sid) {
     var localSDP = new SDP(sess.peerconnection.localDescription.sdp);
     localSDP.media.forEach(function (media) {
         var type = SDPUtil.parse_mline(media.split('\r\n')[0]).media;
-        var ssrc = SDPUtil.find_line(media, 'a=ssrc:').substring(7).split(' ')[0];
-        // assumes a single local ssrc
-        newssrcs[type] = ssrc;
+        if (SDPUtil.find_line(media, 'a=ssrc:')) {
+            var ssrc = SDPUtil.find_line(media, 'a=ssrc:').substring(7).split(' ')[0];
+            // assumes a single local ssrc
+            newssrcs[type] = ssrc;
+        }
     });
     console.log('new ssrcs', newssrcs);
 
@@ -260,7 +262,9 @@ $(document).bind('setLocalDescription.jingle', function (event, sid) {
         i++;
         connection.emuc.addMediaToPresence(i, mtype, newssrcs[mtype]);
     });
-    connection.emuc.sendPresence();
+    if (i > 0) {
+        connection.emuc.sendPresence();
+    }
 });
 
 $(document).bind('joined.muc', function (event, jid, info) {

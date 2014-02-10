@@ -42,6 +42,9 @@ function ColibriFocus(connection, bridgejid) {
 
     this.peerconnection = null;
 
+    // media types of the conference
+    this.media = ['audio', 'video'];
+
     this.sid = Math.random().toString(36).substr(2, 12);
     this.connection.jingle.sessions[this.sid] = this;
     this.mychannel = [];
@@ -151,14 +154,7 @@ ColibriFocus.prototype._makeConference = function () {
     elem.c('conference', {xmlns: 'http://jitsi.org/protocol/colibri'});
 
     var stream = this.connection.jingle.localStream;
-    var types = [];
-    if (connection.jingle.localStream.getAudioTracks().length > 0) {
-        types.push('audio');
-    }
-    if (connection.jingle.localStream.getVideoTracks().length > 0) {
-        types.push('video');
-    }
-    types.forEach(function (name) {
+    this.media.forEach(function (name) {
         elem.c('content', {name: name});
         elem.c('channel', {initiator: 'true', expire: '15'}).up();
         for (var j = 0; j < self.peers.length; j++) {
@@ -652,14 +648,18 @@ ColibriFocus.prototype.setRemoteDescription = function (session, elem, desctype)
     this.remotessrc[session.peerjid] = [];
     for (channel = 0; channel < this.channels[participant].length; channel++) {
         //if (channel == 0) continue; FIXME: does not work as intended
-        this.remotessrc[session.peerjid][channel] = SDPUtil.find_lines(remoteSDP.media[channel], 'a=ssrc:').join('\r\n') + '\r\n';
+        if (SDPUtil.find_lines(remoteSDP.media[channel], 'a=ssrc:').length) {
+            this.remotessrc[session.peerjid][channel] = SDPUtil.find_lines(remoteSDP.media[channel], 'a=ssrc:').join('\r\n') + '\r\n';
+        }
     }
 
     // ACT 4: add new a=ssrc lines to local remotedescription
     for (channel = 0; channel < this.channels[participant].length; channel++) {
         //if (channel == 0) continue; FIXME: does not work as intended
         if (!this.addssrc[channel]) this.addssrc[channel] = '';
-        this.addssrc[channel] += SDPUtil.find_lines(remoteSDP.media[channel], 'a=ssrc:').join('\r\n') + '\r\n';
+        if (SDPUtil.find_lines(remoteSDP.media[channel], 'a=ssrc:').length) {
+            this.addssrc[channel] += SDPUtil.find_lines(remoteSDP.media[channel], 'a=ssrc:').join('\r\n') + '\r\n';
+        }
     }
     this.modifySources();
 };
@@ -843,10 +843,10 @@ ColibriFocus.prototype.modifySources = function () {
             console.log('setModifiedRemoteDescription ok');
             self.peerconnection.createAnswer(
                 function (modifiedAnswer) {
-                    console.log('modifiedAnswer created', modifiedAnswer.sdp);
+                    console.log('modifiedAnswer created');
                     // FIXME: pushing down an answer while ice connection state 
                     // is still checking is bad...
-                    console.log(self.peerconnection.iceConnectionState);
+                    //console.log(self.peerconnection.iceConnectionState);
 
                     // trying to work around another chrome bug
                     //modifiedAnswer.sdp = modifiedAnswer.sdp.replace(/a=setup:active/g, 'a=setup:actpass');
@@ -856,17 +856,17 @@ ColibriFocus.prototype.modifySources = function () {
                             $(document).trigger('setLocalDescription.jingle', [self.sid]);
                         },
                         function (error) {
-                            console.log('setModifiedLocalDescription failed');
+                            console.log('setModifiedLocalDescription failed', error);
                         }
                     );
                 },
                 function (error) {
-                    console.log('createModifiedAnswer failed');
+                    console.log('createModifiedAnswer failed', error);
                 }
             );
         },
         function (error) {
-            console.log('setModifiedRemoteDescription failed');
+            console.log('setModifiedRemoteDescription failed', error);
         }
     );
     /*
@@ -899,7 +899,6 @@ ColibriFocus.prototype.modifySources = function () {
     );
     */
 };
-
 
 // A colibri session is similar to a jingle session, it just implements some things differently
 // FIXME: inherit jinglesession, see https://github.com/legastero/Jingle-RTCPeerConnection/blob/master/index.js
