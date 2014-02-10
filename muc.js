@@ -7,6 +7,7 @@ Strophe.addConnectionPlugin('emuc', {
     roomjid: null,
     myroomjid: null,
     members: {},
+    list_members: [], // so we can elect a new focus
     presMap: {},
     preziMap: {},
     joined: false,
@@ -87,10 +88,12 @@ Strophe.addConnectionPlugin('emuc', {
             if (!this.joined) {
                 this.joined = true;
                 $(document).trigger('joined.muc', [from, member]);
+                this.list_members.push(from);
             }
         } else if (this.members[from] === undefined) {
             // new participant
             this.members[from] = member;
+            this.list_members.push(from);
             $(document).trigger('entered.muc', [from, member, pres]);
         } else {
             console.log('presence change from', from);
@@ -101,6 +104,7 @@ Strophe.addConnectionPlugin('emuc', {
     onPresenceUnavailable: function (pres) {
         var from = pres.getAttribute('from');
         delete this.members[from];
+        this.list_members.splice(this.list_members.indexOf(from), 1);
         $(document).trigger('left.muc', [from]);
         return true;
     },

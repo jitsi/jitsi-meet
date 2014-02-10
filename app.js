@@ -322,7 +322,14 @@ $(document).bind('left.muc', function (event, jid) {
         resizeThumbnails();
     }
 
-    if (Object.keys(connection.emuc.members).length === 0) {
+    if (focus === null && connection.emuc.myroomjid == connection.emuc.list_members[0]) {
+        console.log('welcome to our new focus... myself');
+        focus = new ColibriFocus(connection, config.hosts.bridge);
+        if (Object.keys(connection.emuc.members).length > 0) {
+            focus.makeConference(Object.keys(connection.emuc.members));
+        }
+    } 
+    else if (focus && Object.keys(connection.emuc.members).length === 0) {
         console.log('everyone left');
         if (focus !== null) {
             // FIXME: closing the connection is a hack to avoid some 
@@ -333,7 +340,6 @@ $(document).bind('left.muc', function (event, jid) {
             focus = new ColibriFocus(connection, config.hosts.bridge);
         }
     }
-    
     if (connection.emuc.getPrezi(jid)) {
         $(document).trigger('presentationremoved.muc', [jid, connection.emuc.getPrezi(jid)]);
     }
