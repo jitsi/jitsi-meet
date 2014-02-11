@@ -1066,10 +1066,11 @@ function openChat() {
     }
 
     // Request the focus in the nickname field or the chat input field.
-    if ($('#nickinput').is(':visible'))
+    if ($('#nickname').css('visibility') == 'visible')
         $('#nickinput').focus();
-    else
+    else {
         $('#usermsg').focus();
+    }
 }
 
 /*
@@ -1247,6 +1248,8 @@ function showDisplayName(videoSpanId, displayName) {
                         window.localStorage.displayname = nickname;
                         connection.emuc.addDisplayNameToPresence(nickname);
                         connection.emuc.sendPresence();
+
+                        setChatConversationMode(true);
                     }
 
                     if (!$('#localDisplayName').is(":visible")) {
