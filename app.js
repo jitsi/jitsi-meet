@@ -25,6 +25,11 @@ function init() {
     RTCPeerconnection = TraceablePeerConnection; 
 
     connection = new Strophe.Connection(document.getElementById('boshURL').value || config.bosh || '/http-bind');
+
+    if (nickname) {
+        connection.emuc.addDisplayNameToPresence(nickname);
+    }
+
     if (connection.disco) {
         // for chrome, add multistream cap
     }
@@ -270,22 +275,34 @@ $(document).bind('setLocalDescription.jingle', function (event, sid) {
 $(document).bind('joined.muc', function (event, jid, info) {
     updateRoomUrl(window.location.href);
     document.getElementById('localNick').appendChild(
-        document.createTextNode(Strophe.getResourceFromJid(jid) + ' (you)')
+        document.createTextNode(Strophe.getResourceFromJid(jid) + ' (me)')
     );
 
     if (Object.keys(connection.emuc.members).length < 1) {
         focus = new ColibriFocus(connection, config.hosts.bridge);
     }
-                 
+
+    showFocusIndicator();
+
     // Once we've joined the muc show the toolbar
     showToolbar();
+
+    var displayName = '';
+    if (info.displayName)
+        displayName = info.displayName + ' (me)';
+
+    showDisplayName('localVideoContainer', displayName);
 });
 
 $(document).bind('entered.muc', function (event, jid, info, pres) {
     console.log('entered', jid, info);
     console.log(focus);
-    
-    var container = addRemoteVideoContainer('participant_' + Strophe.getResourceFromJid(jid));
+
+    var videoSpanId = 'participant_' + Strophe.getResourceFromJid(jid);
+    var container = addRemoteVideoContainer(videoSpanId);
+
+    if (info.displayName)
+        showDisplayName(videoSpanId, info.displayName);
 
     var nickfield = document.createElement('span');
     nickfield.appendChild(document.createTextNode(Strophe.getResourceFromJid(jid)));
@@ -350,6 +367,13 @@ $(document).bind('presence.muc', function (event, jid, info, pres) {
         //console.log(jid, 'assoc ssrc', ssrc.getAttribute('type'), ssrc.getAttribute('ssrc'));
         ssrc2jid[ssrc.getAttribute('ssrc')] = jid;
     });
+
+    if (info.displayName) {
+        if (jid === connection.emuc.myroomjid)
+            showDisplayName('localVideoContainer', info.displayName + ' (me)');
+        else
+            showDisplayName('participant_' + Strophe.getResourceFromJid(jid), info.displayName);
+    }
 });
 
 $(document).bind('passwordrequired.muc', function (event, jid) {
@@ -371,7 +395,7 @@ $(document).bind('passwordrequired.muc', function (event, jid) {
 
                         if (lockKey.value != null)
                         {
-                            setSharedKey(lockKey);
+                            setSharedKey(lockKey.value);
                             connection.emuc.doJoin(jid, lockKey.value);
                         }
                     }
@@ -559,7 +583,9 @@ function toggleAudio() {
 function resizeLarge() {
     resizeChat();
     var availableHeight = window.innerHeight;
-    var chatspaceWidth = $('#chatspace').width();
+    var chatspaceWidth = $('#chatspace').is(":visible")
+                            ? $('#chatspace').width()
+                            : 0;
 
     var numvids = $('#remoteVideos>video:visible').length;
     if (numvids < 5)
@@ -631,6 +657,13 @@ function resizeChatConversation() {
 }
 
 $(document).ready(function () {
+    var storedDisplayName = window.localStorage.displayname;
+    if (storedDisplayName) {
+        nickname = storedDisplayName;
+
+        setChatConversationMode(true);
+    }
+
     $('#nickinput').keydown(function(event) {
         if (event.keyCode == 13) {
             event.preventDefault();
@@ -638,10 +671,13 @@ $(document).ready(function () {
             this.value = '';
             if (!nickname) {
                 nickname = val;
-                $('#nickname').css({visibility:"hidden"});
-                $('#chatconversation').css({visibility:'visible'});
-                $('#usermsg').css({visibility:'visible'});
-                $('#usermsg').focus();
+                window.localStorage.displayname = nickname;
+
+                connection.emuc.addDisplayNameToPresence(nickname);
+                connection.emuc.sendPresence();
+
+                setChatConversationMode(true);
+
                 return;
             }
         }
@@ -743,7 +779,7 @@ function updateChatConversation(nick, message)
         divClassName = "localuser";
     else
         divClassName = "remoteuser";
-   
+
     //replace links and smileys
     message = processReplacements(message);
 
@@ -1072,11 +1108,11 @@ function closePageWarning() {
  */
 function showFocusIndicator() {
     if (focus != null) {
-        var localVideoToolbar = document.getElementById('localVideoToolbar');
+        var indicatorSpan = $('#localVideoContainer .focusindicator');
 
-        if (localVideoToolbar.childNodes.length === 0)
+        if (indicatorSpan.children().length == 0)
         {
-            createFocusIndicatorElement(localVideoToolbar);
+            createFocusIndicatorElement(indicatorSpan[0]);
         }
     }
     else if (Object.keys(connection.jingle.sessions).length > 0) {
@@ -1121,12 +1157,11 @@ function scrollChatToBottom() {
     }, 5);
 }
 
-
 /*
  * Toggles the application in and out of full screen mode 
  * (a.k.a. presentation mode in Chrome).
  */
-function toggleFullScreen() {    
+function toggleFullScreen() {
     var fsElement = document.documentElement;
 
     if (!document.mozFullScreen && !document.webkitIsFullScreen){
@@ -1149,5 +1184,106 @@ function toggleFullScreen() {
             document.webkitCancelFullScreen();
             document.webkitCancelFullScreen();
         }
+    }
+}
+
+/**
+ *
+ */
+function showDisplayName(videoSpanId, displayName) {
+    var nameSpan = $('#' + videoSpanId + '>span.displayname');
+
+    // If we already have a display name for this video.
+    if (nameSpan.length > 0) {
+        var nameSpanElement = nameSpan.get(0);
+
+        if (nameSpanElement.id == 'localDisplayName'
+            && $('#localDisplayName').html() != displayName)
+            $('#localDisplayName').html(displayName);
+        else
+            $('#' + videoSpanId + '_name').html(displayName);
+    }
+    else {
+        var editButton = null;
+        if (videoSpanId == 'localVideoContainer') {
+            editButton = createEditDisplayNameButton();
+        }
+
+        if (displayName.length) {
+            nameSpan = document.createElement('span');
+            nameSpan.className = 'displayname';
+            nameSpan.innerHTML = displayName;
+            $('#' + videoSpanId)[0].appendChild(nameSpan);
+        }
+
+        if (!editButton) {
+            nameSpan.id = videoSpanId + '_name';
+        }
+        else {
+            nameSpan.id = 'localDisplayName';
+            $('#' + videoSpanId)[0].appendChild(editButton);
+            
+            var editableText = document.createElement('input');
+            editableText.className = 'displayname';
+            editableText.id = 'editDisplayName';
+
+            if (displayName.length)
+                editableText.value = displayName.substring(0, displayName.indexOf(' (me)'));
+
+            editableText.setAttribute('style', 'display:none;');
+            editableText.setAttribute('placeholder', 'ex. Jane Pink');
+            $('#' + videoSpanId)[0].appendChild(editableText);
+
+            $('#localVideoContainer .displayname').bind("click", function(e) {
+                e.preventDefault();
+                $('#localDisplayName').hide();
+                $('#editDisplayName').show();
+                $('#editDisplayName').focus();
+                $('#editDisplayName').select();
+
+                var inputDisplayNameHandler = function(name) {
+                    if (nickname != name) {
+                        nickname = name;
+                        window.localStorage.displayname = nickname;
+                        connection.emuc.addDisplayNameToPresence(nickname);
+                        connection.emuc.sendPresence();
+                    }
+
+                    if (!$('#localDisplayName').is(":visible")) {
+                        $('#localDisplayName').html(name + " (me)");
+                        $('#localDisplayName').show();
+                        $('#editDisplayName').hide();
+                    }
+                };
+
+                $('#editDisplayName').one("focusout", function (e) {
+                    inputDisplayNameHandler(this.value);
+                });
+
+                $('#editDisplayName').on('keydown', function (e) {
+                    if (e.keyCode == 13) {
+                        e.preventDefault();
+                        inputDisplayNameHandler(this.value);
+                    }
+                });
+            });
+        }
+    }
+}
+
+function createEditDisplayNameButton() {
+    var editButton = document.createElement('a');
+    editButton.className = 'displayname';
+    editButton.innerHTML = '<i class="fa fa-pencil"></i>';
+
+    return editButton;
+}
+
+function setChatConversationMode(isConversationMode) {
+    if (isConversationMode) {
+        $('#nickname').css({visibility:"hidden"});
+        $('#chatconversation').css({visibility:'visible'});
+        $('#usermsg').css({visibility:'visible'});
+        $('#usermsg').focus();
     }
 }

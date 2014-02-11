@@ -31,15 +31,12 @@ Strophe.addConnectionPlugin('emuc', {
             this.connection.addHandler(this.onPresenceError.bind(this), null, 'presence', 'error', null, this.roomjid, {matchBare: true});
             this.connection.addHandler(this.onMessage.bind(this), null, 'message', null, null, this.roomjid, {matchBare: true});
         }
-
-        var join = $pres({to: this.myroomjid }).c('x', {xmlns: 'http://jabber.org/protocol/muc'});
         if (password !== undefined) {
-            join.c('password').t(password);
+            this.presMap['password'] = password;
         }
-        this.connection.send(join);
+        this.sendPresence();
     },
     onPresence: function (pres) {
-        console.log("PRESENCE", pres);
         var from = pres.getAttribute('from');
         var type = pres.getAttribute('type');
         if (type != null) {
@@ -83,6 +80,10 @@ Strophe.addConnectionPlugin('emuc', {
         var tmp = $(pres).find('>x[xmlns="http://jabber.org/protocol/muc#user"]>item');
         member.affiliation = tmp.attr('affiliation');
         member.role = tmp.attr('role');
+
+        var nicktag = $(pres).find('>nick[xmlns="http://jabber.org/protocol/nick"]');
+        member.displayName = (nicktag.length > 0 ? nicktag.text() : null);
+
         if (from == this.myroomjid) {
             if (member.affiliation == 'owner') this.isOwner = true;
             if (!this.joined) {
@@ -90,6 +91,8 @@ Strophe.addConnectionPlugin('emuc', {
                 $(document).trigger('joined.muc', [from, member]);
                 this.list_members.push(from);
             }
+            else
+                $(document).trigger('presence.muc', [from, member, pres]);
         } else if (this.members[from] === undefined) {
             // new participant
             this.members[from] = member;
@@ -167,7 +170,19 @@ Strophe.addConnectionPlugin('emuc', {
     },
     sendPresence: function () {
         var pres = $pres({to: this.presMap['to'] });
-        pres.c('x', {xmlns: this.presMap['xns']}).up();
+        pres.c('x', {xmlns: this.presMap['xns']});
+
+        if (this.presMap['password']) {
+            pres.c('password').t(this.presMap['password']).up();
+        }
+
+        pres.up();
+
+        if (this.presMap['displayName']) {
+            // XEP-0172
+            pres.c('nick', {xmlns: 'http://jabber.org/protocol/nick'}).t(this.presMap['displayName']).up();
+        }
+
         if (this.presMap['prezins']) {
             pres.c('prezi', {xmlns: this.presMap['prezins'], 'url': this.presMap['preziurl']}).
                             c('current').t(this.presMap['prezicurrent']).up().up();
@@ -191,6 +206,9 @@ Strophe.addConnectionPlugin('emuc', {
         }
         pres.up();
         connection.send(pres);
+    },
+    addDisplayNameToPresence: function (displayName) {
+        this.presMap['displayName'] = displayName;
     },
     addMediaToPresence: function (sourceNumber, mtype, ssrcs) {
         if (!this.presMap['medians'])
