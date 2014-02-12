@@ -8,6 +8,7 @@
     <script src="muc.js?v=5"></script><!-- simple MUC library -->
     <script src="estos_log.js?v=2"></script><!-- simple stanza logger -->
     <script src="app.js?v=18"></script><!-- application logic -->
+    <script src="etherpad.js?v=1"></script><!-- etherpad plugin -->
     <script src="smileys.js?v=1"></script><!-- smiley images -->
     <script src="replacement.js?v=5"></script><!-- link and smiley replacement -->
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
@@ -36,11 +37,7 @@
             <div class="header_button_separator"></div>
             <a class="button" onclick='openPreziDialog();'><i title="Share prezi" class="fa fa-desktop fa-lg"></i></a>
             <div class="header_button_separator"></div>
-            <a class="button" onclick='toggleFullScreen();'><i title="Enter / Exit Full Screen" class="fa fa-arrows-alt"></i></a>
-            <!--span id="settingsButton">
-                <div class="header_button_separator"></div>
-                <a class="button" onclick='openSettingsDialog();'><i title="Settings" class="fa fa-cog fa-lg"></i></a>
-            </span-->
+            <a class="button" onclick='toggleFullScreen();'><i title="Enter / Exit Full Screen" class="fa fa-arrows-alt fa-lg"></i></a>
         </span>
     </div>
     <div id="settings">
@@ -58,6 +55,7 @@
         <div id="largeVideoContainer" class="videocontainer">
             <div id="reloadPresentation"><a onclick='reloadPresentation();'><i title="Reload Prezi" class="fa fa-repeat fa-lg"></i></a></div>
             <div id="presentation"></div>
+            <div id="etherpad"></div>
             <video id="largeVideo" autoplay oncontextmenu="return false;"></video>
         </div>
         <div class="fade_line"></div>
