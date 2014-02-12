@@ -86,6 +86,7 @@ function doJoin() {
             window.history.pushState('VideoChat', 'Room: ' + roomnode, window.location.pathname + roomnode);
         }
     }
+
     roomjid = roomnode + '@' + config.hosts.muc;
 
     if (config.useNicks) {
@@ -111,7 +112,9 @@ $(document).bind('mediaready.jingle', function (event, stream) {
     updateLargeVideo(localVideoSrc, true, 0);
 
     $('#localVideo').click(function () {
-	updateLargeVideo($(this).attr('src'), true, 0);
+        $(document).trigger("video.selected", [false]);
+        updateLargeVideo($(this).attr('src'), true, 0);
+
         $('video').each(function (idx, el) {
             if (el.id.indexOf('mixedmslabel') != -1) {
                 el.volume = 0;
@@ -217,6 +220,7 @@ $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
     };
     sel.click(
         function () {
+            $(document).trigger("video.selected", [false]);
             updateLargeVideo($(this).attr('src'), false, 1);
         }
     );
@@ -282,6 +286,10 @@ $(document).bind('joined.muc', function (event, jid, info) {
         focus = new ColibriFocus(connection, config.hosts.bridge);
     }
 
+    if (focus && config.etherpad_base) {
+        Etherpad.init();
+    }
+
     showFocusIndicator();
 
     // Once we've joined the muc show the toolbar
@@ -338,13 +346,13 @@ $(document).bind('left.muc', function (event, jid) {
         $(container).hide();
         resizeThumbnails();
     }
-
     if (focus === null && connection.emuc.myroomjid == connection.emuc.list_members[0]) {
         console.log('welcome to our new focus... myself');
         focus = new ColibriFocus(connection, config.hosts.bridge);
         if (Object.keys(connection.emuc.members).length > 0) {
             focus.makeConference(Object.keys(connection.emuc.members));
         }
+        $(document).trigger('focusechanged.muc', [focus]);
     } 
     else if (focus && Object.keys(connection.emuc.members).length === 0) {
         console.log('everyone left');
@@ -437,11 +445,11 @@ $(document).bind('presentationadded.muc', function (event, jid, presUrl, current
     setPresentationVisible(true);
     $('#largeVideoContainer').hover(
         function (event) {
-            if ($('#largeVideo').css('visibility') == 'hidden')
+            if (isPresentationVisible())
                 $('#reloadPresentation').css({display:'inline-block'});
         },
         function (event) {
-            if ($('#largeVideo').css('visibility') == 'visible')
+            if (!isPresentationVisible())
                 $('#reloadPresentation').css({display:'none'});
             else {
                 var e = event.toElement || event.relatedTarget;
@@ -519,6 +527,9 @@ function reloadPresentation() {
  */
 function setPresentationVisible(visible) {
     if (visible) {
+        // Trigger the video.selected event to indicate a change in the large video.
+        $(document).trigger("video.selected", [true]);
+
         $('#largeVideo').fadeOut(300, function () {
             $('#largeVideo').css({visibility:'hidden'});
             $('#presentation>iframe').fadeIn(300, function() {
@@ -536,6 +547,10 @@ function setPresentationVisible(visible) {
             });
         }
     }
+}
+
+var isPresentationVisible = function () {
+    return ($('#presentation>iframe') != null && $('#presentation>iframe').css('opacity') == 1);
 }
 
 /**
@@ -607,15 +622,20 @@ function resizeLarge() {
         $('#presentation>iframe').width(availableWidth);
         $('#presentation>iframe').height(availableWidth / aspectRatio);
     }
-    
+
+    if ($('#etherpad>iframe')) {
+        $('#etherpad>iframe').width(availableWidth);
+        $('#etherpad>iframe').height(availableWidth / aspectRatio);
+    }
+
     resizeThumbnails();
 }
 
 function resizeThumbnails() {
     // Calculate the available height, which is the inner window height minus 39px for the header
-    // minus 4px for the delimiter lines on the top and bottom of the large video,
+    // minus 2px for the delimiter lines on the top and bottom of the large video,
     // minus the 36px space inside the remoteVideos container used for highlighting shadow.
-    var availableHeight = window.innerHeight - $('#largeVideo').height() - 79;
+    var availableHeight = window.innerHeight - $('#largeVideo').height() - 59;
     var numvids = $('#remoteVideos>span:visible').length;
 
     // Remove the 1px borders arround videos and the chat width.
@@ -629,7 +649,7 @@ function resizeThumbnails() {
     }
 
     // size videos so that while keeping AR and max height, we have a nice fit
-    $('#remoteVideos').height(availableHeight+26); // add the 2*18px-padding-top border used for highlighting shadow.
+    $('#remoteVideos').height(availableHeight);
     $('#remoteVideos>span').width(availableWidth);
     $('#remoteVideos>span').height(availableHeight);
 }
