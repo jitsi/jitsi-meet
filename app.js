@@ -130,13 +130,14 @@ $(document).bind('mediafailure.jingle', function () {
 $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
     function waitForRemoteVideo(selector, sid) {
         var sess = connection.jingle.sessions[sid];
+        if (data.stream.id == 'mixedmslabel') return;
         videoTracks = data.stream.getVideoTracks();
         if (videoTracks.length === 0 || selector[0].currentTime > 0) {
             RTC.attachMediaStream(selector, data.stream); // FIXME: why do i have to do this for FF?
             $(document).trigger('callactive.jingle', [selector, sid]);
             console.log('waitForremotevideo', sess.peerconnection.iceConnectionState, sess.peerconnection.signalingState);
         } else {
-            setTimeout(function () { waitForRemoteVideo(selector, sid); }, 100);
+            setTimeout(function () { waitForRemoteVideo(selector, sid); }, 250);
         }
     }
     var sess = connection.jingle.sessions[sid];
@@ -220,7 +221,43 @@ $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
             updateLargeVideo($(this).attr('src'), false, 1);
         }
     );
+    // an attempt to work around https://github.com/jitsi/jitmeet/issues/32
+    if (data.peerjid && sess.peerjid == data.peerjid && 
+            data.stream.getVideoTracks().length == 0 && 
+            connection.jingle.localStream.getVideoTracks().length > 0) {
+        window.setTimeout(function() {
+            sendKeyframe(sess.peerconnection);
+        }, 3000);
+    }
 });
+
+// an attempt to work around https://github.com/jitsi/jitmeet/issues/32
+function sendKeyframe(pc) {
+    console.log('sendkeyframe', pc.iceConnectionState);
+    if (pc.iceConnectionState != 'connected') return; // safe...
+    pc.setRemoteDescription(
+        pc.remoteDescription,
+        function () {
+            pc.createAnswer(
+                function (modifiedAnswer) {
+                    pc.setLocalDescription(modifiedAnswer,
+                        function () {
+                        },
+                        function (error) {
+                            console.log('triggerKeyframe setLocalDescription failed', error);
+                        }
+                    );
+                },
+                function (error) {
+                    console.log('triggerKeyframe createAnswer failed', error);
+                }
+            );
+        },
+        function (error) {
+            console.log('triggerKeyframe setRemoteDescription failed', error);
+        }
+    );
+}
 
 $(document).bind('callincoming.jingle', function (event, sid) {
     var sess = connection.jingle.sessions[sid];
