@@ -31,6 +31,10 @@ html, body{
     height: 100%;
 }
 
+#etherpad {
+    z-index: 0;
+}
+
 .videocontainer>span {
     display: none; /* enable when you want nicks to be shown */
     position: absolute;

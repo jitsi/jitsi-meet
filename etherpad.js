@@ -1,5 +1,8 @@
 var Etherpad = (function (my) {
     var etherpadName = null;
+    var etherpadIFrame = null;
+    var domain = null;
+    var options = "?showControls=true&showChat=false&showLineNumbers=true&useMonospaceFont=false";
 
     /**
      * Initializes the etherpad.
@@ -8,6 +11,8 @@ var Etherpad = (function (my) {
 
         if (config.etherpad_base && !etherpadName) {
 
+            domain = config.etherpad_base;
+
             if (!name) {
                 // In case we're the focus we generate the name.
                 etherpadName = Math.random().toString(36).substring(7) + '_' + (new Date().getTime()).toString();
@@ -15,21 +20,8 @@ var Etherpad = (function (my) {
             }
             else
                 etherpadName = name;
-                
-            this.domain = config.etherpad_base;
-            this.options = "?showControls=true&showChat=false&showLineNumbers=true&useMonospaceFont=false";
 
             createEtherpadButton();
-
-            this.iframe = document.createElement('iframe');
-            this.iframe.src = this.domain + etherpadName + this.options;
-            this.iframe.frameBorder = 0;
-            this.iframe.scrolling = "no";
-            this.iframe.width = $('#largeVideoContainer').width() || 640;
-            this.iframe.height = $('#largeVideoContainer').height() || 480;
-            this.iframe.setAttribute('style', 'visibility: hidden;');
-
-            document.getElementById('etherpad').appendChild(this.iframe);
         }
     }
 
@@ -37,6 +29,10 @@ var Etherpad = (function (my) {
      * Opens/hides the Etherpad.
      */
     my.toggleEtherpad = function (isPresentation) {
+        if (!etherpadIFrame)
+            createIFrame();
+
+        // TODO FIX large video and prezi toggling. Too many calls from different places.
         var largeVideo = null;
         if (isPresentationVisible())
             largeVideo = $('#presentation>iframe');
@@ -103,6 +99,22 @@ var Etherpad = (function (my) {
     }
 
     /**
+     * Creates the IFrame for the etherpad.
+     */
+    function createIFrame() {
+        etherpadIFrame = document.createElement('iframe');
+        etherpadIFrame.src = domain + etherpadName + options;
+                console.log("ETHER PAD URL", etherpadIFrame.src);
+        etherpadIFrame.frameBorder = 0;
+        etherpadIFrame.scrolling = "no";
+        etherpadIFrame.width = $('#largeVideoContainer').width() || 640;
+        etherpadIFrame.height = $('#largeVideoContainer').height() || 480;
+        etherpadIFrame.setAttribute('style', 'visibility: hidden;');
+
+        document.getElementById('etherpad').appendChild(etherpadIFrame);
+    }
+
+    /**
      * On Etherpad added to muc.
      */
     $(document).bind('etherpadadded.muc', function (event, jid, etherpadName) {
@@ -128,7 +140,7 @@ var Etherpad = (function (my) {
         if (!config.etherpad_base)
             return;
 
-        if ($('#etherpad>iframe').css('visibility') != 'hidden')
+        if (etherpadIFrame && etherpadIFrame.style.visibility != 'hidden')
             Etherpad.toggleEtherpad(isPresentation);
     });
 

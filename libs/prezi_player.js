@@ -94,7 +94,7 @@
 
             this.initPollInterval = setInterval(function(){
                 _this.sendMessage({'action': 'init'});
-            }, 200);
+            }, 500);
             PreziPlayer.players[id] = this;
         }
 
