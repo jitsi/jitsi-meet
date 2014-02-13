@@ -104,7 +104,6 @@ var Etherpad = (function (my) {
     function createIFrame() {
         etherpadIFrame = document.createElement('iframe');
         etherpadIFrame.src = domain + etherpadName + options;
-                console.log("ETHER PAD URL", etherpadIFrame.src);
         etherpadIFrame.frameBorder = 0;
         etherpadIFrame.scrolling = "no";
         etherpadIFrame.width = $('#largeVideoContainer').width() || 640;
