@@ -43,6 +43,13 @@ Strophe.addConnectionPlugin('emuc', {
             return true;
         }
 
+        // Parse etherpad tag.
+        var etherpad = $(pres).find('>etherpad');
+        if (etherpad.length) {
+            $(document).trigger('etherpadadded.muc', [from, etherpad.text()]);
+        }
+
+        // Parse prezi tag.
         var presentation = $(pres).find('>prezi');
         if (presentation.length)
         {
@@ -188,6 +195,10 @@ Strophe.addConnectionPlugin('emuc', {
                             c('current').t(this.presMap['prezicurrent']).up().up();
         }
 
+        if (this.presMap['etherpadns']) {
+            pres.c('etherpad', {xmlns: this.presMap['etherpadns']}).t(this.presMap['etherpadname']).up();
+        }
+
         if (this.presMap['medians'])
         {
             pres.c('media', {xmlns: this.presMap['medians']});
@@ -232,5 +243,9 @@ Strophe.addConnectionPlugin('emuc', {
     },
     getPrezi: function (roomjid) {
         return this.preziMap[roomjid];
+    },
+    addEtherpadToPresence: function(etherpadName) {
+        this.presMap['etherpadns'] = 'http://jitsi.org/jitmeet/etherpad';
+        this.presMap['etherpadname'] = etherpadName;
     }
 });

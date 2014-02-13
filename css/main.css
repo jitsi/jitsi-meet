@@ -22,7 +22,7 @@ html, body{
     margin-left: auto;
     margin-right: auto;
 }
-#presentation, .videocontainer>video {
+#presentation, #etherpad, .videocontainer>video {
     position: absolute;
     left: 0px;
     top: 0px;
@@ -53,7 +53,7 @@ html, body{
     position:relative;
     text-align:center;
     height:196px;
-    padding-top:10px;
+    padding: 5px 0px;
     width:auto;
     overflow: hidden;
     border:1px solid transparent;
@@ -415,5 +415,5 @@ form {
     background-clip: padding-box;
     -webkit-border-radius: 5px;
     -webkit-background-clip: padding-box;
-    z-index: 2;
+    z-index: 3;
 }
