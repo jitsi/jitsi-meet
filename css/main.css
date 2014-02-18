@@ -3,7 +3,7 @@ html, body{
     height:100%;
     color: #424242;
     font-family:'Helvetica Neue', Helvetica, sans-serif;
-	font-weight: 400;
+    font-weight: 400;
     background: #e9e9e9;
     overflow-x: hidden;
 }
@@ -185,16 +185,16 @@ html, body{
 }
 
 #left {
-	display:block;
+    display:block;
     position: absolute;
-	left: 0px;
+    left: 0px;
     top: 0px;
     width: 100px;
     height: 39px;
-	background-image:url(../images/left1.png);
-	background-repeat:no-repeat;
-	margin: 0;
-	padding: 0;
+    background-image:url(../images/left1.png);
+    background-repeat:no-repeat;
+    margin: 0;
+    padding: 0;
 }
 
 #leftlogo {
@@ -222,6 +222,11 @@ html, body{
     visibility: hidden;
 }
 
+.toolbar_span {
+    display: inline-block;
+    position: relative;
+}
+
 .button {
     display: inline-block;
     position: relative;
@@ -233,6 +238,30 @@ html, body{
     font-size: 11pt;
     text-align: center;
     text-shadow: 0px 1px 0px rgba(255,255,255,.3), 0px -1px 0px rgba(0,0,0,.7);
+    z-index: 1;
+}
+
+.toolbar_span>span {
+    display: inline-block;
+    position: absolute;
+    font-size: 7pt;
+    color: #ffffff;
+    text-align:center;
+    cursor: pointer;
+}
+
+#chat {
+    font-size:1.65em;
+    -webkit-transition: all .5s ease-in-out;;
+       -moz-transition: all .5s ease-in-out;;
+            transition: all .5s ease-in-out;;
+}
+
+#chat.active {
+    -webkit-text-shadow: 0 0 10px #ffffff;
+    -moz-text-shadow: 0 0 10px #ffffff;
+    text-shadow: 0 0 10px #ffffff;
+    -webkit-transform: scale(1.1);
 }
 
 a.button:hover {
@@ -266,15 +295,15 @@ a.button:hover {
 }
 
 #right {
-	display:block;
+    display:block;
     position:absolute;
     right: 0px;
     top: 0px;
-	background-image:url(../images/right1.png);
-	background-repeat:no-repeat;
-	margin:0;
-	padding:0;
-	width:100px;
+    background-image:url(../images/right1.png);
+    background-repeat:no-repeat;
+    margin:0;
+    padding:0;
+    width:100px;
     height:39px;
 }
 

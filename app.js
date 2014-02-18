@@ -182,6 +182,8 @@ $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
         container = document.createElement('span');
         container.className = 'videocontainer';
         remotes.appendChild(container);
+        console.log("PLAY USER JOINEDDDDDDDD");
+        Util.playSoundNotification('userJoined');
     }
     var vid = document.createElement('video');
     var id = 'remoteVideo_' + sid + '_' + data.stream.id;
@@ -212,11 +214,12 @@ $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
             if (pick) {
                  if (pick.src === localVideoSrc)
                  isLocalVideo = true;
-                 
+
                  updateLargeVideo(pick.src, isLocalVideo, pick.volume);
             }
         }
         $('#' + id).parent().remove();
+        Util.playSoundNotification('userLeft');
         resizeThumbnails();
     };
     sel.click(
@@ -632,8 +635,8 @@ function toggleAudio() {
     }
 }
 
-function resizeLarge() {
-    resizeChat();
+var resizeLarge = function () {
+    Chat.resizeChat();
     var availableHeight = window.innerHeight;
     var chatspaceWidth = $('#chatspace').is(":visible")
                             ? $('#chatspace').width()
@@ -666,7 +669,7 @@ function resizeLarge() {
     }
 
     resizeThumbnails();
-}
+};
 
 function resizeThumbnails() {
     // Calculate the available height, which is the inner window height minus 39px for the header
@@ -691,70 +694,8 @@ function resizeThumbnails() {
     $('#remoteVideos>span').height(availableHeight);
 }
 
-function resizeChat() {
-    var availableHeight = window.innerHeight;
-    var availableWidth = window.innerWidth;
-
-    var chatWidth = 200;
-    if (availableWidth*0.2 < 200)
-        chatWidth = availableWidth*0.2;
-
-    $('#chatspace').width(chatWidth);
-    $('#chatspace').height(availableHeight - 40);
-
-    resizeChatConversation();
-}
-
-function resizeChatConversation() {
-    var usermsgStyleHeight = document.getElementById("usermsg").style.height;
-    var usermsgHeight = usermsgStyleHeight.substring(0, usermsgStyleHeight.indexOf('px'));
-
-    $('#chatconversation').width($('#chatspace').width() - 10);
-    $('#chatconversation').height(window.innerHeight - 50 - parseInt(usermsgHeight));
-}
-
 $(document).ready(function () {
-    var storedDisplayName = window.localStorage.displayname;
-    if (storedDisplayName) {
-        nickname = storedDisplayName;
-
-        setChatConversationMode(true);
-    }
-
-    $('#nickinput').keydown(function(event) {
-        if (event.keyCode == 13) {
-            event.preventDefault();
-            var val = this.value;
-            this.value = '';
-            if (!nickname) {
-                nickname = val;
-                window.localStorage.displayname = nickname;
-
-                connection.emuc.addDisplayNameToPresence(nickname);
-                connection.emuc.sendPresence();
-
-                setChatConversationMode(true);
-
-                return;
-            }
-        }
-    });
-
-    $('#usermsg').keydown(function(event) {
-        if (event.keyCode == 13) {
-            event.preventDefault();
-            var message = this.value;
-            $('#usermsg').val('').trigger('autosize.resize');
-            this.focus();
-            connection.emuc.sendMessage(message, nickname);
-        }
-    });
-
-    var onTextAreaResize = function() {
-        resizeChatConversation();
-        scrollChatToBottom();
-    };
-    $('#usermsg').autosize({callback: onTextAreaResize});
+    Chat.init();
 
     // Set the defaults for prompt dialogs.
     jQuery.prompt.setDefaults({persistent: false});
@@ -824,24 +765,6 @@ function dump(elem, filename){
     data.metadata = metadata;
     elem.href += encodeURIComponent(JSON.stringify(data, null, '  '));
     return false;
-}
-
-/*
- * Appends the given message to the chat conversation.
- */
-function updateChatConversation(nick, message)
-{
-    var divClassName = '';
-    if (nickname == nick)
-        divClassName = "localuser";
-    else
-        divClassName = "remoteuser";
-
-    //replace links and smileys
-    message = processReplacements(message);
-
-    $('#chatconversation').append('<div class="' + divClassName + '"><b>' + nick + ': </b>' + message + '</div>');
-    $('#chatconversation').animate({ scrollTop: $('#chatconversation')[0].scrollHeight}, 1000);
 }
 
 /*
@@ -1093,44 +1016,6 @@ function updateLockButton() {
 }
 
 /*
- * Opens / closes the chat area.
- */
-function openChat() {
-    var chatspace = $('#chatspace');
-    var videospace = $('#videospace');
-
-    var onShow = function () {
-        resizeLarge();
-        $('#chatspace').show("slide", { direction: "right", duration: 500});
-    };
-    var onHide = function () {
-        $('#chatspace').hide("slide", { direction: "right", duration: 500});
-        resizeLarge();
-    };
-
-    if (chatspace.css("display") == 'block') {
-        videospace.animate({right: 0}, {queue: false, duration: 500, progress: onHide});
-    }
-    else {
-        videospace.animate({right: chatspace.width()},
-                           {queue: false,
-                            duration: 500,
-                            progress: onShow,
-                            complete: function() {
-                                scrollChatToBottom();
-                            }
-                           });
-    }
-
-    // Request the focus in the nickname field or the chat input field.
-    if ($('#nickname').css('visibility') == 'visible')
-        $('#nickinput').focus();
-    else {
-        $('#usermsg').focus();
-    }
-}
-
-/*
  * Shows the call main toolbar.
  */
 function showToolbar() {
@@ -1199,7 +1084,7 @@ function addRemoteVideoContainer(id) {
     return container;
 }
 
-/*
+/**
  * Creates the element indicating the focus of the conference.
  */
 function createFocusIndicatorElement(parentElement) {
@@ -1209,13 +1094,7 @@ function createFocusIndicatorElement(parentElement) {
     parentElement.appendChild(focusIndicator);
 }
 
-function scrollChatToBottom() {
-    setTimeout(function() {
-        $('#chatconversation').scrollTop($('#chatconversation')[0].scrollHeight);
-    }, 5);
-}
-
-/*
+/**
  * Toggles the application in and out of full screen mode 
  * (a.k.a. presentation mode in Chrome).
  */
@@ -1246,7 +1125,7 @@ function toggleFullScreen() {
 }
 
 /**
- *
+ * Shows the display name for the given video.
  */
 function showDisplayName(videoSpanId, displayName) {
     var nameSpan = $('#' + videoSpanId + '>span.displayname');
@@ -1306,7 +1185,7 @@ function showDisplayName(videoSpanId, displayName) {
                         connection.emuc.addDisplayNameToPresence(nickname);
                         connection.emuc.sendPresence();
 
-                        setChatConversationMode(true);
+                        Chat.setChatConversationMode(true);
                     }
 
                     if (!$('#localDisplayName').is(":visible")) {
@@ -1337,13 +1216,4 @@ function createEditDisplayNameButton() {
     editButton.innerHTML = '<i class="fa fa-pencil"></i>';
 
     return editButton;
-}
-
-function setChatConversationMode(isConversationMode) {
-    if (isConversationMode) {
-        $('#nickname').css({visibility:"hidden"});
-        $('#chatconversation').css({visibility:'visible'});
-        $('#usermsg').css({visibility:'visible'});
-        $('#usermsg').focus();
-    }
 }

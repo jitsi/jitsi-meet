@@ -8,6 +8,8 @@
     <script src="muc.js?v=6"></script><!-- simple MUC library -->
     <script src="estos_log.js?v=2"></script><!-- simple stanza logger -->
     <script src="app.js?v=20"></script><!-- application logic -->
+    <script src="chat.js?v=1"></script><!-- chat logic -->
+    <script src="util.js?v=1"></script><!-- utility functions -->
     <script src="etherpad.js?v=2"></script><!-- etherpad plugin -->
     <script src="smileys.js?v=1"></script><!-- smiley images -->
     <script src="replacement.js?v=5"></script><!-- link and smiley replacement -->
@@ -25,17 +27,22 @@
         <a href="http://jitsi.org" target="_blank"><div id="leftlogo"></div></a>
         <a href="http://www.estos.com/" target="_blank"><div id="rightlogo"></div></a>
         <span id="toolbar">
-            <a class="button" onclick='buttonClick("#mute", "fa fa-microphone fa-lg fa fa-microphone-slash fa-lg");toggleAudio();'><i id="mute" title="Mute / unmute" class="fa fa-microphone fa-lg"></i></a>
+            <a class="button" onclick='buttonClick("#mute", "fa fa-microphone fa-lg fa fa-microphone-slash fa-lg");toggleAudio();'>
+                <i id="mute" title="Mute / unmute" class="fa fa-microphone fa-lg"></i></a>
             <div class="header_button_separator"></div>
-            <a class="button" onclick='buttonClick("#video", "fa fa-video-camera fa-lg fa fa-video-camera no-fa-video-camera fa-lg");toggleVideo();'><i id="video" title="Start / stop camera" class="fa fa-video-camera fa-lg"></i></a>
+            <a class="button" onclick='buttonClick("#video", "fa fa-video-camera fa-lg fa fa-video-camera no-fa-video-camera fa-lg");toggleVideo();'>
+                <i id="video" title="Start / stop camera" class="fa fa-video-camera fa-lg"></i></a>
             <div class="header_button_separator"></div>
             <a class="button" onclick="openLockDialog();"><i id="lockIcon" title="Lock/unlock room" class="fa fa-unlock fa-lg"></i></a>
             <div class="header_button_separator"></div>
             <a class="button" onclick="openLinkDialog();"><i title="Invite others" class="fa fa-link fa-lg"></i></a>
             <div class="header_button_separator"></div>
-            <a class="button" onclick='openChat();'><i id="chat" title="Open chat" class="fa fa-comments fa-lg"></i></a>
+            <span class="toolbar_span">
+                <a class="button" onclick='Chat.toggleChat();'><i id="chat" title="Open chat" class="fa fa-comments-o fa-lg"></i></a>
+                <span id="unreadMessages"></span>
+            </span>
             <div class="header_button_separator"></div>
-            <a class="button" onclick='openPreziDialog();'><i title="Share prezi" class="fa fa-desktop fa-lg"></i></a>
+            <a class="button" onclick='openPreziDialog();'><i title="Share prezi" class="fa fa-picture-o fa-lg"></i></a>
             <div class="header_button_separator"></div>
             <a class="button" onclick='toggleFullScreen();'><i title="Enter / Exit Full Screen" class="fa fa-arrows-alt fa-lg"></i></a>
         </span>
@@ -65,6 +72,8 @@
                 <video id="localVideo" autoplay oncontextmenu="return false;" muted></video>
                 <span class="focusindicator"></span>
             </span>
+            <audio id="userJoined" src="sounds/joined.wav" preload="auto"></audio>
+            <audio id="userLeft" src="sounds/left.wav" preload="auto"></audio>
         </div>
     </div>
     <div id="chatspace">
@@ -74,9 +83,10 @@
                 <input type='text' id="nickinput" placeholder='Choose a nickname' autofocus>
             </form>
         </div>
-        
+
         <!--div><i class="fa fa-comments">&nbsp;</i><span class='nick'></span>:&nbsp;<span class='chattext'></span></div-->
         <div id="chatconversation"></div>
+        <audio id="chatNotification" src="sounds/incomingMessage.wav" preload="auto"></audio>
         <textarea id="usermsg" placeholder='Enter text...' autofocus></textarea>
     </div>
     <a id="downloadlog" onclick='dump(event.target);'><i title="Download support information" class="fa fa-cloud-download"></i></a>

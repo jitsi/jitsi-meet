@@ -15,7 +15,8 @@ var Etherpad = (function (my) {
 
             if (!name) {
                 // In case we're the focus we generate the name.
-                etherpadName = Math.random().toString(36).substring(7) + '_' + (new Date().getTime()).toString();
+                etherpadName = Math.random().toString(36).substring(7)
+                                + '_' + (new Date().getTime()).toString();
                 shareEtherpad();
             }
             else
@@ -94,7 +95,8 @@ var Etherpad = (function (my) {
         button.appendChild(buttonImage);
 
         var toolbar = document.getElementById('toolbar');
-        toolbar.insertBefore(button, toolbar.childNodes[toolbar.childNodes.length - 4]);
+        toolbar.insertBefore(button,
+                toolbar.childNodes[toolbar.childNodes.length - 4]);
         toolbar.insertBefore(separator, button);
     }
 

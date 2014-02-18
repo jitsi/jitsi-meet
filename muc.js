@@ -143,7 +143,7 @@ Strophe.addConnectionPlugin('emuc', {
         if (txt) {
             console.log('chat', nick, txt);
 
-            updateChatConversation(nick, txt);
+            Chat.updateChatConversation(nick, txt);
         }
         return true;
     },
