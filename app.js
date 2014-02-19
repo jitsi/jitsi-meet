@@ -182,7 +182,6 @@ $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
         container = document.createElement('span');
         container.className = 'videocontainer';
         remotes.appendChild(container);
-        console.log("PLAY USER JOINEDDDDDDDD");
         Util.playSoundNotification('userJoined');
     }
     var vid = document.createElement('video');

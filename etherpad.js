@@ -22,9 +22,9 @@ var Etherpad = (function (my) {
             else
                 etherpadName = name;
 
-            createEtherpadButton();
+            enableEtherpadButton();
         }
-    }
+    };
 
     /**
      * Opens/hides the Etherpad.
@@ -77,27 +77,9 @@ var Etherpad = (function (my) {
     /**
      * Creates the Etherpad button and adds it to the toolbar.
      */
-    function createEtherpadButton() {
-        //<div class="header_button_separator"></div>
-        //<a class="button" onclick='Etherpad.openEtherpad("teeest");'>
-        //<i title="Open shared document" class="fa fa-file-text fa-lg"></i></a>
-        var separator = document.createElement('div');
-        separator.className = 'header_button_separator';
-
-        var button = document.createElement('a');
-        button.className = 'button';
-        button.setAttribute('onclick', 'Etherpad.toggleEtherpad(0);');
-        
-        var buttonImage = document.createElement('i');
-        buttonImage.setAttribute('title', 'Open shared document');
-        buttonImage.className = 'fa fa-file-text fa-lg';
-
-        button.appendChild(buttonImage);
-
-        var toolbar = document.getElementById('toolbar');
-        toolbar.insertBefore(button,
-                toolbar.childNodes[toolbar.childNodes.length - 4]);
-        toolbar.insertBefore(separator, button);
+    function enableEtherpadButton() {
+        if (!$('#etherpadButton').is(":visible"))
+            $('#etherpadButton').css({display:'inline-block'});
     }
 
     /**

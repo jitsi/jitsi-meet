@@ -61,10 +61,10 @@ var Chat = (function (my) {
     /**
      * Appends the given message to the chat conversation.
      */
-    my.updateChatConversation = function (nick, message) {
+    my.updateChatConversation = function (from, displayName, message) {
         var divClassName = '';
 
-        if (nickname == nick) {
+        if (connection.emuc.myroomjid == from) {
             divClassName = "localuser";
         }
         else {
@@ -81,7 +81,8 @@ var Chat = (function (my) {
         message = processReplacements(message);
 
         $('#chatconversation').append('<div class="' + divClassName + '"><b>'
-                                        + nick + ': </b>' + message + '</div>');
+                                        + displayName + ': </b>'
+                                        + message + '</div>');
         $('#chatconversation').animate(
                 { scrollTop: $('#chatconversation')[0].scrollHeight}, 1000);
     };
@@ -188,8 +189,8 @@ var Chat = (function (my) {
 
             unreadMsgElement.setAttribute(
                     'style',
-                    'top:' + Util.toInteger(topIndent)
-                     + '; left:' + Util.toInteger(leftIndent) +';');
+                    'top:' + topIndent
+                     + '; left:' + leftIndent +';');
         }
         else
             unreadMsgElement.innerHTML = '';

@@ -35,6 +35,10 @@ html, body{
     z-index: 0;
 }
 
+#etherpadButton {
+    display: none;
+}
+
 .videocontainer>span {
     display: none; /* enable when you want nicks to be shown */
     position: absolute;
@@ -261,7 +265,7 @@ html, body{
     -webkit-text-shadow: 0 0 10px #ffffff;
     -moz-text-shadow: 0 0 10px #ffffff;
     text-shadow: 0 0 10px #ffffff;
-    -webkit-transform: scale(1.1);
+    /* -webkit-transform: scale(1.1); */
 }
 
 a.button:hover {

@@ -139,11 +139,12 @@ Strophe.addConnectionPlugin('emuc', {
         var txt = $(msg).find('>body').text();
         // TODO: <subject/>
         // FIXME: this is a hack. but jingle on muc makes nickchanges hard
-        var nick = $(msg).find('>nick[xmlns="http://jabber.org/protocol/nick"]').text() || Strophe.getResourceFromJid(msg.getAttribute('from'));
+        var from = msg.getAttribute('from');
+        var nick = $(msg).find('>nick[xmlns="http://jabber.org/protocol/nick"]').text() || Strophe.getResourceFromJid(from);
         if (txt) {
             console.log('chat', nick, txt);
 
-            Chat.updateChatConversation(nick, txt);
+            Chat.updateChatConversation(from, nick, txt);
         }
         return true;
     },
