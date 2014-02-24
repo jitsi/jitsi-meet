@@ -2254,7 +2254,7 @@ JingleSession.prototype.hardMuteVideo = function (muted) {
     this.pendingop = muted ? 'mute' : 'unmute';
     this.modifySources();
 
-    this.localStream.getVideoTracks.forEach(function (track) {
+    this.connection.jingle.localStream.getVideoTracks().forEach(function (track) {
         track.enabled = !muted;
     });
 };
