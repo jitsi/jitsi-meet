@@ -55,6 +55,8 @@ function ColibriFocus(connection, bridgejid) {
     this.addssrc = [];
     // ssrc lines to be removed on next update
     this.removessrc = [];
+    // pending mute/unmute video op that modify local description
+    this.pendingop = null;
 
     // container for candidates from the focus
     // gathered before confid is known
@@ -802,8 +804,8 @@ ColibriFocus.prototype.terminate = function (session, reason) {
 
 ColibriFocus.prototype.modifySources = function () {
     var self = this;
-    if (!(this.addssrc.length || this.removessrc.length)) return;
     if (this.peerconnection.signalingState == 'closed') return;
+    if (!(this.addssrc.length || this.removessrc.length || this.pendingop !== null)) return;
 
     // FIXME: this is a big hack
     // https://code.google.com/p/webrtc/issues/detail?id=2688
@@ -844,6 +846,25 @@ ColibriFocus.prototype.modifySources = function () {
             self.peerconnection.createAnswer(
                 function (modifiedAnswer) {
                     console.log('modifiedAnswer created');
+
+                    // change video direction, see https://github.com/jitsi/jitmeet/issues/41
+                    if (self.pendingop !== null) {
+                        var sdp = new SDP(modifiedAnswer.sdp);
+                        if (sdp.media.length > 1) {
+                            switch(self.pendingop) {
+                            case 'mute':
+                                sdp.media[1] = sdp.media[1].replace('a=sendrecv', 'a=recvonly');
+                                break;
+                            case 'unmute':
+                                sdp.media[1] = sdp.media[1].replace('a=recvonly', 'a=sendrecv');
+                                break;
+                            }
+                            sdp.raw = sdp.session + sdp.media.join('');
+                            modifiedAnswer.sdp = sdp.raw;
+                        }
+                        self.pendingop = null;
+                    }
+
                     // FIXME: pushing down an answer while ice connection state 
                     // is still checking is bad...
                     //console.log(self.peerconnection.iceConnectionState);
@@ -898,6 +919,15 @@ ColibriFocus.prototype.modifySources = function () {
         }
     );
     */
+};
+
+ColibriFocus.prototype.hardMuteVideo = function (muted) {
+    this.pendingop = muted ? 'mute' : 'unmute';
+    this.modifySources();
+
+    this.localStream.getVideoTracks.forEach(function (track) {
+        track.enabled = !muted;
+    });
 };
 
 // A colibri session is similar to a jingle session, it just implements some things differently
