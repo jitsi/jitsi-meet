@@ -120,11 +120,7 @@ ColibriFocus.prototype.makeConference = function (peers) {
             console.log('end of candidates');
             return;
         }
-        if (self.confid === 0) {
-            self.drip_container.push(event.candidate);
-        } else {
-            self.sendIceCandidate(event.candidate);
-        }
+        self.sendIceCandidate(event.candidate);
     };
     this._makeConference();
     /*
@@ -714,12 +710,21 @@ ColibriFocus.prototype.addIceCandidate = function (session, elem) {
 
 // send our own candidate to the bridge
 ColibriFocus.prototype.sendIceCandidate = function (candidate) {
+    var self = this;
     //console.log('candidate', candidate);
     if (!candidate) {
         console.log('end of candidates');
         return;
     }
-    this.sendIceCandidates([candidate]);
+    if (this.drip_container.length === 0) {
+        // start 20ms callout
+        window.setTimeout(function () {
+            if (self.drip_container.length === 0) return;
+            self.sendIceCandidates(self.drip_container);
+            self.drip_container = [];
+        }, 20);
+    }
+    this.drip_container.push(candidate);
 };
 
 // sort and send multiple candidates
