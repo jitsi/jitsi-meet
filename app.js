@@ -83,7 +83,8 @@ function doJoin() {
             roomnode = path.substr(1).toLowerCase();
         } else {
             roomnode = Math.random().toString(36).substr(2, 20);
-            window.history.pushState('VideoChat', 'Room: ' + roomnode, window.location.pathname + roomnode);
+            window.history.pushState('VideoChat',
+                    'Room: ' + roomnode, window.location.pathname + roomnode);
         }
     }
 
@@ -165,12 +166,14 @@ $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
     var remotes = document.getElementById('remoteVideos');
 
     if (data.peerjid) {
-        container  = document.getElementById('participant_' + Strophe.getResourceFromJid(data.peerjid));
+        container  = document.getElementById(
+                'participant_' + Strophe.getResourceFromJid(data.peerjid));
         if (!container) {
             console.warn('no container for', data.peerjid);
             // create for now...
             // FIXME: should be removed
-            container = addRemoteVideoContainer('participant_' + Strophe.getResourceFromJid(data.peerjid));
+            container = addRemoteVideoContainer(
+                    'participant_' + Strophe.getResourceFromJid(data.peerjid));
         } else {
             //console.log('found container for', data.peerjid);
         }
@@ -588,7 +591,7 @@ $(document).bind('presentationadded.muc', function (event, jid, presUrl, current
                 });
 
     $('#presentation>iframe').attr('id', preziPlayer.options.preziId);
-                 
+
     preziPlayer.on(PreziPlayer.EVENT_STATUS, function(event) {
         console.log("prezi status", event.value);
         if (event.value == PreziPlayer.STATUS_CONTENT_READY) {
@@ -897,10 +900,10 @@ function openLockDialog() {
                      if(v)
                      {
                         var lockKey = document.getElementById('lockKey');
-                     
+
                         if (lockKey.value)
                         {
-                            setSharedKey(lockKey.value);
+                            setSharedKey(Util.escapeHtml(lockKey.value));
                             lockRoom(true);
                         }
                      }
@@ -913,7 +916,8 @@ function openLockDialog() {
  * Opens the invite link dialog.
  */
 function openLinkDialog() {
-    $.prompt('<input id="inviteLinkRef" type="text" value="' + roomUrl + '" onclick="this.select();">',
+    $.prompt('<input id="inviteLinkRef" type="text" value="'
+            + encodeURI(roomUrl) + '" onclick="this.select();" readonly>',
              {
              title: "Share this link with everyone you want to invite",
              persistent: false,
@@ -949,7 +953,7 @@ function openSettingsDialog() {
 
                         if ($('#requireNicknames').is(":checked"))
                         {
-                            // it is checked                        
+                            // it is checked
                         }
              /*
                         var lockKey = document.getElementById('lockKey');
@@ -986,7 +990,8 @@ function openPreziDialog() {
         });
     }
     else if (preziPlayer != null) {
-        $.prompt("Another participant is already sharing a Prezi. This conference allows only one Prezi at a time.",
+        $.prompt("Another participant is already sharing a Prezi." +
+                "This conference allows only one Prezi at a time.",
                  {
                  title: "Share a Prezi",
                  buttons: { "Ok": true},
@@ -1012,20 +1017,24 @@ function openPreziDialog() {
 
                     if (preziUrl.value)
                     {
-                        if (preziUrl.value.indexOf('http://prezi.com/') != 0
-                            && preziUrl.value.indexOf('https://prezi.com/') != 0)
+                        var urlValue
+                            = encodeURI(Util.escapeHtml(preziUrl.value));
+
+                        if (urlValue.indexOf('http://prezi.com/') != 0
+                            && urlValue.indexOf('https://prezi.com/') != 0)
                         {
                             $.prompt.goToState('state1');
                             return false;
                         }
                         else {
-                            var presIdTmp = preziUrl.value.substring(preziUrl.value.indexOf("prezi.com/") + 10);
-                            if (presIdTmp.indexOf('/') < 2) {
+                            var presIdTmp = urlValue.substring(urlValue.indexOf("prezi.com/") + 10);
+                            if (!Util.isAlphanumeric(presIdTmp)
+                                    || presIdTmp.indexOf('/') < 2) {
                                 $.prompt.goToState('state1');
                                 return false;
                             }
                             else {
-                                connection.emuc.addPreziToPresence(preziUrl.value, 0);
+                                connection.emuc.addPreziToPresence(urlValue, 0);
                                 connection.emuc.sendPresence();
                                 $.prompt.close();
                             }
@@ -1053,7 +1062,7 @@ function openPreziDialog() {
         };
 
         var myPrompt = jQuery.prompt(openPreziState);
-        
+
         myPrompt.on('impromptu:loaded', function(e) {
                     document.getElementById('preziUrl').focus();
                     });
@@ -1071,7 +1080,7 @@ function lockRoom(lock) {
         connection.emuc.lockRoom(sharedKey);
     else
         connection.emuc.lockRoom('');
-    
+
     updateLockButton();
 }
 
@@ -1202,6 +1211,8 @@ function toggleFullScreen() {
  * Shows the display name for the given video.
  */
 function showDisplayName(videoSpanId, displayName) {
+    var escDisplayName = Util.escapeHtml(displayName);
+
     var nameSpan = $('#' + videoSpanId + '>span.displayname');
 
     // If we already have a display name for this video.
@@ -1209,21 +1220,21 @@ function showDisplayName(videoSpanId, displayName) {
         var nameSpanElement = nameSpan.get(0);
 
         if (nameSpanElement.id == 'localDisplayName'
-            && $('#localDisplayName').html() != displayName)
-            $('#localDisplayName').html(displayName);
+            && $('#localDisplayName').html() != escDisplayName)
+            $('#localDisplayName').html(escDisplayName);
         else
-            $('#' + videoSpanId + '_name').html(displayName);
+            $('#' + videoSpanId + '_name').html(escDisplayName);
     }
     else {
         var editButton = null;
+
         if (videoSpanId == 'localVideoContainer') {
             editButton = createEditDisplayNameButton();
         }
-
-        if (displayName.length) {
+        if (escDisplayName.length) {
             nameSpan = document.createElement('span');
             nameSpan.className = 'displayname';
-            nameSpan.innerHTML = displayName;
+            nameSpan.innerHTML = escDisplayName;
             $('#' + videoSpanId)[0].appendChild(nameSpan);
         }
 
@@ -1233,13 +1244,14 @@ function showDisplayName(videoSpanId, displayName) {
         else {
             nameSpan.id = 'localDisplayName';
             $('#' + videoSpanId)[0].appendChild(editButton);
-            
+
             var editableText = document.createElement('input');
             editableText.className = 'displayname';
             editableText.id = 'editDisplayName';
 
-            if (displayName.length)
-                editableText.value = displayName.substring(0, displayName.indexOf(' (me)'));
+            if (escDisplayName.length)
+                editableText.value
+                    = escDisplayName.substring(0, escDisplayName.indexOf(' (me)'));
 
             editableText.setAttribute('style', 'display:none;');
             editableText.setAttribute('placeholder', 'ex. Jane Pink');
@@ -1254,7 +1266,7 @@ function showDisplayName(videoSpanId, displayName) {
 
                 var inputDisplayNameHandler = function(name) {
                     if (nickname != name) {
-                        nickname = name;
+                        nickname = Util.escapeHtml(name);
                         window.localStorage.displayname = nickname;
                         connection.emuc.addDisplayNameToPresence(nickname);
                         connection.emuc.sendPresence();
@@ -1263,7 +1275,7 @@ function showDisplayName(videoSpanId, displayName) {
                     }
 
                     if (!$('#localDisplayName').is(":visible")) {
-                        $('#localDisplayName').html(name + " (me)");
+                        $('#localDisplayName').html(nickname + " (me)");
                         $('#localDisplayName').show();
                         $('#editDisplayName').hide();
                     }

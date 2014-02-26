@@ -39,5 +39,23 @@ var Util = (function (my) {
         document.getElementById(id).play();
     };
 
+    /**
+     * Escapes the given text.
+     */
+    my.escapeHtml = function(unsafeText) {
+        return $('<div/>').text(unsafeText).html();
+    };
+
+    /**
+     * Indicates if the given string is an alphanumeric string.
+     * Note that some special characters are also allowed (-, _ , /) for the
+     * purpose of checking URIs. (FIXME: This should maybe moved to another not
+     * so generic method in the future.)
+     */
+    my.isAlphanumeric = function(unsafeText) {
+        var regex = /^[a-z0-9-_\/]+$/i;
+        return regex.test(unsafeText);
+    };
+
     return my;
 }(Util || {}));

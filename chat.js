@@ -19,7 +19,7 @@ var Chat = (function (my) {
         $('#nickinput').keydown(function(event) {
             if (event.keyCode == 13) {
                 event.preventDefault();
-                var val = this.value;
+                var val = Util.escapeHtml(this.value);
                 this.value = '';
                 if (!nickname) {
                     nickname = val;
@@ -38,7 +38,7 @@ var Chat = (function (my) {
         $('#usermsg').keydown(function(event) {
             if (event.keyCode == 13) {
                 event.preventDefault();
-                var message = this.value;
+                var message = Util.escapeHtml(this.value);
                 $('#usermsg').val('').trigger('autosize.resize');
                 this.focus();
                 connection.emuc.sendMessage(message, nickname);
@@ -78,10 +78,12 @@ var Chat = (function (my) {
         }
 
         //replace links and smileys
-        message = processReplacements(message);
+        var escMessage = Util.escapeHtml(message);
+        var escDisplayName = Util.escapeHtml(displayName);
+        message = processReplacements(escMessage);
 
         $('#chatconversation').append('<div class="' + divClassName + '"><b>'
-                                        + displayName + ': </b>'
+                                        + escDisplayName + ': </b>'
                                         + message + '</div>');
         $('#chatconversation').animate(
                 { scrollTop: $('#chatconversation')[0].scrollHeight}, 1000);
