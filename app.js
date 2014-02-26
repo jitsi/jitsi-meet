@@ -360,13 +360,17 @@ $(document).bind('setLocalDescription.jingle', function (event, sid) {
     // put our ssrcs into presence so other clients can identify our stream
     var sess = connection.jingle.sessions[sid];
     var newssrcs = {};
+    var directions = {};
     var localSDP = new SDP(sess.peerconnection.localDescription.sdp);
     localSDP.media.forEach(function (media) {
         var type = SDPUtil.parse_mline(media.split('\r\n')[0]).media;
+
         if (SDPUtil.find_line(media, 'a=ssrc:')) {
-            var ssrc = SDPUtil.find_line(media, 'a=ssrc:').substring(7).split(' ')[0];
             // assumes a single local ssrc
+            var ssrc = SDPUtil.find_line(media, 'a=ssrc:').substring(7).split(' ')[0];
             newssrcs[type] = ssrc;
+
+            directions[type] = (SDPUtil.find_line(media, 'a=sendrecv') || SDPUtil.find_line(media, 'a=recvonly') || SDPUtil.find_line('a=sendonly') || SDPUtil.find_line('a=inactive') || 'a=sendrecv').substr(2);
         }
     });
     console.log('new ssrcs', newssrcs);
@@ -374,7 +378,7 @@ $(document).bind('setLocalDescription.jingle', function (event, sid) {
     var i = 0;
     Object.keys(newssrcs).forEach(function (mtype) {
         i++;
-        connection.emuc.addMediaToPresence(i, mtype, newssrcs[mtype]);
+        connection.emuc.addMediaToPresence(i, mtype, newssrcs[mtype], directions[mtype]);
     });
     if (i > 0) {
         connection.emuc.sendPresence();

@@ -210,10 +210,12 @@ Strophe.addConnectionPlugin('emuc', {
                 }
             });
             if (sourceNumber > 0)
-                for (var i = 1; i <= sourceNumber/2; i ++) {
+                for (var i = 1; i <= sourceNumber/3; i ++) {
                     pres.c('source',
                            {type: this.presMap['source' + i + '_type'],
-                           ssrc: this.presMap['source' + i + '_ssrc']}).up();
+                           ssrc: this.presMap['source' + i + '_ssrc'],
+                           direction: this.presMap['source'+ i + '_direction'] || 'sendrecv' }
+                    ).up();
                 }
         }
         pres.up();
@@ -222,12 +224,13 @@ Strophe.addConnectionPlugin('emuc', {
     addDisplayNameToPresence: function (displayName) {
         this.presMap['displayName'] = displayName;
     },
-    addMediaToPresence: function (sourceNumber, mtype, ssrcs) {
+    addMediaToPresence: function (sourceNumber, mtype, ssrcs, direction) {
         if (!this.presMap['medians'])
             this.presMap['medians'] = 'http://estos.de/ns/mjs';
 
         this.presMap['source' + sourceNumber + '_type'] = mtype;
         this.presMap['source' + sourceNumber + '_ssrc'] = ssrcs;
+        this.presMap['source' + sourceNumber + '_direction'] = direction;
     },
     addPreziToPresence: function (url, currentSlide) {
         this.presMap['prezins'] = 'http://jitsi.org/jitmeet/prezi';
