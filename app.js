@@ -489,7 +489,15 @@ $(document).bind('presence.muc', function (event, jid, info, pres) {
 
         // might need to update the direction if participant just went from sendrecv to recvonly
         if (ssrc.getAttribute('type') == 'video') {
-            console.warn('video direction for', jid, ssrc.getAttribute('direction'));
+            var el = $('#participant_'  + Strophe.getResourceFromJid(jid) + '>video');
+            switch(ssrc.getAttribute('direction')) {
+            case 'sendrecv':
+                el.show(); 
+                break;
+            case 'recvonly':
+                el.hide();
+                break;
+            }
         }
     });
 
