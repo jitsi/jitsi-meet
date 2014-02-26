@@ -483,6 +483,11 @@ $(document).bind('presence.muc', function (event, jid, info, pres) {
     $(pres).find('>media[xmlns="http://estos.de/ns/mjs"]>source').each(function (idx, ssrc) {
         //console.log(jid, 'assoc ssrc', ssrc.getAttribute('type'), ssrc.getAttribute('ssrc'));
         ssrc2jid[ssrc.getAttribute('ssrc')] = jid;
+
+        // might need to update the direction if participant just went from sendrecv to recvonly
+        if (ssrc.getAttribute('type') == 'video') {
+            console.warn('video direction for', jid, ssrc.getAttribute('direction'));
+        }
     });
 
     if (info.displayName) {
