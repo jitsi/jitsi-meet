@@ -2,7 +2,8 @@
 /* application specific logic */
 var connection = null;
 var focus = null;
-var RTC;
+var activecall = null;
+var RTC = null;
 var RTCPeerConnection = null;
 var nickname = null;
 var sharedKey = '';
@@ -336,11 +337,16 @@ function muteVideo(pc, unmute) {
 
 $(document).bind('callincoming.jingle', function (event, sid) {
     var sess = connection.jingle.sessions[sid];
+
+    // TODO: do we check activecall == null?
+    activecall = sess;
+
     // TODO: check affiliation and/or role
     console.log('emuc data for', sess.peerjid, connection.emuc.members[sess.peerjid]);
     sess.usedrip = true; // not-so-naive trickle ice
     sess.sendAnswer();
     sess.accept();
+
 });
 
 $(document).bind('callactive.jingle', function (event, videoelem, sid) {
@@ -708,9 +714,19 @@ function updateLargeVideo(newSrc, localVideo, vol) {
 
 function toggleVideo() {
     if (!(connection && connection.jingle.localStream)) return;
+    var ismuted = false;
+    for (var idx = 0; idx < connection.jingle.localStream.getVideoTracks().length; idx++) {
+        ismuted = !connection.jingle.localStream.getVideoTracks()[idx].enabled;
+    }
     for (var idx = 0; idx < connection.jingle.localStream.getVideoTracks().length; idx++) {
         connection.jingle.localStream.getVideoTracks()[idx].enabled = !connection.jingle.localStream.getVideoTracks()[idx].enabled;
     }
+    var sess = focus || activecall;
+    if (!sess) {
+        return;
+    }
+    sess.pendingop = ismuted ? 'unmute' : 'mute';
+    sess.modifySources();
 }
 
 function toggleAudio() {
