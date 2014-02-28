@@ -10,7 +10,7 @@ body {
 #wrap{
     display: block;
     position: absolute;
-    width:766px;
+    width:900px;
     height: 262px;
     overflow:hidden;
     text-align: center;
@@ -25,6 +25,10 @@ body {
     height:262px;
     float: left;
 }
+.firefox{
+    font-size: 11pt;
+    color: #c8c8c8;
+}
 #middle{
     display:inline-block;
     background-image:url(../images/chromepointer.png);
@@ -35,8 +39,8 @@ body {
 }
 #text{
     display:inline-block;
-    font-size: 20pt;
-    width: 400px;
+    font-size: 18pt;
+    width: 600px;
     vertical-align:middle;
     padding-top: 30px;
 }
