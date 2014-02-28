@@ -1,6 +1,6 @@
 # Server Installation for jitmeet
 
-## Install prosody
+## Install prosody and otalk modules
 ```sh
 echo deb http://packages.prosody.im/debian $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list
 wget --no-check-certificate https://prosody.im/files/prosody-debian-packages.key -O- | sudo apt-key add -
@@ -12,11 +12,12 @@ cd otalk-server
 cp -r mod* /usr/lib/prosody/modules
 ```
 
-## Configure prosody, `/etc/prosody/prosody.cfg.lua`
+## Configure prosody
+Modify the config file in `/etc/prosody/prosody.cfg.lua`:
 - modules to enable/add: compression, bosh, smacks3, smacks2, carbons, mam, lastactivity, offline, pubsub, adhoc, websocket, http_altconnect
-- comment out: c2s_require_encryption = true, and s2s_secure_auth = false
+- comment out: `c2s_require_encryption = true`, and `s2s_secure_auth = false`
 - change `authentication = "internal_hashed"`
-- add
+- add this:
 ```
 daemonize = true
 cross_domain_bosh = true;
@@ -42,7 +43,9 @@ Component "jitsi-videobridge.jitmeet.example.com"
 - check the example config file, next to the document (prosody.cfg.lua)
 
 Generate certs for the domain:
-    prosodyctl cert generate jitmeet.example.com
+```sh
+prosodyctl cert generate jitmeet.example.com
+```
 
 ## Install nginx
 ```sh
@@ -104,7 +107,7 @@ wget https://download.jitsi.org/jitsi-videobridge/linux/jitsi-videobridge-linux-
 unzip jitsi-videobridge-linux-{arch-buildnum}.zip
 ```
 
-install JRE if missing:
+Install JRE if missing:
 ```
 apt-get install default-jre
 ```
@@ -114,24 +117,23 @@ In the user home that will be starting the jitsi video bridge create `.sip-commu
 org.jitsi.impl.neomedia.transform.srtp.SRTPCryptoContext.checkReplay=false
 ```
 
-start the videobrdige with:
+Start the videobrdige with:
 ```sh
 ./jvb.sh --host=localhost --domain=jitmeet.example.com --port=5347 --secret=YOURSECRET1 &
 ```
-
 Or autostart it by adding the line in `/etc/rc.local`:
 ```sh
 /bin/bash /root/jitsi-videobridge-linux-x64-74/jvb.sh --host=localhost --domain=jitmeet.example.com --port=5347 --secret=YOURSECRET1 </dev/null >> /var/log/jvb.log 2>&1
 ```
 
-Checkout and configure web part
+Checkout and configure jitmeet:
 ```sh
 cd /srv
 git clone https://github.com/jitsi/jitmeet.git
 mv jitmeet/ jitmeet.example.com
 ```
 
-edit /srv/jitmeet.example.com/config.js
+Edit `/srv/jitmeet.example.com/config.js`:
 ```
 var config = {
     hosts: {
@@ -178,8 +180,7 @@ module_path     /usr/lib/restund/modules
 turn_relay_addr [turn ip address]
 ```
 
-Configure prosody to use it in `/etc/prosody/prosody.cfg.lua`
-Add to your virtual host:
+Configure prosody to use it in `/etc/prosody/prosody.cfg.lua`.  Add to your virtual host:
 ```
 turncredentials_secret = "YOURSECRET2";
 turncredentials = {
@@ -187,7 +188,7 @@ turncredentials = {
 }
 ```
 
-reload prosody if needed
+Reload prosody if needed
 ```
 prosodyctl reload
 telnet localhost 5582
