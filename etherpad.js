@@ -40,7 +40,7 @@ var Etherpad = (function (my) {
         else
             largeVideo = $('#largeVideo');
 
-        if ($('#etherpad>iframe').css('visibility') == 'hidden') {
+        if ($('#etherpad>iframe').css('visibility') === 'hidden') {
             largeVideo.fadeOut(300, function () {
                 if (isPresentationVisible())
                     largeVideo.css({opacity:'0'});
@@ -123,7 +123,7 @@ var Etherpad = (function (my) {
         if (!config.etherpad_base)
             return;
 
-        if (etherpadIFrame && etherpadIFrame.style.visibility != 'hidden')
+        if (etherpadIFrame && etherpadIFrame.style.visibility !== 'hidden')
             Etherpad.toggleEtherpad(isPresentation);
     });
 

@@ -1,5 +1,5 @@
 /* jshint -W117 */
-/* a simple MUC connection plugin 
+/* a simple MUC connection plugin
  * can only handle a single MUC room
  */
 Strophe.addConnectionPlugin('emuc', {

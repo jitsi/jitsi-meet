@@ -5,33 +5,33 @@ function processReplacements(body)
 {
     //make links clickable
     body = linkify(body);
-    
+
     //add smileys
     body = smilify(body);
-    
+
     return body;
 }
 
 /**
- * Finds and replaces all links in the links in "body" 
+ * Finds and replaces all links in the links in "body"
  * with their <a href=""></a>
  */
 function linkify(inputText)
 {
     var replacedText, replacePattern1, replacePattern2, replacePattern3;
-    
+
     //URLs starting with http://, https://, or ftp://
     replacePattern1 = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
     replacedText = inputText.replace(replacePattern1, '<a href="$1" target="_blank">$1</a>');
-    
+
     //URLs starting with "www." (without // before it, or it'd re-link the ones done above).
     replacePattern2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
     replacedText = replacedText.replace(replacePattern2, '$1<a href="http://$2" target="_blank">$2</a>');
-    
+
     //Change email addresses to mailto:: links.
     replacePattern3 = /(([a-zA-Z0-9\-\_\.])+@[a-zA-Z\_]+?(\.[a-zA-Z]{2,6})+)/gim;
     replacedText = replacedText.replace(replacePattern3, '<a href="mailto:$1">$1</a>');
-    
+
     return replacedText;
 }
 
@@ -42,7 +42,7 @@ function smilify(body)
 {
     if(!body)
         return body;
-    
+
     body = body.replace(/(:\(|:\(\(|:-\(\(|:-\(|\(sad\))/gi, "<img src="+smiley1+ ">");
     body = body.replace(/(\(angry\))/gi, "<img src="+smiley2+ ">");
     body = body.replace(/(\(n\))/gi, "<img src="+smiley3+ ">");
@@ -63,7 +63,6 @@ function smilify(body)
     body = body.replace(/(:-P|:P|:-p|:p)/gi, "<img src="+smiley18+ ">");
     body = body.replace(/(:-\0|\(shocked\))/gi, "<img src="+smiley19+ ">");
     body = body.replace(/(\(oops\))/gi, "<img src="+smiley20+ ">");
-                                  
-    return body
-};
-                                
+
+    return body;
+}

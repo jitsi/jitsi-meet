@@ -4,8 +4,8 @@ Strophe.addConnectionPlugin('logger', {
     log: [],
     init: function (conn) {
         this.connection = conn;
-        this.connection.rawInput = this.log_incoming.bind(this);;
-        this.connection.rawOutput = this.log_outgoing.bind(this);;
+        this.connection.rawInput = this.log_incoming.bind(this);
+        this.connection.rawOutput = this.log_outgoing.bind(this);
     },
     log_incoming: function (stanza) {
         this.log.push([new Date().getTime(), 'incoming', stanza]);
