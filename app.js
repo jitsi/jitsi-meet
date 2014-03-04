@@ -19,11 +19,11 @@ function init() {
     if (RTC === null) {
         window.location.href = 'webrtcrequired.html';
         return;
-    } else if (RTC.browser != 'chrome') {
+    } else if (RTC.browser !== 'chrome') {
         window.location.href = 'chromeonly.html';
         return;
     }
-    RTCPeerconnection = TraceablePeerConnection; 
+    RTCPeerconnection = TraceablePeerConnection;
 
     connection = new Strophe.Connection(document.getElementById('boshURL').value || config.bosh || '/http-bind');
 
@@ -44,12 +44,12 @@ function init() {
     var jid = document.getElementById('jid').value || config.hosts.domain || window.location.hostname;
 
     connection.connect(jid, document.getElementById('password').value, function (status) {
-        if (status == Strophe.Status.CONNECTED) {
+        if (status === Strophe.Status.CONNECTED) {
             console.log('connected');
             if (config.useStunTurn) {
                 connection.jingle.getStunAndTurnCredentials();
             }
-            if (RTC.browser == 'firefox') {
+            if (RTC.browser === 'firefox') {
                 getUserMediaWithConstraints(['audio']);
             } else {
                 getUserMediaWithConstraints(['audio', 'video'], config.resolution || '360');
@@ -118,10 +118,10 @@ $(document).bind('mediaready.jingle', function (event, stream) {
         updateLargeVideo($(this).attr('src'), true, 0);
 
         $('video').each(function (idx, el) {
-            if (el.id.indexOf('mixedmslabel') != -1) {
+            if (el.id.indexOf('mixedmslabel') !== -1) {
                 el.volume = 0;
                 el.volume = 1;
-            } 
+            }
         });
     });
 
@@ -131,11 +131,11 @@ $(document).bind('mediaready.jingle', function (event, stream) {
 $(document).bind('mediafailure.jingle', function () {
     // FIXME
 });
-  
+
 $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
     function waitForRemoteVideo(selector, sid) {
         var sess = connection.jingle.sessions[sid];
-        if (data.stream.id == 'mixedmslabel') return;
+        if (data.stream.id === 'mixedmslabel') return;
         videoTracks = data.stream.getVideoTracks();
         if (videoTracks.length === 0 || selector[0].currentTime > 0) {
             RTC.attachMediaStream(selector, data.stream); // FIXME: why do i have to do this for FF?
@@ -148,10 +148,10 @@ $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
     var sess = connection.jingle.sessions[sid];
 
     // look up an associated JID for a stream id
-    if (data.stream.id.indexOf('mixedmslabel') == -1) {
+    if (data.stream.id.indexOf('mixedmslabel') === -1) {
         var ssrclines = SDPUtil.find_lines(sess.peerconnection.remoteDescription.sdp, 'a=ssrc');
         ssrclines = ssrclines.filter(function (line) {
-            return line.indexOf('mslabel:' + data.stream.label) != -1; 
+            return line.indexOf('mslabel:' + data.stream.label) !== -1;
                                      });
         if (ssrclines.length) {
             thessrc = ssrclines[0].substring(7).split(' ')[0];
@@ -179,7 +179,7 @@ $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
             //console.log('found container for', data.peerjid);
         }
     } else {
-        if (data.stream.id != 'mixedmslabel') {
+        if (data.stream.id !== 'mixedmslabel') {
             console.warn('can not associate stream', data.stream.id, 'with a participant');
         }
         // FIXME: for the mixed ms we dont need a video -- currently
@@ -195,7 +195,7 @@ $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
     vid.oncontextmenu = function () { return false; };
     container.appendChild(vid);
     // TODO: make mixedstream display:none via css?
-    if (id.indexOf('mixedmslabel') != -1) {
+    if (id.indexOf('mixedmslabel') !== -1) {
         container.id = 'mixedstream';
         $(container).hide();
     }
@@ -232,8 +232,8 @@ $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
         }
     );
     // an attempt to work around https://github.com/jitsi/jitmeet/issues/32
-    if (data.peerjid && sess.peerjid == data.peerjid && 
-            data.stream.getVideoTracks().length == 0 && 
+    if (data.peerjid && sess.peerjid === data.peerjid &&
+            data.stream.getVideoTracks().length === 0 &&
             connection.jingle.localStream.getVideoTracks().length > 0) {
         window.setTimeout(function() {
             sendKeyframe(sess.peerconnection);
@@ -244,7 +244,7 @@ $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
 // an attempt to work around https://github.com/jitsi/jitmeet/issues/32
 function sendKeyframe(pc) {
     console.log('sendkeyframe', pc.iceConnectionState);
-    if (pc.iceConnectionState != 'connected') return; // safe...
+    if (pc.iceConnectionState !== 'connected') return; // safe...
     pc.setRemoteDescription(
         pc.remoteDescription,
         function () {
@@ -350,7 +350,7 @@ $(document).bind('callincoming.jingle', function (event, sid) {
 });
 
 $(document).bind('callactive.jingle', function (event, videoelem, sid) {
-    if (videoelem.attr('id').indexOf('mixedmslabel') == -1) {
+    if (videoelem.attr('id').indexOf('mixedmslabel') === -1) {
         // ignore mixedmslabela0 and v0
         videoelem.show();
         resizeThumbnails();
@@ -464,18 +464,18 @@ $(document).bind('left.muc', function (event, jid) {
         $(container).hide();
         resizeThumbnails();
     }
-    if (focus === null && connection.emuc.myroomjid == connection.emuc.list_members[0]) {
+    if (focus === null && connection.emuc.myroomjid === connection.emuc.list_members[0]) {
         console.log('welcome to our new focus... myself');
         focus = new ColibriFocus(connection, config.hosts.bridge);
         if (Object.keys(connection.emuc.members).length > 0) {
             focus.makeConference(Object.keys(connection.emuc.members));
         }
         $(document).trigger('focusechanged.muc', [focus]);
-    } 
+    }
     else if (focus && Object.keys(connection.emuc.members).length === 0) {
         console.log('everyone left');
         if (focus !== null) {
-            // FIXME: closing the connection is a hack to avoid some 
+            // FIXME: closing the connection is a hack to avoid some
             // problemswith reinit
             if (focus.peerconnection !== null) {
                 focus.peerconnection.close();
@@ -494,11 +494,11 @@ $(document).bind('presence.muc', function (event, jid, info, pres) {
         ssrc2jid[ssrc.getAttribute('ssrc')] = jid;
 
         // might need to update the direction if participant just went from sendrecv to recvonly
-        if (ssrc.getAttribute('type') == 'video') {
+        if (ssrc.getAttribute('type') === 'video') {
             var el = $('#participant_'  + Strophe.getResourceFromJid(jid) + '>video');
             switch(ssrc.getAttribute('direction')) {
             case 'sendrecv':
-                el.show(); 
+                el.show();
                 break;
             case 'recvonly':
                 el.hide();
@@ -532,7 +532,7 @@ $(document).bind('passwordrequired.muc', function (event, jid) {
                     {
                         var lockKey = document.getElementById('lockKey');
 
-                        if (lockKey.value != null)
+                        if (lockKey.value !== null)
                         {
                             setSharedKey(lockKey.value);
                             connection.emuc.doJoin(jid, lockKey.value);
@@ -551,7 +551,7 @@ $(document).bind('presentationremoved.muc', function(event, jid, presUrl) {
     setPresentationVisible(false);
     $('#participant_' + Strophe.getResourceFromJid(jid) + '_' + presId).remove();
     $('#presentation>iframe').remove();
-    if (preziPlayer != null) {
+    if (preziPlayer !== null) {
         preziPlayer.destroy();
         preziPlayer = null;
     }
@@ -585,8 +585,8 @@ $(document).bind('presentationadded.muc', function (event, jid, presUrl, current
             else {
                 var e = event.toElement || event.relatedTarget;
 
-                while(e && e.parentNode && e.parentNode != window) {
-                    if (e.parentNode == this ||  e ==  this) {
+                while(e && e.parentNode && e.parentNode !== window) {
+                    if (e.parentNode === this || e === this) {
                         return false;
                     }
                     e = e.parentNode;
@@ -608,8 +608,8 @@ $(document).bind('presentationadded.muc', function (event, jid, presUrl, current
 
     preziPlayer.on(PreziPlayer.EVENT_STATUS, function(event) {
         console.log("prezi status", event.value);
-        if (event.value == PreziPlayer.STATUS_CONTENT_READY) {
-            if (jid != connection.emuc.myroomjid)
+        if (event.value === PreziPlayer.STATUS_CONTENT_READY) {
+            if (jid !== connection.emuc.myroomjid)
                 preziPlayer.flyToStep(currentSlide);
         }
     });
@@ -680,8 +680,8 @@ function setPresentationVisible(visible) {
     }
 }
 
-var isPresentationVisible = function () {
-    return ($('#presentation>iframe') != null && $('#presentation>iframe').css('opacity') == 1);
+function isPresentationVisible() {
+    return ($('#presentation>iframe') !== null && $('#presentation>iframe').css('opacity') == 1);
 }
 
 /**
@@ -692,7 +692,7 @@ function updateLargeVideo(newSrc, localVideo, vol) {
 
     setPresentationVisible(false);
 
-    if ($('#largeVideo').attr('src') != newSrc) {
+    if ($('#largeVideo').attr('src') !== newSrc) {
 
         document.getElementById('largeVideo').volume = vol;
 
@@ -700,10 +700,10 @@ function updateLargeVideo(newSrc, localVideo, vol) {
             $(this).attr('src', newSrc);
 
             var videoTransform = document.getElementById('largeVideo').style.webkitTransform;
-            if (localVideo && videoTransform != 'scaleX(-1)') {
+            if (localVideo && videoTransform !== 'scaleX(-1)') {
                 document.getElementById('largeVideo').style.webkitTransform = "scaleX(-1)";
             }
-            else if (!localVideo && videoTransform == 'scaleX(-1)') {
+            else if (!localVideo && videoTransform === 'scaleX(-1)') {
                 document.getElementById('largeVideo').style.webkitTransform = "none";
             }
 
@@ -880,7 +880,7 @@ function buttonClick(id, classname) {
  */
 function openLockDialog() {
     // Only the focus is able to set a shared key.
-    if (focus == null) {
+    if (focus === null) {
         if (sharedKey)
             $.prompt("This conversation is currently protected by a shared secret key.",
                  {
@@ -981,7 +981,7 @@ function openSettingsDialog() {
                         }
              /*
                         var lockKey = document.getElementById('lockKey');
-             
+
                         if (lockKey.value)
                         {
                             setSharedKey(lockKey.value);
@@ -1013,7 +1013,7 @@ function openPreziDialog() {
             }
         });
     }
-    else if (preziPlayer != null) {
+    else if (preziPlayer !== null) {
         $.prompt("Another participant is already sharing a Prezi." +
                 "This conference allows only one Prezi at a time.",
                  {
@@ -1044,8 +1044,8 @@ function openPreziDialog() {
                         var urlValue
                             = encodeURI(Util.escapeHtml(preziUrl.value));
 
-                        if (urlValue.indexOf('http://prezi.com/') != 0
-                            && urlValue.indexOf('https://prezi.com/') != 0)
+                        if (urlValue.indexOf('http://prezi.com/') !== 0
+                            && urlValue.indexOf('https://prezi.com/') !== 0)
                         {
                             $.prompt.goToState('state1');
                             return false;
@@ -1077,7 +1077,7 @@ function openPreziDialog() {
             defaultButton: 1,
             submit:function(e,v,m,f) {
                 e.preventDefault();
-                if(v==0)
+                if (v === 0)
                     $.prompt.close();
                 else
                     $.prompt.goToState('state0');
@@ -1127,7 +1127,7 @@ function updateLockButton() {
  */
 function showToolbar() {
     $('#toolbar').css({visibility:"visible"});
-    if (focus != null)
+    if (focus !== null)
     {
 //        TODO: Enable settings functionality. Need to uncomment the settings button in index.html.
 //        $('#settingsButton').css({visibility:"visible"});
@@ -1145,7 +1145,7 @@ function updateRoomUrl(newRoomUrl) {
  * Warning to the user that the conference window is about to be closed.
  */
 function closePageWarning() {
-    if (focus != null)
+    if (focus !== null)
         return "You are the owner of this conference call and you are about to end it.";
     else
         return "You are about to leave this conversation.";
@@ -1157,10 +1157,10 @@ function closePageWarning() {
  * from the connection.jingle.sessions.
  */
 function showFocusIndicator() {
-    if (focus != null) {
+    if (focus !== null) {
         var indicatorSpan = $('#localVideoContainer .focusindicator');
 
-        if (indicatorSpan.children().length == 0)
+        if (indicatorSpan.children().length === 0)
         {
             createFocusIndicatorElement(indicatorSpan[0]);
         }
@@ -1172,11 +1172,11 @@ function showFocusIndicator() {
         var focusContainer = document.getElementById(focusId);
         var indicatorSpan = $('#' + focusId + ' .focusindicator');
 
-        if (!indicatorSpan || indicatorSpan.length == 0) {
+        if (!indicatorSpan || indicatorSpan.length === 0) {
             indicatorSpan = document.createElement('span');
             indicatorSpan.className = 'focusindicator';
             focusContainer.appendChild(indicatorSpan);
-            
+
             createFocusIndicatorElement(indicatorSpan);
         }
     }
@@ -1197,12 +1197,12 @@ function addRemoteVideoContainer(id) {
 function createFocusIndicatorElement(parentElement) {
     var focusIndicator = document.createElement('i');
     focusIndicator.className = 'fa fa-star';
-    focusIndicator.title = "The owner of this conference"
+    focusIndicator.title = "The owner of this conference";
     parentElement.appendChild(focusIndicator);
 }
 
 /**
- * Toggles the application in and out of full screen mode 
+ * Toggles the application in and out of full screen mode
  * (a.k.a. presentation mode in Chrome).
  */
 function toggleFullScreen() {
@@ -1214,7 +1214,7 @@ function toggleFullScreen() {
         if (fsElement.mozRequestFullScreen) {
 
             fsElement.mozRequestFullScreen();
-        } 
+        }
         else {
             fsElement.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
         }
@@ -1243,8 +1243,8 @@ function showDisplayName(videoSpanId, displayName) {
     if (nameSpan.length > 0) {
         var nameSpanElement = nameSpan.get(0);
 
-        if (nameSpanElement.id == 'localDisplayName'
-            && $('#localDisplayName').html() != escDisplayName)
+        if (nameSpanElement.id === 'localDisplayName'
+            && $('#localDisplayName').html() !== escDisplayName)
             $('#localDisplayName').html(escDisplayName);
         else
             $('#' + videoSpanId + '_name').html(escDisplayName);
@@ -1252,7 +1252,7 @@ function showDisplayName(videoSpanId, displayName) {
     else {
         var editButton = null;
 
-        if (videoSpanId == 'localVideoContainer') {
+        if (videoSpanId === 'localVideoContainer') {
             editButton = createEditDisplayNameButton();
         }
         if (escDisplayName.length) {
@@ -1289,7 +1289,7 @@ function showDisplayName(videoSpanId, displayName) {
                 $('#editDisplayName').select();
 
                 var inputDisplayNameHandler = function(name) {
-                    if (nickname != name) {
+                    if (nickname !== name) {
                         nickname = Util.escapeHtml(name);
                         window.localStorage.displayname = nickname;
                         connection.emuc.addDisplayNameToPresence(nickname);
@@ -1310,7 +1310,7 @@ function showDisplayName(videoSpanId, displayName) {
                 });
 
                 $('#editDisplayName').on('keydown', function (e) {
-                    if (e.keyCode == 13) {
+                    if (e.keyCode === 13) {
                         e.preventDefault();
                         inputDisplayNameHandler(this.value);
                     }

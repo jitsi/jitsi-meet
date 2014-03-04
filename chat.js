@@ -17,7 +17,7 @@ var Chat = (function (my) {
         }
 
         $('#nickinput').keydown(function(event) {
-            if (event.keyCode == 13) {
+            if (event.keyCode === 13) {
                 event.preventDefault();
                 var val = Util.escapeHtml(this.value);
                 this.value = '';
@@ -36,7 +36,7 @@ var Chat = (function (my) {
         });
 
         $('#usermsg').keydown(function(event) {
-            if (event.keyCode == 13) {
+            if (event.keyCode === 13) {
                 event.preventDefault();
                 var message = Util.escapeHtml(this.value);
                 $('#usermsg').val('').trigger('autosize.resize');
@@ -64,7 +64,7 @@ var Chat = (function (my) {
     my.updateChatConversation = function (from, displayName, message) {
         var divClassName = '';
 
-        if (connection.emuc.myroomjid == from) {
+        if (connection.emuc.myroomjid === from) {
             divClassName = "localuser";
         }
         else {
@@ -124,7 +124,7 @@ var Chat = (function (my) {
         }
 
         // Request the focus in the nickname field or the chat input field.
-        if ($('#nickname').css('visibility') == 'visible')
+        if ($('#nickname').css('visibility') === 'visible')
             $('#nickinput').focus();
         else {
             $('#usermsg').focus();
@@ -171,7 +171,7 @@ var Chat = (function (my) {
         $('#chatconversation').width($('#chatspace').width() - 10);
         $('#chatconversation')
             .height(window.innerHeight - 50 - parseInt(usermsgHeight));
-    };
+    }
 
     /**
      * Shows/hides a visual notification, indicating that a message has arrived.
