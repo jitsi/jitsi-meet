@@ -2133,7 +2133,7 @@ JingleSession.prototype.removeSource = function (elem) {
             if (!SDPUtil.find_line(media, 'a=mid:' + name))
                 return;
             sdp.media[idx] += lines;
-            if (!self.addssrc[idx]) self.removessrc[idx] = '';
+            if (!self.removessrc[idx]) self.removessrc[idx] = '';
             self.removessrc[idx] += lines;
         });
         sdp.raw = sdp.session + sdp.media.join('');
