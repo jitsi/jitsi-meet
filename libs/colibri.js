@@ -322,9 +322,6 @@ ColibriFocus.prototype.createdConference = function (result) {
                                 localSDP.TransportToJingle(channel, elem);
 
                                 elem.up(); // end of channel
-                                for (j = 0; j < self.peers.length; j++) {
-                                    elem.c('channel', {initiator: 'true', expire:'15' }).up();
-                                }
                                 elem.up(); // end of content
                             });
 
