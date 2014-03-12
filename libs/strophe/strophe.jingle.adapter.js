@@ -7,6 +7,24 @@ function TraceablePeerConnection(ice_config, constraints) {
     this.statsinterval = null;
     this.maxstats = 300; // limit to 300 values, i.e. 5 minutes; set to 0 to disable
 
+    /**
+     * Array of ssrcs that will be added on next modifySources call.
+     * @type {Array}
+     */
+    this.addssrc = [];
+    /**
+     * Array of ssrcs that will be added on next modifySources call.
+     * @type {Array}
+     */
+    this.removessrc = [];
+    /**
+     * Pending operation that will be done during modifySources call.
+     * Currently 'mute'/'unmute' operations are supported.
+     *
+     * @type {String}
+     */
+    this.pendingop = null;
+
     // override as desired
     this.trace = function(what, info) {
         //console.warn('WTRACE', what, info);
@@ -161,6 +179,173 @@ TraceablePeerConnection.prototype.setRemoteDescription = function (description, 
      // start gathering stats
      }
      */
+};
+
+TraceablePeerConnection.prototype.hardMuteVideo = function (muted) {
+    this.pendingop = muted ? 'mute' : 'unmute';
+    this.modifySources();
+};
+
+TraceablePeerConnection.prototype.enqueueAddSsrc = function(channel, ssrcLines) {
+    if (!this.addssrc[channel]) {
+        this.addssrc[channel] = '';
+    }
+    this.addssrc[channel] += ssrcLines;
+}
+
+TraceablePeerConnection.prototype.addSource = function (elem) {
+    console.log('addssrc', new Date().getTime());
+    console.log('ice', this.iceConnectionState);
+    var sdp = new SDP(this.remoteDescription.sdp);
+
+    var self = this;
+    $(elem).each(function (idx, content) {
+        var name = $(content).attr('name');
+        var lines = '';
+        tmp = $(content).find('>source[xmlns="urn:xmpp:jingle:apps:rtp:ssma:0"]');
+        tmp.each(function () {
+            var ssrc = $(this).attr('ssrc');
+            $(this).find('>parameter').each(function () {
+                lines += 'a=ssrc:' + ssrc + ' ' + $(this).attr('name');
+                if ($(this).attr('value') && $(this).attr('value').length)
+                    lines += ':' + $(this).attr('value');
+                lines += '\r\n';
+            });
+        });
+        sdp.media.forEach(function(media, idx) {
+            if (!SDPUtil.find_line(media, 'a=mid:' + name))
+                return;
+            sdp.media[idx] += lines;
+            self.enqueueAddSsrc(idx, lines);
+        });
+        sdp.raw = sdp.session + sdp.media.join('');
+    });
+    this.modifySources();
+};
+
+TraceablePeerConnection.prototype.enqueueRemoveSsrc = function(channel, ssrcLines) {
+    if (!this.removessrc[channel]){
+        this.removessrc[channel] = '';
+    }
+    this.removessrc[channel] += ssrcLines;
+}
+
+TraceablePeerConnection.prototype.removeSource = function (elem) {
+    console.log('removessrc', new Date().getTime());
+    console.log('ice', this.iceConnectionState);
+    var sdp = new SDP(this.remoteDescription.sdp);
+
+    var self = this;
+    $(elem).each(function (idx, content) {
+        var name = $(content).attr('name');
+        var lines = '';
+        tmp = $(content).find('>source[xmlns="urn:xmpp:jingle:apps:rtp:ssma:0"]');
+        tmp.each(function () {
+            var ssrc = $(this).attr('ssrc');
+            $(this).find('>parameter').each(function () {
+                lines += 'a=ssrc:' + ssrc + ' ' + $(this).attr('name');
+                if ($(this).attr('value') && $(this).attr('value').length)
+                    lines += ':' + $(this).attr('value');
+                lines += '\r\n';
+            });
+        });
+        sdp.media.forEach(function(media, idx) {
+            if (!SDPUtil.find_line(media, 'a=mid:' + name))
+                return;
+            sdp.media[idx] += lines;
+            self.enqueueRemoveSsrc(idx, lines);
+        });
+        sdp.raw = sdp.session + sdp.media.join('');
+    });
+    this.modifySources();
+};
+
+TraceablePeerConnection.prototype.modifySources = function(successCallback) {
+    var self = this;
+    if (this.signalingState == 'closed') return;
+    if (!(this.addssrc.length || this.removessrc.length || this.pendingop !== null)){
+        if(successCallback){
+            successCallback();
+        }
+        return;
+    }
+
+    // FIXME: this is a big hack
+    // https://code.google.com/p/webrtc/issues/detail?id=2688
+    if (!(this.signalingState == 'stable' && this.iceConnectionState == 'connected')) {
+        console.warn('modifySources not yet', this.signalingState, this.iceConnectionState);
+        this.wait = true;
+        window.setTimeout(function() { self.modifySources(); }, 250);
+        return;
+    }
+    if (this.wait) {
+        window.setTimeout(function() { self.modifySources(); }, 2500);
+        this.wait = false;
+        return;
+    }
+
+    var sdp = new SDP(this.remoteDescription.sdp);
+
+    // add sources
+    this.addssrc.forEach(function(lines, idx) {
+        sdp.media[idx] += lines;
+    });
+    this.addssrc = [];
+
+    // remove sources
+    this.removessrc.forEach(function(lines, idx) {
+        lines = lines.split('\r\n');
+        lines.pop(); // remove empty last element;
+        lines.forEach(function(line) {
+            sdp.media[idx] = sdp.media[idx].replace(line + '\r\n', '');
+        });
+    });
+    this.removessrc = [];
+
+    sdp.raw = sdp.session + sdp.media.join('');
+    this.setRemoteDescription(new RTCSessionDescription({type: 'offer', sdp: sdp.raw}),
+        function() {
+            self.createAnswer(
+                function(modifiedAnswer) {
+                    // change video direction, see https://github.com/jitsi/jitmeet/issues/41
+                    if (self.pendingop !== null) {
+                        var sdp = new SDP(modifiedAnswer.sdp);
+                        if (sdp.media.length > 1) {
+                            switch(self.pendingop) {
+                                case 'mute':
+                                    sdp.media[1] = sdp.media[1].replace('a=sendrecv', 'a=recvonly');
+                                    break;
+                                case 'unmute':
+                                    sdp.media[1] = sdp.media[1].replace('a=recvonly', 'a=sendrecv');
+                                    break;
+                            }
+                            sdp.raw = sdp.session + sdp.media.join('');
+                            modifiedAnswer.sdp = sdp.raw;
+                        }
+                        self.pendingop = null;
+                    }
+
+                    self.setLocalDescription(modifiedAnswer,
+                        function() {
+                            //console.log('modified setLocalDescription ok');
+                            if(successCallback){
+                                successCallback();
+                            }
+                        },
+                        function(error) {
+                            console.error('modified setLocalDescription failed', error);
+                        }
+                    );
+                },
+                function(error) {
+                    console.error('modified answer failed', error);
+                }
+            );
+        },
+        function(error) {
+            console.error('modify failed', error);
+        }
+    );
 };
 
 TraceablePeerConnection.prototype.close = function () {

@@ -725,8 +725,8 @@ function toggleVideo() {
     if (!sess) {
         return;
     }
-    sess.pendingop = ismuted ? 'unmute' : 'mute';
-    sess.modifySources();
+    sess.peerconnection.pendingop = ismuted ? 'unmute' : 'mute';
+    sess.peerconnection.modifySources();
 }
 
 function toggleAudio() {

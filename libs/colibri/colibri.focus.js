@@ -40,7 +40,10 @@ function ColibriFocus(connection, bridgejid) {
     this.peers = [];
     this.confid = null;
 
-    this.peerconnection = null;
+    this.peerconnection
+        = new TraceablePeerConnection(
+            this.connection.jingle.ice_config,
+            this.connection.jingle.pc_constraints);
 
     // media types of the conference
     this.media = ['audio', 'video'];
@@ -50,13 +53,6 @@ function ColibriFocus(connection, bridgejid) {
     this.mychannel = [];
     this.channels = [];
     this.remotessrc = {};
-
-    // ssrc lines to be added on next update
-    this.addssrc = [];
-    // ssrc lines to be removed on next update
-    this.removessrc = [];
-    // pending mute/unmute video op that modify local description
-    this.pendingop = null;
 
     // container for candidates from the focus
     // gathered before confid is known
@@ -81,7 +77,6 @@ ColibriFocus.prototype.makeConference = function (peers) {
         self.channels.push([]);
     });
 
-    this.peerconnection = new TraceablePeerConnection(this.connection.jingle.ice_config, this.connection.jingle.pc_constraints);
     this.peerconnection.addStream(this.connection.jingle.localStream);
     this.peerconnection.oniceconnectionstatechange = function (event) {
         console.warn('ice connection state changed to', self.peerconnection.iceConnectionState);
@@ -651,9 +646,11 @@ ColibriFocus.prototype.setRemoteDescription = function (session, elem, desctype)
     // ACT 4: add new a=ssrc lines to local remotedescription
     for (channel = 0; channel < this.channels[participant].length; channel++) {
         //if (channel == 0) continue; FIXME: does not work as intended
-        if (!this.addssrc[channel]) this.addssrc[channel] = '';
         if (SDPUtil.find_lines(remoteSDP.media[channel], 'a=ssrc:').length) {
-            this.addssrc[channel] += SDPUtil.find_lines(remoteSDP.media[channel], 'a=ssrc:').join('\r\n') + '\r\n';
+            this.peerconnection.enqueueAddSsrc(
+                channel,
+                SDPUtil.find_lines(remoteSDP.media[channel], 'a=ssrc:').join('\r\n') + '\r\n'
+            );
         }
     }
     this.modifySources();
@@ -764,8 +761,7 @@ ColibriFocus.prototype.terminate = function (session, reason) {
     }
     var ssrcs = this.remotessrc[session.peerjid];
     for (var i = 0; i < ssrcs.length; i++) {
-        if (!this.removessrc[i]) this.removessrc[i] = '';
-        this.removessrc[i] += ssrcs[i];
+        this.peerconnection.enqueueRemoveSsrc(i, ssrcs[i]);
     }
     // remove from this.peers
     this.peers.splice(participant, 1);
@@ -796,7 +792,7 @@ ColibriFocus.prototype.terminate = function (session, reason) {
     for (var j = 0; j < ssrcs.length; j++) {
         sdp.media[j] = 'a=mid:' + contents[j] + '\r\n';
         sdp.media[j] += ssrcs[j];
-        this.removessrc[j] += ssrcs[j];
+        this.peerconnection.enqueueRemoveSsrc(j, ssrcs[j]);
     }
     this.sendSSRCUpdate(sdp, session.peerjid, false);
 
@@ -806,126 +802,14 @@ ColibriFocus.prototype.terminate = function (session, reason) {
 
 ColibriFocus.prototype.modifySources = function () {
     var self = this;
-    if (this.peerconnection.signalingState == 'closed') return;
-    if (!(this.addssrc.length || this.removessrc.length || this.pendingop !== null)) return;
-
-    // FIXME: this is a big hack
-    // https://code.google.com/p/webrtc/issues/detail?id=2688
-    if (!(this.peerconnection.signalingState == 'stable' && this.peerconnection.iceConnectionState == 'connected')) {
-        console.warn('modifySources not yet', this.peerconnection.signalingState, this.peerconnection.iceConnectionState);
-        window.setTimeout(function () { self.modifySources(); }, 250);
-        this.wait = true;
-        return;
-    }
-    if (this.wait) {
-        window.setTimeout(function () { self.modifySources(); }, 2500);
-        this.wait = false;
-        return;
-    }
-    var sdp = new SDP(this.peerconnection.remoteDescription.sdp);
-
-    // add sources
-    this.addssrc.forEach(function (lines, idx) {
-        sdp.media[idx] += lines;
+    this.peerconnection.modifySources(function(){
+        $(document).trigger('setLocalDescription.jingle', [self.sid]);
     });
-    this.addssrc = [];
-
-    // remove sources
-    this.removessrc.forEach(function (lines, idx) {
-        lines = lines.split('\r\n');
-        lines.pop(); // remove empty last element;
-        lines.forEach(function (line) {
-            sdp.media[idx] = sdp.media[idx].replace(line + '\r\n', '');
-        });
-    });
-    this.removessrc = [];
-
-    sdp.raw = sdp.session + sdp.media.join('');
-    this.peerconnection.setRemoteDescription(
-        new RTCSessionDescription({type: 'offer', sdp: sdp.raw }),
-        function () {
-            console.log('setModifiedRemoteDescription ok');
-            self.peerconnection.createAnswer(
-                function (modifiedAnswer) {
-                    console.log('modifiedAnswer created');
-
-                    // change video direction, see https://github.com/jitsi/jitmeet/issues/41
-                    if (self.pendingop !== null) {
-                        var sdp = new SDP(modifiedAnswer.sdp);
-                        if (sdp.media.length > 1) {
-                            switch(self.pendingop) {
-                            case 'mute':
-                                sdp.media[1] = sdp.media[1].replace('a=sendrecv', 'a=recvonly');
-                                break;
-                            case 'unmute':
-                                sdp.media[1] = sdp.media[1].replace('a=recvonly', 'a=sendrecv');
-                                break;
-                            }
-                            sdp.raw = sdp.session + sdp.media.join('');
-                            modifiedAnswer.sdp = sdp.raw;
-                        }
-                        self.pendingop = null;
-                    }
-
-                    // FIXME: pushing down an answer while ice connection state
-                    // is still checking is bad...
-                    //console.log(self.peerconnection.iceConnectionState);
-
-                    // trying to work around another chrome bug
-                    //modifiedAnswer.sdp = modifiedAnswer.sdp.replace(/a=setup:active/g, 'a=setup:actpass');
-                    self.peerconnection.setLocalDescription(modifiedAnswer,
-                        function () {
-                            console.log('setModifiedLocalDescription ok');
-                            $(document).trigger('setLocalDescription.jingle', [self.sid]);
-                        },
-                        function (error) {
-                            console.log('setModifiedLocalDescription failed', error);
-                        }
-                    );
-                },
-                function (error) {
-                    console.log('createModifiedAnswer failed', error);
-                }
-            );
-        },
-        function (error) {
-            console.log('setModifiedRemoteDescription failed', error);
-        }
-    );
-    /*
-     * now that we have a passive focus, this way is bad again! :-)
-    this.peerconnection.createOffer(
-        function (modifiedOffer) {
-            console.log('created (un)modified offer');
-            self.peerconnection.setLocalDescription(modifiedOffer,
-                function () {
-                    console.log('setModifiedLocalDescription ok');
-                    self.peerconnection.setRemoteDescription(
-                        new RTCSessionDescription({type: 'answer', sdp: sdp.raw }),
-                        function () {
-                            console.log('setModifiedRemoteDescription ok');
-                        },
-                        function (error) {
-                            console.log('setModifiedRemoteDescription failed');
-                        }
-                    );
-                    $(document).trigger('setLocalDescription.jingle', [self.sid]);
-                },
-                function (error) {
-                    console.log('setModifiedLocalDescription failed');
-                }
-            );
-        },
-        function (error) {
-            console.log('creating (un)modified offerfailed');
-        }
-    );
-    */
 };
 
 ColibriFocus.prototype.hardMuteVideo = function (muted) {
-    this.pendingop = muted ? 'mute' : 'unmute';
-    this.modifySources();
+
+    this.peerconnection.hardMuteVideo(muted);
 
     this.connection.jingle.localStream.getVideoTracks().forEach(function (track) {
         track.enabled = !muted;
