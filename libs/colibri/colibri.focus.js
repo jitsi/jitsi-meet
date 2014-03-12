@@ -34,16 +34,15 @@
  THE SOFTWARE.
  */
 /* jshint -W117 */
+
+ColibriFocus.prototype = Object.create(SessionBase.prototype);
 function ColibriFocus(connection, bridgejid) {
-    this.connection = connection;
+
+    SessionBase.call(this, connection);
+
     this.bridgejid = bridgejid;
     this.peers = [];
     this.confid = null;
-
-    this.peerconnection
-        = new TraceablePeerConnection(
-            this.connection.jingle.ice_config,
-            this.connection.jingle.pc_constraints);
 
     // media types of the conference
     this.media = ['audio', 'video'];
@@ -623,9 +622,7 @@ ColibriFocus.prototype.sendSSRCUpdate = function (sdp, jid, isadd) {
 ColibriFocus.prototype.setRemoteDescription = function (session, elem, desctype) {
     var participant = this.peers.indexOf(session.peerjid);
     console.log('Colibri.setRemoteDescription from', session.peerjid, participant);
-    var self = this;
     var remoteSDP = new SDP('');
-    var tmp;
     var channel;
     remoteSDP.fromJingle(elem);
 
@@ -799,20 +796,4 @@ ColibriFocus.prototype.terminate = function (session, reason) {
 
     delete this.remotessrc[session.peerjid];
     this.modifySources();
-};
-
-ColibriFocus.prototype.modifySources = function () {
-    var self = this;
-    this.peerconnection.modifySources(function(){
-        $(document).trigger('setLocalDescription.jingle', [self.sid]);
-    });
-};
-
-ColibriFocus.prototype.hardMuteVideo = function (muted) {
-
-    this.peerconnection.hardMuteVideo(muted);
-
-    this.connection.jingle.localVideo.getVideoTracks().forEach(function (track) {
-        track.enabled = !muted;
-    });
 };

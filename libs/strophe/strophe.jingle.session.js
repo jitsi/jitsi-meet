@@ -1,27 +1,17 @@
 /* jshint -W117 */
 // Jingle stuff
+JingleSession.prototype = Object.create(SessionBase.prototype);
 function JingleSession(me, sid, connection) {
+
+    SessionBase.call(this, connection);
+
     this.me = me;
     this.sid = sid;
-    this.connection = connection;
     this.initiator = null;
     this.responder = null;
     this.isInitiator = null;
     this.peerjid = null;
     this.state = null;
-    /**
-     * Peer connection instance.
-     * @type {TraceablePeerConnection}
-     */
-    this.peerconnection = null;
-    //console.log('create PeerConnection ' + JSON.stringify(this.ice_config));
-    try {
-        this.peerconnection = new RTCPeerconnection(this.ice_config, this.pc_constraints);
-    } catch (e) {
-        console.error('Failed to create PeerConnection, exception: ', e.message);
-        console.error(e);
-    }
-
     this.localSDP = null;
     this.remoteSDP = null;
     this.localStreams = [];
@@ -631,39 +621,6 @@ JingleSession.prototype.sendTerminate = function (reason, text) {
         window.clearInterval(this.statsinterval);
         this.statsinterval = null;
     }
-};
-
-
-JingleSession.prototype.addSource = function (elem) {
-
-    this.peerconnection.addSource(elem);
-
-    this.modifySources();
-};
-
-JingleSession.prototype.removeSource = function (elem) {
-
-    this.peerconnection.removeSource(elem);
-
-    this.modifySources();
-};
-
-JingleSession.prototype.modifySources = function() {
-    var self = this;
-    this.peerconnection.modifySources(function(){
-        $(document).trigger('setLocalDescription.jingle', [self.sid]);
-    });
-};
-
-// SDP-based mute by going recvonly/sendrecv
-// FIXME: should probably black out the screen as well
-JingleSession.prototype.hardMuteVideo = function (muted) {
-
-    this.peerconnection.hardMuteVideo(muted);
-
-    this.connection.jingle.localVideo.getVideoTracks().forEach(function (track) {
-        track.enabled = !muted;
-    });
 };
 
 JingleSession.prototype.sendMute = function (muted, content) {

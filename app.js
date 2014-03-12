@@ -4,7 +4,6 @@ var connection = null;
 var focus = null;
 var activecall = null;
 var RTC = null;
-var RTCPeerConnection = null;
 var nickname = null;
 var sharedKey = '';
 var roomUrl = null;
@@ -23,7 +22,6 @@ function init() {
         window.location.href = 'chromeonly.html';
         return;
     }
-    RTCPeerconnection = TraceablePeerConnection;
 
     connection = new Strophe.Connection(document.getElementById('boshURL').value || config.bosh || '/http-bind');
 
