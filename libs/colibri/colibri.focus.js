@@ -102,14 +102,10 @@ ColibriFocus.prototype.makeConference = function (peers) {
         */
     };
     this.peerconnection.onaddstream = function (event) {
-        self.remoteStream = event.stream;
         // search the jid associated with this stream
         Object.keys(self.remotessrc).forEach(function (jid) {
             if (self.remotessrc[jid].join('\r\n').indexOf('mslabel:' + event.stream.id) != -1) {
                 event.peerjid = jid;
-                if (self.connection.jingle.jid2session[jid]) {
-                    self.connection.jingle.jid2session[jid].remotestream = event.stream;
-                }
             }
         });
         $(document).trigger('remotestreamadded.jingle', [event, self.sid]);

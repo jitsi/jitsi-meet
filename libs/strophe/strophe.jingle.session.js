@@ -22,7 +22,6 @@ function JingleSession(me, sid, connection) {
         console.error(e);
     }
 
-    this.remoteStream = null;
     this.localSDP = null;
     this.remoteSDP = null;
     this.localStreams = [];
@@ -69,13 +68,15 @@ JingleSession.prototype.initiate = function (peerjid, isInitiator) {
         self.sendIceCandidate(event.candidate);
     };
     this.peerconnection.onaddstream = function (event) {
-        self.remoteStream = event.stream;
         self.remoteStreams.push(event.stream);
         $(document).trigger('remotestreamadded.jingle', [event, self.sid]);
     };
     this.peerconnection.onremovestream = function (event) {
-        self.remoteStream = null;
-        // FIXME: remove from this.remoteStreams
+        // Remove the stream from remoteStreams
+        var streamIdx = self.remoteStreams.indexOf(event.stream);
+        if(streamIdx !== -1){
+            self.remoteStreams.splice(streamIdx, 1);
+        }
         // FIXME: remotestreamremoved.jingle not defined anywhere(unused)
         $(document).trigger('remotestreamremoved.jingle', [event, self.sid]);
     };
