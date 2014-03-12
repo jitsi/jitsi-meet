@@ -79,6 +79,7 @@
             <span id="localVideoContainer" class="videocontainer">
                 <span id="localNick"></span>
                 <video id="localVideo" autoplay oncontextmenu="return false;" muted></video>
+                <audio id="localAudio" autoplay oncontextmenu="return false;" muted></audio>
                 <span class="focusindicator"></span>
             </span>
             <audio id="userJoined" src="sounds/joined.wav" preload="auto"></audio>
@@ -99,6 +100,7 @@
         <textarea id="usermsg" placeholder='Enter text...' autofocus></textarea>
     </div>
     <a id="downloadlog" onclick='dump(event.target);'><i title="Download support information" class="fa fa-cloud-download"></i></a>
+    <!-- Google Analytics -->
     <script>
         (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
              (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
@@ -106,5 +108,6 @@
         ga('create', 'UA-319188-14', 'jit.si');
         ga('send', 'pageview');
     </script>
+    <!-- End Google Analytics -->
   </body>
 </html>

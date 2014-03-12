@@ -77,24 +77,29 @@ ColibriFocus.prototype.makeConference = function (peers) {
         self.channels.push([]);
     });
 
-    this.peerconnection.addStream(this.connection.jingle.localStream);
+    if(connection.jingle.localAudio) {
+        this.peerconnection.addStream(connection.jingle.localAudio);
+    }
+    if(connection.jingle.localVideo) {
+        this.peerconnection.addStream(connection.jingle.localVideo);
+    }
     this.peerconnection.oniceconnectionstatechange = function (event) {
         console.warn('ice connection state changed to', self.peerconnection.iceConnectionState);
         /*
-         if (self.peerconnection.signalingState == 'stable' && self.peerconnection.iceConnectionState == 'connected') {
-         console.log('adding new remote SSRCs from iceconnectionstatechange');
-         window.setTimeout(function() { self.modifySources(); }, 1000);
-         }
-         */
+        if (self.peerconnection.signalingState == 'stable' && self.peerconnection.iceConnectionState == 'connected') {
+            console.log('adding new remote SSRCs from iceconnectionstatechange');
+            window.setTimeout(function() { self.modifySources(); }, 1000);
+        }
+        */
     };
     this.peerconnection.onsignalingstatechange = function (event) {
         console.warn(self.peerconnection.signalingState);
         /*
-         if (self.peerconnection.signalingState == 'stable' && self.peerconnection.iceConnectionState == 'connected') {
-         console.log('adding new remote SSRCs from signalingstatechange');
-         window.setTimeout(function() { self.modifySources(); }, 1000);
-         }
-         */
+        if (self.peerconnection.signalingState == 'stable' && self.peerconnection.iceConnectionState == 'connected') {
+            console.log('adding new remote SSRCs from signalingstatechange');
+            window.setTimeout(function() { self.modifySources(); }, 1000);
+        }
+        */
     };
     this.peerconnection.onaddstream = function (event) {
         self.remoteStream = event.stream;
@@ -146,7 +151,6 @@ ColibriFocus.prototype._makeConference = function () {
     var elem = $iq({to: this.bridgejid, type: 'get'});
     elem.c('conference', {xmlns: 'http://jitsi.org/protocol/colibri'});
 
-    var stream = this.connection.jingle.localStream;
     this.media.forEach(function (name) {
         elem.c('content', {name: name});
         elem.c('channel', {initiator: 'true', expire: '15'}).up();
@@ -443,7 +447,8 @@ ColibriFocus.prototype.initiate = function (peer, isInitiator) {
                                   this.connection);
     sess.initiate(peer);
     sess.colibri = this;
-    sess.localStream = this.connection.jingle.localStream;
+    // We do not announce our audio per conference peer, so only video is set here
+    sess.localVideo = this.connection.jingle.localVideo;
     sess.media_constraints = this.connection.jingle.media_constraints;
     sess.pc_constraints = this.connection.jingle.pc_constraints;
     sess.ice_config = this.connection.jingle.ice_config;
@@ -610,7 +615,7 @@ ColibriFocus.prototype.sendSSRCUpdate = function (sdp, jid, isadd) {
                     console.warn('got modify result');
                 },
                 function (err) {
-                    console.warn('got modify error');
+                    console.warn('got modify error', err);
                 }
             );
         } else {
@@ -697,7 +702,7 @@ ColibriFocus.prototype.addIceCandidate = function (session, elem) {
             console.log('got result');
         },
         function (err) {
-            console.warn('got error');
+            console.error('got error', err);
         }
     );
 };
@@ -748,7 +753,7 @@ ColibriFocus.prototype.sendIceCandidates = function (candidates) {
             console.log('got result');
         },
         function (err) {
-            console.warn('got error');
+            console.error('got error', err);
         }
     );
 };
@@ -779,7 +784,7 @@ ColibriFocus.prototype.terminate = function (session, reason) {
             console.log('got result');
         },
         function (err) {
-            console.log('got error');
+            console.error('got error', err);
         }
     );
     // and remove from channels
@@ -811,7 +816,7 @@ ColibriFocus.prototype.hardMuteVideo = function (muted) {
 
     this.peerconnection.hardMuteVideo(muted);
 
-    this.connection.jingle.localStream.getVideoTracks().forEach(function (track) {
+    this.connection.jingle.localVideo.getVideoTracks().forEach(function (track) {
         track.enabled = !muted;
     });
 };

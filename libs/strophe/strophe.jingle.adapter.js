@@ -220,7 +220,6 @@ TraceablePeerConnection.prototype.addSource = function (elem) {
         });
         sdp.raw = sdp.session + sdp.media.join('');
     });
-    this.modifySources();
 };
 
 TraceablePeerConnection.prototype.enqueueRemoveSsrc = function(channel, ssrcLines) {
@@ -257,7 +256,6 @@ TraceablePeerConnection.prototype.removeSource = function (elem) {
         });
         sdp.raw = sdp.session + sdp.media.join('');
     });
-    this.modifySources();
 };
 
 TraceablePeerConnection.prototype.modifySources = function(successCallback) {
@@ -275,11 +273,11 @@ TraceablePeerConnection.prototype.modifySources = function(successCallback) {
     if (!(this.signalingState == 'stable' && this.iceConnectionState == 'connected')) {
         console.warn('modifySources not yet', this.signalingState, this.iceConnectionState);
         this.wait = true;
-        window.setTimeout(function() { self.modifySources(); }, 250);
+        window.setTimeout(function() { self.modifySources(successCallback); }, 250);
         return;
     }
     if (this.wait) {
-        window.setTimeout(function() { self.modifySources(); }, 2500);
+        window.setTimeout(function() { self.modifySources(successCallback); }, 2500);
         this.wait = false;
         return;
     }
@@ -325,6 +323,12 @@ TraceablePeerConnection.prototype.modifySources = function(successCallback) {
                         self.pendingop = null;
                     }
 
+                    // FIXME: pushing down an answer while ice connection state
+                    // is still checking is bad...
+                    //console.log(self.peerconnection.iceConnectionState);
+
+                    // trying to work around another chrome bug
+                    //modifiedAnswer.sdp = modifiedAnswer.sdp.replace(/a=setup:active/g, 'a=setup:actpass');
                     self.setLocalDescription(modifiedAnswer,
                         function() {
                             //console.log('modified setLocalDescription ok');
@@ -471,7 +475,7 @@ function setupRTC() {
     return RTC;
 }
 
-function getUserMediaWithConstraints(um, resolution, bandwidth, fps) {
+function getUserMediaWithConstraints(um, success_callback, failure_callback, resolution, bandwidth, fps) {
     var constraints = {audio: false, video: false};
 
     if (um.indexOf('video') >= 0) {
@@ -553,14 +557,18 @@ function getUserMediaWithConstraints(um, resolution, bandwidth, fps) {
         RTC.getUserMedia(constraints,
             function (stream) {
                 console.log('onUserMediaSuccess');
-                $(document).trigger('mediaready.jingle', [stream]);
+                success_callback(stream);
             },
             function (error) {
                 console.warn('Failed to get access to local media. Error ', error);
-                $(document).trigger('mediafailure.jingle');
+                if(failure_callback) {
+                    failure_callback(error);
+                }
             });
     } catch (e) {
         console.error('GUM failed: ', e);
-        $(document).trigger('mediafailure.jingle');
+        if(failure_callback) {
+            failure_callback(e);
+        }
     }
 }

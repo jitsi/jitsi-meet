@@ -76,6 +76,7 @@ JingleSession.prototype.initiate = function (peerjid, isInitiator) {
     this.peerconnection.onremovestream = function (event) {
         self.remoteStream = null;
         // FIXME: remove from this.remoteStreams
+        // FIXME: remotestreamremoved.jingle not defined anywhere(unused)
         $(document).trigger('remotestreamremoved.jingle', [event, self.sid]);
     };
     this.peerconnection.onsignalingstatechange = function (event) {
@@ -635,11 +636,15 @@ JingleSession.prototype.sendTerminate = function (reason, text) {
 JingleSession.prototype.addSource = function (elem) {
 
     this.peerconnection.addSource(elem);
+
+    this.modifySources();
 };
 
 JingleSession.prototype.removeSource = function (elem) {
 
     this.peerconnection.removeSource(elem);
+
+    this.modifySources();
 };
 
 JingleSession.prototype.modifySources = function() {
@@ -655,7 +660,7 @@ JingleSession.prototype.hardMuteVideo = function (muted) {
 
     this.peerconnection.hardMuteVideo(muted);
 
-    this.connection.jingle.localStream.getVideoTracks().forEach(function (track) {
+    this.connection.jingle.localVideo.getVideoTracks().forEach(function (track) {
         track.enabled = !muted;
     });
 };

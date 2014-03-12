@@ -12,7 +12,8 @@ Strophe.addConnectionPlugin('jingle', {
         }
         // MozDontOfferDataChannel: true when this is firefox
     },
-    localStream: null,
+    localAudio: null,
+    localVideo: null,
 
     init: function (conn) {
         this.connection = conn;
@@ -38,12 +39,13 @@ Strophe.addConnectionPlugin('jingle', {
     onJingle: function (iq) {
         var sid = $(iq).find('jingle').attr('sid');
         var action = $(iq).find('jingle').attr('action');
+        var fromJid = iq.getAttribute('from');
         // send ack first
         var ack = $iq({type: 'result',
-            to: iq.getAttribute('from'),
+            to: fromJid,
             id: iq.getAttribute('id')
         });
-        console.log('on jingle ' + action);
+        console.log('on jingle ' + action + ' from ' + fromJid, iq);
         var sess = this.sessions[sid];
         if ('session-initiate' != action) {
             if (sess === null) {
@@ -56,8 +58,8 @@ Strophe.addConnectionPlugin('jingle', {
             }
             // compare from to sess.peerjid (bare jid comparison for later compat with message-mode)
             // local jid is not checked
-            if (Strophe.getBareJidFromJid(iq.getAttribute('from')) != Strophe.getBareJidFromJid(sess.peerjid)) {
-                console.warn('jid mismatch for session id', sid, iq.getAttribute('from'), sess.peerjid);
+            if (Strophe.getBareJidFromJid(fromJid) != Strophe.getBareJidFromJid(sess.peerjid)) {
+                console.warn('jid mismatch for session id', sid, fromJid, sess.peerjid);
                 ack.type = 'error';
                 ack.c('error', {type: 'cancel'})
                     .c('item-not-found', {xmlns: 'urn:ietf:params:xml:ns:xmpp-stanzas'}).up()
@@ -82,14 +84,17 @@ Strophe.addConnectionPlugin('jingle', {
             case 'session-initiate':
                 sess = new JingleSession($(iq).attr('to'), $(iq).find('jingle').attr('sid'), this.connection);
                 // configure session
-                if (this.localStream) {
-                    sess.localStreams.push(this.localStream);
+                if (this.localAudio) {
+                    sess.localStreams.push(this.localAudio);
+                }
+                if (this.localVideo) {
+                    sess.localStreams.push(this.localVideo);
                 }
                 sess.media_constraints = this.media_constraints;
                 sess.pc_constraints = this.pc_constraints;
                 sess.ice_config = this.ice_config;
 
-                sess.initiate($(iq).attr('from'), false);
+                sess.initiate(fromJid, false);
                 // FIXME: setRemoteDescription should only be done when this call is to be accepted
                 sess.setRemoteDescription($(iq).find('>jingle'), 'offer');
 
@@ -152,8 +157,11 @@ Strophe.addConnectionPlugin('jingle', {
             Math.random().toString(36).substr(2, 12), // random string
             this.connection);
         // configure session
-        if (this.localStream) {
-            sess.localStreams.push(this.localStream);
+        if (this.localAudio) {
+            sess.localStreams.push(this.localAudio);
+        }
+        if (this.localVideo) {
+            sess.localStreams.push(this.localVideo);
         }
         sess.media_constraints = this.media_constraints;
         sess.pc_constraints = this.pc_constraints;

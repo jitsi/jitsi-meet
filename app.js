@@ -49,16 +49,40 @@ function init() {
             if (config.useStunTurn) {
                 connection.jingle.getStunAndTurnCredentials();
             }
-            if (RTC.browser === 'firefox') {
-                getUserMediaWithConstraints(['audio']);
-            } else {
-                getUserMediaWithConstraints(['audio', 'video'], config.resolution || '360');
-            }
+            getUserMediaWithConstraints( ['audio'], audioStreamReady,
+                function(error){
+                    console.error('failed to obtain audio stream - stop', error);
+                });
             document.getElementById('connect').disabled = true;
         } else {
             console.log('status', status);
         }
     });
+}
+
+function audioStreamReady(stream) {
+
+    change_local_audio(stream);
+
+    if(RTC.browser !== 'firefox') {
+        getUserMediaWithConstraints( ['video'], videoStreamReady, videoStreamFailed, config.resolution || '360' );
+    } else {
+        doJoin();
+    }
+}
+
+function videoStreamReady(stream) {
+
+    change_local_video(stream);
+
+    doJoin();
+}
+
+function videoStreamFailed(error) {
+
+    console.warn("Failed to obtain video stream - continue anyway", error);
+
+    doJoin();
 }
 
 function doJoin() {
@@ -104,8 +128,17 @@ function doJoin() {
     connection.emuc.doJoin(roomjid);
 }
 
-$(document).bind('mediaready.jingle', function (event, stream) {
-    connection.jingle.localStream = stream;
+function change_local_audio(stream) {
+
+    connection.jingle.localAudio = stream;
+    RTC.attachMediaStream($('#localAudio'), stream);
+    document.getElementById('localAudio').autoplay = true;
+    document.getElementById('localAudio').volume = 0;
+}
+
+function change_local_video(stream) {
+
+    connection.jingle.localVideo = stream;
     RTC.attachMediaStream($('#localVideo'), stream);
     document.getElementById('localVideo').autoplay = true;
     document.getElementById('localVideo').volume = 0;
@@ -124,16 +157,14 @@ $(document).bind('mediaready.jingle', function (event, stream) {
             }
         });
     });
-
-    doJoin();
-});
-
-$(document).bind('mediafailure.jingle', function () {
-    // FIXME
-});
+}
 
 $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
     function waitForRemoteVideo(selector, sid) {
+        if(selector.removed) {
+            console.warn("media removed before had started", selector);
+            return;
+        }
         var sess = connection.jingle.sessions[sid];
         if (data.stream.id === 'mixedmslabel') return;
         videoTracks = data.stream.getVideoTracks();
@@ -188,8 +219,11 @@ $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
         remotes.appendChild(container);
         Util.playSoundNotification('userJoined');
     }
-    var vid = document.createElement('video');
-    var id = 'remoteVideo_' + sid + '_' + data.stream.id;
+
+    var isVideo = data.stream.getVideoTracks().length > 0;
+    var vid = isVideo ? document.createElement('video') : document.createElement('audio');
+    var id = (isVideo ? 'remoteVideo_' : 'remoteAudio_') + sid + '_' + data.stream.id;
+
     vid.id = id;
     vid.autoplay = true;
     vid.oncontextmenu = function () { return false; };
@@ -203,11 +237,14 @@ $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
     var sel = $('#' + id);
     sel.hide();
     RTC.attachMediaStream(sel, data.stream);
-    waitForRemoteVideo(sel, sid);
+
+    if(isVideo) {
+        waitForRemoteVideo(sel, sid);
+    }
+
     data.stream.onended = function () {
         console.log('stream ended', this.id);
-        var src = $('#' + id).attr('src');
-        if (src === $('#largeVideo').attr('src')) {
+        if (sel.attr('src') === $('#largeVideo').attr('src')) {
             // this is currently displayed as large
             // pick the last visible video in the row
             // if nobody else is left, this picks the local video
@@ -221,9 +258,21 @@ $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
                  updateLargeVideo(pick.src, isLocalVideo, pick.volume);
             }
         }
-        $('#' + id).parent().remove();
-        Util.playSoundNotification('userLeft');
-        resizeThumbnails();
+        // Mark video as removed to cancel waiting loop(if video is removed before has started)
+        sel.removed = true;
+
+        var userContainer = sel.parent();
+        if(userContainer.children().length === 0) {
+            console.log("Remove whole user");
+            // Remove whole container
+            userContainer.remove();
+            Util.playSoundNotification('userLeft');
+            resizeThumbnails();
+        } else {
+            // Remove only stream holder
+            sel.remove();
+            console.log("Remove stream only", sel);
+        }
     };
     sel.click(
         function () {
@@ -232,9 +281,10 @@ $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
         }
     );
     // an attempt to work around https://github.com/jitsi/jitmeet/issues/32
-    if (data.peerjid && sess.peerjid === data.peerjid &&
-            data.stream.getVideoTracks().length === 0 &&
-            connection.jingle.localStream.getVideoTracks().length > 0) {
+    if (isVideo
+        && data.peerjid && sess.peerjid === data.peerjid &&
+           data.stream.getVideoTracks().length === 0 &&
+           connection.jingle.localVideo.getVideoTracks().length > 0) {
         window.setTimeout(function() {
             sendKeyframe(sess.peerconnection);
         }, 3000);
@@ -379,7 +429,12 @@ $(document).bind('setLocalDescription.jingle', function (event, sid) {
             var ssrc = SDPUtil.find_line(media, 'a=ssrc:').substring(7).split(' ')[0];
             newssrcs[type] = ssrc;
 
-            directions[type] = (SDPUtil.find_line(media, 'a=sendrecv') || SDPUtil.find_line(media, 'a=recvonly') || SDPUtil.find_line('a=sendonly') || SDPUtil.find_line('a=inactive') || 'a=sendrecv').substr(2);
+            directions[type] = (
+                SDPUtil.find_line(media, 'a=sendrecv')
+                || SDPUtil.find_line(media, 'a=recvonly')
+                || SDPUtil.find_line('a=sendonly')
+                || SDPUtil.find_line('a=inactive')
+                || 'a=sendrecv' ).substr(2);
         }
     });
     console.log('new ssrcs', newssrcs);
@@ -422,7 +477,7 @@ $(document).bind('joined.muc', function (event, jid, info) {
 
 $(document).bind('entered.muc', function (event, jid, info, pres) {
     console.log('entered', jid, info);
-    console.log(focus);
+    console.log('is focus?' + focus ? 'true' : 'false');
 
     var videoSpanId = 'participant_' + Strophe.getResourceFromJid(jid);
     var container = addRemoteVideoContainer(videoSpanId);
@@ -712,17 +767,22 @@ function updateLargeVideo(newSrc, localVideo, vol) {
     }
 }
 
+function getConferenceHandler() {
+    return focus ? focus : activecall;
+}
+
 function toggleVideo() {
-    if (!(connection && connection.jingle.localStream)) return;
+    if (!(connection && connection.jingle.localVideo)) return;
     var ismuted = false;
-    for (var idx = 0; idx < connection.jingle.localStream.getVideoTracks().length; idx++) {
-        ismuted = !connection.jingle.localStream.getVideoTracks()[idx].enabled;
+    var localVideo = connection.jingle.localVideo;
+    for (var idx = 0; idx < localVideo.getVideoTracks().length; idx++) {
+        ismuted = !localVideo.getVideoTracks()[idx].enabled;
     }
-    for (var idx = 0; idx < connection.jingle.localStream.getVideoTracks().length; idx++) {
-        connection.jingle.localStream.getVideoTracks()[idx].enabled = !connection.jingle.localStream.getVideoTracks()[idx].enabled;
+    for (var idx = 0; idx < localVideo.getVideoTracks().length; idx++) {
+        localVideo.getVideoTracks()[idx].enabled = !localVideo.getVideoTracks()[idx].enabled;
     }
-    var sess = focus || activecall;
-    if (!sess) {
+    var sess = getConferenceHandler();
+    if (sess) {
         return;
     }
     sess.peerconnection.pendingop = ismuted ? 'unmute' : 'mute';
@@ -730,9 +790,10 @@ function toggleVideo() {
 }
 
 function toggleAudio() {
-    if (!(connection && connection.jingle.localStream)) return;
-    for (var idx = 0; idx < connection.jingle.localStream.getAudioTracks().length; idx++) {
-        connection.jingle.localStream.getAudioTracks()[idx].enabled = !connection.jingle.localStream.getAudioTracks()[idx].enabled;
+    if (!(connection && connection.jingle.localAudio)) return;
+    var localAudio = connection.jingle.localAudio;
+    for (var idx = 0; idx < localAudio.getAudioTracks().length; idx++) {
+        localAudio.getAudioTracks()[idx].enabled = !localAudio.getAudioTracks()[idx].enabled;
     }
 }
 
@@ -1170,6 +1231,10 @@ function showFocusIndicator() {
         var session = connection.jingle.sessions[Object.keys(connection.jingle.sessions)[0]];
         var focusId = 'participant_' + Strophe.getResourceFromJid(session.peerjid);
         var focusContainer = document.getElementById(focusId);
+        if(!focusContainer) {
+            console.error("No focus container!");
+            return;
+        }
         var indicatorSpan = $('#' + focusId + ' .focusindicator');
 
         if (!indicatorSpan || indicatorSpan.length === 0) {
