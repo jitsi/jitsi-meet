@@ -3,10 +3,9 @@
 JingleSession.prototype = Object.create(SessionBase.prototype);
 function JingleSession(me, sid, connection) {
 
-    SessionBase.call(this, connection);
+    SessionBase.call(this, connection, sid);
 
     this.me = me;
-    this.sid = sid;
     this.initiator = null;
     this.responder = null;
     this.isInitiator = null;
@@ -153,6 +152,22 @@ JingleSession.prototype.accept = function () {
             console.error('setLocalDescription failed', e);
         }
     );
+};
+
+/**
+ * Implements SessionBase.sendSSRCUpdate.
+ */
+JingleSession.prototype.sendSSRCUpdate = function(sdpMediaSsrcs, fromJid, isadd) {
+
+    var self = this;
+    console.log('tell', self.peerjid, 'about ' + (isadd ? 'new' : 'removed') + ' ssrcs from' + self.me);
+
+    if (!(this.peerconnection.signalingState == 'stable' && this.peerconnection.iceConnectionState == 'connected')){
+        console.log("Too early to send updates");
+        return;
+    }
+
+    this.sendSSRCUpdateIq(sdpMediaSsrcs, self.sid, self.initiator, self.peerjid, isadd);
 };
 
 JingleSession.prototype.terminate = function (reason) {

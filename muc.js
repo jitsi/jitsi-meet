@@ -232,6 +232,14 @@ Strophe.addConnectionPlugin('emuc', {
         this.presMap['source' + sourceNumber + '_ssrc'] = ssrcs;
         this.presMap['source' + sourceNumber + '_direction'] = direction;
     },
+    clearPresenceMedia: function () {
+        var self = this;
+        Object.keys(this.presMap).forEach( function(key) {
+            if(key.indexOf('source') != -1) {
+                delete self.presMap[key];
+            }
+        });
+    },
     addPreziToPresence: function (url, currentSlide) {
         this.presMap['prezins'] = 'http://jitsi.org/jitmeet/prezi';
         this.presMap['preziurl'] = url;

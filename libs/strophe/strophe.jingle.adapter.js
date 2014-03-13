@@ -25,6 +25,12 @@ function TraceablePeerConnection(ice_config, constraints) {
      */
     this.pendingop = null;
 
+    /**
+     * Flag indicates that peer connection stream have changed and modifySources should proceed.
+     * @type {boolean}
+     */
+    this.switchstreams = false;
+
     // override as desired
     this.trace = function(what, info) {
         //console.warn('WTRACE', what, info);
@@ -197,6 +203,7 @@ TraceablePeerConnection.prototype.addSource = function (elem) {
     console.log('addssrc', new Date().getTime());
     console.log('ice', this.iceConnectionState);
     var sdp = new SDP(this.remoteDescription.sdp);
+    var mySdp = new SDP(this.peerconnection.localDescription.sdp);
 
     var self = this;
     $(elem).each(function (idx, content) {
@@ -205,6 +212,15 @@ TraceablePeerConnection.prototype.addSource = function (elem) {
         tmp = $(content).find('>source[xmlns="urn:xmpp:jingle:apps:rtp:ssma:0"]');
         tmp.each(function () {
             var ssrc = $(this).attr('ssrc');
+            if(mySdp.containsSSRC(ssrc)){
+                /**
+                 * This happens when multiple participants change their streams at the same time and
+                 * ColibriFocus.modifySources have to wait for stable state. In the meantime multiple
+                 * addssrc are scheduled for update IQ. See
+                 */
+                console.warn("Got add stream request for my own ssrc: "+ssrc);
+                return;
+            }
             $(this).find('>parameter').each(function () {
                 lines += 'a=ssrc:' + ssrc + ' ' + $(this).attr('name');
                 if ($(this).attr('value') && $(this).attr('value').length)
@@ -233,6 +249,7 @@ TraceablePeerConnection.prototype.removeSource = function (elem) {
     console.log('removessrc', new Date().getTime());
     console.log('ice', this.iceConnectionState);
     var sdp = new SDP(this.remoteDescription.sdp);
+    var mySdp = new SDP(this.peerconnection.localDescription.sdp);
 
     var self = this;
     $(elem).each(function (idx, content) {
@@ -241,6 +258,11 @@ TraceablePeerConnection.prototype.removeSource = function (elem) {
         tmp = $(content).find('>source[xmlns="urn:xmpp:jingle:apps:rtp:ssma:0"]');
         tmp.each(function () {
             var ssrc = $(this).attr('ssrc');
+            // This should never happen, but can be useful for bug detection
+            if(mySdp.containsSSRC(ssrc)){
+                console.error("Got remove stream request for my own ssrc: "+ssrc);
+                return;
+            }
             $(this).find('>parameter').each(function () {
                 lines += 'a=ssrc:' + ssrc + ' ' + $(this).attr('name');
                 if ($(this).attr('value') && $(this).attr('value').length)
@@ -261,7 +283,8 @@ TraceablePeerConnection.prototype.removeSource = function (elem) {
 TraceablePeerConnection.prototype.modifySources = function(successCallback) {
     var self = this;
     if (this.signalingState == 'closed') return;
-    if (!(this.addssrc.length || this.removessrc.length || this.pendingop !== null)){
+    if (!(this.addssrc.length || this.removessrc.length || this.pendingop !== null || this.switchstreams)){
+        // There is nothing to do since scheduled job might have been executed by another succeeding call
         if(successCallback){
             successCallback();
         }
@@ -281,6 +304,9 @@ TraceablePeerConnection.prototype.modifySources = function(successCallback) {
         this.wait = false;
         return;
     }
+
+    // Reset switch streams flag
+    this.switchstreams = false;
 
     var sdp = new SDP(this.remoteDescription.sdp);
 
@@ -486,8 +512,11 @@ function getUserMediaWithConstraints(um, success_callback, failure_callback, res
     }
     if (um.indexOf('screen') >= 0) {
         constraints.video = {
-            "mandatory": {
-                "chromeMediaSource": "screen"
+            mandatory: {
+                chromeMediaSource: "screen",
+                maxWidth: window.screen.width,
+                maxHeight: window.screen.height,
+                maxFrameRate: 3
             }
         };
     }

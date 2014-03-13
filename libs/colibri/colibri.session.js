@@ -61,6 +61,14 @@ ColibriSession.prototype.accept = function () {
     console.log('ColibriSession.accept');
 };
 
+ColibriSession.prototype.addSource = function (elem, fromJid) {
+    this.colibri.addSource(elem, fromJid);
+};
+
+ColibriSession.prototype.removeSource = function (elem, fromJid) {
+    this.colibri.removeSource(elem, fromJid);
+};
+
 ColibriSession.prototype.terminate = function (reason) {
     this.colibri.terminate(this, reason);
 };

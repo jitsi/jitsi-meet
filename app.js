@@ -166,6 +166,7 @@ $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
         var sess = connection.jingle.sessions[sid];
         if (data.stream.id === 'mixedmslabel') return;
         videoTracks = data.stream.getVideoTracks();
+        console.log("waiting..", videoTracks, selector[0]);
         if (videoTracks.length === 0 || selector[0].currentTime > 0) {
             RTC.attachMediaStream(selector, data.stream); // FIXME: why do i have to do this for FF?
             $(document).trigger('callactive.jingle', [selector, sid]);
@@ -437,6 +438,8 @@ $(document).bind('setLocalDescription.jingle', function (event, sid) {
     });
     console.log('new ssrcs', newssrcs);
 
+    // Have to clear presence map to get rid of removed streams
+    connection.emuc.clearPresenceMedia();
     var i = 0;
     Object.keys(newssrcs).forEach(function (mtype) {
         i++;
@@ -542,6 +545,14 @@ $(document).bind('left.muc', function (event, jid) {
 });
 
 $(document).bind('presence.muc', function (event, jid, info, pres) {
+
+    // Remove old ssrcs coming from the jid
+    Object.keys(ssrc2jid).forEach(function(ssrc){
+       if(ssrc2jid[ssrc] == jid){
+           delete ssrc2jid[ssrc];
+       }
+    });
+
     $(pres).find('>media[xmlns="http://estos.de/ns/mjs"]>source').each(function (idx, ssrc) {
         //console.log(jid, 'assoc ssrc', ssrc.getAttribute('type'), ssrc.getAttribute('ssrc'));
         ssrc2jid[ssrc.getAttribute('ssrc')] = jid;
@@ -1190,6 +1201,9 @@ function showToolbar() {
     {
 //        TODO: Enable settings functionality. Need to uncomment the settings button in index.html.
 //        $('#settingsButton').css({visibility:"visible"});
+    }
+    if(isDesktopSharingEnabled()) {
+        $('#desktopsharing').css({display:"inline"});
     }
 }
 

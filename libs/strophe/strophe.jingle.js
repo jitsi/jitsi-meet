@@ -141,10 +141,10 @@ Strophe.addConnectionPlugin('jingle', {
                 }
                 break;
             case 'addsource': // FIXME: proprietary
-                sess.addSource($(iq).find('>jingle>content'));
+                sess.addSource($(iq).find('>jingle>content'), fromJid);
                 break;
             case 'removesource': // FIXME: proprietary
-                sess.removeSource($(iq).find('>jingle>content'));
+                sess.removeSource($(iq).find('>jingle>content'), fromJid);
                 break;
             default:
                 console.warn('jingle action not implemented', action);

@@ -6,6 +6,7 @@
     <script src="libs/strophe/strophe.jingle.bundle.js?v=8"></script>
     <script src="libs/strophe/strophe.jingle.js?v=1"></script>
     <script src="libs/strophe/strophe.jingle.sdp.js?v=1"></script>
+    <script src="libs/strophe/strophe.jingle.sdp.util.js?v=1"></script>
     <script src="libs/strophe/strophe.jingle.sessionbase.js?v=1"></script>
     <script src="libs/strophe/strophe.jingle.session.js?v=1"></script>
     <script src="libs/colibri/colibri.focus.js?v=8"></script><!-- colibri focus implementation -->
@@ -15,6 +16,7 @@
     <script src="estos_log.js?v=2"></script><!-- simple stanza logger -->
     <script src="app.js?v=23"></script><!-- application logic -->
     <script src="chat.js?v=3"></script><!-- chat logic -->
+    <script src="desktopsharing.js?v=1"></script><!-- desktop sharing logic -->
     <script src="util.js?v=2"></script><!-- utility functions -->
     <script src="etherpad.js?v=5"></script><!-- etherpad plugin -->
     <script src="smileys.js?v=1"></script><!-- smiley images -->
@@ -54,6 +56,10 @@
                 <a class="button" onclick='Etherpad.toggleEtherpad(0);'><i title="Open shared document" class="fa fa-file-text fa-lg"></i></a>
             </span>
             <div class="header_button_separator"></div>
+            <span id="desktopsharing" style="display: none">
+                <a class="button" onclick="toggleScreenSharing();"><i title="Share screen" class="fa fa-desktop fa-lg"></i></a>
+                <div class="header_button_separator"></div>
+            </span>
             <a class="button" onclick='toggleFullScreen();'><i title="Enter / Exit Full Screen" class="fa fa-arrows-alt fa-lg"></i></a>
         </span>
     </div>
