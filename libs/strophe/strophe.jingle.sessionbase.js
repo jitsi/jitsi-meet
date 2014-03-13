@@ -170,11 +170,17 @@ SessionBase.prototype.sendSSRCUpdateIq = function(sdpMediaSsrcs, sid, initiator,
 
 // SDP-based mute by going recvonly/sendrecv
 // FIXME: should probably black out the screen as well
-SessionBase.prototype.hardMuteVideo = function (muted) {
+SessionBase.prototype.toggleVideoMute = function (callback) {
 
-    this.peerconnection.hardMuteVideo(muted);
+    var ismuted = false;
+    var localVideo = connection.jingle.localVideo;
+    for (var idx = 0; idx < localVideo.getVideoTracks().length; idx++) {
+        ismuted = !localVideo.getVideoTracks()[idx].enabled;
+    }
+    for (var idx = 0; idx < localVideo.getVideoTracks().length; idx++) {
+        localVideo.getVideoTracks()[idx].enabled = !localVideo.getVideoTracks()[idx].enabled;
+    }
 
-    this.connection.jingle.localVideo.getVideoTracks().forEach(function (track) {
-        track.enabled = !muted;
-    });
+    this.peerconnection.hardMuteVideo(!ismuted);
+    this.modifySources(callback(!ismuted));
 };

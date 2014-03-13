@@ -782,20 +782,21 @@ function getConferenceHandler() {
 
 function toggleVideo() {
     if (!(connection && connection.jingle.localVideo)) return;
-    var ismuted = false;
-    var localVideo = connection.jingle.localVideo;
-    for (var idx = 0; idx < localVideo.getVideoTracks().length; idx++) {
-        ismuted = !localVideo.getVideoTracks()[idx].enabled;
-    }
-    for (var idx = 0; idx < localVideo.getVideoTracks().length; idx++) {
-        localVideo.getVideoTracks()[idx].enabled = !localVideo.getVideoTracks()[idx].enabled;
-    }
+
     var sess = getConferenceHandler();
     if (sess) {
-        return;
+        sess.toggleVideoMute(
+            function(isMuted){
+                if(isMuted) {
+                    $('#video').removeClass("fa fa-video-camera fa-lg");
+                    $('#video').addClass("fa fa-video-camera no-fa-video-camera fa-lg");
+                } else {
+                    $('#video').removeClass("fa fa-video-camera no-fa-video-camera fa-lg");
+                    $('#video').addClass("fa fa-video-camera fa-lg");
+                }
+            }
+        );
     }
-    sess.peerconnection.pendingop = ismuted ? 'unmute' : 'mute';
-    sess.peerconnection.modifySources();
 }
 
 function toggleAudio() {

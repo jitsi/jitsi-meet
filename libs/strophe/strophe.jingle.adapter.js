@@ -189,7 +189,6 @@ TraceablePeerConnection.prototype.setRemoteDescription = function (description, 
 
 TraceablePeerConnection.prototype.hardMuteVideo = function (muted) {
     this.pendingop = muted ? 'mute' : 'unmute';
-    this.modifySources();
 };
 
 TraceablePeerConnection.prototype.enqueueAddSsrc = function(channel, ssrcLines) {
@@ -338,9 +337,11 @@ TraceablePeerConnection.prototype.modifySources = function(successCallback) {
                             switch(self.pendingop) {
                                 case 'mute':
                                     sdp.media[1] = sdp.media[1].replace('a=sendrecv', 'a=recvonly');
+                                    console.error("MUTE");
                                     break;
                                 case 'unmute':
                                     sdp.media[1] = sdp.media[1].replace('a=recvonly', 'a=sendrecv');
+                                    console.error("UNMUTE");
                                     break;
                             }
                             sdp.raw = sdp.session + sdp.media.join('');
