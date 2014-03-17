@@ -14,18 +14,22 @@ var switchInProgress = false;
  *
  * @type {function(stream_callback, failure_callback}
  */
-var obtainDesktopStream = obtainScreenFromExtension;
-
-/**
- * Desktop sharing must be enabled in config and works on chrome only.
- */
-var desktopSharingEnabled = config.desktopSharing;
+var obtainDesktopStream = null;
 
 /**
  * @returns {boolean} <tt>true</tt> if desktop sharing feature is available and enabled.
  */
 function isDesktopSharingEnabled() {
-    return desktopSharingEnabled;
+    if(obtainDesktopStream === obtainScreenFromExtension) {
+        // Parse chrome version
+        var userAgent = navigator.userAgent.toLowerCase();
+        // We can assume that user agent is chrome, because it's enforced when 'ext' streaming method is set
+        var ver = parseInt(userAgent.match(/chrome\/(\d+)\./)[1], 10);
+        console.log("Chrome version" + userAgent, ver);
+        return ver >= 35;
+    } else {
+        return obtainDesktopStream === obtainWebRTCScreen;
+    }
 }
 
 /**
@@ -36,16 +40,26 @@ function isDesktopSharingEnabled() {
  */
 function setDesktopSharing(method) {
     if(method == "ext") {
-        obtainDesktopStream = obtainScreenFromExtension;
-        desktopSharingEnabled = true;
+        if(RTC.browser === 'chrome') {
+            obtainDesktopStream = obtainScreenFromExtension;
+        } else {
+            console.log("Chrome is required to use extension method");
+            obtainDesktopStream = null;
+        }
     } else if(method == "webrtc") {
         obtainDesktopStream = obtainWebRTCScreen;
-        desktopSharingEnabled = true;
     } else {
         obtainDesktopStream = null;
-        desktopSharingEnabled = false;
     }
     showDesktopSharingButton();
+}
+
+function showDesktopSharingButton() {
+    if(isDesktopSharingEnabled()) {
+        $('#desktopsharing').css( {display:"inline"} );
+    } else {
+        $('#desktopsharing').css( {display:"none"} );
+    }
 }
 
 /*
@@ -129,11 +143,59 @@ function obtainWebRTCScreen(streamCallback, failCallback) {
  * Asks Chrome extension to call chooseDesktopMedia and gets chrome 'desktop' stream for returned stream token.
  */
 function obtainScreenFromExtension(streamCallback, failCallback) {
-    // Check for extension API
-    if(!chrome || !chrome.runtime) {
-        failCallback("Failed to communicate with extension - no API available");
-        return;
+    checkExtInstalled(
+        function(isInstalled) {
+            if(isInstalled) {
+                doGetStreamFromExtension(streamCallback, failCallback);
+            } else {
+                chrome.webstore.install(
+                    "https://chrome.google.com/webstore/detail/" + config.chromeExtensionId,
+                    function(arg) {
+                        console.log("Extension installed successfully", arg);
+                        // We need to reload the page in order to get the access to chrome.runtime
+                        window.location.reload(false);
+                    },
+                    function(arg) {
+                        console.log("Failed to install the extension", arg);
+                        failCallback(arg);
+                    }
+                );
+            }
+        }
+    );
+}
+
+function checkExtInstalled(isInstalledCallback) {
+    if(!chrome.runtime) {
+        // No API, so no extension for sure
+        isInstalledCallback(false);
+        return false;
     }
+    chrome.runtime.sendMessage(
+        config.chromeExtensionId,
+        { getVersion: true },
+        function(response){
+            if(!response || !response.version) {
+                // Communication failure - assume that no endpoint exists
+                console.warn("Extension not installed?: "+chrome.runtime.lastError);
+                isInstalledCallback(false);
+            } else {
+                // Check installed extension version
+                var extVersion = response.version;
+                console.log('Extension version is: '+extVersion);
+                var updateRequired = extVersion < config.minChromeExtVersion;
+                if(updateRequired) {
+                    alert(
+                        'Jitsi Desktop Streamer requires update. ' +
+                        'Changes will take effect after next Chrome restart.' );
+                }
+                isInstalledCallback(!updateRequired);
+            }
+        }
+    );
+}
+
+function doGetStreamFromExtension(streamCallback, failCallback) {
     // Sends 'getStream' msg to the extension. Extension id must be defined in the config.
     chrome.runtime.sendMessage(
         config.chromeExtensionId,

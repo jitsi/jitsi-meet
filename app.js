@@ -1245,15 +1245,8 @@ function showToolbar() {
 //        TODO: Enable settings functionality. Need to uncomment the settings button in index.html.
 //        $('#settingsButton').css({visibility:"visible"});
     }
-    showDesktopSharingButton();
-}
-
-function showDesktopSharingButton() {
-    if(isDesktopSharingEnabled()) {
-        $('#desktopsharing').css( {display:"inline"} );
-    } else {
-        $('#desktopsharing').css( {display:"none"} );
-    }
+    // Set desktop sharing method
+    setDesktopSharing(config.desktopSharing);
 }
 
 /*
