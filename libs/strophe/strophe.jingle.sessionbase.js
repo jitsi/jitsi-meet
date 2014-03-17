@@ -51,6 +51,9 @@ SessionBase.prototype.switchStreams = function (new_stream, oldStream, success_c
     // Remember SDP to figure out added/removed SSRCs
     var oldSdp = new SDP(self.peerconnection.localDescription.sdp);
 
+    // Stop the stream to trigger onended event for old stream
+    oldStream.stop();
+
     self.peerconnection.removeStream(oldStream);
 
     self.connection.jingle.localVideo = new_stream;

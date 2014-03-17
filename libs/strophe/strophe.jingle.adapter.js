@@ -337,11 +337,9 @@ TraceablePeerConnection.prototype.modifySources = function(successCallback) {
                             switch(self.pendingop) {
                                 case 'mute':
                                     sdp.media[1] = sdp.media[1].replace('a=sendrecv', 'a=recvonly');
-                                    console.error("MUTE");
                                     break;
                                 case 'unmute':
                                     sdp.media[1] = sdp.media[1].replace('a=recvonly', 'a=sendrecv');
-                                    console.error("UNMUTE");
                                     break;
                             }
                             sdp.raw = sdp.session + sdp.media.join('');
@@ -502,7 +500,7 @@ function setupRTC() {
     return RTC;
 }
 
-function getUserMediaWithConstraints(um, success_callback, failure_callback, resolution, bandwidth, fps) {
+function getUserMediaWithConstraints(um, success_callback, failure_callback, resolution, bandwidth, fps, desktopStream) {
     var constraints = {audio: false, video: false};
 
     if (um.indexOf('video') >= 0) {
@@ -520,6 +518,17 @@ function getUserMediaWithConstraints(um, success_callback, failure_callback, res
                 maxFrameRate: 3
             }
         };
+    }
+    if (um.indexOf('desktop') >= 0) {
+        constraints.video = {
+            mandatory: {
+                chromeMediaSource: "desktop",
+                chromeMediaSourceId: desktopStream,
+                maxWidth: window.screen.width,
+                maxHeight: window.screen.height,
+                maxFrameRate: 3
+            }
+        }
     }
 
     if (resolution && !constraints.video) {

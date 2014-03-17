@@ -9,6 +9,7 @@ var sharedKey = '';
 var roomUrl = null;
 var ssrc2jid = {};
 var localVideoSrc = null;
+var flipXLocalVideo = true;
 var preziPlayer = null;
 
 /* window.onbeforeunload = closePageWarning; */
@@ -71,7 +72,7 @@ function audioStreamReady(stream) {
 
 function videoStreamReady(stream) {
 
-    change_local_video(stream);
+    change_local_video(stream, true);
 
     doJoin();
 }
@@ -134,27 +135,37 @@ function change_local_audio(stream) {
     document.getElementById('localAudio').volume = 0;
 }
 
-function change_local_video(stream) {
+function change_local_video(stream, flipX) {
 
     connection.jingle.localVideo = stream;
-    RTC.attachMediaStream($('#localVideo'), stream);
-    document.getElementById('localVideo').autoplay = true;
-    document.getElementById('localVideo').volume = 0;
 
-    localVideoSrc = document.getElementById('localVideo').src;
-    updateLargeVideo(localVideoSrc, true, 0);
+    var localVideo = document.createElement('video');
+    localVideo.id = 'localVideo_'+stream.id;
+    localVideo.autoplay = true;
+    localVideo.volume = 0; // is it required if audio is separated ?
+    localVideo.oncontextmenu = function () { return false; };
 
-    $('#localVideo').click(function () {
-        $(document).trigger("video.selected", [false]);
-        updateLargeVideo($(this).attr('src'), true, 0);
+    var localVideoContainer = document.getElementById('localVideoContainer');
+    localVideoContainer.appendChild(localVideo);
 
-        $('video').each(function (idx, el) {
-            if (el.id.indexOf('mixedmslabel') !== -1) {
-                el.volume = 0;
-                el.volume = 1;
-            }
-        });
-    });
+    var localVideoSelector = $('#' + localVideo.id);
+    // Add click handler
+    localVideoSelector.click(function () { handleVideoThumbClicked(localVideo.src); } );
+    // Add stream ended handler
+    stream.onended = function () {
+        localVideoContainer.removeChild(localVideo);
+        checkChangeLargeVideo(localVideo.src);
+    };
+    // Flip video x axis if needed
+    flipXLocalVideo = flipX;
+    if(flipX) {
+        localVideoSelector.addClass("flipVideoX");
+    }
+    // Attach WebRTC stream
+    RTC.attachMediaStream(localVideoSelector, stream);
+
+    localVideoSrc = localVideo.src;
+    updateLargeVideo(localVideoSrc, 0);
 }
 
 $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
@@ -243,42 +254,27 @@ $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
 
     data.stream.onended = function () {
         console.log('stream ended', this.id);
-        if (sel.attr('src') === $('#largeVideo').attr('src')) {
-            // this is currently displayed as large
-            // pick the last visible video in the row
-            // if nobody else is left, this picks the local video
-            var pick = $('#remoteVideos>span[id!="mixedstream"]:visible:last>video').get(0);
-            // mute if localvideo
-            var isLocalVideo = false;
-            if (pick) {
-                 if (pick.src === localVideoSrc)
-                 isLocalVideo = true;
 
-                 updateLargeVideo(pick.src, isLocalVideo, pick.volume);
-            }
-        }
         // Mark video as removed to cancel waiting loop(if video is removed before has started)
         sel.removed = true;
+        sel.remove();
 
-        var userContainer = sel.parent();
-        if(userContainer.children().length === 0) {
+        var audioCount = $('#'+container.id+'>audio').length;
+        var videoCount = $('#'+container.id+'>video').length;
+        if(!audioCount && !videoCount) {
             console.log("Remove whole user");
             // Remove whole container
-            userContainer.remove();
+            container.remove();
             Util.playSoundNotification('userLeft');
             resizeThumbnails();
-        } else {
-            // Remove only stream holder
-            sel.remove();
-            console.log("Remove stream only", sel);
         }
+
+        checkChangeLargeVideo(vid.src);
     };
-    sel.click(
-        function () {
-            $(document).trigger("video.selected", [false]);
-            updateLargeVideo($(this).attr('src'), false, 1);
-        }
-    );
+
+    // Add click handler
+    sel.click(function () { handleVideoThumbClicked(vid.src); });
+
     // an attempt to work around https://github.com/jitsi/jitmeet/issues/32
     if (isVideo
         && data.peerjid && sess.peerjid === data.peerjid &&
@@ -289,6 +285,46 @@ $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
         }, 3000);
     }
 });
+
+function handleVideoThumbClicked(videoSrc) {
+
+    $(document).trigger("video.selected", [false]);
+
+    updateLargeVideo(videoSrc, 1);
+
+    $('audio').each(function (idx, el) {
+        // We no longer mix so we check for local audio now
+        if(el.id != 'localAudio') {
+            el.volume = 0;
+            el.volume = 1;
+        }
+    });
+}
+
+/**
+ * Checks if removed video is currently displayed and tries to display another one instead.
+ * @param removedVideoSrc src stream identifier of the video.
+ */
+function checkChangeLargeVideo(removedVideoSrc){
+    if (removedVideoSrc === $('#largeVideo').attr('src')) {
+        // this is currently displayed as large
+        // pick the last visible video in the row
+        // if nobody else is left, this picks the local video
+        var pick = $('#remoteVideos>span[id!="mixedstream"]:visible:last>video').get(0);
+
+        if(!pick) {
+            console.info("Last visible video no longer exists");
+            pick = $('#remoteVideos>span[id!="mixedstream"]>video').get(0);
+        }
+
+        // mute if localvideo
+        if (pick) {
+            updateLargeVideo(pick.src, pick.volume);
+        } else {
+            console.warn("Failed to elect large video");
+        }
+    }
+}
 
 // an attempt to work around https://github.com/jitsi/jitmeet/issues/32
 function sendKeyframe(pc) {
@@ -404,7 +440,7 @@ $(document).bind('callactive.jingle', function (event, videoelem, sid) {
         videoelem.show();
         resizeThumbnails();
 
-        updateLargeVideo(videoelem.attr('src'), false, 1);
+        updateLargeVideo(videoelem.attr('src'), 1);
 
         showFocusIndicator();
     }
@@ -566,6 +602,8 @@ $(document).bind('presence.muc', function (event, jid, info, pres) {
                 break;
             case 'recvonly':
                 el.hide();
+                // FIXME: Check if we have to change large video
+                //checkChangeLargeVideo(el);
                 break;
             }
         }
@@ -751,23 +789,27 @@ function isPresentationVisible() {
 /**
  * Updates the large video with the given new video source.
  */
-function updateLargeVideo(newSrc, localVideo, vol) {
+function updateLargeVideo(newSrc, vol) {
     console.log('hover in', newSrc);
 
     setPresentationVisible(false);
 
     if ($('#largeVideo').attr('src') !== newSrc) {
 
-        document.getElementById('largeVideo').volume = vol;
+        // FIXME: is it still required ? audio is separated
+        //document.getElementById('largeVideo').volume = vol;
 
         $('#largeVideo').fadeOut(300, function () {
             $(this).attr('src', newSrc);
 
+            // Screen stream is already rotated
+            var flipX = (newSrc === localVideoSrc) && flipXLocalVideo;
+
             var videoTransform = document.getElementById('largeVideo').style.webkitTransform;
-            if (localVideo && videoTransform !== 'scaleX(-1)') {
+            if (flipX && videoTransform !== 'scaleX(-1)') {
                 document.getElementById('largeVideo').style.webkitTransform = "scaleX(-1)";
             }
-            else if (!localVideo && videoTransform === 'scaleX(-1)') {
+            else if (!flipX && videoTransform === 'scaleX(-1)') {
                 document.getElementById('largeVideo').style.webkitTransform = "none";
             }
 
@@ -1203,8 +1245,14 @@ function showToolbar() {
 //        TODO: Enable settings functionality. Need to uncomment the settings button in index.html.
 //        $('#settingsButton').css({visibility:"visible"});
     }
+    showDesktopSharingButton();
+}
+
+function showDesktopSharingButton() {
     if(isDesktopSharingEnabled()) {
-        $('#desktopsharing').css({display:"inline"});
+        $('#desktopsharing').css( {display:"inline"} );
+    } else {
+        $('#desktopsharing').css( {display:"none"} );
     }
 }
 

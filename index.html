@@ -14,9 +14,9 @@
     <script src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
     <script src="muc.js?v=9"></script><!-- simple MUC library -->
     <script src="estos_log.js?v=2"></script><!-- simple stanza logger -->
+    <script src="desktopsharing.js?v=1"></script><!-- desktop sharing -->
     <script src="app.js?v=23"></script><!-- application logic -->
     <script src="chat.js?v=3"></script><!-- chat logic -->
-    <script src="desktopsharing.js?v=1"></script><!-- desktop sharing logic -->
     <script src="util.js?v=2"></script><!-- utility functions -->
     <script src="etherpad.js?v=5"></script><!-- etherpad plugin -->
     <script src="smileys.js?v=1"></script><!-- smiley images -->
@@ -85,7 +85,7 @@
         <div id="remoteVideos">
             <span id="localVideoContainer" class="videocontainer">
                 <span id="localNick"></span>
-                <video id="localVideo" autoplay oncontextmenu="return false;" muted></video>
+                <!--<video id="localVideo" autoplay oncontextmenu="return false;" muted></video> - is now per stream generated -->
                 <audio id="localAudio" autoplay oncontextmenu="return false;" muted></audio>
                 <span class="focusindicator"></span>
             </span>

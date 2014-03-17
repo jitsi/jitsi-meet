@@ -49,7 +49,7 @@ html, body{
     font-size: 10pt;
 }
 
-#localVideo {
+.flipVideoX {
     -moz-transform: scaleX(-1);
     -webkit-transform: scaleX(-1);
     -o-transform: scaleX(-1);

@@ -9,5 +9,6 @@ var config = {
 //  useIPv6: true, // ipv6 support. use at your own risk
     useNicks: false,
     bosh: '//lambada.jitsi.net/http-bind', // FIXME: use xep-0156 for that
-    chromeDesktopSharing: false // Desktop sharing is disabled by default
+    desktopSharing: false, // Desktop sharing is disabled by default(call setDesktopSharing in the console to enable)
+    chromeExtensionId: 'nhkhigmiepmkogopmkfipjlfkeablnch' // Id of Jitsi Desktop Streamer chrome extension
 };
