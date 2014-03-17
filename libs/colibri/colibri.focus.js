@@ -147,9 +147,16 @@ ColibriFocus.prototype._makeConference = function () {
 
     this.media.forEach(function (name) {
         elem.c('content', {name: name});
-        elem.c('channel', {initiator: 'true', expire: '15'}).up();
+        elem.c('channel', {
+            initiator: 'true',
+            expire: '15',
+            endpoint: 'fix_me_focus_endpoint'}).up();
         for (var j = 0; j < self.peers.length; j++) {
-            elem.c('channel', {initiator: 'true', expire:'15' }).up();
+            elem.c('channel', {
+                initiator: 'true',
+                expire: '15',
+                endpoint: self.peers[j].substr(1 + self.peers[j].lastIndexOf('/'));
+            }).up();
         }
         elem.up(); // end of content
     });
@@ -301,7 +308,8 @@ ColibriFocus.prototype.createdConference = function (result) {
                                 elem.c('channel', {
                                     initiator: 'true',
                                     expire: '15',
-                                    id: self.mychannel[channel].attr('id')
+                                    id: self.mychannel[channel].attr('id'),
+                                    endpoint: 'fix_me_focus_endpoint'
                                 });
 
                                 // FIXME: should reuse code from .toJingle
@@ -491,7 +499,11 @@ ColibriFocus.prototype.addNewParticipant = function (peer) {
     localSDP.media.forEach(function (media, channel) {
         var name = SDPUtil.parse_mline(media.split('\r\n')[0]).media;
         elem.c('content', {name: name});
-        elem.c('channel', {initiator: 'true', expire:'15'});
+        elem.c('channel', {
+                initiator: 'true',
+                expire:'15',
+                endpoint: peer.substr(1 + peer.lastIndexOf('/'))
+        });
         elem.up(); // end of channel
         elem.up(); // end of content
     });
@@ -518,7 +530,11 @@ ColibriFocus.prototype.updateChannel = function (remoteSDP, participant) {
     change.c('conference', {xmlns: 'http://jitsi.org/protocol/colibri', id: this.confid});
     for (channel = 0; channel < this.channels[participant].length; channel++) {
         change.c('content', {name: channel === 0 ? 'audio' : 'video'});
-        change.c('channel', {id: $(this.channels[participant][channel]).attr('id')});
+        change.c('channel', {
+            id: $(this.channels[participant][channel]).attr('id'),
+            endpoint: $(this.channels[participant][channel]).attr('endpoint'),
+            expire: '15'
+        });
 
         var rtpmap = SDPUtil.find_lines(remoteSDP.media[channel], 'a=rtpmap:');
         rtpmap.forEach(function (val) {
@@ -684,7 +700,11 @@ ColibriFocus.prototype.addIceCandidate = function (session, elem) {
         var channel = name == 'audio' ? 0 : 1; // FIXME: search mlineindex in localdesc
 
         change.c('content', {name: name});
-        change.c('channel', {id: $(self.channels[participant][channel]).attr('id')});
+        change.c('channel', {
+            id: $(self.channels[participant][channel]).attr('id'),
+            endpoint: $(self.channels[participant][channel]).attr('endpoint'),
+            expire: '15'
+        });
         $(this).find('>transport').each(function () {
             change.c('transport', {
                 ufrag: $(this).attr('ufrag'),
@@ -748,7 +768,11 @@ ColibriFocus.prototype.sendIceCandidates = function (candidates) {
         var cands = candidates.filter(function (el) { return el.sdpMLineIndex == mid; });
         if (cands.length > 0) {
             mycands.c('content', {name: cands[0].sdpMid });
-            mycands.c('channel', {id: $(this.mychannel[cands[0].sdpMLineIndex]).attr('id')});
+            mycands.c('channel', {
+                id: $(this.mychannel[cands[0].sdpMLineIndex]).attr('id'),
+                endpoint: $(this.mychannel[cands[0].sdpMLineIndex]).attr('endpoint'),
+                expire: '15'
+            });
             mycands.c('transport', {xmlns: 'urn:xmpp:jingle:transports:ice-udp:1'});
             for (var i = 0; i < cands.length; i++) {
                 mycands.c('candidate', SDPUtil.candidateToJingle(cands[i].candidate)).up();
@@ -786,7 +810,11 @@ ColibriFocus.prototype.terminate = function (session, reason) {
     change.c('conference', {xmlns: 'http://jitsi.org/protocol/colibri', id: this.confid});
     for (var channel = 0; channel < this.channels[participant].length; channel++) {
         change.c('content', {name: channel === 0 ? 'audio' : 'video'});
-        change.c('channel', {id: $(this.channels[participant][channel]).attr('id'), expire: '0'});
+        change.c('channel', {
+            id: $(this.channels[participant][channel]).attr('id'),
+            endpoint: $(this.channels[participant][channel]).attr('endpoint'),
+            expire: '0'
+        });
         change.up(); // end of channel
         change.up(); // end of content
     }
