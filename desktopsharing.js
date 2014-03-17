@@ -42,14 +42,17 @@ function setDesktopSharing(method) {
     if(method == "ext") {
         if(RTC.browser === 'chrome') {
             obtainDesktopStream = obtainScreenFromExtension;
+            console.info("Using Chrome extension for desktop sharing");
         } else {
-            console.log("Chrome is required to use extension method");
+            console.error("Chrome is required to use extension method");
             obtainDesktopStream = null;
         }
     } else if(method == "webrtc") {
         obtainDesktopStream = obtainWebRTCScreen;
+        console.info("Using WebRTC for desktop sharing");
     } else {
         obtainDesktopStream = null;
+        console.info("Desktop sharing disabled");
     }
     showDesktopSharingButton();
 }
@@ -66,11 +69,8 @@ function showDesktopSharingButton() {
  * Toggles screen sharing.
  */
 function toggleScreenSharing() {
-    if (!(connection && connection.connected
-        && !switchInProgress
-        && getConferenceHandler().peerconnection.signalingState == 'stable'
-        && getConferenceHandler().peerconnection.iceConnectionState == 'connected'
-        && obtainDesktopStream )) {
+    if (switchInProgress || !obtainDesktopStream) {
+        console.warn("Switch in progress or no method defined");
         return;
     }
     switchInProgress = true;
@@ -85,7 +85,7 @@ function toggleScreenSharing() {
                 // Hook 'ended' event to restore camera when screen stream stops
                 stream.addEventListener('ended',
                     function(e) {
-                        if(!switchInProgress) {
+                        if(!switchInProgress && isUsingScreenStream) {
                             toggleScreenSharing();
                         }
                     }
@@ -118,13 +118,24 @@ function newStreamCreated(stream) {
 
     change_local_video(stream, !isUsingScreenStream);
 
-    // FIXME: will block switchInProgress on true value in case of exception
-    getConferenceHandler().switchStreams(
-        stream, oldStream,
-        function() {
-            // Switch operation has finished
+    var conferenceHandler = getConferenceHandler();
+    if(conferenceHandler) {
+        console.info("Conference considered as started");
+        // FIXME: will block switchInProgress on true value in case of exception
+        conferenceHandler.switchStreams(stream, oldStream, streamSwitchDone);
+    } else {
+        // We are done immediately
+        console.error("No conference handler");
+        streamSwitchDone();
+    }
+}
+
+function streamSwitchDone() {
+    //window.setTimeout(
+    //    function() {
             switchInProgress = false;
-        });
+    //    }, 100
+    //);
 }
 
 /**

@@ -49,7 +49,10 @@ SessionBase.prototype.switchStreams = function (new_stream, oldStream, success_c
     var self = this;
 
     // Remember SDP to figure out added/removed SSRCs
-    var oldSdp = new SDP(self.peerconnection.localDescription.sdp);
+    var oldSdp = null;
+    if(self.peerconnection.localDescription) {
+        oldSdp = new SDP(self.peerconnection.localDescription.sdp);
+    }
 
     // Stop the stream to trigger onended event for old stream
     oldStream.stop();
@@ -62,6 +65,12 @@ SessionBase.prototype.switchStreams = function (new_stream, oldStream, success_c
     self.connection.jingle.localStreams = [];
     self.connection.jingle.localStreams.push(self.connection.jingle.localAudio);
     self.connection.jingle.localStreams.push(self.connection.jingle.localVideo);
+
+    // Conference is not active
+    if(!oldSdp) {
+        success_callback();
+        return;
+    }
 
     self.peerconnection.switchstreams = true;
     self.modifySources(function() {

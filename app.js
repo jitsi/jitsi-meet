@@ -221,7 +221,9 @@ $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
         }
     } else {
         if (data.stream.id !== 'mixedmslabel') {
-            console.warn('can not associate stream', data.stream.id, 'with a participant');
+            console.error('can not associate stream', data.stream.id, 'with a participant');
+            // We don't want to add it here since it will cause troubles
+            return;
         }
         // FIXME: for the mixed ms we dont need a video -- currently
         container = document.createElement('span');
@@ -448,6 +450,8 @@ $(document).bind('callactive.jingle', function (event, videoelem, sid) {
 
 $(document).bind('callterminated.jingle', function (event, sid, reason) {
     // FIXME
+    focus = null;
+    activecall = null;
 });
 
 $(document).bind('setLocalDescription.jingle', function (event, sid) {
