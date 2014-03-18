@@ -120,7 +120,6 @@ function newStreamCreated(stream) {
 
     var conferenceHandler = getConferenceHandler();
     if(conferenceHandler) {
-        console.info("Conference considered as started");
         // FIXME: will block switchInProgress on true value in case of exception
         conferenceHandler.switchStreams(stream, oldStream, streamSwitchDone);
     } else {

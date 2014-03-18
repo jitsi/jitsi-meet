@@ -483,7 +483,12 @@ $(document).bind('setLocalDescription.jingle', function (event, sid) {
     var i = 0;
     Object.keys(newssrcs).forEach(function (mtype) {
         i++;
-        connection.emuc.addMediaToPresence(i, mtype, newssrcs[mtype], directions[mtype]);
+        var type = mtype;
+        // Change video type to screen
+        if(mtype === 'video' && isUsingScreenStream) {
+            type = 'screen';
+        }
+        connection.emuc.addMediaToPresence(i, type, newssrcs[mtype], directions[mtype]);
     });
     if (i > 0) {
         connection.emuc.sendPresence();
@@ -597,8 +602,9 @@ $(document).bind('presence.muc', function (event, jid, info, pres) {
         //console.log(jid, 'assoc ssrc', ssrc.getAttribute('type'), ssrc.getAttribute('ssrc'));
         ssrc2jid[ssrc.getAttribute('ssrc')] = jid;
 
+        var type = ssrc.getAttribute('type');
         // might need to update the direction if participant just went from sendrecv to recvonly
-        if (ssrc.getAttribute('type') === 'video') {
+        if (type === 'video' || type === 'screen') {
             var el = $('#participant_'  + Strophe.getResourceFromJid(jid) + '>video');
             switch(ssrc.getAttribute('direction')) {
             case 'sendrecv':
@@ -609,6 +615,14 @@ $(document).bind('presence.muc', function (event, jid, info, pres) {
                 // FIXME: Check if we have to change large video
                 //checkChangeLargeVideo(el);
                 break;
+            }
+            // Camera video or shared screen ?
+            if (type === 'screen') {
+                // Shared screen
+                //console.info("Have screen ssrc from "+jid, ssrc);
+            } else {
+                // Camera video
+                //console.info("Have camera ssrc from "+jid, ssrc);
             }
         }
     });
