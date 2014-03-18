@@ -155,7 +155,7 @@ ColibriFocus.prototype._makeConference = function () {
             elem.c('channel', {
                 initiator: 'true',
                 expire: '15',
-                endpoint: self.peers[j].substr(1 + self.peers[j].lastIndexOf('/'));
+                endpoint: self.peers[j].substr(1 + self.peers[j].lastIndexOf('/'))
             }).up();
         }
         elem.up(); // end of content
