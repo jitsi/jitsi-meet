@@ -205,8 +205,6 @@ html, body{
     position:absolute;
     top: 5px;
     left: 15px;
-    background-image:url(../images/jitsilogo.png);
-    background-repeat:no-repeat;
     height: 31px;
     width: 68px;
     z-index:1;
@@ -314,8 +312,6 @@ a.button:hover {
     position:absolute;
     top: 6px;
     right: 15px;
-    background-image:url(../images/estoslogo.png);
-    background-repeat:no-repeat;
     height: 25px;
     width: 62px;
     z-index:1;
