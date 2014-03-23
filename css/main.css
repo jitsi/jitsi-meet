@@ -230,7 +230,7 @@ html, body{
     position: relative;
 }
 
-.button {
+a[role='button'] {
     display: inline-block;
     position: relative;
     color: #FFFFFF;

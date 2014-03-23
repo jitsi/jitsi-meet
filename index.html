@@ -40,33 +40,33 @@
     <div id="header">
         <a href="http://jitsi.org" target="_blank"><div id="leftlogo"></div></a>
         <a href="http://www.estos.com/" target="_blank"><div id="rightlogo"></div></a>
-        <div role="toolbar" id="toolbar">
-            <a class="button" onclick='buttonClick("#mute", "fa fa-microphone fa-lg fa fa-microphone-slash fa-lg");toggleAudio();'>
-                <i id="mute" title="Mute / unmute" class="fa fa-microphone fa-lg"></i></a>
+        <div role="toolbar" id="toolbar" tabindex="0">
+            <a role="button" aria-label="Mute / unmute" tabindex="0" onclick='buttonClick("#mute", "fa fa-microphone fa-lg fa fa-microphone-slash fa-lg");toggleAudio();'>
+                <i id="mute" class="fa fa-microphone fa-lg"></i></a>
             <div class="header_button_separator"></div>
-            <a class="button" onclick='buttonClick("#video");toggleVideo();'>
-                <i id="video" title="Start / stop camera" class="fa fa-video-camera fa-lg"></i></a>
+            <a role="button" aria-label="Start / stop camera" tabindex="0" onclick='buttonClick("#video");toggleVideo();'>
+                <i id="video" class="fa fa-video-camera fa-lg"></i></a>
             <div class="header_button_separator"></div>
-            <a class="button" onclick="openLockDialog();"><i id="lockIcon" title="Lock/unlock room" class="fa fa-unlock fa-lg"></i></a>
+            <a role="button" aria-label="Lock/unlock room" tabindex="0" onclick="openLockDialog();"><i id="lockIcon" class="fa fa-unlock fa-lg"></i></a>
             <div class="header_button_separator"></div>
-            <a class="button" onclick="openLinkDialog();"><i title="Invite others" class="fa fa-link fa-lg"></i></a>
+            <a role="button" aria-label="Invite others" tabindex="0" onclick="openLinkDialog();"><i class="fa fa-link fa-lg"></i></a>
             <div class="header_button_separator"></div>
             <span class="toolbar_span">
-                <a class="button" onclick='Chat.toggleChat();'><i id="chat" title="Open chat" class="fa fa-comments-o fa-lg"></i></a>
+                <a role="button" aria-label="Open chat" tabindex="0" onclick='Chat.toggleChat();'><i id="chat" class="fa fa-comments-o fa-lg"></i></a>
                 <span id="unreadMessages"></span>
             </span>
             <div class="header_button_separator"></div>
-            <a class="button" onclick='openPreziDialog();'><i title="Share prezi" class="fa fa-picture-o fa-lg"></i></a>
+            <a role="button" aria-label="Share prezi" tabindex="0" onclick='openPreziDialog();'><i class="fa fa-picture-o fa-lg"></i></a>
             <span id="etherpadButton">
                 <div class="header_button_separator"></div>
-                <a class="button" onclick='Etherpad.toggleEtherpad(0);'><i title="Open shared document" class="fa fa-file-text fa-lg"></i></a>
+                <a role="button" aria-label="Open shared document" tabindex="0" onclick='Etherpad.toggleEtherpad(0);'><i class="fa fa-file-text fa-lg"></i></a>
             </span>
             <div class="header_button_separator"></div>
             <span id="desktopsharing" style="display: none">
-                <a class="button" onclick="toggleScreenSharing();"><i title="Share screen" class="fa fa-desktop fa-lg"></i></a>
+                <a role="button" aria-label="Share screen" tabindex="0" onclick="toggleScreenSharing();"><i class="fa fa-desktop fa-lg"></i></a>
                 <div class="header_button_separator"></div>
             </span>
-            <a class="button" onclick='toggleFullScreen();'><i title="Enter / Exit Full Screen" class="fa fa-arrows-alt fa-lg"></i></a>
+            <a role="button" aria-label="Enter / Exit Full Screen" tabindex="0" onclick='toggleFullScreen();'><i class="fa fa-arrows-alt fa-lg"></i></a>
         </div>
     </div>
     <div id="settings">
@@ -82,7 +82,7 @@
     <div id="videospace">
         <div class="fade_line"></div>
         <div id="largeVideoContainer" class="videocontainer">
-            <div id="reloadPresentation"><a onclick='reloadPresentation();'><i title="Reload Prezi" class="fa fa-repeat fa-lg"></i></a></div>
+            <div id="reloadPresentation"><a onclick='reloadPresentation();' tabindex="0"><i title="Reload Prezi" class="fa fa-repeat fa-lg"></i></a></div>
             <div id="presentation"></div>
             <div id="etherpad"></div>
             <video id="largeVideo" autoplay oncontextmenu="return false;"></video>
@@ -112,7 +112,7 @@
         <audio id="chatNotification" src="sounds/incomingMessage.wav" preload="auto"></audio>
         <textarea id="usermsg" placeholder='Enter text...' autofocus></textarea>
     </div>
-    <a id="downloadlog" onclick='dump(event.target);'><i title="Download support information" class="fa fa-cloud-download"></i></a>
+    <a id="downloadlog" tabindex="0" onclick='dump(event.target);'><i title="Download support information" class="fa fa-cloud-download"></i></a>
     <!-- Google Analytics -->
     <script>
         (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
