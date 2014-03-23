@@ -1,5 +1,7 @@
+<!DOCTYPE html>
 <html>
   <head>
+    <meta charset="utf-8">
     <title>WebRTC, meet the Jitsi Videobridge</title>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
     <script src="libs/strophe/strophe.jingle.adapter.js?v=1"></script><!-- strophe.jingle bundles -->
@@ -38,7 +40,7 @@
     <div id="header">
         <a href="http://jitsi.org" target="_blank"><div id="leftlogo"></div></a>
         <a href="http://www.estos.com/" target="_blank"><div id="rightlogo"></div></a>
-        <span id="toolbar">
+        <div role="toolbar" id="toolbar">
             <a class="button" onclick='buttonClick("#mute", "fa fa-microphone fa-lg fa fa-microphone-slash fa-lg");toggleAudio();'>
                 <i id="mute" title="Mute / unmute" class="fa fa-microphone fa-lg"></i></a>
             <div class="header_button_separator"></div>
@@ -65,7 +67,7 @@
                 <div class="header_button_separator"></div>
             </span>
             <a class="button" onclick='toggleFullScreen();'><i title="Enter / Exit Full Screen" class="fa fa-arrows-alt fa-lg"></i></a>
-        </span>
+        </div>
     </div>
     <div id="settings">
       <h1>Connection Settings</h1>

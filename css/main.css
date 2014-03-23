@@ -213,7 +213,6 @@ html, body{
 }
 
 #toolbar {
-    display:block;
     position:relative;
     height:39px;
     width:auto;
@@ -291,7 +290,7 @@ a.button:hover {
 .header_button_separator {
     display: inline-block;
     position:relative;
-    top: 7;
+    top: 7px;
     width: 1px;
     height: 25px;
     background: white;
