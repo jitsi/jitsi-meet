@@ -48,15 +48,35 @@ function init() {
             if (config.useStunTurn) {
                 connection.jingle.getStunAndTurnCredentials();
             }
-            getUserMediaWithConstraints( ['audio'], audioStreamReady,
-                function(error){
-                    console.error('failed to obtain audio stream - stop', error);
-                });
+            obtainAudioAndVideoPermissions(function(){
+                getUserMediaWithConstraints( ['audio'], audioStreamReady,
+                    function(error){
+                        console.error('failed to obtain audio stream - stop', error);
+                    });
+            });
+
             document.getElementById('connect').disabled = true;
         } else {
             console.log('status', status);
         }
     });
+}
+
+/**
+ * We first ask for audio and video combined stream in order to get permissions and not to ask twice.
+ * Then we dispose the stream and continue with separate audio, video streams(required for desktop sharing).
+ */
+function obtainAudioAndVideoPermissions(callback){
+    // Get AV
+    getUserMediaWithConstraints(
+        ['audio', 'video'],
+        function(avStream) {
+            avStream.stop();
+            callback();
+        },
+        function(error){
+            console.error('failed to obtain audio/video stream - stop', error);
+        });
 }
 
 function audioStreamReady(stream) {
@@ -965,7 +985,8 @@ $(window).bind('beforeunload', function () {
 
 function disposeConference() {
     var handler = getConferenceHandler();
-    if(handler) {
+    if(handler && handler.peerconnection) {
+        // FIXME: probably removing streams is not required and close() should be enough
         if(connection.jingle.localAudio) {
             handler.peerconnection.removeStream(connection.jingle.localAudio);
         }
