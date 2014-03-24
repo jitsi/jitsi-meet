@@ -53,6 +53,12 @@ JingleSession.prototype.initiate = function (peerjid, isInitiator) {
     this.hadstuncandidate = false;
     this.hadturncandidate = false;
     this.lasticecandidate = false;
+
+    this.peerconnection
+        = new TraceablePeerConnection(
+            this.connection.jingle.ice_config,
+            this.connection.jingle.pc_constraints );
+
     this.peerconnection.onicecandidate = function (event) {
         self.sendIceCandidate(event.candidate);
     };

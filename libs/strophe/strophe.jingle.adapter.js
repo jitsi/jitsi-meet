@@ -328,6 +328,12 @@ TraceablePeerConnection.prototype.modifySources = function(successCallback) {
     sdp.raw = sdp.session + sdp.media.join('');
     this.setRemoteDescription(new RTCSessionDescription({type: 'offer', sdp: sdp.raw}),
         function() {
+
+            if(self.signalingState == 'closed') {
+                console.error("createAnswer attempt on closed state");
+                return;
+            }
+
             self.createAnswer(
                 function(modifiedAnswer) {
                     // change video direction, see https://github.com/jitsi/jitmeet/issues/41

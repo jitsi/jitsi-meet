@@ -75,11 +75,16 @@ ColibriFocus.prototype.makeConference = function (peers) {
         self.channels.push([]);
     });
 
-    if(connection.jingle.localAudio) {
-        this.peerconnection.addStream(connection.jingle.localAudio);
+    this.peerconnection
+        = new TraceablePeerConnection(
+            this.connection.jingle.ice_config,
+            this.connection.jingle.pc_constraints );
+
+    if(this.connection.jingle.localAudio) {
+        this.peerconnection.addStream(this.connection.jingle.localAudio);
     }
-    if(connection.jingle.localVideo) {
-        this.peerconnection.addStream(connection.jingle.localVideo);
+    if(this.connection.jingle.localVideo) {
+        this.peerconnection.addStream(this.connection.jingle.localVideo);
     }
     this.peerconnection.oniceconnectionstatechange = function (event) {
         console.warn('ice connection state changed to', self.peerconnection.iceConnectionState);

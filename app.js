@@ -295,8 +295,7 @@ function handleVideoThumbClicked(videoSrc) {
     updateLargeVideo(videoSrc, 1);
 
     $('audio').each(function (idx, el) {
-        // We no longer mix so we check for local audio now
-        if(el.id != 'localAudio') {
+        if (el.id.indexOf('mixedmslabel') !== -1) {
             el.volume = 0;
             el.volume = 1;
         }
@@ -450,8 +449,6 @@ $(document).bind('callactive.jingle', function (event, videoelem, sid) {
 
 $(document).bind('callterminated.jingle', function (event, sid, reason) {
     // FIXME
-    focus = null;
-    activecall = null;
 });
 
 $(document).bind('setLocalDescription.jingle', function (event, sid) {
@@ -575,14 +572,10 @@ $(document).bind('left.muc', function (event, jid) {
     }
     else if (focus && Object.keys(connection.emuc.members).length === 0) {
         console.log('everyone left');
-        if (focus !== null) {
-            // FIXME: closing the connection is a hack to avoid some
-            // problemswith reinit
-            if (focus.peerconnection !== null) {
-                focus.peerconnection.close();
-            }
-            focus = new ColibriFocus(connection, config.hosts.bridge);
-        }
+        // FIXME: closing the connection is a hack to avoid some
+        // problemswith reinit
+        disposeConference();
+        focus = new ColibriFocus(connection, config.hosts.bridge);
     }
     if (connection.emuc.getPrezi(jid)) {
         $(document).trigger('presentationremoved.muc', [jid, connection.emuc.getPrezi(jid)]);
@@ -967,7 +960,23 @@ $(window).bind('beforeunload', function () {
             }
         });
     }
+    disposeConference();
 });
+
+function disposeConference() {
+    var handler = getConferenceHandler();
+    if(handler) {
+        if(connection.jingle.localAudio) {
+            handler.peerconnection.removeStream(connection.jingle.localAudio);
+        }
+        if(connection.jingle.localVideo) {
+            handler.peerconnection.removeStream(connection.jingle.localVideo);
+        }
+        handler.peerconnection.close();
+    }
+    focus = null;
+    activecall = null;
+}
 
 function dump(elem, filename){
     elem = elem.parentNode;

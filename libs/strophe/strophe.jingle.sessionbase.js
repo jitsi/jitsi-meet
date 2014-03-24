@@ -8,10 +8,6 @@ function SessionBase(connection, sid){
 
     this.connection = connection;
     this.sid = sid;
-    this.peerconnection
-        = new TraceablePeerConnection(
-            connection.jingle.ice_config,
-            connection.jingle.pc_constraints);
 }
 
 
@@ -48,26 +44,27 @@ SessionBase.prototype.switchStreams = function (new_stream, oldStream, success_c
 
     var self = this;
 
-    // Remember SDP to figure out added/removed SSRCs
-    var oldSdp = null;
-    if(self.peerconnection.localDescription) {
-        oldSdp = new SDP(self.peerconnection.localDescription.sdp);
-    }
-
     // Stop the stream to trigger onended event for old stream
     oldStream.stop();
 
-    self.peerconnection.removeStream(oldStream);
+    // Remember SDP to figure out added/removed SSRCs
+    var oldSdp = null;
+    if(self.peerconnection) {
+        if(self.peerconnection.localDescription) {
+            oldSdp = new SDP(self.peerconnection.localDescription.sdp);
+        }
+        self.peerconnection.removeStream(oldStream);
+        self.peerconnection.addStream(new_stream);
+    }
 
     self.connection.jingle.localVideo = new_stream;
-    self.peerconnection.addStream(self.connection.jingle.localVideo);
 
     self.connection.jingle.localStreams = [];
     self.connection.jingle.localStreams.push(self.connection.jingle.localAudio);
     self.connection.jingle.localStreams.push(self.connection.jingle.localVideo);
 
     // Conference is not active
-    if(!oldSdp) {
+    if(!oldSdp || !self.peerconnection) {
         success_callback();
         return;
     }
