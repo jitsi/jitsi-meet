@@ -63,10 +63,16 @@ function init() {
 }
 
 /**
+ * HTTPS only:
  * We first ask for audio and video combined stream in order to get permissions and not to ask twice.
  * Then we dispose the stream and continue with separate audio, video streams(required for desktop sharing).
  */
 function obtainAudioAndVideoPermissions(callback){
+    // This makes sense only on https sites otherwise we'll be asked for permissions every time
+    if(location.protocol !== 'https:') {
+        callback();
+        return;
+    }
     // Get AV
     getUserMediaWithConstraints(
         ['audio', 'video'],
