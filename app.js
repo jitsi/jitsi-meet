@@ -8,12 +8,25 @@ var nickname = null;
 var sharedKey = '';
 var roomUrl = null;
 var ssrc2jid = {};
+
+/**
+ * Indicates whether ssrc is camera video or desktop stream.
+ * FIXME: remove those maps
+ */
+var ssrc2videoType = {};
+var videoSrcToSsrc = {};
+
 var localVideoSrc = null;
 var flipXLocalVideo = true;
 var isFullScreen = false;
 var toolbarTimeout = null;
 var currentVideoWidth = null;
 var currentVideoHeight = null;
+/**
+ * Method used to calculate large video size.
+ * @type {function()}
+ */
+var getVideoSize;
 
 /* window.onbeforeunload = closePageWarning; */
 
@@ -173,10 +186,6 @@ function change_local_video(stream, flipX) {
     localVideo.volume = 0; // is it required if audio is separated ?
     localVideo.oncontextmenu = function () { return false; };
 
-    localVideo.addEventListener('loadedmetadata', function(e){
-        positionLarge(this.videoWidth, this.videoHeight);
-    });
-
     var localVideoContainer = document.getElementById('localVideoWrapper');
     localVideoContainer.appendChild(localVideo);
 
@@ -201,25 +210,35 @@ function change_local_video(stream, flipX) {
 }
 
 $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
-    function waitForRemoteVideo(selector, sid) {
+    function waitForRemoteVideo(selector, sid, ssrc) {
         if(selector.removed) {
             console.warn("media removed before had started", selector);
             return;
         }
         var sess = connection.jingle.sessions[sid];
         if (data.stream.id === 'mixedmslabel') return;
-        videoTracks = data.stream.getVideoTracks();
+        var videoTracks = data.stream.getVideoTracks();
         console.log("waiting..", videoTracks, selector[0]);
         if (videoTracks.length === 0 || selector[0].currentTime > 0) {
             RTC.attachMediaStream(selector, data.stream); // FIXME: why do i have to do this for FF?
+
+            // FIXME: add a class that will associate peer Jid, video.src, it's ssrc and video type
+            //        in order to get rid of too many maps
+            if(ssrc) {
+                videoSrcToSsrc[sel.attr('src')] = ssrc;
+            } else {
+                console.warn("No ssrc given for video", sel);
+            }
+
             $(document).trigger('callactive.jingle', [selector, sid]);
             console.log('waitForremotevideo', sess.peerconnection.iceConnectionState, sess.peerconnection.signalingState);
         } else {
-            setTimeout(function () { waitForRemoteVideo(selector, sid); }, 250);
+            setTimeout(function () { waitForRemoteVideo(selector, sid, ssrc); }, 250);
         }
     }
     var sess = connection.jingle.sessions[sid];
 
+    var thessrc;
     // look up an associated JID for a stream id
     if (data.stream.id.indexOf('mixedmslabel') === -1) {
         var ssrclines = SDPUtil.find_lines(sess.peerconnection.remoteDescription.sdp, 'a=ssrc');
@@ -272,15 +291,7 @@ $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
     vid.autoplay = true;
     vid.oncontextmenu = function () { return false; };
 
-    vid.addEventListener('loadedmetadata', function(e){
-        positionLarge(this.videoWidth, this.videoHeight);
-    });
-
     container.appendChild(vid);
-    var sel = $('#' + id);
-    sel.hide();
-    RTC.attachMediaStream(sel, data.stream);
-    waitForRemoteVideo(sel, sid);
 
     // TODO: make mixedstream display:none via css?
     if (id.indexOf('mixedmslabel') !== -1) {
@@ -293,7 +304,7 @@ $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
     RTC.attachMediaStream(sel, data.stream);
 
     if(isVideo) {
-        waitForRemoteVideo(sel, sid);
+        waitForRemoteVideo(sel, sid, thessrc);
     }
 
     data.stream.onended = function () {
@@ -592,6 +603,7 @@ $(document).bind('entered.muc', function (event, jid, info, pres) {
 
     $(pres).find('>media[xmlns="http://estos.de/ns/mjs"]>source').each(function (idx, ssrc) {
         //console.log(jid, 'assoc ssrc', ssrc.getAttribute('type'), ssrc.getAttribute('ssrc'));
+        // Fixme: direction and video types are unhandled here(maybe something more)
         ssrc2jid[ssrc.getAttribute('ssrc')] = jid;
     });
 });
@@ -632,13 +644,19 @@ $(document).bind('presence.muc', function (event, jid, info, pres) {
        if(ssrc2jid[ssrc] == jid){
            delete ssrc2jid[ssrc];
        }
+       if(ssrc2videoType == jid){
+           delete  ssrc2videoType[ssrc];
+       }
     });
 
     $(pres).find('>media[xmlns="http://estos.de/ns/mjs"]>source').each(function (idx, ssrc) {
         //console.log(jid, 'assoc ssrc', ssrc.getAttribute('type'), ssrc.getAttribute('ssrc'));
-        ssrc2jid[ssrc.getAttribute('ssrc')] = jid;
+        var ssrcV = ssrc.getAttribute('ssrc');
+        ssrc2jid[ssrcV] = jid;
 
         var type = ssrc.getAttribute('type');
+        ssrc2videoType[ssrcV] = type;
+
         // might need to update the direction if participant just went from sendrecv to recvonly
         if (type === 'video' || type === 'screen') {
             var el = $('#participant_'  + Strophe.getResourceFromJid(jid) + '>video');
@@ -651,14 +669,6 @@ $(document).bind('presence.muc', function (event, jid, info, pres) {
                 // FIXME: Check if we have to change large video
                 //checkChangeLargeVideo(el);
                 break;
-            }
-            // Camera video or shared screen ?
-            if (type === 'screen') {
-                // Shared screen
-                //console.info("Have screen ssrc from "+jid, ssrc);
-            } else {
-                // Camera video
-                //console.info("Have camera ssrc from "+jid, ssrc);
             }
         }
     });
@@ -705,11 +715,6 @@ function updateLargeVideo(newSrc, vol) {
     console.log('hover in', newSrc);
 
     if ($('#largeVideo').attr('src') != newSrc) {
-        document.getElementById('largeVideo')
-            .addEventListener('loadedmetadata', function(e){
-                currentVideoWidth = this.videoWidth;
-                currentVideoHeight = this.videoHeight;
-        });
 
         var isVisible = $('#largeVideo').is(':visible');
 
@@ -727,10 +732,43 @@ function updateLargeVideo(newSrc, vol) {
                 document.getElementById('largeVideo').style.webkitTransform = "none";
             }
 
+            // Change the way we'll be measuring large video
+            getVideoSize = isVideoSrcDesktop(newSrc) ? getVideoSizeFit : getVideoSizeCover;
+
             if (isVisible)
                 $(this).fadeIn(300);
         });
     }
+}
+
+/**
+ * Checks if video identified by given src is desktop stream.
+ * @param videoSrc eg. blob:https%3A//pawel.jitsi.net/9a46e0bd-131e-4d18-9c14-a9264e8db395
+ * @returns {boolean}
+ */
+function isVideoSrcDesktop(videoSrc){
+    // FIXME: fix this mapping mess...
+    // figure out if large video is desktop stream or just a camera
+    var isDesktop = false;
+    if(localVideoSrc === videoSrc) {
+        // local video
+        isDesktop = isUsingScreenStream;
+    } else {
+        // Do we have associations...
+        var videoSsrc = videoSrcToSsrc[videoSrc];
+        if(videoSsrc) {
+            var videoType = ssrc2videoType[videoSsrc];
+            if(videoType) {
+                // Finally there...
+                isDesktop = videoType === 'screen';
+            } else {
+                console.error("No video type for ssrc: " + videoSsrc);
+            }
+        } else {
+            console.error("No ssrc for src: " + videoSrc);
+        }
+    }
+    return isDesktop;
 }
 
 /**
@@ -799,11 +837,11 @@ var positionLarge = function(videoWidth, videoHeight) {
                                     videoSpaceWidth,
                                     videoSpaceHeight);
 
-    var availableWidth = videoSize[0];
-    var availableHeight = videoSize[1];
+    var largeVideoWidth = videoSize[0];
+    var largeVideoHeight = videoSize[1];
 
-    var videoPosition = getVideoPosition(   availableWidth,
-                                            availableHeight,
+    var videoPosition = getVideoPosition(   largeVideoWidth,
+                                            largeVideoHeight,
                                             videoSpaceWidth,
                                             videoSpaceHeight);
 
@@ -811,8 +849,8 @@ var positionLarge = function(videoWidth, videoHeight) {
     var verticalIndent = videoPosition[1];
 
     positionVideo(  $('#largeVideo'),
-                    availableWidth,
-                    availableHeight,
+                    largeVideoWidth,
+                    largeVideoHeight,
                     horizontalIndent, verticalIndent);
 };
 
@@ -843,14 +881,15 @@ var getVideoPosition = function (   videoWidth,
 };
 
 /**
- * Returns an array of the video dimensions, so that if fits the screen.
+ * Returns an array of the video dimensions, so that it covers the screen.
+ * It leaves no empty areas, but some parts of the video might not be visible.
  *
  * @return an array with 2 elements, the video width and the video height
  */
-var getVideoSize = function(videoWidth,
-                            videoHeight,
-                            videoSpaceWidth,
-                            videoSpaceHeight) {
+function getVideoSizeCover(videoWidth,
+                           videoHeight,
+                           videoSpaceWidth,
+                           videoSpaceHeight) {
     if (!videoWidth)
         videoWidth = currentVideoWidth;
     if (!videoHeight)
@@ -872,7 +911,40 @@ var getVideoSize = function(videoWidth,
     }
 
     return [availableWidth, availableHeight];
-};
+}
+
+/**
+ * Returns an array of the video dimensions, so that it keeps it's aspect ratio and fits available area with it's
+ * larger dimension. This method ensures that whole video will be visible and can leave empty areas.
+ *
+ * @return an array with 2 elements, the video width and the video height
+ */
+function getVideoSizeFit(videoWidth,
+                                   videoHeight,
+                                   videoSpaceWidth,
+                                   videoSpaceHeight) {
+    if (!videoWidth)
+        videoWidth = currentVideoWidth;
+    if (!videoHeight)
+        videoHeight = currentVideoHeight;
+
+    var aspectRatio = videoWidth / videoHeight;
+
+    var availableWidth = Math.max(videoWidth, videoSpaceWidth);
+    var availableHeight = Math.max(videoHeight, videoSpaceHeight);
+
+    if (availableWidth / aspectRatio >= videoSpaceHeight) {
+        availableHeight = videoSpaceHeight;
+        availableWidth = availableHeight*aspectRatio;
+    }
+
+    if (availableHeight*aspectRatio >= videoSpaceWidth) {
+        availableWidth = videoSpaceWidth;
+        availableHeight = availableWidth / aspectRatio;
+    }
+
+    return [availableWidth, availableHeight];
+}
 
 /**
  * Sets the size and position of the given video element.
@@ -945,11 +1017,22 @@ $(document).ready(function () {
     // Set default desktop sharing method
     setDesktopSharing(config.desktopSharing);
 
+    // By default we cover the whole screen with video
+    getVideoSize = getVideoSizeCover;
+
     resizeLargeVideoContainer();
     $(window).resize(function () {
         resizeLargeVideoContainer();
         positionLarge();
     });
+    // Listen for large video size updates
+    document.getElementById('largeVideo')
+        .addEventListener('loadedmetadata', function(e){
+            currentVideoWidth = this.videoWidth;
+            currentVideoHeight = this.videoHeight;
+            positionLarge(currentVideoWidth, currentVideoHeight);
+        });
+
     if (!$('#settings').is(':visible')) {
         console.log('init');
         init();
