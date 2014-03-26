@@ -537,7 +537,10 @@ function getUserMediaWithConstraints(um, success_callback, failure_callback, res
         }
     }
 
-    if (resolution && !constraints.video) {
+    // Check if we are running on Android device
+    var isAndroid = navigator.userAgent.indexOf('Android') != -1;
+
+    if (resolution && !constraints.video || isAndroid) {
         constraints.video = {mandatory: {}};// same behaviour as true
     }
     // see https://code.google.com/p/chromium/issues/detail?id=143631#c9 for list of supported resolutions
@@ -580,7 +583,7 @@ function getUserMediaWithConstraints(um, success_callback, failure_callback, res
             constraints.video.mandatory.minHeight = 240;
             break;
         default:
-            if (navigator.userAgent.indexOf('Android') != -1) {
+            if (isAndroid) {
                 constraints.video.mandatory.minWidth = 320;
                 constraints.video.mandatory.minHeight = 240;
                 constraints.video.mandatory.maxFrameRate = 15;
