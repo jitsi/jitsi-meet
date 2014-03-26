@@ -17,19 +17,28 @@ var switchInProgress = false;
 var obtainDesktopStream = null;
 
 /**
+ * Flag used to cache desktop sharing enabled state. Do not use directly as it can be <tt>null</tt>.
+ * @type {null|boolean}
+ */
+var _desktopSharingEnabled = null;
+
+/**
  * @returns {boolean} <tt>true</tt> if desktop sharing feature is available and enabled.
  */
 function isDesktopSharingEnabled() {
-    if(obtainDesktopStream === obtainScreenFromExtension) {
-        // Parse chrome version
-        var userAgent = navigator.userAgent.toLowerCase();
-        // We can assume that user agent is chrome, because it's enforced when 'ext' streaming method is set
-        var ver = parseInt(userAgent.match(/chrome\/(\d+)\./)[1], 10);
-        console.log("Chrome version" + userAgent, ver);
-        return ver >= 35;
-    } else {
-        return obtainDesktopStream === obtainWebRTCScreen;
+    if(_desktopSharingEnabled === null){
+        if(obtainDesktopStream === obtainScreenFromExtension) {
+            // Parse chrome version
+            var userAgent = navigator.userAgent.toLowerCase();
+            // We can assume that user agent is chrome, because it's enforced when 'ext' streaming method is set
+            var ver = parseInt(userAgent.match(/chrome\/(\d+)\./)[1], 10);
+            console.log("Chrome version" + userAgent, ver);
+            _desktopSharingEnabled = ver >= 35;
+        } else {
+            _desktopSharingEnabled = obtainDesktopStream === obtainWebRTCScreen;
+        }
     }
+    return _desktopSharingEnabled;
 }
 
 /**
@@ -39,21 +48,21 @@ function isDesktopSharingEnabled() {
  *        must be enabled), pass any other string or nothing in order to disable this feature completely.
  */
 function setDesktopSharing(method) {
-    if(method == "ext") {
-        if(RTC.browser === 'chrome') {
-            obtainDesktopStream = obtainScreenFromExtension;
-            console.info("Using Chrome extension for desktop sharing");
-        } else {
-            console.error("Chrome is required to use extension method");
-            obtainDesktopStream = null;
-        }
-    } else if(method == "webrtc") {
-        obtainDesktopStream = obtainWebRTCScreen;
-        console.info("Using WebRTC for desktop sharing");
-    } else {
+    // Check if we are running chrome
+    if(!navigator.webkitGetUserMedia){
         obtainDesktopStream = null;
         console.info("Desktop sharing disabled");
+    } else if(method == "ext") {
+        obtainDesktopStream = obtainScreenFromExtension;
+        console.info("Using Chrome extension for desktop sharing");
+    } else if(method == "webrtc") {
+        obtainDesktopStream = obtainWebRTCScreen;
+        console.info("Using Chrome WebRTC for desktop sharing");
     }
+
+    // Reset enabled cache
+    _desktopSharingEnabled = null;
+
     showDesktopSharingButton();
 }
 

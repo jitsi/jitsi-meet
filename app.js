@@ -942,6 +942,9 @@ $(document).ready(function () {
     // Set the defaults for prompt dialogs.
     jQuery.prompt.setDefaults({persistent: false});
 
+    // Set default desktop sharing method
+    setDesktopSharing(config.desktopSharing);
+
     resizeLargeVideoContainer();
     $(window).resize(function () {
         resizeLargeVideoContainer();
@@ -1221,8 +1224,9 @@ function showToolbar() {
 //        TODO: Enable settings functionality. Need to uncomment the settings button in index.html.
 //        $('#settingsButton').css({visibility:"visible"});
     }
-    // Set desktop sharing method
-    setDesktopSharing(config.desktopSharing);
+
+    // Show/hide desktop sharing button
+    showDesktopSharingButton();
 }
 
 /**
