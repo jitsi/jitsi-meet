@@ -1,0 +1,226 @@
+#videospace {
+    display: block;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+}
+
+#remoteVideos {
+    display:block;
+    position:absolute;
+    text-align:right;
+    height:196px;
+    padding: 18px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width:auto;
+    overflow: hidden;
+    border:1px solid transparent;
+    z-index: 2;
+}
+
+.videocontainer {
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#remoteVideos .videocontainer {
+    display: inline-block;
+    background-image:url(../images/avatar1.png);
+    background-size: contain;
+    border-radius:8px;
+    border: 2px solid #212425;
+}
+
+#remoteVideos .videocontainer:hover {
+    width: 100%;
+    height: 100%;
+    content:"";
+    cursor: pointer;
+    cursor: hand;
+    transform:scale(1.08, 1.08);
+    -webkit-transform:scale(1.08, 1.08);
+    transition-duration: 0.5s;
+    -webkit-transition-duration: 0.5s;
+    -webkit-animation-name: greyPulse;
+    -webkit-animation-duration: 2s;
+    -webkit-animation-iteration-count: 1;
+    -webkit-box-shadow: 0 0 18px #388396;
+    border: 2px solid #388396;
+    z-index: 3;
+}
+
+#localVideoWrapper {
+    display:inline-block;
+    -webkit-mask-box-image: url(http://emcho.com/db/videomask.svg);
+    border-radius:0px !important;
+    border: 0px !important;
+}
+
+#remoteVideos .videocontainer>video {
+    border-radius:6px;
+}
+
+.flipVideoX {
+    transform: scale(-1, 1);
+    -moz-transform: scale(-1, 1);
+    -webkit-transform: scale(-1, 1);
+    -o-transform: scale(-1, 1);
+}
+
+#localVideoWrapper>video {
+    border-radius:0px !important;
+}
+
+#largeVideo,
+#largeVideoContainer {
+    overflow: hidden;
+    text-align: center;
+}
+
+#presentation,
+#etherpad,
+#localVideoWrapper>video,
+#localVideoWrapper,
+.videocontainer>video {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+}
+
+#etherpad,
+#presentation {
+    text-align: center;
+}
+
+#etherpad {
+    z-index: 0;
+}
+
+#etherpadButton {
+    display: none;
+}
+
+#remoteVideos .videocontainer>span.focusindicator {
+    display: inline-block;
+    position: absolute;
+    color: #FFFFFF;
+    top: 0;
+    left: 0;
+    padding: 5px 0px;
+    width: 25px;
+    font-size: 11pt;
+    text-shadow: 0px 1px 0px rgba(255,255,255,.3), 0px -1px 0px rgba(0,0,0,.7);
+    border: 0px;
+    z-index: 2;
+}
+
+#remoteVideos .nick {
+    display: none; /* enable when you want nicks to be shown */
+    position: absolute;
+    left: 0px;
+    bottom: -20px;
+    z-index: 0;
+    width: 100%;
+    font-size: 10pt;
+}
+
+.videocontainer>span.displayname,
+.videocontainer>input.displayname {
+    display: inline-block;
+    position: absolute;
+    background: -webkit-linear-gradient(left, rgba(0,0,0,.7), rgba(0,0,0,0));
+    color: #FFFFFF;
+    bottom: 0;
+    left: 0;
+    padding: 3px 5px;
+    width: 100%;
+    height: auto;
+    max-height: 18px;
+    font-size: 9pt;
+    text-align: left;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    z-index: 2;
+    box-sizing: border-box;
+    border-bottom-left-radius:6px;
+    border-bottom-right-radius:6px;
+}
+
+#localVideoContainer>span.displayname:hover {
+    cursor: text;
+}
+
+.videocontainer>a.displayname {
+    display: inline-block;
+    position: absolute;
+    color: #FFFFFF;
+    bottom: 0;
+    right: 0;
+    padding: 3px 5px;
+    font-size: 9pt;
+    cursor: pointer;
+    z-index: 2;
+}
+
+#reloadPresentation {
+    display: none;
+    position: absolute;
+    color: #FFFFFF;
+    top: 0;
+    right:0;
+    padding: 10px 10px;
+    font-size: 11pt;
+    cursor: pointer;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
+    background-clip: padding-box;
+    -webkit-border-radius: 5px;
+    -webkit-background-clip: padding-box;
+    z-index: 20; /*The reload button should appear on top of the header!*/
+}
+
+#header{
+    display:none;
+    position:absolute;
+    height:39px;
+    text-align:center;
+    top:0;
+    left:0;
+    right:0;
+    z-index:10;
+}
+
+#toolbar {
+    display:inline-block;
+    position:relative;
+    margin-left:auto;
+    margin-right:auto;
+    height:39px;
+    width:auto;
+    overflow: hidden;
+    background: linear-gradient(to bottom, rgba(103,103,103,.65) , rgba(0,0,0,.65));
+    -webkit-box-shadow: 0 0 2px #000000, 0 0 10px #000000;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+}
+
+#watermark {
+    display: block;
+    position: absolute;
+    left: 15;
+    top: 15;
+    width: 20%;
+    height: 10%;
+    background-image:url(../images/watermark.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    z-index: 2;
+}

@@ -4,99 +4,15 @@ html, body{
     color: #424242;
     font-family:'Helvetica Neue', Helvetica, sans-serif;
     font-weight: 400;
-    background: #e9e9e9;
+    background: #000000;
     overflow-x: hidden;
-}
-
-#videospace {
-    display: block;
-    position: absolute;
-    top: 39px;
-    left: 0px;
-    right: 0px;
-    float: left;
-}
-
-.videocontainer {
-    position: relative;
-    margin-left: auto;
-    margin-right: auto;
-}
-#presentation, #etherpad, .videocontainer>video {
-    position: absolute;
-    left: 0px;
-    top: 0px;
-    z-index: 1;
-    width: 100%;
-    height: 100%;
-}
-
-#etherpad {
-    z-index: 0;
-}
-
-#etherpadButton {
-    display: none;
-}
-
-.videocontainer>span {
-    display: none; /* enable when you want nicks to be shown */
-    position: absolute;
-    left: 0px;
-    bottom: -20px;
-    z-index: 0;
-    width: 100%;
-    font-size: 10pt;
-}
-
-.flipVideoX {
-    -moz-transform: scaleX(-1);
-    -webkit-transform: scaleX(-1);
-    -o-transform: scaleX(-1);
-    transform: scaleX(-1);
-}
-
-#remoteVideos {
-    display:block;
-    position:relative;
-    text-align:center;
-    height:196px;
-    padding: 5px 0px;
-    width:auto;
-    overflow: hidden;
-    border:1px solid transparent;
-    z-index: 2;
-}
-
-#remoteVideos>span {
-    display: inline-block;
-    z-index:0;
-    border:1px solid #FFFFFF;
-    background-image:url(../images/avatar1.png);
-    background-size: contain;
-}
-
-#remoteVideos>span:hover {
-    cursor: pointer;
-    cursor: hand;
-    transform:scale(1.08, 1.08);
-    -webkit-transform:scale(1.08, 1.08);
-    transition-duration: 0.5s;
-    -webkit-transition-duration: 0.5s;
-    background-color: #FFFFFF;
-    -webkit-animation-name: greyPulse;
-    -webkit-animation-duration: 2s;
-    -webkit-animation-iteration-count: 1;
-    -webkit-box-shadow: 0 0 18px #515151;
-    border:1px solid #FFFFFF;
-    z-index: 10;
 }
 
 #chatspace {
     display:none;
     position:absolute;
     float: right;
-    top: 40px;
+    top: 0px;
     bottom: 0px;
     right: 0px;
     width: 20%;
@@ -105,9 +21,11 @@ html, body{
     /* background-color:#dfebf1;*/
     background-color:#FFFFFF;
     border-left:1px solid #424242;
+    z-index: 5;
 }
 
 #chatconversation {
+    visibility: hidden;
     position: relative;
     top: 5px;
     padding: 5px;
@@ -119,7 +37,6 @@ html, body{
     overflow-y: scroll;
     overflow-x: hidden;
     word-wrap: break-word;
-    visibility: hidden;
 }
 
 .localuser {
@@ -131,20 +48,20 @@ html, body{
 }
 
 #usermsg {
+    visibility:hidden;
     position: relative;
     width: 100%;
     height: 5%;
     padding: 5px;
-    z-index: 5;
     max-height:150px;
     min-height:50px;
-    visibility:hidden;
     border: 0px none;
     border-top: 1px solid #cccccc;
     background: #FFFFFF;
     box-shadow: none;
     border-radius:0;
     font-size: 10pt;
+    overflow: hidden;
 }
 
 #usermsg: hover {
@@ -169,57 +86,12 @@ html, body{
     font-size: 14;
 }
 
-#spacer {
-    height:5px;
-}
-
 #settings {
     display:none;
 }
 
 #nowebrtc {
     display:none;
-}
-
-#header{
-    display:block;
-    height:39px;
-    text-align:center;
-    background-color: #2591e5;
-}
-
-#left {
-    display:block;
-    position: absolute;
-    left: 0px;
-    top: 0px;
-    width: 100px;
-    height: 39px;
-    background-image:url(../images/left1.png);
-    background-repeat:no-repeat;
-    margin: 0;
-    padding: 0;
-}
-
-#leftlogo {
-    position:absolute;
-    top: 5px;
-    left: 15px;
-    background-image:url(../images/jitsilogo.png);
-    background-repeat:no-repeat;
-    height: 31px;
-    width: 68px;
-    z-index:1;
-}
-
-#toolbar {
-    display:block;
-    position:relative;
-    height:39px;
-    width:auto;
-    overflow: hidden;
-    z-index:0;
-    visibility: hidden;
 }
 
 #settingsButton {
@@ -254,18 +126,16 @@ html, body{
     cursor: pointer;
 }
 
-#chat {
-    font-size:1.65em;
+#chatButton {
     -webkit-transition: all .5s ease-in-out;;
        -moz-transition: all .5s ease-in-out;;
             transition: all .5s ease-in-out;;
 }
 
-#chat.active {
+#chatButton.active {
     -webkit-text-shadow: 0 0 10px #ffffff;
     -moz-text-shadow: 0 0 10px #ffffff;
     text-shadow: 0 0 10px #ffffff;
-    /* -webkit-transform: scale(1.1); */
 }
 
 a.button:hover {
@@ -282,44 +152,13 @@ a.button:hover {
     color: #636363;
 }
 
-.fade_line {
-    height: 1px;
-    background: black;
-    background: -webkit-gradient(linear, 0 0, 100% 0, from(#e9e9e9), to(#e9e9e9), color-stop(50%, black));
-}
-
 .header_button_separator {
     display: inline-block;
     position:relative;
-    top: 7;
+    top: 5;
     width: 1px;
-    height: 25px;
-    background: white;
-    background: -webkit-gradient(linear, 0 0, 0 100%, from(#087dba), to(#087dba), color-stop(50%, white));
-}
-
-#right {
-    display:block;
-    position:absolute;
-    right: 0px;
-    top: 0px;
-    background-image:url(../images/right1.png);
-    background-repeat:no-repeat;
-    margin:0;
-    padding:0;
-    width:100px;
-    height:39px;
-}
-
-#rightlogo {
-    position:absolute;
-    top: 6px;
-    right: 15px;
-    background-image:url(../images/estoslogo.png);
-    background-repeat:no-repeat;
-    height: 25px;
-    width: 62px;
-    z-index:1;
+    height: 20px;
+    background: #676767;
 }
 
 input[type='text'], textarea {
@@ -386,71 +225,4 @@ form {
     left: 5;
     overflow: visible;
     z-index: 100;
-}
-
-.videocontainer>span.focusindicator {
-    display: inline-block;
-    position: absolute;
-    color: #FFFFFF;
-    top: 0;
-    padding: 5px 0px;
-    width: 25px;
-    font-size: 11pt;
-    text-shadow: 0px 1px 0px rgba(255,255,255,.3), 0px -1px 0px rgba(0,0,0,.7);
-    border: 0px;
-    z-index: 2;
-}
-
-.videocontainer>span.displayname,
-.videocontainer>input.displayname {
-    display: inline-block;
-    position: absolute;
-    background: -webkit-linear-gradient(left, rgba(0,0,0,.7), rgba(0,0,0,0));
-    color: #b7b7b7;
-    bottom: 0;
-    left: 0;
-    padding: 3px 5px;
-    width: 100%;
-    height: auto;
-    max-height: 18px;
-    font-size: 9pt;
-    text-align: left;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
-    z-index: 2;
-    box-sizing: border-box;
-}
-
-#localVideoContainer>span.displayname:hover {
-    cursor: text;
-}
-
-.videocontainer>a.displayname {
-    display: inline-block;
-    position: absolute;
-    color: #b7b7b7;
-    bottom: 0;
-    right: 0;
-    padding: 3px 5px;
-    font-size: 9pt;
-    cursor: pointer;
-    z-index: 2;
-}
-
-#reloadPresentation {
-    display: none;
-    position: absolute;
-    color: #FFFFFF;
-    top: 0;
-    right: 0;
-    padding: 10px 10px;
-    font-size: 11pt;
-    cursor: pointer;
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 5px;
-    background-clip: padding-box;
-    -webkit-border-radius: 5px;
-    -webkit-background-clip: padding-box;
-    z-index: 3;
 }

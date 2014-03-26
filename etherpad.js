@@ -33,21 +33,23 @@ var Etherpad = (function (my) {
         if (!etherpadIFrame)
             createIFrame();
 
-        // TODO FIX large video and prezi toggling. Too many calls from different places.
         var largeVideo = null;
-        if (isPresentationVisible())
+        if (Prezi.isPresentationVisible())
             largeVideo = $('#presentation>iframe');
         else
             largeVideo = $('#largeVideo');
 
         if ($('#etherpad>iframe').css('visibility') === 'hidden') {
             largeVideo.fadeOut(300, function () {
-                if (isPresentationVisible())
+                if (Prezi.isPresentationVisible())
                     largeVideo.css({opacity:'0'});
-                else
-                    largeVideo.css({visibility:'hidden'});
+                else {
+                    setLargeVideoVisible(false);
+                    dockToolbar(true);
+                }
 
                 $('#etherpad>iframe').fadeIn(300, function() {
+                    document.body.style.background = '#eeeeee';
                     $('#etherpad>iframe').css({visibility:'visible'});
                     $('#etherpad').css({zIndex:2});
                 });
@@ -57,14 +59,37 @@ var Etherpad = (function (my) {
             $('#etherpad>iframe').fadeOut(300, function () {
                 $('#etherpad>iframe').css({visibility:'hidden'});
                 $('#etherpad').css({zIndex:0});
+                document.body.style.background = 'black';
                 if (!isPresentation) {
                     $('#largeVideo').fadeIn(300, function() {
-                        $('#largeVideo').css({visibility:'visible'});
+                        setLargeVideoVisible(true);
+                        dockToolbar(false);
                     });
                 }
             });
         }
+        resize();
     };
+
+    /**
+     * Resizes the etherpad.
+     */
+    function resize() {
+        if ($('#etherpad>iframe').length) {
+            var remoteVideos = $('#remoteVideos');
+            var availableHeight
+                = window.innerHeight - remoteVideos.outerHeight();
+            var availableWidth = Util.getAvailableVideoWidth();
+
+            var aspectRatio = 16.0 / 9.0;
+            if (availableHeight < availableWidth / aspectRatio) {
+                availableWidth = Math.floor(availableHeight * aspectRatio);
+            }
+
+            $('#etherpad>iframe').width(availableWidth);
+            $('#etherpad>iframe').height(availableHeight);
+        }
+    }
 
     /**
      * Shares the Etherpad name with other participants.
@@ -125,6 +150,13 @@ var Etherpad = (function (my) {
 
         if (etherpadIFrame && etherpadIFrame.style.visibility !== 'hidden')
             Etherpad.toggleEtherpad(isPresentation);
+    });
+
+    /**
+     * Resizes the etherpad, when the window is resized.
+     */
+    $(window).resize(function () {
+        resize();
     });
 
     return my;

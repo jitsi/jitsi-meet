@@ -20,10 +20,14 @@
     <script src="chat.js?v=3"></script><!-- chat logic -->
     <script src="util.js?v=2"></script><!-- utility functions -->
     <script src="etherpad.js?v=5"></script><!-- etherpad plugin -->
+    <script src="prezi.js?v=1"></script><!-- prezi plugin -->
     <script src="smileys.js?v=1"></script><!-- smiley images -->
     <script src="replacement.js?v=5"></script><!-- link and smiley replacement -->
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/font.css"/>
     <link rel="stylesheet" type="text/css" media="screen" href="css/main.css?v=19"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="css/videolayout_default.css?v=1" id="videolayout_default"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="css/videolayout_fullscreen.css?v=1" id="videolayout_fullscreen" disabled>
     <link rel="stylesheet" href="css/jquery-impromptu.css?v=4">
     <link rel="stylesheet" href="css/modaldialog.css?v=3">
     <!--
@@ -39,32 +43,32 @@
         <a href="http://jitsi.org" target="_blank"><div id="leftlogo"></div></a>
         <a href="http://www.estos.com/" target="_blank"><div id="rightlogo"></div></a>
         <span id="toolbar">
-            <a class="button" onclick='buttonClick("#mute", "fa fa-microphone fa-lg fa fa-microphone-slash fa-lg");toggleAudio();'>
-                <i id="mute" title="Mute / unmute" class="fa fa-microphone fa-lg"></i></a>
+            <a class="button" onclick='buttonClick("#mute", "icon-microphone icon-mic-disabled");toggleAudio();'>
+                <i id="mute" title="Mute / unmute" class="icon-microphone"></i></a>
             <div class="header_button_separator"></div>
-            <a class="button" onclick='buttonClick("#video");toggleVideo();'>
-                <i id="video" title="Start / stop camera" class="fa fa-video-camera fa-lg"></i></a>
+            <a class="button" onclick='buttonClick("#video", "icon-camera icon-camera-disabled");toggleVideo();'>
+                <i id="video" title="Start / stop camera" class="icon-camera"></i></a>
             <div class="header_button_separator"></div>
-            <a class="button" onclick="openLockDialog();"><i id="lockIcon" title="Lock/unlock room" class="fa fa-unlock fa-lg"></i></a>
+            <a class="button" onclick="openLockDialog();"><i id="lockIcon" title="Lock/unlock room" class="icon-security"></i></a>
             <div class="header_button_separator"></div>
-            <a class="button" onclick="openLinkDialog();"><i title="Invite others" class="fa fa-link fa-lg"></i></a>
+            <a class="button" onclick="openLinkDialog();"><i title="Invite others" class="icon-link"></i></a>
             <div class="header_button_separator"></div>
             <span class="toolbar_span">
-                <a class="button" onclick='Chat.toggleChat();'><i id="chat" title="Open chat" class="fa fa-comments-o fa-lg"></i></a>
+                <a class="button" onclick='Chat.toggleChat();'><i id="chatButton" title="Open chat" class="icon-chat"></i></a>
                 <span id="unreadMessages"></span>
             </span>
             <div class="header_button_separator"></div>
-            <a class="button" onclick='openPreziDialog();'><i title="Share prezi" class="fa fa-picture-o fa-lg"></i></a>
+            <a class="button" onclick='Prezi.openPreziDialog();'><i title="Share prezi" class="icon-prezi"></i></a>
             <span id="etherpadButton">
                 <div class="header_button_separator"></div>
-                <a class="button" onclick='Etherpad.toggleEtherpad(0);'><i title="Open shared document" class="fa fa-file-text fa-lg"></i></a>
+                <a class="button" onclick='Etherpad.toggleEtherpad(0);'><i title="Open shared document" class="icon-share-doc"></i></a>
             </span>
             <div class="header_button_separator"></div>
             <span id="desktopsharing" style="display: none">
-                <a class="button" onclick="toggleScreenSharing();"><i title="Share screen" class="fa fa-desktop fa-lg"></i></a>
+                <a class="button" onclick="toggleScreenSharing();"><i title="Share screen" class="icon-share-desktop"></i></a>
                 <div class="header_button_separator"></div>
             </span>
-            <a class="button" onclick='toggleFullScreen();'><i title="Enter / Exit Full Screen" class="fa fa-arrows-alt fa-lg"></i></a>
+            <a class="button" onclick='buttonClick("#fullScreen", "icon-full-screen icon-exit-full-screen");toggleFullScreen();'><i id="fullScreen" title="Enter / Exit Full Screen" class="icon-full-screen"></i></a>
         </span>
     </div>
     <div id="settings">
@@ -76,20 +80,20 @@
         <input id="connect" type="submit" value="Connect" />
       </form>
     </div>
-
-    <div id="videospace">
-        <div class="fade_line"></div>
+    <div id="reloadPresentation"><a onclick='Prezi.reloadPresentation();'><i title="Reload Prezi" class="fa fa-repeat fa-lg"></i></a></div>
+    <div id="videospace" onmousemove="showToolbar();">
         <div id="largeVideoContainer" class="videocontainer">
-            <div id="reloadPresentation"><a onclick='reloadPresentation();'><i title="Reload Prezi" class="fa fa-repeat fa-lg"></i></a></div>
             <div id="presentation"></div>
             <div id="etherpad"></div>
+            <a href="http://jitsi.org" target="_new"><div id="watermark"></div></a>
             <video id="largeVideo" autoplay oncontextmenu="return false;"></video>
         </div>
-        <div class="fade_line"></div>
         <div id="remoteVideos">
             <span id="localVideoContainer" class="videocontainer">
-                <span id="localNick"></span>
-                <!--<video id="localVideo" autoplay oncontextmenu="return false;" muted></video> - is now per stream generated -->
+                <span id="localNick" class="nick"></span>
+                <span id="localVideoWrapper">
+                    <!--<video id="localVideo" autoplay oncontextmenu="return false;" muted></video> - is now per stream generated -->
+                </span>
                 <audio id="localAudio" autoplay oncontextmenu="return false;" muted></audio>
                 <span class="focusindicator"></span>
             </span>

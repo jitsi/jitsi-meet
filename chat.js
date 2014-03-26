@@ -96,31 +96,78 @@ var Chat = (function (my) {
         var chatspace = $('#chatspace');
         var videospace = $('#videospace');
 
-        var onShow = function () {
-            resizeLarge();
-            $('#chatspace').show("slide", { direction: "right", duration: 500});
-        };
-        var onHide = function () {
-            $('#chatspace').hide("slide", { direction: "right", duration: 500});
-            resizeLarge();
-        };
+        var chatSize = (chatspace.is(":visible")) ? [0, 0] : Chat.getChatSize();
+        var videospaceWidth = window.innerWidth - chatSize[0];
+        var videospaceHeight = window.innerHeight;
+        var videoSize
+            = getVideoSize(null, null, videospaceWidth, videospaceHeight);
+        var videoWidth = videoSize[0];
+        var videoHeight = videoSize[1];
+        var videoPosition = getVideoPosition(   videoWidth,
+                                                videoHeight,
+                                                videospaceWidth,
+                                                videospaceHeight);
+        var horizontalIndent = videoPosition[0];
+        var verticalIndent = videoPosition[1];
 
         if (chatspace.is(":visible")) {
-            videospace.animate( {right: 0},
+            videospace.animate( {right: chatSize[0],
+                                width: videospaceWidth,
+                                height: videospaceHeight},
                                 {queue: false,
-                                duration: 500,
-                                progress: onHide});
+                                duration: 500});
+
+            $('#largeVideoContainer').animate({ width: videospaceWidth,
+                                                height: videospaceHeight},
+                                                {queue: false,
+                                                 duration: 500
+                                                });
+
+            $('#largeVideo').animate({  width: videoWidth,
+                                        height: videoHeight,
+                                        top: verticalIndent,
+                                        bottom: verticalIndent,
+                                        left: horizontalIndent,
+                                        right: horizontalIndent},
+                                        {   queue: false,
+                                            duration: 500
+                                        });
+
+            $('#chatspace').hide("slide", { direction: "right",
+                                            queue: false,
+                                            duration: 500});
         }
         else {
-            videospace.animate({right: chatspace.width()},
+            videospace.animate({right: chatSize[0],
+                                width: videospaceWidth,
+                                height: videospaceHeight},
                                {queue: false,
                                 duration: 500,
-                                progress: onShow,
                                 complete: function() {
                                     scrollChatToBottom();
                                     chatspace.trigger('shown');
                                 }
                                });
+
+            $('#largeVideoContainer').animate({ width: videospaceWidth,
+                                                height: videospaceHeight},
+                                                {queue: false,
+                                                 duration: 500
+                                                });
+
+            $('#largeVideo').animate({  width: videoWidth,
+                                        height: videoHeight,
+                                        top: verticalIndent,
+                                        bottom: verticalIndent,
+                                        left: horizontalIndent,
+                                        right: horizontalIndent},
+                                        {queue: false,
+                                         duration: 500
+                                        });
+
+            $('#chatspace').show("slide", { direction: "right",
+                                            queue: false,
+                                            duration: 500});
         }
 
         // Request the focus in the nickname field or the chat input field.
@@ -147,6 +194,18 @@ var Chat = (function (my) {
      * Resizes the chat area.
      */
     my.resizeChat = function () {
+        var chatSize = Chat.getChatSize();
+
+        $('#chatspace').width(chatSize[0]);
+        $('#chatspace').height(chatSize[1]);
+
+        resizeChatConversation();
+    };
+
+    /**
+     * Returns the size of the chat.
+     */
+    my.getChatSize = function() {
         var availableHeight = window.innerHeight;
         var availableWidth = window.innerWidth;
 
@@ -154,10 +213,7 @@ var Chat = (function (my) {
         if (availableWidth*0.2 < 200)
             chatWidth = availableWidth*0.2;
 
-        $('#chatspace').width(chatWidth);
-        $('#chatspace').height(availableHeight - 40);
-
-        resizeChatConversation();
+        return [chatWidth, availableHeight];
     };
 
     /**
@@ -168,10 +224,11 @@ var Chat = (function (my) {
         var usermsgHeight = usermsgStyleHeight
             .substring(0, usermsgStyleHeight.indexOf('px'));
 
+        $('#usermsg').width($('#chatspace').width() - 10);
         $('#chatconversation').width($('#chatspace').width() - 10);
         $('#chatconversation')
-            .height(window.innerHeight - 50 - parseInt(usermsgHeight));
-    }
+            .height(window.innerHeight - 10 - parseInt(usermsgHeight));
+    };
 
     /**
      * Shows/hides a visual notification, indicating that a message has arrived.
@@ -179,25 +236,35 @@ var Chat = (function (my) {
     function setVisualNotification(show) {
         var unreadMsgElement = document.getElementById('unreadMessages');
 
+        var glower = $('#chatButton');
+
         if (unreadMessages) {
             unreadMsgElement.innerHTML = unreadMessages.toString();
 
+            showToolbar();
+
             var chatButtonElement
-                = document.getElementById('chat').parentNode;
+                = document.getElementById('chatButton').parentNode;
             var leftIndent = (Util.getTextWidth(chatButtonElement)
-                                - Util.getTextWidth(unreadMsgElement) - 5)/2;
+                                - Util.getTextWidth(unreadMsgElement))/2;
             var topIndent = (Util.getTextHeight(chatButtonElement)
-                                - Util.getTextHeight(unreadMsgElement))/2 - 2;
+                                - Util.getTextHeight(unreadMsgElement))/2 - 3;
 
             unreadMsgElement.setAttribute(
                     'style',
                     'top:' + topIndent
                      + '; left:' + leftIndent +';');
-        }
-        else
-            unreadMsgElement.innerHTML = '';
 
-        var glower = $('#chat');
+            if (!glower.hasClass('icon-chat-simple')) {
+                glower.removeClass('icon-chat');
+                glower.addClass('icon-chat-simple');
+            }
+        }
+        else {
+            unreadMsgElement.innerHTML = '';
+            glower.removeClass('icon-chat-simple');
+            glower.addClass('icon-chat');
+        }
 
         if (show && !notificationInterval) {
             notificationInterval = window.setInterval(function() {
