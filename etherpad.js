@@ -81,11 +81,6 @@ var Etherpad = (function (my) {
                 = window.innerHeight - remoteVideos.outerHeight();
             var availableWidth = Util.getAvailableVideoWidth();
 
-            var aspectRatio = 16.0 / 9.0;
-            if (availableHeight < availableWidth / aspectRatio) {
-                availableWidth = Math.floor(availableHeight * aspectRatio);
-            }
-
             $('#etherpad>iframe').width(availableWidth);
             $('#etherpad>iframe').height(availableHeight);
         }
