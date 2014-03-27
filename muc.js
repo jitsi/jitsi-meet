@@ -98,17 +98,15 @@ Strophe.addConnectionPlugin('emuc', {
                 $(document).trigger('joined.muc', [from, member]);
                 this.list_members.push(from);
             }
-            else
-                $(document).trigger('presence.muc', [from, member, pres]);
         } else if (this.members[from] === undefined) {
             // new participant
             this.members[from] = member;
             this.list_members.push(from);
             $(document).trigger('entered.muc', [from, member, pres]);
-        } else {
-            console.log('presence change from', from);
-            $(document).trigger('presence.muc', [from, member, pres]);
         }
+        // Always trigger presence to update bindings
+        console.log('presence change from', from);
+        $(document).trigger('presence.muc', [from, member, pres]);
         return true;
     },
     onPresenceUnavailable: function (pres) {

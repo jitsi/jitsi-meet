@@ -262,11 +262,7 @@ $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
         container  = document.getElementById(
                 'participant_' + Strophe.getResourceFromJid(data.peerjid));
         if (!container) {
-            console.warn('no container for', data.peerjid);
-            // create for now...
-            // FIXME: should be removed
-            container = addRemoteVideoContainer(
-                    'participant_' + Strophe.getResourceFromJid(data.peerjid));
+            console.error('no container for', data.peerjid);
         } else {
             //console.log('found container for', data.peerjid);
         }
@@ -575,17 +571,8 @@ $(document).bind('entered.muc', function (event, jid, info, pres) {
     console.log('entered', jid, info);
     console.log('is focus?' + focus ? 'true' : 'false');
 
-    var videoSpanId = 'participant_' + Strophe.getResourceFromJid(jid);
-    var container = addRemoteVideoContainer(videoSpanId);
-
-    if (info.displayName)
-        showDisplayName(videoSpanId, info.displayName);
-
-    var nickfield = document.createElement('span');
-    nickfield.className = "nick";
-    nickfield.appendChild(document.createTextNode(Strophe.getResourceFromJid(jid)));
-    container.appendChild(nickfield);
-    resizeThumbnails();
+    // Add Peer's container
+    ensurePeerContainerExists(jid);
 
     if (focus !== null) {
         // FIXME: this should prepare the video
@@ -600,12 +587,6 @@ $(document).bind('entered.muc', function (event, jid, info, pres) {
     else if (sharedKey) {
         updateLockButton();
     }
-
-    $(pres).find('>media[xmlns="http://estos.de/ns/mjs"]>source').each(function (idx, ssrc) {
-        //console.log(jid, 'assoc ssrc', ssrc.getAttribute('type'), ssrc.getAttribute('ssrc'));
-        // Fixme: direction and video types are unhandled here(maybe something more)
-        ssrc2jid[ssrc.getAttribute('ssrc')] = jid;
-    });
 });
 
 $(document).bind('left.muc', function (event, jid) {
@@ -674,10 +655,12 @@ $(document).bind('presence.muc', function (event, jid, info, pres) {
     });
 
     if (info.displayName) {
-        if (jid === connection.emuc.myroomjid)
+        if (jid === connection.emuc.myroomjid) {
             showDisplayName('localVideoContainer', info.displayName + ' (me)');
-        else
+        } else {
+            ensurePeerContainerExists(jid);
             showDisplayName('participant_' + Strophe.getResourceFromJid(jid), info.displayName);
+        }
     }
 });
 
@@ -1387,6 +1370,28 @@ function showFocusIndicator() {
             createFocusIndicatorElement(indicatorSpan);
         }
     }
+}
+
+/**
+ * Checks if container for participant identified by given peerJid exists in the document and creates it eventually.
+ * @param peerJid peer Jid to check.
+ */
+function ensurePeerContainerExists(peerJid){
+
+    var peerResource = Strophe.getResourceFromJid(peerJid);
+    var videoSpanId = 'participant_' + peerResource;
+
+    if($('#'+videoSpanId).length > 0) {
+        return;
+    }
+
+    var container = addRemoteVideoContainer(videoSpanId);
+
+    var nickfield = document.createElement('span');
+    nickfield.className = "nick";
+    nickfield.appendChild(document.createTextNode(peerResource));
+    container.appendChild(nickfield);
+    resizeThumbnails();
 }
 
 function addRemoteVideoContainer(id) {
