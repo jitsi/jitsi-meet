@@ -365,6 +365,11 @@ function checkChangeLargeVideo(removedVideoSrc){
         if(!pick) {
             console.info("Last visible video no longer exists");
             pick = $('#remoteVideos>span[id!="mixedstream"]>video').get(0);
+            if(!pick) {
+                // Try local video
+                console.info("Fallback to local video...");
+                pick = $('#remoteVideos>span>span>video').get(0);
+            }
         }
 
         // mute if localvideo
