@@ -47,17 +47,6 @@ var Util = (function (my) {
     };
 
     /**
-     * Indicates if the given string is an alphanumeric string.
-     * Note that some special characters are also allowed (-, _ , /) for the
-     * purpose of checking URIs. (FIXME: This should maybe moved to another not
-     * so generic method in the future.)
-     */
-    my.isAlphanumeric = function(unsafeText) {
-        var regex = /^[a-z0-9-_\/]+$/i;
-        return regex.test(unsafeText);
-    };
-
-    /**
      * Returns the available video width.
      */
     my.getAvailableVideoWidth = function() {

@@ -112,7 +112,7 @@ var Prezi = (function (my) {
                             else {
                                 var presIdTmp = urlValue.substring(
                                         urlValue.indexOf("prezi.com/") + 10);
-                                if (!Util.isAlphanumeric(presIdTmp)
+                                if (!isAlphanumeric(presIdTmp)
                                         || presIdTmp.indexOf('/') < 2) {
                                     $.prompt.goToState('state1');
                                     return false;
@@ -257,6 +257,16 @@ var Prezi = (function (my) {
             preziPlayer = null;
         }
     };
+
+    /**
+     * Indicates if the given string is an alphanumeric string.
+     * Note that some special characters are also allowed (-, _ , /, &, ?, =, ;) for the
+     * purpose of checking URIs.
+     */
+    function isAlphanumeric(unsafeText) {
+        var regex = /^[a-z0-9-_\/&\?=;]+$/i;
+        return regex.test(unsafeText);
+    }
 
     /**
      * Returns the presentation id from the given url.
