@@ -55,7 +55,7 @@
 
 #localVideoWrapper {
     display:inline-block;
-    -webkit-mask-box-image: url(http://emcho.com/db/videomask.svg);
+    -webkit-mask-box-image: url(../images/videomask.svg);
     border-radius:0px !important;
     border: 0px !important;
 }
