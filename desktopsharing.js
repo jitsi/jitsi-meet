@@ -202,7 +202,7 @@ function checkExtInstalled(isInstalledCallback) {
                 // Check installed extension version
                 var extVersion = response.version;
                 console.log('Extension version is: '+extVersion);
-                var updateRequired = extVersion < config.minChromeExtVersion;
+                var updateRequired = isUpdateRequired(config.minChromeExtVersion, extVersion);
                 if(updateRequired) {
                     alert(
                         'Jitsi Desktop Streamer requires update. ' +
@@ -212,6 +212,50 @@ function checkExtInstalled(isInstalledCallback) {
             }
         }
     );
+}
+
+/**
+ * Checks whether extension update is required.
+ * @param minVersion minimal required version
+ * @param extVersion current extension version
+ * @returns {boolean}
+ */
+function isUpdateRequired(minVersion, extVersion)
+{
+    try
+    {
+        var s1 = minVersion.split('.');
+        var s2 = extVersion.split('.');
+
+        var len = Math.max(s1.length, s2.length);
+        for(var i = 0; i < len; i++)
+        {
+            var n1=0,n2=0;
+
+            if(i < s1.length)
+                n1 = parseInt(s1[i]);
+            if(i < s2.length)
+                n2 = parseInt(s2[i]);
+
+            if(isNaN(n1) || isNaN(n2))
+            {
+                return true;
+            }
+            else if(n1 !== n2)
+            {
+                return n1 > n2;
+            }
+        }
+
+        // will happen if boths version has identical numbers in
+        // their components (even if one of them is longer, has more components)
+        return false;
+    }
+    catch(e)
+    {
+        console.error("Failed to parse extension version", e);
+        return true;
+    }
 }
 
 function doGetStreamFromExtension(streamCallback, failCallback) {
