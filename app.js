@@ -27,6 +27,11 @@ var currentVideoHeight = null;
  * @type {function()}
  */
 var getVideoSize;
+/**
+ * Method used to get large video position.
+ * @type {function()}
+ */
+var getVideoPosition;
 
 /* window.onbeforeunload = closePageWarning; */
 
@@ -720,8 +725,10 @@ function updateLargeVideo(newSrc, vol) {
                 document.getElementById('largeVideo').style.webkitTransform = "none";
             }
 
-            // Change the way we'll be measuring large video
-            getVideoSize = isVideoSrcDesktop(newSrc) ? getVideoSizeFit : getVideoSizeCover;
+            // Change the way we'll be measuring and positioning large video
+            var isDesktop = isVideoSrcDesktop(newSrc);
+            getVideoSize = isDesktop ? getDesktopVideoSize : getCameraVideoSize;
+            getVideoPosition = isDesktop ? getDesktopVideoPosition : getCameraVideoPosition;
 
             if (isVisible)
                 $(this).fadeIn(300);
@@ -849,10 +856,10 @@ var positionLarge = function(videoWidth, videoHeight) {
  * @return an array with 2 elements, the horizontal indent and the vertical
  * indent
  */
-var getVideoPosition = function (   videoWidth,
-                                    videoHeight,
-                                    videoSpaceWidth,
-                                    videoSpaceHeight) {
+function getCameraVideoPosition(   videoWidth,
+                                   videoHeight,
+                                   videoSpaceWidth,
+                                   videoSpaceHeight) {
     // Parent height isn't completely calculated when we position the video in
     // full screen mode and this is why we use the screen height in this case.
     // Need to think it further at some point and implement it properly.
@@ -866,7 +873,26 @@ var getVideoPosition = function (   videoWidth,
     var verticalIndent = (videoSpaceHeight - videoHeight)/2;
 
     return [horizontalIndent, verticalIndent];
-};
+}
+
+/**
+ * Returns an array of the video horizontal and vertical indents.
+ * Centers horizontally and top aligns vertically.
+ *
+ * @return an array with 2 elements, the horizontal indent and the vertical
+ * indent
+ */
+function getDesktopVideoPosition(  videoWidth,
+                                   videoHeight,
+                                   videoSpaceWidth,
+                                   videoSpaceHeight) {
+
+    var horizontalIndent = (videoSpaceWidth - videoWidth)/2;
+
+    var verticalIndent = 0;// Top aligned
+
+    return [horizontalIndent, verticalIndent];
+}
 
 /**
  * Returns an array of the video dimensions, so that it covers the screen.
@@ -874,7 +900,7 @@ var getVideoPosition = function (   videoWidth,
  *
  * @return an array with 2 elements, the video width and the video height
  */
-function getVideoSizeCover(videoWidth,
+function getCameraVideoSize(videoWidth,
                            videoHeight,
                            videoSpaceWidth,
                            videoSpaceHeight) {
@@ -907,10 +933,11 @@ function getVideoSizeCover(videoWidth,
  *
  * @return an array with 2 elements, the video width and the video height
  */
-function getVideoSizeFit(videoWidth,
-                                   videoHeight,
-                                   videoSpaceWidth,
-                                   videoSpaceHeight) {
+function getDesktopVideoSize( videoWidth,
+                              videoHeight,
+                              videoSpaceWidth,
+                              videoSpaceHeight )
+{
     if (!videoWidth)
         videoWidth = currentVideoWidth;
     if (!videoHeight)
@@ -921,12 +948,16 @@ function getVideoSizeFit(videoWidth,
     var availableWidth = Math.max(videoWidth, videoSpaceWidth);
     var availableHeight = Math.max(videoHeight, videoSpaceHeight);
 
-    if (availableWidth / aspectRatio >= videoSpaceHeight) {
+    videoSpaceHeight -= $('#remoteVideos').outerHeight();
+
+    if (availableWidth / aspectRatio >= videoSpaceHeight)
+    {
         availableHeight = videoSpaceHeight;
         availableWidth = availableHeight*aspectRatio;
     }
 
-    if (availableHeight*aspectRatio >= videoSpaceWidth) {
+    if (availableHeight*aspectRatio >= videoSpaceWidth)
+    {
         availableWidth = videoSpaceWidth;
         availableHeight = availableWidth / aspectRatio;
     }
@@ -1005,8 +1036,9 @@ $(document).ready(function () {
     // Set default desktop sharing method
     setDesktopSharing(config.desktopSharing);
 
-    // By default we cover the whole screen with video
-    getVideoSize = getVideoSizeCover;
+    // By default we use camera
+    getVideoSize = getCameraVideoSize;
+    getVideoPosition = getCameraVideoPosition;
 
     resizeLargeVideoContainer();
     $(window).resize(function () {
