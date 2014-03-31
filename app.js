@@ -224,6 +224,7 @@ $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
         if (data.stream.id === 'mixedmslabel') return;
         var videoTracks = data.stream.getVideoTracks();
         console.log("waiting..", videoTracks, selector[0]);
+
         if (videoTracks.length === 0 || selector[0].currentTime > 0) {
             RTC.attachMediaStream(selector, data.stream); // FIXME: why do i have to do this for FF?
 
@@ -1002,8 +1003,8 @@ var resizeLargeVideoContainer = function () {
     resizeThumbnails();
 };
 
-function resizeThumbnails() {
-    // Calculate the available height, which is the inner window height minus
+var calculateThumbnailSize = function() {
+ // Calculate the available height, which is the inner window height minus
     // 39px for the header minus 2px for the delimiter lines on the top and
     // bottom of the large video, minus the 36px space inside the remoteVideos
     // container used for highlighting shadow.
@@ -1021,10 +1022,18 @@ function resizeThumbnails() {
         availableWidth = Math.floor(availableHeight * aspectRatio);
     }
 
+    return [availableWidth, availableHeight];
+};
+
+function resizeThumbnails() {
+    var thumbnailSize = calculateThumbnailSize();
+    var width = thumbnailSize[0];
+    var height = thumbnailSize[1];
+
     // size videos so that while keeping AR and max height, we have a nice fit
-    $('#remoteVideos').height(availableHeight);
-    $('#remoteVideos>span').width(availableWidth);
-    $('#remoteVideos>span').height(availableHeight);
+    $('#remoteVideos').height(height);
+    $('#remoteVideos>span').width(width);
+    $('#remoteVideos>span').height(height);
 }
 
 $(document).ready(function () {
@@ -1480,8 +1489,6 @@ function toggleFullScreen() {
  * Shows the display name for the given video.
  */
 function showDisplayName(videoSpanId, displayName) {
-    var escDisplayName = Util.escapeHtml(displayName);
-
     var nameSpan = $('#' + videoSpanId + '>span.displayname');
 
     // If we already have a display name for this video.
@@ -1489,10 +1496,10 @@ function showDisplayName(videoSpanId, displayName) {
         var nameSpanElement = nameSpan.get(0);
 
         if (nameSpanElement.id === 'localDisplayName'
-            && $('#localDisplayName').html() !== escDisplayName)
-            $('#localDisplayName').html(escDisplayName);
+            && $('#localDisplayName').text() !== displayName)
+            $('#localDisplayName').text(displayName);
         else
-            $('#' + videoSpanId + '_name').html(escDisplayName);
+            $('#' + videoSpanId + '_name').text(displayName);
     }
     else {
         var editButton = null;
@@ -1500,10 +1507,10 @@ function showDisplayName(videoSpanId, displayName) {
         if (videoSpanId === 'localVideoContainer') {
             editButton = createEditDisplayNameButton();
         }
-        if (escDisplayName.length) {
+        if (displayName.length) {
             nameSpan = document.createElement('span');
             nameSpan.className = 'displayname';
-            nameSpan.innerHTML = escDisplayName;
+            nameSpan.innerText = displayName;
             $('#' + videoSpanId)[0].appendChild(nameSpan);
         }
 
@@ -1518,9 +1525,9 @@ function showDisplayName(videoSpanId, displayName) {
             editableText.className = 'displayname';
             editableText.id = 'editDisplayName';
 
-            if (escDisplayName.length)
+            if (displayName.length)
                 editableText.value
-                    = escDisplayName.substring(0, escDisplayName.indexOf(' (me)'));
+                    = displayName.substring(0, displayName.indexOf(' (me)'));
 
             editableText.setAttribute('style', 'display:none;');
             editableText.setAttribute('placeholder', 'ex. Jane Pink');
@@ -1535,7 +1542,7 @@ function showDisplayName(videoSpanId, displayName) {
 
                 var inputDisplayNameHandler = function(name) {
                     if (nickname !== name) {
-                        nickname = Util.escapeHtml(name);
+                        nickname = name;
                         window.localStorage.displayname = nickname;
                         connection.emuc.addDisplayNameToPresence(nickname);
                         connection.emuc.sendPresence();
@@ -1544,7 +1551,7 @@ function showDisplayName(videoSpanId, displayName) {
                     }
 
                     if (!$('#localDisplayName').is(":visible")) {
-                        $('#localDisplayName').html(nickname + " (me)");
+                        $('#localDisplayName').text(nickname + " (me)");
                         $('#localDisplayName').show();
                         $('#editDisplayName').hide();
                     }
