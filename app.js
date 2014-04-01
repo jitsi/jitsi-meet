@@ -1044,6 +1044,11 @@ $(document).ready(function () {
 
     // Set default desktop sharing method
     setDesktopSharing(config.desktopSharing);
+    // Initialize Chrome extension inline installs
+    if(config.chromeExtensionId)
+    {
+        initInlineInstalls();
+    }
 
     // By default we use camera
     getVideoSize = getCameraVideoSize;

@@ -74,6 +74,25 @@ function showDesktopSharingButton() {
     }
 }
 
+/**
+ * Initializes <link rel=chrome-webstore-item /> with extension id set in config.js to support inline installs.
+ * Host site must be selected as main website of published extension.
+ */
+function initInlineInstalls()
+{
+    $("link[rel=chrome-webstore-item]").attr("href", getWebStoreInstallUrl());
+}
+
+/**
+ * Constructs inline install URL for Chrome desktop streaming extension.
+ * The 'chromeExtensionId' must be defined in config.js.
+ * @returns {string}
+ */
+function getWebStoreInstallUrl()
+{
+    return "https://chrome.google.com/webstore/detail/" + config.chromeExtensionId;
+}
+
 /*
  * Toggles screen sharing.
  */
@@ -168,7 +187,7 @@ function obtainScreenFromExtension(streamCallback, failCallback) {
                 doGetStreamFromExtension(streamCallback, failCallback);
             } else {
                 chrome.webstore.install(
-                    "https://chrome.google.com/webstore/detail/" + config.chromeExtensionId,
+                    getWebStoreInstallUrl(),
                     function(arg) {
                         console.log("Extension installed successfully", arg);
                         // We need to reload the page in order to get the access to chrome.runtime
@@ -188,7 +207,6 @@ function checkExtInstalled(isInstalledCallback) {
     if(!chrome.runtime) {
         // No API, so no extension for sure
         isInstalledCallback(false);
-        return false;
     }
     chrome.runtime.sendMessage(
         config.chromeExtensionId,
