@@ -415,35 +415,6 @@ function sendKeyframe(pc) {
     );
 }
 
-function demonstrateabug(pc) {
-    // funny way of doing mute. the subsequent offer contains things like rtcp-mux
-    // and triggers all new ice candidates (ice restart)
-    // this code is here to demonstrate a bug
-    pc.createOffer(
-        function (offer) {
-            console.log(offer);
-            var sdp = new SDP(offer.sdp);
-            if (sdp.media.length > 1) {
-                sdp.media[1] = sdp.media[1].replace('a=sendrecv', 'a=recvonly');
-                sdp.raw = sdp.session + sdp.media.join('');
-                offer.sdp = sdp.raw;
-                pc.setLocalDescription(offer,
-                    function () {
-                        console.log('mute SLD ok');
-                    },
-                    function(error) {
-                        console.log('mute SLD error');
-                    }
-                );
-            }
-        },
-        function (error) {
-            console.warn(error);
-        },
-        {mandatory: {OfferToReceiveAudio: true, OfferToReceiveVideo: false}}
-    );
-}
-
 // really mute video, i.e. dont even send black frames
 function muteVideo(pc, unmute) {
     // FIXME: this probably needs another of those lovely state safeguards...
