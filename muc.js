@@ -72,6 +72,19 @@ Strophe.addConnectionPlugin('emuc', {
             $(document).trigger('presentationremoved.muc', [from, url]);
         }
 
+        // Parse audio info tag.
+        var audioMuted = $(pres).find('>audiomuted');
+        if (audioMuted.length) {
+            $(document).trigger('audiomuted.muc', [from, audioMuted.text()]);
+        }
+
+        // Parse video info tag.
+        var videoMuted = $(pres).find('>videomuted');
+        if (videoMuted.length) {
+            $(document).trigger('videomuted.muc', [from, videoMuted.text()]);
+        }
+
+        // Parse status.
         if ($(pres).find('>x[xmlns="http://jabber.org/protocol/muc#user"]>status[code="201"]').length) {
             // http://xmpp.org/extensions/xep-0045.html#createroom-instant
             this.isOwner = true;
@@ -81,6 +94,7 @@ Strophe.addConnectionPlugin('emuc', {
             this.connection.send(create); // fire away
         }
 
+        // Parse roles.
         var member = {};
         member.show = $(pres).find('>show').text();
         member.status = $(pres).find('>status').text();
@@ -186,16 +200,31 @@ Strophe.addConnectionPlugin('emuc', {
 
         if (this.presMap['displayName']) {
             // XEP-0172
-            pres.c('nick', {xmlns: 'http://jabber.org/protocol/nick'}).t(this.presMap['displayName']).up();
+            pres.c('nick', {xmlns: 'http://jabber.org/protocol/nick'})
+                .t(this.presMap['displayName']).up();
+        }
+
+        if (this.presMap['audions']) {
+            pres.c('audiomuted', {xmlns: this.presMap['audions']})
+                .t(this.presMap['audiomuted']).up();
+        }
+
+        if (this.presMap['videons']) {
+            console.log("SEND VIDEO MUTED", this.presMap['videomuted']);
+            pres.c('videomuted', {xmlns: this.presMap['videons']})
+                .t(this.presMap['videomuted']).up();
         }
 
         if (this.presMap['prezins']) {
-            pres.c('prezi', {xmlns: this.presMap['prezins'], 'url': this.presMap['preziurl']}).
-                            c('current').t(this.presMap['prezicurrent']).up().up();
+            pres.c('prezi',
+                    {xmlns: this.presMap['prezins'],
+                    'url': this.presMap['preziurl']})
+                    .c('current').t(this.presMap['prezicurrent']).up().up();
         }
 
         if (this.presMap['etherpadns']) {
-            pres.c('etherpad', {xmlns: this.presMap['etherpadns']}).t(this.presMap['etherpadname']).up();
+            pres.c('etherpad', {xmlns: this.presMap['etherpadns']})
+                .t(this.presMap['etherpadname']).up();
         }
 
         if (this.presMap['medians'])
@@ -212,7 +241,8 @@ Strophe.addConnectionPlugin('emuc', {
                     pres.c('source',
                            {type: this.presMap['source' + i + '_type'],
                            ssrc: this.presMap['source' + i + '_ssrc'],
-                           direction: this.presMap['source'+ i + '_direction'] || 'sendrecv' }
+                           direction: this.presMap['source'+ i + '_direction']
+                                                    || 'sendrecv' }
                     ).up();
                 }
         }
@@ -257,5 +287,13 @@ Strophe.addConnectionPlugin('emuc', {
     addEtherpadToPresence: function(etherpadName) {
         this.presMap['etherpadns'] = 'http://jitsi.org/jitmeet/etherpad';
         this.presMap['etherpadname'] = etherpadName;
+    },
+    addAudioInfoToPresence: function(isMuted) {
+        this.presMap['audions'] = 'http://jitsi.org/jitmeet/audio';
+        this.presMap['audiomuted'] = isMuted.toString();
+    },
+    addVideoInfoToPresence: function(isMuted) {
+        this.presMap['videons'] = 'http://jitsi.org/jitmeet/video';
+        this.presMap['videomuted'] = isMuted.toString();
     }
 });

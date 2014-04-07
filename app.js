@@ -223,7 +223,7 @@ $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
         var sess = connection.jingle.sessions[sid];
         if (data.stream.id === 'mixedmslabel') return;
         var videoTracks = data.stream.getVideoTracks();
-        console.log("waiting..", videoTracks, selector[0]);
+//        console.log("waiting..", videoTracks, selector[0]);
 
         if (videoTracks.length === 0 || selector[0].currentTime > 0) {
             RTC.attachMediaStream(selector, data.stream); // FIXME: why do i have to do this for FF?
@@ -673,6 +673,32 @@ $(document).bind('passwordrequired.muc', function (event, jid) {
             });
 });
 
+$(document).bind('audiomuted.muc', function (event, jid, isMuted) {
+    var videoSpanId = null;
+    if (jid === connection.emuc.myroomjid) {
+        videoSpanId = 'localVideoContainer';
+    } else {
+        ensurePeerContainerExists(jid);
+        videoSpanId = 'participant_' + Strophe.getResourceFromJid(jid);
+    }
+
+    if (videoSpanId)
+        showAudioIndicator(videoSpanId, isMuted);
+});
+
+$(document).bind('videomuted.muc', function (event, jid, isMuted) {
+    var videoSpanId = null;
+    if (jid === connection.emuc.myroomjid) {
+        videoSpanId = 'localVideoContainer';
+    } else {
+        ensurePeerContainerExists(jid);
+        videoSpanId = 'participant_' + Strophe.getResourceFromJid(jid);
+    }
+
+    if (videoSpanId)
+        showAudioIndicator(videoSpanId, isMuted);
+});
+
 /**
  * Updates the large video with the given new video source.
  */
@@ -744,11 +770,11 @@ function isVideoSrcDesktop(videoSrc){
 function setLargeVideoVisible(isVisible) {
     if (isVisible) {
         $('#largeVideo').css({visibility:'visible'});
-        $('#watermark').css({visibility:'visible'});
+        $('.watermark').css({visibility:'visible'});
     }
     else {
         $('#largeVideo').css({visibility:'hidden'});
-        $('#watermark').css({visibility:'hidden'});
+        $('.watermark').css({visibility:'hidden'});
     }
 }
 
@@ -757,35 +783,49 @@ function getConferenceHandler() {
 }
 
 function toggleVideo() {
-    if (!(connection && connection.jingle.localVideo)) return;
+    if (!(connection && connection.jingle.localVideo))
+        return;
 
     var sess = getConferenceHandler();
     if (sess) {
         sess.toggleVideoMute(
             function(isMuted){
                 if(isMuted) {
-                    $('#video').removeClass("fa fa-video-camera fa-lg");
-                    $('#video').addClass("fa fa-video-camera no-fa-video-camera fa-lg");
+                    $('#video').removeClass("icon-camera");
+                    $('#video').addClass("icon-camera icon-camera-disabled");
                 } else {
-                    $('#video').removeClass("fa fa-video-camera no-fa-video-camera fa-lg");
-                    $('#video').addClass("fa fa-video-camera fa-lg");
+                    $('#video').removeClass("icon-camera icon-camera-disabled");
+                    $('#video').addClass("icon-camera");
                 }
             }
         );
     }
+
     var sess = focus || activecall;
     if (!sess) {
         return;
     }
+
     sess.pendingop = ismuted ? 'unmute' : 'mute';
+//    connection.emuc.addVideoInfoToPresence(!ismuted);
+//    connection.emuc.sendPresence();
+
     sess.modifySources();
 }
 
+/**
+ * Mutes / unmutes audio for the local participant.
+ */
 function toggleAudio() {
-    if (!(connection && connection.jingle.localAudio)) return;
+    if (!(connection && connection.jingle.localAudio))
+        return;
     var localAudio = connection.jingle.localAudio;
     for (var idx = 0; idx < localAudio.getAudioTracks().length; idx++) {
-        localAudio.getAudioTracks()[idx].enabled = !localAudio.getAudioTracks()[idx].enabled;
+        var audioEnabled = localAudio.getAudioTracks()[idx].enabled;
+
+        localAudio.getAudioTracks()[idx].enabled = !audioEnabled;
+        connection.emuc.addAudioInfoToPresence(audioEnabled); //isMuted is the opposite of audioEnabled
+        connection.emuc.sendPresence();
     }
 }
 
@@ -1559,6 +1599,62 @@ function createEditDisplayNameButton() {
     editButton.innerHTML = '<i class="fa fa-pencil"></i>';
 
     return editButton;
+}
+
+/**
+ * Shows audio muted indicator over small videos.
+ */
+function showAudioIndicator(videoSpanId, isMuted) {
+    var audioMutedSpan = $('#' + videoSpanId + '>span.audioMuted');
+
+    if (isMuted === 'false') {
+        if (audioMutedSpan.length > 0) {
+            audioMutedSpan.remove();
+        }
+    }
+    else {
+        var videoMutedSpan = $('#' + videoSpanId + '>span.videoMuted');
+
+        audioMutedSpan = document.createElement('span');
+        audioMutedSpan.className = 'audioMuted';
+        if (videoMutedSpan) {
+            audioMutedSpan.right = '30px';
+        }
+        $('#' + videoSpanId)[0].appendChild(audioMutedSpan);
+
+        var mutedIndicator = document.createElement('i');
+        mutedIndicator.className = 'icon-mic-disabled';
+        mutedIndicator.title = "Participant is muted";
+        audioMutedSpan.appendChild(mutedIndicator);
+    }
+}
+
+/**
+ * Shows video muted indicator over small videos.
+ */
+function showVideoIndicator(videoSpanId, isMuted) {
+    var videoMutedSpan = $('#' + videoSpanId + '>span.videoMuted');
+
+    if (isMuted === 'false') {
+        if (videoMutedSpan.length > 0) {
+            videoMutedSpan.remove();
+        }
+    }
+    else {
+        var audioMutedSpan = $('#' + videoSpanId + '>span.audioMuted');
+
+        videoMutedSpan = document.createElement('span');
+        videoMutedSpan.className = 'videoMuted';
+        if (audioMutedSpan) {
+            videoMutedSpan.right = '30px';
+        }
+        $('#' + videoSpanId)[0].appendChild(videoMutedSpan);
+
+        var mutedIndicator = document.createElement('i');
+        mutedIndicator.className = 'icon-camera-disabled';
+        mutedIndicator.title = "Participant has stopped the camera.";
+        videoMutedSpan.appendChild(mutedIndicator);
+    }
 }
 
 /**
