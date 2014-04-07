@@ -63,14 +63,14 @@ function TraceablePeerConnection(ice_config, constraints) {
     };
     this.onsignalingstatechange = null;
     this.peerconnection.onsignalingstatechange = function (event) {
-        self.trace('onsignalingstatechange', event.srcElement.signalingState);
+        self.trace('onsignalingstatechange', self.signalingState);
         if (self.onsignalingstatechange !== null) {
             self.onsignalingstatechange(event);
         }
     };
     this.oniceconnectionstatechange = null;
     this.peerconnection.oniceconnectionstatechange = function (event) {
-        self.trace('oniceconnectionstatechange', event.srcElement.iceConnectionState);
+        self.trace('oniceconnectionstatechange', self.iceConnectionState);
         if (self.oniceconnectionstatechange !== null) {
             self.oniceconnectionstatechange(event);
         }
