@@ -207,6 +207,7 @@ function checkExtInstalled(isInstalledCallback) {
     if(!chrome.runtime) {
         // No API, so no extension for sure
         isInstalledCallback(false);
+        return;
     }
     chrome.runtime.sendMessage(
         config.chromeExtensionId,
