@@ -40,11 +40,9 @@ function init() {
     if (RTC === null) {
         window.location.href = 'webrtcrequired.html';
         return;
-        /*
     } else if (RTC.browser !== 'chrome') {
         window.location.href = 'chromeonly.html';
         return;
-        */
     }
 
     connection = new Strophe.Connection(document.getElementById('boshURL').value || config.bosh || '/http-bind');
