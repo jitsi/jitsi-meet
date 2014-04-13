@@ -1,3 +1,4 @@
+/* global $ */
 /**
  * Utility functions.
  */
@@ -8,7 +9,7 @@ var Util = (function (my) {
      *
      * @param el the element
      */
-    my.getTextWidth = function(el) {
+    my.getTextWidth = function (el) {
         return (el.clientWidth + 1);
     };
 
@@ -17,7 +18,7 @@ var Util = (function (my) {
      *
      * @param el the element
      */
-    my.getTextHeight = function(el) {
+    my.getTextHeight = function (el) {
         return (el.clientHeight + 1);
     };
 
@@ -26,7 +27,7 @@ var Util = (function (my) {
      *
      * @param number the number to cast
      */
-    my.toInteger = function(number) {
+    my.toInteger = function (number) {
         return Math.round(Number(number));
     };
 
@@ -35,24 +36,22 @@ var Util = (function (my) {
      *
      * @param id the identifier of the audio element.
      */
-    my.playSoundNotification = function(id) {
+    my.playSoundNotification = function (id) {
         document.getElementById(id).play();
     };
 
     /**
      * Escapes the given text.
      */
-    my.escapeHtml = function(unsafeText) {
+    my.escapeHtml = function (unsafeText) {
         return $('<div/>').text(unsafeText).html();
     };
 
     /**
      * Returns the available video width.
      */
-    my.getAvailableVideoWidth = function() {
-        var chatspaceWidth = $('#chatspace').is(":visible")
-        ? $('#chatspace').width()
-        : 0;
+    my.getAvailableVideoWidth = function () {
+        var chatspaceWidth = $('#chatspace').is(":visible") ? $('#chatspace').width() : 0;
 
         return window.innerWidth - chatspaceWidth;
     };

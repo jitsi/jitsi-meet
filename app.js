@@ -24,12 +24,12 @@ var currentVideoWidth = null;
 var currentVideoHeight = null;
 /**
  * Method used to calculate large video size.
- * @type {function()}
+ * @type {function ()}
  */
 var getVideoSize;
 /**
  * Method used to get large video position.
- * @type {function()}
+ * @type {function ()}
  */
 var getVideoPosition;
 
@@ -40,9 +40,11 @@ function init() {
     if (RTC === null) {
         window.location.href = 'webrtcrequired.html';
         return;
+        /*
     } else if (RTC.browser !== 'chrome') {
         window.location.href = 'chromeonly.html';
         return;
+        */
     }
 
     connection = new Strophe.Connection(document.getElementById('boshURL').value || config.bosh || '/http-bind');
@@ -69,9 +71,9 @@ function init() {
             if (config.useStunTurn) {
                 connection.jingle.getStunAndTurnCredentials();
             }
-            obtainAudioAndVideoPermissions(function(){
-                getUserMediaWithConstraints( ['audio'], audioStreamReady,
-                    function(error){
+            obtainAudioAndVideoPermissions(function () {
+                getUserMediaWithConstraints(['audio'], audioStreamReady,
+                    function (error) {
                         console.error('failed to obtain audio stream - stop', error);
                     });
             });
@@ -88,20 +90,20 @@ function init() {
  * We first ask for audio and video combined stream in order to get permissions and not to ask twice.
  * Then we dispose the stream and continue with separate audio, video streams(required for desktop sharing).
  */
-function obtainAudioAndVideoPermissions(callback){
+function obtainAudioAndVideoPermissions(callback) {
     // This makes sense only on https sites otherwise we'll be asked for permissions every time
-    if(location.protocol !== 'https:') {
+    if (location.protocol !== 'https:') {
         callback();
         return;
     }
     // Get AV
     getUserMediaWithConstraints(
         ['audio', 'video'],
-        function(avStream) {
+        function (avStream) {
             avStream.stop();
             callback();
         },
-        function(error){
+        function (error) {
             console.error('failed to obtain audio/video stream - stop', error);
         });
 }
@@ -110,8 +112,8 @@ function audioStreamReady(stream) {
 
     change_local_audio(stream);
 
-    if(RTC.browser !== 'firefox') {
-        getUserMediaWithConstraints( ['video'], videoStreamReady, videoStreamFailed, config.resolution || '360' );
+    if (RTC.browser !== 'firefox') {
+        getUserMediaWithConstraints(['video'], videoStreamReady, videoStreamFailed, config.resolution || '360');
     } else {
         doJoin();
     }
@@ -169,7 +171,7 @@ function doJoin() {
             roomjid += '/' + Strophe.getNodeFromJid(connection.jid);
         }
     } else {
-        roomjid += '/' + Strophe.getNodeFromJid(connection.jid).substr(0,8);
+        roomjid += '/' + Strophe.getNodeFromJid(connection.jid).substr(0, 8);
     }
     connection.emuc.doJoin(roomjid);
 }
@@ -186,7 +188,7 @@ function change_local_video(stream, flipX) {
     connection.jingle.localVideo = stream;
 
     var localVideo = document.createElement('video');
-    localVideo.id = 'localVideo_'+stream.id;
+    localVideo.id = 'localVideo_' + stream.id;
     localVideo.autoplay = true;
     localVideo.volume = 0; // is it required if audio is separated ?
     localVideo.oncontextmenu = function () { return false; };
@@ -196,7 +198,9 @@ function change_local_video(stream, flipX) {
 
     var localVideoSelector = $('#' + localVideo.id);
     // Add click handler
-    localVideoSelector.click(function () { handleVideoThumbClicked(localVideo.src); } );
+    localVideoSelector.click(function () {
+        handleVideoThumbClicked(localVideo.src);
+    });
     // Add stream ended handler
     stream.onended = function () {
         localVideoContainer.removeChild(localVideo);
@@ -204,7 +208,7 @@ function change_local_video(stream, flipX) {
     };
     // Flip video x axis if needed
     flipXLocalVideo = flipX;
-    if(flipX) {
+    if (flipX) {
         localVideoSelector.addClass("flipVideoX");
     }
     // Attach WebRTC stream
@@ -216,7 +220,7 @@ function change_local_video(stream, flipX) {
 
 $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
     function waitForRemoteVideo(selector, sid, ssrc) {
-        if(selector.removed) {
+        if (selector.removed) {
             console.warn("media removed before had started", selector);
             return;
         }
@@ -230,7 +234,7 @@ $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
 
             // FIXME: add a class that will associate peer Jid, video.src, it's ssrc and video type
             //        in order to get rid of too many maps
-            if(ssrc) {
+            if (ssrc) {
                 videoSrcToSsrc[sel.attr('src')] = ssrc;
             } else {
                 console.warn("No ssrc given for video", sel);
@@ -250,7 +254,7 @@ $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
         var ssrclines = SDPUtil.find_lines(sess.peerconnection.remoteDescription.sdp, 'a=ssrc');
         ssrclines = ssrclines.filter(function (line) {
             return line.indexOf('mslabel:' + data.stream.label) !== -1;
-                                     });
+        });
         if (ssrclines.length) {
             thessrc = ssrclines[0].substring(7).split(' ')[0];
             // ok to overwrite the one from focus? might save work in colibri.js
@@ -305,7 +309,7 @@ $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
     sel.hide();
     RTC.attachMediaStream(sel, data.stream);
 
-    if(isVideo) {
+    if (isVideo) {
         waitForRemoteVideo(sel, sid, thessrc);
     }
 
@@ -316,9 +320,9 @@ $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
         sel.removed = true;
         sel.remove();
 
-        var audioCount = $('#'+container.id+'>audio').length;
-        var videoCount = $('#'+container.id+'>video').length;
-        if(!audioCount && !videoCount) {
+        var audioCount = $('#' + container.id + '>audio').length;
+        var videoCount = $('#' + container.id + '>video').length;
+        if (!audioCount && !videoCount) {
             console.log("Remove whole user");
             // Remove whole container
             container.remove();
@@ -330,14 +334,17 @@ $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
     };
 
     // Add click handler
-    sel.click(function () { handleVideoThumbClicked(vid.src); });
+    sel.click(function () {
+        handleVideoThumbClicked(vid.src);
+    });
 
     // an attempt to work around https://github.com/jitsi/jitmeet/issues/32
-    if (isVideo
-        && data.peerjid && sess.peerjid === data.peerjid &&
-           data.stream.getVideoTracks().length === 0 &&
-           connection.jingle.localVideo.getVideoTracks().length > 0) {
-        window.setTimeout(function() {
+    if (isVideo &&
+        data.peerjid && sess.peerjid === data.peerjid &&
+        data.stream.getVideoTracks().length === 0 &&
+        connection.jingle.localVideo.getVideoTracks().length > 0) {
+        //
+        window.setTimeout(function () {
             sendKeyframe(sess.peerconnection);
         }, 3000);
     }
@@ -361,17 +368,17 @@ function handleVideoThumbClicked(videoSrc) {
  * Checks if removed video is currently displayed and tries to display another one instead.
  * @param removedVideoSrc src stream identifier of the video.
  */
-function checkChangeLargeVideo(removedVideoSrc){
+function checkChangeLargeVideo(removedVideoSrc) {
     if (removedVideoSrc === $('#largeVideo').attr('src')) {
         // this is currently displayed as large
         // pick the last visible video in the row
         // if nobody else is left, this picks the local video
         var pick = $('#remoteVideos>span[id!="mixedstream"]:visible:last>video').get(0);
 
-        if(!pick) {
+        if (!pick) {
             console.info("Last visible video no longer exists");
             pick = $('#remoteVideos>span[id!="mixedstream"]>video').get(0);
-            if(!pick) {
+            if (!pick) {
                 // Try local video
                 console.info("Fallback to local video...");
                 pick = $('#remoteVideos>span>span>video').get(0);
@@ -396,8 +403,10 @@ function sendKeyframe(pc) {
         function () {
             pc.createAnswer(
                 function (modifiedAnswer) {
-                    pc.setLocalDescription(modifiedAnswer,
+                    pc.setLocalDescription(
+                        modifiedAnswer,
                         function () {
+                            // noop
                         },
                         function (error) {
                             console.log('triggerKeyframe setLocalDescription failed', error);
@@ -436,7 +445,7 @@ function muteVideo(pc, unmute) {
                         function () {
                             console.log('mute SLD ok');
                         },
-                        function(error) {
+                        function (error) {
                             console.log('mute SLD error');
                         }
                     );
@@ -497,11 +506,11 @@ $(document).bind('setLocalDescription.jingle', function (event, sid) {
             newssrcs[type] = ssrc;
 
             directions[type] = (
-                SDPUtil.find_line(media, 'a=sendrecv')
-                || SDPUtil.find_line(media, 'a=recvonly')
-                || SDPUtil.find_line('a=sendonly')
-                || SDPUtil.find_line('a=inactive')
-                || 'a=sendrecv' ).substr(2);
+                SDPUtil.find_line(media, 'a=sendrecv') ||
+                SDPUtil.find_line(media, 'a=recvonly') ||
+                SDPUtil.find_line('a=sendonly') ||
+                SDPUtil.find_line('a=inactive') ||
+                'a=sendrecv').substr(2);
         }
     });
     console.log('new ssrcs', newssrcs);
@@ -513,7 +522,7 @@ $(document).bind('setLocalDescription.jingle', function (event, sid) {
         i++;
         var type = mtype;
         // Change video type to screen
-        if(mtype === 'video' && isUsingScreenStream) {
+        if (mtype === 'video' && isUsingScreenStream) {
             type = 'screen';
         }
         connection.emuc.addMediaToPresence(i, type, newssrcs[mtype], directions[mtype]);
@@ -603,13 +612,13 @@ $(document).bind('left.muc', function (event, jid) {
 $(document).bind('presence.muc', function (event, jid, info, pres) {
 
     // Remove old ssrcs coming from the jid
-    Object.keys(ssrc2jid).forEach(function(ssrc){
-       if(ssrc2jid[ssrc] == jid){
-           delete ssrc2jid[ssrc];
-       }
-       if(ssrc2videoType == jid){
-           delete  ssrc2videoType[ssrc];
-       }
+    Object.keys(ssrc2jid).forEach(function (ssrc) {
+        if (ssrc2jid[ssrc] == jid) {
+            delete ssrc2jid[ssrc];
+        }
+        if (ssrc2videoType == jid) {
+            delete ssrc2videoType[ssrc];
+        }
     });
 
     $(pres).find('>media[xmlns="http://estos.de/ns/mjs"]>source').each(function (idx, ssrc) {
@@ -623,7 +632,7 @@ $(document).bind('presence.muc', function (event, jid, info, pres) {
         // might need to update the direction if participant just went from sendrecv to recvonly
         if (type === 'video' || type === 'screen') {
             var el = $('#participant_'  + Strophe.getResourceFromJid(jid) + '>video');
-            switch(ssrc.getAttribute('direction')) {
+            switch (ssrc.getAttribute('direction')) {
             case 'sendrecv':
                 el.show();
                 break;
@@ -650,27 +659,24 @@ $(document).bind('passwordrequired.muc', function (event, jid) {
     console.log('on password required', jid);
 
     $.prompt('<h2>Password required</h2>' +
-            '<input id="lockKey" type="text" placeholder="shared key" autofocus>',
-             {
-                persistent: true,
-                buttons: { "Ok": true , "Cancel": false},
-                defaultButton: 1,
-                loaded: function(event) {
-                    document.getElementById('lockKey').focus();
-                },
-                submit: function(e,v,m,f){
-                    if(v)
-                    {
-                        var lockKey = document.getElementById('lockKey');
+        '<input id="lockKey" type="text" placeholder="shared key" autofocus>', {
+        persistent: true,
+        buttons: { "Ok": true, "Cancel": false},
+        defaultButton: 1,
+        loaded: function (event) {
+            document.getElementById('lockKey').focus();
+        },
+        submit: function (e, v, m, f) {
+            if (v) {
+                var lockKey = document.getElementById('lockKey');
 
-                        if (lockKey.value !== null)
-                        {
-                            setSharedKey(lockKey.value);
-                            connection.emuc.doJoin(jid, lockKey.value);
-                        }
-                    }
+                if (lockKey.value !== null) {
+                    setSharedKey(lockKey.value);
+                    connection.emuc.doJoin(jid, lockKey.value);
                 }
-            });
+            }
+        }
+    });
 });
 
 $(document).bind('audiomuted.muc', function (event, jid, isMuted) {
@@ -739,19 +745,19 @@ function updateLargeVideo(newSrc, vol) {
  * @param videoSrc eg. blob:https%3A//pawel.jitsi.net/9a46e0bd-131e-4d18-9c14-a9264e8db395
  * @returns {boolean}
  */
-function isVideoSrcDesktop(videoSrc){
+function isVideoSrcDesktop(videoSrc) {
     // FIXME: fix this mapping mess...
     // figure out if large video is desktop stream or just a camera
     var isDesktop = false;
-    if(localVideoSrc === videoSrc) {
+    if (localVideoSrc === videoSrc) {
         // local video
         isDesktop = isUsingScreenStream;
     } else {
         // Do we have associations...
         var videoSsrc = videoSrcToSsrc[videoSrc];
-        if(videoSsrc) {
+        if (videoSsrc) {
             var videoType = ssrc2videoType[videoSsrc];
-            if(videoType) {
+            if (videoType) {
                 // Finally there...
                 isDesktop = videoType === 'screen';
             } else {
@@ -769,12 +775,12 @@ function isVideoSrcDesktop(videoSrc){
  */
 function setLargeVideoVisible(isVisible) {
     if (isVisible) {
-        $('#largeVideo').css({visibility:'visible'});
-        $('.watermark').css({visibility:'visible'});
+        $('#largeVideo').css({visibility: 'visible'});
+        $('.watermark').css({visibility: 'visible'});
     }
     else {
-        $('#largeVideo').css({visibility:'hidden'});
-        $('.watermark').css({visibility:'hidden'});
+        $('#largeVideo').css({visibility: 'hidden'});
+        $('.watermark').css({visibility: 'hidden'});
     }
 }
 
@@ -789,8 +795,8 @@ function toggleVideo() {
     var sess = getConferenceHandler();
     if (sess) {
         sess.toggleVideoMute(
-            function(isMuted){
-                if(isMuted) {
+            function (isMuted) {
+                if (isMuted) {
                     $('#video').removeClass("icon-camera");
                     $('#video').addClass("icon-camera icon-camera-disabled");
                 } else {
@@ -801,7 +807,7 @@ function toggleVideo() {
         );
     }
 
-    var sess = focus || activecall;
+    sess = focus || activecall;
     if (!sess) {
         return;
     }
@@ -835,30 +841,30 @@ function toggleAudio() {
  * @param videoWidth the stream video width
  * @param videoHeight the stream video height
  */
-var positionLarge = function(videoWidth, videoHeight) {
+var positionLarge = function (videoWidth, videoHeight) {
     var videoSpaceWidth = $('#videospace').width();
     var videoSpaceHeight = window.innerHeight;
 
-    var videoSize = getVideoSize(   videoWidth,
-                                    videoHeight,
-                                    videoSpaceWidth,
-                                    videoSpaceHeight);
+    var videoSize = getVideoSize(videoWidth,
+                                 videoHeight,
+                                 videoSpaceWidth,
+                                 videoSpaceHeight);
 
     var largeVideoWidth = videoSize[0];
     var largeVideoHeight = videoSize[1];
 
-    var videoPosition = getVideoPosition(   largeVideoWidth,
-                                            largeVideoHeight,
-                                            videoSpaceWidth,
-                                            videoSpaceHeight);
+    var videoPosition = getVideoPosition(largeVideoWidth,
+                                         largeVideoHeight,
+                                         videoSpaceWidth,
+                                         videoSpaceHeight);
 
     var horizontalIndent = videoPosition[0];
     var verticalIndent = videoPosition[1];
 
-    positionVideo(  $('#largeVideo'),
-                    largeVideoWidth,
-                    largeVideoHeight,
-                    horizontalIndent, verticalIndent);
+    positionVideo($('#largeVideo'),
+                  largeVideoWidth,
+                  largeVideoHeight,
+                  horizontalIndent, verticalIndent);
 };
 
 /**
@@ -868,21 +874,21 @@ var positionLarge = function(videoWidth, videoHeight) {
  * @return an array with 2 elements, the horizontal indent and the vertical
  * indent
  */
-function getCameraVideoPosition(   videoWidth,
-                                   videoHeight,
-                                   videoSpaceWidth,
-                                   videoSpaceHeight) {
+function getCameraVideoPosition(videoWidth,
+                                videoHeight,
+                                videoSpaceWidth,
+                                videoSpaceHeight) {
     // Parent height isn't completely calculated when we position the video in
     // full screen mode and this is why we use the screen height in this case.
     // Need to think it further at some point and implement it properly.
-    var isFullScreen = document.fullScreen
-                        || document.mozFullScreen
-                        || document.webkitIsFullScreen; 
+    var isFullScreen = document.fullScreen ||
+            document.mozFullScreen ||
+            document.webkitIsFullScreen;
     if (isFullScreen)
         videoSpaceHeight = window.innerHeight;
 
-    var horizontalIndent = (videoSpaceWidth - videoWidth)/2;
-    var verticalIndent = (videoSpaceHeight - videoHeight)/2;
+    var horizontalIndent = (videoSpaceWidth - videoWidth) / 2;
+    var verticalIndent = (videoSpaceHeight - videoHeight) / 2;
 
     return [horizontalIndent, verticalIndent];
 }
@@ -894,12 +900,12 @@ function getCameraVideoPosition(   videoWidth,
  * @return an array with 2 elements, the horizontal indent and the vertical
  * indent
  */
-function getDesktopVideoPosition(  videoWidth,
-                                   videoHeight,
-                                   videoSpaceWidth,
-                                   videoSpaceHeight) {
+function getDesktopVideoPosition(videoWidth,
+                                 videoHeight,
+                                 videoSpaceWidth,
+                                 videoSpaceHeight) {
 
-    var horizontalIndent = (videoSpaceWidth - videoWidth)/2;
+    var horizontalIndent = (videoSpaceWidth - videoWidth) / 2;
 
     var verticalIndent = 0;// Top aligned
 
@@ -928,10 +934,10 @@ function getCameraVideoSize(videoWidth,
 
     if (availableWidth / aspectRatio < videoSpaceHeight) {
         availableHeight = videoSpaceHeight;
-        availableWidth = availableHeight*aspectRatio;
+        availableWidth = availableHeight * aspectRatio;
     }
 
-    if (availableHeight*aspectRatio < videoSpaceWidth) {
+    if (availableHeight * aspectRatio < videoSpaceWidth) {
         availableWidth = videoSpaceWidth;
         availableHeight = availableWidth / aspectRatio;
     }
@@ -945,11 +951,10 @@ function getCameraVideoSize(videoWidth,
  *
  * @return an array with 2 elements, the video width and the video height
  */
-function getDesktopVideoSize( videoWidth,
-                              videoHeight,
-                              videoSpaceWidth,
-                              videoSpaceHeight )
-{
+function getDesktopVideoSize(videoWidth,
+                             videoHeight,
+                             videoSpaceWidth,
+                             videoSpaceHeight) {
     if (!videoWidth)
         videoWidth = currentVideoWidth;
     if (!videoHeight)
@@ -965,10 +970,10 @@ function getDesktopVideoSize( videoWidth,
     if (availableWidth / aspectRatio >= videoSpaceHeight)
     {
         availableHeight = videoSpaceHeight;
-        availableWidth = availableHeight*aspectRatio;
+        availableWidth = availableHeight * aspectRatio;
     }
 
-    if (availableHeight*aspectRatio >= videoSpaceWidth)
+    if (availableHeight * aspectRatio >= videoSpaceWidth)
     {
         availableWidth = videoSpaceWidth;
         availableHeight = availableWidth / aspectRatio;
@@ -986,11 +991,11 @@ function getDesktopVideoSize( videoWidth,
  * @param horizontalIndent the left and right indent
  * @param verticalIndent the top and bottom indent
  */
-function positionVideo( video,
-                        width,
-                        height,
-                        horizontalIndent,
-                        verticalIndent) {
+function positionVideo(video,
+                       width,
+                       height,
+                       horizontalIndent,
+                       verticalIndent) {
     video.width(width);
     video.height(height);
     video.css({  top: verticalIndent + 'px',
@@ -1014,7 +1019,7 @@ var resizeLargeVideoContainer = function () {
     resizeThumbnails();
 };
 
-var calculateThumbnailSize = function() {
+var calculateThumbnailSize = function () {
  // Calculate the available height, which is the inner window height minus
     // 39px for the header minus 2px for the delimiter lines on the top and
     // bottom of the large video, minus the 36px space inside the remoteVideos
@@ -1056,8 +1061,7 @@ $(document).ready(function () {
     // Set default desktop sharing method
     setDesktopSharing(config.desktopSharing);
     // Initialize Chrome extension inline installs
-    if(config.chromeExtensionId)
-    {
+    if (config.chromeExtensionId) {
         initInlineInstalls();
     }
 
@@ -1072,7 +1076,7 @@ $(document).ready(function () {
     });
     // Listen for large video size updates
     document.getElementById('largeVideo')
-        .addEventListener('loadedmetadata', function(e){
+        .addEventListener('loadedmetadata', function (e) {
             currentVideoWidth = this.videoWidth;
             currentVideoHeight = this.videoHeight;
             positionLarge(currentVideoWidth, currentVideoHeight);
@@ -1114,12 +1118,12 @@ $(window).bind('beforeunload', function () {
 
 function disposeConference() {
     var handler = getConferenceHandler();
-    if(handler && handler.peerconnection) {
+    if (handler && handler.peerconnection) {
         // FIXME: probably removing streams is not required and close() should be enough
-        if(connection.jingle.localAudio) {
+        if (connection.jingle.localAudio) {
             handler.peerconnection.removeStream(connection.jingle.localAudio);
         }
-        if(connection.jingle.localVideo) {
+        if (connection.jingle.localVideo) {
             handler.peerconnection.removeStream(connection.jingle.localVideo);
         }
         handler.peerconnection.close();
@@ -1128,7 +1132,7 @@ function disposeConference() {
     activecall = null;
 }
 
-function dump(elem, filename){
+function dump(elem, filename) {
     elem = elem.parentNode;
     elem.download = filename || 'meetlog.json';
     elem.href = 'data:application/json;charset=utf-8,\n';
@@ -1141,8 +1145,8 @@ function dump(elem, filename){
                 data["jingle_" + session.sid] = {
                     updateLog: session.peerconnection.updateLog,
                     stats: session.peerconnection.stats,
-                    url: window.location.href}
-                ;
+                    url: window.location.href
+                };
             }
         });
     }
@@ -1173,56 +1177,57 @@ function openLockDialog() {
     if (focus === null) {
         if (sharedKey)
             $.prompt("This conversation is currently protected by a shared secret key.",
-                 {
-                 title: "Secrect key",
-                 persistent: false
-                 });
+                {
+                    title: "Secrect key",
+                    persistent: false
+                }
+            );
         else
             $.prompt("This conversation isn't currently protected by a secret key. Only the owner of the conference could set a shared key.",
-                     {
-                     title: "Secrect key",
-                     persistent: false
-                     });
-    }
-    else {
-        if (sharedKey)
+                {
+                    title: "Secrect key",
+                    persistent: false
+                }
+            );
+    } else {
+        if (sharedKey) {
             $.prompt("Are you sure you would like to remove your secret key?",
-                     {
-                     title: "Remove secrect key",
-                     persistent: false,
-                     buttons: { "Remove": true, "Cancel": false},
-                     defaultButton: 1,
-                     submit: function(e,v,m,f){
-                     if(v)
-                     {
-                        setSharedKey('');
-                        lockRoom(false);
-                     }
-                     }
-                     });
-        else
+                {
+                    title: "Remove secrect key",
+                    persistent: false,
+                    buttons: { "Remove": true, "Cancel": false},
+                    defaultButton: 1,
+                    submit: function (e, v, m, f) {
+                        if (v) {
+                            setSharedKey('');
+                            lockRoom(false);
+                        }
+                    }
+                }
+            );
+        } else {
             $.prompt('<h2>Set a secrect key to lock your room</h2>' +
                      '<input id="lockKey" type="text" placeholder="your shared key" autofocus>',
-                     {
-                     persistent: false,
-                     buttons: { "Save": true , "Cancel": false},
-                     defaultButton: 1,
-                     loaded: function(event) {
-                     document.getElementById('lockKey').focus();
-                     },
-                     submit: function(e,v,m,f){
-                     if(v)
-                     {
-                        var lockKey = document.getElementById('lockKey');
+                {
+                    persistent: false,
+                    buttons: { "Save": true, "Cancel": false},
+                    defaultButton: 1,
+                    loaded: function (event) {
+                        document.getElementById('lockKey').focus();
+                    },
+                    submit: function (e, v, m, f) {
+                        if (v) {
+                            var lockKey = document.getElementById('lockKey');
 
-                        if (lockKey.value)
-                        {
-                            setSharedKey(Util.escapeHtml(lockKey.value));
-                            lockRoom(true);
+                            if (lockKey.value) {
+                                setSharedKey(Util.escapeHtml(lockKey.value));
+                                lockRoom(true);
+                            }
                         }
-                     }
+                    }
                 }
-            });
+            );
+        }
     }
 }
 
@@ -1230,16 +1235,17 @@ function openLockDialog() {
  * Opens the invite link dialog.
  */
 function openLinkDialog() {
-    $.prompt('<input id="inviteLinkRef" type="text" value="'
-            + encodeURI(roomUrl) + '" onclick="this.select();" readonly>',
-             {
-             title: "Share this link with everyone you want to invite",
-             persistent: false,
-             buttons: { "Cancel": false},
-             loaded: function(event) {
-             document.getElementById('inviteLinkRef').select();
-             }
-             });
+    $.prompt('<input id="inviteLinkRef" type="text" value="' +
+        encodeURI(roomUrl) + '" onclick="this.select();" readonly>',
+        {
+            title: "Share this link with everyone you want to invite",
+            persistent: false,
+            buttons: { "Cancel": false},
+            loaded: function (event) {
+                document.getElementById('inviteLinkRef').select();
+            }
+        }
+    );
 }
 
 /**
@@ -1247,40 +1253,38 @@ function openLinkDialog() {
  */
 function openSettingsDialog() {
     $.prompt('<h2>Configure your conference</h2>' +
-             '<input type="checkbox" id="initMuted"> Participants join muted<br/>' +
-             '<input type="checkbox" id="requireNicknames"> Require nicknames<br/><br/>' +
-             'Set a secrect key to lock your room: <input id="lockKey" type="text" placeholder="your shared key" autofocus>',
-             {
-                persistent: false,
-                buttons: { "Save": true , "Cancel": false},
-                defaultButton: 1,
-                loaded: function(event) {
-                    document.getElementById('lockKey').focus();
-                },
-                submit: function(e,v,m,f){
-                    if(v)
-                    {
-                        if ($('#initMuted').is(":checked"))
-                        {
-                            // it is checked
-                        }
-
-                        if ($('#requireNicknames').is(":checked"))
-                        {
-                            // it is checked
-                        }
-             /*
-                        var lockKey = document.getElementById('lockKey');
-
-                        if (lockKey.value)
-                        {
-                            setSharedKey(lockKey.value);
-                            lockRoom(true);
-                        }
-              */
+        '<input type="checkbox" id="initMuted"> Participants join muted<br/>' +
+        '<input type="checkbox" id="requireNicknames"> Require nicknames<br/><br/>' +
+        'Set a secrect key to lock your room: <input id="lockKey" type="text" placeholder="your shared key" autofocus>',
+        {
+            persistent: false,
+            buttons: { "Save": true, "Cancel": false},
+            defaultButton: 1,
+            loaded: function (event) {
+                document.getElementById('lockKey').focus();
+            },
+            submit: function (e, v, m, f) {
+                if (v) {
+                    if ($('#initMuted').is(":checked")) {
+                        // it is checked
                     }
+
+                    if ($('#requireNicknames').is(":checked")) {
+                        // it is checked
+                    }
+                    /*
+                    var lockKey = document.getElementById('lockKey');
+
+                    if (lockKey.value)
+                    {
+                        setSharedKey(lockKey.value);
+                        lockRoom(true);
+                    }
+                    */
                 }
-             });
+            }
+        }
+    );
 }
 
 /**
@@ -1312,10 +1316,10 @@ function updateLockButton() {
 /**
  * Hides the toolbar.
  */
-var hideToolbar = function() {
+var hideToolbar = function () {
 
     var isToolbarHover = false;
-    $('#header').find('*').each(function(){
+    $('#header').find('*').each(function () {
         var id = $(this).attr('id');
         if ($("#" + id + ":hover").length > 0) {
             isToolbarHover = true;
@@ -1418,7 +1422,7 @@ function showFocusIndicator() {
         var session = connection.jingle.sessions[Object.keys(connection.jingle.sessions)[0]];
         var focusId = 'participant_' + Strophe.getResourceFromJid(session.peerjid);
         var focusContainer = document.getElementById(focusId);
-        if(!focusContainer) {
+        if (!focusContainer) {
             console.error("No focus container!");
             return;
         }
@@ -1438,12 +1442,11 @@ function showFocusIndicator() {
  * Checks if container for participant identified by given peerJid exists in the document and creates it eventually.
  * @param peerJid peer Jid to check.
  */
-function ensurePeerContainerExists(peerJid){
-
+function ensurePeerContainerExists(peerJid) {
     var peerResource = Strophe.getResourceFromJid(peerJid);
     var videoSpanId = 'participant_' + peerResource;
 
-    if($('#'+videoSpanId).length > 0) {
+    if ($('#' + videoSpanId).length > 0) {
         return;
     }
 
@@ -1482,8 +1485,7 @@ function createFocusIndicatorElement(parentElement) {
 function toggleFullScreen() {
     var fsElement = document.documentElement;
 
-    if (!document.mozFullScreen && !document.webkitIsFullScreen){
-
+    if (!document.mozFullScreen && !document.webkitIsFullScreen) {
         //Enter Full Screen
         if (fsElement.mozRequestFullScreen) {
             fsElement.mozRequestFullScreen();
@@ -1511,13 +1513,13 @@ function showDisplayName(videoSpanId, displayName) {
     if (nameSpan.length > 0) {
         var nameSpanElement = nameSpan.get(0);
 
-        if (nameSpanElement.id === 'localDisplayName'
-            && $('#localDisplayName').text() !== displayName)
+        if (nameSpanElement.id === 'localDisplayName' &&
+            $('#localDisplayName').text() !== displayName) {
             $('#localDisplayName').text(displayName);
-        else
+        } else {
             $('#' + videoSpanId + '_name').text(displayName);
-    }
-    else {
+        }
+    } else {
         var editButton = null;
 
         if (videoSpanId === 'localVideoContainer') {
@@ -1532,8 +1534,7 @@ function showDisplayName(videoSpanId, displayName) {
 
         if (!editButton) {
             nameSpan.id = videoSpanId + '_name';
-        }
-        else {
+        } else {
             nameSpan.id = 'localDisplayName';
             $('#' + videoSpanId)[0].appendChild(editButton);
 
@@ -1541,22 +1542,22 @@ function showDisplayName(videoSpanId, displayName) {
             editableText.className = 'displayname';
             editableText.id = 'editDisplayName';
 
-            if (displayName.length)
-                editableText.value
-                    = displayName.substring(0, displayName.indexOf(' (me)'));
+            if (displayName.length) {
+                editableText.value = displayName.substring(0, displayName.indexOf(' (me)'));
+            }
 
             editableText.setAttribute('style', 'display:none;');
             editableText.setAttribute('placeholder', 'ex. Jane Pink');
             $('#' + videoSpanId)[0].appendChild(editableText);
 
-            $('#localVideoContainer .displayname').bind("click", function(e) {
+            $('#localVideoContainer .displayname').bind("click", function (e) {
                 e.preventDefault();
                 $('#localDisplayName').hide();
                 $('#editDisplayName').show();
                 $('#editDisplayName').focus();
                 $('#editDisplayName').select();
 
-                var inputDisplayNameHandler = function(name) {
+                var inputDisplayNameHandler = function (name) {
                     if (nickname !== name) {
                         nickname = name;
                         window.localStorage.displayname = nickname;
@@ -1661,20 +1662,21 @@ function showVideoIndicator(videoSpanId, isMuted) {
  * Resizes and repositions videos in full screen mode.
  */
 $(document).on('webkitfullscreenchange mozfullscreenchange fullscreenchange',
-        function() {
-            resizeLargeVideoContainer();
-            positionLarge();
-            isFullScreen = document.fullScreen
-                                || document.mozFullScreen
-                                || document.webkitIsFullScreen;
+    function () {
+        resizeLargeVideoContainer();
+        positionLarge();
+        isFullScreen = document.fullScreen ||
+            document.mozFullScreen ||
+            document.webkitIsFullScreen;
 
-            if (isFullScreen) {
-                setView("fullscreen");
-            }
-            else {
-                setView("default");
-            }
-});
+        if (isFullScreen) {
+            setView("fullscreen");
+        }
+        else {
+            setView("default");
+        }
+    }
+);
 
 /**
  * Sets the current view.

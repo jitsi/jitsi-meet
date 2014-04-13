@@ -1,3 +1,4 @@
+/* global $, Util, connection, nickname:true, getVideoSize, getVideoPosition, showToolbar, processReplacements */
 /**
  * Chat related user interface.
  */
@@ -16,7 +17,7 @@ var Chat = (function (my) {
             Chat.setChatConversationMode(true);
         }
 
-        $('#nickinput').keydown(function(event) {
+        $('#nickinput').keydown(function (event) {
             if (event.keyCode === 13) {
                 event.preventDefault();
                 var val = Util.escapeHtml(this.value);
@@ -35,7 +36,7 @@ var Chat = (function (my) {
             }
         });
 
-        $('#usermsg').keydown(function(event) {
+        $('#usermsg').keydown(function (event) {
             if (event.keyCode === 13) {
                 event.preventDefault();
                 var message = Util.escapeHtml(this.value);
@@ -45,14 +46,14 @@ var Chat = (function (my) {
             }
         });
 
-        var onTextAreaResize = function() {
+        var onTextAreaResize = function () {
             resizeChatConversation();
             scrollChatToBottom();
         };
         $('#usermsg').autosize({callback: onTextAreaResize});
 
         $("#chatspace").bind("shown",
-            function() {
+            function () {
                 unreadMessages = 0;
                 setVisualNotification(false);
             });
@@ -82,9 +83,9 @@ var Chat = (function (my) {
         var escDisplayName = Util.escapeHtml(displayName);
         message = processReplacements(escMessage);
 
-        $('#chatconversation').append('<div class="' + divClassName + '"><b>'
-                                        + escDisplayName + ': </b>'
-                                        + message + '</div>');
+        $('#chatconversation').append('<div class="' + divClassName + '"><b>' +
+                                      escDisplayName + ': </b>' +
+                                      message + '</div>');
         $('#chatconversation').animate(
                 { scrollTop: $('#chatconversation')[0].scrollHeight}, 1000);
     };
@@ -103,15 +104,15 @@ var Chat = (function (my) {
             = getVideoSize(null, null, videospaceWidth, videospaceHeight);
         var videoWidth = videoSize[0];
         var videoHeight = videoSize[1];
-        var videoPosition = getVideoPosition(   videoWidth,
-                                                videoHeight,
-                                                videospaceWidth,
-                                                videospaceHeight);
+        var videoPosition = getVideoPosition(videoWidth,
+                                             videoHeight,
+                                             videospaceWidth,
+                                             videospaceHeight);
         var horizontalIndent = videoPosition[0];
         var verticalIndent = videoPosition[1];
 
         if (chatspace.is(":visible")) {
-            videospace.animate( {right: chatSize[0],
+            videospace.animate({right: chatSize[0],
                                 width: videospaceWidth,
                                 height: videospaceHeight},
                                 {queue: false,
@@ -143,7 +144,7 @@ var Chat = (function (my) {
                                 height: videospaceHeight},
                                {queue: false,
                                 duration: 500,
-                                complete: function() {
+                                complete: function () {
                                     scrollChatToBottom();
                                     chatspace.trigger('shown');
                                 }
@@ -183,9 +184,9 @@ var Chat = (function (my) {
      */
     my.setChatConversationMode = function (isConversationMode) {
         if (isConversationMode) {
-            $('#nickname').css({visibility:"hidden"});
-            $('#chatconversation').css({visibility:'visible'});
-            $('#usermsg').css({visibility:'visible'});
+            $('#nickname').css({visibility: 'hidden'});
+            $('#chatconversation').css({visibility: 'visible'});
+            $('#usermsg').css({visibility: 'visible'});
             $('#usermsg').focus();
         }
     };
@@ -205,13 +206,13 @@ var Chat = (function (my) {
     /**
      * Returns the size of the chat.
      */
-    my.getChatSize = function() {
+    my.getChatSize = function () {
         var availableHeight = window.innerHeight;
         var availableWidth = window.innerWidth;
 
         var chatWidth = 200;
-        if (availableWidth*0.2 < 200)
-            chatWidth = availableWidth*0.2;
+        if (availableWidth * 0.2 < 200)
+            chatWidth = availableWidth * 0.2;
 
         return [chatWidth, availableHeight];
     };
@@ -228,7 +229,7 @@ var Chat = (function (my) {
         $('#chatconversation').width($('#chatspace').width() - 10);
         $('#chatconversation')
             .height(window.innerHeight - 10 - parseInt(usermsgHeight));
-    };
+    }
 
     /**
      * Shows/hides a visual notification, indicating that a message has arrived.
@@ -245,15 +246,15 @@ var Chat = (function (my) {
 
             var chatButtonElement
                 = document.getElementById('chatButton').parentNode;
-            var leftIndent = (Util.getTextWidth(chatButtonElement)
-                                - Util.getTextWidth(unreadMsgElement))/2;
-            var topIndent = (Util.getTextHeight(chatButtonElement)
-                                - Util.getTextHeight(unreadMsgElement))/2 - 3;
+            var leftIndent = (Util.getTextWidth(chatButtonElement) -
+                              Util.getTextWidth(unreadMsgElement)) / 2;
+            var topIndent = (Util.getTextHeight(chatButtonElement) -
+                             Util.getTextHeight(unreadMsgElement)) / 2 - 3;
 
             unreadMsgElement.setAttribute(
                     'style',
-                    'top:' + topIndent
-                     + '; left:' + leftIndent +';');
+                    'top:' + topIndent +
+                    '; left:' + leftIndent + ';');
 
             if (!glower.hasClass('icon-chat-simple')) {
                 glower.removeClass('icon-chat');
@@ -267,7 +268,7 @@ var Chat = (function (my) {
         }
 
         if (show && !notificationInterval) {
-            notificationInterval = window.setInterval(function() {
+            notificationInterval = window.setInterval(function () {
                 glower.toggleClass('active');
             }, 800);
         }
@@ -282,7 +283,7 @@ var Chat = (function (my) {
      * Scrolls chat to the bottom.
      */
     function scrollChatToBottom() {
-        setTimeout(function() {
+        setTimeout(function () {
             $('#chatconversation').scrollTop(
                     $('#chatconversation')[0].scrollHeight);
         }, 5);

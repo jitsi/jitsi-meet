@@ -1,3 +1,4 @@
+/* global Strophe */
 Strophe.addConnectionPlugin('logger', {
     // logs raw stanzas and makes them available for download as JSON
     connection: null,

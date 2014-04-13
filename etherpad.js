@@ -1,3 +1,4 @@
+/* global $, config, Prezi, Util, connection, setLargeVideoVisible, dockToolbar */
 var Etherpad = (function (my) {
     var etherpadName = null;
     var etherpadIFrame = null;
@@ -15,8 +16,8 @@ var Etherpad = (function (my) {
 
             if (!name) {
                 // In case we're the focus we generate the name.
-                etherpadName = Math.random().toString(36).substring(7)
-                                + '_' + (new Date().getTime()).toString();
+                etherpadName = Math.random().toString(36).substring(7) +
+                                '_' + (new Date().getTime()).toString();
                 shareEtherpad();
             }
             else
@@ -41,27 +42,27 @@ var Etherpad = (function (my) {
 
         if ($('#etherpad>iframe').css('visibility') === 'hidden') {
             largeVideo.fadeOut(300, function () {
-                if (Prezi.isPresentationVisible())
-                    largeVideo.css({opacity:'0'});
-                else {
+                if (Prezi.isPresentationVisible()) {
+                    largeVideo.css({opacity: '0'});
+                } else {
                     setLargeVideoVisible(false);
                     dockToolbar(true);
                 }
 
-                $('#etherpad>iframe').fadeIn(300, function() {
+                $('#etherpad>iframe').fadeIn(300, function () {
                     document.body.style.background = '#eeeeee';
-                    $('#etherpad>iframe').css({visibility:'visible'});
-                    $('#etherpad').css({zIndex:2});
+                    $('#etherpad>iframe').css({visibility: 'visible'});
+                    $('#etherpad').css({zIndex: 2});
                 });
             });
         }
         else if ($('#etherpad>iframe')) {
             $('#etherpad>iframe').fadeOut(300, function () {
-                $('#etherpad>iframe').css({visibility:'hidden'});
-                $('#etherpad').css({zIndex:0});
+                $('#etherpad>iframe').css({visibility: 'hidden'});
+                $('#etherpad').css({zIndex: 0});
                 document.body.style.background = 'black';
                 if (!isPresentation) {
-                    $('#largeVideo').fadeIn(300, function() {
+                    $('#largeVideo').fadeIn(300, function () {
                         setLargeVideoVisible(true);
                         dockToolbar(false);
                     });
@@ -99,7 +100,7 @@ var Etherpad = (function (my) {
      */
     function enableEtherpadButton() {
         if (!$('#etherpadButton').is(":visible"))
-            $('#etherpadButton').css({display:'inline-block'});
+            $('#etherpadButton').css({display: 'inline-block'});
     }
 
     /**
