@@ -1,0 +1,23 @@
+{
+  "name": "jitsi-meet",
+  "version": "0.0.0",
+  "description": "A sample app for the Jitsi Videobridge",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/jitsi/jitsi-meet"
+  },
+  "keywords": [
+    "jingle",
+    "webrtc",
+    "xmpp",
+    "browser"
+  ],
+  "author": "",
+  "readmeFilename": "README.md",
+  "dependencies": {
+  },
+  "devDependencies": {
+    "precommit-hook": "0.3.x"
+  },
+  "license": "MIT"
+}

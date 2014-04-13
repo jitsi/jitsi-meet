@@ -1,0 +1,15 @@
+{
+    "asi": false,
+    "expr": true,
+    "loopfunc": true,
+    "curly": false,
+    "evil": true,
+    "white": true,
+    "undef": true,
+    "browser": true,
+    "node": true,
+    "trailing": true,
+    "indent": 4,
+    "latedef": true,
+    "newcap": true
+}
