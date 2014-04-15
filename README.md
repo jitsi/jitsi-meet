@@ -1,7 +1,11 @@
-Jitsi Meet - a colibri.js sample application
+Jitsi Meet - Secure, Simple and Scalable Video Conferences 
 ====
-A WebRTC-powered multi-user videochat. For a live demo, check out either https://meet.jit.si 
+Jitsi Meet is an OpenSource (MIT) WebRTC JavaScript application that uses [Jitsi Videobridge](https://jitsi.org/videobridge) to provide high quality, scalable video conferences. You can see [Jitsi Meet in action](http://youtu.be/7vFUVClsNh0) here at the 482 session of the VoIP Users Conference.
 
-Built using Philipp Hancke's colibri.js and strophe.jingle
+You can also try it out yourself at https://meet.jit.si .
 
-powered by the [jitsi-videobridge](https://jitsi.org/videobridge
+Jitsi Meet allows for very efficient collaboration. It allows users to stream their desktop or only some windows. It also shared document editing with Etherpad and remote presentations with Prezi. 
+
+## Acknowledgements
+
+Jitsi Meet started out as a sample conferencing application using Jitsi Videobridge. It was originally developed by Philipp Hancke who then contributed it to the community where development continues with joint forces! 
