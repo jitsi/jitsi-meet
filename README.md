@@ -6,6 +6,14 @@ You can also try it out yourself at https://meet.jit.si .
 
 Jitsi Meet allows for very efficient collaboration. It allows users to stream their desktop or only some windows. It also shared document editing with Etherpad and remote presentations with Prezi. 
 
+## Install
+
+Installing Jitsi Meet is quite a simple experience even though it requires it requires installing a few other components first, such as Jitsi Videobridge, a web server such as Nginx and an XMPP one like Prosody.
+
+You can find instructions on how to deploy Jitsi Meet [here](https://jitsi.org/meet/deploy)
+
+You may also find it helpful to have a look at our sample [config files](https://www.dropbox.com/sh/jgp4s8kp6xuyubr/5FACgJmqLD) 
+
 ## Acknowledgements
 
 Jitsi Meet started out as a sample conferencing application using Jitsi Videobridge. It was originally developed by Philipp Hancke who then contributed it to the community where development continues with joint forces! 
