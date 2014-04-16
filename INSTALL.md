@@ -4,7 +4,7 @@ This describes configuring a server `jitmeet.example.com`.  You will nedd to
 change references to that to match your host, and generate some passwords for
 `YOURSECRET1` and `YOURSECRET2`.
 
-There are also some complete [example config files](https://www.dropbox.com/sh/jgp4s8kp6xuyubr/5FACgJmqLD) available..
+There are also some complete [example config files](https://www.dropbox.com/sh/jgp4s8kp6xuyubr/5FACgJmqLD) available, mentioned in each section.
 
 ## Install prosody and otalk modules
 ```sh
@@ -19,7 +19,8 @@ cp -r mod* /usr/lib/prosody/modules
 ```
 
 ## Configure prosody
-Modify the config file in `/etc/prosody/prosody.cfg.lua`:
+Modify the config file in `/etc/prosody/prosody.cfg.lua` (see also the example config file):
+
 - modules to enable/add: compression, bosh, smacks3, smacks2, carbons, mam, lastactivity, offline, pubsub, adhoc, websocket, http_altconnect
 - comment out: `c2s_require_encryption = true`, and `s2s_secure_auth = false`
 - change `authentication = "internal_hashed"`
@@ -46,7 +47,6 @@ Component "conference.jitmeet.example.com" "muc"
 Component "jitsi-videobridge.jitmeet.example.com"
     component_secret = "YOURSECRET1"
 ```
-- check the example config file, next to the document (`prosody.cfg.lua`)
 
 Generate certs for the domain:
 ```sh
@@ -70,7 +70,7 @@ types_hash_max_size 2048;
 server_names_hash_bucket_size 64;
 ```
 
-Add a new file in /etc/nginx/sites-available (see the jitmeet.example.com file for example)
+Add a new file `jitmeet.example.com` in `/etc/nginx/sites-available` (see also the example config file):
 ```
 server {
     listen 80;
@@ -104,7 +104,6 @@ Add link for the added configuration
 cd /etc/nginx/sites-enabled
 ln -s ../sites-available/jitmeet.example.com jitmeet.example.com
 ```
-check the example config files for more info.
 
 ## Fix firewall if needed
 ```sh
@@ -144,7 +143,7 @@ git clone https://github.com/jitsi/jitmeet.git
 mv jitmeet/ jitmeet.example.com
 ```
 
-Edit host names in `/srv/jitmeet.example.com/config.js`:
+Edit host names in `/srv/jitmeet.example.com/config.js` (see also the example config file):
 ```
 var config = {
     hosts: {
@@ -159,7 +158,6 @@ var config = {
     minChromeExtVersion: '0.1' // Required version of Chrome extension
 };
 ```
-check the example config file, next to the document (config.js)
 
 Restart nginx to get the new configuration:
 ```sh
