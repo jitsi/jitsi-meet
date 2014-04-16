@@ -1,5 +1,11 @@
 # Server Installation for jitmeet
 
+This describes configuring a server `jitmeet.example.com`.  You will nedd to
+change references to that to match your host, and generate some passwords for
+`YOURSECRET1` and `YOURSECRET2`.
+
+There are also some complete [example config files](https://www.dropbox.com/sh/jgp4s8kp6xuyubr/5FACgJmqLD) available..
+
 ## Install prosody and otalk modules
 ```sh
 echo deb http://packages.prosody.im/debian $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list
@@ -40,11 +46,16 @@ Component "conference.jitmeet.example.com" "muc"
 Component "jitsi-videobridge.jitmeet.example.com"
     component_secret = "YOURSECRET1"
 ```
-- check the example config file, next to the document (prosody.cfg.lua)
+- check the example config file, next to the document (`prosody.cfg.lua`)
 
 Generate certs for the domain:
 ```sh
 prosodyctl cert generate jitmeet.example.com
+```
+
+Restart prosody XMPP server with the new config
+```sh
+prosodyctl restart
 ```
 
 ## Install nginx
@@ -93,7 +104,7 @@ Add link for the added configuration
 cd /etc/nginx/sites-enabled
 ln -s ../sites-available/jitmeet.example.com jitmeet.example.com
 ```
-check the example config files, next to the document (nginx.conf and jitmeet.example.com)
+check the example config files for more info.
 
 ## Fix firewall if needed
 ```sh
@@ -123,7 +134,7 @@ Start the videobrdige with:
 ```
 Or autostart it by adding the line in `/etc/rc.local`:
 ```sh
-/bin/bash /root/jitsi-videobridge-linux-x64-74/jvb.sh --host=localhost --domain=jitmeet.example.com --port=5347 --secret=YOURSECRET1 </dev/null >> /var/log/jvb.log 2>&1
+/bin/bash /root/jitsi-videobridge-linux-{arch-buildnum}/jvb.sh --host=localhost --domain=jitmeet.example.com --port=5347 --secret=YOURSECRET1 </dev/null >> /var/log/jvb.log 2>&1
 ```
 
 Checkout and configure jitmeet:
@@ -133,7 +144,7 @@ git clone https://github.com/jitsi/jitmeet.git
 mv jitmeet/ jitmeet.example.com
 ```
 
-Edit `/srv/jitmeet.example.com/config.js`:
+Edit host names in `/srv/jitmeet.example.com/config.js`:
 ```
 var config = {
     hosts: {
@@ -143,9 +154,17 @@ var config = {
     },
     useNicks: false,
     bosh: '//jitmeet.example.com/http-bind' // FIXME: use xep-0156 for that
+    desktopSharing: 'ext', // Desktop sharing method. Can be set to 'ext', 'webrtc' or false to disable.
+    chromeExtensionId: 'diibjkoicjeejcmhdnailmkgecihlobk', // Id of desktop streamer Chrome extension
+    minChromeExtVersion: '0.1' // Required version of Chrome extension
 };
 ```
 check the example config file, next to the document (config.js)
+
+Restart nginx to get the new configuration:
+```sh
+invoke-rc.d nginx restart
+```
 
 
 ## Install [Turn server](https://github.com/andyet/otalk-server/tree/master/restund)
@@ -155,14 +174,14 @@ wget http://creytiv.com/pub/re-0.4.7.tar.gz
 tar zxvf re-0.4.7.tar.gz
 ln -s re-0.4.7 re
 cd re-0.4.7
-make install PREFIX=/usr
+sudo make install PREFIX=/usr
 cd ..
 wget http://creytiv.com/pub/restund-0.4.2.tar.gz
 wget https://raw.github.com/andyet/otalk-server/master/restund/restund-auth.patch
 tar zxvf restund-0.4.2.tar.gz
 cd restund-0.4.2/
 patch -p1 < ../restund-auth.patch
-make install PREFIX=/usr
+sudo make install PREFIX=/usr
 cp debian/restund.init /etc/init.d/restund
 chmod +x /etc/init.d/restund
 cd /etc
@@ -184,7 +203,7 @@ Configure prosody to use it in `/etc/prosody/prosody.cfg.lua`.  Add to your virt
 ```
 turncredentials_secret = "YOURSECRET2";
 turncredentials = {
-    { type = "turn", host = "turn.address.ip.configured", port = 80, transport = "tcp" }
+    { type = "turn", host = "turn.address.ip.configured", port = 3478, transport = "tcp" }
 }
 ```
 
@@ -196,3 +215,16 @@ module:reload("turncredentials", "jitmeet.example.com")
 quit
 ```
 
+## Running behind NAT
+In case of videobridge being installed on a machine behind NAT, add the following extra lines to the file `~/.sip-communicator/sip-communicator.properties` (in the home of user running the videobridge):
+```
+org.jitsi.videobridge.NAT_HARVESTER_LOCAL_ADDRESS=<Local.IP.Address>
+org.jitsi.videobridge.NAT_HARVESTER_PUBLIC_ADDRESS=<Public.IP.Address>
+```
+
+So the file should look like this at the end:
+```
+org.jitsi.impl.neomedia.transform.srtp.SRTPCryptoContext.checkReplay=false
+org.jitsi.videobridge.NAT_HARVESTER_LOCAL_ADDRESS=<Local.IP.Address>
+org.jitsi.videobridge.NAT_HARVESTER_PUBLIC_ADDRESS=<Public.IP.Address>
+```
