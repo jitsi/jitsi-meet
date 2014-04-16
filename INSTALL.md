@@ -1,6 +1,6 @@
-# Server Installation for jitmeet
+# Server Installation for Jitsi Meet
 
-This describes configuring a server `jitmeet.example.com`.  You will nedd to
+This describes configuring a server `jitmeet.example.com`.  You will need to
 change references to that to match your host, and generate some passwords for
 `YOURSECRET1` and `YOURSECRET2`.
 
@@ -21,7 +21,7 @@ cp -r mod* /usr/lib/prosody/modules
 ## Configure prosody
 Modify the config file in `/etc/prosody/prosody.cfg.lua` (see also the example config file):
 
-- modules to enable/add: compression, bosh, smacks3, smacks2, carbons, mam, lastactivity, offline, pubsub, adhoc, websocket, http_altconnect
+- modules to enable/add: compression, bosh, smacks, carbons, mam, lastactivity, offline, pubsub, adhoc, websocket, http_altconnect
 - comment out: `c2s_require_encryption = true`, and `s2s_secure_auth = false`
 - change `authentication = "internal_hashed"`
 - add this:
@@ -139,8 +139,8 @@ Or autostart it by adding the line in `/etc/rc.local`:
 Checkout and configure jitmeet:
 ```sh
 cd /srv
-git clone https://github.com/jitsi/jitmeet.git
-mv jitmeet/ jitmeet.example.com
+git clone https://github.com/jitsi/jitsi-meet.git
+mv jitsi-meet/ jitmeet.example.com
 ```
 
 Edit host names in `/srv/jitmeet.example.com/config.js` (see also the example config file):
@@ -153,9 +153,9 @@ var config = {
     },
     useNicks: false,
     bosh: '//jitmeet.example.com/http-bind' // FIXME: use xep-0156 for that
-    desktopSharing: 'ext', // Desktop sharing method. Can be set to 'ext', 'webrtc' or false to disable.
-    chromeExtensionId: 'diibjkoicjeejcmhdnailmkgecihlobk', // Id of desktop streamer Chrome extension
-    minChromeExtVersion: '0.1' // Required version of Chrome extension
+    desktopSharing: 'false', // Desktop sharing method. Can be set to 'ext', 'webrtc' or false to disable.
+    //chromeExtensionId: 'diibjkoicjeejcmhdnailmkgecihlobk', // Id of desktop streamer Chrome extension
+    //minChromeExtVersion: '0.1' // Required version of Chrome extension
 };
 ```
 
