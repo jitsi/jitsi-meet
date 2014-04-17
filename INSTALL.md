@@ -205,6 +205,8 @@ turncredentials = {
 }
 ```
 
+Add turncredentials module in the "modules_enabled" section
+
 Reload prosody if needed
 ```
 prosodyctl reload
