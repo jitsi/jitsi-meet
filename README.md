@@ -8,7 +8,7 @@ Jitsi Meet allows for very efficient collaboration. It allows users to stream th
 
 ## Install
 
-Installing Jitsi Meet is quite a simple experience even though it requires it requires installing a few other components first, such as Jitsi Videobridge, a web server such as Nginx and an XMPP one like Prosody.
+Installing Jitsi Meet is quite a simple experience even though it requires installing a few other components first, such as Jitsi Videobridge, a web server such as Nginx and an XMPP one like Prosody.
 
 You can find information on how to deploy Jitsi Meet in the [installation insstructions](https://jitsi.org/meet/deploy)
 
