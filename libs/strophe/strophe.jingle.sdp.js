@@ -155,7 +155,10 @@ SDP.prototype.toJingle = function (elem, thecreator) {
     }
     for (i = 0; i < this.media.length; i++) {
         mline = SDPUtil.parse_mline(this.media[i].split('\r\n')[0]);
-        if (!(mline.media == 'audio' || mline.media == 'video')) {
+        if (!(mline.media === 'audio' ||
+              mline.media === 'video' ||
+              mline.media === 'application'))
+        {
             continue;
         }
         if (SDPUtil.find_line(this.media[i], 'a=ssrc:')) {
@@ -171,12 +174,32 @@ SDP.prototype.toJingle = function (elem, thecreator) {
             elem.attrs({ name: mid });
 
             // old BUNDLE plan, to be removed
-            if (bundle.indexOf(mid) != -1) {
+            if (bundle.indexOf(mid) !== -1) {
                 elem.c('bundle', {xmlns: 'http://estos.de/ns/bundle'}).up();
                 bundle.splice(bundle.indexOf(mid), 1);
             }
         }
-        if (SDPUtil.find_line(this.media[i], 'a=rtpmap:').length) {
+        // Sctp
+        if (SDPUtil.find_line(this.media[i], 'a=sctpmap:').length)
+        {
+            for (j = 0; j < mline.fmt.length; j++)
+            {
+                var sctpmap = SDPUtil.find_line(
+                    this.media[i], 'a=sctpmap:' + mline.fmt[j]);
+                if (sctpmap)
+                {
+                    elem.c('sctp',
+                        {
+                            xmlns: 'http://jitsi.org/ns/sctp',
+                            port : SDPUtil.parse_sctpmap(sctpmap)
+                        });
+                    elem.up();
+                }
+            }
+        }
+
+        if (SDPUtil.find_line(this.media[i], 'a=rtpmap:').length)
+        {
             elem.c('description',
                 {xmlns: 'urn:xmpp:jingle:apps:rtp:1',
                     media: mline.media });
@@ -438,6 +461,11 @@ SDP.prototype.jingle2media = function (content) {
         ssrc = desc.attr('ssrc'),
         self = this,
         tmp;
+    var sctp = null;
+    if (!desc.length)
+    {
+        sctp = content.find('sctp');
+    }
 
     tmp = { media: desc.attr('media') };
     tmp.port = '1';
@@ -446,14 +474,28 @@ SDP.prototype.jingle2media = function (content) {
         tmp.port = '0';
     }
     if (content.find('>transport>fingerprint').length || desc.find('encryption').length) {
-        tmp.proto = 'RTP/SAVPF';
+        if (sctp)
+            tmp.proto = 'DTLS/SCTP';
+        else
+            tmp.proto = 'RTP/SAVPF';
     } else {
         tmp.proto = 'RTP/AVPF';
     }
-    tmp.fmt = desc.find('payload-type').map(function () { return this.getAttribute('id'); }).get();
-    media += SDPUtil.build_mline(tmp) + '\r\n';
+    if (!sctp)
+    {
+        tmp.fmt = desc.find('payload-type').map(
+            function () { return this.getAttribute('id'); }).get();
+        media += SDPUtil.build_mline(tmp) + '\r\n';
+    }
+    else
+    {
+        media += 'm=application 1 DTLS/SCTP ' + sctp.attr('port') + '\r\n';
+        media += 'a=sctpmap:' + sctp.attr('port') + ' webrtc-datachannel\r\n';
+    }
+
     media += 'c=IN IP4 0.0.0.0\r\n';
-    media += 'a=rtcp:1 IN IP4 0.0.0.0\r\n';
+    if (!sctp)
+        media += 'a=rtcp:1 IN IP4 0.0.0.0\r\n';
     tmp = content.find('>transport[xmlns="urn:xmpp:jingle:transports:ice-udp:1"]');
     if (tmp.length) {
         if (tmp.attr('ufrag')) {

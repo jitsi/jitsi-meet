@@ -470,12 +470,27 @@ $(document).bind('callincoming.jingle', function (event, sid) {
     // TODO: do we check activecall == null?
     activecall = sess;
 
+    // Bind data channel listener in case we're a regular participant
+    if (config.openSctp)
+    {
+        bindDataChannelListener(sess.peerconnection);
+    }
+
     // TODO: check affiliation and/or role
     console.log('emuc data for', sess.peerjid, connection.emuc.members[sess.peerjid]);
     sess.usedrip = true; // not-so-naive trickle ice
     sess.sendAnswer();
     sess.accept();
 
+});
+
+$(document).bind('conferenceCreated.jingle', function (event, focus)
+{
+    // Bind data channel listener in case we're the focus
+    if (config.openSctp)
+    {
+        bindDataChannelListener(focus.peerconnection);
+    }
 });
 
 $(document).bind('callactive.jingle', function (event, videoelem, sid) {
@@ -507,7 +522,7 @@ $(document).bind('setLocalDescription.jingle', function (event, sid) {
     var directions = {};
     var localSDP = new SDP(sess.peerconnection.localDescription.sdp);
     localSDP.media.forEach(function (media) {
-        var type = SDPUtil.parse_mline(media.split('\r\n')[0]).media;
+        var type = SDPUtil.parse_mid(SDPUtil.find_line(media, 'a=mid:'));
 
         if (SDPUtil.find_line(media, 'a=ssrc:')) {
             // assumes a single local ssrc

@@ -11,5 +11,6 @@ var config = {
     bosh: '//lambada.jitsi.net/http-bind', // FIXME: use xep-0156 for that
     desktopSharing: 'ext', // Desktop sharing method. Can be set to 'ext', 'webrtc' or false to disable.
     chromeExtensionId: 'diibjkoicjeejcmhdnailmkgecihlobk', // Id of desktop streamer Chrome extension
-    minChromeExtVersion: '0.1' // Required version of Chrome extension
+    minChromeExtVersion: '0.1', // Required version of Chrome extension
+    openSctp: true //Toggle to enable/disable SCTP channels
 };
