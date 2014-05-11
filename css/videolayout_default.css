@@ -16,9 +16,8 @@
     left: 0;
     right: 0;
     width:auto;
-    overflow: hidden;
     border:1px solid transparent;
-    z-index: 2;
+    z-index: 5;
 }
 
 .videocontainer {
@@ -41,8 +40,8 @@
     content:"";
     cursor: pointer;
     cursor: hand;
-    transform:scale(1.08, 1.08);
-    -webkit-transform:scale(1.08, 1.08);
+    /* transform:scale(1.08, 1.08);
+    -webkit-transform:scale(1.08, 1.08); */
     transition-duration: 0.5s;
     -webkit-transition-duration: 0.5s;
     -webkit-animation-name: greyPulse;
@@ -107,7 +106,8 @@
     display: none;
 }
 
-#remoteVideos .videocontainer>span.focusindicator {
+#remoteVideos .videocontainer>span.focusindicator,
+#remoteVideos .videocontainer>span.remotevideomenu {
     display: inline-block;
     position: absolute;
     color: #FFFFFF;

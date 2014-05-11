@@ -36,6 +36,12 @@ Strophe.addConnectionPlugin('emuc', {
         }
         this.sendPresence();
     },
+    doLeave: function() {
+        console.log("DO LEAVE", this.myroomjid);
+        var pres = $pres({to: this.myroomjid, type: 'unavailable' });
+        this.presMap.length = 0;
+        this.connection.send(pres);
+    },
     onPresence: function (pres) {
         var from = pres.getAttribute('from');
         var type = pres.getAttribute('type');
@@ -125,9 +131,22 @@ Strophe.addConnectionPlugin('emuc', {
     },
     onPresenceUnavailable: function (pres) {
         var from = pres.getAttribute('from');
-        delete this.members[from];
-        this.list_members.splice(this.list_members.indexOf(from), 1);
-        $(document).trigger('left.muc', [from]);
+        // Status code 110 indicates that this notification is "self-presence".
+        if (!$(pres).find('>x[xmlns="http://jabber.org/protocol/muc#user"]>status[code="110"]').length) {
+            delete this.members[from];
+            this.list_members.splice(this.list_members.indexOf(from), 1);
+            $(document).trigger('left.muc', [from]);
+        }
+        // If the status code is 110 this means we're leaving and we would like
+        // to remove everyone else from our view, so we trigger the event.
+        else if (this.list_members.length > 1) {
+            for (var i = 0; i < this.list_members.length; i++) {
+                var member = this.list_members[i];
+                delete this.members[i];
+                this.list_members.splice(i, 1);
+                $(document).trigger('left.muc', member);
+            }
+        }
         return true;
     },
     onPresenceError: function (pres) {
@@ -188,6 +207,21 @@ Strophe.addConnectionPlugin('emuc', {
             }
         );
     },
+    kick: function (jid) {
+        var kickIQ = $iq({to: this.roomjid, type: 'set'})
+            .c('query', {xmlns: 'http://jabber.org/protocol/muc#admin'})
+            .c('item', {nick: Strophe.getResourceFromJid(jid), role: 'none'})
+            .c('reason').t('You have been kicked.').up().up().up();
+
+        this.connection.sendIQ(
+                kickIQ,
+                function (result) {
+                    console.log('Kick participant with jid: ' + jid, result);
+                },
+                function (error) {
+                    console.log('Kick participant error: ', error);
+                });
+    },
     sendPresence: function () {
         var pres = $pres({to: this.presMap['to'] });
         pres.c('x', {xmlns: this.presMap['xns']});
@@ -210,7 +244,6 @@ Strophe.addConnectionPlugin('emuc', {
         }
 
         if (this.presMap['videons']) {
-            console.log("SEND VIDEO MUTED", this.presMap['videomuted']);
             pres.c('videomuted', {xmlns: this.presMap['videons']})
                 .t(this.presMap['videomuted']).up();
         }

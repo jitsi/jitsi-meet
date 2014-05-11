@@ -90,5 +90,5 @@ ColibriSession.prototype.sendAnswer = function (sdp, provisional) {
 };
 
 ColibriSession.prototype.sendTerminate = function (reason, text) {
-    console.log('ColibriSession.sendTerminate');
+    this.colibri.sendTerminate(this, reason, text);
 };

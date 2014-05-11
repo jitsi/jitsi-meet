@@ -848,3 +848,46 @@ ColibriFocus.prototype.terminate = function (session, reason) {
     delete this.remotessrc[session.peerjid];
     this.modifySources();
 };
+
+ColibriFocus.prototype.sendTerminate = function (session, reason, text) {
+    var term = $iq({to: session.peerjid, type: 'set'})
+        .c('jingle',
+            {xmlns: 'urn:xmpp:jingle:1',
+            action: 'session-terminate',
+            initiator: session.me,
+            sid: session.sid})
+        .c('reason')
+        .c(reason || 'success');
+
+    if (text) {
+        term.up().c('text').t(text);
+    }
+
+    this.connection.sendIQ(term,
+        function () {
+            if (!session)
+                return;
+
+            if (session.peerconnection) {
+                session.peerconnection.close();
+                session.peerconnection = null;
+            }
+
+            session.terminate();
+            var ack = {};
+            ack.source = 'terminate';
+            $(document).trigger('ack.jingle', [session.sid, ack]);
+        },
+        function (stanza) {
+            var error = ($(stanza).find('error').length) ? {
+                code: $(stanza).find('error').attr('code'),
+                reason: $(stanza).find('error :first')[0].tagName,
+            }:{};
+            $(document).trigger('ack.jingle', [self.sid, error]);
+        },
+        10000);
+    if (this.statsinterval !== null) {
+        window.clearInterval(this.statsinterval);
+        this.statsinterval = null;
+    }
+};

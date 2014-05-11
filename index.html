@@ -31,6 +31,7 @@
     <script src="prezi.js?v=2"></script><!-- prezi plugin -->
     <script src="smileys.js?v=1"></script><!-- smiley images -->
     <script src="replacement.js?v=5"></script><!-- link and smiley replacement -->
+    <script src="moderatemuc.js?v=1"></script><!-- moderator plugin -->
     <script src="analytics.js?v=1"></script><!-- google analytics plugin -->
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
     <link rel="stylesheet" href="css/font.css"/>
@@ -38,6 +39,7 @@
     <link rel="stylesheet" type="text/css" media="screen" href="css/videolayout_default.css?v=4" id="videolayout_default"/>
     <link rel="stylesheet" href="css/jquery-impromptu.css?v=4">
     <link rel="stylesheet" href="css/modaldialog.css?v=3">
+    <link rel="stylesheet" href="css/popup_menu.css?v=1">
     <!--
         Link used for inline installation of chrome desktop streaming extension,
         is updated automatically from the code with the value defined in config.js -->
@@ -49,7 +51,7 @@
   <body>
     <div id="header">
         <span id="toolbar">
-            <a class="button" onclick='buttonClick("#mute", "icon-microphone icon-mic-disabled");toggleAudio();'>
+            <a class="button" onclick='toggleAudio();'>
                 <i id="mute" title="Mute / unmute" class="icon-microphone"></i></a>
             <div class="header_button_separator"></div>
             <a class="button" onclick='buttonClick("#video", "icon-camera icon-camera-disabled");toggleVideo();'>

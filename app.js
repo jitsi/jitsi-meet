@@ -15,6 +15,7 @@ var ssrc2jid = {};
  */
 var ssrc2videoType = {};
 var videoSrcToSsrc = {};
+var mutedAudios = {};
 
 var localVideoSrc = null;
 var flipXLocalVideo = true;
@@ -34,6 +35,8 @@ var getVideoSize;
 var getVideoPosition;
 
 /* window.onbeforeunload = closePageWarning; */
+
+var preMuted = false;
 
 function init() {
     RTC = setupRTC();
@@ -179,6 +182,10 @@ function change_local_audio(stream) {
     RTC.attachMediaStream($('#localAudio'), stream);
     document.getElementById('localAudio').autoplay = true;
     document.getElementById('localAudio').volume = 0;
+    if (preMuted) {
+        toggleAudio();
+        preMuted = false;
+    }
 }
 
 function change_local_video(stream, flipX) {
@@ -485,8 +492,13 @@ $(document).bind('callactive.jingle', function (event, videoelem, sid) {
     }
 });
 
-$(document).bind('callterminated.jingle', function (event, sid, reason) {
-    // FIXME
+$(document).bind('callterminated.jingle', function (event, sid, jid, reason) {
+    // Leave the room if my call has been remotely terminated.
+    if (connection.emuc.joined && focus == null && reason === 'kick') {
+        connection.emuc.doLeave();
+        openMessageDialog(  "Session Terminated",
+                            "Ouch! You have been kicked out of the meet!");
+    }
 });
 
 $(document).bind('setLocalDescription.jingle', function (event, sid) {
@@ -579,15 +591,25 @@ $(document).bind('entered.muc', function (event, jid, info, pres) {
 });
 
 $(document).bind('left.muc', function (event, jid) {
-    console.log('left', jid);
+    console.log('left.muc', jid);
+    // Need to call this with a slight delay, otherwise the element couldn't be
+    // found for some reason.
+    window.setTimeout(function () {
+        var container = document.getElementById(
+                'participant_' + Strophe.getResourceFromJid(jid));
+        if (container) {
+            // hide here, wait for video to close before removing
+            $(container).hide();
+            resizeThumbnails();
+        }
+    }, 10);
+
     connection.jingle.terminateByJid(jid);
-    var container = document.getElementById('participant_' + Strophe.getResourceFromJid(jid));
-    if (container) {
-        // hide here, wait for video to close before removing
-        $(container).hide();
-        resizeThumbnails();
-    }
-    if (focus === null && connection.emuc.myroomjid === connection.emuc.list_members[0]) {
+
+    if (focus == null
+            && jid !== connection.emuc.myroomjid
+            && connection.emuc.myroomjid === connection.emuc.list_members[0]
+            && connection.emuc.list_members.length > 1) {
         console.log('welcome to our new focus... myself');
         focus = new ColibriFocus(connection, config.hosts.bridge);
         if (Object.keys(connection.emuc.members).length > 0) {
@@ -603,7 +625,8 @@ $(document).bind('left.muc', function (event, jid) {
         focus = new ColibriFocus(connection, config.hosts.bridge);
     }
     if (connection.emuc.getPrezi(jid)) {
-        $(document).trigger('presentationremoved.muc', [jid, connection.emuc.getPrezi(jid)]);
+        $(document).trigger('presentationremoved.muc',
+                            [jid, connection.emuc.getPrezi(jid)]);
     }
 });
 
@@ -686,6 +709,11 @@ $(document).bind('audiomuted.muc', function (event, jid, isMuted) {
         videoSpanId = 'participant_' + Strophe.getResourceFromJid(jid);
     }
 
+    if (focus) {
+        mutedAudios[jid] = isMuted;
+        updateRemoteVideoMenu(jid, isMuted);
+    }
+
     if (videoSpanId)
         showAudioIndicator(videoSpanId, isMuted);
 });
@@ -700,7 +728,7 @@ $(document).bind('videomuted.muc', function (event, jid, isMuted) {
     }
 
     if (videoSpanId)
-        showAudioIndicator(videoSpanId, isMuted);
+        showVideoIndicator(videoSpanId, isMuted);
 });
 
 /**
@@ -821,8 +849,11 @@ function toggleVideo() {
  * Mutes / unmutes audio for the local participant.
  */
 function toggleAudio() {
-    if (!(connection && connection.jingle.localAudio))
+    if (!(connection && connection.jingle.localAudio)) {
+        preMuted = true;
         return;
+    }
+
     var localAudio = connection.jingle.localAudio;
     for (var idx = 0; idx < localAudio.getAudioTracks().length; idx++) {
         var audioEnabled = localAudio.getAudioTracks()[idx].enabled;
@@ -831,6 +862,8 @@ function toggleAudio() {
         connection.emuc.addAudioInfoToPresence(audioEnabled); //isMuted is the opposite of audioEnabled
         connection.emuc.sendPresence();
     }
+
+    buttonClick("#mute", "icon-microphone icon-mic-disabled");
 }
 
 /**
@@ -1168,6 +1201,22 @@ function buttonClick(id, classname) {
 }
 
 /**
+ * Shows a message to the user.
+ *
+ * @param titleString the title of the message
+ * @param messageString the text of the message
+ */
+function openMessageDialog(titleString, messageString) {
+    console.log("OPEN MESSAGE DIALOG");
+    $.prompt(messageString,
+        {
+            title: titleString,
+            persistent: false
+        }
+    );
+}
+
+/**
  * Opens the lock room dialog.
  */
 function openLockDialog() {
@@ -1448,7 +1497,7 @@ function ensurePeerContainerExists(peerJid) {
         return;
     }
 
-    var container = addRemoteVideoContainer(videoSpanId);
+    var container = addRemoteVideoContainer(peerJid, videoSpanId);
 
     var nickfield = document.createElement('span');
     nickfield.className = "nick";
@@ -1457,11 +1506,15 @@ function ensurePeerContainerExists(peerJid) {
     resizeThumbnails();
 }
 
-function addRemoteVideoContainer(id) {
+function addRemoteVideoContainer(peerJid, spanId) {
     var container = document.createElement('span');
-    container.id = id;
+    container.id = spanId;
     container.className = 'videocontainer';
     var remotes = document.getElementById('remoteVideos');
+
+    if (focus)
+        addRemoteVideoMenu(peerJid, container);
+
     remotes.appendChild(container);
     return container;
 }
@@ -1474,6 +1527,97 @@ function createFocusIndicatorElement(parentElement) {
     focusIndicator.className = 'fa fa-star';
     focusIndicator.title = "The owner of this conference";
     parentElement.appendChild(focusIndicator);
+}
+
+function addRemoteVideoMenu(jid, parentElement) {
+    var spanElement = document.createElement('span');
+    spanElement.className = 'remotevideomenu';
+
+    parentElement.appendChild(spanElement);
+
+    var menuElement = document.createElement('i');
+    menuElement.className = 'fa fa-angle-down';
+    menuElement.title = 'Remote user controls';
+    spanElement.appendChild(menuElement);
+
+//    <ul class="popupmenu">
+//    <li><a href="#">Mute</a></li>
+//    <li><a href="#">Eject</a></li>
+//    </ul>
+    var popupmenuElement = document.createElement('ul');
+    popupmenuElement.className = 'popupmenu';
+    popupmenuElement.id = 'remote_popupmenu_' + Strophe.getResourceFromJid(jid);
+    spanElement.appendChild(popupmenuElement);
+
+    var muteMenuItem = document.createElement('li');
+    var muteLinkItem = document.createElement('a');
+
+    var mutedIndicator = "<i class='icon-mic-disabled'></i>";
+
+    if (!mutedAudios[jid]) {
+        muteLinkItem.innerHTML = mutedIndicator + 'Mute';
+        muteLinkItem.className = 'mutelink';
+    }
+    else {
+        muteLinkItem.innerHTML = mutedIndicator + ' Muted';
+        muteLinkItem.className = 'mutelink disabled';
+    }
+
+    muteLinkItem.onclick = function(){
+        if ($(this).attr('disabled') != undefined) {
+            event.preventDefault();
+        }
+        var isMute = !mutedAudios[jid];
+        connection.moderate.setMute(jid, isMute);
+        popupmenuElement.setAttribute('style', 'display:none;');
+
+        if (isMute) {
+            this.innerHTML = mutedIndicator + ' Muted';
+            this.className = 'mutelink disabled';
+        }
+        else {
+            this.innerHTML = mutedIndicator + ' Mute';
+            this.className = 'mutelink';
+        }
+    };
+
+    muteMenuItem.appendChild(muteLinkItem);
+    popupmenuElement.appendChild(muteMenuItem);
+
+    var ejectIndicator = "<i class='fa fa-eject'></i>";
+
+    var ejectMenuItem = document.createElement('li');
+    var ejectLinkItem = document.createElement('a');
+    ejectLinkItem.innerHTML = ejectIndicator + ' Kick out';
+    ejectLinkItem.onclick = function(){
+        connection.moderate.eject(jid);
+        popupmenuElement.setAttribute('style', 'display:none;');
+    };
+
+    ejectMenuItem.appendChild(ejectLinkItem);
+    popupmenuElement.appendChild(ejectMenuItem);
+}
+
+function updateRemoteVideoMenu(jid, isMuted) {
+    var muteMenuItem
+        = $('#remote_popupmenu_'
+                + Strophe.getResourceFromJid(jid)
+                + '>li>a.mutelink');
+
+    var mutedIndicator = "<i class='icon-mic-disabled'></i>";
+
+    if (muteMenuItem.length) {
+        var muteLink = muteMenuItem.get(0);
+
+        if (isMuted === 'true') {
+            muteLink.innerHTML = mutedIndicator + ' Muted';
+            muteLink.className = 'mutelink disabled';
+        }
+        else {
+            muteLink.innerHTML = mutedIndicator + ' Mute';
+            muteLink.className = 'mutelink';
+        }
+    }
 }
 
 /**

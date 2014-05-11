@@ -1,0 +1,56 @@
+/*Initialize*/
+ul.popupmenu {
+    display:none;
+    position: absolute;
+    padding:0;
+    margin: 0;
+    bottom: 20px;
+    padding-bottom: 5px;
+    padding-top: 5px;
+    right: 10px;
+    left: 0px;
+    width: 100px;
+    background-color: rgba(0,0,0,1);
+    -webkit-box-shadow: 0 0 2px #000000, 0 0 10px #000000;
+    border-radius:8px;
+}
+
+ul.popupmenu:after {
+    content: url('../images/popupPointer.png');
+    display: block;
+    position: absolute;
+    bottom: -9px;
+    left: 13px;
+}
+
+ul.popupmenu li {
+    list-style-type: none;
+    text-align: left;
+}
+
+ul.popupmenu li:hover {
+    background-color: rgba(82, 82, 82, .7);
+    border-radius:2px;
+}
+
+/*Link Appearance*/
+ul.popupmenu li a {
+    text-decoration: none;
+    color: #fff;
+    padding: 5px;
+    display: inline-block;
+    font-size: 9pt;
+}
+
+ul.popupmenu li a i {
+    width: 12px;
+}
+
+span.remotevideomenu:hover ul.popupmenu {
+    display:block !important;
+}
+
+a.disabled {
+    color: gray !important;
+    pointer-events: none;
+}

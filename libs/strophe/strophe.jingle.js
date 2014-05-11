@@ -112,17 +112,27 @@ Strophe.addConnectionPlugin('jingle', {
                 $(document).trigger('callaccepted.jingle', [sess.sid]);
                 break;
             case 'session-terminate':
-                console.log('terminating...');
+                // If this is not the focus sending the terminate, we have
+                // nothing more to do here.
+                if (Object.keys(this.sessions).length < 1
+                    || !(this.sessions[Object.keys(this.sessions)[0]]
+                        instanceof JingleSession))
+                {
+                    break;
+                }
+                console.log('terminating...', sess.sid);
                 sess.terminate();
                 this.terminate(sess.sid);
                 if ($(iq).find('>jingle>reason').length) {
                     $(document).trigger('callterminated.jingle', [
                         sess.sid,
+                        sess.peerjid,
                         $(iq).find('>jingle>reason>:first')[0].tagName,
                         $(iq).find('>jingle>reason>text').text()
                     ]);
                 } else {
-                    $(document).trigger('callterminated.jingle', [sess.sid]);
+                    $(document).trigger('callterminated.jingle',
+                                        [sess.sid, sess.peerjid]);
                 }
                 break;
             case 'transport-info':
@@ -192,6 +202,7 @@ Strophe.addConnectionPlugin('jingle', {
             delete this.sessions[sid];
         }
     },
+    // Used to terminate a session when an unavailable presence is received.
     terminateByJid: function (jid) {
         if (this.jid2session.hasOwnProperty(jid)) {
             var sess = this.jid2session[jid];
@@ -200,7 +211,22 @@ Strophe.addConnectionPlugin('jingle', {
                 console.log('peer went away silently', jid);
                 delete this.sessions[sess.sid];
                 delete this.jid2session[jid];
-                $(document).trigger('callterminated.jingle', [sess.sid, 'gone']);
+                $(document).trigger('callterminated.jingle',
+                                    [sess.sid, jid], 'gone');
+            }
+        }
+    },
+    terminateRemoteByJid: function (jid, reason) {
+        if (this.jid2session.hasOwnProperty(jid)) {
+            var sess = this.jid2session[jid];
+            if (sess) {
+                sess.sendTerminate(reason || (!sess.active()) ? 'kick' : null);
+                sess.terminate();
+                console.log('terminate peer with jid', sess.sid, jid);
+                delete this.sessions[sess.sid];
+                delete this.jid2session[jid];
+                $(document).trigger('callterminated.jingle',
+                                    [sess.sid, jid, 'kicked']);
             }
         }
     },
