@@ -37,7 +37,7 @@ Strophe.addConnectionPlugin('emuc', {
         this.sendPresence();
     },
     doLeave: function() {
-        console.log("DO LEAVE", this.myroomjid);
+        console.log("do leave", this.myroomjid);
         var pres = $pres({to: this.myroomjid, type: 'unavailable' });
         this.presMap.length = 0;
         this.connection.send(pres);
@@ -216,7 +216,7 @@ Strophe.addConnectionPlugin('emuc', {
         this.connection.sendIQ(
                 kickIQ,
                 function (result) {
-                    console.log('Kick participant with jid: ' + jid, result);
+                    console.log('Kick participant with jid: ', jid, result);
                 },
                 function (error) {
                     console.log('Kick participant error: ', error);
