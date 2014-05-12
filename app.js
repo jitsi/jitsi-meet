@@ -38,6 +38,8 @@ var getVideoPosition;
 
 var preMuted = false;
 
+var sessionTerminated = false;
+
 function init() {
     RTC = setupRTC();
     if (RTC === null) {
@@ -495,6 +497,7 @@ $(document).bind('callactive.jingle', function (event, videoelem, sid) {
 $(document).bind('callterminated.jingle', function (event, sid, jid, reason) {
     // Leave the room if my call has been remotely terminated.
     if (connection.emuc.joined && focus == null && reason === 'kick') {
+        sessionTerminated = true;
         connection.emuc.doLeave();
         openMessageDialog(  "Session Terminated",
                             "Ouch! You have been kicked out of the meet!");
@@ -607,9 +610,12 @@ $(document).bind('left.muc', function (event, jid) {
     connection.jingle.terminateByJid(jid);
 
     if (focus == null
+            // I shouldn't be the one that left to enter here.
             && jid !== connection.emuc.myroomjid
             && connection.emuc.myroomjid === connection.emuc.list_members[0]
-            && connection.emuc.list_members.length > 1) {
+            // If our session has been terminated for some reason
+            // (kicked, hangup), don't try to become the focus
+            && !sessionTerminated) {
         console.log('welcome to our new focus... myself');
         focus = new ColibriFocus(connection, config.hosts.bridge);
         if (Object.keys(connection.emuc.members).length > 0) {
