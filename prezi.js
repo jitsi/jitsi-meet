@@ -324,6 +324,11 @@ var Prezi = (function (my) {
     $(document).bind('gotoslide.muc', function (event, jid, presUrl, current) {
         if (preziPlayer) {
             preziPlayer.flyToStep(current);
+            // 
+            var animationStepsArray = preziPlayer.getAnimationCountOnSteps();
+            for (var i = 0; i <= animationStepsArray[current]; i++) {
+                preziPlayer.flyToNextStep();
+            }
         }
     });
 
