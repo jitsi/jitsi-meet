@@ -226,13 +226,12 @@
 #header{
     display:none;
     position:absolute;
-    height:39px;
+    height: 0px;
     text-align:center;
     top:0;
     left:0;
     right:0;
     z-index:10;
-    height: 0px;
 }
 
 #toolbar {
