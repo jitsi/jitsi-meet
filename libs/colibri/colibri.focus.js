@@ -45,6 +45,12 @@ function ColibriFocus(connection, bridgejid) {
     this.confid = null;
 
     /**
+     * Local XMPP resource used to join the multi user chat.
+     * @type {*}
+     */
+    this.myMucResource = Strophe.getResourceFromJid(connection.emuc.myroomjid);
+
+    /**
      * Default channel expire value in seconds.
      * @type {number}
      */
@@ -172,7 +178,7 @@ ColibriFocus.prototype._makeConference = function () {
         elem.c(channel, {
             initiator: 'true',
             expire: '15',
-            endpoint: 'fix_me_focus_endpoint'
+            endpoint: self.myMucResource
         });
         if (isData)
             elem.attrs({port:  5000});
@@ -400,7 +406,7 @@ ColibriFocus.prototype.createdConference = function (result) {
                                         initiator: 'true',
                                         expire: self.channelExpire,
                                         id: self.mychannel[channel].attr('id'),
-                                        endpoint: 'fix_me_focus_endpoint'
+                                        endpoint: self.myMucResource
                                     });
 
                                     // FIXME: should reuse code from .toJingle
@@ -422,7 +428,7 @@ ColibriFocus.prototype.createdConference = function (result) {
                                         {
                                             initiator: 'true',
                                             expire: self.channelExpire,
-                                            endpoint: 'fix_me_focus_endpoint',
+                                            endpoint: self.myMucResource,
                                             port: sctpPort
                                         }
                                     );
