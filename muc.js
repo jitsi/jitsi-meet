@@ -21,6 +21,9 @@ Strophe.addConnectionPlugin('emuc', {
     },
     doJoin: function (jid, password) {
         this.myroomjid = jid;
+
+        console.info("Joined MUC as " + this.myroomjid);
+
         this.initPresenceMap(this.myroomjid);
 
         if (!this.roomjid) {

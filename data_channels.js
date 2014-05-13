@@ -1,3 +1,4 @@
+/* global connection, Strophe, updateLargeVideo*/
 /**
  * Callback triggered by PeerConnection when new data channel is opened
  * on the bridge.
@@ -27,6 +28,34 @@ function onDataChannel(event)
     {
         var msgData = event.data;
         console.info("Got Data Channel Message:", msgData, dataChannel);
+
+        // Active speaker event
+        if (msgData.indexOf('activeSpeaker') === 0)
+        {
+            // Endpoint ID from the bridge
+            var endpointId = msgData.split(":")[1];
+            console.info("New active speaker: " + endpointId);
+
+            var container  = document.getElementById(
+                'participant_' + endpointId);
+            // Check if local video
+            if (!container)
+            {
+                if (endpointId ===
+                        Strophe.getResourceFromJid(connection.emuc.myroomjid))
+                {
+                    container = document.getElementById('localVideoContainer');
+                }
+            }
+            if (container)
+            {
+                var video = container.getElementsByTagName("video");
+                if (video.length)
+                {
+                    updateLargeVideo(video[0].src);
+                }
+            }
+        }
     };
 
     dataChannel.onclose = function ()
@@ -48,7 +77,7 @@ function bindDataChannelListener(peerConnection)
     // and peer as single channel can be used for sending and receiving data.
     // So either channel opened by the bridge or the one opened here is enough
     // for communication with the bridge.
-    var dataChannelOptions =
+    /*var dataChannelOptions =
     {
         reliable: true
     };
@@ -60,4 +89,9 @@ function bindDataChannelListener(peerConnection)
     {
         dataChannel.send("My channel !!!");
     };
+    dataChannel.onmessage = function (event)
+    {
+        var msgData = event.data;
+        console.info("Got My Data Channel Message:", msgData, dataChannel);
+    };*/
 }
