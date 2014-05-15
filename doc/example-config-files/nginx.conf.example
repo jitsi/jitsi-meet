@@ -1,0 +1,54 @@
+user www-data;
+worker_processes  1;
+
+error_log  /var/log/nginx/error.log;
+pid        /var/run/nginx.pid;
+
+events {
+    worker_connections  1024;
+    # multi_accept on;
+}
+
+http {
+    include       /etc/nginx/mime.types;
+
+    access_log	/var/log/nginx/access.log;
+
+    sendfile        on;
+    #tcp_nopush     on;
+
+    #keepalive_timeout  0;
+    keepalive_timeout  65;
+    tcp_nodelay        on;
+
+    tcp_nopush on;
+    types_hash_max_size 2048;
+    server_names_hash_bucket_size 64;
+
+    gzip  on;
+    gzip_disable "MSIE [1-6]\.(?!.*SV1)";
+
+    include /etc/nginx/conf.d/*.conf;
+    include /etc/nginx/sites-enabled/*;
+}
+
+# mail {
+#     # See sample authentication script at:
+#     # http://wiki.nginx.org/NginxImapAuthenticateWithApachePhpScript
+# 
+#     # auth_http localhost/auth.php;
+#     # pop3_capabilities "TOP" "USER";
+#     # imap_capabilities "IMAP4rev1" "UIDPLUS";
+# 
+#     server {
+#         listen     localhost:110;
+#         protocol   pop3;
+#         proxy      on;
+#     }
+# 
+#     server {
+#         listen     localhost:143;
+#         protocol   imap;
+#         proxy      on;
+#     }
+# }

@@ -4,7 +4,7 @@ This describes configuring a server `jitmeet.example.com`.  You will need to
 change references to that to match your host, and generate some passwords for
 `YOURSECRET1` and `YOURSECRET2`.
 
-There are also some complete [example config files](https://www.dropbox.com/sh/jgp4s8kp6xuyubr/5FACgJmqLD) available, mentioned in each section.
+There are also some complete [example config files](https://github.com/jitsi/jitsi-meet/tree/master/doc/example-config-files/) available, mentioned in each section.
 
 ## Install prosody and otalk modules
 ```sh
