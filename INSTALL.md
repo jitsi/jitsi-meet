@@ -8,6 +8,7 @@ There are also some complete [example config files](https://github.com/jitsi/jit
 
 ## Install prosody and otalk modules
 ```sh
+apt-get install lsb-release
 echo deb http://packages.prosody.im/debian $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list
 wget --no-check-certificate https://prosody.im/files/prosody-debian-packages.key -O- | sudo apt-key add -
 apt-get update
