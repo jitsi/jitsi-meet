@@ -1,6 +1,6 @@
 # Server Installation for Jitsi Meet
 
-This describes configuring a server `jitmeet.example.com`.  You will need to
+This describes configuring a server `jitsi.example.com`.  You will need to
 change references to that to match your host, and generate some passwords for
 `YOURSECRET1` and `YOURSECRET2`.
 
@@ -34,23 +34,23 @@ default_archive_policy = "roster"
 ```
 - configure your domain by editing the example.com virtual host section section:
 ```
-VirtualHost "jitmeet.example.com"
+VirtualHost "jitsi.example.com"
 authentication = "anonymous"
 ssl = {
-    key = "/var/lib/prosody/jitmeet.example.com.key";
-    certificate = "/var/lib/prosody/jitmeet.example.com.crt";
+    key = "/var/lib/prosody/jitsi.example.com.key";
+    certificate = "/var/lib/prosody/jitsi.example.com.crt";
 }
 ```
 - and finally configure components:
 ```
-Component "conference.jitmeet.example.com" "muc"
-Component "jitsi-videobridge.jitmeet.example.com"
+Component "conference.jitsi.example.com" "muc"
+Component "jitsi-videobridge.jitsi.example.com"
     component_secret = "YOURSECRET1"
 ```
 
 Generate certs for the domain:
 ```sh
-prosodyctl cert generate jitmeet.example.com
+prosodyctl cert generate jitsi.example.com
 ```
 
 Restart prosody XMPP server with the new config
@@ -70,13 +70,13 @@ types_hash_max_size 2048;
 server_names_hash_bucket_size 64;
 ```
 
-Add a new file `jitmeet.example.com` in `/etc/nginx/sites-available` (see also the example config file):
+Add a new file `jitsi.example.com` in `/etc/nginx/sites-available` (see also the example config file):
 ```
 server {
     listen 80;
-    server_name jitmeet.example.com;
+    server_name jitsi.example.com;
     # set the root
-    root /srv/jitmeet.example.com;
+    root /srv/jitsi.example.com;
     index index.html;
     location ~ ^/([a-zA-Z0-9]+)$ {
         rewrite ^/(.*)$ / break;
@@ -102,7 +102,7 @@ server {
 Add link for the added configuration
 ```sh
 cd /etc/nginx/sites-enabled
-ln -s ../sites-available/jitmeet.example.com jitmeet.example.com
+ln -s ../sites-available/jitsi.example.com jitsi.example.com
 ```
 
 ## Fix firewall if needed
@@ -111,7 +111,7 @@ ufw allow 80
 ufw allow 5222
 ```
 
-## Install videobridge
+## Install Jitsi Videobridge
 ```sh
 wget https://download.jitsi.org/jitsi-videobridge/linux/jitsi-videobridge-linux-{arch-buildnum}.zip
 unzip jitsi-videobridge-linux-{arch-buildnum}.zip
@@ -122,37 +122,38 @@ Install JRE if missing:
 apt-get install default-jre
 ```
 
-In the user home that will be starting the jitsi video bridge create `.sip-communicator` folder and add the file `sip-communicator.properties` with one line in it:
+In the user home that will be starting Jitsi Videobridge create `.sip-communicator` folder and add the file `sip-communicator.properties` with one line in it:
 ```
 org.jitsi.impl.neomedia.transform.srtp.SRTPCryptoContext.checkReplay=false
 ```
 
 Start the videobrdige with:
 ```sh
-./jvb.sh --host=localhost --domain=jitmeet.example.com --port=5347 --secret=YOURSECRET1 &
+./jvb.sh --host=localhost --domain=jitsi.example.com --port=5347 --secret=YOURSECRET1 &
 ```
 Or autostart it by adding the line in `/etc/rc.local`:
 ```sh
-/bin/bash /root/jitsi-videobridge-linux-{arch-buildnum}/jvb.sh --host=localhost --domain=jitmeet.example.com --port=5347 --secret=YOURSECRET1 </dev/null >> /var/log/jvb.log 2>&1
+/bin/bash /root/jitsi-videobridge-linux-{arch-buildnum}/jvb.sh --host=localhost --domain=jitsi.example.com --port=5347 --secret=YOURSECRET1 </dev/null >> /var/log/jvb.log 2>&1
 ```
 
-Checkout and configure jitmeet:
+## Deploy Jitsi Meet
+Checkout and configure Jitsi Meet:
 ```sh
 cd /srv
 git clone https://github.com/jitsi/jitsi-meet.git
-mv jitsi-meet/ jitmeet.example.com
+mv jitsi-meet/ jitsi.example.com
 ```
 
-Edit host names in `/srv/jitmeet.example.com/config.js` (see also the example config file):
+Edit host names in `/srv/jitsi.example.com/config.js` (see also the example config file):
 ```
 var config = {
     hosts: {
-        domain: 'jitmeet.example.com',
-        muc: 'conference.jitmeet.example.com',
-        bridge: 'jitsi-videobridge.jitmeet.example.com'
+        domain: 'jitsi.example.com',
+        muc: 'conference.jitsi.example.com',
+        bridge: 'jitsi-videobridge.jitsi.example.com'
     },
     useNicks: false,
-    bosh: '//jitmeet.example.com/http-bind' // FIXME: use xep-0156 for that
+    bosh: '//jitsi.example.com/http-bind' // FIXME: use xep-0156 for that
     desktopSharing: 'false', // Desktop sharing method. Can be set to 'ext', 'webrtc' or false to disable.
     //chromeExtensionId: 'diibjkoicjeejcmhdnailmkgecihlobk', // Id of desktop streamer Chrome extension
     //minChromeExtVersion: '0.1' // Required version of Chrome extension
@@ -188,7 +189,7 @@ wget https://raw.github.com/andyet/otalk-server/master/restund/restund.conf
 
 Configure addresses and ports as desired, and the password to be configured in prosody:
 ```
-realm           jitmeet.example.com
+realm           jitsi.example.com
 # share this with your prosody server
 auth_shared     YOURSECRET2
 
@@ -211,7 +212,7 @@ Reload prosody if needed
 ```
 prosodyctl reload
 telnet localhost 5582
-module:reload("turncredentials", "jitmeet.example.com")
+module:reload("turncredentials", "jitsi.example.com")
 quit
 ```
 
@@ -228,3 +229,6 @@ org.jitsi.impl.neomedia.transform.srtp.SRTPCryptoContext.checkReplay=false
 org.jitsi.videobridge.NAT_HARVESTER_LOCAL_ADDRESS=<Local.IP.Address>
 org.jitsi.videobridge.NAT_HARVESTER_PUBLIC_ADDRESS=<Public.IP.Address>
 ```
+
+# Hold your first conference
+You are now all set and ready to have your first meet by going to http://jitsi.example.com
