@@ -73,7 +73,7 @@ modules_enabled = {
 		--"watchregistrations"; -- Alert admins of registrations
 		--"motd"; -- Send a message to users when they log in
 		--"legacyauth"; -- Legacy authentication. Only used by some old clients and bots.
-	-- jitmeet
+	-- jitsi
 		"smacks";
 		"carbons";
 		"mam";
@@ -167,7 +167,7 @@ log = {
 
 --VirtualHost "localhost"
 
-VirtualHost "jitmeet.example.com"
+VirtualHost "jitsi.example.com"
 	-- enabled = false -- Remove this line to enable this host
 	authentication = "anonymous"
 	-- Assign this host a certificate for TLS, otherwise it would use the one
@@ -175,8 +175,8 @@ VirtualHost "jitmeet.example.com"
 	-- Note that old-style SSL on port 5223 only supports one certificate, and will always
 	-- use the global one.
 	ssl = {
-		key = "/var/lib/prosody/jitmeet.example.com.key";
-		certificate = "/var/lib/prosody/jitmeet.example.com.crt";
+		key = "/var/lib/prosody/jitsi.example.com.key";
+		certificate = "/var/lib/prosody/jitsi.example.com.crt";
 	}
 
 ------ Components ------
@@ -199,7 +199,7 @@ VirtualHost "jitmeet.example.com"
 --Component "gateway.example.com"
 --	component_secret = "password"
 
-Component "conference.jitmeet.example.com" "muc"
+Component "conference.jitsi.example.com" "muc"
 
-Component "jitsi-videobridge.jitmeet.example.com"
+Component "jitsi-videobridge.jitsi.example.com"
     component_secret = "IfGaish6"

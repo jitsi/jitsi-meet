@@ -1,9 +1,9 @@
 server {
     listen 80;
 
-    server_name jitmeet.example.com;
+    server_name jitsi.example.com;
     # set the root
-    root /srv/jitmeet.example.com;
+    root /srv/jitsi.example.com;
     index index.html;
 
     location ~ ^/([a-zA-Z0-9]+)$ {
