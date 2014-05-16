@@ -211,10 +211,7 @@ Add turncredentials module in the "modules_enabled" section
 
 Reload prosody if needed
 ```
-prosodyctl reload
-telnet localhost 5582
-module:reload("turncredentials", "jitsi.example.com")
-quit
+prosodyctl restart
 ```
 
 ## Running behind NAT
