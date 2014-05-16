@@ -135,7 +135,7 @@ Or autostart it by adding the line in `/etc/rc.local`:
 ```sh
 /bin/bash /root/jitsi-videobridge-linux-{arch-buildnum}/jvb.sh --host=localhost --domain=jitmeet.example.com --port=5347 --secret=YOURSECRET1 </dev/null >> /var/log/jvb.log 2>&1
 ```
-
+## Install Jitmeet
 Checkout and configure jitmeet:
 ```sh
 cd /srv
@@ -228,3 +228,6 @@ org.jitsi.impl.neomedia.transform.srtp.SRTPCryptoContext.checkReplay=false
 org.jitsi.videobridge.NAT_HARVESTER_LOCAL_ADDRESS=<Local.IP.Address>
 org.jitsi.videobridge.NAT_HARVESTER_PUBLIC_ADDRESS=<Public.IP.Address>
 ```
+
+## Test it
+Now to access your jitsi.meet webclient conference page go to: jitmeet.example.com.
