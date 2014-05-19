@@ -6,6 +6,8 @@ change references to that to match your host, and generate some passwords for
 
 There are also some complete [example config files](https://github.com/jitsi/jitsi-meet/tree/master/doc/example-config-files/) available, mentioned in each section.
 
+A linux script is also available at the following address: https://gist.github.com/francoisTemasys/a17f5874bf104f0a2684. You should be able to install Jitsi Meet along with Jitsi Videobridge in less than 10min.
+
 ## Install prosody and otalk modules
 ```sh
 apt-get install lsb-release
@@ -111,6 +113,7 @@ ln -s ../sites-available/jitsi.example.com jitsi.example.com
 ufw allow 80
 ufw allow 5222
 ```
+NOTE: if you are running behind NAT with security parameters, you must allow the port 10 000 to 20 000 (default ports) on protocol UDP.
 
 ## Install Jitsi Videobridge
 ```sh
