@@ -1558,14 +1558,14 @@ function addRemoteVideoMenu(jid, parentElement) {
     var muteMenuItem = document.createElement('li');
     var muteLinkItem = document.createElement('a');
 
-    var mutedIndicator = "<i class='icon-mic-disabled'></i>";
+    var mutedIndicator = "<span><i class='icon-mic-disabled'></i></span>";
 
     if (!mutedAudios[jid]) {
         muteLinkItem.innerHTML = mutedIndicator + 'Mute';
         muteLinkItem.className = 'mutelink';
     }
     else {
-        muteLinkItem.innerHTML = mutedIndicator + ' Muted';
+        muteLinkItem.innerHTML = mutedIndicator + 'Muted';
         muteLinkItem.className = 'mutelink disabled';
     }
 
@@ -1578,11 +1578,11 @@ function addRemoteVideoMenu(jid, parentElement) {
         popupmenuElement.setAttribute('style', 'display:none;');
 
         if (isMute) {
-            this.innerHTML = mutedIndicator + ' Muted';
+            this.innerHTML = mutedIndicator + 'Muted';
             this.className = 'mutelink disabled';
         }
         else {
-            this.innerHTML = mutedIndicator + ' Mute';
+            this.innerHTML = mutedIndicator + 'Mute';
             this.className = 'mutelink';
         }
     };
@@ -1590,11 +1590,11 @@ function addRemoteVideoMenu(jid, parentElement) {
     muteMenuItem.appendChild(muteLinkItem);
     popupmenuElement.appendChild(muteMenuItem);
 
-    var ejectIndicator = "<i class='fa fa-eject'></i>";
+    var ejectIndicator = "<span><i class='icon-kick'></i></span>";
 
     var ejectMenuItem = document.createElement('li');
     var ejectLinkItem = document.createElement('a');
-    ejectLinkItem.innerHTML = ejectIndicator + ' Kick out';
+    ejectLinkItem.innerHTML = ejectIndicator + 'Kick out';
     ejectLinkItem.onclick = function(){
         connection.moderate.eject(jid);
         popupmenuElement.setAttribute('style', 'display:none;');
@@ -1610,17 +1610,17 @@ function updateRemoteVideoMenu(jid, isMuted) {
                 + Strophe.getResourceFromJid(jid)
                 + '>li>a.mutelink');
 
-    var mutedIndicator = "<i class='icon-mic-disabled'></i>";
+    var mutedIndicator = "<span><i class='icon-mic-disabled'></i></span>";
 
     if (muteMenuItem.length) {
         var muteLink = muteMenuItem.get(0);
 
         if (isMuted === 'true') {
-            muteLink.innerHTML = mutedIndicator + ' Muted';
+            muteLink.innerHTML = mutedIndicator + 'Muted';
             muteLink.className = 'mutelink disabled';
         }
         else {
-            muteLink.innerHTML = mutedIndicator + ' Mute';
+            muteLink.innerHTML = mutedIndicator + 'Mute';
             muteLink.className = 'mutelink';
         }
     }

@@ -4,7 +4,8 @@ ul.popupmenu {
     position: absolute;
     padding:0;
     margin: 0;
-    bottom: 20px;
+    bottom: 0;
+    margin-bottom: 35px;
     padding-bottom: 5px;
     padding-top: 5px;
     right: 10px;
@@ -42,8 +43,15 @@ ul.popupmenu li a {
     font-size: 9pt;
 }
 
-ul.popupmenu li a i {
-    width: 12px;
+ul.popupmenu li a i.icon-kick {
+    font-size: 8pt;
+}
+
+ul.popupmenu li a span {
+    display: inline-block;
+    width: 20px;
+    height: 16px;
+    text-align: center;
 }
 
 span.remotevideomenu:hover ul.popupmenu {

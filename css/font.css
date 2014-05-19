@@ -24,6 +24,12 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-kick1:before {
+    content: "\e60f";
+}
+.icon-kick:before {
+    content: "\e610";
+}
 .icon-share-desktop:before {
 	content: "\e602";
 }
