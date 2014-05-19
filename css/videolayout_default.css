@@ -52,6 +52,10 @@
     z-index: 3;
 }
 
+#remoteVideos .videocontainer.videoContainerFocused {
+    border: 3px solid #388396;
+}
+
 #localVideoWrapper {
     display:inline-block;
     -webkit-mask-box-image: url(../images/videomask.svg);

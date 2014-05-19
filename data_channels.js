@@ -1,4 +1,4 @@
-/* global connection, Strophe, updateLargeVideo*/
+/* global connection, Strophe, updateLargeVideo, focusedVideoSrc*/
 /**
  * Callback triggered by PeerConnection when new data channel is opened
  * on the bridge.
@@ -30,7 +30,7 @@ function onDataChannel(event)
         console.info("Got Data Channel Message:", msgData, dataChannel);
 
         // Active speaker event
-        if (msgData.indexOf('activeSpeaker') === 0)
+        if (msgData.indexOf('activeSpeaker') === 0 && !focusedVideoSrc)
         {
             // Endpoint ID from the bridge
             var endpointId = msgData.split(":")[1];
