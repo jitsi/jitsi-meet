@@ -57,23 +57,23 @@
             <a class="button" onclick='buttonClick("#video", "icon-camera icon-camera-disabled");toggleVideo();'>
                 <i id="video" title="Start / stop camera" class="icon-camera"></i></a>
             <div class="header_button_separator"></div>
-            <a class="button" onclick="openLockDialog();"><i id="lockIcon" title="Lock/unlock room" class="icon-security"></i></a>
+            <a class="button" onclick="openLockDialog();" title="Lock/unlock room"><i id="lockIcon" class="icon-security"></i></a>
             <div class="header_button_separator"></div>
-            <a class="button" onclick="openLinkDialog();"><i title="Invite others" class="icon-link"></i></a>
+            <a class="button" onclick="openLinkDialog();" title="Invite others"><i class="icon-link"></i></a>
             <div class="header_button_separator"></div>
             <span class="toolbar_span">
-                <a class="button" onclick='Chat.toggleChat();'><i id="chatButton" title="Open chat" class="icon-chat"></i></a>
+                <a class="button" onclick='Chat.toggleChat();' title="Open chat"><i id="chatButton" class="icon-chat"></i></a>
                 <span id="unreadMessages"></span>
             </span>
             <div class="header_button_separator"></div>
-            <a class="button" onclick='Prezi.openPreziDialog();'><i title="Share prezi" class="icon-prezi"></i></a>
+            <a class="button" onclick='Prezi.openPreziDialog();' title="Share Prezi"><i class="icon-prezi"></i></a>
             <span id="etherpadButton">
                 <div class="header_button_separator"></div>
-                <a class="button" onclick='Etherpad.toggleEtherpad(0);'><i title="Open shared document" class="icon-share-doc"></i></a>
+                <a class="button" onclick='Etherpad.toggleEtherpad(0);' title="Open shared document"><i class="icon-share-doc"></i></a>
             </span>
             <div class="header_button_separator"></div>
             <span id="desktopsharing" style="display: none">
-                <a class="button" onclick="toggleScreenSharing();"><i title="Share screen" class="icon-share-desktop"></i></a>
+                <a class="button" onclick="toggleScreenSharing();" title="Share screen"><i class="icon-share-desktop"></i></a>
                 <div class="header_button_separator"></div>
             </span>
             <a class="button" onclick='buttonClick("#fullScreen", "icon-full-screen icon-exit-full-screen");toggleFullScreen();'><i id="fullScreen" title="Enter / Exit Full Screen" class="icon-full-screen"></i></a>
