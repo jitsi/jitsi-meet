@@ -1213,7 +1213,6 @@ function buttonClick(id, classname) {
  * @param messageString the text of the message
  */
 function openMessageDialog(titleString, messageString) {
-    console.log("OPEN MESSAGE DIALOG");
     $.prompt(messageString,
         {
             title: titleString,
@@ -1288,17 +1287,22 @@ function openLockDialog() {
  * Opens the invite link dialog.
  */
 function openLinkDialog() {
-    $.prompt('<input id="inviteLinkRef" type="text" value="' +
-        encodeURI(roomUrl) + '" onclick="this.select();" readonly>',
-        {
-            title: "Share this link with everyone you want to invite",
-            persistent: false,
-            buttons: { "Cancel": false},
-            loaded: function (event) {
-                document.getElementById('inviteLinkRef').select();
-            }
-        }
-    );
+    if (roomUrl == null)
+        openMessageDialog(  "Invite others",
+                            "Your conference is currently being created."
+                            + " Please try again in a few seconds.");
+    else
+        $.prompt('<input id="inviteLinkRef" type="text" value="' +
+                encodeURI(roomUrl) + '" onclick="this.select();" readonly>',
+                {
+                    title: "Share this link with everyone you want to invite",
+                    persistent: false,
+                    buttons: { "Cancel": false},
+                    loaded: function (event) {
+                        document.getElementById('inviteLinkRef').select();
+                    }
+                }
+            );
 }
 
 /**
