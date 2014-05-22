@@ -66,6 +66,10 @@ div.jqi .jqibuttons button{
 div.jqi .jqibuttons button.jqidefaultbutton{
 	color: #489afe;
 }
+
+div.jqi .jqibuttons button:disabled {
+    color: #b6b6b6 !important;
+}
 div.jqi .jqibuttons button:hover,
 div.jqi .jqibuttons button:focus{
 	color: #287ade;

@@ -677,7 +677,8 @@ $(document).bind('presence.muc', function (event, jid, info, pres) {
             showDisplayName('localVideoContainer', info.displayName + ' (me)');
         } else {
             ensurePeerContainerExists(jid);
-            showDisplayName('participant_' + Strophe.getResourceFromJid(jid), info.displayName);
+            showDisplayName('participant_' + Strophe.getResourceFromJid(jid),
+                            info.displayName);
         }
     }
 });
@@ -1287,22 +1288,61 @@ function openLockDialog() {
  * Opens the invite link dialog.
  */
 function openLinkDialog() {
+    var inviteLink;
     if (roomUrl == null)
-        openMessageDialog(  "Invite others",
-                            "Your conference is currently being created."
-                            + " Please try again in a few seconds.");
+        inviteLink = "Your conference is currently being created...";
     else
-        $.prompt('<input id="inviteLinkRef" type="text" value="' +
-                encodeURI(roomUrl) + '" onclick="this.select();" readonly>',
-                {
-                    title: "Share this link with everyone you want to invite",
-                    persistent: false,
-                    buttons: { "Cancel": false},
-                    loaded: function (event) {
+        inviteLink = encodeURI(roomUrl);
+
+    $.prompt('<input id="inviteLinkRef" type="text" value="' +
+            inviteLink + '" onclick="this.select();" readonly>',
+            {
+                title: "Share this link with everyone you want to invite",
+                persistent: false,
+                buttons: { "Invite": true, "Cancel": false},
+                defaultButton: 1,
+                loaded: function (event) {
+                    if (roomUrl)
                         document.getElementById('inviteLinkRef').select();
+                    else
+                        document.getElementById('jqi_state0_buttonInvite')
+                            .disabled = true;
+                },
+                submit: function (e, v, m, f) {
+                    if (v) {
+                        if (roomUrl) {
+                            inviteParticipants();
+                        }
                     }
                 }
-            );
+            }
+        );
+}
+
+/**
+ * Invite participants to conference.
+ */
+function inviteParticipants() {
+    if (roomUrl == null)
+        return;
+
+    var conferenceName = roomUrl.substring(roomUrl.lastIndexOf('/') + 1);
+    var subject = "Invitation to a Jitsi Meet (" + conferenceName + ")";
+    var body = "Hey there, I%27d like to invite you to a Jitsi Meet"
+                + " conference I%27ve just set up.%0D%0A%0D%0A"
+                + "Please click on the following link in order"
+                + " to join the conference.%0D%0A%0D%0A"
+                + roomUrl + "%0D%0A%0D%0A"
+                + "Note that Jitsi Meet is currently only supported by Chromim,"
+                + " Google Chrome and Opera, so you need"
+                + " to be using one of these browsers.%0D%0A%0D%0A"
+                + "Talk to you in a sec!";
+
+    if (window.localStorage.displayname)
+        body += "%0D%0A%0D%0A" + window.localStorage.displayname;
+
+    window.location.href
+        = "mailto:?subject=" + subject + "&body=" + body;
 }
 
 /**
@@ -1448,6 +1488,14 @@ function dockToolbar(isDock) {
  */
 function updateRoomUrl(newRoomUrl) {
     roomUrl = newRoomUrl;
+
+    // If the invite dialog has been already opened we update the information.
+    var inviteLink = document.getElementById('inviteLinkRef');
+    if (inviteLink) {
+        inviteLink.value = roomUrl;
+        inviteLink.select();
+        document.getElementById('jqi_state0_buttonInvite').disabled = false;
+    }
 }
 
 /**
