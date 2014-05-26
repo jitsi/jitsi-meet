@@ -128,7 +128,7 @@ In the user home that will be starting Jitsi Videobridge create `.sip-communicat
 org.jitsi.impl.neomedia.transform.srtp.SRTPCryptoContext.checkReplay=false
 ```
 
-Start the videobrdige with:
+Start the videobridge with:
 ```sh
 ./jvb.sh --host=localhost --domain=jitsi.example.com --port=5347 --secret=YOURSECRET1 &
 ```
