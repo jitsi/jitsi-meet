@@ -179,24 +179,6 @@ SDP.prototype.toJingle = function (elem, thecreator) {
                 bundle.splice(bundle.indexOf(mid), 1);
             }
         }
-        // Sctp
-        if (SDPUtil.find_line(this.media[i], 'a=sctpmap:').length)
-        {
-            for (j = 0; j < mline.fmt.length; j++)
-            {
-                var sctpmap = SDPUtil.find_line(
-                    this.media[i], 'a=sctpmap:' + mline.fmt[j]);
-                if (sctpmap)
-                {
-                    elem.c('sctp',
-                        {
-                            xmlns: 'http://jitsi.org/ns/sctp',
-                            port : SDPUtil.parse_sctpmap(sctpmap)
-                        });
-                    elem.up();
-                }
-            }
-        }
 
         if (SDPUtil.find_line(this.media[i], 'a=rtpmap:').length)
         {
@@ -327,6 +309,26 @@ SDP.prototype.TransportToJingle = function (mediaindex, elem) {
     var self = this;
     elem.c('transport');
 
+    // XEP-0343 DTLS/SCTP
+    if (SDPUtil.find_line(this.media[mediaindex], 'a=sctpmap:').length)
+    {
+        var sctpmap = SDPUtil.find_line(
+            this.media[i], 'a=sctpmap:', self.session);
+        if (sctpmap)
+        {
+            var sctpAttrs = SDPUtil.parse_sctpmap(sctpmap);
+            elem.c('sctpmap',
+                {
+                    xmlns: 'urn:xmpp:jingle:transports:dtls-sctp:1',
+                    number: sctpAttrs[0], /* SCTP port */
+                    protocol: sctpAttrs[1], /* protocol */
+                });
+            // Optional stream count attribute
+            if (sctpAttrs.length > 2)
+                elem.attrs({ streams: sctpAttrs[2]});
+            elem.up();
+        }
+    }
     // XEP-0320
     var fingerprints = SDPUtil.find_lines(this.media[mediaindex], 'a=fingerprint:', this.session);
     fingerprints.forEach(function(line) {
@@ -461,11 +463,8 @@ SDP.prototype.jingle2media = function (content) {
         ssrc = desc.attr('ssrc'),
         self = this,
         tmp;
-    var sctp = null;
-    if (!desc.length)
-    {
-        sctp = content.find('sctp');
-    }
+    var sctp = content.find(
+        '>transport>sctpmap[xmlns="urn:xmpp:jingle:transports:dtls-sctp:1"]');
 
     tmp = { media: desc.attr('media') };
     tmp.port = '1';
@@ -474,14 +473,14 @@ SDP.prototype.jingle2media = function (content) {
         tmp.port = '0';
     }
     if (content.find('>transport>fingerprint').length || desc.find('encryption').length) {
-        if (sctp)
+        if (sctp.length)
             tmp.proto = 'DTLS/SCTP';
         else
             tmp.proto = 'RTP/SAVPF';
     } else {
         tmp.proto = 'RTP/AVPF';
     }
-    if (!sctp)
+    if (!sctp.length)
     {
         tmp.fmt = desc.find('payload-type').map(
             function () { return this.getAttribute('id'); }).get();
@@ -489,12 +488,19 @@ SDP.prototype.jingle2media = function (content) {
     }
     else
     {
-        media += 'm=application 1 DTLS/SCTP ' + sctp.attr('port') + '\r\n';
-        media += 'a=sctpmap:' + sctp.attr('port') + ' webrtc-datachannel\r\n';
+        media += 'm=application 1 DTLS/SCTP ' + sctp.attr('number') + '\r\n';
+        media += 'a=sctpmap:' + sctp.attr('number') +
+            ' ' + sctp.attr('protocol');
+
+        var streamCount = sctp.attr('streams');
+        if (streamCount)
+            media += ' ' + streamCount + '\r\n';
+        else
+            media += '\r\n';
     }
 
     media += 'c=IN IP4 0.0.0.0\r\n';
-    if (!sctp)
+    if (!sctp.length)
         media += 'a=rtcp:1 IN IP4 0.0.0.0\r\n';
     tmp = content.find('>transport[xmlns="urn:xmpp:jingle:transports:ice-udp:1"]');
     if (tmp.length) {

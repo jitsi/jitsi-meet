@@ -93,12 +93,16 @@ SDPUtil = {
     /**
      * Parses SDP line "a=sctpmap:..." and extracts SCTP port from it.
      * @param line eg. "a=sctpmap:5000 webrtc-datachannel"
-     * @returns SCTP port number
+     * @returns [SCTP port number, protocol, streams]
      */
     parse_sctpmap: function (line)
     {
         var parts = line.substring(10).split(' ');
-        return parts[0];// SCTP port
+        var sctpPort = parts[0];
+        var protocol = parts[1];
+        // Stream count is optional
+        var streamCount = parts.length > 2 ? parts[2] : null;
+        return [sctpPort, protocol, streamCount];// SCTP port
     },
     build_rtpmap: function (el) {
         var line = 'a=rtpmap:' + el.getAttribute('id') + ' ' + el.getAttribute('name') + '/' + el.getAttribute('clockrate');

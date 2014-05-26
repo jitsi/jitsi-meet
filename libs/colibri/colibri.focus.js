@@ -423,7 +423,7 @@ ColibriFocus.prototype.createdConference = function (result) {
                                 else
                                 {
                                     var sctpmap = SDPUtil.find_line(media, 'a=sctpmap:' + mline.fmt[0]);
-                                    var sctpPort = SDPUtil.parse_sctpmap(sctpmap);
+                                    var sctpPort = SDPUtil.parse_sctpmap(sctpmap)[0];
                                     elem.c("sctpconnection",
                                         {
                                             initiator: 'true',
@@ -712,7 +712,7 @@ ColibriFocus.prototype.updateChannel = function (remoteSDP, participant) {
             change.c('sctpconnection', {
                 endpoint: $(this.channels[participant][channel]).attr('endpoint'),
                 expire: self.channelExpire,
-                port: SDPUtil.parse_sctpmap(sctpmap)
+                port: SDPUtil.parse_sctpmap(sctpmap)[0]
             });
         }
         // now add transport
