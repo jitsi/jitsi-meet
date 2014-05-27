@@ -1341,8 +1341,7 @@ function inviteParticipants() {
     if (window.localStorage.displayname)
         body += "%0D%0A%0D%0A" + window.localStorage.displayname;
 
-    window.location.href
-        = "mailto:?subject=" + subject + "&body=" + body;
+    window.open("mailto:?subject=" + subject + "&body=" + body, '_blank');
 }
 
 /**
