@@ -169,11 +169,15 @@ var Prezi = (function (my) {
         console.log("presentation added", presUrl);
 
         var presId = getPresentationId(presUrl);
+
         var elementId = 'participant_'
                         + Strophe.getResourceFromJid(jid)
                         + '_' + presId;
 
-        addRemoteVideoContainer(elementId);
+        // We explicitly don't specify the peer jid here, because we don't want
+        // this video to be dealt with as a peer related one (for example we
+        // don't want to show a mute/kick menu for this one, etc.).
+        addRemoteVideoContainer(null, elementId);
         resizeThumbnails();
 
         var controlsEnabled = false;
@@ -322,12 +326,12 @@ var Prezi = (function (my) {
      * Indicates presentation slide change.
      */
     $(document).bind('gotoslide.muc', function (event, jid, presUrl, current) {
-        if (preziPlayer) {
+        if (preziPlayer && preziPlayer.getCurrentStep() != current) {
             preziPlayer.flyToStep(current);
-            // 
+
             var animationStepsArray = preziPlayer.getAnimationCountOnSteps();
-            for (var i = 0; i <= animationStepsArray[current]; i++) {
-                preziPlayer.flyToNextStep();
+            for (var i = 0; i < parseInt(animationStepsArray[current]); i++) {
+                preziPlayer.flyToStep(current, i);
             }
         }
     });

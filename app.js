@@ -858,6 +858,8 @@ function toggleVideo() {
 function toggleAudio() {
     if (!(connection && connection.jingle.localAudio)) {
         preMuted = true;
+        // We still click the button.
+        buttonClick("#mute", "icon-microphone icon-mic-disabled");
         return;
     }
 
@@ -866,7 +868,8 @@ function toggleAudio() {
         var audioEnabled = localAudio.getAudioTracks()[idx].enabled;
 
         localAudio.getAudioTracks()[idx].enabled = !audioEnabled;
-        connection.emuc.addAudioInfoToPresence(audioEnabled); //isMuted is the opposite of audioEnabled
+        // isMuted is the opposite of audioEnabled
+        connection.emuc.addAudioInfoToPresence(audioEnabled);
         connection.emuc.sendPresence();
     }
 
@@ -1569,7 +1572,9 @@ function addRemoteVideoContainer(peerJid, spanId) {
     container.className = 'videocontainer';
     var remotes = document.getElementById('remoteVideos');
 
-    if (focus)
+    // If the peerJid is null then this video span couldn't be directly
+    // associated with a participant (this could happen in the case of prezi).
+    if (focus && peerJid != null)
         addRemoteVideoMenu(peerJid, container);
 
     remotes.appendChild(container);

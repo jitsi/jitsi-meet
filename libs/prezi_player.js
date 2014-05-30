@@ -6,11 +6,13 @@
 
         PreziPlayer.API_VERSION = 1;
         PreziPlayer.CURRENT_STEP = 'currentStep';
+        PreziPlayer.CURRENT_ANIMATION_STEP = 'currentAnimationStep';
         PreziPlayer.CURRENT_OBJECT = 'currentObject';
         PreziPlayer.STATUS_LOADING = 'loading';
         PreziPlayer.STATUS_READY = 'ready';
         PreziPlayer.STATUS_CONTENT_READY = 'contentready';
         PreziPlayer.EVENT_CURRENT_STEP = "currentStepChange";
+        PreziPlayer.EVENT_CURRENT_ANIMATION_STEP = "currentAnimationStepChange";
         PreziPlayer.EVENT_CURRENT_OBJECT = "currentObjectChange";
         PreziPlayer.EVENT_STATUS = "statusChange";
         PreziPlayer.EVENT_PLAYING = "isAutoPlayingChange";
@@ -61,6 +63,7 @@
             this.options = options;
             this.values = {'status': PreziPlayer.STATUS_LOADING};
             this.values[PreziPlayer.CURRENT_STEP] = 0;
+            this.values[PreziPlayer.CURRENT_ANIMATION_STEP] = 0;
             this.values[PreziPlayer.CURRENT_OBJECT] = null;
             this.callbacks = [];
             this.id = id;
@@ -84,14 +87,16 @@
             this.iframe.width = options.width || 640;
             this.iframe.height = options.height || 480;
             this.embedTo.innerHTML = '';
+            // JITSI: IN CASE SOMETHING GOES WRONG.
             try {
                 this.embedTo.appendChild(this.iframe);
             }
             catch (err) {
                 console.log("CATCH ERROR");
             }
-                          
 
+            // JITSI: Increase interval from 200 to 500, which fixes prezi
+            // crashes for us.
             this.initPollInterval = setInterval(function(){
                 _this.sendMessage({'action': 'init'});
             }, 500);
@@ -152,7 +157,26 @@
         };
 
         PreziPlayer.prototype.toStep = /* toStep is DEPRECATED */
-        PreziPlayer.prototype.flyToStep = function(step) {
+        PreziPlayer.prototype.flyToStep = function(step, animation_step) {
+            var obj = this;
+            // check animation_step
+            if (animation_step > 0 &&
+                obj.values.animationCountOnSteps &&
+                obj.values.animationCountOnSteps[step] <= animation_step) {
+                animation_step = obj.values.animationCountOnSteps[step];
+            }
+            // jump to animation steps by calling flyToNextStep()
+            function doAnimationSteps() {
+                if (obj.values.isMoving == true) {
+                    setTimeout(doAnimationSteps, 100); // wait until the flight ends
+                    return;
+                }
+                while (animation_step-- > 0) {
+                    obj.flyToNextStep(); // do the animation steps
+                }
+            }
+            setTimeout(doAnimationSteps, 200); // 200ms is the internal "reporting" time
+            // jump to the step
             return this.sendMessage({
                 'action': 'present',
                 'data': ['moveToStep', step]
@@ -192,6 +216,10 @@
             return this.values.currentStep;
         };
 
+        PreziPlayer.prototype.getCurrentAnimationStep = function() {
+            return this.values.currentAnimationStep;
+        };
+
         PreziPlayer.prototype.getCurrentObject = function() {
             return this.values.currentObject;
         };
@@ -206,6 +234,10 @@
 
         PreziPlayer.prototype.getStepCount = function() {
             return this.values.stepCount;
+        };
+
+        PreziPlayer.prototype.getAnimationCountOnSteps = function() {
+            return this.values.animationCountOnSteps;
         };
 
         PreziPlayer.prototype.getTitle = function() {

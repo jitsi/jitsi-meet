@@ -61,6 +61,7 @@ Strophe.addConnectionPlugin('emuc', {
         {
             var url = presentation.attr('url');
             var current = presentation.find('>current').text();
+
             console.log('presentation info received from', from, url);
 
             if (this.preziMap[from] == null) {
