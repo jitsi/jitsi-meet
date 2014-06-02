@@ -276,13 +276,9 @@ $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
     var remotes = document.getElementById('remoteVideos');
 
     if (data.peerjid) {
+        ensurePeerContainerExists(data.peerjid);
         container  = document.getElementById(
                 'participant_' + Strophe.getResourceFromJid(data.peerjid));
-        if (!container) {
-            console.error('no container for', data.peerjid);
-        } else {
-            //console.log('found container for', data.peerjid);
-        }
     } else {
         if (data.stream.id !== 'mixedmslabel') {
             console.error('can not associate stream', data.stream.id, 'with a participant');
@@ -330,7 +326,7 @@ $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
         var audioCount = $('#' + container.id + '>audio').length;
         var videoCount = $('#' + container.id + '>video').length;
         if (!audioCount && !videoCount) {
-            console.log("Remove whole user");
+            console.log("Remove whole user", container.id);
             // Remove whole container
             container.remove();
             Util.playSoundNotification('userLeft');
@@ -1526,8 +1522,11 @@ function showFocusIndicator() {
     }
     else if (Object.keys(connection.jingle.sessions).length > 0) {
         // If we're only a participant the focus will be the only session we have.
-        var session = connection.jingle.sessions[Object.keys(connection.jingle.sessions)[0]];
-        var focusId = 'participant_' + Strophe.getResourceFromJid(session.peerjid);
+        var session
+            = connection.jingle.sessions
+                [Object.keys(connection.jingle.sessions)[0]];
+        var focusId
+            = 'participant_' + Strophe.getResourceFromJid(session.peerjid);
         var focusContainer = document.getElementById(focusId);
         if (!focusContainer) {
             console.error("No focus container!");
@@ -1554,6 +1553,11 @@ function ensurePeerContainerExists(peerJid) {
     var videoSpanId = 'participant_' + peerResource;
 
     if ($('#' + videoSpanId).length > 0) {
+        // If there's been a focus change, make sure we add focus related
+        // interface!!
+        if (focus && $('#remote_popupmenu_' + peerResource).length <= 0)
+            addRemoteVideoMenu( peerJid,
+                                document.getElementById(videoSpanId));
         return;
     }
 
