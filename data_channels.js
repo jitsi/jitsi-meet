@@ -12,11 +12,11 @@ function onDataChannel(event)
     {
         console.info("Data channel opened by the bridge !!!", dataChannel);
 
+        // Code sample for sending string and/or binary data
         // Sends String message to the bridge
-        dataChannel.send("Hello bridge!");
-
+        //dataChannel.send("Hello bridge!");
         // Sends 12 bytes binary message to the bridge
-        dataChannel.send(new ArrayBuffer(12));
+        //dataChannel.send(new ArrayBuffer(12));
     };
 
     dataChannel.onerror = function (error)
@@ -38,15 +38,8 @@ function onDataChannel(event)
 
             var container  = document.getElementById(
                 'participant_' + endpointId);
-            // Check if local video
-            if (!container)
-            {
-                if (endpointId ===
-                        Strophe.getResourceFromJid(connection.emuc.myroomjid))
-                {
-                    container = document.getElementById('localVideoContainer');
-                }
-            }
+            // Local video will not have container found, but that's ok
+            // since we don't want to switch to local video
             if (container)
             {
                 var video = container.getElementsByTagName("video");
