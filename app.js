@@ -8,6 +8,11 @@ var nickname = null;
 var sharedKey = '';
 var roomUrl = null;
 var ssrc2jid = {};
+/**
+ * The stats collector that process stats data and triggers updates to app.js.
+ * @type {StatsCollector}
+ */
+var statsCollector = null;
 
 /**
  * Indicates whether ssrc is camera video or desktop stream.
@@ -464,11 +469,45 @@ function muteVideo(pc, unmute) {
     );
 }
 
+/**
+ * Callback called by {@link StatsCollector} in intervals supplied to it's
+ * constructor.
+ * @param statsCollector {@link StatsCollector} source of the event.
+ */
+function statsUpdated(statsCollector)
+{
+    Object.keys(statsCollector.jid2stats).forEach(function (jid)
+    {
+        var peerStats = statsCollector.jid2stats[jid];
+        Object.keys(peerStats.ssrc2AudioLevel).forEach(function (ssrc)
+        {
+            console.info(jid +  " audio level: " +
+                peerStats.ssrc2AudioLevel[ssrc] + " of ssrc: " + ssrc);
+        });
+    });
+}
+
+/**
+ * Starts the {@link StatsCollector} if the feature is enabled in config.js.
+ */
+function startRtpStatsCollector()
+{
+    if (config.enableRtpStats)
+    {
+        statsCollector = new StatsCollector(
+            getConferenceHandler().peerconnection, 200, statsUpdated);
+
+        statsCollector.start();
+    }
+}
+
 $(document).bind('callincoming.jingle', function (event, sid) {
     var sess = connection.jingle.sessions[sid];
 
     // TODO: do we check activecall == null?
     activecall = sess;
+
+    startRtpStatsCollector();
 
     // TODO: check affiliation and/or role
     console.log('emuc data for', sess.peerjid, connection.emuc.members[sess.peerjid]);
@@ -476,6 +515,11 @@ $(document).bind('callincoming.jingle', function (event, sid) {
     sess.sendAnswer();
     sess.accept();
 
+});
+
+$(document).bind('conferenceCreated.jingle', function (event, focus)
+{
+    startRtpStatsCollector();
 });
 
 $(document).bind('callactive.jingle', function (event, videoelem, sid) {
@@ -1164,6 +1208,11 @@ function disposeConference() {
             handler.peerconnection.removeStream(connection.jingle.localVideo);
         }
         handler.peerconnection.close();
+    }
+    if (statsCollector)
+    {
+        statsCollector.stop();
+        statsCollector = null;
     }
     focus = null;
     activecall = null;

@@ -344,6 +344,10 @@ ColibriFocus.prototype.createdConference = function (result) {
                             for (var i = 0; i < numparticipants; i++) {
                                 self.initiate(self.peers[i], true);
                             }
+
+                            // Notify we've created the conference
+                            $(document).trigger(
+                                'conferenceCreated.jingle', self);
                         },
                         function (error) {
                             console.warn('setLocalDescription failed.', error);
