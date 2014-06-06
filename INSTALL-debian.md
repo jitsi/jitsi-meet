@@ -1,4 +1,4 @@
-# Server Installation for Jitsi Meet
+# Debian Installation for Jitsi Meet with full IPv6 support, rfc5766-turn-server and encrypted XMPP signaling
 
 This describes configuring a server `jitsi.example.com`.  You will need to
 change references to that to match your host, and generate some passwords for
@@ -60,6 +60,13 @@ Generate certs for the domain:
 ```sh
 prosodyctl cert generate jitsi.example.com
 ```
+
+If you want to make a certificate request for a public CA you can issue the following command:
+```sh
+prosodyctl cert request jitsi.example.com
+```
+The request file will be `/var/lib/prosody/jitsi.example.com.req`
+
 
 Restart prosody XMPP server with the new config
 ```sh
@@ -220,7 +227,7 @@ aptitude update
 aptitude install rfc5766-turn-server
 ```
 
-In /etc/turnserver.conf uncomment/add the following:
+In `/etc/turnserver.conf` uncomment/add the following:
 ```
 lt-cred-mech
 use-auth-secret
@@ -230,7 +237,7 @@ cert=/var/lib/prosody/jitsi.example.com.crt
 pkey=/var/lib/prosody/jitsi.example.com.key
 ```
 
-In /etc/default/rfc5766-turn-server uncomment this line:
+In `/etc/default/rfc5766-turn-server` uncomment this line:
 ```
 TURNSERVER_ENABLED=1
 ```
