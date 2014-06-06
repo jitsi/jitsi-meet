@@ -222,7 +222,7 @@ invoke-rc.d nginx restart
 
 ## Install [rfc5766-turn-server](https://code.google.com/p/rfc5766-turn-server/)
 ```sh
-echo "deb http://ftp.no.debian.org/debian/ stable main contrib non-free" >> /etc/apt/sources.list.d/jessie.list
+echo "deb http://ftp.no.debian.org/debian/ jessie main contrib non-free" >> /etc/apt/sources.list.d/jessie.list
 aptitude update
 aptitude install rfc5766-turn-server
 ```
@@ -277,4 +277,10 @@ org.jitsi.videobridge.NAT_HARVESTER_PUBLIC_ADDRESS=<Public.IP.Address>
 ```
 
 # Hold your first conference
-You are now all set and ready to have your first meet by going to http://jitsi.example.com
+You are now all set and ready to have your first meet by going to https://jitsi.example.com
+
+# To enable screen sharing go to:
+```
+chrome://flags/#enable-usermedia-screen-capture
+```
+Click Enable and restart your browser
