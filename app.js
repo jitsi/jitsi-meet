@@ -268,7 +268,7 @@ $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
             return line.indexOf('msid:' + data.stream.label) !== -1;
         });
         if (ssrclines.length) {
-            thessrc = ssrclines[0].substring(5).split(' ')[0];
+            thessrc = ssrclines[0].substring(7).split(' ')[0];
             // ok to overwrite the one from focus? might save work in colibri.js
             console.log('associated jid', ssrc2jid[thessrc], data.peerjid);
             if (ssrc2jid[thessrc]) {
