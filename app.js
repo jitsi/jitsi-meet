@@ -265,10 +265,10 @@ $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
     if (data.stream.id.indexOf('mixedmslabel') === -1) {
         var ssrclines = SDPUtil.find_lines(sess.peerconnection.remoteDescription.sdp, 'a=ssrc');
         ssrclines = ssrclines.filter(function (line) {
-            return line.indexOf('mslabel:' + data.stream.label) !== -1;
+            return line.indexOf('msid:' + data.stream.label) !== -1;
         });
         if (ssrclines.length) {
-            thessrc = ssrclines[0].substring(7).split(' ')[0];
+            thessrc = ssrclines[0].substring(5).split(' ')[0];
             // ok to overwrite the one from focus? might save work in colibri.js
             console.log('associated jid', ssrc2jid[thessrc], data.peerjid);
             if (ssrc2jid[thessrc]) {
