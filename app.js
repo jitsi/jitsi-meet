@@ -265,7 +265,7 @@ $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
     if (data.stream.id.indexOf('mixedmslabel') === -1) {
         var ssrclines = SDPUtil.find_lines(sess.peerconnection.remoteDescription.sdp, 'a=ssrc');
         ssrclines = ssrclines.filter(function (line) {
-            return line.indexOf('msid:' + data.stream.label) !== -1;
+            return line.indexOf('msid:' + data.stream.id) !== -1;
         });
         if (ssrclines.length) {
             thessrc = ssrclines[0].substring(7).split(' ')[0];
