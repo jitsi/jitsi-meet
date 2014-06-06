@@ -279,7 +279,7 @@ org.jitsi.videobridge.NAT_HARVESTER_PUBLIC_ADDRESS=<Public.IP.Address>
 # Hold your first conference
 You are now all set and ready to have your first meet by going to https://jitsi.example.com
 
-# To enable screen sharing go to:
+To enable screen sharing go to:
 ```
 chrome://flags/#enable-usermedia-screen-capture
 ```
