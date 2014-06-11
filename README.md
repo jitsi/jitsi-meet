@@ -14,6 +14,9 @@ You can find information on how to deploy Jitsi Meet in the [installation instru
 
 You may also find it helpful to have a look at our sample [config files](https://github.com/jitsi/jitsi-meet/tree/master/doc/example-config-files/) 
 
+## Discuss
+Please use the [Jitsi dev mailing list](http://lists.jitsi.org/pipermail/dev/) to discuss feature requests before opening an issue on github. 
+
 ## Acknowledgements
 
 Jitsi Meet started out as a sample conferencing application using Jitsi Videobridge. It was originally developed by Philipp Hancke who then contributed it to the community where development continues with joint forces! 
