@@ -32,7 +32,7 @@ function TraceablePeerConnection(ice_config, constraints) {
     this.switchstreams = false;
 
     // override as desired
-    this.trace = function(what, info) {
+    this.trace = function (what, info) {
         //console.warn('WTRACE', what, info);
         self.updateLog.push({
             time: new Date(),
@@ -144,8 +144,8 @@ TraceablePeerConnection.prototype.removeStream = function (stream) {
 
 TraceablePeerConnection.prototype.createDataChannel = function (label, opts) {
     this.trace('createDataChannel', label, opts);
-    this.peerconnection.createDataChannel(label, opts);
-}
+    return this.peerconnection.createDataChannel(label, opts);
+};
 
 TraceablePeerConnection.prototype.setLocalDescription = function (description, successCallback, failureCallback) {
     var self = this;

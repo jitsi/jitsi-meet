@@ -20,6 +20,11 @@ var statsCollector = null;
  */
 var ssrc2videoType = {};
 var videoSrcToSsrc = {};
+/**
+ * Currently focused video "src"(displayed in large video).
+ * @type {String}
+ */
+var focusedVideoSrc = null;
 var mutedAudios = {};
 
 var localVideoSrc = null;
@@ -358,7 +363,65 @@ $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
     }
 });
 
+/**
+ * Returns the JID of the user to whom given <tt>videoSrc</tt> belongs.
+ * @param videoSrc the video "src" identifier.
+ * @returns {null | String} the JID of the user to whom given <tt>videoSrc</tt>
+ *                   belongs.
+ */
+function getJidFromVideoSrc(videoSrc)
+{
+    if (videoSrc === localVideoSrc)
+        return connection.emuc.myroomjid;
+
+    var ssrc = videoSrcToSsrc[videoSrc];
+    if (!ssrc)
+    {
+        return null;
+    }
+    return ssrc2jid[ssrc];
+}
+
+/**
+ * Gets the selector of video thumbnail container for the user identified by
+ * given <tt>userJid</tt>
+ * @param userJid user's Jid for whom we want to get the video container.
+ */
+function getParticipantContainer(userJid)
+{
+    if (!userJid)
+        return null;
+
+    if (userJid === connection.emuc.myroomjid)
+        return $("#localVideoContainer");
+    else
+        return $("#participant_" + Strophe.getResourceFromJid(userJid));
+}
+
 function handleVideoThumbClicked(videoSrc) {
+    // Restore style for previously focused video
+    var oldContainer =
+        getParticipantContainer(
+            getJidFromVideoSrc(focusedVideoSrc));
+    if (oldContainer)
+        oldContainer.removeClass("videoContainerFocused");
+
+    // Unlock
+    if (focusedVideoSrc === videoSrc)
+    {
+        focusedVideoSrc = null;
+        return;
+    }
+
+    // Lock new video
+    focusedVideoSrc = videoSrc;
+
+    var userJid = getJidFromVideoSrc(videoSrc);
+    if (userJid)
+    {
+        var container = getParticipantContainer(userJid);
+        container.addClass("videoContainerFocused");
+    }
 
     $(document).trigger("video.selected", [false]);
 
@@ -509,6 +572,12 @@ $(document).bind('callincoming.jingle', function (event, sid) {
 
     startRtpStatsCollector();
 
+    // Bind data channel listener in case we're a regular participant
+    if (config.openSctp)
+    {
+        bindDataChannelListener(sess.peerconnection);
+    }
+
     // TODO: check affiliation and/or role
     console.log('emuc data for', sess.peerjid, connection.emuc.members[sess.peerjid]);
     sess.usedrip = true; // not-so-naive trickle ice
@@ -520,6 +589,12 @@ $(document).bind('callincoming.jingle', function (event, sid) {
 $(document).bind('conferenceCreated.jingle', function (event, focus)
 {
     startRtpStatsCollector();
+
+    // Bind data channel listener in case we're the focus
+    if (config.openSctp)
+    {
+        bindDataChannelListener(focus.peerconnection);
+    }
 });
 
 $(document).bind('callactive.jingle', function (event, videoelem, sid) {
@@ -528,7 +603,8 @@ $(document).bind('callactive.jingle', function (event, videoelem, sid) {
         videoelem.show();
         resizeThumbnails();
 
-        updateLargeVideo(videoelem.attr('src'), 1);
+        if (!focusedVideoSrc)
+            updateLargeVideo(videoelem.attr('src'), 1);
 
         showFocusIndicator();
     }
@@ -551,7 +627,7 @@ $(document).bind('setLocalDescription.jingle', function (event, sid) {
     var directions = {};
     var localSDP = new SDP(sess.peerconnection.localDescription.sdp);
     localSDP.media.forEach(function (media) {
-        var type = SDPUtil.parse_mline(media.split('\r\n')[0]).media;
+        var type = SDPUtil.parse_mid(SDPUtil.find_line(media, 'a=mid:'));
 
         if (SDPUtil.find_line(media, 'a=ssrc:')) {
             // assumes a single local ssrc
@@ -646,6 +722,16 @@ $(document).bind('left.muc', function (event, jid) {
             resizeThumbnails();
         }
     }, 10);
+
+    // Unlock large video
+    if (focusedVideoSrc)
+    {
+        if (getJidFromVideoSrc(focusedVideoSrc) === jid)
+        {
+            console.info("Focused video owner has left the conference");
+            focusedVideoSrc = null;
+        }
+    }
 
     connection.jingle.terminateByJid(jid);
 
