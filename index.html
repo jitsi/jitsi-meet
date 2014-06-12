@@ -35,6 +35,8 @@
     <script src="moderatemuc.js?v=1"></script><!-- moderator plugin -->
     <script src="analytics.js?v=1"></script><!-- google analytics plugin -->
     <script src="rtp_stats.js?v=1"></script><!-- RTP stats processing -->
+    <script src="videolayout.js?v=1"></script><!-- video ui -->
+    <script src="toolbar.js?v=1"></script><!-- toolbar ui -->
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
     <link rel="stylesheet" href="css/font.css"/>
     <link rel="stylesheet" type="text/css" media="screen" href="css/main.css?v=20"/>
@@ -78,7 +80,7 @@
                 <a class="button" onclick="toggleScreenSharing();" title="Share screen"><i class="icon-share-desktop"></i></a>
                 <div class="header_button_separator"></div>
             </span>
-            <a class="button" onclick='buttonClick("#fullScreen", "icon-full-screen icon-exit-full-screen");toggleFullScreen();'><i id="fullScreen" title="Enter / Exit Full Screen" class="icon-full-screen"></i></a>
+            <a class="button" onclick='buttonClick("#fullScreen", "icon-full-screen icon-exit-full-screen");Toolbar.toggleFullScreen();'><i id="fullScreen" title="Enter / Exit Full Screen" class="icon-full-screen"></i></a>
         </span>
     </div>
     <div id="settings">
@@ -91,7 +93,7 @@
       </form>
     </div>
     <div id="reloadPresentation"><a onclick='Prezi.reloadPresentation();'><i title="Reload Prezi" class="fa fa-repeat fa-lg"></i></a></div>
-    <div id="videospace" onmousemove="showToolbar();">
+    <div id="videospace" onmousemove="Toolbar.showToolbar();">
         <div id="largeVideoContainer" class="videocontainer">
             <div id="presentation"></div>
             <div id="etherpad"></div>

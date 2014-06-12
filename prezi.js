@@ -19,10 +19,10 @@ var Prezi = (function (my) {
             $(document).trigger("video.selected", [true]);
 
             $('#largeVideo').fadeOut(300, function () {
-                setLargeVideoVisible(false);
+                VideoLayout.setLargeVideoVisible(false);
                 $('#presentation>iframe').fadeIn(300, function() {
                     $('#presentation>iframe').css({opacity:'1'});
-                    dockToolbar(true);
+                    Toolbar.dockToolbar(true);
                 });
             });
         }
@@ -32,8 +32,8 @@ var Prezi = (function (my) {
                     $('#presentation>iframe').css({opacity:'0'});
                     $('#reloadPresentation').css({display:'none'});
                     $('#largeVideo').fadeIn(300, function() {
-                        setLargeVideoVisible(true);
-                        dockToolbar(false);
+                        VideoLayout.setLargeVideoVisible(true);
+                        Toolbar.dockToolbar(false);
                     });
                 });
             }
@@ -177,8 +177,8 @@ var Prezi = (function (my) {
         // We explicitly don't specify the peer jid here, because we don't want
         // this video to be dealt with as a peer related one (for example we
         // don't want to show a mute/kick menu for this one, etc.).
-        addRemoteVideoContainer(null, elementId);
-        resizeThumbnails();
+        VideoLayout.addRemoteVideoContainer(null, elementId);
+        VideoLayout.resizeThumbnails();
 
         var controlsEnabled = false;
         if (jid === connection.emuc.myroomjid)

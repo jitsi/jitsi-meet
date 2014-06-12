@@ -38,14 +38,17 @@ function onDataChannel(event)
 
             var container  = document.getElementById(
                 'participant_' + endpointId);
+
             // Local video will not have container found, but that's ok
             // since we don't want to switch to local video
+
             if (container)
             {
                 var video = container.getElementsByTagName("video");
                 if (video.length)
                 {
-                    updateLargeVideo(video[0].src);
+                    VideoLayout.updateLargeVideo(video[0].src);
+                    VideoLayout.enableActiveSpeaker(endpointId, true);
                 }
             }
         }

@@ -34,7 +34,8 @@
     border: 2px solid #212425;
 }
 
-#remoteVideos .videocontainer:hover {
+#remoteVideos .videocontainer:hover,
+#remoteVideos .videocontainer.videoContainerFocused {
     width: 100%;
     height: 100%;
     content:"";
@@ -52,10 +53,6 @@
     z-index: 3;
 }
 
-#remoteVideos .videocontainer.videoContainerFocused {
-    border: 3px solid #388396;
-}
-
 #localVideoWrapper {
     display:inline-block;
     -webkit-mask-box-image: url(../images/videomask.svg);
@@ -63,7 +60,8 @@
     border: 0px !important;
 }
 
-#remoteVideos .videocontainer>video {
+#remoteVideos .videocontainer>video,
+#remoteVideos .videocontainer>canvas {
     border-radius:4px;
 }
 
@@ -88,7 +86,8 @@
 #etherpad,
 #localVideoWrapper>video,
 #localVideoWrapper,
-.videocontainer>video {
+.videocontainer>video,
+.videocontainer>canvas {
     position: absolute;
     left: 0;
     top: 0;
@@ -137,25 +136,22 @@
 
 .videocontainer>span.displayname,
 .videocontainer>input.displayname {
-    display: inline-block;
+    display: none;
     position: absolute;
-    background: -webkit-linear-gradient(left, rgba(0,0,0,.7), rgba(0,0,0,0));
     color: #FFFFFF;
-    bottom: 0;
-    left: 0;
-    padding: 3px 5px;
-    width: 100%;
-    height: auto;
-    max-height: 18px;
-    font-size: 9pt;
-    text-align: left;
+    background: rgba(0,0,0,.7);
+    text-align: center;
     text-overflow: ellipsis;
+    width: 70%;
+    height: 20%;
+    left: 15%;
+    top: 40%;
+    padding: 5px;
+    font-size: 11pt;
     overflow: hidden;
     white-space: nowrap;
     z-index: 2;
-    box-sizing: border-box;
-    border-bottom-left-radius:4px;
-    border-bottom-right-radius:4px;
+    border-radius:20px;
 }
 
 #localVideoContainer>span.displayname:hover {
@@ -164,6 +160,10 @@
 
 .videocontainer>span.displayname {
     pointer-events: none;
+}
+
+.videocontainer>input.displayname {
+    height: auto;
 }
 
 #localDisplayName {

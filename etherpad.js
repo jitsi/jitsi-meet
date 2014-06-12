@@ -45,8 +45,8 @@ var Etherpad = (function (my) {
                 if (Prezi.isPresentationVisible()) {
                     largeVideo.css({opacity: '0'});
                 } else {
-                    setLargeVideoVisible(false);
-                    dockToolbar(true);
+                    VideoLayout.setLargeVideoVisible(false);
+                    Toolbar.dockToolbar(true);
                 }
 
                 $('#etherpad>iframe').fadeIn(300, function () {
@@ -63,8 +63,8 @@ var Etherpad = (function (my) {
                 document.body.style.background = 'black';
                 if (!isPresentation) {
                     $('#largeVideo').fadeIn(300, function () {
-                        setLargeVideoVisible(true);
-                        dockToolbar(false);
+                        VideoLayout.setLargeVideoVisible(true);
+                        Toolbar.dockToolbar(false);
                     });
                 }
             });

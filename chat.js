@@ -242,7 +242,7 @@ var Chat = (function (my) {
         if (unreadMessages) {
             unreadMsgElement.innerHTML = unreadMessages.toString();
 
-            showToolbar();
+            Toolbar.showToolbar();
 
             var chatButtonElement
                 = document.getElementById('chatButton').parentNode;
