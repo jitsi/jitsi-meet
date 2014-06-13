@@ -532,10 +532,14 @@ var VideoLayout = (function (my) {
         // If there's an active speaker (automatically) selected we have to
         // disable this state and update the current active speaker.
         if (isEnable) {
-            if (currentActiveSpeaker)
-                VideoLayout.enableActiveSpeaker(currentActiveSpeaker, false);
-            else
-                currentActiveSpeaker = resourceJid;
+            if (currentActiveSpeaker) {
+                var oldSpeaker = currentActiveSpeaker;
+                setTimeout(function () {
+                    VideoLayout.enableActiveSpeaker(oldSpeaker, false);
+                    }, 200);
+            }
+
+            currentActiveSpeaker = resourceJid;
         }
         else if (resourceJid === currentActiveSpeaker)
             currentActiveSpeaker = null;
@@ -565,7 +569,7 @@ var VideoLayout = (function (my) {
         }
         else {
             activeSpeakerCanvas = activeSpeakerCanvas.get(0);
-        } 
+        }
 
         if (videoElement && videoElement.length > 0) {
             var video = document.getElementById(videoElement.get(0).id);
