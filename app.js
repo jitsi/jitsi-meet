@@ -1114,3 +1114,13 @@ function setView(viewName) {
 //        document.getElementById('videolayout_fullscreen').disabled  = true;
 //    }
 }
+
+$(document).bind('fatalError.jingle',
+    function (event, session, error)
+    {
+        sessionTerminated = true;
+        connection.emuc.doLeave();
+        openMessageDialog(  "Sorry",
+            "Your browser version is too old. Please update and try again...");
+    }
+);
