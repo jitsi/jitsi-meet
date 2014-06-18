@@ -410,6 +410,9 @@ var VideoLayout = (function (my) {
             if (!indicatorSpan || indicatorSpan.length === 0) {
                 indicatorSpan = document.createElement('span');
                 indicatorSpan.className = 'focusindicator';
+                Util.setTooltip(indicatorSpan,
+                                "The owner of<br/>this conference",
+                                "top");
                 focusContainer.appendChild(indicatorSpan);
 
                 createFocusIndicatorElement(indicatorSpan);
@@ -440,7 +443,9 @@ var VideoLayout = (function (my) {
 
             var mutedIndicator = document.createElement('i');
             mutedIndicator.className = 'icon-camera-disabled';
-            mutedIndicator.title = "Participant has stopped the camera.";
+            Util.setTooltip(mutedIndicator,
+                    "Participant has<br/>stopped the camera.",
+                    "top");
             videoMutedSpan.appendChild(mutedIndicator);
         }
     };
@@ -461,6 +466,10 @@ var VideoLayout = (function (my) {
 
             audioMutedSpan = document.createElement('span');
             audioMutedSpan.className = 'audioMuted';
+            Util.setTooltip(audioMutedSpan,
+                    "Participant is muted",
+                    "top");
+
             if (videoMutedSpan) {
                 audioMutedSpan.right = '30px';
             }
@@ -468,7 +477,6 @@ var VideoLayout = (function (my) {
 
             var mutedIndicator = document.createElement('i');
             mutedIndicator.className = 'icon-mic-disabled';
-            mutedIndicator.title = "Participant is muted";
             audioMutedSpan.appendChild(mutedIndicator);
         }
     };
@@ -705,6 +713,9 @@ var VideoLayout = (function (my) {
     function createEditDisplayNameButton() {
         var editButton = document.createElement('a');
         editButton.className = 'displayname';
+        Util.setTooltip(editButton,
+                        'Click to edit your<br/>display name',
+                        "top");
         editButton.innerHTML = '<i class="fa fa-pencil"></i>';
 
         return editButton;
@@ -719,7 +730,6 @@ var VideoLayout = (function (my) {
     function createFocusIndicatorElement(parentElement) {
         var focusIndicator = document.createElement('i');
         focusIndicator.className = 'fa fa-star';
-        focusIndicator.title = "The owner of this conference";
         parentElement.appendChild(focusIndicator);
     }
 

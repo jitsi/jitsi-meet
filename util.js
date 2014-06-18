@@ -57,7 +57,7 @@ var Util = (function (my) {
         return window.innerWidth - chatspaceWidth;
     };
 
-    my.imageToGrayScale = function(canvas) {
+    my.imageToGrayScale = function (canvas) {
         var context = canvas.getContext('2d');
         var imgData = context.getImageData(0, 0, canvas.width, canvas.height);
         var pixels  = imgData.data;
@@ -72,6 +72,13 @@ var Util = (function (my) {
         }
         // redraw the image in black & white
         context.putImageData(imgData, 0, 0);
+    };
+
+    my.setTooltip = function (element, tooltipText, position) {
+        element.setAttribute("data-content", tooltipText);
+        element.setAttribute("data-toggle", "popover");
+        element.setAttribute("data-placement", position);
+        element.setAttribute("data-html", true);
     };
 
     return my;

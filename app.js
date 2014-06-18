@@ -889,6 +889,9 @@ function getCameraVideoSize(videoWidth,
 $(document).ready(function () {
     Chat.init();
 
+    $('body').popover({ selector: '[data-toggle=popover]',
+                        trigger: 'click hover'});
+
     // Set the defaults for prompt dialogs.
     jQuery.prompt.setDefaults({persistent: false});
 

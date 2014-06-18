@@ -122,6 +122,7 @@
     text-shadow: 0px 1px 0px rgba(255,255,255,.3), 0px -1px 0px rgba(0,0,0,.7);
     border: 0px;
     z-index: 2;
+    text-align: center;
 }
 
 #remoteVideos .nick {
@@ -194,6 +195,7 @@
     text-shadow: 0px 1px 0px rgba(255,255,255,.3), 0px -1px 0px rgba(0,0,0,.7);
     border: 0px;
     z-index: 3;
+    text-align: center;
 }
 
 .videocontainer>span.videoMuted {
@@ -245,7 +247,6 @@
     margin-right:auto;
     height:39px;
     width:auto;
-    overflow: hidden;
     background: linear-gradient(to bottom, rgba(103,103,103,.65) , rgba(0,0,0,.65));
     -webkit-box-shadow: 0 0 2px #000000, 0 0 10px #000000;
     border-bottom-left-radius: 12px;
