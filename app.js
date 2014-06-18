@@ -244,7 +244,9 @@ $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
                 'participant_' + Strophe.getResourceFromJid(data.peerjid));
     } else {
         if (data.stream.id !== 'mixedmslabel') {
-            console.error('can not associate stream', data.stream.id, 'with a participant');
+            console.error(  'can not associate stream',
+                            data.stream.id,
+                            'with a participant');
             // We don't want to add it here since it will cause troubles
             return;
         }
@@ -304,14 +306,22 @@ $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
         VideoLayout.handleVideoThumbClicked(vid.src);
     });
     // Add hover handler
-    sel.hover(
-            function() {
-                VideoLayout.showDisplayName(container.id, true);
-            },
-            function() {
-                if (focusedVideoSrc !== vid.src)
-                    VideoLayout.showDisplayName(container.id, false);
+    $(container).hover(
+        function() {
+            VideoLayout.showDisplayName(container.id, true);
+        },
+        function() {
+            var videoSrc = null;
+            if ($('#' + container.id + '>video')
+                    && $('#' + container.id + '>video').length > 0) {
+                videoSrc = $('#' + container.id + '>video').get(0).src;
             }
+
+            // If the video has been "pinned" by the user we want to keep the
+            // display name on place.
+            if (focusedVideoSrc !== videoSrc)
+                VideoLayout.showDisplayName(container.id, false);
+        }
     );
 
     // an attempt to work around https://github.com/jitsi/jitmeet/issues/32

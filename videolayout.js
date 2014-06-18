@@ -552,54 +552,21 @@ var VideoLayout = (function (my) {
         else if (resourceJid === currentActiveSpeaker)
             currentActiveSpeaker = null;
 
-        var activeSpeakerCanvas = $('#' + videoSpanId + '>canvas');
-        var videoElement = $('#' + videoSpanId + '>video');
-        var canvasSize = calculateThumbnailSize();
+        var video = $('#' + videoSpanId + '>video');
 
-        if (isEnable && (!activeSpeakerCanvas
-                    || activeSpeakerCanvas.length === 0)) {
-
-              activeSpeakerCanvas = document.createElement('canvas');
-              activeSpeakerCanvas.width = canvasSize[0];
-              activeSpeakerCanvas.height = canvasSize[1];
-
-              // We flip the canvas image if this is the local video.
-              if (videoSpanId === 'localVideoWrapper')
-                  activeSpeakerCanvas.className += " flipVideoX";
-
-              videoSpan.appendChild(activeSpeakerCanvas);
-              activeSpeakerCanvas.addEventListener(
-                      'click',
-                      function() {
-                          VideoLayout.handleVideoThumbClicked(
-                                  videoElement.get(0).src);
-                      }, false);
-        }
-        else {
-            activeSpeakerCanvas = activeSpeakerCanvas.get(0);
-        }
-
-        if (videoElement && videoElement.length > 0) {
-            var video = document.getElementById(videoElement.get(0).id);
+        if (video && video.length > 0) {
+            var videoElement = video.get(0);
             if (isEnable) {
-                var context = activeSpeakerCanvas.getContext('2d');
+                if (!videoElement.classList.contains("activespeaker"))
+                    videoElement.classList.add("activespeaker");
 
-                context.fillRect(0, 0, canvasSize[0], canvasSize[1]);
-                context.drawImage(video, 0, 0, canvasSize[0], canvasSize[1]);
-                Util.imageToGrayScale(activeSpeakerCanvas);
-
-                VideoLayout
-                    .showDisplayName(videoSpanId, true);
-                activeSpeakerCanvas
-                    .setAttribute('style', 'display:block !important;');
-                video.setAttribute('style', 'display:none !important;');
+                VideoLayout.showDisplayName(videoSpanId, true);
             }
             else {
-                VideoLayout
-                    .showDisplayName(videoSpanId, false);
-                video.setAttribute('style', 'display:block !important;');
-                activeSpeakerCanvas
-                    .setAttribute('style', 'display:none !important;');
+                VideoLayout.showDisplayName(videoSpanId, false);
+
+                if (videoElement.classList.contains("activespeaker"))
+                    videoElement.classList.remove("activespeaker");
             }
         }
     };
