@@ -766,6 +766,19 @@ ColibriFocus.prototype.sendSSRCUpdate = function (sdpMediaSsrcs, fromJid, isadd)
 ColibriFocus.prototype.addSource = function (elem, fromJid) {
 
     var self = this;
+    // FIXME: dirty waiting
+    if (!this.peerconnection.localDescription)
+    {
+        console.warn("addSource - localDescription not ready yet")
+        setTimeout(function()
+            {
+                self.addSource(elem, fromJid);
+            },
+            200
+        );
+        return;
+    }
+
     this.peerconnection.addSource(elem);
 
     var peerSsrc = this.remotessrc[fromJid];
@@ -799,6 +812,19 @@ ColibriFocus.prototype.addSource = function (elem, fromJid) {
 ColibriFocus.prototype.removeSource = function (elem, fromJid) {
 
     var self = this;
+    // FIXME: dirty waiting
+    if (!self.peerconnection.localDescription)
+    {
+        console.warn("removeSource - localDescription not ready yet");
+        setTimeout(function()
+            {
+                self.removeSource(elem, fromJid);
+            },
+            200
+        );
+        return;
+    }
+
     this.peerconnection.removeSource(elem);
 
     var peerSsrc = this.remotessrc[fromJid];
