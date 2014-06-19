@@ -59,7 +59,8 @@ var VideoLayout = (function (my) {
     };
 
     /**
-     * Checks if removed video is currently displayed and tries to display another one instead.
+     * Checks if removed video is currently displayed and tries to display
+     * another one instead.
      * @param removedVideoSrc src stream identifier of the video.
      */
     my.checkChangeLargeVideo = function(removedVideoSrc) {
@@ -67,7 +68,9 @@ var VideoLayout = (function (my) {
             // this is currently displayed as large
             // pick the last visible video in the row
             // if nobody else is left, this picks the local video
-            var pick = $('#remoteVideos>span[id!="mixedstream"]:visible:last>video').get(0);
+            var pick
+                = $('#remoteVideos>span[id!="mixedstream"]:visible:last>video')
+                    .get(0);
 
             if (!pick) {
                 console.info("Last visible video no longer exists");
@@ -523,6 +526,8 @@ var VideoLayout = (function (my) {
      * disabled
      */
     my.enableActiveSpeaker = function(resourceJid, isEnable) {
+        console.log("Enable active speaker", resourceJid, isEnable);
+
         var videoSpanId = null;
         if (resourceJid
                 === Strophe.getResourceFromJid(connection.emuc.myroomjid))
