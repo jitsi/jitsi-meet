@@ -154,6 +154,7 @@ var Toolbar = (function (my) {
     my.showToolbar = function() {
         if (!$('#header').is(':visible')) {
             $('#header').show("slide", { direction: "up", duration: 300});
+            $('#subject').animate({top: "+=40"}, 300);
 
             if (toolbarTimeout) {
                 clearTimeout(toolbarTimeout);
@@ -222,6 +223,7 @@ var Toolbar = (function (my) {
 
         if (!isToolbarHover) {
             $('#header').hide("slide", { direction: "up", duration: 300});
+            $('#subject').animate({top: "-=40"}, 300);
         }
         else {
             toolbarTimeout = setTimeout(hideToolbar, TOOLBAR_TIMEOUT);

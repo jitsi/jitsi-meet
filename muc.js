@@ -170,12 +170,36 @@ Strophe.addConnectionPlugin('emuc', {
         }
         this.connection.send(msg);
     },
+    setSubject: function (subject){
+        var msg = $msg({to: this.roomjid, type: 'groupchat'});
+        msg.c('subject', subject);
+        this.connection.send(msg);
+        console.log("topic changed to " + subject);
+    },
     onMessage: function (msg) {
-        var txt = $(msg).find('>body').text();
-        // TODO: <subject/>
         // FIXME: this is a hack. but jingle on muc makes nickchanges hard
         var from = msg.getAttribute('from');
         var nick = $(msg).find('>nick[xmlns="http://jabber.org/protocol/nick"]').text() || Strophe.getResourceFromJid(from);
+
+        var txt = $(msg).find('>body').text();
+        var type = msg.getAttribute("type");
+        if(type == "error")
+        {
+            Chat.chatAddError($(msg).find('>text').text(), txt);
+            return true;
+        }
+
+        var subject = $(msg).find('>subject');
+        if(subject.length)
+        {
+            var subjectText = subject.text();
+            if(subjectText || subjectText == "") {
+                Chat.chatSetSubject(subjectText);
+                console.log("Subject is changed to " + subjectText);
+            }
+        }
+
+
         if (txt) {
             console.log('chat', nick, txt);
 

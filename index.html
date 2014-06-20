@@ -23,12 +23,13 @@
     <script src="libs/tooltip.js?v=1"></script><!-- bootstrap tooltip lib -->
     <script src="libs/popover.js?v=1"></script><!-- bootstrap tooltip lib -->
     <script src="config.js?v=2"></script><!-- adapt to your needs, i.e. set hosts and bosh path -->
-    <script src="muc.js?v=11"></script><!-- simple MUC library -->
+    <script src="muc.js?v=12"></script><!-- simple MUC library -->
     <script src="estos_log.js?v=2"></script><!-- simple stanza logger -->
     <script src="desktopsharing.js?v=2"></script><!-- desktop sharing -->
     <script src="data_channels.js?v=1"></script><!-- data channels -->
     <script src="app.js?v=28"></script><!-- application logic -->
-    <script src="chat.js?v=5"></script><!-- chat logic -->
+    <script src="commands.js?v=1"></script><!-- application logic -->
+    <script src="chat.js?v=6"></script><!-- chat logic -->
     <script src="util.js?v=5"></script><!-- utility functions -->
     <script src="etherpad.js?v=8"></script><!-- etherpad plugin -->
     <script src="prezi.js?v=4"></script><!-- prezi plugin -->
@@ -38,11 +39,11 @@
     <script src="analytics.js?v=1"></script><!-- google analytics plugin -->
     <script src="rtp_stats.js?v=1"></script><!-- RTP stats processing -->
     <script src="videolayout.js?v=3"></script><!-- video ui -->
-    <script src="toolbar.js?v=1"></script><!-- toolbar ui -->
+    <script src="toolbar.js?v=2"></script><!-- toolbar ui -->
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
     <link rel="stylesheet" href="css/font.css"/>
-    <link rel="stylesheet" type="text/css" media="screen" href="css/main.css?v=20"/>
-    <link rel="stylesheet" type="text/css" media="screen" href="css/videolayout_default.css?v=6" id="videolayout_default"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="css/main.css?v=21"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="css/videolayout_default.css?v=7" id="videolayout_default"/>
     <link rel="stylesheet" href="css/jquery-impromptu.css?v=4">
     <link rel="stylesheet" href="css/modaldialog.css?v=3">
     <link rel="stylesheet" href="css/popup_menu.css?v=2">
@@ -56,37 +57,40 @@
     <script src="libs/prezi_player.js?v=2"></script>
   </head>
   <body>
-    <div id="header">
-        <span id="toolbar">
-            <a class="button" data-toggle="popover" data-placement="bottom" data-content="Mute / Unmute" onclick='toggleAudio();'>
-                <i id="mute" class="icon-microphone"></i></a>
-            <div class="header_button_separator"></div>
-            <a class="button" data-toggle="popover" data-placement="bottom" data-content="Start / stop camera" onclick='buttonClick("#video", "icon-camera icon-camera-disabled");toggleVideo();'>
-                <i id="video" class="icon-camera"></i></a>
-            <div class="header_button_separator"></div>
-            <a class="button" data-toggle="popover" data-placement="bottom" data-content="Lock / unlock room" onclick="Toolbar.openLockDialog();">
-                <i id="lockIcon" class="icon-security"></i></a>
-            <div class="header_button_separator"></div>
-            <a class="button" data-toggle="popover" data-placement="bottom" data-content="Invite others" onclick="Toolbar.openLinkDialog();"><i class="icon-link"></i></a>
-            <div class="header_button_separator"></div>
-            <span class="toolbar_span">
-                <a class="button" data-toggle="popover" data-placement="bottom" data-content="Open / close chat" onclick='Chat.toggleChat();'><i id="chatButton" class="icon-chat"></i></a>
-                <span id="unreadMessages"></span>
-            </span>
-            <div class="header_button_separator"></div>
-            <a class="button" data-toggle="popover" data-placement="bottom" data-content="Share Prezi" onclick='Prezi.openPreziDialog();'><i class="icon-prezi"></i></a>
-            <span id="etherpadButton">
+    <div style="position: relative;" id="header_container">
+        <div id="header">
+            <span id="toolbar">
+                <a class="button" data-toggle="popover" data-placement="bottom" data-content="Mute / Unmute" onclick='toggleAudio();'>
+                    <i id="mute" class="icon-microphone"></i></a>
                 <div class="header_button_separator"></div>
-                <a class="button" data-toggle="popover" data-placement="bottom" data-content="Shared document" onclick='Etherpad.toggleEtherpad(0);'><i class="icon-share-doc"></i></a>
-            </span>
-            <div class="header_button_separator"></div>
-            <span id="desktopsharing" style="display: none">
-                <a class="button" data-toggle="popover" data-placement="bottom" data-content="Share screen" onclick="toggleScreenSharing();"><i class="icon-share-desktop"></i></a>
+                <a class="button" data-toggle="popover" data-placement="bottom" data-content="Start / stop camera" onclick='buttonClick("#video", "icon-camera icon-camera-disabled");toggleVideo();'>
+                    <i id="video" class="icon-camera"></i></a>
                 <div class="header_button_separator"></div>
+                <a class="button" data-toggle="popover" data-placement="bottom" data-content="Lock / unlock room" onclick="Toolbar.openLockDialog();">
+                    <i id="lockIcon" class="icon-security"></i></a>
+                <div class="header_button_separator"></div>
+                <a class="button" data-toggle="popover" data-placement="bottom" data-content="Invite others" onclick="Toolbar.openLinkDialog();"><i class="icon-link"></i></a>
+                <div class="header_button_separator"></div>
+                <span class="toolbar_span">
+                    <a class="button" data-toggle="popover" data-placement="bottom" data-content="Open / close chat" onclick='Chat.toggleChat();'><i id="chatButton" class="icon-chat"></i></a>
+                    <span id="unreadMessages"></span>
+                </span>
+                <div class="header_button_separator"></div>
+                <a class="button" data-toggle="popover" data-placement="bottom" data-content="Share Prezi" onclick='Prezi.openPreziDialog();'><i class="icon-prezi"></i></a>
+                <span id="etherpadButton">
+                    <div class="header_button_separator"></div>
+                    <a class="button" data-toggle="popover" data-placement="bottom" data-content="Shared document" onclick='Etherpad.toggleEtherpad(0);'><i class="icon-share-doc"></i></a>
+                </span>
+                <div class="header_button_separator"></div>
+                <span id="desktopsharing" style="display: none">
+                    <a class="button" data-toggle="popover" data-placement="bottom" data-content="Share screen" onclick="toggleScreenSharing();"><i class="icon-share-desktop"></i></a>
+                    <div class="header_button_separator"></div>
+                </span>
+                <a class="button" data-toggle="popover" data-placement="bottom" data-content="Enter / Exit Full Screen" onclick='buttonClick("#fullScreen", "icon-full-screen icon-exit-full-screen");Toolbar.toggleFullScreen();'>
+                    <i id="fullScreen" class="icon-full-screen"></i></a>
             </span>
-            <a class="button" data-toggle="popover" data-placement="bottom" data-content="Enter / Exit Full Screen" onclick='buttonClick("#fullScreen", "icon-full-screen icon-exit-full-screen");Toolbar.toggleFullScreen();'>
-                <i id="fullScreen" class="icon-full-screen"></i></a>
-        </span>
+        </div>
+        <div id="subject"></div>
     </div>
     <div id="settings">
       <h1>Connection Settings</h1>

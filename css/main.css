@@ -43,6 +43,10 @@ html, body{
     color: #087dba;
 }
 
+.errorMessage {
+    color: red;
+}
+
 .remoteuser {
     color: #424242;
 }

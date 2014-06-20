@@ -235,7 +235,6 @@
 #header{
     display:none;
     position:absolute;
-    height: 0px;
     text-align:center;
     top:0;
     left:0;
@@ -254,6 +253,21 @@
     -webkit-box-shadow: 0 0 2px #000000, 0 0 10px #000000;
     border-bottom-left-radius: 12px;
     border-bottom-right-radius: 12px;
+}
+
+#subject {
+    position: relative;
+    z-index: 3;
+    width: auto;
+    padding: 5px;
+    margin-left: 40%;
+    margin-right: 40%;
+    text-align: center;
+    background: linear-gradient(to bottom, rgba(255,255,255,.85) , rgba(255,255,255,.35));
+    -webkit-box-shadow: 0 0 2px #000000, 0 0 10px #000000;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+    display: none;
 }
 
 .watermark {
