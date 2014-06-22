@@ -156,7 +156,8 @@ SessionBase.prototype.sendSSRCUpdateIq = function(sdpMediaSsrcs, sid, initiator,
     var modify = $iq({to: toJid, type: 'set'})
         .c('jingle', {
             xmlns: 'urn:xmpp:jingle:1',
-            action: isAdd ? 'source-add' : 'source-remove',
+            //action: isAdd ? 'source-add' : 'source-remove', -- not yet
+            action: isAdd ? 'addsource' : 'removesource',
             initiator: initiator,
             sid: sid
         }
@@ -169,7 +170,7 @@ SessionBase.prototype.sendSSRCUpdateIq = function(sdpMediaSsrcs, sid, initiator,
         var channel = sdpMediaSsrcs[channelNum];
         modify.c('content', {name: channel.mediaType});
 
-        modify.c('description', {xmlns:'urn:xmpp:jingle:apps:rtp:1', media: channel.mediaType});
+        // modify.c('description', {xmlns:'urn:xmpp:jingle:apps:rtp:1', media: channel.mediaType}); -- not yet
         // FIXME: not completly sure this operates on blocks and / or handles different ssrcs correctly
         // generate sources from lines
         Object.keys(channel.ssrcs).forEach(function(ssrcNum) {
@@ -191,7 +192,7 @@ SessionBase.prototype.sendSSRCUpdateIq = function(sdpMediaSsrcs, sid, initiator,
             });
             modify.up(); // end of source
         });
-        modify.up(); // end of description
+        // modify.up(); // end of description -- not yet
         modify.up(); // end of content
     });
     if (modified) {

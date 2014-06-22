@@ -150,9 +150,11 @@ Strophe.addConnectionPlugin('jingle', {
                     $(document).trigger('unmute.jingle', [sess.sid, affected]);
                 }
                 break;
+            case 'addsource': // FIXME: proprietary, un-jingleish
             case 'source-add': // FIXME: proprietary
                 sess.addSource($(iq).find('>jingle>content'), fromJid);
                 break;
+            case 'removesource': // FIXME: proprietary, un-jingleish
             case 'source-remove': // FIXME: proprietary
                 sess.removeSource($(iq).find('>jingle>content'), fromJid);
                 break;
