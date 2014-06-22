@@ -530,8 +530,8 @@ $(document).bind('setLocalDescription.jingle', function (event, sid) {
             directions[type] = (
                 SDPUtil.find_line(media, 'a=sendrecv') ||
                 SDPUtil.find_line(media, 'a=recvonly') ||
-                SDPUtil.find_line('a=sendonly') ||
-                SDPUtil.find_line('a=inactive') ||
+                SDPUtil.find_line(media, 'a=sendonly') ||
+                SDPUtil.find_line(media, 'a=inactive') ||
                 'a=sendrecv').substr(2);
         }
     });
