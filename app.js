@@ -319,7 +319,10 @@ $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
 
             // If the video has been "pinned" by the user we want to keep the
             // display name on place.
-            if (focusedVideoSrc !== videoSrc)
+            if (focusedVideoSrc && focusedVideoSrc !== videoSrc
+                || (!focusedVideoSrc
+                    && container.id
+                        !== VideoLayout.getActiveSpeakerContainerId()))
                 VideoLayout.showDisplayName(container.id, false);
         }
     );
@@ -436,6 +439,8 @@ function statsUpdated(statsCollector)
         {
             console.info(jid +  " audio level: " +
                 peerStats.ssrc2AudioLevel[ssrc] + " of ssrc: " + ssrc);
+//            VideoLayout.updateAudioLevel(   Strophe.getResourceFromJid(jid),
+//                                            peerStats.ssrc2AudioLevel[ssrc]);
         });
     });
 }

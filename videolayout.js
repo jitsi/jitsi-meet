@@ -138,8 +138,7 @@ var VideoLayout = (function (my) {
     my.handleVideoThumbClicked = function(videoSrc) {
         // Restore style for previously focused video
         var focusJid = getJidFromVideoSrc(focusedVideoSrc);
-        var oldContainer =
-            getParticipantContainer(focusJid);
+        var oldContainer = getParticipantContainer(focusJid);
 
         if (oldContainer) {
             oldContainer.removeClass("videoContainerFocused");
@@ -147,11 +146,21 @@ var VideoLayout = (function (my) {
                     Strophe.getResourceFromJid(focusJid), false);
         }
 
-        // Unlock
+        // Unlock current focused.
         if (focusedVideoSrc === videoSrc)
         {
             focusedVideoSrc = null;
+            // Enable the currently set active speaker.
+            if (currentActiveSpeaker) {
+                VideoLayout.enableActiveSpeaker(currentActiveSpeaker, true);
+            }
+
             return;
+        }
+        // Remove style for current active speaker if we're going to lock
+        // another video.
+        else if (currentActiveSpeaker) {
+            VideoLayout.enableActiveSpeaker(currentActiveSpeaker, false);
         }
 
         // Lock new video
@@ -526,7 +535,12 @@ var VideoLayout = (function (my) {
      * disabled
      */
     my.enableActiveSpeaker = function(resourceJid, isEnable) {
-        console.log("Enable active speaker", resourceJid, isEnable);
+        var displayName = resourceJid;
+        var nameSpan = $('#participant_' + resourceJid + '>span.displayname');
+        if (nameSpan.length > 0)
+            displayName = nameSpan.text();
+
+        console.log("Enable active speaker", displayName, isEnable);
 
         var videoSpanId = null;
         if (resourceJid
@@ -541,21 +555,6 @@ var VideoLayout = (function (my) {
             console.error("No video element for jid", resourceJid);
             return;
         }
-
-        // If there's an active speaker (automatically) selected we have to
-        // disable this state and update the current active speaker.
-        if (isEnable) {
-            if (currentActiveSpeaker) {
-                var oldSpeaker = currentActiveSpeaker;
-                setTimeout(function () {
-                    VideoLayout.enableActiveSpeaker(oldSpeaker, false);
-                    }, 200);
-            }
-
-            currentActiveSpeaker = resourceJid;
-        }
-        else if (resourceJid === currentActiveSpeaker)
-            currentActiveSpeaker = null;
 
         var video = $('#' + videoSpanId + '>video');
 
@@ -734,6 +733,13 @@ var VideoLayout = (function (my) {
     };
 
     /**
+     * Returns the current active speaker.
+     */
+    my.getActiveSpeakerContainerId = function () {
+        return 'participant_' + currentActiveSpeaker;
+    };
+
+    /**
      * Adds the remote video menu element for the given <tt>jid</tt> in the
      * given <tt>parentElement</tt>.
      *
@@ -839,6 +845,46 @@ var VideoLayout = (function (my) {
 
         if (videoSpanId)
             VideoLayout.showVideoIndicator(videoSpanId, isMuted);
+    });
+
+    /**
+     * On active speaker changed event.
+     */
+    $(document).bind('activespeakerchanged', function (event, resourceJid) {
+
+        // Disable style for previous active speaker.
+        if (currentActiveSpeaker
+                && currentActiveSpeaker !== resourceJid
+                && !focusedVideoSrc) {
+            var oldContainer  = document.getElementById(
+                    'participant_' + currentActiveSpeaker);
+
+            if (oldContainer) {
+                VideoLayout.enableActiveSpeaker(currentActiveSpeaker, false);
+            }
+        }
+
+        // Obtain container for new active speaker.
+        var container  = document.getElementById(
+                'participant_' + resourceJid);
+
+        // Update the current active speaker.
+        if (resourceJid !== currentActiveSpeaker)
+            currentActiveSpeaker = resourceJid;
+        else
+            return;
+
+        // Local video will not have container found, but that's ok
+        // since we don't want to switch to local video.
+        if (container && !focusedVideoSrc)
+        {
+            var video = container.getElementsByTagName("video");
+            if (video.length)
+            {
+                VideoLayout.updateLargeVideo(video[0].src);
+                VideoLayout.enableActiveSpeaker(resourceJid, true);
+            }
+        }
     });
 
     return my;

@@ -30,27 +30,14 @@ function onDataChannel(event)
         console.info("Got Data Channel Message:", msgData, dataChannel);
 
         // Active speaker event
-        if (msgData.indexOf('activeSpeaker') === 0 && !focusedVideoSrc)
+        if (msgData.indexOf('activeSpeaker') === 0)
         {
             // Endpoint ID from the bridge
-            var endpointId = msgData.split(":")[1];
-            console.info("New active speaker: " + endpointId);
+            var resourceJid = msgData.split(":")[1];
 
-            var container  = document.getElementById(
-                'participant_' + endpointId);
-
-            // Local video will not have container found, but that's ok
-            // since we don't want to switch to local video
-
-            if (container)
-            {
-                var video = container.getElementsByTagName("video");
-                if (video.length)
-                {
-                    VideoLayout.updateLargeVideo(video[0].src);
-                    VideoLayout.enableActiveSpeaker(endpointId, true);
-                }
-            }
+            console.info(
+                "Data channel new active speaker event: " + resourceJid);
+            $(document).trigger('activespeakerchanged', [resourceJid]);
         }
     };
 
