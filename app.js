@@ -15,6 +15,12 @@ var ssrc2jid = {};
 var statsCollector = null;
 
 /**
+ * The stats collector for the local stream.
+ * @type {LocalStatsCollector}
+ */
+var localStatsCollector = null;
+
+/**
  * Indicates whether ssrc is camera video or desktop stream.
  * FIXME: remove those maps
  */
@@ -122,6 +128,8 @@ function obtainAudioAndVideoPermissions(callback) {
 function audioStreamReady(stream) {
 
     VideoLayout.changeLocalAudio(stream);
+
+    startLocalRtpStatsCollector(stream);
 
     if (RTC.browser !== 'firefox') {
         getUserMediaWithConstraints(['video'],
@@ -446,16 +454,52 @@ function statsUpdated(statsCollector)
 }
 
 /**
+ * Callback called by {@link LocalStatsCollector} in intervals supplied to it's
+ * constructor.
+ * @param statsCollector {@link LocalStatsCollector} source of the event.
+ */
+function localStatsUpdated(statsCollector)
+{
+    console.info("Local audio level: " +  statsCollector.audioLevel);
+}
+
+/**
  * Starts the {@link StatsCollector} if the feature is enabled in config.js.
  */
 function startRtpStatsCollector()
 {
-    if (config.enableRtpStats)
+    if (config.enableRtpStats && !statsCollector)
     {
         statsCollector = new StatsCollector(
             getConferenceHandler().peerconnection, 200, statsUpdated);
 
+        stopLocalRtpStatsCollector();
+
         statsCollector.start();
+    }
+}
+/**
+ * Starts the {@link LocalStatsCollector} if the feature is enabled in config.js
+ * @param stream the stream that will be used for collecting statistics.
+ */
+function startLocalRtpStatsCollector(stream)
+{
+    if(config.enableRtpStats)
+    {
+        localStatsCollector = new LocalStatsCollector(stream, 200, localStatsUpdated);
+        localStatsCollector.start();
+    }
+}
+
+/**
+ * Stops the {@link LocalStatsCollector}.
+ */
+function stopLocalRtpStatsCollector()
+{
+    if(localStatsCollector)
+    {
+        localStatsCollector.stop();
+        localStatsCollector = null;
     }
 }
 
@@ -965,10 +1009,10 @@ $(window).bind('beforeunload', function () {
             }
         });
     }
-    disposeConference();
+    disposeConference(true);
 });
 
-function disposeConference() {
+function disposeConference(onUnload) {
     var handler = getConferenceHandler();
     if (handler && handler.peerconnection) {
         // FIXME: probably removing streams is not required and close() should be enough
@@ -984,6 +1028,13 @@ function disposeConference() {
     {
         statsCollector.stop();
         statsCollector = null;
+    }
+    if(!onUnload) {
+        startLocalRtpStatsCollector(connection.jingle.localAudio);
+    }
+    else
+    {
+        stopLocalRtpStatsCollector();
     }
     focus = null;
     activecall = null;
