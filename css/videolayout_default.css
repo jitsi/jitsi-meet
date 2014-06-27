@@ -32,6 +32,7 @@
     background-size: contain;
     border-radius:8px;
     border: 2px solid #212425;
+    margin-right: 3px;
 }
 
 #remoteVideos .videocontainer:hover,
@@ -50,7 +51,6 @@
     -webkit-animation-iteration-count: 1;
     -webkit-box-shadow: 0 0 18px #388396;
     border: 2px solid #388396;
-    z-index: 3;
 }
 
 #localVideoWrapper {

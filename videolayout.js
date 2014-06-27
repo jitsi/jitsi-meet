@@ -816,6 +816,9 @@ var VideoLayout = (function (my) {
         popupmenuElement.appendChild(ejectMenuItem);
     }
 
+    /**
+     * On audio muted event.
+     */
     $(document).bind('audiomuted.muc', function (event, jid, isMuted) {
         var videoSpanId = null;
         if (jid === connection.emuc.myroomjid) {
@@ -834,6 +837,9 @@ var VideoLayout = (function (my) {
             VideoLayout.showAudioIndicator(videoSpanId, isMuted);
     });
 
+    /**
+     * On video muted event.
+     */
     $(document).bind('videomuted.muc', function (event, jid, isMuted) {
         var videoSpanId = null;
         if (jid === connection.emuc.myroomjid) {
@@ -851,6 +857,10 @@ var VideoLayout = (function (my) {
      * On active speaker changed event.
      */
     $(document).bind('activespeakerchanged', function (event, resourceJid) {
+        // We ignore local user events.
+        if (resourceJid
+                === Strophe.getResourceFromJid(connection.emuc.myroomjid))
+            return;
 
         // Disable style for previous active speaker.
         if (currentActiveSpeaker
