@@ -1,0 +1,2 @@
+debian/etc/*			/etc/
+debian/usr/share/*		/usr/share/
