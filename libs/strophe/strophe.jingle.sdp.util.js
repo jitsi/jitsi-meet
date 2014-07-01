@@ -283,7 +283,9 @@ SDPUtil = {
     candidateToJingle: function (line) {
         // a=candidate:2979166662 1 udp 2113937151 192.168.2.100 57698 typ host generation 0
         //      <candidate component=... foundation=... generation=... id=... ip=... network=... port=... priority=... protocol=... type=.../>
-        if (line.substring(0, 12) != 'a=candidate:') {
+        if (line.indexOf('candidate:') == 0) {
+            line = 'a=' + line;
+        } else if (line.substring(0, 12) != 'a=candidate:') {
             console.log('parseCandidate called with a line that is not a candidate line');
             console.log(line);
             return null;
