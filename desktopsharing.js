@@ -1,4 +1,4 @@
-/* global $, config, connection, chrome, alert, getUserMediaWithConstraints, change_local_video, getConferenceHandler */
+/* global $, config, connection, chrome, alert, getUserMediaWithConstraints, changeLocalVideo, getConferenceHandler */
 /**
  * Indicates that desktop stream is currently in use(for toggle purpose).
  * @type {boolean}
@@ -251,7 +251,9 @@ function newStreamCreated(stream) {
 
     var oldStream = connection.jingle.localVideo;
 
-    change_local_video(stream, !isUsingScreenStream);
+    connection.jingle.localVideo = stream;
+
+    VideoLayout.changeLocalVideo(stream, !isUsingScreenStream);
 
     var conferenceHandler = getConferenceHandler();
     if (conferenceHandler) {

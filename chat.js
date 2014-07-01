@@ -39,10 +39,19 @@ var Chat = (function (my) {
         $('#usermsg').keydown(function (event) {
             if (event.keyCode === 13) {
                 event.preventDefault();
-                var message = Util.escapeHtml(this.value);
+                var value = this.value;
                 $('#usermsg').val('').trigger('autosize.resize');
                 this.focus();
-                connection.emuc.sendMessage(message, nickname);
+                var command = new CommandsProcessor(value);
+                if(command.isCommand())
+                {
+                    command.processCommand();
+                }
+                else
+                {
+                    var message = Util.escapeHtml(value);
+                    connection.emuc.sendMessage(message, nickname);
+                }
             }
         });
 
@@ -89,6 +98,45 @@ var Chat = (function (my) {
         $('#chatconversation').animate(
                 { scrollTop: $('#chatconversation')[0].scrollHeight}, 1000);
     };
+
+    /**
+     * Appends error message to the conversation
+     * @param errorMessage the received error message.
+     * @param originalText the original message.
+     */
+    my.chatAddError = function(errorMessage, originalText)
+    {
+        errorMessage = Util.escapeHtml(errorMessage);
+        originalText = Util.escapeHtml(originalText);
+
+        $('#chatconversation').append('<div class="errorMessage"><b>Error: </b>'
+            + 'Your message' + (originalText? (' \"'+ originalText + '\"') : "")
+            + ' was not sent.' + (errorMessage? (' Reason: ' + errorMessage) : '')
+            +  '</div>');
+        $('#chatconversation').animate(
+            { scrollTop: $('#chatconversation')[0].scrollHeight}, 1000);
+
+    }
+
+    /**
+     * Sets the subject to the UI
+     * @param subject the subject
+     */
+    my.chatSetSubject = function(subject)
+    {
+        if(subject)
+            subject = subject.trim();
+        $('#subject').html(linkify(Util.escapeHtml(subject)));
+        if(subject == "")
+        {
+            $("#subject").css({display: "none"});
+        }
+        else
+        {
+            $("#subject").css({display: "block"});
+        }
+    }
+
 
     /**
      * Opens / closes the chat area.
@@ -242,7 +290,7 @@ var Chat = (function (my) {
         if (unreadMessages) {
             unreadMsgElement.innerHTML = unreadMessages.toString();
 
-            showToolbar();
+            Toolbar.showToolbar();
 
             var chatButtonElement
                 = document.getElementById('chatButton').parentNode;

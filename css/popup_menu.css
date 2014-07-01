@@ -9,7 +9,7 @@ ul.popupmenu {
     padding-bottom: 5px;
     padding-top: 5px;
     right: 10px;
-    left: 0px;
+    left: -5px;
     width: 100px;
     background-color: rgba(0,0,0,1);
     -webkit-box-shadow: 0 0 2px #000000, 0 0 10px #000000;
@@ -21,7 +21,7 @@ ul.popupmenu:after {
     display: block;
     position: absolute;
     bottom: -9px;
-    left: 13px;
+    left: 11px;
 }
 
 ul.popupmenu li {

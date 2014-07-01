@@ -32,9 +32,11 @@
     background-size: contain;
     border-radius:8px;
     border: 2px solid #212425;
+    margin-right: 3px;
 }
 
-#remoteVideos .videocontainer:hover {
+#remoteVideos .videocontainer:hover,
+#remoteVideos .videocontainer.videoContainerFocused {
     width: 100%;
     height: 100%;
     content:"";
@@ -49,7 +51,6 @@
     -webkit-animation-iteration-count: 1;
     -webkit-box-shadow: 0 0 18px #388396;
     border: 2px solid #388396;
-    z-index: 3;
 }
 
 #localVideoWrapper {
@@ -93,6 +94,11 @@
     height: 100%;
 }
 
+.activespeaker {
+    -webkit-filter: grayscale(1);
+    filter: grayscale(1);
+}
+
 #etherpad,
 #presentation {
     text-align: center;
@@ -119,6 +125,7 @@
     text-shadow: 0px 1px 0px rgba(255,255,255,.3), 0px -1px 0px rgba(0,0,0,.7);
     border: 0px;
     z-index: 2;
+    text-align: center;
 }
 
 #remoteVideos .nick {
@@ -133,25 +140,22 @@
 
 .videocontainer>span.displayname,
 .videocontainer>input.displayname {
-    display: inline-block;
+    display: none;
     position: absolute;
-    background: -webkit-linear-gradient(left, rgba(0,0,0,.7), rgba(0,0,0,0));
     color: #FFFFFF;
-    bottom: 0;
-    left: 0;
-    padding: 3px 5px;
-    width: 100%;
-    height: auto;
-    max-height: 18px;
-    font-size: 9pt;
-    text-align: left;
+    background: rgba(0,0,0,.7);
+    text-align: center;
     text-overflow: ellipsis;
+    width: 70%;
+    height: 20%;
+    left: 15%;
+    top: 40%;
+    padding: 5px;
+    font-size: 11pt;
     overflow: hidden;
     white-space: nowrap;
     z-index: 2;
-    box-sizing: border-box;
-    border-bottom-left-radius:4px;
-    border-bottom-right-radius:4px;
+    border-radius:20px;
 }
 
 #localVideoContainer>span.displayname:hover {
@@ -160,6 +164,10 @@
 
 .videocontainer>span.displayname {
     pointer-events: none;
+}
+
+.videocontainer>input.displayname {
+    height: auto;
 }
 
 #localDisplayName {
@@ -190,6 +198,7 @@
     text-shadow: 0px 1px 0px rgba(255,255,255,.3), 0px -1px 0px rgba(0,0,0,.7);
     border: 0px;
     z-index: 3;
+    text-align: center;
 }
 
 .videocontainer>span.videoMuted {
@@ -226,7 +235,6 @@
 #header{
     display:none;
     position:absolute;
-    height: 0px;
     text-align:center;
     top:0;
     left:0;
@@ -241,11 +249,25 @@
     margin-right:auto;
     height:39px;
     width:auto;
-    overflow: hidden;
     background: linear-gradient(to bottom, rgba(103,103,103,.65) , rgba(0,0,0,.65));
     -webkit-box-shadow: 0 0 2px #000000, 0 0 10px #000000;
     border-bottom-left-radius: 12px;
     border-bottom-right-radius: 12px;
+}
+
+#subject {
+    position: relative;
+    z-index: 3;
+    width: auto;
+    padding: 5px;
+    margin-left: 40%;
+    margin-right: 40%;
+    text-align: center;
+    background: linear-gradient(to bottom, rgba(255,255,255,.85) , rgba(255,255,255,.35));
+    -webkit-box-shadow: 0 0 2px #000000, 0 0 10px #000000;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+    display: none;
 }
 
 .watermark {

@@ -5,7 +5,7 @@ function TraceablePeerConnection(ice_config, constraints) {
     this.updateLog = [];
     this.stats = {};
     this.statsinterval = null;
-    this.maxstats = 300; // limit to 300 values, i.e. 5 minutes; set to 0 to disable
+    this.maxstats = 0; // limit to 300 values, i.e. 5 minutes; set to 0 to disable
 
     /**
      * Array of ssrcs that will be added on next modifySources call.
@@ -32,7 +32,7 @@ function TraceablePeerConnection(ice_config, constraints) {
     this.switchstreams = false;
 
     // override as desired
-    this.trace = function(what, info) {
+    this.trace = function (what, info) {
         //console.warn('WTRACE', what, info);
         self.updateLog.push({
             time: new Date(),
@@ -88,8 +88,8 @@ function TraceablePeerConnection(ice_config, constraints) {
         if (self.ondatachannel !== null) {
             self.ondatachannel(event);
         }
-    }
-    if (!navigator.mozGetUserMedia) {
+    };
+    if (!navigator.mozGetUserMedia && this.maxstats) {
         this.statsinterval = window.setInterval(function() {
             self.peerconnection.getStats(function(stats) {
                 var results = stats.result();
@@ -144,8 +144,8 @@ TraceablePeerConnection.prototype.removeStream = function (stream) {
 
 TraceablePeerConnection.prototype.createDataChannel = function (label, opts) {
     this.trace('createDataChannel', label, opts);
-    this.peerconnection.createDataChannel(label, opts);
-}
+    return this.peerconnection.createDataChannel(label, opts);
+};
 
 TraceablePeerConnection.prototype.setLocalDescription = function (description, successCallback, failureCallback) {
     var self = this;

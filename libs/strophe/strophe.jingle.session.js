@@ -420,6 +420,7 @@ JingleSession.prototype.setRemoteDescription = function (elem, desctype) {
         },
         function (e) {
             console.error('setRemoteDescription error', e);
+            $(document).trigger('fatalError.jingle', [self, e]);
         }
     );
 };
