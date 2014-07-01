@@ -1,10 +1,11 @@
 Source: jitsi-meet
 Section: net
 Priority: extra
-Maintainer: Yasen Pramatarov <yasen@bluejimp.com>
+Maintainer: Jitsi Team <dev@jitsi.org>
+Uploaders: Emil Ivov <emcho@jitsi.org>, Damian Minkov <damencho@jitsi.org>
 Build-Depends: debhelper (>= 8.0.0)
 Standards-Version: 3.9.3
-Homepage: https://jitsi.org/Projects/JitsiMeet
+Homepage: https://jitsi.org/meet
 
 Package: jitsi-meet
 Architecture: any
