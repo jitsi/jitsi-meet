@@ -23,7 +23,18 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
-
+.icon-callRetro:before {
+    content: "\e611";
+}
+.icon-callModern:before {
+    content: "\e612";
+}
+.icon-recDisable:before {
+    content: "\e613";
+}
+.icon-recEnable:before {
+    content: "\e614";
+}
 .icon-kick1:before {
     content: "\e60f";
 }

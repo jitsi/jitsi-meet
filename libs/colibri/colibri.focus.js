@@ -77,6 +77,8 @@ function ColibriFocus(connection, bridgejid) {
 
     // silly wait flag
     this.wait = true;
+
+    this.recordingEnabled = false;
 }
 
 // creates a conferences with an initial set of peers
@@ -162,6 +164,36 @@ ColibriFocus.prototype.makeConference = function (peers) {
         }
     );
     */
+};
+
+// Sends a COLIBRI message which enables or disables (according to 'state') the
+// recording on the bridge.
+ColibriFocus.prototype.setRecording = function(state, token, callback) {
+    var self = this;
+    var elem = $iq({to: this.bridgejid, type: 'get'});
+    elem.c('conference', {
+        xmlns: 'http://jitsi.org/protocol/colibri',
+        id: this.confid
+    });
+    elem.c('recording', {state: state, token: token});
+    elem.up();
+
+    this.connection.sendIQ(elem,
+        function (result) {
+            console.log('Set recording "', state, '". Result:', result);
+            var recordingElem = $(result).find('>conference>recording');
+            var newState = recordingElem.attr('state');
+            if (newState == null){
+                newState = false;
+            }
+
+            self.recordingEnabled = newState;
+            callback(newState);
+        },
+        function (error) {
+            console.warn(error);
+        }
+    );
 };
 
 ColibriFocus.prototype._makeConference = function () {

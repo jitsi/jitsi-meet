@@ -6,6 +6,7 @@ var activecall = null;
 var RTC = null;
 var nickname = null;
 var sharedKey = '';
+var recordingToken ='';
 var roomUrl = null;
 var ssrc2jid = {};
 /**
@@ -613,6 +614,7 @@ $(document).bind('joined.muc', function (event, jid, info) {
 
     if (Object.keys(connection.emuc.members).length < 1) {
         focus = new ColibriFocus(connection, config.hosts.bridge);
+        showRecordingButton(false);
     }
 
     if (focus && config.etherpad_base) {
@@ -633,6 +635,7 @@ $(document).bind('joined.muc', function (event, jid, info) {
 
 $(document).bind('entered.muc', function (event, jid, info, pres) {
     console.log('entered', jid, info);
+
     console.log('is focus?' + focus ? 'true' : 'false');
 
     // Add Peer's container
@@ -643,6 +646,7 @@ $(document).bind('entered.muc', function (event, jid, info, pres) {
         if (focus.confid === null) {
             console.log('make new conference with', jid);
             focus.makeConference(Object.keys(connection.emuc.members));
+            showRecordingButton(true);
         } else {
             console.log('invite', jid, 'into conference');
             focus.addNewParticipant(jid);
@@ -688,17 +692,20 @@ $(document).bind('left.muc', function (event, jid) {
             && !sessionTerminated) {
         console.log('welcome to our new focus... myself');
         focus = new ColibriFocus(connection, config.hosts.bridge);
+
         if (Object.keys(connection.emuc.members).length > 0) {
             focus.makeConference(Object.keys(connection.emuc.members));
+            showRecordingButton(true);
         }
         $(document).trigger('focusechanged.muc', [focus]);
     }
     else if (focus && Object.keys(connection.emuc.members).length === 0) {
         console.log('everyone left');
         // FIXME: closing the connection is a hack to avoid some
-        // problemswith reinit
+        // problems with reinit
         disposeConference();
         focus = new ColibriFocus(connection, config.hosts.bridge);
+        showRecordingButton(false);
     }
     if (connection.emuc.getPrezi(jid)) {
         $(document).trigger('presentationremoved.muc',
@@ -865,6 +872,57 @@ function toggleAudio() {
     }
 
     buttonClick("#mute", "icon-microphone icon-mic-disabled");
+}
+
+// Starts or stops the recording for the conference.
+function toggleRecording() {
+    if (focus === null || focus.confid === null) {
+        console.log('non-focus, or conference not yet organized: not enabling recording');
+        return;
+    }
+
+    if (!recordingToken)
+    {
+        $.prompt('<h2>Enter recording token</h2>' +
+                '<input id="recordingToken" type="text" placeholder="token" autofocus>',
+            {
+                persistent: false,
+                buttons: { "Save": true, "Cancel": false},
+                defaultButton: 1,
+                loaded: function (event) {
+                    document.getElementById('recordingToken').focus();
+                },
+                submit: function (e, v, m, f) {
+                    if (v) {
+                        var token = document.getElementById('recordingToken');
+
+                        if (token.value) {
+                            setRecordingToken(Util.escapeHtml(token.value));
+                            toggleRecording();
+                        }
+                    }
+                }
+            }
+        );
+
+        return;
+    }
+
+    var oldState = focus.recordingEnabled;
+    buttonClick("#recordButton", "icon-recEnable icon-recDisable");
+    focus.setRecording(!oldState,
+                        recordingToken,
+                        function (state) {
+                            console.log("New recording state: ", state);
+                            if (state == oldState) //failed to change, reset the token because it might have been wrong
+                            {
+                                buttonClick("#recordButton", "icon-recEnable icon-recDisable");
+                                setRecordingToken(null);
+                            }
+                        }
+    );
+
+
 }
 
 /**
@@ -1111,6 +1169,10 @@ function setSharedKey(sKey) {
     sharedKey = sKey;
 }
 
+function setRecordingToken(token) {
+    recordingToken = token;
+}
+
 /**
  * Updates the room invite url.
  */
@@ -1169,6 +1231,20 @@ function setView(viewName) {
 //        document.getElementById('videolayout_default').disabled  = false;
 //        document.getElementById('videolayout_fullscreen').disabled  = true;
 //    }
+}
+
+function showRecordingButton(show) {
+    if (!config.enableRecording) {
+        return;
+    }
+
+    if (show) {
+        $('#recording').css({display: "inline"});
+    }
+    else {
+        $('#recording').css({display: "none"});
+    }
+
 }
 
 $(document).bind('fatalError.jingle',

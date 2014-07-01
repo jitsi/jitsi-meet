@@ -13,5 +13,6 @@ var config = {
     chromeExtensionId: 'diibjkoicjeejcmhdnailmkgecihlobk', // Id of desktop streamer Chrome extension
     minChromeExtVersion: '0.1', // Required version of Chrome extension
     enableRtpStats: false, // Enables RTP stats processing
-    openSctp: true //Toggle to enable/disable SCTP channels
+    openSctp: true, //Toggle to enable/disable SCTP channels
+    enableRecording: false
 };
