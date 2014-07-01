@@ -309,10 +309,14 @@ $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
         VideoLayout.checkChangeLargeVideo(vid.src);
     };
 
-    // Add click handler
-    sel.click(function () {
-        VideoLayout.handleVideoThumbClicked(vid.src);
-    });
+    // Add click handler.
+    container.onclick = function (event) {
+        VideoLayout.handleVideoThumbClicked(
+                $('#' + container.id + '>video').get(0).src);
+        event.preventDefault();
+        return false;
+    };
+
     // Add hover handler
     $(container).hover(
         function() {
@@ -327,10 +331,8 @@ $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
 
             // If the video has been "pinned" by the user we want to keep the
             // display name on place.
-            if (focusedVideoSrc && focusedVideoSrc !== videoSrc
-                || (!focusedVideoSrc
-                    && container.id
-                        !== VideoLayout.getActiveSpeakerContainerId()))
+            if (!VideoLayout.isLargeVideoVisible()
+                    || videoSrc !== $('#largeVideo').attr('src'))
                 VideoLayout.showDisplayName(container.id, false);
         }
     );
@@ -445,10 +447,8 @@ function statsUpdated(statsCollector)
         var peerStats = statsCollector.jid2stats[jid];
         Object.keys(peerStats.ssrc2AudioLevel).forEach(function (ssrc)
         {
-            console.info(jid +  " audio level: " +
-                peerStats.ssrc2AudioLevel[ssrc] + " of ssrc: " + ssrc);
-//            VideoLayout.updateAudioLevel(   Strophe.getResourceFromJid(jid),
-//                                            peerStats.ssrc2AudioLevel[ssrc]);
+//            console.info(jid +  " audio level: " +
+//                peerStats.ssrc2AudioLevel[ssrc] + " of ssrc: " + ssrc);
         });
     });
 }
@@ -460,7 +460,7 @@ function statsUpdated(statsCollector)
  */
 function localStatsUpdated(statsCollector)
 {
-    console.info("Local audio level: " +  statsCollector.audioLevel);
+//    console.info("Local audio level: " +  statsCollector.audioLevel);
 }
 
 /**
@@ -545,7 +545,9 @@ $(document).bind('callactive.jingle', function (event, videoelem, sid) {
         videoelem.show();
         VideoLayout.resizeThumbnails();
 
-        if (!focusedVideoSrc)
+        // Update the large video to the last added video only if there's no
+        // current active or focused speaker.
+        if (!focusedVideoSrc && !VideoLayout.getActiveSpeakerResourceJid())
             VideoLayout.updateLargeVideo(videoelem.attr('src'), 1);
 
         VideoLayout.showFocusIndicator();
@@ -740,16 +742,14 @@ $(document).bind('presence.muc', function (event, jid, info, pres) {
         }
     });
 
-    if (info.displayName) {
-        if (jid === connection.emuc.myroomjid) {
-            VideoLayout.setDisplayName('localVideoContainer',
-                                        info.displayName + ' (me)');
-        } else {
-            VideoLayout.ensurePeerContainerExists(jid);
-            VideoLayout.setDisplayName(
-                    'participant_' + Strophe.getResourceFromJid(jid),
-                    info.displayName);
-        }
+    if (jid === connection.emuc.myroomjid) {
+        VideoLayout.setDisplayName('localVideoContainer',
+                                    info.displayName);
+    } else {
+        VideoLayout.ensurePeerContainerExists(jid);
+        VideoLayout.setDisplayName(
+                'participant_' + Strophe.getResourceFromJid(jid),
+                info.displayName);
     }
 });
 

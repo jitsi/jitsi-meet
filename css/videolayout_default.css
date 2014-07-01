@@ -95,8 +95,7 @@
 }
 
 .activespeaker {
-    -webkit-filter: grayscale(1);
-    filter: grayscale(1);
+    background: #000 !important;
 }
 
 #etherpad,
