@@ -10,7 +10,7 @@ server {
     ssl_certificate /var/lib/prosody/jitsi-meet.example.com.crt;
     ssl_certificate_key /var/lib/prosody/jitsi-meet.example.com.key;
 
-    root /srv/web/jitsi-meet;
+    root /usr/share/jitsi-meet;
     index index.html index.htm;
 
     location ~ ^/([a-zA-Z0-9]+)$ {

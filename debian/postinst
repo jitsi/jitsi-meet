@@ -40,11 +40,11 @@ case "$1" in
         fi
 
         # jitsi meet
-        chown -R www-data:www-data /srv/web/jitsi-meet/
-        sed -i "s/jitsi-meet.example.com/$JVB_HOSTNAME/g" /srv/web/jitsi-meet/config.js
+        chown -R www-data:www-data /usr/share/jitsi-meet/
+        sed -i "s/jitsi-meet.example.com/$JVB_HOSTNAME/g" /usr/share/jitsi-meet/config.js
         # enable turn
-        if grep "//  useStunTurn: true," /srv/web/jitsi-meet/config.js > /dev/null; then
-            sed -i "s/\/\/\ \ useStunTurn:\ true,/\ \ \ \ useStunTurn:\ true,/" /srv/web/jitsi-meet/config.js
+        if grep "//  useStunTurn: true," /usr/share/jitsi-meet/config.js > /dev/null; then
+            sed -i "s/\/\/\ \ useStunTurn:\ true,/\ \ \ \ useStunTurn:\ true,/" /usr/share/jitsi-meet/config.js
         fi
         invoke-rc.d nginx restart
 
