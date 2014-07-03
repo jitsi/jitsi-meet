@@ -169,14 +169,16 @@ var VideoLayout = (function (my) {
             oldContainer.removeClass("videoContainerFocused");
         }
 
-        // Unlock current focused.
+        // Unlock current focused. 
         if (focusedVideoSrc === videoSrc)
         {
             focusedVideoSrc = null;
+            var activeSpeakerVideo = null;
             // Enable the currently set active speaker.
             if (currentActiveSpeaker) {
-                var activeSpeakerVideo = document
-                    .getElementById('participant_' + currentActiveSpeaker);
+                activeSpeakerVideo
+                    = $('#participant_' + currentActiveSpeaker + '>video')
+                        .get(0);
 
                 if (activeSpeakerVideo)
                     VideoLayout.updateLargeVideo(activeSpeakerVideo.src, 1);
