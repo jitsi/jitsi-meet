@@ -1163,3 +1163,27 @@ ColibriFocus.prototype.sendTerminate = function (session, reason, text) {
         this.statsinterval = null;
     }
 };
+
+ColibriFocus.prototype.setRTCPTerminationStrategy = function (strategyFQN) {
+    var self = this;
+    var strategyIQ = $iq({to: this.bridgejid, type: 'set'});
+    strategyIQ.c('conference', {
+	    xmlns: 'http://jitsi.org/protocol/colibri',
+	    id: this.confid,
+    });
+
+    strategyIQ.c('rtcp-termination-strategy', {name: strategyFQN });
+
+    strategyIQ.c('content', {name: "video"});
+    strategyIQ.up(); // end of content
+
+    console.log('setting RTCP termination strategy', strategyFQN);
+    this.connection.sendIQ(strategyIQ,
+        function (res) {
+            console.log('got result');
+        },
+        function (err) {
+            console.error('got error', err);
+        }
+    );
+
