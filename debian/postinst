@@ -48,9 +48,6 @@ case "$1" in
         fi
         invoke-rc.d nginx restart
 
-        # and we're done
-        db_stop
-
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)
