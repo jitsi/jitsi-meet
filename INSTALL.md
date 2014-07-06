@@ -230,3 +230,26 @@ org.jitsi.videobridge.NAT_HARVESTER_PUBLIC_ADDRESS=<Public.IP.Address>
 
 # Hold your first conference
 You are now all set and ready to have your first meet by going to http://jitsi.example.com
+
+
+## Enabling recording
+Currently recording is only supported for linux-64 and macos. To enable it, add
+the following properties to sip-communicator.properties:
+```
+org.jitsi.videobridge.ENABLE_MEDIA_RECORDING=true
+org.jitsi.videobridge.MEDIA_RECORDING_PATH=/path/to/recordings/dir
+org.jitsi.videobridge.MEDIA_RECORDING_TOKEN=secret
+```
+
+where /path/to/recordings/dir is the path to a pre-existing directory where recordings
+will be stored (needs to be writeable by the user running jitsi-videobridge),
+and "secret" is a string which will be used for authentication.
+
+Then, edit the Jitsi-Meet config.js file and set:
+```
+enableRecoridng: true
+```
+
+Restart jitsi-videobridge and start a new conference (making sure that the page
+is reloaded with the new config.js) -- the organizer of the conference should
+now have a "recoriding" button in the floating menu, near the "mute" button.
