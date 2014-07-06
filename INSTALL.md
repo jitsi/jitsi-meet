@@ -247,7 +247,7 @@ and "secret" is a string which will be used for authentication.
 
 Then, edit the Jitsi-Meet config.js file and set:
 ```
-enableRecoridng: true
+enableRecording: true
 ```
 
 Restart jitsi-videobridge and start a new conference (making sure that the page
