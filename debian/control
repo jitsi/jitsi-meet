@@ -8,7 +8,7 @@ Standards-Version: 3.9.3
 Homepage: https://jitsi.org/meet
 
 Package: jitsi-meet
-Architecture: any
+Architecture: all
 Pre-Depends: adduser, openssl, jitsi-videobridge
 Depends: ${shlibs:Depends}, ${misc:Depends}, nginx
 Description: WebRTC JavaScript video conferences
