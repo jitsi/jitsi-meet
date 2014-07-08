@@ -24,8 +24,6 @@ set -e
 
 case "$1" in
     purge|remove)
-        rm /etc/nginx/sites-enabled/jitsi-meet
-        rm /etc/nginx/sites-available/jitsi-meet
         if [ -x "/etc/init.d/nginx" ]; then
             invoke-rc.d nginx reload
         fi
