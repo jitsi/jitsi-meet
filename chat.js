@@ -135,8 +135,7 @@ var Chat = (function (my) {
         {
             $("#subject").css({display: "block"});
         }
-    }
-
+    };
 
     /**
      * Opens / closes the chat area.
@@ -187,6 +186,9 @@ var Chat = (function (my) {
                                             duration: 500});
         }
         else {
+            // Undock the toolbar when the chat is shown.
+            Toolbar.dockToolbar(false);
+
             videospace.animate({right: chatSize[0],
                                 width: videospaceWidth,
                                 height: videospaceHeight},
@@ -290,7 +292,7 @@ var Chat = (function (my) {
         if (unreadMessages) {
             unreadMsgElement.innerHTML = unreadMessages.toString();
 
-            Toolbar.showToolbar();
+            Toolbar.dockToolbar(true);
 
             var chatButtonElement
                 = document.getElementById('chatButton').parentNode;

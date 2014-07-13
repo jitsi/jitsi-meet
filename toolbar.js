@@ -236,9 +236,12 @@ var Toolbar = (function (my) {
             if (!$('#header').is(':visible')) {
                 Toolbar.showToolbar();
             }
+
             // Then clear the time out, to dock the toolbar.
-            clearTimeout(toolbarTimeout);
-            toolbarTimeout = null;
+            if (toolbarTimeout) {
+                clearTimeout(toolbarTimeout);
+                toolbarTimeout = null;
+            }
         }
         else {
             if (!$('#header').is(':visible')) {

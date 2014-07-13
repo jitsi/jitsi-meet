@@ -131,15 +131,24 @@ html, body{
 }
 
 #chatButton {
-    -webkit-transition: all .5s ease-in-out;;
-       -moz-transition: all .5s ease-in-out;;
-            transition: all .5s ease-in-out;;
+    -webkit-transition: all .5s ease-in-out;
+       -moz-transition: all .5s ease-in-out;
+            transition: all .5s ease-in-out;
 }
-
+/*#ffde00*/
 #chatButton.active {
-    -webkit-text-shadow: 0 0 10px #ffffff;
-    -moz-text-shadow: 0 0 10px #ffffff;
-    text-shadow: 0 0 10px #ffffff;
+    -webkit-text-shadow:    -1px 0 10px #00ccff,
+                            0 1px 10px #00ccff,
+                            1px 0 10px #00ccff,
+                            0 -1px 10px #00ccff;
+    -moz-text-shadow:   1px 0 10px #00ccff,
+                        0 1px 10px #00ccff,
+                        1px 0 10px #00ccff,
+                        0 -1px 10px #00ccff;
+    text-shadow:    -1px 0 10px #00ccff,
+                    0 1px 10px #00ccff,
+                    1px 0 10px #00ccff,
+                    0 -1px 10px #00ccff;
 }
 
 a.button:hover {
