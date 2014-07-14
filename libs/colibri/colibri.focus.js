@@ -540,7 +540,8 @@ ColibriFocus.prototype.initiate = function (peer, isInitiator) {
             if (1) { //i > 0) { // not for audio FIXME: does not work as intended
                 // re-add all remote a=ssrcs
                 for (var jid in this.remotessrc) {
-                    if (jid == peer) continue;
+                    if (jid == peer || !this.remotessrc[jid][i])
+                        continue;
                     sdp.media[i] += this.remotessrc[jid][i];
                 }
                 // and local a=ssrc lines
@@ -714,6 +715,9 @@ ColibriFocus.prototype.updateChannel = function (remoteSDP, participant) {
     change.c('conference', {xmlns: 'http://jitsi.org/protocol/colibri', id: this.confid});
     for (channel = 0; channel < this.channels[participant].length; channel++)
     {
+        if (!remoteSDP.media[channel])
+            continue;
+
         var name = SDPUtil.parse_mid(SDPUtil.find_line(remoteSDP.media[channel], 'a=mid:'));
         change.c('content', {name: name});
         if (name !== 'data')
@@ -894,6 +898,9 @@ ColibriFocus.prototype.setRemoteDescription = function (session, elem, desctype)
     this.remotessrc[session.peerjid] = [];
     for (channel = 0; channel < this.channels[participant].length; channel++) {
         //if (channel == 0) continue; FIXME: does not work as intended
+        if (!remoteSDP.media[channel])
+            continue;
+
         if (SDPUtil.find_lines(remoteSDP.media[channel], 'a=ssrc:').length)
         {
             this.remotessrc[session.peerjid][channel] =
@@ -905,6 +912,9 @@ ColibriFocus.prototype.setRemoteDescription = function (session, elem, desctype)
     // ACT 4: add new a=ssrc lines to local remotedescription
     for (channel = 0; channel < this.channels[participant].length; channel++) {
         //if (channel == 0) continue; FIXME: does not work as intended
+        if (!remoteSDP.media[channel])
+            continue;
+
         if (SDPUtil.find_lines(remoteSDP.media[channel], 'a=ssrc:').length) {
             this.peerconnection.enqueueAddSsrc(
                 channel,
