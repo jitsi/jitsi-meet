@@ -477,9 +477,7 @@ var VideoLayout = (function (my) {
             if (!indicatorSpan || indicatorSpan.length === 0) {
                 indicatorSpan = document.createElement('span');
                 indicatorSpan.className = 'focusindicator';
-                Util.setTooltip(indicatorSpan,
-                                "The owner of<br/>this conference",
-                                "top");
+
                 focusContainer.appendChild(indicatorSpan);
 
                 createFocusIndicatorElement(indicatorSpan);
@@ -772,6 +770,10 @@ var VideoLayout = (function (my) {
         var focusIndicator = document.createElement('i');
         focusIndicator.className = 'fa fa-star';
         parentElement.appendChild(focusIndicator);
+
+        Util.setTooltip(parentElement,
+                "The owner of<br/>this conference",
+                "top");
     }
 
     /**
