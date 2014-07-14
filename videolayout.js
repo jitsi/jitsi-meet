@@ -570,7 +570,9 @@ var VideoLayout = (function (my) {
      * Resizes thumbnails.
      */
     my.resizeThumbnails = function() {
-        var thumbnailSize = calculateThumbnailSize();
+        var videoSpaceWidth = $('#remoteVideos').width();
+
+        var thumbnailSize = VideoLayout.calculateThumbnailSize(videoSpaceWidth);
         var width = thumbnailSize[0];
         var height = thumbnailSize[1];
 
@@ -682,7 +684,7 @@ var VideoLayout = (function (my) {
     /**
      * Calculates the thumbnail size.
      */
-    var calculateThumbnailSize = function () {
+    my.calculateThumbnailSize = function (videoSpaceWidth) {
         // Calculate the available height, which is the inner window height minus
        // 39px for the header minus 2px for the delimiter lines on the top and
        // bottom of the large video, minus the 36px space inside the remoteVideos
@@ -691,8 +693,10 @@ var VideoLayout = (function (my) {
 
        var numvids = $('#remoteVideos>span:visible').length;
 
-       // Remove the 1px borders arround videos and the chat width.
-       var availableWinWidth = $('#remoteVideos').width() - 2 * numvids - 50;
+       // Remove the 3px borders arround videos and border around the remote
+       // videos area
+       var availableWinWidth = videoSpaceWidth - 2 * 3 * numvids - 50;
+
        var availableWidth = availableWinWidth / numvids;
        var aspectRatio = 16.0 / 9.0;
        var maxHeight = Math.min(160, availableHeight);
