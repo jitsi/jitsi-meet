@@ -562,7 +562,7 @@ $(document).bind('callactive.jingle', function (event, videoelem, sid) {
 
         // Update the large video to the last added video only if there's no
         // current active or focused speaker.
-        if (!focusedVideoSrc && !VideoLayout.getActiveSpeakerResourceJid())
+        if (!focusedVideoSrc && !VideoLayout.getDominantSpeakerResourceJid())
             VideoLayout.updateLargeVideo(videoelem.attr('src'), 1);
 
         VideoLayout.showFocusIndicator();
