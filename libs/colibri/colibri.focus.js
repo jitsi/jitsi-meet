@@ -58,6 +58,12 @@ function ColibriFocus(connection, bridgejid) {
         = ('number' === typeof(config.channelExpire))
             ? config.channelExpire
             : 15;
+    /**
+     * Default channel last-n value.
+     * @type {number}
+     */
+    this.channelLastN
+        = ('number' === typeof(config.channelLastN)) ? config.channelLastN : -1;
 
     // media types of the conference
     if (config.openSctp)
@@ -212,13 +218,8 @@ ColibriFocus.prototype._makeConference = function () {
         else
         {
             elemName = 'channel';
-            if ('video' === name)
-            {
-                // last-n
-                var lastN = config.channelLastN;
-                if ('undefined' !== typeof(lastN))
-                    elemAttrs['last-n'] = lastN;
-            }
+            if (('video' === name) && (this.channelLastN >= 0))
+                elemAttrs['last-n'] = this.channelLastN;
         }
 
         elem.c('content', {name: name});
@@ -686,13 +687,8 @@ ColibriFocus.prototype.addNewParticipant = function (peer) {
         else
         {
             elemName = 'channel';
-            if ('video' === name)
-            {
-                // last-n
-                var lastN = config.channelLastN;
-                if ('undefined' !== typeof(lastN))
-                    elemAttrs['last-n'] = lastN;
-            }
+            if (('video' === name) && (this.channelLastN >= 0))
+                elemAttrs['last-n'] = this.channelLastN;
         }
 
         elem.c('content', {name: name});
@@ -1203,5 +1199,50 @@ ColibriFocus.prototype.setRTCPTerminationStrategy = function (strategyFQN) {
             console.error('got error', err);
         }
     );
+};
+
+/**
+ * Sets the default value of the channel last-n attribute in this conference and
+ * updates/patches the existing channels.
+ */
+ColibriFocus.prototype.setChannelLastN = function (channelLastN) {
+    if (('number' === typeof(channelLastN))
+            && (this.channelLastN !== channelLastN))
+    {
+        this.channelLastN = channelLastN;
+
+        // Update/patch the existing channels.
+        var patch = $iq({ to:this.bridgejid, type:'set' });
+
+        patch.c(
+            'conference',
+            { xmlns:'http://jitsi.org/protocol/colibri', id:this.confid });
+        patch.c('content', { name:'video' });
+        patch.c(
+            'channel',
+            {
+                id:$(this.mychannel[1 /* video */]).attr('id'),
+                'last-n':this.channelLastN
+            });
+        patch.up(); // end of channel
+        for (var p = 0; p < this.channels.length; p++)
+        {
+            patch.c(
+                'channel',
+                {
+                    id:$(this.channels[p][1 /* video */]).attr('id'),
+                    'last-n':this.channelLastN
+                });
+            patch.up(); // end of channel
+        }
+        this.connection.sendIQ(
+            patch,
+            function (res) {
+                console.info('Set channel last-n succeeded: ', res);
+            },
+            function (err) {
+                console.error('Set channel last-n failed: ', err);
+            });
+    }
 };
 
