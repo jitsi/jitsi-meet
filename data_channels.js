@@ -10,7 +10,7 @@ function onDataChannel(event)
 
     dataChannel.onopen = function ()
     {
-        console.info("Data channel opened by the bridge !!!", dataChannel);
+        console.info("Data channel opened by the Videobridge!", dataChannel);
 
         // Code sample for sending string and/or binary data
         // Sends String message to the bridge
@@ -26,18 +26,56 @@ function onDataChannel(event)
 
     dataChannel.onmessage = function (event)
     {
-        var msgData = event.data;
-        console.info("Got Data Channel Message:", msgData, dataChannel);
+        var data = event.data;
+        // JSON
+        var obj;
 
-        // Active speaker event
-        if (msgData.indexOf('activeSpeaker') === 0)
+        try
         {
-            // Endpoint ID from the bridge
-            var resourceJid = msgData.split(":")[1];
+            obj = JSON.parse(data);
+        }
+        catch (e)
+        {
+            console.error(
+                "Failed to parse data channel message as JSON: ",
+                data,
+                dataChannel);
+        }
+        if (('undefined' !== typeof(obj)) && (null !== obj))
+        {
+            var colibriClass = obj.colibriClass;
 
-            console.info(
-                "Data channel new active speaker event: " + resourceJid);
-            $(document).trigger('activespeakerchanged', [resourceJid]);
+            if ("DominantSpeakerEndpointChangeEvent" === colibriClass)
+            {
+                // Endpoint ID from the Videobridge.
+                var dominantSpeakerEndpoint = obj.dominantSpeakerEndpoint;
+
+                console.info(
+                    "Data channel new dominant speaker event: ",
+                    dominantSpeakerEndpoint);
+                $(document).trigger(
+                    'dominantspeakerchanged',
+                    [dominantSpeakerEndpoint]);
+            }
+            else if ("LastNEndpointsChangeEvent" === colibriClass)
+            {
+                // The new/latest list of last-n endpoint IDs.
+                var lastNEndpoints = obj.lastNEndpoints;
+                /*
+                 * The list of endpoint IDs which are entering the list of
+                 * last-n at this time i.e. were not in the old list of last-n
+                 * endpoint IDs.
+                 */
+                var endpointsEnteringLastN = obj.endpointsEnteringLastN;
+
+                console.debug(
+                    "Data channel new last-n event: ",
+                    lastNEndpoints);
+            }
+            else
+            {
+                console.debug("Data channel JSON-formatted message: ", obj);
+            }
         }
     };
 
@@ -78,3 +116,4 @@ function bindDataChannelListener(peerConnection)
         console.info("Got My Data Channel Message:", msgData, dataChannel);
     };*/
 }
+

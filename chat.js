@@ -115,8 +115,7 @@ var Chat = (function (my) {
             +  '</div>');
         $('#chatconversation').animate(
             { scrollTop: $('#chatconversation')[0].scrollHeight}, 1000);
-
-    }
+    };
 
     /**
      * Sets the subject to the UI
@@ -135,8 +134,7 @@ var Chat = (function (my) {
         {
             $("#subject").css({display: "block"});
         }
-    }
-
+    };
 
     /**
      * Opens / closes the chat area.
@@ -159,12 +157,25 @@ var Chat = (function (my) {
         var horizontalIndent = videoPosition[0];
         var verticalIndent = videoPosition[1];
 
+        var thumbnailSize = VideoLayout.calculateThumbnailSize(videospaceWidth);
+        var thumbnailsWidth = thumbnailSize[0];
+        var thumbnailsHeight = thumbnailSize[1];
+
         if (chatspace.is(":visible")) {
             videospace.animate({right: chatSize[0],
                                 width: videospaceWidth,
                                 height: videospaceHeight},
                                 {queue: false,
                                 duration: 500});
+
+            $('#remoteVideos').animate({height: thumbnailsHeight},
+                                        {queue: false,
+                                        duration: 500});
+
+            $('#remoteVideos>span').animate({height: thumbnailsHeight,
+                                            width: thumbnailsWidth},
+                                            {queue: false,
+                                            duration: 500});
 
             $('#largeVideoContainer').animate({ width: videospaceWidth,
                                                 height: videospaceHeight},
@@ -187,6 +198,9 @@ var Chat = (function (my) {
                                             duration: 500});
         }
         else {
+            // Undock the toolbar when the chat is shown.
+            Toolbar.dockToolbar(false);
+
             videospace.animate({right: chatSize[0],
                                 width: videospaceWidth,
                                 height: videospaceHeight},
@@ -197,6 +211,15 @@ var Chat = (function (my) {
                                     chatspace.trigger('shown');
                                 }
                                });
+
+            $('#remoteVideos').animate({height: thumbnailsHeight},
+                    {queue: false,
+                    duration: 500});
+
+            $('#remoteVideos>span').animate({height: thumbnailsHeight,
+                        width: thumbnailsWidth},
+                        {queue: false,
+                        duration: 500});
 
             $('#largeVideoContainer').animate({ width: videospaceWidth,
                                                 height: videospaceHeight},
@@ -290,7 +313,7 @@ var Chat = (function (my) {
         if (unreadMessages) {
             unreadMsgElement.innerHTML = unreadMessages.toString();
 
-            Toolbar.showToolbar();
+            Toolbar.dockToolbar(true);
 
             var chatButtonElement
                 = document.getElementById('chatButton').parentNode;

@@ -1,6 +1,6 @@
 var VideoLayout = (function (my) {
     var preMuted = false;
-    var currentActiveSpeaker = null;
+    var currentDominantSpeaker = null;
 
     my.changeLocalAudio = function(stream) {
         connection.jingle.localAudio = stream;
@@ -139,19 +139,19 @@ var VideoLayout = (function (my) {
 
                 if (isVisible) {
                     // Only if the large video is currently visible.
-                    // Disable previous active speaker video.
+                    // Disable previous dominant speaker video.
                     var oldJid = getJidFromVideoSrc(oldSrc);
                     if (oldJid) {
                         var oldResourceJid = Strophe.getResourceFromJid(oldJid);
-                        VideoLayout.enableActiveSpeaker(oldResourceJid, false);
+                        VideoLayout.enableDominantSpeaker(oldResourceJid, false);
                     }
 
-                    // Enable new active speaker in the remote videos section.
+                    // Enable new dominant speaker in the remote videos section.
                     var userJid = getJidFromVideoSrc(newSrc);
                     if (userJid)
                     {
                         var resourceJid = Strophe.getResourceFromJid(userJid);
-                        VideoLayout.enableActiveSpeaker(resourceJid, true);
+                        VideoLayout.enableDominantSpeaker(resourceJid, true);
                     }
 
                     $(this).fadeIn(300);
@@ -173,15 +173,15 @@ var VideoLayout = (function (my) {
         if (focusedVideoSrc === videoSrc)
         {
             focusedVideoSrc = null;
-            var activeSpeakerVideo = null;
-            // Enable the currently set active speaker.
-            if (currentActiveSpeaker) {
-                activeSpeakerVideo
-                    = $('#participant_' + currentActiveSpeaker + '>video')
+            var dominantSpeakerVideo = null;
+            // Enable the currently set dominant speaker.
+            if (currentDominantSpeaker) {
+                dominantSpeakerVideo
+                    = $('#participant_' + currentDominantSpeaker + '>video')
                         .get(0);
 
-                if (activeSpeakerVideo)
-                    VideoLayout.updateLargeVideo(activeSpeakerVideo.src, 1);
+                if (dominantSpeakerVideo)
+                    VideoLayout.updateLargeVideo(dominantSpeakerVideo.src, 1);
             }
 
             return;
@@ -254,12 +254,12 @@ var VideoLayout = (function (my) {
         if (isVisible) {
             $('#largeVideo').css({visibility: 'visible'});
             $('.watermark').css({visibility: 'visible'});
-            VideoLayout.enableActiveSpeaker(resourceJid, true);
+            VideoLayout.enableDominantSpeaker(resourceJid, true);
         }
         else {
             $('#largeVideo').css({visibility: 'hidden'});
             $('.watermark').css({visibility: 'hidden'});
-            VideoLayout.enableActiveSpeaker(resourceJid, false);
+            VideoLayout.enableDominantSpeaker(resourceJid, false);
         }
     };
 
@@ -477,9 +477,7 @@ var VideoLayout = (function (my) {
             if (!indicatorSpan || indicatorSpan.length === 0) {
                 indicatorSpan = document.createElement('span');
                 indicatorSpan.className = 'focusindicator';
-                Util.setTooltip(indicatorSpan,
-                                "The owner of<br/>this conference",
-                                "top");
+
                 focusContainer.appendChild(indicatorSpan);
 
                 createFocusIndicatorElement(indicatorSpan);
@@ -570,7 +568,9 @@ var VideoLayout = (function (my) {
      * Resizes thumbnails.
      */
     my.resizeThumbnails = function() {
-        var thumbnailSize = calculateThumbnailSize();
+        var videoSpaceWidth = $('#remoteVideos').width();
+
+        var thumbnailSize = VideoLayout.calculateThumbnailSize(videoSpaceWidth);
         var width = thumbnailSize[0];
         var height = thumbnailSize[1];
 
@@ -582,20 +582,20 @@ var VideoLayout = (function (my) {
     };
 
     /**
-     * Enables the active speaker UI.
+     * Enables the dominant speaker UI.
      *
      * @param resourceJid the jid indicating the video element to
      * activate/deactivate
-     * @param isEnable indicates if the active speaker should be enabled or
+     * @param isEnable indicates if the dominant speaker should be enabled or
      * disabled
      */
-    my.enableActiveSpeaker = function(resourceJid, isEnable) {
+    my.enableDominantSpeaker = function(resourceJid, isEnable) {
         var displayName = resourceJid;
         var nameSpan = $('#participant_' + resourceJid + '>span.displayname');
         if (nameSpan.length > 0)
             displayName = nameSpan.text();
 
-        console.log("UI enable active speaker",
+        console.log("UI enable dominant speaker",
                     displayName,
                     resourceJid,
                     isEnable);
@@ -625,16 +625,16 @@ var VideoLayout = (function (my) {
             if (isEnable) {
                 VideoLayout.showDisplayName(videoContainerId, true);
 
-                if (!videoSpan.classList.contains("activespeaker"))
-                    videoSpan.classList.add("activespeaker");
+                if (!videoSpan.classList.contains("dominantspeaker"))
+                    videoSpan.classList.add("dominantspeaker");
 
                 video.css({visibility: 'hidden'});
             }
             else {
                 VideoLayout.showDisplayName(videoContainerId, false);
 
-                if (videoSpan.classList.contains("activespeaker"))
-                    videoSpan.classList.remove("activespeaker");
+                if (videoSpan.classList.contains("dominantspeaker"))
+                    videoSpan.classList.remove("dominantspeaker");
 
                 video.css({visibility: 'visible'});
             }
@@ -682,7 +682,7 @@ var VideoLayout = (function (my) {
     /**
      * Calculates the thumbnail size.
      */
-    var calculateThumbnailSize = function () {
+    my.calculateThumbnailSize = function (videoSpaceWidth) {
         // Calculate the available height, which is the inner window height minus
        // 39px for the header minus 2px for the delimiter lines on the top and
        // bottom of the large video, minus the 36px space inside the remoteVideos
@@ -691,8 +691,10 @@ var VideoLayout = (function (my) {
 
        var numvids = $('#remoteVideos>span:visible').length;
 
-       // Remove the 1px borders arround videos and the chat width.
-       var availableWinWidth = $('#remoteVideos').width() - 2 * numvids - 50;
+       // Remove the 3px borders arround videos and border around the remote
+       // videos area
+       var availableWinWidth = videoSpaceWidth - 2 * 3 * numvids - 50;
+
        var availableWidth = availableWinWidth / numvids;
        var aspectRatio = 16.0 / 9.0;
        var maxHeight = Math.min(160, availableHeight);
@@ -768,6 +770,10 @@ var VideoLayout = (function (my) {
         var focusIndicator = document.createElement('i');
         focusIndicator.className = 'fa fa-star';
         parentElement.appendChild(focusIndicator);
+
+        Util.setTooltip(parentElement,
+                "The owner of<br/>this conference",
+                "top");
     }
 
     /**
@@ -799,10 +805,10 @@ var VideoLayout = (function (my) {
     };
 
     /**
-     * Returns the current active speaker resource jid.
+     * Returns the current dominant speaker resource jid.
      */
-    my.getActiveSpeakerResourceJid = function () {
-        return currentActiveSpeaker;
+    my.getDominantSpeakerResourceJid = function () {
+        return currentDominantSpeaker;
     };
 
     /**
@@ -920,21 +926,21 @@ var VideoLayout = (function (my) {
     });
 
     /**
-     * On active speaker changed event.
+     * On dominant speaker changed event.
      */
-    $(document).bind('activespeakerchanged', function (event, resourceJid) {
+    $(document).bind('dominantspeakerchanged', function (event, resourceJid) {
         // We ignore local user events.
         if (resourceJid
                 === Strophe.getResourceFromJid(connection.emuc.myroomjid))
             return;
 
-        // Obtain container for new active speaker.
+        // Obtain container for new dominant speaker.
         var container  = document.getElementById(
                 'participant_' + resourceJid);
 
-        // Update the current active speaker.
-        if (resourceJid !== currentActiveSpeaker)
-            currentActiveSpeaker = resourceJid;
+        // Update the current dominant speaker.
+        if (resourceJid !== currentDominantSpeaker)
+            currentDominantSpeaker = resourceJid;
         else
             return;
 

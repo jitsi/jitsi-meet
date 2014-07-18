@@ -519,6 +519,7 @@ function getUserMediaWithConstraints(um, success_callback, failure_callback, res
         constraints.video = {
             mandatory: {
                 chromeMediaSource: "screen",
+                googLeakyBucket: true,
                 maxWidth: window.screen.width,
                 maxHeight: window.screen.height,
                 maxFrameRate: 3
@@ -530,6 +531,7 @@ function getUserMediaWithConstraints(um, success_callback, failure_callback, res
             mandatory: {
                 chromeMediaSource: "desktop",
                 chromeMediaSourceId: desktopStream,
+                googLeakyBucket: true,
                 maxWidth: window.screen.width,
                 maxHeight: window.screen.height,
                 maxFrameRate: 3

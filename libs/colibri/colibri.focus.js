@@ -54,17 +54,22 @@ function ColibriFocus(connection, bridgejid) {
      * Default channel expire value in seconds.
      * @type {number}
      */
-    this.channelExpire = 60;
+    this.channelExpire
+        = ('number' === typeof(config.channelExpire))
+            ? config.channelExpire
+            : 15;
+    /**
+     * Default channel last-n value.
+     * @type {number}
+     */
+    this.channelLastN
+        = ('number' === typeof(config.channelLastN)) ? config.channelLastN : -1;
 
     // media types of the conference
     if (config.openSctp)
-    {
         this.media = ['audio', 'video', 'data'];
-    }
     else
-    {
         this.media = ['audio', 'video'];
-    }
 
     this.connection.jingle.sessions[this.sid] = this;
     this.mychannel = [];
@@ -202,29 +207,33 @@ ColibriFocus.prototype._makeConference = function () {
     elem.c('conference', {xmlns: 'http://jitsi.org/protocol/colibri'});
 
     this.media.forEach(function (name) {
-        var isData = name === 'data';
-        var channel = isData ? 'sctpconnection' : 'channel';
+        var elemName;
+        var elemAttrs = { initiator: 'true', expire: self.channelExpire };
+
+        if ('data' === name)
+        {
+            elemName = 'sctpconnection';
+            elemAttrs['port'] = 5000;
+        }
+        else
+        {
+            elemName = 'channel';
+            if (('video' === name) && (this.channelLastN >= 0))
+                elemAttrs['last-n'] = this.channelLastN;
+        }
 
         elem.c('content', {name: name});
 
-        elem.c(channel, {
-            initiator: 'true',
-            expire: '15',
-            endpoint: self.myMucResource
-        });
-        if (isData)
-            elem.attrs({port:  5000});
-        elem.up();// end of channel
+        elem.c(elemName, elemAttrs);
+        elem.attrs({ endpoint: self.myMucResource });
+        elem.up();// end of channel/sctpconnection
 
         for (var j = 0; j < self.peers.length; j++) {
-            elem.c(channel, {
-                initiator: 'true',
-                expire: '15',
-                endpoint: self.peers[j].substr(1 + self.peers[j].lastIndexOf('/'))
-            });
-            if (isData)
-                elem.attrs({port: 5000});
-            elem.up(); // end of channel
+            var peer = self.peers[j];
+
+            elem.c(elemName, elemAttrs);
+            elem.attrs({ endpoint: peer.substr(1 + peer.lastIndexOf('/')) });
+            elem.up(); // end of channel/sctpconnection
         }
         elem.up(); // end of content
     });
@@ -233,7 +242,7 @@ ColibriFocus.prototype._makeConference = function () {
     localSDP.media.forEach(function (media, channel) {
         var name = SDPUtil.parse_mline(media.split('\r\n')[0]).media;
         elem.c('content', {name: name});
-        elem.c('channel', {initiator: 'false', expire: '15'});
+        elem.c('channel', {initiator: 'false', expire: self.channelExpire});
 
         // FIXME: should reuse code from .toJingle
         var mline = SDPUtil.parse_mline(media.split('\r\n')[0]);
@@ -247,7 +256,7 @@ ColibriFocus.prototype._makeConference = function () {
 
         elem.up(); // end of channel
         for (j = 0; j < self.peers.length; j++) {
-            elem.c('channel', {initiator: 'true', expire:'15' }).up();
+            elem.c('channel', {initiator: 'true', expire: self.channelExpire }).up();
         }
         elem.up(); // end of content
     });
@@ -540,7 +549,8 @@ ColibriFocus.prototype.initiate = function (peer, isInitiator) {
             if (1) { //i > 0) { // not for audio FIXME: does not work as intended
                 // re-add all remote a=ssrcs
                 for (var jid in this.remotessrc) {
-                    if (jid == peer) continue;
+                    if (jid == peer || !this.remotessrc[jid][i])
+                        continue;
                     sdp.media[i] += this.remotessrc[jid][i];
                 }
                 // and local a=ssrc lines
@@ -661,24 +671,28 @@ ColibriFocus.prototype.addNewParticipant = function (peer) {
     var localSDP = new SDP(this.peerconnection.localDescription.sdp);
     localSDP.media.forEach(function (media, channel) {
         var name = SDPUtil.parse_mid(SDPUtil.find_line(media, 'a=mid:'));
-        elem.c('content', {name: name});
-        if (name !== 'data')
-        {
-            elem.c('channel', {
+        var elemName;
+        var elemAttrs
+            = {
                 initiator: 'true',
                 expire: self.channelExpire,
                 endpoint: peer.substr(1 + peer.lastIndexOf('/'))
-            });
+            };
+
+        if ('data' == name)
+        {
+            elemName = 'sctpconnection';
+            elemAttrs['port'] = 5000;
         }
         else
         {
-            elem.c('sctpconnection', {
-                endpoint: peer.substr(1 + peer.lastIndexOf('/')),
-                initiator: 'true',
-                expire: self.channelExpire,
-                port: 5000
-            });
+            elemName = 'channel';
+            if (('video' === name) && (this.channelLastN >= 0))
+                elemAttrs['last-n'] = this.channelLastN;
         }
+
+        elem.c('content', {name: name});
+        elem.c(elemName, elemAttrs);
         elem.up(); // end of channel/sctpconnection
         elem.up(); // end of content
     });
@@ -714,6 +728,9 @@ ColibriFocus.prototype.updateChannel = function (remoteSDP, participant) {
     change.c('conference', {xmlns: 'http://jitsi.org/protocol/colibri', id: this.confid});
     for (channel = 0; channel < this.channels[participant].length; channel++)
     {
+        if (!remoteSDP.media[channel])
+            continue;
+
         var name = SDPUtil.parse_mid(SDPUtil.find_line(remoteSDP.media[channel], 'a=mid:'));
         change.c('content', {name: name});
         if (name !== 'data')
@@ -894,6 +911,9 @@ ColibriFocus.prototype.setRemoteDescription = function (session, elem, desctype)
     this.remotessrc[session.peerjid] = [];
     for (channel = 0; channel < this.channels[participant].length; channel++) {
         //if (channel == 0) continue; FIXME: does not work as intended
+        if (!remoteSDP.media[channel])
+            continue;
+
         if (SDPUtil.find_lines(remoteSDP.media[channel], 'a=ssrc:').length)
         {
             this.remotessrc[session.peerjid][channel] =
@@ -905,6 +925,9 @@ ColibriFocus.prototype.setRemoteDescription = function (session, elem, desctype)
     // ACT 4: add new a=ssrc lines to local remotedescription
     for (channel = 0; channel < this.channels[participant].length; channel++) {
         //if (channel == 0) continue; FIXME: does not work as intended
+        if (!remoteSDP.media[channel])
+            continue;
+
         if (SDPUtil.find_lines(remoteSDP.media[channel], 'a=ssrc:').length) {
             this.peerconnection.enqueueAddSsrc(
                 channel,
@@ -1153,3 +1176,73 @@ ColibriFocus.prototype.sendTerminate = function (session, reason, text) {
         this.statsinterval = null;
     }
 };
+
+ColibriFocus.prototype.setRTCPTerminationStrategy = function (strategyFQN) {
+    var self = this;
+    var strategyIQ = $iq({to: this.bridgejid, type: 'set'});
+    strategyIQ.c('conference', {
+	    xmlns: 'http://jitsi.org/protocol/colibri',
+	    id: this.confid,
+    });
+
+    strategyIQ.c('rtcp-termination-strategy', {name: strategyFQN });
+
+    strategyIQ.c('content', {name: "video"});
+    strategyIQ.up(); // end of content
+
+    console.log('setting RTCP termination strategy', strategyFQN);
+    this.connection.sendIQ(strategyIQ,
+        function (res) {
+            console.log('got result');
+        },
+        function (err) {
+            console.error('got error', err);
+        }
+    );
+};
+
+/**
+ * Sets the default value of the channel last-n attribute in this conference and
+ * updates/patches the existing channels.
+ */
+ColibriFocus.prototype.setChannelLastN = function (channelLastN) {
+    if (('number' === typeof(channelLastN))
+            && (this.channelLastN !== channelLastN))
+    {
+        this.channelLastN = channelLastN;
+
+        // Update/patch the existing channels.
+        var patch = $iq({ to:this.bridgejid, type:'set' });
+
+        patch.c(
+            'conference',
+            { xmlns:'http://jitsi.org/protocol/colibri', id:this.confid });
+        patch.c('content', { name:'video' });
+        patch.c(
+            'channel',
+            {
+                id:$(this.mychannel[1 /* video */]).attr('id'),
+                'last-n':this.channelLastN
+            });
+        patch.up(); // end of channel
+        for (var p = 0; p < this.channels.length; p++)
+        {
+            patch.c(
+                'channel',
+                {
+                    id:$(this.channels[p][1 /* video */]).attr('id'),
+                    'last-n':this.channelLastN
+                });
+            patch.up(); // end of channel
+        }
+        this.connection.sendIQ(
+            patch,
+            function (res) {
+                console.info('Set channel last-n succeeded: ', res);
+            },
+            function (err) {
+                console.error('Set channel last-n failed: ', err);
+            });
+    }
+};
+

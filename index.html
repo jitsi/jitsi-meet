@@ -27,9 +27,9 @@
     <script src="estos_log.js?v=2"></script><!-- simple stanza logger -->
     <script src="desktopsharing.js?v=2"></script><!-- desktop sharing -->
     <script src="data_channels.js?v=2"></script><!-- data channels -->
-    <script src="app.js?v=29"></script><!-- application logic -->
+    <script src="app.js?v=3"></script><!-- application logic -->
     <script src="commands.js?v=1"></script><!-- application logic -->
-    <script src="chat.js?v=6"></script><!-- chat logic -->
+    <script src="chat.js?v=7"></script><!-- chat logic -->
     <script src="util.js?v=5"></script><!-- utility functions -->
     <script src="etherpad.js?v=8"></script><!-- etherpad plugin -->
     <script src="prezi.js?v=4"></script><!-- prezi plugin -->
@@ -39,11 +39,11 @@
     <script src="analytics.js?v=1"></script><!-- google analytics plugin -->
     <script src="rtp_stats.js?v=1"></script><!-- RTP stats processing -->
     <script src="local_stats.js?v=1"></script><!-- Local stats processing -->
-    <script src="videolayout.js?v=4"></script><!-- video ui -->
-    <script src="toolbar.js?v=2"></script><!-- toolbar ui -->
+    <script src="videolayout.js?v=6"></script><!-- video ui -->
+    <script src="toolbar.js?v=3"></script><!-- toolbar ui -->
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
     <link rel="stylesheet" href="css/font.css"/>
-    <link rel="stylesheet" type="text/css" media="screen" href="css/main.css?v=21"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="css/main.css?v=22"/>
     <link rel="stylesheet" type="text/css" media="screen" href="css/videolayout_default.css?v=7" id="videolayout_default"/>
     <link rel="stylesheet" href="css/jquery-impromptu.css?v=4">
     <link rel="stylesheet" href="css/modaldialog.css?v=3">
@@ -123,7 +123,7 @@
                     <!--<video id="localVideo" autoplay oncontextmenu="return false;" muted></video> - is now per stream generated -->
                 </span>
                 <audio id="localAudio" autoplay oncontextmenu="return false;" muted></audio>
-                <span class="focusindicator" data-content="The owner of&#10;this conference" data-toggle="popover" data-placement="top"></span>
+                <span class="focusindicator"></span>
             </span>
             <audio id="userJoined" src="sounds/joined.wav" preload="auto"></audio>
             <audio id="userLeft" src="sounds/left.wav" preload="auto"></audio>
