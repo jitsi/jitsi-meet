@@ -923,14 +923,14 @@ function toggleRecording() {
     }
 
     var oldState = focus.recordingEnabled;
-    buttonClick("#recordButton", "icon-recEnable icon-recDisable");
+    $('#recordButton').toggleClass('active');
     focus.setRecording(!oldState,
                         recordingToken,
                         function (state) {
                             console.log("New recording state: ", state);
                             if (state == oldState) //failed to change, reset the token because it might have been wrong
                             {
-                                buttonClick("#recordButton", "icon-recEnable icon-recDisable");
+                                $('#recordButton').toggleClass('active');
                                 setRecordingToken(null);
                             }
                         }
