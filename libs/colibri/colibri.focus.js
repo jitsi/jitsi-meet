@@ -172,7 +172,8 @@ ColibriFocus.prototype.makeConference = function (peers) {
 };
 
 // Sends a COLIBRI message which enables or disables (according to 'state') the
-// recording on the bridge.
+// recording on the bridge. Waits for the result IQ and calls 'callback' with
+// the new recording state, according to the IQ.
 ColibriFocus.prototype.setRecording = function(state, token, callback) {
     var self = this;
     var elem = $iq({to: this.bridgejid, type: 'get'});
@@ -187,10 +188,7 @@ ColibriFocus.prototype.setRecording = function(state, token, callback) {
         function (result) {
             console.log('Set recording "', state, '". Result:', result);
             var recordingElem = $(result).find('>conference>recording');
-            var newState = recordingElem.attr('state');
-            if (newState == null){
-                newState = false;
-            }
+            var newState = ('true' === recordingElem.attr('state'));
 
             self.recordingEnabled = newState;
             callback(newState);
