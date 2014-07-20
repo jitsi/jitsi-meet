@@ -201,8 +201,8 @@ ColibriFocus.prototype.setRecording = function(state, token, callback) {
 
 ColibriFocus.prototype._makeConference = function () {
     var self = this;
-    var elem = $iq({to: this.bridgejid, type: 'get'});
-    elem.c('conference', {xmlns: 'http://jitsi.org/protocol/colibri'});
+    var elem = $iq({ to: this.bridgejid, type: 'get' });
+    elem.c('conference', { xmlns: 'http://jitsi.org/protocol/colibri' });
 
     this.media.forEach(function (name) {
         var elemName;
@@ -216,11 +216,11 @@ ColibriFocus.prototype._makeConference = function () {
         else
         {
             elemName = 'channel';
-            if (('video' === name) && (this.channelLastN >= 0))
-                elemAttrs['last-n'] = this.channelLastN;
+            if (('video' === name) && (self.channelLastN >= 0))
+                elemAttrs['last-n'] = self.channelLastN;
         }
 
-        elem.c('content', {name: name});
+        elem.c('content', { name: name });
 
         elem.c(elemName, elemAttrs);
         elem.attrs({ endpoint: self.myMucResource });
@@ -655,9 +655,7 @@ ColibriFocus.prototype.addNewParticipant = function (peer) {
         {
             console.error('local description not ready yet, postponing', peer);
         }
-        window.setTimeout(function () {
-            self.addNewParticipant(peer);
-        }, 250);
+        window.setTimeout(function () { self.addNewParticipant(peer); }, 250);
         return;
     }
     var index = this.channels.length;
@@ -665,7 +663,9 @@ ColibriFocus.prototype.addNewParticipant = function (peer) {
     this.peers.push(peer);
 
     var elem = $iq({to: this.bridgejid, type: 'get'});
-    elem.c('conference', {xmlns: 'http://jitsi.org/protocol/colibri', id: this.confid});
+    elem.c(
+        'conference',
+        { xmlns: 'http://jitsi.org/protocol/colibri', id: this.confid });
     var localSDP = new SDP(this.peerconnection.localDescription.sdp);
     localSDP.media.forEach(function (media, channel) {
         var name = SDPUtil.parse_mid(SDPUtil.find_line(media, 'a=mid:'));
@@ -685,11 +685,11 @@ ColibriFocus.prototype.addNewParticipant = function (peer) {
         else
         {
             elemName = 'channel';
-            if (('video' === name) && (this.channelLastN >= 0))
-                elemAttrs['last-n'] = this.channelLastN;
+            if (('video' === name) && (self.channelLastN >= 0))
+                elemAttrs['last-n'] = self.channelLastN;
         }
 
-        elem.c('content', {name: name});
+        elem.c('content', { name: name });
         elem.c(elemName, elemAttrs);
         elem.up(); // end of channel/sctpconnection
         elem.up(); // end of content
@@ -817,12 +817,7 @@ ColibriFocus.prototype.addSource = function (elem, fromJid) {
     if (!this.peerconnection.localDescription)
     {
         console.warn("addSource - localDescription not ready yet")
-        setTimeout(function()
-            {
-                self.addSource(elem, fromJid);
-            },
-            200
-        );
+        setTimeout(function() { self.addSource(elem, fromJid); }, 200);
         return;
     }
 
@@ -863,12 +858,7 @@ ColibriFocus.prototype.removeSource = function (elem, fromJid) {
     if (!self.peerconnection.localDescription)
     {
         console.warn("removeSource - localDescription not ready yet");
-        setTimeout(function()
-            {
-                self.removeSource(elem, fromJid);
-            },
-            200
-        );
+        setTimeout(function() { self.removeSource(elem, fromJid); }, 200);
         return;
     }
 
@@ -1009,11 +999,13 @@ ColibriFocus.prototype.sendIceCandidate = function (candidate) {
     }
     if (this.drip_container.length === 0) {
         // start 20ms callout
-        window.setTimeout(function () {
-            if (self.drip_container.length === 0) return;
-            self.sendIceCandidates(self.drip_container);
-            self.drip_container = [];
-        }, 20);
+        window.setTimeout(
+            function () {
+                if (self.drip_container.length === 0) return;
+                self.sendIceCandidates(self.drip_container);
+                self.drip_container = [];
+            },
+            20);
     }
     this.drip_container.push(candidate);
 };
@@ -1210,17 +1202,17 @@ ColibriFocus.prototype.setChannelLastN = function (channelLastN) {
         this.channelLastN = channelLastN;
 
         // Update/patch the existing channels.
-        var patch = $iq({ to:this.bridgejid, type:'set' });
+        var patch = $iq({ to: this.bridgejid, type: 'set' });
 
         patch.c(
             'conference',
-            { xmlns:'http://jitsi.org/protocol/colibri', id:this.confid });
-        patch.c('content', { name:'video' });
+            { xmlns: 'http://jitsi.org/protocol/colibri', id: this.confid });
+        patch.c('content', { name: 'video' });
         patch.c(
             'channel',
             {
-                id:$(this.mychannel[1 /* video */]).attr('id'),
-                'last-n':this.channelLastN
+                id: $(this.mychannel[1 /* video */]).attr('id'),
+                'last-n': this.channelLastN
             });
         patch.up(); // end of channel
         for (var p = 0; p < this.channels.length; p++)
@@ -1228,18 +1220,18 @@ ColibriFocus.prototype.setChannelLastN = function (channelLastN) {
             patch.c(
                 'channel',
                 {
-                    id:$(this.channels[p][1 /* video */]).attr('id'),
-                    'last-n':this.channelLastN
+                    id: $(this.channels[p][1 /* video */]).attr('id'),
+                    'last-n': this.channelLastN
                 });
             patch.up(); // end of channel
         }
         this.connection.sendIQ(
             patch,
             function (res) {
-                console.info('Set channel last-n succeeded: ', res);
+                console.info('Set channel last-n succeeded:', res);
             },
             function (err) {
-                console.error('Set channel last-n failed: ', err);
+                console.error('Set channel last-n failed:', err);
             });
     }
 };
