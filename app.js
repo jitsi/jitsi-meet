@@ -734,7 +734,7 @@ $(document).bind('presence.muc', function (event, jid, info, pres) {
         if (ssrc2jid[ssrc] == jid) {
             delete ssrc2jid[ssrc];
         }
-        if (ssrc2videoType == jid) {
+        if (ssrc2videoType[ssrc] == jid) {
             delete ssrc2videoType[ssrc];
         }
     });
