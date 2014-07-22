@@ -175,7 +175,13 @@ var Chat = (function (my) {
             $('#remoteVideos>span').animate({height: thumbnailsHeight,
                                             width: thumbnailsWidth},
                                             {queue: false,
-                                            duration: 500});
+                                            duration: 500,
+                                            complete: function() {
+                                                $(document).trigger(
+                                                        "remotevideo.resized",
+                                                        [thumbnailsWidth,
+                                                         thumbnailsHeight]);
+                                            }});
 
             $('#largeVideoContainer').animate({ width: videospaceWidth,
                                                 height: videospaceHeight},
@@ -219,7 +225,12 @@ var Chat = (function (my) {
             $('#remoteVideos>span').animate({height: thumbnailsHeight,
                         width: thumbnailsWidth},
                         {queue: false,
-                        duration: 500});
+                        duration: 500,
+                        complete: function() {
+                            $(document).trigger(
+                                    "remotevideo.resized",
+                                    [thumbnailsWidth, thumbnailsHeight]);
+                        }});
 
             $('#largeVideoContainer').animate({ width: videospaceWidth,
                                                 height: videospaceHeight},

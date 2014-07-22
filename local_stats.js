@@ -32,7 +32,6 @@ var LocalStatsCollector = (function() {
         this.audioLevel = 0;
     }
 
-
     /**
      * Starts the collecting the statistics.
      */
@@ -61,8 +60,7 @@ var LocalStatsCollector = (function() {
             },
             this.intervalMilis
         );
-
-    }
+    };
 
     /**
      * Stops collecting the statistics.
@@ -72,8 +70,7 @@ var LocalStatsCollector = (function() {
             clearInterval(this.intervalId);
             this.intervalId = null;
         }
-    }
-
+    };
 
     /**
      * Converts frequency data array to audio level.
@@ -91,7 +88,7 @@ var LocalStatsCollector = (function() {
         }
 
         return maxVolume / 255;
-    }
+    };
 
     return LocalStatsCollectorProto;
 })();

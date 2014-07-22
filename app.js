@@ -448,8 +448,9 @@ function statsUpdated(statsCollector)
         var peerStats = statsCollector.jid2stats[jid];
         Object.keys(peerStats.ssrc2AudioLevel).forEach(function (ssrc)
         {
-//            console.info(jid +  " audio level: " +
-//                peerStats.ssrc2AudioLevel[ssrc] + " of ssrc: " + ssrc);
+            if (jid !== connection.emuc.myRoomJid)
+                AudioLevels.updateAudioLevel(   Strophe.getResourceFromJid(jid),
+                                                peerStats.ssrc2AudioLevel[ssrc]);
         });
     });
 }
@@ -461,7 +462,10 @@ function statsUpdated(statsCollector)
  */
 function localStatsUpdated(statsCollector)
 {
-//    console.info("Local audio level: " +  statsCollector.audioLevel);
+    if (connection.emuc.myRoomJid)
+        AudioLevels.updateAudioLevel(
+                Strophe.getResourceFromJid(connection.emuc.myRoomJid),
+                statsCollector.audioLevel);
 }
 
 /**

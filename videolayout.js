@@ -26,6 +26,8 @@ var VideoLayout = (function (my) {
         var localVideoContainer = document.getElementById('localVideoWrapper');
         localVideoContainer.appendChild(localVideo);
 
+        AudioLevels.updateAudioLevelCanvas();
+
         var localVideoSelector = $('#' + localVideo.id);
         // Add click handler to both video and video wrapper elements in case
         // there's no video.
@@ -313,6 +315,8 @@ var VideoLayout = (function (my) {
             addRemoteVideoMenu(peerJid, container);
 
         remotes.appendChild(container);
+        AudioLevels.updateAudioLevelCanvas(peerJid);
+
         return container;
     };
 
@@ -579,6 +583,8 @@ var VideoLayout = (function (my) {
         $('#remoteVideos').height(height);
         $('#remoteVideos>span').width(width);
         $('#remoteVideos>span').height(height);
+
+        $(document).trigger("remotevideo.resized", [width, height]);
     };
 
     /**
@@ -958,3 +964,5 @@ var VideoLayout = (function (my) {
 
     return my;
 }(VideoLayout || {}));
+
+    
