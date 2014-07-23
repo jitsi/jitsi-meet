@@ -636,7 +636,7 @@ $(document).bind('joined.muc', function (event, jid, info) {
             focus.setEndpointDisplayName(connection.emuc.myroomjid,
                                          nickname);
         }
-        showRecordingButton(false);
+        Toolbar.showRecordingButton(false);
     }
 
     if (focus && config.etherpad_base) {
@@ -668,7 +668,7 @@ $(document).bind('entered.muc', function (event, jid, info, pres) {
         if (focus.confid === null) {
             console.log('make new conference with', jid);
             focus.makeConference(Object.keys(connection.emuc.members));
-            showRecordingButton(true);
+            Toolbar.showRecordingButton(true);
         } else {
             console.log('invite', jid, 'into conference');
             focus.addNewParticipant(jid);
@@ -721,7 +721,7 @@ $(document).bind('left.muc', function (event, jid) {
 
         if (Object.keys(connection.emuc.members).length > 0) {
             focus.makeConference(Object.keys(connection.emuc.members));
-            showRecordingButton(true);
+            Toolbar.showRecordingButton(true);
         }
         $(document).trigger('focusechanged.muc', [focus]);
     }
@@ -735,7 +735,7 @@ $(document).bind('left.muc', function (event, jid) {
             focus.setEndpointDisplayName(connection.emuc.myroomjid,
                                          nickname);
         }
-        showRecordingButton(false);
+        Toolbar.showRecordingButton(false);
     }
     if (connection.emuc.getPrezi(jid)) {
         $(document).trigger('presentationremoved.muc',
@@ -943,14 +943,14 @@ function toggleRecording() {
     }
 
     var oldState = focus.recordingEnabled;
-    $('#recordButton').toggleClass('active');
+    Toolbar.toggleRecordingButtonState();
     focus.setRecording(!oldState,
                         recordingToken,
                         function (state) {
                             console.log("New recording state: ", state);
                             if (state == oldState) //failed to change, reset the token because it might have been wrong
                             {
-                                $('#recordButton').toggleClass('active');
+                                Toolbar.toggleRecordingButtonState();
                                 setRecordingToken(null);
                             }
                         }
@@ -1263,19 +1263,7 @@ function setView(viewName) {
 //    }
 }
 
-function showRecordingButton(show) {
-    if (!config.enableRecording) {
-        return;
-    }
 
-    if (show) {
-        $('#recording').css({display: "inline"});
-    }
-    else {
-        $('#recording').css({display: "none"});
-    }
-
-}
 
 $(document).bind('fatalError.jingle',
     function (event, session, error)

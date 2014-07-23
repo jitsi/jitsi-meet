@@ -284,5 +284,24 @@ var Toolbar = (function (my) {
         }
     };
 
+    // Shows or hides the 'recording' button.
+    my.showRecordingButton = function (show) {
+        if (!config.enableRecording) {
+            return;
+        }
+
+        if (show) {
+            $('#recording').css({display: "inline"});
+        }
+        else {
+            $('#recording').css({display: "none"});
+        }
+    };
+
+    // Toggle the state of the recording button
+    my.toggleRecordingButtonState = function() {
+        $('#recordButton').toggleClass('active');
+    };
+
     return my;
 }(Toolbar || {}));
