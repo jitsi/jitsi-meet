@@ -84,6 +84,10 @@ function ColibriFocus(connection, bridgejid) {
     this.wait = true;
 
     this.recordingEnabled = false;
+
+    // stores information about the endpoints (i.e. display names) to
+    // be sent to the videobridge.
+    this.endpointsInfo = null;
 }
 
 // creates a conferences with an initial set of peers
@@ -176,7 +180,7 @@ ColibriFocus.prototype.makeConference = function (peers) {
 // the new recording state, according to the IQ.
 ColibriFocus.prototype.setRecording = function(state, token, callback) {
     var self = this;
-    var elem = $iq({to: this.bridgejid, type: 'get'});
+    var elem = $iq({to: this.bridgejid, type: 'set'});
     elem.c('conference', {
         xmlns: 'http://jitsi.org/protocol/colibri',
         id: this.confid
@@ -196,6 +200,74 @@ ColibriFocus.prototype.setRecording = function(state, token, callback) {
         function (error) {
             console.warn(error);
         }
+    );
+};
+
+/*
+ * Updates the display name for an endpoint with a specific jid.
+ * jid: the jid associated with the endpoint.
+ * displayName: the new display name for the endpoint.
+ */
+ColibriFocus.prototype.setEndpointDisplayName = function(jid, displayName) {
+    var endpointId = jid.substr(1 + jid.lastIndexOf('/'));
+    var update = false;
+
+    if (this.endpointsInfo === null) {
+       this.endpointsInfo = {};
+    }
+
+    var endpointInfo = this.endpointsInfo[endpointId];
+    if ('undefined' === typeof endpointInfo) {
+        endpointInfo = this.endpointsInfo[endpointId] = {};
+    }
+
+    if (endpointInfo['displayname'] !== displayName) {
+        endpointInfo['displayname'] = displayName;
+        update = true;
+    }
+
+    if (update) {
+        this.updateEndpoints();
+    }
+};
+
+/*
+ * Sends a colibri message to the bridge that contains the
+ * current endpoints and their display names.
+ */
+ColibriFocus.prototype.updateEndpoints = function() {
+    if (this.confid === null
+        || this.endpointsInfo === null) {
+        return;
+    }
+
+    if (this.confid === 0) {
+        // the colibri conference is currently initiating
+        var self = this;
+        window.setTimeout(function() { self.updateEndpoints()}, 1000);
+        return;
+    }
+
+    var elem = $iq({to: this.bridgejid, type: 'set'});
+    elem.c('conference', {
+        xmlns: 'http://jitsi.org/protocol/colibri',
+        id: this.confid
+    });
+
+    for (var id in this.endpointsInfo) {
+        elem.c('endpoint');
+        elem.attrs({ id: id,
+                     displayname: this.endpointsInfo[id]['displayname']
+        });
+        elem.up();
+    }
+
+    //elem.up(); //conference
+
+    this.connection.sendIQ(
+        elem,
+        function (result) {},
+        function (error) { console.warn(error); }
     );
 };
 
@@ -235,6 +307,17 @@ ColibriFocus.prototype._makeConference = function () {
         }
         elem.up(); // end of content
     });
+
+    if (this.endpointsInfo !== null) {
+        for (var id in this.endpointsInfo) {
+            elem.c('endpoint');
+            elem.attrs({ id: id,
+                         displayname: this.endpointsInfo[id]['displayname']
+            });
+            elem.up();
+        }
+    }
+
     /*
     var localSDP = new SDP(this.peerconnection.localDescription.sdp);
     localSDP.media.forEach(function (media, channel) {

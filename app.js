@@ -632,6 +632,10 @@ $(document).bind('joined.muc', function (event, jid, info) {
 
     if (Object.keys(connection.emuc.members).length < 1) {
         focus = new ColibriFocus(connection, config.hosts.bridge);
+        if (nickname !== null) {
+            focus.setEndpointDisplayName(connection.emuc.myroomjid,
+                                         nickname);
+        }
         showRecordingButton(false);
     }
 
@@ -710,6 +714,10 @@ $(document).bind('left.muc', function (event, jid) {
             && !sessionTerminated) {
         console.log('welcome to our new focus... myself');
         focus = new ColibriFocus(connection, config.hosts.bridge);
+        if (nickname !== null) {
+            focus.setEndpointDisplayName(connection.emuc.myroomjid,
+                                         nickname);
+        }
 
         if (Object.keys(connection.emuc.members).length > 0) {
             focus.makeConference(Object.keys(connection.emuc.members));
@@ -723,6 +731,10 @@ $(document).bind('left.muc', function (event, jid) {
         // problems with reinit
         disposeConference();
         focus = new ColibriFocus(connection, config.hosts.bridge);
+        if (nickname !== null) {
+            focus.setEndpointDisplayName(connection.emuc.myroomjid,
+                                         nickname);
+        }
         showRecordingButton(false);
     }
     if (connection.emuc.getPrezi(jid)) {
@@ -775,6 +787,10 @@ $(document).bind('presence.muc', function (event, jid, info, pres) {
         VideoLayout.setDisplayName(
                 'participant_' + Strophe.getResourceFromJid(jid),
                 info.displayName);
+    }
+
+    if (focus !== null && info.displayName !== null) {
+        focus.setEndpointDisplayName(jid, info.displayName);
     }
 });
 
