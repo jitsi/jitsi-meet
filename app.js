@@ -312,8 +312,15 @@ $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
 
     // Add click handler.
     container.onclick = function (event) {
-        VideoLayout.handleVideoThumbClicked(
-                $('#' + container.id + '>video').get(0).src);
+        /*
+         * FIXME It turns out that videoThumb may not exist (if there is no
+         * actual video).
+         */
+        var videoThumb = $('#' + container.id + '>video').get(0);
+
+        if (videoThumb)
+            VideoLayout.handleVideoThumbClicked(videoThumb.src);
+
         event.preventDefault();
         return false;
     };
