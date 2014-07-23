@@ -81,6 +81,14 @@ var CanvasUtil = (function(my) {
      * @return the new cloned canvas.
      */
     my.cloneCanvas = function (oldCanvas) {
+        /*
+         * FIXME Testing has shown that oldCanvas may not exist. In such a case,
+         * the method CanvasUtil.cloneCanvas may throw an error. Since audio
+         * levels are frequently updated, the errors have been observed to pile
+         * into the console, strain the CPU.
+         */
+        if (!oldCanvas)
+            return oldCanvas;
 
         //create a new canvas
         var newCanvas = document.createElement('canvas');

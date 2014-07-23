@@ -117,15 +117,27 @@ var AudioLevels = (function(my) {
 
             var audioLevelCanvasOrig = $('#' + videoSpanId + '>canvas').get(0);
 
-            audioLevelCanvasCache[resourceJid]
-                = CanvasUtil.cloneCanvas(audioLevelCanvasOrig);
+            /*
+             * FIXME Testing has shown that audioLevelCanvasOrig may not exist.
+             * In such a case, the method CanvasUtil.cloneCanvas may throw an
+             * error. Since audio levels are frequently updated, the errors have
+             * been observed to pile into the console, strain the CPU.
+             */
+            if (audioLevelCanvasOrig)
+            {
+                audioLevelCanvasCache[resourceJid]
+                    = CanvasUtil.cloneCanvas(audioLevelCanvasOrig);
+            }
         }
 
         var canvas = audioLevelCanvasCache[resourceJid];
 
+        if (!canvas)
+            return;
+
         var drawContext = canvas.getContext('2d');
 
-        drawContext.clearRect (0, 0, canvas.width, canvas.height);
+        drawContext.clearRect(0, 0, canvas.width, canvas.height);
 
         var shadowLevel = getShadowLevel(audioLevel);
 
