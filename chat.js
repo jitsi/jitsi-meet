@@ -204,8 +204,10 @@ var Chat = (function (my) {
                                             duration: 500});
         }
         else {
-            // Undock the toolbar when the chat is shown.
-            Toolbar.dockToolbar(false);
+            // Undock the toolbar when the chat is shown and if we're in a 
+            // video mode.
+            if (VideoLayout.isLargeVideoVisible())
+                Toolbar.dockToolbar(false);
 
             videospace.animate({right: chatSize[0],
                                 width: videospaceWidth,
