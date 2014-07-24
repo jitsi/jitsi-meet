@@ -293,7 +293,8 @@ $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
     data.stream.onended = function () {
         console.log('stream ended', this.id);
 
-        // Mark video as removed to cancel waiting loop(if video is removed before has started)
+        // Mark video as removed to cancel waiting loop(if video is removed
+        // before has started)
         sel.removed = true;
         sel.remove();
 
@@ -455,9 +456,8 @@ function statsUpdated(statsCollector)
         var peerStats = statsCollector.jid2stats[jid];
         Object.keys(peerStats.ssrc2AudioLevel).forEach(function (ssrc)
         {
-            if (jid !== connection.emuc.myRoomJid)
-                AudioLevels.updateAudioLevel(   Strophe.getResourceFromJid(jid),
-                                                peerStats.ssrc2AudioLevel[ssrc]);
+            AudioLevels.updateAudioLevel(   Strophe.getResourceFromJid(jid),
+                                            peerStats.ssrc2AudioLevel[ssrc]);
         });
     });
 }
@@ -469,10 +469,9 @@ function statsUpdated(statsCollector)
  */
 function localStatsUpdated(statsCollector)
 {
-    if (connection.emuc.myRoomJid)
-        AudioLevels.updateAudioLevel(
-                Strophe.getResourceFromJid(connection.emuc.myRoomJid),
-                statsCollector.audioLevel);
+    AudioLevels.updateAudioLevel(
+            AudioLevels.LOCAL_LEVEL,
+            statsCollector.audioLevel);
 }
 
 /**

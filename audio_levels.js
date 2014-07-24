@@ -7,6 +7,8 @@ var AudioLevels = (function(my) {
     var SHADOW_COLOR = '#00ccff';
     var audioLevelCanvasCache = {};
 
+    my.LOCAL_LEVEL = 'local';
+
     /**
      * Updates the audio level canvas for the given peerJid. If the canvas
      * didn't exist we create it.
@@ -71,17 +73,12 @@ var AudioLevels = (function(my) {
     my.updateAudioLevel = function (resourceJid, audioLevel) {
         drawAudioLevelCanvas(resourceJid, audioLevel);
 
-        var videoSpanId = null;
-        if (resourceJid
-                === Strophe.getResourceFromJid(connection.emuc.myroomjid))
-            videoSpanId = 'localVideoContainer';
-        else
-            videoSpanId = 'participant_' + resourceJid;
+        var videoSpanId = getVideoSpanId(resourceJid);
 
         var audioLevelCanvas = $('#' + videoSpanId + '>canvas').get(0);
 
         if (!audioLevelCanvas)
-            return ;
+            return;
 
         var drawContext = audioLevelCanvas.getContext('2d');
 
@@ -92,6 +89,9 @@ var AudioLevels = (function(my) {
         drawContext.drawImage(canvasCache, 0, 0);
     };
 
+    /**
+     * Resizes the given audio level canvas to match the given thumbnail size.
+     */
     function resizeAudioLevelCanvas(audioLevelCanvas,
                                     thumbnailWidth,
                                     thumbnailHeight) {
@@ -108,12 +108,8 @@ var AudioLevels = (function(my) {
      */
     function drawAudioLevelCanvas(resourceJid, audioLevel) {
         if (!audioLevelCanvasCache[resourceJid]) {
-            var videoSpanId = null;
-            if (resourceJid
-                    === Strophe.getResourceFromJid(connection.emuc.myroomjid))
-                videoSpanId = 'localVideoContainer';
-            else
-                videoSpanId = 'participant_' + resourceJid;
+
+            var videoSpanId = getVideoSpanId(resourceJid);
 
             var audioLevelCanvasOrig = $('#' + videoSpanId + '>canvas').get(0);
 
@@ -171,6 +167,22 @@ var AudioLevels = (function(my) {
             shadowLevel = Math.round(CANVAS_EXTRA/2*((audioLevel - 0.6) / 0.4));
         }
         return shadowLevel;
+    };
+
+    /**
+     * Returns the video span id corresponding to the given resourceJid or local
+     * user.
+     */
+    function getVideoSpanId(resourceJid) {
+        var videoSpanId = null;
+        if (resourceJid === AudioLevels.LOCAL_LEVEL
+                || (connection.emuc.myroomjid && resourceJid
+                    === Strophe.getResourceFromJid(connection.emuc.myroomjid)))
+            videoSpanId = 'localVideoContainer';
+        else
+            videoSpanId = 'participant_' + resourceJid;
+
+        return videoSpanId;
     };
 
     /**
