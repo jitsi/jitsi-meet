@@ -445,33 +445,23 @@ function muteVideo(pc, unmute) {
 }
 
 /**
- * Callback called by {@link StatsCollector} in intervals supplied to it's
- * constructor.
- * @param statsCollector {@link StatsCollector} source of the event.
+ * Callback for audio levels changed.
+ * @param jid JID of the user
+ * @param audioLevel the audio level value
  */
-function statsUpdated(statsCollector)
+function audioLevelUpdated(jid, audioLevel)
 {
-    Object.keys(statsCollector.jid2stats).forEach(function (jid)
+    var resourceJid;
+    if(jid === LocalStatsCollector.LOCAL_JID)
     {
-        var peerStats = statsCollector.jid2stats[jid];
-        Object.keys(peerStats.ssrc2AudioLevel).forEach(function (ssrc)
-        {
-            AudioLevels.updateAudioLevel(   Strophe.getResourceFromJid(jid),
-                                            peerStats.ssrc2AudioLevel[ssrc]);
-        });
-    });
-}
+        resourceJid = AudioLevels.LOCAL_LEVEL;
+    }
+    else
+    {
+        resourceJid = Strophe.getResourceFromJid(jid);
+    }
 
-/**
- * Callback called by {@link LocalStatsCollector} in intervals supplied to it's
- * constructor.
- * @param statsCollector {@link LocalStatsCollector} source of the event.
- */
-function localStatsUpdated(statsCollector)
-{
-    AudioLevels.updateAudioLevel(
-            AudioLevels.LOCAL_LEVEL,
-            statsCollector.audioLevel);
+    AudioLevels.updateAudioLevel(resourceJid, audioLevel);
 }
 
 /**
@@ -483,10 +473,7 @@ function startRtpStatsCollector()
     if (config.enableRtpStats)
     {
         statsCollector = new StatsCollector(
-            getConferenceHandler().peerconnection, 200, statsUpdated);
-
-        stopLocalRtpStatsCollector();
-
+            getConferenceHandler().peerconnection, 200, audioLevelUpdated);
         statsCollector.start();
     }
 }
@@ -511,7 +498,7 @@ function startLocalRtpStatsCollector(stream)
 {
     if(config.enableRtpStats)
     {
-        localStatsCollector = new LocalStatsCollector(stream, 200, localStatsUpdated);
+        localStatsCollector = new LocalStatsCollector(stream, 100, audioLevelUpdated);
         localStatsCollector.start();
     }
 }
@@ -1123,11 +1110,7 @@ function disposeConference(onUnload) {
         handler.peerconnection.close();
     }
     stopRTPStatsCollector();
-    if(!onUnload) {
-        startLocalRtpStatsCollector(connection.jingle.localAudio);
-    }
-    else
-    {
+    if(onUnload) {
         stopLocalRtpStatsCollector();
     }
     focus = null;

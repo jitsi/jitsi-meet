@@ -213,6 +213,8 @@ StatsCollector.prototype.processReport = function ()
             // but it seems to vary between 0 and around 32k.
             audioLevel = audioLevel / 32767;
             jidStats.setSsrcAudioLevel(ssrc, audioLevel);
+            if(jid != connection.emuc.myroomjid)
+                this.updateCallback(jid, audioLevel);
         }
 
         var key = 'packetsReceived';
@@ -281,7 +283,5 @@ StatsCollector.prototype.processReport = function ()
         // bar indicator
         //console.info("Loss SMA3: " + outputAvg + " Q: " + quality);
     }
-
-    self.updateCallback(self);
 };
 

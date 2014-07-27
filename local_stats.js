@@ -6,13 +6,13 @@ var LocalStatsCollector = (function() {
      * Size of the webaudio analizer buffer.
      * @type {number}
      */
-    var WEBAUDIO_ANALIZER_FFT_SIZE = 512;
+    var WEBAUDIO_ANALIZER_FFT_SIZE = 2048;
 
     /**
      * Value of the webaudio analizer smoothing time parameter.
      * @type {number}
      */
-    var WEBAUDIO_ANALIZER_SMOOTING_TIME = 0.1;
+    var WEBAUDIO_ANALIZER_SMOOTING_TIME = 0.8;
 
     /**
      * <tt>LocalStatsCollector</tt> calculates statistics for the local stream.
@@ -54,12 +54,16 @@ var LocalStatsCollector = (function() {
         this.intervalId = setInterval(
             function () {
                 var array = new Uint8Array(analyser.frequencyBinCount);
-                analyser.getByteFrequencyData(array);
-                self.audioLevel = FrequencyDataToAudioLevel(array);
-                self.updateCallback(self);
+                analyser.getByteTimeDomainData(array);
+                var audioLevel = TimeDomainDataToAudioLevel(array);
+                if(audioLevel != self.audioLevel) {
+                    self.audioLevel = animateLevel(audioLevel, self.audioLevel);
+                    self.updateCallback(LocalStatsCollectorProto.LOCAL_JID, self.audioLevel);
+                }
             },
             this.intervalMilis
         );
+
     };
 
     /**
@@ -73,22 +77,55 @@ var LocalStatsCollector = (function() {
     };
 
     /**
-     * Converts frequency data array to audio level.
-     * @param array the frequency data array.
+     * Converts time domain data array to audio level.
+     * @param array the time domain data array.
      * @returns {number} the audio level
      */
-    var FrequencyDataToAudioLevel = function (array) {
+    var TimeDomainDataToAudioLevel = function (samples) {
+
         var maxVolume = 0;
 
-        var length = array.length;
+        var length = samples.length;
 
         for (var i = 0; i < length; i++) {
-            if (maxVolume < array[i])
-                maxVolume = array[i];
+            if (maxVolume < samples[i])
+                maxVolume = samples[i];
         }
 
-        return maxVolume / 255;
+        return parseFloat(((maxVolume - 127) / 128).toFixed(3));
     };
+
+    /**
+     * Animates audio level change
+     * @param newLevel the new audio level
+     * @param lastLevel the last audio level
+     * @returns {Number} the audio level to be set
+     */
+    function animateLevel(newLevel, lastLevel)
+    {
+        var value = 0;
+        var diff = lastLevel - newLevel;
+        if(diff > 0.2)
+        {
+            value = lastLevel - 0.2;
+        }
+        else if(diff < -0.4)
+        {
+            value = lastLevel + 0.4;
+        }
+        else
+        {
+            value = newLevel;
+        }
+
+        return parseFloat(value.toFixed(3));
+    }
+
+    /**
+     * Indicates that this audio level is for local jid.
+     * @type {string}
+     */
+    LocalStatsCollectorProto.LOCAL_JID = 'local';
 
     return LocalStatsCollectorProto;
 })();
