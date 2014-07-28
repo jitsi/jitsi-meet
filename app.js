@@ -455,6 +455,8 @@ function audioLevelUpdated(jid, audioLevel)
     if(jid === LocalStatsCollector.LOCAL_JID)
     {
         resourceJid = AudioLevels.LOCAL_LEVEL;
+        if(isAudioMuted())
+            return;
     }
     else
     {
@@ -899,6 +901,20 @@ function toggleAudio() {
     }
 
     buttonClick("#mute", "icon-microphone icon-mic-disabled");
+}
+
+/**
+ * Checks whether the audio is muted or not.
+ * @returns {boolean} true if audio is muted and false if not.
+ */
+function isAudioMuted()
+{
+    var localAudio = connection.jingle.localAudio;
+    for (var idx = 0; idx < localAudio.getAudioTracks().length; idx++) {
+        if(localAudio.getAudioTracks()[idx].enabled === true)
+            return false;
+    }
+    return true;
 }
 
 // Starts or stops the recording for the conference.
