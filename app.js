@@ -293,7 +293,8 @@ $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
     data.stream.onended = function () {
         console.log('stream ended', this.id);
 
-        // Mark video as removed to cancel waiting loop(if video is removed before has started)
+        // Mark video as removed to cancel waiting loop(if video is removed
+        // before has started)
         sel.removed = true;
         sel.remove();
 
@@ -312,8 +313,15 @@ $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
 
     // Add click handler.
     container.onclick = function (event) {
-        VideoLayout.handleVideoThumbClicked(
-                $('#' + container.id + '>video').get(0).src);
+        /*
+         * FIXME It turns out that videoThumb may not exist (if there is no
+         * actual video).
+         */
+        var videoThumb = $('#' + container.id + '>video').get(0);
+
+        if (videoThumb)
+            VideoLayout.handleVideoThumbClicked(videoThumb.src);
+
         event.preventDefault();
         return false;
     };
@@ -437,31 +445,25 @@ function muteVideo(pc, unmute) {
 }
 
 /**
- * Callback called by {@link StatsCollector} in intervals supplied to it's
- * constructor.
- * @param statsCollector {@link StatsCollector} source of the event.
+ * Callback for audio levels changed.
+ * @param jid JID of the user
+ * @param audioLevel the audio level value
  */
-function statsUpdated(statsCollector)
+function audioLevelUpdated(jid, audioLevel)
 {
-    Object.keys(statsCollector.jid2stats).forEach(function (jid)
+    var resourceJid;
+    if(jid === LocalStatsCollector.LOCAL_JID)
     {
-        var peerStats = statsCollector.jid2stats[jid];
-        Object.keys(peerStats.ssrc2AudioLevel).forEach(function (ssrc)
-        {
-//            console.info(jid +  " audio level: " +
-//                peerStats.ssrc2AudioLevel[ssrc] + " of ssrc: " + ssrc);
-        });
-    });
-}
+        resourceJid = AudioLevels.LOCAL_LEVEL;
+        if(isAudioMuted())
+            return;
+    }
+    else
+    {
+        resourceJid = Strophe.getResourceFromJid(jid);
+    }
 
-/**
- * Callback called by {@link LocalStatsCollector} in intervals supplied to it's
- * constructor.
- * @param statsCollector {@link LocalStatsCollector} source of the event.
- */
-function localStatsUpdated(statsCollector)
-{
-//    console.info("Local audio level: " +  statsCollector.audioLevel);
+    AudioLevels.updateAudioLevel(resourceJid, audioLevel);
 }
 
 /**
@@ -473,10 +475,7 @@ function startRtpStatsCollector()
     if (config.enableRtpStats)
     {
         statsCollector = new StatsCollector(
-            getConferenceHandler().peerconnection, 200, statsUpdated);
-
-        stopLocalRtpStatsCollector();
-
+            getConferenceHandler().peerconnection, 200, audioLevelUpdated);
         statsCollector.start();
     }
 }
@@ -501,7 +500,7 @@ function startLocalRtpStatsCollector(stream)
 {
     if(config.enableRtpStats)
     {
-        localStatsCollector = new LocalStatsCollector(stream, 200, localStatsUpdated);
+        localStatsCollector = new LocalStatsCollector(stream, 100, audioLevelUpdated);
         localStatsCollector.start();
     }
 }
@@ -628,7 +627,11 @@ $(document).bind('joined.muc', function (event, jid, info) {
 
     if (Object.keys(connection.emuc.members).length < 1) {
         focus = new ColibriFocus(connection, config.hosts.bridge);
-        showRecordingButton(false);
+        if (nickname !== null) {
+            focus.setEndpointDisplayName(connection.emuc.myroomjid,
+                                         nickname);
+        }
+        Toolbar.showRecordingButton(false);
     }
 
     if (focus && config.etherpad_base) {
@@ -660,7 +663,7 @@ $(document).bind('entered.muc', function (event, jid, info, pres) {
         if (focus.confid === null) {
             console.log('make new conference with', jid);
             focus.makeConference(Object.keys(connection.emuc.members));
-            showRecordingButton(true);
+            Toolbar.showRecordingButton(true);
         } else {
             console.log('invite', jid, 'into conference');
             focus.addNewParticipant(jid);
@@ -706,10 +709,14 @@ $(document).bind('left.muc', function (event, jid) {
             && !sessionTerminated) {
         console.log('welcome to our new focus... myself');
         focus = new ColibriFocus(connection, config.hosts.bridge);
+        if (nickname !== null) {
+            focus.setEndpointDisplayName(connection.emuc.myroomjid,
+                                         nickname);
+        }
 
         if (Object.keys(connection.emuc.members).length > 0) {
             focus.makeConference(Object.keys(connection.emuc.members));
-            showRecordingButton(true);
+            Toolbar.showRecordingButton(true);
         }
         $(document).trigger('focusechanged.muc', [focus]);
     }
@@ -719,7 +726,11 @@ $(document).bind('left.muc', function (event, jid) {
         // problems with reinit
         disposeConference();
         focus = new ColibriFocus(connection, config.hosts.bridge);
-        showRecordingButton(false);
+        if (nickname !== null) {
+            focus.setEndpointDisplayName(connection.emuc.myroomjid,
+                                         nickname);
+        }
+        Toolbar.showRecordingButton(false);
     }
     if (connection.emuc.getPrezi(jid)) {
         $(document).trigger('presentationremoved.muc',
@@ -734,7 +745,7 @@ $(document).bind('presence.muc', function (event, jid, info, pres) {
         if (ssrc2jid[ssrc] == jid) {
             delete ssrc2jid[ssrc];
         }
-        if (ssrc2videoType == jid) {
+        if (ssrc2videoType[ssrc] == jid) {
             delete ssrc2videoType[ssrc];
         }
     });
@@ -771,6 +782,10 @@ $(document).bind('presence.muc', function (event, jid, info, pres) {
         VideoLayout.setDisplayName(
                 'participant_' + Strophe.getResourceFromJid(jid),
                 info.displayName);
+    }
+
+    if (focus !== null && info.displayName !== null) {
+        focus.setEndpointDisplayName(jid, info.displayName);
     }
 });
 
@@ -888,6 +903,20 @@ function toggleAudio() {
     buttonClick("#mute", "icon-microphone icon-mic-disabled");
 }
 
+/**
+ * Checks whether the audio is muted or not.
+ * @returns {boolean} true if audio is muted and false if not.
+ */
+function isAudioMuted()
+{
+    var localAudio = connection.jingle.localAudio;
+    for (var idx = 0; idx < localAudio.getAudioTracks().length; idx++) {
+        if(localAudio.getAudioTracks()[idx].enabled === true)
+            return false;
+    }
+    return true;
+}
+
 // Starts or stops the recording for the conference.
 function toggleRecording() {
     if (focus === null || focus.confid === null) {
@@ -923,14 +952,14 @@ function toggleRecording() {
     }
 
     var oldState = focus.recordingEnabled;
-    buttonClick("#recordButton", "icon-recEnable icon-recDisable");
+    Toolbar.toggleRecordingButtonState();
     focus.setRecording(!oldState,
                         recordingToken,
                         function (state) {
                             console.log("New recording state: ", state);
                             if (state == oldState) //failed to change, reset the token because it might have been wrong
                             {
-                                buttonClick("#recordButton", "icon-recEnable icon-recDisable");
+                                Toolbar.toggleRecordingButtonState();
                                 setRecordingToken(null);
                             }
                         }
@@ -1097,11 +1126,7 @@ function disposeConference(onUnload) {
         handler.peerconnection.close();
     }
     stopRTPStatsCollector();
-    if(!onUnload) {
-        startLocalRtpStatsCollector(connection.jingle.localAudio);
-    }
-    else
-    {
+    if(onUnload) {
         stopLocalRtpStatsCollector();
     }
     focus = null;
@@ -1243,19 +1268,7 @@ function setView(viewName) {
 //    }
 }
 
-function showRecordingButton(show) {
-    if (!config.enableRecording) {
-        return;
-    }
 
-    if (show) {
-        $('#recording').css({display: "inline"});
-    }
-    else {
-        $('#recording').css({display: "none"});
-    }
-
-}
 
 $(document).bind('fatalError.jingle',
     function (event, session, error)

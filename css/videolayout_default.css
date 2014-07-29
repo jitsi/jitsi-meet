@@ -4,6 +4,7 @@
     top: 0px;
     left: 0px;
     right: 0px;
+    overflow: hidden;
 }
 
 #remoteVideos {
@@ -49,8 +50,21 @@
     -webkit-animation-name: greyPulse;
     -webkit-animation-duration: 2s;
     -webkit-animation-iteration-count: 1;
-    -webkit-box-shadow: 0 0 18px #388396;
-    border: 2px solid #388396;
+}
+
+#remoteVideos .videocontainer:hover {
+    -webkit-box-shadow: inset 0 0 10px #FFFFFF, 0 0 10px #FFFFFF;
+    border: 2px solid #FFFFFF;
+}
+
+#remoteVideos .videocontainer.videoContainerFocused {
+    -webkit-box-shadow: inset 0 0 28px #006d91;
+    border: 2px solid #006d91;
+}
+
+#remoteVideos .videocontainer.videoContainerFocused:hover {
+    -webkit-box-shadow: inset 0 0 5px #FFFFFF, 0 0 10px #FFFFFF, inset 0 0 60px #006d91;
+    border: 2px solid #FFFFFF;
 }
 
 #localVideoWrapper {
@@ -290,4 +304,11 @@
     right: 15;
     background-image:url(../images/rightwatermark.png);
     background-position: center right;
+}
+
+.audiolevel {
+    display: inline-block;
+    position: absolute;
+    z-index: 0;
+    border-radius:10px;
 }

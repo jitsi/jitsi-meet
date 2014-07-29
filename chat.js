@@ -175,7 +175,13 @@ var Chat = (function (my) {
             $('#remoteVideos>span').animate({height: thumbnailsHeight,
                                             width: thumbnailsWidth},
                                             {queue: false,
-                                            duration: 500});
+                                            duration: 500,
+                                            complete: function() {
+                                                $(document).trigger(
+                                                        "remotevideo.resized",
+                                                        [thumbnailsWidth,
+                                                         thumbnailsHeight]);
+                                            }});
 
             $('#largeVideoContainer').animate({ width: videospaceWidth,
                                                 height: videospaceHeight},
@@ -198,8 +204,10 @@ var Chat = (function (my) {
                                             duration: 500});
         }
         else {
-            // Undock the toolbar when the chat is shown.
-            Toolbar.dockToolbar(false);
+            // Undock the toolbar when the chat is shown and if we're in a 
+            // video mode.
+            if (VideoLayout.isLargeVideoVisible())
+                Toolbar.dockToolbar(false);
 
             videospace.animate({right: chatSize[0],
                                 width: videospaceWidth,
@@ -219,7 +227,12 @@ var Chat = (function (my) {
             $('#remoteVideos>span').animate({height: thumbnailsHeight,
                         width: thumbnailsWidth},
                         {queue: false,
-                        duration: 500});
+                        duration: 500,
+                        complete: function() {
+                            $(document).trigger(
+                                    "remotevideo.resized",
+                                    [thumbnailsWidth, thumbnailsHeight]);
+                        }});
 
             $('#largeVideoContainer').animate({ width: videospaceWidth,
                                                 height: videospaceHeight},

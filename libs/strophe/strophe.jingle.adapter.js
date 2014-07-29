@@ -510,7 +510,7 @@ function getUserMediaWithConstraints(um, success_callback, failure_callback, res
     var constraints = {audio: false, video: false};
 
     if (um.indexOf('video') >= 0) {
-        constraints.video = {mandatory: {}};// same behaviour as true
+        constraints.video = { mandatory: {}, optional: [] };// same behaviour as true
     }
     if (um.indexOf('audio') >= 0) {
         constraints.audio = {};// same behaviour as true
@@ -523,7 +523,8 @@ function getUserMediaWithConstraints(um, success_callback, failure_callback, res
                 maxWidth: window.screen.width,
                 maxHeight: window.screen.height,
                 maxFrameRate: 3
-            }
+            },
+            optional: []
         };
     }
     if (um.indexOf('desktop') >= 0) {
@@ -535,7 +536,8 @@ function getUserMediaWithConstraints(um, success_callback, failure_callback, res
                 maxWidth: window.screen.width,
                 maxHeight: window.screen.height,
                 maxFrameRate: 3
-            }
+            },
+            optional: []
         }
     }
 
@@ -543,7 +545,7 @@ function getUserMediaWithConstraints(um, success_callback, failure_callback, res
     var isAndroid = navigator.userAgent.indexOf('Android') != -1;
 
     if (resolution && !constraints.video || isAndroid) {
-        constraints.video = {mandatory: {}};// same behaviour as true
+        constraints.video = { mandatory: {}, optional: [] };// same behaviour as true
     }
     // see https://code.google.com/p/chromium/issues/detail?id=143631#c9 for list of supported resolutions
     switch (resolution) {
@@ -552,23 +554,23 @@ function getUserMediaWithConstraints(um, success_callback, failure_callback, res
         case 'fullhd':
             constraints.video.mandatory.minWidth = 1920;
             constraints.video.mandatory.minHeight = 1080;
-            constraints.video.mandatory.minAspectRatio = 1.77;
+            constraints.video.optional.push({ minAspectRatio: 1.77 });
             break;
         case '720':
         case 'hd':
             constraints.video.mandatory.minWidth = 1280;
             constraints.video.mandatory.minHeight = 720;
-            constraints.video.mandatory.minAspectRatio = 1.77;
+            constraints.video.optional.push({ minAspectRatio: 1.77 });
             break;
         case '360':
             constraints.video.mandatory.minWidth = 640;
             constraints.video.mandatory.minHeight = 360;
-            constraints.video.mandatory.minAspectRatio = 1.77;
+            constraints.video.optional.push({ minAspectRatio: 1.77 });
             break;
         case '180':
             constraints.video.mandatory.minWidth = 320;
             constraints.video.mandatory.minHeight = 180;
-            constraints.video.mandatory.minAspectRatio = 1.77;
+            constraints.video.optional.push({ minAspectRatio: 1.77 });
             break;
         // 4:3
         case '960':

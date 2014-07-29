@@ -29,7 +29,7 @@ var Toolbar = (function (my) {
             if (sharedKey) {
                 $.prompt("Are you sure you would like to remove your secret key?",
                     {
-                        title: "Remove secrect key",
+                        title: "Remove secret key",
                         persistent: false,
                         buttons: { "Remove": true, "Cancel": false},
                         defaultButton: 1,
@@ -42,7 +42,7 @@ var Toolbar = (function (my) {
                     }
                 );
             } else {
-                $.prompt('<h2>Set a secrect key to lock your room</h2>' +
+                $.prompt('<h2>Set a secret key to lock your room</h2>' +
                          '<input id="lockKey" type="text" placeholder="your shared key" autofocus>',
                     {
                         persistent: false,
@@ -142,7 +142,7 @@ var Toolbar = (function (my) {
         $.prompt('<h2>Configure your conference</h2>' +
             '<input type="checkbox" id="initMuted"> Participants join muted<br/>' +
             '<input type="checkbox" id="requireNicknames"> Require nicknames<br/><br/>' +
-            'Set a secrect key to lock your room: <input id="lockKey" type="text" placeholder="your shared key" autofocus>',
+            'Set a secret key to lock your room: <input id="lockKey" type="text" placeholder="your shared key" autofocus>',
             {
                 persistent: false,
                 buttons: { "Save": true, "Cancel": false},
@@ -282,6 +282,25 @@ var Toolbar = (function (my) {
         else {
             toolbarTimeout = setTimeout(hideToolbar, TOOLBAR_TIMEOUT);
         }
+    };
+
+    // Shows or hides the 'recording' button.
+    my.showRecordingButton = function (show) {
+        if (!config.enableRecording) {
+            return;
+        }
+
+        if (show) {
+            $('#recording').css({display: "inline"});
+        }
+        else {
+            $('#recording').css({display: "none"});
+        }
+    };
+
+    // Toggle the state of the recording button
+    my.toggleRecordingButtonState = function() {
+        $('#recordButton').toggleClass('active');
     };
 
     return my;

@@ -151,6 +151,27 @@ html, body{
                     0 -1px 10px #00ccff;
 }
 
+#recordButton {
+    -webkit-transition: all .5s ease-in-out;
+    -moz-transition: all .5s ease-in-out;
+    transition: all .5s ease-in-out;
+}
+/*#ffde00*/
+#recordButton.active {
+    -webkit-text-shadow:    -1px 0 10px #00ccff,
+    0 1px 10px #00ccff,
+    1px 0 10px #00ccff,
+    0 -1px 10px #00ccff;
+    -moz-text-shadow:   1px 0 10px #00ccff,
+    0 1px 10px #00ccff,
+    1px 0 10px #00ccff,
+    0 -1px 10px #00ccff;
+    text-shadow:    -1px 0 10px #00ccff,
+    0 1px 10px #00ccff,
+    1px 0 10px #00ccff,
+    0 -1px 10px #00ccff;
+}
+
 a.button:hover {
     top: 0;
     cursor: pointer;
