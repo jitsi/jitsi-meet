@@ -513,7 +513,7 @@ function getUserMediaWithConstraints(um, success_callback, failure_callback, res
         constraints.video = { mandatory: {}, optional: [] };// same behaviour as true
     }
     if (um.indexOf('audio') >= 0) {
-        constraints.audio = {};// same behaviour as true
+        constraints.audio = { mandatory: {}, optional: []};// same behaviour as true
     }
     if (um.indexOf('screen') >= 0) {
         constraints.video = {
@@ -538,6 +538,29 @@ function getUserMediaWithConstraints(um, success_callback, failure_callback, res
                 maxFrameRate: 3
             },
             optional: []
+        }
+    }
+
+    if (constraints.audio) {
+        // if it is good enough for hangouts...
+        constraints.audio.optional.push(
+            {googEchoCancellation: true},
+            {googAutoGainControl: true},
+            {googNoiseSupression: true},
+            {googHighpassFilter: true},
+            {googNoisesuppression2: true},
+            {googEchoCancellation2: true},
+            {googAutoGainControl2: true}
+        );
+    }
+    if (constraints.video) {
+        constraints.video.optional.push(
+            {googNoiseReduction: true}
+        );
+        if (um.indexOf('video') >= 0) {
+            constraints.video.optional.push(
+                {googLeakyBucket: true}
+            );
         }
     }
 
@@ -596,12 +619,12 @@ function getUserMediaWithConstraints(um, success_callback, failure_callback, res
     }
 
     if (bandwidth) { // doesn't work currently, see webrtc issue 1846
-        if (!constraints.video) constraints.video = {mandatory: {}};//same behaviour as true
-        constraints.video.optional = [{bandwidth: bandwidth}];
+        if (!constraints.video) constraints.video = {mandatory: {}, optional: []};//same behaviour as true
+        constraints.video.optional.push({bandwidth: bandwidth});
     }
     if (fps) { // for some cameras it might be necessary to request 30fps
         // so they choose 30fps mjpg over 10fps yuy2
-        if (!constraints.video) constraints.video = {mandatory: {}};// same behaviour as tru;
+        if (!constraints.video) constraints.video = {mandatory: {}, optional: []};// same behaviour as true;
         constraints.video.mandatory.minFrameRate = fps;
     }
 
