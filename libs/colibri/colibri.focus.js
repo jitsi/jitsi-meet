@@ -303,6 +303,9 @@ ColibriFocus.prototype._makeConference = function () {
 
             elem.c(elemName, elemAttrs);
             elem.attrs({ endpoint: peer.substr(1 + peer.lastIndexOf('/')) });
+            if ('channel' === elemName && config.useRtcpMux) {
+                elem.c('rtcp-mux').up();
+            }
             elem.up(); // end of channel/sctpconnection
         }
         elem.up(); // end of content
@@ -407,6 +410,7 @@ ColibriFocus.prototype.createdConference = function (result) {
         'a=rtpmap:13 CN/8000\r\n' +
         'a=rtpmap:126 telephone-event/8000\r\n' +
         'a=maxptime:60\r\n' +
+        (config.useRtcpMux ? 'a=rtcp-mux\r\n' : '') +
         /* Video */
         'm=video 1 RTP/SAVPF 100 116 117\r\n' +
         'c=IN IP4 0.0.0.0\r\n' +
@@ -421,6 +425,7 @@ ColibriFocus.prototype.createdConference = function (result) {
         'a=rtcp-fb:100 goog-remb\r\n' +
         'a=rtpmap:116 red/90000\r\n' +
         'a=rtpmap:117 ulpfec/90000\r\n' +
+        (config.useRtcpMux ? 'a=rtcp-mux\r\n' : '') +
         /* Data SCTP */
         (config.openSctp ?
             'm=application 1 DTLS/SCTP 5000\r\n' +
@@ -617,7 +622,9 @@ ColibriFocus.prototype.initiate = function (peer, isInitiator) {
         sdp.removeSessionLines('a=group:');
         sdp.removeSessionLines('a=msid-semantic:'); // FIXME: not mapped over jingle anyway...
         for (var i = 0; i < sdp.media.length; i++) {
-            sdp.removeMediaLines(i, 'a=rtcp-mux');
+            if (!config.useRtcpMux){
+                sdp.removeMediaLines(i, 'a=rtcp-mux');
+            }
             sdp.removeMediaLines(i, 'a=ssrc:');
             sdp.removeMediaLines(i, 'a=crypto:');
             sdp.removeMediaLines(i, 'a=candidate:');
@@ -774,6 +781,9 @@ ColibriFocus.prototype.addNewParticipant = function (peer) {
 
         elem.c('content', { name: name });
         elem.c(elemName, elemAttrs);
+        if ('channel' === elemName && config.useRtcpMux) {
+            elem.c('rtcp-mux').up();
+        }
         elem.up(); // end of channel/sctpconnection
         elem.up(); // end of content
     });
@@ -821,6 +831,9 @@ ColibriFocus.prototype.updateChannel = function (remoteSDP, participant) {
                 endpoint: $(this.channels[participant][channel]).attr('endpoint'),
                 expire: self.channelExpire
             });
+            if (config.useRtcpMux) {
+                change.c('rtcp-mux').up();
+            }
 
             var rtpmap = SDPUtil.find_lines(remoteSDP.media[channel], 'a=rtpmap:');
             rtpmap.forEach(function (val) {
@@ -1031,6 +1044,10 @@ ColibriFocus.prototype.addIceCandidate = function (session, elem) {
                 endpoint: $(self.channels[participant][channel]).attr('endpoint'),
                 expire: self.channelExpire
             });
+
+            if (config.useRtcpMux) {
+                change.c('rtcp-mux').up();
+            }
         }
         else
         {
@@ -1114,6 +1131,10 @@ ColibriFocus.prototype.sendIceCandidates = function (candidates) {
                     endpoint: $(this.mychannel[cands[0].sdpMLineIndex]).attr('endpoint'),
                     expire: self.channelExpire
                 });
+                if (config.useRtcpMux) {
+                    mycands.c('rtcp-mux').up();
+                }
+
             }
             else
             {
