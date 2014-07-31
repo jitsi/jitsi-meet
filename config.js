@@ -15,5 +15,6 @@ var config = {
     enableRtpStats: true, // Enables RTP stats processing
     openSctp: true, // Toggle to enable/disable SCTP channels
 //    channelLastN: -1, // The default value of the channel attribute last-n.
+//    useRtcpMux: true,
     enableRecording: false
 };
