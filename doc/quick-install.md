@@ -5,7 +5,7 @@ This documents decribes the needed steps for quick Jitsi Meet installation on a 
 # Add the repository
 
 ```sh
-add-apt-repository 'http://download.jitsi.org/nightly/deb unstable/'
+add-apt-repository 'deb http://download.jitsi.org/nightly/deb unstable/'
 ```
 
 add-apt-repository is in the default Ubuntu install and is available for both Ubuntu and Debian, but if it's not present, either install it with
@@ -43,3 +43,6 @@ Launch a web broswer (Chrome, Chromium or latest Opera) and enter in the URL bar
 Confirm that you trust the self-signed certificate of the newly installed Jitsi Meet.
 
 Enjoy!
+
+# Add sip-gateway to Jitsi Meet
+
