@@ -1,4 +1,4 @@
-# Quick install for Jitsi Meet on GNU/Linux systems
+# Jitsi Meet quick install
 
 This documents decribes the needed steps for quick Jitsi Meet installation on a Debian based GNU/Linux system.
 
