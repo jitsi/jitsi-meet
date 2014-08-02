@@ -14,6 +14,7 @@ add-apt-repository is in the default Ubuntu install and is available for both Ub
 
 ```sh
 apt-get -y install software-properties-common
+add-apt-repository 'deb http://download.jitsi.org/nightly/deb unstable/'
 ```
 
 or add the repository by hand with
