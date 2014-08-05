@@ -68,3 +68,12 @@ During the installation you'll be asked to enter your SIP account and password. 
 Launch again a browser with the Jitsi Meet URL and you'll see a telephone icon on the right end of the toolbar. Use it to invite SIP accounts to join the current conference.
 
 Enjoy!
+
+## Deinstall
+
+Somethimes the following packages will fail to uninstall properly:
+
+- jigasi
+- jitsi-videobridge
+
+When this happens, just run the deinstall command a second time and it should be ok. The reason for failure is that not allways the daemons are stopped right away, there is a timeout before the actual stop. And if the unistall script goes on before the services' stop, there is an error. The second run of the deinstall command fixes this, as by then the jigasi or jvb daemons are already stopped.
