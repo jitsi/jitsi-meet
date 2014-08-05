@@ -76,4 +76,8 @@ Somethimes the following packages will fail to uninstall properly:
 - jigasi
 - jitsi-videobridge
 
-When this happens, just run the deinstall command a second time and it should be ok. The reason for failure is that not allways the daemons are stopped right away, there is a timeout before the actual stop. And if the unistall script goes on before the services' stop, there is an error. The second run of the deinstall command fixes this, as by then the jigasi or jvb daemons are already stopped.
+When this happens, just run the deinstall command a second time and it should be ok.
+
+The reason for failure is that not allways the daemons are stopped right away, there is a timeout before the actual stop. And if the unistall script goes on before the services' stop, there is an error.
+
+The second run of the deinstall command fixes this, as by then the jigasi or jvb daemons are already stopped.
