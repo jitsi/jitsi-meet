@@ -2,6 +2,8 @@
 
 This documents decribes the needed steps for quick Jitsi Meet installation on a Debian based GNU/Linux system.
 
+N.B.: All commands are supposed to be run by root. If you are logged in as a regular user with sudo rights, please prepend ___sudo___ to each of the commands.
+
 ## Basic Jitsi Meet install
 
 ### Add the repository
@@ -52,3 +54,17 @@ Enjoy!
 
 ## Adding sip-gateway to Jitsi Meet
 
+### Install Jigasi
+
+```sh
+wget http://178.33.104.217/debs/jigasi/jigasi_1.0-1_amd64.deb
+dpkg -i --force-overwrite jigasi_1.0-1_amd64.deb
+```
+
+During the installation you'll be asked to enter the SIP account and password.
+
+### Reload Jitsi Meet
+
+Launch again a browser with the Jitsi Meet URL and you'll see a telephone icon on the right end of the toolbar. Use it to invite sip accounts to join the current conference.
+
+Enjoy!
