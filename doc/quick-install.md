@@ -42,7 +42,7 @@ apt-get -y install jitsi-meet
 
 During the installation you'll be asked to enter the hostname of the Jitsi Meet instance. If you have a FQDN hostname for the instance already set ip in DNS, enter it there. If you don't have a resolvable hostname, you can enter the IP address of the machine (if it is static or doesn't change).
 
-This hostname (ot IP address) will be used for virtualhost configuration inside the Jitsi Meet and also you and your correspondents will be using it to access the web conferences.
+This hostname (or IP address) will be used for virtualhost configuration inside the Jitsi Meet and also you and your correspondents will be using it to access the web conferences.
 
 ### Open a conference
 
