@@ -1,6 +1,7 @@
 var config = {
     hosts: {
         domain: 'jitsi-meet.example.com',
+        //anonymousdomain: 'guest.example.com',
         muc: 'conference.jitsi-meet.example.com', // FIXME: use XEP-0030
         bridge: 'jitsi-videobridge.jitsi-meet.example.com', // FIXME: use XEP-0030
         //call_control: 'callcontrol.jitsi-meet.example.com'

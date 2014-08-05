@@ -66,7 +66,7 @@ function init() {
         return;
     }
 
-    var jid = document.getElementById('jid').value || config.hosts.domain || window.location.hostname;
+    var jid = document.getElementById('jid').value || config.hosts.anonymousdomain || config.hosts.domain || window.location.hostname;
     connect(jid);
 }
 

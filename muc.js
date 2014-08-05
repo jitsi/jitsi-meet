@@ -157,6 +157,17 @@ Strophe.addConnectionPlugin('emuc', {
         var from = pres.getAttribute('from');
         if ($(pres).find('>error[type="auth"]>not-authorized[xmlns="urn:ietf:params:xml:ns:xmpp-stanzas"]').length) {
             $(document).trigger('passwordrequired.muc', [from]);
+        } else if ($(pres).find(
+                '>error[type="cancel"]>not-allowed[xmlns="urn:ietf:params:xml:ns:xmpp-stanzas"]').length) {
+            var toDomain = Strophe.getDomainFromJid(pres.getAttribute('to'));
+            if(toDomain === config.hosts.anonymousdomain) {
+                // we are connected with anonymous domain and only non anonymous users can create rooms
+                // we must authorize the user
+                $(document).trigger('passwordrequired.main');
+            }
+            else
+                console.warn('onPresError ', pres);
+
         } else {
             console.warn('onPresError ', pres);
         }
