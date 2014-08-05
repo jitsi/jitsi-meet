@@ -57,7 +57,7 @@ Enjoy!
 ### Install Jigasi
 
 ```sh
-wget http://178.33.104.217/debs/jigasi/jigasi_1.0-1_amd64.deb
+wget https://download.jitsi.org/jigasi_1.0-1_amd64.deb
 dpkg -i --force-overwrite jigasi_1.0-1_amd64.deb
 ```
 
