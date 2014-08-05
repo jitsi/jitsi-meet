@@ -61,10 +61,10 @@ wget http://178.33.104.217/debs/jigasi/jigasi_1.0-1_amd64.deb
 dpkg -i --force-overwrite jigasi_1.0-1_amd64.deb
 ```
 
-During the installation you'll be asked to enter the SIP account and password.
+During the installation you'll be asked to enter your SIP account and password. This account will be used to invite the other SIP participants.
 
 ### Reload Jitsi Meet
 
-Launch again a browser with the Jitsi Meet URL and you'll see a telephone icon on the right end of the toolbar. Use it to invite sip accounts to join the current conference.
+Launch again a browser with the Jitsi Meet URL and you'll see a telephone icon on the right end of the toolbar. Use it to invite SIP accounts to join the current conference.
 
 Enjoy!
