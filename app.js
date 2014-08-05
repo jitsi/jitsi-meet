@@ -66,6 +66,11 @@ function init() {
         return;
     }
 
+    var jid = document.getElementById('jid').value || config.hosts.domain || window.location.hostname;
+    connect(jid);
+}
+
+function connect(jid, password) {
     connection = new Strophe.Connection(document.getElementById('boshURL').value || config.bosh || '/http-bind');
 
     if (nickname) {
@@ -82,9 +87,11 @@ function init() {
         connection.jingle.pc_constraints.optional.push({googIPv6: true});
     }
 
-    var jid = document.getElementById('jid').value || config.hosts.domain || window.location.hostname;
+    if(!password)
+        password = document.getElementById('password').value;
 
-    connection.connect(jid, document.getElementById('password').value, function (status) {
+    var anonymousConnectionFailed = false;
+    connection.connect(jid, password, function (status, msg) {
         if (status === Strophe.Status.CONNECTED) {
             console.log('connected');
             if (config.useStunTurn) {
@@ -98,6 +105,20 @@ function init() {
             });
 
             document.getElementById('connect').disabled = true;
+        } else if (status === Strophe.Status.CONNFAIL) {
+            if(msg === 'x-strophe-bad-non-anon-jid') {
+                anonymousConnectionFailed = true;
+            }
+            console.log('status', status);
+        } else if (status === Strophe.Status.DISCONNECTED) {
+            if(anonymousConnectionFailed) {
+                // prompt user for username and password
+                $(document).trigger('passwordrequired.main');
+            }
+        } else if (status === Strophe.Status.AUTHFAIL) {
+            // wrong password or username, prompt user
+            $(document).trigger('passwordrequired.main');
+
         } else {
             console.log('status', status);
         }
@@ -819,6 +840,31 @@ $(document).bind('passwordrequired.muc', function (event, jid) {
                 if (lockKey.value !== null) {
                     setSharedKey(lockKey.value);
                     connection.emuc.doJoin(jid, lockKey.value);
+                }
+            }
+        }
+    });
+});
+
+$(document).bind('passwordrequired.main', function (event) {
+    console.log('password is required');
+
+    $.prompt('<h2>Password required</h2>' +
+        '<input id="passwordrequired.username" type="text" placeholder="user@domain.net" autofocus>' +
+        '<input id="passwordrequired.password" type="password" placeholder="user password">', {
+        persistent: true,
+        buttons: { "Ok": true, "Cancel": false},
+        defaultButton: 1,
+        loaded: function (event) {
+            document.getElementById('passwordrequired.username').focus();
+        },
+        submit: function (e, v, m, f) {
+            if (v) {
+                var username = document.getElementById('passwordrequired.username');
+                var password = document.getElementById('passwordrequired.password');
+
+                if (username.value !== null && password.value != null) {
+                    connect(username.value, password.value);
                 }
             }
         }
