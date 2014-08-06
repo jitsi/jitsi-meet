@@ -57,6 +57,12 @@ Enjoy!
 ### Install Jigasi
 
 ```sh
+apt-get -o Dpkg::Options::="--force-overwrite" -y install jigasi
+```
+
+or
+
+```sh
 wget https://download.jitsi.org/jigasi_1.0-1_amd64.deb
 dpkg -i --force-overwrite jigasi_1.0-1_amd64.deb
 ```
