@@ -34,16 +34,6 @@ wget -qO - https://download.jitsi.org/nightly/deb/unstable/archive.key | apt-key
 apt-get update
 ```
 
-### Install all in one run
-
-```sh
-apt-get -o Dpkg::Options::="--force-overwrite" -y install jigasi
-```
-
-If you install that way, you are ready to use Jitsi Meet with SIP gateway.
-
-You can also install the components one by one, as described below.
-
 ### Install Jitsi Meet
 
 ```sh
@@ -76,6 +66,8 @@ or
 wget https://download.jitsi.org/jigasi_1.0-1_amd64.deb
 dpkg -i --force-overwrite jigasi_1.0-1_amd64.deb
 ```
+
+You need to pass "--force-overwrite" option to dpkg, because the jigasi package patches some of the files in the jitsi-meet package in order to enable the SIP support in Jitsi Meet.
 
 During the installation you'll be asked to enter your SIP account and password. This account will be used to invite the other SIP participants.
 
