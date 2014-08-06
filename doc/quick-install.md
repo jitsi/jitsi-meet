@@ -34,6 +34,12 @@ wget -qO - https://download.jitsi.org/nightly/deb/unstable/archive.key | apt-key
 apt-get update
 ```
 
+### Install all in one run
+
+```sh
+apt-get -o Dpkg::Options::="--force-overwrite" -y install jigasi
+```
+
 ### Install Jitsi Meet
 
 ```sh
