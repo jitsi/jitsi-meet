@@ -40,6 +40,10 @@ apt-get update
 apt-get -o Dpkg::Options::="--force-overwrite" -y install jigasi
 ```
 
+If you install that way, you are ready to use Jitsi Meet with SIP gateway.
+
+You can also install the components one by one, as described below.
+
 ### Install Jitsi Meet
 
 ```sh
