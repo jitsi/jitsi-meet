@@ -20,6 +20,7 @@
     <script src="libs/colibri/colibri.focus.js?v=8"></script><!-- colibri focus implementation -->
     <script src="libs/colibri/colibri.session.js?v=1"></script>
     <script src="libs/jquery-ui.js"></script>
+    <script src="libs/rayo.js?v=1"></script>
     <script src="libs/tooltip.js?v=1"></script><!-- bootstrap tooltip lib -->
     <script src="libs/popover.js?v=1"></script><!-- bootstrap tooltip lib -->
     <script src="config.js?v=3"></script><!-- adapt to your needs, i.e. set hosts and bosh path -->
@@ -96,6 +97,11 @@
                 </span>
                 <a class="button" data-toggle="popover" data-placement="bottom" data-content="Enter / Exit Full Screen" onclick='buttonClick("#fullScreen", "icon-full-screen icon-exit-full-screen");Toolbar.toggleFullScreen();'>
                     <i id="fullScreen" class="icon-full-screen"></i></a>
+                <span id="sipCallButton">
+                    <div class="header_button_separator"></div>
+                    <a class="button" data-toggle="popover" data-placement="bottom" data-content="Call SIP number" onclick='callSipButtonClicked();'>
+                        <i class="icon-telephone"></i></a>
+                </span>
             </span>
         </div>
         <div id="subject"></div>

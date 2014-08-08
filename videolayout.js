@@ -323,10 +323,34 @@ var VideoLayout = (function (my) {
     /**
      * Shows the display name for the given video.
      */
-    my.setDisplayName = function(videoSpanId, displayName) {
+    my.setDisplayName = function(videoSpanId, displayName, statusMsg) {
         var nameSpan = $('#' + videoSpanId + '>span.displayname');
         var defaultLocalDisplayName = "Me";
         var defaultRemoteDisplayName = "Speaker";
+
+        var statusSpan = $('#' + videoSpanId + '>span.status');
+        if (!statusSpan.length)
+        {
+            //Add status span
+            statusSpan = document.createElement('span');
+            statusSpan.className = 'status';
+            statusSpan.id = videoSpanId + '_status';
+            $('#' + videoSpanId)[0].appendChild(statusSpan);
+
+            statusSpan = $('#' + videoSpanId + '>span.status');
+        }
+
+        // Display status
+        if (statusMsg && statusMsg.length)
+        {
+            $('#' + videoSpanId + '_status').text(statusMsg);
+            statusSpan.get(0).setAttribute("style", "display:inline-block;");
+        }
+        else
+        {
+            // Hide
+            statusSpan.get(0).setAttribute("style", "display:none;");
+        }
 
         // If we already have a display name for this video.
         if (nameSpan.length > 0) {

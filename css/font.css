@@ -71,6 +71,9 @@
 .icon-share-doc:before {
 	content: "\e605";
 }
+.icon-telephone:before {
+    content: "\e611";
+}
 .icon-security-locked:before {
 	content: "\e607";
 }

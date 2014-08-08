@@ -303,5 +303,18 @@ var Toolbar = (function (my) {
         $('#recordButton').toggleClass('active');
     };
 
+    // Shows or hides SIP calls button
+    my.showSipCallButton = function (show)
+    {
+        if (config.hosts.call_control && show)
+        {
+            $('#sipCallButton').css({display: "inline"});
+        }
+        else
+        {
+            $('#sipCallButton').css({display: "none"});
+        }
+    };
+
     return my;
 }(Toolbar || {}));

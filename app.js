@@ -8,6 +8,7 @@ var nickname = null;
 var sharedKey = '';
 var recordingToken ='';
 var roomUrl = null;
+var roomName = null;
 var ssrc2jid = {};
 /**
  * The stats collector that process stats data and triggers updates to app.js.
@@ -182,7 +183,9 @@ function doJoin() {
         }
     }
 
-    roomjid = roomnode + '@' + config.hosts.muc;
+    roomName = roomnode + '@' + config.hosts.muc;
+
+    roomjid = roomName;
 
     if (config.useNicks) {
         var nick = window.prompt('Your nickname (optional)');
@@ -631,7 +634,13 @@ $(document).bind('joined.muc', function (event, jid, info) {
             focus.setEndpointDisplayName(connection.emuc.myroomjid,
                                          nickname);
         }
+        Toolbar.showSipCallButton(true);
         Toolbar.showRecordingButton(false);
+    }
+
+    if (!focus)
+    {
+        Toolbar.showSipCallButton(false);
     }
 
     if (focus && config.etherpad_base) {
@@ -714,6 +723,8 @@ $(document).bind('left.muc', function (event, jid) {
                                          nickname);
         }
 
+        Toolbar.showSipCallButton(true);
+
         if (Object.keys(connection.emuc.members).length > 0) {
             focus.makeConference(Object.keys(connection.emuc.members));
             Toolbar.showRecordingButton(true);
@@ -730,6 +741,7 @@ $(document).bind('left.muc', function (event, jid) {
             focus.setEndpointDisplayName(connection.emuc.myroomjid,
                                          nickname);
         }
+        Toolbar.showSipCallButton(true);
         Toolbar.showRecordingButton(false);
     }
     if (connection.emuc.getPrezi(jid)) {
@@ -781,7 +793,7 @@ $(document).bind('presence.muc', function (event, jid, info, pres) {
         VideoLayout.ensurePeerContainerExists(jid);
         VideoLayout.setDisplayName(
                 'participant_' + Strophe.getResourceFromJid(jid),
-                info.displayName);
+                info.displayName, info.status);
     }
 
     if (focus !== null && info.displayName !== null) {
@@ -1279,3 +1291,32 @@ $(document).bind('fatalError.jingle',
             "Your browser version is too old. Please update and try again...");
     }
 );
+
+function callSipButtonClicked()
+{
+    $.prompt('<h2>Enter SIP number</h2>' +
+        '<input id="sipNumber" type="text"' +
+        ' value="' + config.defaultSipNumber + '" autofocus>',
+        {
+            persistent: false,
+            buttons: { "Dial": true, "Cancel": false},
+            defaultButton: 2,
+            loaded: function (event)
+            {
+                document.getElementById('sipNumber').focus();
+            },
+            submit: function (e, v, m, f)
+            {
+                if (v)
+                {
+                    var numberInput = document.getElementById('sipNumber');
+                    if (numberInput.value)
+                    {
+                        connection.rayo.dial(
+                            numberInput.value, 'fromnumber', roomName);
+                    }
+                }
+            }
+        }
+    );
+}
