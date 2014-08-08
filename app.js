@@ -1,6 +1,7 @@
 /* jshint -W117 */
 /* application specific logic */
 var connection = null;
+var authenticatedUser = false;
 var focus = null;
 var activecall = null;
 var RTC = null;
@@ -105,6 +106,9 @@ function connect(jid, password) {
             });
 
             document.getElementById('connect').disabled = true;
+
+            if(password)
+                authenticatedUser = true;
         } else if (status === Strophe.Status.CONNFAIL) {
             if(msg === 'x-strophe-bad-non-anon-jid') {
                 anonymousConnectionFailed = true;
@@ -216,7 +220,13 @@ function doJoin() {
             roomjid += '/' + Strophe.getNodeFromJid(connection.jid);
         }
     } else {
-        roomjid += '/' + Strophe.getNodeFromJid(connection.jid).substr(0, 8);
+
+        var tmpJid = Strophe.getNodeFromJid(connection.jid);
+
+        if(!authenticatedUser)
+            tmpJid = tmpJid.substr(0, 8);
+
+        roomjid += '/' + tmpJid;
     }
     connection.emuc.doJoin(roomjid);
 }
