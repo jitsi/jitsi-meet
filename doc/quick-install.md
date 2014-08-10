@@ -24,7 +24,7 @@ wget -qO - https://download.jitsi.org/nightly/deb/unstable/archive.key | apt-key
 or add the repository by hand with
 
 ```sh
-echo 'deb http://download.jitsi.org/nightly/deb trusty unstable/' >> /etc/apt/sources.list
+echo 'deb http://download.jitsi.org/nightly/deb unstable/' >> /etc/apt/sources.list
 wget -qO - https://download.jitsi.org/nightly/deb/unstable/archive.key | apt-key add -
 ```
 
