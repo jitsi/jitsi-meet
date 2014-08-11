@@ -124,7 +124,7 @@ var Toolbar = (function (my) {
                     + " to join the conference.%0D%0A%0D%0A"
                     + roomUrl + "%0D%0A%0D%0A"
                     + sharedKeyText
-                    + "Note that Jitsi Meet is currently only supported by Chromim,"
+                    + "Note that Jitsi Meet is currently only supported by Chromium,"
                     + " Google Chrome and Opera, so you need"
                     + " to be using one of these browsers.%0D%0A%0D%0A"
                     + "Talk to you in a sec!";
