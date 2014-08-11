@@ -1,5 +1,5 @@
 #!/bin/sh
-# postrm script for jitsi-meet
+# postrm script for jitsi-meet-prosody
 #
 # see: dh_installdeb(1)
 
@@ -24,9 +24,7 @@ set -e
 
 case "$1" in
     purge|remove)
-        rm /etc/nginx/sites-enabled/jitsi-meet
-        rm /etc/nginx/sites-available/jitsi-meet
-        if [ -x "/etc/init.d/nginx" ]; then
+        if [ -x "/etc/init.d/prosody" ]; then
             invoke-rc.d nginx reload
         fi
     ;;

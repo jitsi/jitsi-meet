@@ -21,9 +21,6 @@ set -e
 case "$1" in
     configure)
 
-        # firewall conf
-        ufw allow 80
-
         # nginx conf
         . /etc/default/jitsi-videobridge
         cp /usr/share/doc/jitsi-meet/jitsi-meet.example /etc/nginx/sites-available/$JVB_HOSTNAME.conf

@@ -15,3 +15,5 @@ debian/usr/share/jitsi-meet/images/avatar1.png
 debian/usr/share/jitsi-meet/images/popupPointer.png
 debian/usr/share/jitsi-meet/images/favicon.ico
 debian/usr/share/doc/jitsi-meet/changelog.Debian.gz
+debian/usr/share/doc/jitsi-meet-prosody/changelog.Debian.gz
+debian/usr/share/doc/jitsi-meet-prosody/prosody.cfg.lua-jvb.example.gz
