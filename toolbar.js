@@ -18,7 +18,7 @@ var Toolbar = (function (my) {
                 );
             else
                 $.prompt("This conversation isn't currently protected by"
-                        + " a secret key. Only the owner of the conference" +
+                        + " a secret key. Only the owner of the conference"
                         + " could set a shared key.",
                     {
                         title: "Secrect key",
