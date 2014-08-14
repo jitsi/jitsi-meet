@@ -12,7 +12,7 @@ var Toolbar = (function (my) {
                 $.prompt("This conversation is currently protected by"
                         + " a shared secret key.",
                     {
-                        title: "Secrect key",
+                        title: "Secret key",
                         persistent: false
                     }
                 );
@@ -21,7 +21,7 @@ var Toolbar = (function (my) {
                         + " a secret key. Only the owner of the conference"
                         + " could set a shared key.",
                     {
-                        title: "Secrect key",
+                        title: "Secret key",
                         persistent: false
                     }
                 );
