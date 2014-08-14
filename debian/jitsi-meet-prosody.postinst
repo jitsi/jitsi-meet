@@ -34,7 +34,8 @@ case "$1" in
             DOMAIN="$( (hostname -d; echo localdomain) | head -n 1)"
             openssl req -new -newkey rsa:4096 -days 365 -nodes -x509 -subj \
                 "/O=$DOMAIN/OU=$HOST/CN=$JVB_HOSTNAME/emailAddress=webmaster@$HOST.$DOMAIN" \
-                -keyout /var/lib/prosody/$JVB_HOSTNAME.key -out /var/lib
+                -keyout /var/lib/prosody/$JVB_HOSTNAME.key \
+                -out /var/lib/prosody/$JVB_HOSTNAME.crt
         fi
         ln -sf /var/lib/prosody/$JVB_HOSTNAME.key /etc/prosody/certs/$JVB_HOSTNAME.key
         ln -sf /var/lib/prosody/$JVB_HOSTNAME.crt /etc/prosody/certs/$JVB_HOSTNAME.crt
