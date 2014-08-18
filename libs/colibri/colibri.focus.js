@@ -492,22 +492,15 @@ ColibriFocus.prototype.createdConference = function (result) {
         tmp = $(this.mychannel[channel]).find('>source[xmlns="urn:xmpp:jingle:apps:rtp:ssma:0"]');
         // FIXME: check rtp-level-relay-type
 
-        var isData = bridgeSDP.media[channel].indexOf('application') !== -1;
-        if (!isData && tmp.length)
-        {
-            bridgeSDP.media[channel] += 'a=ssrc:' + tmp.attr('ssrc') + ' ' + 'cname:mixed' + '\r\n';
-            bridgeSDP.media[channel] += 'a=ssrc:' + tmp.attr('ssrc') + ' ' + 'label:mixedlabela0' + '\r\n';
-            bridgeSDP.media[channel] += 'a=ssrc:' + tmp.attr('ssrc') + ' ' + 'msid:mixedmslabel mixedlabela0' + '\r\n';
-            bridgeSDP.media[channel] += 'a=ssrc:' + tmp.attr('ssrc') + ' ' + 'mslabel:mixedmslabel' + '\r\n';
-        }
-        else if (!isData)
-        {
+        var name = bridgeSDP.media[channel].split(" ")[0].substr(2); // 'm=audio ...'
+        if (name === 'audio' || name === 'video') {
             // make chrome happy... '3735928559' == 0xDEADBEEF
-            // FIXME: this currently appears as two streams, should be one
-            bridgeSDP.media[channel] += 'a=ssrc:' + '3735928559' + ' ' + 'cname:mixed' + '\r\n';
-            bridgeSDP.media[channel] += 'a=ssrc:' + '3735928559' + ' ' + 'label:mixedlabelv0' + '\r\n';
-            bridgeSDP.media[channel] += 'a=ssrc:' + '3735928559' + ' ' + 'msid:mixedmslabel mixedlabelv0' + '\r\n';
-            bridgeSDP.media[channel] += 'a=ssrc:' + '3735928559' + ' ' + 'mslabel:mixedmslabel' + '\r\n';
+            var ssrc = tmp.length ? tmp.attr('ssrc') : '3735928559';
+
+            bridgeSDP.media[channel] += 'a=ssrc:' + ssrc + ' cname:mixed\r\n';
+            bridgeSDP.media[channel] += 'a=ssrc:' + ssrc + ' label:mixedlabel' + name + '0\r\n';
+            bridgeSDP.media[channel] += 'a=ssrc:' + ssrc + ' msid:mixedmslabel mixedlabel' + name + '0\r\n';
+            bridgeSDP.media[channel] += 'a=ssrc:' + ssrc + ' mslabel:mixedmslabel\r\n';
         }
 
         // FIXME: should take code from .fromJingle
@@ -683,20 +676,16 @@ ColibriFocus.prototype.initiate = function (peer, isInitiator) {
         console.log('channel id', chan.attr('id'));
 
         tmp = chan.find('>source[xmlns="urn:xmpp:jingle:apps:rtp:ssma:0"]');
-        if (tmp.length) {
-            sdp.media[j] += 'a=ssrc:' + tmp.attr('ssrc') + ' ' + 'cname:mixed' + '\r\n';
-            sdp.media[j] += 'a=ssrc:' + tmp.attr('ssrc') + ' ' + 'label:mixedlabela0' + '\r\n';
-            sdp.media[j] += 'a=ssrc:' + tmp.attr('ssrc') + ' ' + 'msid:mixedmslabel mixedlabela0' + '\r\n';
-            sdp.media[j] += 'a=ssrc:' + tmp.attr('ssrc') + ' ' + 'mslabel:mixedmslabel' + '\r\n';
-        }
-        // No SSRCs for 'data', comes when j == 2
-        else if (j < 2)
-        {
+
+        var name = sdp.media[j].split(" ")[0].substr(2); // 'm=audio ...'
+        if (name === 'audio' || name === 'video') {
             // make chrome happy... '3735928559' == 0xDEADBEEF
-            sdp.media[j] += 'a=ssrc:' + '3735928559' + ' ' + 'cname:mixed' + '\r\n';
-            sdp.media[j] += 'a=ssrc:' + '3735928559' + ' ' + 'label:mixedlabelv0' + '\r\n';
-            sdp.media[j] += 'a=ssrc:' + '3735928559' + ' ' + 'msid:mixedmslabel mixedlabelv0' + '\r\n';
-            sdp.media[j] += 'a=ssrc:' + '3735928559' + ' ' + 'mslabel:mixedmslabel' + '\r\n';
+            var ssrc = tmp.length ? tmp.attr('ssrc') : '3735928559';
+
+            sdp.media[j] += 'a=ssrc:' + ssrc + ' cname:mixed\r\n';
+            sdp.media[j] += 'a=ssrc:' + ssrc + ' label:mixedlabel' + name + '0\r\n';
+            sdp.media[j] += 'a=ssrc:' + ssrc + ' msid:mixedmslabel mixedlabel' + name + '0\r\n';
+            sdp.media[j] += 'a=ssrc:' + ssrc + ' mslabel:mixedmslabel\r\n';
         }
 
         // In the case of bundle, we add each candidate to all m= lines/jingle contents,
