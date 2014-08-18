@@ -572,6 +572,7 @@ ColibriFocus.prototype.createdConference = function (result) {
                                         {
                                             initiator: 'true',
                                             expire: self.channelExpire,
+                                            id: self.mychannel[channel].attr('id'),
                                             endpoint: self.myMucResource,
                                             port: sctpPort
                                         }
@@ -885,6 +886,7 @@ ColibriFocus.prototype.updateChannel = function (remoteSDP, participant) {
         {
             var sctpmap = SDPUtil.find_line(remoteSDP.media[channel], 'a=sctpmap:');
             change.c('sctpconnection', {
+                id: $(this.channels[participant][channel]).attr('id'),
                 endpoint: $(this.channels[participant][channel]).attr('endpoint'),
                 expire: self.channelExpire,
                 port: SDPUtil.parse_sctpmap(sctpmap)[0]
@@ -1082,6 +1084,7 @@ ColibriFocus.prototype.addIceCandidate = function (session, elem) {
         else
         {
             change.c('sctpconnection', {
+                id: $(self.channels[participant][channel]).attr('id'),
                 endpoint: $(self.channels[participant][channel]).attr('endpoint'),
                 expire: self.channelExpire
             });
@@ -1169,6 +1172,7 @@ ColibriFocus.prototype.sendIceCandidates = function (candidates) {
             else
             {
                 mycands.c('sctpconnection', {
+                    id: $(this.mychannel[cands[0].sdpMLineIndex]).attr('id'),
                     endpoint: $(this.mychannel[cands[0].sdpMLineIndex]).attr('endpoint'),
                     port: $(this.mychannel[cands[0].sdpMLineIndex]).attr('port'),
                     expire: self.channelExpire
@@ -1228,6 +1232,7 @@ ColibriFocus.prototype.terminate = function (session, reason) {
         else
         {
             change.c('sctpconnection', {
+                id: $(this.channels[participant][channel]).attr('id'),
                 endpoint: $(this.channels[participant][channel]).attr('endpoint'),
                 expire: '0'
             });
