@@ -19,5 +19,6 @@ var config = {
     //defaultSipNumber: '20669', //Default SIP number used in call dialog
 //    channelLastN: -1, // The default value of the channel attribute last-n.
 //    useRtcpMux: true,
+//    useBundle: true,
     enableRecording: false
 };

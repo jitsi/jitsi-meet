@@ -72,6 +72,7 @@ function ColibriFocus(connection, bridgejid) {
         this.media = ['audio', 'video'];
 
     this.connection.jingle.sessions[this.sid] = this;
+    this.bundledTransports = {};
     this.mychannel = [];
     this.channels = [];
     this.remotessrc = {};
@@ -296,13 +297,20 @@ ColibriFocus.prototype._makeConference = function () {
 
         elem.c(elemName, elemAttrs);
         elem.attrs({ endpoint: self.myMucResource });
+        if (config.useBundle) {
+            elem.attrs({ 'channel-bundle-id': self.myMucResource });
+        }
         elem.up();// end of channel/sctpconnection
 
         for (var j = 0; j < self.peers.length; j++) {
             var peer = self.peers[j];
+            var peerEndpoint = peer.substr(1 + peer.lastIndexOf('/'));
 
             elem.c(elemName, elemAttrs);
-            elem.attrs({ endpoint: peer.substr(1 + peer.lastIndexOf('/')) });
+            elem.attrs({ endpoint: peerEndpoint });
+            if (config.useBundle) {
+                elem.attrs({ 'channel-bundle-id': peerEndpoint });
+            }
             elem.up(); // end of channel/sctpconnection
         }
         elem.up(); // end of content
@@ -353,7 +361,7 @@ ColibriFocus.prototype._makeConference = function () {
     );
 };
 
-// callback when a conference was created
+// callback when a colibri conference was created
 ColibriFocus.prototype.createdConference = function (result) {
     console.log('created a conference on the bridge');
     var self = this;
@@ -379,6 +387,14 @@ ColibriFocus.prototype.createdConference = function (result) {
         }
     }
 
+    // save the 'transport' elements from 'channel-bundle'-s
+    var channelBundles = $(result).find('>conference>channel-bundle');
+    for (var i = 0; i < channelBundles.length; i++)
+    {
+        var endpointId = $(channelBundles[i]).attr('id');
+        this.bundledTransports[endpointId] = $(channelBundles[i]).find('>transport[xmlns="urn:xmpp:jingle:transports:ice-udp:1"]');
+    }
+
     console.log('remote channels', this.channels);
 
     // Notify that the focus has created the conference on the bridge
@@ -390,6 +406,11 @@ ColibriFocus.prototype.createdConference = function (result) {
         's=-\r\n' +
         't=0 0\r\n' +
         /* Audio */
+        (config.useBundle
+            ? ('a=group:BUNDLE audio video' +
+                (config.openSctp ? ' data' : '') +
+               '\r\n')
+            : '') +
         'm=audio 1 RTP/SAVPF 111 103 104 0 8 106 105 13 126\r\n' +
         'c=IN IP4 0.0.0.0\r\n' +
         'a=rtcp:1 IN IP4 0.0.0.0\r\n' +
@@ -490,7 +511,13 @@ ColibriFocus.prototype.createdConference = function (result) {
         }
 
         // FIXME: should take code from .fromJingle
-        tmp = $(this.mychannel[channel]).find('>transport[xmlns="urn:xmpp:jingle:transports:ice-udp:1"]');
+        var channelBundleId = $(this.mychannel[channel]).attr('channel-bundle-id');
+        if (typeof channelBundleId != 'undefined') {
+            tmp = this.bundledTransports[channelBundleId];
+        } else {
+            tmp = $(this.mychannel[channel]).find('>transport[xmlns="urn:xmpp:jingle:transports:ice-udp:1"]');
+        }
+
         if (tmp.length) {
             bridgeSDP.media[channel] += 'a=ice-ufrag:' + tmp.attr('ufrag') + '\r\n';
             bridgeSDP.media[channel] += 'a=ice-pwd:' + tmp.attr('pwd') + '\r\n';
@@ -514,7 +541,7 @@ ColibriFocus.prototype.createdConference = function (result) {
                 function (answer) {
                     self.peerconnection.setLocalDescription(answer,
                         function () {
-                            console.log('setLocalDescription succeded.');
+                            console.log('setLocalDescription succeeded.');
                             // make sure our presence is updated
                             $(document).trigger('setLocalDescription.jingle', [self.sid]);
                             var elem = $iq({to: self.bridgejid, type: 'get'});
@@ -570,7 +597,7 @@ ColibriFocus.prototype.createdConference = function (result) {
                                 },
                                 function (error) {
                                     console.error(
-                                        "ERROR setLocalDescription succeded",
+                                        "ERROR sending colibri message",
                                         error, elem);
                                 }
                             );
@@ -616,7 +643,9 @@ ColibriFocus.prototype.initiate = function (peer, isInitiator) {
         var localSDP = new SDP(this.peerconnection.localDescription.sdp);
         // throw away stuff we don't want
         // not needed with static offer
-        sdp.removeSessionLines('a=group:');
+        if (!config.useBundle) {
+            sdp.removeSessionLines('a=group:');
+        }
         sdp.removeSessionLines('a=msid-semantic:'); // FIXME: not mapped over jingle anyway...
         for (var i = 0; i < sdp.media.length; i++) {
             if (!config.useRtcpMux){
@@ -670,7 +699,14 @@ ColibriFocus.prototype.initiate = function (peer, isInitiator) {
             sdp.media[j] += 'a=ssrc:' + '3735928559' + ' ' + 'mslabel:mixedmslabel' + '\r\n';
         }
 
-        tmp = chan.find('>transport[xmlns="urn:xmpp:jingle:transports:ice-udp:1"]');
+        // In the case of bundle, we add each candidate to all m= lines/jingle contents,
+        // just as chrome does
+        if (config.useBundle){
+            tmp = this.bundledTransports[chan.attr('channel-bundle-id')];
+        } else {
+            tmp = chan.find('>transport[xmlns="urn:xmpp:jingle:transports:ice-udp:1"]');
+        }
+
         if (tmp.length) {
             if (tmp.attr('ufrag'))
                 sdp.media[j] += 'a=ice-ufrag:' + tmp.attr('ufrag') + '\r\n';
@@ -757,12 +793,17 @@ ColibriFocus.prototype.addNewParticipant = function (peer) {
     localSDP.media.forEach(function (media, channel) {
         var name = SDPUtil.parse_mid(SDPUtil.find_line(media, 'a=mid:'));
         var elemName;
+        var endpointId = peer.substr(1 + peer.lastIndexOf('/'));
         var elemAttrs
             = {
                 initiator: 'true',
                 expire: self.channelExpire,
-                endpoint: peer.substr(1 + peer.lastIndexOf('/'))
+                endpoint: endpointId
             };
+        if (config.useBundle) {
+            elemAttrs['channel-bundle-id'] = endpointId;
+        }
+
 
         if ('data' == name)
         {
@@ -785,7 +826,8 @@ ColibriFocus.prototype.addNewParticipant = function (peer) {
     this.connection.sendIQ(elem,
         function (result) {
             var contents = $(result).find('>conference>content').get();
-            for (var i = 0; i < contents.length; i++) {
+            var i;
+            for (i = 0; i < contents.length; i++) {
                 var channelXml = $(contents[i]).find('>channel');
                 if (channelXml.length)
                 {
@@ -796,6 +838,12 @@ ColibriFocus.prototype.addNewParticipant = function (peer) {
                     tmp = $(contents[i]).find('>sctpconnection').get();
                 }
                 self.channels[index][i] = tmp[0];
+            }
+            var channelBundles = $(result).find('>conference>channel-bundle');
+            for (i = 0; i < channelBundles.length; i++)
+            {
+                var endpointId = $(channelBundles[i]).attr('id');
+                self.bundledTransports[endpointId] = $(channelBundles[i]).find('>transport[xmlns="urn:xmpp:jingle:transports:ice-udp:1"]');
             }
             self.initiate(peer, true);
         },
@@ -1022,6 +1070,12 @@ ColibriFocus.prototype.addIceCandidate = function (session, elem) {
     change.c('conference', {xmlns: 'http://jitsi.org/protocol/colibri', id: this.confid});
     $(elem).each(function () {
         var name = $(this).attr('name');
+
+        // If we are using bundle, audio/video/data channel will have the same candidates, so only send them for
+        // the audio channel.
+        if (config.useBundle && name !== 'audio') {
+            return;
+        }
 
         var channel = name == 'audio' ? 0 : 1; // FIXME: search mlineindex in localdesc
         if (name != 'audio' && name != 'video')
