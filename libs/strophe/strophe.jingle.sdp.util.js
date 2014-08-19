@@ -208,6 +208,7 @@ SDPUtil = {
             line += 'tcptype';
             line += ' ';
             line += cand.tcptype;
+            line += ' ';
         }
         line += 'generation';
         line += ' ';
