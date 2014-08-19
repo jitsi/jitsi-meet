@@ -16,7 +16,6 @@ var config = {
     minChromeExtVersion: '0.1', // Required version of Chrome extension
     enableRtpStats: true, // Enables RTP stats processing
     openSctp: true, // Toggle to enable/disable SCTP channels
-    //defaultSipNumber: '20669', //Default SIP number used in call dialog
 //    channelLastN: -1, // The default value of the channel attribute last-n.
 //    useRtcpMux: true,
 //    useBundle: true,

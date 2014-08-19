@@ -1351,8 +1351,7 @@ $(document).bind('fatalError.jingle',
 function callSipButtonClicked()
 {
     $.prompt('<h2>Enter SIP number</h2>' +
-        '<input id="sipNumber" type="text"' +
-        ' value="' + config.defaultSipNumber + '" autofocus>',
+        '<input id="sipNumber" type="text" value="" autofocus>',
         {
             persistent: false,
             buttons: { "Dial": true, "Cancel": false},
@@ -1366,7 +1365,7 @@ function callSipButtonClicked()
                 if (v)
                 {
                     var numberInput = document.getElementById('sipNumber');
-                    if (numberInput.value)
+                    if (numberInput.value && numberInput.value.length)
                     {
                         connection.rayo.dial(
                             numberInput.value, 'fromnumber', roomName);
