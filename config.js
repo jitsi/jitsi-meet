@@ -19,5 +19,7 @@ var config = {
 //    channelLastN: -1, // The default value of the channel attribute last-n.
 //    useRtcpMux: true,
 //    useBundle: true,
-    enableRecording: false
+    enableRecording: false,
+    enableWelcomePage: false,
+    isBrand: false
 };

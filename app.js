@@ -1115,6 +1115,33 @@ function getCameraVideoSize(videoWidth,
 }
 
 $(document).ready(function () {
+
+    if(config.enableWelcomePage && window.location.pathname == "/")
+    {
+        $("#videoconference_page").hide();
+        $("#enter_room_button").click(function()
+        {
+            var val = Util.escapeHtml($("#enter_room_field").val());
+            window.location.pathname = "/" + val;
+        });
+
+        $("#enter_room_field").keydown(function (event) {
+            if (event.keyCode === 13) {
+                var val = Util.escapeHtml(this.value);
+                window.location.pathname = "/" + val;
+            }
+        });
+
+        if(!config.isBrand)
+        {
+            $("#brand_logo").hide();
+            $("#brand_header").hide();
+            $("#header_text").hide();
+        }
+        return;
+    }
+
+    $("#welcome_page").hide();
     Chat.init();
 
     $('body').popover({ selector: '[data-toggle=popover]',
