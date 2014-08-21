@@ -16,6 +16,17 @@ function ChannelSsrc(ssrc, type) {
 }
 
 /**
+ * Class holds a=ssrc-group: lines
+ * @param semantics
+ * @param ssrcs
+ * @constructor
+ */
+function ChannelSsrcGroup(semantics, ssrcs, line) {
+    this.semantics = semantics;
+    this.ssrcs = ssrcs;
+}
+
+/**
  * Helper class represents media channel. Is a container for ChannelSsrc, holds channel idx and media type.
  * @param channelNumber channel idx in SDP media array.
  * @param mediaType media type(a=mid)
@@ -36,6 +47,12 @@ function MediaChannel(channelNumber, mediaType) {
      * The maps of ssrc numbers to ChannelSsrc objects.
      */
     this.ssrcs = {};
+
+    /**
+     * The array of ChannelSsrcGroup objects.
+     * @type {Array}
+     */
+    this.ssrcGroups = [];
 }
 
 SDPUtil = {

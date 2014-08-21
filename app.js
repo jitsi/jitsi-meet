@@ -70,18 +70,18 @@ function init() {
     }
 
     obtainAudioAndVideoPermissions(function (stream) {
-        var audioStream = new webkitMediaStream(stream);
-        var videoStream = new webkitMediaStream(stream);
-        var videoTracks = stream.getVideoTracks();
+        var audioStream = new webkitMediaStream();
+        var videoStream = new webkitMediaStream();
         var audioTracks = stream.getAudioTracks();
-        for (var i = 0; i < videoTracks.length; i++) {
-            audioStream.removeTrack(videoTracks[i]);
+        var videoTracks = stream.getVideoTracks();
+        for (var i = 0; i < audioTracks.length; i++) {
+            audioStream.addTrack(audioTracks[i]);
         }
         VideoLayout.changeLocalAudio(audioStream);
         startLocalRtpStatsCollector(audioStream);
 
-        for (i = 0; i < audioTracks.length; i++) {
-            videoStream.removeTrack(audioTracks[i]);
+        for (i = 0; i < videoTracks.length; i++) {
+            videoStream.addTrack(videoTracks[i]);
         }
         VideoLayout.changeLocalVideo(videoStream, true);
         maybeDoJoin();
@@ -237,7 +237,9 @@ function waitForRemoteVideo(selector, ssrc, stream) {
     if (stream.id === 'mixedmslabel') return;
 
     if (selector[0].currentTime > 0) {
-        RTC.attachMediaStream(selector, stream); // FIXME: why do i have to do this for FF?
+        var simulcast = new Simulcast();
+        var videoStream = simulcast.getReceivingVideoStream(stream);
+        RTC.attachMediaStream(selector, videoStream); // FIXME: why do i have to do this for FF?
 
         // FIXME: add a class that will associate peer Jid, video.src, it's ssrc and video type
         //        in order to get rid of too many maps
@@ -256,18 +258,40 @@ function waitForRemoteVideo(selector, ssrc, stream) {
 }
 
 $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
+    waitForPresence(data, sid);
+});
+
+function waitForPresence(data, sid) {
     var sess = connection.jingle.sessions[sid];
 
     var thessrc;
     // look up an associated JID for a stream id
     if (data.stream.id.indexOf('mixedmslabel') === -1) {
+        // look only at a=ssrc: and _not_ at a=ssrc-group: lines
         var ssrclines
-            = SDPUtil.find_lines(sess.peerconnection.remoteDescription.sdp, 'a=ssrc');
+            = SDPUtil.find_lines(sess.peerconnection.remoteDescription.sdp, 'a=ssrc:');
         ssrclines = ssrclines.filter(function (line) {
             return line.indexOf('mslabel:' + data.stream.label) !== -1;
         });
         if (ssrclines.length) {
             thessrc = ssrclines[0].substring(7).split(' ')[0];
+
+            // We signal our streams (through Jingle to the focus) before we set
+            // our presence (through which peers associate remote streams to
+            // jids). So, it might arrive that a remote stream is added but
+            // ssrc2jid is not yet updated and thus data.peerjid cannot be
+            // successfully set. Here we wait for up to a second for the
+            // presence to arrive.
+
+            if (!ssrc2jid[thessrc]) {
+                setTimeout(function(d, s) {
+                    return function() {
+                            waitForPresence(d, s);
+                    }
+                }(data, sid), 250);
+                return;
+            }
+
             // ok to overwrite the one from focus? might save work in colibri.js
             console.log('associated jid', ssrc2jid[thessrc], data.peerjid);
             if (ssrc2jid[thessrc]) {
@@ -276,6 +300,9 @@ $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
         }
     }
 
+    // NOTE(gp) now that we have simulcast, a media stream can have more than 1
+    // ssrc. We should probably take that into account in our MediaStream
+    // wrapper.
     mediaStreams.push(new MediaStream(data, sid, thessrc));
 
     var container;
@@ -322,7 +349,7 @@ $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
             sendKeyframe(sess.peerconnection);
         }, 3000);
     }
-});
+}
 
 /**
  * Returns the JID of the user to whom given <tt>videoSrc</tt> belongs.
@@ -532,40 +559,35 @@ $(document).bind('callterminated.jingle', function (event, sid, jid, reason) {
 $(document).bind('setLocalDescription.jingle', function (event, sid) {
     // put our ssrcs into presence so other clients can identify our stream
     var sess = connection.jingle.sessions[sid];
-    var newssrcs = {};
-    var directions = {};
-    var localSDP = new SDP(sess.peerconnection.localDescription.sdp);
-    localSDP.media.forEach(function (media) {
-        var type = SDPUtil.parse_mid(SDPUtil.find_line(media, 'a=mid:'));
+    var newssrcs = [];
+    var simulcast = new Simulcast();
+    var media = simulcast.parseMedia(sess.peerconnection.localDescription);
+    media.forEach(function (media) {
 
-        if (SDPUtil.find_line(media, 'a=ssrc:')) {
-            // assumes a single local ssrc
-            var ssrc = SDPUtil.find_line(media, 'a=ssrc:').substring(7).split(' ')[0];
-            newssrcs[type] = ssrc;
-
-            directions[type] = (
-                SDPUtil.find_line(media, 'a=sendrecv') ||
-                SDPUtil.find_line(media, 'a=recvonly') ||
-                SDPUtil.find_line(media, 'a=sendonly') ||
-                SDPUtil.find_line(media, 'a=inactive') ||
-                'a=sendrecv').substr(2);
-        }
+        // TODO(gp) maybe exclude FID streams?
+        Object.keys(media.sources).forEach(function(ssrc) {
+            newssrcs.push({
+                'ssrc': ssrc,
+                'type': media.type,
+                'direction': media.direction
+            });
+        });
     });
     console.log('new ssrcs', newssrcs);
 
     // Have to clear presence map to get rid of removed streams
     connection.emuc.clearPresenceMedia();
-    var i = 0;
-    Object.keys(newssrcs).forEach(function (mtype) {
-        i++;
-        var type = mtype;
-        // Change video type to screen
-        if (mtype === 'video' && isUsingScreenStream) {
-            type = 'screen';
+
+    if (newssrcs.length > 0) {
+        for (var i = 1; i <= newssrcs.length; i ++) {
+            // Change video type to screen
+            if (newssrcs[i-1].type === 'video' && isUsingScreenStream) {
+                newssrcs[i-1].type = 'screen';
+            }
+            connection.emuc.addMediaToPresence(i,
+                newssrcs[i-1].type, newssrcs[i-1].ssrc, newssrcs[i-1].direction);
         }
-        connection.emuc.addMediaToPresence(i, type, newssrcs[mtype], directions[mtype]);
-    });
-    if (i > 0) {
+
         connection.emuc.sendPresence();
     }
 });

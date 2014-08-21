@@ -22,5 +22,7 @@ var config = {
     useBundle: true,
     enableRecording: false,
     enableWelcomePage: false,
+    enableSimulcast: false,
+    useNativeSimulcast: false,
     isBrand: false
 };
