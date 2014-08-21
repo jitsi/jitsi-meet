@@ -329,7 +329,7 @@ form {
 
 #brand_logo
 {
-    background-image:url(../images/welcome_page/unicef-logo.png);
+    background-image:url(../images/welcome_page/brand-logo.png);
     width: 215px;
     height: 55px;
     position: absolute;
@@ -340,7 +340,7 @@ form {
 
 #brand_header
 {
-    background-image:url(../images/welcome_page/unicef-header-big.png);
+    background-image:url(../images/welcome_page/header-big.png);
     position:absolute;
     width: 583px;
     height: 274px;
