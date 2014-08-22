@@ -46,7 +46,6 @@ var Etherpad = (function (my) {
                     largeVideo.css({opacity: '0'});
                 } else {
                     VideoLayout.setLargeVideoVisible(false);
-                    ToolbarToggler.dockToolbar(true);
                 }
 
                 $('#etherpad>iframe').fadeIn(300, function () {
@@ -64,7 +63,6 @@ var Etherpad = (function (my) {
                 if (!isPresentation) {
                     $('#largeVideo').fadeIn(300, function () {
                         VideoLayout.setLargeVideoVisible(true);
-                        ToolbarToggler.dockToolbar(false);
                     });
                 }
             });
@@ -116,6 +114,46 @@ var Etherpad = (function (my) {
         etherpadIFrame.setAttribute('style', 'visibility: hidden;');
 
         document.getElementById('etherpad').appendChild(etherpadIFrame);
+
+        etherpadIFrame.onload = function() {
+
+            document.domain = document.domain;
+            bubbleIframeMouseMove(etherpadIFrame);
+            setTimeout(function() {
+            //the iframes inside of the etherpad are not yet loaded when the etherpad iframe is loaded
+                var outer = etherpadIFrame.contentDocument.getElementsByName("ace_outer")[0];
+                bubbleIframeMouseMove(outer);
+                var inner = outer.contentDocument.getElementsByName("ace_inner")[0];
+                bubbleIframeMouseMove(inner);
+            }, 2000);
+        };
+    }
+
+    function bubbleIframeMouseMove(iframe){
+        var existingOnMouseMove = iframe.contentWindow.onmousemove;
+        iframe.contentWindow.onmousemove = function(e){
+            if(existingOnMouseMove) existingOnMouseMove(e);
+            var evt = document.createEvent("MouseEvents");
+            var boundingClientRect = iframe.getBoundingClientRect();
+            evt.initMouseEvent(
+                "mousemove",
+                true, // bubbles
+                false, // not cancelable
+                window,
+                e.detail,
+                e.screenX,
+                e.screenY,
+                    e.clientX + boundingClientRect.left,
+                    e.clientY + boundingClientRect.top,
+                e.ctrlKey,
+                e.altKey,
+                e.shiftKey,
+                e.metaKey,
+                e.button,
+                null // no related element
+            );
+            iframe.dispatchEvent(evt);
+        };
     }
 
     /**
