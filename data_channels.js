@@ -74,9 +74,15 @@ function onDataChannel(event)
                  */
                 var endpointsEnteringLastN = obj.endpointsEnteringLastN;
 
-                console.debug(
+                var stream = obj.stream;
+
+                console.log(
                     "Data channel new last-n event: ",
-                    lastNEndpoints);
+                    lastNEndpoints, endpointsEnteringLastN, obj);
+
+                $(document).trigger(
+                        'lastnchanged',
+                        [lastNEndpoints, endpointsEnteringLastN, stream]);
             }
             else
             {

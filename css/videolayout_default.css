@@ -15,7 +15,7 @@
     padding: 18px;
     bottom: 0;
     left: 0;
-    right: 0;
+    right: 20px;
     width:auto;
     border:1px solid transparent;
     z-index: 5;
@@ -333,4 +333,8 @@
     position: absolute;
     z-index: 0;
     border-radius:10px;
+}
+
+#mixedstream {
+    display:none !important;
 }

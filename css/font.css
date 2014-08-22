@@ -23,6 +23,12 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
+.icon-contactList:before {
+    content: "\e615";
+}
+.icon-avatar:before {
+    content: "\e616";
+}
 .icon-callRetro:before {
     content: "\e611";
 }

@@ -23,15 +23,16 @@
     <script src="libs/rayo.js?v=1"></script>
     <script src="libs/tooltip.js?v=1"></script><!-- bootstrap tooltip lib -->
     <script src="libs/popover.js?v=1"></script><!-- bootstrap tooltip lib -->
-    <script src="config.js?v=3"></script><!-- adapt to your needs, i.e. set hosts and bosh path -->
-    <script src="muc.js?v=12"></script><!-- simple MUC library -->
+    <script src="config.js?v=4"></script><!-- adapt to your needs, i.e. set hosts and bosh path -->
+    <script src="muc.js?v=13"></script><!-- simple MUC library -->
     <script src="estos_log.js?v=2"></script><!-- simple stanza logger -->
     <script src="desktopsharing.js?v=2"></script><!-- desktop sharing -->
-    <script src="data_channels.js?v=2"></script><!-- data channels -->
-    <script src="app.js?v=4"></script><!-- application logic -->
+    <script src="data_channels.js?v=3"></script><!-- data channels -->
+    <script src="app.js?v=5"></script><!-- application logic -->
     <script src="commands.js?v=1"></script><!-- application logic -->
-    <script src="chat.js?v=8"></script><!-- chat logic -->
-    <script src="util.js?v=5"></script><!-- utility functions -->
+    <script src="chat.js?v=9"></script><!-- chat logic -->
+    <script src="contact_list.js?v=1"></script><!-- contact list logic -->
+    <script src="util.js?v=6"></script><!-- utility functions -->
     <script src="etherpad.js?v=8"></script><!-- etherpad plugin -->
     <script src="prezi.js?v=4"></script><!-- prezi plugin -->
     <script src="smileys.js?v=2"></script><!-- smiley images -->
@@ -40,18 +41,21 @@
     <script src="analytics.js?v=1"></script><!-- google analytics plugin -->
     <script src="rtp_stats.js?v=1"></script><!-- RTP stats processing -->
     <script src="local_stats.js?v=1"></script><!-- Local stats processing -->
-    <script src="videolayout.js?v=7"></script><!-- video ui -->
-    <script src="toolbar.js?v=3"></script><!-- toolbar ui -->
+    <script src="videolayout.js?v=8"></script><!-- video ui -->
+    <script src="toolbar.js?v=4"></script><!-- toolbar ui -->
     <script src="canvas_util.js?v=1"></script><!-- canvas drawing utils -->
     <script src="audio_levels.js?v=1"></script><!-- audio levels plugin -->
+    <script src="media_stream.js?v=1"></script><!-- media stream -->
+    <script src="bottom_toolbar.js?v=1"></script><!-- media stream -->
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/font.css"/>
-    <link rel="stylesheet" type="text/css" media="screen" href="css/main.css?v=22"/>
-    <link rel="stylesheet" type="text/css" media="screen" href="css/videolayout_default.css?v=8" id="videolayout_default"/>
+    <link rel="stylesheet" href="css/font.css?v=2"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="css/main.css?v=23"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="css/videolayout_default.css?v=9" id="videolayout_default"/>
     <link rel="stylesheet" href="css/jquery-impromptu.css?v=4">
     <link rel="stylesheet" href="css/modaldialog.css?v=3">
     <link rel="stylesheet" href="css/popup_menu.css?v=2">
     <link rel="stylesheet" href="css/popover.css?v=1">
+    <link rel="stylesheet" href="css/contact_list.css?v=1">
     <!--
         Link used for inline installation of chrome desktop streaming extension,
         is updated automatically from the code with the value defined in config.js -->
@@ -158,7 +162,7 @@
                     </a>
                     <div class="header_button_separator"></div>
                     <span class="toolbar_span">
-                        <a class="button" data-toggle="popover" data-placement="bottom" data-content="Open / close chat" onclick='Chat.toggleChat();'>
+                        <a class="button" data-toggle="popover" data-placement="bottom" data-content="Open / close chat" onclick='BottomToolbar.toggleChat();'>
                             <i id="chatButton" class="icon-chat"></i>
                         </a>
                         <span id="unreadMessages"></span>
@@ -222,6 +226,20 @@
                 <audio id="userJoined" src="sounds/joined.wav" preload="auto"></audio>
                 <audio id="userLeft" src="sounds/left.wav" preload="auto"></audio>
             </div>
+            <span id="bottomToolbar">
+                <span class="bottomToolbar_span">
+                    <a class="bottomToolbarButton" data-toggle="popover" data-placement="top" data-content="Open / close chat" onclick='BottomToolbar.toggleChat();'>
+                        <i id="chatBottomButton" class="icon-chat-simple"></i>
+                    </a>
+                    <span id="unreadMessages"></span>
+                </span>
+                <span class="bottomToolbar_span">
+                    <a class="bottomToolbarButton" data-toggle="popover" data-placement="top" data-content="Open / close contact list" onclick='BottomToolbar.toggleContactList();'>
+                        <i id="contactListButton" class="icon-contactList"></i>
+                    </a>
+                    <span id="unreadMessages"></span>
+                </span>
+            </span>
         </div>
         <div id="chatspace">
             <div id="nickname">
@@ -238,5 +256,11 @@
         </div>
         <a id="downloadlog" onclick='dump(event.target);' data-toggle="popover" data-placement="right" data-content="Download logs" ><i class="fa fa-cloud-download"></i></a>
     </div>
+    <div id="contactlist">
+        <ul>
+            <li class="title"><i class="icon-contact-list"></i> CONTACT LIST</li>
+        </ul>
+    </div>
+    <a id="downloadlog" onclick='dump(event.target);' data-toggle="popover" data-placement="right" data-content="Download logs" ><i class="fa fa-cloud-download"></i></a>
   </body>
 </html>

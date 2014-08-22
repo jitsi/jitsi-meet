@@ -373,5 +373,13 @@ Strophe.addConnectionPlugin('emuc', {
     addVideoInfoToPresence: function(isMuted) {
         this.presMap['videons'] = 'http://jitsi.org/jitmeet/video';
         this.presMap['videomuted'] = isMuted.toString();
+    },
+    findJidFromResource: function(resourceJid) {
+        var peerJid = null;
+        Object.keys(this.members).some(function (jid) {
+            peerJid = jid;
+            return Strophe.getResourceFromJid(jid) === resourceJid;
+        });
+        return peerJid;
     }
 });

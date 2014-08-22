@@ -11,6 +11,8 @@ var recordingToken ='';
 var roomUrl = null;
 var roomName = null;
 var ssrc2jid = {};
+var mediaStreams = [];
+
 /**
  * The stats collector that process stats data and triggers updates to app.js.
  * @type {StatsCollector}
@@ -231,40 +233,41 @@ function doJoin() {
     connection.emuc.doJoin(roomjid);
 }
 
-$(document).bind('remotestreamadded.jingle', function (event, data, sid) {
-    function waitForRemoteVideo(selector, sid, ssrc) {
-        if (selector.removed) {
-            console.warn("media removed before had started", selector);
-            return;
-        }
-        var sess = connection.jingle.sessions[sid];
-        if (data.stream.id === 'mixedmslabel') return;
-        var videoTracks = data.stream.getVideoTracks();
-//        console.log("waiting..", videoTracks, selector[0]);
-
-        if (videoTracks.length === 0 || selector[0].currentTime > 0) {
-            RTC.attachMediaStream(selector, data.stream); // FIXME: why do i have to do this for FF?
-
-            // FIXME: add a class that will associate peer Jid, video.src, it's ssrc and video type
-            //        in order to get rid of too many maps
-            if (ssrc) {
-                videoSrcToSsrc[sel.attr('src')] = ssrc;
-            } else {
-                console.warn("No ssrc given for video", sel);
-            }
-
-            $(document).trigger('callactive.jingle', [selector, sid]);
-            console.log('waitForremotevideo', sess.peerconnection.iceConnectionState, sess.peerconnection.signalingState);
-        } else {
-            setTimeout(function () { waitForRemoteVideo(selector, sid, ssrc); }, 250);
-        }
+function waitForRemoteVideo(selector, ssrc, stream) {
+    if (selector.removed || !selector.parent().is(":visible")) {
+        console.warn("Media removed before had started", selector);
+        return;
     }
+
+    if (stream.id === 'mixedmslabel') return;
+
+    if (selector[0].currentTime > 0) {
+        RTC.attachMediaStream(selector, stream); // FIXME: why do i have to do this for FF?
+
+        // FIXME: add a class that will associate peer Jid, video.src, it's ssrc and video type
+        //        in order to get rid of too many maps
+        if (ssrc && selector.attr('src')) {
+            videoSrcToSsrc[selector.attr('src')] = ssrc;
+        } else {
+            console.warn("No ssrc given for video", selector);
+        }
+
+        $(document).trigger('videoactive.jingle', [selector]);
+    } else {
+        setTimeout(function () {
+            waitForRemoteVideo(selector, ssrc, stream);
+            }, 250);
+    }
+}
+
+$(document).bind('remotestreamadded.jingle', function (event, data, sid) {
     var sess = connection.jingle.sessions[sid];
 
     var thessrc;
     // look up an associated JID for a stream id
     if (data.stream.id.indexOf('mixedmslabel') === -1) {
-        var ssrclines = SDPUtil.find_lines(sess.peerconnection.remoteDescription.sdp, 'a=ssrc');
+        var ssrclines
+            = SDPUtil.find_lines(sess.peerconnection.remoteDescription.sdp, 'a=ssrc');
         ssrclines = ssrclines.filter(function (line) {
             return line.indexOf('mslabel:' + data.stream.label) !== -1;
         });
@@ -278,11 +281,14 @@ $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
         }
     }
 
+    mediaStreams.push(new MediaStream(data, sid, thessrc));
+
     var container;
     var remotes = document.getElementById('remoteVideos');
 
     if (data.peerjid) {
         VideoLayout.ensurePeerContainerExists(data.peerjid);
+
         container  = document.getElementById(
                 'participant_' + Strophe.getResourceFromJid(data.peerjid));
     } else {
@@ -295,90 +301,21 @@ $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
         }
         // FIXME: for the mixed ms we dont need a video -- currently
         container = document.createElement('span');
+        container.id = 'mixedstream';
         container.className = 'videocontainer';
         remotes.appendChild(container);
         Util.playSoundNotification('userJoined');
     }
 
     var isVideo = data.stream.getVideoTracks().length > 0;
-    var vid = isVideo ? document.createElement('video') : document.createElement('audio');
-    var id = (isVideo ? 'remoteVideo_' : 'remoteAudio_') + sid + '_' + data.stream.id;
 
-    vid.id = id;
-    vid.autoplay = true;
-    vid.oncontextmenu = function () { return false; };
-
-    container.appendChild(vid);
-
-    // TODO: make mixedstream display:none via css?
-    if (id.indexOf('mixedmslabel') !== -1) {
-        container.id = 'mixedstream';
-        $(container).hide();
+    if (container) {
+        VideoLayout.addRemoteStreamElement( container,
+                                            sid,
+                                            data.stream,
+                                            data.peerjid,
+                                            thessrc);
     }
-
-    var sel = $('#' + id);
-    sel.hide();
-    RTC.attachMediaStream(sel, data.stream);
-
-    if (isVideo) {
-        waitForRemoteVideo(sel, sid, thessrc);
-    }
-
-    data.stream.onended = function () {
-        console.log('stream ended', this.id);
-
-        // Mark video as removed to cancel waiting loop(if video is removed
-        // before has started)
-        sel.removed = true;
-        sel.remove();
-
-        var audioCount = $('#' + container.id + '>audio').length;
-        var videoCount = $('#' + container.id + '>video').length;
-        if (!audioCount && !videoCount) {
-            console.log("Remove whole user", container.id);
-            // Remove whole container
-            container.remove();
-            Util.playSoundNotification('userLeft');
-            VideoLayout.resizeThumbnails();
-        }
-
-        VideoLayout.checkChangeLargeVideo(vid.src);
-    };
-
-    // Add click handler.
-    container.onclick = function (event) {
-        /*
-         * FIXME It turns out that videoThumb may not exist (if there is no
-         * actual video).
-         */
-        var videoThumb = $('#' + container.id + '>video').get(0);
-
-        if (videoThumb)
-            VideoLayout.handleVideoThumbClicked(videoThumb.src);
-
-        event.preventDefault();
-        return false;
-    };
-
-    // Add hover handler
-    $(container).hover(
-        function() {
-            VideoLayout.showDisplayName(container.id, true);
-        },
-        function() {
-            var videoSrc = null;
-            if ($('#' + container.id + '>video')
-                    && $('#' + container.id + '>video').length > 0) {
-                videoSrc = $('#' + container.id + '>video').get(0).src;
-            }
-
-            // If the video has been "pinned" by the user we want to keep the
-            // display name on place.
-            if (!VideoLayout.isLargeVideoVisible()
-                    || videoSrc !== $('#largeVideo').attr('src'))
-                VideoLayout.showDisplayName(container.id, false);
-        }
-    );
 
     // an attempt to work around https://github.com/jitsi/jitmeet/issues/32
     if (isVideo &&
@@ -587,21 +524,6 @@ $(document).bind('conferenceCreated.jingle', function (event, focus)
     }
 });
 
-$(document).bind('callactive.jingle', function (event, videoelem, sid) {
-    if (videoelem.attr('id').indexOf('mixedmslabel') === -1) {
-        // ignore mixedmslabela0 and v0
-        videoelem.show();
-        VideoLayout.resizeThumbnails();
-
-        // Update the large video to the last added video only if there's no
-        // current active or focused speaker.
-        if (!focusedVideoSrc && !VideoLayout.getDominantSpeakerResourceJid())
-            VideoLayout.updateLargeVideo(videoelem.attr('src'), 1);
-
-        VideoLayout.showFocusIndicator();
-    }
-});
-
 $(document).bind('callterminated.jingle', function (event, sid, jid, reason) {
     // Leave the room if my call has been remotely terminated.
     if (connection.emuc.joined && focus == null && reason === 'kick') {
@@ -680,14 +602,20 @@ $(document).bind('joined.muc', function (event, jid, info) {
 
     VideoLayout.showFocusIndicator();
 
+    // Add myself to the contact list.
+    ContactList.addContact(jid);
+
     // Once we've joined the muc show the toolbar
     Toolbar.showToolbar();
 
     var displayName = '';
     if (info.displayName)
         displayName = info.displayName + ' (me)';
+    else
+        displayName = "Me";
 
-    VideoLayout.setDisplayName('localVideoContainer', displayName);
+    $(document).trigger('displaynamechanged',
+                        ['localVideoContainer', displayName]);
 });
 
 $(document).bind('entered.muc', function (event, jid, info, pres) {
@@ -811,21 +739,15 @@ $(document).bind('presence.muc', function (event, jid, info, pres) {
             case 'recvonly':
                 el.hide();
                 // FIXME: Check if we have to change large video
-                //VideoLayout.checkChangeLargeVideo(el);
+                //VideoLayout.updateLargeVideo(el);
                 break;
             }
         }
     });
 
-    if (jid === connection.emuc.myroomjid) {
-        VideoLayout.setDisplayName('localVideoContainer',
-                                    info.displayName);
-    } else {
-        VideoLayout.ensurePeerContainerExists(jid);
-        VideoLayout.setDisplayName(
-                'participant_' + Strophe.getResourceFromJid(jid),
-                info.displayName);
-    }
+    if (info.displayName && info.displayName.length > 0)
+        $(document).trigger('displaynamechanged',
+                            [jid, info.displayName]);
 
     if (focus !== null && info.displayName !== null) {
         focus.setEndpointDisplayName(jid, info.displayName);
@@ -1370,7 +1292,27 @@ function setView(viewName) {
 //    }
 }
 
-
+function hangUp() {
+    if (connection && connection.connected) {
+        // ensure signout
+        $.ajax({
+            type: 'POST',
+            url: config.bosh,
+            async: false,
+            cache: false,
+            contentType: 'application/xml',
+            data: "<body rid='" + (connection.rid || connection._proto.rid) + "' xmlns='http://jabber.org/protocol/httpbind' sid='" + (connection.sid || connection._proto.sid) + "' type='terminate'><presence xmlns='jabber:client' type='unavailable'/></body>",
+            success: function (data) {
+                console.log('signed out');
+                console.log(data);
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log('signout error', textStatus + ' (' + errorThrown + ')');
+            }
+        });
+    }
+    disposeConference(true);
+}
 
 $(document).bind('fatalError.jingle',
     function (event, session, error)
