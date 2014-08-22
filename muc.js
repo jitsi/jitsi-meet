@@ -131,6 +131,12 @@ Strophe.addConnectionPlugin('emuc', {
         // Always trigger presence to update bindings
         console.log('presence change from', from);
         $(document).trigger('presence.muc', [from, member, pres]);
+
+        // Trigger status message update
+        if (member.status) {
+            $(document).trigger('presence.status.muc', [from, member, pres]);
+        }
+
         return true;
     },
     onPresenceUnavailable: function (pres) {

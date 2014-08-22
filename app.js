@@ -824,12 +824,19 @@ $(document).bind('presence.muc', function (event, jid, info, pres) {
         VideoLayout.ensurePeerContainerExists(jid);
         VideoLayout.setDisplayName(
                 'participant_' + Strophe.getResourceFromJid(jid),
-                info.displayName, info.status);
+                info.displayName);
     }
 
     if (focus !== null && info.displayName !== null) {
         focus.setEndpointDisplayName(jid, info.displayName);
     }
+});
+
+$(document).bind('presence.status.muc', function (event, jid, info, pres) {
+
+    VideoLayout.setPresenceStatus(
+        'participant_' + Strophe.getResourceFromJid(jid), info.status);
+
 });
 
 $(document).bind('passwordrequired.muc', function (event, jid) {
