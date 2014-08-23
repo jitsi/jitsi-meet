@@ -156,7 +156,7 @@ SessionBase.prototype.sendSSRCUpdateIq = function(sdpMediaSsrcs, sid, initiator,
     var modify = $iq({to: toJid, type: 'set'})
         .c('jingle', {
             xmlns: 'urn:xmpp:jingle:1',
-            action: isAdd ? 'source-add' : 'source-remove', -- not yet
+            action: isAdd ? 'source-add' : 'source-remove',
             initiator: initiator,
             sid: sid
         }
