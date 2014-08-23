@@ -15,7 +15,7 @@
     margin: 10px 0;
 }
 
-.jqistates input[type="text"] {
+.jqistates input[type='text'], input[type='password'] {
     width: 100%;
 }
 

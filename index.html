@@ -1,4 +1,4 @@
-<html itemscope itemtype="http://schema.org/Product" prefix="og: http://ogp.me/ns#">
+<html itemscope itemtype="http://schema.org/Product" prefix="og: http://ogp.me/ns#" xmlns="http://www.w3.org/1999/html">
   <head>
     <title>Jitsi Videobridge meets WebRTC</title>
     <link rel="icon" type="image/png" href="/images/favicon.ico"/>
@@ -9,7 +9,7 @@
     <meta itemprop="name" content="Jitsi Meet"/>
     <meta itemprop="description" content="Join a WebRTC video conference powered by the Jitsi Videobridge"/>
     <meta itemprop="image" content="/images/jitsilogo.png"/>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script src="libs/jquery.min.js"></script>
     <script src="libs/strophe/strophe.jingle.adapter.js?v=1"></script><!-- strophe.jingle bundles -->
     <script src="libs/strophe/strophe.jingle.bundle.js?v=8"></script>
     <script src="libs/strophe/strophe.jingle.js?v=1"></script>
@@ -19,18 +19,20 @@
     <script src="libs/strophe/strophe.jingle.session.js?v=1"></script>
     <script src="libs/colibri/colibri.focus.js?v=8"></script><!-- colibri focus implementation -->
     <script src="libs/colibri/colibri.session.js?v=1"></script>
-    <script src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+    <script src="libs/jquery-ui.js"></script>
+    <script src="libs/rayo.js?v=1"></script>
     <script src="libs/tooltip.js?v=1"></script><!-- bootstrap tooltip lib -->
     <script src="libs/popover.js?v=1"></script><!-- bootstrap tooltip lib -->
-    <script src="config.js?v=2"></script><!-- adapt to your needs, i.e. set hosts and bosh path -->
-    <script src="muc.js?v=12"></script><!-- simple MUC library -->
+    <script src="config.js?v=4"></script><!-- adapt to your needs, i.e. set hosts and bosh path -->
+    <script src="muc.js?v=13"></script><!-- simple MUC library -->
     <script src="estos_log.js?v=2"></script><!-- simple stanza logger -->
     <script src="desktopsharing.js?v=2"></script><!-- desktop sharing -->
-    <script src="data_channels.js?v=1"></script><!-- data channels -->
-    <script src="app.js?v=28"></script><!-- application logic -->
+    <script src="data_channels.js?v=3"></script><!-- data channels -->
+    <script src="app.js?v=5"></script><!-- application logic -->
     <script src="commands.js?v=1"></script><!-- application logic -->
-    <script src="chat.js?v=6"></script><!-- chat logic -->
-    <script src="util.js?v=5"></script><!-- utility functions -->
+    <script src="chat.js?v=9"></script><!-- chat logic -->
+    <script src="contact_list.js?v=1"></script><!-- contact list logic -->
+    <script src="util.js?v=6"></script><!-- utility functions -->
     <script src="etherpad.js?v=8"></script><!-- etherpad plugin -->
     <script src="prezi.js?v=4"></script><!-- prezi plugin -->
     <script src="smileys.js?v=2"></script><!-- smiley images -->
@@ -38,16 +40,22 @@
     <script src="moderatemuc.js?v=3"></script><!-- moderator plugin -->
     <script src="analytics.js?v=1"></script><!-- google analytics plugin -->
     <script src="rtp_stats.js?v=1"></script><!-- RTP stats processing -->
-    <script src="videolayout.js?v=3"></script><!-- video ui -->
-    <script src="toolbar.js?v=2"></script><!-- toolbar ui -->
+    <script src="local_stats.js?v=1"></script><!-- Local stats processing -->
+    <script src="videolayout.js?v=8"></script><!-- video ui -->
+    <script src="toolbar.js?v=4"></script><!-- toolbar ui -->
+    <script src="canvas_util.js?v=1"></script><!-- canvas drawing utils -->
+    <script src="audio_levels.js?v=1"></script><!-- audio levels plugin -->
+    <script src="media_stream.js?v=1"></script><!-- media stream -->
+    <script src="bottom_toolbar.js?v=1"></script><!-- media stream -->
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/font.css"/>
-    <link rel="stylesheet" type="text/css" media="screen" href="css/main.css?v=21"/>
-    <link rel="stylesheet" type="text/css" media="screen" href="css/videolayout_default.css?v=7" id="videolayout_default"/>
+    <link rel="stylesheet" href="css/font.css?v=3"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="css/main.css?v=23"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="css/videolayout_default.css?v=9" id="videolayout_default"/>
     <link rel="stylesheet" href="css/jquery-impromptu.css?v=4">
     <link rel="stylesheet" href="css/modaldialog.css?v=3">
     <link rel="stylesheet" href="css/popup_menu.css?v=2">
     <link rel="stylesheet" href="css/popover.css?v=1">
+    <link rel="stylesheet" href="css/contact_list.css?v=1">
     <!--
         Link used for inline installation of chrome desktop streaming extension,
         is updated automatically from the code with the value defined in config.js -->
@@ -57,84 +65,201 @@
     <script src="libs/prezi_player.js?v=2"></script>
   </head>
   <body>
-    <div style="position: relative;" id="header_container">
-        <div id="header">
-            <span id="toolbar">
-                <a class="button" data-toggle="popover" data-placement="bottom" data-content="Mute / Unmute" onclick='toggleAudio();'>
-                    <i id="mute" class="icon-microphone"></i></a>
-                <div class="header_button_separator"></div>
-                <a class="button" data-toggle="popover" data-placement="bottom" data-content="Start / stop camera" onclick='buttonClick("#video", "icon-camera icon-camera-disabled");toggleVideo();'>
-                    <i id="video" class="icon-camera"></i></a>
-                <div class="header_button_separator"></div>
-                <a class="button" data-toggle="popover" data-placement="bottom" data-content="Lock / unlock room" onclick="Toolbar.openLockDialog();">
-                    <i id="lockIcon" class="icon-security"></i></a>
-                <div class="header_button_separator"></div>
-                <a class="button" data-toggle="popover" data-placement="bottom" data-content="Invite others" onclick="Toolbar.openLinkDialog();"><i class="icon-link"></i></a>
-                <div class="header_button_separator"></div>
-                <span class="toolbar_span">
-                    <a class="button" data-toggle="popover" data-placement="bottom" data-content="Open / close chat" onclick='Chat.toggleChat();'><i id="chatButton" class="icon-chat"></i></a>
+    <div id="welcome_page">
+        <div id="welcome_page_header">
+            <a href="http://jitsi.org" target="_new">
+                <div id="jitsi_logo"></div>
+            </a>
+
+            <div id="enter_room">
+                <input id="enter_room_field" type="text" placeholder="Enter room name" />
+                <input id="enter_room_button" type="button" value="GO" />
+            </div>
+            <div id="brand_header"></div>
+            <div id="header_text"></div>
+        </div>
+        <div id="welcome_page_main">
+            <div id="features">
+                <div class="feature_row">
+                    <div class="feature_holder">
+                        <div class="feature_icon">Simple to use</div>
+                        <div class="feature_description">
+                            No downloads required. uTalk works directly within your browser. Simply share your conference URL with others to get started.
+                        </div>
+                    </div>
+                    <div class="feature_holder">
+                        <div class="feature_icon">Low bandwidth</div>
+                        <div class="feature_description">
+                            Multi-party video conferences work with as little as 128Kbps. Screen-sharing and audio-only conferences are possible with far less.
+                        </div>
+                    </div>
+                    <div class="feature_holder">
+                        <div class="feature_icon">Open source</div>
+                        <div class="feature_description">
+                            uTalk is licensed under the &lt;GPL/LGPL/WHATEVER&gt;. You can download, use, modify, and share the software without any restrictions.
+                        </div>
+                    </div>
+                    <div class="feature_holder">
+                        <div class="feature_icon">Unlimited users</div>
+                        <div class="feature_description">
+                            There are no artificial restrictions on the number of users or conference participants. Server power and bandwidth are the only limiting factors.
+                        </div>
+                    </div>
+                </div>
+                <div class="feature_row">
+                    <div class="feature_holder">
+                        <div class="feature_icon">Screen sharing</div>
+                        <div class="feature_description">
+                            It's easy to share your screen with others. uTalk is ideal for on-line presentations, lectures, and tech support sessions.
+                        </div>
+                    </div>
+                    <div class="feature_holder">
+                        <div class="feature_icon">Secure rooms</div>
+                        <div class="feature_description">
+                            Need some privacy? uTalk conference rooms can be secured with a password in order to exclude unwanted guests and prevent interruptions.
+                        </div>
+                    </div>
+                    <div class="feature_holder">
+                        <div class="feature_icon">Shared notes</div>
+                        <div class="feature_description">
+                            uTalk features Etherpad, a real-time collaborative text editor that's great for meeting minutes, writing articles, and more.
+                        </div>
+                    </div>
+                    <div class="feature_holder">
+                        <div class="feature_icon">Usage statistics</div>
+                        <div class="feature_description">
+                            Learn about your users through easy integration with Piwik, Google Analytics, and other usage monitoring and statistics systems.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="videoconference_page">
+        <div style="position: relative;" id="header_container">
+            <div id="header">
+                <span id="toolbar">
+                    <a class="button" data-toggle="popover" data-placement="bottom" data-content="Mute / Unmute" onclick='toggleAudio();'>
+                        <i id="mute" class="icon-microphone"></i>
+                    </a>
+                    <div class="header_button_separator"></div>
+                    <a class="button" data-toggle="popover" data-placement="bottom" data-content="Start / stop camera" onclick='buttonClick("#video", "icon-camera icon-camera-disabled");toggleVideo();'>
+                        <i id="video" class="icon-camera"></i>
+                    </a>
+                    <span id="recording" style="display: none">
+                        <div class="header_button_separator"></div>
+                        <a class="button" data-toggle="popover" data-placement="bottom" data-content="Record" onclick='toggleRecording();'>
+                            <i id="recordButton" class="icon-recEnable"></i>
+                        </a>
+                    </span>
+                    <div class="header_button_separator"></div>
+                    <a class="button" data-toggle="popover" data-placement="bottom" data-content="Lock / unlock room" onclick="Toolbar.openLockDialog();">
+                        <i id="lockIcon" class="icon-security"></i>
+                    </a>
+                    <div class="header_button_separator"></div>
+                    <a class="button" data-toggle="popover" data-placement="bottom" data-content="Invite others" onclick="Toolbar.openLinkDialog();">
+                        <i class="icon-link"></i>
+                    </a>
+                    <div class="header_button_separator"></div>
+                    <span class="toolbar_span">
+                        <a class="button" data-toggle="popover" data-placement="bottom" data-content="Open / close chat" onclick='BottomToolbar.toggleChat();'>
+                            <i id="chatButton" class="icon-chat"></i>
+                        </a>
+                        <span id="unreadMessages"></span>
+                    </span>
+                    <div class="header_button_separator"></div>
+                    <a class="button" data-toggle="popover" data-placement="bottom" data-content="Share Prezi" onclick='Prezi.openPreziDialog();'>
+                        <i class="icon-prezi"></i>
+                    </a>
+                    <span id="etherpadButton">
+                        <div class="header_button_separator"></div>
+                        <a class="button" data-toggle="popover" data-placement="bottom" data-content="Shared document" onclick='Etherpad.toggleEtherpad(0);'>
+                            <i class="icon-share-doc"></i>
+                        </a>
+                    </span>
+                    <div class="header_button_separator"></div>
+                    <span id="desktopsharing" style="display: none">
+                        <a class="button" data-toggle="popover" data-placement="bottom" data-content="Share screen" onclick="toggleScreenSharing();">
+                            <i class="icon-share-desktop"></i>
+                        </a>
+                    </span>
+                    <div class="header_button_separator"></div>
+                    <a class="button" data-toggle="popover" data-placement="bottom" data-content="Enter / Exit Full Screen" onclick='buttonClick("#fullScreen", "icon-full-screen icon-exit-full-screen");Toolbar.toggleFullScreen();'>
+                        <i id="fullScreen" class="icon-full-screen"></i>
+                    </a>
+                    <span id="sipCallButton">
+                        <div class="header_button_separator"></div>
+                        <a class="button" data-toggle="popover" data-placement="bottom" data-content="Call SIP number" onclick='callSipButtonClicked();'>
+                            <i class="icon-telephone"></i></a>
+                    </span>
+                </span>
+            </div>
+            <div id="subject"></div>
+        </div>
+        <div id="settings">
+          <h1>Connection Settings</h1>
+          <form id="loginInfo">
+            <label>JID: <input id="jid" type="text" name="jid" placeholder="me@example.com"/></label>
+            <label>Password: <input id="password" type="password" name="password" placeholder="secret"/></label>
+            <label>BOSH URL: <input id="boshURL" type="text" name="boshURL" placeholder="/http-bind"/></label>
+            <input id="connect" type="submit" value="Connect" />
+          </form>
+        </div>
+        <div id="reloadPresentation"><a onclick='Prezi.reloadPresentation();'><i title="Reload Prezi" class="fa fa-repeat fa-lg"></i></a></div>
+        <div id="videospace" onmousemove="Toolbar.showToolbar();">
+            <div id="largeVideoContainer" class="videocontainer">
+                <div id="presentation"></div>
+                <div id="etherpad"></div>
+                <a href="http://jitsi.org" target="_new"><div class="watermark" id="leftwatermark"></div></a>
+                <!-- a href="http://jitsi.org" target="_new"><div class="watermark" id="rightwatermark"></div></a -->
+                <video id="largeVideo" autoplay oncontextmenu="return false;"></video>
+            </div>
+            <div id="remoteVideos">
+                <span id="localVideoContainer" class="videocontainer">
+                    <span id="localNick" class="nick"></span>
+                    <span id="localVideoWrapper">
+                        <!--<video id="localVideo" autoplay oncontextmenu="return false;" muted></video> - is now per stream generated -->
+                    </span>
+                    <audio id="localAudio" autoplay oncontextmenu="return false;" muted></audio>
+                    <span class="focusindicator"></span>
+                </span>
+                <audio id="userJoined" src="sounds/joined.wav" preload="auto"></audio>
+                <audio id="userLeft" src="sounds/left.wav" preload="auto"></audio>
+            </div>
+            <span id="bottomToolbar">
+                <span class="bottomToolbar_span">
+                    <a class="bottomToolbarButton" data-toggle="popover" data-placement="top" data-content="Open / close chat" onclick='BottomToolbar.toggleChat();'>
+                        <i id="chatBottomButton" class="icon-chat-simple"></i>
+                    </a>
                     <span id="unreadMessages"></span>
                 </span>
-                <div class="header_button_separator"></div>
-                <a class="button" data-toggle="popover" data-placement="bottom" data-content="Share Prezi" onclick='Prezi.openPreziDialog();'><i class="icon-prezi"></i></a>
-                <span id="etherpadButton">
-                    <div class="header_button_separator"></div>
-                    <a class="button" data-toggle="popover" data-placement="bottom" data-content="Shared document" onclick='Etherpad.toggleEtherpad(0);'><i class="icon-share-doc"></i></a>
+                <span class="bottomToolbar_span">
+                    <a class="bottomToolbarButton" data-toggle="popover" data-placement="top" data-content="Open / close contact list" onclick='BottomToolbar.toggleContactList();'>
+                        <i id="contactListButton" class="icon-contactList"></i>
+                    </a>
+                    <span id="unreadMessages"></span>
                 </span>
-                <div class="header_button_separator"></div>
-                <span id="desktopsharing" style="display: none">
-                    <a class="button" data-toggle="popover" data-placement="bottom" data-content="Share screen" onclick="toggleScreenSharing();"><i class="icon-share-desktop"></i></a>
-                    <div class="header_button_separator"></div>
-                </span>
-                <a class="button" data-toggle="popover" data-placement="bottom" data-content="Enter / Exit Full Screen" onclick='buttonClick("#fullScreen", "icon-full-screen icon-exit-full-screen");Toolbar.toggleFullScreen();'>
-                    <i id="fullScreen" class="icon-full-screen"></i></a>
             </span>
         </div>
-        <div id="subject"></div>
-    </div>
-    <div id="settings">
-      <h1>Connection Settings</h1>
-      <form id="loginInfo">
-        <label>JID: <input id="jid" type="text" name="jid" placeholder="me@example.com"/></label>
-        <label>Password: <input id="password" type="password" name="password" placeholder="secret"/></label>
-        <label>BOSH URL: <input id="boshURL" type="text" name="boshURL" placeholder="/http-bind"/></label>
-        <input id="connect" type="submit" value="Connect" />
-      </form>
-    </div>
-    <div id="reloadPresentation"><a onclick='Prezi.reloadPresentation();'><i title="Reload Prezi" class="fa fa-repeat fa-lg"></i></a></div>
-    <div id="videospace" onmousemove="Toolbar.showToolbar();">
-        <div id="largeVideoContainer" class="videocontainer">
-            <div id="presentation"></div>
-            <div id="etherpad"></div>
-            <a href="http://jitsi.org" target="_new"><div class="watermark" id="leftwatermark"></div></a>
-            <!-- a href="http://jitsi.org" target="_new"><div class="watermark" id="rightwatermark"></div></a -->
-            <video id="largeVideo" autoplay oncontextmenu="return false;"></video>
-        </div>
-        <div id="remoteVideos">
-            <span id="localVideoContainer" class="videocontainer">
-                <span id="localNick" class="nick"></span>
-                <span id="localVideoWrapper">
-                    <!--<video id="localVideo" autoplay oncontextmenu="return false;" muted></video> - is now per stream generated -->
-                </span>
-                <audio id="localAudio" autoplay oncontextmenu="return false;" muted></audio>
-                <span class="focusindicator" data-content="The owner of&#10;this conference" data-toggle="popover" data-placement="top"></span>
-            </span>
-            <audio id="userJoined" src="sounds/joined.wav" preload="auto"></audio>
-            <audio id="userLeft" src="sounds/left.wav" preload="auto"></audio>
-        </div>
-    </div>
-    <div id="chatspace">
-        <div id="nickname">
-            Enter a nickname in the box below
-            <form>
-                <input type='text' id="nickinput" placeholder='Choose a nickname' autofocus>
-            </form>
-        </div>
+        <div id="chatspace">
+            <div id="nickname">
+                Enter a nickname in the box below
+                <form>
+                    <input type='text' id="nickinput" placeholder='Choose a nickname' autofocus>
+                </form>
+            </div>
 
-        <!--div><i class="fa fa-comments">&nbsp;</i><span class='nick'></span>:&nbsp;<span class='chattext'></span></div-->
-        <div id="chatconversation"></div>
-        <audio id="chatNotification" src="sounds/incomingMessage.wav" preload="auto"></audio>
-        <textarea id="usermsg" placeholder='Enter text...' autofocus></textarea>
+            <!--div><i class="fa fa-comments">&nbsp;</i><span class='nick'></span>:&nbsp;<span class='chattext'></span></div-->
+            <div id="chatconversation"></div>
+            <audio id="chatNotification" src="sounds/incomingMessage.wav" preload="auto"></audio>
+            <textarea id="usermsg" placeholder='Enter text...' autofocus></textarea>
+        </div>
+        <a id="downloadlog" onclick='dump(event.target);' data-toggle="popover" data-placement="right" data-content="Download logs" ><i class="fa fa-cloud-download"></i></a>
+    </div>
+    <div id="contactlist">
+        <ul>
+            <li class="title"><i class="icon-contact-list"></i> CONTACT LIST</li>
+        </ul>
     </div>
     <a id="downloadlog" onclick='dump(event.target);' data-toggle="popover" data-placement="right" data-content="Download logs" ><i class="fa fa-cloud-download"></i></a>
   </body>

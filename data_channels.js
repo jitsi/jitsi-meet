@@ -1,16 +1,22 @@
 /* global connection, Strophe, updateLargeVideo, focusedVideoSrc*/
+
+// cache datachannels to avoid garbage collection
+// https://code.google.com/p/chromium/issues/detail?id=405545
+var _dataChannels = [];
+
 /**
  * Callback triggered by PeerConnection when new data channel is opened
  * on the bridge.
  * @param event the event info object.
  */
+
 function onDataChannel(event)
 {
     var dataChannel = event.channel;
 
     dataChannel.onopen = function ()
     {
-        console.info("Data channel opened by the bridge !!!", dataChannel);
+        console.info("Data channel opened by the Videobridge!", dataChannel);
 
         // Code sample for sending string and/or binary data
         // Sends String message to the bridge
@@ -26,30 +32,61 @@ function onDataChannel(event)
 
     dataChannel.onmessage = function (event)
     {
-        var msgData = event.data;
-        console.info("Got Data Channel Message:", msgData, dataChannel);
+        var data = event.data;
+        // JSON
+        var obj;
 
-        // Active speaker event
-        if (msgData.indexOf('activeSpeaker') === 0 && !focusedVideoSrc)
+        try
         {
-            // Endpoint ID from the bridge
-            var endpointId = msgData.split(":")[1];
-            console.info("New active speaker: " + endpointId);
+            obj = JSON.parse(data);
+        }
+        catch (e)
+        {
+            console.error(
+                "Failed to parse data channel message as JSON: ",
+                data,
+                dataChannel);
+        }
+        if (('undefined' !== typeof(obj)) && (null !== obj))
+        {
+            var colibriClass = obj.colibriClass;
 
-            var container  = document.getElementById(
-                'participant_' + endpointId);
-
-            // Local video will not have container found, but that's ok
-            // since we don't want to switch to local video
-
-            if (container)
+            if ("DominantSpeakerEndpointChangeEvent" === colibriClass)
             {
-                var video = container.getElementsByTagName("video");
-                if (video.length)
-                {
-                    VideoLayout.updateLargeVideo(video[0].src);
-                    VideoLayout.enableActiveSpeaker(endpointId, true);
-                }
+                // Endpoint ID from the Videobridge.
+                var dominantSpeakerEndpoint = obj.dominantSpeakerEndpoint;
+
+                console.info(
+                    "Data channel new dominant speaker event: ",
+                    dominantSpeakerEndpoint);
+                $(document).trigger(
+                    'dominantspeakerchanged',
+                    [dominantSpeakerEndpoint]);
+            }
+            else if ("LastNEndpointsChangeEvent" === colibriClass)
+            {
+                // The new/latest list of last-n endpoint IDs.
+                var lastNEndpoints = obj.lastNEndpoints;
+                /*
+                 * The list of endpoint IDs which are entering the list of
+                 * last-n at this time i.e. were not in the old list of last-n
+                 * endpoint IDs.
+                 */
+                var endpointsEnteringLastN = obj.endpointsEnteringLastN;
+
+                var stream = obj.stream;
+
+                console.log(
+                    "Data channel new last-n event: ",
+                    lastNEndpoints, endpointsEnteringLastN, obj);
+
+                $(document).trigger(
+                        'lastnchanged',
+                        [lastNEndpoints, endpointsEnteringLastN, stream]);
+            }
+            else
+            {
+                console.debug("Data channel JSON-formatted message: ", obj);
             }
         }
     };
@@ -57,7 +94,11 @@ function onDataChannel(event)
     dataChannel.onclose = function ()
     {
         console.info("The Data Channel closed", dataChannel);
+        var idx = _dataChannels.indexOf(dataChannel);
+        if (idx > -1) 
+            _dataChannels = _dataChannels.splice(idx, 1);
     };
+    _dataChannels.push(dataChannel);
 }
 
 /**
@@ -91,3 +132,4 @@ function bindDataChannelListener(peerConnection)
         console.info("Got My Data Channel Message:", msgData, dataChannel);
     };*/
 }
+

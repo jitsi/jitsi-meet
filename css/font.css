@@ -23,7 +23,24 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
-
+.icon-contactList:before {
+    content: "\e615";
+}
+.icon-avatar:before {
+    content: "\e616";
+}
+.icon-callRetro:before {
+    content: "\e611";
+}
+.icon-callModern:before {
+    content: "\e612";
+}
+.icon-recDisable:before {
+    content: "\e613";
+}
+.icon-recEnable:before {
+    content: "\e614";
+}
 .icon-kick1:before {
     content: "\e60f";
 }
@@ -59,6 +76,9 @@
 }
 .icon-share-doc:before {
 	content: "\e605";
+}
+.icon-telephone:before {
+    content: "\e611";
 }
 .icon-security-locked:before {
 	content: "\e607";

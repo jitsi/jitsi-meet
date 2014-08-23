@@ -510,19 +510,21 @@ function getUserMediaWithConstraints(um, success_callback, failure_callback, res
     var constraints = {audio: false, video: false};
 
     if (um.indexOf('video') >= 0) {
-        constraints.video = {mandatory: {}};// same behaviour as true
+        constraints.video = { mandatory: {}, optional: [] };// same behaviour as true
     }
     if (um.indexOf('audio') >= 0) {
-        constraints.audio = {};// same behaviour as true
+        constraints.audio = { mandatory: {}, optional: []};// same behaviour as true
     }
     if (um.indexOf('screen') >= 0) {
         constraints.video = {
             mandatory: {
                 chromeMediaSource: "screen",
+                googLeakyBucket: true,
                 maxWidth: window.screen.width,
                 maxHeight: window.screen.height,
                 maxFrameRate: 3
-            }
+            },
+            optional: []
         };
     }
     if (um.indexOf('desktop') >= 0) {
@@ -530,10 +532,35 @@ function getUserMediaWithConstraints(um, success_callback, failure_callback, res
             mandatory: {
                 chromeMediaSource: "desktop",
                 chromeMediaSourceId: desktopStream,
+                googLeakyBucket: true,
                 maxWidth: window.screen.width,
                 maxHeight: window.screen.height,
                 maxFrameRate: 3
-            }
+            },
+            optional: []
+        }
+    }
+
+    if (constraints.audio) {
+        // if it is good enough for hangouts...
+        constraints.audio.optional.push(
+            {googEchoCancellation: true},
+            {googAutoGainControl: true},
+            {googNoiseSupression: true},
+            {googHighpassFilter: true},
+            {googNoisesuppression2: true},
+            {googEchoCancellation2: true},
+            {googAutoGainControl2: true}
+        );
+    }
+    if (constraints.video) {
+        constraints.video.optional.push(
+            {googNoiseReduction: true}
+        );
+        if (um.indexOf('video') >= 0) {
+            constraints.video.optional.push(
+                {googLeakyBucket: true}
+            );
         }
     }
 
@@ -541,7 +568,7 @@ function getUserMediaWithConstraints(um, success_callback, failure_callback, res
     var isAndroid = navigator.userAgent.indexOf('Android') != -1;
 
     if (resolution && !constraints.video || isAndroid) {
-        constraints.video = {mandatory: {}};// same behaviour as true
+        constraints.video = { mandatory: {}, optional: [] };// same behaviour as true
     }
     // see https://code.google.com/p/chromium/issues/detail?id=143631#c9 for list of supported resolutions
     switch (resolution) {
@@ -550,23 +577,23 @@ function getUserMediaWithConstraints(um, success_callback, failure_callback, res
         case 'fullhd':
             constraints.video.mandatory.minWidth = 1920;
             constraints.video.mandatory.minHeight = 1080;
-            constraints.video.mandatory.minAspectRatio = 1.77;
+            constraints.video.optional.push({ minAspectRatio: 1.77 });
             break;
         case '720':
         case 'hd':
             constraints.video.mandatory.minWidth = 1280;
             constraints.video.mandatory.minHeight = 720;
-            constraints.video.mandatory.minAspectRatio = 1.77;
+            constraints.video.optional.push({ minAspectRatio: 1.77 });
             break;
         case '360':
             constraints.video.mandatory.minWidth = 640;
             constraints.video.mandatory.minHeight = 360;
-            constraints.video.mandatory.minAspectRatio = 1.77;
+            constraints.video.optional.push({ minAspectRatio: 1.77 });
             break;
         case '180':
             constraints.video.mandatory.minWidth = 320;
             constraints.video.mandatory.minHeight = 180;
-            constraints.video.mandatory.minAspectRatio = 1.77;
+            constraints.video.optional.push({ minAspectRatio: 1.77 });
             break;
         // 4:3
         case '960':
@@ -592,12 +619,12 @@ function getUserMediaWithConstraints(um, success_callback, failure_callback, res
     }
 
     if (bandwidth) { // doesn't work currently, see webrtc issue 1846
-        if (!constraints.video) constraints.video = {mandatory: {}};//same behaviour as true
-        constraints.video.optional = [{bandwidth: bandwidth}];
+        if (!constraints.video) constraints.video = {mandatory: {}, optional: []};//same behaviour as true
+        constraints.video.optional.push({bandwidth: bandwidth});
     }
     if (fps) { // for some cameras it might be necessary to request 30fps
         // so they choose 30fps mjpg over 10fps yuy2
-        if (!constraints.video) constraints.video = {mandatory: {}};// same behaviour as tru;
+        if (!constraints.video) constraints.video = {mandatory: {}, optional: []};// same behaviour as true;
         constraints.video.mandatory.minFrameRate = fps;
     }
 

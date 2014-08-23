@@ -287,7 +287,10 @@ JingleSession.prototype.sendIceCandidates = function (candidates) {
             if (SDPUtil.find_line(this.localSDP.media[mid], 'a=fingerprint:', this.localSDP.session)) {
                 var tmp = SDPUtil.parse_fingerprint(SDPUtil.find_line(this.localSDP.media[mid], 'a=fingerprint:', this.localSDP.session));
                 tmp.required = true;
-                cand.c('fingerprint').t(tmp.fingerprint);
+                cand.c(
+                    'fingerprint',
+                    {xmlns: 'urn:xmpp:jingle:apps:dtls:0'})
+                    .t(tmp.fingerprint);
                 delete tmp.fingerprint;
                 cand.attrs(tmp);
                 cand.up();

@@ -1,0 +1,6 @@
+jitsi-meet for Debian
+---------------------
+
+The jitsi-meet package is built from the sources of Jitsi Meet.
+
+Jitsi Meet is downloaded from https://github.com/jitsi/jitsi-meet and the git files are removed. you can recreate the source with 'git clone https://github.com/jitsi/jitsi-meet.git'.

@@ -4,6 +4,7 @@
     top: 0px;
     left: 0px;
     right: 0px;
+    overflow: hidden;
 }
 
 #remoteVideos {
@@ -14,7 +15,7 @@
     padding: 18px;
     bottom: 0;
     left: 0;
-    right: 0;
+    right: 20px;
     width:auto;
     border:1px solid transparent;
     z-index: 5;
@@ -32,6 +33,7 @@
     background-size: contain;
     border-radius:8px;
     border: 2px solid #212425;
+    margin-right: 3px;
 }
 
 #remoteVideos .videocontainer:hover,
@@ -48,9 +50,21 @@
     -webkit-animation-name: greyPulse;
     -webkit-animation-duration: 2s;
     -webkit-animation-iteration-count: 1;
-    -webkit-box-shadow: 0 0 18px #388396;
-    border: 2px solid #388396;
-    z-index: 3;
+}
+
+#remoteVideos .videocontainer:hover {
+    -webkit-box-shadow: inset 0 0 10px #FFFFFF, 0 0 10px #FFFFFF;
+    border: 2px solid #FFFFFF;
+}
+
+#remoteVideos .videocontainer.videoContainerFocused {
+    -webkit-box-shadow: inset 0 0 28px #006d91;
+    border: 2px solid #006d91;
+}
+
+#remoteVideos .videocontainer.videoContainerFocused:hover {
+    -webkit-box-shadow: inset 0 0 5px #FFFFFF, 0 0 10px #FFFFFF, inset 0 0 60px #006d91;
+    border: 2px solid #FFFFFF;
 }
 
 #localVideoWrapper {
@@ -94,9 +108,8 @@
     height: 100%;
 }
 
-.activespeaker {
-    -webkit-filter: grayscale(1);
-    filter: grayscale(1);
+.dominantspeaker {
+    background: #000 !important;
 }
 
 #etherpad,
@@ -158,10 +171,31 @@
     border-radius:20px;
 }
 
+.videocontainer>span.status {
+    display: inline-block;
+    position: absolute;
+    color: #FFFFFF;
+    background: rgba(0,0,0,.7);
+    text-align: center;
+    text-overflow: ellipsis;
+    width: 70%;
+    height: 15%;
+    left: 15%;
+    bottom: 2%;
+    padding: 5px;
+    font-size: 10pt;
+    overflow: hidden;
+    white-space: nowrap;
+    z-index: 2;
+    border-radius:20px;
+}
+
+#localVideoContainer>span.status:hover,
 #localVideoContainer>span.displayname:hover {
     cursor: text;
 }
 
+.videocontainer>span.status,
 .videocontainer>span.displayname {
     pointer-events: none;
 }
@@ -174,6 +208,7 @@
     pointer-events: auto !important;
 }
 
+.videocontainer>a.status,
 .videocontainer>a.displayname {
     display: inline-block;
     position: absolute;
@@ -291,4 +326,15 @@
     right: 15;
     background-image:url(../images/rightwatermark.png);
     background-position: center right;
+}
+
+.audiolevel {
+    display: inline-block;
+    position: absolute;
+    z-index: 0;
+    border-radius:10px;
+}
+
+#mixedstream {
+    display:none !important;
 }

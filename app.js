@@ -1,18 +1,29 @@
 /* jshint -W117 */
 /* application specific logic */
 var connection = null;
+var authenticatedUser = false;
 var focus = null;
 var activecall = null;
 var RTC = null;
 var nickname = null;
 var sharedKey = '';
+var recordingToken ='';
 var roomUrl = null;
+var roomName = null;
 var ssrc2jid = {};
+var mediaStreams = [];
+
 /**
  * The stats collector that process stats data and triggers updates to app.js.
  * @type {StatsCollector}
  */
 var statsCollector = null;
+
+/**
+ * The stats collector for the local stream.
+ * @type {LocalStatsCollector}
+ */
+var localStatsCollector = null;
 
 /**
  * Indicates whether ssrc is camera video or desktop stream.
@@ -58,6 +69,11 @@ function init() {
         return;
     }
 
+    var jid = document.getElementById('jid').value || config.hosts.anonymousdomain || config.hosts.domain || window.location.hostname;
+    connect(jid);
+}
+
+function connect(jid, password) {
     connection = new Strophe.Connection(document.getElementById('boshURL').value || config.bosh || '/http-bind');
 
     if (nickname) {
@@ -74,9 +90,11 @@ function init() {
         connection.jingle.pc_constraints.optional.push({googIPv6: true});
     }
 
-    var jid = document.getElementById('jid').value || config.hosts.domain || window.location.hostname;
+    if(!password)
+        password = document.getElementById('password').value;
 
-    connection.connect(jid, document.getElementById('password').value, function (status) {
+    var anonymousConnectionFailed = false;
+    connection.connect(jid, password, function (status, msg) {
         if (status === Strophe.Status.CONNECTED) {
             console.log('connected');
             if (config.useStunTurn) {
@@ -90,6 +108,23 @@ function init() {
             });
 
             document.getElementById('connect').disabled = true;
+
+            if(password)
+                authenticatedUser = true;
+        } else if (status === Strophe.Status.CONNFAIL) {
+            if(msg === 'x-strophe-bad-non-anon-jid') {
+                anonymousConnectionFailed = true;
+            }
+            console.log('status', status);
+        } else if (status === Strophe.Status.DISCONNECTED) {
+            if(anonymousConnectionFailed) {
+                // prompt user for username and password
+                $(document).trigger('passwordrequired.main');
+            }
+        } else if (status === Strophe.Status.AUTHFAIL) {
+            // wrong password or username, prompt user
+            $(document).trigger('passwordrequired.main');
+
         } else {
             console.log('status', status);
         }
@@ -122,6 +157,8 @@ function obtainAudioAndVideoPermissions(callback) {
 function audioStreamReady(stream) {
 
     VideoLayout.changeLocalAudio(stream);
+
+    startLocalRtpStatsCollector(stream);
 
     if (RTC.browser !== 'firefox') {
         getUserMediaWithConstraints(['video'],
@@ -173,7 +210,9 @@ function doJoin() {
         }
     }
 
-    roomjid = roomnode + '@' + config.hosts.muc;
+    roomName = roomnode + '@' + config.hosts.muc;
+
+    roomjid = roomName;
 
     if (config.useNicks) {
         var nick = window.prompt('Your nickname (optional)');
@@ -183,45 +222,52 @@ function doJoin() {
             roomjid += '/' + Strophe.getNodeFromJid(connection.jid);
         }
     } else {
-        roomjid += '/' + Strophe.getNodeFromJid(connection.jid).substr(0, 8);
+
+        var tmpJid = Strophe.getNodeFromJid(connection.jid);
+
+        if(!authenticatedUser)
+            tmpJid = tmpJid.substr(0, 8);
+
+        roomjid += '/' + tmpJid;
     }
     connection.emuc.doJoin(roomjid);
 }
 
-$(document).bind('remotestreamadded.jingle', function (event, data, sid) {
-    function waitForRemoteVideo(selector, sid, ssrc) {
-        if (selector.removed) {
-            console.warn("media removed before had started", selector);
-            return;
-        }
-        var sess = connection.jingle.sessions[sid];
-        if (data.stream.id === 'mixedmslabel') return;
-        var videoTracks = data.stream.getVideoTracks();
-//        console.log("waiting..", videoTracks, selector[0]);
-
-        if (videoTracks.length === 0 || selector[0].currentTime > 0) {
-            RTC.attachMediaStream(selector, data.stream); // FIXME: why do i have to do this for FF?
-
-            // FIXME: add a class that will associate peer Jid, video.src, it's ssrc and video type
-            //        in order to get rid of too many maps
-            if (ssrc) {
-                videoSrcToSsrc[sel.attr('src')] = ssrc;
-            } else {
-                console.warn("No ssrc given for video", sel);
-            }
-
-            $(document).trigger('callactive.jingle', [selector, sid]);
-            console.log('waitForremotevideo', sess.peerconnection.iceConnectionState, sess.peerconnection.signalingState);
-        } else {
-            setTimeout(function () { waitForRemoteVideo(selector, sid, ssrc); }, 250);
-        }
+function waitForRemoteVideo(selector, ssrc, stream) {
+    if (selector.removed || !selector.parent().is(":visible")) {
+        console.warn("Media removed before had started", selector);
+        return;
     }
+
+    if (stream.id === 'mixedmslabel') return;
+
+    if (selector[0].currentTime > 0) {
+        RTC.attachMediaStream(selector, stream); // FIXME: why do i have to do this for FF?
+
+        // FIXME: add a class that will associate peer Jid, video.src, it's ssrc and video type
+        //        in order to get rid of too many maps
+        if (ssrc && selector.attr('src')) {
+            videoSrcToSsrc[selector.attr('src')] = ssrc;
+        } else {
+            console.warn("No ssrc given for video", selector);
+        }
+
+        $(document).trigger('videoactive.jingle', [selector]);
+    } else {
+        setTimeout(function () {
+            waitForRemoteVideo(selector, ssrc, stream);
+            }, 250);
+    }
+}
+
+$(document).bind('remotestreamadded.jingle', function (event, data, sid) {
     var sess = connection.jingle.sessions[sid];
 
     var thessrc;
     // look up an associated JID for a stream id
     if (data.stream.id.indexOf('mixedmslabel') === -1) {
-        var ssrclines = SDPUtil.find_lines(sess.peerconnection.remoteDescription.sdp, 'a=ssrc');
+        var ssrclines
+            = SDPUtil.find_lines(sess.peerconnection.remoteDescription.sdp, 'a=ssrc');
         ssrclines = ssrclines.filter(function (line) {
             return line.indexOf('mslabel:' + data.stream.label) !== -1;
         });
@@ -235,11 +281,14 @@ $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
         }
     }
 
+    mediaStreams.push(new MediaStream(data, sid, thessrc));
+
     var container;
     var remotes = document.getElementById('remoteVideos');
 
     if (data.peerjid) {
         VideoLayout.ensurePeerContainerExists(data.peerjid);
+
         container  = document.getElementById(
                 'participant_' + Strophe.getResourceFromJid(data.peerjid));
     } else {
@@ -252,77 +301,21 @@ $(document).bind('remotestreamadded.jingle', function (event, data, sid) {
         }
         // FIXME: for the mixed ms we dont need a video -- currently
         container = document.createElement('span');
+        container.id = 'mixedstream';
         container.className = 'videocontainer';
         remotes.appendChild(container);
         Util.playSoundNotification('userJoined');
     }
 
     var isVideo = data.stream.getVideoTracks().length > 0;
-    var vid = isVideo ? document.createElement('video') : document.createElement('audio');
-    var id = (isVideo ? 'remoteVideo_' : 'remoteAudio_') + sid + '_' + data.stream.id;
 
-    vid.id = id;
-    vid.autoplay = true;
-    vid.oncontextmenu = function () { return false; };
-
-    container.appendChild(vid);
-
-    // TODO: make mixedstream display:none via css?
-    if (id.indexOf('mixedmslabel') !== -1) {
-        container.id = 'mixedstream';
-        $(container).hide();
+    if (container) {
+        VideoLayout.addRemoteStreamElement( container,
+                                            sid,
+                                            data.stream,
+                                            data.peerjid,
+                                            thessrc);
     }
-
-    var sel = $('#' + id);
-    sel.hide();
-    RTC.attachMediaStream(sel, data.stream);
-
-    if (isVideo) {
-        waitForRemoteVideo(sel, sid, thessrc);
-    }
-
-    data.stream.onended = function () {
-        console.log('stream ended', this.id);
-
-        // Mark video as removed to cancel waiting loop(if video is removed before has started)
-        sel.removed = true;
-        sel.remove();
-
-        var audioCount = $('#' + container.id + '>audio').length;
-        var videoCount = $('#' + container.id + '>video').length;
-        if (!audioCount && !videoCount) {
-            console.log("Remove whole user", container.id);
-            // Remove whole container
-            container.remove();
-            Util.playSoundNotification('userLeft');
-            VideoLayout.resizeThumbnails();
-        }
-
-        VideoLayout.checkChangeLargeVideo(vid.src);
-    };
-
-    // Add click handler
-    sel.click(function () {
-        VideoLayout.handleVideoThumbClicked(vid.src);
-    });
-    // Add hover handler
-    $(container).hover(
-        function() {
-            VideoLayout.showDisplayName(container.id, true);
-        },
-        function() {
-            var videoSrc = null;
-            if ($('#' + container.id + '>video')
-                    && $('#' + container.id + '>video').length > 0) {
-                videoSrc = $('#' + container.id + '>video').get(0).src;
-            }
-
-            // If the video has been "pinned" by the user we want to keep the
-            // display name on place.
-            if (focusedVideoSrc !== videoSrc)
-                VideoLayout.showDisplayName(container.id, false);
-        }
-    );
 
     // an attempt to work around https://github.com/jitsi/jitmeet/issues/32
     if (isVideo &&
@@ -423,21 +416,25 @@ function muteVideo(pc, unmute) {
 }
 
 /**
- * Callback called by {@link StatsCollector} in intervals supplied to it's
- * constructor.
- * @param statsCollector {@link StatsCollector} source of the event.
+ * Callback for audio levels changed.
+ * @param jid JID of the user
+ * @param audioLevel the audio level value
  */
-function statsUpdated(statsCollector)
+function audioLevelUpdated(jid, audioLevel)
 {
-    Object.keys(statsCollector.jid2stats).forEach(function (jid)
+    var resourceJid;
+    if(jid === LocalStatsCollector.LOCAL_JID)
     {
-        var peerStats = statsCollector.jid2stats[jid];
-        Object.keys(peerStats.ssrc2AudioLevel).forEach(function (ssrc)
-        {
-            console.info(jid +  " audio level: " +
-                peerStats.ssrc2AudioLevel[ssrc] + " of ssrc: " + ssrc);
-        });
-    });
+        resourceJid = AudioLevels.LOCAL_LEVEL;
+        if(isAudioMuted())
+            return;
+    }
+    else
+    {
+        resourceJid = Strophe.getResourceFromJid(jid);
+    }
+
+    AudioLevels.updateAudioLevel(resourceJid, audioLevel);
 }
 
 /**
@@ -445,12 +442,49 @@ function statsUpdated(statsCollector)
  */
 function startRtpStatsCollector()
 {
+    stopRTPStatsCollector();
     if (config.enableRtpStats)
     {
         statsCollector = new StatsCollector(
-            getConferenceHandler().peerconnection, 200, statsUpdated);
-
+            getConferenceHandler().peerconnection, 200, audioLevelUpdated);
         statsCollector.start();
+    }
+}
+
+/**
+ * Stops the {@link StatsCollector}.
+ */
+function stopRTPStatsCollector()
+{
+    if (statsCollector)
+    {
+        statsCollector.stop();
+        statsCollector = null;
+    }
+}
+
+/**
+ * Starts the {@link LocalStatsCollector} if the feature is enabled in config.js
+ * @param stream the stream that will be used for collecting statistics.
+ */
+function startLocalRtpStatsCollector(stream)
+{
+    if(config.enableRtpStats)
+    {
+        localStatsCollector = new LocalStatsCollector(stream, 100, audioLevelUpdated);
+        localStatsCollector.start();
+    }
+}
+
+/**
+ * Stops the {@link LocalStatsCollector}.
+ */
+function stopLocalRtpStatsCollector()
+{
+    if(localStatsCollector)
+    {
+        localStatsCollector.stop();
+        localStatsCollector = null;
     }
 }
 
@@ -490,19 +524,6 @@ $(document).bind('conferenceCreated.jingle', function (event, focus)
     }
 });
 
-$(document).bind('callactive.jingle', function (event, videoelem, sid) {
-    if (videoelem.attr('id').indexOf('mixedmslabel') === -1) {
-        // ignore mixedmslabela0 and v0
-        videoelem.show();
-        VideoLayout.resizeThumbnails();
-
-        if (!focusedVideoSrc)
-            VideoLayout.updateLargeVideo(videoelem.attr('src'), 1);
-
-        VideoLayout.showFocusIndicator();
-    }
-});
-
 $(document).bind('callterminated.jingle', function (event, sid, jid, reason) {
     // Leave the room if my call has been remotely terminated.
     if (connection.emuc.joined && focus == null && reason === 'kick') {
@@ -530,8 +551,8 @@ $(document).bind('setLocalDescription.jingle', function (event, sid) {
             directions[type] = (
                 SDPUtil.find_line(media, 'a=sendrecv') ||
                 SDPUtil.find_line(media, 'a=recvonly') ||
-                SDPUtil.find_line('a=sendonly') ||
-                SDPUtil.find_line('a=inactive') ||
+                SDPUtil.find_line(media, 'a=sendonly') ||
+                SDPUtil.find_line(media, 'a=inactive') ||
                 'a=sendrecv').substr(2);
         }
     });
@@ -562,6 +583,17 @@ $(document).bind('joined.muc', function (event, jid, info) {
 
     if (Object.keys(connection.emuc.members).length < 1) {
         focus = new ColibriFocus(connection, config.hosts.bridge);
+        if (nickname !== null) {
+            focus.setEndpointDisplayName(connection.emuc.myroomjid,
+                                         nickname);
+        }
+        Toolbar.showSipCallButton(true);
+        Toolbar.showRecordingButton(false);
+    }
+
+    if (!focus)
+    {
+        Toolbar.showSipCallButton(false);
     }
 
     if (focus && config.etherpad_base) {
@@ -570,18 +602,25 @@ $(document).bind('joined.muc', function (event, jid, info) {
 
     VideoLayout.showFocusIndicator();
 
+    // Add myself to the contact list.
+    ContactList.addContact(jid);
+
     // Once we've joined the muc show the toolbar
     Toolbar.showToolbar();
 
     var displayName = '';
     if (info.displayName)
         displayName = info.displayName + ' (me)';
+    else
+        displayName = "Me";
 
-    VideoLayout.setDisplayName('localVideoContainer', displayName);
+    $(document).trigger('displaynamechanged',
+                        ['localVideoContainer', displayName]);
 });
 
 $(document).bind('entered.muc', function (event, jid, info, pres) {
     console.log('entered', jid, info);
+
     console.log('is focus?' + focus ? 'true' : 'false');
 
     // Add Peer's container
@@ -592,6 +631,7 @@ $(document).bind('entered.muc', function (event, jid, info, pres) {
         if (focus.confid === null) {
             console.log('make new conference with', jid);
             focus.makeConference(Object.keys(connection.emuc.members));
+            Toolbar.showRecordingButton(true);
         } else {
             console.log('invite', jid, 'into conference');
             focus.addNewParticipant(jid);
@@ -637,17 +677,31 @@ $(document).bind('left.muc', function (event, jid) {
             && !sessionTerminated) {
         console.log('welcome to our new focus... myself');
         focus = new ColibriFocus(connection, config.hosts.bridge);
+        if (nickname !== null) {
+            focus.setEndpointDisplayName(connection.emuc.myroomjid,
+                                         nickname);
+        }
+
+        Toolbar.showSipCallButton(true);
+
         if (Object.keys(connection.emuc.members).length > 0) {
             focus.makeConference(Object.keys(connection.emuc.members));
+            Toolbar.showRecordingButton(true);
         }
         $(document).trigger('focusechanged.muc', [focus]);
     }
     else if (focus && Object.keys(connection.emuc.members).length === 0) {
         console.log('everyone left');
         // FIXME: closing the connection is a hack to avoid some
-        // problemswith reinit
+        // problems with reinit
         disposeConference();
         focus = new ColibriFocus(connection, config.hosts.bridge);
+        if (nickname !== null) {
+            focus.setEndpointDisplayName(connection.emuc.myroomjid,
+                                         nickname);
+        }
+        Toolbar.showSipCallButton(true);
+        Toolbar.showRecordingButton(false);
     }
     if (connection.emuc.getPrezi(jid)) {
         $(document).trigger('presentationremoved.muc',
@@ -662,7 +716,7 @@ $(document).bind('presence.muc', function (event, jid, info, pres) {
         if (ssrc2jid[ssrc] == jid) {
             delete ssrc2jid[ssrc];
         }
-        if (ssrc2videoType == jid) {
+        if (ssrc2videoType[ssrc] == jid) {
             delete ssrc2videoType[ssrc];
         }
     });
@@ -685,23 +739,26 @@ $(document).bind('presence.muc', function (event, jid, info, pres) {
             case 'recvonly':
                 el.hide();
                 // FIXME: Check if we have to change large video
-                //VideoLayout.checkChangeLargeVideo(el);
+                //VideoLayout.updateLargeVideo(el);
                 break;
             }
         }
     });
 
-    if (info.displayName) {
-        if (jid === connection.emuc.myroomjid) {
-            VideoLayout.setDisplayName('localVideoContainer',
-                                        info.displayName + ' (me)');
-        } else {
-            VideoLayout.ensurePeerContainerExists(jid);
-            VideoLayout.setDisplayName(
-                    'participant_' + Strophe.getResourceFromJid(jid),
-                    info.displayName);
-        }
+    if (info.displayName && info.displayName.length > 0)
+        $(document).trigger('displaynamechanged',
+                            [jid, info.displayName]);
+
+    if (focus !== null && info.displayName !== null) {
+        focus.setEndpointDisplayName(jid, info.displayName);
     }
+});
+
+$(document).bind('presence.status.muc', function (event, jid, info, pres) {
+
+    VideoLayout.setPresenceStatus(
+        'participant_' + Strophe.getResourceFromJid(jid), info.status);
+
 });
 
 $(document).bind('passwordrequired.muc', function (event, jid) {
@@ -722,6 +779,31 @@ $(document).bind('passwordrequired.muc', function (event, jid) {
                 if (lockKey.value !== null) {
                     setSharedKey(lockKey.value);
                     connection.emuc.doJoin(jid, lockKey.value);
+                }
+            }
+        }
+    });
+});
+
+$(document).bind('passwordrequired.main', function (event) {
+    console.log('password is required');
+
+    $.prompt('<h2>Password required</h2>' +
+        '<input id="passwordrequired.username" type="text" placeholder="user@domain.net" autofocus>' +
+        '<input id="passwordrequired.password" type="password" placeholder="user password">', {
+        persistent: true,
+        buttons: { "Ok": true, "Cancel": false},
+        defaultButton: 1,
+        loaded: function (event) {
+            document.getElementById('passwordrequired.username').focus();
+        },
+        submit: function (e, v, m, f) {
+            if (v) {
+                var username = document.getElementById('passwordrequired.username');
+                var password = document.getElementById('passwordrequired.password');
+
+                if (username.value !== null && password.value != null) {
+                    connect(username.value, password.value);
                 }
             }
         }
@@ -819,6 +901,71 @@ function toggleAudio() {
 }
 
 /**
+ * Checks whether the audio is muted or not.
+ * @returns {boolean} true if audio is muted and false if not.
+ */
+function isAudioMuted()
+{
+    var localAudio = connection.jingle.localAudio;
+    for (var idx = 0; idx < localAudio.getAudioTracks().length; idx++) {
+        if(localAudio.getAudioTracks()[idx].enabled === true)
+            return false;
+    }
+    return true;
+}
+
+// Starts or stops the recording for the conference.
+function toggleRecording() {
+    if (focus === null || focus.confid === null) {
+        console.log('non-focus, or conference not yet organized: not enabling recording');
+        return;
+    }
+
+    if (!recordingToken)
+    {
+        $.prompt('<h2>Enter recording token</h2>' +
+                '<input id="recordingToken" type="text" placeholder="token" autofocus>',
+            {
+                persistent: false,
+                buttons: { "Save": true, "Cancel": false},
+                defaultButton: 1,
+                loaded: function (event) {
+                    document.getElementById('recordingToken').focus();
+                },
+                submit: function (e, v, m, f) {
+                    if (v) {
+                        var token = document.getElementById('recordingToken');
+
+                        if (token.value) {
+                            setRecordingToken(Util.escapeHtml(token.value));
+                            toggleRecording();
+                        }
+                    }
+                }
+            }
+        );
+
+        return;
+    }
+
+    var oldState = focus.recordingEnabled;
+    Toolbar.toggleRecordingButtonState();
+    focus.setRecording(!oldState,
+                        recordingToken,
+                        function (state) {
+                            console.log("New recording state: ", state);
+                            if (state == oldState) //failed to change, reset the token because it might have been wrong
+                            {
+                                Toolbar.toggleRecordingButtonState();
+                                setRecordingToken(null);
+                            }
+                        }
+    );
+
+
+}
+
+/**
  * Returns an array of the video horizontal and vertical indents,
  * so that if fits its parent.
  *
@@ -897,6 +1044,33 @@ function getCameraVideoSize(videoWidth,
 }
 
 $(document).ready(function () {
+
+    if(config.enableWelcomePage && window.location.pathname == "/")
+    {
+        $("#videoconference_page").hide();
+        $("#enter_room_button").click(function()
+        {
+            var val = Util.escapeHtml($("#enter_room_field").val());
+            window.location.pathname = "/" + val;
+        });
+
+        $("#enter_room_field").keydown(function (event) {
+            if (event.keyCode === 13) {
+                var val = Util.escapeHtml(this.value);
+                window.location.pathname = "/" + val;
+            }
+        });
+
+        if(!config.isBrand)
+        {
+            $("#brand_logo").hide();
+            $("#brand_header").hide();
+            $("#header_text").hide();
+        }
+        return;
+    }
+
+    $("#welcome_page").hide();
     Chat.init();
 
     $('body').popover({ selector: '[data-toggle=popover]',
@@ -960,10 +1134,10 @@ $(window).bind('beforeunload', function () {
             }
         });
     }
-    disposeConference();
+    disposeConference(true);
 });
 
-function disposeConference() {
+function disposeConference(onUnload) {
     var handler = getConferenceHandler();
     if (handler && handler.peerconnection) {
         // FIXME: probably removing streams is not required and close() should be enough
@@ -975,10 +1149,9 @@ function disposeConference() {
         }
         handler.peerconnection.close();
     }
-    if (statsCollector)
-    {
-        statsCollector.stop();
-        statsCollector = null;
+    stopRTPStatsCollector();
+    if(onUnload) {
+        stopLocalRtpStatsCollector();
     }
     focus = null;
     activecall = null;
@@ -1055,6 +1228,10 @@ function setSharedKey(sKey) {
     sharedKey = sKey;
 }
 
+function setRecordingToken(token) {
+    recordingToken = token;
+}
+
 /**
  * Updates the room invite url.
  */
@@ -1115,6 +1292,28 @@ function setView(viewName) {
 //    }
 }
 
+function hangUp() {
+    if (connection && connection.connected) {
+        // ensure signout
+        $.ajax({
+            type: 'POST',
+            url: config.bosh,
+            async: false,
+            cache: false,
+            contentType: 'application/xml',
+            data: "<body rid='" + (connection.rid || connection._proto.rid) + "' xmlns='http://jabber.org/protocol/httpbind' sid='" + (connection.sid || connection._proto.sid) + "' type='terminate'><presence xmlns='jabber:client' type='unavailable'/></body>",
+            success: function (data) {
+                console.log('signed out');
+                console.log(data);
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log('signout error', textStatus + ' (' + errorThrown + ')');
+            }
+        });
+    }
+    disposeConference(true);
+}
+
 $(document).bind('fatalError.jingle',
     function (event, session, error)
     {
@@ -1124,3 +1323,31 @@ $(document).bind('fatalError.jingle',
             "Your browser version is too old. Please update and try again...");
     }
 );
+
+function callSipButtonClicked()
+{
+    $.prompt('<h2>Enter SIP number</h2>' +
+        '<input id="sipNumber" type="text" value="" autofocus>',
+        {
+            persistent: false,
+            buttons: { "Dial": true, "Cancel": false},
+            defaultButton: 2,
+            loaded: function (event)
+            {
+                document.getElementById('sipNumber').focus();
+            },
+            submit: function (e, v, m, f)
+            {
+                if (v)
+                {
+                    var numberInput = document.getElementById('sipNumber');
+                    if (numberInput.value && numberInput.value.length)
+                    {
+                        connection.rayo.dial(
+                            numberInput.value, 'fromnumber', roomName);
+                    }
+                }
+            }
+        }
+    );
+}
