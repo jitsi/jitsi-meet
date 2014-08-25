@@ -69,6 +69,24 @@ function init() {
         return;
     }
 
+    obtainAudioAndVideoPermissions(function (stream) {
+        var audioStream = new webkitMediaStream(stream);
+        var videoStream = new webkitMediaStream(stream);
+        var videoTracks = stream.getVideoTracks();
+        var audioTracks = stream.getAudioTracks();
+        for (var i = 0; i < videoTracks.length; i++) {
+            audioStream.removeTrack(videoTracks[i]);
+        }
+        VideoLayout.changeLocalAudio(audioStream);
+        startLocalRtpStatsCollector(audioStream);
+
+        for (i = 0; i < audioTracks.length; i++) {
+            videoStream.removeTrack(audioTracks[i]);
+        }
+        VideoLayout.changeLocalVideo(videoStream, true);
+        maybeDoJoin();
+    });
+
     var jid = document.getElementById('jid').value || config.hosts.anonymousdomain || config.hosts.domain || window.location.hostname;
     connect(jid);
 }
@@ -100,17 +118,11 @@ function connect(jid, password) {
             if (config.useStunTurn) {
                 connection.jingle.getStunAndTurnCredentials();
             }
-            obtainAudioAndVideoPermissions(function () {
-                getUserMediaWithConstraints(['audio'], audioStreamReady,
-                    function (error) {
-                        console.error('failed to obtain audio stream - stop', error);
-                    });
-            });
-
             document.getElementById('connect').disabled = true;
 
             if(password)
                 authenticatedUser = true;
+            maybeDoJoin();
         } else if (status === Strophe.Status.CONNFAIL) {
             if(msg === 'x-strophe-bad-non-anon-jid') {
                 anonymousConnectionFailed = true;
@@ -146,41 +158,21 @@ function obtainAudioAndVideoPermissions(callback) {
     getUserMediaWithConstraints(
         ['audio', 'video'],
         function (avStream) {
-            avStream.stop();
-            callback();
+            callback(avStream);
         },
         function (error) {
             console.error('failed to obtain audio/video stream - stop', error);
-        });
+        },
+        config.resolution || '360');
 }
 
-function audioStreamReady(stream) {
-
-    VideoLayout.changeLocalAudio(stream);
-
-    startLocalRtpStatsCollector(stream);
-
-    if (RTC.browser !== 'firefox') {
-        getUserMediaWithConstraints(['video'],
-                                    videoStreamReady,
-                                    videoStreamFailed,
-                                    config.resolution || '360');
-    } else {
+function maybeDoJoin() {
+    if (connection && connection.connected && Strophe.getResourceFromJid(connection.jid) // .connected is true while connecting?
+        && (connection.jingle.localAudio || connection.jingle.localVideo)) {
         doJoin();
     }
 }
 
-function videoStreamReady(stream) {
-    VideoLayout.changeLocalVideo(stream, true);
-
-    doJoin();
-}
-
-function videoStreamFailed(error) {
-    console.warn("Failed to obtain video stream - continue anyway", error);
-
-    doJoin();
-}
 
 function doJoin() {
     var roomnode = null;
@@ -1078,7 +1070,8 @@ function getCameraVideoSize(videoWidth,
 
 $(document).ready(function () {
 
-    if(config.enableWelcomePage && window.location.pathname == "/")
+    if(config.enableWelcomePage && window.location.pathname == "/" &&
+        (!window.localStorage.welcomePageDisabled || window.localStorage.welcomePageDisabled == "false"))
     {
         $("#videoconference_page").hide();
         $("#enter_room_button").click(function()
@@ -1094,12 +1087,10 @@ $(document).ready(function () {
             }
         });
 
-        if(!config.isBrand)
-        {
-            $("#brand_logo").hide();
-            $("#brand_header").hide();
-            $("#header_text").hide();
-        }
+        $("#disable_welcome").click(function () {
+            window.localStorage.welcomePageDisabled = $("#disable_welcome").is(":checked");
+        });
+
         return;
     }
 
@@ -1383,4 +1374,31 @@ function callSipButtonClicked()
             }
         }
     );
+}
+
+function hangup() {
+    disposeConference();
+    sessionTerminated = true;
+    connection.emuc.doLeave();
+    var buttons = {};
+    if(config.enableWelcomePage)
+    {
+        setTimeout(function()
+        {
+            window.localStorage.welcomePageDisabled = false;
+            window.location.pathname = "/";
+        }, 10000);
+
+    }
+
+    $.prompt("Session Terminated",
+        {
+            title: "You hang up the call",
+            persistent: true,
+            buttons: {},
+            closeText: ''
+
+        }
+    );
+
 }

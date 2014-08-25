@@ -95,3 +95,7 @@
 .icon-microphone:before {
 	content: "\e60b";
 }
+
+.icon-hangup:before {
+    content: "\e617";
+}
