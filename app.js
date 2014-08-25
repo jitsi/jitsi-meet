@@ -100,11 +100,23 @@ function connect(jid, password) {
             if (config.useStunTurn) {
                 connection.jingle.getStunAndTurnCredentials();
             }
-            obtainAudioAndVideoPermissions(function () {
-                getUserMediaWithConstraints(['audio'], audioStreamReady,
-                    function (error) {
-                        console.error('failed to obtain audio stream - stop', error);
-                    });
+            obtainAudioAndVideoPermissions(function (stream) {
+                audioStream = new webkitMediaStream(stream);
+                videoStream = new webkitMediaStream(stream);
+                var videoTracks = stream.getVideoTracks();
+                var audioTracks = stream.getAudioTracks();
+                for (var i = 0; i < videoTracks.length; i++) {
+                    audioStream.removeTrack(videoTracks[i]);
+                }
+                audioStreamReady(audioStream);
+                VideoLayout.changeLocalAudio(audioStream);
+                startLocalRtpStatsCollector(audioStream);
+
+                for (i = 0; i < audioTracks.length; i++) {
+                    videoStream.removeTrack(audioTracks[i]);
+                }
+                VideoLayout.changeLocalVideo(videoStream, true);
+                doJoin();
             });
 
             document.getElementById('connect').disabled = true;
@@ -146,8 +158,7 @@ function obtainAudioAndVideoPermissions(callback) {
     getUserMediaWithConstraints(
         ['audio', 'video'],
         function (avStream) {
-            avStream.stop();
-            callback();
+            callback(avStream);
         },
         function (error) {
             console.error('failed to obtain audio/video stream - stop', error);
@@ -156,24 +167,7 @@ function obtainAudioAndVideoPermissions(callback) {
 
 function audioStreamReady(stream) {
 
-    VideoLayout.changeLocalAudio(stream);
 
-    startLocalRtpStatsCollector(stream);
-
-    if (RTC.browser !== 'firefox') {
-        getUserMediaWithConstraints(['video'],
-                                    videoStreamReady,
-                                    videoStreamFailed,
-                                    config.resolution || '360');
-    } else {
-        doJoin();
-    }
-}
-
-function videoStreamReady(stream) {
-    VideoLayout.changeLocalVideo(stream, true);
-
-    doJoin();
 }
 
 function videoStreamFailed(error) {
