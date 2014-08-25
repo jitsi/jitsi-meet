@@ -69,6 +69,24 @@ function init() {
         return;
     }
 
+    obtainAudioAndVideoPermissions(function (stream) {
+        var audioStream = new webkitMediaStream(stream);
+        var videoStream = new webkitMediaStream(stream);
+        var videoTracks = stream.getVideoTracks();
+        var audioTracks = stream.getAudioTracks();
+        for (var i = 0; i < videoTracks.length; i++) {
+            audioStream.removeTrack(videoTracks[i]);
+        }
+        VideoLayout.changeLocalAudio(audioStream);
+        startLocalRtpStatsCollector(audioStream);
+
+        for (i = 0; i < audioTracks.length; i++) {
+            videoStream.removeTrack(audioTracks[i]);
+        }
+        VideoLayout.changeLocalVideo(videoStream, true);
+        maybeDoJoin();
+    });
+
     var jid = document.getElementById('jid').value || config.hosts.anonymousdomain || config.hosts.domain || window.location.hostname;
     connect(jid);
 }
@@ -100,29 +118,11 @@ function connect(jid, password) {
             if (config.useStunTurn) {
                 connection.jingle.getStunAndTurnCredentials();
             }
-            obtainAudioAndVideoPermissions(function (stream) {
-                audioStream = new webkitMediaStream(stream);
-                videoStream = new webkitMediaStream(stream);
-                var videoTracks = stream.getVideoTracks();
-                var audioTracks = stream.getAudioTracks();
-                for (var i = 0; i < videoTracks.length; i++) {
-                    audioStream.removeTrack(videoTracks[i]);
-                }
-                audioStreamReady(audioStream);
-                VideoLayout.changeLocalAudio(audioStream);
-                startLocalRtpStatsCollector(audioStream);
-
-                for (i = 0; i < audioTracks.length; i++) {
-                    videoStream.removeTrack(audioTracks[i]);
-                }
-                VideoLayout.changeLocalVideo(videoStream, true);
-                doJoin();
-            });
-
             document.getElementById('connect').disabled = true;
 
             if(password)
                 authenticatedUser = true;
+            maybeDoJoin();
         } else if (status === Strophe.Status.CONNFAIL) {
             if(msg === 'x-strophe-bad-non-anon-jid') {
                 anonymousConnectionFailed = true;
@@ -165,16 +165,13 @@ function obtainAudioAndVideoPermissions(callback) {
         });
 }
 
-function audioStreamReady(stream) {
-
-
+function maybeDoJoin() {
+    if (connection && connection.connected && Strophe.getResourceFromJid(connection.jid) // .connected is true while connecting?
+        && (connection.jingle.localAudio || connection.jingle.localVideo)) {
+        doJoin();
+    }
 }
 
-function videoStreamFailed(error) {
-    console.warn("Failed to obtain video stream - continue anyway", error);
-
-    doJoin();
-}
 
 function doJoin() {
     var roomnode = null;
