@@ -1045,7 +1045,8 @@ function getCameraVideoSize(videoWidth,
 
 $(document).ready(function () {
 
-    if(config.enableWelcomePage && window.location.pathname == "/")
+    if(config.enableWelcomePage && window.location.pathname == "/" &&
+        (!window.localStorage.welcomePageDisabled || window.localStorage.welcomePageDisabled == "false"))
     {
         $("#videoconference_page").hide();
         $("#enter_room_button").click(function()
@@ -1061,12 +1062,10 @@ $(document).ready(function () {
             }
         });
 
-        if(!config.isBrand)
-        {
-            $("#brand_logo").hide();
-            $("#brand_header").hide();
-            $("#header_text").hide();
-        }
+        $("#disable_welcome").click(function () {
+            window.localStorage.welcomePageDisabled = $("#disable_welcome").is(":checked");
+        });
+
         return;
     }
 
@@ -1350,4 +1349,31 @@ function callSipButtonClicked()
             }
         }
     );
+}
+
+function hangup() {
+    disposeConference();
+    sessionTerminated = true;
+    connection.emuc.doLeave();
+    var buttons = {};
+    if(config.enableWelcomePage)
+    {
+        setTimeout(function()
+        {
+            window.localStorage.welcomePageDisabled = false;
+            window.location.pathname = "/";
+        }, 10000);
+
+    }
+
+    $.prompt("Session Terminated",
+        {
+            title: "You hang up the call",
+            persistent: true,
+            buttons: {},
+            closeText: ''
+
+        }
+    );
+
 }

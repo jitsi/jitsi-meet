@@ -1,0 +1,193 @@
+
+#disable_welcome {
+    display:none;
+}
+
+#disable_welcome + label
+{
+    background-image: url(../images/welcome_page/disable-welcome.png);
+    display:inline-block;
+    position:absolute;
+    margin-left: 323px;
+    height: 54px;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    background-repeat: no-repeat;
+    padding-left: 62px;
+    padding-top: 19px;
+    font-weight: 500;
+    font-family: Helvetica;
+    font-size: 16px;
+    color: #acacac;
+}
+
+#disable_welcome:checked + label
+{
+    background-image: url(../images/welcome_page/disable-welcome-selected.png);
+    display:inline-block;
+    position:absolute;
+    margin-left: 323px;
+    height: 54px;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    background-repeat: no-repeat;
+    padding-left: 62px;
+    padding-top: 19px;
+    font-weight: 500;
+    font-family: Helvetica;
+    font-size: 16px;
+    color: #acacac;
+}
+
+
+#enter_room_field {
+    border-radius: 10px;
+    font-size: 16px;
+    padding: 15px 55px 10px 30px;
+    border: none;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    -webkit-appearance: none;
+    width: 318px;
+    height: 55px;
+    position:absolute;
+    font-weight: 500;
+    font-family: Helvetica;
+    box-shadow: none;
+    z-index: 2;
+}
+
+#enter_room_button {
+    width: 73px;
+    height: 45px;
+    background-color: #16a8fe;
+    moz-border-radius: 15px;
+    -webkit-border-radius: 15px;
+    color: #ffffff;
+    font-weight: 600;
+    border: none;
+    position:absolute;
+    margin-left: 240px;
+    margin-top: 5px;
+    font-size: 19px;
+    font-family: Helvetica;
+    padding-top: 6px;
+    z-index: 2;
+    outline: none;
+}
+
+#enter_room {
+    margin: 70px auto 0px auto;
+    width:318px;
+}
+
+#welcome_page_header
+{
+    background-image: url(../images/welcome_page/pattern-header.png);
+    height: 290px;
+    width: 100%;
+    position: absolute;
+}
+
+#welcome_page_main
+{
+    background-image:url(../images/welcome_page/pattern-body.png);
+    width: 100%;
+    position: absolute;
+    margin-top: 290px;
+}
+
+#jitsi_logo
+{
+    background-image:url(../images/welcome_page/jitsi-logo.png);
+    background-repeat: no-repeat;
+    width: 186px;
+    height: 74px;
+    position: absolute;
+    top: 15px;
+    left: 30px;
+}
+
+#brand_logo
+{
+    background-image:url(../images/welcome_page/brand-logo.png);
+    width: 215px;
+    height: 55px;
+    position: absolute;
+    top: 15px;
+    right: 30px;
+
+}
+
+#brand_header
+{
+    background-image:url(../images/welcome_page/header-big.png);
+    position:absolute;
+    width: 583px;
+    height: 274px;
+    left: 340px;
+    top:15px;
+}
+
+#header_text
+{
+    position: absolute;
+    left: 200px;
+    top: 150px;
+    width: 885px;
+    height: 100px;
+    color: #ffffff;
+    font-family: Helvetica;
+    font-size: 24px;
+    text-align: center;
+}
+
+#features
+{
+    margin-top: 30px;
+    position: relative;
+}
+
+.feature_row
+{
+    position: relative;
+    width: 976px;
+    margin: 0px auto 30px auto;
+    padding-right: 75px;
+
+}
+
+.feature_holder
+{
+    float:left;
+    width: 169px;
+    padding-left: 75px;
+}
+
+.feature_icon
+{
+    background-image:url(../images/welcome_page/bubble.png);
+    background-repeat: no-repeat;
+    width: 169px;
+    height: 169px;
+    font-family: Helvetica;
+    color: #ffffff;
+    font-size: 22px;
+    /*font-weight: bold;*/
+    text-align: center;
+    display: table-cell;
+    padding: 50px 29px 0px 17px;
+}
+
+.feature_description
+{
+    width: 169px;
+    font-family: Helvetica;
+    color: #ffffff;
+    font-size: 16px;
+    padding-top: 30px;
+    line-height: 22px;
+    font-weight: 200;
+}
