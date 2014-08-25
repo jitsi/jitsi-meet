@@ -162,7 +162,8 @@ function obtainAudioAndVideoPermissions(callback) {
         },
         function (error) {
             console.error('failed to obtain audio/video stream - stop', error);
-        });
+        },
+        config.resolution || '360');
 }
 
 function maybeDoJoin() {
