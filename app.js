@@ -159,9 +159,17 @@ function obtainAudioAndVideoPermissions(callback) {
         ['audio', 'video'],
         function (avStream) {
             callback(avStream);
+            trackUsage('localMedia', {
+                audio: avStream.getAudioTracks().length,
+                video: avStream.getVideoTracks().length
+            });
         },
         function (error) {
             console.error('failed to obtain audio/video stream - stop', error);
+            trackUsage('localMediaError', {
+                media: error.media || 'video',
+                name : error.name
+            });
         },
         config.resolution || '360');
 }
