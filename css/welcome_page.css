@@ -8,7 +8,6 @@
     background-image: url(../images/welcome_page/disable-welcome.png);
     display:inline-block;
     position:absolute;
-    margin-left: 323px;
     height: 54px;
     cursor: pointer;
     -webkit-user-select: none;
@@ -20,6 +19,9 @@
     font-family: Helvetica;
     font-size: 16px;
     color: #acacac;
+    z-index: 2;
+    float: left;
+    margin-left: 5px;
 }
 
 #disable_welcome:checked + label
@@ -27,7 +29,6 @@
     background-image: url(../images/welcome_page/disable-welcome-selected.png);
     display:inline-block;
     position:absolute;
-    margin-left: 323px;
     height: 54px;
     cursor: pointer;
     -webkit-user-select: none;
@@ -39,23 +40,45 @@
     font-family: Helvetica;
     font-size: 16px;
     color: #acacac;
+    z-index: 2;
+    float: left;
+    margin-left: 5px;
 }
 
-
-#enter_room_field {
+#enter_room_form {
     border-radius: 10px;
-    font-size: 16px;
-    padding: 15px 55px 10px 30px;
+    background-color: #FFFFFF;
     border: none;
     -moz-border-radius: 10px;
     -webkit-border-radius: 10px;
     -webkit-appearance: none;
-    width: 318px;
     height: 55px;
-    position:absolute;
+    box-shadow: none;
+    float: left;
+}
+
+#domain_name
+{
+    float: left;
+    padding: 20px 0px 10px 20px;
+    font-size: 18px;
+    font-weight: 500;
+    font-family: Helvetica;
+}
+
+#enter_room_field {
+    font-size: 16px;
+    padding: 15px 5px 10px 10px;
+    border: none;
+    -webkit-appearance: none;
+    width: 228px;
+    height: 55px;
     font-weight: 500;
     font-family: Helvetica;
     box-shadow: none;
+    float: left;
+    background-color: #FFFFFF;
+    position: relative;
     z-index: 2;
 }
 
@@ -68,19 +91,24 @@
     color: #ffffff;
     font-weight: 600;
     border: none;
-    position:absolute;
-    margin-left: 240px;
     margin-top: 5px;
     font-size: 19px;
     font-family: Helvetica;
     padding-top: 6px;
-    z-index: 2;
     outline: none;
+    float:left;
+    position: relative;
+    z-index: 2;
 }
 
-#enter_room {
+#enter_room_container {
     margin: 70px auto 0px auto;
-    width:318px;
+    width:531px;
+}
+
+#enter_room{
+    float:left;
+    padding-right: 5px;
 }
 
 #welcome_page_header

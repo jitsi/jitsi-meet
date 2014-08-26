@@ -1041,9 +1041,13 @@ $(document).ready(function () {
         (!window.localStorage.welcomePageDisabled || window.localStorage.welcomePageDisabled == "false"))
     {
         $("#videoconference_page").hide();
+        $("#domain_name").text(window.location.host + "/");
+        $("span[name='appName']").text(brand.appName);
         $("#enter_room_button").click(function()
         {
-            var val = Util.escapeHtml($("#enter_room_field").val());
+            var val = $("#enter_room_field").val();
+            if(!val)
+                val = $("#enter_room_field").attr("placeholder");
             window.location.pathname = "/" + val;
         });
 
@@ -1053,6 +1057,24 @@ $(document).ready(function () {
                 window.location.pathname = "/" + val;
             }
         });
+
+        function animate(word) {
+            var currentVal = $("#enter_room_field").attr("placeholder");
+            $("#enter_room_field").attr("placeholder", currentVal + word.substr(0, 1));
+            setTimeout(function() {
+                    animate(word.substring(1, word.length))
+                }, 150);
+        }
+
+        function update_roomname()
+        {
+
+            $("#enter_room_field").attr("placeholder", "");
+            animate(RoomNameGenerator.generateRoomWithoutSeparator());
+            setTimeout(update_roomname, 10000);
+
+        }
+        update_roomname();
 
         $("#disable_welcome").click(function () {
             window.localStorage.welcomePageDisabled = $("#disable_welcome").is(":checked");

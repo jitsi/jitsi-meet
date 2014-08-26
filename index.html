@@ -24,6 +24,7 @@
     <script src="libs/tooltip.js?v=1"></script><!-- bootstrap tooltip lib -->
     <script src="libs/popover.js?v=1"></script><!-- bootstrap tooltip lib -->
     <script src="config.js?v=4"></script><!-- adapt to your needs, i.e. set hosts and bosh path -->
+    <script src="brand.js?v=1"></script>
     <script src="muc.js?v=13"></script><!-- simple MUC library -->
     <script src="estos_log.js?v=2"></script><!-- simple stanza logger -->
     <script src="desktopsharing.js?v=2"></script><!-- desktop sharing -->
@@ -47,6 +48,7 @@
     <script src="audio_levels.js?v=1"></script><!-- audio levels plugin -->
     <script src="media_stream.js?v=1"></script><!-- media stream -->
     <script src="bottom_toolbar.js?v=1"></script><!-- media stream -->
+    <script src="roomname_generator.js?v=1"></script><!-- generator for random room names -->
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
     <link rel="stylesheet" href="css/font.css?v=3"/>
     <link rel="stylesheet" type="text/css" media="screen" href="css/main.css?v=23"/>
@@ -72,11 +74,16 @@
                 <div id="jitsi_logo"></div>
             </a>
 
-            <div id="enter_room">
-                <input id="enter_room_field" type="text" placeholder="Enter room name" />
-                <input id="enter_room_button" type="button" value="GO" />
-                <input type='checkbox' name='checkbox' id="disable_welcome"/>
-                <label for="disable_welcome">Don't show this page</label>
+            <div id="enter_room_container">
+                    <div id="enter_room_form" >
+                        <div id="domain_name"></div>
+                        <div id="enter_room">
+                            <input id="enter_room_field" type="text" placeholder="Enter room name" />
+                            <input id="enter_room_button" type="button" value="GO" />
+                        </div>
+                    </div>
+                    <input type='checkbox' name='checkbox' id="disable_welcome"/>
+                    <label for="disable_welcome">Don't show this page</label>
             </div>
             <div id="brand_header"></div>
             <div id="header_text"></div>
@@ -87,7 +94,7 @@
                     <div class="feature_holder">
                         <div class="feature_icon">Simple to use</div>
                         <div class="feature_description">
-                            No downloads required. uTalk works directly within your browser. Simply share your conference URL with others to get started.
+                            No downloads required. <span name="appName"></span> works directly within your browser. Simply share your conference URL with others to get started.
                         </div>
                     </div>
                     <div class="feature_holder">
@@ -99,7 +106,7 @@
                     <div class="feature_holder">
                         <div class="feature_icon">Open source</div>
                         <div class="feature_description">
-                            uTalk is licensed under the &lt;GPL/LGPL/WHATEVER&gt;. You can download, use, modify, and share the software without any restrictions.
+                            <span name="appName"></span> is licensed under the &lt;GPL/LGPL/WHATEVER&gt;. You can download, use, modify, and share the software without any restrictions.
                         </div>
                     </div>
                     <div class="feature_holder">
@@ -113,19 +120,19 @@
                     <div class="feature_holder">
                         <div class="feature_icon">Screen sharing</div>
                         <div class="feature_description">
-                            It's easy to share your screen with others. uTalk is ideal for on-line presentations, lectures, and tech support sessions.
+                            It's easy to share your screen with others. <span name="appName"></span> is ideal for on-line presentations, lectures, and tech support sessions.
                         </div>
                     </div>
                     <div class="feature_holder">
                         <div class="feature_icon">Secure rooms</div>
                         <div class="feature_description">
-                            Need some privacy? uTalk conference rooms can be secured with a password in order to exclude unwanted guests and prevent interruptions.
+                            Need some privacy? <span name="appName"></span> conference rooms can be secured with a password in order to exclude unwanted guests and prevent interruptions.
                         </div>
                     </div>
                     <div class="feature_holder">
                         <div class="feature_icon">Shared notes</div>
                         <div class="feature_description">
-                            uTalk features Etherpad, a real-time collaborative text editor that's great for meeting minutes, writing articles, and more.
+                            <span name="appName"></span> features Etherpad, a real-time collaborative text editor that's great for meeting minutes, writing articles, and more.
                         </div>
                     </div>
                     <div class="feature_holder">
