@@ -152,16 +152,13 @@
 #brand_header
 {
     background-image:url(../images/welcome_page/header-big.png);
-    position:absolute;
     width: 583px;
     height: 274px;
-    left: 340px;
-    top:15px;
+    margin: -55px auto 0px auto;
 }
 
 #header_text
 {
-    position: absolute;
     left: 200px;
     top: 150px;
     width: 885px;
@@ -170,6 +167,7 @@
     font-family: Helvetica;
     font-size: 24px;
     text-align: center;
+    margin: -139px auto 0px auto;
 }
 
 #features

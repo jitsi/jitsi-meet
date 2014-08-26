@@ -1376,10 +1376,17 @@ function hangup() {
 
     $.prompt("Session Terminated",
         {
-            title: "You hang up the call",
+            title: "You hung up the call",
             persistent: true,
-            buttons: {},
-            closeText: ''
+            buttons: {
+                "Join again": true
+            },
+            closeText: '',
+            submit: function(event, value, message, formVals)
+            {
+                window.location.reload();
+                return false;
+            }
 
         }
     );
