@@ -23,7 +23,7 @@ case "$1" in
 
         . /etc/default/jitsi-videobridge
 
-        if [ -x /etc/prosody/prosody.cfg.lua ]; then
+        if [ -f /etc/prosody/prosody.cfg.lua ]; then
             mv /etc/prosody/prosody.cfg.lua /etc/prosody/prosody.cfg.lua.orig
         fi
         gunzip -c /usr/share/doc/jitsi-meet-prosody/prosody.cfg.lua-jvb.example.gz > /etc/prosody/prosody.cfg.lua
