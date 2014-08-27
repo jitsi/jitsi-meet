@@ -1036,7 +1036,7 @@ $(document).ready(function () {
         {
             var val = $("#enter_room_field").val();
             if(!val)
-                val = $("#enter_room_field").attr("placeholder");
+                val = $("#enter_room_field").attr("room_name");
             window.location.pathname = "/" + val;
         });
 
@@ -1057,9 +1057,10 @@ $(document).ready(function () {
 
         function update_roomname()
         {
-
+            var word = RoomNameGenerator.generateRoomWithoutSeparator();
+            $("#enter_room_field").attr("room_name", word);
             $("#enter_room_field").attr("placeholder", "");
-            animate(RoomNameGenerator.generateRoomWithoutSeparator());
+            animate(word);
             setTimeout(update_roomname, 10000);
 
         }
