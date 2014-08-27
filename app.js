@@ -594,14 +594,9 @@ $(document).bind('joined.muc', function (event, jid, info) {
     // Once we've joined the muc show the toolbar
     Toolbar.showToolbar();
 
-    var displayName = '';
     if (info.displayName)
-        displayName = info.displayName + ' (me)';
-    else
-        displayName = "Me";
-
-    $(document).trigger('displaynamechanged',
-                        ['localVideoContainer', displayName]);
+        $(document).trigger('displaynamechanged',
+                            ['localVideoContainer', info.displayName + ' (me)']);
 });
 
 $(document).bind('entered.muc', function (event, jid, info, pres) {
