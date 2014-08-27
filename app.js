@@ -1048,13 +1048,22 @@ $(document).ready(function () {
             }
         });
 
+        var updateTimeout;
+        var animateTimeout;
+        $("#reload_roomname").click(function () {
+            clearTimeout(updateTimeout);
+            clearTimeout(animateTimeout);
+            update_roomname();
+        });
+
         function animate(word) {
             var currentVal = $("#enter_room_field").attr("placeholder");
             $("#enter_room_field").attr("placeholder", currentVal + word.substr(0, 1));
-            setTimeout(function() {
+            animateTimeout = setTimeout(function() {
                     animate(word.substring(1, word.length))
-                }, 150);
+                }, 70);
         }
+
 
         function update_roomname()
         {
@@ -1062,7 +1071,7 @@ $(document).ready(function () {
             $("#enter_room_field").attr("room_name", word);
             $("#enter_room_field").attr("placeholder", "");
             animate(word);
-            setTimeout(update_roomname, 10000);
+            updateTimeout = setTimeout(update_roomname, 10000);
 
         }
         update_roomname();

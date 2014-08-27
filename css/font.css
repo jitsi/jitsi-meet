@@ -99,3 +99,7 @@
 .icon-hangup:before {
     content: "\e617";
 }
+
+.icon-reload:before {
+    content: "\e618";
+}
