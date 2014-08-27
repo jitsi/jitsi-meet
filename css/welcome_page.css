@@ -3,46 +3,42 @@
     display:none;
 }
 
+.disable_welcome_position
+{
+    margin: -139px auto 0px auto;
+    padding-left: 39px;
+    padding-top: 7px;
+    width: 269px;
+    height: 31px;
+    display:block;
+}
+
 #disable_welcome + label
 {
     background-image: url(../images/welcome_page/disable-welcome.png);
-    display:inline-block;
-    position:absolute;
-    height: 54px;
     cursor: pointer;
     -webkit-user-select: none;
     -moz-user-select: none;
     background-repeat: no-repeat;
-    padding-left: 62px;
-    padding-top: 19px;
     font-weight: 500;
     font-family: Helvetica;
     font-size: 16px;
     color: #acacac;
     z-index: 2;
-    float: left;
-    margin-left: 5px;
 }
 
 #disable_welcome:checked + label
 {
     background-image: url(../images/welcome_page/disable-welcome-selected.png);
-    display:inline-block;
-    position:absolute;
-    height: 54px;
     cursor: pointer;
     -webkit-user-select: none;
     -moz-user-select: none;
     background-repeat: no-repeat;
-    padding-left: 62px;
-    padding-top: 19px;
     font-weight: 500;
     font-family: Helvetica;
     font-size: 16px;
     color: #acacac;
     z-index: 2;
-    float: left;
-    margin-left: 5px;
 }
 
 #enter_room_form {
@@ -86,8 +82,8 @@
     width: 73px;
     height: 45px;
     background-color: #16a8fe;
-    moz-border-radius: 15px;
-    -webkit-border-radius: 15px;
+    moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
     color: #ffffff;
     font-weight: 600;
     border: none;
@@ -103,7 +99,7 @@
 
 #enter_room_container {
     margin: 70px auto 0px auto;
-    width:531px;
+    width:437px;
 }
 
 #enter_room{
@@ -159,15 +155,13 @@
 
 #header_text
 {
-    left: 200px;
-    top: 150px;
     width: 885px;
     height: 100px;
     color: #ffffff;
     font-family: Helvetica;
     font-size: 24px;
     text-align: center;
-    margin: -139px auto 0px auto;
+    margin: 0px auto 0px auto;
 }
 
 #features
