@@ -99,7 +99,7 @@
 
 #enter_room_container {
     margin: 70px auto 0px auto;
-    width:468px;
+    display: table;
 }
 
 #enter_room{
@@ -150,7 +150,7 @@
     background-image:url(../images/welcome_page/header-big.png);
     width: 583px;
     height: 274px;
-    margin: -55px auto 0px auto;
+    margin: -110px auto 0px auto;
 }
 
 #header_text
