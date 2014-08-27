@@ -190,7 +190,8 @@ function doJoin() {
         if (path.length > 1) {
             roomnode = path.substr(1).toLowerCase();
         } else {
-            roomnode = Math.random().toString(36).substr(2, 20);
+            roomnode = RoomNameGenerator.generateRoomWithoutSeparator(3);
+
             window.history.pushState('VideoChat',
                     'Room: ' + roomnode, window.location.pathname + roomnode);
         }
