@@ -23,6 +23,12 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
+.icon-contactList:before {
+    content: "\e615";
+}
+.icon-avatar:before {
+    content: "\e616";
+}
 .icon-callRetro:before {
     content: "\e611";
 }
@@ -71,6 +77,9 @@
 .icon-share-doc:before {
 	content: "\e605";
 }
+.icon-telephone:before {
+    content: "\e611";
+}
 .icon-security-locked:before {
 	content: "\e607";
 }
@@ -85,4 +94,8 @@
 }
 .icon-microphone:before {
 	content: "\e60b";
+}
+
+.icon-hangup:before {
+    content: "\e617";
 }

@@ -12,16 +12,16 @@ var Toolbar = (function (my) {
                 $.prompt("This conversation is currently protected by"
                         + " a shared secret key.",
                     {
-                        title: "Secrect key",
+                        title: "Secret key",
                         persistent: false
                     }
                 );
             else
                 $.prompt("This conversation isn't currently protected by"
-                        + " a secret key. Only the owner of the conference" +
+                        + " a secret key. Only the owner of the conference"
                         + " could set a shared key.",
                     {
-                        title: "Secrect key",
+                        title: "Secret key",
                         persistent: false
                     }
                 );
@@ -118,16 +118,17 @@ var Toolbar = (function (my) {
 
         var conferenceName = roomUrl.substring(roomUrl.lastIndexOf('/') + 1);
         var subject = "Invitation to a Jitsi Meet (" + conferenceName + ")";
-        var body = "Hey there, I%27d like to invite you to a Jitsi Meet"
-                    + " conference I%27ve just set up.%0D%0A%0D%0A"
-                    + "Please click on the following link in order"
-                    + " to join the conference.%0D%0A%0D%0A"
-                    + roomUrl + "%0D%0A%0D%0A"
-                    + sharedKeyText
-                    + "Note that Jitsi Meet is currently only supported by Chromim,"
-                    + " Google Chrome and Opera, so you need"
-                    + " to be using one of these browsers.%0D%0A%0D%0A"
-                    + "Talk to you in a sec!";
+        var body = "Hey there, I%27d like to invite you to a Jitsi Meet" +
+                    " conference I%27ve just set up.%0D%0A%0D%0A" +
+                    "Please click on the following link in order" +
+                    " to join the conference.%0D%0A%0D%0A" +
+                    roomUrl +
+                    "%0D%0A%0D%0A" +
+                    sharedKeyText +
+                    "Note that Jitsi Meet is currently only supported by Chromium," +
+                    " Google Chrome and Opera, so you need" +
+                    " to be using one of these browsers.%0D%0A%0D%0A" +
+                    "Talk to you in a sec!";
 
         if (window.localStorage.displayname)
             body += "%0D%0A%0D%0A" + window.localStorage.displayname;
@@ -301,6 +302,19 @@ var Toolbar = (function (my) {
     // Toggle the state of the recording button
     my.toggleRecordingButtonState = function() {
         $('#recordButton').toggleClass('active');
+    };
+
+    // Shows or hides SIP calls button
+    my.showSipCallButton = function (show)
+    {
+        if (config.hosts.call_control && show)
+        {
+            $('#sipCallButton').css({display: "inline"});
+        }
+        else
+        {
+            $('#sipCallButton').css({display: "none"});
+        }
     };
 
     return my;

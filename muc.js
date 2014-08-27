@@ -131,6 +131,12 @@ Strophe.addConnectionPlugin('emuc', {
         // Always trigger presence to update bindings
         console.log('presence change from', from);
         $(document).trigger('presence.muc', [from, member, pres]);
+
+        // Trigger status message update
+        if (member.status) {
+            $(document).trigger('presence.status.muc', [from, member, pres]);
+        }
+
         return true;
     },
     onPresenceUnavailable: function (pres) {
@@ -157,6 +163,17 @@ Strophe.addConnectionPlugin('emuc', {
         var from = pres.getAttribute('from');
         if ($(pres).find('>error[type="auth"]>not-authorized[xmlns="urn:ietf:params:xml:ns:xmpp-stanzas"]').length) {
             $(document).trigger('passwordrequired.muc', [from]);
+        } else if ($(pres).find(
+                '>error[type="cancel"]>not-allowed[xmlns="urn:ietf:params:xml:ns:xmpp-stanzas"]').length) {
+            var toDomain = Strophe.getDomainFromJid(pres.getAttribute('to'));
+            if(toDomain === config.hosts.anonymousdomain) {
+                // we are connected with anonymous domain and only non anonymous users can create rooms
+                // we must authorize the user
+                $(document).trigger('passwordrequired.main');
+            }
+            else
+                console.warn('onPresError ', pres);
+
         } else {
             console.warn('onPresError ', pres);
         }
@@ -356,5 +373,13 @@ Strophe.addConnectionPlugin('emuc', {
     addVideoInfoToPresence: function(isMuted) {
         this.presMap['videons'] = 'http://jitsi.org/jitmeet/video';
         this.presMap['videomuted'] = isMuted.toString();
+    },
+    findJidFromResource: function(resourceJid) {
+        var peerJid = null;
+        Object.keys(this.members).some(function (jid) {
+            peerJid = jid;
+            return Strophe.getResourceFromJid(jid) === resourceJid;
+        });
+        return peerJid;
     }
 });

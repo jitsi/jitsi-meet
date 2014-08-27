@@ -15,7 +15,7 @@
     padding: 18px;
     bottom: 0;
     left: 0;
-    right: 0;
+    right: 20px;
     width:auto;
     border:1px solid transparent;
     z-index: 5;
@@ -171,10 +171,31 @@
     border-radius:20px;
 }
 
+.videocontainer>span.status {
+    display: inline-block;
+    position: absolute;
+    color: #FFFFFF;
+    background: rgba(0,0,0,.7);
+    text-align: center;
+    text-overflow: ellipsis;
+    width: 70%;
+    height: 15%;
+    left: 15%;
+    bottom: 2%;
+    padding: 5px;
+    font-size: 10pt;
+    overflow: hidden;
+    white-space: nowrap;
+    z-index: 2;
+    border-radius:20px;
+}
+
+#localVideoContainer>span.status:hover,
 #localVideoContainer>span.displayname:hover {
     cursor: text;
 }
 
+.videocontainer>span.status,
 .videocontainer>span.displayname {
     pointer-events: none;
 }
@@ -187,6 +208,7 @@
     pointer-events: auto !important;
 }
 
+.videocontainer>a.status,
 .videocontainer>a.displayname {
     display: inline-block;
     position: absolute;
@@ -311,4 +333,8 @@
     position: absolute;
     z-index: 0;
     border-radius:10px;
+}
+
+#mixedstream {
+    display:none !important;
 }

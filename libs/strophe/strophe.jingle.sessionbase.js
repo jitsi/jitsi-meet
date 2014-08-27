@@ -156,7 +156,7 @@ SessionBase.prototype.sendSSRCUpdateIq = function(sdpMediaSsrcs, sid, initiator,
     var modify = $iq({to: toJid, type: 'set'})
         .c('jingle', {
             xmlns: 'urn:xmpp:jingle:1',
-            action: isAdd ? 'addsource' : 'removesource',
+            action: isAdd ? 'source-add' : 'source-remove',
             initiator: initiator,
             sid: sid
         }
@@ -168,6 +168,8 @@ SessionBase.prototype.sendSSRCUpdateIq = function(sdpMediaSsrcs, sid, initiator,
         modified = true;
         var channel = sdpMediaSsrcs[channelNum];
         modify.c('content', {name: channel.mediaType});
+
+        modify.c('description', {xmlns:'urn:xmpp:jingle:apps:rtp:1', media: channel.mediaType});
         // FIXME: not completly sure this operates on blocks and / or handles different ssrcs correctly
         // generate sources from lines
         Object.keys(channel.ssrcs).forEach(function(ssrcNum) {
@@ -189,6 +191,7 @@ SessionBase.prototype.sendSSRCUpdateIq = function(sdpMediaSsrcs, sid, initiator,
             });
             modify.up(); // end of source
         });
+        modify.up(); // end of description
         modify.up(); // end of content
     });
     if (modified) {

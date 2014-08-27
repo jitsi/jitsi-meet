@@ -208,7 +208,7 @@ TraceablePeerConnection.prototype.addSource = function (elem) {
     $(elem).each(function (idx, content) {
         var name = $(content).attr('name');
         var lines = '';
-        tmp = $(content).find('>source[xmlns="urn:xmpp:jingle:apps:rtp:ssma:0"]');
+        tmp = $(content).find('source[xmlns="urn:xmpp:jingle:apps:rtp:ssma:0"]'); // can handle both >source and >description>source
         tmp.each(function () {
             var ssrc = $(this).attr('ssrc');
             if(mySdp.containsSSRC(ssrc)){
@@ -254,7 +254,7 @@ TraceablePeerConnection.prototype.removeSource = function (elem) {
     $(elem).each(function (idx, content) {
         var name = $(content).attr('name');
         var lines = '';
-        tmp = $(content).find('>source[xmlns="urn:xmpp:jingle:apps:rtp:ssma:0"]');
+        tmp = $(content).find('source[xmlns="urn:xmpp:jingle:apps:rtp:ssma:0"]'); // can handle both >source and >description>source
         tmp.each(function () {
             var ssrc = $(this).attr('ssrc');
             // This should never happen, but can be useful for bug detection

@@ -1,9 +1,15 @@
 /* global connection, Strophe, updateLargeVideo, focusedVideoSrc*/
+
+// cache datachannels to avoid garbage collection
+// https://code.google.com/p/chromium/issues/detail?id=405545
+var _dataChannels = [];
+
 /**
  * Callback triggered by PeerConnection when new data channel is opened
  * on the bridge.
  * @param event the event info object.
  */
+
 function onDataChannel(event)
 {
     var dataChannel = event.channel;
@@ -68,9 +74,15 @@ function onDataChannel(event)
                  */
                 var endpointsEnteringLastN = obj.endpointsEnteringLastN;
 
-                console.debug(
+                var stream = obj.stream;
+
+                console.log(
                     "Data channel new last-n event: ",
-                    lastNEndpoints);
+                    lastNEndpoints, endpointsEnteringLastN, obj);
+
+                $(document).trigger(
+                        'lastnchanged',
+                        [lastNEndpoints, endpointsEnteringLastN, stream]);
             }
             else
             {
@@ -82,7 +94,11 @@ function onDataChannel(event)
     dataChannel.onclose = function ()
     {
         console.info("The Data Channel closed", dataChannel);
+        var idx = _dataChannels.indexOf(dataChannel);
+        if (idx > -1) 
+            _dataChannels = _dataChannels.splice(idx, 1);
     };
+    _dataChannels.push(dataChannel);
 }
 
 /**

@@ -8,7 +8,8 @@ html, body{
     overflow-x: hidden;
 }
 
-#chatspace {
+#chatspace,
+#contactlist {
     display:none;
     position:absolute;
     float: right;
@@ -18,10 +19,12 @@ html, body{
     width: 20%;
     max-width: 200px;
     overflow: hidden;
-    /* background-color:#dfebf1;*/
-    background-color:#FFFFFF;
-    border-left:1px solid #424242;
     z-index: 5;
+}
+
+#chatspace {
+    background-color:#FFF;
+    border-left:1px solid #424242;
 }
 
 #chatconversation {
@@ -68,7 +71,7 @@ html, body{
     overflow: hidden;
 }
 
-#usermsg: hover {
+#usermsg:hover {
     border: 0px none;
     border-top: 1px solid #cccccc;
     box-shadow: none;
@@ -172,7 +175,8 @@ html, body{
     0 -1px 10px #00ccff;
 }
 
-a.button:hover {
+a.button:hover,
+a.bottomToolbarButton:hover {
     top: 0;
     cursor: pointer;
     background: rgba(0, 0, 0, 0.3);
@@ -195,7 +199,7 @@ a.button:hover {
     background: #676767;
 }
 
-input[type='text'], textarea {
+input[type='text'], input[type='password'], textarea {
     display: inline-block;
     font-size: 14px;
     padding: 5px;
@@ -211,7 +215,7 @@ input[type='text'], textarea {
     resize: none; /* prevents the user-resizing, adjust to taste */
 }
 
-input[type='text'], textarea:focus {
+input[type='text'], input[type='password'], textarea:focus {
     box-shadow: inset 0 0 3px 2px #ACD8F0; /* provides a more style-able
                                          replacement to the outline */
 }
@@ -258,4 +262,48 @@ form {
     left: 5;
     overflow: visible;
     z-index: 100;
+}
+
+#bottomToolbar {
+    display:block;
+    position: absolute;
+    right: -1;
+    bottom: 40px;
+    width: 29px;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    color: #FFF;
+    border: 1px solid #000;
+    background: rgba(50,50,50,.65);
+    padding-top: 5px;
+    padding-bottom: 5px;
+    z-index: 6; /*+1 from #remoteVideos*/
+}
+
+.bottomToolbarButton {
+    display: inline-block;
+    position: relative;
+    color: #FFFFFF;
+    top: 0;
+    padding-top: 3px;
+    width: 29px;
+    height: 20px;
+    cursor: pointer;
+    font-size: 10pt;
+    text-align: center;
+    text-shadow: 0px 1px 0px rgba(255,255,255,.3), 0px -1px 0px rgba(0,0,0,.7);
+    z-index: 1;
+}
+
+.active {
+    color: #00ccff;
+}
+
+.bottomToolbar_span>span {
+    display: inline-block;
+    position: absolute;
+    font-size: 7pt;
+    color: #ffffff;
+    text-align: center;
+    cursor: pointer;
 }

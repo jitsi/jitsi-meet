@@ -174,6 +174,9 @@ SDPUtil = {
                 case 'generation':
                     candidate.generation = elems[i + 1];
                     break;
+                case 'tcptype':
+                    candidate.tcptype = elems[i + 1];
+                    break;
                 default: // TODO
                     console.log('parse_icecandidate not translating "' + elems[i] + '" = "' + elems[i + 1] + '"');
             }
@@ -200,6 +203,12 @@ SDPUtil = {
                     line += ' ';
                 }
                 break;
+        }
+        if (cand.hasOwnAttribute('tcptype')) {
+            line += 'tcptype';
+            line += ' ';
+            line += cand.tcptype;
+            line += ' ';
         }
         line += 'generation';
         line += ' ';
@@ -283,7 +292,7 @@ SDPUtil = {
     candidateToJingle: function (line) {
         // a=candidate:2979166662 1 udp 2113937151 192.168.2.100 57698 typ host generation 0
         //      <candidate component=... foundation=... generation=... id=... ip=... network=... port=... priority=... protocol=... type=.../>
-        if (line.indexOf('candidate:') == 0) {
+        if (line.indexOf('candidate:') === 0) {
             line = 'a=' + line;
         } else if (line.substring(0, 12) != 'a=candidate:') {
             console.log('parseCandidate called with a line that is not a candidate line');
@@ -320,6 +329,9 @@ SDPUtil = {
                     break;
                 case 'generation':
                     candidate.generation = elems[i + 1];
+                    break;
+                case 'tcptype':
+                    candidate.tcptype = elems[i + 1];
                     break;
                 default: // TODO
                     console.log('not translating "' + elems[i] + '" = "' + elems[i + 1] + '"');

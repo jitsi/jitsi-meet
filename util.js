@@ -52,7 +52,9 @@ var Util = (function (my) {
      */
     my.getAvailableVideoWidth = function () {
         var chatspaceWidth
-            = $('#chatspace').is(":visible") ? $('#chatspace').width() : 0;
+            = (Chat.isVisible() || ContactList.isVisible())
+                ? $('#chatspace').width()
+                : 0;
 
         return window.innerWidth - chatspaceWidth;
     };

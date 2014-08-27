@@ -80,7 +80,7 @@ var Chat = (function (my) {
         else {
             divClassName = "remoteuser";
 
-            if (!$('#chatspace').is(":visible")) {
+            if (!Chat.isVisible()) {
                 unreadMessages++;
                 Util.playSoundNotification('chatNotification');
                 setVisualNotification(true);
@@ -299,6 +299,13 @@ var Chat = (function (my) {
             chatWidth = availableWidth * 0.2;
 
         return [chatWidth, availableHeight];
+    };
+
+    /**
+     * Indicates if the chat is currently visible.
+     */
+    my.isVisible = function () {
+        return $('#chatspace').is(":visible");
     };
 
     /**
