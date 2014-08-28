@@ -190,10 +190,11 @@ function doJoin() {
         if (path.length > 1) {
             roomnode = path.substr(1).toLowerCase();
         } else {
-            roomnode = RoomNameGenerator.generateRoomWithoutSeparator(3);
+            var word = RoomNameGenerator.generateRoomWithoutSeparator(3);
+            roomnode = word.toLowerCase();
 
             window.history.pushState('VideoChat',
-                    'Room: ' + roomnode, window.location.pathname + roomnode);
+                    'Room: ' + word, window.location.pathname + word);
         }
     }
 
