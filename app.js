@@ -190,7 +190,8 @@ function doJoin() {
         if (path.length > 1) {
             roomnode = path.substr(1).toLowerCase();
         } else {
-            roomnode = Math.random().toString(36).substr(2, 20);
+            roomnode = RoomNameGenerator.generateRoomWithoutSeparator(3);
+
             window.history.pushState('VideoChat',
                     'Room: ' + roomnode, window.location.pathname + roomnode);
         }
@@ -1036,7 +1037,7 @@ $(document).ready(function () {
         {
             var val = $("#enter_room_field").val();
             if(!val)
-                val = $("#enter_room_field").attr("placeholder");
+                val = $("#enter_room_field").attr("room_name");
             window.location.pathname = "/" + val;
         });
 
@@ -1047,20 +1048,30 @@ $(document).ready(function () {
             }
         });
 
+        var updateTimeout;
+        var animateTimeout;
+        $("#reload_roomname").click(function () {
+            clearTimeout(updateTimeout);
+            clearTimeout(animateTimeout);
+            update_roomname();
+        });
+
         function animate(word) {
             var currentVal = $("#enter_room_field").attr("placeholder");
             $("#enter_room_field").attr("placeholder", currentVal + word.substr(0, 1));
-            setTimeout(function() {
+            animateTimeout = setTimeout(function() {
                     animate(word.substring(1, word.length))
-                }, 150);
+                }, 70);
         }
+
 
         function update_roomname()
         {
-
+            var word = RoomNameGenerator.generateRoomWithoutSeparator();
+            $("#enter_room_field").attr("room_name", word);
             $("#enter_room_field").attr("placeholder", "");
-            animate(RoomNameGenerator.generateRoomWithoutSeparator());
-            setTimeout(update_roomname, 10000);
+            animate(word);
+            updateTimeout = setTimeout(update_roomname, 10000);
 
         }
         update_roomname();
