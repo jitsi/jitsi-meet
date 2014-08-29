@@ -39,9 +39,9 @@ case "$1" in
         chown -R www-data:www-data /usr/share/jitsi-meet/
         sed -i "s/jitsi-meet.example.com/$JVB_HOSTNAME/g" /usr/share/jitsi-meet/config.js
         # enable turn
-        if grep "//  useStunTurn: true," /usr/share/jitsi-meet/config.js > /dev/null; then
-            sed -i "s/\/\/\ \ useStunTurn:\ true,/\ \ \ \ useStunTurn:\ true,/" /usr/share/jitsi-meet/config.js
-        fi
+        #if grep "//  useStunTurn: true," /usr/share/jitsi-meet/config.js > /dev/null; then
+        #    sed -i "s/\/\/\ \ useStunTurn:\ true,/\ \ \ \ useStunTurn:\ true,/" /usr/share/jitsi-meet/config.js
+        #fi
         invoke-rc.d nginx restart
 
     ;;
