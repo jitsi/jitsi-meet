@@ -40,10 +40,10 @@ case "$1" in
         # SSL for nginx
         db_get jitsi-meet/cert-choice
         CERT_CHOICE="$RET"
-        if [ "$CERT_CHOICE" == 'I want a generated self-signed certificate' ]; then
+        if [ "$CERT_CHOICE" = 'I want a generated self-signed certificate' ]; then
             # self-signed certificate is already in place for prosody
             :
-        elif [ "$CERT_CHOICE" == 'I have a certificate and will upload the files on the server' ]; then
+        elif [ "$CERT_CHOICE" = 'I have a certificate and will upload the files on the server' ]; then
             db_fset jitsi-meet/default-key "/etc/ssl/$JVB_HOSTNAME.key"
             db_get jitsi-meet/cert-path-key
             CERT_KEY="$RET"
