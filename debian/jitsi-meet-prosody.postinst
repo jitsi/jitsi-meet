@@ -23,12 +23,20 @@ case "$1" in
 
         . /etc/default/jitsi-videobridge
 
-        if [ -f /etc/prosody/prosody.cfg.lua ]; then
-            mv /etc/prosody/prosody.cfg.lua /etc/prosody/prosody.cfg.lua.orig
+        PROSODY_CONFIG_PRESENT="true"
+        if [ ! -f /etc/prosody/prosody.cfg.lua ]; then
+            PROSODY_CONFIG_PRESENT="false"
+            gunzip -c /usr/share/doc/jitsi-meet-prosody/prosody.cfg.lua-jvb.example.gz > /etc/prosody/prosody.cfg.lua
         fi
-        gunzip -c /usr/share/doc/jitsi-meet-prosody/prosody.cfg.lua-jvb.example.gz > /etc/prosody/prosody.cfg.lua
-        sed -i "s/jitmeet.example.com/$JVB_HOSTNAME/g" /etc/prosody/prosody.cfg.lua
-        sed -i "s/jitmeetSecret/$JVB_SECRET/g" /etc/prosody/prosody.cfg.lua
+
+        if [ ! grep "VirtualHost \"$JVB_HOSTNAME\"" /etc/prosody/prosody.cfg.lua > /dev/null ]; then
+            if [ "PROSODY_CONFIG_PRESENT" = "true" ]; then
+                mv /etc/prosody/prosody.cfg.lua /etc/prosody/prosody.cfg.lua.orig
+            fi
+            sed -i "s/jitmeet.example.com/$JVB_HOSTNAME/g" /etc/prosody/prosody.cfg.lua
+            sed -i "s/jitmeetSecret/$JVB_SECRET/g" /etc/prosody/prosody.cfg.lua
+        fi
+
         if [ ! -f /var/lib/prosody/$JVB_HOSTNAME.crt ]; then
             HOST="$( (hostname -s; echo localhost) | head -n 1)"
             DOMAIN="$( (hostname -d; echo localdomain) | head -n 1)"
