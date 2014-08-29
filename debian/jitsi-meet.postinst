@@ -45,15 +45,19 @@ case "$1" in
             :
         elif [ "$CERT_CHOICE" = 'I have a certificate and will upload the files on the server' ]; then
             db_fset jitsi-meet/default-key "/etc/ssl/$JVB_HOSTNAME.key"
+            db_input critical jitsi-meet/cert-path-key || true
+            db_go
             db_get jitsi-meet/cert-path-key
             CERT_KEY="$RET"
             db_fset jitsi-meet/default-crt "/etc/ssl/$JVB_HOSTNAME.crt"
+            db_input critical jitsi-meet/cert-path-crt || true
+            db_go
             db_get jitsi-meet/cert-path-crt
             CERT_CRT="$RET"
             # replace self-signed certificate paths with user provided ones
-            sed -i "s/ssl_certificate_key\ /var/lib/prosody/(.*)key;/ssl_certificate_key\ $CERT_KEY;/g" \
+            sed -i "s/ssl_certificate_key\ \/var\/lib\/prosody\/(.*)key/ssl_certificate_key\ $CERT_KEY/g" \
                 /etc/nginx/sites-available/$JVB_HOSTNAME.conf
-            sed -i "s/ssl_certificate\ /var/lib/prosody/(.*)crt;/ssl_certificate\ $CERT_CRT;/g" \
+            sed -i "s/ssl_certificate\ \/var\/lib\/prosody\/(.*)crt/ssl_certificate\ $CERT_CRT/g" \
                 /etc/nginx/sites-available/$JVB_HOSTNAME.conf
         fi
 
