@@ -125,8 +125,10 @@
 
 #jitsi_logo
 {
-    background-image:url(../images/welcome_page/jitsi-logo.png);
+    background-image:url(../images/watermark.png);
     background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center left;
     width: 186px;
     height: 74px;
     position: absolute;
@@ -136,7 +138,10 @@
 
 #brand_logo
 {
-    background-image:url(../images/welcome_page/brand-logo.png);
+    background-image:url(../images/rightwatermark.png);
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center left;
     width: 215px;
     height: 55px;
     position: absolute;
