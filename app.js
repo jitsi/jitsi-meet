@@ -92,6 +92,11 @@ function init() {
 }
 
 function connect(jid, password) {
+    var localAudio, localVideo;
+    if (connection && connection.jingle) {
+        localAudio = connection.jingle.localAudio;
+        localVideo = connection.jingle.localVideo;
+    }
     connection = new Strophe.Connection(document.getElementById('boshURL').value || config.bosh || '/http-bind');
 
     if (nickname) {
@@ -107,6 +112,8 @@ function connect(jid, password) {
         if (!connection.jingle.pc_constraints.optional) connection.jingle.pc_constraints.optional = [];
         connection.jingle.pc_constraints.optional.push({googIPv6: true});
     }
+    if (localAudio) connection.jingle.localAudio = localAudio;
+    if (localVideo) connection.jingle.localVideo = localVideo;
 
     if(!password)
         password = document.getElementById('password').value;
