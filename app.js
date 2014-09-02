@@ -1034,18 +1034,21 @@ $(document).ready(function () {
         $("#videoconference_page").hide();
         $("#domain_name").text(window.location.host + "/");
         $("span[name='appName']").text(brand.appName);
-        $("#enter_room_button").click(function()
+        function enter_room()
         {
             var val = $("#enter_room_field").val();
             if(!val)
                 val = $("#enter_room_field").attr("room_name");
             window.location.pathname = "/" + val;
+        }
+        $("#enter_room_button").click(function()
+        {
+            enter_room();
         });
 
         $("#enter_room_field").keydown(function (event) {
             if (event.keyCode === 13) {
-                var val = Util.escapeHtml(this.value);
-                window.location.pathname = "/" + val;
+                enter_room();
             }
         });
 
