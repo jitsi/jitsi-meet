@@ -189,6 +189,7 @@
     float:left;
     width: 169px;
     padding-left: 75px;
+    padding-bottom: 30px;
 }
 
 .feature_icon
@@ -203,12 +204,12 @@
     /*font-weight: bold;*/
     text-align: center;
     display: table-cell;
-    padding: 50px 29px 0px 17px;
+    padding: 50px 26px 0px 20px;
 }
 
 .feature_description
 {
-    width: 169px;
+    width: 190px;
     font-family: Helvetica;
     color: #ffffff;
     font-size: 16px;

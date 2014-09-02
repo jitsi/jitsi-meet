@@ -1027,12 +1027,13 @@ function getCameraVideoSize(videoWidth,
 }
 
 $(document).ready(function () {
+    document.title = brand.appName;
 
     if(config.enableWelcomePage && window.location.pathname == "/" &&
         (!window.localStorage.welcomePageDisabled || window.localStorage.welcomePageDisabled == "false"))
     {
         $("#videoconference_page").hide();
-        $("#domain_name").text(window.location.host + "/");
+        $("#domain_name").text(window.location.protocol + "//" + window.location.host + "/");
         $("span[name='appName']").text(brand.appName);
         function enter_room()
         {
