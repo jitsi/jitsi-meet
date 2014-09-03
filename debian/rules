@@ -10,7 +10,6 @@
 #export DH_VERBOSE=1
 
 %:
-	dh $@
-
-override_dh_install-indep:
-	dh_install -Xdebian -Xdoc -XINSTALL.md -XLICENSE -XREADME.md usr/share/jitsi-meet/
+	dh_install
+	dh_installdirs
+	dh $@ 

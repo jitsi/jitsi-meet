@@ -1,6 +1,6 @@
 # Jitsi Meet quick install
 
-This documents decribes the needed steps for quick Jitsi Meet installation on a Debian based GNU/Linux system.
+This documents decribes the needed steps for quick Jitsi Meet installation on an Ubuntu 14.04 system.
 
 N.B.: All commands are supposed to be run by root. If you are logged in as a regular user with sudo rights, please prepend ___sudo___ to each of the commands.
 

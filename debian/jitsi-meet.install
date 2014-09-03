@@ -1,2 +1,10 @@
-*				        usr/share/jitsi-meet/
-debian/usr/share/*		usr/share/
+*.js					/usr/share/jitsi-meet/
+*.json					/usr/share/jitsi-meet/
+*.html					/usr/share/jitsi-meet/
+*.ico					/usr/share/jitsi-meet/
+libs					/usr/share/jitsi-meet/
+css					/usr/share/jitsi-meet/
+sounds					/usr/share/jitsi-meet/
+fonts					/usr/share/jitsi-meet/
+images					/usr/share/jitsi-meet/
+debian/usr/share/doc/jitsi-meet		/usr/share/doc/
