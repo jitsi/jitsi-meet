@@ -34,35 +34,34 @@ case "$1" in
             sed -i "s/#\ server_names_hash_bucket_size\ 64/\ server_names_hash_bucket_size\ 64/" /etc/nginx/nginx.conf
         fi
 
-        # loading debconf
-        . /usr/share/debconf/confmodule
+        if [ ! -f /etc/ssl/$JVB_HOSTNAME.key] || [ ! -f /etc/ssl/$JVB_HOSTNAME.crt]; then
+            # loading debconf
+            . /usr/share/debconf/confmodule
 
-        # SSL for nginx
-        db_get jitsi-meet/cert-choice
-        CERT_CHOICE="$RET"
-        if [ "$CERT_CHOICE" = 'I want a generated self-signed certificate' ]; then
-            # self-signed certificate is already in place for prosody
-            :
-        elif [ "$CERT_CHOICE" = 'I have a certificate and will upload the files on the server' ]; then
-            db_set jitsi-meet/cert-path-key "/etc/ssl/$JVB_HOSTNAME.key"
-            db_input critical jitsi-meet/cert-path-key || true
-            db_go
-            db_get jitsi-meet/cert-path-key
-            CERT_KEY="$RET"
-            db_set jitsi-meet/cert-path-crt "/etc/ssl/$JVB_HOSTNAME.crt"
-            db_input critical jitsi-meet/cert-path-crt || true
-            db_go
-            db_get jitsi-meet/cert-path-crt
-            CERT_CRT="$RET"
-            # replace self-signed certificate paths with user provided ones
-            CERT_KEY_ESC=$(echo $CERT_KEY | sed 's/\./\\\./g')
-            CERT_KEY_ESC=$(echo $CERT_KEY_ESC | sed 's/\//\\\//g')
-            sed -i "s/ssl_certificate_key\ \/var\/lib\/prosody\/.*key/ssl_certificate_key\ $CERT_KEY_ESC/g" \
-                /etc/nginx/sites-available/$JVB_HOSTNAME.conf
-            CERT_CRT_ESC=$(echo $CERT_CRT | sed 's/\./\\\./g')
-            CERT_CRT_ESC=$(echo $CERT_CRT_ESC | sed 's/\//\\\//g')
-            sed -i "s/ssl_certificate\ \/var\/lib\/prosody\/.*crt/ssl_certificate\ $CERT_CRT_ESC/g" \
-                /etc/nginx/sites-available/$JVB_HOSTNAME.conf
+            # SSL for nginx
+            db_get jitsi-meet/cert-choice
+            CERT_CHOICE="$RET"
+            if [ "$CERT_CHOICE" = 'I have a certificate and will upload the files on the server' ]; then
+                db_set jitsi-meet/cert-path-key "/etc/ssl/$JVB_HOSTNAME.key"
+                db_input critical jitsi-meet/cert-path-key || true
+                db_go
+                db_get jitsi-meet/cert-path-key
+                CERT_KEY="$RET"
+                db_set jitsi-meet/cert-path-crt "/etc/ssl/$JVB_HOSTNAME.crt"
+                db_input critical jitsi-meet/cert-path-crt || true
+                db_go
+                db_get jitsi-meet/cert-path-crt
+                CERT_CRT="$RET"
+                # replace self-signed certificate paths with user provided ones
+                CERT_KEY_ESC=$(echo $CERT_KEY | sed 's/\./\\\./g')
+                CERT_KEY_ESC=$(echo $CERT_KEY_ESC | sed 's/\//\\\//g')
+                sed -i "s/ssl_certificate_key\ \/var\/lib\/prosody\/.*key/ssl_certificate_key\ $CERT_KEY_ESC/g" \
+                    /etc/nginx/sites-available/$JVB_HOSTNAME.conf
+                CERT_CRT_ESC=$(echo $CERT_CRT | sed 's/\./\\\./g')
+                CERT_CRT_ESC=$(echo $CERT_CRT_ESC | sed 's/\//\\\//g')
+                sed -i "s/ssl_certificate\ \/var\/lib\/prosody\/.*crt/ssl_certificate\ $CERT_CRT_ESC/g" \
+                    /etc/nginx/sites-available/$JVB_HOSTNAME.conf
+            fi
         fi
 
         # and we're done with debconf
