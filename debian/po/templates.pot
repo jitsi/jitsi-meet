@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jitsi-meet\n"
 "Report-Msgid-Bugs-To: jitsi-meet@packages.debian.org\n"
-"POT-Creation-Date: 2014-09-03 16:27+0200\n"
+"POT-Creation-Date: 2014-09-03 17:26+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,13 +20,13 @@ msgstr ""
 #. Type: select
 #. Choices
 #: ../jitsi-meet.templates:1001
-msgid "I want a generated self-signed certificate"
+msgid "Self-signed certificate will be generated"
 msgstr ""
 
 #. Type: select
 #. Choices
 #: ../jitsi-meet.templates:1001
-msgid "I have a certificate and will upload the files on the server"
+msgid "A certificate is available and the files are uploaded on the server"
 msgstr ""
 
 #. Type: select
@@ -39,31 +39,31 @@ msgstr ""
 #. Description
 #: ../jitsi-meet.templates:1002
 msgid ""
-"Jitsi Meet is best to be set up with an SSL certificate. If you have no "
-"certificate, we can generate a self-signed one. If you have a certificate "
-"signed by a recognised CA, you can upload it on the server  and point us to "
-"its location. The default filenames will be /etc/ssl/--domain.name--.key  "
-"for the key and /etc/ssl/--domain.name--.crt for the certificate."
+"Jitsi Meet is best to be set up with an SSL certificate. Having no "
+"certificate, a self-signed one will be generated. Having a certificate "
+"signed by a recognised CA, it can be uploaded on the server and point its "
+"location. The default filenames will be /etc/ssl/--domain.name--.key for the "
+"key and /etc/ssl/--domain.name--.crt for the certificate."
 msgstr ""
 
 #. Type: string
 #. Description
 #: ../jitsi-meet.templates:2001
-msgid "Full local server path to the SSL key file"
+msgid "Full local server path to the SSL key file:"
 msgstr ""
 
 #. Type: string
 #. Description
 #: ../jitsi-meet.templates:2001
 msgid ""
-"The full path to the SSL key file on the server. If you haven't uploaded it, "
-"now is a good time to upload it in another console."
+"The full path to the SSL key file on the server. If it has not been "
+"uploaded, now is a good time to do so."
 msgstr ""
 
 #. Type: string
 #. Description
 #: ../jitsi-meet.templates:3001
-msgid "Full local server path to the SSL certificate file"
+msgid "Full local server path to the SSL certificate file:"
 msgstr ""
 
 #. Type: string
