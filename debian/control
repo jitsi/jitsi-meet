@@ -4,7 +4,7 @@ Priority: extra
 Maintainer: Jitsi Team <dev@jitsi.org>
 Uploaders: Emil Ivov <emcho@jitsi.org>, Damian Minkov <damencho@jitsi.org>
 Build-Depends: debhelper (>= 8.0.0)
-Standards-Version: 3.9.3
+Standards-Version: 3.9.5
 Homepage: https://jitsi.org/meet
 
 Package: jitsi-meet
