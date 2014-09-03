@@ -17,13 +17,13 @@ var ContactList = (function (my) {
      *
      * @param peerJid the peerJid corresponding to the contact
      */
-    my.ensureAddContact = function(peerJid) {
+    my.ensureAddContact = function(peerJid, userId) {
         var resourceJid = Strophe.getResourceFromJid(peerJid);
 
         var contact = $('#contactlist>ul>li[id="' + resourceJid + '"]');
 
         if (!contact || contact.length <= 0)
-            ContactList.addContact(peerJid);
+            ContactList.addContact(peerJid, userId);
     };
 
     /**
@@ -31,7 +31,7 @@ var ContactList = (function (my) {
      *
      * @param peerJid the jid of the contact to add
      */
-    my.addContact = function(peerJid) {
+    my.addContact = function(peerJid, userId) {
         var resourceJid = Strophe.getResourceFromJid(peerJid);
 
         var contactlist = $('#contactlist>ul');
@@ -39,7 +39,7 @@ var ContactList = (function (my) {
         var newContact = document.createElement('li');
         newContact.id = resourceJid;
 
-        newContact.appendChild(createAvatar());
+        newContact.appendChild(createAvatar(userId));
         newContact.appendChild(createDisplayNameParagraph("Participant"));
 
         var clElement = contactlist.get(0);
@@ -196,12 +196,13 @@ var ContactList = (function (my) {
      * 
      * @return the newly created avatar element
      */
-    function createAvatar() {
-        var avatar = document.createElement('i');
+    function createAvatar(userId) {
+        var avatar = document.createElement('img');
         avatar.className = "icon-avatar avatar";
+        avatar.src = "https://www.gravatar.com/avatar/" + userId + "?d=retro&size=30";
 
         return avatar;
-    };
+    }
 
     /**
      * Creates the display name paragraph.

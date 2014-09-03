@@ -301,6 +301,10 @@ Strophe.addConnectionPlugin('emuc', {
             pres.c('bridgeIsDown').up();
         }
 
+        if(this.presMap['userId']) {
+            pres.c('userId').t(this.presMap['userId']).up();
+        }
+
         if (this.presMap['displayName']) {
             // XEP-0172
             pres.c('nick', {xmlns: 'http://jabber.org/protocol/nick'})
@@ -409,5 +413,8 @@ Strophe.addConnectionPlugin('emuc', {
     },
     addBridgeIsDownToPresence: function() {
         this.presMap['bridgeIsDown'] = true;
+    },
+    addUserIdToPresence: function(userId) {
+        this.presMap['userId'] = userId;
     }
 });

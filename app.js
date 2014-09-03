@@ -104,6 +104,8 @@ function connect(jid, password) {
         connection.emuc.addDisplayNameToPresence(nickname);
     }
 
+    connection.emuc.addUserIdToPresence(UserId.getUID());
+
     if (connection.disco) {
         // for chrome, add multistream cap
     }
@@ -685,7 +687,7 @@ $(document).bind('joined.muc', function (event, jid, info) {
     VideoLayout.showFocusIndicator();
 
     // Add myself to the contact list.
-    ContactList.addContact(jid);
+    ContactList.addContact(jid, UserId.getUID());
 
     // Once we've joined the muc show the toolbar
     ToolbarToggler.showToolbar();
@@ -701,7 +703,8 @@ $(document).bind('entered.muc', function (event, jid, info, pres) {
     console.log('is focus? ' + (focus ? 'true' : 'false'));
 
     // Add Peer's container
-    VideoLayout.ensurePeerContainerExists(jid);
+    var userId = $(pres).find(">userID").text();
+    VideoLayout.ensurePeerContainerExists(jid, userId);
 
     if (focus !== null) {
         // FIXME: this should prepare the video
@@ -1566,3 +1569,8 @@ function hangup() {
     );
 
 }
+
+$(document).on('videomuted.muc', function(event, who, value) {
+    var videoTag = $("#participant_" + Strophe.getResourceFromJid(who)).find('>video');
+    videoTag.css("display", value === "false" ? 'inline-block' : 'none');
+});
