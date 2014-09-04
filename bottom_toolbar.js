@@ -22,7 +22,7 @@ var BottomToolbar = (function (my) {
     };
 
     my.toggleFilmStrip = function() {
-        $("#remoteVideos").toggleClass("hidden");
+        $("#remoteVideos").toggle("slide", { direction: "down", duration: 700});
     };
 
 

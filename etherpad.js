@@ -46,7 +46,7 @@ var Etherpad = (function (my) {
                     largeVideo.css({opacity: '0'});
                 } else {
                     VideoLayout.setLargeVideoVisible(false);
-                    Toolbar.dockToolbar(true);
+                    ToolbarToggler.dockToolbar(true);
                 }
 
                 $('#etherpad>iframe').fadeIn(300, function () {
@@ -64,7 +64,7 @@ var Etherpad = (function (my) {
                 if (!isPresentation) {
                     $('#largeVideo').fadeIn(300, function () {
                         VideoLayout.setLargeVideoVisible(true);
-                        Toolbar.dockToolbar(false);
+                        ToolbarToggler.dockToolbar(false);
                     });
                 }
             });

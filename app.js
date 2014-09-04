@@ -601,7 +601,7 @@ $(document).bind('joined.muc', function (event, jid, info) {
     ContactList.addContact(jid);
 
     // Once we've joined the muc show the toolbar
-    Toolbar.showToolbar();
+    ToolbarToggler.showToolbar();
 
     if (info.displayName)
         $(document).trigger('displaynamechanged',
