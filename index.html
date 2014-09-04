@@ -44,6 +44,7 @@
     <script src="local_sts.js?v=1"></script><!-- Local stats processing -->
     <script src="videolayout.js?v=8"></script><!-- video ui -->
     <script src="toolbar.js?v=4"></script><!-- toolbar ui -->
+    <script src="toolbar_toggler.js"></script>
     <script src="canvas_util.js?v=1"></script><!-- canvas drawing utils -->
     <script src="audio_levels.js?v=1"></script><!-- audio levels plugin -->
     <script src="media_stream.js?v=1"></script><!-- media stream -->
@@ -228,7 +229,7 @@
           </form>
         </div>
         <div id="reloadPresentation"><a onclick='Prezi.reloadPresentation();'><i title="Reload Prezi" class="fa fa-repeat fa-lg"></i></a></div>
-        <div id="videospace" onmousemove="Toolbar.showToolbar();">
+        <div id="videospace" onmousemove="ToolbarToggler.showToolbar();">
             <div id="largeVideoContainer" class="videocontainer">
                 <div id="presentation"></div>
                 <div id="etherpad"></div>
@@ -253,13 +254,16 @@
                     <a class="bottomToolbarButton" data-toggle="popover" data-placement="top" data-content="Open / close chat" onclick='BottomToolbar.toggleChat();'>
                         <i id="chatBottomButton" class="icon-chat-simple"></i>
                     </a>
-                    <span id="unreadMessages"></span>
                 </span>
                 <span class="bottomToolbar_span">
                     <a class="bottomToolbarButton" data-toggle="popover" data-placement="top" data-content="Open / close contact list" onclick='BottomToolbar.toggleContactList();'>
                         <i id="contactListButton" class="icon-contactList"></i>
                     </a>
-                    <span id="unreadMessages"></span>
+                </span>
+                <span class="bottomToolbar_span">
+                    <a class="bottomToolbarButton" data-toggle="popover" data-placement="top" data-content="Show / hide film strip" onclick='BottomToolbar.toggleFilmStrip()'>
+                        <i id="filmStripButton" class="icon-filmstrip"></i>
+                    </a>
                 </span>
             </span>
         </div>

@@ -21,6 +21,10 @@ var BottomToolbar = (function (my) {
         ContactList.toggleContactList();
     };
 
+    my.toggleFilmStrip = function() {
+        $("#remoteVideos").toggle("slide", { direction: "down", duration: 700});
+    };
+
 
     $(document).bind("remotevideo.resized", function (event, width, height) {
         var bottom = (height - $('#bottomToolbar').outerHeight())/2 + 18;
