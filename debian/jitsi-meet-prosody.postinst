@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # postinst script for jitsi-meet-prosody
 #
 # see: dh_installdeb(1)
@@ -24,14 +24,24 @@ case "$1" in
         . /etc/default/jitsi-videobridge
 
         PROSODY_CONFIG_PRESENT="true"
+        # if there is no prosody config extract our template
         if [ ! -f /etc/prosody/prosody.cfg.lua ]; then
             PROSODY_CONFIG_PRESENT="false"
             gunzip -c /usr/share/doc/jitsi-meet-prosody/prosody.cfg.lua-jvb.example.gz > /etc/prosody/prosody.cfg.lua
         fi
 
-        if [ ! grep "VirtualHost \"$JVB_HOSTNAME\"" /etc/prosody/prosody.cfg.lua > /dev/null ]; then
+        # if there is no config for our domain, lets create it
+        if ! grep -q "VirtualHost \"$JVB_HOSTNAME\"" /etc/prosody/prosody.cfg.lua; then
+
+            # if its not our template, save the original and extract our template
+            if ! grep -q "VirtualHost \"jitmeet.example.com\"" /etc/prosody/prosody.cfg.lua; then
+                PROSODY_CONFIG_PRESENT="false"
+                cp /etc/prosody/prosody.cfg.lua /etc/prosody/prosody.cfg.lua.orig
+                gunzip -c /usr/share/doc/jitsi-meet-prosody/prosody.cfg.lua-jvb.example.gz > /etc/prosody/prosody.cfg.lua
+            fi
+
             if [ "PROSODY_CONFIG_PRESENT" = "true" ]; then
-                mv /etc/prosody/prosody.cfg.lua /etc/prosody/prosody.cfg.lua.orig
+                cp /etc/prosody/prosody.cfg.lua /etc/prosody/prosody.cfg.lua.orig
             fi
             sed -i "s/jitmeet.example.com/$JVB_HOSTNAME/g" /etc/prosody/prosody.cfg.lua
             sed -i "s/jitmeetSecret/$JVB_SECRET/g" /etc/prosody/prosody.cfg.lua
