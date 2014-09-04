@@ -20,8 +20,9 @@ set -e
 case "$1" in
     configure)
 
-        # nginx conf
         . /etc/default/jitsi-videobridge
+
+        # nginx conf
         if [ ! -f /etc/nginx/sites-available/$JVB_HOSTNAME.conf ]; then
             cp /usr/share/doc/jitsi-meet/jitsi-meet.example /etc/nginx/sites-available/$JVB_HOSTNAME.conf
             if [ ! -f /etc/nginx/sites-enabled/$JVB_HOSTNAME.conf ]; then
@@ -34,7 +35,7 @@ case "$1" in
             sed -i "s/#\ server_names_hash_bucket_size\ 64/\ server_names_hash_bucket_size\ 64/" /etc/nginx/nginx.conf
         fi
 
-        if [ ! -f /etc/ssl/$JVB_HOSTNAME.key] || [ ! -f /etc/ssl/$JVB_HOSTNAME.crt]; then
+        if [ ! -f /etc/ssl/$JVB_HOSTNAME.key ] || [ ! -f /etc/ssl/$JVB_HOSTNAME.crt ]; then
             # loading debconf
             . /usr/share/debconf/confmodule
 
@@ -62,10 +63,10 @@ case "$1" in
                 sed -i "s/ssl_certificate\ \/var\/lib\/prosody\/.*crt/ssl_certificate\ $CERT_CRT_ESC/g" \
                     /etc/nginx/sites-available/$JVB_HOSTNAME.conf
             fi
-        fi
 
-        # and we're done with debconf
-        db_stop
+            # and we're done with debconf
+            db_stop
+        fi
 
         # jitsi meet
         chown -R www-data:www-data /usr/share/jitsi-meet/
