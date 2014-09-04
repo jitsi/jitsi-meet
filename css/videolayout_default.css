@@ -19,6 +19,12 @@
     width:auto;
     border:1px solid transparent;
     z-index: 5;
+    -webkit-transition: bottom 2s; /* For Safari 3.1 to 6.0 */
+    transition: bottom 2s;
+}
+
+#remotevideos.hidden {
+    bottom: -196px;
 }
 
 .videocontainer {
