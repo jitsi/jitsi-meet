@@ -74,15 +74,15 @@ modules_enabled = {
                 --"motd"; -- Send a message to users when they log in
                 --"legacyauth"; -- Legacy authentication. Only used by some old clients and bots.
         -- jitmeet
-                "smacks";
-                "carbons";
-                "mam";
-                "lastactivity";
-                "offline";
+                --"smacks";
+                --"carbons";
+                --"mam";
+                --"lastactivity";
+                --"offline";
                 "pubsub";
-                "adhoc";
-                "websocket";
-                "http_altconnect";
+                --"adhoc";
+                --"websocket";
+                --"http_altconnect";
                 "turncredentials";
 }
 
