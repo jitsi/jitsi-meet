@@ -1,6 +1,5 @@
 jitsi-meet (1.0.1-1) unstable; urgency=low
 
-  * Initial release
-  * Jitsi Meet github snapshot from 2014-07-01
+  * Initial release. (Closes: #760485)
 
- -- Yasen Pramatarov <yasen@bluejimp.com>  Tue, 01 Jul 2014 16:31:41 +0300
+ -- Damian Minkov <damencho@jitsi.org>  Fri, 29 Aug 2014 16:38:14 +0200
