@@ -252,15 +252,18 @@ var Chat = (function (my) {
 
             $('#chatspace').show("slide", { direction: "right",
                                             queue: false,
-                                            duration: 500});
+                                            duration: 500,
+                                            complete: function () {
+                                                // Request the focus in the nickname field or the chat input field.
+                                                if ($('#nickname').css('visibility') === 'visible') {
+                                                    $('#nickinput').focus();
+                                                } else {
+                                                    $('#usermsg').focus();
+                                                }
+                                            }
+            });
         }
 
-        // Request the focus in the nickname field or the chat input field.
-        if ($('#nickname').css('visibility') === 'visible')
-            $('#nickinput').focus();
-        else {
-            $('#usermsg').focus();
-        }
     };
 
     /**
