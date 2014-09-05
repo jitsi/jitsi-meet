@@ -27,7 +27,7 @@ case "$1" in
         # if there is no prosody config extract our template
         if [ ! -f /etc/prosody/prosody.cfg.lua ]; then
             PROSODY_CONFIG_PRESENT="false"
-            cp /usr/share/doc/jitsi-meet-prosody/prosody.cfg.lua-jvb.example /etc/prosody/prosody.cfg.lua
+            gunzip -c /usr/share/doc/jitsi-meet-prosody/prosody.cfg.lua-jvb.example.gz /etc/prosody/prosody.cfg.lua
         fi
 
         # if there is no config for our domain, lets create it
@@ -37,7 +37,7 @@ case "$1" in
             if ! grep -q "VirtualHost \"jitmeet.example.com\"" /etc/prosody/prosody.cfg.lua; then
                 PROSODY_CONFIG_PRESENT="false"
                 cp /etc/prosody/prosody.cfg.lua /etc/prosody/prosody.cfg.lua.orig
-                cp /usr/share/doc/jitsi-meet-prosody/prosody.cfg.lua-jvb.example /etc/prosody/prosody.cfg.lua
+                gunzip -c /usr/share/doc/jitsi-meet-prosody/prosody.cfg.lua-jvb.example.gz /etc/prosody/prosody.cfg.lua
             fi
 
             if [ "PROSODY_CONFIG_PRESENT" = "true" ]; then
