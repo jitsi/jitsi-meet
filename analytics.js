@@ -1,3 +1,4 @@
+/* jshint ignore:start */
 /**
  * Google Analytics
  */
@@ -6,3 +7,4 @@
           })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
         ga('create', 'UA-319188-14', 'jit.si');
         ga('send', 'pageview');
+/* jshint ignore:end */

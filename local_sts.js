@@ -39,7 +39,7 @@ var LocalStatsCollector = (function() {
         if (!window.AudioContext)
             return;
 
-        var context = new AudioContext();
+        var context = new window.AudioContext();
         var analyser = context.createAnalyser();
         analyser.smoothingTimeConstant = WEBAUDIO_ANALIZER_SMOOTING_TIME;
         analyser.fftSize = WEBAUDIO_ANALIZER_FFT_SIZE;
@@ -55,7 +55,7 @@ var LocalStatsCollector = (function() {
             function () {
                 var array = new Uint8Array(analyser.frequencyBinCount);
                 analyser.getByteTimeDomainData(array);
-                var audioLevel = TimeDomainDataToAudioLevel(array);
+                var audioLevel = timeDomainDataToAudioLevel(array);
                 if(audioLevel != self.audioLevel) {
                     self.audioLevel = animateLevel(audioLevel, self.audioLevel);
                     self.updateCallback(LocalStatsCollectorProto.LOCAL_JID, self.audioLevel);
@@ -81,7 +81,7 @@ var LocalStatsCollector = (function() {
      * @param array the time domain data array.
      * @returns {number} the audio level
      */
-    var TimeDomainDataToAudioLevel = function (samples) {
+    var timeDomainDataToAudioLevel = function (samples) {
 
         var maxVolume = 0;
 

@@ -97,7 +97,7 @@ var AudioLevels = (function(my) {
                                     thumbnailHeight) {
         audioLevelCanvas.width = thumbnailWidth + CANVAS_EXTRA;
         audioLevelCanvas.height = thumbnailHeight + CANVAS_EXTRA;
-    };
+    }
 
     /**
      * Draws the audio level canvas into the cached canvas object.
@@ -146,7 +146,7 @@ var AudioLevels = (function(my) {
                                             CANVAS_RADIUS,
                                             SHADOW_COLOR,
                                             shadowLevel);
-    };
+    }
 
     /**
      * Returns the shadow/glow level for the given audio level.
@@ -167,7 +167,7 @@ var AudioLevels = (function(my) {
             shadowLevel = Math.round(CANVAS_EXTRA/2*((audioLevel - 0.6) / 0.4));
         }
         return shadowLevel;
-    };
+    }
 
     /**
      * Returns the video span id corresponding to the given resourceJid or local
@@ -183,7 +183,7 @@ var AudioLevels = (function(my) {
             videoSpanId = 'participant_' + resourceJid;
 
         return videoSpanId;
-    };
+    }
 
     /**
      * Indicates that the remote video has been resized.

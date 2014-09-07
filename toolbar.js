@@ -52,7 +52,7 @@ var Toolbar = (function (my) {
                         submit: function (e, v, m, f) {
                             if (v) {
                                 var lockKey = document.getElementById('lockKey');
-    
+
                                 if (lockKey.value) {
                                     setSharedKey(Util.escapeHtml(lockKey.value));
                                     lockRoom(true);
@@ -70,7 +70,7 @@ var Toolbar = (function (my) {
      */
     my.openLinkDialog = function () {
         var inviteLink;
-        if (roomUrl == null)
+        if (roomUrl === null)
             inviteLink = "Your conference is currently being created...";
         else
             inviteLink = encodeURI(roomUrl);
@@ -104,7 +104,7 @@ var Toolbar = (function (my) {
      * Invite participants to conference.
      */
     function inviteParticipants() {
-        if (roomUrl == null)
+        if (roomUrl === null)
             return;
 
         var sharedKeyText = "";
@@ -154,13 +154,13 @@ var Toolbar = (function (my) {
                         if ($('#initMuted').is(":checked")) {
                             // it is checked
                         }
-    
+
                         if ($('#requireNicknames').is(":checked")) {
                             // it is checked
                         }
                         /*
                         var lockKey = document.getElementById('lockKey');
-    
+
                         if (lockKey.value)
                         {
                             setSharedKey(lockKey.value);

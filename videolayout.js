@@ -177,7 +177,7 @@ var VideoLayout = (function (my) {
             oldContainer.removeClass("videoContainerFocused");
         }
 
-        // Unlock current focused. 
+        // Unlock current focused.
         if (focusedVideoSrc === videoSrc)
         {
             focusedVideoSrc = null;
@@ -284,9 +284,9 @@ var VideoLayout = (function (my) {
     /**
      * Checks if container for participant identified by given peerJid exists
      * in the document and creates it eventually.
-     * 
+     *
      * @param peerJid peer Jid to check.
-     * 
+     *
      * @return Returns <tt>true</tt> if the peer container exists,
      * <tt>false</tt> - otherwise
      */
@@ -335,7 +335,7 @@ var VideoLayout = (function (my) {
 
         // If the peerJid is null then this video span couldn't be directly
         // associated with a participant (this could happen in the case of prezi).
-        if (focus && peerJid != null)
+        if (focus && peerJid !== null)
             addRemoteVideoMenu(peerJid, container);
 
         remotes.appendChild(container);
@@ -438,7 +438,7 @@ var VideoLayout = (function (my) {
     /**
      * Removes the remote stream element corresponding to the given stream and
      * parent container.
-     * 
+     *
      * @param stream the stream
      * @param container
      */
@@ -491,7 +491,7 @@ var VideoLayout = (function (my) {
             peerContainer.show();
         else if (peerContainer.is(':visible') && !isShow)
             peerContainer.hide();
-    };
+    }
 
     /**
      * Sets the display name for the given video span id.
@@ -599,7 +599,7 @@ var VideoLayout = (function (my) {
                 });
             }
         }
-    };
+    }
 
     /**
      * Shows/hides the display name on the remote video.
@@ -609,7 +609,7 @@ var VideoLayout = (function (my) {
     my.showDisplayName = function(videoSpanId, isShow) {
         var nameSpan = $('#' + videoSpanId + '>span.displayname').get(0);
         if (isShow) {
-            if (nameSpan && nameSpan.innerHTML && nameSpan.innerHTML.length) 
+            if (nameSpan && nameSpan.innerHTML && nameSpan.innerHTML.length)
                 nameSpan.setAttribute("style", "display:inline-block;");
         }
         else {
@@ -656,8 +656,10 @@ var VideoLayout = (function (my) {
      * from the connection.jingle.sessions.
      */
     my.showFocusIndicator = function() {
+        var indicatorSpan;
+
         if (focus !== null) {
-            var indicatorSpan = $('#localVideoContainer .focusindicator');
+            indicatorSpan = $('#localVideoContainer .focusindicator');
 
             if (indicatorSpan.children().length === 0)
             {
@@ -677,7 +679,7 @@ var VideoLayout = (function (my) {
                 console.error("No focus container!");
                 return;
             }
-            var indicatorSpan = $('#' + focusId + ' .focusindicator');
+            indicatorSpan = $('#' + focusId + ' .focusindicator');
 
             if (!indicatorSpan || indicatorSpan.length === 0) {
                 indicatorSpan = document.createElement('span');
@@ -959,7 +961,7 @@ var VideoLayout = (function (my) {
 
    /**
     * Creates the edit display name button.
-    * 
+    *
     * @returns the edit button
     */
     function createEditDisplayNameButton() {
@@ -1035,7 +1037,7 @@ var VideoLayout = (function (my) {
         var i = containerElement.id.indexOf('participant_');
 
         if (i >= 0)
-            return containerElement.id.substring(i + 12); 
+            return containerElement.id.substring(i + 12);
     };
 
     /**
@@ -1081,7 +1083,7 @@ var VideoLayout = (function (my) {
         }
 
         muteLinkItem.onclick = function(){
-            if ($(this).attr('disabled') != undefined) {
+            if ($(this).attr('disabled') !== undefined) {
                 event.preventDefault();
             }
             var isMute = !mutedAudios[jid];
