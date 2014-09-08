@@ -19,6 +19,11 @@
     width:auto;
     border:1px solid transparent;
     z-index: 5;
+    transition: bottom 2s;
+}
+
+#remotevideos.hidden {
+    bottom: -196px;
 }
 
 .videocontainer {
