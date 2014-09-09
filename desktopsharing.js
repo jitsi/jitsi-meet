@@ -125,7 +125,7 @@ function doGetStreamFromExtension(streamCallback, failCallback) {
     // Sends 'getStream' msg to the extension. Extension id must be defined in the config.
     chrome.runtime.sendMessage(
         config.chromeExtensionId,
-        { getStream: true},
+        { getStream: true, sources: config.desktopSharingSources },
         function (response) {
             if (!response) {
                 failCallback(chrome.runtime.lastError);
