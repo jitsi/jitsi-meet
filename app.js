@@ -836,6 +836,7 @@ function getConferenceHandler() {
 }
 
 function toggleVideo() {
+    buttonClick("#video", "icon-camera icon-camera-disabled");
     if (!(connection && connection.jingle.localVideo))
         return;
 
@@ -1099,7 +1100,12 @@ $(document).ready(function () {
     Chat.init();
 
     $('body').popover({ selector: '[data-toggle=popover]',
-                        trigger: 'click hover'});
+        trigger: 'click hover',
+        content: function() {
+            return this.getAttribute("content") +
+                   KeyboardShortcut.getShortcut(this.getAttribute("shortcut"));
+        }
+    });
 
     // Set the defaults for prompt dialogs.
     jQuery.prompt.setDefaults({persistent: false});
