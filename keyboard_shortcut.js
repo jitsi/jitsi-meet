@@ -32,7 +32,8 @@ var KeyboardShortcut = (function(my) {
     };
 
     window.onkeyup = function(e) {
-        if($("#chatspace").css("display") === "none") {
+        if($("#chatspace").css("display") === "none" ||
+            !($("#usermsg").is(":focus") || $("#nickinput").is(":focus"))) {
             var keycode = e.which;
             if (typeof shortcuts[keycode] === "object") {
                 shortcuts[keycode].function();
