@@ -1,4 +1,5 @@
 var KeyboardShortcut = (function(my) {
+    //maps keycode to character, id of popover for given function and function
     var shortcuts = {
         67: {
             character: "C",
@@ -35,9 +36,9 @@ var KeyboardShortcut = (function(my) {
             var keycode = e.which;
             if (typeof shortcuts[keycode] === "object") {
                 shortcuts[keycode].function();
-            } else if (keycode >= 49 && keycode <= 57) {
+            } else if (keycode >= "1".charCodeAt(0) && keycode <= "9".charCodeAt(0)) {
                 var remoteVideos = $(".videocontainer:not(#mixedstream)"),
-                    videoWanted = keycode - 48;
+                    videoWanted = keycode - "0".charCodeAt(0);
                 if (remoteVideos.length > videoWanted) {
                     remoteVideos[videoWanted].click();
                 }
@@ -47,13 +48,14 @@ var KeyboardShortcut = (function(my) {
 
     window.onkeydown = function(e) {
         if($("#chatspace").css("display") === "none") {
-            if(e.which === 84) {
+            if(e.which === "T".charCodeAt(0)) {
                 if(isAudioMuted()) {
                     toggleAudio();
                 }
             }
         }
     };
+    
     /**
      *  
      * @param id indicates the popover associated with the shortcut
