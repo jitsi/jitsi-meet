@@ -10,6 +10,8 @@
 #export DH_VERBOSE=1
 
 %:
-	dh_install
+	dh $@
+
+override_dh_install:
 	dh_installdirs
-	dh $@ 
+	dh_install -Xlibs/strophe/strophe.min.js

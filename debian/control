@@ -3,14 +3,14 @@ Section: net
 Priority: extra
 Maintainer: Jitsi Team <dev@jitsi.org>
 Uploaders: Emil Ivov <emcho@jitsi.org>, Damian Minkov <damencho@jitsi.org>
-Build-Depends: debhelper (>= 8.0.0)
+Build-Depends: debhelper (>= 8.0.0), libjs-strophe (>= 1.1.3)
 Standards-Version: 3.9.5
 Homepage: https://jitsi.org/meet
 
 Package: jitsi-meet
 Architecture: all
 Pre-Depends: adduser, openssl, jitsi-videobridge
-Depends: ${misc:Depends}, nginx, jitsi-meet-prosody
+Depends: ${misc:Depends}, nginx, jitsi-meet-prosody, libjs-strophe (>= 1.1.3)
 Description: WebRTC JavaScript video conferences
  Jitsi Meet is a WebRTC JavaScript application that uses Jitsi
  Videobridge to provide high quality, scalable video conferences.
