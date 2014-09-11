@@ -611,7 +611,7 @@ $(document).bind('joined.muc', function (event, jid, info) {
 $(document).bind('entered.muc', function (event, jid, info, pres) {
     console.log('entered', jid, info);
 
-    console.log('is focus?' + focus ? 'true' : 'false');
+    console.log('is focus? ' + (focus ? 'true' : 'false'));
 
     // Add Peer's container
     VideoLayout.ensurePeerContainerExists(jid);
