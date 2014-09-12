@@ -130,10 +130,14 @@ if (TraceablePeerConnection.prototype.__defineGetter__ !== undefined) {
     TraceablePeerConnection.prototype.__defineGetter__('iceConnectionState', function() { return this.peerconnection.iceConnectionState; });
     TraceablePeerConnection.prototype.__defineGetter__('localDescription', function() {
         var simulcast = new Simulcast();
-        var publicLocalDescription = simulcast.makeLocalDescriptionPublic(this.peerconnection.localDescription);
+        var publicLocalDescription = simulcast.reverseTransformLocalDescription(this.peerconnection.localDescription);
         return publicLocalDescription;
     });
-    TraceablePeerConnection.prototype.__defineGetter__('remoteDescription', function() { return this.peerconnection.remoteDescription; });
+    TraceablePeerConnection.prototype.__defineGetter__('remoteDescription', function() {
+        var simulcast = new Simulcast();
+        var publicRemoteDescription = simulcast.reverseTransformRemoteDescription(this.peerconnection.remoteDescription);
+        return publicRemoteDescription;
+    });
 }
 
 TraceablePeerConnection.prototype.addStream = function (stream) {

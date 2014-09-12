@@ -120,7 +120,7 @@ JingleSession.prototype.accept = function () {
         pranswer.sdp = pranswer.sdp.replace('a=inactive', 'a=sendrecv');
     }
     var simulcast = new Simulcast();
-    pranswer = simulcast.makeLocalDescriptionPublic(pranswer);
+    pranswer = simulcast.reverseTransformLocalDescription(pranswer);
     var prsdp = new SDP(pranswer.sdp);
     var accept = $iq({to: this.peerjid,
         type: 'set'})
@@ -568,7 +568,7 @@ JingleSession.prototype.createdAnswer = function (sdp, provisional) {
                     responder: this.responder,
                     sid: this.sid });
             var simulcast = new Simulcast();
-            var publicLocalDesc = simulcast.makeLocalDescriptionPublic(sdp);
+            var publicLocalDesc = simulcast.reverseTransformLocalDescription(sdp);
             var publicLocalSDP = new SDP(publicLocalDesc.sdp);
             publicLocalSDP.toJingle(accept, this.initiator == this.me ? 'initiator' : 'responder');
             this.connection.sendIQ(accept,

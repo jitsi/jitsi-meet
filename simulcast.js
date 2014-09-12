@@ -15,7 +15,7 @@ function Simulcast() {
     "use strict";
     // global state for all transformers.
     var localExplosionMap = {}, localVideoSourceCache, emptyCompoundIndex,
-        remoteMaps = {
+        remoteVideoSourceCache, remoteMaps = {
             msid2Quality: {},
             ssrc2Msid: {},
             receivingVideoStreams: {}
@@ -43,6 +43,14 @@ function Simulcast() {
 
     Simulcast.prototype._restoreVideoSources = function (lines) {
         this._replaceVideoSources(lines, localVideoSourceCache);
+    };
+
+    Simulcast.prototype._cacheRemoteVideoSources = function (lines) {
+        remoteVideoSourceCache = this._getVideoSources(lines);
+    };
+
+    Simulcast.prototype._restoreRemoteVideoSources = function (lines) {
+        this._replaceVideoSources(lines, remoteVideoSourceCache);
     };
 
     Simulcast.prototype._replaceVideoSources = function (lines, videoSources) {
@@ -216,6 +224,12 @@ function Simulcast() {
         }
     };
 
+    /**
+     * Produces a single stream with multiple tracks for local video sources.
+     *
+     * @param lines
+     * @private
+     */
     Simulcast.prototype._explodeLocalSimulcastSources = function (lines) {
         var sb, msid, sid, tid, videoSources, self;
 
@@ -259,6 +273,12 @@ function Simulcast() {
         this._replaceVideoSources(lines, sb);
     };
 
+    /**
+     * Groups local video sources together in the ssrc-group:SIM group.
+     *
+     * @param lines
+     * @private
+     */
     Simulcast.prototype._groupLocalVideoSources = function (lines) {
         var sb, videoSources, ssrcs = [], ssrc;
 
@@ -401,6 +421,13 @@ function Simulcast() {
         return sb;
     };
 
+    /**
+     * Ensures that the simulcast group is present in the answer, _if_ native
+     * simulcast is enabled,
+     *
+     * @param desc
+     * @returns {*}
+     */
     Simulcast.prototype.transformAnswer = function (desc) {
         if (config.enableSimulcast && config.useNativeSimulcast) {
 
@@ -429,11 +456,53 @@ function Simulcast() {
         return desc;
     };
 
-    Simulcast.prototype.makeLocalDescriptionPublic = function (desc) {
+    Simulcast.prototype._restoreSimulcastGroups = function (sb) {
+        this._restoreRemoteVideoSources(sb);
+    };
+
+    /**
+     * Restores the simulcast groups of the remote description. In
+     * transformRemoteDescription we remove those in order for the set remote
+     * description to succeed. The focus needs the signal the groups to new
+     * participants.
+     *
+     * @param desc
+     * @returns {*}
+     */
+    Simulcast.prototype.reverseTransformRemoteDescription = function (desc) {
         var sb;
 
-        if (!desc || desc == null)
+        if (!desc || desc == null) {
             return desc;
+        }
+
+        if (config.enableSimulcast) {
+            sb = desc.sdp.split('\r\n');
+
+            this._restoreSimulcastGroups(sb);
+
+            desc = new RTCSessionDescription({
+                type: desc.type,
+                sdp: sb.join('\r\n')
+            });
+        }
+
+        return desc;
+    };
+
+    /**
+     * Prepares the local description for public usage (i.e. to be signaled
+     * through Jingle to the focus).
+     *
+     * @param desc
+     * @returns {RTCSessionDescription}
+     */
+    Simulcast.prototype.reverseTransformLocalDescription = function (desc) {
+        var sb;
+
+        if (!desc || desc == null) {
+            return desc;
+        }
 
         if (config.enableSimulcast) {
 
@@ -480,29 +549,15 @@ function Simulcast() {
         this._replaceVideoSources(lines, sb);
     };
 
-    Simulcast.prototype.transformBridgeDescription = function (desc) {
-        if (config.enableSimulcast && config.useNativeSimulcast) {
-
-            var sb = desc.sdp.split('\r\n');
-
-            this._ensureGoogConference(sb);
-
-            desc = new RTCSessionDescription({
-                type: desc.type,
-                sdp: sb.join('\r\n')
-            });
-
-            if (this.debugLvl && this.debugLvl > 1) {
-                console.info('Transformed bridge description');
-                console.info(desc.sdp);
-            }
-        }
-
-        return desc;
-    };
-
     Simulcast.prototype._updateRemoteMaps = function (lines) {
         var remoteVideoSources = this._parseMedia(lines, ['video'])[0], videoSource, quality;
+
+        // (re) initialize the remote maps.
+        remoteMaps = {
+            msid2Quality: {},
+            ssrc2Msid: {},
+            receivingVideoStreams: {}
+        };
 
         if (remoteVideoSources.groups && remoteVideoSources.groups.length !== 0) {
             remoteVideoSources.groups.forEach(function (group) {
@@ -518,6 +573,12 @@ function Simulcast() {
         }
     };
 
+    /**
+     *
+     *
+     * @param desc
+     * @returns {*}
+     */
     Simulcast.prototype.transformLocalDescription = function (desc) {
         if (config.enableSimulcast && !config.useNativeSimulcast) {
 
@@ -539,14 +600,28 @@ function Simulcast() {
         return desc;
     };
 
+    /**
+     * Removes the ssrc-group:SIM from the remote description bacause Chrome
+     * either gets confused and thinks this is an FID group or, if an FID group
+     * is already present, it fails to set the remote description.
+     *
+     * @param desc
+     * @returns {*}
+     */
     Simulcast.prototype.transformRemoteDescription = function (desc) {
         if (config.enableSimulcast) {
 
             var sb = desc.sdp.split('\r\n');
 
             this._updateRemoteMaps(sb);
-            this._removeSimulcastGroup(sb); // NOTE(gp) this needs to be called after updateRemoteMaps!
-            this._ensureGoogConference(sb);
+            this._cacheRemoteVideoSources(sb);
+            this._removeSimulcastGroup(sb); // NOTE(gp) this needs to be called after updateRemoteMaps because we need the simulcast group in the _updateRemoteMaps() method.
+
+            if (config.useNativeSimulcast) {
+                // We don't need the goog conference flag if we're not doing
+                // native simulcast.
+                this._ensureGoogConference(sb);
+            }
 
             desc = new RTCSessionDescription({
                 type: desc.type,
@@ -562,20 +637,28 @@ function Simulcast() {
         return desc;
     };
 
-    Simulcast.prototype.setReceivingVideoStream = function (ssrc) {
+    Simulcast.prototype._setReceivingVideoStream = function (ssrc) {
         var receivingTrack = remoteMaps.ssrc2Msid[ssrc],
             msidParts = receivingTrack.split(' ');
 
         remoteMaps.receivingVideoStreams[msidParts[0]] = msidParts[1];
     };
 
+    /**
+     * Returns a stream with single video track, the one currently being
+     * received by this endpoint.
+     *
+     * @param stream the remote simulcast stream.
+     * @returns {webkitMediaStream}
+     */
     Simulcast.prototype.getReceivingVideoStream = function (stream) {
-        var tracks, track, i, electedTrack, msid, quality = 1, receivingTrackId;
+        var tracks, i, electedTrack, msid, quality = 1, receivingTrackId;
 
         if (config.enableSimulcast) {
 
             if (remoteMaps.receivingVideoStreams[stream.id])
             {
+                // the bridge has signaled us to receive a specific track.
                 receivingTrackId = remoteMaps.receivingVideoStreams[stream.id];
                 tracks = stream.getVideoTracks();
                 for (i = 0; i < tracks.length; i++) {
@@ -587,15 +670,18 @@ function Simulcast() {
             }
 
             if (!electedTrack) {
+                // we don't have an elected track, choose by initial quality.
                 tracks = stream.getVideoTracks();
                 for (i = 0; i < tracks.length; i++) {
-                    track = tracks[i];
-                    msid = [stream.id, track.id].join(' ');
+                    msid = [stream.id, tracks[i].id].join(' ');
                     if (remoteMaps.msid2Quality[msid] === quality) {
-                        electedTrack = track;
+                        electedTrack = tracks[i];
                         break;
                     }
                 }
+
+                // TODO(gp) if the initialQuality could not be satisfied, lower
+                // the requirement and try again.
             }
         }
 
@@ -604,6 +690,15 @@ function Simulcast() {
             : stream;
     };
 
+    var stream;
+
+    /**
+     * GUM for simulcast.
+     *
+     * @param constraints
+     * @param success
+     * @param err
+     */
     Simulcast.prototype.getUserMedia = function (constraints, success, err) {
 
         // TODO(gp) what if we request a resolution not supported by the hardware?
@@ -620,7 +715,10 @@ function Simulcast() {
 
         if (config.enableSimulcast && !config.useNativeSimulcast) {
 
-            // NOTE(gp) if we request the lq stream first webkitGetUserMedia fails randomly. Tested with Chrome 37.
+            // NOTE(gp) if we request the lq stream first webkitGetUserMedia
+            // fails randomly. Tested with Chrome 37. As fippo suggested, the
+            // reason appears to be that Chrome only acquires the cam once and
+            // then downscales the picture (https://code.google.com/p/chromium/issues/detail?id=346616#c11)
 
             navigator.webkitGetUserMedia(constraints, function (hqStream) {
 
@@ -641,6 +739,7 @@ function Simulcast() {
                     localMaps.msids.splice(0, 0, lqStream.getVideoTracks()[0].id);
 
                     hqStream.addTrack(lqStream.getVideoTracks()[0]);
+                    stream = hqStream;
                     success(hqStream);
                 }, err);
             }, err);
@@ -656,18 +755,95 @@ function Simulcast() {
 
                 // add hq stream to local map
                 localMaps.msids.push(hqStream.getVideoTracks()[0].id);
-
+                stream = hqStream;
                 success(hqStream);
             }, err);
         }
     };
 
-    Simulcast.prototype.getRemoteVideoStreamIdBySSRC = function (primarySSRC) {
-        return remoteMaps.ssrc2Msid[primarySSRC];
+    /**
+     * Gets the fully qualified msid (stream.id + track.id) associated to the
+     * SSRC.
+     *
+     * @param ssrc
+     * @returns {*}
+     */
+    Simulcast.prototype.getRemoteVideoStreamIdBySSRC = function (ssrc) {
+        return remoteMaps.ssrc2Msid[ssrc];
     };
 
     Simulcast.prototype.parseMedia = function (desc, mediatypes) {
         var lines = desc.sdp.split('\r\n');
         return this._parseMedia(lines, mediatypes);
     };
+
+    Simulcast.prototype._startLocalVideoStream = function (ssrc) {
+        var trackid;
+
+        Object.keys(localMaps.msid2ssrc).some(function (tid) {
+            if (localMaps.msid2ssrc[tid] == ssrc)
+            {
+                trackid = tid;
+                return true;
+            }
+        });
+
+        stream.getVideoTracks().some(function(track) {
+            if (track.id === trackid) {
+                track.enabled = true;
+                return true;
+            }
+        });
+    };
+
+    Simulcast.prototype._stopLocalVideoStream = function (ssrc) {
+        var trackid;
+
+        Object.keys(localMaps.msid2ssrc).some(function (tid) {
+            if (localMaps.msid2ssrc[tid] == ssrc)
+            {
+                trackid = tid;
+                return true;
+            }
+        });
+
+        stream.getVideoTracks().some(function(track) {
+            if (track.id === trackid) {
+                track.enabled = false;
+                return true;
+            }
+        });
+    };
+
+    Simulcast.prototype.getLocalVideoStream = function() {
+        var track;
+
+        stream.getVideoTracks().some(function(t) {
+            if ((track = t).enabled) {
+                return true;
+            }
+        });
+
+        return new webkitMediaStream([track]);
+    };
+
+    $(document).bind('simulcastlayerschanged', function (event, endpointSimulcastLayers) {
+        endpointSimulcastLayers.forEach(function (esl) {
+            var ssrc = esl.simulcastLayer.primarySSRC;
+            var simulcast = new Simulcast();
+            simulcast._setReceivingVideoStream(ssrc);
+        });
+    });
+
+    $(document).bind('startsimulcastlayer', function(event, simulcastLayer) {
+        var ssrc = simulcastLayer.primarySSRC;
+        var simulcast = new Simulcast();
+        simulcast._startLocalVideoStream(ssrc);
+    });
+
+    $(document).bind('stopsimulcastlayer', function(event, simulcastLayer) {
+        var ssrc = simulcastLayer.primarySSRC;
+        var simulcast = new Simulcast();
+        simulcast._stopLocalVideoStream(ssrc);
+    });
 }());

@@ -23,6 +23,10 @@ function onDataChannel(event)
         //dataChannel.send("Hello bridge!");
         // Sends 12 bytes binary message to the bridge
         //dataChannel.send(new ArrayBuffer(12));
+
+        // TODO(gp) we are supposed to tell the bridge about video selections
+        // so that it can do adaptive simulcast, What if a video selection has
+        // been made while the data channels are down or broken?
     };
 
     dataChannel.onerror = function (error)
@@ -88,6 +92,16 @@ function onDataChannel(event)
             {
                 var endpointSimulcastLayers = obj.endpointSimulcastLayers;
                 $(document).trigger('simulcastlayerschanged', [endpointSimulcastLayers]);
+            }
+            else if ("StartSimulcastLayerEvent" === colibriClass)
+            {
+                var simulcastLayer = obj.simulcastLayer;
+                $(document).trigger('startsimulcastlayer', simulcastLayer);
+            }
+            else if ("StopSimulcastLayerEvent" === colibriClass)
+            {
+                var simulcastLayer = obj.simulcastLayer;
+                $(document).trigger('stopsimulcastlayer', simulcastLayer);
             }
             else
             {

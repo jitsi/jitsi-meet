@@ -116,6 +116,10 @@ var VideoLayout = (function (my) {
 
             var isVisible = $('#largeVideo').is(':visible');
 
+            // we need this here because after the fade the videoSrc may have
+            // changed.
+            var isDesktop = isVideoSrcDesktop(newSrc);
+
             $('#largeVideo').fadeOut(300, function () {
                 var oldSrc = $(this).attr('src');
 
@@ -137,7 +141,7 @@ var VideoLayout = (function (my) {
                 }
 
                 // Change the way we'll be measuring and positioning large video
-                var isDesktop = isVideoSrcDesktop(newSrc);
+
                 getVideoSize = isDesktop
                                 ? getDesktopVideoSize
                                 : getCameraVideoSize;
@@ -209,7 +213,7 @@ var VideoLayout = (function (my) {
 
         // Triggers a "video.selected" event. The "false" parameter indicates
         // this isn't a prezi.
-        $(document).trigger("video.selected", [false]);
+        $(document).trigger("video.selected", [false, userJid]);
 
         VideoLayout.updateLargeVideo(videoSrc, 1);
 
@@ -1294,6 +1298,28 @@ var VideoLayout = (function (my) {
         }
     });
 
+    $(document).bind('startsimulcastlayer', function(event, simulcastLayer) {
+        var localVideoSelector = $('#' + 'localVideo_' + connection.jingle.localVideo.id);
+        var simulcast = new Simulcast();
+        var stream = simulcast.getLocalVideoStream();
+
+        // Attach WebRTC stream
+        RTC.attachMediaStream(localVideoSelector, stream);
+
+        localVideoSrc = $(localVideoSelector).attr('src');
+    });
+
+    $(document).bind('stopsimulcastlayer', function(event, simulcastLayer) {
+        var localVideoSelector = $('#' + 'localVideo_' + connection.jingle.localVideo.id);
+        var simulcast = new Simulcast();
+        var stream = simulcast.getLocalVideoStream();
+
+        // Attach WebRTC stream
+        RTC.attachMediaStream(localVideoSelector, stream);
+
+        localVideoSrc = $(localVideoSelector).attr('src');
+    });
+
     /**
      * On simulcast layers changed event.
      */
@@ -1302,7 +1328,6 @@ var VideoLayout = (function (my) {
         endpointSimulcastLayers.forEach(function (esl) {
 
             var primarySSRC = esl.simulcastLayer.primarySSRC;
-            simulcast.setReceivingVideoStream(primarySSRC);
             var msid = simulcast.getRemoteVideoStreamIdBySSRC(primarySSRC);
 
             // Get session and stream from msid.

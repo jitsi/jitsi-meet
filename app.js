@@ -279,7 +279,10 @@ function waitForPresence(data, sid) {
         var ssrclines
             = SDPUtil.find_lines(sess.peerconnection.remoteDescription.sdp, 'a=ssrc:');
         ssrclines = ssrclines.filter(function (line) {
-            return line.indexOf('mslabel:' + data.stream.label) !== -1;
+            // NOTE(gp) previously we filtered on the mslabel, but that property
+            // is not always present.
+            // return line.indexOf('mslabel:' + data.stream.label) !== -1;
+            return line.indexOf('msid:' + data.stream.id) !== -1;
         });
         if (ssrclines.length) {
             thessrc = ssrclines[0].substring(7).split(' ')[0];
@@ -292,6 +295,7 @@ function waitForPresence(data, sid) {
             // presence to arrive.
 
             if (!ssrc2jid[thessrc]) {
+                // TODO(gp) limit wait duration to 1 sec.
                 setTimeout(function(d, s) {
                     return function() {
                             waitForPresence(d, s);
@@ -1417,6 +1421,17 @@ $(document).bind('fatalError.jingle',
             "Your browser version is too old. Please update and try again...");
     }
 );
+
+$(document).bind("video.selected", function(event, isPresentation, userJid) {
+    if (!isPresentation && _dataChannels && _dataChannels.length != 0) {
+        _dataChannels[0].send(JSON.stringify({
+            'colibriClass': 'SelectedEndpointChangedEvent',
+            'selectedEndpoint': (isPresentation || !userJid)
+                // TODO(gp) hmm.. I wonder which one of the Strophe methods to use..
+                ? null : userJid.split('/')[1]
+        }));
+    }
+});
 
 function callSipButtonClicked()
 {
