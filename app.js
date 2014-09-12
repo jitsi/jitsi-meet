@@ -160,9 +160,17 @@ function obtainAudioAndVideoPermissions(callback) {
         ['audio', 'video'],
         function (avStream) {
             callback(avStream);
+            trackUsage('localMedia', {
+                audio: avStream.getAudioTracks().length,
+                video: avStream.getVideoTracks().length
+            });
         },
         function (error) {
             console.error('failed to obtain audio/video stream - stop', error);
+            trackUsage('localMediaError', {
+                media: error.media || 'video',
+                name : error.name
+            });
         },
         config.resolution || '360');
 }
@@ -589,6 +597,39 @@ $(document).bind('setLocalDescription.jingle', function (event, sid) {
         }
 
         connection.emuc.sendPresence();
+    }
+});
+
+$(document).bind('iceconnectionstatechange.jingle', function (event, sid, session) {
+    switch (session.peerconnection.iceConnectionState) {
+    case 'checking': 
+        session.timeChecking = (new Date()).getTime();
+        session.firstconnect = true;
+        break;
+    case 'completed': // on caller side
+    case 'connected':
+        if (session.firstconnect) {
+            session.firstconnect = false;
+            var metadata = {};
+            metadata.setupTime = (new Date()).getTime() - session.timeChecking;
+            session.peerconnection.getStats(function (res) {
+                res.result().forEach(function (report) {
+                    if (report.type == 'googCandidatePair' && report.stat('googActiveConnection') == 'true') {
+                        metadata.localCandidateType = report.stat('googLocalCandidateType');
+                        metadata.remoteCandidateType = report.stat('googRemoteCandidateType');
+
+                        // log pair as well so we can get nice pie charts 
+                        metadata.candidatePair = report.stat('googLocalCandidateType') + ';' + report.stat('googRemoteCandidateType');
+
+                        if (report.stat('googRemoteAddress').indexOf('[') === 0) {
+                            metadata.ipv6 = true;
+                        }
+                    }
+                });
+                trackUsage('iceConnected', metadata);
+            });
+        }
+        break;
     }
 });
 

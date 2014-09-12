@@ -126,6 +126,7 @@ ColibriFocus.prototype.makeConference = function (peers) {
             window.setTimeout(function() { self.modifySources(); }, 1000);
         }
         */
+        $(document).trigger('iceconnectionstatechange.jingle', [self.sid, self]);
     };
     this.peerconnection.onsignalingstatechange = function (event) {
         console.warn(self.peerconnection.signalingState);
