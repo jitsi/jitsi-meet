@@ -185,6 +185,29 @@
         that.$element.trigger('shown.bs.' + that.type)
       }
 
+      var deltas = {
+          "bottom": $tip[0].getBoundingClientRect().bottom - window.innerHeight,
+          "right": $tip[0].getBoundingClientRect().right - window.innerWidth,
+          "left": -$tip[0].getBoundingClientRect().left,
+          "top": -$tip[0].getBoundingClientRect().top
+      };
+      for(var direction in deltas) {
+          if (deltas[direction] > 0) {
+              var delta = deltas[direction];
+              if(direction === "right" || direction === "bottom") {
+                  delta = -delta;
+              }
+              direction = direction === "top" || direction === "bottom" ? "top" : "left";
+              var currentPosition = parseInt($tip.css(direction), 10);
+              $tip.css(direction, currentPosition + delta);
+              if(direction === "left") {
+                  $tip.children(".arrow").css(direction, parseInt($tip.children(".arrow").css(direction), 10) - delta);
+              } else {
+                  $tip.children(".arrow").css(direction, 50 - $tip[0].getBoundingClientRect().height / delta + "%");
+              }
+          }
+      }
+
       $.support.transition && this.$tip.hasClass('fade') ?
         $tip
           .one($.support.transition.end, complete)

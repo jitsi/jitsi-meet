@@ -92,6 +92,11 @@ function init() {
 }
 
 function connect(jid, password) {
+    var localAudio, localVideo;
+    if (connection && connection.jingle) {
+        localAudio = connection.jingle.localAudio;
+        localVideo = connection.jingle.localVideo;
+    }
     connection = new Strophe.Connection(document.getElementById('boshURL').value || config.bosh || '/http-bind');
 
     if (nickname) {
@@ -107,6 +112,8 @@ function connect(jid, password) {
         if (!connection.jingle.pc_constraints.optional) connection.jingle.pc_constraints.optional = [];
         connection.jingle.pc_constraints.optional.push({googIPv6: true});
     }
+    if (localAudio) connection.jingle.localAudio = localAudio;
+    if (localVideo) connection.jingle.localVideo = localVideo;
 
     if(!password)
         password = document.getElementById('password').value;
@@ -144,16 +151,10 @@ function connect(jid, password) {
 }
 
 /**
- * HTTPS only:
- * We first ask for audio and video combined stream in order to get permissions and not to ask twice.
- * Then we dispose the stream and continue with separate audio, video streams(required for desktop sharing).
+ * We ask for audio and video combined stream in order to get permissions and
+ * not to ask twice.
  */
 function obtainAudioAndVideoPermissions(callback) {
-    // This makes sense only on https sites otherwise we'll be asked for permissions every time
-    if (location.protocol !== 'https:') {
-        callback();
-        return;
-    }
     // Get AV
     getUserMediaWithConstraints(
         ['audio', 'video'],
@@ -204,9 +205,11 @@ function doJoin() {
         if (path.length > 1) {
             roomnode = path.substr(1).toLowerCase();
         } else {
-            roomnode = Math.random().toString(36).substr(2, 20);
+            var word = RoomNameGenerator.generateRoomWithoutSeparator(3);
+            roomnode = word.toLowerCase();
+
             window.history.pushState('VideoChat',
-                    'Room: ' + roomnode, window.location.pathname + roomnode);
+                    'Room: ' + word, window.location.pathname + word);
         }
     }
 
@@ -641,14 +644,9 @@ $(document).bind('joined.muc', function (event, jid, info) {
     // Once we've joined the muc show the toolbar
     Toolbar.showToolbar();
 
-    var displayName = '';
     if (info.displayName)
-        displayName = info.displayName + ' (me)';
-    else
-        displayName = "Me";
-
-    $(document).trigger('displaynamechanged',
-                        ['localVideoContainer', displayName]);
+        $(document).trigger('displaynamechanged',
+                            ['localVideoContainer', info.displayName + ' (me)']);
 });
 
 $(document).bind('entered.muc', function (event, jid, info, pres) {
@@ -1077,23 +1075,59 @@ function getCameraVideoSize(videoWidth,
 }
 
 $(document).ready(function () {
+    document.title = brand.appName;
 
     if(config.enableWelcomePage && window.location.pathname == "/" &&
         (!window.localStorage.welcomePageDisabled || window.localStorage.welcomePageDisabled == "false"))
     {
         $("#videoconference_page").hide();
+        $("#domain_name").text(window.location.protocol + "//" + window.location.host + "/");
+        $("span[name='appName']").text(brand.appName);
+        function enter_room()
+        {
+            var val = $("#enter_room_field").val();
+            if(!val)
+                val = $("#enter_room_field").attr("room_name");
+            window.location.pathname = "/" + val;
+        }
         $("#enter_room_button").click(function()
         {
-            var val = Util.escapeHtml($("#enter_room_field").val());
-            window.location.pathname = "/" + val;
+            enter_room();
         });
 
         $("#enter_room_field").keydown(function (event) {
             if (event.keyCode === 13) {
-                var val = Util.escapeHtml(this.value);
-                window.location.pathname = "/" + val;
+                enter_room();
             }
         });
+
+        var updateTimeout;
+        var animateTimeout;
+        $("#reload_roomname").click(function () {
+            clearTimeout(updateTimeout);
+            clearTimeout(animateTimeout);
+            update_roomname();
+        });
+
+        function animate(word) {
+            var currentVal = $("#enter_room_field").attr("placeholder");
+            $("#enter_room_field").attr("placeholder", currentVal + word.substr(0, 1));
+            animateTimeout = setTimeout(function() {
+                    animate(word.substring(1, word.length))
+                }, 70);
+        }
+
+
+        function update_roomname()
+        {
+            var word = RoomNameGenerator.generateRoomWithoutSeparator();
+            $("#enter_room_field").attr("room_name", word);
+            $("#enter_room_field").attr("placeholder", "");
+            animate(word);
+            updateTimeout = setTimeout(update_roomname, 10000);
+
+        }
+        update_roomname();
 
         $("#disable_welcome").click(function () {
             window.localStorage.welcomePageDisabled = $("#disable_welcome").is(":checked");
@@ -1401,10 +1435,17 @@ function hangup() {
 
     $.prompt("Session Terminated",
         {
-            title: "You hang up the call",
+            title: "You hung up the call",
             persistent: true,
-            buttons: {},
-            closeText: ''
+            buttons: {
+                "Join again": true
+            },
+            closeText: '',
+            submit: function(event, value, message, formVals)
+            {
+                window.location.reload();
+                return false;
+            }
 
         }
     );

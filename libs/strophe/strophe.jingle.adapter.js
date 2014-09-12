@@ -577,23 +577,19 @@ function getUserMediaWithConstraints(um, success_callback, failure_callback, res
         case 'fullhd':
             constraints.video.mandatory.minWidth = 1920;
             constraints.video.mandatory.minHeight = 1080;
-            constraints.video.optional.push({ minAspectRatio: 1.77 });
             break;
         case '720':
         case 'hd':
             constraints.video.mandatory.minWidth = 1280;
             constraints.video.mandatory.minHeight = 720;
-            constraints.video.optional.push({ minAspectRatio: 1.77 });
             break;
         case '360':
             constraints.video.mandatory.minWidth = 640;
             constraints.video.mandatory.minHeight = 360;
-            constraints.video.optional.push({ minAspectRatio: 1.77 });
             break;
         case '180':
             constraints.video.mandatory.minWidth = 320;
             constraints.video.mandatory.minHeight = 180;
-            constraints.video.optional.push({ minAspectRatio: 1.77 });
             break;
         // 4:3
         case '960':
@@ -617,6 +613,10 @@ function getUserMediaWithConstraints(um, success_callback, failure_callback, res
             }
             break;
     }
+    if (constraints.video.mandatory.minWidth)
+        constraints.video.mandatory.maxWidth = constraints.video.mandatory.minWidth;
+    if (constraints.video.mandatory.minHeight)
+        constraints.video.mandatory.maxHeight = constraints.video.mandatory.minHeight;
 
     if (bandwidth) { // doesn't work currently, see webrtc issue 1846
         if (!constraints.video) constraints.video = {mandatory: {}, optional: []};//same behaviour as true

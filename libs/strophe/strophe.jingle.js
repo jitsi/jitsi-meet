@@ -253,7 +253,8 @@ Strophe.addConnectionPlugin('jingle', {
                 $(res).find('>services>service').each(function (idx, el) {
                     el = $(el);
                     var dict = {};
-                    switch (el.attr('type')) {
+                    var type = el.attr('type');
+                    switch (type) {
                         case 'stun':
                             dict.url = 'stun:' + el.attr('host');
                             if (el.attr('port')) {
@@ -262,7 +263,8 @@ Strophe.addConnectionPlugin('jingle', {
                             iceservers.push(dict);
                             break;
                         case 'turn':
-                            dict.url = 'turn:';
+                        case 'turns':
+                            dict.url = type + ':';
                             if (el.attr('username')) { // https://code.google.com/p/webrtc/issues/detail?id=1508
                                 if (navigator.userAgent.match(/Chrom(e|ium)\/([0-9]+)\./) && parseInt(navigator.userAgent.match(/Chrom(e|ium)\/([0-9]+)\./)[2], 10) < 28) {
                                     dict.url += el.attr('username') + '@';

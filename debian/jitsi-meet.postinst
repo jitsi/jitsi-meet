@@ -23,15 +23,14 @@ case "$1" in
 
         # nginx conf
         . /etc/default/jitsi-videobridge
-        cp /usr/share/doc/jitsi-meet/jitsi-meet.example /etc/nginx/sites-available/$JVB_HOSTNAME.conf
-        if [ ! -f /etc/nginx/sites-enabled/$JVB_HOSTNAME.conf ]; then
-            ln -s /etc/nginx/sites-available/$JVB_HOSTNAME.conf /etc/nginx/sites-enabled/$JVB_HOSTNAME.conf
+        if [ ! -f /etc/nginx/sites-available/$JVB_HOSTNAME.conf ]; then
+            cp /usr/share/doc/jitsi-meet/jitsi-meet.example /etc/nginx/sites-available/$JVB_HOSTNAME.conf
+            if [ ! -f /etc/nginx/sites-enabled/$JVB_HOSTNAME.conf ]; then
+                ln -s /etc/nginx/sites-available/$JVB_HOSTNAME.conf /etc/nginx/sites-enabled/$JVB_HOSTNAME.conf
+            fi
+            sed -i "s/jitsi-meet.example.com/$JVB_HOSTNAME/g" /etc/nginx/sites-available/$JVB_HOSTNAME.conf
         fi
-        sed -i "s/jitsi-meet.example.com/$JVB_HOSTNAME/g" /etc/nginx/sites-available/$JVB_HOSTNAME.conf
-        # FIXME do we need the default?
-        if [ ! -f /etc/nginx/sites-enabled/default ]; then
-            ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
-        fi
+
         if grep "# server_names_hash_bucket_size 64" /etc/nginx/nginx.conf > /dev/null; then
             sed -i "s/#\ server_names_hash_bucket_size\ 64/\ server_names_hash_bucket_size\ 64/" /etc/nginx/nginx.conf
         fi
@@ -40,9 +39,9 @@ case "$1" in
         chown -R www-data:www-data /usr/share/jitsi-meet/
         sed -i "s/jitsi-meet.example.com/$JVB_HOSTNAME/g" /usr/share/jitsi-meet/config.js
         # enable turn
-        if grep "//  useStunTurn: true," /usr/share/jitsi-meet/config.js > /dev/null; then
-            sed -i "s/\/\/\ \ useStunTurn:\ true,/\ \ \ \ useStunTurn:\ true,/" /usr/share/jitsi-meet/config.js
-        fi
+        #if grep "//  useStunTurn: true," /usr/share/jitsi-meet/config.js > /dev/null; then
+        #    sed -i "s/\/\/\ \ useStunTurn:\ true,/\ \ \ \ useStunTurn:\ true,/" /usr/share/jitsi-meet/config.js
+        #fi
         invoke-rc.d nginx restart
 
     ;;

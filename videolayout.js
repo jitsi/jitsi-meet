@@ -28,6 +28,9 @@ var VideoLayout = (function (my) {
         var localVideoContainer = document.getElementById('localVideoWrapper');
         localVideoContainer.appendChild(localVideo);
 
+        // Set default display name.
+        setDisplayName('localVideoContainer');
+
         AudioLevels.updateAudioLevelCanvas();
 
         var localVideoSelector = $('#' + localVideo.id);
@@ -102,7 +105,6 @@ var VideoLayout = (function (my) {
             }
         }
     };
-
 
     /**
      * Updates the large video with the given new video source.
@@ -305,6 +307,9 @@ var VideoLayout = (function (my) {
         else {
             var container
                 = VideoLayout.addRemoteVideoContainer(peerJid, videoSpanId);
+
+            // Set default display name.
+            setDisplayName(videoSpanId);
 
             var nickfield = document.createElement('span');
             nickfield.className = "nick";
@@ -541,7 +546,7 @@ var VideoLayout = (function (my) {
                 editableText.className = 'displayname';
                 editableText.id = 'editDisplayName';
 
-                if (displayName.length) {
+                if (displayName && displayName.length) {
                     editableText.value
                         = displayName.substring(0, displayName.indexOf(' (me)'));
                 }
