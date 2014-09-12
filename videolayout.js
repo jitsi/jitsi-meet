@@ -381,7 +381,9 @@ var VideoLayout = (function (my) {
             // If the container is currently visible we attach the stream.
             if (!isVideo
                 || (container.offsetParent !== null && isVideo)) {
-                RTC.attachMediaStream(sel, stream);
+                var simulcast = new Simulcast();
+                var videoStream = simulcast.getReceivingVideoStream(stream);
+                RTC.attachMediaStream(sel, videoStream);
 
                 if (isVideo)
                     waitForRemoteVideo(sel, thessrc, stream);
@@ -1248,7 +1250,9 @@ var VideoLayout = (function (my) {
                             && mediaStream.type === mediaStream.VIDEO_TYPE) {
                             var sel = $('#participant_' + resourceJid + '>video');
 
-                            RTC.attachMediaStream(sel, mediaStream.stream);
+                            var simulcast = new Simulcast();
+                            var videoStream = simulcast.getReceivingVideoStream(mediaStream.stream);
+                            RTC.attachMediaStream(sel, videoStream);
                             waitForRemoteVideo(
                                     sel,
                                     mediaStream.ssrc,
@@ -1286,6 +1290,85 @@ var VideoLayout = (function (my) {
 
             VideoLayout.showFocusIndicator();
         }
+    });
+
+    /**
+     * On simulcast layers changed event.
+     */
+    $(document).bind('simulcastlayerschanged', function (event, endpointSimulcastLayers) {
+        var simulcast = new Simulcast();
+        endpointSimulcastLayers.forEach(function (esl) {
+
+            var primarySSRC = esl.simulcastLayer.primarySSRC;
+            simulcast.setReceivingVideoStream(primarySSRC);
+            var msid = simulcast.getRemoteVideoStreamIdBySSRC(primarySSRC);
+
+            // Get session and stream from msid.
+            var session, electedStream;
+            var i, j, k;
+            if (connection.jingle) {
+                var keys = Object.keys(connection.jingle.sessions);
+                for (i = 0; i < keys.length; i++) {
+                    var sid = keys[i];
+
+                    if (electedStream) {
+                        // stream found, stop.
+                        break;
+                    }
+
+                    session = connection.jingle.sessions[sid];
+                    if (session.remoteStreams) {
+                        for (j = 0; j < session.remoteStreams.length; j++) {
+                            var remoteStream = session.remoteStreams[j];
+
+                            if (electedStream) {
+                                // stream found, stop.
+                                break;
+                            }
+                            var tracks = remoteStream.getVideoTracks();
+                            if (tracks) {
+                                for (k = 0; k < tracks.length; k++) {
+                                    var track = tracks[k];
+
+                                    if (msid === [remoteStream.id, track.id].join(' ')) {
+                                        electedStream = new webkitMediaStream([track]);
+                                        // stream found, stop.
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (session && electedStream) {
+                console.info('Switching simulcast substream.');
+                console.info([esl, primarySSRC, msid, session, electedStream]);
+
+                var msidParts = msid.split(' ');
+                var selRemoteVideo = $(['#', 'remoteVideo_', session.sid, '_', msidParts[0]].join(''));
+
+                var updateLargeVideo = (ssrc2jid[videoSrcToSsrc[selRemoteVideo.attr('src')]]
+                    == ssrc2jid[videoSrcToSsrc[$('#largeVideo').attr('src')]]);
+                var updateFocusedVideoSrc = (selRemoteVideo.attr('src') == focusedVideoSrc);
+
+                var electedStreamUrl = webkitURL.createObjectURL(electedStream);
+                selRemoteVideo.attr('src', electedStreamUrl);
+                videoSrcToSsrc[selRemoteVideo.attr('src')] = primarySSRC;
+
+                if (updateLargeVideo) {
+                    VideoLayout.updateLargeVideo(electedStreamUrl);
+                }
+
+                if (updateFocusedVideoSrc) {
+                    focusedVideoSrc = electedStreamUrl;
+                }
+
+            } else {
+                console.error('Could not find a stream or a session.');
+            }
+        });
     });
 
     return my;

@@ -84,6 +84,11 @@ function onDataChannel(event)
                         'lastnchanged',
                         [lastNEndpoints, endpointsEnteringLastN, stream]);
             }
+            else if ("SimulcastLayersChangedEvent" === colibriClass)
+            {
+                var endpointSimulcastLayers = obj.endpointSimulcastLayers;
+                $(document).trigger('simulcastlayerschanged', [endpointSimulcastLayers]);
+            }
             else
             {
                 console.debug("Data channel JSON-formatted message: ", obj);

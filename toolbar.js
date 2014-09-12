@@ -1,6 +1,4 @@
 var Toolbar = (function (my) {
-    var INITIAL_TOOLBAR_TIMEOUT = 20000;
-    var TOOLBAR_TIMEOUT = INITIAL_TOOLBAR_TIMEOUT;
 
     /**
      * Opens the lock room dialog.
@@ -199,90 +197,11 @@ var Toolbar = (function (my) {
             }
         }
     };
-
-    /**
-     * Shows the main toolbar.
-     */
-    my.showToolbar = function() {
-        if (!$('#header').is(':visible')) {
-            $('#header').show("slide", { direction: "up", duration: 300});
-            $('#subject').animate({top: "+=40"}, 300);
-
-            if (toolbarTimeout) {
-                clearTimeout(toolbarTimeout);
-                toolbarTimeout = null;
-            }
-            toolbarTimeout = setTimeout(hideToolbar, TOOLBAR_TIMEOUT);
-            TOOLBAR_TIMEOUT = 4000;
-        }
-
-        if (focus != null)
-        {
-//            TODO: Enable settings functionality. Need to uncomment the settings button in index.html.
-//            $('#settingsButton').css({visibility:"visible"});
-        }
-
-        // Show/hide desktop sharing button
-        showDesktopSharingButton();
-    };
-
-    /**
-     * Docks/undocks the toolbar.
-     *
-     * @param isDock indicates what operation to perform
-     */
-    my.dockToolbar = function(isDock) {
-        if (isDock) {
-            // First make sure the toolbar is shown.
-            if (!$('#header').is(':visible')) {
-                Toolbar.showToolbar();
-            }
-
-            // Then clear the time out, to dock the toolbar.
-            if (toolbarTimeout) {
-                clearTimeout(toolbarTimeout);
-                toolbarTimeout = null;
-            }
-        }
-        else {
-            if (!$('#header').is(':visible')) {
-                Toolbar.showToolbar();
-            }
-            else {
-                toolbarTimeout = setTimeout(hideToolbar, TOOLBAR_TIMEOUT);
-            }
-        }
-    };
-
     /**
      * Updates the lock button state.
      */
     my.updateLockButton = function() {
         buttonClick("#lockIcon", "icon-security icon-security-locked");
-    };
-
-    /**
-     * Hides the toolbar.
-     */
-    var hideToolbar = function () {
-        var isToolbarHover = false;
-        $('#header').find('*').each(function () {
-            var id = $(this).attr('id');
-            if ($("#" + id + ":hover").length > 0) {
-                isToolbarHover = true;
-            }
-        });
-
-        clearTimeout(toolbarTimeout);
-        toolbarTimeout = null;
-
-        if (!isToolbarHover) {
-            $('#header').hide("slide", { direction: "up", duration: 300});
-            $('#subject').animate({top: "-=40"}, 300);
-        }
-        else {
-            toolbarTimeout = setTimeout(hideToolbar, TOOLBAR_TIMEOUT);
-        }
     };
 
     // Shows or hides the 'recording' button.

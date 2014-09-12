@@ -1,0 +1,23 @@
+Template: jitsi-meet/cert-choice
+Type: select
+__Choices: Self-signed certificate will be generated, A certificate is available and the files are uploaded on the server
+_Description: SSL certificate for the Jitsi Meet instance
+ Jitsi Meet is best to be set up with an SSL certificate.
+ Having no certificate, a self-signed one will be generated.
+ Having a certificate signed by a recognised CA, it can be uploaded on the server
+ and point its location. The default filenames will be /etc/ssl/--domain.name--.key
+ for the key and /etc/ssl/--domain.name--.crt for the certificate.
+
+Template: jitsi-meet/cert-path-key
+Type: string
+Default: ${default-key}
+_Description: Full local server path to the SSL key file:
+ The full path to the SSL key file on the server.
+ If it has not been uploaded, now is a good time to do so.
+
+Template: jitsi-meet/cert-path-crt
+Type: string
+Default: ${default-crt}
+_Description: Full local server path to the SSL certificate file:
+ The full path to the SSL certificate file on the server.
+ If you haven't uploaded it, now is a good time to upload it in another console.

@@ -10,6 +10,7 @@
     <meta itemprop="description" content="Join a WebRTC video conference powered by the Jitsi Videobridge"/>
     <meta itemprop="image" content="/images/jitsilogo.png"/>
     <script src="libs/jquery-2.1.1.min.js"></script>
+    <script src="simulcast.js?v=1"></script><!-- simulcast handling -->
     <script src="libs/strophe/strophe.jingle.adapter.js?v=1"></script><!-- strophe.jingle bundles -->
     <script src="libs/strophe/strophe.jingle.bundle.js?v=8"></script>
     <script src="libs/strophe/strophe.jingle.js?v=1"></script>
@@ -17,6 +18,7 @@
     <script src="libs/strophe/strophe.jingle.sdp.util.js?v=1"></script>
     <script src="libs/strophe/strophe.jingle.sessionbase.js?v=1"></script>
     <script src="libs/strophe/strophe.jingle.session.js?v=1"></script>
+    <script src="libs/strophe/strophe.util.js"></script>
     <script src="libs/colibri/colibri.focus.js?v=8"></script><!-- colibri focus implementation -->
     <script src="libs/colibri/colibri.session.js?v=1"></script>
     <script src="libs/jquery-ui.js"></script>
@@ -29,13 +31,13 @@
     <script src="estos_log.js?v=2"></script><!-- simple stanza logger -->
     <script src="desktopsharing.js?v=2"></script><!-- desktop sharing -->
     <script src="data_channels.js?v=3"></script><!-- data channels -->
-    <script src="app.js?v=7"></script><!-- application logic -->
+    <script src="app.js?v=9"></script><!-- application logic -->
     <script src="commands.js?v=1"></script><!-- application logic -->
-    <script src="chat.js?v=9"></script><!-- chat logic -->
-    <script src="contact_list.js?v=1"></script><!-- contact list logic -->
+    <script src="chat.js?v=10"></script><!-- chat logic -->
+    <script src="contact_list.js?v=2"></script><!-- contact list logic -->
     <script src="util.js?v=6"></script><!-- utility functions -->
-    <script src="etherpad.js?v=8"></script><!-- etherpad plugin -->
-    <script src="prezi.js?v=4"></script><!-- prezi plugin -->
+    <script src="etherpad.js?v=9"></script><!-- etherpad plugin -->
+    <script src="prezi.js?v=5"></script><!-- prezi plugin -->
     <script src="smileys.js?v=2"></script><!-- smiley images -->
     <script src="replacement.js?v=6"></script><!-- link and smiley replacement -->
     <script src="moderatemuc.js?v=3"></script><!-- moderator plugin -->
@@ -43,17 +45,19 @@
     <script src="rtp_sts.js?v=1"></script><!-- RTP stats processing -->
     <script src="local_sts.js?v=1"></script><!-- Local stats processing -->
     <script src="videolayout.js?v=8"></script><!-- video ui -->
-    <script src="toolbar.js?v=4"></script><!-- toolbar ui -->
+    <script src="toolbar.js?v=5"></script><!-- toolbar ui -->
+    <script src="toolbar_toggler.js?v=1"></script>
     <script src="canvas_util.js?v=1"></script><!-- canvas drawing utils -->
     <script src="audio_levels.js?v=1"></script><!-- audio levels plugin -->
     <script src="media_stream.js?v=1"></script><!-- media stream -->
-    <script src="bottom_toolbar.js?v=1"></script><!-- media stream -->
+    <script src="bottom_toolbar.js?v=2"></script><!-- media stream -->
     <script src="roomname_generator.js?v=1"></script><!-- generator for random room names -->
+    <script src="keyboard_shortcut.js?v=1"></script>
     <script src="tracking.js?v=1"></script><!-- tracking -->
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/font.css?v=3"/>
+    <link rel="stylesheet" href="css/font.css?v=4"/>
     <link rel="stylesheet" type="text/css" media="screen" href="css/main.css?v=23"/>
-    <link rel="stylesheet" type="text/css" media="screen" href="css/videolayout_default.css?v=9" id="videolayout_default"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="css/videolayout_default.css?v=10" id="videolayout_default"/>
     <link rel="stylesheet" href="css/jquery-impromptu.css?v=4">
     <link rel="stylesheet" href="css/modaldialog.css?v=3">
     <link rel="stylesheet" href="css/popup_menu.css?v=2">
@@ -156,62 +160,62 @@
         <div style="position: relative;" id="header_container">
             <div id="header">
                 <span id="toolbar">
-                    <a class="button" data-toggle="popover" data-placement="bottom" data-content="Mute / Unmute" onclick='toggleAudio();'>
+                    <a class="button" data-toggle="popover" data-placement="bottom" shortcut="mutePopover" content="Mute / Unmute" onclick='toggleAudio();'>
                         <i id="mute" class="icon-microphone"></i>
                     </a>
                     <div class="header_button_separator"></div>
-                    <a class="button" data-toggle="popover" data-placement="bottom" data-content="Start / stop camera" onclick='buttonClick("#video", "icon-camera icon-camera-disabled");toggleVideo();'>
+                    <a class="button" data-toggle="popover" data-placement="bottom" shortcut="toggleVideoPopover" content="Start / stop camera" onclick='toggleVideo();'>
                         <i id="video" class="icon-camera"></i>
                     </a>
                     <span id="recording" style="display: none">
                         <div class="header_button_separator"></div>
-                        <a class="button" data-toggle="popover" data-placement="bottom" data-content="Record" onclick='toggleRecording();'>
+                        <a class="button" data-toggle="popover" data-placement="bottom" content="Record" onclick='toggleRecording();'>
                             <i id="recordButton" class="icon-recEnable"></i>
                         </a>
                     </span>
                     <div class="header_button_separator"></div>
-                    <a class="button" data-toggle="popover" data-placement="bottom" data-content="Lock / unlock room" onclick="Toolbar.openLockDialog();">
+                    <a class="button" data-toggle="popover" data-placement="bottom" content="Lock / unlock room" onclick="Toolbar.openLockDialog();">
                         <i id="lockIcon" class="icon-security"></i>
                     </a>
                     <div class="header_button_separator"></div>
-                    <a class="button" data-toggle="popover" data-placement="bottom" data-content="Invite others" onclick="Toolbar.openLinkDialog();">
+                    <a class="button" data-toggle="popover" data-placement="bottom" content="Invite others" onclick="Toolbar.openLinkDialog();">
                         <i class="icon-link"></i>
                     </a>
                     <div class="header_button_separator"></div>
                     <span class="toolbar_span">
-                        <a class="button" data-toggle="popover" data-placement="bottom" data-content="Open / close chat" onclick='BottomToolbar.toggleChat();'>
+                        <a class="button" data-toggle="popover" shortcut="toggleChatPopover" data-placement="bottom" content="Open / close chat" onclick='BottomToolbar.toggleChat();'>
                             <i id="chatButton" class="icon-chat"></i>
                         </a>
                         <span id="unreadMessages"></span>
                     </span>
                     <div class="header_button_separator"></div>
-                    <a class="button" data-toggle="popover" data-placement="bottom" data-content="Share Prezi" onclick='Prezi.openPreziDialog();'>
+                    <a class="button" data-toggle="popover" data-placement="bottom" content="Share Prezi" onclick='Prezi.openPreziDialog();'>
                         <i class="icon-prezi"></i>
                     </a>
                     <span id="etherpadButton">
                         <div class="header_button_separator"></div>
-                        <a class="button" data-toggle="popover" data-placement="bottom" data-content="Shared document" onclick='Etherpad.toggleEtherpad(0);'>
+                        <a class="button" data-toggle="popover" data-placement="bottom" content="Shared document" onclick='Etherpad.toggleEtherpad(0);'>
                             <i class="icon-share-doc"></i>
                         </a>
                     </span>
                     <div class="header_button_separator"></div>
                     <span id="desktopsharing" style="display: none">
-                        <a class="button" data-toggle="popover" data-placement="bottom" data-content="Share screen" onclick="toggleScreenSharing();">
+                        <a class="button" data-toggle="popover" data-placement="bottom" content="Share screen" onclick="toggleScreenSharing();">
                             <i class="icon-share-desktop"></i>
                         </a>
                     </span>
                     <div class="header_button_separator"></div>
-                    <a class="button" data-toggle="popover" data-placement="bottom" data-content="Enter / Exit Full Screen" onclick='buttonClick("#fullScreen", "icon-full-screen icon-exit-full-screen");Toolbar.toggleFullScreen();'>
+                    <a class="button" data-toggle="popover" data-placement="bottom" content="Enter / Exit Full Screen" onclick='buttonClick("#fullScreen", "icon-full-screen icon-exit-full-screen");Toolbar.toggleFullScreen();'>
                         <i id="fullScreen" class="icon-full-screen"></i>
                     </a>
                     <span id="sipCallButton">
                         <div class="header_button_separator"></div>
-                        <a class="button" data-toggle="popover" data-placement="bottom" data-content="Call SIP number" onclick='callSipButtonClicked();'>
+                        <a class="button" data-toggle="popover" data-placement="bottom" content="Call SIP number" onclick='callSipButtonClicked();'>
                             <i class="icon-telephone"></i></a>
                     </span>
                     <div class="header_button_separator"></div>
                     <span id="hangup">
-                        <a class="button" data-toggle="popover" data-placement="bottom" data-content="Hang Up" onclick='hangup();'>
+                        <a class="button" data-toggle="popover" data-placement="bottom" content="Hang Up" onclick='hangup();'>
                             <i class="icon-hangup" style="color:#ff0000;font-size: 1.4em;"></i>
                         </a>
                     </span>
@@ -229,7 +233,7 @@
           </form>
         </div>
         <div id="reloadPresentation"><a onclick='Prezi.reloadPresentation();'><i title="Reload Prezi" class="fa fa-repeat fa-lg"></i></a></div>
-        <div id="videospace" onmousemove="Toolbar.showToolbar();">
+        <div id="videospace" onmousemove="ToolbarToggler.showToolbar();">
             <div id="largeVideoContainer" class="videocontainer">
                 <div id="presentation"></div>
                 <div id="etherpad"></div>
@@ -251,16 +255,19 @@
             </div>
             <span id="bottomToolbar">
                 <span class="bottomToolbar_span">
-                    <a class="bottomToolbarButton" data-toggle="popover" data-placement="top" data-content="Open / close chat" onclick='BottomToolbar.toggleChat();'>
+                    <a class="bottomToolbarButton" data-container="body" data-toggle="popover" shortcut="toggleChatPopover" data-placement="top" content="Open / close chat" onclick='BottomToolbar.toggleChat();'>
                         <i id="chatBottomButton" class="icon-chat-simple"></i>
                     </a>
-                    <span id="unreadMessages"></span>
                 </span>
                 <span class="bottomToolbar_span">
-                    <a class="bottomToolbarButton" data-toggle="popover" data-placement="top" data-content="Open / close contact list" onclick='BottomToolbar.toggleContactList();'>
+                    <a class="bottomToolbarButton" data-container="body" data-toggle="popover" data-placement="top" data-container="body" id="contactlistpopover" content="Open / close contact list" onclick='BottomToolbar.toggleContactList();'>
                         <i id="contactListButton" class="icon-contactList"></i>
                     </a>
-                    <span id="unreadMessages"></span>
+                </span>
+                <span class="bottomToolbar_span">
+                    <a class="bottomToolbarButton" data-container="body" data-toggle="popover" shortcut="filmstripPopover" data-placement="top" content="Show / hide film strip" onclick='BottomToolbar.toggleFilmStrip()'>
+                        <i id="filmStripButton" class="icon-filmstrip"></i>
+                    </a>
                 </span>
             </span>
         </div>

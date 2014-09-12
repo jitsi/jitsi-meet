@@ -1,0 +1,3 @@
+# The strophe.min.js file, from http://strophe.im/strophejs/ (https://github.com/strophe/strophejs)
+# contains the source with minimum space characters
+source-is-missing libs/strophe/strophe.jingle.bundle.js

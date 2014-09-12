@@ -4,7 +4,7 @@ Priority: extra
 Maintainer: Jitsi Team <dev@jitsi.org>
 Uploaders: Emil Ivov <emcho@jitsi.org>, Damian Minkov <damencho@jitsi.org>
 Build-Depends: debhelper (>= 8.0.0)
-Standards-Version: 3.9.3
+Standards-Version: 3.9.5
 Homepage: https://jitsi.org/meet
 
 Package: jitsi-meet
@@ -20,8 +20,8 @@ Description: WebRTC JavaScript video conferences
 
 Package: jitsi-meet-prosody
 Architecture: all
-Pre-Depends: adduser, openssl, prosody-trunk, jitsi-videobridge
-Depends: ${misc:Depends}, nginx, prosody-modules-otalk, lua-sec
+Pre-Depends: adduser, openssl, prosody | prosody-trunk, jitsi-videobridge
+Depends: ${misc:Depends}, nginx, prosody-module-turncredentials | prosody-modules-otalk, lua-sec
 Description: Prosody configuration for Jitsi Meet
  Jitsi Meet is a WebRTC JavaScript application that uses Jitsi
  Videobridge to provide high quality, scalable video conferences.

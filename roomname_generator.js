@@ -118,7 +118,7 @@ var RoomNameGenerator = function(my) {
      */
     function generateWord()
     {
-        return words[( Math.round(((new Date().getTime() / 1000) +Math.random()*1000) % 1008))];
+        return words[Math.floor(Math.random() * words.length)];
     }
 
     /**

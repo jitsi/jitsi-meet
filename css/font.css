@@ -103,3 +103,6 @@
 .icon-reload:before {
     content: "\e618";
 }
+.icon-filmstrip:before {
+    content: "\e619";
+}

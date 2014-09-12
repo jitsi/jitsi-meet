@@ -13,13 +13,16 @@ var config = {
     bosh: '//jitsi-meet.example.com/http-bind', // FIXME: use xep-0156 for that
     desktopSharing: 'ext', // Desktop sharing method. Can be set to 'ext', 'webrtc' or false to disable.
     chromeExtensionId: 'diibjkoicjeejcmhdnailmkgecihlobk', // Id of desktop streamer Chrome extension
+    desktopSharingSources: ['screen', 'window'],
     minChromeExtVersion: '0.1', // Required version of Chrome extension
     enableRtpStats: true, // Enables RTP stats processing
     openSctp: true, // Toggle to enable/disable SCTP channels
     channelLastN: -1, // The default value of the channel attribute last-n.
-//    useRtcpMux: true,
-//    useBundle: true,
+    useRtcpMux: true,
+    useBundle: true,
     enableRecording: false,
     enableWelcomePage: false,
+    enableSimulcast: false,
+    useNativeSimulcast: false,
     isBrand: false
 };

@@ -143,7 +143,7 @@ var ContactList = (function (my) {
             // Undock the toolbar when the chat is shown and if we're in a 
             // video mode.
             if (VideoLayout.isLargeVideoVisible())
-                Toolbar.dockToolbar(false);
+                ToolbarToggler.dockToolbar(false);
 
             videospace.animate({right: chatSize[0],
                                 width: videospaceWidth,

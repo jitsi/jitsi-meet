@@ -207,7 +207,7 @@ var Chat = (function (my) {
             // Undock the toolbar when the chat is shown and if we're in a 
             // video mode.
             if (VideoLayout.isLargeVideoVisible())
-                Toolbar.dockToolbar(false);
+                ToolbarToggler.dockToolbar(false);
 
             videospace.animate({right: chatSize[0],
                                 width: videospaceWidth,
@@ -252,15 +252,18 @@ var Chat = (function (my) {
 
             $('#chatspace').show("slide", { direction: "right",
                                             queue: false,
-                                            duration: 500});
+                                            duration: 500,
+                                            complete: function () {
+                                                // Request the focus in the nickname field or the chat input field.
+                                                if ($('#nickname').css('visibility') === 'visible') {
+                                                    $('#nickinput').focus();
+                                                } else {
+                                                    $('#usermsg').focus();
+                                                }
+                                            }
+            });
         }
 
-        // Request the focus in the nickname field or the chat input field.
-        if ($('#nickname').css('visibility') === 'visible')
-            $('#nickinput').focus();
-        else {
-            $('#usermsg').focus();
-        }
     };
 
     /**
@@ -333,7 +336,7 @@ var Chat = (function (my) {
         if (unreadMessages) {
             unreadMsgElement.innerHTML = unreadMessages.toString();
 
-            Toolbar.dockToolbar(true);
+            ToolbarToggler.dockToolbar(true);
 
             var chatButtonElement
                 = document.getElementById('chatButton').parentNode;

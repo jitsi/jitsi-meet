@@ -128,7 +128,11 @@ dumpSDP = function(description) {
 if (TraceablePeerConnection.prototype.__defineGetter__ !== undefined) {
     TraceablePeerConnection.prototype.__defineGetter__('signalingState', function() { return this.peerconnection.signalingState; });
     TraceablePeerConnection.prototype.__defineGetter__('iceConnectionState', function() { return this.peerconnection.iceConnectionState; });
-    TraceablePeerConnection.prototype.__defineGetter__('localDescription', function() { return this.peerconnection.localDescription; });
+    TraceablePeerConnection.prototype.__defineGetter__('localDescription', function() {
+        var simulcast = new Simulcast();
+        var publicLocalDescription = simulcast.makeLocalDescriptionPublic(this.peerconnection.localDescription);
+        return publicLocalDescription;
+    });
     TraceablePeerConnection.prototype.__defineGetter__('remoteDescription', function() { return this.peerconnection.remoteDescription; });
 }
 
@@ -149,6 +153,8 @@ TraceablePeerConnection.prototype.createDataChannel = function (label, opts) {
 
 TraceablePeerConnection.prototype.setLocalDescription = function (description, successCallback, failureCallback) {
     var self = this;
+    var simulcast = new Simulcast();
+    description = simulcast.transformLocalDescription(description);
     this.trace('setLocalDescription', dumpSDP(description));
     this.peerconnection.setLocalDescription(description,
         function () {
@@ -169,6 +175,8 @@ TraceablePeerConnection.prototype.setLocalDescription = function (description, s
 
 TraceablePeerConnection.prototype.setRemoteDescription = function (description, successCallback, failureCallback) {
     var self = this;
+    var simulcast = new Simulcast();
+    description = simulcast.transformRemoteDescription(description);
     this.trace('setRemoteDescription', dumpSDP(description));
     this.peerconnection.setRemoteDescription(description,
         function () {
@@ -208,6 +216,16 @@ TraceablePeerConnection.prototype.addSource = function (elem) {
     $(elem).each(function (idx, content) {
         var name = $(content).attr('name');
         var lines = '';
+        tmp = $(content).find('ssrc-group[xmlns="urn:xmpp:jingle:apps:rtp:ssma:0"]').each(function() {
+            var semantics = this.getAttribute('semantics');
+            var ssrcs = $(this).find('>source').map(function () {
+                return this.getAttribute('ssrc');
+            }).get();
+
+            if (ssrcs.length != 0) {
+                lines += 'a=ssrc-group:' + semantics + ' ' + ssrcs.join(' ') + '\r\n';
+            }
+        });
         tmp = $(content).find('source[xmlns="urn:xmpp:jingle:apps:rtp:ssma:0"]'); // can handle both >source and >description>source
         tmp.each(function () {
             var ssrc = $(this).attr('ssrc');
@@ -254,6 +272,16 @@ TraceablePeerConnection.prototype.removeSource = function (elem) {
     $(elem).each(function (idx, content) {
         var name = $(content).attr('name');
         var lines = '';
+        tmp = $(content).find('ssrc-group[xmlns="urn:xmpp:jingle:apps:rtp:ssma:0"]').each(function() {
+            var semantics = this.getAttribute('semantics');
+            var ssrcs = $(this).find('>source').map(function () {
+                return this.getAttribute('ssrc');
+            }).get();
+
+            if (ssrcs.length != 0) {
+                lines += 'a=ssrc-group:' + semantics + ' ' + ssrcs.join(' ') + '\r\n';
+            }
+        });
         tmp = $(content).find('source[xmlns="urn:xmpp:jingle:apps:rtp:ssma:0"]'); // can handle both >source and >description>source
         tmp.each(function () {
             var ssrc = $(this).attr('ssrc');
@@ -413,6 +441,8 @@ TraceablePeerConnection.prototype.createAnswer = function (successCallback, fail
     this.trace('createAnswer', JSON.stringify(constraints, null, ' '));
     this.peerconnection.createAnswer(
         function (answer) {
+            var simulcast = new Simulcast();
+            answer = simulcast.transformAnswer(answer);
             self.trace('createAnswerOnSuccess', dumpSDP(answer));
             successCallback(answer);
         },
@@ -628,18 +658,43 @@ function getUserMediaWithConstraints(um, success_callback, failure_callback, res
         constraints.video.mandatory.minFrameRate = fps;
     }
 
+    var isFF = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+
     try {
-        RTC.getUserMedia(constraints,
-            function (stream) {
-                console.log('onUserMediaSuccess');
-                success_callback(stream);
-            },
-            function (error) {
-                console.warn('Failed to get access to local media. Error ', error);
-                if(failure_callback) {
-                    failure_callback(error);
-                }
-            });
+        if (config.enableSimulcast
+            && constraints.video
+            && constraints.video.chromeMediaSource !== 'screen'
+            && constraints.video.chromeMediaSource !== 'desktop'
+            && !isAndroid
+
+            // We currently do not support FF, as it doesn't have multistream support.
+            && !isFF) {
+            var simulcast = new Simulcast();
+            simulcast.getUserMedia(constraints, function (stream) {
+                    console.log('onUserMediaSuccess');
+                    success_callback(stream);
+                },
+                function (error) {
+                    console.warn('Failed to get access to local media. Error ', error);
+                    if (failure_callback) {
+                        failure_callback(error);
+                    }
+                });
+        } else {
+
+            RTC.getUserMedia(constraints,
+                function (stream) {
+                    console.log('onUserMediaSuccess');
+                    success_callback(stream);
+                },
+                function (error) {
+                    console.warn('Failed to get access to local media. Error ', error);
+                    if (failure_callback) {
+                        failure_callback(error);
+                    }
+                });
+
+        }
     } catch (e) {
         console.error('GUM failed: ', e);
         if(failure_callback) {
