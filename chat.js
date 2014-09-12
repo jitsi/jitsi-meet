@@ -1,4 +1,3 @@
-/* global $, Util, connection, nickname:true, getVideoSize, getVideoPosition, showToolbar, processReplacements */
 /**
  * Chat related user interface.
  */
@@ -126,7 +125,7 @@ var Chat = (function (my) {
         if(subject)
             subject = subject.trim();
         $('#subject').html(linkify(Util.escapeHtml(subject)));
-        if(subject == "")
+        if(subject === "")
         {
             $("#subject").css({display: "none"});
         }
@@ -204,7 +203,7 @@ var Chat = (function (my) {
                                             duration: 500});
         }
         else {
-            // Undock the toolbar when the chat is shown and if we're in a 
+            // Undock the toolbar when the chat is shown and if we're in a
             // video mode.
             if (VideoLayout.isLargeVideoVisible())
                 ToolbarToggler.dockToolbar(false);

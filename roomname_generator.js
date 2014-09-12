@@ -135,9 +135,9 @@ var RoomNameGenerator = function(my) {
             number_of_words = NUMBER_OF_WORDS;
         var name = "";
         for(var i = 0; i<number_of_words; i++)
-            name += ((i != 0)? separator : "") + generateWord();
+            name += ((i !== 0)? separator : "") + generateWord();
         return name;
-    }
+    };
 
     /**
      * Generates new room name.
@@ -155,7 +155,7 @@ var RoomNameGenerator = function(my) {
             name += word ;
         }
         return name;
-    }
+    };
 
     return RoomNameGeneratorProto;
 }();

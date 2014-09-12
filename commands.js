@@ -21,12 +21,12 @@ var CommandsProcessor = (function()
             {
                 for(var command in commands)
                 {
-                    if(message.indexOf("/" + command) == 0)
+                    if(message.indexOf("/" + command) === 0)
                         return command;
                 }
             }
             return "";
-        };
+        }
 
         var command = getCommand(message);
 
@@ -37,7 +37,7 @@ var CommandsProcessor = (function()
         this.getCommand = function()
         {
             return command;
-        }
+        };
 
 
         var messageArgument = message.substr(command.length + 2);
@@ -49,7 +49,7 @@ var CommandsProcessor = (function()
         this.getArgument = function()
         {
             return messageArgument;
-        }
+        };
     }
 
     /**
@@ -61,7 +61,7 @@ var CommandsProcessor = (function()
         if(this.getCommand())
             return true;
         return false;
-    }
+    };
 
     /**
      * Processes the command.
@@ -73,7 +73,7 @@ var CommandsProcessor = (function()
 
         commands[this.getCommand()](this.getArgument());
 
-    }
+    };
 
     /**
      * Processes the data for topic command.
@@ -83,7 +83,7 @@ var CommandsProcessor = (function()
     {
         var topic = Util.escapeHtml(commandArguments);
         connection.emuc.setSubject(topic);
-    }
+    };
 
     /**
      * List with supported commands. The keys are the names of the commands and

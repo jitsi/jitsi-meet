@@ -140,7 +140,7 @@ var ContactList = (function (my) {
                                             duration: 500});
         }
         else {
-            // Undock the toolbar when the chat is shown and if we're in a 
+            // Undock the toolbar when the chat is shown and if we're in a
             // video mode.
             if (VideoLayout.isLargeVideoVisible())
                 ToolbarToggler.dockToolbar(false);
@@ -193,7 +193,7 @@ var ContactList = (function (my) {
 
     /**
      * Creates the avatar element.
-     * 
+     *
      * @return the newly created avatar element
      */
     function createAvatar() {
@@ -201,7 +201,7 @@ var ContactList = (function (my) {
         avatar.className = "icon-avatar avatar";
 
         return avatar;
-    };
+    }
 
     /**
      * Creates the display name paragraph.
@@ -213,7 +213,7 @@ var ContactList = (function (my) {
         p.innerHTML = displayName;
 
         return p;
-    };
+    }
 
     /**
      * Indicates that the display name has changed.

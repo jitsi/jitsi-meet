@@ -24,7 +24,7 @@ var ToolbarToggler = (function(my) {
             TOOLBAR_TIMEOUT = 4000;
         }
 
-        if (focus != null)
+        if (focus !== null)
         {
 //            TODO: Enable settings functionality. Need to uncomment the settings button in index.html.
 //            $('#settingsButton').css({visibility:"visible"});

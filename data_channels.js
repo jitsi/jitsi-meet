@@ -1,5 +1,3 @@
-/* global connection, Strophe, updateLargeVideo, focusedVideoSrc*/
-
 // cache datachannels to avoid garbage collection
 // https://code.google.com/p/chromium/issues/detail?id=405545
 var _dataChannels = [];
@@ -100,7 +98,7 @@ function onDataChannel(event)
     {
         console.info("The Data Channel closed", dataChannel);
         var idx = _dataChannels.indexOf(dataChannel);
-        if (idx > -1) 
+        if (idx > -1)
             _dataChannels = _dataChannels.splice(idx, 1);
     };
     _dataChannels.push(dataChannel);

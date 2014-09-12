@@ -1,4 +1,3 @@
-/* global $, config, Prezi, Util, connection, setLargeVideoVisible, dockToolbar */
 var Etherpad = (function (my) {
     var etherpadName = null;
     var etherpadIFrame = null;
