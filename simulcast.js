@@ -633,8 +633,12 @@ function Simulcast() {
 
                 navigator.webkitGetUserMedia(lqConstraints, function (lqStream) {
 
+                    // NOTE(gp) The specification says Array.forEach() will visit
+                    // the array elements in numeric order, and that it doesn't
+                    // visit elements that don't exist.
+
                     // add lq trackid to local map
-                    localMaps.msids.push(lqStream.getVideoTracks()[0].id);
+                    localMaps.msids.splice(0, 0, lqStream.getVideoTracks()[0].id);
 
                     hqStream.addTrack(lqStream.getVideoTracks()[0]);
                     success(hqStream);
