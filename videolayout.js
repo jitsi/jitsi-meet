@@ -731,6 +731,7 @@ var VideoLayout = (function (my) {
 
         if (isMuted === 'false') {
             if (audioMutedSpan.length > 0) {
+                audioMutedSpan.popover('hide');
                 audioMutedSpan.remove();
             }
         }
