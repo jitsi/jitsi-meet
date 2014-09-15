@@ -191,6 +191,24 @@ SessionBase.prototype.sendSSRCUpdateIq = function(sdpMediaSsrcs, sid, initiator,
             });
             modify.up(); // end of source
         });
+
+        // generate source groups from lines
+        channel.ssrcGroups.forEach(function(ssrcGroup) {
+            if (ssrcGroup.ssrcs.length != 0) {
+
+                modify.c('ssrc-group', {
+                    semantics: ssrcGroup.semantics,
+                    xmlns: 'urn:xmpp:jingle:apps:rtp:ssma:0'
+                });
+
+                ssrcGroup.ssrcs.forEach(function (ssrc) {
+                    modify.c('source', { ssrc: ssrc })
+                        .up(); // end of source
+                });
+                modify.up(); // end of ssrc-group
+            }
+        });
+
         modify.up(); // end of description
         modify.up(); // end of content
     });
