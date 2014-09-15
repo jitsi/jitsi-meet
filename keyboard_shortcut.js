@@ -36,9 +36,9 @@ var KeyboardShortcut = (function(my) {
             var keycode = e.which;
             if (typeof shortcuts[keycode] === "object") {
                 shortcuts[keycode].function();
-            } else if (keycode >= "1".charCodeAt(0) && keycode <= "9".charCodeAt(0)) {
+            } else if (keycode >= "0".charCodeAt(0) && keycode <= "9".charCodeAt(0)) {
                 var remoteVideos = $(".videocontainer:not(#mixedstream)"),
-                    videoWanted = keycode - "0".charCodeAt(0);
+                    videoWanted = (keycode - "0".charCodeAt(0) + 1) % 10;
                 if (remoteVideos.length > videoWanted) {
                     remoteVideos[videoWanted].click();
                 }

@@ -546,6 +546,7 @@ var VideoLayout = (function (my) {
 
                 var editableText = document.createElement('input');
                 editableText.className = 'displayname';
+                editableText.type = 'text';
                 editableText.id = 'editDisplayName';
 
                 if (displayName && displayName.length) {
