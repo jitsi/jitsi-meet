@@ -86,6 +86,8 @@ function isUpdateRequired(minVersion, extVersion)
     catch (e)
     {
         console.error("Failed to parse extension version", e);
+        messageHandler.showError('Error',
+            'Error when trying to detect desktopsharing extension.');
         return true;
     }
 }
@@ -166,6 +168,8 @@ function obtainScreenFromExtension(streamCallback, failCallback) {
                     function (arg) {
                         console.log("Failed to install the extension", arg);
                         failCallback(arg);
+                        messageHandler.showError('Error',
+                            'Failed to install desktop sharing extension');
                     }
                 );
             }
@@ -236,6 +240,7 @@ function initInlineInstalls()
 
 function getSwitchStreamFailed(error) {
     console.error("Failed to obtain the stream to switch to", error);
+    messageHandler.showError('Error', 'Failed to get video stream');
     switchInProgress = false;
 }
 
@@ -262,6 +267,8 @@ function newStreamCreated(stream) {
     } else {
         // We are done immediately
         console.error("No conference handler");
+        messageHandler.showError('Error',
+            'Unable to switch video stream.');
         streamSwitchDone();
     }
 }

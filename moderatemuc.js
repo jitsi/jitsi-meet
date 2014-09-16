@@ -34,6 +34,9 @@ Strophe.addConnectionPlugin('moderate', {
                 },
                 function (error) {
                     console.log('set mute error', error);
+                    messageHandler.openReportDialog(null, 'Failed to mute ' +
+                        $("#participant_" + jid).find(".displayname").text() ||
+                        "participant" + '.', error);
                 });
     },
     onMute: function(iq) {

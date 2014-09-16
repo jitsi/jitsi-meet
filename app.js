@@ -12,6 +12,7 @@ var roomUrl = null;
 var roomName = null;
 var ssrc2jid = {};
 var mediaStreams = [];
+var bridgeIsDown = false;
 
 /**
  * The stats collector that process stats data and triggers updates to app.js.
@@ -41,7 +42,6 @@ var mutedAudios = {};
 var localVideoSrc = null;
 var flipXLocalVideo = true;
 var isFullScreen = false;
-var toolbarTimeout = null;
 var currentVideoWidth = null;
 var currentVideoHeight = null;
 /**
@@ -171,6 +171,9 @@ function obtainAudioAndVideoPermissions(callback) {
                 media: error.media || 'video',
                 name : error.name
             });
+            messageHandler.showError("Error",
+                "Failed to obtain permissions to use the local microphone" +
+                    "and/or camera.");
         },
         config.resolution || '360');
 }
@@ -239,6 +242,8 @@ function doJoin() {
 function waitForRemoteVideo(selector, ssrc, stream) {
     if (selector.removed || !selector.parent().is(":visible")) {
         console.warn("Media removed before had started", selector);
+        messageHandler.showError("Warning",
+            "Media was removed before it had started.");
         return;
     }
 
@@ -255,6 +260,7 @@ function waitForRemoteVideo(selector, ssrc, stream) {
             videoSrcToSsrc[selector.attr('src')] = ssrc;
         } else {
             console.warn("No ssrc given for video", selector);
+            messageHandler.showError('Warning', 'No ssrc was given for the video.');
         }
 
         $(document).trigger('videoactive.jingle', [selector]);
@@ -327,9 +333,11 @@ function waitForPresence(data, sid) {
                 'participant_' + Strophe.getResourceFromJid(data.peerjid));
     } else {
         if (data.stream.id !== 'mixedmslabel') {
-            console.error(  'can not associate stream',
-                            data.stream.id,
-                            'with a participant');
+            console.error('can not associate stream',
+                data.stream.id,
+                'with a participant');
+            messageHandler.showError('Oops',
+                'We could not associate the current stream with a participant.');
             // We don't want to add it here since it will cause troubles
             return;
         }
@@ -398,16 +406,19 @@ function sendKeyframe(pc) {
                         },
                         function (error) {
                             console.log('triggerKeyframe setLocalDescription failed', error);
+                            messageHandler.showError();
                         }
                     );
                 },
                 function (error) {
                     console.log('triggerKeyframe createAnswer failed', error);
+                    messageHandler.showError();
                 }
             );
         },
         function (error) {
             console.log('triggerKeyframe setRemoteDescription failed', error);
+            messageHandler.showError();
         }
     );
 }
@@ -435,16 +446,24 @@ function muteVideo(pc, unmute) {
                         },
                         function (error) {
                             console.log('mute SLD error');
+                            messageHandler.showError('Error',
+                                'Oops! Something went wrong and we failed to ' +
+                                    'mute! (SLD Failure)');
                         }
                     );
                 },
                 function (error) {
                     console.log(error);
+                    messageHandler.showError();
                 }
             );
         },
         function (error) {
             console.log('muteVideo SRD error');
+            messageHandler.showError('Error',
+                'Oops! Something went wrong and we failed to stop video!' +
+                    '(SRD Failure)');
+
         }
     );
 }
@@ -563,7 +582,7 @@ $(document).bind('callterminated.jingle', function (event, sid, jid, reason) {
     if (connection.emuc.joined && focus == null && reason === 'kick') {
         sessionTerminated = true;
         connection.emuc.doLeave();
-        openMessageDialog(  "Session Terminated",
+        messageHandler.openMessageDialog("Session Terminated",
                             "Ouch! You have been kicked out of the meet!");
     }
 });
@@ -687,7 +706,13 @@ $(document).bind('entered.muc', function (event, jid, info, pres) {
         // FIXME: this should prepare the video
         if (focus.confid === null) {
             console.log('make new conference with', jid);
-            focus.makeConference(Object.keys(connection.emuc.members));
+            focus.makeConference(Object.keys(connection.emuc.members),
+                function(error) {
+                    bridgeIsDown = true;
+                    connection.emuc.addBridgeIsDownToPresence();
+                    connection.emuc.sendPresence();
+                }
+            );
             Toolbar.showRecordingButton(true);
         } else {
             console.log('invite', jid, 'into conference');
@@ -809,6 +834,14 @@ $(document).bind('presence.muc', function (event, jid, info, pres) {
     if (focus !== null && info.displayName !== null) {
         focus.setEndpointDisplayName(jid, info.displayName);
     }
+
+    //check if the video bridge is available
+    if($(pres).find(">bridgeIsDown").length > 0 && !bridgeIsDown) {
+        bridgeIsDown = true;
+        messageHandler.showError("Error",
+            "The video bridge is currently unavailable.");
+    }
+
 });
 
 $(document).bind('presence.status.muc', function (event, jid, info, pres) {
@@ -821,40 +854,36 @@ $(document).bind('presence.status.muc', function (event, jid, info, pres) {
 $(document).bind('passwordrequired.muc', function (event, jid) {
     console.log('on password required', jid);
 
-    $.prompt('<h2>Password required</h2>' +
-        '<input id="lockKey" type="text" placeholder="shared key" autofocus>', {
-        persistent: true,
-        buttons: { "Ok": true, "Cancel": false},
-        defaultButton: 1,
-        loaded: function (event) {
-            document.getElementById('lockKey').focus();
-        },
-        submit: function (e, v, m, f) {
+    messageHandler.openTwoButtonDialog(null,
+        '<h2>Password required</h2>' +
+        '<input id="lockKey" type="text" placeholder="shared key" autofocus>',
+        true,
+        "Ok",
+        function (e, v, m, f) {
             if (v) {
                 var lockKey = document.getElementById('lockKey');
-
                 if (lockKey.value !== null) {
                     setSharedKey(lockKey.value);
                     connection.emuc.doJoin(jid, lockKey.value);
                 }
             }
+        },
+        function (event) {
+            document.getElementById('lockKey').focus();
         }
-    });
+    );
 });
 
 $(document).bind('passwordrequired.main', function (event) {
     console.log('password is required');
 
-    $.prompt('<h2>Password required</h2>' +
-        '<input id="passwordrequired.username" type="text" placeholder="user@domain.net" autofocus>' +
-        '<input id="passwordrequired.password" type="password" placeholder="user password">', {
-        persistent: true,
-        buttons: { "Ok": true, "Cancel": false},
-        defaultButton: 1,
-        loaded: function (event) {
-            document.getElementById('passwordrequired.username').focus();
-        },
-        submit: function (e, v, m, f) {
+    messageHandler.openTwoButtonDialog(null,
+        '<h2>Password required</h2>' +
+            '<input id="passwordrequired.username" type="text" placeholder="user@domain.net" autofocus>' +
+            '<input id="passwordrequired.password" type="password" placeholder="user password">',
+        true,
+        "Ok",
+        function (e, v, m, f) {
             if (v) {
                 var username = document.getElementById('passwordrequired.username');
                 var password = document.getElementById('passwordrequired.password');
@@ -863,8 +892,11 @@ $(document).bind('passwordrequired.main', function (event) {
                     connect(username.value, password.value);
                 }
             }
+        },
+        function (event) {
+            document.getElementById('passwordrequired.username').focus();
         }
-    });
+    );
 });
 
 /**
@@ -981,25 +1013,23 @@ function toggleRecording() {
 
     if (!recordingToken)
     {
-        $.prompt('<h2>Enter recording token</h2>' +
+        messageHandler.openTwoButtonDialog(null,
+            '<h2>Enter recording token</h2>' +
                 '<input id="recordingToken" type="text" placeholder="token" autofocus>',
-            {
-                persistent: false,
-                buttons: { "Save": true, "Cancel": false},
-                defaultButton: 1,
-                loaded: function (event) {
-                    document.getElementById('recordingToken').focus();
-                },
-                submit: function (e, v, m, f) {
-                    if (v) {
-                        var token = document.getElementById('recordingToken');
+            false,
+            "Save",
+            function (e, v, m, f) {
+                if (v) {
+                    var token = document.getElementById('recordingToken');
 
-                        if (token.value) {
-                            setRecordingToken(Util.escapeHtml(token.value));
-                            toggleRecording();
-                        }
+                    if (token.value) {
+                        setRecordingToken(Util.escapeHtml(token.value));
+                        toggleRecording();
                     }
                 }
+            },
+            function (event) {
+                document.getElementById('recordingToken').focus();
             }
         );
 
@@ -1259,6 +1289,16 @@ function dump(elem, filename) {
     elem = elem.parentNode;
     elem.download = filename || 'meetlog.json';
     elem.href = 'data:application/json;charset=utf-8,\n';
+    var data = populateData();
+    elem.href += encodeURIComponent(JSON.stringify(data, null, '  '));
+    return false;
+}
+
+
+/**
+ * Populates the log data
+ */
+function populateData() {
     var data = {};
     if (connection.jingle) {
         Object.keys(connection.jingle.sessions).forEach(function (sid) {
@@ -1273,7 +1313,7 @@ function dump(elem, filename) {
             }
         });
     }
-    metadata = {};
+    var metadata = {};
     metadata.time = new Date();
     metadata.url = window.location.href;
     metadata.ua = navigator.userAgent;
@@ -1281,8 +1321,7 @@ function dump(elem, filename) {
         metadata.xmpp = connection.logger.log;
     }
     data.metadata = metadata;
-    elem.href += encodeURIComponent(JSON.stringify(data, null, '  '));
-    return false;
+    return data;
 }
 
 /**
@@ -1290,21 +1329,6 @@ function dump(elem, filename) {
  */
 function buttonClick(id, classname) {
     $(id).toggleClass(classname); // add the class to the clicked element
-}
-
-/**
- * Shows a message to the user.
- *
- * @param titleString the title of the message
- * @param messageString the text of the message
- */
-function openMessageDialog(titleString, messageString) {
-    $.prompt(messageString,
-        {
-            title: titleString,
-            persistent: false
-        }
-    );
 }
 
 /**
@@ -1417,7 +1441,7 @@ $(document).bind('fatalError.jingle',
     {
         sessionTerminated = true;
         connection.emuc.doLeave();
-        openMessageDialog(  "Sorry",
+        messageHandler.showError(  "Sorry",
             "Your browser version is too old. Please update and try again...");
     }
 );
@@ -1440,28 +1464,23 @@ $(document).bind("selectedendpointchanged", function(event, userJid) {
 
 function callSipButtonClicked()
 {
-    $.prompt('<h2>Enter SIP number</h2>' +
-        '<input id="sipNumber" type="text" value="" autofocus>',
-        {
-            persistent: false,
-            buttons: { "Dial": true, "Cancel": false},
-            defaultButton: 2,
-            loaded: function (event)
-            {
-                document.getElementById('sipNumber').focus();
-            },
-            submit: function (e, v, m, f)
-            {
-                if (v)
-                {
-                    var numberInput = document.getElementById('sipNumber');
-                    if (numberInput.value && numberInput.value.length)
-                    {
-                        connection.rayo.dial(
-                            numberInput.value, 'fromnumber', roomName);
-                    }
+    messageHandler.openTwoButtonDialog(null,
+        '<h2>Enter SIP number</h2>' +
+            '<input id="sipNumber" type="text"' +
+            ' value="' + config.defaultSipNumber + '" autofocus>',
+        false,
+        "Dial",
+        function (e, v, m, f) {
+            if (v) {
+                var numberInput = document.getElementById('sipNumber');
+                if (numberInput.value) {
+                    connection.rayo.dial(
+                        numberInput.value, 'fromnumber', roomName);
                 }
             }
+        },
+        function (event) {
+            document.getElementById('sipNumber').focus();
         }
     );
 }

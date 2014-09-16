@@ -6,59 +6,51 @@ var Toolbar = (function (my) {
     my.openLockDialog = function () {
         // Only the focus is able to set a shared key.
         if (focus === null) {
-            if (sharedKey)
-                $.prompt("This conversation is currently protected by"
-                        + " a shared secret key.",
-                    {
-                        title: "Secret key",
-                        persistent: false
-                    }
-                );
-            else
-                $.prompt("This conversation isn't currently protected by"
-                        + " a secret key. Only the owner of the conference"
-                        + " could set a shared key.",
-                    {
-                        title: "Secret key",
-                        persistent: false
-                    }
-                );
+            if (sharedKey) {
+                messageHandler.openMessageDialog(null,
+                        "This conversation is currently protected by" +
+                        " a shared secret key.",
+                    false,
+                    "Secret key");
+            } else {
+                messageHandler.openMessageDialog(null,
+                    "This conversation isn't currently protected by" +
+                        " a secret key. Only the owner of the conference" +
+                        " could set a shared key.",
+                    false,
+                    "Secret key");
+            }
         } else {
             if (sharedKey) {
-                $.prompt("Are you sure you would like to remove your secret key?",
-                    {
-                        title: "Remove secret key",
-                        persistent: false,
-                        buttons: { "Remove": true, "Cancel": false},
-                        defaultButton: 1,
-                        submit: function (e, v, m, f) {
-                            if (v) {
-                                setSharedKey('');
-                                lockRoom(false);
-                            }
+                messageHandler.openTwoButtonDialog(null,
+                    "Are you sure you would like to remove your secret key?",
+                    false,
+                    "Remove",
+                    function (e, v) {
+                        if (v) {
+                            setSharedKey('');
+                            lockRoom(false);
                         }
-                    }
-                );
+                    });
             } else {
-                $.prompt('<h2>Set a secret key to lock your room</h2>' +
-                         '<input id="lockKey" type="text" placeholder="your shared key" autofocus>',
-                    {
-                        persistent: false,
-                        buttons: { "Save": true, "Cancel": false},
-                        defaultButton: 1,
-                        loaded: function (event) {
-                            document.getElementById('lockKey').focus();
-                        },
-                        submit: function (e, v, m, f) {
-                            if (v) {
-                                var lockKey = document.getElementById('lockKey');
-    
-                                if (lockKey.value) {
-                                    setSharedKey(Util.escapeHtml(lockKey.value));
-                                    lockRoom(true);
-                                }
+                messageHandler.openTwoButtonDialog(null,
+                    '<h2>Set a secret key to lock your room</h2>' +
+                        '<input id="lockKey" type="text"' +
+                        'placeholder="your shared key" autofocus>',
+                    false,
+                    "Save",
+                    function (e, v) {
+                        if (v) {
+                            var lockKey = document.getElementById('lockKey');
+
+                            if (lockKey.value) {
+                                setSharedKey(Util.escapeHtml(lockKey.value));
+                                lockRoom(true);
                             }
                         }
+                    },
+                    function () {
+                        document.getElementById('lockKey').focus();
                     }
                 );
             }
@@ -70,34 +62,33 @@ var Toolbar = (function (my) {
      */
     my.openLinkDialog = function () {
         var inviteLink;
-        if (roomUrl == null)
+        if (roomUrl == null) {
             inviteLink = "Your conference is currently being created...";
-        else
+        } else {
             inviteLink = encodeURI(roomUrl);
-
-        $.prompt('<input id="inviteLinkRef" type="text" value="' +
+        }
+        messageHandler.openTwoButtonDialog(
+            "Share this link with everyone you want to invite",
+            '<input id="inviteLinkRef" type="text" value="' +
                 inviteLink + '" onclick="this.select();" readonly>',
-                {
-                    title: "Share this link with everyone you want to invite",
-                    persistent: false,
-                    buttons: { "Invite": true, "Cancel": false},
-                    defaultButton: 1,
-                    loaded: function (event) {
-                        if (roomUrl)
-                            document.getElementById('inviteLinkRef').select();
-                        else
-                            document.getElementById('jqi_state0_buttonInvite')
-                                .disabled = true;
-                    },
-                    submit: function (e, v, m, f) {
-                        if (v) {
-                            if (roomUrl) {
-                                inviteParticipants();
-                            }
-                        }
+            false,
+            "Invite",
+            function (e, v) {
+                if (v) {
+                    if (roomUrl) {
+                        inviteParticipants();
                     }
                 }
-            );
+            },
+            function () {
+                if (roomUrl) {
+                    document.getElementById('inviteLinkRef').select();
+                } else {
+                    document.getElementById('jqi_state0_buttonInvite')
+                        .disabled = true;
+                }
+            }
+        );
     };
 
     /**
@@ -108,11 +99,12 @@ var Toolbar = (function (my) {
             return;
 
         var sharedKeyText = "";
-        if (sharedKey && sharedKey.length > 0)
-            sharedKeyText
-                = "This conference is password protected. Please use the "
-                    + "following pin when joining:%0D%0A%0D%0A"
-                    + sharedKey + "%0D%0A%0D%0A";
+        if (sharedKey && sharedKey.length > 0) {
+            sharedKeyText =
+                "This conference is password protected. Please use the " +
+                "following pin when joining:%0D%0A%0D%0A" +
+                sharedKey + "%0D%0A%0D%0A";
+        }
 
         var conferenceName = roomUrl.substring(roomUrl.lastIndexOf('/') + 1);
         var subject = "Invitation to a Jitsi Meet (" + conferenceName + ")";
@@ -128,8 +120,9 @@ var Toolbar = (function (my) {
                     " to be using one of these browsers.%0D%0A%0D%0A" +
                     "Talk to you in a sec!";
 
-        if (window.localStorage.displayname)
+        if (window.localStorage.displayname) {
             body += "%0D%0A%0D%0A" + window.localStorage.displayname;
+        }
 
         window.open("mailto:?subject=" + subject + "&body=" + body, '_blank');
     }
@@ -138,36 +131,38 @@ var Toolbar = (function (my) {
      * Opens the settings dialog.
      */
     my.openSettingsDialog = function () {
-        $.prompt('<h2>Configure your conference</h2>' +
-            '<input type="checkbox" id="initMuted"> Participants join muted<br/>' +
-            '<input type="checkbox" id="requireNicknames"> Require nicknames<br/><br/>' +
-            'Set a secret key to lock your room: <input id="lockKey" type="text" placeholder="your shared key" autofocus>',
-            {
-                persistent: false,
-                buttons: { "Save": true, "Cancel": false},
-                defaultButton: 1,
-                loaded: function (event) {
-                    document.getElementById('lockKey').focus();
-                },
-                submit: function (e, v, m, f) {
-                    if (v) {
-                        if ($('#initMuted').is(":checked")) {
-                            // it is checked
-                        }
-    
-                        if ($('#requireNicknames').is(":checked")) {
-                            // it is checked
-                        }
-                        /*
-                        var lockKey = document.getElementById('lockKey');
-    
-                        if (lockKey.value)
-                        {
-                            setSharedKey(lockKey.value);
-                            lockRoom(true);
-                        }
-                        */
+        messageHandler.openTwoButtonDialog(
+            '<h2>Configure your conference</h2>' +
+                '<input type="checkbox" id="initMuted">' +
+                'Participants join muted<br/>' +
+                '<input type="checkbox" id="requireNicknames">' +
+                'Require nicknames<br/><br/>' +
+                'Set a secret key to lock your room:' +
+                '<input id="lockKey" type="text" placeholder="your shared key"' +
+                'autofocus>',
+            null,
+            false,
+            "Save",
+            function () {
+                document.getElementById('lockKey').focus();
+            },
+            function (e, v) {
+                if (v) {
+                    if ($('#initMuted').is(":checked")) {
+                        // it is checked
                     }
+
+                    if ($('#requireNicknames').is(":checked")) {
+                        // it is checked
+                    }
+                    /*
+                    var lockKey = document.getElementById('lockKey');
+
+                    if (lockKey.value) {
+                        setSharedKey(lockKey.value);
+                        lockRoom(true);
+                    }
+                    */
                 }
             }
         );
@@ -224,14 +219,10 @@ var Toolbar = (function (my) {
     };
 
     // Shows or hides SIP calls button
-    my.showSipCallButton = function (show)
-    {
-        if (config.hosts.call_control && show)
-        {
+    my.showSipCallButton = function(show){
+        if (config.hosts.call_control && show) {
             $('#sipCallButton').css({display: "inline"});
-        }
-        else
-        {
+        } else {
             $('#sipCallButton').css({display: "none"});
         }
     };
