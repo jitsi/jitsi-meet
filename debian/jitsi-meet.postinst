@@ -42,7 +42,7 @@ case "$1" in
             # SSL for nginx
             db_get jitsi-meet/cert-choice
             CERT_CHOICE="$RET"
-            if [ "$CERT_CHOICE" = 'I have a certificate and will upload the files on the server' ]; then
+            if [ "$CERT_CHOICE" = 'A certificate is available and the files are uploaded on the server' ]; then
                 db_set jitsi-meet/cert-path-key "/etc/ssl/$JVB_HOSTNAME.key"
                 db_input critical jitsi-meet/cert-path-key || true
                 db_go
