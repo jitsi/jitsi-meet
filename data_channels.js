@@ -24,9 +24,13 @@ function onDataChannel(event)
         // Sends 12 bytes binary message to the bridge
         //dataChannel.send(new ArrayBuffer(12));
 
-        // TODO(gp) we are supposed to tell the bridge about video selections
-        // so that it can do adaptive simulcast, What if a video selection has
-        // been made while the data channels are down or broken?
+        // when the data channel becomes available, tell the bridge about video
+        // selections so that it can do adaptive simulcast,
+        var largeVideoSrc = $('#largeVideo').attr('src');
+        var userJid = getJidFromVideoSrc(largeVideoSrc);
+        // we want the notification to trigger even if userJid is undefined,
+        // or null.
+        onSelectedEndpointChanged(userJid);
     };
 
     dataChannel.onerror = function (error)

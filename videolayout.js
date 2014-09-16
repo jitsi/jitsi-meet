@@ -3,6 +3,7 @@ var VideoLayout = (function (my) {
     var currentDominantSpeaker = null;
     var lastNCount = config.channelLastN;
     var lastNEndpointsCache = [];
+    var largeVideoNewSrc = '';
 
     my.changeLocalAudio = function(stream) {
         connection.jingle.localAudio = stream;
@@ -113,12 +114,18 @@ var VideoLayout = (function (my) {
         console.log('hover in', newSrc);
 
         if ($('#largeVideo').attr('src') != newSrc) {
+            largeVideoNewSrc = newSrc;
 
             var isVisible = $('#largeVideo').is(':visible');
 
             // we need this here because after the fade the videoSrc may have
             // changed.
             var isDesktop = isVideoSrcDesktop(newSrc);
+
+            var userJid = getJidFromVideoSrc(newSrc);
+            // we want the notification to trigger even if userJid is undefined,
+            // or null.
+            $(document).trigger("selectedendpointchanged", [userJid]);
 
             $('#largeVideo').fadeOut(300, function () {
                 var oldSrc = $(this).attr('src');
@@ -213,7 +220,7 @@ var VideoLayout = (function (my) {
 
         // Triggers a "video.selected" event. The "false" parameter indicates
         // this isn't a prezi.
-        $(document).trigger("video.selected", [false, userJid]);
+        $(document).trigger("video.selected", [false]);
 
         VideoLayout.updateLargeVideo(videoSrc, 1);
 
@@ -1298,7 +1305,7 @@ var VideoLayout = (function (my) {
         }
     });
 
-    $(document).bind('startsimulcastlayer', function(event, simulcastLayer) {
+    $(document).bind('simulcastlayerstarted', function(event) {
         var localVideoSelector = $('#' + 'localVideo_' + connection.jingle.localVideo.id);
         var simulcast = new Simulcast();
         var stream = simulcast.getLocalVideoStream();
@@ -1309,7 +1316,7 @@ var VideoLayout = (function (my) {
         localVideoSrc = $(localVideoSelector).attr('src');
     });
 
-    $(document).bind('stopsimulcastlayer', function(event, simulcastLayer) {
+    $(document).bind('simulcastlayerstopped', function(event) {
         var localVideoSelector = $('#' + 'localVideo_' + connection.jingle.localVideo.id);
         var simulcast = new Simulcast();
         var stream = simulcast.getLocalVideoStream();
@@ -1377,7 +1384,7 @@ var VideoLayout = (function (my) {
                 var selRemoteVideo = $(['#', 'remoteVideo_', session.sid, '_', msidParts[0]].join(''));
 
                 var updateLargeVideo = (ssrc2jid[videoSrcToSsrc[selRemoteVideo.attr('src')]]
-                    == ssrc2jid[videoSrcToSsrc[$('#largeVideo').attr('src')]]);
+                    == ssrc2jid[videoSrcToSsrc[largeVideoNewSrc]]);
                 var updateFocusedVideoSrc = (selRemoteVideo.attr('src') == focusedVideoSrc);
 
                 var electedStreamUrl = webkitURL.createObjectURL(electedStream);

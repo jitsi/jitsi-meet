@@ -839,11 +839,13 @@ function Simulcast() {
         var ssrc = simulcastLayer.primarySSRC;
         var simulcast = new Simulcast();
         simulcast._startLocalVideoStream(ssrc);
+        $(document).trigger('simulcastlayerstarted');
     });
 
     $(document).bind('stopsimulcastlayer', function(event, simulcastLayer) {
         var ssrc = simulcastLayer.primarySSRC;
         var simulcast = new Simulcast();
         simulcast._stopLocalVideoStream(ssrc);
+        $(document).trigger('simulcastlayerstopped');
     });
 }());

@@ -1422,15 +1422,20 @@ $(document).bind('fatalError.jingle',
     }
 );
 
-$(document).bind("video.selected", function(event, isPresentation, userJid) {
-    if (!isPresentation && _dataChannels && _dataChannels.length != 0) {
+function onSelectedEndpointChanged(userJid)
+{
+    console.log('selected endpoint changed: ', userJid);
+    if (_dataChannels && _dataChannels.length != 0) {
         _dataChannels[0].send(JSON.stringify({
             'colibriClass': 'SelectedEndpointChangedEvent',
-            'selectedEndpoint': (isPresentation || !userJid)
-                // TODO(gp) hmm.. I wonder which one of the Strophe methods to use..
-                ? null : userJid.split('/')[1]
+            'selectedEndpoint': (!userJid || userJid == null)
+                ? null : Strophe.getResourceFromJid(userJid)
         }));
     }
+}
+
+$(document).bind("selectedendpointchanged", function(event, userJid) {
+    onSelectedEndpointChanged(userJid);
 });
 
 function callSipButtonClicked()
