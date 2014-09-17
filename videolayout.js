@@ -1,6 +1,8 @@
 var VideoLayout = (function (my) {
     var preMuted = false;
     var currentDominantSpeaker = null;
+    var defaultRemoteDisplayName = "Fellow Jitster";
+    var defaultDominantSpeakerDisplayName = "Speaker";
     var lastNCount = config.channelLastN;
     var lastNEndpointsCache = [];
     var largeVideoNewSrc = '';
@@ -512,7 +514,6 @@ var VideoLayout = (function (my) {
     function setDisplayName(videoSpanId, displayName) {
         var nameSpan = $('#' + videoSpanId + '>span.displayname');
         var defaultLocalDisplayName = "Me";
-        var defaultRemoteDisplayName = "Speaker";
 
         // If we already have a display name for this video.
         if (nameSpan.length > 0) {
@@ -1196,10 +1197,19 @@ var VideoLayout = (function (my) {
             return;
 
         // Update the current dominant speaker.
-        if (resourceJid !== currentDominantSpeaker)
+        if (resourceJid !== currentDominantSpeaker) {
+            var oldSpeakerVideoSpanId = "participant_" + currentDominantSpeaker,
+                newSpeakerVideoSpanId = "participant_" + resourceJid;
+            if($("#" + oldSpeakerVideoSpanId + ">span.displayname").text() === defaultDominantSpeakerDisplayName) {
+                setDisplayName(oldSpeakerVideoSpanId, null);
+            }
+            if($("#" + newSpeakerVideoSpanId + ">span.displayname").text() === defaultRemoteDisplayName) {
+                setDisplayName(newSpeakerVideoSpanId, defaultDominantSpeakerDisplayName);
+            }
             currentDominantSpeaker = resourceJid;
-        else
+        } else {
             return;
+        }
 
         // Obtain container for new dominant speaker.
         var container  = document.getElementById(
