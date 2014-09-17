@@ -950,20 +950,11 @@ function toggleVideo() {
                     $('#video').removeClass("icon-camera icon-camera-disabled");
                     $('#video').addClass("icon-camera");
                 }
+                connection.emuc.addVideoInfoToPresence(isMuted);
+                connection.emuc.sendPresence();
             }
         );
     }
-
-    sess = focus || activecall;
-    if (!sess) {
-        return;
-    }
-
-    sess.pendingop = ismuted ? 'unmute' : 'mute';
-//    connection.emuc.addVideoInfoToPresence(!ismuted);
-//    connection.emuc.sendPresence();
-
-    sess.modifySources();
 }
 
 /**
