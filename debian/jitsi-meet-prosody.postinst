@@ -57,7 +57,13 @@ case "$1" in
         fi
         ln -sf /var/lib/prosody/$JVB_HOSTNAME.key /etc/prosody/certs/$JVB_HOSTNAME.key
         ln -sf /var/lib/prosody/$JVB_HOSTNAME.crt /etc/prosody/certs/$JVB_HOSTNAME.crt
-        invoke-rc.d prosody restart
+
+        if [ "PROSODY_CONFIG_PRESENT" = "true" ]; then
+            invoke-rc.d prosody reload
+        else
+            invoke-rc.d prosody restart
+            invoke-rc.d jitsi-videobridge restart
+        fi
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)
