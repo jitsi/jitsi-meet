@@ -28,7 +28,7 @@ var RoomNameGenerator = function(my) {
      * @type {string[]}
      */
     var words = [
-        "definite ", "indefinite ", "articles", "name", "preposition ", "help", "very", "to", "through", "and", "just",
+        "definite", "indefinite", "articles", "name", "preposition", "help", "very", "to", "through", "and", "just",
         "a", "form", "in", "sentence", "is", "great", "it", "think", "you", "say", "that", "help", "he", "low", "was",
         "line", "for", "differ", "on", "turn", "are", "cause", "with", "much", "as", "mean", "before", "his", "move",
         "they", "right", "be", "boy", "at", "old", "one", "too", "have", "same", "this", "tell", "from", "does", "or",
