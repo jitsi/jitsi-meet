@@ -13,7 +13,7 @@ var ToolbarToggler = (function(my) {
             header.show("slide", { direction: "up", duration: 300});
             $('#subject').animate({top: "+=40"}, 300);
             if(!bottomToolbar.is(":visible")) {
-                bottomToolbar.show("slide", {direction: "right",cduration: 300});
+                bottomToolbar.show("slide", {direction: "right",duration: 300});
             }
 
             if (toolbarTimeout) {
@@ -57,8 +57,8 @@ var ToolbarToggler = (function(my) {
         if (!isToolbarHover) {
             header.hide("slide", { direction: "up", duration: 300});
             $('#subject').animate({top: "-=40"}, 300);
-            if(!$("#remoteVideos").is(":visible")) {
-                bottomToolbar.hide("slide", {direction: "right", cduration: 300});
+            if($("#remoteVideos").hasClass("hidden")) {
+                bottomToolbar.hide("slide", {direction: "right", duration: 300});
             }
         }
         else {
