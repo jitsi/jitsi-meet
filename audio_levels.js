@@ -2,9 +2,6 @@
  * The audio Levels plugin.
  */
 var AudioLevels = (function(my) {
-    var CANVAS_EXTRA = 104;
-    var CANVAS_RADIUS = 7;
-    var SHADOW_COLOR = '#00ccff';
     var audioLevelCanvasCache = {};
 
     my.LOCAL_LEVEL = 'local';
@@ -47,8 +44,8 @@ var AudioLevels = (function(my) {
 
             audioLevelCanvas = document.createElement('canvas');
             audioLevelCanvas.className = "audiolevel";
-            audioLevelCanvas.style.bottom = "-" + CANVAS_EXTRA/2 + "px";
-            audioLevelCanvas.style.left = "-" + CANVAS_EXTRA/2 + "px";
+            audioLevelCanvas.style.bottom = "-" + interfaceConfig.CANVAS_EXTRA/2 + "px";
+            audioLevelCanvas.style.left = "-" + interfaceConfig.CANVAS_EXTRA/2 + "px";
             resizeAudioLevelCanvas( audioLevelCanvas,
                     thumbnailWidth,
                     thumbnailHeight);
@@ -95,8 +92,8 @@ var AudioLevels = (function(my) {
     function resizeAudioLevelCanvas(audioLevelCanvas,
                                     thumbnailWidth,
                                     thumbnailHeight) {
-        audioLevelCanvas.width = thumbnailWidth + CANVAS_EXTRA;
-        audioLevelCanvas.height = thumbnailHeight + CANVAS_EXTRA;
+        audioLevelCanvas.width = thumbnailWidth + interfaceConfig.CANVAS_EXTRA;
+        audioLevelCanvas.height = thumbnailHeight + interfaceConfig.CANVAS_EXTRA;
     };
 
     /**
@@ -140,12 +137,12 @@ var AudioLevels = (function(my) {
         if (shadowLevel > 0)
             // drawContext, x, y, w, h, r, shadowColor, shadowLevel
             CanvasUtil.drawRoundRectGlow(   drawContext,
-                                            CANVAS_EXTRA/2, CANVAS_EXTRA/2,
-                                            canvas.width - CANVAS_EXTRA,
-                                            canvas.height - CANVAS_EXTRA,
-                                            CANVAS_RADIUS,
-                                            SHADOW_COLOR,
-                                            shadowLevel);
+                interfaceConfig.CANVAS_EXTRA/2, interfaceConfig.CANVAS_EXTRA/2,
+                canvas.width - interfaceConfig.CANVAS_EXTRA,
+                canvas.height - interfaceConfig.CANVAS_EXTRA,
+                interfaceConfig.CANVAS_RADIUS,
+                interfaceConfig.SHADOW_COLOR,
+                shadowLevel);
     };
 
     /**
@@ -158,13 +155,13 @@ var AudioLevels = (function(my) {
         var shadowLevel = 0;
 
         if (audioLevel <= 0.3) {
-            shadowLevel = Math.round(CANVAS_EXTRA/2*(audioLevel/0.3));
+            shadowLevel = Math.round(interfaceConfig.CANVAS_EXTRA/2*(audioLevel/0.3));
         }
         else if (audioLevel <= 0.6) {
-            shadowLevel = Math.round(CANVAS_EXTRA/2*((audioLevel - 0.3) / 0.3));
+            shadowLevel = Math.round(interfaceConfig.CANVAS_EXTRA/2*((audioLevel - 0.3) / 0.3));
         }
         else {
-            shadowLevel = Math.round(CANVAS_EXTRA/2*((audioLevel - 0.6) / 0.4));
+            shadowLevel = Math.round(interfaceConfig.CANVAS_EXTRA/2*((audioLevel - 0.6) / 0.4));
         }
         return shadowLevel;
     };
@@ -192,13 +189,13 @@ var AudioLevels = (function(my) {
         var resized = false;
         $('#remoteVideos>span>canvas').each(function() {
             var canvas = $(this).get(0);
-            if (canvas.width !== width + CANVAS_EXTRA) {
-                canvas.width = width + CANVAS_EXTRA;
+            if (canvas.width !== width + interfaceConfig.CANVAS_EXTRA) {
+                canvas.width = width + interfaceConfig.CANVAS_EXTRA;
                 resized = true;
             }
 
-            if (canvas.heigh !== height + CANVAS_EXTRA) {
-                canvas.height = height + CANVAS_EXTRA;
+            if (canvas.heigh !== height + interfaceConfig.CANVAS_EXTRA) {
+                canvas.height = height + interfaceConfig.CANVAS_EXTRA;
                 resized = true;
             }
         });
@@ -206,9 +203,9 @@ var AudioLevels = (function(my) {
         if (resized)
             Object.keys(audioLevelCanvasCache).forEach(function (resourceJid) {
                 audioLevelCanvasCache[resourceJid].width
-                    = width + CANVAS_EXTRA;
+                    = width + interfaceConfig.CANVAS_EXTRA;
                 audioLevelCanvasCache[resourceJid].height
-                    = height + CANVAS_EXTRA;
+                    = height + interfaceConfig.CANVAS_EXTRA;
             });
     });
 

@@ -1,8 +1,6 @@
 var VideoLayout = (function (my) {
     var preMuted = false;
     var currentDominantSpeaker = null;
-    var defaultRemoteDisplayName = "Fellow Jitster";
-    var defaultDominantSpeakerDisplayName = "Speaker";
     var lastNCount = config.channelLastN;
     var lastNEndpointsCache = [];
     var largeVideoNewSrc = '';
@@ -529,7 +527,7 @@ var VideoLayout = (function (my) {
                 if (displayName && displayName.length > 0)
                     $('#' + videoSpanId + '_name').text(displayName);
                 else
-                    $('#' + videoSpanId + '_name').text(defaultRemoteDisplayName);
+                    $('#' + videoSpanId + '_name').text(interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME);
             }
         } else {
             var editButton = null;
@@ -543,7 +541,7 @@ var VideoLayout = (function (my) {
                 nameSpan.innerText = defaultLocalDisplayName;
             }
             else {
-                nameSpan.innerText = defaultRemoteDisplayName;
+                nameSpan.innerText = interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME;
             }
 
             if (displayName && displayName.length > 0) {
@@ -1200,11 +1198,14 @@ var VideoLayout = (function (my) {
         if (resourceJid !== currentDominantSpeaker) {
             var oldSpeakerVideoSpanId = "participant_" + currentDominantSpeaker,
                 newSpeakerVideoSpanId = "participant_" + resourceJid;
-            if($("#" + oldSpeakerVideoSpanId + ">span.displayname").text() === defaultDominantSpeakerDisplayName) {
+            if($("#" + oldSpeakerVideoSpanId + ">span.displayname").text() ===
+                interfaceConfig.DEFAULT_DOMINANT_SPEAKER_DISPLAY_NAME) {
                 setDisplayName(oldSpeakerVideoSpanId, null);
             }
-            if($("#" + newSpeakerVideoSpanId + ">span.displayname").text() === defaultRemoteDisplayName) {
-                setDisplayName(newSpeakerVideoSpanId, defaultDominantSpeakerDisplayName);
+            if($("#" + newSpeakerVideoSpanId + ">span.displayname").text() ===
+                interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME) {
+                setDisplayName(newSpeakerVideoSpanId,
+                    interfaceConfig.DEFAULT_DOMINANT_SPEAKER_DISPLAY_NAME);
             }
             currentDominantSpeaker = resourceJid;
         } else {
