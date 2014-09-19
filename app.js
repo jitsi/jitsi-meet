@@ -1440,7 +1440,7 @@ $(document).bind('fatalError.jingle',
 function onSelectedEndpointChanged(userJid)
 {
     console.log('selected endpoint changed: ', userJid);
-    if (_dataChannels && _dataChannels.length != 0) {
+    if (_dataChannels && _dataChannels.length != 0 && _dataChannels[0].readyState == "open") {
         _dataChannels[0].send(JSON.stringify({
             'colibriClass': 'SelectedEndpointChangedEvent',
             'selectedEndpoint': (!userJid || userJid == null)
