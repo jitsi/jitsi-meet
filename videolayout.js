@@ -1250,7 +1250,6 @@ var VideoLayout = (function (my) {
             var resourceJid = VideoLayout.getPeerContainerResourceJid(element);
 
             if (resourceJid
-                && lastNEndpoints.length > 0
                 && lastNEndpoints.indexOf(resourceJid) < 0) {
                 console.log("Remove from last N", resourceJid);
                 showPeerContainer(resourceJid, false);
