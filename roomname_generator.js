@@ -1,161 +1,189 @@
 var RoomNameGenerator = function(my) {
-
-
     /**
      * Constructs new RoomNameGenerator object.
      * @constructor constructs new RoomNameGenerator object.
      */
     function RoomNameGeneratorProto()
     {
-
     }
 
-    /**
-     * Default separator the words in the room name
-     * @type {string}
-     */
-    var DEFAULT_SEPARATOR = "-";
+    //var nouns = [
+    //];
+    var pluralNouns = [
+        "Aliens", "Animals", "Antelopes", "Ants", "Apes", "Apples", "Baboons", "Bacteria", "Badgers", "Bananas", "Bats",
+        "Bears", "Birds", "Blokes", "Bonobos", "Boys", "Brides", "Brothers", "Bugs", "Bulls", "Butterflies", "Cheetahs",
+        "Cherries", "Chicken", "Children", "Chimps", "Clowns", "Cows", "Creatures", "Dinosaurs", "Dogs", "Dolphins",
+        "Donkeys", "Dragons", "Ducks", "Dudes", "Dwarfs", "Eagles", "Elephants", "Elves", "FAIL", "Fathers", "Fellows",
+        "Fish", "Flowers", "Folk", "Folks", "Frogs", "Fruit", "Fungi", "Galaxies", "Gals", "Geese", "Girls", "Goats",
+        "Gorillas", "Grooms", "Guys", "Hedgehogs", "Hippos", "Horses", "Hunters", "Insects", "Kids", "Knights",
+        "Lemons", "Lemurs", "Leopards", "LifeForms", "Lions", "Lizards", "Men", "Mice", "Monkeys", "Monsters",
+        "Mothers", "Mushrooms", "Octopodes", "Oranges", "Orangutans", "Organisms", "Pants", "Parrots", "Penguins",
+        "People", "Pigeons", "Pigs", "Pineapples", "Plants", "Potatoes", "Priests", "Rats", "Reptiles", "Reptilians",
+        "Rhinos", "Seagulls", "Sheep", "Siblings", "Sisters", "Snakes", "Spaghetti", "Spiders", "Squid", "Squirrels",
+        "Stars", "Students", "Teachers", "Tigers", "Tomatoes", "Trees", "Vegetables", "Virgins", "Viruses", "Vulcans",
+        "Weasels", "Wenches", "Whales", "Witches", "Wizards", "Wolves", "Women", "Workers", "Worms", "Zebras"
+    ];
+    //var places = [
+    //"Pub", "University", "Airport", "Library", "Mall", "Theater", "Stadium", "Office", "Show", "Gallows", "Beach",
+    // "Cemetery", "Hospital", "Reception", "Restaurant", "Bar", "Church", "House", "School", "Square", "Village",
+    // "Cinema", "Movies", "Party", "Restroom", "End", "Jail", "PostOffice", "Station", "Circus", "Gates", "Entrance",
+    // "Bridge"
+    //];
+    var verbs = [
+        "Abandon", "Abuse", "Adapt", "Advertise", "Answer", "Answer", "Anticipate", "Appreciate", "Appreciate",
+        "Approach", "Ask", "Bite", "Bleed", "Blossom", "Blush", "Breathe", "Breed", "Bribe", "Burn", "Calculate",
+        "Clean", "Come", "Communicate", "Compute", "Confess", "Confiscate", "Conjugate", "Conjure", "Consume",
+        "Contemplate", "Copulate", "Crawl", "Curse", "Dance", "Defecate", "Delegate", "Devour", "Die", "Differ",
+        "Dissolve", "DoIt", "Drink", "Eat", "Elaborate", "Emancipate", "Estimate", "Excrete", "Expire", "Extinguish",
+        "Extract", "FAIL", "Facilitate", "Fall", "Feed", "Finish", "Floss", "Fly", "Follow", "Fragment", "Freeze",
+        "Gather", "Glow", "Grow", "Hex", "Hide", "Hug", "Hump", "Hurry", "Improve", "Intersect", "Investigate", "Jinx",
+        "Joke", "Kill", "Kiss", "Laugh", "Lick", "Manage", "Meet", "Merge", "Move", "Object", "Observe", "Offer",
+        "Paint", "Participate", "Party", "Perform", "Pursue", "Pierce", "Play", "Postpone", "Pray", "Proclaim",
+        "Question", "Reckon", "Reproduce", "Rhyme", "Rot", "Scream", "Search", "Secrete", "Select", "Share", "Shoot",
+        "Shout", "Shout", "Signal", "Skate", "Sleep", "Smile", "Smoke", "Solve", "Spell", "Spell", "Steer", "Stink",
+        "Substitute", "Sweat", "Swim", "Taste", "Teach", "Terminate", "Think", "Unite", "Vanish", "Worship"
+    ];
+    var adverbs = [
+        "Absently", "Accurately", "Accusingly", "Adorably", "AllTheTime", "Alone", "Always", "Amazingly", "Angrily",
+        "Anxiously", "Anywhere", "Appallingly", "Apparently", "Articulately", "Astonishingly", "Badly", "Barely",
+        "Beautifully", "Blindly", "Bravely", "Brightly", "Briskly", "Brutally", "Calmly", "Carefully", "Casually",
+        "Cautiously", "Cleverly", "Constantly", "Correctly", "Crazily", "Curiously", "Cynically", "Daily",
+        "Dangerously", "Deliberately", "Delicately", "Desperately", "Discreetly", "Eagerly", "Easily", "Euphoric",
+        "Evenly", "Everywhere", "Exactly", "Expectantly", "Extensively", "FAIL", "Ferociously", "Fiercely", "Finely",
+        "Flatly", "Frequently", "Frighteningly", "Gently", "Gently", "Gloriously", "Grimly", "Guiltily", "Happily",
+        "Hard", "Hastily", "Heroically", "High", "Highly", "Hourly", "Humbly", "Hysterically", "Immensely",
+        "Impartially", "Impolitely", "Indifferently", "Intensely", "Jealously", "Jovially", "Kindly", "Lazily",
+        "Lightly", "Loudly", "Lovingly", "Loyally", "Magnificently", "Malevolently", "Merrily", "Mightily", "Miserably",
+        "Mysteriously", "NOT", "Nervously", "Nicely", "Nowhere", "Objectively", "Obnoxiously", "Obsessively",
+        "Obviously", "Often", "Painfully", "Patiently", "Playfully", "Politely", "Poorly", "Precisely", "Promptly",
+        "Quickly", "Quietly", "Randomly", "Rapidly", "Rarely", "Recklessly", "Regularly", "Remorsefully", "Responsibly",
+        "Rudely", "Ruthlessly", "Sadly", "Scornfully", "Seamlessly", "Seldom", "Selfishly", "Seriously", "Shakily",
+        "Sharply", "Sideways", "Silently", "Sleepily", "Slightly", "Slowly", "Slyly", "Smoothly", "Softly", "Solemnly",
+        "Solemnly", "Steadily", "Sternly", "Strangely", "Strongly", "Stunningly", "Surely", "Tenderly", "Thoughtfully",
+        "Tightly", "Uneasily", "Vanishingly", "Violently", "Warmly", "Weakly", "Wearily", "Weekly", "Weirdly", "Well",
+        "Well", "Wickedly", "Wildly", "Wisely", "Wonderfully", "Yearly"
+    ];
+    var adjectives = [
+        "Abominable", "Accurate", "Adorable", "All", "Alleged", "Ancient", "Angry", "Angry", "Anxious", "Appalling",
+        "Apparent", "Astonishing", "Attractive", "Awesome", "Baby", "Bad", "Beautiful", "Benign", "Big", "Bitter",
+        "Blind", "Blue", "Bold", "Brave", "Bright", "Brisk", "Brutal", "Calm", "Camouflaged", "Casual", "Cautious",
+        "Choppy", "Chosen", "Clever", "Cold", "Cool", "Crawly", "Crazy", "Creepy", "Cruel", "Curious", "Cynical",
+        "Dangerous", "Dark", "Delicate", "Desperate", "Difficult", "Discreet", "Disguised", "Disgusting", "Dizzy",
+        "Drunk", "Dumb", "Eager", "Easy", "Edgy", "Electric", "Elegant", "Emancipated", "Enormous", "Euphoric", "Evil",
+        "FAIL", "Fast", "Fat", "Fat", "Ferocious", "Fierce", "Fine", "Flawed", "Flying", "Flying", "Foolish", "Foxy",
+        "Freezing", "Funny", "Furious", "Gentle", "Glorious", "Gnarly", "Golden", "Good", "Green", "Green", "Guilty",
+        "Hairy", "Happy", "Hard", "Hasty", "Hazy", "Heroic", "Horny", "Hostile", "Hot", "Humble", "Humongous",
+        "Humorous", "Hysterical", "Idealistic", "Ignorant", "Immense", "Impartial", "Impolite", "Indifferent",
+        "Infuriated", "Insightful", "Intense", "Interesting", "Intimidated", "Intriguing", "Jealous", "Jolly", "Jovial",
+        "Jumpy", "Kind", "Laughing", "Lazy", "Liquid", "Lonely", "Longing", "Loud", "Loving", "Loyal", "Macabre", "Mad",
+        "Magical", "Magnificent", "Malevolent", "Manly", "Medieval", "Memorable", "Mere", "Merry", "Mighty",
+        "Mischievous", "Miserable", "Modified", "Moody", "Most", "Mysterious", "Mystical", "Naked", "Nasty", "Needy",
+        "Nervous", "Nice", "Objective", "Obnoxious", "Obsessive", "Obvious", "Oily", "Oily", "Opinionated", "Orange",
+        "Painful", "Passionate", "Perfect", "Pink", "Playful", "Poisonous", "Polite", "Poor", "Popular", "Powerful", 
+        "Precise", "Preserved", "Pretty", "Purple", "Quick", "Quiet", "Racist", "Random", "Rapid", "Rare", "Real",
+        "Reassuring", "Reckless", "Red", "Regular", "Remorseful", "Responsible", "Rich", "Rotten", "Rude", "Ruthless",
+        "Sad", "Scared", "Scary", "Scornful", "Screaming", "Selfish", "Selfish", "Serious", "Shady", "Shaky", "Sharp",
+        "Shiny", "Shy", "Simple", "Skinny", "Sleepy", "Slow", "Sly", "Small", "Smart", "Smelly", "Smiling", "Smooth",
+        "Smug", "Sober", "Soft", "Solemn", "Square", "Square", "Steady", "Stinking", "Stoned", "Strange", "Strong",
+        "Stunning", "Stunning", "Stupid", "Subjective", "Successful", "Surly", "Sweet", "Tactful", "Tense",
+        "Thoughtful", "Tight", "Tiny", "Tolerant", "Ugly", "Uneasy", "Unique", "Unseen", "Violent", "Warm", "Weak",
+        "Weird", "WellCooked",  "WellFed", "Wicked", "Wild", "Wise", "Witty", "Wonderful", "Worried", "Yellow", "Young",
+        "Zealous"
+        ];
+    //var pronouns = [
+    //];
+    //var conjunctions = [
+    //"And", "Or", "For", "Above", "Before", "Against", "Between"
+    //];
 
-    /**
-     * Default number of words in the room name.
-     * @type {number}
+    /*
+     * Maps a string (category name) to the array of words from that category.
      */
-    var NUMBER_OF_WORDS = 3;
+    var CATEGORIES =
+    {
+        //"_NOUN_": nouns,
+        "_PLURALNOUN_": pluralNouns,
+        //"_PLACE_": places,
+        "_VERB_": verbs,
+        "_ADVERB_": adverbs,
+        "_ADJECTIVE_": adjectives
+        //"_PRONOUN_": pronouns,
+        //"_CONJUNCTION_": conjunctions,
+    };
 
+    var PATTERNS = [
+        "_ADJECTIVE__PLURALNOUN__VERB__ADVERB_"
 
-    /**
-     * The list with words.
-     * @type {string[]}
-     */
-    var words = [
-        "definite", "indefinite", "articles", "name", "preposition", "help", "very", "to", "through", "and", "just",
-        "a", "form", "in", "sentence", "is", "great", "it", "think", "you", "say", "that", "help", "he", "low", "was",
-        "line", "for", "differ", "on", "turn", "are", "cause", "with", "much", "as", "mean", "before", "his", "move",
-        "they", "right", "be", "boy", "at", "old", "one", "too", "have", "same", "this", "tell", "from", "does", "or",
-        "set", "had", "three", "by", "want", "hot", "air", "word", "well", "but", "also", "what", "play", "some", "small",
-        "we", "end", "can", "put", "out", "home", "other", "read", "were", "hand", "all", "port", "there", "large",
-        "when", "spell", "up", "add", "use", "even", "your", "land", "how", "here", "said", "must", "an", "big", "each",
-        "high", "she", "such", "which", "follow", "do", "act", "their", "why", "time", "ask", "if", "men", "will", "change",
-        "way", "went", "about", "light", "many", "kind", "then", "off", "them", "need", "write", "house", "would",
-        "picture", "like", "try", "so", "us", "these", "again", "her", "animal", "long", "point", "make", "mother",
-        "thing", "world", "see", "near", "him", "build", "two", "self", "has", "earth", "look", "father", "more", "head",
-        "day", "stand", "could", "own", "go", "page", "come", "should", "did", "country", "number", "found", "sound",
-        "answer", "no", "school", "most", "grow", "people", "study", "my", "still", "over", "learn", "know", "plant",
-        "water", "cover", "than", "food", "call", "sun", "first", "four", "who", "between", "may", "state", "down",
-        "keep", "side", "eye", "been", "never", "now", "last", "find", "let", "any", "thought", "new", "city", "work",
-        "tree", "part", "cross", "take", "farm", "get", "hard", "place", "start", "made", "might", "live", "story",
-        "where", "saw", "after", "far", "back", "sea", "little", "draw", "only", "left", "round", "late", "man", "run",
-        "year", "don't", "came", "while", "show", "press", "every", "close", "good", "night", "me", "real", "give",
-        "life", "our", "few", "under", "north", "open", "ten", "seem", "simple", "together", "several", "next", "vowel",
-        "white", "toward", "children", "war", "begin", "lay", "got", "against", "walk", "pattern", "example", "slow",
-        "ease", "center", "paper", "love", "group", "person", "always", "money", "music", "serve", "those", "appear",
-        "both", "road", "mark", "map", "often", "rain", "letter", "rule", "until", "govern", "mile", "pull", "river",
-        "cold", "car", "notice", "feet", "voice", "care", "unit", "second", "power", "book", "town", "carry", "fine",
-        "took", "certain", "science", "fly", "eat", "fall", "room", "lead", "friend", "cry", "began", "dark", "idea",
-        "machine", "fish", "note", "mountain", "wait", "stop", "plan", "once", "figure", "base", "star", "hear", "box",
-        "horse", "noun", "cut", "field", "sure", "rest", "watch", "correct", "color", "able", "face", "pound", "wood",
-        "done", "main", "beauty", "enough", "drive", "plain", "stood", "girl", "contain", "usual", "front", "young",
-        "teach", "ready", "week", "above", "final", "ever", "gave", "red", "green", "list", "oh", "though", "quick",
-        "feel", "develop", "talk", "ocean", "bird", "warm", "soon", "free", "body", "minute", "dog", "strong", "family",
-        "special", "direct", "mind", "pose", "behind", "leave", "clear", "song", "tail", "measure", "produce", "door",
-        "fact", "product", "street", "black", "inch", "short", "multiply", "numeral", "nothing", "class", "course", "wind",
-        "stay", "question", "wheel", "happen", "full", "complete", "force", "ship", "blue", "area", "object", "half",
-        "decide", "rock", "surface", "order", "deep", "fire", "moon", "south", "island", "problem", "foot", "piece",
-        "system", "told", "busy", "knew", "test", "pass", "record", "since", "boat", "top", "common", "whole", "gold",
-        "king", "possible", "space", "plane", "heard", "stead", "best", "dry", "hour", "wonder", "better", "laugh",
-        "true", "thousand", "during", "ago", "hundred", "ran", "five", "check", "remember", "game", "step", "shape",
-        "early", "equate", "hold", "hot", "west", "miss", "ground", "brought", "interest", "heat", "reach", "snow",
-        "fast", "tire", "verb", "bring", "sing", "yes", "listen", "distant", "six", "fill", "table", "east", "travel",
-        "paint", "less", "language", "morning", "among", "grand", "cat", "ball", "century", "yet", "consider", "wave",
-        "type", "drop", "law", "heart", "bit", "am", "coast", "present", "copy", "heavy", "phrase", "dance", "silent",
-        "engine", "tall", "position", "sand", "arm", "soil", "wide", "roll", "sail", "temperature", "material", "finger",
-        "size", "industry", "vary", "value", "settle", "fight", "speak", "lie", "weight", "beat", "general", "excite",
-        "ice", "natural", "matter", "view", "circle", "sense", "pair", "ear", "include", "else", "divide", "quite",
-        "syllable", "broke", "felt", "case", "perhaps", "middle", "pick", "kill", "sudden", "son", "count", "lake",
-        "square", "moment", "reason", "scale", "length", "loud", "represent", "spring", "art", "observe", "subject",
-        "child", "region", "straight", "energy", "consonant", "hunt", "nation", "probable", "dictionary", "bed", "milk",
-        "brother", "speed", "egg", "method", "ride", "organ", "cell", "pay", "believe", "age", "fraction", "section",
-        "forest", "dress", "sit", "cloud", "race", "surprise", "window", "quiet", "store", "stone", "summer", "tiny",
-        "train", "climb", "sleep", "cool", "prove", "design", "lone", "poor", "leg", "lot", "exercise", "experiment",
-        "wall", "bottom", "catch", "key", "mount", "iron", "wish", "single", "sky", "stick", "board", "flat", "joy",
-        "twenty", "winter", "skin", "sat", "smile", "written", "crease", "wild", "hole", "instrument", "trade", "kept",
-        "melody", "glass", "trip", "grass", "office", "cow", "receive", "job", "row", "edge", "mouth", "sign", "exact",
-        "visit", "symbol", "past", "die", "soft", "least", "fun", "trouble", "bright", "shout", "gas", "except",
-        "weather", "wrote", "month", "seed", "million", "tone", "bear", "join", "finish", "suggest", "happy", "clean",
-        "hope", "break", "flower", "lady", "clothe", "yard", "strange", "rise", "gone", "bad", "jump", "blow", "baby",
-        "oil", "eight", "blood", "village", "touch", "meet", "grew", "root", "cent", "buy", "mix", "raise", "team",
-        "solve", "wire", "metal", "cost", "whether", "lost", "push", "brown", "seven", "wear", "paragraph", "garden",
-        "third", "equal", "shall", "sent", "held", "choose", "hair", "fell", "describe", "fit", "cook", "flow", "floor",
-        "fair", "either", "bank", "result", "collect", "burn", "save", "hill", "control", "safe", "decimal", "rank",
-        "word", "reference", "gentle", "truck", "woman", "noise", "captain", "level",
-        "practice", "chance", "separate", "gather", "difficult", "shop", "doctor", "stretch", "please", "throw",
-        "protect", "shine", "noon", "property", "whose", "column", "locate", "molecule", "ring", "select", "character",
-        "wrong", "insect", "gray", "caught", "repeat", "period", "require", "indicate", "broad", "radio", "prepare",
-        "spoke", "salt", "atom", "nose", "human", "plural", "history", "anger", "effect", "claim", "electric",
-        "continent", "expect", "oxygen", "crop", "sugar", "modern", "death", "element", "pretty", "hit", "skill",
-        "student", "women", "corner", "season", "party", "solution", "supply", "magnet", "bone", "silver", "rail",
-        "thank", "imagine", "branch", "provide", "match", "agree", "suffix", "thus", "especially", "capital", "fig",
-        "won't", "afraid", "chair", "huge", "danger", "sister", "fruit", "steel", "rich", "discuss", "thick", "forward",
-        "soldier", "similar", "process", "guide", "operate", "experience", "guess", "score", "necessary", "apple",
-        "sharp", "bought", "wing", "led", "create", "pitch", "neighbor", "coat", "wash", "mass", "bat", "card", "rather",
-        "band", "crowd", "rope", "corn", "slip", "compare", "win", "poem", "dream", "string", "evening", "bell",
-        "condition", "depend", "feed", "meat", "tool", "rub", "total", "tube", "basic", "famous", "smell", "dollar",
-        "valley", "stream", "nor", "fear", "double", "sight", "seat", "thin", "arrive", "triangle", "master", "planet",
-        "track", "hurry", "parent", "chief", "shore", "colony", "division", "clock", "sheet", "mine", "substance", "tie",
-        "favor", "enter", "connect", "major", "post", "fresh", "spend", "search", "chord", "send", "fat", "yellow",
-        "glad", "gun", "original", "allow", "share", "print", "station", "dead", "dad", "spot", "bread", "desert",
-        "charge", "suit", "proper", "current", "bar", "lift", "offer", "rose", "segment", "continue", "slave", "block",
-        "duck", "chart", "instant", "hat", "market", "sell", "degree", "success", "populate", "company", "chick",
-        "subtract", "dear", "event", "enemy", "particular", "reply", "deal", "drink", "swim", "occur", "term", "support",
-        "opposite", "speech", "wife", "nature", "shoe", "range", "shoulder", "steam", "spread", "motion", "arrange",
-        "path", "camp", "liquid", "invent", "log", "cotton", "meant", "born", "quotient", "determine", "teeth", "quart",
-        "shell", "nine", "neck", "fancy", "fan", "football"
+        // BeautifulFungiOrSpaghetti
+        //"_ADJECTIVE__PLURALNOUN__CONJUNCTION__PLURALNOUN_",
+
+        // AmazinglyScaryToy
+        //"_ADVERB__ADJECTIVE__NOUN_",
+
+        // NeitherTrashNorRifle
+        //"Neither_NOUN_Nor_NOUN_",
+        //"Either_NOUN_Or_NOUN_",
+
+        // EitherCopulateOrInvestigate
+        //"Either_VERB_Or_VERB_",
+        //"Neither_VERB_Nor_VERB_",
+
+        //"The_ADJECTIVE__ADJECTIVE__NOUN_",
+        //"The_ADVERB__ADJECTIVE__NOUN_",
+        //"The_ADVERB__ADJECTIVE__NOUN_s",
+        //"The_ADVERB__ADJECTIVE__PLURALNOUN__VERB_",
+
+        // WolvesComputeBadly
+        //"_PLURALNOUN__VERB__ADVERB_",
+
+        // UniteFacilitateAndMerge
+        //"_VERB__VERB_And_VERB_",
+
+        //NastyWitchesAtThePub
+        //"_ADJECTIVE__PLURALNOUN_AtThe_PLACE_",
     ];
 
-    /**
-     * Returns random word from the array of words.
-     * @returns {string} random word from the array of words.
+
+    /*
+     * Returns a random element from the array 'arr' 
      */
-    function generateWord()
+    function randomElement(arr)
     {
-        return words[Math.floor(Math.random() * words.length)];
+        return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    /*
+     * Returns true if the string 's' contains one of the
+     * template strings.
+     */
+    function hasTemplate(s)
+    {
+        for (var template in CATEGORIES){
+            if (s.indexOf(template) >= 0){
+                return true;
+            }
+        }
     }
 
     /**
      * Generates new room name.
-     * @param separator the separator for the words.
-     * @param number_of_words number of words in the room name
-     * @returns {string} the room name
-     */
-    RoomNameGeneratorProto.generateRoom = function(separator, number_of_words)
-    {
-        if(!separator)
-            separator = DEFAULT_SEPARATOR;
-        if(!number_of_words)
-            number_of_words = NUMBER_OF_WORDS;
-        var name = "";
-        for(var i = 0; i<number_of_words; i++)
-            name += ((i != 0)? separator : "") + generateWord();
-        return name;
-    }
-
-    /**
-     * Generates new room name.
-     * @param number_of_words number of words in the room name
-     * @returns {string} the room name
+     * @param number_of_words ignored
      */
     RoomNameGeneratorProto.generateRoomWithoutSeparator = function(number_of_words)
     {
-        if(!number_of_words)
-            number_of_words = NUMBER_OF_WORDS;
-        var name = "";
-        for(var i = 0; i<number_of_words; i++) {
-            var word = generateWord();
-            word = word.substring(0, 1).toUpperCase() + word.substring(1, word.length);
-            name += word ;
+        // Note that if more than one pattern is available, the choice of 'name' won't be random (names from patterns
+        // with fewer options will have higher probability of being chosen that names from patterns with more options).
+        var name = randomElement(PATTERNS);
+        var word;
+        while (hasTemplate(name)){
+            for (var template in CATEGORIES){
+                word = randomElement(CATEGORIES[template]);
+                name = name.replace(template, word);
+            }
         }
+
         return name;
-    }
+    };
 
     return RoomNameGeneratorProto;
 }();
