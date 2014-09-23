@@ -480,7 +480,9 @@ function audioLevelUpdated(jid, audioLevel)
     {
         resourceJid = AudioLevels.LOCAL_LEVEL;
         if(isAudioMuted())
-            return;
+        {
+            audioLevel = 0;
+        }
     }
     else
     {
