@@ -60,6 +60,7 @@ var getVideoPosition;
 var sessionTerminated = false;
 
 function init() {
+    Toolbar.setupButtonsFromConfig();
     RTC = setupRTC();
     if (RTC === null) {
         window.location.href = 'webrtcrequired.html';

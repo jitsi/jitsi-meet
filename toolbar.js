@@ -1,6 +1,16 @@
 var Toolbar = (function (my) {
 
     /**
+     * Disables and enables some of the buttons.
+     */
+    my.setupButtonsFromConfig = function () {
+        if(config.disablePrezi)
+        {
+            $("#prezi_button").css({display: "none"});
+        }
+    }
+
+    /**
      * Opens the lock room dialog.
      */
     my.openLockDialog = function () {
