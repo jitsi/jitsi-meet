@@ -243,8 +243,6 @@ function doJoin() {
 function waitForRemoteVideo(selector, ssrc, stream) {
     if (selector.removed || !selector.parent().is(":visible")) {
         console.warn("Media removed before had started", selector);
-        messageHandler.showError("Warning",
-            "Media was removed before it had started.");
         return;
     }
 
