@@ -274,6 +274,7 @@ form {
     left: 5;
     overflow: visible;
     z-index: 100;
+    color: rgba(255,255,255,.50);
 }
 
 #bottomToolbar {

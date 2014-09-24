@@ -1126,12 +1126,33 @@ function getCameraVideoSize(videoWidth,
 $(document).ready(function () {
     document.title = brand.appName;
 
+    if (interfaceConfig.SHOW_JITSI_WATERMARK) {
+        $("#leftwatermark").css({display: 'block'});
+        $("#leftwatermark").parent().get(0).href
+            = interfaceConfig.JITSI_WATERMARK_LINK;
+    }
+
+    if (interfaceConfig.SHOW_BRAND_WATERMARK) {
+        $("#rightwatermark").css({display: 'block'});
+        $("#rightwatermark").parent().get(0).href
+            = interfaceConfig.BRAND_WATERMARK_LINK;
+        $("#rightwatermark").get(0).style.backgroundImage
+            = "url(../images/rightwatermark.png)";
+    }
+
+    if (interfaceConfig.SHOW_POWERED_BY) {
+        $("#poweredby").css({display: 'block'});
+    }
+
     if(config.enableWelcomePage && window.location.pathname == "/" &&
-        (!window.localStorage.welcomePageDisabled || window.localStorage.welcomePageDisabled == "false"))
+        (!window.localStorage.welcomePageDisabled
+                || window.localStorage.welcomePageDisabled == "false"))
     {
         $("#videoconference_page").hide();
-        $("#domain_name").text(window.location.protocol + "//" + window.location.host + "/");
+        $("#domain_name").text(
+                window.location.protocol + "//" + window.location.host + "/");
         $("span[name='appName']").text(brand.appName);
+
         function enter_room()
         {
             var val = $("#enter_room_field").val();

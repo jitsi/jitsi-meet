@@ -325,15 +325,27 @@
 }
 
 #leftwatermark {
+    display: none;
     left: 15;
     background-image:url(../images/watermark.png);
     background-position: center left;
 }
 
 #rightwatermark {
+    display: none;
     right: 15;
-    background-image:url(../images/rightwatermark.png);
     background-position: center right;
+}
+
+#poweredby {
+    display: none;
+    position: absolute;
+    left: 25;
+    bottom: 7;
+    font-size: 11pt;
+    color: rgba(255,255,255,.50);
+    text-decoration: none;
+    z-index: 100;
 }
 
 .audiolevel {

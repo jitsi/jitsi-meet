@@ -26,13 +26,13 @@
     <script src="libs/tooltip.js?v=1"></script><!-- bootstrap tooltip lib -->
     <script src="libs/popover.js?v=1"></script><!-- bootstrap tooltip lib -->
     <script src="config.js?v=5"></script><!-- adapt to your needs, i.e. set hosts and bosh path -->
-    <script src="interface_config.js?v=1"></script>
+    <script src="interface_config.js?v=2"></script>
     <script src="brand.js?v=1"></script>
     <script src="muc.js?v=14"></script><!-- simple MUC library -->
     <script src="estos_log.js?v=2"></script><!-- simple stanza logger -->
     <script src="desktopsharing.js?v=3"></script><!-- desktop sharing -->
     <script src="data_channels.js?v=3"></script><!-- data channels -->
-    <script src="app.js?v=11"></script><!-- application logic -->
+    <script src="app.js?v=12"></script><!-- application logic -->
     <script src="commands.js?v=1"></script><!-- application logic -->
     <script src="chat.js?v=10"></script><!-- chat logic -->
     <script src="contact_list.js?v=2"></script><!-- contact list logic -->
@@ -51,7 +51,7 @@
     <script src="canvas_util.js?v=1"></script><!-- canvas drawing utils -->
     <script src="audio_levels.js?v=2"></script><!-- audio levels plugin -->
     <script src="media_stream.js?v=1"></script><!-- media stream -->
-    <script src="bottom_toolbar.js?v=2"></script><!-- media stream -->
+    <script src="bottom_toolbar.js?v=3"></script><!-- media stream -->
     <script src="roomname_generator.js?v=1"></script><!-- generator for random room names -->
     <script src="keyboard_shortcut.js?v=2"></script>
     <script src="tracking.js?v=1"></script><!-- tracking -->
@@ -241,8 +241,9 @@
             <div id="largeVideoContainer" class="videocontainer">
                 <div id="presentation"></div>
                 <div id="etherpad"></div>
-                <a href="http://jitsi.org" target="_new"><div class="watermark" id="leftwatermark"></div></a>
-                <!-- a href="http://jitsi.org" target="_new"><div class="watermark" id="rightwatermark"></div></a -->
+                <a target="_new"><div class="watermark" id="leftwatermark"></div></a>
+                <a target="_new"><div class="watermark" id="rightwatermark"></div></a>
+                <a id="poweredby" href="http://jitsi.org" target="_new" >powered by jitsi.org</a>
                 <video id="largeVideo" autoplay oncontextmenu="return false;"></video>
             </div>
             <div id="remoteVideos">

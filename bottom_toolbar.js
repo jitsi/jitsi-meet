@@ -26,7 +26,6 @@ var BottomToolbar = (function (my) {
         filmstrip.toggleClass("hidden");
     };
 
-
     $(document).bind("remotevideo.resized", function (event, width, height) {
         var bottom = (height - $('#bottomToolbar').outerHeight())/2 + 18;
 
