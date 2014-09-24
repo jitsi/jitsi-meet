@@ -19,6 +19,9 @@ html, body{
     width: 20%;
     max-width: 200px;
     overflow: hidden;
+    /* background-color:#dfebf1;*/
+    background-color:#FFFFFF;
+    border-left:1px solid #424242;
     z-index: 5;
 }
 
@@ -114,13 +117,13 @@ html, body{
     display: inline-block;
     position: relative;
     color: #FFFFFF;
-    top: 0;
+    top: 0px;
     padding: 10px 0px;
-    width: 39px;
+    width: 38px;
     cursor: pointer;
     font-size: 11pt;
     text-align: center;
-    text-shadow: 0px 1px 0px rgba(255,255,255,.3), 0px -1px 0px rgba(0,0,0,.7);
+    text-shadow: 0px 1px 0px rgba(255,255,255,.3), 0px -1px 0px rgba(0,0,0,.6);
     z-index: 1;
 }
 
@@ -177,12 +180,12 @@ html, body{
 
 a.button:hover,
 a.bottomToolbarButton:hover {
-    top: 0;
+    top: 0px;
     cursor: pointer;
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
     background-clip: padding-box;
-    -webkit-border-radius: 5px;
+    -webkit-border-radius: 6px;
     -webkit-background-clip: padding-box;
 }
 
@@ -196,7 +199,16 @@ a.bottomToolbarButton:hover {
     top: 5;
     width: 1px;
     height: 20px;
-    background: #676767;
+    background: #373737;
+}
+
+.bottom_button_separator {
+    display: inline-block;
+    position: relative;
+    left: 5;
+    width: 20px;
+    height: 1px;
+    background: #373737;
 }
 
 input[type='text'], input[type='password'], textarea {
@@ -267,16 +279,14 @@ form {
 #bottomToolbar {
     display:block;
     position: absolute;
-    right: -1;
+    right: 0;
+    margin-right: 5px;
     bottom: 40px;
     width: 29px;
-    border-top-left-radius: 10px;
-    border-bottom-left-radius: 10px;
+    border-radius: 6px;
     color: #FFF;
-    border: 1px solid #000;
-    background: rgba(50,50,50,.65);
-    padding-top: 5px;
-    padding-bottom: 5px;
+    border: 1px solid rgba(256, 256, 256, 0.2);
+    background: rgba(0,0,0,0.8);
     z-index: 6; /*+1 from #remoteVideos*/
 }
 
@@ -285,8 +295,9 @@ form {
     position: relative;
     color: #FFFFFF;
     top: 0;
-    padding-top: 3px;
-    width: 29px;
+    padding-top: 6px;
+    margin: 2px;
+    width: 25px;
     height: 20px;
     cursor: pointer;
     font-size: 10pt;

@@ -285,14 +285,17 @@
 #toolbar {
     display:inline-block;
     position:relative;
+    margin-top:5px;
     margin-left:auto;
     margin-right:auto;
-    height:39px;
+    padding-left:2px;
+    padding-right:2px;
+    height:38px;
     width:auto;
-    background: linear-gradient(to bottom, rgba(103,103,103,.65) , rgba(0,0,0,.65));
-    -webkit-box-shadow: 0 0 2px #000000, 0 0 10px #000000;
-    border-bottom-left-radius: 12px;
-    border-bottom-right-radius: 12px;
+    background-color: rgba(0,0,0,0.8); 
+    border: 1px solid rgba(256, 256, 256, 0.2);
+    border-radius: 6px;
+    
 }
 
 #subject {
