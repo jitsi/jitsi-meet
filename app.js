@@ -840,7 +840,7 @@ $(document).bind('presence.muc', function (event, jid, info, pres) {
     if($(pres).find(">bridgeIsDown").length > 0 && !bridgeIsDown) {
         bridgeIsDown = true;
         messageHandler.showError("Error",
-            "The video bridge is currently unavailable.");
+            "The video bridge is currently unavailable. Please try again later!");
     }
 
 });

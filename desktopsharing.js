@@ -240,7 +240,6 @@ function initInlineInstalls()
 
 function getSwitchStreamFailed(error) {
     console.error("Failed to obtain the stream to switch to", error);
-    messageHandler.showError('Error', 'Failed to get video stream');
     switchInProgress = false;
 }
 
