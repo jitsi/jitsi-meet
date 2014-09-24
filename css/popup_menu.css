@@ -2,17 +2,17 @@
 ul.popupmenu {
     display:none;
     position: absolute;
-    padding:0;
+    padding:10px;
     margin: 0;
     bottom: 0;
-    margin-bottom: 25px;
-    padding-bottom: 5px;
-    padding-top: 5px;
+    margin-bottom: 35px;
+    padding-bottom:  10px;
+    padding-top: 10px;
     right: 10px;
     left: -5px;
     width: 100px;
-    background-color: rgba(0,0,0,1);
-    -webkit-box-shadow: 0 0 2px #000000, 0 0 10px #000000;
+    background-color: rgba(0,0,0,0.9);
+    border: 1px solid rgba(256, 256, 256, 0.2);
     border-radius:8px;
 }
 
@@ -30,8 +30,8 @@ ul.popupmenu li {
 }
 
 ul.popupmenu li:hover {
-    background-color: rgba(82, 82, 82, .7);
-    border-radius:2px;
+    background-color: rgba(256, 256, 256, .2);
+    border-radius:6px;
 }
 
 /*Link Appearance*/
