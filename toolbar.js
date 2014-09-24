@@ -19,21 +19,22 @@ var Toolbar = (function (my) {
             if (sharedKey) {
                 messageHandler.openMessageDialog(null,
                         "This conversation is currently protected by" +
-                        " a shared secret key.",
+                        " a password. Only the owner of the conference" +
+                        " could set a password.",
                     false,
-                    "Secret key");
+                    "Password");
             } else {
                 messageHandler.openMessageDialog(null,
                     "This conversation isn't currently protected by" +
-                        " a secret key. Only the owner of the conference" +
-                        " could set a shared key.",
+                        " a password. Only the owner of the conference" +
+                        " could set a password.",
                     false,
-                    "Secret key");
+                    "Password");
             }
         } else {
             if (sharedKey) {
                 messageHandler.openTwoButtonDialog(null,
-                    "Are you sure you would like to remove your secret key?",
+                    "Are you sure you would like to remove your password?",
                     false,
                     "Remove",
                     function (e, v) {
@@ -44,9 +45,9 @@ var Toolbar = (function (my) {
                     });
             } else {
                 messageHandler.openTwoButtonDialog(null,
-                    '<h2>Set a secret key to lock your room</h2>' +
+                    '<h2>Set a password to lock your room</h2>' +
                         '<input id="lockKey" type="text"' +
-                        'placeholder="your shared key" autofocus>',
+                        'placeholder="your password" autofocus>',
                     false,
                     "Save",
                     function (e, v) {
@@ -147,8 +148,8 @@ var Toolbar = (function (my) {
                 'Participants join muted<br/>' +
                 '<input type="checkbox" id="requireNicknames">' +
                 'Require nicknames<br/><br/>' +
-                'Set a secret key to lock your room:' +
-                '<input id="lockKey" type="text" placeholder="your shared key"' +
+                'Set a password to lock your room:' +
+                '<input id="lockKey" type="text" placeholder="your password"' +
                 'autofocus>',
             null,
             false,
