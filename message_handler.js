@@ -40,6 +40,28 @@ var messageHandler = (function(my) {
     };
 
     /**
+     * Shows a message to the user with two buttons: first is given as a parameter and the second is Cancel.
+     *
+     * @param titleString the title of the message
+     * @param msgString the text of the message
+     * @param persistent boolean value which determines whether the message is persistent or not
+     * @param buttons object with the buttons. The keys must be the name of the button and value is the value
+     * that will be passed to submitFunction
+     * @param submitFunction function to be called on submit
+     * @param loadedFunction function to be called after the prompt is fully loaded
+     */
+    my.openDialog = function(titleString, msgString, persistent, buttons, submitFunction, loadedFunction) {
+        $.prompt(msgString, {
+            title: titleString,
+            persistent: false,
+            buttons: buttons,
+            defaultButton: 1,
+            loaded: loadedFunction,
+            submit: submitFunction
+        });
+    };
+
+    /**
      * Shows a dialog with different states to the user.
      *
      * @param statesObject object containing all the states of the dialog
