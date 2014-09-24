@@ -238,5 +238,21 @@ var Toolbar = (function (my) {
         }
     };
 
+    /**
+     * Sets the state of the button. The button has blue glow if desktop streaming is active.
+     * @param active the state of the desktop streaming.
+     */
+    my.changeDesktopSharingButtonState = function (active) {
+        var button = $("#desktopsharing > a");
+        if(active)
+        {
+            button.addClass("glow");
+        }
+        else
+        {
+            button.removeClass("glow");
+        }
+    }
+
     return my;
 }(Toolbar || {}));

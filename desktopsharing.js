@@ -247,6 +247,7 @@ function streamSwitchDone() {
     //window.setTimeout(
     //    function () {
     switchInProgress = false;
+    Toolbar.changeDesktopSharingButtonState(isUsingScreenStream);
     //    }, 100
     //);
 }
