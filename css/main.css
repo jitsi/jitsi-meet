@@ -324,3 +324,38 @@ form {
 {
     text-shadow: 0px 0px 30px #06a5df, 0px 0px 10px #06a5df, 0px 0px 5px #06a5df,0px 0px 3px #06a5df;
 }
+
+.watermark {
+    display: block;
+    position: absolute;
+    top: 15;
+    width: 186px;
+    height: 74px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    z-index: 2;
+}
+
+.leftwatermark {
+    display: none;
+    left: 15;
+    background-image:url(../images/watermark.png);
+    background-position: center left;
+}
+
+.rightwatermark {
+    display: none;
+    right: 15;
+    background-position: center right;
+}
+
+.poweredby {
+    display: none;
+    position: absolute;
+    left: 25;
+    bottom: 7;
+    font-size: 11pt;
+    color: rgba(255,255,255,.50);
+    text-decoration: none;
+    z-index: 100;
+}

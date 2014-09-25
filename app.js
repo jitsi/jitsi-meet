@@ -1126,24 +1126,6 @@ function getCameraVideoSize(videoWidth,
 $(document).ready(function () {
     document.title = brand.appName;
 
-    if (interfaceConfig.SHOW_JITSI_WATERMARK) {
-        $("#leftwatermark").css({display: 'block'});
-        $("#leftwatermark").parent().get(0).href
-            = interfaceConfig.JITSI_WATERMARK_LINK;
-    }
-
-    if (interfaceConfig.SHOW_BRAND_WATERMARK) {
-        $("#rightwatermark").css({display: 'block'});
-        $("#rightwatermark").parent().get(0).href
-            = interfaceConfig.BRAND_WATERMARK_LINK;
-        $("#rightwatermark").get(0).style.backgroundImage
-            = "url(../images/rightwatermark.png)";
-    }
-
-    if (interfaceConfig.SHOW_POWERED_BY) {
-        $("#poweredby").css({display: 'block'});
-    }
-
     if(config.enableWelcomePage && window.location.pathname == "/" &&
         (!window.localStorage.welcomePageDisabled
                 || window.localStorage.welcomePageDisabled == "false"))
@@ -1152,6 +1134,31 @@ $(document).ready(function () {
         $("#domain_name").text(
                 window.location.protocol + "//" + window.location.host + "/");
         $("span[name='appName']").text(brand.appName);
+
+        if (interfaceConfig.SHOW_JITSI_WATERMARK) {
+            var leftWatermarkDiv
+                = $("#welcome_page_header div[class='watermark leftwatermark']");
+
+            leftWatermarkDiv.css({display: 'block'});
+            leftWatermarkDiv.parent().get(0).href
+                = interfaceConfig.JITSI_WATERMARK_LINK;
+        }
+
+        if (interfaceConfig.SHOW_BRAND_WATERMARK) {
+            var rightWatermarkDiv
+                = $("#welcome_page_header div[class='watermark rightwatermark']");
+
+            rightWatermarkDiv.css({display: 'block'});
+            rightWatermarkDiv.parent().get(0).href
+                = interfaceConfig.BRAND_WATERMARK_LINK;
+            rightWatermarkDiv.get(0).style.backgroundImage
+                = "url(../images/rightwatermark.png)";
+        }
+
+        if (interfaceConfig.SHOW_POWERED_BY) {
+            $("#welcome_page_header>a[class='poweredby']")
+                .css({display: 'block'});
+        }
 
         function enter_room()
         {
@@ -1187,7 +1194,6 @@ $(document).ready(function () {
                 }, 70);
         }
 
-
         function update_roomname()
         {
             var word = RoomNameGenerator.generateRoomWithoutSeparator();
@@ -1200,10 +1206,35 @@ $(document).ready(function () {
         update_roomname();
 
         $("#disable_welcome").click(function () {
-            window.localStorage.welcomePageDisabled = $("#disable_welcome").is(":checked");
+            window.localStorage.welcomePageDisabled
+                = $("#disable_welcome").is(":checked");
         });
 
         return;
+    }
+
+    if (interfaceConfig.SHOW_JITSI_WATERMARK) {
+        var leftWatermarkDiv
+            = $("#largeVideoContainer div[class='watermark leftwatermark']");
+
+        leftWatermarkDiv.css({display: 'block'});
+        leftWatermarkDiv.parent().get(0).href
+            = interfaceConfig.JITSI_WATERMARK_LINK;
+    }
+
+    if (interfaceConfig.SHOW_BRAND_WATERMARK) {
+        var rightWatermarkDiv
+            = $("#largeVideoContainer div[class='watermark rightwatermark']");
+
+        rightWatermarkDiv.css({display: 'block'});
+        rightWatermarkDiv.parent().get(0).href
+            = interfaceConfig.BRAND_WATERMARK_LINK;
+        rightWatermarkDiv.get(0).style.backgroundImage
+            = "url(../images/rightwatermark.png)";
+    }
+
+    if (interfaceConfig.SHOW_POWERED_BY) {
+        $("#largeVideoContainer>a[class='poweredby']").css({display: 'block'});
     }
 
     $("#welcome_page").hide();
@@ -1265,7 +1296,10 @@ $(window).bind('beforeunload', function () {
             async: false,
             cache: false,
             contentType: 'application/xml',
-            data: "<body rid='" + (connection.rid || connection._proto.rid) + "' xmlns='http://jabber.org/protocol/httpbind' sid='" + (connection.sid || connection._proto.sid) + "' type='terminate'><presence xmlns='jabber:client' type='unavailable'/></body>",
+            data: "<body rid='" + (connection.rid || connection._proto.rid)
+                + "' xmlns='http://jabber.org/protocol/httpbind' sid='"
+                + (connection.sid || connection._proto.sid)
+                + "' type='terminate'><presence xmlns='jabber:client' type='unavailable'/></body>",
             success: function (data) {
                 console.log('signed out');
                 console.log(data);
@@ -1281,7 +1315,8 @@ $(window).bind('beforeunload', function () {
 function disposeConference(onUnload) {
     var handler = getConferenceHandler();
     if (handler && handler.peerconnection) {
-        // FIXME: probably removing streams is not required and close() should be enough
+        // FIXME: probably removing streams is not required and close() should
+        // be enough
         if (connection.jingle.localAudio) {
             handler.peerconnection.removeStream(connection.jingle.localAudio);
         }
