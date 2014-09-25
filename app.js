@@ -1516,10 +1516,13 @@ $(document).bind("selectedendpointchanged", function(event, userJid) {
 
 function callSipButtonClicked()
 {
+    var defaultNumber
+        = config.defaultSipNumber ? config.defaultSipNumber : '';
+
     messageHandler.openTwoButtonDialog(null,
         '<h2>Enter SIP number</h2>' +
             '<input id="sipNumber" type="text"' +
-            ' value="' + config.defaultSipNumber + '" autofocus>',
+            ' value="' + defaultNumber + '" autofocus>',
         false,
         "Dial",
         function (e, v, m, f) {
