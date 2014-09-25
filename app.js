@@ -1138,10 +1138,13 @@ $(document).ready(function () {
         if (interfaceConfig.SHOW_JITSI_WATERMARK) {
             var leftWatermarkDiv
                 = $("#welcome_page_header div[class='watermark leftwatermark']");
+            if(leftWatermarkDiv && leftWatermarkDiv.length > 0)
+            {
+                leftWatermarkDiv.css({display: 'block'});
+                leftWatermarkDiv.parent().get(0).href
+                    = interfaceConfig.JITSI_WATERMARK_LINK;
+            }
 
-            leftWatermarkDiv.css({display: 'block'});
-            leftWatermarkDiv.parent().get(0).href
-                = interfaceConfig.JITSI_WATERMARK_LINK;
         }
 
         if (interfaceConfig.SHOW_BRAND_WATERMARK) {
