@@ -1150,12 +1150,13 @@ $(document).ready(function () {
         if (interfaceConfig.SHOW_BRAND_WATERMARK) {
             var rightWatermarkDiv
                 = $("#welcome_page_header div[class='watermark rightwatermark']");
-
-            rightWatermarkDiv.css({display: 'block'});
-            rightWatermarkDiv.parent().get(0).href
-                = interfaceConfig.BRAND_WATERMARK_LINK;
-            rightWatermarkDiv.get(0).style.backgroundImage
-                = "url(../images/rightwatermark.png)";
+            if(rightWatermarkDiv && rightWatermarkDiv.length > 0) {
+                rightWatermarkDiv.css({display: 'block'});
+                rightWatermarkDiv.parent().get(0).href
+                    = interfaceConfig.BRAND_WATERMARK_LINK;
+                rightWatermarkDiv.get(0).style.backgroundImage
+                    = "url(../images/rightwatermark.png)";
+            }
         }
 
         if (interfaceConfig.SHOW_POWERED_BY) {
