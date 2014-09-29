@@ -40,7 +40,7 @@ case "$1" in
                 gunzip -c /usr/share/doc/jitsi-meet-prosody/prosody.cfg.lua-jvb.example.gz > /etc/prosody/prosody.cfg.lua
             fi
 
-            if [ "PROSODY_CONFIG_PRESENT" = "true" ]; then
+            if [ "$PROSODY_CONFIG_PRESENT" = "true" ]; then
                 cp /etc/prosody/prosody.cfg.lua /etc/prosody/prosody.cfg.lua.orig
             fi
             sed -i "s/jitmeet.example.com/$JVB_HOSTNAME/g" /etc/prosody/prosody.cfg.lua
@@ -58,7 +58,7 @@ case "$1" in
         ln -sf /var/lib/prosody/$JVB_HOSTNAME.key /etc/prosody/certs/$JVB_HOSTNAME.key
         ln -sf /var/lib/prosody/$JVB_HOSTNAME.crt /etc/prosody/certs/$JVB_HOSTNAME.crt
 
-        if [ "PROSODY_CONFIG_PRESENT" = "true" ]; then
+        if [ "$PROSODY_CONFIG_PRESENT" = "true" ]; then
             invoke-rc.d prosody reload
         else
             invoke-rc.d prosody restart
