@@ -301,8 +301,8 @@ var VideoLayout = (function (my) {
      * @return Returns <tt>true</tt> if the peer container exists,
      * <tt>false</tt> - otherwise
      */
-    my.ensurePeerContainerExists = function(peerJid) {
-        ContactList.ensureAddContact(peerJid);
+    my.ensurePeerContainerExists = function(peerJid, userId) {
+        ContactList.ensureAddContact(peerJid, userId);
 
         var resourceJid = Strophe.getResourceFromJid(peerJid);
 
@@ -311,14 +311,17 @@ var VideoLayout = (function (my) {
         if ($('#' + videoSpanId).length > 0) {
             // If there's been a focus change, make sure we add focus related
             // interface!!
-            if (focus && $('#remote_popupmenu_' + resourceJid).length <= 0)
-                addRemoteVideoMenu( peerJid,
-                                    document.getElementById(videoSpanId));
+            if (focus && $('#remote_popupmenu_' + resourceJid).length <= 0) {
+                addRemoteVideoMenu(peerJid,
+                    document.getElementById(videoSpanId));
+            }
         }
         else {
-            var container
-                = VideoLayout.addRemoteVideoContainer(peerJid, videoSpanId);
-
+            var container =
+                VideoLayout.addRemoteVideoContainer(peerJid, videoSpanId, userId);
+            $(container).css('background-image',
+                    "url('https://www.gravatar.com/avatar/" + userId +
+                        "?d=retro&size=100')");
             // Set default display name.
             setDisplayName(videoSpanId);
 
