@@ -54,11 +54,19 @@ ul.popupmenu li a span {
     text-align: center;
 }
 
-span.remotevideomenu:hover ul.popupmenu {
+span.remotevideomenu:hover ul.popupmenu, ul.popupmenu:hover {
     display:block !important;
 }
 
 a.disabled {
     color: gray !important;
     pointer-events: none;
+}
+
+.popupmenuPadding {
+    height: 35px;
+    width: 100px;
+    position: absolute;
+    bottom: -35;
+    left: 0px;
 }
