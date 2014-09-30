@@ -20,6 +20,7 @@
     border:1px solid transparent;
     z-index: 5;
     transition: bottom 2s;
+    overflow: visible !important;
 }
 
 #remotevideos.hidden {
@@ -55,6 +56,7 @@
     -webkit-animation-name: greyPulse;
     -webkit-animation-duration: 2s;
     -webkit-animation-iteration-count: 1;
+    overflow: visible !important;
 }
 
 #remoteVideos .videocontainer:hover {
