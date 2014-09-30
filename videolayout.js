@@ -1127,6 +1127,10 @@ var VideoLayout = (function (my) {
 
         ejectMenuItem.appendChild(ejectLinkItem);
         popupmenuElement.appendChild(ejectMenuItem);
+
+        var paddingSpan = document.createElement('span');
+        paddingSpan.className = 'popupmenuPadding';
+        popupmenuElement.appendChild(paddingSpan);
     }
 
     /**
