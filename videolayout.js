@@ -919,8 +919,9 @@ var VideoLayout = (function (my) {
            numvids = $('#remoteVideos>span:visible').length;
 
        // Remove the 3px borders arround videos and border around the remote
-       // videos area
-       var availableWinWidth = videoSpaceWidth - 2 * 3 * numvids - 70;
+       // videos area and the 4 pixels between the local video and the others
+       //TODO: Find out where the 4 pixels come from and remove them
+       var availableWinWidth = videoSpaceWidth - 2 * 3 * numvids - 70 - 4;
 
        var availableWidth = availableWinWidth / numvids;
        var aspectRatio = 16.0 / 9.0;
