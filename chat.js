@@ -143,7 +143,7 @@ var Chat = (function (my) {
         var chatspace = $('#chatspace');
         var videospace = $('#videospace');
 
-        var chatSize = (chatspace.is(":visible")) ? [0, 0] : Chat.getChatSize();
+        var chatSize = (Chat.isVisible()) ? [0, 0] : Chat.getChatSize();
         var videospaceWidth = window.innerWidth - chatSize[0];
         var videospaceHeight = window.innerHeight;
         var videoSize
@@ -160,97 +160,64 @@ var Chat = (function (my) {
         var thumbnailSize = VideoLayout.calculateThumbnailSize(videospaceWidth);
         var thumbnailsWidth = thumbnailSize[0];
         var thumbnailsHeight = thumbnailSize[1];
+        var completeFunction = Chat.isVisible() ?
+            function() {} : function () {
+                                scrollChatToBottom();
+                                chatspace.trigger('shown');
+                            };
 
-        if (chatspace.is(":visible")) {
-            videospace.animate({right: chatSize[0],
-                                width: videospaceWidth,
-                                height: videospaceHeight},
-                                {queue: false,
-                                duration: 500});
+        videospace.animate({right: chatSize[0],
+                            width: videospaceWidth,
+                            height: videospaceHeight},
+                            {queue: false,
+                            duration: 500,
+                            complete: completeFunction});
 
-            $('#remoteVideos').animate({height: thumbnailsHeight},
+        $('#remoteVideos').animate({height: thumbnailsHeight},
+                                    {queue: false,
+                                    duration: 500});
+
+        $('#remoteVideos>span').animate({height: thumbnailsHeight,
+                                        width: thumbnailsWidth},
                                         {queue: false,
-                                        duration: 500});
+                                        duration: 500,
+                                        complete: function() {
+                                            $(document).trigger(
+                                                    "remotevideo.resized",
+                                                    [thumbnailsWidth,
+                                                     thumbnailsHeight]);
+                                        }});
 
-            $('#remoteVideos>span').animate({height: thumbnailsHeight,
-                                            width: thumbnailsWidth},
+        $('#largeVideoContainer').animate({ width: videospaceWidth,
+                                            height: videospaceHeight},
                                             {queue: false,
-                                            duration: 500,
-                                            complete: function() {
-                                                $(document).trigger(
-                                                        "remotevideo.resized",
-                                                        [thumbnailsWidth,
-                                                         thumbnailsHeight]);
-                                            }});
+                                             duration: 500
+                                            });
 
-            $('#largeVideoContainer').animate({ width: videospaceWidth,
-                                                height: videospaceHeight},
-                                                {queue: false,
-                                                 duration: 500
-                                                });
+        $('#largeVideo').animate({  width: videoWidth,
+                                    height: videoHeight,
+                                    top: verticalIndent,
+                                    bottom: verticalIndent,
+                                    left: horizontalIndent,
+                                    right: horizontalIndent},
+                                    {   queue: false,
+                                        duration: 500
+                                    }
+        );
 
-            $('#largeVideo').animate({  width: videoWidth,
-                                        height: videoHeight,
-                                        top: verticalIndent,
-                                        bottom: verticalIndent,
-                                        left: horizontalIndent,
-                                        right: horizontalIndent},
-                                        {   queue: false,
-                                            duration: 500
-                                        });
-
-            $('#chatspace').hide("slide", { direction: "right",
+        if (Chat.isVisible()) {
+            chatspace.hide("slide", { direction: "right",
                                             queue: false,
                                             duration: 500});
         }
         else {
             // Undock the toolbar when the chat is shown and if we're in a 
             // video mode.
-            if (VideoLayout.isLargeVideoVisible())
+            if (VideoLayout.isLargeVideoVisible()) {
                 ToolbarToggler.dockToolbar(false);
+            }
 
-            videospace.animate({right: chatSize[0],
-                                width: videospaceWidth,
-                                height: videospaceHeight},
-                               {queue: false,
-                                duration: 500,
-                                complete: function () {
-                                    scrollChatToBottom();
-                                    chatspace.trigger('shown');
-                                }
-                               });
-
-            $('#remoteVideos').animate({height: thumbnailsHeight},
-                    {queue: false,
-                    duration: 500});
-
-            $('#remoteVideos>span').animate({height: thumbnailsHeight,
-                        width: thumbnailsWidth},
-                        {queue: false,
-                        duration: 500,
-                        complete: function() {
-                            $(document).trigger(
-                                    "remotevideo.resized",
-                                    [thumbnailsWidth, thumbnailsHeight]);
-                        }});
-
-            $('#largeVideoContainer').animate({ width: videospaceWidth,
-                                                height: videospaceHeight},
-                                                {queue: false,
-                                                 duration: 500
-                                                });
-
-            $('#largeVideo').animate({  width: videoWidth,
-                                        height: videoHeight,
-                                        top: verticalIndent,
-                                        bottom: verticalIndent,
-                                        left: horizontalIndent,
-                                        right: horizontalIndent},
-                                        {queue: false,
-                                         duration: 500
-                                        });
-
-            $('#chatspace').show("slide", { direction: "right",
+            chatspace.show("slide", { direction: "right",
                                             queue: false,
                                             duration: 500,
                                             complete: function () {

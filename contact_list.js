@@ -96,94 +96,57 @@ var ContactList = (function (my) {
         var thumbnailSize = VideoLayout.calculateThumbnailSize(videospaceWidth);
         var thumbnailsWidth = thumbnailSize[0];
         var thumbnailsHeight = thumbnailSize[1];
+        var completeFunction = ContactList.isVisible() ?
+            function() {} : function () { contactlist.trigger('shown');};
+
+        videospace.animate({right: chatSize[0],
+                            width: videospaceWidth,
+                            height: videospaceHeight},
+                            {queue: false,
+                            duration: 500,
+                            complete: completeFunction
+                            });
+
+        $('#remoteVideos').animate({height: thumbnailsHeight},
+                                    {queue: false,
+                                    duration: 500});
+
+        $('#remoteVideos>span').animate({height: thumbnailsHeight,
+                                        width: thumbnailsWidth},
+                                        {queue: false,
+                                        duration: 500,
+                                        complete: function() {
+                                            $(document).trigger(
+                                                    "remotevideo.resized",
+                                                    [thumbnailsWidth,
+                                                     thumbnailsHeight]);
+                                        }});
+
+        $('#largeVideoContainer').animate({ width: videospaceWidth,
+                                            height: videospaceHeight},
+                                            {queue: false,
+                                             duration: 500
+                                            });
+
+        $('#largeVideo').animate({  width: videoWidth,
+                                    height: videoHeight,
+                                    top: verticalIndent,
+                                    bottom: verticalIndent,
+                                    left: horizontalIndent,
+                                    right: horizontalIndent},
+                                    {   queue: false,
+                                        duration: 500
+                                    });
 
         if (ContactList.isVisible()) {
-            videospace.animate({right: chatSize[0],
-                                width: videospaceWidth,
-                                height: videospaceHeight},
-                                {queue: false,
-                                duration: 500});
-
-            $('#remoteVideos').animate({height: thumbnailsHeight},
-                                        {queue: false,
-                                        duration: 500});
-
-            $('#remoteVideos>span').animate({height: thumbnailsHeight,
-                                            width: thumbnailsWidth},
-                                            {queue: false,
-                                            duration: 500,
-                                            complete: function() {
-                                                $(document).trigger(
-                                                        "remotevideo.resized",
-                                                        [thumbnailsWidth,
-                                                         thumbnailsHeight]);
-                                            }});
-
-            $('#largeVideoContainer').animate({ width: videospaceWidth,
-                                                height: videospaceHeight},
-                                                {queue: false,
-                                                 duration: 500
-                                                });
-
-            $('#largeVideo').animate({  width: videoWidth,
-                                        height: videoHeight,
-                                        top: verticalIndent,
-                                        bottom: verticalIndent,
-                                        left: horizontalIndent,
-                                        right: horizontalIndent},
-                                        {   queue: false,
-                                            duration: 500
-                                        });
-
             $('#contactlist').hide("slide", { direction: "right",
                                             queue: false,
                                             duration: 500});
-        }
-        else {
+        } else {
             // Undock the toolbar when the chat is shown and if we're in a 
             // video mode.
             if (VideoLayout.isLargeVideoVisible())
                 ToolbarToggler.dockToolbar(false);
-
-            videospace.animate({right: chatSize[0],
-                                width: videospaceWidth,
-                                height: videospaceHeight},
-                               {queue: false,
-                                duration: 500,
-                                complete: function () {
-                                    contactlist.trigger('shown');
-                                }
-                               });
-
-            $('#remoteVideos').animate({height: thumbnailsHeight},
-                    {queue: false,
-                    duration: 500});
-
-            $('#remoteVideos>span').animate({height: thumbnailsHeight,
-                        width: thumbnailsWidth},
-                        {queue: false,
-                        duration: 500,
-                        complete: function() {
-                            $(document).trigger(
-                                    "remotevideo.resized",
-                                    [thumbnailsWidth, thumbnailsHeight]);
-                        }});
-
-            $('#largeVideoContainer').animate({ width: videospaceWidth,
-                                                height: videospaceHeight},
-                                                {queue: false,
-                                                 duration: 500
-                                                });
-
-            $('#largeVideo').animate({  width: videoWidth,
-                                        height: videoHeight,
-                                        top: verticalIndent,
-                                        bottom: verticalIndent,
-                                        left: horizontalIndent,
-                                        right: horizontalIndent},
-                                        {queue: false,
-                                         duration: 500
-                                        });
 
             $('#contactlist').show("slide", { direction: "right",
                                             queue: false,
