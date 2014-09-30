@@ -9,6 +9,11 @@ server {
     location ~ ^/([a-zA-Z0-9]+)$ {
         rewrite ^/(.*)$ / break;
         }
+
+    location / {
+        ssi on;
+    }
+
     # BOSH
     location /http-bind {
         proxy_pass      http://localhost:5280/http-bind;
