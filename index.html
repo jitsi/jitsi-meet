@@ -164,64 +164,64 @@
         <div style="position: relative;" id="header_container">
             <div id="header">
                 <span id="toolbar">
-                    <a class="button" data-toggle="popover" data-placement="bottom" shortcut="mutePopover" content="Mute / Unmute" onclick='toggleAudio();'>
+                    <a class="button" data-container="body" data-toggle="popover" data-placement="bottom" shortcut="mutePopover" content="Mute / Unmute" onclick='toggleAudio();'>
                         <i id="mute" class="icon-microphone"></i>
                     </a>
                     <div class="header_button_separator"></div>
-                    <a class="button" data-toggle="popover" data-placement="bottom" shortcut="toggleVideoPopover" content="Start / stop camera" onclick='toggleVideo();'>
+                    <a class="button" data-container="body" data-toggle="popover" data-placement="bottom" shortcut="toggleVideoPopover" content="Start / stop camera" onclick='toggleVideo();'>
                         <i id="video" class="icon-camera"></i>
                     </a>
                     <span id="recording" style="display: none">
                         <div class="header_button_separator"></div>
-                        <a class="button" data-toggle="popover" data-placement="bottom" content="Record" onclick='toggleRecording();'>
+                        <a class="button" data-container="body" data-toggle="popover" data-placement="bottom" content="Record" onclick='toggleRecording();'>
                             <i id="recordButton" class="icon-recEnable"></i>
                         </a>
                     </span>
                     <div class="header_button_separator"></div>
-                    <a class="button" data-toggle="popover" data-placement="bottom" content="Lock / unlock room" onclick="Toolbar.openLockDialog();">
+                    <a class="button" data-container="body" data-toggle="popover" data-placement="bottom" content="Lock / unlock room" onclick="Toolbar.openLockDialog();">
                         <i id="lockIcon" class="icon-security"></i>
                     </a>
                     <div class="header_button_separator"></div>
-                    <a class="button" data-toggle="popover" data-placement="bottom" content="Invite others" onclick="Toolbar.openLinkDialog();">
+                    <a class="button" data-container="body" data-toggle="popover" data-placement="bottom" content="Invite others" onclick="Toolbar.openLinkDialog();">
                         <i class="icon-link"></i>
                     </a>
                     <div class="header_button_separator"></div>
                     <span class="toolbar_span">
-                        <a class="button" data-toggle="popover" shortcut="toggleChatPopover" data-placement="bottom" content="Open / close chat" onclick='BottomToolbar.toggleChat();'>
+                        <a class="button" data-container="body" data-toggle="popover" shortcut="toggleChatPopover" data-placement="bottom" content="Open / close chat" onclick='BottomToolbar.toggleChat();'>
                             <i id="chatButton" class="icon-chat"></i>
                         </a>
                         <span id="unreadMessages"></span>
                     </span>
                     <span id="prezi_button">
                         <div class="header_button_separator"></div>
-                        <a class="button" data-toggle="popover" data-placement="bottom" content="Share Prezi" onclick='Prezi.openPreziDialog();'>
+                        <a class="button" data-container="body" data-toggle="popover" data-placement="bottom" content="Share Prezi" onclick='Prezi.openPreziDialog();'>
                             <i class="icon-prezi"></i>
                         </a>
                     </span>
                     <span id="etherpadButton">
                         <div class="header_button_separator"></div>
-                        <a class="button" data-toggle="popover" data-placement="bottom" content="Shared document" onclick='Etherpad.toggleEtherpad(0);'>
+                        <a class="button" data-container="body" data-toggle="popover" data-placement="bottom" content="Shared document" onclick='Etherpad.toggleEtherpad(0);'>
                             <i class="icon-share-doc"></i>
                         </a>
                     </span>
                     <div class="header_button_separator"></div>
                     <span id="desktopsharing" style="display: none">
-                        <a class="button" data-toggle="popover" data-placement="bottom" content="Share screen" onclick="toggleScreenSharing();">
+                        <a class="button" data-container="body" data-toggle="popover" data-placement="bottom" content="Share screen" onclick="toggleScreenSharing();">
                             <i class="icon-share-desktop"></i>
                         </a>
                     </span>
                     <div class="header_button_separator"></div>
-                    <a class="button" data-toggle="popover" data-placement="bottom" content="Enter / Exit Full Screen" onclick='buttonClick("#fullScreen", "icon-full-screen icon-exit-full-screen");Toolbar.toggleFullScreen();'>
+                    <a class="button" data-container="body" data-toggle="popover" data-placement="bottom" content="Enter / Exit Full Screen" onclick='buttonClick("#fullScreen", "icon-full-screen icon-exit-full-screen");Toolbar.toggleFullScreen();'>
                         <i id="fullScreen" class="icon-full-screen"></i>
                     </a>
                     <span id="sipCallButton" style="display: none">
                         <div class="header_button_separator"></div>
-                        <a class="button" data-toggle="popover" data-placement="bottom" content="Call SIP number" onclick='callSipButtonClicked();'>
+                        <a class="button" data-container="body" data-toggle="popover" data-placement="bottom" content="Call SIP number" onclick='callSipButtonClicked();'>
                             <i class="icon-telephone"></i></a>
                     </span>
                     <div class="header_button_separator"></div>
                     <span id="hangup">
-                        <a class="button" data-toggle="popover" data-placement="bottom" content="Hang Up" onclick='hangup();'>
+                        <a class="button" data-container="body" data-toggle="popover" data-placement="bottom" content="Hang Up" onclick='hangup();'>
                             <i class="icon-hangup" style="color:#ff0000;font-size: 1.4em;"></i>
                         </a>
                     </span>
@@ -243,8 +243,8 @@
             <div id="largeVideoContainer" class="videocontainer">
                 <div id="presentation"></div>
                 <div id="etherpad"></div>
-                <a target="_new"><div class="watermark leftwatermark" id=""></div></a>
-                <a target="_new"><div class="watermark rightwatermark" id=""></div></a>
+                <a target="_new"><div class="watermark leftwatermark"></div></a>
+                <a target="_new"><div class="watermark rightwatermark"></div></a>
                 <a class="poweredby" href="http://jitsi.org" target="_new" >powered by jitsi.org</a>
                 <video id="largeVideo" autoplay oncontextmenu="return false;"></video>
             </div>
@@ -298,7 +298,7 @@
                 <li class="title"><i class="icon-contact-list"></i> CONTACT LIST</li>
             </ul>
         </div>
-        <a id="downloadlog" onclick='dump(event.target);' data-toggle="popover" data-placement="right" data-content="Download logs" ><i class="fa fa-cloud-download"></i></a>
+        <a id="downloadlog" onclick='dump(event.target);' data-container="body" data-toggle="popover" data-placement="right" data-content="Download logs" ><i class="fa fa-cloud-download"></i></a>
     </div>
   </body>
 </html>
