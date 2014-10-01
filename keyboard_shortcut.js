@@ -47,7 +47,7 @@ var KeyboardShortcut = (function(my) {
     };
 
     window.onkeydown = function(e) {
-        if($("#chatspace").css("display") === "none") {
+        if(!($(":focus").is("input[type=text]") || $(":focus").is("textarea"))) {
             if(e.which === "T".charCodeAt(0)) {
                 if(isAudioMuted()) {
                     toggleAudio();
