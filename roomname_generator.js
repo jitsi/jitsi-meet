@@ -166,9 +166,8 @@ var RoomNameGenerator = function(my) {
 
     /**
      * Generates new room name.
-     * @param number_of_words ignored
      */
-    RoomNameGeneratorProto.generateRoomWithoutSeparator = function(number_of_words)
+    RoomNameGeneratorProto.generateRoomWithoutSeparator = function()
     {
         // Note that if more than one pattern is available, the choice of 'name' won't be random (names from patterns
         // with fewer options will have higher probability of being chosen that names from patterns with more options).

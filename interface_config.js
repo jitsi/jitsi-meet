@@ -10,5 +10,6 @@ var interfaceConfig = {
     JITSI_WATERMARK_LINK: "http://jitsi.org",
     SHOW_BRAND_WATERMARK: false,
     BRAND_WATERMARK_LINK: "",
-    SHOW_POWERED_BY: false
+    SHOW_POWERED_BY: false,
+    GENERATE_ROOMNAMES_ON_WELCOME_PAGE: true
 };

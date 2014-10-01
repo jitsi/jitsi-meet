@@ -201,4 +201,5 @@
     float:  left;
     cursor: pointer;
     text-align: center;
+    display: none;
 }

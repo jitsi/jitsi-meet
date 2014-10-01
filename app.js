@@ -209,7 +209,7 @@ function doJoin() {
         if (path.length > 1) {
             roomnode = path.substr(1).toLowerCase();
         } else {
-            var word = RoomNameGenerator.generateRoomWithoutSeparator(3);
+            var word = RoomNameGenerator.generateRoomWithoutSeparator();
             roomnode = word.toLowerCase();
 
             window.history.pushState('VideoChat',
@@ -1167,9 +1167,12 @@ $(document).ready(function () {
         function enter_room()
         {
             var val = $("#enter_room_field").val();
-            if(!val)
+            if(!val) {
                 val = $("#enter_room_field").attr("room_name");
-            window.location.pathname = "/" + val;
+            }
+            if (val) {
+                window.location.pathname = "/" + val;
+            }
         }
         $("#enter_room_button").click(function()
         {
@@ -1177,37 +1180,41 @@ $(document).ready(function () {
         });
 
         $("#enter_room_field").keydown(function (event) {
-            if (event.keyCode === 13) {
+            if (event.keyCode === 13 /* enter */) {
                 enter_room();
             }
         });
 
-        var updateTimeout;
-        var animateTimeout;
-        $("#reload_roomname").click(function () {
-            clearTimeout(updateTimeout);
-            clearTimeout(animateTimeout);
-            update_roomname();
-        });
 
-        function animate(word) {
-            var currentVal = $("#enter_room_field").attr("placeholder");
-            $("#enter_room_field").attr("placeholder", currentVal + word.substr(0, 1));
-            animateTimeout = setTimeout(function() {
+        if (interfaceConfig.GENERATE_ROOMNAMES_ON_WELCOME_PAGE){
+            var updateTimeout;
+            var animateTimeout;
+            $("#reload_roomname").click(function () {
+                clearTimeout(updateTimeout);
+                clearTimeout(animateTimeout);
+                update_roomname();
+            });
+            $("#reload_roomname").show();
+
+            function animate(word) {
+                var currentVal = $("#enter_room_field").attr("placeholder");
+                $("#enter_room_field").attr("placeholder", currentVal + word.substr(0, 1));
+                animateTimeout = setTimeout(function() {
                     animate(word.substring(1, word.length))
                 }, 70);
-        }
+            }
 
-        function update_roomname()
-        {
-            var word = RoomNameGenerator.generateRoomWithoutSeparator();
-            $("#enter_room_field").attr("room_name", word);
-            $("#enter_room_field").attr("placeholder", "");
-            animate(word);
-            updateTimeout = setTimeout(update_roomname, 10000);
-
+            function update_roomname()
+            {
+                var word = RoomNameGenerator.generateRoomWithoutSeparator();
+                $("#enter_room_field").attr("room_name", word);
+                $("#enter_room_field").attr("placeholder", "");
+                clearTimeout(animateTimeout);
+                animate(word);
+                updateTimeout = setTimeout(update_roomname, 10000);
+            }
+            update_roomname();
         }
-        update_roomname();
 
         $("#disable_welcome").click(function () {
             window.localStorage.welcomePageDisabled
@@ -1544,7 +1551,6 @@ function hangup() {
     disposeConference();
     sessionTerminated = true;
     connection.emuc.doLeave();
-    var buttons = {};
     if(config.enableWelcomePage)
     {
         setTimeout(function()
