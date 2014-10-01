@@ -1155,7 +1155,7 @@ $(document).ready(function () {
                 rightWatermarkDiv.parent().get(0).href
                     = interfaceConfig.BRAND_WATERMARK_LINK;
                 rightWatermarkDiv.get(0).style.backgroundImage
-                    = "url(../images/rightwatermark.png)";
+                    = "url(images/rightwatermark.png)";
             }
         }
 
@@ -1234,7 +1234,7 @@ $(document).ready(function () {
         rightWatermarkDiv.parent().get(0).href
             = interfaceConfig.BRAND_WATERMARK_LINK;
         rightWatermarkDiv.get(0).style.backgroundImage
-            = "url(../images/rightwatermark.png)";
+            = "url(images/rightwatermark.png)";
     }
 
     if (interfaceConfig.SHOW_POWERED_BY) {
