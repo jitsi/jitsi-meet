@@ -715,21 +715,22 @@ var VideoLayout = (function (my) {
             }
         }
         else {
-            var audioMutedSpan = $('#' + videoSpanId + '>span.audioMuted');
+            if(videoMutedSpan.length == 0) {
+                videoMutedSpan = document.createElement('span');
+                videoMutedSpan.className = 'videoMuted';
 
-            videoMutedSpan = document.createElement('span');
-            videoMutedSpan.className = 'videoMuted';
-            if (audioMutedSpan) {
-                videoMutedSpan.right = '30px';
-            }
-            $('#' + videoSpanId)[0].appendChild(videoMutedSpan);
+                $('#' + videoSpanId)[0].appendChild(videoMutedSpan);
 
-            var mutedIndicator = document.createElement('i');
-            mutedIndicator.className = 'icon-camera-disabled';
-            Util.setTooltip(mutedIndicator,
+                var mutedIndicator = document.createElement('i');
+                mutedIndicator.className = 'icon-camera-disabled';
+                Util.setTooltip(mutedIndicator,
                     "Participant has<br/>stopped the camera.",
                     "top");
-            videoMutedSpan.appendChild(mutedIndicator);
+                videoMutedSpan.appendChild(mutedIndicator);
+            }
+            var audioMutedSpan = $('#' + videoSpanId + '>span.audioMuted');
+            videoMutedSpan = $('#' + videoSpanId + '>span.videoMuted');
+            videoMutedSpan.css({right: ((audioMutedSpan.length > 0)?'30px':'0px')});
         }
     };
 
@@ -746,17 +747,14 @@ var VideoLayout = (function (my) {
             }
         }
         else {
-            var videoMutedSpan = $('#' + videoSpanId + '>span.videoMuted');
-
+            if(audioMutedSpan.length > 0 )
+                return;
             audioMutedSpan = document.createElement('span');
             audioMutedSpan.className = 'audioMuted';
             Util.setTooltip(audioMutedSpan,
-                    "Participant is muted",
-                    "top");
+                "Participant is muted",
+                "top");
 
-            if (videoMutedSpan) {
-                audioMutedSpan.right = '30px';
-            }
             $('#' + videoSpanId)[0].appendChild(audioMutedSpan);
 
             var mutedIndicator = document.createElement('i');
