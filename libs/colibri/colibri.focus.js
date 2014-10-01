@@ -292,8 +292,14 @@ ColibriFocus.prototype._makeConference = function (errorCallback) {
         else
         {
             elemName = 'channel';
-            if (('video' === name) && (self.channelLastN >= 0))
-                elemAttrs['last-n'] = self.channelLastN;
+            if ('video' === name) {
+                if (self.channelLastN >= 0) {
+                    elemAttrs['last-n'] = self.channelLastN;
+                }
+                if (config.adaptiveLastN) {
+                    elemAttrs['adaptive-last-n'] = 'true';
+                }
+            }
         }
 
         elem.c('content', { name: name });
@@ -834,8 +840,14 @@ ColibriFocus.prototype.addNewParticipant = function (peer) {
         else
         {
             elemName = 'channel';
-            if (('video' === name) && (self.channelLastN >= 0))
-                elemAttrs['last-n'] = self.channelLastN;
+            if ('video' === name) {
+                if (self.channelLastN >= 0) {
+                    elemAttrs['last-n'] = self.channelLastN;
+                }
+                if (config.adaptiveLastN) {
+                    elemAttrs['adaptive-last-n'] = 'true';
+                }
+            }
         }
 
         elem.c('content', { name: name });
