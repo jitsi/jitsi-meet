@@ -709,7 +709,6 @@ $(document).bind('entered.muc', function (event, jid, info, pres) {
             console.log('make new conference with', jid);
             focus.makeConference(Object.keys(connection.emuc.members),
                 function(error) {
-                    bridgeIsDown = true;
                     connection.emuc.addBridgeIsDownToPresence();
                     connection.emuc.sendPresence();
                 }
