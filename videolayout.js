@@ -1320,26 +1320,27 @@ var VideoLayout = (function (my) {
         }
     });
 
-    $(document).bind('simulcastlayerstarted', function(event) {
+    $(document).bind('simulcastlayerstarted simulcastlayerstopped', function(event) {
         var localVideoSelector = $('#' + 'localVideo_' + connection.jingle.localVideo.id);
         var simulcast = new Simulcast();
         var stream = simulcast.getLocalVideoStream();
+
+        var updateLargeVideo = (connection.emuc.myroomjid
+            == getJidFromVideoSrc(largeVideoNewSrc));
+        var updateFocusedVideoSrc = (localVideoSrc == focusedVideoSrc);
 
         // Attach WebRTC stream
         RTC.attachMediaStream(localVideoSelector, stream);
 
         localVideoSrc = $(localVideoSelector).attr('src');
-    });
 
-    $(document).bind('simulcastlayerstopped', function(event) {
-        var localVideoSelector = $('#' + 'localVideo_' + connection.jingle.localVideo.id);
-        var simulcast = new Simulcast();
-        var stream = simulcast.getLocalVideoStream();
+        if (updateLargeVideo) {
+            VideoLayout.updateLargeVideo(localVideoSrc);
+        }
 
-        // Attach WebRTC stream
-        RTC.attachMediaStream(localVideoSelector, stream);
-
-        localVideoSrc = $(localVideoSelector).attr('src');
+        if (updateFocusedVideoSrc) {
+            focusedVideoSrc = localVideoSrc;
+        }
     });
 
     /**
@@ -1415,7 +1416,7 @@ var VideoLayout = (function (my) {
                 }
 
             } else {
-                console.error('Could not find a stream or a session.');
+                console.error('Could not find a stream or a session.', session, electedStream);
             }
         });
     });

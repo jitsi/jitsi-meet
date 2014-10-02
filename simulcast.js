@@ -37,11 +37,11 @@ function Simulcast() {
         };
     }());
 
-    Simulcast.prototype._cacheVideoSources = function (lines) {
+    Simulcast.prototype._cacheLocalVideoSources = function (lines) {
         localVideoSourceCache = this._getVideoSources(lines);
     };
 
-    Simulcast.prototype._restoreVideoSources = function (lines) {
+    Simulcast.prototype._restoreLocalVideoSources = function (lines) {
         this._replaceVideoSources(lines, localVideoSourceCache);
     };
 
@@ -183,7 +183,7 @@ function Simulcast() {
     };
 
     // Returns a random integer between min (included) and max (excluded)
-    // Using Math.round() will give you a non-uniform distribution!
+    // Using Math.round() gives a non-uniform distribution!
     Simulcast.prototype._generateRandomSSRC = function () {
         var min = 0, max = 0xffffffff;
         return Math.floor(Math.random() * (max - min)) + min;
@@ -198,6 +198,23 @@ function Simulcast() {
 
     emptyCompoundIndex = new CompoundIndex();
 
+    /**
+     * The _indexOfArray() method returns the first a CompoundIndex at which a
+     * given element can be found in the array, or emptyCompoundIndex if it is
+     * not present.
+     *
+     * Example:
+     *
+     * _indexOfArray('3', [ 'this is line 1', 'this is line 2', 'this is line 3' ])
+     *
+     * returns {row: 2, column: 14}
+     *
+     * @param needle
+     * @param haystack
+     * @param start
+     * @returns {CompoundIndex}
+     * @private
+     */
     Simulcast.prototype._indexOfArray = function (needle, haystack, start) {
         var length = haystack.length, idx, i;
 
@@ -360,11 +377,11 @@ function Simulcast() {
 
         if (this._indexOfArray('a=ssrc-group:SIM', lines) === emptyCompoundIndex) {
             this._appendSimulcastGroup(lines);
-            this._cacheVideoSources(lines);
+            this._cacheLocalVideoSources(lines);
         } else {
             // verify that the ssrcs participating in the SIM group are present
             // in the SDP (needed for presence).
-            this._restoreVideoSources(lines);
+            this._restoreLocalVideoSources(lines);
         }
     };
 
@@ -550,14 +567,12 @@ function Simulcast() {
     };
 
     Simulcast.prototype._updateRemoteMaps = function (lines) {
-        var remoteVideoSources = this._parseMedia(lines, ['video'])[0], videoSource, quality;
+        var remoteVideoSources = this._parseMedia(lines, ['video'])[0],
+            videoSource, quality;
 
         // (re) initialize the remote maps.
-        remoteMaps = {
-            msid2Quality: {},
-            ssrc2Msid: {},
-            receivingVideoStreams: {}
-        };
+        remoteMaps.msid2Quality = {};
+        remoteMaps.ssrc2Msid = {};
 
         if (remoteVideoSources.groups && remoteVideoSources.groups.length !== 0) {
             remoteVideoSources.groups.forEach(function (group) {
@@ -637,11 +652,8 @@ function Simulcast() {
         return desc;
     };
 
-    Simulcast.prototype._setReceivingVideoStream = function (ssrc) {
-        var receivingTrack = remoteMaps.ssrc2Msid[ssrc],
-            msidParts = receivingTrack.split(' ');
-
-        remoteMaps.receivingVideoStreams[msidParts[0]] = msidParts[1];
+    Simulcast.prototype._setReceivingVideoStream = function (endpoint, ssrc) {
+        remoteMaps.receivingVideoStreams[endpoint] = ssrc;
     };
 
     /**
@@ -652,22 +664,20 @@ function Simulcast() {
      * @returns {webkitMediaStream}
      */
     Simulcast.prototype.getReceivingVideoStream = function (stream) {
-        var tracks, i, electedTrack, msid, quality = 1, receivingTrackId;
+        var tracks, i, electedTrack, msid, quality = 0, receivingTrackId;
 
         if (config.enableSimulcast) {
 
-            if (remoteMaps.receivingVideoStreams[stream.id])
-            {
-                // the bridge has signaled us to receive a specific track.
-                receivingTrackId = remoteMaps.receivingVideoStreams[stream.id];
-                tracks = stream.getVideoTracks();
-                for (i = 0; i < tracks.length; i++) {
-                    if (receivingTrackId === tracks[i].id) {
-                        electedTrack = tracks[i];
-                        break;
+            stream.getVideoTracks().some(function(track) {
+                return Object.keys(remoteMaps.receivingVideoStreams).some(function(endpoint) {
+                    var ssrc = remoteMaps.receivingVideoStreams[endpoint];
+                    var msid = remoteMaps.ssrc2Msid[ssrc];
+                    if (msid == [stream.id, track.id].join(' ')) {
+                        electedTrack = track;
+                        return true;
                     }
-                }
-            }
+                });
+            });
 
             if (!electedTrack) {
                 // we don't have an elected track, choose by initial quality.
@@ -708,10 +718,14 @@ function Simulcast() {
             video: {
                 mandatory: {
                     maxWidth: 320,
-                    maxHeight: 180
+                    maxHeight: 180,
+                    maxFrameRate: 15
                 }
             }
         };
+
+        console.log('HQ constraints: ', constraints);
+        console.log('LQ constraints: ', lqConstraints);
 
         if (config.enableSimulcast && !config.useNativeSimulcast) {
 
@@ -777,42 +791,30 @@ function Simulcast() {
         return this._parseMedia(lines, mediatypes);
     };
 
-    Simulcast.prototype._startLocalVideoStream = function (ssrc) {
+    Simulcast.prototype._setLocalVideoStreamEnabled = function (ssrc, enabled) {
         var trackid;
 
-        Object.keys(localMaps.msid2ssrc).some(function (tid) {
-            if (localMaps.msid2ssrc[tid] == ssrc)
-            {
+        console.log(['Requested to', enabled ? 'enable' : 'disable', ssrc].join(' '));
+        if (Object.keys(localMaps.msid2ssrc).some(function (tid) {
+            // Search for the track id that corresponds to the ssrc
+            if (localMaps.msid2ssrc[tid] == ssrc) {
                 trackid = tid;
                 return true;
             }
-        });
-
-        stream.getVideoTracks().some(function(track) {
+        }) && stream.getVideoTracks().some(function(track) {
+            // Start/stop the track that corresponds to the track id
             if (track.id === trackid) {
-                track.enabled = true;
+                track.enabled = enabled;
                 return true;
             }
-        });
-    };
-
-    Simulcast.prototype._stopLocalVideoStream = function (ssrc) {
-        var trackid;
-
-        Object.keys(localMaps.msid2ssrc).some(function (tid) {
-            if (localMaps.msid2ssrc[tid] == ssrc)
-            {
-                trackid = tid;
-                return true;
-            }
-        });
-
-        stream.getVideoTracks().some(function(track) {
-            if (track.id === trackid) {
-                track.enabled = false;
-                return true;
-            }
-        });
+        })) {
+            console.log([trackid, enabled ? 'enabled' : 'disabled'].join(' '));
+            $(document).trigger(enabled
+                ? 'simulcastlayerstarted'
+                : 'simulcastlayerstopped');
+        } else {
+            console.error("I don't have a local stream with SSRC " + ssrc);
+        }
     };
 
     Simulcast.prototype.getLocalVideoStream = function() {
@@ -831,21 +833,19 @@ function Simulcast() {
         endpointSimulcastLayers.forEach(function (esl) {
             var ssrc = esl.simulcastLayer.primarySSRC;
             var simulcast = new Simulcast();
-            simulcast._setReceivingVideoStream(ssrc);
+            simulcast._setReceivingVideoStream(esl.endpoint, ssrc);
         });
     });
 
     $(document).bind('startsimulcastlayer', function(event, simulcastLayer) {
         var ssrc = simulcastLayer.primarySSRC;
         var simulcast = new Simulcast();
-        simulcast._startLocalVideoStream(ssrc);
-        $(document).trigger('simulcastlayerstarted');
+        simulcast._setLocalVideoStreamEnabled(ssrc, true);
     });
 
     $(document).bind('stopsimulcastlayer', function(event, simulcastLayer) {
         var ssrc = simulcastLayer.primarySSRC;
         var simulcast = new Simulcast();
-        simulcast._stopLocalVideoStream(ssrc);
-        $(document).trigger('simulcastlayerstopped');
+        simulcast._setLocalVideoStreamEnabled(ssrc, false);
     });
 }());
