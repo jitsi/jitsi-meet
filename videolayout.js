@@ -910,11 +910,10 @@ var VideoLayout = (function (my) {
        // container used for highlighting shadow.
        var availableHeight = 100;
 
-       var numvids = 0;
-       if (lastNCount && lastNCount > 0)
-           numvids = lastNCount + 1;
-       else
-           numvids = $('#remoteVideos>span:visible').length;
+        var numvids = $('#remoteVideos>span:visible').length;
+        if (lastNCount && lastNCount > 0) {
+            numvids = Math.min(lastNCount + 1, numvids);
+        }
 
        // Remove the 3px borders arround videos and border around the remote
        // videos area and the 4 pixels between the local video and the others
