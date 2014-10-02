@@ -1507,12 +1507,20 @@ $(document).bind('fatalError.jingle',
 function onSelectedEndpointChanged(userJid)
 {
     console.log('selected endpoint changed: ', userJid);
-    if (_dataChannels && _dataChannels.length != 0 && _dataChannels[0].readyState == "open") {
-        _dataChannels[0].send(JSON.stringify({
-            'colibriClass': 'SelectedEndpointChangedEvent',
-            'selectedEndpoint': (!userJid || userJid == null)
-                ? null : Strophe.getResourceFromJid(userJid)
-        }));
+    if (_dataChannels && _dataChannels.length != 0)
+    {
+        _dataChannels.some(function (dataChannel) {
+            if (dataChannel.readyState == 'open')
+            {
+                dataChannel.send(JSON.stringify({
+                    'colibriClass': 'SelectedEndpointChangedEvent',
+                    'selectedEndpoint': (!userJid || userJid == null)
+                        ? null : Strophe.getResourceFromJid(userJid)
+                }));
+
+                return true;
+            }
+        });
     }
 }
 
