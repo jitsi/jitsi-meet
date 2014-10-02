@@ -504,6 +504,9 @@ var VideoLayout = (function (my) {
             peerContainer.show();
         else if (peerContainer.is(':visible') && !isShow)
             peerContainer.hide();
+
+        VideoLayout.resizeThumbnails();
+
     };
 
     /**
