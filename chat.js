@@ -354,25 +354,41 @@ var Chat = (function (my) {
      */
     function setVisualNotification(show) {
         var unreadMsgElement = document.getElementById('unreadMessages');
+        var unreadMsgBottomElement = document.getElementById('bottomUnreadMessages');
 
         var glower = $('#chatButton');
+        var bottomGlower = $('#chatBottomButton');
 
         if (unreadMessages) {
             unreadMsgElement.innerHTML = unreadMessages.toString();
+            unreadMsgBottomElement.innerHTML = unreadMessages.toString();
 
             ToolbarToggler.dockToolbar(true);
 
             var chatButtonElement
                 = document.getElementById('chatButton').parentNode;
             var leftIndent = (Util.getTextWidth(chatButtonElement) -
-                              Util.getTextWidth(unreadMsgElement)) / 2;
+                Util.getTextWidth(unreadMsgElement)) / 2;
             var topIndent = (Util.getTextHeight(chatButtonElement) -
-                             Util.getTextHeight(unreadMsgElement)) / 2 - 3;
+                Util.getTextHeight(unreadMsgElement)) / 2 - 2;
 
             unreadMsgElement.setAttribute(
-                    'style',
+                'style',
                     'top:' + topIndent +
                     '; left:' + leftIndent + ';');
+
+            var chatBottomButtonElement
+                = document.getElementById('chatBottomButton').parentNode;
+            var bottomLeftIndent = (Util.getTextWidth(chatBottomButtonElement) -
+                Util.getTextWidth(unreadMsgBottomElement)) / 2;
+            var bottomTopIndent = (Util.getTextHeight(chatBottomButtonElement) -
+                Util.getTextHeight(unreadMsgBottomElement)) / 2 - 3;
+
+            unreadMsgBottomElement.setAttribute(
+                'style',
+                    'top:' + bottomTopIndent +
+                    '; left:' + bottomLeftIndent + ';');
+
 
             if (!glower.hasClass('icon-chat-simple')) {
                 glower.removeClass('icon-chat');
@@ -381,6 +397,7 @@ var Chat = (function (my) {
         }
         else {
             unreadMsgElement.innerHTML = '';
+            unreadMsgBottomElement.innerHTML = '';
             glower.removeClass('icon-chat-simple');
             glower.addClass('icon-chat');
         }
@@ -388,12 +405,15 @@ var Chat = (function (my) {
         if (show && !notificationInterval) {
             notificationInterval = window.setInterval(function () {
                 glower.toggleClass('active');
+                bottomGlower.toggleClass('active glowing');
             }, 800);
         }
         else if (!show && notificationInterval) {
             window.clearInterval(notificationInterval);
             notificationInterval = false;
             glower.removeClass('active');
+            bottomGlower.removeClass('glowing');
+            bottomGlower.addClass('active');
         }
     }
 

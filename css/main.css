@@ -70,13 +70,13 @@ html, body{
     cursor: pointer;
 }
 
-#chatButton {
+#chatButton, #chatBottomButton, #contactListButton {
     -webkit-transition: all .5s ease-in-out;
        -moz-transition: all .5s ease-in-out;
             transition: all .5s ease-in-out;
 }
 /*#ffde00*/
-#chatButton.active {
+#chatButton.active, #contactListButton.glowing, #chatBottomButton.glowing {
     -webkit-text-shadow:    -1px 0 10px #00ccff,
                             0 1px 10px #00ccff,
                             1px 0 10px #00ccff,
@@ -89,6 +89,19 @@ html, body{
                     0 1px 10px #00ccff,
                     1px 0 10px #00ccff,
                     0 -1px 10px #00ccff;
+}
+
+#numberOfParticipants {
+    position: absolute;
+    top: 0px;
+    right: -1;
+    color: white;
+    width: 13px;
+    height: 13px;
+    line-height: 13px;
+    font-weight: bold;
+    border-radius: 2px;
+    text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 }
 
 #recordButton {

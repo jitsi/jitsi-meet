@@ -46,7 +46,7 @@
     max-height:150px;
     min-height:35px;
     border: 0px none;
-    background: #231F20;
+    background: #3a3a3a;
     color: #a7a7a7;
     box-shadow: none;
     border-radius:0;
@@ -75,10 +75,24 @@
 #nickinput {
     margin-top: 20px;
     font-size: 14px;
-    background: #231F20;
+    background: #3a3a3a;
     box-shadow: inset 0 0 3px 2px #a7a7a7;
     border: 1px solid #a7a7a7;
     color: #a7a7a7;
+}
+
+#unreadMessages {
+    font-size: 8px;
+    position: absolute;
+    left: 46%;
+    top: 27%
+}
+
+#bottomUnreadMessages {
+    top: 5px;
+    left: 10px;
+    position: absolute;
+    font-size: 8px;
 }
 
 #chatspace .username {
@@ -105,7 +119,7 @@
 }
 
 .chatmessage {
-    background: #231F20;
+    background: #3a3a3a;
     width: 93%;
     margin-left: 5%;
     margin-right: auto;
@@ -149,7 +163,7 @@
     max-height:150px;
     min-height:35px;
     border: 0px none;
-    background: #231F20;
+    background: #3a3a3a;
     overflow: hidden;
     visibility: hidden;
 }
@@ -157,7 +171,7 @@
 #smileysContainer {
     display: none;
     position: absolute;
-    background: #231F20;
+    background: #3a3a3a;
     border-bottom: 1px solid;
     border-top: 1px solid;
     width: 100%;
@@ -205,5 +219,5 @@
 }
 
 #usermsg::-webkit-scrollbar-track-piece {
-    background: #231F20;
+    background: #3a3a3a;
 }

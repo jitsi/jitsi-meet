@@ -2,6 +2,10 @@
  * Contact list.
  */
 var ContactList = (function (my) {
+
+    var numberOfContacts = 0;
+    var notificationInterval;
+
     /**
      * Indicates if the chat is currently visible.
      *
@@ -65,6 +69,7 @@ var ContactList = (function (my) {
         else {
             clElement.appendChild(newContact);
         }
+        updateNumberOfParticipants(1);
     };
 
     /**
@@ -81,6 +86,8 @@ var ContactList = (function (my) {
             var contactlist = $('#contactlist>ul');
 
             contactlist.get(0).removeChild(contact.get(0));
+
+            updateNumberOfParticipants(-1);
         }
     };
 
@@ -163,6 +170,27 @@ var ContactList = (function (my) {
             $('#contactlist').show("slide", { direction: "right",
                                             queue: false,
                                             duration: 500});
+
+            //stop the glowing of the contact list icon
+            setVisualNotification(false);
+        }
+    };
+
+    /**
+     * Updates the number of participants in the contact list button and sets
+     * the glow
+     * @param delta indicates whether a new user has joined (1) or someone has
+     * left(-1)
+     */
+    function updateNumberOfParticipants(delta) {
+        //when the user is alone we don't show the number of participants
+        if(numberOfContacts === 0) {
+            $("#numberOfParticipants").text('');
+            numberOfContacts += delta;
+        } else if(numberOfContacts !== 0 && !ContactList.isVisible()) {
+            setVisualNotification(true);
+            numberOfContacts += delta;
+            $("#numberOfParticipants").text(numberOfContacts);
         }
     };
 
@@ -176,7 +204,7 @@ var ContactList = (function (my) {
         avatar.className = "icon-avatar avatar";
 
         return avatar;
-    };
+    }
 
     /**
      * Creates the display name paragraph.
@@ -188,7 +216,35 @@ var ContactList = (function (my) {
         p.innerHTML = displayName;
 
         return p;
-    };
+    }
+
+    /**
+     * Shows/hides a visual notification, indicating that a new user has joined
+     * the conference.
+     */
+    function setVisualNotification(show, stopGlowingIn) {
+        var glower = $('#contactListButton');
+        function stopGlowing() {
+            window.clearInterval(notificationInterval);
+            notificationInterval = false;
+            glower.removeClass('glowing');
+            if(!ContactList.isVisible()) {
+                glower.removeClass('active');
+            }
+        }
+
+        if (show && !notificationInterval) {
+            notificationInterval = window.setInterval(function () {
+                glower.toggleClass('active glowing');
+            }, 800);
+        }
+        else if (!show && notificationInterval) {
+            stopGlowing();
+        }
+        if(stopGlowingIn) {
+            setTimeout(stopGlowing, stopGlowingIn);
+        }
+    }
 
     /**
      * Indicates that the display name has changed.

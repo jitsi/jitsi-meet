@@ -36,8 +36,8 @@
     <script src="data_channels.js?v=3"></script><!-- data channels -->
     <script src="app.js?v=18"></script><!-- application logic -->
     <script src="commands.js?v=1"></script><!-- application logic -->
-    <script src="chat.js?v=12"></script><!-- chat logic -->
-    <script src="contact_list.js?v=4"></script><!-- contact list logic -->
+    <script src="chat.js?v=13"></script><!-- chat logic -->
+    <script src="contact_list.js?v=5"></script><!-- contact list logic -->
     <script src="util.js?v=6"></script><!-- utility functions -->
     <script src="etherpad.js?v=9"></script><!-- etherpad plugin -->
     <script src="prezi.js?v=6"></script><!-- prezi plugin -->
@@ -54,7 +54,7 @@
     <script src="canvas_util.js?v=1"></script><!-- canvas drawing utils -->
     <script src="audio_levels.js?v=2"></script><!-- audio levels plugin -->
     <script src="media_stream.js?v=1"></script><!-- media stream -->
-    <script src="bottom_toolbar.js?v=4"></script><!-- media stream -->
+    <script src="bottom_toolbar.js?v=5"></script><!-- media stream -->
     <script src="roomname_generator.js?v=1"></script><!-- generator for random room names -->
     <script src="keyboard_shortcut.js?v=3"></script>
     <script src="tracking.js?v=1"></script><!-- tracking -->
@@ -63,7 +63,7 @@
     <script src="api_connector.js?v=1"></script>
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
     <link rel="stylesheet" href="css/font.css?v=5"/>
-    <link rel="stylesheet" type="text/css" media="screen" href="css/main.css?v=27"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="css/main.css?v=28"/>
     <link rel="stylesheet" type="text/css" media="screen" href="css/videolayout_default.css?v=13" id="videolayout_default"/>
     <link rel="stylesheet" href="css/jquery-impromptu.css?v=4">
     <link rel="stylesheet" href="css/modaldialog.css?v=3">
@@ -71,7 +71,7 @@
     <link rel="stylesheet" href="css/popover.css?v=2">
       <link rel="stylesheet" href="css/jitsi_popover.css?v=2">
     <link rel="stylesheet" href="css/contact_list.css?v=3">
-    <link rel="stylesheet" href="css/chat.css?v=4">
+    <link rel="stylesheet" href="css/chat.css?v=5">
     <link rel="stylesheet" href="css/welcome_page.css?v=2">
     <!--
         Link used for inline installation of chrome desktop streaming extension,
@@ -193,9 +193,10 @@
                     <div class="header_button_separator"></div>
                     <span class="toolbar_span">
                         <a class="button" data-container="body" data-toggle="popover" shortcut="toggleChatPopover" data-placement="bottom" content="Open / close chat" onclick='BottomToolbar.toggleChat();'>
-                            <i id="chatButton" class="icon-chat"></i>
+                            <i id="chatButton" class="icon-chat">
+                                <span id="unreadMessages"></span>
+                            </i>
                         </a>
-                        <span id="unreadMessages"></span>
                     </span>
                     <span id="prezi_button">
                         <div class="header_button_separator"></div>
@@ -273,13 +274,16 @@
             <span id="bottomToolbar">
                 <span class="bottomToolbar_span">
                     <a class="bottomToolbarButton" data-container="body" data-toggle="popover" shortcut="toggleChatPopover" data-placement="top" content="Open / close chat" onclick='BottomToolbar.toggleChat();'>
-                        <i id="chatBottomButton" class="icon-chat-simple"></i>
+                        <i id="chatBottomButton" class="icon-chat-simple">
+                            <span id="bottomUnreadMessages"></span>
+                        </i>
                     </a>
                 </span>
                 <div class="bottom_button_separator"></div>
                 <span class="bottomToolbar_span">
                     <a class="bottomToolbarButton" data-container="body" data-toggle="popover" data-placement="top" id="contactlistpopover" content="Open / close contact list" onclick='BottomToolbar.toggleContactList();'>
                         <i id="contactListButton" class="icon-contactList"></i>
+                        <span id="numberOfParticipants"></span>
                     </a>
                 </span>
                 <div class="bottom_button_separator"></div>

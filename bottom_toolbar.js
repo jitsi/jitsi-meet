@@ -9,9 +9,9 @@ var BottomToolbar = (function (my) {
             }, 500);
         }
 
-        buttonClick("#chatBottomButton", "active");
-
         Chat.toggleChat();
+
+        buttonClick("#chatBottomButton", "active");
     };
 
     my.toggleContactList = function() {
