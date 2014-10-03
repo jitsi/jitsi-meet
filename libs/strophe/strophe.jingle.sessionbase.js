@@ -13,12 +13,13 @@ function SessionBase(connection, sid){
 
 SessionBase.prototype.modifySources = function (successCallback) {
     var self = this;
-    this.peerconnection.modifySources(function(){
-        $(document).trigger('setLocalDescription.jingle', [self.sid]);
-        if(successCallback) {
-            successCallback();
-        }
-    });
+    if(this.peerconnection)
+        this.peerconnection.modifySources(function(){
+            $(document).trigger('setLocalDescription.jingle', [self.sid]);
+            if(successCallback) {
+                successCallback();
+            }
+        });
 };
 
 SessionBase.prototype.addSource = function (elem, fromJid) {
@@ -239,6 +240,7 @@ SessionBase.prototype.toggleVideoMute = function (callback) {
         localVideo.getVideoTracks()[idx].enabled = !localVideo.getVideoTracks()[idx].enabled;
     }
 
-    this.peerconnection.hardMuteVideo(!ismuted);
+    if(this.peerconnection)
+        this.peerconnection.hardMuteVideo(!ismuted);
     this.modifySources(callback(!ismuted));
 };
