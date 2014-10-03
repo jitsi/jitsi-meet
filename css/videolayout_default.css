@@ -282,6 +282,7 @@
     left:0;
     right:0;
     z-index:10;
+    pointer-events: none;
 }
 
 #toolbar {
@@ -297,7 +298,7 @@
     background-color: rgba(0,0,0,0.8); 
     border: 1px solid rgba(256, 256, 256, 0.2);
     border-radius: 6px;
-    
+    pointer-events: auto;
 }
 
 #subject {
