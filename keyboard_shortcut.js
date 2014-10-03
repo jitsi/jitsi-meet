@@ -32,7 +32,7 @@ var KeyboardShortcut = (function(my) {
     };
 
     window.onkeyup = function(e) {
-        if(!($(":focus").is("input[type=text]") || $(":focus").is("textarea"))) {
+        if(!($(":focus").is("input[type=text]") || $(":focus").is("input[type=password]") || $(":focus").is("textarea"))) {
             var keycode = e.which;
             if (typeof shortcuts[keycode] === "object") {
                 shortcuts[keycode].function();
@@ -47,7 +47,7 @@ var KeyboardShortcut = (function(my) {
     };
 
     window.onkeydown = function(e) {
-        if(!($(":focus").is("input[type=text]") || $(":focus").is("textarea"))) {
+        if(!($(":focus").is("input[type=text]") || $(":focus").is("input[type=password]") || $(":focus").is("textarea"))) {
             if(e.which === "T".charCodeAt(0)) {
                 if(isAudioMuted()) {
                     toggleAudio();
