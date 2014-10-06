@@ -1,5 +1,6 @@
 #contactlist {
     background-color: black;
+    cursor: default;
 }
 
 #contactlist>ul {
@@ -12,7 +13,8 @@
     text-align: left;
     color: #FFF;
     font-size: 10pt;
-    padding: 8px 10px;
+    padding: 7px 10px;
+    margin: 2px;
 }
 
 #contactlist>ul>li>p {
@@ -32,4 +34,8 @@
     margin-right: 10px;
     vertical-align: middle;
     font-size: 22pt;
+}
+
+#contactlist .clickable {
+    cursor: pointer;
 }

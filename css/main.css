@@ -1,3 +1,8 @@
+* {
+    -webkit-user-select: none;
+    user-select: none;
+}
+
 html, body{
     margin:0px;
     height:100%;
@@ -30,6 +35,10 @@ html, body{
     border-left:1px solid #424242;
 }
 
+#chatspace * {
+    -webkit-user-select: text;
+    user-select: text;
+}
 #chatconversation {
     visibility: hidden;
     position: relative;

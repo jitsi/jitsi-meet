@@ -507,6 +507,8 @@ var VideoLayout = (function (my) {
 
         VideoLayout.resizeThumbnails();
 
+        ContactList.setClickable(resourceJid, isShow);
+
     };
 
     /**

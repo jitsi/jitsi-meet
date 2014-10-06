@@ -38,6 +38,18 @@ var ContactList = (function (my) {
 
         var newContact = document.createElement('li');
         newContact.id = resourceJid;
+        newContact.className = "clickable";
+        newContact.onclick = function(event) {
+            if(event.currentTarget.className === "clickable") {
+                var jid = event.currentTarget.id;
+                var videoContainer = $("#participant_" + jid);
+                if (videoContainer.length > 0) {
+                    videoContainer.click();
+                } else if (jid == Strophe.getResourceFromJid(connection.emuc.myroomjid)) {
+                    $("#localVideoContainer").click();
+                }
+            }
+        };
 
         newContact.appendChild(createAvatar());
         newContact.appendChild(createDisplayNameParagraph("Participant"));
@@ -193,6 +205,15 @@ var ContactList = (function (my) {
         if (contactName && displayName && displayName.length > 0)
             contactName.html(displayName);
     });
+
+    my.setClickable = function(resourceJid, isClickable) {
+        var contact = $('#contactlist>ul>li[id="' + resourceJid + '"]');
+        if(isClickable) {
+            contact.addClass('clickable');
+        } else {
+            contact.removeClass('clickable');
+        }
+    };
 
     return my;
 }(ContactList || {}));
