@@ -828,7 +828,10 @@ function Simulcast() {
     };
 
     Simulcast.prototype.getLocalVideoStream = function() {
-        return displayedLocalVideoStream;
+        return (displayedLocalVideoStream)
+            ? displayedLocalVideoStream
+            // in case we have no simulcast at all, i.e. we didn't perform the GUM
+            : connection.jingle.localVideo;
     };
 
     $(document).bind('simulcastlayerschanged', function (event, endpointSimulcastLayers) {
