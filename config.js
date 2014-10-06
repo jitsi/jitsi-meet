@@ -26,6 +26,5 @@ var config = {
     enableRecording: false,
     enableWelcomePage: false,
     enableSimulcast: false,
-    useNativeSimulcast: false,
     isBrand: false
 };

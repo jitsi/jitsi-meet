@@ -3,7 +3,10 @@ var VideoLayout = (function (my) {
     var currentDominantSpeaker = null;
     var lastNCount = config.channelLastN;
     var lastNEndpointsCache = [];
-    var largeVideoNewSrc = '';
+    var largeVideoState = {
+        updateInProgress: false,
+        newSrc: ''
+    };
 
     my.changeLocalAudio = function(stream) {
         connection.jingle.localAudio = stream;
@@ -66,7 +69,9 @@ var VideoLayout = (function (my) {
             localVideoSelector.addClass("flipVideoX");
         }
         // Attach WebRTC stream
-        RTC.attachMediaStream(localVideoSelector, stream);
+        var simulcast = new Simulcast();
+        var videoStream = simulcast.getLocalVideoStream();
+        RTC.attachMediaStream(localVideoSelector, videoStream);
 
         localVideoSrc = localVideo.src;
 
@@ -114,68 +119,91 @@ var VideoLayout = (function (my) {
         console.log('hover in', newSrc);
 
         if ($('#largeVideo').attr('src') != newSrc) {
-            largeVideoNewSrc = newSrc;
 
-            var isVisible = $('#largeVideo').is(':visible');
+            // Due to the simulcast the localVideoSrc may have changed when the
+            // fadeOut event triggers. In that case the getJidFromVideoSrc and
+            // isVideoSrcDesktop methods will not function correctly.
+            //
+            // Also, again due to the simulcast, the updateLargeVideo method can
+            // be called multiple times almost simultaneously. Therefore, we
+            // store the state here and update only once.
 
-            // we need this here because after the fade the videoSrc may have
-            // changed.
-            var isDesktop = isVideoSrcDesktop(newSrc);
+            largeVideoState.newSrc = newSrc;
+            largeVideoState.isVisible = $('#largeVideo').is(':visible');
+            largeVideoState.isDesktop = isVideoSrcDesktop(newSrc);
+            largeVideoState.userJid = getJidFromVideoSrc(newSrc);
 
-            var userJid = getJidFromVideoSrc(newSrc);
-            // we want the notification to trigger even if userJid is undefined,
-            // or null.
-            $(document).trigger("selectedendpointchanged", [userJid]);
+            // Screen stream is already rotated
+            largeVideoState.flipX = (newSrc === localVideoSrc) && flipXLocalVideo;
 
-            $('#largeVideo').fadeOut(300, function () {
-                var oldSrc = $(this).attr('src');
+            var oldSrc = $('#largeVideo').attr('src');
+            largeVideoState.oldJid = getJidFromVideoSrc(oldSrc);
 
-                $(this).attr('src', newSrc);
+            var fade = false;
+            if (largeVideoState.oldJid != largeVideoState.userJid) {
+                fade = true;
+                // we want the notification to trigger even if userJid is undefined,
+                // or null.
+                $(document).trigger("selectedendpointchanged", [largeVideoState.userJid]);
+            }
 
-                // Screen stream is already rotated
-                var flipX = (newSrc === localVideoSrc) && flipXLocalVideo;
+            if (!largeVideoState.updateInProgress) {
+                largeVideoState.updateInProgress = true;
 
-                var videoTransform = document.getElementById('largeVideo')
-                                        .style.webkitTransform;
+                var doUpdate = function () {
 
-                if (flipX && videoTransform !== 'scaleX(-1)') {
-                    document.getElementById('largeVideo').style.webkitTransform
-                        = "scaleX(-1)";
-                }
-                else if (!flipX && videoTransform === 'scaleX(-1)') {
-                    document.getElementById('largeVideo').style.webkitTransform
-                        = "none";
-                }
+                    $('#largeVideo').attr('src', largeVideoState.newSrc);
 
-                // Change the way we'll be measuring and positioning large video
+                    var videoTransform = document.getElementById('largeVideo')
+                        .style.webkitTransform;
 
-                getVideoSize = isDesktop
-                                ? getDesktopVideoSize
-                                : getCameraVideoSize;
-                getVideoPosition = isDesktop
-                                    ? getDesktopVideoPosition
-                                    : getCameraVideoPosition;
-
-                if (isVisible) {
-                    // Only if the large video is currently visible.
-                    // Disable previous dominant speaker video.
-                    var oldJid = getJidFromVideoSrc(oldSrc);
-                    if (oldJid) {
-                        var oldResourceJid = Strophe.getResourceFromJid(oldJid);
-                        VideoLayout.enableDominantSpeaker(oldResourceJid, false);
+                    if (largeVideoState.flipX && videoTransform !== 'scaleX(-1)') {
+                        document.getElementById('largeVideo').style.webkitTransform
+                            = "scaleX(-1)";
+                    }
+                    else if (!largeVideoState.flipX && videoTransform === 'scaleX(-1)') {
+                        document.getElementById('largeVideo').style.webkitTransform
+                            = "none";
                     }
 
-                    // Enable new dominant speaker in the remote videos section.
-                    var userJid = getJidFromVideoSrc(newSrc);
-                    if (userJid)
-                    {
-                        var resourceJid = Strophe.getResourceFromJid(userJid);
-                        VideoLayout.enableDominantSpeaker(resourceJid, true);
-                    }
+                    // Change the way we'll be measuring and positioning large video
 
-                    $(this).fadeIn(300);
+                    getVideoSize = largeVideoState.isDesktop
+                        ? getDesktopVideoSize
+                        : getCameraVideoSize;
+                    getVideoPosition = largeVideoState.isDesktop
+                        ? getDesktopVideoPosition
+                        : getCameraVideoPosition;
+
+                    if (largeVideoState.isVisible) {
+                        // Only if the large video is currently visible.
+                        // Disable previous dominant speaker video.
+                        if (largeVideoState.oldJid) {
+                            var oldResourceJid = Strophe.getResourceFromJid(largeVideoState.oldJid);
+                            VideoLayout.enableDominantSpeaker(oldResourceJid, false);
+                        }
+
+                        // Enable new dominant speaker in the remote videos section.
+                        if (largeVideoState.userJid) {
+                            var resourceJid = Strophe.getResourceFromJid(largeVideoState.userJid);
+                            VideoLayout.enableDominantSpeaker(resourceJid, true);
+                        }
+
+                        largeVideoState.updateInProgress = false;
+                        if (fade) {
+                            // using "this" should be ok because we're called
+                            // from within the fadeOut event.
+                            $(this).fadeIn(300);
+                        }
+                    }
+                };
+
+                if (fade) {
+                    $('#largeVideo').fadeOut(300, doUpdate);
+                } else {
+                    doUpdate();
                 }
-            });
+            }
         }
     };
 
@@ -814,15 +842,6 @@ var VideoLayout = (function (my) {
      * disabled
      */
     my.enableDominantSpeaker = function(resourceJid, isEnable) {
-        var displayName = resourceJid;
-        var nameSpan = $('#participant_' + resourceJid + '>span.displayname');
-        if (nameSpan.length > 0)
-            displayName = nameSpan.text();
-
-        console.log("UI enable dominant speaker",
-                    displayName,
-                    resourceJid,
-                    isEnable);
 
         var videoSpanId = null;
         var videoContainerId = null;
@@ -835,6 +854,16 @@ var VideoLayout = (function (my) {
             videoSpanId = 'participant_' + resourceJid;
             videoContainerId = videoSpanId;
         }
+
+        var displayName = resourceJid;
+        var nameSpan = $('#' + videoContainerId + '>span.displayname');
+        if (nameSpan.length > 0)
+            displayName = nameSpan.text();
+
+        console.log("UI enable dominant speaker",
+            displayName,
+            resourceJid,
+            isEnable);
 
         videoSpan = document.getElementById(videoContainerId);
 
@@ -1322,29 +1351,6 @@ var VideoLayout = (function (my) {
         }
     });
 
-    $(document).bind('simulcastlayerstarted simulcastlayerstopped', function(event) {
-        var localVideoSelector = $('#' + 'localVideo_' + connection.jingle.localVideo.id);
-        var simulcast = new Simulcast();
-        var stream = simulcast.getLocalVideoStream();
-
-        var updateLargeVideo = (connection.emuc.myroomjid
-            == getJidFromVideoSrc(largeVideoNewSrc));
-        var updateFocusedVideoSrc = (localVideoSrc == focusedVideoSrc);
-
-        // Attach WebRTC stream
-        RTC.attachMediaStream(localVideoSelector, stream);
-
-        localVideoSrc = $(localVideoSelector).attr('src');
-
-        if (updateLargeVideo) {
-            VideoLayout.updateLargeVideo(localVideoSrc);
-        }
-
-        if (updateFocusedVideoSrc) {
-            focusedVideoSrc = localVideoSrc;
-        }
-    });
-
     /**
      * On simulcast layers changed event.
      */
@@ -1402,7 +1408,7 @@ var VideoLayout = (function (my) {
                 var selRemoteVideo = $(['#', 'remoteVideo_', session.sid, '_', msidParts[0]].join(''));
 
                 var updateLargeVideo = (ssrc2jid[videoSrcToSsrc[selRemoteVideo.attr('src')]]
-                    == ssrc2jid[videoSrcToSsrc[largeVideoNewSrc]]);
+                    == ssrc2jid[videoSrcToSsrc[largeVideoState.newSrc]]);
                 var updateFocusedVideoSrc = (selRemoteVideo.attr('src') == focusedVideoSrc);
 
                 var electedStreamUrl = webkitURL.createObjectURL(electedStream);

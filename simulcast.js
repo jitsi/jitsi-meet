@@ -8,7 +8,14 @@ function Simulcast() {
     "use strict";
 
     // TODO(gp) split the Simulcast class in two classes : NativeSimulcast and ClassicSimulcast.
-    this.debugLvl = 1;
+
+    // Once we properly support native simulcast, enable it automatically in the
+    // supported browsers (Chrome).
+    this.useNativeSimulcast = false;
+
+    // TODO(gp) we need a logging framework for javascript à la log4j or the
+    // java logging framework that allows for selective log display
+    this.debugLvl = 0;
 }
 
 (function () {
@@ -446,7 +453,7 @@ function Simulcast() {
      * @returns {*}
      */
     Simulcast.prototype.transformAnswer = function (desc) {
-        if (config.enableSimulcast && config.useNativeSimulcast) {
+        if (config.enableSimulcast && this.useNativeSimulcast) {
 
             var sb = desc.sdp.split('\r\n');
 
@@ -523,7 +530,7 @@ function Simulcast() {
 
         if (config.enableSimulcast) {
 
-            if (config.useNativeSimulcast) {
+            if (this.useNativeSimulcast) {
                 sb = desc.sdp.split('\r\n');
 
                 this._explodeLocalSimulcastSources(sb);
@@ -595,7 +602,7 @@ function Simulcast() {
      * @returns {*}
      */
     Simulcast.prototype.transformLocalDescription = function (desc) {
-        if (config.enableSimulcast && !config.useNativeSimulcast) {
+        if (config.enableSimulcast && !this.useNativeSimulcast) {
 
             var sb = desc.sdp.split('\r\n');
 
@@ -632,7 +639,7 @@ function Simulcast() {
             this._cacheRemoteVideoSources(sb);
             this._removeSimulcastGroup(sb); // NOTE(gp) this needs to be called after updateRemoteMaps because we need the simulcast group in the _updateRemoteMaps() method.
 
-            if (config.useNativeSimulcast) {
+            if (this.useNativeSimulcast) {
                 // We don't need the goog conference flag if we're not doing
                 // native simulcast.
                 this._ensureGoogConference(sb);
@@ -700,7 +707,7 @@ function Simulcast() {
             : stream;
     };
 
-    var stream;
+    var localStream, displayedLocalVideoStream;
 
     /**
      * GUM for simulcast.
@@ -727,7 +734,7 @@ function Simulcast() {
         console.log('HQ constraints: ', constraints);
         console.log('LQ constraints: ', lqConstraints);
 
-        if (config.enableSimulcast && !config.useNativeSimulcast) {
+        if (config.enableSimulcast && !this.useNativeSimulcast) {
 
             // NOTE(gp) if we request the lq stream first webkitGetUserMedia
             // fails randomly. Tested with Chrome 37. As fippo suggested, the
@@ -735,6 +742,8 @@ function Simulcast() {
             // then downscales the picture (https://code.google.com/p/chromium/issues/detail?id=346616#c11)
 
             navigator.webkitGetUserMedia(constraints, function (hqStream) {
+
+                localStream = hqStream;
 
                 // reset local maps.
                 localMaps.msids = [];
@@ -745,6 +754,8 @@ function Simulcast() {
 
                 navigator.webkitGetUserMedia(lqConstraints, function (lqStream) {
 
+                    displayedLocalVideoStream = lqStream;
+
                     // NOTE(gp) The specification says Array.forEach() will visit
                     // the array elements in numeric order, and that it doesn't
                     // visit elements that don't exist.
@@ -752,9 +763,8 @@ function Simulcast() {
                     // add lq trackid to local map
                     localMaps.msids.splice(0, 0, lqStream.getVideoTracks()[0].id);
 
-                    hqStream.addTrack(lqStream.getVideoTracks()[0]);
-                    stream = hqStream;
-                    success(hqStream);
+                    localStream.addTrack(lqStream.getVideoTracks()[0]);
+                    success(localStream);
                 }, err);
             }, err);
         } else {
@@ -769,8 +779,8 @@ function Simulcast() {
 
                 // add hq stream to local map
                 localMaps.msids.push(hqStream.getVideoTracks()[0].id);
-                stream = hqStream;
-                success(hqStream);
+                displayedLocalVideoStream = localStream = hqStream;
+                success(localStream);
             }, err);
         }
     };
@@ -801,7 +811,7 @@ function Simulcast() {
                 trackid = tid;
                 return true;
             }
-        }) && stream.getVideoTracks().some(function(track) {
+        }) && localStream.getVideoTracks().some(function(track) {
             // Start/stop the track that corresponds to the track id
             if (track.id === trackid) {
                 track.enabled = enabled;
@@ -818,15 +828,7 @@ function Simulcast() {
     };
 
     Simulcast.prototype.getLocalVideoStream = function() {
-        var track;
-
-        stream.getVideoTracks().some(function(t) {
-            if ((track = t).enabled) {
-                return true;
-            }
-        });
-
-        return new webkitMediaStream([track]);
+        return displayedLocalVideoStream;
     };
 
     $(document).bind('simulcastlayerschanged', function (event, endpointSimulcastLayers) {
