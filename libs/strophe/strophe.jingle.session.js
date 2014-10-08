@@ -119,7 +119,6 @@ JingleSession.prototype.accept = function () {
         // FIXME: change any inactive to sendrecv or whatever they were originally
         pranswer.sdp = pranswer.sdp.replace('a=inactive', 'a=sendrecv');
     }
-    var simulcast = new Simulcast();
     pranswer = simulcast.reverseTransformLocalDescription(pranswer);
     var prsdp = new SDP(pranswer.sdp);
     var accept = $iq({to: this.peerjid,
@@ -567,7 +566,6 @@ JingleSession.prototype.createdAnswer = function (sdp, provisional) {
                     initiator: this.initiator,
                     responder: this.responder,
                     sid: this.sid });
-            var simulcast = new Simulcast();
             var publicLocalDesc = simulcast.reverseTransformLocalDescription(sdp);
             var publicLocalSDP = new SDP(publicLocalDesc.sdp);
             publicLocalSDP.toJingle(accept, this.initiator == this.me ? 'initiator' : 'responder');

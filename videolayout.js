@@ -64,7 +64,6 @@ var VideoLayout = (function (my) {
             localVideoSelector.addClass("flipVideoX");
         }
         // Attach WebRTC stream
-        var simulcast = new Simulcast();
         var videoStream = simulcast.getLocalVideoStream();
         RTC.attachMediaStream(localVideoSelector, videoStream);
 
@@ -415,7 +414,6 @@ var VideoLayout = (function (my) {
             // If the container is currently visible we attach the stream.
             if (!isVideo
                 || (container.offsetParent !== null && isVideo)) {
-                var simulcast = new Simulcast();
                 var videoStream = simulcast.getReceivingVideoStream(stream);
                 RTC.attachMediaStream(sel, videoStream);
 
@@ -1315,7 +1313,6 @@ var VideoLayout = (function (my) {
                             && mediaStream.type === mediaStream.VIDEO_TYPE) {
                             var sel = $('#participant_' + resourceJid + '>video');
 
-                            var simulcast = new Simulcast();
                             var videoStream = simulcast.getReceivingVideoStream(mediaStream.stream);
                             RTC.attachMediaStream(sel, videoStream);
                             waitForRemoteVideo(
@@ -1361,7 +1358,6 @@ var VideoLayout = (function (my) {
      * On simulcast layers changed event.
      */
     $(document).bind('simulcastlayerschanged', function (event, endpointSimulcastLayers) {
-        var simulcast = new Simulcast();
         endpointSimulcastLayers.forEach(function (esl) {
 
             var primarySSRC = esl.simulcastLayer.primarySSRC;

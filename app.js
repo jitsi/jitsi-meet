@@ -246,7 +246,6 @@ function waitForRemoteVideo(selector, ssrc, stream) {
     if (stream.id === 'mixedmslabel') return;
 
     if (selector[0].currentTime > 0) {
-        var simulcast = new Simulcast();
         var videoStream = simulcast.getReceivingVideoStream(stream);
         RTC.attachMediaStream(selector, videoStream); // FIXME: why do i have to do this for FF?
 
@@ -589,7 +588,6 @@ $(document).bind('setLocalDescription.jingle', function (event, sid) {
     // put our ssrcs into presence so other clients can identify our stream
     var sess = connection.jingle.sessions[sid];
     var newssrcs = [];
-    var simulcast = new Simulcast();
     var media = simulcast.parseMedia(sess.peerconnection.localDescription);
     media.forEach(function (media) {
 
