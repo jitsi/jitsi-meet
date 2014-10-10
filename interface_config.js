@@ -1,7 +1,7 @@
 var interfaceConfig = {
     CANVAS_EXTRA: 104,
     CANVAS_RADIUS: 7,
-    SHADOW_COLOR: '#00ccff',
+    SHADOW_COLOR: '#ffffff',
     INITIAL_TOOLBAR_TIMEOUT: 20000,
     TOOLBAR_TIMEOUT: 4000,
     DEFAULT_REMOTE_DISPLAY_NAME: "Fellow Jitster",
