@@ -1185,7 +1185,7 @@ $(document).ready(function () {
         });
 
 
-        if (interfaceConfig.GENERATE_ROOMNAMES_ON_WELCOME_PAGE){
+        if (!(interfaceConfig.GENERATE_ROOMNAMES_ON_WELCOME_PAGE === false)){
             var updateTimeout;
             var animateTimeout;
             $("#reload_roomname").click(function () {
