@@ -66,6 +66,8 @@ var Chat = (function (my) {
                 unreadMessages = 0;
                 setVisualNotification(false);
             });
+
+        addSmileys();
     };
 
     /**
@@ -92,9 +94,15 @@ var Chat = (function (my) {
         var escDisplayName = Util.escapeHtml(displayName);
         message = processReplacements(escMessage);
 
-        $('#chatconversation').append('<div class="' + divClassName + '"><b>' +
-                                      escDisplayName + ': </b>' +
-                                      message + '</div>');
+        var messageContainer =
+            '<div class="chatmessage">'+
+                '<img src="../images/chatArrow.svg" class="chatArrow">' +
+                '<div class="username ' + divClassName +'">' + escDisplayName + '</div>' +
+                '<div class="timestamp">' + getCurrentTime() + '</div>' +
+                '<div class="usermessage">' + message + '</div>' +
+            '</div>';
+
+        $('#chatconversation').append(messageContainer);
         $('#chatconversation').animate(
                 { scrollTop: $('#chatconversation')[0].scrollHeight}, 1000);
     };
@@ -229,6 +237,7 @@ var Chat = (function (my) {
                                                 }
                                             }
             });
+            Chat.resizeChat();
         }
 
     };
@@ -277,19 +286,66 @@ var Chat = (function (my) {
     my.isVisible = function () {
         return $('#chatspace').is(":visible");
     };
+    /**
+     * Shows and hides the window with the smileys
+     */
+    my.toggleSmileys = function() {
+        var smileys = $('#smileysContainer');
+        if(!smileys.is(':visible')) {
+            smileys.show("slide", { direction: "down", duration: 300});
+        } else {
+            smileys.hide("slide", { direction: "down", duration: 300});
+        }
+        $('#usermsg').focus();
+    };
+
+    /**
+     * Adds the smileys container to the chat
+     */
+    function addSmileys() {
+        var smileysContainer = document.createElement('div');
+        smileysContainer.id = 'smileysContainer';
+        function addClickFunction(smiley, number) {
+            smiley.onclick = function addSmileyToMessage() {
+                var usermsg = $('#usermsg');
+                var message = usermsg.val();
+                message += smileys['smiley' + number];
+                usermsg.val(message);
+                usermsg.get(0).setSelectionRange(message.length, message.length);
+                Chat.toggleSmileys();
+                usermsg.focus();
+            };
+        }
+        for(var i = 1; i <= 21; i++) {
+            var smileyContainer = document.createElement('div');
+            smileyContainer.id = 'smiley' + i;
+            smileyContainer.className = 'smileyContainer';
+            var smiley = document.createElement('img');
+            smiley.src = 'images/smileys/smiley' + i + '.svg';
+            smiley.className =  'smiley';
+            addClickFunction(smiley, i);
+            smileyContainer.appendChild(smiley);
+            smileysContainer.appendChild(smileyContainer);
+        }
+
+        $("#chatspace").append(smileysContainer);
+    }
 
     /**
      * Resizes the chat conversation.
      */
     function resizeChatConversation() {
-        var usermsgStyleHeight = document.getElementById("usermsg").style.height;
-        var usermsgHeight = usermsgStyleHeight
-            .substring(0, usermsgStyleHeight.indexOf('px'));
+        var msgareaHeight = $('#usermsg').outerHeight();
+        var chatspace = $('#chatspace');
+        var width = chatspace.width();
+        var chat = $('#chatconversation');
+        var smileys = $('#smileysarea');
 
-        $('#usermsg').width($('#chatspace').width() - 10);
-        $('#chatconversation').width($('#chatspace').width() - 10);
-        $('#chatconversation')
-            .height(window.innerHeight - 10 - parseInt(usermsgHeight));
+        smileys.height(msgareaHeight);
+        $("#smileys").css('bottom', (msgareaHeight - 26) / 2);
+        $('#smileysContainer').css('bottom', msgareaHeight);
+        chat.width(width - 10);
+        chat.height(window.innerHeight - 15 - msgareaHeight);
     }
 
     /**
@@ -348,6 +404,27 @@ var Chat = (function (my) {
             $('#chatconversation').scrollTop(
                     $('#chatconversation')[0].scrollHeight);
         }, 5);
+    }
+
+    /**
+     * Returns the current time in the format it is shown to the user
+     * @returns {string}
+     */
+    function getCurrentTime() {
+        var now     = new Date();
+        var hour    = now.getHours();
+        var minute  = now.getMinutes();
+        var second  = now.getSeconds();
+        if(hour.toString().length === 1) {
+            hour = '0'+hour;
+        }
+        if(minute.toString().length === 1) {
+            minute = '0'+minute;
+        }
+        if(second.toString().length === 1) {
+            second = '0'+second;
+        }
+        return hour+':'+minute+':'+second;
     }
 
     return my;

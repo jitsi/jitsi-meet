@@ -36,7 +36,7 @@
     <script src="data_channels.js?v=3"></script><!-- data channels -->
     <script src="app.js?v=18"></script><!-- application logic -->
     <script src="commands.js?v=1"></script><!-- application logic -->
-    <script src="chat.js?v=11"></script><!-- chat logic -->
+    <script src="chat.js?v=12"></script><!-- chat logic -->
     <script src="contact_list.js?v=4"></script><!-- contact list logic -->
     <script src="util.js?v=6"></script><!-- utility functions -->
     <script src="etherpad.js?v=9"></script><!-- etherpad plugin -->
@@ -62,7 +62,7 @@
     <script src="message_handler.js?v=1"></script>
     <script src="api_connector.js?v=1"></script>
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/font.css?v=4"/>
+    <link rel="stylesheet" href="css/font.css?v=5"/>
     <link rel="stylesheet" type="text/css" media="screen" href="css/main.css?v=26"/>
     <link rel="stylesheet" type="text/css" media="screen" href="css/videolayout_default.css?v=13" id="videolayout_default"/>
     <link rel="stylesheet" href="css/jquery-impromptu.css?v=4">
@@ -71,6 +71,7 @@
     <link rel="stylesheet" href="css/popover.css?v=2">
       <link rel="stylesheet" href="css/jitsi_popover.css?v=2">
     <link rel="stylesheet" href="css/contact_list.css?v=3">
+    <link rel="stylesheet" href="css/chat.css?v=2">
     <link rel="stylesheet" href="css/welcome_page.css?v=2">
     <!--
         Link used for inline installation of chrome desktop streaming extension,
@@ -277,7 +278,7 @@
                 </span>
                 <div class="bottom_button_separator"></div>
                 <span class="bottomToolbar_span">
-                    <a class="bottomToolbarButton" data-container="body" data-toggle="popover" data-placement="top" data-container="body" id="contactlistpopover" content="Open / close contact list" onclick='BottomToolbar.toggleContactList();'>
+                    <a class="bottomToolbarButton" data-container="body" data-toggle="popover" data-placement="top" id="contactlistpopover" content="Open / close contact list" onclick='BottomToolbar.toggleContactList();'>
                         <i id="contactListButton" class="icon-contactList"></i>
                     </a>
                 </span>
@@ -300,7 +301,12 @@
             <!--div><i class="fa fa-comments">&nbsp;</i><span class='nick'></span>:&nbsp;<span class='chattext'></span></div-->
             <div id="chatconversation"></div>
             <audio id="chatNotification" src="sounds/incomingMessage.wav" preload="auto"></audio>
-            <textarea id="usermsg" placeholder='Enter text...' autofocus></textarea>
+                <textarea id="usermsg" placeholder='Enter text...' autofocus></textarea>
+            <div id="smileysarea">
+                <div id="smileys" onclick="Chat.toggleSmileys()">
+                    <img src="images/smile.svg"/>
+                </div>
+            </div>
         </div>
         <div id="contactlist">
             <ul>

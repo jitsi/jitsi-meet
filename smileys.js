@@ -1,45 +1,48 @@
-var smiley1 = "images/smileys/smiley1.gif";
+var smileys = {
+    "smiley1": ':)',
+    "smiley2": ':(',
+    "smiley3": ':D',
+    "smiley4": '(y)',
+    "smiley5": ' :P',
+    "smiley6": '(wave)',
+    "smiley7": '(blush)',
+    "smiley8": '(chuckle)',
+    "smiley9": '(shoked)',
+    "smiley10": ':*',
+    "smiley11": '(n)',
+    "smiley12": '(search)',
+    "smiley13": ' <3',
+    "smiley14": '(oops)',
+    "smiley15": '(angry)',
+    "smiley16": '(angel)',
+    "smiley17": '(sick)',
+    "smiley18": ';(',
+    "smiley19": '(bomb)',
+    "smiley20": '(clap)',
+    "smiley21": ' ;)'
+};
 
-var smiley2 = "images/smileys/smiley2.gif";
+var regexs = {
+    'smiley2': /(:-\(\(|:-\(|:\(\(|:\(|\(sad\))/gi,
+    'smiley3': /(:-\)\)|:\)\)|\(lol\)|:-D|:D)/gi,
+    'smiley1': /(:-\)|:\))/gi,
+    'smiley4': /(\(y\)|\(Y\)|\(ok\))/gi,
+    'smiley5': /(:-P|:P|:-p|:p)/gi,
+    'smiley6': /(\(wave\))/gi,
+    'smiley7': /(\(blush\))/gi,
+    'smiley8': /(\(chuckle\))/gi,
+    'smiley9': /(:-0|\(shocked\))/gi,
+    'smiley10': /(:-\*|:\*|\(kiss\))/gi,
+    'smiley11': /(\(n\))/gi,
+    'smiley12': /(\(search\))/g,
+    'smiley13': /(<3|&lt;3|&amp;lt;3|\(L\)|\(l\)|\(H\)|\(h\))/gi,
+    'smiley14': /(\(oops\))/gi,
+    'smiley15': /(\(angry\))/gi,
+    'smiley16': /(\(angel\))/gi,
+    'smiley17': /(\(sick\))/gi,
+    'smiley18': /(;-\(\(|;\(\(|;-\(|;\(|:'\(|:'-\(|:~-\(|:~\(|\(upset\))/gi,
+    'smiley19': /(\(bomb\))/gi,
+    'smiley20': /(\(clap\))/gi,
+    'smiley21': /(;-\)|;\)|;-\)\)|;\)\)|;-D|;D|\(wink\))/gi
+};
 
-
-var smiley3 = "images/smileys/smiley3.gif";
-
-var smiley4 = "images/smileys/smiley4.gif";
-
-var smiley5 = "images/smileys/smiley5.gif";
-
-var smiley6 = "images/smileys/smiley6.gif";
-
-var smiley7 = "images/smileys/smiley7.gif";
-
-var smiley8 = "images/smileys/smiley8.gif";
-
-var smiley9 = "images/smileys/smiley9.gif";
-
-
-var smiley10 = "images/smileys/smiley10.gif";
-
-
-var smiley11 = "images/smileys/smiley11.gif";
-
-
-var smiley12 = "images/smileys/smiley12.gif";
-
-var smiley13 = "images/smileys/smiley13.gif";
-
-var smiley14 = "images/smileys/smiley14.gif";
-
-var smiley15 = "images/smileys/smiley15.gif";
-
-
-var smiley16 = "images/smileys/smiley16.gif";
-
-var smiley17 = "images/smileys/smiley17.gif";
-
-
-var smiley18 = "images/smileys/smiley18.gif";
-
-var smiley19 = "images/smileys/smiley19.gif";
-
-var smiley20 = "images/smileys/smiley20.gif";
