@@ -431,7 +431,8 @@ var VideoLayout = (function (my) {
             stream.onended = function () {
                 console.log('stream ended', this);
 
-                VideoLayout.removeRemoteStreamElement(stream, container);
+                VideoLayout.removeRemoteStreamElement(
+                    stream, isVideo, container);
 
                 if (peerJid)
                     ContactList.removeContact(peerJid);
@@ -481,15 +482,16 @@ var VideoLayout = (function (my) {
      * parent container.
      * 
      * @param stream the stream
+     * @param isVideo <tt>true</tt> if given <tt>stream</tt> is a video one.
      * @param container
      */
-    my.removeRemoteStreamElement = function (stream, container) {
+    my.removeRemoteStreamElement = function (stream, isVideo, container) {
         if (!container)
             return;
 
         var select = null;
         var removedVideoSrc = null;
-        if (stream.getVideoTracks().length > 0) {
+        if (isVideo) {
             select = $('#' + container.id + '>video');
             removedVideoSrc = select.get(0).src;
         }
