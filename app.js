@@ -121,8 +121,8 @@ function connect(jid, password) {
 
     var anonymousConnectionFailed = false;
     connection.connect(jid, password, function (status, msg) {
+        console.log('Strophe status changed to', Strophe.getStatusString(status));
         if (status === Strophe.Status.CONNECTED) {
-            console.log('connected');
             if (config.useStunTurn) {
                 connection.jingle.getStunAndTurnCredentials();
             }
@@ -135,7 +135,6 @@ function connect(jid, password) {
             if(msg === 'x-strophe-bad-non-anon-jid') {
                 anonymousConnectionFailed = true;
             }
-            console.log('status', status);
         } else if (status === Strophe.Status.DISCONNECTED) {
             if(anonymousConnectionFailed) {
                 // prompt user for username and password
@@ -145,8 +144,6 @@ function connect(jid, password) {
             // wrong password or username, prompt user
             $(document).trigger('passwordrequired.main');
 
-        } else {
-            console.log('status', status);
         }
     });
 }
