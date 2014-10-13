@@ -1,5 +1,4 @@
 var VideoLayout = (function (my) {
-    var preMuted = false;
     var currentDominantSpeaker = null;
     var lastNCount = config.channelLastN;
     var lastNEndpointsCache = [];
@@ -14,10 +13,6 @@ var VideoLayout = (function (my) {
         RTC.attachMediaStream($('#localAudio'), stream);
         document.getElementById('localAudio').autoplay = true;
         document.getElementById('localAudio').volume = 0;
-        if (preMuted) {
-            toggleAudio();
-            preMuted = false;
-        }
     };
 
     my.changeLocalVideo = function(stream, flipX) {

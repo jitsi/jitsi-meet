@@ -962,7 +962,6 @@ function toggleVideo() {
  */
 function toggleAudio() {
     if (!(connection && connection.jingle.localAudio)) {
-        preMuted = true;
         // We still click the button.
         buttonClick("#mute", "icon-microphone icon-mic-disabled");
         return;
