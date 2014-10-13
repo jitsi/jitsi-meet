@@ -766,6 +766,7 @@ var VideoLayout = (function (my) {
 
     /**
      * Shows audio muted indicator over small videos.
+     * @param {string} isMuted
      */
     my.showAudioIndicator = function(videoSpanId, isMuted) {
         var audioMutedSpan = $('#' + videoSpanId + '>span.audioMuted');
@@ -791,6 +792,14 @@ var VideoLayout = (function (my) {
             mutedIndicator.className = 'icon-mic-disabled';
             audioMutedSpan.appendChild(mutedIndicator);
         }
+    };
+
+    /*
+     * Shows or hides the audio muted indicator over the local thumbnail video.
+     * @param {boolean} isMuted
+     */
+    my.showLocalAudioIndicator = function(isMuted) {
+        VideoLayout.showAudioIndicator('localVideoContainer', isMuted.toString());
     };
 
     /**
@@ -1166,19 +1175,19 @@ var VideoLayout = (function (my) {
      * On audio muted event.
      */
     $(document).bind('audiomuted.muc', function (event, jid, isMuted) {
-        var videoSpanId = null;
         if (jid === connection.emuc.myroomjid) {
-            videoSpanId = 'localVideoContainer';
-        } else {
-            VideoLayout.ensurePeerContainerExists(jid);
-            videoSpanId = 'participant_' + Strophe.getResourceFromJid(jid);
+            // The local mute indicator is controlled locally
+            return;
         }
+
+        VideoLayout.ensurePeerContainerExists(jid);
 
         if (focus) {
             mutedAudios[jid] = isMuted;
             VideoLayout.updateRemoteVideoMenu(jid, isMuted);
         }
 
+        var videoSpanId = 'participant_' + Strophe.getResourceFromJid(jid);
         if (videoSpanId)
             VideoLayout.showAudioIndicator(videoSpanId, isMuted);
     });

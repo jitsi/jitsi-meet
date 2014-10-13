@@ -967,14 +967,21 @@ function toggleAudio() {
         return;
     }
 
-    var localAudio = connection.jingle.localAudio;
-    for (var idx = 0; idx < localAudio.getAudioTracks().length; idx++) {
-        var audioEnabled = localAudio.getAudioTracks()[idx].enabled;
+    // It is not clear what is the right way to handle multiple tracks.
+    // So at least make sure that they are all muted or all unmuted and
+    // that we send presence just once.
+    var localAudioTracks = connection.jingle.localAudio.getAudioTracks();
+    if (localAudioTracks.length > 0) {
+        var audioEnabled = localAudioTracks[0].enabled;
 
-        localAudio.getAudioTracks()[idx].enabled = !audioEnabled;
+        for (var idx = 0; idx < localAudioTracks.length; idx++) {
+            localAudioTracks[idx].enabled = !audioEnabled;
+        }
+
         // isMuted is the opposite of audioEnabled
         connection.emuc.addAudioInfoToPresence(audioEnabled);
         connection.emuc.sendPresence();
+        VideoLayout.showLocalAudioIndicator(audioEnabled);
     }
 
     buttonClick("#mute", "icon-microphone icon-mic-disabled");
