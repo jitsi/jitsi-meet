@@ -662,51 +662,52 @@ ColibriFocus.prototype.initiate = function (peer, isInitiator) {
     var participant = this.peers.indexOf(peer);
     console.log('tell', peer, participant);
     var sdp;
-    if (this.peerconnection !== null && this.peerconnection.signalingState == 'stable') {
-        sdp = new SDP(this.peerconnection.remoteDescription.sdp);
-        var localSDP = new SDP(this.peerconnection.localDescription.sdp);
-        // throw away stuff we don't want
-        // not needed with static offer
-        if (!config.useBundle) {
-            sdp.removeSessionLines('a=group:');
-        }
-        sdp.removeSessionLines('a=msid-semantic:'); // FIXME: not mapped over jingle anyway...
-        for (var i = 0; i < sdp.media.length; i++) {
-            if (!config.useRtcpMux){
-                sdp.removeMediaLines(i, 'a=rtcp-mux');
-            }
-            sdp.removeMediaLines(i, 'a=ssrc:');
-            sdp.removeMediaLines(i, 'a=ssrc-group:');
-            sdp.removeMediaLines(i, 'a=crypto:');
-            sdp.removeMediaLines(i, 'a=candidate:');
-            sdp.removeMediaLines(i, 'a=ice-options:google-ice');
-            sdp.removeMediaLines(i, 'a=ice-ufrag:');
-            sdp.removeMediaLines(i, 'a=ice-pwd:');
-            sdp.removeMediaLines(i, 'a=fingerprint:');
-            sdp.removeMediaLines(i, 'a=setup:');
 
-            if (1) { //i > 0) { // not for audio FIXME: does not work as intended
-                // re-add all remote a=ssrcs _and_ a=ssrc-group
-                for (var jid in this.remotessrc) {
-                    if (jid == peer || !this.remotessrc[jid][i])
-                        continue;
-                    sdp.media[i] += this.remotessrc[jid][i];
-                }
-
-                // add local a=ssrc-group: lines
-                lines = SDPUtil.find_lines(localSDP.media[i], 'a=ssrc-group:');
-                if (lines.length != 0)
-                    sdp.media[i] += lines.join('\r\n') + '\r\n';
-
-                // and local a=ssrc: lines
-                sdp.media[i] += SDPUtil.find_lines(localSDP.media[i], 'a=ssrc:').join('\r\n') + '\r\n';
-            }
-        }
-        sdp.raw = sdp.session + sdp.media.join('');
-    } else {
+    if (!(this.peerconnection !== null && this.peerconnection.signalingState == 'stable')) {
         console.error('can not initiate a new session without a stable peerconnection');
         return;
     }
+
+    sdp = new SDP(this.peerconnection.remoteDescription.sdp);
+    var localSDP = new SDP(this.peerconnection.localDescription.sdp);
+    // throw away stuff we don't want
+    // not needed with static offer
+    if (!config.useBundle) {
+        sdp.removeSessionLines('a=group:');
+    }
+    sdp.removeSessionLines('a=msid-semantic:'); // FIXME: not mapped over jingle anyway...
+    for (var i = 0; i < sdp.media.length; i++) {
+        if (!config.useRtcpMux){
+            sdp.removeMediaLines(i, 'a=rtcp-mux');
+        }
+        sdp.removeMediaLines(i, 'a=ssrc:');
+        sdp.removeMediaLines(i, 'a=ssrc-group:');
+        sdp.removeMediaLines(i, 'a=crypto:');
+        sdp.removeMediaLines(i, 'a=candidate:');
+        sdp.removeMediaLines(i, 'a=ice-options:google-ice');
+        sdp.removeMediaLines(i, 'a=ice-ufrag:');
+        sdp.removeMediaLines(i, 'a=ice-pwd:');
+        sdp.removeMediaLines(i, 'a=fingerprint:');
+        sdp.removeMediaLines(i, 'a=setup:');
+
+        if (1) { //i > 0) { // not for audio FIXME: does not work as intended
+            // re-add all remote a=ssrcs _and_ a=ssrc-group
+            for (var jid in this.remotessrc) {
+                if (jid == peer || !this.remotessrc[jid][i])
+                    continue;
+                sdp.media[i] += this.remotessrc[jid][i];
+            }
+
+            // add local a=ssrc-group: lines
+            lines = SDPUtil.find_lines(localSDP.media[i], 'a=ssrc-group:');
+            if (lines.length != 0)
+                sdp.media[i] += lines.join('\r\n') + '\r\n';
+
+            // and local a=ssrc: lines
+            sdp.media[i] += SDPUtil.find_lines(localSDP.media[i], 'a=ssrc:').join('\r\n') + '\r\n';
+        }
+    }
+    sdp.raw = sdp.session + sdp.media.join('');
 
     // add stuff we got from the bridge
     for (var j = 0; j < sdp.media.length; j++) {
