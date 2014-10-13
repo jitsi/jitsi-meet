@@ -677,7 +677,7 @@ ColibriFocus.prototype.initiate = function (peer, isInitiator) {
     }
     sdp.removeSessionLines('a=msid-semantic:'); // FIXME: not mapped over jingle anyway...
     for (var i = 0; i < sdp.media.length; i++) {
-        if (!config.useRtcpMux){
+        if (!config.useRtcpMux) {
             sdp.removeMediaLines(i, 'a=rtcp-mux');
         }
         sdp.removeMediaLines(i, 'a=ssrc:');
@@ -689,25 +689,7 @@ ColibriFocus.prototype.initiate = function (peer, isInitiator) {
         sdp.removeMediaLines(i, 'a=ice-pwd:');
         sdp.removeMediaLines(i, 'a=fingerprint:');
         sdp.removeMediaLines(i, 'a=setup:');
-
-        if (1) { //i > 0) { // not for audio FIXME: does not work as intended
-            // re-add all remote a=ssrcs _and_ a=ssrc-group
-            for (var jid in this.remotessrc) {
-                if (jid == peer || !this.remotessrc[jid][i])
-                    continue;
-                sdp.media[i] += this.remotessrc[jid][i];
-            }
-
-            // add local a=ssrc-group: lines
-            lines = SDPUtil.find_lines(localSDP.media[i], 'a=ssrc-group:');
-            if (lines.length != 0)
-                sdp.media[i] += lines.join('\r\n') + '\r\n';
-
-            // and local a=ssrc: lines
-            sdp.media[i] += SDPUtil.find_lines(localSDP.media[i], 'a=ssrc:').join('\r\n') + '\r\n';
-        }
     }
-    sdp.raw = sdp.session + sdp.media.join('');
 
     // add stuff we got from the bridge
     for (var j = 0; j < sdp.media.length; j++) {
@@ -756,6 +738,25 @@ ColibriFocus.prototype.initiate = function (peer, isInitiator) {
             }
         }
     }
+
+    for (var i = 0; i < sdp.media.length; i++) {
+        // re-add all remote a=ssrcs _and_ a=ssrc-group
+        for (var jid in this.remotessrc) {
+            if (jid == peer || !this.remotessrc[jid][i])
+                continue;
+            sdp.media[i] += this.remotessrc[jid][i];
+        }
+
+        // add local a=ssrc-group: lines
+        lines = SDPUtil.find_lines(localSDP.media[i], 'a=ssrc-group:');
+        if (lines.length != 0)
+            sdp.media[i] += lines.join('\r\n') + '\r\n';
+
+        // and local a=ssrc: lines
+        sdp.media[i] += SDPUtil.find_lines(localSDP.media[i], 'a=ssrc:').join('\r\n') + '\r\n';
+    }
+    sdp.raw = sdp.session + sdp.media.join('');
+
     // make a new colibri session and configure it
     // FIXME: is it correct to use this.connection.jid when used in a MUC?
     var sess = new ColibriSession(this.connection.jid,
