@@ -57,7 +57,7 @@ var ContactList = (function (my) {
         var clElement = contactlist.get(0);
 
         if (resourceJid === Strophe.getResourceFromJid(connection.emuc.myroomjid)
-            && $('#contactlist>ul .title')[0].nextSibling.nextSibling)
+            && $('#contactlist>ul .title')[0].nextSibling && $('#contactlist>ul .title')[0].nextSibling.nextSibling)
         {
             clElement.insertBefore(newContact,
                     $('#contactlist>ul .title')[0].nextSibling.nextSibling);
