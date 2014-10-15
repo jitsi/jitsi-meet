@@ -7,12 +7,6 @@
 function Simulcast() {
     "use strict";
 
-    // TODO(gp) split the Simulcast class in two classes : NativeSimulcast and ClassicSimulcast.
-
-    // Once we properly support native simulcast, enable it automatically in the
-    // supported browsers (Chrome).
-    this.useNativeSimulcast = false;
-
     // TODO(gp) we need a logging framework for javascript à la log4j or the
     // java logging framework that allows for selective log display
     this.debugLvl = 0;
@@ -336,7 +330,7 @@ Simulcast.prototype = {
     },
 
     _appendSimulcastGroup: function (lines) {
-        var videoSources, ssrcGroup, simSSRC, numOfSubs = 3, i, sb, msid;
+        var videoSources, ssrcGroup, simSSRC, numOfSubs = 2, i, sb, msid;
 
         if (this.debugLvl) {
             console.info('Appending simulcast group...');
@@ -442,40 +436,6 @@ Simulcast.prototype = {
         return sb;
     },
 
-    /**
-     * Ensures that the simulcast group is present in the answer, _if_ native
-     * simulcast is enabled,
-     *
-     * @param desc
-     * @returns {*}
-     */
-    transformAnswer: function (desc) {
-        if (config.enableSimulcast && this.useNativeSimulcast) {
-
-            var sb = desc.sdp.split('\r\n');
-
-            // Even if we have enabled native simulcasting previously
-            // (with a call to SLD with an appropriate SDP, for example),
-            // createAnswer seems to consistently generate incomplete SDP
-            // with missing SSRCS.
-            //
-            // So, subsequent calls to SLD will have missing SSRCS and presence
-            // won't have the complete list of SRCs.
-            this._ensureSimulcastGroup(sb);
-
-            desc = new RTCSessionDescription({
-                type: desc.type,
-                sdp: sb.join('\r\n')
-            });
-
-            if (this.debugLvl && this.debugLvl > 1) {
-                console.info('Transformed answer');
-                console.info(desc.sdp);
-            }
-        }
-
-        return desc;
-    },
 
     _restoreSimulcastGroups: function (sb) {
         this._restoreRemoteVideoSources(sb);
@@ -511,55 +471,6 @@ Simulcast.prototype = {
         return desc;
     },
 
-    /**
-     * Prepares the local description for public usage (i.e. to be signaled
-     * through Jingle to the focus).
-     *
-     * @param desc
-     * @returns {RTCSessionDescription}
-     */
-    reverseTransformLocalDescription: function (desc) {
-        var sb;
-
-        if (!desc || desc == null) {
-            return desc;
-        }
-
-        if (config.enableSimulcast) {
-
-            if (this.useNativeSimulcast) {
-                sb = desc.sdp.split('\r\n');
-
-                this._explodeLocalSimulcastSources(sb);
-
-                desc = new RTCSessionDescription({
-                    type: desc.type,
-                    sdp: sb.join('\r\n')
-                });
-
-                if (this.debugLvl && this.debugLvl > 1) {
-                    console.info('Exploded local video sources');
-                    console.info(desc.sdp);
-                }
-            } else {
-                sb = desc.sdp.split('\r\n');
-
-                this._groupLocalVideoSources(sb);
-
-                desc = new RTCSessionDescription({
-                    type: desc.type,
-                    sdp: sb.join('\r\n')
-                });
-
-                if (this.debugLvl && this.debugLvl > 1) {
-                    console.info('Grouped local video sources');
-                    console.info(desc.sdp);
-                }
-            }
-        }
-
-        return desc;
-    },
 
     _ensureOrder: function (lines) {
         var videoSources, sb;
@@ -591,70 +502,6 @@ Simulcast.prototype = {
                 }
             });
         }
-    },
-
-    /**
-     *
-     *
-     * @param desc
-     * @returns {*}
-     */
-    transformLocalDescription: function (desc) {
-        if (config.enableSimulcast && !this.useNativeSimulcast) {
-
-            var sb = desc.sdp.split('\r\n');
-
-            this._removeSimulcastGroup(sb);
-
-            desc = new RTCSessionDescription({
-                type: desc.type,
-                sdp: sb.join('\r\n')
-            });
-
-            if (this.debugLvl && this.debugLvl > 1) {
-                console.info('Transformed local description');
-                console.info(desc.sdp);
-            }
-        }
-
-        return desc;
-    },
-
-    /**
-     * Removes the ssrc-group:SIM from the remote description bacause Chrome
-     * either gets confused and thinks this is an FID group or, if an FID group
-     * is already present, it fails to set the remote description.
-     *
-     * @param desc
-     * @returns {*}
-     */
-    transformRemoteDescription: function (desc) {
-        if (config.enableSimulcast) {
-
-            var sb = desc.sdp.split('\r\n');
-
-            this._updateRemoteMaps(sb);
-            this._cacheRemoteVideoSources(sb);
-            this._removeSimulcastGroup(sb); // NOTE(gp) this needs to be called after updateRemoteMaps because we need the simulcast group in the _updateRemoteMaps() method.
-
-            if (this.useNativeSimulcast) {
-                // We don't need the goog conference flag if we're not doing
-                // native simulcast.
-                this._ensureGoogConference(sb);
-            }
-
-            desc = new RTCSessionDescription({
-                type: desc.type,
-                sdp: sb.join('\r\n')
-            });
-
-            if (this.debugLvl && this.debugLvl > 1) {
-                console.info('Transformed remote description');
-                console.info(desc.sdp);
-            }
-        }
-
-        return desc;
     },
 
     _setReceivingVideoStream: function (endpoint, ssrc) {
@@ -709,83 +556,6 @@ Simulcast.prototype = {
     localStream: null, displayedLocalVideoStream: null,
 
     /**
-     * GUM for simulcast.
-     *
-     * @param constraints
-     * @param success
-     * @param err
-     */
-    getUserMedia: function (constraints, success, err) {
-
-        // TODO(gp) what if we request a resolution not supported by the hardware?
-        // TODO(gp) make the lq stream configurable; although this wouldn't work with native simulcast
-        var lqConstraints = {
-            audio: false,
-            video: {
-                mandatory: {
-                    maxWidth: 320,
-                    maxHeight: 180,
-                    maxFrameRate: 15
-                }
-            }
-        };
-
-        console.log('HQ constraints: ', constraints);
-        console.log('LQ constraints: ', lqConstraints);
-
-        if (config.enableSimulcast && !this.useNativeSimulcast) {
-
-            // NOTE(gp) if we request the lq stream first webkitGetUserMedia
-            // fails randomly. Tested with Chrome 37. As fippo suggested, the
-            // reason appears to be that Chrome only acquires the cam once and
-            // then downscales the picture (https://code.google.com/p/chromium/issues/detail?id=346616#c11)
-
-            var self = this;
-            navigator.webkitGetUserMedia(constraints, function (hqStream) {
-
-                self.localStream = hqStream;
-
-                // reset local maps.
-                self.localMaps.msids = [];
-                self.localMaps.msid2ssrc = {};
-
-                // add hq trackid to local map
-                self.localMaps.msids.push(hqStream.getVideoTracks()[0].id);
-
-                navigator.webkitGetUserMedia(lqConstraints, function (lqStream) {
-
-                    self.displayedLocalVideoStream = lqStream;
-
-                    // NOTE(gp) The specification says Array.forEach() will visit
-                    // the array elements in numeric order, and that it doesn't
-                    // visit elements that don't exist.
-
-                    // add lq trackid to local map
-                    self.localMaps.msids.splice(0, 0, lqStream.getVideoTracks()[0].id);
-
-                    self.localStream.addTrack(lqStream.getVideoTracks()[0]);
-                    success(self.localStream);
-                }, err);
-            }, err);
-        } else {
-
-            // There's nothing special to do for native simulcast, so just do a normal GUM.
-
-            navigator.webkitGetUserMedia(constraints, function (hqStream) {
-
-                // reset local maps.
-                self.localMaps.msids = [];
-                self.localMaps.msid2ssrc = {};
-
-                // add hq stream to local map
-                self.localMaps.msids.push(hqStream.getVideoTracks()[0].id);
-                self.displayedLocalVideoStream = this.localStream = hqStream;
-                success(self.localStream);
-            }, err);
-        }
-    },
-
-    /**
      * Gets the fully qualified msid (stream.id + track.id) associated to the
      * SSRC.
      *
@@ -801,40 +571,467 @@ Simulcast.prototype = {
         return this._parseMedia(lines, mediatypes);
     },
 
-    _setLocalVideoStreamEnabled: function (ssrc, enabled) {
-        var trackid;
-
-        var self = this;
-        console.log(['Requested to', enabled ? 'enable' : 'disable', ssrc].join(' '));
-        if (Object.keys(this.localMaps.msid2ssrc).some(function (tid) {
-            // Search for the track id that corresponds to the ssrc
-            if (self.localMaps.msid2ssrc[tid] == ssrc) {
-                trackid = tid;
-                return true;
-            }
-        }) && self.localStream.getVideoTracks().some(function (track) {
-            // Start/stop the track that corresponds to the track id
-            if (track.id === trackid) {
-                track.enabled = enabled;
-                return true;
-            }
-        })) {
-            console.log([trackid, enabled ? 'enabled' : 'disabled'].join(' '));
-            $(document).trigger(enabled
-                ? 'simulcastlayerstarted'
-                : 'simulcastlayerstopped');
-        } else {
-            console.error("I don't have a local stream with SSRC " + ssrc);
-        }
-    },
-
     getLocalVideoStream: function () {
         return (this.displayedLocalVideoStream != null)
             ? this.displayedLocalVideoStream
             // in case we have no simulcast at all, i.e. we didn't perform the GUM
             : connection.jingle.localVideo;
     }
+};
+
+
+function NativeSimulcast() {
+    Simulcast.call(this); // call the super constructor.
 }
+
+NativeSimulcast.prototype = Object.create(Simulcast.prototype);
+
+/**
+ * GUM for simulcast.
+ *
+ * @param constraints
+ * @param success
+ * @param err
+ */
+NativeSimulcast.prototype.getUserMedia = function (constraints, success, err) {
+
+    // There's nothing special to do for native simulcast, so just do a normal GUM.
+
+    var self = this;
+    navigator.webkitGetUserMedia(constraints, function (hqStream) {
+
+        // reset local maps.
+        self.localMaps.msids = [];
+        self.localMaps.msid2ssrc = {};
+
+        // add hq stream to local map
+        self.localMaps.msids.push(hqStream.getVideoTracks()[0].id);
+        self.displayedLocalVideoStream = self.localStream = hqStream;
+        success(self.localStream);
+    }, err);
+};
+
+/**
+ * Prepares the local description for public usage (i.e. to be signaled
+ * through Jingle to the focus).
+ *
+ * @param desc
+ * @returns {RTCSessionDescription}
+ */
+NativeSimulcast.prototype.reverseTransformLocalDescription = function (desc) {
+    var sb;
+
+    if (!desc || desc == null) {
+        return desc;
+    }
+
+    if (config.enableSimulcast) {
+        sb = desc.sdp.split('\r\n');
+
+        this._explodeLocalSimulcastSources(sb);
+
+        desc = new RTCSessionDescription({
+            type: desc.type,
+            sdp: sb.join('\r\n')
+        });
+
+        if (this.debugLvl && this.debugLvl > 1) {
+            console.info('Exploded local video sources');
+            console.info(desc.sdp);
+        }
+    }
+
+    return desc;
+};
+
+/**
+ * Ensures that the simulcast group is present in the answer, _if_ native
+ * simulcast is enabled,
+ *
+ * @param desc
+ * @returns {*}
+ */
+NativeSimulcast.prototype.transformAnswer = function (desc) {
+    if (config.enableSimulcast) {
+
+        var sb = desc.sdp.split('\r\n');
+
+        // Even if we have enabled native simulcasting previously
+        // (with a call to SLD with an appropriate SDP, for example),
+        // createAnswer seems to consistently generate incomplete SDP
+        // with missing SSRCS.
+        //
+        // So, subsequent calls to SLD will have missing SSRCS and presence
+        // won't have the complete list of SRCs.
+        this._ensureSimulcastGroup(sb);
+
+        desc = new RTCSessionDescription({
+            type: desc.type,
+            sdp: sb.join('\r\n')
+        });
+
+        if (this.debugLvl && this.debugLvl > 1) {
+            console.info('Transformed answer');
+            console.info(desc.sdp);
+        }
+    }
+
+    return desc;
+};
+
+
+/**
+ *
+ *
+ * @param desc
+ * @returns {*}
+ */
+NativeSimulcast.prototype.transformLocalDescription = function (desc) {
+    return desc;
+};
+
+/**
+ * Removes the ssrc-group:SIM from the remote description bacause Chrome
+ * either gets confused and thinks this is an FID group or, if an FID group
+ * is already present, it fails to set the remote description.
+ *
+ * @param desc
+ * @returns {*}
+ */
+NativeSimulcast.prototype.transformRemoteDescription = function (desc) {
+    if (config.enableSimulcast) {
+
+        var sb = desc.sdp.split('\r\n');
+
+        this._updateRemoteMaps(sb);
+        this._cacheRemoteVideoSources(sb);
+        this._removeSimulcastGroup(sb); // NOTE(gp) this needs to be called after updateRemoteMaps because we need the simulcast group in the _updateRemoteMaps() method.
+        // We don't need the goog conference flag if we're not doing
+        // native simulcast.
+        this._ensureGoogConference(sb);
+
+        desc = new RTCSessionDescription({
+            type: desc.type,
+            sdp: sb.join('\r\n')
+        });
+
+        if (this.debugLvl && this.debugLvl > 1) {
+            console.info('Transformed remote description');
+            console.info(desc.sdp);
+        }
+    }
+
+    return desc;
+};
+
+NativeSimulcast.prototype._setLocalVideoStreamEnabled = function (ssrc, enabled) {
+    // Nothing to do here, native simulcast does that auto-magically.
+};
+
+NativeSimulcast.prototype.constructor = NativeSimulcast;
+
+function GrumpySimulcast() {
+    Simulcast.call(this);
+}
+
+GrumpySimulcast.prototype = Object.create(Simulcast.prototype);
+
+/**
+ * GUM for simulcast.
+ *
+ * @param constraints
+ * @param success
+ * @param err
+ */
+GrumpySimulcast.prototype.getUserMedia = function (constraints, success, err) {
+
+    // TODO(gp) what if we request a resolution not supported by the hardware?
+    // TODO(gp) make the lq stream configurable; although this wouldn't work with native simulcast
+    var lqConstraints = {
+        audio: false,
+        video: {
+            mandatory: {
+                maxWidth: 320,
+                maxHeight: 180,
+                maxFrameRate: 15
+            }
+        }
+    };
+
+    console.log('HQ constraints: ', constraints);
+    console.log('LQ constraints: ', lqConstraints);
+
+    if (config.enableSimulcast) {
+
+        // NOTE(gp) if we request the lq stream first webkitGetUserMedia
+        // fails randomly. Tested with Chrome 37. As fippo suggested, the
+        // reason appears to be that Chrome only acquires the cam once and
+        // then downscales the picture (https://code.google.com/p/chromium/issues/detail?id=346616#c11)
+
+        var self = this;
+        navigator.webkitGetUserMedia(constraints, function (hqStream) {
+
+            self.localStream = hqStream;
+
+            // reset local maps.
+            self.localMaps.msids = [];
+            self.localMaps.msid2ssrc = {};
+
+            // add hq trackid to local map
+            self.localMaps.msids.push(hqStream.getVideoTracks()[0].id);
+
+            navigator.webkitGetUserMedia(lqConstraints, function (lqStream) {
+
+                self.displayedLocalVideoStream = lqStream;
+
+                // NOTE(gp) The specification says Array.forEach() will visit
+                // the array elements in numeric order, and that it doesn't
+                // visit elements that don't exist.
+
+                // add lq trackid to local map
+                self.localMaps.msids.splice(0, 0, lqStream.getVideoTracks()[0].id);
+
+                self.localStream.addTrack(lqStream.getVideoTracks()[0]);
+                success(self.localStream);
+            }, err);
+        }, err);
+    }
+};
+
+/**
+ * Prepares the local description for public usage (i.e. to be signaled
+ * through Jingle to the focus).
+ *
+ * @param desc
+ * @returns {RTCSessionDescription}
+ */
+GrumpySimulcast.prototype.reverseTransformLocalDescription = function (desc) {
+    var sb;
+
+    if (!desc || desc == null) {
+        return desc;
+    }
+
+    if (config.enableSimulcast) {
+
+
+        sb = desc.sdp.split('\r\n');
+
+        this._groupLocalVideoSources(sb);
+
+        desc = new RTCSessionDescription({
+            type: desc.type,
+            sdp: sb.join('\r\n')
+        });
+
+        if (this.debugLvl && this.debugLvl > 1) {
+            console.info('Grouped local video sources');
+            console.info(desc.sdp);
+        }
+    }
+
+    return desc;
+};
+
+/**
+ * Ensures that the simulcast group is present in the answer, _if_ native
+ * simulcast is enabled,
+ *
+ * @param desc
+ * @returns {*}
+ */
+GrumpySimulcast.prototype.transformAnswer = function (desc) {
+    return desc;
+};
+
+
+/**
+ *
+ *
+ * @param desc
+ * @returns {*}
+ */
+GrumpySimulcast.prototype.transformLocalDescription = function (desc) {
+    if (config.enableSimulcast) {
+
+        var sb = desc.sdp.split('\r\n');
+
+        this._removeSimulcastGroup(sb);
+
+        desc = new RTCSessionDescription({
+            type: desc.type,
+            sdp: sb.join('\r\n')
+        });
+
+        if (this.debugLvl && this.debugLvl > 1) {
+            console.info('Transformed local description');
+            console.info(desc.sdp);
+        }
+    }
+
+    return desc;
+};
+
+/**
+ * Removes the ssrc-group:SIM from the remote description bacause Chrome
+ * either gets confused and thinks this is an FID group or, if an FID group
+ * is already present, it fails to set the remote description.
+ *
+ * @param desc
+ * @returns {*}
+ */
+GrumpySimulcast.prototype.transformRemoteDescription = function (desc) {
+    if (config.enableSimulcast) {
+
+        var sb = desc.sdp.split('\r\n');
+
+        this._updateRemoteMaps(sb);
+        this._cacheRemoteVideoSources(sb);
+        this._removeSimulcastGroup(sb); // NOTE(gp) this needs to be called after updateRemoteMaps because we need the simulcast group in the _updateRemoteMaps() method.
+
+        desc = new RTCSessionDescription({
+            type: desc.type,
+            sdp: sb.join('\r\n')
+        });
+
+        if (this.debugLvl && this.debugLvl > 1) {
+            console.info('Transformed remote description');
+            console.info(desc.sdp);
+        }
+    }
+
+    return desc;
+};
+
+GrumpySimulcast.prototype._setLocalVideoStreamEnabled = function (ssrc, enabled) {
+    var trackid;
+
+    var self = this;
+    console.log(['Requested to', enabled ? 'enable' : 'disable', ssrc].join(' '));
+    if (Object.keys(this.localMaps.msid2ssrc).some(function (tid) {
+        // Search for the track id that corresponds to the ssrc
+        if (self.localMaps.msid2ssrc[tid] == ssrc) {
+            trackid = tid;
+            return true;
+        }
+    }) && self.localStream.getVideoTracks().some(function (track) {
+        // Start/stop the track that corresponds to the track id
+        if (track.id === trackid) {
+            track.enabled = enabled;
+            return true;
+        }
+    })) {
+        console.log([trackid, enabled ? 'enabled' : 'disabled'].join(' '));
+        $(document).trigger(enabled
+            ? 'simulcastlayerstarted'
+            : 'simulcastlayerstopped');
+    } else {
+        console.error("I don't have a local stream with SSRC " + ssrc);
+    }
+};
+
+GrumpySimulcast.prototype.constructor = GrumpySimulcast;
+
+function NoSimulcast() {
+    Simulcast.call(this);
+}
+
+NoSimulcast.prototype = Object.create(Simulcast.prototype);
+
+/**
+ * GUM for simulcast.
+ *
+ * @param constraints
+ * @param success
+ * @param err
+ */
+NoSimulcast.prototype.getUserMedia = function (constraints, success, err) {
+    var self = this;
+    navigator.webkitGetUserMedia(constraints, function (hqStream) {
+
+        // reset local maps.
+        self.localMaps.msids = [];
+        self.localMaps.msid2ssrc = {};
+
+        // add hq stream to local map
+        self.localMaps.msids.push(hqStream.getVideoTracks()[0].id);
+        self.displayedLocalVideoStream = self.localStream = hqStream;
+        success(self.localStream);
+    }, err);
+};
+
+/**
+ * Prepares the local description for public usage (i.e. to be signaled
+ * through Jingle to the focus).
+ *
+ * @param desc
+ * @returns {RTCSessionDescription}
+ */
+NoSimulcast.prototype.reverseTransformLocalDescription = function (desc) {
+    return desc;
+};
+
+/**
+ * Ensures that the simulcast group is present in the answer, _if_ native
+ * simulcast is enabled,
+ *
+ * @param desc
+ * @returns {*}
+ */
+NoSimulcast.prototype.transformAnswer = function (desc) {
+    return desc;
+};
+
+
+/**
+ *
+ *
+ * @param desc
+ * @returns {*}
+ */
+NoSimulcast.prototype.transformLocalDescription = function (desc) {
+    return desc;
+};
+
+/**
+ * Removes the ssrc-group:SIM from the remote description bacause Chrome
+ * either gets confused and thinks this is an FID group or, if an FID group
+ * is already present, it fails to set the remote description.
+ *
+ * @param desc
+ * @returns {*}
+ */
+NoSimulcast.prototype.transformRemoteDescription = function (desc) {
+    return desc;
+};
+
+NoSimulcast.prototype._setLocalVideoStreamEnabled = function (ssrc, enabled) {
+
+};
+
+NoSimulcast.prototype.constructor = NoSimulcast;
+
+// Initialize simulcast.
+var simulcast;
+if (!config.enableSimulcast) {
+    simulcast = new NoSimulcast();
+} else {
+
+    var isChromium = window.chrome,
+        vendorName = window.navigator.vendor;
+    if(isChromium !== null && isChromium !== undefined && vendorName === "Google Inc.") {
+        var ver = parseInt(window.navigator.appVersion.match(/Chrome\/(\d+)\./)[1], 10);
+        if (ver > 37) {
+            simulcast = new NativeSimulcast();
+        } else {
+            simulcast = new NoSimulcast();
+        }
+    } else {
+        simulcast = new NoSimulcast();
+    }
+
+}
+
 $(document).bind('simulcastlayerschanged', function (event, endpointSimulcastLayers) {
     endpointSimulcastLayers.forEach(function (esl) {
         var ssrc = esl.simulcastLayer.primarySSRC;
@@ -851,5 +1048,3 @@ $(document).bind('stopsimulcastlayer', function (event, simulcastLayer) {
     var ssrc = simulcastLayer.primarySSRC;
     simulcast._setLocalVideoStreamEnabled(ssrc, false);
 });
-
-var simulcast = new Simulcast();
