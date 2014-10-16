@@ -26,6 +26,7 @@ function JingleSession(me, sid, connection) {
     this.usetrickle = true;
     this.usepranswer = false; // early transport warmup -- mind you, this might fail. depends on webrtc issue 1718
     this.usedrip = false; // dripping is sending trickle candidates not one-by-one
+    this.dontsendlocalcandidate = false; // dont send local candidates
 
     this.hadstuncandidate = false;
     this.hadturncandidate = false;
@@ -60,7 +61,8 @@ JingleSession.prototype.initiate = function (peerjid, isInitiator) {
             this.connection.jingle.pc_constraints );
 
     this.peerconnection.onicecandidate = function (event) {
-        self.sendIceCandidate(event.candidate);
+        if (!self.dontsendlocalcandidate)
+            self.sendIceCandidate(event.candidate);
     };
     this.peerconnection.onaddstream = function (event) {
         self.remoteStreams.push(event.stream);

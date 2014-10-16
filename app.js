@@ -554,7 +554,7 @@ $(document).bind('callincoming.jingle', function (event, sid) {
 
     // TODO: check affiliation and/or role
     console.log('emuc data for', sess.peerjid, connection.emuc.members[sess.peerjid]);
-    sess.usedrip = true; // not-so-naive trickle ice
+    sess.dontsendlocalcandidate = true; // dont send local candidates
     sess.sendAnswer();
     sess.accept();
 
