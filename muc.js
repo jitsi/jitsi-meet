@@ -94,6 +94,16 @@ Strophe.addConnectionPlugin('emuc', {
             $(document).trigger('videomuted.muc', [from, videoMuted.text()]);
         }
 
+        var stats = $(pres).find('>stats');
+        if(stats.length)
+        {
+            var statsObj = {};
+            Strophe.forEachChild(stats[0], "stat", function (el) {
+                statsObj[el.getAttribute("name")] = el.getAttribute("value");
+            });
+            ConnectionQuality.updateRemoteStats(from, statsObj);
+        }
+
         // Parse status.
         if ($(pres).find('>x[xmlns="http://jabber.org/protocol/muc#user"]>status[code="201"]').length) {
             // http://xmpp.org/extensions/xep-0045.html#createroom-instant
@@ -319,6 +329,15 @@ Strophe.addConnectionPlugin('emuc', {
                 .t(this.presMap['videomuted']).up();
         }
 
+        if(this.presMap['statsns'])
+        {
+            var stats = pres.c('stats', {xmlns: this.presMap['statsns']});
+            for(var stat in this.presMap["stats"])
+                if(this.presMap["stats"][stat] != null)
+                    stats.c("stat",{name: stat, value: this.presMap["stats"][stat]}).up();
+            pres.up();
+        }
+
         if (this.presMap['prezins']) {
             pres.c('prezi',
                     {xmlns: this.presMap['prezins'],
@@ -400,6 +419,10 @@ Strophe.addConnectionPlugin('emuc', {
     addVideoInfoToPresence: function(isMuted) {
         this.presMap['videons'] = 'http://jitsi.org/jitmeet/video';
         this.presMap['videomuted'] = isMuted.toString();
+    },
+    addConnectionInfoToPresence: function(stats) {
+        this.presMap['statsns'] = 'http://jitsi.org/jitmeet/stats';
+        this.presMap['stats'] = stats;
     },
     findJidFromResource: function(resourceJid) {
         var peerJid = null;

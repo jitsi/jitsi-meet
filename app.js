@@ -497,7 +497,8 @@ function startRtpStatsCollector()
     if (config.enableRtpStats)
     {
         statsCollector = new StatsCollector(
-            getConferenceHandler().peerconnection, 200, audioLevelUpdated);
+            getConferenceHandler().peerconnection, 200, audioLevelUpdated, 2000,
+            ConnectionQuality.updateLocalStats);
         statsCollector.start();
     }
 }
@@ -511,6 +512,7 @@ function stopRTPStatsCollector()
     {
         statsCollector.stop();
         statsCollector = null;
+        ConnectionQuality.stopSendingStats();
     }
 }
 
@@ -728,6 +730,7 @@ $(document).bind('left.muc', function (event, jid) {
         var container = document.getElementById(
                 'participant_' + Strophe.getResourceFromJid(jid));
         if (container) {
+            VideoLayout.removeConnectionIndicator(jid);
             // hide here, wait for video to close before removing
             $(container).hide();
             VideoLayout.resizeThumbnails();

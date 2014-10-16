@@ -28,7 +28,7 @@ var LocalStatsCollector = (function() {
         this.stream = stream;
         this.intervalId = null;
         this.intervalMilis = interval;
-        this.updateCallback = updateCallback;
+        this.audioLevelsUpdateCallback = updateCallback;
         this.audioLevel = 0;
     }
 
@@ -58,7 +58,7 @@ var LocalStatsCollector = (function() {
                 var audioLevel = TimeDomainDataToAudioLevel(array);
                 if(audioLevel != self.audioLevel) {
                     self.audioLevel = animateLevel(audioLevel, self.audioLevel);
-                    self.updateCallback(LocalStatsCollectorProto.LOCAL_JID, self.audioLevel);
+                    self.audioLevelsUpdateCallback(LocalStatsCollectorProto.LOCAL_JID, self.audioLevel);
                 }
             },
             this.intervalMilis

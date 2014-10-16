@@ -6,6 +6,7 @@ var VideoLayout = (function (my) {
         updateInProgress: false,
         newSrc: ''
     };
+    my.connectionIndicators = {};
 
     my.changeLocalAudio = function(stream) {
         connection.jingle.localAudio = stream;
@@ -29,6 +30,11 @@ var VideoLayout = (function (my) {
 
         // Set default display name.
         setDisplayName('localVideoContainer');
+
+        if(!VideoLayout.connectionIndicators["localVideoContainer"]) {
+            VideoLayout.connectionIndicators["localVideoContainer"]
+                = new ConnectionIndicator($("#localVideoContainer")[0]);
+        }
 
         AudioLevels.updateAudioLevelCanvas();
 
@@ -175,15 +181,42 @@ var VideoLayout = (function (my) {
                         if (largeVideoState.oldJid) {
                             var oldResourceJid = Strophe.getResourceFromJid(largeVideoState.oldJid);
                             VideoLayout.enableDominantSpeaker(oldResourceJid, false);
+                            if(VideoLayout.connectionIndicators) {
+                                var videoContainerId = null;
+                                if (oldResourceJid == Strophe.getResourceFromJid(connection.emuc.myroomjid)) {
+                                    videoContainerId = 'localVideoContainer';
+                                }
+                                else {
+                                    videoContainerId = 'participant_' + oldResourceJid;
+                                }
+                                if(VideoLayout.connectionIndicators[videoContainerId])
+                                    VideoLayout.connectionIndicators[videoContainerId].setShowHQ(false);
+                            }
+
                         }
 
                         // Enable new dominant speaker in the remote videos section.
                         if (largeVideoState.userJid) {
                             var resourceJid = Strophe.getResourceFromJid(largeVideoState.userJid);
                             VideoLayout.enableDominantSpeaker(resourceJid, true);
+                            if(VideoLayout.connectionIndicators)
+                            {
+                                var videoContainerId = null;
+                                if (resourceJid
+                                    === Strophe.getResourceFromJid(connection.emuc.myroomjid)) {
+                                    videoContainerId = 'localVideoContainer';
+                                }
+                                else {
+                                    videoContainerId = 'participant_' + resourceJid;
+                                }
+                                if(VideoLayout.connectionIndicators[videoContainerId])
+                                    VideoLayout.connectionIndicators[videoContainerId].setShowHQ(true);
+                            }
+
                         }
 
                         largeVideoState.updateInProgress = false;
+
                         if (fade) {
                             // using "this" should be ok because we're called
                             // from within the fadeOut event.
@@ -343,6 +376,8 @@ var VideoLayout = (function (my) {
 
             // Set default display name.
             setDisplayName(videoSpanId);
+
+            VideoLayout.connectionIndicators[videoSpanId] = new ConnectionIndicator(container);
 
             var nickfield = document.createElement('span');
             nickfield.className = "nick";
@@ -504,8 +539,11 @@ var VideoLayout = (function (my) {
 
         if (!audioCount && !videoCount) {
             console.log("Remove whole user", container.id);
+            if(VideoLayout.connectionIndicators[container.id])
+                VideoLayout.connectionIndicators[container.id].remove();
             // Remove whole container
             container.remove();
+
             Util.playSoundNotification('userLeft');
             VideoLayout.resizeThumbnails();
         }
@@ -526,7 +564,11 @@ var VideoLayout = (function (my) {
         if (!peerContainer.is(':visible') && isShow)
             peerContainer.show();
         else if (peerContainer.is(':visible') && !isShow)
+        {
             peerContainer.hide();
+            if(VideoLayout.connectionIndicators['participant_' + resourceJid])
+                VideoLayout.connectionIndicators['participant_' + resourceJid].hide();
+        }
 
         VideoLayout.resizeThumbnails();
 
@@ -758,7 +800,7 @@ var VideoLayout = (function (my) {
             }
             var audioMutedSpan = $('#' + videoSpanId + '>span.audioMuted');
             videoMutedSpan = $('#' + videoSpanId + '>span.videoMuted');
-            videoMutedSpan.css({right: ((audioMutedSpan.length > 0)?'30px':'0px')});
+            videoMutedSpan.css({right: ((audioMutedSpan.length > 0)?'50px':'30px')});
         }
     };
 
@@ -1430,6 +1472,353 @@ var VideoLayout = (function (my) {
             }
         });
     });
+
+    /**
+     * Constructs new connection indicator.
+     * @param videoContainer the video container associated with the indicator.
+     * @constructor
+     */
+    function ConnectionIndicator(videoContainer)
+    {
+        this.videoContainer = videoContainer;
+        this.bandwidth = null;
+        this.packetLoss = null;
+        this.bitrate = null;
+        this.showMoreValue = false;
+        this.resolution = null;
+        this.transport = [];
+        this.popover = null;
+        this.showHQ = false;
+        this.create();
+    }
+
+    /**
+     * Values for the connection quality
+     * @type {{98: string, 81: string, 64: string, 47: string, 30: string, 0: string}}
+     */
+    ConnectionIndicator.connectionQualityValues = {
+        98: "18px", //full
+        81: "15px",//4 bars
+        64: "11px",//3 bars
+        47: "7px",//2 bars
+        30: "3px",//1 bar
+        0: "0px"//empty
+    };
+
+    /**
+     * Sets the value of the property that indicates whether the displayed resolution si the
+     * resolution of High Quality stream or Low Quality
+     * @param value boolean.
+     */
+    ConnectionIndicator.prototype.setShowHQ = function (value) {
+        this.showHQ = value;
+        this.updatePopoverData();
+    };
+
+    /**
+     * Generates the html content.
+     * @returns {string} the html content.
+     */
+    ConnectionIndicator.prototype.generateText = function () {
+        var downloadBitrate, uploadBitrate, packetLoss, resolution;
+
+        if(this.bitrate === null)
+        {
+            downloadBitrate = "N/A";
+            uploadBitrate = "N/A";
+        }
+        else
+        {
+            downloadBitrate = this.bitrate.download? this.bitrate.download + " Kbps" : "N/A";
+            uploadBitrate = this.bitrate.upload? this.bitrate.upload + " Kbps" : "N/A";
+        }
+
+        if(this.packetLoss === null)
+        {
+            packetLoss = "N/A";
+        }
+        else
+        {
+
+            packetLoss = "<span class='jitsipopover_green'>&darr;</span>" +
+                (this.packetLoss.download != null? this.packetLoss.download : "N/A") +
+                "% <span class='jitsipopover_orange'>&uarr;</span>" +
+                (this.packetLoss.upload != null? this.packetLoss.upload : "N/A") + "%";
+        }
+
+        var resolutionValue = null;
+        if(this.resolution)
+        {
+            if(this.showHQ && this.resolution.hq)
+            {
+                resolutionValue = this.resolution.hq;
+            }
+            else if(!this.showHQ && this.resolution.lq)
+            {
+                resolutionValue = this.resolution.lq;
+            }
+        }
+
+        if(!resolutionValue ||
+            !resolutionValue.height ||
+            !resolutionValue.width)
+        {
+            resolution = "N/A";
+        }
+        else
+        {
+            resolution = resolutionValue.width + "x" + resolutionValue.height;
+        }
+
+        var result = "<span class='jitsipopover_blue'>Bitrate:</span> <span class='jitsipopover_green'>&darr;</span>" +
+            downloadBitrate + " <span class='jitsipopover_orange'>&uarr;</span>" +
+            uploadBitrate + "<br />" +
+            "<span class='jitsipopover_blue'>Packet loss: </span>" + packetLoss  + "<br />" +
+            "<span class='jitsipopover_blue'>Resolution:</span> " + resolution + "<br />";
+
+        if(this.videoContainer.id == "localVideoContainer")
+            result += "<div class=\"jitsipopover_showmore\" onclick = \"VideoLayout.connectionIndicators['" +
+                 this.videoContainer.id + "'].showMore()\">" + (this.showMoreValue? "Show less" : "Show More") + "</div><br />";
+
+        if(this.showMoreValue)
+        {
+            var downloadBandwidth, uploadBandwidth, transport;
+            if(this.bandwidth === null)
+            {
+                downloadBandwidth = "N/A";
+                uploadBandwidth = "N/A";
+            }
+            else
+            {
+                downloadBandwidth = this.bandwidth.download? this.bandwidth.download + " Kbps" : "N/A";
+                uploadBandwidth = this.bandwidth.upload? this.bandwidth.upload + " Kbps" : "N/A";
+            }
+
+            if(!this.transport || this.transport.length === 0)
+            {
+                transport = "<span class='jitsipopover_blue'>Address:</span> N/A";
+            }
+            else
+            {
+                transport = "<span class='jitsipopover_blue'>Address:</span> " + this.transport[0].ip.substring(0,this.transport[0].ip.indexOf(":")) + "<br />";
+                if(this.transport.length > 1)
+                {
+                    transport += "<span class='jitsipopover_blue'>Ports:</span> ";
+                }
+                else
+                {
+                    transport += "<span class='jitsipopover_blue'>Port:</span> ";
+                }
+                for(var i = 0; i < this.transport.length; i++)
+                {
+                    transport += ((i !== 0)? ", " : "") +
+                        this.transport[i].ip.substring(this.transport[i].ip.indexOf(":")+1,
+                                this.transport[i].ip.length);
+                }
+                transport += "<br /><span class='jitsipopover_blue'>Transport:</span> " + this.transport[0].type + "<br />";
+            }
+
+            result += "<span class='jitsipopover_blue'>Estimated bandwidth:</span> " +
+                "<span class='jitsipopover_green'>&darr;</span>" + downloadBandwidth +
+                " <span class='jitsipopover_orange'>&uarr;</span>" +
+                uploadBandwidth + "<br />";
+
+            result += transport;
+
+        }
+
+        return result;
+    };
+
+    /**
+     * Shows or hide the additional information.
+     */
+    ConnectionIndicator.prototype.showMore = function () {
+        this.showMoreValue = !this.showMoreValue;
+        this.updatePopoverData();
+    };
+
+    /**
+     * Creates the indicator
+     */
+    ConnectionIndicator.prototype.create = function () {
+        this.connectionIndicatorContainer = document.createElement("div");
+        this.connectionIndicatorContainer.className = "connectionindicator";
+        this.connectionIndicatorContainer.style.display = "none";
+        this.videoContainer.appendChild(this.connectionIndicatorContainer);
+        this.popover = new JitsiPopover($("#" + this.videoContainer.id + " > .connectionindicator"),
+            {content: "<div class=\"connection_info\">Come back here for " +
+                "connection information once the conference starts</div>", skin: "black"});
+
+        function createIcon(classes)
+        {
+            var icon = document.createElement("span");
+            for(var i in classes)
+            {
+                icon.classList.add(classes[i]);
+            }
+            icon.appendChild(document.createElement("i")).classList.add("icon-connection");
+            return icon;
+        }
+        this.emptyIcon = this.connectionIndicatorContainer.appendChild(
+            createIcon(["connection", "connection_empty"]));
+        this.fullIcon = this.connectionIndicatorContainer.appendChild(
+            createIcon(["connection", "connection_full"]));
+
+    };
+
+    /**
+     * Removes the indicator
+     */
+    ConnectionIndicator.prototype.remove = function()
+    {
+        this.popover.hide();
+        this.connectionIndicatorContainer.remove();
+
+    };
+
+    /**
+     * Updates the data of the indicator
+     * @param percent the percent of connection quality
+     * @param object the statistics data.
+     */
+    ConnectionIndicator.prototype.updateConnectionQuality = function (percent, object) {
+
+        if(percent === null)
+        {
+            this.connectionIndicatorContainer.style.display = "none";
+            return;
+        }
+        else
+        {
+            this.connectionIndicatorContainer.style.display = "block";
+        }
+        this.bandwidth = object.bandwidth;
+        this.bitrate = object.bitrate;
+        this.packetLoss = object.packetLoss;
+        this.transport = object.transport;
+        if(object.resolution)
+        {
+            this.resolution = object.resolution;
+        }
+        for(var quality in ConnectionIndicator.connectionQualityValues)
+        {
+            if(percent >= quality)
+            {
+                this.fullIcon.style.width = ConnectionIndicator.connectionQualityValues[quality];
+            }
+        }
+        this.updatePopoverData();
+    };
+
+    /**
+     * Updates the resolution
+     * @param resolution the new resolution
+     */
+    ConnectionIndicator.prototype.updateResolution = function (resolution) {
+        this.resolution = resolution;
+        this.updatePopoverData();
+    };
+
+    /**
+     * Updates the content of the popover
+     */
+    ConnectionIndicator.prototype.updatePopoverData = function () {
+        this.popover.updateContent("<div class=\"connection_info\">" + this.generateText() + "</div>");
+    };
+
+    /**
+     * Hides the popover
+     */
+    ConnectionIndicator.prototype.hide = function () {
+        this.popover.hide();
+    };
+
+    /**
+     * Hides the indicator
+     */
+    ConnectionIndicator.prototype.hideIndicator = function () {
+        this.connectionIndicatorContainer.style.display = "none";
+    };
+
+    /**
+     * Updates the data for the indicator
+     * @param id the id of the indicator
+     * @param percent the percent for connection quality
+     * @param object the data
+     */
+    function updateStatsIndicator(id, percent, object) {
+        if(VideoLayout.connectionIndicators[id])
+            VideoLayout.connectionIndicators[id].updateConnectionQuality(percent, object);
+    }
+
+    /**
+     * Updates local stats
+     * @param percent
+     * @param object
+     */
+    my.updateLocalConnectionStats = function (percent, object) {
+        var resolution = null;
+        if(object.resolution !== null)
+        {
+            resolution = object.resolution;
+            object.resolution = resolution[connection.emuc.myroomjid];
+            delete resolution[connection.emuc.myroomjid];
+        }
+        updateStatsIndicator("localVideoContainer", percent, object);
+        for(var jid in resolution)
+        {
+            if(resolution[jid] === null)
+                continue;
+            var id = 'participant_' + Strophe.getResourceFromJid(jid);
+            if(VideoLayout.connectionIndicators[id])
+            {
+                VideoLayout.connectionIndicators[id].updateResolution(resolution[jid]);
+            }
+        }
+
+    };
+
+    /**
+     * Updates remote stats.
+     * @param jid the jid associated with the stats
+     * @param percent the connection quality percent
+     * @param object the stats data
+     */
+    my.updateConnectionStats = function (jid, percent, object) {
+        var resourceJid = Strophe.getResourceFromJid(jid);
+
+        var videoSpanId = 'participant_' + resourceJid;
+        updateStatsIndicator(videoSpanId, percent, object);
+    };
+
+    /**
+     * Removes the connection
+     * @param jid
+     */
+    my.removeConnectionIndicator = function (jid) {
+        if(VideoLayout.connectionIndicators['participant_' + Strophe.getResourceFromJid(jid)])
+            VideoLayout.connectionIndicators['participant_' + Strophe.getResourceFromJid(jid)].remove();
+    };
+
+    /**
+     * Hides the connection indicator
+     * @param jid
+     */
+    my.hideConnectionIndicator = function (jid) {
+        if(VideoLayout.connectionIndicators['participant_' + Strophe.getResourceFromJid(jid)])
+            VideoLayout.connectionIndicators['participant_' + Strophe.getResourceFromJid(jid)].hide();
+    };
+
+    /**
+     * Hides all the indicators
+     */
+    my.onStatsStop = function () {
+        for(var indicator in VideoLayout.connectionIndicators)
+        {
+            VideoLayout.connectionIndicators[indicator].hideIndicator();
+        }
+    };
 
     return my;
 }(VideoLayout || {}));
