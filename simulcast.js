@@ -184,8 +184,8 @@ Simulcast.prototype = {
         return res;
     },
 
-// Returns a random integer between min (included) and max (excluded)
-// Using Math.round() gives a non-uniform distribution!
+    // Returns a random integer between min (included) and max (excluded)
+    // Using Math.round() gives a non-uniform distribution!
     _generateRandomSSRC: function () {
         var min = 0, max = 0xffffffff;
         return Math.floor(Math.random() * (max - min)) + min;
@@ -486,13 +486,13 @@ Simulcast.prototype = {
 };
 
 
-function NativeSimulcast() {
+function NativeSimulcastSender() {
     Simulcast.call(this); // call the super constructor.
 }
 
-NativeSimulcast.prototype = Object.create(Simulcast.prototype);
+NativeSimulcastSender.prototype = Object.create(Simulcast.prototype);
 
-NativeSimulcast.prototype._localExplosionMap = {};
+NativeSimulcastSender.prototype._localExplosionMap = {};
 
 /**
  * Produces a single stream with multiple tracks for local video sources.
@@ -500,7 +500,7 @@ NativeSimulcast.prototype._localExplosionMap = {};
  * @param lines
  * @private
  */
-NativeSimulcast.prototype._explodeLocalSimulcastSources = function (lines) {
+NativeSimulcastSender.prototype._explodeLocalSimulcastSources = function (lines) {
     var sb, msid, sid, tid, videoSources, self;
 
     if (this.debugLvl) {
@@ -550,7 +550,7 @@ NativeSimulcast.prototype._explodeLocalSimulcastSources = function (lines) {
  * @param success
  * @param err
  */
-NativeSimulcast.prototype.getUserMedia = function (constraints, success, err) {
+NativeSimulcastSender.prototype.getUserMedia = function (constraints, success, err) {
 
     // There's nothing special to do for native simulcast, so just do a normal GUM.
 
@@ -568,7 +568,7 @@ NativeSimulcast.prototype.getUserMedia = function (constraints, success, err) {
  * @param desc
  * @returns {RTCSessionDescription}
  */
-NativeSimulcast.prototype.reverseTransformLocalDescription = function (desc) {
+NativeSimulcastSender.prototype.reverseTransformLocalDescription = function (desc) {
     var sb;
 
     if (!desc || desc == null) {
@@ -600,7 +600,7 @@ NativeSimulcast.prototype.reverseTransformLocalDescription = function (desc) {
  * @param desc
  * @returns {*}
  */
-NativeSimulcast.prototype.transformAnswer = function (desc) {
+NativeSimulcastSender.prototype.transformAnswer = function (desc) {
 
     var sb = desc.sdp.split('\r\n');
 
@@ -633,7 +633,7 @@ NativeSimulcast.prototype.transformAnswer = function (desc) {
  * @param desc
  * @returns {*}
  */
-NativeSimulcast.prototype.transformLocalDescription = function (desc) {
+NativeSimulcastSender.prototype.transformLocalDescription = function (desc) {
     return desc;
 };
 
@@ -645,7 +645,7 @@ NativeSimulcast.prototype.transformLocalDescription = function (desc) {
  * @param desc
  * @returns {*}
  */
-NativeSimulcast.prototype.transformRemoteDescription = function (desc) {
+NativeSimulcastSender.prototype.transformRemoteDescription = function (desc) {
 
     var sb = desc.sdp.split('\r\n');
 
@@ -669,19 +669,19 @@ NativeSimulcast.prototype.transformRemoteDescription = function (desc) {
     return desc;
 };
 
-NativeSimulcast.prototype._setLocalVideoStreamEnabled = function (ssrc, enabled) {
+NativeSimulcastSender.prototype._setLocalVideoStreamEnabled = function (ssrc, enabled) {
     // Nothing to do here, native simulcast does that auto-magically.
 };
 
-NativeSimulcast.prototype.constructor = NativeSimulcast;
+NativeSimulcastSender.prototype.constructor = NativeSimulcastSender;
 
-function SimpleSimulcast() {
+function SimpleSimulcastSender() {
     Simulcast.call(this);
 }
 
-SimpleSimulcast.prototype = Object.create(Simulcast.prototype);
+SimpleSimulcastSender.prototype = Object.create(Simulcast.prototype);
 
-SimpleSimulcast.prototype._localMaps = {
+SimpleSimulcastSender.prototype._localMaps = {
     msids: [],
     msid2ssrc: {}
 };
@@ -692,7 +692,7 @@ SimpleSimulcast.prototype._localMaps = {
  * @param lines
  * @private
  */
-SimpleSimulcast.prototype._groupLocalVideoSources = function (lines) {
+SimpleSimulcastSender.prototype._groupLocalVideoSources = function (lines) {
     var sb, videoSources, ssrcs = [], ssrc;
 
     if (this.debugLvl) {
@@ -735,7 +735,7 @@ SimpleSimulcast.prototype._groupLocalVideoSources = function (lines) {
  * @param success
  * @param err
  */
-SimpleSimulcast.prototype.getUserMedia = function (constraints, success, err) {
+SimpleSimulcastSender.prototype.getUserMedia = function (constraints, success, err) {
 
     // TODO(gp) what if we request a resolution not supported by the hardware?
     // TODO(gp) make the lq stream configurable; although this wouldn't work with native simulcast
@@ -795,7 +795,7 @@ SimpleSimulcast.prototype.getUserMedia = function (constraints, success, err) {
  * @param desc
  * @returns {RTCSessionDescription}
  */
-SimpleSimulcast.prototype.reverseTransformLocalDescription = function (desc) {
+SimpleSimulcastSender.prototype.reverseTransformLocalDescription = function (desc) {
     var sb;
 
     if (!desc || desc == null) {
@@ -826,7 +826,7 @@ SimpleSimulcast.prototype.reverseTransformLocalDescription = function (desc) {
  * @param desc
  * @returns {*}
  */
-SimpleSimulcast.prototype.transformAnswer = function (desc) {
+SimpleSimulcastSender.prototype.transformAnswer = function (desc) {
     return desc;
 };
 
@@ -837,7 +837,7 @@ SimpleSimulcast.prototype.transformAnswer = function (desc) {
  * @param desc
  * @returns {*}
  */
-SimpleSimulcast.prototype.transformLocalDescription = function (desc) {
+SimpleSimulcastSender.prototype.transformLocalDescription = function (desc) {
 
     var sb = desc.sdp.split('\r\n');
 
@@ -864,7 +864,7 @@ SimpleSimulcast.prototype.transformLocalDescription = function (desc) {
  * @param desc
  * @returns {*}
  */
-SimpleSimulcast.prototype.transformRemoteDescription = function (desc) {
+SimpleSimulcastSender.prototype.transformRemoteDescription = function (desc) {
 
     var sb = desc.sdp.split('\r\n');
 
@@ -885,7 +885,7 @@ SimpleSimulcast.prototype.transformRemoteDescription = function (desc) {
     return desc;
 };
 
-SimpleSimulcast.prototype._setLocalVideoStreamEnabled = function (ssrc, enabled) {
+SimpleSimulcastSender.prototype._setLocalVideoStreamEnabled = function (ssrc, enabled) {
     var trackid;
 
     var self = this;
@@ -912,13 +912,13 @@ SimpleSimulcast.prototype._setLocalVideoStreamEnabled = function (ssrc, enabled)
     }
 };
 
-SimpleSimulcast.prototype.constructor = SimpleSimulcast;
+SimpleSimulcastSender.prototype.constructor = SimpleSimulcastSender;
 
-function NoSimulcast() {
+function NoSimulcastSender() {
     Simulcast.call(this);
 }
 
-NoSimulcast.prototype = Object.create(Simulcast.prototype);
+NoSimulcastSender.prototype = Object.create(Simulcast.prototype);
 
 /**
  * GUM for simulcast.
@@ -927,7 +927,7 @@ NoSimulcast.prototype = Object.create(Simulcast.prototype);
  * @param success
  * @param err
  */
-NoSimulcast.prototype.getUserMedia = function (constraints, success, err) {
+NoSimulcastSender.prototype.getUserMedia = function (constraints, success, err) {
     var self = this;
     navigator.webkitGetUserMedia(constraints, function (hqStream) {
         self.localStream = hqStream;
@@ -942,7 +942,7 @@ NoSimulcast.prototype.getUserMedia = function (constraints, success, err) {
  * @param desc
  * @returns {RTCSessionDescription}
  */
-NoSimulcast.prototype.reverseTransformLocalDescription = function (desc) {
+NoSimulcastSender.prototype.reverseTransformLocalDescription = function (desc) {
     return desc;
 };
 
@@ -953,7 +953,7 @@ NoSimulcast.prototype.reverseTransformLocalDescription = function (desc) {
  * @param desc
  * @returns {*}
  */
-NoSimulcast.prototype.transformAnswer = function (desc) {
+NoSimulcastSender.prototype.transformAnswer = function (desc) {
     return desc;
 };
 
@@ -964,7 +964,7 @@ NoSimulcast.prototype.transformAnswer = function (desc) {
  * @param desc
  * @returns {*}
  */
-NoSimulcast.prototype.transformLocalDescription = function (desc) {
+NoSimulcastSender.prototype.transformLocalDescription = function (desc) {
     return desc;
 };
 
@@ -976,20 +976,20 @@ NoSimulcast.prototype.transformLocalDescription = function (desc) {
  * @param desc
  * @returns {*}
  */
-NoSimulcast.prototype.transformRemoteDescription = function (desc) {
+NoSimulcastSender.prototype.transformRemoteDescription = function (desc) {
     return desc;
 };
 
-NoSimulcast.prototype._setLocalVideoStreamEnabled = function (ssrc, enabled) {
+NoSimulcastSender.prototype._setLocalVideoStreamEnabled = function (ssrc, enabled) {
 
 };
 
-NoSimulcast.prototype.constructor = NoSimulcast;
+NoSimulcastSender.prototype.constructor = NoSimulcastSender;
 
 // Initialize simulcast.
 var simulcast;
 if (!config.enableSimulcast) {
-    simulcast = new NoSimulcast();
+    simulcast = new NoSimulcastSender();
 } else {
 
     var isChromium = window.chrome,
@@ -997,12 +997,12 @@ if (!config.enableSimulcast) {
     if(isChromium !== null && isChromium !== undefined && vendorName === "Google Inc.") {
         var ver = parseInt(window.navigator.appVersion.match(/Chrome\/(\d+)\./)[1], 10);
         if (ver > 37) {
-            simulcast = new NativeSimulcast();
+            simulcast = new NativeSimulcastSender();
         } else {
-            simulcast = new NoSimulcast();
+            simulcast = new NoSimulcastSender();
         }
     } else {
-        simulcast = new NoSimulcast();
+        simulcast = new NoSimulcastSender();
     }
 
 }
