@@ -108,7 +108,6 @@ function connect(jid, password) {
         // for chrome, add multistream cap
     }
     connection.jingle.pc_constraints = RTC.pc_constraints;
-    connection.jingle.ice_config.iceTransports = 'relay';
     if (config.useIPv6) {
         // https://code.google.com/p/webrtc/issues/detail?id=2828
         if (!connection.jingle.pc_constraints.optional) connection.jingle.pc_constraints.optional = [];
