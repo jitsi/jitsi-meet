@@ -331,8 +331,6 @@ function waitForPresence(data, sid) {
             console.error('can not associate stream',
                 data.stream.id,
                 'with a participant');
-            messageHandler.showError('Oops',
-                'We could not associate the current stream with a participant.');
             // We don't want to add it here since it will cause troubles
             return;
         }
