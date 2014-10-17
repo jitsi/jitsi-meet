@@ -56,10 +56,16 @@ var JitsiPopover = (function () {
     JitsiPopover.prototype.hide = function () {
         if(!this.elementIsHovered && !this.popoverIsHovered && this.popoverShown)
         {
-            $(".jitsipopover").remove();
-            this.popoverShown = false;
-
+            this.forceHide();
         }
+    };
+
+    /**
+     * Hides the popover
+     */
+    JitsiPopover.prototype.forceHide = function () {
+        $(".jitsipopover").remove();
+        this.popoverShown = false;
     };
 
     /**

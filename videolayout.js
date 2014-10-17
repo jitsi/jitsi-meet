@@ -797,12 +797,27 @@ var VideoLayout = (function (my) {
                     "top");
                 videoMutedSpan.appendChild(mutedIndicator);
             }
-            var audioMutedSpan = $('#' + videoSpanId + '>span.audioMuted');
-            videoMutedSpan = $('#' + videoSpanId + '>span.videoMuted');
-            videoMutedSpan.css({right: ((audioMutedSpan.length > 0)?'50px':'30px')});
+
+            VideoLayout.updateMutePosition(videoSpanId);
+
         }
     };
 
+    my.updateMutePosition = function (videoSpanId) {
+        var audioMutedSpan = $('#' + videoSpanId + '>span.audioMuted');
+        var connectionIndicator = $('#' + videoSpanId + '>div.connectionindicator');
+        var videoMutedSpan = $('#' + videoSpanId + '>span.videoMuted');
+        if(connectionIndicator.length > 0
+            && connectionIndicator[0].style.display != "none") {
+            audioMutedSpan.css({right: "23px"});
+            videoMutedSpan.css({right: ((audioMutedSpan.length > 0? 23 : 0) + 30) + "px"});
+        }
+        else
+        {
+            audioMutedSpan.css({right: "0px"});
+            videoMutedSpan.css({right: (audioMutedSpan.length > 0? 30 : 0) + "px"});
+        }
+    }
     /**
      * Shows audio muted indicator over small videos.
      * @param {string} isMuted
@@ -817,19 +832,20 @@ var VideoLayout = (function (my) {
             }
         }
         else {
-            if(audioMutedSpan.length > 0 )
-                return;
-            audioMutedSpan = document.createElement('span');
-            audioMutedSpan.className = 'audioMuted';
-            Util.setTooltip(audioMutedSpan,
-                "Participant is muted",
-                "top");
+            if(audioMutedSpan.length == 0 ) {
+                audioMutedSpan = document.createElement('span');
+                audioMutedSpan.className = 'audioMuted';
+                Util.setTooltip(audioMutedSpan,
+                    "Participant is muted",
+                    "top");
 
-            $('#' + videoSpanId)[0].appendChild(audioMutedSpan);
+                $('#' + videoSpanId)[0].appendChild(audioMutedSpan);
+                var mutedIndicator = document.createElement('i');
+                mutedIndicator.className = 'icon-mic-disabled';
+                audioMutedSpan.appendChild(mutedIndicator);
 
-            var mutedIndicator = document.createElement('i');
-            mutedIndicator.className = 'icon-mic-disabled';
-            audioMutedSpan.appendChild(mutedIndicator);
+            }
+            VideoLayout.updateMutePosition(videoSpanId);
         }
     };
 
@@ -1683,8 +1699,8 @@ var VideoLayout = (function (my) {
      */
     ConnectionIndicator.prototype.remove = function()
     {
-        this.popover.hide();
         this.connectionIndicatorContainer.remove();
+        this.popover.forceHide();
 
     };
 
@@ -1698,11 +1714,15 @@ var VideoLayout = (function (my) {
         if(percent === null)
         {
             this.connectionIndicatorContainer.style.display = "none";
+            this.popover.forceHide();
             return;
         }
         else
         {
-            this.connectionIndicatorContainer.style.display = "block";
+            if(this.connectionIndicatorContainer.style.display == "none") {
+                this.connectionIndicatorContainer.style.display = "block";
+                VideoLayout.updateMutePosition(this.videoContainer.id);
+            }
         }
         this.bandwidth = object.bandwidth;
         this.bitrate = object.bitrate;
@@ -1742,7 +1762,7 @@ var VideoLayout = (function (my) {
      * Hides the popover
      */
     ConnectionIndicator.prototype.hide = function () {
-        this.popover.hide();
+        this.popover.forceHide();
     };
 
     /**
@@ -1750,6 +1770,8 @@ var VideoLayout = (function (my) {
      */
     ConnectionIndicator.prototype.hideIndicator = function () {
         this.connectionIndicatorContainer.style.display = "none";
+        if(this.popover)
+            this.popover.forceHide();
     };
 
     /**
