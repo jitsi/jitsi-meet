@@ -3,6 +3,8 @@
 
 /**
  * Created by gp on 11/08/14.
+ *
+ * TODO(gp) split into SimulcastReceiver and SimulcastSender
  */
 function Simulcast() {
     "use strict";
@@ -15,19 +17,14 @@ function Simulcast() {
 Simulcast.prototype = {
 
     // global state for all transformers.
-    localExplosionMap: {},
-    localVideoSourceCache: '',
-    remoteVideoSourceCache: '',
-    remoteMaps: {
+    _localVideoSourceCache: '',
+    _remoteVideoSourceCache: '',
+    _remoteMaps: {
         msid2Quality: {},
         ssrc2Msid: {},
         receivingVideoStreams: {}
     },
-    localMaps: {
-        msids: [],
-        msid2ssrc: {}
-    },
-    emptyCompoundIndex: {},
+    _emptyCompoundIndex: {},
 
     _generateGuid: (function () {
         function s4() {
@@ -43,19 +40,19 @@ Simulcast.prototype = {
     }()),
 
     _cacheLocalVideoSources: function (lines) {
-        this.localVideoSourceCache = this._getVideoSources(lines);
+        this._localVideoSourceCache = this._getVideoSources(lines);
     },
 
     _restoreLocalVideoSources: function (lines) {
-        this._replaceVideoSources(lines, this.localVideoSourceCache);
+        this._replaceVideoSources(lines, this._localVideoSourceCache);
     },
 
     _cacheRemoteVideoSources: function (lines) {
-        this.remoteVideoSourceCache = this._getVideoSources(lines);
+        this._remoteVideoSourceCache = this._getVideoSources(lines);
     },
 
     _restoreRemoteVideoSources: function (lines) {
-        this._replaceVideoSources(lines, this.remoteVideoSourceCache);
+        this._replaceVideoSources(lines, this._remoteVideoSourceCache);
     },
 
     _replaceVideoSources: function (lines, videoSources) {
@@ -197,7 +194,7 @@ Simulcast.prototype = {
 
     /**
      * The _indexOfArray() method returns the first a CompoundIndex at which a
-     * given element can be found in the array, or emptyCompoundIndex if it is
+     * given element can be found in the array, or _emptyCompoundIndex if it is
      * not present.
      *
      * Example:
@@ -225,7 +222,7 @@ Simulcast.prototype = {
                 return {row: i, column: idx};
             }
         }
-        return this.emptyCompoundIndex;
+        return this._emptyCompoundIndex;
     },
 
     _removeSimulcastGroup: function (lines) {
@@ -236,97 +233,6 @@ Simulcast.prototype = {
                 lines.splice(i, 1);
             }
         }
-    },
-
-    /**
-     * Produces a single stream with multiple tracks for local video sources.
-     *
-     * @param lines
-     * @private
-     */
-    _explodeLocalSimulcastSources: function (lines) {
-        var sb, msid, sid, tid, videoSources, self;
-
-        if (this.debugLvl) {
-            console.info('Exploding local video sources...');
-        }
-
-        videoSources = this._parseMedia(lines, ['video'])[0];
-
-        self = this;
-        if (videoSources.groups && videoSources.groups.length !== 0) {
-            videoSources.groups.forEach(function (group) {
-                if (group.semantics === 'SIM') {
-                    group.ssrcs.forEach(function (ssrc) {
-
-                        // Get the msid for this ssrc..
-                        if (self.localExplosionMap[ssrc]) {
-                            // .. either from the explosion map..
-                            msid = self.localExplosionMap[ssrc];
-                        } else {
-                            // .. or generate a new one (msid).
-                            sid = videoSources.sources[ssrc].msid
-                                .substring(0, videoSources.sources[ssrc].msid.indexOf(' '));
-
-                            tid = self._generateGuid();
-                            msid = [sid, tid].join(' ');
-                            self.localExplosionMap[ssrc] = msid;
-                        }
-
-                        // Assign it to the source object.
-                        videoSources.sources[ssrc].msid = msid;
-
-                        // TODO(gp) Change the msid of associated sources.
-                    });
-                }
-            });
-        }
-
-        sb = this._compileVideoSources(videoSources);
-
-        this._replaceVideoSources(lines, sb);
-    },
-
-    /**
-     * Groups local video sources together in the ssrc-group:SIM group.
-     *
-     * @param lines
-     * @private
-     */
-    _groupLocalVideoSources: function (lines) {
-        var sb, videoSources, ssrcs = [], ssrc;
-
-        if (this.debugLvl) {
-            console.info('Grouping local video sources...');
-        }
-
-        videoSources = this._parseMedia(lines, ['video'])[0];
-
-        for (ssrc in videoSources.sources) {
-            // jitsi-meet destroys/creates streams at various places causing
-            // the original local stream ids to change. The only thing that
-            // remains unchanged is the trackid.
-            this.localMaps.msid2ssrc[videoSources.sources[ssrc].msid.split(' ')[1]] = ssrc;
-        }
-
-        var self = this;
-        // TODO(gp) add only "free" sources.
-        this.localMaps.msids.forEach(function (msid) {
-            ssrcs.push(self.localMaps.msid2ssrc[msid]);
-        });
-
-        if (!videoSources.groups) {
-            videoSources.groups = [];
-        }
-
-        videoSources.groups.push({
-            'semantics': 'SIM',
-            'ssrcs': ssrcs
-        });
-
-        sb = this._compileVideoSources(videoSources);
-
-        this._replaceVideoSources(lines, sb);
     },
 
     _appendSimulcastGroup: function (lines) {
@@ -367,13 +273,13 @@ Simulcast.prototype = {
         this._replaceVideoSources(lines, sb);
     },
 
-// Does the actual patching.
+    // Does the actual patching.
     _ensureSimulcastGroup: function (lines) {
         if (this.debugLvl) {
             console.info('Ensuring simulcast group...');
         }
 
-        if (this._indexOfArray('a=ssrc-group:SIM', lines) === this.emptyCompoundIndex) {
+        if (this._indexOfArray('a=ssrc-group:SIM', lines) === this._emptyCompoundIndex) {
             this._appendSimulcastGroup(lines);
             this._cacheLocalVideoSources(lines);
         } else {
@@ -389,7 +295,7 @@ Simulcast.prototype = {
             console.info('Ensuring x-google-conference flag...')
         }
 
-        if (this._indexOfArray('a=x-google-flag:conference', lines) === this.emptyCompoundIndex) {
+        if (this._indexOfArray('a=x-google-flag:conference', lines) === this._emptyCompoundIndex) {
             // Add the google conference flag
             sb = this._getVideoSources(lines);
             sb = ['a=x-google-flag:conference'].concat(sb);
@@ -486,8 +392,8 @@ Simulcast.prototype = {
             videoSource, quality;
 
         // (re) initialize the remote maps.
-        this.remoteMaps.msid2Quality = {};
-        this.remoteMaps.ssrc2Msid = {};
+        this._remoteMaps.msid2Quality = {};
+        this._remoteMaps.ssrc2Msid = {};
 
         var self = this;
         if (remoteVideoSources.groups && remoteVideoSources.groups.length !== 0) {
@@ -496,8 +402,8 @@ Simulcast.prototype = {
                     quality = 0;
                     group.ssrcs.forEach(function (ssrc) {
                         videoSource = remoteVideoSources.sources[ssrc];
-                        self.remoteMaps.msid2Quality[videoSource.msid] = quality++;
-                        self.remoteMaps.ssrc2Msid[videoSource.ssrc] = videoSource.msid;
+                        self._remoteMaps.msid2Quality[videoSource.msid] = quality++;
+                        self._remoteMaps.ssrc2Msid[videoSource.ssrc] = videoSource.msid;
                     });
                 }
             });
@@ -505,7 +411,7 @@ Simulcast.prototype = {
     },
 
     _setReceivingVideoStream: function (endpoint, ssrc) {
-        this.remoteMaps.receivingVideoStreams[endpoint] = ssrc;
+        this._remoteMaps.receivingVideoStreams[endpoint] = ssrc;
     },
 
     /**
@@ -522,9 +428,9 @@ Simulcast.prototype = {
         if (config.enableSimulcast) {
 
             stream.getVideoTracks().some(function (track) {
-                return Object.keys(self.remoteMaps.receivingVideoStreams).some(function (endpoint) {
-                    var ssrc = self.remoteMaps.receivingVideoStreams[endpoint];
-                    var msid = self.remoteMaps.ssrc2Msid[ssrc];
+                return Object.keys(self._remoteMaps.receivingVideoStreams).some(function (endpoint) {
+                    var ssrc = self._remoteMaps.receivingVideoStreams[endpoint];
+                    var msid = self._remoteMaps.ssrc2Msid[ssrc];
                     if (msid == [stream.id, track.id].join(' ')) {
                         electedTrack = track;
                         return true;
@@ -537,7 +443,7 @@ Simulcast.prototype = {
                 tracks = stream.getVideoTracks();
                 for (i = 0; i < tracks.length; i++) {
                     msid = [stream.id, tracks[i].id].join(' ');
-                    if (this.remoteMaps.msid2Quality[msid] === quality) {
+                    if (this._remoteMaps.msid2Quality[msid] === quality) {
                         electedTrack = tracks[i];
                         break;
                     }
@@ -563,7 +469,7 @@ Simulcast.prototype = {
      * @returns {*}
      */
     getRemoteVideoStreamIdBySSRC: function (ssrc) {
-        return this.remoteMaps.ssrc2Msid[ssrc];
+        return this._remoteMaps.ssrc2Msid[ssrc];
     },
 
     parseMedia: function (desc, mediatypes) {
@@ -586,6 +492,57 @@ function NativeSimulcast() {
 
 NativeSimulcast.prototype = Object.create(Simulcast.prototype);
 
+NativeSimulcast.prototype._localExplosionMap = {};
+
+/**
+ * Produces a single stream with multiple tracks for local video sources.
+ *
+ * @param lines
+ * @private
+ */
+NativeSimulcast.prototype._explodeLocalSimulcastSources = function (lines) {
+    var sb, msid, sid, tid, videoSources, self;
+
+    if (this.debugLvl) {
+        console.info('Exploding local video sources...');
+    }
+
+    videoSources = this._parseMedia(lines, ['video'])[0];
+
+    self = this;
+    if (videoSources.groups && videoSources.groups.length !== 0) {
+        videoSources.groups.forEach(function (group) {
+            if (group.semantics === 'SIM') {
+                group.ssrcs.forEach(function (ssrc) {
+
+                    // Get the msid for this ssrc..
+                    if (self._localExplosionMap[ssrc]) {
+                        // .. either from the explosion map..
+                        msid = self._localExplosionMap[ssrc];
+                    } else {
+                        // .. or generate a new one (msid).
+                        sid = videoSources.sources[ssrc].msid
+                            .substring(0, videoSources.sources[ssrc].msid.indexOf(' '));
+
+                        tid = self._generateGuid();
+                        msid = [sid, tid].join(' ');
+                        self._localExplosionMap[ssrc] = msid;
+                    }
+
+                    // Assign it to the source object.
+                    videoSources.sources[ssrc].msid = msid;
+
+                    // TODO(gp) Change the msid of associated sources.
+                });
+            }
+        });
+    }
+
+    sb = this._compileVideoSources(videoSources);
+
+    this._replaceVideoSources(lines, sb);
+};
+
 /**
  * GUM for simulcast.
  *
@@ -599,13 +556,6 @@ NativeSimulcast.prototype.getUserMedia = function (constraints, success, err) {
 
     var self = this;
     navigator.webkitGetUserMedia(constraints, function (hqStream) {
-
-        // reset local maps.
-        self.localMaps.msids = [];
-        self.localMaps.msid2ssrc = {};
-
-        // add hq stream to local map
-        self.localMaps.msids.push(hqStream.getVideoTracks()[0].id);
         self.localStream = hqStream;
         success(hqStream);
     }, err);
@@ -625,20 +575,19 @@ NativeSimulcast.prototype.reverseTransformLocalDescription = function (desc) {
         return desc;
     }
 
-    if (config.enableSimulcast) {
-        sb = desc.sdp.split('\r\n');
 
-        this._explodeLocalSimulcastSources(sb);
+    sb = desc.sdp.split('\r\n');
 
-        desc = new RTCSessionDescription({
-            type: desc.type,
-            sdp: sb.join('\r\n')
-        });
+    this._explodeLocalSimulcastSources(sb);
 
-        if (this.debugLvl && this.debugLvl > 1) {
-            console.info('Exploded local video sources');
-            console.info(desc.sdp);
-        }
+    desc = new RTCSessionDescription({
+        type: desc.type,
+        sdp: sb.join('\r\n')
+    });
+
+    if (this.debugLvl && this.debugLvl > 1) {
+        console.info('Exploded local video sources');
+        console.info(desc.sdp);
     }
 
     return desc;
@@ -652,28 +601,26 @@ NativeSimulcast.prototype.reverseTransformLocalDescription = function (desc) {
  * @returns {*}
  */
 NativeSimulcast.prototype.transformAnswer = function (desc) {
-    if (config.enableSimulcast) {
 
-        var sb = desc.sdp.split('\r\n');
+    var sb = desc.sdp.split('\r\n');
 
-        // Even if we have enabled native simulcasting previously
-        // (with a call to SLD with an appropriate SDP, for example),
-        // createAnswer seems to consistently generate incomplete SDP
-        // with missing SSRCS.
-        //
-        // So, subsequent calls to SLD will have missing SSRCS and presence
-        // won't have the complete list of SRCs.
-        this._ensureSimulcastGroup(sb);
+    // Even if we have enabled native simulcasting previously
+    // (with a call to SLD with an appropriate SDP, for example),
+    // createAnswer seems to consistently generate incomplete SDP
+    // with missing SSRCS.
+    //
+    // So, subsequent calls to SLD will have missing SSRCS and presence
+    // won't have the complete list of SRCs.
+    this._ensureSimulcastGroup(sb);
 
-        desc = new RTCSessionDescription({
-            type: desc.type,
-            sdp: sb.join('\r\n')
-        });
+    desc = new RTCSessionDescription({
+        type: desc.type,
+        sdp: sb.join('\r\n')
+    });
 
-        if (this.debugLvl && this.debugLvl > 1) {
-            console.info('Transformed answer');
-            console.info(desc.sdp);
-        }
+    if (this.debugLvl && this.debugLvl > 1) {
+        console.info('Transformed answer');
+        console.info(desc.sdp);
     }
 
     return desc;
@@ -699,26 +646,24 @@ NativeSimulcast.prototype.transformLocalDescription = function (desc) {
  * @returns {*}
  */
 NativeSimulcast.prototype.transformRemoteDescription = function (desc) {
-    if (config.enableSimulcast) {
 
-        var sb = desc.sdp.split('\r\n');
+    var sb = desc.sdp.split('\r\n');
 
-        this._updateRemoteMaps(sb);
-        this._cacheRemoteVideoSources(sb);
-        this._removeSimulcastGroup(sb); // NOTE(gp) this needs to be called after updateRemoteMaps because we need the simulcast group in the _updateRemoteMaps() method.
-        // We don't need the goog conference flag if we're not doing
-        // native simulcast.
-        this._ensureGoogConference(sb);
+    this._updateRemoteMaps(sb);
+    this._cacheRemoteVideoSources(sb);
+    this._removeSimulcastGroup(sb); // NOTE(gp) this needs to be called after updateRemoteMaps because we need the simulcast group in the _updateRemoteMaps() method.
+    // We don't need the goog conference flag if we're not doing
+    // native simulcast.
+    this._ensureGoogConference(sb);
 
-        desc = new RTCSessionDescription({
-            type: desc.type,
-            sdp: sb.join('\r\n')
-        });
+    desc = new RTCSessionDescription({
+        type: desc.type,
+        sdp: sb.join('\r\n')
+    });
 
-        if (this.debugLvl && this.debugLvl > 1) {
-            console.info('Transformed remote description');
-            console.info(desc.sdp);
-        }
+    if (this.debugLvl && this.debugLvl > 1) {
+        console.info('Transformed remote description');
+        console.info(desc.sdp);
     }
 
     return desc;
@@ -730,11 +675,58 @@ NativeSimulcast.prototype._setLocalVideoStreamEnabled = function (ssrc, enabled)
 
 NativeSimulcast.prototype.constructor = NativeSimulcast;
 
-function GrumpySimulcast() {
+function SimpleSimulcast() {
     Simulcast.call(this);
 }
 
-GrumpySimulcast.prototype = Object.create(Simulcast.prototype);
+SimpleSimulcast.prototype = Object.create(Simulcast.prototype);
+
+SimpleSimulcast.prototype._localMaps = {
+    msids: [],
+    msid2ssrc: {}
+};
+
+/**
+ * Groups local video sources together in the ssrc-group:SIM group.
+ *
+ * @param lines
+ * @private
+ */
+SimpleSimulcast.prototype._groupLocalVideoSources = function (lines) {
+    var sb, videoSources, ssrcs = [], ssrc;
+
+    if (this.debugLvl) {
+        console.info('Grouping local video sources...');
+    }
+
+    videoSources = this._parseMedia(lines, ['video'])[0];
+
+    for (ssrc in videoSources.sources) {
+        // jitsi-meet destroys/creates streams at various places causing
+        // the original local stream ids to change. The only thing that
+        // remains unchanged is the trackid.
+        this._localMaps.msid2ssrc[videoSources.sources[ssrc].msid.split(' ')[1]] = ssrc;
+    }
+
+    var self = this;
+    // TODO(gp) add only "free" sources.
+    this._localMaps.msids.forEach(function (msid) {
+        ssrcs.push(self._localMaps.msid2ssrc[msid]);
+    });
+
+    if (!videoSources.groups) {
+        videoSources.groups = [];
+    }
+
+    videoSources.groups.push({
+        'semantics': 'SIM',
+        'ssrcs': ssrcs
+    });
+
+    sb = this._compileVideoSources(videoSources);
+
+    this._replaceVideoSources(lines, sb);
+};
 
 /**
  * GUM for simulcast.
@@ -743,7 +735,7 @@ GrumpySimulcast.prototype = Object.create(Simulcast.prototype);
  * @param success
  * @param err
  */
-GrumpySimulcast.prototype.getUserMedia = function (constraints, success, err) {
+SimpleSimulcast.prototype.getUserMedia = function (constraints, success, err) {
 
     // TODO(gp) what if we request a resolution not supported by the hardware?
     // TODO(gp) make the lq stream configurable; although this wouldn't work with native simulcast
@@ -761,41 +753,39 @@ GrumpySimulcast.prototype.getUserMedia = function (constraints, success, err) {
     console.log('HQ constraints: ', constraints);
     console.log('LQ constraints: ', lqConstraints);
 
-    if (config.enableSimulcast) {
 
-        // NOTE(gp) if we request the lq stream first webkitGetUserMedia
-        // fails randomly. Tested with Chrome 37. As fippo suggested, the
-        // reason appears to be that Chrome only acquires the cam once and
-        // then downscales the picture (https://code.google.com/p/chromium/issues/detail?id=346616#c11)
+    // NOTE(gp) if we request the lq stream first webkitGetUserMedia
+    // fails randomly. Tested with Chrome 37. As fippo suggested, the
+    // reason appears to be that Chrome only acquires the cam once and
+    // then downscales the picture (https://code.google.com/p/chromium/issues/detail?id=346616#c11)
 
-        var self = this;
-        navigator.webkitGetUserMedia(constraints, function (hqStream) {
+    var self = this;
+    navigator.webkitGetUserMedia(constraints, function (hqStream) {
 
-            self.localStream = hqStream;
+        self.localStream = hqStream;
 
-            // reset local maps.
-            self.localMaps.msids = [];
-            self.localMaps.msid2ssrc = {};
+        // reset local maps.
+        self._localMaps.msids = [];
+        self._localMaps.msid2ssrc = {};
 
-            // add hq trackid to local map
-            self.localMaps.msids.push(hqStream.getVideoTracks()[0].id);
+        // add hq trackid to local map
+        self._localMaps.msids.push(hqStream.getVideoTracks()[0].id);
 
-            navigator.webkitGetUserMedia(lqConstraints, function (lqStream) {
+        navigator.webkitGetUserMedia(lqConstraints, function (lqStream) {
 
-                self.displayedLocalVideoStream = lqStream;
+            self.displayedLocalVideoStream = lqStream;
 
-                // NOTE(gp) The specification says Array.forEach() will visit
-                // the array elements in numeric order, and that it doesn't
-                // visit elements that don't exist.
+            // NOTE(gp) The specification says Array.forEach() will visit
+            // the array elements in numeric order, and that it doesn't
+            // visit elements that don't exist.
 
-                // add lq trackid to local map
-                self.localMaps.msids.splice(0, 0, lqStream.getVideoTracks()[0].id);
+            // add lq trackid to local map
+            self._localMaps.msids.splice(0, 0, lqStream.getVideoTracks()[0].id);
 
-                self.localStream.addTrack(lqStream.getVideoTracks()[0]);
-                success(self.localStream);
-            }, err);
+            self.localStream.addTrack(lqStream.getVideoTracks()[0]);
+            success(self.localStream);
         }, err);
-    }
+    }, err);
 };
 
 /**
@@ -805,29 +795,25 @@ GrumpySimulcast.prototype.getUserMedia = function (constraints, success, err) {
  * @param desc
  * @returns {RTCSessionDescription}
  */
-GrumpySimulcast.prototype.reverseTransformLocalDescription = function (desc) {
+SimpleSimulcast.prototype.reverseTransformLocalDescription = function (desc) {
     var sb;
 
     if (!desc || desc == null) {
         return desc;
     }
 
-    if (config.enableSimulcast) {
+    sb = desc.sdp.split('\r\n');
 
+    this._groupLocalVideoSources(sb);
 
-        sb = desc.sdp.split('\r\n');
+    desc = new RTCSessionDescription({
+        type: desc.type,
+        sdp: sb.join('\r\n')
+    });
 
-        this._groupLocalVideoSources(sb);
-
-        desc = new RTCSessionDescription({
-            type: desc.type,
-            sdp: sb.join('\r\n')
-        });
-
-        if (this.debugLvl && this.debugLvl > 1) {
-            console.info('Grouped local video sources');
-            console.info(desc.sdp);
-        }
+    if (this.debugLvl && this.debugLvl > 1) {
+        console.info('Grouped local video sources');
+        console.info(desc.sdp);
     }
 
     return desc;
@@ -840,7 +826,7 @@ GrumpySimulcast.prototype.reverseTransformLocalDescription = function (desc) {
  * @param desc
  * @returns {*}
  */
-GrumpySimulcast.prototype.transformAnswer = function (desc) {
+SimpleSimulcast.prototype.transformAnswer = function (desc) {
     return desc;
 };
 
@@ -851,22 +837,20 @@ GrumpySimulcast.prototype.transformAnswer = function (desc) {
  * @param desc
  * @returns {*}
  */
-GrumpySimulcast.prototype.transformLocalDescription = function (desc) {
-    if (config.enableSimulcast) {
+SimpleSimulcast.prototype.transformLocalDescription = function (desc) {
 
-        var sb = desc.sdp.split('\r\n');
+    var sb = desc.sdp.split('\r\n');
 
-        this._removeSimulcastGroup(sb);
+    this._removeSimulcastGroup(sb);
 
-        desc = new RTCSessionDescription({
-            type: desc.type,
-            sdp: sb.join('\r\n')
-        });
+    desc = new RTCSessionDescription({
+        type: desc.type,
+        sdp: sb.join('\r\n')
+    });
 
-        if (this.debugLvl && this.debugLvl > 1) {
-            console.info('Transformed local description');
-            console.info(desc.sdp);
-        }
+    if (this.debugLvl && this.debugLvl > 1) {
+        console.info('Transformed local description');
+        console.info(desc.sdp);
     }
 
     return desc;
@@ -880,37 +864,35 @@ GrumpySimulcast.prototype.transformLocalDescription = function (desc) {
  * @param desc
  * @returns {*}
  */
-GrumpySimulcast.prototype.transformRemoteDescription = function (desc) {
-    if (config.enableSimulcast) {
+SimpleSimulcast.prototype.transformRemoteDescription = function (desc) {
 
-        var sb = desc.sdp.split('\r\n');
+    var sb = desc.sdp.split('\r\n');
 
-        this._updateRemoteMaps(sb);
-        this._cacheRemoteVideoSources(sb);
-        this._removeSimulcastGroup(sb); // NOTE(gp) this needs to be called after updateRemoteMaps because we need the simulcast group in the _updateRemoteMaps() method.
+    this._updateRemoteMaps(sb);
+    this._cacheRemoteVideoSources(sb);
+    this._removeSimulcastGroup(sb); // NOTE(gp) this needs to be called after updateRemoteMaps because we need the simulcast group in the _updateRemoteMaps() method.
 
-        desc = new RTCSessionDescription({
-            type: desc.type,
-            sdp: sb.join('\r\n')
-        });
+    desc = new RTCSessionDescription({
+        type: desc.type,
+        sdp: sb.join('\r\n')
+    });
 
-        if (this.debugLvl && this.debugLvl > 1) {
-            console.info('Transformed remote description');
-            console.info(desc.sdp);
-        }
+    if (this.debugLvl && this.debugLvl > 1) {
+        console.info('Transformed remote description');
+        console.info(desc.sdp);
     }
 
     return desc;
 };
 
-GrumpySimulcast.prototype._setLocalVideoStreamEnabled = function (ssrc, enabled) {
+SimpleSimulcast.prototype._setLocalVideoStreamEnabled = function (ssrc, enabled) {
     var trackid;
 
     var self = this;
     console.log(['Requested to', enabled ? 'enable' : 'disable', ssrc].join(' '));
-    if (Object.keys(this.localMaps.msid2ssrc).some(function (tid) {
+    if (Object.keys(this._localMaps.msid2ssrc).some(function (tid) {
         // Search for the track id that corresponds to the ssrc
-        if (self.localMaps.msid2ssrc[tid] == ssrc) {
+        if (self._localMaps.msid2ssrc[tid] == ssrc) {
             trackid = tid;
             return true;
         }
@@ -930,7 +912,7 @@ GrumpySimulcast.prototype._setLocalVideoStreamEnabled = function (ssrc, enabled)
     }
 };
 
-GrumpySimulcast.prototype.constructor = GrumpySimulcast;
+SimpleSimulcast.prototype.constructor = SimpleSimulcast;
 
 function NoSimulcast() {
     Simulcast.call(this);
@@ -948,14 +930,7 @@ NoSimulcast.prototype = Object.create(Simulcast.prototype);
 NoSimulcast.prototype.getUserMedia = function (constraints, success, err) {
     var self = this;
     navigator.webkitGetUserMedia(constraints, function (hqStream) {
-
-        // reset local maps.
-        self.localMaps.msids = [];
-        self.localMaps.msid2ssrc = {};
-
-        // add hq stream to local map
-        self.localMaps.msids.push(hqStream.getVideoTracks()[0].id);
-        self.displayedLocalVideoStream = self.localStream = hqStream;
+        self.localStream = hqStream;
         success(self.localStream);
     }, err);
 };
