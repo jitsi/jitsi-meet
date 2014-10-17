@@ -606,8 +606,8 @@ NativeSimulcast.prototype.getUserMedia = function (constraints, success, err) {
 
         // add hq stream to local map
         self.localMaps.msids.push(hqStream.getVideoTracks()[0].id);
-        self.displayedLocalVideoStream = self.localStream = hqStream;
-        success(self.localStream);
+        self.localStream = hqStream;
+        success(hqStream);
     }, err);
 };
 
