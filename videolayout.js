@@ -1531,6 +1531,24 @@ var VideoLayout = (function (my) {
         this.updatePopoverData();
     };
 
+    ConnectionIndicator.getIP = function(value)
+    {
+        return value.substring(0, value.indexOf(":"));
+    };
+
+    ConnectionIndicator.getPort = function(value)
+    {
+        return value.substring(value.indexOf(":") + 1, value.length);
+    };
+
+    ConnectionIndicator.getStringFromArray = function (array) {
+        var res = "";
+        for(var i = 0; i < array.length; i++)
+        {
+            res += (i == 0? "" : ", ") + array[i];
+        }
+        return res;
+    }
     /**
      * Generates the html content.
      * @returns {string} the html content.
@@ -1616,10 +1634,40 @@ var VideoLayout = (function (my) {
             }
             else
             {
-                var localTransport = "<tr><td><span class='jitsipopover_blue'>Local address: </span></td><td> " +
-                    this.transport[0].localip.substring(0,this.transport[0].localip.indexOf(":")) + "</td></tr>"
-                transport = "<tr><td><span class='jitsipopover_blue'>Remote address:</span></td><td> " +
-                    this.transport[0].ip.substring(0,this.transport[0].ip.indexOf(":")) + "</td></tr>";
+                var data = {remoteIP: [], localIP:[], remotePort:[], localPort:[]};
+                for(var i = 0; i < this.transport.length; i++)
+                {
+                    var ip =  ConnectionIndicator.getIP(this.transport[i].ip);
+                    var port = ConnectionIndicator.getPort(this.transport[i].ip);
+                    var localIP = ConnectionIndicator.getIP(this.transport[i].localip);
+                    var localPort = ConnectionIndicator.getPort(this.transport[i].localip);
+                    if(data.remoteIP.indexOf(ip) == -1)
+                    {
+                       data.remoteIP.push(ip);
+                    }
+
+                    if(data.remotePort.indexOf(port) == -1)
+                    {
+                        data.remotePort.push(port);
+                    }
+
+                    if(data.localIP.indexOf(localIP) == -1)
+                    {
+                        data.localIP.push(localIP);
+                    }
+
+                    if(data.localPort.indexOf(localPort) == -1)
+                    {
+                        data.localPort.push(localPort);
+                    }
+
+                }
+                var localTransport = "<tr><td><span class='jitsipopover_blue'>Local address" +
+                    (data.localIP.length > 1? "es" : "") + ": </span></td><td> " +
+                     ConnectionIndicator.getStringFromArray(data.localIP) + "</td></tr>";
+                transport = "<tr><td><span class='jitsipopover_blue'>Remote address"+
+                    (data.remoteIP.length > 1? "es" : "") + ":</span></td><td> " +
+                    ConnectionIndicator.getStringFromArray(data.remoteIP) + "</td></tr>";
                 if(this.transport.length > 1)
                 {
                     transport += "<tr><td><span class='jitsipopover_blue'>Remote ports:</span></td><td>";
@@ -1630,15 +1678,9 @@ var VideoLayout = (function (my) {
                     transport += "<tr><td><span class='jitsipopover_blue'>Remote port:</span></td><td>";
                     localTransport += "<tr><td><span class='jitsipopover_blue'>Local port:</span></td><td>";
                 }
-                for(var i = 0; i < this.transport.length; i++)
-                {
-                    transport += ((i !== 0)? ", " : "") +
-                        this.transport[i].ip.substring(this.transport[i].ip.indexOf(":")+1,
-                                this.transport[i].ip.length);
-                    localTransport += ((i !== 0)? ", " : "") +
-                        this.transport[i].localip.substring(this.transport[i].localip.indexOf(":")+1,
-                            this.transport[i].localip.length);
-                }
+
+                transport += ConnectionIndicator.getStringFromArray(data.remotePort);
+                localTransport += ConnectionIndicator.getStringFromArray(data.localPort);
                 transport += "</td></tr>";
                 transport += localTransport + "</td></tr>";
                 transport +="<tr><td><span class='jitsipopover_blue'>Transport:</span></td><td>" + this.transport[0].type + "</td></tr>";
