@@ -90,7 +90,7 @@ var JitsiPopover = (function () {
             of: this.element,
             using: function (position, elements) {
                 var calcLeft = elements.target.left - elements.element.left + elements.target.width/2;
-                $(".jitsipopover").css({top: position.top, left: position.left, display: "block"});
+                $(".jitsipopover").css({top: position.top, left: position.left, display: "table"});
                 $(".jitsipopover > .arrow").css({left: calcLeft});
                 $(".jitsipopover > .jitsiPopupmenuPadding").css({left: calcLeft - 50});
             }

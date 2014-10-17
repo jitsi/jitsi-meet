@@ -1152,6 +1152,7 @@ var VideoLayout = (function (my) {
 //        <li><a href="#">Mute</a></li>
 //        <li><a href="#">Eject</a></li>
 //        </ul>
+
         var popupmenuElement = document.createElement('ul');
         popupmenuElement.className = 'popupmenu';
         popupmenuElement.id
@@ -1570,11 +1571,11 @@ var VideoLayout = (function (my) {
             resolution = resolutionValue.width + "x" + resolutionValue.height;
         }
 
-        var result = "<span class='jitsipopover_blue'>Bitrate:</span> <span class='jitsipopover_green'>&darr;</span>" +
+        var result = "<table style='width:100%'><tr><td><span class='jitsipopover_blue'>Bitrate:</span></td><td><span class='jitsipopover_green'>&darr;</span>" +
             downloadBitrate + " <span class='jitsipopover_orange'>&uarr;</span>" +
-            uploadBitrate + "<br />" +
-            "<span class='jitsipopover_blue'>Packet loss: </span>" + packetLoss  + "<br />" +
-            "<span class='jitsipopover_blue'>Resolution:</span> " + resolution + "<br />";
+            uploadBitrate + "</td></tr><tr><td>" +
+            "<tr><td><span class='jitsipopover_blue'>Packet loss: </span></td><td>" + packetLoss  + "</td></tr><tr><td>" +
+            "<span class='jitsipopover_blue'>Resolution:</span></td><td>" + resolution + "</td></tr></table>";
 
         if(this.videoContainer.id == "localVideoContainer")
             result += "<div class=\"jitsipopover_showmore\" onclick = \"VideoLayout.connectionIndicators['" +
@@ -1596,34 +1597,45 @@ var VideoLayout = (function (my) {
 
             if(!this.transport || this.transport.length === 0)
             {
-                transport = "<span class='jitsipopover_blue'>Address:</span> N/A";
+                transport = "<tr><td><span class='jitsipopover_blue'>Address:</span></td><td> N/A</td></tr>";
             }
             else
             {
-                transport = "<span class='jitsipopover_blue'>Address:</span> " + this.transport[0].ip.substring(0,this.transport[0].ip.indexOf(":")) + "<br />";
+                var localTransport = "<tr><td><span class='jitsipopover_blue'>Local address: </span></td><td> " +
+                    this.transport[0].localip.substring(0,this.transport[0].localip.indexOf(":")) + "</td></tr>"
+                transport = "<tr><td><span class='jitsipopover_blue'>Remote address:</span></td><td> " +
+                    this.transport[0].ip.substring(0,this.transport[0].ip.indexOf(":")) + "</td></tr>";
                 if(this.transport.length > 1)
                 {
-                    transport += "<span class='jitsipopover_blue'>Ports:</span> ";
+                    transport += "<tr><td><span class='jitsipopover_blue'>Remote ports:</span></td><td>";
+                    localTransport += "<tr><td><span class='jitsipopover_blue'>Local ports:</span></td><td>";
                 }
                 else
                 {
-                    transport += "<span class='jitsipopover_blue'>Port:</span> ";
+                    transport += "<tr><td><span class='jitsipopover_blue'>Remote port:</span></td><td>";
+                    localTransport += "<tr><td><span class='jitsipopover_blue'>Local port:</span></td><td>";
                 }
                 for(var i = 0; i < this.transport.length; i++)
                 {
                     transport += ((i !== 0)? ", " : "") +
                         this.transport[i].ip.substring(this.transport[i].ip.indexOf(":")+1,
                                 this.transport[i].ip.length);
+                    localTransport += ((i !== 0)? ", " : "") +
+                        this.transport[i].localip.substring(this.transport[i].localip.indexOf(":")+1,
+                            this.transport[i].localip.length);
                 }
-                transport += "<br /><span class='jitsipopover_blue'>Transport:</span> " + this.transport[0].type + "<br />";
+                transport += "</td></tr>";
+                transport += localTransport + "</td></tr>";
+                transport +="<tr><td><span class='jitsipopover_blue'>Transport:</span></td><td>" + this.transport[0].type + "</td></tr>";
+
             }
 
-            result += "<span class='jitsipopover_blue'>Estimated bandwidth:</span> " +
+            result += "<table  style='width:100%'><tr><td><span class='jitsipopover_blue'>Estimated bandwidth:</span> </td><td>" +
                 "<span class='jitsipopover_green'>&darr;</span>" + downloadBandwidth +
                 " <span class='jitsipopover_orange'>&uarr;</span>" +
-                uploadBandwidth + "<br />";
+                uploadBandwidth + "</td></tr>";
 
-            result += transport;
+            result += transport + "</table>";
 
         }
 

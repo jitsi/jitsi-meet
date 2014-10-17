@@ -62,8 +62,8 @@ var ConnectionQuality = (function () {
      */
     function convertToMUCStats(stats) {
         return {
-            "bitrate_donwload": stats.bitrate.download,
-            "bitrate_uplpoad": stats.bitrate.upload,
+            "bitrate_download": stats.bitrate.download,
+            "bitrate_upload": stats.bitrate.upload,
             "packetLoss_total": stats.packetLoss.total,
             "packetLoss_download": stats.packetLoss.download,
             "packetLoss_upload": stats.packetLoss.upload
@@ -78,8 +78,8 @@ var ConnectionQuality = (function () {
     function parseMUCStats(stats) {
         return {
             bitrate: {
-                download: stats.bitrate_donwload,
-                upload: stats.bitrate_uplpoad
+                download: stats.bitrate_download,
+                upload: stats.bitrate_upload
             },
             packetLoss: {
                 total: stats.packetLoss_total,
@@ -101,7 +101,6 @@ var ConnectionQuality = (function () {
             return;
         }
         remoteStats[jid] = parseMUCStats(data);
-        console.log(remoteStats[jid]);
 
         VideoLayout.updateConnectionStats(jid, 100 - data.packetLoss_total,remoteStats[jid]);
 

@@ -227,7 +227,6 @@
     left: 0px;
     top: 0px;
     font-size: 8pt;
-    text-shadow: 1px 1px 1px rgba(0,0,0,1), -1px -1px -1px rgba(0,0,0,1);
     border: 0px;
     width: 18px;
     height: 13px;
@@ -235,10 +234,20 @@
 
 .connection_info
 {
+    float: left;
+    padding-bottom: 5px;
+}
+
+.connection_info > table
+{
+    white-space: nowrap;
+}
+
+.connection_info, .connection_info > table
+{
     text-align: left;
     font-size: 11px;
-    white-space:nowrap;
-    /*width: 260px;*/
+    color: #ffffff;
 }
 
 #localVideoContainer>span.status:hover,

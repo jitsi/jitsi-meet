@@ -197,8 +197,8 @@ StatsCollector.prototype.processStatsReport = function () {
         var now = this.currentStatsReport[idx];
         if (now.stat('googAvailableReceiveBandwidth') || now.stat('googAvailableSendBandwidth')) {
             PeerStats.bandwidth = {
-                "download": Math.round((now.stat('googAvailableReceiveBandwidth') * 8) / 1000),
-                "upload": Math.round((now.stat('googAvailableSendBandwidth') * 8) / 1000)
+                "download": Math.round((now.stat('googAvailableReceiveBandwidth')) / 1000),
+                "upload": Math.round((now.stat('googAvailableSendBandwidth')) / 1000)
             };
         }
 
@@ -206,19 +206,22 @@ StatsCollector.prototype.processStatsReport = function () {
         {
             var ip = now.stat('googRemoteAddress');
             var type = now.stat("googTransportType");
-            if(!ip || !type)
+            var localIP = now.stat("googLocalAddress");
+            var active = now.stat("googActiveConnection");
+            if(!ip || !type || !localIP || !active)
                 continue;
             var addressSaved = false;
             for(var i = 0; i < PeerStats.transport.length; i++)
             {
-                if(PeerStats.transport[i].ip == ip && PeerStats.transport[i].type == type)
+                if(PeerStats.transport[i].ip == ip && PeerStats.transport[i].type == type &&
+                    PeerStats.transport[i].localip == localIP)
                 {
                     addressSaved = true;
                 }
             }
             if(addressSaved)
                 continue;
-            PeerStats.transport.push({ip: ip, type: type});
+            PeerStats.transport.push({localip: localIP, ip: ip, type: type});
             continue;
         }
 
@@ -261,13 +264,23 @@ StatsCollector.prototype.processStatsReport = function () {
             }
         }
         var packetsNow = now.stat(key);
+        if(!packetsNow || packetsNow < 0)
+            packetsNow = 0;
+
         var packetsBefore = before.stat(key);
+        if(!packetsBefore || packetsBefore < 0)
+            packetsBefore = 0;
         var packetRate = packetsNow - packetsBefore;
 
         var currentLoss = now.stat('packetsLost');
+        if(!currentLoss || currentLoss < 0)
+            currentLoss = 0;
         var previousLoss = before.stat('packetsLost');
+        if(!previousLoss || previousLoss < 0)
+            previousLoss = 0;
         var lossRate = currentLoss - previousLoss;
-
+        if(lossRate < 0)
+            lossRate = 0;
         var packetsTotal = (packetRate + lossRate);
 
         jidStats.setSsrcLoss(ssrc, {"packetsTotal": packetsTotal, "packetsLost": lossRate,
@@ -308,7 +321,6 @@ StatsCollector.prototype.processStatsReport = function () {
         if(!jidStats.resolution)
             jidStats.resolution = null;
 
-        console.log(jid + " - resolution: " + resolution.height + "x" + resolution.width);
         if(resolution.height && resolution.width)
         {
             if(!jidStats.resolution)
