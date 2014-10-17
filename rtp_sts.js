@@ -208,7 +208,7 @@ StatsCollector.prototype.processStatsReport = function () {
             var type = now.stat("googTransportType");
             var localIP = now.stat("googLocalAddress");
             var active = now.stat("googActiveConnection");
-            if(!ip || !type || !localIP || !active)
+            if(!ip || !type || !localIP || active != "true")
                 continue;
             var addressSaved = false;
             for(var i = 0; i < PeerStats.transport.length; i++)
