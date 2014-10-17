@@ -3,7 +3,7 @@ Strophe.addConnectionPlugin('jingle', {
     connection: null,
     sessions: {},
     jid2session: {},
-    ice_config: {iceServers: [], iceTransports: 'relay'},
+    ice_config: {iceServers: []},
     pc_constraints: {},
     media_constraints: {
         mandatory: {
