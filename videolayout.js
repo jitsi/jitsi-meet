@@ -175,54 +175,53 @@ var VideoLayout = (function (my) {
                         ? getDesktopVideoPosition
                         : getCameraVideoPosition;
 
-                    if (largeVideoState.isVisible) {
-                        // Only if the large video is currently visible.
-                        // Disable previous dominant speaker video.
-                        if (largeVideoState.oldJid) {
-                            var oldResourceJid = Strophe.getResourceFromJid(largeVideoState.oldJid);
-                            VideoLayout.enableDominantSpeaker(oldResourceJid, false);
-                            if(VideoLayout.connectionIndicators) {
-                                var videoContainerId = null;
-                                if (oldResourceJid == Strophe.getResourceFromJid(connection.emuc.myroomjid)) {
-                                    videoContainerId = 'localVideoContainer';
-                                }
-                                else {
-                                    videoContainerId = 'participant_' + oldResourceJid;
-                                }
-                                if(VideoLayout.connectionIndicators[videoContainerId])
-                                    VideoLayout.connectionIndicators[videoContainerId].setShowHQ(false);
+
+                    // Only if the large video is currently visible.
+                    // Disable previous dominant speaker video.
+                    if (largeVideoState.oldJid) {
+                        var oldResourceJid = Strophe.getResourceFromJid(largeVideoState.oldJid);
+                        VideoLayout.enableDominantSpeaker(oldResourceJid, false);
+                        if(VideoLayout.connectionIndicators) {
+                            var videoContainerId = null;
+                            if (oldResourceJid == Strophe.getResourceFromJid(connection.emuc.myroomjid)) {
+                                videoContainerId = 'localVideoContainer';
                             }
-
-                        }
-
-                        // Enable new dominant speaker in the remote videos section.
-                        if (largeVideoState.userJid) {
-                            var resourceJid = Strophe.getResourceFromJid(largeVideoState.userJid);
-                            VideoLayout.enableDominantSpeaker(resourceJid, true);
-                            if(VideoLayout.connectionIndicators)
-                            {
-                                var videoContainerId = null;
-                                if (resourceJid
-                                    === Strophe.getResourceFromJid(connection.emuc.myroomjid)) {
-                                    videoContainerId = 'localVideoContainer';
-                                }
-                                else {
-                                    videoContainerId = 'participant_' + resourceJid;
-                                }
-                                if(VideoLayout.connectionIndicators[videoContainerId])
-                                    VideoLayout.connectionIndicators[videoContainerId].setShowHQ(true);
+                            else {
+                                videoContainerId = 'participant_' + oldResourceJid;
                             }
-
+                            if(VideoLayout.connectionIndicators[videoContainerId])
+                                VideoLayout.connectionIndicators[videoContainerId].setShowHQ(false);
                         }
 
-                        largeVideoState.updateInProgress = false;
-
-                        if (fade) {
-                            // using "this" should be ok because we're called
-                            // from within the fadeOut event.
-                            $(this).fadeIn(300);
-                        }
                     }
+
+                    // Enable new dominant speaker in the remote videos section.
+                    if (largeVideoState.userJid) {
+                        var resourceJid = Strophe.getResourceFromJid(largeVideoState.userJid);
+                        VideoLayout.enableDominantSpeaker(resourceJid, true);
+                        if(VideoLayout.connectionIndicators)
+                        {
+                            var videoContainerId = null;
+                            if (resourceJid
+                                === Strophe.getResourceFromJid(connection.emuc.myroomjid)) {
+                                videoContainerId = 'localVideoContainer';
+                            }
+                            else {
+                                videoContainerId = 'participant_' + resourceJid;
+                            }
+                            if(VideoLayout.connectionIndicators[videoContainerId])
+                                VideoLayout.connectionIndicators[videoContainerId].setShowHQ(true);
+                        }
+
+                    }
+
+                    if (fade && largeVideoState.isVisible) {
+                        // using "this" should be ok because we're called
+                        // from within the fadeOut event.
+                        $(this).fadeIn(300);
+                    }
+
+                    largeVideoState.updateInProgress = false;
                 };
 
                 if (fade) {
