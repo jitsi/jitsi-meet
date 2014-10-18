@@ -647,7 +647,7 @@ var VideoLayout = (function (my) {
                     $('#editDisplayName').select();
 
                     var inputDisplayNameHandler = function (name) {
-                        if (nickname !== name) {
+                        if (name && nickname !== name) {
                             nickname = name;
                             window.localStorage.displayname = nickname;
                             connection.emuc.addDisplayNameToPresence(nickname);
