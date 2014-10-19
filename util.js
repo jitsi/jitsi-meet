@@ -44,7 +44,7 @@ var Util = (function (my) {
      * Escapes the given text.
      */
     my.escapeHtml = function (unsafeText) {
-        return $('<div/>').text(unsafeText).html();
+        return $('<div/>').text(unsafeText).text();
     };
 
     /**
