@@ -44,6 +44,13 @@ var Util = (function (my) {
      * Escapes the given text.
      */
     my.escapeHtml = function (unsafeText) {
+        return $('<div/>').text(unsafeText).html();
+    };
+    
+    /**
+     * Escapes only tags from the given text.
+     */
+    my.escapeTags = function (unsafeText) {
         return unsafeText.replace(/</g, '&lt;').replace(/>/g, '&gt;');
     };
 
