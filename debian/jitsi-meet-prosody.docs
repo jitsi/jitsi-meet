@@ -1,1 +1,2 @@
-debian/usr/share/doc/jitsi-meet-prosody/prosody.cfg.lua-jvb.example
+doc/debian/jitsi-meet-prosody/prosody.cfg.lua-jvb.example
+doc/debian/jitsi-meet-prosody/README
