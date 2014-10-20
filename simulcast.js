@@ -934,6 +934,29 @@ function SimulcastManager() {
 
     // Create remote simulcast.
     this.simulcastReceiver = new SimulcastReceiver(this.simulcastUtils);
+
+    // Initialize local simulcast.
+
+    // TODO(gp) move into SimulcastManager.prototype.getUserMedia and take into
+    // account constraints.
+    if (!config.enableSimulcast) {
+        this.simulcastSender = new NoSimulcastSender();
+    } else {
+
+        var isChromium = window.chrome,
+            vendorName = window.navigator.vendor;
+        if(isChromium !== null && isChromium !== undefined && vendorName === "Google Inc.") {
+            var ver = parseInt(window.navigator.appVersion.match(/Chrome\/(\d+)\./)[1], 10);
+            if (ver > 37) {
+                this.simulcastSender = new NativeSimulcastSender();
+            } else {
+                this.simulcastSender = new NoSimulcastSender();
+            }
+        } else {
+            this.simulcastSender = new NoSimulcastSender();
+        }
+
+    }
 }
 
 /**
@@ -1009,28 +1032,6 @@ SimulcastManager.prototype.getLocalVideoStream = function() {
  * @param err
  */
 SimulcastManager.prototype.getUserMedia = function (constraints, success, err) {
-
-    // Initialize local simulcast.
-
-    // TODO(gp) take into account constraints.
-    if (!config.enableSimulcast) {
-        this.simulcastSender = new NoSimulcastSender();
-    } else {
-
-        var isChromium = window.chrome,
-            vendorName = window.navigator.vendor;
-        if(isChromium !== null && isChromium !== undefined && vendorName === "Google Inc.") {
-            var ver = parseInt(window.navigator.appVersion.match(/Chrome\/(\d+)\./)[1], 10);
-            if (ver > 37) {
-                this.simulcastSender = new NativeSimulcastSender();
-            } else {
-                this.simulcastSender = new NoSimulcastSender();
-            }
-        } else {
-            this.simulcastSender = new NoSimulcastSender();
-        }
-
-    }
 
     this.simulcastSender.getUserMedia(constraints, success, err);
 };
