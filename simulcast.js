@@ -224,8 +224,8 @@ SimulcastUtils.prototype._compileVideoSources = function (videoSources) {
     return sb;
 };
 
-function SimulcastReceiver(simulcastUtils) {
-    this.simulcastUtils = simulcastUtils;
+function SimulcastReceiver() {
+    this.simulcastUtils = new SimulcastUtils();
     this.logger = new SimulcastLogger('SimulcastReceiver');
 }
 
@@ -933,7 +933,7 @@ function SimulcastManager() {
     this.simulcastUtils = new SimulcastUtils();
 
     // Create remote simulcast.
-    this.simulcastReceiver = new SimulcastReceiver(this.simulcastUtils);
+    this.simulcastReceiver = new SimulcastReceiver();
 
     // Initialize local simulcast.
 
