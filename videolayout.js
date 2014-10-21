@@ -227,13 +227,7 @@ var VideoLayout = (function (my) {
                 if (fade) {
                     $('#largeVideo').fadeOut(300, doUpdate);
                 } else {
-                    $("#preload").attr("src", largeVideoState.newSrc);
-                    // The 'canplay' event occurs when the browser can start
-                    // playing the specified audio/video. See:
-                    // http://www.w3schools.com/tags/av_event_canplay.asp
-                    $("#preload").one("canplay",function(){
-                        doUpdate();
-                    });
+                    doUpdate();
                 }
             }
         }
