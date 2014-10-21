@@ -14,4 +14,9 @@
 
 override_dh_install:
 	dh_installdirs
-	dh_install -Xlibs/strophe/strophe.min.js
+	dh_install
+	yui-compressor -o debian/jitsi-meet/usr/share/jitsi-meet/libs/strophe/strophe.caps.jsonly.min.js \
+		debian/patches/missing-source/libs/strophe/strophe.caps.jsonly.js
+	yui-compressor -o debian/jitsi-meet/usr/share/jitsi-meet/libs/strophe/strophe.disco.min.js \
+		debian/patches/missing-source/libs/strophe/sha1.js \
+		debian/patches/missing-source/libs/strophe/strophe.disco.js

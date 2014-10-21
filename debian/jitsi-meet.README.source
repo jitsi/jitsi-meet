@@ -8,14 +8,14 @@ Use something like the script below to update from Git
 
 #!/bin/bash
 
-VERSION=1.0.1-1
+VERSION=1.0.1
 
 echo "*.min.js export-ignore" > .gitattributes
 echo "jquery-2.1.1.* export-ignore" >> .gitattributes
 echo "jquery-ui.js export-ignore" >> .gitattributes
 echo ".gitignore export-ignore" >> .gitattributes
-echo "$VERSION" > version.txt
-sed -i "s/1.0.1-1/$VERSION/g" debian/changelog
+
+sed -i "s/1.0.1/$VERSION/g" debian/changelog
 
 git archive --worktree-attributes --format tar --prefix jitsi-meet-$VERSION/ -o ../jitsi-meet_${VERSION}.orig.tar master
 tar --transform "s,^,jitsi-meet-$VERSION/,"  -rf ../jitsi-meet_${VERSION}.orig.tar
