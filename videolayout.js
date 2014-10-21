@@ -8,6 +8,8 @@ var VideoLayout = (function (my) {
     };
     my.connectionIndicators = {};
 
+    var displayedSsrcs = {};
+
     my.changeLocalAudio = function(stream) {
         connection.jingle.localAudio = stream;
 
@@ -33,7 +35,7 @@ var VideoLayout = (function (my) {
 
         if(!VideoLayout.connectionIndicators["localVideoContainer"]) {
             VideoLayout.connectionIndicators["localVideoContainer"]
-                = new ConnectionIndicator($("#localVideoContainer")[0]);
+                = new ConnectionIndicator($("#localVideoContainer")[0], null);
         }
 
         AudioLevels.updateAudioLevelCanvas();
@@ -181,38 +183,12 @@ var VideoLayout = (function (my) {
                     if (largeVideoState.oldJid) {
                         var oldResourceJid = Strophe.getResourceFromJid(largeVideoState.oldJid);
                         VideoLayout.enableDominantSpeaker(oldResourceJid, false);
-                        if(VideoLayout.connectionIndicators) {
-                            var videoContainerId = null;
-                            if (oldResourceJid == Strophe.getResourceFromJid(connection.emuc.myroomjid)) {
-                                videoContainerId = 'localVideoContainer';
-                            }
-                            else {
-                                videoContainerId = 'participant_' + oldResourceJid;
-                            }
-                            if(VideoLayout.connectionIndicators[videoContainerId])
-                                VideoLayout.connectionIndicators[videoContainerId].setShowHQ(false);
-                        }
-
                     }
 
                     // Enable new dominant speaker in the remote videos section.
                     if (largeVideoState.userJid) {
                         var resourceJid = Strophe.getResourceFromJid(largeVideoState.userJid);
                         VideoLayout.enableDominantSpeaker(resourceJid, true);
-                        if(VideoLayout.connectionIndicators)
-                        {
-                            var videoContainerId = null;
-                            if (resourceJid
-                                === Strophe.getResourceFromJid(connection.emuc.myroomjid)) {
-                                videoContainerId = 'localVideoContainer';
-                            }
-                            else {
-                                videoContainerId = 'participant_' + resourceJid;
-                            }
-                            if(VideoLayout.connectionIndicators[videoContainerId])
-                                VideoLayout.connectionIndicators[videoContainerId].setShowHQ(true);
-                        }
-
                     }
 
                     if (fade && largeVideoState.isVisible) {
@@ -376,7 +352,7 @@ var VideoLayout = (function (my) {
             // Set default display name.
             setDisplayName(videoSpanId);
 
-            VideoLayout.connectionIndicators[videoSpanId] = new ConnectionIndicator(container);
+            VideoLayout.connectionIndicators[videoSpanId] = new ConnectionIndicator(container, peerJid);
 
             var nickfield = document.createElement('span');
             nickfield.className = "nick";
@@ -1482,6 +1458,21 @@ var VideoLayout = (function (my) {
                 if (updateFocusedVideoSrc) {
                     focusedVideoSrc = electedStreamUrl;
                 }
+                var ssrc = videoSrcToSsrc[selRemoteVideo.attr('src')];
+                displayedSsrcs[ssrc2jid[ssrc]] = ssrc;
+                var jid = ssrc2jid[ssrc];
+                var videoId;
+                if(jid == connection.emuc.myroomjid)
+                {
+                    videoId = "localVideoContainer";
+                }
+                else
+                {
+                    videoId = "participant_" + Strophe.getResourceFromJid(jid);
+                }
+                var connectionIndicator = VideoLayout.connectionIndicators[videoId];
+                if(connectionIndicator)
+                    connectionIndicator.updatePopoverData();
 
             } else {
                 console.error('Could not find a stream or a session.', session, electedStream);
@@ -1494,7 +1485,7 @@ var VideoLayout = (function (my) {
      * @param videoContainer the video container associated with the indicator.
      * @constructor
      */
-    function ConnectionIndicator(videoContainer)
+    function ConnectionIndicator(videoContainer, jid)
     {
         this.videoContainer = videoContainer;
         this.bandwidth = null;
@@ -1504,7 +1495,7 @@ var VideoLayout = (function (my) {
         this.resolution = null;
         this.transport = [];
         this.popover = null;
-        this.showHQ = false;
+        this.jid = jid;
         this.create();
     }
 
@@ -1519,16 +1510,6 @@ var VideoLayout = (function (my) {
         47: "7px",//2 bars
         30: "3px",//1 bar
         0: "0px"//empty
-    };
-
-    /**
-     * Sets the value of the property that indicates whether the displayed resolution si the
-     * resolution of High Quality stream or Low Quality
-     * @param value boolean.
-     */
-    ConnectionIndicator.prototype.setShowHQ = function (value) {
-        this.showHQ = value;
-        this.updatePopoverData();
     };
 
     ConnectionIndicator.getIP = function(value)
@@ -1583,17 +1564,38 @@ var VideoLayout = (function (my) {
         var resolutionValue = null;
         if(this.resolution)
         {
-            if(this.showHQ && this.resolution.hq)
+            var keys = Object.keys(this.resolution);
+            if(keys.length == 1)
             {
-                resolutionValue = this.resolution.hq;
+                for(var ssrc in this.resolution)
+                {
+                    resolutionValue = this.resolution[ssrc];
+                }
             }
-            else if(!this.showHQ && this.resolution.lq)
+            else if(keys.length > 1)
             {
-                resolutionValue = this.resolution.lq;
+                resolutionValue = this.resolution[displayedSsrcs[this.jid]];
             }
         }
 
-        if(!resolutionValue ||
+        if(this.jid==null)
+        {
+            resolution = "";
+            for(var i in this.resolution)
+            {
+                resolutionValue = this.resolution[i];
+                if(resolutionValue)
+                {
+                    if(resolutionValue.height &&
+                        resolutionValue.width)
+                    {
+                        resolution += (resolution == ""? "" : ", ")
+                            + resolutionValue.width + "x" + resolutionValue.height;
+                    }
+                }
+            }
+        }
+        else if(!resolutionValue ||
             !resolutionValue.height ||
             !resolutionValue.width)
         {

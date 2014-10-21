@@ -18,7 +18,7 @@ function PeerStats()
     this.ssrc2Loss = {};
     this.ssrc2AudioLevel = {};
     this.ssrc2bitrate = {};
-    this.resolution = null;
+    this.ssrc2resolution = {};
 }
 
 /**
@@ -50,6 +50,22 @@ PeerStats.packetLoss = null;
 PeerStats.prototype.setSsrcLoss = function (ssrc, lossRate)
 {
     this.ssrc2Loss[ssrc] = lossRate;
+};
+
+/**
+ * Sets resolution for given <tt>ssrc</tt> that belong to the peer
+ * represented by this instance.
+ * @param ssrc audio or video RTP stream SSRC.
+ * @param resolution new resolution value to be set.
+ */
+PeerStats.prototype.setSsrcResolution = function (ssrc, resolution)
+{
+    if(resolution == null && this.ssrc2resolution[ssrc])
+    {
+        delete this.ssrc2resolution[ssrc];
+    }
+    else if(resolution != null)
+        this.ssrc2resolution[ssrc] = resolution;
 };
 
 /**
@@ -318,22 +334,13 @@ StatsCollector.prototype.processStatsReport = function () {
             resolution.width = now.stat("googFrameWidthSent");
         }
 
-        if(!jidStats.resolution)
-            jidStats.resolution = null;
-
         if(resolution.height && resolution.width)
         {
-            if(!jidStats.resolution)
-                jidStats.resolution = { hq: resolution, lq: resolution};
-            else if(jidStats.resolution.hq.width > resolution.width &&
-                jidStats.resolution.hq.height > resolution.height)
-            {
-                jidStats.resolution.lq = resolution;
-            }
-            else
-            {
-                jidStats.resolution.hq = resolution;
-            }
+            jidStats.setSsrcResolution(ssrc, resolution);
+        }
+        else
+        {
+            jidStats.setSsrcResolution(ssrc, null);
         }
 
 
@@ -365,8 +372,7 @@ StatsCollector.prototype.processStatsReport = function () {
                     bitrateUpload += self.jid2stats[jid].ssrc2bitrate[ssrc].upload;
                 }
             );
-            resolution[jid] = self.jid2stats[jid].resolution;
-            delete self.jid2stats[jid].resolution;
+            resolution[jid] = self.jid2stats[jid].ssrc2resolution;
         }
     );
 
