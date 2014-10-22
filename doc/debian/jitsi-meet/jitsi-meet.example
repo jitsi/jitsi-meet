@@ -13,6 +13,10 @@ server {
     root /usr/share/jitsi-meet;
     index index.html index.htm;
 
+    location /config.js {
+        alias /etc/jitsi/meet/jitsi-meet.example.com-config.js;
+    }
+
     location ~ ^/([a-zA-Z0-9]+)$ {
         rewrite ^/(.*)$ / break;
     }

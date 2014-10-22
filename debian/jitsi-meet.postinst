@@ -69,14 +69,14 @@ case "$1" in
         fi
 
         # jitsi meet
-        chown -R www-data:www-data /usr/share/jitsi-meet/
-        sed -i "s/jitsi-meet.example.com/$JVB_HOSTNAME/g" /usr/share/jitsi-meet/config.js
-        # enable turn
-        #if grep "//  useStunTurn: true," /usr/share/jitsi-meet/config.js > /dev/null; then
-        #    sed -i "s/\/\/\ \ useStunTurn:\ true,/\ \ \ \ useStunTurn:\ true,/" /usr/share/jitsi-meet/config.js
-        #fi
-        invoke-rc.d nginx restart
+        JITSI_MEET_CONFIG="/etc/jitsi/meet/$JVB_HOSTNAME-config.js"
+        if [ ! -f $JITSI_MEET_CONFIG ]; then
+            mkdir -p /etc/jitsi/meet/
+            cp /usr/share/doc/jitsi-meet/config.js $JITSI_MEET_CONFIG
+            sed -i "s/jitsi-meet.example.com/$JVB_HOSTNAME/g" $JITSI_MEET_CONFIG
+        fi
 
+        invoke-rc.d nginx reload
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)
