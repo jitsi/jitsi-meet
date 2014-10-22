@@ -24,27 +24,17 @@ case "$1" in
         . /etc/default/jitsi-videobridge
 
         PROSODY_CONFIG_PRESENT="true"
+        PROSODY_HOST_CONFIG="/etc/prosody/conf.avail/$JVB_HOSTNAME.cfg.lua"
         # if there is no prosody config extract our template
-        if [ ! -f /etc/prosody/prosody.cfg.lua ]; then
+        # check for config in conf.avail or check whether it wasn't already configured in main config
+        if [ ! -f $PROSODY_HOST_CONFIG ] && ! grep -q "VirtualHost \"$JVB_HOSTNAME\"" /etc/prosody/prosody.cfg.lua; then
             PROSODY_CONFIG_PRESENT="false"
-            gunzip -c /usr/share/doc/jitsi-meet-prosody/prosody.cfg.lua-jvb.example.gz > /etc/prosody/prosody.cfg.lua
-        fi
-
-        # if there is no config for our domain, lets create it
-        if ! grep -q "VirtualHost \"$JVB_HOSTNAME\"" /etc/prosody/prosody.cfg.lua; then
-
-            # if its not our template, save the original and extract our template
-            if ! grep -q "VirtualHost \"jitmeet.example.com\"" /etc/prosody/prosody.cfg.lua; then
-                PROSODY_CONFIG_PRESENT="false"
-                cp /etc/prosody/prosody.cfg.lua /etc/prosody/prosody.cfg.lua.orig
-                gunzip -c /usr/share/doc/jitsi-meet-prosody/prosody.cfg.lua-jvb.example.gz > /etc/prosody/prosody.cfg.lua
+            cp /usr/share/doc/jitsi-meet-prosody/prosody.cfg.lua-jvb.example $PROSODY_HOST_CONFIG
+            sed -i "s/jitmeet.example.com/$JVB_HOSTNAME/g" $PROSODY_HOST_CONFIG
+            sed -i "s/jitmeetSecret/$JVB_SECRET/g" $PROSODY_HOST_CONFIG
+            if [ ! -f /etc/prosody/conf.d/$JVB_HOSTNAME.cfg.lua ]; then
+                ln -s $PROSODY_HOST_CONFIG /etc/prosody/conf.d/$JVB_HOSTNAME.cfg.lua
             fi
-
-            if [ "$PROSODY_CONFIG_PRESENT" = "true" ]; then
-                cp /etc/prosody/prosody.cfg.lua /etc/prosody/prosody.cfg.lua.orig
-            fi
-            sed -i "s/jitmeet.example.com/$JVB_HOSTNAME/g" /etc/prosody/prosody.cfg.lua
-            sed -i "s/jitmeetSecret/$JVB_SECRET/g" /etc/prosody/prosody.cfg.lua
         fi
 
         if [ ! -f /var/lib/prosody/$JVB_HOSTNAME.crt ]; then
@@ -58,9 +48,7 @@ case "$1" in
         ln -sf /var/lib/prosody/$JVB_HOSTNAME.key /etc/prosody/certs/$JVB_HOSTNAME.key
         ln -sf /var/lib/prosody/$JVB_HOSTNAME.crt /etc/prosody/certs/$JVB_HOSTNAME.crt
 
-        if [ "$PROSODY_CONFIG_PRESENT" = "true" ]; then
-            invoke-rc.d prosody reload
-        else
+        if [ "$PROSODY_CONFIG_PRESENT" = "false" ]; then
             invoke-rc.d prosody restart
             invoke-rc.d jitsi-videobridge restart
         fi
