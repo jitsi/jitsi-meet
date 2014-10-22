@@ -622,41 +622,41 @@ var VideoLayout = (function (my) {
                     $('#editDisplayName').focus();
                     $('#editDisplayName').select();
 
-                    var inputDisplayNameHandler = function (name) {
-                        if (nickname !== name) {
-                            nickname = name;
-                            window.localStorage.displayname = nickname;
-                            connection.emuc.addDisplayNameToPresence(nickname);
-                            connection.emuc.sendPresence();
-
-                            Chat.setChatConversationMode(true);
-                        }
-
-                        if (!$('#localDisplayName').is(":visible")) {
-                            if (nickname)
-                                $('#localDisplayName').text(nickname + " (me)");
-                            else
-                                $('#localDisplayName')
-                                    .text(defaultLocalDisplayName);
-                            $('#localDisplayName').show();
-                        }
-
-                        $('#editDisplayName').hide();
-                    };
-
                     $('#editDisplayName').one("focusout", function (e) {
-                        inputDisplayNameHandler(this.value);
+                        VideoLayout.inputDisplayNameHandler(this.value);
                     });
 
                     $('#editDisplayName').on('keydown', function (e) {
                         if (e.keyCode === 13) {
                             e.preventDefault();
-                            inputDisplayNameHandler(this.value);
+                            VideoLayout.inputDisplayNameHandler(this.value);
                         }
                     });
                 });
             }
         }
+    };
+
+    my.inputDisplayNameHandler = function (name) {
+        if (nickname !== name) {
+            nickname = name;
+            window.localStorage.displayname = nickname;
+            connection.emuc.addDisplayNameToPresence(nickname);
+            connection.emuc.sendPresence();
+
+            Chat.setChatConversationMode(true);
+        }
+
+        if (!$('#localDisplayName').is(":visible")) {
+            if (nickname)
+                $('#localDisplayName').text(nickname + " (me)");
+            else
+                $('#localDisplayName')
+                    .text(defaultLocalDisplayName);
+            $('#localDisplayName').show();
+        }
+
+        $('#editDisplayName').hide();
     };
 
     /**

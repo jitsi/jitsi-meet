@@ -1126,6 +1126,8 @@ function getCameraVideoSize(videoWidth,
 
 $(document).ready(function () {
     document.title = brand.appName;
+    if(APIConnector.isEnabled())
+        APIConnector.init();
 
     if(config.enableWelcomePage && window.location.pathname == "/" &&
         (!window.localStorage.welcomePageDisabled
@@ -1185,7 +1187,6 @@ $(document).ready(function () {
                 enter_room();
             }
         });
-
 
         if (!(interfaceConfig.GENERATE_ROOMNAMES_ON_WELCOME_PAGE === false)){
             var updateTimeout;
@@ -1322,6 +1323,8 @@ $(window).bind('beforeunload', function () {
         });
     }
     disposeConference(true);
+    if(APIConnector.isEnabled())
+        APIConnector.dispose();
 });
 
 function disposeConference(onUnload) {
