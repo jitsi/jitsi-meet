@@ -46,6 +46,13 @@ var Util = (function (my) {
     my.escapeHtml = function (unsafeText) {
         return $('<div/>').text(unsafeText).html();
     };
+    
+    /**
+     * Escapes only tags from the given text.
+     */
+    my.escapeTags = function (unsafeText) {
+        return unsafeText.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    };
 
     /**
      * Returns the available video width.
