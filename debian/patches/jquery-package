@@ -1,0 +1,22 @@
+Index: jitsi-meet/index.html
+===================================================================
+--- jitsi-meet.orig/index.html
++++ jitsi-meet/index.html
+@@ -9,7 +9,7 @@
+     <meta itemprop="name" content="Jitsi Meet"/>
+     <meta itemprop="description" content="Join a WebRTC video conference powered by the Jitsi Videobridge"/>
+     <meta itemprop="image" content="/images/jitsilogo.png"/>
+-    <script src="libs/jquery-2.1.1.min.js"></script>
++    <script src="libs/jquery.min.js"></script>
+     <script src="config.js?v=5"></script><!-- adapt to your needs, i.e. set hosts and bosh path -->
+     <script src="simulcast.js?v=5"></script><!-- simulcast handling -->
+     <script src="libs/strophe/strophe.jingle.adapter.js?v=2"></script><!-- strophe.jingle bundles -->
+@@ -24,7 +24,7 @@
+     <script src="libs/strophe/strophe.util.js"></script>
+     <script src="libs/colibri/colibri.focus.js?v=10"></script><!-- colibri focus implementation -->
+     <script src="libs/colibri/colibri.session.js?v=1"></script>
+-    <script src="libs/jquery-ui.js"></script>
++    <script src="libs/jquery-ui.min.js"></script>
+     <script src="libs/rayo.js?v=1"></script>
+     <script src="libs/tooltip.js?v=1"></script><!-- bootstrap tooltip lib -->
+     <script src="libs/popover.js?v=1"></script><!-- bootstrap tooltip lib -->
