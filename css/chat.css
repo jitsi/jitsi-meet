@@ -75,6 +75,10 @@
 #nickinput {
     margin-top: 20px;
     font-size: 14px;
+    background: #231F20;
+    box-shadow: inset 0 0 3px 2px #a7a7a7;
+    border: 1px solid #a7a7a7;
+    color: #a7a7a7;
 }
 
 #chatspace .username {
@@ -147,6 +151,7 @@
     border: 0px none;
     background: #231F20;
     overflow: hidden;
+    visibility: hidden;
 }
 
 #smileysContainer {

@@ -250,6 +250,7 @@ var Chat = (function (my) {
             $('#nickname').css({visibility: 'hidden'});
             $('#chatconversation').css({visibility: 'visible'});
             $('#usermsg').css({visibility: 'visible'});
+            $('#smileysarea').css({visibility: 'visible'});
             $('#usermsg').focus();
         }
     };
