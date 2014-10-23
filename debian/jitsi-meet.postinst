@@ -22,6 +22,12 @@ case "$1" in
 
         . /etc/default/jitsi-videobridge
 
+        # loading debconf
+        . /usr/share/debconf/confmodule
+
+        # stores the hostname so we will reuse it later, like in purge
+        db_set jitsi-meet/jvb-hostname $JVB_HOSTNAME
+
         # nginx conf
         if [ ! -f /etc/nginx/sites-available/$JVB_HOSTNAME.conf ]; then
             cp /usr/share/doc/jitsi-meet/jitsi-meet.example /etc/nginx/sites-available/$JVB_HOSTNAME.conf
@@ -36,9 +42,6 @@ case "$1" in
         fi
 
         if [ ! -f /etc/ssl/$JVB_HOSTNAME.key ] || [ ! -f /etc/ssl/$JVB_HOSTNAME.crt ]; then
-            # loading debconf
-            . /usr/share/debconf/confmodule
-
             # SSL for nginx
             db_get jitsi-meet/cert-choice
             CERT_CHOICE="$RET"
@@ -63,9 +66,6 @@ case "$1" in
                 sed -i "s/ssl_certificate\ \/var\/lib\/prosody\/.*crt/ssl_certificate\ $CERT_CRT_ESC/g" \
                     /etc/nginx/sites-available/$JVB_HOSTNAME.conf
             fi
-
-            # and we're done with debconf
-            db_stop
         fi
 
         # jitsi meet
@@ -74,6 +74,9 @@ case "$1" in
             cp /usr/share/doc/jitsi-meet/config.js $JITSI_MEET_CONFIG
             sed -i "s/jitsi-meet.example.com/$JVB_HOSTNAME/g" $JITSI_MEET_CONFIG
         fi
+
+        # and we're done with debconf
+        db_stop
 
         invoke-rc.d nginx reload
     ;;

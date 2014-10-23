@@ -28,8 +28,17 @@ case "$1" in
             invoke-rc.d nginx reload
         fi
     ;;
-
-    purge|upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)
+    purge)
+        db_get jitsi-meet/jvb-hostname
+        JVB_HOSTNAME=$RET
+        if [ -n "$RET" ]; then
+            #. /etc/default/jitsi-videobridge
+            rm -f /etc/jitsi/meet/$JVB_HOSTNAME-config.js
+            rm -f /etc/nginx/sites-available/$JVB_HOSTNAME.conf
+            rm -f /etc/nginx/sites-enabled/$JVB_HOSTNAME.conf
+        fi
+    ;;
+    upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)
     ;;
 
     *)
