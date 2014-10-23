@@ -71,7 +71,6 @@ case "$1" in
         # jitsi meet
         JITSI_MEET_CONFIG="/etc/jitsi/meet/$JVB_HOSTNAME-config.js"
         if [ ! -f $JITSI_MEET_CONFIG ]; then
-            mkdir -p /etc/jitsi/meet/
             cp /usr/share/doc/jitsi-meet/config.js $JITSI_MEET_CONFIG
             sed -i "s/jitsi-meet.example.com/$JVB_HOSTNAME/g" $JITSI_MEET_CONFIG
         fi
