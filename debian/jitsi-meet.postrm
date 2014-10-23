@@ -32,7 +32,6 @@ case "$1" in
         db_get jitsi-meet/jvb-hostname
         JVB_HOSTNAME=$RET
         if [ -n "$RET" ]; then
-            #. /etc/default/jitsi-videobridge
             rm -f /etc/jitsi/meet/$JVB_HOSTNAME-config.js
             rm -f /etc/nginx/sites-available/$JVB_HOSTNAME.conf
             rm -f /etc/nginx/sites-enabled/$JVB_HOSTNAME.conf

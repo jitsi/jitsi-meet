@@ -21,7 +21,7 @@ set -e
 case "$1" in
     configure)
 
-        . /etc/default/jitsi-videobridge
+        . /etc/jitsi/videobridge/config
 
         PROSODY_CONFIG_PRESENT="true"
         PROSODY_HOST_CONFIG="/etc/prosody/conf.avail/$JVB_HOSTNAME.cfg.lua"
