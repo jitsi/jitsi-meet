@@ -855,6 +855,10 @@ $(document).bind('passwordrequired.muc', function (event, jid) {
         '<input id="lockKey" type="text" placeholder="password" autofocus>',
         true,
         "Ok",
+        function (e, v, m, f) {},
+        function (event) {
+            document.getElementById('lockKey').focus();
+        },
         function (e, v, m, f) {
             if (v) {
                 var lockKey = document.getElementById('lockKey');
@@ -863,9 +867,6 @@ $(document).bind('passwordrequired.muc', function (event, jid) {
                     connection.emuc.doJoin(jid, lockKey.value);
                 }
             }
-        },
-        function (event) {
-            document.getElementById('lockKey').focus();
         }
     );
 });

@@ -24,8 +24,10 @@ var messageHandler = (function(my) {
      * @param leftButton the fist button's text
      * @param submitFunction function to be called on submit
      * @param loadedFunction function to be called after the prompt is fully loaded
+     * @param closeFunction function to be called after the prompt is closed
      */
-    my.openTwoButtonDialog = function(titleString, msgString, persistent, leftButton, submitFunction, loadedFunction) {
+    my.openTwoButtonDialog = function(titleString, msgString, persistent, leftButton,
+                                      submitFunction, loadedFunction, closeFunction) {
         var buttons = {};
         buttons[leftButton] = true;
         buttons.Cancel = false;
@@ -35,7 +37,8 @@ var messageHandler = (function(my) {
             buttons: buttons,
             defaultButton: 1,
             loaded: loadedFunction,
-            submit: submitFunction
+            submit: submitFunction,
+            close: closeFunction
         });
     };
 
