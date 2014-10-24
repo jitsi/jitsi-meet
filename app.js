@@ -1033,7 +1033,7 @@ function toggleRecording() {
     Toolbar.toggleRecordingButtonState();
     focus.setRecording(!oldState,
                         recordingToken,
-                        function (state, result) {
+                        function (state, path) {
                             console.log("New recording state: ", state);
 
                             if (state == oldState) //failed to change, reset the token because it might have been wrong
