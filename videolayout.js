@@ -141,9 +141,9 @@ var VideoLayout = (function (my) {
             var oldSrc = $('#largeVideo').attr('src');
             largeVideoState.oldJid = getJidFromVideoSrc(oldSrc);
 
-            var fade = false;
+            var userChanged = false;
             if (largeVideoState.oldJid != largeVideoState.userJid) {
-                fade = true;
+                userChanged = true;
                 // we want the notification to trigger even if userJid is undefined,
                 // or null.
                 $(document).trigger("selectedendpointchanged", [largeVideoState.userJid]);
@@ -154,7 +154,41 @@ var VideoLayout = (function (my) {
 
                 var doUpdate = function () {
 
-                    $('#largeVideo').attr('src', largeVideoState.newSrc);
+                    if (!userChanged && largeVideoState.preload
+                        && largeVideoState.preload != null
+                        && $(largeVideoState.preload).attr('src') == newSrc) {
+
+                        console.info('Switching to preloaded video');
+                        var attributes = $('#largeVideo').prop("attributes");
+
+                        // loop through largeVideo attributes and apply them on
+                        // preload.
+                        $.each(attributes, function () {
+                            if (this.name != 'id' && this.name != 'src') {
+                                largeVideoState.preload.attr(this.name, this.value);
+                            }
+                        });
+
+                        largeVideoState.preload.appendTo($('#largeVideoContainer'));
+                        $('#largeVideo').attr('id', 'previousLargeVideo');
+                        largeVideoState.preload.attr('id', 'largeVideo');
+                        $('#previousLargeVideo').remove();
+
+                        largeVideoState.preload.on('loadedmetadata', function (e) {
+                            currentVideoWidth = this.videoWidth;
+                            currentVideoHeight = this.videoHeight;
+                            VideoLayout.positionLarge(currentVideoWidth, currentVideoHeight);
+                        });
+                        largeVideoState.preload = null;
+                        largeVideoState.preload_ssrc = 0;
+                    } else {
+                        if (largeVideoState.preload
+                            && largeVideoState.preload != null) {
+                            $(largeVideoState.preload).remove();
+                            largeVideoState.preload_ssrc = 0;
+                        }
+                        $('#largeVideo').attr('src', largeVideoState.newSrc);
+                    }
 
                     var videoTransform = document.getElementById('largeVideo')
                         .style.webkitTransform;
@@ -191,7 +225,7 @@ var VideoLayout = (function (my) {
                         VideoLayout.enableDominantSpeaker(resourceJid, true);
                     }
 
-                    if (fade && largeVideoState.isVisible) {
+                    if (userChanged && largeVideoState.isVisible) {
                         // using "this" should be ok because we're called
                         // from within the fadeOut event.
                         $(this).fadeIn(300);
@@ -200,7 +234,7 @@ var VideoLayout = (function (my) {
                     largeVideoState.updateInProgress = false;
                 };
 
-                if (fade) {
+                if (userChanged) {
                     $('#largeVideo').fadeOut(300, doUpdate);
                 } else {
                     doUpdate();
@@ -1388,6 +1422,81 @@ var VideoLayout = (function (my) {
         }
     });
 
+    $(document).bind('simulcastlayerschanging', function (event, endpointSimulcastLayers) {
+        endpointSimulcastLayers.forEach(function (esl) {
+            var primarySSRC = esl.simulcastLayer.primarySSRC;
+            var msid = simulcast.getRemoteVideoStreamIdBySSRC(primarySSRC);
+
+            // Get session and stream from msid.
+            var session, electedStream;
+            var i, j, k;
+            if (connection.jingle) {
+                var keys = Object.keys(connection.jingle.sessions);
+                for (i = 0; i < keys.length; i++) {
+                    var sid = keys[i];
+
+                    if (electedStream) {
+                        // stream found, stop.
+                        break;
+                    }
+
+                    session = connection.jingle.sessions[sid];
+                    if (session.remoteStreams) {
+                        for (j = 0; j < session.remoteStreams.length; j++) {
+                            var remoteStream = session.remoteStreams[j];
+
+                            if (electedStream) {
+                                // stream found, stop.
+                                break;
+                            }
+                            var tracks = remoteStream.getVideoTracks();
+                            if (tracks) {
+                                for (k = 0; k < tracks.length; k++) {
+                                    var track = tracks[k];
+
+                                    if (msid === [remoteStream.id, track.id].join(' ')) {
+                                        electedStream = new webkitMediaStream([track]);
+                                        // stream found, stop.
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (session && electedStream) {
+                console.info('Switching simulcast substream.');
+                console.info([esl, primarySSRC, msid, session, electedStream]);
+
+                var msidParts = msid.split(' ');
+                var selRemoteVideo = $(['#', 'remoteVideo_', session.sid, '_', msidParts[0]].join(''));
+
+                var preload = (ssrc2jid[videoSrcToSsrc[selRemoteVideo.attr('src')]]
+                    == ssrc2jid[videoSrcToSsrc[largeVideoState.newSrc]]);
+
+                if (preload) {
+                    if (largeVideoState.preload)
+                    {
+                        $(largeVideoState.preload).remove();
+                    }
+                    console.info('Preloading remote video');
+                    largeVideoState.preload = $('<video autoplay></video>');
+                    // ssrcs are unique in an rtp session
+                    largeVideoState.preload_ssrc = primarySSRC;
+
+                    var electedStreamUrl = webkitURL.createObjectURL(electedStream);
+                    largeVideoState.preload
+                        .attr('src', electedStreamUrl);
+                }
+
+            } else {
+                console.error('Could not find a stream or a session.', session, electedStream);
+            }
+        });
+    });
+
     /**
      * On simulcast layers changed event.
      */
@@ -1447,7 +1556,16 @@ var VideoLayout = (function (my) {
                     == ssrc2jid[videoSrcToSsrc[largeVideoState.newSrc]]);
                 var updateFocusedVideoSrc = (selRemoteVideo.attr('src') == focusedVideoSrc);
 
-                var electedStreamUrl = webkitURL.createObjectURL(electedStream);
+                var electedStreamUrl;
+                if (largeVideoState.preload_ssrc == primarySSRC)
+                {
+                    electedStreamUrl = $(largeVideoState.preload).attr('src');
+                }
+                else
+                {
+                    electedStreamUrl = webkitURL.createObjectURL(electedStream);
+                }
+
                 selRemoteVideo.attr('src', electedStreamUrl);
                 videoSrcToSsrc[selRemoteVideo.attr('src')] = primarySSRC;
 

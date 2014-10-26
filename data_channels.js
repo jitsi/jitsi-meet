@@ -97,6 +97,11 @@ function onDataChannel(event)
                 var endpointSimulcastLayers = obj.endpointSimulcastLayers;
                 $(document).trigger('simulcastlayerschanged', [endpointSimulcastLayers]);
             }
+            else if ("SimulcastLayersChangingEvent" === colibriClass)
+            {
+                var endpointSimulcastLayers = obj.endpointSimulcastLayers;
+                $(document).trigger('simulcastlayerschanging', [endpointSimulcastLayers]);
+            }
             else if ("StartSimulcastLayerEvent" === colibriClass)
             {
                 var simulcastLayer = obj.simulcastLayer;
