@@ -182,11 +182,6 @@ var VideoLayout = (function (my) {
                         largeVideoState.preload = null;
                         largeVideoState.preload_ssrc = 0;
                     } else {
-                        if (largeVideoState.preload
-                            && largeVideoState.preload != null) {
-                            $(largeVideoState.preload).remove();
-                            largeVideoState.preload_ssrc = 0;
-                        }
                         $('#largeVideo').attr('src', largeVideoState.newSrc);
                     }
 
@@ -1467,7 +1462,6 @@ var VideoLayout = (function (my) {
             }
 
             if (session && electedStream) {
-                console.info('Switching simulcast substream.');
                 console.info([esl, primarySSRC, msid, session, electedStream]);
 
                 var msidParts = msid.split(' ');
@@ -1563,6 +1557,13 @@ var VideoLayout = (function (my) {
                 }
                 else
                 {
+                    if (largeVideoState.preload
+                        && largeVideoState.preload != null) {
+                        $(largeVideoState.preload).remove();
+                    }
+
+                    largeVideoState.preload_ssrc = 0;
+
                     electedStreamUrl = webkitURL.createObjectURL(electedStream);
                 }
 
