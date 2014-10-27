@@ -370,7 +370,7 @@ var Chat = (function (my) {
             var leftIndent = (Util.getTextWidth(chatButtonElement) -
                 Util.getTextWidth(unreadMsgElement)) / 2;
             var topIndent = (Util.getTextHeight(chatButtonElement) -
-                Util.getTextHeight(unreadMsgElement)) / 2 - 2;
+                Util.getTextHeight(unreadMsgElement)) / 2 - 3;
 
             unreadMsgElement.setAttribute(
                 'style',
@@ -382,7 +382,7 @@ var Chat = (function (my) {
             var bottomLeftIndent = (Util.getTextWidth(chatBottomButtonElement) -
                 Util.getTextWidth(unreadMsgBottomElement)) / 2;
             var bottomTopIndent = (Util.getTextHeight(chatBottomButtonElement) -
-                Util.getTextHeight(unreadMsgBottomElement)) / 2 - 3;
+                Util.getTextHeight(unreadMsgBottomElement)) / 2 - 2;
 
             unreadMsgBottomElement.setAttribute(
                 'style',
