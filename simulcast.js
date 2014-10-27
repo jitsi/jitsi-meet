@@ -250,6 +250,7 @@ SimulcastReceiver.prototype._ensureGoogConference = function (lines) {
     this.logger.info('Ensuring x-google-conference flag...')
 
     if (this.simulcastUtils._indexOfArray('a=x-google-flag:conference', lines) === this.simulcastUtils._emptyCompoundIndex) {
+        // TODO(gp) do that for the audio as well as suggested by fippo.
         // Add the google conference flag
         sb = this.simulcastUtils._getVideoSources(lines);
         sb = ['a=x-google-flag:conference'].concat(sb);
@@ -945,7 +946,11 @@ function SimulcastManager() {
 
         var isChromium = window.chrome,
             vendorName = window.navigator.vendor;
-        if(isChromium !== null && isChromium !== undefined && vendorName === "Google Inc.") {
+        if(isChromium !== null && isChromium !== undefined
+            /* skip opera */
+            && vendorName === "Google Inc."
+            /* skip Chromium as suggested by fippo */
+            && !window.navigator.appVersion.match(/Chromium\//) ) {
             var ver = parseInt(window.navigator.appVersion.match(/Chrome\/(\d+)\./)[1], 10);
             if (ver > 37) {
                 this.simulcastSender = new NativeSimulcastSender();
