@@ -1274,17 +1274,27 @@ var VideoLayout = (function (my) {
      */
     $(document).bind('displaynamechanged',
                     function (event, jid, displayName, status) {
+        var name = null;
         if (jid === 'localVideoContainer'
             || jid === connection.emuc.myroomjid) {
+            name = nickname;
             setDisplayName('localVideoContainer',
                            displayName);
         } else {
             VideoLayout.ensurePeerContainerExists(jid);
-
+            name = $('#participant_' + Strophe.getResourceFromJid(jid) + "_name").text();
             setDisplayName(
                 'participant_' + Strophe.getResourceFromJid(jid),
                 displayName,
                 status);
+        }
+
+        if(APIConnector.isEnabled() && APIConnector.isEventEnabled("displayNameChange"))
+        {
+            if(jid === 'localVideoContainer')
+                jid = connection.emuc.myroomjid;
+            if(!name || name != displayName)
+                APIConnector.triggerEvent("displayNameChange",{jid: jid, displayname: displayName});
         }
     });
 

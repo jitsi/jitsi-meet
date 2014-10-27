@@ -698,6 +698,11 @@ $(document).bind('entered.muc', function (event, jid, info, pres) {
     // Add Peer's container
     VideoLayout.ensurePeerContainerExists(jid);
 
+    if(APIConnector.isEnabled() && APIConnector.isEventEnabled("participantJoined"))
+    {
+        APIConnector.triggerEvent("participantJoined",{jid: jid});
+    }
+
     if (focus !== null) {
         // FIXME: this should prepare the video
         if (focus.confid === null) {
@@ -733,6 +738,11 @@ $(document).bind('left.muc', function (event, jid) {
             VideoLayout.resizeThumbnails();
         }
     }, 10);
+
+    if(APIConnector.isEnabled() && APIConnector.isEventEnabled("participantLeft"))
+    {
+        APIConnector.triggerEvent("participantLeft",{jid: jid});
+    }
 
     // Unlock large video
     if (focusedVideoSrc)

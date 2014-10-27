@@ -33,6 +33,7 @@ Controlling embedded Jitsi Meet Conference
 =========
 
 You can control the embedded Jitsi Meet conference using the JitsiMeetExternalAPI object.
+
 You can send command to Jitsi Meet conference using ```executeCommand```. 
 ```
 api.executeCommand(command, arguments)
@@ -56,9 +57,17 @@ api.executeCommand('muteAudio', [])
 ```
 api.executeCommand('muteVideo', [])
 ```
-* **filmStrip** - hides / shows the film strip. No arguments are required.
+* **toggleFilmStrip** - hides / shows the film strip. No arguments are required.
 ```
 api.executeCommand('filmStrip', [])
+```
+* **toggleChat** - hides / shows the chat. No arguments are required.
+```
+api.executeCommand('toggleChat', [])
+```
+* **toggleContactList** - hides / shows the contact list. No arguments are required.
+```
+api.executeCommand('toggleContactList', [])
 ```
 
 You can also execute multiple commands using the method ```executeCommands```. 
@@ -72,7 +81,87 @@ commands.
 api.executeCommands({displayName: ['nickname'], muteAudio: []});
 ```
 
-You can also remove the embedded Jitsi Meet Conference with the following code:
+You can add event listeners to the embedded Jitsi Meet using ```addEventListener``` method.
+```
+api.addEventListener(event, listener)
+```
+The ```event``` parameter is String object with the name of the event.
+The ```listener``` paramenter is Function object with one argument that will be notified when the event occurs
+with data related to the event.
+
+Currently we support the following events:
+
+* **incommingMessage** - event notifications about incomming
+messages. The listener will receive object with the following structure:
+```
+{
+"from": from,//JID of the user that sent the message
+"nick": nick,//the nickname of the user that sent the message
+"message": txt//the text of the message
+}
+```
+* **outgoingMessage** - event notifications about outgoing
+messages. The listener will receive object with the following structure:
+```
+{
+"message": txt//the text of the message
+}
+```
+* **displayNameChanged** - event notifications about display name
+change. The listener will receive object with the following structure:
+```
+{
+jid: jid,//the JID of the participant that changed his display name
+displayname: displayName //the new display name
+}
+```
+* **participantJoined** - event notifications about new participant.
+The listener will receive object with the following structure:
+```
+{
+jid: jid //the jid of the participant
+}
+```
+* **participantLeft** - event notifications about participant that left room.
+The listener will receive object with the following structure:
+```
+{
+jid: jid //the jid of the participant
+}
+```
+
+You can also add multiple event listeners by using ```addEventListeners```.
+This method requires one argument of type Object. The object argument must 
+have keys with the names of the events and values the listeners of the events.
+
+```
+function incommingMessageListener(object)
+{
+...
+}
+
+function outgoingMessageListener(object)
+{
+...
+}
+
+api.addEventListeners({
+    incommingMessage: incommingMessageListener,
+    outgoingMessage: outgoingMessageListener})
+```
+
+If you want to remove a listener you can use ```removeEventListener``` method with argument the name of the event.
+```
+api.removeEventListener("incommingMessage");
+```
+
+If you want to remove more than one event you can use ```removeEventListeners``` method with argument
+ array with the names of the events.
+```
+api.removeEventListeners(["incommingMessage", "outgoingMessageListener"]);
+```
+
+You can remove the embedded Jitsi Meet Conference with the following code:
 ```
 api.dispose()
 ```

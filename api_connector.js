@@ -21,7 +21,30 @@ var APIConnector = (function () {
         displayName: VideoLayout.inputDisplayNameHandler,
         muteAudio: toggleAudio,
         muteVideo: toggleVideo,
-        filmStrip: BottomToolbar.toggleFilmStrip
+        toggleFilmStrip: BottomToolbar.toggleFilmStrip,
+        toggleChat: BottomToolbar.toggleChat,
+        toggleContactList: BottomToolbar.toggleContactList
+    };
+
+
+    /**
+     * Maps the supported events and their status
+     * (true it the event is enabled and false if it is disabled)
+     * @type {{
+     *              incommingMessage: boolean,
+     *              outgoingMessage: boolean,
+     *              displayNameChange: boolean,
+     *              participantJoined: boolean,
+     *              participantLeft: boolean
+     *      }}
+     */
+    var events =
+    {
+        incommingMessage: false,
+        outgoingMessage:false,
+        displayNameChange: false,
+        participantJoined: false,
+        participantLeft: false
     };
 
     /**
@@ -51,7 +74,7 @@ var APIConnector = (function () {
         {
             window.attachEvent('onmessage', APIConnector.processMessage);
         }
-        APIConnector.sendMessage({loaded: true});
+        APIConnector.sendMessage({type: "system", loaded: true});
     };
 
     /**
@@ -72,12 +95,91 @@ var APIConnector = (function () {
         try {
             message = JSON.parse(event.data);
         } catch (e) {}
+
+        if(!message.type)
+            return;
+        switch (message.type)
+        {
+            case "command":
+                APIConnector.processCommand(message);
+                break;
+            case "event":
+                APIConnector.processEvent(message);
+                break;
+            default:
+                console.error("Unknown type of the message");
+                return;
+        }
+
+    };
+
+    /**
+     * Processes commands from external applicaiton.
+     * @param message the object with the command
+     */
+    APIConnector.processCommand = function (message)
+    {
+        if(message.action != "execute")
+        {
+            console.error("Unknown action of the message");
+            return;
+        }
         for(var key in message)
         {
             if(commands[key])
                 commands[key].apply(null, message[key]);
         }
+    };
 
+    /**
+     * Processes events objects from external applications
+     * @param event the event
+     */
+    APIConnector.processEvent = function (event) {
+        if(!event.action)
+        {
+            console.error("Event with no action is received.");
+            return;
+        }
+
+        switch(event.action)
+        {
+            case "add":
+                for(var i = 0; i < event.events.length; i++)
+                {
+                    events[event.events[i]] = true;
+                }
+                break;
+            case "remove":
+                for(var i = 0; i < event.events.length; i++)
+                {
+                    events[event.events[i]] = false;
+                }
+                break;
+            default:
+                console.error("Unknown action for event.");
+        }
+
+    };
+
+    /**
+     * Checks whether the event is enabled ot not.
+     * @param name the name of the event.
+     * @returns {*}
+     */
+    APIConnector.isEventEnabled = function (name) {
+        return events[name];
+    };
+
+    /**
+     * Sends event object to the external application that has been subscribed
+     * for that event.
+     * @param name the name event
+     * @param object data associated with the event
+     */
+    APIConnector.triggerEvent = function (name, object) {
+        APIConnector.sendMessage({
+            type: "event", action: "result", event: name, result: object});
     };
 
     /**

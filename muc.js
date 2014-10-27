@@ -201,6 +201,10 @@ Strophe.addConnectionPlugin('emuc', {
             msg.c('nick', {xmlns: 'http://jabber.org/protocol/nick'}).t(nickname).up().up();
         }
         this.connection.send(msg);
+        if(APIConnector.isEnabled() && APIConnector.isEventEnabled("outgoingMessage"))
+        {
+            APIConnector.triggerEvent("outgoingMessage", {"message": body});
+        }
     },
     setSubject: function (subject){
         var msg = $msg({to: this.roomjid, type: 'groupchat'});
@@ -234,8 +238,13 @@ Strophe.addConnectionPlugin('emuc', {
 
         if (txt) {
             console.log('chat', nick, txt);
-
             Chat.updateChatConversation(from, nick, txt);
+            if(APIConnector.isEnabled() && APIConnector.isEventEnabled("incommingMessage"))
+            {
+                if(from != this.myroomjid)
+                    APIConnector.triggerEvent("incommingMessage",
+                        {"from": from, "nick": nick, "message": txt});
+            }
         }
         return true;
     },
