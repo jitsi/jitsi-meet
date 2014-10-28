@@ -719,9 +719,6 @@ $(document).bind('entered.muc', function (event, jid, info, pres) {
             focus.addNewParticipant(jid);
         }
     }
-    else if (sharedKey) {
-        Toolbar.updateLockButton();
-    }
 });
 
 $(document).bind('left.muc', function (event, jid) {
@@ -859,6 +856,9 @@ $(document).bind('presence.status.muc', function (event, jid, info, pres) {
 
 $(document).bind('passwordrequired.muc', function (event, jid) {
     console.log('on password required', jid);
+
+    // password is required
+    Toolbar.lockLockButton();
 
     messageHandler.openTwoButtonDialog(null,
         '<h2>Password required</h2>' +

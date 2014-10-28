@@ -209,6 +209,13 @@ var Toolbar = (function (my) {
     my.updateLockButton = function() {
         buttonClick("#lockIcon", "icon-security icon-security-locked");
     };
+    /**
+     * Updates the lock button state to locked.
+     */
+    my.lockLockButton = function() {
+        if($("#lockIcon").hasClass("icon-security"))
+            buttonClick("#lockIcon", "icon-security icon-security-locked");
+    };
 
     // Shows or hides the 'recording' button.
     my.showRecordingButton = function (show) {
