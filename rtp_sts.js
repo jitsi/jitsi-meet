@@ -1,11 +1,14 @@
 /* global ssrc2jid */
 /**
- * Calculates packet lost percent using the number of lost packets and the number of all packet.
+ * Calculates packet lost percent using the number of lost packets and the
+ * number of all packet.
  * @param lostPackets the number of lost packets
  * @param totalPackets the number of all packets.
  * @returns {number} packet loss percent
  */
 function calculatePacketLoss(lostPackets, totalPackets) {
+    if(!totalPackets || totalPackets <= 0 || !lostPackets || lostPackets <= 0)
+        return 0;
     return Math.round((lostPackets/totalPackets)*100);
 }
 
@@ -60,11 +63,11 @@ PeerStats.prototype.setSsrcLoss = function (ssrc, lossRate)
  */
 PeerStats.prototype.setSsrcResolution = function (ssrc, resolution)
 {
-    if(resolution == null && this.ssrc2resolution[ssrc])
+    if(resolution === null && this.ssrc2resolution[ssrc])
     {
         delete this.ssrc2resolution[ssrc];
     }
-    else if(resolution != null)
+    else if(resolution !== null)
         this.ssrc2resolution[ssrc] = resolution;
 };
 
@@ -103,16 +106,18 @@ PeerStats.transport = [];
  * <tt>StatsCollector</tt> registers for stats updates of given
  * <tt>peerconnection</tt> in given <tt>interval</tt>. On each update particular
  * stats are extracted and put in {@link PeerStats} objects. Once the processing
- * is done <tt>audioLevelsUpdateCallback</tt> is called with <tt>this</tt> instance as
- * an event source.
+ * is done <tt>audioLevelsUpdateCallback</tt> is called with <tt>this</tt>
+ * instance as an event source.
  *
  * @param peerconnection webRTC peer connection object.
  * @param interval stats refresh interval given in ms.
- * @param {function(StatsCollector)} audioLevelsUpdateCallback the callback called on stats
- *                                   update.
+ * @param {function(StatsCollector)} audioLevelsUpdateCallback the callback
+ * called on stats update.
  * @constructor
  */
-function StatsCollector(peerconnection, audioLevelsInterval, audioLevelsUpdateCallback, statsInterval, statsUpdateCallback)
+function StatsCollector(peerconnection, audioLevelsInterval,
+                        audioLevelsUpdateCallback, statsInterval,
+                        statsUpdateCallback)
 {
     this.peerconnection = peerconnection;
     this.baselineAudioLevelsReport = null;
@@ -173,7 +178,8 @@ StatsCollector.prototype.start = function ()
                     //console.error("Got interval report", results);
                     self.currentAudioLevelsReport = results;
                     self.processAudioLevelReport();
-                    self.baselineAudioLevelsReport = self.currentAudioLevelsReport;
+                    self.baselineAudioLevelsReport =
+                        self.currentAudioLevelsReport;
                 },
                 self.errorCallback
             );
@@ -211,10 +217,14 @@ StatsCollector.prototype.processStatsReport = function () {
 
     for (var idx in this.currentStatsReport) {
         var now = this.currentStatsReport[idx];
-        if (now.stat('googAvailableReceiveBandwidth') || now.stat('googAvailableSendBandwidth')) {
+        if (now.stat('googAvailableReceiveBandwidth') ||
+            now.stat('googAvailableSendBandwidth'))
+        {
             PeerStats.bandwidth = {
-                "download": Math.round((now.stat('googAvailableReceiveBandwidth')) / 1000),
-                "upload": Math.round((now.stat('googAvailableSendBandwidth')) / 1000)
+                "download": Math.round(
+                        (now.stat('googAvailableReceiveBandwidth')) / 1000),
+                "upload": Math.round(
+                        (now.stat('googAvailableSendBandwidth')) / 1000)
             };
         }
 
@@ -229,7 +239,8 @@ StatsCollector.prototype.processStatsReport = function () {
             var addressSaved = false;
             for(var i = 0; i < PeerStats.transport.length; i++)
             {
-                if(PeerStats.transport[i].ip == ip && PeerStats.transport[i].type == type &&
+                if(PeerStats.transport[i].ip == ip &&
+                    PeerStats.transport[i].type == type &&
                     PeerStats.transport[i].localip == localIP)
                 {
                     addressSaved = true;
@@ -241,7 +252,6 @@ StatsCollector.prototype.processStatsReport = function () {
             continue;
         }
 
-//            console.log("bandwidth: " + now.stat('googAvailableReceiveBandwidth') + " - " + now.stat('googAvailableSendBandwidth'));
         if (now.type != 'ssrc') {
             continue;
         }
@@ -287,7 +297,8 @@ StatsCollector.prototype.processStatsReport = function () {
         if(!packetsBefore || packetsBefore < 0)
             packetsBefore = 0;
         var packetRate = packetsNow - packetsBefore;
-
+        if(!packetRate || packetRate < 0)
+            packetRate = 0;
         var currentLoss = now.stat('packetsLost');
         if(!currentLoss || currentLoss < 0)
             currentLoss = 0;
@@ -295,17 +306,20 @@ StatsCollector.prototype.processStatsReport = function () {
         if(!previousLoss || previousLoss < 0)
             previousLoss = 0;
         var lossRate = currentLoss - previousLoss;
-        if(lossRate < 0)
+        if(!lossRate || lossRate < 0)
             lossRate = 0;
         var packetsTotal = (packetRate + lossRate);
 
-        jidStats.setSsrcLoss(ssrc, {"packetsTotal": packetsTotal, "packetsLost": lossRate,
-            "isDownloadStream": isDownloadStream});
+        jidStats.setSsrcLoss(ssrc,
+            {"packetsTotal": packetsTotal,
+                "packetsLost": lossRate,
+                "isDownloadStream": isDownloadStream});
 
         var bytesReceived = 0, bytesSent = 0;
         if(now.stat("bytesReceived"))
         {
-            bytesReceived = now.stat("bytesReceived") - before.stat("bytesReceived");
+            bytesReceived = now.stat("bytesReceived") -
+                before.stat("bytesReceived");
         }
 
         if(now.stat("bytesSent"))
@@ -313,22 +327,37 @@ StatsCollector.prototype.processStatsReport = function () {
             bytesSent = now.stat("bytesSent") - before.stat("bytesSent");
         }
 
-        if(bytesReceived < 0)
-            bytesReceived = 0;
-        if(bytesSent < 0)
-            bytesSent = 0;
-
         var time = Math.round((now.timestamp - before.timestamp) / 1000);
+        if(bytesReceived <= 0 || time <= 0)
+        {
+            bytesReceived = 0;
+        }
+        else
+        {
+            bytesReceived = Math.round(((bytesReceived * 8) / time) / 1000);
+        }
+
+        if(bytesSent <= 0 || time <= 0)
+        {
+            bytesSent = 0;
+        }
+        else
+        {
+            bytesSent = Math.round(((bytesSent * 8) / time) / 1000);
+        }
+
         jidStats.setSsrcBitrate(ssrc, {
-            "download": Math.round(((bytesReceived * 8) / time) / 1000),
-            "upload": Math.round(((bytesSent * 8) / time) / 1000)});
+            "download": bytesReceived,
+            "upload": bytesSent});
         var resolution = {height: null, width: null};
-        if(now.stat("googFrameHeightReceived") && now.stat("googFrameWidthReceived"))
+        if(now.stat("googFrameHeightReceived") &&
+            now.stat("googFrameWidthReceived"))
         {
             resolution.height = now.stat("googFrameHeightReceived");
             resolution.width = now.stat("googFrameWidthReceived");
         }
-        else if(now.stat("googFrameHeightSent") && now.stat("googFrameWidthSent"))
+        else if(now.stat("googFrameHeightSent") &&
+            now.stat("googFrameWidthSent"))
         {
             resolution.height = now.stat("googFrameHeightSent");
             resolution.width = now.stat("googFrameWidthSent");
@@ -352,7 +381,7 @@ StatsCollector.prototype.processStatsReport = function () {
     var lostPackets = {download: 0, upload: 0};
     var bitrateDownload = 0;
     var bitrateUpload = 0;
-    var resolution = {};
+    var resolutions = {};
     Object.keys(this.jid2stats).forEach(
         function (jid)
         {
@@ -362,17 +391,21 @@ StatsCollector.prototype.processStatsReport = function () {
                     var type = "upload";
                     if(self.jid2stats[jid].ssrc2Loss[ssrc].isDownloadStream)
                         type = "download";
-                    totalPackets[type] += self.jid2stats[jid].ssrc2Loss[ssrc].packetsTotal;
-                    lostPackets[type] += self.jid2stats[jid].ssrc2Loss[ssrc].packetsLost;
+                    totalPackets[type] +=
+                        self.jid2stats[jid].ssrc2Loss[ssrc].packetsTotal;
+                    lostPackets[type] +=
+                        self.jid2stats[jid].ssrc2Loss[ssrc].packetsLost;
                 }
             );
             Object.keys(self.jid2stats[jid].ssrc2bitrate).forEach(
                 function (ssrc) {
-                    bitrateDownload += self.jid2stats[jid].ssrc2bitrate[ssrc].download;
-                    bitrateUpload += self.jid2stats[jid].ssrc2bitrate[ssrc].upload;
+                    bitrateDownload +=
+                        self.jid2stats[jid].ssrc2bitrate[ssrc].download;
+                    bitrateUpload +=
+                        self.jid2stats[jid].ssrc2bitrate[ssrc].upload;
                 }
             );
-            resolution[jid] = self.jid2stats[jid].ssrc2resolution;
+            resolutions[jid] = self.jid2stats[jid].ssrc2resolution;
         }
     );
 
@@ -392,12 +425,12 @@ StatsCollector.prototype.processStatsReport = function () {
             "bitrate": PeerStats.bitrate,
             "packetLoss": PeerStats.packetLoss,
             "bandwidth": PeerStats.bandwidth,
-            "resolution": resolution,
+            "resolution": resolutions,
             "transport": PeerStats.transport
         });
     PeerStats.transport = [];
 
-}
+};
 
 /**
  * Stats processing logic.
