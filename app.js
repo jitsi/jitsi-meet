@@ -1413,8 +1413,6 @@ function lockRoom(lock) {
         connection.emuc.lockRoom(sharedKey);
     else
         connection.emuc.lockRoom('');
-
-    Toolbar.updateLockButton();
 }
 
 /**

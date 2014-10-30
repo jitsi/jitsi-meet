@@ -263,19 +263,31 @@ Strophe.addConnectionPlugin('emuc', {
                     // FIXME: is muc#roomconfig_passwordprotectedroom required?
                     this.connection.sendIQ(formsubmit,
                         function (res) {
-                            console.log('set room password');
+                            // password is required
+                            if (sharedKey)
+                            {
+                                console.log('set room password');
+                                Toolbar.lockLockButton();
+                            }
+                            else
+                            {
+                                console.log('removed room password');
+                                Toolbar.unlockLockButton();
+                            }
                         },
                         function (err) {
                             console.warn('setting password failed', err);
                             messageHandler.showError('Lock failed',
                                 'Failed to lock conference.',
                                 err);
+                            setSharedKey('');
                         }
                     );
                 } else {
                     console.warn('room passwords not supported');
                     messageHandler.showError('Warning',
                         'Room passwords are currently not supported.');
+                    setSharedKey('');
 
                 }
             },
@@ -284,6 +296,7 @@ Strophe.addConnectionPlugin('emuc', {
                 messageHandler.showError('Lock failed',
                     'Failed to lock conference.',
                     err);
+                setSharedKey('');
             }
         );
     },

@@ -204,10 +204,11 @@ var Toolbar = (function (my) {
         }
     };
     /**
-     * Updates the lock button state.
+     * Unlocks the lock button state.
      */
-    my.updateLockButton = function() {
-        buttonClick("#lockIcon", "icon-security icon-security-locked");
+    my.unlockLockButton = function() {
+        if($("#lockIcon").hasClass("icon-security-locked"))
+            buttonClick("#lockIcon", "icon-security icon-security-locked");
     };
     /**
      * Updates the lock button state to locked.
