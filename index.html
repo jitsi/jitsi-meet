@@ -29,13 +29,14 @@
     <script src="libs/tooltip.js?v=1"></script><!-- bootstrap tooltip lib -->
     <script src="libs/popover.js?v=1"></script><!-- bootstrap tooltip lib -->
     <script src="interface_config.js?v=3"></script>
+    <script src="libs/toastr.js?v=1"></script><!-- notifications lib -->
     <script src="muc.js?v=16"></script><!-- simple MUC library -->
     <script src="estos_log.js?v=2"></script><!-- simple stanza logger -->
     <script src="desktopsharing.js?v=3"></script><!-- desktop sharing -->
     <script src="data_channels.js?v=3"></script><!-- data channels -->
     <script src="app.js?v=20"></script><!-- application logic -->
     <script src="commands.js?v=1"></script><!-- application logic -->
-    <script src="chat.js?v=13"></script><!-- chat logic -->
+    <script src="chat.js?v=14"></script><!-- chat logic -->
     <script src="contact_list.js?v=5"></script><!-- contact list logic -->
     <script src="util.js?v=6"></script><!-- utility functions -->
     <script src="etherpad.js?v=9"></script><!-- etherpad plugin -->
@@ -46,7 +47,7 @@
     <script src="analytics.js?v=1"></script><!-- google analytics plugin -->
     <script src="rtp_sts.js?v=5"></script><!-- RTP stats processing -->
     <script src="local_sts.js?v=2"></script><!-- Local stats processing -->
-    <script src="videolayout.js?v=24"></script><!-- video ui -->
+    <script src="videolayout.js?v=25"></script><!-- video ui -->
     <script src="connectionquality.js?v=1"></script>
     <script src="toolbar.js?v=6"></script><!-- toolbar ui -->
     <script src="toolbar_toggler.js?v=2"></script>
@@ -58,17 +59,18 @@
     <script src="keyboard_shortcut.js?v=3"></script>
     <script src="tracking.js?v=1"></script><!-- tracking -->
     <script src="jitsipopover.js?v=3"></script>
-    <script src="message_handler.js?v=1"></script>
+    <script src="message_handler.js?v=2"></script>
     <script src="api_connector.js?v=2"></script>
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
     <link rel="stylesheet" href="css/font.css?v=5"/>
+    <link rel="stylesheet" href="css/toastr.css?v=1">
     <link rel="stylesheet" type="text/css" media="screen" href="css/main.css?v=29"/>
     <link rel="stylesheet" type="text/css" media="screen" href="css/videolayout_default.css?v=13" id="videolayout_default"/>
     <link rel="stylesheet" href="css/jquery-impromptu.css?v=4">
     <link rel="stylesheet" href="css/modaldialog.css?v=3">
     <link rel="stylesheet" href="css/popup_menu.css?v=4">
     <link rel="stylesheet" href="css/popover.css?v=2">
-      <link rel="stylesheet" href="css/jitsi_popover.css?v=2">
+    <link rel="stylesheet" href="css/jitsi_popover.css?v=2">
     <link rel="stylesheet" href="css/contact_list.css?v=3">
     <link rel="stylesheet" href="css/chat.css?v=5">
     <link rel="stylesheet" href="css/welcome_page.css?v=2">
@@ -318,6 +320,7 @@
             </ul>
         </div>
         <a id="downloadlog" onclick='dump(event.target);' data-container="body" data-toggle="popover" data-placement="right" data-content="Download logs" ><i class="fa fa-cloud-download"></i></a>
+        <span id="poweredby">Powered by jitsi.org</span>
     </div>
   </body>
 </html>

@@ -214,9 +214,13 @@ var Chat = (function (my) {
         );
 
         if (Chat.isVisible()) {
+            $("#toast-container").animate({right: '5px'},
+                                {queue: false,
+                                duration: 500});
             chatspace.hide("slide", { direction: "right",
                                             queue: false,
                                             duration: 500});
+
         }
         else {
             // Undock the toolbar when the chat is shown and if we're in a 
@@ -225,6 +229,10 @@ var Chat = (function (my) {
                 ToolbarToggler.dockToolbar(false);
             }
 
+
+            $("#toast-container").animate({right: (chatSize[0] + 5) + 'px'},
+                {queue: false,
+                    duration: 500});
             chatspace.show("slide", { direction: "right",
                                             queue: false,
                                             duration: 500,
@@ -237,6 +245,7 @@ var Chat = (function (my) {
                                                 }
                                             }
             });
+
             Chat.resizeChat();
         }
 

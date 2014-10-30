@@ -1363,6 +1363,12 @@ var VideoLayout = (function (my) {
             if (resourceJid
                 && lastNEndpoints.indexOf(resourceJid) < 0) {
                 console.log("Remove from last N", resourceJid);
+                var jid = connection.emuc.findJidFromResource(resourceJid);
+                messageHandler.notify(
+                    connection.emuc.members[jid].displayName || 'Somebody',
+                    'lastN',
+                    'is out of dominant speakers'
+                );
                 showPeerContainer(resourceJid, false);
             }
         });
@@ -1375,6 +1381,11 @@ var VideoLayout = (function (my) {
 
                 if (!$('#participant_' + resourceJid).is(':visible')) {
                     console.log("Add to last N", resourceJid);
+                    var jid = connection.emuc.findJidFromResource(resourceJid);
+                    messageHandler.notify(
+                        connection.emuc.members[jid].displayName || 'Somebody',
+                        'lastN',
+                        'is in dominant speakers');
                     showPeerContainer(resourceJid, true);
 
                     mediaStreams.some(function (mediaStream) {

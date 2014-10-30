@@ -106,6 +106,16 @@ var messageHandler = (function(my) {
         messageHandler.openMessageDialog(title, message);
     };
 
+    my.notify = function(displayName, cls, message) {
+        toastr.info(
+            '<span class="nickname">' +
+                displayName +
+            '</span><br>' +
+            '<span class=' + cls + '>' +
+                message +
+            '</span>');
+    };
+
     return my;
 }(messageHandler || {}));
 

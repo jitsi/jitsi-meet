@@ -158,6 +158,9 @@ var ContactList = (function (my) {
                                     });
 
         if (ContactList.isVisible()) {
+            $("#toast-container").animate({right: '12px'},
+                {queue: false,
+                    duration: 500});
             $('#contactlist').hide("slide", { direction: "right",
                                             queue: false,
                                             duration: 500});
@@ -167,6 +170,10 @@ var ContactList = (function (my) {
             if (VideoLayout.isLargeVideoVisible())
                 ToolbarToggler.dockToolbar(false);
 
+
+            $("#toast-container").animate({right: '212px'},
+                {queue: false,
+                    duration: 500});
             $('#contactlist').show("slide", { direction: "right",
                                             queue: false,
                                             duration: 500});

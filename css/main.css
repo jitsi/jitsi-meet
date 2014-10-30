@@ -311,3 +311,56 @@ form {
     text-decoration: none;
     z-index: 100;
 }
+
+#toast-container.notification-bottom-right {
+    bottom: 120px;
+    right: 5px;
+}
+
+#toast-container.notification-bottom-right-center {
+    right: 205px;
+}
+
+#toast-container .toast-info {
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+.toast-close-button {
+    right: -7px;
+    top: -19px;
+}
+
+#toast-container .toast-info {
+    background-color: black;
+    border: 1px solid #3a3a3a;
+    width: 220px;
+    padding: 10px 10px 10px 50px;
+}
+
+.connected {
+    color: forestgreen;
+    font-size: 12px;
+}
+
+.disconnected {
+    color: darkred;
+    font-size: 12px;
+}
+
+.lastN {
+    color: #a3a3a3;
+    font-size: 12px;
+}
+
+.toast-close-button:hover,
+.toast-close-button:focus {
+    color: #ffffff;
+    opacity: 1;
+    -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
+    filter: alpha(opacity=100);
+}
+
+.toast-message .nickname {
+    font-weight: bold;
+}
