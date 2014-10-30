@@ -685,9 +685,12 @@ $(document).bind('joined.muc', function (event, jid, info) {
     // Once we've joined the muc show the toolbar
     ToolbarToggler.showToolbar();
 
-    if (info.displayName)
+    var displayName = !config.displayJids
+        ? info.displayName : Strophe.getResourceFromJid(jid);
+
+    if (displayName)
         $(document).trigger('displaynamechanged',
-                            ['localVideoContainer', info.displayName + ' (me)']);
+                            ['localVideoContainer', displayName + ' (me)']);
 });
 
 $(document).bind('entered.muc', function (event, jid, info, pres) {
@@ -830,9 +833,12 @@ $(document).bind('presence.muc', function (event, jid, info, pres) {
         }
     });
 
-    if (info.displayName && info.displayName.length > 0)
+    var displayName = !config.displayJids
+        ? info.displayName : Strophe.getResourceFromJid(jid);
+
+    if (displayName && displayName.length > 0)
         $(document).trigger('displaynamechanged',
-                            [jid, info.displayName]);
+                            [jid, displayName]);
 
     if (focus !== null && info.displayName !== null) {
         focus.setEndpointDisplayName(jid, info.displayName);
