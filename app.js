@@ -695,6 +695,9 @@ $(document).bind('joined.muc', function (event, jid, info) {
 
 $(document).bind('entered.muc', function (event, jid, info, pres) {
     console.log('entered', jid, info);
+    messageHandler.notify(info.displayName || 'Somebody',
+        'connected',
+        'connected');
 
     console.log('is focus? ' + (focus ? 'true' : 'false'));
 
@@ -726,6 +729,11 @@ $(document).bind('entered.muc', function (event, jid, info, pres) {
 
 $(document).bind('left.muc', function (event, jid) {
     console.log('left.muc', jid);
+    var displayName = $('#participant_' + Strophe.getResourceFromJid(jid) +
+        '>.displayname').text();
+    messageHandler.notify(displayName || 'Somebody',
+        'disconnected',
+        'disconnected');
     // Need to call this with a slight delay, otherwise the element couldn't be
     // found for some reason.
     window.setTimeout(function () {
@@ -1315,6 +1323,31 @@ $(document).ready(function () {
             init();
         };
     }
+
+    toastr.options = {
+        "closeButton": true,
+        "debug": false,
+        "positionClass": "notification-bottom-right",
+        "onclick": null,
+        "showDuration": "300",
+        "hideDuration": "1000",
+        "timeOut": "2000",
+        "extendedTimeOut": "1000",
+        "showEasing": "swing",
+        "hideEasing": "linear",
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut",
+        "reposition": function() {
+            if(Chat.isVisible() || ContactList.isVisible()) {
+                $("#toast-container").addClass("toast-bottom-right-center");
+            } else {
+                $("#toast-container").removeClass("toast-bottom-right-center");
+            }
+        },
+        "newestOnTop": false
+    }
+
+
 });
 
 $(window).bind('beforeunload', function () {
