@@ -116,5 +116,12 @@ var ConnectionQuality = (function () {
         VideoLayout.onStatsStop();
     };
 
+    /**
+     * Returns the local statistics.
+     */
+    ConnectionQuality.getStats = function () {
+        return stats;
+    }
+
     return ConnectionQuality;
 })();

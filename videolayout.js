@@ -1643,12 +1643,12 @@ var VideoLayout = (function (my) {
 
     ConnectionIndicator.getIP = function(value)
     {
-        return value.substring(0, value.indexOf(":"));
+        return value.substring(0, value.lastIndexOf(":"));
     };
 
     ConnectionIndicator.getPort = function(value)
     {
-        return value.substring(value.indexOf(":") + 1, value.length);
+        return value.substring(value.lastIndexOf(":") + 1, value.length);
     };
 
     ConnectionIndicator.getStringFromArray = function (array) {
