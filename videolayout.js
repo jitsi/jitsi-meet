@@ -1428,48 +1428,15 @@ var VideoLayout = (function (my) {
     $(document).bind('simulcastlayerschanging', function (event, endpointSimulcastLayers) {
         endpointSimulcastLayers.forEach(function (esl) {
             var primarySSRC = esl.simulcastLayer.primarySSRC;
-            var msid = simulcast.getRemoteVideoStreamIdBySSRC(primarySSRC);
 
-            // Get session and stream from msid.
-            var session, electedStream;
-            var i, j, k;
-            if (connection.jingle) {
-                var keys = Object.keys(connection.jingle.sessions);
-                for (i = 0; i < keys.length; i++) {
-                    var sid = keys[i];
-
-                    if (electedStream) {
-                        // stream found, stop.
-                        break;
-                    }
-
-                    session = connection.jingle.sessions[sid];
-                    if (session.remoteStreams) {
-                        for (j = 0; j < session.remoteStreams.length; j++) {
-                            var remoteStream = session.remoteStreams[j];
-
-                            if (electedStream) {
-                                // stream found, stop.
-                                break;
-                            }
-                            var tracks = remoteStream.getVideoTracks();
-                            if (tracks) {
-                                for (k = 0; k < tracks.length; k++) {
-                                    var track = tracks[k];
-
-                                    if (msid === [remoteStream.id, track.id].join(' ')) {
-                                        electedStream = new webkitMediaStream([track]);
-                                        // stream found, stop.
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            // Get session and stream from primary ssrc.
+            var res = simulcast.getReceivingVideoStreamBySSRC(primarySSRC);
+            var session = res.session;
+            var electedStream = res.stream;
 
             if (session && electedStream) {
+                var msid = simulcast.getRemoteVideoStreamIdBySSRC(primarySSRC);
+
                 console.info([esl, primarySSRC, msid, session, electedStream]);
 
                 var msidParts = msid.split(' ');
@@ -1506,48 +1473,15 @@ var VideoLayout = (function (my) {
         endpointSimulcastLayers.forEach(function (esl) {
 
             var primarySSRC = esl.simulcastLayer.primarySSRC;
-            var msid = simulcast.getRemoteVideoStreamIdBySSRC(primarySSRC);
 
-            // Get session and stream from msid.
-            var session, electedStream;
-            var i, j, k;
-            if (connection.jingle) {
-                var keys = Object.keys(connection.jingle.sessions);
-                for (i = 0; i < keys.length; i++) {
-                    var sid = keys[i];
-
-                    if (electedStream) {
-                        // stream found, stop.
-                        break;
-                    }
-
-                    session = connection.jingle.sessions[sid];
-                    if (session.remoteStreams) {
-                        for (j = 0; j < session.remoteStreams.length; j++) {
-                            var remoteStream = session.remoteStreams[j];
-
-                            if (electedStream) {
-                                // stream found, stop.
-                                break;
-                            }
-                            var tracks = remoteStream.getVideoTracks();
-                            if (tracks) {
-                                for (k = 0; k < tracks.length; k++) {
-                                    var track = tracks[k];
-
-                                    if (msid === [remoteStream.id, track.id].join(' ')) {
-                                        electedStream = new webkitMediaStream([track]);
-                                        // stream found, stop.
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            // Get session and stream from primary ssrc.
+            var res = simulcast.getReceivingVideoStreamBySSRC(primarySSRC);
+            var session = res.session;
+            var electedStream = res.stream;
 
             if (session && electedStream) {
+                var msid = simulcast.getRemoteVideoStreamIdBySSRC(primarySSRC);
+
                 console.info('Switching simulcast substream.');
                 console.info([esl, primarySSRC, msid, session, electedStream]);
 
