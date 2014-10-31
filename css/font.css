@@ -113,3 +113,7 @@
     line-height: normal;
     content: "\e61a";
 }
+
+.icon-settings:before {
+    content: "\e61b";
+}

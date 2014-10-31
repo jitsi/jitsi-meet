@@ -1,0 +1,45 @@
+#settingsmenu {
+    background: black;
+    color: #00ccff;
+}
+
+#settingsmenu input {
+    margin-top: 10px;
+    margin-left: 10%;
+    width: 80%;
+    font-size: 14px;
+    background: #3a3a3a;
+    border: none;
+    box-shadow: none;
+    color: #a7a7a7;
+}
+
+#settingsmenu .arrow-up {
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 5px solid #3a3a3a;
+    position: relative;
+    top: 10px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#settingsmenu button {
+    width: 36%;
+    left: 32%;
+    padding: 0;
+    margin-top: 10px;
+}
+
+#settingsmenu #avatar {
+    width: 24%;
+    left: 38%;
+    border-radius: 25px;
+    position: relative;
+}
+
+#settingsmenu .icon-settings {
+    padding: 34px;
+}
