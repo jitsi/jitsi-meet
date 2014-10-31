@@ -324,8 +324,8 @@ SimulcastReceiver.prototype._updateRemoteMaps = function (lines) {
     }
 };
 
-SimulcastReceiver.prototype._setReceivingVideoStream = function (endpoint, ssrc) {
-    this._remoteMaps.receivingVideoStreams[endpoint] = ssrc;
+SimulcastReceiver.prototype._setReceivingVideoStream = function (resource, ssrc) {
+    this._remoteMaps.receivingVideoStreams[resource] = ssrc;
 };
 
 /**
@@ -342,8 +342,8 @@ SimulcastReceiver.prototype.getReceivingVideoStream = function (stream) {
     if (config.enableSimulcast) {
 
         stream.getVideoTracks().some(function (track) {
-            return Object.keys(self._remoteMaps.receivingVideoStreams).some(function (endpoint) {
-                var ssrc = self._remoteMaps.receivingVideoStreams[endpoint];
+            return Object.keys(self._remoteMaps.receivingVideoStreams).some(function (resource) {
+                var ssrc = self._remoteMaps.receivingVideoStreams[resource];
                 var msid = self._remoteMaps.ssrc2Msid[ssrc];
                 if (msid == [stream.id, track.id].join(' ')) {
                     electedTrack = track;
@@ -1074,8 +1074,8 @@ SimulcastManager.prototype.parseMedia = function(lines, mediatypes) {
     return this.simulcastUtils.parseMedia(sb, mediatypes);
 };
 
-SimulcastManager.prototype._setReceivingVideoStream = function(endpoint, ssrc) {
-    this.simulcastReceiver._setReceivingVideoStream(endpoint, ssrc);
+SimulcastManager.prototype._setReceivingVideoStream = function(resource, ssrc) {
+    this.simulcastReceiver._setReceivingVideoStream(resource, ssrc);
 };
 
 SimulcastManager.prototype._setLocalVideoStreamEnabled = function(ssrc, enabled) {
