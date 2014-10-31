@@ -8,8 +8,6 @@ var VideoLayout = (function (my) {
     };
     my.connectionIndicators = {};
 
-    var displayedSsrcs = {};
-
     my.changeLocalAudio = function(stream) {
         connection.jingle.localAudio = stream;
 
@@ -1587,9 +1585,8 @@ var VideoLayout = (function (my) {
                 if (updateFocusedVideoSrc) {
                     focusedVideoSrc = electedStreamUrl;
                 }
-                var ssrc = videoSrcToSsrc[selRemoteVideo.attr('src')];
-                displayedSsrcs[ssrc2jid[ssrc]] = ssrc;
-                var jid = ssrc2jid[ssrc];
+
+                var jid = ssrc2jid[primarySSRC];
                 var videoId;
                 if(jid == connection.emuc.myroomjid)
                 {
@@ -1703,7 +1700,8 @@ var VideoLayout = (function (my) {
             }
             else if(keys.length > 1)
             {
-                resolutionValue = this.resolution[displayedSsrcs[this.jid]];
+                var displayedSsrc = simulcast.getReceivingSSRC(this.jid);
+                resolutionValue = this.resolution[displayedSsrc];
             }
         }
 

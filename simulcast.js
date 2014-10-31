@@ -233,6 +233,7 @@ SimulcastReceiver.prototype._remoteVideoSourceCache = '';
 SimulcastReceiver.prototype._remoteMaps = {
     msid2Quality: {},
     ssrc2Msid: {},
+    msid2ssrc: {},
     receivingVideoStreams: {}
 };
 
@@ -308,6 +309,7 @@ SimulcastReceiver.prototype._updateRemoteMaps = function (lines) {
     // (re) initialize the remote maps.
     this._remoteMaps.msid2Quality = {};
     this._remoteMaps.ssrc2Msid = {};
+    this._remoteMaps.msid2ssrc = {};
 
     var self = this;
     if (remoteVideoSources.groups && remoteVideoSources.groups.length !== 0) {
@@ -318,6 +320,7 @@ SimulcastReceiver.prototype._updateRemoteMaps = function (lines) {
                     videoSource = remoteVideoSources.sources[ssrc];
                     self._remoteMaps.msid2Quality[videoSource.msid] = quality++;
                     self._remoteMaps.ssrc2Msid[videoSource.ssrc] = videoSource.msid;
+                    self._remoteMaps.msid2ssrc[videoSource.msid] = videoSource.ssrc;
                 });
             }
         });
@@ -371,6 +374,57 @@ SimulcastReceiver.prototype.getReceivingVideoStream = function (stream) {
     return (electedTrack)
         ? new webkitMediaStream([electedTrack])
         : stream;
+};
+
+SimulcastReceiver.prototype.getReceivingSSRC = function (jid) {
+    var resource = Strophe.getResourceFromJid(jid);
+    var ssrc = this._remoteMaps.receivingVideoStreams[resource];
+
+    // If we haven't receiving a "changed" event yet, then we must be receiving
+    // low quality (that the sender always streams).
+    if (!ssrc && connection.jingle) {
+        var session;
+        var i, j, k;
+
+        var keys = Object.keys(connection.jingle.sessions);
+        for (i = 0; i < keys.length; i++) {
+            var sid = keys[i];
+
+            if (ssrc) {
+                // stream found, stop.
+                break;
+            }
+
+            session = connection.jingle.sessions[sid];
+            if (session.remoteStreams) {
+                for (j = 0; j < session.remoteStreams.length; j++) {
+                    var remoteStream = session.remoteStreams[j];
+
+                    if (ssrc) {
+                        // stream found, stop.
+                        break;
+                    }
+                    var tracks = remoteStream.getVideoTracks();
+                    if (tracks) {
+                        for (k = 0; k < tracks.length; k++) {
+                            var track = tracks[k];
+                            var msid = [remoteStream.id, track.id].join(' ');
+                            var _ssrc = this._remoteMaps.msid2ssrc[msid];
+                            var _jid = ssrc2jid[_ssrc];
+                            var quality = this._remoteMaps.msid2Quality[msid];
+                            if (jid == _jid && quality == 0) {
+                                ssrc = _ssrc;
+                                // stream found, stop.
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return ssrc;
 };
 
 /**
@@ -1062,6 +1116,11 @@ SimulcastManager.prototype.reverseTransformLocalDescription = function (desc) {
 SimulcastManager.prototype.transformAnswer = function (desc) {
     return this.simulcastSender.transformAnswer(desc);
 };
+
+SimulcastManager.prototype.getReceivingSSRC = function (jid) {
+    return this.simulcastReceiver.getReceivingSSRC(jid);
+};
+
 
 /**
  *
