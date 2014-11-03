@@ -70,7 +70,7 @@ html, body{
     cursor: pointer;
 }
 
-#chatButton, #chatBottomButton, #contactListButton {
+#chatButton, #chatBottomButton, #contactListButton, #numberOfParticipants {
     -webkit-transition: all .5s ease-in-out;
        -moz-transition: all .5s ease-in-out;
             transition: all .5s ease-in-out;
@@ -101,7 +101,12 @@ html, body{
     line-height: 13px;
     font-weight: bold;
     border-radius: 2px;
+    font-size: 11px;
     text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+}
+
+#contactListButton.active #numberOfParticipants {
+    color: #00ccff;
 }
 
 #recordButton {
