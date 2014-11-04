@@ -27,5 +27,4 @@ var config = {
     enableRecording: false,
     enableWelcomePage: false,
     enableSimulcast: false,
-    isBrand: false
 };

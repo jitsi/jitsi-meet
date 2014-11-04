@@ -1142,7 +1142,7 @@ function getCameraVideoSize(videoWidth,
 }
 
 $(document).ready(function () {
-    document.title = brand.appName;
+    document.title = interfaceConfig.APP_NAME;
     if(APIConnector.isEnabled())
         APIConnector.init();
 
@@ -1153,7 +1153,7 @@ $(document).ready(function () {
         $("#videoconference_page").hide();
         $("#domain_name").text(
                 window.location.protocol + "//" + window.location.host + "/");
-        $("span[name='appName']").text(brand.appName);
+        $("span[name='appName']").text(interfaceConfig.APP_NAME);
 
         if (interfaceConfig.SHOW_JITSI_WATERMARK) {
             var leftWatermarkDiv

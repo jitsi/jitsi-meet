@@ -11,5 +11,6 @@ var interfaceConfig = {
     SHOW_BRAND_WATERMARK: false,
     BRAND_WATERMARK_LINK: "",
     SHOW_POWERED_BY: false,
-    GENERATE_ROOMNAMES_ON_WELCOME_PAGE: true
+    GENERATE_ROOMNAMES_ON_WELCOME_PAGE: true,
+    APP_NAME: "Jitsi Meet"
 };
