@@ -26,5 +26,5 @@ var config = {
     useBundle: true,
     enableRecording: false,
     enableWelcomePage: false,
-    enableSimulcast: false,
+    enableSimulcast: false
 };
