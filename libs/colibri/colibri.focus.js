@@ -299,6 +299,9 @@ ColibriFocus.prototype._makeConference = function (errorCallback) {
                 if (config.adaptiveLastN) {
                     elemAttrs['adaptive-last-n'] = 'true';
                 }
+                if (config.adaptiveSimulcast) {
+                    elemAttrs['adaptive-simulcast'] = 'true';
+                }
             }
         }
 
@@ -847,6 +850,9 @@ ColibriFocus.prototype.addNewParticipant = function (peer) {
                 }
                 if (config.adaptiveLastN) {
                     elemAttrs['adaptive-last-n'] = 'true';
+                }
+                if (config.adaptiveSimulcast) {
+                    elemAttrs['adaptive-simulcast'] = 'true';
                 }
             }
         }
