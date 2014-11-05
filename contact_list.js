@@ -220,7 +220,7 @@ var ContactList = (function (my) {
      */
     function createDisplayNameParagraph(displayName) {
         var p = document.createElement('p');
-        p.innerHTML = displayName;
+        p.innerText = displayName;
 
         return p;
     }
@@ -266,7 +266,7 @@ var ContactList = (function (my) {
         var contactName = $('#contactlist #' + resourceJid + '>p');
 
         if (contactName && displayName && displayName.length > 0)
-            contactName.html(displayName);
+            contactName.text(displayName);
     });
 
     my.setClickable = function(resourceJid, isClickable) {
