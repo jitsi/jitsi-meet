@@ -221,3 +221,19 @@
 #usermsg::-webkit-scrollbar-track-piece {
     background: #3a3a3a;
 }
+
+a:link {
+    color: rgb(184, 184, 184);
+}
+
+a:visited {
+    color: white;
+}
+
+a:hover {
+    color: rgb(213, 213, 213);
+}
+
+a:active {
+    color: black;
+}
