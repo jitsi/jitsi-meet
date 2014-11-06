@@ -65,26 +65,41 @@ function init() {
     if (RTC === null) {
         window.location.href = 'webrtcrequired.html';
         return;
-    } else if (RTC.browser !== 'chrome') {
-        window.location.href = 'chromeonly.html';
-        return;
     }
 
     obtainAudioAndVideoPermissions(function (stream) {
-        var audioStream = new webkitMediaStream();
-        var videoStream = new webkitMediaStream();
-        var audioTracks = stream.getAudioTracks();
-        var videoTracks = stream.getVideoTracks();
-        for (var i = 0; i < audioTracks.length; i++) {
-            audioStream.addTrack(audioTracks[i]);
-        }
-        VideoLayout.changeLocalAudio(audioStream);
-        startLocalRtpStatsCollector(audioStream);
+        var audioStream, videoStream;
+        if(document.webkitMediaStream)
+        {
+            var audioStream = new webkitMediaStream();
+            var videoStream = new webkitMediaStream();
+            var audioTracks = stream.getAudioTracks();
+            var videoTracks = stream.getVideoTracks();
+            for (var i = 0; i < audioTracks.length; i++) {
+                audioStream.addTrack(audioTracks[i]);
+            }
 
-        for (i = 0; i < videoTracks.length; i++) {
-            videoStream.addTrack(videoTracks[i]);
+            for (i = 0; i < videoTracks.length; i++) {
+                videoStream.addTrack(videoTracks[i]);
+            }
+            VideoLayout.changeLocalAudio(audioStream);
+            startLocalRtpStatsCollector(audioStream);
+
+
+            VideoLayout.changeLocalVideo(videoStream, true);
         }
-        VideoLayout.changeLocalVideo(videoStream, true);
+        else
+        {
+//            VideoLayout.changeLocalAudio(stream);
+            startLocalRtpStatsCollector(stream);
+
+
+            VideoLayout.changeLocalVideo(stream, true);
+        }
+
+
+
+
         maybeDoJoin();
     });
 
@@ -275,7 +290,7 @@ function waitForPresence(data, sid) {
 
     var thessrc;
     // look up an associated JID for a stream id
-    if (data.stream.id.indexOf('mixedmslabel') === -1) {
+    if (!data.stream.id || data.stream.id.indexOf('mixedmslabel') === -1) {
         // look only at a=ssrc: and _not_ at a=ssrc-group: lines
         var ssrclines
             = SDPUtil.find_lines(sess.peerconnection.remoteDescription.sdp, 'a=ssrc:');
@@ -283,7 +298,7 @@ function waitForPresence(data, sid) {
             // NOTE(gp) previously we filtered on the mslabel, but that property
             // is not always present.
             // return line.indexOf('mslabel:' + data.stream.label) !== -1;
-            return line.indexOf('msid:' + data.stream.id) !== -1;
+            return (!data.stream.id? false : (line.indexOf('msid:' + data.stream.id) !== -1));
         });
         if (ssrclines.length) {
             thessrc = ssrclines[0].substring(7).split(' ')[0];
