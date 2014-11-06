@@ -285,12 +285,6 @@ SDP.prototype.toJingle = function (elem, thecreator) {
                 });
                 elem.up();
 
-                // old proprietary mapping, to be removed at some point
-                tmp = SDPUtil.parse_ssrc(this.media[i]);
-                tmp.xmlns = 'http://estos.de/ns/ssrc';
-                tmp.ssrc = ssrc;
-                elem.c('ssrc', tmp).up(); // ssrc is part of description
-
                 // XEP-0339 handle ssrc-group attributes
                 var ssrc_group_lines = SDPUtil.find_lines(this.media[i], 'a=ssrc-group:');
                 ssrc_group_lines.forEach(function(line) {
@@ -644,15 +638,5 @@ SDP.prototype.jingle2media = function (content) {
         });
     });
 
-    if (tmp.length === 0) {
-        // fallback to proprietary mapping of a=ssrc lines
-        tmp = content.find('description>ssrc[xmlns="http://estos.de/ns/ssrc"]');
-        if (tmp.length) {
-            media += 'a=ssrc:' + ssrc + ' cname:' + tmp.attr('cname') + '\r\n';
-            media += 'a=ssrc:' + ssrc + ' msid:' + tmp.attr('msid') + '\r\n';
-            media += 'a=ssrc:' + ssrc + ' mslabel:' + tmp.attr('mslabel') + '\r\n';
-            media += 'a=ssrc:' + ssrc + ' label:' + tmp.attr('label') + '\r\n';
-        }
-    }
     return media;
 };
