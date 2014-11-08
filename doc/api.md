@@ -91,7 +91,7 @@ with data related to the event.
 
 Currently we support the following events:
 
-* **incommingMessage** - event notifications about incomming
+* **incomingMessage** - event notifications about incoming
 messages. The listener will receive object with the following structure:
 ```
 {
@@ -135,7 +135,7 @@ This method requires one argument of type Object. The object argument must
 have keys with the names of the events and values the listeners of the events.
 
 ```
-function incommingMessageListener(object)
+function incomingMessageListener(object)
 {
 ...
 }
@@ -146,19 +146,19 @@ function outgoingMessageListener(object)
 }
 
 api.addEventListeners({
-    incommingMessage: incommingMessageListener,
+    incomingMessage: incomingMessageListener,
     outgoingMessage: outgoingMessageListener})
 ```
 
 If you want to remove a listener you can use ```removeEventListener``` method with argument the name of the event.
 ```
-api.removeEventListener("incommingMessage");
+api.removeEventListener("incomingMessage");
 ```
 
 If you want to remove more than one event you can use ```removeEventListeners``` method with argument
  array with the names of the events.
 ```
-api.removeEventListeners(["incommingMessage", "outgoingMessageListener"]);
+api.removeEventListeners(["incomingMessage", "outgoingMessageListener"]);
 ```
 
 You can remove the embedded Jitsi Meet Conference with the following code:

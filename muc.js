@@ -239,10 +239,10 @@ Strophe.addConnectionPlugin('emuc', {
         if (txt) {
             console.log('chat', nick, txt);
             Chat.updateChatConversation(from, nick, txt);
-            if(APIConnector.isEnabled() && APIConnector.isEventEnabled("incommingMessage"))
+            if(APIConnector.isEnabled() && APIConnector.isEventEnabled("incomingMessage"))
             {
                 if(from != this.myroomjid)
-                    APIConnector.triggerEvent("incommingMessage",
+                    APIConnector.triggerEvent("incomingMessage",
                         {"from": from, "nick": nick, "message": txt});
             }
         }
