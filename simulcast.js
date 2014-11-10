@@ -732,25 +732,28 @@ NativeSimulcastSender.prototype.transformLocalDescription = function (desc) {
  */
 SimulcastReceiver.prototype.transformRemoteDescription = function (desc) {
 
-    var sb = desc.sdp.split('\r\n');
+    if (desc && desc.sdp) {
+        var sb = desc.sdp.split('\r\n');
 
-    this._updateRemoteMaps(sb);
-    this._cacheRemoteVideoSources(sb);
+        this._updateRemoteMaps(sb);
+        this._cacheRemoteVideoSources(sb);
 
-    // NOTE(gp) this needs to be called after updateRemoteMaps because we need the simulcast group in the _updateRemoteMaps() method.
-    this.simulcastUtils._removeSimulcastGroup(sb);
+        // NOTE(gp) this needs to be called after updateRemoteMaps because we need the simulcast group in the _updateRemoteMaps() method.
+        this.simulcastUtils._removeSimulcastGroup(sb);
 
-    // We don't need the goog conference flag if we're not doing native
-    // simulcast, but at the receiver, we have no idea if the sender is
-    // doing native or not-native simulcast.
-    this._ensureGoogConference(sb);
+        if (desc.sdp.indexOf('a=ssrc-group:SIM') !== -1) {
+            // We don't need the goog conference flag if we're not doing
+            // simulcast.
+            this._ensureGoogConference(sb);
+        }
 
-    desc = new RTCSessionDescription({
-        type: desc.type,
-        sdp: sb.join('\r\n')
-    });
+        desc = new RTCSessionDescription({
+            type: desc.type,
+            sdp: sb.join('\r\n')
+        });
 
-    this.logger.fine(['Transformed remote description', desc.sdp].join(' '));
+        this.logger.fine(['Transformed remote description', desc.sdp].join(' '));
+    }
 
     return desc;
 };
@@ -1200,15 +1203,15 @@ function SimulcastLogger(name) {
 }
 
 SimulcastLogger.prototype.log = function (text) {
-    console.log(text);
+        console.log(text);
 };
 
 SimulcastLogger.prototype.info = function (text) {
-    console.info(text);
+        console.info(text);
 };
 
 SimulcastLogger.prototype.fine = function (text) {
-    console.log(text);
+        console.log(text);
 };
 
 SimulcastLogger.prototype.error = function (text) {
