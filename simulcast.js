@@ -491,7 +491,6 @@ function SimulcastSender() {
 }
 
 SimulcastSender.prototype._localVideoSourceCache = '';
-SimulcastSender.prototype.localStream = null;
 SimulcastSender.prototype.displayedLocalVideoStream = null;
 
 SimulcastSender.prototype._generateGuid = (function () {
@@ -644,10 +643,7 @@ NativeSimulcastSender.prototype._explodeSimulcastSenderSources = function (lines
 NativeSimulcastSender.prototype.getUserMedia = function (constraints, success, err) {
 
     // There's nothing special to do for native simulcast, so just do a normal GUM.
-
-    var self = this;
     navigator.webkitGetUserMedia(constraints, function (hqStream) {
-        self.localStream = hqStream;
         success(hqStream);
     }, err);
 };
@@ -770,6 +766,7 @@ function SimpleSimulcastSender() {
 
 SimpleSimulcastSender.prototype = Object.create(SimulcastSender.prototype);
 
+SimpleSimulcastSender.prototype.localStream = null;
 SimpleSimulcastSender.prototype._localMaps = {
     msids: [],
     msid2ssrc: {}
@@ -982,10 +979,8 @@ NoSimulcastSender.prototype = Object.create(SimulcastSender.prototype);
  * @param err
  */
 NoSimulcastSender.prototype.getUserMedia = function (constraints, success, err) {
-    var self = this;
     navigator.webkitGetUserMedia(constraints, function (hqStream) {
-        self.localStream = hqStream;
-        success(self.localStream);
+        success(hqStream);
     }, err);
 };
 
