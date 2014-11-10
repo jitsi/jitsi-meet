@@ -6,7 +6,7 @@
  * @constructor
  */
 function SimulcastUtils() {
-    this.logger = new SimulcastLogger("SimulcastUtils");
+    this.logger = new SimulcastLogger("SimulcastUtils", 1);
 }
 
 /**
@@ -226,7 +226,7 @@ SimulcastUtils.prototype._compileVideoSources = function (videoSources) {
 
 function SimulcastReceiver() {
     this.simulcastUtils = new SimulcastUtils();
-    this.logger = new SimulcastLogger('SimulcastReceiver');
+    this.logger = new SimulcastLogger('SimulcastReceiver', 1);
 }
 
 SimulcastReceiver.prototype._remoteVideoSourceCache = '';
@@ -487,7 +487,7 @@ SimulcastReceiver.prototype.getRemoteVideoStreamIdBySSRC = function (ssrc) {
 
 function SimulcastSender() {
     this.simulcastUtils = new SimulcastUtils();
-    this.logger = new SimulcastLogger('SimulcastSender');
+    this.logger = new SimulcastLogger('SimulcastSender', 1);
 }
 
 SimulcastSender.prototype._localVideoSourceCache = '';
@@ -1198,20 +1198,27 @@ SimulcastManager.prototype._setLocalVideoStreamEnabled = function(ssrc, enabled)
  *
  * @constructor
  */
-function SimulcastLogger(name) {
+function SimulcastLogger(name, lvl) {
     this.name = name;
+    this.lvl = lvl;
 }
 
 SimulcastLogger.prototype.log = function (text) {
+    if (this.lvl) {
         console.log(text);
+    }
 };
 
 SimulcastLogger.prototype.info = function (text) {
+    if (this.lvl > 1) {
         console.info(text);
+    }
 };
 
 SimulcastLogger.prototype.fine = function (text) {
+    if (this.lvl > 2) {
         console.log(text);
+    }
 };
 
 SimulcastLogger.prototype.error = function (text) {
