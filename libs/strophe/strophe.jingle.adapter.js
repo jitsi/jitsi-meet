@@ -320,6 +320,7 @@ TraceablePeerConnection.prototype.modifySources = function(successCallback) {
 
     // FIXME: this is a big hack
     // https://code.google.com/p/webrtc/issues/detail?id=2688
+    // ^ has been fixed.
     if (!(this.signalingState == 'stable' && this.iceConnectionState == 'connected')) {
         console.warn('modifySources not yet', this.signalingState, this.iceConnectionState);
         this.wait = true;
