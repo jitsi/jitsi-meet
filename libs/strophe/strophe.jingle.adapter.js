@@ -140,11 +140,13 @@ if (TraceablePeerConnection.prototype.__defineGetter__ !== undefined) {
 
 TraceablePeerConnection.prototype.addStream = function (stream) {
     this.trace('addStream', stream.id);
+    simulcast.resetSender();
     this.peerconnection.addStream(stream);
 };
 
 TraceablePeerConnection.prototype.removeStream = function (stream) {
     this.trace('removeStream', stream.id);
+    simulcast.resetSender();
     this.peerconnection.removeStream(stream);
 };
 
@@ -204,7 +206,7 @@ TraceablePeerConnection.prototype.enqueueAddSsrc = function(channel, ssrcLines) 
         this.addssrc[channel] = '';
     }
     this.addssrc[channel] += ssrcLines;
-}
+};
 
 TraceablePeerConnection.prototype.addSource = function (elem) {
     console.log('addssrc', new Date().getTime());
@@ -260,7 +262,7 @@ TraceablePeerConnection.prototype.enqueueRemoveSsrc = function(channel, ssrcLine
         this.removessrc[channel] = '';
     }
     this.removessrc[channel] += ssrcLines;
-}
+};
 
 TraceablePeerConnection.prototype.removeSource = function (elem) {
     console.log('removessrc', new Date().getTime());

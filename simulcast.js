@@ -490,7 +490,6 @@ function SimulcastSender() {
     this.logger = new SimulcastLogger('SimulcastSender', 1);
 }
 
-SimulcastSender.prototype._localVideoSourceCache = '';
 SimulcastSender.prototype.displayedLocalVideoStream = null;
 
 SimulcastSender.prototype._generateGuid = (function () {
@@ -506,14 +505,6 @@ SimulcastSender.prototype._generateGuid = (function () {
     };
 }());
 
-SimulcastSender.prototype._cacheLocalVideoSources = function (lines) {
-    this._localVideoSourceCache = this.simulcastUtils._getVideoSources(lines);
-};
-
-SimulcastSender.prototype._restoreLocalVideoSources = function (lines) {
-    this.simulcastUtils._replaceVideoSources(lines, this._localVideoSourceCache);
-};
-
 // Returns a random integer between min (included) and max (excluded)
 // Using Math.round() gives a non-uniform distribution!
 SimulcastSender.prototype._generateRandomSSRC = function () {
@@ -521,7 +512,37 @@ SimulcastSender.prototype._generateRandomSSRC = function () {
     return Math.floor(Math.random() * (max - min)) + min;
 };
 
-SimulcastSender.prototype._appendSimulcastGroup = function (lines) {
+SimulcastSender.prototype.getLocalVideoStream = function () {
+    return (this.displayedLocalVideoStream != null)
+        ? this.displayedLocalVideoStream
+        // in case we have no simulcast at all, i.e. we didn't perform the GUM
+        : connection.jingle.localVideo;
+};
+
+function NativeSimulcastSender() {
+    SimulcastSender.call(this); // call the super constructor.
+}
+
+NativeSimulcastSender.prototype = Object.create(SimulcastSender.prototype);
+
+NativeSimulcastSender.prototype._localExplosionMap = {};
+NativeSimulcastSender.prototype._isUsingScreenStream = false;
+NativeSimulcastSender.prototype._localVideoSourceCache = '';
+
+NativeSimulcastSender.prototype.reset = function () {
+    this._localExplosionMap = {};
+    this._isUsingScreenStream = isUsingScreenStream;
+};
+
+NativeSimulcastSender.prototype._cacheLocalVideoSources = function (lines) {
+    this._localVideoSourceCache = this.simulcastUtils._getVideoSources(lines);
+};
+
+NativeSimulcastSender.prototype._restoreLocalVideoSources = function (lines) {
+    this.simulcastUtils._replaceVideoSources(lines, this._localVideoSourceCache);
+};
+
+NativeSimulcastSender.prototype._appendSimulcastGroup = function (lines) {
     var videoSources, ssrcGroup, simSSRC, numOfSubs = 2, i, sb, msid;
 
     this.logger.info('Appending simulcast group...');
@@ -557,7 +578,7 @@ SimulcastSender.prototype._appendSimulcastGroup = function (lines) {
 };
 
 // Does the actual patching.
-SimulcastSender.prototype._ensureSimulcastGroup = function (lines) {
+NativeSimulcastSender.prototype._ensureSimulcastGroup = function (lines) {
 
     this.logger.info('Ensuring simulcast group...');
 
@@ -570,21 +591,6 @@ SimulcastSender.prototype._ensureSimulcastGroup = function (lines) {
         this._restoreLocalVideoSources(lines);
     }
 };
-
-SimulcastSender.prototype.getLocalVideoStream = function () {
-    return (this.displayedLocalVideoStream != null)
-        ? this.displayedLocalVideoStream
-        // in case we have no simulcast at all, i.e. we didn't perform the GUM
-        : connection.jingle.localVideo;
-};
-
-function NativeSimulcastSender() {
-    SimulcastSender.call(this); // call the super constructor.
-}
-
-NativeSimulcastSender.prototype = Object.create(SimulcastSender.prototype);
-
-NativeSimulcastSender.prototype._localExplosionMap = {};
 
 /**
  * Produces a single stream with multiple tracks for local video sources.
@@ -658,7 +664,7 @@ NativeSimulcastSender.prototype.getUserMedia = function (constraints, success, e
 NativeSimulcastSender.prototype.reverseTransformLocalDescription = function (desc) {
     var sb;
 
-    if (!desc || desc == null) {
+    if (!desc || desc == null || this._isUsingScreenStream) {
         return desc;
     }
 
@@ -685,6 +691,10 @@ NativeSimulcastSender.prototype.reverseTransformLocalDescription = function (des
  * @returns {*}
  */
 NativeSimulcastSender.prototype.transformAnswer = function (desc) {
+
+    if (!desc || desc == null || this._isUsingScreenStream) {
+        return desc;
+    }
 
     var sb = desc.sdp.split('\r\n');
 
@@ -734,7 +744,8 @@ SimulcastReceiver.prototype.transformRemoteDescription = function (desc) {
         this._updateRemoteMaps(sb);
         this._cacheRemoteVideoSources(sb);
 
-        // NOTE(gp) this needs to be called after updateRemoteMaps because we need the simulcast group in the _updateRemoteMaps() method.
+        // NOTE(gp) this needs to be called after updateRemoteMaps because we
+        // need the simulcast group in the _updateRemoteMaps() method.
         this.simulcastUtils._removeSimulcastGroup(sb);
 
         if (desc.sdp.indexOf('a=ssrc-group:SIM') !== -1) {
@@ -1187,6 +1198,12 @@ SimulcastManager.prototype._setReceivingVideoStream = function(resource, ssrc) {
 
 SimulcastManager.prototype._setLocalVideoStreamEnabled = function(ssrc, enabled) {
     this.simulcastSender._setLocalVideoStreamEnabled(ssrc, enabled);
+};
+
+SimulcastManager.prototype.resetSender = function() {
+    if (typeof this.simulcastSender.reset === 'function'){
+        this.simulcastSender.reset();
+    }
 };
 
 /**

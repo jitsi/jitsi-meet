@@ -42,7 +42,7 @@ SDP.prototype.getMediaSsrcMap = function() {
         });
     }
     return media_ssrcs;
-}
+};
 /**
  * Returns <tt>true</tt> if this SDP contains given SSRC.
  * @param ssrc the ssrc to check.
@@ -59,7 +59,8 @@ SDP.prototype.containsSSRC = function(ssrc) {
         }
     });
     return contains;
-}
+};
+
 /**
  * Returns map of MediaChannel that contains only media not contained in <tt>otherSdp</tt>. Mapped by channel idx.
  * @param otherSdp the other SDP to check ssrc with.
@@ -89,7 +90,7 @@ SDP.prototype.getNewMedia = function(otherSdp) {
             }
         }
         return true;
-    };
+    }
 
     var myMedia = this.getMediaSsrcMap();
     var othersMedia = otherSdp.getMediaSsrcMap();
@@ -111,7 +112,7 @@ SDP.prototype.getNewMedia = function(otherSdp) {
                 }
                 newMedia[channelNum].ssrcs[ssrc] = othersChannel.ssrcs[ssrc];
             }
-        })
+        });
 
         // Look for new ssrc groups across the channels
         othersChannel.ssrcGroups.forEach(function(otherSsrcGroup){
@@ -120,7 +121,7 @@ SDP.prototype.getNewMedia = function(otherSdp) {
             var matched = false;
             for (var i = 0; i < myChannel.ssrcGroups.length; i++) {
                 var mySsrcGroup = myChannel.ssrcGroups[i];
-                if (otherSsrcGroup.semantics == mySsrcGroup
+                if (otherSsrcGroup.semantics == mySsrcGroup.semantics
                     && arrayEquals.apply(otherSsrcGroup.ssrcs, [mySsrcGroup.ssrcs])) {
 
                     matched = true;
@@ -140,7 +141,8 @@ SDP.prototype.getNewMedia = function(otherSdp) {
         });
     });
     return newMedia;
-}
+};
+
 // remove iSAC and CN from SDP
 SDP.prototype.mangle = function () {
     var i, j, mline, lines, rtpmap, newdesc;
