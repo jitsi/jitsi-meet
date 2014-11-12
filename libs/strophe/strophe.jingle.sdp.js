@@ -69,7 +69,7 @@ SDP.prototype.getNewMedia = function(otherSdp) {
 
     // this could be useful in Array.prototype.
     function arrayEquals(array) {
-        // if the other array is a falsy value, return
+        // if the other array is a false value, return
         if (!array)
             return false;
 
