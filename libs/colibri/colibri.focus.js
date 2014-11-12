@@ -1099,16 +1099,30 @@ ColibriFocus.prototype.addSource = function (elem, fromJid) {
 
     this.peerconnection.addSource(elem);
 
+    // NOTE(gp) this could be a useful thing to have in every Array object.
+    var diffArray = function(a) {
+        return this.filter(function(i) {return a.indexOf(i) < 0;});
+    };
+
     var peerSsrc = this.remotessrc[fromJid];
-    //console.log("On ADD", self.addssrc, peerSsrc);
+    // console.log("On ADD", this.peerconnection.addssrc, peerSsrc);
     this.peerconnection.addssrc.forEach(function(val, idx){
         if(!peerSsrc[idx]){
             // add ssrc
             peerSsrc[idx] = val;
-        } else {
-            if(peerSsrc[idx].indexOf(val) == -1){
-                peerSsrc[idx] = peerSsrc[idx]+val;
-            }
+        } else if (val) {
+            // NOTE(gp) we can't expect the lines in the removessrc SDP fragment
+            // to be in the same order as in the lines in the peerSsrc SDP
+            // fragment. So, here we remove the val lines and re-add them.
+
+            var lines = peerSsrc[idx].split('\r\n');
+            var diffLines = val.split('\r\n');
+
+            // Remove ssrc
+            peerSsrc[idx] = diffArray.apply(lines, [diffLines]).join('\r\n');
+
+            // Add ssrc
+            peerSsrc[idx] = peerSsrc[idx]+val;
         }
     });
 
@@ -1150,12 +1164,22 @@ ColibriFocus.prototype.removeSource = function (elem, fromJid) {
 
     this.peerconnection.removeSource(elem);
 
+    // NOTE(gp) this could be a useful thing to have in every Array object.
+    var diffArray = function(a) {
+        return this.filter(function(i) {return a.indexOf(i) < 0;});
+    };
+
     var peerSsrc = this.remotessrc[fromJid];
-    //console.log("On REMOVE", self.removessrc, peerSsrc);
+    // console.log("On REMOVE", this.peerconnection.removessrc, peerSsrc);
     this.peerconnection.removessrc.forEach(function(val, idx){
-        if(peerSsrc[idx]){
+        if(peerSsrc[idx] && val){
+            // NOTE(gp) we can't expect the lines in the removessrc SDP fragment
+            // to be in the same order as in the lines in the peerSsrc SDP
+            // fragment.
+            var lines = peerSsrc[idx].split('\r\n');
+            var diffLines = val.split('\r\n');
             // Remove ssrc
-            peerSsrc[idx] = peerSsrc[idx].replace(val, '');
+            peerSsrc[idx] = diffArray.apply(lines, [diffLines]).join('\r\n');
         }
     });
 
