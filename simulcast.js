@@ -137,7 +137,7 @@ SimulcastUtils.prototype.parseMedia = function (lines, mediatypes) {
             lines[i].substring(0, 'a=sendonly'.length) === 'a=sendonly' ||
             lines[i].substring(0, 'a=inactive'.length) === 'a=inactive')) {
 
-            cur_media.direction = lines[i].substring('a='.length, 8);
+            cur_media.direction = lines[i].substring('a='.length);
         }
     }
 
