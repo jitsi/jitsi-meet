@@ -55,6 +55,13 @@ SimulcastUtils.prototype._replaceVideoSources = function (lines, videoSources) {
 
 };
 
+SimulcastUtils.prototype.isValidDescription = function (desc)
+{
+    return desc && desc != null
+        && desc.type && desc.type != ''
+        && desc.sdp && desc.sdp != '';
+};
+
 SimulcastUtils.prototype._getVideoSources = function (lines) {
     var i, inVideo = false, sb = [];
 
@@ -275,7 +282,7 @@ SimulcastReceiver.prototype._restoreSimulcastGroups = function (sb) {
 SimulcastReceiver.prototype.reverseTransformRemoteDescription = function (desc) {
     var sb;
 
-    if (!desc || desc == null) {
+    if (!this.simulcastUtils.isValidDescription(desc)) {
         return desc;
     }
 
@@ -664,7 +671,7 @@ NativeSimulcastSender.prototype.getUserMedia = function (constraints, success, e
 NativeSimulcastSender.prototype.reverseTransformLocalDescription = function (desc) {
     var sb;
 
-    if (!desc || desc == null || this._isUsingScreenStream) {
+    if (!this.simulcastUtils.isValidDescription(desc) || this._isUsingScreenStream) {
         return desc;
     }
 
@@ -692,7 +699,7 @@ NativeSimulcastSender.prototype.reverseTransformLocalDescription = function (des
  */
 NativeSimulcastSender.prototype.transformAnswer = function (desc) {
 
-    if (!desc || desc == null || this._isUsingScreenStream) {
+    if (!this.simulcastUtils.isValidDescription(desc) || this._isUsingScreenStream) {
         return desc;
     }
 
@@ -893,7 +900,7 @@ SimpleSimulcastSender.prototype.getUserMedia = function (constraints, success, e
 SimpleSimulcastSender.prototype.reverseTransformLocalDescription = function (desc) {
     var sb;
 
-    if (!desc || desc == null) {
+    if (!this.simulcastUtils.isValidDescription(desc)) {
         return desc;
     }
 
