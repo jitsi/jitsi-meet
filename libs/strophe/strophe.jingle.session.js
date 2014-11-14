@@ -23,7 +23,7 @@ function JingleSession(me, sid, connection) {
     this.ice_config = {};
     this.drip_container = [];
 
-    this.usetrickle = false;
+    this.usetrickle = true;
     this.usepranswer = false; // early transport warmup -- mind you, this might fail. depends on webrtc issue 1718
     this.usedrip = false; // dripping is sending trickle candidates not one-by-one
 
@@ -359,7 +359,7 @@ JingleSession.prototype.createdOffer = function (sdp) {
     var self = this;
     this.localSDP = new SDP(sdp.sdp);
     //this.localSDP.mangle();
-    if (this.usetrickle) {
+    var sendJingle = function () {
         var init = $iq({to: this.peerjid,
             type: 'set'})
             .c('jingle', {xmlns: 'urn:xmpp:jingle:1',
@@ -388,7 +388,16 @@ JingleSession.prototype.createdOffer = function (sdp) {
     sdp.sdp = this.localSDP.raw;
     this.peerconnection.setLocalDescription(sdp,
         function () {
-            $(document).trigger('setLocalDescription.jingle', [self.sid]);
+            if(this.usetrickle)
+            {
+                RTC.getLocalSSRC(function(ssrc)
+                {
+                    sendJingle(ssrc);
+                    $(document).trigger('setLocalDescription.jingle', [self.sid]);
+                });
+            }
+            else
+                $(document).trigger('setLocalDescription.jingle', [self.sid]);
             //console.log('setLocalDescription success');
         },
         function (e) {
@@ -579,33 +588,7 @@ JingleSession.prototype.createdAnswer = function (sdp, provisional) {
     //this.localSDP.mangle();
     this.usepranswer = provisional === true;
     if (this.usetrickle) {
-        if (!this.usepranswer) {
-            var accept = $iq({to: this.peerjid,
-                type: 'set'})
-                .c('jingle', {xmlns: 'urn:xmpp:jingle:1',
-                    action: 'session-accept',
-                    initiator: this.initiator,
-                    responder: this.responder,
-                    sid: this.sid });
-            var publicLocalDesc = simulcast.reverseTransformLocalDescription(sdp);
-            var publicLocalSDP = new SDP(publicLocalDesc.sdp);
-            publicLocalSDP.toJingle(accept, this.initiator == this.me ? 'initiator' : 'responder');
-            this.connection.sendIQ(accept,
-                function () {
-                    var ack = {};
-                    ack.source = 'answer';
-                    $(document).trigger('ack.jingle', [self.sid, ack]);
-                },
-                function (stanza) {
-                    var error = ($(stanza).find('error').length) ? {
-                        code: $(stanza).find('error').attr('code'),
-                        reason: $(stanza).find('error :first')[0].tagName,
-                    }:{};
-                    error.source = 'answer';
-                    $(document).trigger('error.jingle', [self.sid, error]);
-                },
-                10000);
-        } else {
+        if (this.usepranswer) {
             sdp.type = 'pranswer';
             for (var i = 0; i < this.localSDP.media.length; i++) {
                 this.localSDP.media[i] = this.localSDP.media[i].replace('a=sendrecv\r\n', 'a=inactive\r\n');
@@ -613,11 +596,48 @@ JingleSession.prototype.createdAnswer = function (sdp, provisional) {
             this.localSDP.raw = this.localSDP.session + '\r\n' + this.localSDP.media.join('');
         }
     }
+    var self = this;
+    var sendJingle = function (ssrcs) {
+
+                var accept = $iq({to: self.peerjid,
+                    type: 'set'})
+                    .c('jingle', {xmlns: 'urn:xmpp:jingle:1',
+                        action: 'session-accept',
+                        initiator: self.initiator,
+                        responder: self.responder,
+                        sid: self.sid });
+                var publicLocalDesc = simulcast.reverseTransformLocalDescription(sdp);
+                var publicLocalSDP = new SDP(publicLocalDesc.sdp);
+                publicLocalSDP.toJingle(accept, self.initiator == self.me ? 'initiator' : 'responder', ssrcs);
+                this.connection.sendIQ(accept,
+                    function () {
+                        var ack = {};
+                        ack.source = 'answer';
+                        $(document).trigger('ack.jingle', [self.sid, ack]);
+                    },
+                    function (stanza) {
+                        var error = ($(stanza).find('error').length) ? {
+                            code: $(stanza).find('error').attr('code'),
+                            reason: $(stanza).find('error :first')[0].tagName,
+                        }:{};
+                        error.source = 'answer';
+                        $(document).trigger('error.jingle', [self.sid, error]);
+                    },
+                    10000);
+    }
     sdp.sdp = this.localSDP.raw;
     this.peerconnection.setLocalDescription(sdp,
         function () {
-            $(document).trigger('setLocalDescription.jingle', [self.sid]);
+
             //console.log('setLocalDescription success');
+            if (self.usetrickle && !self.usepranswer) {
+                RTC.getLocalSSRC(self, function (ssrc) {
+                    sendJingle(ssrc);
+                    $(document).trigger('setLocalDescription.jingle', [self.sid]);
+                });
+            }
+            else
+                $(document).trigger('setLocalDescription.jingle', [self.sid]);
         },
         function (e) {
             console.error('setLocalDescription failed', e);
