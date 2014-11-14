@@ -431,7 +431,7 @@ ColibriFocus.prototype.createdConference = function (result) {
         'a=extmap:1 urn:ietf:params:rtp-hdrext:ssrc-audio-level\r\n' +
         'a=sendrecv\r\n' +
         'a=rtpmap:111 opus/48000/2\r\n' +
-        'a=fmtp:111 minptime=10\r\n' +
+        'a=fmtp:111 minptime=10; useinbandfec=true\r\n' +
         'a=rtpmap:103 ISAC/16000\r\n' +
         'a=rtpmap:104 ISAC/32000\r\n' +
         'a=rtpmap:0 PCMU/8000\r\n' +
