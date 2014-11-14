@@ -539,7 +539,7 @@ ColibriFocus.prototype.createdConference = function (result) {
     }
     bridgeSDP.raw = bridgeSDP.session + bridgeSDP.media.join('');
     var bridgeDesc = new RTCSessionDescription({type: 'offer', sdp: bridgeSDP.raw});
-    var bridgeDesc = simulcast.transformRemoteDescription(bridgeDesc);
+    bridgeDesc = simulcast.transformRemoteDescription(bridgeDesc);
 
     this.peerconnection.setRemoteDescription(bridgeDesc,
         function () {
