@@ -13,6 +13,7 @@ var roomName = null;
 var ssrc2jid = {};
 var mediaStreams = [];
 var bridgeIsDown = false;
+var notReceivedSSRCs = [];
 
 /**
  * The stats collector that process stats data and triggers updates to app.js.
@@ -270,7 +271,7 @@ function waitForRemoteVideo(selector, ssrc, stream) {
             videoSrcToSsrc[selector.attr('src')] = ssrc;
         } else {
             console.warn("No ssrc given for video", selector);
-            messageHandler.showError('Warning', 'No ssrc was given for the video.');
+//            messageHandler.showError('Warning', 'No ssrc was given for the video.');
         }
 
         $(document).trigger('videoactive.jingle', [selector]);
@@ -328,6 +329,26 @@ function waitForPresence(data, sid) {
             if (ssrc2jid[thessrc]) {
                 data.peerjid = ssrc2jid[thessrc];
             }
+        }
+    }
+
+    if(RTC.browser == "firefox")
+    {
+        if((notReceivedSSRCs.length == 0) ||
+            !ssrc2jid[notReceivedSSRCs[notReceivedSSRCs.length - 1]])
+        {
+            // TODO(gp) limit wait duration to 1 sec.
+            setTimeout(function(d, s) {
+                return function() {
+                    waitForPresence(d, s);
+                }
+            }(data, sid), 250);
+            return;
+        }
+
+        thessrc = notReceivedSSRCs.pop();
+        if (ssrc2jid[thessrc]) {
+            data.peerjid = ssrc2jid[thessrc];
         }
     }
 
@@ -853,6 +874,7 @@ $(document).bind('presence.muc', function (event, jid, info, pres) {
         //console.log(jid, 'assoc ssrc', ssrc.getAttribute('type'), ssrc.getAttribute('ssrc'));
         var ssrcV = ssrc.getAttribute('ssrc');
         ssrc2jid[ssrcV] = jid;
+        notReceivedSSRCs.push(ssrcV);
 
         var type = ssrc.getAttribute('type');
         ssrc2videoType[ssrcV] = type;

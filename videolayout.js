@@ -23,7 +23,7 @@ var VideoLayout = (function (my) {
         connection.jingle.localVideo = stream;
 
         var localVideo = document.createElement('video');
-        localVideo.id = 'localVideo_' + stream.id;
+        localVideo.id = 'localVideo_' + RTC.getStreamID(stream);
         localVideo.autoplay = true;
         localVideo.volume = 0; // is it required if audio is separated ?
         localVideo.oncontextmenu = function () { return false; };
@@ -427,7 +427,7 @@ var VideoLayout = (function (my) {
                         ? document.createElement('video')
                         : document.createElement('audio');
         var id = (isVideo ? 'remoteVideo_' : 'remoteAudio_')
-                    + sid + '_' + stream.id;
+                    + sid + '_' + RTC.getStreamID(stream);
 
         element.id = id;
         element.autoplay = true;

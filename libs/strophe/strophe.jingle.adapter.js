@@ -530,6 +530,14 @@ function setupRTC() {
                         callback(null);
                     });
             };
+            RTC.getStreamID = function (stream) {
+                var tracks = stream.getVideoTracks();
+                if(!tracks || tracks.length == 0)
+                {
+                    tracks = stream.getAudioTracks();
+                }
+                return tracks[0].id.replace(/[\{,\}]/g,"");
+            }
         }
     } else if (navigator.webkitGetUserMedia) {
         console.log('This appears to be Chrome');
@@ -558,6 +566,9 @@ function setupRTC() {
         }
         RTC.getLocalSSRC = function (session, callback) {
             callback(null);
+        }
+        RTC.getStreamID = function (stream) {
+            return stream.id;
         }
     }
     if (RTC === null) {
