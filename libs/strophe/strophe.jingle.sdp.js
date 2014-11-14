@@ -637,7 +637,7 @@ SDP.prototype.jingle2media = function (content) {
         media += SDPUtil.build_rtpmap(this) + '\r\n';
         if ($(this).find('>parameter').length) {
             media += 'a=fmtp:' + this.getAttribute('id') + ' ';
-            media += $(this).find('parameter').map(function () { return (this.getAttribute('name') ? (this.getAttribute('name') + '=') : '') + this.getAttribute('value'); }).get().join(';');
+            media += $(this).find('parameter').map(function () { return (this.getAttribute('name') ? (this.getAttribute('name') + '=') : '') + this.getAttribute('value'); }).get().join('; ');
             media += '\r\n';
         }
         // xep-0293
