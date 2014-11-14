@@ -5,6 +5,7 @@ function TraceablePeerConnection(ice_config, constraints) {
     this.updateLog = [];
     this.stats = {};
     this.statsinterval = null;
+    this.originalRemoteDescription = null;
     this.maxstats = 0; // limit to 300 values, i.e. 5 minutes; set to 0 to disable
 
     /**
@@ -187,6 +188,7 @@ TraceablePeerConnection.prototype.setRemoteDescription = function (description, 
     var self = this;
     description = simulcast.transformRemoteDescription(description);
     this.trace('setRemoteDescription', dumpSDP(description));
+    this.originalRemoteDescription = description;
     this.peerconnection.setRemoteDescription(description,
         function () {
             self.trace('setRemoteDescriptionOnSuccess');
@@ -483,6 +485,11 @@ TraceablePeerConnection.prototype.addIceCandidate = function (candidate, success
 TraceablePeerConnection.prototype.getStats = function(callback, errback) {
     if (navigator.mozGetUserMedia) {
         // ignore for now...
+        if(!errback)
+            errback = function () {
+
+            }
+        this.peerconnection.getStats(null,callback,errback);
     } else {
         this.peerconnection.getStats(callback);
     }
@@ -511,6 +518,18 @@ function setupRTC() {
                 MediaStream.prototype.getAudioTracks = function () { return []; };
             RTCSessionDescription = mozRTCSessionDescription;
             RTCIceCandidate = mozRTCIceCandidate;
+            RTC.getLocalSSRC = function (session, callback) {
+                session.peerconnection.getStats(function (s) {
+                        session.localStreamsSSRC = {
+                            "audio": s['outbound_rtp_audio_0'].ssrc,
+                            "video": s['outbound_rtp_video_1'].ssrc
+                        };
+                        callback(session.localStreamsSSRC);
+                    },
+                    function () {
+                        callback(null);
+                    });
+            };
         }
     } else if (navigator.webkitGetUserMedia) {
         console.log('This appears to be Chrome');
@@ -536,6 +555,9 @@ function setupRTC() {
             webkitMediaStream.prototype.getAudioTracks = function () {
                 return this.audioTracks;
             };
+        }
+        RTC.getLocalSSRC = function (session, callback) {
+            callback(null);
         }
     }
     if (RTC === null) {

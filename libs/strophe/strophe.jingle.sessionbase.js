@@ -89,7 +89,8 @@ SessionBase.prototype.switchStreams = function (new_stream, oldStream, success_c
     self.connection.jingle.localVideo = new_stream;
 
     self.connection.jingle.localStreams = [];
-    self.connection.jingle.localStreams.push(self.connection.jingle.localAudio);
+    if(RTC.browser == "chrome")
+        self.connection.jingle.localStreams.push(self.connection.jingle.localAudio);
     self.connection.jingle.localStreams.push(self.connection.jingle.localVideo);
 
     // Conference is not active

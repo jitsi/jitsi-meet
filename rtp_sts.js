@@ -174,6 +174,8 @@ StatsCollector.prototype.start = function ()
             self.peerconnection.getStats(
                 function (report)
                 {
+                    if(!report || !report.result || typeof report.result != 'function')
+                        return;
                     var results = report.result();
                     //console.error("Got interval report", results);
                     self.currentAudioLevelsReport = results;
@@ -193,6 +195,8 @@ StatsCollector.prototype.start = function ()
             self.peerconnection.getStats(
                 function (report)
                 {
+                    if(!report || !report.result || typeof report.result != 'function')
+                        return;
                     var results = report.result();
                     //console.error("Got interval report", results);
                     self.currentStatsReport = results;

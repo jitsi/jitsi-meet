@@ -453,6 +453,7 @@ ColibriFocus.prototype.createdConference = function (result) {
         'a=rtpmap:100 VP8/90000\r\n' +
         'a=rtcp-fb:100 ccm fir\r\n' +
         'a=rtcp-fb:100 nack\r\n' +
+        'a=rtcp-fb:100 nack pli\r\n' +
         'a=rtcp-fb:100 goog-remb\r\n' +
         'a=rtpmap:116 red/90000\r\n' +
         'a=rtpmap:117 ulpfec/90000\r\n' +

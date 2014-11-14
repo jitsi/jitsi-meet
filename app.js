@@ -69,7 +69,7 @@ function init() {
 
     obtainAudioAndVideoPermissions(function (stream) {
         var audioStream, videoStream;
-        if(document.webkitMediaStream)
+        if(window.webkitMediaStream)
         {
             var audioStream = new webkitMediaStream();
             var videoStream = new webkitMediaStream();
@@ -90,7 +90,7 @@ function init() {
         }
         else
         {
-//            VideoLayout.changeLocalAudio(stream);
+            VideoLayout.changeLocalAudio(stream);
             startLocalRtpStatsCollector(stream);
 
 
@@ -289,16 +289,19 @@ function waitForPresence(data, sid) {
     var sess = connection.jingle.sessions[sid];
 
     var thessrc;
+
     // look up an associated JID for a stream id
-    if (!data.stream.id || data.stream.id.indexOf('mixedmslabel') === -1) {
+    if (data.stream.id && data.stream.id.indexOf('mixedmslabel') === -1) {
         // look only at a=ssrc: and _not_ at a=ssrc-group: lines
+
         var ssrclines
             = SDPUtil.find_lines(sess.peerconnection.remoteDescription.sdp, 'a=ssrc:');
         ssrclines = ssrclines.filter(function (line) {
             // NOTE(gp) previously we filtered on the mslabel, but that property
             // is not always present.
             // return line.indexOf('mslabel:' + data.stream.label) !== -1;
-            return (!data.stream.id? false : (line.indexOf('msid:' + data.stream.id) !== -1));
+
+            return ((line.indexOf('msid:' + data.stream.id) !== -1));
         });
         if (ssrclines.length) {
             thessrc = ssrclines[0].substring(7).split(' ')[0];
@@ -606,15 +609,27 @@ $(document).bind('setLocalDescription.jingle', function (event, sid) {
     var media = simulcast.parseMedia(sess.peerconnection.localDescription);
     media.forEach(function (media) {
 
-        // TODO(gp) maybe exclude FID streams?
-        Object.keys(media.sources).forEach(function(ssrc) {
+        if(Object.keys(media.sources) > 0) {
+            // TODO(gp) maybe exclude FID streams?
+            Object.keys(media.sources).forEach(function (ssrc) {
+                newssrcs.push({
+                    'ssrc': ssrc,
+                    'type': media.type,
+                    'direction': media.direction
+                });
+            });
+        }
+        else if(sess.localStreamsSSRC && sess.localStreamsSSRC[media.type])
+        {
             newssrcs.push({
-                'ssrc': ssrc,
+                'ssrc': sess.localStreamsSSRC[media.type],
                 'type': media.type,
                 'direction': media.direction
             });
-        });
+        }
+
     });
+
     console.log('new ssrcs', newssrcs);
 
     // Have to clear presence map to get rid of removed streams
@@ -647,20 +662,22 @@ $(document).bind('iceconnectionstatechange.jingle', function (event, sid, sessio
             var metadata = {};
             metadata.setupTime = (new Date()).getTime() - session.timeChecking;
             session.peerconnection.getStats(function (res) {
-                res.result().forEach(function (report) {
-                    if (report.type == 'googCandidatePair' && report.stat('googActiveConnection') == 'true') {
-                        metadata.localCandidateType = report.stat('googLocalCandidateType');
-                        metadata.remoteCandidateType = report.stat('googRemoteCandidateType');
+                if(res && res.result) {
+                    res.result().forEach(function (report) {
+                        if (report.type == 'googCandidatePair' && report.stat('googActiveConnection') == 'true') {
+                            metadata.localCandidateType = report.stat('googLocalCandidateType');
+                            metadata.remoteCandidateType = report.stat('googRemoteCandidateType');
 
-                        // log pair as well so we can get nice pie charts 
-                        metadata.candidatePair = report.stat('googLocalCandidateType') + ';' + report.stat('googRemoteCandidateType');
+                            // log pair as well so we can get nice pie charts
+                            metadata.candidatePair = report.stat('googLocalCandidateType') + ';' + report.stat('googRemoteCandidateType');
 
-                        if (report.stat('googRemoteAddress').indexOf('[') === 0) {
-                            metadata.ipv6 = true;
+                            if (report.stat('googRemoteAddress').indexOf('[') === 0) {
+                                metadata.ipv6 = true;
+                            }
                         }
-                    }
-                });
-                trackUsage('iceConnected', metadata);
+                    });
+                    trackUsage('iceConnected', metadata);
+                }
             });
         }
         break;
@@ -1327,6 +1344,8 @@ $(document).ready(function () {
             currentVideoHeight = this.videoHeight;
             VideoLayout.positionLarge(currentVideoWidth, currentVideoHeight);
         });
+
+    document.getElementById('largeVideo').volume = 0;
 
     if (!$('#settings').is(':visible')) {
         console.log('init');
