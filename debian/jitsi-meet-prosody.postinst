@@ -23,6 +23,15 @@ case "$1" in
 
         . /etc/jitsi/videobridge/config
 
+        # loading debconf
+        . /usr/share/debconf/confmodule
+
+        # stores the hostname so we will reuse it later, like in purge
+        db_set jitsi-meet-prosody/jvb-hostname $JVB_HOSTNAME
+
+        # and we're done with debconf
+        db_stop
+
         PROSODY_CONFIG_PRESENT="true"
         PROSODY_HOST_CONFIG="/etc/prosody/conf.avail/$JVB_HOSTNAME.cfg.lua"
         # if there is no prosody config extract our template
