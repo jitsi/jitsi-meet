@@ -296,11 +296,12 @@ JingleSession.prototype.sendIceCandidates = function (candidates) {
             sid: this.sid});
     for (var mid = 0; mid < this.localSDP.media.length; mid++) {
         var cands = candidates.filter(function (el) { return el.sdpMLineIndex == mid; });
+        var mline = SDPUtil.parse_mline(this.localSDP.media[mid].split('\r\n')[0]);
         if (cands.length > 0) {
             var ice = SDPUtil.iceparams(this.localSDP.media[mid], this.localSDP.session);
             ice.xmlns = 'urn:xmpp:jingle:transports:ice-udp:1';
             cand.c('content', {creator: this.initiator == this.me ? 'initiator' : 'responder',
-                name: cands[0].sdpMid
+                name: (cands[0].sdpMid? cands[0].sdpMid : mline.media)
             }).c('transport', ice);
             for (var i = 0; i < cands.length; i++) {
                 cand.c('candidate', SDPUtil.candidateToJingle(cands[i].candidate)).up();

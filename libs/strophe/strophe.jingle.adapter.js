@@ -520,9 +520,24 @@ function setupRTC() {
             RTCIceCandidate = mozRTCIceCandidate;
             RTC.getLocalSSRC = function (session, callback) {
                 session.peerconnection.getStats(function (s) {
+                        var keys = Object.keys(s);
+                        var audio = null;
+                        var video = null;
+                        for(var i = 0; i < keys.length; i++)
+                        {
+                            if(keys[i].indexOf("outbound_rtp_audio") != -1)
+                            {
+                                audio = s[keys[i]].ssrc;
+                            }
+
+                            if(keys[i].indexOf("outbound_rtp_video") != -1)
+                            {
+                                video = s[keys[i]].ssrc;
+                            }
+                        }
                         session.localStreamsSSRC = {
-                            "audio": s['outbound_rtp_audio_0'].ssrc,
-                            "video": s['outbound_rtp_video_1'].ssrc
+                            "audio": audio,//for stable 0
+                            "video": video// for stable 1
                         };
                         callback(session.localStreamsSSRC);
                     },
