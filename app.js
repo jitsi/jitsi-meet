@@ -736,6 +736,7 @@ $(document).bind('left.muc', function (event, jid) {
         'disconnected');
     // Need to call this with a slight delay, otherwise the element couldn't be
     // found for some reason.
+    // XXX(gp) it works fine without the timeout for me (with Chrome 38).
     window.setTimeout(function () {
         var container = document.getElementById(
                 'participant_' + Strophe.getResourceFromJid(jid));
