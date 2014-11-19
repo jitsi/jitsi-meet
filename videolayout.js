@@ -1,6 +1,8 @@
 var VideoLayout = (function (my) {
     var currentDominantSpeaker = null;
     var lastNCount = config.channelLastN;
+    var localLastNCount = config.channelLastN;
+    var localLastNSet = [];
     var lastNEndpointsCache = [];
     var largeVideoState = {
         updateInProgress: false,
@@ -387,10 +389,10 @@ var VideoLayout = (function (my) {
             container.appendChild(nickfield);
 
             // In case this is not currently in the last n we don't show it.
-            if (lastNCount
-                && lastNCount > 0
-                && $('#remoteVideos>span').length >= lastNCount + 2) {
-                showPeerContainer(resourceJid, false);
+            if (localLastNCount
+                && localLastNCount > 0
+                && $('#remoteVideos>span').length >= localLastNCount + 2) {
+                showPeerContainer(resourceJid, 'hide');
             }
             else
                 VideoLayout.resizeThumbnails();
@@ -557,24 +559,44 @@ var VideoLayout = (function (my) {
     /**
      * Show/hide peer container for the given resourceJid.
      */
-    function showPeerContainer(resourceJid, isShow) {
+    function showPeerContainer(resourceJid, state) {
         var peerContainer = $('#participant_' + resourceJid);
 
         if (!peerContainer)
             return;
 
-        if (!peerContainer.is(':visible') && isShow)
-            peerContainer.show();
-        else if (peerContainer.is(':visible') && !isShow)
+        var isHide = state === 'hide';
+        var resizeThumbnails = false;
+
+        if (!isHide) {
+            if (!peerContainer.is(':visible')) {
+                resizeThumbnails = true;
+                peerContainer.show();
+            }
+
+            // TODO(gp) add proper avatars handling.
+            if (state == 'show')
+            {
+                peerContainer.css('-webkit-filter', '');
+            }
+            else // if (state == 'avatar')
+            {
+                peerContainer.css('-webkit-filter', 'grayscale(100%)');
+            }
+        }
+        else if (peerContainer.is(':visible') && isHide)
         {
+            resizeThumbnails = true;
             peerContainer.hide();
             if(VideoLayout.connectionIndicators['participant_' + resourceJid])
                 VideoLayout.connectionIndicators['participant_' + resourceJid].hide();
         }
 
-        VideoLayout.resizeThumbnails();
+        if (resizeThumbnails) {
+            VideoLayout.resizeThumbnails();
+        }
 
-        ContactList.setClickable(resourceJid, isShow);
+        ContactList.setClickable(resourceJid, !isHide);
 
     };
 
@@ -1009,8 +1031,8 @@ var VideoLayout = (function (my) {
        var availableHeight = 100;
 
         var numvids = $('#remoteVideos>span:visible').length;
-        if (lastNCount && lastNCount > 0) {
-            numvids = Math.min(lastNCount + 1, numvids);
+        if (localLastNCount && localLastNCount > 0) {
+            numvids = Math.min(localLastNCount + 1, numvids);
         }
 
        // Remove the 3px borders arround videos and border around the remote
@@ -1373,14 +1395,58 @@ var VideoLayout = (function (my) {
 
         lastNEndpointsCache = lastNEndpoints;
 
+        // Say A, B, C, D, E, and F are in a conference and LastN = 3.
+        //
+        // If LastN drops to, say, 2, because of adaptivity, then E should see
+        // thumbnails for A, B and C. A and B are in E's server side LastN set,
+        // so E sees them. C is only in E's local LastN set.
+        //
+        // If F starts talking and LastN = 3, then E should see thumbnails for
+        // F, A, B. B gets "ejected" from E's server side LastN set, but it
+        // enters E's local LastN ejecting C.
+
+        // Increase the local LastN set size, if necessary.
+        if (lastNCount > localLastNCount) {
+            localLastNCount = lastNCount;
+        }
+
+        // Update the local LastN set preserving the order in which the
+        // endpoints appeared in the LastN/local LastN set.
+
+        var nextLocalLastNSet = lastNEndpoints.slice(0);
+        for (var i = 0; i < localLastNSet.length; i++) {
+            if (nextLocalLastNSet.length >= localLastNCount) {
+                break;
+            }
+
+            var resourceJid = localLastNSet[i];
+            if (nextLocalLastNSet.indexOf(resourceJid) === -1) {
+                nextLocalLastNSet.push(resourceJid);
+            }
+        }
+
+        localLastNSet = nextLocalLastNSet;
+
+        // Handle LastN/local LastN changes.
         $('#remoteVideos>span').each(function( index, element ) {
             var resourceJid = VideoLayout.getPeerContainerResourceJid(element);
 
+            var isReceived = true;
             if (resourceJid
-                && lastNEndpoints.indexOf(resourceJid) < 0) {
+                && lastNEndpoints.indexOf(resourceJid) < 0
+                && localLastNSet.indexOf(resourceJid) < 0) {
                 console.log("Remove from last N", resourceJid);
-                showPeerContainer(resourceJid, false);
+                showPeerContainer(resourceJid, 'hide');
+                isReceived = false;
+            } else if (resourceJid
+                && $('#participant_' + resourceJid).is(':visible')
+                && lastNEndpoints.indexOf(resourceJid) < 0
+                && localLastNSet.indexOf(resourceJid) >= 0) {
+                showPeerContainer(resourceJid, 'avatar');
+                isReceived = false;
+            }
 
+            if (!isReceived) {
                 // resourceJid has dropped out of the server side lastN set, so
                 // it is no longer being received. If resourceJid was being
                 // displayed in the large video we have to switch to another
@@ -1418,9 +1484,10 @@ var VideoLayout = (function (my) {
         if (endpointsEnteringLastN && endpointsEnteringLastN.length > 0) {
             endpointsEnteringLastN.forEach(function (resourceJid) {
 
-                if (!$('#participant_' + resourceJid).is(':visible')) {
+                var isVisible = $('#participant_' + resourceJid).is(':visible');
+                showPeerContainer(resourceJid, 'show');
+                if (!isVisible) {
                     console.log("Add to last N", resourceJid);
-                    showPeerContainer(resourceJid, true);
 
                     mediaStreams.some(function (mediaStream) {
                         if (mediaStream.peerjid
