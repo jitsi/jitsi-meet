@@ -1148,6 +1148,22 @@ var VideoLayout = (function (my) {
             return containerElement.id.substring(i + 12); 
     };
 
+    my.getLargeVideoResource = function () {
+        var largeVideoJid, largeVideoResource;
+
+        // Another approach could be to compare the srcs of the thumbnails and
+        // then call getPeerContainerResourceJid.
+
+        var largeVideoSsrc
+            = videoSrcToSsrc[$('#largeVideo').attr('src')];
+
+        if (largeVideoSsrc
+                /* variables/state checking to prevent exceptions */
+            && (largeVideoJid = ssrc2jid[largeVideoSsrc])
+            && (largeVideoResource = Strophe.getResourceFromJid(largeVideoJid)))
+            return largeVideoResource;
+    };
+
     /**
      * Adds the remote video menu element for the given <tt>jid</tt> in the
      * given <tt>parentElement</tt>.
@@ -1364,6 +1380,35 @@ var VideoLayout = (function (my) {
                 && lastNEndpoints.indexOf(resourceJid) < 0) {
                 console.log("Remove from last N", resourceJid);
                 showPeerContainer(resourceJid, false);
+
+                // resourceJid has dropped out of the server side lastN set, so
+                // it is no longer being received. If resourceJid was being
+                // displayed in the large video we have to switch to another
+                // user.
+                var largeVideoResource = VideoLayout.getLargeVideoResource();
+                if (resourceJid === largeVideoResource) {
+                    var resource, container, src;
+                    var myResource
+                        = Strophe.getResourceFromJid(connection.emuc.myroomjid);
+
+                    // Find out which endpoint to show in the large video.
+                    for (var i = 0; i < lastNEndpoints.length; i++) {
+                        resource = lastNEndpoints[i];
+                        if (!resource || resource === myResource)
+                            continue;
+
+                        container = $("#participant_" + resource);
+                        if (container.length == 0)
+                            continue;
+
+                        src = $('video', container).attr('src');
+                        if (!src)
+                            continue;
+
+                        VideoLayout.updateLargeVideo(src);
+                        break;
+                    }
+                }
             }
         });
 
@@ -1442,6 +1487,8 @@ var VideoLayout = (function (my) {
                 var msidParts = msid.split(' ');
                 var selRemoteVideo = $(['#', 'remoteVideo_', session.sid, '_', msidParts[0]].join(''));
 
+                // FIXME(gp) here we should use the VideoLayout.getPeerContainerResource
+                // and VideoLayout.getLargeVideoResource methods.
                 var preload = (ssrc2jid[videoSrcToSsrc[selRemoteVideo.attr('src')]]
                     == ssrc2jid[videoSrcToSsrc[largeVideoState.newSrc]]);
 
@@ -1488,6 +1535,8 @@ var VideoLayout = (function (my) {
                 var msidParts = msid.split(' ');
                 var selRemoteVideo = $(['#', 'remoteVideo_', session.sid, '_', msidParts[0]].join(''));
 
+                // FIXME(gp) here we should use the VideoLayout.getPeerContainerResource
+                // and VideoLayout.getLargeVideoResource methods.
                 var updateLargeVideo = (ssrc2jid[videoSrcToSsrc[selRemoteVideo.attr('src')]]
                     == ssrc2jid[videoSrcToSsrc[largeVideoState.newSrc]]);
                 var updateFocusedVideoSrc = (selRemoteVideo.attr('src') == focusedVideoSrc);
