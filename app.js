@@ -1560,6 +1560,30 @@ $(document).bind("selectedendpointchanged", function(event, userJid) {
     onSelectedEndpointChanged(userJid);
 });
 
+function onPinnedEndpointChanged(userJid)
+{
+    console.log('pinned endpoint changed: ', userJid);
+    if (_dataChannels && _dataChannels.length != 0)
+    {
+        _dataChannels.some(function (dataChannel) {
+            if (dataChannel.readyState == 'open')
+            {
+                dataChannel.send(JSON.stringify({
+                    'colibriClass': 'PinnedEndpointChangedEvent',
+                    'pinnedEndpoint': (!userJid || userJid == null)
+                        ? null : Strophe.getResourceFromJid(userJid)
+                }));
+
+                return true;
+            }
+        });
+    }
+}
+
+$(document).bind("pinnedendpointchanged", function(event, userJid) {
+    onPinnedEndpointChanged(userJid);
+});
+
 function callSipButtonClicked()
 {
     var defaultNumber

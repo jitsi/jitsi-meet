@@ -263,6 +263,7 @@ var VideoLayout = (function (my) {
                 }
             }
 
+            $(document).trigger("pinnedendpointchanged");
             return;
         }
 
@@ -275,6 +276,8 @@ var VideoLayout = (function (my) {
         {
             var container = getParticipantContainer(userJid);
             container.addClass("videoContainerFocused");
+
+            $(document).trigger("pinnedendpointchanged", [userJid]);
         }
 
         // Triggers a "video.selected" event. The "false" parameter indicates
