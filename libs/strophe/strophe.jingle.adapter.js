@@ -510,7 +510,40 @@ function setupRTC() {
                     element[0].mozSrcObject = stream;
                     element[0].play();
                 },
-                pc_constraints: {}
+                pc_constraints: {},
+                getLocalSSRC: function (session, callback) {
+                    session.peerconnection.getStats(function (s) {
+                            var ssrcs = {};
+                            s.forEach(function (item) {
+                                if (item.type == "outboundrtp" && !item.isRemote)
+                                {
+                                    ssrcs[item.id.split('_')[2]] = item.ssrc;
+                                }
+                            });
+                            session.localStreamsSSRC = {
+                                "audio": ssrcs.audio,//for stable 0
+                                "video": ssrcs.video// for stable 1
+                            };
+                            callback(session.localStreamsSSRC);
+                        },
+                        function () {
+                            callback(null);
+                        });
+                },
+                getStreamID: function (stream) {
+                    var tracks = stream.getVideoTracks();
+                    if(!tracks || tracks.length == 0)
+                    {
+                        tracks = stream.getAudioTracks();
+                    }
+                    return tracks[0].id.replace(/[\{,\}]/g,"");
+                },
+                getVideoSrc: function (element) {
+                    return element.mozSrcObject;
+                },
+                setVideoSrc: function (element, src) {
+                    element.mozSrcObject = src;
+                }
             };
             if (!MediaStream.prototype.getVideoTracks)
                 MediaStream.prototype.getVideoTracks = function () { return []; };
@@ -518,41 +551,6 @@ function setupRTC() {
                 MediaStream.prototype.getAudioTracks = function () { return []; };
             RTCSessionDescription = mozRTCSessionDescription;
             RTCIceCandidate = mozRTCIceCandidate;
-            RTC.getLocalSSRC = function (session, callback) {
-                session.peerconnection.getStats(function (s) {
-                        var keys = Object.keys(s);
-                        var audio = null;
-                        var video = null;
-                        for(var i = 0; i < keys.length; i++)
-                        {
-                            if(keys[i].indexOf("outbound_rtp_audio") != -1)
-                            {
-                                audio = s[keys[i]].ssrc;
-                            }
-
-                            if(keys[i].indexOf("outbound_rtp_video") != -1)
-                            {
-                                video = s[keys[i]].ssrc;
-                            }
-                        }
-                        session.localStreamsSSRC = {
-                            "audio": audio,//for stable 0
-                            "video": video// for stable 1
-                        };
-                        callback(session.localStreamsSSRC);
-                    },
-                    function () {
-                        callback(null);
-                    });
-            };
-            RTC.getStreamID = function (stream) {
-                var tracks = stream.getVideoTracks();
-                if(!tracks || tracks.length == 0)
-                {
-                    tracks = stream.getAudioTracks();
-                }
-                return tracks[0].id.replace(/[\{,\}]/g,"");
-            }
         }
     } else if (navigator.webkitGetUserMedia) {
         console.log('This appears to be Chrome');
@@ -564,7 +562,19 @@ function setupRTC() {
                 element.attr('src', webkitURL.createObjectURL(stream));
             },
             // DTLS should now be enabled by default but..
-            pc_constraints: {'optional': [{'DtlsSrtpKeyAgreement': 'true'}]}
+            pc_constraints: {'optional': [{'DtlsSrtpKeyAgreement': 'true'}]},
+            getLocalSSRC: function (session, callback) {
+                callback(null);
+            },
+            getStreamID: function (stream) {
+                return stream.id;
+            },
+            getVideoSrc: function (element) {
+                return element.getAttribute("src");
+            },
+            setVideoSrc: function (element, src) {
+                element.setAttribute("src", src);
+            }
         };
         if (navigator.userAgent.indexOf('Android') != -1) {
             RTC.pc_constraints = {}; // disable DTLS on Android
@@ -578,12 +588,6 @@ function setupRTC() {
             webkitMediaStream.prototype.getAudioTracks = function () {
                 return this.audioTracks;
             };
-        }
-        RTC.getLocalSSRC = function (session, callback) {
-            callback(null);
-        }
-        RTC.getStreamID = function (stream) {
-            return stream.id;
         }
     }
     if (RTC === null) {

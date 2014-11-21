@@ -107,7 +107,6 @@ JingleSession.prototype.accept = function () {
 
     var pranswer = this.peerconnection.localDescription;
     if (!pranswer || pranswer.type != 'pranswer') {
-        console.error("No local sdp set!");
         return;
     }
     console.log('going from pranswer to answer');

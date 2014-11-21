@@ -14,6 +14,7 @@ var ssrc2jid = {};
 var mediaStreams = [];
 var bridgeIsDown = false;
 var notReceivedSSRCs = [];
+var jid2Ssrc = {};
 
 /**
  * The stats collector that process stats data and triggers updates to app.js.
@@ -32,7 +33,6 @@ var localStatsCollector = null;
  * FIXME: remove those maps
  */
 var ssrc2videoType = {};
-var videoSrcToSsrc = {};
 /**
  * Currently focused video "src"(displayed in large video).
  * @type {String}
@@ -253,7 +253,7 @@ function doJoin() {
     connection.emuc.doJoin(roomjid);
 }
 
-function waitForRemoteVideo(selector, ssrc, stream) {
+function waitForRemoteVideo(selector, ssrc, stream, jid) {
     if (selector.removed || !selector.parent().is(":visible")) {
         console.warn("Media removed before had started", selector);
         return;
@@ -267,17 +267,17 @@ function waitForRemoteVideo(selector, ssrc, stream) {
 
         // FIXME: add a class that will associate peer Jid, video.src, it's ssrc and video type
         //        in order to get rid of too many maps
-        if (ssrc && selector.attr('src')) {
-            videoSrcToSsrc[selector.attr('src')] = ssrc;
+        if (ssrc && jid) {
+            jid2Ssrc[Strophe.getResourceFromJid(jid)] = ssrc;
         } else {
-            console.warn("No ssrc given for video", selector);
+            console.warn("No ssrc given for jid", jid);
 //            messageHandler.showError('Warning', 'No ssrc was given for the video.');
         }
 
         $(document).trigger('videoactive.jingle', [selector]);
     } else {
         setTimeout(function () {
-            waitForRemoteVideo(selector, ssrc, stream);
+            waitForRemoteVideo(selector, ssrc, stream, jid);
             }, 250);
     }
 }
@@ -401,25 +401,6 @@ function waitForPresence(data, sid) {
             sendKeyframe(sess.peerconnection);
         }, 3000);
     }
-}
-
-/**
- * Returns the JID of the user to whom given <tt>videoSrc</tt> belongs.
- * @param videoSrc the video "src" identifier.
- * @returns {null | String} the JID of the user to whom given <tt>videoSrc</tt>
- *                   belongs.
- */
-function getJidFromVideoSrc(videoSrc)
-{
-    if (videoSrc === localVideoSrc)
-        return connection.emuc.myroomjid;
-
-    var ssrc = videoSrcToSsrc[videoSrc];
-    if (!ssrc)
-    {
-        return null;
-    }
-    return ssrc2jid[ssrc];
 }
 
 // an attempt to work around https://github.com/jitsi/jitmeet/issues/32
@@ -805,14 +786,13 @@ $(document).bind('left.muc', function (event, jid) {
         APIConnector.triggerEvent("participantLeft",{jid: jid});
     }
 
+    delete jid2Ssrc[jid];
+
     // Unlock large video
-    if (focusedVideoSrc)
+    if (focusedVideoSrc && focusedVideoSrc.jid === jid)
     {
-        if (getJidFromVideoSrc(focusedVideoSrc) === jid)
-        {
-            console.info("Focused video owner has left the conference");
-            focusedVideoSrc = null;
-        }
+        console.info("Focused video owner has left the conference");
+        focusedVideoSrc = null;
     }
 
     connection.jingle.terminateByJid(jid);
@@ -864,8 +844,6 @@ $(document).bind('presence.muc', function (event, jid, info, pres) {
     Object.keys(ssrc2jid).forEach(function (ssrc) {
         if (ssrc2jid[ssrc] == jid) {
             delete ssrc2jid[ssrc];
-        }
-        if (ssrc2videoType[ssrc] == jid) {
             delete ssrc2videoType[ssrc];
         }
     });
@@ -980,16 +958,20 @@ $(document).bind('passwordrequired.main', function (event) {
  * blob:https%3A//pawel.jitsi.net/9a46e0bd-131e-4d18-9c14-a9264e8db395
  * @returns {boolean}
  */
-function isVideoSrcDesktop(videoSrc) {
+function isVideoSrcDesktop(jid) {
     // FIXME: fix this mapping mess...
     // figure out if large video is desktop stream or just a camera
+
+    if(!jid)
+        return false;
     var isDesktop = false;
-    if (localVideoSrc === videoSrc) {
+    if (connection.emuc.myroomjid &&
+        Strophe.getResourceFromJid(connection.emuc.myroomjid) === jid) {
         // local video
         isDesktop = isUsingScreenStream;
     } else {
         // Do we have associations...
-        var videoSsrc = videoSrcToSsrc[videoSrc];
+        var videoSsrc = jid2Ssrc[jid];
         if (videoSsrc) {
             var videoType = ssrc2videoType[videoSsrc];
             if (videoType) {
@@ -999,7 +981,7 @@ function isVideoSrcDesktop(videoSrc) {
                 console.error("No video type for ssrc: " + videoSsrc);
             }
         } else {
-            console.error("No ssrc for src: " + videoSrc);
+            console.error("No ssrc for jid: " + jid);
         }
     }
     return isDesktop;
@@ -1602,7 +1584,7 @@ function onSelectedEndpointChanged(userJid)
                 dataChannel.send(JSON.stringify({
                     'colibriClass': 'SelectedEndpointChangedEvent',
                     'selectedEndpoint': (!userJid || userJid == null)
-                        ? null : Strophe.getResourceFromJid(userJid)
+                        ? null : userJid
                 }));
 
                 return true;
