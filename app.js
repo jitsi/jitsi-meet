@@ -13,7 +13,9 @@ var roomName = null;
 var ssrc2jid = {};
 var mediaStreams = [];
 var bridgeIsDown = false;
+//TODO: this array must be removed when firefox implement multistream support
 var notReceivedSSRCs = [];
+
 var jid2Ssrc = {};
 
 /**
@@ -91,11 +93,9 @@ function init() {
         }
         else
         {
-            VideoLayout.changeLocalAudio(stream);
+            VideoLayout.changeLocalStream(stream);
             startLocalRtpStatsCollector(stream);
 
-
-            VideoLayout.changeLocalVideo(stream, true);
         }
 
 
@@ -332,6 +332,7 @@ function waitForPresence(data, sid) {
         }
     }
 
+    //TODO: this code should be removed when firefox implement multistream support
     if(RTC.browser == "firefox")
     {
         if((notReceivedSSRCs.length == 0) ||

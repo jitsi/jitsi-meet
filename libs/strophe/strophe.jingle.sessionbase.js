@@ -89,7 +89,9 @@ SessionBase.prototype.switchStreams = function (new_stream, oldStream, success_c
     self.connection.jingle.localVideo = new_stream;
 
     self.connection.jingle.localStreams = [];
-    if(RTC.browser == "chrome")
+
+    //in firefox we have only one stream object
+    if(self.connection.jingle.localAudio != self.connection.jingle.localVideo)
         self.connection.jingle.localStreams.push(self.connection.jingle.localAudio);
     self.connection.jingle.localStreams.push(self.connection.jingle.localVideo);
 

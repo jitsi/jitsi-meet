@@ -11,15 +11,16 @@ var VideoLayout = (function (my) {
 
     my.connectionIndicators = {};
 
+    my.changeLocalStream = function (stream) {
+        connection.jingle.localAudio = stream;
+        VideoLayout.changeLocalVideo(stream, true);
+    }
+
     my.changeLocalAudio = function(stream) {
         connection.jingle.localAudio = stream;
-        if(RTC.browser == "chrome")
-        {
-            RTC.attachMediaStream($('#localAudio'), stream);
-            document.getElementById('localAudio').autoplay = true;
-            document.getElementById('localAudio').volume = 0;
-        }
-
+        RTC.attachMediaStream($('#localAudio'), stream);
+        document.getElementById('localAudio').autoplay = true;
+        document.getElementById('localAudio').volume = 0;
     };
 
     my.changeLocalVideo = function(stream, flipX) {

@@ -5,7 +5,6 @@ function TraceablePeerConnection(ice_config, constraints) {
     this.updateLog = [];
     this.stats = {};
     this.statsinterval = null;
-    this.originalRemoteDescription = null;
     this.maxstats = 0; // limit to 300 values, i.e. 5 minutes; set to 0 to disable
 
     /**
@@ -188,7 +187,6 @@ TraceablePeerConnection.prototype.setRemoteDescription = function (description, 
     var self = this;
     description = simulcast.transformRemoteDescription(description);
     this.trace('setRemoteDescription', dumpSDP(description));
-    this.originalRemoteDescription = description;
     this.peerconnection.setRemoteDescription(description,
         function () {
             self.trace('setRemoteDescriptionOnSuccess');
