@@ -1609,7 +1609,12 @@ var VideoLayout = (function (my) {
                 // and VideoLayout.getLargeVideoResource methods.
                 var updateLargeVideo = (ssrc2jid[videoSrcToSsrc[selRemoteVideo.attr('src')]]
                     == ssrc2jid[videoSrcToSsrc[largeVideoState.newSrc]]);
-                var updateFocusedVideoSrc = (selRemoteVideo.attr('src') == focusedVideoSrc);
+
+                // We should only update the focused video src if it's not a
+                // falsy value.
+                var updateFocusedVideoSrc
+                    = focusedVideoSrc && focusedVideoSrc !== ''
+                        && (selRemoteVideo.attr('src') == focusedVideoSrc);
 
                 var electedStreamUrl;
                 if (largeVideoState.preload_ssrc == primarySSRC)
