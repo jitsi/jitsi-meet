@@ -247,7 +247,7 @@ var VideoLayout = (function (my) {
             oldContainer.removeClass("videoContainerFocused");
         }
 
-        // Unlock current focused. 
+        // Unlock current focused.
         if (focusedVideoSrc === videoSrc)
         {
             focusedVideoSrc = null;
@@ -1634,7 +1634,7 @@ var VideoLayout = (function (my) {
                 }
 
                 selRemoteVideo.attr('src', electedStreamUrl);
-                videoSrcToSsrc[selRemoteVideo.attr('src')] = primarySSRC;
+                videoSrcToSsrc[selRemoteVideo.attr('src')] = primarySSRC + ''; // what we store there is typeof string.
 
                 if (updateLargeVideo) {
                     VideoLayout.updateLargeVideo(electedStreamUrl);
