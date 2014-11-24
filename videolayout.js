@@ -1542,6 +1542,12 @@ var VideoLayout = (function (my) {
 
     $(document).bind('simulcastlayerschanging', function (event, endpointSimulcastLayers) {
         endpointSimulcastLayers.forEach(function (esl) {
+
+            var resource = esl.endpoint;
+            if (lastNCount < 1 || lastNEndpointsCache.indexOf(resource) === -1) {
+                return;
+            }
+
             var primarySSRC = esl.simulcastLayer.primarySSRC;
 
             // Get session and stream from primary ssrc.
@@ -1588,6 +1594,11 @@ var VideoLayout = (function (my) {
      */
     $(document).bind('simulcastlayerschanged', function (event, endpointSimulcastLayers) {
         endpointSimulcastLayers.forEach(function (esl) {
+
+            var resource = esl.endpoint;
+            if (lastNCount < 1 || lastNEndpointsCache.indexOf(resource) === -1) {
+                return;
+            }
 
             var primarySSRC = esl.simulcastLayer.primarySSRC;
 
@@ -1644,15 +1655,14 @@ var VideoLayout = (function (my) {
                     focusedVideoSrc = electedStreamUrl;
                 }
 
-                var jid = ssrc2jid[primarySSRC];
                 var videoId;
-                if(jid == connection.emuc.myroomjid)
+                if(resource == Strophe.getResourceFromJid(connection.emuc.myroomjid))
                 {
                     videoId = "localVideoContainer";
                 }
                 else
                 {
-                    videoId = "participant_" + Strophe.getResourceFromJid(jid);
+                    videoId = "participant_" + resource;
                 }
                 var connectionIndicator = VideoLayout.connectionIndicators[videoId];
                 if(connectionIndicator)
