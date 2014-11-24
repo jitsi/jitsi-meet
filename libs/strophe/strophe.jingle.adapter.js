@@ -152,8 +152,16 @@ TraceablePeerConnection.prototype.addStream = function (stream) {
 
 };
 
-TraceablePeerConnection.prototype.removeStream = function (stream) {
+TraceablePeerConnection.prototype.removeStream = function (stream, stopStreams) {
     this.trace('removeStream', stream.id);
+    if(stopStreams) {
+        stream.getAudioTracks().forEach(function (track) {
+            track.stop();
+        });
+        stream.getVideoTracks().forEach(function (track) {
+            track.stop();
+        });
+    }
     this.peerconnection.removeStream(stream);
 };
 

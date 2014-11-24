@@ -122,7 +122,17 @@ var VideoLayout = (function (my) {
                 var container = pick.parentNode;
                 var jid = null;
                 if(container)
-                    jid = VideoLayout.getPeerContainerResourceJid(container);
+                {
+                    if(container.id == "localVideoWrapper")
+                    {
+                        jid = Strophe.getResourceFromJid(connection.emuc.myroomjid);
+                    }
+                    else
+                    {
+                        jid = VideoLayout.getPeerContainerResourceJid(container);
+                    }
+                }
+
                 VideoLayout.updateLargeVideo(RTC.getVideoSrc(pick), pick.volume, jid);
             } else {
                 console.warn("Failed to elect large video");
@@ -153,7 +163,13 @@ var VideoLayout = (function (my) {
             largeVideoState.newSrc = newSrc;
             largeVideoState.isVisible = $('#largeVideo').is(':visible');
             largeVideoState.isDesktop = isVideoSrcDesktop(jid);
-            largeVideoState.oldJid = largeVideoState.userJid;
+            if(jid2Ssrc[largeVideoState.userJid]) {
+                largeVideoState.oldJid = largeVideoState.userJid;
+            }
+            else
+            {
+                largeVideoState.oldJid = null;
+            }
             largeVideoState.userJid = jid;
 
             // Screen stream is already rotated
@@ -952,7 +968,6 @@ var VideoLayout = (function (my) {
         videoSpan = document.getElementById(videoContainerId);
 
         if (!videoSpan) {
-            console.error("No video element for jid", resourceJid);
             return;
         }
 

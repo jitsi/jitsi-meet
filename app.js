@@ -1422,10 +1422,10 @@ function disposeConference(onUnload) {
         // FIXME: probably removing streams is not required and close() should
         // be enough
         if (connection.jingle.localAudio) {
-            handler.peerconnection.removeStream(connection.jingle.localAudio);
+            handler.peerconnection.removeStream(connection.jingle.localAudio, onUnload);
         }
         if (connection.jingle.localVideo) {
-            handler.peerconnection.removeStream(connection.jingle.localVideo);
+            handler.peerconnection.removeStream(connection.jingle.localVideo, onUnload);
         }
         handler.peerconnection.close();
     }
