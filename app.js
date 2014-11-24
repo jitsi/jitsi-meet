@@ -238,6 +238,25 @@ function doJoin() {
 }
 
 function waitForRemoteVideo(selector, ssrc, stream) {
+
+    // XXX(gp) so, every call to this function is *always* preceded by a call
+    // to the RTC.attachMediaStream() function but that call is *not* followed
+    // by an update to the videoSrcToSsrc map!
+    //
+    // The above way of doing things results in video SRCs that don't correspond
+    // to any SSRC for a short period of time (to be more precise, for as long
+    // the waitForRemoteVideo takes to complete). This causes problems (see
+    // bellow).
+    //
+    // I'm wondering why we need to do that; i.e. why call RTC.attachMediaStream()
+    // a second time in here and only then update the videoSrcToSsrc map? Why
+    // not simply update the videoSrcToSsrc map when the RTC.attachMediaStream()
+    // is called the first time? I actually do that in the lastN changed event
+    // handler because the "orphan" video SRC is causing troubles there. The
+    // purpose of this method would then be to fire the "videoactive.jingle".
+    //
+    // Food for though I guess :-)
+
     if (selector.removed || !selector.parent().is(":visible")) {
         console.warn("Media removed before had started", selector);
         return;

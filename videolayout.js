@@ -4,6 +4,7 @@ var VideoLayout = (function (my) {
     var localLastNCount = config.channelLastN;
     var localLastNSet = [];
     var lastNEndpointsCache = [];
+    var lastNPickupJid = null;
     var largeVideoState = {
         updateInProgress: false,
         newSrc: ''
@@ -238,7 +239,7 @@ var VideoLayout = (function (my) {
         }
     };
 
-    my.handleVideoThumbClicked = function(videoSrc) {
+    my.handleVideoThumbClicked = function(videoSrc, noPinnedEndpointChangedEvent) {
         // Restore style for previously focused video
         var focusJid = getJidFromVideoSrc(focusedVideoSrc);
         var oldContainer = getParticipantContainer(focusJid);
@@ -263,7 +264,9 @@ var VideoLayout = (function (my) {
                 }
             }
 
-            $(document).trigger("pinnedendpointchanged");
+            if (!noPinnedEndpointChangedEvent) {
+                $(document).trigger("pinnedendpointchanged");
+            }
             return;
         }
 
@@ -277,7 +280,13 @@ var VideoLayout = (function (my) {
             var container = getParticipantContainer(userJid);
             container.addClass("videoContainerFocused");
 
-            $(document).trigger("pinnedendpointchanged", [userJid]);
+            if (!noPinnedEndpointChangedEvent) {
+                $(document).trigger("pinnedendpointchanged", [userJid]);
+            }
+        }
+
+        if ($('#largeVideo').attr('src') == videoSrc) {
+            return;
         }
 
         // Triggers a "video.selected" event. The "false" parameter indicates
@@ -599,7 +608,9 @@ var VideoLayout = (function (my) {
             VideoLayout.resizeThumbnails();
         }
 
-        ContactList.setClickable(resourceJid, !isHide);
+        // We want to be able to pin a participant from the contact list, even
+        // if he's not in the lastN set!
+        // ContactList.setClickable(resourceJid, !isHide);
 
     };
 
@@ -1272,6 +1283,48 @@ var VideoLayout = (function (my) {
     }
 
     /**
+     * On contact list item clicked.
+     */
+    $(ContactList).bind('contactclicked', function(event, jid) {
+        if (!jid) {
+            return;
+        }
+
+        var resource = Strophe.getResourceFromJid(jid);
+        var videoContainer = $("#participant_" + resource);
+        if (videoContainer.length > 0) {
+            var videoThumb = $('video', videoContainer).get(0);
+            // It is not always the case that a videoThumb exists (if there is
+            // no actual video).
+            if (videoThumb) {
+                if (videoThumb.src && videoThumb.src != '') {
+
+                    // We have a video src, great! Let's update the large video
+                    // now.
+
+                    VideoLayout.handleVideoThumbClicked(videoThumb.src);
+                } else {
+
+                    // If we don't have a video src for jid, there's absolutely
+                    // no point in calling handleVideoThumbClicked; Quite
+                    // simply, it won't work because it needs an src to attach
+                    // to the large video.
+                    //
+                    // Instead, we trigger the pinned endpoint changed event to
+                    // let the bridge adjust its lastN set for myjid and store
+                    // the pinned user in the lastNPickupJid variable to be
+                    // picked up later by the lastN changed event handler.
+
+                    lastNPickupJid = jid;
+                    $(document).trigger("pinnedendpointchanged", [jid]);
+                }
+            } else if (jid == connection.emuc.myroomjid) {
+                $("#localVideoContainer").click();
+            }
+        }
+    });
+
+    /**
      * On audio muted event.
      */
     $(document).bind('audiomuted.muc', function (event, jid, isMuted) {
@@ -1430,6 +1483,8 @@ var VideoLayout = (function (my) {
 
         localLastNSet = nextLocalLastNSet;
 
+        var updateLargeVideo = false;
+
         // Handle LastN/local LastN changes.
         $('#remoteVideos>span').each(function( index, element ) {
             var resourceJid = VideoLayout.getPeerContainerResourceJid(element);
@@ -1455,28 +1510,8 @@ var VideoLayout = (function (my) {
                 // displayed in the large video we have to switch to another
                 // user.
                 var largeVideoResource = VideoLayout.getLargeVideoResource();
-                if (resourceJid === largeVideoResource) {
-                    var resource, container, src;
-                    var myResource
-                        = Strophe.getResourceFromJid(connection.emuc.myroomjid);
-
-                    // Find out which endpoint to show in the large video.
-                    for (var i = 0; i < lastNEndpoints.length; i++) {
-                        resource = lastNEndpoints[i];
-                        if (!resource || resource === myResource)
-                            continue;
-
-                        container = $("#participant_" + resource);
-                        if (container.length == 0)
-                            continue;
-
-                        src = $('video', container).attr('src');
-                        if (!src)
-                            continue;
-
-                        VideoLayout.updateLargeVideo(src);
-                        break;
-                    }
+                if (!updateLargeVideo && resourceJid === largeVideoResource) {
+                    updateLargeVideo = true;
                 }
             }
         });
@@ -1501,6 +1536,18 @@ var VideoLayout = (function (my) {
 
                             var videoStream = simulcast.getReceivingVideoStream(mediaStream.stream);
                             RTC.attachMediaStream(sel, videoStream);
+                            videoSrcToSsrc[sel.attr('src')] = mediaStream.ssrc;
+                            if (lastNPickupJid == mediaStream.peerjid) {
+                                // Clean up the lastN pickup jid.
+                                lastNPickupJid = null;
+
+                                // Don't fire the events again, they've already
+                                // been fired in the contact list click handler.
+                                VideoLayout.handleVideoThumbClicked($(sel).attr('src'), false);
+
+                                updateLargeVideo = false;
+                            }
+
                             waitForRemoteVideo(
                                     sel,
                                     mediaStream.ssrc,
@@ -1510,6 +1557,37 @@ var VideoLayout = (function (my) {
                     });
                 }
             });
+        }
+
+        // The endpoint that was being shown in the large video has dropped out
+        // of the lastN set and there was no lastN pickup jid. We need to update
+        // the large video now.
+
+        if (updateLargeVideo) {
+
+            var resource, container, src;
+            var myResource
+                = Strophe.getResourceFromJid(connection.emuc.myroomjid);
+
+            // Find out which endpoint to show in the large video.
+            for (var i = 0; i < lastNEndpoints.length; i++) {
+                resource = lastNEndpoints[i];
+                if (!resource || resource === myResource)
+                    continue;
+
+                container = $("#participant_" + resource);
+                if (container.length == 0)
+                    continue;
+
+                src = $('video', container).attr('src');
+                if (!src)
+                    continue;
+
+                // videoSrcToSsrc needs to be update for this call to succeed.
+                VideoLayout.updateLargeVideo(src);
+                break;
+
+            }
         }
     });
 

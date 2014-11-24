@@ -41,17 +41,13 @@ var ContactList = (function (my) {
         var contactlist = $('#contactlist>ul');
 
         var newContact = document.createElement('li');
+        // XXX(gp) contact click event handling is now in videolayout.js. Is the
+        // following statement (newContact.id = resourceJid) still relevant?
         newContact.id = resourceJid;
         newContact.className = "clickable";
         newContact.onclick = function(event) {
             if(event.currentTarget.className === "clickable") {
-                var jid = event.currentTarget.id;
-                var videoContainer = $("#participant_" + jid);
-                if (videoContainer.length > 0) {
-                    videoContainer.click();
-                } else if (jid == Strophe.getResourceFromJid(connection.emuc.myroomjid)) {
-                    $("#localVideoContainer").click();
-                }
+                $(ContactList).trigger('contactclicked', [peerJid]);
             }
         };
 
