@@ -29,7 +29,16 @@ case "$1" in
         fi
     ;;
 
-    purge|upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)
+    purge)
+        db_get jitsi-meet-prosody/jvb-hostname
+        JVB_HOSTNAME=$RET
+        if [ -n "$RET" ]; then
+            rm -f /etc/prosody/conf.avail/$JVB_HOSTNAME.cfg.lua
+            rm -f /etc/prosody/conf.d/$JVB_HOSTNAME.cfg.lua
+        fi
+    ;;
+
+    upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)
     ;;
 
     *)

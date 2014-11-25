@@ -48,7 +48,7 @@ var JitsiMeetExternalAPI = (function()
         this.iframeHolder.style.width = width + "px";
         this.iframeHolder.style.height = height + "px";
         this.frameName = "jitsiConferenceFrame" + JitsiMeetExternalAPI.id;
-        this.url = "http://" + domain + "/";
+        this.url = "//" + domain + "/";
         if(room_name)
             this.url += room_name;
         this.url += "#external";
@@ -139,7 +139,7 @@ var JitsiMeetExternalAPI = (function()
      * event and value - the listener.
      * Currently we support the following
      * events:
-     * incommingMessage - receives event notifications about incomming
+     * incomingMessage - receives event notifications about incoming
      * messages. The listener will receive object with the following structure:
      * {{
      *  "from": from,//JID of the user that sent the message
@@ -185,7 +185,7 @@ var JitsiMeetExternalAPI = (function()
     /**
      * Adds event listeners to Meet Jitsi. Currently we support the following
      * events:
-     * incommingMessage - receives event notifications about incomming
+     * incomingMessage - receives event notifications about incoming
      * messages. The listener will receive object with the following structure:
      * {{
      *  "from": from,//JID of the user that sent the message

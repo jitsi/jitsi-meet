@@ -31,7 +31,7 @@ var APIConnector = (function () {
      * Maps the supported events and their status
      * (true it the event is enabled and false if it is disabled)
      * @type {{
-     *              incommingMessage: boolean,
+     *              incomingMessage: boolean,
      *              outgoingMessage: boolean,
      *              displayNameChange: boolean,
      *              participantJoined: boolean,
@@ -40,7 +40,7 @@ var APIConnector = (function () {
      */
     var events =
     {
-        incommingMessage: false,
+        incomingMessage: false,
         outgoingMessage:false,
         displayNameChange: false,
         participantJoined: false,

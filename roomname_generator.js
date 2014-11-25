@@ -11,17 +11,17 @@ var RoomNameGenerator = function(my) {
     //];
     var pluralNouns = [
         "Aliens", "Animals", "Antelopes", "Ants", "Apes", "Apples", "Baboons", "Bacteria", "Badgers", "Bananas", "Bats",
-        "Bears", "Birds", "Blokes", "Bonobos", "Boys", "Brides", "Brothers", "Bugs", "Bulls", "Butterflies", "Cheetahs",
+        "Bears", "Birds", "Bonobos", "Brides", "Bugs", "Bulls", "Butterflies", "Cheetahs",
         "Cherries", "Chicken", "Children", "Chimps", "Clowns", "Cows", "Creatures", "Dinosaurs", "Dogs", "Dolphins",
-        "Donkeys", "Dragons", "Ducks", "Dudes", "Dwarfs", "Eagles", "Elephants", "Elves", "FAIL", "Fathers", "Fellows",
-        "Fish", "Flowers", "Folk", "Folks", "Frogs", "Fruit", "Fungi", "Galaxies", "Gals", "Geese", "Girls", "Goats",
-        "Gorillas", "Grooms", "Guys", "Hedgehogs", "Hippos", "Horses", "Hunters", "Insects", "Kids", "Knights",
-        "Lemons", "Lemurs", "Leopards", "LifeForms", "Lions", "Lizards", "Men", "Mice", "Monkeys", "Monsters",
-        "Mothers", "Mushrooms", "Octopodes", "Oranges", "Orangutans", "Organisms", "Pants", "Parrots", "Penguins",
+        "Donkeys", "Dragons", "Ducks", "Dwarfs", "Eagles", "Elephants", "Elves", "FAIL", "Fathers",
+        "Fish", "Flowers", "Frogs", "Fruit", "Fungi", "Galaxies", "Geese", "Goats",
+        "Gorillas", "Hedgehogs", "Hippos", "Horses", "Hunters", "Insects", "Kids", "Knights",
+        "Lemons", "Lemurs", "Leopards", "LifeForms", "Lions", "Lizards", "Mice", "Monkeys", "Monsters",
+        "Mushrooms", "Octopodes", "Oranges", "Orangutans", "Organisms", "Pants", "Parrots", "Penguins",
         "People", "Pigeons", "Pigs", "Pineapples", "Plants", "Potatoes", "Priests", "Rats", "Reptiles", "Reptilians",
-        "Rhinos", "Seagulls", "Sheep", "Siblings", "Sisters", "Snakes", "Spaghetti", "Spiders", "Squid", "Squirrels",
-        "Stars", "Students", "Teachers", "Tigers", "Tomatoes", "Trees", "Vegetables", "Virgins", "Viruses", "Vulcans",
-        "Weasels", "Wenches", "Whales", "Witches", "Wizards", "Wolves", "Women", "Workers", "Worms", "Zebras"
+        "Rhinos", "Seagulls", "Sheep", "Siblings", "Snakes", "Spaghetti", "Spiders", "Squid", "Squirrels",
+        "Stars", "Students", "Teachers", "Tigers", "Tomatoes", "Trees", "Vampires", "Vegetables", "Viruses", "Vulcans",
+        "Warewolves", "Weasels", "Whales", "Witches", "Wizards", "Wolves", "Workers", "Worms", "Zebras"
     ];
     //var places = [
     //"Pub", "University", "Airport", "Library", "Mall", "Theater", "Stadium", "Office", "Show", "Gallows", "Beach",
@@ -30,7 +30,7 @@ var RoomNameGenerator = function(my) {
     // "Bridge"
     //];
     var verbs = [
-        "Abandon", "Adapt", "Advertise", "Answer", "Answer", "Anticipate", "Appreciate", "Appreciate",
+        "Abandon", "Adapt", "Advertise", "Answer", "Anticipate", "Appreciate",
         "Approach", "Argue", "Ask", "Bite", "Blossom", "Blush", "Breathe", "Breed", "Bribe", "Burn", "Calculate",
         "Clean", "Code", "Communicate", "Compute", "Confess", "Confiscate", "Conjugate", "Conjure", "Consume",
         "Contemplate", "Crawl", "Dance", "Delegate", "Devour", "Develop", "Differ", "Discuss",
@@ -39,9 +39,9 @@ var RoomNameGenerator = function(my) {
         "Gather", "Glow", "Grow", "Hex", "Hide", "Hug", "Hurry", "Improve", "Intersect", "Investigate", "Jinx",
         "Joke", "Jubilate", "Kiss", "Laugh", "Manage", "Meet", "Merge", "Move", "Object", "Observe", "Offer",
         "Paint", "Participate", "Party", "Perform", "Plan", "Pursue", "Pierce", "Play", "Postpone", "Pray", "Proclaim",
-        "Question", "Read", "Reckon", "Rejoice", "Represent", "Resize", "Rhyme", "Scream", "Search", "Secrete", "Select", "Share", "Shoot",
-        "Shout", "Shout", "Signal", "Sing", "Skate", "Sleep", "Smile", "Smoke", "Solve", "Spell", "Spell", "Steer", "Stink",
-        "Substitute", "Sweat", "Swim", "Taste", "Teach", "Terminate", "Think", "Type", "Unite", "Vanish", "Worship"
+        "Question", "Read", "Reckon", "Rejoice", "Represent", "Resize", "Rhyme", "Scream", "Search", "Select", "Share", "Shoot",
+        "Shout", "Signal", "Sing", "Skate", "Sleep", "Smile", "Smoke", "Solve", "Spell", "Steer", "Stink",
+        "Substitute", "Swim", "Taste", "Teach", "Terminate", "Think", "Type", "Unite", "Vanish", "Worship"
     ];
     var adverbs = [
         "Absently", "Accurately", "Accusingly", "Adorably", "AllTheTime", "Alone", "Always", "Amazingly", "Angrily",
@@ -69,24 +69,24 @@ var RoomNameGenerator = function(my) {
         "Choppy", "Chosen", "Clever", "Cold", "Cool", "Crawly", "Crazy", "Creepy", "Cruel", "Curious", "Cynical",
         "Dangerous", "Dark", "Delicate", "Desperate", "Difficult", "Discreet", "Disguised", "Dizzy",
         "Dumb", "Eager", "Easy", "Edgy", "Electric", "Elegant", "Emancipated", "Enormous", "Euphoric", "Evil",
-        "FAIL", "Fast", "Fat", "Ferocious", "Fierce", "Fine", "Flawed", "Flying", "Foolish", "Foxy",
+        "FAIL", "Fast", "Ferocious", "Fierce", "Fine", "Flawed", "Flying", "Foolish", "Foxy",
         "Freezing", "Funny", "Furious", "Gentle", "Glorious", "Golden", "Good", "Green", "Green", "Guilty",
         "Hairy", "Happy", "Hard", "Hasty", "Hazy", "Heroic", "Hostile", "Hot", "Humble", "Humongous",
         "Humorous", "Hysterical", "Idealistic", "Ignorant", "Immense", "Impartial", "Impolite", "Indifferent",
         "Infuriated", "Insightful", "Intense", "Interesting", "Intimidated", "Intriguing", "Jealous", "Jolly", "Jovial",
         "Jumpy", "Kind", "Laughing", "Lazy", "Liquid", "Lonely", "Longing", "Loud", "Loving", "Loyal", "Macabre", "Mad",
-        "Magical", "Magnificent", "Malevolent", "Manly", "Medieval", "Memorable", "Mere", "Merry", "Mighty",
+        "Magical", "Magnificent", "Malevolent", "Medieval", "Memorable", "Mere", "Merry", "Mighty",
         "Mischievous", "Miserable", "Modified", "Moody", "Most", "Mysterious", "Mystical", "Needy",
         "Nervous", "Nice", "Objective", "Obnoxious", "Obsessive", "Obvious", "Opinionated", "Orange",
         "Painful", "Passionate", "Perfect", "Pink", "Playful", "Poisonous", "Polite", "Poor", "Popular", "Powerful", 
         "Precise", "Preserved", "Pretty", "Purple", "Quick", "Quiet", "Random", "Rapid", "Rare", "Real",
-        "Reassuring", "Reckless", "Red", "Regular", "Remorseful", "Responsible", "Rich", "Rotten", "Rude", "Ruthless",
-        "Sad", "Scared", "Scary", "Scornful", "Screaming", "Selfish", "Selfish", "Serious", "Shady", "Shaky", "Sharp",
+        "Reassuring", "Reckless", "Red", "Regular", "Remorseful", "Responsible", "Rich", "Rude", "Ruthless",
+        "Sad", "Scared", "Scary", "Scornful", "Screaming", "Selfish", "Serious", "Shady", "Shaky", "Sharp",
         "Shiny", "Shy", "Simple", "Sleepy", "Slow", "Sly", "Small", "Smart", "Smelly", "Smiling", "Smooth",
         "Smug", "Sober", "Soft", "Solemn", "Square", "Square", "Steady", "Strange", "Strong",
         "Stunning", "Subjective", "Successful", "Surly", "Sweet", "Tactful", "Tense",
         "Thoughtful", "Tight", "Tiny", "Tolerant", "Uneasy", "Unique", "Unseen", "Warm", "Weak",
-        "Weird", "WellCooked",  "WellFed", "Wicked", "Wild", "Wise", "Witty", "Wonderful", "Worried", "Yellow", "Young",
+        "Weird", "WellCooked", "Wild", "Wise", "Witty", "Wonderful", "Worried", "Yellow", "Young",
         "Zealous"
         ];
     //var pronouns = [

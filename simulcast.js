@@ -6,7 +6,7 @@
  * @constructor
  */
 function SimulcastUtils() {
-    this.logger = new SimulcastLogger("SimulcastUtils");
+    this.logger = new SimulcastLogger("SimulcastUtils", 1);
 }
 
 /**
@@ -53,6 +53,13 @@ SimulcastUtils.prototype._replaceVideoSources = function (lines, videoSources) {
     lines.splice.apply(lines,
         [index, howMany].concat(videoSources));
 
+};
+
+SimulcastUtils.prototype.isValidDescription = function (desc)
+{
+    return desc && desc != null
+        && desc.type && desc.type != ''
+        && desc.sdp && desc.sdp != '';
 };
 
 SimulcastUtils.prototype._getVideoSources = function (lines) {
@@ -137,7 +144,7 @@ SimulcastUtils.prototype.parseMedia = function (lines, mediatypes) {
             lines[i].substring(0, 'a=sendonly'.length) === 'a=sendonly' ||
             lines[i].substring(0, 'a=inactive'.length) === 'a=inactive')) {
 
-            cur_media.direction = lines[i].substring('a='.length, 8);
+            cur_media.direction = lines[i].substring('a='.length);
         }
     }
 
@@ -226,7 +233,7 @@ SimulcastUtils.prototype._compileVideoSources = function (videoSources) {
 
 function SimulcastReceiver() {
     this.simulcastUtils = new SimulcastUtils();
-    this.logger = new SimulcastLogger('SimulcastReceiver');
+    this.logger = new SimulcastLogger('SimulcastReceiver', 1);
 }
 
 SimulcastReceiver.prototype._remoteVideoSourceCache = '';
@@ -275,7 +282,7 @@ SimulcastReceiver.prototype._restoreSimulcastGroups = function (sb) {
 SimulcastReceiver.prototype.reverseTransformRemoteDescription = function (desc) {
     var sb;
 
-    if (!desc || desc == null) {
+    if (!this.simulcastUtils.isValidDescription(desc)) {
         return desc;
     }
 
@@ -487,11 +494,9 @@ SimulcastReceiver.prototype.getRemoteVideoStreamIdBySSRC = function (ssrc) {
 
 function SimulcastSender() {
     this.simulcastUtils = new SimulcastUtils();
-    this.logger = new SimulcastLogger('SimulcastSender');
+    this.logger = new SimulcastLogger('SimulcastSender', 1);
 }
 
-SimulcastSender.prototype._localVideoSourceCache = '';
-SimulcastSender.prototype.localStream = null;
 SimulcastSender.prototype.displayedLocalVideoStream = null;
 
 SimulcastSender.prototype._generateGuid = (function () {
@@ -507,14 +512,6 @@ SimulcastSender.prototype._generateGuid = (function () {
     };
 }());
 
-SimulcastSender.prototype._cacheLocalVideoSources = function (lines) {
-    this._localVideoSourceCache = this.simulcastUtils._getVideoSources(lines);
-};
-
-SimulcastSender.prototype._restoreLocalVideoSources = function (lines) {
-    this.simulcastUtils._replaceVideoSources(lines, this._localVideoSourceCache);
-};
-
 // Returns a random integer between min (included) and max (excluded)
 // Using Math.round() gives a non-uniform distribution!
 SimulcastSender.prototype._generateRandomSSRC = function () {
@@ -522,7 +519,37 @@ SimulcastSender.prototype._generateRandomSSRC = function () {
     return Math.floor(Math.random() * (max - min)) + min;
 };
 
-SimulcastSender.prototype._appendSimulcastGroup = function (lines) {
+SimulcastSender.prototype.getLocalVideoStream = function () {
+    return (this.displayedLocalVideoStream != null)
+        ? this.displayedLocalVideoStream
+        // in case we have no simulcast at all, i.e. we didn't perform the GUM
+        : connection.jingle.localVideo;
+};
+
+function NativeSimulcastSender() {
+    SimulcastSender.call(this); // call the super constructor.
+}
+
+NativeSimulcastSender.prototype = Object.create(SimulcastSender.prototype);
+
+NativeSimulcastSender.prototype._localExplosionMap = {};
+NativeSimulcastSender.prototype._isUsingScreenStream = false;
+NativeSimulcastSender.prototype._localVideoSourceCache = '';
+
+NativeSimulcastSender.prototype.reset = function () {
+    this._localExplosionMap = {};
+    this._isUsingScreenStream = isUsingScreenStream;
+};
+
+NativeSimulcastSender.prototype._cacheLocalVideoSources = function (lines) {
+    this._localVideoSourceCache = this.simulcastUtils._getVideoSources(lines);
+};
+
+NativeSimulcastSender.prototype._restoreLocalVideoSources = function (lines) {
+    this.simulcastUtils._replaceVideoSources(lines, this._localVideoSourceCache);
+};
+
+NativeSimulcastSender.prototype._appendSimulcastGroup = function (lines) {
     var videoSources, ssrcGroup, simSSRC, numOfSubs = 2, i, sb, msid;
 
     this.logger.info('Appending simulcast group...');
@@ -558,7 +585,7 @@ SimulcastSender.prototype._appendSimulcastGroup = function (lines) {
 };
 
 // Does the actual patching.
-SimulcastSender.prototype._ensureSimulcastGroup = function (lines) {
+NativeSimulcastSender.prototype._ensureSimulcastGroup = function (lines) {
 
     this.logger.info('Ensuring simulcast group...');
 
@@ -571,21 +598,6 @@ SimulcastSender.prototype._ensureSimulcastGroup = function (lines) {
         this._restoreLocalVideoSources(lines);
     }
 };
-
-SimulcastSender.prototype.getLocalVideoStream = function () {
-    return (this.displayedLocalVideoStream != null)
-        ? this.displayedLocalVideoStream
-        // in case we have no simulcast at all, i.e. we didn't perform the GUM
-        : connection.jingle.localVideo;
-};
-
-function NativeSimulcastSender() {
-    SimulcastSender.call(this); // call the super constructor.
-}
-
-NativeSimulcastSender.prototype = Object.create(SimulcastSender.prototype);
-
-NativeSimulcastSender.prototype._localExplosionMap = {};
 
 /**
  * Produces a single stream with multiple tracks for local video sources.
@@ -644,10 +656,7 @@ NativeSimulcastSender.prototype._explodeSimulcastSenderSources = function (lines
 NativeSimulcastSender.prototype.getUserMedia = function (constraints, success, err) {
 
     // There's nothing special to do for native simulcast, so just do a normal GUM.
-
-    var self = this;
     navigator.webkitGetUserMedia(constraints, function (hqStream) {
-        self.localStream = hqStream;
         success(hqStream);
     }, err);
 };
@@ -662,7 +671,7 @@ NativeSimulcastSender.prototype.getUserMedia = function (constraints, success, e
 NativeSimulcastSender.prototype.reverseTransformLocalDescription = function (desc) {
     var sb;
 
-    if (!desc || desc == null) {
+    if (!this.simulcastUtils.isValidDescription(desc) || this._isUsingScreenStream) {
         return desc;
     }
 
@@ -689,6 +698,10 @@ NativeSimulcastSender.prototype.reverseTransformLocalDescription = function (des
  * @returns {*}
  */
 NativeSimulcastSender.prototype.transformAnswer = function (desc) {
+
+    if (!this.simulcastUtils.isValidDescription(desc) || this._isUsingScreenStream) {
+        return desc;
+    }
 
     var sb = desc.sdp.split('\r\n');
 
@@ -738,7 +751,8 @@ SimulcastReceiver.prototype.transformRemoteDescription = function (desc) {
         this._updateRemoteMaps(sb);
         this._cacheRemoteVideoSources(sb);
 
-        // NOTE(gp) this needs to be called after updateRemoteMaps because we need the simulcast group in the _updateRemoteMaps() method.
+        // NOTE(gp) this needs to be called after updateRemoteMaps because we
+        // need the simulcast group in the _updateRemoteMaps() method.
         this.simulcastUtils._removeSimulcastGroup(sb);
 
         if (desc.sdp.indexOf('a=ssrc-group:SIM') !== -1) {
@@ -770,6 +784,7 @@ function SimpleSimulcastSender() {
 
 SimpleSimulcastSender.prototype = Object.create(SimulcastSender.prototype);
 
+SimpleSimulcastSender.prototype.localStream = null;
 SimpleSimulcastSender.prototype._localMaps = {
     msids: [],
     msid2ssrc: {}
@@ -885,7 +900,7 @@ SimpleSimulcastSender.prototype.getUserMedia = function (constraints, success, e
 SimpleSimulcastSender.prototype.reverseTransformLocalDescription = function (desc) {
     var sb;
 
-    if (!desc || desc == null) {
+    if (!this.simulcastUtils.isValidDescription(desc)) {
         return desc;
     }
 
@@ -982,10 +997,8 @@ NoSimulcastSender.prototype = Object.create(SimulcastSender.prototype);
  * @param err
  */
 NoSimulcastSender.prototype.getUserMedia = function (constraints, success, err) {
-    var self = this;
     navigator.webkitGetUserMedia(constraints, function (hqStream) {
-        self.localStream = hqStream;
-        success(self.localStream);
+        success(hqStream);
     }, err);
 };
 
@@ -1194,24 +1207,37 @@ SimulcastManager.prototype._setLocalVideoStreamEnabled = function(ssrc, enabled)
     this.simulcastSender._setLocalVideoStreamEnabled(ssrc, enabled);
 };
 
+SimulcastManager.prototype.resetSender = function() {
+    if (typeof this.simulcastSender.reset === 'function'){
+        this.simulcastSender.reset();
+    }
+};
+
 /**
  *
  * @constructor
  */
-function SimulcastLogger(name) {
+function SimulcastLogger(name, lvl) {
     this.name = name;
+    this.lvl = lvl;
 }
 
 SimulcastLogger.prototype.log = function (text) {
+    if (this.lvl) {
         console.log(text);
+    }
 };
 
 SimulcastLogger.prototype.info = function (text) {
+    if (this.lvl > 1) {
         console.info(text);
+    }
 };
 
 SimulcastLogger.prototype.fine = function (text) {
+    if (this.lvl > 2) {
         console.log(text);
+    }
 };
 
 SimulcastLogger.prototype.error = function (text) {

@@ -25,6 +25,6 @@ var config = {
     useRtcpMux: true,
     useBundle: true,
     enableRecording: false,
-    enableWelcomePage: false,
+    enableWelcomePage: true,
     enableSimulcast: false
 };

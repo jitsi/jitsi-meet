@@ -140,6 +140,7 @@ if (TraceablePeerConnection.prototype.__defineGetter__ !== undefined) {
 
 TraceablePeerConnection.prototype.addStream = function (stream) {
     this.trace('addStream', stream.id);
+    simulcast.resetSender();
     try
     {
         this.peerconnection.addStream(stream);
@@ -149,11 +150,11 @@ TraceablePeerConnection.prototype.addStream = function (stream) {
         console.error(e);
         return;
     }
-
 };
 
 TraceablePeerConnection.prototype.removeStream = function (stream, stopStreams) {
     this.trace('removeStream', stream.id);
+    simulcast.resetSender();
     if(stopStreams) {
         stream.getAudioTracks().forEach(function (track) {
             track.stop();
@@ -221,7 +222,7 @@ TraceablePeerConnection.prototype.enqueueAddSsrc = function(channel, ssrcLines) 
         this.addssrc[channel] = '';
     }
     this.addssrc[channel] += ssrcLines;
-}
+};
 
 TraceablePeerConnection.prototype.addSource = function (elem) {
     console.log('addssrc', new Date().getTime());
@@ -277,7 +278,7 @@ TraceablePeerConnection.prototype.enqueueRemoveSsrc = function(channel, ssrcLine
         this.removessrc[channel] = '';
     }
     this.removessrc[channel] += ssrcLines;
-}
+};
 
 TraceablePeerConnection.prototype.removeSource = function (elem) {
     console.log('removessrc', new Date().getTime());
@@ -337,6 +338,7 @@ TraceablePeerConnection.prototype.modifySources = function(successCallback) {
 
     // FIXME: this is a big hack
     // https://code.google.com/p/webrtc/issues/detail?id=2688
+    // ^ has been fixed.
     if (!(this.signalingState == 'stable' && this.iceConnectionState == 'connected')) {
         console.warn('modifySources not yet', this.signalingState, this.iceConnectionState);
         this.wait = true;
