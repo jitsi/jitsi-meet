@@ -630,7 +630,7 @@ $(document).bind('setLocalDescription.jingle', function (event, sid) {
     var media = simulcast.parseMedia(sess.peerconnection.localDescription);
     media.forEach(function (media) {
 
-        if(Object.keys(media.sources) > 0) {
+        if(Object.keys(media.sources).length > 0) {
             // TODO(gp) maybe exclude FID streams?
             Object.keys(media.sources).forEach(function (ssrc) {
                 newssrcs.push({
