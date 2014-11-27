@@ -122,7 +122,16 @@ var Avatar = (function(my) {
     }
 
     function isUserMuted(jid) {
-        if(!mediaStreams[jid] || !mediaStreams[jid][MediaStream.VIDEO_TYPE]) {
+        // XXX(gp) we may want to rename this method to something like
+        // isUserStreaming, for example.
+        if (jid && jid != connection.emuc.myroomjid) {
+            var resource = Strophe.getResourceFromJid(jid);
+            if (!VideoLayout.isInLastN(resource)) {
+                return true;
+            }
+        }
+
+        if (!mediaStreams[jid] || !mediaStreams[jid][MediaStream.VIDEO_TYPE]) {
             return null;
         }
         return mediaStreams[jid][MediaStream.VIDEO_TYPE].muted;

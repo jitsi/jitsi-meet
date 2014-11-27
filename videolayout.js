@@ -11,6 +11,12 @@ var VideoLayout = (function (my) {
     };
     my.connectionIndicators = {};
 
+    my.isInLastN = function(resource) {
+        return lastNCount < 0 // lastN is disabled, return true
+            || (lastNCount > 0 && lastNEndpointsCache.length == 0) // lastNEndpoints cache not built yet, return true
+            || (lastNEndpointsCache && lastNEndpointsCache.indexOf(resource) !== -1);
+    };
+
     my.changeLocalAudio = function(stream) {
         connection.jingle.localAudio = stream;
 
@@ -597,14 +603,17 @@ var VideoLayout = (function (my) {
                 peerContainer.show();
             }
 
-            // TODO(gp) add proper avatars handling.
             if (state == 'show')
             {
-                peerContainer.css('-webkit-filter', '');
+                // peerContainer.css('-webkit-filter', '');
+                var jid = connection.emuc.findJidFromResource(resourceJid);
+                Avatar.showUserAvatar(jid, false);
             }
             else // if (state == 'avatar')
             {
-                peerContainer.css('-webkit-filter', 'grayscale(100%)');
+                // peerContainer.css('-webkit-filter', 'grayscale(100%)');
+                var jid = connection.emuc.findJidFromResource(resourceJid);
+                Avatar.showUserAvatar(jid, true);
             }
         }
         else if (peerContainer.is(':visible') && isHide)
