@@ -14,7 +14,7 @@ var Avatar = (function(my) {
             }
             users[jid] = id;
         }
-        var url = getGravatarUrl(users[jid]);
+        var url = getGravatarUrl(users[jid] || jid);
         var resourceJid = Strophe.getResourceFromJid(jid);
         var thumbnail = $('#participant_' + resourceJid);
         var avatar = $('#avatar_' + resourceJid);
@@ -128,9 +128,12 @@ var Avatar = (function(my) {
         return mediaStreams[jid][MediaStream.VIDEO_TYPE].muted;
     }
 
-    function getGravatarUrl(email, size) {
+    function getGravatarUrl(id, size) {
+        if(id === connection.emuc.myroomjid) {
+            id = SettingsMenu.getUID();
+        }
         return 'https://www.gravatar.com/avatar/' +
-            (email ? MD5.hexdigest(email.trim().toLowerCase()) : SettingsMenu.getUID()) +
+            MD5.hexdigest(id.trim().toLowerCase()) +
             "?d=retro&size=" + (size || "30");
     }
 
