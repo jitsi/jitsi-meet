@@ -129,7 +129,7 @@ var Avatar = (function(my) {
     }
 
     function getGravatarUrl(id, size) {
-        if(id === connection.emuc.myroomjid) {
+        if(id === connection.emuc.myroomjid || !id) {
             id = SettingsMenu.getUID();
         }
         return 'https://www.gravatar.com/avatar/' +
