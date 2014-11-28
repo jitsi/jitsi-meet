@@ -1017,7 +1017,7 @@ function setAudioMuted(mute) {
     // isMuted is the opposite of audioEnabled
     connection.emuc.addAudioInfoToPresence(mute);
     connection.emuc.sendPresence();
-    VideoLayout.showLocalAudioIndicator(audioEnabled);
+    VideoLayout.showLocalAudioIndicator(mute);
 
     buttonClick("#mute", "icon-microphone icon-mic-disabled");
 }
