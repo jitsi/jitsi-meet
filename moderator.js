@@ -1,5 +1,5 @@
-/* global $, $iq, config, connection, Etherpad, hangUp, Strophe, Toolbar,
-   Util, VideoLayout */
+/* global $, $iq, config, connection, Etherpad, hangUp, roomName, Strophe,
+ Toolbar, Util, VideoLayout */
 /**
  * Contains logic responsible for enabling/disabling functionality available
  * only to moderator users.
@@ -66,16 +66,43 @@ var Moderator = (function (my) {
         );
     };
 
-    // FIXME: we need to show the fact that we're waiting for the focus
-    // to the user(or that focus is not available)
-    my.allocateConferenceFocus = function (roomName, callback) {
+    my.createConferenceIq = function () {
         var elem = $iq({to: config.hosts.focus, type: 'set'});
         elem.c('conference', {
             xmlns: 'http://jitsi.org/protocol/focus',
             room: roomName
         });
+        if (config.channelLastN !== undefined)
+        {
+            elem.c(
+                'property',
+                { name: 'channelLastN', value: config.channelLastN})
+                .up();
+        }
+        if (config.adaptiveLastN !== undefined)
+        {
+            elem.c(
+                'property',
+                { name: 'adaptiveLastN', value: config.adaptiveLastN})
+                .up();
+        }
+        if (config.adaptiveSimulcast !== undefined)
+        {
+            elem.c(
+                'property',
+                { name: 'adaptiveSimulcast', value: config.adaptiveSimulcast})
+                .up();
+        }
         elem.up();
-        connection.sendIQ(elem,
+        return elem;
+    };
+
+    // FIXME: we need to show the fact that we're waiting for the focus
+    // to the user(or that focus is not available)
+    my.allocateConferenceFocus = function (roomName, callback) {
+        var iq = Moderator.createConferenceIq();
+        connection.sendIQ(
+            iq,
             function (result) {
                 if ('true' === $(result).find('conference').attr('ready')) {
                     // Reset both timers
@@ -89,7 +116,8 @@ var Moderator = (function (my) {
                     getNextErrorTimeout(true);
                     window.setTimeout(
                         function () {
-                            Moderator.allocateConferenceFocus(roomName, callback);
+                            Moderator.allocateConferenceFocus(
+                                roomName, callback);
                         }, waitMs);
                 }
             },
