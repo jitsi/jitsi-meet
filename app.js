@@ -603,16 +603,6 @@ $(document).bind('conferenceCreated.jingle', function (event, focus)
     }
 });
 
-$(document).bind('callterminated.jingle', function (event, sid, jid, reason) {
-    // Leave the room if my call has been remotely terminated.
-    if (connection.emuc.joined && reason === 'kick') {
-        sessionTerminated = true;
-        connection.emuc.doLeave();
-        messageHandler.openMessageDialog("Session Terminated",
-                            "Ouch! You have been kicked out of the meet!");
-    }
-});
-
 $(document).bind('setLocalDescription.jingle', function (event, sid) {
     // put our ssrcs into presence so other clients can identify our stream
     var sess = connection.jingle.sessions[sid];
@@ -850,6 +840,17 @@ $(document).bind('presence.status.muc', function (event, jid, info, pres) {
     VideoLayout.setPresenceStatus(
         'participant_' + Strophe.getResourceFromJid(jid), info.status);
 
+});
+
+$(document).bind('kicked.muc', function (event, jid) {
+    console.info(jid + " has been kicked from MUC!");
+    if (connection.emuc.myroomjid === jid) {
+        sessionTerminated = true;
+        disposeConference(false);
+        connection.emuc.doLeave();
+        messageHandler.openMessageDialog("Session Terminated",
+            "Ouch! You have been kicked out of the meet!");
+    }
 });
 
 $(document).bind('passwordrequired.muc', function (event, jid) {

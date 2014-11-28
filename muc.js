@@ -167,7 +167,11 @@ Strophe.addConnectionPlugin('emuc', {
         if (!$(pres).find('>x[xmlns="http://jabber.org/protocol/muc#user"]>status[code="110"]').length) {
             delete this.members[from];
             this.list_members.splice(this.list_members.indexOf(from), 1);
-            $(document).trigger('left.muc', [from]);
+            if ($(pres).find('>x[xmlns="http://jabber.org/protocol/muc#user"]>status[code="307"]').length) {
+                $(document).trigger('kicked.muc', [from]);
+            } else {
+                $(document).trigger('left.muc', [from]);
+            }
         }
         // If the status code is 110 this means we're leaving and we would like
         // to remove everyone else from our view, so we trigger the event.

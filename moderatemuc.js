@@ -1,4 +1,4 @@
-/* global $, $iq, config, connection, Strophe, toggleAudio */
+/* global $, $iq, config, connection, messageHandler, Strophe, toggleAudio */
 /**
  * Moderate connection plugin.
  */
@@ -40,7 +40,8 @@ Strophe.addConnectionPlugin('moderate', {
         return true;
     },
     eject: function (jid) {
-        connection.jingle.terminateRemoteByJid(jid, 'kick');
+        // We're not the focus, so can't terminate
+        //connection.jingle.terminateRemoteByJid(jid, 'kick');
         connection.emuc.kick(jid);
     }
 });
