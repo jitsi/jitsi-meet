@@ -310,6 +310,7 @@ var VideoLayout = (function (my) {
                 connection.emuc.findJidFromResource(
                     largeVideoState.userResourceJid));
         }
+
     };
 
     my.handleVideoThumbClicked = function(videoSrc,
@@ -318,7 +319,7 @@ var VideoLayout = (function (my) {
         // Restore style for previously focused video
         var oldContainer = null;
         if(focusedVideoInfo) {
-            var focusResourceJid = focusedVideoInfo.resouceJid;
+            var focusResourceJid = focusedVideoInfo.resourceJid;
             oldContainer = getParticipantContainer(focusResourceJid);
         }
 
@@ -354,7 +355,7 @@ var VideoLayout = (function (my) {
         // Lock new video
         focusedVideoInfo = {
             src: videoSrc,
-            resouceJid: resourceJid
+            resourceJid: resourceJid
         };
 
         // Update focused/pinned interface.
@@ -368,7 +369,8 @@ var VideoLayout = (function (my) {
             }
         }
 
-        if ($('#largeVideo').attr('src') === videoSrc) {
+        if ($('#largeVideo').attr('src') === videoSrc &&
+            VideoLayout.isLargeVideoOnTop()) {
             return;
         }
 
@@ -433,15 +435,18 @@ var VideoLayout = (function (my) {
             $('#largeVideo').css({visibility: 'hidden'});
             $('.watermark').css({visibility: 'hidden'});
             VideoLayout.enableDominantSpeaker(resourceJid, false);
-            var focusJid = VideoLayout.getLargeVideoState().userJid;
-            var oldContainer = getParticipantContainer(focusJid);
+            if(focusedVideoInfo) {
+                var focusResourceJid = focusedVideoInfo.resourceJid;
+                var oldContainer = getParticipantContainer(focusResourceJid);
 
-            if (oldContainer) {
-                oldContainer.removeClass("videoContainerFocused");
-            }
-            focusedVideoInfo = null;
-            if(focusJid) {
-                Avatar.showUserAvatar(focusJid);
+                if (oldContainer && oldContainer.length > 0) {
+                    oldContainer.removeClass("videoContainerFocused");
+                }
+                focusedVideoInfo = null;
+                if(focusResourceJid) {
+                    Avatar.showUserAvatar(
+                        connection.emuc.findJidFromResource(focusResourceJid));
+                }
             }
         }
     };
@@ -453,6 +458,10 @@ var VideoLayout = (function (my) {
      */
     my.isLargeVideoVisible = function() {
         return $('#largeVideo').is(':visible');
+    };
+
+    my.isLargeVideoOnTop = function () {
+        return !Prezi.isPresentationVisible() && !Etherpad.isVisible();
     };
 
     /**
@@ -596,13 +605,14 @@ var VideoLayout = (function (my) {
                  * no actual video).
                  */
                 var videoThumb = $('#' + container.id + '>video').get(0);
-
-                if (videoThumb)
+                if (videoThumb) {
                     VideoLayout.handleVideoThumbClicked(
                         RTC.getVideoSrc(videoThumb),
                         false,
                         Strophe.getResourceFromJid(peerJid));
+                }
 
+                event.stopPropagation();
                 event.preventDefault();
                 return false;
             };
@@ -1098,21 +1108,21 @@ var VideoLayout = (function (my) {
 
         if (video && video.length > 0) {
             if (isEnable) {
-                VideoLayout.showDisplayName(videoContainerId, true);
+                var isLargeVideoVisible = VideoLayout.isLargeVideoOnTop();
+                VideoLayout.showDisplayName(videoContainerId, isLargeVideoVisible);
 
                 if (!videoSpan.classList.contains("dominantspeaker"))
                     videoSpan.classList.add("dominantspeaker");
-
-                video.css({visibility: 'hidden'});
             }
             else {
                 VideoLayout.showDisplayName(videoContainerId, false);
 
                 if (videoSpan.classList.contains("dominantspeaker"))
                     videoSpan.classList.remove("dominantspeaker");
-
-                video.css({visibility: 'visible'});
             }
+
+            Avatar.showUserAvatar(
+                connection.emuc.findJidFromResource(resourceJid));
         }
     };
 
@@ -1715,12 +1725,13 @@ var VideoLayout = (function (my) {
                     = VideoLayout.getPeerContainerResourceJid(videoParent[0]);
 
             // Update the large video to the last added video only if there's no
-            // current dominant or focused speaker or update it to the current
-            // dominant speaker.
-            if ((!focusedVideoInfo && !VideoLayout.getDominantSpeakerResourceJid())
-                || (parentResourceJid
-                && VideoLayout.getDominantSpeakerResourceJid()
-                    === parentResourceJid)) {
+            // current dominant, focused speaker or prezi playing or update it to
+            // the current dominant speaker.
+            if ((!focusedVideoInfo &&
+                !VideoLayout.getDominantSpeakerResourceJid() &&
+                !Prezi.isPresentationVisible()) ||
+                (parentResourceJid &&
+                VideoLayout.getDominantSpeakerResourceJid() === parentResourceJid)) {
                 VideoLayout.updateLargeVideo(
                     RTC.getVideoSrc(videoelem[0]),
                     1,

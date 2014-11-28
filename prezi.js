@@ -13,23 +13,24 @@ var Prezi = (function (my) {
      * Shows/hides a presentation.
      */
     my.setPresentationVisible = function (visible) {
+        var prezi = $('#presentation>iframe');
         if (visible) {
             // Trigger the video.selected event to indicate a change in the
             // large video.
             $(document).trigger("video.selected", [true]);
 
-            $('#largeVideo').fadeOut(300, function () {
+            $('#largeVideo').fadeOut(300);
+            prezi.fadeIn(300, function() {
+                prezi.css({opacity:'1'});
+                ToolbarToggler.dockToolbar(true);
                 VideoLayout.setLargeVideoVisible(false);
-                $('#presentation>iframe').fadeIn(300, function() {
-                    $('#presentation>iframe').css({opacity:'1'});
-                    ToolbarToggler.dockToolbar(true);
-                });
             });
+            $('#activeSpeakerAvatar').css('visibility', 'hidden');
         }
         else {
-            if ($('#presentation>iframe').css('opacity') == '1') {
-                $('#presentation>iframe').fadeOut(300, function () {
-                    $('#presentation>iframe').css({opacity:'0'});
+            if (prezi.css('opacity') == '1') {
+                prezi.fadeOut(300, function () {
+                    prezi.css({opacity:'0'});
                     $('#reloadPresentation').css({display:'none'});
                     $('#largeVideo').fadeIn(300, function() {
                         VideoLayout.setLargeVideoVisible(true);
@@ -332,8 +333,9 @@ var Prezi = (function (my) {
      * On video selected event.
      */
     $(document).bind('video.selected', function (event, isPresentation) {
-        if (!isPresentation && $('#presentation>iframe'))
+        if (!isPresentation && $('#presentation>iframe')) {
             Prezi.setPresentationVisible(false);
+        }
     });
 
     $(window).resize(function () {

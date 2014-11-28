@@ -73,8 +73,9 @@ var Avatar = (function(my) {
             }
 
             //if the user is the currently focused, the dominant speaker or if
-            //there is no focused and no dominant speaker
-            if (activeSpeakerJid === jid) {
+            //there is no focused and no dominant speaker and the large video is
+            //currently shown
+            if (activeSpeakerJid === jid && VideoLayout.isLargeVideoOnTop()) {
                 setVisibility($("#largeVideo"), !show);
                 setVisibility($('#activeSpeakerAvatar'), show);
                 setVisibility(avatar, false);

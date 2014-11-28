@@ -48,12 +48,12 @@ var Etherpad = (function (my) {
                 } else {
                     VideoLayout.setLargeVideoVisible(false);
                 }
+            });
 
-                $('#etherpad>iframe').fadeIn(300, function () {
-                    document.body.style.background = '#eeeeee';
-                    $('#etherpad>iframe').css({visibility: 'visible'});
-                    $('#etherpad').css({zIndex: 2});
-                });
+            $('#etherpad>iframe').fadeIn(300, function () {
+                document.body.style.background = '#eeeeee';
+                $('#etherpad>iframe').css({visibility: 'visible'});
+                $('#etherpad').css({zIndex: 2});
             });
         }
         else if ($('#etherpad>iframe')) {
@@ -61,14 +61,20 @@ var Etherpad = (function (my) {
                 $('#etherpad>iframe').css({visibility: 'hidden'});
                 $('#etherpad').css({zIndex: 0});
                 document.body.style.background = 'black';
-                if (!isPresentation) {
-                    $('#largeVideo').fadeIn(300, function () {
-                        VideoLayout.setLargeVideoVisible(true);
-                    });
-                }
             });
+
+            if (!isPresentation) {
+                $('#largeVideo').fadeIn(300, function () {
+                    VideoLayout.setLargeVideoVisible(true);
+                });
+            }
         }
         resize();
+    };
+
+    my.isVisible = function() {
+        var etherpadIframe = $('#etherpad>iframe');
+        return etherpadIframe && etherpadIframe.is(':visible');
     };
 
     /**

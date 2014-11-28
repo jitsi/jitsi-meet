@@ -36,8 +36,6 @@
 #remoteVideos .videocontainer {
     display: inline-block;
     background-color: black;
-    background-repeat: no-repeat;
-    background-position: 45;
     background-size: contain;
     border-radius:8px;
     border: 2px solid #212425;
@@ -376,6 +374,7 @@
     position: absolute;
     z-index: 0;
     border-radius:10px;
+    pointer-events: none;
 }
 
 #mixedstream {
