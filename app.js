@@ -182,11 +182,9 @@ function maybeDoJoin() {
     }
 }
 
-
-function doJoin() {
+function generateRoomName() {
     var roomnode = null;
     var path = window.location.pathname;
-    var roomjid;
 
     // determinde the room node from the url
     // TODO: just the roomnode or the whole bare jid?
@@ -214,7 +212,41 @@ function doJoin() {
     }
 
     roomName = roomnode + '@' + config.hosts.muc;
+}
 
+function doJoin() {
+    if (!roomName) {
+        generateRoomName();
+    }
+
+    var elem = $iq({to: config.hosts.focus, type: 'set'});
+    elem.c('conference', {
+        xmlns: 'http://jitsi.org/protocol/focus',
+        room: roomName
+    });
+    elem.up();
+    connection.sendIQ(elem,
+        function (result) {
+            console.info("Focus replied ", result);
+            if ('true' === $(result).find('conference').attr('ready')) {
+                doJoinAfterFocus();
+            } else {
+                console.info("Waiting for the focus...");
+                window.setTimeout(
+                    function () {
+                        doJoin();
+                    }, 3000);
+            }
+        },
+        function (error) {
+            console.warn(error);
+        }
+    );
+}
+
+function doJoinAfterFocus() {
+
+    var roomjid;
     roomjid = roomName;
 
     if (config.useNicks) {
@@ -675,53 +707,6 @@ $(document).bind('joined.muc', function (event, jid, info) {
     document.getElementById('localNick').appendChild(
         document.createTextNode(Strophe.getResourceFromJid(jid) + ' (me)')
     );
-
-    if (connection.emuc.isModerator())
-    {
-        Toolbar.showSipCallButton(true);
-        Toolbar.showRecordingButton(true);
-    }
-    else
-    {
-        Toolbar.showSipCallButton(false);
-        Toolbar.showRecordingButton(false);
-    }
-/*    if (Object.keys(connection.emuc.members).length < 1) {
-        focus = new ColibriFocus(connection, config.hosts.bridge);
-        if (nickname !== null) {
-            focus.setEndpointDisplayName(connection.emuc.myroomjid,
-                                         nickname);
-        }
-        Toolbar.showSipCallButton(true);
-        Toolbar.showRecordingButton(false);
-    }
-
-    if (!focus)
-    {
-        Toolbar.showSipCallButton(false);
-    }
-
-    if (focus && config.etherpad_base) {
-        Etherpad.init();
-    }*/
-
-    var elem = $iq({to: config.hosts.focus, type: 'set'});
-    elem.c('conference', {
-        xmlns: 'http://jitsi.org/protocol/focus',
-        room: roomUrl.substr(roomUrl.lastIndexOf("/") + 1)
-    });
-    elem.up();
-
-    connection.sendIQ(elem,
-        function (result) {
-            console.info("Focus replied ", result);
-        },
-        function (error) {
-            console.warn(error);
-        }
-    );
-
-    VideoLayout.showFocusIndicator();
 
     // Add myself to the contact list.
     ContactList.addContact(jid);
