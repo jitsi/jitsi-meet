@@ -1,4 +1,4 @@
-/* global $, config, connection, chrome, alert, getUserMediaWithConstraints, changeLocalVideo, getConferenceHandler */
+/* global $, alert, changeLocalVideo, chrome, config, connection, getConferenceHandler, getUserMediaWithConstraints, VideoLayout */
 /**
  * Indicates that desktop stream is currently in use(for toggle purpose).
  * @type {boolean}
@@ -283,9 +283,9 @@ function toggleScreenSharing() {
     }
     switchInProgress = true;
 
-    // Only the focus is able to set a shared key.
     if (!isUsingScreenStream)
     {
+        // Switch to desktop stream
         obtainDesktopStream(
             function (stream) {
                 // We now use screen stream
