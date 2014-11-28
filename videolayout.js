@@ -17,6 +17,10 @@ var VideoLayout = (function (my) {
         RTC.attachMediaStream($('#localAudio'), stream);
         document.getElementById('localAudio').autoplay = true;
         document.getElementById('localAudio').volume = 0;
+        if (preMuted) {
+            setAudioMuted(true);
+            preMuted = false;
+        }
     };
 
     my.changeLocalVideo = function(stream, flipX) {
@@ -1253,8 +1257,8 @@ var VideoLayout = (function (my) {
             if ($(this).attr('disabled') != undefined) {
                 event.preventDefault();
             }
-            var isMute = !mutedAudios[jid];
-            connection.moderate.setMute(jid, isMute);
+            var isMute = mutedAudios[jid] == true;
+            connection.moderate.setMute(jid, !isMute);
             popupmenuElement.setAttribute('style', 'display:none;');
 
             if (isMute) {
@@ -1349,10 +1353,9 @@ var VideoLayout = (function (my) {
             videoSpanId = 'participant_' + Strophe.getResourceFromJid(jid);
         }
 
-        VideoLayout.ensurePeerContainerExists(jid);
+        mutedAudios[jid] = isMuted;
 
         if (Moderator.isModerator()) {
-            mutedAudios[jid] = isMuted;
             VideoLayout.updateRemoteVideoMenu(jid, isMuted);
         }
 

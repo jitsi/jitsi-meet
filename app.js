@@ -37,6 +37,16 @@ var videoSrcToSsrc = {};
  */
 var focusedVideoSrc = null;
 var mutedAudios = {};
+/**
+ * Remembers if we were muted by the focus.
+ * @type {boolean}
+ */
+var forceMuted = false;
+/**
+ * Indicates if we have muted our audio before the conference has started.
+ * @type {boolean}
+ */
+var preMuted = false;
 
 var localVideoSrc = null;
 var flipXLocalVideo = true;
@@ -970,9 +980,29 @@ function toggleVideo() {
  * Mutes / unmutes audio for the local participant.
  */
 function toggleAudio() {
+    setAudioMuted(!isAudioMuted());
+}
+
+/**
+ * Sets muted audio state for the local participant.
+ */
+function setAudioMuted(mute) {
     if (!(connection && connection.jingle.localAudio)) {
+        preMuted = mute;
         // We still click the button.
         buttonClick("#mute", "icon-microphone icon-mic-disabled");
+        return;
+    }
+
+    if (forceMuted && !mute) {
+        console.info("Asking focus for unmute");
+        connection.moderate.setMute(connection.emuc.myroomjid, mute);
+        // FIXME: wait for result before resetting muted status
+        forceMuted = false;
+    }
+
+    if (mute == isAudioMuted()) {
+        // Nothing to do
         return;
     }
 
@@ -981,17 +1011,14 @@ function toggleAudio() {
     // that we send presence just once.
     var localAudioTracks = connection.jingle.localAudio.getAudioTracks();
     if (localAudioTracks.length > 0) {
-        var audioEnabled = localAudioTracks[0].enabled;
-
         for (var idx = 0; idx < localAudioTracks.length; idx++) {
-            localAudioTracks[idx].enabled = !audioEnabled;
+            localAudioTracks[idx].enabled = !mute;
         }
-
-        // isMuted is the opposite of audioEnabled
-        connection.emuc.addAudioInfoToPresence(audioEnabled);
-        connection.emuc.sendPresence();
-        VideoLayout.showLocalAudioIndicator(audioEnabled);
     }
+    // isMuted is the opposite of audioEnabled
+    connection.emuc.addAudioInfoToPresence(mute);
+    connection.emuc.sendPresence();
+    VideoLayout.showLocalAudioIndicator(audioEnabled);
 
     buttonClick("#mute", "icon-microphone icon-mic-disabled");
 }
