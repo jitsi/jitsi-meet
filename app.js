@@ -710,10 +710,10 @@ $(document).bind('entered.muc', function (event, jid, info, pres) {
         'connected',
         'connected');
 
-    if (Strophe.getResourceFromJid(jid).indexOf('focus') != -1)
+    if (info.isFocus)
     {
         focusJid = jid;
-        console.info("Ignore focus " + jid);
+        console.info("Ignore focus: " + jid +", real JID: " + info.jid);
         return;
     }
 
@@ -828,10 +828,9 @@ $(document).bind('presence.muc', function (event, jid, info, pres) {
 
     if (displayName && displayName.length > 0)
         $(document).trigger('displaynamechanged',
-                            [jid, displayName]);
-    if (Strophe.getResourceFromJid(jid).indexOf('focus') != -1)
+                            [jid, info.displayName]);
+    if (info.isFocus)
     {
-        console.info("Ignore focus");
         return;
     }
 

@@ -13,6 +13,7 @@ var config = {
     useNicks: false,
     bosh: '//jitsi-meet.example.com/http-bind', // FIXME: use xep-0156 for that
     clientNode: 'http://jitsi.org/jitsimeet', // The name of client node advertised in XEP-0115 'c' stanza
+    focusUserJid: 'focus@auth.pawel.jitsi.net', // The real JID of focus participant
     //defaultSipNumber: '', // Default SIP number
     desktopSharing: 'ext', // Desktop sharing method. Can be set to 'ext', 'webrtc' or false to disable.
     chromeExtensionId: 'diibjkoicjeejcmhdnailmkgecihlobk', // Id of desktop streamer Chrome extension

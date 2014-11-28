@@ -123,6 +123,13 @@ Strophe.addConnectionPlugin('emuc', {
         member.affiliation = tmp.attr('affiliation');
         member.role = tmp.attr('role');
 
+        // Focus recognition
+        member.jid = tmp.attr('jid');
+        member.isFocus = false;
+        if (member.jid && member.jid.indexOf(config.focusUserJid + "/") == 0) {
+            member.isFocus = true;
+        }
+
         var nicktag = $(pres).find('>nick[xmlns="http://jabber.org/protocol/nick"]');
         member.displayName = (nicktag.length > 0 ? nicktag.text() : null);
 
@@ -167,11 +174,7 @@ Strophe.addConnectionPlugin('emuc', {
         if (!$(pres).find('>x[xmlns="http://jabber.org/protocol/muc#user"]>status[code="110"]').length) {
             delete this.members[from];
             this.list_members.splice(this.list_members.indexOf(from), 1);
-            if ($(pres).find('>x[xmlns="http://jabber.org/protocol/muc#user"]>status[code="307"]').length) {
-                $(document).trigger('kicked.muc', [from]);
-            } else {
-                $(document).trigger('left.muc', [from]);
-            }
+            $(document).trigger('left.muc', [from]);
         }
         // If the status code is 110 this means we're leaving and we would like
         // to remove everyone else from our view, so we trigger the event.
@@ -182,6 +185,9 @@ Strophe.addConnectionPlugin('emuc', {
                 this.list_members.splice(i, 1);
                 $(document).trigger('left.muc', member);
             }
+        }
+        if ($(pres).find('>x[xmlns="http://jabber.org/protocol/muc#user"]>status[code="307"]').length) {
+            $(document).trigger('kicked.muc', [from]);
         }
         return true;
     },
