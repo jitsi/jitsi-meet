@@ -1,14 +1,16 @@
+/* global $, buttonClick, config, lockRoom, messageHandler, Moderator, roomUrl,
+   setSharedKey, sharedKey, Util */
 var Toolbar = (function (my) {
 
     /**
      * Disables and enables some of the buttons.
      */
     my.setupButtonsFromConfig = function () {
-        if(config.disablePrezi)
+        if (config.disablePrezi)
         {
             $("#prezi_button").css({display: "none"});
         }
-    }
+    };
 
     /**
      * Opens the lock room dialog.
@@ -73,7 +75,7 @@ var Toolbar = (function (my) {
      */
     my.openLinkDialog = function () {
         var inviteLink;
-        if (roomUrl == null) {
+        if (roomUrl === null) {
             inviteLink = "Your conference is currently being created...";
         } else {
             inviteLink = encodeURI(roomUrl);
@@ -106,7 +108,7 @@ var Toolbar = (function (my) {
      * Invite participants to conference.
      */
     function inviteParticipants() {
-        if (roomUrl == null)
+        if (roomUrl === null)
             return;
 
         var sharedKeyText = "";
@@ -126,7 +128,8 @@ var Toolbar = (function (my) {
                     roomUrl +
                     "%0D%0A%0D%0A" +
                     sharedKeyText +
-                    "Note that Jitsi Meet is currently only supported by Chromium," +
+                    "Note that Jitsi Meet is currently" +
+                    " only supported by Chromium," +
                     " Google Chrome and Opera, so you need" +
                     " to be using one of these browsers.%0D%0A%0D%0A" +
                     "Talk to you in a sec!";
@@ -183,7 +186,7 @@ var Toolbar = (function (my) {
      * Toggles the application in and out of full screen mode
      * (a.k.a. presentation mode in Chrome).
      */
-    my.toggleFullScreen = function() {
+    my.toggleFullScreen = function () {
         var fsElement = document.documentElement;
 
         if (!document.mozFullScreen && !document.webkitIsFullScreen) {
@@ -206,15 +209,15 @@ var Toolbar = (function (my) {
     /**
      * Unlocks the lock button state.
      */
-    my.unlockLockButton = function() {
-        if($("#lockIcon").hasClass("icon-security-locked"))
+    my.unlockLockButton = function () {
+        if ($("#lockIcon").hasClass("icon-security-locked"))
             buttonClick("#lockIcon", "icon-security icon-security-locked");
     };
     /**
      * Updates the lock button state to locked.
      */
-    my.lockLockButton = function() {
-        if($("#lockIcon").hasClass("icon-security"))
+    my.lockLockButton = function () {
+        if ($("#lockIcon").hasClass("icon-security"))
             buttonClick("#lockIcon", "icon-security icon-security-locked");
     };
 
@@ -233,12 +236,12 @@ var Toolbar = (function (my) {
     };
 
     // Toggle the state of the recording button
-    my.toggleRecordingButtonState = function() {
+    my.toggleRecordingButtonState = function () {
         $('#recordButton').toggleClass('active');
     };
 
     // Shows or hides SIP calls button
-    my.showSipCallButton = function(show){
+    my.showSipCallButton = function (show) {
         if (config.hosts.call_control && show) {
             $('#sipCallButton').css({display: "inline"});
         } else {
@@ -247,12 +250,13 @@ var Toolbar = (function (my) {
     };
 
     /**
-     * Sets the state of the button. The button has blue glow if desktop streaming is active.
+     * Sets the state of the button. The button has blue glow if desktop
+     * streaming is active.
      * @param active the state of the desktop streaming.
      */
     my.changeDesktopSharingButtonState = function (active) {
         var button = $("#desktopsharing > a");
-        if(active)
+        if (active)
         {
             button.addClass("glow");
         }
@@ -260,7 +264,7 @@ var Toolbar = (function (my) {
         {
             button.removeClass("glow");
         }
-    }
+    };
 
     return my;
 }(Toolbar || {}));
