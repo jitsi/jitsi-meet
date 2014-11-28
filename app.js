@@ -6,7 +6,7 @@ var activecall = null;
 var RTC = null;
 var nickname = null;
 var sharedKey = '';
-var recordingToken ='';
+var focusJid = null;
 var roomUrl = null;
 var roomName = null;
 var ssrc2jid = {};
@@ -676,6 +676,16 @@ $(document).bind('joined.muc', function (event, jid, info) {
         document.createTextNode(Strophe.getResourceFromJid(jid) + ' (me)')
     );
 
+    if (connection.emuc.isModerator())
+    {
+        Toolbar.showSipCallButton(true);
+        Toolbar.showRecordingButton(true);
+    }
+    else
+    {
+        Toolbar.showSipCallButton(false);
+        Toolbar.showRecordingButton(false);
+    }
 /*    if (Object.keys(connection.emuc.members).length < 1) {
         focus = new ColibriFocus(connection, config.hosts.bridge);
         if (nickname !== null) {
@@ -737,7 +747,8 @@ $(document).bind('entered.muc', function (event, jid, info, pres) {
 
     if (Strophe.getResourceFromJid(jid).indexOf('focus') != -1)
     {
-        console.info("Ignore focus");
+        focusJid = jid;
+        console.info("Ignore focus " + jid);
         return;
     }
 
@@ -1036,51 +1047,7 @@ function isAudioMuted()
 
 // Starts or stops the recording for the conference.
 function toggleRecording() {
-    if (focus === null || focus.confid === null) {
-        console.log('non-focus, or conference not yet organized: not enabling recording');
-        return;
-    }
-
-    if (!recordingToken)
-    {
-        messageHandler.openTwoButtonDialog(null,
-            '<h2>Enter recording token</h2>' +
-                '<input id="recordingToken" type="text" placeholder="token" autofocus>',
-            false,
-            "Save",
-            function (e, v, m, f) {
-                if (v) {
-                    var token = document.getElementById('recordingToken');
-
-                    if (token.value) {
-                        setRecordingToken(Util.escapeHtml(token.value));
-                        toggleRecording();
-                    }
-                }
-            },
-            function (event) {
-                document.getElementById('recordingToken').focus();
-            }
-        );
-
-        return;
-    }
-
-    var oldState = focus.recordingEnabled;
-    Toolbar.toggleRecordingButtonState();
-    focus.setRecording(!oldState,
-                        recordingToken,
-                        function (state) {
-                            console.log("New recording state: ", state);
-                            if (state == oldState) //failed to change, reset the token because it might have been wrong
-                            {
-                                Toolbar.toggleRecordingButtonState();
-                                setRecordingToken(null);
-                            }
-                        }
-    );
-
-
+    Recording.toggleRecording();
 }
 
 /**
@@ -1470,10 +1437,6 @@ function lockRoom(lock) {
  */
 function setSharedKey(sKey) {
     sharedKey = sKey;
-}
-
-function setRecordingToken(token) {
-    recordingToken = token;
 }
 
 /**

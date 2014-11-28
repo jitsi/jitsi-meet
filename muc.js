@@ -12,6 +12,7 @@ Strophe.addConnectionPlugin('emuc', {
     preziMap: {},
     joined: false,
     isOwner: false,
+    role: null,
     init: function (conn) {
         this.connection = conn;
     },
@@ -127,6 +128,10 @@ Strophe.addConnectionPlugin('emuc', {
 
         if (from == this.myroomjid) {
             if (member.affiliation == 'owner') this.isOwner = true;
+            if (this.role !== member.role) {
+                this.role = member.role;
+                console.info("My role: " + this.role);
+            }
             if (!this.joined) {
                 this.joined = true;
                 $(document).trigger('joined.muc', [from, member]);
@@ -456,5 +461,8 @@ Strophe.addConnectionPlugin('emuc', {
     },
     addBridgeIsDownToPresence: function() {
         this.presMap['bridgeIsDown'] = true;
+    },
+    isModerator: function() {
+        return this.role === 'moderator';
     }
 });
