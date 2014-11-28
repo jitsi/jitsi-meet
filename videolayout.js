@@ -1640,7 +1640,7 @@ var VideoLayout = (function (my) {
         endpointSimulcastLayers.forEach(function (esl) {
 
             var resource = esl.endpoint;
-            if (lastNCount < 1 || lastNEndpointsCache.indexOf(resource) === -1) {
+            if (lastNCount !== -1 && (lastNCount < 1 || lastNEndpointsCache.indexOf(resource) === -1)) {
                 return;
             }
 
@@ -1686,7 +1686,7 @@ var VideoLayout = (function (my) {
         endpointSimulcastLayers.forEach(function (esl) {
 
             var resource = esl.endpoint;
-            if (lastNCount < 1 || lastNEndpointsCache.indexOf(resource) === -1) {
+            if (lastNCount !== -1 && (lastNCount < 1 || lastNEndpointsCache.indexOf(resource) === -1)) {
                 return;
             }
 
@@ -1861,19 +1861,25 @@ var VideoLayout = (function (my) {
         if(this.jid==null)
         {
             resolution = "";
-            for(var i in this.resolution)
+            if(this.resolution == null || !Object.keys(this.resolution)
+                || Object.keys(this.resolution).length == 0)
             {
-                resolutionValue = this.resolution[i];
-                if(resolutionValue)
+                resolution = "N/A";
+            }
+            else
+                for(var i in this.resolution)
                 {
-                    if(resolutionValue.height &&
-                        resolutionValue.width)
+                    resolutionValue = this.resolution[i];
+                    if(resolutionValue)
                     {
-                        resolution += (resolution == ""? "" : ", ")
-                            + resolutionValue.width + "x" + resolutionValue.height;
+                        if(resolutionValue.height &&
+                            resolutionValue.width)
+                        {
+                            resolution += (resolution == ""? "" : ", ")
+                                + resolutionValue.width + "x" + resolutionValue.height;
+                        }
                     }
                 }
-            }
         }
         else if(!resolutionValue ||
             !resolutionValue.height ||
