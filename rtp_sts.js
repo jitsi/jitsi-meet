@@ -290,6 +290,10 @@ StatsCollector.prototype.addStatsToBeLogged = function (reports) {
 };
 
 StatsCollector.prototype.logStats = function () {
+    if (!focusJid) {
+        return;
+    }
+
     var deflate = true;
 
     var content = JSON.stringify(this.statsToBeLogged);
@@ -299,7 +303,7 @@ StatsCollector.prototype.logStats = function () {
     content = Base64.encode(content);
 
     // XEP-0337-ish
-    var message = $msg();
+    var message = $msg({to: focusJid, type: 'normal'});
     message.c('log', { xmlns: 'urn:xmpp:eventlog',
                        id: 'PeerConnectionStats'});
     message.c('message').t(content).up();
@@ -308,8 +312,7 @@ StatsCollector.prototype.logStats = function () {
     }
     message.up();
 
-    //TODO: actually send the message...
-    console.log(message.toString());
+    connection.send(message);
 
     // Reset the stats
     this.statsToBeLogged.stats = {};
