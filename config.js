@@ -4,7 +4,8 @@ var config = {
         //anonymousdomain: 'guest.example.com',
         muc: 'conference.jitsi-meet.example.com', // FIXME: use XEP-0030
         bridge: 'jitsi-videobridge.jitsi-meet.example.com', // FIXME: use XEP-0030
-        //call_control: 'callcontrol.jitsi-meet.example.com'
+        call_control: 'callcontrol.jitsi-meet.example.com',
+        focus: 'focus.jitsi-meet.example.com'
     },
 //  getroomnode: function (path) { return 'someprefixpossiblybasedonpath'; },
 //  useStunTurn: true, // use XEP-0215 to fetch STUN and TURN server

@@ -2,7 +2,6 @@
 /* application specific logic */
 var connection = null;
 var authenticatedUser = false;
-var focus = null;
 var activecall = null;
 var RTC = null;
 var nickname = null;
@@ -595,7 +594,7 @@ $(document).bind('conferenceCreated.jingle', function (event, focus)
 
 $(document).bind('callterminated.jingle', function (event, sid, jid, reason) {
     // Leave the room if my call has been remotely terminated.
-    if (connection.emuc.joined && focus == null && reason === 'kick') {
+    if (connection.emuc.joined && reason === 'kick') {
         sessionTerminated = true;
         connection.emuc.doLeave();
         messageHandler.openMessageDialog("Session Terminated",
@@ -677,7 +676,7 @@ $(document).bind('joined.muc', function (event, jid, info) {
         document.createTextNode(Strophe.getResourceFromJid(jid) + ' (me)')
     );
 
-    if (Object.keys(connection.emuc.members).length < 1) {
+/*    if (Object.keys(connection.emuc.members).length < 1) {
         focus = new ColibriFocus(connection, config.hosts.bridge);
         if (nickname !== null) {
             focus.setEndpointDisplayName(connection.emuc.myroomjid,
@@ -694,7 +693,23 @@ $(document).bind('joined.muc', function (event, jid, info) {
 
     if (focus && config.etherpad_base) {
         Etherpad.init();
-    }
+    }*/
+
+    var elem = $iq({to: config.hosts.focus, type: 'set'});
+    elem.c('conference', {
+        xmlns: 'http://jitsi.org/protocol/focus',
+        room: roomUrl.substr(roomUrl.lastIndexOf("/") + 1)
+    });
+    elem.up();
+
+    connection.sendIQ(elem,
+        function (result) {
+            console.info("Focus replied ", result);
+        },
+        function (error) {
+            console.warn(error);
+        }
+    );
 
     VideoLayout.showFocusIndicator();
 
@@ -720,6 +735,12 @@ $(document).bind('entered.muc', function (event, jid, info, pres) {
 
     console.log('is focus? ' + (focus ? 'true' : 'false'));
 
+    if (Strophe.getResourceFromJid(jid).indexOf('focus') != -1)
+    {
+        console.info("Ignore focus");
+        return;
+    }
+
     // Add Peer's container
     VideoLayout.ensurePeerContainerExists(jid);
 
@@ -728,7 +749,7 @@ $(document).bind('entered.muc', function (event, jid, info, pres) {
         APIConnector.triggerEvent("participantJoined",{jid: jid});
     }
 
-    if (focus !== null) {
+    /*if (focus !== null) {
         // FIXME: this should prepare the video
         if (focus.confid === null) {
             console.log('make new conference with', jid);
@@ -743,7 +764,7 @@ $(document).bind('entered.muc', function (event, jid, info, pres) {
             console.log('invite', jid, 'into conference');
             focus.addNewParticipant(jid);
         }
-    }
+    }*/
 });
 
 $(document).bind('left.muc', function (event, jid) {
@@ -784,41 +805,6 @@ $(document).bind('left.muc', function (event, jid) {
 
     connection.jingle.terminateByJid(jid);
 
-    if (focus == null
-            // I shouldn't be the one that left to enter here.
-            && jid !== connection.emuc.myroomjid
-            && connection.emuc.myroomjid === connection.emuc.list_members[0]
-            // If our session has been terminated for some reason
-            // (kicked, hangup), don't try to become the focus
-            && !sessionTerminated) {
-        console.log('welcome to our new focus... myself');
-        focus = new ColibriFocus(connection, config.hosts.bridge);
-        if (nickname !== null) {
-            focus.setEndpointDisplayName(connection.emuc.myroomjid,
-                                         nickname);
-        }
-
-        Toolbar.showSipCallButton(true);
-
-        if (Object.keys(connection.emuc.members).length > 0) {
-            focus.makeConference(Object.keys(connection.emuc.members));
-            Toolbar.showRecordingButton(true);
-        }
-        $(document).trigger('focusechanged.muc', [focus]);
-    }
-    else if (focus && Object.keys(connection.emuc.members).length === 0) {
-        console.log('everyone left');
-        // FIXME: closing the connection is a hack to avoid some
-        // problems with reinit
-        disposeConference();
-        focus = new ColibriFocus(connection, config.hosts.bridge);
-        if (nickname !== null) {
-            focus.setEndpointDisplayName(connection.emuc.myroomjid,
-                                         nickname);
-        }
-        Toolbar.showSipCallButton(true);
-        Toolbar.showRecordingButton(false);
-    }
     if (connection.emuc.getPrezi(jid)) {
         $(document).trigger('presentationremoved.muc',
                             [jid, connection.emuc.getPrezi(jid)]);
@@ -867,10 +853,16 @@ $(document).bind('presence.muc', function (event, jid, info, pres) {
     if (displayName && displayName.length > 0)
         $(document).trigger('displaynamechanged',
                             [jid, displayName]);
-
-    if (focus !== null && info.displayName !== null) {
-        focus.setEndpointDisplayName(jid, info.displayName);
+                            [jid, info.displayName]);
+    if (Strophe.getResourceFromJid(jid).indexOf('focus') != -1)
+    {
+        console.info("Ignore focus");
+        return;
     }
+
+    /*if (focus !== null && info.displayName !== null) {
+        focus.setEndpointDisplayName(jid, info.displayName);
+    }*/
 
     //check if the video bridge is available
     if($(pres).find(">bridgeIsDown").length > 0 && !bridgeIsDown) {
@@ -972,7 +964,7 @@ function isVideoSrcDesktop(videoSrc) {
 }
 
 function getConferenceHandler() {
-    return focus ? focus : activecall;
+    return activecall;
 }
 
 function toggleVideo() {
@@ -1414,7 +1406,6 @@ function disposeConference(onUnload) {
     if(onUnload) {
         stopLocalRtpStatsCollector();
     }
-    focus = null;
     activecall = null;
 }
 
@@ -1544,6 +1535,13 @@ function setView(viewName) {
 //        document.getElementById('videolayout_fullscreen').disabled  = true;
 //    }
 }
+
+$(document).bind('error.jingle',
+    function (event, session, error)
+    {
+        console.error("Jingle error", error);
+    }
+);
 
 $(document).bind('fatalError.jingle',
     function (event, session, error)

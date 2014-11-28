@@ -581,6 +581,8 @@ JingleSession.prototype.createdAnswer = function (sdp, provisional) {
                         reason: $(stanza).find('error :first')[0].tagName,
                     }:{};
                     error.source = 'answer';
+                    error.stanza = stanza;
+
                     $(document).trigger('error.jingle', [self.sid, error]);
                 },
                 10000);
