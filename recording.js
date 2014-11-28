@@ -1,9 +1,8 @@
 /* global $, $iq, config, connection, focusJid, messageHandler, Moderator,
    Toolbar, Util */
 var Recording = (function (my) {
-    var status = false;
     var recordingToken = null;
-    var recordingEnabled = false;
+    var recordingEnabled;
 
     my.setRecordingToken = function (token) {
         recordingToken = token;
@@ -71,18 +70,36 @@ var Recording = (function (my) {
         }
 
         var oldState = recordingEnabled;
-        Toolbar.toggleRecordingButtonState();
+        Toolbar.setRecordingButtonState(!oldState);
         my.setRecording(!oldState,
             recordingToken,
             function (state) {
                 console.log("New recording state: ", state);
-                if (state == oldState)
+                if (state === oldState)
                 {
+                    // FIXME: new focus:
+                    // this will not work when moderator changes
+                    // during active session. Then it will assume that
+                    // recording status has changed to true, but it might have
+                    // been already true(and we only received actual status from
+                    // the focus).
+                    //
+                    // SO we start with status null, so that it is initialized
+                    // here and will fail only after second click, so if invalid
+                    // token was used we have to press the button twice before
+                    // current status will be fetched and token will be reset.
+                    //
+                    // Reliable way would be to return authentication error.
+                    // Or status update when moderator connects.
+                    // Or we have to stop recording session when current
+                    // moderator leaves the room.
+
                     // Failed to change, reset the token because it might
                     // have been wrong
-                    Toolbar.toggleRecordingButtonState();
                     my.setRecordingToken(null);
                 }
+                // Update with returned status
+                Toolbar.setRecordingButtonState(state);
             }
         );
     };

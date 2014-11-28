@@ -235,9 +235,15 @@ var Toolbar = (function (my) {
         }
     };
 
-    // Toggle the state of the recording button
-    my.toggleRecordingButtonState = function () {
-        $('#recordButton').toggleClass('active');
+    // Sets the state of the recording button
+    my.setRecordingButtonState = function (isRecording) {
+        if (isRecording) {
+            $('#recordButton').removeClass("icon-recEnable");
+            $('#recordButton').addClass("icon-recEnable active");
+        } else {
+            $('#recordButton').removeClass("icon-recEnable active");
+            $('#recordButton').addClass("icon-recEnable");
+        }
     };
 
     // Shows or hides SIP calls button
