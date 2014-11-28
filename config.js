@@ -28,5 +28,6 @@ var config = {
     useBundle: true,
     enableRecording: true,
     enableWelcomePage: false,
-    enableSimulcast: false
+    enableSimulcast: false,
+    logStats: false // Enable logging of PeerConnection stats via the focus
 };
