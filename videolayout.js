@@ -1705,11 +1705,11 @@ var VideoLayout = (function (my) {
             // then ignore the event (= do not change large video/thumbnail
             // SRCs).
             //
-            // Note that even if we ignore the "changing" event in this event
+            // Note that even if we ignore the "changed" event in this event
             // handler, the bridge must continue sending these events because
-            // the simulcast code in simulcast.js handles it to know what's
-            // going to be streamed by the bridge when/if the endpoint gets back
-            // into the lastN set.
+            // the simulcast code in simulcast.js uses it to know what's going
+            // to be streamed by the bridge when/if the endpoint gets back into
+            // the lastN set.
 
             if (lastNCount != -1
                 && (lastNCount < 1 || lastNEndpointsCache.indexOf(resource) === -1)) {
