@@ -17,7 +17,7 @@ var Toolbar = (function (my) {
      */
     my.openLockDialog = function () {
         // Only the focus is able to set a shared key.
-        if (focus === null) {
+        if (Moderator.isModerator()) {
             if (sharedKey) {
                 messageHandler.openMessageDialog(null,
                         "This conversation is currently protected by" +

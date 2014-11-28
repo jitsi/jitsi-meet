@@ -1,4 +1,4 @@
-/* global $, interfaceConfig, showDesktopSharingButton */
+/* global $, interfaceConfig, Moderator, showDesktopSharingButton */
 var ToolbarToggler = (function (my) {
     var toolbarTimeoutObject,
         toolbarTimeout = interfaceConfig.INITIAL_TOOLBAR_TIMEOUT;
@@ -25,7 +25,7 @@ var ToolbarToggler = (function (my) {
             toolbarTimeout = interfaceConfig.TOOLBAR_TIMEOUT;
         }
 
-        if (focus !== null)
+        if (Moderator.isModerator())
         {
 //            TODO: Enable settings functionality.
 //                  Need to uncomment the settings button in index.html.

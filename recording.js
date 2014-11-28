@@ -1,4 +1,5 @@
-/* global $, $iq, config, connection, focusJid, messageHandler, Toolbar, Util */
+/* global $, $iq, config, connection, focusJid, messageHandler, Moderator,
+   Toolbar, Util */
 var Recording = (function (my) {
     var status = false;
     var recordingToken = null;
@@ -36,7 +37,7 @@ var Recording = (function (my) {
     };
 
     my.toggleRecording = function () {
-        if (!connection.emuc.isModerator()) {
+        if (!Moderator.isModerator()) {
             console.log(
                 'non-focus, or conference not yet organized:' +
                 ' not enabling recording');

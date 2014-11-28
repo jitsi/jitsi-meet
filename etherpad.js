@@ -1,4 +1,5 @@
-/* global $, config, Prezi, Util, connection, setLargeVideoVisible, dockToolbar */
+/* global $, config, connection, dockToolbar, Moderator, Prezi,
+   setLargeVideoVisible, ToolbarToggler, Util, VideoLayout */
 var Etherpad = (function (my) {
     var etherpadName = null;
     var etherpadIFrame = null;
@@ -161,7 +162,7 @@ var Etherpad = (function (my) {
      */
     $(document).bind('etherpadadded.muc', function (event, jid, etherpadName) {
         console.log("Etherpad added", etherpadName);
-        if (config.etherpad_base && !focus) {
+        if (config.etherpad_base && !Moderator.isModerator()) {
             Etherpad.init(etherpadName);
         }
     });
@@ -169,6 +170,7 @@ var Etherpad = (function (my) {
     /**
      * On focus changed event.
      */
+    // FIXME: there is no such event as 'focusechanged.muc'
     $(document).bind('focusechanged.muc', function (event, focus) {
         console.log("Focus changed");
         if (config.etherpad_base)

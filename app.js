@@ -728,8 +728,6 @@ $(document).bind('entered.muc', function (event, jid, info, pres) {
         'connected',
         'connected');
 
-    console.log('is focus? ' + (focus ? 'true' : 'false'));
-
     if (Strophe.getResourceFromJid(jid).indexOf('focus') != -1)
     {
         focusJid = jid;
@@ -1249,6 +1247,8 @@ $(document).ready(function () {
         }
     });
 
+    Moderator.init();
+
     // Set the defaults for prompt dialogs.
     jQuery.prompt.setDefaults({persistent: false});
 
@@ -1442,11 +1442,13 @@ function updateRoomUrl(newRoomUrl) {
  * Warning to the user that the conference window is about to be closed.
  */
 function closePageWarning() {
+    /*
+    FIXME: do we need a warning when the focus is a server-side one now ?
     if (focus !== null)
         return "You are the owner of this conference call and"
                 + " you are about to end it.";
-    else
-        return "You are about to leave this conversation.";
+    else*/
+    return "You are about to leave this conversation.";
 }
 
 /**
