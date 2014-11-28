@@ -130,7 +130,7 @@ Strophe.addConnectionPlugin('emuc', {
             if (member.affiliation == 'owner') this.isOwner = true;
             if (this.role !== member.role) {
                 this.role = member.role;
-                console.info("My role: " + this.role);
+                $(document).trigger('local.role.changed.muc', [from, member, pres]);
             }
             if (!this.joined) {
                 this.joined = true;
@@ -142,6 +142,13 @@ Strophe.addConnectionPlugin('emuc', {
             this.members[from] = member;
             this.list_members.push(from);
             $(document).trigger('entered.muc', [from, member, pres]);
+        } else {
+            // Presence update for existing participant
+            // Watch role change:
+            if (this.members[from].role != member.role) {
+                this.members[from].role = member.role
+                $(document).trigger('role.changed.muc', [from, member, pres]);
+            }
         }
         // Always trigger presence to update bindings
         console.log('presence change from', from, pres);
