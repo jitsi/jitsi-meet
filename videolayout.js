@@ -1640,7 +1640,15 @@ var VideoLayout = (function (my) {
         endpointSimulcastLayers.forEach(function (esl) {
 
             var resource = esl.endpoint;
-            if (lastNCount < 1 || lastNEndpointsCache.indexOf(resource) === -1) {
+
+            // if lastN is enabled *and* the endpoint is *not* in the lastN set,
+            // then ignore the event (= do not preload anything).
+            //
+            // The bridge could probably stop sending this message if it's for
+            // an endpoint that's not in lastN.
+
+            if (lastNCount != -1
+                && (lastNCount < 1 || lastNEndpointsCache.indexOf(resource) === -1)) {
                 return;
             }
 
@@ -1692,7 +1700,19 @@ var VideoLayout = (function (my) {
         endpointSimulcastLayers.forEach(function (esl) {
 
             var resource = esl.endpoint;
-            if (lastNCount < 1 || lastNEndpointsCache.indexOf(resource) === -1) {
+
+            // if lastN is enabled *and* the endpoint is *not* in the lastN set,
+            // then ignore the event (= do not change large video/thumbnail
+            // SRCs).
+            //
+            // Note that even if we ignore the "changing" event in this event
+            // handler, the bridge must continue sending these events because
+            // the simulcast code in simulcast.js handles it to know what's
+            // going to be streamed by the bridge when/if the endpoint gets back
+            // into the lastN set.
+
+            if (lastNCount != -1
+                && (lastNCount < 1 || lastNEndpointsCache.indexOf(resource) === -1)) {
                 return;
             }
 
