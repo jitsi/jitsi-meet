@@ -10,7 +10,7 @@ var focusJid = null;
 var roomUrl = null;
 var roomName = null;
 var ssrc2jid = {};
-var mediaStreams = [];
+var mediaStreams = {};
 var bridgeIsDown = false;
 
 /**
@@ -108,9 +108,16 @@ function connect(jid, password) {
         localVideo = connection.jingle.localVideo;
     }
     connection = new Strophe.Connection(document.getElementById('boshURL').value || config.bosh || '/http-bind');
-
-    if (nickname) {
-        connection.emuc.addDisplayNameToPresence(nickname);
+    
+    var email = SettingsMenu.getEmail();
+    var displayName = SettingsMenu.getDisplayName();
+    if(email) {
+        connection.emuc.addEmailToPresence(email);
+    } else {
+        connection.emuc.addUserIdToPresence(SettingsMenu.getUID());
+    }
+    if(displayName) {
+        connection.emuc.addDisplayNameToPresence(displayName);
     }
 
     if (connection.disco) {
@@ -355,7 +362,12 @@ function waitForPresence(data, sid) {
     // NOTE(gp) now that we have simulcast, a media stream can have more than 1
     // ssrc. We should probably take that into account in our MediaStream
     // wrapper.
-    mediaStreams.push(new MediaStream(data, sid, thessrc));
+    var mediaStream = new MediaStream(data, sid, thessrc);
+    var jid = data.peerjid || connection.emuc.myroomjid;
+    if(!mediaStreams[jid]) {
+        mediaStreams[jid] = {};
+    }
+    mediaStreams[jid][mediaStream.type] = mediaStream;
 
     var container;
     var remotes = document.getElementById('remoteVideos');
@@ -392,6 +404,8 @@ function waitForPresence(data, sid) {
                                             data.stream,
                                             data.peerjid,
                                             thessrc);
+        if(isVideo && container.id !== 'mixedstream')
+             videoSrcToSsrc[$(container).find('>video')[0].src] = thessrc;
     }
 
     // an attempt to work around https://github.com/jitsi/jitmeet/issues/32
@@ -691,7 +705,7 @@ $(document).bind('joined.muc', function (event, jid, info) {
     );
 
     // Add myself to the contact list.
-    ContactList.addContact(jid);
+    ContactList.addContact(jid, SettingsMenu.getEmail() || SettingsMenu.getUID());
 
     // Once we've joined the muc show the toolbar
     ToolbarToggler.showToolbar();
@@ -718,7 +732,12 @@ $(document).bind('entered.muc', function (event, jid, info, pres) {
     }
 
     // Add Peer's container
-    VideoLayout.ensurePeerContainerExists(jid);
+    var id = $(pres).find('>userID').text();
+    var email = $(pres).find('>email');
+    if(email.length > 0) {
+        id = email.text();
+    }
+    VideoLayout.ensurePeerContainerExists(jid,id);
 
     if(APIConnector.isEnabled() && APIConnector.isEventEnabled("participantJoined"))
     {
@@ -844,6 +863,13 @@ $(document).bind('presence.muc', function (event, jid, info, pres) {
         messageHandler.showError("Error",
             "Jitsi Videobridge is currently unavailable. Please try again later!");
     }
+
+    var id = $(pres).find('>userID').text();
+    var email = $(pres).find('>email');
+    if(email.length > 0) {
+        id = email.text();
+    }
+    Avatar.setUserAvatar(jid, id);
 
 });
 
@@ -1310,15 +1336,20 @@ $(document).ready(function () {
         "showMethod": "fadeIn",
         "hideMethod": "fadeOut",
         "reposition": function() {
-            if(Chat.isVisible() || ContactList.isVisible()) {
-                $("#toast-container").addClass("toast-bottom-right-center");
+            if(PanelToggler.isVisible()) {
+                $("#toast-container").addClass("notification-bottom-right-center");
             } else {
-                $("#toast-container").removeClass("toast-bottom-right-center");
+                $("#toast-container").removeClass("notification-bottom-right-center");
             }
         },
         "newestOnTop": false
-    }
+    };
 
+    $('#settingsmenu>input').keyup(function(event){
+        if(event.keyCode === 13) {//enter
+            SettingsMenu.update();
+        }
+    })
 
 });
 
@@ -1617,3 +1648,14 @@ function hangup() {
     );
 
 }
+
+$(document).on('videomuted.muc', function(event, jid, value) {
+    if(mediaStreams[jid] && mediaStreams[jid][MediaStream.VIDEO_TYPE]) {
+        var stream = mediaStreams[jid][MediaStream.VIDEO_TYPE];
+        var isMuted = (value === "true");
+        if (isMuted != stream.muted) {
+            stream.muted = isMuted;
+            Avatar.showUserAvatar(jid, isMuted);
+        }
+    }
+});

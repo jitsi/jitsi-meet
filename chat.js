@@ -57,7 +57,7 @@ var Chat = (function (my) {
 
         var onTextAreaResize = function () {
             resizeChatConversation();
-            scrollChatToBottom();
+            Chat.scrollChatToBottom();
         };
         $('#usermsg').autosize({callback: onTextAreaResize});
 
@@ -144,112 +144,7 @@ var Chat = (function (my) {
         }
     };
 
-    /**
-     * Opens / closes the chat area.
-     */
-    my.toggleChat = function () {
-        var chatspace = $('#chatspace');
-        var videospace = $('#videospace');
 
-        var chatSize = (Chat.isVisible()) ? [0, 0] : Chat.getChatSize();
-        var videospaceWidth = window.innerWidth - chatSize[0];
-        var videospaceHeight = window.innerHeight;
-        var videoSize
-            = getVideoSize(null, null, videospaceWidth, videospaceHeight);
-        var videoWidth = videoSize[0];
-        var videoHeight = videoSize[1];
-        var videoPosition = getVideoPosition(videoWidth,
-                                             videoHeight,
-                                             videospaceWidth,
-                                             videospaceHeight);
-        var horizontalIndent = videoPosition[0];
-        var verticalIndent = videoPosition[1];
-
-        var thumbnailSize = VideoLayout.calculateThumbnailSize(videospaceWidth);
-        var thumbnailsWidth = thumbnailSize[0];
-        var thumbnailsHeight = thumbnailSize[1];
-        var completeFunction = Chat.isVisible() ?
-            function() {} : function () {
-                                scrollChatToBottom();
-                                chatspace.trigger('shown');
-                            };
-
-        videospace.animate({right: chatSize[0],
-                            width: videospaceWidth,
-                            height: videospaceHeight},
-                            {queue: false,
-                            duration: 500,
-                            complete: completeFunction});
-
-        $('#remoteVideos').animate({height: thumbnailsHeight},
-                                    {queue: false,
-                                    duration: 500});
-
-        $('#remoteVideos>span').animate({height: thumbnailsHeight,
-                                        width: thumbnailsWidth},
-                                        {queue: false,
-                                        duration: 500,
-                                        complete: function() {
-                                            $(document).trigger(
-                                                    "remotevideo.resized",
-                                                    [thumbnailsWidth,
-                                                     thumbnailsHeight]);
-                                        }});
-
-        $('#largeVideoContainer').animate({ width: videospaceWidth,
-                                            height: videospaceHeight},
-                                            {queue: false,
-                                             duration: 500
-                                            });
-
-        $('#largeVideo').animate({  width: videoWidth,
-                                    height: videoHeight,
-                                    top: verticalIndent,
-                                    bottom: verticalIndent,
-                                    left: horizontalIndent,
-                                    right: horizontalIndent},
-                                    {   queue: false,
-                                        duration: 500
-                                    }
-        );
-
-        if (Chat.isVisible()) {
-            $("#toast-container").animate({right: '5px'},
-                                {queue: false,
-                                duration: 500});
-            chatspace.hide("slide", { direction: "right",
-                                            queue: false,
-                                            duration: 500});
-
-        }
-        else {
-            // Undock the toolbar when the chat is shown and if we're in a 
-            // video mode.
-            if (VideoLayout.isLargeVideoVisible()) {
-                ToolbarToggler.dockToolbar(false);
-            }
-
-
-            $("#toast-container").animate({right: (chatSize[0] + 5) + 'px'},
-                {queue: false,
-                    duration: 500});
-            chatspace.show("slide", { direction: "right",
-                                            queue: false,
-                                            duration: 500,
-                                            complete: function () {
-                                                // Request the focus in the nickname field or the chat input field.
-                                                if ($('#nickname').css('visibility') === 'visible') {
-                                                    $('#nickinput').focus();
-                                                } else {
-                                                    $('#usermsg').focus();
-                                                }
-                                            }
-            });
-
-            Chat.resizeChat();
-        }
-
-    };
 
     /**
      * Sets the chat conversation mode.
@@ -268,26 +163,12 @@ var Chat = (function (my) {
      * Resizes the chat area.
      */
     my.resizeChat = function () {
-        var chatSize = Chat.getChatSize();
+        var chatSize = PanelToggler.getPanelSize();
 
         $('#chatspace').width(chatSize[0]);
         $('#chatspace').height(chatSize[1]);
 
         resizeChatConversation();
-    };
-
-    /**
-     * Returns the size of the chat.
-     */
-    my.getChatSize = function () {
-        var availableHeight = window.innerHeight;
-        var availableWidth = window.innerWidth;
-
-        var chatWidth = 200;
-        if (availableWidth * 0.2 < 200)
-            chatWidth = availableWidth * 0.2;
-
-        return [chatWidth, availableHeight];
     };
 
     /**
@@ -307,6 +188,16 @@ var Chat = (function (my) {
             smileys.hide("slide", { direction: "down", duration: 300});
         }
         $('#usermsg').focus();
+    };
+
+    /**
+     * Scrolls chat to the bottom.
+     */
+    my.scrollChatToBottom = function() {
+        setTimeout(function () {
+            $('#chatconversation').scrollTop(
+                $('#chatconversation')[0].scrollHeight);
+        }, 5);
     };
 
     /**
@@ -426,15 +317,6 @@ var Chat = (function (my) {
         }
     }
 
-    /**
-     * Scrolls chat to the bottom.
-     */
-    function scrollChatToBottom() {
-        setTimeout(function () {
-            $('#chatconversation').scrollTop(
-                    $('#chatconversation')[0].scrollHeight);
-        }, 5);
-    }
 
     /**
      * Returns the current time in the format it is shown to the user
