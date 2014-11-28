@@ -161,24 +161,33 @@ function connect(jid, password) {
  */
 function obtainAudioAndVideoPermissions(callback) {
     // Get AV
+    var cb = function (stream) {
+        console.log('got', stream, stream.getAudioTracks().length, stream.getVideoTracks().length);
+        callback(stream);
+        trackUsage('localMedia', {
+            audio: stream.getAudioTracks().length,
+            video: stream.getVideoTracks().length
+        });
+    }
     getUserMediaWithConstraints(
         ['audio', 'video'],
-        function (avStream) {
-            callback(avStream);
-            trackUsage('localMedia', {
-                audio: avStream.getAudioTracks().length,
-                video: avStream.getVideoTracks().length
-            });
-        },
+        cb,
         function (error) {
-            console.error('failed to obtain audio/video stream - stop', error);
-            trackUsage('localMediaError', {
-                media: error.media || 'video',
-                name : error.name
-            });
-            messageHandler.showError("Error",
-                "Failed to obtain permissions to use the local microphone" +
-                    "and/or camera.");
+            console.error('failed to obtain audio/video stream - trying audio only', error);
+            getUserMediaWithConstraints(
+                ['audio'],
+                cb,
+                function (error) {
+                    console.error('failed to obtain audio/video stream - stop', error);
+                    trackUsage('localMediaError', {
+                        media: error.media || 'video',
+                        name : error.name
+                    });
+                    messageHandler.showError("Error",
+                        "Failed to obtain permissions to use the local microphone" +
+                            "and/or camera.");
+                }
+            );
         },
         config.resolution || '360');
 }
