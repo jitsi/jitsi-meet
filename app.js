@@ -849,7 +849,6 @@ $(document).bind('presence.muc', function (event, jid, info, pres) {
     if (displayName && displayName.length > 0)
         $(document).trigger('displaynamechanged',
                             [jid, displayName]);
-                            [jid, info.displayName]);
     if (Strophe.getResourceFromJid(jid).indexOf('focus') != -1)
     {
         console.info("Ignore focus");
