@@ -219,29 +219,8 @@ function doJoin() {
         generateRoomName();
     }
 
-    var elem = $iq({to: config.hosts.focus, type: 'set'});
-    elem.c('conference', {
-        xmlns: 'http://jitsi.org/protocol/focus',
-        room: roomName
-    });
-    elem.up();
-    connection.sendIQ(elem,
-        function (result) {
-            console.info("Focus replied ", result);
-            if ('true' === $(result).find('conference').attr('ready')) {
-                doJoinAfterFocus();
-            } else {
-                console.info("Waiting for the focus...");
-                window.setTimeout(
-                    function () {
-                        doJoin();
-                    }, 3000);
-            }
-        },
-        function (error) {
-            console.warn(error);
-        }
-    );
+    Moderator.allocateConferenceFocus(
+        roomName, doJoinAfterFocus);
 }
 
 function doJoinAfterFocus() {
