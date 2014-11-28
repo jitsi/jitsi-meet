@@ -7,6 +7,7 @@
 var Moderator = (function (my) {
 
     var getNextTimeout = Util.createExpBackoffTimer(1000);
+    var getNextErrorTimeout = Util.createExpBackoffTimer(1000);
 
     my.isModerator = function () {
         return connection.emuc.isModerator();
@@ -58,12 +59,15 @@ var Moderator = (function (my) {
                         "Focus has left the room - leaving conference");
                     //hangUp();
                     // We'd rather reload to have everything re-initialized
+                    // FIXME: show some message before reload
                     location.reload();
                 }
             }
         );
     };
 
+    // FIXME: we need to show the fact that we're waiting for the focus
+    // to the user(or that focus is not available)
     my.allocateConferenceFocus = function (roomName, callback) {
         var elem = $iq({to: config.hosts.focus, type: 'set'});
         elem.c('conference', {
@@ -74,12 +78,15 @@ var Moderator = (function (my) {
         connection.sendIQ(elem,
             function (result) {
                 if ('true' === $(result).find('conference').attr('ready')) {
-                    // Reset timer
+                    // Reset both timers
                     getNextTimeout(true);
+                    getNextErrorTimeout(true);
                     callback();
                 } else {
                     var waitMs = getNextTimeout();
                     console.info("Waiting for the focus... " + waitMs);
+                    // Reset error timeout
+                    getNextErrorTimeout(true);
                     window.setTimeout(
                         function () {
                             Moderator.allocateConferenceFocus(roomName, callback);
@@ -87,8 +94,10 @@ var Moderator = (function (my) {
                 }
             },
             function (error) {
-                var waitMs = getNextTimeout();
+                var waitMs = getNextErrorTimeout();
                 console.error("Focus error, retry after " + waitMs, error);
+                // Reset response timeout
+                getNextTimeout(true);
                 window.setTimeout(
                     function () {
                         Moderator.allocateConferenceFocus(roomName, callback);
