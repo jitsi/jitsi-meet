@@ -356,7 +356,10 @@ function waitForPresence(data, sid) {
         container  = document.getElementById(
                 'participant_' + Strophe.getResourceFromJid(data.peerjid));
     } else {
-        if (data.stream.id !== 'mixedmslabel') {
+        if (data.stream.id !== 'mixedmslabel'
+            // FIXME: default stream is added always with new focus
+            // (to be investigated)
+            && data.stream.id !== 'default') {
             console.error('can not associate stream',
                 data.stream.id,
                 'with a participant');
