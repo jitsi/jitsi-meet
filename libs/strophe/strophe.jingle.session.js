@@ -129,21 +129,6 @@ JingleSession.prototype.accept = function () {
             responder: this.responder,
             sid: this.sid });
     prsdp.toJingle(accept, this.initiator == this.me ? 'initiator' : 'responder');
-    this.connection.sendIQ(accept,
-        function () {
-            var ack = {};
-            ack.source = 'answer';
-            $(document).trigger('ack.jingle', [self.sid, ack]);
-        },
-        function (stanza) {
-            var error = ($(stanza).find('error').length) ? {
-                code: $(stanza).find('error').attr('code'),
-                reason: $(stanza).find('error :first')[0].tagName,
-            }:{};
-            error.source = 'answer';
-            $(document).trigger('error.jingle', [self.sid, error]);
-        },
-        10000);
 
     var sdp = this.peerconnection.localDescription.sdp;
     while (SDPUtil.find_line(sdp, 'a=inactive')) {
@@ -154,6 +139,22 @@ JingleSession.prototype.accept = function () {
         function () {
             //console.log('setLocalDescription success');
             $(document).trigger('setLocalDescription.jingle', [self.sid]);
+
+            this.connection.sendIQ(accept,
+                function () {
+                    var ack = {};
+                    ack.source = 'answer';
+                    $(document).trigger('ack.jingle', [self.sid, ack]);
+                },
+                function (stanza) {
+                    var error = ($(stanza).find('error').length) ? {
+                        code: $(stanza).find('error').attr('code'),
+                        reason: $(stanza).find('error :first')[0].tagName,
+                    }:{};
+                    error.source = 'answer';
+                    $(document).trigger('error.jingle', [self.sid, error]);
+                },
+                10000);
         },
         function (e) {
             console.error('setLocalDescription failed', e);
@@ -556,10 +557,11 @@ JingleSession.prototype.createdAnswer = function (sdp, provisional) {
     var self = this;
     this.localSDP = new SDP(sdp.sdp);
     //this.localSDP.mangle();
+    var accept = null;
     this.usepranswer = provisional === true;
     if (this.usetrickle) {
         if (!this.usepranswer) {
-            var accept = $iq({to: this.peerjid,
+            accept = $iq({to: this.peerjid,
                 type: 'set'})
                 .c('jingle', {xmlns: 'urn:xmpp:jingle:1',
                     action: 'session-accept',
@@ -569,23 +571,6 @@ JingleSession.prototype.createdAnswer = function (sdp, provisional) {
             var publicLocalDesc = simulcast.reverseTransformLocalDescription(sdp);
             var publicLocalSDP = new SDP(publicLocalDesc.sdp);
             publicLocalSDP.toJingle(accept, this.initiator == this.me ? 'initiator' : 'responder');
-            this.connection.sendIQ(accept,
-                function () {
-                    var ack = {};
-                    ack.source = 'answer';
-                    $(document).trigger('ack.jingle', [self.sid, ack]);
-                },
-                function (stanza) {
-                    var error = ($(stanza).find('error').length) ? {
-                        code: $(stanza).find('error').attr('code'),
-                        reason: $(stanza).find('error :first')[0].tagName,
-                    }:{};
-                    error.source = 'answer';
-                    error.stanza = stanza;
-
-                    $(document).trigger('error.jingle', [self.sid, error]);
-                },
-                10000);
         } else {
             sdp.type = 'pranswer';
             for (var i = 0; i < this.localSDP.media.length; i++) {
@@ -599,6 +584,26 @@ JingleSession.prototype.createdAnswer = function (sdp, provisional) {
         function () {
             $(document).trigger('setLocalDescription.jingle', [self.sid]);
             //console.log('setLocalDescription success');
+            if (accept)
+            {
+                this.connection.sendIQ(accept,
+                    function () {
+                        var ack = {};
+                        ack.source = 'answer';
+                        $(document).trigger('ack.jingle', [self.sid, ack]);
+                    },
+                    function (stanza) {
+                        var error = ($(stanza).find('error').length) ? {
+                            code: $(stanza).find('error').attr('code'),
+                            reason: $(stanza).find('error :first')[0].tagName,
+                        }:{};
+                        error.source = 'answer';
+                        error.stanza = stanza;
+
+                        $(document).trigger('error.jingle', [self.sid, error]);
+                    },
+                    10000);
+            }
         },
         function (e) {
             console.error('setLocalDescription failed', e);
