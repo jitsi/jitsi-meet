@@ -208,7 +208,7 @@ function obtainAudioAndVideoPermissions(callback) {
             } else {
                 // do we want to show something?
                 gumDone = true;
-                cb(null);
+                callback(null);
                 trackUsage('localMedia', {
                     audio: 0,
                     video: 0,
