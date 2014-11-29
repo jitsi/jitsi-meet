@@ -13,6 +13,7 @@ var roomName = null;
 var ssrc2jid = {};
 var mediaStreams = {};
 var bridgeIsDown = false;
+var gumDone = false;
 
 /**
  * The stats collector that process stats data and triggers updates to app.js.
@@ -71,20 +72,22 @@ function init() {
     }
 
     obtainAudioAndVideoPermissions(function (stream) {
-        var audioStream = new webkitMediaStream();
-        var videoStream = new webkitMediaStream();
-        var audioTracks = stream.getAudioTracks();
-        var videoTracks = stream.getVideoTracks();
-        for (var i = 0; i < audioTracks.length; i++) {
-            audioStream.addTrack(audioTracks[i]);
-        }
-        VideoLayout.changeLocalAudio(audioStream);
-        startLocalRtpStatsCollector(audioStream);
+        if (stream) {
+            var audioStream = new webkitMediaStream();
+            var videoStream = new webkitMediaStream();
+            var audioTracks = stream.getAudioTracks();
+            var videoTracks = stream.getVideoTracks();
+            for (var i = 0; i < audioTracks.length; i++) {
+                audioStream.addTrack(audioTracks[i]);
+            }
+            VideoLayout.changeLocalAudio(audioStream);
+            startLocalRtpStatsCollector(audioStream);
 
-        for (i = 0; i < videoTracks.length; i++) {
-            videoStream.addTrack(videoTracks[i]);
+            for (i = 0; i < videoTracks.length; i++) {
+                videoStream.addTrack(videoTracks[i]);
+            }
+            VideoLayout.changeLocalVideo(videoStream, true);
         }
-        VideoLayout.changeLocalVideo(videoStream, true);
         maybeDoJoin();
     });
 
@@ -161,40 +164,66 @@ function connect(jid, password) {
  */
 function obtainAudioAndVideoPermissions(callback) {
     // Get AV
-    var cb = function (stream) {
-        console.log('got', stream, stream.getAudioTracks().length, stream.getVideoTracks().length);
-        callback(stream);
-        trackUsage('localMedia', {
-            audio: stream.getAudioTracks().length,
-            video: stream.getVideoTracks().length
+    // TODO: need to hook up with UI to allow user to actually choose
+    //      instead of just detecting stuff. See haircheck
+    var obtain = function (what) {
+        getUserMediaWithConstraints(
+            what,
+            function (stream) {
+                gumDone = true;
+                console.log('got', stream, stream.getAudioTracks().length, stream.getVideoTracks().length);
+                callback(stream);
+                trackUsage('localMedia', {
+                    audio: stream.getAudioTracks().length,
+                    video: stream.getVideoTracks().length
+                });
+            },
+            function (error) {
+                console.error('failed to obtain audio/video stream - stop', error);
+                trackUsage('localMediaError', {
+                    media: error.media || 'video',
+                    name : error.name
+                });
+                messageHandler.showError("Error",
+                    "Failed to obtain permissions to use the local microphone" +
+                        "and/or camera.");
+            },
+            config.resolution || '360'
+        );
+    };
+    if (MediaStreamTrack && MediaStreamTrack.getSources) {
+        MediaStreamTrack.getSources(function (sources) {
+            // look at the kinds and device whether to call GUM with AV, audio-only or not at all
+            var a = 0;
+            var v = 0;
+            sources.forEach(function (source) {
+                if (source.kind === 'audio') a++;
+                if (source.kind === 'video') v++;
+            });
+
+            if (a && v) {
+                obtain(['audio', 'video']);
+            } else if (a) {
+                obtain(['audio']);
+            } else {
+                // do we want to show something?
+                gumDone = true;
+                cb(null);
+                trackUsage('localMedia', {
+                    audio: 0,
+                    video: 0,
+                });
+            }
         });
+    } else {
+        obtain(['audio', 'video']);
     }
-    getUserMediaWithConstraints(
-        ['audio', 'video'],
-        cb,
-        function (error) {
-            console.error('failed to obtain audio/video stream - trying audio only', error);
-            getUserMediaWithConstraints(
-                ['audio'],
-                cb,
-                function (error) {
-                    console.error('failed to obtain audio/video stream - stop', error);
-                    trackUsage('localMediaError', {
-                        media: error.media || 'video',
-                        name : error.name
-                    });
-                    messageHandler.showError("Error",
-                        "Failed to obtain permissions to use the local microphone" +
-                            "and/or camera.");
-                }
-            );
-        },
-        config.resolution || '360');
 }
 
+// join when we're connected (have a full jid) and are done with GUM
 function maybeDoJoin() {
-    if (connection && connection.connected && Strophe.getResourceFromJid(connection.jid) // .connected is true while connecting?
-        && (connection.jingle.localAudio || connection.jingle.localVideo)) {
+    if (connection && Strophe.getResourceFromJid(connection.jid) 
+        && gumDone) {
         doJoin();
     }
 }
