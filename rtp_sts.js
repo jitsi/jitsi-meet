@@ -79,7 +79,14 @@ PeerStats.prototype.setSsrcResolution = function (ssrc, resolution)
  */
 PeerStats.prototype.setSsrcBitrate = function (ssrc, bitrate)
 {
-    this.ssrc2bitrate[ssrc] = bitrate;
+    if(this.ssrc2bitrate[ssrc])
+    {
+        this.ssrc2bitrate[ssrc].download += bitrate.download;
+        this.ssrc2bitrate[ssrc].upload += bitrate.upload;
+    }
+    else {
+        this.ssrc2bitrate[ssrc] = bitrate;
+    }
 };
 
 /**
@@ -392,6 +399,7 @@ StatsCollector.prototype.processStatsReport = function () {
                 "packetsLost": lossRate,
                 "isDownloadStream": isDownloadStream});
 
+
         var bytesReceived = 0, bytesSent = 0;
         if(getStatValue(now, "bytesReceived"))
         {
@@ -401,7 +409,8 @@ StatsCollector.prototype.processStatsReport = function () {
 
         if(getStatValue(now, "bytesSent"))
         {
-            bytesSent = getStatValue(now, "bytesSent") - getStatValue(before, "bytesSent");
+            bytesSent = getStatValue(now, "bytesSent") -
+                getStatValue(before, "bytesSent");
         }
 
         var time = Math.round((now.timestamp - before.timestamp) / 1000);
@@ -426,6 +435,7 @@ StatsCollector.prototype.processStatsReport = function () {
         jidStats.setSsrcBitrate(ssrc, {
             "download": bytesReceived,
             "upload": bytesSent});
+
         var resolution = {height: null, width: null};
         try {
             if (getStatValue(now, "googFrameHeightReceived") &&
@@ -481,13 +491,14 @@ StatsCollector.prototype.processStatsReport = function () {
                         self.jid2stats[jid].ssrc2bitrate[ssrc].download;
                     bitrateUpload +=
                         self.jid2stats[jid].ssrc2bitrate[ssrc].upload;
+
+                    delete self.jid2stats[jid].ssrc2bitrate[ssrc];
                 }
             );
             resolutions[jid] = self.jid2stats[jid].ssrc2resolution;
         }
     );
 
-    console.log("!!!!!!!!!! " + bitrateDownload + " - " + bitrateUpload);
     PeerStats.bitrate = {"upload": bitrateUpload, "download": bitrateDownload};
 
     PeerStats.packetLoss = {
