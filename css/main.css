@@ -13,8 +13,7 @@ html, body{
     overflow-x: hidden;
 }
 
-#chatspace,
-#contactlist {
+.right-panel {
     display:none;
     position:absolute;
     float: right;
@@ -36,10 +35,6 @@ html, body{
 
 #nowebrtc {
     display:none;
-}
-
-#settingsButton {
-    visibility: hidden;
 }
 
 .toolbar_span {

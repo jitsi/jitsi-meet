@@ -211,12 +211,6 @@ SDP.prototype.toJingle = function (elem, thecreator, ssrcs) {
             elem.up();
         }
     }
-    // old bundle plan, to be removed
-    var bundle = [];
-    if (SDPUtil.find_line(this.session, 'a=group:BUNDLE')) {
-        bundle = SDPUtil.find_line(this.session, 'a=group:BUNDLE ').split(' ');
-        bundle.shift();
-    }
     for (i = 0; i < this.media.length; i++) {
         mline = SDPUtil.parse_mline(this.media[i].split('\r\n')[0]);
         if (!(mline.media === 'audio' ||
@@ -241,12 +235,6 @@ SDP.prototype.toJingle = function (elem, thecreator, ssrcs) {
             // prefer identifier from a=mid if present
             var mid = SDPUtil.parse_mid(SDPUtil.find_line(this.media[i], 'a=mid:'));
             elem.attrs({ name: mid });
-
-            // old BUNDLE plan, to be removed
-            if (bundle.indexOf(mid) !== -1) {
-                elem.c('bundle', {xmlns: 'http://estos.de/ns/bundle'}).up();
-                bundle.splice(bundle.indexOf(mid), 1);
-            }
         }
 
         if (SDPUtil.find_line(this.media[i], 'a=rtpmap:').length)
@@ -339,12 +327,6 @@ SDP.prototype.toJingle = function (elem, thecreator, ssrcs) {
 
 
                 }
-
-                // old proprietary mapping, to be removed at some point
-                tmp = SDPUtil.parse_ssrc(this.media[i]);
-                tmp.xmlns = 'http://estos.de/ns/ssrc';
-                tmp.ssrc = ssrc;
-                elem.c('ssrc', tmp).up(); // ssrc is part of description
 
                 // XEP-0339 handle ssrc-group attributes
                 var ssrc_group_lines = SDPUtil.find_lines(this.media[i], 'a=ssrc-group:');
@@ -535,28 +517,6 @@ SDP.prototype.fromJingle = function (jingle) {
                 self.raw += 'a=group:' + (group.getAttribute('semantics') || group.getAttribute('type')) + ' ' + contents.join(' ') + '\r\n';
             }
         });
-    } else if ($(jingle).find('>group[xmlns="urn:ietf:rfc:5888"]').length) {
-        // temporary namespace, not to be used. to be removed soon.
-        $(jingle).find('>group[xmlns="urn:ietf:rfc:5888"]').each(function (idx, group) {
-            var contents = $(group).find('>content').map(function (idx, content) {
-                return content.getAttribute('name');
-            }).get();
-            if (group.getAttribute('type') !== null && contents.length > 0) {
-                self.raw += 'a=group:' + group.getAttribute('type') + ' ' + contents.join(' ') + '\r\n';
-            }
-        });
-    } else {
-        // for backward compability, to be removed soon
-        // assume all contents are in the same bundle group, can be improved upon later
-        var bundle = $(jingle).find('>content').filter(function (idx, content) {
-            //elem.c('bundle', {xmlns:'http://estos.de/ns/bundle'});
-            return $(content).find('>bundle').length > 0;
-        }).map(function (idx, content) {
-                return content.getAttribute('name');
-            }).get();
-        if (bundle.length) {
-            this.raw += 'a=group:BUNDLE ' + bundle.join(' ') + '\r\n';
-        }
     }
 
     this.session = this.raw;
@@ -721,15 +681,5 @@ SDP.prototype.jingle2media = function (content) {
         });
     });
 
-    if (tmp.length === 0) {
-        // fallback to proprietary mapping of a=ssrc lines
-        tmp = content.find('description>ssrc[xmlns="http://estos.de/ns/ssrc"]');
-        if (tmp.length) {
-            media += 'a=ssrc:' + ssrc + ' cname:' + tmp.attr('cname') + '\r\n';
-            media += 'a=ssrc:' + ssrc + ' msid:' + tmp.attr('msid') + '\r\n';
-            media += 'a=ssrc:' + ssrc + ' mslabel:' + tmp.attr('mslabel') + '\r\n';
-            media += 'a=ssrc:' + ssrc + ' label:' + tmp.attr('label') + '\r\n';
-        }
-    }
     return media;
 };

@@ -16,15 +16,17 @@ var MediaStream = (function() {
      * @constructor
      */
     function MediaStreamProto(data, sid, ssrc) {
-        this.VIDEO_TYPE = "Video";
-        this.AUDIO_TYPE = "Audio";
         this.stream = data.stream;
         this.peerjid = data.peerjid;
         this.ssrc = ssrc;
         this.session = connection.jingle.sessions[sid];
         this.type = (this.stream.getVideoTracks().length > 0)
-                    ? this.VIDEO_TYPE : this.AUDIO_TYPE;
+                    ? MediaStream.VIDEO_TYPE : MediaStream.AUDIO_TYPE;
+        this.muted = false;
     }
 
     return MediaStreamProto;
 })();
+
+MediaStream.VIDEO_TYPE = 'Video';
+MediaStream.AUDIO_TYPE = 'Audio';

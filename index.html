@@ -28,17 +28,18 @@
     <script src="libs/rayo.js?v=1"></script>
     <script src="libs/tooltip.js?v=1"></script><!-- bootstrap tooltip lib -->
     <script src="libs/popover.js?v=1"></script><!-- bootstrap tooltip lib -->
-    <script src="interface_config.js?v=3"></script>
     <script src="libs/toastr.js?v=1"></script><!-- notifications lib -->
-    <script src="muc.js?v=16"></script><!-- simple MUC library -->
+    <script src="interface_config.js?v=4"></script>
+    <script src="muc.js?v=17"></script><!-- simple MUC library -->
     <script src="estos_log.js?v=2"></script><!-- simple stanza logger -->
     <script src="desktopsharing.js?v=3"></script><!-- desktop sharing -->
     <script src="data_channels.js?v=3"></script><!-- data channels -->
-    <script src="app.js?v=20"></script><!-- application logic -->
+    <script src="app.js?v=21"></script><!-- application logic -->
     <script src="commands.js?v=1"></script><!-- application logic -->
-    <script src="chat.js?v=14"></script><!-- chat logic -->
-    <script src="contact_list.js?v=6"></script><!-- contact list logic -->
-    <script src="util.js?v=6"></script><!-- utility functions -->
+    <script src="chat.js?v=15"></script><!-- chat logic -->
+    <script src="contact_list.js?v=7"></script><!-- contact list logic -->
+    <script src="side_panel_toggler.js?v=1"></script>
+    <script src="util.js?v=7"></script><!-- utility functions -->
     <script src="etherpad.js?v=9"></script><!-- etherpad plugin -->
     <script src="prezi.js?v=6"></script><!-- prezi plugin -->
     <script src="smileys.js?v=3"></script><!-- smiley images -->
@@ -47,33 +48,36 @@
     <script src="analytics.js?v=1"></script><!-- google analytics plugin -->
     <script src="rtp_sts.js?v=5"></script><!-- RTP stats processing -->
     <script src="local_sts.js?v=2"></script><!-- Local stats processing -->
-    <script src="videolayout.js?v=28"></script><!-- video ui -->
+    <script src="videolayout.js?v=29"></script><!-- video ui -->
     <script src="connectionquality.js?v=1"></script>
     <script src="toolbar.js?v=6"></script><!-- toolbar ui -->
     <script src="toolbar_toggler.js?v=2"></script>
     <script src="canvas_util.js?v=1"></script><!-- canvas drawing utils -->
     <script src="audio_levels.js?v=2"></script><!-- audio levels plugin -->
-    <script src="media_stream.js?v=1"></script><!-- media stream -->
-    <script src="bottom_toolbar.js?v=5"></script><!-- media stream -->
+    <script src="media_stream.js?v=2"></script><!-- media stream -->
+    <script src="bottom_toolbar.js?v=6"></script><!-- media stream -->
     <script src="roomname_generator.js?v=1"></script><!-- generator for random room names -->
     <script src="keyboard_shortcut.js?v=3"></script>
     <script src="tracking.js?v=1"></script><!-- tracking -->
     <script src="jitsipopover.js?v=3"></script>
     <script src="message_handler.js?v=2"></script>
     <script src="api_connector.js?v=2"></script>
-    <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/font.css?v=5"/>
+    <script src="settings_menu.js?v=1"></script>
+    <script src="avatar.js?v=1"></script><!-- avatars -->
+    <link rel="stylesheet" href="css/font.css?v=6"/>
     <link rel="stylesheet" href="css/toastr.css?v=1">
-    <link rel="stylesheet" type="text/css" media="screen" href="css/main.css?v=29"/>
-    <link rel="stylesheet" type="text/css" media="screen" href="css/videolayout_default.css?v=13" id="videolayout_default"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="css/main.css?v=30"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="css/videolayout_default.css?v=14" id="videolayout_default"/>
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
     <link rel="stylesheet" href="css/jquery-impromptu.css?v=4">
     <link rel="stylesheet" href="css/modaldialog.css?v=3">
     <link rel="stylesheet" href="css/popup_menu.css?v=4">
     <link rel="stylesheet" href="css/popover.css?v=2">
     <link rel="stylesheet" href="css/jitsi_popover.css?v=2">
-    <link rel="stylesheet" href="css/contact_list.css?v=3">
+    <link rel="stylesheet" href="css/contact_list.css?v=4">
     <link rel="stylesheet" href="css/chat.css?v=5">
     <link rel="stylesheet" href="css/welcome_page.css?v=2">
+    <link rel="stylesheet" href="css/settingsmenu.css?v=1">
     <!--
         Link used for inline installation of chrome desktop streaming extension,
         is updated automatically from the code with the value defined in config.js -->
@@ -227,6 +231,10 @@
                             <i class="icon-telephone"></i></a>
                     </span>
                     <div class="header_button_separator"></div>
+                    <a class="button" data-container="body" data-toggle="popover" data-placement="bottom" content="Settings" onclick='PanelToggler.toggleSettingsMenu();'>
+                        <i id="settingsButton" class="icon-settings"></i>
+                    </a>
+                    <div class="header_button_separator"></div>
                     <span id="hangup">
                         <a class="button" data-container="body" data-toggle="popover" data-placement="bottom" content="Hang Up" onclick='hangup();'>
                             <i class="icon-hangup" style="color:#ff0000;font-size: 1.4em;"></i>
@@ -253,6 +261,7 @@
                 <a target="_new"><div class="watermark leftwatermark"></div></a>
                 <a target="_new"><div class="watermark rightwatermark"></div></a>
                 <a class="poweredby" href="http://jitsi.org" target="_new" >powered by jitsi.org</a>
+                <img id="activeSpeakerAvatar" src=""/>
                 <video id="largeVideo" autoplay oncontextmenu="return false;"></video>
             </div>
             <div id="remoteVideos">
@@ -296,7 +305,7 @@
                 </span>
             </span>
         </div>
-        <div id="chatspace">
+        <div id="chatspace" class="right-panel">
             <div id="nickname">
                 Enter a nickname in the box below
                 <form>
@@ -314,10 +323,18 @@
                 </div>
             </div>
         </div>
-        <div id="contactlist">
+        <div id="contactlist" class="right-panel">
             <ul>
                 <li class="title"><i class="icon-contact-list"></i> CONTACT LIST</li>
             </ul>
+        </div>
+        <div id="settingsmenu" class="right-panel">
+            <div class="icon-settings"> SETTINGS</div>
+            <img id="avatar" src="https://www.gravatar.com/avatar/87291c37c25be69a072a4514931b1749?d=retro&size=30"/>
+            <div class="arrow-up"></div>
+            <input type="text" id="setDisplayName" placeholder="Name">
+            <input type="text" id="setEmail" placeholder="E-Mail">
+            <button onclick="SettingsMenu.update()" id="updateSettings">Update</button>
         </div>
         <a id="downloadlog" onclick='dump(event.target);' data-container="body" data-toggle="popover" data-placement="right" data-content="Download logs" ><i class="fa fa-cloud-download"></i></a>
     </div>

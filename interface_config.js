@@ -6,11 +6,13 @@ var interfaceConfig = {
     TOOLBAR_TIMEOUT: 4000,
     DEFAULT_REMOTE_DISPLAY_NAME: "Fellow Jitster",
     DEFAULT_DOMINANT_SPEAKER_DISPLAY_NAME: "Speaker",
+    DEFAULT_LOCAL_DISPLAY_NAME: "me",
     SHOW_JITSI_WATERMARK: true,
     JITSI_WATERMARK_LINK: "http://jitsi.org",
     SHOW_BRAND_WATERMARK: false,
     BRAND_WATERMARK_LINK: "",
     SHOW_POWERED_BY: false,
     GENERATE_ROOMNAMES_ON_WELCOME_PAGE: true,
-    APP_NAME: "Jitsi Meet"
+    APP_NAME: "Jitsi Meet",
+    ACTIVE_SPEAKER_AVATAR_SIZE: 100
 };

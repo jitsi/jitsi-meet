@@ -14,6 +14,12 @@ var VideoLayout = (function (my) {
 
     my.connectionIndicators = {};
 
+    my.isInLastN = function(resource) {
+        return lastNCount < 0 // lastN is disabled, return true
+            || (lastNCount > 0 && lastNEndpointsCache.length == 0) // lastNEndpoints cache not built yet, return true
+            || (lastNEndpointsCache && lastNEndpointsCache.indexOf(resource) !== -1);
+    };
+
     my.changeLocalStream = function (stream) {
         connection.jingle.localAudio = stream;
         VideoLayout.changeLocalVideo(stream, true);
@@ -155,6 +161,7 @@ var VideoLayout = (function (my) {
 
         if (RTC.getVideoSrc($('#largeVideo')[0]) != newSrc) {
 
+            $('#activeSpeakerAvatar').css('visibility', 'hidden');
             // Due to the simulcast the localVideoSrc may have changed when the
             // fadeOut event triggers. In that case the getJidFromVideoSrc and
             // isVideoSrcDesktop methods will not function correctly.
@@ -193,6 +200,8 @@ var VideoLayout = (function (my) {
                 largeVideoState.updateInProgress = true;
 
                 var doUpdate = function () {
+
+                    Avatar.updateActiveSpeakerAvatarSrc(largeVideoState.userJid);
 
                     if (!userChanged && largeVideoState.preload
                         && largeVideoState.preload != null
@@ -263,6 +272,10 @@ var VideoLayout = (function (my) {
                         // using "this" should be ok because we're called
                         // from within the fadeOut event.
                         $(this).fadeIn(300);
+                    }
+
+                    if(userChanged) {
+                        Avatar.showUserAvatar(largeVideoState.oldJid);
                     }
 
                     largeVideoState.updateInProgress = false;
@@ -410,12 +423,13 @@ var VideoLayout = (function (my) {
      * in the document and creates it eventually.
      * 
      * @param peerJid peer Jid to check.
+     * @param userId user email or id for setting the avatar
      * 
      * @return Returns <tt>true</tt> if the peer container exists,
      * <tt>false</tt> - otherwise
      */
-    my.ensurePeerContainerExists = function(peerJid) {
-        ContactList.ensureAddContact(peerJid);
+    my.ensurePeerContainerExists = function(peerJid, userId) {
+        ContactList.ensureAddContact(peerJid, userId);
 
         var resourceJid = Strophe.getResourceFromJid(peerJid);
 
@@ -424,14 +438,15 @@ var VideoLayout = (function (my) {
         if ($('#' + videoSpanId).length > 0) {
             // If there's been a focus change, make sure we add focus related
             // interface!!
-            if (focus && $('#remote_popupmenu_' + resourceJid).length <= 0)
-                addRemoteVideoMenu( peerJid,
-                                    document.getElementById(videoSpanId));
+            if (focus && $('#remote_popupmenu_' + resourceJid).length <= 0) {
+                addRemoteVideoMenu(peerJid,
+                    document.getElementById(videoSpanId));
+            }
         }
         else {
-            var container
-                = VideoLayout.addRemoteVideoContainer(peerJid, videoSpanId);
-
+            var container =
+                VideoLayout.addRemoteVideoContainer(peerJid, videoSpanId, userId);
+            Avatar.setUserAvatar(peerJid, userId);
             // Set default display name.
             setDisplayName(videoSpanId);
 
@@ -626,14 +641,17 @@ var VideoLayout = (function (my) {
                 peerContainer.show();
             }
 
-            // TODO(gp) add proper avatars handling.
             if (state == 'show')
             {
-                peerContainer.css('-webkit-filter', '');
+                // peerContainer.css('-webkit-filter', '');
+                var jid = connection.emuc.findJidFromResource(resourceJid);
+                Avatar.showUserAvatar(jid, false);
             }
             else // if (state == 'avatar')
             {
-                peerContainer.css('-webkit-filter', 'grayscale(100%)');
+                // peerContainer.css('-webkit-filter', 'grayscale(100%)');
+                var jid = connection.emuc.findJidFromResource(resourceJid);
+                Avatar.showUserAvatar(jid, true);
             }
         }
         else if (peerContainer.is(':visible') && isHide)
@@ -659,6 +677,7 @@ var VideoLayout = (function (my) {
      */
     function setDisplayName(videoSpanId, displayName) {
         var nameSpan = $('#' + videoSpanId + '>span.displayname');
+        var defaultLocalDisplayName = interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME;
 
         // If we already have a display name for this video.
         if (nameSpan.length > 0) {
@@ -719,6 +738,7 @@ var VideoLayout = (function (my) {
                     .bind("click", function (e) {
 
                     e.preventDefault();
+                    e.stopPropagation();
                     $('#localDisplayName').hide();
                     $('#editDisplayName').show();
                     $('#editDisplayName').focus();
@@ -737,7 +757,7 @@ var VideoLayout = (function (my) {
                 });
             }
         }
-    };
+    }
 
     my.inputDisplayNameHandler = function (name) {
         if (nickname !== name) {
@@ -754,7 +774,7 @@ var VideoLayout = (function (my) {
                 $('#localDisplayName').text(nickname + " (me)");
             else
                 $('#localDisplayName')
-                    .text(defaultLocalDisplayName);
+                    .text(interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME);
             $('#localDisplayName').show();
         }
 
@@ -950,6 +970,10 @@ var VideoLayout = (function (my) {
         $('#largeVideoContainer').width(availableWidth);
         $('#largeVideoContainer').height(availableHeight);
 
+
+        $('#activeSpeakerAvatar').css('top',
+            (availableHeight - interfaceConfig.ACTIVE_SPEAKER_AVATAR_SIZE) / 2);
+
         VideoLayout.resizeThumbnails();
     };
 
@@ -968,6 +992,8 @@ var VideoLayout = (function (my) {
         $('#remoteVideos').height(height);
         $('#remoteVideos>span').width(width);
         $('#remoteVideos>span').height(height);
+
+        $('.userAvatar').css('left', (width - height) / 2);
 
         $(document).trigger("remotevideo.resized", [width, height]);
     };
@@ -1549,35 +1575,26 @@ var VideoLayout = (function (my) {
                 if (!isVisible) {
                     console.log("Add to last N", resourceJid);
 
-                    mediaStreams.some(function (mediaStream) {
-                        if (mediaStream.peerjid
-                            && Strophe.getResourceFromJid(mediaStream.peerjid)
-                                === resourceJid
-                            && mediaStream.type === mediaStream.VIDEO_TYPE) {
-                            var sel = $('#participant_' + resourceJid + '>video');
+                    var jid = connection.emuc.findJidFromResource(resourceJid);
+                    var mediaStream = mediaStreams[jid][MediaStream.VIDEO_TYPE];
+                    var sel = $('#participant_' + resourceJid + '>video');
 
-                            var videoStream = simulcast.getReceivingVideoStream(mediaStream.stream);
-                            RTC.attachMediaStream(sel, videoStream);
-                            if (lastNPickupJid == mediaStream.peerjid) {
-                                // Clean up the lastN pickup jid.
-                                lastNPickupJid = null;
+                    var videoStream = simulcast.getReceivingVideoStream(
+                        mediaStream.stream);
+                    RTC.attachMediaStream(sel, videoStream);
+                    if (lastNPickupJid == mediaStream.peerjid) {
+                        // Clean up the lastN pickup jid.
+                        lastNPickupJid = null;
 
-                                // Don't fire the events again, they've already
-                                // been fired in the contact list click handler.
-                                VideoLayout.handleVideoThumbClicked($(sel).attr('src'), false, mediaStream.peerjid);
+                        // Don't fire the events again, they've already
+                        // been fired in the contact list click handler.
+                        VideoLayout.handleVideoThumbClicked($(sel).attr('src'), false, mediaStream.peerjid);
 
-                                updateLargeVideo = false;
-                            }
-
-                            waitForRemoteVideo(
-                                    sel,
-                                    mediaStream.ssrc,
-                                    mediaStream.stream, resourceJid);
-                            return true;
-                        }
-                    });
+                        updateLargeVideo = false;
+                    }
+                    waitForRemoteVideo(sel, mediaStream.ssrc, mediaStream.stream, resourceJid);
                 }
-            });
+            })
         }
 
         // The endpoint that was being shown in the large video has dropped out
@@ -1643,7 +1660,15 @@ var VideoLayout = (function (my) {
         endpointSimulcastLayers.forEach(function (esl) {
 
             var resource = esl.endpoint;
-            if (lastNCount !== -1 && (lastNCount < 1 || lastNEndpointsCache.indexOf(resource) === -1)) {
+
+            // if lastN is enabled *and* the endpoint is *not* in the lastN set,
+            // then ignore the event (= do not preload anything).
+            //
+            // The bridge could probably stop sending this message if it's for
+            // an endpoint that's not in lastN.
+
+            if (lastNCount != -1
+                && (lastNCount < 1 || lastNEndpointsCache.indexOf(resource) === -1)) {
                 return;
             }
 
@@ -1689,7 +1714,19 @@ var VideoLayout = (function (my) {
         endpointSimulcastLayers.forEach(function (esl) {
 
             var resource = esl.endpoint;
-            if (lastNCount !== -1 && (lastNCount < 1 || lastNEndpointsCache.indexOf(resource) === -1)) {
+
+            // if lastN is enabled *and* the endpoint is *not* in the lastN set,
+            // then ignore the event (= do not change large video/thumbnail
+            // SRCs).
+            //
+            // Note that even if we ignore the "changed" event in this event
+            // handler, the bridge must continue sending these events because
+            // the simulcast code in simulcast.js uses it to know what's going
+            // to be streamed by the bridge when/if the endpoint gets back into
+            // the lastN set.
+
+            if (lastNCount != -1
+                && (lastNCount < 1 || lastNEndpointsCache.indexOf(resource) === -1)) {
                 return;
             }
 

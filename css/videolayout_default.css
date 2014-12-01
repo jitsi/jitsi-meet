@@ -35,7 +35,9 @@
 
 #remoteVideos .videocontainer {
     display: inline-block;
-    background-image:url(../images/avatar1.png);
+    background-color: black;
+    background-repeat: no-repeat;
+    background-position: 45;
     background-size: contain;
     border-radius:8px;
     border: 2px solid #212425;
@@ -118,10 +120,6 @@
     z-index: 1;
     width: 100%;
     height: 100%;
-}
-
-.dominantspeaker {
-    background: #000 !important;
 }
 
 #etherpad,
@@ -382,4 +380,20 @@
 
 #mixedstream {
     display:none !important;
+}
+
+#activeSpeakerAvatar {
+    visibility: hidden;
+    width: 100px;
+    height: 100px;
+    margin: auto;
+    position: relative;
+    border-radius: 50px;
+}
+
+.userAvatar {
+    height: 100%;
+    position: absolute;
+    left: 35px;
+    border-radius: 200px;
 }
