@@ -26,5 +26,7 @@ var config = {
     useBundle: true,
     enableRecording: false,
     enableWelcomePage: true,
-    enableSimulcast: false
+    enableSimulcast: false,
+    enableFirefoxSupport: false //firefox support is still experimental, only one-to-one conferences with chrome focus
+    // will work when simulcast, bundle, mux, lastN and SCTP are disabled.
 };

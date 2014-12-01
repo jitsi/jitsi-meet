@@ -68,6 +68,10 @@ function init() {
     if (RTC === null) {
         window.location.href = 'webrtcrequired.html';
         return;
+    } else if (RTC.browser !== 'chrome' &&
+        config.enableFirefoxSupport !== true) {
+        window.location.href = 'chromeonly.html';
+        return;
     }
 
     obtainAudioAndVideoPermissions(function (stream) {
