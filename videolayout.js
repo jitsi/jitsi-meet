@@ -166,7 +166,10 @@ var VideoLayout = (function (my) {
             largeVideoState.newSrc = newSrc;
             largeVideoState.isVisible = $('#largeVideo').is(':visible');
             largeVideoState.isDesktop = isVideoSrcDesktop(jid);
-            if(jid2Ssrc[largeVideoState.userJid]) {
+            if(jid2Ssrc[largeVideoState.userJid] ||
+                (connection && connection.emuc.myroomjid &&
+                    largeVideoState.userJid == Strophe.getResourceFromJid(connection.emuc.myroomjid)))
+            {
                 largeVideoState.oldJid = largeVideoState.userJid;
             }
             else
