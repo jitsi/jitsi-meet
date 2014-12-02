@@ -194,7 +194,8 @@ SDP.prototype.removeMediaLines = function(mediaindex, prefix) {
 }
 
 // add content's to a jingle element
-SDP.prototype.toJingle = function (elem, thecreator) {
+SDP.prototype.toJingle = function (elem, thecreator, ssrcs) {
+//    console.log("SSRC" + ssrcs["audio"] + " - " + ssrcs["video"]);
     var i, j, k, mline, ssrc, rtpmap, tmp, line, lines;
     var self = this;
     // new bundle plan
@@ -221,7 +222,12 @@ SDP.prototype.toJingle = function (elem, thecreator) {
         if (SDPUtil.find_line(this.media[i], 'a=ssrc:')) {
             ssrc = SDPUtil.find_line(this.media[i], 'a=ssrc:').substring(7).split(' ')[0]; // take the first
         } else {
-            ssrc = false;
+            if(ssrcs && ssrcs[mline.media])
+            {
+                ssrc = ssrcs[mline.media];
+            }
+            else
+                ssrc = false;
         }
 
         elem.c('content', {creator: thecreator, name: mline.media});
@@ -267,25 +273,60 @@ SDP.prototype.toJingle = function (elem, thecreator) {
                 elem.c('source', { ssrc: ssrc, xmlns: 'urn:xmpp:jingle:apps:rtp:ssma:0' });
                 // FIXME: group by ssrc and support multiple different ssrcs
                 var ssrclines = SDPUtil.find_lines(this.media[i], 'a=ssrc:');
-                ssrclines.forEach(function(line) {
-                    idx = line.indexOf(' ');
-                    var linessrc = line.substr(0, idx).substr(7);
-                    if (linessrc != ssrc) {
+                if(ssrclines.length > 0) {
+                    ssrclines.forEach(function (line) {
+                        idx = line.indexOf(' ');
+                        var linessrc = line.substr(0, idx).substr(7);
+                        if (linessrc != ssrc) {
+                            elem.up();
+                            ssrc = linessrc;
+                            elem.c('source', { ssrc: ssrc, xmlns: 'urn:xmpp:jingle:apps:rtp:ssma:0' });
+                        }
+                        var kv = line.substr(idx + 1);
+                        elem.c('parameter');
+                        if (kv.indexOf(':') == -1) {
+                            elem.attrs({ name: kv });
+                        } else {
+                            elem.attrs({ name: kv.split(':', 2)[0] });
+                            elem.attrs({ value: kv.split(':', 2)[1] });
+                        }
                         elem.up();
-                        ssrc = linessrc;
-                        elem.c('source', { ssrc: ssrc, xmlns: 'urn:xmpp:jingle:apps:rtp:ssma:0' });
-                    }
-                    var kv = line.substr(idx + 1);
-                    elem.c('parameter');
-                    if (kv.indexOf(':') == -1) {
-                        elem.attrs({ name: kv });
-                    } else {
-                        elem.attrs({ name: kv.split(':', 2)[0] });
-                        elem.attrs({ value: kv.split(':', 2)[1] });
-                    }
+                    });
                     elem.up();
-                });
-                elem.up();
+                }
+                else
+                {
+                    elem.up();
+                    elem.c('source', { ssrc: ssrc, xmlns: 'urn:xmpp:jingle:apps:rtp:ssma:0' });
+                    elem.c('parameter');
+                    elem.attrs({name: "cname", value:Math.random().toString(36).substring(7)});
+                    elem.up();
+                    var msid = null;
+                    if(mline.media == "audio")
+                    {
+                        msid = connection.jingle.localAudio.getAudioTracks()[0].id;
+                    }
+                    else
+                    {
+                        msid = connection.jingle.localVideo.getVideoTracks()[0].id;
+                    }
+                    if(msid != null)
+                    {
+                        msid = msid.replace(/[\{,\}]/g,"");
+                        elem.c('parameter');
+                        elem.attrs({name: "msid", value:msid});
+                        elem.up();
+                        elem.c('parameter');
+                        elem.attrs({name: "mslabel", value:msid});
+                        elem.up();
+                        elem.c('parameter');
+                        elem.attrs({name: "label", value:msid});
+                        elem.up();
+                        elem.up();
+                    }
+
+
+                }
 
                 // XEP-0339 handle ssrc-group attributes
                 var ssrc_group_lines = SDPUtil.find_lines(this.media[i], 'a=ssrc-group:');

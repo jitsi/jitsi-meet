@@ -141,12 +141,28 @@ if (TraceablePeerConnection.prototype.__defineGetter__ !== undefined) {
 TraceablePeerConnection.prototype.addStream = function (stream) {
     this.trace('addStream', stream.id);
     simulcast.resetSender();
-    this.peerconnection.addStream(stream);
+    try
+    {
+        this.peerconnection.addStream(stream);
+    }
+    catch (e)
+    {
+        console.error(e);
+        return;
+    }
 };
 
-TraceablePeerConnection.prototype.removeStream = function (stream) {
+TraceablePeerConnection.prototype.removeStream = function (stream, stopStreams) {
     this.trace('removeStream', stream.id);
     simulcast.resetSender();
+    if(stopStreams) {
+        stream.getAudioTracks().forEach(function (track) {
+            track.stop();
+        });
+        stream.getVideoTracks().forEach(function (track) {
+            track.stop();
+        });
+    }
     this.peerconnection.removeStream(stream);
 };
 
@@ -486,6 +502,11 @@ TraceablePeerConnection.prototype.addIceCandidate = function (candidate, success
 TraceablePeerConnection.prototype.getStats = function(callback, errback) {
     if (navigator.mozGetUserMedia) {
         // ignore for now...
+        if(!errback)
+            errback = function () {
+
+            }
+        this.peerconnection.getStats(null,callback,errback);
     } else {
         this.peerconnection.getStats(callback);
     }
@@ -506,7 +527,40 @@ function setupRTC() {
                     element[0].mozSrcObject = stream;
                     element[0].play();
                 },
-                pc_constraints: {}
+                pc_constraints: {},
+                getLocalSSRC: function (session, callback) {
+                    session.peerconnection.getStats(function (s) {
+                            var ssrcs = {};
+                            s.forEach(function (item) {
+                                if (item.type == "outboundrtp" && !item.isRemote)
+                                {
+                                    ssrcs[item.id.split('_')[2]] = item.ssrc;
+                                }
+                            });
+                            session.localStreamsSSRC = {
+                                "audio": ssrcs.audio,//for stable 0
+                                "video": ssrcs.video// for stable 1
+                            };
+                            callback(session.localStreamsSSRC);
+                        },
+                        function () {
+                            callback(null);
+                        });
+                },
+                getStreamID: function (stream) {
+                    var tracks = stream.getVideoTracks();
+                    if(!tracks || tracks.length == 0)
+                    {
+                        tracks = stream.getAudioTracks();
+                    }
+                    return tracks[0].id.replace(/[\{,\}]/g,"");
+                },
+                getVideoSrc: function (element) {
+                    return element.mozSrcObject;
+                },
+                setVideoSrc: function (element, src) {
+                    element.mozSrcObject = src;
+                }
             };
             if (!MediaStream.prototype.getVideoTracks)
                 MediaStream.prototype.getVideoTracks = function () { return []; };
@@ -525,7 +579,19 @@ function setupRTC() {
                 element.attr('src', webkitURL.createObjectURL(stream));
             },
             // DTLS should now be enabled by default but..
-            pc_constraints: {'optional': [{'DtlsSrtpKeyAgreement': 'true'}]}
+            pc_constraints: {'optional': [{'DtlsSrtpKeyAgreement': 'true'}]},
+            getLocalSSRC: function (session, callback) {
+                callback(null);
+            },
+            getStreamID: function (stream) {
+                return stream.id;
+            },
+            getVideoSrc: function (element) {
+                return element.getAttribute("src");
+            },
+            setVideoSrc: function (element, src) {
+                element.setAttribute("src", src);
+            }
         };
         if (navigator.userAgent.indexOf('Android') != -1) {
             RTC.pc_constraints = {}; // disable DTLS on Android

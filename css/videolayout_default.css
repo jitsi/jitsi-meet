@@ -104,6 +104,11 @@
     text-align: center;
 }
 
+#largeVideo
+{
+    object-fit: cover;
+}
+
 #presentation,
 #etherpad,
 #localVideoWrapper>video,

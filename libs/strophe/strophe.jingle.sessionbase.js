@@ -82,14 +82,17 @@ SessionBase.prototype.switchStreams = function (new_stream, oldStream, success_c
         if(self.peerconnection.localDescription) {
             oldSdp = new SDP(self.peerconnection.localDescription.sdp);
         }
-        self.peerconnection.removeStream(oldStream);
+        self.peerconnection.removeStream(oldStream, true);
         self.peerconnection.addStream(new_stream);
     }
 
     self.connection.jingle.localVideo = new_stream;
 
     self.connection.jingle.localStreams = [];
-    self.connection.jingle.localStreams.push(self.connection.jingle.localAudio);
+
+    //in firefox we have only one stream object
+    if(self.connection.jingle.localAudio != self.connection.jingle.localVideo)
+        self.connection.jingle.localStreams.push(self.connection.jingle.localAudio);
     self.connection.jingle.localStreams.push(self.connection.jingle.localVideo);
 
     // Conference is not active

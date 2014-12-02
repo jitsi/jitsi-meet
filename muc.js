@@ -112,7 +112,7 @@ Strophe.addConnectionPlugin('emuc', {
             var create = $iq({type: 'set', to: this.roomjid})
                     .c('query', {xmlns: 'http://jabber.org/protocol/muc#owner'})
                     .c('x', {xmlns: 'jabber:x:data', type: 'submit'});
-            this.connection.send(create); // fire away
+            this.connection.sendIQ(create); // fire away
         }
 
         // Parse roles.

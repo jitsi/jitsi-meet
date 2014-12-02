@@ -88,7 +88,9 @@ Strophe.addConnectionPlugin('jingle', {
             case 'session-initiate':
                 sess = new JingleSession($(iq).attr('to'), $(iq).find('jingle').attr('sid'), this.connection);
                 // configure session
-                if (this.localAudio) {
+
+                //in firefox we have only one stream object
+                if (this.localAudio != this.localVideo) {
                     sess.localStreams.push(this.localAudio);
                 }
                 if (this.localVideo) {
@@ -173,7 +175,9 @@ Strophe.addConnectionPlugin('jingle', {
             Math.random().toString(36).substr(2, 12), // random string
             this.connection);
         // configure session
-        if (this.localAudio) {
+
+        //in firefox we have only one stream
+        if (this.localAudio != this.localVideo) {
             sess.localStreams.push(this.localAudio);
         }
         if (this.localVideo) {

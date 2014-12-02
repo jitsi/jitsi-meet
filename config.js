@@ -4,7 +4,7 @@ var config = {
         //anonymousdomain: 'guest.example.com',
         muc: 'conference.jitsi-meet.example.com', // FIXME: use XEP-0030
         bridge: 'jitsi-videobridge.jitsi-meet.example.com', // FIXME: use XEP-0030
-        call_control: 'callcontrol.jitsi-meet.example.com',
+        //call_control: 'callcontrol.jitsi-meet.example.com',
         focus: 'focus.jitsi-meet.example.com'
     },
 //  getroomnode: function (path) { return 'someprefixpossiblybasedonpath'; },
@@ -26,8 +26,10 @@ var config = {
     adaptiveSimulcast: false,
     useRtcpMux: true,
     useBundle: true,
-    enableRecording: true,
-    enableWelcomePage: false,
+    enableRecording: false,
+    enableWelcomePage: true,
     enableSimulcast: false,
+    enableFirefoxSupport: false, //firefox support is still experimental, only one-to-one conferences with chrome focus
+    // will work when simulcast, bundle, mux, lastN and SCTP are disabled.
     logStats: false // Enable logging of PeerConnection stats via the focus
 };
