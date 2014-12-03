@@ -535,8 +535,21 @@ var VideoLayout = (function (my) {
                 VideoLayout.removeRemoteStreamElement(
                     stream, isVideo, container);
 
-                if (peerJid)
-                    ContactList.removeContact(peerJid);
+                // NOTE(gp) it seems that under certain circumstances, the
+                // onended event is not fired and thus the contact list is not
+                // updated.
+                //
+                // The onended event of a stream should be fired when the SSRCs
+                // corresponding to that stream are removed from the SDP; but
+                // this doesn't seem to always be the case, resulting in ghost
+                // contacts.
+                //
+                // In an attempt to fix the ghost contacts problem, I'm moving
+                // the removeContact() method call in app.js, inside the
+                // 'muc.left' event handler.
+
+                //if (peerJid)
+                //    ContactList.removeContact(peerJid);
             };
 
             // Add click handler.

@@ -824,6 +824,7 @@ $(document).bind('left.muc', function (event, jid) {
         var container = document.getElementById(
                 'participant_' + Strophe.getResourceFromJid(jid));
         if (container) {
+            ContactList.removeContact(jid);
             VideoLayout.removeConnectionIndicator(jid);
             // hide here, wait for video to close before removing
             $(container).hide();
