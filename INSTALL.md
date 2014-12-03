@@ -13,7 +13,7 @@ echo deb http://packages.prosody.im/debian $(lsb_release -sc) main | sudo tee -a
 wget --no-check-certificate https://prosody.im/files/prosody-debian-packages.key -O- | sudo apt-key add -
 apt-get update
 apt-get install prosody-trunk
-apt-get install git lua-zlib lua-sec-prosody lua-dbi-sqlite3 liblua5.1-bitop-dev liblua5.1-bitop0
+apt-get install git lua-zlib lua-sec lua-dbi-sqlite3 liblua5.1-bitop-dev liblua5.1-bitop0
 git clone https://github.com/andyet/otalk-server.git
 cd otalk-server
 cp -r mod* /usr/lib/prosody/modules
@@ -169,7 +169,7 @@ invoke-rc.d nginx restart
 
 ## Install [Turn server](https://github.com/andyet/otalk-server/tree/master/restund)
 ```sh
-apt-get install make gcc
+apt-get install make gcc build-essential
 wget http://creytiv.com/pub/re-0.4.7.tar.gz
 tar zxvf re-0.4.7.tar.gz
 ln -s re-0.4.7 re
