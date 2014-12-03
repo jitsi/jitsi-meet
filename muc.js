@@ -123,7 +123,7 @@ Strophe.addConnectionPlugin('emuc', {
         member.role = tmp.attr('role');
 
         var nicktag = $(pres).find('>nick[xmlns="http://jabber.org/protocol/nick"]');
-        member.displayName = (nicktag.length > 0 ? nicktag.text() : null);
+        member.displayName = (nicktag.length > 0 ? nicktag.html() : null);
 
         if (from == this.myroomjid) {
             if (member.affiliation == 'owner') this.isOwner = true;

@@ -699,12 +699,12 @@ var VideoLayout = (function (my) {
             if (nameSpanElement.id === 'localDisplayName' &&
                 $('#localDisplayName').text() !== displayName) {
                 if (displayName && displayName.length > 0)
-                    $('#localDisplayName').text(displayName + ' (me)');
+                    $('#localDisplayName').html(displayName + ' (me)');
                 else
                     $('#localDisplayName').text(defaultLocalDisplayName);
             } else {
                 if (displayName && displayName.length > 0)
-                    $('#' + videoSpanId + '_name').text(displayName);
+                    $('#' + videoSpanId + '_name').html(displayName);
                 else
                     $('#' + videoSpanId + '_name').text(interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME);
             }
@@ -773,7 +773,7 @@ var VideoLayout = (function (my) {
     }
 
     my.inputDisplayNameHandler = function (name) {
-        if (nickname !== name) {
+        if (name && nickname !== name) {
             nickname = name;
             window.localStorage.displayname = nickname;
             connection.emuc.addDisplayNameToPresence(nickname);
@@ -1036,7 +1036,7 @@ var VideoLayout = (function (my) {
         var displayName = resourceJid;
         var nameSpan = $('#' + videoContainerId + '>span.displayname');
         if (nameSpan.length > 0)
-            displayName = nameSpan.text();
+            displayName = nameSpan.html();
 
         console.log("UI enable dominant speaker",
             displayName,
