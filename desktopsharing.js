@@ -169,7 +169,7 @@ function obtainScreenFromExtension(streamCallback, failCallback) {
                         console.log("Failed to install the extension", arg);
                         failCallback(arg);
                         messageHandler.showError('Error',
-                            'Failed to install desktop sharing extension');
+                            'Failed to install desktop sharing extension. Try installing through <a href="' + getWebStoreInstallUrl() + '" target="_blank">this link</a>.');
                     }
                 );
             }
