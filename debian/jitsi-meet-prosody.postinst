@@ -62,6 +62,8 @@ case "$1" in
             # create 'focus@auth.domain' prosody user
             # FIXME this duplicates with above
             prosodyctl register $JICOFO_AUTH_USER $JICOFO_AUTH_DOMAIN $JICOFO_AUTH_PASSWORD
+            # trigger a restart
+            PROSODY_CONFIG_PRESENT="false"
         fi
 
         if [ ! -f /var/lib/prosody/$JVB_HOSTNAME.crt ]; then
