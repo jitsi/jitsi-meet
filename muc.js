@@ -477,6 +477,10 @@ Strophe.addConnectionPlugin('emuc', {
         this.presMap['stats'] = stats;
     },
     findJidFromResource: function(resourceJid) {
+        if(resourceJid && 
+            resourceJid === Strophe.getResourceFromJid(connection.emuc.myroomjid)) {
+            return connection.emuc.myroomjid;
+        }
         var peerJid = null;
         Object.keys(this.members).some(function (jid) {
             peerJid = jid;

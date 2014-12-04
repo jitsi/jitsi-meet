@@ -93,12 +93,8 @@ var Avatar = (function(my) {
      */
     my.updateActiveSpeakerAvatarSrc = function(jid) {
         if(!jid) {
-            if (focusedVideoSrc) {
-                jid = getJidFromVideoSrc(focusedVideoSrc);
-            } else {
-                jid = connection.emuc.findJidFromResource(
-                    VideoLayout.getDominantSpeakerResourceJid());
-            }
+            jid = connection.emuc.findJidFromResource(
+                    VideoLayout.getLargeVideoState().userResourceJid);
         }
         var avatar = $("#activeSpeakerAvatar")[0];
         var url = getGravatarUrl(users[jid],

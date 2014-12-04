@@ -38,7 +38,7 @@ var ssrc2videoType = {};
  * Currently focused video "src"(displayed in large video).
  * @type {String}
  */
-var focusedVideoSrc = null;
+var focusedVideoInfo = null;
 var mutedAudios = {};
 /**
  * Remembers if we were muted by the focus.
@@ -837,10 +837,10 @@ $(document).bind('left.muc', function (event, jid) {
     delete jid2Ssrc[jid];
 
     // Unlock large video
-    if (focusedVideoSrc && focusedVideoSrc.jid === jid)
+    if (focusedVideoInfo && focusedVideoInfo.jid === jid)
     {
         console.info("Focused video owner has left the conference");
-        focusedVideoSrc = null;
+        focusedVideoInfo = null;
     }
 
     connection.jingle.terminateByJid(jid);
