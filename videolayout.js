@@ -23,7 +23,7 @@ var VideoLayout = (function (my) {
     my.changeLocalStream = function (stream) {
         connection.jingle.localAudio = stream;
         VideoLayout.changeLocalVideo(stream, true);
-    }
+    };
 
     my.changeLocalAudio = function(stream) {
         connection.jingle.localAudio = stream;

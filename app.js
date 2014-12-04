@@ -765,16 +765,17 @@ $(document).bind('joined.muc', function (event, jid, info) {
 
 $(document).bind('entered.muc', function (event, jid, info, pres) {
     console.log('entered', jid, info);
-    messageHandler.notify(info.displayName || 'Somebody',
-        'connected',
-        'connected');
-
     if (info.isFocus)
     {
         focusJid = jid;
         console.info("Ignore focus: " + jid +", real JID: " + info.jid);
+        messageHandler.notify('Focus', 'connected', 'connected');
         return;
     }
+
+    messageHandler.notify(info.displayName || 'Somebody',
+        'connected',
+        'connected');
 
     // Add Peer's container
     var id = $(pres).find('>userID').text();
