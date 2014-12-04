@@ -1,18 +1,20 @@
-var ToolbarToggler = (function(my) {
+/* global $, interfaceConfig, Moderator, showDesktopSharingButton */
+var ToolbarToggler = (function (my) {
     var toolbarTimeoutObject,
         toolbarTimeout = interfaceConfig.INITIAL_TOOLBAR_TIMEOUT;
 
     /**
      * Shows the main toolbar.
      */
-    my.showToolbar = function() {
+    my.showToolbar = function () {
         var header = $("#header"),
             bottomToolbar = $("#bottomToolbar");
         if (!header.is(':visible') || !bottomToolbar.is(":visible")) {
             header.show("slide", { direction: "up", duration: 300});
             $('#subject').animate({top: "+=40"}, 300);
-            if(!bottomToolbar.is(":visible")) {
-                bottomToolbar.show("slide", {direction: "right",duration: 300});
+            if (!bottomToolbar.is(":visible")) {
+                bottomToolbar.show(
+                    "slide", {direction: "right", duration: 300});
             }
 
             if (toolbarTimeoutObject) {
@@ -23,9 +25,10 @@ var ToolbarToggler = (function(my) {
             toolbarTimeout = interfaceConfig.TOOLBAR_TIMEOUT;
         }
 
-        if (focus != null)
+        if (Moderator.isModerator())
         {
-//            TODO: Enable settings functionality. Need to uncomment the settings button in index.html.
+//            TODO: Enable settings functionality.
+//                  Need to uncomment the settings button in index.html.
 //            $('#settingsButton').css({visibility:"visible"});
         }
 
@@ -46,8 +49,8 @@ var ToolbarToggler = (function(my) {
                 isToolbarHover = true;
             }
         });
-        if($("#bottomToolbar:hover").length > 0) {
-                isToolbarHover = true;
+        if ($("#bottomToolbar:hover").length > 0) {
+            isToolbarHover = true;
         }
 
         clearTimeout(toolbarTimeoutObject);
@@ -56,8 +59,9 @@ var ToolbarToggler = (function(my) {
         if (!isToolbarHover) {
             header.hide("slide", { direction: "up", duration: 300});
             $('#subject').animate({top: "-=40"}, 300);
-            if($("#remoteVideos").hasClass("hidden")) {
-                bottomToolbar.hide("slide", {direction: "right", duration: 300});
+            if ($("#remoteVideos").hasClass("hidden")) {
+                bottomToolbar.hide(
+                    "slide", {direction: "right", duration: 300});
             }
         }
         else {
@@ -71,7 +75,7 @@ var ToolbarToggler = (function(my) {
      *
      * @param isDock indicates what operation to perform
      */
-    my.dockToolbar = function(isDock) {
+    my.dockToolbar = function (isDock) {
         if (isDock) {
             // First make sure the toolbar is shown.
             if (!$('#header').is(':visible')) {

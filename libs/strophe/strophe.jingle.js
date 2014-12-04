@@ -30,8 +30,12 @@ Strophe.addConnectionPlugin('jingle', {
             // this is dealt with by SDP O/A so we don't need to annouce this
             //this.connection.disco.addFeature('urn:xmpp:jingle:apps:rtp:rtcp-fb:0'); // XEP-0293
             //this.connection.disco.addFeature('urn:xmpp:jingle:apps:rtp:rtp-hdrext:0'); // XEP-0294
-            this.connection.disco.addFeature('urn:ietf:rfc:5761'); // rtcp-mux
-            //this.connection.disco.addFeature('urn:ietf:rfc:5888'); // a=group, e.g. bundle
+            if (config.useRtcpMux) {
+                this.connection.disco.addFeature('urn:ietf:rfc:5761'); // rtcp-mux
+            }
+            if (config.useBundle) {
+                this.connection.disco.addFeature('urn:ietf:rfc:5888'); // a=group, e.g. bundle
+            }
             //this.connection.disco.addFeature('urn:ietf:rfc:5576'); // a=ssrc
         }
         this.connection.addHandler(this.onJingle.bind(this), 'urn:xmpp:jingle:1', 'iq', 'set', null, null);

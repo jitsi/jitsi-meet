@@ -105,11 +105,11 @@ SessionBase.prototype.switchStreams = function (new_stream, oldStream, success_c
     self.modifySources(function() {
         console.log('modify sources done');
 
+        success_callback();
+
         var newSdp = new SDP(self.peerconnection.localDescription.sdp);
         console.log("SDPs", oldSdp, newSdp);
         self.notifyMySSRCUpdate(oldSdp, newSdp);
-
-        success_callback();
     });
 };
 

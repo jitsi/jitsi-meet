@@ -1,4 +1,5 @@
 /* global ssrc2jid */
+/* jshint -W117 */
 /**
  * Calculates packet lost percent using the number of lost packets and the
  * number of all packet.
@@ -133,6 +134,37 @@ function StatsCollector(peerconnection, audioLevelsInterval,
     this.currentStatsReport = null;
     this.baselineStatsReport = null;
     this.audioLevelsIntervalId = null;
+
+    /**
+     * Gather PeerConnection stats once every this many milliseconds.
+     */
+    this.GATHER_INTERVAL = 10000;
+
+    /**
+     * Log stats via the focus once every this many milliseconds.
+     */
+    this.LOG_INTERVAL = 60000;
+
+    /**
+     * Gather stats and store them in this.statsToBeLogged.
+     */
+    this.gatherStatsIntervalId = null;
+
+    /**
+     * Send the stats already saved in this.statsToBeLogged to be logged via
+     * the focus.
+     */
+    this.logStatsIntervalId = null;
+
+    /**
+     * Stores the statistics which will be send to the focus to be logged.
+     */
+    this.statsToBeLogged =
+    {
+      timestamps: [],
+      stats: {}
+    };
+
     // Updates stats interval
     this.audioLevelsIntervalMilis = audioLevelsInterval;
 
@@ -156,6 +188,10 @@ StatsCollector.prototype.stop = function ()
         this.audioLevelsIntervalId = null;
         clearInterval(this.statsIntervalId);
         this.statsIntervalId = null;
+        clearInterval(this.logStatsIntervalId);
+        this.logStatsIntervalId = null;
+        clearInterval(this.gatherStatsIntervalId);
+        this.gatherStatsIntervalId = null;
     }
 };
 
@@ -238,8 +274,84 @@ StatsCollector.prototype.start = function ()
         },
         self.statsIntervalMilis
     );
+
+    if (config.logStats) {
+        this.gatherStatsIntervalId = setInterval(
+            function () {
+                self.peerconnection.getStats(
+                    function (report) {
+                        self.addStatsToBeLogged(report.result());
+                    },
+                    function () {
+                    }
+                );
+            },
+            this.GATHER_INTERVAL
+        );
+
+        this.logStatsIntervalId = setInterval(
+            function() { self.logStats(); },
+            this.LOG_INTERVAL);
+    }
 };
 
+/**
+ * Converts the stats to the format used for logging, and saves the data in
+ * this.statsToBeLogged.
+ * @param reports Reports as given by webkitRTCPerConnection.getStats.
+ */
+StatsCollector.prototype.addStatsToBeLogged = function (reports) {
+    var self = this;
+    var num_records = this.statsToBeLogged.timestamps.length;
+    this.statsToBeLogged.timestamps.push(new Date().getTime());
+    reports.map(function (report) {
+        var stat = self.statsToBeLogged.stats[report.id];
+        if (!stat) {
+            stat = self.statsToBeLogged.stats[report.id] = {};
+        }
+        stat.type = report.type;
+        report.names().map(function (name) {
+            var values = stat[name];
+            if (!values) {
+                values = stat[name] = [];
+            }
+            while (values.length < num_records) {
+                values.push(null);
+            }
+            values.push(report.stat(name));
+        });
+    });
+};
+
+StatsCollector.prototype.logStats = function () {
+    if (!focusJid) {
+        return;
+    }
+
+    var deflate = true;
+
+    var content = JSON.stringify(this.statsToBeLogged);
+    if (deflate) {
+        content = String.fromCharCode.apply(null, Pako.deflateRaw(content));
+    }
+    content = Base64.encode(content);
+
+    // XEP-0337-ish
+    var message = $msg({to: focusJid, type: 'normal'});
+    message.c('log', { xmlns: 'urn:xmpp:eventlog',
+                       id: 'PeerConnectionStats'});
+    message.c('message').t(content).up();
+    if (deflate) {
+        message.c('tag', {name: "deflated", value: "true"}).up();
+    }
+    message.up();
+
+    connection.send(message);
+
+    // Reset the stats
+    this.statsToBeLogged.stats = {};
+    this.statsToBeLogged.timestamps = [];
+};
 var keyMap = {
     "firefox": {
         "ssrc": "ssrc",

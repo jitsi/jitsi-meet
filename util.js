@@ -82,5 +82,20 @@ var Util = (function (my) {
         element.setAttribute("data-container", "body");
     };
 
+    my.createExpBackoffTimer = function (step) {
+        var count = 1;
+        return function (reset) {
+            // Reset call
+            if (reset) {
+                count = 1;
+                return;
+            }
+            // Calculate next timeout
+            var timeout = Math.pow(2, count - 1);
+            count += 1;
+            return timeout * step;
+        };
+    };
+
     return my;
 }(Util || {}));

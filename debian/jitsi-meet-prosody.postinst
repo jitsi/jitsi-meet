@@ -23,6 +23,8 @@ case "$1" in
 
         . /etc/jitsi/videobridge/config
 
+        . /etc/jitsi/jicofo/config
+
         # loading debconf
         . /usr/share/debconf/confmodule
 
@@ -41,9 +43,25 @@ case "$1" in
             cp /usr/share/doc/jitsi-meet-prosody/prosody.cfg.lua-jvb.example $PROSODY_HOST_CONFIG
             sed -i "s/jitmeet.example.com/$JVB_HOSTNAME/g" $PROSODY_HOST_CONFIG
             sed -i "s/jitmeetSecret/$JVB_SECRET/g" $PROSODY_HOST_CONFIG
+            sed -i "s/focusSecret/$JICOFO_SECRET/g" $PROSODY_HOST_CONFIG
+            sed -i "s/focusUser/$JICOFO_AUTH_USER/g" $PROSODY_HOST_CONFIG
             if [ ! -f /etc/prosody/conf.d/$JVB_HOSTNAME.cfg.lua ]; then
                 ln -s $PROSODY_HOST_CONFIG /etc/prosody/conf.d/$JVB_HOSTNAME.cfg.lua
             fi
+            # create 'focus@auth.domain' prosody user
+            # FIXME this duplicates with below
+            prosodyctl register $JICOFO_AUTH_USER $JICOFO_AUTH_DOMAIN $JICOFO_AUTH_PASSWORD
+        fi
+        # on UPGRADE to server side focus check if focus is configured
+        if [ -f $PROSODY_HOST_CONFIG ] && ! grep -q "VirtualHost \"auth.$JVB_HOSTNAME\"" $PROSODY_HOST_CONFIG; then
+            echo -e "\nVirtualHost \"auth.$JVB_HOSTNAME\"" >> $PROSODY_HOST_CONFIG
+            echo -e "        authentication = \"internal_plain\"\n" >> $PROSODY_HOST_CONFIG
+            echo -e "admins = { \"$JICOFO_AUTH_USER@auth.$JVB_HOSTNAME\" }\n" >> $PROSODY_HOST_CONFIG
+            echo -e "Component \"focus.$JVB_HOSTNAME\"" >> $PROSODY_HOST_CONFIG
+            echo -e "    component_secret=\"$JICOFO_SECRET\"\n" >> $PROSODY_HOST_CONFIG
+            # create 'focus@auth.domain' prosody user
+            # FIXME this duplicates with above
+            prosodyctl register $JICOFO_AUTH_USER $JICOFO_AUTH_DOMAIN $JICOFO_AUTH_PASSWORD
         fi
 
         if [ ! -f /var/lib/prosody/$JVB_HOSTNAME.crt ]; then
@@ -60,6 +78,7 @@ case "$1" in
         if [ "$PROSODY_CONFIG_PRESENT" = "false" ]; then
             invoke-rc.d prosody restart
             invoke-rc.d jitsi-videobridge restart
+            invoke-rc.d jicofo restart
         fi
     ;;
 

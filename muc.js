@@ -12,6 +12,7 @@ Strophe.addConnectionPlugin('emuc', {
     preziMap: {},
     joined: false,
     isOwner: false,
+    role: null,
     init: function (conn) {
         this.connection = conn;
     },
@@ -122,11 +123,22 @@ Strophe.addConnectionPlugin('emuc', {
         member.affiliation = tmp.attr('affiliation');
         member.role = tmp.attr('role');
 
+        // Focus recognition
+        member.jid = tmp.attr('jid');
+        member.isFocus = false;
+        if (member.jid && member.jid.indexOf(config.focusUserJid + "/") == 0) {
+            member.isFocus = true;
+        }
+
         var nicktag = $(pres).find('>nick[xmlns="http://jabber.org/protocol/nick"]');
         member.displayName = (nicktag.length > 0 ? nicktag.text() : null);
 
         if (from == this.myroomjid) {
             if (member.affiliation == 'owner') this.isOwner = true;
+            if (this.role !== member.role) {
+                this.role = member.role;
+                $(document).trigger('local.role.changed.muc', [from, member, pres]);
+            }
             if (!this.joined) {
                 this.joined = true;
                 $(document).trigger('joined.muc', [from, member]);
@@ -137,9 +149,16 @@ Strophe.addConnectionPlugin('emuc', {
             this.members[from] = member;
             this.list_members.push(from);
             $(document).trigger('entered.muc', [from, member, pres]);
+        } else {
+            // Presence update for existing participant
+            // Watch role change:
+            if (this.members[from].role != member.role) {
+                this.members[from].role = member.role
+                $(document).trigger('role.changed.muc', [from, member, pres]);
+            }
         }
         // Always trigger presence to update bindings
-        console.log('presence change from', from);
+        console.log('presence change from', from, pres);
         $(document).trigger('presence.muc', [from, member, pres]);
 
         // Trigger status message update
@@ -166,6 +185,9 @@ Strophe.addConnectionPlugin('emuc', {
                 this.list_members.splice(i, 1);
                 $(document).trigger('left.muc', member);
             }
+        }
+        if ($(pres).find('>x[xmlns="http://jabber.org/protocol/muc#user"]>status[code="307"]').length) {
+            $(document).trigger('kicked.muc', [from]);
         }
         return true;
     },
@@ -470,5 +492,8 @@ Strophe.addConnectionPlugin('emuc', {
     },
     addUserIdToPresence: function(userId) {
         this.presMap['userId'] = userId;
+    },
+    isModerator: function() {
+        return this.role === 'moderator';
     }
 });

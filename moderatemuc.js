@@ -1,53 +1,60 @@
+/* global $, $iq, config, connection, focusJid, forceMuted, messageHandler,
+   setAudioMuted, Strophe, toggleAudio */
 /**
  * Moderate connection plugin.
  */
 Strophe.addConnectionPlugin('moderate', {
     connection: null,
-    roomjid: null,
-    myroomjid: null,
-    members: {},
-    list_members: [], // so we can elect a new focus
-    presMap: {},
-    preziMap: {},
-    joined: false,
-    isOwner: false,
     init: function (conn) {
         this.connection = conn;
 
-        this.connection.addHandler( this.onMute.bind(this),
-                                    'http://jitsi.org/jitmeet/audio',
-                                    'iq',
-                                    'set',
-                                    null,
-                                    null);
+        this.connection.addHandler(this.onMute.bind(this),
+                                   'http://jitsi.org/jitmeet/audio',
+                                   'iq',
+                                   'set',
+                                   null,
+                                   null);
     },
-    setMute: function(jid, mute) {
-        var iq = $iq({to: jid, type: 'set'})
-                    .c('mute', {xmlns: 'http://jitsi.org/jitmeet/audio'})
-                    .t(mute.toString())
-                    .up();
+    setMute: function (jid, mute) {
+        console.info("set mute", mute);
+        var iqToFocus = $iq({to: focusJid, type: 'set'})
+            .c('mute', {
+                xmlns: 'http://jitsi.org/jitmeet/audio',
+                jid: jid
+            })
+            .t(mute.toString())
+            .up();
 
         this.connection.sendIQ(
-                iq,
-                function (result) {
-                    console.log('set mute', result);
-                },
-                function (error) {
-                    console.log('set mute error', error);
-                    messageHandler.openReportDialog(null, 'Failed to mute ' +
-                        $("#participant_" + jid).find(".displayname").text() ||
-                        "participant" + '.', error);
-                });
+            iqToFocus,
+            function (result) {
+                console.log('set mute', result);
+            },
+            function (error) {
+                console.log('set mute error', error);
+                // FIXME: this causes an exception
+                //messageHandler.openReportDialog(null, 'Failed to mute ' +
+                  //  $("#participant_" + jid).find(".displayname").text() ||
+                    //"participant" + '.', error);
+            });
     },
-    onMute: function(iq) {
+    onMute: function (iq) {
+        var from = iq.getAttribute('from');
+        if (from !== focusJid) {
+            console.warn("Ignored mute from non focus peer");
+            return false;
+        }
         var mute = $(iq).find('mute');
         if (mute.length) {
-            toggleAudio();
+            var doMuteAudio = mute.text() === "true";
+            setAudioMuted(doMuteAudio);
+            forceMuted = doMuteAudio;
         }
         return true;
     },
-    eject: function(jid) {
-        connection.jingle.terminateRemoteByJid(jid, 'kick');
+    eject: function (jid) {
+        // We're not the focus, so can't terminate
+        //connection.jingle.terminateRemoteByJid(jid, 'kick');
         connection.emuc.kick(jid);
     }
 });
