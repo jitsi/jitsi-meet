@@ -891,7 +891,7 @@ $(document).bind('presence.muc', function (event, jid, info, pres) {
 
     if (displayName && displayName.length > 0)
         $(document).trigger('displaynamechanged',
-                            [jid, info.displayName]);
+                            [jid, displayName]);
     if (info.isFocus)
     {
         return;
