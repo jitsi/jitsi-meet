@@ -93,7 +93,7 @@ SimulcastUtils.prototype._getVideoSources = function (lines) {
 
 SimulcastUtils.prototype.parseMedia = function (lines, mediatypes) {
     var i, res = [], type, cur_media, idx, ssrcs, cur_ssrc, ssrc,
-        ssrc_attribute, group, semantics, skip;
+        ssrc_attribute, group, semantics, skip = true;
 
     this.logger.info('Parsing media sources...');
 
