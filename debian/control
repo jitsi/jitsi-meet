@@ -23,7 +23,7 @@ Description: WebRTC JavaScript video conferences
 Package: jitsi-meet-prosody
 Architecture: all
 Pre-Depends: openssl, prosody | prosody-trunk, jitsi-videobridge
-Depends: ${misc:Depends}
+Depends: ${misc:Depends}, jicofo
 Description: Prosody configuration for Jitsi Meet
  Jitsi Meet is a WebRTC JavaScript application that uses Jitsi
  Videobridge to provide high quality, scalable video conferences.
