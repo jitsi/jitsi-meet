@@ -93,6 +93,20 @@ var Moderator = (function (my) {
                 { name: 'adaptiveSimulcast', value: config.adaptiveSimulcast})
                 .up();
         }
+        if (config.openSctp !== undefined)
+        {
+            elem.c(
+                'property',
+                { name: 'openSctp', value: config.openSctp})
+                .up();
+        }
+        if (config.enableFirefoxSupport !== undefined)
+        {
+            elem.c(
+                'property',
+                { name: 'enableFirefoxHacks', value: config.enableFirefoxSupport})
+                .up();
+        }
         elem.up();
         return elem;
     };
