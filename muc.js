@@ -126,7 +126,8 @@ Strophe.addConnectionPlugin('emuc', {
         // Focus recognition
         member.jid = tmp.attr('jid');
         member.isFocus = false;
-        if (member.jid && member.jid.indexOf(config.focusUserJid + "/") == 0) {
+        if (member.jid
+            && member.jid.indexOf(Moderator.getFocusUserJid() + "/") == 0) {
             member.isFocus = true;
         }
 
