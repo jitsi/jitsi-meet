@@ -1,5 +1,5 @@
-/* global $, $iq, config, connection, Etherpad, hangUp, roomName, Strophe,
- Toolbar, Util, VideoLayout */
+/* global $, $iq, config, connection, Etherpad, hangUp, messageHandler,
+ roomName, Strophe, Toolbar, Util, VideoLayout */
 /**
  * Contains logic responsible for enabling/disabling functionality available
  * only to moderator users.
@@ -78,15 +78,19 @@ var Moderator = (function (my) {
         return focusUserJid;
     };
 
-    my.createConferenceIq = function () {
+    my.getFocusComponent = function () {
         // Get focus component address
         var focusComponent = config.hosts.focus;
         // If not specified use default: 'focus.domain'
         if (!focusComponent) {
             focusComponent = 'focus.' + config.hosts.domain;
         }
+        return focusComponent;
+    };
+
+    my.createConferenceIq = function () {
         // Generate create conference IQ
-        var elem = $iq({to: focusComponent, type: 'set'});
+        var elem = $iq({to: Moderator.getFocusComponent(), type: 'set'});
         elem.c('conference', {
             xmlns: 'http://jitsi.org/protocol/focus',
             room: roomName
@@ -162,6 +166,11 @@ var Moderator = (function (my) {
             function (error) {
                 var waitMs = getNextErrorTimeout();
                 console.error("Focus error, retry after " + waitMs, error);
+                // Show message
+                messageHandler.notify(
+                    'Conference focus', 'disconnected',
+                    Moderator.getFocusComponent() +
+                    ' not available - retry in ' + (waitMs / 1000) + ' sec');
                 // Reset response timeout
                 getNextTimeout(true);
                 window.setTimeout(
