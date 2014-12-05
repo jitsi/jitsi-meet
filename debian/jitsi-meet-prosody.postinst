@@ -35,10 +35,12 @@ case "$1" in
         db_stop
 
         PROSODY_CONFIG_PRESENT="true"
+        PROSODY_CREATE_JICOFO_USER="false"
         PROSODY_HOST_CONFIG="/etc/prosody/conf.avail/$JVB_HOSTNAME.cfg.lua"
+        PROSODY_CONFIG_OLD="/etc/prosody/prosody.cfg.lua"
         # if there is no prosody config extract our template
         # check for config in conf.avail or check whether it wasn't already configured in main config
-        if [ ! -f $PROSODY_HOST_CONFIG ] && ! grep -q "VirtualHost \"$JVB_HOSTNAME\"" /etc/prosody/prosody.cfg.lua; then
+        if [ ! -f $PROSODY_HOST_CONFIG ] && ! grep -q "VirtualHost \"$JVB_HOSTNAME\"" $PROSODY_CONFIG_OLD; then
             PROSODY_CONFIG_PRESENT="false"
             cp /usr/share/doc/jitsi-meet-prosody/prosody.cfg.lua-jvb.example $PROSODY_HOST_CONFIG
             sed -i "s/jitmeet.example.com/$JVB_HOSTNAME/g" $PROSODY_HOST_CONFIG
@@ -48,19 +50,32 @@ case "$1" in
             if [ ! -f /etc/prosody/conf.d/$JVB_HOSTNAME.cfg.lua ]; then
                 ln -s $PROSODY_HOST_CONFIG /etc/prosody/conf.d/$JVB_HOSTNAME.cfg.lua
             fi
-            # create 'focus@auth.domain' prosody user
-            # FIXME this duplicates with below
-            prosodyctl register $JICOFO_AUTH_USER $JICOFO_AUTH_DOMAIN $JICOFO_AUTH_PASSWORD
+            PROSODY_CREATE_JICOFO_USER="true"
         fi
-        # on UPGRADE to server side focus check if focus is configured
+        # UPGRADE to server side focus check if focus is configured
         if [ -f $PROSODY_HOST_CONFIG ] && ! grep -q "VirtualHost \"auth.$JVB_HOSTNAME\"" $PROSODY_HOST_CONFIG; then
             echo -e "\nVirtualHost \"auth.$JVB_HOSTNAME\"" >> $PROSODY_HOST_CONFIG
             echo -e "        authentication = \"internal_plain\"\n" >> $PROSODY_HOST_CONFIG
             echo -e "admins = { \"$JICOFO_AUTH_USER@auth.$JVB_HOSTNAME\" }\n" >> $PROSODY_HOST_CONFIG
             echo -e "Component \"focus.$JVB_HOSTNAME\"" >> $PROSODY_HOST_CONFIG
             echo -e "    component_secret=\"$JICOFO_SECRET\"\n" >> $PROSODY_HOST_CONFIG
+            PROSODY_CREATE_JICOFO_USER="true"
+        # UPGRADE to server side focus on old config(/etc/prosody/prosody.cfg.lua)
+        elif [ ! -f $PROSODY_HOST_CONFIG ] && ! grep -q "VirtualHost \"auth.$JVB_HOSTNAME\"" $PROSODY_CONFIG_OLD; then
+            echo -e "\nVirtualHost \"auth.$JVB_HOSTNAME\"" >> $PROSODY_CONFIG_OLD
+            echo -e "        authentication = \"internal_plain\"\n" >> $PROSODY_CONFIG_OLD
+            if ! grep -q "admins = { }" $PROSODY_CONFIG_OLD; then
+                echo -e "admins = { \"$JICOFO_AUTH_USER@auth.$JVB_HOSTNAME\" }\n" >> $PROSODY_CONFIG_OLD
+            else
+                sed -i "s/admins = { }/admins = { \"$JICOFO_AUTH_USER@auth.$JVB_HOSTNAME\" }\n/g" $PROSODY_CONFIG_OLD
+            fi
+            echo -e "Component \"focus.$JVB_HOSTNAME\"" >> $PROSODY_CONFIG_OLD
+            echo -e "    component_secret=\"$JICOFO_SECRET\"\n" >> $PROSODY_CONFIG_OLD
+            PROSODY_CREATE_JICOFO_USER="true"
+        fi
+
+        if [ "$PROSODY_CREATE_JICOFO_USER" = "true" ]; then
             # create 'focus@auth.domain' prosody user
-            # FIXME this duplicates with above
             prosodyctl register $JICOFO_AUTH_USER $JICOFO_AUTH_DOMAIN $JICOFO_AUTH_PASSWORD
             # trigger a restart
             PROSODY_CONFIG_PRESENT="false"
