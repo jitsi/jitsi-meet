@@ -90,7 +90,7 @@ var Chat = (function (my) {
         }
 
         //replace links and smileys
-        var escMessage = Util.escapeHtml(message);
+        var escMessage = message.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br/>'); //Strophe already escapes special symbols on sending, so we escape here only tags to avoid double &amp;
         var escDisplayName = Util.escapeHtml(displayName);
         message = processReplacements(escMessage);
 
