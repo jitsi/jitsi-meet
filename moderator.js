@@ -95,6 +95,13 @@ var Moderator = (function (my) {
             xmlns: 'http://jitsi.org/protocol/focus',
             room: roomName
         });
+        if (config.hosts.bridge !== undefined)
+        {
+            elem.c(
+                'property',
+                { name: 'bridge', value: config.hosts.bridge})
+                .up();
+        }
         if (config.channelLastN !== undefined)
         {
             elem.c(
