@@ -854,6 +854,18 @@ $(document).bind('left.muc', function (event, jid) {
 
 $(document).bind('presence.muc', function (event, jid, info, pres) {
 
+    //check if the video bridge is available
+    if($(pres).find(">bridgeIsDown").length > 0 && !bridgeIsDown) {
+        bridgeIsDown = true;
+        messageHandler.showError("Error",
+            "Jitsi Videobridge is currently unavailable. Please try again later!");
+    }
+
+    if (info.isFocus)
+    {
+        return;
+    }
+
     // Remove old ssrcs coming from the jid
     Object.keys(ssrc2jid).forEach(function (ssrc) {
         if (ssrc2jid[ssrc] == jid) {
@@ -893,11 +905,6 @@ $(document).bind('presence.muc', function (event, jid, info, pres) {
     if (displayName && displayName.length > 0)
         $(document).trigger('displaynamechanged',
                             [jid, displayName]);
-    if (info.isFocus)
-    {
-        return;
-    }
-
     /*if (focus !== null && info.displayName !== null) {
         focus.setEndpointDisplayName(jid, info.displayName);
     }*/
