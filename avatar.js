@@ -78,6 +78,7 @@ var Avatar = (function(my) {
             if (activeSpeakerJid === jid && VideoLayout.isLargeVideoOnTop()) {
                 setVisibility($("#largeVideo"), !show);
                 setVisibility($('#activeSpeakerAvatar'), show);
+                setVisibility($('#activeSpeakerAudioLevel'), show);
                 setVisibility(avatar, false);
                 setVisibility(video, false);
             } else {

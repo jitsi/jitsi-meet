@@ -49,12 +49,12 @@
     <script src="analytics.js?v=1"></script><!-- google analytics plugin -->
     <script src="rtp_sts.js?v=5"></script><!-- RTP stats processing -->
     <script src="local_sts.js?v=2"></script><!-- Local stats processing -->
-    <script src="videolayout.js?v=29"></script><!-- video ui -->
+    <script src="videolayout.js?v=30"></script><!-- video ui -->
     <script src="connectionquality.js?v=1"></script>
     <script src="toolbar.js?v=6"></script><!-- toolbar ui -->
     <script src="toolbar_toggler.js?v=2"></script>
     <script src="canvas_util.js?v=1"></script><!-- canvas drawing utils -->
-    <script src="audio_levels.js?v=2"></script><!-- audio levels plugin -->
+    <script src="audio_levels.js?v=3"></script><!-- audio levels plugin -->
     <script src="media_stream.js?v=2"></script><!-- media stream -->
     <script src="bottom_toolbar.js?v=6"></script><!-- media stream -->
     <script src="moderator.js?v=2"></script><!-- media stream -->
@@ -66,11 +66,11 @@
     <script src="message_handler.js?v=2"></script>
     <script src="api_connector.js?v=2"></script>
     <script src="settings_menu.js?v=1"></script>
-    <script src="avatar.js?v=1"></script><!-- avatars -->
+    <script src="avatar.js?v=2"></script><!-- avatars -->
     <link rel="stylesheet" href="css/font.css?v=6"/>
     <link rel="stylesheet" href="css/toastr.css?v=1">
     <link rel="stylesheet" type="text/css" media="screen" href="css/main.css?v=30"/>
-    <link rel="stylesheet" type="text/css" media="screen" href="css/videolayout_default.css?v=14" id="videolayout_default"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="css/videolayout_default.css?v=15" id="videolayout_default"/>
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
     <link rel="stylesheet" href="css/jquery-impromptu.css?v=4">
     <link rel="stylesheet" href="css/modaldialog.css?v=3">
@@ -265,6 +265,7 @@
                 <a target="_new"><div class="watermark rightwatermark"></div></a>
                 <a class="poweredby" href="http://jitsi.org" target="_new" >powered by jitsi.org</a>
                 <img id="activeSpeakerAvatar" src=""/>
+                <canvas id="activeSpeakerAudioLevel"></canvas>
                 <video id="largeVideo" autoplay oncontextmenu="return false;"></video>
             </div>
             <div id="remoteVideos">

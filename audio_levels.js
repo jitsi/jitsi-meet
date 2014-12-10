@@ -21,7 +21,7 @@ var AudioLevels = (function(my) {
             videoSpanId = 'participant_' + resourceJid;
         }
 
-        videoSpan = document.getElementById(videoSpanId);
+        var videoSpan = document.getElementById(videoSpanId);
 
         if (!videoSpan) {
             if (resourceJid)
@@ -35,8 +35,7 @@ var AudioLevels = (function(my) {
         var audioLevelCanvas = $('#' + videoSpanId + '>canvas');
 
         var videoSpaceWidth = $('#remoteVideos').width();
-        var thumbnailSize
-            = VideoLayout.calculateThumbnailSize(videoSpaceWidth);
+        var thumbnailSize = VideoLayout.calculateThumbnailSize(videoSpaceWidth);
         var thumbnailWidth = thumbnailSize[0];
         var thumbnailHeight = thumbnailSize[1];
 
@@ -84,6 +83,50 @@ var AudioLevels = (function(my) {
         drawContext.clearRect (0, 0,
                 audioLevelCanvas.width, audioLevelCanvas.height);
         drawContext.drawImage(canvasCache, 0, 0);
+
+        if(resourceJid === AudioLevels.LOCAL_LEVEL) {
+            resourceJid = Strophe.getResourceFromJid(connection.emuc.myroomjid);
+        }
+
+        if(resourceJid  === VideoLayout.getLargeVideoState().userResourceJid) {
+            AudioLevels.updateActiveSpeakerAudioLevel(audioLevel);
+        }
+    };
+
+    my.updateActiveSpeakerAudioLevel = function(audioLevel) {
+        var drawContext = $('#activeSpeakerAudioLevel')[0].getContext('2d');
+        var r = interfaceConfig.ACTIVE_SPEAKER_AVATAR_SIZE / 2;
+        var center = (interfaceConfig.ACTIVE_SPEAKER_AVATAR_SIZE + r) / 2;
+
+        // Save the previous state of the context.
+        drawContext.save();
+
+        drawContext.clearRect(0, 0, 300, 300);
+
+        // Draw a circle.
+        drawContext.arc(center, center, r, 0, 2 * Math.PI);
+
+        // Add a shadow around the circle
+        drawContext.shadowColor = interfaceConfig.SHADOW_COLOR;
+        drawContext.shadowBlur = getShadowLevel(audioLevel);
+        drawContext.shadowOffsetX = 0;
+        drawContext.shadowOffsetY = 0;
+
+        // Fill the shape.
+        drawContext.fill();
+
+        drawContext.save();
+
+        drawContext.restore();
+
+
+        drawContext.arc(center, center, r, 0, 2 * Math.PI);
+
+        drawContext.clip();
+        drawContext.clearRect(0, 0, 277, 200);
+
+        // Restore the previous context state.
+        drawContext.restore();
     };
 
     /**
@@ -94,7 +137,7 @@ var AudioLevels = (function(my) {
                                     thumbnailHeight) {
         audioLevelCanvas.width = thumbnailWidth + interfaceConfig.CANVAS_EXTRA;
         audioLevelCanvas.height = thumbnailHeight + interfaceConfig.CANVAS_EXTRA;
-    };
+    }
 
     /**
      * Draws the audio level canvas into the cached canvas object.
@@ -143,7 +186,7 @@ var AudioLevels = (function(my) {
                 interfaceConfig.CANVAS_RADIUS,
                 interfaceConfig.SHADOW_COLOR,
                 shadowLevel);
-    };
+    }
 
     /**
      * Returns the shadow/glow level for the given audio level.
@@ -164,7 +207,7 @@ var AudioLevels = (function(my) {
             shadowLevel = Math.round(interfaceConfig.CANVAS_EXTRA/2*((audioLevel - 0.6) / 0.4));
         }
         return shadowLevel;
-    };
+    }
 
     /**
      * Returns the video span id corresponding to the given resourceJid or local
@@ -180,7 +223,7 @@ var AudioLevels = (function(my) {
             videoSpanId = 'participant_' + resourceJid;
 
         return videoSpanId;
-    };
+    }
 
     /**
      * Indicates that the remote video has been resized.
