@@ -4,10 +4,16 @@
  * @param sid my session identifier(resource)
  * @constructor
  */
-function SessionBase(connection, sid){
-
+function SessionBase(connection, sid) {
     this.connection = connection;
     this.sid = sid;
+
+    /**
+     * The indicator which determines whether the (local) video has been muted
+     * in response to a user command in contrast to an automatic decision made
+     * by the application logic.
+     */
+    this.muteByUser = true;
 }
 
 
@@ -63,6 +69,7 @@ SessionBase.prototype.removeSource = function (elem, fromJid) {
 
     this.modifySources();
 };
+
 /**
  * Switches video streams.
  * @param new_stream new stream that will be used as video of this session.
@@ -230,20 +237,85 @@ SessionBase.prototype.sendSSRCUpdateIq = function(sdpMediaSsrcs, sid, initiator,
     }
 };
 
+/**
+ * Determines whether the (local) video is mute i.e. all video tracks are
+ * disabled.
+ *
+ * @return <tt>true</tt> if the (local) video is mute i.e. all video tracks are
+ * disabled; otherwise, <tt>false</tt>
+ */
+SessionBase.prototype.isVideoMute = function () {
+    var tracks = connection.jingle.localVideo.getVideoTracks();
+    var mute = true;
+
+    for (var i = 0; i < tracks.length; ++i) {
+        if (tracks[i].enabled) {
+            mute = false;
+            break;
+        }
+    }
+    return mute;
+};
+
+/**
+ * Mutes/unmutes the (local) video i.e. enables/disables all video tracks.
+ *
+ * @param mute <tt>true</tt> to mute the (local) video i.e. to disable all video
+ * tracks; otherwise, <tt>false</tt>
+ * @param callback a function to be invoked with <tt>mute</tt> after all video
+ * tracks have been enabled/disabled. The function may, optionally, return
+ * another function which is to be invoked after the whole mute/unmute operation
+ * has completed successfully.
+ * @param options an object which specifies optional arguments such as the
+ * <tt>boolean</tt> key <tt>byUser</tt> with default value <tt>true</tt> which
+ * specifies whether the method was initiated in response to a user command (in
+ * contrast to an automatic decision made by the application logic)
+ */
+SessionBase.prototype.setVideoMute = function (mute, callback, options) {
+    var byUser;
+
+    if (options) {
+        byUser = options.byUser;
+        if (typeof byUser === 'undefined') {
+            byUser = true;
+        } 
+    } else {
+        byUser = true;
+    }
+    // The user's command to mute the (local) video takes precedence over any
+    // automatic decision made by the application logic.
+    if (byUser) {
+        this.muteByUser = mute;
+    } else if (this.muteByUser) {
+        return;
+    }
+    if (mute == this.isVideoMute())
+    {
+        // Even if no change occurs, the specified callback is to be executed.
+        // The specified callback may, optionally, return a successCallback
+        // which is to be executed as well.
+        var successCallback = callback(mute);
+
+        if (successCallback) {
+            successCallback();
+        }
+    } else {
+        var tracks = connection.jingle.localVideo.getVideoTracks();
+
+        for (var i = 0; i < tracks.length; ++i) {
+            tracks[i].enabled = !mute;
+        }
+
+        if (this.peerconnection) {
+            this.peerconnection.hardMuteVideo(mute);
+        }
+
+        this.modifySources(callback(mute));
+    }
+};
+
 // SDP-based mute by going recvonly/sendrecv
 // FIXME: should probably black out the screen as well
 SessionBase.prototype.toggleVideoMute = function (callback) {
-
-    var ismuted = false;
-    var localVideo = connection.jingle.localVideo;
-    for (var idx = 0; idx < localVideo.getVideoTracks().length; idx++) {
-        ismuted = !localVideo.getVideoTracks()[idx].enabled;
-    }
-    for (var idx = 0; idx < localVideo.getVideoTracks().length; idx++) {
-        localVideo.getVideoTracks()[idx].enabled = !localVideo.getVideoTracks()[idx].enabled;
-    }
-
-    if(this.peerconnection)
-        this.peerconnection.hardMuteVideo(!ismuted);
-    this.modifySources(callback(!ismuted));
+    setVideoMute(isVideoMute(), callback);
 };

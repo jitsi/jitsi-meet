@@ -70,46 +70,65 @@ function onDataChannel(event)
                     'dominantspeakerchanged',
                     [dominantSpeakerEndpoint]);
             }
+            else if ("InLastNChangeEvent" === colibriClass)
+            {
+                var oldValue = obj.oldValue;
+                var newValue = obj.newValue;
+                // Make sure that oldValue and newValue are of type boolean.
+                var type;
+
+                if ((type = typeof oldValue) !== 'boolean') {
+                    if (type === 'string') {
+                        oldValue = (oldValue == "true");
+                    } else {
+                        oldValue = new Boolean(oldValue).valueOf();
+                    }
+                }
+                if ((type = typeof newValue) !== 'boolean') {
+                    if (type === 'string') {
+                        newValue = (newValue == "true");
+                    } else {
+                        newValue = new Boolean(newValue).valueOf();
+                    }
+                }
+                $(document).trigger('inlastnchanged', [oldValue, newValue]);
+            }
             else if ("LastNEndpointsChangeEvent" === colibriClass)
             {
                 // The new/latest list of last-n endpoint IDs.
                 var lastNEndpoints = obj.lastNEndpoints;
-                /*
-                 * The list of endpoint IDs which are entering the list of
-                 * last-n at this time i.e. were not in the old list of last-n
-                 * endpoint IDs.
-                 */
+                // The list of endpoint IDs which are entering the list of
+                // last-n at this time i.e. were not in the old list of last-n
+                // endpoint IDs.
                 var endpointsEnteringLastN = obj.endpointsEnteringLastN;
-
                 var stream = obj.stream;
 
                 console.log(
                     "Data channel new last-n event: ",
                     lastNEndpoints, endpointsEnteringLastN, obj);
-
                 $(document).trigger(
-                        'lastnchanged',
-                        [lastNEndpoints, endpointsEnteringLastN, stream]);
+                    'lastnchanged',
+                    [lastNEndpoints, endpointsEnteringLastN, stream]);
             }
             else if ("SimulcastLayersChangedEvent" === colibriClass)
             {
-                var endpointSimulcastLayers = obj.endpointSimulcastLayers;
-                $(document).trigger('simulcastlayerschanged', [endpointSimulcastLayers]);
+                $(document).trigger(
+                    'simulcastlayerschanged',
+                    [obj.endpointSimulcastLayers]);
             }
             else if ("SimulcastLayersChangingEvent" === colibriClass)
             {
-                var endpointSimulcastLayers = obj.endpointSimulcastLayers;
-                $(document).trigger('simulcastlayerschanging', [endpointSimulcastLayers]);
+                $(document).trigger(
+                    'simulcastlayerschanging',
+                    [obj.endpointSimulcastLayers]);
             }
             else if ("StartSimulcastLayerEvent" === colibriClass)
             {
-                var simulcastLayer = obj.simulcastLayer;
-                $(document).trigger('startsimulcastlayer', simulcastLayer);
+                $(document).trigger('startsimulcastlayer', obj.simulcastLayer);
             }
             else if ("StopSimulcastLayerEvent" === colibriClass)
             {
-                var simulcastLayer = obj.simulcastLayer;
-                $(document).trigger('stopsimulcastlayer', simulcastLayer);
+                $(document).trigger('stopsimulcastlayer', obj.simulcastLayer);
             }
             else
             {
@@ -141,10 +160,8 @@ function bindDataChannelListener(peerConnection)
     // and peer as single channel can be used for sending and receiving data.
     // So either channel opened by the bridge or the one opened here is enough
     // for communication with the bridge.
-    /*var dataChannelOptions =
-    {
-        reliable: true
-    };
+/*
+    var dataChannelOptions = { reliable: true };
     var dataChannel
        = peerConnection.createDataChannel("myChannel", dataChannelOptions);
 
@@ -157,6 +174,7 @@ function bindDataChannelListener(peerConnection)
     {
         var msgData = event.data;
         console.info("Got My Data Channel Message:", msgData, dataChannel);
-    };*/
+    };
+*/
 }
 

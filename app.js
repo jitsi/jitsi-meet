@@ -1035,26 +1035,60 @@ function getConferenceHandler() {
     return activecall;
 }
 
+/**
+ * Mutes/unmutes the local video.
+ *
+ * @param mute <tt>true</tt> to mute the local video; otherwise, <tt>false</tt>
+ * @param options an object which specifies optional arguments such as the
+ * <tt>boolean</tt> key <tt>byUser</tt> with default value <tt>true</tt> which
+ * specifies whether the method was initiated in response to a user command (in
+ * contrast to an automatic decision taken by the application logic)
+ */
+function setVideoMute(mute, options) {
+    if (connection && connection.jingle.localVideo) {
+        var session = getConferenceHandler();
+
+        if (session) {
+            session.setVideoMute(
+                mute,
+                function (mute) {
+                    var video = $('#video');
+                    var communicativeClass = "icon-camera";
+                    var muteClass = "icon-camera icon-camera-disabled";
+
+                    if (mute) {
+                        video.removeClass(communicativeClass);
+                        video.addClass(muteClass);
+                    } else {
+                        video.removeClass(muteClass);
+                        video.addClass(communicativeClass);
+                    }
+                    connection.emuc.addVideoInfoToPresence(mute);
+                    connection.emuc.sendPresence();
+                },
+                options);
+        }
+    }
+}
+
+$(document).on('inlastnchanged', function (event, oldValue, newValue) {
+    if (config.muteLocalVideoIfNotInLastN) {
+        setVideoMute(!newValue, { 'byUser': false });
+    }
+});
+
+/**
+ * Mutes/unmutes the local video.
+ */
 function toggleVideo() {
     buttonClick("#video", "icon-camera icon-camera-disabled");
-    if (!(connection && connection.jingle.localVideo))
-        return;
 
-    var sess = getConferenceHandler();
-    if (sess) {
-        sess.toggleVideoMute(
-            function (isMuted) {
-                if (isMuted) {
-                    $('#video').removeClass("icon-camera");
-                    $('#video').addClass("icon-camera icon-camera-disabled");
-                } else {
-                    $('#video').removeClass("icon-camera icon-camera-disabled");
-                    $('#video').addClass("icon-camera");
-                }
-                connection.emuc.addVideoInfoToPresence(isMuted);
-                connection.emuc.sendPresence();
-            }
-        );
+    if (connection && connection.jingle.localVideo) {
+        var session = getConferenceHandler();
+
+        if (session) {
+            setVideoMute(!session.isVideoMute());
+        }
     }
 }
 
