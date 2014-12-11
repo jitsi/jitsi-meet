@@ -354,6 +354,9 @@ Strophe.addConnectionPlugin('emuc', {
             pres.c('c', connection.caps.generateCapsAttrs()).up();
         }
 
+        pres.c('user-agent', {xmlns: 'http://jitsi.org/jitmeet/user-agent'})
+            .t(navigator.userAgent).up();
+
         if(this.presMap['bridgeIsDown']) {
             pres.c('bridgeIsDown').up();
         }
