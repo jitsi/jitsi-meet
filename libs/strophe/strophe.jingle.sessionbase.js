@@ -13,7 +13,7 @@ function SessionBase(connection, sid) {
      * in response to a user command in contrast to an automatic decision made
      * by the application logic.
      */
-    this.muteByUser = true;
+    this.videoMuteByUser = false;
 }
 
 
@@ -285,8 +285,8 @@ SessionBase.prototype.setVideoMute = function (mute, callback, options) {
     // The user's command to mute the (local) video takes precedence over any
     // automatic decision made by the application logic.
     if (byUser) {
-        this.muteByUser = mute;
-    } else if (this.muteByUser) {
+        this.videoMuteByUser = mute;
+    } else if (this.videoMuteByUser) {
         return;
     }
     if (mute == this.isVideoMute())
