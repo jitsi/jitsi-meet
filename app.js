@@ -769,7 +769,8 @@ $(document).bind('entered.muc', function (event, jid, info, pres) {
     {
         focusJid = jid;
         console.info("Ignore focus: " + jid +", real JID: " + info.jid);
-        messageHandler.notify('Focus', 'connected', 'connected');
+        // We don't want this notification for the focus.
+        // messageHandler.notify('Focus', 'connected', 'connected');
         return;
     }
 
