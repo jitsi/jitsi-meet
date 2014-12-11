@@ -1597,7 +1597,7 @@ $(document).bind('fatalError.jingle',
         sessionTerminated = true;
         connection.emuc.doLeave();
         messageHandler.showError(  "Sorry",
-            "Your browser version is too old. Please update and try again...");
+            "Internal application error[setRemoteDescription]");
     }
 );
 
