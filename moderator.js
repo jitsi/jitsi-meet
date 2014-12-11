@@ -1,5 +1,5 @@
 /* global $, $iq, config, connection, Etherpad, hangUp, messageHandler,
- roomName, Strophe, Toolbar, Util, VideoLayout */
+ roomName, sessionTerminated, Strophe, Toolbar, Util, VideoLayout */
 /**
  * Contains logic responsible for enabling/disabling functionality available
  * only to moderator users.
@@ -55,7 +55,7 @@ var Moderator = (function (my) {
             function (event, jid) {
                 console.info("Someone left is it focus ? " + jid);
                 var resource = Strophe.getResourceFromJid(jid);
-                if (resource === 'focus') {
+                if (resource === 'focus' && !sessionTerminated) {
                     console.info(
                         "Focus has left the room - leaving conference");
                     //hangUp();
