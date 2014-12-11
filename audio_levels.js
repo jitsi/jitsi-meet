@@ -85,6 +85,9 @@ var AudioLevels = (function(my) {
         drawContext.drawImage(canvasCache, 0, 0);
 
         if(resourceJid === AudioLevels.LOCAL_LEVEL) {
+            if(!connection.emuc.myroomjid) {
+                return;
+            }
             resourceJid = Strophe.getResourceFromJid(connection.emuc.myroomjid);
         }
 
