@@ -139,7 +139,7 @@ var ContactList = (function (my) {
     function createAvatar(id) {
         var avatar = document.createElement('img');
         avatar.className = "icon-avatar avatar";
-        avatar.src = "https://www.gravatar.com/avatar/" + id + "?d=retro&size=30";
+        avatar.src = "https://www.gravatar.com/avatar/" + id + "?d=wavatar&size=30";
 
         return avatar;
     }

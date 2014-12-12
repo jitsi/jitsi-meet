@@ -141,7 +141,7 @@ var Avatar = (function(my) {
         }
         return 'https://www.gravatar.com/avatar/' +
             MD5.hexdigest(id.trim().toLowerCase()) +
-            "?d=retro&size=" + (size || "30");
+            "?d=wavatar&size=" + (size || "30");
     }
 
     return my;
