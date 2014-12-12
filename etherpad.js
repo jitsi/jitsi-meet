@@ -42,6 +42,7 @@ var Etherpad = (function (my) {
             largeVideo = $('#largeVideo');
 
         if ($('#etherpad>iframe').css('visibility') === 'hidden') {
+            $('#activeSpeaker').css('visibility', 'hidden');
             largeVideo.fadeOut(300, function () {
                 if (Prezi.isPresentationVisible()) {
                     largeVideo.css({opacity: '0'});

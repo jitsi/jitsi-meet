@@ -25,7 +25,7 @@ var Prezi = (function (my) {
                 ToolbarToggler.dockToolbar(true);
                 VideoLayout.setLargeVideoVisible(false);
             });
-            $('#activeSpeakerAvatar').css('visibility', 'hidden');
+            $('#activeSpeaker').css('visibility', 'hidden');
         }
         else {
             if (prezi.css('opacity') == '1') {

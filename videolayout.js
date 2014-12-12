@@ -173,8 +173,7 @@ var VideoLayout = (function (my) {
 
         if (RTC.getVideoSrc($('#largeVideo')[0]) !== newSrc) {
 
-            $('#activeSpeakerAvatar').css('visibility', 'hidden');
-            $('#activeSpeakerAudioLevel').css('visibility', 'hidden');
+            $('#activeSpeaker').css('visibility', 'hidden');
             // Due to the simulcast the localVideoSrc may have changed when the
             // fadeOut event triggers. In that case the getJidFromVideoSrc and
             // isVideoSrcDesktop methods will not function correctly.
@@ -434,6 +433,7 @@ var VideoLayout = (function (my) {
         }
         else {
             $('#largeVideo').css({visibility: 'hidden'});
+            $('#activeSpeaker').css('visibility', 'hidden');
             $('.watermark').css({visibility: 'hidden'});
             VideoLayout.enableDominantSpeaker(resourceJid, false);
             if(focusedVideoInfo) {
@@ -1040,10 +1040,8 @@ var VideoLayout = (function (my) {
         $('#largeVideoContainer').height(availableHeight);
 
         var avatarSize = interfaceConfig.ACTIVE_SPEAKER_AVATAR_SIZE;
-        var top = (availableHeight - avatarSize) / 2;
-        $('#activeSpeakerAvatar').css('top', top);
-        $('#activeSpeakerAudioLevel').css('top', top - avatarSize / 4);
-        $('#activeSpeakerAudioLevel').css('left', availableWidth / 2 - avatarSize * 3 / 4);
+        var top = availableHeight / 2 - avatarSize / 4 * 3;
+        $('#activeSpeaker').css('top', top);
 
         VideoLayout.resizeThumbnails();
     };

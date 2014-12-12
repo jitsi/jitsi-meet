@@ -41,15 +41,15 @@
     <script src="contact_list.js?v=7"></script><!-- contact list logic -->
     <script src="side_panel_toggler.js?v=1"></script>
     <script src="util.js?v=7"></script><!-- utility functions -->
-    <script src="etherpad.js?v=9"></script><!-- etherpad plugin -->
-    <script src="prezi.js?v=6"></script><!-- prezi plugin -->
+    <script src="etherpad.js?v=10"></script><!-- etherpad plugin -->
+    <script src="prezi.js?v=7"></script><!-- prezi plugin -->
     <script src="smileys.js?v=3"></script><!-- smiley images -->
     <script src="replacement.js?v=7"></script><!-- link and smiley replacement -->
     <script src="moderatemuc.js?v=4"></script><!-- moderator plugin -->
     <script src="analytics.js?v=1"></script><!-- google analytics plugin -->
     <script src="rtp_sts.js?v=5"></script><!-- RTP stats processing -->
     <script src="local_sts.js?v=2"></script><!-- Local stats processing -->
-    <script src="videolayout.js?v=30"></script><!-- video ui -->
+    <script src="videolayout.js?v=31"></script><!-- video ui -->
     <script src="connectionquality.js?v=1"></script>
     <script src="toolbar.js?v=6"></script><!-- toolbar ui -->
     <script src="toolbar_toggler.js?v=2"></script>
@@ -66,11 +66,11 @@
     <script src="message_handler.js?v=2"></script>
     <script src="api_connector.js?v=2"></script>
     <script src="settings_menu.js?v=1"></script>
-    <script src="avatar.js?v=2"></script><!-- avatars -->
+    <script src="avatar.js?v=3"></script><!-- avatars -->
     <link rel="stylesheet" href="css/font.css?v=6"/>
     <link rel="stylesheet" href="css/toastr.css?v=1">
     <link rel="stylesheet" type="text/css" media="screen" href="css/main.css?v=30"/>
-    <link rel="stylesheet" type="text/css" media="screen" href="css/videolayout_default.css?v=15" id="videolayout_default"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="css/videolayout_default.css?v=16" id="videolayout_default"/>
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
     <link rel="stylesheet" href="css/jquery-impromptu.css?v=4">
     <link rel="stylesheet" href="css/modaldialog.css?v=3">
@@ -264,8 +264,10 @@
                 <a target="_new"><div class="watermark leftwatermark"></div></a>
                 <a target="_new"><div class="watermark rightwatermark"></div></a>
                 <a class="poweredby" href="http://jitsi.org" target="_new" >powered by jitsi.org</a>
-                <img id="activeSpeakerAvatar" src=""/>
-                <canvas id="activeSpeakerAudioLevel"></canvas>
+                <div id="activeSpeaker">
+                    <img id="activeSpeakerAvatar" src=""/>
+                    <canvas id="activeSpeakerAudioLevel"></canvas>
+                </div>
                 <video id="largeVideo" autoplay oncontextmenu="return false;"></video>
             </div>
             <div id="remoteVideos">

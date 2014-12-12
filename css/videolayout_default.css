@@ -377,11 +377,21 @@
     pointer-events: none;
 }
 
-#activeSpeakerAudioLevel {
+#activeSpeaker {
     visibility: hidden;
+    width: 150px;
+    height: 150px;
+    margin: auto;
+    overflow: hidden;
+    position: relative;
+}
+
+#activeSpeakerAudioLevel {
     position: absolute;
-    top: 113px;
+    top: 0px;
+    left: 0px;
     z-index: 1;
+    visibility: inherit;
 }
 
 #mixedstream {
@@ -389,13 +399,14 @@
 }
 
 #activeSpeakerAvatar {
-    visibility: hidden;
     width: 100px;
     height: 100px;
+    top: 25px;
     margin: auto;
     position: relative;
     border-radius: 50px;
     z-index: 2;
+    visibility: inherit;
 }
 
 .userAvatar {
