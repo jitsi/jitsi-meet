@@ -1,4 +1,4 @@
-/* global ssrc2jid */
+/* global focusMucJid, ssrc2jid */
 /* jshint -W117 */
 /**
  * Calculates packet lost percent using the number of lost packets and the
@@ -324,7 +324,7 @@ StatsCollector.prototype.addStatsToBeLogged = function (reports) {
 };
 
 StatsCollector.prototype.logStats = function () {
-    if (!focusJid) {
+    if (!focusMucJid) {
         return;
     }
 
@@ -337,7 +337,7 @@ StatsCollector.prototype.logStats = function () {
     content = Base64.encode(content);
 
     // XEP-0337-ish
-    var message = $msg({to: focusJid, type: 'normal'});
+    var message = $msg({to: focusMucJid, type: 'normal'});
     message.c('log', { xmlns: 'urn:xmpp:eventlog',
                        id: 'PeerConnectionStats'});
     message.c('message').t(content).up();

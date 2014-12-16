@@ -2,11 +2,12 @@
 /* application specific logic */
 var connection = null;
 var authenticatedUser = false;
+var authenticationWindow = null;
 var activecall = null;
 var RTC = null;
 var nickname = null;
 var sharedKey = '';
-var focusJid = null;
+var focusMucJid = null;
 var roomUrl = null;
 var roomName = null;
 var ssrc2jid = {};
@@ -163,6 +164,8 @@ function connect(jid, password) {
                 connection.jingle.getStunAndTurnCredentials();
             }
             document.getElementById('connect').disabled = true;
+
+            console.info("My Jabber ID: " + connection.jid);
 
             if(password)
                 authenticatedUser = true;
@@ -755,6 +758,10 @@ $(document).bind('joined.muc', function (event, jid, info) {
     // Once we've joined the muc show the toolbar
     ToolbarToggler.showToolbar();
 
+    // Show authenticate button if needed
+    Toolbar.showAuthenticateButton(
+        Moderator.isExternalAuthEnabled() && !Moderator.isModerator());
+
     var displayName = !config.displayJids
         ? info.displayName : Strophe.getResourceFromJid(jid);
 
@@ -767,10 +774,8 @@ $(document).bind('entered.muc', function (event, jid, info, pres) {
     console.log('entered', jid, info);
     if (info.isFocus)
     {
-        focusJid = jid;
+        focusMucJid = jid;
         console.info("Ignore focus: " + jid +", real JID: " + info.jid);
-        // We don't want this notification for the focus.
-        // messageHandler.notify('Focus', 'connected', 'connected');
         return;
     }
 
@@ -944,6 +949,44 @@ $(document).bind('kicked.muc', function (event, jid) {
     }
 });
 
+$(document).bind('role.changed.muc', function (event, jid, member, pres) {
+        console.info("Role changed for " + jid + ", new role: " + member.role);
+
+        VideoLayout.showModeratorIndicator();
+
+        if (member.role === 'moderator') {
+            var displayName = member.displayName;
+            if (!displayName) {
+                displayName = 'Somebody';
+            }
+            messageHandler.notify(
+                displayName,
+                'connected',
+                'Moderator rights granted to ' + displayName + '!');
+        }
+    }
+);
+
+$(document).bind('local.role.changed.muc', function (event, jid, info, pres) {
+
+        console.info("My role changed, new role: " + info.role);
+        var isModerator = Moderator.isModerator();
+
+        VideoLayout.showModeratorIndicator();
+        Toolbar.showAuthenticateButton(
+            Moderator.isExternalAuthEnabled() && !isModerator);
+
+        if (isModerator) {
+            if (authenticationWindow) {
+                authenticationWindow.close();
+                authenticationWindow = null;
+            }
+            messageHandler.notify(
+                'Me', 'connected', 'Moderator rights granted !');
+        }
+    }
+);
+
 $(document).bind('passwordrequired.muc', function (event, jid) {
     console.log('on password required', jid);
 
@@ -995,6 +1038,44 @@ $(document).bind('passwordrequired.main', function (event) {
         }
     );
 });
+
+$(document).bind('auth_required.moderator', function () {
+    // extract room name from 'room@muc.server.net'
+    var room = roomName.substr(0, roomName.indexOf('@'));
+
+    messageHandler.openDialog(
+        'Stop',
+        'Authentication is required to create room:<br/>' + room,
+        true,
+        {
+            Authenticate: 'authNow',
+            Close: 'close'
+        },
+        function (onSubmitEvent, submitValue) {
+            console.info('On submit: ' + submitValue, submitValue);
+            if (submitValue === 'authNow') {
+                authenticateClicked();
+            } else {
+                Toolbar.showAuthenticateButton(true);
+            }
+        }
+    );
+});
+
+function authenticateClicked() {
+    // Get authentication URL
+    Moderator.getAuthUrl(function (url) {
+        // Open popup with authentication URL
+        authenticationWindow = messageHandler.openCenteredPopup(
+            url, 500, 400,
+            function () {
+                // On popup closed - retry room allocation
+                Moderator.allocateConferenceFocus(
+                    roomName, doJoinAfterFocus);
+                authenticationWindow = null;
+            });
+    });
+};
 
 /**
  * Checks if video identified by given src is desktop stream.
@@ -1474,6 +1555,9 @@ $(window).bind('beforeunload', function () {
 });
 
 function disposeConference(onUnload) {
+
+    Toolbar.showAuthenticateButton(false);
+
     var handler = getConferenceHandler();
     if (handler && handler.peerconnection) {
         // FIXME: probably removing streams is not required and close() should

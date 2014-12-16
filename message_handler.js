@@ -81,6 +81,32 @@ var messageHandler = (function(my) {
     };
 
     /**
+     * Opens new popup window for given <tt>url</tt> centered over current
+     * window.
+     *
+     * @param url the URL to be displayed in the popup window
+     * @param w the width of the popup window
+     * @param h the height of the popup window
+     * @param onPopupClosed optional callback function called when popup window
+     *        has been closed.
+     */
+    my.openCenteredPopup = function (url, w, h, onPopupClosed) {
+        var l = window.screenX + (window.innerWidth / 2) - (w / 2);
+        var t = window.screenY + (window.innerHeight / 2) - (h / 2);
+        var popup = window.open(
+            url, '_blank',
+            'top=' + t + ', left=' + l + ', width=' + w + ', height=' + h + '');
+        if (onPopupClosed) {
+            var pollTimer = window.setInterval(function () {
+                if (popup.closed !== false) {
+                    window.clearInterval(pollTimer);
+                    onPopupClosed();
+                }
+            }, 200);
+        }
+    };
+
+    /**
      * Shows a dialog prompting the user to send an error report.
      *
      * @param titleString the title of the message

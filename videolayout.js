@@ -485,7 +485,8 @@ var VideoLayout = (function (my) {
         if ($('#' + videoSpanId).length > 0) {
             // If there's been a focus change, make sure we add focus related
             // interface!!
-            if (Moderator.isModerator() && $('#remote_popupmenu_' + resourceJid).length <= 0) {
+            if (Moderator.isModerator() && !Moderator.isPeerModerator(peerJid)
+                && $('#remote_popupmenu_' + resourceJid).length <= 0) {
                 addRemoteVideoMenu(peerJid,
                     document.getElementById(videoSpanId));
             }
@@ -905,38 +906,42 @@ var VideoLayout = (function (my) {
             {
                 createModeratorIndicatorElement(indicatorSpan[0]);
             }
-        } else {
-            Object.keys(connection.emuc.members).forEach(function (jid) {
-                var member = connection.emuc.members[jid];
-                if (member.role === 'moderator') {
-                    var moderatorId
-                        = 'participant_' + Strophe.getResourceFromJid(jid);
-
-                    var moderatorContainer
-                        = document.getElementById(moderatorId);
-
-                    if (Strophe.getResourceFromJid(jid) === 'focus') {
-                        // Skip server side focus
-                        return;
-                    }
-                    if (!moderatorContainer) {
-                        console.error("No moderator container for " + jid);
-                        return;
-                    }
-                    var indicatorSpan
-                        = $('#' + moderatorId + ' .focusindicator');
-
-                    if (!indicatorSpan || indicatorSpan.length === 0) {
-                        indicatorSpan = document.createElement('span');
-                        indicatorSpan.className = 'focusindicator';
-
-                        moderatorContainer.appendChild(indicatorSpan);
-
-                        createModeratorIndicatorElement(indicatorSpan);
-                    }
-                }
-            });
         }
+        Object.keys(connection.emuc.members).forEach(function (jid) {
+            var member = connection.emuc.members[jid];
+            if (member.role === 'moderator') {
+                var moderatorId
+                    = 'participant_' + Strophe.getResourceFromJid(jid);
+
+                var moderatorContainer
+                    = document.getElementById(moderatorId);
+
+                if (Strophe.getResourceFromJid(jid) === 'focus') {
+                    // Skip server side focus
+                    return;
+                }
+                if (!moderatorContainer) {
+                    console.error("No moderator container for " + jid);
+                    return;
+                }
+                var menuSpan = $('#' + moderatorId + '>span.remotevideomenu');
+                if (menuSpan.length) {
+                    removeRemoteVideoMenu(moderatorId);
+                }
+
+                var indicatorSpan
+                    = $('#' + moderatorId + ' .focusindicator');
+
+                if (!indicatorSpan || indicatorSpan.length === 0) {
+                    indicatorSpan = document.createElement('span');
+                    indicatorSpan.className = 'focusindicator';
+
+                    moderatorContainer.appendChild(indicatorSpan);
+
+                    createModeratorIndicatorElement(indicatorSpan);
+                }
+            }
+        });
     };
 
     /**
@@ -1397,6 +1402,19 @@ var VideoLayout = (function (my) {
         var paddingSpan = document.createElement('span');
         paddingSpan.className = 'popupmenuPadding';
         popupmenuElement.appendChild(paddingSpan);
+    }
+
+    /**
+     * Removes remote video menu element from video element identified by
+     * given <tt>videoElementId</tt>.
+     *
+     * @param videoElementId the id of local or remote video element.
+     */
+    function removeRemoteVideoMenu(videoElementId) {
+        var menuSpan = $('#' + videoElementId + '>span.remotevideomenu');
+        if (menuSpan.length) {
+            menuSpan.remove();
+        }
     }
 
     /**

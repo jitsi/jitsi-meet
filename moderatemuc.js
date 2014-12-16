@@ -1,4 +1,4 @@
-/* global $, $iq, config, connection, focusJid, forceMuted, messageHandler,
+/* global $, $iq, config, connection, focusMucJid, forceMuted, messageHandler,
    setAudioMuted, Strophe, toggleAudio */
 /**
  * Moderate connection plugin.
@@ -17,7 +17,7 @@ Strophe.addConnectionPlugin('moderate', {
     },
     setMute: function (jid, mute) {
         console.info("set mute", mute);
-        var iqToFocus = $iq({to: focusJid, type: 'set'})
+        var iqToFocus = $iq({to: focusMucJid, type: 'set'})
             .c('mute', {
                 xmlns: 'http://jitsi.org/jitmeet/audio',
                 jid: jid
@@ -40,7 +40,7 @@ Strophe.addConnectionPlugin('moderate', {
     },
     onMute: function (iq) {
         var from = iq.getAttribute('from');
-        if (from !== focusJid) {
+        if (from !== focusMucJid) {
             console.warn("Ignored mute from non focus peer");
             return false;
         }

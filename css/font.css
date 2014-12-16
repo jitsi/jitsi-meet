@@ -42,6 +42,9 @@
 .icon-recEnable:before {
     content: "\e614";
 }
+.icon-authenticate:before {
+    content: "\e1ae";
+}
 .icon-kick1:before {
     content: "\e60f";
 }

@@ -1,4 +1,4 @@
-/* global $, $iq, config, connection, focusJid, messageHandler, Moderator,
+/* global $, $iq, config, connection, focusMucJid, messageHandler, Moderator,
    Toolbar, Util */
 var Recording = (function (my) {
     var recordingToken = null;
@@ -13,7 +13,7 @@ var Recording = (function (my) {
     // with the new recording state, according to the IQ.
     my.setRecording = function (state, token, callback) {
         var self = this;
-        var elem = $iq({to: focusJid, type: 'set'});
+        var elem = $iq({to: focusMucJid, type: 'set'});
         elem.c('conference', {
             xmlns: 'http://jitsi.org/protocol/colibri'
         });

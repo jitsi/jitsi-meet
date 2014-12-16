@@ -503,5 +503,11 @@ Strophe.addConnectionPlugin('emuc', {
     },
     isModerator: function() {
         return this.role === 'moderator';
+    },
+    getMemberRole: function(peerJid) {
+        if (this.members[peerJid]) {
+            return this.members[peerJid].role;
+        }
+        return null;
     }
 });

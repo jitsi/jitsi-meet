@@ -221,6 +221,19 @@ var Toolbar = (function (my) {
             buttonClick("#lockIcon", "icon-security icon-security-locked");
     };
 
+    /**
+     * Shows or hides authentication button
+     * @param show <tt>true</tt> to show or <tt>false</tt> to hide
+     */
+    my.showAuthenticateButton = function (show) {
+        if (show) {
+            $('#authentication').css({display: "inline"});
+        }
+        else {
+            $('#authentication').css({display: "none"});
+        }
+    };
+
     // Shows or hides the 'recording' button.
     my.showRecordingButton = function (show) {
         if (!config.enableRecording) {

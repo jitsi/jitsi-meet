@@ -9,9 +9,19 @@ var Moderator = (function (my) {
     var focusUserJid;
     var getNextTimeout = Util.createExpBackoffTimer(1000);
     var getNextErrorTimeout = Util.createExpBackoffTimer(1000);
+    // External authentication stuff
+    var externalAuthEnabled = false;
 
     my.isModerator = function () {
         return connection.emuc.isModerator();
+    };
+
+    my.isPeerModerator = function (peerJid) {
+        return connection.emuc.getMemberRole(peerJid) === 'moderator';
+    };
+
+    my.isExternalAuthEnabled = function () {
+        return externalAuthEnabled;
     };
 
     my.onModeratorStatusChanged = function (isModerator) {
@@ -27,25 +37,12 @@ var Moderator = (function (my) {
         if (isModerator && config.etherpad_base) {
             Etherpad.init();
         }
-
-        $(document).trigger('local.role.moderator', [isModerator]);
     };
 
     my.init = function () {
         $(document).bind(
-            'role.changed.muc',
-            function (event, jid, info, pres) {
-                console.info(
-                    "Role changed for " + jid + ", new role: " + info.role);
-                VideoLayout.showModeratorIndicator();
-            }
-        );
-
-        $(document).bind(
             'local.role.changed.muc',
             function (event, jid, info, pres) {
-                console.info("My role changed, new role: " + info.role);
-                VideoLayout.showModeratorIndicator();
                 Moderator.onModeratorStatusChanged(Moderator.isModerator());
             }
         );
@@ -141,6 +138,19 @@ var Moderator = (function (my) {
         return elem;
     };
 
+    my.parseConfigOptions = function (resultIq) {
+
+        Moderator.setFocusUserJid(
+            $(resultIq).find('conference').attr('focusjid'));
+
+        var extAuthParam
+            = $(resultIq).find('>conference>property[name=\'externalAuth\']');
+        if (extAuthParam.length) {
+            externalAuthEnabled = extAuthParam.attr('value') === 'true';
+        }
+        console.info("External authentication enabled: " + externalAuthEnabled);
+    };
+
     // FIXME: we need to show the fact that we're waiting for the focus
     // to the user(or that focus is not available)
     my.allocateConferenceFocus = function (roomName, callback) {
@@ -155,8 +165,9 @@ var Moderator = (function (my) {
                     // Reset both timers
                     getNextTimeout(true);
                     getNextErrorTimeout(true);
-                    Moderator.setFocusUserJid(
-                        $(result).find('conference').attr('focusjid'));
+                    // Setup config options
+                    Moderator.parseConfigOptions(result);
+                    // Exec callback
                     callback();
                 } else {
                     var waitMs = getNextTimeout();
@@ -171,6 +182,12 @@ var Moderator = (function (my) {
                 }
             },
             function (error) {
+                // Not authorized to create new room
+                if ($(error).find('>error>not-authorized').length) {
+                    console.warn("Unauthorized to start the conference");
+                    $(document).trigger('auth_required.moderator');
+                    return;
+                }
                 var waitMs = getNextErrorTimeout();
                 console.error("Focus error, retry after " + waitMs, error);
                 // Show message
@@ -184,6 +201,30 @@ var Moderator = (function (my) {
                     function () {
                         Moderator.allocateConferenceFocus(roomName, callback);
                     }, waitMs);
+            }
+        );
+    };
+
+    my.getAuthUrl = function (urlCallback) {
+        var iq = $iq({to: Moderator.getFocusComponent(), type: 'get'});
+        iq.c('auth-url', {
+            xmlns: 'http://jitsi.org/protocol/focus',
+            room: roomName
+        });
+        connection.sendIQ(
+            iq,
+            function (result) {
+                var url = $(result).find('auth-url').attr('url');
+                if (url) {
+                    console.info("Got auth url: " + url);
+                    urlCallback(url);
+                } else {
+                    console.error(
+                        "Failed to get auth url fro mthe focus", result);
+                }
+            },
+            function (error) {
+                console.error("Get auth url error", error);
             }
         );
     };

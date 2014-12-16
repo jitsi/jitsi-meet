@@ -184,6 +184,12 @@
                     <a class="button" data-container="body" data-toggle="popover" data-placement="bottom" shortcut="toggleVideoPopover" content="Start / stop camera" onclick='toggleVideo();'>
                         <i id="video" class="icon-camera"></i>
                     </a>
+                    <span id="authentication" style="display: none">
+                        <div class="header_button_separator"></div>
+                        <a class="button" data-container="body" data-toggle="popover" data-placement="bottom" content="Authenticate" onclick='authenticateClicked();'>
+                            <i id="authButton" class="icon-avatar"></i>
+                        </a>
+                    </span>
                     <span id="recording" style="display: none">
                         <div class="header_button_separator"></div>
                         <a class="button" data-container="body" data-toggle="popover" data-placement="bottom" content="Record" onclick='toggleRecording();'>
