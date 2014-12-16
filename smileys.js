@@ -7,7 +7,7 @@ var smileys = {
     "smiley6": '(wave)',
     "smiley7": '(blush)',
     "smiley8": '(chuckle)',
-    "smiley9": '(shoked)',
+    "smiley9": '(shocked)',
     "smiley10": ':*',
     "smiley11": '(n)',
     "smiley12": '(search)',
