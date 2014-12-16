@@ -1074,6 +1074,13 @@ function authenticateClicked() {
                     roomName, doJoinAfterFocus);
                 authenticationWindow = null;
             });
+        if (!authenticationWindow) {
+            Toolbar.showAuthenticateButton(true);
+            messageHandler.openMessageDialog(
+                null, "Your browser is blocking popup windows from this site." +
+                " Please enable popups in your browser security settings" +
+                " and try again.");
+        }
     });
 };
 

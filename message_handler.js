@@ -89,6 +89,9 @@ var messageHandler = (function(my) {
      * @param h the height of the popup window
      * @param onPopupClosed optional callback function called when popup window
      *        has been closed.
+     *
+     * @returns popup window object if opened successfully or undefined
+     *          in case we failed to open it(popup blocked)
      */
     my.openCenteredPopup = function (url, w, h, onPopupClosed) {
         var l = window.screenX + (window.innerWidth / 2) - (w / 2);
@@ -96,7 +99,7 @@ var messageHandler = (function(my) {
         var popup = window.open(
             url, '_blank',
             'top=' + t + ', left=' + l + ', width=' + w + ', height=' + h + '');
-        if (onPopupClosed) {
+        if (popup && onPopupClosed) {
             var pollTimer = window.setInterval(function () {
                 if (popup.closed !== false) {
                     window.clearInterval(pollTimer);
@@ -104,6 +107,7 @@ var messageHandler = (function(my) {
                 }
             }, 200);
         }
+        return popup;
     };
 
     /**
