@@ -14,5 +14,6 @@ var interfaceConfig = {
     SHOW_POWERED_BY: false,
     GENERATE_ROOMNAMES_ON_WELCOME_PAGE: true,
     APP_NAME: "Jitsi Meet",
+    INVITATION_POWERED_BY: true,
     ACTIVE_SPEAKER_AVATAR_SIZE: 100
 };

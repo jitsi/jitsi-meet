@@ -120,15 +120,15 @@ var Toolbar = (function (my) {
         }
 
         var conferenceName = roomUrl.substring(roomUrl.lastIndexOf('/') + 1);
-        var subject = "Invitation to a Jitsi Meet (" + conferenceName + ")";
-        var body = "Hey there, I%27d like to invite you to a Jitsi Meet" +
+        var subject = "Invitation to a " + interfaceConfig.APP_NAME + " (" + conferenceName + ")";
+        var body = "Hey there, I%27d like to invite you to a " + interfaceConfig.APP_NAME +
                     " conference I%27ve just set up.%0D%0A%0D%0A" +
                     "Please click on the following link in order" +
                     " to join the conference.%0D%0A%0D%0A" +
                     roomUrl +
                     "%0D%0A%0D%0A" +
                     sharedKeyText +
-                    "Note that Jitsi Meet is currently" +
+                    "Note that " + interfaceConfig.APP_NAME + " is currently" +
                     " only supported by Chromium," +
                     " Google Chrome and Opera, so you need" +
                     " to be using one of these browsers.%0D%0A%0D%0A" +
@@ -136,6 +136,10 @@ var Toolbar = (function (my) {
 
         if (window.localStorage.displayname) {
             body += "%0D%0A%0D%0A" + window.localStorage.displayname;
+        }
+
+        if (interfaceConfig.INVITATION_POWERED_BY) {
+            body += "%0D%0A%0D%0A--%0D%0Apowered by jitsi.org";
         }
 
         window.open("mailto:?subject=" + subject + "&body=" + body, '_blank');
