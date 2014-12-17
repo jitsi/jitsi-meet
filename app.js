@@ -19,18 +19,6 @@ var notReceivedSSRCs = [];
 var jid2Ssrc = {};
 
 /**
- * The stats collector that process stats data and triggers updates to app.js.
- * @type {StatsCollector}
- */
-var statsCollector = null;
-
-/**
- * The stats collector for the local stream.
- * @type {LocalStatsCollector}
- */
-var localStatsCollector = null;
-
-/**
  * Indicates whether ssrc is camera video or desktop stream.
  * FIXME: remove those maps
  */
@@ -100,7 +88,7 @@ function init() {
                 videoStream.addTrack(videoTracks[i]);
             }
             VideoLayout.changeLocalAudio(audioStream);
-            startLocalRtpStatsCollector(audioStream);
+            statistics.onStreamCreated(audioStream);
 
 
             VideoLayout.changeLocalVideo(videoStream, true);
@@ -108,7 +96,7 @@ function init() {
         else
         {
             VideoLayout.changeLocalStream(stream);
-            startLocalRtpStatsCollector(stream);
+            statistics.onStreamCreated(stream);
 
         }
 
@@ -559,7 +547,7 @@ function muteVideo(pc, unmute) {
 function audioLevelUpdated(jid, audioLevel)
 {
     var resourceJid;
-    if(jid === LocalStatsCollector.LOCAL_JID)
+    if(jid === statistics.LOCAL_JID)
     {
         resourceJid = AudioLevels.LOCAL_LEVEL;
         if(isAudioMuted())
@@ -575,66 +563,13 @@ function audioLevelUpdated(jid, audioLevel)
     AudioLevels.updateAudioLevel(resourceJid, audioLevel);
 }
 
-/**
- * Starts the {@link StatsCollector} if the feature is enabled in config.js.
- */
-function startRtpStatsCollector()
-{
-    stopRTPStatsCollector();
-    if (config.enableRtpStats)
-    {
-        statsCollector = new StatsCollector(
-            getConferenceHandler().peerconnection, 200, audioLevelUpdated, 2000,
-            ConnectionQuality.updateLocalStats);
-        statsCollector.start();
-    }
-}
-
-/**
- * Stops the {@link StatsCollector}.
- */
-function stopRTPStatsCollector()
-{
-    if (statsCollector)
-    {
-        statsCollector.stop();
-        statsCollector = null;
-        ConnectionQuality.stopSendingStats();
-    }
-}
-
-/**
- * Starts the {@link LocalStatsCollector} if the feature is enabled in config.js
- * @param stream the stream that will be used for collecting statistics.
- */
-function startLocalRtpStatsCollector(stream)
-{
-    if(config.enableRtpStats)
-    {
-        localStatsCollector = new LocalStatsCollector(stream, 100, audioLevelUpdated);
-        localStatsCollector.start();
-    }
-}
-
-/**
- * Stops the {@link LocalStatsCollector}.
- */
-function stopLocalRtpStatsCollector()
-{
-    if(localStatsCollector)
-    {
-        localStatsCollector.stop();
-        localStatsCollector = null;
-    }
-}
-
 $(document).bind('callincoming.jingle', function (event, sid) {
     var sess = connection.jingle.sessions[sid];
 
     // TODO: do we check activecall == null?
     activecall = sess;
 
-    startRtpStatsCollector();
+    statistics.onConfereceCreated(sess);
 
     // Bind data channel listener in case we're a regular participant
     if (config.openSctp)
@@ -652,7 +587,7 @@ $(document).bind('callincoming.jingle', function (event, sid) {
 
 $(document).bind('conferenceCreated.jingle', function (event, focus)
 {
-    startRtpStatsCollector();
+    statistics.onConfereceCreated(getConferenceHandler());
 });
 
 $(document).bind('conferenceCreated.jingle', function (event, focus)
@@ -1461,6 +1396,10 @@ $(document).ready(function () {
         }
     });
 
+    statistics.addAudioLevelListener(audioLevelUpdated);
+    statistics.addConnectionStatsListener(ConnectionQuality.updateLocalStats);
+    statistics.addRemoteStatsStopListener(ConnectionQuality.stopSendingStats);
+    
     Moderator.init();
 
     // Set the defaults for prompt dialogs.
@@ -1577,10 +1516,7 @@ function disposeConference(onUnload) {
         }
         handler.peerconnection.close();
     }
-    stopRTPStatsCollector();
-    if(onUnload) {
-        stopLocalRtpStatsCollector();
-    }
+    statistics.onDisposeConference(onUnload);
     activecall = null;
 }
 

@@ -1,3 +1,135 @@
+!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.statistics=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+/**
+ * Provides statistics for the local stream.
+ */
+
+
+/**
+ * Size of the webaudio analizer buffer.
+ * @type {number}
+ */
+var WEBAUDIO_ANALIZER_FFT_SIZE = 2048;
+
+/**
+ * Value of the webaudio analizer smoothing time parameter.
+ * @type {number}
+ */
+var WEBAUDIO_ANALIZER_SMOOTING_TIME = 0.8;
+
+/**
+ * Converts time domain data array to audio level.
+ * @param array the time domain data array.
+ * @returns {number} the audio level
+ */
+function timeDomainDataToAudioLevel(samples) {
+
+    var maxVolume = 0;
+
+    var length = samples.length;
+
+    for (var i = 0; i < length; i++) {
+        if (maxVolume < samples[i])
+            maxVolume = samples[i];
+    }
+
+    return parseFloat(((maxVolume - 127) / 128).toFixed(3));
+};
+
+/**
+ * Animates audio level change
+ * @param newLevel the new audio level
+ * @param lastLevel the last audio level
+ * @returns {Number} the audio level to be set
+ */
+function animateLevel(newLevel, lastLevel)
+{
+    var value = 0;
+    var diff = lastLevel - newLevel;
+    if(diff > 0.2)
+    {
+        value = lastLevel - 0.2;
+    }
+    else if(diff < -0.4)
+    {
+        value = lastLevel + 0.4;
+    }
+    else
+    {
+        value = newLevel;
+    }
+
+    return parseFloat(value.toFixed(3));
+}
+
+
+/**
+ * <tt>LocalStatsCollector</tt> calculates statistics for the local stream.
+ *
+ * @param stream the local stream
+ * @param interval stats refresh interval given in ms.
+ * @param {function(LocalStatsCollector)} updateCallback the callback called on stats
+ *                                   update.
+ * @constructor
+ */
+function LocalStatsCollector(stream, interval, statisticsService, eventEmitter) {
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
+    this.stream = stream;
+    this.intervalId = null;
+    this.intervalMilis = interval;
+    this.eventEmitter = eventEmitter;
+    this.audioLevel = 0;
+    this.statisticsService = statisticsService;
+}
+
+/**
+ * Starts the collecting the statistics.
+ */
+LocalStatsCollector.prototype.start = function () {
+    if (!window.AudioContext)
+        return;
+
+    var context = new AudioContext();
+    var analyser = context.createAnalyser();
+    analyser.smoothingTimeConstant = WEBAUDIO_ANALIZER_SMOOTING_TIME;
+    analyser.fftSize = WEBAUDIO_ANALIZER_FFT_SIZE;
+
+
+    var source = context.createMediaStreamSource(this.stream);
+    source.connect(analyser);
+
+
+    var self = this;
+
+    this.intervalId = setInterval(
+        function () {
+            var array = new Uint8Array(analyser.frequencyBinCount);
+            analyser.getByteTimeDomainData(array);
+            var audioLevel = timeDomainDataToAudioLevel(array);
+            if(audioLevel != self.audioLevel) {
+                self.audioLevel = animateLevel(audioLevel, self.audioLevel);
+                self.eventEmitter.emit(
+                    "statistics.audioLevel",
+                    self.statisticsService.LOCAL_JID,
+                    self.audioLevel);
+            }
+        },
+        this.intervalMilis
+    );
+
+};
+
+/**
+ * Stops collecting the statistics.
+ */
+LocalStatsCollector.prototype.stop = function () {
+    if (this.intervalId) {
+        clearInterval(this.intervalId);
+        this.intervalId = null;
+    }
+};
+
+module.exports = LocalStatsCollector;
+},{}],2:[function(require,module,exports){
 /* global focusMucJid, ssrc2jid */
 /* jshint -W117 */
 /**
@@ -11,6 +143,13 @@ function calculatePacketLoss(lostPackets, totalPackets) {
     if(!totalPackets || totalPackets <= 0 || !lostPackets || lostPackets <= 0)
         return 0;
     return Math.round((lostPackets/totalPackets)*100);
+}
+
+function getStatValue(item, name) {
+    if(!keyMap[RTC.browser][name])
+        throw "The property isn't supported!";
+    var key = keyMap[RTC.browser][name];
+    return RTC.browser == "chrome"? item.stat(key) : item[key];
 }
 
 /**
@@ -124,9 +263,7 @@ PeerStats.transport = [];
  * called on stats update.
  * @constructor
  */
-function StatsCollector(peerconnection, audioLevelsInterval,
-                        audioLevelsUpdateCallback, statsInterval,
-                        statsUpdateCallback)
+function StatsCollector(peerconnection, audioLevelsInterval, statsInterval, eventEmitter)
 {
     this.peerconnection = peerconnection;
     this.baselineAudioLevelsReport = null;
@@ -134,6 +271,7 @@ function StatsCollector(peerconnection, audioLevelsInterval,
     this.currentStatsReport = null;
     this.baselineStatsReport = null;
     this.audioLevelsIntervalId = null;
+    this.eventEmitter = eventEmitter;
 
     /**
      * Gather PeerConnection stats once every this many milliseconds.
@@ -161,8 +299,8 @@ function StatsCollector(peerconnection, audioLevelsInterval,
      */
     this.statsToBeLogged =
     {
-      timestamps: [],
-      stats: {}
+        timestamps: [],
+        stats: {}
     };
 
     // Updates stats interval
@@ -172,10 +310,9 @@ function StatsCollector(peerconnection, audioLevelsInterval,
     this.statsIntervalMilis = statsInterval;
     // Map of jids to PeerStats
     this.jid2stats = {};
-
-    this.audioLevelsUpdateCallback = audioLevelsUpdateCallback;
-    this.statsUpdateCallback = statsUpdateCallback;
 }
+
+module.exports = StatsCollector;
 
 /**
  * Stops stats updates.
@@ -339,7 +476,7 @@ StatsCollector.prototype.logStats = function () {
     // XEP-0337-ish
     var message = $msg({to: focusMucJid, type: 'normal'});
     message.c('log', { xmlns: 'urn:xmpp:eventlog',
-                       id: 'PeerConnectionStats'});
+        id: 'PeerConnectionStats'});
     message.c('message').t(content).up();
     if (deflate) {
         message.c('tag', {name: "deflated", value: "true"}).up();
@@ -616,13 +753,13 @@ StatsCollector.prototype.processStatsReport = function () {
     PeerStats.packetLoss = {
         total:
             calculatePacketLoss(lostPackets.download + lostPackets.upload,
-                totalPackets.download + totalPackets.upload),
+                    totalPackets.download + totalPackets.upload),
         download:
             calculatePacketLoss(lostPackets.download, totalPackets.download),
         upload:
             calculatePacketLoss(lostPackets.upload, totalPackets.upload)
     };
-    this.statsUpdateCallback(
+    this.eventEmitter.emit("statistics.connectionstats",
         {
             "bitrate": PeerStats.bitrate,
             "packetLoss": PeerStats.packetLoss,
@@ -696,17 +833,450 @@ StatsCollector.prototype.processAudioLevelReport = function ()
             audioLevel = audioLevel / 32767;
             jidStats.setSsrcAudioLevel(ssrc, audioLevel);
             if(jid != connection.emuc.myroomjid)
-                this.audioLevelsUpdateCallback(jid, audioLevel);
+                this.eventEmitter.emit("statistics.audioLevel", jid, audioLevel);
         }
 
     }
 
 
 };
+},{}],3:[function(require,module,exports){
+/**
+ * Created by hristo on 8/4/14.
+ */
+var LocalStats = require("./LocalStatsCollector.js");
+var RTPStats = require("./RTPStatsCollector.js");
+var EventEmitter = require("events");
+//var StreamEventTypes = require("../service/RTC/StreamEventTypes.js");
+//var XMPPEvents = require("../service/xmpp/XMPPEvents");
 
-function getStatValue(item, name) {
-    if(!keyMap[RTC.browser][name])
-        throw "The property isn't supported!";
-    var key = keyMap[RTC.browser][name];
-    return RTC.browser == "chrome"? item.stat(key) : item[key];
+var eventEmitter = new EventEmitter();
+
+var localStats = null;
+
+var rtpStats = null;
+
+var RTCService = null;
+
+function stopLocal()
+{
+    if(localStats)
+    {
+        localStats.stop();
+        localStats = null;
+    }
 }
+
+function stopRemote()
+{
+    if(rtpStats)
+    {
+        rtpStats.stop();
+        eventEmitter.emit("statistics.stop");
+        rtpStats = null;
+    }
+}
+
+function startRemoteStats (peerconnection) {
+    if (config.enableRtpStats)
+    {
+        if(rtpStats)
+        {
+            rtpStats.stop();
+            rtpStats = null;
+        }
+
+        rtpStats = new RTPStats(peerconnection, 200, 2000, eventEmitter);
+        rtpStats.start();
+    }
+
+}
+
+
+var statistics =
+{
+    /**
+     * Indicates that this audio level is for local jid.
+     * @type {string}
+     */
+    LOCAL_JID: 'local',
+
+    addAudioLevelListener: function(listener)
+    {
+        eventEmitter.on("statistics.audioLevel", listener);
+    },
+
+    removeAudioLevelListener: function(listener)
+    {
+        eventEmitter.removeListener("statistics.audioLevel", listener);
+    },
+
+    addConnectionStatsListener: function(listener)
+    {
+        eventEmitter.on("statistics.connectionstats", listener);
+    },
+
+    removeConnectionStatsListener: function(listener)
+    {
+        eventEmitter.removeListener("statistics.connectionstats", listener);
+    },
+
+
+    addRemoteStatsStopListener: function(listener)
+    {
+        eventEmitter.on("statistics.stop", listener);
+    },
+
+    removeRemoteStatsStopListener: function(listener)
+    {
+        eventEmitter.removeListener("statistics.stop", listener);
+    },
+
+    stop: function () {
+        stopLocal();
+        stopRemote();
+        if(eventEmitter)
+        {
+            eventEmitter.removeAllListeners();
+        }
+    },
+
+    stopRemoteStatistics: function()
+    {
+        stopRemote();
+    },
+
+    onConfereceCreated: function (event) {
+        startRemoteStats(event.peerconnection);
+    },
+
+    onDisposeConference: function (onUnload) {
+        stopRemote();
+        if(onUnload) {
+            stopLocal();
+            eventEmitter.removeAllListeners();
+        }
+    },
+
+    onStreamCreated: function(stream)
+    {
+        if(stream.getAudioTracks().length === 0)
+            return;
+
+        localStats = new LocalStats(stream, 100, this,
+            eventEmitter);
+        localStats.start();
+    }
+};
+
+
+
+
+module.exports = statistics;
+},{"./LocalStatsCollector.js":1,"./RTPStatsCollector.js":2,"events":4}],4:[function(require,module,exports){
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+function EventEmitter() {
+  this._events = this._events || {};
+  this._maxListeners = this._maxListeners || undefined;
+}
+module.exports = EventEmitter;
+
+// Backwards-compat with node 0.10.x
+EventEmitter.EventEmitter = EventEmitter;
+
+EventEmitter.prototype._events = undefined;
+EventEmitter.prototype._maxListeners = undefined;
+
+// By default EventEmitters will print a warning if more than 10 listeners are
+// added to it. This is a useful default which helps finding memory leaks.
+EventEmitter.defaultMaxListeners = 10;
+
+// Obviously not all Emitters should be limited to 10. This function allows
+// that to be increased. Set to zero for unlimited.
+EventEmitter.prototype.setMaxListeners = function(n) {
+  if (!isNumber(n) || n < 0 || isNaN(n))
+    throw TypeError('n must be a positive number');
+  this._maxListeners = n;
+  return this;
+};
+
+EventEmitter.prototype.emit = function(type) {
+  var er, handler, len, args, i, listeners;
+
+  if (!this._events)
+    this._events = {};
+
+  // If there is no 'error' event listener then throw.
+  if (type === 'error') {
+    if (!this._events.error ||
+        (isObject(this._events.error) && !this._events.error.length)) {
+      er = arguments[1];
+      if (er instanceof Error) {
+        throw er; // Unhandled 'error' event
+      } else {
+        throw TypeError('Uncaught, unspecified "error" event.');
+      }
+      return false;
+    }
+  }
+
+  handler = this._events[type];
+
+  if (isUndefined(handler))
+    return false;
+
+  if (isFunction(handler)) {
+    switch (arguments.length) {
+      // fast cases
+      case 1:
+        handler.call(this);
+        break;
+      case 2:
+        handler.call(this, arguments[1]);
+        break;
+      case 3:
+        handler.call(this, arguments[1], arguments[2]);
+        break;
+      // slower
+      default:
+        len = arguments.length;
+        args = new Array(len - 1);
+        for (i = 1; i < len; i++)
+          args[i - 1] = arguments[i];
+        handler.apply(this, args);
+    }
+  } else if (isObject(handler)) {
+    len = arguments.length;
+    args = new Array(len - 1);
+    for (i = 1; i < len; i++)
+      args[i - 1] = arguments[i];
+
+    listeners = handler.slice();
+    len = listeners.length;
+    for (i = 0; i < len; i++)
+      listeners[i].apply(this, args);
+  }
+
+  return true;
+};
+
+EventEmitter.prototype.addListener = function(type, listener) {
+  var m;
+
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  if (!this._events)
+    this._events = {};
+
+  // To avoid recursion in the case that type === "newListener"! Before
+  // adding it to the listeners, first emit "newListener".
+  if (this._events.newListener)
+    this.emit('newListener', type,
+              isFunction(listener.listener) ?
+              listener.listener : listener);
+
+  if (!this._events[type])
+    // Optimize the case of one listener. Don't need the extra array object.
+    this._events[type] = listener;
+  else if (isObject(this._events[type]))
+    // If we've already got an array, just append.
+    this._events[type].push(listener);
+  else
+    // Adding the second element, need to change to array.
+    this._events[type] = [this._events[type], listener];
+
+  // Check for listener leak
+  if (isObject(this._events[type]) && !this._events[type].warned) {
+    var m;
+    if (!isUndefined(this._maxListeners)) {
+      m = this._maxListeners;
+    } else {
+      m = EventEmitter.defaultMaxListeners;
+    }
+
+    if (m && m > 0 && this._events[type].length > m) {
+      this._events[type].warned = true;
+      console.error('(node) warning: possible EventEmitter memory ' +
+                    'leak detected. %d listeners added. ' +
+                    'Use emitter.setMaxListeners() to increase limit.',
+                    this._events[type].length);
+      if (typeof console.trace === 'function') {
+        // not supported in IE 10
+        console.trace();
+      }
+    }
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.on = EventEmitter.prototype.addListener;
+
+EventEmitter.prototype.once = function(type, listener) {
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  var fired = false;
+
+  function g() {
+    this.removeListener(type, g);
+
+    if (!fired) {
+      fired = true;
+      listener.apply(this, arguments);
+    }
+  }
+
+  g.listener = listener;
+  this.on(type, g);
+
+  return this;
+};
+
+// emits a 'removeListener' event iff the listener was removed
+EventEmitter.prototype.removeListener = function(type, listener) {
+  var list, position, length, i;
+
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  if (!this._events || !this._events[type])
+    return this;
+
+  list = this._events[type];
+  length = list.length;
+  position = -1;
+
+  if (list === listener ||
+      (isFunction(list.listener) && list.listener === listener)) {
+    delete this._events[type];
+    if (this._events.removeListener)
+      this.emit('removeListener', type, listener);
+
+  } else if (isObject(list)) {
+    for (i = length; i-- > 0;) {
+      if (list[i] === listener ||
+          (list[i].listener && list[i].listener === listener)) {
+        position = i;
+        break;
+      }
+    }
+
+    if (position < 0)
+      return this;
+
+    if (list.length === 1) {
+      list.length = 0;
+      delete this._events[type];
+    } else {
+      list.splice(position, 1);
+    }
+
+    if (this._events.removeListener)
+      this.emit('removeListener', type, listener);
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.removeAllListeners = function(type) {
+  var key, listeners;
+
+  if (!this._events)
+    return this;
+
+  // not listening for removeListener, no need to emit
+  if (!this._events.removeListener) {
+    if (arguments.length === 0)
+      this._events = {};
+    else if (this._events[type])
+      delete this._events[type];
+    return this;
+  }
+
+  // emit removeListener for all listeners on all events
+  if (arguments.length === 0) {
+    for (key in this._events) {
+      if (key === 'removeListener') continue;
+      this.removeAllListeners(key);
+    }
+    this.removeAllListeners('removeListener');
+    this._events = {};
+    return this;
+  }
+
+  listeners = this._events[type];
+
+  if (isFunction(listeners)) {
+    this.removeListener(type, listeners);
+  } else {
+    // LIFO order
+    while (listeners.length)
+      this.removeListener(type, listeners[listeners.length - 1]);
+  }
+  delete this._events[type];
+
+  return this;
+};
+
+EventEmitter.prototype.listeners = function(type) {
+  var ret;
+  if (!this._events || !this._events[type])
+    ret = [];
+  else if (isFunction(this._events[type]))
+    ret = [this._events[type]];
+  else
+    ret = this._events[type].slice();
+  return ret;
+};
+
+EventEmitter.listenerCount = function(emitter, type) {
+  var ret;
+  if (!emitter._events || !emitter._events[type])
+    ret = 0;
+  else if (isFunction(emitter._events[type]))
+    ret = 1;
+  else
+    ret = emitter._events[type].length;
+  return ret;
+};
+
+function isFunction(arg) {
+  return typeof arg === 'function';
+}
+
+function isNumber(arg) {
+  return typeof arg === 'number';
+}
+
+function isObject(arg) {
+  return typeof arg === 'object' && arg !== null;
+}
+
+function isUndefined(arg) {
+  return arg === void 0;
+}
+
+},{}]},{},[3])(3)
+});
