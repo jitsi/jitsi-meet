@@ -58,14 +58,6 @@ Launch again a browser with the Jitsi Meet URL and you'll see a telephone icon o
 
 Enjoy!
 
-## Troubleshoot
-
-If the SIP gateway doesn't work on first try, restart it.
-
-```sh
-/etc/init.d/jigasi restart
-```
-
 ## Deinstall
 
 ```sh
