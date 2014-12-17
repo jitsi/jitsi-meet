@@ -6,13 +6,11 @@ You can also try it out yourself at https://meet.jit.si .
 
 Jitsi Meet allows for very efficient collaboration. It allows users to stream their desktop or only some windows. It also supports shared document editing with Etherpad and remote presentations with Prezi. 
 
-## Install
+## Installation
 
-Installing Jitsi Meet is quite a simple experience even though it requires installing a few other components first, such as Jitsi Videobridge, a web server such as Nginx and an XMPP one like Prosody.
+Installing Jitsi Meet is quite a simple experience. For Debian-based systems, we recommend following the [quick-install](https://github.com/jitsi/jitsi-meet/blob/master/doc/quick-install.md) document, which uses the package system.
 
-You can find information on how to deploy Jitsi Meet in the [installation instructions](https://jitsi.org/meet/deploy)
-
-You may also find it helpful to have a look at our sample [config files](https://github.com/jitsi/jitsi-meet/tree/master/doc/example-config-files/) 
+For other systems, or if you wish to install all components manually, see the [detailed installation instructions](https://github.com/jitsi/jitsi-meet/blob/master/doc/manual-install.md).
 
 ## Discuss
 Please use the [Jitsi dev mailing list](http://lists.jitsi.org/pipermail/dev/) to discuss feature requests before opening an issue on github. 
