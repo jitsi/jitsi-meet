@@ -7,22 +7,6 @@ N.B.: All commands are supposed to be run by root. If you are logged in as a reg
 ## Basic Jitsi Meet install
 
 ### Add the repository
-
-```sh
-add-apt-repository 'deb http://download.jitsi.org/nightly/deb unstable/'
-wget -qO - https://download.jitsi.org/nightly/deb/unstable/archive.key | apt-key add -
-```
-
-add-apt-repository is in the default Ubuntu install and is available for both Ubuntu and Debian, but if it's not present, either install it with
-
-```sh
-apt-get -y install software-properties-common
-add-apt-repository 'deb http://download.jitsi.org/nightly/deb unstable/'
-wget -qO - https://download.jitsi.org/nightly/deb/unstable/archive.key | apt-key add -
-```
-
-or add the repository by hand with
-
 ```sh
 echo 'deb http://download.jitsi.org/nightly/deb unstable/' >> /etc/apt/sources.list
 wget -qO - https://download.jitsi.org/nightly/deb/unstable/archive.key | apt-key add -
