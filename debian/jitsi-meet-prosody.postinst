@@ -52,6 +52,11 @@ case "$1" in
                 ln -s $PROSODY_HOST_CONFIG /etc/prosody/conf.d/$JVB_HOSTNAME.cfg.lua
             fi
             PROSODY_CREATE_JICOFO_USER="true"
+            # on some distributions main prosody config doesn't include configs
+            # from conf.d folder enable it as this where we put our config by default
+            if ! grep -q "Include \"conf\.d\/\*\.cfg.lua\"" $PROSODY_CONFIG_OLD; then
+                echo -e "\nInclude \"conf.d/*.cfg.lua\"" >> $PROSODY_CONFIG_OLD
+            fi
         fi
         # UPGRADE to server side focus check if focus is configured
         if [ -f $PROSODY_HOST_CONFIG ] && ! grep -q "VirtualHost \"auth.$JVB_HOSTNAME\"" $PROSODY_HOST_CONFIG; then
