@@ -61,7 +61,7 @@ Enjoy!
 ## Deinstall
 
 ```sh
-apt-get purge jigasi jitsi-meet jitsi-videobridge
+apt-get purge jigasi jitsi-meet jicofo jitsi-videobridge
 ```
 
 Somethimes the following packages will fail to uninstall properly:
