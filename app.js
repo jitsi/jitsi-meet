@@ -752,7 +752,7 @@ $(document).bind('entered.muc', function (event, jid, info, pres) {
 $(document).bind('left.muc', function (event, jid) {
     console.log('left.muc', jid);
     var displayName = $('#participant_' + Strophe.getResourceFromJid(jid) +
-        '>.displayname').text();
+        '>.displayname').html();
     messageHandler.notify(displayName || 'Somebody',
         'disconnected',
         'disconnected');

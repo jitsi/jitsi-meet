@@ -170,7 +170,7 @@ var ContactList = (function (my) {
         var contactName = $('#contactlist #' + resourceJid + '>p');
 
         if (contactName && displayName && displayName.length > 0)
-            contactName.text(displayName);
+            contactName.html(displayName);
     });
 
     my.setClickable = function(resourceJid, isClickable) {
