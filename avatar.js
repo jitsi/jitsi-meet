@@ -129,10 +129,10 @@ var Avatar = (function(my) {
             }
         }
 
-        if (!mediaStreams[jid] || !mediaStreams[jid][MediaStream.VIDEO_TYPE]) {
+        if (!RTC.remoteStreams[jid] || !RTC.remoteStreams[jid][MediaStreamType.VIDEO_TYPE]) {
             return null;
         }
-        return mediaStreams[jid][MediaStream.VIDEO_TYPE].muted;
+        return RTC.remoteStreams[jid][MediaStream.VIDEO_TYPE].muted;
     }
 
     function getGravatarUrl(id, size) {

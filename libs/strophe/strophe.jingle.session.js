@@ -262,19 +262,7 @@ JingleSession.prototype.sendIceCandidate = function (candidate) {
                     },
                     10000);
             }
-
-            RTC.getLocalSSRC(this, function (ssrcs) {
-                if(ssrcs)
-                {
-                    sendJingle(ssrcs);
-                    $(document).trigger("setLocalDescription.jingle", [self.sid]);
-                }
-                else
-                {
-                    sendJingle();
-                }
-            });
-
+            sendJingle();
         }
         this.lasticecandidate = true;
         console.log('Have we encountered any srflx candidates? ' + this.hadstuncandidate);
@@ -390,11 +378,8 @@ JingleSession.prototype.createdOffer = function (sdp) {
         function () {
             if(this.usetrickle)
             {
-                RTC.getLocalSSRC(function(ssrc)
-                {
-                    sendJingle(ssrc);
-                    $(document).trigger('setLocalDescription.jingle', [self.sid]);
-                });
+                sendJingle();
+                $(document).trigger('setLocalDescription.jingle', [self.sid]);
             }
             else
                 $(document).trigger('setLocalDescription.jingle', [self.sid]);
@@ -631,10 +616,8 @@ JingleSession.prototype.createdAnswer = function (sdp, provisional) {
 
             //console.log('setLocalDescription success');
             if (self.usetrickle && !self.usepranswer) {
-                RTC.getLocalSSRC(self, function (ssrc) {
-                    sendJingle(ssrc);
-                    $(document).trigger('setLocalDescription.jingle', [self.sid]);
-                });
+                sendJingle();
+                $(document).trigger('setLocalDescription.jingle', [self.sid]);
             }
             else
                 $(document).trigger('setLocalDescription.jingle', [self.sid]);

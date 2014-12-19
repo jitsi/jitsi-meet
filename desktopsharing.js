@@ -28,7 +28,7 @@ var _desktopSharingEnabled = null;
  * Flag 'chrome://flags/#enable-usermedia-screen-capture' must be enabled.
  */
 function obtainWebRTCScreen(streamCallback, failCallback) {
-    getUserMediaWithConstraints(
+    RTC.getUserMediaWithConstraints(
         ['screen'],
         streamCallback,
         failCallback
@@ -135,7 +135,7 @@ function doGetStreamFromExtension(streamCallback, failCallback) {
             }
             console.log("Response from extension: " + response);
             if (response.streamId) {
-                getUserMediaWithConstraints(
+                RTC.getUserMediaWithConstraints(
                     ['desktop'],
                     function (stream) {
                         streamCallback(stream);
@@ -303,7 +303,7 @@ function toggleScreenSharing() {
             getSwitchStreamFailed);
     } else {
         // Disable screen stream
-        getUserMediaWithConstraints(
+        RTC.getUserMediaWithConstraints(
             ['video'],
             function (stream) {
                 // We are now using camera stream

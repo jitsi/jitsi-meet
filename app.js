@@ -4,14 +4,12 @@ var connection = null;
 var authenticatedUser = false;
 var authenticationWindow = null;
 var activecall = null;
-var RTC = null;
 var nickname = null;
 var sharedKey = '';
 var focusMucJid = null;
 var roomUrl = null;
 var roomName = null;
 var ssrc2jid = {};
-var mediaStreams = {};
 var bridgeIsDown = false;
 //TODO: this array must be removed when firefox implement multistream support
 var notReceivedSSRCs = [];
@@ -62,49 +60,10 @@ var sessionTerminated = false;
 
 function init() {
     Toolbar.setupButtonsFromConfig();
-    RTC = setupRTC();
-    if (RTC === null) {
-        window.location.href = 'webrtcrequired.html';
-        return;
-    } else if (RTC.browser !== 'chrome' &&
-        config.enableFirefoxSupport !== true) {
-        window.location.href = 'chromeonly.html';
-        return;
-    }
 
-    obtainAudioAndVideoPermissions(function (stream) {
-        var audioStream, videoStream;
-        if(window.webkitMediaStream)
-        {
-            var audioStream = new webkitMediaStream();
-            var videoStream = new webkitMediaStream();
-            var audioTracks = stream.getAudioTracks();
-            var videoTracks = stream.getVideoTracks();
-            for (var i = 0; i < audioTracks.length; i++) {
-                audioStream.addTrack(audioTracks[i]);
-            }
-
-            for (i = 0; i < videoTracks.length; i++) {
-                videoStream.addTrack(videoTracks[i]);
-            }
-            VideoLayout.changeLocalAudio(audioStream);
-            statistics.onStreamCreated(audioStream);
-
-
-            VideoLayout.changeLocalVideo(videoStream, true);
-        }
-        else
-        {
-            VideoLayout.changeLocalStream(stream);
-            statistics.onStreamCreated(stream);
-
-        }
-
-
-
-
-        maybeDoJoin();
-    });
+    RTC.addStreamListener(maybeDoJoin, StreamEventTypes.EVENT_TYPE_LOCAL_CREATED);
+    RTC.addStreamListener(VideoLayout.onLocalStreamCreated, StreamEventTypes.EVENT_TYPE_LOCAL_CREATED)
+    RTC.start();
 
     var jid = document.getElementById('jid').value || config.hosts.anonymousdomain || config.hosts.domain || window.location.hostname;
     connect(jid);
@@ -132,7 +91,7 @@ function connect(jid, password) {
     if (connection.disco) {
         // for chrome, add multistream cap
     }
-    connection.jingle.pc_constraints = RTC.pc_constraints;
+    connection.jingle.pc_constraints = RTC.getPCConstraints();
     if (config.useIPv6) {
         // https://code.google.com/p/webrtc/issues/detail?id=2828
         if (!connection.jingle.pc_constraints.optional) connection.jingle.pc_constraints.optional = [];
@@ -175,42 +134,7 @@ function connect(jid, password) {
     });
 }
 
-/**
- * We ask for audio and video combined stream in order to get permissions and
- * not to ask twice.
- */
-function obtainAudioAndVideoPermissions(callback) {
-    // Get AV
-    var cb = function (stream) {
-        console.log('got', stream, stream.getAudioTracks().length, stream.getVideoTracks().length);
-        callback(stream);
-        trackUsage('localMedia', {
-            audio: stream.getAudioTracks().length,
-            video: stream.getVideoTracks().length
-        });
-    }
-    getUserMediaWithConstraints(
-        ['audio', 'video'],
-        cb,
-        function (error) {
-            console.error('failed to obtain audio/video stream - trying audio only', error);
-            getUserMediaWithConstraints(
-                ['audio'],
-                cb,
-                function (error) {
-                    console.error('failed to obtain audio/video stream - stop', error);
-                    trackUsage('localMediaError', {
-                        media: error.media || 'video',
-                        name : error.name
-                    });
-                    messageHandler.showError("Error",
-                        "Failed to obtain permissions to use the local microphone" +
-                            "and/or camera.");
-                }
-            );
-        },
-        config.resolution || '360');
-}
+
 
 function maybeDoJoin() {
     if (connection && connection.connected && Strophe.getResourceFromJid(connection.jid) // .connected is true while connecting?
@@ -382,7 +306,7 @@ function waitForPresence(data, sid) {
     }
 
     //TODO: this code should be removed when firefox implement multistream support
-    if(RTC.browser == "firefox")
+    if(RTC.getBrowserType() == RTCBrowserType.RTC_BROWSER_FIREFOX)
     {
         if((notReceivedSSRCs.length == 0) ||
             !ssrc2jid[notReceivedSSRCs[notReceivedSSRCs.length - 1]])
@@ -402,15 +326,7 @@ function waitForPresence(data, sid) {
         }
     }
 
-    // NOTE(gp) now that we have simulcast, a media stream can have more than 1
-    // ssrc. We should probably take that into account in our MediaStream
-    // wrapper.
-    var mediaStream = new MediaStream(data, sid, thessrc);
-    var jid = data.peerjid || connection.emuc.myroomjid;
-    if(!mediaStreams[jid]) {
-        mediaStreams[jid] = {};
-    }
-    mediaStreams[jid][mediaStream.type] = mediaStream;
+    RTC.createRemoteStream(data, sid, thessrc);
 
     var container;
     var remotes = document.getElementById('remoteVideos');
@@ -569,13 +485,8 @@ $(document).bind('callincoming.jingle', function (event, sid) {
     // TODO: do we check activecall == null?
     activecall = sess;
 
-    statistics.onConfereceCreated(sess);
-
-    // Bind data channel listener in case we're a regular participant
-    if (config.openSctp)
-    {
-        bindDataChannelListener(sess.peerconnection);
-    }
+    statistics.onConferenceCreated(sess);
+    RTC.onConferenceCreated(sess);
 
     // TODO: check affiliation and/or role
     console.log('emuc data for', sess.peerjid, connection.emuc.members[sess.peerjid]);
@@ -588,15 +499,7 @@ $(document).bind('callincoming.jingle', function (event, sid) {
 $(document).bind('conferenceCreated.jingle', function (event, focus)
 {
     statistics.onConfereceCreated(getConferenceHandler());
-});
-
-$(document).bind('conferenceCreated.jingle', function (event, focus)
-{
-    // Bind data channel listener in case we're the focus
-    if (config.openSctp)
-    {
-        bindDataChannelListener(focus.peerconnection);
-    }
+    RTC.onConfereceCreated(focus);
 });
 
 $(document).bind('setLocalDescription.jingle', function (event, sid) {
@@ -1622,28 +1525,8 @@ $(document).on('webkitfullscreenchange mozfullscreenchange fullscreenchange',
             document.mozFullScreen ||
             document.webkitIsFullScreen;
 
-        if (isFullScreen) {
-            setView("fullscreen");
-        }
-        else {
-            setView("default");
-        }
     }
 );
-
-/**
- * Sets the current view.
- */
-function setView(viewName) {
-//    if (viewName == "fullscreen") {
-//        document.getElementById('videolayout_fullscreen').disabled  = false;
-//        document.getElementById('videolayout_default').disabled  = true;
-//    }
-//    else {
-//        document.getElementById('videolayout_default').disabled  = false;
-//        document.getElementById('videolayout_fullscreen').disabled  = true;
-//    }
-}
 
 $(document).bind('error.jingle',
     function (event, session, error)
@@ -1661,54 +1544,6 @@ $(document).bind('fatalError.jingle',
             "Internal application error[setRemoteDescription]");
     }
 );
-
-function onSelectedEndpointChanged(userJid)
-{
-    console.log('selected endpoint changed: ', userJid);
-    if (_dataChannels && _dataChannels.length != 0)
-    {
-        _dataChannels.some(function (dataChannel) {
-            if (dataChannel.readyState == 'open')
-            {
-                dataChannel.send(JSON.stringify({
-                    'colibriClass': 'SelectedEndpointChangedEvent',
-                    'selectedEndpoint': (!userJid || userJid == null)
-                        ? null : userJid
-                }));
-
-                return true;
-            }
-        });
-    }
-}
-
-$(document).bind("selectedendpointchanged", function(event, userJid) {
-    onSelectedEndpointChanged(userJid);
-});
-
-function onPinnedEndpointChanged(userJid)
-{
-    console.log('pinned endpoint changed: ', userJid);
-    if (_dataChannels && _dataChannels.length != 0)
-    {
-        _dataChannels.some(function (dataChannel) {
-            if (dataChannel.readyState == 'open')
-            {
-                dataChannel.send(JSON.stringify({
-                    'colibriClass': 'PinnedEndpointChangedEvent',
-                    'pinnedEndpoint': (!userJid || userJid == null)
-                        ? null : Strophe.getResourceFromJid(userJid)
-                }));
-
-                return true;
-            }
-        });
-    }
-}
-
-$(document).bind("pinnedendpointchanged", function(event, userJid) {
-    onPinnedEndpointChanged(userJid);
-});
 
 function callSipButtonClicked()
 {
@@ -1768,14 +1603,3 @@ function hangup() {
     );
 
 }
-
-$(document).on('videomuted.muc', function(event, jid, value) {
-    if(mediaStreams[jid] && mediaStreams[jid][MediaStream.VIDEO_TYPE]) {
-        var stream = mediaStreams[jid][MediaStream.VIDEO_TYPE];
-        var isMuted = (value === "true");
-        if (isMuted != stream.muted) {
-            stream.muted = isMuted;
-            Avatar.showUserAvatar(jid, isMuted);
-        }
-    }
-});

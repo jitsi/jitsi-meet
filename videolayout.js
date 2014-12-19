@@ -20,6 +20,21 @@ var VideoLayout = (function (my) {
             || (lastNEndpointsCache && lastNEndpointsCache.indexOf(resource) !== -1);
     };
 
+    my.onLocalStreamCreated = function (stream) {
+        switch(stream.type)
+        {
+            case "audio":
+                VideoLayout.changeLocalAudio(stream.getOriginalStream());
+                break;
+            case "video":
+                VideoLayout.changeLocalVideo(stream.getOriginalStream(), true);
+                break;
+            case "stream":
+                VideoLayout.changeLocalStream(stream.getOriginalStream());
+                break;
+        }
+    };
+
     my.changeLocalStream = function (stream) {
         connection.jingle.localAudio = stream;
         VideoLayout.changeLocalVideo(stream, true);
@@ -1495,6 +1510,10 @@ var VideoLayout = (function (my) {
      * On video muted event.
      */
     $(document).bind('videomuted.muc', function (event, jid, isMuted) {
+        if(!RTC.muteRemoteVideoStream(jid, isMuted))
+            return;
+
+        Avatar.showUserAvatar(jid, isMuted);
         var videoSpanId = null;
         if (jid === connection.emuc.myroomjid) {
             videoSpanId = 'localVideoContainer';
@@ -1674,7 +1693,7 @@ var VideoLayout = (function (my) {
                     console.log("Add to last N", resourceJid);
 
                     var jid = connection.emuc.findJidFromResource(resourceJid);
-                    var mediaStream = mediaStreams[jid][MediaStream.VIDEO_TYPE];
+                    var mediaStream = RTC.remoteStreams[jid][MediaStreamType.VIDEO_TYPE];
                     var sel = $('#participant_' + resourceJid + '>video');
 
                     var videoStream = simulcast.getReceivingVideoStream(

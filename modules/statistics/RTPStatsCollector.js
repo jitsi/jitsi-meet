@@ -14,10 +14,10 @@ function calculatePacketLoss(lostPackets, totalPackets) {
 }
 
 function getStatValue(item, name) {
-    if(!keyMap[RTC.browser][name])
+    if(!keyMap[RTC.getBrowserType()][name])
         throw "The property isn't supported!";
-    var key = keyMap[RTC.browser][name];
-    return RTC.browser == "chrome"? item.stat(key) : item[key];
+    var key = keyMap[RTC.getBrowserType()][name];
+    return RTC.getBrowserType() == RTCBrowserType.RTC_BROWSER_CHROME? item.stat(key) : item[key];
 }
 
 /**
@@ -357,36 +357,36 @@ StatsCollector.prototype.logStats = function () {
     this.statsToBeLogged.stats = {};
     this.statsToBeLogged.timestamps = [];
 };
-var keyMap = {
-    "firefox": {
-        "ssrc": "ssrc",
-        "packetsReceived": "packetsReceived",
-        "packetsLost": "packetsLost",
-        "packetsSent": "packetsSent",
-        "bytesReceived": "bytesReceived",
-        "bytesSent": "bytesSent"
-    },
-    "chrome": {
-        "receiveBandwidth": "googAvailableReceiveBandwidth",
-        "sendBandwidth": "googAvailableSendBandwidth",
-        "remoteAddress": "googRemoteAddress",
-        "transportType": "googTransportType",
-        "localAddress": "googLocalAddress",
-        "activeConnection": "googActiveConnection",
-        "ssrc": "ssrc",
-        "packetsReceived": "packetsReceived",
-        "packetsSent": "packetsSent",
-        "packetsLost": "packetsLost",
-        "bytesReceived": "bytesReceived",
-        "bytesSent": "bytesSent",
-        "googFrameHeightReceived": "googFrameHeightReceived",
-        "googFrameWidthReceived": "googFrameWidthReceived",
-        "googFrameHeightSent": "googFrameHeightSent",
-        "googFrameWidthSent": "googFrameWidthSent",
-        "audioInputLevel": "audioInputLevel",
-        "audioOutputLevel": "audioOutputLevel"
-    }
+var keyMap = {};
+keyMap[RTCBrowserType.RTC_BROWSER_FIREFOX] = {
+    "ssrc": "ssrc",
+    "packetsReceived": "packetsReceived",
+    "packetsLost": "packetsLost",
+    "packetsSent": "packetsSent",
+    "bytesReceived": "bytesReceived",
+    "bytesSent": "bytesSent"
 };
+keyMap[RTCBrowserType.RTC_BROWSER_CHROME] = {
+    "receiveBandwidth": "googAvailableReceiveBandwidth",
+    "sendBandwidth": "googAvailableSendBandwidth",
+    "remoteAddress": "googRemoteAddress",
+    "transportType": "googTransportType",
+    "localAddress": "googLocalAddress",
+    "activeConnection": "googActiveConnection",
+    "ssrc": "ssrc",
+    "packetsReceived": "packetsReceived",
+    "packetsSent": "packetsSent",
+    "packetsLost": "packetsLost",
+    "bytesReceived": "bytesReceived",
+    "bytesSent": "bytesSent",
+    "googFrameHeightReceived": "googFrameHeightReceived",
+    "googFrameWidthReceived": "googFrameWidthReceived",
+    "googFrameHeightSent": "googFrameHeightSent",
+    "googFrameWidthSent": "googFrameWidthSent",
+    "audioInputLevel": "audioInputLevel",
+    "audioOutputLevel": "audioOutputLevel"
+};
+
 
 /**
  * Stats processing logic.
