@@ -94,7 +94,7 @@ var RTC = {
         this.rtcUtils.obtainAudioAndVideoPermissions();
     },
     onConferenceCreated: function(event) {
-        var DataChannels = require("./datachannels");
+        var DataChannels = require("./DataChannels");
         DataChannels.bindDataChannelListener(event.peerconnection);
     },
     muteRemoteVideoStream: function (jid, value) {
