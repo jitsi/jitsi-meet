@@ -1,5 +1,8 @@
 var EventEmitter = require("events");
 var RTCUtils = require("./RTCUtils.js");
+var LocalStream = require("./LocalStream.js");
+var MediaStream = require("./MediaStream.js")
+var DataChannels = require("./DataChannels");
 //These lines should be uncommented when require works in app.js
 //var StreamEventTypes = require("../../service/RTC/StreamEventTypes.js");
 //var XMPPEvents = require("../service/xmpp/XMPPEvents");
@@ -22,7 +25,6 @@ var RTC = {
         eventEmitter.removeListener(eventType, listener);
     },
     createLocalStream: function (stream, type) {
-        var LocalStream = require("./LocalStream.js");
         var localStream =  new LocalStream(stream, type, eventEmitter);
         this.localStreams.push(localStream);
         if(type == "audio")
@@ -47,7 +49,6 @@ var RTC = {
         }
     },
     createRemoteStream: function (data, sid, thessrc) {
-        var MediaStream = require("./MediaStream.js")
         var remoteStream = new MediaStream(data, sid, thessrc, eventEmitter);
         var jid = data.peerjid || connection.emuc.myroomjid;
         if(!this.remoteStreams[jid]) {
@@ -94,7 +95,6 @@ var RTC = {
         this.rtcUtils.obtainAudioAndVideoPermissions();
     },
     onConferenceCreated: function(event) {
-        var DataChannels = require("./DataChannels");
         DataChannels.bindDataChannelListener(event.peerconnection);
     },
     muteRemoteVideoStream: function (jid, value) {
