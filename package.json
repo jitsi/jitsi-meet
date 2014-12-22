@@ -15,9 +15,9 @@
   "author": "",
   "readmeFilename": "README.md",
   "dependencies": {
+      "events": "*"
   },
   "devDependencies": {
-    "precommit-hook": "0.3.x"
   },
   "license": "MIT"
 }
