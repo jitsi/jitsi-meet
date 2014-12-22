@@ -2,7 +2,7 @@
 
 This describes configuring a server `jitsi.example.com`.  You will need to
 change references to that to match your host, and generate some passwords for
-`YOURSECRET1` and `YOURSECRET2`.
+`YOURSECRET1`, `YOURSECRET2`, `YOURSECRET3` and `YOURSECRET4`.
 
 There are also some complete [example config files](https://github.com/jitsi/jitsi-meet/tree/master/doc/example-config-files/) available, mentioned in each section.
 
@@ -36,22 +36,42 @@ default_archive_policy = "roster"
 - configure your domain by editing the example.com virtual host section section:
 ```
 VirtualHost "jitsi.example.com"
-authentication = "anonymous"
-ssl = {
-    key = "/var/lib/prosody/jitsi.example.com.key";
-    certificate = "/var/lib/prosody/jitsi.example.com.crt";
-}
+    authentication = "anonymous"
+    ssl = {
+        key = "/var/lib/prosody/jitsi.example.com.key";
+        certificate = "/var/lib/prosody/jitsi.example.com.crt";
+    }
+```
+- add domain with authentication for conference focus user:
+```
+VirtualHost "auth.jitsi.example.com"
+    authentication = "internal_plain"
+    ssl = {
+        key = "/var/lib/prosody/jitsi.example.com.key";
+        certificate = "/var/lib/prosody/jitsi.example.com.crt";
+    }
+```
+- add focus user to server admins:
+```
+admins = { "focus@auth.jitsi.example.com" }
 ```
 - and finally configure components:
 ```
 Component "conference.jitsi.example.com" "muc"
 Component "jitsi-videobridge.jitsi.example.com"
     component_secret = "YOURSECRET1"
+Component "focus.jitsi.example.com"
+    component_secret = "YOURSECRET2"
 ```
 
 Generate certs for the domain:
 ```sh
 prosodyctl cert generate jitsi.example.com
+```
+
+Create conference focus user:
+```sh
+prosodyctl register focus auth.jitsi.example.com YOURSECRET3
 ```
 
 Restart prosody XMPP server with the new config
@@ -137,6 +157,22 @@ Or autostart it by adding the line in `/etc/rc.local`:
 /bin/bash /root/jitsi-videobridge-linux-{arch-buildnum}/jvb.sh --host=localhost --domain=jitsi.example.com --port=5347 --secret=YOURSECRET1 </dev/null >> /var/log/jvb.log 2>&1
 ```
 
+## Install Jitsi Conference Focus(jicofo)
+Clone source from Github repo:
+```sh
+git clone https://github.com/jitsi/jicofo.git
+```
+Build distribution package. Replace {os-name} with one of: 'lin', 'lin64', 'macosx', 'win', 'win64'.
+```sh
+cd jicofo
+ant dist.{os-name}
+```
+Run jicofo:
+```sh
+cd dist/{os-name}'
+./jicofo.sh --domain=jitsi.exmaple.com --secret=YOURSECRET2 --user_domain=auth.jitsi.example.com --user_name=focus --user_password=YOURSECRET3
+```
+
 ## Deploy Jitsi Meet
 Checkout and configure Jitsi Meet:
 ```sh
@@ -192,7 +228,7 @@ Configure addresses and ports as desired, and the password to be configured in p
 ```
 realm           jitsi.example.com
 # share this with your prosody server
-auth_shared     YOURSECRET2
+auth_shared     YOURSECRET4
 
 # modules
 module_path     /usr/lib/restund/modules
@@ -201,7 +237,7 @@ turn_relay_addr [turn ip address]
 
 Configure prosody to use it in `/etc/prosody/prosody.cfg.lua`.  Add to your virtual host:
 ```
-turncredentials_secret = "YOURSECRET2";
+turncredentials_secret = "YOURSECRET4";
 turncredentials = {
     { type = "turn", host = "turn.address.ip.configured", port = 3478, transport = "tcp" }
 }
