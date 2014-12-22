@@ -1,4 +1,3 @@
-var RTC = require("./RTC.js");
 ////These lines should be uncommented when require works in app.js
 //var RTCBrowserType = require("../../service/RTC/RTCBrowserType.js");
 //var StreamEventTypes = require("../../service/RTC/StreamEventTypes.js");
@@ -15,7 +14,7 @@ var RTC = require("./RTC.js");
  *
  * @constructor
  */
-function MediaStream(data, sid, ssrc, eventEmmiter) {
+function MediaStream(data, sid, ssrc, eventEmmiter, browser) {
     this.sid = sid;
     this.stream = data.stream;
     this.peerjid = data.peerjid;
@@ -24,15 +23,15 @@ function MediaStream(data, sid, ssrc, eventEmmiter) {
         MediaStreamType.VIDEO_TYPE : MediaStreamType.AUDIO_TYPE;
     this.muted = false;
     eventEmmiter.emit(StreamEventTypes.EVENT_TYPE_REMOTE_CREATED, this);
+    if(browser == RTCBrowserType.RTC_BROWSER_FIREFOX)
+    {
+        if (!this.getVideoTracks)
+            this.getVideoTracks = function () { return []; };
+        if (!this.getAudioTracks)
+            this.getAudioTracks = function () { return []; };
+    }
 }
 
-if(RTC.getBrowserType() == RTCBrowserType.RTC_BROWSER_FIREFOX)
-{
-    if (!MediaStream.prototype.getVideoTracks)
-        MediaStream.prototype.getVideoTracks = function () { return []; };
-    if (!MediaStream.prototype.getAudioTracks)
-        MediaStream.prototype.getAudioTracks = function () { return []; };
-}
 
 MediaStream.prototype.getOriginalStream = function()
 {
