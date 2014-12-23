@@ -321,6 +321,17 @@ module.exports = LocalStream;
  * @constructor
  */
 function MediaStream(data, sid, ssrc, eventEmmiter, browser) {
+
+    // XXX(gp) to minimize headaches in the future, we should build our
+    // abstractions around tracks and not streams. ORTC is track based API.
+    // Mozilla expects m-lines to represent media tracks.
+    //
+    // Practically, what I'm saying is that we should have a MediaTrack class
+    // and not a MediaStream class.
+    //
+    // Also, we should be able to associate multiple SSRCs with a MediaTrack as
+    // a track might have an associated RTX and FEC sources.
+
     this.sid = sid;
     this.stream = data.stream;
     this.peerjid = data.peerjid;
@@ -727,7 +738,7 @@ RTCUtils.prototype.getUserMediaWithConstraints = function(
                 });
         } else {
 
-            RTCUtils.getUserMedia(constraints,
+            this.getUserMedia(constraints,
                 function (stream) {
                     console.log('onUserMediaSuccess');
                     success_callback(stream);
