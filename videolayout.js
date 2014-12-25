@@ -1440,8 +1440,13 @@ var VideoLayout = (function (my) {
             return;
         }
 
-        var resource = Strophe.getResourceFromJid(jid);
-        var videoContainer = $("#participant_" + resource);
+        if (jid === connection.emuc.myroomjid) {
+            var videoContainer = $("#localVideoContainer");
+        }
+        else {
+            var resource = Strophe.getResourceFromJid(jid);
+            var videoContainer = $("#participant_" + resource);
+        }
         if (videoContainer.length > 0) {
             var videoThumb = $('video', videoContainer).get(0);
             // It is not always the case that a videoThumb exists (if there is
