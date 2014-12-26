@@ -33,6 +33,11 @@ function JingleSession(me, sid, connection) {
 
     this.reason = null;
 
+    this.addssrc = [];
+    this.removessrc = [];
+    this.pendingop = null;
+    this.switchstreams = false;
+
     this.wait = true;
     this.localStreamsSSRC = null;
 
@@ -680,8 +685,52 @@ JingleSession.prototype.addSource = function (elem, fromJid) {
         return;
     }
 
-    this.peerconnection.addSource(elem);
+    console.log('addssrc', new Date().getTime());
+    console.log('ice', this.peerconnection.iceConnectionState);
+    var sdp = new SDP(this.peerconnection.remoteDescription.sdp);
+    var mySdp = new SDP(this.peerconnection.localDescription.sdp);
 
+    $(elem).each(function (idx, content) {
+        var name = $(content).attr('name');
+        var lines = '';
+        tmp = $(content).find('ssrc-group[xmlns="urn:xmpp:jingle:apps:rtp:ssma:0"]').each(function() {
+            var semantics = this.getAttribute('semantics');
+            var ssrcs = $(this).find('>source').map(function () {
+                return this.getAttribute('ssrc');
+            }).get();
+
+            if (ssrcs.length != 0) {
+                lines += 'a=ssrc-group:' + semantics + ' ' + ssrcs.join(' ') + '\r\n';
+            }
+        });
+        tmp = $(content).find('source[xmlns="urn:xmpp:jingle:apps:rtp:ssma:0"]'); // can handle both >source and >description>source
+        tmp.each(function () {
+            var ssrc = $(this).attr('ssrc');
+            if(mySdp.containsSSRC(ssrc)){
+                /**
+                 * This happens when multiple participants change their streams at the same time and
+                 * ColibriFocus.modifySources have to wait for stable state. In the meantime multiple
+                 * addssrc are scheduled for update IQ. See
+                 */
+                console.warn("Got add stream request for my own ssrc: "+ssrc);
+                return;
+            }
+            $(this).find('>parameter').each(function () {
+                lines += 'a=ssrc:' + ssrc + ' ' + $(this).attr('name');
+                if ($(this).attr('value') && $(this).attr('value').length)
+                    lines += ':' + $(this).attr('value');
+                lines += '\r\n';
+            });
+        });
+        sdp.media.forEach(function(media, idx) {
+            if (!SDPUtil.find_line(media, 'a=mid:' + name))
+                return;
+            sdp.media[idx] += lines;
+            if (!self.addssrc[idx]) self.addssrc[idx] = '';
+            self.addssrc[idx] += lines;
+        });
+        sdp.raw = sdp.session + sdp.media.join('');
+    });
     this.modifySources();
 };
 
@@ -701,20 +750,165 @@ JingleSession.prototype.removeSource = function (elem, fromJid) {
         return;
     }
 
-    this.peerconnection.removeSource(elem);
+    console.log('removessrc', new Date().getTime());
+    console.log('ice', this.peerconnection.iceConnectionState);
+    var sdp = new SDP(this.peerconnection.remoteDescription.sdp);
+    var mySdp = new SDP(this.peerconnection.localDescription.sdp);
 
+    $(elem).each(function (idx, content) {
+        var name = $(content).attr('name');
+        var lines = '';
+        tmp = $(content).find('ssrc-group[xmlns="urn:xmpp:jingle:apps:rtp:ssma:0"]').each(function() {
+            var semantics = this.getAttribute('semantics');
+            var ssrcs = $(this).find('>source').map(function () {
+                return this.getAttribute('ssrc');
+            }).get();
+
+            if (ssrcs.length != 0) {
+                lines += 'a=ssrc-group:' + semantics + ' ' + ssrcs.join(' ') + '\r\n';
+            }
+        });
+        tmp = $(content).find('source[xmlns="urn:xmpp:jingle:apps:rtp:ssma:0"]'); // can handle both >source and >description>source
+        tmp.each(function () {
+            var ssrc = $(this).attr('ssrc');
+            // This should never happen, but can be useful for bug detection
+            if(mySdp.containsSSRC(ssrc)){
+                console.error("Got remove stream request for my own ssrc: "+ssrc);
+                return;
+            }
+            $(this).find('>parameter').each(function () {
+                lines += 'a=ssrc:' + ssrc + ' ' + $(this).attr('name');
+                if ($(this).attr('value') && $(this).attr('value').length)
+                    lines += ':' + $(this).attr('value');
+                lines += '\r\n';
+            });
+        });
+        sdp.media.forEach(function(media, idx) {
+            if (!SDPUtil.find_line(media, 'a=mid:' + name))
+                return;
+            sdp.media[idx] += lines;
+            if (!self.removessrc[idx]) self.removessrc[idx] = '';
+            self.removessrc[idx] += lines;
+        });
+        sdp.raw = sdp.session + sdp.media.join('');
+    });
     this.modifySources();
 };
 
 JingleSession.prototype.modifySources = function (successCallback) {
     var self = this;
-    if(this.peerconnection)
-        this.peerconnection.modifySources(function(){
-            $(document).trigger('setLocalDescription.jingle', [self.sid]);
-            if(successCallback) {
-                successCallback();
-            }
+    if (this.peerconnection.signalingState == 'closed') return;
+    if (!(this.addssrc.length || this.removessrc.length || this.pendingop !== null || this.switchstreams)){
+        // There is nothing to do since scheduled job might have been executed by another succeeding call
+        $(document).trigger('setLocalDescription.jingle', [self.sid]);
+        if(successCallback){
+            successCallback();
+        }
+        return;
+    }
+
+    // FIXME: this is a big hack
+    // https://code.google.com/p/webrtc/issues/detail?id=2688
+    // ^ has been fixed.
+    if (!(this.peerconnection.signalingState == 'stable' && this.peerconnection.iceConnectionState == 'connected')) {
+        console.warn('modifySources not yet', this.peerconnection.signalingState, this.peerconnection.iceConnectionState);
+        this.wait = true;
+        window.setTimeout(function() { self.modifySources(successCallback); }, 250);
+        return;
+    }
+    if (this.wait) {
+        window.setTimeout(function() { self.modifySources(successCallback); }, 2500);
+        this.wait = false;
+        return;
+    }
+
+    // Reset switch streams flag
+    this.switchstreams = false;
+
+    var sdp = new SDP(this.peerconnection.remoteDescription.sdp);
+
+    // add sources
+    this.addssrc.forEach(function(lines, idx) {
+        sdp.media[idx] += lines;
+    });
+    this.addssrc = [];
+
+    // remove sources
+    this.removessrc.forEach(function(lines, idx) {
+        lines = lines.split('\r\n');
+        lines.pop(); // remove empty last element;
+        lines.forEach(function(line) {
+            sdp.media[idx] = sdp.media[idx].replace(line + '\r\n', '');
         });
+    });
+    this.removessrc = [];
+
+    // FIXME:
+    // this was a hack for the situation when only one peer exists
+    // in the conference.
+    // check if still required and remove
+    if (sdp.media[0])
+        sdp.media[0] = sdp.media[0].replace('a=recvonly', 'a=sendrecv');
+    if (sdp.media[1])
+        sdp.media[1] = sdp.media[1].replace('a=recvonly', 'a=sendrecv');
+
+    sdp.raw = sdp.session + sdp.media.join('');
+    this.peerconnection.setRemoteDescription(new RTCSessionDescription({type: 'offer', sdp: sdp.raw}),
+        function() {
+
+            if(self.signalingState == 'closed') {
+                console.error("createAnswer attempt on closed state");
+                return;
+            }
+
+            self.peerconnection.createAnswer(
+                function(modifiedAnswer) {
+                    // change video direction, see https://github.com/jitsi/jitmeet/issues/41
+                    if (self.pendingop !== null) {
+                        var sdp = new SDP(modifiedAnswer.sdp);
+                        if (sdp.media.length > 1) {
+                            switch(self.pendingop) {
+                                case 'mute':
+                                    sdp.media[1] = sdp.media[1].replace('a=sendrecv', 'a=recvonly');
+                                    break;
+                                case 'unmute':
+                                    sdp.media[1] = sdp.media[1].replace('a=recvonly', 'a=sendrecv');
+                                    break;
+                            }
+                            sdp.raw = sdp.session + sdp.media.join('');
+                            modifiedAnswer.sdp = sdp.raw;
+                        }
+                        self.pendingop = null;
+                    }
+
+                    // FIXME: pushing down an answer while ice connection state
+                    // is still checking is bad...
+                    //console.log(self.peerconnection.iceConnectionState);
+
+                    // trying to work around another chrome bug
+                    //modifiedAnswer.sdp = modifiedAnswer.sdp.replace(/a=setup:active/g, 'a=setup:actpass');
+                    self.peerconnection.setLocalDescription(modifiedAnswer,
+                        function() {
+                            //console.log('modified setLocalDescription ok');
+                            $(document).trigger('setLocalDescription.jingle', [self.sid]);
+                            if(successCallback){
+                                successCallback();
+                            }
+                        },
+                        function(error) {
+                            console.error('modified setLocalDescription failed', error);
+                        }
+                    );
+                },
+                function(error) {
+                    console.error('modified answer failed', error);
+                }
+            );
+        },
+        function(error) {
+            console.error('modify failed', error);
+        }
+    );
 };
 
 /**
@@ -755,7 +949,7 @@ JingleSession.prototype.switchStreams = function (new_stream, oldStream, success
         return;
     }
 
-    self.peerconnection.switchstreams = true;
+    self.switchstreams = true;
     self.modifySources(function() {
         console.log('modify sources done');
 
@@ -961,9 +1155,7 @@ JingleSession.prototype.setVideoMute = function (mute, callback, options) {
             tracks[i].enabled = !mute;
         }
 
-        if (this.peerconnection) {
-            this.peerconnection.hardMuteVideo(mute);
-        }
+        this.hardMuteVideo(mute);
 
         this.modifySources(callback(mute));
     }
@@ -973,6 +1165,10 @@ JingleSession.prototype.setVideoMute = function (mute, callback, options) {
 // FIXME: should probably black out the screen as well
 JingleSession.prototype.toggleVideoMute = function (callback) {
     setVideoMute(isVideoMute(), callback);
+};
+
+JingleSession.prototype.hardMuteVideo = function (muted) {
+    this.pendingop = muted ? 'mute' : 'unmute';
 };
 
 JingleSession.prototype.sendMute = function (muted, content) {
@@ -1046,3 +1242,4 @@ JingleSession.prototype.getStats = function (interval) {
     }, interval || 3000);
     return this.statsinterval;
 };
+
