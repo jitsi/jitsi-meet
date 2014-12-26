@@ -968,121 +968,57 @@ JingleSession.prototype.switchStreams = function (new_stream, oldStream, success
  */
 JingleSession.prototype.notifyMySSRCUpdate = function (old_sdp, new_sdp) {
 
-    var old_media = old_sdp.getMediaSsrcMap();
-    var new_media = new_sdp.getMediaSsrcMap();
-    //console.log("old/new medias: ", old_media, new_media);
-
-    var toAdd = old_sdp.getNewMedia(new_sdp);
-    var toRemove = new_sdp.getNewMedia(old_sdp);
-    //console.log("to add", toAdd);
-    //console.log("to remove", toRemove);
-    if(Object.keys(toRemove).length > 0){
-        this.sendSSRCUpdate(toRemove, null, false);
-    }
-    if(Object.keys(toAdd).length > 0){
-        this.sendSSRCUpdate(toAdd, null, true);
-    }
-};
-
-/**
- * Empty method that does nothing by default. It should send SSRC update IQs to session participants.
- * @param sdpMediaSsrcs array of
- * @param fromJid
- * @param isAdd
- */
-JingleSession.prototype.sendSSRCUpdate = function(sdpMediaSsrcs, fromJid, isAdd) {
-    var self = this;
-    console.log('tell', self.peerjid, 'about ' + (isadd ? 'new' : 'removed') + ' ssrcs from' + self.me);
-
     if (!(this.peerconnection.signalingState == 'stable' && this.peerconnection.iceConnectionState == 'connected')){
         console.log("Too early to send updates");
         return;
     }
 
-    this.sendSSRCUpdateIq(sdpMediaSsrcs, self.sid, self.initiator, self.peerjid, isadd);
-}
-
-/**
- * Sends SSRC update IQ.
- * @param sdpMediaSsrcs SSRCs map obtained from SDP.getNewMedia. Cntains SSRCs to add/remove.
- * @param sid session identifier that will be put into the IQ.
- * @param initiator initiator identifier.
- * @param toJid destination Jid
- * @param isAdd indicates if this is remove or add operation.
- */
-JingleSession.prototype.sendSSRCUpdateIq = function(sdpMediaSsrcs, sid, initiator, toJid, isAdd) {
-
-    var self = this;
-    var modify = $iq({to: toJid, type: 'set'})
+    // send source-add IQ.
+    var sdpDiffer = new SDPDiffer(old_sdp, new_sdp);
+    var add = $iq({to: self.peerjid, type: 'set'})
         .c('jingle', {
             xmlns: 'urn:xmpp:jingle:1',
-            action: isAdd ? 'source-add' : 'source-remove',
-            initiator: initiator,
-            sid: sid
+            action: 'source-add',
+            initiator: self.initiator,
+            sid: self.sid
         }
     );
-    // FIXME: only announce video ssrcs since we mix audio and dont need
-    //      the audio ssrcs therefore
-    var modified = false;
-    Object.keys(sdpMediaSsrcs).forEach(function(channelNum){
-        modified = true;
-        var channel = sdpMediaSsrcs[channelNum];
-        modify.c('content', {name: channel.mediaType});
-
-        modify.c('description', {xmlns:'urn:xmpp:jingle:apps:rtp:1', media: channel.mediaType});
-        // FIXME: not completly sure this operates on blocks and / or handles different ssrcs correctly
-        // generate sources from lines
-        Object.keys(channel.ssrcs).forEach(function(ssrcNum) {
-            var mediaSsrc = channel.ssrcs[ssrcNum];
-            modify.c('source', { xmlns: 'urn:xmpp:jingle:apps:rtp:ssma:0' });
-            modify.attrs({ssrc: mediaSsrc.ssrc});
-            // iterate over ssrc lines
-            mediaSsrc.lines.forEach(function (line) {
-                var idx = line.indexOf(' ');
-                var kv = line.substr(idx + 1);
-                modify.c('parameter');
-                if (kv.indexOf(':') == -1) {
-                    modify.attrs({ name: kv });
-                } else {
-                    modify.attrs({ name: kv.split(':', 2)[0] });
-                    modify.attrs({ value: kv.split(':', 2)[1] });
-                }
-                modify.up(); // end of parameter
-            });
-            modify.up(); // end of source
-        });
-
-        // generate source groups from lines
-        channel.ssrcGroups.forEach(function(ssrcGroup) {
-            if (ssrcGroup.ssrcs.length != 0) {
-
-                modify.c('ssrc-group', {
-                    semantics: ssrcGroup.semantics,
-                    xmlns: 'urn:xmpp:jingle:apps:rtp:ssma:0'
-                });
-
-                ssrcGroup.ssrcs.forEach(function (ssrc) {
-                    modify.c('source', { ssrc: ssrc })
-                        .up(); // end of source
-                });
-                modify.up(); // end of ssrc-group
-            }
-        });
-
-        modify.up(); // end of description
-        modify.up(); // end of content
-    });
-    if (modified) {
-        self.connection.sendIQ(modify,
+    var added = sdpDiffer.toJingle(add);
+    if (added) {
+        this.connection.sendIQ(add,
             function (res) {
-                console.info('got modify result', res);
+                console.info('got add result', res);
             },
             function (err) {
-                console.error('got modify error', err);
+                console.error('got add error', err);
             }
         );
     } else {
-        console.log('modification not necessary');
+        console.log('addition not necessary');
+    }
+
+    // send source-remove IQ.
+    sdpDiffer = new SDPDiffer(new_sdp, old_sdp);
+    var remove = $iq({to: self.peerjid, type: 'set'})
+        .c('jingle', {
+            xmlns: 'urn:xmpp:jingle:1',
+            action: 'source-remove',
+            initiator: self.initiator,
+            sid: self.sid
+        }
+    );
+    var removed = sdpDiffer.toJingle(remove);
+    if (removed) {
+        this.connection.sendIQ(remove,
+            function (res) {
+                console.info('got remove result', res);
+            },
+            function (err) {
+                console.error('got remove error', err);
+            }
+        );
+    } else {
+        console.log('removal not necessary');
     }
 };
 

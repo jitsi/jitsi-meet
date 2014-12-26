@@ -17,27 +17,37 @@ function SDP(sdp) {
 SDP.prototype.getMediaSsrcMap = function() {
     var self = this;
     var media_ssrcs = {};
-    for (channelNum = 0; channelNum < self.media.length; channelNum++) {
-        modified = true;
-        tmp = SDPUtil.find_lines(self.media[channelNum], 'a=ssrc:');
-        var type = SDPUtil.parse_mid(SDPUtil.find_line(self.media[channelNum], 'a=mid:'));
-        var channel = new MediaChannel(channelNum, type);
-        media_ssrcs[channelNum] = channel;
+    var tmp;
+    for (var mediaindex = 0; mediaindex < self.media.length; mediaindex++) {
+        tmp = SDPUtil.find_lines(self.media[mediaindex], 'a=ssrc:');
+        var mid = SDPUtil.parse_mid(SDPUtil.find_line(self.media[mediaindex], 'a=mid:'));
+        var media = {
+            mediaindex: mediaindex,
+            mid: mid,
+            ssrcs: {},
+            ssrcGroups: []
+        };
+        media_ssrcs[mediaindex] = media;
         tmp.forEach(function (line) {
             var linessrc = line.substring(7).split(' ')[0];
             // allocate new ChannelSsrc
-            if(!channel.ssrcs[linessrc]) {
-                channel.ssrcs[linessrc] = new ChannelSsrc(linessrc, type);
+            if(!media.ssrcs[linessrc]) {
+                media.ssrcs[linessrc] = {
+                    ssrc: linessrc,
+                    lines: []
+                };
             }
-            channel.ssrcs[linessrc].lines.push(line);
+            media.ssrcs[linessrc].lines.push(line);
         });
-        tmp = SDPUtil.find_lines(self.media[channelNum], 'a=ssrc-group:');
+        tmp = SDPUtil.find_lines(self.media[mediaindex], 'a=ssrc-group:');
         tmp.forEach(function(line){
             var semantics = line.substr(0, idx).substr(13);
             var ssrcs = line.substr(14 + semantics.length).split(' ');
             if (ssrcs.length != 0) {
-                var ssrcGroup = new ChannelSsrcGroup(semantics, ssrcs);
-                channel.ssrcGroups.push(ssrcGroup);
+                media.ssrcGroups.push({
+                    semantics: semantics,
+                    ssrcs: ssrcs
+                });
             }
         });
     }
@@ -49,23 +59,28 @@ SDP.prototype.getMediaSsrcMap = function() {
  * @returns {boolean} <tt>true</tt> if this SDP contains given SSRC.
  */
 SDP.prototype.containsSSRC = function(ssrc) {
-    var channels = this.getMediaSsrcMap();
+    var medias = this.getMediaSsrcMap();
     var contains = false;
-    Object.keys(channels).forEach(function(chNumber){
-        var channel = channels[chNumber];
+    Object.keys(medias).forEach(function(mediaindex){
+        var media = medias[mediaindex];
         //console.log("Check", channel, ssrc);
-        if(Object.keys(channel.ssrcs).indexOf(ssrc) != -1){
+        if(Object.keys(media.ssrcs).indexOf(ssrc) != -1){
             contains = true;
         }
     });
     return contains;
 };
 
+function SDPDiffer(mySDP, otherSDP) {
+    this.mySDP = new SDP(mySDP);
+    this.otherSDP = new SDP(otherSDP);
+}
+
 /**
  * Returns map of MediaChannel that contains only media not contained in <tt>otherSdp</tt>. Mapped by channel idx.
  * @param otherSdp the other SDP to check ssrc with.
  */
-SDP.prototype.getNewMedia = function(otherSdp) {
+SDPDiffer.prototype.getNewMedia = function() {
 
     // this could be useful in Array.prototype.
     function arrayEquals(array) {
@@ -92,35 +107,40 @@ SDP.prototype.getNewMedia = function(otherSdp) {
         return true;
     }
 
-    var myMedia = this.getMediaSsrcMap();
-    var othersMedia = otherSdp.getMediaSsrcMap();
+    var myMedias = this.mySDP.getMediaSsrcMap();
+    var othersMedias = this.otherSDP.getMediaSsrcMap();
     var newMedia = {};
-    Object.keys(othersMedia).forEach(function(channelNum) {
-        var myChannel = myMedia[channelNum];
-        var othersChannel = othersMedia[channelNum];
-        if(!myChannel && othersChannel) {
+    Object.keys(othersMedias).forEach(function(othersMediaIdx) {
+        var myMedia = myMedias[othersMediaIdx];
+        var othersMedia = othersMedias[othersMediaIdx];
+        if(!myMedia && othersMedia) {
             // Add whole channel
-            newMedia[channelNum] = othersChannel;
+            newMedia[othersMediaIdx] = othersMedia;
             return;
         }
         // Look for new ssrcs accross the channel
-        Object.keys(othersChannel.ssrcs).forEach(function(ssrc) {
-            if(Object.keys(myChannel.ssrcs).indexOf(ssrc) === -1) {
+        Object.keys(othersMedia.ssrcs).forEach(function(ssrc) {
+            if(Object.keys(myMedia.ssrcs).indexOf(ssrc) === -1) {
                 // Allocate channel if we've found ssrc that doesn't exist in our channel
-                if(!newMedia[channelNum]){
-                    newMedia[channelNum] = new MediaChannel(othersChannel.chNumber, othersChannel.mediaType);
+                if(!newMedia[othersMediaIdx]){
+                    newMedia[othersMediaIdx] = {
+                        mediaindex: othersMedia.mediaindex,
+                        mid: othersMedia.mid,
+                        ssrcs: {},
+                        ssrcGroups: []
+                    };
                 }
-                newMedia[channelNum].ssrcs[ssrc] = othersChannel.ssrcs[ssrc];
+                newMedia[othersMediaIdx].ssrcs[ssrc] = othersMedia.ssrcs[ssrc];
             }
         });
 
         // Look for new ssrc groups across the channels
-        othersChannel.ssrcGroups.forEach(function(otherSsrcGroup){
+        othersMedia.ssrcGroups.forEach(function(otherSsrcGroup){
 
             // try to match the other ssrc-group with an ssrc-group of ours
             var matched = false;
-            for (var i = 0; i < myChannel.ssrcGroups.length; i++) {
-                var mySsrcGroup = myChannel.ssrcGroups[i];
+            for (var i = 0; i < myMedia.ssrcGroups.length; i++) {
+                var mySsrcGroup = myMedia.ssrcGroups[i];
                 if (otherSsrcGroup.semantics == mySsrcGroup.semantics
                     && arrayEquals.apply(otherSsrcGroup.ssrcs, [mySsrcGroup.ssrcs])) {
 
@@ -133,14 +153,86 @@ SDP.prototype.getNewMedia = function(otherSdp) {
                 // Allocate channel if we've found an ssrc-group that doesn't
                 // exist in our channel
 
-                if(!newMedia[channelNum]){
-                    newMedia[channelNum] = new MediaChannel(othersChannel.chNumber, othersChannel.mediaType);
+                if(!newMedia[othersMediaIdx]){
+                    newMedia[othersMediaIdx] = {
+                        mediaindex: othersMedia.mediaindex,
+                        mid: othersMedia.mid,
+                        ssrcs: {},
+                        ssrcGroups: []
+                    };
                 }
-                newMedia[channelNum].ssrcGroups.push(otherSsrcGroup);
+                newMedia[othersMediaIdx].ssrcGroups.push(otherSsrcGroup);
             }
         });
     });
     return newMedia;
+};
+
+/**
+ * Sends SSRC update IQ.
+ * @param sdpMediaSsrcs SSRCs map obtained from SDP.getNewMedia. Cntains SSRCs to add/remove.
+ * @param sid session identifier that will be put into the IQ.
+ * @param initiator initiator identifier.
+ * @param toJid destination Jid
+ * @param isAdd indicates if this is remove or add operation.
+ */
+SDPDiffer.prototype.toJingle = function(modify) {
+    var sdpMediaSsrcs = this.getNewMedia();
+    var self = this;
+
+    // FIXME: only announce video ssrcs since we mix audio and dont need
+    //      the audio ssrcs therefore
+    var modified = false;
+    Object.keys(sdpMediaSsrcs).forEach(function(mediaindex){
+        modified = true;
+        var media = sdpMediaSsrcs[mediaindex];
+        modify.c('content', {name: media.mid});
+
+        modify.c('description', {xmlns:'urn:xmpp:jingle:apps:rtp:1', media: media.mid});
+        // FIXME: not completly sure this operates on blocks and / or handles different ssrcs correctly
+        // generate sources from lines
+        Object.keys(media.ssrcs).forEach(function(ssrcNum) {
+            var mediaSsrc = media.ssrcs[ssrcNum];
+            modify.c('source', { xmlns: 'urn:xmpp:jingle:apps:rtp:ssma:0' });
+            modify.attrs({ssrc: mediaSsrc.ssrc});
+            // iterate over ssrc lines
+            mediaSsrc.lines.forEach(function (line) {
+                var idx = line.indexOf(' ');
+                var kv = line.substr(idx + 1);
+                modify.c('parameter');
+                if (kv.indexOf(':') == -1) {
+                    modify.attrs({ name: kv });
+                } else {
+                    modify.attrs({ name: kv.split(':', 2)[0] });
+                    modify.attrs({ value: kv.split(':', 2)[1] });
+                }
+                modify.up(); // end of parameter
+            });
+            modify.up(); // end of source
+        });
+
+        // generate source groups from lines
+        media.ssrcGroups.forEach(function(ssrcGroup) {
+            if (ssrcGroup.ssrcs.length != 0) {
+
+                modify.c('ssrc-group', {
+                    semantics: ssrcGroup.semantics,
+                    xmlns: 'urn:xmpp:jingle:apps:rtp:ssma:0'
+                });
+
+                ssrcGroup.ssrcs.forEach(function (ssrc) {
+                    modify.c('source', { ssrc: ssrc })
+                        .up(); // end of source
+                });
+                modify.up(); // end of ssrc-group
+            }
+        });
+
+        modify.up(); // end of description
+        modify.up(); // end of content
+    });
+
+    return modified;
 };
 
 // remove iSAC and CN from SDP
@@ -683,62 +775,6 @@ SDP.prototype.jingle2media = function (content) {
 
     return media;
 };
-/**
- * Contains utility classes used in SDP class.
- *
- */
-
-/**
- * Class holds a=ssrc lines and media type a=mid
- * @param ssrc synchronization source identifier number(a=ssrc lines from SDP)
- * @param type media type eg. "audio" or "video"(a=mid frm SDP)
- * @constructor
- */
-function ChannelSsrc(ssrc, type) {
-    this.ssrc = ssrc;
-    this.type = type;
-    this.lines = [];
-}
-
-/**
- * Class holds a=ssrc-group: lines
- * @param semantics
- * @param ssrcs
- * @constructor
- */
-function ChannelSsrcGroup(semantics, ssrcs, line) {
-    this.semantics = semantics;
-    this.ssrcs = ssrcs;
-}
-
-/**
- * Helper class represents media channel. Is a container for ChannelSsrc, holds channel idx and media type.
- * @param channelNumber channel idx in SDP media array.
- * @param mediaType media type(a=mid)
- * @constructor
- */
-function MediaChannel(channelNumber, mediaType) {
-    /**
-     * SDP channel number
-     * @type {*}
-     */
-    this.chNumber = channelNumber;
-    /**
-     * Channel media type(a=mid)
-     * @type {*}
-     */
-    this.mediaType = mediaType;
-    /**
-     * The maps of ssrc numbers to ChannelSsrc objects.
-     */
-    this.ssrcs = {};
-
-    /**
-     * The array of ChannelSsrcGroup objects.
-     * @type {Array}
-     */
-    this.ssrcGroups = [];
-}
 
 SDPUtil = {
     iceparams: function (mediadesc, sessiondesc) {
