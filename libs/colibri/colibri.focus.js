@@ -140,7 +140,7 @@ ColibriFocus.prototype.makeConference = function (peers, errorCallback) {
     this.peerconnection.onaddstream = function (event) {
         // search the jid associated with this stream
         Object.keys(self.remotessrc).forEach(function (jid) {
-            if (self.remotessrc[jid].join('\r\n').indexOf('mslabel:' + event.stream.id) != -1) {
+            if (self.remotessrc[jid].join('\r\n').indexOf('msid:' + event.stream.id) != -1) {
                 event.peerjid = jid;
             }
         });
