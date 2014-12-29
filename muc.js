@@ -46,6 +46,41 @@ Strophe.addConnectionPlugin('emuc', {
         this.presMap.length = 0;
         this.connection.send(pres);
     },
+    createNonAnonymousRoom: function() {
+        // http://xmpp.org/extensions/xep-0045.html#createroom-reserved
+
+        var getForm = $iq({type: 'get', to: this.roomjid})
+            .c('query', {xmlns: 'http://jabber.org/protocol/muc#owner'})
+            .c('x', {xmlns: 'jabber:x:data', type: 'submit'});
+
+        this.connection.sendIQ(getForm, function (form){
+
+            if (!$(form).find(
+                '>query>x[xmlns="jabber:x:data"]' +
+                '>field[var="muc#roomconfig_whois"]').length) {
+
+                console.error('non-anonymous rooms not supported');
+                return;
+            }
+
+            var formSubmit = $iq({to: this.roomjid, type: 'set'})
+                .c('query', {xmlns: 'http://jabber.org/protocol/muc#owner'});
+
+            formSubmit.c('x', {xmlns: 'jabber:x:data', type: 'submit'});
+
+            formSubmit.c('field', {'var': 'FORM_TYPE'})
+                .c('value')
+                .t('http://jabber.org/protocol/muc#roomconfig').up().up();
+
+            formSubmit.c('field', {'var': 'muc#roomconfig_whois'})
+                .c('value').t('anyone').up().up();
+
+            this.connection.sendIQ(formSubmit);
+
+        }, function (error){
+            console.error("Error getting room configuration form");
+        });
+    },
     onPresence: function (pres) {
         var from = pres.getAttribute('from');
         var type = pres.getAttribute('type');
@@ -107,12 +142,8 @@ Strophe.addConnectionPlugin('emuc', {
 
         // Parse status.
         if ($(pres).find('>x[xmlns="http://jabber.org/protocol/muc#user"]>status[code="201"]').length) {
-            // http://xmpp.org/extensions/xep-0045.html#createroom-instant
             this.isOwner = true;
-            var create = $iq({type: 'set', to: this.roomjid})
-                    .c('query', {xmlns: 'http://jabber.org/protocol/muc#owner'})
-                    .c('x', {xmlns: 'jabber:x:data', type: 'submit'});
-            this.connection.sendIQ(create); // fire away
+            this.createNonAnonymousRoom();
         }
 
         // Parse roles.
