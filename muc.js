@@ -83,8 +83,9 @@ Strophe.addConnectionPlugin('emuc', {
     },
     onPresence: function (pres) {
         var from = pres.getAttribute('from');
-        var type = pres.getAttribute('type');
-        if (type != null) {
+
+        // What is this for? A workaround for something?
+        if (pres.getAttribute('type')) {
             return true;
         }
 

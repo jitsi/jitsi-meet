@@ -4,21 +4,76 @@ var Recording = (function (my) {
     var recordingToken = null;
     var recordingEnabled;
 
+    /**
+     * Whether to use a jirecon component for recording, or use the videobridge
+     * through COLIBRI.
+     */
+    var useJirecon = (typeof config.hosts.jirecon != "undefined");
+
+    /**
+     * The ID of the jirecon recording session. Jirecon generates it when we
+     * initially start recording, and it needs to be used in subsequent requests
+     * to jirecon.
+     */
+    var jireconRid = null;
+
     my.setRecordingToken = function (token) {
         recordingToken = token;
+    };
+
+    my.setRecording = function (state, token, callback) {
+        if (useJirecon){
+            this.setRecordingJirecon(state, token, callback);
+        } else {
+            this.setRecordingColibri(state, token, callback);
+        }
+    };
+
+    my.setRecordingJirecon = function (state, token, callback) {
+        if (state == recordingEnabled){
+            return;
+        }
+
+        var iq = $iq({to: config.hosts.jirecon, type: 'set'})
+            .c('recording', {xmlns: 'http://jitsi.org/protocol/jirecon',
+                action: state ? 'start' : 'stop',
+                mucjid: connection.emuc.roomjid});
+        if (!state){
+            iq.attrs({rid: jireconRid});
+        }
+
+        console.log('Start recording');
+
+        connection.sendIQ(
+            iq,
+            function (result) {
+                // TODO wait for an IQ with the real status, since this is
+                // provisional?
+                jireconRid = $(result).find('recording').attr('rid');
+                console.log('Recording ' + (state ? 'started' : 'stopped') +
+                    '(jirecon)' + result);
+                recordingEnabled = state;
+                if (!state){
+                    jireconRid = null;
+                }
+
+                callback(state);
+            },
+            function (error) {
+                console.log('Failed to start recording, error: ', error);
+                callback(recordingEnabled);
+            });
     };
 
     // Sends a COLIBRI message which enables or disables (according to 'state')
     // the recording on the bridge. Waits for the result IQ and calls 'callback'
     // with the new recording state, according to the IQ.
-    my.setRecording = function (state, token, callback) {
-        var self = this;
+    my.setRecordingColibri = function (state, token, callback) {
         var elem = $iq({to: focusMucJid, type: 'set'});
         elem.c('conference', {
             xmlns: 'http://jitsi.org/protocol/colibri'
         });
         elem.c('recording', {state: state, token: token});
-        elem.up();
 
         connection.sendIQ(elem,
             function (result) {
@@ -31,6 +86,7 @@ var Recording = (function (my) {
             },
             function (error) {
                 console.warn(error);
+                callback(recordingEnabled);
             }
         );
     };
@@ -43,11 +99,13 @@ var Recording = (function (my) {
             return;
         }
 
-        if (!recordingToken)
+        // Jirecon does not (currently) support a token.
+        if (!recordingToken && !useJirecon)
         {
             messageHandler.openTwoButtonDialog(null,
                     '<h2>Enter recording token</h2>' +
-                    '<input id="recordingToken" type="text" placeholder="token" autofocus>',
+                    '<input id="recordingToken" type="text" ' +
+                    'placeholder="token" autofocus>',
                 false,
                 "Save",
                 function (e, v, m, f) {
@@ -63,7 +121,8 @@ var Recording = (function (my) {
                 },
                 function (event) {
                     document.getElementById('recordingToken').focus();
-                }
+                },
+                function () {}
             );
 
             return;
