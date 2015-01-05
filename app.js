@@ -61,6 +61,7 @@ var sessionTerminated = false;
 function init() {
     Toolbar.setupButtonsFromConfig();
 
+
     RTC.addStreamListener(maybeDoJoin, StreamEventTypes.EVENT_TYPE_LOCAL_CREATED);
     RTC.addStreamListener(VideoLayout.onLocalStreamCreated, StreamEventTypes.EVENT_TYPE_LOCAL_CREATED)
     RTC.start();
@@ -1299,6 +1300,7 @@ $(document).ready(function () {
         }
     });
 
+    statistics.start();
     statistics.addAudioLevelListener(audioLevelUpdated);
     statistics.addConnectionStatsListener(ConnectionQuality.updateLocalStats);
     statistics.addRemoteStatsStopListener(ConnectionQuality.stopSendingStats);
