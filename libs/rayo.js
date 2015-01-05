@@ -24,7 +24,7 @@ Strophe.addConnectionPlugin('rayo',
             var req = $iq(
                 {
                     type: 'set',
-                    to: config.hosts.call_control
+                    to: focusMucJid
                 }
             );
             req.c('dial',
