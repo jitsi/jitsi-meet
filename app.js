@@ -905,7 +905,7 @@ function authenticateClicked() {
     Moderator.getAuthUrl(function (url) {
         // Open popup with authentication URL
         authenticationWindow = messageHandler.openCenteredPopup(
-            url, 500, 400,
+            url, 910, 660,
             function () {
                 // On popup closed - retry room allocation
                 Moderator.allocateConferenceFocus(
