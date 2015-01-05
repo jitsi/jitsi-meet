@@ -72,8 +72,8 @@ SDP.prototype.containsSSRC = function(ssrc) {
 };
 
 function SDPDiffer(mySDP, otherSDP) {
-    this.mySDP = new SDP(mySDP);
-    this.otherSDP = new SDP(otherSDP);
+    this.mySDP = mySDP;
+    this.otherSDP = otherSDP;
 }
 
 /**

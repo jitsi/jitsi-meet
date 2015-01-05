@@ -968,43 +968,20 @@ JingleSession.prototype.switchStreams = function (new_stream, oldStream, success
  */
 JingleSession.prototype.notifyMySSRCUpdate = function (old_sdp, new_sdp) {
 
-    if (!(this.peerconnection.signalingState == 'stable' && this.peerconnection.iceConnectionState == 'connected')){
+    if (!(this.peerconnection.signalingState == 'stable' &&
+        this.peerconnection.iceConnectionState == 'connected')){
         console.log("Too early to send updates");
         return;
     }
 
-    // send source-add IQ.
-    var sdpDiffer = new SDPDiffer(old_sdp, new_sdp);
-    var add = $iq({to: self.peerjid, type: 'set'})
-        .c('jingle', {
-            xmlns: 'urn:xmpp:jingle:1',
-            action: 'source-add',
-            initiator: self.initiator,
-            sid: self.sid
-        }
-    );
-    var added = sdpDiffer.toJingle(add);
-    if (added) {
-        this.connection.sendIQ(add,
-            function (res) {
-                console.info('got add result', res);
-            },
-            function (err) {
-                console.error('got add error', err);
-            }
-        );
-    } else {
-        console.log('addition not necessary');
-    }
-
     // send source-remove IQ.
     sdpDiffer = new SDPDiffer(new_sdp, old_sdp);
-    var remove = $iq({to: self.peerjid, type: 'set'})
+    var remove = $iq({to: this.peerjid, type: 'set'})
         .c('jingle', {
             xmlns: 'urn:xmpp:jingle:1',
             action: 'source-remove',
-            initiator: self.initiator,
-            sid: self.sid
+            initiator: this.initiator,
+            sid: this.sid
         }
     );
     var removed = sdpDiffer.toJingle(remove);
@@ -1019,6 +996,30 @@ JingleSession.prototype.notifyMySSRCUpdate = function (old_sdp, new_sdp) {
         );
     } else {
         console.log('removal not necessary');
+    }
+
+    // send source-add IQ.
+    var sdpDiffer = new SDPDiffer(old_sdp, new_sdp);
+    var add = $iq({to: this.peerjid, type: 'set'})
+        .c('jingle', {
+            xmlns: 'urn:xmpp:jingle:1',
+            action: 'source-add',
+            initiator: this.initiator,
+            sid: this.sid
+        }
+    );
+    var added = sdpDiffer.toJingle(add);
+    if (added) {
+        this.connection.sendIQ(add,
+            function (res) {
+                console.info('got add result', res);
+            },
+            function (err) {
+                console.error('got add error', err);
+            }
+        );
+    } else {
+        console.log('addition not necessary');
     }
 };
 
