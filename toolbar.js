@@ -265,7 +265,7 @@ var Toolbar = (function (my) {
 
     // Shows or hides SIP calls button
     my.showSipCallButton = function (show) {
-        if (config.hosts.call_control && show) {
+        if (Moderator.isSipGatewayEnabled() && show) {
             $('#sipCallButton').css({display: "inline"});
         } else {
             $('#sipCallButton').css({display: "none"});
