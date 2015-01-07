@@ -18,12 +18,12 @@ var APIConnector = (function () {
      */
     var commands =
     {
-        displayName: VideoLayout.inputDisplayNameHandler,
+        displayName: UI.inputDisplayNameHandler,
         muteAudio: toggleAudio,
         muteVideo: toggleVideo,
-        toggleFilmStrip: BottomToolbar.toggleFilmStrip,
-        toggleChat: BottomToolbar.toggleChat,
-        toggleContactList: BottomToolbar.toggleContactList
+        toggleFilmStrip: UI.toggleFilmStrip,
+        toggleChat: UI.toggleChat,
+        toggleContactList: UI.toggleContactList
     };
 
 

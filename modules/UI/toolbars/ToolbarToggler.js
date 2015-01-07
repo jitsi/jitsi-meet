@@ -1,12 +1,46 @@
 /* global $, interfaceConfig, Moderator, showDesktopSharingButton */
-var ToolbarToggler = (function (my) {
-    var toolbarTimeoutObject,
-        toolbarTimeout = interfaceConfig.INITIAL_TOOLBAR_TIMEOUT;
 
+var toolbarTimeoutObject,
+    toolbarTimeout = interfaceConfig.INITIAL_TOOLBAR_TIMEOUT;
+
+/**
+ * Hides the toolbar.
+ */
+function hideToolbar() {
+    var header = $("#header"),
+        bottomToolbar = $("#bottomToolbar");
+    var isToolbarHover = false;
+    header.find('*').each(function () {
+        var id = $(this).attr('id');
+        if ($("#" + id + ":hover").length > 0) {
+            isToolbarHover = true;
+        }
+    });
+    if ($("#bottomToolbar:hover").length > 0) {
+        isToolbarHover = true;
+    }
+
+    clearTimeout(toolbarTimeoutObject);
+    toolbarTimeoutObject = null;
+
+    if (!isToolbarHover) {
+        header.hide("slide", { direction: "up", duration: 300});
+        $('#subject').animate({top: "-=40"}, 300);
+        if ($("#remoteVideos").hasClass("hidden")) {
+            bottomToolbar.hide(
+                "slide", {direction: "right", duration: 300});
+        }
+    }
+    else {
+        toolbarTimeoutObject = setTimeout(hideToolbar, toolbarTimeout);
+    }
+}
+
+var ToolbarToggler = {
     /**
      * Shows the main toolbar.
      */
-    my.showToolbar = function () {
+    showToolbar: function () {
         var header = $("#header"),
             bottomToolbar = $("#bottomToolbar");
         if (!header.is(':visible') || !bottomToolbar.is(":visible")) {
@@ -34,40 +68,7 @@ var ToolbarToggler = (function (my) {
 
         // Show/hide desktop sharing button
         showDesktopSharingButton();
-    };
-
-    /**
-     * Hides the toolbar.
-     */
-    var hideToolbar = function () {
-        var header = $("#header"),
-            bottomToolbar = $("#bottomToolbar");
-        var isToolbarHover = false;
-        header.find('*').each(function () {
-            var id = $(this).attr('id');
-            if ($("#" + id + ":hover").length > 0) {
-                isToolbarHover = true;
-            }
-        });
-        if ($("#bottomToolbar:hover").length > 0) {
-            isToolbarHover = true;
-        }
-
-        clearTimeout(toolbarTimeoutObject);
-        toolbarTimeoutObject = null;
-
-        if (!isToolbarHover) {
-            header.hide("slide", { direction: "up", duration: 300});
-            $('#subject').animate({top: "-=40"}, 300);
-            if ($("#remoteVideos").hasClass("hidden")) {
-                bottomToolbar.hide(
-                    "slide", {direction: "right", duration: 300});
-            }
-        }
-        else {
-            toolbarTimeoutObject = setTimeout(hideToolbar, toolbarTimeout);
-        }
-    };
+    },
 
 
     /**
@@ -75,11 +76,11 @@ var ToolbarToggler = (function (my) {
      *
      * @param isDock indicates what operation to perform
      */
-    my.dockToolbar = function (isDock) {
+    dockToolbar: function (isDock) {
         if (isDock) {
             // First make sure the toolbar is shown.
             if (!$('#header').is(':visible')) {
-                ToolbarToggler.showToolbar();
+                this.showToolbar();
             }
 
             // Then clear the time out, to dock the toolbar.
@@ -90,14 +91,14 @@ var ToolbarToggler = (function (my) {
         }
         else {
             if (!$('#header').is(':visible')) {
-                ToolbarToggler.showToolbar();
+                this.showToolbar();
             }
             else {
                 toolbarTimeoutObject = setTimeout(hideToolbar, toolbarTimeout);
             }
         }
-    };
+    }
 
+};
 
-    return my;
-}(ToolbarToggler || {}));
+module.exports = ToolbarToggler;

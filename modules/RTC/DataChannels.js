@@ -32,7 +32,7 @@ var DataChannels =
             // selections so that it can do adaptive simulcast,
             // we want the notification to trigger even if userJid is undefined,
             // or null.
-            var userJid = VideoLayout.getLargeVideoState().userJid;
+            var userJid = UI.getLargeVideoState().userJid;
             // we want the notification to trigger even if userJid is undefined,
             // or null.
             onSelectedEndpointChanged(userJid);

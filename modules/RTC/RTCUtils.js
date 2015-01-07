@@ -245,7 +245,7 @@ RTCUtils.prototype.getUserMediaWithConstraints = function(
                 });
         } else {
 
-            RTCUtils.getUserMedia(constraints,
+            this.getUserMedia(constraints,
                 function (stream) {
                     console.log('onUserMediaSuccess');
                     success_callback(stream);
@@ -296,7 +296,7 @@ RTCUtils.prototype.obtainAudioAndVideoPermissions = function() {
                         media: error.media || 'video',
                         name : error.name
                     });
-                    messageHandler.showError("Error",
+                    UI.messageHandler.showError("Error",
                             "Failed to obtain permissions to use the local microphone" +
                             "and/or camera.");
                 }

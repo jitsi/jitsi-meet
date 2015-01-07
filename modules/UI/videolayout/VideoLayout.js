@@ -1,38 +1,333 @@
-var VideoLayout = (function (my) {
-    var currentDominantSpeaker = null;
-    var lastNCount = config.channelLastN;
-    var localLastNCount = config.channelLastN;
-    var localLastNSet = [];
-    var lastNEndpointsCache = [];
-    var lastNPickupJid = null;
-    var largeVideoState = {
-        updateInProgress: false,
-        newSrc: ''
+var AudioLevels = require("../audio_levels/AudioLevels");
+var Avatar = require("../avatar/Avatar");
+var Chat = require("../side_pannels/chat/Chat");
+var ContactList = require("../side_pannels/contactlist/ContactList");
+var UIUtil = require("../util/UIUtil");
+var ConnectionIndicator = require("./ConnectionIndicator");
+
+var currentDominantSpeaker = null;
+var lastNCount = config.channelLastN;
+var localLastNCount = config.channelLastN;
+var localLastNSet = [];
+var lastNEndpointsCache = [];
+var lastNPickupJid = null;
+var largeVideoState = {
+    updateInProgress: false,
+    newSrc: ''
+};
+
+var defaultLocalDisplayName = "Me";
+
+/**
+ * Sets the display name for the given video span id.
+ */
+function setDisplayName(videoSpanId, displayName) {
+    var nameSpan = $('#' + videoSpanId + '>span.displayname');
+    var defaultLocalDisplayName = interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME;
+
+    // If we already have a display name for this video.
+    if (nameSpan.length > 0) {
+        var nameSpanElement = nameSpan.get(0);
+
+        if (nameSpanElement.id === 'localDisplayName' &&
+            $('#localDisplayName').text() !== displayName) {
+            if (displayName && displayName.length > 0)
+                $('#localDisplayName').html(displayName + ' (me)');
+            else
+                $('#localDisplayName').text(defaultLocalDisplayName);
+        } else {
+            if (displayName && displayName.length > 0)
+                $('#' + videoSpanId + '_name').html(displayName);
+            else
+                $('#' + videoSpanId + '_name').text(interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME);
+        }
+    } else {
+        var editButton = null;
+
+        nameSpan = document.createElement('span');
+        nameSpan.className = 'displayname';
+        $('#' + videoSpanId)[0].appendChild(nameSpan);
+
+        if (videoSpanId === 'localVideoContainer') {
+            editButton = createEditDisplayNameButton();
+            nameSpan.innerText = defaultLocalDisplayName;
+        }
+        else {
+            nameSpan.innerText = interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME;
+        }
+
+        if (displayName && displayName.length > 0) {
+            nameSpan.innerText = displayName;
+        }
+
+        if (!editButton) {
+            nameSpan.id = videoSpanId + '_name';
+        } else {
+            nameSpan.id = 'localDisplayName';
+            $('#' + videoSpanId)[0].appendChild(editButton);
+
+            var editableText = document.createElement('input');
+            editableText.className = 'displayname';
+            editableText.type = 'text';
+            editableText.id = 'editDisplayName';
+
+            if (displayName && displayName.length) {
+                editableText.value
+                    = displayName.substring(0, displayName.indexOf(' (me)'));
+            }
+
+            editableText.setAttribute('style', 'display:none;');
+            editableText.setAttribute('placeholder', 'ex. Jane Pink');
+            $('#' + videoSpanId)[0].appendChild(editableText);
+
+            $('#localVideoContainer .displayname')
+                .bind("click", function (e) {
+
+                    e.preventDefault();
+                    e.stopPropagation();
+                    $('#localDisplayName').hide();
+                    $('#editDisplayName').show();
+                    $('#editDisplayName').focus();
+                    $('#editDisplayName').select();
+
+                    $('#editDisplayName').one("focusout", function (e) {
+                        VideoLayout.inputDisplayNameHandler(this.value);
+                    });
+
+                    $('#editDisplayName').on('keydown', function (e) {
+                        if (e.keyCode === 13) {
+                            e.preventDefault();
+                            VideoLayout.inputDisplayNameHandler(this.value);
+                        }
+                    });
+                });
+        }
+    }
+}
+
+/**
+ * Gets the selector of video thumbnail container for the user identified by
+ * given <tt>userJid</tt>
+ * @param resourceJid user's Jid for whom we want to get the video container.
+ */
+function getParticipantContainer(resourceJid)
+{
+    if (!resourceJid)
+        return null;
+
+    if (resourceJid === Strophe.getResourceFromJid(connection.emuc.myroomjid))
+        return $("#localVideoContainer");
+    else
+        return $("#participant_" + resourceJid);
+}
+
+/**
+ * Sets the size and position of the given video element.
+ *
+ * @param video the video element to position
+ * @param width the desired video width
+ * @param height the desired video height
+ * @param horizontalIndent the left and right indent
+ * @param verticalIndent the top and bottom indent
+ */
+function positionVideo(video,
+                       width,
+                       height,
+                       horizontalIndent,
+                       verticalIndent) {
+    video.width(width);
+    video.height(height);
+    video.css({  top: verticalIndent + 'px',
+        bottom: verticalIndent + 'px',
+        left: horizontalIndent + 'px',
+        right: horizontalIndent + 'px'});
+}
+
+/**
+ * Adds the remote video menu element for the given <tt>jid</tt> in the
+ * given <tt>parentElement</tt>.
+ *
+ * @param jid the jid indicating the video for which we're adding a menu.
+ * @param parentElement the parent element where this menu will be added
+ */
+function addRemoteVideoMenu(jid, parentElement) {
+    var spanElement = document.createElement('span');
+    spanElement.className = 'remotevideomenu';
+
+    parentElement.appendChild(spanElement);
+
+    var menuElement = document.createElement('i');
+    menuElement.className = 'fa fa-angle-down';
+    menuElement.title = 'Remote user controls';
+    spanElement.appendChild(menuElement);
+
+//        <ul class="popupmenu">
+//        <li><a href="#">Mute</a></li>
+//        <li><a href="#">Eject</a></li>
+//        </ul>
+
+    var popupmenuElement = document.createElement('ul');
+    popupmenuElement.className = 'popupmenu';
+    popupmenuElement.id
+        = 'remote_popupmenu_' + Strophe.getResourceFromJid(jid);
+    spanElement.appendChild(popupmenuElement);
+
+    var muteMenuItem = document.createElement('li');
+    var muteLinkItem = document.createElement('a');
+
+    var mutedIndicator = "<i class='icon-mic-disabled'></i>";
+
+    if (!mutedAudios[jid]) {
+        muteLinkItem.innerHTML = mutedIndicator + 'Mute';
+        muteLinkItem.className = 'mutelink';
+    }
+    else {
+        muteLinkItem.innerHTML = mutedIndicator + ' Muted';
+        muteLinkItem.className = 'mutelink disabled';
+    }
+
+    muteLinkItem.onclick = function(){
+        if ($(this).attr('disabled') != undefined) {
+            event.preventDefault();
+        }
+        var isMute = mutedAudios[jid] == true;
+        connection.moderate.setMute(jid, !isMute);
+        popupmenuElement.setAttribute('style', 'display:none;');
+
+        if (isMute) {
+            this.innerHTML = mutedIndicator + ' Muted';
+            this.className = 'mutelink disabled';
+        }
+        else {
+            this.innerHTML = mutedIndicator + ' Mute';
+            this.className = 'mutelink';
+        }
     };
 
-    var defaultLocalDisplayName = "Me";
+    muteMenuItem.appendChild(muteLinkItem);
+    popupmenuElement.appendChild(muteMenuItem);
 
+    var ejectIndicator = "<i class='fa fa-eject'></i>";
+
+    var ejectMenuItem = document.createElement('li');
+    var ejectLinkItem = document.createElement('a');
+    ejectLinkItem.innerHTML = ejectIndicator + ' Kick out';
+    ejectLinkItem.onclick = function(){
+        connection.moderate.eject(jid);
+        popupmenuElement.setAttribute('style', 'display:none;');
+    };
+
+    ejectMenuItem.appendChild(ejectLinkItem);
+    popupmenuElement.appendChild(ejectMenuItem);
+
+    var paddingSpan = document.createElement('span');
+    paddingSpan.className = 'popupmenuPadding';
+    popupmenuElement.appendChild(paddingSpan);
+}
+
+/**
+ * Removes remote video menu element from video element identified by
+ * given <tt>videoElementId</tt>.
+ *
+ * @param videoElementId the id of local or remote video element.
+ */
+function removeRemoteVideoMenu(videoElementId) {
+    var menuSpan = $('#' + videoElementId + '>span.remotevideomenu');
+    if (menuSpan.length) {
+        menuSpan.remove();
+    }
+}
+
+/**
+ * Updates the data for the indicator
+ * @param id the id of the indicator
+ * @param percent the percent for connection quality
+ * @param object the data
+ */
+function updateStatsIndicator(id, percent, object) {
+    if(VideoLayout.connectionIndicators[id])
+        VideoLayout.connectionIndicators[id].updateConnectionQuality(percent, object);
+}
+
+
+/**
+ * Returns an array of the video dimensions, so that it keeps it's aspect
+ * ratio and fits available area with it's larger dimension. This method
+ * ensures that whole video will be visible and can leave empty areas.
+ *
+ * @return an array with 2 elements, the video width and the video height
+ */
+function getDesktopVideoSize(videoWidth,
+                             videoHeight,
+                             videoSpaceWidth,
+                             videoSpaceHeight) {
+    if (!videoWidth)
+        videoWidth = currentVideoWidth;
+    if (!videoHeight)
+        videoHeight = currentVideoHeight;
+
+    var aspectRatio = videoWidth / videoHeight;
+
+    var availableWidth = Math.max(videoWidth, videoSpaceWidth);
+    var availableHeight = Math.max(videoHeight, videoSpaceHeight);
+
+    videoSpaceHeight -= $('#remoteVideos').outerHeight();
+
+    if (availableWidth / aspectRatio >= videoSpaceHeight)
+    {
+        availableHeight = videoSpaceHeight;
+        availableWidth = availableHeight * aspectRatio;
+    }
+
+    if (availableHeight * aspectRatio >= videoSpaceWidth)
+    {
+        availableWidth = videoSpaceWidth;
+        availableHeight = availableWidth / aspectRatio;
+    }
+
+    return [availableWidth, availableHeight];
+}
+
+/**
+ * Creates the edit display name button.
+ *
+ * @returns the edit button
+ */
+function createEditDisplayNameButton() {
+    var editButton = document.createElement('a');
+    editButton.className = 'displayname';
+    Util.setTooltip(editButton,
+        'Click to edit your<br/>display name',
+        "top");
+    editButton.innerHTML = '<i class="fa fa-pencil"></i>';
+
+    return editButton;
+}
+
+/**
+ * Creates the element indicating the moderator(owner) of the conference.
+ *
+ * @param parentElement the parent element where the owner indicator will
+ * be added
+ */
+function createModeratorIndicatorElement(parentElement) {
+    var moderatorIndicator = document.createElement('i');
+    moderatorIndicator.className = 'fa fa-star';
+    parentElement.appendChild(moderatorIndicator);
+
+    Util.setTooltip(parentElement,
+        "The owner of<br/>this conference",
+        "top");
+}
+
+
+var VideoLayout = (function (my) {
     my.connectionIndicators = {};
 
     my.isInLastN = function(resource) {
         return lastNCount < 0 // lastN is disabled, return true
             || (lastNCount > 0 && lastNEndpointsCache.length == 0) // lastNEndpoints cache not built yet, return true
             || (lastNEndpointsCache && lastNEndpointsCache.indexOf(resource) !== -1);
-    };
-
-    my.onLocalStreamCreated = function (stream) {
-        switch(stream.type)
-        {
-            case "audio":
-                VideoLayout.changeLocalAudio(stream.getOriginalStream());
-                break;
-            case "video":
-                VideoLayout.changeLocalVideo(stream.getOriginalStream(), true);
-                break;
-            case "stream":
-                VideoLayout.changeLocalStream(stream.getOriginalStream());
-                break;
-        }
     };
 
     my.changeLocalStream = function (stream) {
@@ -68,10 +363,10 @@ var VideoLayout = (function (my) {
 
         if(!VideoLayout.connectionIndicators["localVideoContainer"]) {
             VideoLayout.connectionIndicators["localVideoContainer"]
-                = new ConnectionIndicator($("#localVideoContainer")[0], null);
+                = new ConnectionIndicator($("#localVideoContainer")[0], null, VideoLayout);
         }
 
-        AudioLevels.updateAudioLevelCanvas();
+        AudioLevels.updateAudioLevelCanvas(null, VideoLayout);
 
         var localVideoSelector = $('#' + localVideo.id);
         // Add click handler to both video and video wrapper elements in case
@@ -175,6 +470,44 @@ var VideoLayout = (function (my) {
             }
         }
     };
+    
+    my.onRemoteStreamAdded = function (stream) {
+        var container;
+        var remotes = document.getElementById('remoteVideos');
+
+        if (stream.peerjid) {
+            VideoLayout.ensurePeerContainerExists(stream.peerjid);
+
+            container  = document.getElementById(
+                    'participant_' + Strophe.getResourceFromJid(stream.peerjid));
+        } else {
+            var id = stream.getOriginalStream().id;
+            if (id !== 'mixedmslabel'
+                // FIXME: default stream is added always with new focus
+                // (to be investigated)
+                && id !== 'default') {
+                console.error('can not associate stream',
+                    id,
+                    'with a participant');
+                // We don't want to add it here since it will cause troubles
+                return;
+            }
+            // FIXME: for the mixed ms we dont need a video -- currently
+            container = document.createElement('span');
+            container.id = 'mixedstream';
+            container.className = 'videocontainer';
+            remotes.appendChild(container);
+            Util.playSoundNotification('userJoined');
+        }
+
+        if (container) {
+            VideoLayout.addRemoteStreamElement( container,
+                stream.sid,
+                stream.getOriginalStream(),
+                stream.peerjid,
+                stream.ssrc);
+        }
+    }
 
     my.getLargeVideoState = function () {
         return largeVideoState;
@@ -477,6 +810,8 @@ var VideoLayout = (function (my) {
     };
 
     my.isLargeVideoOnTop = function () {
+        var Etherpad = require("../etherpad/Etherpad");
+        var Prezi = require("../prezi/Prezi");
         return !Prezi.isPresentationVisible() && !Etherpad.isVisible();
     };
 
@@ -513,7 +848,8 @@ var VideoLayout = (function (my) {
             // Set default display name.
             setDisplayName(videoSpanId);
 
-            VideoLayout.connectionIndicators[videoSpanId] = new ConnectionIndicator(container, peerJid);
+            VideoLayout.connectionIndicators[videoSpanId] =
+                new ConnectionIndicator(container, peerJid, VideoLayout);
 
             var nickfield = document.createElement('span');
             nickfield.className = "nick";
@@ -543,7 +879,7 @@ var VideoLayout = (function (my) {
             addRemoteVideoMenu(peerJid, container);
 
         remotes.appendChild(container);
-        AudioLevels.updateAudioLevelCanvas(peerJid);
+        AudioLevels.updateAudioLevelCanvas(peerJid, VideoLayout);
 
         return container;
     };
@@ -751,93 +1087,6 @@ var VideoLayout = (function (my) {
         // ContactList.setClickable(resourceJid, !isHide);
 
     };
-
-    /**
-     * Sets the display name for the given video span id.
-     */
-    function setDisplayName(videoSpanId, displayName) {
-        var nameSpan = $('#' + videoSpanId + '>span.displayname');
-        var defaultLocalDisplayName = interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME;
-
-        // If we already have a display name for this video.
-        if (nameSpan.length > 0) {
-            var nameSpanElement = nameSpan.get(0);
-
-            if (nameSpanElement.id === 'localDisplayName' &&
-                $('#localDisplayName').text() !== displayName) {
-                if (displayName && displayName.length > 0)
-                    $('#localDisplayName').html(displayName + ' (me)');
-                else
-                    $('#localDisplayName').text(defaultLocalDisplayName);
-            } else {
-                if (displayName && displayName.length > 0)
-                    $('#' + videoSpanId + '_name').html(displayName);
-                else
-                    $('#' + videoSpanId + '_name').text(interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME);
-            }
-        } else {
-            var editButton = null;
-
-            nameSpan = document.createElement('span');
-            nameSpan.className = 'displayname';
-            $('#' + videoSpanId)[0].appendChild(nameSpan);
-
-            if (videoSpanId === 'localVideoContainer') {
-                editButton = createEditDisplayNameButton();
-                nameSpan.innerText = defaultLocalDisplayName;
-            }
-            else {
-                nameSpan.innerText = interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME;
-            }
-
-            if (displayName && displayName.length > 0) {
-                nameSpan.innerText = displayName;
-            }
-
-            if (!editButton) {
-                nameSpan.id = videoSpanId + '_name';
-            } else {
-                nameSpan.id = 'localDisplayName';
-                $('#' + videoSpanId)[0].appendChild(editButton);
-
-                var editableText = document.createElement('input');
-                editableText.className = 'displayname';
-                editableText.type = 'text';
-                editableText.id = 'editDisplayName';
-
-                if (displayName && displayName.length) {
-                    editableText.value
-                        = displayName.substring(0, displayName.indexOf(' (me)'));
-                }
-
-                editableText.setAttribute('style', 'display:none;');
-                editableText.setAttribute('placeholder', 'ex. Jane Pink');
-                $('#' + videoSpanId)[0].appendChild(editableText);
-
-                $('#localVideoContainer .displayname')
-                    .bind("click", function (e) {
-
-                    e.preventDefault();
-                    e.stopPropagation();
-                    $('#localDisplayName').hide();
-                    $('#editDisplayName').show();
-                    $('#editDisplayName').focus();
-                    $('#editDisplayName').select();
-
-                    $('#editDisplayName').one("focusout", function (e) {
-                        VideoLayout.inputDisplayNameHandler(this.value);
-                    });
-
-                    $('#editDisplayName').on('keydown', function (e) {
-                        if (e.keyCode === 13) {
-                            e.preventDefault();
-                            VideoLayout.inputDisplayNameHandler(this.value);
-                        }
-                    });
-                });
-            }
-        }
-    }
 
     my.inputDisplayNameHandler = function (name) {
         if (name && nickname !== name) {
@@ -1050,7 +1299,7 @@ var VideoLayout = (function (my) {
     my.resizeLargeVideoContainer = function () {
         Chat.resizeChat();
         var availableHeight = window.innerHeight;
-        var availableWidth = Util.getAvailableVideoWidth();
+        var availableWidth = UIUtil.getAvailableVideoWidth();
 
         if (availableWidth < 0 || availableHeight < 0) return;
 
@@ -1148,44 +1397,6 @@ var VideoLayout = (function (my) {
     };
 
     /**
-     * Gets the selector of video thumbnail container for the user identified by
-     * given <tt>userJid</tt>
-     * @param resourceJid user's Jid for whom we want to get the video container.
-     */
-    function getParticipantContainer(resourceJid)
-    {
-        if (!resourceJid)
-            return null;
-
-        if (resourceJid === Strophe.getResourceFromJid(connection.emuc.myroomjid))
-            return $("#localVideoContainer");
-        else
-            return $("#participant_" + resourceJid);
-    }
-
-    /**
-     * Sets the size and position of the given video element.
-     *
-     * @param video the video element to position
-     * @param width the desired video width
-     * @param height the desired video height
-     * @param horizontalIndent the left and right indent
-     * @param verticalIndent the top and bottom indent
-     */
-    function positionVideo(video,
-                           width,
-                           height,
-                           horizontalIndent,
-                           verticalIndent) {
-        video.width(width);
-        video.height(height);
-        video.css({  top: verticalIndent + 'px',
-                     bottom: verticalIndent + 'px',
-                     left: horizontalIndent + 'px',
-                     right: horizontalIndent + 'px'});
-    }
-
-    /**
      * Calculates the thumbnail size.
      *
      * @param videoSpaceWidth the width of the video space
@@ -1217,76 +1428,6 @@ var VideoLayout = (function (my) {
 
        return [availableWidth, availableHeight];
    };
-
-   /**
-    * Returns an array of the video dimensions, so that it keeps it's aspect
-    * ratio and fits available area with it's larger dimension. This method
-    * ensures that whole video will be visible and can leave empty areas.
-    *
-    * @return an array with 2 elements, the video width and the video height
-    */
-   function getDesktopVideoSize(videoWidth,
-                                videoHeight,
-                                videoSpaceWidth,
-                                videoSpaceHeight) {
-       if (!videoWidth)
-           videoWidth = currentVideoWidth;
-       if (!videoHeight)
-           videoHeight = currentVideoHeight;
-
-       var aspectRatio = videoWidth / videoHeight;
-
-       var availableWidth = Math.max(videoWidth, videoSpaceWidth);
-       var availableHeight = Math.max(videoHeight, videoSpaceHeight);
-
-       videoSpaceHeight -= $('#remoteVideos').outerHeight();
-
-       if (availableWidth / aspectRatio >= videoSpaceHeight)
-       {
-           availableHeight = videoSpaceHeight;
-           availableWidth = availableHeight * aspectRatio;
-       }
-
-       if (availableHeight * aspectRatio >= videoSpaceWidth)
-       {
-           availableWidth = videoSpaceWidth;
-           availableHeight = availableWidth / aspectRatio;
-       }
-
-       return [availableWidth, availableHeight];
-   }
-
-   /**
-    * Creates the edit display name button.
-    * 
-    * @returns the edit button
-    */
-    function createEditDisplayNameButton() {
-        var editButton = document.createElement('a');
-        editButton.className = 'displayname';
-        Util.setTooltip(editButton,
-                        'Click to edit your<br/>display name',
-                        "top");
-        editButton.innerHTML = '<i class="fa fa-pencil"></i>';
-
-        return editButton;
-    }
-
-    /**
-     * Creates the element indicating the moderator(owner) of the conference.
-     *
-     * @param parentElement the parent element where the owner indicator will
-     * be added
-     */
-    function createModeratorIndicatorElement(parentElement) {
-        var moderatorIndicator = document.createElement('i');
-        moderatorIndicator.className = 'fa fa-star';
-        parentElement.appendChild(moderatorIndicator);
-
-        Util.setTooltip(parentElement,
-                "The owner of<br/>this conference",
-                "top");
-    }
 
     /**
      * Updates the remote video menu.
@@ -1336,101 +1477,6 @@ var VideoLayout = (function (my) {
         if (i >= 0)
             return containerElement.id.substring(i + 12); 
     };
-
-    /**
-     * Adds the remote video menu element for the given <tt>jid</tt> in the
-     * given <tt>parentElement</tt>.
-     *
-     * @param jid the jid indicating the video for which we're adding a menu.
-     * @param parentElement the parent element where this menu will be added
-     */
-    function addRemoteVideoMenu(jid, parentElement) {
-        var spanElement = document.createElement('span');
-        spanElement.className = 'remotevideomenu';
-
-        parentElement.appendChild(spanElement);
-
-        var menuElement = document.createElement('i');
-        menuElement.className = 'fa fa-angle-down';
-        menuElement.title = 'Remote user controls';
-        spanElement.appendChild(menuElement);
-
-//        <ul class="popupmenu">
-//        <li><a href="#">Mute</a></li>
-//        <li><a href="#">Eject</a></li>
-//        </ul>
-
-        var popupmenuElement = document.createElement('ul');
-        popupmenuElement.className = 'popupmenu';
-        popupmenuElement.id
-            = 'remote_popupmenu_' + Strophe.getResourceFromJid(jid);
-        spanElement.appendChild(popupmenuElement);
-
-        var muteMenuItem = document.createElement('li');
-        var muteLinkItem = document.createElement('a');
-
-        var mutedIndicator = "<i class='icon-mic-disabled'></i>";
-
-        if (!mutedAudios[jid]) {
-            muteLinkItem.innerHTML = mutedIndicator + 'Mute';
-            muteLinkItem.className = 'mutelink';
-        }
-        else {
-            muteLinkItem.innerHTML = mutedIndicator + ' Muted';
-            muteLinkItem.className = 'mutelink disabled';
-        }
-
-        muteLinkItem.onclick = function(){
-            if ($(this).attr('disabled') != undefined) {
-                event.preventDefault();
-            }
-            var isMute = mutedAudios[jid] == true;
-            connection.moderate.setMute(jid, !isMute);
-            popupmenuElement.setAttribute('style', 'display:none;');
-
-            if (isMute) {
-                this.innerHTML = mutedIndicator + ' Muted';
-                this.className = 'mutelink disabled';
-            }
-            else {
-                this.innerHTML = mutedIndicator + ' Mute';
-                this.className = 'mutelink';
-            }
-        };
-
-        muteMenuItem.appendChild(muteLinkItem);
-        popupmenuElement.appendChild(muteMenuItem);
-
-        var ejectIndicator = "<i class='fa fa-eject'></i>";
-
-        var ejectMenuItem = document.createElement('li');
-        var ejectLinkItem = document.createElement('a');
-        ejectLinkItem.innerHTML = ejectIndicator + ' Kick out';
-        ejectLinkItem.onclick = function(){
-            connection.moderate.eject(jid);
-            popupmenuElement.setAttribute('style', 'display:none;');
-        };
-
-        ejectMenuItem.appendChild(ejectLinkItem);
-        popupmenuElement.appendChild(ejectMenuItem);
-
-        var paddingSpan = document.createElement('span');
-        paddingSpan.className = 'popupmenuPadding';
-        popupmenuElement.appendChild(paddingSpan);
-    }
-
-    /**
-     * Removes remote video menu element from video element identified by
-     * given <tt>videoElementId</tt>.
-     *
-     * @param videoElementId the id of local or remote video element.
-     */
-    function removeRemoteVideoMenu(videoElementId) {
-        var menuSpan = $('#' + videoElementId + '>span.remotevideomenu');
-        if (menuSpan.length) {
-            menuSpan.remove();
-        }
-    }
 
     /**
      * On contact list item clicked.
@@ -1767,7 +1813,7 @@ var VideoLayout = (function (my) {
             // the current dominant speaker.
             if ((!focusedVideoInfo &&
                 !VideoLayout.getDominantSpeakerResourceJid() &&
-                !Prezi.isPresentationVisible()) ||
+                !require("../prezi/Prezi").isPresentationVisible()) ||
                 (parentResourceJid &&
                 VideoLayout.getDominantSpeakerResourceJid() === parentResourceJid)) {
                 VideoLayout.updateLargeVideo(
@@ -1924,362 +1970,6 @@ var VideoLayout = (function (my) {
     });
 
     /**
-     * Constructs new connection indicator.
-     * @param videoContainer the video container associated with the indicator.
-     * @constructor
-     */
-    function ConnectionIndicator(videoContainer, jid)
-    {
-        this.videoContainer = videoContainer;
-        this.bandwidth = null;
-        this.packetLoss = null;
-        this.bitrate = null;
-        this.showMoreValue = false;
-        this.resolution = null;
-        this.transport = [];
-        this.popover = null;
-        this.jid = jid;
-        this.create();
-    }
-
-    /**
-     * Values for the connection quality
-     * @type {{98: string, 81: string, 64: string, 47: string, 30: string, 0: string}}
-     */
-    ConnectionIndicator.connectionQualityValues = {
-        98: "18px", //full
-        81: "15px",//4 bars
-        64: "11px",//3 bars
-        47: "7px",//2 bars
-        30: "3px",//1 bar
-        0: "0px"//empty
-    };
-
-    ConnectionIndicator.getIP = function(value)
-    {
-        return value.substring(0, value.lastIndexOf(":"));
-    };
-
-    ConnectionIndicator.getPort = function(value)
-    {
-        return value.substring(value.lastIndexOf(":") + 1, value.length);
-    };
-
-    ConnectionIndicator.getStringFromArray = function (array) {
-        var res = "";
-        for(var i = 0; i < array.length; i++)
-        {
-            res += (i == 0? "" : ", ") + array[i];
-        }
-        return res;
-    }
-    /**
-     * Generates the html content.
-     * @returns {string} the html content.
-     */
-    ConnectionIndicator.prototype.generateText = function () {
-        var downloadBitrate, uploadBitrate, packetLoss, resolution;
-
-        if(this.bitrate === null)
-        {
-            downloadBitrate = "N/A";
-            uploadBitrate = "N/A";
-        }
-        else
-        {
-            downloadBitrate = this.bitrate.download? this.bitrate.download + " Kbps" : "N/A";
-            uploadBitrate = this.bitrate.upload? this.bitrate.upload + " Kbps" : "N/A";
-        }
-
-        if(this.packetLoss === null)
-        {
-            packetLoss = "N/A";
-        }
-        else
-        {
-
-            packetLoss = "<span class='jitsipopover_green'>&darr;</span>" +
-                (this.packetLoss.download != null? this.packetLoss.download : "N/A") +
-                "% <span class='jitsipopover_orange'>&uarr;</span>" +
-                (this.packetLoss.upload != null? this.packetLoss.upload : "N/A") + "%";
-        }
-
-        var resolutionValue = null;
-        if(this.resolution)
-        {
-            var keys = Object.keys(this.resolution);
-            if(keys.length == 1)
-            {
-                for(var ssrc in this.resolution)
-                {
-                    resolutionValue = this.resolution[ssrc];
-                }
-            }
-            else if(keys.length > 1)
-            {
-                var displayedSsrc = simulcast.getReceivingSSRC(this.jid);
-                resolutionValue = this.resolution[displayedSsrc];
-            }
-        }
-
-        if(this.jid==null)
-        {
-            resolution = "";
-            if(this.resolution == null || !Object.keys(this.resolution)
-                || Object.keys(this.resolution).length == 0)
-            {
-                resolution = "N/A";
-            }
-            else
-                for(var i in this.resolution)
-                {
-                    resolutionValue = this.resolution[i];
-                    if(resolutionValue)
-                    {
-                        if(resolutionValue.height &&
-                            resolutionValue.width)
-                        {
-                            resolution += (resolution == ""? "" : ", ")
-                                + resolutionValue.width + "x" + resolutionValue.height;
-                        }
-                    }
-                }
-        }
-        else if(!resolutionValue ||
-            !resolutionValue.height ||
-            !resolutionValue.width)
-        {
-            resolution = "N/A";
-        }
-        else
-        {
-            resolution = resolutionValue.width + "x" + resolutionValue.height;
-        }
-
-        var result = "<table style='width:100%'><tr><td><span class='jitsipopover_blue'>Bitrate:</span></td><td><span class='jitsipopover_green'>&darr;</span>" +
-            downloadBitrate + " <span class='jitsipopover_orange'>&uarr;</span>" +
-            uploadBitrate + "</td></tr><tr><td>" +
-            "<tr><td><span class='jitsipopover_blue'>Packet loss: </span></td><td>" + packetLoss  + "</td></tr><tr><td>" +
-            "<span class='jitsipopover_blue'>Resolution:</span></td><td>" + resolution + "</td></tr></table>";
-
-        if(this.videoContainer.id == "localVideoContainer")
-            result += "<div class=\"jitsipopover_showmore\" onclick = \"VideoLayout.connectionIndicators['" +
-                 this.videoContainer.id + "'].showMore()\">" + (this.showMoreValue? "Show less" : "Show More") + "</div><br />";
-
-        if(this.showMoreValue)
-        {
-            var downloadBandwidth, uploadBandwidth, transport;
-            if(this.bandwidth === null)
-            {
-                downloadBandwidth = "N/A";
-                uploadBandwidth = "N/A";
-            }
-            else
-            {
-                downloadBandwidth = this.bandwidth.download? this.bandwidth.download + " Kbps" : "N/A";
-                uploadBandwidth = this.bandwidth.upload? this.bandwidth.upload + " Kbps" : "N/A";
-            }
-
-            if(!this.transport || this.transport.length === 0)
-            {
-                transport = "<tr><td><span class='jitsipopover_blue'>Address:</span></td><td> N/A</td></tr>";
-            }
-            else
-            {
-                var data = {remoteIP: [], localIP:[], remotePort:[], localPort:[]};
-                for(var i = 0; i < this.transport.length; i++)
-                {
-                    var ip =  ConnectionIndicator.getIP(this.transport[i].ip);
-                    var port = ConnectionIndicator.getPort(this.transport[i].ip);
-                    var localIP = ConnectionIndicator.getIP(this.transport[i].localip);
-                    var localPort = ConnectionIndicator.getPort(this.transport[i].localip);
-                    if(data.remoteIP.indexOf(ip) == -1)
-                    {
-                       data.remoteIP.push(ip);
-                    }
-
-                    if(data.remotePort.indexOf(port) == -1)
-                    {
-                        data.remotePort.push(port);
-                    }
-
-                    if(data.localIP.indexOf(localIP) == -1)
-                    {
-                        data.localIP.push(localIP);
-                    }
-
-                    if(data.localPort.indexOf(localPort) == -1)
-                    {
-                        data.localPort.push(localPort);
-                    }
-
-                }
-                var localTransport = "<tr><td><span class='jitsipopover_blue'>Local address" +
-                    (data.localIP.length > 1? "es" : "") + ": </span></td><td> " +
-                     ConnectionIndicator.getStringFromArray(data.localIP) + "</td></tr>";
-                transport = "<tr><td><span class='jitsipopover_blue'>Remote address"+
-                    (data.remoteIP.length > 1? "es" : "") + ":</span></td><td> " +
-                    ConnectionIndicator.getStringFromArray(data.remoteIP) + "</td></tr>";
-                if(this.transport.length > 1)
-                {
-                    transport += "<tr><td><span class='jitsipopover_blue'>Remote ports:</span></td><td>";
-                    localTransport += "<tr><td><span class='jitsipopover_blue'>Local ports:</span></td><td>";
-                }
-                else
-                {
-                    transport += "<tr><td><span class='jitsipopover_blue'>Remote port:</span></td><td>";
-                    localTransport += "<tr><td><span class='jitsipopover_blue'>Local port:</span></td><td>";
-                }
-
-                transport += ConnectionIndicator.getStringFromArray(data.remotePort);
-                localTransport += ConnectionIndicator.getStringFromArray(data.localPort);
-                transport += "</td></tr>";
-                transport += localTransport + "</td></tr>";
-                transport +="<tr><td><span class='jitsipopover_blue'>Transport:</span></td><td>" + this.transport[0].type + "</td></tr>";
-
-            }
-
-            result += "<table  style='width:100%'><tr><td><span class='jitsipopover_blue'>Estimated bandwidth:</span> </td><td>" +
-                "<span class='jitsipopover_green'>&darr;</span>" + downloadBandwidth +
-                " <span class='jitsipopover_orange'>&uarr;</span>" +
-                uploadBandwidth + "</td></tr>";
-
-            result += transport + "</table>";
-
-        }
-
-        return result;
-    };
-
-    /**
-     * Shows or hide the additional information.
-     */
-    ConnectionIndicator.prototype.showMore = function () {
-        this.showMoreValue = !this.showMoreValue;
-        this.updatePopoverData();
-    };
-
-    /**
-     * Creates the indicator
-     */
-    ConnectionIndicator.prototype.create = function () {
-        this.connectionIndicatorContainer = document.createElement("div");
-        this.connectionIndicatorContainer.className = "connectionindicator";
-        this.connectionIndicatorContainer.style.display = "none";
-        this.videoContainer.appendChild(this.connectionIndicatorContainer);
-        this.popover = new JitsiPopover($("#" + this.videoContainer.id + " > .connectionindicator"),
-            {content: "<div class=\"connection_info\">Come back here for " +
-                "connection information once the conference starts</div>", skin: "black"});
-
-        function createIcon(classes)
-        {
-            var icon = document.createElement("span");
-            for(var i in classes)
-            {
-                icon.classList.add(classes[i]);
-            }
-            icon.appendChild(document.createElement("i")).classList.add("icon-connection");
-            return icon;
-        }
-        this.emptyIcon = this.connectionIndicatorContainer.appendChild(
-            createIcon(["connection", "connection_empty"]));
-        this.fullIcon = this.connectionIndicatorContainer.appendChild(
-            createIcon(["connection", "connection_full"]));
-
-    };
-
-    /**
-     * Removes the indicator
-     */
-    ConnectionIndicator.prototype.remove = function()
-    {
-        this.connectionIndicatorContainer.remove();
-        this.popover.forceHide();
-
-    };
-
-    /**
-     * Updates the data of the indicator
-     * @param percent the percent of connection quality
-     * @param object the statistics data.
-     */
-    ConnectionIndicator.prototype.updateConnectionQuality = function (percent, object) {
-
-        if(percent === null)
-        {
-            this.connectionIndicatorContainer.style.display = "none";
-            this.popover.forceHide();
-            return;
-        }
-        else
-        {
-            if(this.connectionIndicatorContainer.style.display == "none") {
-                this.connectionIndicatorContainer.style.display = "block";
-                VideoLayout.updateMutePosition(this.videoContainer.id);
-            }
-        }
-        this.bandwidth = object.bandwidth;
-        this.bitrate = object.bitrate;
-        this.packetLoss = object.packetLoss;
-        this.transport = object.transport;
-        if(object.resolution)
-        {
-            this.resolution = object.resolution;
-        }
-        for(var quality in ConnectionIndicator.connectionQualityValues)
-        {
-            if(percent >= quality)
-            {
-                this.fullIcon.style.width = ConnectionIndicator.connectionQualityValues[quality];
-            }
-        }
-        this.updatePopoverData();
-    };
-
-    /**
-     * Updates the resolution
-     * @param resolution the new resolution
-     */
-    ConnectionIndicator.prototype.updateResolution = function (resolution) {
-        this.resolution = resolution;
-        this.updatePopoverData();
-    };
-
-    /**
-     * Updates the content of the popover
-     */
-    ConnectionIndicator.prototype.updatePopoverData = function () {
-        this.popover.updateContent("<div class=\"connection_info\">" + this.generateText() + "</div>");
-    };
-
-    /**
-     * Hides the popover
-     */
-    ConnectionIndicator.prototype.hide = function () {
-        this.popover.forceHide();
-    };
-
-    /**
-     * Hides the indicator
-     */
-    ConnectionIndicator.prototype.hideIndicator = function () {
-        this.connectionIndicatorContainer.style.display = "none";
-        if(this.popover)
-            this.popover.forceHide();
-    };
-
-    /**
-     * Updates the data for the indicator
-     * @param id the id of the indicator
-     * @param percent the percent for connection quality
-     * @param object the data
-     */
-    function updateStatsIndicator(id, percent, object) {
-        if(VideoLayout.connectionIndicators[id])
-            VideoLayout.connectionIndicators[id].updateConnectionQuality(percent, object);
-    }
-
-    /**
      * Updates local stats
      * @param percent
      * @param object
@@ -2349,3 +2039,5 @@ var VideoLayout = (function (my) {
 
     return my;
 }(VideoLayout || {}));
+
+module.exports = VideoLayout;

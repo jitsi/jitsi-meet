@@ -1,4 +1,23 @@
 /* jshint -W117 */
+
+
+function CallIncomingJingle(sid) {
+    var sess = connection.jingle.sessions[sid];
+
+    // TODO: do we check activecall == null?
+    activecall = sess;
+
+    statistics.onConferenceCreated(sess);
+    RTC.onConferenceCreated(sess);
+
+    // TODO: check affiliation and/or role
+    console.log('emuc data for', sess.peerjid, connection.emuc.members[sess.peerjid]);
+    sess.usedrip = true; // not-so-naive trickle ice
+    sess.sendAnswer();
+    sess.accept();
+
+};
+
 Strophe.addConnectionPlugin('jingle', {
     connection: null,
     sessions: {},
@@ -110,7 +129,7 @@ Strophe.addConnectionPlugin('jingle', {
                 // the callback should either
                 // .sendAnswer and .accept
                 // or .sendTerminate -- not necessarily synchronus
-                $(document).trigger('callincoming.jingle', [sess.sid]);
+                CallIncomingJingle(sess.sid);
                 break;
             case 'session-accept':
                 sess.setRemoteDescription($(iq).find('>jingle'), 'answer');

@@ -45,7 +45,7 @@ var Recording = (function (my) {
 
         if (!recordingToken)
         {
-            messageHandler.openTwoButtonDialog(null,
+            UI.messageHandler.openTwoButtonDialog(null,
                     '<h2>Enter recording token</h2>' +
                     '<input id="recordingToken" type="text" placeholder="token" autofocus>',
                 false,
@@ -70,7 +70,7 @@ var Recording = (function (my) {
         }
 
         var oldState = recordingEnabled;
-        Toolbar.setRecordingButtonState(!oldState);
+        UI.setRecordingButtonState(!oldState);
         my.setRecording(!oldState,
             recordingToken,
             function (state) {
@@ -99,7 +99,7 @@ var Recording = (function (my) {
                     my.setRecordingToken(null);
                 }
                 // Update with returned status
-                Toolbar.setRecordingButtonState(state);
+                UI.setRecordingButtonState(state);
             }
         );
     };

@@ -1,4 +1,4 @@
-/* global $, alert, changeLocalVideo, chrome, config, connection, getConferenceHandler, getUserMediaWithConstraints, VideoLayout */
+/* global $, alert, changeLocalVideo, chrome, config, connection, getConferenceHandler, getUserMediaWithConstraints */
 /**
  * Indicates that desktop stream is currently in use(for toggle purpose).
  * @type {boolean}
@@ -86,7 +86,7 @@ function isUpdateRequired(minVersion, extVersion)
     catch (e)
     {
         console.error("Failed to parse extension version", e);
-        messageHandler.showError('Error',
+        UI.messageHandler.showError('Error',
             'Error when trying to detect desktopsharing extension.');
         return true;
     }
@@ -168,7 +168,7 @@ function obtainScreenFromExtension(streamCallback, failCallback) {
                     function (arg) {
                         console.log("Failed to install the extension", arg);
                         failCallback(arg);
-                        messageHandler.showError('Error',
+                        UI.messageHandler.showError('Error',
                             'Failed to install desktop sharing extension');
                     }
                 );
@@ -247,7 +247,7 @@ function streamSwitchDone() {
     //window.setTimeout(
     //    function () {
     switchInProgress = false;
-    Toolbar.changeDesktopSharingButtonState(isUsingScreenStream);
+    UI.changeDesktopSharingButtonState(isUsingScreenStream);
     //    }, 100
     //);
 }
@@ -258,7 +258,7 @@ function newStreamCreated(stream) {
 
     connection.jingle.localVideo = stream;
 
-    VideoLayout.changeLocalVideo(stream, !isUsingScreenStream);
+    UI.changeLocalVideo(stream, !isUsingScreenStream);
 
     var conferenceHandler = getConferenceHandler();
     if (conferenceHandler) {
@@ -267,7 +267,7 @@ function newStreamCreated(stream) {
     } else {
         // We are done immediately
         console.error("No conference handler");
-        messageHandler.showError('Error',
+        UI.messageHandler.showError('Error',
             'Unable to switch video stream.');
         streamSwitchDone();
     }

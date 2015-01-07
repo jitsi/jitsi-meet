@@ -4,12 +4,12 @@ var KeyboardShortcut = (function(my) {
         67: {
             character: "C",
             id: "toggleChatPopover",
-            function: BottomToolbar.toggleChat
+            function: UI.toggleChat
         },
         70: {
             character: "F",
             id: "filmstripPopover",
-            function: BottomToolbar.toggleFilmStrip
+            function: UI.toggleFilmStrip
         },
         77: {
             character: "M",
@@ -45,7 +45,7 @@ var KeyboardShortcut = (function(my) {
             }
           //esc while the smileys are visible hides them
         } else if (keycode === 27 && $('#smileysContainer').is(':visible')) {
-            Chat.toggleSmileys();
+            UI.toggleSmileys();
         }
     };
 

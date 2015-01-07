@@ -32,7 +32,7 @@ var ConnectionQuality = (function () {
      */
     ConnectionQuality.updateLocalStats = function (data) {
         stats = data;
-        VideoLayout.updateLocalConnectionStats(100 - stats.packetLoss.total,stats);
+        UI.updateLocalConnectionStats(100 - stats.packetLoss.total,stats);
         if(sendIntervalId == null)
         {
             startSendingStats();
@@ -97,12 +97,12 @@ var ConnectionQuality = (function () {
     ConnectionQuality.updateRemoteStats = function (jid, data) {
         if(data == null || data.packetLoss_total == null)
         {
-            VideoLayout.updateConnectionStats(jid, null, null);
+            UI.updateConnectionStats(jid, null, null);
             return;
         }
         remoteStats[jid] = parseMUCStats(data);
 
-        VideoLayout.updateConnectionStats(jid, 100 - data.packetLoss_total,remoteStats[jid]);
+        UI.updateConnectionStats(jid, 100 - data.packetLoss_total,remoteStats[jid]);
 
     };
 
@@ -113,7 +113,7 @@ var ConnectionQuality = (function () {
         clearInterval(sendIntervalId);
         sendIntervalId = null;
         //notify UI about stopping statistics gathering
-        VideoLayout.onStatsStop();
+        UI.onStatsStop();
     };
 
     /**

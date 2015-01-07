@@ -107,3 +107,5 @@ var CanvasUtil = (function(my) {
 
     return my;
 })(CanvasUtil || {});
+
+module.exports = CanvasUtil;

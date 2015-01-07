@@ -1,3 +1,4 @@
+var Smileys = require("./smileys.json");
 /**
  * Processes links and smileys in "body"
  */
@@ -44,6 +45,7 @@ function smilify(body)
         return body;
     }
 
+    var regexs = Smileys["regexs"];
     for(var smiley in regexs) {
         if(regexs.hasOwnProperty(smiley)) {
             body = body.replace(regexs[smiley],
@@ -53,3 +55,8 @@ function smilify(body)
 
     return body;
 }
+
+module.exports = {
+    processReplacements: processReplacements,
+    linkify: linkify
+};

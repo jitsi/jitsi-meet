@@ -149,4 +149,6 @@ var messageHandler = (function(my) {
     return my;
 }(messageHandler || {}));
 
+module.exports = messageHandler;
+
 

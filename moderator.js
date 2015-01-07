@@ -1,5 +1,5 @@
 /* global $, $iq, config, connection, Etherpad, hangUp, messageHandler,
- roomName, sessionTerminated, Strophe, Toolbar, Util, VideoLayout */
+ roomName, sessionTerminated, Strophe, Util */
 /**
  * Contains logic responsible for enabling/disabling functionality available
  * only to moderator users.
@@ -13,56 +13,35 @@ var Moderator = (function (my) {
     var externalAuthEnabled = false;
 
     my.isModerator = function () {
-        return connection.emuc.isModerator();
+        return connection && connection.emuc.isModerator();
     };
 
     my.isPeerModerator = function (peerJid) {
-        return connection.emuc.getMemberRole(peerJid) === 'moderator';
+        return connection && connection.emuc.getMemberRole(peerJid) === 'moderator';
     };
 
     my.isExternalAuthEnabled = function () {
         return externalAuthEnabled;
     };
 
-    my.onModeratorStatusChanged = function (isModerator) {
-
-        Toolbar.showSipCallButton(isModerator);
-        Toolbar.showRecordingButton(
-                isModerator); //&&
-                // FIXME:
-                // Recording visible if
-                // there are at least 2(+ 1 focus) participants
-                //Object.keys(connection.emuc.members).length >= 3);
-
-        if (isModerator && config.etherpad_base) {
-            Etherpad.init();
-        }
-    };
-
     my.init = function () {
-        $(document).bind(
-            'local.role.changed.muc',
-            function (event, jid, info, pres) {
-                Moderator.onModeratorStatusChanged(Moderator.isModerator());
-            }
-        );
-
-        $(document).bind(
-            'left.muc',
-            function (event, jid) {
-                console.info("Someone left is it focus ? " + jid);
-                var resource = Strophe.getResourceFromJid(jid);
-                if (resource === 'focus' && !sessionTerminated) {
-                    console.info(
-                        "Focus has left the room - leaving conference");
-                    //hangUp();
-                    // We'd rather reload to have everything re-initialized
-                    // FIXME: show some message before reload
-                    location.reload();
-                }
-            }
-        );
+        Moderator.onLocalRoleChange = function (from, member, pres) {
+            UI.onModeratorStatusChanged(Moderator.isModerator());
+        };
     };
+
+    my.onMucLeft = function (jid) {
+        console.info("Someone left is it focus ? " + jid);
+        var resource = Strophe.getResourceFromJid(jid);
+        if (resource === 'focus' && !sessionTerminated) {
+            console.info(
+                "Focus has left the room - leaving conference");
+            //hangUp();
+            // We'd rather reload to have everything re-initialized
+            // FIXME: show some message before reload
+            location.reload();
+        }
+    }
 
     my.setFocusUserJid = function (focusJid) {
         if (!focusUserJid) {
@@ -185,13 +164,13 @@ var Moderator = (function (my) {
                 // Not authorized to create new room
                 if ($(error).find('>error>not-authorized').length) {
                     console.warn("Unauthorized to start the conference");
-                    $(document).trigger('auth_required.moderator');
+                    UI.onAuthenticationRequired();
                     return;
                 }
                 var waitMs = getNextErrorTimeout();
                 console.error("Focus error, retry after " + waitMs, error);
                 // Show message
-                messageHandler.notify(
+                UI.messageHandler.notify(
                     'Conference focus', 'disconnected',
                     Moderator.getFocusComponent() +
                     ' not available - retry in ' + (waitMs / 1000) + ' sec');

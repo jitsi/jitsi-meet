@@ -1,6 +1,204 @@
-/* global $, buttonClick, config, lockRoom, messageHandler, Moderator, roomUrl,
+/* global $, buttonClick, config, lockRoom,  Moderator,
    setSharedKey, sharedKey, Util */
+var messageHandler = require("../util/MessageHandler");
+var BottomToolbar = require("./BottomToolbar");
+var Prezi = require("../prezi/Prezi");
+var Etherpad = require("../etherpad/Etherpad");
+var PanelToggler = require("../side_pannels/SidePanelToggler");
+
+var roomUrl = null;
+var sharedKey = '';
+var authenticationWindow = null;
+
+var buttonHandlers =
+{
+    "toolbar_button_mute": function () {
+        return toggleAudio();
+    },
+    "toolbar_button_camera": function () {
+        return toggleVideo();
+    },
+    "toolbar_button_authentication": function () {
+        return Toolbar.authenticateClicked();
+    },
+    "toolbar_button_record": function () {
+        return toggleRecording();
+    },
+    "toolbar_button_security": function () {
+        return Toolbar.openLockDialog();
+    },
+    "toolbar_button_link": function () {
+        return Toolbar.openLinkDialog();
+    },
+    "toolbar_button_chat": function () {
+        return BottomToolbar.toggleChat();
+    },
+    "toolbar_button_prezi": function () {
+        return Prezi.openPreziDialog();
+    },
+    "toolbar_button_etherpad": function () {
+        return Etherpad.toggleEtherpad(0);
+    },
+    "toolbar_button_desktopsharing": function () {
+        return toggleScreenSharing();
+    },
+    "toolbar_button_fullScreen": function()
+    {
+        buttonClick("#fullScreen", "icon-full-screen icon-exit-full-screen");
+        return Toolbar.toggleFullScreen();
+    },
+    "toolbar_button_sip": function () {
+        return callSipButtonClicked();
+    },
+    "toolbar_button_settings": function () {
+        PanelToggler.toggleSettingsMenu();
+    },
+    "toolbar_button_hangup": function () {
+        return hangup();
+    }
+};
+
+/**
+ * Starts or stops the recording for the conference.
+ */
+
+function toggleRecording() {
+    Recording.toggleRecording();
+}
+
+/**
+ * Locks / unlocks the room.
+ */
+function lockRoom(lock) {
+    var currentSharedKey = '';
+    if (lock)
+        currentSharedKey = sharedKey;
+
+    connection.emuc.lockRoom(currentSharedKey, function (res) {
+        // password is required
+        if (sharedKey)
+        {
+            console.log('set room password');
+            Toolbar.lockLockButton();
+        }
+        else
+        {
+            console.log('removed room password');
+            Toolbar.unlockLockButton();
+        }
+    }, function (err) {
+        console.warn('setting password failed', err);
+        messageHandler.showError('Lock failed',
+            'Failed to lock conference.',
+            err);
+        Toolbar.setSharedKey('');
+    }, function () {
+        console.warn('room passwords not supported');
+        messageHandler.showError('Warning',
+            'Room passwords are currently not supported.');
+        Toolbar.setSharedKey('');
+    });
+};
+
+/**
+ * Invite participants to conference.
+ */
+function inviteParticipants() {
+    if (roomUrl === null)
+        return;
+
+    var sharedKeyText = "";
+    if (sharedKey && sharedKey.length > 0) {
+        sharedKeyText =
+            "This conference is password protected. Please use the " +
+            "following pin when joining:%0D%0A%0D%0A" +
+            sharedKey + "%0D%0A%0D%0A";
+    }
+
+    var conferenceName = roomUrl.substring(roomUrl.lastIndexOf('/') + 1);
+    var subject = "Invitation to a " + interfaceConfig.APP_NAME + " (" + conferenceName + ")";
+    var body = "Hey there, I%27d like to invite you to a " + interfaceConfig.APP_NAME +
+        " conference I%27ve just set up.%0D%0A%0D%0A" +
+        "Please click on the following link in order" +
+        " to join the conference.%0D%0A%0D%0A" +
+        roomUrl +
+        "%0D%0A%0D%0A" +
+        sharedKeyText +
+        "Note that " + interfaceConfig.APP_NAME + " is currently" +
+        " only supported by Chromium," +
+        " Google Chrome and Opera, so you need" +
+        " to be using one of these browsers.%0D%0A%0D%0A" +
+        "Talk to you in a sec!";
+
+    if (window.localStorage.displayname) {
+        body += "%0D%0A%0D%0A" + window.localStorage.displayname;
+    }
+
+    if (interfaceConfig.INVITATION_POWERED_BY) {
+        body += "%0D%0A%0D%0A--%0D%0Apowered by jitsi.org";
+    }
+
+    window.open("mailto:?subject=" + subject + "&body=" + body, '_blank');
+}
+
 var Toolbar = (function (my) {
+
+    my.init = function () {
+        for(var k in buttonHandlers)
+            $("#" + k).click(buttonHandlers[k]);
+    }
+
+    /**
+     * Sets shared key
+     * @param sKey the shared key
+     */
+    my.setSharedKey = function (sKey) {
+        sharedKey = sKey;
+    };
+
+    my.closeAuthenticationWindow = function () {
+        if (authenticationWindow) {
+            authenticationWindow.close();
+            authenticationWindow = null;
+        }
+    }
+
+    my.authenticateClicked = function () {
+        // Get authentication URL
+        Moderator.getAuthUrl(function (url) {
+            // Open popup with authentication URL
+            authenticationWindow = messageHandler.openCenteredPopup(
+                url, 500, 400,
+                function () {
+                    // On popup closed - retry room allocation
+                    Moderator.allocateConferenceFocus(
+                        roomName, doJoinAfterFocus);
+                    authenticationWindow = null;
+                });
+            if (!authenticationWindow) {
+                Toolbar.showAuthenticateButton(true);
+                messageHandler.openMessageDialog(
+                    null, "Your browser is blocking popup windows from this site." +
+                        " Please enable popups in your browser security settings" +
+                        " and try again.");
+            }
+        });
+    };
+
+    /**
+     * Updates the room invite url.
+     */
+    my.updateRoomUrl = function (newRoomUrl) {
+        roomUrl = newRoomUrl;
+
+        // If the invite dialog has been already opened we update the information.
+        var inviteLink = document.getElementById('inviteLinkRef');
+        if (inviteLink) {
+            inviteLink.value = roomUrl;
+            inviteLink.select();
+            document.getElementById('jqi_state0_buttonInvite').disabled = false;
+        }
+    }
 
     /**
      * Disables and enables some of the buttons.
@@ -41,7 +239,7 @@ var Toolbar = (function (my) {
                     "Remove",
                     function (e, v) {
                         if (v) {
-                            setSharedKey('');
+                            Toolbar.setSharedKey('');
                             lockRoom(false);
                         }
                     });
@@ -57,7 +255,7 @@ var Toolbar = (function (my) {
                             var lockKey = document.getElementById('lockKey');
 
                             if (lockKey.value) {
-                                setSharedKey(Util.escapeHtml(lockKey.value));
+                                Toolbar.setSharedKey(Util.escapeHtml(lockKey.value));
                                 lockRoom(true);
                             }
                         }
@@ -103,47 +301,6 @@ var Toolbar = (function (my) {
             }
         );
     };
-
-    /**
-     * Invite participants to conference.
-     */
-    function inviteParticipants() {
-        if (roomUrl === null)
-            return;
-
-        var sharedKeyText = "";
-        if (sharedKey && sharedKey.length > 0) {
-            sharedKeyText =
-                "This conference is password protected. Please use the " +
-                "following pin when joining:%0D%0A%0D%0A" +
-                sharedKey + "%0D%0A%0D%0A";
-        }
-
-        var conferenceName = roomUrl.substring(roomUrl.lastIndexOf('/') + 1);
-        var subject = "Invitation to a " + interfaceConfig.APP_NAME + " (" + conferenceName + ")";
-        var body = "Hey there, I%27d like to invite you to a " + interfaceConfig.APP_NAME +
-                    " conference I%27ve just set up.%0D%0A%0D%0A" +
-                    "Please click on the following link in order" +
-                    " to join the conference.%0D%0A%0D%0A" +
-                    roomUrl +
-                    "%0D%0A%0D%0A" +
-                    sharedKeyText +
-                    "Note that " + interfaceConfig.APP_NAME + " is currently" +
-                    " only supported by Chromium," +
-                    " Google Chrome and Opera, so you need" +
-                    " to be using one of these browsers.%0D%0A%0D%0A" +
-                    "Talk to you in a sec!";
-
-        if (window.localStorage.displayname) {
-            body += "%0D%0A%0D%0A" + window.localStorage.displayname;
-        }
-
-        if (interfaceConfig.INVITATION_POWERED_BY) {
-            body += "%0D%0A%0D%0A--%0D%0Apowered by jitsi.org";
-        }
-
-        window.open("mailto:?subject=" + subject + "&body=" + body, '_blank');
-    }
 
     /**
      * Opens the settings dialog.
@@ -291,3 +448,5 @@ var Toolbar = (function (my) {
 
     return my;
 }(Toolbar || {}));
+
+module.exports = Toolbar;

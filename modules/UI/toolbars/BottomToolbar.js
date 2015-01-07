@@ -1,4 +1,23 @@
+var PanelToggler = require("../side_pannels/SidePanelToggler");
+
+var buttonHandlers = {
+    "bottom_toolbar_contact_list": function () {
+        BottomToolbar.toggleContactList();
+    },
+    "bottom_toolbar_film_strip": function () {
+        BottomToolbar.toggleFilmStrip();
+    },
+    "bottom_toolbar_chat": function () {
+        BottomToolbar.toggleChat();
+    }
+};
+
 var BottomToolbar = (function (my) {
+    my.init = function () {
+        for(var k in buttonHandlers)
+            $("#" + k).click(buttonHandlers[k]);
+    };
+
     my.toggleChat = function() {
         PanelToggler.toggleChat();
     };
@@ -20,3 +39,5 @@ var BottomToolbar = (function (my) {
 
     return my;
 }(BottomToolbar || {}));
+
+module.exports = BottomToolbar;

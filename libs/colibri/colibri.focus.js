@@ -92,6 +92,12 @@ function ColibriFocus(connection, bridgejid) {
     this.endpointsInfo = null;
 }
 
+function conferenceCreated(focus)
+{
+    statistics.onConfereceCreated(getConferenceHandler());
+    RTC.onConfereceCreated(focus);
+}
+
 // creates a conferences with an initial set of peers
 ColibriFocus.prototype.makeConference = function (peers, errorCallback) {
     var self = this;
@@ -411,7 +417,7 @@ ColibriFocus.prototype.createdConference = function (result) {
     console.log('remote channels', this.channels);
 
     // Notify that the focus has created the conference on the bridge
-    $(document).trigger('conferenceCreated.jingle', [self]);
+    conferenceCreated(self);
 
     var bridgeSDP = new SDP(
         'v=0\r\n' +
@@ -561,8 +567,7 @@ ColibriFocus.prototype.createdConference = function (result) {
                             }
 
                             // Notify we've created the conference
-                            $(document).trigger(
-                                'conferenceCreated.jingle', self);
+                            conferenceCreated(self);
                         },
                         function (error) {
                             console.warn('setLocalDescription failed.', error);

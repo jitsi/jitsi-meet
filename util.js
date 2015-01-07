@@ -47,16 +47,6 @@ var Util = (function (my) {
         return $('<div/>').text(unsafeText).html();
     };
 
-    /**
-     * Returns the available video width.
-     */
-    my.getAvailableVideoWidth = function () {
-        var rightPanelWidth
-            = PanelToggler.isVisible() ? PanelToggler.getPanelSize()[0] : 0;
-
-        return window.innerWidth - rightPanelWidth;
-    };
-
     my.imageToGrayScale = function (canvas) {
         var context = canvas.getContext('2d');
         var imgData = context.getImageData(0, 0, canvas.width, canvas.height);

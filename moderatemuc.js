@@ -1,4 +1,4 @@
-/* global $, $iq, config, connection, focusMucJid, forceMuted, messageHandler,
+/* global $, $iq, config, connection, focusMucJid, forceMuted,
    setAudioMuted, Strophe, toggleAudio */
 /**
  * Moderate connection plugin.
@@ -32,10 +32,6 @@ Strophe.addConnectionPlugin('moderate', {
             },
             function (error) {
                 console.log('set mute error', error);
-                // FIXME: this causes an exception
-                //messageHandler.openReportDialog(null, 'Failed to mute ' +
-                  //  $("#participant_" + jid).find(".displayname").text() ||
-                    //"participant" + '.', error);
             });
     },
     onMute: function (iq) {

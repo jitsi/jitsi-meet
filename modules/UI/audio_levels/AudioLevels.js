@@ -1,3 +1,5 @@
+var CanvasUtil = require("./CanvasUtils");
+
 /**
  * The audio Levels plugin.
  */
@@ -10,7 +12,7 @@ var AudioLevels = (function(my) {
      * Updates the audio level canvas for the given peerJid. If the canvas
      * didn't exist we create it.
      */
-    my.updateAudioLevelCanvas = function (peerJid) {
+    my.updateAudioLevelCanvas = function (peerJid, VideoLayout) {
         var resourceJid = null;
         var videoSpanId = null;
         if (!peerJid)
@@ -66,7 +68,7 @@ var AudioLevels = (function(my) {
      * which we draw the audio level
      * @param audioLevel the newAudio level to render
      */
-    my.updateAudioLevel = function (resourceJid, audioLevel) {
+    my.updateAudioLevel = function (resourceJid, audioLevel, largeVideoResourceJid) {
         drawAudioLevelCanvas(resourceJid, audioLevel);
 
         var videoSpanId = getVideoSpanId(resourceJid);
@@ -91,7 +93,7 @@ var AudioLevels = (function(my) {
             resourceJid = Strophe.getResourceFromJid(connection.emuc.myroomjid);
         }
 
-        if(resourceJid  === VideoLayout.getLargeVideoState().userResourceJid) {
+        if(resourceJid  === largeVideoResourceJid) {
             AudioLevels.updateActiveSpeakerAudioLevel(audioLevel);
         }
     };
@@ -258,3 +260,5 @@ var AudioLevels = (function(my) {
     return my;
 
 })(AudioLevels || {});
+
+module.exports = AudioLevels;

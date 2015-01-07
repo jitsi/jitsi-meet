@@ -2,12 +2,9 @@
 /* application specific logic */
 var connection = null;
 var authenticatedUser = false;
-var authenticationWindow = null;
 var activecall = null;
 var nickname = null;
-var sharedKey = '';
 var focusMucJid = null;
-var roomUrl = null;
 var roomName = null;
 var ssrc2jid = {};
 var bridgeIsDown = false;
@@ -59,10 +56,8 @@ var getVideoPosition;
 var sessionTerminated = false;
 
 function init() {
-    Toolbar.setupButtonsFromConfig();
 
     RTC.addStreamListener(maybeDoJoin, StreamEventTypes.EVENT_TYPE_LOCAL_CREATED);
-    RTC.addStreamListener(VideoLayout.onLocalStreamCreated, StreamEventTypes.EVENT_TYPE_LOCAL_CREATED)
     RTC.start();
 
     var jid = document.getElementById('jid').value || config.hosts.anonymousdomain || config.hosts.domain || window.location.hostname;
@@ -76,13 +71,14 @@ function connect(jid, password) {
         localVideo = connection.jingle.localVideo;
     }
     connection = new Strophe.Connection(document.getElementById('boshURL').value || config.bosh || '/http-bind');
-    
-    var email = SettingsMenu.getEmail();
-    var displayName = SettingsMenu.getDisplayName();
+
+    var settings = UI.getSettings();
+    var email = settings.email;
+    var displayName = settings.displayName;
     if(email) {
         connection.emuc.addEmailToPresence(email);
     } else {
-        connection.emuc.addUserIdToPresence(SettingsMenu.getUID());
+        connection.emuc.addUserIdToPresence(settings.uid);
     }
     if(displayName) {
         connection.emuc.addDisplayNameToPresence(displayName);
@@ -143,41 +139,9 @@ function maybeDoJoin() {
     }
 }
 
-function generateRoomName() {
-    var roomnode = null;
-    var path = window.location.pathname;
-
-    // determinde the room node from the url
-    // TODO: just the roomnode or the whole bare jid?
-    if (config.getroomnode && typeof config.getroomnode === 'function') {
-        // custom function might be responsible for doing the pushstate
-        roomnode = config.getroomnode(path);
-    } else {
-        /* fall back to default strategy
-         * this is making assumptions about how the URL->room mapping happens.
-         * It currently assumes deployment at root, with a rewrite like the
-         * following one (for nginx):
-        location ~ ^/([a-zA-Z0-9]+)$ {
-            rewrite ^/(.*)$ / break;
-        }
-         */
-        if (path.length > 1) {
-            roomnode = path.substr(1).toLowerCase();
-        } else {
-            var word = RoomNameGenerator.generateRoomWithoutSeparator();
-            roomnode = word.toLowerCase();
-
-            window.history.pushState('VideoChat',
-                    'Room: ' + word, window.location.pathname + word);
-        }
-    }
-
-    roomName = roomnode + '@' + config.hosts.muc;
-}
-
 function doJoin() {
     if (!roomName) {
-        generateRoomName();
+        UI.generateRoomName();
     }
 
     Moderator.allocateConferenceFocus(
@@ -244,7 +208,6 @@ function waitForRemoteVideo(selector, ssrc, stream, jid) {
             jid2Ssrc[Strophe.getResourceFromJid(jid)] = ssrc;
         } else {
             console.warn("No ssrc given for jid", jid);
-//            messageHandler.showError('Warning', 'No ssrc was given for the video.');
         }
 
         $(document).trigger('videoactive.jingle', [selector]);
@@ -328,43 +291,7 @@ function waitForPresence(data, sid) {
 
     RTC.createRemoteStream(data, sid, thessrc);
 
-    var container;
-    var remotes = document.getElementById('remoteVideos');
-
-    if (data.peerjid) {
-        VideoLayout.ensurePeerContainerExists(data.peerjid);
-
-        container  = document.getElementById(
-                'participant_' + Strophe.getResourceFromJid(data.peerjid));
-    } else {
-        if (data.stream.id !== 'mixedmslabel'
-            // FIXME: default stream is added always with new focus
-            // (to be investigated)
-            && data.stream.id !== 'default') {
-            console.error('can not associate stream',
-                data.stream.id,
-                'with a participant');
-            // We don't want to add it here since it will cause troubles
-            return;
-        }
-        // FIXME: for the mixed ms we dont need a video -- currently
-        container = document.createElement('span');
-        container.id = 'mixedstream';
-        container.className = 'videocontainer';
-        remotes.appendChild(container);
-        Util.playSoundNotification('userJoined');
-    }
-
     var isVideo = data.stream.getVideoTracks().length > 0;
-
-    if (container) {
-        VideoLayout.addRemoteStreamElement( container,
-                                            sid,
-                                            data.stream,
-                                            data.peerjid,
-                                            thessrc);
-    }
-
     // an attempt to work around https://github.com/jitsi/jitmeet/issues/32
     if (isVideo &&
         data.peerjid && sess.peerjid === data.peerjid &&
@@ -393,19 +320,19 @@ function sendKeyframe(pc) {
                         },
                         function (error) {
                             console.log('triggerKeyframe setLocalDescription failed', error);
-                            messageHandler.showError();
+                            UI.messageHandler.showError();
                         }
                     );
                 },
                 function (error) {
                     console.log('triggerKeyframe createAnswer failed', error);
-                    messageHandler.showError();
+                    UI.messageHandler.showError();
                 }
             );
         },
         function (error) {
             console.log('triggerKeyframe setRemoteDescription failed', error);
-            messageHandler.showError();
+            UI.messageHandler.showError();
         }
     );
 }
@@ -433,7 +360,7 @@ function muteVideo(pc, unmute) {
                         },
                         function (error) {
                             console.log('mute SLD error');
-                            messageHandler.showError('Error',
+                            UI.messageHandler.showError('Error',
                                 'Oops! Something went wrong and we failed to ' +
                                     'mute! (SLD Failure)');
                         }
@@ -441,66 +368,19 @@ function muteVideo(pc, unmute) {
                 },
                 function (error) {
                     console.log(error);
-                    messageHandler.showError();
+                    UI.messageHandler.showError();
                 }
             );
         },
         function (error) {
             console.log('muteVideo SRD error');
-            messageHandler.showError('Error',
+            UI.messageHandler.showError('Error',
                 'Oops! Something went wrong and we failed to stop video!' +
                     '(SRD Failure)');
 
         }
     );
 }
-
-/**
- * Callback for audio levels changed.
- * @param jid JID of the user
- * @param audioLevel the audio level value
- */
-function audioLevelUpdated(jid, audioLevel)
-{
-    var resourceJid;
-    if(jid === statistics.LOCAL_JID)
-    {
-        resourceJid = AudioLevels.LOCAL_LEVEL;
-        if(isAudioMuted())
-        {
-            audioLevel = 0;
-        }
-    }
-    else
-    {
-        resourceJid = Strophe.getResourceFromJid(jid);
-    }
-
-    AudioLevels.updateAudioLevel(resourceJid, audioLevel);
-}
-
-$(document).bind('callincoming.jingle', function (event, sid) {
-    var sess = connection.jingle.sessions[sid];
-
-    // TODO: do we check activecall == null?
-    activecall = sess;
-
-    statistics.onConferenceCreated(sess);
-    RTC.onConferenceCreated(sess);
-
-    // TODO: check affiliation and/or role
-    console.log('emuc data for', sess.peerjid, connection.emuc.members[sess.peerjid]);
-    sess.usedrip = true; // not-so-naive trickle ice
-    sess.sendAnswer();
-    sess.accept();
-
-});
-
-$(document).bind('conferenceCreated.jingle', function (event, focus)
-{
-    statistics.onConfereceCreated(getConferenceHandler());
-    RTC.onConfereceCreated(focus);
-});
 
 $(document).bind('setLocalDescription.jingle', function (event, sid) {
     // put our ssrcs into presence so other clients can identify our stream
@@ -585,115 +465,7 @@ $(document).bind('iceconnectionstatechange.jingle', function (event, sid, sessio
 });
 
 $(document).bind('joined.muc', function (event, jid, info) {
-    updateRoomUrl(window.location.href);
-    document.getElementById('localNick').appendChild(
-        document.createTextNode(Strophe.getResourceFromJid(jid) + ' (me)')
-    );
 
-    // Add myself to the contact list.
-    ContactList.addContact(jid, SettingsMenu.getEmail() || SettingsMenu.getUID());
-
-    // Once we've joined the muc show the toolbar
-    ToolbarToggler.showToolbar();
-
-    // Show authenticate button if needed
-    Toolbar.showAuthenticateButton(
-        Moderator.isExternalAuthEnabled() && !Moderator.isModerator());
-
-    var displayName = !config.displayJids
-        ? info.displayName : Strophe.getResourceFromJid(jid);
-
-    if (displayName)
-        $(document).trigger('displaynamechanged',
-                            ['localVideoContainer', displayName + ' (me)']);
-});
-
-$(document).bind('entered.muc', function (event, jid, info, pres) {
-    console.log('entered', jid, info);
-    if (info.isFocus)
-    {
-        focusMucJid = jid;
-        console.info("Ignore focus: " + jid +", real JID: " + info.jid);
-        return;
-    }
-
-    messageHandler.notify(info.displayName || 'Somebody',
-        'connected',
-        'connected');
-
-    // Add Peer's container
-    var id = $(pres).find('>userID').text();
-    var email = $(pres).find('>email');
-    if(email.length > 0) {
-        id = email.text();
-    }
-    VideoLayout.ensurePeerContainerExists(jid,id);
-
-    if(APIConnector.isEnabled() && APIConnector.isEventEnabled("participantJoined"))
-    {
-        APIConnector.triggerEvent("participantJoined",{jid: jid});
-    }
-
-    /*if (focus !== null) {
-        // FIXME: this should prepare the video
-        if (focus.confid === null) {
-            console.log('make new conference with', jid);
-            focus.makeConference(Object.keys(connection.emuc.members),
-                function(error) {
-                    connection.emuc.addBridgeIsDownToPresence();
-                    connection.emuc.sendPresence();
-                }
-            );
-            Toolbar.showRecordingButton(true);
-        } else {
-            console.log('invite', jid, 'into conference');
-            focus.addNewParticipant(jid);
-        }
-    }*/
-});
-
-$(document).bind('left.muc', function (event, jid) {
-    console.log('left.muc', jid);
-    var displayName = $('#participant_' + Strophe.getResourceFromJid(jid) +
-        '>.displayname').html();
-    messageHandler.notify(displayName || 'Somebody',
-        'disconnected',
-        'disconnected');
-    // Need to call this with a slight delay, otherwise the element couldn't be
-    // found for some reason.
-    // XXX(gp) it works fine without the timeout for me (with Chrome 38).
-    window.setTimeout(function () {
-        var container = document.getElementById(
-                'participant_' + Strophe.getResourceFromJid(jid));
-        if (container) {
-            ContactList.removeContact(jid);
-            VideoLayout.removeConnectionIndicator(jid);
-            // hide here, wait for video to close before removing
-            $(container).hide();
-            VideoLayout.resizeThumbnails();
-        }
-    }, 10);
-
-    if(APIConnector.isEnabled() && APIConnector.isEventEnabled("participantLeft"))
-    {
-        APIConnector.triggerEvent("participantLeft",{jid: jid});
-    }
-
-    delete jid2Ssrc[jid];
-
-    // Unlock large video
-    if (focusedVideoInfo && focusedVideoInfo.jid === jid)
-    {
-        console.info("Focused video owner has left the conference");
-        focusedVideoInfo = null;
-    }
-
-    connection.jingle.terminateByJid(jid);
-
-    if (connection.emuc.getPrezi(jid)) {
-        $(document).trigger('presentationremoved.muc',
-                            [jid, connection.emuc.getPrezi(jid)]);
-    }
 });
 
 $(document).bind('presence.muc', function (event, jid, info, pres) {
@@ -701,7 +473,7 @@ $(document).bind('presence.muc', function (event, jid, info, pres) {
     //check if the video bridge is available
     if($(pres).find(">bridgeIsDown").length > 0 && !bridgeIsDown) {
         bridgeIsDown = true;
-        messageHandler.showError("Error",
+        UI.messageHandler.showError("Error",
             "Jitsi Videobridge is currently unavailable. Please try again later!");
     }
 
@@ -756,7 +528,7 @@ $(document).bind('presence.muc', function (event, jid, info, pres) {
     //check if the video bridge is available
     if($(pres).find(">bridgeIsDown").length > 0 && !bridgeIsDown) {
         bridgeIsDown = true;
-        messageHandler.showError("Error",
+        UI.messageHandler.showError("Error",
             "Jitsi Videobridge is currently unavailable. Please try again later!");
     }
 
@@ -765,14 +537,7 @@ $(document).bind('presence.muc', function (event, jid, info, pres) {
     if(email.length > 0) {
         id = email.text();
     }
-    Avatar.setUserAvatar(jid, id);
-
-});
-
-$(document).bind('presence.status.muc', function (event, jid, info, pres) {
-
-    VideoLayout.setPresenceStatus(
-        'participant_' + Strophe.getResourceFromJid(jid), info.status);
+    UI.setUserAvatar(jid, id);
 
 });
 
@@ -782,80 +547,15 @@ $(document).bind('kicked.muc', function (event, jid) {
         sessionTerminated = true;
         disposeConference(false);
         connection.emuc.doLeave();
-        messageHandler.openMessageDialog("Session Terminated",
+        UI.messageHandler.openMessageDialog("Session Terminated",
             "Ouch! You have been kicked out of the meet!");
     }
-});
-
-$(document).bind('role.changed.muc', function (event, jid, member, pres) {
-        console.info("Role changed for " + jid + ", new role: " + member.role);
-
-        VideoLayout.showModeratorIndicator();
-
-        if (member.role === 'moderator') {
-            var displayName = member.displayName;
-            if (!displayName) {
-                displayName = 'Somebody';
-            }
-            messageHandler.notify(
-                displayName,
-                'connected',
-                'Moderator rights granted to ' + displayName + '!');
-        }
-    }
-);
-
-$(document).bind('local.role.changed.muc', function (event, jid, info, pres) {
-
-        console.info("My role changed, new role: " + info.role);
-        var isModerator = Moderator.isModerator();
-
-        VideoLayout.showModeratorIndicator();
-        Toolbar.showAuthenticateButton(
-            Moderator.isExternalAuthEnabled() && !isModerator);
-
-        if (isModerator) {
-            if (authenticationWindow) {
-                authenticationWindow.close();
-                authenticationWindow = null;
-            }
-            messageHandler.notify(
-                'Me', 'connected', 'Moderator rights granted !');
-        }
-    }
-);
-
-$(document).bind('passwordrequired.muc', function (event, jid) {
-    console.log('on password required', jid);
-
-    // password is required
-    Toolbar.lockLockButton();
-
-    messageHandler.openTwoButtonDialog(null,
-        '<h2>Password required</h2>' +
-        '<input id="lockKey" type="text" placeholder="password" autofocus>',
-        true,
-        "Ok",
-        function (e, v, m, f) {},
-        function (event) {
-            document.getElementById('lockKey').focus();
-        },
-        function (e, v, m, f) {
-            if (v) {
-                var lockKey = document.getElementById('lockKey');
-                if (lockKey.value !== null) {
-                    setSharedKey(lockKey.value);
-                    connection.emuc.doJoin(jid, lockKey.value);
-                }
-            }
-        }
-    );
 });
 
 $(document).bind('passwordrequired.main', function (event) {
     console.log('password is required');
 
-    messageHandler.openTwoButtonDialog(null,
+    UI.messageHandler.openTwoButtonDialog(null,
         '<h2>Password required</h2>' +
             '<input id="passwordrequired.username" type="text" placeholder="user@domain.net" autofocus>' +
             '<input id="passwordrequired.password" type="password" placeholder="user password">',
@@ -876,51 +576,6 @@ $(document).bind('passwordrequired.main', function (event) {
         }
     );
 });
-
-$(document).bind('auth_required.moderator', function () {
-    // extract room name from 'room@muc.server.net'
-    var room = roomName.substr(0, roomName.indexOf('@'));
-
-    messageHandler.openDialog(
-        'Stop',
-        'Authentication is required to create room:<br/>' + room,
-        true,
-        {
-            Authenticate: 'authNow',
-            Close: 'close'
-        },
-        function (onSubmitEvent, submitValue) {
-            console.info('On submit: ' + submitValue, submitValue);
-            if (submitValue === 'authNow') {
-                authenticateClicked();
-            } else {
-                Toolbar.showAuthenticateButton(true);
-            }
-        }
-    );
-});
-
-function authenticateClicked() {
-    // Get authentication URL
-    Moderator.getAuthUrl(function (url) {
-        // Open popup with authentication URL
-        authenticationWindow = messageHandler.openCenteredPopup(
-            url, 500, 400,
-            function () {
-                // On popup closed - retry room allocation
-                Moderator.allocateConferenceFocus(
-                    roomName, doJoinAfterFocus);
-                authenticationWindow = null;
-            });
-        if (!authenticationWindow) {
-            Toolbar.showAuthenticateButton(true);
-            messageHandler.openMessageDialog(
-                null, "Your browser is blocking popup windows from this site." +
-                " Please enable popups in your browser security settings" +
-                " and try again.");
-        }
-    });
-};
 
 /**
  * Checks if video identified by given src is desktop stream.
@@ -1060,7 +715,7 @@ function setAudioMuted(mute) {
     // isMuted is the opposite of audioEnabled
     connection.emuc.addAudioInfoToPresence(mute);
     connection.emuc.sendPresence();
-    VideoLayout.showLocalAudioIndicator(mute);
+    UI.showLocalAudioIndicator(mute);
 
     buttonClick("#mute", "icon-microphone icon-mic-disabled");
 }
@@ -1077,11 +732,6 @@ function isAudioMuted()
             return false;
     }
     return true;
-}
-
-// Starts or stops the recording for the conference.
-function toggleRecording() {
-    Recording.toggleRecording();
 }
 
 /**
@@ -1163,150 +813,16 @@ function getCameraVideoSize(videoWidth,
 }
 
 $(document).ready(function () {
-    document.title = interfaceConfig.APP_NAME;
+
     if(APIConnector.isEnabled())
         APIConnector.init();
 
-    if(config.enableWelcomePage && window.location.pathname == "/" &&
-        (!window.localStorage.welcomePageDisabled
-                || window.localStorage.welcomePageDisabled == "false"))
-    {
-        $("#videoconference_page").hide();
-        $("#domain_name").text(
-                window.location.protocol + "//" + window.location.host + "/");
-        $("span[name='appName']").text(interfaceConfig.APP_NAME);
-
-        if (interfaceConfig.SHOW_JITSI_WATERMARK) {
-            var leftWatermarkDiv
-                = $("#welcome_page_header div[class='watermark leftwatermark']");
-            if(leftWatermarkDiv && leftWatermarkDiv.length > 0)
-            {
-                leftWatermarkDiv.css({display: 'block'});
-                leftWatermarkDiv.parent().get(0).href
-                    = interfaceConfig.JITSI_WATERMARK_LINK;
-            }
-
-        }
-
-        if (interfaceConfig.SHOW_BRAND_WATERMARK) {
-            var rightWatermarkDiv
-                = $("#welcome_page_header div[class='watermark rightwatermark']");
-            if(rightWatermarkDiv && rightWatermarkDiv.length > 0) {
-                rightWatermarkDiv.css({display: 'block'});
-                rightWatermarkDiv.parent().get(0).href
-                    = interfaceConfig.BRAND_WATERMARK_LINK;
-                rightWatermarkDiv.get(0).style.backgroundImage
-                    = "url(images/rightwatermark.png)";
-            }
-        }
-
-        if (interfaceConfig.SHOW_POWERED_BY) {
-            $("#welcome_page_header>a[class='poweredby']")
-                .css({display: 'block'});
-        }
-
-        function enter_room()
-        {
-            var val = $("#enter_room_field").val();
-            if(!val) {
-                val = $("#enter_room_field").attr("room_name");
-            }
-            if (val) {
-                window.location.pathname = "/" + val;
-            }
-        }
-        $("#enter_room_button").click(function()
-        {
-            enter_room();
-        });
-
-        $("#enter_room_field").keydown(function (event) {
-            if (event.keyCode === 13 /* enter */) {
-                enter_room();
-            }
-        });
-
-        if (!(interfaceConfig.GENERATE_ROOMNAMES_ON_WELCOME_PAGE === false)){
-            var updateTimeout;
-            var animateTimeout;
-            $("#reload_roomname").click(function () {
-                clearTimeout(updateTimeout);
-                clearTimeout(animateTimeout);
-                update_roomname();
-            });
-            $("#reload_roomname").show();
-
-            function animate(word) {
-                var currentVal = $("#enter_room_field").attr("placeholder");
-                $("#enter_room_field").attr("placeholder", currentVal + word.substr(0, 1));
-                animateTimeout = setTimeout(function() {
-                    animate(word.substring(1, word.length))
-                }, 70);
-            }
-
-            function update_roomname()
-            {
-                var word = RoomNameGenerator.generateRoomWithoutSeparator();
-                $("#enter_room_field").attr("room_name", word);
-                $("#enter_room_field").attr("placeholder", "");
-                clearTimeout(animateTimeout);
-                animate(word);
-                updateTimeout = setTimeout(update_roomname, 10000);
-            }
-            update_roomname();
-        }
-
-        $("#disable_welcome").click(function () {
-            window.localStorage.welcomePageDisabled
-                = $("#disable_welcome").is(":checked");
-        });
-
-        return;
-    }
-
-    if (interfaceConfig.SHOW_JITSI_WATERMARK) {
-        var leftWatermarkDiv
-            = $("#largeVideoContainer div[class='watermark leftwatermark']");
-
-        leftWatermarkDiv.css({display: 'block'});
-        leftWatermarkDiv.parent().get(0).href
-            = interfaceConfig.JITSI_WATERMARK_LINK;
-    }
-
-    if (interfaceConfig.SHOW_BRAND_WATERMARK) {
-        var rightWatermarkDiv
-            = $("#largeVideoContainer div[class='watermark rightwatermark']");
-
-        rightWatermarkDiv.css({display: 'block'});
-        rightWatermarkDiv.parent().get(0).href
-            = interfaceConfig.BRAND_WATERMARK_LINK;
-        rightWatermarkDiv.get(0).style.backgroundImage
-            = "url(images/rightwatermark.png)";
-    }
-
-    if (interfaceConfig.SHOW_POWERED_BY) {
-        $("#largeVideoContainer>a[class='poweredby']").css({display: 'block'});
-    }
-
-    $("#welcome_page").hide();
-    Chat.init();
-
-    $('body').popover({ selector: '[data-toggle=popover]',
-        trigger: 'click hover',
-        content: function() {
-            return this.getAttribute("content") +
-                   KeyboardShortcut.getShortcut(this.getAttribute("shortcut"));
-        }
-    });
-
-    statistics.addAudioLevelListener(audioLevelUpdated);
+    UI.start();
     statistics.addConnectionStatsListener(ConnectionQuality.updateLocalStats);
     statistics.addRemoteStatsStopListener(ConnectionQuality.stopSendingStats);
+    statistics.start();
     
     Moderator.init();
-
-    // Set the defaults for prompt dialogs.
-    jQuery.prompt.setDefaults({persistent: false});
 
     // Set default desktop sharing method
     setDesktopSharing(config.desktopSharing);
@@ -1318,62 +834,6 @@ $(document).ready(function () {
     // By default we use camera
     getVideoSize = getCameraVideoSize;
     getVideoPosition = getCameraVideoPosition;
-
-    VideoLayout.resizeLargeVideoContainer();
-    $(window).resize(function () {
-        VideoLayout.resizeLargeVideoContainer();
-        VideoLayout.positionLarge();
-    });
-    // Listen for large video size updates
-    document.getElementById('largeVideo')
-        .addEventListener('loadedmetadata', function (e) {
-            currentVideoWidth = this.videoWidth;
-            currentVideoHeight = this.videoHeight;
-            VideoLayout.positionLarge(currentVideoWidth, currentVideoHeight);
-        });
-
-    document.getElementById('largeVideo').volume = 0;
-
-    if (!$('#settings').is(':visible')) {
-        console.log('init');
-        init();
-    } else {
-        loginInfo.onsubmit = function (e) {
-            if (e.preventDefault) e.preventDefault();
-            $('#settings').hide();
-            init();
-        };
-    }
-
-    toastr.options = {
-        "closeButton": true,
-        "debug": false,
-        "positionClass": "notification-bottom-right",
-        "onclick": null,
-        "showDuration": "300",
-        "hideDuration": "1000",
-        "timeOut": "2000",
-        "extendedTimeOut": "1000",
-        "showEasing": "swing",
-        "hideEasing": "linear",
-        "showMethod": "fadeIn",
-        "hideMethod": "fadeOut",
-        "reposition": function() {
-            if(PanelToggler.isVisible()) {
-                $("#toast-container").addClass("notification-bottom-right-center");
-            } else {
-                $("#toast-container").removeClass("notification-bottom-right-center");
-            }
-        },
-        "newestOnTop": false
-    };
-
-    $('#settingsmenu>input').keyup(function(event){
-        if(event.keyCode === 13) {//enter
-            SettingsMenu.update();
-        }
-    })
-
 });
 
 $(window).bind('beforeunload', function () {
@@ -1404,9 +864,7 @@ $(window).bind('beforeunload', function () {
 });
 
 function disposeConference(onUnload) {
-
-    Toolbar.showAuthenticateButton(false);
-
+    UI.onDisposeConference(onUnload);
     var handler = getConferenceHandler();
     if (handler && handler.peerconnection) {
         // FIXME: probably removing streams is not required and close() should
@@ -1469,37 +927,6 @@ function buttonClick(id, classname) {
     $(id).toggleClass(classname); // add the class to the clicked element
 }
 
-/**
- * Locks / unlocks the room.
- */
-function lockRoom(lock) {
-    if (lock)
-        connection.emuc.lockRoom(sharedKey);
-    else
-        connection.emuc.lockRoom('');
-}
-
-/**
- * Sets the shared key.
- */
-function setSharedKey(sKey) {
-    sharedKey = sKey;
-}
-
-/**
- * Updates the room invite url.
- */
-function updateRoomUrl(newRoomUrl) {
-    roomUrl = newRoomUrl;
-
-    // If the invite dialog has been already opened we update the information.
-    var inviteLink = document.getElementById('inviteLinkRef');
-    if (inviteLink) {
-        inviteLink.value = roomUrl;
-        inviteLink.select();
-        document.getElementById('jqi_state0_buttonInvite').disabled = false;
-    }
-}
 
 /**
  * Warning to the user that the conference window is about to be closed.
@@ -1514,19 +941,6 @@ function closePageWarning() {
     return "You are about to leave this conversation.";
 }
 
-/**
- * Resizes and repositions videos in full screen mode.
- */
-$(document).on('webkitfullscreenchange mozfullscreenchange fullscreenchange',
-    function () {
-        VideoLayout.resizeLargeVideoContainer();
-        VideoLayout.positionLarge();
-        isFullScreen = document.fullScreen ||
-            document.mozFullScreen ||
-            document.webkitIsFullScreen;
-
-    }
-);
 
 $(document).bind('error.jingle',
     function (event, session, error)
@@ -1540,7 +954,7 @@ $(document).bind('fatalError.jingle',
     {
         sessionTerminated = true;
         connection.emuc.doLeave();
-        messageHandler.showError(  "Sorry",
+        UI.messageHandler.showError(  "Sorry",
             "Internal application error[setRemoteDescription]");
     }
 );
@@ -1550,7 +964,7 @@ function callSipButtonClicked()
     var defaultNumber
         = config.defaultSipNumber ? config.defaultSipNumber : '';
 
-    messageHandler.openTwoButtonDialog(null,
+    UI.messageHandler.openTwoButtonDialog(null,
         '<h2>Enter SIP number</h2>' +
             '<input id="sipNumber" type="text"' +
             ' value="' + defaultNumber + '" autofocus>',

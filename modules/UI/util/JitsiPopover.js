@@ -119,3 +119,5 @@ var JitsiPopover = (function () {
 
 
 })();
+
+module.exports = JitsiPopover;

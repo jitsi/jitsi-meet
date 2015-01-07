@@ -1,3 +1,10 @@
+var Chat = require("./chat/Chat");
+var ContactList = require("./contactlist/ContactList");
+var Settings = require("./settings/Settings");
+var SettingsMenu = require("./settings/SettingsMenu");
+var VideoLayout = require("../videolayout/VideoLayout");
+var ToolbarToggler = require("../toolbars/ToolbarToggler");
+
 /**
  * Toggler for the chat, contact list, settings menu, etc..
  */
@@ -215,8 +222,9 @@ var PanelToggler = (function(my) {
             '#settingsmenu',
             null,
             function() {
-                $('#setDisplayName').get(0).value = SettingsMenu.getDisplayName();
-                $('#setEmail').get(0).value = SettingsMenu.getEmail();
+                var settings = Settings.getSettings();
+                $('#setDisplayName').get(0).value = settings.displayName;
+                $('#setEmail').get(0).value = settings.email;
             },
             null);
     };
@@ -243,3 +251,5 @@ var PanelToggler = (function(my) {
     return my;
 
 }(PanelToggler || {}));
+
+module.exports = PanelToggler;

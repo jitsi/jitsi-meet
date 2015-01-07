@@ -49,6 +49,7 @@ Strophe.addConnectionPlugin('emuc', {
     onPresence: function (pres) {
         var from = pres.getAttribute('from');
         var type = pres.getAttribute('type');
+        console.debug("Presence " + from + " - " + type);
         if (type != null) {
             return true;
         }
@@ -56,7 +57,9 @@ Strophe.addConnectionPlugin('emuc', {
         // Parse etherpad tag.
         var etherpad = $(pres).find('>etherpad');
         if (etherpad.length) {
-            $(document).trigger('etherpadadded.muc', [from, etherpad.text()]);
+            if (config.etherpad_base && !Moderator.isModerator()) {
+                UI.initEtherpad(etherpad.text());
+            }
         }
 
         // Parse prezi tag.
@@ -138,24 +141,40 @@ Strophe.addConnectionPlugin('emuc', {
             if (member.affiliation == 'owner') this.isOwner = true;
             if (this.role !== member.role) {
                 this.role = member.role;
-                $(document).trigger('local.role.changed.muc', [from, member, pres]);
+                if(Moderator.onLocalRoleChange)
+                    Moderator.onLocalRoleChange(from, member, pres);
+                UI.onLocalRoleChange(from, member, pres);
             }
             if (!this.joined) {
                 this.joined = true;
                 $(document).trigger('joined.muc', [from, member]);
+                UI.onMucJoined(from, member);
                 this.list_members.push(from);
             }
         } else if (this.members[from] === undefined) {
             // new participant
             this.members[from] = member;
             this.list_members.push(from);
-            $(document).trigger('entered.muc', [from, member, pres]);
+            console.log('entered', from, member);
+            if (member.isFocus)
+            {
+                focusMucJid = from;
+                console.info("Ignore focus: " + from +", real JID: " + member.jid);
+            }
+            else {
+                var id = $(pres).find('>userID').text();
+                var email = $(pres).find('>email');
+                if (email.length > 0) {
+                    id = email.text();
+                }
+                UI.onMucEntered(from, id, member.displayName);
+            }
         } else {
             // Presence update for existing participant
             // Watch role change:
             if (this.members[from].role != member.role) {
-                this.members[from].role = member.role
-                $(document).trigger('role.changed.muc', [from, member, pres]);
+                this.members[from].role = member.role;
+                UI.onMucRoleChanged(member.role, member.displayName);
             }
         }
         // Always trigger presence to update bindings
@@ -164,7 +183,7 @@ Strophe.addConnectionPlugin('emuc', {
 
         // Trigger status message update
         if (member.status) {
-            $(document).trigger('presence.status.muc', [from, member, pres]);
+            UI.onMucPresenceStatus(from, member);
         }
 
         return true;
@@ -175,7 +194,7 @@ Strophe.addConnectionPlugin('emuc', {
         if (!$(pres).find('>x[xmlns="http://jabber.org/protocol/muc#user"]>status[code="110"]').length) {
             delete this.members[from];
             this.list_members.splice(this.list_members.indexOf(from), 1);
-            $(document).trigger('left.muc', [from]);
+            this.onParticipantLeft(from);
         }
         // If the status code is 110 this means we're leaving and we would like
         // to remove everyone else from our view, so we trigger the event.
@@ -184,7 +203,7 @@ Strophe.addConnectionPlugin('emuc', {
                 var member = this.list_members[i];
                 delete this.members[i];
                 this.list_members.splice(i, 1);
-                $(document).trigger('left.muc', member);
+                this.onParticipantLeft(member);
             }
         }
         if ($(pres).find('>x[xmlns="http://jabber.org/protocol/muc#user"]>status[code="307"]').length) {
@@ -195,7 +214,11 @@ Strophe.addConnectionPlugin('emuc', {
     onPresenceError: function (pres) {
         var from = pres.getAttribute('from');
         if ($(pres).find('>error[type="auth"]>not-authorized[xmlns="urn:ietf:params:xml:ns:xmpp-stanzas"]').length) {
-            $(document).trigger('passwordrequired.muc', [from]);
+            console.log('on password required', from);
+
+            UI.onPasswordReqiured(function (value) {
+                connection.emuc.doJoin(from, value);
+            })
         } else if ($(pres).find(
                 '>error[type="cancel"]>not-allowed[xmlns="urn:ietf:params:xml:ns:xmpp-stanzas"]').length) {
             var toDomain = Strophe.getDomainFromJid(pres.getAttribute('to'));
@@ -205,13 +228,13 @@ Strophe.addConnectionPlugin('emuc', {
                 $(document).trigger('passwordrequired.main');
             } else {
                 console.warn('onPresError ', pres);
-                messageHandler.openReportDialog(null,
+                UI.messageHandler.openReportDialog(null,
                     'Oops! Something went wrong and we couldn`t connect to the conference.',
                 pres);
             }
         } else {
             console.warn('onPresError ', pres);
-            messageHandler.openReportDialog(null,
+            UI.messageHandler.openReportDialog(null,
                 'Oops! Something went wrong and we couldn`t connect to the conference.',
                 pres);
         }
@@ -244,7 +267,7 @@ Strophe.addConnectionPlugin('emuc', {
         var type = msg.getAttribute("type");
         if(type == "error")
         {
-            Chat.chatAddError($(msg).find('>text').text(), txt);
+            UI.chatAddError($(msg).find('>text').text(), txt);
             return true;
         }
 
@@ -253,7 +276,7 @@ Strophe.addConnectionPlugin('emuc', {
         {
             var subjectText = subject.text();
             if(subjectText || subjectText == "") {
-                Chat.chatSetSubject(subjectText);
+                UI.chatSetSubject(subjectText);
                 console.log("Subject is changed to " + subjectText);
             }
         }
@@ -261,7 +284,7 @@ Strophe.addConnectionPlugin('emuc', {
 
         if (txt) {
             console.log('chat', nick, txt);
-            Chat.updateChatConversation(from, nick, txt);
+            UI.updateChatConversation(from, nick, txt);
             if(APIConnector.isEnabled() && APIConnector.isEventEnabled("incomingMessage"))
             {
                 if(from != this.myroomjid)
@@ -271,7 +294,7 @@ Strophe.addConnectionPlugin('emuc', {
         }
         return true;
     },
-    lockRoom: function (key) {
+    lockRoom: function (key, onSuccess, onError, onNotSupported) {
         //http://xmpp.org/extensions/xep-0045.html#roomconfig
         var ob = this;
         this.connection.sendIQ($iq({to: this.roomjid, type: 'get'}).c('query', {xmlns: 'http://jabber.org/protocol/muc#owner'}),
@@ -285,43 +308,12 @@ Strophe.addConnectionPlugin('emuc', {
                     formsubmit.c('field', {'var': 'muc#roomconfig_whois'}).c('value').t('anyone').up().up();
                     // FIXME: is muc#roomconfig_passwordprotectedroom required?
                     this.connection.sendIQ(formsubmit,
-                        function (res) {
-                            // password is required
-                            if (sharedKey)
-                            {
-                                console.log('set room password');
-                                Toolbar.lockLockButton();
-                            }
-                            else
-                            {
-                                console.log('removed room password');
-                                Toolbar.unlockLockButton();
-                            }
-                        },
-                        function (err) {
-                            console.warn('setting password failed', err);
-                            messageHandler.showError('Lock failed',
-                                'Failed to lock conference.',
-                                err);
-                            setSharedKey('');
-                        }
-                    );
+                        onSuccess,
+                        onError);
                 } else {
-                    console.warn('room passwords not supported');
-                    messageHandler.showError('Warning',
-                        'Room passwords are currently not supported.');
-                    setSharedKey('');
-
+                    onNotSupported();
                 }
-            },
-            function (err) {
-                console.warn('setting password failed', err);
-                messageHandler.showError('Lock failed',
-                    'Failed to lock conference.',
-                    err);
-                setSharedKey('');
-            }
-        );
+            }, onError);
     },
     kick: function (jid) {
         var kickIQ = $iq({to: this.roomjid, type: 'set'})
@@ -427,6 +419,7 @@ Strophe.addConnectionPlugin('emuc', {
         }
 
         pres.up();
+//        console.debug(pres.toString());
         connection.send(pres);
     },
     addDisplayNameToPresence: function (displayName) {
@@ -509,5 +502,24 @@ Strophe.addConnectionPlugin('emuc', {
             return this.members[peerJid].role;
         }
         return null;
+    },
+    onParticipantLeft: function (jid) {
+        UI.onMucLeft(jid);
+
+        if(APIConnector.isEnabled() && APIConnector.isEventEnabled("participantLeft"))
+        {
+            APIConnector.triggerEvent("participantLeft",{jid: jid});
+        }
+
+        delete jid2Ssrc[jid];
+
+        connection.jingle.terminateByJid(jid);
+
+        if (connection.emuc.getPrezi(jid)) {
+            $(document).trigger('presentationremoved.muc',
+                [jid, connection.emuc.getPrezi(jid)]);
+        }
+
+        Moderator.onMucLeft(jid);
     }
 });
