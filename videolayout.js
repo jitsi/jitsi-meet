@@ -497,16 +497,7 @@ var VideoLayout = (function (my) {
 
         var videoSpanId = 'participant_' + resourceJid;
 
-        if ($('#' + videoSpanId).length > 0) {
-            // If there's been a focus change, make sure we add focus related
-            // interface!!
-            if (Moderator.isModerator() && !Moderator.isPeerModerator(peerJid)
-                && $('#remote_popupmenu_' + resourceJid).length <= 0) {
-                addRemoteVideoMenu(peerJid,
-                    document.getElementById(videoSpanId));
-            }
-        }
-        else {
+        if (!$('#' + videoSpanId).length) {
             var container =
                 VideoLayout.addRemoteVideoContainer(peerJid, videoSpanId, userId);
             Avatar.setUserAvatar(peerJid, userId);
@@ -914,7 +905,9 @@ var VideoLayout = (function (my) {
      * Shows a visual indicator for the moderator of the conference.
      */
     my.showModeratorIndicator = function () {
-        if (Moderator.isModerator()) {
+
+        var isModerator = Moderator.isModerator();
+        if (isModerator) {
             var indicatorSpan = $('#localVideoContainer .focusindicator');
 
             if (indicatorSpan.children().length === 0)
@@ -923,37 +916,47 @@ var VideoLayout = (function (my) {
             }
         }
         Object.keys(connection.emuc.members).forEach(function (jid) {
+
+            if (Strophe.getResourceFromJid(jid) === 'focus') {
+                // Skip server side focus
+                return;
+            }
+
+            var resourceJid = Strophe.getResourceFromJid(jid);
+            var videoSpanId = 'participant_' + resourceJid;
+            var videoContainer = document.getElementById(videoSpanId);
+
+            if (!videoContainer) {
+                console.error("No video container for " + jid);
+                return;
+            }
+
             var member = connection.emuc.members[jid];
+
             if (member.role === 'moderator') {
-                var moderatorId
-                    = 'participant_' + Strophe.getResourceFromJid(jid);
-
-                var moderatorContainer
-                    = document.getElementById(moderatorId);
-
-                if (Strophe.getResourceFromJid(jid) === 'focus') {
-                    // Skip server side focus
-                    return;
-                }
-                if (!moderatorContainer) {
-                    console.error("No moderator container for " + jid);
-                    return;
-                }
-                var menuSpan = $('#' + moderatorId + '>span.remotevideomenu');
+                // Remove menu if peer is moderator
+                var menuSpan = $('#' + videoSpanId + '>span.remotevideomenu');
                 if (menuSpan.length) {
-                    removeRemoteVideoMenu(moderatorId);
+                    removeRemoteVideoMenu(videoSpanId);
                 }
-
+                // Show moderator indicator
                 var indicatorSpan
-                    = $('#' + moderatorId + ' .focusindicator');
+                    = $('#' + videoSpanId + ' .focusindicator');
 
                 if (!indicatorSpan || indicatorSpan.length === 0) {
                     indicatorSpan = document.createElement('span');
                     indicatorSpan.className = 'focusindicator';
 
-                    moderatorContainer.appendChild(indicatorSpan);
+                    videoContainer.appendChild(indicatorSpan);
 
                     createModeratorIndicatorElement(indicatorSpan);
+                }
+            } else if (isModerator) {
+                // We are moderator, but user is not - add menu
+                if ($('#remote_popupmenu_' + resourceJid).length <= 0) {
+                    addRemoteVideoMenu(
+                        jid,
+                        document.getElementById('participant_' + resourceJid));
                 }
             }
         });
