@@ -17,27 +17,37 @@ function SDP(sdp) {
 SDP.prototype.getMediaSsrcMap = function() {
     var self = this;
     var media_ssrcs = {};
-    for (channelNum = 0; channelNum < self.media.length; channelNum++) {
-        modified = true;
-        tmp = SDPUtil.find_lines(self.media[channelNum], 'a=ssrc:');
-        var type = SDPUtil.parse_mid(SDPUtil.find_line(self.media[channelNum], 'a=mid:'));
-        var channel = new MediaChannel(channelNum, type);
-        media_ssrcs[channelNum] = channel;
+    var tmp;
+    for (var mediaindex = 0; mediaindex < self.media.length; mediaindex++) {
+        tmp = SDPUtil.find_lines(self.media[mediaindex], 'a=ssrc:');
+        var mid = SDPUtil.parse_mid(SDPUtil.find_line(self.media[mediaindex], 'a=mid:'));
+        var media = {
+            mediaindex: mediaindex,
+            mid: mid,
+            ssrcs: {},
+            ssrcGroups: []
+        };
+        media_ssrcs[mediaindex] = media;
         tmp.forEach(function (line) {
             var linessrc = line.substring(7).split(' ')[0];
             // allocate new ChannelSsrc
-            if(!channel.ssrcs[linessrc]) {
-                channel.ssrcs[linessrc] = new ChannelSsrc(linessrc, type);
+            if(!media.ssrcs[linessrc]) {
+                media.ssrcs[linessrc] = {
+                    ssrc: linessrc,
+                    lines: []
+                };
             }
-            channel.ssrcs[linessrc].lines.push(line);
+            media.ssrcs[linessrc].lines.push(line);
         });
-        tmp = SDPUtil.find_lines(self.media[channelNum], 'a=ssrc-group:');
+        tmp = SDPUtil.find_lines(self.media[mediaindex], 'a=ssrc-group:');
         tmp.forEach(function(line){
             var semantics = line.substr(0, idx).substr(13);
             var ssrcs = line.substr(14 + semantics.length).split(' ');
             if (ssrcs.length != 0) {
-                var ssrcGroup = new ChannelSsrcGroup(semantics, ssrcs);
-                channel.ssrcGroups.push(ssrcGroup);
+                media.ssrcGroups.push({
+                    semantics: semantics,
+                    ssrcs: ssrcs
+                });
             }
         });
     }
@@ -49,23 +59,28 @@ SDP.prototype.getMediaSsrcMap = function() {
  * @returns {boolean} <tt>true</tt> if this SDP contains given SSRC.
  */
 SDP.prototype.containsSSRC = function(ssrc) {
-    var channels = this.getMediaSsrcMap();
+    var medias = this.getMediaSsrcMap();
     var contains = false;
-    Object.keys(channels).forEach(function(chNumber){
-        var channel = channels[chNumber];
+    Object.keys(medias).forEach(function(mediaindex){
+        var media = medias[mediaindex];
         //console.log("Check", channel, ssrc);
-        if(Object.keys(channel.ssrcs).indexOf(ssrc) != -1){
+        if(Object.keys(media.ssrcs).indexOf(ssrc) != -1){
             contains = true;
         }
     });
     return contains;
 };
 
+function SDPDiffer(mySDP, otherSDP) {
+    this.mySDP = mySDP;
+    this.otherSDP = otherSDP;
+}
+
 /**
  * Returns map of MediaChannel that contains only media not contained in <tt>otherSdp</tt>. Mapped by channel idx.
  * @param otherSdp the other SDP to check ssrc with.
  */
-SDP.prototype.getNewMedia = function(otherSdp) {
+SDPDiffer.prototype.getNewMedia = function() {
 
     // this could be useful in Array.prototype.
     function arrayEquals(array) {
@@ -92,35 +107,40 @@ SDP.prototype.getNewMedia = function(otherSdp) {
         return true;
     }
 
-    var myMedia = this.getMediaSsrcMap();
-    var othersMedia = otherSdp.getMediaSsrcMap();
+    var myMedias = this.mySDP.getMediaSsrcMap();
+    var othersMedias = this.otherSDP.getMediaSsrcMap();
     var newMedia = {};
-    Object.keys(othersMedia).forEach(function(channelNum) {
-        var myChannel = myMedia[channelNum];
-        var othersChannel = othersMedia[channelNum];
-        if(!myChannel && othersChannel) {
+    Object.keys(othersMedias).forEach(function(othersMediaIdx) {
+        var myMedia = myMedias[othersMediaIdx];
+        var othersMedia = othersMedias[othersMediaIdx];
+        if(!myMedia && othersMedia) {
             // Add whole channel
-            newMedia[channelNum] = othersChannel;
+            newMedia[othersMediaIdx] = othersMedia;
             return;
         }
         // Look for new ssrcs accross the channel
-        Object.keys(othersChannel.ssrcs).forEach(function(ssrc) {
-            if(Object.keys(myChannel.ssrcs).indexOf(ssrc) === -1) {
+        Object.keys(othersMedia.ssrcs).forEach(function(ssrc) {
+            if(Object.keys(myMedia.ssrcs).indexOf(ssrc) === -1) {
                 // Allocate channel if we've found ssrc that doesn't exist in our channel
-                if(!newMedia[channelNum]){
-                    newMedia[channelNum] = new MediaChannel(othersChannel.chNumber, othersChannel.mediaType);
+                if(!newMedia[othersMediaIdx]){
+                    newMedia[othersMediaIdx] = {
+                        mediaindex: othersMedia.mediaindex,
+                        mid: othersMedia.mid,
+                        ssrcs: {},
+                        ssrcGroups: []
+                    };
                 }
-                newMedia[channelNum].ssrcs[ssrc] = othersChannel.ssrcs[ssrc];
+                newMedia[othersMediaIdx].ssrcs[ssrc] = othersMedia.ssrcs[ssrc];
             }
         });
 
         // Look for new ssrc groups across the channels
-        othersChannel.ssrcGroups.forEach(function(otherSsrcGroup){
+        othersMedia.ssrcGroups.forEach(function(otherSsrcGroup){
 
             // try to match the other ssrc-group with an ssrc-group of ours
             var matched = false;
-            for (var i = 0; i < myChannel.ssrcGroups.length; i++) {
-                var mySsrcGroup = myChannel.ssrcGroups[i];
+            for (var i = 0; i < myMedia.ssrcGroups.length; i++) {
+                var mySsrcGroup = myMedia.ssrcGroups[i];
                 if (otherSsrcGroup.semantics == mySsrcGroup.semantics
                     && arrayEquals.apply(otherSsrcGroup.ssrcs, [mySsrcGroup.ssrcs])) {
 
@@ -133,14 +153,86 @@ SDP.prototype.getNewMedia = function(otherSdp) {
                 // Allocate channel if we've found an ssrc-group that doesn't
                 // exist in our channel
 
-                if(!newMedia[channelNum]){
-                    newMedia[channelNum] = new MediaChannel(othersChannel.chNumber, othersChannel.mediaType);
+                if(!newMedia[othersMediaIdx]){
+                    newMedia[othersMediaIdx] = {
+                        mediaindex: othersMedia.mediaindex,
+                        mid: othersMedia.mid,
+                        ssrcs: {},
+                        ssrcGroups: []
+                    };
                 }
-                newMedia[channelNum].ssrcGroups.push(otherSsrcGroup);
+                newMedia[othersMediaIdx].ssrcGroups.push(otherSsrcGroup);
             }
         });
     });
     return newMedia;
+};
+
+/**
+ * Sends SSRC update IQ.
+ * @param sdpMediaSsrcs SSRCs map obtained from SDP.getNewMedia. Cntains SSRCs to add/remove.
+ * @param sid session identifier that will be put into the IQ.
+ * @param initiator initiator identifier.
+ * @param toJid destination Jid
+ * @param isAdd indicates if this is remove or add operation.
+ */
+SDPDiffer.prototype.toJingle = function(modify) {
+    var sdpMediaSsrcs = this.getNewMedia();
+    var self = this;
+
+    // FIXME: only announce video ssrcs since we mix audio and dont need
+    //      the audio ssrcs therefore
+    var modified = false;
+    Object.keys(sdpMediaSsrcs).forEach(function(mediaindex){
+        modified = true;
+        var media = sdpMediaSsrcs[mediaindex];
+        modify.c('content', {name: media.mid});
+
+        modify.c('description', {xmlns:'urn:xmpp:jingle:apps:rtp:1', media: media.mid});
+        // FIXME: not completly sure this operates on blocks and / or handles different ssrcs correctly
+        // generate sources from lines
+        Object.keys(media.ssrcs).forEach(function(ssrcNum) {
+            var mediaSsrc = media.ssrcs[ssrcNum];
+            modify.c('source', { xmlns: 'urn:xmpp:jingle:apps:rtp:ssma:0' });
+            modify.attrs({ssrc: mediaSsrc.ssrc});
+            // iterate over ssrc lines
+            mediaSsrc.lines.forEach(function (line) {
+                var idx = line.indexOf(' ');
+                var kv = line.substr(idx + 1);
+                modify.c('parameter');
+                if (kv.indexOf(':') == -1) {
+                    modify.attrs({ name: kv });
+                } else {
+                    modify.attrs({ name: kv.split(':', 2)[0] });
+                    modify.attrs({ value: kv.split(':', 2)[1] });
+                }
+                modify.up(); // end of parameter
+            });
+            modify.up(); // end of source
+        });
+
+        // generate source groups from lines
+        media.ssrcGroups.forEach(function(ssrcGroup) {
+            if (ssrcGroup.ssrcs.length != 0) {
+
+                modify.c('ssrc-group', {
+                    semantics: ssrcGroup.semantics,
+                    xmlns: 'urn:xmpp:jingle:apps:rtp:ssma:0'
+                });
+
+                ssrcGroup.ssrcs.forEach(function (ssrc) {
+                    modify.c('source', { ssrc: ssrc })
+                        .up(); // end of source
+                });
+                modify.up(); // end of ssrc-group
+            }
+        });
+
+        modify.up(); // end of description
+        modify.up(); // end of content
+    });
+
+    return modified;
 };
 
 // remove iSAC and CN from SDP
@@ -683,3 +775,353 @@ SDP.prototype.jingle2media = function (content) {
 
     return media;
 };
+
+SDPUtil = {
+    iceparams: function (mediadesc, sessiondesc) {
+        var data = null;
+        if (SDPUtil.find_line(mediadesc, 'a=ice-ufrag:', sessiondesc) &&
+            SDPUtil.find_line(mediadesc, 'a=ice-pwd:', sessiondesc)) {
+            data = {
+                ufrag: SDPUtil.parse_iceufrag(SDPUtil.find_line(mediadesc, 'a=ice-ufrag:', sessiondesc)),
+                pwd: SDPUtil.parse_icepwd(SDPUtil.find_line(mediadesc, 'a=ice-pwd:', sessiondesc))
+            };
+        }
+        return data;
+    },
+    parse_iceufrag: function (line) {
+        return line.substring(12);
+    },
+    build_iceufrag: function (frag) {
+        return 'a=ice-ufrag:' + frag;
+    },
+    parse_icepwd: function (line) {
+        return line.substring(10);
+    },
+    build_icepwd: function (pwd) {
+        return 'a=ice-pwd:' + pwd;
+    },
+    parse_mid: function (line) {
+        return line.substring(6);
+    },
+    parse_mline: function (line) {
+        var parts = line.substring(2).split(' '),
+            data = {};
+        data.media = parts.shift();
+        data.port = parts.shift();
+        data.proto = parts.shift();
+        if (parts[parts.length - 1] === '') { // trailing whitespace
+            parts.pop();
+        }
+        data.fmt = parts;
+        return data;
+    },
+    build_mline: function (mline) {
+        return 'm=' + mline.media + ' ' + mline.port + ' ' + mline.proto + ' ' + mline.fmt.join(' ');
+    },
+    parse_rtpmap: function (line) {
+        var parts = line.substring(9).split(' '),
+            data = {};
+        data.id = parts.shift();
+        parts = parts[0].split('/');
+        data.name = parts.shift();
+        data.clockrate = parts.shift();
+        data.channels = parts.length ? parts.shift() : '1';
+        return data;
+    },
+    /**
+     * Parses SDP line "a=sctpmap:..." and extracts SCTP port from it.
+     * @param line eg. "a=sctpmap:5000 webrtc-datachannel"
+     * @returns [SCTP port number, protocol, streams]
+     */
+    parse_sctpmap: function (line)
+    {
+        var parts = line.substring(10).split(' ');
+        var sctpPort = parts[0];
+        var protocol = parts[1];
+        // Stream count is optional
+        var streamCount = parts.length > 2 ? parts[2] : null;
+        return [sctpPort, protocol, streamCount];// SCTP port
+    },
+    build_rtpmap: function (el) {
+        var line = 'a=rtpmap:' + el.getAttribute('id') + ' ' + el.getAttribute('name') + '/' + el.getAttribute('clockrate');
+        if (el.getAttribute('channels') && el.getAttribute('channels') != '1') {
+            line += '/' + el.getAttribute('channels');
+        }
+        return line;
+    },
+    parse_crypto: function (line) {
+        var parts = line.substring(9).split(' '),
+            data = {};
+        data.tag = parts.shift();
+        data['crypto-suite'] = parts.shift();
+        data['key-params'] = parts.shift();
+        if (parts.length) {
+            data['session-params'] = parts.join(' ');
+        }
+        return data;
+    },
+    parse_fingerprint: function (line) { // RFC 4572
+        var parts = line.substring(14).split(' '),
+            data = {};
+        data.hash = parts.shift();
+        data.fingerprint = parts.shift();
+        // TODO assert that fingerprint satisfies 2UHEX *(":" 2UHEX) ?
+        return data;
+    },
+    parse_fmtp: function (line) {
+        var parts = line.split(' '),
+            i, key, value,
+            data = [];
+        parts.shift();
+        parts = parts.join(' ').split(';');
+        for (i = 0; i < parts.length; i++) {
+            key = parts[i].split('=')[0];
+            while (key.length && key[0] == ' ') {
+                key = key.substring(1);
+            }
+            value = parts[i].split('=')[1];
+            if (key && value) {
+                data.push({name: key, value: value});
+            } else if (key) {
+                // rfc 4733 (DTMF) style stuff
+                data.push({name: '', value: key});
+            }
+        }
+        return data;
+    },
+    parse_icecandidate: function (line) {
+        var candidate = {},
+            elems = line.split(' ');
+        candidate.foundation = elems[0].substring(12);
+        candidate.component = elems[1];
+        candidate.protocol = elems[2].toLowerCase();
+        candidate.priority = elems[3];
+        candidate.ip = elems[4];
+        candidate.port = elems[5];
+        // elems[6] => "typ"
+        candidate.type = elems[7];
+        candidate.generation = 0; // default value, may be overwritten below
+        for (var i = 8; i < elems.length; i += 2) {
+            switch (elems[i]) {
+                case 'raddr':
+                    candidate['rel-addr'] = elems[i + 1];
+                    break;
+                case 'rport':
+                    candidate['rel-port'] = elems[i + 1];
+                    break;
+                case 'generation':
+                    candidate.generation = elems[i + 1];
+                    break;
+                case 'tcptype':
+                    candidate.tcptype = elems[i + 1];
+                    break;
+                default: // TODO
+                    console.log('parse_icecandidate not translating "' + elems[i] + '" = "' + elems[i + 1] + '"');
+            }
+        }
+        candidate.network = '1';
+        candidate.id = Math.random().toString(36).substr(2, 10); // not applicable to SDP -- FIXME: should be unique, not just random
+        return candidate;
+    },
+    build_icecandidate: function (cand) {
+        var line = ['a=candidate:' + cand.foundation, cand.component, cand.protocol, cand.priority, cand.ip, cand.port, 'typ', cand.type].join(' ');
+        line += ' ';
+        switch (cand.type) {
+            case 'srflx':
+            case 'prflx':
+            case 'relay':
+                if (cand.hasOwnAttribute('rel-addr') && cand.hasOwnAttribute('rel-port')) {
+                    line += 'raddr';
+                    line += ' ';
+                    line += cand['rel-addr'];
+                    line += ' ';
+                    line += 'rport';
+                    line += ' ';
+                    line += cand['rel-port'];
+                    line += ' ';
+                }
+                break;
+        }
+        if (cand.hasOwnAttribute('tcptype')) {
+            line += 'tcptype';
+            line += ' ';
+            line += cand.tcptype;
+            line += ' ';
+        }
+        line += 'generation';
+        line += ' ';
+        line += cand.hasOwnAttribute('generation') ? cand.generation : '0';
+        return line;
+    },
+    parse_ssrc: function (desc) {
+        // proprietary mapping of a=ssrc lines
+        // TODO: see "Jingle RTP Source Description" by Juberti and P. Thatcher on google docs
+        // and parse according to that
+        var lines = desc.split('\r\n'),
+            data = {};
+        for (var i = 0; i < lines.length; i++) {
+            if (lines[i].substring(0, 7) == 'a=ssrc:') {
+                var idx = lines[i].indexOf(' ');
+                data[lines[i].substr(idx + 1).split(':', 2)[0]] = lines[i].substr(idx + 1).split(':', 2)[1];
+            }
+        }
+        return data;
+    },
+    parse_rtcpfb: function (line) {
+        var parts = line.substr(10).split(' ');
+        var data = {};
+        data.pt = parts.shift();
+        data.type = parts.shift();
+        data.params = parts;
+        return data;
+    },
+    parse_extmap: function (line) {
+        var parts = line.substr(9).split(' ');
+        var data = {};
+        data.value = parts.shift();
+        if (data.value.indexOf('/') != -1) {
+            data.direction = data.value.substr(data.value.indexOf('/') + 1);
+            data.value = data.value.substr(0, data.value.indexOf('/'));
+        } else {
+            data.direction = 'both';
+        }
+        data.uri = parts.shift();
+        data.params = parts;
+        return data;
+    },
+    find_line: function (haystack, needle, sessionpart) {
+        var lines = haystack.split('\r\n');
+        for (var i = 0; i < lines.length; i++) {
+            if (lines[i].substring(0, needle.length) == needle) {
+                return lines[i];
+            }
+        }
+        if (!sessionpart) {
+            return false;
+        }
+        // search session part
+        lines = sessionpart.split('\r\n');
+        for (var j = 0; j < lines.length; j++) {
+            if (lines[j].substring(0, needle.length) == needle) {
+                return lines[j];
+            }
+        }
+        return false;
+    },
+    find_lines: function (haystack, needle, sessionpart) {
+        var lines = haystack.split('\r\n'),
+            needles = [];
+        for (var i = 0; i < lines.length; i++) {
+            if (lines[i].substring(0, needle.length) == needle)
+                needles.push(lines[i]);
+        }
+        if (needles.length || !sessionpart) {
+            return needles;
+        }
+        // search session part
+        lines = sessionpart.split('\r\n');
+        for (var j = 0; j < lines.length; j++) {
+            if (lines[j].substring(0, needle.length) == needle) {
+                needles.push(lines[j]);
+            }
+        }
+        return needles;
+    },
+    candidateToJingle: function (line) {
+        // a=candidate:2979166662 1 udp 2113937151 192.168.2.100 57698 typ host generation 0
+        //      <candidate component=... foundation=... generation=... id=... ip=... network=... port=... priority=... protocol=... type=.../>
+        if (line.indexOf('candidate:') === 0) {
+            line = 'a=' + line;
+        } else if (line.substring(0, 12) != 'a=candidate:') {
+            console.log('parseCandidate called with a line that is not a candidate line');
+            console.log(line);
+            return null;
+        }
+        if (line.substring(line.length - 2) == '\r\n') // chomp it
+            line = line.substring(0, line.length - 2);
+        var candidate = {},
+            elems = line.split(' '),
+            i;
+        if (elems[6] != 'typ') {
+            console.log('did not find typ in the right place');
+            console.log(line);
+            return null;
+        }
+        candidate.foundation = elems[0].substring(12);
+        candidate.component = elems[1];
+        candidate.protocol = elems[2].toLowerCase();
+        candidate.priority = elems[3];
+        candidate.ip = elems[4];
+        candidate.port = elems[5];
+        // elems[6] => "typ"
+        candidate.type = elems[7];
+
+        candidate.generation = '0'; // default, may be overwritten below
+        for (i = 8; i < elems.length; i += 2) {
+            switch (elems[i]) {
+                case 'raddr':
+                    candidate['rel-addr'] = elems[i + 1];
+                    break;
+                case 'rport':
+                    candidate['rel-port'] = elems[i + 1];
+                    break;
+                case 'generation':
+                    candidate.generation = elems[i + 1];
+                    break;
+                case 'tcptype':
+                    candidate.tcptype = elems[i + 1];
+                    break;
+                default: // TODO
+                    console.log('not translating "' + elems[i] + '" = "' + elems[i + 1] + '"');
+            }
+        }
+        candidate.network = '1';
+        candidate.id = Math.random().toString(36).substr(2, 10); // not applicable to SDP -- FIXME: should be unique, not just random
+        return candidate;
+    },
+    candidateFromJingle: function (cand) {
+        var line = 'a=candidate:';
+        line += cand.getAttribute('foundation');
+        line += ' ';
+        line += cand.getAttribute('component');
+        line += ' ';
+        line += cand.getAttribute('protocol'); //.toUpperCase(); // chrome M23 doesn't like this
+        line += ' ';
+        line += cand.getAttribute('priority');
+        line += ' ';
+        line += cand.getAttribute('ip');
+        line += ' ';
+        line += cand.getAttribute('port');
+        line += ' ';
+        line += 'typ';
+        line += ' ' + cand.getAttribute('type');
+        line += ' ';
+        switch (cand.getAttribute('type')) {
+            case 'srflx':
+            case 'prflx':
+            case 'relay':
+                if (cand.getAttribute('rel-addr') && cand.getAttribute('rel-port')) {
+                    line += 'raddr';
+                    line += ' ';
+                    line += cand.getAttribute('rel-addr');
+                    line += ' ';
+                    line += 'rport';
+                    line += ' ';
+                    line += cand.getAttribute('rel-port');
+                    line += ' ';
+                }
+                break;
+        }
+        if (cand.getAttribute('protocol').toLowerCase() == 'tcp') {
+            line += 'tcptype';
+            line += ' ';
+            line += cand.getAttribute('tcptype');
+            line += ' ';
+        }
+        line += 'generation';
+        line += ' ';
+        line += cand.getAttribute('generation') || '0';
+        return line + '\r\n';
+    }
+};
+

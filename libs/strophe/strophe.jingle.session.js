@@ -1,11 +1,9 @@
 /* jshint -W117 */
 // Jingle stuff
-JingleSession.prototype = Object.create(SessionBase.prototype);
 function JingleSession(me, sid, connection) {
-
-    SessionBase.call(this, connection, sid);
-
     this.me = me;
+    this.sid = sid;
+    this.connection = connection;
     this.initiator = null;
     this.responder = null;
     this.isInitiator = null;
@@ -35,8 +33,20 @@ function JingleSession(me, sid, connection) {
 
     this.reason = null;
 
+    this.addssrc = [];
+    this.removessrc = [];
+    this.pendingop = null;
+    this.switchstreams = false;
+
     this.wait = true;
     this.localStreamsSSRC = null;
+
+    /**
+     * The indicator which determines whether the (local) video has been muted
+     * in response to a user command in contrast to an automatic decision made
+     * by the application logic.
+     */
+    this.videoMuteByUser = false;
 }
 
 JingleSession.prototype.initiate = function (peerjid, isInitiator) {
@@ -161,22 +171,6 @@ JingleSession.prototype.accept = function () {
             console.error('setLocalDescription failed', e);
         }
     );
-};
-
-/**
- * Implements SessionBase.sendSSRCUpdate.
- */
-JingleSession.prototype.sendSSRCUpdate = function(sdpMediaSsrcs, fromJid, isadd) {
-
-    var self = this;
-    console.log('tell', self.peerjid, 'about ' + (isadd ? 'new' : 'removed') + ' ssrcs from' + self.me);
-
-    if (!(this.peerconnection.signalingState == 'stable' && this.peerconnection.iceConnectionState == 'connected')){
-        console.log("Too early to send updates");
-        return;
-    }
-
-    this.sendSSRCUpdateIq(sdpMediaSsrcs, self.sid, self.initiator, self.peerjid, isadd);
 };
 
 JingleSession.prototype.terminate = function (reason) {
@@ -675,6 +669,445 @@ JingleSession.prototype.sendTerminate = function (reason, text) {
     }
 };
 
+JingleSession.prototype.addSource = function (elem, fromJid) {
+
+    var self = this;
+    // FIXME: dirty waiting
+    if (!this.peerconnection.localDescription)
+    {
+        console.warn("addSource - localDescription not ready yet")
+        setTimeout(function()
+            {
+                self.addSource(elem, fromJid);
+            },
+            200
+        );
+        return;
+    }
+
+    console.log('addssrc', new Date().getTime());
+    console.log('ice', this.peerconnection.iceConnectionState);
+    var sdp = new SDP(this.peerconnection.remoteDescription.sdp);
+    var mySdp = new SDP(this.peerconnection.localDescription.sdp);
+
+    $(elem).each(function (idx, content) {
+        var name = $(content).attr('name');
+        var lines = '';
+        tmp = $(content).find('ssrc-group[xmlns="urn:xmpp:jingle:apps:rtp:ssma:0"]').each(function() {
+            var semantics = this.getAttribute('semantics');
+            var ssrcs = $(this).find('>source').map(function () {
+                return this.getAttribute('ssrc');
+            }).get();
+
+            if (ssrcs.length != 0) {
+                lines += 'a=ssrc-group:' + semantics + ' ' + ssrcs.join(' ') + '\r\n';
+            }
+        });
+        tmp = $(content).find('source[xmlns="urn:xmpp:jingle:apps:rtp:ssma:0"]'); // can handle both >source and >description>source
+        tmp.each(function () {
+            var ssrc = $(this).attr('ssrc');
+            if(mySdp.containsSSRC(ssrc)){
+                /**
+                 * This happens when multiple participants change their streams at the same time and
+                 * ColibriFocus.modifySources have to wait for stable state. In the meantime multiple
+                 * addssrc are scheduled for update IQ. See
+                 */
+                console.warn("Got add stream request for my own ssrc: "+ssrc);
+                return;
+            }
+            $(this).find('>parameter').each(function () {
+                lines += 'a=ssrc:' + ssrc + ' ' + $(this).attr('name');
+                if ($(this).attr('value') && $(this).attr('value').length)
+                    lines += ':' + $(this).attr('value');
+                lines += '\r\n';
+            });
+        });
+        sdp.media.forEach(function(media, idx) {
+            if (!SDPUtil.find_line(media, 'a=mid:' + name))
+                return;
+            sdp.media[idx] += lines;
+            if (!self.addssrc[idx]) self.addssrc[idx] = '';
+            self.addssrc[idx] += lines;
+        });
+        sdp.raw = sdp.session + sdp.media.join('');
+    });
+    this.modifySources();
+};
+
+JingleSession.prototype.removeSource = function (elem, fromJid) {
+
+    var self = this;
+    // FIXME: dirty waiting
+    if (!this.peerconnection.localDescription)
+    {
+        console.warn("removeSource - localDescription not ready yet")
+        setTimeout(function()
+            {
+                self.removeSource(elem, fromJid);
+            },
+            200
+        );
+        return;
+    }
+
+    console.log('removessrc', new Date().getTime());
+    console.log('ice', this.peerconnection.iceConnectionState);
+    var sdp = new SDP(this.peerconnection.remoteDescription.sdp);
+    var mySdp = new SDP(this.peerconnection.localDescription.sdp);
+
+    $(elem).each(function (idx, content) {
+        var name = $(content).attr('name');
+        var lines = '';
+        tmp = $(content).find('ssrc-group[xmlns="urn:xmpp:jingle:apps:rtp:ssma:0"]').each(function() {
+            var semantics = this.getAttribute('semantics');
+            var ssrcs = $(this).find('>source').map(function () {
+                return this.getAttribute('ssrc');
+            }).get();
+
+            if (ssrcs.length != 0) {
+                lines += 'a=ssrc-group:' + semantics + ' ' + ssrcs.join(' ') + '\r\n';
+            }
+        });
+        tmp = $(content).find('source[xmlns="urn:xmpp:jingle:apps:rtp:ssma:0"]'); // can handle both >source and >description>source
+        tmp.each(function () {
+            var ssrc = $(this).attr('ssrc');
+            // This should never happen, but can be useful for bug detection
+            if(mySdp.containsSSRC(ssrc)){
+                console.error("Got remove stream request for my own ssrc: "+ssrc);
+                return;
+            }
+            $(this).find('>parameter').each(function () {
+                lines += 'a=ssrc:' + ssrc + ' ' + $(this).attr('name');
+                if ($(this).attr('value') && $(this).attr('value').length)
+                    lines += ':' + $(this).attr('value');
+                lines += '\r\n';
+            });
+        });
+        sdp.media.forEach(function(media, idx) {
+            if (!SDPUtil.find_line(media, 'a=mid:' + name))
+                return;
+            sdp.media[idx] += lines;
+            if (!self.removessrc[idx]) self.removessrc[idx] = '';
+            self.removessrc[idx] += lines;
+        });
+        sdp.raw = sdp.session + sdp.media.join('');
+    });
+    this.modifySources();
+};
+
+JingleSession.prototype.modifySources = function (successCallback) {
+    var self = this;
+    if (this.peerconnection.signalingState == 'closed') return;
+    if (!(this.addssrc.length || this.removessrc.length || this.pendingop !== null || this.switchstreams)){
+        // There is nothing to do since scheduled job might have been executed by another succeeding call
+        $(document).trigger('setLocalDescription.jingle', [self.sid]);
+        if(successCallback){
+            successCallback();
+        }
+        return;
+    }
+
+    // FIXME: this is a big hack
+    // https://code.google.com/p/webrtc/issues/detail?id=2688
+    // ^ has been fixed.
+    if (!(this.peerconnection.signalingState == 'stable' && this.peerconnection.iceConnectionState == 'connected')) {
+        console.warn('modifySources not yet', this.peerconnection.signalingState, this.peerconnection.iceConnectionState);
+        this.wait = true;
+        window.setTimeout(function() { self.modifySources(successCallback); }, 250);
+        return;
+    }
+    if (this.wait) {
+        window.setTimeout(function() { self.modifySources(successCallback); }, 2500);
+        this.wait = false;
+        return;
+    }
+
+    // Reset switch streams flag
+    this.switchstreams = false;
+
+    var sdp = new SDP(this.peerconnection.remoteDescription.sdp);
+
+    // add sources
+    this.addssrc.forEach(function(lines, idx) {
+        sdp.media[idx] += lines;
+    });
+    this.addssrc = [];
+
+    // remove sources
+    this.removessrc.forEach(function(lines, idx) {
+        lines = lines.split('\r\n');
+        lines.pop(); // remove empty last element;
+        lines.forEach(function(line) {
+            sdp.media[idx] = sdp.media[idx].replace(line + '\r\n', '');
+        });
+    });
+    this.removessrc = [];
+
+    // FIXME:
+    // this was a hack for the situation when only one peer exists
+    // in the conference.
+    // check if still required and remove
+    if (sdp.media[0])
+        sdp.media[0] = sdp.media[0].replace('a=recvonly', 'a=sendrecv');
+    if (sdp.media[1])
+        sdp.media[1] = sdp.media[1].replace('a=recvonly', 'a=sendrecv');
+
+    sdp.raw = sdp.session + sdp.media.join('');
+    this.peerconnection.setRemoteDescription(new RTCSessionDescription({type: 'offer', sdp: sdp.raw}),
+        function() {
+
+            if(self.signalingState == 'closed') {
+                console.error("createAnswer attempt on closed state");
+                return;
+            }
+
+            self.peerconnection.createAnswer(
+                function(modifiedAnswer) {
+                    // change video direction, see https://github.com/jitsi/jitmeet/issues/41
+                    if (self.pendingop !== null) {
+                        var sdp = new SDP(modifiedAnswer.sdp);
+                        if (sdp.media.length > 1) {
+                            switch(self.pendingop) {
+                                case 'mute':
+                                    sdp.media[1] = sdp.media[1].replace('a=sendrecv', 'a=recvonly');
+                                    break;
+                                case 'unmute':
+                                    sdp.media[1] = sdp.media[1].replace('a=recvonly', 'a=sendrecv');
+                                    break;
+                            }
+                            sdp.raw = sdp.session + sdp.media.join('');
+                            modifiedAnswer.sdp = sdp.raw;
+                        }
+                        self.pendingop = null;
+                    }
+
+                    // FIXME: pushing down an answer while ice connection state
+                    // is still checking is bad...
+                    //console.log(self.peerconnection.iceConnectionState);
+
+                    // trying to work around another chrome bug
+                    //modifiedAnswer.sdp = modifiedAnswer.sdp.replace(/a=setup:active/g, 'a=setup:actpass');
+                    self.peerconnection.setLocalDescription(modifiedAnswer,
+                        function() {
+                            //console.log('modified setLocalDescription ok');
+                            $(document).trigger('setLocalDescription.jingle', [self.sid]);
+                            if(successCallback){
+                                successCallback();
+                            }
+                        },
+                        function(error) {
+                            console.error('modified setLocalDescription failed', error);
+                        }
+                    );
+                },
+                function(error) {
+                    console.error('modified answer failed', error);
+                }
+            );
+        },
+        function(error) {
+            console.error('modify failed', error);
+        }
+    );
+};
+
+/**
+ * Switches video streams.
+ * @param new_stream new stream that will be used as video of this session.
+ * @param oldStream old video stream of this session.
+ * @param success_callback callback executed after successful stream switch.
+ */
+JingleSession.prototype.switchStreams = function (new_stream, oldStream, success_callback) {
+
+    var self = this;
+
+    // Stop the stream to trigger onended event for old stream
+    oldStream.stop();
+
+    // Remember SDP to figure out added/removed SSRCs
+    var oldSdp = null;
+    if(self.peerconnection) {
+        if(self.peerconnection.localDescription) {
+            oldSdp = new SDP(self.peerconnection.localDescription.sdp);
+        }
+        self.peerconnection.removeStream(oldStream, true);
+        self.peerconnection.addStream(new_stream);
+    }
+
+    self.connection.jingle.localVideo = new_stream;
+
+    self.connection.jingle.localStreams = [];
+
+    //in firefox we have only one stream object
+    if(self.connection.jingle.localAudio != self.connection.jingle.localVideo)
+        self.connection.jingle.localStreams.push(self.connection.jingle.localAudio);
+    self.connection.jingle.localStreams.push(self.connection.jingle.localVideo);
+
+    // Conference is not active
+    if(!oldSdp || !self.peerconnection) {
+        success_callback();
+        return;
+    }
+
+    self.switchstreams = true;
+    self.modifySources(function() {
+        console.log('modify sources done');
+
+        success_callback();
+
+        var newSdp = new SDP(self.peerconnection.localDescription.sdp);
+        console.log("SDPs", oldSdp, newSdp);
+        self.notifyMySSRCUpdate(oldSdp, newSdp);
+    });
+};
+
+/**
+ * Figures out added/removed ssrcs and send update IQs.
+ * @param old_sdp SDP object for old description.
+ * @param new_sdp SDP object for new description.
+ */
+JingleSession.prototype.notifyMySSRCUpdate = function (old_sdp, new_sdp) {
+
+    if (!(this.peerconnection.signalingState == 'stable' &&
+        this.peerconnection.iceConnectionState == 'connected')){
+        console.log("Too early to send updates");
+        return;
+    }
+
+    // send source-remove IQ.
+    sdpDiffer = new SDPDiffer(new_sdp, old_sdp);
+    var remove = $iq({to: this.peerjid, type: 'set'})
+        .c('jingle', {
+            xmlns: 'urn:xmpp:jingle:1',
+            action: 'source-remove',
+            initiator: this.initiator,
+            sid: this.sid
+        }
+    );
+    var removed = sdpDiffer.toJingle(remove);
+    if (removed) {
+        this.connection.sendIQ(remove,
+            function (res) {
+                console.info('got remove result', res);
+            },
+            function (err) {
+                console.error('got remove error', err);
+            }
+        );
+    } else {
+        console.log('removal not necessary');
+    }
+
+    // send source-add IQ.
+    var sdpDiffer = new SDPDiffer(old_sdp, new_sdp);
+    var add = $iq({to: this.peerjid, type: 'set'})
+        .c('jingle', {
+            xmlns: 'urn:xmpp:jingle:1',
+            action: 'source-add',
+            initiator: this.initiator,
+            sid: this.sid
+        }
+    );
+    var added = sdpDiffer.toJingle(add);
+    if (added) {
+        this.connection.sendIQ(add,
+            function (res) {
+                console.info('got add result', res);
+            },
+            function (err) {
+                console.error('got add error', err);
+            }
+        );
+    } else {
+        console.log('addition not necessary');
+    }
+};
+
+/**
+ * Determines whether the (local) video is mute i.e. all video tracks are
+ * disabled.
+ *
+ * @return <tt>true</tt> if the (local) video is mute i.e. all video tracks are
+ * disabled; otherwise, <tt>false</tt>
+ */
+JingleSession.prototype.isVideoMute = function () {
+    var tracks = connection.jingle.localVideo.getVideoTracks();
+    var mute = true;
+
+    for (var i = 0; i < tracks.length; ++i) {
+        if (tracks[i].enabled) {
+            mute = false;
+            break;
+        }
+    }
+    return mute;
+};
+
+/**
+ * Mutes/unmutes the (local) video i.e. enables/disables all video tracks.
+ *
+ * @param mute <tt>true</tt> to mute the (local) video i.e. to disable all video
+ * tracks; otherwise, <tt>false</tt>
+ * @param callback a function to be invoked with <tt>mute</tt> after all video
+ * tracks have been enabled/disabled. The function may, optionally, return
+ * another function which is to be invoked after the whole mute/unmute operation
+ * has completed successfully.
+ * @param options an object which specifies optional arguments such as the
+ * <tt>boolean</tt> key <tt>byUser</tt> with default value <tt>true</tt> which
+ * specifies whether the method was initiated in response to a user command (in
+ * contrast to an automatic decision made by the application logic)
+ */
+JingleSession.prototype.setVideoMute = function (mute, callback, options) {
+    var byUser;
+
+    if (options) {
+        byUser = options.byUser;
+        if (typeof byUser === 'undefined') {
+            byUser = true;
+        }
+    } else {
+        byUser = true;
+    }
+    // The user's command to mute the (local) video takes precedence over any
+    // automatic decision made by the application logic.
+    if (byUser) {
+        this.videoMuteByUser = mute;
+    } else if (this.videoMuteByUser) {
+        return;
+    }
+    if (mute == this.isVideoMute())
+    {
+        // Even if no change occurs, the specified callback is to be executed.
+        // The specified callback may, optionally, return a successCallback
+        // which is to be executed as well.
+        var successCallback = callback(mute);
+
+        if (successCallback) {
+            successCallback();
+        }
+    } else {
+        var tracks = connection.jingle.localVideo.getVideoTracks();
+
+        for (var i = 0; i < tracks.length; ++i) {
+            tracks[i].enabled = !mute;
+        }
+
+        this.hardMuteVideo(mute);
+
+        this.modifySources(callback(mute));
+    }
+};
+
+// SDP-based mute by going recvonly/sendrecv
+// FIXME: should probably black out the screen as well
+JingleSession.prototype.toggleVideoMute = function (callback) {
+    setVideoMute(isVideoMute(), callback);
+};
+
+JingleSession.prototype.hardMuteVideo = function (muted) {
+    this.pendingop = muted ? 'mute' : 'unmute';
+};
+
 JingleSession.prototype.sendMute = function (muted, content) {
     var info = $iq({to: this.peerjid,
         type: 'set'})
@@ -746,3 +1179,4 @@ JingleSession.prototype.getStats = function (interval) {
     }, interval || 3000);
     return this.statsinterval;
 };
+

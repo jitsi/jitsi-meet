@@ -164,15 +164,25 @@ var Toolbar = (function (my) {
     }
 
     my.authenticateClicked = function () {
+        // If auth window exists just bring it to the front
+        if (authenticationWindow) {
+            authenticationWindow.focus();
+            return;
+        }
         // Get authentication URL
         Moderator.getAuthUrl(function (url) {
             // Open popup with authentication URL
             authenticationWindow = messageHandler.openCenteredPopup(
-                url, 500, 400,
+                url, 910, 660,
+                // On closed
                 function () {
+                    // Close authentication dialog if opened
+                    if (authDialog) {
+                        messageHandler.closeDialog();
+                        authDialog = null;
+                    }
                     // On popup closed - retry room allocation
-                    Moderator.allocateConferenceFocus(
-                        roomName, doJoinAfterFocus);
+                    Moderator.allocateConferenceFocus(roomName, doJoinAfterFocus);
                     authenticationWindow = null;
                 });
             if (!authenticationWindow) {
@@ -422,7 +432,7 @@ var Toolbar = (function (my) {
 
     // Shows or hides SIP calls button
     my.showSipCallButton = function (show) {
-        if (config.hosts.call_control && show) {
+        if (Moderator.isSipGatewayEnabled() && show) {
             $('#sipCallButton').css({display: "inline"});
         } else {
             $('#sipCallButton').css({display: "none"});

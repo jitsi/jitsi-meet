@@ -16,7 +16,7 @@ $(MODULES): *.js
 	$(BROWSERIFY) $(FLAGS) $(MODULE_DIR)/$@/$@.js -s $@ -o $(OUTPUT_DIR)/$@.bundle.js
 
 clean:
-	@rm $(OUTPUT_DIR)/*.bundle.js
+	@rm -f $(OUTPUT_DIR)/*.bundle.js
 
 deploy:
 	@mkdir -p $(DEPLOY_DIR) && cp $(OUTPUT_DIR)/*.bundle.js $(DEPLOY_DIR)

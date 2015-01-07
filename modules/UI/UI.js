@@ -406,23 +406,36 @@ UI.onPasswordReqiured = function (callback) {
 };
 
 UI.onAuthenticationRequired = function () {
+    // This is the loop that will wait for the room to be created by
+    // someone else. 'auth_required.moderator' will bring us back here.
+    authRetryId = window.setTimeout(
+        function () {
+            Moderator.allocateConferenceFocus(roomName, doJoinAfterFocus);
+        }, 5000);
+    // Show prompt only if it's not open
+    if (authDialog !== null) {
+        return;
+    }
     // extract room name from 'room@muc.server.net'
     var room = roomName.substr(0, roomName.indexOf('@'));
 
-    messageHandler.openDialog(
+    authDialog = messageHandler.openDialog(
         'Stop',
-            'Authentication is required to create room:<br/>' + room,
+            'Authentication is required to create room:<br/><b>' + room +
+            '</b></br> You can either authenticate to create the room or ' +
+            'just wait for someone else to do so.',
         true,
         {
-            Authenticate: 'authNow',
-            Close: 'close'
+            Authenticate: 'authNow'
         },
         function (onSubmitEvent, submitValue) {
-            console.info('On submit: ' + submitValue, submitValue);
+
+            // Do not close the dialog yet
+            onSubmitEvent.preventDefault();
+
+            // Open login popup
             if (submitValue === 'authNow') {
                 Toolbar.authenticateClicked();
-            } else {
-                Toolbar.showAuthenticateButton(true);
             }
         }
     );

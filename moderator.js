@@ -11,6 +11,10 @@ var Moderator = (function (my) {
     var getNextErrorTimeout = Util.createExpBackoffTimer(1000);
     // External authentication stuff
     var externalAuthEnabled = false;
+    // Sip gateway can be enabled by configuring Jigasi host in config.js or
+    // it will be enabled automatically if focus detects the component through
+    // service discovery.
+    var sipGatewayEnabled = config.hosts.call_control !== undefined;
 
     my.isModerator = function () {
         return connection && connection.emuc.isModerator();
@@ -22,6 +26,10 @@ var Moderator = (function (my) {
 
     my.isExternalAuthEnabled = function () {
         return externalAuthEnabled;
+    };
+
+    my.isSipGatewayEnabled = function () {
+        return sipGatewayEnabled;
     };
 
     my.init = function () {
@@ -78,6 +86,14 @@ var Moderator = (function (my) {
                 { name: 'bridge', value: config.hosts.bridge})
                 .up();
         }
+        // Tell the focus we have Jigasi configured
+        if (config.hosts.call_control !== undefined)
+        {
+            elem.c(
+                'property',
+                { name: 'call_control', value: config.hosts.call_control})
+                .up();
+        }
         if (config.channelLastN !== undefined)
         {
             elem.c(
@@ -127,7 +143,17 @@ var Moderator = (function (my) {
         if (extAuthParam.length) {
             externalAuthEnabled = extAuthParam.attr('value') === 'true';
         }
+
         console.info("External authentication enabled: " + externalAuthEnabled);
+
+        // Check if focus has auto-detected Jigasi component(this will be also
+        // included if we have passed our host from the config)
+        if ($(resultIq).find(
+                '>conference>property[name=\'sipGatewayEnabled\']').length) {
+            sipGatewayEnabled = true;
+        }
+
+        console.info("Sip gateway enabled: " + sipGatewayEnabled);
     };
 
     // FIXME: we need to show the fact that we're waiting for the focus

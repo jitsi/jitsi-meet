@@ -2,6 +2,10 @@
 /* application specific logic */
 var connection = null;
 var authenticatedUser = false;
+/* Initial "authentication required" dialog */
+var authDialog = null;
+/* Loop retry ID that wits for other user to create the room */
+var authRetryId = null;
 var activecall = null;
 var nickname = null;
 var focusMucJid = null;
@@ -56,6 +60,7 @@ var getVideoPosition;
 var sessionTerminated = false;
 
 function init() {
+
 
     RTC.addStreamListener(maybeDoJoin, StreamEventTypes.EVENT_TYPE_LOCAL_CREATED);
     RTC.start();
@@ -149,6 +154,17 @@ function doJoin() {
 }
 
 function doJoinAfterFocus() {
+
+    // Close authentication dialog if opened
+    if (authDialog) {
+        messageHandler.closeDialog();
+        authDialog = null;
+    }
+    // Clear retry interval, so that we don't call 'doJoinAfterFocus' twice
+    if (authRetryId) {
+        window.clearTimeout(authRetryId);
+        authRetryId = null;
+    }
 
     var roomjid;
     roomjid = roomName;
@@ -999,21 +1015,15 @@ function hangup() {
 
     }
 
-    $.prompt("Session Terminated",
+    messageHandler.openDialog(
+        "Session Terminated",
+        "You hung up the call",
+        true,
+        { "Join again": true },
+        function(event, value, message, formVals)
         {
-            title: "You hung up the call",
-            persistent: true,
-            buttons: {
-                "Join again": true
-            },
-            closeText: '',
-            submit: function(event, value, message, formVals)
-            {
-                window.location.reload();
-                return false;
-            }
-
+            window.location.reload();
+            return false;
         }
     );
-
 }
