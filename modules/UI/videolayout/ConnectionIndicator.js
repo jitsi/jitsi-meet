@@ -91,7 +91,7 @@ ConnectionIndicator.prototype.generateText = function () {
     }
 
     var resolutionValue = null;
-    if(this.resolution)
+    if(this.resolution && this.jid != null)
     {
         var keys = Object.keys(this.resolution);
         if(keys.length == 1)
