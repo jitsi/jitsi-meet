@@ -2,7 +2,12 @@
 /* application specific logic */
 var connection = null;
 var authenticatedUser = false;
+/* Popup window that show login page */
 var authenticationWindow = null;
+/* Initial "authentication required" dialog */
+var authDialog = null;
+/* Loop retry ID that wits for other user to create the room */
+var authRetryId = null;
 var activecall = null;
 var nickname = null;
 var sharedKey = '';
@@ -186,6 +191,17 @@ function doJoin() {
 }
 
 function doJoinAfterFocus() {
+
+    // Close authentication dialog if opened
+    if (authDialog) {
+        messageHandler.closeDialog();
+        authDialog = null;
+    }
+    // Clear retry interval, so that we don't call 'doJoinAfterFocus' twice
+    if (authRetryId) {
+        window.clearTimeout(authRetryId);
+        authRetryId = null;
+    }
 
     var roomjid;
     roomjid = roomName;
@@ -879,38 +895,62 @@ $(document).bind('passwordrequired.main', function (event) {
 });
 
 $(document).bind('auth_required.moderator', function () {
+
+    // This is the loop that will wait for the room to be created by
+    // someone else. 'auth_required.moderator' will bring us back here.
+    authRetryId = window.setTimeout(
+        function () {
+            Moderator.allocateConferenceFocus(roomName, doJoinAfterFocus);
+        }, 5000);
+    // Show prompt only if it's not open
+    if (authDialog !== null) {
+        return;
+    }
     // extract room name from 'room@muc.server.net'
     var room = roomName.substr(0, roomName.indexOf('@'));
 
-    messageHandler.openDialog(
+    authDialog = messageHandler.openDialog(
         'Stop',
-        'Authentication is required to create room:<br/>' + room,
+        'Authentication is required to create room:<br/><b>' + room +
+        '</b></br> You can either authenticate to create the room or ' +
+        'just wait for someone else to do so.',
         true,
         {
-            Authenticate: 'authNow',
-            Close: 'close'
+            Authenticate: 'authNow'
         },
         function (onSubmitEvent, submitValue) {
-            console.info('On submit: ' + submitValue, submitValue);
+
+            // Do not close the dialog yet
+            onSubmitEvent.preventDefault();
+
+            // Open login popup
             if (submitValue === 'authNow') {
                 authenticateClicked();
-            } else {
-                Toolbar.showAuthenticateButton(true);
             }
         }
     );
 });
 
 function authenticateClicked() {
+    // If auth window exists just bring it to the front
+    if (authenticationWindow) {
+        authenticationWindow.focus();
+        return;
+    }
     // Get authentication URL
     Moderator.getAuthUrl(function (url) {
         // Open popup with authentication URL
         authenticationWindow = messageHandler.openCenteredPopup(
             url, 910, 660,
+            // On closed
             function () {
+                // Close authentication dialog if opened
+                if (authDialog) {
+                    messageHandler.closeDialog();
+                    authDialog = null;
+                }
                 // On popup closed - retry room allocation
-                Moderator.allocateConferenceFocus(
-                    roomName, doJoinAfterFocus);
+                Moderator.allocateConferenceFocus(roomName, doJoinAfterFocus);
                 authenticationWindow = null;
             });
         if (!authenticationWindow) {
@@ -1587,21 +1627,15 @@ function hangup() {
 
     }
 
-    $.prompt("Session Terminated",
+    messageHandler.openDialog(
+        "Session Terminated",
+        "You hung up the call",
+        true,
+        { "Join again": true },
+        function(event, value, message, formVals)
         {
-            title: "You hung up the call",
-            persistent: true,
-            buttons: {
-                "Join again": true
-            },
-            closeText: '',
-            submit: function(event, value, message, formVals)
-            {
-                window.location.reload();
-                return false;
-            }
-
+            window.location.reload();
+            return false;
         }
     );
-
 }

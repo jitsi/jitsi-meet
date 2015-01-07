@@ -1,3 +1,4 @@
+/* global $, jQuery */
 var messageHandler = (function(my) {
 
     /**
@@ -53,15 +54,27 @@ var messageHandler = (function(my) {
      * @param submitFunction function to be called on submit
      * @param loadedFunction function to be called after the prompt is fully loaded
      */
-    my.openDialog = function(titleString, msgString, persistent, buttons, submitFunction, loadedFunction) {
-        $.prompt(msgString, {
+    my.openDialog = function (titleString,    msgString, persistent, buttons,
+                              submitFunction, loadedFunction) {
+        var args = {
             title: titleString,
-            persistent: false,
+            persistent: persistent,
             buttons: buttons,
             defaultButton: 1,
             loaded: loadedFunction,
             submit: submitFunction
-        });
+        };
+        if (persistent) {
+            args.closeText = '';
+        }
+        return $.prompt(msgString, args);
+    };
+
+    /**
+     * Closes currently opened dialog.
+     */
+    my.closeDialog = function () {
+        $.prompt.close();
     };
 
     /**
