@@ -37,7 +37,16 @@ Strophe.addConnectionPlugin('rayo',
                 {
                     name: 'JvbRoomName',
                     value: roomName
-                });
+                }).up();
+
+            if (sharedKey !== null && sharedKey.length) {
+
+                req.c('header',
+                    {
+                        name: 'JvbRoomPassword',
+                        value: sharedKey
+                    }).up();
+            }
 
             this.connection.sendIQ(
                 req,
