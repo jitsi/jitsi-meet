@@ -553,6 +553,14 @@ UI.connectionIndicatorShowMore = function(id)
     return VideoLayout.connectionIndicators[id].showMore();
 }
 
+UI.showToolbar = function () {
+    return ToolbarToggler.showToolbar();
+}
+
+UI.dockToolbar = function (isDock) {
+    return ToolbarToggler.dockToolbar(isDock);
+}
+
 
 module.exports = UI;
 

@@ -140,7 +140,7 @@ Strophe.addConnectionPlugin('emuc', {
             Strophe.forEachChild(stats[0], "stat", function (el) {
                 statsObj[el.getAttribute("name")] = el.getAttribute("value");
             });
-            connection_quality.updateRemoteStats(from, statsObj);
+            connectionquality.updateRemoteStats(from, statsObj);
         }
 
         // Parse status.
