@@ -969,6 +969,8 @@ var statistics =
     },
 
     start: function () {
+        this.addConnectionStatsListener(connection_quality.updateLocalStats);
+        this.addRemoteStatsStopListener(connection_quality.stopSendingStats);
         RTC.addStreamListener(onStreamCreated,
             StreamEventTypes.EVENT_TYPE_LOCAL_CREATED);
     }

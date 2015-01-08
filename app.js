@@ -834,8 +834,6 @@ $(document).ready(function () {
         APIConnector.init();
 
     UI.start();
-    statistics.addConnectionStatsListener(ConnectionQuality.updateLocalStats);
-    statistics.addRemoteStatsStopListener(ConnectionQuality.stopSendingStats);
     statistics.start();
     
     Moderator.init();
