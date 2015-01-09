@@ -260,10 +260,9 @@ function newStreamCreated(stream) {
 
     UI.changeLocalVideo(stream, !isUsingScreenStream);
 
-    var conferenceHandler = getConferenceHandler();
-    if (conferenceHandler) {
+    if (activecall) {
         // FIXME: will block switchInProgress on true value in case of exception
-        conferenceHandler.switchStreams(stream, oldStream, streamSwitchDone);
+        activecall.switchStreams(stream, oldStream, streamSwitchDone);
     } else {
         // We are done immediately
         console.error("No conference handler");

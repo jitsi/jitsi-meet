@@ -16,10 +16,6 @@ var largeVideoState = {
     newSrc: ''
 };
 
-// By default we use camera
-var getVideoSize = getCameraVideoSize;
-var getVideoPosition = getCameraVideoPosition;
-
 var defaultLocalDisplayName = "Me";
 
 /**
@@ -407,6 +403,10 @@ function createModeratorIndicatorElement(parentElement) {
 var VideoLayout = (function (my) {
     my.connectionIndicators = {};
 
+    // By default we use camera
+    my.getVideoSize = getCameraVideoSize;
+    my.getVideoPosition = getCameraVideoPosition;
+
     my.isInLastN = function(resource) {
         return lastNCount < 0 // lastN is disabled, return true
             || (lastNCount > 0 && lastNEndpointsCache.length == 0) // lastNEndpoints cache not built yet, return true
@@ -692,10 +692,10 @@ var VideoLayout = (function (my) {
 
                     // Change the way we'll be measuring and positioning large video
 
-                    getVideoSize = largeVideoState.isDesktop
+                    VideoLayout.getVideoSize = largeVideoState.isDesktop
                         ? getDesktopVideoSize
                         : getCameraVideoSize;
-                    getVideoPosition = largeVideoState.isDesktop
+                    VideoLayout.getVideoPosition = largeVideoState.isDesktop
                         ? getDesktopVideoPosition
                         : getCameraVideoPosition;
 
@@ -829,7 +829,7 @@ var VideoLayout = (function (my) {
         var videoSpaceWidth = $('#videospace').width();
         var videoSpaceHeight = window.innerHeight;
 
-        var videoSize = getVideoSize(videoWidth,
+        var videoSize = VideoLayout.getVideoSize(videoWidth,
                                      videoHeight,
                                      videoSpaceWidth,
                                      videoSpaceHeight);
@@ -837,7 +837,7 @@ var VideoLayout = (function (my) {
         var largeVideoWidth = videoSize[0];
         var largeVideoHeight = videoSize[1];
 
-        var videoPosition = getVideoPosition(largeVideoWidth,
+        var videoPosition = VideoLayout.getVideoPosition(largeVideoWidth,
                                              largeVideoHeight,
                                              videoSpaceWidth,
                                              videoSpaceHeight);

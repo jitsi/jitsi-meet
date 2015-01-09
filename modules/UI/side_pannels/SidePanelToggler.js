@@ -29,10 +29,10 @@ var PanelToggler = (function(my) {
         var videospaceWidth = window.innerWidth - panelSize[0];
         var videospaceHeight = window.innerHeight;
         var videoSize
-            = getVideoSize(null, null, videospaceWidth, videospaceHeight);
+            = VideoLayout.getVideoSize(null, null, videospaceWidth, videospaceHeight);
         var videoWidth = videoSize[0];
         var videoHeight = videoSize[1];
-        var videoPosition = getVideoPosition(videoWidth,
+        var videoPosition = VideoLayout.getVideoPosition(videoWidth,
             videoHeight,
             videospaceWidth,
             videospaceHeight);

@@ -44,18 +44,6 @@ var flipXLocalVideo = true;
 var isFullScreen = false;
 var currentVideoWidth = null;
 var currentVideoHeight = null;
-/**
- * Method used to calculate large video size.
- * @type {function ()}
- */
-var getVideoSize;
-/**
- * Method used to get large video position.
- * @type {function ()}
- */
-var getVideoPosition;
-
-/* window.onbeforeunload = closePageWarning; */
 
 var sessionTerminated = false;
 
@@ -624,10 +612,6 @@ function isVideoSrcDesktop(jid) {
     return isDesktop;
 }
 
-function getConferenceHandler() {
-    return activecall;
-}
-
 /**
  * Mutes/unmutes the local video.
  *
@@ -639,7 +623,7 @@ function getConferenceHandler() {
  */
 function setVideoMute(mute, options) {
     if (connection && connection.jingle.localVideo) {
-        var session = getConferenceHandler();
+        var session = activecall;
 
         if (session) {
             session.setVideoMute(
@@ -677,7 +661,7 @@ function toggleVideo() {
     buttonClick("#video", "icon-camera icon-camera-disabled");
 
     if (connection && connection.jingle.localVideo) {
-        var session = getConferenceHandler();
+        var session = activecall;
 
         if (session) {
             setVideoMute(!session.isVideoMute());
@@ -793,7 +777,7 @@ $(window).bind('beforeunload', function () {
 
 function disposeConference(onUnload) {
     UI.onDisposeConference(onUnload);
-    var handler = getConferenceHandler();
+    var handler = activecall;
     if (handler && handler.peerconnection) {
         // FIXME: probably removing streams is not required and close() should
         // be enough
@@ -807,45 +791,6 @@ function disposeConference(onUnload) {
     }
     statistics.onDisposeConference(onUnload);
     activecall = null;
-}
-
-function dump(elem, filename) {
-    elem = elem.parentNode;
-    elem.download = filename || 'meetlog.json';
-    elem.href = 'data:application/json;charset=utf-8,\n';
-    var data = populateData();
-    elem.href += encodeURIComponent(JSON.stringify(data, null, '  '));
-    return false;
-}
-
-
-/**
- * Populates the log data
- */
-function populateData() {
-    var data = {};
-    if (connection.jingle) {
-        Object.keys(connection.jingle.sessions).forEach(function (sid) {
-            var session = connection.jingle.sessions[sid];
-            if (session.peerconnection && session.peerconnection.updateLog) {
-                // FIXME: should probably be a .dump call
-                data["jingle_" + session.sid] = {
-                    updateLog: session.peerconnection.updateLog,
-                    stats: session.peerconnection.stats,
-                    url: window.location.href
-                };
-            }
-        });
-    }
-    var metadata = {};
-    metadata.time = new Date();
-    metadata.url = window.location.href;
-    metadata.ua = navigator.userAgent;
-    if (connection.logger) {
-        metadata.xmpp = connection.logger.log;
-    }
-    data.metadata = metadata;
-    return data;
 }
 
 /**

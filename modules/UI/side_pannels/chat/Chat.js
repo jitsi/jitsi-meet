@@ -1,5 +1,4 @@
-/* global $, Util, connection, nickname:true, getVideoSize,
-getVideoPosition, showToolbar */
+/* global $, Util, connection, nickname:true, showToolbar */
 var Replacement = require("./Replacement");
 var CommandsProcessor = require("./Commands");
 var ToolbarToggler = require("../../toolbars/ToolbarToggler");

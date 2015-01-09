@@ -321,5 +321,24 @@ Strophe.addConnectionPlugin('jingle', {
             }
         );
         // implement push?
+    },
+
+    /**
+     * Populates the log data
+     */
+    populateData: function () {
+        var data = {};
+        Object.keys(this.sessions).forEach(function (sid) {
+            var session = this.sessions[sid];
+            if (session.peerconnection && session.peerconnection.updateLog) {
+                // FIXME: should probably be a .dump call
+                data["jingle_" + session.sid] = {
+                    updateLog: session.peerconnection.updateLog,
+                    stats: session.peerconnection.stats,
+                    url: window.location.href
+                };
+            }
+        });
+        return data;
     }
 });

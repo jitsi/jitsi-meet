@@ -551,16 +551,36 @@ UI.generateRoomName = function() {
 UI.connectionIndicatorShowMore = function(id)
 {
     return VideoLayout.connectionIndicators[id].showMore();
-}
+};
 
 UI.showToolbar = function () {
     return ToolbarToggler.showToolbar();
-}
+};
 
 UI.dockToolbar = function (isDock) {
     return ToolbarToggler.dockToolbar(isDock);
-}
+};
 
+
+function dump(elem, filename) {
+    elem = elem.parentNode;
+    elem.download = filename || 'meetlog.json';
+    elem.href = 'data:application/json;charset=utf-8,\n';
+    var data = {};
+    if (connection.jingle) {
+        data = connection.jingle.populateData();
+    }
+    var metadata = {};
+    metadata.time = new Date();
+    metadata.url = window.location.href;
+    metadata.ua = navigator.userAgent;
+    if (connection.logger) {
+        metadata.xmpp = connection.logger.log;
+    }
+    data.metadata = metadata;
+    elem.href += encodeURIComponent(JSON.stringify(data, null, '  '));
+    return false;
+}
 
 module.exports = UI;
 
