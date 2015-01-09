@@ -460,12 +460,6 @@ UI.onMucEntered = function (jid, id, displayName) {
 
     // Add Peer's container
     VideoLayout.ensurePeerContainerExists(jid,id);
-
-    if(APIConnector.isEnabled() &&
-        APIConnector.isEventEnabled("participantJoined"))
-    {
-        APIConnector.triggerEvent("participantJoined",{jid: jid});
-    }
 };
 
 UI.onMucPresenceStatus = function ( jid, info) {

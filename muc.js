@@ -199,6 +199,7 @@ Strophe.addConnectionPlugin('emuc', {
                     id = email.text();
                 }
                 UI.onMucEntered(from, id, member.displayName);
+                API.triggerEvent("participantJoined",{jid: from});
             }
         } else {
             // Presence update for existing participant
@@ -278,10 +279,7 @@ Strophe.addConnectionPlugin('emuc', {
             msg.c('nick', {xmlns: 'http://jabber.org/protocol/nick'}).t(nickname).up().up();
         }
         this.connection.send(msg);
-        if(APIConnector.isEnabled() && APIConnector.isEventEnabled("outgoingMessage"))
-        {
-            APIConnector.triggerEvent("outgoingMessage", {"message": body});
-        }
+        API.triggerEvent("outgoingMessage", {"message": body});
     },
     setSubject: function (subject){
         var msg = $msg({to: this.roomjid, type: 'groupchat'});
@@ -316,12 +314,9 @@ Strophe.addConnectionPlugin('emuc', {
         if (txt) {
             console.log('chat', nick, txt);
             UI.updateChatConversation(from, nick, txt);
-            if(APIConnector.isEnabled() && APIConnector.isEventEnabled("incomingMessage"))
-            {
-                if(from != this.myroomjid)
-                    APIConnector.triggerEvent("incomingMessage",
-                        {"from": from, "nick": nick, "message": txt});
-            }
+            if(from != this.myroomjid)
+                API.triggerEvent("incomingMessage",
+                    {"from": from, "nick": nick, "message": txt});
         }
         return true;
     },
@@ -537,10 +532,7 @@ Strophe.addConnectionPlugin('emuc', {
     onParticipantLeft: function (jid) {
         UI.onMucLeft(jid);
 
-        if(APIConnector.isEnabled() && APIConnector.isEventEnabled("participantLeft"))
-        {
-            APIConnector.triggerEvent("participantLeft",{jid: jid});
-        }
+        API.triggerEvent("participantLeft",{jid: jid});
 
         delete jid2Ssrc[jid];
 

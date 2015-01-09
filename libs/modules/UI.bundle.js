@@ -461,12 +461,6 @@ UI.onMucEntered = function (jid, id, displayName) {
 
     // Add Peer's container
     VideoLayout.ensurePeerContainerExists(jid,id);
-
-    if(APIConnector.isEnabled() &&
-        APIConnector.isEventEnabled("participantJoined"))
-    {
-        APIConnector.triggerEvent("participantJoined",{jid: jid});
-    }
 };
 
 UI.onMucPresenceStatus = function ( jid, info) {
@@ -552,16 +546,36 @@ UI.generateRoomName = function() {
 UI.connectionIndicatorShowMore = function(id)
 {
     return VideoLayout.connectionIndicators[id].showMore();
-}
+};
 
 UI.showToolbar = function () {
     return ToolbarToggler.showToolbar();
-}
+};
 
 UI.dockToolbar = function (isDock) {
     return ToolbarToggler.dockToolbar(isDock);
-}
+};
 
+
+function dump(elem, filename) {
+    elem = elem.parentNode;
+    elem.download = filename || 'meetlog.json';
+    elem.href = 'data:application/json;charset=utf-8,\n';
+    var data = {};
+    if (connection.jingle) {
+        data = connection.jingle.populateData();
+    }
+    var metadata = {};
+    metadata.time = new Date();
+    metadata.url = window.location.href;
+    metadata.ua = navigator.userAgent;
+    if (connection.logger) {
+        metadata.xmpp = connection.logger.log;
+    }
+    data.metadata = metadata;
+    elem.href += encodeURIComponent(JSON.stringify(data, null, '  '));
+    return false;
+}
 
 module.exports = UI;
 
@@ -1683,10 +1697,10 @@ var PanelToggler = (function(my) {
         var videospaceWidth = window.innerWidth - panelSize[0];
         var videospaceHeight = window.innerHeight;
         var videoSize
-            = getVideoSize(null, null, videospaceWidth, videospaceHeight);
+            = VideoLayout.getVideoSize(null, null, videospaceWidth, videospaceHeight);
         var videoWidth = videoSize[0];
         var videoHeight = videoSize[1];
-        var videoPosition = getVideoPosition(videoWidth,
+        var videoPosition = VideoLayout.getVideoPosition(videoWidth,
             videoHeight,
             videospaceWidth,
             videospaceHeight);
@@ -1908,8 +1922,7 @@ var PanelToggler = (function(my) {
 
 module.exports = PanelToggler;
 },{"../toolbars/ToolbarToggler":16,"../videolayout/VideoLayout":23,"./chat/Chat":8,"./contactlist/ContactList":12,"./settings/Settings":13,"./settings/SettingsMenu":14}],8:[function(require,module,exports){
-/* global $, Util, connection, nickname:true, getVideoSize,
-getVideoPosition, showToolbar */
+/* global $, Util, connection, nickname:true, showToolbar */
 var Replacement = require("./Replacement");
 var CommandsProcessor = require("./Commands");
 var ToolbarToggler = require("../../toolbars/ToolbarToggler");
@@ -4180,10 +4193,6 @@ var largeVideoState = {
     newSrc: ''
 };
 
-// By default we use camera
-var getVideoSize = getCameraVideoSize;
-var getVideoPosition = getCameraVideoPosition;
-
 var defaultLocalDisplayName = "Me";
 
 /**
@@ -4571,6 +4580,10 @@ function createModeratorIndicatorElement(parentElement) {
 var VideoLayout = (function (my) {
     my.connectionIndicators = {};
 
+    // By default we use camera
+    my.getVideoSize = getCameraVideoSize;
+    my.getVideoPosition = getCameraVideoPosition;
+
     my.isInLastN = function(resource) {
         return lastNCount < 0 // lastN is disabled, return true
             || (lastNCount > 0 && lastNEndpointsCache.length == 0) // lastNEndpoints cache not built yet, return true
@@ -4856,10 +4869,10 @@ var VideoLayout = (function (my) {
 
                     // Change the way we'll be measuring and positioning large video
 
-                    getVideoSize = largeVideoState.isDesktop
+                    VideoLayout.getVideoSize = largeVideoState.isDesktop
                         ? getDesktopVideoSize
                         : getCameraVideoSize;
-                    getVideoPosition = largeVideoState.isDesktop
+                    VideoLayout.getVideoPosition = largeVideoState.isDesktop
                         ? getDesktopVideoPosition
                         : getCameraVideoPosition;
 
@@ -4993,7 +5006,7 @@ var VideoLayout = (function (my) {
         var videoSpaceWidth = $('#videospace').width();
         var videoSpaceHeight = window.innerHeight;
 
-        var videoSize = getVideoSize(videoWidth,
+        var videoSize = VideoLayout.getVideoSize(videoWidth,
                                      videoHeight,
                                      videoSpaceWidth,
                                      videoSpaceHeight);
@@ -5001,7 +5014,7 @@ var VideoLayout = (function (my) {
         var largeVideoWidth = videoSize[0];
         var largeVideoHeight = videoSize[1];
 
-        var videoPosition = getVideoPosition(largeVideoWidth,
+        var videoPosition = VideoLayout.getVideoPosition(largeVideoWidth,
                                              largeVideoHeight,
                                              videoSpaceWidth,
                                              videoSpaceHeight);
@@ -5842,13 +5855,10 @@ var VideoLayout = (function (my) {
                 status);
         }
 
-        if(APIConnector.isEnabled() && APIConnector.isEventEnabled("displayNameChange"))
-        {
-            if(jid === 'localVideoContainer')
-                jid = connection.emuc.myroomjid;
-            if(!name || name != displayName)
-                APIConnector.triggerEvent("displayNameChange",{jid: jid, displayname: displayName});
-        }
+        if(jid === 'localVideoContainer')
+            jid = connection.emuc.myroomjid;
+        if(!name || name != displayName)
+            API.triggerEvent("displayNameChange",{jid: jid, displayname: displayName});
     });
 
     /**

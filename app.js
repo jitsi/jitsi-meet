@@ -732,8 +732,8 @@ function isAudioMuted()
 
 $(document).ready(function () {
 
-    if(APIConnector.isEnabled())
-        APIConnector.init();
+    if(API.isEnabled())
+        API.init();
 
     UI.start();
     statistics.start();
@@ -771,8 +771,8 @@ $(window).bind('beforeunload', function () {
         });
     }
     disposeConference(true);
-    if(APIConnector.isEnabled())
-        APIConnector.dispose();
+    if(API.isEnabled())
+        API.dispose();
 });
 
 function disposeConference(onUnload) {

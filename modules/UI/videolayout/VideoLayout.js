@@ -1678,13 +1678,10 @@ var VideoLayout = (function (my) {
                 status);
         }
 
-        if(APIConnector.isEnabled() && APIConnector.isEventEnabled("displayNameChange"))
-        {
-            if(jid === 'localVideoContainer')
-                jid = connection.emuc.myroomjid;
-            if(!name || name != displayName)
-                APIConnector.triggerEvent("displayNameChange",{jid: jid, displayname: displayName});
-        }
+        if(jid === 'localVideoContainer')
+            jid = connection.emuc.myroomjid;
+        if(!name || name != displayName)
+            API.triggerEvent("displayNameChange",{jid: jid, displayname: displayName});
     });
 
     /**
