@@ -280,10 +280,6 @@ RTCUtils.prototype.obtainAudioAndVideoPermissions = function() {
     var cb = function (stream) {
         console.log('got', stream, stream.getAudioTracks().length, stream.getVideoTracks().length);
         self.handleLocalStream(stream);
-        trackUsage('localMedia', {
-            audio: stream.getAudioTracks().length,
-            video: stream.getVideoTracks().length
-        });
     };
     var self = this;
     this.getUserMediaWithConstraints(
@@ -296,10 +292,6 @@ RTCUtils.prototype.obtainAudioAndVideoPermissions = function() {
                 cb,
                 function (error) {
                     console.error('failed to obtain audio/video stream - stop', error);
-                    trackUsage('localMediaError', {
-                        media: error.media || 'video',
-                        name : error.name
-                    });
                     UI.messageHandler.showError("Error",
                             "Failed to obtain permissions to use the local microphone" +
                             "and/or camera.");

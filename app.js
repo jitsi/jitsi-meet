@@ -460,7 +460,6 @@ $(document).bind('iceconnectionstatechange.jingle', function (event, sid, sessio
                             }
                         }
                     });
-                    trackUsage('iceConnected', metadata);
                 }
             });
         }
