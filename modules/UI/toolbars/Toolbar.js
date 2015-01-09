@@ -58,6 +58,33 @@ var buttonHandlers =
     }
 };
 
+function hangup() {
+    disposeConference();
+    sessionTerminated = true;
+    connection.emuc.doLeave();
+    if(config.enableWelcomePage)
+    {
+        setTimeout(function()
+        {
+            window.localStorage.welcomePageDisabled = false;
+            window.location.pathname = "/";
+        }, 10000);
+
+    }
+
+    UI.messageHandler.openDialog(
+        "Session Terminated",
+        "You hung up the call",
+        true,
+        { "Join again": true },
+        function(event, value, message, formVals)
+        {
+            window.location.reload();
+            return false;
+        }
+    );
+}
+
 /**
  * Starts or stops the recording for the conference.
  */

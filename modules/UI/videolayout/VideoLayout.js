@@ -16,7 +16,90 @@ var largeVideoState = {
     newSrc: ''
 };
 
+// By default we use camera
+var getVideoSize = getCameraVideoSize;
+var getVideoPosition = getCameraVideoPosition;
+
 var defaultLocalDisplayName = "Me";
+
+/**
+ * Returns an array of the video horizontal and vertical indents,
+ * so that if fits its parent.
+ *
+ * @return an array with 2 elements, the horizontal indent and the vertical
+ * indent
+ */
+function getCameraVideoPosition(videoWidth,
+                                videoHeight,
+                                videoSpaceWidth,
+                                videoSpaceHeight) {
+    // Parent height isn't completely calculated when we position the video in
+    // full screen mode and this is why we use the screen height in this case.
+    // Need to think it further at some point and implement it properly.
+    var isFullScreen = document.fullScreen ||
+        document.mozFullScreen ||
+        document.webkitIsFullScreen;
+    if (isFullScreen)
+        videoSpaceHeight = window.innerHeight;
+
+    var horizontalIndent = (videoSpaceWidth - videoWidth) / 2;
+    var verticalIndent = (videoSpaceHeight - videoHeight) / 2;
+
+    return [horizontalIndent, verticalIndent];
+}
+
+/**
+ * Returns an array of the video horizontal and vertical indents.
+ * Centers horizontally and top aligns vertically.
+ *
+ * @return an array with 2 elements, the horizontal indent and the vertical
+ * indent
+ */
+function getDesktopVideoPosition(videoWidth,
+                                 videoHeight,
+                                 videoSpaceWidth,
+                                 videoSpaceHeight) {
+
+    var horizontalIndent = (videoSpaceWidth - videoWidth) / 2;
+
+    var verticalIndent = 0;// Top aligned
+
+    return [horizontalIndent, verticalIndent];
+}
+
+
+/**
+ * Returns an array of the video dimensions, so that it covers the screen.
+ * It leaves no empty areas, but some parts of the video might not be visible.
+ *
+ * @return an array with 2 elements, the video width and the video height
+ */
+function getCameraVideoSize(videoWidth,
+                            videoHeight,
+                            videoSpaceWidth,
+                            videoSpaceHeight) {
+    if (!videoWidth)
+        videoWidth = currentVideoWidth;
+    if (!videoHeight)
+        videoHeight = currentVideoHeight;
+
+    var aspectRatio = videoWidth / videoHeight;
+
+    var availableWidth = Math.max(videoWidth, videoSpaceWidth);
+    var availableHeight = Math.max(videoHeight, videoSpaceHeight);
+
+    if (availableWidth / aspectRatio < videoSpaceHeight) {
+        availableHeight = videoSpaceHeight;
+        availableWidth = availableHeight * aspectRatio;
+    }
+
+    if (availableHeight * aspectRatio < videoSpaceWidth) {
+        availableWidth = videoSpaceWidth;
+        availableHeight = availableWidth / aspectRatio;
+    }
+
+    return [availableWidth, availableHeight];
+}
 
 /**
  * Sets the display name for the given video span id.

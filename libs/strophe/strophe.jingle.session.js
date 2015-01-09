@@ -163,7 +163,7 @@ JingleSession.prototype.accept = function () {
                         reason: $(stanza).find('error :first')[0].tagName
                     }:{};
                     error.source = 'answer';
-                    $(document).trigger('error.jingle', [self.sid, error]);
+                    JingleSession.onJingleError(self.sid, error);
                 },
                 10000);
         },
@@ -252,7 +252,7 @@ JingleSession.prototype.sendIceCandidate = function (candidate) {
                             reason: $(stanza).find('error :first')[0].tagName,
                         }:{};
                         error.source = 'offer';
-                        $(document).trigger('error.jingle', [self.sid, error]);
+                        JingleSession.onJingleError(self.sid, error);
                     },
                     10000);
             }
@@ -317,7 +317,7 @@ JingleSession.prototype.sendIceCandidates = function (candidates) {
                 reason: $(stanza).find('error :first')[0].tagName,
             }:{};
             error.source = 'transportinfo';
-            $(document).trigger('error.jingle', [this.sid, error]);
+            JingleSession.onJingleError(this.sid, error);
         },
         10000);
 };
@@ -363,7 +363,7 @@ JingleSession.prototype.createdOffer = function (sdp) {
                     reason: $(stanza).find('error :first')[0].tagName,
                 }:{};
                 error.source = 'offer';
-                $(document).trigger('error.jingle', [self.sid, error]);
+                JingleSession.onJingleError(self.sid, error);
             },
             10000);
     }
@@ -433,7 +433,7 @@ JingleSession.prototype.setRemoteDescription = function (elem, desctype) {
         },
         function (e) {
             console.error('setRemoteDescription error', e);
-            $(document).trigger('fatalError.jingle', [self, e]);
+            JingleSession.onJingleFatalError(self, e);
         }
     );
 };
@@ -600,7 +600,7 @@ JingleSession.prototype.createdAnswer = function (sdp, provisional) {
                             reason: $(stanza).find('error :first')[0].tagName,
                         }:{};
                         error.source = 'answer';
-                        $(document).trigger('error.jingle', [self.sid, error]);
+                        JingleSession.onJingleError(self.sid, error);
                     },
                     10000);
     }
@@ -1180,3 +1180,15 @@ JingleSession.prototype.getStats = function (interval) {
     return this.statsinterval;
 };
 
+JingleSession.onJingleError = function (session, error)
+{
+    console.error("Jingle error", error);
+}
+
+JingleSession.onJingleFatalError = function (session, error)
+{
+    sessionTerminated = true;
+    connection.emuc.doLeave();
+    UI.messageHandler.showError(  "Sorry",
+        "Internal application error[setRemoteDescription]");
+}

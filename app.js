@@ -480,10 +480,6 @@ $(document).bind('iceconnectionstatechange.jingle', function (event, sid, sessio
     }
 });
 
-$(document).bind('joined.muc', function (event, jid, info) {
-
-});
-
 $(document).bind('presence.muc', function (event, jid, info, pres) {
 
     //check if the video bridge is available
@@ -750,84 +746,6 @@ function isAudioMuted()
     return true;
 }
 
-/**
- * Returns an array of the video horizontal and vertical indents,
- * so that if fits its parent.
- *
- * @return an array with 2 elements, the horizontal indent and the vertical
- * indent
- */
-function getCameraVideoPosition(videoWidth,
-                                videoHeight,
-                                videoSpaceWidth,
-                                videoSpaceHeight) {
-    // Parent height isn't completely calculated when we position the video in
-    // full screen mode and this is why we use the screen height in this case.
-    // Need to think it further at some point and implement it properly.
-    var isFullScreen = document.fullScreen ||
-            document.mozFullScreen ||
-            document.webkitIsFullScreen;
-    if (isFullScreen)
-        videoSpaceHeight = window.innerHeight;
-
-    var horizontalIndent = (videoSpaceWidth - videoWidth) / 2;
-    var verticalIndent = (videoSpaceHeight - videoHeight) / 2;
-
-    return [horizontalIndent, verticalIndent];
-}
-
-/**
- * Returns an array of the video horizontal and vertical indents.
- * Centers horizontally and top aligns vertically.
- *
- * @return an array with 2 elements, the horizontal indent and the vertical
- * indent
- */
-function getDesktopVideoPosition(videoWidth,
-                                 videoHeight,
-                                 videoSpaceWidth,
-                                 videoSpaceHeight) {
-
-    var horizontalIndent = (videoSpaceWidth - videoWidth) / 2;
-
-    var verticalIndent = 0;// Top aligned
-
-    return [horizontalIndent, verticalIndent];
-}
-
-/**
- * Returns an array of the video dimensions, so that it covers the screen.
- * It leaves no empty areas, but some parts of the video might not be visible.
- *
- * @return an array with 2 elements, the video width and the video height
- */
-function getCameraVideoSize(videoWidth,
-                           videoHeight,
-                           videoSpaceWidth,
-                           videoSpaceHeight) {
-    if (!videoWidth)
-        videoWidth = currentVideoWidth;
-    if (!videoHeight)
-        videoHeight = currentVideoHeight;
-
-    var aspectRatio = videoWidth / videoHeight;
-
-    var availableWidth = Math.max(videoWidth, videoSpaceWidth);
-    var availableHeight = Math.max(videoHeight, videoSpaceHeight);
-
-    if (availableWidth / aspectRatio < videoSpaceHeight) {
-        availableHeight = videoSpaceHeight;
-        availableWidth = availableHeight * aspectRatio;
-    }
-
-    if (availableHeight * aspectRatio < videoSpaceWidth) {
-        availableWidth = videoSpaceWidth;
-        availableHeight = availableWidth / aspectRatio;
-    }
-
-    return [availableWidth, availableHeight];
-}
-
 $(document).ready(function () {
 
     if(APIConnector.isEnabled())
@@ -844,10 +762,6 @@ $(document).ready(function () {
     if (config.chromeExtensionId) {
         initInlineInstalls();
     }
-
-    // By default we use camera
-    getVideoSize = getCameraVideoSize;
-    getVideoPosition = getCameraVideoPosition;
 });
 
 $(window).bind('beforeunload', function () {
@@ -939,63 +853,4 @@ function populateData() {
  */
 function buttonClick(id, classname) {
     $(id).toggleClass(classname); // add the class to the clicked element
-}
-
-
-/**
- * Warning to the user that the conference window is about to be closed.
- */
-function closePageWarning() {
-    /*
-    FIXME: do we need a warning when the focus is a server-side one now ?
-    if (focus !== null)
-        return "You are the owner of this conference call and"
-                + " you are about to end it.";
-    else*/
-    return "You are about to leave this conversation.";
-}
-
-
-$(document).bind('error.jingle',
-    function (event, session, error)
-    {
-        console.error("Jingle error", error);
-    }
-);
-
-$(document).bind('fatalError.jingle',
-    function (event, session, error)
-    {
-        sessionTerminated = true;
-        connection.emuc.doLeave();
-        UI.messageHandler.showError(  "Sorry",
-            "Internal application error[setRemoteDescription]");
-    }
-);
-
-function hangup() {
-    disposeConference();
-    sessionTerminated = true;
-    connection.emuc.doLeave();
-    if(config.enableWelcomePage)
-    {
-        setTimeout(function()
-        {
-            window.localStorage.welcomePageDisabled = false;
-            window.location.pathname = "/";
-        }, 10000);
-
-    }
-
-    UI.messageHandler.openDialog(
-        "Session Terminated",
-        "You hung up the call",
-        true,
-        { "Join again": true },
-        function(event, value, message, formVals)
-        {
-            window.location.reload();
-            return false;
-        }
-    );
 }
