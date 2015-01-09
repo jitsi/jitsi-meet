@@ -973,32 +973,6 @@ $(document).bind('fatalError.jingle',
     }
 );
 
-function callSipButtonClicked()
-{
-    var defaultNumber
-        = config.defaultSipNumber ? config.defaultSipNumber : '';
-
-    UI.messageHandler.openTwoButtonDialog(null,
-        '<h2>Enter SIP number</h2>' +
-            '<input id="sipNumber" type="text"' +
-            ' value="' + defaultNumber + '" autofocus>',
-        false,
-        "Dial",
-        function (e, v, m, f) {
-            if (v) {
-                var numberInput = document.getElementById('sipNumber');
-                if (numberInput.value) {
-                    connection.rayo.dial(
-                        numberInput.value, 'fromnumber', roomName);
-                }
-            }
-        },
-        function (event) {
-            document.getElementById('sipNumber').focus();
-        }
-    );
-}
-
 function hangup() {
     disposeConference();
     sessionTerminated = true;

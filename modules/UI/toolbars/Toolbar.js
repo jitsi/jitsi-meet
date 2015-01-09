@@ -1,4 +1,4 @@
-/* global $, buttonClick, config, lockRoom,  Moderator,
+/* global $, buttonClick, config, lockRoom,  Moderator, roomName,
    setSharedKey, sharedKey, Util */
 var messageHandler = require("../util/MessageHandler");
 var BottomToolbar = require("./BottomToolbar");
@@ -139,6 +139,33 @@ function inviteParticipants() {
     }
 
     window.open("mailto:?subject=" + subject + "&body=" + body, '_blank');
+}
+
+function callSipButtonClicked()
+{
+    var defaultNumber
+        = config.defaultSipNumber ? config.defaultSipNumber : '';
+
+    messageHandler.openTwoButtonDialog(null,
+        '<h2>Enter SIP number</h2>' +
+        '<input id="sipNumber" type="text"' +
+        ' value="' + defaultNumber + '" autofocus>',
+        false,
+        "Dial",
+        function (e, v, m, f) {
+            if (v) {
+                var numberInput = document.getElementById('sipNumber');
+                if (numberInput.value) {
+                    connection.rayo.dial(
+                        numberInput.value, 'fromnumber',
+                        roomName, sharedKey);
+                }
+            }
+        },
+        function (event) {
+            document.getElementById('sipNumber').focus();
+        }
+    );
 }
 
 var Toolbar = (function (my) {

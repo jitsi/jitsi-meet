@@ -18,7 +18,7 @@ Strophe.addConnectionPlugin('rayo',
         {
             console.info("Rayo IQ", iq);
         },
-        dial: function (to, from, roomName)
+        dial: function (to, from, roomName, roomPass)
         {
             var self = this;
             var req = $iq(
@@ -39,12 +39,12 @@ Strophe.addConnectionPlugin('rayo',
                     value: roomName
                 }).up();
 
-            if (sharedKey !== null && sharedKey.length) {
+            if (roomPass !== null && roomPass.length) {
 
                 req.c('header',
                     {
                         name: 'JvbRoomPassword',
-                        value: sharedKey
+                        value: roomPass
                     }).up();
             }
 
