@@ -157,7 +157,7 @@ function doJoinAfterFocus() {
 
     // Close authentication dialog if opened
     if (authDialog) {
-        messageHandler.closeDialog();
+        UI.messageHandler.closeDialog();
         authDialog = null;
     }
     // Clear retry interval, so that we don't call 'doJoinAfterFocus' twice
@@ -1013,7 +1013,7 @@ function hangup() {
 
     }
 
-    messageHandler.openDialog(
+    UI.messageHandler.openDialog(
         "Session Terminated",
         "You hung up the call",
         true,
