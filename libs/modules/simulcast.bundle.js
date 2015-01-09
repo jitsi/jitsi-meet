@@ -1,235 +1,39 @@
-/*jslint plusplus: true */
-/*jslint nomen: true*/
-
+!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.simulcast=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 /**
  *
  * @constructor
  */
-function SimulcastUtils() {
-    this.logger = new SimulcastLogger("SimulcastUtils", 1);
+function SimulcastLogger(name, lvl) {
+    this.name = name;
+    this.lvl = lvl;
 }
 
-/**
- *
- * @type {{}}
- * @private
- */
-SimulcastUtils.prototype._emptyCompoundIndex = {};
-
-/**
- *
- * @param lines
- * @param videoSources
- * @private
- */
-SimulcastUtils.prototype._replaceVideoSources = function (lines, videoSources) {
-    var i, inVideo = false, index = -1, howMany = 0;
-
-    this.logger.info('Replacing video sources...');
-
-    for (i = 0; i < lines.length; i++) {
-        if (inVideo && lines[i].substring(0, 'm='.length) === 'm=') {
-            // Out of video.
-            break;
-        }
-
-        if (!inVideo && lines[i].substring(0, 'm=video '.length) === 'm=video ') {
-            // In video.
-            inVideo = true;
-        }
-
-        if (inVideo && (lines[i].substring(0, 'a=ssrc:'.length) === 'a=ssrc:'
-            || lines[i].substring(0, 'a=ssrc-group:'.length) === 'a=ssrc-group:')) {
-
-            if (index === -1) {
-                index = i;
-            }
-
-            howMany++;
-        }
-    }
-
-    //  efficiency baby ;)
-    lines.splice.apply(lines,
-        [index, howMany].concat(videoSources));
-
-};
-
-SimulcastUtils.prototype.isValidDescription = function (desc)
-{
-    return desc && desc != null
-        && desc.type && desc.type != ''
-        && desc.sdp && desc.sdp != '';
-};
-
-SimulcastUtils.prototype._getVideoSources = function (lines) {
-    var i, inVideo = false, sb = [];
-
-    this.logger.info('Getting video sources...');
-
-    for (i = 0; i < lines.length; i++) {
-        if (inVideo && lines[i].substring(0, 'm='.length) === 'm=') {
-            // Out of video.
-            break;
-        }
-
-        if (!inVideo && lines[i].substring(0, 'm=video '.length) === 'm=video ') {
-            // In video.
-            inVideo = true;
-        }
-
-        if (inVideo && lines[i].substring(0, 'a=ssrc:'.length) === 'a=ssrc:') {
-            // In SSRC.
-            sb.push(lines[i]);
-        }
-
-        if (inVideo && lines[i].substring(0, 'a=ssrc-group:'.length) === 'a=ssrc-group:') {
-            sb.push(lines[i]);
-        }
-    }
-
-    return sb;
-};
-
-SimulcastUtils.prototype.parseMedia = function (lines, mediatypes) {
-    var i, res = [], type, cur_media, idx, ssrcs, cur_ssrc, ssrc,
-        ssrc_attribute, group, semantics, skip = true;
-
-    this.logger.info('Parsing media sources...');
-
-    for (i = 0; i < lines.length; i++) {
-        if (lines[i].substring(0, 'm='.length) === 'm=') {
-
-            type = lines[i]
-                .substr('m='.length, lines[i].indexOf(' ') - 'm='.length);
-            skip = mediatypes !== undefined && mediatypes.indexOf(type) === -1;
-
-            if (!skip) {
-                cur_media = {
-                    'type': type,
-                    'sources': {},
-                    'groups': []
-                };
-
-                res.push(cur_media);
-            }
-
-        } else if (!skip && lines[i].substring(0, 'a=ssrc:'.length) === 'a=ssrc:') {
-
-            idx = lines[i].indexOf(' ');
-            ssrc = lines[i].substring('a=ssrc:'.length, idx);
-            if (cur_media.sources[ssrc] === undefined) {
-                cur_ssrc = {'ssrc': ssrc};
-                cur_media.sources[ssrc] = cur_ssrc;
-            }
-
-            ssrc_attribute = lines[i].substr(idx + 1).split(':', 2)[0];
-            cur_ssrc[ssrc_attribute] = lines[i].substr(idx + 1).split(':', 2)[1];
-
-            if (cur_media.base === undefined) {
-                cur_media.base = cur_ssrc;
-            }
-
-        } else if (!skip && lines[i].substring(0, 'a=ssrc-group:'.length) === 'a=ssrc-group:') {
-            idx = lines[i].indexOf(' ');
-            semantics = lines[i].substr(0, idx).substr('a=ssrc-group:'.length);
-            ssrcs = lines[i].substr(idx).trim().split(' ');
-            group = {
-                'semantics': semantics,
-                'ssrcs': ssrcs
-            };
-            cur_media.groups.push(group);
-        } else if (!skip && (lines[i].substring(0, 'a=sendrecv'.length) === 'a=sendrecv' ||
-            lines[i].substring(0, 'a=recvonly'.length) === 'a=recvonly' ||
-            lines[i].substring(0, 'a=sendonly'.length) === 'a=sendonly' ||
-            lines[i].substring(0, 'a=inactive'.length) === 'a=inactive')) {
-
-            cur_media.direction = lines[i].substring('a='.length);
-        }
-    }
-
-    return res;
-};
-
-/**
- * The _indexOfArray() method returns the first a CompoundIndex at which a
- * given element can be found in the array, or _emptyCompoundIndex if it is
- * not present.
- *
- * Example:
- *
- * _indexOfArray('3', [ 'this is line 1', 'this is line 2', 'this is line 3' ])
- *
- * returns {row: 2, column: 14}
- *
- * @param needle
- * @param haystack
- * @param start
- * @returns {}
- * @private
- */
-SimulcastUtils.prototype._indexOfArray = function (needle, haystack, start) {
-    var length = haystack.length, idx, i;
-
-    if (!start) {
-        start = 0;
-    }
-
-    for (i = start; i < length; i++) {
-        idx = haystack[i].indexOf(needle);
-        if (idx !== -1) {
-            return {row: i, column: idx};
-        }
-    }
-    return this._emptyCompoundIndex;
-};
-
-SimulcastUtils.prototype._removeSimulcastGroup = function (lines) {
-    var i;
-
-    for (i = lines.length - 1; i >= 0; i--) {
-        if (lines[i].indexOf('a=ssrc-group:SIM') !== -1) {
-            lines.splice(i, 1);
-        }
+SimulcastLogger.prototype.log = function (text) {
+    if (this.lvl) {
+        console.log(text);
     }
 };
 
-SimulcastUtils.prototype._compileVideoSources = function (videoSources) {
-    var sb = [], ssrc, addedSSRCs = [];
-
-    this.logger.info('Compiling video sources...');
-
-    // Add the groups
-    if (videoSources.groups && videoSources.groups.length !== 0) {
-        videoSources.groups.forEach(function (group) {
-            if (group.ssrcs && group.ssrcs.length !== 0) {
-                sb.push([['a=ssrc-group:', group.semantics].join(''), group.ssrcs.join(' ')].join(' '));
-
-                // if (group.semantics !== 'SIM') {
-                group.ssrcs.forEach(function (ssrc) {
-                    addedSSRCs.push(ssrc);
-                    sb.splice.apply(sb, [sb.length, 0].concat([
-                        ["a=ssrc:", ssrc, " cname:", videoSources.sources[ssrc].cname].join(''),
-                        ["a=ssrc:", ssrc, " msid:", videoSources.sources[ssrc].msid].join('')]));
-                });
-                //}
-            }
-        });
+SimulcastLogger.prototype.info = function (text) {
+    if (this.lvl > 1) {
+        console.info(text);
     }
-
-    // Then add any free sources.
-    if (videoSources.sources) {
-        for (ssrc in videoSources.sources) {
-            if (addedSSRCs.indexOf(ssrc) === -1) {
-                sb.splice.apply(sb, [sb.length, 0].concat([
-                    ["a=ssrc:", ssrc, " cname:", videoSources.sources[ssrc].cname].join(''),
-                    ["a=ssrc:", ssrc, " msid:", videoSources.sources[ssrc].msid].join('')]));
-            }
-        }
-    }
-
-    return sb;
 };
+
+SimulcastLogger.prototype.fine = function (text) {
+    if (this.lvl > 2) {
+        console.log(text);
+    }
+};
+
+SimulcastLogger.prototype.error = function (text) {
+    console.error(text);
+};
+
+module.exports = SimulcastLogger;
+},{}],2:[function(require,module,exports){
+var SimulcastLogger = require("./SimulcastLogger");
+var SimulcastUtils = require("./SimulcastUtils");
 
 function SimulcastReceiver() {
     this.simulcastUtils = new SimulcastUtils();
@@ -492,6 +296,48 @@ SimulcastReceiver.prototype.getRemoteVideoStreamIdBySSRC = function (ssrc) {
     return this._remoteMaps.ssrc2Msid[ssrc];
 };
 
+/**
+ * Removes the ssrc-group:SIM from the remote description bacause Chrome
+ * either gets confused and thinks this is an FID group or, if an FID group
+ * is already present, it fails to set the remote description.
+ *
+ * @param desc
+ * @returns {*}
+ */
+SimulcastReceiver.prototype.transformRemoteDescription = function (desc) {
+
+    if (desc && desc.sdp) {
+        var sb = desc.sdp.split('\r\n');
+
+        this._updateRemoteMaps(sb);
+        this._cacheRemoteVideoSources(sb);
+
+        // NOTE(gp) this needs to be called after updateRemoteMaps because we
+        // need the simulcast group in the _updateRemoteMaps() method.
+        this.simulcastUtils._removeSimulcastGroup(sb);
+
+        if (desc.sdp.indexOf('a=ssrc-group:SIM') !== -1) {
+            // We don't need the goog conference flag if we're not doing
+            // simulcast.
+            this._ensureGoogConference(sb);
+        }
+
+        desc = new RTCSessionDescription({
+            type: desc.type,
+            sdp: sb.join('\r\n')
+        });
+
+        this.logger.fine(['Transformed remote description', desc.sdp].join(' '));
+    }
+
+    return desc;
+};
+
+module.exports = SimulcastReceiver;
+},{"./SimulcastLogger":1,"./SimulcastUtils":4}],3:[function(require,module,exports){
+var SimulcastLogger = require("./SimulcastLogger");
+var SimulcastUtils = require("./SimulcastUtils");
+
 function SimulcastSender() {
     this.simulcastUtils = new SimulcastUtils();
     this.logger = new SimulcastLogger('SimulcastSender', 1);
@@ -732,43 +578,6 @@ NativeSimulcastSender.prototype.transformAnswer = function (desc) {
  * @returns {*}
  */
 NativeSimulcastSender.prototype.transformLocalDescription = function (desc) {
-    return desc;
-};
-
-/**
- * Removes the ssrc-group:SIM from the remote description bacause Chrome
- * either gets confused and thinks this is an FID group or, if an FID group
- * is already present, it fails to set the remote description.
- *
- * @param desc
- * @returns {*}
- */
-SimulcastReceiver.prototype.transformRemoteDescription = function (desc) {
-
-    if (desc && desc.sdp) {
-        var sb = desc.sdp.split('\r\n');
-
-        this._updateRemoteMaps(sb);
-        this._cacheRemoteVideoSources(sb);
-
-        // NOTE(gp) this needs to be called after updateRemoteMaps because we
-        // need the simulcast group in the _updateRemoteMaps() method.
-        this.simulcastUtils._removeSimulcastGroup(sb);
-
-        if (desc.sdp.indexOf('a=ssrc-group:SIM') !== -1) {
-            // We don't need the goog conference flag if we're not doing
-            // simulcast.
-            this._ensureGoogConference(sb);
-        }
-
-        desc = new RTCSessionDescription({
-            type: desc.type,
-            sdp: sb.join('\r\n')
-        });
-
-        this.logger.fine(['Transformed remote description', desc.sdp].join(' '));
-    }
-
     return desc;
 };
 
@@ -1041,6 +850,256 @@ NoSimulcastSender.prototype._setLocalVideoStreamEnabled = function (ssrc, enable
 
 NoSimulcastSender.prototype.constructor = NoSimulcastSender;
 
+module.exports = {
+    "native": NativeSimulcastSender,
+    "no": NoSimulcastSender
+}
+
+},{"./SimulcastLogger":1,"./SimulcastUtils":4}],4:[function(require,module,exports){
+var SimulcastLogger = require("./SimulcastLogger");
+
+/**
+ *
+ * @constructor
+ */
+function SimulcastUtils() {
+    this.logger = new SimulcastLogger("SimulcastUtils", 1);
+}
+
+/**
+ *
+ * @type {{}}
+ * @private
+ */
+SimulcastUtils.prototype._emptyCompoundIndex = {};
+
+/**
+ *
+ * @param lines
+ * @param videoSources
+ * @private
+ */
+SimulcastUtils.prototype._replaceVideoSources = function (lines, videoSources) {
+    var i, inVideo = false, index = -1, howMany = 0;
+
+    this.logger.info('Replacing video sources...');
+
+    for (i = 0; i < lines.length; i++) {
+        if (inVideo && lines[i].substring(0, 'm='.length) === 'm=') {
+            // Out of video.
+            break;
+        }
+
+        if (!inVideo && lines[i].substring(0, 'm=video '.length) === 'm=video ') {
+            // In video.
+            inVideo = true;
+        }
+
+        if (inVideo && (lines[i].substring(0, 'a=ssrc:'.length) === 'a=ssrc:'
+            || lines[i].substring(0, 'a=ssrc-group:'.length) === 'a=ssrc-group:')) {
+
+            if (index === -1) {
+                index = i;
+            }
+
+            howMany++;
+        }
+    }
+
+    //  efficiency baby ;)
+    lines.splice.apply(lines,
+        [index, howMany].concat(videoSources));
+
+};
+
+SimulcastUtils.prototype.isValidDescription = function (desc)
+{
+    return desc && desc != null
+        && desc.type && desc.type != ''
+        && desc.sdp && desc.sdp != '';
+};
+
+SimulcastUtils.prototype._getVideoSources = function (lines) {
+    var i, inVideo = false, sb = [];
+
+    this.logger.info('Getting video sources...');
+
+    for (i = 0; i < lines.length; i++) {
+        if (inVideo && lines[i].substring(0, 'm='.length) === 'm=') {
+            // Out of video.
+            break;
+        }
+
+        if (!inVideo && lines[i].substring(0, 'm=video '.length) === 'm=video ') {
+            // In video.
+            inVideo = true;
+        }
+
+        if (inVideo && lines[i].substring(0, 'a=ssrc:'.length) === 'a=ssrc:') {
+            // In SSRC.
+            sb.push(lines[i]);
+        }
+
+        if (inVideo && lines[i].substring(0, 'a=ssrc-group:'.length) === 'a=ssrc-group:') {
+            sb.push(lines[i]);
+        }
+    }
+
+    return sb;
+};
+
+SimulcastUtils.prototype.parseMedia = function (lines, mediatypes) {
+    var i, res = [], type, cur_media, idx, ssrcs, cur_ssrc, ssrc,
+        ssrc_attribute, group, semantics, skip = true;
+
+    this.logger.info('Parsing media sources...');
+
+    for (i = 0; i < lines.length; i++) {
+        if (lines[i].substring(0, 'm='.length) === 'm=') {
+
+            type = lines[i]
+                .substr('m='.length, lines[i].indexOf(' ') - 'm='.length);
+            skip = mediatypes !== undefined && mediatypes.indexOf(type) === -1;
+
+            if (!skip) {
+                cur_media = {
+                    'type': type,
+                    'sources': {},
+                    'groups': []
+                };
+
+                res.push(cur_media);
+            }
+
+        } else if (!skip && lines[i].substring(0, 'a=ssrc:'.length) === 'a=ssrc:') {
+
+            idx = lines[i].indexOf(' ');
+            ssrc = lines[i].substring('a=ssrc:'.length, idx);
+            if (cur_media.sources[ssrc] === undefined) {
+                cur_ssrc = {'ssrc': ssrc};
+                cur_media.sources[ssrc] = cur_ssrc;
+            }
+
+            ssrc_attribute = lines[i].substr(idx + 1).split(':', 2)[0];
+            cur_ssrc[ssrc_attribute] = lines[i].substr(idx + 1).split(':', 2)[1];
+
+            if (cur_media.base === undefined) {
+                cur_media.base = cur_ssrc;
+            }
+
+        } else if (!skip && lines[i].substring(0, 'a=ssrc-group:'.length) === 'a=ssrc-group:') {
+            idx = lines[i].indexOf(' ');
+            semantics = lines[i].substr(0, idx).substr('a=ssrc-group:'.length);
+            ssrcs = lines[i].substr(idx).trim().split(' ');
+            group = {
+                'semantics': semantics,
+                'ssrcs': ssrcs
+            };
+            cur_media.groups.push(group);
+        } else if (!skip && (lines[i].substring(0, 'a=sendrecv'.length) === 'a=sendrecv' ||
+            lines[i].substring(0, 'a=recvonly'.length) === 'a=recvonly' ||
+            lines[i].substring(0, 'a=sendonly'.length) === 'a=sendonly' ||
+            lines[i].substring(0, 'a=inactive'.length) === 'a=inactive')) {
+
+            cur_media.direction = lines[i].substring('a='.length);
+        }
+    }
+
+    return res;
+};
+
+/**
+ * The _indexOfArray() method returns the first a CompoundIndex at which a
+ * given element can be found in the array, or _emptyCompoundIndex if it is
+ * not present.
+ *
+ * Example:
+ *
+ * _indexOfArray('3', [ 'this is line 1', 'this is line 2', 'this is line 3' ])
+ *
+ * returns {row: 2, column: 14}
+ *
+ * @param needle
+ * @param haystack
+ * @param start
+ * @returns {}
+ * @private
+ */
+SimulcastUtils.prototype._indexOfArray = function (needle, haystack, start) {
+    var length = haystack.length, idx, i;
+
+    if (!start) {
+        start = 0;
+    }
+
+    for (i = start; i < length; i++) {
+        idx = haystack[i].indexOf(needle);
+        if (idx !== -1) {
+            return {row: i, column: idx};
+        }
+    }
+    return this._emptyCompoundIndex;
+};
+
+SimulcastUtils.prototype._removeSimulcastGroup = function (lines) {
+    var i;
+
+    for (i = lines.length - 1; i >= 0; i--) {
+        if (lines[i].indexOf('a=ssrc-group:SIM') !== -1) {
+            lines.splice(i, 1);
+        }
+    }
+};
+
+SimulcastUtils.prototype._compileVideoSources = function (videoSources) {
+    var sb = [], ssrc, addedSSRCs = [];
+
+    this.logger.info('Compiling video sources...');
+
+    // Add the groups
+    if (videoSources.groups && videoSources.groups.length !== 0) {
+        videoSources.groups.forEach(function (group) {
+            if (group.ssrcs && group.ssrcs.length !== 0) {
+                sb.push([['a=ssrc-group:', group.semantics].join(''), group.ssrcs.join(' ')].join(' '));
+
+                // if (group.semantics !== 'SIM') {
+                group.ssrcs.forEach(function (ssrc) {
+                    addedSSRCs.push(ssrc);
+                    sb.splice.apply(sb, [sb.length, 0].concat([
+                        ["a=ssrc:", ssrc, " cname:", videoSources.sources[ssrc].cname].join(''),
+                        ["a=ssrc:", ssrc, " msid:", videoSources.sources[ssrc].msid].join('')]));
+                });
+                //}
+            }
+        });
+    }
+
+    // Then add any free sources.
+    if (videoSources.sources) {
+        for (ssrc in videoSources.sources) {
+            if (addedSSRCs.indexOf(ssrc) === -1) {
+                sb.splice.apply(sb, [sb.length, 0].concat([
+                    ["a=ssrc:", ssrc, " cname:", videoSources.sources[ssrc].cname].join(''),
+                    ["a=ssrc:", ssrc, " msid:", videoSources.sources[ssrc].msid].join('')]));
+            }
+        }
+    }
+
+    return sb;
+};
+
+module.exports = SimulcastUtils;
+},{"./SimulcastLogger":1}],5:[function(require,module,exports){
+/*jslint plusplus: true */
+/*jslint nomen: true*/
+
+var SimulcastSender = require("./SimulcastSender");
+var NoSimulcastSender = SimulcastSender["no"];
+var NativeSimulcastSender = SimulcastSender["native"];
+var SimulcastReceiver = require("./SimulcastReceiver");
+var SimulcastUtils = require("./SimulcastUtils");
+
+
 /**
  *
  * @constructor
@@ -1213,39 +1272,6 @@ SimulcastManager.prototype.resetSender = function() {
     }
 };
 
-/**
- *
- * @constructor
- */
-function SimulcastLogger(name, lvl) {
-    this.name = name;
-    this.lvl = lvl;
-}
-
-SimulcastLogger.prototype.log = function (text) {
-    if (this.lvl) {
-        console.log(text);
-    }
-};
-
-SimulcastLogger.prototype.info = function (text) {
-    if (this.lvl > 1) {
-        console.info(text);
-    }
-};
-
-SimulcastLogger.prototype.fine = function (text) {
-    if (this.lvl > 2) {
-        console.log(text);
-    }
-};
-
-SimulcastLogger.prototype.error = function (text) {
-    console.error(text);
-};
-
-var simulcast = new SimulcastManager();
-
 $(document).bind('simulcastlayerschanged', function (event, endpointSimulcastLayers) {
     endpointSimulcastLayers.forEach(function (esl) {
         var ssrc = esl.simulcastLayer.primarySSRC;
@@ -1261,4 +1287,11 @@ $(document).bind('startsimulcastlayer', function (event, simulcastLayer) {
 $(document).bind('stopsimulcastlayer', function (event, simulcastLayer) {
     var ssrc = simulcastLayer.primarySSRC;
     simulcast._setLocalVideoStreamEnabled(ssrc, false);
+});
+
+
+var simulcast = new SimulcastManager();
+
+module.exports = simulcast;
+},{"./SimulcastReceiver":2,"./SimulcastSender":3,"./SimulcastUtils":4}]},{},[5])(5)
 });
