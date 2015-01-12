@@ -254,9 +254,9 @@ function streamSwitchDone() {
 
 function newStreamCreated(stream) {
 
-    var oldStream = connection.jingle.localVideo;
+    var oldStream = RTC.localVideo.getOriginalStream();
 
-    connection.jingle.localVideo = stream;
+    RTC.localVideo.stream = stream;
 
     UI.changeLocalVideo(stream, !isUsingScreenStream);
 

@@ -84,7 +84,7 @@ function registerListeners() {
         if(jid === statistics.LOCAL_JID)
         {
             resourceJid = AudioLevels.LOCAL_LEVEL;
-            if(isAudioMuted())
+            if(RTC.localAudio.isMuted())
             {
                 audioLevel = 0;
             }
@@ -4591,12 +4591,10 @@ var VideoLayout = (function (my) {
     };
 
     my.changeLocalStream = function (stream) {
-        connection.jingle.localAudio = stream;
         VideoLayout.changeLocalVideo(stream, true);
     };
 
     my.changeLocalAudio = function(stream) {
-        connection.jingle.localAudio = stream;
         RTC.attachMediaStream($('#localAudio'), stream);
         document.getElementById('localAudio').autoplay = true;
         document.getElementById('localAudio').volume = 0;
@@ -4607,8 +4605,6 @@ var VideoLayout = (function (my) {
     };
 
     my.changeLocalVideo = function(stream, flipX) {
-        connection.jingle.localVideo = stream;
-
         var localVideo = document.createElement('video');
         localVideo.id = 'localVideo_' + RTC.getStreamID(stream);
         localVideo.autoplay = true;

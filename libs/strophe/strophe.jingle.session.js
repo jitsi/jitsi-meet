@@ -11,7 +11,6 @@ function JingleSession(me, sid, connection) {
     this.state = null;
     this.localSDP = null;
     this.remoteSDP = null;
-    this.localStreams = [];
     this.relayedStreams = [];
     this.remoteStreams = [];
     this.startTime = null;
@@ -103,8 +102,8 @@ JingleSession.prototype.initiate = function (peerjid, isInitiator) {
         $(document).trigger('iceconnectionstatechange.jingle', [self.sid, self]);
     };
     // add any local and relayed stream
-    this.localStreams.forEach(function(stream) {
-        self.peerconnection.addStream(stream);
+    RTC.localStreams.forEach(function(stream) {
+        self.peerconnection.addStream(stream.getOriginalStream());
     });
     this.relayedStreams.forEach(function(stream) {
         self.peerconnection.addStream(stream);
@@ -934,14 +933,7 @@ JingleSession.prototype.switchStreams = function (new_stream, oldStream, success
         self.peerconnection.addStream(new_stream);
     }
 
-    self.connection.jingle.localVideo = new_stream;
-
-    self.connection.jingle.localStreams = [];
-
-    //in firefox we have only one stream object
-    if(self.connection.jingle.localAudio != self.connection.jingle.localVideo)
-        self.connection.jingle.localStreams.push(self.connection.jingle.localAudio);
-    self.connection.jingle.localStreams.push(self.connection.jingle.localVideo);
+    RTC.switchVideoStreams(new_stream, oldStream);
 
     // Conference is not active
     if(!oldSdp || !self.peerconnection) {
@@ -1031,7 +1023,7 @@ JingleSession.prototype.notifyMySSRCUpdate = function (old_sdp, new_sdp) {
  * disabled; otherwise, <tt>false</tt>
  */
 JingleSession.prototype.isVideoMute = function () {
-    var tracks = connection.jingle.localVideo.getVideoTracks();
+    var tracks = RTC.localVideo.getVideoTracks();
     var mute = true;
 
     for (var i = 0; i < tracks.length; ++i) {
@@ -1075,7 +1067,7 @@ JingleSession.prototype.setVideoMute = function (mute, callback, options) {
     } else if (this.videoMuteByUser) {
         return;
     }
-    if (mute == this.isVideoMute())
+    if (mute == RTC.localVideo.isMuted())
     {
         // Even if no change occurs, the specified callback is to be executed.
         // The specified callback may, optionally, return a successCallback
@@ -1086,11 +1078,7 @@ JingleSession.prototype.setVideoMute = function (mute, callback, options) {
             successCallback();
         }
     } else {
-        var tracks = connection.jingle.localVideo.getVideoTracks();
-
-        for (var i = 0; i < tracks.length; ++i) {
-            tracks[i].enabled = !mute;
-        }
+        RTC.localVideo.setMute(!mute);
 
         this.hardMuteVideo(mute);
 
@@ -1101,7 +1089,7 @@ JingleSession.prototype.setVideoMute = function (mute, callback, options) {
 // SDP-based mute by going recvonly/sendrecv
 // FIXME: should probably black out the screen as well
 JingleSession.prototype.toggleVideoMute = function (callback) {
-    setVideoMute(isVideoMute(), callback);
+    setVideoMute(RTC.localVideo.isMuted(), callback);
 };
 
 JingleSession.prototype.hardMuteVideo = function (muted) {

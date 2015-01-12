@@ -83,7 +83,7 @@ function registerListeners() {
         if(jid === statistics.LOCAL_JID)
         {
             resourceJid = AudioLevels.LOCAL_LEVEL;
-            if(isAudioMuted())
+            if(RTC.localAudio.isMuted())
             {
                 audioLevel = 0;
             }

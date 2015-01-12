@@ -19,7 +19,7 @@ var KeyboardShortcut = (function(my) {
         84: {
             character: "T",
             function: function() {
-                if(!isAudioMuted()) {
+                if(!RTC.localAudio.isMuted()) {
                     toggleAudio();
                 }
             }
@@ -52,7 +52,7 @@ var KeyboardShortcut = (function(my) {
     window.onkeydown = function(e) {
         if(!($(":focus").is("input[type=text]") || $(":focus").is("input[type=password]") || $(":focus").is("textarea"))) {
             if(e.which === "T".charCodeAt(0)) {
-                if(isAudioMuted()) {
+                if(RTC.localAudio.isMuted()) {
                     toggleAudio();
                 }
             }

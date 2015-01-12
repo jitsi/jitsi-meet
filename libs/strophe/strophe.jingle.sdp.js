@@ -396,11 +396,11 @@ SDP.prototype.toJingle = function (elem, thecreator, ssrcs) {
                     var msid = null;
                     if(mline.media == "audio")
                     {
-                        msid = connection.jingle.localAudio.getAudioTracks()[0].id;
+                        msid = RTC.localAudio.getId();
                     }
                     else
                     {
-                        msid = connection.jingle.localVideo.getVideoTracks()[0].id;
+                        msid = RTC.localVideo.getId();
                     }
                     if(msid != null)
                     {

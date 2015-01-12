@@ -31,9 +31,6 @@ Strophe.addConnectionPlugin('jingle', {
         }
         // MozDontOfferDataChannel: true when this is firefox
     },
-    localAudio: null,
-    localVideo: null,
-
     init: function (conn) {
         this.connection = conn;
         if (this.connection.disco) {
@@ -108,13 +105,6 @@ Strophe.addConnectionPlugin('jingle', {
                 sess = new JingleSession($(iq).attr('to'), $(iq).find('jingle').attr('sid'), this.connection);
                 // configure session
 
-                //in firefox we have only one stream object
-                if (this.localAudio != this.localVideo) {
-                    sess.localStreams.push(this.localAudio);
-                }
-                if (this.localVideo) {
-                    sess.localStreams.push(this.localVideo);
-                }
                 sess.media_constraints = this.media_constraints;
                 sess.pc_constraints = this.pc_constraints;
                 sess.ice_config = this.ice_config;
@@ -195,13 +185,6 @@ Strophe.addConnectionPlugin('jingle', {
             this.connection);
         // configure session
 
-        //in firefox we have only one stream
-        if (this.localAudio != this.localVideo) {
-            sess.localStreams.push(this.localAudio);
-        }
-        if (this.localVideo) {
-            sess.localStreams.push(this.localVideo);
-        }
         sess.media_constraints = this.media_constraints;
         sess.pc_constraints = this.pc_constraints;
         sess.ice_config = this.ice_config;

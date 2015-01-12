@@ -27,7 +27,10 @@ var RTC = {
     createLocalStream: function (stream, type) {
 
         var localStream =  new LocalStream(stream, type, eventEmitter);
-        this.localStreams.push(localStream);
+        //in firefox we have only one stream object
+        if(this.localStreams.length == 0 ||
+            this.localStreams[0].getOriginalStream() != stream)
+            this.localStreams.push(localStream);
         if(type == "audio")
         {
             this.localAudio = localStream;
@@ -117,6 +120,16 @@ var RTC = {
             return true;
         }
         return false;
+    },
+    switchVideoStreams: function (new_stream) {
+        this.localVideo.stream = new_stream;
+
+        this.localStreams = [];
+
+        //in firefox we have only one stream object
+        if(this.localAudio.getOriginalStream() != new_stream)
+            this.localStreams.push(this.localAudio);
+        this.localStreams.push(this.localVideo);
     }
 
 };

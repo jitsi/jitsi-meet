@@ -58,11 +58,6 @@ function init() {
 }
 
 function connect(jid, password) {
-    var localAudio, localVideo;
-    if (connection && connection.jingle) {
-        localAudio = connection.jingle.localAudio;
-        localVideo = connection.jingle.localVideo;
-    }
     connection = new Strophe.Connection(document.getElementById('boshURL').value || config.bosh || '/http-bind');
 
     var settings = UI.getSettings();
@@ -86,8 +81,6 @@ function connect(jid, password) {
         if (!connection.jingle.pc_constraints.optional) connection.jingle.pc_constraints.optional = [];
         connection.jingle.pc_constraints.optional.push({googIPv6: true});
     }
-    if (localAudio) connection.jingle.localAudio = localAudio;
-    if (localVideo) connection.jingle.localVideo = localVideo;
 
     if(!password)
         password = document.getElementById('password').value;
@@ -127,7 +120,7 @@ function connect(jid, password) {
 
 function maybeDoJoin() {
     if (connection && connection.connected && Strophe.getResourceFromJid(connection.jid) // .connected is true while connecting?
-        && (connection.jingle.localAudio || connection.jingle.localVideo)) {
+        && (RTC.localAudio || RTC.localVideo)) {
         doJoin();
     }
 }
@@ -300,7 +293,7 @@ function waitForPresence(data, sid) {
     if (isVideo &&
         data.peerjid && sess.peerjid === data.peerjid &&
         data.stream.getVideoTracks().length === 0 &&
-        connection.jingle.localVideo.getVideoTracks().length > 0) {
+        RTC.localVideo.getTracks().length > 0) {
         //
         window.setTimeout(function () {
             sendKeyframe(sess.peerconnection);
@@ -621,11 +614,9 @@ function isVideoSrcDesktop(jid) {
  * contrast to an automatic decision taken by the application logic)
  */
 function setVideoMute(mute, options) {
-    if (connection && connection.jingle.localVideo) {
-        var session = activecall;
-
-        if (session) {
-            session.setVideoMute(
+    if (connection && RTC.localVideo) {
+        if (activecall) {
+            activecall.setVideoMute(
                 mute,
                 function (mute) {
                     var video = $('#video');
@@ -659,12 +650,8 @@ $(document).on('inlastnchanged', function (event, oldValue, newValue) {
 function toggleVideo() {
     buttonClick("#video", "icon-camera icon-camera-disabled");
 
-    if (connection && connection.jingle.localVideo) {
-        var session = activecall;
-
-        if (session) {
-            setVideoMute(!session.isVideoMute());
-        }
+    if (connection && activecall && RTC.localVideo ) {
+        setVideoMute(!RTC.localVideo.isMuted());
     }
 }
 
@@ -672,14 +659,14 @@ function toggleVideo() {
  * Mutes / unmutes audio for the local participant.
  */
 function toggleAudio() {
-    setAudioMuted(!isAudioMuted());
+    setAudioMuted(!RTC.localAudio.isMuted());
 }
 
 /**
  * Sets muted audio state for the local participant.
  */
 function setAudioMuted(mute) {
-    if (!(connection && connection.jingle.localAudio)) {
+    if (!(connection && RTC.localAudio)) {
         preMuted = mute;
         // We still click the button.
         buttonClick("#mute", "icon-microphone icon-mic-disabled");
@@ -693,7 +680,7 @@ function setAudioMuted(mute) {
         forceMuted = false;
     }
 
-    if (mute == isAudioMuted()) {
+    if (mute == RTC.localAudio.isMuted()) {
         // Nothing to do
         return;
     }
@@ -701,12 +688,7 @@ function setAudioMuted(mute) {
     // It is not clear what is the right way to handle multiple tracks.
     // So at least make sure that they are all muted or all unmuted and
     // that we send presence just once.
-    var localAudioTracks = connection.jingle.localAudio.getAudioTracks();
-    if (localAudioTracks.length > 0) {
-        for (var idx = 0; idx < localAudioTracks.length; idx++) {
-            localAudioTracks[idx].enabled = !mute;
-        }
-    }
+    RTC.localAudio.mute();
     // isMuted is the opposite of audioEnabled
     connection.emuc.addAudioInfoToPresence(mute);
     connection.emuc.sendPresence();
@@ -715,19 +697,6 @@ function setAudioMuted(mute) {
     buttonClick("#mute", "icon-microphone icon-mic-disabled");
 }
 
-/**
- * Checks whether the audio is muted or not.
- * @returns {boolean} true if audio is muted and false if not.
- */
-function isAudioMuted()
-{
-    var localAudio = connection.jingle.localAudio;
-    for (var idx = 0; idx < localAudio.getAudioTracks().length; idx++) {
-        if(localAudio.getAudioTracks()[idx].enabled === true)
-            return false;
-    }
-    return true;
-}
 
 $(document).ready(function () {
 
@@ -780,11 +749,11 @@ function disposeConference(onUnload) {
     if (handler && handler.peerconnection) {
         // FIXME: probably removing streams is not required and close() should
         // be enough
-        if (connection.jingle.localAudio) {
-            handler.peerconnection.removeStream(connection.jingle.localAudio, onUnload);
+        if (RTC.localAudio) {
+            handler.peerconnection.removeStream(RTC.localAudio.getOriginalStream(), onUnload);
         }
-        if (connection.jingle.localVideo) {
-            handler.peerconnection.removeStream(connection.jingle.localVideo, onUnload);
+        if (RTC.localVideo) {
+            handler.peerconnection.removeStream(RTC.localVideo.getOriginalStream(), onUnload);
         }
         handler.peerconnection.close();
     }
