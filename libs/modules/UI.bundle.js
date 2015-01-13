@@ -5814,7 +5814,8 @@ var VideoLayout = (function (my) {
     /**
      * On video muted event.
      */
-    $(document).bind('videomuted.muc', function (event, jid, isMuted) {
+    $(document).bind('videomuted.muc', function (event, jid, value) {
+        var isMuted = (value === "true");
         if(!RTC.muteRemoteVideoStream(jid, isMuted))
             return;
 
@@ -5828,7 +5829,7 @@ var VideoLayout = (function (my) {
         }
 
         if (videoSpanId)
-            VideoLayout.showVideoIndicator(videoSpanId, isMuted);
+            VideoLayout.showVideoIndicator(videoSpanId, value);
     });
 
     /**

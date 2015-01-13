@@ -500,9 +500,8 @@ var RTC = {
         if(!stream)
             return false;
 
-        var isMuted = (value === "true");
-        if (isMuted != stream.muted) {
-            stream.setMute(isMuted);
+        if (value != stream.muted) {
+            stream.setMute(value);
             return true;
         }
         return false;
