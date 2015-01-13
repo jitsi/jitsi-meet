@@ -45,26 +45,28 @@ function setupToolbars() {
     BottomToolbar.init();
 }
 
+function streamHandler(stream) {
+    switch (stream.type)
+    {
+        case "audio":
+            VideoLayout.changeLocalAudio(stream);
+            break;
+        case "video":
+            VideoLayout.changeLocalVideo(stream);
+            break;
+        case "stream":
+            VideoLayout.changeLocalStream(stream);
+            break;
+        case "desktop":
+            VideoLayout.changeLocalVideo(stream);
+            break;
+    }
+}
 
 function registerListeners() {
-    RTC.addStreamListener(function (stream) {
-        switch (stream.type)
-        {
-            case "audio":
-                VideoLayout.changeLocalAudio(stream.getOriginalStream());
-                break;
-            case "video":
-                VideoLayout.changeLocalVideo(stream.getOriginalStream(), true);
-                break;
-            case "stream":
-                VideoLayout.changeLocalStream(stream.getOriginalStream());
-                break;
-            case "desktop":
-                VideoLayout.changeLocalVideo(stream, !isUsingScreenStream);
-                break;
-        }
-    }, StreamEventTypes.EVENT_TYPE_LOCAL_CREATED);
+    RTC.addStreamListener(streamHandler, StreamEventTypes.EVENT_TYPE_LOCAL_CREATED);
 
+    RTC.addStreamListener(streamHandler, StreamEventTypes.EVENT_TYPE_LOCAL_CHANGED);
     RTC.addStreamListener(function (stream) {
         VideoLayout.onRemoteStreamAdded(stream);
     }, StreamEventTypes.EVENT_TYPE_REMOTE_CREATED);
@@ -97,6 +99,13 @@ function registerListeners() {
         AudioLevels.updateAudioLevel(resourceJid, audioLevel,
             UI.getLargeVideoState().userResourceJid);
     });
+    desktopsharing.addListener(function () {
+        ToolbarToggler.showDesktopSharingButton();
+    }, DesktopSharingEventTypes.INIT);
+    desktopsharing.addListener(
+        Toolbar.changeDesktopSharingButtonState,
+        DesktopSharingEventTypes.SWITCHING_DONE);
+
 
 }
 
@@ -446,10 +455,6 @@ UI.setRecordingButtonState = function (state) {
     Toolbar.setRecordingButtonState(state);
 };
 
-UI.changeDesktopSharingButtonState = function (isUsingScreenStream) {
-    Toolbar.changeDesktopSharingButtonState(isUsingScreenStream);
-};
-
 UI.inputDisplayNameHandler = function (value) {
     VideoLayout.inputDisplayNameHandler(value);
 };
@@ -506,10 +511,6 @@ UI.showLocalAudioIndicator = function (mute) {
     VideoLayout.showLocalAudioIndicator(mute);
 };
 
-UI.changeLocalVideo = function (stream, flipx) {
-    VideoLayout.changeLocalVideo(stream, flipx);
-};
-
 UI.generateRoomName = function() {
     var roomnode = null;
     var path = window.location.pathname;
@@ -555,7 +556,6 @@ UI.showToolbar = function () {
 UI.dockToolbar = function (isDock) {
     return ToolbarToggler.dockToolbar(isDock);
 };
-
 
 function dump(elem, filename) {
     elem = elem.parentNode;
@@ -2830,10 +2830,18 @@ var BottomToolbar = (function (my) {
 module.exports = BottomToolbar;
 
 },{"../side_pannels/SidePanelToggler":7}],16:[function(require,module,exports){
-/* global $, interfaceConfig, Moderator, showDesktopSharingButton */
+/* global $, interfaceConfig, Moderator, DesktopStreaming.showDesktopSharingButton */
 
 var toolbarTimeoutObject,
     toolbarTimeout = interfaceConfig.INITIAL_TOOLBAR_TIMEOUT;
+
+function showDesktopSharingButton() {
+    if (desktopsharing.isDesktopSharingEnabled()) {
+        $('#desktopsharing').css({display: "inline"});
+    } else {
+        $('#desktopsharing').css({display: "none"});
+    }
+}
 
 /**
  * Hides the toolbar.
@@ -2929,7 +2937,9 @@ var ToolbarToggler = {
                 toolbarTimeoutObject = setTimeout(hideToolbar, toolbarTimeout);
             }
         }
-    }
+    },
+
+    showDesktopSharingButton: showDesktopSharingButton
 
 };
 
@@ -2977,7 +2987,7 @@ var buttonHandlers =
         return Etherpad.toggleEtherpad(0);
     },
     "toolbar_button_desktopsharing": function () {
-        return toggleScreenSharing();
+        return desktopsharing.toggleScreenSharing();
     },
     "toolbar_button_fullScreen": function()
     {
@@ -3199,7 +3209,7 @@ var Toolbar = (function (my) {
             inviteLink.select();
             document.getElementById('jqi_state0_buttonInvite').disabled = false;
         }
-    }
+    };
 
     /**
      * Disables and enables some of the buttons.
@@ -4591,11 +4601,11 @@ var VideoLayout = (function (my) {
     };
 
     my.changeLocalStream = function (stream) {
-        VideoLayout.changeLocalVideo(stream, true);
+        VideoLayout.changeLocalVideo(stream);
     };
 
     my.changeLocalAudio = function(stream) {
-        RTC.attachMediaStream($('#localAudio'), stream);
+        RTC.attachMediaStream($('#localAudio'), stream.getOriginalStream());
         document.getElementById('localAudio').autoplay = true;
         document.getElementById('localAudio').volume = 0;
         if (preMuted) {
@@ -4604,9 +4614,13 @@ var VideoLayout = (function (my) {
         }
     };
 
-    my.changeLocalVideo = function(stream, flipX) {
+    my.changeLocalVideo = function(stream) {
+        var flipX = true;
+        if(stream.type == "desktop")
+            flipX = false;
         var localVideo = document.createElement('video');
-        localVideo.id = 'localVideo_' + RTC.getStreamID(stream);
+        localVideo.id = 'localVideo_' +
+            RTC.getStreamID(stream.getOriginalStream());
         localVideo.autoplay = true;
         localVideo.volume = 0; // is it required if audio is separated ?
         localVideo.oncontextmenu = function () { return false; };
@@ -4654,7 +4668,7 @@ var VideoLayout = (function (my) {
             }
         );
         // Add stream ended handler
-        stream.onended = function () {
+        stream.getOriginalStream().onended = function () {
             localVideoContainer.removeChild(localVideo);
             VideoLayout.updateRemovedVideo(RTC.getVideoSrc(localVideo));
         };

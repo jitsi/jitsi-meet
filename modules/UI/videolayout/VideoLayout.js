@@ -414,11 +414,11 @@ var VideoLayout = (function (my) {
     };
 
     my.changeLocalStream = function (stream) {
-        VideoLayout.changeLocalVideo(stream, true);
+        VideoLayout.changeLocalVideo(stream);
     };
 
     my.changeLocalAudio = function(stream) {
-        RTC.attachMediaStream($('#localAudio'), stream);
+        RTC.attachMediaStream($('#localAudio'), stream.getOriginalStream());
         document.getElementById('localAudio').autoplay = true;
         document.getElementById('localAudio').volume = 0;
         if (preMuted) {
@@ -427,9 +427,13 @@ var VideoLayout = (function (my) {
         }
     };
 
-    my.changeLocalVideo = function(stream, flipX) {
+    my.changeLocalVideo = function(stream) {
+        var flipX = true;
+        if(stream.type == "desktop")
+            flipX = false;
         var localVideo = document.createElement('video');
-        localVideo.id = 'localVideo_' + RTC.getStreamID(stream);
+        localVideo.id = 'localVideo_' +
+            RTC.getStreamID(stream.getOriginalStream());
         localVideo.autoplay = true;
         localVideo.volume = 0; // is it required if audio is separated ?
         localVideo.oncontextmenu = function () { return false; };
@@ -477,7 +481,7 @@ var VideoLayout = (function (my) {
             }
         );
         // Add stream ended handler
-        stream.onended = function () {
+        stream.getOriginalStream().onended = function () {
             localVideoContainer.removeChild(localVideo);
             VideoLayout.updateRemovedVideo(RTC.getVideoSrc(localVideo));
         };

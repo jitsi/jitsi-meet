@@ -1,7 +1,15 @@
-/* global $, interfaceConfig, Moderator, showDesktopSharingButton */
+/* global $, interfaceConfig, Moderator, DesktopStreaming.showDesktopSharingButton */
 
 var toolbarTimeoutObject,
     toolbarTimeout = interfaceConfig.INITIAL_TOOLBAR_TIMEOUT;
+
+function showDesktopSharingButton() {
+    if (desktopsharing.isDesktopSharingEnabled()) {
+        $('#desktopsharing').css({display: "inline"});
+    } else {
+        $('#desktopsharing').css({display: "none"});
+    }
+}
 
 /**
  * Hides the toolbar.
@@ -97,7 +105,9 @@ var ToolbarToggler = {
                 toolbarTimeoutObject = setTimeout(hideToolbar, toolbarTimeout);
             }
         }
-    }
+    },
+
+    showDesktopSharingButton: showDesktopSharingButton
 
 };
 

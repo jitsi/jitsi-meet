@@ -384,7 +384,7 @@ NativeSimulcastSender.prototype._localVideoSourceCache = '';
 
 NativeSimulcastSender.prototype.reset = function () {
     this._localExplosionMap = {};
-    this._isUsingScreenStream = isUsingScreenStream;
+    this._isUsingScreenStream = desktopsharing.isUsingScreenStream();
 };
 
 NativeSimulcastSender.prototype._cacheLocalVideoSources = function (lines) {

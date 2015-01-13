@@ -44,26 +44,28 @@ function setupToolbars() {
     BottomToolbar.init();
 }
 
+function streamHandler(stream) {
+    switch (stream.type)
+    {
+        case "audio":
+            VideoLayout.changeLocalAudio(stream);
+            break;
+        case "video":
+            VideoLayout.changeLocalVideo(stream);
+            break;
+        case "stream":
+            VideoLayout.changeLocalStream(stream);
+            break;
+        case "desktop":
+            VideoLayout.changeLocalVideo(stream);
+            break;
+    }
+}
 
 function registerListeners() {
-    RTC.addStreamListener(function (stream) {
-        switch (stream.type)
-        {
-            case "audio":
-                VideoLayout.changeLocalAudio(stream.getOriginalStream());
-                break;
-            case "video":
-                VideoLayout.changeLocalVideo(stream.getOriginalStream(), true);
-                break;
-            case "stream":
-                VideoLayout.changeLocalStream(stream.getOriginalStream());
-                break;
-            case "desktop":
-                VideoLayout.changeLocalVideo(stream, !isUsingScreenStream);
-                break;
-        }
-    }, StreamEventTypes.EVENT_TYPE_LOCAL_CREATED);
+    RTC.addStreamListener(streamHandler, StreamEventTypes.EVENT_TYPE_LOCAL_CREATED);
 
+    RTC.addStreamListener(streamHandler, StreamEventTypes.EVENT_TYPE_LOCAL_CHANGED);
     RTC.addStreamListener(function (stream) {
         VideoLayout.onRemoteStreamAdded(stream);
     }, StreamEventTypes.EVENT_TYPE_REMOTE_CREATED);
@@ -96,6 +98,13 @@ function registerListeners() {
         AudioLevels.updateAudioLevel(resourceJid, audioLevel,
             UI.getLargeVideoState().userResourceJid);
     });
+    desktopsharing.addListener(function () {
+        ToolbarToggler.showDesktopSharingButton();
+    }, DesktopSharingEventTypes.INIT);
+    desktopsharing.addListener(
+        Toolbar.changeDesktopSharingButtonState,
+        DesktopSharingEventTypes.SWITCHING_DONE);
+
 
 }
 
@@ -445,10 +454,6 @@ UI.setRecordingButtonState = function (state) {
     Toolbar.setRecordingButtonState(state);
 };
 
-UI.changeDesktopSharingButtonState = function (isUsingScreenStream) {
-    Toolbar.changeDesktopSharingButtonState(isUsingScreenStream);
-};
-
 UI.inputDisplayNameHandler = function (value) {
     VideoLayout.inputDisplayNameHandler(value);
 };
@@ -505,10 +510,6 @@ UI.showLocalAudioIndicator = function (mute) {
     VideoLayout.showLocalAudioIndicator(mute);
 };
 
-UI.changeLocalVideo = function (stream, flipx) {
-    VideoLayout.changeLocalVideo(stream, flipx);
-};
-
 UI.generateRoomName = function() {
     var roomnode = null;
     var path = window.location.pathname;
@@ -554,7 +555,6 @@ UI.showToolbar = function () {
 UI.dockToolbar = function (isDock) {
     return ToolbarToggler.dockToolbar(isDock);
 };
-
 
 function dump(elem, filename) {
     elem = elem.parentNode;

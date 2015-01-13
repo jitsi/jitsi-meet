@@ -40,7 +40,7 @@ var buttonHandlers =
         return Etherpad.toggleEtherpad(0);
     },
     "toolbar_button_desktopsharing": function () {
-        return toggleScreenSharing();
+        return desktopsharing.toggleScreenSharing();
     },
     "toolbar_button_fullScreen": function()
     {
@@ -262,7 +262,7 @@ var Toolbar = (function (my) {
             inviteLink.select();
             document.getElementById('jqi_state0_buttonInvite').disabled = false;
         }
-    }
+    };
 
     /**
      * Disables and enables some of the buttons.

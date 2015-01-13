@@ -415,7 +415,7 @@ $(document).bind('setLocalDescription.jingle', function (event, sid) {
     if (newssrcs.length > 0) {
         for (var i = 1; i <= newssrcs.length; i ++) {
             // Change video type to screen
-            if (newssrcs[i-1].type === 'video' && isUsingScreenStream) {
+            if (newssrcs[i-1].type === 'video' && desktopsharing.isUsingScreenStream()) {
                 newssrcs[i-1].type = 'screen';
             }
             connection.emuc.addMediaToPresence(i,
@@ -585,7 +585,7 @@ function isVideoSrcDesktop(jid) {
     if (connection.emuc.myroomjid &&
         Strophe.getResourceFromJid(connection.emuc.myroomjid) === jid) {
         // local video
-        isDesktop = isUsingScreenStream;
+        isDesktop = desktopsharing.isUsingScreenStream();
     } else {
         // Do we have associations...
         var videoSsrc = jid2Ssrc[jid];
@@ -709,11 +709,7 @@ $(document).ready(function () {
     Moderator.init();
 
     // Set default desktop sharing method
-    setDesktopSharing(config.desktopSharing);
-    // Initialize Chrome extension inline installs
-    if (config.chromeExtensionId) {
-        initInlineInstalls();
-    }
+    desktopsharing.init();
 });
 
 $(window).bind('beforeunload', function () {

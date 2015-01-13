@@ -920,9 +920,6 @@ JingleSession.prototype.switchStreams = function (new_stream, oldStream, success
 
     var self = this;
 
-    // Stop the stream to trigger onended event for old stream
-    oldStream.stop();
-
     // Remember SDP to figure out added/removed SSRCs
     var oldSdp = null;
     if(self.peerconnection) {

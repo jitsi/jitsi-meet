@@ -23,6 +23,10 @@ var obtainDesktopStream = null;
  */
 var _desktopSharingEnabled = null;
 
+var EventEmitter = require("events");
+
+var eventEmitter = new EventEmitter();
+
 /**
  * Method obtains desktop stream from WebRTC 'screen' source.
  * Flag 'chrome://flags/#enable-usermedia-screen-capture' must be enabled.
@@ -178,33 +182,6 @@ function obtainScreenFromExtension(streamCallback, failCallback) {
 }
 
 /**
- * @returns {boolean} <tt>true</tt> if desktop sharing feature is available and enabled.
- */
-function isDesktopSharingEnabled() {
-    if (_desktopSharingEnabled === null) {
-        if (obtainDesktopStream === obtainScreenFromExtension) {
-            // Parse chrome version
-            var userAgent = navigator.userAgent.toLowerCase();
-            // We can assume that user agent is chrome, because it's enforced when 'ext' streaming method is set
-            var ver = parseInt(userAgent.match(/chrome\/(\d+)\./)[1], 10);
-            console.log("Chrome version" + userAgent, ver);
-            _desktopSharingEnabled = ver >= 34;
-        } else {
-            _desktopSharingEnabled = obtainDesktopStream === obtainWebRTCScreen;
-        }
-    }
-    return _desktopSharingEnabled;
-}
-
-function showDesktopSharingButton() {
-    if (isDesktopSharingEnabled()) {
-        $('#desktopsharing').css({display: "inline"});
-    } else {
-        $('#desktopsharing').css({display: "none"});
-    }
-}
-
-/**
  * Call this method to toggle desktop sharing feature.
  * @param method pass "ext" to use chrome extension for desktop capture(chrome extension required),
  *        pass "webrtc" to use WebRTC "screen" desktop source('chrome://flags/#enable-usermedia-screen-capture'
@@ -225,8 +202,6 @@ function setDesktopSharing(method) {
 
     // Reset enabled cache
     _desktopSharingEnabled = null;
-
-    showDesktopSharingButton();
 }
 
 /**
@@ -244,73 +219,103 @@ function getSwitchStreamFailed(error) {
 }
 
 function streamSwitchDone() {
-    //window.setTimeout(
-    //    function () {
     switchInProgress = false;
-    UI.changeDesktopSharingButtonState(isUsingScreenStream);
-    //    }, 100
-    //);
+    eventEmitter.emit(
+        DesktopSharingEventTypes.SWITCHING_DONE,
+        isUsingScreenStream);
 }
 
-function newStreamCreated(stream) {
-
-    var oldStream = RTC.localVideo.getOriginalStream();
-
-    RTC.localVideo.stream = stream;
-
-    UI.changeLocalVideo(stream, !isUsingScreenStream);
-
-    if (activecall) {
-        // FIXME: will block switchInProgress on true value in case of exception
-        activecall.switchStreams(stream, oldStream, streamSwitchDone);
-    } else {
-        // We are done immediately
-        console.error("No conference handler");
-        UI.messageHandler.showError('Error',
-            'Unable to switch video stream.');
-        streamSwitchDone();
-    }
+function newStreamCreated(stream)
+{
+    eventEmitter.emit(DesktopSharingEventTypes.NEW_STREAM_CREATED,
+        stream, isUsingScreenStream, streamSwitchDone);
 }
 
-/*
- * Toggles screen sharing.
- */
-function toggleScreenSharing() {
-    if (switchInProgress || !obtainDesktopStream) {
-        console.warn("Switch in progress or no method defined");
-        return;
-    }
-    switchInProgress = true;
 
-    if (!isUsingScreenStream)
+module.exports = {
+    isUsingScreenStream: function () {
+        return isUsingScreenStream;
+    },
+
+    /**
+     * @returns {boolean} <tt>true</tt> if desktop sharing feature is available and enabled.
+     */
+    isDesktopSharingEnabled: function () {
+        if (_desktopSharingEnabled === null) {
+            if (obtainDesktopStream === obtainScreenFromExtension) {
+                // Parse chrome version
+                var userAgent = navigator.userAgent.toLowerCase();
+                // We can assume that user agent is chrome, because it's enforced when 'ext' streaming method is set
+                var ver = parseInt(userAgent.match(/chrome\/(\d+)\./)[1], 10);
+                console.log("Chrome version" + userAgent, ver);
+                _desktopSharingEnabled = ver >= 34;
+            } else {
+                _desktopSharingEnabled = obtainDesktopStream === obtainWebRTCScreen;
+            }
+        }
+        return _desktopSharingEnabled;
+    },
+    
+    init: function () {
+        setDesktopSharing(config.desktopSharing);
+
+        // Initialize Chrome extension inline installs
+        if (config.chromeExtensionId) {
+            initInlineInstalls();
+        }
+
+        eventEmitter.emit(DesktopSharingEventTypes.INIT);
+    },
+
+    addListener: function(listener, type)
     {
-        // Switch to desktop stream
-        obtainDesktopStream(
-            function (stream) {
-                // We now use screen stream
-                isUsingScreenStream = true;
-                // Hook 'ended' event to restore camera when screen stream stops
-                stream.addEventListener('ended',
-                    function (e) {
-                        if (!switchInProgress && isUsingScreenStream) {
-                            toggleScreenSharing();
+        eventEmitter.on(type, listener);
+    },
+
+    removeListener: function (listener,type) {
+        eventEmitter.removeListener(type, listener);
+    },
+
+    /*
+     * Toggles screen sharing.
+     */
+    toggleScreenSharing: function () {
+        if (switchInProgress || !obtainDesktopStream) {
+            console.warn("Switch in progress or no method defined");
+            return;
+        }
+        switchInProgress = true;
+
+        if (!isUsingScreenStream)
+        {
+            // Switch to desktop stream
+            obtainDesktopStream(
+                function (stream) {
+                    // We now use screen stream
+                    isUsingScreenStream = true;
+                    // Hook 'ended' event to restore camera when screen stream stops
+                    stream.addEventListener('ended',
+                        function (e) {
+                            if (!switchInProgress && isUsingScreenStream) {
+                                toggleScreenSharing();
+                            }
                         }
-                    }
-                );
-                newStreamCreated(stream);
-            },
-            getSwitchStreamFailed);
-    } else {
-        // Disable screen stream
-        RTC.getUserMediaWithConstraints(
-            ['video'],
-            function (stream) {
-                // We are now using camera stream
-                isUsingScreenStream = false;
-                newStreamCreated(stream);
-            },
-            getSwitchStreamFailed, config.resolution || '360'
-        );
+                    );
+                    newStreamCreated(stream);
+                },
+                getSwitchStreamFailed);
+        } else {
+            // Disable screen stream
+            RTC.getUserMediaWithConstraints(
+                ['video'],
+                function (stream) {
+                    // We are now using camera stream
+                    isUsingScreenStream = false;
+                    newStreamCreated(stream);
+                },
+                getSwitchStreamFailed, config.resolution || '360'
+            );
+        }
     }
-}
+};
 
