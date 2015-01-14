@@ -255,9 +255,18 @@ Strophe.addConnectionPlugin('emuc', {
                 '>error[type="cancel"]>not-allowed[xmlns="urn:ietf:params:xml:ns:xmpp-stanzas"]').length) {
             var toDomain = Strophe.getDomainFromJid(pres.getAttribute('to'));
             if(toDomain === config.hosts.anonymousdomain) {
-                // we are connected with anonymous domain and only non anonymous users can create rooms
-                // we must authorize the user
-                $(document).trigger('passwordrequired.main');
+                // We are connected with anonymous domain and only non anonymous
+                // users can create rooms, but focus should not allow us to
+                // enter the room by replying with 'not-authorized'. This would
+                // result in reconnection from authorized domain.
+                // We're either missing Jicofo/Prosody config for anonymous
+                // domains or something is wrong.
+                //$(document).trigger('passwordrequired.main');
+                UI.messageHandler.openReportDialog(null,
+                    'Oops ! We couldn`t join the conference.' +
+                    ' There might be some problem with security' +
+                    ' configuration. Please contact service' +
+                    ' administrator.', pres);
             } else {
                 console.warn('onPresError ', pres);
                 UI.messageHandler.openReportDialog(null,

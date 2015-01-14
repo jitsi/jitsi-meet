@@ -190,7 +190,17 @@ var Moderator = (function (my) {
                 // Not authorized to create new room
                 if ($(error).find('>error>not-authorized').length) {
                     console.warn("Unauthorized to start the conference");
-                    UI.onAuthenticationRequired();
+                    var toDomain
+                        = Strophe.getDomainFromJid(error.getAttribute('to'));
+                    if (toDomain === config.hosts.anonymousdomain) {
+                        // we are connected with anonymous domain and
+                        // only non anonymous users can create rooms
+                        // we must authorize the user
+                        $(document).trigger('passwordrequired.main');
+                    } else {
+                        // External authentication mode
+                        UI.onAuthenticationRequired();
+                    }
                     return;
                 }
                 var waitMs = getNextErrorTimeout();
