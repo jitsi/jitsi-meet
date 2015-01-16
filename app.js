@@ -53,7 +53,15 @@ function init() {
     RTC.addStreamListener(maybeDoJoin, StreamEventTypes.EVENT_TYPE_LOCAL_CREATED);
     RTC.start();
 
-    var jid = document.getElementById('jid').value || config.hosts.anonymousdomain || config.hosts.domain || window.location.hostname;
+    var configDomain = config.hosts.anonymousdomain || config.hosts.domain;
+
+    // Force authenticated domain if room is appended with '?login=true'
+    if (config.hosts.anonymousdomain &&
+        window.location.search.indexOf("login=true") !== -1) {
+        configDomain = config.hosts.domain;
+    }
+
+    var jid = document.getElementById('jid').value || configDomain || window.location.hostname;
     connect(jid);
 }
 

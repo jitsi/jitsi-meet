@@ -17,7 +17,7 @@ server {
         alias /etc/jitsi/meet/jitsi-meet.example.com-config.js;
     }
 
-    location ~ ^/([a-zA-Z0-9]+)$ {
+    location ~ ^/([a-zA-Z0-9=\?]+)$ {
         rewrite ^/(.*)$ / break;
     }
 
