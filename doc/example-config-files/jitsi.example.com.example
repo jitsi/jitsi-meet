@@ -6,7 +6,7 @@ server {
     root /srv/jitsi.example.com;
     index index.html;
 
-    location ~ ^/([a-zA-Z0-9]+)$ {
+    location ~ ^/([a-zA-Z0-9=\?]+)$ {
         rewrite ^/(.*)$ / break;
         }
 

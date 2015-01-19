@@ -163,6 +163,7 @@ var Moderator = {
         Moderator.setFocusUserJid(config.focusUserJid);
         // Send create conference IQ
         var iq = Moderator.createConferenceIq(roomName);
+        var self = this;
         connection.sendIQ(
             iq,
             function (result) {
@@ -190,9 +191,21 @@ var Moderator = {
                 // Not authorized to create new room
                 if ($(error).find('>error>not-authorized').length) {
                     console.warn("Unauthorized to start the conference");
-                    UI.onAuthenticationRequired(function () {
-                        Moderator.allocateConferenceFocus(roomName, callback);
-                    });
+                    var toDomain
+                        = Strophe.getDomainFromJid(error.getAttribute('to'));
+                    if (toDomain === config.hosts.anonymousdomain) {
+                        // we are connected with anonymous domain and
+                        // only non anonymous users can create rooms
+                        // we must authorize the user
+
+                        self.xmppService.promptLogin();
+                    } else {
+                        // External authentication mode
+                        UI.onAuthenticationRequired(function () {
+                            Moderator.allocateConferenceFocus(
+                                roomName, callback);
+                        });
+                    }
                     return;
                 }
                 var waitMs = getNextErrorTimeout();

@@ -147,10 +147,13 @@ var XMPP = {
         initStrophePlugins();
         registerListeners();
         Moderator.init();
-        var jid = uiCredentials.jid ||
-            config.hosts.anonymousdomain ||
-            config.hosts.domain ||
-            window.location.hostname;
+        var configDomain = config.hosts.anonymousdomain || config.hosts.domain;
+        // Force authenticated domain if room is appended with '?login=true'
+        if (config.hosts.anonymousdomain &&
+            window.location.search.indexOf("login=true") !== -1) {
+            configDomain = config.hosts.domain;
+        }
+        var jid = uiCredentials.jid || configDomain || window.location.hostname;
         connect(jid, null, uiCredentials);
     },
     promptLogin: function () {
@@ -356,7 +359,7 @@ var XMPP = {
 
         var deflate = true;
 
-        var content = JSON.stringify(dataYes);
+        var content = JSON.stringify(data);
         if (deflate) {
             content = String.fromCharCode.apply(null, Pako.deflateRaw(content));
         }

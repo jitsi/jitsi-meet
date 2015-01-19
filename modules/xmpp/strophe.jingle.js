@@ -42,6 +42,7 @@ module.exports = function(XMPP)
                 this.connection.disco.addFeature('urn:xmpp:jingle:1');
                 this.connection.disco.addFeature('urn:xmpp:jingle:apps:rtp:1');
                 this.connection.disco.addFeature('urn:xmpp:jingle:transports:ice-udp:1');
+                this.connection.disco.addFeature('urn:xmpp:jingle:transports:dtls-sctp:1');
                 this.connection.disco.addFeature('urn:xmpp:jingle:apps:rtp:audio');
                 this.connection.disco.addFeature('urn:xmpp:jingle:apps:rtp:video');
 
