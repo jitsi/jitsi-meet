@@ -14,7 +14,7 @@
  *
  * @constructor
  */
-function MediaStream(data, sid, ssrc, eventEmmiter, browser) {
+function MediaStream(data, sid, ssrc, browser) {
 
     // XXX(gp) to minimize headaches in the future, we should build our
     // abstractions around tracks and not streams. ORTC is track based API.
@@ -33,7 +33,6 @@ function MediaStream(data, sid, ssrc, eventEmmiter, browser) {
     this.type = (this.stream.getVideoTracks().length > 0)?
         MediaStreamType.VIDEO_TYPE : MediaStreamType.AUDIO_TYPE;
     this.muted = false;
-    eventEmmiter.emit(StreamEventTypes.EVENT_TYPE_REMOTE_CREATED, this);
     if(browser == RTCBrowserType.RTC_BROWSER_FIREFOX)
     {
         if (!this.getVideoTracks)

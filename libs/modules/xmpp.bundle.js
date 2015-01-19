@@ -3827,31 +3827,32 @@ module.exports = function(XMPP, eventEmitter) {
 
 var JingleSession = require("./JingleSession");
 
-function CallIncomingJingle(sid, connection) {
-    var sess = connection.jingle.sessions[sid];
-
-    // TODO: do we check activecall == null?
-    activecall = sess;
-
-    statistics.onConferenceCreated(sess);
-    RTC.onConferenceCreated(sess);
-
-    // TODO: check affiliation and/or role
-    console.log('emuc data for', sess.peerjid, connection.emuc.members[sess.peerjid]);
-    sess.usedrip = true; // not-so-naive trickle ice
-    sess.sendAnswer();
-    sess.accept();
-
-};
-
 module.exports = function(XMPP)
 {
+    function CallIncomingJingle(sid, connection) {
+        var sess = connection.jingle.sessions[sid];
+
+        // TODO: do we check activecall == null?
+        connection.jingle.activecall = sess;
+
+        statistics.onConferenceCreated(sess);
+        RTC.onConferenceCreated(sess);
+
+        // TODO: check affiliation and/or role
+        console.log('emuc data for', sess.peerjid, connection.emuc.members[sess.peerjid]);
+        sess.usedrip = true; // not-so-naive trickle ice
+        sess.sendAnswer();
+        sess.accept();
+
+    };
+
     Strophe.addConnectionPlugin('jingle', {
         connection: null,
         sessions: {},
         jid2session: {},
         ice_config: {iceServers: []},
         pc_constraints: {},
+        activecall: null,
         media_constraints: {
             mandatory: {
                 'OfferToReceiveAudio': true,
@@ -4389,7 +4390,6 @@ var SDP = require("./SDP");
 var eventEmitter = new EventEmitter();
 var connection = null;
 var authenticatedUser = false;
-var activecall = null;
 
 function connect(jid, password, uiCredentials) {
     var bosh
@@ -4576,7 +4576,7 @@ var XMPP = {
     },
     disposeConference: function (onUnload) {
         eventEmitter.emit(XMPPEvents.DISPOSE_CONFERENCE, onUnload);
-        var handler = activecall;
+        var handler = connection.jingle.activecall;
         if (handler && handler.peerconnection) {
             // FIXME: probably removing streams is not required and close() should
             // be enough
@@ -4588,7 +4588,7 @@ var XMPP = {
             }
             handler.peerconnection.close();
         }
-        activecall = null;
+        connection.jingle.activecall = null;
         if(!onUnload)
         {
             this.sessionTerminated = true;
@@ -4615,9 +4615,9 @@ var XMPP = {
         return Moderator.isExternalAuthEnabled();
     },
     switchStreams: function (stream, oldStream, callback) {
-        if (activecall) {
+        if (connection && connection.jingle.activecall) {
             // FIXME: will block switchInProgress on true value in case of exception
-            activecall.switchStreams(stream, oldStream, callback);
+            connection.jingle.activecall.switchStreams(stream, oldStream, callback);
         } else {
             // We are done immediately
             console.error("No conference handler");
@@ -4627,9 +4627,9 @@ var XMPP = {
         }
     },
     setVideoMute: function (mute, callback, options) {
-       if(activecall && connection && RTC.localVideo)
+       if(connection && RTC.localVideo && connection.jingle.activecall)
        {
-           activecall.setVideoMute(mute, callback, options);
+           connection.jingle.activecall.setVideoMute(mute, callback, options);
        }
     },
     setAudioMute: function (mute, callback) {
@@ -4797,7 +4797,7 @@ var XMPP = {
         connection.moderate.eject(jid);
     },
     findJidFromResource: function (resource) {
-        connection.emuc.findJidFromResource(resource);
+        return connection.emuc.findJidFromResource(resource);
     },
     getMembers: function () {
         return connection.emuc.members;

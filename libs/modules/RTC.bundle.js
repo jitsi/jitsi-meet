@@ -184,9 +184,9 @@ var DataChannels =
 
 }
 
-function onSelectedEndpointChanged(userJid)
+function onSelectedEndpointChanged(userResource)
 {
-    console.log('selected endpoint changed: ', userJid);
+    console.log('selected endpoint changed: ', userResource);
     if (_dataChannels && _dataChannels.length != 0)
     {
         _dataChannels.some(function (dataChannel) {
@@ -194,8 +194,9 @@ function onSelectedEndpointChanged(userJid)
             {
                 dataChannel.send(JSON.stringify({
                     'colibriClass': 'SelectedEndpointChangedEvent',
-                    'selectedEndpoint': (!userJid || userJid == null)
-                        ? null : userJid
+                    'selectedEndpoint':
+                        (!userResource || userResource === null)?
+                            null : userResource
                 }));
 
                 return true;
@@ -204,13 +205,13 @@ function onSelectedEndpointChanged(userJid)
     }
 }
 
-$(document).bind("selectedendpointchanged", function(event, userJid) {
-    onSelectedEndpointChanged(userJid);
+$(document).bind("selectedendpointchanged", function(event, userResource) {
+    onSelectedEndpointChanged(userResource);
 });
 
-function onPinnedEndpointChanged(userJid)
+function onPinnedEndpointChanged(userResource)
 {
-    console.log('pinned endpoint changed: ', userJid);
+    console.log('pinned endpoint changed: ', userResource);
     if (_dataChannels && _dataChannels.length != 0)
     {
         _dataChannels.some(function (dataChannel) {
@@ -218,8 +219,9 @@ function onPinnedEndpointChanged(userJid)
             {
                 dataChannel.send(JSON.stringify({
                     'colibriClass': 'PinnedEndpointChangedEvent',
-                    'pinnedEndpoint': (!userJid || userJid == null)
-                        ? null : Strophe.getResourceFromJid(userJid)
+                    'pinnedEndpoint':
+                        (!userResource || userResource == null)?
+                            null : userResource
                 }));
 
                 return true;
@@ -228,8 +230,8 @@ function onPinnedEndpointChanged(userJid)
     }
 }
 
-$(document).bind("pinnedendpointchanged", function(event, userJid) {
-    onPinnedEndpointChanged(userJid);
+$(document).bind("pinnedendpointchanged", function(event, userResource) {
+    onPinnedEndpointChanged(userResource);
 });
 
 module.exports = DataChannels;
@@ -339,7 +341,7 @@ module.exports = LocalStream;
  *
  * @constructor
  */
-function MediaStream(data, sid, ssrc, eventEmmiter, browser) {
+function MediaStream(data, sid, ssrc, browser) {
 
     // XXX(gp) to minimize headaches in the future, we should build our
     // abstractions around tracks and not streams. ORTC is track based API.
@@ -358,7 +360,6 @@ function MediaStream(data, sid, ssrc, eventEmmiter, browser) {
     this.type = (this.stream.getVideoTracks().length > 0)?
         MediaStreamType.VIDEO_TYPE : MediaStreamType.AUDIO_TYPE;
     this.muted = false;
-    eventEmmiter.emit(StreamEventTypes.EVENT_TYPE_REMOTE_CREATED, this);
     if(browser == RTCBrowserType.RTC_BROWSER_FIREFOX)
     {
         if (!this.getVideoTracks)
@@ -442,13 +443,15 @@ var RTC = {
         }
     },
     createRemoteStream: function (data, sid, thessrc) {
-        var remoteStream = new MediaStream(data, sid, thessrc, eventEmitter,
+        var remoteStream = new MediaStream(data, sid, thessrc,
             this.getBrowserType());
         var jid = data.peerjid || xmpp.myJid();
         if(!this.remoteStreams[jid]) {
             this.remoteStreams[jid] = {};
         }
         this.remoteStreams[jid][remoteStream.type]= remoteStream;
+        eventEmitter.emit(StreamEventTypes.EVENT_TYPE_REMOTE_CREATED, remoteStream);
+        console.debug("ADD remote stream ", remoteStream.type, " ", jid, " ", thessrc);
         return remoteStream;
     },
     getBrowserType: function () {

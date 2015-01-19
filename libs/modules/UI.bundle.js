@@ -6129,7 +6129,7 @@ var VideoLayout = (function (my) {
                     // picked up later by the lastN changed event handler.
 
                     lastNPickupJid = jid;
-                    $(document).trigger("pinnedendpointchanged", [jid]);
+                    $(document).trigger("pinnedendpointchanged", [Strophe.getResourceFromJid(jid)]);
                 }
             } else if (jid == xmpp.myJid()) {
                 $("#localVideoContainer").click();

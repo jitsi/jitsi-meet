@@ -219,7 +219,7 @@ SimulcastReceiver.prototype.getReceivingVideoStreamBySSRC = function (ssrc)
     var sid, electedStream;
     var i, j, k;
     var jid = ssrc2jid[ssrc];
-    if(jid)
+    if(jid && RTC.remoteStreams[jid])
     {
         var remoteStreamObject = RTC.remoteStreams[jid][MediaStreamType.VIDEO_TYPE];
         var remoteStream = remoteStreamObject.getOriginalStream();
@@ -238,6 +238,10 @@ SimulcastReceiver.prototype.getReceivingVideoStreamBySSRC = function (ssrc)
             }
         }
 
+    }
+    else
+    {
+        console.debug(RTC.remoteStreams, jid, ssrc);
     }
 
     return {

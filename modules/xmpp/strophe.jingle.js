@@ -2,31 +2,32 @@
 
 var JingleSession = require("./JingleSession");
 
-function CallIncomingJingle(sid, connection) {
-    var sess = connection.jingle.sessions[sid];
-
-    // TODO: do we check activecall == null?
-    activecall = sess;
-
-    statistics.onConferenceCreated(sess);
-    RTC.onConferenceCreated(sess);
-
-    // TODO: check affiliation and/or role
-    console.log('emuc data for', sess.peerjid, connection.emuc.members[sess.peerjid]);
-    sess.usedrip = true; // not-so-naive trickle ice
-    sess.sendAnswer();
-    sess.accept();
-
-};
-
 module.exports = function(XMPP)
 {
+    function CallIncomingJingle(sid, connection) {
+        var sess = connection.jingle.sessions[sid];
+
+        // TODO: do we check activecall == null?
+        connection.jingle.activecall = sess;
+
+        statistics.onConferenceCreated(sess);
+        RTC.onConferenceCreated(sess);
+
+        // TODO: check affiliation and/or role
+        console.log('emuc data for', sess.peerjid, connection.emuc.members[sess.peerjid]);
+        sess.usedrip = true; // not-so-naive trickle ice
+        sess.sendAnswer();
+        sess.accept();
+
+    };
+
     Strophe.addConnectionPlugin('jingle', {
         connection: null,
         sessions: {},
         jid2session: {},
         ice_config: {iceServers: []},
         pc_constraints: {},
+        activecall: null,
         media_constraints: {
             mandatory: {
                 'OfferToReceiveAudio': true,

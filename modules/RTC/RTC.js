@@ -56,13 +56,15 @@ var RTC = {
         }
     },
     createRemoteStream: function (data, sid, thessrc) {
-        var remoteStream = new MediaStream(data, sid, thessrc, eventEmitter,
+        var remoteStream = new MediaStream(data, sid, thessrc,
             this.getBrowserType());
         var jid = data.peerjid || xmpp.myJid();
         if(!this.remoteStreams[jid]) {
             this.remoteStreams[jid] = {};
         }
         this.remoteStreams[jid][remoteStream.type]= remoteStream;
+        eventEmitter.emit(StreamEventTypes.EVENT_TYPE_REMOTE_CREATED, remoteStream);
+        console.debug("ADD remote stream ", remoteStream.type, " ", jid, " ", thessrc);
         return remoteStream;
     },
     getBrowserType: function () {

@@ -183,9 +183,9 @@ var DataChannels =
 
 }
 
-function onSelectedEndpointChanged(userJid)
+function onSelectedEndpointChanged(userResource)
 {
-    console.log('selected endpoint changed: ', userJid);
+    console.log('selected endpoint changed: ', userResource);
     if (_dataChannels && _dataChannels.length != 0)
     {
         _dataChannels.some(function (dataChannel) {
@@ -193,8 +193,9 @@ function onSelectedEndpointChanged(userJid)
             {
                 dataChannel.send(JSON.stringify({
                     'colibriClass': 'SelectedEndpointChangedEvent',
-                    'selectedEndpoint': (!userJid || userJid == null)
-                        ? null : userJid
+                    'selectedEndpoint':
+                        (!userResource || userResource === null)?
+                            null : userResource
                 }));
 
                 return true;
@@ -203,13 +204,13 @@ function onSelectedEndpointChanged(userJid)
     }
 }
 
-$(document).bind("selectedendpointchanged", function(event, userJid) {
-    onSelectedEndpointChanged(userJid);
+$(document).bind("selectedendpointchanged", function(event, userResource) {
+    onSelectedEndpointChanged(userResource);
 });
 
-function onPinnedEndpointChanged(userJid)
+function onPinnedEndpointChanged(userResource)
 {
-    console.log('pinned endpoint changed: ', userJid);
+    console.log('pinned endpoint changed: ', userResource);
     if (_dataChannels && _dataChannels.length != 0)
     {
         _dataChannels.some(function (dataChannel) {
@@ -217,8 +218,9 @@ function onPinnedEndpointChanged(userJid)
             {
                 dataChannel.send(JSON.stringify({
                     'colibriClass': 'PinnedEndpointChangedEvent',
-                    'pinnedEndpoint': (!userJid || userJid == null)
-                        ? null : Strophe.getResourceFromJid(userJid)
+                    'pinnedEndpoint':
+                        (!userResource || userResource == null)?
+                            null : userResource
                 }));
 
                 return true;
@@ -227,8 +229,8 @@ function onPinnedEndpointChanged(userJid)
     }
 }
 
-$(document).bind("pinnedendpointchanged", function(event, userJid) {
-    onPinnedEndpointChanged(userJid);
+$(document).bind("pinnedendpointchanged", function(event, userResource) {
+    onPinnedEndpointChanged(userResource);
 });
 
 module.exports = DataChannels;
