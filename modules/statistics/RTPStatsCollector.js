@@ -329,30 +329,9 @@ StatsCollector.prototype.addStatsToBeLogged = function (reports) {
 };
 
 StatsCollector.prototype.logStats = function () {
-    if (!focusMucJid) {
+
+    if(!xmpp.sendLogs(this.statsToBeLogged))
         return;
-    }
-
-    var deflate = true;
-
-    var content = JSON.stringify(this.statsToBeLogged);
-    if (deflate) {
-        content = String.fromCharCode.apply(null, Pako.deflateRaw(content));
-    }
-    content = Base64.encode(content);
-
-    // XEP-0337-ish
-    var message = $msg({to: focusMucJid, type: 'normal'});
-    message.c('log', { xmlns: 'urn:xmpp:eventlog',
-        id: 'PeerConnectionStats'});
-    message.c('message').t(content).up();
-    if (deflate) {
-        message.c('tag', {name: "deflated", value: "true"}).up();
-    }
-    message.up();
-
-    connection.send(message);
-
     // Reset the stats
     this.statsToBeLogged.stats = {};
     this.statsToBeLogged.timestamps = [];
@@ -700,7 +679,7 @@ StatsCollector.prototype.processAudioLevelReport = function ()
             // but it seems to vary between 0 and around 32k.
             audioLevel = audioLevel / 32767;
             jidStats.setSsrcAudioLevel(ssrc, audioLevel);
-            if(jid != connection.emuc.myroomjid)
+            if(jid != xmpp.myJid())
                 this.eventEmitter.emit("statistics.audioLevel", jid, audioLevel);
         }
 

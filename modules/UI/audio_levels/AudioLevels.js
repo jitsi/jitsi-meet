@@ -87,10 +87,10 @@ var AudioLevels = (function(my) {
         drawContext.drawImage(canvasCache, 0, 0);
 
         if(resourceJid === AudioLevels.LOCAL_LEVEL) {
-            if(!connection.emuc.myroomjid) {
+            if(!xmpp.myJid()) {
                 return;
             }
-            resourceJid = Strophe.getResourceFromJid(connection.emuc.myroomjid);
+            resourceJid = xmpp.myResource();
         }
 
         if(resourceJid  === largeVideoResourceJid) {
@@ -221,8 +221,8 @@ var AudioLevels = (function(my) {
     function getVideoSpanId(resourceJid) {
         var videoSpanId = null;
         if (resourceJid === AudioLevels.LOCAL_LEVEL
-                || (connection.emuc.myroomjid && resourceJid
-                    === Strophe.getResourceFromJid(connection.emuc.myroomjid)))
+                || (xmpp.myResource() && resourceJid
+                    === xmpp.myResource()))
             videoSpanId = 'localVideoContainer';
         else
             videoSpanId = 'participant_' + resourceJid;

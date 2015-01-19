@@ -1,47 +1,53 @@
-/* global $, $iq, config, connection, Etherpad, hangUp, messageHandler,
+/* global $, $iq, config, connection, UI, messageHandler,
  roomName, sessionTerminated, Strophe, Util */
 /**
  * Contains logic responsible for enabling/disabling functionality available
  * only to moderator users.
  */
-var Moderator = (function (my) {
+var connection = null;
+var focusUserJid;
+var getNextTimeout = Util.createExpBackoffTimer(1000);
+var getNextErrorTimeout = Util.createExpBackoffTimer(1000);
+// External authentication stuff
+var externalAuthEnabled = false;
+// Sip gateway can be enabled by configuring Jigasi host in config.js or
+// it will be enabled automatically if focus detects the component through
+// service discovery.
+var sipGatewayEnabled = config.hosts.call_control !== undefined;
 
-    var focusUserJid;
-    var getNextTimeout = Util.createExpBackoffTimer(1000);
-    var getNextErrorTimeout = Util.createExpBackoffTimer(1000);
-    // External authentication stuff
-    var externalAuthEnabled = false;
-    // Sip gateway can be enabled by configuring Jigasi host in config.js or
-    // it will be enabled automatically if focus detects the component through
-    // service discovery.
-    var sipGatewayEnabled = config.hosts.call_control !== undefined;
-
-    my.isModerator = function () {
+var Moderator = {
+    isModerator: function () {
         return connection && connection.emuc.isModerator();
-    };
+    },
 
-    my.isPeerModerator = function (peerJid) {
-        return connection && connection.emuc.getMemberRole(peerJid) === 'moderator';
-    };
+    isPeerModerator: function (peerJid) {
+        return connection &&
+            connection.emuc.getMemberRole(peerJid) === 'moderator';
+    },
 
-    my.isExternalAuthEnabled = function () {
+    isExternalAuthEnabled: function () {
         return externalAuthEnabled;
-    };
+    },
 
-    my.isSipGatewayEnabled = function () {
+    isSipGatewayEnabled: function () {
         return sipGatewayEnabled;
-    };
+    },
 
-    my.init = function () {
-        Moderator.onLocalRoleChange = function (from, member, pres) {
+    setConnection: function (con) {
+        connection = con;
+    },
+
+    init: function (xmpp) {
+        this.xmppService = xmpp;
+        this.onLocalRoleChange = function (from, member, pres) {
             UI.onModeratorStatusChanged(Moderator.isModerator());
         };
-    };
+    },
 
-    my.onMucLeft = function (jid) {
+    onMucLeft: function (jid) {
         console.info("Someone left is it focus ? " + jid);
         var resource = Strophe.getResourceFromJid(jid);
-        if (resource === 'focus' && !sessionTerminated) {
+        if (resource === 'focus' && !this.xmppService.sessionTerminated) {
             console.info(
                 "Focus has left the room - leaving conference");
             //hangUp();
@@ -49,20 +55,20 @@ var Moderator = (function (my) {
             // FIXME: show some message before reload
             location.reload();
         }
-    }
-
-    my.setFocusUserJid = function (focusJid) {
+    },
+    
+    setFocusUserJid: function (focusJid) {
         if (!focusUserJid) {
             focusUserJid = focusJid;
             console.info("Focus jid set to: " + focusUserJid);
         }
-    };
+    },
 
-    my.getFocusUserJid = function () {
+    getFocusUserJid: function () {
         return focusUserJid;
-    };
+    },
 
-    my.getFocusComponent = function () {
+    getFocusComponent: function () {
         // Get focus component address
         var focusComponent = config.hosts.focus;
         // If not specified use default: 'focus.domain'
@@ -70,99 +76,93 @@ var Moderator = (function (my) {
             focusComponent = 'focus.' + config.hosts.domain;
         }
         return focusComponent;
-    };
+    },
 
-    my.createConferenceIq = function () {
+    createConferenceIq: function (roomName) {
         // Generate create conference IQ
         var elem = $iq({to: Moderator.getFocusComponent(), type: 'set'});
         elem.c('conference', {
             xmlns: 'http://jitsi.org/protocol/focus',
             room: roomName
         });
-        if (config.hosts.bridge !== undefined)
-        {
+        if (config.hosts.bridge !== undefined) {
             elem.c(
                 'property',
                 { name: 'bridge', value: config.hosts.bridge})
                 .up();
         }
         // Tell the focus we have Jigasi configured
-        if (config.hosts.call_control !== undefined)
-        {
+        if (config.hosts.call_control !== undefined) {
             elem.c(
                 'property',
                 { name: 'call_control', value: config.hosts.call_control})
                 .up();
         }
-        if (config.channelLastN !== undefined)
-        {
+        if (config.channelLastN !== undefined) {
             elem.c(
                 'property',
                 { name: 'channelLastN', value: config.channelLastN})
                 .up();
         }
-        if (config.adaptiveLastN !== undefined)
-        {
+        if (config.adaptiveLastN !== undefined) {
             elem.c(
                 'property',
                 { name: 'adaptiveLastN', value: config.adaptiveLastN})
                 .up();
         }
-        if (config.adaptiveSimulcast !== undefined)
-        {
+        if (config.adaptiveSimulcast !== undefined) {
             elem.c(
                 'property',
                 { name: 'adaptiveSimulcast', value: config.adaptiveSimulcast})
                 .up();
         }
-        if (config.openSctp !== undefined)
-        {
+        if (config.openSctp !== undefined) {
             elem.c(
                 'property',
                 { name: 'openSctp', value: config.openSctp})
                 .up();
         }
-        if (config.enableFirefoxSupport !== undefined)
-        {
+        if (config.enableFirefoxSupport !== undefined) {
             elem.c(
                 'property',
-                { name: 'enableFirefoxHacks', value: config.enableFirefoxSupport})
+                { name: 'enableFirefoxHacks',
+                    value: config.enableFirefoxSupport})
                 .up();
         }
         elem.up();
         return elem;
-    };
+    },
 
-    my.parseConfigOptions = function (resultIq) {
-
+    parseConfigOptions: function (resultIq) {
+    
         Moderator.setFocusUserJid(
             $(resultIq).find('conference').attr('focusjid'));
-
+    
         var extAuthParam
             = $(resultIq).find('>conference>property[name=\'externalAuth\']');
         if (extAuthParam.length) {
             externalAuthEnabled = extAuthParam.attr('value') === 'true';
         }
-
+    
         console.info("External authentication enabled: " + externalAuthEnabled);
-
+    
         // Check if focus has auto-detected Jigasi component(this will be also
         // included if we have passed our host from the config)
         if ($(resultIq).find(
-                '>conference>property[name=\'sipGatewayEnabled\']').length) {
+            '>conference>property[name=\'sipGatewayEnabled\']').length) {
             sipGatewayEnabled = true;
         }
-
+    
         console.info("Sip gateway enabled: " + sipGatewayEnabled);
-    };
+    },
 
     // FIXME: we need to show the fact that we're waiting for the focus
     // to the user(or that focus is not available)
-    my.allocateConferenceFocus = function (roomName, callback) {
+    allocateConferenceFocus: function (roomName, callback) {
         // Try to use focus user JID from the config
         Moderator.setFocusUserJid(config.focusUserJid);
         // Send create conference IQ
-        var iq = Moderator.createConferenceIq();
+        var iq = Moderator.createConferenceIq(roomName);
         connection.sendIQ(
             iq,
             function (result) {
@@ -190,7 +190,9 @@ var Moderator = (function (my) {
                 // Not authorized to create new room
                 if ($(error).find('>error>not-authorized').length) {
                     console.warn("Unauthorized to start the conference");
-                    UI.onAuthenticationRequired();
+                    UI.onAuthenticationRequired(function () {
+                        Moderator.allocateConferenceFocus(roomName, callback);
+                    });
                     return;
                 }
                 var waitMs = getNextErrorTimeout();
@@ -198,8 +200,9 @@ var Moderator = (function (my) {
                 // Show message
                 UI.messageHandler.notify(
                     'Conference focus', 'disconnected',
-                    Moderator.getFocusComponent() +
-                    ' not available - retry in ' + (waitMs / 1000) + ' sec');
+                        Moderator.getFocusComponent() +
+                        ' not available - retry in ' +
+                        (waitMs / 1000) + ' sec');
                 // Reset response timeout
                 getNextTimeout(true);
                 window.setTimeout(
@@ -208,9 +211,9 @@ var Moderator = (function (my) {
                     }, waitMs);
             }
         );
-    };
+    },
 
-    my.getAuthUrl = function (urlCallback) {
+    getAuthUrl: function (roomName, urlCallback) {
         var iq = $iq({to: Moderator.getFocusComponent(), type: 'get'});
         iq.c('auth-url', {
             xmlns: 'http://jitsi.org/protocol/focus',
@@ -232,10 +235,10 @@ var Moderator = (function (my) {
                 console.error("Get auth url error", error);
             }
         );
-    };
+    }
+};
 
-    return my;
-}(Moderator || {}));
+module.exports = Moderator;
 
 
 

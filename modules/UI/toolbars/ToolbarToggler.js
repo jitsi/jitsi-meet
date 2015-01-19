@@ -67,7 +67,7 @@ var ToolbarToggler = {
             toolbarTimeout = interfaceConfig.TOOLBAR_TIMEOUT;
         }
 
-        if (Moderator.isModerator())
+        if (xmpp.isModerator())
         {
 //            TODO: Enable settings functionality.
 //                  Need to uncomment the settings button in index.html.

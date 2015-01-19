@@ -46,23 +46,6 @@ function createDisplayNameParagraph(displayName) {
 }
 
 
-/**
- * Indicates that the display name has changed.
- */
-$(document).bind(   'displaynamechanged',
-    function (event, peerJid, displayName) {
-        if (peerJid === 'localVideoContainer')
-            peerJid = connection.emuc.myroomjid;
-
-        var resourceJid = Strophe.getResourceFromJid(peerJid);
-
-        var contactName = $('#contactlist #' + resourceJid + '>p');
-
-        if (contactName && displayName && displayName.length > 0)
-            contactName.html(displayName);
-    });
-
-
 function stopGlowing(glower) {
     window.clearInterval(notificationInterval);
     notificationInterval = false;
@@ -127,7 +110,7 @@ var ContactList = {
 
         var clElement = contactlist.get(0);
 
-        if (resourceJid === Strophe.getResourceFromJid(connection.emuc.myroomjid)
+        if (resourceJid === xmpp.myResource()
             && $('#contactlist>ul .title')[0].nextSibling.nextSibling) {
             clElement.insertBefore(newContact,
                 $('#contactlist>ul .title')[0].nextSibling.nextSibling);
@@ -182,6 +165,18 @@ var ContactList = {
         } else {
             contact.removeClass('clickable');
         }
+    },
+
+    onDisplayNameChange: function (peerJid, displayName) {
+        if (peerJid === 'localVideoContainer')
+            peerJid = xmpp.myJid();
+
+        var resourceJid = Strophe.getResourceFromJid(peerJid);
+
+        var contactName = $('#contactlist #' + resourceJid + '>p');
+
+        if (contactName && displayName && displayName.length > 0)
+            contactName.html(displayName);
     }
 };
 

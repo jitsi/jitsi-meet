@@ -58,7 +58,7 @@ var RTC = {
     createRemoteStream: function (data, sid, thessrc) {
         var remoteStream = new MediaStream(data, sid, thessrc, eventEmitter,
             this.getBrowserType());
-        var jid = data.peerjid || connection.emuc.myroomjid;
+        var jid = data.peerjid || xmpp.myJid();
         if(!this.remoteStreams[jid]) {
             this.remoteStreams[jid] = {};
         }
@@ -144,16 +144,7 @@ var RTC = {
         RTC.localVideo = this.createLocalStream(stream, type, true);
         // Stop the stream to trigger onended event for old stream
         oldStream.stop();
-        if (activecall) {
-            // FIXME: will block switchInProgress on true value in case of exception
-            activecall.switchStreams(stream, oldStream, callback);
-        } else {
-            // We are done immediately
-            console.error("No conference handler");
-            UI.messageHandler.showError('Error',
-                'Unable to switch video stream.');
-            callback();
-        }
+        xmpp.switchStreams(stream, oldStream,callback);
     }
 
 };

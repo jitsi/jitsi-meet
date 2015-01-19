@@ -4,6 +4,7 @@ var Settings = require("./settings/Settings");
 var SettingsMenu = require("./settings/SettingsMenu");
 var VideoLayout = require("../videolayout/VideoLayout");
 var ToolbarToggler = require("../toolbars/ToolbarToggler");
+var UIUtil = require("../util/UIUtil");
 
 /**
  * Toggler for the chat, contact list, settings menu, etc..
@@ -110,7 +111,7 @@ var PanelToggler = (function(my) {
      * @param onClose function to be called if the window is going to be closed
      */
     var toggle = function(object, selector, onOpenComplete, onOpen, onClose) {
-        buttonClick(buttons[selector], "active");
+        UIUtil.buttonClick(buttons[selector], "active");
 
         if (object.isVisible()) {
             $("#toast-container").animate({
@@ -140,7 +141,7 @@ var PanelToggler = (function(my) {
 
             if(currentlyOpen) {
                 var current = $(currentlyOpen);
-                buttonClick(buttons[currentlyOpen], "active");
+                UIUtil.buttonClick(buttons[currentlyOpen], "active");
                 current.css('z-index', 4);
                 setTimeout(function () {
                     current.css('display', 'none');

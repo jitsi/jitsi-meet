@@ -18,8 +18,8 @@
 var commands =
 {
     displayName: UI.inputDisplayNameHandler,
-    muteAudio: toggleAudio,
-    muteVideo: toggleVideo,
+    muteAudio: UI.toggleAudio,
+    muteVideo: UI.toggleVideo,
     toggleFilmStrip: UI.toggleFilmStrip,
     toggleChat: UI.toggleChat,
     toggleContactList: UI.toggleContactList

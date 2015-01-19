@@ -12,7 +12,7 @@ function setVisibility(selector, show) {
 function isUserMuted(jid) {
     // XXX(gp) we may want to rename this method to something like
     // isUserStreaming, for example.
-    if (jid && jid != connection.emuc.myroomjid) {
+    if (jid && jid != xmpp.myJid()) {
         var resource = Strophe.getResourceFromJid(jid);
         if (!require("../videolayout/VideoLayout").isInLastN(resource)) {
             return true;
@@ -26,7 +26,7 @@ function isUserMuted(jid) {
 }
 
 function getGravatarUrl(id, size) {
-    if(id === connection.emuc.myroomjid || !id) {
+    if(id === xmpp.myJid() || !id) {
         id = Settings.getSettings().uid;
     }
     return 'https://www.gravatar.com/avatar/' +
@@ -57,7 +57,7 @@ var Avatar = {
 
         // set the avatar in the settings menu if it is local user and get the
         // local video container
-        if (jid === connection.emuc.myroomjid) {
+        if (jid === xmpp.myJid()) {
             $('#avatar').get(0).src = thumbUrl;
             thumbnail = $('#localVideoContainer');
         }
@@ -100,7 +100,7 @@ var Avatar = {
             var video = $('#participant_' + resourceJid + '>video');
             var avatar = $('#avatar_' + resourceJid);
 
-            if (jid === connection.emuc.myroomjid) {
+            if (jid === xmpp.myJid()) {
                 video = $('#localVideoWrapper>video');
             }
             if (show === undefined || show === null) {
@@ -130,7 +130,7 @@ var Avatar = {
      */
     updateActiveSpeakerAvatarSrc: function (jid) {
         if (!jid) {
-            jid = connection.emuc.findJidFromResource(
+            jid = xmpp.findJidFromResource(
                 require("../videolayout/VideoLayout").getLargeVideoState().userResourceJid);
         }
         var avatar = $("#activeSpeakerAvatar")[0];

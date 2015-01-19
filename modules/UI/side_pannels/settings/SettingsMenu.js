@@ -10,16 +10,15 @@ var SettingsMenu = {
 
         if(newDisplayName) {
             var displayName = Settings.setDisplayName(newDisplayName);
-            connection.emuc.addDisplayNameToPresence(displayName);
+            xmpp.addToPresence("displayName", displayName, true);
         }
 
 
-        connection.emuc.addEmailToPresence(newEmail);
+        xmpp.addToPresence("email", newEmail);
         var email = Settings.setEmail(newEmail);
 
 
-        connection.emuc.sendPresence();
-        Avatar.setUserAvatar(connection.emuc.myroomjid, email);
+        Avatar.setUserAvatar(xmpp.myJid(), email);
     },
 
     isVisible: function() {
@@ -29,14 +28,15 @@ var SettingsMenu = {
     setDisplayName: function(newDisplayName) {
         var displayName = Settings.setDisplayName(newDisplayName);
         $('#setDisplayName').get(0).value = displayName;
+    },
+
+    onDisplayNameChange: function(peerJid, newDisplayName) {
+        if(peerJid === 'localVideoContainer' ||
+            peerJid === xmpp.myJid()) {
+            this.setDisplayName(newDisplayName);
+        }
     }
 };
 
-$(document).bind('displaynamechanged', function(event, peerJid, newDisplayName) {
-    if(peerJid === 'localVideoContainer' ||
-        peerJid === connection.emuc.myroomjid) {
-        SettingsMenu.setDisplayName(newDisplayName);
-    }
-});
 
 module.exports = SettingsMenu;

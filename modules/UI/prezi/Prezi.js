@@ -30,7 +30,7 @@ var Prezi = {
      * to load.
      */
     openPreziDialog: function() {
-        var myprezi = connection.emuc.getPrezi(connection.emuc.myroomjid);
+        var myprezi = xmpp.getPrezi();
         if (myprezi) {
             messageHandler.openTwoButtonDialog("Remove Prezi",
                 "Are you sure you would like to remove your Prezi?",
@@ -38,8 +38,7 @@ var Prezi = {
                 "Remove",
                 function(e,v,m,f) {
                     if(v) {
-                        connection.emuc.removePreziFromPresence();
-                        connection.emuc.sendPresence();
+                        xmpp.removePreziFromPresence();
                     }
                 }
             );
@@ -91,9 +90,7 @@ var Prezi = {
                                         return false;
                                     }
                                     else {
-                                        connection.emuc
-                                            .addPreziToPresence(urlValue, 0);
-                                        connection.emuc.sendPresence();
+                                        xmpp.addToPresence("prezi", urlValue);
                                         $.prompt.close();
                                     }
                                 }
@@ -151,7 +148,7 @@ function presentationAdded(event, jid, presUrl, currentSlide) {
     VideoLayout.resizeThumbnails();
 
     var controlsEnabled = false;
-    if (jid === connection.emuc.myroomjid)
+    if (jid === xmpp.myJid())
         controlsEnabled = true;
 
     setPresentationVisible(true);
@@ -191,15 +188,14 @@ function presentationAdded(event, jid, presUrl, currentSlide) {
     preziPlayer.on(PreziPlayer.EVENT_STATUS, function(event) {
         console.log("prezi status", event.value);
         if (event.value == PreziPlayer.STATUS_CONTENT_READY) {
-            if (jid != connection.emuc.myroomjid)
+            if (jid != xmpp.myJid())
                 preziPlayer.flyToStep(currentSlide);
         }
     });
 
     preziPlayer.on(PreziPlayer.EVENT_CURRENT_STEP, function(event) {
         console.log("event value", event.value);
-        connection.emuc.addCurrentSlideToPresence(event.value);
-        connection.emuc.sendPresence();
+        xmpp.addToPresence("preziSlide", event.value);
     });
 
     $("#" + elementId).css( 'background-image',

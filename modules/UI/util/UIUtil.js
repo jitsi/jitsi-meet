@@ -11,6 +11,13 @@ module.exports = {
             = PanelToggler.isVisible() ? PanelToggler.getPanelSize()[0] : 0;
 
         return window.innerWidth - rightPanelWidth;
+    },
+    /**
+     * Changes the style class of the element given by id.
+     */
+    buttonClick: function(id, classname) {
+        $(id).toggleClass(classname); // add the class to the clicked element
     }
+
 
 };

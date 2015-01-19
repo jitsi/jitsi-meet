@@ -17,9 +17,11 @@ var PanelToggler = require("./side_pannels/SidePanelToggler");
 var RoomNameGenerator = require("./welcome_page/RoomnameGenerator");
 UI.messageHandler = require("./util/MessageHandler");
 var messageHandler = UI.messageHandler;
+var Authentication  = require("./authentication/Authentication");
+var UIUtil = require("./util/UIUtil");
 
 //var eventEmitter = new EventEmitter();
-
+var roomName = null;
 
 
 function setupPrezi()
@@ -39,7 +41,7 @@ function setupChat()
 }
 
 function setupToolbars() {
-    Toolbar.init();
+    Toolbar.init(UI);
     Toolbar.setupButtonsFromConfig();
     BottomToolbar.init();
 }
@@ -62,6 +64,16 @@ function streamHandler(stream) {
     }
 }
 
+function onDisposeConference(unload) {
+    Toolbar.showAuthenticateButton(false);
+};
+
+function onDisplayNameChanged(jid, displayName) {
+    ContactList.onDisplayNameChange(jid, displayName);
+    SettingsMenu.onDisplayNameChange(jid, displayName);
+    VideoLayout.onDisplayNameChanged(jid, displayName);
+}
+
 function registerListeners() {
     RTC.addStreamListener(streamHandler, StreamEventTypes.EVENT_TYPE_LOCAL_CREATED);
 
@@ -70,14 +82,7 @@ function registerListeners() {
         VideoLayout.onRemoteStreamAdded(stream);
     }, StreamEventTypes.EVENT_TYPE_REMOTE_CREATED);
 
-    // Listen for large video size updates
-    document.getElementById('largeVideo')
-        .addEventListener('loadedmetadata', function (e) {
-            currentVideoWidth = this.videoWidth;
-            currentVideoHeight = this.videoHeight;
-            VideoLayout.positionLarge(currentVideoWidth, currentVideoHeight);
-        });
-
+    VideoLayout.init();
 
     statistics.addAudioLevelListener(function(jid, audioLevel)
     {
@@ -104,8 +109,38 @@ function registerListeners() {
     desktopsharing.addListener(
         Toolbar.changeDesktopSharingButtonState,
         DesktopSharingEventTypes.SWITCHING_DONE);
+    xmpp.addListener(XMPPEvents.DISPOSE_CONFERENCE, onDisposeConference);
+    xmpp.addListener(XMPPEvents.KICKED, function () {
+        messageHandler.openMessageDialog("Session Terminated",
+            "Ouch! You have been kicked out of the meet!");
+    });
+    xmpp.addListener(XMPPEvents.BRIDGE_DOWN, function () {
+        messageHandler.showError("Error",
+            "Jitsi Videobridge is currently unavailable. Please try again later!");
+    });
+    xmpp.addListener(XMPPEvents.USER_ID_CHANGED, Avatar.setUserAvatar);
+    xmpp.addListener(XMPPEvents.CHANGED_STREAMS, function (jid, changedStreams) {
+        for(stream in changedStreams)
+        {
+            // might need to update the direction if participant just went from sendrecv to recvonly
+            if (stream.type === 'video' || stream.type === 'screen') {
+                var el = $('#participant_'  + Strophe.getResourceFromJid(jid) + '>video');
+                switch (stream.direction) {
+                    case 'sendrecv':
+                        el.show();
+                        break;
+                    case 'recvonly':
+                        el.hide();
+                        // FIXME: Check if we have to change large video
+                        //VideoLayout.updateLargeVideo(el);
+                        break;
+                }
+            }
+        }
 
-
+    });
+    xmpp.addListener(XMPPEvents.DISPLAY_NAME_CHANGED, onDisplayNameChanged);
+    xmpp.addListener(XMPPEvents.MUC_JOINED, onMucJoined);
 }
 
 function bindEvents()
@@ -117,10 +152,6 @@ function bindEvents()
         function () {
             VideoLayout.resizeLargeVideoContainer();
             VideoLayout.positionLarge();
-            isFullScreen = document.fullScreen ||
-                document.mozFullScreen ||
-                document.webkitIsFullScreen;
-
         }
     );
 
@@ -255,11 +286,6 @@ UI.start = function () {
 
 };
 
-
-UI.setUserAvatar = function (jid, id) {
-    Avatar.setUserAvatar(jid, id);
-};
-
 UI.toggleSmileys = function () {
     Chat.toggleSmileys();
 };
@@ -278,7 +304,7 @@ UI.updateChatConversation = function (from, displayName, message) {
     return Chat.updateChatConversation(from, displayName, message);
 };
 
-UI.onMucJoined = function (jid, info) {
+function onMucJoined(jid, info) {
     Toolbar.updateRoomUrl(window.location.href);
     document.getElementById('localNick').appendChild(
         document.createTextNode(Strophe.getResourceFromJid(jid) + ' (me)')
@@ -293,15 +319,14 @@ UI.onMucJoined = function (jid, info) {
 
     // Show authenticate button if needed
     Toolbar.showAuthenticateButton(
-            Moderator.isExternalAuthEnabled() && !Moderator.isModerator());
+            xmpp.isExternalAuthEnabled() && !xmpp.isModerator());
 
     var displayName = !config.displayJids
         ? info.displayName : Strophe.getResourceFromJid(jid);
 
     if (displayName)
-        $(document).trigger('displaynamechanged',
-            ['localVideoContainer', displayName + ' (me)']);
-};
+        onDisplayNameChanged('localVideoContainer', displayName + ' (me)');
+}
 
 UI.initEtherpad = function (name) {
     Etherpad.init(name);
@@ -357,21 +382,17 @@ UI.toggleContactList = function () {
 UI.onLocalRoleChange = function (jid, info, pres) {
 
     console.info("My role changed, new role: " + info.role);
-    var isModerator = Moderator.isModerator();
+    var isModerator = xmpp.isModerator();
 
     VideoLayout.showModeratorIndicator();
     Toolbar.showAuthenticateButton(
-            Moderator.isExternalAuthEnabled() && !isModerator);
+            xmpp.isExternalAuthEnabled() && !isModerator);
 
     if (isModerator) {
-        Toolbar.closeAuthenticationWindow();
+        Authentication.closeAuthenticationWindow();
         messageHandler.notify(
             'Me', 'connected', 'Moderator rights granted !');
     }
-};
-
-UI.onDisposeConference = function (unload) {
-    Toolbar.showAuthenticateButton(false);
 };
 
 UI.onModeratorStatusChanged = function (isModerator) {
@@ -414,40 +435,11 @@ UI.onPasswordReqiured = function (callback) {
     );
 };
 
-UI.onAuthenticationRequired = function () {
-    // This is the loop that will wait for the room to be created by
-    // someone else. 'auth_required.moderator' will bring us back here.
-    authRetryId = window.setTimeout(
-        function () {
-            Moderator.allocateConferenceFocus(roomName, doJoinAfterFocus);
-        }, 5000);
-    // Show prompt only if it's not open
-    if (authDialog !== null) {
-        return;
-    }
-    // extract room name from 'room@muc.server.net'
-    var room = roomName.substr(0, roomName.indexOf('@'));
-
-    authDialog = messageHandler.openDialog(
-        'Stop',
-            'Authentication is required to create room:<br/><b>' + room +
-            '</b></br> You can either authenticate to create the room or ' +
-            'just wait for someone else to do so.',
-        true,
-        {
-            Authenticate: 'authNow'
-        },
-        function (onSubmitEvent, submitValue) {
-
-            // Do not close the dialog yet
-            onSubmitEvent.preventDefault();
-
-            // Open login popup
-            if (submitValue === 'authNow') {
-                Toolbar.authenticateClicked();
-            }
-        }
-    );
+UI.onAuthenticationRequired = function (intervalCallback) {
+    Authentication.openAuthenticationDialog(
+        roomName, intervalCallback, function () {
+            Toolbar.authenticateClicked();
+        });
 };
 
 UI.setRecordingButtonState = function (state) {
@@ -511,6 +503,8 @@ UI.showLocalAudioIndicator = function (mute) {
 };
 
 UI.generateRoomName = function() {
+    if(roomName)
+        return roomName;
     var roomnode = null;
     var path = window.location.pathname;
 
@@ -540,6 +534,7 @@ UI.generateRoomName = function() {
     }
 
     roomName = roomnode + '@' + config.hosts.muc;
+    return roomName;
 };
 
 
@@ -556,24 +551,145 @@ UI.dockToolbar = function (isDock) {
     return ToolbarToggler.dockToolbar(isDock);
 };
 
+UI.getCreadentials = function () {
+    return {
+        bosh: document.getElementById('boshURL').value,
+        password: document.getElementById('password').value,
+        jid: document.getElementById('jid').value
+    };
+};
+
+UI.disableConnect = function () {
+    document.getElementById('connect').disabled = true;
+};
+
+UI.showLoginPopup = function(callback)
+{
+    console.log('password is required');
+
+    UI.messageHandler.openTwoButtonDialog(null,
+            '<h2>Password required</h2>' +
+            '<input id="passwordrequired.username" type="text" placeholder="user@domain.net" autofocus>' +
+            '<input id="passwordrequired.password" type="password" placeholder="user password">',
+        true,
+        "Ok",
+        function (e, v, m, f) {
+            if (v) {
+                var username = document.getElementById('passwordrequired.username');
+                var password = document.getElementById('passwordrequired.password');
+
+                if (username.value !== null && password.value != null) {
+                    callback(username.value, password.value);
+                }
+            }
+        },
+        function (event) {
+            document.getElementById('passwordrequired.username').focus();
+        }
+    );
+}
+
+UI.checkForNicknameAndJoin = function () {
+
+    Authentication.closeAuthenticationDialog();
+    Authentication.stopInterval();
+
+    var nick = null;
+    if (config.useNicks) {
+        nick = window.prompt('Your nickname (optional)');
+    }
+    xmpp.joinRooom(roomName, config.useNicks, nick);
+}
+
+
 function dump(elem, filename) {
     elem = elem.parentNode;
     elem.download = filename || 'meetlog.json';
     elem.href = 'data:application/json;charset=utf-8,\n';
-    var data = {};
-    if (connection.jingle) {
-        data = connection.jingle.populateData();
-    }
+    var data = xmpp.populateData();
     var metadata = {};
     metadata.time = new Date();
     metadata.url = window.location.href;
     metadata.ua = navigator.userAgent;
-    if (connection.logger) {
-        metadata.xmpp = connection.logger.log;
+    var log = xmpp.getLogger();
+    if (log) {
+        metadata.xmpp = log;
     }
     data.metadata = metadata;
     elem.href += encodeURIComponent(JSON.stringify(data, null, '  '));
     return false;
+}
+
+UI.getRoomName = function () {
+    return roomName;
+}
+
+/**
+ * Mutes/unmutes the local video.
+ *
+ * @param mute <tt>true</tt> to mute the local video; otherwise, <tt>false</tt>
+ * @param options an object which specifies optional arguments such as the
+ * <tt>boolean</tt> key <tt>byUser</tt> with default value <tt>true</tt> which
+ * specifies whether the method was initiated in response to a user command (in
+ * contrast to an automatic decision taken by the application logic)
+ */
+function setVideoMute(mute, options) {
+    xmpp.setVideoMute(
+        mute,
+        function (mute) {
+            var video = $('#video');
+            var communicativeClass = "icon-camera";
+            var muteClass = "icon-camera icon-camera-disabled";
+
+            if (mute) {
+                video.removeClass(communicativeClass);
+                video.addClass(muteClass);
+            } else {
+                video.removeClass(muteClass);
+                video.addClass(communicativeClass);
+            }
+        },
+        options);
+}
+
+/**
+ * Mutes/unmutes the local video.
+ */
+UI.toggleVideo = function () {
+    UIUtil.buttonClick("#video", "icon-camera icon-camera-disabled");
+
+    setVideoMute(!RTC.localVideo.isMuted());
+};
+
+/**
+ * Mutes / unmutes audio for the local participant.
+ */
+UI.toggleAudio = function() {
+    UI.setAudioMuted(!RTC.localAudio.isMuted());
+};
+
+/**
+ * Sets muted audio state for the local participant.
+ */
+UI.setAudioMuted = function (mute) {
+
+    if(!xmpp.setAudioMute(mute, function () {
+        UI.showLocalAudioIndicator(mute);
+
+        UIUtil.buttonClick("#mute", "icon-microphone icon-mic-disabled");
+    }))
+    {
+        // We still click the button.
+        UIUtil.buttonClick("#mute", "icon-microphone icon-mic-disabled");
+        return;
+    }
+
+}
+
+UI.onLastNChanged = function (oldValue, newValue) {
+    if (config.muteLocalVideoIfNotInLastN) {
+        setVideoMute(!newValue, { 'byUser': false });
+    }
 }
 
 module.exports = UI;

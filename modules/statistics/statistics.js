@@ -59,6 +59,14 @@ function onStreamCreated(stream)
     localStats.start();
 }
 
+function onDisposeConference(onUnload) {
+    stopRemote();
+    if(onUnload) {
+        stopLocal();
+        eventEmitter.removeAllListeners();
+    }
+}
+
 
 var statistics =
 {
@@ -117,19 +125,12 @@ var statistics =
         startRemoteStats(event.peerconnection);
     },
 
-    onDisposeConference: function (onUnload) {
-        stopRemote();
-        if(onUnload) {
-            stopLocal();
-            eventEmitter.removeAllListeners();
-        }
-    },
-
     start: function () {
         this.addConnectionStatsListener(connectionquality.updateLocalStats);
         this.addRemoteStatsStopListener(connectionquality.stopSendingStats);
         RTC.addStreamListener(onStreamCreated,
             StreamEventTypes.EVENT_TYPE_LOCAL_CREATED);
+        xmpp.addListener(XMPPEvents.DISPOSE_CONFERENCE, onDisposeConference);
     }
 
 };

@@ -1,4 +1,4 @@
-/* global $, Util, connection, nickname:true, showToolbar */
+/* global $, Util, nickname:true, showToolbar */
 var Replacement = require("./Replacement");
 var CommandsProcessor = require("./Commands");
 var ToolbarToggler = require("../../toolbars/ToolbarToggler");
@@ -184,8 +184,7 @@ var Chat = (function (my) {
                     nickname = val;
                     window.localStorage.displayname = nickname;
 
-                    connection.emuc.addDisplayNameToPresence(nickname);
-                    connection.emuc.sendPresence();
+                    xmpp.addToPresence("displayName", nickname);
 
                     Chat.setChatConversationMode(true);
 
@@ -208,7 +207,7 @@ var Chat = (function (my) {
                 else
                 {
                     var message = Util.escapeHtml(value);
-                    connection.emuc.sendMessage(message, nickname);
+                    xmpp.sendChatMessage(message, nickname);
                 }
             }
         });
@@ -234,7 +233,7 @@ var Chat = (function (my) {
     my.updateChatConversation = function (from, displayName, message) {
         var divClassName = '';
 
-        if (connection.emuc.myroomjid === from) {
+        if (xmpp.myJid() === from) {
             divClassName = "localuser";
         }
         else {

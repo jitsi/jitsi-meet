@@ -14,20 +14,20 @@ var KeyboardShortcut = (function(my) {
         77: {
             character: "M",
             id: "mutePopover",
-            function: toggleAudio
+            function: UI.toggleAudio
         },
         84: {
             character: "T",
             function: function() {
                 if(!RTC.localAudio.isMuted()) {
-                    toggleAudio();
+                    UI.toggleAudio();
                 }
             }
         },
         86: {
             character: "V",
             id: "toggleVideoPopover",
-            function: toggleVideo
+            function: UI.toggleVideo
         }
     };
 
@@ -53,7 +53,7 @@ var KeyboardShortcut = (function(my) {
         if(!($(":focus").is("input[type=text]") || $(":focus").is("input[type=password]") || $(":focus").is("textarea"))) {
             if(e.which === "T".charCodeAt(0)) {
                 if(RTC.localAudio.isMuted()) {
-                    toggleAudio();
+                    UI.toggleAudio();
                 }
             }
         }

@@ -1,22 +1,24 @@
-/* global $, buttonClick, config, lockRoom,  Moderator, roomName,
-   setSharedKey, sharedKey, Util */
+/* global $, buttonClick, config, lockRoom,
+   setSharedKey, Util */
 var messageHandler = require("../util/MessageHandler");
 var BottomToolbar = require("./BottomToolbar");
 var Prezi = require("../prezi/Prezi");
 var Etherpad = require("../etherpad/Etherpad");
 var PanelToggler = require("../side_pannels/SidePanelToggler");
+var Authentication = require("../authentication/Authentication");
+var UIUtil = require("../util/UIUtil");
 
 var roomUrl = null;
 var sharedKey = '';
-var authenticationWindow = null;
+var UI = null;
 
 var buttonHandlers =
 {
     "toolbar_button_mute": function () {
-        return toggleAudio();
+        return UI.toggleAudio();
     },
     "toolbar_button_camera": function () {
-        return toggleVideo();
+        return UI.toggleVideo();
     },
     "toolbar_button_authentication": function () {
         return Toolbar.authenticateClicked();
@@ -44,7 +46,7 @@ var buttonHandlers =
     },
     "toolbar_button_fullScreen": function()
     {
-        buttonClick("#fullScreen", "icon-full-screen icon-exit-full-screen");
+        UIUtil.buttonClick("#fullScreen", "icon-full-screen icon-exit-full-screen");
         return Toolbar.toggleFullScreen();
     },
     "toolbar_button_sip": function () {
@@ -59,9 +61,7 @@ var buttonHandlers =
 };
 
 function hangup() {
-    disposeConference();
-    sessionTerminated = true;
-    connection.emuc.doLeave();
+    xmpp.disposeConference();
     if(config.enableWelcomePage)
     {
         setTimeout(function()
@@ -90,7 +90,29 @@ function hangup() {
  */
 
 function toggleRecording() {
-    Recording.toggleRecording();
+    xmpp.toggleRecording(function (callback) {
+        UI.messageHandler.openTwoButtonDialog(null,
+                '<h2>Enter recording token</h2>' +
+                '<input id="recordingToken" type="text" ' +
+                'placeholder="token" autofocus>',
+            false,
+            "Save",
+            function (e, v, m, f) {
+                if (v) {
+                    var token = document.getElementById('recordingToken');
+
+                    if (token.value) {
+                        callback(Util.escapeHtml(token.value));
+                    }
+                }
+            },
+            function (event) {
+                document.getElementById('recordingToken').focus();
+            },
+            function () {
+            }
+        );
+    }, Toolbar.setRecordingButtonState, Toolbar.setRecordingButtonState);
 }
 
 /**
@@ -101,7 +123,7 @@ function lockRoom(lock) {
     if (lock)
         currentSharedKey = sharedKey;
 
-    connection.emuc.lockRoom(currentSharedKey, function (res) {
+    xmpp.lockRoom(currentSharedKey, function (res) {
         // password is required
         if (sharedKey)
         {
@@ -183,9 +205,8 @@ function callSipButtonClicked()
             if (v) {
                 var numberInput = document.getElementById('sipNumber');
                 if (numberInput.value) {
-                    connection.rayo.dial(
-                        numberInput.value, 'fromnumber',
-                        roomName, sharedKey);
+                    xmpp.dial(numberInput.value, 'fromnumber',
+                        UI.getRoomName(), sharedKey);
                 }
             }
         },
@@ -197,9 +218,10 @@ function callSipButtonClicked()
 
 var Toolbar = (function (my) {
 
-    my.init = function () {
+    my.init = function (ui) {
         for(var k in buttonHandlers)
             $("#" + k).click(buttonHandlers[k]);
+        UI = ui;
     }
 
     /**
@@ -210,35 +232,15 @@ var Toolbar = (function (my) {
         sharedKey = sKey;
     };
 
-    my.closeAuthenticationWindow = function () {
-        if (authenticationWindow) {
-            authenticationWindow.close();
-            authenticationWindow = null;
-        }
-    }
-
     my.authenticateClicked = function () {
-        // If auth window exists just bring it to the front
-        if (authenticationWindow) {
-            authenticationWindow.focus();
-            return;
-        }
+        Authentication.focusAuthenticationWindow();
         // Get authentication URL
-        Moderator.getAuthUrl(function (url) {
+        xmpp.getAuthUrl(UI.getRoomName(), function (url) {
             // Open popup with authentication URL
-            authenticationWindow = messageHandler.openCenteredPopup(
-                url, 910, 660,
-                // On closed
-                function () {
-                    // Close authentication dialog if opened
-                    if (authDialog) {
-                        messageHandler.closeDialog();
-                        authDialog = null;
-                    }
-                    // On popup closed - retry room allocation
-                    Moderator.allocateConferenceFocus(roomName, doJoinAfterFocus);
-                    authenticationWindow = null;
-                });
+            var authenticationWindow = Authentication.createAuthenticationWindow(function () {
+                // On popup closed - retry room allocation
+                xmpp.allocateConferenceFocus(UI.getRoomName(), UI.checkForNicknameAndJoin);
+            }, url);
             if (!authenticationWindow) {
                 Toolbar.showAuthenticateButton(true);
                 messageHandler.openMessageDialog(
@@ -279,7 +281,7 @@ var Toolbar = (function (my) {
      */
     my.openLockDialog = function () {
         // Only the focus is able to set a shared key.
-        if (!Moderator.isModerator()) {
+        if (!xmpp.isModerator()) {
             if (sharedKey) {
                 messageHandler.openMessageDialog(null,
                         "This conversation is currently protected by" +
@@ -436,14 +438,14 @@ var Toolbar = (function (my) {
      */
     my.unlockLockButton = function () {
         if ($("#lockIcon").hasClass("icon-security-locked"))
-            buttonClick("#lockIcon", "icon-security icon-security-locked");
+            UIUtil.buttonClick("#lockIcon", "icon-security icon-security-locked");
     };
     /**
      * Updates the lock button state to locked.
      */
     my.lockLockButton = function () {
         if ($("#lockIcon").hasClass("icon-security"))
-            buttonClick("#lockIcon", "icon-security icon-security-locked");
+            UIUtil.buttonClick("#lockIcon", "icon-security icon-security-locked");
     };
 
     /**
@@ -486,7 +488,7 @@ var Toolbar = (function (my) {
 
     // Shows or hides SIP calls button
     my.showSipCallButton = function (show) {
-        if (Moderator.isSipGatewayEnabled() && show) {
+        if (xmpp.isSipGatewayEnabled() && show) {
             $('#sipCallButton').css({display: "inline"});
         } else {
             $('#sipCallButton').css({display: "none"});

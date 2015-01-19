@@ -159,43 +159,19 @@ SimulcastReceiver.prototype.getReceivingSSRC = function (jid) {
 
     // If we haven't receiving a "changed" event yet, then we must be receiving
     // low quality (that the sender always streams).
-    if (!ssrc && connection.jingle) {
-        var session;
-        var i, j, k;
-
-        var keys = Object.keys(connection.jingle.sessions);
-        for (i = 0; i < keys.length; i++) {
-            var sid = keys[i];
-
-            if (ssrc) {
-                // stream found, stop.
-                break;
-            }
-
-            session = connection.jingle.sessions[sid];
-            if (session.remoteStreams) {
-                for (j = 0; j < session.remoteStreams.length; j++) {
-                    var remoteStream = session.remoteStreams[j];
-
-                    if (ssrc) {
-                        // stream found, stop.
-                        break;
-                    }
-                    var tracks = remoteStream.getVideoTracks();
-                    if (tracks) {
-                        for (k = 0; k < tracks.length; k++) {
-                            var track = tracks[k];
-                            var msid = [remoteStream.id, track.id].join(' ');
-                            var _ssrc = this._remoteMaps.msid2ssrc[msid];
-                            var _jid = ssrc2jid[_ssrc];
-                            var quality = this._remoteMaps.msid2Quality[msid];
-                            if (jid == _jid && quality == 0) {
-                                ssrc = _ssrc;
-                                // stream found, stop.
-                                break;
-                            }
-                        }
-                    }
+    if(!ssrc)
+    {
+        var remoteStreamObject = RTC.remoteStreams[jid][MediaStreamType.VIDEO_TYPE];
+        var remoteStream = remoteStreamObject.getOriginalStream();
+        var tracks = remoteStream.getVideoTracks();
+        if (tracks) {
+            for (var k = 0; k < tracks.length; k++) {
+                var track = tracks[k];
+                var msid = [remoteStream.id, track.id].join(' ');
+                var _ssrc = this._remoteMaps.msid2ssrc[msid];
+                var quality = this._remoteMaps.msid2Quality[msid];
+                if (quality == 0) {
+                    ssrc = _ssrc;
                 }
             }
         }
@@ -206,47 +182,32 @@ SimulcastReceiver.prototype.getReceivingSSRC = function (jid) {
 
 SimulcastReceiver.prototype.getReceivingVideoStreamBySSRC = function (ssrc)
 {
-    var session, electedStream;
+    var sid, electedStream;
     var i, j, k;
-    if (connection.jingle) {
-        var keys = Object.keys(connection.jingle.sessions);
-        for (i = 0; i < keys.length; i++) {
-            var sid = keys[i];
-
-            if (electedStream) {
-                // stream found, stop.
-                break;
-            }
-
-            session = connection.jingle.sessions[sid];
-            if (session.remoteStreams) {
-                for (j = 0; j < session.remoteStreams.length; j++) {
-                    var remoteStream = session.remoteStreams[j];
-
-                    if (electedStream) {
-                        // stream found, stop.
-                        break;
-                    }
-                    var tracks = remoteStream.getVideoTracks();
-                    if (tracks) {
-                        for (k = 0; k < tracks.length; k++) {
-                            var track = tracks[k];
-                            var msid = [remoteStream.id, track.id].join(' ');
-                            var tmp = this._remoteMaps.msid2ssrc[msid];
-                            if (tmp == ssrc) {
-                                electedStream = new webkitMediaStream([track]);
-                                // stream found, stop.
-                                break;
-                            }
-                        }
-                    }
+    var jid = ssrc2jid[ssrc];
+    if(jid)
+    {
+        var remoteStreamObject = RTC.remoteStreams[jid][MediaStreamType.VIDEO_TYPE];
+        var remoteStream = remoteStreamObject.getOriginalStream();
+        var tracks = remoteStream.getVideoTracks();
+        if (tracks) {
+            for (k = 0; k < tracks.length; k++) {
+                var track = tracks[k];
+                var msid = [remoteStream.id, track.id].join(' ');
+                var tmp = this._remoteMaps.msid2ssrc[msid];
+                if (tmp == ssrc) {
+                    electedStream = new webkitMediaStream([track]);
+                    sid = remoteStreamObject.sid;
+                    // stream found, stop.
+                    break;
                 }
             }
         }
+
     }
 
     return {
-        session: session,
+        sid: sid,
         stream: electedStream
     };
 };

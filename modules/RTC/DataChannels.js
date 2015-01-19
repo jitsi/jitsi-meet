@@ -1,4 +1,4 @@
-/* global connection, Strophe, updateLargeVideo, focusedVideoSrc*/
+/* global Strophe, updateLargeVideo, focusedVideoSrc*/
 
 // cache datachannels to avoid garbage collection
 // https://code.google.com/p/chromium/issues/detail?id=405545
@@ -91,7 +91,7 @@ var DataChannels =
                             newValue = new Boolean(newValue).valueOf();
                         }
                     }
-                    $(document).trigger('inlastnchanged', [oldValue, newValue]);
+                    UI.onLastNChanged(oldValue, newValue);
                 }
                 else if ("LastNEndpointsChangeEvent" === colibriClass)
                 {

@@ -1,4 +1,4 @@
-/* global $, config, connection, dockToolbar, Moderator,
+/* global $, config, dockToolbar,
    setLargeVideoVisible, Util */
 
 var VideoLayout = require("../videolayout/VideoLayout");
@@ -30,8 +30,7 @@ function resize() {
  * Shares the Etherpad name with other participants.
  */
 function shareEtherpad() {
-    connection.emuc.addEtherpadToPresence(etherpadName);
-    connection.emuc.sendPresence();
+    xmpp.addToPresence("etherpad", etherpadName);
 }
 
 /**

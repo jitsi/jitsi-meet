@@ -29,8 +29,7 @@ function startSendingStats() {
  * Sends statistics to other participants
  */
 function sendStats() {
-    connection.emuc.addConnectionInfoToPresence(convertToMUCStats(stats));
-    connection.emuc.sendPresence();
+    xmpp.addToPresence("connectionQuality", convertToMUCStats(stats));
 }
 
 /**

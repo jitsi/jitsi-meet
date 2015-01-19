@@ -262,3 +262,5 @@ TraceablePeerConnection.prototype.getStats = function(callback, errback) {
     }
 };
 
+module.exports = TraceablePeerConnection;
+

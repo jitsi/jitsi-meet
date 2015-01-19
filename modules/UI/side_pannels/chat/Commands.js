@@ -32,7 +32,7 @@ function getCommand(message)
 function processTopic(commandArguments)
 {
     var topic = Util.escapeHtml(commandArguments);
-    connection.emuc.setSubject(topic);
+    xmpp.setSubject(topic);
 }
 
 /**

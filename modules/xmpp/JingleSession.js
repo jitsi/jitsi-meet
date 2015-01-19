@@ -1,6 +1,11 @@
 /* jshint -W117 */
+var TraceablePeerConnection = require("./TraceablePeerConnection");
+var SDPDiffer = require("./SDPDiffer");
+var SDPUtil = require("./SDPUtil");
+var SDP = require("./SDP");
+
 // Jingle stuff
-function JingleSession(me, sid, connection) {
+function JingleSession(me, sid, connection, service) {
     this.me = me;
     this.sid = sid;
     this.connection = connection;
@@ -12,13 +17,13 @@ function JingleSession(me, sid, connection) {
     this.localSDP = null;
     this.remoteSDP = null;
     this.relayedStreams = [];
-    this.remoteStreams = [];
     this.startTime = null;
     this.stopTime = null;
     this.media_constraints = null;
     this.pc_constraints = null;
     this.ice_config = {};
     this.drip_container = [];
+    this.service = service;
 
     this.usetrickle = true;
     this.usepranswer = false; // early transport warmup -- mind you, this might fail. depends on webrtc issue 1718
@@ -73,16 +78,11 @@ JingleSession.prototype.initiate = function (peerjid, isInitiator) {
         self.sendIceCandidate(event.candidate);
     };
     this.peerconnection.onaddstream = function (event) {
-        self.remoteStreams.push(event.stream);
         console.log("REMOTE STREAM ADDED: " + event.stream + " - " + event.stream.id);
-        $(document).trigger('remotestreamadded.jingle', [event, self.sid]);
+        self.remoteStreamAdded(event);
     };
     this.peerconnection.onremovestream = function (event) {
         // Remove the stream from remoteStreams
-        var streamIdx = self.remoteStreams.indexOf(event.stream);
-        if(streamIdx !== -1){
-            self.remoteStreams.splice(streamIdx, 1);
-        }
         // FIXME: remotestreamremoved.jingle not defined anywhere(unused)
         $(document).trigger('remotestreamremoved.jingle', [event, self.sid]);
     };
@@ -99,7 +99,7 @@ JingleSession.prototype.initiate = function (peerjid, isInitiator) {
                 this.stopTime = new Date();
                 break;
         }
-        $(document).trigger('iceconnectionstatechange.jingle', [self.sid, self]);
+        onIceConnectionStateChange(self.sid, self);
     };
     // add any local and relayed stream
     RTC.localStreams.forEach(function(stream) {
@@ -109,6 +109,49 @@ JingleSession.prototype.initiate = function (peerjid, isInitiator) {
         self.peerconnection.addStream(stream);
     });
 };
+
+function onIceConnectionStateChange(sid, session) {
+    switch (session.peerconnection.iceConnectionState) {
+        case 'checking':
+            session.timeChecking = (new Date()).getTime();
+            session.firstconnect = true;
+            break;
+        case 'completed': // on caller side
+        case 'connected':
+            if (session.firstconnect) {
+                session.firstconnect = false;
+                var metadata = {};
+                metadata.setupTime
+                    = (new Date()).getTime() - session.timeChecking;
+                session.peerconnection.getStats(function (res) {
+                    if(res && res.result) {
+                        res.result().forEach(function (report) {
+                            if (report.type == 'googCandidatePair' &&
+                                report.stat('googActiveConnection') == 'true') {
+                                metadata.localCandidateType
+                                    = report.stat('googLocalCandidateType');
+                                metadata.remoteCandidateType
+                                    = report.stat('googRemoteCandidateType');
+
+                                // log pair as well so we can get nice pie
+                                // charts
+                                metadata.candidatePair
+                                    = report.stat('googLocalCandidateType') +
+                                        ';' +
+                                        report.stat('googRemoteCandidateType');
+
+                                if (report.stat('googRemoteAddress').indexOf('[') === 0)
+                                {
+                                    metadata.ipv6 = true;
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+            break;
+    }
+}
 
 JingleSession.prototype.accept = function () {
     var self = this;
@@ -145,12 +188,13 @@ JingleSession.prototype.accept = function () {
         // FIXME: change any inactive to sendrecv or whatever they were originally
         sdp = sdp.replace('a=inactive', 'a=sendrecv');
     }
+    var self = this;
     this.peerconnection.setLocalDescription(new RTCSessionDescription({type: 'answer', sdp: sdp}),
         function () {
             //console.log('setLocalDescription success');
-            $(document).trigger('setLocalDescription.jingle', [self.sid]);
+            self.setLocalDescription();
 
-            this.connection.sendIQ(accept,
+            self.connection.sendIQ(accept,
                 function () {
                     var ack = {};
                     ack.source = 'answer';
@@ -347,8 +391,8 @@ JingleSession.prototype.createdOffer = function (sdp) {
                 action: 'session-initiate',
                 initiator: this.initiator,
                 sid: this.sid});
-        this.localSDP.toJingle(init, this.initiator == this.me ? 'initiator' : 'responder', this.localStreamsSSRC);
-        this.connection.sendIQ(init,
+        self.localSDP.toJingle(init, this.initiator == this.me ? 'initiator' : 'responder', this.localStreamsSSRC);
+        self.connection.sendIQ(init,
             function () {
                 var ack = {};
                 ack.source = 'offer';
@@ -369,13 +413,11 @@ JingleSession.prototype.createdOffer = function (sdp) {
     sdp.sdp = this.localSDP.raw;
     this.peerconnection.setLocalDescription(sdp,
         function () {
-            if(this.usetrickle)
+            if(self.usetrickle)
             {
                 sendJingle();
-                $(document).trigger('setLocalDescription.jingle', [self.sid]);
             }
-            else
-                $(document).trigger('setLocalDescription.jingle', [self.sid]);
+            self.setLocalDescription();
             //console.log('setLocalDescription success');
         },
         function (e) {
@@ -587,7 +629,7 @@ JingleSession.prototype.createdAnswer = function (sdp, provisional) {
                 var publicLocalDesc = simulcast.reverseTransformLocalDescription(sdp);
                 var publicLocalSDP = new SDP(publicLocalDesc.sdp);
                 publicLocalSDP.toJingle(accept, self.initiator == self.me ? 'initiator' : 'responder', ssrcs);
-                this.connection.sendIQ(accept,
+                self.connection.sendIQ(accept,
                     function () {
                         var ack = {};
                         ack.source = 'answer';
@@ -610,10 +652,8 @@ JingleSession.prototype.createdAnswer = function (sdp, provisional) {
             //console.log('setLocalDescription success');
             if (self.usetrickle && !self.usepranswer) {
                 sendJingle();
-                $(document).trigger('setLocalDescription.jingle', [self.sid]);
             }
-            else
-                $(document).trigger('setLocalDescription.jingle', [self.sid]);
+            self.setLocalDescription();
         },
         function (e) {
             console.error('setLocalDescription failed', e);
@@ -799,7 +839,7 @@ JingleSession.prototype.modifySources = function (successCallback) {
     if (this.peerconnection.signalingState == 'closed') return;
     if (!(this.addssrc.length || this.removessrc.length || this.pendingop !== null || this.switchstreams)){
         // There is nothing to do since scheduled job might have been executed by another succeeding call
-        $(document).trigger('setLocalDescription.jingle', [self.sid]);
+        this.setLocalDescription();
         if(successCallback){
             successCallback();
         }
@@ -889,7 +929,7 @@ JingleSession.prototype.modifySources = function (successCallback) {
                     self.peerconnection.setLocalDescription(modifiedAnswer,
                         function() {
                             //console.log('modified setLocalDescription ok');
-                            $(document).trigger('setLocalDescription.jingle', [self.sid]);
+                            self.setLocalDescription();
                             if(successCallback){
                                 successCallback();
                             }
@@ -1064,12 +1104,20 @@ JingleSession.prototype.setVideoMute = function (mute, callback, options) {
     } else if (this.videoMuteByUser) {
         return;
     }
+
+    var self = this;
+    var localCallback = function (mute) {
+        self.connection.emuc.addVideoInfoToPresence(mute);
+        self.connection.emuc.sendPresence();
+        return callback(mute)
+    };
+
     if (mute == RTC.localVideo.isMuted())
     {
         // Even if no change occurs, the specified callback is to be executed.
         // The specified callback may, optionally, return a successCallback
         // which is to be executed as well.
-        var successCallback = callback(mute);
+        var successCallback = localCallback(mute);
 
         if (successCallback) {
             successCallback();
@@ -1079,14 +1127,14 @@ JingleSession.prototype.setVideoMute = function (mute, callback, options) {
 
         this.hardMuteVideo(mute);
 
-        this.modifySources(callback(mute));
+        this.modifySources(localCallback(mute));
     }
 };
 
 // SDP-based mute by going recvonly/sendrecv
 // FIXME: should probably black out the screen as well
 JingleSession.prototype.toggleVideoMute = function (callback) {
-    setVideoMute(RTC.localVideo.isMuted(), callback);
+    this.service.setVideoMute(RTC.localVideo.isMuted(), callback);
 };
 
 JingleSession.prototype.hardMuteVideo = function (muted) {
@@ -1172,8 +1220,170 @@ JingleSession.onJingleError = function (session, error)
 
 JingleSession.onJingleFatalError = function (session, error)
 {
-    sessionTerminated = true;
+    this.service.sessionTerminated = true;
     connection.emuc.doLeave();
     UI.messageHandler.showError(  "Sorry",
         "Internal application error[setRemoteDescription]");
 }
+
+JingleSession.prototype.setLocalDescription = function () {
+    // put our ssrcs into presence so other clients can identify our stream
+    var newssrcs = [];
+    var media = simulcast.parseMedia(this.peerconnection.localDescription);
+    media.forEach(function (media) {
+
+        if(Object.keys(media.sources).length > 0) {
+            // TODO(gp) maybe exclude FID streams?
+            Object.keys(media.sources).forEach(function (ssrc) {
+                newssrcs.push({
+                    'ssrc': ssrc,
+                    'type': media.type,
+                    'direction': media.direction
+                });
+            });
+        }
+        else if(this.localStreamsSSRC && this.localStreamsSSRC[media.type])
+        {
+            newssrcs.push({
+                'ssrc': this.localStreamsSSRC[media.type],
+                'type': media.type,
+                'direction': media.direction
+            });
+        }
+
+    });
+
+    console.log('new ssrcs', newssrcs);
+
+    // Have to clear presence map to get rid of removed streams
+    this.connection.emuc.clearPresenceMedia();
+
+    if (newssrcs.length > 0) {
+        for (var i = 1; i <= newssrcs.length; i ++) {
+            // Change video type to screen
+            if (newssrcs[i-1].type === 'video' && desktopsharing.isUsingScreenStream()) {
+                newssrcs[i-1].type = 'screen';
+            }
+            this.connection.emuc.addMediaToPresence(i,
+                newssrcs[i-1].type, newssrcs[i-1].ssrc, newssrcs[i-1].direction);
+        }
+
+        this.connection.emuc.sendPresence();
+    }
+}
+
+// an attempt to work around https://github.com/jitsi/jitmeet/issues/32
+function sendKeyframe(pc) {
+    console.log('sendkeyframe', pc.iceConnectionState);
+    if (pc.iceConnectionState !== 'connected') return; // safe...
+    pc.setRemoteDescription(
+        pc.remoteDescription,
+        function () {
+            pc.createAnswer(
+                function (modifiedAnswer) {
+                    pc.setLocalDescription(
+                        modifiedAnswer,
+                        function () {
+                            // noop
+                        },
+                        function (error) {
+                            console.log('triggerKeyframe setLocalDescription failed', error);
+                            UI.messageHandler.showError();
+                        }
+                    );
+                },
+                function (error) {
+                    console.log('triggerKeyframe createAnswer failed', error);
+                    UI.messageHandler.showError();
+                }
+            );
+        },
+        function (error) {
+            console.log('triggerKeyframe setRemoteDescription failed', error);
+            UI.messageHandler.showError();
+        }
+    );
+}
+
+
+JingleSession.prototype.remoteStreamAdded = function (data) {
+    var self = this;
+    var thessrc;
+
+    // look up an associated JID for a stream id
+    if (data.stream.id && data.stream.id.indexOf('mixedmslabel') === -1) {
+        // look only at a=ssrc: and _not_ at a=ssrc-group: lines
+
+        var ssrclines
+            = SDPUtil.find_lines(this.peerconnection.remoteDescription.sdp, 'a=ssrc:');
+        ssrclines = ssrclines.filter(function (line) {
+            // NOTE(gp) previously we filtered on the mslabel, but that property
+            // is not always present.
+            // return line.indexOf('mslabel:' + data.stream.label) !== -1;
+
+            return ((line.indexOf('msid:' + data.stream.id) !== -1));
+        });
+        if (ssrclines.length) {
+            thessrc = ssrclines[0].substring(7).split(' ')[0];
+
+            // We signal our streams (through Jingle to the focus) before we set
+            // our presence (through which peers associate remote streams to
+            // jids). So, it might arrive that a remote stream is added but
+            // ssrc2jid is not yet updated and thus data.peerjid cannot be
+            // successfully set. Here we wait for up to a second for the
+            // presence to arrive.
+
+            if (!ssrc2jid[thessrc]) {
+                // TODO(gp) limit wait duration to 1 sec.
+                setTimeout(function(d) {
+                    return function() {
+                        self.remoteStreamAdded(d);
+                    }
+                }(data), 250);
+                return;
+            }
+
+            // ok to overwrite the one from focus? might save work in colibri.js
+            console.log('associated jid', ssrc2jid[thessrc], data.peerjid);
+            if (ssrc2jid[thessrc]) {
+                data.peerjid = ssrc2jid[thessrc];
+            }
+        }
+    }
+
+    //TODO: this code should be removed when firefox implement multistream support
+    if(RTC.getBrowserType() == RTCBrowserType.RTC_BROWSER_FIREFOX)
+    {
+        if((notReceivedSSRCs.length == 0) ||
+            !ssrc2jid[notReceivedSSRCs[notReceivedSSRCs.length - 1]])
+        {
+            // TODO(gp) limit wait duration to 1 sec.
+            setTimeout(function(d) {
+                return function() {
+                    self.remoteStreamAdded(d);
+                }
+            }(data), 250);
+            return;
+        }
+
+        thessrc = notReceivedSSRCs.pop();
+        if (ssrc2jid[thessrc]) {
+            data.peerjid = ssrc2jid[thessrc];
+        }
+    }
+
+    RTC.createRemoteStream(data, this.sid, thessrc);
+
+    var isVideo = data.stream.getVideoTracks().length > 0;
+    // an attempt to work around https://github.com/jitsi/jitmeet/issues/32
+    if (isVideo &&
+        data.peerjid && this.peerjid === data.peerjid &&
+        data.stream.getVideoTracks().length === 0 &&
+        RTC.localVideo.getTracks().length > 0) {
+        window.setTimeout(function () {
+            sendKeyframe(self.peerconnection);
+        }, 3000);
+    }
+}
+
+module.exports = JingleSession;
