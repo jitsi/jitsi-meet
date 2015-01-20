@@ -54,6 +54,9 @@ function JingleSession(me, sid, connection, service) {
     this.videoMuteByUser = false;
 }
 
+//TODO: this array must be removed when firefox implement multistream support
+JingleSession.notReceivedSSRCs = [];
+
 JingleSession.prototype.initiate = function (peerjid, isInitiator) {
     var self = this;
     if (this.state !== null) {
@@ -1355,8 +1358,8 @@ JingleSession.prototype.remoteStreamAdded = function (data) {
     //TODO: this code should be removed when firefox implement multistream support
     if(RTC.getBrowserType() == RTCBrowserType.RTC_BROWSER_FIREFOX)
     {
-        if((notReceivedSSRCs.length == 0) ||
-            !ssrc2jid[notReceivedSSRCs[notReceivedSSRCs.length - 1]])
+        if((JingleSession.notReceivedSSRCs.length == 0) ||
+            !ssrc2jid[JingleSession.notReceivedSSRCs[JingleSession.notReceivedSSRCs.length - 1]])
         {
             // TODO(gp) limit wait duration to 1 sec.
             setTimeout(function(d) {
@@ -1367,7 +1370,7 @@ JingleSession.prototype.remoteStreamAdded = function (data) {
             return;
         }
 
-        thessrc = notReceivedSSRCs.pop();
+        thessrc = JingleSession.notReceivedSSRCs.pop();
         if (ssrc2jid[thessrc]) {
             data.peerjid = ssrc2jid[thessrc];
         }
@@ -3079,15 +3082,15 @@ function setRecordingToken(token) {
     recordingToken = token;
 }
 
-function setRecording(state, token, callback) {
+function setRecording(state, token, callback, connection) {
     if (useJirecon){
-        this.setRecordingJirecon(state, token, callback);
+        this.setRecordingJirecon(state, token, callback, connection);
     } else {
-        this.setRecordingColibri(state, token, callback);
+        this.setRecordingColibri(state, token, callback, connection);
     }
 }
 
-function setRecordingJirecon(state, token, callback) {
+function setRecordingJirecon(state, token, callback, connection) {
     if (state == recordingEnabled){
         return;
     }
@@ -3126,8 +3129,8 @@ function setRecordingJirecon(state, token, callback) {
 // Sends a COLIBRI message which enables or disables (according to 'state')
 // the recording on the bridge. Waits for the result IQ and calls 'callback'
 // with the new recording state, according to the IQ.
-function setRecordingColibri(state, token, callback) {
-    var elem = $iq({to: focusMucJid, type: 'set'});
+function setRecordingColibri(state, token, callback, connection) {
+    var elem = $iq({to: connection.emuc.focusMucJid, type: 'set'});
     elem.c('conference', {
         xmlns: 'http://jitsi.org/protocol/colibri'
     });
@@ -3151,7 +3154,7 @@ function setRecordingColibri(state, token, callback) {
 
 var Recording = {
     toggleRecording: function (tokenEmptyCallback,
-                               startingCallback, startedCallback) {
+                               startingCallback, startedCallback, connection) {
         if (!Moderator.isModerator()) {
             console.log(
                     'non-focus, or conference not yet organized:' +
@@ -3199,7 +3202,8 @@ var Recording = {
                 }
                 startedCallback(state);
 
-            }
+            },
+            connection
         );
     }
 
@@ -3215,6 +3219,7 @@ module.exports = Recording;
 var bridgeIsDown = false;
 
 var Moderator = require("./moderator");
+var JingleSession = require("./JingleSession");
 
 module.exports = function(XMPP, eventEmitter) {
     Strophe.addConnectionPlugin('emuc', {
@@ -3228,6 +3233,7 @@ module.exports = function(XMPP, eventEmitter) {
         joined: false,
         isOwner: false,
         role: null,
+        focusMucJid: null,
         init: function (conn) {
             this.connection = conn;
         },
@@ -3400,7 +3406,7 @@ module.exports = function(XMPP, eventEmitter) {
                 this.list_members.push(from);
                 console.log('entered', from, member);
                 if (member.isFocus) {
-                    focusMucJid = from;
+                    this.focusMucJid = from;
                     console.info("Ignore focus: " + from + ", real JID: " + member.jid);
                 }
                 else {
@@ -3753,8 +3759,6 @@ module.exports = function(XMPP, eventEmitter) {
 
             API.triggerEvent("participantLeft", {jid: jid});
 
-            delete jid2Ssrc[jid];
-
             this.connection.jingle.terminateByJid(jid);
 
             if (this.getPrezi(jid)) {
@@ -3777,7 +3781,6 @@ module.exports = function(XMPP, eventEmitter) {
             Object.keys(ssrc2jid).forEach(function (ssrc) {
                 if (ssrc2jid[ssrc] == jid) {
                     delete ssrc2jid[ssrc];
-                    delete ssrc2videoType[ssrc];
                 }
             });
 
@@ -3786,10 +3789,10 @@ module.exports = function(XMPP, eventEmitter) {
                 //console.log(jid, 'assoc ssrc', ssrc.getAttribute('type'), ssrc.getAttribute('ssrc'));
                 var ssrcV = ssrc.getAttribute('ssrc');
                 ssrc2jid[ssrcV] = from;
-                notReceivedSSRCs.push(ssrcV);
+                JingleSession.notReceivedSSRCs.push(ssrcV);
+
 
                 var type = ssrc.getAttribute('type');
-                ssrc2videoType[ssrcV] = type;
 
                 var direction = ssrc.getAttribute('direction');
 
@@ -3822,7 +3825,7 @@ module.exports = function(XMPP, eventEmitter) {
 };
 
 
-},{"./moderator":6}],9:[function(require,module,exports){
+},{"./JingleSession":1,"./moderator":6}],9:[function(require,module,exports){
 /* jshint -W117 */
 
 var JingleSession = require("./JingleSession");
@@ -4202,7 +4205,7 @@ module.exports = function (XMPP) {
         },
         setMute: function (jid, mute) {
             console.info("set mute", mute);
-            var iqToFocus = $iq({to: focusMucJid, type: 'set'})
+            var iqToFocus = $iq({to: this.connection.emuc.focusMucJid, type: 'set'})
                 .c('mute', {
                     xmlns: 'http://jitsi.org/jitmeet/audio',
                     jid: jid
@@ -4221,7 +4224,7 @@ module.exports = function (XMPP) {
         },
         onMute: function (iq) {
             var from = iq.getAttribute('from');
-            if (from !== focusMucJid) {
+            if (from !== this.connection.emuc.focusMucJid) {
                 console.warn("Ignored mute from non focus peer");
                 return false;
             }
@@ -4264,7 +4267,7 @@ module.exports = function() {
                 var req = $iq(
                     {
                         type: 'set',
-                        to: focusMucJid
+                        to: this.connection.emuc.focusMucJid
                     }
                 );
                 req.c('dial',
@@ -4707,7 +4710,7 @@ var XMPP = {
     toggleRecording: function (tokenEmptyCallback,
                                startingCallback, startedCallback) {
         Recording.toggleRecording(tokenEmptyCallback,
-            startingCallback, startedCallback);
+            startingCallback, startedCallback, connection);
     },
     addToPresence: function (name, value, dontSend) {
         switch (name)
@@ -4737,7 +4740,7 @@ var XMPP = {
             connection.emuc.sendPresence();
     },
     sendLogs: function (data) {
-        if(!focusMucJid)
+        if(!connection.emuc.focusMucJid)
             return;
 
         var deflate = true;
@@ -4748,7 +4751,7 @@ var XMPP = {
         }
         content = Base64.encode(content);
         // XEP-0337-ish
-        var message = $msg({to: focusMucJid, type: 'normal'});
+        var message = $msg({to: connection.emuc.focusMucJid, type: 'normal'});
         message.c('log', { xmlns: 'urn:xmpp:eventlog',
             id: 'PeerConnectionStats'});
         message.c('message').t(content).up();

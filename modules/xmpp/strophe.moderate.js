@@ -18,7 +18,7 @@ module.exports = function (XMPP) {
         },
         setMute: function (jid, mute) {
             console.info("set mute", mute);
-            var iqToFocus = $iq({to: focusMucJid, type: 'set'})
+            var iqToFocus = $iq({to: this.connection.emuc.focusMucJid, type: 'set'})
                 .c('mute', {
                     xmlns: 'http://jitsi.org/jitmeet/audio',
                     jid: jid
@@ -37,7 +37,7 @@ module.exports = function (XMPP) {
         },
         onMute: function (iq) {
             var from = iq.getAttribute('from');
-            if (from !== focusMucJid) {
+            if (from !== this.connection.emuc.focusMucJid) {
                 console.warn("Ignored mute from non focus peer");
                 return false;
             }

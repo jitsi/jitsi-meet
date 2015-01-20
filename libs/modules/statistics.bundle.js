@@ -130,7 +130,7 @@ LocalStatsCollector.prototype.stop = function () {
 
 module.exports = LocalStatsCollector;
 },{}],2:[function(require,module,exports){
-/* global focusMucJid, ssrc2jid */
+/* global ssrc2jid */
 /* jshint -W117 */
 /**
  * Calculates packet lost percent using the number of lost packets and the

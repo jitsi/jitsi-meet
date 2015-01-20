@@ -1,23 +1,7 @@
 /* jshint -W117 */
 /* application specific logic */
 var nickname = null;
-var focusMucJid = null;
 var ssrc2jid = {};
-//TODO: this array must be removed when firefox implement multistream support
-var notReceivedSSRCs = [];
-
-var jid2Ssrc = {};
-
-/**
- * Indicates whether ssrc is camera video or desktop stream.
- * FIXME: remove those maps
- */
-var ssrc2videoType = {};
-/**
- * Currently focused video "src"(displayed in large video).
- * @type {String}
- */
-var focusedVideoInfo = null;
 
 function init() {
 

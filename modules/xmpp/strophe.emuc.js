@@ -6,6 +6,7 @@
 var bridgeIsDown = false;
 
 var Moderator = require("./moderator");
+var JingleSession = require("./JingleSession");
 
 module.exports = function(XMPP, eventEmitter) {
     Strophe.addConnectionPlugin('emuc', {
@@ -19,6 +20,7 @@ module.exports = function(XMPP, eventEmitter) {
         joined: false,
         isOwner: false,
         role: null,
+        focusMucJid: null,
         init: function (conn) {
             this.connection = conn;
         },
@@ -191,7 +193,7 @@ module.exports = function(XMPP, eventEmitter) {
                 this.list_members.push(from);
                 console.log('entered', from, member);
                 if (member.isFocus) {
-                    focusMucJid = from;
+                    this.focusMucJid = from;
                     console.info("Ignore focus: " + from + ", real JID: " + member.jid);
                 }
                 else {
@@ -544,8 +546,6 @@ module.exports = function(XMPP, eventEmitter) {
 
             API.triggerEvent("participantLeft", {jid: jid});
 
-            delete jid2Ssrc[jid];
-
             this.connection.jingle.terminateByJid(jid);
 
             if (this.getPrezi(jid)) {
@@ -568,7 +568,6 @@ module.exports = function(XMPP, eventEmitter) {
             Object.keys(ssrc2jid).forEach(function (ssrc) {
                 if (ssrc2jid[ssrc] == jid) {
                     delete ssrc2jid[ssrc];
-                    delete ssrc2videoType[ssrc];
                 }
             });
 
@@ -577,10 +576,10 @@ module.exports = function(XMPP, eventEmitter) {
                 //console.log(jid, 'assoc ssrc', ssrc.getAttribute('type'), ssrc.getAttribute('ssrc'));
                 var ssrcV = ssrc.getAttribute('ssrc');
                 ssrc2jid[ssrcV] = from;
-                notReceivedSSRCs.push(ssrcV);
+                JingleSession.notReceivedSSRCs.push(ssrcV);
+
 
                 var type = ssrc.getAttribute('type');
-                ssrc2videoType[ssrcV] = type;
 
                 var direction = ssrc.getAttribute('direction');
 

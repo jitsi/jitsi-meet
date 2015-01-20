@@ -1,10 +1,11 @@
 //var StreamEventTypes = require("../../service/RTC/StreamEventTypes.js");
 
-function LocalStream(stream, type, eventEmitter)
+function LocalStream(stream, type, eventEmitter, videoType)
 {
     this.stream = stream;
     this.eventEmitter = eventEmitter;
     this.type = type;
+    this.videoType = videoType;
     var self = this;
     if(type == "audio")
     {

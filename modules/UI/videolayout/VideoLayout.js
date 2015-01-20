@@ -15,6 +15,11 @@ var largeVideoState = {
     updateInProgress: false,
     newSrc: ''
 };
+/**
+ * Currently focused video "src"(displayed in large video).
+ * @type {String}
+ */
+var focusedVideoInfo = null;
 
 /**
  * Indicates if we have muted our audio before the conference has started.
@@ -92,15 +97,6 @@ function waitForRemoteVideo(selector, ssrc, stream, jid) {
     if (selector[0].currentTime > 0) {
         var videoStream = simulcast.getReceivingVideoStream(stream);
         RTC.attachMediaStream(selector, videoStream); // FIXME: why do i have to do this for FF?
-
-        // FIXME: add a class that will associate peer Jid, video.src, it's ssrc and video type
-        //        in order to get rid of too many maps
-        if (ssrc && jid) {
-            jid2Ssrc[Strophe.getResourceFromJid(jid)] = ssrc;
-        } else {
-            console.warn("No ssrc given for jid", jid);
-        }
-
         videoactive(selector);
     } else {
         setTimeout(function () {
@@ -492,43 +488,6 @@ function createModeratorIndicatorElement(parentElement) {
 }
 
 
-/**
- * Checks if video identified by given src is desktop stream.
- * @param videoSrc eg.
- * blob:https%3A//pawel.jitsi.net/9a46e0bd-131e-4d18-9c14-a9264e8db395
- * @returns {boolean}
- */
-function isVideoSrcDesktop(jid) {
-    // FIXME: fix this mapping mess...
-    // figure out if large video is desktop stream or just a camera
-
-    if(!jid)
-        return false;
-    var isDesktop = false;
-    if (xmpp.myJid() &&
-        xmpp.myResource() === jid) {
-        // local video
-        isDesktop = desktopsharing.isUsingScreenStream();
-    } else {
-        // Do we have associations...
-        var videoSsrc = jid2Ssrc[jid];
-        if (videoSsrc) {
-            var videoType = ssrc2videoType[videoSsrc];
-            if (videoType) {
-                // Finally there...
-                isDesktop = videoType === 'screen';
-            } else {
-                console.error("No video type for ssrc: " + videoSsrc);
-            }
-        } else {
-            console.error("No ssrc for jid: " + jid);
-        }
-    }
-    return isDesktop;
-}
-
-
-
 var VideoLayout = (function (my) {
     my.connectionIndicators = {};
 
@@ -571,7 +530,7 @@ var VideoLayout = (function (my) {
 
     my.changeLocalVideo = function(stream) {
         var flipX = true;
-        if(stream.type == "desktop")
+        if(stream.videoType == "screen")
             flipX = false;
         var localVideo = document.createElement('video');
         localVideo.id = 'localVideo_' +
@@ -754,11 +713,8 @@ var VideoLayout = (function (my) {
 
             largeVideoState.newSrc = newSrc;
             largeVideoState.isVisible = $('#largeVideo').is(':visible');
-            largeVideoState.isDesktop = isVideoSrcDesktop(resourceJid);
-            if(jid2Ssrc[largeVideoState.userResourceJid] ||
-                (xmpp.myResource() &&
-                    largeVideoState.userResourceJid ===
-                    xmpp.myResource())) {
+            largeVideoState.isDesktop = RTC.isVideoSrcDesktop(resourceJid);
+            if(largeVideoState.userResourceJid) {
                 largeVideoState.oldResourceJid = largeVideoState.userResourceJid;
             } else {
                 largeVideoState.oldResourceJid = null;
@@ -2133,7 +2089,6 @@ var VideoLayout = (function (my) {
                 }
 
                 var jid = ssrc2jid[primarySSRC];
-                jid2Ssrc[jid] = primarySSRC;
 
                 if (updateLargeVideo) {
                     VideoLayout.updateLargeVideo(RTC.getVideoSrc(selRemoteVideo[0]), null,
@@ -2230,6 +2185,15 @@ var VideoLayout = (function (my) {
             VideoLayout.connectionIndicators[indicator].hideIndicator();
         }
     };
+
+    my.participantLeft = function (jid) {
+        // Unlock large video
+        if (focusedVideoInfo && focusedVideoInfo.jid === jid)
+        {
+            console.info("Focused video owner has left the conference");
+            focusedVideoInfo = null;
+        }
+    }
 
     return my;
 }(VideoLayout || {}));

@@ -53,6 +53,9 @@ function JingleSession(me, sid, connection, service) {
     this.videoMuteByUser = false;
 }
 
+//TODO: this array must be removed when firefox implement multistream support
+JingleSession.notReceivedSSRCs = [];
+
 JingleSession.prototype.initiate = function (peerjid, isInitiator) {
     var self = this;
     if (this.state !== null) {
@@ -1354,8 +1357,8 @@ JingleSession.prototype.remoteStreamAdded = function (data) {
     //TODO: this code should be removed when firefox implement multistream support
     if(RTC.getBrowserType() == RTCBrowserType.RTC_BROWSER_FIREFOX)
     {
-        if((notReceivedSSRCs.length == 0) ||
-            !ssrc2jid[notReceivedSSRCs[notReceivedSSRCs.length - 1]])
+        if((JingleSession.notReceivedSSRCs.length == 0) ||
+            !ssrc2jid[JingleSession.notReceivedSSRCs[JingleSession.notReceivedSSRCs.length - 1]])
         {
             // TODO(gp) limit wait duration to 1 sec.
             setTimeout(function(d) {
@@ -1366,7 +1369,7 @@ JingleSession.prototype.remoteStreamAdded = function (data) {
             return;
         }
 
-        thessrc = notReceivedSSRCs.pop();
+        thessrc = JingleSession.notReceivedSSRCs.pop();
         if (ssrc2jid[thessrc]) {
             data.peerjid = ssrc2jid[thessrc];
         }

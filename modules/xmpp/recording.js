@@ -23,15 +23,15 @@ function setRecordingToken(token) {
     recordingToken = token;
 }
 
-function setRecording(state, token, callback) {
+function setRecording(state, token, callback, connection) {
     if (useJirecon){
-        this.setRecordingJirecon(state, token, callback);
+        this.setRecordingJirecon(state, token, callback, connection);
     } else {
-        this.setRecordingColibri(state, token, callback);
+        this.setRecordingColibri(state, token, callback, connection);
     }
 }
 
-function setRecordingJirecon(state, token, callback) {
+function setRecordingJirecon(state, token, callback, connection) {
     if (state == recordingEnabled){
         return;
     }
@@ -70,8 +70,8 @@ function setRecordingJirecon(state, token, callback) {
 // Sends a COLIBRI message which enables or disables (according to 'state')
 // the recording on the bridge. Waits for the result IQ and calls 'callback'
 // with the new recording state, according to the IQ.
-function setRecordingColibri(state, token, callback) {
-    var elem = $iq({to: focusMucJid, type: 'set'});
+function setRecordingColibri(state, token, callback, connection) {
+    var elem = $iq({to: connection.emuc.focusMucJid, type: 'set'});
     elem.c('conference', {
         xmlns: 'http://jitsi.org/protocol/colibri'
     });
@@ -95,7 +95,7 @@ function setRecordingColibri(state, token, callback) {
 
 var Recording = {
     toggleRecording: function (tokenEmptyCallback,
-                               startingCallback, startedCallback) {
+                               startingCallback, startedCallback, connection) {
         if (!Moderator.isModerator()) {
             console.log(
                     'non-focus, or conference not yet organized:' +
@@ -143,7 +143,8 @@ var Recording = {
                 }
                 startedCallback(state);
 
-            }
+            },
+            connection
         );
     }
 

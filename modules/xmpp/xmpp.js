@@ -323,7 +323,7 @@ var XMPP = {
     toggleRecording: function (tokenEmptyCallback,
                                startingCallback, startedCallback) {
         Recording.toggleRecording(tokenEmptyCallback,
-            startingCallback, startedCallback);
+            startingCallback, startedCallback, connection);
     },
     addToPresence: function (name, value, dontSend) {
         switch (name)
@@ -353,7 +353,7 @@ var XMPP = {
             connection.emuc.sendPresence();
     },
     sendLogs: function (data) {
-        if(!focusMucJid)
+        if(!connection.emuc.focusMucJid)
             return;
 
         var deflate = true;
@@ -364,7 +364,7 @@ var XMPP = {
         }
         content = Base64.encode(content);
         // XEP-0337-ish
-        var message = $msg({to: focusMucJid, type: 'normal'});
+        var message = $msg({to: connection.emuc.focusMucJid, type: 'normal'});
         message.c('log', { xmlns: 'urn:xmpp:eventlog',
             id: 'PeerConnectionStats'});
         message.c('message').t(content).up();

@@ -58,9 +58,6 @@ function streamHandler(stream) {
         case "stream":
             VideoLayout.changeLocalStream(stream);
             break;
-        case "desktop":
-            VideoLayout.changeLocalVideo(stream);
-            break;
     }
 }
 
@@ -354,12 +351,7 @@ UI.onMucLeft = function (jid) {
         }
     }, 10);
 
-    // Unlock large video
-    if (focusedVideoInfo && focusedVideoInfo.jid === jid)
-    {
-        console.info("Focused video owner has left the conference");
-        focusedVideoInfo = null;
-    }
+    VideoLayout.participantLeft(jid);
 
 };
 

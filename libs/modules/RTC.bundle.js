@@ -240,11 +240,12 @@ module.exports = DataChannels;
 },{}],2:[function(require,module,exports){
 //var StreamEventTypes = require("../../service/RTC/StreamEventTypes.js");
 
-function LocalStream(stream, type, eventEmitter)
+function LocalStream(stream, type, eventEmitter, videoType)
 {
     this.stream = stream;
     this.eventEmitter = eventEmitter;
     this.type = type;
+    this.videoType = videoType;
     var self = this;
     if(type == "audio")
     {
@@ -359,6 +360,7 @@ function MediaStream(data, sid, ssrc, browser) {
     this.ssrc = ssrc;
     this.type = (this.stream.getVideoTracks().length > 0)?
         MediaStreamType.VIDEO_TYPE : MediaStreamType.AUDIO_TYPE;
+    this.videoType = null;
     this.muted = false;
     if(browser == RTCBrowserType.RTC_BROWSER_FIREFOX)
     {
@@ -493,6 +495,20 @@ var RTC = {
             function (stream, isUsingScreenStream, callback) {
                 self.changeLocalVideo(stream, isUsingScreenStream, callback);
             }, DesktopSharingEventTypes.NEW_STREAM_CREATED);
+        xmpp.addListener(XMPPEvents.CHANGED_STREAMS, function (jid, changedStreams) {
+            for(var i = 0; i < changedStreams.length; i++) {
+                var type = changedStreams[i].type;
+                if (type != "audio") {
+                    var peerStreams = self.remoteStreams[jid];
+                    if(!peerStreams)
+                        continue;
+                    var videoStream = peerStreams[MediaStreamType.VIDEO_TYPE];
+                    if(!videoStream)
+                        continue;
+                    videoStream.videoType = changedStreams[i].type;
+                }
+            }
+        })
         this.rtcUtils = new RTCUtils(this);
         this.rtcUtils.obtainAudioAndVideoPermissions();
     },
@@ -529,13 +545,39 @@ var RTC = {
     },
     changeLocalVideo: function (stream, isUsingScreenStream, callback) {
         var oldStream = this.localVideo.getOriginalStream();
-        var type = (isUsingScreenStream? "desktop" : "video");
-        RTC.localVideo = this.createLocalStream(stream, type, true);
+        var type = (isUsingScreenStream? "screen" : "video");
+        RTC.localVideo = this.createLocalStream(stream, "video", true, type);
         // Stop the stream to trigger onended event for old stream
         oldStream.stop();
         xmpp.switchStreams(stream, oldStream,callback);
-    }
+    },
+    /**
+     * Checks if video identified by given src is desktop stream.
+     * @param videoSrc eg.
+     * blob:https%3A//pawel.jitsi.net/9a46e0bd-131e-4d18-9c14-a9264e8db395
+     * @returns {boolean}
+     */
+    isVideoSrcDesktop: function (jid) {
+        if(!jid)
+            return false;
+        var isDesktop = false;
+        var stream = null;
+        if (xmpp.myJid() &&
+            xmpp.myResource() === jid) {
+            // local video
+            stream = this.localVideo;
+        } else {
+            var peerStreams = this.remoteStreams[jid];
+            if(!peerStreams)
+                return false;
+            stream = peerStreams[MediaStreamType.VIDEO_TYPE];
+        }
 
+        if(stream)
+            isDesktop = (stream.videoType === "screen");
+
+        return isDesktop;
+    }
 };
 
 module.exports = RTC;

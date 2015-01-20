@@ -21,7 +21,7 @@ module.exports = function() {
                 var req = $iq(
                     {
                         type: 'set',
-                        to: focusMucJid
+                        to: this.connection.emuc.focusMucJid
                     }
                 );
                 req.c('dial',
