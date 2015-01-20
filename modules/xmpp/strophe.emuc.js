@@ -61,6 +61,8 @@ module.exports = function(XMPP, eventEmitter) {
                 .c('query', {xmlns: 'http://jabber.org/protocol/muc#owner'})
                 .c('x', {xmlns: 'jabber:x:data', type: 'submit'});
 
+            var self = this;
+
             this.connection.sendIQ(getForm, function (form) {
 
                 if (!$(form).find(
@@ -83,7 +85,7 @@ module.exports = function(XMPP, eventEmitter) {
                 formSubmit.c('field', {'var': 'muc#roomconfig_whois'})
                     .c('value').t('anyone').up().up();
 
-                this.connection.sendIQ(formSubmit);
+                self.connection.sendIQ(formSubmit);
 
             }, function (error) {
                 console.error("Error getting room configuration form");
@@ -347,7 +349,7 @@ module.exports = function(XMPP, eventEmitter) {
                         // Fixes a bug in prosody 0.9.+ https://code.google.com/p/lxmppd/issues/detail?id=373
                         formsubmit.c('field', {'var': 'muc#roomconfig_whois'}).c('value').t('anyone').up().up();
                         // FIXME: is muc#roomconfig_passwordprotectedroom required?
-                        this.connection.sendIQ(formsubmit,
+                        ob.connection.sendIQ(formsubmit,
                             onSuccess,
                             onError);
                     } else {
