@@ -3084,9 +3084,9 @@ function setRecordingToken(token) {
 
 function setRecording(state, token, callback, connection) {
     if (useJirecon){
-        this.setRecordingJirecon(state, token, callback, connection);
+        setRecordingJirecon(state, token, callback, connection);
     } else {
-        this.setRecordingColibri(state, token, callback, connection);
+        setRecordingColibri(state, token, callback, connection);
     }
 }
 
