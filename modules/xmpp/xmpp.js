@@ -159,7 +159,7 @@ var XMPP = {
     promptLogin: function () {
         UI.showLoginPopup(connect);
     },
-    joinRooom: function(roomName, useNicks, nick)
+    joinRoom: function(roomName, useNicks, nick)
     {
         var roomjid;
         roomjid = roomName;

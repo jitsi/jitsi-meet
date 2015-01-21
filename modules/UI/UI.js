@@ -590,7 +590,7 @@ UI.checkForNicknameAndJoin = function () {
     if (config.useNicks) {
         nick = window.prompt('Your nickname (optional)');
     }
-    xmpp.joinRooom(roomName, config.useNicks, nick);
+    xmpp.joinRoom(roomName, config.useNicks, nick);
 }
 
 
