@@ -1313,6 +1313,7 @@ function sendKeyframe(pc) {
 JingleSession.prototype.remoteStreamAdded = function (data) {
     var self = this;
     var thessrc;
+    var ssrc2jid = this.connection.emuc.ssrc2jid;
 
     // look up an associated JID for a stream id
     if (data.stream.id && data.stream.id.indexOf('mixedmslabel') === -1) {
@@ -3234,6 +3235,7 @@ module.exports = function(XMPP, eventEmitter) {
         isOwner: false,
         role: null,
         focusMucJid: null,
+        ssrc2jid: {},
         init: function (conn) {
             this.connection = conn;
         },
@@ -3779,10 +3781,11 @@ module.exports = function(XMPP, eventEmitter) {
             if(memeber.isFocus)
                 return;
 
+            var self = this;
             // Remove old ssrcs coming from the jid
-            Object.keys(ssrc2jid).forEach(function (ssrc) {
-                if (ssrc2jid[ssrc] == jid) {
-                    delete ssrc2jid[ssrc];
+            Object.keys(this.ssrc2jid).forEach(function (ssrc) {
+                if (self.ssrc2jid[ssrc] == jid) {
+                    delete self.ssrc2jid[ssrc];
                 }
             });
 
@@ -3790,7 +3793,7 @@ module.exports = function(XMPP, eventEmitter) {
             $(pres).find('>media[xmlns="http://estos.de/ns/mjs"]>source').each(function (idx, ssrc) {
                 //console.log(jid, 'assoc ssrc', ssrc.getAttribute('type'), ssrc.getAttribute('ssrc'));
                 var ssrcV = ssrc.getAttribute('ssrc');
-                ssrc2jid[ssrcV] = from;
+                self.ssrc2jid[ssrcV] = from;
                 JingleSession.notReceivedSSRCs.push(ssrcV);
 
 
@@ -4806,6 +4809,11 @@ var XMPP = {
     },
     getMembers: function () {
         return connection.emuc.members;
+    },
+    getJidFromSSRC: function (ssrc) {
+        if(!connection)
+            return null;
+        return connection.emuc.ssrc2jid[ssrc];
     }
 
 };

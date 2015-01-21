@@ -6385,7 +6385,7 @@ var VideoLayout = (function (my) {
 
                 var msidParts = msid.split(' ');
 
-                var preload = (Strophe.getResourceFromJid(ssrc2jid[primarySSRC]) == largeVideoState.userResourceJid);
+                var preload = (Strophe.getResourceFromJid(xmpp.getJidFromSSRC(primarySSRC)) == largeVideoState.userResourceJid);
 
                 if (preload) {
                     if (largeVideoState.preload)
@@ -6445,7 +6445,7 @@ var VideoLayout = (function (my) {
                 var msidParts = msid.split(' ');
                 var selRemoteVideo = $(['#', 'remoteVideo_', sid, '_', msidParts[0]].join(''));
 
-                var updateLargeVideo = (Strophe.getResourceFromJid(ssrc2jid[primarySSRC])
+                var updateLargeVideo = (Strophe.getResourceFromJid(xmpp.getJidFromSSRC(primarySSRC))
                     == largeVideoState.userResourceJid);
                 var updateFocusedVideoSrc = (focusedVideoInfo && focusedVideoInfo.src && focusedVideoInfo.src != '' &&
                     (RTC.getVideoSrc(selRemoteVideo[0]) == focusedVideoInfo.src));
@@ -6467,7 +6467,7 @@ var VideoLayout = (function (my) {
                     RTC.attachMediaStream(selRemoteVideo, electedStream);
                 }
 
-                var jid = ssrc2jid[primarySSRC];
+                var jid = xmpp.getJidFromSSRC(primarySSRC);
 
                 if (updateLargeVideo) {
                     VideoLayout.updateLargeVideo(RTC.getVideoSrc(selRemoteVideo[0]), null,

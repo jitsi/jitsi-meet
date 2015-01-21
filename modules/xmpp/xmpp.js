@@ -417,6 +417,11 @@ var XMPP = {
     },
     getMembers: function () {
         return connection.emuc.members;
+    },
+    getJidFromSSRC: function (ssrc) {
+        if(!connection)
+            return null;
+        return connection.emuc.ssrc2jid[ssrc];
     }
 
 };

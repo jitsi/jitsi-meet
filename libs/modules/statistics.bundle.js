@@ -576,7 +576,7 @@ StatsCollector.prototype.processStatsReport = function () {
         var ssrc = getStatValue(now, 'ssrc');
         if(!ssrc)
             continue;
-        var jid = ssrc2jid[ssrc];
+        var jid = xmpp.getJidFromSSRC(ssrc);
         if (!jid && (Date.now() - now.timestamp) < 3000) {
             console.warn("No jid for ssrc: " + ssrc);
             continue;
@@ -777,7 +777,7 @@ StatsCollector.prototype.processAudioLevelReport = function ()
         }
 
         var ssrc = getStatValue(now, 'ssrc');
-        var jid = ssrc2jid[ssrc];
+        var jid = xmpp.getJidFromSSRC(ssrc);
         if (!jid && (Date.now() - now.timestamp) < 3000)
         {
             console.warn("No jid for ssrc: " + ssrc);

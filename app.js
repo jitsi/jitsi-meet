@@ -1,7 +1,6 @@
 /* jshint -W117 */
 /* application specific logic */
 var nickname = null;
-var ssrc2jid = {};
 
 function init() {
 

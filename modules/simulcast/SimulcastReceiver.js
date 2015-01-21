@@ -184,7 +184,7 @@ SimulcastReceiver.prototype.getReceivingVideoStreamBySSRC = function (ssrc)
 {
     var sid, electedStream;
     var i, j, k;
-    var jid = ssrc2jid[ssrc];
+    var jid = xmpp.getJidFromSSRC(ssrc);
     if(jid && RTC.remoteStreams[jid])
     {
         var remoteStreamObject = RTC.remoteStreams[jid][MediaStreamType.VIDEO_TYPE];

@@ -1312,6 +1312,7 @@ function sendKeyframe(pc) {
 JingleSession.prototype.remoteStreamAdded = function (data) {
     var self = this;
     var thessrc;
+    var ssrc2jid = this.connection.emuc.ssrc2jid;
 
     // look up an associated JID for a stream id
     if (data.stream.id && data.stream.id.indexOf('mixedmslabel') === -1) {
