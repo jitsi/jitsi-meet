@@ -2,6 +2,7 @@ var Moderator = require("./moderator");
 var EventEmitter = require("events");
 var Recording = require("./recording");
 var SDP = require("./SDP");
+var Pako = require("pako");
 
 var eventEmitter = new EventEmitter();
 var connection = null;
@@ -360,7 +361,7 @@ var XMPP = {
 
         var content = JSON.stringify(data);
         if (deflate) {
-            content = String.fromCharCode.apply(null, Pako.deflateRaw(content));
+            content = String.fromCharCode.apply(null, Pako.deflate.deflateRaw(content));
         }
         content = Base64.encode(content);
         // XEP-0337-ish

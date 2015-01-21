@@ -15,7 +15,8 @@
   "author": "",
   "readmeFilename": "README.md",
   "dependencies": {
-      "events": "*"
+      "events": "*",
+      "pako": "*"
   },
   "devDependencies": {
   },

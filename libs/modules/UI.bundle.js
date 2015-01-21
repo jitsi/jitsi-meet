@@ -3648,7 +3648,7 @@ var Toolbar = (function (my) {
 module.exports = Toolbar;
 },{"../authentication/Authentication":4,"../etherpad/Etherpad":6,"../prezi/Prezi":7,"../side_pannels/SidePanelToggler":8,"../util/MessageHandler":21,"../util/UIUtil":22,"./BottomToolbar":16}],19:[function(require,module,exports){
 module.exports=require(17)
-},{}],20:[function(require,module,exports){
+},{"/Users/boris/jitsi/git/jitsi-meet/modules/UI/toolbars/ToolbarToggler.js":17}],20:[function(require,module,exports){
 var JitsiPopover = (function () {
     /**
      * Constructs new JitsiPopover and attaches it to the element
