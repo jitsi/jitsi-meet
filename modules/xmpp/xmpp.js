@@ -361,7 +361,7 @@ var XMPP = {
 
         var content = JSON.stringify(data);
         if (deflate) {
-            content = String.fromCharCode.apply(null, Pako.deflate.deflateRaw(content));
+            content = String.fromCharCode.apply(null, Pako.deflateRaw(content));
         }
         content = Base64.encode(content);
         // XEP-0337-ish
