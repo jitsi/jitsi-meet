@@ -6,11 +6,15 @@ MODULES = $(MODULE_SUBDIRS:$(MODULE_DIR)/%/=%)
 OUTPUT_DIR = .
 DEPLOY_DIR = libs/modules
 
-all:FLAGS = $(GLOBAL_FLAGS)
-all:$(MODULES)
+all: compile deploy clean
 
-debug:FLAGS = -d $(GLOBAL_FLAGS)
-debug:$(MODULES)
+compile:FLAGS = $(GLOBAL_FLAGS)
+compile:$(MODULES)
+
+debug: compile-debug deploy clean
+
+compile-debug:FLAGS = -d $(GLOBAL_FLAGS)
+compile-debug:$(MODULES)
 
 $(MODULES): *.js
 	$(BROWSERIFY) $(FLAGS) $(MODULE_DIR)/$@/$@.js -s $@ -o $(OUTPUT_DIR)/$@.bundle.js
@@ -20,4 +24,3 @@ clean:
 
 deploy:
 	@mkdir -p $(DEPLOY_DIR) && cp $(OUTPUT_DIR)/*.bundle.js $(DEPLOY_DIR)
-	
