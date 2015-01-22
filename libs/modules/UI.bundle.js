@@ -6,8 +6,8 @@ var AudioLevels = require("./audio_levels/AudioLevels.js");
 var Prezi = require("./prezi/Prezi.js");
 var Etherpad = require("./etherpad/Etherpad.js");
 var Chat = require("./side_pannels/chat/Chat.js");
-var Toolbar = require("./toolbars/toolbar");
-var ToolbarToggler = require("./toolbars/toolbartoggler");
+var Toolbar = require("./toolbars/Toolbar");
+var ToolbarToggler = require("./toolbars/ToolbarToggler");
 var BottomToolbar = require("./toolbars/BottomToolbar");
 var ContactList = require("./side_pannels/contactlist/ContactList");
 var Avatar = require("./avatar/Avatar");
@@ -688,7 +688,7 @@ UI.onLastNChanged = function (oldValue, newValue) {
 module.exports = UI;
 
 
-},{"./audio_levels/AudioLevels.js":2,"./authentication/Authentication":4,"./avatar/Avatar":5,"./etherpad/Etherpad.js":6,"./prezi/Prezi.js":7,"./side_pannels/SidePanelToggler":8,"./side_pannels/chat/Chat.js":9,"./side_pannels/contactlist/ContactList":13,"./side_pannels/settings/Settings":14,"./side_pannels/settings/SettingsMenu":15,"./toolbars/BottomToolbar":16,"./toolbars/toolbar":18,"./toolbars/toolbartoggler":19,"./util/MessageHandler":21,"./util/UIUtil":22,"./videolayout/VideoLayout.js":24,"./welcome_page/RoomnameGenerator":25,"./welcome_page/WelcomePage":26}],2:[function(require,module,exports){
+},{"./audio_levels/AudioLevels.js":2,"./authentication/Authentication":4,"./avatar/Avatar":5,"./etherpad/Etherpad.js":6,"./prezi/Prezi.js":7,"./side_pannels/SidePanelToggler":8,"./side_pannels/chat/Chat.js":9,"./side_pannels/contactlist/ContactList":13,"./side_pannels/settings/Settings":14,"./side_pannels/settings/SettingsMenu":15,"./toolbars/BottomToolbar":16,"./toolbars/Toolbar":17,"./toolbars/ToolbarToggler":18,"./util/MessageHandler":20,"./util/UIUtil":21,"./videolayout/VideoLayout.js":23,"./welcome_page/RoomnameGenerator":24,"./welcome_page/WelcomePage":25}],2:[function(require,module,exports){
 var CanvasUtil = require("./CanvasUtils");
 
 /**
@@ -1305,7 +1305,7 @@ var Avatar = {
 
 
 module.exports = Avatar;
-},{"../side_pannels/settings/Settings":14,"../videolayout/VideoLayout":24}],6:[function(require,module,exports){
+},{"../side_pannels/settings/Settings":14,"../videolayout/VideoLayout":23}],6:[function(require,module,exports){
 /* global $, config, dockToolbar,
    setLargeVideoVisible, Util */
 
@@ -1501,7 +1501,7 @@ var Etherpad = {
 
 module.exports = Etherpad;
 
-},{"../prezi/Prezi":7,"../util/UIUtil":22,"../videolayout/VideoLayout":24}],7:[function(require,module,exports){
+},{"../prezi/Prezi":7,"../util/UIUtil":21,"../videolayout/VideoLayout":23}],7:[function(require,module,exports){
 var ToolbarToggler = require("../toolbars/ToolbarToggler");
 var UIUtil = require("../util/UIUtil");
 var VideoLayout = require("../videolayout/VideoLayout");
@@ -1853,7 +1853,7 @@ $(window).resize(function () {
 
 module.exports = Prezi;
 
-},{"../toolbars/ToolbarToggler":17,"../util/MessageHandler":21,"../util/UIUtil":22,"../videolayout/VideoLayout":24}],8:[function(require,module,exports){
+},{"../toolbars/ToolbarToggler":18,"../util/MessageHandler":20,"../util/UIUtil":21,"../videolayout/VideoLayout":23}],8:[function(require,module,exports){
 var Chat = require("./chat/Chat");
 var ContactList = require("./contactlist/ContactList");
 var Settings = require("./settings/Settings");
@@ -2110,7 +2110,7 @@ var PanelToggler = (function(my) {
 }(PanelToggler || {}));
 
 module.exports = PanelToggler;
-},{"../toolbars/ToolbarToggler":17,"../util/UIUtil":22,"../videolayout/VideoLayout":24,"./chat/Chat":9,"./contactlist/ContactList":13,"./settings/Settings":14,"./settings/SettingsMenu":15}],9:[function(require,module,exports){
+},{"../toolbars/ToolbarToggler":18,"../util/UIUtil":21,"../videolayout/VideoLayout":23,"./chat/Chat":9,"./contactlist/ContactList":13,"./settings/Settings":14,"./settings/SettingsMenu":15}],9:[function(require,module,exports){
 /* global $, Util, nickname:true, showToolbar */
 var Replacement = require("./Replacement");
 var CommandsProcessor = require("./Commands");
@@ -2470,7 +2470,7 @@ var Chat = (function (my) {
     return my;
 }(Chat || {}));
 module.exports = Chat;
-},{"../../toolbars/ToolbarToggler":17,"../SidePanelToggler":8,"./Commands":10,"./Replacement":11,"./smileys.json":12}],10:[function(require,module,exports){
+},{"../../toolbars/ToolbarToggler":18,"../SidePanelToggler":8,"./Commands":10,"./Replacement":11,"./smileys.json":12}],10:[function(require,module,exports){
 /**
  * List with supported commands. The keys are the names of the commands and
  * the value is the function that processes the message.
@@ -3013,121 +3013,6 @@ var BottomToolbar = (function (my) {
 module.exports = BottomToolbar;
 
 },{"../side_pannels/SidePanelToggler":8}],17:[function(require,module,exports){
-/* global $, interfaceConfig, Moderator, DesktopStreaming.showDesktopSharingButton */
-
-var toolbarTimeoutObject,
-    toolbarTimeout = interfaceConfig.INITIAL_TOOLBAR_TIMEOUT;
-
-function showDesktopSharingButton() {
-    if (desktopsharing.isDesktopSharingEnabled()) {
-        $('#desktopsharing').css({display: "inline"});
-    } else {
-        $('#desktopsharing').css({display: "none"});
-    }
-}
-
-/**
- * Hides the toolbar.
- */
-function hideToolbar() {
-    var header = $("#header"),
-        bottomToolbar = $("#bottomToolbar");
-    var isToolbarHover = false;
-    header.find('*').each(function () {
-        var id = $(this).attr('id');
-        if ($("#" + id + ":hover").length > 0) {
-            isToolbarHover = true;
-        }
-    });
-    if ($("#bottomToolbar:hover").length > 0) {
-        isToolbarHover = true;
-    }
-
-    clearTimeout(toolbarTimeoutObject);
-    toolbarTimeoutObject = null;
-
-    if (!isToolbarHover) {
-        header.hide("slide", { direction: "up", duration: 300});
-        $('#subject').animate({top: "-=40"}, 300);
-        if ($("#remoteVideos").hasClass("hidden")) {
-            bottomToolbar.hide(
-                "slide", {direction: "right", duration: 300});
-        }
-    }
-    else {
-        toolbarTimeoutObject = setTimeout(hideToolbar, toolbarTimeout);
-    }
-}
-
-var ToolbarToggler = {
-    /**
-     * Shows the main toolbar.
-     */
-    showToolbar: function () {
-        var header = $("#header"),
-            bottomToolbar = $("#bottomToolbar");
-        if (!header.is(':visible') || !bottomToolbar.is(":visible")) {
-            header.show("slide", { direction: "up", duration: 300});
-            $('#subject').animate({top: "+=40"}, 300);
-            if (!bottomToolbar.is(":visible")) {
-                bottomToolbar.show(
-                    "slide", {direction: "right", duration: 300});
-            }
-
-            if (toolbarTimeoutObject) {
-                clearTimeout(toolbarTimeoutObject);
-                toolbarTimeoutObject = null;
-            }
-            toolbarTimeoutObject = setTimeout(hideToolbar, toolbarTimeout);
-            toolbarTimeout = interfaceConfig.TOOLBAR_TIMEOUT;
-        }
-
-        if (xmpp.isModerator())
-        {
-//            TODO: Enable settings functionality.
-//                  Need to uncomment the settings button in index.html.
-//            $('#settingsButton').css({visibility:"visible"});
-        }
-
-        // Show/hide desktop sharing button
-        showDesktopSharingButton();
-    },
-
-
-    /**
-     * Docks/undocks the toolbar.
-     *
-     * @param isDock indicates what operation to perform
-     */
-    dockToolbar: function (isDock) {
-        if (isDock) {
-            // First make sure the toolbar is shown.
-            if (!$('#header').is(':visible')) {
-                this.showToolbar();
-            }
-
-            // Then clear the time out, to dock the toolbar.
-            if (toolbarTimeoutObject) {
-                clearTimeout(toolbarTimeoutObject);
-                toolbarTimeoutObject = null;
-            }
-        }
-        else {
-            if (!$('#header').is(':visible')) {
-                this.showToolbar();
-            }
-            else {
-                toolbarTimeoutObject = setTimeout(hideToolbar, toolbarTimeout);
-            }
-        }
-    },
-
-    showDesktopSharingButton: showDesktopSharingButton
-
-};
-
-module.exports = ToolbarToggler;
-},{}],18:[function(require,module,exports){
 /* global $, buttonClick, config, lockRoom,
    setSharedKey, Util */
 var messageHandler = require("../util/MessageHandler");
@@ -3646,9 +3531,122 @@ var Toolbar = (function (my) {
 }(Toolbar || {}));
 
 module.exports = Toolbar;
-},{"../authentication/Authentication":4,"../etherpad/Etherpad":6,"../prezi/Prezi":7,"../side_pannels/SidePanelToggler":8,"../util/MessageHandler":21,"../util/UIUtil":22,"./BottomToolbar":16}],19:[function(require,module,exports){
-module.exports=require(17)
-},{"/Users/boris/jitsi/git/jitsi-meet/modules/UI/toolbars/ToolbarToggler.js":17}],20:[function(require,module,exports){
+},{"../authentication/Authentication":4,"../etherpad/Etherpad":6,"../prezi/Prezi":7,"../side_pannels/SidePanelToggler":8,"../util/MessageHandler":20,"../util/UIUtil":21,"./BottomToolbar":16}],18:[function(require,module,exports){
+/* global $, interfaceConfig, Moderator, DesktopStreaming.showDesktopSharingButton */
+
+var toolbarTimeoutObject,
+    toolbarTimeout = interfaceConfig.INITIAL_TOOLBAR_TIMEOUT;
+
+function showDesktopSharingButton() {
+    if (desktopsharing.isDesktopSharingEnabled()) {
+        $('#desktopsharing').css({display: "inline"});
+    } else {
+        $('#desktopsharing').css({display: "none"});
+    }
+}
+
+/**
+ * Hides the toolbar.
+ */
+function hideToolbar() {
+    var header = $("#header"),
+        bottomToolbar = $("#bottomToolbar");
+    var isToolbarHover = false;
+    header.find('*').each(function () {
+        var id = $(this).attr('id');
+        if ($("#" + id + ":hover").length > 0) {
+            isToolbarHover = true;
+        }
+    });
+    if ($("#bottomToolbar:hover").length > 0) {
+        isToolbarHover = true;
+    }
+
+    clearTimeout(toolbarTimeoutObject);
+    toolbarTimeoutObject = null;
+
+    if (!isToolbarHover) {
+        header.hide("slide", { direction: "up", duration: 300});
+        $('#subject').animate({top: "-=40"}, 300);
+        if ($("#remoteVideos").hasClass("hidden")) {
+            bottomToolbar.hide(
+                "slide", {direction: "right", duration: 300});
+        }
+    }
+    else {
+        toolbarTimeoutObject = setTimeout(hideToolbar, toolbarTimeout);
+    }
+}
+
+var ToolbarToggler = {
+    /**
+     * Shows the main toolbar.
+     */
+    showToolbar: function () {
+        var header = $("#header"),
+            bottomToolbar = $("#bottomToolbar");
+        if (!header.is(':visible') || !bottomToolbar.is(":visible")) {
+            header.show("slide", { direction: "up", duration: 300});
+            $('#subject').animate({top: "+=40"}, 300);
+            if (!bottomToolbar.is(":visible")) {
+                bottomToolbar.show(
+                    "slide", {direction: "right", duration: 300});
+            }
+
+            if (toolbarTimeoutObject) {
+                clearTimeout(toolbarTimeoutObject);
+                toolbarTimeoutObject = null;
+            }
+            toolbarTimeoutObject = setTimeout(hideToolbar, toolbarTimeout);
+            toolbarTimeout = interfaceConfig.TOOLBAR_TIMEOUT;
+        }
+
+        if (xmpp.isModerator())
+        {
+//            TODO: Enable settings functionality.
+//                  Need to uncomment the settings button in index.html.
+//            $('#settingsButton').css({visibility:"visible"});
+        }
+
+        // Show/hide desktop sharing button
+        showDesktopSharingButton();
+    },
+
+
+    /**
+     * Docks/undocks the toolbar.
+     *
+     * @param isDock indicates what operation to perform
+     */
+    dockToolbar: function (isDock) {
+        if (isDock) {
+            // First make sure the toolbar is shown.
+            if (!$('#header').is(':visible')) {
+                this.showToolbar();
+            }
+
+            // Then clear the time out, to dock the toolbar.
+            if (toolbarTimeoutObject) {
+                clearTimeout(toolbarTimeoutObject);
+                toolbarTimeoutObject = null;
+            }
+        }
+        else {
+            if (!$('#header').is(':visible')) {
+                this.showToolbar();
+            }
+            else {
+                toolbarTimeoutObject = setTimeout(hideToolbar, toolbarTimeout);
+            }
+        }
+    },
+
+    showDesktopSharingButton: showDesktopSharingButton
+
+};
+
+module.exports = ToolbarToggler;
+},{}],19:[function(require,module,exports){
 var JitsiPopover = (function () {
     /**
      * Constructs new JitsiPopover and attaches it to the element
@@ -3772,7 +3770,7 @@ var JitsiPopover = (function () {
 })();
 
 module.exports = JitsiPopover;
-},{}],21:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 /* global $, jQuery */
 var messageHandler = (function(my) {
 
@@ -3941,7 +3939,7 @@ module.exports = messageHandler;
 
 
 
-},{}],22:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 /**
  * Created by hristo on 12/22/14.
  */
@@ -3965,7 +3963,7 @@ module.exports = {
 
 
 };
-},{"../side_pannels/SidePanelToggler":8}],23:[function(require,module,exports){
+},{"../side_pannels/SidePanelToggler":8}],22:[function(require,module,exports){
 var JitsiPopover = require("../util/JitsiPopover");
 
 /**
@@ -4376,7 +4374,7 @@ ConnectionIndicator.prototype.hideIndicator = function () {
 };
 
 module.exports = ConnectionIndicator;
-},{"../util/JitsiPopover":20}],24:[function(require,module,exports){
+},{"../util/JitsiPopover":19}],23:[function(require,module,exports){
 var AudioLevels = require("../audio_levels/AudioLevels");
 var Avatar = require("../avatar/Avatar");
 var Chat = require("../side_pannels/chat/Chat");
@@ -6578,7 +6576,7 @@ var VideoLayout = (function (my) {
 }(VideoLayout || {}));
 
 module.exports = VideoLayout;
-},{"../audio_levels/AudioLevels":2,"../avatar/Avatar":5,"../etherpad/Etherpad":6,"../prezi/Prezi":7,"../side_pannels/chat/Chat":9,"../side_pannels/contactlist/ContactList":13,"../util/UIUtil":22,"./ConnectionIndicator":23}],25:[function(require,module,exports){
+},{"../audio_levels/AudioLevels":2,"../avatar/Avatar":5,"../etherpad/Etherpad":6,"../prezi/Prezi":7,"../side_pannels/chat/Chat":9,"../side_pannels/contactlist/ContactList":13,"../util/UIUtil":21,"./ConnectionIndicator":22}],24:[function(require,module,exports){
 //var nouns = [
 //];
 var pluralNouns = [
@@ -6759,7 +6757,7 @@ var RoomNameGenerator = {
 
 module.exports = RoomNameGenerator;
 
-},{}],26:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 var animateTimeout, updateTimeout;
 
 var RoomNameGenerator = require("./RoomnameGenerator");
@@ -6863,5 +6861,5 @@ function setupWelcomePage()
 }
 
 module.exports = setupWelcomePage;
-},{"./RoomnameGenerator":25}]},{},[1])(1)
+},{"./RoomnameGenerator":24}]},{},[1])(1)
 });
