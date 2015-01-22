@@ -12,9 +12,22 @@ Installing Jitsi Meet is quite a simple experience. For Debian-based systems, we
 
 For other systems, or if you wish to install all components manually, see the [detailed installation instructions](https://github.com/jitsi/jitsi-meet/blob/master/doc/manual-install.md).
 
-## Development tools
+## Building the sources
 
 Jitsi Meet uses [Browserify](http://browserify.org). If you want to make changes in the code you need to [install Browserify](http://browserify.org/#install). Browserify requires [nodejs](http://nodejs.org). 
+
+On Debian/Ubuntu systems, the required packages can be installed with:
+```
+sudo apt-get install npm
+sudo npm install -g browserify
+cd jitsi-meet
+npm install
+```
+
+To build the Jitsi Meet application, just type
+```
+make
+```
 
 ## Discuss
 Please use the [Jitsi dev mailing list](http://lists.jitsi.org/pipermail/dev/) to discuss feature requests before opening an issue on github. 
