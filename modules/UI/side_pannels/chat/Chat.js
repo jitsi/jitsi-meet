@@ -3,6 +3,7 @@ var Replacement = require("./Replacement");
 var CommandsProcessor = require("./Commands");
 var ToolbarToggler = require("../../toolbars/ToolbarToggler");
 var smileys = require("./smileys.json").smileys;
+var NicknameHandler = require("../../util/NicknameHandler");
 
 var notificationInterval = false;
 var unreadMessages = 0;
@@ -168,25 +169,20 @@ var Chat = (function (my) {
      * Initializes chat related interface.
      */
     my.init = function () {
-        var storedDisplayName = window.localStorage.displayname;
-        if (storedDisplayName) {
-            nickname = storedDisplayName;
-
+        if(NicknameHandler.getNickname())
             Chat.setChatConversationMode(true);
-        }
+        NicknameHandler.addListener(UIEvents.NICKNAME_CHANGED,
+            function (nickname) {
+                Chat.setChatConversationMode(true);
+            });
 
         $('#nickinput').keydown(function (event) {
             if (event.keyCode === 13) {
                 event.preventDefault();
                 var val = Util.escapeHtml(this.value);
                 this.value = '';
-                if (!nickname) {
-                    nickname = val;
-                    window.localStorage.displayname = nickname;
-
-                    xmpp.addToPresence("displayName", nickname);
-
-                    Chat.setChatConversationMode(true);
+                if (!NicknameHandler.getNickname()) {
+                    NicknameHandler.setNickname(val);
 
                     return;
                 }
@@ -207,7 +203,7 @@ var Chat = (function (my) {
                 else
                 {
                     var message = Util.escapeHtml(value);
-                    xmpp.sendChatMessage(message, nickname);
+                    xmpp.sendChatMessage(message, NicknameHandler.getNickname());
                 }
             }
         });

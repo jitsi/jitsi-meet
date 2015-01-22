@@ -4495,6 +4495,9 @@ function initStrophePlugins()
 function registerListeners() {
     RTC.addStreamListener(maybeDoJoin,
         StreamEventTypes.EVENT_TYPE_LOCAL_CREATED);
+    UI.addListener(UIEvents.NICKNAME_CHANGED, function (nickname) {
+        XMPP.addToPresence("displayName", nickname);
+    })
 }
 
 function setupEvents() {
@@ -4551,7 +4554,7 @@ var XMPP = {
     promptLogin: function () {
         UI.showLoginPopup(connect);
     },
-    joinRooom: function(roomName, useNicks, nick)
+    joinRoom: function(roomName, useNicks, nick)
     {
         var roomjid;
         roomjid = roomName;

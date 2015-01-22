@@ -4,6 +4,7 @@ var Chat = require("../side_pannels/chat/Chat");
 var ContactList = require("../side_pannels/contactlist/ContactList");
 var UIUtil = require("../util/UIUtil");
 var ConnectionIndicator = require("./ConnectionIndicator");
+var NicknameHandler = require("../util/NicknameHandler");
 
 var currentDominantSpeaker = null;
 var lastNCount = config.channelLastN;
@@ -1258,17 +1259,11 @@ var VideoLayout = (function (my) {
     };
 
     my.inputDisplayNameHandler = function (name) {
-        if (name && nickname !== name) {
-            nickname = name;
-            window.localStorage.displayname = nickname;
-            xmpp.addToPresence("displayName", nickname);
-
-            Chat.setChatConversationMode(true);
-        }
+        NicknameHandler.setNickname(name);
 
         if (!$('#localDisplayName').is(":visible")) {
-            if (nickname)
-                $('#localDisplayName').text(nickname + " (me)");
+            if (NicknameHandler.getNickname())
+                $('#localDisplayName').text(NicknameHandler.getNickname() + " (me)");
             else
                 $('#localDisplayName')
                     .text(interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME);
@@ -1764,7 +1759,7 @@ var VideoLayout = (function (my) {
         var name = null;
         if (jid === 'localVideoContainer'
             || jid === xmpp.myJid()) {
-            name = nickname;
+            name = NicknameHandler.getNickname();
             setDisplayName('localVideoContainer',
                            displayName);
         } else {

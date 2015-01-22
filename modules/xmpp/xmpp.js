@@ -103,6 +103,9 @@ function initStrophePlugins()
 function registerListeners() {
     RTC.addStreamListener(maybeDoJoin,
         StreamEventTypes.EVENT_TYPE_LOCAL_CREATED);
+    UI.addListener(UIEvents.NICKNAME_CHANGED, function (nickname) {
+        XMPP.addToPresence("displayName", nickname);
+    })
 }
 
 function setupEvents() {

@@ -1,6 +1,5 @@
 /* jshint -W117 */
 /* application specific logic */
-var nickname = null;
 
 function init() {
 

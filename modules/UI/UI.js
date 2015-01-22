@@ -10,7 +10,7 @@ var ToolbarToggler = require("./toolbars/ToolbarToggler");
 var BottomToolbar = require("./toolbars/BottomToolbar");
 var ContactList = require("./side_pannels/contactlist/ContactList");
 var Avatar = require("./avatar/Avatar");
-//var EventEmitter = require("events");
+var EventEmitter = require("events");
 var SettingsMenu = require("./side_pannels/settings/SettingsMenu");
 var Settings = require("./side_pannels/settings/Settings");
 var PanelToggler = require("./side_pannels/SidePanelToggler");
@@ -19,8 +19,9 @@ UI.messageHandler = require("./util/MessageHandler");
 var messageHandler = UI.messageHandler;
 var Authentication  = require("./authentication/Authentication");
 var UIUtil = require("./util/UIUtil");
+var NicknameHandler = require("./util/NicknameHandler");
 
-//var eventEmitter = new EventEmitter();
+var eventEmitter = new EventEmitter();
 var roomName = null;
 
 
@@ -210,12 +211,14 @@ UI.start = function () {
     // Set the defaults for prompt dialogs.
     jQuery.prompt.setDefaults({persistent: false});
 
-//    KeyboardShortcut.init();
+
+    NicknameHandler.init(eventEmitter);
     registerListeners();
     bindEvents();
     setupPrezi();
     setupToolbars();
     setupChat();
+
 
     document.title = interfaceConfig.APP_NAME;
 
@@ -682,6 +685,10 @@ UI.onLastNChanged = function (oldValue, newValue) {
     if (config.muteLocalVideoIfNotInLastN) {
         setVideoMute(!newValue, { 'byUser': false });
     }
+}
+
+UI.addListener = function (type, listener) {
+    eventEmitter.on(type, listener);
 }
 
 module.exports = UI;

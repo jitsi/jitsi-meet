@@ -11,7 +11,7 @@ var ToolbarToggler = require("./toolbars/ToolbarToggler");
 var BottomToolbar = require("./toolbars/BottomToolbar");
 var ContactList = require("./side_pannels/contactlist/ContactList");
 var Avatar = require("./avatar/Avatar");
-//var EventEmitter = require("events");
+var EventEmitter = require("events");
 var SettingsMenu = require("./side_pannels/settings/SettingsMenu");
 var Settings = require("./side_pannels/settings/Settings");
 var PanelToggler = require("./side_pannels/SidePanelToggler");
@@ -20,8 +20,9 @@ UI.messageHandler = require("./util/MessageHandler");
 var messageHandler = UI.messageHandler;
 var Authentication  = require("./authentication/Authentication");
 var UIUtil = require("./util/UIUtil");
+var NicknameHandler = require("./util/NicknameHandler");
 
-//var eventEmitter = new EventEmitter();
+var eventEmitter = new EventEmitter();
 var roomName = null;
 
 
@@ -211,12 +212,14 @@ UI.start = function () {
     // Set the defaults for prompt dialogs.
     jQuery.prompt.setDefaults({persistent: false});
 
-//    KeyboardShortcut.init();
+
+    NicknameHandler.init(eventEmitter);
     registerListeners();
     bindEvents();
     setupPrezi();
     setupToolbars();
     setupChat();
+
 
     document.title = interfaceConfig.APP_NAME;
 
@@ -591,7 +594,7 @@ UI.checkForNicknameAndJoin = function () {
     if (config.useNicks) {
         nick = window.prompt('Your nickname (optional)');
     }
-    xmpp.joinRooom(roomName, config.useNicks, nick);
+    xmpp.joinRoom(roomName, config.useNicks, nick);
 }
 
 
@@ -685,10 +688,14 @@ UI.onLastNChanged = function (oldValue, newValue) {
     }
 }
 
+UI.addListener = function (type, listener) {
+    eventEmitter.on(type, listener);
+}
+
 module.exports = UI;
 
 
-},{"./audio_levels/AudioLevels.js":2,"./authentication/Authentication":4,"./avatar/Avatar":5,"./etherpad/Etherpad.js":6,"./prezi/Prezi.js":7,"./side_pannels/SidePanelToggler":8,"./side_pannels/chat/Chat.js":9,"./side_pannels/contactlist/ContactList":13,"./side_pannels/settings/Settings":14,"./side_pannels/settings/SettingsMenu":15,"./toolbars/BottomToolbar":16,"./toolbars/Toolbar":17,"./toolbars/ToolbarToggler":18,"./util/MessageHandler":20,"./util/UIUtil":21,"./videolayout/VideoLayout.js":23,"./welcome_page/RoomnameGenerator":24,"./welcome_page/WelcomePage":25}],2:[function(require,module,exports){
+},{"./audio_levels/AudioLevels.js":2,"./authentication/Authentication":4,"./avatar/Avatar":5,"./etherpad/Etherpad.js":6,"./prezi/Prezi.js":7,"./side_pannels/SidePanelToggler":8,"./side_pannels/chat/Chat.js":9,"./side_pannels/contactlist/ContactList":13,"./side_pannels/settings/Settings":14,"./side_pannels/settings/SettingsMenu":15,"./toolbars/BottomToolbar":16,"./toolbars/Toolbar":17,"./toolbars/ToolbarToggler":18,"./util/MessageHandler":20,"./util/NicknameHandler":21,"./util/UIUtil":22,"./videolayout/VideoLayout.js":24,"./welcome_page/RoomnameGenerator":25,"./welcome_page/WelcomePage":26,"events":27}],2:[function(require,module,exports){
 var CanvasUtil = require("./CanvasUtils");
 
 /**
@@ -1305,7 +1312,7 @@ var Avatar = {
 
 
 module.exports = Avatar;
-},{"../side_pannels/settings/Settings":14,"../videolayout/VideoLayout":23}],6:[function(require,module,exports){
+},{"../side_pannels/settings/Settings":14,"../videolayout/VideoLayout":24}],6:[function(require,module,exports){
 /* global $, config, dockToolbar,
    setLargeVideoVisible, Util */
 
@@ -1501,7 +1508,7 @@ var Etherpad = {
 
 module.exports = Etherpad;
 
-},{"../prezi/Prezi":7,"../util/UIUtil":21,"../videolayout/VideoLayout":23}],7:[function(require,module,exports){
+},{"../prezi/Prezi":7,"../util/UIUtil":22,"../videolayout/VideoLayout":24}],7:[function(require,module,exports){
 var ToolbarToggler = require("../toolbars/ToolbarToggler");
 var UIUtil = require("../util/UIUtil");
 var VideoLayout = require("../videolayout/VideoLayout");
@@ -1853,7 +1860,7 @@ $(window).resize(function () {
 
 module.exports = Prezi;
 
-},{"../toolbars/ToolbarToggler":18,"../util/MessageHandler":20,"../util/UIUtil":21,"../videolayout/VideoLayout":23}],8:[function(require,module,exports){
+},{"../toolbars/ToolbarToggler":18,"../util/MessageHandler":20,"../util/UIUtil":22,"../videolayout/VideoLayout":24}],8:[function(require,module,exports){
 var Chat = require("./chat/Chat");
 var ContactList = require("./contactlist/ContactList");
 var Settings = require("./settings/Settings");
@@ -2110,12 +2117,13 @@ var PanelToggler = (function(my) {
 }(PanelToggler || {}));
 
 module.exports = PanelToggler;
-},{"../toolbars/ToolbarToggler":18,"../util/UIUtil":21,"../videolayout/VideoLayout":23,"./chat/Chat":9,"./contactlist/ContactList":13,"./settings/Settings":14,"./settings/SettingsMenu":15}],9:[function(require,module,exports){
+},{"../toolbars/ToolbarToggler":18,"../util/UIUtil":22,"../videolayout/VideoLayout":24,"./chat/Chat":9,"./contactlist/ContactList":13,"./settings/Settings":14,"./settings/SettingsMenu":15}],9:[function(require,module,exports){
 /* global $, Util, nickname:true, showToolbar */
 var Replacement = require("./Replacement");
 var CommandsProcessor = require("./Commands");
 var ToolbarToggler = require("../../toolbars/ToolbarToggler");
 var smileys = require("./smileys.json").smileys;
+var NicknameHandler = require("../../util/NicknameHandler");
 
 var notificationInterval = false;
 var unreadMessages = 0;
@@ -2281,25 +2289,20 @@ var Chat = (function (my) {
      * Initializes chat related interface.
      */
     my.init = function () {
-        var storedDisplayName = window.localStorage.displayname;
-        if (storedDisplayName) {
-            nickname = storedDisplayName;
-
+        if(NicknameHandler.getNickname())
             Chat.setChatConversationMode(true);
-        }
+        NicknameHandler.addListener(UIEvents.NICKNAME_CHANGED,
+            function (nickname) {
+                Chat.setChatConversationMode(true);
+            });
 
         $('#nickinput').keydown(function (event) {
             if (event.keyCode === 13) {
                 event.preventDefault();
                 var val = Util.escapeHtml(this.value);
                 this.value = '';
-                if (!nickname) {
-                    nickname = val;
-                    window.localStorage.displayname = nickname;
-
-                    xmpp.addToPresence("displayName", nickname);
-
-                    Chat.setChatConversationMode(true);
+                if (!NicknameHandler.getNickname()) {
+                    NicknameHandler.setNickname(val);
 
                     return;
                 }
@@ -2320,7 +2323,7 @@ var Chat = (function (my) {
                 else
                 {
                     var message = Util.escapeHtml(value);
-                    xmpp.sendChatMessage(message, nickname);
+                    xmpp.sendChatMessage(message, NicknameHandler.getNickname());
                 }
             }
         });
@@ -2470,7 +2473,7 @@ var Chat = (function (my) {
     return my;
 }(Chat || {}));
 module.exports = Chat;
-},{"../../toolbars/ToolbarToggler":18,"../SidePanelToggler":8,"./Commands":10,"./Replacement":11,"./smileys.json":12}],10:[function(require,module,exports){
+},{"../../toolbars/ToolbarToggler":18,"../../util/NicknameHandler":21,"../SidePanelToggler":8,"./Commands":10,"./Replacement":11,"./smileys.json":12}],10:[function(require,module,exports){
 /**
  * List with supported commands. The keys are the names of the commands and
  * the value is the function that processes the message.
@@ -3531,7 +3534,7 @@ var Toolbar = (function (my) {
 }(Toolbar || {}));
 
 module.exports = Toolbar;
-},{"../authentication/Authentication":4,"../etherpad/Etherpad":6,"../prezi/Prezi":7,"../side_pannels/SidePanelToggler":8,"../util/MessageHandler":20,"../util/UIUtil":21,"./BottomToolbar":16}],18:[function(require,module,exports){
+},{"../authentication/Authentication":4,"../etherpad/Etherpad":6,"../prezi/Prezi":7,"../side_pannels/SidePanelToggler":8,"../util/MessageHandler":20,"../util/UIUtil":22,"./BottomToolbar":16}],18:[function(require,module,exports){
 /* global $, interfaceConfig, Moderator, DesktopStreaming.showDesktopSharingButton */
 
 var toolbarTimeoutObject,
@@ -3940,6 +3943,35 @@ module.exports = messageHandler;
 
 
 },{}],21:[function(require,module,exports){
+var nickname = null;
+var eventEmitter = null;
+
+var NickanameHandler = {
+    init: function (emitter) {
+        eventEmitter = emitter;
+        var storedDisplayName = window.localStorage.displayname;
+        if (storedDisplayName) {
+            nickname = storedDisplayName;
+        }
+    },
+    setNickname: function (newNickname) {
+        if (!newNickname || nickname === newNickname)
+            return;
+
+        nickname = newNickname;
+        window.localStorage.displayname = nickname;
+        eventEmitter.emit(UIEvents.NICKNAME_CHANGED, newNickname);
+    },
+    getNickname: function () {
+        return nickname;
+    },
+    addListener: function (type, listener) {
+        eventEmitter.on(type, listener);
+    }
+};
+
+module.exports = NickanameHandler;
+},{}],22:[function(require,module,exports){
 /**
  * Created by hristo on 12/22/14.
  */
@@ -3963,7 +3995,7 @@ module.exports = {
 
 
 };
-},{"../side_pannels/SidePanelToggler":8}],22:[function(require,module,exports){
+},{"../side_pannels/SidePanelToggler":8}],23:[function(require,module,exports){
 var JitsiPopover = require("../util/JitsiPopover");
 
 /**
@@ -4374,13 +4406,14 @@ ConnectionIndicator.prototype.hideIndicator = function () {
 };
 
 module.exports = ConnectionIndicator;
-},{"../util/JitsiPopover":19}],23:[function(require,module,exports){
+},{"../util/JitsiPopover":19}],24:[function(require,module,exports){
 var AudioLevels = require("../audio_levels/AudioLevels");
 var Avatar = require("../avatar/Avatar");
 var Chat = require("../side_pannels/chat/Chat");
 var ContactList = require("../side_pannels/contactlist/ContactList");
 var UIUtil = require("../util/UIUtil");
 var ConnectionIndicator = require("./ConnectionIndicator");
+var NicknameHandler = require("../util/NicknameHandler");
 
 var currentDominantSpeaker = null;
 var lastNCount = config.channelLastN;
@@ -5635,17 +5668,11 @@ var VideoLayout = (function (my) {
     };
 
     my.inputDisplayNameHandler = function (name) {
-        if (name && nickname !== name) {
-            nickname = name;
-            window.localStorage.displayname = nickname;
-            xmpp.addToPresence("displayName", nickname);
-
-            Chat.setChatConversationMode(true);
-        }
+        NicknameHandler.setNickname(name);
 
         if (!$('#localDisplayName').is(":visible")) {
-            if (nickname)
-                $('#localDisplayName').text(nickname + " (me)");
+            if (NicknameHandler.getNickname())
+                $('#localDisplayName').text(NicknameHandler.getNickname() + " (me)");
             else
                 $('#localDisplayName')
                     .text(interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME);
@@ -6141,7 +6168,7 @@ var VideoLayout = (function (my) {
         var name = null;
         if (jid === 'localVideoContainer'
             || jid === xmpp.myJid()) {
-            name = nickname;
+            name = NicknameHandler.getNickname();
             setDisplayName('localVideoContainer',
                            displayName);
         } else {
@@ -6576,7 +6603,7 @@ var VideoLayout = (function (my) {
 }(VideoLayout || {}));
 
 module.exports = VideoLayout;
-},{"../audio_levels/AudioLevels":2,"../avatar/Avatar":5,"../etherpad/Etherpad":6,"../prezi/Prezi":7,"../side_pannels/chat/Chat":9,"../side_pannels/contactlist/ContactList":13,"../util/UIUtil":21,"./ConnectionIndicator":22}],24:[function(require,module,exports){
+},{"../audio_levels/AudioLevels":2,"../avatar/Avatar":5,"../etherpad/Etherpad":6,"../prezi/Prezi":7,"../side_pannels/chat/Chat":9,"../side_pannels/contactlist/ContactList":13,"../util/NicknameHandler":21,"../util/UIUtil":22,"./ConnectionIndicator":23}],25:[function(require,module,exports){
 //var nouns = [
 //];
 var pluralNouns = [
@@ -6757,7 +6784,7 @@ var RoomNameGenerator = {
 
 module.exports = RoomNameGenerator;
 
-},{}],25:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 var animateTimeout, updateTimeout;
 
 var RoomNameGenerator = require("./RoomnameGenerator");
@@ -6861,5 +6888,308 @@ function setupWelcomePage()
 }
 
 module.exports = setupWelcomePage;
-},{"./RoomnameGenerator":24}]},{},[1])(1)
+},{"./RoomnameGenerator":25}],27:[function(require,module,exports){
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+function EventEmitter() {
+  this._events = this._events || {};
+  this._maxListeners = this._maxListeners || undefined;
+}
+module.exports = EventEmitter;
+
+// Backwards-compat with node 0.10.x
+EventEmitter.EventEmitter = EventEmitter;
+
+EventEmitter.prototype._events = undefined;
+EventEmitter.prototype._maxListeners = undefined;
+
+// By default EventEmitters will print a warning if more than 10 listeners are
+// added to it. This is a useful default which helps finding memory leaks.
+EventEmitter.defaultMaxListeners = 10;
+
+// Obviously not all Emitters should be limited to 10. This function allows
+// that to be increased. Set to zero for unlimited.
+EventEmitter.prototype.setMaxListeners = function(n) {
+  if (!isNumber(n) || n < 0 || isNaN(n))
+    throw TypeError('n must be a positive number');
+  this._maxListeners = n;
+  return this;
+};
+
+EventEmitter.prototype.emit = function(type) {
+  var er, handler, len, args, i, listeners;
+
+  if (!this._events)
+    this._events = {};
+
+  // If there is no 'error' event listener then throw.
+  if (type === 'error') {
+    if (!this._events.error ||
+        (isObject(this._events.error) && !this._events.error.length)) {
+      er = arguments[1];
+      if (er instanceof Error) {
+        throw er; // Unhandled 'error' event
+      }
+      throw TypeError('Uncaught, unspecified "error" event.');
+    }
+  }
+
+  handler = this._events[type];
+
+  if (isUndefined(handler))
+    return false;
+
+  if (isFunction(handler)) {
+    switch (arguments.length) {
+      // fast cases
+      case 1:
+        handler.call(this);
+        break;
+      case 2:
+        handler.call(this, arguments[1]);
+        break;
+      case 3:
+        handler.call(this, arguments[1], arguments[2]);
+        break;
+      // slower
+      default:
+        len = arguments.length;
+        args = new Array(len - 1);
+        for (i = 1; i < len; i++)
+          args[i - 1] = arguments[i];
+        handler.apply(this, args);
+    }
+  } else if (isObject(handler)) {
+    len = arguments.length;
+    args = new Array(len - 1);
+    for (i = 1; i < len; i++)
+      args[i - 1] = arguments[i];
+
+    listeners = handler.slice();
+    len = listeners.length;
+    for (i = 0; i < len; i++)
+      listeners[i].apply(this, args);
+  }
+
+  return true;
+};
+
+EventEmitter.prototype.addListener = function(type, listener) {
+  var m;
+
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  if (!this._events)
+    this._events = {};
+
+  // To avoid recursion in the case that type === "newListener"! Before
+  // adding it to the listeners, first emit "newListener".
+  if (this._events.newListener)
+    this.emit('newListener', type,
+              isFunction(listener.listener) ?
+              listener.listener : listener);
+
+  if (!this._events[type])
+    // Optimize the case of one listener. Don't need the extra array object.
+    this._events[type] = listener;
+  else if (isObject(this._events[type]))
+    // If we've already got an array, just append.
+    this._events[type].push(listener);
+  else
+    // Adding the second element, need to change to array.
+    this._events[type] = [this._events[type], listener];
+
+  // Check for listener leak
+  if (isObject(this._events[type]) && !this._events[type].warned) {
+    var m;
+    if (!isUndefined(this._maxListeners)) {
+      m = this._maxListeners;
+    } else {
+      m = EventEmitter.defaultMaxListeners;
+    }
+
+    if (m && m > 0 && this._events[type].length > m) {
+      this._events[type].warned = true;
+      console.error('(node) warning: possible EventEmitter memory ' +
+                    'leak detected. %d listeners added. ' +
+                    'Use emitter.setMaxListeners() to increase limit.',
+                    this._events[type].length);
+      if (typeof console.trace === 'function') {
+        // not supported in IE 10
+        console.trace();
+      }
+    }
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.on = EventEmitter.prototype.addListener;
+
+EventEmitter.prototype.once = function(type, listener) {
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  var fired = false;
+
+  function g() {
+    this.removeListener(type, g);
+
+    if (!fired) {
+      fired = true;
+      listener.apply(this, arguments);
+    }
+  }
+
+  g.listener = listener;
+  this.on(type, g);
+
+  return this;
+};
+
+// emits a 'removeListener' event iff the listener was removed
+EventEmitter.prototype.removeListener = function(type, listener) {
+  var list, position, length, i;
+
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  if (!this._events || !this._events[type])
+    return this;
+
+  list = this._events[type];
+  length = list.length;
+  position = -1;
+
+  if (list === listener ||
+      (isFunction(list.listener) && list.listener === listener)) {
+    delete this._events[type];
+    if (this._events.removeListener)
+      this.emit('removeListener', type, listener);
+
+  } else if (isObject(list)) {
+    for (i = length; i-- > 0;) {
+      if (list[i] === listener ||
+          (list[i].listener && list[i].listener === listener)) {
+        position = i;
+        break;
+      }
+    }
+
+    if (position < 0)
+      return this;
+
+    if (list.length === 1) {
+      list.length = 0;
+      delete this._events[type];
+    } else {
+      list.splice(position, 1);
+    }
+
+    if (this._events.removeListener)
+      this.emit('removeListener', type, listener);
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.removeAllListeners = function(type) {
+  var key, listeners;
+
+  if (!this._events)
+    return this;
+
+  // not listening for removeListener, no need to emit
+  if (!this._events.removeListener) {
+    if (arguments.length === 0)
+      this._events = {};
+    else if (this._events[type])
+      delete this._events[type];
+    return this;
+  }
+
+  // emit removeListener for all listeners on all events
+  if (arguments.length === 0) {
+    for (key in this._events) {
+      if (key === 'removeListener') continue;
+      this.removeAllListeners(key);
+    }
+    this.removeAllListeners('removeListener');
+    this._events = {};
+    return this;
+  }
+
+  listeners = this._events[type];
+
+  if (isFunction(listeners)) {
+    this.removeListener(type, listeners);
+  } else {
+    // LIFO order
+    while (listeners.length)
+      this.removeListener(type, listeners[listeners.length - 1]);
+  }
+  delete this._events[type];
+
+  return this;
+};
+
+EventEmitter.prototype.listeners = function(type) {
+  var ret;
+  if (!this._events || !this._events[type])
+    ret = [];
+  else if (isFunction(this._events[type]))
+    ret = [this._events[type]];
+  else
+    ret = this._events[type].slice();
+  return ret;
+};
+
+EventEmitter.listenerCount = function(emitter, type) {
+  var ret;
+  if (!emitter._events || !emitter._events[type])
+    ret = 0;
+  else if (isFunction(emitter._events[type]))
+    ret = 1;
+  else
+    ret = emitter._events[type].length;
+  return ret;
+};
+
+function isFunction(arg) {
+  return typeof arg === 'function';
+}
+
+function isNumber(arg) {
+  return typeof arg === 'number';
+}
+
+function isObject(arg) {
+  return typeof arg === 'object' && arg !== null;
+}
+
+function isUndefined(arg) {
+  return arg === void 0;
+}
+
+},{}]},{},[1])(1)
 });
