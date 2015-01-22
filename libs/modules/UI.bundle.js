@@ -202,7 +202,7 @@ UI.start = function () {
         trigger: 'click hover',
         content: function() {
             return this.getAttribute("content") +
-                KeyboardShortcut.getShortcut(this.getAttribute("shortcut"));
+                keyboardshortcut.getShortcut(this.getAttribute("shortcut"));
         }
     });
     VideoLayout.resizeLargeVideoContainer();
@@ -690,6 +690,13 @@ UI.onLastNChanged = function (oldValue, newValue) {
 
 UI.addListener = function (type, listener) {
     eventEmitter.on(type, listener);
+}
+
+UI.clickOnVideo = function (videoNumber) {
+    var remoteVideos = $(".videocontainer:not(#mixedstream)");
+    if (remoteVideos.length > videoNumber) {
+        remoteVideos[videoNumber].click();
+    }
 }
 
 module.exports = UI;

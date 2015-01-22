@@ -18,6 +18,8 @@ $(document).ready(function () {
     
     // Set default desktop sharing method
     desktopsharing.init();
+
+    keyboardshortcut.init();
 });
 
 $(window).bind('beforeunload', function () {
