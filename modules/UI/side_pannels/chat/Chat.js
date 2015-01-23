@@ -4,6 +4,7 @@ var CommandsProcessor = require("./Commands");
 var ToolbarToggler = require("../../toolbars/ToolbarToggler");
 var smileys = require("./smileys.json").smileys;
 var NicknameHandler = require("../../util/NicknameHandler");
+var UIUtil = require("../../util/UIUtil");
 
 var notificationInterval = false;
 var unreadMessages = 0;
@@ -28,10 +29,10 @@ function setVisualNotification(show) {
 
         var chatButtonElement
             = document.getElementById('chatButton').parentNode;
-        var leftIndent = (Util.getTextWidth(chatButtonElement) -
-            Util.getTextWidth(unreadMsgElement)) / 2;
-        var topIndent = (Util.getTextHeight(chatButtonElement) -
-            Util.getTextHeight(unreadMsgElement)) / 2 - 3;
+        var leftIndent = (UIUtil.getTextWidth(chatButtonElement) -
+            UIUtil.getTextWidth(unreadMsgElement)) / 2;
+        var topIndent = (UIUtil.getTextHeight(chatButtonElement) -
+            UIUtil.getTextHeight(unreadMsgElement)) / 2 - 3;
 
         unreadMsgElement.setAttribute(
             'style',
@@ -179,7 +180,7 @@ var Chat = (function (my) {
         $('#nickinput').keydown(function (event) {
             if (event.keyCode === 13) {
                 event.preventDefault();
-                var val = Util.escapeHtml(this.value);
+                var val = UIUtil.escapeHtml(this.value);
                 this.value = '';
                 if (!NicknameHandler.getNickname()) {
                     NicknameHandler.setNickname(val);
@@ -202,7 +203,7 @@ var Chat = (function (my) {
                 }
                 else
                 {
-                    var message = Util.escapeHtml(value);
+                    var message = UIUtil.escapeHtml(value);
                     xmpp.sendChatMessage(message, NicknameHandler.getNickname());
                 }
             }
@@ -237,7 +238,7 @@ var Chat = (function (my) {
 
             if (!Chat.isVisible()) {
                 unreadMessages++;
-                Util.playSoundNotification('chatNotification');
+                UIUtil.playSoundNotification('chatNotification');
                 setVisualNotification(true);
             }
         }
@@ -247,7 +248,7 @@ var Chat = (function (my) {
         // so we escape here only tags to avoid double &amp;
         var escMessage = message.replace(/</g, '&lt;').
             replace(/>/g, '&gt;').replace(/\n/g, '<br/>');
-        var escDisplayName = Util.escapeHtml(displayName);
+        var escDisplayName = UIUtil.escapeHtml(displayName);
         message = Replacement.processReplacements(escMessage);
 
         var messageContainer =
@@ -270,8 +271,8 @@ var Chat = (function (my) {
      */
     my.chatAddError = function(errorMessage, originalText)
     {
-        errorMessage = Util.escapeHtml(errorMessage);
-        originalText = Util.escapeHtml(originalText);
+        errorMessage = UIUtil.escapeHtml(errorMessage);
+        originalText = UIUtil.escapeHtml(originalText);
 
         $('#chatconversation').append(
             '<div class="errorMessage"><b>Error: </b>' + 'Your message' +
@@ -290,7 +291,7 @@ var Chat = (function (my) {
     {
         if(subject)
             subject = subject.trim();
-        $('#subject').html(Replacement.linkify(Util.escapeHtml(subject)));
+        $('#subject').html(Replacement.linkify(UIUtil.escapeHtml(subject)));
         if(subject === "")
         {
             $("#subject").css({display: "none"});

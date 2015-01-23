@@ -1,12 +1,13 @@
 var Avatar = require("../../avatar/Avatar");
 var Settings = require("./Settings");
+var UIUtil = require("../../util/UIUtil");
 
 
 var SettingsMenu = {
 
     update: function() {
-        var newDisplayName = Util.escapeHtml($('#setDisplayName').get(0).value);
-        var newEmail = Util.escapeHtml($('#setEmail').get(0).value);
+        var newDisplayName = UIUtil.escapeHtml($('#setDisplayName').get(0).value);
+        var newEmail = UIUtil.escapeHtml($('#setEmail').get(0).value);
 
         if(newDisplayName) {
             var displayName = Settings.setDisplayName(newDisplayName);

@@ -702,7 +702,7 @@ UI.clickOnVideo = function (videoNumber) {
 module.exports = UI;
 
 
-},{"./audio_levels/AudioLevels.js":2,"./authentication/Authentication":4,"./avatar/Avatar":5,"./etherpad/Etherpad.js":6,"./prezi/Prezi.js":7,"./side_pannels/SidePanelToggler":8,"./side_pannels/chat/Chat.js":9,"./side_pannels/contactlist/ContactList":13,"./side_pannels/settings/Settings":14,"./side_pannels/settings/SettingsMenu":15,"./toolbars/BottomToolbar":16,"./toolbars/Toolbar":17,"./toolbars/ToolbarToggler":18,"./util/MessageHandler":20,"./util/NicknameHandler":21,"./util/UIUtil":22,"./videolayout/VideoLayout.js":24,"./welcome_page/RoomnameGenerator":25,"./welcome_page/WelcomePage":26,"events":27}],2:[function(require,module,exports){
+},{"./audio_levels/AudioLevels.js":2,"./authentication/Authentication":4,"./avatar/Avatar":5,"./etherpad/Etherpad.js":6,"./prezi/Prezi.js":7,"./side_pannels/SidePanelToggler":9,"./side_pannels/chat/Chat.js":10,"./side_pannels/contactlist/ContactList":14,"./side_pannels/settings/Settings":15,"./side_pannels/settings/SettingsMenu":16,"./toolbars/BottomToolbar":17,"./toolbars/Toolbar":18,"./toolbars/ToolbarToggler":19,"./util/MessageHandler":21,"./util/NicknameHandler":22,"./util/UIUtil":23,"./videolayout/VideoLayout.js":25,"./welcome_page/RoomnameGenerator":26,"./welcome_page/WelcomePage":27,"events":28}],2:[function(require,module,exports){
 var CanvasUtil = require("./CanvasUtils");
 
 /**
@@ -1319,7 +1319,7 @@ var Avatar = {
 
 
 module.exports = Avatar;
-},{"../side_pannels/settings/Settings":14,"../videolayout/VideoLayout":24}],6:[function(require,module,exports){
+},{"../side_pannels/settings/Settings":15,"../videolayout/VideoLayout":25}],6:[function(require,module,exports){
 /* global $, config, dockToolbar,
    setLargeVideoVisible, Util */
 
@@ -1515,11 +1515,12 @@ var Etherpad = {
 
 module.exports = Etherpad;
 
-},{"../prezi/Prezi":7,"../util/UIUtil":22,"../videolayout/VideoLayout":24}],7:[function(require,module,exports){
+},{"../prezi/Prezi":7,"../util/UIUtil":23,"../videolayout/VideoLayout":25}],7:[function(require,module,exports){
 var ToolbarToggler = require("../toolbars/ToolbarToggler");
 var UIUtil = require("../util/UIUtil");
 var VideoLayout = require("../videolayout/VideoLayout");
 var messageHandler = require("../util/MessageHandler");
+var PreziPlayer = require("./PreziPlayer");
 
 var preziPlayer = null;
 
@@ -1591,7 +1592,7 @@ var Prezi = {
                             if (preziUrl.value)
                             {
                                 var urlValue
-                                    = encodeURI(Util.escapeHtml(preziUrl.value));
+                                    = encodeURI(UIUtil.escapeHtml(preziUrl.value));
 
                                 if (urlValue.indexOf('http://prezi.com/') != 0
                                     && urlValue.indexOf('https://prezi.com/') != 0)
@@ -1867,7 +1868,302 @@ $(window).resize(function () {
 
 module.exports = Prezi;
 
-},{"../toolbars/ToolbarToggler":18,"../util/MessageHandler":20,"../util/UIUtil":22,"../videolayout/VideoLayout":24}],8:[function(require,module,exports){
+},{"../toolbars/ToolbarToggler":19,"../util/MessageHandler":21,"../util/UIUtil":23,"../videolayout/VideoLayout":25,"./PreziPlayer":8}],8:[function(require,module,exports){
+(function() {
+    "use strict";
+    var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+
+    window.PreziPlayer = (function() {
+
+        PreziPlayer.API_VERSION = 1;
+        PreziPlayer.CURRENT_STEP = 'currentStep';
+        PreziPlayer.CURRENT_ANIMATION_STEP = 'currentAnimationStep';
+        PreziPlayer.CURRENT_OBJECT = 'currentObject';
+        PreziPlayer.STATUS_LOADING = 'loading';
+        PreziPlayer.STATUS_READY = 'ready';
+        PreziPlayer.STATUS_CONTENT_READY = 'contentready';
+        PreziPlayer.EVENT_CURRENT_STEP = "currentStepChange";
+        PreziPlayer.EVENT_CURRENT_ANIMATION_STEP = "currentAnimationStepChange";
+        PreziPlayer.EVENT_CURRENT_OBJECT = "currentObjectChange";
+        PreziPlayer.EVENT_STATUS = "statusChange";
+        PreziPlayer.EVENT_PLAYING = "isAutoPlayingChange";
+        PreziPlayer.EVENT_IS_MOVING = "isMovingChange";
+        PreziPlayer.domain = "https://prezi.com";
+        PreziPlayer.path = "/player/";
+        PreziPlayer.players = {};
+        PreziPlayer.binded_methods = ['changesHandler'];
+
+        PreziPlayer.createMultiplePlayers = function(optionArray){
+            for(var i=0; i<optionArray.length; i++) {
+                var optionSet = optionArray[i];
+                new PreziPlayer(optionSet.id, optionSet);
+            };
+        };
+
+        PreziPlayer.messageReceived = function(event){
+            var message, item, player;
+            try {
+                message = JSON.parse(event.data);
+            } catch (e) {}
+            if (message.id && (player = PreziPlayer.players[message.id])){
+                if (player.options.debug === true) {
+                    if (console && console.log) console.log('received', message);
+                }
+                if (message.type === "changes"){
+                    player.changesHandler(message);
+                }
+                for (var i=0; i<player.callbacks.length; i++) {
+                    item = player.callbacks[i];
+                    if (item && message.type === item.event){
+                        item.callback(message);
+                    }
+                }
+            }
+        };
+
+        function PreziPlayer(id, options) {
+            var params, paramString = "", _this = this;
+            if (PreziPlayer.players[id]){
+                PreziPlayer.players[id].destroy();
+            }
+            for(var i=0; i<PreziPlayer.binded_methods.length; i++) {
+                var method_name = PreziPlayer.binded_methods[i];
+                _this[method_name] = __bind(_this[method_name], _this);
+            };
+            options = options || {};
+            this.options = options;
+            this.values = {'status': PreziPlayer.STATUS_LOADING};
+            this.values[PreziPlayer.CURRENT_STEP] = 0;
+            this.values[PreziPlayer.CURRENT_ANIMATION_STEP] = 0;
+            this.values[PreziPlayer.CURRENT_OBJECT] = null;
+            this.callbacks = [];
+            this.id = id;
+            this.embedTo = document.getElementById(id);
+            if (!this.embedTo) {
+                throw "The element id is not available.";
+            }
+            this.iframe = document.createElement('iframe');
+            params = [
+                { name: 'oid', value: options.preziId },
+                { name: 'explorable', value: options.explorable ? 1 : 0 },
+                { name: 'controls', value: options.controls ? 1 : 0 }
+            ];
+            for(var i=0; i<params.length; i++) {
+                var param = params[i];
+                paramString += (i===0 ? "?" : "&") + param.name + "=" + param.value;
+            };
+            this.iframe.src = PreziPlayer.domain + PreziPlayer.path + paramString;
+            this.iframe.frameBorder = 0;
+            this.iframe.scrolling = "no";
+            this.iframe.width = options.width || 640;
+            this.iframe.height = options.height || 480;
+            this.embedTo.innerHTML = '';
+            // JITSI: IN CASE SOMETHING GOES WRONG.
+            try {
+                this.embedTo.appendChild(this.iframe);
+            }
+            catch (err) {
+                console.log("CATCH ERROR");
+            }
+
+            // JITSI: Increase interval from 200 to 500, which fixes prezi
+            // crashes for us.
+            this.initPollInterval = setInterval(function(){
+                _this.sendMessage({'action': 'init'});
+            }, 500);
+            PreziPlayer.players[id] = this;
+        }
+
+        PreziPlayer.prototype.changesHandler = function(message) {
+            var key, value, j, item;
+            if (this.initPollInterval) {
+                clearInterval(this.initPollInterval);
+                this.initPollInterval = false;
+            }
+            for (key in message.data) {
+                if (message.data.hasOwnProperty(key)){
+                    value = message.data[key];
+                    this.values[key] = value;
+                    for (j=0; j<this.callbacks.length; j++) {
+                        item = this.callbacks[j];
+                        if (item && item.event === key + "Change"){
+                            item.callback({type: item.event, value: value});
+                        }
+                    }
+                }
+            }
+        };
+
+        PreziPlayer.prototype.destroy = function() {
+            if (this.initPollInterval) {
+                clearInterval(this.initPollInterval);
+                this.initPollInterval = false;
+            }
+            this.embedTo.innerHTML = '';
+        };
+
+        PreziPlayer.prototype.sendMessage = function(message) {
+            if (this.options.debug === true) {
+                if (console && console.log) console.log('sent', message);
+            }
+            message.version = PreziPlayer.API_VERSION;
+            message.id = this.id;
+            return this.iframe.contentWindow.postMessage(JSON.stringify(message), '*');
+        };
+
+        PreziPlayer.prototype.nextStep = /* nextStep is DEPRECATED */
+        PreziPlayer.prototype.flyToNextStep = function() {
+            return this.sendMessage({
+                'action': 'present',
+                'data': ['moveToNextStep']
+            });
+        };
+
+        PreziPlayer.prototype.previousStep = /* previousStep is DEPRECATED */
+        PreziPlayer.prototype.flyToPreviousStep = function() {
+            return this.sendMessage({
+                'action': 'present',
+                'data': ['moveToPrevStep']
+            });
+        };
+
+        PreziPlayer.prototype.toStep = /* toStep is DEPRECATED */
+        PreziPlayer.prototype.flyToStep = function(step, animation_step) {
+            var obj = this;
+            // check animation_step
+            if (animation_step > 0 &&
+                obj.values.animationCountOnSteps &&
+                obj.values.animationCountOnSteps[step] <= animation_step) {
+                animation_step = obj.values.animationCountOnSteps[step];
+            }
+            // jump to animation steps by calling flyToNextStep()
+            function doAnimationSteps() {
+                if (obj.values.isMoving == true) {
+                    setTimeout(doAnimationSteps, 100); // wait until the flight ends
+                    return;
+                }
+                while (animation_step-- > 0) {
+                    obj.flyToNextStep(); // do the animation steps
+                }
+            }
+            setTimeout(doAnimationSteps, 200); // 200ms is the internal "reporting" time
+            // jump to the step
+            return this.sendMessage({
+                'action': 'present',
+                'data': ['moveToStep', step]
+            });
+        };
+
+        PreziPlayer.prototype.toObject = /* toObject is DEPRECATED */
+        PreziPlayer.prototype.flyToObject = function(objectId) {
+            return this.sendMessage({
+                'action': 'present',
+                'data': ['moveToObject', objectId]
+            });
+        };
+
+        PreziPlayer.prototype.play = function(defaultDelay) {
+            return this.sendMessage({
+                'action': 'present',
+                'data': ['startAutoPlay', defaultDelay]
+            });
+        };
+
+        PreziPlayer.prototype.stop = function() {
+            return this.sendMessage({
+                'action': 'present',
+                'data': ['stopAutoPlay']
+            });
+        };
+
+        PreziPlayer.prototype.pause = function(defaultDelay) {
+            return this.sendMessage({
+                'action': 'present',
+                'data': ['pauseAutoPlay', defaultDelay]
+            });
+        };
+
+        PreziPlayer.prototype.getCurrentStep = function() {
+            return this.values.currentStep;
+        };
+
+        PreziPlayer.prototype.getCurrentAnimationStep = function() {
+            return this.values.currentAnimationStep;
+        };
+
+        PreziPlayer.prototype.getCurrentObject = function() {
+            return this.values.currentObject;
+        };
+
+        PreziPlayer.prototype.getStatus = function() {
+            return this.values.status;
+        };
+
+        PreziPlayer.prototype.isPlaying = function() {
+            return this.values.isAutoPlaying;
+        };
+
+        PreziPlayer.prototype.getStepCount = function() {
+            return this.values.stepCount;
+        };
+
+        PreziPlayer.prototype.getAnimationCountOnSteps = function() {
+            return this.values.animationCountOnSteps;
+        };
+
+        PreziPlayer.prototype.getTitle = function() {
+            return this.values.title;
+        };
+
+        PreziPlayer.prototype.setDimensions = function(dims) {
+            for (var parameter in dims) {
+                this.iframe[parameter] = dims[parameter];
+            }
+        }
+
+        PreziPlayer.prototype.getDimensions = function() {
+            return {
+                width: parseInt(this.iframe.width, 10),
+                height: parseInt(this.iframe.height, 10)
+            }
+        }
+
+        PreziPlayer.prototype.on = function(event, callback) {
+            this.callbacks.push({
+                event: event,
+                callback: callback
+            });
+        };
+
+        PreziPlayer.prototype.off = function(event, callback) {
+            var j, item;
+            if (event === undefined) {
+                this.callbacks = [];
+            }
+            j = this.callbacks.length;
+            while (j--) {
+                item = this.callbacks[j];
+                if (item && item.event === event && (callback === undefined || item.callback === callback)){
+                    this.callbacks.splice(j, 1);
+                }
+            }
+        };
+
+        if (window.addEventListener) {
+            window.addEventListener('message', PreziPlayer.messageReceived, false);
+        } else {
+            window.attachEvent('onmessage', PreziPlayer.messageReceived);
+        }
+
+        return PreziPlayer;
+
+    })();
+
+})();
+
+module.exports = PreziPlayer;
+
+},{}],9:[function(require,module,exports){
 var Chat = require("./chat/Chat");
 var ContactList = require("./contactlist/ContactList");
 var Settings = require("./settings/Settings");
@@ -2124,13 +2420,14 @@ var PanelToggler = (function(my) {
 }(PanelToggler || {}));
 
 module.exports = PanelToggler;
-},{"../toolbars/ToolbarToggler":18,"../util/UIUtil":22,"../videolayout/VideoLayout":24,"./chat/Chat":9,"./contactlist/ContactList":13,"./settings/Settings":14,"./settings/SettingsMenu":15}],9:[function(require,module,exports){
+},{"../toolbars/ToolbarToggler":19,"../util/UIUtil":23,"../videolayout/VideoLayout":25,"./chat/Chat":10,"./contactlist/ContactList":14,"./settings/Settings":15,"./settings/SettingsMenu":16}],10:[function(require,module,exports){
 /* global $, Util, nickname:true, showToolbar */
 var Replacement = require("./Replacement");
 var CommandsProcessor = require("./Commands");
 var ToolbarToggler = require("../../toolbars/ToolbarToggler");
 var smileys = require("./smileys.json").smileys;
 var NicknameHandler = require("../../util/NicknameHandler");
+var UIUtil = require("../../util/UIUtil");
 
 var notificationInterval = false;
 var unreadMessages = 0;
@@ -2155,10 +2452,10 @@ function setVisualNotification(show) {
 
         var chatButtonElement
             = document.getElementById('chatButton').parentNode;
-        var leftIndent = (Util.getTextWidth(chatButtonElement) -
-            Util.getTextWidth(unreadMsgElement)) / 2;
-        var topIndent = (Util.getTextHeight(chatButtonElement) -
-            Util.getTextHeight(unreadMsgElement)) / 2 - 3;
+        var leftIndent = (UIUtil.getTextWidth(chatButtonElement) -
+            UIUtil.getTextWidth(unreadMsgElement)) / 2;
+        var topIndent = (UIUtil.getTextHeight(chatButtonElement) -
+            UIUtil.getTextHeight(unreadMsgElement)) / 2 - 3;
 
         unreadMsgElement.setAttribute(
             'style',
@@ -2306,7 +2603,7 @@ var Chat = (function (my) {
         $('#nickinput').keydown(function (event) {
             if (event.keyCode === 13) {
                 event.preventDefault();
-                var val = Util.escapeHtml(this.value);
+                var val = UIUtil.escapeHtml(this.value);
                 this.value = '';
                 if (!NicknameHandler.getNickname()) {
                     NicknameHandler.setNickname(val);
@@ -2329,7 +2626,7 @@ var Chat = (function (my) {
                 }
                 else
                 {
-                    var message = Util.escapeHtml(value);
+                    var message = UIUtil.escapeHtml(value);
                     xmpp.sendChatMessage(message, NicknameHandler.getNickname());
                 }
             }
@@ -2364,7 +2661,7 @@ var Chat = (function (my) {
 
             if (!Chat.isVisible()) {
                 unreadMessages++;
-                Util.playSoundNotification('chatNotification');
+                UIUtil.playSoundNotification('chatNotification');
                 setVisualNotification(true);
             }
         }
@@ -2374,7 +2671,7 @@ var Chat = (function (my) {
         // so we escape here only tags to avoid double &amp;
         var escMessage = message.replace(/</g, '&lt;').
             replace(/>/g, '&gt;').replace(/\n/g, '<br/>');
-        var escDisplayName = Util.escapeHtml(displayName);
+        var escDisplayName = UIUtil.escapeHtml(displayName);
         message = Replacement.processReplacements(escMessage);
 
         var messageContainer =
@@ -2397,8 +2694,8 @@ var Chat = (function (my) {
      */
     my.chatAddError = function(errorMessage, originalText)
     {
-        errorMessage = Util.escapeHtml(errorMessage);
-        originalText = Util.escapeHtml(originalText);
+        errorMessage = UIUtil.escapeHtml(errorMessage);
+        originalText = UIUtil.escapeHtml(originalText);
 
         $('#chatconversation').append(
             '<div class="errorMessage"><b>Error: </b>' + 'Your message' +
@@ -2417,7 +2714,7 @@ var Chat = (function (my) {
     {
         if(subject)
             subject = subject.trim();
-        $('#subject').html(Replacement.linkify(Util.escapeHtml(subject)));
+        $('#subject').html(Replacement.linkify(UIUtil.escapeHtml(subject)));
         if(subject === "")
         {
             $("#subject").css({display: "none"});
@@ -2480,7 +2777,9 @@ var Chat = (function (my) {
     return my;
 }(Chat || {}));
 module.exports = Chat;
-},{"../../toolbars/ToolbarToggler":18,"../../util/NicknameHandler":21,"../SidePanelToggler":8,"./Commands":10,"./Replacement":11,"./smileys.json":12}],10:[function(require,module,exports){
+},{"../../toolbars/ToolbarToggler":19,"../../util/NicknameHandler":22,"../../util/UIUtil":23,"../SidePanelToggler":9,"./Commands":11,"./Replacement":12,"./smileys.json":13}],11:[function(require,module,exports){
+var UIUtil = require("../../util/UIUtil");
+
 /**
  * List with supported commands. The keys are the names of the commands and
  * the value is the function that processes the message.
@@ -2514,7 +2813,7 @@ function getCommand(message)
  */
 function processTopic(commandArguments)
 {
-    var topic = Util.escapeHtml(commandArguments);
+    var topic = UIUtil.escapeHtml(commandArguments);
     xmpp.setSubject(topic);
 }
 
@@ -2576,7 +2875,7 @@ CommandsProcessor.prototype.processCommand = function()
 };
 
 module.exports = CommandsProcessor;
-},{}],11:[function(require,module,exports){
+},{"../../util/UIUtil":23}],12:[function(require,module,exports){
 var Smileys = require("./smileys.json");
 /**
  * Processes links and smileys in "body"
@@ -2640,7 +2939,7 @@ module.exports = {
     linkify: linkify
 };
 
-},{"./smileys.json":12}],12:[function(require,module,exports){
+},{"./smileys.json":13}],13:[function(require,module,exports){
 module.exports={
     "smileys": {
         "smiley1": ":)",
@@ -2690,7 +2989,7 @@ module.exports={
     }
 }
 
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 
 var numberOfContacts = 0;
 var notificationInterval;
@@ -2874,7 +3173,7 @@ var ContactList = {
 };
 
 module.exports = ContactList;
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 var email = '';
 var displayName = '';
 var userId;
@@ -2934,16 +3233,17 @@ var Settings =
 
 module.exports = Settings;
 
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 var Avatar = require("../../avatar/Avatar");
 var Settings = require("./Settings");
+var UIUtil = require("../../util/UIUtil");
 
 
 var SettingsMenu = {
 
     update: function() {
-        var newDisplayName = Util.escapeHtml($('#setDisplayName').get(0).value);
-        var newEmail = Util.escapeHtml($('#setEmail').get(0).value);
+        var newDisplayName = UIUtil.escapeHtml($('#setDisplayName').get(0).value);
+        var newEmail = UIUtil.escapeHtml($('#setEmail').get(0).value);
 
         if(newDisplayName) {
             var displayName = Settings.setDisplayName(newDisplayName);
@@ -2977,7 +3277,7 @@ var SettingsMenu = {
 
 
 module.exports = SettingsMenu;
-},{"../../avatar/Avatar":5,"./Settings":14}],16:[function(require,module,exports){
+},{"../../avatar/Avatar":5,"../../util/UIUtil":23,"./Settings":15}],17:[function(require,module,exports){
 var PanelToggler = require("../side_pannels/SidePanelToggler");
 
 var buttonHandlers = {
@@ -3022,7 +3322,7 @@ var BottomToolbar = (function (my) {
 
 module.exports = BottomToolbar;
 
-},{"../side_pannels/SidePanelToggler":8}],17:[function(require,module,exports){
+},{"../side_pannels/SidePanelToggler":9}],18:[function(require,module,exports){
 /* global $, buttonClick, config, lockRoom,
    setSharedKey, Util */
 var messageHandler = require("../util/MessageHandler");
@@ -3127,7 +3427,7 @@ function toggleRecording() {
                     var token = document.getElementById('recordingToken');
 
                     if (token.value) {
-                        callback(Util.escapeHtml(token.value));
+                        callback(UIUtil.escapeHtml(token.value));
                     }
                 }
             },
@@ -3346,7 +3646,7 @@ var Toolbar = (function (my) {
                             var lockKey = document.getElementById('lockKey');
 
                             if (lockKey.value) {
-                                Toolbar.setSharedKey(Util.escapeHtml(lockKey.value));
+                                Toolbar.setSharedKey(UIUtil.escapeHtml(lockKey.value));
                                 lockRoom(true);
                             }
                         }
@@ -3541,7 +3841,7 @@ var Toolbar = (function (my) {
 }(Toolbar || {}));
 
 module.exports = Toolbar;
-},{"../authentication/Authentication":4,"../etherpad/Etherpad":6,"../prezi/Prezi":7,"../side_pannels/SidePanelToggler":8,"../util/MessageHandler":20,"../util/UIUtil":22,"./BottomToolbar":16}],18:[function(require,module,exports){
+},{"../authentication/Authentication":4,"../etherpad/Etherpad":6,"../prezi/Prezi":7,"../side_pannels/SidePanelToggler":9,"../util/MessageHandler":21,"../util/UIUtil":23,"./BottomToolbar":17}],19:[function(require,module,exports){
 /* global $, interfaceConfig, Moderator, DesktopStreaming.showDesktopSharingButton */
 
 var toolbarTimeoutObject,
@@ -3656,7 +3956,7 @@ var ToolbarToggler = {
 };
 
 module.exports = ToolbarToggler;
-},{}],19:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 var JitsiPopover = (function () {
     /**
      * Constructs new JitsiPopover and attaches it to the element
@@ -3780,7 +4080,7 @@ var JitsiPopover = (function () {
 })();
 
 module.exports = JitsiPopover;
-},{}],20:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 /* global $, jQuery */
 var messageHandler = (function(my) {
 
@@ -3949,7 +4249,7 @@ module.exports = messageHandler;
 
 
 
-},{}],21:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 var nickname = null;
 var eventEmitter = null;
 
@@ -3978,7 +4278,7 @@ var NickanameHandler = {
 };
 
 module.exports = NickanameHandler;
-},{}],22:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 /**
  * Created by hristo on 12/22/14.
  */
@@ -3998,11 +4298,69 @@ module.exports = {
      */
     buttonClick: function(id, classname) {
         $(id).toggleClass(classname); // add the class to the clicked element
+    },
+    /**
+     * Returns the text width for the given element.
+     *
+     * @param el the element
+     */
+    getTextWidth: function (el) {
+        return (el.clientWidth + 1);
+    },
+
+    /**
+     * Returns the text height for the given element.
+     *
+     * @param el the element
+     */
+    getTextHeight: function (el) {
+        return (el.clientHeight + 1);
+    },
+
+    /**
+     * Plays the sound given by id.
+     *
+     * @param id the identifier of the audio element.
+     */
+    playSoundNotification: function (id) {
+        document.getElementById(id).play();
+    },
+
+    /**
+     * Escapes the given text.
+     */
+    escapeHtml: function (unsafeText) {
+        return $('<div/>').text(unsafeText).html();
+    },
+
+    imageToGrayScale: function (canvas) {
+        var context = canvas.getContext('2d');
+        var imgData = context.getImageData(0, 0, canvas.width, canvas.height);
+        var pixels  = imgData.data;
+
+        for (var i = 0, n = pixels.length; i < n; i += 4) {
+            var grayscale
+                = pixels[i] * .3 + pixels[i+1] * .59 + pixels[i+2] * .11;
+            pixels[i  ] = grayscale;        // red
+            pixels[i+1] = grayscale;        // green
+            pixels[i+2] = grayscale;        // blue
+            // pixels[i+3]              is alpha
+        }
+        // redraw the image in black & white
+        context.putImageData(imgData, 0, 0);
+    },
+
+    setTooltip: function (element, tooltipText, position) {
+        element.setAttribute("data-content", tooltipText);
+        element.setAttribute("data-toggle", "popover");
+        element.setAttribute("data-placement", position);
+        element.setAttribute("data-html", true);
+        element.setAttribute("data-container", "body");
     }
 
 
 };
-},{"../side_pannels/SidePanelToggler":8}],23:[function(require,module,exports){
+},{"../side_pannels/SidePanelToggler":9}],24:[function(require,module,exports){
 var JitsiPopover = require("../util/JitsiPopover");
 
 /**
@@ -4413,7 +4771,7 @@ ConnectionIndicator.prototype.hideIndicator = function () {
 };
 
 module.exports = ConnectionIndicator;
-},{"../util/JitsiPopover":19}],24:[function(require,module,exports){
+},{"../util/JitsiPopover":20}],25:[function(require,module,exports){
 var AudioLevels = require("../audio_levels/AudioLevels");
 var Avatar = require("../avatar/Avatar");
 var Chat = require("../side_pannels/chat/Chat");
@@ -4880,7 +5238,7 @@ function getDesktopVideoSize(videoWidth,
 function createEditDisplayNameButton() {
     var editButton = document.createElement('a');
     editButton.className = 'displayname';
-    Util.setTooltip(editButton,
+    UIUtil.setTooltip(editButton,
         'Click to edit your<br/>display name',
         "top");
     editButton.innerHTML = '<i class="fa fa-pencil"></i>';
@@ -4899,7 +5257,7 @@ function createModeratorIndicatorElement(parentElement) {
     moderatorIndicator.className = 'fa fa-star';
     parentElement.appendChild(moderatorIndicator);
 
-    Util.setTooltip(parentElement,
+    UIUtil.setTooltip(parentElement,
         "The owner of<br/>this conference",
         "top");
 }
@@ -5095,7 +5453,7 @@ var VideoLayout = (function (my) {
             container.id = 'mixedstream';
             container.className = 'videocontainer';
             remotes.appendChild(container);
-            Util.playSoundNotification('userJoined');
+            UIUtil.playSoundNotification('userJoined');
         }
 
         if (container) {
@@ -5617,7 +5975,7 @@ var VideoLayout = (function (my) {
             // Remove whole container
             container.remove();
 
-            Util.playSoundNotification('userLeft');
+            UIUtil.playSoundNotification('userLeft');
             VideoLayout.resizeThumbnails();
         }
 
@@ -5822,7 +6180,7 @@ var VideoLayout = (function (my) {
 
                 var mutedIndicator = document.createElement('i');
                 mutedIndicator.className = 'icon-camera-disabled';
-                Util.setTooltip(mutedIndicator,
+                UIUtil.setTooltip(mutedIndicator,
                     "Participant has<br/>stopped the camera.",
                     "top");
                 videoMutedSpan.appendChild(mutedIndicator);
@@ -5865,7 +6223,7 @@ var VideoLayout = (function (my) {
             if(audioMutedSpan.length == 0 ) {
                 audioMutedSpan = document.createElement('span');
                 audioMutedSpan.className = 'audioMuted';
-                Util.setTooltip(audioMutedSpan,
+                UIUtil.setTooltip(audioMutedSpan,
                     "Participant is muted",
                     "top");
 
@@ -6610,7 +6968,7 @@ var VideoLayout = (function (my) {
 }(VideoLayout || {}));
 
 module.exports = VideoLayout;
-},{"../audio_levels/AudioLevels":2,"../avatar/Avatar":5,"../etherpad/Etherpad":6,"../prezi/Prezi":7,"../side_pannels/chat/Chat":9,"../side_pannels/contactlist/ContactList":13,"../util/NicknameHandler":21,"../util/UIUtil":22,"./ConnectionIndicator":23}],25:[function(require,module,exports){
+},{"../audio_levels/AudioLevels":2,"../avatar/Avatar":5,"../etherpad/Etherpad":6,"../prezi/Prezi":7,"../side_pannels/chat/Chat":10,"../side_pannels/contactlist/ContactList":14,"../util/NicknameHandler":22,"../util/UIUtil":23,"./ConnectionIndicator":24}],26:[function(require,module,exports){
 //var nouns = [
 //];
 var pluralNouns = [
@@ -6791,7 +7149,7 @@ var RoomNameGenerator = {
 
 module.exports = RoomNameGenerator;
 
-},{}],26:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 var animateTimeout, updateTimeout;
 
 var RoomNameGenerator = require("./RoomnameGenerator");
@@ -6895,7 +7253,7 @@ function setupWelcomePage()
 }
 
 module.exports = setupWelcomePage;
-},{"./RoomnameGenerator":25}],27:[function(require,module,exports){
+},{"./RoomnameGenerator":26}],28:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a

@@ -6,8 +6,23 @@
  */
 var connection = null;
 var focusUserJid;
-var getNextTimeout = Util.createExpBackoffTimer(1000);
-var getNextErrorTimeout = Util.createExpBackoffTimer(1000);
+function createExpBackoffTimer(step) {
+    var count = 1;
+    return function (reset) {
+        // Reset call
+        if (reset) {
+            count = 1;
+            return;
+        }
+        // Calculate next timeout
+        var timeout = Math.pow(2, count - 1);
+        count += 1;
+        return timeout * step;
+    };
+}
+
+var getNextTimeout = createExpBackoffTimer(1000);
+var getNextErrorTimeout = createExpBackoffTimer(1000);
 // External authentication stuff
 var externalAuthEnabled = false;
 // Sip gateway can be enabled by configuring Jigasi host in config.js or

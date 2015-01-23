@@ -1,3 +1,5 @@
+var UIUtil = require("../../util/UIUtil");
+
 /**
  * List with supported commands. The keys are the names of the commands and
  * the value is the function that processes the message.
@@ -31,7 +33,7 @@ function getCommand(message)
  */
 function processTopic(commandArguments)
 {
-    var topic = Util.escapeHtml(commandArguments);
+    var topic = UIUtil.escapeHtml(commandArguments);
     xmpp.setSubject(topic);
 }
 

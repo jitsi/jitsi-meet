@@ -2,6 +2,7 @@ var ToolbarToggler = require("../toolbars/ToolbarToggler");
 var UIUtil = require("../util/UIUtil");
 var VideoLayout = require("../videolayout/VideoLayout");
 var messageHandler = require("../util/MessageHandler");
+var PreziPlayer = require("./PreziPlayer");
 
 var preziPlayer = null;
 
@@ -73,7 +74,7 @@ var Prezi = {
                             if (preziUrl.value)
                             {
                                 var urlValue
-                                    = encodeURI(Util.escapeHtml(preziUrl.value));
+                                    = encodeURI(UIUtil.escapeHtml(preziUrl.value));
 
                                 if (urlValue.indexOf('http://prezi.com/') != 0
                                     && urlValue.indexOf('https://prezi.com/') != 0)

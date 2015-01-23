@@ -289,3 +289,5 @@
     })();
 
 })();
+
+module.exports = PreziPlayer;

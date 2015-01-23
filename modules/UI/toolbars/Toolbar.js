@@ -102,7 +102,7 @@ function toggleRecording() {
                     var token = document.getElementById('recordingToken');
 
                     if (token.value) {
-                        callback(Util.escapeHtml(token.value));
+                        callback(UIUtil.escapeHtml(token.value));
                     }
                 }
             },
@@ -321,7 +321,7 @@ var Toolbar = (function (my) {
                             var lockKey = document.getElementById('lockKey');
 
                             if (lockKey.value) {
-                                Toolbar.setSharedKey(Util.escapeHtml(lockKey.value));
+                                Toolbar.setSharedKey(UIUtil.escapeHtml(lockKey.value));
                                 lockRoom(true);
                             }
                         }

@@ -464,7 +464,7 @@ function getDesktopVideoSize(videoWidth,
 function createEditDisplayNameButton() {
     var editButton = document.createElement('a');
     editButton.className = 'displayname';
-    Util.setTooltip(editButton,
+    UIUtil.setTooltip(editButton,
         'Click to edit your<br/>display name',
         "top");
     editButton.innerHTML = '<i class="fa fa-pencil"></i>';
@@ -483,7 +483,7 @@ function createModeratorIndicatorElement(parentElement) {
     moderatorIndicator.className = 'fa fa-star';
     parentElement.appendChild(moderatorIndicator);
 
-    Util.setTooltip(parentElement,
+    UIUtil.setTooltip(parentElement,
         "The owner of<br/>this conference",
         "top");
 }
@@ -679,7 +679,7 @@ var VideoLayout = (function (my) {
             container.id = 'mixedstream';
             container.className = 'videocontainer';
             remotes.appendChild(container);
-            Util.playSoundNotification('userJoined');
+            UIUtil.playSoundNotification('userJoined');
         }
 
         if (container) {
@@ -1201,7 +1201,7 @@ var VideoLayout = (function (my) {
             // Remove whole container
             container.remove();
 
-            Util.playSoundNotification('userLeft');
+            UIUtil.playSoundNotification('userLeft');
             VideoLayout.resizeThumbnails();
         }
 
@@ -1406,7 +1406,7 @@ var VideoLayout = (function (my) {
 
                 var mutedIndicator = document.createElement('i');
                 mutedIndicator.className = 'icon-camera-disabled';
-                Util.setTooltip(mutedIndicator,
+                UIUtil.setTooltip(mutedIndicator,
                     "Participant has<br/>stopped the camera.",
                     "top");
                 videoMutedSpan.appendChild(mutedIndicator);
@@ -1449,7 +1449,7 @@ var VideoLayout = (function (my) {
             if(audioMutedSpan.length == 0 ) {
                 audioMutedSpan = document.createElement('span');
                 audioMutedSpan.className = 'audioMuted';
-                Util.setTooltip(audioMutedSpan,
+                UIUtil.setTooltip(audioMutedSpan,
                     "Participant is muted",
                     "top");
 
