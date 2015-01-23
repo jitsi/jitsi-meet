@@ -54,9 +54,6 @@ var Moderator = {
 
     init: function (xmpp) {
         this.xmppService = xmpp;
-        this.onLocalRoleChange = function (from, member, pres) {
-            UI.onModeratorStatusChanged(Moderator.isModerator());
-        };
     },
 
     onMucLeft: function (jid) {

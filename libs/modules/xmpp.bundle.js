@@ -2855,9 +2855,6 @@ var Moderator = {
 
     init: function (xmpp) {
         this.xmppService = xmpp;
-        this.onLocalRoleChange = function (from, member, pres) {
-            UI.onModeratorStatusChanged(Moderator.isModerator());
-        };
     },
 
     onMucLeft: function (jid) {
@@ -3333,7 +3330,7 @@ module.exports = function(XMPP, eventEmitter) {
             var etherpad = $(pres).find('>etherpad');
             if (etherpad.length) {
                 if (config.etherpad_base && !Moderator.isModerator()) {
-                    UI.initEtherpad(etherpad.text());
+                    eventEmitter.emit(XMPPEvents.ETHERPAD, etherpad.text());
                 }
             }
 
@@ -3410,9 +3407,10 @@ module.exports = function(XMPP, eventEmitter) {
                 if (member.affiliation == 'owner') this.isOwner = true;
                 if (this.role !== member.role) {
                     this.role = member.role;
-                    if (Moderator.onLocalRoleChange)
-                        Moderator.onLocalRoleChange(from, member, pres);
-                    UI.onLocalRoleChange(from, member, pres);
+
+                    eventEmitter.emit(XMPPEvents.LOCALROLE_CHANGED,
+                        from, member, pres, Moderator.isModerator(),
+                        Moderator.isExternalAuthEnabled());
                 }
                 if (!this.joined) {
                     this.joined = true;
@@ -3434,25 +3432,24 @@ module.exports = function(XMPP, eventEmitter) {
                     if (email.length > 0) {
                         id = email.text();
                     }
-                    UI.onMucEntered(from, id, member.displayName);
-                    API.triggerEvent("participantJoined", {jid: from});
+                    eventEmitter.emit(XMPPEvents.MUC_ENTER, from, id, member.displayName);
                 }
             } else {
                 // Presence update for existing participant
                 // Watch role change:
                 if (this.members[from].role != member.role) {
                     this.members[from].role = member.role;
-                    UI.onMucRoleChanged(member.role, member.displayName);
+                    eventEmitter.emit(XMPPEvents.MUC_ROLE_CHANGED,
+                        member.role, member.displayName);
                 }
             }
 
             // Always trigger presence to update bindings
-            $(document).trigger('presence.muc', [from, member, pres]);
             this.parsePresence(from, member, pres);
 
             // Trigger status message update
             if (member.status) {
-                UI.onMucPresenceStatus(from, member);
+                eventEmitter.emit(XMPPEvents.PRESENCE_STATUS, from, member);
             }
 
             return true;
@@ -3489,7 +3486,7 @@ module.exports = function(XMPP, eventEmitter) {
             if ($(pres).find('>error[type="auth"]>not-authorized[xmlns="urn:ietf:params:xml:ns:xmpp-stanzas"]').length) {
                 console.log('on password required', from);
                 var self = this;
-                UI.onPasswordReqiured(function (value) {
+                eventEmitter.emit(XMPPEvents.PASSWORD_REQUIRED, function (value) {
                     self.doJoin(from, value);
                 });
             } else if ($(pres).find(
@@ -3538,12 +3535,16 @@ module.exports = function(XMPP, eventEmitter) {
         onMessage: function (msg) {
             // FIXME: this is a hack. but jingle on muc makes nickchanges hard
             var from = msg.getAttribute('from');
-            var nick = $(msg).find('>nick[xmlns="http://jabber.org/protocol/nick"]').text() || Strophe.getResourceFromJid(from);
+            var nick =
+                $(msg).find('>nick[xmlns="http://jabber.org/protocol/nick"]')
+                    .text() ||
+                Strophe.getResourceFromJid(from);
 
             var txt = $(msg).find('>body').text();
             var type = msg.getAttribute("type");
             if (type == "error") {
-                UI.chatAddError($(msg).find('>text').text(), txt);
+                eventEmitter.emit(XMPPEvents.CHAT_ERROR_RECEIVED,
+                    $(msg).find('>text').text(), txt);
                 return true;
             }
 
@@ -3551,7 +3552,7 @@ module.exports = function(XMPP, eventEmitter) {
             if (subject.length) {
                 var subjectText = subject.text();
                 if (subjectText || subjectText == "") {
-                    UI.chatSetSubject(subjectText);
+                    eventEmitter.emit(XMPPEvents.SUBJECT_CHANGED, subjectText);
                     console.log("Subject is changed to " + subjectText);
                 }
             }
@@ -3559,10 +3560,8 @@ module.exports = function(XMPP, eventEmitter) {
 
             if (txt) {
                 console.log('chat', nick, txt);
-                UI.updateChatConversation(from, nick, txt);
-                if (from != this.myroomjid)
-                    API.triggerEvent("incomingMessage",
-                        {"from": from, "nick": nick, "message": txt});
+                eventEmitter.emit(XMPPEvents.MESSAGE_RECEIVED,
+                    from, nick, txt, this.myroomjid);
             }
             return true;
         },
@@ -3689,7 +3688,6 @@ module.exports = function(XMPP, eventEmitter) {
             }
 
             pres.up();
-//        console.debug(pres.toString());
             this.connection.send(pres);
         },
         addDisplayNameToPresence: function (displayName) {
@@ -3774,9 +3772,8 @@ module.exports = function(XMPP, eventEmitter) {
             return null;
         },
         onParticipantLeft: function (jid) {
-            UI.onMucLeft(jid);
 
-            API.triggerEvent("participantLeft", {jid: jid});
+            eventEmitter.emit(XMPPEvents.MUC_LEFT, jid);
 
             this.connection.jingle.terminateByJid(jid);
 

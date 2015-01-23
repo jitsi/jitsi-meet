@@ -140,6 +140,16 @@ function registerListeners() {
     });
     xmpp.addListener(XMPPEvents.DISPLAY_NAME_CHANGED, onDisplayNameChanged);
     xmpp.addListener(XMPPEvents.MUC_JOINED, onMucJoined);
+    xmpp.addListener(XMPPEvents.LOCALROLE_CHANGED, onLocalRoleChange);
+    xmpp.addListener(XMPPEvents.MUC_ENTER, onMucEntered);
+    xmpp.addListener(XMPPEvents.MUC_ROLE_CHANGED, onMucRoleChanged);
+    xmpp.addListener(XMPPEvents.PRESENCE_STATUS, onMucPresenceStatus);
+    xmpp.addListener(XMPPEvents.SUBJECT_CHANGED, chatSetSubject);
+    xmpp.addListener(XMPPEvents.MESSAGE_RECEIVED, updateChatConversation);
+    xmpp.addListener(XMPPEvents.MUC_LEFT, onMucLeft);
+    xmpp.addListener(XMPPEvents.PASSWORD_REQUIRED, onPasswordReqiured);
+    xmpp.addListener(XMPPEvents.CHAT_ERROR_RECEIVED, chatAddError);
+    xmpp.addListener(XMPPEvents.ETHERPAD, initEtherpad);
 }
 
 function bindEvents()
@@ -291,17 +301,17 @@ UI.toggleSmileys = function () {
     Chat.toggleSmileys();
 };
 
-UI.chatAddError = function(errorMessage, originalText)
+function chatAddError(errorMessage, originalText)
 {
     return Chat.chatAddError(errorMessage, originalText);
 };
 
-UI.chatSetSubject = function(text)
+function chatSetSubject(text)
 {
     return Chat.chatSetSubject(text);
 };
 
-UI.updateChatConversation = function (from, displayName, message) {
+function updateChatConversation(from, displayName, message) {
     return Chat.updateChatConversation(from, displayName, message);
 };
 
@@ -329,11 +339,11 @@ function onMucJoined(jid, info) {
         onDisplayNameChanged('localVideoContainer', displayName + ' (me)');
 }
 
-UI.initEtherpad = function (name) {
+function initEtherpad(name) {
     Etherpad.init(name);
 };
 
-UI.onMucLeft = function (jid) {
+function onMucLeft(jid) {
     console.log('left.muc', jid);
     var displayName = $('#participant_' + Strophe.getResourceFromJid(jid) +
         '>.displayname').html();
@@ -375,23 +385,23 @@ UI.toggleContactList = function () {
     return BottomToolbar.toggleContactList();
 };
 
-UI.onLocalRoleChange = function (jid, info, pres) {
+function onLocalRoleChange(jid, info, pres, isModerator, isExternalAuthEnabled)
+{
 
     console.info("My role changed, new role: " + info.role);
-    var isModerator = xmpp.isModerator();
-
+    onModeratorStatusChanged(isModerator);
     VideoLayout.showModeratorIndicator();
     Toolbar.showAuthenticateButton(
-            xmpp.isExternalAuthEnabled() && !isModerator);
+            isExternalAuthEnabled && !isModerator);
 
     if (isModerator) {
         Authentication.closeAuthenticationWindow();
         messageHandler.notify(
             'Me', 'connected', 'Moderator rights granted !');
     }
-};
+}
 
-UI.onModeratorStatusChanged = function (isModerator) {
+function onModeratorStatusChanged(isModerator) {
 
     Toolbar.showSipCallButton(isModerator);
     Toolbar.showRecordingButton(
@@ -406,7 +416,7 @@ UI.onModeratorStatusChanged = function (isModerator) {
     }
 };
 
-UI.onPasswordReqiured = function (callback) {
+function onPasswordReqiured(callback) {
     // password is required
     Toolbar.lockLockButton();
 
@@ -429,7 +439,35 @@ UI.onPasswordReqiured = function (callback) {
             }
         }
     );
-};
+}
+function onMucEntered(jid, id, displayName) {
+    messageHandler.notify(displayName || 'Somebody',
+        'connected',
+        'connected');
+
+    // Add Peer's container
+    VideoLayout.ensurePeerContainerExists(jid,id);
+}
+
+function onMucPresenceStatus( jid, info) {
+    VideoLayout.setPresenceStatus(
+            'participant_' + Strophe.getResourceFromJid(jid), info.status);
+}
+
+function onMucRoleChanged(role, displayName) {
+    VideoLayout.showModeratorIndicator();
+
+    if (role === 'moderator') {
+        var displayName = displayName;
+        if (!displayName) {
+            displayName = 'Somebody';
+        }
+        messageHandler.notify(
+            displayName,
+            'connected',
+                'Moderator rights granted to ' + displayName + '!');
+    }
+}
 
 UI.onAuthenticationRequired = function (intervalCallback) {
     Authentication.openAuthenticationDialog(
@@ -444,35 +482,6 @@ UI.setRecordingButtonState = function (state) {
 
 UI.inputDisplayNameHandler = function (value) {
     VideoLayout.inputDisplayNameHandler(value);
-};
-
-UI.onMucEntered = function (jid, id, displayName) {
-    messageHandler.notify(displayName || 'Somebody',
-        'connected',
-        'connected');
-
-    // Add Peer's container
-    VideoLayout.ensurePeerContainerExists(jid,id);
-};
-
-UI.onMucPresenceStatus = function ( jid, info) {
-    VideoLayout.setPresenceStatus(
-            'participant_' + Strophe.getResourceFromJid(jid), info.status);
-};
-
-UI.onMucRoleChanged = function (role, displayName) {
-    VideoLayout.showModeratorIndicator();
-
-    if (role === 'moderator') {
-        var displayName = displayName;
-        if (!displayName) {
-            displayName = 'Somebody';
-        }
-        messageHandler.notify(
-            displayName,
-            'connected',
-                'Moderator rights granted to ' + displayName + '!');
-    }
 };
 
 UI.updateLocalConnectionStats = function(percent, stats)
@@ -2464,10 +2473,10 @@ function setVisualNotification(show) {
 
         var chatBottomButtonElement
             = document.getElementById('chatBottomButton').parentNode;
-        var bottomLeftIndent = (Util.getTextWidth(chatBottomButtonElement) -
-            Util.getTextWidth(unreadMsgBottomElement)) / 2;
-        var bottomTopIndent = (Util.getTextHeight(chatBottomButtonElement) -
-            Util.getTextHeight(unreadMsgBottomElement)) / 2 - 2;
+        var bottomLeftIndent = (UIUtil.getTextWidth(chatBottomButtonElement) -
+            UIUtil.getTextWidth(unreadMsgBottomElement)) / 2;
+        var bottomTopIndent = (UIUtil.getTextHeight(chatBottomButtonElement) -
+            UIUtil.getTextHeight(unreadMsgBottomElement)) / 2 - 2;
 
         unreadMsgBottomElement.setAttribute(
             'style',

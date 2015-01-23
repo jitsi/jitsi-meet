@@ -133,6 +133,20 @@ function processMessage(event)
 
 }
 
+function setupListeners() {
+    xmpp.addListener(XMPPEvents.MUC_ENTER, function (from) {
+        API.triggerEvent("participantJoined", {jid: from});
+    });
+    xmpp.addListener(XMPPEvents.MESSAGE_RECEIVED, function (from, nick, txt, myjid) {
+        if (from != myjid)
+            API.triggerEvent("incomingMessage",
+                {"from": from, "nick": nick, "message": txt});
+    });
+    xmpp.addListener(XMPPEvents.MUC_LEFT, function (jid) {
+        API.triggerEvent("participantLeft", {jid: jid});
+    });
+}
+
 var API = {
     /**
      * Check whether the API should be enabled or not.
@@ -161,6 +175,7 @@ var API = {
             window.attachEvent('onmessage', processMessage);
         }
         sendMessage({type: "system", loaded: true});
+        setupListeners();
     },
     /**
      * Checks whether the event is enabled ot not.

@@ -41,10 +41,10 @@ function setVisualNotification(show) {
 
         var chatBottomButtonElement
             = document.getElementById('chatBottomButton').parentNode;
-        var bottomLeftIndent = (Util.getTextWidth(chatBottomButtonElement) -
-            Util.getTextWidth(unreadMsgBottomElement)) / 2;
-        var bottomTopIndent = (Util.getTextHeight(chatBottomButtonElement) -
-            Util.getTextHeight(unreadMsgBottomElement)) / 2 - 2;
+        var bottomLeftIndent = (UIUtil.getTextWidth(chatBottomButtonElement) -
+            UIUtil.getTextWidth(unreadMsgBottomElement)) / 2;
+        var bottomTopIndent = (UIUtil.getTextHeight(chatBottomButtonElement) -
+            UIUtil.getTextHeight(unreadMsgBottomElement)) / 2 - 2;
 
         unreadMsgBottomElement.setAttribute(
             'style',
