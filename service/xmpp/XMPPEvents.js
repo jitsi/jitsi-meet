@@ -17,6 +17,7 @@ var XMPPEvents = {
     PRESENCE_STATUS: "xmpp.presence_status",
     SUBJECT_CHANGED: "xmpp.subject_changed",
     MESSAGE_RECEIVED: "xmpp.message_received",
+    SENDING_CHAT_MESSAGE: "xmpp.sending_chat_message",
     PASSWORD_REQUIRED: "xmpp.password_required",
     CHAT_ERROR_RECEIVED: "xmpp.chat_error_received",
     ETHERPAD: "xmpp.etherpad"

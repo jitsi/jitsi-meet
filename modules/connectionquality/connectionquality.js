@@ -1,3 +1,6 @@
+var EventEmitter = require("events");
+var eventEmitter = new EventEmitter();
+
 /**
  * local stats
  * @type {{}}
@@ -68,13 +71,20 @@ function parseMUCStats(stats) {
 
 
 var ConnectionQuality = {
+    init: function () {
+        xmpp.addListener(XMPPEvents.REMOTE_STATS, this.updateRemoteStats);
+        statistics.addConnectionStatsListener(this.updateLocalStats);
+        statistics.addRemoteStatsStopListener(this.stopSendingStats);
+
+    },
+
     /**
      * Updates the local statistics
      * @param data new statistics
      */
     updateLocalStats: function (data) {
         stats = data;
-        UI.updateLocalConnectionStats(100 - stats.packetLoss.total, stats);
+        eventEmitter.emit(CQEvents.LOCALSTATS_UPDATED, 100 - stats.packetLoss.total, stats);
         if (sendIntervalId == null) {
             startSendingStats();
         }
@@ -87,13 +97,13 @@ var ConnectionQuality = {
      */
     updateRemoteStats: function (jid, data) {
         if (data == null || data.packetLoss_total == null) {
-            UI.updateConnectionStats(jid, null, null);
+            eventEmitter.emit(CQEvents.REMOTESTATS_UPDATED, jid, null, null);
             return;
         }
         remoteStats[jid] = parseMUCStats(data);
 
-        UI.updateConnectionStats(jid, 100 - data.packetLoss_total, remoteStats[jid]);
-
+        eventEmitter.emit(CQEvents.REMOTESTATS_UPDATED,
+            jid, 100 - data.packetLoss_total, remoteStats[jid]);
     },
 
     /**
@@ -103,7 +113,7 @@ var ConnectionQuality = {
         clearInterval(sendIntervalId);
         sendIntervalId = null;
         //notify UI about stopping statistics gathering
-        UI.onStatsStop();
+        eventEmitter.emit(CQEvents.STOP);
     },
 
     /**
@@ -111,6 +121,10 @@ var ConnectionQuality = {
      */
     getStats: function () {
         return stats;
+    },
+    
+    addListener: function (type, listener) {
+        eventEmitter.on(type, listener);
     }
 
 };

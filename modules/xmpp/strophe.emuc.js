@@ -149,7 +149,7 @@ module.exports = function(XMPP, eventEmitter) {
                 Strophe.forEachChild(stats[0], "stat", function (el) {
                     statsObj[el.getAttribute("name")] = el.getAttribute("value");
                 });
-                connectionquality.updateRemoteStats(from, statsObj);
+                eventEmitter.emit(XMPPEvents.REMOTE_STATS, from, statsObj);
             }
 
             // Parse status.
@@ -298,7 +298,7 @@ module.exports = function(XMPP, eventEmitter) {
                 msg.c('nick', {xmlns: 'http://jabber.org/protocol/nick'}).t(nickname).up().up();
             }
             this.connection.send(msg);
-            API.triggerEvent("outgoingMessage", {"message": body});
+            eventEmitter.emit(XMPPEvents.SENDING_CHAT_MESSAGE, body);
         },
         setSubject: function (subject) {
             var msg = $msg({to: this.roomjid, type: 'groupchat'});
@@ -598,8 +598,6 @@ module.exports = function(XMPP, eventEmitter) {
 
             if (displayName && displayName.length > 0)
             {
-//                $(document).trigger('displaynamechanged',
-//                    [jid, displayName]);
                 eventEmitter.emit(XMPPEvents.DISPLAY_NAME_CHANGED, from, displayName);
             }
 

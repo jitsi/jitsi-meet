@@ -93,7 +93,7 @@ function doJoin() {
 function initStrophePlugins()
 {
     require("./strophe.emuc")(XMPP, eventEmitter);
-    require("./strophe.jingle")();
+    require("./strophe.jingle")(XMPP, eventEmitter);
     require("./strophe.moderate")(XMPP);
     require("./strophe.util")();
     require("./strophe.rayo")();
@@ -105,7 +105,7 @@ function registerListeners() {
         StreamEventTypes.EVENT_TYPE_LOCAL_CREATED);
     UI.addListener(UIEvents.NICKNAME_CHANGED, function (nickname) {
         XMPP.addToPresence("displayName", nickname);
-    })
+    });
 }
 
 function setupEvents() {

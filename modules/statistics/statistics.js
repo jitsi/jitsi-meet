@@ -121,16 +121,13 @@ var statistics =
         stopRemote();
     },
 
-    onConferenceCreated: function (event) {
-        startRemoteStats(event.peerconnection);
-    },
-
     start: function () {
-        this.addConnectionStatsListener(connectionquality.updateLocalStats);
-        this.addRemoteStatsStopListener(connectionquality.stopSendingStats);
         RTC.addStreamListener(onStreamCreated,
             StreamEventTypes.EVENT_TYPE_LOCAL_CREATED);
         xmpp.addListener(XMPPEvents.DISPOSE_CONFERENCE, onDisposeConference);
+        xmpp.addListener(XMPPEvents.CALL_INCOMING, function (event) {
+            startRemoteStats(event.peerconnection);
+        });
     }
 
 };

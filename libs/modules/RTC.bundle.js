@@ -508,12 +508,12 @@ var RTC = {
                     videoStream.videoType = changedStreams[i].type;
                 }
             }
-        })
+        });
+        xmpp.addListener(XMPPEvents.CALL_INCOMING, function(event) {
+            DataChannels.bindDataChannelListener(event.peerconnection);
+        });
         this.rtcUtils = new RTCUtils(this);
         this.rtcUtils.obtainAudioAndVideoPermissions();
-    },
-    onConferenceCreated: function(event) {
-        DataChannels.bindDataChannelListener(event.peerconnection);
     },
     muteRemoteVideoStream: function (jid, value) {
         var stream;

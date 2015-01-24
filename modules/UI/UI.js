@@ -149,6 +149,12 @@ function registerListeners() {
     xmpp.addListener(XMPPEvents.PASSWORD_REQUIRED, onPasswordReqiured);
     xmpp.addListener(XMPPEvents.CHAT_ERROR_RECEIVED, chatAddError);
     xmpp.addListener(XMPPEvents.ETHERPAD, initEtherpad);
+    connectionquality.addListener(CQEvents.LOCALSTATS_UPDATED,
+        VideoLayout.updateLocalConnectionStats);
+    connectionquality.addListener(CQEvents.REMOTESTATS_UPDATED,
+        VideoLayout.updateConnectionStats);
+    connectionquality.addListener(CQEvents.STOP,
+        VideoLayout.onStatsStop);
 }
 
 function bindEvents()
@@ -207,13 +213,6 @@ UI.start = function () {
 
     $("#welcome_page").hide();
 
-    $('body').popover({ selector: '[data-toggle=popover]',
-        trigger: 'click hover',
-        content: function() {
-            return this.getAttribute("content") +
-                keyboardshortcut.getShortcut(this.getAttribute("shortcut"));
-        }
-    });
     VideoLayout.resizeLargeVideoContainer();
     $("#videospace").mousemove(function () {
         return ToolbarToggler.showToolbar();
@@ -483,19 +482,6 @@ UI.inputDisplayNameHandler = function (value) {
     VideoLayout.inputDisplayNameHandler(value);
 };
 
-UI.updateLocalConnectionStats = function(percent, stats)
-{
-    VideoLayout.updateLocalConnectionStats(percent, stats);
-};
-
-UI.updateConnectionStats = function(jid, percent, stats)
-{
-    VideoLayout.updateConnectionStats(jid, percent, stats);
-};
-
-UI.onStatsStop = function () {
-    VideoLayout.onStatsStop();
-};
 
 UI.getLargeVideoState = function()
 {

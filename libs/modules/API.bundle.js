@@ -47,6 +47,8 @@ var events =
     participantLeft: false
 };
 
+var displayName = {};
+
 /**
  * Processes commands from external applicaiton.
  * @param message the object with the command
@@ -144,6 +146,16 @@ function setupListeners() {
     });
     xmpp.addListener(XMPPEvents.MUC_LEFT, function (jid) {
         API.triggerEvent("participantLeft", {jid: jid});
+    });
+    xmpp.addListener(XMPPEvents.DISPLAY_NAME_CHANGED, function (jid, newDisplayName) {
+        name = displayName[jid];
+        if(!name || name != newDisplayName) {
+            API.triggerEvent("displayNameChange", {jid: jid, displayname: newDisplayName});
+            displayName[jid] = newDisplayName;
+        }
+    });
+    xmpp.addListener(XMPPEvents.SENDING_CHAT_MESSAGE, function (body) {
+        API.triggerEvent("outgoingMessage", {"message": body});
     });
 }
 

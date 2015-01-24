@@ -15,6 +15,7 @@ $(document).ready(function () {
 
     UI.start();
     statistics.start();
+    connectionquality.init();
     
     // Set default desktop sharing method
     desktopsharing.init();

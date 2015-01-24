@@ -1756,25 +1756,18 @@ var VideoLayout = (function (my) {
      */
     my.onDisplayNameChanged =
                     function (jid, displayName, status) {
-        var name = null;
         if (jid === 'localVideoContainer'
             || jid === xmpp.myJid()) {
-            name = NicknameHandler.getNickname();
             setDisplayName('localVideoContainer',
                            displayName);
         } else {
             VideoLayout.ensurePeerContainerExists(jid);
-            name = $('#participant_' + Strophe.getResourceFromJid(jid) + "_name").text();
             setDisplayName(
                 'participant_' + Strophe.getResourceFromJid(jid),
                 displayName,
                 status);
         }
 
-        if(jid === 'localVideoContainer')
-            jid = xmpp.myJid();
-        if(!name || name != displayName)
-            API.triggerEvent("displayNameChange",{jid: jid, displayname: displayName});
     };
 
     /**

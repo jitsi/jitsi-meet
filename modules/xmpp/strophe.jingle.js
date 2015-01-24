@@ -2,7 +2,7 @@
 
 var JingleSession = require("./JingleSession");
 
-module.exports = function(XMPP)
+module.exports = function(XMPP, eventEmitter)
 {
     function CallIncomingJingle(sid, connection) {
         var sess = connection.jingle.sessions[sid];
@@ -10,8 +10,7 @@ module.exports = function(XMPP)
         // TODO: do we check activecall == null?
         connection.jingle.activecall = sess;
 
-        statistics.onConferenceCreated(sess);
-        RTC.onConferenceCreated(sess);
+        eventEmitter.emit(XMPPEvents.CALL_INCOMING, sess);
 
         // TODO: check affiliation and/or role
         console.log('emuc data for', sess.peerjid, connection.emuc.members[sess.peerjid]);
