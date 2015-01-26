@@ -700,7 +700,9 @@ function getConstraints(um, resolution, bandwidth, fps, desktopStream, isAndroid
         }
     }
 
-    setResolutionConstraints(constraints, resolution, isAndroid);
+    if (um.indexOf('video') >= 0) {
+        setResolutionConstraints(constraints, resolution, isAndroid);
+    }
 
     if (bandwidth) { // doesn't work currently, see webrtc issue 1846
         if (!constraints.video) constraints.video = {mandatory: {}, optional: []};//same behaviour as true
