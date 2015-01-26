@@ -154,7 +154,7 @@ var DataChannels =
      */
     bindDataChannelListener: function (peerConnection) {
         if(!config.openSctp)
-            retrun;
+            return;
 
         peerConnection.ondatachannel = this.onDataChannel;
 
