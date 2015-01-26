@@ -3796,7 +3796,7 @@ module.exports = function(XMPP, eventEmitter) {
             var self = this;
             // Remove old ssrcs coming from the jid
             Object.keys(this.ssrc2jid).forEach(function (ssrc) {
-                if (self.ssrc2jid[ssrc] == jid) {
+                if (self.ssrc2jid[ssrc] == from) {
                     delete self.ssrc2jid[ssrc];
                 }
             });
