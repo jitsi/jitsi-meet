@@ -46,6 +46,22 @@ function SimulcastManager() {
         }
 
     }
+    RTC.addListener(RTCEvents.SIMULCAST_LAYER_CHANGED,
+        function (endpointSimulcastLayers) {
+            endpointSimulcastLayers.forEach(function (esl) {
+                var ssrc = esl.simulcastLayer.primarySSRC;
+                simulcast._setReceivingVideoStream(esl.endpoint, ssrc);
+            });
+        });
+    RTC.addListener(RTCEvents.SIMULCAST_START, function (simulcastLayer) {
+        var ssrc = simulcastLayer.primarySSRC;
+        simulcast._setLocalVideoStreamEnabled(ssrc, true);
+    });
+    RTC.addListener(RTCEvents.SIMULCAST_STOP, function (simulcastLayer) {
+        var ssrc = simulcastLayer.primarySSRC;
+        simulcast._setLocalVideoStreamEnabled(ssrc, false);
+    });
+
 }
 
 /**
@@ -179,24 +195,6 @@ SimulcastManager.prototype.resetSender = function() {
         this.simulcastSender.reset();
     }
 };
-
-$(document).bind('simulcastlayerschanged', function (event, endpointSimulcastLayers) {
-    endpointSimulcastLayers.forEach(function (esl) {
-        var ssrc = esl.simulcastLayer.primarySSRC;
-        simulcast._setReceivingVideoStream(esl.endpoint, ssrc);
-    });
-});
-
-$(document).bind('startsimulcastlayer', function (event, simulcastLayer) {
-    var ssrc = simulcastLayer.primarySSRC;
-    simulcast._setLocalVideoStreamEnabled(ssrc, true);
-});
-
-$(document).bind('stopsimulcastlayer', function (event, simulcastLayer) {
-    var ssrc = simulcastLayer.primarySSRC;
-    simulcast._setLocalVideoStreamEnabled(ssrc, false);
-});
-
 
 var simulcast = new SimulcastManager();
 

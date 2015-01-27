@@ -80,7 +80,23 @@ function registerListeners() {
     RTC.addStreamListener(function (stream) {
         VideoLayout.onRemoteStreamAdded(stream);
     }, StreamEventTypes.EVENT_TYPE_REMOTE_CREATED);
-
+    RTC.addListener(RTCEvents.LASTN_CHANGED, onLastNChanged);
+    RTC.addListener(RTCEvents.DOMINANTSPEAKER_CHANGED, function (resourceJid) {
+        VideoLayout.onDominantSpeakerChanged(resourceJid);
+    });
+    RTC.addListener(RTCEvents.LASTN_ENDPOINT_CHANGED,
+        function (lastNEndpoints, endpointsEnteringLastN, stream) {
+            VideoLayout.onLastNEndpointsChanged(lastNEndpoints,
+                endpointsEnteringLastN, stream);
+        });
+    RTC.addListener(RTCEvents.SIMULCAST_LAYER_CHANGED,
+        function (endpointSimulcastLayers) {
+           VideoLayout.onSimulcastLayersChanged(endpointSimulcastLayers);
+        });
+    RTC.addListener(RTCEvents.SIMULCAST_LAYER_CHANGING,
+        function (endpointSimulcastLayers) {
+            VideoLayout.onSimulcastLayersChanging(endpointSimulcastLayers);
+        });
     VideoLayout.init();
 
     statistics.addAudioLevelListener(function(jid, audioLevel)
@@ -156,6 +172,9 @@ function registerListeners() {
         VideoLayout.updateConnectionStats);
     connectionquality.addListener(CQEvents.STOP,
         VideoLayout.onStatsStop);
+    xmpp.addListener(XMPPEvents.AUTHENTICATION_REQUIRED, onAuthenticationRequired);
+
+
 }
 
 function bindEvents()
@@ -368,21 +387,6 @@ function onMucLeft(jid) {
 
 };
 
-UI.getSettings = function () {
-    return Settings.getSettings();
-};
-
-UI.toggleFilmStrip = function () {
-    return BottomToolbar.toggleFilmStrip();
-};
-
-UI.toggleChat = function () {
-    return BottomToolbar.toggleChat();
-};
-
-UI.toggleContactList = function () {
-    return BottomToolbar.toggleContactList();
-};
 
 function onLocalRoleChange(jid, info, pres, isModerator, isExternalAuthEnabled)
 {
@@ -468,11 +472,34 @@ function onMucRoleChanged(role, displayName) {
     }
 }
 
-UI.onAuthenticationRequired = function (intervalCallback) {
+function onAuthenticationRequired(intervalCallback) {
     Authentication.openAuthenticationDialog(
         roomName, intervalCallback, function () {
             Toolbar.authenticateClicked();
         });
+};
+
+
+function onLastNChanged(oldValue, newValue) {
+    if (config.muteLocalVideoIfNotInLastN) {
+        setVideoMute(!newValue, { 'byUser': false });
+    }
+}
+
+UI.getSettings = function () {
+    return Settings.getSettings();
+};
+
+UI.toggleFilmStrip = function () {
+    return BottomToolbar.toggleFilmStrip();
+};
+
+UI.toggleChat = function () {
+    return BottomToolbar.toggleChat();
+};
+
+UI.toggleContactList = function () {
+    return BottomToolbar.toggleContactList();
 };
 
 UI.setRecordingButtonState = function (state) {
@@ -675,12 +702,6 @@ UI.setAudioMuted = function (mute) {
         return;
     }
 
-}
-
-UI.onLastNChanged = function (oldValue, newValue) {
-    if (config.muteLocalVideoIfNotInLastN) {
-        setVideoMute(!newValue, { 'byUser': false });
-    }
 }
 
 UI.addListener = function (type, listener) {
@@ -4805,8 +4826,6 @@ var currentVideoHeight = null;
 
 var localVideoSrc = null;
 
-var defaultLocalDisplayName = "Me";
-
 function videoactive( videoelem) {
     if (videoelem.attr('id').indexOf('mixedmslabel') === -1) {
         // ignore mixedmslabela0 and v0
@@ -6542,7 +6561,7 @@ var VideoLayout = (function (my) {
     /**
      * On dominant speaker changed event.
      */
-    $(document).bind('dominantspeakerchanged', function (event, resourceJid) {
+    my.onDominantSpeakerChanged = function (resourceJid) {
         // We ignore local user events.
         if (resourceJid
                 === xmpp.myResource())
@@ -6581,18 +6600,16 @@ var VideoLayout = (function (my) {
             if (video.length && video[0].currentTime > 0)
                 VideoLayout.updateLargeVideo(RTC.getVideoSrc(video[0]), resourceJid);
         }
-    });
+    };
 
     /**
      * On last N change event.
      *
-     * @param event the event that notified us
      * @param lastNEndpoints the list of last N endpoints
      * @param endpointsEnteringLastN the list currently entering last N
      * endpoints
      */
-    $(document).bind('lastnchanged', function ( event,
-                                                lastNEndpoints,
+    my.onLastNEndpointsChanged = function ( lastNEndpoints,
                                                 endpointsEnteringLastN,
                                                 stream) {
         if (lastNCount !== lastNEndpoints.length)
@@ -6731,9 +6748,9 @@ var VideoLayout = (function (my) {
 
             }
         }
-    });
+    };
 
-    $(document).bind('simulcastlayerschanging', function (event, endpointSimulcastLayers) {
+    my.onSimulcastLayersChanging = function (endpointSimulcastLayers) {
         endpointSimulcastLayers.forEach(function (esl) {
 
             var resource = esl.endpoint;
@@ -6782,12 +6799,12 @@ var VideoLayout = (function (my) {
                 console.error('Could not find a stream or a session.', sid, electedStream);
             }
         });
-    });
+    };
 
     /**
      * On simulcast layers changed event.
      */
-    $(document).bind('simulcastlayerschanged', function (event, endpointSimulcastLayers) {
+    my.onSimulcastLayersChanged = function (endpointSimulcastLayers) {
         endpointSimulcastLayers.forEach(function (esl) {
 
             var resource = esl.endpoint;
@@ -6873,7 +6890,7 @@ var VideoLayout = (function (my) {
                 console.error('Could not find a stream or a sid.', sid, electedStream);
             }
         });
-    });
+    };
 
     /**
      * Updates local stats

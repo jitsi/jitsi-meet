@@ -4,6 +4,7 @@
 // cache datachannels to avoid garbage collection
 // https://code.google.com/p/chromium/issues/detail?id=405545
 var _dataChannels = [];
+var eventEmitter = null;
 
 
 
@@ -67,9 +68,7 @@ var DataChannels =
                     console.info(
                         "Data channel new dominant speaker event: ",
                         dominantSpeakerEndpoint);
-                    $(document).trigger(
-                        'dominantspeakerchanged',
-                        [dominantSpeakerEndpoint]);
+                    eventEmitter.emit(RTC.DOMINANTSPEAKER_CHANGED, dominantSpeakerEndpoint);
                 }
                 else if ("InLastNChangeEvent" === colibriClass)
                 {
@@ -92,7 +91,8 @@ var DataChannels =
                             newValue = new Boolean(newValue).valueOf();
                         }
                     }
-                    UI.onLastNChanged(oldValue, newValue);
+
+                    eventEmitter.emit(RTCEvents.LASTN_CHANGED, oldValue, newValue);
                 }
                 else if ("LastNEndpointsChangeEvent" === colibriClass)
                 {
@@ -107,29 +107,26 @@ var DataChannels =
                     console.log(
                         "Data channel new last-n event: ",
                         lastNEndpoints, endpointsEnteringLastN, obj);
-                    $(document).trigger(
-                        'lastnchanged',
-                        [lastNEndpoints, endpointsEnteringLastN, stream]);
+                    eventEmitter.emit(RTCEvents.LASTN_ENDPOINT_CHANGED,
+                        lastNEndpoints, endpointsEnteringLastN, obj);
                 }
                 else if ("SimulcastLayersChangedEvent" === colibriClass)
                 {
-                    $(document).trigger(
-                        'simulcastlayerschanged',
-                        [obj.endpointSimulcastLayers]);
+                    eventEmitter.emit(RTCEvents.SIMULCAST_LAYER_CHANGED,
+                        obj.endpointSimulcastLayers);
                 }
                 else if ("SimulcastLayersChangingEvent" === colibriClass)
                 {
-                    $(document).trigger(
-                        'simulcastlayerschanging',
-                        [obj.endpointSimulcastLayers]);
+                    eventEmitter.emit(RTCEvents.SIMULCAST_LAYER_CHANGING,
+                        obj.endpointSimulcastLayers);
                 }
                 else if ("StartSimulcastLayerEvent" === colibriClass)
                 {
-                    $(document).trigger('startsimulcastlayer', obj.simulcastLayer);
+                    eventEmitter.emit(RTCEvents.SIMULCAST_START, obj.simulcastLayer);
                 }
                 else if ("StopSimulcastLayerEvent" === colibriClass)
                 {
-                    $(document).trigger('stopsimulcastlayer', obj.simulcastLayer);
+                    eventEmitter.emit(RTCEvents.SIMULCAST_STOP, obj.simulcastLayer);
                 }
                 else
                 {
@@ -152,11 +149,12 @@ var DataChannels =
      * Binds "ondatachannel" event listener to given PeerConnection instance.
      * @param peerConnection WebRTC peer connection instance.
      */
-    bindDataChannelListener: function (peerConnection) {
+    init: function (peerConnection, emitter) {
         if(!config.openSctp)
             retrun;
 
         peerConnection.ondatachannel = this.onDataChannel;
+        eventEmitter = emitter;
 
         // Sample code for opening new data channel from Jitsi Meet to the bridge.
         // Although it's not a requirement to open separate channels from both bridge
@@ -407,6 +405,9 @@ var RTC = {
     addStreamListener: function (listener, eventType) {
         eventEmitter.on(eventType, listener);
     },
+    addListener: function (type, listener) {
+        eventEmitter.on(type, listener);
+    },
     removeStreamListener: function (listener, eventType) {
         if(!(eventType instanceof StreamEventTypes))
             throw "Illegal argument";
@@ -510,7 +511,7 @@ var RTC = {
             }
         });
         xmpp.addListener(XMPPEvents.CALL_INCOMING, function(event) {
-            DataChannels.bindDataChannelListener(event.peerconnection);
+            DataChannels.init(event.peerconnection, eventEmitter);
         });
         this.rtcUtils = new RTCUtils(this);
         this.rtcUtils.obtainAudioAndVideoPermissions();

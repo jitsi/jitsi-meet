@@ -2831,6 +2831,8 @@ var externalAuthEnabled = false;
 // service discovery.
 var sipGatewayEnabled = config.hosts.call_control !== undefined;
 
+var eventEmitter = null;
+
 var Moderator = {
     isModerator: function () {
         return connection && connection.emuc.isModerator();
@@ -2853,8 +2855,9 @@ var Moderator = {
         connection = con;
     },
 
-    init: function (xmpp) {
+    init: function (xmpp, emitter) {
         this.xmppService = xmpp;
+        eventEmitter = emitter;
     },
 
     onMucLeft: function (jid) {
@@ -3013,11 +3016,13 @@ var Moderator = {
 
                         self.xmppService.promptLogin();
                     } else {
-                        // External authentication mode
-                        UI.onAuthenticationRequired(function () {
-                            Moderator.allocateConferenceFocus(
-                                roomName, callback);
-                        });
+
+                        eventEmitter.emit(XMPPEvents.AUTHENTICATION_REQUIRED, // External authentication mode
+                            function () {
+                                Moderator.allocateConferenceFocus(
+                                    roomName, callback);
+                            });
+
                     }
                     return;
                 }

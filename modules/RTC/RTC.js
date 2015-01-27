@@ -18,6 +18,9 @@ var RTC = {
     addStreamListener: function (listener, eventType) {
         eventEmitter.on(eventType, listener);
     },
+    addListener: function (type, listener) {
+        eventEmitter.on(type, listener);
+    },
     removeStreamListener: function (listener, eventType) {
         if(!(eventType instanceof StreamEventTypes))
             throw "Illegal argument";
@@ -121,7 +124,7 @@ var RTC = {
             }
         });
         xmpp.addListener(XMPPEvents.CALL_INCOMING, function(event) {
-            DataChannels.bindDataChannelListener(event.peerconnection);
+            DataChannels.init(event.peerconnection, eventEmitter);
         });
         this.rtcUtils = new RTCUtils(this);
         this.rtcUtils.obtainAudioAndVideoPermissions();

@@ -79,7 +79,23 @@ function registerListeners() {
     RTC.addStreamListener(function (stream) {
         VideoLayout.onRemoteStreamAdded(stream);
     }, StreamEventTypes.EVENT_TYPE_REMOTE_CREATED);
-
+    RTC.addListener(RTCEvents.LASTN_CHANGED, onLastNChanged);
+    RTC.addListener(RTCEvents.DOMINANTSPEAKER_CHANGED, function (resourceJid) {
+        VideoLayout.onDominantSpeakerChanged(resourceJid);
+    });
+    RTC.addListener(RTCEvents.LASTN_ENDPOINT_CHANGED,
+        function (lastNEndpoints, endpointsEnteringLastN, stream) {
+            VideoLayout.onLastNEndpointsChanged(lastNEndpoints,
+                endpointsEnteringLastN, stream);
+        });
+    RTC.addListener(RTCEvents.SIMULCAST_LAYER_CHANGED,
+        function (endpointSimulcastLayers) {
+           VideoLayout.onSimulcastLayersChanged(endpointSimulcastLayers);
+        });
+    RTC.addListener(RTCEvents.SIMULCAST_LAYER_CHANGING,
+        function (endpointSimulcastLayers) {
+            VideoLayout.onSimulcastLayersChanging(endpointSimulcastLayers);
+        });
     VideoLayout.init();
 
     statistics.addAudioLevelListener(function(jid, audioLevel)
@@ -155,6 +171,9 @@ function registerListeners() {
         VideoLayout.updateConnectionStats);
     connectionquality.addListener(CQEvents.STOP,
         VideoLayout.onStatsStop);
+    xmpp.addListener(XMPPEvents.AUTHENTICATION_REQUIRED, onAuthenticationRequired);
+
+
 }
 
 function bindEvents()
@@ -367,21 +386,6 @@ function onMucLeft(jid) {
 
 };
 
-UI.getSettings = function () {
-    return Settings.getSettings();
-};
-
-UI.toggleFilmStrip = function () {
-    return BottomToolbar.toggleFilmStrip();
-};
-
-UI.toggleChat = function () {
-    return BottomToolbar.toggleChat();
-};
-
-UI.toggleContactList = function () {
-    return BottomToolbar.toggleContactList();
-};
 
 function onLocalRoleChange(jid, info, pres, isModerator, isExternalAuthEnabled)
 {
@@ -467,11 +471,34 @@ function onMucRoleChanged(role, displayName) {
     }
 }
 
-UI.onAuthenticationRequired = function (intervalCallback) {
+function onAuthenticationRequired(intervalCallback) {
     Authentication.openAuthenticationDialog(
         roomName, intervalCallback, function () {
             Toolbar.authenticateClicked();
         });
+};
+
+
+function onLastNChanged(oldValue, newValue) {
+    if (config.muteLocalVideoIfNotInLastN) {
+        setVideoMute(!newValue, { 'byUser': false });
+    }
+}
+
+UI.getSettings = function () {
+    return Settings.getSettings();
+};
+
+UI.toggleFilmStrip = function () {
+    return BottomToolbar.toggleFilmStrip();
+};
+
+UI.toggleChat = function () {
+    return BottomToolbar.toggleChat();
+};
+
+UI.toggleContactList = function () {
+    return BottomToolbar.toggleContactList();
 };
 
 UI.setRecordingButtonState = function (state) {
@@ -674,12 +701,6 @@ UI.setAudioMuted = function (mute) {
         return;
     }
 
-}
-
-UI.onLastNChanged = function (oldValue, newValue) {
-    if (config.muteLocalVideoIfNotInLastN) {
-        setVideoMute(!newValue, { 'byUser': false });
-    }
 }
 
 UI.addListener = function (type, listener) {

@@ -19,6 +19,7 @@ var XMPPEvents = {
     MESSAGE_RECEIVED: "xmpp.message_received",
     SENDING_CHAT_MESSAGE: "xmpp.sending_chat_message",
     PASSWORD_REQUIRED: "xmpp.password_required",
+    AUTHENTICATION_REQUIRED: "xmpp.authentication_required",
     CHAT_ERROR_RECEIVED: "xmpp.chat_error_received",
     ETHERPAD: "xmpp.etherpad"
 };
