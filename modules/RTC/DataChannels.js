@@ -177,9 +177,11 @@ var DataChannels =
          var msgData = event.data;
          console.info("Got My Data Channel Message:", msgData, dataChannel);
          };*/
-    }
+    },
+    handleSelectedEndpointEvent: onSelectedEndpointChanged,
+    handlePinnedEndpointEvent: onPinnedEndpointChanged
 
-}
+};
 
 function onSelectedEndpointChanged(userResource)
 {
@@ -202,10 +204,6 @@ function onSelectedEndpointChanged(userResource)
     }
 }
 
-$(document).bind("selectedendpointchanged", function(event, userResource) {
-    onSelectedEndpointChanged(userResource);
-});
-
 function onPinnedEndpointChanged(userResource)
 {
     console.log('pinned endpoint changed: ', userResource);
@@ -226,10 +224,6 @@ function onPinnedEndpointChanged(userResource)
         });
     }
 }
-
-$(document).bind("pinnedendpointchanged", function(event, userResource) {
-    onPinnedEndpointChanged(userResource);
-});
 
 module.exports = DataChannels;
 

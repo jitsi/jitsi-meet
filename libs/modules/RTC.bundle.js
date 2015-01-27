@@ -178,9 +178,11 @@ var DataChannels =
          var msgData = event.data;
          console.info("Got My Data Channel Message:", msgData, dataChannel);
          };*/
-    }
+    },
+    handleSelectedEndpointEvent: onSelectedEndpointChanged,
+    handlePinnedEndpointEvent: onPinnedEndpointChanged
 
-}
+};
 
 function onSelectedEndpointChanged(userResource)
 {
@@ -203,10 +205,6 @@ function onSelectedEndpointChanged(userResource)
     }
 }
 
-$(document).bind("selectedendpointchanged", function(event, userResource) {
-    onSelectedEndpointChanged(userResource);
-});
-
 function onPinnedEndpointChanged(userResource)
 {
     console.log('pinned endpoint changed: ', userResource);
@@ -227,10 +225,6 @@ function onPinnedEndpointChanged(userResource)
         });
     }
 }
-
-$(document).bind("pinnedendpointchanged", function(event, userResource) {
-    onPinnedEndpointChanged(userResource);
-});
 
 module.exports = DataChannels;
 
@@ -513,6 +507,10 @@ var RTC = {
         xmpp.addListener(XMPPEvents.CALL_INCOMING, function(event) {
             DataChannels.init(event.peerconnection, eventEmitter);
         });
+        UI.addListener(UIEvents.SELECTED_ENDPOINT,
+            DataChannels.handleSelectedEndpointEvent);
+        UI.addListener(UIEvents.PINNED_ENDPOINT,
+            DataChannels.handlePinnedEndpointEvent);
         this.rtcUtils = new RTCUtils(this);
         this.rtcUtils.obtainAudioAndVideoPermissions();
     },

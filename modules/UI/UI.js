@@ -96,7 +96,7 @@ function registerListeners() {
         function (endpointSimulcastLayers) {
             VideoLayout.onSimulcastLayersChanging(endpointSimulcastLayers);
         });
-    VideoLayout.init();
+    VideoLayout.init(eventEmitter);
 
     statistics.addAudioLevelListener(function(jid, audioLevel)
     {

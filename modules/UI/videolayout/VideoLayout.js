@@ -16,6 +16,9 @@ var largeVideoState = {
     updateInProgress: false,
     newSrc: ''
 };
+
+var eventEmitter = null;
+
 /**
  * Currently focused video "src"(displayed in large video).
  * @type {String}
@@ -494,7 +497,7 @@ var VideoLayout = (function (my) {
     my.getVideoSize = getCameraVideoSize;
     my.getVideoPosition = getCameraVideoPosition;
 
-    my.init = function () {
+    my.init = function (emitter) {
         // Listen for large video size updates
         document.getElementById('largeVideo')
             .addEventListener('loadedmetadata', function (e) {
@@ -502,6 +505,7 @@ var VideoLayout = (function (my) {
                 currentVideoHeight = this.videoHeight;
                 VideoLayout.positionLarge(currentVideoWidth, currentVideoHeight);
             });
+        eventEmitter = emitter;
     };
 
     my.isInLastN = function(resource) {
@@ -728,7 +732,8 @@ var VideoLayout = (function (my) {
                 userChanged = true;
                 // we want the notification to trigger even if userJid is undefined,
                 // or null.
-                $(document).trigger("selectedendpointchanged", [largeVideoState.userResourceJid]);
+                eventEmitter.emit(UIEvents.SELECTED_ENDPOINT,
+                    largeVideoState.userResourceJid);
             }
 
             if (!largeVideoState.updateInProgress) {
@@ -872,7 +877,7 @@ var VideoLayout = (function (my) {
             }
 
             if (!noPinnedEndpointChangedEvent) {
-                $(document).trigger("pinnedendpointchanged");
+                eventEmitter.emit(UIEvents.PINNED_ENDPOINT);
             }
             return;
         }
@@ -890,7 +895,7 @@ var VideoLayout = (function (my) {
             container.addClass("videoContainerFocused");
 
             if (!noPinnedEndpointChangedEvent) {
-                $(document).trigger("pinnedendpointchanged", [resourceJid]);
+                eventEmitter.emit(UIEvents.PINNED_ENDPOINT, resourceJid);
             }
         }
 
@@ -1509,6 +1514,8 @@ var VideoLayout = (function (my) {
 
         $('.userAvatar').css('left', (width - height) / 2);
 
+
+
         $(document).trigger("remotevideo.resized", [width, height]);
     };
 
@@ -1691,7 +1698,8 @@ var VideoLayout = (function (my) {
                     // picked up later by the lastN changed event handler.
 
                     lastNPickupJid = jid;
-                    $(document).trigger("pinnedendpointchanged", [Strophe.getResourceFromJid(jid)]);
+                    eventEmitter.emit(UIEvents.PINNED_ENDPOINT,
+                        Strophe.getResourceFromJid(jid));
                 }
             } else if (jid == xmpp.myJid()) {
                 $("#localVideoContainer").click();
