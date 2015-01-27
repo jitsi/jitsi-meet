@@ -150,7 +150,7 @@ var DataChannels =
      */
     init: function (peerConnection, emitter) {
         if(!config.openSctp)
-            retrun;
+            return;
 
         peerConnection.ondatachannel = this.onDataChannel;
         eventEmitter = emitter;
