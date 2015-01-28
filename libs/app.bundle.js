@@ -987,7 +987,9 @@ function getConstraints(um, resolution, bandwidth, fps, desktopStream, isAndroid
         }
     }
 
-    setResolutionConstraints(constraints, resolution, isAndroid);
+    if (um.indexOf('video') >= 0) {
+        setResolutionConstraints(constraints, resolution, isAndroid);
+    }
 
     if (bandwidth) { // doesn't work currently, see webrtc issue 1846
         if (!constraints.video) constraints.video = {mandatory: {}, optional: []};//same behaviour as true
@@ -9407,10 +9409,12 @@ NativeSimulcastSender.prototype._appendSimulcastGroup = function (lines) {
         simSSRC = this._generateRandomSSRC();
         ssrcGroup.push(simSSRC);
 
-        sb.splice.apply(sb, [sb.length, 0].concat(
-            [["a=ssrc:", simSSRC, " cname:", videoSources.base.cname].join(''),
-                ["a=ssrc:", simSSRC, " msid:", videoSources.base.msid].join('')]
-        ));
+        if (videoSources.base) {
+            sb.splice.apply(sb, [sb.length, 0].concat(
+                [["a=ssrc:", simSSRC, " cname:", videoSources.base.cname].join(''),
+                    ["a=ssrc:", simSSRC, " msid:", videoSources.base.msid].join('')]
+            ));
+        }
 
         this.logger.info(['Generated substream ', i, ' with SSRC ', simSSRC, '.'].join(''));
 

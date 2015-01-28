@@ -78,10 +78,12 @@ NativeSimulcastSender.prototype._appendSimulcastGroup = function (lines) {
         simSSRC = this._generateRandomSSRC();
         ssrcGroup.push(simSSRC);
 
-        sb.splice.apply(sb, [sb.length, 0].concat(
-            [["a=ssrc:", simSSRC, " cname:", videoSources.base.cname].join(''),
-                ["a=ssrc:", simSSRC, " msid:", videoSources.base.msid].join('')]
-        ));
+        if (videoSources.base) {
+            sb.splice.apply(sb, [sb.length, 0].concat(
+                [["a=ssrc:", simSSRC, " cname:", videoSources.base.cname].join(''),
+                    ["a=ssrc:", simSSRC, " msid:", videoSources.base.msid].join('')]
+            ));
+        }
 
         this.logger.info(['Generated substream ', i, ' with SSRC ', simSSRC, '.'].join(''));
 
