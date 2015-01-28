@@ -4,4 +4,4 @@ var RTCBrowserType = {
     RTC_BROWSER_FIREFOX: "rtc_browser.firefox"
 };
 
-//module.exports = RTCBrowserType;
+module.exports = RTCBrowserType;

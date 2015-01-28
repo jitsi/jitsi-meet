@@ -1,4 +1,5 @@
 var Settings = require("../side_pannels/settings/Settings");
+var MediaStreamType = require("../../../service/RTC/MediaStreamTypes");
 
 var users = {};
 var activeSpeakerJid;
@@ -12,21 +13,21 @@ function setVisibility(selector, show) {
 function isUserMuted(jid) {
     // XXX(gp) we may want to rename this method to something like
     // isUserStreaming, for example.
-    if (jid && jid != xmpp.myJid()) {
+    if (jid && jid != APP.xmpp.myJid()) {
         var resource = Strophe.getResourceFromJid(jid);
         if (!require("../videolayout/VideoLayout").isInLastN(resource)) {
             return true;
         }
     }
 
-    if (!RTC.remoteStreams[jid] || !RTC.remoteStreams[jid][MediaStreamType.VIDEO_TYPE]) {
+    if (!APP.RTC.remoteStreams[jid] || !APP.RTC.remoteStreams[jid][MediaStreamType.VIDEO_TYPE]) {
         return null;
     }
-    return RTC.remoteStreams[jid][MediaStreamType.VIDEO_TYPE].muted;
+    return APP.RTC.remoteStreams[jid][MediaStreamType.VIDEO_TYPE].muted;
 }
 
 function getGravatarUrl(id, size) {
-    if(id === xmpp.myJid() || !id) {
+    if(id === APP.xmpp.myJid() || !id) {
         id = Settings.getSettings().uid;
     }
     return 'https://www.gravatar.com/avatar/' +
@@ -57,7 +58,7 @@ var Avatar = {
 
         // set the avatar in the settings menu if it is local user and get the
         // local video container
-        if (jid === xmpp.myJid()) {
+        if (jid === APP.xmpp.myJid()) {
             $('#avatar').get(0).src = thumbUrl;
             thumbnail = $('#localVideoContainer');
         }
@@ -100,7 +101,7 @@ var Avatar = {
             var video = $('#participant_' + resourceJid + '>video');
             var avatar = $('#avatar_' + resourceJid);
 
-            if (jid === xmpp.myJid()) {
+            if (jid === APP.xmpp.myJid()) {
                 video = $('#localVideoWrapper>video');
             }
             if (show === undefined || show === null) {
@@ -130,7 +131,7 @@ var Avatar = {
      */
     updateActiveSpeakerAvatarSrc: function (jid) {
         if (!jid) {
-            jid = xmpp.findJidFromResource(
+            jid = APP.xmpp.findJidFromResource(
                 require("../videolayout/VideoLayout").getLargeVideoState().userResourceJid);
         }
         var avatar = $("#activeSpeakerAvatar")[0];

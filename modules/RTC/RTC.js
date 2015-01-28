@@ -3,9 +3,12 @@ var RTCUtils = require("./RTCUtils.js");
 var LocalStream = require("./LocalStream.js");
 var DataChannels = require("./DataChannels");
 var MediaStream = require("./MediaStream.js");
-//These lines should be uncommented when require works in app.js
-//var StreamEventTypes = require("../../service/RTC/StreamEventTypes.js");
-//var XMPPEvents = require("../service/xmpp/XMPPEvents");
+var DesktopSharingEventTypes
+    = require("../../service/desktopsharing/DesktopSharingEventTypes");
+var MediaStreamType = require("../../service/RTC/MediaStreamTypes");
+var StreamEventTypes = require("../../service/RTC/StreamEventTypes.js");
+var XMPPEvents = require("../../service/xmpp/XMPPEvents");
+var UIEvents = require("../../service/UI/UIEvents");
 
 var eventEmitter = new EventEmitter();
 
@@ -61,7 +64,7 @@ var RTC = {
     createRemoteStream: function (data, sid, thessrc) {
         var remoteStream = new MediaStream(data, sid, thessrc,
             this.getBrowserType());
-        var jid = data.peerjid || xmpp.myJid();
+        var jid = data.peerjid || APP.xmpp.myJid();
         if(!this.remoteStreams[jid]) {
             this.remoteStreams[jid] = {};
         }
@@ -105,11 +108,11 @@ var RTC = {
     },
     start: function () {
         var self = this;
-        desktopsharing.addListener(
+        APP.desktopsharing.addListener(
             function (stream, isUsingScreenStream, callback) {
                 self.changeLocalVideo(stream, isUsingScreenStream, callback);
             }, DesktopSharingEventTypes.NEW_STREAM_CREATED);
-        xmpp.addListener(XMPPEvents.CHANGED_STREAMS, function (jid, changedStreams) {
+        APP.xmpp.addListener(XMPPEvents.CHANGED_STREAMS, function (jid, changedStreams) {
             for(var i = 0; i < changedStreams.length; i++) {
                 var type = changedStreams[i].type;
                 if (type != "audio") {
@@ -123,12 +126,12 @@ var RTC = {
                 }
             }
         });
-        xmpp.addListener(XMPPEvents.CALL_INCOMING, function(event) {
+        APP.xmpp.addListener(XMPPEvents.CALL_INCOMING, function(event) {
             DataChannels.init(event.peerconnection, eventEmitter);
         });
-        UI.addListener(UIEvents.SELECTED_ENDPOINT,
+        APP.UI.addListener(UIEvents.SELECTED_ENDPOINT,
             DataChannels.handleSelectedEndpointEvent);
-        UI.addListener(UIEvents.PINNED_ENDPOINT,
+        APP.UI.addListener(UIEvents.PINNED_ENDPOINT,
             DataChannels.handlePinnedEndpointEvent);
         this.rtcUtils = new RTCUtils(this);
         this.rtcUtils.obtainAudioAndVideoPermissions();
@@ -164,10 +167,10 @@ var RTC = {
     changeLocalVideo: function (stream, isUsingScreenStream, callback) {
         var oldStream = this.localVideo.getOriginalStream();
         var type = (isUsingScreenStream? "screen" : "video");
-        RTC.localVideo = this.createLocalStream(stream, "video", true, type);
+        this.localVideo = this.createLocalStream(stream, "video", true, type);
         // Stop the stream to trigger onended event for old stream
         oldStream.stop();
-        xmpp.switchStreams(stream, oldStream,callback);
+        APP.xmpp.switchStreams(stream, oldStream,callback);
     },
     /**
      * Checks if video identified by given src is desktop stream.
@@ -180,8 +183,8 @@ var RTC = {
             return false;
         var isDesktop = false;
         var stream = null;
-        if (xmpp.myJid() &&
-            xmpp.myResource() === jid) {
+        if (APP.xmpp.myJid() &&
+            APP.xmpp.myResource() === jid) {
             // local video
             stream = this.localVideo;
         } else {

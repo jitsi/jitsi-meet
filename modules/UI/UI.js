@@ -20,6 +20,12 @@ var messageHandler = UI.messageHandler;
 var Authentication  = require("./authentication/Authentication");
 var UIUtil = require("./util/UIUtil");
 var NicknameHandler = require("./util/NicknameHandler");
+var CQEvents = require("../../service/connectionquality/CQEvents");
+var DesktopSharingEventTypes
+    = require("../../service/desktopsharing/DesktopSharingEventTypes");
+var RTCEvents = require("../../service/RTC/RTCEvents");
+var StreamEventTypes = require("../../service/RTC/StreamEventTypes");
+var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 
 var eventEmitter = new EventEmitter();
 var roomName = null;
@@ -73,38 +79,38 @@ function onDisplayNameChanged(jid, displayName) {
 }
 
 function registerListeners() {
-    RTC.addStreamListener(streamHandler, StreamEventTypes.EVENT_TYPE_LOCAL_CREATED);
+    APP.RTC.addStreamListener(streamHandler, StreamEventTypes.EVENT_TYPE_LOCAL_CREATED);
 
-    RTC.addStreamListener(streamHandler, StreamEventTypes.EVENT_TYPE_LOCAL_CHANGED);
-    RTC.addStreamListener(function (stream) {
+    APP.RTC.addStreamListener(streamHandler, StreamEventTypes.EVENT_TYPE_LOCAL_CHANGED);
+    APP.RTC.addStreamListener(function (stream) {
         VideoLayout.onRemoteStreamAdded(stream);
     }, StreamEventTypes.EVENT_TYPE_REMOTE_CREATED);
-    RTC.addListener(RTCEvents.LASTN_CHANGED, onLastNChanged);
-    RTC.addListener(RTCEvents.DOMINANTSPEAKER_CHANGED, function (resourceJid) {
+    APP.RTC.addListener(RTCEvents.LASTN_CHANGED, onLastNChanged);
+    APP.RTC.addListener(RTCEvents.DOMINANTSPEAKER_CHANGED, function (resourceJid) {
         VideoLayout.onDominantSpeakerChanged(resourceJid);
     });
-    RTC.addListener(RTCEvents.LASTN_ENDPOINT_CHANGED,
+    APP.RTC.addListener(RTCEvents.LASTN_ENDPOINT_CHANGED,
         function (lastNEndpoints, endpointsEnteringLastN, stream) {
             VideoLayout.onLastNEndpointsChanged(lastNEndpoints,
                 endpointsEnteringLastN, stream);
         });
-    RTC.addListener(RTCEvents.SIMULCAST_LAYER_CHANGED,
+    APP.RTC.addListener(RTCEvents.SIMULCAST_LAYER_CHANGED,
         function (endpointSimulcastLayers) {
            VideoLayout.onSimulcastLayersChanged(endpointSimulcastLayers);
         });
-    RTC.addListener(RTCEvents.SIMULCAST_LAYER_CHANGING,
+    APP.RTC.addListener(RTCEvents.SIMULCAST_LAYER_CHANGING,
         function (endpointSimulcastLayers) {
             VideoLayout.onSimulcastLayersChanging(endpointSimulcastLayers);
         });
     VideoLayout.init(eventEmitter);
 
-    statistics.addAudioLevelListener(function(jid, audioLevel)
+    APP.statistics.addAudioLevelListener(function(jid, audioLevel)
     {
         var resourceJid;
-        if(jid === statistics.LOCAL_JID)
+        if(jid === APP.statistics.LOCAL_JID)
         {
             resourceJid = AudioLevels.LOCAL_LEVEL;
-            if(RTC.localAudio.isMuted())
+            if(APP.RTC.localAudio.isMuted())
             {
                 audioLevel = 0;
             }
@@ -117,23 +123,31 @@ function registerListeners() {
         AudioLevels.updateAudioLevel(resourceJid, audioLevel,
             UI.getLargeVideoState().userResourceJid);
     });
-    desktopsharing.addListener(function () {
+    APP.desktopsharing.addListener(function () {
         ToolbarToggler.showDesktopSharingButton();
     }, DesktopSharingEventTypes.INIT);
-    desktopsharing.addListener(
+    APP.desktopsharing.addListener(
         Toolbar.changeDesktopSharingButtonState,
         DesktopSharingEventTypes.SWITCHING_DONE);
-    xmpp.addListener(XMPPEvents.DISPOSE_CONFERENCE, onDisposeConference);
-    xmpp.addListener(XMPPEvents.KICKED, function () {
+    APP.connectionquality.addListener(CQEvents.LOCALSTATS_UPDATED,
+        VideoLayout.updateLocalConnectionStats);
+    APP.connectionquality.addListener(CQEvents.REMOTESTATS_UPDATED,
+        VideoLayout.updateConnectionStats);
+    APP.connectionquality.addListener(CQEvents.STOP,
+        VideoLayout.onStatsStop);
+    APP.xmpp.addListener(XMPPEvents.DISPOSE_CONFERENCE, onDisposeConference);
+    APP.xmpp.addListener(XMPPEvents.KICKED, function () {
         messageHandler.openMessageDialog("Session Terminated",
             "Ouch! You have been kicked out of the meet!");
     });
-    xmpp.addListener(XMPPEvents.BRIDGE_DOWN, function () {
+    APP.xmpp.addListener(XMPPEvents.BRIDGE_DOWN, function () {
         messageHandler.showError("Error",
             "Jitsi Videobridge is currently unavailable. Please try again later!");
     });
-    xmpp.addListener(XMPPEvents.USER_ID_CHANGED, Avatar.setUserAvatar);
-    xmpp.addListener(XMPPEvents.CHANGED_STREAMS, function (jid, changedStreams) {
+    APP.xmpp.addListener(XMPPEvents.USER_ID_CHANGED, function (from, id) {
+        Avatar.setUserAvatar(from, id);
+    });
+    APP.xmpp.addListener(XMPPEvents.CHANGED_STREAMS, function (jid, changedStreams) {
         for(stream in changedStreams)
         {
             // might need to update the direction if participant just went from sendrecv to recvonly
@@ -153,28 +167,52 @@ function registerListeners() {
         }
 
     });
-    xmpp.addListener(XMPPEvents.DISPLAY_NAME_CHANGED, onDisplayNameChanged);
-    xmpp.addListener(XMPPEvents.MUC_JOINED, onMucJoined);
-    xmpp.addListener(XMPPEvents.LOCALROLE_CHANGED, onLocalRoleChange);
-    xmpp.addListener(XMPPEvents.MUC_ENTER, onMucEntered);
-    xmpp.addListener(XMPPEvents.MUC_ROLE_CHANGED, onMucRoleChanged);
-    xmpp.addListener(XMPPEvents.PRESENCE_STATUS, onMucPresenceStatus);
-    xmpp.addListener(XMPPEvents.SUBJECT_CHANGED, chatSetSubject);
-    xmpp.addListener(XMPPEvents.MESSAGE_RECEIVED, updateChatConversation);
-    xmpp.addListener(XMPPEvents.MUC_LEFT, onMucLeft);
-    xmpp.addListener(XMPPEvents.PASSWORD_REQUIRED, onPasswordReqiured);
-    xmpp.addListener(XMPPEvents.CHAT_ERROR_RECEIVED, chatAddError);
-    xmpp.addListener(XMPPEvents.ETHERPAD, initEtherpad);
-    connectionquality.addListener(CQEvents.LOCALSTATS_UPDATED,
-        VideoLayout.updateLocalConnectionStats);
-    connectionquality.addListener(CQEvents.REMOTESTATS_UPDATED,
-        VideoLayout.updateConnectionStats);
-    connectionquality.addListener(CQEvents.STOP,
-        VideoLayout.onStatsStop);
-    xmpp.addListener(XMPPEvents.AUTHENTICATION_REQUIRED, onAuthenticationRequired);
+    APP.xmpp.addListener(XMPPEvents.DISPLAY_NAME_CHANGED, onDisplayNameChanged);
+    APP.xmpp.addListener(XMPPEvents.MUC_JOINED, onMucJoined);
+    APP.xmpp.addListener(XMPPEvents.LOCALROLE_CHANGED, onLocalRoleChange);
+    APP.xmpp.addListener(XMPPEvents.MUC_ENTER, onMucEntered);
+    APP.xmpp.addListener(XMPPEvents.MUC_ROLE_CHANGED, onMucRoleChanged);
+    APP.xmpp.addListener(XMPPEvents.PRESENCE_STATUS, onMucPresenceStatus);
+    APP.xmpp.addListener(XMPPEvents.SUBJECT_CHANGED, chatSetSubject);
+    APP.xmpp.addListener(XMPPEvents.MESSAGE_RECEIVED, updateChatConversation);
+    APP.xmpp.addListener(XMPPEvents.MUC_LEFT, onMucLeft);
+    APP.xmpp.addListener(XMPPEvents.PASSWORD_REQUIRED, onPasswordReqiured);
+    APP.xmpp.addListener(XMPPEvents.CHAT_ERROR_RECEIVED, chatAddError);
+    APP.xmpp.addListener(XMPPEvents.ETHERPAD, initEtherpad);
+    APP.xmpp.addListener(XMPPEvents.AUTHENTICATION_REQUIRED, onAuthenticationRequired);
 
 
 }
+
+
+/**
+ * Mutes/unmutes the local video.
+ *
+ * @param mute <tt>true</tt> to mute the local video; otherwise, <tt>false</tt>
+ * @param options an object which specifies optional arguments such as the
+ * <tt>boolean</tt> key <tt>byUser</tt> with default value <tt>true</tt> which
+ * specifies whether the method was initiated in response to a user command (in
+ * contrast to an automatic decision taken by the application logic)
+ */
+function setVideoMute(mute, options) {
+    APP.xmpp.setVideoMute(
+        mute,
+        function (mute) {
+            var video = $('#video');
+            var communicativeClass = "icon-camera";
+            var muteClass = "icon-camera icon-camera-disabled";
+
+            if (mute) {
+                video.removeClass(communicativeClass);
+                video.addClass(muteClass);
+            } else {
+                video.removeClass(muteClass);
+                video.addClass(communicativeClass);
+            }
+        },
+        options);
+}
+
 
 function bindEvents()
 {
@@ -194,7 +232,7 @@ function bindEvents()
     });
 }
 
-UI.start = function () {
+UI.start = function (init) {
     document.title = interfaceConfig.APP_NAME;
     if(config.enableWelcomePage && window.location.pathname == "/" &&
         (!window.localStorage.welcomePageDisabled || window.localStorage.welcomePageDisabled == "false"))
@@ -314,10 +352,6 @@ UI.start = function () {
 
 };
 
-UI.toggleSmileys = function () {
-    Chat.toggleSmileys();
-};
-
 function chatAddError(errorMessage, originalText)
 {
     return Chat.chatAddError(errorMessage, originalText);
@@ -347,7 +381,7 @@ function onMucJoined(jid, info) {
 
     // Show authenticate button if needed
     Toolbar.showAuthenticateButton(
-            xmpp.isExternalAuthEnabled() && !xmpp.isModerator());
+            APP.xmpp.isExternalAuthEnabled() && !APP.xmpp.isModerator());
 
     var displayName = !config.displayJids
         ? info.displayName : Strophe.getResourceFromJid(jid);
@@ -485,6 +519,11 @@ function onLastNChanged(oldValue, newValue) {
     }
 }
 
+
+UI.toggleSmileys = function () {
+    Chat.toggleSmileys();
+};
+
 UI.getSettings = function () {
     return Settings.getSettings();
 };
@@ -501,10 +540,6 @@ UI.toggleContactList = function () {
     return BottomToolbar.toggleContactList();
 };
 
-UI.setRecordingButtonState = function (state) {
-    Toolbar.setRecordingButtonState(state);
-};
-
 UI.inputDisplayNameHandler = function (value) {
     VideoLayout.inputDisplayNameHandler(value);
 };
@@ -513,10 +548,6 @@ UI.inputDisplayNameHandler = function (value) {
 UI.getLargeVideoState = function()
 {
     return VideoLayout.getLargeVideoState();
-};
-
-UI.showLocalAudioIndicator = function (mute) {
-    VideoLayout.showLocalAudioIndicator(mute);
 };
 
 UI.generateRoomName = function() {
@@ -560,19 +591,15 @@ UI.connectionIndicatorShowMore = function(id)
     return VideoLayout.connectionIndicators[id].showMore();
 };
 
-UI.showToolbar = function () {
-    return ToolbarToggler.showToolbar();
-};
-
-UI.dockToolbar = function (isDock) {
-    return ToolbarToggler.dockToolbar(isDock);
-};
-
 UI.getCreadentials = function () {
+    var settings = this.getSettings();
     return {
         bosh: document.getElementById('boshURL').value,
         password: document.getElementById('password').value,
-        jid: document.getElementById('jid').value
+        jid: document.getElementById('jid').value,
+        email: settings.email,
+        displayName: settings.displayName,
+        uid: settings.uid
     };
 };
 
@@ -615,20 +642,20 @@ UI.checkForNicknameAndJoin = function () {
     if (config.useNicks) {
         nick = window.prompt('Your nickname (optional)');
     }
-    xmpp.joinRoom(roomName, config.useNicks, nick);
-}
+    APP.xmpp.joinRoom(roomName, config.useNicks, nick);
+};
 
 
 function dump(elem, filename) {
     elem = elem.parentNode;
     elem.download = filename || 'meetlog.json';
     elem.href = 'data:application/json;charset=utf-8,\n';
-    var data = xmpp.populateData();
+    var data = APP.xmpp.populateData();
     var metadata = {};
     metadata.time = new Date();
     metadata.url = window.location.href;
     metadata.ua = navigator.userAgent;
-    var log = xmpp.getLogger();
+    var log = APP.xmpp.getLogger();
     if (log) {
         metadata.xmpp = log;
     }
@@ -639,35 +666,7 @@ function dump(elem, filename) {
 
 UI.getRoomName = function () {
     return roomName;
-}
-
-/**
- * Mutes/unmutes the local video.
- *
- * @param mute <tt>true</tt> to mute the local video; otherwise, <tt>false</tt>
- * @param options an object which specifies optional arguments such as the
- * <tt>boolean</tt> key <tt>byUser</tt> with default value <tt>true</tt> which
- * specifies whether the method was initiated in response to a user command (in
- * contrast to an automatic decision taken by the application logic)
- */
-function setVideoMute(mute, options) {
-    xmpp.setVideoMute(
-        mute,
-        function (mute) {
-            var video = $('#video');
-            var communicativeClass = "icon-camera";
-            var muteClass = "icon-camera icon-camera-disabled";
-
-            if (mute) {
-                video.removeClass(communicativeClass);
-                video.addClass(muteClass);
-            } else {
-                video.removeClass(muteClass);
-                video.addClass(communicativeClass);
-            }
-        },
-        options);
-}
+};
 
 /**
  * Mutes/unmutes the local video.
@@ -675,14 +674,14 @@ function setVideoMute(mute, options) {
 UI.toggleVideo = function () {
     UIUtil.buttonClick("#video", "icon-camera icon-camera-disabled");
 
-    setVideoMute(!RTC.localVideo.isMuted());
+    setVideoMute(!APP.RTC.localVideo.isMuted());
 };
 
 /**
  * Mutes / unmutes audio for the local participant.
  */
 UI.toggleAudio = function() {
-    UI.setAudioMuted(!RTC.localAudio.isMuted());
+    UI.setAudioMuted(!APP.RTC.localAudio.isMuted());
 };
 
 /**
@@ -690,8 +689,8 @@ UI.toggleAudio = function() {
  */
 UI.setAudioMuted = function (mute) {
 
-    if(!xmpp.setAudioMute(mute, function () {
-        UI.showLocalAudioIndicator(mute);
+    if(!APP.xmpp.setAudioMute(mute, function () {
+        VideoLayout.showLocalAudioIndicator(mute);
 
         UIUtil.buttonClick("#mute", "icon-microphone icon-mic-disabled");
     }))

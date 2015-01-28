@@ -1,5 +1,4 @@
-//This should be uncommented when app.js supports require
-//var RTCBrowserType = require("../../service/RTC/RTCBrowserType.js");
+var RTCBrowserType = require("../../service/RTC/RTCBrowserType.js");
 
 function setResolutionConstraints(constraints, resolution, isAndroid)
 {
@@ -236,7 +235,7 @@ RTCUtils.prototype.getUserMediaWithConstraints = function(
 
             // We currently do not support FF, as it doesn't have multistream support.
             && !isFF) {
-            simulcast.getUserMedia(constraints, function (stream) {
+            APP.simulcast.getUserMedia(constraints, function (stream) {
                     console.log('onUserMediaSuccess');
                     success_callback(stream);
                 },
@@ -292,7 +291,7 @@ RTCUtils.prototype.obtainAudioAndVideoPermissions = function() {
                 cb,
                 function (error) {
                     console.error('failed to obtain audio/video stream - stop', error);
-                    UI.messageHandler.showError("Error",
+                    APP.UI.messageHandler.showError("Error",
                             "Failed to obtain permissions to use the local microphone" +
                             "and/or camera.");
                 }

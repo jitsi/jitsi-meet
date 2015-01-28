@@ -3,6 +3,9 @@ var EventEmitter = require("events");
 var Recording = require("./recording");
 var SDP = require("./SDP");
 var Pako = require("pako");
+var StreamEventTypes = require("../../service/RTC/StreamEventTypes");
+var UIEvents = require("../../service/UI/UIEvents");
+var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 
 var eventEmitter = new EventEmitter();
 var connection = null;
@@ -14,13 +17,12 @@ function connect(jid, password, uiCredentials) {
     connection = new Strophe.Connection(bosh);
     Moderator.setConnection(connection);
 
-    var settings = UI.getSettings();
-    var email = settings.email;
-    var displayName = settings.displayName;
+    var email = uiCredentials.email;
+    var displayName = uiCredentials.displayName;
     if(email) {
         connection.emuc.addEmailToPresence(email);
     } else {
-        connection.emuc.addUserIdToPresence(settings.uid);
+        connection.emuc.addUserIdToPresence(uiCredentials.uid);
     }
     if(displayName) {
         connection.emuc.addDisplayNameToPresence(displayName);
@@ -29,7 +31,7 @@ function connect(jid, password, uiCredentials) {
     if (connection.disco) {
         // for chrome, add multistream cap
     }
-    connection.jingle.pc_constraints = RTC.getPCConstraints();
+    connection.jingle.pc_constraints = APP.RTC.getPCConstraints();
     if (config.useIPv6) {
         // https://code.google.com/p/webrtc/issues/detail?id=2828
         if (!connection.jingle.pc_constraints.optional)
@@ -48,7 +50,7 @@ function connect(jid, password, uiCredentials) {
             if (config.useStunTurn) {
                 connection.jingle.getStunAndTurnCredentials();
             }
-            UI.disableConnect();
+            APP.UI.disableConnect();
 
             console.info("My Jabber ID: " + connection.jid);
 
@@ -77,17 +79,17 @@ function connect(jid, password, uiCredentials) {
 function maybeDoJoin() {
     if (connection && connection.connected &&
         Strophe.getResourceFromJid(connection.jid)
-        && (RTC.localAudio || RTC.localVideo)) {
+        && (APP.RTC.localAudio || APP.RTC.localVideo)) {
         // .connected is true while connecting?
         doJoin();
     }
 }
 
 function doJoin() {
-    var roomName = UI.generateRoomName();
+    var roomName = APP.UI.generateRoomName();
 
     Moderator.allocateConferenceFocus(
-        roomName, UI.checkForNicknameAndJoin);
+        roomName, APP.UI.checkForNicknameAndJoin);
 }
 
 function initStrophePlugins()
@@ -101,9 +103,9 @@ function initStrophePlugins()
 }
 
 function registerListeners() {
-    RTC.addStreamListener(maybeDoJoin,
+    APP.RTC.addStreamListener(maybeDoJoin,
         StreamEventTypes.EVENT_TYPE_LOCAL_CREATED);
-    UI.addListener(UIEvents.NICKNAME_CHANGED, function (nickname) {
+    APP.UI.addListener(UIEvents.NICKNAME_CHANGED, function (nickname) {
         XMPP.addToPresence("displayName", nickname);
     });
 }
@@ -160,7 +162,7 @@ var XMPP = {
         connect(jid, null, uiCredentials);
     },
     promptLogin: function () {
-        UI.showLoginPopup(connect);
+        APP.UI.showLoginPopup(connect);
     },
     joinRoom: function(roomName, useNicks, nick)
     {
@@ -200,11 +202,11 @@ var XMPP = {
         if (handler && handler.peerconnection) {
             // FIXME: probably removing streams is not required and close() should
             // be enough
-            if (RTC.localAudio) {
-                handler.peerconnection.removeStream(RTC.localAudio.getOriginalStream(), onUnload);
+            if (APP.RTC.localAudio) {
+                handler.peerconnection.removeStream(APP.RTC.localAudio.getOriginalStream(), onUnload);
             }
-            if (RTC.localVideo) {
-                handler.peerconnection.removeStream(RTC.localVideo.getOriginalStream(), onUnload);
+            if (APP.RTC.localVideo) {
+                handler.peerconnection.removeStream(APP.RTC.localVideo.getOriginalStream(), onUnload);
             }
             handler.peerconnection.close();
         }
@@ -247,13 +249,13 @@ var XMPP = {
         }
     },
     setVideoMute: function (mute, callback, options) {
-       if(connection && RTC.localVideo && connection.jingle.activecall)
+       if(connection && APP.RTC.localVideo && connection.jingle.activecall)
        {
            connection.jingle.activecall.setVideoMute(mute, callback, options);
        }
     },
     setAudioMute: function (mute, callback) {
-        if (!(connection && RTC.localAudio)) {
+        if (!(connection && APP.RTC.localAudio)) {
             return false;
         }
 
@@ -265,7 +267,7 @@ var XMPP = {
             this.forceMuted = false;
         }
 
-        if (mute == RTC.localAudio.isMuted()) {
+        if (mute == APP.RTC.localAudio.isMuted()) {
             // Nothing to do
             return true;
         }
@@ -273,7 +275,7 @@ var XMPP = {
         // It is not clear what is the right way to handle multiple tracks.
         // So at least make sure that they are all muted or all unmuted and
         // that we send presence just once.
-        RTC.localAudio.mute();
+        APP.RTC.localAudio.mute();
         // isMuted is the opposite of audioEnabled
         connection.emuc.addAudioInfoToPresence(mute);
         connection.emuc.sendPresence();
@@ -303,7 +305,7 @@ var XMPP = {
                             },
                             function (error) {
                                 console.log('mute SLD error');
-                                UI.messageHandler.showError('Error',
+                                APP.UI.messageHandler.showError('Error',
                                         'Oops! Something went wrong and we failed to ' +
                                         'mute! (SLD Failure)');
                             }
@@ -311,13 +313,13 @@ var XMPP = {
                     },
                     function (error) {
                         console.log(error);
-                        UI.messageHandler.showError();
+                        APP.UI.messageHandler.showError();
                     }
                 );
             },
             function (error) {
                 console.log('muteVideo SRD error');
-                UI.messageHandler.showError('Error',
+                APP.UI.messageHandler.showError('Error',
                         'Oops! Something went wrong and we failed to stop video!' +
                         '(SRD Failure)');
 

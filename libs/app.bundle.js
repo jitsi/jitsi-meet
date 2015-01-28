@@ -1,9 +1,11257 @@
-!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.xmpp=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.APP=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+/* jshint -W117 */
+/* application specific logic */
+
+var APP =
+{
+    init: function () {
+        this.UI = require("./modules/UI/UI");
+        this.API = require("./modules/API/API");
+        this.connectionquality = require("./modules/connectionquality/connectionquality");
+        this.statistics = require("./modules/statistics/statistics");
+        this.RTC = require("./modules/RTC/RTC");
+        this.simulcast = require("./modules/simulcast/simulcast");
+        this.desktopsharing = require("./modules/desktopsharing/desktopsharing");
+        this.xmpp = require("./modules/xmpp/xmpp");
+        this.keyboardshortcut = require("./modules/keyboardshortcut/keyboardshortcut");
+    }
+};
+
+function init() {
+
+    APP.RTC.start();
+    APP.xmpp.start(APP.UI.getCreadentials);
+    APP.statistics.start();
+    APP.connectionquality.init();
+
+    // Set default desktop sharing method
+    APP.desktopsharing.init();
+
+    APP.keyboardshortcut.init();
+}
+
+
+$(document).ready(function () {
+
+    APP.init();
+
+    if(APP.API.isEnabled())
+        APP.API.init();
+
+    APP.UI.start(init);
+
+});
+
+$(window).bind('beforeunload', function () {
+    if(APP.API.isEnabled())
+        APP.API.dispose();
+});
+
+module.exports = APP;
+
+
+},{"./modules/API/API":2,"./modules/RTC/RTC":6,"./modules/UI/UI":8,"./modules/connectionquality/connectionquality":35,"./modules/desktopsharing/desktopsharing":36,"./modules/keyboardshortcut/keyboardshortcut":37,"./modules/simulcast/simulcast":42,"./modules/statistics/statistics":45,"./modules/xmpp/xmpp":59}],2:[function(require,module,exports){
+/**
+ * Implements API class that communicates with external api class
+ * and provides interface to access Jitsi Meet features by external
+ * applications that embed Jitsi Meet
+ */
+
+var XMPPEvents = require("../../service/xmpp/XMPPEvents");
+
+/**
+ * List of the available commands.
+ * @type {{
+ *              displayName: inputDisplayNameHandler,
+ *              muteAudio: toggleAudio,
+ *              muteVideo: toggleVideo,
+ *              filmStrip: toggleFilmStrip
+ *          }}
+ */
+var commands =
+{
+    displayName: APP.UI.inputDisplayNameHandler,
+    muteAudio: APP.UI.toggleAudio,
+    muteVideo: APP.UI.toggleVideo,
+    toggleFilmStrip: APP.UI.toggleFilmStrip,
+    toggleChat: APP.UI.toggleChat,
+    toggleContactList: APP.UI.toggleContactList
+};
+
+
+/**
+ * Maps the supported events and their status
+ * (true it the event is enabled and false if it is disabled)
+ * @type {{
+ *              incomingMessage: boolean,
+ *              outgoingMessage: boolean,
+ *              displayNameChange: boolean,
+ *              participantJoined: boolean,
+ *              participantLeft: boolean
+ *      }}
+ */
+var events =
+{
+    incomingMessage: false,
+    outgoingMessage:false,
+    displayNameChange: false,
+    participantJoined: false,
+    participantLeft: false
+};
+
+var displayName = {};
+
+/**
+ * Processes commands from external applicaiton.
+ * @param message the object with the command
+ */
+function processCommand(message)
+{
+    if(message.action != "execute")
+    {
+        console.error("Unknown action of the message");
+        return;
+    }
+    for(var key in message)
+    {
+        if(commands[key])
+            commands[key].apply(null, message[key]);
+    }
+}
+
+/**
+ * Processes events objects from external applications
+ * @param event the event
+ */
+function processEvent(event) {
+    if(!event.action)
+    {
+        console.error("Event with no action is received.");
+        return;
+    }
+
+    var i = 0;
+    switch(event.action)
+    {
+        case "add":
+            for(; i < event.events.length; i++)
+            {
+                events[event.events[i]] = true;
+            }
+            break;
+        case "remove":
+            for(; i < event.events.length; i++)
+            {
+                events[event.events[i]] = false;
+            }
+            break;
+        default:
+            console.error("Unknown action for event.");
+    }
+
+}
+
+/**
+ * Sends message to the external application.
+ * @param object
+ */
+function sendMessage(object) {
+    window.parent.postMessage(JSON.stringify(object), "*");
+}
+
+/**
+ * Processes a message event from the external application
+ * @param event the message event
+ */
+function processMessage(event)
+{
+    var message;
+    try {
+        message = JSON.parse(event.data);
+    } catch (e) {}
+
+    if(!message.type)
+        return;
+    switch (message.type)
+    {
+        case "command":
+            processCommand(message);
+            break;
+        case "event":
+            processEvent(message);
+            break;
+        default:
+            console.error("Unknown type of the message");
+            return;
+    }
+
+}
+
+function setupListeners() {
+    APP.xmpp.addListener(XMPPEvents.MUC_ENTER, function (from) {
+        API.triggerEvent("participantJoined", {jid: from});
+    });
+    APP.xmpp.addListener(XMPPEvents.MESSAGE_RECEIVED, function (from, nick, txt, myjid) {
+        if (from != myjid)
+            API.triggerEvent("incomingMessage",
+                {"from": from, "nick": nick, "message": txt});
+    });
+    APP.xmpp.addListener(XMPPEvents.MUC_LEFT, function (jid) {
+        API.triggerEvent("participantLeft", {jid: jid});
+    });
+    APP.xmpp.addListener(XMPPEvents.DISPLAY_NAME_CHANGED, function (jid, newDisplayName) {
+        name = displayName[jid];
+        if(!name || name != newDisplayName) {
+            API.triggerEvent("displayNameChange", {jid: jid, displayname: newDisplayName});
+            displayName[jid] = newDisplayName;
+        }
+    });
+    APP.xmpp.addListener(XMPPEvents.SENDING_CHAT_MESSAGE, function (body) {
+        APP.API.triggerEvent("outgoingMessage", {"message": body});
+    });
+}
+
+var API = {
+    /**
+     * Check whether the API should be enabled or not.
+     * @returns {boolean}
+     */
+    isEnabled: function () {
+        var hash = location.hash;
+        if(hash && hash.indexOf("external") > -1 && window.postMessage)
+            return true;
+        return false;
+    },
+    /**
+     * Initializes the APIConnector. Setups message event listeners that will
+     * receive information from external applications that embed Jitsi Meet.
+     * It also sends a message to the external application that APIConnector
+     * is initialized.
+     */
+    init: function () {
+        if (window.addEventListener)
+        {
+            window.addEventListener('message',
+                processMessage, false);
+        }
+        else
+        {
+            window.attachEvent('onmessage', processMessage);
+        }
+        sendMessage({type: "system", loaded: true});
+        setupListeners();
+    },
+    /**
+     * Checks whether the event is enabled ot not.
+     * @param name the name of the event.
+     * @returns {*}
+     */
+    isEventEnabled: function (name) {
+        return events[name];
+    },
+
+    /**
+     * Sends event object to the external application that has been subscribed
+     * for that event.
+     * @param name the name event
+     * @param object data associated with the event
+     */
+    triggerEvent: function (name, object) {
+        if(this.isEnabled() && this.isEventEnabled(name))
+            sendMessage({
+                type: "event", action: "result", event: name, result: object});
+    },
+
+    /**
+     * Removes the listeners.
+     */
+    dispose: function () {
+        if(window.removeEventListener)
+        {
+            window.removeEventListener("message",
+                processMessage, false);
+        }
+        else
+        {
+            window.detachEvent('onmessage', processMessage);
+        }
+
+    }
+
+
+};
+
+module.exports = API;
+},{"../../service/xmpp/XMPPEvents":83}],3:[function(require,module,exports){
+/* global Strophe, updateLargeVideo, focusedVideoSrc*/
+
+// cache datachannels to avoid garbage collection
+// https://code.google.com/p/chromium/issues/detail?id=405545
+var RTCEvents = require("../../service/RTC/RTCEvents");
+
+var _dataChannels = [];
+var eventEmitter = null;
+
+
+
+
+var DataChannels =
+{
+
+    /**
+     * Callback triggered by PeerConnection when new data channel is opened
+     * on the bridge.
+     * @param event the event info object.
+     */
+
+    onDataChannel: function (event)
+    {
+        var dataChannel = event.channel;
+
+        dataChannel.onopen = function () {
+            console.info("Data channel opened by the Videobridge!", dataChannel);
+
+            // Code sample for sending string and/or binary data
+            // Sends String message to the bridge
+            //dataChannel.send("Hello bridge!");
+            // Sends 12 bytes binary message to the bridge
+            //dataChannel.send(new ArrayBuffer(12));
+
+            // when the data channel becomes available, tell the bridge about video
+            // selections so that it can do adaptive simulcast,
+            // we want the notification to trigger even if userJid is undefined,
+            // or null.
+            var userJid = APP.UI.getLargeVideoState().userJid;
+            // we want the notification to trigger even if userJid is undefined,
+            // or null.
+            onSelectedEndpointChanged(userJid);
+        };
+
+        dataChannel.onerror = function (error) {
+            console.error("Data Channel Error:", error, dataChannel);
+        };
+
+        dataChannel.onmessage = function (event) {
+            var data = event.data;
+            // JSON
+            var obj;
+
+            try {
+                obj = JSON.parse(data);
+            }
+            catch (e) {
+                console.error(
+                    "Failed to parse data channel message as JSON: ",
+                    data,
+                    dataChannel);
+            }
+            if (('undefined' !== typeof(obj)) && (null !== obj)) {
+                var colibriClass = obj.colibriClass;
+
+                if ("DominantSpeakerEndpointChangeEvent" === colibriClass) {
+                    // Endpoint ID from the Videobridge.
+                    var dominantSpeakerEndpoint = obj.dominantSpeakerEndpoint;
+
+                    console.info(
+                        "Data channel new dominant speaker event: ",
+                        dominantSpeakerEndpoint);
+                    eventEmitter.emit(RTCEvents.DOMINANTSPEAKER_CHANGED, dominantSpeakerEndpoint);
+                }
+                else if ("InLastNChangeEvent" === colibriClass)
+                {
+                    var oldValue = obj.oldValue;
+                    var newValue = obj.newValue;
+                    // Make sure that oldValue and newValue are of type boolean.
+                    var type;
+
+                    if ((type = typeof oldValue) !== 'boolean') {
+                        if (type === 'string') {
+                            oldValue = (oldValue == "true");
+                        } else {
+                            oldValue = new Boolean(oldValue).valueOf();
+                        }
+                    }
+                    if ((type = typeof newValue) !== 'boolean') {
+                        if (type === 'string') {
+                            newValue = (newValue == "true");
+                        } else {
+                            newValue = new Boolean(newValue).valueOf();
+                        }
+                    }
+
+                    eventEmitter.emit(RTCEvents.LASTN_CHANGED, oldValue, newValue);
+                }
+                else if ("LastNEndpointsChangeEvent" === colibriClass)
+                {
+                    // The new/latest list of last-n endpoint IDs.
+                    var lastNEndpoints = obj.lastNEndpoints;
+                    // The list of endpoint IDs which are entering the list of
+                    // last-n at this time i.e. were not in the old list of last-n
+                    // endpoint IDs.
+                    var endpointsEnteringLastN = obj.endpointsEnteringLastN;
+                    var stream = obj.stream;
+
+                    console.log(
+                        "Data channel new last-n event: ",
+                        lastNEndpoints, endpointsEnteringLastN, obj);
+                    eventEmitter.emit(RTCEvents.LASTN_ENDPOINT_CHANGED,
+                        lastNEndpoints, endpointsEnteringLastN, obj);
+                }
+                else if ("SimulcastLayersChangedEvent" === colibriClass)
+                {
+                    eventEmitter.emit(RTCEvents.SIMULCAST_LAYER_CHANGED,
+                        obj.endpointSimulcastLayers);
+                }
+                else if ("SimulcastLayersChangingEvent" === colibriClass)
+                {
+                    eventEmitter.emit(RTCEvents.SIMULCAST_LAYER_CHANGING,
+                        obj.endpointSimulcastLayers);
+                }
+                else if ("StartSimulcastLayerEvent" === colibriClass)
+                {
+                    eventEmitter.emit(RTCEvents.SIMULCAST_START, obj.simulcastLayer);
+                }
+                else if ("StopSimulcastLayerEvent" === colibriClass)
+                {
+                    eventEmitter.emit(RTCEvents.SIMULCAST_STOP, obj.simulcastLayer);
+                }
+                else
+                {
+                    console.debug("Data channel JSON-formatted message: ", obj);
+                }
+            }
+        };
+
+        dataChannel.onclose = function ()
+        {
+            console.info("The Data Channel closed", dataChannel);
+            var idx = _dataChannels.indexOf(dataChannel);
+            if (idx > -1)
+                _dataChannels = _dataChannels.splice(idx, 1);
+        };
+        _dataChannels.push(dataChannel);
+    },
+
+    /**
+     * Binds "ondatachannel" event listener to given PeerConnection instance.
+     * @param peerConnection WebRTC peer connection instance.
+     */
+    init: function (peerConnection, emitter) {
+        if(!config.openSctp)
+            return;
+
+        peerConnection.ondatachannel = this.onDataChannel;
+        eventEmitter = emitter;
+
+        // Sample code for opening new data channel from Jitsi Meet to the bridge.
+        // Although it's not a requirement to open separate channels from both bridge
+        // and peer as single channel can be used for sending and receiving data.
+        // So either channel opened by the bridge or the one opened here is enough
+        // for communication with the bridge.
+        /*var dataChannelOptions =
+         {
+         reliable: true
+         };
+         var dataChannel
+         = peerConnection.createDataChannel("myChannel", dataChannelOptions);
+
+         // Can be used only when is in open state
+         dataChannel.onopen = function ()
+         {
+         dataChannel.send("My channel !!!");
+         };
+         dataChannel.onmessage = function (event)
+         {
+         var msgData = event.data;
+         console.info("Got My Data Channel Message:", msgData, dataChannel);
+         };*/
+    },
+    handleSelectedEndpointEvent: onSelectedEndpointChanged,
+    handlePinnedEndpointEvent: onPinnedEndpointChanged
+
+};
+
+function onSelectedEndpointChanged(userResource)
+{
+    console.log('selected endpoint changed: ', userResource);
+    if (_dataChannels && _dataChannels.length != 0)
+    {
+        _dataChannels.some(function (dataChannel) {
+            if (dataChannel.readyState == 'open')
+            {
+                dataChannel.send(JSON.stringify({
+                    'colibriClass': 'SelectedEndpointChangedEvent',
+                    'selectedEndpoint':
+                        (!userResource || userResource === null)?
+                            null : userResource
+                }));
+
+                return true;
+            }
+        });
+    }
+}
+
+function onPinnedEndpointChanged(userResource)
+{
+    console.log('pinned endpoint changed: ', userResource);
+    if (_dataChannels && _dataChannels.length != 0)
+    {
+        _dataChannels.some(function (dataChannel) {
+            if (dataChannel.readyState == 'open')
+            {
+                dataChannel.send(JSON.stringify({
+                    'colibriClass': 'PinnedEndpointChangedEvent',
+                    'pinnedEndpoint':
+                        (!userResource || userResource == null)?
+                            null : userResource
+                }));
+
+                return true;
+            }
+        });
+    }
+}
+
+module.exports = DataChannels;
+
+
+},{"../../service/RTC/RTCEvents":78}],4:[function(require,module,exports){
+var StreamEventTypes = require("../../service/RTC/StreamEventTypes.js");
+
+function LocalStream(stream, type, eventEmitter, videoType)
+{
+    this.stream = stream;
+    this.eventEmitter = eventEmitter;
+    this.type = type;
+    this.videoType = videoType;
+    var self = this;
+    if(type == "audio")
+    {
+        this.getTracks = function () {
+            return self.stream.getAudioTracks();
+        };
+    }
+    else
+    {
+        this.getTracks = function () {
+            return self.stream.getVideoTracks();
+        };
+    }
+
+    this.stream.onended = function()
+    {
+        self.streamEnded();
+    };
+}
+
+LocalStream.prototype.streamEnded = function () {
+    this.eventEmitter.emit(StreamEventTypes.EVENT_TYPE_LOCAL_ENDED, this);
+}
+
+LocalStream.prototype.getOriginalStream = function()
+{
+    return this.stream;
+}
+
+LocalStream.prototype.isAudioStream = function () {
+    return (this.stream.getAudioTracks() && this.stream.getAudioTracks().length > 0);
+};
+
+LocalStream.prototype.mute = function()
+{
+    var ismuted = false;
+    var tracks = this.getTracks();
+
+    for (var idx = 0; idx < tracks.length; idx++) {
+        ismuted = !tracks[idx].enabled;
+        tracks[idx].enabled = ismuted;
+    }
+    return ismuted;
+};
+
+LocalStream.prototype.setMute = function(mute)
+{
+    var tracks = this.getTracks();
+
+    for (var idx = 0; idx < tracks.length; idx++) {
+        tracks[idx].enabled = mute;
+    }
+};
+
+LocalStream.prototype.isMuted = function () {
+    var tracks = [];
+    if(this.type == "audio")
+    {
+        tracks = this.stream.getAudioTracks();
+    }
+    else
+    {
+        tracks = this.stream.getVideoTracks();
+    }
+    for (var idx = 0; idx < tracks.length; idx++) {
+        if(tracks[idx].enabled)
+            return false;
+    }
+    return true;
+}
+
+LocalStream.prototype.getId = function () {
+    return this.stream.getTracks()[0].id;
+}
+
+
+
+module.exports = LocalStream;
+
+},{"../../service/RTC/StreamEventTypes.js":79}],5:[function(require,module,exports){
+////These lines should be uncommented when require works in app.js
+var RTCBrowserType = require("../../service/RTC/RTCBrowserType.js");
+var MediaStreamType = require("../../service/RTC/MediaStreamTypes");
+
+/**
+ * Creates a MediaStream object for the given data, session id and ssrc.
+ * It is a wrapper class for the MediaStream.
+ *
+ * @param data the data object from which we obtain the stream,
+ * the peerjid, etc.
+ * @param sid the session id
+ * @param ssrc the ssrc corresponding to this MediaStream
+ *
+ * @constructor
+ */
+function MediaStream(data, sid, ssrc, browser) {
+
+    // XXX(gp) to minimize headaches in the future, we should build our
+    // abstractions around tracks and not streams. ORTC is track based API.
+    // Mozilla expects m-lines to represent media tracks.
+    //
+    // Practically, what I'm saying is that we should have a MediaTrack class
+    // and not a MediaStream class.
+    //
+    // Also, we should be able to associate multiple SSRCs with a MediaTrack as
+    // a track might have an associated RTX and FEC sources.
+
+    this.sid = sid;
+    this.stream = data.stream;
+    this.peerjid = data.peerjid;
+    this.ssrc = ssrc;
+    this.type = (this.stream.getVideoTracks().length > 0)?
+        MediaStreamType.VIDEO_TYPE : MediaStreamType.AUDIO_TYPE;
+    this.videoType = null;
+    this.muted = false;
+    if(browser == RTCBrowserType.RTC_BROWSER_FIREFOX)
+    {
+        if (!this.getVideoTracks)
+            this.getVideoTracks = function () { return []; };
+        if (!this.getAudioTracks)
+            this.getAudioTracks = function () { return []; };
+    }
+}
+
+
+MediaStream.prototype.getOriginalStream = function()
+{
+    return this.stream;
+}
+
+MediaStream.prototype.setMute = function (value)
+{
+    this.stream.muted = value;
+    this.muted = value;
+}
+
+
+module.exports = MediaStream;
+
+},{"../../service/RTC/MediaStreamTypes":76,"../../service/RTC/RTCBrowserType.js":77}],6:[function(require,module,exports){
+var EventEmitter = require("events");
+var RTCUtils = require("./RTCUtils.js");
+var LocalStream = require("./LocalStream.js");
+var DataChannels = require("./DataChannels");
+var MediaStream = require("./MediaStream.js");
+var DesktopSharingEventTypes
+    = require("../../service/desktopsharing/DesktopSharingEventTypes");
+var MediaStreamType = require("../../service/RTC/MediaStreamTypes");
+var StreamEventTypes = require("../../service/RTC/StreamEventTypes.js");
+var XMPPEvents = require("../../service/xmpp/XMPPEvents");
+var UIEvents = require("../../service/UI/UIEvents");
+
+var eventEmitter = new EventEmitter();
+
+var RTC = {
+    rtcUtils: null,
+    localStreams: [],
+    remoteStreams: {},
+    localAudio: null,
+    localVideo: null,
+    addStreamListener: function (listener, eventType) {
+        eventEmitter.on(eventType, listener);
+    },
+    addListener: function (type, listener) {
+        eventEmitter.on(type, listener);
+    },
+    removeStreamListener: function (listener, eventType) {
+        if(!(eventType instanceof StreamEventTypes))
+            throw "Illegal argument";
+
+        eventEmitter.removeListener(eventType, listener);
+    },
+    createLocalStream: function (stream, type, change) {
+
+        var localStream =  new LocalStream(stream, type, eventEmitter);
+        //in firefox we have only one stream object
+        if(this.localStreams.length == 0 ||
+            this.localStreams[0].getOriginalStream() != stream)
+            this.localStreams.push(localStream);
+        if(type == "audio")
+        {
+            this.localAudio = localStream;
+        }
+        else
+        {
+            this.localVideo = localStream;
+        }
+        var eventType = StreamEventTypes.EVENT_TYPE_LOCAL_CREATED;
+        if(change)
+            eventType = StreamEventTypes.EVENT_TYPE_LOCAL_CHANGED;
+
+        eventEmitter.emit(eventType, localStream);
+        return localStream;
+    },
+    removeLocalStream: function (stream) {
+        for(var i = 0; i < this.localStreams.length; i++)
+        {
+            if(this.localStreams[i].getOriginalStream() === stream) {
+                delete this.localStreams[i];
+                return;
+            }
+        }
+    },
+    createRemoteStream: function (data, sid, thessrc) {
+        var remoteStream = new MediaStream(data, sid, thessrc,
+            this.getBrowserType());
+        var jid = data.peerjid || APP.xmpp.myJid();
+        if(!this.remoteStreams[jid]) {
+            this.remoteStreams[jid] = {};
+        }
+        this.remoteStreams[jid][remoteStream.type]= remoteStream;
+        eventEmitter.emit(StreamEventTypes.EVENT_TYPE_REMOTE_CREATED, remoteStream);
+        console.debug("ADD remote stream ", remoteStream.type, " ", jid, " ", thessrc);
+        return remoteStream;
+    },
+    getBrowserType: function () {
+        return this.rtcUtils.browser;
+    },
+    getPCConstraints: function () {
+        return this.rtcUtils.pc_constraints;
+    },
+    getUserMediaWithConstraints:function(um, success_callback,
+                                         failure_callback, resolution,
+                                         bandwidth, fps, desktopStream)
+    {
+        return this.rtcUtils.getUserMediaWithConstraints(um, success_callback,
+            failure_callback, resolution, bandwidth, fps, desktopStream);
+    },
+    attachMediaStream:  function (element, stream) {
+        this.rtcUtils.attachMediaStream(element, stream);
+    },
+    getStreamID:  function (stream) {
+        return this.rtcUtils.getStreamID(stream);
+    },
+    getVideoSrc: function (element) {
+        return this.rtcUtils.getVideoSrc(element);
+    },
+    setVideoSrc: function (element, src) {
+        this.rtcUtils.setVideoSrc(element, src);
+    },
+    dispose: function() {
+        if (this.rtcUtils) {
+            this.rtcUtils = null;
+        }
+    },
+    stop:  function () {
+        this.dispose();
+    },
+    start: function () {
+        var self = this;
+        APP.desktopsharing.addListener(
+            function (stream, isUsingScreenStream, callback) {
+                self.changeLocalVideo(stream, isUsingScreenStream, callback);
+            }, DesktopSharingEventTypes.NEW_STREAM_CREATED);
+        APP.xmpp.addListener(XMPPEvents.CHANGED_STREAMS, function (jid, changedStreams) {
+            for(var i = 0; i < changedStreams.length; i++) {
+                var type = changedStreams[i].type;
+                if (type != "audio") {
+                    var peerStreams = self.remoteStreams[jid];
+                    if(!peerStreams)
+                        continue;
+                    var videoStream = peerStreams[MediaStreamType.VIDEO_TYPE];
+                    if(!videoStream)
+                        continue;
+                    videoStream.videoType = changedStreams[i].type;
+                }
+            }
+        });
+        APP.xmpp.addListener(XMPPEvents.CALL_INCOMING, function(event) {
+            DataChannels.init(event.peerconnection, eventEmitter);
+        });
+        APP.UI.addListener(UIEvents.SELECTED_ENDPOINT,
+            DataChannels.handleSelectedEndpointEvent);
+        APP.UI.addListener(UIEvents.PINNED_ENDPOINT,
+            DataChannels.handlePinnedEndpointEvent);
+        this.rtcUtils = new RTCUtils(this);
+        this.rtcUtils.obtainAudioAndVideoPermissions();
+    },
+    muteRemoteVideoStream: function (jid, value) {
+        var stream;
+
+        if(this.remoteStreams[jid] &&
+            this.remoteStreams[jid][MediaStreamType.VIDEO_TYPE])
+        {
+            stream = this.remoteStreams[jid][MediaStreamType.VIDEO_TYPE];
+        }
+
+        if(!stream)
+            return false;
+
+        if (value != stream.muted) {
+            stream.setMute(value);
+            return true;
+        }
+        return false;
+    },
+    switchVideoStreams: function (new_stream) {
+        this.localVideo.stream = new_stream;
+
+        this.localStreams = [];
+
+        //in firefox we have only one stream object
+        if (this.localAudio.getOriginalStream() != new_stream)
+            this.localStreams.push(this.localAudio);
+        this.localStreams.push(this.localVideo);
+    },
+    changeLocalVideo: function (stream, isUsingScreenStream, callback) {
+        var oldStream = this.localVideo.getOriginalStream();
+        var type = (isUsingScreenStream? "screen" : "video");
+        this.localVideo = this.createLocalStream(stream, "video", true, type);
+        // Stop the stream to trigger onended event for old stream
+        oldStream.stop();
+        APP.xmpp.switchStreams(stream, oldStream,callback);
+    },
+    /**
+     * Checks if video identified by given src is desktop stream.
+     * @param videoSrc eg.
+     * blob:https%3A//pawel.jitsi.net/9a46e0bd-131e-4d18-9c14-a9264e8db395
+     * @returns {boolean}
+     */
+    isVideoSrcDesktop: function (jid) {
+        if(!jid)
+            return false;
+        var isDesktop = false;
+        var stream = null;
+        if (APP.xmpp.myJid() &&
+            APP.xmpp.myResource() === jid) {
+            // local video
+            stream = this.localVideo;
+        } else {
+            var peerStreams = this.remoteStreams[jid];
+            if(!peerStreams)
+                return false;
+            stream = peerStreams[MediaStreamType.VIDEO_TYPE];
+        }
+
+        if(stream)
+            isDesktop = (stream.videoType === "screen");
+
+        return isDesktop;
+    }
+};
+
+module.exports = RTC;
+
+},{"../../service/RTC/MediaStreamTypes":76,"../../service/RTC/StreamEventTypes.js":79,"../../service/UI/UIEvents":80,"../../service/desktopsharing/DesktopSharingEventTypes":82,"../../service/xmpp/XMPPEvents":83,"./DataChannels":3,"./LocalStream.js":4,"./MediaStream.js":5,"./RTCUtils.js":7,"events":84}],7:[function(require,module,exports){
+var RTCBrowserType = require("../../service/RTC/RTCBrowserType.js");
+
+function setResolutionConstraints(constraints, resolution, isAndroid)
+{
+    if (resolution && !constraints.video || isAndroid) {
+        constraints.video = { mandatory: {}, optional: [] };// same behaviour as true
+    }
+    // see https://code.google.com/p/chromium/issues/detail?id=143631#c9 for list of supported resolutions
+    switch (resolution) {
+        // 16:9 first
+        case '1080':
+        case 'fullhd':
+            constraints.video.mandatory.minWidth = 1920;
+            constraints.video.mandatory.minHeight = 1080;
+            break;
+        case '720':
+        case 'hd':
+            constraints.video.mandatory.minWidth = 1280;
+            constraints.video.mandatory.minHeight = 720;
+            break;
+        case '360':
+            constraints.video.mandatory.minWidth = 640;
+            constraints.video.mandatory.minHeight = 360;
+            break;
+        case '180':
+            constraints.video.mandatory.minWidth = 320;
+            constraints.video.mandatory.minHeight = 180;
+            break;
+        // 4:3
+        case '960':
+            constraints.video.mandatory.minWidth = 960;
+            constraints.video.mandatory.minHeight = 720;
+            break;
+        case '640':
+        case 'vga':
+            constraints.video.mandatory.minWidth = 640;
+            constraints.video.mandatory.minHeight = 480;
+            break;
+        case '320':
+            constraints.video.mandatory.minWidth = 320;
+            constraints.video.mandatory.minHeight = 240;
+            break;
+        default:
+            if (isAndroid) {
+                constraints.video.mandatory.minWidth = 320;
+                constraints.video.mandatory.minHeight = 240;
+                constraints.video.mandatory.maxFrameRate = 15;
+            }
+            break;
+    }
+    if (constraints.video.mandatory.minWidth)
+        constraints.video.mandatory.maxWidth = constraints.video.mandatory.minWidth;
+    if (constraints.video.mandatory.minHeight)
+        constraints.video.mandatory.maxHeight = constraints.video.mandatory.minHeight;
+}
+
+
+function getConstraints(um, resolution, bandwidth, fps, desktopStream, isAndroid)
+{
+    var constraints = {audio: false, video: false};
+
+    if (um.indexOf('video') >= 0) {
+        constraints.video = { mandatory: {}, optional: [] };// same behaviour as true
+    }
+    if (um.indexOf('audio') >= 0) {
+        constraints.audio = { mandatory: {}, optional: []};// same behaviour as true
+    }
+    if (um.indexOf('screen') >= 0) {
+        constraints.video = {
+            mandatory: {
+                chromeMediaSource: "screen",
+                googLeakyBucket: true,
+                maxWidth: window.screen.width,
+                maxHeight: window.screen.height,
+                maxFrameRate: 3
+            },
+            optional: []
+        };
+    }
+    if (um.indexOf('desktop') >= 0) {
+        constraints.video = {
+            mandatory: {
+                chromeMediaSource: "desktop",
+                chromeMediaSourceId: desktopStream,
+                googLeakyBucket: true,
+                maxWidth: window.screen.width,
+                maxHeight: window.screen.height,
+                maxFrameRate: 3
+            },
+            optional: []
+        };
+    }
+
+    if (constraints.audio) {
+        // if it is good enough for hangouts...
+        constraints.audio.optional.push(
+            {googEchoCancellation: true},
+            {googAutoGainControl: true},
+            {googNoiseSupression: true},
+            {googHighpassFilter: true},
+            {googNoisesuppression2: true},
+            {googEchoCancellation2: true},
+            {googAutoGainControl2: true}
+        );
+    }
+    if (constraints.video) {
+        constraints.video.optional.push(
+            {googNoiseReduction: false} // chrome 37 workaround for issue 3807, reenable in M38
+        );
+        if (um.indexOf('video') >= 0) {
+            constraints.video.optional.push(
+                {googLeakyBucket: true}
+            );
+        }
+    }
+
+    setResolutionConstraints(constraints, resolution, isAndroid);
+
+    if (bandwidth) { // doesn't work currently, see webrtc issue 1846
+        if (!constraints.video) constraints.video = {mandatory: {}, optional: []};//same behaviour as true
+        constraints.video.optional.push({bandwidth: bandwidth});
+    }
+    if (fps) { // for some cameras it might be necessary to request 30fps
+        // so they choose 30fps mjpg over 10fps yuy2
+        if (!constraints.video) constraints.video = {mandatory: {}, optional: []};// same behaviour as true;
+        constraints.video.mandatory.minFrameRate = fps;
+    }
+
+    return constraints;
+}
+
+
+function RTCUtils(RTCService)
+{
+    this.service = RTCService;
+    if (navigator.mozGetUserMedia) {
+        console.log('This appears to be Firefox');
+        var version = parseInt(navigator.userAgent.match(/Firefox\/([0-9]+)\./)[1], 10);
+        if (version >= 22) {
+            this.peerconnection = mozRTCPeerConnection;
+            this.browser = RTCBrowserType.RTC_BROWSER_FIREFOX;
+            this.getUserMedia = navigator.mozGetUserMedia.bind(navigator);
+            this.pc_constraints = {};
+            this.attachMediaStream =  function (element, stream) {
+                element[0].mozSrcObject = stream;
+                element[0].play();
+            };
+            this.getStreamID =  function (stream) {
+                var tracks = stream.getVideoTracks();
+                if(!tracks || tracks.length == 0)
+                {
+                    tracks = stream.getAudioTracks();
+                }
+                return tracks[0].id.replace(/[\{,\}]/g,"");
+            };
+            this.getVideoSrc = function (element) {
+                return element.mozSrcObject;
+            };
+            this.setVideoSrc = function (element, src) {
+                element.mozSrcObject = src;
+            };
+            RTCSessionDescription = mozRTCSessionDescription;
+            RTCIceCandidate = mozRTCIceCandidate;
+        }
+    } else if (navigator.webkitGetUserMedia) {
+        console.log('This appears to be Chrome');
+        this.peerconnection = webkitRTCPeerConnection;
+        this.browser = RTCBrowserType.RTC_BROWSER_CHROME;
+        this.getUserMedia = navigator.webkitGetUserMedia.bind(navigator);
+        this.attachMediaStream = function (element, stream) {
+            element.attr('src', webkitURL.createObjectURL(stream));
+        };
+        this.getStreamID = function (stream) {
+            // streams from FF endpoints have the characters '{' and '}'
+            // that make jQuery choke.
+            return stream.id.replace(/[\{,\}]/g,"");
+        };
+        this.getVideoSrc = function (element) {
+            return element.getAttribute("src");
+        };
+        this.setVideoSrc = function (element, src) {
+            element.setAttribute("src", src);
+        };
+        // DTLS should now be enabled by default but..
+        this.pc_constraints = {'optional': [{'DtlsSrtpKeyAgreement': 'true'}]};
+        if (navigator.userAgent.indexOf('Android') != -1) {
+            this.pc_constraints = {}; // disable DTLS on Android
+        }
+        if (!webkitMediaStream.prototype.getVideoTracks) {
+            webkitMediaStream.prototype.getVideoTracks = function () {
+                return this.videoTracks;
+            };
+        }
+        if (!webkitMediaStream.prototype.getAudioTracks) {
+            webkitMediaStream.prototype.getAudioTracks = function () {
+                return this.audioTracks;
+            };
+        }
+    }
+    else
+    {
+        try { console.log('Browser does not appear to be WebRTC-capable'); } catch (e) { }
+
+        window.location.href = 'webrtcrequired.html';
+        return;
+    }
+
+    if (this.browser !== RTCBrowserType.RTC_BROWSER_CHROME &&
+        config.enableFirefoxSupport !== true) {
+        window.location.href = 'chromeonly.html';
+        return;
+    }
+
+}
+
+
+RTCUtils.prototype.getUserMediaWithConstraints = function(
+    um, success_callback, failure_callback, resolution,bandwidth, fps,
+    desktopStream)
+{
+    // Check if we are running on Android device
+    var isAndroid = navigator.userAgent.indexOf('Android') != -1;
+
+    var constraints = getConstraints(
+        um, resolution, bandwidth, fps, desktopStream, isAndroid);
+
+    var isFF = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+
+    try {
+        if (config.enableSimulcast
+            && constraints.video
+            && constraints.video.chromeMediaSource !== 'screen'
+            && constraints.video.chromeMediaSource !== 'desktop'
+            && !isAndroid
+
+            // We currently do not support FF, as it doesn't have multistream support.
+            && !isFF) {
+            APP.simulcast.getUserMedia(constraints, function (stream) {
+                    console.log('onUserMediaSuccess');
+                    success_callback(stream);
+                },
+                function (error) {
+                    console.warn('Failed to get access to local media. Error ', error);
+                    if (failure_callback) {
+                        failure_callback(error);
+                    }
+                });
+        } else {
+
+            this.getUserMedia(constraints,
+                function (stream) {
+                    console.log('onUserMediaSuccess');
+                    success_callback(stream);
+                },
+                function (error) {
+                    console.warn('Failed to get access to local media. Error ',
+                        error, constraints);
+                    if (failure_callback) {
+                        failure_callback(error);
+                    }
+                });
+
+        }
+    } catch (e) {
+        console.error('GUM failed: ', e);
+        if(failure_callback) {
+            failure_callback(e);
+        }
+    }
+};
+
+/**
+ * We ask for audio and video combined stream in order to get permissions and
+ * not to ask twice.
+ */
+RTCUtils.prototype.obtainAudioAndVideoPermissions = function() {
+    var self = this;
+    // Get AV
+    var cb = function (stream) {
+        console.log('got', stream, stream.getAudioTracks().length, stream.getVideoTracks().length);
+        self.handleLocalStream(stream);
+    };
+    var self = this;
+    this.getUserMediaWithConstraints(
+        ['audio', 'video'],
+        cb,
+        function (error) {
+            console.error('failed to obtain audio/video stream - trying audio only', error);
+            self.getUserMediaWithConstraints(
+                ['audio'],
+                cb,
+                function (error) {
+                    console.error('failed to obtain audio/video stream - stop', error);
+                    APP.UI.messageHandler.showError("Error",
+                            "Failed to obtain permissions to use the local microphone" +
+                            "and/or camera.");
+                }
+            );
+        },
+            config.resolution || '360');
+}
+
+RTCUtils.prototype.handleLocalStream = function(stream)
+{
+    if(window.webkitMediaStream)
+    {
+        var audioStream = new webkitMediaStream();
+        var videoStream = new webkitMediaStream();
+        var audioTracks = stream.getAudioTracks();
+        var videoTracks = stream.getVideoTracks();
+        for (var i = 0; i < audioTracks.length; i++) {
+            audioStream.addTrack(audioTracks[i]);
+        }
+
+        this.service.createLocalStream(audioStream, "audio");
+
+        for (i = 0; i < videoTracks.length; i++) {
+            videoStream.addTrack(videoTracks[i]);
+        }
+
+
+        this.service.createLocalStream(videoStream, "video");
+    }
+    else
+    {//firefox
+        this.service.createLocalStream(stream, "stream");
+    }
+
+};
+
+
+
+module.exports = RTCUtils;
+},{"../../service/RTC/RTCBrowserType.js":77}],8:[function(require,module,exports){
+var UI = {};
+
+var VideoLayout = require("./videolayout/VideoLayout.js");
+var AudioLevels = require("./audio_levels/AudioLevels.js");
+var Prezi = require("./prezi/Prezi.js");
+var Etherpad = require("./etherpad/Etherpad.js");
+var Chat = require("./side_pannels/chat/Chat.js");
+var Toolbar = require("./toolbars/Toolbar");
+var ToolbarToggler = require("./toolbars/ToolbarToggler");
+var BottomToolbar = require("./toolbars/BottomToolbar");
+var ContactList = require("./side_pannels/contactlist/ContactList");
+var Avatar = require("./avatar/Avatar");
+var EventEmitter = require("events");
+var SettingsMenu = require("./side_pannels/settings/SettingsMenu");
+var Settings = require("./side_pannels/settings/Settings");
+var PanelToggler = require("./side_pannels/SidePanelToggler");
+var RoomNameGenerator = require("./welcome_page/RoomnameGenerator");
+UI.messageHandler = require("./util/MessageHandler");
+var messageHandler = UI.messageHandler;
+var Authentication  = require("./authentication/Authentication");
+var UIUtil = require("./util/UIUtil");
+var NicknameHandler = require("./util/NicknameHandler");
+var CQEvents = require("../../service/connectionquality/CQEvents");
+var DesktopSharingEventTypes
+    = require("../../service/desktopsharing/DesktopSharingEventTypes");
+var RTCEvents = require("../../service/RTC/RTCEvents");
+var StreamEventTypes = require("../../service/RTC/StreamEventTypes");
+var XMPPEvents = require("../../service/xmpp/XMPPEvents");
+
+var eventEmitter = new EventEmitter();
+var roomName = null;
+
+
+function setupPrezi()
+{
+    $("#reloadPresentationLink").click(function()
+    {
+        Prezi.reloadPresentation();
+    });
+}
+
+function setupChat()
+{
+    Chat.init();
+    $("#toggle_smileys").click(function() {
+        Chat.toggleSmileys();
+    });
+}
+
+function setupToolbars() {
+    Toolbar.init(UI);
+    Toolbar.setupButtonsFromConfig();
+    BottomToolbar.init();
+}
+
+function streamHandler(stream) {
+    switch (stream.type)
+    {
+        case "audio":
+            VideoLayout.changeLocalAudio(stream);
+            break;
+        case "video":
+            VideoLayout.changeLocalVideo(stream);
+            break;
+        case "stream":
+            VideoLayout.changeLocalStream(stream);
+            break;
+    }
+}
+
+function onDisposeConference(unload) {
+    Toolbar.showAuthenticateButton(false);
+};
+
+function onDisplayNameChanged(jid, displayName) {
+    ContactList.onDisplayNameChange(jid, displayName);
+    SettingsMenu.onDisplayNameChange(jid, displayName);
+    VideoLayout.onDisplayNameChanged(jid, displayName);
+}
+
+function registerListeners() {
+    APP.RTC.addStreamListener(streamHandler, StreamEventTypes.EVENT_TYPE_LOCAL_CREATED);
+
+    APP.RTC.addStreamListener(streamHandler, StreamEventTypes.EVENT_TYPE_LOCAL_CHANGED);
+    APP.RTC.addStreamListener(function (stream) {
+        VideoLayout.onRemoteStreamAdded(stream);
+    }, StreamEventTypes.EVENT_TYPE_REMOTE_CREATED);
+    APP.RTC.addListener(RTCEvents.LASTN_CHANGED, onLastNChanged);
+    APP.RTC.addListener(RTCEvents.DOMINANTSPEAKER_CHANGED, function (resourceJid) {
+        VideoLayout.onDominantSpeakerChanged(resourceJid);
+    });
+    APP.RTC.addListener(RTCEvents.LASTN_ENDPOINT_CHANGED,
+        function (lastNEndpoints, endpointsEnteringLastN, stream) {
+            VideoLayout.onLastNEndpointsChanged(lastNEndpoints,
+                endpointsEnteringLastN, stream);
+        });
+    APP.RTC.addListener(RTCEvents.SIMULCAST_LAYER_CHANGED,
+        function (endpointSimulcastLayers) {
+           VideoLayout.onSimulcastLayersChanged(endpointSimulcastLayers);
+        });
+    APP.RTC.addListener(RTCEvents.SIMULCAST_LAYER_CHANGING,
+        function (endpointSimulcastLayers) {
+            VideoLayout.onSimulcastLayersChanging(endpointSimulcastLayers);
+        });
+    VideoLayout.init(eventEmitter);
+
+    APP.statistics.addAudioLevelListener(function(jid, audioLevel)
+    {
+        var resourceJid;
+        if(jid === APP.statistics.LOCAL_JID)
+        {
+            resourceJid = AudioLevels.LOCAL_LEVEL;
+            if(APP.RTC.localAudio.isMuted())
+            {
+                audioLevel = 0;
+            }
+        }
+        else
+        {
+            resourceJid = Strophe.getResourceFromJid(jid);
+        }
+
+        AudioLevels.updateAudioLevel(resourceJid, audioLevel,
+            UI.getLargeVideoState().userResourceJid);
+    });
+    APP.desktopsharing.addListener(function () {
+        ToolbarToggler.showDesktopSharingButton();
+    }, DesktopSharingEventTypes.INIT);
+    APP.desktopsharing.addListener(
+        Toolbar.changeDesktopSharingButtonState,
+        DesktopSharingEventTypes.SWITCHING_DONE);
+    APP.connectionquality.addListener(CQEvents.LOCALSTATS_UPDATED,
+        VideoLayout.updateLocalConnectionStats);
+    APP.connectionquality.addListener(CQEvents.REMOTESTATS_UPDATED,
+        VideoLayout.updateConnectionStats);
+    APP.connectionquality.addListener(CQEvents.STOP,
+        VideoLayout.onStatsStop);
+    APP.xmpp.addListener(XMPPEvents.DISPOSE_CONFERENCE, onDisposeConference);
+    APP.xmpp.addListener(XMPPEvents.KICKED, function () {
+        messageHandler.openMessageDialog("Session Terminated",
+            "Ouch! You have been kicked out of the meet!");
+    });
+    APP.xmpp.addListener(XMPPEvents.BRIDGE_DOWN, function () {
+        messageHandler.showError("Error",
+            "Jitsi Videobridge is currently unavailable. Please try again later!");
+    });
+    APP.xmpp.addListener(XMPPEvents.USER_ID_CHANGED, function (from, id) {
+        Avatar.setUserAvatar(from, id);
+    });
+    APP.xmpp.addListener(XMPPEvents.CHANGED_STREAMS, function (jid, changedStreams) {
+        for(stream in changedStreams)
+        {
+            // might need to update the direction if participant just went from sendrecv to recvonly
+            if (stream.type === 'video' || stream.type === 'screen') {
+                var el = $('#participant_'  + Strophe.getResourceFromJid(jid) + '>video');
+                switch (stream.direction) {
+                    case 'sendrecv':
+                        el.show();
+                        break;
+                    case 'recvonly':
+                        el.hide();
+                        // FIXME: Check if we have to change large video
+                        //VideoLayout.updateLargeVideo(el);
+                        break;
+                }
+            }
+        }
+
+    });
+    APP.xmpp.addListener(XMPPEvents.DISPLAY_NAME_CHANGED, onDisplayNameChanged);
+    APP.xmpp.addListener(XMPPEvents.MUC_JOINED, onMucJoined);
+    APP.xmpp.addListener(XMPPEvents.LOCALROLE_CHANGED, onLocalRoleChange);
+    APP.xmpp.addListener(XMPPEvents.MUC_ENTER, onMucEntered);
+    APP.xmpp.addListener(XMPPEvents.MUC_ROLE_CHANGED, onMucRoleChanged);
+    APP.xmpp.addListener(XMPPEvents.PRESENCE_STATUS, onMucPresenceStatus);
+    APP.xmpp.addListener(XMPPEvents.SUBJECT_CHANGED, chatSetSubject);
+    APP.xmpp.addListener(XMPPEvents.MESSAGE_RECEIVED, updateChatConversation);
+    APP.xmpp.addListener(XMPPEvents.MUC_LEFT, onMucLeft);
+    APP.xmpp.addListener(XMPPEvents.PASSWORD_REQUIRED, onPasswordReqiured);
+    APP.xmpp.addListener(XMPPEvents.CHAT_ERROR_RECEIVED, chatAddError);
+    APP.xmpp.addListener(XMPPEvents.ETHERPAD, initEtherpad);
+    APP.xmpp.addListener(XMPPEvents.AUTHENTICATION_REQUIRED, onAuthenticationRequired);
+
+
+}
+
+
+/**
+ * Mutes/unmutes the local video.
+ *
+ * @param mute <tt>true</tt> to mute the local video; otherwise, <tt>false</tt>
+ * @param options an object which specifies optional arguments such as the
+ * <tt>boolean</tt> key <tt>byUser</tt> with default value <tt>true</tt> which
+ * specifies whether the method was initiated in response to a user command (in
+ * contrast to an automatic decision taken by the application logic)
+ */
+function setVideoMute(mute, options) {
+    APP.xmpp.setVideoMute(
+        mute,
+        function (mute) {
+            var video = $('#video');
+            var communicativeClass = "icon-camera";
+            var muteClass = "icon-camera icon-camera-disabled";
+
+            if (mute) {
+                video.removeClass(communicativeClass);
+                video.addClass(muteClass);
+            } else {
+                video.removeClass(muteClass);
+                video.addClass(communicativeClass);
+            }
+        },
+        options);
+}
+
+
+function bindEvents()
+{
+    /**
+     * Resizes and repositions videos in full screen mode.
+     */
+    $(document).on('webkitfullscreenchange mozfullscreenchange fullscreenchange',
+        function () {
+            VideoLayout.resizeLargeVideoContainer();
+            VideoLayout.positionLarge();
+        }
+    );
+
+    $(window).resize(function () {
+        VideoLayout.resizeLargeVideoContainer();
+        VideoLayout.positionLarge();
+    });
+}
+
+UI.start = function (init) {
+    document.title = interfaceConfig.APP_NAME;
+    if(config.enableWelcomePage && window.location.pathname == "/" &&
+        (!window.localStorage.welcomePageDisabled || window.localStorage.welcomePageDisabled == "false"))
+    {
+        $("#videoconference_page").hide();
+        var setupWelcomePage = require("./welcome_page/WelcomePage");
+        setupWelcomePage();
+
+        return;
+    }
+
+    if (interfaceConfig.SHOW_JITSI_WATERMARK) {
+        var leftWatermarkDiv
+            = $("#largeVideoContainer div[class='watermark leftwatermark']");
+
+        leftWatermarkDiv.css({display: 'block'});
+        leftWatermarkDiv.parent().get(0).href
+            = interfaceConfig.JITSI_WATERMARK_LINK;
+    }
+
+    if (interfaceConfig.SHOW_BRAND_WATERMARK) {
+        var rightWatermarkDiv
+            = $("#largeVideoContainer div[class='watermark rightwatermark']");
+
+        rightWatermarkDiv.css({display: 'block'});
+        rightWatermarkDiv.parent().get(0).href
+            = interfaceConfig.BRAND_WATERMARK_LINK;
+        rightWatermarkDiv.get(0).style.backgroundImage
+            = "url(images/rightwatermark.png)";
+    }
+
+    if (interfaceConfig.SHOW_POWERED_BY) {
+        $("#largeVideoContainer>a[class='poweredby']").css({display: 'block'});
+    }
+
+    $("#welcome_page").hide();
+
+    VideoLayout.resizeLargeVideoContainer();
+    $("#videospace").mousemove(function () {
+        return ToolbarToggler.showToolbar();
+    });
+    // Set the defaults for prompt dialogs.
+    jQuery.prompt.setDefaults({persistent: false});
+
+
+    NicknameHandler.init(eventEmitter);
+    registerListeners();
+    bindEvents();
+    setupPrezi();
+    setupToolbars();
+    setupChat();
+
+
+    document.title = interfaceConfig.APP_NAME;
+
+    $("#downloadlog").click(function (event) {
+        dump(event.target);
+    });
+
+    if(config.enableWelcomePage && window.location.pathname == "/" &&
+        (!window.localStorage.welcomePageDisabled || window.localStorage.welcomePageDisabled == "false"))
+    {
+        $("#videoconference_page").hide();
+        var setupWelcomePage = require("./welcome_page/WelcomePage");
+        setupWelcomePage();
+
+        return;
+    }
+
+    $("#welcome_page").hide();
+
+    document.getElementById('largeVideo').volume = 0;
+
+    if (!$('#settings').is(':visible')) {
+        console.log('init');
+        init();
+    } else {
+        loginInfo.onsubmit = function (e) {
+            if (e.preventDefault) e.preventDefault();
+            $('#settings').hide();
+            init();
+        };
+    }
+
+    toastr.options = {
+        "closeButton": true,
+        "debug": false,
+        "positionClass": "notification-bottom-right",
+        "onclick": null,
+        "showDuration": "300",
+        "hideDuration": "1000",
+        "timeOut": "2000",
+        "extendedTimeOut": "1000",
+        "showEasing": "swing",
+        "hideEasing": "linear",
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut",
+        "reposition": function() {
+            if(PanelToggler.isVisible()) {
+                $("#toast-container").addClass("notification-bottom-right-center");
+            } else {
+                $("#toast-container").removeClass("notification-bottom-right-center");
+            }
+        },
+        "newestOnTop": false
+    };
+
+    $('#settingsmenu>input').keyup(function(event){
+        if(event.keyCode === 13) {//enter
+            SettingsMenu.update();
+        }
+    });
+
+    $("#updateSettings").click(function () {
+        SettingsMenu.update();
+    });
+
+};
+
+function chatAddError(errorMessage, originalText)
+{
+    return Chat.chatAddError(errorMessage, originalText);
+};
+
+function chatSetSubject(text)
+{
+    return Chat.chatSetSubject(text);
+};
+
+function updateChatConversation(from, displayName, message) {
+    return Chat.updateChatConversation(from, displayName, message);
+};
+
+function onMucJoined(jid, info) {
+    Toolbar.updateRoomUrl(window.location.href);
+    document.getElementById('localNick').appendChild(
+        document.createTextNode(Strophe.getResourceFromJid(jid) + ' (me)')
+    );
+
+    var settings = Settings.getSettings();
+    // Add myself to the contact list.
+    ContactList.addContact(jid, settings.email || settings.uid);
+
+    // Once we've joined the muc show the toolbar
+    ToolbarToggler.showToolbar();
+
+    // Show authenticate button if needed
+    Toolbar.showAuthenticateButton(
+            APP.xmpp.isExternalAuthEnabled() && !APP.xmpp.isModerator());
+
+    var displayName = !config.displayJids
+        ? info.displayName : Strophe.getResourceFromJid(jid);
+
+    if (displayName)
+        onDisplayNameChanged('localVideoContainer', displayName + ' (me)');
+}
+
+function initEtherpad(name) {
+    Etherpad.init(name);
+};
+
+function onMucLeft(jid) {
+    console.log('left.muc', jid);
+    var displayName = $('#participant_' + Strophe.getResourceFromJid(jid) +
+        '>.displayname').html();
+    messageHandler.notify(displayName || 'Somebody',
+        'disconnected',
+        'disconnected');
+    // Need to call this with a slight delay, otherwise the element couldn't be
+    // found for some reason.
+    // XXX(gp) it works fine without the timeout for me (with Chrome 38).
+    window.setTimeout(function () {
+        var container = document.getElementById(
+                'participant_' + Strophe.getResourceFromJid(jid));
+        if (container) {
+            ContactList.removeContact(jid);
+            VideoLayout.removeConnectionIndicator(jid);
+            // hide here, wait for video to close before removing
+            $(container).hide();
+            VideoLayout.resizeThumbnails();
+        }
+    }, 10);
+
+    VideoLayout.participantLeft(jid);
+
+};
+
+
+function onLocalRoleChange(jid, info, pres, isModerator, isExternalAuthEnabled)
+{
+
+    console.info("My role changed, new role: " + info.role);
+    onModeratorStatusChanged(isModerator);
+    VideoLayout.showModeratorIndicator();
+    Toolbar.showAuthenticateButton(
+            isExternalAuthEnabled && !isModerator);
+
+    if (isModerator) {
+        Authentication.closeAuthenticationWindow();
+        messageHandler.notify(
+            'Me', 'connected', 'Moderator rights granted !');
+    }
+}
+
+function onModeratorStatusChanged(isModerator) {
+
+    Toolbar.showSipCallButton(isModerator);
+    Toolbar.showRecordingButton(
+        isModerator); //&&
+    // FIXME:
+    // Recording visible if
+    // there are at least 2(+ 1 focus) participants
+    //Object.keys(connection.emuc.members).length >= 3);
+
+    if (isModerator && config.etherpad_base) {
+        Etherpad.init();
+    }
+};
+
+function onPasswordReqiured(callback) {
+    // password is required
+    Toolbar.lockLockButton();
+
+    messageHandler.openTwoButtonDialog(null,
+            '<h2>Password required</h2>' +
+            '<input id="lockKey" type="text" placeholder="password" autofocus>',
+        true,
+        "Ok",
+        function (e, v, m, f) {},
+        function (event) {
+            document.getElementById('lockKey').focus();
+        },
+        function (e, v, m, f) {
+            if (v) {
+                var lockKey = document.getElementById('lockKey');
+                if (lockKey.value !== null) {
+                    Toolbar.setSharedKey(lockKey.value);
+                    callback(lockKey.value);
+                }
+            }
+        }
+    );
+}
+function onMucEntered(jid, id, displayName) {
+    messageHandler.notify(displayName || 'Somebody',
+        'connected',
+        'connected');
+
+    // Add Peer's container
+    VideoLayout.ensurePeerContainerExists(jid,id);
+}
+
+function onMucPresenceStatus( jid, info) {
+    VideoLayout.setPresenceStatus(
+            'participant_' + Strophe.getResourceFromJid(jid), info.status);
+}
+
+function onMucRoleChanged(role, displayName) {
+    VideoLayout.showModeratorIndicator();
+
+    if (role === 'moderator') {
+        var displayName = displayName;
+        if (!displayName) {
+            displayName = 'Somebody';
+        }
+        messageHandler.notify(
+            displayName,
+            'connected',
+                'Moderator rights granted to ' + displayName + '!');
+    }
+}
+
+function onAuthenticationRequired(intervalCallback) {
+    Authentication.openAuthenticationDialog(
+        roomName, intervalCallback, function () {
+            Toolbar.authenticateClicked();
+        });
+};
+
+
+function onLastNChanged(oldValue, newValue) {
+    if (config.muteLocalVideoIfNotInLastN) {
+        setVideoMute(!newValue, { 'byUser': false });
+    }
+}
+
+
+UI.toggleSmileys = function () {
+    Chat.toggleSmileys();
+};
+
+UI.getSettings = function () {
+    return Settings.getSettings();
+};
+
+UI.toggleFilmStrip = function () {
+    return BottomToolbar.toggleFilmStrip();
+};
+
+UI.toggleChat = function () {
+    return BottomToolbar.toggleChat();
+};
+
+UI.toggleContactList = function () {
+    return BottomToolbar.toggleContactList();
+};
+
+UI.inputDisplayNameHandler = function (value) {
+    VideoLayout.inputDisplayNameHandler(value);
+};
+
+
+UI.getLargeVideoState = function()
+{
+    return VideoLayout.getLargeVideoState();
+};
+
+UI.generateRoomName = function() {
+    if(roomName)
+        return roomName;
+    var roomnode = null;
+    var path = window.location.pathname;
+
+    // determinde the room node from the url
+    // TODO: just the roomnode or the whole bare jid?
+    if (config.getroomnode && typeof config.getroomnode === 'function') {
+        // custom function might be responsible for doing the pushstate
+        roomnode = config.getroomnode(path);
+    } else {
+        /* fall back to default strategy
+         * this is making assumptions about how the URL->room mapping happens.
+         * It currently assumes deployment at root, with a rewrite like the
+         * following one (for nginx):
+         location ~ ^/([a-zA-Z0-9]+)$ {
+         rewrite ^/(.*)$ / break;
+         }
+         */
+        if (path.length > 1) {
+            roomnode = path.substr(1).toLowerCase();
+        } else {
+            var word = RoomNameGenerator.generateRoomWithoutSeparator();
+            roomnode = word.toLowerCase();
+
+            window.history.pushState('VideoChat',
+                    'Room: ' + word, window.location.pathname + word);
+        }
+    }
+
+    roomName = roomnode + '@' + config.hosts.muc;
+    return roomName;
+};
+
+
+UI.connectionIndicatorShowMore = function(id)
+{
+    return VideoLayout.connectionIndicators[id].showMore();
+};
+
+UI.getCreadentials = function () {
+    var settings = this.getSettings();
+    return {
+        bosh: document.getElementById('boshURL').value,
+        password: document.getElementById('password').value,
+        jid: document.getElementById('jid').value,
+        email: settings.email,
+        displayName: settings.displayName,
+        uid: settings.uid
+    };
+};
+
+UI.disableConnect = function () {
+    document.getElementById('connect').disabled = true;
+};
+
+UI.showLoginPopup = function(callback)
+{
+    console.log('password is required');
+
+    UI.messageHandler.openTwoButtonDialog(null,
+            '<h2>Password required</h2>' +
+            '<input id="passwordrequired.username" type="text" placeholder="user@domain.net" autofocus>' +
+            '<input id="passwordrequired.password" type="password" placeholder="user password">',
+        true,
+        "Ok",
+        function (e, v, m, f) {
+            if (v) {
+                var username = document.getElementById('passwordrequired.username');
+                var password = document.getElementById('passwordrequired.password');
+
+                if (username.value !== null && password.value != null) {
+                    callback(username.value, password.value);
+                }
+            }
+        },
+        function (event) {
+            document.getElementById('passwordrequired.username').focus();
+        }
+    );
+}
+
+UI.checkForNicknameAndJoin = function () {
+
+    Authentication.closeAuthenticationDialog();
+    Authentication.stopInterval();
+
+    var nick = null;
+    if (config.useNicks) {
+        nick = window.prompt('Your nickname (optional)');
+    }
+    APP.xmpp.joinRoom(roomName, config.useNicks, nick);
+};
+
+
+function dump(elem, filename) {
+    elem = elem.parentNode;
+    elem.download = filename || 'meetlog.json';
+    elem.href = 'data:application/json;charset=utf-8,\n';
+    var data = APP.xmpp.populateData();
+    var metadata = {};
+    metadata.time = new Date();
+    metadata.url = window.location.href;
+    metadata.ua = navigator.userAgent;
+    var log = APP.xmpp.getLogger();
+    if (log) {
+        metadata.xmpp = log;
+    }
+    data.metadata = metadata;
+    elem.href += encodeURIComponent(JSON.stringify(data, null, '  '));
+    return false;
+}
+
+UI.getRoomName = function () {
+    return roomName;
+};
+
+/**
+ * Mutes/unmutes the local video.
+ */
+UI.toggleVideo = function () {
+    UIUtil.buttonClick("#video", "icon-camera icon-camera-disabled");
+
+    setVideoMute(!APP.RTC.localVideo.isMuted());
+};
+
+/**
+ * Mutes / unmutes audio for the local participant.
+ */
+UI.toggleAudio = function() {
+    UI.setAudioMuted(!APP.RTC.localAudio.isMuted());
+};
+
+/**
+ * Sets muted audio state for the local participant.
+ */
+UI.setAudioMuted = function (mute) {
+
+    if(!APP.xmpp.setAudioMute(mute, function () {
+        VideoLayout.showLocalAudioIndicator(mute);
+
+        UIUtil.buttonClick("#mute", "icon-microphone icon-mic-disabled");
+    }))
+    {
+        // We still click the button.
+        UIUtil.buttonClick("#mute", "icon-microphone icon-mic-disabled");
+        return;
+    }
+
+}
+
+UI.addListener = function (type, listener) {
+    eventEmitter.on(type, listener);
+}
+
+UI.clickOnVideo = function (videoNumber) {
+    var remoteVideos = $(".videocontainer:not(#mixedstream)");
+    if (remoteVideos.length > videoNumber) {
+        remoteVideos[videoNumber].click();
+    }
+}
+
+module.exports = UI;
+
+
+},{"../../service/RTC/RTCEvents":78,"../../service/RTC/StreamEventTypes":79,"../../service/connectionquality/CQEvents":81,"../../service/desktopsharing/DesktopSharingEventTypes":82,"../../service/xmpp/XMPPEvents":83,"./audio_levels/AudioLevels.js":9,"./authentication/Authentication":11,"./avatar/Avatar":12,"./etherpad/Etherpad.js":13,"./prezi/Prezi.js":14,"./side_pannels/SidePanelToggler":16,"./side_pannels/chat/Chat.js":17,"./side_pannels/contactlist/ContactList":21,"./side_pannels/settings/Settings":22,"./side_pannels/settings/SettingsMenu":23,"./toolbars/BottomToolbar":24,"./toolbars/Toolbar":25,"./toolbars/ToolbarToggler":26,"./util/MessageHandler":28,"./util/NicknameHandler":29,"./util/UIUtil":30,"./videolayout/VideoLayout.js":32,"./welcome_page/RoomnameGenerator":33,"./welcome_page/WelcomePage":34,"events":84}],9:[function(require,module,exports){
+var CanvasUtil = require("./CanvasUtils");
+
+/**
+ * The audio Levels plugin.
+ */
+var AudioLevels = (function(my) {
+    var audioLevelCanvasCache = {};
+
+    my.LOCAL_LEVEL = 'local';
+
+    /**
+     * Updates the audio level canvas for the given peerJid. If the canvas
+     * didn't exist we create it.
+     */
+    my.updateAudioLevelCanvas = function (peerJid, VideoLayout) {
+        var resourceJid = null;
+        var videoSpanId = null;
+        if (!peerJid)
+            videoSpanId = 'localVideoContainer';
+        else {
+            resourceJid = Strophe.getResourceFromJid(peerJid);
+
+            videoSpanId = 'participant_' + resourceJid;
+        }
+
+        var videoSpan = document.getElementById(videoSpanId);
+
+        if (!videoSpan) {
+            if (resourceJid)
+                console.error("No video element for jid", resourceJid);
+            else
+                console.error("No video element for local video.");
+
+            return;
+        }
+
+        var audioLevelCanvas = $('#' + videoSpanId + '>canvas');
+
+        var videoSpaceWidth = $('#remoteVideos').width();
+        var thumbnailSize = VideoLayout.calculateThumbnailSize(videoSpaceWidth);
+        var thumbnailWidth = thumbnailSize[0];
+        var thumbnailHeight = thumbnailSize[1];
+
+        if (!audioLevelCanvas || audioLevelCanvas.length === 0) {
+
+            audioLevelCanvas = document.createElement('canvas');
+            audioLevelCanvas.className = "audiolevel";
+            audioLevelCanvas.style.bottom = "-" + interfaceConfig.CANVAS_EXTRA/2 + "px";
+            audioLevelCanvas.style.left = "-" + interfaceConfig.CANVAS_EXTRA/2 + "px";
+            resizeAudioLevelCanvas( audioLevelCanvas,
+                    thumbnailWidth,
+                    thumbnailHeight);
+
+            videoSpan.appendChild(audioLevelCanvas);
+        } else {
+            audioLevelCanvas = audioLevelCanvas.get(0);
+
+            resizeAudioLevelCanvas( audioLevelCanvas,
+                    thumbnailWidth,
+                    thumbnailHeight);
+        }
+    };
+
+    /**
+     * Updates the audio level UI for the given resourceJid.
+     *
+     * @param resourceJid the resource jid indicating the video element for
+     * which we draw the audio level
+     * @param audioLevel the newAudio level to render
+     */
+    my.updateAudioLevel = function (resourceJid, audioLevel, largeVideoResourceJid) {
+        drawAudioLevelCanvas(resourceJid, audioLevel);
+
+        var videoSpanId = getVideoSpanId(resourceJid);
+
+        var audioLevelCanvas = $('#' + videoSpanId + '>canvas').get(0);
+
+        if (!audioLevelCanvas)
+            return;
+
+        var drawContext = audioLevelCanvas.getContext('2d');
+
+        var canvasCache = audioLevelCanvasCache[resourceJid];
+
+        drawContext.clearRect (0, 0,
+                audioLevelCanvas.width, audioLevelCanvas.height);
+        drawContext.drawImage(canvasCache, 0, 0);
+
+        if(resourceJid === AudioLevels.LOCAL_LEVEL) {
+            if(!APP.xmpp.myJid()) {
+                return;
+            }
+            resourceJid = APP.xmpp.myResource();
+        }
+
+        if(resourceJid  === largeVideoResourceJid) {
+            AudioLevels.updateActiveSpeakerAudioLevel(audioLevel);
+        }
+    };
+
+    my.updateActiveSpeakerAudioLevel = function(audioLevel) {
+        var drawContext = $('#activeSpeakerAudioLevel')[0].getContext('2d');
+        var r = interfaceConfig.ACTIVE_SPEAKER_AVATAR_SIZE / 2;
+        var center = (interfaceConfig.ACTIVE_SPEAKER_AVATAR_SIZE + r) / 2;
+
+        // Save the previous state of the context.
+        drawContext.save();
+
+        drawContext.clearRect(0, 0, 300, 300);
+
+        // Draw a circle.
+        drawContext.arc(center, center, r, 0, 2 * Math.PI);
+
+        // Add a shadow around the circle
+        drawContext.shadowColor = interfaceConfig.SHADOW_COLOR;
+        drawContext.shadowBlur = getShadowLevel(audioLevel);
+        drawContext.shadowOffsetX = 0;
+        drawContext.shadowOffsetY = 0;
+
+        // Fill the shape.
+        drawContext.fill();
+
+        drawContext.save();
+
+        drawContext.restore();
+
+
+        drawContext.arc(center, center, r, 0, 2 * Math.PI);
+
+        drawContext.clip();
+        drawContext.clearRect(0, 0, 277, 200);
+
+        // Restore the previous context state.
+        drawContext.restore();
+    };
+
+    /**
+     * Resizes the given audio level canvas to match the given thumbnail size.
+     */
+    function resizeAudioLevelCanvas(audioLevelCanvas,
+                                    thumbnailWidth,
+                                    thumbnailHeight) {
+        audioLevelCanvas.width = thumbnailWidth + interfaceConfig.CANVAS_EXTRA;
+        audioLevelCanvas.height = thumbnailHeight + interfaceConfig.CANVAS_EXTRA;
+    }
+
+    /**
+     * Draws the audio level canvas into the cached canvas object.
+     *
+     * @param resourceJid the resource jid indicating the video element for
+     * which we draw the audio level
+     * @param audioLevel the newAudio level to render
+     */
+    function drawAudioLevelCanvas(resourceJid, audioLevel) {
+        if (!audioLevelCanvasCache[resourceJid]) {
+
+            var videoSpanId = getVideoSpanId(resourceJid);
+
+            var audioLevelCanvasOrig = $('#' + videoSpanId + '>canvas').get(0);
+
+            /*
+             * FIXME Testing has shown that audioLevelCanvasOrig may not exist.
+             * In such a case, the method CanvasUtil.cloneCanvas may throw an
+             * error. Since audio levels are frequently updated, the errors have
+             * been observed to pile into the console, strain the CPU.
+             */
+            if (audioLevelCanvasOrig)
+            {
+                audioLevelCanvasCache[resourceJid]
+                    = CanvasUtil.cloneCanvas(audioLevelCanvasOrig);
+            }
+        }
+
+        var canvas = audioLevelCanvasCache[resourceJid];
+
+        if (!canvas)
+            return;
+
+        var drawContext = canvas.getContext('2d');
+
+        drawContext.clearRect(0, 0, canvas.width, canvas.height);
+
+        var shadowLevel = getShadowLevel(audioLevel);
+
+        if (shadowLevel > 0)
+            // drawContext, x, y, w, h, r, shadowColor, shadowLevel
+            CanvasUtil.drawRoundRectGlow(   drawContext,
+                interfaceConfig.CANVAS_EXTRA/2, interfaceConfig.CANVAS_EXTRA/2,
+                canvas.width - interfaceConfig.CANVAS_EXTRA,
+                canvas.height - interfaceConfig.CANVAS_EXTRA,
+                interfaceConfig.CANVAS_RADIUS,
+                interfaceConfig.SHADOW_COLOR,
+                shadowLevel);
+    }
+
+    /**
+     * Returns the shadow/glow level for the given audio level.
+     *
+     * @param audioLevel the audio level from which we determine the shadow
+     * level
+     */
+    function getShadowLevel (audioLevel) {
+        var shadowLevel = 0;
+
+        if (audioLevel <= 0.3) {
+            shadowLevel = Math.round(interfaceConfig.CANVAS_EXTRA/2*(audioLevel/0.3));
+        }
+        else if (audioLevel <= 0.6) {
+            shadowLevel = Math.round(interfaceConfig.CANVAS_EXTRA/2*((audioLevel - 0.3) / 0.3));
+        }
+        else {
+            shadowLevel = Math.round(interfaceConfig.CANVAS_EXTRA/2*((audioLevel - 0.6) / 0.4));
+        }
+        return shadowLevel;
+    }
+
+    /**
+     * Returns the video span id corresponding to the given resourceJid or local
+     * user.
+     */
+    function getVideoSpanId(resourceJid) {
+        var videoSpanId = null;
+        if (resourceJid === AudioLevels.LOCAL_LEVEL
+                || (APP.xmpp.myResource() && resourceJid
+                    === APP.xmpp.myResource()))
+            videoSpanId = 'localVideoContainer';
+        else
+            videoSpanId = 'participant_' + resourceJid;
+
+        return videoSpanId;
+    }
+
+    /**
+     * Indicates that the remote video has been resized.
+     */
+    $(document).bind('remotevideo.resized', function (event, width, height) {
+        var resized = false;
+        $('#remoteVideos>span>canvas').each(function() {
+            var canvas = $(this).get(0);
+            if (canvas.width !== width + interfaceConfig.CANVAS_EXTRA) {
+                canvas.width = width + interfaceConfig.CANVAS_EXTRA;
+                resized = true;
+            }
+
+            if (canvas.heigh !== height + interfaceConfig.CANVAS_EXTRA) {
+                canvas.height = height + interfaceConfig.CANVAS_EXTRA;
+                resized = true;
+            }
+        });
+
+        if (resized)
+            Object.keys(audioLevelCanvasCache).forEach(function (resourceJid) {
+                audioLevelCanvasCache[resourceJid].width
+                    = width + interfaceConfig.CANVAS_EXTRA;
+                audioLevelCanvasCache[resourceJid].height
+                    = height + interfaceConfig.CANVAS_EXTRA;
+            });
+    });
+
+    return my;
+
+})(AudioLevels || {});
+
+module.exports = AudioLevels;
+},{"./CanvasUtils":10}],10:[function(require,module,exports){
+/**
+ * Utility class for drawing canvas shapes.
+ */
+var CanvasUtil = (function(my) {
+
+    /**
+     * Draws a round rectangle with a glow. The glowWidth indicates the depth
+     * of the glow.
+     *
+     * @param drawContext the context of the canvas to draw to
+     * @param x the x coordinate of the round rectangle
+     * @param y the y coordinate of the round rectangle
+     * @param w the width of the round rectangle
+     * @param h the height of the round rectangle
+     * @param glowColor the color of the glow
+     * @param glowWidth the width of the glow
+     */
+    my.drawRoundRectGlow
+        = function(drawContext, x, y, w, h, r, glowColor, glowWidth) {
+
+        // Save the previous state of the context.
+        drawContext.save();
+
+        if (w < 2 * r) r = w / 2;
+        if (h < 2 * r) r = h / 2;
+
+        // Draw a round rectangle.
+        drawContext.beginPath();
+        drawContext.moveTo(x+r, y);
+        drawContext.arcTo(x+w, y,   x+w, y+h, r);
+        drawContext.arcTo(x+w, y+h, x,   y+h, r);
+        drawContext.arcTo(x,   y+h, x,   y,   r);
+        drawContext.arcTo(x,   y,   x+w, y,   r);
+        drawContext.closePath();
+
+        // Add a shadow around the rectangle
+        drawContext.shadowColor = glowColor;
+        drawContext.shadowBlur = glowWidth;
+        drawContext.shadowOffsetX = 0;
+        drawContext.shadowOffsetY = 0;
+
+        // Fill the shape.
+        drawContext.fill();
+
+        drawContext.save();
+
+        drawContext.restore();
+
+//      1) Uncomment this line to use Composite Operation, which is doing the
+//      same as the clip function below and is also antialiasing the round
+//      border, but is said to be less fast performance wise.
+
+//      drawContext.globalCompositeOperation='destination-out';
+
+        drawContext.beginPath();
+        drawContext.moveTo(x+r, y);
+        drawContext.arcTo(x+w, y,   x+w, y+h, r);
+        drawContext.arcTo(x+w, y+h, x,   y+h, r);
+        drawContext.arcTo(x,   y+h, x,   y,   r);
+        drawContext.arcTo(x,   y,   x+w, y,   r);
+        drawContext.closePath();
+
+//      2) Uncomment this line to use Composite Operation, which is doing the
+//      same as the clip function below and is also antialiasing the round
+//      border, but is said to be less fast performance wise.
+
+//      drawContext.fill();
+
+        // Comment these two lines if choosing to do the same with composite
+        // operation above 1 and 2.
+        drawContext.clip();
+        drawContext.clearRect(0, 0, 277, 200);
+
+        // Restore the previous context state.
+        drawContext.restore();
+    };
+
+    /**
+     * Clones the given canvas.
+     *
+     * @return the new cloned canvas.
+     */
+    my.cloneCanvas = function (oldCanvas) {
+        /*
+         * FIXME Testing has shown that oldCanvas may not exist. In such a case,
+         * the method CanvasUtil.cloneCanvas may throw an error. Since audio
+         * levels are frequently updated, the errors have been observed to pile
+         * into the console, strain the CPU.
+         */
+        if (!oldCanvas)
+            return oldCanvas;
+
+        //create a new canvas
+        var newCanvas = document.createElement('canvas');
+        var context = newCanvas.getContext('2d');
+
+        //set dimensions
+        newCanvas.width = oldCanvas.width;
+        newCanvas.height = oldCanvas.height;
+
+        //apply the old canvas to the new one
+        context.drawImage(oldCanvas, 0, 0);
+
+        //return the new canvas
+        return newCanvas;
+    };
+
+    return my;
+})(CanvasUtil || {});
+
+module.exports = CanvasUtil;
+},{}],11:[function(require,module,exports){
+/* Initial "authentication required" dialog */
+var authDialog = null;
+/* Loop retry ID that wits for other user to create the room */
+var authRetryId = null;
+var authenticationWindow = null;
+
+var Authentication = {
+    openAuthenticationDialog: function (roomName, intervalCallback, callback) {
+        // This is the loop that will wait for the room to be created by
+        // someone else. 'auth_required.moderator' will bring us back here.
+        authRetryId = window.setTimeout(intervalCallback , 5000);
+        // Show prompt only if it's not open
+        if (authDialog !== null) {
+            return;
+        }
+        // extract room name from 'room@muc.server.net'
+        var room = roomName.substr(0, roomName.indexOf('@'));
+
+        authDialog = messageHandler.openDialog(
+            'Stop',
+                'Authentication is required to create room:<br/><b>' + room +
+                '</b></br> You can either authenticate to create the room or ' +
+                'just wait for someone else to do so.',
+            true,
+            {
+                Authenticate: 'authNow'
+            },
+            function (onSubmitEvent, submitValue) {
+
+                // Do not close the dialog yet
+                onSubmitEvent.preventDefault();
+
+                // Open login popup
+                if (submitValue === 'authNow') {
+                    callback();
+                }
+            }
+        );
+    },
+    closeAuthenticationWindow:function () {
+        if (authenticationWindow) {
+            authenticationWindow.close();
+            authenticationWindow = null;
+        }
+    },
+    focusAuthenticationWindow: function () {
+        // If auth window exists just bring it to the front
+        if (authenticationWindow) {
+            authenticationWindow.focus();
+            return;
+        }
+    },
+    closeAuthenticationDialog: function () {
+        // Close authentication dialog if opened
+        if (authDialog) {
+            APP.UI.messageHandler.closeDialog();
+            authDialog = null;
+        }
+    },
+    createAuthenticationWindow: function (callback, url) {
+        authenticationWindow = messageHandler.openCenteredPopup(
+            url, 910, 660,
+            // On closed
+            function () {
+                // Close authentication dialog if opened
+                if (authDialog) {
+                    messageHandler.closeDialog();
+                    authDialog = null;
+                }
+                callback();
+                authenticationWindow = null;
+            });
+        return authenticationWindow;
+    },
+    stopInterval: function () {
+        // Clear retry interval, so that we don't call 'doJoinAfterFocus' twice
+        if (authRetryId) {
+            window.clearTimeout(authRetryId);
+            authRetryId = null;
+        }
+    }
+};
+
+module.exports = Authentication;
+},{}],12:[function(require,module,exports){
+var Settings = require("../side_pannels/settings/Settings");
+var MediaStreamType = require("../../../service/RTC/MediaStreamTypes");
+
+var users = {};
+var activeSpeakerJid;
+
+function setVisibility(selector, show) {
+    if (selector && selector.length > 0) {
+        selector.css("visibility", show ? "visible" : "hidden");
+    }
+}
+
+function isUserMuted(jid) {
+    // XXX(gp) we may want to rename this method to something like
+    // isUserStreaming, for example.
+    if (jid && jid != APP.xmpp.myJid()) {
+        var resource = Strophe.getResourceFromJid(jid);
+        if (!require("../videolayout/VideoLayout").isInLastN(resource)) {
+            return true;
+        }
+    }
+
+    if (!APP.RTC.remoteStreams[jid] || !APP.RTC.remoteStreams[jid][MediaStreamType.VIDEO_TYPE]) {
+        return null;
+    }
+    return APP.RTC.remoteStreams[jid][MediaStreamType.VIDEO_TYPE].muted;
+}
+
+function getGravatarUrl(id, size) {
+    if(id === APP.xmpp.myJid() || !id) {
+        id = Settings.getSettings().uid;
+    }
+    return 'https://www.gravatar.com/avatar/' +
+        MD5.hexdigest(id.trim().toLowerCase()) +
+        "?d=wavatar&size=" + (size || "30");
+}
+
+var Avatar = {
+
+    /**
+     * Sets the user's avatar in the settings menu(if local user), contact list
+     * and thumbnail
+     * @param jid jid of the user
+     * @param id email or userID to be used as a hash
+     */
+    setUserAvatar: function (jid, id) {
+        if (id) {
+            if (users[jid] === id) {
+                return;
+            }
+            users[jid] = id;
+        }
+        var thumbUrl = getGravatarUrl(users[jid] || jid, 100);
+        var contactListUrl = getGravatarUrl(users[jid] || jid);
+        var resourceJid = Strophe.getResourceFromJid(jid);
+        var thumbnail = $('#participant_' + resourceJid);
+        var avatar = $('#avatar_' + resourceJid);
+
+        // set the avatar in the settings menu if it is local user and get the
+        // local video container
+        if (jid === APP.xmpp.myJid()) {
+            $('#avatar').get(0).src = thumbUrl;
+            thumbnail = $('#localVideoContainer');
+        }
+
+        // set the avatar in the contact list
+        var contact = $('#' + resourceJid + '>img');
+        if (contact && contact.length > 0) {
+            contact.get(0).src = contactListUrl;
+        }
+
+        // set the avatar in the thumbnail
+        if (avatar && avatar.length > 0) {
+            avatar[0].src = thumbUrl;
+        } else {
+            if (thumbnail && thumbnail.length > 0) {
+                avatar = document.createElement('img');
+                avatar.id = 'avatar_' + resourceJid;
+                avatar.className = 'userAvatar';
+                avatar.src = thumbUrl;
+                thumbnail.append(avatar);
+            }
+        }
+
+        //if the user is the current active speaker - update the active speaker
+        // avatar
+        if (jid === activeSpeakerJid) {
+            this.updateActiveSpeakerAvatarSrc(jid);
+        }
+    },
+
+    /**
+     * Hides or shows the user's avatar
+     * @param jid jid of the user
+     * @param show whether we should show the avatar or not
+     * video because there is no dominant speaker and no focused speaker
+     */
+    showUserAvatar: function (jid, show) {
+        if (users[jid]) {
+            var resourceJid = Strophe.getResourceFromJid(jid);
+            var video = $('#participant_' + resourceJid + '>video');
+            var avatar = $('#avatar_' + resourceJid);
+
+            if (jid === APP.xmpp.myJid()) {
+                video = $('#localVideoWrapper>video');
+            }
+            if (show === undefined || show === null) {
+                show = isUserMuted(jid);
+            }
+
+            //if the user is the currently focused, the dominant speaker or if
+            //there is no focused and no dominant speaker and the large video is
+            //currently shown
+            if (activeSpeakerJid === jid && require("../videolayout/VideoLayout").isLargeVideoOnTop()) {
+                setVisibility($("#largeVideo"), !show);
+                setVisibility($('#activeSpeaker'), show);
+                setVisibility(avatar, false);
+                setVisibility(video, false);
+            } else {
+                if (video && video.length > 0) {
+                    setVisibility(video, !show);
+                    setVisibility(avatar, show);
+                }
+            }
+        }
+    },
+
+    /**
+     * Updates the src of the active speaker avatar
+     * @param jid of the current active speaker
+     */
+    updateActiveSpeakerAvatarSrc: function (jid) {
+        if (!jid) {
+            jid = APP.xmpp.findJidFromResource(
+                require("../videolayout/VideoLayout").getLargeVideoState().userResourceJid);
+        }
+        var avatar = $("#activeSpeakerAvatar")[0];
+        var url = getGravatarUrl(users[jid],
+            interfaceConfig.ACTIVE_SPEAKER_AVATAR_SIZE);
+        if (jid === activeSpeakerJid && avatar.src === url) {
+            return;
+        }
+        activeSpeakerJid = jid;
+        var isMuted = isUserMuted(jid);
+        if (jid && isMuted !== null) {
+            avatar.src = url;
+            setVisibility($("#largeVideo"), !isMuted);
+            Avatar.showUserAvatar(jid, isMuted);
+        }
+    }
+
+};
+
+
+module.exports = Avatar;
+},{"../../../service/RTC/MediaStreamTypes":76,"../side_pannels/settings/Settings":22,"../videolayout/VideoLayout":32}],13:[function(require,module,exports){
+/* global $, config,
+   setLargeVideoVisible, Util */
+
+var VideoLayout = require("../videolayout/VideoLayout");
+var Prezi = require("../prezi/Prezi");
+var UIUtil = require("../util/UIUtil");
+
+var etherpadName = null;
+var etherpadIFrame = null;
+var domain = null;
+var options = "?showControls=true&showChat=false&showLineNumbers=true&useMonospaceFont=false";
+
+
+/**
+ * Resizes the etherpad.
+ */
+function resize() {
+    if ($('#etherpad>iframe').length) {
+        var remoteVideos = $('#remoteVideos');
+        var availableHeight
+            = window.innerHeight - remoteVideos.outerHeight();
+        var availableWidth = UIUtil.getAvailableVideoWidth();
+
+        $('#etherpad>iframe').width(availableWidth);
+        $('#etherpad>iframe').height(availableHeight);
+    }
+}
+
+/**
+ * Shares the Etherpad name with other participants.
+ */
+function shareEtherpad() {
+    APP.xmpp.addToPresence("etherpad", etherpadName);
+}
+
+/**
+ * Creates the Etherpad button and adds it to the toolbar.
+ */
+function enableEtherpadButton() {
+    if (!$('#etherpadButton').is(":visible"))
+        $('#etherpadButton').css({display: 'inline-block'});
+}
+
+/**
+ * Creates the IFrame for the etherpad.
+ */
+function createIFrame() {
+    etherpadIFrame = document.createElement('iframe');
+    etherpadIFrame.src = domain + etherpadName + options;
+    etherpadIFrame.frameBorder = 0;
+    etherpadIFrame.scrolling = "no";
+    etherpadIFrame.width = $('#largeVideoContainer').width() || 640;
+    etherpadIFrame.height = $('#largeVideoContainer').height() || 480;
+    etherpadIFrame.setAttribute('style', 'visibility: hidden;');
+
+    document.getElementById('etherpad').appendChild(etherpadIFrame);
+
+    etherpadIFrame.onload = function() {
+
+        document.domain = document.domain;
+        bubbleIframeMouseMove(etherpadIFrame);
+        setTimeout(function() {
+            // the iframes inside of the etherpad are
+            // not yet loaded when the etherpad iframe is loaded
+            var outer = etherpadIFrame.
+                contentDocument.getElementsByName("ace_outer")[0];
+            bubbleIframeMouseMove(outer);
+            var inner = outer.
+                contentDocument.getElementsByName("ace_inner")[0];
+            bubbleIframeMouseMove(inner);
+        }, 2000);
+    };
+}
+
+function bubbleIframeMouseMove(iframe){
+    var existingOnMouseMove = iframe.contentWindow.onmousemove;
+    iframe.contentWindow.onmousemove = function(e){
+        if(existingOnMouseMove) existingOnMouseMove(e);
+        var evt = document.createEvent("MouseEvents");
+        var boundingClientRect = iframe.getBoundingClientRect();
+        evt.initMouseEvent(
+            "mousemove",
+            true, // bubbles
+            false, // not cancelable
+            window,
+            e.detail,
+            e.screenX,
+            e.screenY,
+                e.clientX + boundingClientRect.left,
+                e.clientY + boundingClientRect.top,
+            e.ctrlKey,
+            e.altKey,
+            e.shiftKey,
+            e.metaKey,
+            e.button,
+            null // no related element
+        );
+        iframe.dispatchEvent(evt);
+    };
+}
+
+
+/**
+ * On video selected event.
+ */
+$(document).bind('video.selected', function (event, isPresentation) {
+    if (config.etherpad_base && etherpadIFrame && etherpadIFrame.style.visibility !== 'hidden')
+        Etherpad.toggleEtherpad(isPresentation);
+});
+
+
+var Etherpad = {
+    /**
+     * Initializes the etherpad.
+     */
+    init: function (name) {
+
+        if (config.etherpad_base && !etherpadName) {
+
+            domain = config.etherpad_base;
+
+            if (!name) {
+                // In case we're the focus we generate the name.
+                etherpadName = Math.random().toString(36).substring(7) +
+                                '_' + (new Date().getTime()).toString();
+                shareEtherpad();
+            }
+            else
+                etherpadName = name;
+
+            enableEtherpadButton();
+
+            /**
+             * Resizes the etherpad, when the window is resized.
+             */
+            $(window).resize(function () {
+                resize();
+            });
+        }
+    },
+
+    /**
+     * Opens/hides the Etherpad.
+     */
+    toggleEtherpad: function (isPresentation) {
+        if (!etherpadIFrame)
+            createIFrame();
+
+        var largeVideo = null;
+        if (Prezi.isPresentationVisible())
+            largeVideo = $('#presentation>iframe');
+        else
+            largeVideo = $('#largeVideo');
+
+        if ($('#etherpad>iframe').css('visibility') === 'hidden') {
+            $('#activeSpeaker').css('visibility', 'hidden');
+            largeVideo.fadeOut(300, function () {
+                if (Prezi.isPresentationVisible()) {
+                    largeVideo.css({opacity: '0'});
+                } else {
+                    VideoLayout.setLargeVideoVisible(false);
+                }
+            });
+
+            $('#etherpad>iframe').fadeIn(300, function () {
+                document.body.style.background = '#eeeeee';
+                $('#etherpad>iframe').css({visibility: 'visible'});
+                $('#etherpad').css({zIndex: 2});
+            });
+        }
+        else if ($('#etherpad>iframe')) {
+            $('#etherpad>iframe').fadeOut(300, function () {
+                $('#etherpad>iframe').css({visibility: 'hidden'});
+                $('#etherpad').css({zIndex: 0});
+                document.body.style.background = 'black';
+            });
+
+            if (!isPresentation) {
+                $('#largeVideo').fadeIn(300, function () {
+                    VideoLayout.setLargeVideoVisible(true);
+                });
+            }
+        }
+        resize();
+    },
+
+    isVisible: function() {
+        var etherpadIframe = $('#etherpad>iframe');
+        return etherpadIframe && etherpadIframe.is(':visible');
+    }
+
+};
+
+module.exports = Etherpad;
+
+},{"../prezi/Prezi":14,"../util/UIUtil":30,"../videolayout/VideoLayout":32}],14:[function(require,module,exports){
+var ToolbarToggler = require("../toolbars/ToolbarToggler");
+var UIUtil = require("../util/UIUtil");
+var VideoLayout = require("../videolayout/VideoLayout");
+var messageHandler = require("../util/MessageHandler");
+var PreziPlayer = require("./PreziPlayer");
+
+var preziPlayer = null;
+
+var Prezi = {
+
+
+    /**
+     * Reloads the current presentation.
+     */
+    reloadPresentation: function() {
+        var iframe = document.getElementById(preziPlayer.options.preziId);
+        iframe.src = iframe.src;
+    },
+
+    /**
+     * Returns <tt>true</tt> if the presentation is visible, <tt>false</tt> -
+     * otherwise.
+     */
+    isPresentationVisible: function () {
+        return ($('#presentation>iframe') != null
+                && $('#presentation>iframe').css('opacity') == 1);
+    },
+
+    /**
+     * Opens the Prezi dialog, from which the user could choose a presentation
+     * to load.
+     */
+    openPreziDialog: function() {
+        var myprezi = APP.xmpp.getPrezi();
+        if (myprezi) {
+            messageHandler.openTwoButtonDialog("Remove Prezi",
+                "Are you sure you would like to remove your Prezi?",
+                false,
+                "Remove",
+                function(e,v,m,f) {
+                    if(v) {
+                        xmpp.removePreziFromPresence();
+                    }
+                }
+            );
+        }
+        else if (preziPlayer != null) {
+            messageHandler.openTwoButtonDialog("Share a Prezi",
+                "Another participant is already sharing a Prezi." +
+                    "This conference allows only one Prezi at a time.",
+                false,
+                "Ok",
+                function(e,v,m,f) {
+                    $.prompt.close();
+                }
+            );
+        }
+        else {
+            var openPreziState = {
+                state0: {
+                    html:   '<h2>Share a Prezi</h2>' +
+                            '<input id="preziUrl" type="text" ' +
+                            'placeholder="e.g. ' +
+                            'http://prezi.com/wz7vhjycl7e6/my-prezi" autofocus>',
+                    persistent: false,
+                    buttons: { "Share": true , "Cancel": false},
+                    defaultButton: 1,
+                    submit: function(e,v,m,f){
+                        e.preventDefault();
+                        if(v)
+                        {
+                            var preziUrl = document.getElementById('preziUrl');
+
+                            if (preziUrl.value)
+                            {
+                                var urlValue
+                                    = encodeURI(UIUtil.escapeHtml(preziUrl.value));
+
+                                if (urlValue.indexOf('http://prezi.com/') != 0
+                                    && urlValue.indexOf('https://prezi.com/') != 0)
+                                {
+                                    $.prompt.goToState('state1');
+                                    return false;
+                                }
+                                else {
+                                    var presIdTmp = urlValue.substring(
+                                            urlValue.indexOf("prezi.com/") + 10);
+                                    if (!isAlphanumeric(presIdTmp)
+                                            || presIdTmp.indexOf('/') < 2) {
+                                        $.prompt.goToState('state1');
+                                        return false;
+                                    }
+                                    else {
+                                        xmpp.addToPresence("prezi", urlValue);
+                                        $.prompt.close();
+                                    }
+                                }
+                            }
+                        }
+                        else
+                            $.prompt.close();
+                    }
+                },
+                state1: {
+                    html:   '<h2>Share a Prezi</h2>' +
+                            'Please provide a correct prezi link.',
+                    persistent: false,
+                    buttons: { "Back": true, "Cancel": false },
+                    defaultButton: 1,
+                    submit:function(e,v,m,f) {
+                        e.preventDefault();
+                        if(v==0)
+                            $.prompt.close();
+                        else
+                            $.prompt.goToState('state0');
+                    }
+                }
+            };
+            var focusPreziUrl =  function(e) {
+                    document.getElementById('preziUrl').focus();
+                };
+            messageHandler.openDialogWithStates(openPreziState, focusPreziUrl, focusPreziUrl);
+        }
+    }
+
+};
+
+/**
+ * A new presentation has been added.
+ *
+ * @param event the event indicating the add of a presentation
+ * @param jid the jid from which the presentation was added
+ * @param presUrl url of the presentation
+ * @param currentSlide the current slide to which we should move
+ */
+function presentationAdded(event, jid, presUrl, currentSlide) {
+    console.log("presentation added", presUrl);
+
+    var presId = getPresentationId(presUrl);
+
+    var elementId = 'participant_'
+        + Strophe.getResourceFromJid(jid)
+        + '_' + presId;
+
+    // We explicitly don't specify the peer jid here, because we don't want
+    // this video to be dealt with as a peer related one (for example we
+    // don't want to show a mute/kick menu for this one, etc.).
+    VideoLayout.addRemoteVideoContainer(null, elementId);
+    VideoLayout.resizeThumbnails();
+
+    var controlsEnabled = false;
+    if (jid === xmpp.myJid())
+        controlsEnabled = true;
+
+    setPresentationVisible(true);
+    $('#largeVideoContainer').hover(
+        function (event) {
+            if (Prezi.isPresentationVisible()) {
+                var reloadButtonRight = window.innerWidth
+                    - $('#presentation>iframe').offset().left
+                    - $('#presentation>iframe').width();
+
+                $('#reloadPresentation').css({  right: reloadButtonRight,
+                    display:'inline-block'});
+            }
+        },
+        function (event) {
+            if (!Prezi.isPresentationVisible())
+                $('#reloadPresentation').css({display:'none'});
+            else {
+                var e = event.toElement || event.relatedTarget;
+
+                if (e && e.id != 'reloadPresentation' && e.id != 'header')
+                    $('#reloadPresentation').css({display:'none'});
+            }
+        });
+
+    preziPlayer = new PreziPlayer(
+        'presentation',
+        {preziId: presId,
+            width: getPresentationWidth(),
+            height: getPresentationHeihgt(),
+            controls: controlsEnabled,
+            debug: true
+        });
+
+    $('#presentation>iframe').attr('id', preziPlayer.options.preziId);
+
+    preziPlayer.on(PreziPlayer.EVENT_STATUS, function(event) {
+        console.log("prezi status", event.value);
+        if (event.value == PreziPlayer.STATUS_CONTENT_READY) {
+            if (jid != xmpp.myJid())
+                preziPlayer.flyToStep(currentSlide);
+        }
+    });
+
+    preziPlayer.on(PreziPlayer.EVENT_CURRENT_STEP, function(event) {
+        console.log("event value", event.value);
+        APP.xmpp.addToPresence("preziSlide", event.value);
+    });
+
+    $("#" + elementId).css( 'background-image',
+        'url(../images/avatarprezi.png)');
+    $("#" + elementId).click(
+        function () {
+            setPresentationVisible(true);
+        }
+    );
+};
+
+/**
+ * A presentation has been removed.
+ *
+ * @param event the event indicating the remove of a presentation
+ * @param jid the jid for which the presentation was removed
+ * @param the url of the presentation
+ */
+function presentationRemoved(event, jid, presUrl) {
+    console.log('presentation removed', presUrl);
+    var presId = getPresentationId(presUrl);
+    setPresentationVisible(false);
+    $('#participant_'
+        + Strophe.getResourceFromJid(jid)
+        + '_' + presId).remove();
+    $('#presentation>iframe').remove();
+    if (preziPlayer != null) {
+        preziPlayer.destroy();
+        preziPlayer = null;
+    }
+};
+
+/**
+ * Indicates if the given string is an alphanumeric string.
+ * Note that some special characters are also allowed (-, _ , /, &, ?, =, ;) for the
+ * purpose of checking URIs.
+ */
+function isAlphanumeric(unsafeText) {
+    var regex = /^[a-z0-9-_\/&\?=;]+$/i;
+    return regex.test(unsafeText);
+}
+
+/**
+ * Returns the presentation id from the given url.
+ */
+function getPresentationId (presUrl) {
+    var presIdTmp = presUrl.substring(presUrl.indexOf("prezi.com/") + 10);
+    return presIdTmp.substring(0, presIdTmp.indexOf('/'));
+}
+
+/**
+ * Returns the presentation width.
+ */
+function getPresentationWidth() {
+    var availableWidth = UIUtil.getAvailableVideoWidth();
+    var availableHeight = getPresentationHeihgt();
+
+    var aspectRatio = 16.0 / 9.0;
+    if (availableHeight < availableWidth / aspectRatio) {
+        availableWidth = Math.floor(availableHeight * aspectRatio);
+    }
+    return availableWidth;
+}
+
+/**
+ * Returns the presentation height.
+ */
+function getPresentationHeihgt() {
+    var remoteVideos = $('#remoteVideos');
+    return window.innerHeight - remoteVideos.outerHeight();
+}
+
+/**
+ * Resizes the presentation iframe.
+ */
+function resize() {
+    if ($('#presentation>iframe')) {
+        $('#presentation>iframe').width(getPresentationWidth());
+        $('#presentation>iframe').height(getPresentationHeihgt());
+    }
+}
+
+/**
+ * Shows/hides a presentation.
+ */
+function setPresentationVisible(visible) {
+    var prezi = $('#presentation>iframe');
+    if (visible) {
+        // Trigger the video.selected event to indicate a change in the
+        // large video.
+        $(document).trigger("video.selected", [true]);
+
+        $('#largeVideo').fadeOut(300);
+        prezi.fadeIn(300, function() {
+            prezi.css({opacity:'1'});
+            ToolbarToggler.dockToolbar(true);
+            VideoLayout.setLargeVideoVisible(false);
+        });
+        $('#activeSpeaker').css('visibility', 'hidden');
+    }
+    else {
+        if (prezi.css('opacity') == '1') {
+            prezi.fadeOut(300, function () {
+                prezi.css({opacity:'0'});
+                $('#reloadPresentation').css({display:'none'});
+                $('#largeVideo').fadeIn(300, function() {
+                    VideoLayout.setLargeVideoVisible(true);
+                    ToolbarToggler.dockToolbar(false);
+                });
+            });
+        }
+    }
+}
+
+/**
+ * Presentation has been removed.
+ */
+$(document).bind('presentationremoved.muc', presentationRemoved);
+
+/**
+ * Presentation has been added.
+ */
+$(document).bind('presentationadded.muc', presentationAdded);
+
+/*
+ * Indicates presentation slide change.
+ */
+$(document).bind('gotoslide.muc', function (event, jid, presUrl, current) {
+    if (preziPlayer && preziPlayer.getCurrentStep() != current) {
+        preziPlayer.flyToStep(current);
+
+        var animationStepsArray = preziPlayer.getAnimationCountOnSteps();
+        for (var i = 0; i < parseInt(animationStepsArray[current]); i++) {
+            preziPlayer.flyToStep(current, i);
+        }
+    }
+});
+
+/**
+ * On video selected event.
+ */
+$(document).bind('video.selected', function (event, isPresentation) {
+    if (!isPresentation && $('#presentation>iframe')) {
+        setPresentationVisible(false);
+    }
+});
+
+$(window).resize(function () {
+    resize();
+});
+
+module.exports = Prezi;
+
+},{"../toolbars/ToolbarToggler":26,"../util/MessageHandler":28,"../util/UIUtil":30,"../videolayout/VideoLayout":32,"./PreziPlayer":15}],15:[function(require,module,exports){
+(function() {
+    "use strict";
+    var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+
+    window.PreziPlayer = (function() {
+
+        PreziPlayer.API_VERSION = 1;
+        PreziPlayer.CURRENT_STEP = 'currentStep';
+        PreziPlayer.CURRENT_ANIMATION_STEP = 'currentAnimationStep';
+        PreziPlayer.CURRENT_OBJECT = 'currentObject';
+        PreziPlayer.STATUS_LOADING = 'loading';
+        PreziPlayer.STATUS_READY = 'ready';
+        PreziPlayer.STATUS_CONTENT_READY = 'contentready';
+        PreziPlayer.EVENT_CURRENT_STEP = "currentStepChange";
+        PreziPlayer.EVENT_CURRENT_ANIMATION_STEP = "currentAnimationStepChange";
+        PreziPlayer.EVENT_CURRENT_OBJECT = "currentObjectChange";
+        PreziPlayer.EVENT_STATUS = "statusChange";
+        PreziPlayer.EVENT_PLAYING = "isAutoPlayingChange";
+        PreziPlayer.EVENT_IS_MOVING = "isMovingChange";
+        PreziPlayer.domain = "https://prezi.com";
+        PreziPlayer.path = "/player/";
+        PreziPlayer.players = {};
+        PreziPlayer.binded_methods = ['changesHandler'];
+
+        PreziPlayer.createMultiplePlayers = function(optionArray){
+            for(var i=0; i<optionArray.length; i++) {
+                var optionSet = optionArray[i];
+                new PreziPlayer(optionSet.id, optionSet);
+            };
+        };
+
+        PreziPlayer.messageReceived = function(event){
+            var message, item, player;
+            try {
+                message = JSON.parse(event.data);
+            } catch (e) {}
+            if (message.id && (player = PreziPlayer.players[message.id])){
+                if (player.options.debug === true) {
+                    if (console && console.log) console.log('received', message);
+                }
+                if (message.type === "changes"){
+                    player.changesHandler(message);
+                }
+                for (var i=0; i<player.callbacks.length; i++) {
+                    item = player.callbacks[i];
+                    if (item && message.type === item.event){
+                        item.callback(message);
+                    }
+                }
+            }
+        };
+
+        function PreziPlayer(id, options) {
+            var params, paramString = "", _this = this;
+            if (PreziPlayer.players[id]){
+                PreziPlayer.players[id].destroy();
+            }
+            for(var i=0; i<PreziPlayer.binded_methods.length; i++) {
+                var method_name = PreziPlayer.binded_methods[i];
+                _this[method_name] = __bind(_this[method_name], _this);
+            };
+            options = options || {};
+            this.options = options;
+            this.values = {'status': PreziPlayer.STATUS_LOADING};
+            this.values[PreziPlayer.CURRENT_STEP] = 0;
+            this.values[PreziPlayer.CURRENT_ANIMATION_STEP] = 0;
+            this.values[PreziPlayer.CURRENT_OBJECT] = null;
+            this.callbacks = [];
+            this.id = id;
+            this.embedTo = document.getElementById(id);
+            if (!this.embedTo) {
+                throw "The element id is not available.";
+            }
+            this.iframe = document.createElement('iframe');
+            params = [
+                { name: 'oid', value: options.preziId },
+                { name: 'explorable', value: options.explorable ? 1 : 0 },
+                { name: 'controls', value: options.controls ? 1 : 0 }
+            ];
+            for(var i=0; i<params.length; i++) {
+                var param = params[i];
+                paramString += (i===0 ? "?" : "&") + param.name + "=" + param.value;
+            };
+            this.iframe.src = PreziPlayer.domain + PreziPlayer.path + paramString;
+            this.iframe.frameBorder = 0;
+            this.iframe.scrolling = "no";
+            this.iframe.width = options.width || 640;
+            this.iframe.height = options.height || 480;
+            this.embedTo.innerHTML = '';
+            // JITSI: IN CASE SOMETHING GOES WRONG.
+            try {
+                this.embedTo.appendChild(this.iframe);
+            }
+            catch (err) {
+                console.log("CATCH ERROR");
+            }
+
+            // JITSI: Increase interval from 200 to 500, which fixes prezi
+            // crashes for us.
+            this.initPollInterval = setInterval(function(){
+                _this.sendMessage({'action': 'init'});
+            }, 500);
+            PreziPlayer.players[id] = this;
+        }
+
+        PreziPlayer.prototype.changesHandler = function(message) {
+            var key, value, j, item;
+            if (this.initPollInterval) {
+                clearInterval(this.initPollInterval);
+                this.initPollInterval = false;
+            }
+            for (key in message.data) {
+                if (message.data.hasOwnProperty(key)){
+                    value = message.data[key];
+                    this.values[key] = value;
+                    for (j=0; j<this.callbacks.length; j++) {
+                        item = this.callbacks[j];
+                        if (item && item.event === key + "Change"){
+                            item.callback({type: item.event, value: value});
+                        }
+                    }
+                }
+            }
+        };
+
+        PreziPlayer.prototype.destroy = function() {
+            if (this.initPollInterval) {
+                clearInterval(this.initPollInterval);
+                this.initPollInterval = false;
+            }
+            this.embedTo.innerHTML = '';
+        };
+
+        PreziPlayer.prototype.sendMessage = function(message) {
+            if (this.options.debug === true) {
+                if (console && console.log) console.log('sent', message);
+            }
+            message.version = PreziPlayer.API_VERSION;
+            message.id = this.id;
+            return this.iframe.contentWindow.postMessage(JSON.stringify(message), '*');
+        };
+
+        PreziPlayer.prototype.nextStep = /* nextStep is DEPRECATED */
+        PreziPlayer.prototype.flyToNextStep = function() {
+            return this.sendMessage({
+                'action': 'present',
+                'data': ['moveToNextStep']
+            });
+        };
+
+        PreziPlayer.prototype.previousStep = /* previousStep is DEPRECATED */
+        PreziPlayer.prototype.flyToPreviousStep = function() {
+            return this.sendMessage({
+                'action': 'present',
+                'data': ['moveToPrevStep']
+            });
+        };
+
+        PreziPlayer.prototype.toStep = /* toStep is DEPRECATED */
+        PreziPlayer.prototype.flyToStep = function(step, animation_step) {
+            var obj = this;
+            // check animation_step
+            if (animation_step > 0 &&
+                obj.values.animationCountOnSteps &&
+                obj.values.animationCountOnSteps[step] <= animation_step) {
+                animation_step = obj.values.animationCountOnSteps[step];
+            }
+            // jump to animation steps by calling flyToNextStep()
+            function doAnimationSteps() {
+                if (obj.values.isMoving == true) {
+                    setTimeout(doAnimationSteps, 100); // wait until the flight ends
+                    return;
+                }
+                while (animation_step-- > 0) {
+                    obj.flyToNextStep(); // do the animation steps
+                }
+            }
+            setTimeout(doAnimationSteps, 200); // 200ms is the internal "reporting" time
+            // jump to the step
+            return this.sendMessage({
+                'action': 'present',
+                'data': ['moveToStep', step]
+            });
+        };
+
+        PreziPlayer.prototype.toObject = /* toObject is DEPRECATED */
+        PreziPlayer.prototype.flyToObject = function(objectId) {
+            return this.sendMessage({
+                'action': 'present',
+                'data': ['moveToObject', objectId]
+            });
+        };
+
+        PreziPlayer.prototype.play = function(defaultDelay) {
+            return this.sendMessage({
+                'action': 'present',
+                'data': ['startAutoPlay', defaultDelay]
+            });
+        };
+
+        PreziPlayer.prototype.stop = function() {
+            return this.sendMessage({
+                'action': 'present',
+                'data': ['stopAutoPlay']
+            });
+        };
+
+        PreziPlayer.prototype.pause = function(defaultDelay) {
+            return this.sendMessage({
+                'action': 'present',
+                'data': ['pauseAutoPlay', defaultDelay]
+            });
+        };
+
+        PreziPlayer.prototype.getCurrentStep = function() {
+            return this.values.currentStep;
+        };
+
+        PreziPlayer.prototype.getCurrentAnimationStep = function() {
+            return this.values.currentAnimationStep;
+        };
+
+        PreziPlayer.prototype.getCurrentObject = function() {
+            return this.values.currentObject;
+        };
+
+        PreziPlayer.prototype.getStatus = function() {
+            return this.values.status;
+        };
+
+        PreziPlayer.prototype.isPlaying = function() {
+            return this.values.isAutoPlaying;
+        };
+
+        PreziPlayer.prototype.getStepCount = function() {
+            return this.values.stepCount;
+        };
+
+        PreziPlayer.prototype.getAnimationCountOnSteps = function() {
+            return this.values.animationCountOnSteps;
+        };
+
+        PreziPlayer.prototype.getTitle = function() {
+            return this.values.title;
+        };
+
+        PreziPlayer.prototype.setDimensions = function(dims) {
+            for (var parameter in dims) {
+                this.iframe[parameter] = dims[parameter];
+            }
+        }
+
+        PreziPlayer.prototype.getDimensions = function() {
+            return {
+                width: parseInt(this.iframe.width, 10),
+                height: parseInt(this.iframe.height, 10)
+            }
+        }
+
+        PreziPlayer.prototype.on = function(event, callback) {
+            this.callbacks.push({
+                event: event,
+                callback: callback
+            });
+        };
+
+        PreziPlayer.prototype.off = function(event, callback) {
+            var j, item;
+            if (event === undefined) {
+                this.callbacks = [];
+            }
+            j = this.callbacks.length;
+            while (j--) {
+                item = this.callbacks[j];
+                if (item && item.event === event && (callback === undefined || item.callback === callback)){
+                    this.callbacks.splice(j, 1);
+                }
+            }
+        };
+
+        if (window.addEventListener) {
+            window.addEventListener('message', PreziPlayer.messageReceived, false);
+        } else {
+            window.attachEvent('onmessage', PreziPlayer.messageReceived);
+        }
+
+        return PreziPlayer;
+
+    })();
+
+})();
+
+module.exports = PreziPlayer;
+
+},{}],16:[function(require,module,exports){
+var Chat = require("./chat/Chat");
+var ContactList = require("./contactlist/ContactList");
+var Settings = require("./settings/Settings");
+var SettingsMenu = require("./settings/SettingsMenu");
+var VideoLayout = require("../videolayout/VideoLayout");
+var ToolbarToggler = require("../toolbars/ToolbarToggler");
+var UIUtil = require("../util/UIUtil");
+
+/**
+ * Toggler for the chat, contact list, settings menu, etc..
+ */
+var PanelToggler = (function(my) {
+
+    var currentlyOpen = null;
+    var buttons = {
+        '#chatspace': '#chatBottomButton',
+        '#contactlist': '#contactListButton',
+        '#settingsmenu': '#settingsButton'
+    };
+
+    /**
+     * Resizes the video area
+     * @param isClosing whether the side panel is going to be closed or is going to open / remain opened
+     * @param completeFunction a function to be called when the video space is resized
+     */
+    var resizeVideoArea = function(isClosing, completeFunction) {
+        var videospace = $('#videospace');
+
+        var panelSize = isClosing ? [0, 0] : PanelToggler.getPanelSize();
+        var videospaceWidth = window.innerWidth - panelSize[0];
+        var videospaceHeight = window.innerHeight;
+        var videoSize
+            = VideoLayout.getVideoSize(null, null, videospaceWidth, videospaceHeight);
+        var videoWidth = videoSize[0];
+        var videoHeight = videoSize[1];
+        var videoPosition = VideoLayout.getVideoPosition(videoWidth,
+            videoHeight,
+            videospaceWidth,
+            videospaceHeight);
+        var horizontalIndent = videoPosition[0];
+        var verticalIndent = videoPosition[1];
+
+        var thumbnailSize = VideoLayout.calculateThumbnailSize(videospaceWidth);
+        var thumbnailsWidth = thumbnailSize[0];
+        var thumbnailsHeight = thumbnailSize[1];
+        //for chat
+
+        videospace.animate({
+                right: panelSize[0],
+                width: videospaceWidth,
+                height: videospaceHeight
+            },
+            {
+                queue: false,
+                duration: 500,
+                complete: completeFunction
+            });
+
+        $('#remoteVideos').animate({
+                height: thumbnailsHeight
+            },
+            {
+                queue: false,
+                duration: 500
+            });
+
+        $('#remoteVideos>span').animate({
+                height: thumbnailsHeight,
+                width: thumbnailsWidth
+            },
+            {
+                queue: false,
+                duration: 500,
+                complete: function () {
+                    $(document).trigger(
+                        "remotevideo.resized",
+                        [thumbnailsWidth,
+                            thumbnailsHeight]);
+                }
+            });
+
+        $('#largeVideoContainer').animate({
+                width: videospaceWidth,
+                height: videospaceHeight
+            },
+            {
+                queue: false,
+                duration: 500
+            });
+
+        $('#largeVideo').animate({
+                width: videoWidth,
+                height: videoHeight,
+                top: verticalIndent,
+                bottom: verticalIndent,
+                left: horizontalIndent,
+                right: horizontalIndent
+            },
+            {
+                queue: false,
+                duration: 500
+            });
+    };
+
+    /**
+     * Toggles the windows in the side panel
+     * @param object the window that should be shown
+     * @param selector the selector for the element containing the panel
+     * @param onOpenComplete function to be called when the panel is opened
+     * @param onOpen function to be called if the window is going to be opened
+     * @param onClose function to be called if the window is going to be closed
+     */
+    var toggle = function(object, selector, onOpenComplete, onOpen, onClose) {
+        UIUtil.buttonClick(buttons[selector], "active");
+
+        if (object.isVisible()) {
+            $("#toast-container").animate({
+                    right: '5px'
+                },
+                {
+                    queue: false,
+                    duration: 500
+                });
+            $(selector).hide("slide", {
+                direction: "right",
+                queue: false,
+                duration: 500
+            });
+            if(typeof onClose === "function") {
+                onClose();
+            }
+
+            currentlyOpen = null;
+        }
+        else {
+            // Undock the toolbar when the chat is shown and if we're in a
+            // video mode.
+            if (VideoLayout.isLargeVideoVisible()) {
+                ToolbarToggler.dockToolbar(false);
+            }
+
+            if(currentlyOpen) {
+                var current = $(currentlyOpen);
+                UIUtil.buttonClick(buttons[currentlyOpen], "active");
+                current.css('z-index', 4);
+                setTimeout(function () {
+                    current.css('display', 'none');
+                    current.css('z-index', 5);
+                }, 500);
+            }
+
+            $("#toast-container").animate({
+                    right: (PanelToggler.getPanelSize()[0] + 5) + 'px'
+                },
+                {
+                    queue: false,
+                    duration: 500
+                });
+            $(selector).show("slide", {
+                direction: "right",
+                queue: false,
+                duration: 500,
+                complete: onOpenComplete
+            });
+            if(typeof onOpen === "function") {
+                onOpen();
+            }
+
+            currentlyOpen = selector;
+        }
+    };
+
+    /**
+     * Opens / closes the chat area.
+     */
+    my.toggleChat = function() {
+        var chatCompleteFunction = Chat.isVisible() ?
+            function() {} : function () {
+            Chat.scrollChatToBottom();
+            $('#chatspace').trigger('shown');
+        };
+
+        resizeVideoArea(Chat.isVisible(), chatCompleteFunction);
+
+        toggle(Chat,
+            '#chatspace',
+            function () {
+                // Request the focus in the nickname field or the chat input field.
+                if ($('#nickname').css('visibility') === 'visible') {
+                    $('#nickinput').focus();
+                } else {
+                    $('#usermsg').focus();
+                }
+            },
+            null,
+            Chat.resizeChat,
+            null);
+    };
+
+    /**
+     * Opens / closes the contact list area.
+     */
+    my.toggleContactList = function () {
+        var completeFunction = ContactList.isVisible() ?
+            function() {} : function () { $('#contactlist').trigger('shown');};
+        resizeVideoArea(ContactList.isVisible(), completeFunction);
+
+        toggle(ContactList,
+            '#contactlist',
+            null,
+            function() {
+                ContactList.setVisualNotification(false);
+            },
+            null);
+    };
+
+    /**
+     * Opens / closes the settings menu
+     */
+    my.toggleSettingsMenu = function() {
+        resizeVideoArea(SettingsMenu.isVisible(), function (){});
+        toggle(SettingsMenu,
+            '#settingsmenu',
+            null,
+            function() {
+                var settings = Settings.getSettings();
+                $('#setDisplayName').get(0).value = settings.displayName;
+                $('#setEmail').get(0).value = settings.email;
+            },
+            null);
+    };
+
+    /**
+     * Returns the size of the side panel.
+     */
+    my.getPanelSize = function () {
+        var availableHeight = window.innerHeight;
+        var availableWidth = window.innerWidth;
+
+        var panelWidth = 200;
+        if (availableWidth * 0.2 < 200) {
+            panelWidth = availableWidth * 0.2;
+        }
+
+        return [panelWidth, availableHeight];
+    };
+
+    my.isVisible = function() {
+        return (Chat.isVisible() || ContactList.isVisible() || SettingsMenu.isVisible());
+    };
+
+    return my;
+
+}(PanelToggler || {}));
+
+module.exports = PanelToggler;
+},{"../toolbars/ToolbarToggler":26,"../util/UIUtil":30,"../videolayout/VideoLayout":32,"./chat/Chat":17,"./contactlist/ContactList":21,"./settings/Settings":22,"./settings/SettingsMenu":23}],17:[function(require,module,exports){
+/* global $, Util, nickname:true */
+var Replacement = require("./Replacement");
+var CommandsProcessor = require("./Commands");
+var ToolbarToggler = require("../../toolbars/ToolbarToggler");
+var smileys = require("./smileys.json").smileys;
+var NicknameHandler = require("../../util/NicknameHandler");
+var UIUtil = require("../../util/UIUtil");
+var UIEvents = require("../../../../service/UI/UIEvents");
+
+var notificationInterval = false;
+var unreadMessages = 0;
+
+
+/**
+ * Shows/hides a visual notification, indicating that a message has arrived.
+ */
+function setVisualNotification(show) {
+    var unreadMsgElement = document.getElementById('unreadMessages');
+    var unreadMsgBottomElement
+        = document.getElementById('bottomUnreadMessages');
+
+    var glower = $('#chatButton');
+    var bottomGlower = $('#chatBottomButton');
+
+    if (unreadMessages) {
+        unreadMsgElement.innerHTML = unreadMessages.toString();
+        unreadMsgBottomElement.innerHTML = unreadMessages.toString();
+
+        ToolbarToggler.dockToolbar(true);
+
+        var chatButtonElement
+            = document.getElementById('chatButton').parentNode;
+        var leftIndent = (UIUtil.getTextWidth(chatButtonElement) -
+            UIUtil.getTextWidth(unreadMsgElement)) / 2;
+        var topIndent = (UIUtil.getTextHeight(chatButtonElement) -
+            UIUtil.getTextHeight(unreadMsgElement)) / 2 - 3;
+
+        unreadMsgElement.setAttribute(
+            'style',
+                'top:' + topIndent +
+                '; left:' + leftIndent + ';');
+
+        var chatBottomButtonElement
+            = document.getElementById('chatBottomButton').parentNode;
+        var bottomLeftIndent = (UIUtil.getTextWidth(chatBottomButtonElement) -
+            UIUtil.getTextWidth(unreadMsgBottomElement)) / 2;
+        var bottomTopIndent = (UIUtil.getTextHeight(chatBottomButtonElement) -
+            UIUtil.getTextHeight(unreadMsgBottomElement)) / 2 - 2;
+
+        unreadMsgBottomElement.setAttribute(
+            'style',
+                'top:' + bottomTopIndent +
+                '; left:' + bottomLeftIndent + ';');
+
+
+        if (!glower.hasClass('icon-chat-simple')) {
+            glower.removeClass('icon-chat');
+            glower.addClass('icon-chat-simple');
+        }
+    }
+    else {
+        unreadMsgElement.innerHTML = '';
+        unreadMsgBottomElement.innerHTML = '';
+        glower.removeClass('icon-chat-simple');
+        glower.addClass('icon-chat');
+    }
+
+    if (show && !notificationInterval) {
+        notificationInterval = window.setInterval(function () {
+            glower.toggleClass('active');
+            bottomGlower.toggleClass('active glowing');
+        }, 800);
+    }
+    else if (!show && notificationInterval) {
+        window.clearInterval(notificationInterval);
+        notificationInterval = false;
+        glower.removeClass('active');
+        bottomGlower.removeClass('glowing');
+        bottomGlower.addClass('active');
+    }
+}
+
+
+/**
+ * Returns the current time in the format it is shown to the user
+ * @returns {string}
+ */
+function getCurrentTime() {
+    var now     = new Date();
+    var hour    = now.getHours();
+    var minute  = now.getMinutes();
+    var second  = now.getSeconds();
+    if(hour.toString().length === 1) {
+        hour = '0'+hour;
+    }
+    if(minute.toString().length === 1) {
+        minute = '0'+minute;
+    }
+    if(second.toString().length === 1) {
+        second = '0'+second;
+    }
+    return hour+':'+minute+':'+second;
+}
+
+function toggleSmileys()
+{
+    var smileys = $('#smileysContainer');
+    if(!smileys.is(':visible')) {
+        smileys.show("slide", { direction: "down", duration: 300});
+    } else {
+        smileys.hide("slide", { direction: "down", duration: 300});
+    }
+    $('#usermsg').focus();
+}
+
+function addClickFunction(smiley, number) {
+    smiley.onclick = function addSmileyToMessage() {
+        var usermsg = $('#usermsg');
+        var message = usermsg.val();
+        message += smileys['smiley' + number];
+        usermsg.val(message);
+        usermsg.get(0).setSelectionRange(message.length, message.length);
+        toggleSmileys();
+        usermsg.focus();
+    };
+}
+
+/**
+ * Adds the smileys container to the chat
+ */
+function addSmileys() {
+    var smileysContainer = document.createElement('div');
+    smileysContainer.id = 'smileysContainer';
+    for(var i = 1; i <= 21; i++) {
+        var smileyContainer = document.createElement('div');
+        smileyContainer.id = 'smiley' + i;
+        smileyContainer.className = 'smileyContainer';
+        var smiley = document.createElement('img');
+        smiley.src = 'images/smileys/smiley' + i + '.svg';
+        smiley.className =  'smiley';
+        addClickFunction(smiley, i);
+        smileyContainer.appendChild(smiley);
+        smileysContainer.appendChild(smileyContainer);
+    }
+
+    $("#chatspace").append(smileysContainer);
+}
+
+/**
+ * Resizes the chat conversation.
+ */
+function resizeChatConversation() {
+    var msgareaHeight = $('#usermsg').outerHeight();
+    var chatspace = $('#chatspace');
+    var width = chatspace.width();
+    var chat = $('#chatconversation');
+    var smileys = $('#smileysarea');
+
+    smileys.height(msgareaHeight);
+    $("#smileys").css('bottom', (msgareaHeight - 26) / 2);
+    $('#smileysContainer').css('bottom', msgareaHeight);
+    chat.width(width - 10);
+    chat.height(window.innerHeight - 15 - msgareaHeight);
+}
+
+/**
+ * Chat related user interface.
+ */
+var Chat = (function (my) {
+    /**
+     * Initializes chat related interface.
+     */
+    my.init = function () {
+        if(NicknameHandler.getNickname())
+            Chat.setChatConversationMode(true);
+        NicknameHandler.addListener(UIEvents.NICKNAME_CHANGED,
+            function (nickname) {
+                Chat.setChatConversationMode(true);
+            });
+
+        $('#nickinput').keydown(function (event) {
+            if (event.keyCode === 13) {
+                event.preventDefault();
+                var val = UIUtil.escapeHtml(this.value);
+                this.value = '';
+                if (!NicknameHandler.getNickname()) {
+                    NicknameHandler.setNickname(val);
+
+                    return;
+                }
+            }
+        });
+
+        $('#usermsg').keydown(function (event) {
+            if (event.keyCode === 13) {
+                event.preventDefault();
+                var value = this.value;
+                $('#usermsg').val('').trigger('autosize.resize');
+                this.focus();
+                var command = new CommandsProcessor(value);
+                if(command.isCommand())
+                {
+                    command.processCommand();
+                }
+                else
+                {
+                    var message = UIUtil.escapeHtml(value);
+                    APP.xmpp.sendChatMessage(message, NicknameHandler.getNickname());
+                }
+            }
+        });
+
+        var onTextAreaResize = function () {
+            resizeChatConversation();
+            Chat.scrollChatToBottom();
+        };
+        $('#usermsg').autosize({callback: onTextAreaResize});
+
+        $("#chatspace").bind("shown",
+            function () {
+                unreadMessages = 0;
+                setVisualNotification(false);
+            });
+
+        addSmileys();
+    };
+
+    /**
+     * Appends the given message to the chat conversation.
+     */
+    my.updateChatConversation = function (from, displayName, message) {
+        var divClassName = '';
+
+        if (APP.xmpp.myJid() === from) {
+            divClassName = "localuser";
+        }
+        else {
+            divClassName = "remoteuser";
+
+            if (!Chat.isVisible()) {
+                unreadMessages++;
+                UIUtil.playSoundNotification('chatNotification');
+                setVisualNotification(true);
+            }
+        }
+
+        // replace links and smileys
+        // Strophe already escapes special symbols on sending,
+        // so we escape here only tags to avoid double &amp;
+        var escMessage = message.replace(/</g, '&lt;').
+            replace(/>/g, '&gt;').replace(/\n/g, '<br/>');
+        var escDisplayName = UIUtil.escapeHtml(displayName);
+        message = Replacement.processReplacements(escMessage);
+
+        var messageContainer =
+            '<div class="chatmessage">'+
+                '<img src="../images/chatArrow.svg" class="chatArrow">' +
+                '<div class="username ' + divClassName +'">' + escDisplayName +
+                '</div>' + '<div class="timestamp">' + getCurrentTime() +
+                '</div>' + '<div class="usermessage">' + message + '</div>' +
+            '</div>';
+
+        $('#chatconversation').append(messageContainer);
+        $('#chatconversation').animate(
+                { scrollTop: $('#chatconversation')[0].scrollHeight}, 1000);
+    };
+
+    /**
+     * Appends error message to the conversation
+     * @param errorMessage the received error message.
+     * @param originalText the original message.
+     */
+    my.chatAddError = function(errorMessage, originalText)
+    {
+        errorMessage = UIUtil.escapeHtml(errorMessage);
+        originalText = UIUtil.escapeHtml(originalText);
+
+        $('#chatconversation').append(
+            '<div class="errorMessage"><b>Error: </b>' + 'Your message' +
+            (originalText? (' \"'+ originalText + '\"') : "") +
+            ' was not sent.' +
+            (errorMessage? (' Reason: ' + errorMessage) : '') +  '</div>');
+        $('#chatconversation').animate(
+            { scrollTop: $('#chatconversation')[0].scrollHeight}, 1000);
+    };
+
+    /**
+     * Sets the subject to the UI
+     * @param subject the subject
+     */
+    my.chatSetSubject = function(subject)
+    {
+        if(subject)
+            subject = subject.trim();
+        $('#subject').html(Replacement.linkify(UIUtil.escapeHtml(subject)));
+        if(subject === "")
+        {
+            $("#subject").css({display: "none"});
+        }
+        else
+        {
+            $("#subject").css({display: "block"});
+        }
+    };
+
+
+
+    /**
+     * Sets the chat conversation mode.
+     */
+    my.setChatConversationMode = function (isConversationMode) {
+        if (isConversationMode) {
+            $('#nickname').css({visibility: 'hidden'});
+            $('#chatconversation').css({visibility: 'visible'});
+            $('#usermsg').css({visibility: 'visible'});
+            $('#smileysarea').css({visibility: 'visible'});
+            $('#usermsg').focus();
+        }
+    };
+
+    /**
+     * Resizes the chat area.
+     */
+    my.resizeChat = function () {
+        var chatSize = require("../SidePanelToggler").getPanelSize();
+
+        $('#chatspace').width(chatSize[0]);
+        $('#chatspace').height(chatSize[1]);
+
+        resizeChatConversation();
+    };
+
+    /**
+     * Indicates if the chat is currently visible.
+     */
+    my.isVisible = function () {
+        return $('#chatspace').is(":visible");
+    };
+    /**
+     * Shows and hides the window with the smileys
+     */
+    my.toggleSmileys = toggleSmileys;
+
+    /**
+     * Scrolls chat to the bottom.
+     */
+    my.scrollChatToBottom = function() {
+        setTimeout(function () {
+            $('#chatconversation').scrollTop(
+                $('#chatconversation')[0].scrollHeight);
+        }, 5);
+    };
+
+
+    return my;
+}(Chat || {}));
+module.exports = Chat;
+},{"../../../../service/UI/UIEvents":80,"../../toolbars/ToolbarToggler":26,"../../util/NicknameHandler":29,"../../util/UIUtil":30,"../SidePanelToggler":16,"./Commands":18,"./Replacement":19,"./smileys.json":20}],18:[function(require,module,exports){
+var UIUtil = require("../../util/UIUtil");
+
+/**
+ * List with supported commands. The keys are the names of the commands and
+ * the value is the function that processes the message.
+ * @type {{String: function}}
+ */
+var commands = {
+    "topic" : processTopic
+};
+
+/**
+ * Extracts the command from the message.
+ * @param message the received message
+ * @returns {string} the command
+ */
+function getCommand(message)
+{
+    if(message)
+    {
+        for(var command in commands)
+        {
+            if(message.indexOf("/" + command) == 0)
+                return command;
+        }
+    }
+    return "";
+};
+
+/**
+ * Processes the data for topic command.
+ * @param commandArguments the arguments of the topic command.
+ */
+function processTopic(commandArguments)
+{
+    var topic = UIUtil.escapeHtml(commandArguments);
+    APP.xmpp.setSubject(topic);
+}
+
+/**
+ * Constructs new CommandProccessor instance from a message that
+ * handles commands received via chat messages.
+ * @param message the message
+ * @constructor
+ */
+function CommandsProcessor(message)
+{
+
+
+    var command = getCommand(message);
+
+    /**
+     * Returns the name of the command.
+     * @returns {String} the command
+     */
+    this.getCommand = function()
+    {
+        return command;
+    };
+
+
+    var messageArgument = message.substr(command.length + 2);
+
+    /**
+     * Returns the arguments of the command.
+     * @returns {string}
+     */
+    this.getArgument = function()
+    {
+        return messageArgument;
+    };
+}
+
+/**
+ * Checks whether this instance is valid command or not.
+ * @returns {boolean}
+ */
+CommandsProcessor.prototype.isCommand = function()
+{
+    if(this.getCommand())
+        return true;
+    return false;
+};
+
+/**
+ * Processes the command.
+ */
+CommandsProcessor.prototype.processCommand = function()
+{
+    if(!this.isCommand())
+        return;
+
+    commands[this.getCommand()](this.getArgument());
+
+};
+
+module.exports = CommandsProcessor;
+},{"../../util/UIUtil":30}],19:[function(require,module,exports){
+var Smileys = require("./smileys.json");
+/**
+ * Processes links and smileys in "body"
+ */
+function processReplacements(body)
+{
+    //make links clickable
+    body = linkify(body);
+
+    //add smileys
+    body = smilify(body);
+
+    return body;
+}
+
+/**
+ * Finds and replaces all links in the links in "body"
+ * with their <a href=""></a>
+ */
+function linkify(inputText)
+{
+    var replacedText, replacePattern1, replacePattern2, replacePattern3;
+
+    //URLs starting with http://, https://, or ftp://
+    replacePattern1 = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
+    replacedText = inputText.replace(replacePattern1, '<a href="$1" target="_blank">$1</a>');
+
+    //URLs starting with "www." (without // before it, or it'd re-link the ones done above).
+    replacePattern2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
+    replacedText = replacedText.replace(replacePattern2, '$1<a href="http://$2" target="_blank">$2</a>');
+
+    //Change email addresses to mailto:: links.
+    replacePattern3 = /(([a-zA-Z0-9\-\_\.])+@[a-zA-Z\_]+?(\.[a-zA-Z]{2,6})+)/gim;
+    replacedText = replacedText.replace(replacePattern3, '<a href="mailto:$1">$1</a>');
+
+    return replacedText;
+}
+
+/**
+ * Replaces common smiley strings with images
+ */
+function smilify(body)
+{
+    if(!body) {
+        return body;
+    }
+
+    var regexs = Smileys["regexs"];
+    for(var smiley in regexs) {
+        if(regexs.hasOwnProperty(smiley)) {
+            body = body.replace(regexs[smiley],
+                    '<img class="smiley" src="images/smileys/' + smiley + '.svg">');
+        }
+    }
+
+    return body;
+}
+
+module.exports = {
+    processReplacements: processReplacements,
+    linkify: linkify
+};
+
+},{"./smileys.json":20}],20:[function(require,module,exports){
+module.exports={
+    "smileys": {
+        "smiley1": ":)",
+        "smiley2": ":(",
+        "smiley3": ":D",
+        "smiley4": "(y)",
+        "smiley5": " :P",
+        "smiley6": "(wave)",
+        "smiley7": "(blush)",
+        "smiley8": "(chuckle)",
+        "smiley9": "(shocked)",
+        "smiley10": ":*",
+        "smiley11": "(n)",
+        "smiley12": "(search)",
+        "smiley13": " <3",
+        "smiley14": "(oops)",
+        "smiley15": "(angry)",
+        "smiley16": "(angel)",
+        "smiley17": "(sick)",
+        "smiley18": ";(",
+        "smiley19": "(bomb)",
+        "smiley20": "(clap)",
+        "smiley21": " ;)"
+    },
+    "regexs": {
+        "smiley2": /(:-\(\(|:-\(|:\(\(|:\(|\(sad\))/gi,
+        "smiley3": /(:-\)\)|:\)\)|\(lol\)|:-D|:D)/gi,
+        "smiley1": /(:-\)|:\))/gi,
+        "smiley4": /(\(y\)|\(Y\)|\(ok\))/gi,
+        "smiley5": /(:-P|:P|:-p|:p)/gi,
+        "smiley6": /(\(wave\))/gi,
+        "smiley7": /(\(blush\))/gi,
+        "smiley8": /(\(chuckle\))/gi,
+        "smiley9": /(:-0|\(shocked\))/gi,
+        "smiley10": /(:-\*|:\*|\(kiss\))/gi,
+        "smiley11": /(\(n\))/gi,
+        "smiley12": /(\(search\))/g,
+        "smiley13": /(<3|&lt;3|&amp;lt;3|\(L\)|\(l\)|\(H\)|\(h\))/gi,
+        "smiley14": /(\(oops\))/gi,
+        "smiley15": /(\(angry\))/gi,
+        "smiley16": /(\(angel\))/gi,
+        "smiley17": /(\(sick\))/gi,
+        "smiley18": /(;-\(\(|;\(\(|;-\(|;\(|:"\(|:"-\(|:~-\(|:~\(|\(upset\))/gi,
+        "smiley19": /(\(bomb\))/gi,
+        "smiley20": /(\(clap\))/gi,
+        "smiley21": /(;-\)|;\)|;-\)\)|;\)\)|;-D|;D|\(wink\))/gi
+    }
+}
+
+},{}],21:[function(require,module,exports){
+
+var numberOfContacts = 0;
+var notificationInterval;
+
+/**
+ * Updates the number of participants in the contact list button and sets
+ * the glow
+ * @param delta indicates whether a new user has joined (1) or someone has
+ * left(-1)
+ */
+function updateNumberOfParticipants(delta) {
+    //when the user is alone we don't show the number of participants
+    if(numberOfContacts === 0) {
+        $("#numberOfParticipants").text('');
+        numberOfContacts += delta;
+    } else if(numberOfContacts !== 0 && !ContactList.isVisible()) {
+        ContactList.setVisualNotification(true);
+        numberOfContacts += delta;
+        $("#numberOfParticipants").text(numberOfContacts);
+    }
+}
+
+/**
+ * Creates the avatar element.
+ *
+ * @return the newly created avatar element
+ */
+function createAvatar(id) {
+    var avatar = document.createElement('img');
+    avatar.className = "icon-avatar avatar";
+    avatar.src = "https://www.gravatar.com/avatar/" + id + "?d=wavatar&size=30";
+
+    return avatar;
+}
+
+/**
+ * Creates the display name paragraph.
+ *
+ * @param displayName the display name to set
+ */
+function createDisplayNameParagraph(displayName) {
+    var p = document.createElement('p');
+    p.innerText = displayName;
+
+    return p;
+}
+
+
+function stopGlowing(glower) {
+    window.clearInterval(notificationInterval);
+    notificationInterval = false;
+    glower.removeClass('glowing');
+    if (!ContactList.isVisible()) {
+        glower.removeClass('active');
+    }
+}
+
+
+/**
+ * Contact list.
+ */
+var ContactList = {
+    /**
+     * Indicates if the chat is currently visible.
+     *
+     * @return <tt>true</tt> if the chat is currently visible, <tt>false</tt> -
+     * otherwise
+     */
+    isVisible: function () {
+        return $('#contactlist').is(":visible");
+    },
+
+    /**
+     * Adds a contact for the given peerJid if such doesn't yet exist.
+     *
+     * @param peerJid the peerJid corresponding to the contact
+     * @param id the user's email or userId used to get the user's avatar
+     */
+    ensureAddContact: function (peerJid, id) {
+        var resourceJid = Strophe.getResourceFromJid(peerJid);
+
+        var contact = $('#contactlist>ul>li[id="' + resourceJid + '"]');
+
+        if (!contact || contact.length <= 0)
+            ContactList.addContact(peerJid, id);
+    },
+
+    /**
+     * Adds a contact for the given peer jid.
+     *
+     * @param peerJid the jid of the contact to add
+     * @param id the email or userId of the user
+     */
+    addContact: function (peerJid, id) {
+        var resourceJid = Strophe.getResourceFromJid(peerJid);
+
+        var contactlist = $('#contactlist>ul');
+
+        var newContact = document.createElement('li');
+        newContact.id = resourceJid;
+        newContact.className = "clickable";
+        newContact.onclick = function (event) {
+            if (event.currentTarget.className === "clickable") {
+                $(ContactList).trigger('contactclicked', [peerJid]);
+            }
+        };
+
+        newContact.appendChild(createAvatar(id));
+        newContact.appendChild(createDisplayNameParagraph("Participant"));
+
+        var clElement = contactlist.get(0);
+
+        if (resourceJid === APP.xmpp.myResource()
+            && $('#contactlist>ul .title')[0].nextSibling.nextSibling) {
+            clElement.insertBefore(newContact,
+                $('#contactlist>ul .title')[0].nextSibling.nextSibling);
+        }
+        else {
+            clElement.appendChild(newContact);
+        }
+        updateNumberOfParticipants(1);
+    },
+
+    /**
+     * Removes a contact for the given peer jid.
+     *
+     * @param peerJid the peerJid corresponding to the contact to remove
+     */
+    removeContact: function (peerJid) {
+        var resourceJid = Strophe.getResourceFromJid(peerJid);
+
+        var contact = $('#contactlist>ul>li[id="' + resourceJid + '"]');
+
+        if (contact && contact.length > 0) {
+            var contactlist = $('#contactlist>ul');
+
+            contactlist.get(0).removeChild(contact.get(0));
+
+            updateNumberOfParticipants(-1);
+        }
+    },
+
+    setVisualNotification: function (show, stopGlowingIn) {
+        var glower = $('#contactListButton');
+
+        if (show && !notificationInterval) {
+            notificationInterval = window.setInterval(function () {
+                glower.toggleClass('active glowing');
+            }, 800);
+        }
+        else if (!show && notificationInterval) {
+            stopGlowing(glower);
+        }
+        if (stopGlowingIn) {
+            setTimeout(function () {
+                stopGlowing(glower);
+            }, stopGlowingIn);
+        }
+    },
+
+    setClickable: function (resourceJid, isClickable) {
+        var contact = $('#contactlist>ul>li[id="' + resourceJid + '"]');
+        if (isClickable) {
+            contact.addClass('clickable');
+        } else {
+            contact.removeClass('clickable');
+        }
+    },
+
+    onDisplayNameChange: function (peerJid, displayName) {
+        if (peerJid === 'localVideoContainer')
+            peerJid = xmpp.myJid();
+
+        var resourceJid = Strophe.getResourceFromJid(peerJid);
+
+        var contactName = $('#contactlist #' + resourceJid + '>p');
+
+        if (contactName && displayName && displayName.length > 0)
+            contactName.html(displayName);
+    }
+};
+
+module.exports = ContactList;
+},{}],22:[function(require,module,exports){
+var email = '';
+var displayName = '';
+var userId;
+
+
+function supportsLocalStorage() {
+    try {
+        return 'localStorage' in window && window.localStorage !== null;
+    } catch (e) {
+        console.log("localstorage is not supported");
+        return false;
+    }
+}
+
+
+function generateUniqueId() {
+    function _p8() {
+        return (Math.random().toString(16)+"000000000").substr(2,8);
+    }
+    return _p8() + _p8() + _p8() + _p8();
+}
+
+if(supportsLocalStorage()) {
+    if(!window.localStorage.jitsiMeetId) {
+        window.localStorage.jitsiMeetId = generateUniqueId();
+        console.log("generated id", window.localStorage.jitsiMeetId);
+    }
+    userId = window.localStorage.jitsiMeetId || '';
+    email = window.localStorage.email || '';
+    displayName = window.localStorage.displayname || '';
+} else {
+    console.log("local storage is not supported");
+    userId = generateUniqueId();
+}
+
+var Settings =
+{
+    setDisplayName: function (newDisplayName) {
+        displayName = newDisplayName;
+        window.localStorage.displayname = displayName;
+        return displayName;
+    },
+    setEmail: function(newEmail)
+    {
+        email = newEmail;
+        window.localStorage.email = newEmail;
+        return email;
+    },
+    getSettings: function () {
+        return {
+            email: email,
+            displayName: displayName,
+            uid: userId
+        };
+    }
+};
+
+module.exports = Settings;
+
+},{}],23:[function(require,module,exports){
+var Avatar = require("../../avatar/Avatar");
+var Settings = require("./Settings");
+var UIUtil = require("../../util/UIUtil");
+
+
+var SettingsMenu = {
+
+    update: function() {
+        var newDisplayName = UIUtil.escapeHtml($('#setDisplayName').get(0).value);
+        var newEmail = UIUtil.escapeHtml($('#setEmail').get(0).value);
+
+        if(newDisplayName) {
+            var displayName = Settings.setDisplayName(newDisplayName);
+            APP.xmpp.addToPresence("displayName", displayName, true);
+        }
+
+
+        APP.xmpp.addToPresence("email", newEmail);
+        var email = Settings.setEmail(newEmail);
+
+
+        Avatar.setUserAvatar(xmpp.myJid(), email);
+    },
+
+    isVisible: function() {
+        return $('#settingsmenu').is(':visible');
+    },
+
+    setDisplayName: function(newDisplayName) {
+        var displayName = Settings.setDisplayName(newDisplayName);
+        $('#setDisplayName').get(0).value = displayName;
+    },
+
+    onDisplayNameChange: function(peerJid, newDisplayName) {
+        if(peerJid === 'localVideoContainer' ||
+            peerJid === xmpp.myJid()) {
+            this.setDisplayName(newDisplayName);
+        }
+    }
+};
+
+
+module.exports = SettingsMenu;
+},{"../../avatar/Avatar":12,"../../util/UIUtil":30,"./Settings":22}],24:[function(require,module,exports){
+var PanelToggler = require("../side_pannels/SidePanelToggler");
+
+var buttonHandlers = {
+    "bottom_toolbar_contact_list": function () {
+        BottomToolbar.toggleContactList();
+    },
+    "bottom_toolbar_film_strip": function () {
+        BottomToolbar.toggleFilmStrip();
+    },
+    "bottom_toolbar_chat": function () {
+        BottomToolbar.toggleChat();
+    }
+};
+
+var BottomToolbar = (function (my) {
+    my.init = function () {
+        for(var k in buttonHandlers)
+            $("#" + k).click(buttonHandlers[k]);
+    };
+
+    my.toggleChat = function() {
+        PanelToggler.toggleChat();
+    };
+
+    my.toggleContactList = function() {
+        PanelToggler.toggleContactList();
+    };
+
+    my.toggleFilmStrip = function() {
+        var filmstrip = $("#remoteVideos");
+        filmstrip.toggleClass("hidden");
+    };
+
+    $(document).bind("remotevideo.resized", function (event, width, height) {
+        var bottom = (height - $('#bottomToolbar').outerHeight())/2 + 18;
+
+        $('#bottomToolbar').css({bottom: bottom + 'px'});
+    });
+
+    return my;
+}(BottomToolbar || {}));
+
+module.exports = BottomToolbar;
+
+},{"../side_pannels/SidePanelToggler":16}],25:[function(require,module,exports){
+/* global $, buttonClick, config, lockRoom,
+   setSharedKey, Util */
+var messageHandler = require("../util/MessageHandler");
+var BottomToolbar = require("./BottomToolbar");
+var Prezi = require("../prezi/Prezi");
+var Etherpad = require("../etherpad/Etherpad");
+var PanelToggler = require("../side_pannels/SidePanelToggler");
+var Authentication = require("../authentication/Authentication");
+var UIUtil = require("../util/UIUtil");
+
+var roomUrl = null;
+var sharedKey = '';
+var UI = null;
+
+var buttonHandlers =
+{
+    "toolbar_button_mute": function () {
+        return APP.UI.toggleAudio();
+    },
+    "toolbar_button_camera": function () {
+        return APP.UI.toggleVideo();
+    },
+    "toolbar_button_authentication": function () {
+        return Toolbar.authenticateClicked();
+    },
+    "toolbar_button_record": function () {
+        return toggleRecording();
+    },
+    "toolbar_button_security": function () {
+        return Toolbar.openLockDialog();
+    },
+    "toolbar_button_link": function () {
+        return Toolbar.openLinkDialog();
+    },
+    "toolbar_button_chat": function () {
+        return BottomToolbar.toggleChat();
+    },
+    "toolbar_button_prezi": function () {
+        return Prezi.openPreziDialog();
+    },
+    "toolbar_button_etherpad": function () {
+        return Etherpad.toggleEtherpad(0);
+    },
+    "toolbar_button_desktopsharing": function () {
+        return APP.desktopsharing.toggleScreenSharing();
+    },
+    "toolbar_button_fullScreen": function()
+    {
+        UIUtil.buttonClick("#fullScreen", "icon-full-screen icon-exit-full-screen");
+        return Toolbar.toggleFullScreen();
+    },
+    "toolbar_button_sip": function () {
+        return callSipButtonClicked();
+    },
+    "toolbar_button_settings": function () {
+        PanelToggler.toggleSettingsMenu();
+    },
+    "toolbar_button_hangup": function () {
+        return hangup();
+    }
+};
+
+function hangup() {
+    APP.xmpp.disposeConference();
+    if(config.enableWelcomePage)
+    {
+        setTimeout(function()
+        {
+            window.localStorage.welcomePageDisabled = false;
+            window.location.pathname = "/";
+        }, 10000);
+
+    }
+
+    UI.messageHandler.openDialog(
+        "Session Terminated",
+        "You hung up the call",
+        true,
+        { "Join again": true },
+        function(event, value, message, formVals)
+        {
+            window.location.reload();
+            return false;
+        }
+    );
+}
+
+/**
+ * Starts or stops the recording for the conference.
+ */
+
+function toggleRecording() {
+    xmpp.toggleRecording(function (callback) {
+        APP.UI.messageHandler.openTwoButtonDialog(null,
+                '<h2>Enter recording token</h2>' +
+                '<input id="recordingToken" type="text" ' +
+                'placeholder="token" autofocus>',
+            false,
+            "Save",
+            function (e, v, m, f) {
+                if (v) {
+                    var token = document.getElementById('recordingToken');
+
+                    if (token.value) {
+                        callback(UIUtil.escapeHtml(token.value));
+                    }
+                }
+            },
+            function (event) {
+                document.getElementById('recordingToken').focus();
+            },
+            function () {
+            }
+        );
+    }, Toolbar.setRecordingButtonState, Toolbar.setRecordingButtonState);
+}
+
+/**
+ * Locks / unlocks the room.
+ */
+function lockRoom(lock) {
+    var currentSharedKey = '';
+    if (lock)
+        currentSharedKey = sharedKey;
+
+    xmpp.lockRoom(currentSharedKey, function (res) {
+        // password is required
+        if (sharedKey)
+        {
+            console.log('set room password');
+            Toolbar.lockLockButton();
+        }
+        else
+        {
+            console.log('removed room password');
+            Toolbar.unlockLockButton();
+        }
+    }, function (err) {
+        console.warn('setting password failed', err);
+        messageHandler.showError('Lock failed',
+            'Failed to lock conference.',
+            err);
+        Toolbar.setSharedKey('');
+    }, function () {
+        console.warn('room passwords not supported');
+        messageHandler.showError('Warning',
+            'Room passwords are currently not supported.');
+        Toolbar.setSharedKey('');
+    });
+};
+
+/**
+ * Invite participants to conference.
+ */
+function inviteParticipants() {
+    if (roomUrl === null)
+        return;
+
+    var sharedKeyText = "";
+    if (sharedKey && sharedKey.length > 0) {
+        sharedKeyText =
+            "This conference is password protected. Please use the " +
+            "following pin when joining:%0D%0A%0D%0A" +
+            sharedKey + "%0D%0A%0D%0A";
+    }
+
+    var conferenceName = roomUrl.substring(roomUrl.lastIndexOf('/') + 1);
+    var subject = "Invitation to a " + interfaceConfig.APP_NAME + " (" + conferenceName + ")";
+    var body = "Hey there, I%27d like to invite you to a " + interfaceConfig.APP_NAME +
+        " conference I%27ve just set up.%0D%0A%0D%0A" +
+        "Please click on the following link in order" +
+        " to join the conference.%0D%0A%0D%0A" +
+        roomUrl +
+        "%0D%0A%0D%0A" +
+        sharedKeyText +
+        "Note that " + interfaceConfig.APP_NAME + " is currently" +
+        " only supported by Chromium," +
+        " Google Chrome and Opera, so you need" +
+        " to be using one of these browsers.%0D%0A%0D%0A" +
+        "Talk to you in a sec!";
+
+    if (window.localStorage.displayname) {
+        body += "%0D%0A%0D%0A" + window.localStorage.displayname;
+    }
+
+    if (interfaceConfig.INVITATION_POWERED_BY) {
+        body += "%0D%0A%0D%0A--%0D%0Apowered by jitsi.org";
+    }
+
+    window.open("mailto:?subject=" + subject + "&body=" + body, '_blank');
+}
+
+function callSipButtonClicked()
+{
+    var defaultNumber
+        = config.defaultSipNumber ? config.defaultSipNumber : '';
+
+    messageHandler.openTwoButtonDialog(null,
+        '<h2>Enter SIP number</h2>' +
+        '<input id="sipNumber" type="text"' +
+        ' value="' + defaultNumber + '" autofocus>',
+        false,
+        "Dial",
+        function (e, v, m, f) {
+            if (v) {
+                var numberInput = document.getElementById('sipNumber');
+                if (numberInput.value) {
+                    xmpp.dial(numberInput.value, 'fromnumber',
+                        UI.getRoomName(), sharedKey);
+                }
+            }
+        },
+        function (event) {
+            document.getElementById('sipNumber').focus();
+        }
+    );
+}
+
+var Toolbar = (function (my) {
+
+    my.init = function (ui) {
+        for(var k in buttonHandlers)
+            $("#" + k).click(buttonHandlers[k]);
+        UI = ui;
+    }
+
+    /**
+     * Sets shared key
+     * @param sKey the shared key
+     */
+    my.setSharedKey = function (sKey) {
+        sharedKey = sKey;
+    };
+
+    my.authenticateClicked = function () {
+        Authentication.focusAuthenticationWindow();
+        // Get authentication URL
+        APP.xmpp.getAuthUrl(APP.UI.getRoomName(), function (url) {
+            // Open popup with authentication URL
+            var authenticationWindow = Authentication.createAuthenticationWindow(function () {
+                // On popup closed - retry room allocation
+                xAPP.mpp.allocateConferenceFocus(APP.UI.getRoomName(), APP.UI.checkForNicknameAndJoin);
+            }, url);
+            if (!authenticationWindow) {
+                Toolbar.showAuthenticateButton(true);
+                messageHandler.openMessageDialog(
+                    null, "Your browser is blocking popup windows from this site." +
+                        " Please enable popups in your browser security settings" +
+                        " and try again.");
+            }
+        });
+    };
+
+    /**
+     * Updates the room invite url.
+     */
+    my.updateRoomUrl = function (newRoomUrl) {
+        roomUrl = newRoomUrl;
+
+        // If the invite dialog has been already opened we update the information.
+        var inviteLink = document.getElementById('inviteLinkRef');
+        if (inviteLink) {
+            inviteLink.value = roomUrl;
+            inviteLink.select();
+            document.getElementById('jqi_state0_buttonInvite').disabled = false;
+        }
+    };
+
+    /**
+     * Disables and enables some of the buttons.
+     */
+    my.setupButtonsFromConfig = function () {
+        if (config.disablePrezi)
+        {
+            $("#prezi_button").css({display: "none"});
+        }
+    };
+
+    /**
+     * Opens the lock room dialog.
+     */
+    my.openLockDialog = function () {
+        // Only the focus is able to set a shared key.
+        if (!APP.xmpp.isModerator()) {
+            if (sharedKey) {
+                messageHandler.openMessageDialog(null,
+                        "This conversation is currently protected by" +
+                        " a password. Only the owner of the conference" +
+                        " could set a password.",
+                    false,
+                    "Password");
+            } else {
+                messageHandler.openMessageDialog(null,
+                    "This conversation isn't currently protected by" +
+                        " a password. Only the owner of the conference" +
+                        " could set a password.",
+                    false,
+                    "Password");
+            }
+        } else {
+            if (sharedKey) {
+                messageHandler.openTwoButtonDialog(null,
+                    "Are you sure you would like to remove your password?",
+                    false,
+                    "Remove",
+                    function (e, v) {
+                        if (v) {
+                            Toolbar.setSharedKey('');
+                            lockRoom(false);
+                        }
+                    });
+            } else {
+                messageHandler.openTwoButtonDialog(null,
+                    '<h2>Set a password to lock your room</h2>' +
+                        '<input id="lockKey" type="text"' +
+                        'placeholder="your password" autofocus>',
+                    false,
+                    "Save",
+                    function (e, v) {
+                        if (v) {
+                            var lockKey = document.getElementById('lockKey');
+
+                            if (lockKey.value) {
+                                Toolbar.setSharedKey(UIUtil.escapeHtml(lockKey.value));
+                                lockRoom(true);
+                            }
+                        }
+                    },
+                    function () {
+                        document.getElementById('lockKey').focus();
+                    }
+                );
+            }
+        }
+    };
+
+    /**
+     * Opens the invite link dialog.
+     */
+    my.openLinkDialog = function () {
+        var inviteLink;
+        if (roomUrl === null) {
+            inviteLink = "Your conference is currently being created...";
+        } else {
+            inviteLink = encodeURI(roomUrl);
+        }
+        messageHandler.openTwoButtonDialog(
+            "Share this link with everyone you want to invite",
+            '<input id="inviteLinkRef" type="text" value="' +
+                inviteLink + '" onclick="this.select();" readonly>',
+            false,
+            "Invite",
+            function (e, v) {
+                if (v) {
+                    if (roomUrl) {
+                        inviteParticipants();
+                    }
+                }
+            },
+            function () {
+                if (roomUrl) {
+                    document.getElementById('inviteLinkRef').select();
+                } else {
+                    document.getElementById('jqi_state0_buttonInvite')
+                        .disabled = true;
+                }
+            }
+        );
+    };
+
+    /**
+     * Opens the settings dialog.
+     */
+    my.openSettingsDialog = function () {
+        messageHandler.openTwoButtonDialog(
+            '<h2>Configure your conference</h2>' +
+                '<input type="checkbox" id="initMuted">' +
+                'Participants join muted<br/>' +
+                '<input type="checkbox" id="requireNicknames">' +
+                'Require nicknames<br/><br/>' +
+                'Set a password to lock your room:' +
+                '<input id="lockKey" type="text" placeholder="your password"' +
+                'autofocus>',
+            null,
+            false,
+            "Save",
+            function () {
+                document.getElementById('lockKey').focus();
+            },
+            function (e, v) {
+                if (v) {
+                    if ($('#initMuted').is(":checked")) {
+                        // it is checked
+                    }
+
+                    if ($('#requireNicknames').is(":checked")) {
+                        // it is checked
+                    }
+                    /*
+                    var lockKey = document.getElementById('lockKey');
+
+                    if (lockKey.value) {
+                        setSharedKey(lockKey.value);
+                        lockRoom(true);
+                    }
+                    */
+                }
+            }
+        );
+    };
+
+    /**
+     * Toggles the application in and out of full screen mode
+     * (a.k.a. presentation mode in Chrome).
+     */
+    my.toggleFullScreen = function () {
+        var fsElement = document.documentElement;
+
+        if (!document.mozFullScreen && !document.webkitIsFullScreen) {
+            //Enter Full Screen
+            if (fsElement.mozRequestFullScreen) {
+                fsElement.mozRequestFullScreen();
+            }
+            else {
+                fsElement.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
+            }
+        } else {
+            //Exit Full Screen
+            if (document.mozCancelFullScreen) {
+                document.mozCancelFullScreen();
+            } else {
+                document.webkitCancelFullScreen();
+            }
+        }
+    };
+    /**
+     * Unlocks the lock button state.
+     */
+    my.unlockLockButton = function () {
+        if ($("#lockIcon").hasClass("icon-security-locked"))
+            UIUtil.buttonClick("#lockIcon", "icon-security icon-security-locked");
+    };
+    /**
+     * Updates the lock button state to locked.
+     */
+    my.lockLockButton = function () {
+        if ($("#lockIcon").hasClass("icon-security"))
+            UIUtil.buttonClick("#lockIcon", "icon-security icon-security-locked");
+    };
+
+    /**
+     * Shows or hides authentication button
+     * @param show <tt>true</tt> to show or <tt>false</tt> to hide
+     */
+    my.showAuthenticateButton = function (show) {
+        if (show) {
+            $('#authentication').css({display: "inline"});
+        }
+        else {
+            $('#authentication').css({display: "none"});
+        }
+    };
+
+    // Shows or hides the 'recording' button.
+    my.showRecordingButton = function (show) {
+        if (!config.enableRecording) {
+            return;
+        }
+
+        if (show) {
+            $('#recording').css({display: "inline"});
+        }
+        else {
+            $('#recording').css({display: "none"});
+        }
+    };
+
+    // Sets the state of the recording button
+    my.setRecordingButtonState = function (isRecording) {
+        if (isRecording) {
+            $('#recordButton').removeClass("icon-recEnable");
+            $('#recordButton').addClass("icon-recEnable active");
+        } else {
+            $('#recordButton').removeClass("icon-recEnable active");
+            $('#recordButton').addClass("icon-recEnable");
+        }
+    };
+
+    // Shows or hides SIP calls button
+    my.showSipCallButton = function (show) {
+        if (APP.xmpp.isSipGatewayEnabled() && show) {
+            $('#sipCallButton').css({display: "inline"});
+        } else {
+            $('#sipCallButton').css({display: "none"});
+        }
+    };
+
+    /**
+     * Sets the state of the button. The button has blue glow if desktop
+     * streaming is active.
+     * @param active the state of the desktop streaming.
+     */
+    my.changeDesktopSharingButtonState = function (active) {
+        var button = $("#desktopsharing > a");
+        if (active)
+        {
+            button.addClass("glow");
+        }
+        else
+        {
+            button.removeClass("glow");
+        }
+    };
+
+    return my;
+}(Toolbar || {}));
+
+module.exports = Toolbar;
+},{"../authentication/Authentication":11,"../etherpad/Etherpad":13,"../prezi/Prezi":14,"../side_pannels/SidePanelToggler":16,"../util/MessageHandler":28,"../util/UIUtil":30,"./BottomToolbar":24}],26:[function(require,module,exports){
+/* global $, interfaceConfig, Moderator, DesktopStreaming.showDesktopSharingButton */
+
+var toolbarTimeoutObject,
+    toolbarTimeout = interfaceConfig.INITIAL_TOOLBAR_TIMEOUT;
+
+function showDesktopSharingButton() {
+    if (APP.desktopsharing.isDesktopSharingEnabled()) {
+        $('#desktopsharing').css({display: "inline"});
+    } else {
+        $('#desktopsharing').css({display: "none"});
+    }
+}
+
+/**
+ * Hides the toolbar.
+ */
+function hideToolbar() {
+    var header = $("#header"),
+        bottomToolbar = $("#bottomToolbar");
+    var isToolbarHover = false;
+    header.find('*').each(function () {
+        var id = $(this).attr('id');
+        if ($("#" + id + ":hover").length > 0) {
+            isToolbarHover = true;
+        }
+    });
+    if ($("#bottomToolbar:hover").length > 0) {
+        isToolbarHover = true;
+    }
+
+    clearTimeout(toolbarTimeoutObject);
+    toolbarTimeoutObject = null;
+
+    if (!isToolbarHover) {
+        header.hide("slide", { direction: "up", duration: 300});
+        $('#subject').animate({top: "-=40"}, 300);
+        if ($("#remoteVideos").hasClass("hidden")) {
+            bottomToolbar.hide(
+                "slide", {direction: "right", duration: 300});
+        }
+    }
+    else {
+        toolbarTimeoutObject = setTimeout(hideToolbar, toolbarTimeout);
+    }
+}
+
+var ToolbarToggler = {
+    /**
+     * Shows the main toolbar.
+     */
+    showToolbar: function () {
+        var header = $("#header"),
+            bottomToolbar = $("#bottomToolbar");
+        if (!header.is(':visible') || !bottomToolbar.is(":visible")) {
+            header.show("slide", { direction: "up", duration: 300});
+            $('#subject').animate({top: "+=40"}, 300);
+            if (!bottomToolbar.is(":visible")) {
+                bottomToolbar.show(
+                    "slide", {direction: "right", duration: 300});
+            }
+
+            if (toolbarTimeoutObject) {
+                clearTimeout(toolbarTimeoutObject);
+                toolbarTimeoutObject = null;
+            }
+            toolbarTimeoutObject = setTimeout(hideToolbar, toolbarTimeout);
+            toolbarTimeout = interfaceConfig.TOOLBAR_TIMEOUT;
+        }
+
+        if (APP.xmpp.isModerator())
+        {
+//            TODO: Enable settings functionality.
+//                  Need to uncomment the settings button in index.html.
+//            $('#settingsButton').css({visibility:"visible"});
+        }
+
+        // Show/hide desktop sharing button
+        showDesktopSharingButton();
+    },
+
+
+    /**
+     * Docks/undocks the toolbar.
+     *
+     * @param isDock indicates what operation to perform
+     */
+    dockToolbar: function (isDock) {
+        if (isDock) {
+            // First make sure the toolbar is shown.
+            if (!$('#header').is(':visible')) {
+                this.showToolbar();
+            }
+
+            // Then clear the time out, to dock the toolbar.
+            if (toolbarTimeoutObject) {
+                clearTimeout(toolbarTimeoutObject);
+                toolbarTimeoutObject = null;
+            }
+        }
+        else {
+            if (!$('#header').is(':visible')) {
+                this.showToolbar();
+            }
+            else {
+                toolbarTimeoutObject = setTimeout(hideToolbar, toolbarTimeout);
+            }
+        }
+    },
+
+    showDesktopSharingButton: showDesktopSharingButton
+
+};
+
+module.exports = ToolbarToggler;
+},{}],27:[function(require,module,exports){
+var JitsiPopover = (function () {
+    /**
+     * Constructs new JitsiPopover and attaches it to the element
+     * @param element jquery selector
+     * @param options the options for the popover.
+     * @constructor
+     */
+    function JitsiPopover(element, options)
+    {
+        this.options = {
+            skin: "white",
+            content: ""
+        };
+        if(options)
+        {
+            if(options.skin)
+                this.options.skin = options.skin;
+
+            if(options.content)
+                this.options.content = options.content;
+        }
+
+        this.elementIsHovered = false;
+        this.popoverIsHovered = false;
+        this.popoverShown = false;
+
+        element.data("jitsi_popover", this);
+        this.element = element;
+        this.template = ' <div class="jitsipopover ' + this.options.skin +
+            '"><div class="arrow"></div><div class="jitsipopover-content"></div>' +
+            '<div class="jitsiPopupmenuPadding"></div></div>';
+        var self = this;
+        this.element.on("mouseenter", function () {
+            self.elementIsHovered = true;
+            self.show();
+        }).on("mouseleave", function () {
+            self.elementIsHovered = false;
+            setTimeout(function () {
+                self.hide();
+            }, 10);
+        });
+    }
+
+    /**
+     * Shows the popover
+     */
+    JitsiPopover.prototype.show = function () {
+        this.createPopover();
+        this.popoverShown = true;
+
+    };
+
+    /**
+     * Hides the popover
+     */
+    JitsiPopover.prototype.hide = function () {
+        if(!this.elementIsHovered && !this.popoverIsHovered && this.popoverShown)
+        {
+            this.forceHide();
+        }
+    };
+
+    /**
+     * Hides the popover
+     */
+    JitsiPopover.prototype.forceHide = function () {
+        $(".jitsipopover").remove();
+        this.popoverShown = false;
+    };
+
+    /**
+     * Creates the popover html
+     */
+    JitsiPopover.prototype.createPopover = function () {
+        $("body").append(this.template);
+        $(".jitsipopover > .jitsipopover-content").html(this.options.content);
+        var self = this;
+        $(".jitsipopover").on("mouseenter", function () {
+            self.popoverIsHovered = true;
+        }).on("mouseleave", function () {
+            self.popoverIsHovered = false;
+            self.hide();
+        });
+
+        this.refreshPosition();
+    };
+
+    /**
+     * Refreshes the position of the popover
+     */
+    JitsiPopover.prototype.refreshPosition = function () {
+        $(".jitsipopover").position({
+            my: "bottom",
+            at: "top",
+            collision: "fit",
+            of: this.element,
+            using: function (position, elements) {
+                var calcLeft = elements.target.left - elements.element.left + elements.target.width/2;
+                $(".jitsipopover").css({top: position.top, left: position.left, display: "table"});
+                $(".jitsipopover > .arrow").css({left: calcLeft});
+                $(".jitsipopover > .jitsiPopupmenuPadding").css({left: calcLeft - 50});
+            }
+        });
+    };
+
+    /**
+     * Updates the content of popover.
+     * @param content new content
+     */
+    JitsiPopover.prototype.updateContent = function (content) {
+        this.options.content = content;
+        if(!this.popoverShown)
+            return;
+        $(".jitsipopover").remove();
+        this.createPopover();
+    };
+
+    return JitsiPopover;
+
+
+})();
+
+module.exports = JitsiPopover;
+},{}],28:[function(require,module,exports){
+/* global $, jQuery */
+var messageHandler = (function(my) {
+
+    /**
+     * Shows a message to the user.
+     *
+     * @param titleString the title of the message
+     * @param messageString the text of the message
+     */
+    my.openMessageDialog = function(titleString, messageString) {
+        $.prompt(messageString,
+            {
+                title: titleString,
+                persistent: false
+            }
+        );
+    };
+
+    /**
+     * Shows a message to the user with two buttons: first is given as a parameter and the second is Cancel.
+     *
+     * @param titleString the title of the message
+     * @param msgString the text of the message
+     * @param persistent boolean value which determines whether the message is persistent or not
+     * @param leftButton the fist button's text
+     * @param submitFunction function to be called on submit
+     * @param loadedFunction function to be called after the prompt is fully loaded
+     * @param closeFunction function to be called after the prompt is closed
+     */
+    my.openTwoButtonDialog = function(titleString, msgString, persistent, leftButton,
+                                      submitFunction, loadedFunction, closeFunction) {
+        var buttons = {};
+        buttons[leftButton] = true;
+        buttons.Cancel = false;
+        $.prompt(msgString, {
+            title: titleString,
+            persistent: false,
+            buttons: buttons,
+            defaultButton: 1,
+            loaded: loadedFunction,
+            submit: submitFunction,
+            close: closeFunction
+        });
+    };
+
+    /**
+     * Shows a message to the user with two buttons: first is given as a parameter and the second is Cancel.
+     *
+     * @param titleString the title of the message
+     * @param msgString the text of the message
+     * @param persistent boolean value which determines whether the message is persistent or not
+     * @param buttons object with the buttons. The keys must be the name of the button and value is the value
+     * that will be passed to submitFunction
+     * @param submitFunction function to be called on submit
+     * @param loadedFunction function to be called after the prompt is fully loaded
+     */
+    my.openDialog = function (titleString,    msgString, persistent, buttons,
+                              submitFunction, loadedFunction) {
+        var args = {
+            title: titleString,
+            persistent: persistent,
+            buttons: buttons,
+            defaultButton: 1,
+            loaded: loadedFunction,
+            submit: submitFunction
+        };
+        if (persistent) {
+            args.closeText = '';
+        }
+        return $.prompt(msgString, args);
+    };
+
+    /**
+     * Closes currently opened dialog.
+     */
+    my.closeDialog = function () {
+        $.prompt.close();
+    };
+
+    /**
+     * Shows a dialog with different states to the user.
+     *
+     * @param statesObject object containing all the states of the dialog
+     * @param loadedFunction function to be called after the prompt is fully loaded
+     * @param stateChangedFunction function to be called when the state of the dialog is changed
+     */
+    my.openDialogWithStates = function(statesObject, loadedFunction, stateChangedFunction) {
+
+
+        var myPrompt = $.prompt(statesObject);
+
+        myPrompt.on('impromptu:loaded', loadedFunction);
+        myPrompt.on('impromptu:statechanged', stateChangedFunction);
+    };
+
+    /**
+     * Opens new popup window for given <tt>url</tt> centered over current
+     * window.
+     *
+     * @param url the URL to be displayed in the popup window
+     * @param w the width of the popup window
+     * @param h the height of the popup window
+     * @param onPopupClosed optional callback function called when popup window
+     *        has been closed.
+     *
+     * @returns popup window object if opened successfully or undefined
+     *          in case we failed to open it(popup blocked)
+     */
+    my.openCenteredPopup = function (url, w, h, onPopupClosed) {
+        var l = window.screenX + (window.innerWidth / 2) - (w / 2);
+        var t = window.screenY + (window.innerHeight / 2) - (h / 2);
+        var popup = window.open(
+            url, '_blank',
+            'top=' + t + ', left=' + l + ', width=' + w + ', height=' + h + '');
+        if (popup && onPopupClosed) {
+            var pollTimer = window.setInterval(function () {
+                if (popup.closed !== false) {
+                    window.clearInterval(pollTimer);
+                    onPopupClosed();
+                }
+            }, 200);
+        }
+        return popup;
+    };
+
+    /**
+     * Shows a dialog prompting the user to send an error report.
+     *
+     * @param titleString the title of the message
+     * @param msgString the text of the message
+     * @param error the error that is being reported
+     */
+    my.openReportDialog = function(titleString, msgString, error) {
+        my.openMessageDialog(titleString, msgString);
+        console.log(error);
+        //FIXME send the error to the server
+    };
+
+    /**
+     *  Shows an error dialog to the user.
+     * @param title the title of the message
+     * @param message the text of the messafe
+     */
+    my.showError = function(title, message) {
+        if(!(title || message)) {
+            title = title || "Oops!";
+            message = message || "There was some kind of error";
+        }
+        messageHandler.openMessageDialog(title, message);
+    };
+
+    my.notify = function(displayName, cls, message) {
+        toastr.info(
+            '<span class="nickname">' +
+                displayName +
+            '</span><br>' +
+            '<span class=' + cls + '>' +
+                message +
+            '</span>');
+    };
+
+    return my;
+}(messageHandler || {}));
+
+module.exports = messageHandler;
+
+
+
+},{}],29:[function(require,module,exports){
+var UIEvents = require("../../../service/UI/UIEvents");
+
+var nickname = null;
+var eventEmitter = null;
+
+var NickanameHandler = {
+    init: function (emitter) {
+        eventEmitter = emitter;
+        var storedDisplayName = window.localStorage.displayname;
+        if (storedDisplayName) {
+            nickname = storedDisplayName;
+        }
+    },
+    setNickname: function (newNickname) {
+        if (!newNickname || nickname === newNickname)
+            return;
+
+        nickname = newNickname;
+        window.localStorage.displayname = nickname;
+        eventEmitter.emit(UIEvents.NICKNAME_CHANGED, newNickname);
+    },
+    getNickname: function () {
+        return nickname;
+    },
+    addListener: function (type, listener) {
+        eventEmitter.on(type, listener);
+    }
+};
+
+module.exports = NickanameHandler;
+},{"../../../service/UI/UIEvents":80}],30:[function(require,module,exports){
+/**
+ * Created by hristo on 12/22/14.
+ */
+module.exports = {
+    /**
+     * Returns the available video width.
+     */
+    getAvailableVideoWidth: function () {
+        var PanelToggler = require("../side_pannels/SidePanelToggler");
+        var rightPanelWidth
+            = PanelToggler.isVisible() ? PanelToggler.getPanelSize()[0] : 0;
+
+        return window.innerWidth - rightPanelWidth;
+    },
+    /**
+     * Changes the style class of the element given by id.
+     */
+    buttonClick: function(id, classname) {
+        $(id).toggleClass(classname); // add the class to the clicked element
+    },
+    /**
+     * Returns the text width for the given element.
+     *
+     * @param el the element
+     */
+    getTextWidth: function (el) {
+        return (el.clientWidth + 1);
+    },
+
+    /**
+     * Returns the text height for the given element.
+     *
+     * @param el the element
+     */
+    getTextHeight: function (el) {
+        return (el.clientHeight + 1);
+    },
+
+    /**
+     * Plays the sound given by id.
+     *
+     * @param id the identifier of the audio element.
+     */
+    playSoundNotification: function (id) {
+        document.getElementById(id).play();
+    },
+
+    /**
+     * Escapes the given text.
+     */
+    escapeHtml: function (unsafeText) {
+        return $('<div/>').text(unsafeText).html();
+    },
+
+    imageToGrayScale: function (canvas) {
+        var context = canvas.getContext('2d');
+        var imgData = context.getImageData(0, 0, canvas.width, canvas.height);
+        var pixels  = imgData.data;
+
+        for (var i = 0, n = pixels.length; i < n; i += 4) {
+            var grayscale
+                = pixels[i] * .3 + pixels[i+1] * .59 + pixels[i+2] * .11;
+            pixels[i  ] = grayscale;        // red
+            pixels[i+1] = grayscale;        // green
+            pixels[i+2] = grayscale;        // blue
+            // pixels[i+3]              is alpha
+        }
+        // redraw the image in black & white
+        context.putImageData(imgData, 0, 0);
+    },
+
+    setTooltip: function (element, tooltipText, position) {
+        element.setAttribute("data-content", tooltipText);
+        element.setAttribute("data-toggle", "popover");
+        element.setAttribute("data-placement", position);
+        element.setAttribute("data-html", true);
+        element.setAttribute("data-container", "body");
+    }
+
+
+};
+},{"../side_pannels/SidePanelToggler":16}],31:[function(require,module,exports){
+var JitsiPopover = require("../util/JitsiPopover");
+
+/**
+ * Constructs new connection indicator.
+ * @param videoContainer the video container associated with the indicator.
+ * @constructor
+ */
+function ConnectionIndicator(videoContainer, jid, VideoLayout)
+{
+    this.videoContainer = videoContainer;
+    this.bandwidth = null;
+    this.packetLoss = null;
+    this.bitrate = null;
+    this.showMoreValue = false;
+    this.resolution = null;
+    this.transport = [];
+    this.popover = null;
+    this.jid = jid;
+    this.create();
+    this.videoLayout = VideoLayout;
+}
+
+/**
+ * Values for the connection quality
+ * @type {{98: string,
+ *         81: string,
+ *         64: string,
+ *         47: string,
+ *         30: string,
+ *         0: string}}
+ */
+ConnectionIndicator.connectionQualityValues = {
+    98: "18px", //full
+    81: "15px",//4 bars
+    64: "11px",//3 bars
+    47: "7px",//2 bars
+    30: "3px",//1 bar
+    0: "0px"//empty
+};
+
+ConnectionIndicator.getIP = function(value)
+{
+    return value.substring(0, value.lastIndexOf(":"));
+};
+
+ConnectionIndicator.getPort = function(value)
+{
+    return value.substring(value.lastIndexOf(":") + 1, value.length);
+};
+
+ConnectionIndicator.getStringFromArray = function (array) {
+    var res = "";
+    for(var i = 0; i < array.length; i++)
+    {
+        res += (i === 0? "" : ", ") + array[i];
+    }
+    return res;
+};
+
+/**
+ * Generates the html content.
+ * @returns {string} the html content.
+ */
+ConnectionIndicator.prototype.generateText = function () {
+    var downloadBitrate, uploadBitrate, packetLoss, resolution, i;
+
+    if(this.bitrate === null)
+    {
+        downloadBitrate = "N/A";
+        uploadBitrate = "N/A";
+    }
+    else
+    {
+        downloadBitrate =
+            this.bitrate.download? this.bitrate.download + " Kbps" : "N/A";
+        uploadBitrate =
+            this.bitrate.upload? this.bitrate.upload + " Kbps" : "N/A";
+    }
+
+    if(this.packetLoss === null)
+    {
+        packetLoss = "N/A";
+    }
+    else
+    {
+
+        packetLoss = "<span class='jitsipopover_green'>&darr;</span>" +
+            (this.packetLoss.download !== null? this.packetLoss.download : "N/A") +
+            "% <span class='jitsipopover_orange'>&uarr;</span>" +
+            (this.packetLoss.upload !== null? this.packetLoss.upload : "N/A") + "%";
+    }
+
+    var resolutionValue = null;
+    if(this.resolution && this.jid != null)
+    {
+        var keys = Object.keys(this.resolution);
+        if(keys.length == 1)
+        {
+            for(var ssrc in this.resolution)
+            {
+                resolutionValue = this.resolution[ssrc];
+            }
+        }
+        else if(keys.length > 1)
+        {
+            var displayedSsrc = APP.simulcast.getReceivingSSRC(this.jid);
+            resolutionValue = this.resolution[displayedSsrc];
+        }
+    }
+
+    if(this.jid === null)
+    {
+        resolution = "";
+        if(this.resolution === null || !Object.keys(this.resolution) ||
+            Object.keys(this.resolution).length === 0)
+        {
+            resolution = "N/A";
+        }
+        else
+            for(i in this.resolution)
+            {
+                resolutionValue = this.resolution[i];
+                if(resolutionValue)
+                {
+                    if(resolutionValue.height &&
+                        resolutionValue.width)
+                    {
+                        resolution += (resolution === ""? "" : ", ") +
+                            resolutionValue.width + "x" +
+                            resolutionValue.height;
+                    }
+                }
+            }
+    }
+    else if(!resolutionValue ||
+        !resolutionValue.height ||
+        !resolutionValue.width)
+    {
+        resolution = "N/A";
+    }
+    else
+    {
+        resolution = resolutionValue.width + "x" + resolutionValue.height;
+    }
+
+    var result = "<table style='width:100%'>" +
+        "<tr>" +
+        "<td><span class='jitsipopover_blue'>Bitrate:</span></td>" +
+        "<td><span class='jitsipopover_green'>&darr;</span>" +
+        downloadBitrate + " <span class='jitsipopover_orange'>&uarr;</span>" +
+        uploadBitrate + "</td>" +
+        "</tr><tr>" +
+        "<td><span class='jitsipopover_blue'>Packet loss: </span></td>" +
+        "<td>" + packetLoss  + "</td>" +
+        "</tr><tr>" +
+        "<td><span class='jitsipopover_blue'>Resolution:</span></td>" +
+        "<td>" + resolution + "</td></tr></table>";
+
+    if(this.videoContainer.id == "localVideoContainer")
+        result += "<div class=\"jitsipopover_showmore\" " +
+            "onclick = \"APP.UI.connectionIndicatorShowMore('" +
+            this.videoContainer.id + "')\">" +
+            (this.showMoreValue? "Show less" : "Show More") + "</div><br />";
+
+    if(this.showMoreValue)
+    {
+        var downloadBandwidth, uploadBandwidth, transport;
+        if(this.bandwidth === null)
+        {
+            downloadBandwidth = "N/A";
+            uploadBandwidth = "N/A";
+        }
+        else
+        {
+            downloadBandwidth = this.bandwidth.download?
+                this.bandwidth.download + " Kbps" :
+                "N/A";
+            uploadBandwidth = this.bandwidth.upload?
+                this.bandwidth.upload + " Kbps" :
+                "N/A";
+        }
+
+        if(!this.transport || this.transport.length === 0)
+        {
+            transport = "<tr>" +
+                "<td><span class='jitsipopover_blue'>Address:</span></td>" +
+                "<td> N/A</td></tr>";
+        }
+        else
+        {
+            var data = {remoteIP: [], localIP:[], remotePort:[], localPort:[]};
+            for(i = 0; i < this.transport.length; i++)
+            {
+                var ip =  ConnectionIndicator.getIP(this.transport[i].ip);
+                var port = ConnectionIndicator.getPort(this.transport[i].ip);
+                var localIP =
+                    ConnectionIndicator.getIP(this.transport[i].localip);
+                var localPort =
+                    ConnectionIndicator.getPort(this.transport[i].localip);
+                if(data.remoteIP.indexOf(ip) == -1)
+                {
+                    data.remoteIP.push(ip);
+                }
+
+                if(data.remotePort.indexOf(port) == -1)
+                {
+                    data.remotePort.push(port);
+                }
+
+                if(data.localIP.indexOf(localIP) == -1)
+                {
+                    data.localIP.push(localIP);
+                }
+
+                if(data.localPort.indexOf(localPort) == -1)
+                {
+                    data.localPort.push(localPort);
+                }
+
+            }
+            var localTransport =
+                "<tr><td><span class='jitsipopover_blue'>Local address" +
+                (data.localIP.length > 1? "es" : "") + ": </span></td><td> " +
+                ConnectionIndicator.getStringFromArray(data.localIP) +
+                "</td></tr>";
+            transport =
+                "<tr><td><span class='jitsipopover_blue'>Remote address"+
+                (data.remoteIP.length > 1? "es" : "") + ":</span></td><td> " +
+                ConnectionIndicator.getStringFromArray(data.remoteIP) +
+                "</td></tr>";
+            if(this.transport.length > 1)
+            {
+                transport += "<tr>" +
+                    "<td>" +
+                    "<span class='jitsipopover_blue'>Remote ports:</span>" +
+                    "</td><td>";
+                localTransport += "<tr>" +
+                    "<td>" +
+                    "<span class='jitsipopover_blue'>Local ports:</span>" +
+                    "</td><td>";
+            }
+            else
+            {
+                transport +=
+                    "<tr>" +
+                    "<td>" +
+                    "<span class='jitsipopover_blue'>Remote port:</span>" +
+                    "</td><td>";
+                localTransport +=
+                    "<tr>" +
+                    "<td>" +
+                    "<span class='jitsipopover_blue'>Local port:</span>" +
+                    "</td><td>";
+            }
+
+            transport +=
+                ConnectionIndicator.getStringFromArray(data.remotePort);
+            localTransport +=
+                ConnectionIndicator.getStringFromArray(data.localPort);
+            transport += "</td></tr>";
+            transport += localTransport + "</td></tr>";
+            transport +="<tr>" +
+                "<td><span class='jitsipopover_blue'>Transport:</span></td>" +
+                "<td>" + this.transport[0].type + "</td></tr>";
+
+        }
+
+        result += "<table  style='width:100%'>" +
+            "<tr>" +
+            "<td>" +
+            "<span class='jitsipopover_blue'>Estimated bandwidth:</span>" +
+            "</td><td>" +
+            "<span class='jitsipopover_green'>&darr;</span>" +
+            downloadBandwidth +
+            " <span class='jitsipopover_orange'>&uarr;</span>" +
+            uploadBandwidth + "</td></tr>";
+
+        result += transport + "</table>";
+
+    }
+
+    return result;
+};
+
+/**
+ * Shows or hide the additional information.
+ */
+ConnectionIndicator.prototype.showMore = function () {
+    this.showMoreValue = !this.showMoreValue;
+    this.updatePopoverData();
+};
+
+
+function createIcon(classes)
+{
+    var icon = document.createElement("span");
+    for(var i in classes)
+    {
+        icon.classList.add(classes[i]);
+    }
+    icon.appendChild(
+        document.createElement("i")).classList.add("icon-connection");
+    return icon;
+}
+
+/**
+ * Creates the indicator
+ */
+ConnectionIndicator.prototype.create = function () {
+    this.connectionIndicatorContainer = document.createElement("div");
+    this.connectionIndicatorContainer.className = "connectionindicator";
+    this.connectionIndicatorContainer.style.display = "none";
+    this.videoContainer.appendChild(this.connectionIndicatorContainer);
+    this.popover = new JitsiPopover(
+        $("#" + this.videoContainer.id + " > .connectionindicator"),
+        {content: "<div class=\"connection_info\">Come back here for " +
+            "connection information once the conference starts</div>",
+            skin: "black"});
+
+    this.emptyIcon = this.connectionIndicatorContainer.appendChild(
+        createIcon(["connection", "connection_empty"]));
+    this.fullIcon = this.connectionIndicatorContainer.appendChild(
+        createIcon(["connection", "connection_full"]));
+
+};
+
+/**
+ * Removes the indicator
+ */
+ConnectionIndicator.prototype.remove = function()
+{
+    this.connectionIndicatorContainer.remove();
+    this.popover.forceHide();
+
+};
+
+/**
+ * Updates the data of the indicator
+ * @param percent the percent of connection quality
+ * @param object the statistics data.
+ */
+ConnectionIndicator.prototype.updateConnectionQuality =
+function (percent, object) {
+
+    if(percent === null)
+    {
+        this.connectionIndicatorContainer.style.display = "none";
+        this.popover.forceHide();
+        return;
+    }
+    else
+    {
+        if(this.connectionIndicatorContainer.style.display == "none") {
+            this.connectionIndicatorContainer.style.display = "block";
+            this.videoLayout.updateMutePosition(this.videoContainer.id);
+        }
+    }
+    this.bandwidth = object.bandwidth;
+    this.bitrate = object.bitrate;
+    this.packetLoss = object.packetLoss;
+    this.transport = object.transport;
+    if(object.resolution)
+    {
+        this.resolution = object.resolution;
+    }
+    for(var quality in ConnectionIndicator.connectionQualityValues)
+    {
+        if(percent >= quality)
+        {
+            this.fullIcon.style.width =
+                ConnectionIndicator.connectionQualityValues[quality];
+        }
+    }
+    this.updatePopoverData();
+};
+
+/**
+ * Updates the resolution
+ * @param resolution the new resolution
+ */
+ConnectionIndicator.prototype.updateResolution = function (resolution) {
+    this.resolution = resolution;
+    this.updatePopoverData();
+};
+
+/**
+ * Updates the content of the popover
+ */
+ConnectionIndicator.prototype.updatePopoverData = function () {
+    this.popover.updateContent(
+            "<div class=\"connection_info\">" + this.generateText() + "</div>");
+};
+
+/**
+ * Hides the popover
+ */
+ConnectionIndicator.prototype.hide = function () {
+    this.popover.forceHide();
+};
+
+/**
+ * Hides the indicator
+ */
+ConnectionIndicator.prototype.hideIndicator = function () {
+    this.connectionIndicatorContainer.style.display = "none";
+    if(this.popover)
+        this.popover.forceHide();
+};
+
+module.exports = ConnectionIndicator;
+},{"../util/JitsiPopover":27}],32:[function(require,module,exports){
+var AudioLevels = require("../audio_levels/AudioLevels");
+var Avatar = require("../avatar/Avatar");
+var Chat = require("../side_pannels/chat/Chat");
+var ContactList = require("../side_pannels/contactlist/ContactList");
+var UIUtil = require("../util/UIUtil");
+var ConnectionIndicator = require("./ConnectionIndicator");
+var NicknameHandler = require("../util/NicknameHandler");
+var MediaStreamType = require("../../../service/RTC/MediaStreamTypes");
+var UIEvents = require("../../../service/UI/UIEvents");
+
+var currentDominantSpeaker = null;
+var lastNCount = config.channelLastN;
+var localLastNCount = config.channelLastN;
+var localLastNSet = [];
+var lastNEndpointsCache = [];
+var lastNPickupJid = null;
+var largeVideoState = {
+    updateInProgress: false,
+    newSrc: ''
+};
+
+var eventEmitter = null;
+
+/**
+ * Currently focused video "src"(displayed in large video).
+ * @type {String}
+ */
+var focusedVideoInfo = null;
+
+/**
+ * Indicates if we have muted our audio before the conference has started.
+ * @type {boolean}
+ */
+var preMuted = false;
+
+var mutedAudios = {};
+
+var flipXLocalVideo = true;
+var currentVideoWidth = null;
+var currentVideoHeight = null;
+
+var localVideoSrc = null;
+
+function videoactive( videoelem) {
+    if (videoelem.attr('id').indexOf('mixedmslabel') === -1) {
+        // ignore mixedmslabela0 and v0
+
+        videoelem.show();
+        VideoLayout.resizeThumbnails();
+
+        var videoParent = videoelem.parent();
+        var parentResourceJid = null;
+        if (videoParent)
+            parentResourceJid
+                = VideoLayout.getPeerContainerResourceJid(videoParent[0]);
+
+        // Update the large video to the last added video only if there's no
+        // current dominant, focused speaker or prezi playing or update it to
+        // the current dominant speaker.
+        if ((!focusedVideoInfo &&
+            !VideoLayout.getDominantSpeakerResourceJid() &&
+            !require("../prezi/Prezi").isPresentationVisible()) ||
+            (parentResourceJid &&
+                VideoLayout.getDominantSpeakerResourceJid() === parentResourceJid)) {
+            VideoLayout.updateLargeVideo(
+                APP.RTC.getVideoSrc(videoelem[0]),
+                1,
+                parentResourceJid);
+        }
+
+        VideoLayout.showModeratorIndicator();
+    }
+}
+
+function waitForRemoteVideo(selector, ssrc, stream, jid) {
+    // XXX(gp) so, every call to this function is *always* preceded by a call
+    // to the RTC.attachMediaStream() function but that call is *not* followed
+    // by an update to the videoSrcToSsrc map!
+    //
+    // The above way of doing things results in video SRCs that don't correspond
+    // to any SSRC for a short period of time (to be more precise, for as long
+    // the waitForRemoteVideo takes to complete). This causes problems (see
+    // bellow).
+    //
+    // I'm wondering why we need to do that; i.e. why call RTC.attachMediaStream()
+    // a second time in here and only then update the videoSrcToSsrc map? Why
+    // not simply update the videoSrcToSsrc map when the RTC.attachMediaStream()
+    // is called the first time? I actually do that in the lastN changed event
+    // handler because the "orphan" video SRC is causing troubles there. The
+    // purpose of this method would then be to fire the "videoactive.jingle".
+    //
+    // Food for though I guess :-)
+
+    if (selector.removed || !selector.parent().is(":visible")) {
+        console.warn("Media removed before had started", selector);
+        return;
+    }
+
+    if (stream.id === 'mixedmslabel') return;
+
+    if (selector[0].currentTime > 0) {
+        var videoStream = APP.simulcast.getReceivingVideoStream(stream);
+        APP.RTC.attachMediaStream(selector, videoStream); // FIXME: why do i have to do this for FF?
+        videoactive(selector);
+    } else {
+        setTimeout(function () {
+            waitForRemoteVideo(selector, ssrc, stream, jid);
+        }, 250);
+    }
+}
+
+/**
+ * Returns an array of the video horizontal and vertical indents,
+ * so that if fits its parent.
+ *
+ * @return an array with 2 elements, the horizontal indent and the vertical
+ * indent
+ */
+function getCameraVideoPosition(videoWidth,
+                                videoHeight,
+                                videoSpaceWidth,
+                                videoSpaceHeight) {
+    // Parent height isn't completely calculated when we position the video in
+    // full screen mode and this is why we use the screen height in this case.
+    // Need to think it further at some point and implement it properly.
+    var isFullScreen = document.fullScreen ||
+        document.mozFullScreen ||
+        document.webkitIsFullScreen;
+    if (isFullScreen)
+        videoSpaceHeight = window.innerHeight;
+
+    var horizontalIndent = (videoSpaceWidth - videoWidth) / 2;
+    var verticalIndent = (videoSpaceHeight - videoHeight) / 2;
+
+    return [horizontalIndent, verticalIndent];
+}
+
+/**
+ * Returns an array of the video horizontal and vertical indents.
+ * Centers horizontally and top aligns vertically.
+ *
+ * @return an array with 2 elements, the horizontal indent and the vertical
+ * indent
+ */
+function getDesktopVideoPosition(videoWidth,
+                                 videoHeight,
+                                 videoSpaceWidth,
+                                 videoSpaceHeight) {
+
+    var horizontalIndent = (videoSpaceWidth - videoWidth) / 2;
+
+    var verticalIndent = 0;// Top aligned
+
+    return [horizontalIndent, verticalIndent];
+}
+
+
+/**
+ * Returns an array of the video dimensions, so that it covers the screen.
+ * It leaves no empty areas, but some parts of the video might not be visible.
+ *
+ * @return an array with 2 elements, the video width and the video height
+ */
+function getCameraVideoSize(videoWidth,
+                            videoHeight,
+                            videoSpaceWidth,
+                            videoSpaceHeight) {
+    if (!videoWidth)
+        videoWidth = currentVideoWidth;
+    if (!videoHeight)
+        videoHeight = currentVideoHeight;
+
+    var aspectRatio = videoWidth / videoHeight;
+
+    var availableWidth = Math.max(videoWidth, videoSpaceWidth);
+    var availableHeight = Math.max(videoHeight, videoSpaceHeight);
+
+    if (availableWidth / aspectRatio < videoSpaceHeight) {
+        availableHeight = videoSpaceHeight;
+        availableWidth = availableHeight * aspectRatio;
+    }
+
+    if (availableHeight * aspectRatio < videoSpaceWidth) {
+        availableWidth = videoSpaceWidth;
+        availableHeight = availableWidth / aspectRatio;
+    }
+
+    return [availableWidth, availableHeight];
+}
+
+/**
+ * Sets the display name for the given video span id.
+ */
+function setDisplayName(videoSpanId, displayName) {
+    var nameSpan = $('#' + videoSpanId + '>span.displayname');
+    var defaultLocalDisplayName = interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME;
+
+    // If we already have a display name for this video.
+    if (nameSpan.length > 0) {
+        var nameSpanElement = nameSpan.get(0);
+
+        if (nameSpanElement.id === 'localDisplayName' &&
+            $('#localDisplayName').text() !== displayName) {
+            if (displayName && displayName.length > 0)
+                $('#localDisplayName').html(displayName + ' (me)');
+            else
+                $('#localDisplayName').text(defaultLocalDisplayName);
+        } else {
+            if (displayName && displayName.length > 0)
+                $('#' + videoSpanId + '_name').html(displayName);
+            else
+                $('#' + videoSpanId + '_name').text(interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME);
+        }
+    } else {
+        var editButton = null;
+
+        nameSpan = document.createElement('span');
+        nameSpan.className = 'displayname';
+        $('#' + videoSpanId)[0].appendChild(nameSpan);
+
+        if (videoSpanId === 'localVideoContainer') {
+            editButton = createEditDisplayNameButton();
+            nameSpan.innerText = defaultLocalDisplayName;
+        }
+        else {
+            nameSpan.innerText = interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME;
+        }
+
+        if (displayName && displayName.length > 0) {
+            nameSpan.innerText = displayName;
+        }
+
+        if (!editButton) {
+            nameSpan.id = videoSpanId + '_name';
+        } else {
+            nameSpan.id = 'localDisplayName';
+            $('#' + videoSpanId)[0].appendChild(editButton);
+
+            var editableText = document.createElement('input');
+            editableText.className = 'displayname';
+            editableText.type = 'text';
+            editableText.id = 'editDisplayName';
+
+            if (displayName && displayName.length) {
+                editableText.value
+                    = displayName.substring(0, displayName.indexOf(' (me)'));
+            }
+
+            editableText.setAttribute('style', 'display:none;');
+            editableText.setAttribute('placeholder', 'ex. Jane Pink');
+            $('#' + videoSpanId)[0].appendChild(editableText);
+
+            $('#localVideoContainer .displayname')
+                .bind("click", function (e) {
+
+                    e.preventDefault();
+                    e.stopPropagation();
+                    $('#localDisplayName').hide();
+                    $('#editDisplayName').show();
+                    $('#editDisplayName').focus();
+                    $('#editDisplayName').select();
+
+                    $('#editDisplayName').one("focusout", function (e) {
+                        VideoLayout.inputDisplayNameHandler(this.value);
+                    });
+
+                    $('#editDisplayName').on('keydown', function (e) {
+                        if (e.keyCode === 13) {
+                            e.preventDefault();
+                            VideoLayout.inputDisplayNameHandler(this.value);
+                        }
+                    });
+                });
+        }
+    }
+}
+
+/**
+ * Gets the selector of video thumbnail container for the user identified by
+ * given <tt>userJid</tt>
+ * @param resourceJid user's Jid for whom we want to get the video container.
+ */
+function getParticipantContainer(resourceJid)
+{
+    if (!resourceJid)
+        return null;
+
+    if (resourceJid === APP.xmpp.myResource())
+        return $("#localVideoContainer");
+    else
+        return $("#participant_" + resourceJid);
+}
+
+/**
+ * Sets the size and position of the given video element.
+ *
+ * @param video the video element to position
+ * @param width the desired video width
+ * @param height the desired video height
+ * @param horizontalIndent the left and right indent
+ * @param verticalIndent the top and bottom indent
+ */
+function positionVideo(video,
+                       width,
+                       height,
+                       horizontalIndent,
+                       verticalIndent) {
+    video.width(width);
+    video.height(height);
+    video.css({  top: verticalIndent + 'px',
+        bottom: verticalIndent + 'px',
+        left: horizontalIndent + 'px',
+        right: horizontalIndent + 'px'});
+}
+
+/**
+ * Adds the remote video menu element for the given <tt>jid</tt> in the
+ * given <tt>parentElement</tt>.
+ *
+ * @param jid the jid indicating the video for which we're adding a menu.
+ * @param parentElement the parent element where this menu will be added
+ */
+function addRemoteVideoMenu(jid, parentElement) {
+    var spanElement = document.createElement('span');
+    spanElement.className = 'remotevideomenu';
+
+    parentElement.appendChild(spanElement);
+
+    var menuElement = document.createElement('i');
+    menuElement.className = 'fa fa-angle-down';
+    menuElement.title = 'Remote user controls';
+    spanElement.appendChild(menuElement);
+
+//        <ul class="popupmenu">
+//        <li><a href="#">Mute</a></li>
+//        <li><a href="#">Eject</a></li>
+//        </ul>
+
+    var popupmenuElement = document.createElement('ul');
+    popupmenuElement.className = 'popupmenu';
+    popupmenuElement.id
+        = 'remote_popupmenu_' + Strophe.getResourceFromJid(jid);
+    spanElement.appendChild(popupmenuElement);
+
+    var muteMenuItem = document.createElement('li');
+    var muteLinkItem = document.createElement('a');
+
+    var mutedIndicator = "<i class='icon-mic-disabled'></i>";
+
+    if (!mutedAudios[jid]) {
+        muteLinkItem.innerHTML = mutedIndicator + 'Mute';
+        muteLinkItem.className = 'mutelink';
+    }
+    else {
+        muteLinkItem.innerHTML = mutedIndicator + ' Muted';
+        muteLinkItem.className = 'mutelink disabled';
+    }
+
+    muteLinkItem.onclick = function(){
+        if ($(this).attr('disabled') != undefined) {
+            event.preventDefault();
+        }
+        var isMute = mutedAudios[jid] == true;
+        APP.xmpp.setMute(jid, !isMute);
+
+        popupmenuElement.setAttribute('style', 'display:none;');
+
+        if (isMute) {
+            this.innerHTML = mutedIndicator + ' Muted';
+            this.className = 'mutelink disabled';
+        }
+        else {
+            this.innerHTML = mutedIndicator + ' Mute';
+            this.className = 'mutelink';
+        }
+    };
+
+    muteMenuItem.appendChild(muteLinkItem);
+    popupmenuElement.appendChild(muteMenuItem);
+
+    var ejectIndicator = "<i class='fa fa-eject'></i>";
+
+    var ejectMenuItem = document.createElement('li');
+    var ejectLinkItem = document.createElement('a');
+    ejectLinkItem.innerHTML = ejectIndicator + ' Kick out';
+    ejectLinkItem.onclick = function(){
+        APP.xmpp.eject(jid);
+        popupmenuElement.setAttribute('style', 'display:none;');
+    };
+
+    ejectMenuItem.appendChild(ejectLinkItem);
+    popupmenuElement.appendChild(ejectMenuItem);
+
+    var paddingSpan = document.createElement('span');
+    paddingSpan.className = 'popupmenuPadding';
+    popupmenuElement.appendChild(paddingSpan);
+}
+
+/**
+ * Removes remote video menu element from video element identified by
+ * given <tt>videoElementId</tt>.
+ *
+ * @param videoElementId the id of local or remote video element.
+ */
+function removeRemoteVideoMenu(videoElementId) {
+    var menuSpan = $('#' + videoElementId + '>span.remotevideomenu');
+    if (menuSpan.length) {
+        menuSpan.remove();
+    }
+}
+
+/**
+ * Updates the data for the indicator
+ * @param id the id of the indicator
+ * @param percent the percent for connection quality
+ * @param object the data
+ */
+function updateStatsIndicator(id, percent, object) {
+    if(VideoLayout.connectionIndicators[id])
+        VideoLayout.connectionIndicators[id].updateConnectionQuality(percent, object);
+}
+
+
+/**
+ * Returns an array of the video dimensions, so that it keeps it's aspect
+ * ratio and fits available area with it's larger dimension. This method
+ * ensures that whole video will be visible and can leave empty areas.
+ *
+ * @return an array with 2 elements, the video width and the video height
+ */
+function getDesktopVideoSize(videoWidth,
+                             videoHeight,
+                             videoSpaceWidth,
+                             videoSpaceHeight) {
+    if (!videoWidth)
+        videoWidth = currentVideoWidth;
+    if (!videoHeight)
+        videoHeight = currentVideoHeight;
+
+    var aspectRatio = videoWidth / videoHeight;
+
+    var availableWidth = Math.max(videoWidth, videoSpaceWidth);
+    var availableHeight = Math.max(videoHeight, videoSpaceHeight);
+
+    videoSpaceHeight -= $('#remoteVideos').outerHeight();
+
+    if (availableWidth / aspectRatio >= videoSpaceHeight)
+    {
+        availableHeight = videoSpaceHeight;
+        availableWidth = availableHeight * aspectRatio;
+    }
+
+    if (availableHeight * aspectRatio >= videoSpaceWidth)
+    {
+        availableWidth = videoSpaceWidth;
+        availableHeight = availableWidth / aspectRatio;
+    }
+
+    return [availableWidth, availableHeight];
+}
+
+/**
+ * Creates the edit display name button.
+ *
+ * @returns the edit button
+ */
+function createEditDisplayNameButton() {
+    var editButton = document.createElement('a');
+    editButton.className = 'displayname';
+    UIUtil.setTooltip(editButton,
+        'Click to edit your<br/>display name',
+        "top");
+    editButton.innerHTML = '<i class="fa fa-pencil"></i>';
+
+    return editButton;
+}
+
+/**
+ * Creates the element indicating the moderator(owner) of the conference.
+ *
+ * @param parentElement the parent element where the owner indicator will
+ * be added
+ */
+function createModeratorIndicatorElement(parentElement) {
+    var moderatorIndicator = document.createElement('i');
+    moderatorIndicator.className = 'fa fa-star';
+    parentElement.appendChild(moderatorIndicator);
+
+    UIUtil.setTooltip(parentElement,
+        "The owner of<br/>this conference",
+        "top");
+}
+
+
+var VideoLayout = (function (my) {
+    my.connectionIndicators = {};
+
+    // By default we use camera
+    my.getVideoSize = getCameraVideoSize;
+    my.getVideoPosition = getCameraVideoPosition;
+
+    my.init = function (emitter) {
+        // Listen for large video size updates
+        document.getElementById('largeVideo')
+            .addEventListener('loadedmetadata', function (e) {
+                currentVideoWidth = this.videoWidth;
+                currentVideoHeight = this.videoHeight;
+                VideoLayout.positionLarge(currentVideoWidth, currentVideoHeight);
+            });
+        eventEmitter = emitter;
+    };
+
+    my.isInLastN = function(resource) {
+        return lastNCount < 0 // lastN is disabled, return true
+            || (lastNCount > 0 && lastNEndpointsCache.length == 0) // lastNEndpoints cache not built yet, return true
+            || (lastNEndpointsCache && lastNEndpointsCache.indexOf(resource) !== -1);
+    };
+
+    my.changeLocalStream = function (stream) {
+        VideoLayout.changeLocalVideo(stream);
+    };
+
+    my.changeLocalAudio = function(stream) {
+        APP.RTC.attachMediaStream($('#localAudio'), stream.getOriginalStream());
+        document.getElementById('localAudio').autoplay = true;
+        document.getElementById('localAudio').volume = 0;
+        if (preMuted) {
+            if(!APP.UI.setAudioMuted(true))
+            {
+                preMuted = mute;
+            }
+            preMuted = false;
+        }
+    };
+
+    my.changeLocalVideo = function(stream) {
+        var flipX = true;
+        if(stream.videoType == "screen")
+            flipX = false;
+        var localVideo = document.createElement('video');
+        localVideo.id = 'localVideo_' +
+            APP.RTC.getStreamID(stream.getOriginalStream());
+        localVideo.autoplay = true;
+        localVideo.volume = 0; // is it required if audio is separated ?
+        localVideo.oncontextmenu = function () { return false; };
+
+        var localVideoContainer = document.getElementById('localVideoWrapper');
+        localVideoContainer.appendChild(localVideo);
+
+        // Set default display name.
+        setDisplayName('localVideoContainer');
+
+        if(!VideoLayout.connectionIndicators["localVideoContainer"]) {
+            VideoLayout.connectionIndicators["localVideoContainer"]
+                = new ConnectionIndicator($("#localVideoContainer")[0], null, VideoLayout);
+        }
+
+        AudioLevels.updateAudioLevelCanvas(null, VideoLayout);
+
+        var localVideoSelector = $('#' + localVideo.id);
+
+        function localVideoClick(event) {
+            event.stopPropagation();
+            VideoLayout.handleVideoThumbClicked(
+                APP.RTC.getVideoSrc(localVideo),
+                false,
+                APP.xmpp.myResource());
+        }
+        // Add click handler to both video and video wrapper elements in case
+        // there's no video.
+        localVideoSelector.click(localVideoClick);
+        $('#localVideoContainer').click(localVideoClick);
+
+        // Add hover handler
+        $('#localVideoContainer').hover(
+            function() {
+                VideoLayout.showDisplayName('localVideoContainer', true);
+            },
+            function() {
+                if (!VideoLayout.isLargeVideoVisible()
+                        || APP.RTC.getVideoSrc(localVideo) !== APP.RTC.getVideoSrc($('#largeVideo')[0]))
+                    VideoLayout.showDisplayName('localVideoContainer', false);
+            }
+        );
+        // Add stream ended handler
+        stream.getOriginalStream().onended = function () {
+            localVideoContainer.removeChild(localVideo);
+            VideoLayout.updateRemovedVideo(APP.RTC.getVideoSrc(localVideo));
+        };
+        // Flip video x axis if needed
+        flipXLocalVideo = flipX;
+        if (flipX) {
+            localVideoSelector.addClass("flipVideoX");
+        }
+        // Attach WebRTC stream
+        var videoStream = APP.simulcast.getLocalVideoStream();
+        APP.RTC.attachMediaStream(localVideoSelector, videoStream);
+
+        localVideoSrc = APP.RTC.getVideoSrc(localVideo);
+
+        var myResourceJid = APP.xmpp.myResource();
+
+        VideoLayout.updateLargeVideo(localVideoSrc, 0,
+            myResourceJid);
+
+    };
+
+    /**
+     * Checks if removed video is currently displayed and tries to display
+     * another one instead.
+     * @param removedVideoSrc src stream identifier of the video.
+     */
+    my.updateRemovedVideo = function(removedVideoSrc) {
+        if (removedVideoSrc === APP.RTC.getVideoSrc($('#largeVideo')[0])) {
+            // this is currently displayed as large
+            // pick the last visible video in the row
+            // if nobody else is left, this picks the local video
+            var pick
+                = $('#remoteVideos>span[id!="mixedstream"]:visible:last>video')
+                    .get(0);
+
+            if (!pick) {
+                console.info("Last visible video no longer exists");
+                pick = $('#remoteVideos>span[id!="mixedstream"]>video').get(0);
+
+                if (!pick || !APP.RTC.getVideoSrc(pick)) {
+                    // Try local video
+                    console.info("Fallback to local video...");
+                    pick = $('#remoteVideos>span>span>video').get(0);
+                }
+            }
+
+            // mute if localvideo
+            if (pick) {
+                var container = pick.parentNode;
+                var jid = null;
+                if(container)
+                {
+                    if(container.id == "localVideoWrapper")
+                    {
+                        jid = APP.xmpp.myResource();
+                    }
+                    else
+                    {
+                        jid = VideoLayout.getPeerContainerResourceJid(container);
+                    }
+                }
+
+                VideoLayout.updateLargeVideo(APP.RTC.getVideoSrc(pick), pick.volume, jid);
+            } else {
+                console.warn("Failed to elect large video");
+            }
+        }
+    };
+    
+    my.onRemoteStreamAdded = function (stream) {
+        var container;
+        var remotes = document.getElementById('remoteVideos');
+
+        if (stream.peerjid) {
+            VideoLayout.ensurePeerContainerExists(stream.peerjid);
+
+            container  = document.getElementById(
+                    'participant_' + Strophe.getResourceFromJid(stream.peerjid));
+        } else {
+            var id = stream.getOriginalStream().id;
+            if (id !== 'mixedmslabel'
+                // FIXME: default stream is added always with new focus
+                // (to be investigated)
+                && id !== 'default') {
+                console.error('can not associate stream',
+                    id,
+                    'with a participant');
+                // We don't want to add it here since it will cause troubles
+                return;
+            }
+            // FIXME: for the mixed ms we dont need a video -- currently
+            container = document.createElement('span');
+            container.id = 'mixedstream';
+            container.className = 'videocontainer';
+            remotes.appendChild(container);
+            UIUtil.playSoundNotification('userJoined');
+        }
+
+        if (container) {
+            VideoLayout.addRemoteStreamElement( container,
+                stream.sid,
+                stream.getOriginalStream(),
+                stream.peerjid,
+                stream.ssrc);
+        }
+    }
+
+    my.getLargeVideoState = function () {
+        return largeVideoState;
+    };
+
+    /**
+     * Updates the large video with the given new video source.
+     */
+    my.updateLargeVideo = function(newSrc, vol, resourceJid) {
+        console.log('hover in', newSrc);
+
+        if (APP.RTC.getVideoSrc($('#largeVideo')[0]) !== newSrc) {
+
+            $('#activeSpeaker').css('visibility', 'hidden');
+            // Due to the simulcast the localVideoSrc may have changed when the
+            // fadeOut event triggers. In that case the getJidFromVideoSrc and
+            // isVideoSrcDesktop methods will not function correctly.
+            //
+            // Also, again due to the simulcast, the updateLargeVideo method can
+            // be called multiple times almost simultaneously. Therefore, we
+            // store the state here and update only once.
+
+            largeVideoState.newSrc = newSrc;
+            largeVideoState.isVisible = $('#largeVideo').is(':visible');
+            largeVideoState.isDesktop = APP.RTC.isVideoSrcDesktop(resourceJid);
+            if(largeVideoState.userResourceJid) {
+                largeVideoState.oldResourceJid = largeVideoState.userResourceJid;
+            } else {
+                largeVideoState.oldResourceJid = null;
+            }
+            largeVideoState.userResourceJid = resourceJid;
+
+            // Screen stream is already rotated
+            largeVideoState.flipX = (newSrc === localVideoSrc) && flipXLocalVideo;
+
+            var userChanged = false;
+            if (largeVideoState.oldResourceJid !== largeVideoState.userResourceJid) {
+                userChanged = true;
+                // we want the notification to trigger even if userJid is undefined,
+                // or null.
+                eventEmitter.emit(UIEvents.SELECTED_ENDPOINT,
+                    largeVideoState.userResourceJid);
+            }
+
+            if (!largeVideoState.updateInProgress) {
+                largeVideoState.updateInProgress = true;
+
+                var doUpdate = function () {
+
+                    Avatar.updateActiveSpeakerAvatarSrc(
+                        APP.xmpp.findJidFromResource(
+                            largeVideoState.userResourceJid));
+
+                    if (!userChanged && largeVideoState.preload &&
+                        largeVideoState.preload !== null &&
+                        APP.RTC.getVideoSrc($(largeVideoState.preload)[0]) === newSrc)
+                    {
+
+                        console.info('Switching to preloaded video');
+                        var attributes = $('#largeVideo').prop("attributes");
+
+                        // loop through largeVideo attributes and apply them on
+                        // preload.
+                        $.each(attributes, function () {
+                            if (this.name !== 'id' && this.name !== 'src') {
+                                largeVideoState.preload.attr(this.name, this.value);
+                            }
+                        });
+
+                        largeVideoState.preload.appendTo($('#largeVideoContainer'));
+                        $('#largeVideo').attr('id', 'previousLargeVideo');
+                        largeVideoState.preload.attr('id', 'largeVideo');
+                        $('#previousLargeVideo').remove();
+
+                        largeVideoState.preload.on('loadedmetadata', function (e) {
+                            currentVideoWidth = this.videoWidth;
+                            currentVideoHeight = this.videoHeight;
+                            VideoLayout.positionLarge(currentVideoWidth, currentVideoHeight);
+                        });
+                        largeVideoState.preload = null;
+                        largeVideoState.preload_ssrc = 0;
+                    } else {
+                        APP.RTC.setVideoSrc($('#largeVideo')[0], largeVideoState.newSrc);
+                    }
+
+                    var videoTransform = document.getElementById('largeVideo')
+                        .style.webkitTransform;
+
+                    if (largeVideoState.flipX && videoTransform !== 'scaleX(-1)') {
+                        document.getElementById('largeVideo').style.webkitTransform
+                            = "scaleX(-1)";
+                    }
+                    else if (!largeVideoState.flipX && videoTransform === 'scaleX(-1)') {
+                        document.getElementById('largeVideo').style.webkitTransform
+                            = "none";
+                    }
+
+                    // Change the way we'll be measuring and positioning large video
+
+                    VideoLayout.getVideoSize = largeVideoState.isDesktop
+                        ? getDesktopVideoSize
+                        : getCameraVideoSize;
+                    VideoLayout.getVideoPosition = largeVideoState.isDesktop
+                        ? getDesktopVideoPosition
+                        : getCameraVideoPosition;
+
+
+                    // Only if the large video is currently visible.
+                    // Disable previous dominant speaker video.
+                    if (largeVideoState.oldResourceJid) {
+                        VideoLayout.enableDominantSpeaker(
+                            largeVideoState.oldResourceJid,
+                            false);
+                    }
+
+                    // Enable new dominant speaker in the remote videos section.
+                    if (largeVideoState.userResourceJid) {
+                        VideoLayout.enableDominantSpeaker(
+                            largeVideoState.userResourceJid,
+                            true);
+                    }
+
+                    if (userChanged && largeVideoState.isVisible) {
+                        // using "this" should be ok because we're called
+                        // from within the fadeOut event.
+                        $(this).fadeIn(300);
+                    }
+
+                    if(userChanged) {
+                        Avatar.showUserAvatar(
+                            APP.xmpp.findJidFromResource(
+                                largeVideoState.oldResourceJid));
+                    }
+
+                    largeVideoState.updateInProgress = false;
+                };
+
+                if (userChanged) {
+                    $('#largeVideo').fadeOut(300, doUpdate);
+                } else {
+                    doUpdate();
+                }
+            }
+        } else {
+            Avatar.showUserAvatar(
+                APP.xmpp.findJidFromResource(
+                    largeVideoState.userResourceJid));
+        }
+
+    };
+
+    my.handleVideoThumbClicked = function(videoSrc,
+                                          noPinnedEndpointChangedEvent, 
+                                          resourceJid) {
+        // Restore style for previously focused video
+        var oldContainer = null;
+        if(focusedVideoInfo) {
+            var focusResourceJid = focusedVideoInfo.resourceJid;
+            oldContainer = getParticipantContainer(focusResourceJid);
+        }
+
+        if (oldContainer) {
+            oldContainer.removeClass("videoContainerFocused");
+        }
+
+        // Unlock current focused.
+        if (focusedVideoInfo && focusedVideoInfo.src === videoSrc)
+        {
+            focusedVideoInfo = null;
+            var dominantSpeakerVideo = null;
+            // Enable the currently set dominant speaker.
+            if (currentDominantSpeaker) {
+                dominantSpeakerVideo
+                    = $('#participant_' + currentDominantSpeaker + '>video')
+                        .get(0);
+
+                if (dominantSpeakerVideo) {
+                    VideoLayout.updateLargeVideo(
+                        APP.RTC.getVideoSrc(dominantSpeakerVideo),
+                        1,
+                        currentDominantSpeaker);
+                }
+            }
+
+            if (!noPinnedEndpointChangedEvent) {
+                eventEmitter.emit(UIEvents.PINNED_ENDPOINT);
+            }
+            return;
+        }
+
+        // Lock new video
+        focusedVideoInfo = {
+            src: videoSrc,
+            resourceJid: resourceJid
+        };
+
+        // Update focused/pinned interface.
+        if (resourceJid)
+        {
+            var container = getParticipantContainer(resourceJid);
+            container.addClass("videoContainerFocused");
+
+            if (!noPinnedEndpointChangedEvent) {
+                eventEmitter.emit(UIEvents.PINNED_ENDPOINT, resourceJid);
+            }
+        }
+
+        if ($('#largeVideo').attr('src') === videoSrc &&
+            VideoLayout.isLargeVideoOnTop()) {
+            return;
+        }
+
+        // Triggers a "video.selected" event. The "false" parameter indicates
+        // this isn't a prezi.
+        $(document).trigger("video.selected", [false]);
+
+        VideoLayout.updateLargeVideo(videoSrc, 1, resourceJid);
+
+        $('audio').each(function (idx, el) {
+            if (el.id.indexOf('mixedmslabel') !== -1) {
+                el.volume = 0;
+                el.volume = 1;
+            }
+        });
+    };
+
+    /**
+     * Positions the large video.
+     *
+     * @param videoWidth the stream video width
+     * @param videoHeight the stream video height
+     */
+    my.positionLarge = function (videoWidth, videoHeight) {
+        var videoSpaceWidth = $('#videospace').width();
+        var videoSpaceHeight = window.innerHeight;
+
+        var videoSize = VideoLayout.getVideoSize(videoWidth,
+                                     videoHeight,
+                                     videoSpaceWidth,
+                                     videoSpaceHeight);
+
+        var largeVideoWidth = videoSize[0];
+        var largeVideoHeight = videoSize[1];
+
+        var videoPosition = VideoLayout.getVideoPosition(largeVideoWidth,
+                                             largeVideoHeight,
+                                             videoSpaceWidth,
+                                             videoSpaceHeight);
+
+        var horizontalIndent = videoPosition[0];
+        var verticalIndent = videoPosition[1];
+
+        positionVideo($('#largeVideo'),
+                      largeVideoWidth,
+                      largeVideoHeight,
+                      horizontalIndent, verticalIndent);
+    };
+
+    /**
+     * Shows/hides the large video.
+     */
+    my.setLargeVideoVisible = function(isVisible) {
+        var resourceJid = largeVideoState.userResourceJid;
+
+        if (isVisible) {
+            $('#largeVideo').css({visibility: 'visible'});
+            $('.watermark').css({visibility: 'visible'});
+            VideoLayout.enableDominantSpeaker(resourceJid, true);
+        }
+        else {
+            $('#largeVideo').css({visibility: 'hidden'});
+            $('#activeSpeaker').css('visibility', 'hidden');
+            $('.watermark').css({visibility: 'hidden'});
+            VideoLayout.enableDominantSpeaker(resourceJid, false);
+            if(focusedVideoInfo) {
+                var focusResourceJid = focusedVideoInfo.resourceJid;
+                var oldContainer = getParticipantContainer(focusResourceJid);
+
+                if (oldContainer && oldContainer.length > 0) {
+                    oldContainer.removeClass("videoContainerFocused");
+                }
+                focusedVideoInfo = null;
+                if(focusResourceJid) {
+                    Avatar.showUserAvatar(
+                        APP.xmpp.findJidFromResource(focusResourceJid));
+                }
+            }
+        }
+    };
+
+    /**
+     * Indicates if the large video is currently visible.
+     *
+     * @return <tt>true</tt> if visible, <tt>false</tt> - otherwise
+     */
+    my.isLargeVideoVisible = function() {
+        return $('#largeVideo').is(':visible');
+    };
+
+    my.isLargeVideoOnTop = function () {
+        var Etherpad = require("../etherpad/Etherpad");
+        var Prezi = require("../prezi/Prezi");
+        return !Prezi.isPresentationVisible() && !Etherpad.isVisible();
+    };
+
+    /**
+     * Checks if container for participant identified by given peerJid exists
+     * in the document and creates it eventually.
+     * 
+     * @param peerJid peer Jid to check.
+     * @param userId user email or id for setting the avatar
+     * 
+     * @return Returns <tt>true</tt> if the peer container exists,
+     * <tt>false</tt> - otherwise
+     */
+    my.ensurePeerContainerExists = function(peerJid, userId) {
+        ContactList.ensureAddContact(peerJid, userId);
+
+        var resourceJid = Strophe.getResourceFromJid(peerJid);
+
+        var videoSpanId = 'participant_' + resourceJid;
+
+        if (!$('#' + videoSpanId).length) {
+            var container =
+                VideoLayout.addRemoteVideoContainer(peerJid, videoSpanId, userId);
+            Avatar.setUserAvatar(peerJid, userId);
+            // Set default display name.
+            setDisplayName(videoSpanId);
+
+            VideoLayout.connectionIndicators[videoSpanId] =
+                new ConnectionIndicator(container, peerJid, VideoLayout);
+
+            var nickfield = document.createElement('span');
+            nickfield.className = "nick";
+            nickfield.appendChild(document.createTextNode(resourceJid));
+            container.appendChild(nickfield);
+
+            // In case this is not currently in the last n we don't show it.
+            if (localLastNCount
+                && localLastNCount > 0
+                && $('#remoteVideos>span').length >= localLastNCount + 2) {
+                showPeerContainer(resourceJid, 'hide');
+            }
+            else
+                VideoLayout.resizeThumbnails();
+        }
+    };
+
+    my.addRemoteVideoContainer = function(peerJid, spanId) {
+        var container = document.createElement('span');
+        container.id = spanId;
+        container.className = 'videocontainer';
+        var remotes = document.getElementById('remoteVideos');
+
+        // If the peerJid is null then this video span couldn't be directly
+        // associated with a participant (this could happen in the case of prezi).
+        if (APP.xmpp.isModerator() && peerJid !== null)
+            addRemoteVideoMenu(peerJid, container);
+
+        remotes.appendChild(container);
+        AudioLevels.updateAudioLevelCanvas(peerJid, VideoLayout);
+
+        return container;
+    };
+
+    /**
+     * Creates an audio or video stream element.
+     */
+    my.createStreamElement = function (sid, stream) {
+        var isVideo = stream.getVideoTracks().length > 0;
+
+        var element = isVideo
+                        ? document.createElement('video')
+                        : document.createElement('audio');
+        var id = (isVideo ? 'remoteVideo_' : 'remoteAudio_')
+                    + sid + '_' + APP.RTC.getStreamID(stream);
+
+        element.id = id;
+        element.autoplay = true;
+        element.oncontextmenu = function () { return false; };
+
+        return element;
+    };
+
+    my.addRemoteStreamElement
+        = function (container, sid, stream, peerJid, thessrc) {
+        var newElementId = null;
+
+        var isVideo = stream.getVideoTracks().length > 0;
+
+        if (container) {
+            var streamElement = VideoLayout.createStreamElement(sid, stream);
+            newElementId = streamElement.id;
+
+            container.appendChild(streamElement);
+
+            var sel = $('#' + newElementId);
+            sel.hide();
+
+            // If the container is currently visible we attach the stream.
+            if (!isVideo
+                || (container.offsetParent !== null && isVideo)) {
+                var videoStream = APP.simulcast.getReceivingVideoStream(stream);
+                APP.RTC.attachMediaStream(sel, videoStream);
+
+                if (isVideo)
+                    waitForRemoteVideo(sel, thessrc, stream, peerJid);
+            }
+
+            stream.onended = function () {
+                console.log('stream ended', this);
+
+                VideoLayout.removeRemoteStreamElement(
+                    stream, isVideo, container);
+
+                // NOTE(gp) it seems that under certain circumstances, the
+                // onended event is not fired and thus the contact list is not
+                // updated.
+                //
+                // The onended event of a stream should be fired when the SSRCs
+                // corresponding to that stream are removed from the SDP; but
+                // this doesn't seem to always be the case, resulting in ghost
+                // contacts.
+                //
+                // In an attempt to fix the ghost contacts problem, I'm moving
+                // the removeContact() method call in app.js, inside the
+                // 'muc.left' event handler.
+
+                //if (peerJid)
+                //    ContactList.removeContact(peerJid);
+            };
+
+            // Add click handler.
+            container.onclick = function (event) {
+                /*
+                 * FIXME It turns out that videoThumb may not exist (if there is
+                 * no actual video).
+                 */
+                var videoThumb = $('#' + container.id + '>video').get(0);
+                if (videoThumb) {
+                    VideoLayout.handleVideoThumbClicked(
+                        APP.RTC.getVideoSrc(videoThumb),
+                        false,
+                        Strophe.getResourceFromJid(peerJid));
+                }
+
+                event.stopPropagation();
+                event.preventDefault();
+                return false;
+            };
+
+            // Add hover handler
+            $(container).hover(
+                function() {
+                    VideoLayout.showDisplayName(container.id, true);
+                },
+                function() {
+                    var videoSrc = null;
+                    if ($('#' + container.id + '>video')
+                            && $('#' + container.id + '>video').length > 0) {
+                        videoSrc = APP.RTC.getVideoSrc($('#' + container.id + '>video').get(0));
+                    }
+
+                    // If the video has been "pinned" by the user we want to
+                    // keep the display name on place.
+                    if (!VideoLayout.isLargeVideoVisible()
+                            || videoSrc !== APP.RTC.getVideoSrc($('#largeVideo')[0]))
+                        VideoLayout.showDisplayName(container.id, false);
+                }
+            );
+        }
+
+        return newElementId;
+    };
+
+    /**
+     * Removes the remote stream element corresponding to the given stream and
+     * parent container.
+     * 
+     * @param stream the stream
+     * @param isVideo <tt>true</tt> if given <tt>stream</tt> is a video one.
+     * @param container
+     */
+    my.removeRemoteStreamElement = function (stream, isVideo, container) {
+        if (!container)
+            return;
+
+        var select = null;
+        var removedVideoSrc = null;
+        if (isVideo) {
+            select = $('#' + container.id + '>video');
+            removedVideoSrc = APP.RTC.getVideoSrc(select.get(0));
+        }
+        else
+            select = $('#' + container.id + '>audio');
+
+
+        // Mark video as removed to cancel waiting loop(if video is removed
+        // before has started)
+        select.removed = true;
+        select.remove();
+
+        var audioCount = $('#' + container.id + '>audio').length;
+        var videoCount = $('#' + container.id + '>video').length;
+
+        if (!audioCount && !videoCount) {
+            console.log("Remove whole user", container.id);
+            if(VideoLayout.connectionIndicators[container.id])
+                VideoLayout.connectionIndicators[container.id].remove();
+            // Remove whole container
+            container.remove();
+
+            UIUtil.playSoundNotification('userLeft');
+            VideoLayout.resizeThumbnails();
+        }
+
+        if (removedVideoSrc)
+            VideoLayout.updateRemovedVideo(removedVideoSrc);
+    };
+
+    /**
+     * Show/hide peer container for the given resourceJid.
+     */
+    function showPeerContainer(resourceJid, state) {
+        var peerContainer = $('#participant_' + resourceJid);
+
+        if (!peerContainer)
+            return;
+
+        var isHide = state === 'hide';
+        var resizeThumbnails = false;
+
+        if (!isHide) {
+            if (!peerContainer.is(':visible')) {
+                resizeThumbnails = true;
+                peerContainer.show();
+            }
+
+            var jid = APP.xmpp.findJidFromResource(resourceJid);
+            if (state == 'show')
+            {
+                // peerContainer.css('-webkit-filter', '');
+
+                Avatar.showUserAvatar(jid, false);
+            }
+            else // if (state == 'avatar')
+            {
+                // peerContainer.css('-webkit-filter', 'grayscale(100%)');
+                Avatar.showUserAvatar(jid, true);
+            }
+        }
+        else if (peerContainer.is(':visible') && isHide)
+        {
+            resizeThumbnails = true;
+            peerContainer.hide();
+            if(VideoLayout.connectionIndicators['participant_' + resourceJid])
+                VideoLayout.connectionIndicators['participant_' + resourceJid].hide();
+        }
+
+        if (resizeThumbnails) {
+            VideoLayout.resizeThumbnails();
+        }
+
+        // We want to be able to pin a participant from the contact list, even
+        // if he's not in the lastN set!
+        // ContactList.setClickable(resourceJid, !isHide);
+
+    };
+
+    my.inputDisplayNameHandler = function (name) {
+        NicknameHandler.setNickname(name);
+
+        if (!$('#localDisplayName').is(":visible")) {
+            if (NicknameHandler.getNickname())
+                $('#localDisplayName').text(NicknameHandler.getNickname() + " (me)");
+            else
+                $('#localDisplayName')
+                    .text(interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME);
+            $('#localDisplayName').show();
+        }
+
+        $('#editDisplayName').hide();
+    };
+
+    /**
+     * Shows/hides the display name on the remote video.
+     * @param videoSpanId the identifier of the video span element
+     * @param isShow indicates if the display name should be shown or hidden
+     */
+    my.showDisplayName = function(videoSpanId, isShow) {
+        var nameSpan = $('#' + videoSpanId + '>span.displayname').get(0);
+        if (isShow) {
+            if (nameSpan && nameSpan.innerHTML && nameSpan.innerHTML.length) 
+                nameSpan.setAttribute("style", "display:inline-block;");
+        }
+        else {
+            if (nameSpan)
+                nameSpan.setAttribute("style", "display:none;");
+        }
+    };
+
+    /**
+     * Shows the presence status message for the given video.
+     */
+    my.setPresenceStatus = function (videoSpanId, statusMsg) {
+
+        if (!$('#' + videoSpanId).length) {
+            // No container
+            return;
+        }
+
+        var statusSpan = $('#' + videoSpanId + '>span.status');
+        if (!statusSpan.length) {
+            //Add status span
+            statusSpan = document.createElement('span');
+            statusSpan.className = 'status';
+            statusSpan.id = videoSpanId + '_status';
+            $('#' + videoSpanId)[0].appendChild(statusSpan);
+
+            statusSpan = $('#' + videoSpanId + '>span.status');
+        }
+
+        // Display status
+        if (statusMsg && statusMsg.length) {
+            $('#' + videoSpanId + '_status').text(statusMsg);
+            statusSpan.get(0).setAttribute("style", "display:inline-block;");
+        }
+        else {
+            // Hide
+            statusSpan.get(0).setAttribute("style", "display:none;");
+        }
+    };
+
+    /**
+     * Shows a visual indicator for the moderator of the conference.
+     */
+    my.showModeratorIndicator = function () {
+
+        var isModerator = APP.xmpp.isModerator();
+        if (isModerator) {
+            var indicatorSpan = $('#localVideoContainer .focusindicator');
+
+            if (indicatorSpan.children().length === 0)
+            {
+                createModeratorIndicatorElement(indicatorSpan[0]);
+            }
+        }
+
+        var members = APP.xmpp.getMembers();
+
+        Object.keys(members).forEach(function (jid) {
+
+            if (Strophe.getResourceFromJid(jid) === 'focus') {
+                // Skip server side focus
+                return;
+            }
+
+            var resourceJid = Strophe.getResourceFromJid(jid);
+            var videoSpanId = 'participant_' + resourceJid;
+            var videoContainer = document.getElementById(videoSpanId);
+
+            if (!videoContainer) {
+                console.error("No video container for " + jid);
+                return;
+            }
+
+            var member = members[jid];
+
+            if (member.role === 'moderator') {
+                // Remove menu if peer is moderator
+                var menuSpan = $('#' + videoSpanId + '>span.remotevideomenu');
+                if (menuSpan.length) {
+                    removeRemoteVideoMenu(videoSpanId);
+                }
+                // Show moderator indicator
+                var indicatorSpan
+                    = $('#' + videoSpanId + ' .focusindicator');
+
+                if (!indicatorSpan || indicatorSpan.length === 0) {
+                    indicatorSpan = document.createElement('span');
+                    indicatorSpan.className = 'focusindicator';
+
+                    videoContainer.appendChild(indicatorSpan);
+
+                    createModeratorIndicatorElement(indicatorSpan);
+                }
+            } else if (isModerator) {
+                // We are moderator, but user is not - add menu
+                if ($('#remote_popupmenu_' + resourceJid).length <= 0) {
+                    addRemoteVideoMenu(
+                        jid,
+                        document.getElementById('participant_' + resourceJid));
+                }
+            }
+        });
+    };
+
+    /**
+     * Shows video muted indicator over small videos.
+     */
+    my.showVideoIndicator = function(videoSpanId, isMuted) {
+        var videoMutedSpan = $('#' + videoSpanId + '>span.videoMuted');
+
+        if (isMuted === 'false') {
+            if (videoMutedSpan.length > 0) {
+                videoMutedSpan.remove();
+            }
+        }
+        else {
+            if(videoMutedSpan.length == 0) {
+                videoMutedSpan = document.createElement('span');
+                videoMutedSpan.className = 'videoMuted';
+
+                $('#' + videoSpanId)[0].appendChild(videoMutedSpan);
+
+                var mutedIndicator = document.createElement('i');
+                mutedIndicator.className = 'icon-camera-disabled';
+                UIUtil.setTooltip(mutedIndicator,
+                    "Participant has<br/>stopped the camera.",
+                    "top");
+                videoMutedSpan.appendChild(mutedIndicator);
+            }
+
+            VideoLayout.updateMutePosition(videoSpanId);
+
+        }
+    };
+
+    my.updateMutePosition = function (videoSpanId) {
+        var audioMutedSpan = $('#' + videoSpanId + '>span.audioMuted');
+        var connectionIndicator = $('#' + videoSpanId + '>div.connectionindicator');
+        var videoMutedSpan = $('#' + videoSpanId + '>span.videoMuted');
+        if(connectionIndicator.length > 0
+            && connectionIndicator[0].style.display != "none") {
+            audioMutedSpan.css({right: "23px"});
+            videoMutedSpan.css({right: ((audioMutedSpan.length > 0? 23 : 0) + 30) + "px"});
+        }
+        else
+        {
+            audioMutedSpan.css({right: "0px"});
+            videoMutedSpan.css({right: (audioMutedSpan.length > 0? 30 : 0) + "px"});
+        }
+    }
+    /**
+     * Shows audio muted indicator over small videos.
+     * @param {string} isMuted
+     */
+    my.showAudioIndicator = function(videoSpanId, isMuted) {
+        var audioMutedSpan = $('#' + videoSpanId + '>span.audioMuted');
+
+        if (isMuted === 'false') {
+            if (audioMutedSpan.length > 0) {
+                audioMutedSpan.popover('hide');
+                audioMutedSpan.remove();
+            }
+        }
+        else {
+            if(audioMutedSpan.length == 0 ) {
+                audioMutedSpan = document.createElement('span');
+                audioMutedSpan.className = 'audioMuted';
+                UIUtil.setTooltip(audioMutedSpan,
+                    "Participant is muted",
+                    "top");
+
+                $('#' + videoSpanId)[0].appendChild(audioMutedSpan);
+                var mutedIndicator = document.createElement('i');
+                mutedIndicator.className = 'icon-mic-disabled';
+                audioMutedSpan.appendChild(mutedIndicator);
+
+            }
+            VideoLayout.updateMutePosition(videoSpanId);
+        }
+    };
+
+    /*
+     * Shows or hides the audio muted indicator over the local thumbnail video.
+     * @param {boolean} isMuted
+     */
+    my.showLocalAudioIndicator = function(isMuted) {
+        VideoLayout.showAudioIndicator('localVideoContainer', isMuted.toString());
+    };
+
+    /**
+     * Resizes the large video container.
+     */
+    my.resizeLargeVideoContainer = function () {
+        Chat.resizeChat();
+        var availableHeight = window.innerHeight;
+        var availableWidth = UIUtil.getAvailableVideoWidth();
+
+        if (availableWidth < 0 || availableHeight < 0) return;
+
+        $('#videospace').width(availableWidth);
+        $('#videospace').height(availableHeight);
+        $('#largeVideoContainer').width(availableWidth);
+        $('#largeVideoContainer').height(availableHeight);
+
+        var avatarSize = interfaceConfig.ACTIVE_SPEAKER_AVATAR_SIZE;
+        var top = availableHeight / 2 - avatarSize / 4 * 3;
+        $('#activeSpeaker').css('top', top);
+
+        VideoLayout.resizeThumbnails();
+    };
+
+    /**
+     * Resizes thumbnails.
+     */
+    my.resizeThumbnails = function() {
+        var videoSpaceWidth = $('#remoteVideos').width();
+
+        var thumbnailSize = VideoLayout.calculateThumbnailSize(videoSpaceWidth);
+        var width = thumbnailSize[0];
+        var height = thumbnailSize[1];
+
+        // size videos so that while keeping AR and max height, we have a
+        // nice fit
+        $('#remoteVideos').height(height);
+        $('#remoteVideos>span').width(width);
+        $('#remoteVideos>span').height(height);
+
+        $('.userAvatar').css('left', (width - height) / 2);
+
+
+
+        $(document).trigger("remotevideo.resized", [width, height]);
+    };
+
+    /**
+     * Enables the dominant speaker UI.
+     *
+     * @param resourceJid the jid indicating the video element to
+     * activate/deactivate
+     * @param isEnable indicates if the dominant speaker should be enabled or
+     * disabled
+     */
+    my.enableDominantSpeaker = function(resourceJid, isEnable) {
+
+        var videoSpanId = null;
+        var videoContainerId = null;
+        if (resourceJid
+                === APP.xmpp.myResource()) {
+            videoSpanId = 'localVideoWrapper';
+            videoContainerId = 'localVideoContainer';
+        }
+        else {
+            videoSpanId = 'participant_' + resourceJid;
+            videoContainerId = videoSpanId;
+        }
+
+        var displayName = resourceJid;
+        var nameSpan = $('#' + videoContainerId + '>span.displayname');
+        if (nameSpan.length > 0)
+            displayName = nameSpan.html();
+
+        console.log("UI enable dominant speaker",
+            displayName,
+            resourceJid,
+            isEnable);
+
+        videoSpan = document.getElementById(videoContainerId);
+
+        if (!videoSpan) {
+            return;
+        }
+
+        var video = $('#' + videoSpanId + '>video');
+
+        if (video && video.length > 0) {
+            if (isEnable) {
+                var isLargeVideoVisible = VideoLayout.isLargeVideoOnTop();
+                VideoLayout.showDisplayName(videoContainerId, isLargeVideoVisible);
+
+                if (!videoSpan.classList.contains("dominantspeaker"))
+                    videoSpan.classList.add("dominantspeaker");
+            }
+            else {
+                VideoLayout.showDisplayName(videoContainerId, false);
+
+                if (videoSpan.classList.contains("dominantspeaker"))
+                    videoSpan.classList.remove("dominantspeaker");
+            }
+
+            Avatar.showUserAvatar(
+                APP.xmpp.findJidFromResource(resourceJid));
+        }
+    };
+
+    /**
+     * Calculates the thumbnail size.
+     *
+     * @param videoSpaceWidth the width of the video space
+     */
+    my.calculateThumbnailSize = function (videoSpaceWidth) {
+        // Calculate the available height, which is the inner window height minus
+       // 39px for the header minus 2px for the delimiter lines on the top and
+       // bottom of the large video, minus the 36px space inside the remoteVideos
+       // container used for highlighting shadow.
+       var availableHeight = 100;
+
+        var numvids = $('#remoteVideos>span:visible').length;
+        if (localLastNCount && localLastNCount > 0) {
+            numvids = Math.min(localLastNCount + 1, numvids);
+        }
+
+       // Remove the 3px borders arround videos and border around the remote
+       // videos area and the 4 pixels between the local video and the others
+       //TODO: Find out where the 4 pixels come from and remove them
+       var availableWinWidth = videoSpaceWidth - 2 * 3 * numvids - 70 - 4;
+
+       var availableWidth = availableWinWidth / numvids;
+       var aspectRatio = 16.0 / 9.0;
+       var maxHeight = Math.min(160, availableHeight);
+       availableHeight = Math.min(maxHeight, availableWidth / aspectRatio);
+       if (availableHeight < availableWidth / aspectRatio) {
+           availableWidth = Math.floor(availableHeight * aspectRatio);
+       }
+
+       return [availableWidth, availableHeight];
+   };
+
+    /**
+     * Updates the remote video menu.
+     *
+     * @param jid the jid indicating the video for which we're adding a menu.
+     * @param isMuted indicates the current mute state
+     */
+    my.updateRemoteVideoMenu = function(jid, isMuted) {
+        var muteMenuItem
+            = $('#remote_popupmenu_'
+                    + Strophe.getResourceFromJid(jid)
+                    + '>li>a.mutelink');
+
+        var mutedIndicator = "<i class='icon-mic-disabled'></i>";
+
+        if (muteMenuItem.length) {
+            var muteLink = muteMenuItem.get(0);
+
+            if (isMuted === 'true') {
+                muteLink.innerHTML = mutedIndicator + ' Muted';
+                muteLink.className = 'mutelink disabled';
+            }
+            else {
+                muteLink.innerHTML = mutedIndicator + ' Mute';
+                muteLink.className = 'mutelink';
+            }
+        }
+    };
+
+    /**
+     * Returns the current dominant speaker resource jid.
+     */
+    my.getDominantSpeakerResourceJid = function () {
+        return currentDominantSpeaker;
+    };
+
+    /**
+     * Returns the corresponding resource jid to the given peer container
+     * DOM element.
+     *
+     * @return the corresponding resource jid to the given peer container
+     * DOM element
+     */
+    my.getPeerContainerResourceJid = function (containerElement) {
+        var i = containerElement.id.indexOf('participant_');
+
+        if (i >= 0)
+            return containerElement.id.substring(i + 12); 
+    };
+
+    /**
+     * On contact list item clicked.
+     */
+    $(ContactList).bind('contactclicked', function(event, jid) {
+        if (!jid) {
+            return;
+        }
+
+        var resource = Strophe.getResourceFromJid(jid);
+        var videoContainer = $("#participant_" + resource);
+        if (videoContainer.length > 0) {
+            var videoThumb = $('video', videoContainer).get(0);
+            // It is not always the case that a videoThumb exists (if there is
+            // no actual video).
+            if (videoThumb) {
+                if (videoThumb.src && videoThumb.src != '') {
+
+                    // We have a video src, great! Let's update the large video
+                    // now.
+
+                    VideoLayout.handleVideoThumbClicked(
+                        videoThumb.src,
+                        false,
+                        Strophe.getResourceFromJid(jid));
+                } else {
+
+                    // If we don't have a video src for jid, there's absolutely
+                    // no point in calling handleVideoThumbClicked; Quite
+                    // simply, it won't work because it needs an src to attach
+                    // to the large video.
+                    //
+                    // Instead, we trigger the pinned endpoint changed event to
+                    // let the bridge adjust its lastN set for myjid and store
+                    // the pinned user in the lastNPickupJid variable to be
+                    // picked up later by the lastN changed event handler.
+
+                    lastNPickupJid = jid;
+                    eventEmitter.emit(UIEvents.PINNED_ENDPOINT,
+                        Strophe.getResourceFromJid(jid));
+                }
+            } else if (jid == APP.xmpp.myJid()) {
+                $("#localVideoContainer").click();
+            }
+        }
+    });
+
+    /**
+     * On audio muted event.
+     */
+    $(document).bind('audiomuted.muc', function (event, jid, isMuted) {
+        /*
+         // FIXME: but focus can not mute in this case ? - check
+        if (jid === xmpp.myJid()) {
+
+            // The local mute indicator is controlled locally
+            return;
+        }*/
+        var videoSpanId = null;
+        if (jid === APP.xmpp.myJid()) {
+            videoSpanId = 'localVideoContainer';
+        } else {
+            VideoLayout.ensurePeerContainerExists(jid);
+            videoSpanId = 'participant_' + Strophe.getResourceFromJid(jid);
+        }
+
+        mutedAudios[jid] = isMuted;
+
+        if (APP.xmpp.isModerator()) {
+            VideoLayout.updateRemoteVideoMenu(jid, isMuted);
+        }
+
+        if (videoSpanId)
+            VideoLayout.showAudioIndicator(videoSpanId, isMuted);
+    });
+
+    /**
+     * On video muted event.
+     */
+    $(document).bind('videomuted.muc', function (event, jid, value) {
+        var isMuted = (value === "true");
+        if(!APP.RTC.muteRemoteVideoStream(jid, isMuted))
+            return;
+
+        Avatar.showUserAvatar(jid, isMuted);
+        var videoSpanId = null;
+        if (jid === APP.xmpp.myJid()) {
+            videoSpanId = 'localVideoContainer';
+        } else {
+            VideoLayout.ensurePeerContainerExists(jid);
+            videoSpanId = 'participant_' + Strophe.getResourceFromJid(jid);
+        }
+
+        if (videoSpanId)
+            VideoLayout.showVideoIndicator(videoSpanId, value);
+    });
+
+    /**
+     * Display name changed.
+     */
+    my.onDisplayNameChanged =
+                    function (jid, displayName, status) {
+        if (jid === 'localVideoContainer'
+            || jid === APP.xmpp.myJid()) {
+            setDisplayName('localVideoContainer',
+                           displayName);
+        } else {
+            VideoLayout.ensurePeerContainerExists(jid);
+            setDisplayName(
+                'participant_' + Strophe.getResourceFromJid(jid),
+                displayName,
+                status);
+        }
+
+    };
+
+    /**
+     * On dominant speaker changed event.
+     */
+    my.onDominantSpeakerChanged = function (resourceJid) {
+        // We ignore local user events.
+        if (resourceJid
+                === APP.xmpp.myResource())
+            return;
+
+        // Update the current dominant speaker.
+        if (resourceJid !== currentDominantSpeaker) {
+            var oldSpeakerVideoSpanId = "participant_" + currentDominantSpeaker,
+                newSpeakerVideoSpanId = "participant_" + resourceJid;
+            if($("#" + oldSpeakerVideoSpanId + ">span.displayname").text() ===
+                interfaceConfig.DEFAULT_DOMINANT_SPEAKER_DISPLAY_NAME) {
+                setDisplayName(oldSpeakerVideoSpanId, null);
+            }
+            if($("#" + newSpeakerVideoSpanId + ">span.displayname").text() ===
+                interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME) {
+                setDisplayName(newSpeakerVideoSpanId,
+                    interfaceConfig.DEFAULT_DOMINANT_SPEAKER_DISPLAY_NAME);
+            }
+            currentDominantSpeaker = resourceJid;
+        } else {
+            return;
+        }
+
+        // Obtain container for new dominant speaker.
+        var container  = document.getElementById(
+                'participant_' + resourceJid);
+
+        // Local video will not have container found, but that's ok
+        // since we don't want to switch to local video.
+        if (container && !focusedVideoInfo)
+        {
+            var video = container.getElementsByTagName("video");
+
+            // Update the large video if the video source is already available,
+            // otherwise wait for the "videoactive.jingle" event.
+            if (video.length && video[0].currentTime > 0)
+                VideoLayout.updateLargeVideo(APP.RTC.getVideoSrc(video[0]), resourceJid);
+        }
+    };
+
+    /**
+     * On last N change event.
+     *
+     * @param lastNEndpoints the list of last N endpoints
+     * @param endpointsEnteringLastN the list currently entering last N
+     * endpoints
+     */
+    my.onLastNEndpointsChanged = function ( lastNEndpoints,
+                                                endpointsEnteringLastN,
+                                                stream) {
+        if (lastNCount !== lastNEndpoints.length)
+            lastNCount = lastNEndpoints.length;
+
+        lastNEndpointsCache = lastNEndpoints;
+
+        // Say A, B, C, D, E, and F are in a conference and LastN = 3.
+        //
+        // If LastN drops to, say, 2, because of adaptivity, then E should see
+        // thumbnails for A, B and C. A and B are in E's server side LastN set,
+        // so E sees them. C is only in E's local LastN set.
+        //
+        // If F starts talking and LastN = 3, then E should see thumbnails for
+        // F, A, B. B gets "ejected" from E's server side LastN set, but it
+        // enters E's local LastN ejecting C.
+
+        // Increase the local LastN set size, if necessary.
+        if (lastNCount > localLastNCount) {
+            localLastNCount = lastNCount;
+        }
+
+        // Update the local LastN set preserving the order in which the
+        // endpoints appeared in the LastN/local LastN set.
+
+        var nextLocalLastNSet = lastNEndpoints.slice(0);
+        for (var i = 0; i < localLastNSet.length; i++) {
+            if (nextLocalLastNSet.length >= localLastNCount) {
+                break;
+            }
+
+            var resourceJid = localLastNSet[i];
+            if (nextLocalLastNSet.indexOf(resourceJid) === -1) {
+                nextLocalLastNSet.push(resourceJid);
+            }
+        }
+
+        localLastNSet = nextLocalLastNSet;
+
+        var updateLargeVideo = false;
+
+        // Handle LastN/local LastN changes.
+        $('#remoteVideos>span').each(function( index, element ) {
+            var resourceJid = VideoLayout.getPeerContainerResourceJid(element);
+
+            var isReceived = true;
+            if (resourceJid
+                && lastNEndpoints.indexOf(resourceJid) < 0
+                && localLastNSet.indexOf(resourceJid) < 0) {
+                console.log("Remove from last N", resourceJid);
+                showPeerContainer(resourceJid, 'hide');
+                isReceived = false;
+            } else if (resourceJid
+                && $('#participant_' + resourceJid).is(':visible')
+                && lastNEndpoints.indexOf(resourceJid) < 0
+                && localLastNSet.indexOf(resourceJid) >= 0) {
+                showPeerContainer(resourceJid, 'avatar');
+                isReceived = false;
+            }
+
+            if (!isReceived) {
+                // resourceJid has dropped out of the server side lastN set, so
+                // it is no longer being received. If resourceJid was being
+                // displayed in the large video we have to switch to another
+                // user.
+                var largeVideoResource = largeVideoState.userResourceJid;
+                if (!updateLargeVideo && resourceJid === largeVideoResource) {
+                    updateLargeVideo = true;
+                }
+            }
+        });
+
+        if (!endpointsEnteringLastN || endpointsEnteringLastN.length < 0)
+            endpointsEnteringLastN = lastNEndpoints;
+
+        if (endpointsEnteringLastN && endpointsEnteringLastN.length > 0) {
+            endpointsEnteringLastN.forEach(function (resourceJid) {
+
+                var isVisible = $('#participant_' + resourceJid).is(':visible');
+                showPeerContainer(resourceJid, 'show');
+                if (!isVisible) {
+                    console.log("Add to last N", resourceJid);
+
+                    var jid = APP.xmpp.findJidFromResource(resourceJid);
+                    var mediaStream = APP.RTC.remoteStreams[jid][MediaStreamType.VIDEO_TYPE];
+                    var sel = $('#participant_' + resourceJid + '>video');
+
+                    var videoStream = APP.simulcast.getReceivingVideoStream(
+                        mediaStream.stream);
+                    APP.RTC.attachMediaStream(sel, videoStream);
+                    if (lastNPickupJid == mediaStream.peerjid) {
+                        // Clean up the lastN pickup jid.
+                        lastNPickupJid = null;
+
+                        // Don't fire the events again, they've already
+                        // been fired in the contact list click handler.
+                        VideoLayout.handleVideoThumbClicked(
+                            $(sel).attr('src'),
+                            false,
+                            Strophe.getResourceFromJid(mediaStream.peerjid));
+
+                        updateLargeVideo = false;
+                    }
+                    waitForRemoteVideo(sel, mediaStream.ssrc, mediaStream.stream, resourceJid);
+                }
+            })
+        }
+
+        // The endpoint that was being shown in the large video has dropped out
+        // of the lastN set and there was no lastN pickup jid. We need to update
+        // the large video now.
+
+        if (updateLargeVideo) {
+
+            var resource, container, src;
+            var myResource
+                = APP.xmpp.myResource();
+
+            // Find out which endpoint to show in the large video.
+            for (var i = 0; i < lastNEndpoints.length; i++) {
+                resource = lastNEndpoints[i];
+                if (!resource || resource === myResource)
+                    continue;
+
+                container = $("#participant_" + resource);
+                if (container.length == 0)
+                    continue;
+
+                src = $('video', container).attr('src');
+                if (!src)
+                    continue;
+
+                // videoSrcToSsrc needs to be update for this call to succeed.
+                VideoLayout.updateLargeVideo(src);
+                break;
+
+            }
+        }
+    };
+
+    my.onSimulcastLayersChanging = function (endpointSimulcastLayers) {
+        endpointSimulcastLayers.forEach(function (esl) {
+
+            var resource = esl.endpoint;
+
+            // if lastN is enabled *and* the endpoint is *not* in the lastN set,
+            // then ignore the event (= do not preload anything).
+            //
+            // The bridge could probably stop sending this message if it's for
+            // an endpoint that's not in lastN.
+
+            if (lastNCount != -1
+                && (lastNCount < 1 || lastNEndpointsCache.indexOf(resource) === -1)) {
+                return;
+            }
+
+            var primarySSRC = esl.simulcastLayer.primarySSRC;
+
+            // Get session and stream from primary ssrc.
+            var res = APP.simulcast.getReceivingVideoStreamBySSRC(primarySSRC);
+            var sid = res.sid;
+            var electedStream = res.stream;
+
+            if (sid && electedStream) {
+                var msid = APP.simulcast.getRemoteVideoStreamIdBySSRC(primarySSRC);
+
+                console.info([esl, primarySSRC, msid, sid, electedStream]);
+
+                var preload = (Strophe.getResourceFromJid(APP.xmpp.getJidFromSSRC(primarySSRC)) == largeVideoState.userResourceJid);
+
+                if (preload) {
+                    if (largeVideoState.preload)
+                    {
+                        $(largeVideoState.preload).remove();
+                    }
+                    console.info('Preloading remote video');
+                    largeVideoState.preload = $('<video autoplay></video>');
+                    // ssrcs are unique in an rtp session
+                    largeVideoState.preload_ssrc = primarySSRC;
+
+                    APP.RTC.attachMediaStream(largeVideoState.preload, electedStream)
+                }
+
+            } else {
+                console.error('Could not find a stream or a session.', sid, electedStream);
+            }
+        });
+    };
+
+    /**
+     * On simulcast layers changed event.
+     */
+    my.onSimulcastLayersChanged = function (endpointSimulcastLayers) {
+        endpointSimulcastLayers.forEach(function (esl) {
+
+            var resource = esl.endpoint;
+
+            // if lastN is enabled *and* the endpoint is *not* in the lastN set,
+            // then ignore the event (= do not change large video/thumbnail
+            // SRCs).
+            //
+            // Note that even if we ignore the "changed" event in this event
+            // handler, the bridge must continue sending these events because
+            // the simulcast code in simulcast.js uses it to know what's going
+            // to be streamed by the bridge when/if the endpoint gets back into
+            // the lastN set.
+
+            if (lastNCount != -1
+                && (lastNCount < 1 || lastNEndpointsCache.indexOf(resource) === -1)) {
+                return;
+            }
+
+            var primarySSRC = esl.simulcastLayer.primarySSRC;
+
+            // Get session and stream from primary ssrc.
+            var res = APP.simulcast.getReceivingVideoStreamBySSRC(primarySSRC);
+            var sid = res.sid;
+            var electedStream = res.stream;
+
+            if (sid && electedStream) {
+                var msid = APP.simulcast.getRemoteVideoStreamIdBySSRC(primarySSRC);
+
+                console.info('Switching simulcast substream.');
+                console.info([esl, primarySSRC, msid, sid, electedStream]);
+
+                var msidParts = msid.split(' ');
+                var selRemoteVideo = $(['#', 'remoteVideo_', sid, '_', msidParts[0]].join(''));
+
+                var updateLargeVideo = (Strophe.getResourceFromJid(APP.xmpp.getJidFromSSRC(primarySSRC))
+                    == largeVideoState.userResourceJid);
+                var updateFocusedVideoSrc = (focusedVideoInfo && focusedVideoInfo.src && focusedVideoInfo.src != '' &&
+                    (APP.RTC.getVideoSrc(selRemoteVideo[0]) == focusedVideoInfo.src));
+
+                var electedStreamUrl;
+                if (largeVideoState.preload_ssrc == primarySSRC)
+                {
+                    APP.RTC.setVideoSrc(selRemoteVideo[0], APP.RTC.getVideoSrc(largeVideoState.preload[0]));
+                }
+                else
+                {
+                    if (largeVideoState.preload
+                        && largeVideoState.preload != null) {
+                        $(largeVideoState.preload).remove();
+                    }
+
+                    largeVideoState.preload_ssrc = 0;
+
+                    APP.RTC.attachMediaStream(selRemoteVideo, electedStream);
+                }
+
+                var jid = APP.xmpp.getJidFromSSRC(primarySSRC);
+
+                if (updateLargeVideo) {
+                    VideoLayout.updateLargeVideo(APP.RTC.getVideoSrc(selRemoteVideo[0]), null,
+                        Strophe.getResourceFromJid(jid));
+                }
+
+                if (updateFocusedVideoSrc) {
+                    focusedVideoInfo.src = APP.RTC.getVideoSrc(selRemoteVideo[0]);
+                }
+
+                var videoId;
+                if(resource == APP.xmpp.myResource())
+                {
+                    videoId = "localVideoContainer";
+                }
+                else
+                {
+                    videoId = "participant_" + resource;
+                }
+                var connectionIndicator = VideoLayout.connectionIndicators[videoId];
+                if(connectionIndicator)
+                    connectionIndicator.updatePopoverData();
+
+            } else {
+                console.error('Could not find a stream or a sid.', sid, electedStream);
+            }
+        });
+    };
+
+    /**
+     * Updates local stats
+     * @param percent
+     * @param object
+     */
+    my.updateLocalConnectionStats = function (percent, object) {
+        var resolution = null;
+        if(object.resolution !== null)
+        {
+            resolution = object.resolution;
+            object.resolution = resolution[APP.xmpp.myJid()];
+            delete resolution[APP.xmpp.myJid()];
+        }
+        updateStatsIndicator("localVideoContainer", percent, object);
+        for(var jid in resolution)
+        {
+            if(resolution[jid] === null)
+                continue;
+            var id = 'participant_' + Strophe.getResourceFromJid(jid);
+            if(VideoLayout.connectionIndicators[id])
+            {
+                VideoLayout.connectionIndicators[id].updateResolution(resolution[jid]);
+            }
+        }
+
+    };
+
+    /**
+     * Updates remote stats.
+     * @param jid the jid associated with the stats
+     * @param percent the connection quality percent
+     * @param object the stats data
+     */
+    my.updateConnectionStats = function (jid, percent, object) {
+        var resourceJid = Strophe.getResourceFromJid(jid);
+
+        var videoSpanId = 'participant_' + resourceJid;
+        updateStatsIndicator(videoSpanId, percent, object);
+    };
+
+    /**
+     * Removes the connection
+     * @param jid
+     */
+    my.removeConnectionIndicator = function (jid) {
+        if(VideoLayout.connectionIndicators['participant_' + Strophe.getResourceFromJid(jid)])
+            VideoLayout.connectionIndicators['participant_' + Strophe.getResourceFromJid(jid)].remove();
+    };
+
+    /**
+     * Hides the connection indicator
+     * @param jid
+     */
+    my.hideConnectionIndicator = function (jid) {
+        if(VideoLayout.connectionIndicators['participant_' + Strophe.getResourceFromJid(jid)])
+            VideoLayout.connectionIndicators['participant_' + Strophe.getResourceFromJid(jid)].hide();
+    };
+
+    /**
+     * Hides all the indicators
+     */
+    my.onStatsStop = function () {
+        for(var indicator in VideoLayout.connectionIndicators)
+        {
+            VideoLayout.connectionIndicators[indicator].hideIndicator();
+        }
+    };
+
+    my.participantLeft = function (jid) {
+        // Unlock large video
+        if (focusedVideoInfo && focusedVideoInfo.jid === jid)
+        {
+            console.info("Focused video owner has left the conference");
+            focusedVideoInfo = null;
+        }
+    }
+
+    return my;
+}(VideoLayout || {}));
+
+module.exports = VideoLayout;
+},{"../../../service/RTC/MediaStreamTypes":76,"../../../service/UI/UIEvents":80,"../audio_levels/AudioLevels":9,"../avatar/Avatar":12,"../etherpad/Etherpad":13,"../prezi/Prezi":14,"../side_pannels/chat/Chat":17,"../side_pannels/contactlist/ContactList":21,"../util/NicknameHandler":29,"../util/UIUtil":30,"./ConnectionIndicator":31}],33:[function(require,module,exports){
+//var nouns = [
+//];
+var pluralNouns = [
+    "Aliens", "Animals", "Antelopes", "Ants", "Apes", "Apples", "Baboons", "Bacteria", "Badgers", "Bananas", "Bats",
+    "Bears", "Birds", "Bonobos", "Brides", "Bugs", "Bulls", "Butterflies", "Cheetahs",
+    "Cherries", "Chicken", "Children", "Chimps", "Clowns", "Cows", "Creatures", "Dinosaurs", "Dogs", "Dolphins",
+    "Donkeys", "Dragons", "Ducks", "Dwarfs", "Eagles", "Elephants", "Elves", "FAIL", "Fathers",
+    "Fish", "Flowers", "Frogs", "Fruit", "Fungi", "Galaxies", "Geese", "Goats",
+    "Gorillas", "Hedgehogs", "Hippos", "Horses", "Hunters", "Insects", "Kids", "Knights",
+    "Lemons", "Lemurs", "Leopards", "LifeForms", "Lions", "Lizards", "Mice", "Monkeys", "Monsters",
+    "Mushrooms", "Octopodes", "Oranges", "Orangutans", "Organisms", "Pants", "Parrots", "Penguins",
+    "People", "Pigeons", "Pigs", "Pineapples", "Plants", "Potatoes", "Priests", "Rats", "Reptiles", "Reptilians",
+    "Rhinos", "Seagulls", "Sheep", "Siblings", "Snakes", "Spaghetti", "Spiders", "Squid", "Squirrels",
+    "Stars", "Students", "Teachers", "Tigers", "Tomatoes", "Trees", "Vampires", "Vegetables", "Viruses", "Vulcans",
+    "Warewolves", "Weasels", "Whales", "Witches", "Wizards", "Wolves", "Workers", "Worms", "Zebras"
+];
+//var places = [
+//"Pub", "University", "Airport", "Library", "Mall", "Theater", "Stadium", "Office", "Show", "Gallows", "Beach",
+// "Cemetery", "Hospital", "Reception", "Restaurant", "Bar", "Church", "House", "School", "Square", "Village",
+// "Cinema", "Movies", "Party", "Restroom", "End", "Jail", "PostOffice", "Station", "Circus", "Gates", "Entrance",
+// "Bridge"
+//];
+var verbs = [
+    "Abandon", "Adapt", "Advertise", "Answer", "Anticipate", "Appreciate",
+    "Approach", "Argue", "Ask", "Bite", "Blossom", "Blush", "Breathe", "Breed", "Bribe", "Burn", "Calculate",
+    "Clean", "Code", "Communicate", "Compute", "Confess", "Confiscate", "Conjugate", "Conjure", "Consume",
+    "Contemplate", "Crawl", "Dance", "Delegate", "Devour", "Develop", "Differ", "Discuss",
+    "Dissolve", "Drink", "Eat", "Elaborate", "Emancipate", "Estimate", "Expire", "Extinguish",
+    "Extract", "FAIL", "Facilitate", "Fall", "Feed", "Finish", "Floss", "Fly", "Follow", "Fragment", "Freeze",
+    "Gather", "Glow", "Grow", "Hex", "Hide", "Hug", "Hurry", "Improve", "Intersect", "Investigate", "Jinx",
+    "Joke", "Jubilate", "Kiss", "Laugh", "Manage", "Meet", "Merge", "Move", "Object", "Observe", "Offer",
+    "Paint", "Participate", "Party", "Perform", "Plan", "Pursue", "Pierce", "Play", "Postpone", "Pray", "Proclaim",
+    "Question", "Read", "Reckon", "Rejoice", "Represent", "Resize", "Rhyme", "Scream", "Search", "Select", "Share", "Shoot",
+    "Shout", "Signal", "Sing", "Skate", "Sleep", "Smile", "Smoke", "Solve", "Spell", "Steer", "Stink",
+    "Substitute", "Swim", "Taste", "Teach", "Terminate", "Think", "Type", "Unite", "Vanish", "Worship"
+];
+var adverbs = [
+    "Absently", "Accurately", "Accusingly", "Adorably", "AllTheTime", "Alone", "Always", "Amazingly", "Angrily",
+    "Anxiously", "Anywhere", "Appallingly", "Apparently", "Articulately", "Astonishingly", "Badly", "Barely",
+    "Beautifully", "Blindly", "Bravely", "Brightly", "Briskly", "Brutally", "Calmly", "Carefully", "Casually",
+    "Cautiously", "Cleverly", "Constantly", "Correctly", "Crazily", "Curiously", "Cynically", "Daily",
+    "Dangerously", "Deliberately", "Delicately", "Desperately", "Discreetly", "Eagerly", "Easily", "Euphoricly",
+    "Evenly", "Everywhere", "Exactly", "Expectantly", "Extensively", "FAIL", "Ferociously", "Fiercely", "Finely",
+    "Flatly", "Frequently", "Frighteningly", "Gently", "Gloriously", "Grimly", "Guiltily", "Happily",
+    "Hard", "Hastily", "Heroically", "High", "Highly", "Hourly", "Humbly", "Hysterically", "Immensely",
+    "Impartially", "Impolitely", "Indifferently", "Intensely", "Jealously", "Jovially", "Kindly", "Lazily",
+    "Lightly", "Loudly", "Lovingly", "Loyally", "Magnificently", "Malevolently", "Merrily", "Mightily", "Miserably",
+    "Mysteriously", "NOT", "Nervously", "Nicely", "Nowhere", "Objectively", "Obnoxiously", "Obsessively",
+    "Obviously", "Often", "Painfully", "Patiently", "Playfully", "Politely", "Poorly", "Precisely", "Promptly",
+    "Quickly", "Quietly", "Randomly", "Rapidly", "Rarely", "Recklessly", "Regularly", "Remorsefully", "Responsibly",
+    "Rudely", "Ruthlessly", "Sadly", "Scornfully", "Seamlessly", "Seldom", "Selfishly", "Seriously", "Shakily",
+    "Sharply", "Sideways", "Silently", "Sleepily", "Slightly", "Slowly", "Slyly", "Smoothly", "Softly", "Solemnly", "Steadily", "Sternly", "Strangely", "Strongly", "Stunningly", "Surely", "Tenderly", "Thoughtfully",
+    "Tightly", "Uneasily", "Vanishingly", "Violently", "Warmly", "Weakly", "Wearily", "Weekly", "Weirdly", "Well",
+    "Well", "Wickedly", "Wildly", "Wisely", "Wonderfully", "Yearly"
+];
+var adjectives = [
+    "Abominable", "Accurate", "Adorable", "All", "Alleged", "Ancient", "Angry", "Angry", "Anxious", "Appalling",
+    "Apparent", "Astonishing", "Attractive", "Awesome", "Baby", "Bad", "Beautiful", "Benign", "Big", "Bitter",
+    "Blind", "Blue", "Bold", "Brave", "Bright", "Brisk", "Calm", "Camouflaged", "Casual", "Cautious",
+    "Choppy", "Chosen", "Clever", "Cold", "Cool", "Crawly", "Crazy", "Creepy", "Cruel", "Curious", "Cynical",
+    "Dangerous", "Dark", "Delicate", "Desperate", "Difficult", "Discreet", "Disguised", "Dizzy",
+    "Dumb", "Eager", "Easy", "Edgy", "Electric", "Elegant", "Emancipated", "Enormous", "Euphoric", "Evil",
+    "FAIL", "Fast", "Ferocious", "Fierce", "Fine", "Flawed", "Flying", "Foolish", "Foxy",
+    "Freezing", "Funny", "Furious", "Gentle", "Glorious", "Golden", "Good", "Green", "Green", "Guilty",
+    "Hairy", "Happy", "Hard", "Hasty", "Hazy", "Heroic", "Hostile", "Hot", "Humble", "Humongous",
+    "Humorous", "Hysterical", "Idealistic", "Ignorant", "Immense", "Impartial", "Impolite", "Indifferent",
+    "Infuriated", "Insightful", "Intense", "Interesting", "Intimidated", "Intriguing", "Jealous", "Jolly", "Jovial",
+    "Jumpy", "Kind", "Laughing", "Lazy", "Liquid", "Lonely", "Longing", "Loud", "Loving", "Loyal", "Macabre", "Mad",
+    "Magical", "Magnificent", "Malevolent", "Medieval", "Memorable", "Mere", "Merry", "Mighty",
+    "Mischievous", "Miserable", "Modified", "Moody", "Most", "Mysterious", "Mystical", "Needy",
+    "Nervous", "Nice", "Objective", "Obnoxious", "Obsessive", "Obvious", "Opinionated", "Orange",
+    "Painful", "Passionate", "Perfect", "Pink", "Playful", "Poisonous", "Polite", "Poor", "Popular", "Powerful",
+    "Precise", "Preserved", "Pretty", "Purple", "Quick", "Quiet", "Random", "Rapid", "Rare", "Real",
+    "Reassuring", "Reckless", "Red", "Regular", "Remorseful", "Responsible", "Rich", "Rude", "Ruthless",
+    "Sad", "Scared", "Scary", "Scornful", "Screaming", "Selfish", "Serious", "Shady", "Shaky", "Sharp",
+    "Shiny", "Shy", "Simple", "Sleepy", "Slow", "Sly", "Small", "Smart", "Smelly", "Smiling", "Smooth",
+    "Smug", "Sober", "Soft", "Solemn", "Square", "Square", "Steady", "Strange", "Strong",
+    "Stunning", "Subjective", "Successful", "Surly", "Sweet", "Tactful", "Tense",
+    "Thoughtful", "Tight", "Tiny", "Tolerant", "Uneasy", "Unique", "Unseen", "Warm", "Weak",
+    "Weird", "WellCooked", "Wild", "Wise", "Witty", "Wonderful", "Worried", "Yellow", "Young",
+    "Zealous"
+    ];
+//var pronouns = [
+//];
+//var conjunctions = [
+//"And", "Or", "For", "Above", "Before", "Against", "Between"
+//];
+
+/*
+ * Maps a string (category name) to the array of words from that category.
+ */
+var CATEGORIES =
+{
+    //"_NOUN_": nouns,
+    "_PLURALNOUN_": pluralNouns,
+    //"_PLACE_": places,
+    "_VERB_": verbs,
+    "_ADVERB_": adverbs,
+    "_ADJECTIVE_": adjectives
+    //"_PRONOUN_": pronouns,
+    //"_CONJUNCTION_": conjunctions,
+};
+
+var PATTERNS = [
+    "_ADJECTIVE__PLURALNOUN__VERB__ADVERB_"
+
+    // BeautifulFungiOrSpaghetti
+    //"_ADJECTIVE__PLURALNOUN__CONJUNCTION__PLURALNOUN_",
+
+    // AmazinglyScaryToy
+    //"_ADVERB__ADJECTIVE__NOUN_",
+
+    // NeitherTrashNorRifle
+    //"Neither_NOUN_Nor_NOUN_",
+    //"Either_NOUN_Or_NOUN_",
+
+    // EitherCopulateOrInvestigate
+    //"Either_VERB_Or_VERB_",
+    //"Neither_VERB_Nor_VERB_",
+
+    //"The_ADJECTIVE__ADJECTIVE__NOUN_",
+    //"The_ADVERB__ADJECTIVE__NOUN_",
+    //"The_ADVERB__ADJECTIVE__NOUN_s",
+    //"The_ADVERB__ADJECTIVE__PLURALNOUN__VERB_",
+
+    // WolvesComputeBadly
+    //"_PLURALNOUN__VERB__ADVERB_",
+
+    // UniteFacilitateAndMerge
+    //"_VERB__VERB_And_VERB_",
+
+    //NastyWitchesAtThePub
+    //"_ADJECTIVE__PLURALNOUN_AtThe_PLACE_",
+];
+
+
+/*
+ * Returns a random element from the array 'arr'
+ */
+function randomElement(arr)
+{
+    return arr[Math.floor(Math.random() * arr.length)];
+}
+
+/*
+ * Returns true if the string 's' contains one of the
+ * template strings.
+ */
+function hasTemplate(s)
+{
+    for (var template in CATEGORIES){
+        if (s.indexOf(template) >= 0){
+            return true;
+        }
+    }
+}
+
+/**
+ * Generates new room name.
+ */
+var RoomNameGenerator = {
+    generateRoomWithoutSeparator: function()
+    {
+        // Note that if more than one pattern is available, the choice of 'name' won't be random (names from patterns
+        // with fewer options will have higher probability of being chosen that names from patterns with more options).
+        var name = randomElement(PATTERNS);
+        var word;
+        while (hasTemplate(name)){
+            for (var template in CATEGORIES){
+                word = randomElement(CATEGORIES[template]);
+                name = name.replace(template, word);
+            }
+        }
+
+        return name;
+    }
+}
+
+module.exports = RoomNameGenerator;
+
+},{}],34:[function(require,module,exports){
+var animateTimeout, updateTimeout;
+
+var RoomNameGenerator = require("./RoomnameGenerator");
+
+function enter_room()
+{
+    var val = $("#enter_room_field").val();
+    if(!val) {
+        val = $("#enter_room_field").attr("room_name");
+    }
+    if (val) {
+        window.location.pathname = "/" + val;
+    }
+}
+
+function animate(word) {
+    var currentVal = $("#enter_room_field").attr("placeholder");
+    $("#enter_room_field").attr("placeholder", currentVal + word.substr(0, 1));
+    animateTimeout = setTimeout(function() {
+        animate(word.substring(1, word.length))
+    }, 70);
+}
+
+function update_roomname()
+{
+    var word = RoomNameGenerator.generateRoomWithoutSeparator();
+    $("#enter_room_field").attr("room_name", word);
+    $("#enter_room_field").attr("placeholder", "");
+    clearTimeout(animateTimeout);
+    animate(word);
+    updateTimeout = setTimeout(update_roomname, 10000);
+}
+
+
+function setupWelcomePage()
+{
+    $("#videoconference_page").hide();
+    $("#domain_name").text(
+            window.location.protocol + "//" + window.location.host + "/");
+    $("span[name='appName']").text(interfaceConfig.APP_NAME);
+
+    if (interfaceConfig.SHOW_JITSI_WATERMARK) {
+        var leftWatermarkDiv
+            = $("#welcome_page_header div[class='watermark leftwatermark']");
+        if(leftWatermarkDiv && leftWatermarkDiv.length > 0)
+        {
+            leftWatermarkDiv.css({display: 'block'});
+            leftWatermarkDiv.parent().get(0).href
+                = interfaceConfig.JITSI_WATERMARK_LINK;
+        }
+
+    }
+
+    if (interfaceConfig.SHOW_BRAND_WATERMARK) {
+        var rightWatermarkDiv
+            = $("#welcome_page_header div[class='watermark rightwatermark']");
+        if(rightWatermarkDiv && rightWatermarkDiv.length > 0) {
+            rightWatermarkDiv.css({display: 'block'});
+            rightWatermarkDiv.parent().get(0).href
+                = interfaceConfig.BRAND_WATERMARK_LINK;
+            rightWatermarkDiv.get(0).style.backgroundImage
+                = "url(images/rightwatermark.png)";
+        }
+    }
+
+    if (interfaceConfig.SHOW_POWERED_BY) {
+        $("#welcome_page_header>a[class='poweredby']")
+            .css({display: 'block'});
+    }
+
+    $("#enter_room_button").click(function()
+    {
+        enter_room();
+    });
+
+    $("#enter_room_field").keydown(function (event) {
+        if (event.keyCode === 13 /* enter */) {
+            enter_room();
+        }
+    });
+
+    if (!(interfaceConfig.GENERATE_ROOMNAMES_ON_WELCOME_PAGE === false)){
+        var updateTimeout;
+        var animateTimeout;
+        $("#reload_roomname").click(function () {
+            clearTimeout(updateTimeout);
+            clearTimeout(animateTimeout);
+            update_roomname();
+        });
+        $("#reload_roomname").show();
+
+
+        update_roomname();
+    }
+
+    $("#disable_welcome").click(function () {
+        window.localStorage.welcomePageDisabled
+            = $("#disable_welcome").is(":checked");
+    });
+
+}
+
+module.exports = setupWelcomePage;
+},{"./RoomnameGenerator":33}],35:[function(require,module,exports){
+var EventEmitter = require("events");
+var eventEmitter = new EventEmitter();
+var CQEvents = require("../../service/connectionquality/CQEvents");
+var XMPPEvents = require("../../service/xmpp/XMPPEvents");
+
+/**
+ * local stats
+ * @type {{}}
+ */
+var stats = {};
+
+/**
+ * remote stats
+ * @type {{}}
+ */
+var remoteStats = {};
+
+/**
+ * Interval for sending statistics to other participants
+ * @type {null}
+ */
+var sendIntervalId = null;
+
+
+/**
+ * Start statistics sending.
+ */
+function startSendingStats() {
+    sendStats();
+    sendIntervalId = setInterval(sendStats, 10000);
+}
+
+/**
+ * Sends statistics to other participants
+ */
+function sendStats() {
+    APP.xmpp.addToPresence("connectionQuality", convertToMUCStats(stats));
+}
+
+/**
+ * Converts statistics to format for sending through XMPP
+ * @param stats the statistics
+ * @returns {{bitrate_donwload: *, bitrate_uplpoad: *, packetLoss_total: *, packetLoss_download: *, packetLoss_upload: *}}
+ */
+function convertToMUCStats(stats) {
+    return {
+        "bitrate_download": stats.bitrate.download,
+        "bitrate_upload": stats.bitrate.upload,
+        "packetLoss_total": stats.packetLoss.total,
+        "packetLoss_download": stats.packetLoss.download,
+        "packetLoss_upload": stats.packetLoss.upload
+    };
+}
+
+/**
+ * Converts statitistics to format used by VideoLayout
+ * @param stats
+ * @returns {{bitrate: {download: *, upload: *}, packetLoss: {total: *, download: *, upload: *}}}
+ */
+function parseMUCStats(stats) {
+    return {
+        bitrate: {
+            download: stats.bitrate_download,
+            upload: stats.bitrate_upload
+        },
+        packetLoss: {
+            total: stats.packetLoss_total,
+            download: stats.packetLoss_download,
+            upload: stats.packetLoss_upload
+        }
+    };
+}
+
+
+var ConnectionQuality = {
+    init: function () {
+        APP.xmpp.addListener(XMPPEvents.REMOTE_STATS, this.updateRemoteStats);
+        APP.statistics.addConnectionStatsListener(this.updateLocalStats);
+        APP.statistics.addRemoteStatsStopListener(this.stopSendingStats);
+
+    },
+
+    /**
+     * Updates the local statistics
+     * @param data new statistics
+     */
+    updateLocalStats: function (data) {
+        stats = data;
+        eventEmitter.emit(CQEvents.LOCALSTATS_UPDATED, 100 - stats.packetLoss.total, stats);
+        if (sendIntervalId == null) {
+            startSendingStats();
+        }
+    },
+
+    /**
+     * Updates remote statistics
+     * @param jid the jid associated with the statistics
+     * @param data the statistics
+     */
+    updateRemoteStats: function (jid, data) {
+        if (data == null || data.packetLoss_total == null) {
+            eventEmitter.emit(CQEvents.REMOTESTATS_UPDATED, jid, null, null);
+            return;
+        }
+        remoteStats[jid] = parseMUCStats(data);
+
+        eventEmitter.emit(CQEvents.REMOTESTATS_UPDATED,
+            jid, 100 - data.packetLoss_total, remoteStats[jid]);
+    },
+
+    /**
+     * Stops statistics sending.
+     */
+    stopSendingStats: function () {
+        clearInterval(sendIntervalId);
+        sendIntervalId = null;
+        //notify UI about stopping statistics gathering
+        eventEmitter.emit(CQEvents.STOP);
+    },
+
+    /**
+     * Returns the local statistics.
+     */
+    getStats: function () {
+        return stats;
+    },
+    
+    addListener: function (type, listener) {
+        eventEmitter.on(type, listener);
+    }
+
+};
+
+module.exports = ConnectionQuality;
+},{"../../service/connectionquality/CQEvents":81,"../../service/xmpp/XMPPEvents":83,"events":84}],36:[function(require,module,exports){
+/* global $, alert, changeLocalVideo, chrome, config, getConferenceHandler, getUserMediaWithConstraints */
+/**
+ * Indicates that desktop stream is currently in use(for toggle purpose).
+ * @type {boolean}
+ */
+var isUsingScreenStream = false;
+/**
+ * Indicates that switch stream operation is in progress and prevent from triggering new events.
+ * @type {boolean}
+ */
+var switchInProgress = false;
+
+/**
+ * Method used to get screen sharing stream.
+ *
+ * @type {function (stream_callback, failure_callback}
+ */
+var obtainDesktopStream = null;
+
+/**
+ * Flag used to cache desktop sharing enabled state. Do not use directly as it can be <tt>null</tt>.
+ * @type {null|boolean}
+ */
+var _desktopSharingEnabled = null;
+
+var EventEmitter = require("events");
+
+var eventEmitter = new EventEmitter();
+
+var DesktopSharingEventTypes = require("../../service/desktopsharing/DesktopSharingEventTypes");
+
+/**
+ * Method obtains desktop stream from WebRTC 'screen' source.
+ * Flag 'chrome://flags/#enable-usermedia-screen-capture' must be enabled.
+ */
+function obtainWebRTCScreen(streamCallback, failCallback) {
+    APP.RTC.getUserMediaWithConstraints(
+        ['screen'],
+        streamCallback,
+        failCallback
+    );
+}
+
+/**
+ * Constructs inline install URL for Chrome desktop streaming extension.
+ * The 'chromeExtensionId' must be defined in config.js.
+ * @returns {string}
+ */
+function getWebStoreInstallUrl()
+{
+    return "https://chrome.google.com/webstore/detail/" + config.chromeExtensionId;
+}
+
+/**
+ * Checks whether extension update is required.
+ * @param minVersion minimal required version
+ * @param extVersion current extension version
+ * @returns {boolean}
+ */
+function isUpdateRequired(minVersion, extVersion)
+{
+    try
+    {
+        var s1 = minVersion.split('.');
+        var s2 = extVersion.split('.');
+
+        var len = Math.max(s1.length, s2.length);
+        for (var i = 0; i < len; i++)
+        {
+            var n1 = 0,
+                n2 = 0;
+
+            if (i < s1.length)
+                n1 = parseInt(s1[i]);
+            if (i < s2.length)
+                n2 = parseInt(s2[i]);
+
+            if (isNaN(n1) || isNaN(n2))
+            {
+                return true;
+            }
+            else if (n1 !== n2)
+            {
+                return n1 > n2;
+            }
+        }
+
+        // will happen if boths version has identical numbers in
+        // their components (even if one of them is longer, has more components)
+        return false;
+    }
+    catch (e)
+    {
+        console.error("Failed to parse extension version", e);
+        APP.UI.messageHandler.showError('Error',
+            'Error when trying to detect desktopsharing extension.');
+        return true;
+    }
+}
+
+
+function checkExtInstalled(isInstalledCallback) {
+    if (!chrome.runtime) {
+        // No API, so no extension for sure
+        isInstalledCallback(false);
+        return;
+    }
+    chrome.runtime.sendMessage(
+        config.chromeExtensionId,
+        { getVersion: true },
+        function (response) {
+            if (!response || !response.version) {
+                // Communication failure - assume that no endpoint exists
+                console.warn("Extension not installed?: " + chrome.runtime.lastError);
+                isInstalledCallback(false);
+            } else {
+                // Check installed extension version
+                var extVersion = response.version;
+                console.log('Extension version is: ' + extVersion);
+                var updateRequired = isUpdateRequired(config.minChromeExtVersion, extVersion);
+                if (updateRequired) {
+                    alert(
+                        'Jitsi Desktop Streamer requires update. ' +
+                        'Changes will take effect after next Chrome restart.');
+                }
+                isInstalledCallback(!updateRequired);
+            }
+        }
+    );
+}
+
+function doGetStreamFromExtension(streamCallback, failCallback) {
+    // Sends 'getStream' msg to the extension. Extension id must be defined in the config.
+    chrome.runtime.sendMessage(
+        config.chromeExtensionId,
+        { getStream: true, sources: config.desktopSharingSources },
+        function (response) {
+            if (!response) {
+                failCallback(chrome.runtime.lastError);
+                return;
+            }
+            console.log("Response from extension: " + response);
+            if (response.streamId) {
+                APP.RTC.getUserMediaWithConstraints(
+                    ['desktop'],
+                    function (stream) {
+                        streamCallback(stream);
+                    },
+                    failCallback,
+                    null, null, null,
+                    response.streamId);
+            } else {
+                failCallback("Extension failed to get the stream");
+            }
+        }
+    );
+}
+/**
+ * Asks Chrome extension to call chooseDesktopMedia and gets chrome 'desktop' stream for returned stream token.
+ */
+function obtainScreenFromExtension(streamCallback, failCallback) {
+    checkExtInstalled(
+        function (isInstalled) {
+            if (isInstalled) {
+                doGetStreamFromExtension(streamCallback, failCallback);
+            } else {
+                chrome.webstore.install(
+                    getWebStoreInstallUrl(),
+                    function (arg) {
+                        console.log("Extension installed successfully", arg);
+                        // We need to reload the page in order to get the access to chrome.runtime
+                        window.location.reload(false);
+                    },
+                    function (arg) {
+                        console.log("Failed to install the extension", arg);
+                        failCallback(arg);
+                        APP.UI.messageHandler.showError('Error',
+                            'Failed to install desktop sharing extension');
+                    }
+                );
+            }
+        }
+    );
+}
+
+/**
+ * Call this method to toggle desktop sharing feature.
+ * @param method pass "ext" to use chrome extension for desktop capture(chrome extension required),
+ *        pass "webrtc" to use WebRTC "screen" desktop source('chrome://flags/#enable-usermedia-screen-capture'
+ *        must be enabled), pass any other string or nothing in order to disable this feature completely.
+ */
+function setDesktopSharing(method) {
+    // Check if we are running chrome
+    if (!navigator.webkitGetUserMedia) {
+        obtainDesktopStream = null;
+        console.info("Desktop sharing disabled");
+    } else if (method == "ext") {
+        obtainDesktopStream = obtainScreenFromExtension;
+        console.info("Using Chrome extension for desktop sharing");
+    } else if (method == "webrtc") {
+        obtainDesktopStream = obtainWebRTCScreen;
+        console.info("Using Chrome WebRTC for desktop sharing");
+    }
+
+    // Reset enabled cache
+    _desktopSharingEnabled = null;
+}
+
+/**
+ * Initializes <link rel=chrome-webstore-item /> with extension id set in config.js to support inline installs.
+ * Host site must be selected as main website of published extension.
+ */
+function initInlineInstalls()
+{
+    $("link[rel=chrome-webstore-item]").attr("href", getWebStoreInstallUrl());
+}
+
+function getSwitchStreamFailed(error) {
+    console.error("Failed to obtain the stream to switch to", error);
+    switchInProgress = false;
+}
+
+function streamSwitchDone() {
+    switchInProgress = false;
+    eventEmitter.emit(
+        DesktopSharingEventTypes.SWITCHING_DONE,
+        isUsingScreenStream);
+}
+
+function newStreamCreated(stream)
+{
+    eventEmitter.emit(DesktopSharingEventTypes.NEW_STREAM_CREATED,
+        stream, isUsingScreenStream, streamSwitchDone);
+}
+
+
+module.exports = {
+    isUsingScreenStream: function () {
+        return isUsingScreenStream;
+    },
+
+    /**
+     * @returns {boolean} <tt>true</tt> if desktop sharing feature is available and enabled.
+     */
+    isDesktopSharingEnabled: function () {
+        if (_desktopSharingEnabled === null) {
+            if (obtainDesktopStream === obtainScreenFromExtension) {
+                // Parse chrome version
+                var userAgent = navigator.userAgent.toLowerCase();
+                // We can assume that user agent is chrome, because it's enforced when 'ext' streaming method is set
+                var ver = parseInt(userAgent.match(/chrome\/(\d+)\./)[1], 10);
+                console.log("Chrome version" + userAgent, ver);
+                _desktopSharingEnabled = ver >= 34;
+            } else {
+                _desktopSharingEnabled = obtainDesktopStream === obtainWebRTCScreen;
+            }
+        }
+        return _desktopSharingEnabled;
+    },
+    
+    init: function () {
+        setDesktopSharing(config.desktopSharing);
+
+        // Initialize Chrome extension inline installs
+        if (config.chromeExtensionId) {
+            initInlineInstalls();
+        }
+
+        eventEmitter.emit(DesktopSharingEventTypes.INIT);
+    },
+
+    addListener: function(listener, type)
+    {
+        eventEmitter.on(type, listener);
+    },
+
+    removeListener: function (listener,type) {
+        eventEmitter.removeListener(type, listener);
+    },
+
+    /*
+     * Toggles screen sharing.
+     */
+    toggleScreenSharing: function () {
+        if (switchInProgress || !obtainDesktopStream) {
+            console.warn("Switch in progress or no method defined");
+            return;
+        }
+        switchInProgress = true;
+
+        if (!isUsingScreenStream)
+        {
+            // Switch to desktop stream
+            obtainDesktopStream(
+                function (stream) {
+                    // We now use screen stream
+                    isUsingScreenStream = true;
+                    // Hook 'ended' event to restore camera when screen stream stops
+                    stream.addEventListener('ended',
+                        function (e) {
+                            if (!switchInProgress && isUsingScreenStream) {
+                                toggleScreenSharing();
+                            }
+                        }
+                    );
+                    newStreamCreated(stream);
+                },
+                getSwitchStreamFailed);
+        } else {
+            // Disable screen stream
+            APP.RTC.getUserMediaWithConstraints(
+                ['video'],
+                function (stream) {
+                    // We are now using camera stream
+                    isUsingScreenStream = false;
+                    newStreamCreated(stream);
+                },
+                getSwitchStreamFailed, config.resolution || '360'
+            );
+        }
+    }
+};
+
+
+},{"../../service/desktopsharing/DesktopSharingEventTypes":82,"events":84}],37:[function(require,module,exports){
+//maps keycode to character, id of popover for given function and function
+var shortcuts = {
+    67: {
+        character: "C",
+        id: "toggleChatPopover",
+        function: APP.UI.toggleChat
+    },
+    70: {
+        character: "F",
+        id: "filmstripPopover",
+        function: APP.UI.toggleFilmStrip
+    },
+    77: {
+        character: "M",
+        id: "mutePopover",
+        function: APP.UI.toggleAudio
+    },
+    84: {
+        character: "T",
+        function: function() {
+            if(!APP.RTC.localAudio.isMuted()) {
+                APP.UI.toggleAudio();
+            }
+        }
+    },
+    86: {
+        character: "V",
+        id: "toggleVideoPopover",
+        function: APP.UI.toggleVideo
+    }
+};
+
+
+var KeyboardShortcut = {
+    init: function () {
+        window.onkeyup = function(e) {
+            var keycode = e.which;
+            if(!($(":focus").is("input[type=text]") ||
+                $(":focus").is("input[type=password]") ||
+                $(":focus").is("textarea"))) {
+                if (typeof shortcuts[keycode] === "object") {
+                    shortcuts[keycode].function();
+                }
+                else if (keycode >= "0".charCodeAt(0) &&
+                    keycode <= "9".charCodeAt(0)) {
+                    APP.UI.clickOnVideo(keycode - "0".charCodeAt(0) + 1);
+                }
+                //esc while the smileys are visible hides them
+            } else if (keycode === 27 && $('#smileysContainer').is(':visible')) {
+                APP.UI.toggleSmileys();
+            }
+        };
+
+        window.onkeydown = function(e) {
+            if(!($(":focus").is("input[type=text]") ||
+                $(":focus").is("input[type=password]") ||
+                $(":focus").is("textarea"))) {
+                if(e.which === "T".charCodeAt(0)) {
+                    if(APP.RTC.localAudio.isMuted()) {
+                        APP.UI.toggleAudio();
+                    }
+                }
+            }
+        };
+        var self = this;
+        $('body').popover({ selector: '[data-toggle=popover]',
+            trigger: 'click hover',
+            content: function() {
+                return this.getAttribute("content") +
+                    self.getShortcut(this.getAttribute("shortcut"));
+            }
+        });
+    },
+    /**
+     *
+     * @param id indicates the popover associated with the shortcut
+     * @returns {string} the keyboard shortcut used for the id given
+     */
+    getShortcut: function (id) {
+        for (var keycode in shortcuts) {
+            if (shortcuts.hasOwnProperty(keycode)) {
+                if (shortcuts[keycode].id === id) {
+                    return " (" + shortcuts[keycode].character + ")";
+                }
+            }
+        }
+        return "";
+    }
+};
+
+module.exports = KeyboardShortcut;
+
+},{}],38:[function(require,module,exports){
+/**
+ *
+ * @constructor
+ */
+function SimulcastLogger(name, lvl) {
+    this.name = name;
+    this.lvl = lvl;
+}
+
+SimulcastLogger.prototype.log = function (text) {
+    if (this.lvl) {
+        console.log(text);
+    }
+};
+
+SimulcastLogger.prototype.info = function (text) {
+    if (this.lvl > 1) {
+        console.info(text);
+    }
+};
+
+SimulcastLogger.prototype.fine = function (text) {
+    if (this.lvl > 2) {
+        console.log(text);
+    }
+};
+
+SimulcastLogger.prototype.error = function (text) {
+    console.error(text);
+};
+
+module.exports = SimulcastLogger;
+},{}],39:[function(require,module,exports){
+var SimulcastLogger = require("./SimulcastLogger");
+var SimulcastUtils = require("./SimulcastUtils");
+var MediaStreamType = require("../../service/RTC/MediaStreamTypes");
+
+function SimulcastReceiver() {
+    this.simulcastUtils = new SimulcastUtils();
+    this.logger = new SimulcastLogger('SimulcastReceiver', 1);
+}
+
+SimulcastReceiver.prototype._remoteVideoSourceCache = '';
+SimulcastReceiver.prototype._remoteMaps = {
+    msid2Quality: {},
+    ssrc2Msid: {},
+    msid2ssrc: {},
+    receivingVideoStreams: {}
+};
+
+SimulcastReceiver.prototype._cacheRemoteVideoSources = function (lines) {
+    this._remoteVideoSourceCache = this.simulcastUtils._getVideoSources(lines);
+};
+
+SimulcastReceiver.prototype._restoreRemoteVideoSources = function (lines) {
+    this.simulcastUtils._replaceVideoSources(lines, this._remoteVideoSourceCache);
+};
+
+SimulcastReceiver.prototype._ensureGoogConference = function (lines) {
+    var sb;
+
+    this.logger.info('Ensuring x-google-conference flag...')
+
+    if (this.simulcastUtils._indexOfArray('a=x-google-flag:conference', lines) === this.simulcastUtils._emptyCompoundIndex) {
+        // TODO(gp) do that for the audio as well as suggested by fippo.
+        // Add the google conference flag
+        sb = this.simulcastUtils._getVideoSources(lines);
+        sb = ['a=x-google-flag:conference'].concat(sb);
+        this.simulcastUtils._replaceVideoSources(lines, sb);
+    }
+};
+
+SimulcastReceiver.prototype._restoreSimulcastGroups = function (sb) {
+    this._restoreRemoteVideoSources(sb);
+};
+
+/**
+ * Restores the simulcast groups of the remote description. In
+ * transformRemoteDescription we remove those in order for the set remote
+ * description to succeed. The focus needs the signal the groups to new
+ * participants.
+ *
+ * @param desc
+ * @returns {*}
+ */
+SimulcastReceiver.prototype.reverseTransformRemoteDescription = function (desc) {
+    var sb;
+
+    if (!this.simulcastUtils.isValidDescription(desc)) {
+        return desc;
+    }
+
+    if (config.enableSimulcast) {
+        sb = desc.sdp.split('\r\n');
+
+        this._restoreSimulcastGroups(sb);
+
+        desc = new RTCSessionDescription({
+            type: desc.type,
+            sdp: sb.join('\r\n')
+        });
+    }
+
+    return desc;
+};
+
+SimulcastUtils.prototype._ensureOrder = function (lines) {
+    var videoSources, sb;
+
+    videoSources = this.parseMedia(lines, ['video'])[0];
+    sb = this._compileVideoSources(videoSources);
+
+    this._replaceVideoSources(lines, sb);
+};
+
+SimulcastReceiver.prototype._updateRemoteMaps = function (lines) {
+    var remoteVideoSources = this.simulcastUtils.parseMedia(lines, ['video'])[0],
+        videoSource, quality;
+
+    // (re) initialize the remote maps.
+    this._remoteMaps.msid2Quality = {};
+    this._remoteMaps.ssrc2Msid = {};
+    this._remoteMaps.msid2ssrc = {};
+
+    var self = this;
+    if (remoteVideoSources.groups && remoteVideoSources.groups.length !== 0) {
+        remoteVideoSources.groups.forEach(function (group) {
+            if (group.semantics === 'SIM' && group.ssrcs && group.ssrcs.length !== 0) {
+                quality = 0;
+                group.ssrcs.forEach(function (ssrc) {
+                    videoSource = remoteVideoSources.sources[ssrc];
+                    self._remoteMaps.msid2Quality[videoSource.msid] = quality++;
+                    self._remoteMaps.ssrc2Msid[videoSource.ssrc] = videoSource.msid;
+                    self._remoteMaps.msid2ssrc[videoSource.msid] = videoSource.ssrc;
+                });
+            }
+        });
+    }
+};
+
+SimulcastReceiver.prototype._setReceivingVideoStream = function (resource, ssrc) {
+    this._remoteMaps.receivingVideoStreams[resource] = ssrc;
+};
+
+/**
+ * Returns a stream with single video track, the one currently being
+ * received by this endpoint.
+ *
+ * @param stream the remote simulcast stream.
+ * @returns {webkitMediaStream}
+ */
+SimulcastReceiver.prototype.getReceivingVideoStream = function (stream) {
+    var tracks, i, electedTrack, msid, quality = 0, receivingTrackId;
+
+    var self = this;
+    if (config.enableSimulcast) {
+
+        stream.getVideoTracks().some(function (track) {
+            return Object.keys(self._remoteMaps.receivingVideoStreams).some(function (resource) {
+                var ssrc = self._remoteMaps.receivingVideoStreams[resource];
+                var msid = self._remoteMaps.ssrc2Msid[ssrc];
+                if (msid == [stream.id, track.id].join(' ')) {
+                    electedTrack = track;
+                    return true;
+                }
+            });
+        });
+
+        if (!electedTrack) {
+            // we don't have an elected track, choose by initial quality.
+            tracks = stream.getVideoTracks();
+            for (i = 0; i < tracks.length; i++) {
+                msid = [stream.id, tracks[i].id].join(' ');
+                if (this._remoteMaps.msid2Quality[msid] === quality) {
+                    electedTrack = tracks[i];
+                    break;
+                }
+            }
+
+            // TODO(gp) if the initialQuality could not be satisfied, lower
+            // the requirement and try again.
+        }
+    }
+
+    return (electedTrack)
+        ? new webkitMediaStream([electedTrack])
+        : stream;
+};
+
+SimulcastReceiver.prototype.getReceivingSSRC = function (jid) {
+    var resource = Strophe.getResourceFromJid(jid);
+    var ssrc = this._remoteMaps.receivingVideoStreams[resource];
+
+    // If we haven't receiving a "changed" event yet, then we must be receiving
+    // low quality (that the sender always streams).
+    if(!ssrc)
+    {
+        var remoteStreamObject = APP.RTC.remoteStreams[jid][MediaStreamType.VIDEO_TYPE];
+        var remoteStream = remoteStreamObject.getOriginalStream();
+        var tracks = remoteStream.getVideoTracks();
+        if (tracks) {
+            for (var k = 0; k < tracks.length; k++) {
+                var track = tracks[k];
+                var msid = [remoteStream.id, track.id].join(' ');
+                var _ssrc = this._remoteMaps.msid2ssrc[msid];
+                var quality = this._remoteMaps.msid2Quality[msid];
+                if (quality == 0) {
+                    ssrc = _ssrc;
+                }
+            }
+        }
+    }
+
+    return ssrc;
+};
+
+SimulcastReceiver.prototype.getReceivingVideoStreamBySSRC = function (ssrc)
+{
+    var sid, electedStream;
+    var i, j, k;
+    var jid = APP.xmpp.getJidFromSSRC(ssrc);
+    if(jid && APP.RTC.remoteStreams[jid])
+    {
+        var remoteStreamObject = APP.RTC.remoteStreams[jid][MediaStreamType.VIDEO_TYPE];
+        var remoteStream = remoteStreamObject.getOriginalStream();
+        var tracks = remoteStream.getVideoTracks();
+        if (tracks) {
+            for (k = 0; k < tracks.length; k++) {
+                var track = tracks[k];
+                var msid = [remoteStream.id, track.id].join(' ');
+                var tmp = this._remoteMaps.msid2ssrc[msid];
+                if (tmp == ssrc) {
+                    electedStream = new webkitMediaStream([track]);
+                    sid = remoteStreamObject.sid;
+                    // stream found, stop.
+                    break;
+                }
+            }
+        }
+
+    }
+    else
+    {
+        console.debug(APP.RTC.remoteStreams, jid, ssrc);
+    }
+
+    return {
+        sid: sid,
+        stream: electedStream
+    };
+};
+
+/**
+ * Gets the fully qualified msid (stream.id + track.id) associated to the
+ * SSRC.
+ *
+ * @param ssrc
+ * @returns {*}
+ */
+SimulcastReceiver.prototype.getRemoteVideoStreamIdBySSRC = function (ssrc) {
+    return this._remoteMaps.ssrc2Msid[ssrc];
+};
+
+/**
+ * Removes the ssrc-group:SIM from the remote description bacause Chrome
+ * either gets confused and thinks this is an FID group or, if an FID group
+ * is already present, it fails to set the remote description.
+ *
+ * @param desc
+ * @returns {*}
+ */
+SimulcastReceiver.prototype.transformRemoteDescription = function (desc) {
+
+    if (desc && desc.sdp) {
+        var sb = desc.sdp.split('\r\n');
+
+        this._updateRemoteMaps(sb);
+        this._cacheRemoteVideoSources(sb);
+
+        // NOTE(gp) this needs to be called after updateRemoteMaps because we
+        // need the simulcast group in the _updateRemoteMaps() method.
+        this.simulcastUtils._removeSimulcastGroup(sb);
+
+        if (desc.sdp.indexOf('a=ssrc-group:SIM') !== -1) {
+            // We don't need the goog conference flag if we're not doing
+            // simulcast.
+            this._ensureGoogConference(sb);
+        }
+
+        desc = new RTCSessionDescription({
+            type: desc.type,
+            sdp: sb.join('\r\n')
+        });
+
+        this.logger.fine(['Transformed remote description', desc.sdp].join(' '));
+    }
+
+    return desc;
+};
+
+module.exports = SimulcastReceiver;
+},{"../../service/RTC/MediaStreamTypes":76,"./SimulcastLogger":38,"./SimulcastUtils":41}],40:[function(require,module,exports){
+var SimulcastLogger = require("./SimulcastLogger");
+var SimulcastUtils = require("./SimulcastUtils");
+
+function SimulcastSender() {
+    this.simulcastUtils = new SimulcastUtils();
+    this.logger = new SimulcastLogger('SimulcastSender', 1);
+}
+
+SimulcastSender.prototype.displayedLocalVideoStream = null;
+
+SimulcastSender.prototype._generateGuid = (function () {
+    function s4() {
+        return Math.floor((1 + Math.random()) * 0x10000)
+            .toString(16)
+            .substring(1);
+    }
+
+    return function () {
+        return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+            s4() + '-' + s4() + s4() + s4();
+    };
+}());
+
+// Returns a random integer between min (included) and max (excluded)
+// Using Math.round() gives a non-uniform distribution!
+SimulcastSender.prototype._generateRandomSSRC = function () {
+    var min = 0, max = 0xffffffff;
+    return Math.floor(Math.random() * (max - min)) + min;
+};
+
+SimulcastSender.prototype.getLocalVideoStream = function () {
+    return (this.displayedLocalVideoStream != null)
+        ? this.displayedLocalVideoStream
+        // in case we have no simulcast at all, i.e. we didn't perform the GUM
+        : APP.RTC.localVideo.getOriginalStream();
+};
+
+function NativeSimulcastSender() {
+    SimulcastSender.call(this); // call the super constructor.
+}
+
+NativeSimulcastSender.prototype = Object.create(SimulcastSender.prototype);
+
+NativeSimulcastSender.prototype._localExplosionMap = {};
+NativeSimulcastSender.prototype._isUsingScreenStream = false;
+NativeSimulcastSender.prototype._localVideoSourceCache = '';
+
+NativeSimulcastSender.prototype.reset = function () {
+    this._localExplosionMap = {};
+    this._isUsingScreenStream = APP.desktopsharing.isUsingScreenStream();
+};
+
+NativeSimulcastSender.prototype._cacheLocalVideoSources = function (lines) {
+    this._localVideoSourceCache = this.simulcastUtils._getVideoSources(lines);
+};
+
+NativeSimulcastSender.prototype._restoreLocalVideoSources = function (lines) {
+    this.simulcastUtils._replaceVideoSources(lines, this._localVideoSourceCache);
+};
+
+NativeSimulcastSender.prototype._appendSimulcastGroup = function (lines) {
+    var videoSources, ssrcGroup, simSSRC, numOfSubs = 2, i, sb, msid;
+
+    this.logger.info('Appending simulcast group...');
+
+    // Get the primary SSRC information.
+    videoSources = this.simulcastUtils.parseMedia(lines, ['video'])[0];
+
+    // Start building the SIM SSRC group.
+    ssrcGroup = ['a=ssrc-group:SIM'];
+
+    // The video source buffer.
+    sb = [];
+
+    // Create the simulcast sub-streams.
+    for (i = 0; i < numOfSubs; i++) {
+        // TODO(gp) prevent SSRC collision.
+        simSSRC = this._generateRandomSSRC();
+        ssrcGroup.push(simSSRC);
+
+        sb.splice.apply(sb, [sb.length, 0].concat(
+            [["a=ssrc:", simSSRC, " cname:", videoSources.base.cname].join(''),
+                ["a=ssrc:", simSSRC, " msid:", videoSources.base.msid].join('')]
+        ));
+
+        this.logger.info(['Generated substream ', i, ' with SSRC ', simSSRC, '.'].join(''));
+
+    }
+
+    // Add the group sim layers.
+    sb.splice(0, 0, ssrcGroup.join(' '))
+
+    this.simulcastUtils._replaceVideoSources(lines, sb);
+};
+
+// Does the actual patching.
+NativeSimulcastSender.prototype._ensureSimulcastGroup = function (lines) {
+
+    this.logger.info('Ensuring simulcast group...');
+
+    if (this.simulcastUtils._indexOfArray('a=ssrc-group:SIM', lines) === this.simulcastUtils._emptyCompoundIndex) {
+        this._appendSimulcastGroup(lines);
+        this._cacheLocalVideoSources(lines);
+    } else {
+        // verify that the ssrcs participating in the SIM group are present
+        // in the SDP (needed for presence).
+        this._restoreLocalVideoSources(lines);
+    }
+};
+
+/**
+ * Produces a single stream with multiple tracks for local video sources.
+ *
+ * @param lines
+ * @private
+ */
+NativeSimulcastSender.prototype._explodeSimulcastSenderSources = function (lines) {
+    var sb, msid, sid, tid, videoSources, self;
+
+    this.logger.info('Exploding local video sources...');
+
+    videoSources = this.simulcastUtils.parseMedia(lines, ['video'])[0];
+
+    self = this;
+    if (videoSources.groups && videoSources.groups.length !== 0) {
+        videoSources.groups.forEach(function (group) {
+            if (group.semantics === 'SIM') {
+                group.ssrcs.forEach(function (ssrc) {
+
+                    // Get the msid for this ssrc..
+                    if (self._localExplosionMap[ssrc]) {
+                        // .. either from the explosion map..
+                        msid = self._localExplosionMap[ssrc];
+                    } else {
+                        // .. or generate a new one (msid).
+                        sid = videoSources.sources[ssrc].msid
+                            .substring(0, videoSources.sources[ssrc].msid.indexOf(' '));
+
+                        tid = self._generateGuid();
+                        msid = [sid, tid].join(' ');
+                        self._localExplosionMap[ssrc] = msid;
+                    }
+
+                    // Assign it to the source object.
+                    videoSources.sources[ssrc].msid = msid;
+
+                    // TODO(gp) Change the msid of associated sources.
+                });
+            }
+        });
+    }
+
+    sb = this.simulcastUtils._compileVideoSources(videoSources);
+
+    this.simulcastUtils._replaceVideoSources(lines, sb);
+};
+
+/**
+ * GUM for simulcast.
+ *
+ * @param constraints
+ * @param success
+ * @param err
+ */
+NativeSimulcastSender.prototype.getUserMedia = function (constraints, success, err) {
+
+    // There's nothing special to do for native simulcast, so just do a normal GUM.
+    navigator.webkitGetUserMedia(constraints, function (hqStream) {
+        success(hqStream);
+    }, err);
+};
+
+/**
+ * Prepares the local description for public usage (i.e. to be signaled
+ * through Jingle to the focus).
+ *
+ * @param desc
+ * @returns {RTCSessionDescription}
+ */
+NativeSimulcastSender.prototype.reverseTransformLocalDescription = function (desc) {
+    var sb;
+
+    if (!this.simulcastUtils.isValidDescription(desc) || this._isUsingScreenStream) {
+        return desc;
+    }
+
+
+    sb = desc.sdp.split('\r\n');
+
+    this._explodeSimulcastSenderSources(sb);
+
+    desc = new RTCSessionDescription({
+        type: desc.type,
+        sdp: sb.join('\r\n')
+    });
+
+    this.logger.fine(['Exploded local video sources', desc.sdp].join(' '));
+
+    return desc;
+};
+
+/**
+ * Ensures that the simulcast group is present in the answer, _if_ native
+ * simulcast is enabled,
+ *
+ * @param desc
+ * @returns {*}
+ */
+NativeSimulcastSender.prototype.transformAnswer = function (desc) {
+
+    if (!this.simulcastUtils.isValidDescription(desc) || this._isUsingScreenStream) {
+        return desc;
+    }
+
+    var sb = desc.sdp.split('\r\n');
+
+    // Even if we have enabled native simulcasting previously
+    // (with a call to SLD with an appropriate SDP, for example),
+    // createAnswer seems to consistently generate incomplete SDP
+    // with missing SSRCS.
+    //
+    // So, subsequent calls to SLD will have missing SSRCS and presence
+    // won't have the complete list of SRCs.
+    this._ensureSimulcastGroup(sb);
+
+    desc = new RTCSessionDescription({
+        type: desc.type,
+        sdp: sb.join('\r\n')
+    });
+
+    this.logger.fine(['Transformed answer', desc.sdp].join(' '));
+
+    return desc;
+};
+
+
+/**
+ *
+ *
+ * @param desc
+ * @returns {*}
+ */
+NativeSimulcastSender.prototype.transformLocalDescription = function (desc) {
+    return desc;
+};
+
+NativeSimulcastSender.prototype._setLocalVideoStreamEnabled = function (ssrc, enabled) {
+    // Nothing to do here, native simulcast does that auto-magically.
+};
+
+NativeSimulcastSender.prototype.constructor = NativeSimulcastSender;
+
+function SimpleSimulcastSender() {
+    SimulcastSender.call(this);
+}
+
+SimpleSimulcastSender.prototype = Object.create(SimulcastSender.prototype);
+
+SimpleSimulcastSender.prototype.localStream = null;
+SimpleSimulcastSender.prototype._localMaps = {
+    msids: [],
+    msid2ssrc: {}
+};
+
+/**
+ * Groups local video sources together in the ssrc-group:SIM group.
+ *
+ * @param lines
+ * @private
+ */
+SimpleSimulcastSender.prototype._groupLocalVideoSources = function (lines) {
+    var sb, videoSources, ssrcs = [], ssrc;
+
+    this.logger.info('Grouping local video sources...');
+
+    videoSources = this.simulcastUtils.parseMedia(lines, ['video'])[0];
+
+    for (ssrc in videoSources.sources) {
+        // jitsi-meet destroys/creates streams at various places causing
+        // the original local stream ids to change. The only thing that
+        // remains unchanged is the trackid.
+        this._localMaps.msid2ssrc[videoSources.sources[ssrc].msid.split(' ')[1]] = ssrc;
+    }
+
+    var self = this;
+    // TODO(gp) add only "free" sources.
+    this._localMaps.msids.forEach(function (msid) {
+        ssrcs.push(self._localMaps.msid2ssrc[msid]);
+    });
+
+    if (!videoSources.groups) {
+        videoSources.groups = [];
+    }
+
+    videoSources.groups.push({
+        'semantics': 'SIM',
+        'ssrcs': ssrcs
+    });
+
+    sb = this.simulcastUtils._compileVideoSources(videoSources);
+
+    this.simulcastUtils._replaceVideoSources(lines, sb);
+};
+
+/**
+ * GUM for simulcast.
+ *
+ * @param constraints
+ * @param success
+ * @param err
+ */
+SimpleSimulcastSender.prototype.getUserMedia = function (constraints, success, err) {
+
+    // TODO(gp) what if we request a resolution not supported by the hardware?
+    // TODO(gp) make the lq stream configurable; although this wouldn't work with native simulcast
+    var lqConstraints = {
+        audio: false,
+        video: {
+            mandatory: {
+                maxWidth: 320,
+                maxHeight: 180,
+                maxFrameRate: 15
+            }
+        }
+    };
+
+    this.logger.info('HQ constraints: ', constraints);
+    this.logger.info('LQ constraints: ', lqConstraints);
+
+
+    // NOTE(gp) if we request the lq stream first webkitGetUserMedia
+    // fails randomly. Tested with Chrome 37. As fippo suggested, the
+    // reason appears to be that Chrome only acquires the cam once and
+    // then downscales the picture (https://code.google.com/p/chromium/issues/detail?id=346616#c11)
+
+    var self = this;
+    navigator.webkitGetUserMedia(constraints, function (hqStream) {
+
+        self.localStream = hqStream;
+
+        // reset local maps.
+        self._localMaps.msids = [];
+        self._localMaps.msid2ssrc = {};
+
+        // add hq trackid to local map
+        self._localMaps.msids.push(hqStream.getVideoTracks()[0].id);
+
+        navigator.webkitGetUserMedia(lqConstraints, function (lqStream) {
+
+            self.displayedLocalVideoStream = lqStream;
+
+            // NOTE(gp) The specification says Array.forEach() will visit
+            // the array elements in numeric order, and that it doesn't
+            // visit elements that don't exist.
+
+            // add lq trackid to local map
+            self._localMaps.msids.splice(0, 0, lqStream.getVideoTracks()[0].id);
+
+            self.localStream.addTrack(lqStream.getVideoTracks()[0]);
+            success(self.localStream);
+        }, err);
+    }, err);
+};
+
+/**
+ * Prepares the local description for public usage (i.e. to be signaled
+ * through Jingle to the focus).
+ *
+ * @param desc
+ * @returns {RTCSessionDescription}
+ */
+SimpleSimulcastSender.prototype.reverseTransformLocalDescription = function (desc) {
+    var sb;
+
+    if (!this.simulcastUtils.isValidDescription(desc)) {
+        return desc;
+    }
+
+    sb = desc.sdp.split('\r\n');
+
+    this._groupLocalVideoSources(sb);
+
+    desc = new RTCSessionDescription({
+        type: desc.type,
+        sdp: sb.join('\r\n')
+    });
+
+    this.logger.fine('Grouped local video sources');
+    this.logger.fine(desc.sdp);
+
+    return desc;
+};
+
+/**
+ * Ensures that the simulcast group is present in the answer, _if_ native
+ * simulcast is enabled,
+ *
+ * @param desc
+ * @returns {*}
+ */
+SimpleSimulcastSender.prototype.transformAnswer = function (desc) {
+    return desc;
+};
+
+
+/**
+ *
+ *
+ * @param desc
+ * @returns {*}
+ */
+SimpleSimulcastSender.prototype.transformLocalDescription = function (desc) {
+
+    var sb = desc.sdp.split('\r\n');
+
+    this.simulcastUtils._removeSimulcastGroup(sb);
+
+    desc = new RTCSessionDescription({
+        type: desc.type,
+        sdp: sb.join('\r\n')
+    });
+
+    this.logger.fine('Transformed local description');
+    this.logger.fine(desc.sdp);
+
+    return desc;
+};
+
+SimpleSimulcastSender.prototype._setLocalVideoStreamEnabled = function (ssrc, enabled) {
+    var trackid;
+
+    var self = this;
+    this.logger.log(['Requested to', enabled ? 'enable' : 'disable', ssrc].join(' '));
+    if (Object.keys(this._localMaps.msid2ssrc).some(function (tid) {
+        // Search for the track id that corresponds to the ssrc
+        if (self._localMaps.msid2ssrc[tid] == ssrc) {
+            trackid = tid;
+            return true;
+        }
+    }) && self.localStream.getVideoTracks().some(function (track) {
+        // Start/stop the track that corresponds to the track id
+        if (track.id === trackid) {
+            track.enabled = enabled;
+            return true;
+        }
+    })) {
+        this.logger.log([trackid, enabled ? 'enabled' : 'disabled'].join(' '));
+        $(document).trigger(enabled
+            ? 'simulcastlayerstarted'
+            : 'simulcastlayerstopped');
+    } else {
+        this.logger.error("I don't have a local stream with SSRC " + ssrc);
+    }
+};
+
+SimpleSimulcastSender.prototype.constructor = SimpleSimulcastSender;
+
+function NoSimulcastSender() {
+    SimulcastSender.call(this);
+}
+
+NoSimulcastSender.prototype = Object.create(SimulcastSender.prototype);
+
+/**
+ * GUM for simulcast.
+ *
+ * @param constraints
+ * @param success
+ * @param err
+ */
+NoSimulcastSender.prototype.getUserMedia = function (constraints, success, err) {
+    navigator.webkitGetUserMedia(constraints, function (hqStream) {
+        success(hqStream);
+    }, err);
+};
+
+/**
+ * Prepares the local description for public usage (i.e. to be signaled
+ * through Jingle to the focus).
+ *
+ * @param desc
+ * @returns {RTCSessionDescription}
+ */
+NoSimulcastSender.prototype.reverseTransformLocalDescription = function (desc) {
+    return desc;
+};
+
+/**
+ * Ensures that the simulcast group is present in the answer, _if_ native
+ * simulcast is enabled,
+ *
+ * @param desc
+ * @returns {*}
+ */
+NoSimulcastSender.prototype.transformAnswer = function (desc) {
+    return desc;
+};
+
+
+/**
+ *
+ *
+ * @param desc
+ * @returns {*}
+ */
+NoSimulcastSender.prototype.transformLocalDescription = function (desc) {
+    return desc;
+};
+
+NoSimulcastSender.prototype._setLocalVideoStreamEnabled = function (ssrc, enabled) {
+
+};
+
+NoSimulcastSender.prototype.constructor = NoSimulcastSender;
+
+module.exports = {
+    "native": NativeSimulcastSender,
+    "no": NoSimulcastSender
+}
+
+},{"./SimulcastLogger":38,"./SimulcastUtils":41}],41:[function(require,module,exports){
+var SimulcastLogger = require("./SimulcastLogger");
+
+/**
+ *
+ * @constructor
+ */
+function SimulcastUtils() {
+    this.logger = new SimulcastLogger("SimulcastUtils", 1);
+}
+
+/**
+ *
+ * @type {{}}
+ * @private
+ */
+SimulcastUtils.prototype._emptyCompoundIndex = {};
+
+/**
+ *
+ * @param lines
+ * @param videoSources
+ * @private
+ */
+SimulcastUtils.prototype._replaceVideoSources = function (lines, videoSources) {
+    var i, inVideo = false, index = -1, howMany = 0;
+
+    this.logger.info('Replacing video sources...');
+
+    for (i = 0; i < lines.length; i++) {
+        if (inVideo && lines[i].substring(0, 'm='.length) === 'm=') {
+            // Out of video.
+            break;
+        }
+
+        if (!inVideo && lines[i].substring(0, 'm=video '.length) === 'm=video ') {
+            // In video.
+            inVideo = true;
+        }
+
+        if (inVideo && (lines[i].substring(0, 'a=ssrc:'.length) === 'a=ssrc:'
+            || lines[i].substring(0, 'a=ssrc-group:'.length) === 'a=ssrc-group:')) {
+
+            if (index === -1) {
+                index = i;
+            }
+
+            howMany++;
+        }
+    }
+
+    //  efficiency baby ;)
+    lines.splice.apply(lines,
+        [index, howMany].concat(videoSources));
+
+};
+
+SimulcastUtils.prototype.isValidDescription = function (desc)
+{
+    return desc && desc != null
+        && desc.type && desc.type != ''
+        && desc.sdp && desc.sdp != '';
+};
+
+SimulcastUtils.prototype._getVideoSources = function (lines) {
+    var i, inVideo = false, sb = [];
+
+    this.logger.info('Getting video sources...');
+
+    for (i = 0; i < lines.length; i++) {
+        if (inVideo && lines[i].substring(0, 'm='.length) === 'm=') {
+            // Out of video.
+            break;
+        }
+
+        if (!inVideo && lines[i].substring(0, 'm=video '.length) === 'm=video ') {
+            // In video.
+            inVideo = true;
+        }
+
+        if (inVideo && lines[i].substring(0, 'a=ssrc:'.length) === 'a=ssrc:') {
+            // In SSRC.
+            sb.push(lines[i]);
+        }
+
+        if (inVideo && lines[i].substring(0, 'a=ssrc-group:'.length) === 'a=ssrc-group:') {
+            sb.push(lines[i]);
+        }
+    }
+
+    return sb;
+};
+
+SimulcastUtils.prototype.parseMedia = function (lines, mediatypes) {
+    var i, res = [], type, cur_media, idx, ssrcs, cur_ssrc, ssrc,
+        ssrc_attribute, group, semantics, skip = true;
+
+    this.logger.info('Parsing media sources...');
+
+    for (i = 0; i < lines.length; i++) {
+        if (lines[i].substring(0, 'm='.length) === 'm=') {
+
+            type = lines[i]
+                .substr('m='.length, lines[i].indexOf(' ') - 'm='.length);
+            skip = mediatypes !== undefined && mediatypes.indexOf(type) === -1;
+
+            if (!skip) {
+                cur_media = {
+                    'type': type,
+                    'sources': {},
+                    'groups': []
+                };
+
+                res.push(cur_media);
+            }
+
+        } else if (!skip && lines[i].substring(0, 'a=ssrc:'.length) === 'a=ssrc:') {
+
+            idx = lines[i].indexOf(' ');
+            ssrc = lines[i].substring('a=ssrc:'.length, idx);
+            if (cur_media.sources[ssrc] === undefined) {
+                cur_ssrc = {'ssrc': ssrc};
+                cur_media.sources[ssrc] = cur_ssrc;
+            }
+
+            ssrc_attribute = lines[i].substr(idx + 1).split(':', 2)[0];
+            cur_ssrc[ssrc_attribute] = lines[i].substr(idx + 1).split(':', 2)[1];
+
+            if (cur_media.base === undefined) {
+                cur_media.base = cur_ssrc;
+            }
+
+        } else if (!skip && lines[i].substring(0, 'a=ssrc-group:'.length) === 'a=ssrc-group:') {
+            idx = lines[i].indexOf(' ');
+            semantics = lines[i].substr(0, idx).substr('a=ssrc-group:'.length);
+            ssrcs = lines[i].substr(idx).trim().split(' ');
+            group = {
+                'semantics': semantics,
+                'ssrcs': ssrcs
+            };
+            cur_media.groups.push(group);
+        } else if (!skip && (lines[i].substring(0, 'a=sendrecv'.length) === 'a=sendrecv' ||
+            lines[i].substring(0, 'a=recvonly'.length) === 'a=recvonly' ||
+            lines[i].substring(0, 'a=sendonly'.length) === 'a=sendonly' ||
+            lines[i].substring(0, 'a=inactive'.length) === 'a=inactive')) {
+
+            cur_media.direction = lines[i].substring('a='.length);
+        }
+    }
+
+    return res;
+};
+
+/**
+ * The _indexOfArray() method returns the first a CompoundIndex at which a
+ * given element can be found in the array, or _emptyCompoundIndex if it is
+ * not present.
+ *
+ * Example:
+ *
+ * _indexOfArray('3', [ 'this is line 1', 'this is line 2', 'this is line 3' ])
+ *
+ * returns {row: 2, column: 14}
+ *
+ * @param needle
+ * @param haystack
+ * @param start
+ * @returns {}
+ * @private
+ */
+SimulcastUtils.prototype._indexOfArray = function (needle, haystack, start) {
+    var length = haystack.length, idx, i;
+
+    if (!start) {
+        start = 0;
+    }
+
+    for (i = start; i < length; i++) {
+        idx = haystack[i].indexOf(needle);
+        if (idx !== -1) {
+            return {row: i, column: idx};
+        }
+    }
+    return this._emptyCompoundIndex;
+};
+
+SimulcastUtils.prototype._removeSimulcastGroup = function (lines) {
+    var i;
+
+    for (i = lines.length - 1; i >= 0; i--) {
+        if (lines[i].indexOf('a=ssrc-group:SIM') !== -1) {
+            lines.splice(i, 1);
+        }
+    }
+};
+
+SimulcastUtils.prototype._compileVideoSources = function (videoSources) {
+    var sb = [], ssrc, addedSSRCs = [];
+
+    this.logger.info('Compiling video sources...');
+
+    // Add the groups
+    if (videoSources.groups && videoSources.groups.length !== 0) {
+        videoSources.groups.forEach(function (group) {
+            if (group.ssrcs && group.ssrcs.length !== 0) {
+                sb.push([['a=ssrc-group:', group.semantics].join(''), group.ssrcs.join(' ')].join(' '));
+
+                // if (group.semantics !== 'SIM') {
+                group.ssrcs.forEach(function (ssrc) {
+                    addedSSRCs.push(ssrc);
+                    sb.splice.apply(sb, [sb.length, 0].concat([
+                        ["a=ssrc:", ssrc, " cname:", videoSources.sources[ssrc].cname].join(''),
+                        ["a=ssrc:", ssrc, " msid:", videoSources.sources[ssrc].msid].join('')]));
+                });
+                //}
+            }
+        });
+    }
+
+    // Then add any free sources.
+    if (videoSources.sources) {
+        for (ssrc in videoSources.sources) {
+            if (addedSSRCs.indexOf(ssrc) === -1) {
+                sb.splice.apply(sb, [sb.length, 0].concat([
+                    ["a=ssrc:", ssrc, " cname:", videoSources.sources[ssrc].cname].join(''),
+                    ["a=ssrc:", ssrc, " msid:", videoSources.sources[ssrc].msid].join('')]));
+            }
+        }
+    }
+
+    return sb;
+};
+
+module.exports = SimulcastUtils;
+},{"./SimulcastLogger":38}],42:[function(require,module,exports){
+/*jslint plusplus: true */
+/*jslint nomen: true*/
+
+var SimulcastSender = require("./SimulcastSender");
+var NoSimulcastSender = SimulcastSender["no"];
+var NativeSimulcastSender = SimulcastSender["native"];
+var SimulcastReceiver = require("./SimulcastReceiver");
+var SimulcastUtils = require("./SimulcastUtils");
+var RTCEvents = require("../../service/RTC/RTCEvents");
+
+
+/**
+ *
+ * @constructor
+ */
+function SimulcastManager() {
+
+    // Create the simulcast utilities.
+    this.simulcastUtils = new SimulcastUtils();
+
+    // Create remote simulcast.
+    this.simulcastReceiver = new SimulcastReceiver();
+
+    // Initialize local simulcast.
+
+    // TODO(gp) move into SimulcastManager.prototype.getUserMedia and take into
+    // account constraints.
+    if (!config.enableSimulcast) {
+        this.simulcastSender = new NoSimulcastSender();
+    } else {
+
+        var isChromium = window.chrome,
+            vendorName = window.navigator.vendor;
+        if(isChromium !== null && isChromium !== undefined
+            /* skip opera */
+            && vendorName === "Google Inc."
+            /* skip Chromium as suggested by fippo */
+            && !window.navigator.appVersion.match(/Chromium\//) ) {
+            var ver = parseInt(window.navigator.appVersion.match(/Chrome\/(\d+)\./)[1], 10);
+            if (ver > 37) {
+                this.simulcastSender = new NativeSimulcastSender();
+            } else {
+                this.simulcastSender = new NoSimulcastSender();
+            }
+        } else {
+            this.simulcastSender = new NoSimulcastSender();
+        }
+
+    }
+    APP.RTC.addListener(RTCEvents.SIMULCAST_LAYER_CHANGED,
+        function (endpointSimulcastLayers) {
+            endpointSimulcastLayers.forEach(function (esl) {
+                var ssrc = esl.simulcastLayer.primarySSRC;
+                simulcast._setReceivingVideoStream(esl.endpoint, ssrc);
+            });
+        });
+    APP.RTC.addListener(RTCEvents.SIMULCAST_START, function (simulcastLayer) {
+        var ssrc = simulcastLayer.primarySSRC;
+        simulcast._setLocalVideoStreamEnabled(ssrc, true);
+    });
+    APP.RTC.addListener(RTCEvents.SIMULCAST_STOP, function (simulcastLayer) {
+        var ssrc = simulcastLayer.primarySSRC;
+        simulcast._setLocalVideoStreamEnabled(ssrc, false);
+    });
+
+}
+
+/**
+ * Restores the simulcast groups of the remote description. In
+ * transformRemoteDescription we remove those in order for the set remote
+ * description to succeed. The focus needs the signal the groups to new
+ * participants.
+ *
+ * @param desc
+ * @returns {*}
+ */
+SimulcastManager.prototype.reverseTransformRemoteDescription = function (desc) {
+    return this.simulcastReceiver.reverseTransformRemoteDescription(desc);
+};
+
+/**
+ * Removes the ssrc-group:SIM from the remote description bacause Chrome
+ * either gets confused and thinks this is an FID group or, if an FID group
+ * is already present, it fails to set the remote description.
+ *
+ * @param desc
+ * @returns {*}
+ */
+SimulcastManager.prototype.transformRemoteDescription = function (desc) {
+    return this.simulcastReceiver.transformRemoteDescription(desc);
+};
+
+/**
+ * Gets the fully qualified msid (stream.id + track.id) associated to the
+ * SSRC.
+ *
+ * @param ssrc
+ * @returns {*}
+ */
+SimulcastManager.prototype.getRemoteVideoStreamIdBySSRC = function (ssrc) {
+    return this.simulcastReceiver.getRemoteVideoStreamIdBySSRC(ssrc);
+};
+
+/**
+ * Returns a stream with single video track, the one currently being
+ * received by this endpoint.
+ *
+ * @param stream the remote simulcast stream.
+ * @returns {webkitMediaStream}
+ */
+SimulcastManager.prototype.getReceivingVideoStream = function (stream) {
+    return this.simulcastReceiver.getReceivingVideoStream(stream);
+};
+
+/**
+ *
+ *
+ * @param desc
+ * @returns {*}
+ */
+SimulcastManager.prototype.transformLocalDescription = function (desc) {
+    return this.simulcastSender.transformLocalDescription(desc);
+};
+
+/**
+ *
+ * @returns {*}
+ */
+SimulcastManager.prototype.getLocalVideoStream = function() {
+    return this.simulcastSender.getLocalVideoStream();
+};
+
+/**
+ * GUM for simulcast.
+ *
+ * @param constraints
+ * @param success
+ * @param err
+ */
+SimulcastManager.prototype.getUserMedia = function (constraints, success, err) {
+
+    this.simulcastSender.getUserMedia(constraints, success, err);
+};
+
+/**
+ * Prepares the local description for public usage (i.e. to be signaled
+ * through Jingle to the focus).
+ *
+ * @param desc
+ * @returns {RTCSessionDescription}
+ */
+SimulcastManager.prototype.reverseTransformLocalDescription = function (desc) {
+    return this.simulcastSender.reverseTransformLocalDescription(desc);
+};
+
+/**
+ * Ensures that the simulcast group is present in the answer, _if_ native
+ * simulcast is enabled,
+ *
+ * @param desc
+ * @returns {*}
+ */
+SimulcastManager.prototype.transformAnswer = function (desc) {
+    return this.simulcastSender.transformAnswer(desc);
+};
+
+SimulcastManager.prototype.getReceivingSSRC = function (jid) {
+    return this.simulcastReceiver.getReceivingSSRC(jid);
+};
+
+SimulcastManager.prototype.getReceivingVideoStreamBySSRC = function (msid) {
+    return this.simulcastReceiver.getReceivingVideoStreamBySSRC(msid);
+};
+
+/**
+ *
+ * @param lines
+ * @param mediatypes
+ * @returns {*}
+ */
+SimulcastManager.prototype.parseMedia = function(lines, mediatypes) {
+    var sb = lines.sdp.split('\r\n');
+    return this.simulcastUtils.parseMedia(sb, mediatypes);
+};
+
+SimulcastManager.prototype._setReceivingVideoStream = function(resource, ssrc) {
+    this.simulcastReceiver._setReceivingVideoStream(resource, ssrc);
+};
+
+SimulcastManager.prototype._setLocalVideoStreamEnabled = function(ssrc, enabled) {
+    this.simulcastSender._setLocalVideoStreamEnabled(ssrc, enabled);
+};
+
+SimulcastManager.prototype.resetSender = function() {
+    if (typeof this.simulcastSender.reset === 'function'){
+        this.simulcastSender.reset();
+    }
+};
+
+var simulcast = new SimulcastManager();
+
+module.exports = simulcast;
+},{"../../service/RTC/RTCEvents":78,"./SimulcastReceiver":39,"./SimulcastSender":40,"./SimulcastUtils":41}],43:[function(require,module,exports){
+/**
+ * Provides statistics for the local stream.
+ */
+
+
+/**
+ * Size of the webaudio analizer buffer.
+ * @type {number}
+ */
+var WEBAUDIO_ANALIZER_FFT_SIZE = 2048;
+
+/**
+ * Value of the webaudio analizer smoothing time parameter.
+ * @type {number}
+ */
+var WEBAUDIO_ANALIZER_SMOOTING_TIME = 0.8;
+
+/**
+ * Converts time domain data array to audio level.
+ * @param array the time domain data array.
+ * @returns {number} the audio level
+ */
+function timeDomainDataToAudioLevel(samples) {
+
+    var maxVolume = 0;
+
+    var length = samples.length;
+
+    for (var i = 0; i < length; i++) {
+        if (maxVolume < samples[i])
+            maxVolume = samples[i];
+    }
+
+    return parseFloat(((maxVolume - 127) / 128).toFixed(3));
+};
+
+/**
+ * Animates audio level change
+ * @param newLevel the new audio level
+ * @param lastLevel the last audio level
+ * @returns {Number} the audio level to be set
+ */
+function animateLevel(newLevel, lastLevel)
+{
+    var value = 0;
+    var diff = lastLevel - newLevel;
+    if(diff > 0.2)
+    {
+        value = lastLevel - 0.2;
+    }
+    else if(diff < -0.4)
+    {
+        value = lastLevel + 0.4;
+    }
+    else
+    {
+        value = newLevel;
+    }
+
+    return parseFloat(value.toFixed(3));
+}
+
+
+/**
+ * <tt>LocalStatsCollector</tt> calculates statistics for the local stream.
+ *
+ * @param stream the local stream
+ * @param interval stats refresh interval given in ms.
+ * @param {function(LocalStatsCollector)} updateCallback the callback called on stats
+ *                                   update.
+ * @constructor
+ */
+function LocalStatsCollector(stream, interval, statisticsService, eventEmitter) {
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
+    this.stream = stream;
+    this.intervalId = null;
+    this.intervalMilis = interval;
+    this.eventEmitter = eventEmitter;
+    this.audioLevel = 0;
+    this.statisticsService = statisticsService;
+}
+
+/**
+ * Starts the collecting the statistics.
+ */
+LocalStatsCollector.prototype.start = function () {
+    if (!window.AudioContext)
+        return;
+
+    var context = new AudioContext();
+    var analyser = context.createAnalyser();
+    analyser.smoothingTimeConstant = WEBAUDIO_ANALIZER_SMOOTING_TIME;
+    analyser.fftSize = WEBAUDIO_ANALIZER_FFT_SIZE;
+
+
+    var source = context.createMediaStreamSource(this.stream);
+    source.connect(analyser);
+
+
+    var self = this;
+
+    this.intervalId = setInterval(
+        function () {
+            var array = new Uint8Array(analyser.frequencyBinCount);
+            analyser.getByteTimeDomainData(array);
+            var audioLevel = timeDomainDataToAudioLevel(array);
+            if(audioLevel != self.audioLevel) {
+                self.audioLevel = animateLevel(audioLevel, self.audioLevel);
+                self.eventEmitter.emit(
+                    "statistics.audioLevel",
+                    self.statisticsService.LOCAL_JID,
+                    self.audioLevel);
+            }
+        },
+        this.intervalMilis
+    );
+
+};
+
+/**
+ * Stops collecting the statistics.
+ */
+LocalStatsCollector.prototype.stop = function () {
+    if (this.intervalId) {
+        clearInterval(this.intervalId);
+        this.intervalId = null;
+    }
+};
+
+module.exports = LocalStatsCollector;
+},{}],44:[function(require,module,exports){
+/* global ssrc2jid */
+/* jshint -W117 */
+var RTCBrowserType = require("../../service/RTC/RTCBrowserType");
+
+
+/**
+ * Calculates packet lost percent using the number of lost packets and the
+ * number of all packet.
+ * @param lostPackets the number of lost packets
+ * @param totalPackets the number of all packets.
+ * @returns {number} packet loss percent
+ */
+function calculatePacketLoss(lostPackets, totalPackets) {
+    if(!totalPackets || totalPackets <= 0 || !lostPackets || lostPackets <= 0)
+        return 0;
+    return Math.round((lostPackets/totalPackets)*100);
+}
+
+function getStatValue(item, name) {
+    if(!keyMap[APP.RTC.getBrowserType()][name])
+        throw "The property isn't supported!";
+    var key = keyMap[APP.RTC.getBrowserType()][name];
+    return APP.RTC.getBrowserType() == RTCBrowserType.RTC_BROWSER_CHROME? item.stat(key) : item[key];
+}
+
+/**
+ * Peer statistics data holder.
+ * @constructor
+ */
+function PeerStats()
+{
+    this.ssrc2Loss = {};
+    this.ssrc2AudioLevel = {};
+    this.ssrc2bitrate = {};
+    this.ssrc2resolution = {};
+}
+
+/**
+ * The bandwidth
+ * @type {{}}
+ */
+PeerStats.bandwidth = {};
+
+/**
+ * The bit rate
+ * @type {{}}
+ */
+PeerStats.bitrate = {};
+
+
+
+/**
+ * The packet loss rate
+ * @type {{}}
+ */
+PeerStats.packetLoss = null;
+
+/**
+ * Sets packets loss rate for given <tt>ssrc</tt> that blong to the peer
+ * represented by this instance.
+ * @param ssrc audio or video RTP stream SSRC.
+ * @param lossRate new packet loss rate value to be set.
+ */
+PeerStats.prototype.setSsrcLoss = function (ssrc, lossRate)
+{
+    this.ssrc2Loss[ssrc] = lossRate;
+};
+
+/**
+ * Sets resolution for given <tt>ssrc</tt> that belong to the peer
+ * represented by this instance.
+ * @param ssrc audio or video RTP stream SSRC.
+ * @param resolution new resolution value to be set.
+ */
+PeerStats.prototype.setSsrcResolution = function (ssrc, resolution)
+{
+    if(resolution === null && this.ssrc2resolution[ssrc])
+    {
+        delete this.ssrc2resolution[ssrc];
+    }
+    else if(resolution !== null)
+        this.ssrc2resolution[ssrc] = resolution;
+};
+
+/**
+ * Sets the bit rate for given <tt>ssrc</tt> that blong to the peer
+ * represented by this instance.
+ * @param ssrc audio or video RTP stream SSRC.
+ * @param bitrate new bitrate value to be set.
+ */
+PeerStats.prototype.setSsrcBitrate = function (ssrc, bitrate)
+{
+    if(this.ssrc2bitrate[ssrc])
+    {
+        this.ssrc2bitrate[ssrc].download += bitrate.download;
+        this.ssrc2bitrate[ssrc].upload += bitrate.upload;
+    }
+    else {
+        this.ssrc2bitrate[ssrc] = bitrate;
+    }
+};
+
+/**
+ * Sets new audio level(input or output) for given <tt>ssrc</tt> that identifies
+ * the stream which belongs to the peer represented by this instance.
+ * @param ssrc RTP stream SSRC for which current audio level value will be
+ *        updated.
+ * @param audioLevel the new audio level value to be set. Value is truncated to
+ *        fit the range from 0 to 1.
+ */
+PeerStats.prototype.setSsrcAudioLevel = function (ssrc, audioLevel)
+{
+    // Range limit 0 - 1
+    this.ssrc2AudioLevel[ssrc] = Math.min(Math.max(audioLevel, 0), 1);
+};
+
+/**
+ * Array with the transport information.
+ * @type {Array}
+ */
+PeerStats.transport = [];
+
+
+/**
+ * <tt>StatsCollector</tt> registers for stats updates of given
+ * <tt>peerconnection</tt> in given <tt>interval</tt>. On each update particular
+ * stats are extracted and put in {@link PeerStats} objects. Once the processing
+ * is done <tt>audioLevelsUpdateCallback</tt> is called with <tt>this</tt>
+ * instance as an event source.
+ *
+ * @param peerconnection webRTC peer connection object.
+ * @param interval stats refresh interval given in ms.
+ * @param {function(StatsCollector)} audioLevelsUpdateCallback the callback
+ * called on stats update.
+ * @constructor
+ */
+function StatsCollector(peerconnection, audioLevelsInterval, statsInterval, eventEmitter)
+{
+    this.peerconnection = peerconnection;
+    this.baselineAudioLevelsReport = null;
+    this.currentAudioLevelsReport = null;
+    this.currentStatsReport = null;
+    this.baselineStatsReport = null;
+    this.audioLevelsIntervalId = null;
+    this.eventEmitter = eventEmitter;
+
+    /**
+     * Gather PeerConnection stats once every this many milliseconds.
+     */
+    this.GATHER_INTERVAL = 10000;
+
+    /**
+     * Log stats via the focus once every this many milliseconds.
+     */
+    this.LOG_INTERVAL = 60000;
+
+    /**
+     * Gather stats and store them in this.statsToBeLogged.
+     */
+    this.gatherStatsIntervalId = null;
+
+    /**
+     * Send the stats already saved in this.statsToBeLogged to be logged via
+     * the focus.
+     */
+    this.logStatsIntervalId = null;
+
+    /**
+     * Stores the statistics which will be send to the focus to be logged.
+     */
+    this.statsToBeLogged =
+    {
+        timestamps: [],
+        stats: {}
+    };
+
+    // Updates stats interval
+    this.audioLevelsIntervalMilis = audioLevelsInterval;
+
+    this.statsIntervalId = null;
+    this.statsIntervalMilis = statsInterval;
+    // Map of jids to PeerStats
+    this.jid2stats = {};
+}
+
+module.exports = StatsCollector;
+
+/**
+ * Stops stats updates.
+ */
+StatsCollector.prototype.stop = function ()
+{
+    if (this.audioLevelsIntervalId)
+    {
+        clearInterval(this.audioLevelsIntervalId);
+        this.audioLevelsIntervalId = null;
+        clearInterval(this.statsIntervalId);
+        this.statsIntervalId = null;
+        clearInterval(this.logStatsIntervalId);
+        this.logStatsIntervalId = null;
+        clearInterval(this.gatherStatsIntervalId);
+        this.gatherStatsIntervalId = null;
+    }
+};
+
+/**
+ * Callback passed to <tt>getStats</tt> method.
+ * @param error an error that occurred on <tt>getStats</tt> call.
+ */
+StatsCollector.prototype.errorCallback = function (error)
+{
+    console.error("Get stats error", error);
+    this.stop();
+};
+
+/**
+ * Starts stats updates.
+ */
+StatsCollector.prototype.start = function ()
+{
+    var self = this;
+    this.audioLevelsIntervalId = setInterval(
+        function ()
+        {
+            // Interval updates
+            self.peerconnection.getStats(
+                function (report)
+                {
+                    var results = null;
+                    if(!report || !report.result || typeof report.result != 'function')
+                    {
+                        results = report;
+                    }
+                    else
+                    {
+                        results = report.result();
+                    }
+                    //console.error("Got interval report", results);
+                    self.currentAudioLevelsReport = results;
+                    self.processAudioLevelReport();
+                    self.baselineAudioLevelsReport =
+                        self.currentAudioLevelsReport;
+                },
+                self.errorCallback
+            );
+        },
+        self.audioLevelsIntervalMilis
+    );
+
+    this.statsIntervalId = setInterval(
+        function () {
+            // Interval updates
+            self.peerconnection.getStats(
+                function (report)
+                {
+                    var results = null;
+                    if(!report || !report.result || typeof report.result != 'function')
+                    {
+                        //firefox
+                        results = report;
+                    }
+                    else
+                    {
+                        //chrome
+                        results = report.result();
+                    }
+                    //console.error("Got interval report", results);
+                    self.currentStatsReport = results;
+                    try
+                    {
+                        self.processStatsReport();
+                    }
+                    catch (e)
+                    {
+                        console.error("Unsupported key:" + e, e);
+                    }
+
+                    self.baselineStatsReport = self.currentStatsReport;
+                },
+                self.errorCallback
+            );
+        },
+        self.statsIntervalMilis
+    );
+
+    if (config.logStats) {
+        this.gatherStatsIntervalId = setInterval(
+            function () {
+                self.peerconnection.getStats(
+                    function (report) {
+                        self.addStatsToBeLogged(report.result());
+                    },
+                    function () {
+                    }
+                );
+            },
+            this.GATHER_INTERVAL
+        );
+
+        this.logStatsIntervalId = setInterval(
+            function() { self.logStats(); },
+            this.LOG_INTERVAL);
+    }
+};
+
+/**
+ * Converts the stats to the format used for logging, and saves the data in
+ * this.statsToBeLogged.
+ * @param reports Reports as given by webkitRTCPerConnection.getStats.
+ */
+StatsCollector.prototype.addStatsToBeLogged = function (reports) {
+    var self = this;
+    var num_records = this.statsToBeLogged.timestamps.length;
+    this.statsToBeLogged.timestamps.push(new Date().getTime());
+    reports.map(function (report) {
+        var stat = self.statsToBeLogged.stats[report.id];
+        if (!stat) {
+            stat = self.statsToBeLogged.stats[report.id] = {};
+        }
+        stat.type = report.type;
+        report.names().map(function (name) {
+            var values = stat[name];
+            if (!values) {
+                values = stat[name] = [];
+            }
+            while (values.length < num_records) {
+                values.push(null);
+            }
+            values.push(report.stat(name));
+        });
+    });
+};
+
+StatsCollector.prototype.logStats = function () {
+
+    if(!APP.xmpp.sendLogs(this.statsToBeLogged))
+        return;
+    // Reset the stats
+    this.statsToBeLogged.stats = {};
+    this.statsToBeLogged.timestamps = [];
+};
+var keyMap = {};
+keyMap[RTCBrowserType.RTC_BROWSER_FIREFOX] = {
+    "ssrc": "ssrc",
+    "packetsReceived": "packetsReceived",
+    "packetsLost": "packetsLost",
+    "packetsSent": "packetsSent",
+    "bytesReceived": "bytesReceived",
+    "bytesSent": "bytesSent"
+};
+keyMap[RTCBrowserType.RTC_BROWSER_CHROME] = {
+    "receiveBandwidth": "googAvailableReceiveBandwidth",
+    "sendBandwidth": "googAvailableSendBandwidth",
+    "remoteAddress": "googRemoteAddress",
+    "transportType": "googTransportType",
+    "localAddress": "googLocalAddress",
+    "activeConnection": "googActiveConnection",
+    "ssrc": "ssrc",
+    "packetsReceived": "packetsReceived",
+    "packetsSent": "packetsSent",
+    "packetsLost": "packetsLost",
+    "bytesReceived": "bytesReceived",
+    "bytesSent": "bytesSent",
+    "googFrameHeightReceived": "googFrameHeightReceived",
+    "googFrameWidthReceived": "googFrameWidthReceived",
+    "googFrameHeightSent": "googFrameHeightSent",
+    "googFrameWidthSent": "googFrameWidthSent",
+    "audioInputLevel": "audioInputLevel",
+    "audioOutputLevel": "audioOutputLevel"
+};
+
+
+/**
+ * Stats processing logic.
+ */
+StatsCollector.prototype.processStatsReport = function () {
+    if (!this.baselineStatsReport) {
+        return;
+    }
+
+    for (var idx in this.currentStatsReport) {
+        var now = this.currentStatsReport[idx];
+        try {
+            if (getStatValue(now, 'receiveBandwidth') ||
+                getStatValue(now, 'sendBandwidth')) {
+                PeerStats.bandwidth = {
+                    "download": Math.round(
+                            (getStatValue(now, 'receiveBandwidth')) / 1000),
+                    "upload": Math.round(
+                            (getStatValue(now, 'sendBandwidth')) / 1000)
+                };
+            }
+        }
+        catch(e){/*not supported*/}
+
+        if(now.type == 'googCandidatePair')
+        {
+            var ip, type, localIP, active;
+            try {
+                ip = getStatValue(now, 'remoteAddress');
+                type = getStatValue(now, "transportType");
+                localIP = getStatValue(now, "localAddress");
+                active = getStatValue(now, "activeConnection");
+            }
+            catch(e){/*not supported*/}
+            if(!ip || !type || !localIP || active != "true")
+                continue;
+            var addressSaved = false;
+            for(var i = 0; i < PeerStats.transport.length; i++)
+            {
+                if(PeerStats.transport[i].ip == ip &&
+                    PeerStats.transport[i].type == type &&
+                    PeerStats.transport[i].localip == localIP)
+                {
+                    addressSaved = true;
+                }
+            }
+            if(addressSaved)
+                continue;
+            PeerStats.transport.push({localip: localIP, ip: ip, type: type});
+            continue;
+        }
+
+        if(now.type == "candidatepair")
+        {
+            if(now.state == "succeeded")
+                continue;
+
+            var local = this.currentStatsReport[now.localCandidateId];
+            var remote = this.currentStatsReport[now.remoteCandidateId];
+            PeerStats.transport.push({localip: local.ipAddress + ":" + local.portNumber,
+                ip: remote.ipAddress + ":" + remote.portNumber, type: local.transport});
+
+        }
+
+        if (now.type != 'ssrc' && now.type != "outboundrtp" &&
+            now.type != "inboundrtp") {
+            continue;
+        }
+
+        var before = this.baselineStatsReport[idx];
+        if (!before) {
+            console.warn(getStatValue(now, 'ssrc') + ' not enough data');
+            continue;
+        }
+
+        var ssrc = getStatValue(now, 'ssrc');
+        if(!ssrc)
+            continue;
+        var jid = APP.xmpp.getJidFromSSRC(ssrc);
+        if (!jid && (Date.now() - now.timestamp) < 3000) {
+            console.warn("No jid for ssrc: " + ssrc);
+            continue;
+        }
+
+        var jidStats = this.jid2stats[jid];
+        if (!jidStats) {
+            jidStats = new PeerStats();
+            this.jid2stats[jid] = jidStats;
+        }
+
+
+        var isDownloadStream = true;
+        var key = 'packetsReceived';
+        if (!getStatValue(now, key))
+        {
+            isDownloadStream = false;
+            key = 'packetsSent';
+            if (!getStatValue(now, key))
+            {
+                console.warn("No packetsReceived nor packetSent stat found");
+                continue;
+            }
+        }
+        var packetsNow = getStatValue(now, key);
+        if(!packetsNow || packetsNow < 0)
+            packetsNow = 0;
+
+        var packetsBefore = getStatValue(before, key);
+        if(!packetsBefore || packetsBefore < 0)
+            packetsBefore = 0;
+        var packetRate = packetsNow - packetsBefore;
+        if(!packetRate || packetRate < 0)
+            packetRate = 0;
+        var currentLoss = getStatValue(now, 'packetsLost');
+        if(!currentLoss || currentLoss < 0)
+            currentLoss = 0;
+        var previousLoss = getStatValue(before, 'packetsLost');
+        if(!previousLoss || previousLoss < 0)
+            previousLoss = 0;
+        var lossRate = currentLoss - previousLoss;
+        if(!lossRate || lossRate < 0)
+            lossRate = 0;
+        var packetsTotal = (packetRate + lossRate);
+
+        jidStats.setSsrcLoss(ssrc,
+            {"packetsTotal": packetsTotal,
+                "packetsLost": lossRate,
+                "isDownloadStream": isDownloadStream});
+
+
+        var bytesReceived = 0, bytesSent = 0;
+        if(getStatValue(now, "bytesReceived"))
+        {
+            bytesReceived = getStatValue(now, "bytesReceived") -
+                getStatValue(before, "bytesReceived");
+        }
+
+        if(getStatValue(now, "bytesSent"))
+        {
+            bytesSent = getStatValue(now, "bytesSent") -
+                getStatValue(before, "bytesSent");
+        }
+
+        var time = Math.round((now.timestamp - before.timestamp) / 1000);
+        if(bytesReceived <= 0 || time <= 0)
+        {
+            bytesReceived = 0;
+        }
+        else
+        {
+            bytesReceived = Math.round(((bytesReceived * 8) / time) / 1000);
+        }
+
+        if(bytesSent <= 0 || time <= 0)
+        {
+            bytesSent = 0;
+        }
+        else
+        {
+            bytesSent = Math.round(((bytesSent * 8) / time) / 1000);
+        }
+
+        jidStats.setSsrcBitrate(ssrc, {
+            "download": bytesReceived,
+            "upload": bytesSent});
+
+        var resolution = {height: null, width: null};
+        try {
+            if (getStatValue(now, "googFrameHeightReceived") &&
+                getStatValue(now, "googFrameWidthReceived")) {
+                resolution.height = getStatValue(now, "googFrameHeightReceived");
+                resolution.width = getStatValue(now, "googFrameWidthReceived");
+            }
+            else if (getStatValue(now, "googFrameHeightSent") &&
+                getStatValue(now, "googFrameWidthSent")) {
+                resolution.height = getStatValue(now, "googFrameHeightSent");
+                resolution.width = getStatValue(now, "googFrameWidthSent");
+            }
+        }
+        catch(e){/*not supported*/}
+
+        if(resolution.height && resolution.width)
+        {
+            jidStats.setSsrcResolution(ssrc, resolution);
+        }
+        else
+        {
+            jidStats.setSsrcResolution(ssrc, null);
+        }
+
+
+    }
+
+    var self = this;
+    // Jid stats
+    var totalPackets = {download: 0, upload: 0};
+    var lostPackets = {download: 0, upload: 0};
+    var bitrateDownload = 0;
+    var bitrateUpload = 0;
+    var resolutions = {};
+    Object.keys(this.jid2stats).forEach(
+        function (jid)
+        {
+            Object.keys(self.jid2stats[jid].ssrc2Loss).forEach(
+                function (ssrc)
+                {
+                    var type = "upload";
+                    if(self.jid2stats[jid].ssrc2Loss[ssrc].isDownloadStream)
+                        type = "download";
+                    totalPackets[type] +=
+                        self.jid2stats[jid].ssrc2Loss[ssrc].packetsTotal;
+                    lostPackets[type] +=
+                        self.jid2stats[jid].ssrc2Loss[ssrc].packetsLost;
+                }
+            );
+            Object.keys(self.jid2stats[jid].ssrc2bitrate).forEach(
+                function (ssrc) {
+                    bitrateDownload +=
+                        self.jid2stats[jid].ssrc2bitrate[ssrc].download;
+                    bitrateUpload +=
+                        self.jid2stats[jid].ssrc2bitrate[ssrc].upload;
+
+                    delete self.jid2stats[jid].ssrc2bitrate[ssrc];
+                }
+            );
+            resolutions[jid] = self.jid2stats[jid].ssrc2resolution;
+        }
+    );
+
+    PeerStats.bitrate = {"upload": bitrateUpload, "download": bitrateDownload};
+
+    PeerStats.packetLoss = {
+        total:
+            calculatePacketLoss(lostPackets.download + lostPackets.upload,
+                    totalPackets.download + totalPackets.upload),
+        download:
+            calculatePacketLoss(lostPackets.download, totalPackets.download),
+        upload:
+            calculatePacketLoss(lostPackets.upload, totalPackets.upload)
+    };
+    this.eventEmitter.emit("statistics.connectionstats",
+        {
+            "bitrate": PeerStats.bitrate,
+            "packetLoss": PeerStats.packetLoss,
+            "bandwidth": PeerStats.bandwidth,
+            "resolution": resolutions,
+            "transport": PeerStats.transport
+        });
+    PeerStats.transport = [];
+
+};
+
+/**
+ * Stats processing logic.
+ */
+StatsCollector.prototype.processAudioLevelReport = function ()
+{
+    if (!this.baselineAudioLevelsReport)
+    {
+        return;
+    }
+
+    for (var idx in this.currentAudioLevelsReport)
+    {
+        var now = this.currentAudioLevelsReport[idx];
+
+        if (now.type != 'ssrc')
+        {
+            continue;
+        }
+
+        var before = this.baselineAudioLevelsReport[idx];
+        if (!before)
+        {
+            console.warn(getStatValue(now, 'ssrc') + ' not enough data');
+            continue;
+        }
+
+        var ssrc = getStatValue(now, 'ssrc');
+        var jid = APP.xmpp.getJidFromSSRC(ssrc);
+        if (!jid && (Date.now() - now.timestamp) < 3000)
+        {
+            console.warn("No jid for ssrc: " + ssrc);
+            continue;
+        }
+
+        var jidStats = this.jid2stats[jid];
+        if (!jidStats)
+        {
+            jidStats = new PeerStats();
+            this.jid2stats[jid] = jidStats;
+        }
+
+        // Audio level
+        var audioLevel = null;
+
+        try {
+            audioLevel = getStatValue(now, 'audioInputLevel');
+            if (!audioLevel)
+                audioLevel = getStatValue(now, 'audioOutputLevel');
+        }
+        catch(e) {/*not supported*/
+            console.warn("Audio Levels are not available in the statistics.");
+            clearInterval(this.audioLevelsIntervalId);
+            return;
+        }
+
+        if (audioLevel)
+        {
+            // TODO: can't find specs about what this value really is,
+            // but it seems to vary between 0 and around 32k.
+            audioLevel = audioLevel / 32767;
+            jidStats.setSsrcAudioLevel(ssrc, audioLevel);
+            if(jid != APP.xmpp.myJid())
+                this.eventEmitter.emit("statistics.audioLevel", jid, audioLevel);
+        }
+
+    }
+
+
+};
+},{"../../service/RTC/RTCBrowserType":77}],45:[function(require,module,exports){
+/**
+ * Created by hristo on 8/4/14.
+ */
+var LocalStats = require("./LocalStatsCollector.js");
+var RTPStats = require("./RTPStatsCollector.js");
+var EventEmitter = require("events");
+var StreamEventTypes = require("../../service/RTC/StreamEventTypes.js");
+var XMPPEvents = require("../../service/xmpp/XMPPEvents");
+
+var eventEmitter = new EventEmitter();
+
+var localStats = null;
+
+var rtpStats = null;
+
+function stopLocal()
+{
+    if(localStats)
+    {
+        localStats.stop();
+        localStats = null;
+    }
+}
+
+function stopRemote()
+{
+    if(rtpStats)
+    {
+        rtpStats.stop();
+        eventEmitter.emit("statistics.stop");
+        rtpStats = null;
+    }
+}
+
+function startRemoteStats (peerconnection) {
+    if (config.enableRtpStats)
+    {
+        if(rtpStats)
+        {
+            rtpStats.stop();
+            rtpStats = null;
+        }
+
+        rtpStats = new RTPStats(peerconnection, 200, 2000, eventEmitter);
+        rtpStats.start();
+    }
+
+}
+
+function onStreamCreated(stream)
+{
+    if(stream.getOriginalStream().getAudioTracks().length === 0)
+        return;
+
+    localStats = new LocalStats(stream.getOriginalStream(), 100, statistics,
+        eventEmitter);
+    localStats.start();
+}
+
+function onDisposeConference(onUnload) {
+    stopRemote();
+    if(onUnload) {
+        stopLocal();
+        eventEmitter.removeAllListeners();
+    }
+}
+
+
+var statistics =
+{
+    /**
+     * Indicates that this audio level is for local jid.
+     * @type {string}
+     */
+    LOCAL_JID: 'local',
+
+    addAudioLevelListener: function(listener)
+    {
+        eventEmitter.on("statistics.audioLevel", listener);
+    },
+
+    removeAudioLevelListener: function(listener)
+    {
+        eventEmitter.removeListener("statistics.audioLevel", listener);
+    },
+
+    addConnectionStatsListener: function(listener)
+    {
+        eventEmitter.on("statistics.connectionstats", listener);
+    },
+
+    removeConnectionStatsListener: function(listener)
+    {
+        eventEmitter.removeListener("statistics.connectionstats", listener);
+    },
+
+
+    addRemoteStatsStopListener: function(listener)
+    {
+        eventEmitter.on("statistics.stop", listener);
+    },
+
+    removeRemoteStatsStopListener: function(listener)
+    {
+        eventEmitter.removeListener("statistics.stop", listener);
+    },
+
+    stop: function () {
+        stopLocal();
+        stopRemote();
+        if(eventEmitter)
+        {
+            eventEmitter.removeAllListeners();
+        }
+    },
+
+    stopRemoteStatistics: function()
+    {
+        stopRemote();
+    },
+
+    start: function () {
+        APP.RTC.addStreamListener(onStreamCreated,
+            StreamEventTypes.EVENT_TYPE_LOCAL_CREATED);
+        APP.xmpp.addListener(XMPPEvents.DISPOSE_CONFERENCE, onDisposeConference);
+        APP.xmpp.addListener(XMPPEvents.CALL_INCOMING, function (event) {
+            startRemoteStats(event.peerconnection);
+        });
+    }
+
+};
+
+
+
+
+module.exports = statistics;
+},{"../../service/RTC/StreamEventTypes.js":79,"../../service/xmpp/XMPPEvents":83,"./LocalStatsCollector.js":43,"./RTPStatsCollector.js":44,"events":84}],46:[function(require,module,exports){
 /* jshint -W117 */
 var TraceablePeerConnection = require("./TraceablePeerConnection");
 var SDPDiffer = require("./SDPDiffer");
 var SDPUtil = require("./SDPUtil");
 var SDP = require("./SDP");
+var RTCBrowserType = require("../../service/RTC/RTCBrowserType");
 
 // Jingle stuff
 function JingleSession(me, sid, connection, service) {
@@ -106,7 +11354,7 @@ JingleSession.prototype.initiate = function (peerjid, isInitiator) {
         onIceConnectionStateChange(self.sid, self);
     };
     // add any local and relayed stream
-    RTC.localStreams.forEach(function(stream) {
+    APP.RTC.localStreams.forEach(function(stream) {
         self.peerconnection.addStream(stream.getOriginalStream());
     });
     this.relayedStreams.forEach(function(stream) {
@@ -177,7 +11425,7 @@ JingleSession.prototype.accept = function () {
         // FIXME: change any inactive to sendrecv or whatever they were originally
         pranswer.sdp = pranswer.sdp.replace('a=inactive', 'a=sendrecv');
     }
-    pranswer = simulcast.reverseTransformLocalDescription(pranswer);
+    pranswer = APP.simulcast.reverseTransformLocalDescription(pranswer);
     var prsdp = new SDP(pranswer.sdp);
     var accept = $iq({to: this.peerjid,
         type: 'set'})
@@ -630,7 +11878,7 @@ JingleSession.prototype.createdAnswer = function (sdp, provisional) {
                         initiator: self.initiator,
                         responder: self.responder,
                         sid: self.sid });
-                var publicLocalDesc = simulcast.reverseTransformLocalDescription(sdp);
+                var publicLocalDesc = APP.simulcast.reverseTransformLocalDescription(sdp);
                 var publicLocalSDP = new SDP(publicLocalDesc.sdp);
                 publicLocalSDP.toJingle(accept, self.initiator == self.me ? 'initiator' : 'responder', ssrcs);
                 self.connection.sendIQ(accept,
@@ -1127,7 +12375,7 @@ JingleSession.prototype.setVideoMute = function (mute, callback, options) {
             successCallback();
         }
     } else {
-        RTC.localVideo.setMute(!mute);
+        APP.RTC.localVideo.setMute(!mute);
 
         this.hardMuteVideo(mute);
 
@@ -1138,7 +12386,7 @@ JingleSession.prototype.setVideoMute = function (mute, callback, options) {
 // SDP-based mute by going recvonly/sendrecv
 // FIXME: should probably black out the screen as well
 JingleSession.prototype.toggleVideoMute = function (callback) {
-    this.service.setVideoMute(RTC.localVideo.isMuted(), callback);
+    this.service.setVideoMute(APP.RTC.localVideo.isMuted(), callback);
 };
 
 JingleSession.prototype.hardMuteVideo = function (muted) {
@@ -1225,15 +12473,15 @@ JingleSession.onJingleError = function (session, error)
 JingleSession.onJingleFatalError = function (session, error)
 {
     this.service.sessionTerminated = true;
-    connection.emuc.doLeave();
-    UI.messageHandler.showError(  "Sorry",
+    this.connection.emuc.doLeave();
+    APP.UI.messageHandler.showError(  "Sorry",
         "Internal application error[setRemoteDescription]");
 }
 
 JingleSession.prototype.setLocalDescription = function () {
     // put our ssrcs into presence so other clients can identify our stream
     var newssrcs = [];
-    var media = simulcast.parseMedia(this.peerconnection.localDescription);
+    var media = APP.simulcast.parseMedia(this.peerconnection.localDescription);
     media.forEach(function (media) {
 
         if(Object.keys(media.sources).length > 0) {
@@ -1265,7 +12513,7 @@ JingleSession.prototype.setLocalDescription = function () {
     if (newssrcs.length > 0) {
         for (var i = 1; i <= newssrcs.length; i ++) {
             // Change video type to screen
-            if (newssrcs[i-1].type === 'video' && desktopsharing.isUsingScreenStream()) {
+            if (newssrcs[i-1].type === 'video' && APP.desktopsharing.isUsingScreenStream()) {
                 newssrcs[i-1].type = 'screen';
             }
             this.connection.emuc.addMediaToPresence(i,
@@ -1357,7 +12605,7 @@ JingleSession.prototype.remoteStreamAdded = function (data) {
     }
 
     //TODO: this code should be removed when firefox implement multistream support
-    if(RTC.getBrowserType() == RTCBrowserType.RTC_BROWSER_FIREFOX)
+    if(APP.RTC.getBrowserType() == RTCBrowserType.RTC_BROWSER_FIREFOX)
     {
         if((JingleSession.notReceivedSSRCs.length == 0) ||
             !ssrc2jid[JingleSession.notReceivedSSRCs[JingleSession.notReceivedSSRCs.length - 1]])
@@ -1377,14 +12625,14 @@ JingleSession.prototype.remoteStreamAdded = function (data) {
         }
     }
 
-    RTC.createRemoteStream(data, this.sid, thessrc);
+    APP.RTC.createRemoteStream(data, this.sid, thessrc);
 
     var isVideo = data.stream.getVideoTracks().length > 0;
     // an attempt to work around https://github.com/jitsi/jitmeet/issues/32
     if (isVideo &&
         data.peerjid && this.peerjid === data.peerjid &&
         data.stream.getVideoTracks().length === 0 &&
-        RTC.localVideo.getTracks().length > 0) {
+        APP.RTC.localVideo.getTracks().length > 0) {
         window.setTimeout(function () {
             sendKeyframe(self.peerconnection);
         }, 3000);
@@ -1392,7 +12640,7 @@ JingleSession.prototype.remoteStreamAdded = function (data) {
 }
 
 module.exports = JingleSession;
-},{"./SDP":2,"./SDPDiffer":3,"./SDPUtil":4,"./TraceablePeerConnection":5}],2:[function(require,module,exports){
+},{"../../service/RTC/RTCBrowserType":77,"./SDP":47,"./SDPDiffer":48,"./SDPUtil":49,"./TraceablePeerConnection":50}],47:[function(require,module,exports){
 /* jshint -W117 */
 var SDPUtil = require("./SDPUtil");
 
@@ -1630,11 +12878,11 @@ SDP.prototype.toJingle = function (elem, thecreator, ssrcs) {
                     var msid = null;
                     if(mline.media == "audio")
                     {
-                        msid = RTC.localAudio.getId();
+                        msid = APP.RTC.localAudio.getId();
                     }
                     else
                     {
-                        msid = RTC.localVideo.getId();
+                        msid = APP.RTC.localVideo.getId();
                     }
                     if(msid != null)
                     {
@@ -2014,7 +13262,7 @@ SDP.prototype.jingle2media = function (content) {
 module.exports = SDP;
 
 
-},{"./SDPUtil":4}],3:[function(require,module,exports){
+},{"./SDPUtil":49}],48:[function(require,module,exports){
 function SDPDiffer(mySDP, otherSDP) {
     this.mySDP = mySDP;
     this.otherSDP = otherSDP;
@@ -2180,7 +13428,7 @@ SDPDiffer.prototype.toJingle = function(modify) {
 };
 
 module.exports = SDPDiffer;
-},{}],4:[function(require,module,exports){
+},{}],49:[function(require,module,exports){
 SDPUtil = {
     iceparams: function (mediadesc, sessiondesc) {
         var data = null;
@@ -2530,7 +13778,7 @@ SDPUtil = {
     }
 };
 module.exports = SDPUtil;
-},{}],5:[function(require,module,exports){
+},{}],50:[function(require,module,exports){
 function TraceablePeerConnection(ice_config, constraints) {
     var self = this;
     var RTCPeerconnection = navigator.mozGetUserMedia ? mozRTCPeerConnection : webkitRTCPeerConnection;
@@ -2638,18 +13886,18 @@ if (TraceablePeerConnection.prototype.__defineGetter__ !== undefined) {
     TraceablePeerConnection.prototype.__defineGetter__('signalingState', function() { return this.peerconnection.signalingState; });
     TraceablePeerConnection.prototype.__defineGetter__('iceConnectionState', function() { return this.peerconnection.iceConnectionState; });
     TraceablePeerConnection.prototype.__defineGetter__('localDescription', function() {
-        var publicLocalDescription = simulcast.reverseTransformLocalDescription(this.peerconnection.localDescription);
+        var publicLocalDescription = APP.simulcast.reverseTransformLocalDescription(this.peerconnection.localDescription);
         return publicLocalDescription;
     });
     TraceablePeerConnection.prototype.__defineGetter__('remoteDescription', function() {
-        var publicRemoteDescription = simulcast.reverseTransformRemoteDescription(this.peerconnection.remoteDescription);
+        var publicRemoteDescription = APP.simulcast.reverseTransformRemoteDescription(this.peerconnection.remoteDescription);
         return publicRemoteDescription;
     });
 }
 
 TraceablePeerConnection.prototype.addStream = function (stream) {
     this.trace('addStream', stream.id);
-    simulcast.resetSender();
+    APP.simulcast.resetSender();
     try
     {
         this.peerconnection.addStream(stream);
@@ -2663,7 +13911,7 @@ TraceablePeerConnection.prototype.addStream = function (stream) {
 
 TraceablePeerConnection.prototype.removeStream = function (stream, stopStreams) {
     this.trace('removeStream', stream.id);
-    simulcast.resetSender();
+    APP.simulcast.resetSender();
     if(stopStreams) {
         stream.getAudioTracks().forEach(function (track) {
             track.stop();
@@ -2682,7 +13930,7 @@ TraceablePeerConnection.prototype.createDataChannel = function (label, opts) {
 
 TraceablePeerConnection.prototype.setLocalDescription = function (description, successCallback, failureCallback) {
     var self = this;
-    description = simulcast.transformLocalDescription(description);
+    description = APP.simulcast.transformLocalDescription(description);
     this.trace('setLocalDescription', dumpSDP(description));
     this.peerconnection.setLocalDescription(description,
         function () {
@@ -2703,7 +13951,7 @@ TraceablePeerConnection.prototype.setLocalDescription = function (description, s
 
 TraceablePeerConnection.prototype.setRemoteDescription = function (description, successCallback, failureCallback) {
     var self = this;
-    description = simulcast.transformRemoteDescription(description);
+    description = APP.simulcast.transformRemoteDescription(description);
     this.trace('setRemoteDescription', dumpSDP(description));
     this.peerconnection.setRemoteDescription(description,
         function () {
@@ -2752,7 +14000,7 @@ TraceablePeerConnection.prototype.createAnswer = function (successCallback, fail
     this.trace('createAnswer', JSON.stringify(constraints, null, ' '));
     this.peerconnection.createAnswer(
         function (answer) {
-            answer = simulcast.transformAnswer(answer);
+            answer = APP.simulcast.transformAnswer(answer);
             self.trace('createAnswerOnSuccess', dumpSDP(answer));
             successCallback(answer);
         },
@@ -2798,15 +14046,18 @@ TraceablePeerConnection.prototype.getStats = function(callback, errback) {
 module.exports = TraceablePeerConnection;
 
 
-},{}],6:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 /* global $, $iq, config, connection, UI, messageHandler,
  roomName, sessionTerminated, Strophe, Util */
+var XMPPEvents = require("../../service/xmpp/XMPPEvents");
+
 /**
  * Contains logic responsible for enabling/disabling functionality available
  * only to moderator users.
  */
 var connection = null;
 var focusUserJid;
+
 function createExpBackoffTimer(step) {
     var count = 1;
     return function (reset) {
@@ -3029,7 +14280,7 @@ var Moderator = {
                 var waitMs = getNextErrorTimeout();
                 console.error("Focus error, retry after " + waitMs, error);
                 // Show message
-                UI.messageHandler.notify(
+                APP.UI.messageHandler.notify(
                     'Conference focus', 'disconnected',
                         Moderator.getFocusComponent() +
                         ' not available - retry in ' +
@@ -3074,7 +14325,7 @@ module.exports = Moderator;
 
 
 
-},{}],7:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":83}],52:[function(require,module,exports){
 /* global $, $iq, config, connection, focusMucJid, messageHandler, Moderator,
    Toolbar, Util */
 var Moderator = require("./moderator");
@@ -3228,16 +14479,16 @@ var Recording = {
 }
 
 module.exports = Recording;
-},{"./moderator":6}],8:[function(require,module,exports){
+},{"./moderator":51}],53:[function(require,module,exports){
 /* jshint -W117 */
 /* a simple MUC connection plugin
  * can only handle a single MUC room
  */
-
-var bridgeIsDown = false;
-
+var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 var Moderator = require("./moderator");
 var JingleSession = require("./JingleSession");
+
+var bridgeIsDown = false;
 
 module.exports = function(XMPP, eventEmitter) {
     Strophe.addConnectionPlugin('emuc', {
@@ -3503,20 +14754,20 @@ module.exports = function(XMPP, eventEmitter) {
                     // We're either missing Jicofo/Prosody config for anonymous
                     // domains or something is wrong.
 //                    XMPP.promptLogin();
-                    UI.messageHandler.openReportDialog(null,
+                    APP.UI.messageHandler.openReportDialog(null,
                         'Oops ! We couldn`t join the conference.' +
                         ' There might be some problem with security' +
                         ' configuration. Please contact service' +
                         ' administrator.', pres);
                 } else {
                     console.warn('onPresError ', pres);
-                    UI.messageHandler.openReportDialog(null,
+                    APP.UI.messageHandler.openReportDialog(null,
                         'Oops! Something went wrong and we couldn`t connect to the conference.',
                         pres);
                 }
             } else {
                 console.warn('onPresError ', pres);
-                UI.messageHandler.openReportDialog(null,
+                APP.UI.messageHandler.openReportDialog(null,
                     'Oops! Something went wrong and we couldn`t connect to the conference.',
                     pres);
             }
@@ -3845,10 +15096,12 @@ module.exports = function(XMPP, eventEmitter) {
 };
 
 
-},{"./JingleSession":1,"./moderator":6}],9:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":83,"./JingleSession":46,"./moderator":51}],54:[function(require,module,exports){
 /* jshint -W117 */
 
 var JingleSession = require("./JingleSession");
+var XMPPEvents = require("../../service/xmpp/XMPPEvents");
+
 
 module.exports = function(XMPP, eventEmitter)
 {
@@ -4182,7 +15435,7 @@ module.exports = function(XMPP, eventEmitter)
 };
 
 
-},{"./JingleSession":1}],10:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":83,"./JingleSession":46}],55:[function(require,module,exports){
 /* global Strophe */
 module.exports = function () {
 
@@ -4203,7 +15456,7 @@ module.exports = function () {
         }
     });
 };
-},{}],11:[function(require,module,exports){
+},{}],56:[function(require,module,exports){
 /* global $, $iq, config, connection, focusMucJid, forceMuted,
    setAudioMuted, Strophe */
 /**
@@ -4250,7 +15503,7 @@ module.exports = function (XMPP) {
             var mute = $(iq).find('mute');
             if (mute.length) {
                 var doMuteAudio = mute.text() === "true";
-                UI.setAudioMuted(doMuteAudio);
+                APP.UI.setAudioMuted(doMuteAudio);
                 XMPP.forceMuted = doMuteAudio;
             }
             return true;
@@ -4262,7 +15515,7 @@ module.exports = function (XMPP) {
         }
     });
 }
-},{}],12:[function(require,module,exports){
+},{}],57:[function(require,module,exports){
 /* jshint -W117 */
 module.exports = function() {
     Strophe.addConnectionPlugin('rayo',
@@ -4359,7 +15612,7 @@ module.exports = function() {
     );
 };
 
-},{}],13:[function(require,module,exports){
+},{}],58:[function(require,module,exports){
 /**
  * Strophe logger implementation. Logs from level WARN and above.
  */
@@ -4403,12 +15656,15 @@ module.exports = function () {
     };
 };
 
-},{}],14:[function(require,module,exports){
+},{}],59:[function(require,module,exports){
 var Moderator = require("./moderator");
 var EventEmitter = require("events");
 var Recording = require("./recording");
 var SDP = require("./SDP");
 var Pako = require("pako");
+var StreamEventTypes = require("../../service/RTC/StreamEventTypes");
+var UIEvents = require("../../service/UI/UIEvents");
+var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 
 var eventEmitter = new EventEmitter();
 var connection = null;
@@ -4420,13 +15676,12 @@ function connect(jid, password, uiCredentials) {
     connection = new Strophe.Connection(bosh);
     Moderator.setConnection(connection);
 
-    var settings = UI.getSettings();
-    var email = settings.email;
-    var displayName = settings.displayName;
+    var email = uiCredentials.email;
+    var displayName = uiCredentials.displayName;
     if(email) {
         connection.emuc.addEmailToPresence(email);
     } else {
-        connection.emuc.addUserIdToPresence(settings.uid);
+        connection.emuc.addUserIdToPresence(uiCredentials.uid);
     }
     if(displayName) {
         connection.emuc.addDisplayNameToPresence(displayName);
@@ -4435,7 +15690,7 @@ function connect(jid, password, uiCredentials) {
     if (connection.disco) {
         // for chrome, add multistream cap
     }
-    connection.jingle.pc_constraints = RTC.getPCConstraints();
+    connection.jingle.pc_constraints = APP.RTC.getPCConstraints();
     if (config.useIPv6) {
         // https://code.google.com/p/webrtc/issues/detail?id=2828
         if (!connection.jingle.pc_constraints.optional)
@@ -4454,7 +15709,7 @@ function connect(jid, password, uiCredentials) {
             if (config.useStunTurn) {
                 connection.jingle.getStunAndTurnCredentials();
             }
-            UI.disableConnect();
+            APP.UI.disableConnect();
 
             console.info("My Jabber ID: " + connection.jid);
 
@@ -4483,17 +15738,17 @@ function connect(jid, password, uiCredentials) {
 function maybeDoJoin() {
     if (connection && connection.connected &&
         Strophe.getResourceFromJid(connection.jid)
-        && (RTC.localAudio || RTC.localVideo)) {
+        && (APP.RTC.localAudio || APP.RTC.localVideo)) {
         // .connected is true while connecting?
         doJoin();
     }
 }
 
 function doJoin() {
-    var roomName = UI.generateRoomName();
+    var roomName = APP.UI.generateRoomName();
 
     Moderator.allocateConferenceFocus(
-        roomName, UI.checkForNicknameAndJoin);
+        roomName, APP.UI.checkForNicknameAndJoin);
 }
 
 function initStrophePlugins()
@@ -4507,9 +15762,9 @@ function initStrophePlugins()
 }
 
 function registerListeners() {
-    RTC.addStreamListener(maybeDoJoin,
+    APP.RTC.addStreamListener(maybeDoJoin,
         StreamEventTypes.EVENT_TYPE_LOCAL_CREATED);
-    UI.addListener(UIEvents.NICKNAME_CHANGED, function (nickname) {
+    APP.UI.addListener(UIEvents.NICKNAME_CHANGED, function (nickname) {
         XMPP.addToPresence("displayName", nickname);
     });
 }
@@ -4566,7 +15821,7 @@ var XMPP = {
         connect(jid, null, uiCredentials);
     },
     promptLogin: function () {
-        UI.showLoginPopup(connect);
+        APP.UI.showLoginPopup(connect);
     },
     joinRoom: function(roomName, useNicks, nick)
     {
@@ -4606,11 +15861,11 @@ var XMPP = {
         if (handler && handler.peerconnection) {
             // FIXME: probably removing streams is not required and close() should
             // be enough
-            if (RTC.localAudio) {
-                handler.peerconnection.removeStream(RTC.localAudio.getOriginalStream(), onUnload);
+            if (APP.RTC.localAudio) {
+                handler.peerconnection.removeStream(APP.RTC.localAudio.getOriginalStream(), onUnload);
             }
-            if (RTC.localVideo) {
-                handler.peerconnection.removeStream(RTC.localVideo.getOriginalStream(), onUnload);
+            if (APP.RTC.localVideo) {
+                handler.peerconnection.removeStream(APP.RTC.localVideo.getOriginalStream(), onUnload);
             }
             handler.peerconnection.close();
         }
@@ -4653,13 +15908,13 @@ var XMPP = {
         }
     },
     setVideoMute: function (mute, callback, options) {
-       if(connection && RTC.localVideo && connection.jingle.activecall)
+       if(connection && APP.RTC.localVideo && connection.jingle.activecall)
        {
            connection.jingle.activecall.setVideoMute(mute, callback, options);
        }
     },
     setAudioMute: function (mute, callback) {
-        if (!(connection && RTC.localAudio)) {
+        if (!(connection && APP.RTC.localAudio)) {
             return false;
         }
 
@@ -4671,7 +15926,7 @@ var XMPP = {
             this.forceMuted = false;
         }
 
-        if (mute == RTC.localAudio.isMuted()) {
+        if (mute == APP.RTC.localAudio.isMuted()) {
             // Nothing to do
             return true;
         }
@@ -4679,7 +15934,7 @@ var XMPP = {
         // It is not clear what is the right way to handle multiple tracks.
         // So at least make sure that they are all muted or all unmuted and
         // that we send presence just once.
-        RTC.localAudio.mute();
+        APP.RTC.localAudio.mute();
         // isMuted is the opposite of audioEnabled
         connection.emuc.addAudioInfoToPresence(mute);
         connection.emuc.sendPresence();
@@ -4709,7 +15964,7 @@ var XMPP = {
                             },
                             function (error) {
                                 console.log('mute SLD error');
-                                UI.messageHandler.showError('Error',
+                                APP.UI.messageHandler.showError('Error',
                                         'Oops! Something went wrong and we failed to ' +
                                         'mute! (SLD Failure)');
                             }
@@ -4717,13 +15972,13 @@ var XMPP = {
                     },
                     function (error) {
                         console.log(error);
-                        UI.messageHandler.showError();
+                        APP.UI.messageHandler.showError();
                     }
                 );
             },
             function (error) {
                 console.log('muteVideo SRD error');
-                UI.messageHandler.showError('Error',
+                APP.UI.messageHandler.showError('Error',
                         'Oops! Something went wrong and we failed to stop video!' +
                         '(SRD Failure)');
 
@@ -4838,7 +16093,7 @@ var XMPP = {
 
 module.exports = XMPP;
 
-},{"./SDP":2,"./moderator":6,"./recording":7,"./strophe.emuc":8,"./strophe.jingle":9,"./strophe.logger":10,"./strophe.moderate":11,"./strophe.rayo":12,"./strophe.util":13,"events":31,"pako":15}],15:[function(require,module,exports){
+},{"../../service/RTC/StreamEventTypes":79,"../../service/UI/UIEvents":80,"../../service/xmpp/XMPPEvents":83,"./SDP":47,"./moderator":51,"./recording":52,"./strophe.emuc":53,"./strophe.jingle":54,"./strophe.logger":55,"./strophe.moderate":56,"./strophe.rayo":57,"./strophe.util":58,"events":84,"pako":60}],60:[function(require,module,exports){
 // Top level file is just a mixin of submodules & constants
 'use strict';
 
@@ -4853,7 +16108,7 @@ var pako = {};
 assign(pako, deflate, inflate, constants);
 
 module.exports = pako;
-},{"./lib/deflate":16,"./lib/inflate":17,"./lib/utils/common":18,"./lib/zlib/constants":21}],16:[function(require,module,exports){
+},{"./lib/deflate":61,"./lib/inflate":62,"./lib/utils/common":63,"./lib/zlib/constants":66}],61:[function(require,module,exports){
 'use strict';
 
 
@@ -5215,7 +16470,7 @@ exports.Deflate = Deflate;
 exports.deflate = deflate;
 exports.deflateRaw = deflateRaw;
 exports.gzip = gzip;
-},{"./utils/common":18,"./utils/strings":19,"./zlib/deflate.js":23,"./zlib/messages":28,"./zlib/zstream":30}],17:[function(require,module,exports){
+},{"./utils/common":63,"./utils/strings":64,"./zlib/deflate.js":68,"./zlib/messages":73,"./zlib/zstream":75}],62:[function(require,module,exports){
 'use strict';
 
 
@@ -5581,7 +16836,7 @@ exports.inflate = inflate;
 exports.inflateRaw = inflateRaw;
 exports.ungzip  = inflate;
 
-},{"./utils/common":18,"./utils/strings":19,"./zlib/constants":21,"./zlib/gzheader":24,"./zlib/inflate.js":26,"./zlib/messages":28,"./zlib/zstream":30}],18:[function(require,module,exports){
+},{"./utils/common":63,"./utils/strings":64,"./zlib/constants":66,"./zlib/gzheader":69,"./zlib/inflate.js":71,"./zlib/messages":73,"./zlib/zstream":75}],63:[function(require,module,exports){
 'use strict';
 
 
@@ -5684,7 +16939,7 @@ exports.setTyped = function (on) {
 };
 
 exports.setTyped(TYPED_OK);
-},{}],19:[function(require,module,exports){
+},{}],64:[function(require,module,exports){
 // String encode/decode helpers
 'use strict';
 
@@ -5871,7 +17126,7 @@ exports.utf8border = function(buf, max) {
   return (pos + _utf8len[buf[pos]] > max) ? pos : max;
 };
 
-},{"./common":18}],20:[function(require,module,exports){
+},{"./common":63}],65:[function(require,module,exports){
 'use strict';
 
 // Note: adler32 takes 12% for level 0 and 2% for level 6.
@@ -5904,7 +17159,7 @@ function adler32(adler, buf, len, pos) {
 
 
 module.exports = adler32;
-},{}],21:[function(require,module,exports){
+},{}],66:[function(require,module,exports){
 module.exports = {
 
   /* Allowed flush values; see deflate() and inflate() below for details */
@@ -5952,7 +17207,7 @@ module.exports = {
   Z_DEFLATED:               8
   //Z_NULL:                 null // Use -1 or null inline, depending on var type
 };
-},{}],22:[function(require,module,exports){
+},{}],67:[function(require,module,exports){
 'use strict';
 
 // Note: we can't get significant speed boost here.
@@ -5994,7 +17249,7 @@ function crc32(crc, buf, len, pos) {
 
 
 module.exports = crc32;
-},{}],23:[function(require,module,exports){
+},{}],68:[function(require,module,exports){
 'use strict';
 
 var utils   = require('../utils/common');
@@ -7760,7 +19015,7 @@ exports.deflatePending = deflatePending;
 exports.deflatePrime = deflatePrime;
 exports.deflateTune = deflateTune;
 */
-},{"../utils/common":18,"./adler32":20,"./crc32":22,"./messages":28,"./trees":29}],24:[function(require,module,exports){
+},{"../utils/common":63,"./adler32":65,"./crc32":67,"./messages":73,"./trees":74}],69:[function(require,module,exports){
 'use strict';
 
 
@@ -7801,7 +19056,7 @@ function GZheader() {
 }
 
 module.exports = GZheader;
-},{}],25:[function(require,module,exports){
+},{}],70:[function(require,module,exports){
 'use strict';
 
 // See state defs from inflate.js
@@ -8128,7 +19383,7 @@ module.exports = function inflate_fast(strm, start) {
   return;
 };
 
-},{}],26:[function(require,module,exports){
+},{}],71:[function(require,module,exports){
 'use strict';
 
 
@@ -9632,7 +20887,7 @@ exports.inflateSync = inflateSync;
 exports.inflateSyncPoint = inflateSyncPoint;
 exports.inflateUndermine = inflateUndermine;
 */
-},{"../utils/common":18,"./adler32":20,"./crc32":22,"./inffast":25,"./inftrees":27}],27:[function(require,module,exports){
+},{"../utils/common":63,"./adler32":65,"./crc32":67,"./inffast":70,"./inftrees":72}],72:[function(require,module,exports){
 'use strict';
 
 
@@ -9959,7 +21214,7 @@ module.exports = function inflate_table(type, lens, lens_index, codes, table, ta
   return 0;
 };
 
-},{"../utils/common":18}],28:[function(require,module,exports){
+},{"../utils/common":63}],73:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -9973,7 +21228,7 @@ module.exports = {
   '-5':   'buffer error',        /* Z_BUF_ERROR     (-5) */
   '-6':   'incompatible version' /* Z_VERSION_ERROR (-6) */
 };
-},{}],29:[function(require,module,exports){
+},{}],74:[function(require,module,exports){
 'use strict';
 
 
@@ -11173,7 +22428,7 @@ exports._tr_stored_block = _tr_stored_block;
 exports._tr_flush_block  = _tr_flush_block;
 exports._tr_tally = _tr_tally;
 exports._tr_align = _tr_align;
-},{"../utils/common":18}],30:[function(require,module,exports){
+},{"../utils/common":63}],75:[function(require,module,exports){
 'use strict';
 
 
@@ -11203,7 +22458,100 @@ function ZStream() {
 }
 
 module.exports = ZStream;
-},{}],31:[function(require,module,exports){
+},{}],76:[function(require,module,exports){
+var MediaStreamType = {
+    VIDEO_TYPE: "Video",
+
+    AUDIO_TYPE: "Audio"
+};
+module.exports = MediaStreamType;
+},{}],77:[function(require,module,exports){
+var RTCBrowserType = {
+    RTC_BROWSER_CHROME: "rtc_browser.chrome",
+
+    RTC_BROWSER_FIREFOX: "rtc_browser.firefox"
+};
+
+module.exports = RTCBrowserType;
+},{}],78:[function(require,module,exports){
+var RTCEvents = {
+    LASTN_CHANGED: "rtc.lastn_changed",
+    DOMINANTSPEAKER_CHANGED: "rtc.dominantspeaker_changed",
+    LASTN_ENDPOINT_CHANGED: "rtc.lastn_endpoint_changed",
+    SIMULCAST_LAYER_CHANGED: "rtc.simulcast_layer_changed",
+    SIMULCAST_LAYER_CHANGING: "rtc.simulcast_layer_changing",
+    SIMULCAST_START: "rtc.simlcast_start",
+    SIMULCAST_STOP: "rtc.simlcast_stop"
+};
+
+module.exports = RTCEvents;
+},{}],79:[function(require,module,exports){
+var StreamEventTypes = {
+    EVENT_TYPE_LOCAL_CREATED: "stream.local_created",
+
+    EVENT_TYPE_LOCAL_CHANGED: "stream.local_changed",
+
+    EVENT_TYPE_LOCAL_ENDED: "stream.local_ended",
+
+    EVENT_TYPE_REMOTE_CREATED: "stream.remote_created",
+
+    EVENT_TYPE_REMOTE_ENDED: "stream.remote_ended"
+};
+
+module.exports = StreamEventTypes;
+},{}],80:[function(require,module,exports){
+var UIEvents = {
+    NICKNAME_CHANGED: "UI.nickname_changed",
+    SELECTED_ENDPOINT: "UI.selected_endpoint",
+    PINNED_ENDPOINT: "UI.pinned_endpoint"
+};
+module.exports = UIEvents;
+},{}],81:[function(require,module,exports){
+var CQEvents = {
+    LOCALSTATS_UPDATED: "cq.localstats_updated",
+    REMOTESTATS_UPDATED: "cq.remotestats_updated",
+    STOP: "cq.stop"
+};
+
+module.exports = CQEvents;
+},{}],82:[function(require,module,exports){
+var DesktopSharingEventTypes = {
+    INIT: "ds.init",
+
+    SWITCHING_DONE: "ds.switching_done",
+
+    NEW_STREAM_CREATED: "ds.new_stream_created"
+};
+
+module.exports = DesktopSharingEventTypes;
+},{}],83:[function(require,module,exports){
+var XMPPEvents = {
+    CONFERENCE_CERATED: "xmpp.conferenceCreated.jingle",
+    CALL_TERMINATED: "xmpp.callterminated.jingle",
+    CALL_INCOMING: "xmpp.callincoming.jingle",
+    DISPOSE_CONFERENCE: "xmpp.dispoce_confernce",
+    KICKED: "xmpp.kicked",
+    BRIDGE_DOWN: "xmpp.bridge_down",
+    USER_ID_CHANGED: "xmpp.user_id_changed",
+    CHANGED_STREAMS: "xmpp.changed_streams",
+    MUC_JOINED: "xmpp.muc_joined",
+    MUC_ENTER: "xmpp.muc_enter",
+    MUC_ROLE_CHANGED: "xmpp.muc_role_changed",
+    MUC_LEFT: "xmpp.muc_left",
+    DISPLAY_NAME_CHANGED: "xmpp.display_name_changed",
+    REMOTE_STATS: "xmpp.remote_stats",
+    LOCALROLE_CHANGED: "xmpp.localrole_changed",
+    PRESENCE_STATUS: "xmpp.presence_status",
+    SUBJECT_CHANGED: "xmpp.subject_changed",
+    MESSAGE_RECEIVED: "xmpp.message_received",
+    SENDING_CHAT_MESSAGE: "xmpp.sending_chat_message",
+    PASSWORD_REQUIRED: "xmpp.password_required",
+    AUTHENTICATION_REQUIRED: "xmpp.authentication_required",
+    CHAT_ERROR_RECEIVED: "xmpp.chat_error_received",
+    ETHERPAD: "xmpp.etherpad"
+};
+module.exports = XMPPEvents;
+},{}],84:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -11506,5 +22854,5 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}]},{},[14])(14)
+},{}]},{},[1])(1)
 });

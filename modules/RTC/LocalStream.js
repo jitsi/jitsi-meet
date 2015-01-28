@@ -1,4 +1,4 @@
-//var StreamEventTypes = require("../../service/RTC/StreamEventTypes.js");
+var StreamEventTypes = require("../../service/RTC/StreamEventTypes.js");
 
 function LocalStream(stream, type, eventEmitter, videoType)
 {

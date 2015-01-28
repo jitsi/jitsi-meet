@@ -31,7 +31,7 @@ var Prezi = {
      * to load.
      */
     openPreziDialog: function() {
-        var myprezi = xmpp.getPrezi();
+        var myprezi = APP.xmpp.getPrezi();
         if (myprezi) {
             messageHandler.openTwoButtonDialog("Remove Prezi",
                 "Are you sure you would like to remove your Prezi?",
@@ -196,7 +196,7 @@ function presentationAdded(event, jid, presUrl, currentSlide) {
 
     preziPlayer.on(PreziPlayer.EVENT_CURRENT_STEP, function(event) {
         console.log("event value", event.value);
-        xmpp.addToPresence("preziSlide", event.value);
+        APP.xmpp.addToPresence("preziSlide", event.value);
     });
 
     $("#" + elementId).css( 'background-image',

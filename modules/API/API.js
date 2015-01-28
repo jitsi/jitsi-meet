@@ -4,7 +4,7 @@
  * applications that embed Jitsi Meet
  */
 
-
+var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 
 /**
  * List of the available commands.
@@ -17,12 +17,12 @@
  */
 var commands =
 {
-    displayName: UI.inputDisplayNameHandler,
-    muteAudio: UI.toggleAudio,
-    muteVideo: UI.toggleVideo,
-    toggleFilmStrip: UI.toggleFilmStrip,
-    toggleChat: UI.toggleChat,
-    toggleContactList: UI.toggleContactList
+    displayName: APP.UI.inputDisplayNameHandler,
+    muteAudio: APP.UI.toggleAudio,
+    muteVideo: APP.UI.toggleVideo,
+    toggleFilmStrip: APP.UI.toggleFilmStrip,
+    toggleChat: APP.UI.toggleChat,
+    toggleContactList: APP.UI.toggleContactList
 };
 
 
@@ -135,26 +135,26 @@ function processMessage(event)
 }
 
 function setupListeners() {
-    xmpp.addListener(XMPPEvents.MUC_ENTER, function (from) {
+    APP.xmpp.addListener(XMPPEvents.MUC_ENTER, function (from) {
         API.triggerEvent("participantJoined", {jid: from});
     });
-    xmpp.addListener(XMPPEvents.MESSAGE_RECEIVED, function (from, nick, txt, myjid) {
+    APP.xmpp.addListener(XMPPEvents.MESSAGE_RECEIVED, function (from, nick, txt, myjid) {
         if (from != myjid)
             API.triggerEvent("incomingMessage",
                 {"from": from, "nick": nick, "message": txt});
     });
-    xmpp.addListener(XMPPEvents.MUC_LEFT, function (jid) {
+    APP.xmpp.addListener(XMPPEvents.MUC_LEFT, function (jid) {
         API.triggerEvent("participantLeft", {jid: jid});
     });
-    xmpp.addListener(XMPPEvents.DISPLAY_NAME_CHANGED, function (jid, newDisplayName) {
+    APP.xmpp.addListener(XMPPEvents.DISPLAY_NAME_CHANGED, function (jid, newDisplayName) {
         name = displayName[jid];
         if(!name || name != newDisplayName) {
             API.triggerEvent("displayNameChange", {jid: jid, displayname: newDisplayName});
             displayName[jid] = newDisplayName;
         }
     });
-    xmpp.addListener(XMPPEvents.SENDING_CHAT_MESSAGE, function (body) {
-        API.triggerEvent("outgoingMessage", {"message": body});
+    APP.xmpp.addListener(XMPPEvents.SENDING_CHAT_MESSAGE, function (body) {
+        APP.API.triggerEvent("outgoingMessage", {"message": body});
     });
 }
 

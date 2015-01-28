@@ -3,3 +3,5 @@ var CQEvents = {
     REMOTESTATS_UPDATED: "cq.remotestats_updated",
     STOP: "cq.stop"
 };
+
+module.exports = CQEvents;

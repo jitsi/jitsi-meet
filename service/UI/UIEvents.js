@@ -3,4 +3,4 @@ var UIEvents = {
     SELECTED_ENDPOINT: "UI.selected_endpoint",
     PINNED_ENDPOINT: "UI.pinned_endpoint"
 };
-//module.exports = UIEvents;
+module.exports = UIEvents;

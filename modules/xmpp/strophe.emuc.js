@@ -2,11 +2,11 @@
 /* a simple MUC connection plugin
  * can only handle a single MUC room
  */
-
-var bridgeIsDown = false;
-
+var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 var Moderator = require("./moderator");
 var JingleSession = require("./JingleSession");
+
+var bridgeIsDown = false;
 
 module.exports = function(XMPP, eventEmitter) {
     Strophe.addConnectionPlugin('emuc', {
@@ -272,20 +272,20 @@ module.exports = function(XMPP, eventEmitter) {
                     // We're either missing Jicofo/Prosody config for anonymous
                     // domains or something is wrong.
 //                    XMPP.promptLogin();
-                    UI.messageHandler.openReportDialog(null,
+                    APP.UI.messageHandler.openReportDialog(null,
                         'Oops ! We couldn`t join the conference.' +
                         ' There might be some problem with security' +
                         ' configuration. Please contact service' +
                         ' administrator.', pres);
                 } else {
                     console.warn('onPresError ', pres);
-                    UI.messageHandler.openReportDialog(null,
+                    APP.UI.messageHandler.openReportDialog(null,
                         'Oops! Something went wrong and we couldn`t connect to the conference.',
                         pres);
                 }
             } else {
                 console.warn('onPresError ', pres);
-                UI.messageHandler.openReportDialog(null,
+                APP.UI.messageHandler.openReportDialog(null,
                     'Oops! Something went wrong and we couldn`t connect to the conference.',
                     pres);
             }

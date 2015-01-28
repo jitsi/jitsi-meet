@@ -3,30 +3,30 @@ var shortcuts = {
     67: {
         character: "C",
         id: "toggleChatPopover",
-        function: UI.toggleChat
+        function: APP.UI.toggleChat
     },
     70: {
         character: "F",
         id: "filmstripPopover",
-        function: UI.toggleFilmStrip
+        function: APP.UI.toggleFilmStrip
     },
     77: {
         character: "M",
         id: "mutePopover",
-        function: UI.toggleAudio
+        function: APP.UI.toggleAudio
     },
     84: {
         character: "T",
         function: function() {
-            if(!RTC.localAudio.isMuted()) {
-                UI.toggleAudio();
+            if(!APP.RTC.localAudio.isMuted()) {
+                APP.UI.toggleAudio();
             }
         }
     },
     86: {
         character: "V",
         id: "toggleVideoPopover",
-        function: UI.toggleVideo
+        function: APP.UI.toggleVideo
     }
 };
 
@@ -43,11 +43,11 @@ var KeyboardShortcut = {
                 }
                 else if (keycode >= "0".charCodeAt(0) &&
                     keycode <= "9".charCodeAt(0)) {
-                    UI.clickOnVideo(keycode - "0".charCodeAt(0) + 1);
+                    APP.UI.clickOnVideo(keycode - "0".charCodeAt(0) + 1);
                 }
                 //esc while the smileys are visible hides them
             } else if (keycode === 27 && $('#smileysContainer').is(':visible')) {
-                UI.toggleSmileys();
+                APP.UI.toggleSmileys();
             }
         };
 
@@ -56,8 +56,8 @@ var KeyboardShortcut = {
                 $(":focus").is("input[type=password]") ||
                 $(":focus").is("textarea"))) {
                 if(e.which === "T".charCodeAt(0)) {
-                    if(RTC.localAudio.isMuted()) {
-                        UI.toggleAudio();
+                    if(APP.RTC.localAudio.isMuted()) {
+                        APP.UI.toggleAudio();
                     }
                 }
             }

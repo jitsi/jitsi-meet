@@ -1,3 +1,5 @@
+var UIEvents = require("../../../service/UI/UIEvents");
+
 var nickname = null;
 var eventEmitter = null;
 

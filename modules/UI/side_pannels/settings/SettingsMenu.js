@@ -11,11 +11,11 @@ var SettingsMenu = {
 
         if(newDisplayName) {
             var displayName = Settings.setDisplayName(newDisplayName);
-            xmpp.addToPresence("displayName", displayName, true);
+            APP.xmpp.addToPresence("displayName", displayName, true);
         }
 
 
-        xmpp.addToPresence("email", newEmail);
+        APP.xmpp.addToPresence("email", newEmail);
         var email = Settings.setEmail(newEmail);
 
 

@@ -3,6 +3,7 @@ var TraceablePeerConnection = require("./TraceablePeerConnection");
 var SDPDiffer = require("./SDPDiffer");
 var SDPUtil = require("./SDPUtil");
 var SDP = require("./SDP");
+var RTCBrowserType = require("../../service/RTC/RTCBrowserType");
 
 // Jingle stuff
 function JingleSession(me, sid, connection, service) {
@@ -105,7 +106,7 @@ JingleSession.prototype.initiate = function (peerjid, isInitiator) {
         onIceConnectionStateChange(self.sid, self);
     };
     // add any local and relayed stream
-    RTC.localStreams.forEach(function(stream) {
+    APP.RTC.localStreams.forEach(function(stream) {
         self.peerconnection.addStream(stream.getOriginalStream());
     });
     this.relayedStreams.forEach(function(stream) {
@@ -176,7 +177,7 @@ JingleSession.prototype.accept = function () {
         // FIXME: change any inactive to sendrecv or whatever they were originally
         pranswer.sdp = pranswer.sdp.replace('a=inactive', 'a=sendrecv');
     }
-    pranswer = simulcast.reverseTransformLocalDescription(pranswer);
+    pranswer = APP.simulcast.reverseTransformLocalDescription(pranswer);
     var prsdp = new SDP(pranswer.sdp);
     var accept = $iq({to: this.peerjid,
         type: 'set'})
@@ -629,7 +630,7 @@ JingleSession.prototype.createdAnswer = function (sdp, provisional) {
                         initiator: self.initiator,
                         responder: self.responder,
                         sid: self.sid });
-                var publicLocalDesc = simulcast.reverseTransformLocalDescription(sdp);
+                var publicLocalDesc = APP.simulcast.reverseTransformLocalDescription(sdp);
                 var publicLocalSDP = new SDP(publicLocalDesc.sdp);
                 publicLocalSDP.toJingle(accept, self.initiator == self.me ? 'initiator' : 'responder', ssrcs);
                 self.connection.sendIQ(accept,
@@ -1126,7 +1127,7 @@ JingleSession.prototype.setVideoMute = function (mute, callback, options) {
             successCallback();
         }
     } else {
-        RTC.localVideo.setMute(!mute);
+        APP.RTC.localVideo.setMute(!mute);
 
         this.hardMuteVideo(mute);
 
@@ -1137,7 +1138,7 @@ JingleSession.prototype.setVideoMute = function (mute, callback, options) {
 // SDP-based mute by going recvonly/sendrecv
 // FIXME: should probably black out the screen as well
 JingleSession.prototype.toggleVideoMute = function (callback) {
-    this.service.setVideoMute(RTC.localVideo.isMuted(), callback);
+    this.service.setVideoMute(APP.RTC.localVideo.isMuted(), callback);
 };
 
 JingleSession.prototype.hardMuteVideo = function (muted) {
@@ -1224,15 +1225,15 @@ JingleSession.onJingleError = function (session, error)
 JingleSession.onJingleFatalError = function (session, error)
 {
     this.service.sessionTerminated = true;
-    connection.emuc.doLeave();
-    UI.messageHandler.showError(  "Sorry",
+    this.connection.emuc.doLeave();
+    APP.UI.messageHandler.showError(  "Sorry",
         "Internal application error[setRemoteDescription]");
 }
 
 JingleSession.prototype.setLocalDescription = function () {
     // put our ssrcs into presence so other clients can identify our stream
     var newssrcs = [];
-    var media = simulcast.parseMedia(this.peerconnection.localDescription);
+    var media = APP.simulcast.parseMedia(this.peerconnection.localDescription);
     media.forEach(function (media) {
 
         if(Object.keys(media.sources).length > 0) {
@@ -1264,7 +1265,7 @@ JingleSession.prototype.setLocalDescription = function () {
     if (newssrcs.length > 0) {
         for (var i = 1; i <= newssrcs.length; i ++) {
             // Change video type to screen
-            if (newssrcs[i-1].type === 'video' && desktopsharing.isUsingScreenStream()) {
+            if (newssrcs[i-1].type === 'video' && APP.desktopsharing.isUsingScreenStream()) {
                 newssrcs[i-1].type = 'screen';
             }
             this.connection.emuc.addMediaToPresence(i,
@@ -1356,7 +1357,7 @@ JingleSession.prototype.remoteStreamAdded = function (data) {
     }
 
     //TODO: this code should be removed when firefox implement multistream support
-    if(RTC.getBrowserType() == RTCBrowserType.RTC_BROWSER_FIREFOX)
+    if(APP.RTC.getBrowserType() == RTCBrowserType.RTC_BROWSER_FIREFOX)
     {
         if((JingleSession.notReceivedSSRCs.length == 0) ||
             !ssrc2jid[JingleSession.notReceivedSSRCs[JingleSession.notReceivedSSRCs.length - 1]])
@@ -1376,14 +1377,14 @@ JingleSession.prototype.remoteStreamAdded = function (data) {
         }
     }
 
-    RTC.createRemoteStream(data, this.sid, thessrc);
+    APP.RTC.createRemoteStream(data, this.sid, thessrc);
 
     var isVideo = data.stream.getVideoTracks().length > 0;
     // an attempt to work around https://github.com/jitsi/jitmeet/issues/32
     if (isVideo &&
         data.peerjid && this.peerjid === data.peerjid &&
         data.stream.getVideoTracks().length === 0 &&
-        RTC.localVideo.getTracks().length > 0) {
+        APP.RTC.localVideo.getTracks().length > 0) {
         window.setTimeout(function () {
             sendKeyframe(self.peerconnection);
         }, 3000);

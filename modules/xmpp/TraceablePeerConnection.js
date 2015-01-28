@@ -105,18 +105,18 @@ if (TraceablePeerConnection.prototype.__defineGetter__ !== undefined) {
     TraceablePeerConnection.prototype.__defineGetter__('signalingState', function() { return this.peerconnection.signalingState; });
     TraceablePeerConnection.prototype.__defineGetter__('iceConnectionState', function() { return this.peerconnection.iceConnectionState; });
     TraceablePeerConnection.prototype.__defineGetter__('localDescription', function() {
-        var publicLocalDescription = simulcast.reverseTransformLocalDescription(this.peerconnection.localDescription);
+        var publicLocalDescription = APP.simulcast.reverseTransformLocalDescription(this.peerconnection.localDescription);
         return publicLocalDescription;
     });
     TraceablePeerConnection.prototype.__defineGetter__('remoteDescription', function() {
-        var publicRemoteDescription = simulcast.reverseTransformRemoteDescription(this.peerconnection.remoteDescription);
+        var publicRemoteDescription = APP.simulcast.reverseTransformRemoteDescription(this.peerconnection.remoteDescription);
         return publicRemoteDescription;
     });
 }
 
 TraceablePeerConnection.prototype.addStream = function (stream) {
     this.trace('addStream', stream.id);
-    simulcast.resetSender();
+    APP.simulcast.resetSender();
     try
     {
         this.peerconnection.addStream(stream);
@@ -130,7 +130,7 @@ TraceablePeerConnection.prototype.addStream = function (stream) {
 
 TraceablePeerConnection.prototype.removeStream = function (stream, stopStreams) {
     this.trace('removeStream', stream.id);
-    simulcast.resetSender();
+    APP.simulcast.resetSender();
     if(stopStreams) {
         stream.getAudioTracks().forEach(function (track) {
             track.stop();
@@ -149,7 +149,7 @@ TraceablePeerConnection.prototype.createDataChannel = function (label, opts) {
 
 TraceablePeerConnection.prototype.setLocalDescription = function (description, successCallback, failureCallback) {
     var self = this;
-    description = simulcast.transformLocalDescription(description);
+    description = APP.simulcast.transformLocalDescription(description);
     this.trace('setLocalDescription', dumpSDP(description));
     this.peerconnection.setLocalDescription(description,
         function () {
@@ -170,7 +170,7 @@ TraceablePeerConnection.prototype.setLocalDescription = function (description, s
 
 TraceablePeerConnection.prototype.setRemoteDescription = function (description, successCallback, failureCallback) {
     var self = this;
-    description = simulcast.transformRemoteDescription(description);
+    description = APP.simulcast.transformRemoteDescription(description);
     this.trace('setRemoteDescription', dumpSDP(description));
     this.peerconnection.setRemoteDescription(description,
         function () {
@@ -219,7 +219,7 @@ TraceablePeerConnection.prototype.createAnswer = function (successCallback, fail
     this.trace('createAnswer', JSON.stringify(constraints, null, ' '));
     this.peerconnection.createAnswer(
         function (answer) {
-            answer = simulcast.transformAnswer(answer);
+            answer = APP.simulcast.transformAnswer(answer);
             self.trace('createAnswerOnSuccess', dumpSDP(answer));
             successCallback(answer);
         },

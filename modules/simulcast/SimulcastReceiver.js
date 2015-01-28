@@ -1,5 +1,6 @@
 var SimulcastLogger = require("./SimulcastLogger");
 var SimulcastUtils = require("./SimulcastUtils");
+var MediaStreamType = require("../../service/RTC/MediaStreamTypes");
 
 function SimulcastReceiver() {
     this.simulcastUtils = new SimulcastUtils();
@@ -161,7 +162,7 @@ SimulcastReceiver.prototype.getReceivingSSRC = function (jid) {
     // low quality (that the sender always streams).
     if(!ssrc)
     {
-        var remoteStreamObject = RTC.remoteStreams[jid][MediaStreamType.VIDEO_TYPE];
+        var remoteStreamObject = APP.RTC.remoteStreams[jid][MediaStreamType.VIDEO_TYPE];
         var remoteStream = remoteStreamObject.getOriginalStream();
         var tracks = remoteStream.getVideoTracks();
         if (tracks) {
@@ -184,10 +185,10 @@ SimulcastReceiver.prototype.getReceivingVideoStreamBySSRC = function (ssrc)
 {
     var sid, electedStream;
     var i, j, k;
-    var jid = xmpp.getJidFromSSRC(ssrc);
-    if(jid && RTC.remoteStreams[jid])
+    var jid = APP.xmpp.getJidFromSSRC(ssrc);
+    if(jid && APP.RTC.remoteStreams[jid])
     {
-        var remoteStreamObject = RTC.remoteStreams[jid][MediaStreamType.VIDEO_TYPE];
+        var remoteStreamObject = APP.RTC.remoteStreams[jid][MediaStreamType.VIDEO_TYPE];
         var remoteStream = remoteStreamObject.getOriginalStream();
         var tracks = remoteStream.getVideoTracks();
         if (tracks) {
@@ -207,7 +208,7 @@ SimulcastReceiver.prototype.getReceivingVideoStreamBySSRC = function (ssrc)
     }
     else
     {
-        console.debug(RTC.remoteStreams, jid, ssrc);
+        console.debug(APP.RTC.remoteStreams, jid, ssrc);
     }
 
     return {

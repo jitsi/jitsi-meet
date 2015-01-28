@@ -1,7 +1,6 @@
 ////These lines should be uncommented when require works in app.js
-//var RTCBrowserType = require("../../service/RTC/RTCBrowserType.js");
-//var StreamEventTypes = require("../../service/RTC/StreamEventTypes.js");
-//var MediaStreamType = require("../../service/RTC/MediaStreamTypes");
+var RTCBrowserType = require("../../service/RTC/RTCBrowserType.js");
+var MediaStreamType = require("../../service/RTC/MediaStreamTypes");
 
 /**
  * Creates a MediaStream object for the given data, session id and ssrc.

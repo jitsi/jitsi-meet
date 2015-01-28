@@ -27,12 +27,14 @@ var EventEmitter = require("events");
 
 var eventEmitter = new EventEmitter();
 
+var DesktopSharingEventTypes = require("../../service/desktopsharing/DesktopSharingEventTypes");
+
 /**
  * Method obtains desktop stream from WebRTC 'screen' source.
  * Flag 'chrome://flags/#enable-usermedia-screen-capture' must be enabled.
  */
 function obtainWebRTCScreen(streamCallback, failCallback) {
-    RTC.getUserMediaWithConstraints(
+    APP.RTC.getUserMediaWithConstraints(
         ['screen'],
         streamCallback,
         failCallback
@@ -90,7 +92,7 @@ function isUpdateRequired(minVersion, extVersion)
     catch (e)
     {
         console.error("Failed to parse extension version", e);
-        UI.messageHandler.showError('Error',
+        APP.UI.messageHandler.showError('Error',
             'Error when trying to detect desktopsharing extension.');
         return true;
     }
@@ -139,7 +141,7 @@ function doGetStreamFromExtension(streamCallback, failCallback) {
             }
             console.log("Response from extension: " + response);
             if (response.streamId) {
-                RTC.getUserMediaWithConstraints(
+                APP.RTC.getUserMediaWithConstraints(
                     ['desktop'],
                     function (stream) {
                         streamCallback(stream);
@@ -172,7 +174,7 @@ function obtainScreenFromExtension(streamCallback, failCallback) {
                     function (arg) {
                         console.log("Failed to install the extension", arg);
                         failCallback(arg);
-                        UI.messageHandler.showError('Error',
+                        APP.UI.messageHandler.showError('Error',
                             'Failed to install desktop sharing extension');
                     }
                 );
@@ -306,7 +308,7 @@ module.exports = {
                 getSwitchStreamFailed);
         } else {
             // Disable screen stream
-            RTC.getUserMediaWithConstraints(
+            APP.RTC.getUserMediaWithConstraints(
                 ['video'],
                 function (stream) {
                     // We are now using camera stream

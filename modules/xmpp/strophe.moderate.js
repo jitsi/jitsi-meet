@@ -44,7 +44,7 @@ module.exports = function (XMPP) {
             var mute = $(iq).find('mute');
             if (mute.length) {
                 var doMuteAudio = mute.text() === "true";
-                UI.setAudioMuted(doMuteAudio);
+                APP.UI.setAudioMuted(doMuteAudio);
                 XMPP.forceMuted = doMuteAudio;
             }
             return true;

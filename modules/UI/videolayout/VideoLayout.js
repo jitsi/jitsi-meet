@@ -5,6 +5,8 @@ var ContactList = require("../side_pannels/contactlist/ContactList");
 var UIUtil = require("../util/UIUtil");
 var ConnectionIndicator = require("./ConnectionIndicator");
 var NicknameHandler = require("../util/NicknameHandler");
+var MediaStreamType = require("../../../service/RTC/MediaStreamTypes");
+var UIEvents = require("../../../service/UI/UIEvents");
 
 var currentDominantSpeaker = null;
 var lastNCount = config.channelLastN;
@@ -61,7 +63,7 @@ function videoactive( videoelem) {
             (parentResourceJid &&
                 VideoLayout.getDominantSpeakerResourceJid() === parentResourceJid)) {
             VideoLayout.updateLargeVideo(
-                RTC.getVideoSrc(videoelem[0]),
+                APP.RTC.getVideoSrc(videoelem[0]),
                 1,
                 parentResourceJid);
         }
@@ -97,8 +99,8 @@ function waitForRemoteVideo(selector, ssrc, stream, jid) {
     if (stream.id === 'mixedmslabel') return;
 
     if (selector[0].currentTime > 0) {
-        var videoStream = simulcast.getReceivingVideoStream(stream);
-        RTC.attachMediaStream(selector, videoStream); // FIXME: why do i have to do this for FF?
+        var videoStream = APP.simulcast.getReceivingVideoStream(stream);
+        APP.RTC.attachMediaStream(selector, videoStream); // FIXME: why do i have to do this for FF?
         videoactive(selector);
     } else {
         setTimeout(function () {
@@ -283,7 +285,7 @@ function getParticipantContainer(resourceJid)
     if (!resourceJid)
         return null;
 
-    if (resourceJid === xmpp.myResource())
+    if (resourceJid === APP.xmpp.myResource())
         return $("#localVideoContainer");
     else
         return $("#participant_" + resourceJid);
@@ -359,7 +361,7 @@ function addRemoteVideoMenu(jid, parentElement) {
             event.preventDefault();
         }
         var isMute = mutedAudios[jid] == true;
-        xmpp.setMute(jid, !isMute);
+        APP.xmpp.setMute(jid, !isMute);
 
         popupmenuElement.setAttribute('style', 'display:none;');
 
@@ -382,7 +384,7 @@ function addRemoteVideoMenu(jid, parentElement) {
     var ejectLinkItem = document.createElement('a');
     ejectLinkItem.innerHTML = ejectIndicator + ' Kick out';
     ejectLinkItem.onclick = function(){
-        xmpp.eject(jid);
+        APP.xmpp.eject(jid);
         popupmenuElement.setAttribute('style', 'display:none;');
     };
 
@@ -519,11 +521,11 @@ var VideoLayout = (function (my) {
     };
 
     my.changeLocalAudio = function(stream) {
-        RTC.attachMediaStream($('#localAudio'), stream.getOriginalStream());
+        APP.RTC.attachMediaStream($('#localAudio'), stream.getOriginalStream());
         document.getElementById('localAudio').autoplay = true;
         document.getElementById('localAudio').volume = 0;
         if (preMuted) {
-            if(!UI.setAudioMuted(true))
+            if(!APP.UI.setAudioMuted(true))
             {
                 preMuted = mute;
             }
@@ -537,7 +539,7 @@ var VideoLayout = (function (my) {
             flipX = false;
         var localVideo = document.createElement('video');
         localVideo.id = 'localVideo_' +
-            RTC.getStreamID(stream.getOriginalStream());
+            APP.RTC.getStreamID(stream.getOriginalStream());
         localVideo.autoplay = true;
         localVideo.volume = 0; // is it required if audio is separated ?
         localVideo.oncontextmenu = function () { return false; };
@@ -556,22 +558,18 @@ var VideoLayout = (function (my) {
         AudioLevels.updateAudioLevelCanvas(null, VideoLayout);
 
         var localVideoSelector = $('#' + localVideo.id);
+
+        function localVideoClick(event) {
+            event.stopPropagation();
+            VideoLayout.handleVideoThumbClicked(
+                APP.RTC.getVideoSrc(localVideo),
+                false,
+                APP.xmpp.myResource());
+        }
         // Add click handler to both video and video wrapper elements in case
         // there's no video.
-        localVideoSelector.click(function (event) {
-            event.stopPropagation();
-            VideoLayout.handleVideoThumbClicked(
-                RTC.getVideoSrc(localVideo),
-                false,
-                xmpp.myResource());
-        });
-        $('#localVideoContainer').click(function (event) {
-            event.stopPropagation();
-            VideoLayout.handleVideoThumbClicked(
-                RTC.getVideoSrc(localVideo),
-                false,
-                xmpp.myResource());
-        });
+        localVideoSelector.click(localVideoClick);
+        $('#localVideoContainer').click(localVideoClick);
 
         // Add hover handler
         $('#localVideoContainer').hover(
@@ -580,14 +578,14 @@ var VideoLayout = (function (my) {
             },
             function() {
                 if (!VideoLayout.isLargeVideoVisible()
-                        || RTC.getVideoSrc(localVideo) !== RTC.getVideoSrc($('#largeVideo')[0]))
+                        || APP.RTC.getVideoSrc(localVideo) !== APP.RTC.getVideoSrc($('#largeVideo')[0]))
                     VideoLayout.showDisplayName('localVideoContainer', false);
             }
         );
         // Add stream ended handler
         stream.getOriginalStream().onended = function () {
             localVideoContainer.removeChild(localVideo);
-            VideoLayout.updateRemovedVideo(RTC.getVideoSrc(localVideo));
+            VideoLayout.updateRemovedVideo(APP.RTC.getVideoSrc(localVideo));
         };
         // Flip video x axis if needed
         flipXLocalVideo = flipX;
@@ -595,12 +593,12 @@ var VideoLayout = (function (my) {
             localVideoSelector.addClass("flipVideoX");
         }
         // Attach WebRTC stream
-        var videoStream = simulcast.getLocalVideoStream();
-        RTC.attachMediaStream(localVideoSelector, videoStream);
+        var videoStream = APP.simulcast.getLocalVideoStream();
+        APP.RTC.attachMediaStream(localVideoSelector, videoStream);
 
-        localVideoSrc = RTC.getVideoSrc(localVideo);
+        localVideoSrc = APP.RTC.getVideoSrc(localVideo);
 
-        var myResourceJid = xmpp.myResource();
+        var myResourceJid = APP.xmpp.myResource();
 
         VideoLayout.updateLargeVideo(localVideoSrc, 0,
             myResourceJid);
@@ -613,7 +611,7 @@ var VideoLayout = (function (my) {
      * @param removedVideoSrc src stream identifier of the video.
      */
     my.updateRemovedVideo = function(removedVideoSrc) {
-        if (removedVideoSrc === RTC.getVideoSrc($('#largeVideo')[0])) {
+        if (removedVideoSrc === APP.RTC.getVideoSrc($('#largeVideo')[0])) {
             // this is currently displayed as large
             // pick the last visible video in the row
             // if nobody else is left, this picks the local video
@@ -625,7 +623,7 @@ var VideoLayout = (function (my) {
                 console.info("Last visible video no longer exists");
                 pick = $('#remoteVideos>span[id!="mixedstream"]>video').get(0);
 
-                if (!pick || !RTC.getVideoSrc(pick)) {
+                if (!pick || !APP.RTC.getVideoSrc(pick)) {
                     // Try local video
                     console.info("Fallback to local video...");
                     pick = $('#remoteVideos>span>span>video').get(0);
@@ -640,7 +638,7 @@ var VideoLayout = (function (my) {
                 {
                     if(container.id == "localVideoWrapper")
                     {
-                        jid = xmpp.myResource();
+                        jid = APP.xmpp.myResource();
                     }
                     else
                     {
@@ -648,7 +646,7 @@ var VideoLayout = (function (my) {
                     }
                 }
 
-                VideoLayout.updateLargeVideo(RTC.getVideoSrc(pick), pick.volume, jid);
+                VideoLayout.updateLargeVideo(APP.RTC.getVideoSrc(pick), pick.volume, jid);
             } else {
                 console.warn("Failed to elect large video");
             }
@@ -703,7 +701,7 @@ var VideoLayout = (function (my) {
     my.updateLargeVideo = function(newSrc, vol, resourceJid) {
         console.log('hover in', newSrc);
 
-        if (RTC.getVideoSrc($('#largeVideo')[0]) !== newSrc) {
+        if (APP.RTC.getVideoSrc($('#largeVideo')[0]) !== newSrc) {
 
             $('#activeSpeaker').css('visibility', 'hidden');
             // Due to the simulcast the localVideoSrc may have changed when the
@@ -716,7 +714,7 @@ var VideoLayout = (function (my) {
 
             largeVideoState.newSrc = newSrc;
             largeVideoState.isVisible = $('#largeVideo').is(':visible');
-            largeVideoState.isDesktop = RTC.isVideoSrcDesktop(resourceJid);
+            largeVideoState.isDesktop = APP.RTC.isVideoSrcDesktop(resourceJid);
             if(largeVideoState.userResourceJid) {
                 largeVideoState.oldResourceJid = largeVideoState.userResourceJid;
             } else {
@@ -742,12 +740,12 @@ var VideoLayout = (function (my) {
                 var doUpdate = function () {
 
                     Avatar.updateActiveSpeakerAvatarSrc(
-                        xmpp.findJidFromResource(
+                        APP.xmpp.findJidFromResource(
                             largeVideoState.userResourceJid));
 
                     if (!userChanged && largeVideoState.preload &&
                         largeVideoState.preload !== null &&
-                        RTC.getVideoSrc($(largeVideoState.preload)[0]) === newSrc)
+                        APP.RTC.getVideoSrc($(largeVideoState.preload)[0]) === newSrc)
                     {
 
                         console.info('Switching to preloaded video');
@@ -774,7 +772,7 @@ var VideoLayout = (function (my) {
                         largeVideoState.preload = null;
                         largeVideoState.preload_ssrc = 0;
                     } else {
-                        RTC.setVideoSrc($('#largeVideo')[0], largeVideoState.newSrc);
+                        APP.RTC.setVideoSrc($('#largeVideo')[0], largeVideoState.newSrc);
                     }
 
                     var videoTransform = document.getElementById('largeVideo')
@@ -822,7 +820,7 @@ var VideoLayout = (function (my) {
 
                     if(userChanged) {
                         Avatar.showUserAvatar(
-                            xmpp.findJidFromResource(
+                            APP.xmpp.findJidFromResource(
                                 largeVideoState.oldResourceJid));
                     }
 
@@ -837,7 +835,7 @@ var VideoLayout = (function (my) {
             }
         } else {
             Avatar.showUserAvatar(
-                xmpp.findJidFromResource(
+                APP.xmpp.findJidFromResource(
                     largeVideoState.userResourceJid));
         }
 
@@ -870,7 +868,7 @@ var VideoLayout = (function (my) {
 
                 if (dominantSpeakerVideo) {
                     VideoLayout.updateLargeVideo(
-                        RTC.getVideoSrc(dominantSpeakerVideo),
+                        APP.RTC.getVideoSrc(dominantSpeakerVideo),
                         1,
                         currentDominantSpeaker);
                 }
@@ -976,7 +974,7 @@ var VideoLayout = (function (my) {
                 focusedVideoInfo = null;
                 if(focusResourceJid) {
                     Avatar.showUserAvatar(
-                        xmpp.findJidFromResource(focusResourceJid));
+                        APP.xmpp.findJidFromResource(focusResourceJid));
                 }
             }
         }
@@ -1048,7 +1046,7 @@ var VideoLayout = (function (my) {
 
         // If the peerJid is null then this video span couldn't be directly
         // associated with a participant (this could happen in the case of prezi).
-        if (xmpp.isModerator() && peerJid !== null)
+        if (APP.xmpp.isModerator() && peerJid !== null)
             addRemoteVideoMenu(peerJid, container);
 
         remotes.appendChild(container);
@@ -1067,7 +1065,7 @@ var VideoLayout = (function (my) {
                         ? document.createElement('video')
                         : document.createElement('audio');
         var id = (isVideo ? 'remoteVideo_' : 'remoteAudio_')
-                    + sid + '_' + RTC.getStreamID(stream);
+                    + sid + '_' + APP.RTC.getStreamID(stream);
 
         element.id = id;
         element.autoplay = true;
@@ -1094,8 +1092,8 @@ var VideoLayout = (function (my) {
             // If the container is currently visible we attach the stream.
             if (!isVideo
                 || (container.offsetParent !== null && isVideo)) {
-                var videoStream = simulcast.getReceivingVideoStream(stream);
-                RTC.attachMediaStream(sel, videoStream);
+                var videoStream = APP.simulcast.getReceivingVideoStream(stream);
+                APP.RTC.attachMediaStream(sel, videoStream);
 
                 if (isVideo)
                     waitForRemoteVideo(sel, thessrc, stream, peerJid);
@@ -1133,7 +1131,7 @@ var VideoLayout = (function (my) {
                 var videoThumb = $('#' + container.id + '>video').get(0);
                 if (videoThumb) {
                     VideoLayout.handleVideoThumbClicked(
-                        RTC.getVideoSrc(videoThumb),
+                        APP.RTC.getVideoSrc(videoThumb),
                         false,
                         Strophe.getResourceFromJid(peerJid));
                 }
@@ -1152,13 +1150,13 @@ var VideoLayout = (function (my) {
                     var videoSrc = null;
                     if ($('#' + container.id + '>video')
                             && $('#' + container.id + '>video').length > 0) {
-                        videoSrc = RTC.getVideoSrc($('#' + container.id + '>video').get(0));
+                        videoSrc = APP.RTC.getVideoSrc($('#' + container.id + '>video').get(0));
                     }
 
                     // If the video has been "pinned" by the user we want to
                     // keep the display name on place.
                     if (!VideoLayout.isLargeVideoVisible()
-                            || videoSrc !== RTC.getVideoSrc($('#largeVideo')[0]))
+                            || videoSrc !== APP.RTC.getVideoSrc($('#largeVideo')[0]))
                         VideoLayout.showDisplayName(container.id, false);
                 }
             );
@@ -1183,7 +1181,7 @@ var VideoLayout = (function (my) {
         var removedVideoSrc = null;
         if (isVideo) {
             select = $('#' + container.id + '>video');
-            removedVideoSrc = RTC.getVideoSrc(select.get(0));
+            removedVideoSrc = APP.RTC.getVideoSrc(select.get(0));
         }
         else
             select = $('#' + container.id + '>audio');
@@ -1230,16 +1228,16 @@ var VideoLayout = (function (my) {
                 peerContainer.show();
             }
 
+            var jid = APP.xmpp.findJidFromResource(resourceJid);
             if (state == 'show')
             {
                 // peerContainer.css('-webkit-filter', '');
-                var jid = xmpp.findJidFromResource(resourceJid);
+
                 Avatar.showUserAvatar(jid, false);
             }
             else // if (state == 'avatar')
             {
                 // peerContainer.css('-webkit-filter', 'grayscale(100%)');
-                var jid = xmpp.findJidFromResource(resourceJid);
                 Avatar.showUserAvatar(jid, true);
             }
         }
@@ -1330,7 +1328,7 @@ var VideoLayout = (function (my) {
      */
     my.showModeratorIndicator = function () {
 
-        var isModerator = xmpp.isModerator();
+        var isModerator = APP.xmpp.isModerator();
         if (isModerator) {
             var indicatorSpan = $('#localVideoContainer .focusindicator');
 
@@ -1340,7 +1338,7 @@ var VideoLayout = (function (my) {
             }
         }
 
-        var members = xmpp.getMembers();
+        var members = APP.xmpp.getMembers();
 
         Object.keys(members).forEach(function (jid) {
 
@@ -1532,7 +1530,7 @@ var VideoLayout = (function (my) {
         var videoSpanId = null;
         var videoContainerId = null;
         if (resourceJid
-                === xmpp.myResource()) {
+                === APP.xmpp.myResource()) {
             videoSpanId = 'localVideoWrapper';
             videoContainerId = 'localVideoContainer';
         }
@@ -1575,7 +1573,7 @@ var VideoLayout = (function (my) {
             }
 
             Avatar.showUserAvatar(
-                xmpp.findJidFromResource(resourceJid));
+                APP.xmpp.findJidFromResource(resourceJid));
         }
     };
 
@@ -1701,7 +1699,7 @@ var VideoLayout = (function (my) {
                     eventEmitter.emit(UIEvents.PINNED_ENDPOINT,
                         Strophe.getResourceFromJid(jid));
                 }
-            } else if (jid == xmpp.myJid()) {
+            } else if (jid == APP.xmpp.myJid()) {
                 $("#localVideoContainer").click();
             }
         }
@@ -1719,7 +1717,7 @@ var VideoLayout = (function (my) {
             return;
         }*/
         var videoSpanId = null;
-        if (jid === xmpp.myJid()) {
+        if (jid === APP.xmpp.myJid()) {
             videoSpanId = 'localVideoContainer';
         } else {
             VideoLayout.ensurePeerContainerExists(jid);
@@ -1728,7 +1726,7 @@ var VideoLayout = (function (my) {
 
         mutedAudios[jid] = isMuted;
 
-        if (xmpp.isModerator()) {
+        if (APP.xmpp.isModerator()) {
             VideoLayout.updateRemoteVideoMenu(jid, isMuted);
         }
 
@@ -1741,12 +1739,12 @@ var VideoLayout = (function (my) {
      */
     $(document).bind('videomuted.muc', function (event, jid, value) {
         var isMuted = (value === "true");
-        if(!RTC.muteRemoteVideoStream(jid, isMuted))
+        if(!APP.RTC.muteRemoteVideoStream(jid, isMuted))
             return;
 
         Avatar.showUserAvatar(jid, isMuted);
         var videoSpanId = null;
-        if (jid === xmpp.myJid()) {
+        if (jid === APP.xmpp.myJid()) {
             videoSpanId = 'localVideoContainer';
         } else {
             VideoLayout.ensurePeerContainerExists(jid);
@@ -1763,7 +1761,7 @@ var VideoLayout = (function (my) {
     my.onDisplayNameChanged =
                     function (jid, displayName, status) {
         if (jid === 'localVideoContainer'
-            || jid === xmpp.myJid()) {
+            || jid === APP.xmpp.myJid()) {
             setDisplayName('localVideoContainer',
                            displayName);
         } else {
@@ -1782,7 +1780,7 @@ var VideoLayout = (function (my) {
     my.onDominantSpeakerChanged = function (resourceJid) {
         // We ignore local user events.
         if (resourceJid
-                === xmpp.myResource())
+                === APP.xmpp.myResource())
             return;
 
         // Update the current dominant speaker.
@@ -1816,7 +1814,7 @@ var VideoLayout = (function (my) {
             // Update the large video if the video source is already available,
             // otherwise wait for the "videoactive.jingle" event.
             if (video.length && video[0].currentTime > 0)
-                VideoLayout.updateLargeVideo(RTC.getVideoSrc(video[0]), resourceJid);
+                VideoLayout.updateLargeVideo(APP.RTC.getVideoSrc(video[0]), resourceJid);
         }
     };
 
@@ -1911,13 +1909,13 @@ var VideoLayout = (function (my) {
                 if (!isVisible) {
                     console.log("Add to last N", resourceJid);
 
-                    var jid = xmpp.findJidFromResource(resourceJid);
-                    var mediaStream = RTC.remoteStreams[jid][MediaStreamType.VIDEO_TYPE];
+                    var jid = APP.xmpp.findJidFromResource(resourceJid);
+                    var mediaStream = APP.RTC.remoteStreams[jid][MediaStreamType.VIDEO_TYPE];
                     var sel = $('#participant_' + resourceJid + '>video');
 
-                    var videoStream = simulcast.getReceivingVideoStream(
+                    var videoStream = APP.simulcast.getReceivingVideoStream(
                         mediaStream.stream);
-                    RTC.attachMediaStream(sel, videoStream);
+                    APP.RTC.attachMediaStream(sel, videoStream);
                     if (lastNPickupJid == mediaStream.peerjid) {
                         // Clean up the lastN pickup jid.
                         lastNPickupJid = null;
@@ -1944,7 +1942,7 @@ var VideoLayout = (function (my) {
 
             var resource, container, src;
             var myResource
-                = xmpp.myResource();
+                = APP.xmpp.myResource();
 
             // Find out which endpoint to show in the large video.
             for (var i = 0; i < lastNEndpoints.length; i++) {
@@ -1987,16 +1985,16 @@ var VideoLayout = (function (my) {
             var primarySSRC = esl.simulcastLayer.primarySSRC;
 
             // Get session and stream from primary ssrc.
-            var res = simulcast.getReceivingVideoStreamBySSRC(primarySSRC);
+            var res = APP.simulcast.getReceivingVideoStreamBySSRC(primarySSRC);
             var sid = res.sid;
             var electedStream = res.stream;
 
             if (sid && electedStream) {
-                var msid = simulcast.getRemoteVideoStreamIdBySSRC(primarySSRC);
+                var msid = APP.simulcast.getRemoteVideoStreamIdBySSRC(primarySSRC);
 
                 console.info([esl, primarySSRC, msid, sid, electedStream]);
 
-                var preload = (Strophe.getResourceFromJid(xmpp.getJidFromSSRC(primarySSRC)) == largeVideoState.userResourceJid);
+                var preload = (Strophe.getResourceFromJid(APP.xmpp.getJidFromSSRC(primarySSRC)) == largeVideoState.userResourceJid);
 
                 if (preload) {
                     if (largeVideoState.preload)
@@ -2008,7 +2006,7 @@ var VideoLayout = (function (my) {
                     // ssrcs are unique in an rtp session
                     largeVideoState.preload_ssrc = primarySSRC;
 
-                    RTC.attachMediaStream(largeVideoState.preload, electedStream)
+                    APP.RTC.attachMediaStream(largeVideoState.preload, electedStream)
                 }
 
             } else {
@@ -2043,12 +2041,12 @@ var VideoLayout = (function (my) {
             var primarySSRC = esl.simulcastLayer.primarySSRC;
 
             // Get session and stream from primary ssrc.
-            var res = simulcast.getReceivingVideoStreamBySSRC(primarySSRC);
+            var res = APP.simulcast.getReceivingVideoStreamBySSRC(primarySSRC);
             var sid = res.sid;
             var electedStream = res.stream;
 
             if (sid && electedStream) {
-                var msid = simulcast.getRemoteVideoStreamIdBySSRC(primarySSRC);
+                var msid = APP.simulcast.getRemoteVideoStreamIdBySSRC(primarySSRC);
 
                 console.info('Switching simulcast substream.');
                 console.info([esl, primarySSRC, msid, sid, electedStream]);
@@ -2056,15 +2054,15 @@ var VideoLayout = (function (my) {
                 var msidParts = msid.split(' ');
                 var selRemoteVideo = $(['#', 'remoteVideo_', sid, '_', msidParts[0]].join(''));
 
-                var updateLargeVideo = (Strophe.getResourceFromJid(xmpp.getJidFromSSRC(primarySSRC))
+                var updateLargeVideo = (Strophe.getResourceFromJid(APP.xmpp.getJidFromSSRC(primarySSRC))
                     == largeVideoState.userResourceJid);
                 var updateFocusedVideoSrc = (focusedVideoInfo && focusedVideoInfo.src && focusedVideoInfo.src != '' &&
-                    (RTC.getVideoSrc(selRemoteVideo[0]) == focusedVideoInfo.src));
+                    (APP.RTC.getVideoSrc(selRemoteVideo[0]) == focusedVideoInfo.src));
 
                 var electedStreamUrl;
                 if (largeVideoState.preload_ssrc == primarySSRC)
                 {
-                    RTC.setVideoSrc(selRemoteVideo[0], RTC.getVideoSrc(largeVideoState.preload[0]));
+                    APP.RTC.setVideoSrc(selRemoteVideo[0], APP.RTC.getVideoSrc(largeVideoState.preload[0]));
                 }
                 else
                 {
@@ -2075,22 +2073,22 @@ var VideoLayout = (function (my) {
 
                     largeVideoState.preload_ssrc = 0;
 
-                    RTC.attachMediaStream(selRemoteVideo, electedStream);
+                    APP.RTC.attachMediaStream(selRemoteVideo, electedStream);
                 }
 
-                var jid = xmpp.getJidFromSSRC(primarySSRC);
+                var jid = APP.xmpp.getJidFromSSRC(primarySSRC);
 
                 if (updateLargeVideo) {
-                    VideoLayout.updateLargeVideo(RTC.getVideoSrc(selRemoteVideo[0]), null,
+                    VideoLayout.updateLargeVideo(APP.RTC.getVideoSrc(selRemoteVideo[0]), null,
                         Strophe.getResourceFromJid(jid));
                 }
 
                 if (updateFocusedVideoSrc) {
-                    focusedVideoInfo.src = RTC.getVideoSrc(selRemoteVideo[0]);
+                    focusedVideoInfo.src = APP.RTC.getVideoSrc(selRemoteVideo[0]);
                 }
 
                 var videoId;
-                if(resource == xmpp.myResource())
+                if(resource == APP.xmpp.myResource())
                 {
                     videoId = "localVideoContainer";
                 }
@@ -2118,8 +2116,8 @@ var VideoLayout = (function (my) {
         if(object.resolution !== null)
         {
             resolution = object.resolution;
-            object.resolution = resolution[xmpp.myJid()];
-            delete resolution[xmpp.myJid()];
+            object.resolution = resolution[APP.xmpp.myJid()];
+            delete resolution[APP.xmpp.myJid()];
         }
         updateStatsIndicator("localVideoContainer", percent, object);
         for(var jid in resolution)

@@ -1,6 +1,8 @@
 /* jshint -W117 */
 
 var JingleSession = require("./JingleSession");
+var XMPPEvents = require("../../service/xmpp/XMPPEvents");
+
 
 module.exports = function(XMPP, eventEmitter)
 {

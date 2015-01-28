@@ -1,11 +1,14 @@
 /* global $, $iq, config, connection, UI, messageHandler,
  roomName, sessionTerminated, Strophe, Util */
+var XMPPEvents = require("../../service/xmpp/XMPPEvents");
+
 /**
  * Contains logic responsible for enabling/disabling functionality available
  * only to moderator users.
  */
 var connection = null;
 var focusUserJid;
+
 function createExpBackoffTimer(step) {
     var count = 1;
     return function (reset) {
@@ -228,7 +231,7 @@ var Moderator = {
                 var waitMs = getNextErrorTimeout();
                 console.error("Focus error, retry after " + waitMs, error);
                 // Show message
-                UI.messageHandler.notify(
+                APP.UI.messageHandler.notify(
                     'Conference focus', 'disconnected',
                         Moderator.getFocusComponent() +
                         ' not available - retry in ' +

@@ -4,7 +4,7 @@ var toolbarTimeoutObject,
     toolbarTimeout = interfaceConfig.INITIAL_TOOLBAR_TIMEOUT;
 
 function showDesktopSharingButton() {
-    if (desktopsharing.isDesktopSharingEnabled()) {
+    if (APP.desktopsharing.isDesktopSharingEnabled()) {
         $('#desktopsharing').css({display: "inline"});
     } else {
         $('#desktopsharing').css({display: "none"});
@@ -67,7 +67,7 @@ var ToolbarToggler = {
             toolbarTimeout = interfaceConfig.TOOLBAR_TIMEOUT;
         }
 
-        if (xmpp.isModerator())
+        if (APP.xmpp.isModerator())
         {
 //            TODO: Enable settings functionality.
 //                  Need to uncomment the settings button in index.html.

@@ -1,5 +1,8 @@
 /* global ssrc2jid */
 /* jshint -W117 */
+var RTCBrowserType = require("../../service/RTC/RTCBrowserType");
+
+
 /**
  * Calculates packet lost percent using the number of lost packets and the
  * number of all packet.
@@ -14,10 +17,10 @@ function calculatePacketLoss(lostPackets, totalPackets) {
 }
 
 function getStatValue(item, name) {
-    if(!keyMap[RTC.getBrowserType()][name])
+    if(!keyMap[APP.RTC.getBrowserType()][name])
         throw "The property isn't supported!";
-    var key = keyMap[RTC.getBrowserType()][name];
-    return RTC.getBrowserType() == RTCBrowserType.RTC_BROWSER_CHROME? item.stat(key) : item[key];
+    var key = keyMap[APP.RTC.getBrowserType()][name];
+    return APP.RTC.getBrowserType() == RTCBrowserType.RTC_BROWSER_CHROME? item.stat(key) : item[key];
 }
 
 /**
@@ -330,7 +333,7 @@ StatsCollector.prototype.addStatsToBeLogged = function (reports) {
 
 StatsCollector.prototype.logStats = function () {
 
-    if(!xmpp.sendLogs(this.statsToBeLogged))
+    if(!APP.xmpp.sendLogs(this.statsToBeLogged))
         return;
     // Reset the stats
     this.statsToBeLogged.stats = {};
@@ -444,7 +447,7 @@ StatsCollector.prototype.processStatsReport = function () {
         var ssrc = getStatValue(now, 'ssrc');
         if(!ssrc)
             continue;
-        var jid = xmpp.getJidFromSSRC(ssrc);
+        var jid = APP.xmpp.getJidFromSSRC(ssrc);
         if (!jid && (Date.now() - now.timestamp) < 3000) {
             console.warn("No jid for ssrc: " + ssrc);
             continue;
@@ -645,7 +648,7 @@ StatsCollector.prototype.processAudioLevelReport = function ()
         }
 
         var ssrc = getStatValue(now, 'ssrc');
-        var jid = xmpp.getJidFromSSRC(ssrc);
+        var jid = APP.xmpp.getJidFromSSRC(ssrc);
         if (!jid && (Date.now() - now.timestamp) < 3000)
         {
             console.warn("No jid for ssrc: " + ssrc);
@@ -679,7 +682,7 @@ StatsCollector.prototype.processAudioLevelReport = function ()
             // but it seems to vary between 0 and around 32k.
             audioLevel = audioLevel / 32767;
             jidStats.setSsrcAudioLevel(ssrc, audioLevel);
-            if(jid != xmpp.myJid())
+            if(jid != APP.xmpp.myJid())
                 this.eventEmitter.emit("statistics.audioLevel", jid, audioLevel);
         }
 

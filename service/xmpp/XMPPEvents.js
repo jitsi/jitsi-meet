@@ -23,4 +23,4 @@ var XMPPEvents = {
     CHAT_ERROR_RECEIVED: "xmpp.chat_error_received",
     ETHERPAD: "xmpp.etherpad"
 };
-//module.exports = XMPPEvents;
+module.exports = XMPPEvents;

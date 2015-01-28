@@ -4,10 +4,8 @@
 var LocalStats = require("./LocalStatsCollector.js");
 var RTPStats = require("./RTPStatsCollector.js");
 var EventEmitter = require("events");
-//These lines should be uncommented when require works in app.js
-//var StreamEventTypes = require("../../service/RTC/StreamEventTypes.js");
-//var RTCBrowserType = require("../../service/RTC/RTCBrowserType");
-//var XMPPEvents = require("../service/xmpp/XMPPEvents");
+var StreamEventTypes = require("../../service/RTC/StreamEventTypes.js");
+var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 
 var eventEmitter = new EventEmitter();
 
@@ -122,10 +120,10 @@ var statistics =
     },
 
     start: function () {
-        RTC.addStreamListener(onStreamCreated,
+        APP.RTC.addStreamListener(onStreamCreated,
             StreamEventTypes.EVENT_TYPE_LOCAL_CREATED);
-        xmpp.addListener(XMPPEvents.DISPOSE_CONFERENCE, onDisposeConference);
-        xmpp.addListener(XMPPEvents.CALL_INCOMING, function (event) {
+        APP.xmpp.addListener(XMPPEvents.DISPOSE_CONFERENCE, onDisposeConference);
+        APP.xmpp.addListener(XMPPEvents.CALL_INCOMING, function (event) {
             startRemoteStats(event.peerconnection);
         });
     }

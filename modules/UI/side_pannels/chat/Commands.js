@@ -34,7 +34,7 @@ function getCommand(message)
 function processTopic(commandArguments)
 {
     var topic = UIUtil.escapeHtml(commandArguments);
-    xmpp.setSubject(topic);
+    APP.xmpp.setSubject(topic);
 }
 
 /**

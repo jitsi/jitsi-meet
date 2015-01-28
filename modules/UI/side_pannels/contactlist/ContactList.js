@@ -110,7 +110,7 @@ var ContactList = {
 
         var clElement = contactlist.get(0);
 
-        if (resourceJid === xmpp.myResource()
+        if (resourceJid === APP.xmpp.myResource()
             && $('#contactlist>ul .title')[0].nextSibling.nextSibling) {
             clElement.insertBefore(newContact,
                 $('#contactlist>ul .title')[0].nextSibling.nextSibling);

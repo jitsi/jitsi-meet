@@ -6,6 +6,7 @@ var NoSimulcastSender = SimulcastSender["no"];
 var NativeSimulcastSender = SimulcastSender["native"];
 var SimulcastReceiver = require("./SimulcastReceiver");
 var SimulcastUtils = require("./SimulcastUtils");
+var RTCEvents = require("../../service/RTC/RTCEvents");
 
 
 /**
@@ -46,18 +47,18 @@ function SimulcastManager() {
         }
 
     }
-    RTC.addListener(RTCEvents.SIMULCAST_LAYER_CHANGED,
+    APP.RTC.addListener(RTCEvents.SIMULCAST_LAYER_CHANGED,
         function (endpointSimulcastLayers) {
             endpointSimulcastLayers.forEach(function (esl) {
                 var ssrc = esl.simulcastLayer.primarySSRC;
                 simulcast._setReceivingVideoStream(esl.endpoint, ssrc);
             });
         });
-    RTC.addListener(RTCEvents.SIMULCAST_START, function (simulcastLayer) {
+    APP.RTC.addListener(RTCEvents.SIMULCAST_START, function (simulcastLayer) {
         var ssrc = simulcastLayer.primarySSRC;
         simulcast._setLocalVideoStreamEnabled(ssrc, true);
     });
-    RTC.addListener(RTCEvents.SIMULCAST_STOP, function (simulcastLayer) {
+    APP.RTC.addListener(RTCEvents.SIMULCAST_STOP, function (simulcastLayer) {
         var ssrc = simulcastLayer.primarySSRC;
         simulcast._setLocalVideoStreamEnabled(ssrc, false);
     });

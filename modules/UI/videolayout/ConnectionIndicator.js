@@ -103,7 +103,7 @@ ConnectionIndicator.prototype.generateText = function () {
         }
         else if(keys.length > 1)
         {
-            var displayedSsrc = simulcast.getReceivingSSRC(this.jid);
+            var displayedSsrc = APP.simulcast.getReceivingSSRC(this.jid);
             resolutionValue = this.resolution[displayedSsrc];
         }
     }
@@ -158,7 +158,7 @@ ConnectionIndicator.prototype.generateText = function () {
 
     if(this.videoContainer.id == "localVideoContainer")
         result += "<div class=\"jitsipopover_showmore\" " +
-            "onclick = \"UI.connectionIndicatorShowMore('" +
+            "onclick = \"APP.UI.connectionIndicatorShowMore('" +
             this.videoContainer.id + "')\">" +
             (this.showMoreValue? "Show less" : "Show More") + "</div><br />";
 

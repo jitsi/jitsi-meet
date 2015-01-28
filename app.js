@@ -1,30 +1,50 @@
 /* jshint -W117 */
 /* application specific logic */
 
+var APP =
+{
+    init: function () {
+        this.UI = require("./modules/UI/UI");
+        this.API = require("./modules/API/API");
+        this.connectionquality = require("./modules/connectionquality/connectionquality");
+        this.statistics = require("./modules/statistics/statistics");
+        this.RTC = require("./modules/RTC/RTC");
+        this.simulcast = require("./modules/simulcast/simulcast");
+        this.desktopsharing = require("./modules/desktopsharing/desktopsharing");
+        this.xmpp = require("./modules/xmpp/xmpp");
+        this.keyboardshortcut = require("./modules/keyboardshortcut/keyboardshortcut");
+    }
+};
+
 function init() {
 
-    RTC.start();
-    xmpp.start(UI.getCreadentials);
+    APP.RTC.start();
+    APP.xmpp.start(APP.UI.getCreadentials);
+    APP.statistics.start();
+    APP.connectionquality.init();
+
+    // Set default desktop sharing method
+    APP.desktopsharing.init();
+
+    APP.keyboardshortcut.init();
 }
 
 
 $(document).ready(function () {
 
-    if(API.isEnabled())
-        API.init();
+    APP.init();
 
-    UI.start();
-    statistics.start();
-    connectionquality.init();
-    
-    // Set default desktop sharing method
-    desktopsharing.init();
+    if(APP.API.isEnabled())
+        APP.API.init();
 
-    keyboardshortcut.init();
+    APP.UI.start(init);
+
 });
 
 $(window).bind('beforeunload', function () {
-    if(API.isEnabled())
-        API.dispose();
+    if(APP.API.isEnabled())
+        APP.API.dispose();
 });
+
+module.exports = APP;
 

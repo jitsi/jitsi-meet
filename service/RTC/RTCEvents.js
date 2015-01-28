@@ -6,4 +6,6 @@ var RTCEvents = {
     SIMULCAST_LAYER_CHANGING: "rtc.simulcast_layer_changing",
     SIMULCAST_START: "rtc.simlcast_start",
     SIMULCAST_STOP: "rtc.simlcast_stop"
-}
+};
+
+module.exports = RTCEvents;

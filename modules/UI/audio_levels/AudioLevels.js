@@ -87,10 +87,10 @@ var AudioLevels = (function(my) {
         drawContext.drawImage(canvasCache, 0, 0);
 
         if(resourceJid === AudioLevels.LOCAL_LEVEL) {
-            if(!xmpp.myJid()) {
+            if(!APP.xmpp.myJid()) {
                 return;
             }
-            resourceJid = xmpp.myResource();
+            resourceJid = APP.xmpp.myResource();
         }
 
         if(resourceJid  === largeVideoResourceJid) {
@@ -221,8 +221,8 @@ var AudioLevels = (function(my) {
     function getVideoSpanId(resourceJid) {
         var videoSpanId = null;
         if (resourceJid === AudioLevels.LOCAL_LEVEL
-                || (xmpp.myResource() && resourceJid
-                    === xmpp.myResource()))
+                || (APP.xmpp.myResource() && resourceJid
+                    === APP.xmpp.myResource()))
             videoSpanId = 'localVideoContainer';
         else
             videoSpanId = 'participant_' + resourceJid;

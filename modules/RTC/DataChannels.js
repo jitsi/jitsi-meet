@@ -2,8 +2,11 @@
 
 // cache datachannels to avoid garbage collection
 // https://code.google.com/p/chromium/issues/detail?id=405545
+var RTCEvents = require("../../service/RTC/RTCEvents");
+
 var _dataChannels = [];
 var eventEmitter = null;
+
 
 
 
@@ -33,7 +36,7 @@ var DataChannels =
             // selections so that it can do adaptive simulcast,
             // we want the notification to trigger even if userJid is undefined,
             // or null.
-            var userJid = UI.getLargeVideoState().userJid;
+            var userJid = APP.UI.getLargeVideoState().userJid;
             // we want the notification to trigger even if userJid is undefined,
             // or null.
             onSelectedEndpointChanged(userJid);
@@ -67,7 +70,7 @@ var DataChannels =
                     console.info(
                         "Data channel new dominant speaker event: ",
                         dominantSpeakerEndpoint);
-                    eventEmitter.emit(RTC.DOMINANTSPEAKER_CHANGED, dominantSpeakerEndpoint);
+                    eventEmitter.emit(RTCEvents.DOMINANTSPEAKER_CHANGED, dominantSpeakerEndpoint);
                 }
                 else if ("InLastNChangeEvent" === colibriClass)
                 {

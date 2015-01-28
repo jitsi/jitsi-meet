@@ -1,23 +1,20 @@
 BROWSERIFY = browserify
 GLOBAL_FLAGS = -e
-MODULE_DIR = modules
-MODULE_SUBDIRS = $(wildcard $(MODULE_DIR)/*/)
-MODULES = $(MODULE_SUBDIRS:$(MODULE_DIR)/%/=%)
 OUTPUT_DIR = .
-DEPLOY_DIR = libs/modules
+DEPLOY_DIR = libs
 
 all: compile deploy clean
 
 compile:FLAGS = $(GLOBAL_FLAGS)
-compile:$(MODULES)
+compile: app
 
 debug: compile-debug deploy clean
 
 compile-debug:FLAGS = -d $(GLOBAL_FLAGS)
-compile-debug:$(MODULES)
+compile-debug: app
 
-$(MODULES): *.js
-	$(BROWSERIFY) $(FLAGS) $(MODULE_DIR)/$@/$@.js -s $@ -o $(OUTPUT_DIR)/$@.bundle.js
+app:
+	$(BROWSERIFY) $(FLAGS) app.js -s APP -o $(OUTPUT_DIR)/app.bundle.js
 
 clean:
 	@rm -f $(OUTPUT_DIR)/*.bundle.js

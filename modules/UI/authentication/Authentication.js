@@ -53,7 +53,7 @@ var Authentication = {
     closeAuthenticationDialog: function () {
         // Close authentication dialog if opened
         if (authDialog) {
-            UI.messageHandler.closeDialog();
+            APP.UI.messageHandler.closeDialog();
             authDialog = null;
         }
     },

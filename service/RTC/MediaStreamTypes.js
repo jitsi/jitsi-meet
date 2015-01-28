@@ -3,5 +3,4 @@ var MediaStreamType = {
 
     AUDIO_TYPE: "Audio"
 };
-////These lines should be uncommented when require works in app.js
-//module.exports = MediaStreamType;
+module.exports = MediaStreamType;

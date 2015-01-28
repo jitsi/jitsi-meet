@@ -15,10 +15,10 @@ var UI = null;
 var buttonHandlers =
 {
     "toolbar_button_mute": function () {
-        return UI.toggleAudio();
+        return APP.UI.toggleAudio();
     },
     "toolbar_button_camera": function () {
-        return UI.toggleVideo();
+        return APP.UI.toggleVideo();
     },
     "toolbar_button_authentication": function () {
         return Toolbar.authenticateClicked();
@@ -42,7 +42,7 @@ var buttonHandlers =
         return Etherpad.toggleEtherpad(0);
     },
     "toolbar_button_desktopsharing": function () {
-        return desktopsharing.toggleScreenSharing();
+        return APP.desktopsharing.toggleScreenSharing();
     },
     "toolbar_button_fullScreen": function()
     {
@@ -61,7 +61,7 @@ var buttonHandlers =
 };
 
 function hangup() {
-    xmpp.disposeConference();
+    APP.xmpp.disposeConference();
     if(config.enableWelcomePage)
     {
         setTimeout(function()
@@ -91,7 +91,7 @@ function hangup() {
 
 function toggleRecording() {
     xmpp.toggleRecording(function (callback) {
-        UI.messageHandler.openTwoButtonDialog(null,
+        APP.UI.messageHandler.openTwoButtonDialog(null,
                 '<h2>Enter recording token</h2>' +
                 '<input id="recordingToken" type="text" ' +
                 'placeholder="token" autofocus>',
@@ -235,11 +235,11 @@ var Toolbar = (function (my) {
     my.authenticateClicked = function () {
         Authentication.focusAuthenticationWindow();
         // Get authentication URL
-        xmpp.getAuthUrl(UI.getRoomName(), function (url) {
+        APP.xmpp.getAuthUrl(APP.UI.getRoomName(), function (url) {
             // Open popup with authentication URL
             var authenticationWindow = Authentication.createAuthenticationWindow(function () {
                 // On popup closed - retry room allocation
-                xmpp.allocateConferenceFocus(UI.getRoomName(), UI.checkForNicknameAndJoin);
+                xAPP.mpp.allocateConferenceFocus(APP.UI.getRoomName(), APP.UI.checkForNicknameAndJoin);
             }, url);
             if (!authenticationWindow) {
                 Toolbar.showAuthenticateButton(true);
@@ -281,7 +281,7 @@ var Toolbar = (function (my) {
      */
     my.openLockDialog = function () {
         // Only the focus is able to set a shared key.
-        if (!xmpp.isModerator()) {
+        if (!APP.xmpp.isModerator()) {
             if (sharedKey) {
                 messageHandler.openMessageDialog(null,
                         "This conversation is currently protected by" +
@@ -488,7 +488,7 @@ var Toolbar = (function (my) {
 
     // Shows or hides SIP calls button
     my.showSipCallButton = function (show) {
-        if (xmpp.isSipGatewayEnabled() && show) {
+        if (APP.xmpp.isSipGatewayEnabled() && show) {
             $('#sipCallButton').css({display: "inline"});
         } else {
             $('#sipCallButton').css({display: "none"});

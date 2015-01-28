@@ -1,10 +1,11 @@
-/* global $, Util, nickname:true, showToolbar */
+/* global $, Util, nickname:true */
 var Replacement = require("./Replacement");
 var CommandsProcessor = require("./Commands");
 var ToolbarToggler = require("../../toolbars/ToolbarToggler");
 var smileys = require("./smileys.json").smileys;
 var NicknameHandler = require("../../util/NicknameHandler");
 var UIUtil = require("../../util/UIUtil");
+var UIEvents = require("../../../../service/UI/UIEvents");
 
 var notificationInterval = false;
 var unreadMessages = 0;
@@ -204,7 +205,7 @@ var Chat = (function (my) {
                 else
                 {
                     var message = UIUtil.escapeHtml(value);
-                    xmpp.sendChatMessage(message, NicknameHandler.getNickname());
+                    APP.xmpp.sendChatMessage(message, NicknameHandler.getNickname());
                 }
             }
         });
@@ -230,7 +231,7 @@ var Chat = (function (my) {
     my.updateChatConversation = function (from, displayName, message) {
         var divClassName = '';
 
-        if (xmpp.myJid() === from) {
+        if (APP.xmpp.myJid() === from) {
             divClassName = "localuser";
         }
         else {

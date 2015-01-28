@@ -6,5 +6,4 @@ var DesktopSharingEventTypes = {
     NEW_STREAM_CREATED: "ds.new_stream_created"
 };
 
-//These lines should be uncommented when require works in app.js
-//module.exports = NEW_STREAM_CREATED;
+module.exports = DesktopSharingEventTypes;

@@ -10,5 +10,4 @@ var StreamEventTypes = {
     EVENT_TYPE_REMOTE_ENDED: "stream.remote_ended"
 };
 
-//These lines should be uncommented when require works in app.js
-//module.exports = StreamEventTypes;
+module.exports = StreamEventTypes;
