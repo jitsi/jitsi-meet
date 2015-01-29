@@ -15676,19 +15676,22 @@ var authenticatedUser = false;
 
 function connect(jid, password, uiCredentials) {
     var bosh
-        = uiCredentials.bosh || config.bosh || '/http-bind';
+        = (uiCredentials && uiCredentials.bosh? uiCredentials.bosh : null)
+        || config.bosh || '/http-bind';
     connection = new Strophe.Connection(bosh);
     Moderator.setConnection(connection);
 
-    var email = uiCredentials.email;
-    var displayName = uiCredentials.displayName;
-    if(email) {
-        connection.emuc.addEmailToPresence(email);
-    } else {
-        connection.emuc.addUserIdToPresence(uiCredentials.uid);
-    }
-    if(displayName) {
-        connection.emuc.addDisplayNameToPresence(displayName);
+    if(uiCredentials) {
+        var email = uiCredentials.email;
+        var displayName = uiCredentials.displayName;
+        if (email) {
+            connection.emuc.addEmailToPresence(email);
+        } else {
+            connection.emuc.addUserIdToPresence(uiCredentials.uid);
+        }
+        if (displayName) {
+            connection.emuc.addDisplayNameToPresence(displayName);
+        }
     }
 
     if (connection.disco) {
