@@ -239,7 +239,7 @@ var Toolbar = (function (my) {
             // Open popup with authentication URL
             var authenticationWindow = Authentication.createAuthenticationWindow(function () {
                 // On popup closed - retry room allocation
-                xAPP.mpp.allocateConferenceFocus(APP.UI.getRoomName(), APP.UI.checkForNicknameAndJoin);
+                APP.xmpp.allocateConferenceFocus(APP.UI.getRoomName(), APP.UI.checkForNicknameAndJoin);
             }, url);
             if (!authenticationWindow) {
                 Toolbar.showAuthenticateButton(true);
