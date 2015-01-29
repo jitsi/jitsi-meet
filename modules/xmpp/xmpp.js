@@ -41,6 +41,12 @@ function connect(jid, password, uiCredentials) {
             connection.jingle.pc_constraints.optional = [];
         connection.jingle.pc_constraints.optional.push({googIPv6: true});
     }
+    if (config.useDSCP) {
+        // https://code.google.com/p/webrtc/source/detail?r=7669
+        if (!connection.jingle.pc_constraints.optional)
+            connection.jingle.pc_constraints.optional = [];
+        connection.jingle.pc_constraints.optional.push({googDSCP: true});
+    }
 
     if(!password)
         password = uiCredentials.password;
