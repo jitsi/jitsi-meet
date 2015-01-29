@@ -10,7 +10,8 @@ var config = {
     },
 //  getroomnode: function (path) { return 'someprefixpossiblybasedonpath'; },
 //  useStunTurn: true, // use XEP-0215 to fetch STUN and TURN server
-//  useIPv6: true, // ipv6 support. use at your own risk
+//  useIPv6: true, // IPv6 support .Is Chrome only
+//  useDSCP: true, // IP QoS marking support. Is Chrome only
     useNicks: false,
     bosh: '//jitsi-meet.example.com/http-bind', // FIXME: use xep-0156 for that
     clientNode: 'http://jitsi.org/jitsimeet', // The name of client node advertised in XEP-0115 'c' stanza
