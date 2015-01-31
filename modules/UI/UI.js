@@ -591,7 +591,7 @@ UI.connectionIndicatorShowMore = function(id)
     return VideoLayout.connectionIndicators[id].showMore();
 };
 
-UI.getCreadentials = function () {
+UI.getCredentials = function () {
     var settings = this.getSettings();
     return {
         bosh: document.getElementById('boshURL').value,
