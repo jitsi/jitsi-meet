@@ -974,7 +974,7 @@ JingleSession.prototype.switchStreams = function (new_stream, oldStream, success
         self.peerconnection.addStream(new_stream);
     }
 
-    RTC.switchVideoStreams(new_stream, oldStream);
+    APP.RTC.switchVideoStreams(new_stream, oldStream);
 
     // Conference is not active
     if(!oldSdp || !self.peerconnection) {
