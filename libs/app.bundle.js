@@ -12360,31 +12360,8 @@ JingleSession.prototype.setVideoMute = function (mute, callback, options) {
     } else if (this.videoMuteByUser) {
         return;
     }
-
-    var self = this;
-    var localCallback = function (mute) {
-        self.connection.emuc.addVideoInfoToPresence(mute);
-        self.connection.emuc.sendPresence();
-        return callback(mute)
-    };
-
-    if (mute == RTC.localVideo.isMuted())
-    {
-        // Even if no change occurs, the specified callback is to be executed.
-        // The specified callback may, optionally, return a successCallback
-        // which is to be executed as well.
-        var successCallback = localCallback(mute);
-
-        if (successCallback) {
-            successCallback();
-        }
-    } else {
-        APP.RTC.localVideo.setMute(!mute);
-
-        this.hardMuteVideo(mute);
-
-        this.modifySources(localCallback(mute));
-    }
+    
+    APP.xmpp.setVideoMute(mute, callback, options);
 };
 
 // SDP-based mute by going recvonly/sendrecv
@@ -15916,9 +15893,33 @@ var XMPP = {
         }
     },
     setVideoMute: function (mute, callback, options) {
-       if(connection && APP.RTC.localVideo && connection.jingle.activecall)
-       {
-           connection.jingle.activecall.setVideoMute(mute, callback, options);
+        if(connection && APP.RTC.localVideo) {
+            var self = this;
+            var localCallback = function (mute) {
+                connection.emuc.addVideoInfoToPresence(mute);
+                connection.emuc.sendPresence();
+                return callback(mute)
+            };
+
+            if (mute == APP.RTC.localVideo.isMuted()) {
+                // Even if no change occurs, the specified callback is to be executed.
+                // The specified callback may, optionally, return a successCallback
+                // which is to be executed as well.
+                var successCallback = localCallback(mute);
+
+                if (successCallback) {
+                    successCallback();
+                }
+            } else {
+                APP.RTC.localVideo.setMute(!mute);
+
+                if (connection.jingle.activecall) {
+                    connection.jingle.activecall.hardMuteVideo(mute);
+
+                    connection.jingle.activecall.modifySources(localCallback(mute));
+                }
+                else localCallback(mute);
+            }
        }
     },
     setAudioMute: function (mute, callback) {

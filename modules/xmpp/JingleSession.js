@@ -1108,31 +1108,8 @@ JingleSession.prototype.setVideoMute = function (mute, callback, options) {
     } else if (this.videoMuteByUser) {
         return;
     }
-
-    var self = this;
-    var localCallback = function (mute) {
-        self.connection.emuc.addVideoInfoToPresence(mute);
-        self.connection.emuc.sendPresence();
-        return callback(mute)
-    };
-
-    if (mute == RTC.localVideo.isMuted())
-    {
-        // Even if no change occurs, the specified callback is to be executed.
-        // The specified callback may, optionally, return a successCallback
-        // which is to be executed as well.
-        var successCallback = localCallback(mute);
-
-        if (successCallback) {
-            successCallback();
-        }
-    } else {
-        APP.RTC.localVideo.setMute(!mute);
-
-        this.hardMuteVideo(mute);
-
-        this.modifySources(localCallback(mute));
-    }
+    
+    APP.xmpp.setVideoMute(mute, callback, options);
 };
 
 // SDP-based mute by going recvonly/sendrecv
