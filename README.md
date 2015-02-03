@@ -10,7 +10,7 @@ Jitsi Meet allows for very efficient collaboration. It allows users to stream th
 
 Installing Jitsi Meet is quite a simple experience. For Debian-based systems, we recommend following the [quick-install](https://github.com/jitsi/jitsi-meet/blob/master/doc/quick-install.md) document, which uses the package system.
 
-For other systems, or if you wish to install all components manually, see the [detailed installation instructions](https://github.com/jitsi/jitsi-meet/blob/master/doc/manual-install.md).
+For other systems, or if you wish to install all components manually, see the [detailed manual installation instructions](https://github.com/jitsi/jitsi-meet/blob/master/doc/manual-install.md).
 
 ## Building the sources
 
