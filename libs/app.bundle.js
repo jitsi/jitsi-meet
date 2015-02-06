@@ -14436,11 +14436,12 @@ var Recording = {
             return;
         }
 
+        var self = this;
         // Jirecon does not (currently) support a token.
         if (!recordingToken && !useJirecon) {
             tokenEmptyCallback(function (value) {
                 setRecordingToken(value);
-                this.toggleRecording();
+                self.toggleRecording();
             });
 
             return;
