@@ -39,7 +39,7 @@ var Prezi = {
                 "Remove",
                 function(e,v,m,f) {
                     if(v) {
-                        xmpp.removePreziFromPresence();
+                        APP.xmpp.removePreziFromPresence();
                     }
                 }
             );
@@ -91,7 +91,7 @@ var Prezi = {
                                         return false;
                                     }
                                     else {
-                                        xmpp.addToPresence("prezi", urlValue);
+                                        APP.xmpp.addToPresence("prezi", urlValue);
                                         $.prompt.close();
                                     }
                                 }
@@ -149,7 +149,7 @@ function presentationAdded(event, jid, presUrl, currentSlide) {
     VideoLayout.resizeThumbnails();
 
     var controlsEnabled = false;
-    if (jid === xmpp.myJid())
+    if (jid === APP.xmpp.myJid())
         controlsEnabled = true;
 
     setPresentationVisible(true);
@@ -189,7 +189,7 @@ function presentationAdded(event, jid, presUrl, currentSlide) {
     preziPlayer.on(PreziPlayer.EVENT_STATUS, function(event) {
         console.log("prezi status", event.value);
         if (event.value == PreziPlayer.STATUS_CONTENT_READY) {
-            if (jid != xmpp.myJid())
+            if (jid != APP.xmpp.myJid())
                 preziPlayer.flyToStep(currentSlide);
         }
     });

@@ -169,7 +169,7 @@ var ContactList = {
 
     onDisplayNameChange: function (peerJid, displayName) {
         if (peerJid === 'localVideoContainer')
-            peerJid = xmpp.myJid();
+            peerJid = APP.xmpp.myJid();
 
         var resourceJid = Strophe.getResourceFromJid(peerJid);
 

@@ -246,7 +246,7 @@ var XMPP = {
         } else {
             // We are done immediately
             console.error("No conference handler");
-            UI.messageHandler.showError('Error',
+            APP.UI.messageHandler.showError('Error',
                 'Unable to switch video stream.');
             callback();
         }

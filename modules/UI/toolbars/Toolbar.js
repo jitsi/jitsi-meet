@@ -90,7 +90,7 @@ function hangup() {
  */
 
 function toggleRecording() {
-    xmpp.toggleRecording(function (callback) {
+    APP.xmpp.toggleRecording(function (callback) {
         APP.UI.messageHandler.openTwoButtonDialog(null,
                 '<h2>Enter recording token</h2>' +
                 '<input id="recordingToken" type="text" ' +
@@ -123,7 +123,7 @@ function lockRoom(lock) {
     if (lock)
         currentSharedKey = sharedKey;
 
-    xmpp.lockRoom(currentSharedKey, function (res) {
+    APP.xmpp.lockRoom(currentSharedKey, function (res) {
         // password is required
         if (sharedKey)
         {
@@ -205,7 +205,7 @@ function callSipButtonClicked()
             if (v) {
                 var numberInput = document.getElementById('sipNumber');
                 if (numberInput.value) {
-                    xmpp.dial(numberInput.value, 'fromnumber',
+                    APP.xmpp.dial(numberInput.value, 'fromnumber',
                         UI.getRoomName(), sharedKey);
                 }
             }

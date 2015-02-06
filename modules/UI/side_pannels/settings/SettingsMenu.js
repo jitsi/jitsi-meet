@@ -19,7 +19,7 @@ var SettingsMenu = {
         var email = Settings.setEmail(newEmail);
 
 
-        Avatar.setUserAvatar(xmpp.myJid(), email);
+        Avatar.setUserAvatar(APP.xmpp.myJid(), email);
     },
 
     isVisible: function() {
@@ -33,7 +33,7 @@ var SettingsMenu = {
 
     onDisplayNameChange: function(peerJid, newDisplayName) {
         if(peerJid === 'localVideoContainer' ||
-            peerJid === xmpp.myJid()) {
+            peerJid === APP.xmpp.myJid()) {
             this.setDisplayName(newDisplayName);
         }
     }

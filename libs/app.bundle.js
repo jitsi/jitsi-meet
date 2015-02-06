@@ -20,7 +20,7 @@ var APP =
 function init() {
 
     APP.RTC.start();
-    APP.xmpp.start(APP.UI.getCreadentials);
+    APP.xmpp.start(APP.UI.getCredentials());
     APP.statistics.start();
     APP.connectionquality.init();
 
@@ -1800,7 +1800,7 @@ UI.connectionIndicatorShowMore = function(id)
     return VideoLayout.connectionIndicators[id].showMore();
 };
 
-UI.getCreadentials = function () {
+UI.getCredentials = function () {
     var settings = this.getSettings();
     return {
         bosh: document.getElementById('boshURL').value,
@@ -2781,7 +2781,7 @@ var Prezi = {
                 "Remove",
                 function(e,v,m,f) {
                     if(v) {
-                        xmpp.removePreziFromPresence();
+                        APP.xmpp.removePreziFromPresence();
                     }
                 }
             );
@@ -2833,7 +2833,7 @@ var Prezi = {
                                         return false;
                                     }
                                     else {
-                                        xmpp.addToPresence("prezi", urlValue);
+                                        APP.xmpp.addToPresence("prezi", urlValue);
                                         $.prompt.close();
                                     }
                                 }
@@ -2891,7 +2891,7 @@ function presentationAdded(event, jid, presUrl, currentSlide) {
     VideoLayout.resizeThumbnails();
 
     var controlsEnabled = false;
-    if (jid === xmpp.myJid())
+    if (jid === APP.xmpp.myJid())
         controlsEnabled = true;
 
     setPresentationVisible(true);
@@ -2931,7 +2931,7 @@ function presentationAdded(event, jid, presUrl, currentSlide) {
     preziPlayer.on(PreziPlayer.EVENT_STATUS, function(event) {
         console.log("prezi status", event.value);
         if (event.value == PreziPlayer.STATUS_CONTENT_READY) {
-            if (jid != xmpp.myJid())
+            if (jid != APP.xmpp.myJid())
                 preziPlayer.flyToStep(currentSlide);
         }
     });
@@ -4386,7 +4386,7 @@ var ContactList = {
 
     onDisplayNameChange: function (peerJid, displayName) {
         if (peerJid === 'localVideoContainer')
-            peerJid = xmpp.myJid();
+            peerJid = APP.xmpp.myJid();
 
         var resourceJid = Strophe.getResourceFromJid(peerJid);
 
@@ -4480,7 +4480,7 @@ var SettingsMenu = {
         var email = Settings.setEmail(newEmail);
 
 
-        Avatar.setUserAvatar(xmpp.myJid(), email);
+        Avatar.setUserAvatar(APP.xmpp.myJid(), email);
     },
 
     isVisible: function() {
@@ -4494,7 +4494,7 @@ var SettingsMenu = {
 
     onDisplayNameChange: function(peerJid, newDisplayName) {
         if(peerJid === 'localVideoContainer' ||
-            peerJid === xmpp.myJid()) {
+            peerJid === APP.xmpp.myJid()) {
             this.setDisplayName(newDisplayName);
         }
     }
@@ -4640,7 +4640,7 @@ function hangup() {
  */
 
 function toggleRecording() {
-    xmpp.toggleRecording(function (callback) {
+    APP.xmpp.toggleRecording(function (callback) {
         APP.UI.messageHandler.openTwoButtonDialog(null,
                 '<h2>Enter recording token</h2>' +
                 '<input id="recordingToken" type="text" ' +
@@ -4673,7 +4673,7 @@ function lockRoom(lock) {
     if (lock)
         currentSharedKey = sharedKey;
 
-    xmpp.lockRoom(currentSharedKey, function (res) {
+    APP.xmpp.lockRoom(currentSharedKey, function (res) {
         // password is required
         if (sharedKey)
         {
@@ -4755,7 +4755,7 @@ function callSipButtonClicked()
             if (v) {
                 var numberInput = document.getElementById('sipNumber');
                 if (numberInput.value) {
-                    xmpp.dial(numberInput.value, 'fromnumber',
+                    APP.xmpp.dial(numberInput.value, 'fromnumber',
                         UI.getRoomName(), sharedKey);
                 }
             }
@@ -12316,7 +12316,7 @@ JingleSession.prototype.notifyMySSRCUpdate = function (old_sdp, new_sdp) {
  * disabled; otherwise, <tt>false</tt>
  */
 JingleSession.prototype.isVideoMute = function () {
-    var tracks = RTC.localVideo.getVideoTracks();
+    var tracks = APP.RTC.localVideo.getVideoTracks();
     var mute = true;
 
     for (var i = 0; i < tracks.length; ++i) {
@@ -12368,7 +12368,7 @@ JingleSession.prototype.setVideoMute = function (mute, callback, options) {
         return callback(mute)
     };
 
-    if (mute == RTC.localVideo.isMuted())
+    if (mute == APP.RTC.localVideo.isMuted())
     {
         // Even if no change occurs, the specified callback is to be executed.
         // The specified callback may, optionally, return a successCallback
@@ -12544,19 +12544,19 @@ function sendKeyframe(pc) {
                         },
                         function (error) {
                             console.log('triggerKeyframe setLocalDescription failed', error);
-                            UI.messageHandler.showError();
+                            APP.UI.messageHandler.showError();
                         }
                     );
                 },
                 function (error) {
                     console.log('triggerKeyframe createAnswer failed', error);
-                    UI.messageHandler.showError();
+                    APP.UI.messageHandler.showError();
                 }
             );
         },
         function (error) {
             console.log('triggerKeyframe setRemoteDescription failed', error);
-            UI.messageHandler.showError();
+            APP.UI.messageHandler.showError();
         }
     );
 }
@@ -15910,7 +15910,7 @@ var XMPP = {
         } else {
             // We are done immediately
             console.error("No conference handler");
-            UI.messageHandler.showError('Error',
+            APP.UI.messageHandler.showError('Error',
                 'Unable to switch video stream.');
             callback();
         }

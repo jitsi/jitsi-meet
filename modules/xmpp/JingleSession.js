@@ -1064,7 +1064,7 @@ JingleSession.prototype.notifyMySSRCUpdate = function (old_sdp, new_sdp) {
  * disabled; otherwise, <tt>false</tt>
  */
 JingleSession.prototype.isVideoMute = function () {
-    var tracks = RTC.localVideo.getVideoTracks();
+    var tracks = APP.RTC.localVideo.getVideoTracks();
     var mute = true;
 
     for (var i = 0; i < tracks.length; ++i) {
@@ -1116,7 +1116,7 @@ JingleSession.prototype.setVideoMute = function (mute, callback, options) {
         return callback(mute)
     };
 
-    if (mute == RTC.localVideo.isMuted())
+    if (mute == APP.RTC.localVideo.isMuted())
     {
         // Even if no change occurs, the specified callback is to be executed.
         // The specified callback may, optionally, return a successCallback
@@ -1292,19 +1292,19 @@ function sendKeyframe(pc) {
                         },
                         function (error) {
                             console.log('triggerKeyframe setLocalDescription failed', error);
-                            UI.messageHandler.showError();
+                            APP.UI.messageHandler.showError();
                         }
                     );
                 },
                 function (error) {
                     console.log('triggerKeyframe createAnswer failed', error);
-                    UI.messageHandler.showError();
+                    APP.UI.messageHandler.showError();
                 }
             );
         },
         function (error) {
             console.log('triggerKeyframe setRemoteDescription failed', error);
-            UI.messageHandler.showError();
+            APP.UI.messageHandler.showError();
         }
     );
 }
