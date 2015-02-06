@@ -16,7 +16,8 @@
   "readmeFilename": "README.md",
   "dependencies": {
       "events": "*",
-      "pako": "*"
+      "pako": "*",
+      "i18next-client": "*"
   },
   "devDependencies": {
   },

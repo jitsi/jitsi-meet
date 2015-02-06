@@ -37,8 +37,6 @@ function setupWelcomePage()
     $("#videoconference_page").hide();
     $("#domain_name").text(
             window.location.protocol + "//" + window.location.host + "/");
-    $("span[name='appName']").text(interfaceConfig.APP_NAME);
-
     if (interfaceConfig.SHOW_JITSI_WATERMARK) {
         var leftWatermarkDiv
             = $("#welcome_page_header div[class='watermark leftwatermark']");

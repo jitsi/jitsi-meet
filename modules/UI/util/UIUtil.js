@@ -69,8 +69,8 @@ module.exports = {
         context.putImageData(imgData, 0, 0);
     },
 
-    setTooltip: function (element, tooltipText, position) {
-        element.setAttribute("data-content", tooltipText);
+    setTooltip: function (element, key, position) {
+        element.setAttribute("data-i18n", "[data-content]" + key);
         element.setAttribute("data-toggle", "popover");
         element.setAttribute("data-placement", position);
         element.setAttribute("data-html", true);

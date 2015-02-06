@@ -14,6 +14,7 @@ var APP =
         this.desktopsharing = require("./modules/desktopsharing/desktopsharing");
         this.xmpp = require("./modules/xmpp/xmpp");
         this.keyboardshortcut = require("./modules/keyboardshortcut/keyboardshortcut");
+        this.translation = require("./modules/translation/translation");
     }
 };
 
@@ -35,6 +36,8 @@ $(document).ready(function () {
 
     APP.init();
 
+    APP.translation.init();
+
     if(APP.API.isEnabled())
         APP.API.init();
 
@@ -50,7 +53,7 @@ $(window).bind('beforeunload', function () {
 module.exports = APP;
 
 
-},{"./modules/API/API":2,"./modules/RTC/RTC":6,"./modules/UI/UI":8,"./modules/connectionquality/connectionquality":35,"./modules/desktopsharing/desktopsharing":36,"./modules/keyboardshortcut/keyboardshortcut":37,"./modules/simulcast/simulcast":42,"./modules/statistics/statistics":45,"./modules/xmpp/xmpp":59}],2:[function(require,module,exports){
+},{"./modules/API/API":2,"./modules/RTC/RTC":6,"./modules/UI/UI":8,"./modules/connectionquality/connectionquality":35,"./modules/desktopsharing/desktopsharing":36,"./modules/keyboardshortcut/keyboardshortcut":37,"./modules/simulcast/simulcast":42,"./modules/statistics/statistics":45,"./modules/translation/translation":46,"./modules/xmpp/xmpp":60}],2:[function(require,module,exports){
 /**
  * Implements API class that communicates with external api class
  * and provides interface to access Jitsi Meet features by external
@@ -282,7 +285,7 @@ var API = {
 };
 
 module.exports = API;
-},{"../../service/xmpp/XMPPEvents":83}],3:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":86}],3:[function(require,module,exports){
 /* global Strophe, updateLargeVideo, focusedVideoSrc*/
 
 // cache datachannels to avoid garbage collection
@@ -516,7 +519,7 @@ function onPinnedEndpointChanged(userResource)
 module.exports = DataChannels;
 
 
-},{"../../service/RTC/RTCEvents":78}],4:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":80}],4:[function(require,module,exports){
 var StreamEventTypes = require("../../service/RTC/StreamEventTypes.js");
 
 function LocalStream(stream, type, eventEmitter, videoType)
@@ -604,7 +607,7 @@ LocalStream.prototype.getId = function () {
 
 module.exports = LocalStream;
 
-},{"../../service/RTC/StreamEventTypes.js":79}],5:[function(require,module,exports){
+},{"../../service/RTC/StreamEventTypes.js":81}],5:[function(require,module,exports){
 ////These lines should be uncommented when require works in app.js
 var RTCBrowserType = require("../../service/RTC/RTCBrowserType.js");
 var MediaStreamType = require("../../service/RTC/MediaStreamTypes");
@@ -664,7 +667,7 @@ MediaStream.prototype.setMute = function (value)
 
 module.exports = MediaStream;
 
-},{"../../service/RTC/MediaStreamTypes":76,"../../service/RTC/RTCBrowserType.js":77}],6:[function(require,module,exports){
+},{"../../service/RTC/MediaStreamTypes":78,"../../service/RTC/RTCBrowserType.js":79}],6:[function(require,module,exports){
 var EventEmitter = require("events");
 var RTCUtils = require("./RTCUtils.js");
 var LocalStream = require("./LocalStream.js");
@@ -870,7 +873,7 @@ var RTC = {
 
 module.exports = RTC;
 
-},{"../../service/RTC/MediaStreamTypes":76,"../../service/RTC/StreamEventTypes.js":79,"../../service/UI/UIEvents":80,"../../service/desktopsharing/DesktopSharingEventTypes":82,"../../service/xmpp/XMPPEvents":83,"./DataChannels":3,"./LocalStream.js":4,"./MediaStream.js":5,"./RTCUtils.js":7,"events":84}],7:[function(require,module,exports){
+},{"../../service/RTC/MediaStreamTypes":78,"../../service/RTC/StreamEventTypes.js":81,"../../service/UI/UIEvents":82,"../../service/desktopsharing/DesktopSharingEventTypes":84,"../../service/xmpp/XMPPEvents":86,"./DataChannels":3,"./LocalStream.js":4,"./MediaStream.js":5,"./RTCUtils.js":7,"events":87}],7:[function(require,module,exports){
 var RTCBrowserType = require("../../service/RTC/RTCBrowserType.js");
 
 function setResolutionConstraints(constraints, resolution, isAndroid)
@@ -1206,7 +1209,7 @@ RTCUtils.prototype.handleLocalStream = function(stream)
 
 
 module.exports = RTCUtils;
-},{"../../service/RTC/RTCBrowserType.js":77}],8:[function(require,module,exports){
+},{"../../service/RTC/RTCBrowserType.js":79}],8:[function(require,module,exports){
 var UI = {};
 
 var VideoLayout = require("./videolayout/VideoLayout.js");
@@ -1549,15 +1552,7 @@ UI.start = function (init) {
         "newestOnTop": false
     };
 
-    $('#settingsmenu>input').keyup(function(event){
-        if(event.keyCode === 13) {//enter
-            SettingsMenu.update();
-        }
-    });
-
-    $("#updateSettings").click(function () {
-        SettingsMenu.update();
-    });
+    SettingsMenu.init();
 
 };
 
@@ -1925,7 +1920,7 @@ UI.clickOnVideo = function (videoNumber) {
 module.exports = UI;
 
 
-},{"../../service/RTC/RTCEvents":78,"../../service/RTC/StreamEventTypes":79,"../../service/connectionquality/CQEvents":81,"../../service/desktopsharing/DesktopSharingEventTypes":82,"../../service/xmpp/XMPPEvents":83,"./audio_levels/AudioLevels.js":9,"./authentication/Authentication":11,"./avatar/Avatar":12,"./etherpad/Etherpad.js":13,"./prezi/Prezi.js":14,"./side_pannels/SidePanelToggler":16,"./side_pannels/chat/Chat.js":17,"./side_pannels/contactlist/ContactList":21,"./side_pannels/settings/Settings":22,"./side_pannels/settings/SettingsMenu":23,"./toolbars/BottomToolbar":24,"./toolbars/Toolbar":25,"./toolbars/ToolbarToggler":26,"./util/MessageHandler":28,"./util/NicknameHandler":29,"./util/UIUtil":30,"./videolayout/VideoLayout.js":32,"./welcome_page/RoomnameGenerator":33,"./welcome_page/WelcomePage":34,"events":84}],9:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":80,"../../service/RTC/StreamEventTypes":81,"../../service/connectionquality/CQEvents":83,"../../service/desktopsharing/DesktopSharingEventTypes":84,"../../service/xmpp/XMPPEvents":86,"./audio_levels/AudioLevels.js":9,"./authentication/Authentication":11,"./avatar/Avatar":12,"./etherpad/Etherpad.js":13,"./prezi/Prezi.js":14,"./side_pannels/SidePanelToggler":16,"./side_pannels/chat/Chat.js":17,"./side_pannels/contactlist/ContactList":21,"./side_pannels/settings/Settings":22,"./side_pannels/settings/SettingsMenu":23,"./toolbars/BottomToolbar":24,"./toolbars/Toolbar":25,"./toolbars/ToolbarToggler":26,"./util/MessageHandler":28,"./util/NicknameHandler":29,"./util/UIUtil":30,"./videolayout/VideoLayout.js":32,"./welcome_page/RoomnameGenerator":33,"./welcome_page/WelcomePage":34,"events":87}],9:[function(require,module,exports){
 var CanvasUtil = require("./CanvasUtils");
 
 /**
@@ -2543,7 +2538,7 @@ var Avatar = {
 
 
 module.exports = Avatar;
-},{"../../../service/RTC/MediaStreamTypes":76,"../side_pannels/settings/Settings":22,"../videolayout/VideoLayout":32}],13:[function(require,module,exports){
+},{"../../../service/RTC/MediaStreamTypes":78,"../side_pannels/settings/Settings":22,"../videolayout/VideoLayout":32}],13:[function(require,module,exports){
 /* global $, config,
    setLargeVideoVisible, Util */
 
@@ -4002,7 +3997,7 @@ var Chat = (function (my) {
     return my;
 }(Chat || {}));
 module.exports = Chat;
-},{"../../../../service/UI/UIEvents":80,"../../toolbars/ToolbarToggler":26,"../../util/NicknameHandler":29,"../../util/UIUtil":30,"../SidePanelToggler":16,"./Commands":18,"./Replacement":19,"./smileys.json":20}],18:[function(require,module,exports){
+},{"../../../../service/UI/UIEvents":82,"../../toolbars/ToolbarToggler":26,"../../util/NicknameHandler":29,"../../util/UIUtil":30,"../SidePanelToggler":16,"./Commands":18,"./Replacement":19,"./smileys.json":20}],18:[function(require,module,exports){
 var UIUtil = require("../../util/UIUtil");
 
 /**
@@ -4462,9 +4457,42 @@ module.exports = Settings;
 var Avatar = require("../../avatar/Avatar");
 var Settings = require("./Settings");
 var UIUtil = require("../../util/UIUtil");
+var languages = require("../../../../service/translation/languages");
+
+function generateLanguagesSelectBox()
+{
+    var currentLang = APP.translation.getCurrentLanguage();
+    var html = "<select id=\"languages_selectbox\">";
+    var langArray = languages.getLanguages();
+    for(var i = 0; i < langArray.length; i++)
+    {
+        var lang = langArray[i];
+        html += "<option ";
+        if(lang === currentLang)
+            html += "selected ";
+        html += "value=\"" + lang + "\" data-i18n='languages:" + lang + "'>";
+        html += "</option>";
+
+    }
+
+    return html + "</select>";
+}
 
 
 var SettingsMenu = {
+
+    init: function () {
+        $("#updateSettings").before(generateLanguagesSelectBox());
+        $('#settingsmenu>input').keyup(function(event){
+            if(event.keyCode === 13) {//enter
+                SettingsMenu.update();
+            }
+        });
+
+        $("#updateSettings").click(function () {
+            SettingsMenu.update();
+        });
+    },
 
     update: function() {
         var newDisplayName = UIUtil.escapeHtml($('#setDisplayName').get(0).value);
@@ -4475,6 +4503,7 @@ var SettingsMenu = {
             APP.xmpp.addToPresence("displayName", displayName, true);
         }
 
+        APP.translation.setLanguage($("#languages_selectbox").val());
 
         APP.xmpp.addToPresence("email", newEmail);
         var email = Settings.setEmail(newEmail);
@@ -4502,7 +4531,7 @@ var SettingsMenu = {
 
 
 module.exports = SettingsMenu;
-},{"../../avatar/Avatar":12,"../../util/UIUtil":30,"./Settings":22}],24:[function(require,module,exports){
+},{"../../../../service/translation/languages":85,"../../avatar/Avatar":12,"../../util/UIUtil":30,"./Settings":22}],24:[function(require,module,exports){
 var PanelToggler = require("../side_pannels/SidePanelToggler");
 
 var buttonHandlers = {
@@ -5505,7 +5534,7 @@ var NickanameHandler = {
 };
 
 module.exports = NickanameHandler;
-},{"../../../service/UI/UIEvents":80}],30:[function(require,module,exports){
+},{"../../../service/UI/UIEvents":82}],30:[function(require,module,exports){
 /**
  * Created by hristo on 12/22/14.
  */
@@ -5577,8 +5606,8 @@ module.exports = {
         context.putImageData(imgData, 0, 0);
     },
 
-    setTooltip: function (element, tooltipText, position) {
-        element.setAttribute("data-content", tooltipText);
+    setTooltip: function (element, key, position) {
+        element.setAttribute("data-i18n", "[data-content]" + key);
         element.setAttribute("data-toggle", "popover");
         element.setAttribute("data-placement", position);
         element.setAttribute("data-html", true);
@@ -5653,6 +5682,8 @@ ConnectionIndicator.getStringFromArray = function (array) {
  */
 ConnectionIndicator.prototype.generateText = function () {
     var downloadBitrate, uploadBitrate, packetLoss, resolution, i;
+
+    var translate = APP.translation.translateString;
 
     if(this.bitrate === null)
     {
@@ -5735,22 +5766,28 @@ ConnectionIndicator.prototype.generateText = function () {
 
     var result = "<table style='width:100%'>" +
         "<tr>" +
-        "<td><span class='jitsipopover_blue'>Bitrate:</span></td>" +
+        "<td><span class='jitsipopover_blue' data-i18n='connectionindicator.bitrate'>" +
+        translate("connectionindicator.bitrate") + "</span></td>" +
         "<td><span class='jitsipopover_green'>&darr;</span>" +
         downloadBitrate + " <span class='jitsipopover_orange'>&uarr;</span>" +
         uploadBitrate + "</td>" +
         "</tr><tr>" +
-        "<td><span class='jitsipopover_blue'>Packet loss: </span></td>" +
+        "<td><span class='jitsipopover_blue' data-i18n='connectionindicator.packetloss'>" +
+        translate("connectionindicator.packetloss") + "</span></td>" +
         "<td>" + packetLoss  + "</td>" +
         "</tr><tr>" +
-        "<td><span class='jitsipopover_blue'>Resolution:</span></td>" +
+        "<td><span class='jitsipopover_blue' data-i18n='connectionindicator.resolution'>" +
+        translate("connectionindicator.resolution") + "</span></td>" +
         "<td>" + resolution + "</td></tr></table>";
 
-    if(this.videoContainer.id == "localVideoContainer")
+    if(this.videoContainer.id == "localVideoContainer") {
         result += "<div class=\"jitsipopover_showmore\" " +
             "onclick = \"APP.UI.connectionIndicatorShowMore('" +
-            this.videoContainer.id + "')\">" +
-            (this.showMoreValue? "Show less" : "Show More") + "</div><br />";
+            this.videoContainer.id + "')\"  data-i18n='connectionindicator." +
+                (this.showMoreValue ? "less" : "more") + "'>" +
+            translate("connectionindicator." + (this.showMoreValue ? "less" : "more")) +
+            "</div><br />";
+    }
 
     if(this.showMoreValue)
     {
@@ -5773,7 +5810,9 @@ ConnectionIndicator.prototype.generateText = function () {
         if(!this.transport || this.transport.length === 0)
         {
             transport = "<tr>" +
-                "<td><span class='jitsipopover_blue'>Address:</span></td>" +
+                "<td><span class='jitsipopover_blue' " +
+                "data-i18n='connectionindicator.address'>" +
+                translate("connectionindicator.address") + "</span></td>" +
                 "<td> N/A</td></tr>";
         }
         else
@@ -5808,40 +5847,48 @@ ConnectionIndicator.prototype.generateText = function () {
                 }
 
             }
+
+            var local_address_key = "connectionindicator." +
+                (data.localIP.length > 1? "localaddresses" : "localaddress");
+            var remote_address_key = "connectionindicator." +
+                (data.remoteIP.length > 1? "remoteaddresses" : "remoteaddress");
             var localTransport =
-                "<tr><td><span class='jitsipopover_blue'>Local address" +
-                (data.localIP.length > 1? "es" : "") + ": </span></td><td> " +
+                "<tr><td><span class='jitsipopover_blue' data-i18n='" +
+                local_address_key +"'>" +
+                    translate(local_address_key) + "</span></td><td> " +
                 ConnectionIndicator.getStringFromArray(data.localIP) +
                 "</td></tr>";
             transport =
-                "<tr><td><span class='jitsipopover_blue'>Remote address"+
-                (data.remoteIP.length > 1? "es" : "") + ":</span></td><td> " +
+                "<tr><td><span class='jitsipopover_blue' data-i18n='" +
+                remote_address_key + "'>" +
+                    translate(remote_address_key) + "</span></td><td> " +
                 ConnectionIndicator.getStringFromArray(data.remoteIP) +
                 "</td></tr>";
+
+            var key_remote = "connectionindicator.",
+                key_local = "connectionindicator.";
+
             if(this.transport.length > 1)
             {
-                transport += "<tr>" +
-                    "<td>" +
-                    "<span class='jitsipopover_blue'>Remote ports:</span>" +
-                    "</td><td>";
-                localTransport += "<tr>" +
-                    "<td>" +
-                    "<span class='jitsipopover_blue'>Local ports:</span>" +
-                    "</td><td>";
+                key_remote += "remoteports";
+                key_local += "localports";
             }
             else
             {
-                transport +=
-                    "<tr>" +
-                    "<td>" +
-                    "<span class='jitsipopover_blue'>Remote port:</span>" +
-                    "</td><td>";
-                localTransport +=
-                    "<tr>" +
-                    "<td>" +
-                    "<span class='jitsipopover_blue'>Local port:</span>" +
-                    "</td><td>";
+                key_remote += "remoteport";
+                key_local += "localport";
             }
+
+            transport += "<tr>" +
+                "<td>" +
+                "<span class='jitsipopover_blue' data-i18n='" + key_remote +
+                "'>" +
+                translate(key_remote) + "</span></td><td>";
+            localTransport += "<tr>" +
+                "<td>" +
+                "<span class='jitsipopover_blue' data-i18n='" + key_local +
+                "'>" +
+                translate(key_local) + "</span></td><td>";
 
             transport +=
                 ConnectionIndicator.getStringFromArray(data.remotePort);
@@ -5850,7 +5897,8 @@ ConnectionIndicator.prototype.generateText = function () {
             transport += "</td></tr>";
             transport += localTransport + "</td></tr>";
             transport +="<tr>" +
-                "<td><span class='jitsipopover_blue'>Transport:</span></td>" +
+                "<td><span class='jitsipopover_blue' data-i18n='connectionindicator.transport'>" +
+                translate("connectionindicator.transport") + "</span></td>" +
                 "<td>" + this.transport[0].type + "</td></tr>";
 
         }
@@ -5858,7 +5906,8 @@ ConnectionIndicator.prototype.generateText = function () {
         result += "<table  style='width:100%'>" +
             "<tr>" +
             "<td>" +
-            "<span class='jitsipopover_blue'>Estimated bandwidth:</span>" +
+            "<span class='jitsipopover_blue' data-i18n='connectionindicator.bandwidth'>" +
+            translate("connectionindicator.bandwidth") + "</span>" +
             "</td><td>" +
             "<span class='jitsipopover_green'>&darr;</span>" +
             downloadBandwidth +
@@ -5903,8 +5952,8 @@ ConnectionIndicator.prototype.create = function () {
     this.videoContainer.appendChild(this.connectionIndicatorContainer);
     this.popover = new JitsiPopover(
         $("#" + this.videoContainer.id + " > .connectionindicator"),
-        {content: "<div class=\"connection_info\">Come back here for " +
-            "connection information once the conference starts</div>",
+        {content: "<div class=\"connection_info\" data-i18n='connectionindicator.na'>" +
+            APP.translation.translateString("connectionindicator.na") + "</div>",
             skin: "black"});
 
     this.emptyIcon = this.connectionIndicatorContainer.appendChild(
@@ -5978,7 +6027,8 @@ ConnectionIndicator.prototype.updateResolution = function (resolution) {
  */
 ConnectionIndicator.prototype.updatePopoverData = function () {
     this.popover.updateContent(
-            "<div class=\"connection_info\">" + this.generateText() + "</div>");
+        "<div class=\"connection_info\">" + this.generateText() + "</div>");
+    APP.translation.translateElement($(".connection_info"));
 };
 
 /**
@@ -6236,6 +6286,8 @@ function setDisplayName(videoSpanId, displayName) {
         } else {
             nameSpan.id = 'localDisplayName';
             $('#' + videoSpanId)[0].appendChild(editButton);
+            //translates popover of edit button
+            APP.translation.translateElement($("a.displayname"));
 
             var editableText = document.createElement('input');
             editableText.className = 'displayname';
@@ -6346,14 +6398,16 @@ function addRemoteVideoMenu(jid, parentElement) {
     var muteMenuItem = document.createElement('li');
     var muteLinkItem = document.createElement('a');
 
-    var mutedIndicator = "<i class='icon-mic-disabled'></i>";
+    var mutedIndicator = "<i style='float:left;' class='icon-mic-disabled'></i>";
 
     if (!mutedAudios[jid]) {
-        muteLinkItem.innerHTML = mutedIndicator + 'Mute';
+        muteLinkItem.innerHTML = mutedIndicator +
+            " <div style='width: 90px;margin-left: 20px;' data-i18n='videothumbnail.domute'></div>";
         muteLinkItem.className = 'mutelink';
     }
     else {
-        muteLinkItem.innerHTML = mutedIndicator + ' Muted';
+        muteLinkItem.innerHTML = mutedIndicator +
+            " <div style='width: 90px;margin-left: 20px;' data-i18n='videothumbnail.muted'></div>";
         muteLinkItem.className = 'mutelink disabled';
     }
 
@@ -6367,11 +6421,13 @@ function addRemoteVideoMenu(jid, parentElement) {
         popupmenuElement.setAttribute('style', 'display:none;');
 
         if (isMute) {
-            this.innerHTML = mutedIndicator + ' Muted';
+            this.innerHTML = mutedIndicator +
+                " <div style='width: 90px;margin-left: 20px;' data-i18n='videothumbnail.muted'></div>";
             this.className = 'mutelink disabled';
         }
         else {
-            this.innerHTML = mutedIndicator + ' Mute';
+            this.innerHTML = mutedIndicator +
+                " <div style='width: 90px;margin-left: 20px;' data-i18n='videothumbnail.domute'></div>";
             this.className = 'mutelink';
         }
     };
@@ -6379,11 +6435,12 @@ function addRemoteVideoMenu(jid, parentElement) {
     muteMenuItem.appendChild(muteLinkItem);
     popupmenuElement.appendChild(muteMenuItem);
 
-    var ejectIndicator = "<i class='fa fa-eject'></i>";
+    var ejectIndicator = "<i style='float:left;' class='fa fa-eject'></i>";
 
     var ejectMenuItem = document.createElement('li');
     var ejectLinkItem = document.createElement('a');
-    ejectLinkItem.innerHTML = ejectIndicator + ' Kick out';
+    var ejectText = "<div style='width: 90px;margin-left: 20px;' data-i18n='videothumbnail.kick'>&nbsp;</div>";
+    ejectLinkItem.innerHTML = ejectIndicator + ' ' + ejectText;
     ejectLinkItem.onclick = function(){
         APP.xmpp.eject(jid);
         popupmenuElement.setAttribute('style', 'display:none;');
@@ -6395,6 +6452,7 @@ function addRemoteVideoMenu(jid, parentElement) {
     var paddingSpan = document.createElement('span');
     paddingSpan.className = 'popupmenuPadding';
     popupmenuElement.appendChild(paddingSpan);
+    APP.translation.translateElement($("#" + popupmenuElement.id + " > li > a > div"));
 }
 
 /**
@@ -6469,7 +6527,7 @@ function createEditDisplayNameButton() {
     var editButton = document.createElement('a');
     editButton.className = 'displayname';
     UIUtil.setTooltip(editButton,
-        'Click to edit your<br/>display name',
+        "videothumbnail.editnickname",
         "top");
     editButton.innerHTML = '<i class="fa fa-pencil"></i>';
 
@@ -6488,7 +6546,7 @@ function createModeratorIndicatorElement(parentElement) {
     parentElement.appendChild(moderatorIndicator);
 
     UIUtil.setTooltip(parentElement,
-        "The owner of<br/>this conference",
+        "videothumbnail.moderator",
         "top");
 }
 
@@ -7044,13 +7102,11 @@ var VideoLayout = (function (my) {
         container.id = spanId;
         container.className = 'videocontainer';
         var remotes = document.getElementById('remoteVideos');
-
+        remotes.appendChild(container);
         // If the peerJid is null then this video span couldn't be directly
         // associated with a participant (this could happen in the case of prezi).
         if (APP.xmpp.isModerator() && peerJid !== null)
             addRemoteVideoMenu(peerJid, container);
-
-        remotes.appendChild(container);
         AudioLevels.updateAudioLevelCanvas(peerJid, VideoLayout);
 
         return container;
@@ -7336,6 +7392,8 @@ var VideoLayout = (function (my) {
             if (indicatorSpan.children().length === 0)
             {
                 createModeratorIndicatorElement(indicatorSpan[0]);
+                //translates text in focus indicator
+                APP.translation.translateElement($('#localVideoContainer .focusindicator'));
             }
         }
 
@@ -7376,6 +7434,8 @@ var VideoLayout = (function (my) {
                     videoContainer.appendChild(indicatorSpan);
 
                     createModeratorIndicatorElement(indicatorSpan);
+                    //translates text in focus indicators
+                    APP.translation.translateElement($('#' + videoSpanId + ' .focusindicator'));
                 }
             } else if (isModerator) {
                 // We are moderator, but user is not - add menu
@@ -7409,9 +7469,11 @@ var VideoLayout = (function (my) {
                 var mutedIndicator = document.createElement('i');
                 mutedIndicator.className = 'icon-camera-disabled';
                 UIUtil.setTooltip(mutedIndicator,
-                    "Participant has<br/>stopped the camera.",
+                    "videothumbnail.videomute",
                     "top");
                 videoMutedSpan.appendChild(mutedIndicator);
+                //translate texts for muted indicator
+                APP.translation.translateElement($('#' + videoSpanId  + " > i"));
             }
 
             VideoLayout.updateMutePosition(videoSpanId);
@@ -7452,10 +7514,11 @@ var VideoLayout = (function (my) {
                 audioMutedSpan = document.createElement('span');
                 audioMutedSpan.className = 'audioMuted';
                 UIUtil.setTooltip(audioMutedSpan,
-                    "Participant is muted",
+                    "videothumbnail.mute",
                     "top");
 
                 $('#' + videoSpanId)[0].appendChild(audioMutedSpan);
+                APP.translation.translateElement($('#' + videoSpanId + " > span"));
                 var mutedIndicator = document.createElement('i');
                 mutedIndicator.className = 'icon-mic-disabled';
                 audioMutedSpan.appendChild(mutedIndicator);
@@ -8188,7 +8251,7 @@ var VideoLayout = (function (my) {
 }(VideoLayout || {}));
 
 module.exports = VideoLayout;
-},{"../../../service/RTC/MediaStreamTypes":76,"../../../service/UI/UIEvents":80,"../audio_levels/AudioLevels":9,"../avatar/Avatar":12,"../etherpad/Etherpad":13,"../prezi/Prezi":14,"../side_pannels/chat/Chat":17,"../side_pannels/contactlist/ContactList":21,"../util/NicknameHandler":29,"../util/UIUtil":30,"./ConnectionIndicator":31}],33:[function(require,module,exports){
+},{"../../../service/RTC/MediaStreamTypes":78,"../../../service/UI/UIEvents":82,"../audio_levels/AudioLevels":9,"../avatar/Avatar":12,"../etherpad/Etherpad":13,"../prezi/Prezi":14,"../side_pannels/chat/Chat":17,"../side_pannels/contactlist/ContactList":21,"../util/NicknameHandler":29,"../util/UIUtil":30,"./ConnectionIndicator":31}],33:[function(require,module,exports){
 //var nouns = [
 //];
 var pluralNouns = [
@@ -8409,8 +8472,6 @@ function setupWelcomePage()
     $("#videoconference_page").hide();
     $("#domain_name").text(
             window.location.protocol + "//" + window.location.host + "/");
-    $("span[name='appName']").text(interfaceConfig.APP_NAME);
-
     if (interfaceConfig.SHOW_JITSI_WATERMARK) {
         var leftWatermarkDiv
             = $("#welcome_page_header div[class='watermark leftwatermark']");
@@ -8608,7 +8669,7 @@ var ConnectionQuality = {
 };
 
 module.exports = ConnectionQuality;
-},{"../../service/connectionquality/CQEvents":81,"../../service/xmpp/XMPPEvents":83,"events":84}],36:[function(require,module,exports){
+},{"../../service/connectionquality/CQEvents":83,"../../service/xmpp/XMPPEvents":86,"events":87}],36:[function(require,module,exports){
 /* global $, alert, changeLocalVideo, chrome, config, getConferenceHandler, getUserMediaWithConstraints */
 /**
  * Indicates that desktop stream is currently in use(for toggle purpose).
@@ -8933,7 +8994,7 @@ module.exports = {
 };
 
 
-},{"../../service/desktopsharing/DesktopSharingEventTypes":82,"events":84}],37:[function(require,module,exports){
+},{"../../service/desktopsharing/DesktopSharingEventTypes":84,"events":87}],37:[function(require,module,exports){
 //maps keycode to character, id of popover for given function and function
 var shortcuts = {
     67: {
@@ -9328,7 +9389,7 @@ SimulcastReceiver.prototype.transformRemoteDescription = function (desc) {
 };
 
 module.exports = SimulcastReceiver;
-},{"../../service/RTC/MediaStreamTypes":76,"./SimulcastLogger":38,"./SimulcastUtils":41}],40:[function(require,module,exports){
+},{"../../service/RTC/MediaStreamTypes":78,"./SimulcastLogger":38,"./SimulcastUtils":41}],40:[function(require,module,exports){
 var SimulcastLogger = require("./SimulcastLogger");
 var SimulcastUtils = require("./SimulcastUtils");
 
@@ -10288,7 +10349,7 @@ SimulcastManager.prototype.resetSender = function() {
 var simulcast = new SimulcastManager();
 
 module.exports = simulcast;
-},{"../../service/RTC/RTCEvents":78,"./SimulcastReceiver":39,"./SimulcastSender":40,"./SimulcastUtils":41}],43:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":80,"./SimulcastReceiver":39,"./SimulcastSender":40,"./SimulcastUtils":41}],43:[function(require,module,exports){
 /**
  * Provides statistics for the local stream.
  */
@@ -11112,7 +11173,7 @@ StatsCollector.prototype.processAudioLevelReport = function ()
 
 
 };
-},{"../../service/RTC/RTCBrowserType":77}],45:[function(require,module,exports){
+},{"../../service/RTC/RTCBrowserType":79}],45:[function(require,module,exports){
 /**
  * Created by hristo on 8/4/14.
  */
@@ -11249,7 +11310,119 @@ var statistics =
 
 
 module.exports = statistics;
-},{"../../service/RTC/StreamEventTypes.js":79,"../../service/xmpp/XMPPEvents":83,"./LocalStatsCollector.js":43,"./RTPStatsCollector.js":44,"events":84}],46:[function(require,module,exports){
+},{"../../service/RTC/StreamEventTypes.js":81,"../../service/xmpp/XMPPEvents":86,"./LocalStatsCollector.js":43,"./RTPStatsCollector.js":44,"events":87}],46:[function(require,module,exports){
+var i18n = require("i18next-client");
+var languages = require("../../service/translation/languages");
+var DEFAULT_LANG = languages.EN;
+var initialized = false;
+var waitingForInit = [];
+
+i18n.addPostProcessor("resolveAppName", function(value, key, options) {
+    return value.replace("__app__", interfaceConfig.APP_NAME);
+});
+
+
+
+var defaultOptions = {
+    detectLngQS: "lang",
+    useCookie: false,
+    fallbackLng: DEFAULT_LANG,
+    load: "unspecific",
+    resGetPath: 'lang/__ns__-__lng__.json',
+    ns: {
+        namespaces: ['main', 'languages'],
+        defaultNs: 'main'
+    },
+    lngWhitelist : languages.getLanguages(),
+    fallbackOnNull: true,
+    useDataAttrOptions: true,
+    app: interfaceConfig.APP_NAME,
+    getAsync: true,
+    customLoad: function(lng, ns, options, done) {
+        var resPath = "lang/__ns__-__lng__.json";
+        if(lng === languages.EN)
+            resPath = "lang/__ns__.json";
+        var url = i18n.functions.applyReplacement(resPath, { lng: lng, ns: ns });
+        initialized = false;
+        i18n.functions.ajax({
+            url: url,
+            success: function(data, status, xhr) {
+                i18n.functions.log('loaded: ' + url);
+                done(null, data);
+            },
+            error : function(xhr, status, error) {
+                if ((status && status == 200) ||
+                    (xhr && xhr.status && xhr.status == 200)) {
+                    // file loaded but invalid json, stop waste time !
+                    i18n.functions.error('There is a typo in: ' + url);
+                } else if ((status && status == 404) ||
+                    (xhr && xhr.status && xhr.status == 404)) {
+                    i18n.functions.log('Does not exist: ' + url);
+                } else {
+                    var theStatus = status ? status :
+                        ((xhr && xhr.status) ? xhr.status : null);
+                    i18n.functions.log(theStatus + ' when loading ' + url);
+                }
+
+                done(error, {});
+            },
+            dataType: "json",
+            async : options.getAsync
+        });
+    }
+    //              options for caching
+//                useLocalStorage: true,
+//                localStorageExpirationTime: 86400000 // in ms, default 1 week
+};
+
+function initCompleted(t)
+{
+    initialized = true;
+    $("[data-i18n]").i18n();
+    for(var i = 0; i < waitingForInit.length; i++)
+    {
+        var obj = waitingForInit[i];
+        obj.callback(i18n.t(obj.key));
+    }
+    waitingForInit = [];
+}
+
+module.exports = {
+    init: function (lang) {
+        initialized = false;
+        var options = defaultOptions;
+        if(lang)
+            options.lng = lang;
+        i18n.init(options, initCompleted);
+    },
+    translateString: function (key, cb) {
+        if(!cb)
+            return i18n.t(key);
+
+        if(initialized)
+        {
+            cb(i18n.t(key));
+        }
+        else
+        {
+            waitingForInit.push({"callback": cb, "key": key});
+        }
+    },
+    setLanguage: function (lang) {
+        initialized = false;
+        if(!lang)
+            lang = DEFAULT_LANG;
+        i18n.setLng(lang, defaultOptions, initCompleted);
+    },
+    getCurrentLanguage: function () {
+        return i18n.lng();
+    },
+    translateElement: function (selector) {
+        selector.i18n();
+    }
+};
+
+},{"../../service/translation/languages":85,"i18next-client":61}],47:[function(require,module,exports){
 /* jshint -W117 */
 var TraceablePeerConnection = require("./TraceablePeerConnection");
 var SDPDiffer = require("./SDPDiffer");
@@ -12645,7 +12818,7 @@ JingleSession.prototype.remoteStreamAdded = function (data) {
 
 module.exports = JingleSession;
 
-},{"../../service/RTC/RTCBrowserType":77,"./SDP":47,"./SDPDiffer":48,"./SDPUtil":49,"./TraceablePeerConnection":50}],47:[function(require,module,exports){
+},{"../../service/RTC/RTCBrowserType":79,"./SDP":48,"./SDPDiffer":49,"./SDPUtil":50,"./TraceablePeerConnection":51}],48:[function(require,module,exports){
 /* jshint -W117 */
 var SDPUtil = require("./SDPUtil");
 
@@ -13267,7 +13440,7 @@ SDP.prototype.jingle2media = function (content) {
 module.exports = SDP;
 
 
-},{"./SDPUtil":49}],48:[function(require,module,exports){
+},{"./SDPUtil":50}],49:[function(require,module,exports){
 function SDPDiffer(mySDP, otherSDP) {
     this.mySDP = mySDP;
     this.otherSDP = otherSDP;
@@ -13433,7 +13606,7 @@ SDPDiffer.prototype.toJingle = function(modify) {
 };
 
 module.exports = SDPDiffer;
-},{}],49:[function(require,module,exports){
+},{}],50:[function(require,module,exports){
 SDPUtil = {
     iceparams: function (mediadesc, sessiondesc) {
         var data = null;
@@ -13783,7 +13956,7 @@ SDPUtil = {
     }
 };
 module.exports = SDPUtil;
-},{}],50:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 function TraceablePeerConnection(ice_config, constraints) {
     var self = this;
     var RTCPeerconnection = navigator.mozGetUserMedia ? mozRTCPeerConnection : webkitRTCPeerConnection;
@@ -14051,7 +14224,7 @@ TraceablePeerConnection.prototype.getStats = function(callback, errback) {
 module.exports = TraceablePeerConnection;
 
 
-},{}],51:[function(require,module,exports){
+},{}],52:[function(require,module,exports){
 /* global $, $iq, config, connection, UI, messageHandler,
  roomName, sessionTerminated, Strophe, Util */
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
@@ -14330,7 +14503,7 @@ module.exports = Moderator;
 
 
 
-},{"../../service/xmpp/XMPPEvents":83}],52:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":86}],53:[function(require,module,exports){
 /* global $, $iq, config, connection, focusMucJid, messageHandler, Moderator,
    Toolbar, Util */
 var Moderator = require("./moderator");
@@ -14485,7 +14658,7 @@ var Recording = {
 }
 
 module.exports = Recording;
-},{"./moderator":51}],53:[function(require,module,exports){
+},{"./moderator":52}],54:[function(require,module,exports){
 /* jshint -W117 */
 /* a simple MUC connection plugin
  * can only handle a single MUC room
@@ -15102,7 +15275,7 @@ module.exports = function(XMPP, eventEmitter) {
 };
 
 
-},{"../../service/xmpp/XMPPEvents":83,"./JingleSession":46,"./moderator":51}],54:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":86,"./JingleSession":47,"./moderator":52}],55:[function(require,module,exports){
 /* jshint -W117 */
 
 var JingleSession = require("./JingleSession");
@@ -15441,7 +15614,7 @@ module.exports = function(XMPP, eventEmitter)
 };
 
 
-},{"../../service/xmpp/XMPPEvents":83,"./JingleSession":46}],55:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":86,"./JingleSession":47}],56:[function(require,module,exports){
 /* global Strophe */
 module.exports = function () {
 
@@ -15462,7 +15635,7 @@ module.exports = function () {
         }
     });
 };
-},{}],56:[function(require,module,exports){
+},{}],57:[function(require,module,exports){
 /* global $, $iq, config, connection, focusMucJid, forceMuted,
    setAudioMuted, Strophe */
 /**
@@ -15521,7 +15694,7 @@ module.exports = function (XMPP) {
         }
     });
 }
-},{}],57:[function(require,module,exports){
+},{}],58:[function(require,module,exports){
 /* jshint -W117 */
 module.exports = function() {
     Strophe.addConnectionPlugin('rayo',
@@ -15618,7 +15791,7 @@ module.exports = function() {
     );
 };
 
-},{}],58:[function(require,module,exports){
+},{}],59:[function(require,module,exports){
 /**
  * Strophe logger implementation. Logs from level WARN and above.
  */
@@ -15662,7 +15835,7 @@ module.exports = function () {
     };
 };
 
-},{}],59:[function(require,module,exports){
+},{}],60:[function(require,module,exports){
 var Moderator = require("./moderator");
 var EventEmitter = require("events");
 var Recording = require("./recording");
@@ -16102,7 +16275,2130 @@ var XMPP = {
 
 module.exports = XMPP;
 
-},{"../../service/RTC/StreamEventTypes":79,"../../service/UI/UIEvents":80,"../../service/xmpp/XMPPEvents":83,"./SDP":47,"./moderator":51,"./recording":52,"./strophe.emuc":53,"./strophe.jingle":54,"./strophe.logger":55,"./strophe.moderate":56,"./strophe.rayo":57,"./strophe.util":58,"events":84,"pako":60}],60:[function(require,module,exports){
+},{"../../service/RTC/StreamEventTypes":81,"../../service/UI/UIEvents":82,"../../service/xmpp/XMPPEvents":86,"./SDP":48,"./moderator":52,"./recording":53,"./strophe.emuc":54,"./strophe.jingle":55,"./strophe.logger":56,"./strophe.moderate":57,"./strophe.rayo":58,"./strophe.util":59,"events":87,"pako":62}],61:[function(require,module,exports){
+// i18next, v1.7.7
+// Copyright (c)2014 Jan Mühlemann (jamuhl).
+// Distributed under MIT license
+// http://i18next.com
+(function() {
+
+    // add indexOf to non ECMA-262 standard compliant browsers
+    if (!Array.prototype.indexOf) {
+        Array.prototype.indexOf = function (searchElement /*, fromIndex */ ) {
+            "use strict";
+            if (this == null) {
+                throw new TypeError();
+            }
+            var t = Object(this);
+            var len = t.length >>> 0;
+            if (len === 0) {
+                return -1;
+            }
+            var n = 0;
+            if (arguments.length > 0) {
+                n = Number(arguments[1]);
+                if (n != n) { // shortcut for verifying if it's NaN
+                    n = 0;
+                } else if (n != 0 && n != Infinity && n != -Infinity) {
+                    n = (n > 0 || -1) * Math.floor(Math.abs(n));
+                }
+            }
+            if (n >= len) {
+                return -1;
+            }
+            var k = n >= 0 ? n : Math.max(len - Math.abs(n), 0);
+            for (; k < len; k++) {
+                if (k in t && t[k] === searchElement) {
+                    return k;
+                }
+            }
+            return -1;
+        }
+    }
+    
+    // add lastIndexOf to non ECMA-262 standard compliant browsers
+    if (!Array.prototype.lastIndexOf) {
+        Array.prototype.lastIndexOf = function(searchElement /*, fromIndex*/) {
+            "use strict";
+            if (this == null) {
+                throw new TypeError();
+            }
+            var t = Object(this);
+            var len = t.length >>> 0;
+            if (len === 0) {
+                return -1;
+            }
+            var n = len;
+            if (arguments.length > 1) {
+                n = Number(arguments[1]);
+                if (n != n) {
+                    n = 0;
+                } else if (n != 0 && n != (1 / 0) && n != -(1 / 0)) {
+                    n = (n > 0 || -1) * Math.floor(Math.abs(n));
+                }
+            }
+            var k = n >= 0 ? Math.min(n, len - 1) : len - Math.abs(n);
+            for (; k >= 0; k--) {
+                if (k in t && t[k] === searchElement) {
+                    return k;
+                }
+            }
+            return -1;
+        };
+    }
+    
+    // Add string trim for IE8.
+    if (typeof String.prototype.trim !== 'function') {
+        String.prototype.trim = function() {
+            return this.replace(/^\s+|\s+$/g, ''); 
+        }
+    }
+
+    var root = this
+      , $ = root.jQuery || root.Zepto
+      , i18n = {}
+      , resStore = {}
+      , currentLng
+      , replacementCounter = 0
+      , languages = []
+      , initialized = false
+      , sync = {};
+
+
+
+    // Export the i18next object for **CommonJS**. 
+    // If we're not in CommonJS, add `i18n` to the
+    // global object or to jquery.
+    if (typeof module !== 'undefined' && module.exports) {
+        if (!$) {
+          try {
+            $ = require('jquery');
+          } catch(e) {
+            // just ignore
+          }
+        }
+        if ($) {
+            $.i18n = $.i18n || i18n;
+        }
+        module.exports = i18n;
+    } else {
+        if ($) {
+            $.i18n = $.i18n || i18n;
+        }
+        
+        root.i18n = root.i18n || i18n;
+    }
+    sync = {
+    
+        load: function(lngs, options, cb) {
+            if (options.useLocalStorage) {
+                sync._loadLocal(lngs, options, function(err, store) {
+                    var missingLngs = [];
+                    for (var i = 0, len = lngs.length; i < len; i++) {
+                        if (!store[lngs[i]]) missingLngs.push(lngs[i]);
+                    }
+    
+                    if (missingLngs.length > 0) {
+                        sync._fetch(missingLngs, options, function(err, fetched) {
+                            f.extend(store, fetched);
+                            sync._storeLocal(fetched);
+    
+                            cb(null, store);
+                        });
+                    } else {
+                        cb(null, store);
+                    }
+                });
+            } else {
+                sync._fetch(lngs, options, function(err, store){
+                    cb(null, store);
+                });
+            }
+        },
+    
+        _loadLocal: function(lngs, options, cb) {
+            var store = {}
+              , nowMS = new Date().getTime();
+    
+            if(window.localStorage) {
+    
+                var todo = lngs.length;
+    
+                f.each(lngs, function(key, lng) {
+                    var local = window.localStorage.getItem('res_' + lng);
+    
+                    if (local) {
+                        local = JSON.parse(local);
+    
+                        if (local.i18nStamp && local.i18nStamp + options.localStorageExpirationTime > nowMS) {
+                            store[lng] = local;
+                        }
+                    }
+    
+                    todo--; // wait for all done befor callback
+                    if (todo === 0) cb(null, store);
+                });
+            }
+        },
+    
+        _storeLocal: function(store) {
+            if(window.localStorage) {
+                for (var m in store) {
+                    store[m].i18nStamp = new Date().getTime();
+                    f.localStorage.setItem('res_' + m, JSON.stringify(store[m]));
+                }
+            }
+            return;
+        },
+    
+        _fetch: function(lngs, options, cb) {
+            var ns = options.ns
+              , store = {};
+            
+            if (!options.dynamicLoad) {
+                var todo = ns.namespaces.length * lngs.length
+                  , errors;
+    
+                // load each file individual
+                f.each(ns.namespaces, function(nsIndex, nsValue) {
+                    f.each(lngs, function(lngIndex, lngValue) {
+                        
+                        // Call this once our translation has returned.
+                        var loadComplete = function(err, data) {
+                            if (err) {
+                                errors = errors || [];
+                                errors.push(err);
+                            }
+                            store[lngValue] = store[lngValue] || {};
+                            store[lngValue][nsValue] = data;
+    
+                            todo--; // wait for all done befor callback
+                            if (todo === 0) cb(errors, store);
+                        };
+                        
+                        if(typeof options.customLoad == 'function'){
+                            // Use the specified custom callback.
+                            options.customLoad(lngValue, nsValue, options, loadComplete);
+                        } else {
+                            //~ // Use our inbuilt sync.
+                            sync._fetchOne(lngValue, nsValue, options, loadComplete);
+                        }
+                    });
+                });
+            } else {
+                // Call this once our translation has returned.
+                var loadComplete = function(err, data) {
+                    cb(null, data);
+                };
+    
+                if(typeof options.customLoad == 'function'){
+                    // Use the specified custom callback.
+                    options.customLoad(lngs, ns.namespaces, options, loadComplete);
+                } else {
+                    var url = applyReplacement(options.resGetPath, { lng: lngs.join('+'), ns: ns.namespaces.join('+') });
+                    // load all needed stuff once
+                    f.ajax({
+                        url: url,
+                        success: function(data, status, xhr) {
+                            f.log('loaded: ' + url);
+                            loadComplete(null, data);
+                        },
+                        error : function(xhr, status, error) {
+                            f.log('failed loading: ' + url);
+                            loadComplete('failed loading resource.json error: ' + error);
+                        },
+                        dataType: "json",
+                        async : options.getAsync
+                    });
+                }    
+            }
+        },
+    
+        _fetchOne: function(lng, ns, options, done) {
+            var url = applyReplacement(options.resGetPath, { lng: lng, ns: ns });
+            f.ajax({
+                url: url,
+                success: function(data, status, xhr) {
+                    f.log('loaded: ' + url);
+                    done(null, data);
+                },
+                error : function(xhr, status, error) {
+                    if ((status && status == 200) || (xhr && xhr.status && xhr.status == 200)) {
+                        // file loaded but invalid json, stop waste time !
+                        f.error('There is a typo in: ' + url);
+                    } else if ((status && status == 404) || (xhr && xhr.status && xhr.status == 404)) {
+                        f.log('Does not exist: ' + url);
+                    } else {
+                        var theStatus = status ? status : ((xhr && xhr.status) ? xhr.status : null);
+                        f.log(theStatus + ' when loading ' + url);
+                    }
+                    
+                    done(error, {});
+                },
+                dataType: "json",
+                async : options.getAsync
+            });
+        },
+    
+        postMissing: function(lng, ns, key, defaultValue, lngs) {
+            var payload = {};
+            payload[key] = defaultValue;
+    
+            var urls = [];
+    
+            if (o.sendMissingTo === 'fallback' && o.fallbackLng[0] !== false) {
+                for (var i = 0; i < o.fallbackLng.length; i++) {
+                    urls.push({lng: o.fallbackLng[i], url: applyReplacement(o.resPostPath, { lng: o.fallbackLng[i], ns: ns })});
+                }
+            } else if (o.sendMissingTo === 'current' || (o.sendMissingTo === 'fallback' && o.fallbackLng[0] === false) ) {
+                urls.push({lng: lng, url: applyReplacement(o.resPostPath, { lng: lng, ns: ns })});
+            } else if (o.sendMissingTo === 'all') {
+                for (var i = 0, l = lngs.length; i < l; i++) {
+                    urls.push({lng: lngs[i], url: applyReplacement(o.resPostPath, { lng: lngs[i], ns: ns })});
+                }
+            }
+    
+            for (var y = 0, len = urls.length; y < len; y++) {
+                var item = urls[y];
+                f.ajax({
+                    url: item.url,
+                    type: o.sendType,
+                    data: payload,
+                    success: function(data, status, xhr) {
+                        f.log('posted missing key \'' + key + '\' to: ' + item.url);
+    
+                        // add key to resStore
+                        var keys = key.split('.');
+                        var x = 0;
+                        var value = resStore[item.lng][ns];
+                        while (keys[x]) {
+                            if (x === keys.length - 1) {
+                                value = value[keys[x]] = defaultValue;
+                            } else {
+                                value = value[keys[x]] = value[keys[x]] || {};
+                            }
+                            x++;
+                        }
+                    },
+                    error : function(xhr, status, error) {
+                        f.log('failed posting missing key \'' + key + '\' to: ' + item.url);
+                    },
+                    dataType: "json",
+                    async : o.postAsync
+                });
+            }
+        },
+    
+        reload: reload
+    };
+    // defaults
+    var o = {
+        lng: undefined,
+        load: 'all',
+        preload: [],
+        lowerCaseLng: false,
+        returnObjectTrees: false,
+        fallbackLng: ['dev'],
+        fallbackNS: [],
+        detectLngQS: 'setLng',
+        detectLngFromLocalStorage: false,
+        ns: 'translation',
+        fallbackOnNull: true,
+        fallbackOnEmpty: false,
+        fallbackToDefaultNS: false,
+        nsseparator: ':',
+        keyseparator: '.',
+        selectorAttr: 'data-i18n',
+        debug: false,
+        
+        resGetPath: 'locales/__lng__/__ns__.json',
+        resPostPath: 'locales/add/__lng__/__ns__',
+    
+        getAsync: true,
+        postAsync: true,
+    
+        resStore: undefined,
+        useLocalStorage: false,
+        localStorageExpirationTime: 7*24*60*60*1000,
+    
+        dynamicLoad: false,
+        sendMissing: false,
+        sendMissingTo: 'fallback', // current | all
+        sendType: 'POST',
+    
+        interpolationPrefix: '__',
+        interpolationSuffix: '__',
+        defaultVariables: false,
+        reusePrefix: '$t(',
+        reuseSuffix: ')',
+        pluralSuffix: '_plural',
+        pluralNotFound: ['plural_not_found', Math.random()].join(''),
+        contextNotFound: ['context_not_found', Math.random()].join(''),
+        escapeInterpolation: false,
+        indefiniteSuffix: '_indefinite',
+        indefiniteNotFound: ['indefinite_not_found', Math.random()].join(''),
+    
+        setJqueryExt: true,
+        defaultValueFromContent: true,
+        useDataAttrOptions: false,
+        cookieExpirationTime: undefined,
+        useCookie: true,
+        cookieName: 'i18next',
+        cookieDomain: undefined,
+    
+        objectTreeKeyHandler: undefined,
+        postProcess: undefined,
+        parseMissingKey: undefined,
+        missingKeyHandler: sync.postMissing,
+    
+        shortcutFunction: 'sprintf' // or: defaultValue
+    };
+    function _extend(target, source) {
+        if (!source || typeof source === 'function') {
+            return target;
+        }
+    
+        for (var attr in source) { target[attr] = source[attr]; }
+        return target;
+    }
+    
+    function _deepExtend(target, source) {
+        for (var prop in source)
+            if (prop in target)
+                _deepExtend(target[prop], source[prop]);
+            else
+                target[prop] = source[prop];
+        return target;
+    }
+    
+    function _each(object, callback, args) {
+        var name, i = 0,
+            length = object.length,
+            isObj = length === undefined || Object.prototype.toString.apply(object) !== '[object Array]' || typeof object === "function";
+    
+        if (args) {
+            if (isObj) {
+                for (name in object) {
+                    if (callback.apply(object[name], args) === false) {
+                        break;
+                    }
+                }
+            } else {
+                for ( ; i < length; ) {
+                    if (callback.apply(object[i++], args) === false) {
+                        break;
+                    }
+                }
+            }
+    
+        // A special, fast, case for the most common use of each
+        } else {
+            if (isObj) {
+                for (name in object) {
+                    if (callback.call(object[name], name, object[name]) === false) {
+                        break;
+                    }
+                }
+            } else {
+                for ( ; i < length; ) {
+                    if (callback.call(object[i], i, object[i++]) === false) {
+                        break;
+                    }
+                }
+            }
+        }
+    
+        return object;
+    }
+    
+    var _entityMap = {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': '&quot;',
+        "'": '&#39;',
+        "/": '&#x2F;'
+    };
+    
+    function _escape(data) {
+        if (typeof data === 'string') {
+            return data.replace(/[&<>"'\/]/g, function (s) {
+                return _entityMap[s];
+            });
+        }else{
+            return data;
+        }
+    }
+    
+    function _ajax(options) {
+    
+        // v0.5.0 of https://github.com/goloroden/http.js
+        var getXhr = function (callback) {
+            // Use the native XHR object if the browser supports it.
+            if (window.XMLHttpRequest) {
+                return callback(null, new XMLHttpRequest());
+            } else if (window.ActiveXObject) {
+                // In Internet Explorer check for ActiveX versions of the XHR object.
+                try {
+                    return callback(null, new ActiveXObject("Msxml2.XMLHTTP"));
+                } catch (e) {
+                    return callback(null, new ActiveXObject("Microsoft.XMLHTTP"));
+                }
+            }
+    
+            // If no XHR support was found, throw an error.
+            return callback(new Error());
+        };
+    
+        var encodeUsingUrlEncoding = function (data) {
+            if(typeof data === 'string') {
+                return data;
+            }
+    
+            var result = [];
+            for(var dataItem in data) {
+                if(data.hasOwnProperty(dataItem)) {
+                    result.push(encodeURIComponent(dataItem) + '=' + encodeURIComponent(data[dataItem]));
+                }
+            }
+    
+            return result.join('&');
+        };
+    
+        var utf8 = function (text) {
+            text = text.replace(/\r\n/g, '\n');
+            var result = '';
+    
+            for(var i = 0; i < text.length; i++) {
+                var c = text.charCodeAt(i);
+    
+                if(c < 128) {
+                        result += String.fromCharCode(c);
+                } else if((c > 127) && (c < 2048)) {
+                        result += String.fromCharCode((c >> 6) | 192);
+                        result += String.fromCharCode((c & 63) | 128);
+                } else {
+                        result += String.fromCharCode((c >> 12) | 224);
+                        result += String.fromCharCode(((c >> 6) & 63) | 128);
+                        result += String.fromCharCode((c & 63) | 128);
+                }
+            }
+    
+            return result;
+        };
+    
+        var base64 = function (text) {
+            var keyStr = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+    
+            text = utf8(text);
+            var result = '',
+                    chr1, chr2, chr3,
+                    enc1, enc2, enc3, enc4,
+                    i = 0;
+    
+            do {
+                chr1 = text.charCodeAt(i++);
+                chr2 = text.charCodeAt(i++);
+                chr3 = text.charCodeAt(i++);
+    
+                enc1 = chr1 >> 2;
+                enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
+                enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
+                enc4 = chr3 & 63;
+    
+                if(isNaN(chr2)) {
+                    enc3 = enc4 = 64;
+                } else if(isNaN(chr3)) {
+                    enc4 = 64;
+                }
+    
+                result +=
+                    keyStr.charAt(enc1) +
+                    keyStr.charAt(enc2) +
+                    keyStr.charAt(enc3) +
+                    keyStr.charAt(enc4);
+                chr1 = chr2 = chr3 = '';
+                enc1 = enc2 = enc3 = enc4 = '';
+            } while(i < text.length);
+    
+            return result;
+        };
+    
+        var mergeHeaders = function () {
+            // Use the first header object as base.
+            var result = arguments[0];
+    
+            // Iterate through the remaining header objects and add them.
+            for(var i = 1; i < arguments.length; i++) {
+                var currentHeaders = arguments[i];
+                for(var header in currentHeaders) {
+                    if(currentHeaders.hasOwnProperty(header)) {
+                        result[header] = currentHeaders[header];
+                    }
+                }
+            }
+    
+            // Return the merged headers.
+            return result;
+        };
+    
+        var ajax = function (method, url, options, callback) {
+            // Adjust parameters.
+            if(typeof options === 'function') {
+                callback = options;
+                options = {};
+            }
+    
+            // Set default parameter values.
+            options.cache = options.cache || false;
+            options.data = options.data || {};
+            options.headers = options.headers || {};
+            options.jsonp = options.jsonp || false;
+            options.async = options.async === undefined ? true : options.async;
+    
+            // Merge the various header objects.
+            var headers = mergeHeaders({
+                'accept': '*/*',
+                'content-type': 'application/x-www-form-urlencoded;charset=UTF-8'
+            }, ajax.headers, options.headers);
+    
+            // Encode the data according to the content-type.
+            var payload;
+            if (headers['content-type'] === 'application/json') {
+                payload = JSON.stringify(options.data);
+            } else {
+                payload = encodeUsingUrlEncoding(options.data);
+            }
+    
+            // Specially prepare GET requests: Setup the query string, handle caching and make a JSONP call
+            // if neccessary.
+            if(method === 'GET') {
+                // Setup the query string.
+                var queryString = [];
+                if(payload) {
+                    queryString.push(payload);
+                    payload = null;
+                }
+    
+                // Handle caching.
+                if(!options.cache) {
+                    queryString.push('_=' + (new Date()).getTime());
+                }
+    
+                // If neccessary prepare the query string for a JSONP call.
+                if(options.jsonp) {
+                    queryString.push('callback=' + options.jsonp);
+                    queryString.push('jsonp=' + options.jsonp);
+                }
+    
+                // Merge the query string and attach it to the url.
+                queryString = queryString.join('&');
+                if (queryString.length > 1) {
+                    if (url.indexOf('?') > -1) {
+                        url += '&' + queryString;
+                    } else {
+                        url += '?' + queryString;
+                    }
+                }
+    
+                // Make a JSONP call if neccessary.
+                if(options.jsonp) {
+                    var head = document.getElementsByTagName('head')[0];
+                    var script = document.createElement('script');
+                    script.type = 'text/javascript';
+                    script.src = url;
+                    head.appendChild(script);
+                    return;
+                }
+            }
+    
+            // Since we got here, it is no JSONP request, so make a normal XHR request.
+            getXhr(function (err, xhr) {
+                if(err) return callback(err);
+    
+                // Open the request.
+                xhr.open(method, url, options.async);
+    
+                // Set the request headers.
+                for(var header in headers) {
+                    if(headers.hasOwnProperty(header)) {
+                        xhr.setRequestHeader(header, headers[header]);
+                    }
+                }
+    
+                // Handle the request events.
+                xhr.onreadystatechange = function () {
+                    if(xhr.readyState === 4) {
+                        var data = xhr.responseText || '';
+    
+                        // If no callback is given, return.
+                        if(!callback) {
+                            return;
+                        }
+    
+                        // Return an object that provides access to the data as text and JSON.
+                        callback(xhr.status, {
+                            text: function () {
+                                return data;
+                            },
+    
+                            json: function () {
+                                try {
+                                    return JSON.parse(data)
+                                } catch (e) {
+                                    f.error('Can not parse JSON. URL: ' + url);
+                                    return {};
+                                }
+                            }
+                        });
+                    }
+                };
+    
+                // Actually send the XHR request.
+                xhr.send(payload);
+            });
+        };
+    
+        // Define the external interface.
+        var http = {
+            authBasic: function (username, password) {
+                ajax.headers['Authorization'] = 'Basic ' + base64(username + ':' + password);
+            },
+    
+            connect: function (url, options, callback) {
+                return ajax('CONNECT', url, options, callback);
+            },
+    
+            del: function (url, options, callback) {
+                return ajax('DELETE', url, options, callback);
+            },
+    
+            get: function (url, options, callback) {
+                return ajax('GET', url, options, callback);
+            },
+    
+            head: function (url, options, callback) {
+                return ajax('HEAD', url, options, callback);
+            },
+    
+            headers: function (headers) {
+                ajax.headers = headers || {};
+            },
+    
+            isAllowed: function (url, verb, callback) {
+                this.options(url, function (status, data) {
+                    callback(data.text().indexOf(verb) !== -1);
+                });
+            },
+    
+            options: function (url, options, callback) {
+                return ajax('OPTIONS', url, options, callback);
+            },
+    
+            patch: function (url, options, callback) {
+                return ajax('PATCH', url, options, callback);
+            },
+    
+            post: function (url, options, callback) {
+                return ajax('POST', url, options, callback);
+            },
+    
+            put: function (url, options, callback) {
+                return ajax('PUT', url, options, callback);
+            },
+    
+            trace: function (url, options, callback) {
+                return ajax('TRACE', url, options, callback);
+            }
+        };
+    
+    
+        var methode = options.type ? options.type.toLowerCase() : 'get';
+    
+        http[methode](options.url, options, function (status, data) {
+            // file: protocol always gives status code 0, so check for data
+            if (status === 200 || (status === 0 && data.text())) {
+                options.success(data.json(), status, null);
+            } else {
+                options.error(data.text(), status, null);
+            }
+        });
+    }
+    
+    var _cookie = {
+        create: function(name,value,minutes,domain) {
+            var expires;
+            if (minutes) {
+                var date = new Date();
+                date.setTime(date.getTime()+(minutes*60*1000));
+                expires = "; expires="+date.toGMTString();
+            }
+            else expires = "";
+            domain = (domain)? "domain="+domain+";" : "";
+            document.cookie = name+"="+value+expires+";"+domain+"path=/";
+        },
+    
+        read: function(name) {
+            var nameEQ = name + "=";
+            var ca = document.cookie.split(';');
+            for(var i=0;i < ca.length;i++) {
+                var c = ca[i];
+                while (c.charAt(0)==' ') c = c.substring(1,c.length);
+                if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length,c.length);
+            }
+            return null;
+        },
+    
+        remove: function(name) {
+            this.create(name,"",-1);
+        }
+    };
+    
+    var cookie_noop = {
+        create: function(name,value,minutes,domain) {},
+        read: function(name) { return null; },
+        remove: function(name) {}
+    };
+    
+    
+    
+    // move dependent functions to a container so that
+    // they can be overriden easier in no jquery environment (node.js)
+    var f = {
+        extend: $ ? $.extend : _extend,
+        deepExtend: _deepExtend,
+        each: $ ? $.each : _each,
+        ajax: $ ? $.ajax : (typeof document !== 'undefined' ? _ajax : function() {}),
+        cookie: typeof document !== 'undefined' ? _cookie : cookie_noop,
+        detectLanguage: detectLanguage,
+        escape: _escape,
+        log: function(str) {
+            if (o.debug && typeof console !== "undefined") console.log(str);
+        },
+        error: function(str) {
+            if (typeof console !== "undefined") console.error(str);
+        },
+        getCountyIndexOfLng: function(lng) {
+            var lng_index = 0;
+            if (lng === 'nb-NO' || lng === 'nn-NO' || lng === 'nb-no' || lng === 'nn-no') lng_index = 1;
+            return lng_index;
+        },
+        toLanguages: function(lng) {
+            var log = this.log;
+    
+            function applyCase(l) {
+                var ret = l;
+    
+                if (typeof l === 'string' && l.indexOf('-') > -1) {
+                    var parts = l.split('-');
+    
+                    ret = o.lowerCaseLng ?
+                        parts[0].toLowerCase() +  '-' + parts[1].toLowerCase() :
+                        parts[0].toLowerCase() +  '-' + parts[1].toUpperCase();
+                } else {
+                    ret = o.lowerCaseLng ? l.toLowerCase() : l;
+                }
+    
+                return ret;
+            }
+    
+            var languages = [];
+            var whitelist = o.lngWhitelist || false;
+            var addLanguage = function(language){
+              //reject langs not whitelisted
+              if(!whitelist || whitelist.indexOf(language) > -1){
+                languages.push(language);
+              }else{
+                log('rejecting non-whitelisted language: ' + language);
+              }
+            };
+            if (typeof lng === 'string' && lng.indexOf('-') > -1) {
+                var parts = lng.split('-');
+    
+                if (o.load !== 'unspecific') addLanguage(applyCase(lng));
+                if (o.load !== 'current') addLanguage(applyCase(parts[this.getCountyIndexOfLng(lng)]));
+            } else {
+                addLanguage(applyCase(lng));
+            }
+    
+            for (var i = 0; i < o.fallbackLng.length; i++) {
+                if (languages.indexOf(o.fallbackLng[i]) === -1 && o.fallbackLng[i]) languages.push(applyCase(o.fallbackLng[i]));
+            }
+            return languages;
+        },
+        regexEscape: function(str) {
+            return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+        },
+        regexReplacementEscape: function(strOrFn) {
+            if (typeof strOrFn === 'string') {
+                return strOrFn.replace(/\$/g, "$$$$");
+            } else {
+                return strOrFn;
+            }
+        },
+        localStorage: {
+            setItem: function(key, value) {
+                if (window.localStorage) {
+                    try {
+                        window.localStorage.setItem(key, value);
+                    } catch (e) {
+                        f.log('failed to set value for key "' + key + '" to localStorage.');
+                    }
+                }
+            }
+        }
+    };
+    function init(options, cb) {
+        
+        if (typeof options === 'function') {
+            cb = options;
+            options = {};
+        }
+        options = options || {};
+        
+        // override defaults with passed in options
+        f.extend(o, options);
+        delete o.fixLng; /* passed in each time */
+    
+        // override functions: .log(), .detectLanguage(), etc
+        if (o.functions) {
+            delete o.functions;
+            f.extend(f, options.functions);
+        }
+    
+        // create namespace object if namespace is passed in as string
+        if (typeof o.ns == 'string') {
+            o.ns = { namespaces: [o.ns], defaultNs: o.ns};
+        }
+    
+        // fallback namespaces
+        if (typeof o.fallbackNS == 'string') {
+            o.fallbackNS = [o.fallbackNS];
+        }
+    
+        // fallback languages
+        if (typeof o.fallbackLng == 'string' || typeof o.fallbackLng == 'boolean') {
+            o.fallbackLng = [o.fallbackLng];
+        }
+    
+        // escape prefix/suffix
+        o.interpolationPrefixEscaped = f.regexEscape(o.interpolationPrefix);
+        o.interpolationSuffixEscaped = f.regexEscape(o.interpolationSuffix);
+    
+        if (!o.lng) o.lng = f.detectLanguage();
+    
+        languages = f.toLanguages(o.lng);
+        currentLng = languages[0];
+        f.log('currentLng set to: ' + currentLng);
+    
+        if (o.useCookie && f.cookie.read(o.cookieName) !== currentLng){ //cookie is unset or invalid
+            f.cookie.create(o.cookieName, currentLng, o.cookieExpirationTime, o.cookieDomain);
+        }
+        if (o.detectLngFromLocalStorage && typeof document !== 'undefined' && window.localStorage) {
+            f.localStorage.setItem('i18next_lng', currentLng);
+        }
+    
+        var lngTranslate = translate;
+        if (options.fixLng) {
+            lngTranslate = function(key, options) {
+                options = options || {};
+                options.lng = options.lng || lngTranslate.lng;
+                return translate(key, options);
+            };
+            lngTranslate.lng = currentLng;
+        }
+    
+        pluralExtensions.setCurrentLng(currentLng);
+    
+        // add JQuery extensions
+        if ($ && o.setJqueryExt) addJqueryFunct();
+    
+        // jQuery deferred
+        var deferred;
+        if ($ && $.Deferred) {
+            deferred = $.Deferred();
+        }
+    
+        // return immidiatly if res are passed in
+        if (o.resStore) {
+            resStore = o.resStore;
+            initialized = true;
+            if (cb) cb(lngTranslate);
+            if (deferred) deferred.resolve(lngTranslate);
+            if (deferred) return deferred.promise();
+            return;
+        }
+    
+        // languages to load
+        var lngsToLoad = f.toLanguages(o.lng);
+        if (typeof o.preload === 'string') o.preload = [o.preload];
+        for (var i = 0, l = o.preload.length; i < l; i++) {
+            var pres = f.toLanguages(o.preload[i]);
+            for (var y = 0, len = pres.length; y < len; y++) {
+                if (lngsToLoad.indexOf(pres[y]) < 0) {
+                    lngsToLoad.push(pres[y]);
+                }
+            }
+        }
+    
+        // else load them
+        i18n.sync.load(lngsToLoad, o, function(err, store) {
+            resStore = store;
+            initialized = true;
+    
+            if (cb) cb(lngTranslate);
+            if (deferred) deferred.resolve(lngTranslate);
+        });
+    
+        if (deferred) return deferred.promise();
+    }
+    function preload(lngs, cb) {
+        if (typeof lngs === 'string') lngs = [lngs];
+        for (var i = 0, l = lngs.length; i < l; i++) {
+            if (o.preload.indexOf(lngs[i]) < 0) {
+                o.preload.push(lngs[i]);
+            }
+        }
+        return init(cb);
+    }
+    
+    function addResourceBundle(lng, ns, resources, deep) {
+        if (typeof ns !== 'string') {
+            resources = ns;
+            ns = o.ns.defaultNs;
+        } else if (o.ns.namespaces.indexOf(ns) < 0) {
+            o.ns.namespaces.push(ns);
+        }
+    
+        resStore[lng] = resStore[lng] || {};
+        resStore[lng][ns] = resStore[lng][ns] || {};
+    
+        if (deep) {
+            f.deepExtend(resStore[lng][ns], resources);
+        } else {
+            f.extend(resStore[lng][ns], resources);
+        }
+    }
+    
+    function hasResourceBundle(lng, ns) {
+        if (typeof ns !== 'string') {
+            ns = o.ns.defaultNs;
+        }
+    
+        resStore[lng] = resStore[lng] || {};
+        var res = resStore[lng][ns] || {};
+    
+        var hasValues = false;
+        for(var prop in res) {
+            if (res.hasOwnProperty(prop)) {
+                hasValues = true;
+            }
+        }
+    
+        return hasValues;
+    }
+    
+    function removeResourceBundle(lng, ns) {
+        if (typeof ns !== 'string') {
+            ns = o.ns.defaultNs;
+        }
+    
+        resStore[lng] = resStore[lng] || {};
+        resStore[lng][ns] = {};
+    }
+    
+    function addResource(lng, ns, key, value) {
+        if (typeof ns !== 'string') {
+            resource = ns;
+            ns = o.ns.defaultNs;
+        } else if (o.ns.namespaces.indexOf(ns) < 0) {
+            o.ns.namespaces.push(ns);
+        }
+    
+        resStore[lng] = resStore[lng] || {};
+        resStore[lng][ns] = resStore[lng][ns] || {};
+    
+        var keys = key.split(o.keyseparator);
+        var x = 0;
+        var node = resStore[lng][ns];
+        var origRef = node;
+    
+        while (keys[x]) {
+            if (x == keys.length - 1)
+                node[keys[x]] = value;
+            else {
+                if (node[keys[x]] == null)
+                    node[keys[x]] = {};
+    
+                node = node[keys[x]];
+            }
+            x++;
+        }
+    }
+    
+    function addResources(lng, ns, resources) {
+        if (typeof ns !== 'string') {
+            resource = ns;
+            ns = o.ns.defaultNs;
+        } else if (o.ns.namespaces.indexOf(ns) < 0) {
+            o.ns.namespaces.push(ns);
+        }
+    
+        for (var m in resources) {
+            if (typeof resources[m] === 'string') addResource(lng, ns, m, resources[m]);
+        }
+    }
+    
+    function setDefaultNamespace(ns) {
+        o.ns.defaultNs = ns;
+    }
+    
+    function loadNamespace(namespace, cb) {
+        loadNamespaces([namespace], cb);
+    }
+    
+    function loadNamespaces(namespaces, cb) {
+        var opts = {
+            dynamicLoad: o.dynamicLoad,
+            resGetPath: o.resGetPath,
+            getAsync: o.getAsync,
+            customLoad: o.customLoad,
+            ns: { namespaces: namespaces, defaultNs: ''} /* new namespaces to load */
+        };
+    
+        // languages to load
+        var lngsToLoad = f.toLanguages(o.lng);
+        if (typeof o.preload === 'string') o.preload = [o.preload];
+        for (var i = 0, l = o.preload.length; i < l; i++) {
+            var pres = f.toLanguages(o.preload[i]);
+            for (var y = 0, len = pres.length; y < len; y++) {
+                if (lngsToLoad.indexOf(pres[y]) < 0) {
+                    lngsToLoad.push(pres[y]);
+                }
+            }
+        }
+    
+        // check if we have to load
+        var lngNeedLoad = [];
+        for (var a = 0, lenA = lngsToLoad.length; a < lenA; a++) {
+            var needLoad = false;
+            var resSet = resStore[lngsToLoad[a]];
+            if (resSet) {
+                for (var b = 0, lenB = namespaces.length; b < lenB; b++) {
+                    if (!resSet[namespaces[b]]) needLoad = true;
+                }
+            } else {
+                needLoad = true;
+            }
+    
+            if (needLoad) lngNeedLoad.push(lngsToLoad[a]);
+        }
+    
+        if (lngNeedLoad.length) {
+            i18n.sync._fetch(lngNeedLoad, opts, function(err, store) {
+                var todo = namespaces.length * lngNeedLoad.length;
+    
+                // load each file individual
+                f.each(namespaces, function(nsIndex, nsValue) {
+    
+                    // append namespace to namespace array
+                    if (o.ns.namespaces.indexOf(nsValue) < 0) {
+                        o.ns.namespaces.push(nsValue);
+                    }
+    
+                    f.each(lngNeedLoad, function(lngIndex, lngValue) {
+                        resStore[lngValue] = resStore[lngValue] || {};
+                        resStore[lngValue][nsValue] = store[lngValue][nsValue];
+    
+                        todo--; // wait for all done befor callback
+                        if (todo === 0 && cb) {
+                            if (o.useLocalStorage) i18n.sync._storeLocal(resStore);
+                            cb();
+                        }
+                    });
+                });
+            });
+        } else {
+            if (cb) cb();
+        }
+    }
+    
+    function setLng(lng, options, cb) {
+        if (typeof options === 'function') {
+            cb = options;
+            options = {};
+        } else if (!options) {
+            options = {};
+        }
+    
+        options.lng = lng;
+        return init(options, cb);
+    }
+    
+    function lng() {
+        return currentLng;
+    }
+    
+    function reload(cb) {
+        resStore = {};
+        setLng(currentLng, cb);
+    }
+    function addJqueryFunct() {
+        // $.t shortcut
+        $.t = $.t || translate;
+    
+        function parse(ele, key, options) {
+            if (key.length === 0) return;
+    
+            var attr = 'text';
+    
+            if (key.indexOf('[') === 0) {
+                var parts = key.split(']');
+                key = parts[1];
+                attr = parts[0].substr(1, parts[0].length-1);
+            }
+    
+            if (key.indexOf(';') === key.length-1) {
+                key = key.substr(0, key.length-2);
+            }
+    
+            var optionsToUse;
+            if (attr === 'html') {
+                optionsToUse = o.defaultValueFromContent ? $.extend({ defaultValue: ele.html() }, options) : options;
+                ele.html($.t(key, optionsToUse));
+            } else if (attr === 'text') {
+                optionsToUse = o.defaultValueFromContent ? $.extend({ defaultValue: ele.text() }, options) : options;
+                ele.text($.t(key, optionsToUse));
+            } else if (attr === 'prepend') {
+                optionsToUse = o.defaultValueFromContent ? $.extend({ defaultValue: ele.html() }, options) : options;
+                ele.prepend($.t(key, optionsToUse));
+            } else if (attr === 'append') {
+                optionsToUse = o.defaultValueFromContent ? $.extend({ defaultValue: ele.html() }, options) : options;
+                ele.append($.t(key, optionsToUse));
+            } else if (attr.indexOf("data-") === 0) {
+                var dataAttr = attr.substr(("data-").length);
+                optionsToUse = o.defaultValueFromContent ? $.extend({ defaultValue: ele.data(dataAttr) }, options) : options;
+                var translated = $.t(key, optionsToUse);
+                //we change into the data cache
+                ele.data(dataAttr, translated);
+                //we change into the dom
+                ele.attr(attr, translated);
+            } else {
+                optionsToUse = o.defaultValueFromContent ? $.extend({ defaultValue: ele.attr(attr) }, options) : options;
+                ele.attr(attr, $.t(key, optionsToUse));
+            }
+        }
+    
+        function localize(ele, options) {
+            var key = ele.attr(o.selectorAttr);
+            if (!key && typeof key !== 'undefined' && key !== false) key = ele.text() || ele.val();
+            if (!key) return;
+    
+            var target = ele
+              , targetSelector = ele.data("i18n-target");
+            if (targetSelector) {
+                target = ele.find(targetSelector) || ele;
+            }
+    
+            if (!options && o.useDataAttrOptions === true) {
+                options = ele.data("i18n-options");
+            }
+            options = options || {};
+    
+            if (key.indexOf(';') >= 0) {
+                var keys = key.split(';');
+    
+                $.each(keys, function(m, k) {
+                    if (k !== '') parse(target, k, options);
+                });
+    
+            } else {
+                parse(target, key, options);
+            }
+    
+            if (o.useDataAttrOptions === true) ele.data("i18n-options", options);
+        }
+    
+        // fn
+        $.fn.i18n = function (options) {
+            return this.each(function() {
+                // localize element itself
+                localize($(this), options);
+    
+                // localize childs
+                var elements =  $(this).find('[' + o.selectorAttr + ']');
+                elements.each(function() { 
+                    localize($(this), options);
+                });
+            });
+        };
+    }
+    function applyReplacement(str, replacementHash, nestedKey, options) {
+        if (!str) return str;
+    
+        options = options || replacementHash; // first call uses replacement hash combined with options
+        if (str.indexOf(options.interpolationPrefix || o.interpolationPrefix) < 0) return str;
+    
+        var prefix = options.interpolationPrefix ? f.regexEscape(options.interpolationPrefix) : o.interpolationPrefixEscaped
+          , suffix = options.interpolationSuffix ? f.regexEscape(options.interpolationSuffix) : o.interpolationSuffixEscaped
+          , unEscapingSuffix = 'HTML'+suffix;
+    
+        var hash = replacementHash.replace && typeof replacementHash.replace === 'object' ? replacementHash.replace : replacementHash;
+        f.each(hash, function(key, value) {
+            var nextKey = nestedKey ? nestedKey + o.keyseparator + key : key;
+            if (typeof value === 'object' && value !== null) {
+                str = applyReplacement(str, value, nextKey, options);
+            } else {
+                if (options.escapeInterpolation || o.escapeInterpolation) {
+                    str = str.replace(new RegExp([prefix, nextKey, unEscapingSuffix].join(''), 'g'), f.regexReplacementEscape(value));
+                    str = str.replace(new RegExp([prefix, nextKey, suffix].join(''), 'g'), f.regexReplacementEscape(f.escape(value)));
+                } else {
+                    str = str.replace(new RegExp([prefix, nextKey, suffix].join(''), 'g'), f.regexReplacementEscape(value));
+                }
+                // str = options.escapeInterpolation;
+            }
+        });
+        return str;
+    }
+    
+    // append it to functions
+    f.applyReplacement = applyReplacement;
+    
+    function applyReuse(translated, options) {
+        var comma = ',';
+        var options_open = '{';
+        var options_close = '}';
+    
+        var opts = f.extend({}, options);
+        delete opts.postProcess;
+    
+        while (translated.indexOf(o.reusePrefix) != -1) {
+            replacementCounter++;
+            if (replacementCounter > o.maxRecursion) { break; } // safety net for too much recursion
+            var index_of_opening = translated.lastIndexOf(o.reusePrefix);
+            var index_of_end_of_closing = translated.indexOf(o.reuseSuffix, index_of_opening) + o.reuseSuffix.length;
+            var token = translated.substring(index_of_opening, index_of_end_of_closing);
+            var token_without_symbols = token.replace(o.reusePrefix, '').replace(o.reuseSuffix, '');
+    
+            if (index_of_end_of_closing <= index_of_opening) {
+                f.error('there is an missing closing in following translation value', translated);
+                return '';
+            }
+    
+            if (token_without_symbols.indexOf(comma) != -1) {
+                var index_of_token_end_of_closing = token_without_symbols.indexOf(comma);
+                if (token_without_symbols.indexOf(options_open, index_of_token_end_of_closing) != -1 && token_without_symbols.indexOf(options_close, index_of_token_end_of_closing) != -1) {
+                    var index_of_opts_opening = token_without_symbols.indexOf(options_open, index_of_token_end_of_closing);
+                    var index_of_opts_end_of_closing = token_without_symbols.indexOf(options_close, index_of_opts_opening) + options_close.length;
+                    try {
+                        opts = f.extend(opts, JSON.parse(token_without_symbols.substring(index_of_opts_opening, index_of_opts_end_of_closing)));
+                        token_without_symbols = token_without_symbols.substring(0, index_of_token_end_of_closing);
+                    } catch (e) {
+                    }
+                }
+            }
+    
+            var translated_token = _translate(token_without_symbols, opts);
+            translated = translated.replace(token, f.regexReplacementEscape(translated_token));
+        }
+        return translated;
+    }
+    
+    function hasContext(options) {
+        return (options.context && (typeof options.context == 'string' || typeof options.context == 'number'));
+    }
+    
+    function needsPlural(options, lng) {
+        return (options.count !== undefined && typeof options.count != 'string'/* && pluralExtensions.needsPlural(lng, options.count)*/);
+    }
+    
+    function needsIndefiniteArticle(options) {
+        return (options.indefinite_article !== undefined && typeof options.indefinite_article != 'string' && options.indefinite_article);
+    }
+    
+    function exists(key, options) {
+        options = options || {};
+    
+        var notFound = _getDefaultValue(key, options)
+            , found = _find(key, options);
+    
+        return found !== undefined || found === notFound;
+    }
+    
+    function translate(key, options) {
+        options = options || {};
+    
+        if (!initialized) {
+            f.log('i18next not finished initialization. you might have called t function before loading resources finished.')
+            return options.defaultValue || '';
+        };
+        replacementCounter = 0;
+        return _translate.apply(null, arguments);
+    }
+    
+    function _getDefaultValue(key, options) {
+        return (options.defaultValue !== undefined) ? options.defaultValue : key;
+    }
+    
+    function _injectSprintfProcessor() {
+    
+        var values = [];
+    
+        // mh: build array from second argument onwards
+        for (var i = 1; i < arguments.length; i++) {
+            values.push(arguments[i]);
+        }
+    
+        return {
+            postProcess: 'sprintf',
+            sprintf:     values
+        };
+    }
+    
+    function _translate(potentialKeys, options) {
+        if (options && typeof options !== 'object') {
+            if (o.shortcutFunction === 'sprintf') {
+                // mh: gettext like sprintf syntax found, automatically create sprintf processor
+                options = _injectSprintfProcessor.apply(null, arguments);
+            } else if (o.shortcutFunction === 'defaultValue') {
+                options = {
+                    defaultValue: options
+                }
+            }
+        } else {
+            options = options || {};
+        }
+    
+        if (typeof o.defaultVariables === 'object') {
+            options = f.extend({}, o.defaultVariables, options);
+        }
+    
+        if (potentialKeys === undefined || potentialKeys === null || potentialKeys === '') return '';
+    
+        if (typeof potentialKeys === 'string') {
+            potentialKeys = [potentialKeys];
+        }
+    
+        var key = potentialKeys[0];
+    
+        if (potentialKeys.length > 1) {
+            for (var i = 0; i < potentialKeys.length; i++) {
+                key = potentialKeys[i];
+                if (exists(key, options)) {
+                    break;
+                }
+            }
+        }
+    
+        var notFound = _getDefaultValue(key, options)
+            , found = _find(key, options)
+            , lngs = options.lng ? f.toLanguages(options.lng, options.fallbackLng) : languages
+            , ns = options.ns || o.ns.defaultNs
+            , parts;
+    
+        // split ns and key
+        if (key.indexOf(o.nsseparator) > -1) {
+            parts = key.split(o.nsseparator);
+            ns = parts[0];
+            key = parts[1];
+        }
+    
+        if (found === undefined && o.sendMissing && typeof o.missingKeyHandler === 'function') {
+            if (options.lng) {
+                o.missingKeyHandler(lngs[0], ns, key, notFound, lngs);
+            } else {
+                o.missingKeyHandler(o.lng, ns, key, notFound, lngs);
+            }
+        }
+    
+        var postProcessor = options.postProcess || o.postProcess;
+        if (found !== undefined && postProcessor) {
+            if (postProcessors[postProcessor]) {
+                found = postProcessors[postProcessor](found, key, options);
+            }
+        }
+    
+        // process notFound if function exists
+        var splitNotFound = notFound;
+        if (notFound.indexOf(o.nsseparator) > -1) {
+            parts = notFound.split(o.nsseparator);
+            splitNotFound = parts[1];
+        }
+        if (splitNotFound === key && o.parseMissingKey) {
+            notFound = o.parseMissingKey(notFound);
+        }
+    
+        if (found === undefined) {
+            notFound = applyReplacement(notFound, options);
+            notFound = applyReuse(notFound, options);
+    
+            if (postProcessor && postProcessors[postProcessor]) {
+                var val = _getDefaultValue(key, options);
+                found = postProcessors[postProcessor](val, key, options);
+            }
+        }
+    
+        return (found !== undefined) ? found : notFound;
+    }
+    
+    function _find(key, options) {
+        options = options || {};
+    
+        var optionWithoutCount, translated
+            , notFound = _getDefaultValue(key, options)
+            , lngs = languages;
+    
+        if (!resStore) { return notFound; } // no resStore to translate from
+    
+        // CI mode
+        if (lngs[0].toLowerCase() === 'cimode') return notFound;
+    
+        // passed in lng
+        if (options.lngs) lngs = options.lngs;
+        if (options.lng) {
+            lngs = f.toLanguages(options.lng, options.fallbackLng);
+    
+            if (!resStore[lngs[0]]) {
+                var oldAsync = o.getAsync;
+                o.getAsync = false;
+    
+                i18n.sync.load(lngs, o, function(err, store) {
+                    f.extend(resStore, store);
+                    o.getAsync = oldAsync;
+                });
+            }
+        }
+    
+        var ns = options.ns || o.ns.defaultNs;
+        if (key.indexOf(o.nsseparator) > -1) {
+            var parts = key.split(o.nsseparator);
+            ns = parts[0];
+            key = parts[1];
+        }
+    
+        if (hasContext(options)) {
+            optionWithoutCount = f.extend({}, options);
+            delete optionWithoutCount.context;
+            optionWithoutCount.defaultValue = o.contextNotFound;
+    
+            var contextKey = ns + o.nsseparator + key + '_' + options.context;
+    
+            translated = translate(contextKey, optionWithoutCount);
+            if (translated != o.contextNotFound) {
+                return applyReplacement(translated, { context: options.context }); // apply replacement for context only
+            } // else continue translation with original/nonContext key
+        }
+    
+        if (needsPlural(options, lngs[0])) {
+            optionWithoutCount = f.extend({ lngs: [lngs[0]]}, options);
+            delete optionWithoutCount.count;
+            delete optionWithoutCount.lng;
+            optionWithoutCount.defaultValue = o.pluralNotFound;
+    
+            var pluralKey;
+            if (!pluralExtensions.needsPlural(lngs[0], options.count)) {
+                pluralKey = ns + o.nsseparator + key;
+            } else {
+                pluralKey = ns + o.nsseparator + key + o.pluralSuffix;
+                var pluralExtension = pluralExtensions.get(lngs[0], options.count);
+                if (pluralExtension >= 0) {
+                    pluralKey = pluralKey + '_' + pluralExtension;
+                } else if (pluralExtension === 1) {
+                    pluralKey = ns + o.nsseparator + key; // singular
+                }
+            }
+    
+            translated = translate(pluralKey, optionWithoutCount);
+    
+            if (translated != o.pluralNotFound) {
+                return applyReplacement(translated, {
+                    count: options.count,
+                    interpolationPrefix: options.interpolationPrefix,
+                    interpolationSuffix: options.interpolationSuffix
+                }); // apply replacement for count only
+            } else if (lngs.length > 1) {
+                // remove failed lng
+                var clone = lngs.slice();
+                clone.shift();
+                options = f.extend(options, { lngs: clone });
+                delete options.lng;
+                // retry with fallbacks
+                translated = translate(ns + o.nsseparator + key, options);
+                if (translated != o.pluralNotFound) return translated;
+            } else {
+                return translated;
+            }
+        }
+    
+        if (needsIndefiniteArticle(options)) {
+            var optionsWithoutIndef = f.extend({}, options);
+            delete optionsWithoutIndef.indefinite_article;
+            optionsWithoutIndef.defaultValue = o.indefiniteNotFound;
+            // If we don't have a count, we want the indefinite, if we do have a count, and needsPlural is false
+            var indefiniteKey = ns + o.nsseparator + key + (((options.count && !needsPlural(options, lngs[0])) || !options.count) ? o.indefiniteSuffix : "");
+            translated = translate(indefiniteKey, optionsWithoutIndef);
+            if (translated != o.indefiniteNotFound) {
+                return translated;
+            }
+        }
+    
+        var found;
+        var keys = key.split(o.keyseparator);
+        for (var i = 0, len = lngs.length; i < len; i++ ) {
+            if (found !== undefined) break;
+    
+            var l = lngs[i];
+    
+            var x = 0;
+            var value = resStore[l] && resStore[l][ns];
+            while (keys[x]) {
+                value = value && value[keys[x]];
+                x++;
+            }
+            if (value !== undefined) {
+                var valueType = Object.prototype.toString.apply(value);
+                if (typeof value === 'string') {
+                    value = applyReplacement(value, options);
+                    value = applyReuse(value, options);
+                } else if (valueType === '[object Array]' && !o.returnObjectTrees && !options.returnObjectTrees) {
+                    value = value.join('\n');
+                    value = applyReplacement(value, options);
+                    value = applyReuse(value, options);
+                } else if (value === null && o.fallbackOnNull === true) {
+                    value = undefined;
+                } else if (value !== null) {
+                    if (!o.returnObjectTrees && !options.returnObjectTrees) {
+                        if (o.objectTreeKeyHandler && typeof o.objectTreeKeyHandler == 'function') {
+                            value = o.objectTreeKeyHandler(key, value, l, ns, options);
+                        } else {
+                            value = 'key \'' + ns + ':' + key + ' (' + l + ')\' ' +
+                                'returned an object instead of string.';
+                            f.log(value);
+                        }
+                    } else if (valueType !== '[object Number]' && valueType !== '[object Function]' && valueType !== '[object RegExp]') {
+                        var copy = (valueType === '[object Array]') ? [] : {}; // apply child translation on a copy
+                        f.each(value, function(m) {
+                            copy[m] = _translate(ns + o.nsseparator + key + o.keyseparator + m, options);
+                        });
+                        value = copy;
+                    }
+                }
+    
+                if (typeof value === 'string' && value.trim() === '' && o.fallbackOnEmpty === true)
+                    value = undefined;
+    
+                found = value;
+            }
+        }
+    
+        if (found === undefined && !options.isFallbackLookup && (o.fallbackToDefaultNS === true || (o.fallbackNS && o.fallbackNS.length > 0))) {
+            // set flag for fallback lookup - avoid recursion
+            options.isFallbackLookup = true;
+    
+            if (o.fallbackNS.length) {
+    
+                for (var y = 0, lenY = o.fallbackNS.length; y < lenY; y++) {
+                    found = _find(o.fallbackNS[y] + o.nsseparator + key, options);
+    
+                    if (found || (found==="" && o.fallbackOnEmpty === false)) {
+                        /* compare value without namespace */
+                        var foundValue = found.indexOf(o.nsseparator) > -1 ? found.split(o.nsseparator)[1] : found
+                          , notFoundValue = notFound.indexOf(o.nsseparator) > -1 ? notFound.split(o.nsseparator)[1] : notFound;
+    
+                        if (foundValue !== notFoundValue) break;
+                    }
+                }
+            } else {
+                found = _find(key, options); // fallback to default NS
+            }
+            options.isFallbackLookup = false;
+        }
+    
+        return found;
+    }
+    function detectLanguage() {
+        var detectedLng;
+        var whitelist = o.lngWhitelist || [];
+        var userLngChoices = [];
+    
+        // get from qs
+        var qsParm = [];
+        if (typeof window !== 'undefined') {
+            (function() {
+                var query = window.location.search.substring(1);
+                var params = query.split('&');
+                for (var i=0; i<params.length; i++) {
+                    var pos = params[i].indexOf('=');
+                    if (pos > 0) {
+                        var key = params[i].substring(0,pos);
+                        if (key == o.detectLngQS) {
+                            userLngChoices.push(params[i].substring(pos+1));
+                        }
+                    }
+                }
+            })();
+        }
+    
+        // get from cookie
+        if (o.useCookie && typeof document !== 'undefined') {
+            var c = f.cookie.read(o.cookieName);
+            if (c) userLngChoices.push(c);
+        }
+    
+        // get from localStorage
+        if (o.detectLngFromLocalStorage && typeof window !== 'undefined' && window.localStorage) {
+            userLngChoices.push(window.localStorage.getItem('i18next_lng'));
+        }
+    
+        // get from navigator
+        if (typeof navigator !== 'undefined') {
+            if (navigator.languages) { // chrome only; not an array, so can't use .push.apply instead of iterating
+                for (var i=0;i<navigator.languages.length;i++) {
+                    userLngChoices.push(navigator.languages[i]);
+                }
+            }
+            if (navigator.userLanguage) {
+                userLngChoices.push(navigator.userLanguage);
+            }
+            if (navigator.language) {
+                userLngChoices.push(navigator.language);
+            }
+        }
+    
+        (function() {
+            for (var i=0;i<userLngChoices.length;i++) {
+                var lng = userLngChoices[i];
+    
+                if (lng.indexOf('-') > -1) {
+                    var parts = lng.split('-');
+                    lng = o.lowerCaseLng ?
+                        parts[0].toLowerCase() +  '-' + parts[1].toLowerCase() :
+                        parts[0].toLowerCase() +  '-' + parts[1].toUpperCase();
+                }
+    
+                if (whitelist.length === 0 || whitelist.indexOf(lng) > -1) {
+                    detectedLng = lng;
+                    break;
+                }
+            }
+        })();
+    
+        //fallback
+        if (!detectedLng){
+          detectedLng = o.fallbackLng[0];
+        }
+        
+        return detectedLng;
+    }
+    // definition http://translate.sourceforge.net/wiki/l10n/pluralforms
+    
+    /* [code, name, numbers, pluralsType] */
+    var _rules = [
+        ["ach", "Acholi", [1,2], 1],
+        ["af", "Afrikaans",[1,2], 2],
+        ["ak", "Akan", [1,2], 1],
+        ["am", "Amharic", [1,2], 1],
+        ["an", "Aragonese",[1,2], 2],
+        ["ar", "Arabic", [0,1,2,3,11,100],5],
+        ["arn", "Mapudungun",[1,2], 1],
+        ["ast", "Asturian", [1,2], 2],
+        ["ay", "Aymará", [1], 3],
+        ["az", "Azerbaijani",[1,2],2],
+        ["be", "Belarusian",[1,2,5],4],
+        ["bg", "Bulgarian",[1,2], 2],
+        ["bn", "Bengali", [1,2], 2],
+        ["bo", "Tibetan", [1], 3],
+        ["br", "Breton", [1,2], 1],
+        ["bs", "Bosnian", [1,2,5],4],
+        ["ca", "Catalan", [1,2], 2],
+        ["cgg", "Chiga", [1], 3],
+        ["cs", "Czech", [1,2,5],6],
+        ["csb", "Kashubian",[1,2,5],7],
+        ["cy", "Welsh", [1,2,3,8],8],
+        ["da", "Danish", [1,2], 2],
+        ["de", "German", [1,2], 2],
+        ["dev", "Development Fallback", [1,2], 2],
+        ["dz", "Dzongkha", [1], 3],
+        ["el", "Greek", [1,2], 2],
+        ["en", "English", [1,2], 2],
+        ["eo", "Esperanto",[1,2], 2],
+        ["es", "Spanish", [1,2], 2],
+        ["es_ar","Argentinean Spanish", [1,2], 2],
+        ["et", "Estonian", [1,2], 2],
+        ["eu", "Basque", [1,2], 2],
+        ["fa", "Persian", [1], 3],
+        ["fi", "Finnish", [1,2], 2],
+        ["fil", "Filipino", [1,2], 1],
+        ["fo", "Faroese", [1,2], 2],
+        ["fr", "French", [1,2], 9],
+        ["fur", "Friulian", [1,2], 2],
+        ["fy", "Frisian", [1,2], 2],
+        ["ga", "Irish", [1,2,3,7,11],10],
+        ["gd", "Scottish Gaelic",[1,2,3,20],11],
+        ["gl", "Galician", [1,2], 2],
+        ["gu", "Gujarati", [1,2], 2],
+        ["gun", "Gun", [1,2], 1],
+        ["ha", "Hausa", [1,2], 2],
+        ["he", "Hebrew", [1,2], 2],
+        ["hi", "Hindi", [1,2], 2],
+        ["hr", "Croatian", [1,2,5],4],
+        ["hu", "Hungarian",[1,2], 2],
+        ["hy", "Armenian", [1,2], 2],
+        ["ia", "Interlingua",[1,2],2],
+        ["id", "Indonesian",[1], 3],
+        ["is", "Icelandic",[1,2], 12],
+        ["it", "Italian", [1,2], 2],
+        ["ja", "Japanese", [1], 3],
+        ["jbo", "Lojban", [1], 3],
+        ["jv", "Javanese", [0,1], 13],
+        ["ka", "Georgian", [1], 3],
+        ["kk", "Kazakh", [1], 3],
+        ["km", "Khmer", [1], 3],
+        ["kn", "Kannada", [1,2], 2],
+        ["ko", "Korean", [1], 3],
+        ["ku", "Kurdish", [1,2], 2],
+        ["kw", "Cornish", [1,2,3,4],14],
+        ["ky", "Kyrgyz", [1], 3],
+        ["lb", "Letzeburgesch",[1,2],2],
+        ["ln", "Lingala", [1,2], 1],
+        ["lo", "Lao", [1], 3],
+        ["lt", "Lithuanian",[1,2,10],15],
+        ["lv", "Latvian", [1,2,0],16],
+        ["mai", "Maithili", [1,2], 2],
+        ["mfe", "Mauritian Creole",[1,2],1],
+        ["mg", "Malagasy", [1,2], 1],
+        ["mi", "Maori", [1,2], 1],
+        ["mk", "Macedonian",[1,2],17],
+        ["ml", "Malayalam",[1,2], 2],
+        ["mn", "Mongolian",[1,2], 2],
+        ["mnk", "Mandinka", [0,1,2],18],
+        ["mr", "Marathi", [1,2], 2],
+        ["ms", "Malay", [1], 3],
+        ["mt", "Maltese", [1,2,11,20],19],
+        ["nah", "Nahuatl", [1,2], 2],
+        ["nap", "Neapolitan",[1,2], 2],
+        ["nb", "Norwegian Bokmal",[1,2],2],
+        ["ne", "Nepali", [1,2], 2],
+        ["nl", "Dutch", [1,2], 2],
+        ["nn", "Norwegian Nynorsk",[1,2],2],
+        ["no", "Norwegian",[1,2], 2],
+        ["nso", "Northern Sotho",[1,2],2],
+        ["oc", "Occitan", [1,2], 1],
+        ["or", "Oriya", [2,1], 2],
+        ["pa", "Punjabi", [1,2], 2],
+        ["pap", "Papiamento",[1,2], 2],
+        ["pl", "Polish", [1,2,5],7],
+        ["pms", "Piemontese",[1,2], 2],
+        ["ps", "Pashto", [1,2], 2],
+        ["pt", "Portuguese",[1,2], 2],
+        ["pt_br","Brazilian Portuguese",[1,2], 2],
+        ["rm", "Romansh", [1,2], 2],
+        ["ro", "Romanian", [1,2,20],20],
+        ["ru", "Russian", [1,2,5],4],
+        ["sah", "Yakut", [1], 3],
+        ["sco", "Scots", [1,2], 2],
+        ["se", "Northern Sami",[1,2], 2],
+        ["si", "Sinhala", [1,2], 2],
+        ["sk", "Slovak", [1,2,5],6],
+        ["sl", "Slovenian",[5,1,2,3],21],
+        ["so", "Somali", [1,2], 2],
+        ["son", "Songhay", [1,2], 2],
+        ["sq", "Albanian", [1,2], 2],
+        ["sr", "Serbian", [1,2,5],4],
+        ["su", "Sundanese",[1], 3],
+        ["sv", "Swedish", [1,2], 2],
+        ["sw", "Swahili", [1,2], 2],
+        ["ta", "Tamil", [1,2], 2],
+        ["te", "Telugu", [1,2], 2],
+        ["tg", "Tajik", [1,2], 1],
+        ["th", "Thai", [1], 3],
+        ["ti", "Tigrinya", [1,2], 1],
+        ["tk", "Turkmen", [1,2], 2],
+        ["tr", "Turkish", [1,2], 1],
+        ["tt", "Tatar", [1], 3],
+        ["ug", "Uyghur", [1], 3],
+        ["uk", "Ukrainian",[1,2,5],4],
+        ["ur", "Urdu", [1,2], 2],
+        ["uz", "Uzbek", [1,2], 1],
+        ["vi", "Vietnamese",[1], 3],
+        ["wa", "Walloon", [1,2], 1],
+        ["wo", "Wolof", [1], 3],
+        ["yo", "Yoruba", [1,2], 2],
+        ["zh", "Chinese", [1], 3]
+    ];
+    
+    var _rulesPluralsTypes = {
+        1: function(n) {return Number(n > 1);},
+        2: function(n) {return Number(n != 1);},
+        3: function(n) {return 0;},
+        4: function(n) {return Number(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);},
+        5: function(n) {return Number(n===0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5);},
+        6: function(n) {return Number((n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2);},
+        7: function(n) {return Number(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);},
+        8: function(n) {return Number((n==1) ? 0 : (n==2) ? 1 : (n != 8 && n != 11) ? 2 : 3);},
+        9: function(n) {return Number(n >= 2);},
+        10: function(n) {return Number(n==1 ? 0 : n==2 ? 1 : n<7 ? 2 : n<11 ? 3 : 4) ;},
+        11: function(n) {return Number((n==1 || n==11) ? 0 : (n==2 || n==12) ? 1 : (n > 2 && n < 20) ? 2 : 3);},
+        12: function(n) {return Number(n%10!=1 || n%100==11);},
+        13: function(n) {return Number(n !== 0);},
+        14: function(n) {return Number((n==1) ? 0 : (n==2) ? 1 : (n == 3) ? 2 : 3);},
+        15: function(n) {return Number(n%10==1 && n%100!=11 ? 0 : n%10>=2 && (n%100<10 || n%100>=20) ? 1 : 2);},
+        16: function(n) {return Number(n%10==1 && n%100!=11 ? 0 : n !== 0 ? 1 : 2);},
+        17: function(n) {return Number(n==1 || n%10==1 ? 0 : 1);},
+        18: function(n) {return Number(0 ? 0 : n==1 ? 1 : 2);},
+        19: function(n) {return Number(n==1 ? 0 : n===0 || ( n%100>1 && n%100<11) ? 1 : (n%100>10 && n%100<20 ) ? 2 : 3);},
+        20: function(n) {return Number(n==1 ? 0 : (n===0 || (n%100 > 0 && n%100 < 20)) ? 1 : 2);},
+        21: function(n) {return Number(n%100==1 ? 1 : n%100==2 ? 2 : n%100==3 || n%100==4 ? 3 : 0); }
+    };
+    
+    var pluralExtensions = {
+    
+        rules: (function () {
+            var l, rules = {};
+            for (l=_rules.length; l-- ;) {
+                rules[_rules[l][0]] = {
+                    name: _rules[l][1],
+                    numbers: _rules[l][2],
+                    plurals: _rulesPluralsTypes[_rules[l][3]]
+                }
+            }
+            return rules;
+        }()),
+    
+        // you can add your own pluralExtensions
+        addRule: function(lng, obj) {
+            pluralExtensions.rules[lng] = obj;
+        },
+    
+        setCurrentLng: function(lng) {
+            if (!pluralExtensions.currentRule || pluralExtensions.currentRule.lng !== lng) {
+                var parts = lng.split('-');
+    
+                pluralExtensions.currentRule = {
+                    lng: lng,
+                    rule: pluralExtensions.rules[parts[0]]
+                };
+            }
+        },
+    
+        needsPlural: function(lng, count) {
+            var parts = lng.split('-');
+    
+            var ext;
+            if (pluralExtensions.currentRule && pluralExtensions.currentRule.lng === lng) {
+                ext = pluralExtensions.currentRule.rule; 
+            } else {
+                ext = pluralExtensions.rules[parts[f.getCountyIndexOfLng(lng)]];
+            }
+    
+            if (ext && ext.numbers.length <= 1) {
+                return false;
+            } else {
+                return this.get(lng, count) !== 1;
+            }
+        },
+    
+        get: function(lng, count) {
+            var parts = lng.split('-');
+    
+            function getResult(l, c) {
+                var ext;
+                if (pluralExtensions.currentRule && pluralExtensions.currentRule.lng === lng) {
+                    ext = pluralExtensions.currentRule.rule; 
+                } else {
+                    ext = pluralExtensions.rules[l];
+                }
+                if (ext) {
+                    var i;
+                    if (ext.noAbs) {
+                        i = ext.plurals(c);
+                    } else {
+                        i = ext.plurals(Math.abs(c));
+                    }
+                    
+                    var number = ext.numbers[i];
+                    if (ext.numbers.length === 2 && ext.numbers[0] === 1) {
+                        if (number === 2) { 
+                            number = -1; // regular plural
+                        } else if (number === 1) {
+                            number = 1; // singular
+                        }
+                    }//console.log(count + '-' + number);
+                    return number;
+                } else {
+                    return c === 1 ? '1' : '-1';
+                }
+            }
+                        
+            return getResult(parts[f.getCountyIndexOfLng(lng)], count);
+        }
+    
+    };
+    var postProcessors = {};
+    var addPostProcessor = function(name, fc) {
+        postProcessors[name] = fc;
+    };
+    // sprintf support
+    var sprintf = (function() {
+        function get_type(variable) {
+            return Object.prototype.toString.call(variable).slice(8, -1).toLowerCase();
+        }
+        function str_repeat(input, multiplier) {
+            for (var output = []; multiplier > 0; output[--multiplier] = input) {/* do nothing */}
+            return output.join('');
+        }
+    
+        var str_format = function() {
+            if (!str_format.cache.hasOwnProperty(arguments[0])) {
+                str_format.cache[arguments[0]] = str_format.parse(arguments[0]);
+            }
+            return str_format.format.call(null, str_format.cache[arguments[0]], arguments);
+        };
+    
+        str_format.format = function(parse_tree, argv) {
+            var cursor = 1, tree_length = parse_tree.length, node_type = '', arg, output = [], i, k, match, pad, pad_character, pad_length;
+            for (i = 0; i < tree_length; i++) {
+                node_type = get_type(parse_tree[i]);
+                if (node_type === 'string') {
+                    output.push(parse_tree[i]);
+                }
+                else if (node_type === 'array') {
+                    match = parse_tree[i]; // convenience purposes only
+                    if (match[2]) { // keyword argument
+                        arg = argv[cursor];
+                        for (k = 0; k < match[2].length; k++) {
+                            if (!arg.hasOwnProperty(match[2][k])) {
+                                throw(sprintf('[sprintf] property "%s" does not exist', match[2][k]));
+                            }
+                            arg = arg[match[2][k]];
+                        }
+                    }
+                    else if (match[1]) { // positional argument (explicit)
+                        arg = argv[match[1]];
+                    }
+                    else { // positional argument (implicit)
+                        arg = argv[cursor++];
+                    }
+    
+                    if (/[^s]/.test(match[8]) && (get_type(arg) != 'number')) {
+                        throw(sprintf('[sprintf] expecting number but found %s', get_type(arg)));
+                    }
+                    switch (match[8]) {
+                        case 'b': arg = arg.toString(2); break;
+                        case 'c': arg = String.fromCharCode(arg); break;
+                        case 'd': arg = parseInt(arg, 10); break;
+                        case 'e': arg = match[7] ? arg.toExponential(match[7]) : arg.toExponential(); break;
+                        case 'f': arg = match[7] ? parseFloat(arg).toFixed(match[7]) : parseFloat(arg); break;
+                        case 'o': arg = arg.toString(8); break;
+                        case 's': arg = ((arg = String(arg)) && match[7] ? arg.substring(0, match[7]) : arg); break;
+                        case 'u': arg = Math.abs(arg); break;
+                        case 'x': arg = arg.toString(16); break;
+                        case 'X': arg = arg.toString(16).toUpperCase(); break;
+                    }
+                    arg = (/[def]/.test(match[8]) && match[3] && arg >= 0 ? '+'+ arg : arg);
+                    pad_character = match[4] ? match[4] == '0' ? '0' : match[4].charAt(1) : ' ';
+                    pad_length = match[6] - String(arg).length;
+                    pad = match[6] ? str_repeat(pad_character, pad_length) : '';
+                    output.push(match[5] ? arg + pad : pad + arg);
+                }
+            }
+            return output.join('');
+        };
+    
+        str_format.cache = {};
+    
+        str_format.parse = function(fmt) {
+            var _fmt = fmt, match = [], parse_tree = [], arg_names = 0;
+            while (_fmt) {
+                if ((match = /^[^\x25]+/.exec(_fmt)) !== null) {
+                    parse_tree.push(match[0]);
+                }
+                else if ((match = /^\x25{2}/.exec(_fmt)) !== null) {
+                    parse_tree.push('%');
+                }
+                else if ((match = /^\x25(?:([1-9]\d*)\$|\(([^\)]+)\))?(\+)?(0|'[^$])?(-)?(\d+)?(?:\.(\d+))?([b-fosuxX])/.exec(_fmt)) !== null) {
+                    if (match[2]) {
+                        arg_names |= 1;
+                        var field_list = [], replacement_field = match[2], field_match = [];
+                        if ((field_match = /^([a-z_][a-z_\d]*)/i.exec(replacement_field)) !== null) {
+                            field_list.push(field_match[1]);
+                            while ((replacement_field = replacement_field.substring(field_match[0].length)) !== '') {
+                                if ((field_match = /^\.([a-z_][a-z_\d]*)/i.exec(replacement_field)) !== null) {
+                                    field_list.push(field_match[1]);
+                                }
+                                else if ((field_match = /^\[(\d+)\]/.exec(replacement_field)) !== null) {
+                                    field_list.push(field_match[1]);
+                                }
+                                else {
+                                    throw('[sprintf] huh?');
+                                }
+                            }
+                        }
+                        else {
+                            throw('[sprintf] huh?');
+                        }
+                        match[2] = field_list;
+                    }
+                    else {
+                        arg_names |= 2;
+                    }
+                    if (arg_names === 3) {
+                        throw('[sprintf] mixing positional and named placeholders is not (yet) supported');
+                    }
+                    parse_tree.push(match);
+                }
+                else {
+                    throw('[sprintf] huh?');
+                }
+                _fmt = _fmt.substring(match[0].length);
+            }
+            return parse_tree;
+        };
+    
+        return str_format;
+    })();
+    
+    var vsprintf = function(fmt, argv) {
+        argv.unshift(fmt);
+        return sprintf.apply(null, argv);
+    };
+    
+    addPostProcessor("sprintf", function(val, key, opts) {
+        if (!opts.sprintf) return val;
+    
+        if (Object.prototype.toString.apply(opts.sprintf) === '[object Array]') {
+            return vsprintf(val, opts.sprintf);
+        } else if (typeof opts.sprintf === 'object') {
+            return sprintf(val, opts.sprintf);
+        }
+    
+        return val;
+    });
+    // public api interface
+    i18n.init = init;
+    i18n.setLng = setLng;
+    i18n.preload = preload;
+    i18n.addResourceBundle = addResourceBundle;
+    i18n.hasResourceBundle = hasResourceBundle;
+    i18n.addResource = addResource;
+    i18n.addResources = addResources;
+    i18n.removeResourceBundle = removeResourceBundle;
+    i18n.loadNamespace = loadNamespace;
+    i18n.loadNamespaces = loadNamespaces;
+    i18n.setDefaultNamespace = setDefaultNamespace;
+    i18n.t = translate;
+    i18n.translate = translate;
+    i18n.exists = exists;
+    i18n.detectLanguage = f.detectLanguage;
+    i18n.pluralExtensions = pluralExtensions;
+    i18n.sync = sync;
+    i18n.functions = f;
+    i18n.lng = lng;
+    i18n.addPostProcessor = addPostProcessor;
+    i18n.options = o;
+
+})();
+},{"jquery":"jquery"}],62:[function(require,module,exports){
 // Top level file is just a mixin of submodules & constants
 'use strict';
 
@@ -16117,7 +18413,7 @@ var pako = {};
 assign(pako, deflate, inflate, constants);
 
 module.exports = pako;
-},{"./lib/deflate":61,"./lib/inflate":62,"./lib/utils/common":63,"./lib/zlib/constants":66}],61:[function(require,module,exports){
+},{"./lib/deflate":63,"./lib/inflate":64,"./lib/utils/common":65,"./lib/zlib/constants":68}],63:[function(require,module,exports){
 'use strict';
 
 
@@ -16479,7 +18775,7 @@ exports.Deflate = Deflate;
 exports.deflate = deflate;
 exports.deflateRaw = deflateRaw;
 exports.gzip = gzip;
-},{"./utils/common":63,"./utils/strings":64,"./zlib/deflate.js":68,"./zlib/messages":73,"./zlib/zstream":75}],62:[function(require,module,exports){
+},{"./utils/common":65,"./utils/strings":66,"./zlib/deflate.js":70,"./zlib/messages":75,"./zlib/zstream":77}],64:[function(require,module,exports){
 'use strict';
 
 
@@ -16845,7 +19141,7 @@ exports.inflate = inflate;
 exports.inflateRaw = inflateRaw;
 exports.ungzip  = inflate;
 
-},{"./utils/common":63,"./utils/strings":64,"./zlib/constants":66,"./zlib/gzheader":69,"./zlib/inflate.js":71,"./zlib/messages":73,"./zlib/zstream":75}],63:[function(require,module,exports){
+},{"./utils/common":65,"./utils/strings":66,"./zlib/constants":68,"./zlib/gzheader":71,"./zlib/inflate.js":73,"./zlib/messages":75,"./zlib/zstream":77}],65:[function(require,module,exports){
 'use strict';
 
 
@@ -16948,7 +19244,7 @@ exports.setTyped = function (on) {
 };
 
 exports.setTyped(TYPED_OK);
-},{}],64:[function(require,module,exports){
+},{}],66:[function(require,module,exports){
 // String encode/decode helpers
 'use strict';
 
@@ -17135,7 +19431,7 @@ exports.utf8border = function(buf, max) {
   return (pos + _utf8len[buf[pos]] > max) ? pos : max;
 };
 
-},{"./common":63}],65:[function(require,module,exports){
+},{"./common":65}],67:[function(require,module,exports){
 'use strict';
 
 // Note: adler32 takes 12% for level 0 and 2% for level 6.
@@ -17168,7 +19464,7 @@ function adler32(adler, buf, len, pos) {
 
 
 module.exports = adler32;
-},{}],66:[function(require,module,exports){
+},{}],68:[function(require,module,exports){
 module.exports = {
 
   /* Allowed flush values; see deflate() and inflate() below for details */
@@ -17216,7 +19512,7 @@ module.exports = {
   Z_DEFLATED:               8
   //Z_NULL:                 null // Use -1 or null inline, depending on var type
 };
-},{}],67:[function(require,module,exports){
+},{}],69:[function(require,module,exports){
 'use strict';
 
 // Note: we can't get significant speed boost here.
@@ -17258,7 +19554,7 @@ function crc32(crc, buf, len, pos) {
 
 
 module.exports = crc32;
-},{}],68:[function(require,module,exports){
+},{}],70:[function(require,module,exports){
 'use strict';
 
 var utils   = require('../utils/common');
@@ -19024,7 +21320,7 @@ exports.deflatePending = deflatePending;
 exports.deflatePrime = deflatePrime;
 exports.deflateTune = deflateTune;
 */
-},{"../utils/common":63,"./adler32":65,"./crc32":67,"./messages":73,"./trees":74}],69:[function(require,module,exports){
+},{"../utils/common":65,"./adler32":67,"./crc32":69,"./messages":75,"./trees":76}],71:[function(require,module,exports){
 'use strict';
 
 
@@ -19065,7 +21361,7 @@ function GZheader() {
 }
 
 module.exports = GZheader;
-},{}],70:[function(require,module,exports){
+},{}],72:[function(require,module,exports){
 'use strict';
 
 // See state defs from inflate.js
@@ -19392,7 +21688,7 @@ module.exports = function inflate_fast(strm, start) {
   return;
 };
 
-},{}],71:[function(require,module,exports){
+},{}],73:[function(require,module,exports){
 'use strict';
 
 
@@ -20896,7 +23192,7 @@ exports.inflateSync = inflateSync;
 exports.inflateSyncPoint = inflateSyncPoint;
 exports.inflateUndermine = inflateUndermine;
 */
-},{"../utils/common":63,"./adler32":65,"./crc32":67,"./inffast":70,"./inftrees":72}],72:[function(require,module,exports){
+},{"../utils/common":65,"./adler32":67,"./crc32":69,"./inffast":72,"./inftrees":74}],74:[function(require,module,exports){
 'use strict';
 
 
@@ -21223,7 +23519,7 @@ module.exports = function inflate_table(type, lens, lens_index, codes, table, ta
   return 0;
 };
 
-},{"../utils/common":63}],73:[function(require,module,exports){
+},{"../utils/common":65}],75:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -21237,7 +23533,7 @@ module.exports = {
   '-5':   'buffer error',        /* Z_BUF_ERROR     (-5) */
   '-6':   'incompatible version' /* Z_VERSION_ERROR (-6) */
 };
-},{}],74:[function(require,module,exports){
+},{}],76:[function(require,module,exports){
 'use strict';
 
 
@@ -22437,7 +24733,7 @@ exports._tr_stored_block = _tr_stored_block;
 exports._tr_flush_block  = _tr_flush_block;
 exports._tr_tally = _tr_tally;
 exports._tr_align = _tr_align;
-},{"../utils/common":63}],75:[function(require,module,exports){
+},{"../utils/common":65}],77:[function(require,module,exports){
 'use strict';
 
 
@@ -22467,14 +24763,14 @@ function ZStream() {
 }
 
 module.exports = ZStream;
-},{}],76:[function(require,module,exports){
+},{}],78:[function(require,module,exports){
 var MediaStreamType = {
     VIDEO_TYPE: "Video",
 
     AUDIO_TYPE: "Audio"
 };
 module.exports = MediaStreamType;
-},{}],77:[function(require,module,exports){
+},{}],79:[function(require,module,exports){
 var RTCBrowserType = {
     RTC_BROWSER_CHROME: "rtc_browser.chrome",
 
@@ -22482,7 +24778,7 @@ var RTCBrowserType = {
 };
 
 module.exports = RTCBrowserType;
-},{}],78:[function(require,module,exports){
+},{}],80:[function(require,module,exports){
 var RTCEvents = {
     LASTN_CHANGED: "rtc.lastn_changed",
     DOMINANTSPEAKER_CHANGED: "rtc.dominantspeaker_changed",
@@ -22494,7 +24790,7 @@ var RTCEvents = {
 };
 
 module.exports = RTCEvents;
-},{}],79:[function(require,module,exports){
+},{}],81:[function(require,module,exports){
 var StreamEventTypes = {
     EVENT_TYPE_LOCAL_CREATED: "stream.local_created",
 
@@ -22508,14 +24804,14 @@ var StreamEventTypes = {
 };
 
 module.exports = StreamEventTypes;
-},{}],80:[function(require,module,exports){
+},{}],82:[function(require,module,exports){
 var UIEvents = {
     NICKNAME_CHANGED: "UI.nickname_changed",
     SELECTED_ENDPOINT: "UI.selected_endpoint",
     PINNED_ENDPOINT: "UI.pinned_endpoint"
 };
 module.exports = UIEvents;
-},{}],81:[function(require,module,exports){
+},{}],83:[function(require,module,exports){
 var CQEvents = {
     LOCALSTATS_UPDATED: "cq.localstats_updated",
     REMOTESTATS_UPDATED: "cq.remotestats_updated",
@@ -22523,7 +24819,7 @@ var CQEvents = {
 };
 
 module.exports = CQEvents;
-},{}],82:[function(require,module,exports){
+},{}],84:[function(require,module,exports){
 var DesktopSharingEventTypes = {
     INIT: "ds.init",
 
@@ -22533,7 +24829,20 @@ var DesktopSharingEventTypes = {
 };
 
 module.exports = DesktopSharingEventTypes;
-},{}],83:[function(require,module,exports){
+},{}],85:[function(require,module,exports){
+module.exports = {
+    getLanguages : function () {
+        var languages = [];
+        for(var lang in this)
+        {
+            if(typeof this[lang] === "string")
+                languages.push(this[lang]);
+        }
+        return languages;
+    },
+    EN: "en"
+}
+},{}],86:[function(require,module,exports){
 var XMPPEvents = {
     CONFERENCE_CERATED: "xmpp.conferenceCreated.jingle",
     CALL_TERMINATED: "xmpp.callterminated.jingle",
@@ -22560,7 +24869,7 @@ var XMPPEvents = {
     ETHERPAD: "xmpp.etherpad"
 };
 module.exports = XMPPEvents;
-},{}],84:[function(require,module,exports){
+},{}],87:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a

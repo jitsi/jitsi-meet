@@ -1,5 +1,5 @@
 BROWSERIFY = browserify
-GLOBAL_FLAGS = -e
+GLOBAL_FLAGS = -x jquery -e
 OUTPUT_DIR = .
 DEPLOY_DIR = libs
 
@@ -21,3 +21,4 @@ clean:
 
 deploy:
 	@mkdir -p $(DEPLOY_DIR) && cp $(OUTPUT_DIR)/*.bundle.js $(DEPLOY_DIR)
+	

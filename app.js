@@ -13,6 +13,7 @@ var APP =
         this.desktopsharing = require("./modules/desktopsharing/desktopsharing");
         this.xmpp = require("./modules/xmpp/xmpp");
         this.keyboardshortcut = require("./modules/keyboardshortcut/keyboardshortcut");
+        this.translation = require("./modules/translation/translation");
     }
 };
 
@@ -33,6 +34,8 @@ function init() {
 $(document).ready(function () {
 
     APP.init();
+
+    APP.translation.init();
 
     if(APP.API.isEnabled())
         APP.API.init();

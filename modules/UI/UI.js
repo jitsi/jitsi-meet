@@ -340,15 +340,7 @@ UI.start = function (init) {
         "newestOnTop": false
     };
 
-    $('#settingsmenu>input').keyup(function(event){
-        if(event.keyCode === 13) {//enter
-            SettingsMenu.update();
-        }
-    });
-
-    $("#updateSettings").click(function () {
-        SettingsMenu.update();
-    });
+    SettingsMenu.init();
 
 };
 

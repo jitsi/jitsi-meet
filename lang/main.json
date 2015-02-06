@@ -1,0 +1,120 @@
+{
+    "contactlist": "CONTACT LIST",
+    "connectionsettings": "Connection Settings",
+    "poweredby": "powered by",
+    "downloadlogs": "Download logs",
+    "welcomepage":{
+        "go": "GO",
+        "roomname": "Enter room name",
+        "disable": "Don't show this page next time I enter",
+        "feature1": {
+            "title": "Simple to use",
+            "content": "No downloads required. __app__ works directly within your browser. Simply share your conference URL with others to get started."
+        },
+        "feature2": {
+            "title": "Low bandwidth",
+            "content": "Multi-party video conferences work with as little as 128Kbps. Screen-sharing and audio-only conferences are possible with far less."
+        },
+        "feature3": {
+            "title": "Open source",
+            "content": "__app__ is licensed under MIT. You are free to download, use, modify, and share them as per these licenses."
+        },
+        "feature4": {
+            "title": "Unlimited users",
+            "content": "There are no artificial restrictions on the number of users or conference participants. Server power and bandwidth are the only limiting factors."
+        },
+        "feature5": {
+            "title": "Screen sharing",
+            "content": "It's easy to share your screen with others. __app__ is ideal for on-line presentations, lectures, and tech support sessions."
+        },
+        "feature6": {
+            "title": "Secure rooms",
+            "content": "Need some privacy? __app__ conference rooms can be secured with a password in order to exclude unwanted guests and prevent interruptions."
+        },
+        "feature7": {
+            "title": "Shared notes",
+            "content": "__app__ features Etherpad, a real-time collaborative text editor that's great for meeting minutes, writing articles, and more."
+        },
+        "feature8": {
+            "title": "Usage statistics",
+            "content": "Learn about your users through easy integration with Piwik, Google Analytics, and other usage monitoring and statistics systems."
+        }
+    },
+    "toolbar": {
+        "mute": "Mute / Unmute",
+        "videomute": "Start / stop camera",
+        "authenticate": "Authenticate",
+        "record": "Record",
+        "lock": "Lock / unlock room",
+        "invite": "Invite others",
+        "chat": "Open / close chat",
+        "prezi": "Share Prezi",
+        "etherpad": "Shared document",
+        "sharescreen": "Share screen",
+        "fullscreen": "Enter / Exit Full Screen",
+        "sip": "Call SIP number",
+        "Settings": "Settings",
+        "hangup": "Hang Up"
+    },
+    "bottomtoolbar": {
+        "chat": "Open / close chat",
+        "filmstrip": "Open / close contact list",
+        "contactlist": "Show / hide film strip"
+    },
+    "chat":{
+        "nickname": {
+            "title": "Enter a nickname in the box below",
+            "popover": "Choose a nickname"
+        },
+        "messagebox": "Enter text..."
+    },
+    "settings":
+    {
+        "title": "SETTINGS",
+        "update": "Update",
+        "name": "Name"
+    },
+    "videothumbnail":
+    {
+        "editnickname": "Click to edit your<br/>display name",
+        "moderator": "The owner of<br/>this conference",
+        "videomute": "Participant has<br/>stopped the camera.",
+        "mute": "Participant is muted",
+        "kick": "Kick out",
+        "muted": "Muted",
+        "domute": "Mute"
+
+    },
+    "connectionindicator":
+    {
+        "bitrate": "Bitrate:",
+        "packetloss": "Packet loss: ",
+        "resolution": "Resolution:",
+        "less": "Show less",
+        "more": "Show more",
+        "address": "Address:",
+        "remoteports": "Remote ports:",
+        "localports": "Local ports:",
+        "remoteport": "Remote port:",
+        "localport": "Local port:",
+        "localaddress": "Local address: ",
+        "localaddresses": "Local addresses: ",
+        "remoteaddress": "Remote address: ",
+        "remoteaddresses": "Remote addresses: ",
+        "transport": "Transport: ",
+        "bandwidth": "Estimated bandwidth:",
+        "na": "Come back here for connection information once the conference starts"
+    },
+    "notify": {
+        "disconnected": "disconnected",
+        "moderator": "Moderator rights granted !",
+        "connected": "connected"
+
+    }
+
+
+
+
+
+
+}

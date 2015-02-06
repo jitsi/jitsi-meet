@@ -235,6 +235,8 @@ function setDisplayName(videoSpanId, displayName) {
         } else {
             nameSpan.id = 'localDisplayName';
             $('#' + videoSpanId)[0].appendChild(editButton);
+            //translates popover of edit button
+            APP.translation.translateElement($("a.displayname"));
 
             var editableText = document.createElement('input');
             editableText.className = 'displayname';
@@ -345,14 +347,16 @@ function addRemoteVideoMenu(jid, parentElement) {
     var muteMenuItem = document.createElement('li');
     var muteLinkItem = document.createElement('a');
 
-    var mutedIndicator = "<i class='icon-mic-disabled'></i>";
+    var mutedIndicator = "<i style='float:left;' class='icon-mic-disabled'></i>";
 
     if (!mutedAudios[jid]) {
-        muteLinkItem.innerHTML = mutedIndicator + 'Mute';
+        muteLinkItem.innerHTML = mutedIndicator +
+            " <div style='width: 90px;margin-left: 20px;' data-i18n='videothumbnail.domute'></div>";
         muteLinkItem.className = 'mutelink';
     }
     else {
-        muteLinkItem.innerHTML = mutedIndicator + ' Muted';
+        muteLinkItem.innerHTML = mutedIndicator +
+            " <div style='width: 90px;margin-left: 20px;' data-i18n='videothumbnail.muted'></div>";
         muteLinkItem.className = 'mutelink disabled';
     }
 
@@ -366,11 +370,13 @@ function addRemoteVideoMenu(jid, parentElement) {
         popupmenuElement.setAttribute('style', 'display:none;');
 
         if (isMute) {
-            this.innerHTML = mutedIndicator + ' Muted';
+            this.innerHTML = mutedIndicator +
+                " <div style='width: 90px;margin-left: 20px;' data-i18n='videothumbnail.muted'></div>";
             this.className = 'mutelink disabled';
         }
         else {
-            this.innerHTML = mutedIndicator + ' Mute';
+            this.innerHTML = mutedIndicator +
+                " <div style='width: 90px;margin-left: 20px;' data-i18n='videothumbnail.domute'></div>";
             this.className = 'mutelink';
         }
     };
@@ -378,11 +384,12 @@ function addRemoteVideoMenu(jid, parentElement) {
     muteMenuItem.appendChild(muteLinkItem);
     popupmenuElement.appendChild(muteMenuItem);
 
-    var ejectIndicator = "<i class='fa fa-eject'></i>";
+    var ejectIndicator = "<i style='float:left;' class='fa fa-eject'></i>";
 
     var ejectMenuItem = document.createElement('li');
     var ejectLinkItem = document.createElement('a');
-    ejectLinkItem.innerHTML = ejectIndicator + ' Kick out';
+    var ejectText = "<div style='width: 90px;margin-left: 20px;' data-i18n='videothumbnail.kick'>&nbsp;</div>";
+    ejectLinkItem.innerHTML = ejectIndicator + ' ' + ejectText;
     ejectLinkItem.onclick = function(){
         APP.xmpp.eject(jid);
         popupmenuElement.setAttribute('style', 'display:none;');
@@ -394,6 +401,7 @@ function addRemoteVideoMenu(jid, parentElement) {
     var paddingSpan = document.createElement('span');
     paddingSpan.className = 'popupmenuPadding';
     popupmenuElement.appendChild(paddingSpan);
+    APP.translation.translateElement($("#" + popupmenuElement.id + " > li > a > div"));
 }
 
 /**
@@ -468,7 +476,7 @@ function createEditDisplayNameButton() {
     var editButton = document.createElement('a');
     editButton.className = 'displayname';
     UIUtil.setTooltip(editButton,
-        'Click to edit your<br/>display name',
+        "videothumbnail.editnickname",
         "top");
     editButton.innerHTML = '<i class="fa fa-pencil"></i>';
 
@@ -487,7 +495,7 @@ function createModeratorIndicatorElement(parentElement) {
     parentElement.appendChild(moderatorIndicator);
 
     UIUtil.setTooltip(parentElement,
-        "The owner of<br/>this conference",
+        "videothumbnail.moderator",
         "top");
 }
 
@@ -1043,13 +1051,11 @@ var VideoLayout = (function (my) {
         container.id = spanId;
         container.className = 'videocontainer';
         var remotes = document.getElementById('remoteVideos');
-
+        remotes.appendChild(container);
         // If the peerJid is null then this video span couldn't be directly
         // associated with a participant (this could happen in the case of prezi).
         if (APP.xmpp.isModerator() && peerJid !== null)
             addRemoteVideoMenu(peerJid, container);
-
-        remotes.appendChild(container);
         AudioLevels.updateAudioLevelCanvas(peerJid, VideoLayout);
 
         return container;
@@ -1335,6 +1341,8 @@ var VideoLayout = (function (my) {
             if (indicatorSpan.children().length === 0)
             {
                 createModeratorIndicatorElement(indicatorSpan[0]);
+                //translates text in focus indicator
+                APP.translation.translateElement($('#localVideoContainer .focusindicator'));
             }
         }
 
@@ -1375,6 +1383,8 @@ var VideoLayout = (function (my) {
                     videoContainer.appendChild(indicatorSpan);
 
                     createModeratorIndicatorElement(indicatorSpan);
+                    //translates text in focus indicators
+                    APP.translation.translateElement($('#' + videoSpanId + ' .focusindicator'));
                 }
             } else if (isModerator) {
                 // We are moderator, but user is not - add menu
@@ -1408,9 +1418,11 @@ var VideoLayout = (function (my) {
                 var mutedIndicator = document.createElement('i');
                 mutedIndicator.className = 'icon-camera-disabled';
                 UIUtil.setTooltip(mutedIndicator,
-                    "Participant has<br/>stopped the camera.",
+                    "videothumbnail.videomute",
                     "top");
                 videoMutedSpan.appendChild(mutedIndicator);
+                //translate texts for muted indicator
+                APP.translation.translateElement($('#' + videoSpanId  + " > i"));
             }
 
             VideoLayout.updateMutePosition(videoSpanId);
@@ -1451,10 +1463,11 @@ var VideoLayout = (function (my) {
                 audioMutedSpan = document.createElement('span');
                 audioMutedSpan.className = 'audioMuted';
                 UIUtil.setTooltip(audioMutedSpan,
-                    "Participant is muted",
+                    "videothumbnail.mute",
                     "top");
 
                 $('#' + videoSpanId)[0].appendChild(audioMutedSpan);
+                APP.translation.translateElement($('#' + videoSpanId + " > span"));
                 var mutedIndicator = document.createElement('i');
                 mutedIndicator.className = 'icon-mic-disabled';
                 audioMutedSpan.appendChild(mutedIndicator);
