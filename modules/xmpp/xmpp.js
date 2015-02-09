@@ -431,6 +431,12 @@ var XMPP = {
         if(!connection)
             return null;
         return connection.emuc.ssrc2jid[ssrc];
+    },
+    getMUCJoined: function () {
+        return connection.emuc.joined;
+    },
+    getSessions: function () {
+        return connection.jingle.sessions;
     }
 
 };
