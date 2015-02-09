@@ -84,7 +84,7 @@ function LocalStatsCollector(stream, interval, statisticsService, eventEmitter) 
  * Starts the collecting the statistics.
  */
 LocalStatsCollector.prototype.start = function () {
-    if (!window.AudioContext)
+    if (config.disableAudioLevels || !window.AudioContext)
         return;
 
     var context = new AudioContext();

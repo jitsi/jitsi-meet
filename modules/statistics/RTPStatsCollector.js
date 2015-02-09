@@ -219,69 +219,66 @@ StatsCollector.prototype.errorCallback = function (error)
 StatsCollector.prototype.start = function ()
 {
     var self = this;
-    this.audioLevelsIntervalId = setInterval(
-        function ()
-        {
-            // Interval updates
-            self.peerconnection.getStats(
-                function (report)
-                {
-                    var results = null;
-                    if(!report || !report.result || typeof report.result != 'function')
-                    {
-                        results = report;
-                    }
-                    else
-                    {
-                        results = report.result();
-                    }
-                    //console.error("Got interval report", results);
-                    self.currentAudioLevelsReport = results;
-                    self.processAudioLevelReport();
-                    self.baselineAudioLevelsReport =
-                        self.currentAudioLevelsReport;
-                },
-                self.errorCallback
-            );
-        },
-        self.audioLevelsIntervalMilis
-    );
+    if(!config.disableAudioLevels) {
+        this.audioLevelsIntervalId = setInterval(
+            function () {
+                // Interval updates
+                self.peerconnection.getStats(
+                    function (report) {
+                        var results = null;
+                        if (!report || !report.result ||
+                            typeof report.result != 'function') {
+                            results = report;
+                        }
+                        else {
+                            results = report.result();
+                        }
+                        //console.error("Got interval report", results);
+                        self.currentAudioLevelsReport = results;
+                        self.processAudioLevelReport();
+                        self.baselineAudioLevelsReport =
+                            self.currentAudioLevelsReport;
+                    },
+                    self.errorCallback
+                );
+            },
+            self.audioLevelsIntervalMilis
+        );
+    }
 
-    this.statsIntervalId = setInterval(
-        function () {
-            // Interval updates
-            self.peerconnection.getStats(
-                function (report)
-                {
-                    var results = null;
-                    if(!report || !report.result || typeof report.result != 'function')
-                    {
-                        //firefox
-                        results = report;
-                    }
-                    else
-                    {
-                        //chrome
-                        results = report.result();
-                    }
-                    //console.error("Got interval report", results);
-                    self.currentStatsReport = results;
-                    try
-                    {
-                        self.processStatsReport();
-                    }
-                    catch (e)
-                    {
-                        console.error("Unsupported key:" + e, e);
-                    }
+    if(!config.disableStats) {
+        this.statsIntervalId = setInterval(
+            function () {
+                // Interval updates
+                self.peerconnection.getStats(
+                    function (report) {
+                        var results = null;
+                        if (!report || !report.result ||
+                            typeof report.result != 'function') {
+                            //firefox
+                            results = report;
+                        }
+                        else {
+                            //chrome
+                            results = report.result();
+                        }
+                        //console.error("Got interval report", results);
+                        self.currentStatsReport = results;
+                        try {
+                            self.processStatsReport();
+                        }
+                        catch (e) {
+                            console.error("Unsupported key:" + e, e);
+                        }
 
-                    self.baselineStatsReport = self.currentStatsReport;
-                },
-                self.errorCallback
-            );
-        },
-        self.statsIntervalMilis
-    );
+                        self.baselineStatsReport = self.currentStatsReport;
+                    },
+                    self.errorCallback
+                );
+            },
+            self.statsIntervalMilis
+        );
+    }
 
     if (config.logStats) {
         this.gatherStatsIntervalId = setInterval(

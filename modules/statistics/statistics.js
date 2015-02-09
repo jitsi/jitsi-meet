@@ -33,18 +33,14 @@ function stopRemote()
 }
 
 function startRemoteStats (peerconnection) {
-    if (config.enableRtpStats)
+    if(rtpStats)
     {
-        if(rtpStats)
-        {
-            rtpStats.stop();
-            rtpStats = null;
-        }
-
-        rtpStats = new RTPStats(peerconnection, 200, 2000, eventEmitter);
-        rtpStats.start();
+        rtpStats.stop();
+        rtpStats = null;
     }
 
+    rtpStats = new RTPStats(peerconnection, 200, 2000, eventEmitter);
+    rtpStats.start();
 }
 
 function onStreamCreated(stream)
