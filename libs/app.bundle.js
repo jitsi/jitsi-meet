@@ -1917,6 +1917,16 @@ UI.clickOnVideo = function (videoNumber) {
     }
 }
 
+//Used by torture
+UI.showToolbar = function () {
+    return ToolbarToggler.showToolbar();
+}
+
+//Used by torture
+UI.dockToolbar = function (isDock) {
+    return ToolbarToggler.dockToolbar(isDock);
+}
+
 module.exports = UI;
 
 
