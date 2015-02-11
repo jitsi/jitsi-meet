@@ -1315,7 +1315,7 @@ function registerListeners() {
             VideoLayout.onSimulcastLayersChanging(endpointSimulcastLayers);
         });
     VideoLayout.init(eventEmitter);
-
+    AudioLevels.init();
     APP.statistics.addAudioLevelListener(function(jid, audioLevel)
     {
         var resourceJid;
@@ -1933,6 +1933,21 @@ module.exports = UI;
 },{"../../service/RTC/RTCEvents":80,"../../service/RTC/StreamEventTypes":81,"../../service/connectionquality/CQEvents":83,"../../service/desktopsharing/DesktopSharingEventTypes":84,"../../service/xmpp/XMPPEvents":86,"./audio_levels/AudioLevels.js":9,"./authentication/Authentication":11,"./avatar/Avatar":12,"./etherpad/Etherpad.js":13,"./prezi/Prezi.js":14,"./side_pannels/SidePanelToggler":16,"./side_pannels/chat/Chat.js":17,"./side_pannels/contactlist/ContactList":21,"./side_pannels/settings/Settings":22,"./side_pannels/settings/SettingsMenu":23,"./toolbars/BottomToolbar":24,"./toolbars/Toolbar":25,"./toolbars/ToolbarToggler":26,"./util/MessageHandler":28,"./util/NicknameHandler":29,"./util/UIUtil":30,"./videolayout/VideoLayout.js":32,"./welcome_page/RoomnameGenerator":33,"./welcome_page/WelcomePage":34,"events":87}],9:[function(require,module,exports){
 var CanvasUtil = require("./CanvasUtils");
 
+var ASDrawContext = $('#activeSpeakerAudioLevel')[0].getContext('2d');
+
+function initActiveSpeakerAudioLevels() {
+    var ASRadius = interfaceConfig.ACTIVE_SPEAKER_AVATAR_SIZE / 2;
+    var ASCenter = (interfaceConfig.ACTIVE_SPEAKER_AVATAR_SIZE + ASRadius) / 2;
+
+// Draw a circle.
+    ASDrawContext.arc(ASCenter, ASCenter, ASRadius, 0, 2 * Math.PI);
+
+// Add a shadow around the circle
+    ASDrawContext.shadowColor = interfaceConfig.SHADOW_COLOR;
+    ASDrawContext.shadowOffsetX = 0;
+    ASDrawContext.shadowOffsetY = 0;
+}
+
 /**
  * The audio Levels plugin.
  */
@@ -1940,6 +1955,10 @@ var AudioLevels = (function(my) {
     var audioLevelCanvasCache = {};
 
     my.LOCAL_LEVEL = 'local';
+
+    my.init = function () {
+        initActiveSpeakerAudioLevels();
+    }
 
     /**
      * Updates the audio level canvas for the given peerJid. If the canvas
@@ -2027,44 +2046,26 @@ var AudioLevels = (function(my) {
         }
 
         if(resourceJid  === largeVideoResourceJid) {
-            AudioLevels.updateActiveSpeakerAudioLevel(audioLevel);
+            window.requestAnimationFrame(function () {
+                AudioLevels.updateActiveSpeakerAudioLevel(audioLevel);
+            });
         }
     };
 
     my.updateActiveSpeakerAudioLevel = function(audioLevel) {
-        var drawContext = $('#activeSpeakerAudioLevel')[0].getContext('2d');
-        var r = interfaceConfig.ACTIVE_SPEAKER_AVATAR_SIZE / 2;
-        var center = (interfaceConfig.ACTIVE_SPEAKER_AVATAR_SIZE + r) / 2;
+        if($("#activeSpeaker").css("visibility") == "hidden")
+            return;
 
-        // Save the previous state of the context.
-        drawContext.save();
 
-        drawContext.clearRect(0, 0, 300, 300);
+        ASDrawContext.clearRect(0, 0, 300, 300);
+        if(audioLevel == 0)
+            return;
 
-        // Draw a circle.
-        drawContext.arc(center, center, r, 0, 2 * Math.PI);
+        ASDrawContext.shadowBlur = getShadowLevel(audioLevel);
 
-        // Add a shadow around the circle
-        drawContext.shadowColor = interfaceConfig.SHADOW_COLOR;
-        drawContext.shadowBlur = getShadowLevel(audioLevel);
-        drawContext.shadowOffsetX = 0;
-        drawContext.shadowOffsetY = 0;
 
         // Fill the shape.
-        drawContext.fill();
-
-        drawContext.save();
-
-        drawContext.restore();
-
-
-        drawContext.arc(center, center, r, 0, 2 * Math.PI);
-
-        drawContext.clip();
-        drawContext.clearRect(0, 0, 277, 200);
-
-        // Restore the previous context state.
-        drawContext.restore();
+        ASDrawContext.fill();
     };
 
     /**
@@ -10604,8 +10605,12 @@ PeerStats.prototype.setSsrcBitrate = function (ssrc, bitrate)
 PeerStats.prototype.setSsrcAudioLevel = function (ssrc, audioLevel)
 {
     // Range limit 0 - 1
-    this.ssrc2AudioLevel[ssrc] = Math.min(Math.max(audioLevel, 0), 1);
+    this.ssrc2AudioLevel[ssrc] = formatAudioLevel(audioLevel);
 };
+
+function formatAudioLevel(audioLevel) {
+    return Math.min(Math.max(audioLevel, 0), 1);
+}
 
 /**
  * Array with the transport information.
@@ -10681,16 +10686,26 @@ module.exports = StatsCollector;
 /**
  * Stops stats updates.
  */
-StatsCollector.prototype.stop = function ()
-{
-    if (this.audioLevelsIntervalId)
-    {
+StatsCollector.prototype.stop = function () {
+    if (this.audioLevelsIntervalId) {
         clearInterval(this.audioLevelsIntervalId);
         this.audioLevelsIntervalId = null;
+    }
+
+    if (this.statsIntervalId)
+    {
         clearInterval(this.statsIntervalId);
         this.statsIntervalId = null;
+    }
+
+    if(this.logStatsIntervalId)
+    {
         clearInterval(this.logStatsIntervalId);
         this.logStatsIntervalId = null;
+    }
+
+    if(this.gatherStatsIntervalId)
+    {
         clearInterval(this.gatherStatsIntervalId);
         this.gatherStatsIntervalId = null;
     }
@@ -10713,6 +10728,7 @@ StatsCollector.prototype.start = function ()
 {
     var self = this;
     if(!config.disableAudioLevels) {
+        console.debug("set audio levels interval");
         this.audioLevelsIntervalId = setInterval(
             function () {
                 // Interval updates
@@ -10740,6 +10756,7 @@ StatsCollector.prototype.start = function ()
     }
 
     if(!config.disableStats) {
+        console.debug("set stats interval");
         this.statsIntervalId = setInterval(
             function () {
                 // Interval updates
@@ -11170,10 +11187,15 @@ StatsCollector.prototype.processAudioLevelReport = function ()
         {
             // TODO: can't find specs about what this value really is,
             // but it seems to vary between 0 and around 32k.
-            audioLevel = audioLevel / 32767;
-            jidStats.setSsrcAudioLevel(ssrc, audioLevel);
-            if(jid != APP.xmpp.myJid())
+            audioLevel = formatAudioLevel(audioLevel / 32767);
+            var oldLevel = jidStats.ssrc2AudioLevel[ssrc];
+            if(jid != APP.xmpp.myJid() && (!oldLevel || oldLevel != audioLevel))
+            {
+
+                jidStats.ssrc2AudioLevel[ssrc] = audioLevel;
+
                 this.eventEmitter.emit("statistics.audioLevel", jid, audioLevel);
+            }
         }
 
     }
@@ -11231,7 +11253,7 @@ function onStreamCreated(stream)
     if(stream.getOriginalStream().getAudioTracks().length === 0)
         return;
 
-    localStats = new LocalStats(stream.getOriginalStream(), 100, statistics,
+    localStats = new LocalStats(stream.getOriginalStream(), 200, statistics,
         eventEmitter);
     localStats.start();
 }

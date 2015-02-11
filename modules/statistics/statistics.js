@@ -48,7 +48,7 @@ function onStreamCreated(stream)
     if(stream.getOriginalStream().getAudioTracks().length === 0)
         return;
 
-    localStats = new LocalStats(stream.getOriginalStream(), 100, statistics,
+    localStats = new LocalStats(stream.getOriginalStream(), 200, statistics,
         eventEmitter);
     localStats.start();
 }

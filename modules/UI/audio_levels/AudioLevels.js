@@ -1,5 +1,20 @@
 var CanvasUtil = require("./CanvasUtils");
 
+var ASDrawContext = $('#activeSpeakerAudioLevel')[0].getContext('2d');
+
+function initActiveSpeakerAudioLevels() {
+    var ASRadius = interfaceConfig.ACTIVE_SPEAKER_AVATAR_SIZE / 2;
+    var ASCenter = (interfaceConfig.ACTIVE_SPEAKER_AVATAR_SIZE + ASRadius) / 2;
+
+// Draw a circle.
+    ASDrawContext.arc(ASCenter, ASCenter, ASRadius, 0, 2 * Math.PI);
+
+// Add a shadow around the circle
+    ASDrawContext.shadowColor = interfaceConfig.SHADOW_COLOR;
+    ASDrawContext.shadowOffsetX = 0;
+    ASDrawContext.shadowOffsetY = 0;
+}
+
 /**
  * The audio Levels plugin.
  */
@@ -7,6 +22,10 @@ var AudioLevels = (function(my) {
     var audioLevelCanvasCache = {};
 
     my.LOCAL_LEVEL = 'local';
+
+    my.init = function () {
+        initActiveSpeakerAudioLevels();
+    }
 
     /**
      * Updates the audio level canvas for the given peerJid. If the canvas
@@ -94,44 +113,26 @@ var AudioLevels = (function(my) {
         }
 
         if(resourceJid  === largeVideoResourceJid) {
-            AudioLevels.updateActiveSpeakerAudioLevel(audioLevel);
+            window.requestAnimationFrame(function () {
+                AudioLevels.updateActiveSpeakerAudioLevel(audioLevel);
+            });
         }
     };
 
     my.updateActiveSpeakerAudioLevel = function(audioLevel) {
-        var drawContext = $('#activeSpeakerAudioLevel')[0].getContext('2d');
-        var r = interfaceConfig.ACTIVE_SPEAKER_AVATAR_SIZE / 2;
-        var center = (interfaceConfig.ACTIVE_SPEAKER_AVATAR_SIZE + r) / 2;
+        if($("#activeSpeaker").css("visibility") == "hidden")
+            return;
 
-        // Save the previous state of the context.
-        drawContext.save();
 
-        drawContext.clearRect(0, 0, 300, 300);
+        ASDrawContext.clearRect(0, 0, 300, 300);
+        if(audioLevel == 0)
+            return;
 
-        // Draw a circle.
-        drawContext.arc(center, center, r, 0, 2 * Math.PI);
+        ASDrawContext.shadowBlur = getShadowLevel(audioLevel);
 
-        // Add a shadow around the circle
-        drawContext.shadowColor = interfaceConfig.SHADOW_COLOR;
-        drawContext.shadowBlur = getShadowLevel(audioLevel);
-        drawContext.shadowOffsetX = 0;
-        drawContext.shadowOffsetY = 0;
 
         // Fill the shape.
-        drawContext.fill();
-
-        drawContext.save();
-
-        drawContext.restore();
-
-
-        drawContext.arc(center, center, r, 0, 2 * Math.PI);
-
-        drawContext.clip();
-        drawContext.clearRect(0, 0, 277, 200);
-
-        // Restore the previous context state.
-        drawContext.restore();
+        ASDrawContext.fill();
     };
 
     /**

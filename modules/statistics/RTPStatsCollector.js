@@ -111,8 +111,12 @@ PeerStats.prototype.setSsrcBitrate = function (ssrc, bitrate)
 PeerStats.prototype.setSsrcAudioLevel = function (ssrc, audioLevel)
 {
     // Range limit 0 - 1
-    this.ssrc2AudioLevel[ssrc] = Math.min(Math.max(audioLevel, 0), 1);
+    this.ssrc2AudioLevel[ssrc] = formatAudioLevel(audioLevel);
 };
+
+function formatAudioLevel(audioLevel) {
+    return Math.min(Math.max(audioLevel, 0), 1);
+}
 
 /**
  * Array with the transport information.
@@ -188,16 +192,26 @@ module.exports = StatsCollector;
 /**
  * Stops stats updates.
  */
-StatsCollector.prototype.stop = function ()
-{
-    if (this.audioLevelsIntervalId)
-    {
+StatsCollector.prototype.stop = function () {
+    if (this.audioLevelsIntervalId) {
         clearInterval(this.audioLevelsIntervalId);
         this.audioLevelsIntervalId = null;
+    }
+
+    if (this.statsIntervalId)
+    {
         clearInterval(this.statsIntervalId);
         this.statsIntervalId = null;
+    }
+
+    if(this.logStatsIntervalId)
+    {
         clearInterval(this.logStatsIntervalId);
         this.logStatsIntervalId = null;
+    }
+
+    if(this.gatherStatsIntervalId)
+    {
         clearInterval(this.gatherStatsIntervalId);
         this.gatherStatsIntervalId = null;
     }
@@ -220,6 +234,7 @@ StatsCollector.prototype.start = function ()
 {
     var self = this;
     if(!config.disableAudioLevels) {
+        console.debug("set audio levels interval");
         this.audioLevelsIntervalId = setInterval(
             function () {
                 // Interval updates
@@ -247,6 +262,7 @@ StatsCollector.prototype.start = function ()
     }
 
     if(!config.disableStats) {
+        console.debug("set stats interval");
         this.statsIntervalId = setInterval(
             function () {
                 // Interval updates
@@ -677,10 +693,15 @@ StatsCollector.prototype.processAudioLevelReport = function ()
         {
             // TODO: can't find specs about what this value really is,
             // but it seems to vary between 0 and around 32k.
-            audioLevel = audioLevel / 32767;
-            jidStats.setSsrcAudioLevel(ssrc, audioLevel);
-            if(jid != APP.xmpp.myJid())
+            audioLevel = formatAudioLevel(audioLevel / 32767);
+            var oldLevel = jidStats.ssrc2AudioLevel[ssrc];
+            if(jid != APP.xmpp.myJid() && (!oldLevel || oldLevel != audioLevel))
+            {
+
+                jidStats.ssrc2AudioLevel[ssrc] = audioLevel;
+
                 this.eventEmitter.emit("statistics.audioLevel", jid, audioLevel);
+            }
         }
 
     }
