@@ -188,7 +188,8 @@ var RTC = {
             // local video
             stream = this.localVideo;
         } else {
-            var peerStreams = this.remoteStreams[jid];
+            var peerJid = APP.xmpp.findJidFromResource(jid);
+            var peerStreams = this.remoteStreams[peerJid];
             if(!peerStreams)
                 return false;
             stream = peerStreams[MediaStreamType.VIDEO_TYPE];
