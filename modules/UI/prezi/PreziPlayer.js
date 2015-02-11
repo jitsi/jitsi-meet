@@ -33,21 +33,22 @@
             var message, item, player;
             try {
                 message = JSON.parse(event.data);
-            } catch (e) {}
-            if (message.id && (player = PreziPlayer.players[message.id])){
-                if (player.options.debug === true) {
-                    if (console && console.log) console.log('received', message);
-                }
-                if (message.type === "changes"){
-                    player.changesHandler(message);
-                }
-                for (var i=0; i<player.callbacks.length; i++) {
-                    item = player.callbacks[i];
-                    if (item && message.type === item.event){
-                        item.callback(message);
+                if (message.id && (player = PreziPlayer.players[message.id])) {
+                    if (player.options.debug === true) {
+                        if (console && console.log)
+                            console.log('received', message);
+                    }
+                    if (message.type === "changes") {
+                        player.changesHandler(message);
+                    }
+                    for (var i = 0; i < player.callbacks.length; i++) {
+                        item = player.callbacks[i];
+                        if (item && message.type === item.event) {
+                            item.callback(message);
+                        }
                     }
                 }
-            }
+            } catch (e) { }
         };
 
         function PreziPlayer(id, options) {
