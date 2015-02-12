@@ -62,7 +62,7 @@ case "$1" in
         if [ -f $PROSODY_HOST_CONFIG ] && ! grep -q "VirtualHost \"auth.$JVB_HOSTNAME\"" $PROSODY_HOST_CONFIG; then
             echo -e "\nVirtualHost \"auth.$JVB_HOSTNAME\"" >> $PROSODY_HOST_CONFIG
             echo -e "        authentication = \"internal_plain\"\n" >> $PROSODY_HOST_CONFIG
-            echo -e "admins = { \"$JICOFO_AUTH_USER@auth.$JVB_HOSTNAME\" }\n" >> $PROSODY_HOST_CONFIG
+            sed -i "s/Component \"conference.$JVB_HOSTNAME\" \"muc\"/Component \"conference.$JVB_HOSTNAME\" \"muc\"\nadmins = { \"$JICOFO_AUTH_USER@auth.$JVB_HOSTNAME\" }\n/g" $PROSODY_HOST_CONFIG
             echo -e "Component \"focus.$JVB_HOSTNAME\"" >> $PROSODY_HOST_CONFIG
             echo -e "    component_secret=\"$JICOFO_SECRET\"\n" >> $PROSODY_HOST_CONFIG
             PROSODY_CREATE_JICOFO_USER="true"
