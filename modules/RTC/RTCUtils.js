@@ -1,59 +1,51 @@
 var RTCBrowserType = require("../../service/RTC/RTCBrowserType.js");
+var Resolutions = require("../../service/RTC/Resolutions");
+
+var currentResolution = null;
+
+function getPreviousResolution(resolution) {
+    if(!Resolutions[resolution])
+        return null;
+    var order = Resolutions[resolution].order;
+    var res = null;
+    var resName = null;
+    for(var i in Resolutions)
+    {
+        var tmp = Resolutions[i];
+        if(res == null || (res.order < tmp.order && tmp.order < order))
+        {
+            resName = i;
+            res = tmp;
+        }
+    }
+    return resName;
+}
 
 function setResolutionConstraints(constraints, resolution, isAndroid)
 {
     if (resolution && !constraints.video || isAndroid) {
         constraints.video = { mandatory: {}, optional: [] };// same behaviour as true
     }
-    // see https://code.google.com/p/chromium/issues/detail?id=143631#c9 for list of supported resolutions
-    switch (resolution) {
-        // 16:9 first
-        case '1080':
-        case 'fullhd':
-            constraints.video.mandatory.minWidth = 1920;
-            constraints.video.mandatory.minHeight = 1080;
-            break;
-        case '720':
-        case 'hd':
-            constraints.video.mandatory.minWidth = 1280;
-            constraints.video.mandatory.minHeight = 720;
-            break;
-        case '360':
-            constraints.video.mandatory.minWidth = 640;
-            constraints.video.mandatory.minHeight = 360;
-            break;
-        case '180':
-            constraints.video.mandatory.minWidth = 320;
-            constraints.video.mandatory.minHeight = 180;
-            break;
-        // 4:3
-        case '960':
-            constraints.video.mandatory.minWidth = 960;
-            constraints.video.mandatory.minHeight = 720;
-            break;
-        case '640':
-        case 'vga':
-            constraints.video.mandatory.minWidth = 640;
-            constraints.video.mandatory.minHeight = 480;
-            break;
-        case '320':
+
+    if(Resolutions[resolution])
+    {
+        constraints.video.mandatory.minWidth = Resolutions[resolution].width;
+        constraints.video.mandatory.minHeight = Resolutions[resolution].height;
+    }
+    else
+    {
+        if (isAndroid) {
             constraints.video.mandatory.minWidth = 320;
             constraints.video.mandatory.minHeight = 240;
-            break;
-        default:
-            if (isAndroid) {
-                constraints.video.mandatory.minWidth = 320;
-                constraints.video.mandatory.minHeight = 240;
-                constraints.video.mandatory.maxFrameRate = 15;
-            }
-            break;
+            constraints.video.mandatory.maxFrameRate = 15;
+        }
     }
+
     if (constraints.video.mandatory.minWidth)
         constraints.video.mandatory.maxWidth = constraints.video.mandatory.minWidth;
     if (constraints.video.mandatory.minHeight)
         constraints.video.mandatory.maxHeight = constraints.video.mandatory.minHeight;
 }
-
 
 function getConstraints(um, resolution, bandwidth, fps, desktopStream, isAndroid)
 {
@@ -220,6 +212,7 @@ RTCUtils.prototype.getUserMediaWithConstraints = function(
     um, success_callback, failure_callback, resolution,bandwidth, fps,
     desktopStream)
 {
+    currentResolution = resolution;
     // Check if we are running on Android device
     var isAndroid = navigator.userAgent.indexOf('Android') != -1;
 
@@ -278,28 +271,58 @@ RTCUtils.prototype.getUserMediaWithConstraints = function(
 RTCUtils.prototype.obtainAudioAndVideoPermissions = function() {
     var self = this;
     // Get AV
-    var cb = function (stream) {
-        console.log('got', stream, stream.getAudioTracks().length, stream.getVideoTracks().length);
-        self.handleLocalStream(stream);
-    };
-    var self = this;
+
     this.getUserMediaWithConstraints(
         ['audio', 'video'],
-        cb,
-        function (error) {
-            console.error('failed to obtain audio/video stream - trying audio only', error);
-            self.getUserMediaWithConstraints(
-                ['audio'],
-                cb,
-                function (error) {
-                    console.error('failed to obtain audio/video stream - stop', error);
-                    APP.UI.messageHandler.showError("Error",
-                            "Failed to obtain permissions to use the local microphone" +
-                            "and/or camera.");
-                }
-            );
+        function (stream) {
+            self.successCallback(stream);
         },
-            config.resolution || '360');
+        function (error) {
+            self.errorCallback(error);
+        },
+        config.resolution || '360');
+}
+
+RTCUtils.prototype.successCallback = function (stream) {
+    console.log('got', stream, stream.getAudioTracks().length,
+        stream.getVideoTracks().length);
+    this.handleLocalStream(stream);
+};
+
+RTCUtils.prototype.errorCallback = function (error) {
+    var self = this;
+    console.error('failed to obtain audio/video stream - trying audio only', error);
+    var resolution = getPreviousResolution(currentResolution);
+    if(typeof error == "object" && error.constraintName && error.name
+        && (error.name == "ConstraintNotSatisfiedError" ||
+            error.name == "OverconstrainedError") &&
+        (error.constraintName == "minWidth" || error.constraintName == "maxWidth" ||
+            error.constraintName == "minHeight" || error.constraintName == "maxHeight")
+        && resolution != null)
+    {
+        self.getUserMediaWithConstraints(['audio', 'video'],
+            function (stream) {
+                return self.successCallback(stream);
+            }, function (error) {
+                return self.errorCallback(error);
+            }, resolution);
+    }
+    else
+    {
+        self.getUserMediaWithConstraints(
+            ['audio'],
+            function (stream) {
+                return self.successCallback(stream);
+            },
+            function (error) {
+                console.error('failed to obtain audio/video stream - stop', error);
+                APP.UI.messageHandler.showError("Error",
+                        "Failed to obtain permissions to use the local microphone" +
+                        "and/or camera.");
+            }
+        );
+    }
+
 }
 
 RTCUtils.prototype.handleLocalStream = function(stream)

@@ -285,7 +285,7 @@ var API = {
 };
 
 module.exports = API;
-},{"../../service/xmpp/XMPPEvents":86}],3:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":87}],3:[function(require,module,exports){
 /* global Strophe, updateLargeVideo, focusedVideoSrc*/
 
 // cache datachannels to avoid garbage collection
@@ -607,7 +607,7 @@ LocalStream.prototype.getId = function () {
 
 module.exports = LocalStream;
 
-},{"../../service/RTC/StreamEventTypes.js":81}],5:[function(require,module,exports){
+},{"../../service/RTC/StreamEventTypes.js":82}],5:[function(require,module,exports){
 ////These lines should be uncommented when require works in app.js
 var RTCBrowserType = require("../../service/RTC/RTCBrowserType.js");
 var MediaStreamType = require("../../service/RTC/MediaStreamTypes");
@@ -873,63 +873,55 @@ var RTC = {
 
 module.exports = RTC;
 
-},{"../../service/RTC/MediaStreamTypes":78,"../../service/RTC/StreamEventTypes.js":81,"../../service/UI/UIEvents":82,"../../service/desktopsharing/DesktopSharingEventTypes":84,"../../service/xmpp/XMPPEvents":86,"./DataChannels":3,"./LocalStream.js":4,"./MediaStream.js":5,"./RTCUtils.js":7,"events":87}],7:[function(require,module,exports){
+},{"../../service/RTC/MediaStreamTypes":78,"../../service/RTC/StreamEventTypes.js":82,"../../service/UI/UIEvents":83,"../../service/desktopsharing/DesktopSharingEventTypes":85,"../../service/xmpp/XMPPEvents":87,"./DataChannels":3,"./LocalStream.js":4,"./MediaStream.js":5,"./RTCUtils.js":7,"events":88}],7:[function(require,module,exports){
 var RTCBrowserType = require("../../service/RTC/RTCBrowserType.js");
+var Resolutions = require("../../service/RTC/Resolutions");
+
+var currentResolution = null;
+
+function getPreviousResolution(resolution) {
+    if(!Resolutions[resolution])
+        return null;
+    var order = Resolutions[resolution].order;
+    var res = null;
+    var resName = null;
+    for(var i in Resolutions)
+    {
+        var tmp = Resolutions[i];
+        if(res == null || (res.order < tmp.order && tmp.order < order))
+        {
+            resName = i;
+            res = tmp;
+        }
+    }
+    return resName;
+}
 
 function setResolutionConstraints(constraints, resolution, isAndroid)
 {
     if (resolution && !constraints.video || isAndroid) {
         constraints.video = { mandatory: {}, optional: [] };// same behaviour as true
     }
-    // see https://code.google.com/p/chromium/issues/detail?id=143631#c9 for list of supported resolutions
-    switch (resolution) {
-        // 16:9 first
-        case '1080':
-        case 'fullhd':
-            constraints.video.mandatory.minWidth = 1920;
-            constraints.video.mandatory.minHeight = 1080;
-            break;
-        case '720':
-        case 'hd':
-            constraints.video.mandatory.minWidth = 1280;
-            constraints.video.mandatory.minHeight = 720;
-            break;
-        case '360':
-            constraints.video.mandatory.minWidth = 640;
-            constraints.video.mandatory.minHeight = 360;
-            break;
-        case '180':
-            constraints.video.mandatory.minWidth = 320;
-            constraints.video.mandatory.minHeight = 180;
-            break;
-        // 4:3
-        case '960':
-            constraints.video.mandatory.minWidth = 960;
-            constraints.video.mandatory.minHeight = 720;
-            break;
-        case '640':
-        case 'vga':
-            constraints.video.mandatory.minWidth = 640;
-            constraints.video.mandatory.minHeight = 480;
-            break;
-        case '320':
+
+    if(Resolutions[resolution])
+    {
+        constraints.video.mandatory.minWidth = Resolutions[resolution].width;
+        constraints.video.mandatory.minHeight = Resolutions[resolution].height;
+    }
+    else
+    {
+        if (isAndroid) {
             constraints.video.mandatory.minWidth = 320;
             constraints.video.mandatory.minHeight = 240;
-            break;
-        default:
-            if (isAndroid) {
-                constraints.video.mandatory.minWidth = 320;
-                constraints.video.mandatory.minHeight = 240;
-                constraints.video.mandatory.maxFrameRate = 15;
-            }
-            break;
+            constraints.video.mandatory.maxFrameRate = 15;
+        }
     }
+
     if (constraints.video.mandatory.minWidth)
         constraints.video.mandatory.maxWidth = constraints.video.mandatory.minWidth;
     if (constraints.video.mandatory.minHeight)
         constraints.video.mandatory.maxHeight = constraints.video.mandatory.minHeight;
 }
-
 
 function getConstraints(um, resolution, bandwidth, fps, desktopStream, isAndroid)
 {
@@ -1096,6 +1088,7 @@ RTCUtils.prototype.getUserMediaWithConstraints = function(
     um, success_callback, failure_callback, resolution,bandwidth, fps,
     desktopStream)
 {
+    currentResolution = resolution;
     // Check if we are running on Android device
     var isAndroid = navigator.userAgent.indexOf('Android') != -1;
 
@@ -1154,28 +1147,58 @@ RTCUtils.prototype.getUserMediaWithConstraints = function(
 RTCUtils.prototype.obtainAudioAndVideoPermissions = function() {
     var self = this;
     // Get AV
-    var cb = function (stream) {
-        console.log('got', stream, stream.getAudioTracks().length, stream.getVideoTracks().length);
-        self.handleLocalStream(stream);
-    };
-    var self = this;
+
     this.getUserMediaWithConstraints(
         ['audio', 'video'],
-        cb,
-        function (error) {
-            console.error('failed to obtain audio/video stream - trying audio only', error);
-            self.getUserMediaWithConstraints(
-                ['audio'],
-                cb,
-                function (error) {
-                    console.error('failed to obtain audio/video stream - stop', error);
-                    APP.UI.messageHandler.showError("Error",
-                            "Failed to obtain permissions to use the local microphone" +
-                            "and/or camera.");
-                }
-            );
+        function (stream) {
+            self.successCallback(stream);
         },
-            config.resolution || '360');
+        function (error) {
+            self.errorCallback(error);
+        },
+        config.resolution || '360');
+}
+
+RTCUtils.prototype.successCallback = function (stream) {
+    console.log('got', stream, stream.getAudioTracks().length,
+        stream.getVideoTracks().length);
+    this.handleLocalStream(stream);
+};
+
+RTCUtils.prototype.errorCallback = function (error) {
+    var self = this;
+    console.error('failed to obtain audio/video stream - trying audio only', error);
+    var resolution = getPreviousResolution(currentResolution);
+    if(typeof error == "object" && error.constraintName && error.name
+        && (error.name == "ConstraintNotSatisfiedError" ||
+            error.name == "OverconstrainedError") &&
+        (error.constraintName == "minWidth" || error.constraintName == "maxWidth" ||
+            error.constraintName == "minHeight" || error.constraintName == "maxHeight")
+        && resolution != null)
+    {
+        self.getUserMediaWithConstraints(['audio', 'video'],
+            function (stream) {
+                return self.successCallback(stream);
+            }, function (error) {
+                return self.errorCallback(error);
+            }, resolution);
+    }
+    else
+    {
+        self.getUserMediaWithConstraints(
+            ['audio'],
+            function (stream) {
+                return self.successCallback(stream);
+            },
+            function (error) {
+                console.error('failed to obtain audio/video stream - stop', error);
+                APP.UI.messageHandler.showError("Error",
+                        "Failed to obtain permissions to use the local microphone" +
+                        "and/or camera.");
+            }
+        );
+    }
+
 }
 
 RTCUtils.prototype.handleLocalStream = function(stream)
@@ -1209,7 +1232,7 @@ RTCUtils.prototype.handleLocalStream = function(stream)
 
 
 module.exports = RTCUtils;
-},{"../../service/RTC/RTCBrowserType.js":79}],8:[function(require,module,exports){
+},{"../../service/RTC/RTCBrowserType.js":79,"../../service/RTC/Resolutions":81}],8:[function(require,module,exports){
 var UI = {};
 
 var VideoLayout = require("./videolayout/VideoLayout.js");
@@ -1930,7 +1953,7 @@ UI.dockToolbar = function (isDock) {
 module.exports = UI;
 
 
-},{"../../service/RTC/RTCEvents":80,"../../service/RTC/StreamEventTypes":81,"../../service/connectionquality/CQEvents":83,"../../service/desktopsharing/DesktopSharingEventTypes":84,"../../service/xmpp/XMPPEvents":86,"./audio_levels/AudioLevels.js":9,"./authentication/Authentication":11,"./avatar/Avatar":12,"./etherpad/Etherpad.js":13,"./prezi/Prezi.js":14,"./side_pannels/SidePanelToggler":16,"./side_pannels/chat/Chat.js":17,"./side_pannels/contactlist/ContactList":21,"./side_pannels/settings/Settings":22,"./side_pannels/settings/SettingsMenu":23,"./toolbars/BottomToolbar":24,"./toolbars/Toolbar":25,"./toolbars/ToolbarToggler":26,"./util/MessageHandler":28,"./util/NicknameHandler":29,"./util/UIUtil":30,"./videolayout/VideoLayout.js":32,"./welcome_page/RoomnameGenerator":33,"./welcome_page/WelcomePage":34,"events":87}],9:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":80,"../../service/RTC/StreamEventTypes":82,"../../service/connectionquality/CQEvents":84,"../../service/desktopsharing/DesktopSharingEventTypes":85,"../../service/xmpp/XMPPEvents":87,"./audio_levels/AudioLevels.js":9,"./authentication/Authentication":11,"./avatar/Avatar":12,"./etherpad/Etherpad.js":13,"./prezi/Prezi.js":14,"./side_pannels/SidePanelToggler":16,"./side_pannels/chat/Chat.js":17,"./side_pannels/contactlist/ContactList":21,"./side_pannels/settings/Settings":22,"./side_pannels/settings/SettingsMenu":23,"./toolbars/BottomToolbar":24,"./toolbars/Toolbar":25,"./toolbars/ToolbarToggler":26,"./util/MessageHandler":28,"./util/NicknameHandler":29,"./util/UIUtil":30,"./videolayout/VideoLayout.js":32,"./welcome_page/RoomnameGenerator":33,"./welcome_page/WelcomePage":34,"events":88}],9:[function(require,module,exports){
 var CanvasUtil = require("./CanvasUtils");
 
 var ASDrawContext = $('#activeSpeakerAudioLevel')[0].getContext('2d');
@@ -4008,7 +4031,7 @@ var Chat = (function (my) {
     return my;
 }(Chat || {}));
 module.exports = Chat;
-},{"../../../../service/UI/UIEvents":82,"../../toolbars/ToolbarToggler":26,"../../util/NicknameHandler":29,"../../util/UIUtil":30,"../SidePanelToggler":16,"./Commands":18,"./Replacement":19,"./smileys.json":20}],18:[function(require,module,exports){
+},{"../../../../service/UI/UIEvents":83,"../../toolbars/ToolbarToggler":26,"../../util/NicknameHandler":29,"../../util/UIUtil":30,"../SidePanelToggler":16,"./Commands":18,"./Replacement":19,"./smileys.json":20}],18:[function(require,module,exports){
 var UIUtil = require("../../util/UIUtil");
 
 /**
@@ -4542,7 +4565,7 @@ var SettingsMenu = {
 
 
 module.exports = SettingsMenu;
-},{"../../../../service/translation/languages":85,"../../avatar/Avatar":12,"../../util/UIUtil":30,"./Settings":22}],24:[function(require,module,exports){
+},{"../../../../service/translation/languages":86,"../../avatar/Avatar":12,"../../util/UIUtil":30,"./Settings":22}],24:[function(require,module,exports){
 var PanelToggler = require("../side_pannels/SidePanelToggler");
 
 var buttonHandlers = {
@@ -5545,7 +5568,7 @@ var NickanameHandler = {
 };
 
 module.exports = NickanameHandler;
-},{"../../../service/UI/UIEvents":82}],30:[function(require,module,exports){
+},{"../../../service/UI/UIEvents":83}],30:[function(require,module,exports){
 /**
  * Created by hristo on 12/22/14.
  */
@@ -8262,7 +8285,7 @@ var VideoLayout = (function (my) {
 }(VideoLayout || {}));
 
 module.exports = VideoLayout;
-},{"../../../service/RTC/MediaStreamTypes":78,"../../../service/UI/UIEvents":82,"../audio_levels/AudioLevels":9,"../avatar/Avatar":12,"../etherpad/Etherpad":13,"../prezi/Prezi":14,"../side_pannels/chat/Chat":17,"../side_pannels/contactlist/ContactList":21,"../util/NicknameHandler":29,"../util/UIUtil":30,"./ConnectionIndicator":31}],33:[function(require,module,exports){
+},{"../../../service/RTC/MediaStreamTypes":78,"../../../service/UI/UIEvents":83,"../audio_levels/AudioLevels":9,"../avatar/Avatar":12,"../etherpad/Etherpad":13,"../prezi/Prezi":14,"../side_pannels/chat/Chat":17,"../side_pannels/contactlist/ContactList":21,"../util/NicknameHandler":29,"../util/UIUtil":30,"./ConnectionIndicator":31}],33:[function(require,module,exports){
 //var nouns = [
 //];
 var pluralNouns = [
@@ -8680,7 +8703,7 @@ var ConnectionQuality = {
 };
 
 module.exports = ConnectionQuality;
-},{"../../service/connectionquality/CQEvents":83,"../../service/xmpp/XMPPEvents":86,"events":87}],36:[function(require,module,exports){
+},{"../../service/connectionquality/CQEvents":84,"../../service/xmpp/XMPPEvents":87,"events":88}],36:[function(require,module,exports){
 /* global $, alert, changeLocalVideo, chrome, config, getConferenceHandler, getUserMediaWithConstraints */
 /**
  * Indicates that desktop stream is currently in use(for toggle purpose).
@@ -9005,7 +9028,7 @@ module.exports = {
 };
 
 
-},{"../../service/desktopsharing/DesktopSharingEventTypes":84,"events":87}],37:[function(require,module,exports){
+},{"../../service/desktopsharing/DesktopSharingEventTypes":85,"events":88}],37:[function(require,module,exports){
 //maps keycode to character, id of popover for given function and function
 var shortcuts = {
     67: {
@@ -11335,7 +11358,7 @@ var statistics =
 
 
 module.exports = statistics;
-},{"../../service/RTC/StreamEventTypes.js":81,"../../service/xmpp/XMPPEvents":86,"./LocalStatsCollector.js":43,"./RTPStatsCollector.js":44,"events":87}],46:[function(require,module,exports){
+},{"../../service/RTC/StreamEventTypes.js":82,"../../service/xmpp/XMPPEvents":87,"./LocalStatsCollector.js":43,"./RTPStatsCollector.js":44,"events":88}],46:[function(require,module,exports){
 var i18n = require("i18next-client");
 var languages = require("../../service/translation/languages");
 var DEFAULT_LANG = languages.EN;
@@ -11447,7 +11470,7 @@ module.exports = {
     }
 };
 
-},{"../../service/translation/languages":85,"i18next-client":61}],47:[function(require,module,exports){
+},{"../../service/translation/languages":86,"i18next-client":61}],47:[function(require,module,exports){
 /* jshint -W117 */
 var TraceablePeerConnection = require("./TraceablePeerConnection");
 var SDPDiffer = require("./SDPDiffer");
@@ -14528,7 +14551,7 @@ module.exports = Moderator;
 
 
 
-},{"../../service/xmpp/XMPPEvents":86}],53:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":87}],53:[function(require,module,exports){
 /* global $, $iq, config, connection, focusMucJid, messageHandler, Moderator,
    Toolbar, Util */
 var Moderator = require("./moderator");
@@ -15300,7 +15323,7 @@ module.exports = function(XMPP, eventEmitter) {
 };
 
 
-},{"../../service/xmpp/XMPPEvents":86,"./JingleSession":47,"./moderator":52}],55:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":87,"./JingleSession":47,"./moderator":52}],55:[function(require,module,exports){
 /* jshint -W117 */
 
 var JingleSession = require("./JingleSession");
@@ -15639,7 +15662,7 @@ module.exports = function(XMPP, eventEmitter)
 };
 
 
-},{"../../service/xmpp/XMPPEvents":86,"./JingleSession":47}],56:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":87,"./JingleSession":47}],56:[function(require,module,exports){
 /* global Strophe */
 module.exports = function () {
 
@@ -16306,7 +16329,7 @@ var XMPP = {
 
 module.exports = XMPP;
 
-},{"../../service/RTC/StreamEventTypes":81,"../../service/UI/UIEvents":82,"../../service/xmpp/XMPPEvents":86,"./SDP":48,"./moderator":52,"./recording":53,"./strophe.emuc":54,"./strophe.jingle":55,"./strophe.logger":56,"./strophe.moderate":57,"./strophe.rayo":58,"./strophe.util":59,"events":87,"pako":62}],61:[function(require,module,exports){
+},{"../../service/RTC/StreamEventTypes":82,"../../service/UI/UIEvents":83,"../../service/xmpp/XMPPEvents":87,"./SDP":48,"./moderator":52,"./recording":53,"./strophe.emuc":54,"./strophe.jingle":55,"./strophe.logger":56,"./strophe.moderate":57,"./strophe.rayo":58,"./strophe.util":59,"events":88,"pako":62}],61:[function(require,module,exports){
 // i18next, v1.7.7
 // Copyright (c)2014 Jan Mühlemann (jamuhl).
 // Distributed under MIT license
@@ -24822,6 +24845,60 @@ var RTCEvents = {
 
 module.exports = RTCEvents;
 },{}],81:[function(require,module,exports){
+var Resolutions = {
+    "1080": {
+        width: 1920,
+        height: 1080,
+        order: 7
+    },
+    "fullhd": {
+        width: 1920,
+        height: 1080,
+        order: 7
+    },
+    "720": {
+        width: 1280,
+        height: 720,
+        order: 6
+    },
+    "hd": {
+        width: 1280,
+        height: 720,
+        order: 6
+    },
+    "960": {
+        width: 960,
+        height: 720,
+        order: 5
+    },
+    "640": {
+        width: 640,
+        height: 480,
+        order: 4
+    },
+    "vga": {
+        width: 640,
+        height: 480,
+        order: 4
+    },
+    "360": {
+        width: 640,
+        height: 360,
+        order: 3
+    },
+    "320": {
+        width: 320,
+        height: 240,
+        order: 2
+    },
+    "180": {
+        width: 320,
+        height: 180,
+        order: 1
+    }
+};
+module.exports = Resolutions;
+},{}],82:[function(require,module,exports){
 var StreamEventTypes = {
     EVENT_TYPE_LOCAL_CREATED: "stream.local_created",
 
@@ -24835,14 +24912,14 @@ var StreamEventTypes = {
 };
 
 module.exports = StreamEventTypes;
-},{}],82:[function(require,module,exports){
+},{}],83:[function(require,module,exports){
 var UIEvents = {
     NICKNAME_CHANGED: "UI.nickname_changed",
     SELECTED_ENDPOINT: "UI.selected_endpoint",
     PINNED_ENDPOINT: "UI.pinned_endpoint"
 };
 module.exports = UIEvents;
-},{}],83:[function(require,module,exports){
+},{}],84:[function(require,module,exports){
 var CQEvents = {
     LOCALSTATS_UPDATED: "cq.localstats_updated",
     REMOTESTATS_UPDATED: "cq.remotestats_updated",
@@ -24850,7 +24927,7 @@ var CQEvents = {
 };
 
 module.exports = CQEvents;
-},{}],84:[function(require,module,exports){
+},{}],85:[function(require,module,exports){
 var DesktopSharingEventTypes = {
     INIT: "ds.init",
 
@@ -24860,7 +24937,7 @@ var DesktopSharingEventTypes = {
 };
 
 module.exports = DesktopSharingEventTypes;
-},{}],85:[function(require,module,exports){
+},{}],86:[function(require,module,exports){
 module.exports = {
     getLanguages : function () {
         var languages = [];
@@ -24873,7 +24950,7 @@ module.exports = {
     },
     EN: "en"
 }
-},{}],86:[function(require,module,exports){
+},{}],87:[function(require,module,exports){
 var XMPPEvents = {
     CONFERENCE_CERATED: "xmpp.conferenceCreated.jingle",
     CALL_TERMINATED: "xmpp.callterminated.jingle",
@@ -24900,7 +24977,7 @@ var XMPPEvents = {
     ETHERPAD: "xmpp.etherpad"
 };
 module.exports = XMPPEvents;
-},{}],87:[function(require,module,exports){
+},{}],88:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
