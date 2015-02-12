@@ -16,14 +16,13 @@ VirtualHost "jitmeet.example.com"
         }
 
 Component "conference.jitmeet.example.com" "muc"
+admins = { "focusUser@auth.jitmeet.example.com" }
 
 Component "jitsi-videobridge.jitmeet.example.com"
     component_secret = "jitmeetSecret"
 
 VirtualHost "auth.jitmeet.example.com"
         authentication = "internal_plain"
-
-admins = { "focusUser@auth.jitmeet.example.com" }
 
 Component "focus.jitmeet.example.com"
     component_secret = "focusSecret"
