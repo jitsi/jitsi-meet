@@ -390,9 +390,9 @@ function onMucLeft(jid) {
     console.log('left.muc', jid);
     var displayName = $('#participant_' + Strophe.getResourceFromJid(jid) +
         '>.displayname').html();
-    messageHandler.notify(displayName || 'Somebody',
+    messageHandler.notify(displayName,'notify.somebody', "Somebody",
         'disconnected',
-        'disconnected');
+        'notify.disconnected', "disconnected");
     // Need to call this with a slight delay, otherwise the element couldn't be
     // found for some reason.
     // XXX(gp) it works fine without the timeout for me (with Chrome 38).
@@ -424,8 +424,9 @@ function onLocalRoleChange(jid, info, pres, isModerator, isExternalAuthEnabled)
 
     if (isModerator) {
         Authentication.closeAuthenticationWindow();
-        messageHandler.notify(
-            'Me', 'connected', 'Moderator rights granted !');
+        messageHandler.notify(null, "notify.me",
+            'Me', 'connected', "notify.moderator",
+            'Moderator rights granted !');
     }
 }
 
@@ -469,9 +470,9 @@ function onPasswordReqiured(callback) {
     );
 }
 function onMucEntered(jid, id, displayName) {
-    messageHandler.notify(displayName || 'Somebody',
+    messageHandler.notify(displayName,'notify.somebody', "Somebody",
         'connected',
-        'connected');
+        'notify.connected', "connected");
 
     // Add Peer's container
     VideoLayout.ensurePeerContainerExists(jid,id);
@@ -486,14 +487,22 @@ function onMucRoleChanged(role, displayName) {
     VideoLayout.showModeratorIndicator();
 
     if (role === 'moderator') {
-        var displayName = displayName;
-        if (!displayName) {
-            displayName = 'Somebody';
+        var messageKey, messageOptions = {};
+        var lDisplayName = displayName;
+        if (!lDisplayName) {
+            lDisplayName = 'Somebody';
+            messageKey = "notify.grantedToUnknown";
+        }
+        else
+        {
+            messageKey = "notify.grantedTo";
+            messageOptions = {to: displayName};
         }
         messageHandler.notify(
-            displayName,
-            'connected',
-                'Moderator rights granted to ' + displayName + '!');
+            displayName,'notify.somebody', "Somebody",
+            'connected', messageKey,
+            'Moderator rights granted to ' + lDisplayName + '!',
+            messageOptions);
     }
 }
 

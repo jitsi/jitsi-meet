@@ -1625,9 +1625,9 @@ function onMucLeft(jid) {
     console.log('left.muc', jid);
     var displayName = $('#participant_' + Strophe.getResourceFromJid(jid) +
         '>.displayname').html();
-    messageHandler.notify(displayName || 'Somebody',
+    messageHandler.notify(displayName,'notify.somebody', "Somebody",
         'disconnected',
-        'disconnected');
+        'notify.disconnected', "disconnected");
     // Need to call this with a slight delay, otherwise the element couldn't be
     // found for some reason.
     // XXX(gp) it works fine without the timeout for me (with Chrome 38).
@@ -1659,8 +1659,9 @@ function onLocalRoleChange(jid, info, pres, isModerator, isExternalAuthEnabled)
 
     if (isModerator) {
         Authentication.closeAuthenticationWindow();
-        messageHandler.notify(
-            'Me', 'connected', 'Moderator rights granted !');
+        messageHandler.notify(null, "notify.me",
+            'Me', 'connected', "notify.moderator",
+            'Moderator rights granted !');
     }
 }
 
@@ -1704,9 +1705,9 @@ function onPasswordReqiured(callback) {
     );
 }
 function onMucEntered(jid, id, displayName) {
-    messageHandler.notify(displayName || 'Somebody',
+    messageHandler.notify(displayName,'notify.somebody', "Somebody",
         'connected',
-        'connected');
+        'notify.connected', "connected");
 
     // Add Peer's container
     VideoLayout.ensurePeerContainerExists(jid,id);
@@ -1721,14 +1722,22 @@ function onMucRoleChanged(role, displayName) {
     VideoLayout.showModeratorIndicator();
 
     if (role === 'moderator') {
-        var displayName = displayName;
-        if (!displayName) {
-            displayName = 'Somebody';
+        var messageKey, messageOptions = {};
+        var lDisplayName = displayName;
+        if (!lDisplayName) {
+            lDisplayName = 'Somebody';
+            messageKey = "notify.grantedToUnknown";
+        }
+        else
+        {
+            messageKey = "notify.grantedTo";
+            messageOptions = {to: displayName};
         }
         messageHandler.notify(
-            displayName,
-            'connected',
-                'Moderator rights granted to ' + displayName + '!');
+            displayName,'notify.somebody', "Somebody",
+            'connected', messageKey,
+            'Moderator rights granted to ' + lDisplayName + '!',
+            messageOptions);
     }
 }
 
@@ -5520,13 +5529,32 @@ var messageHandler = (function(my) {
         messageHandler.openMessageDialog(title, message);
     };
 
-    my.notify = function(displayName, cls, message) {
+    my.notify = function(displayName, displayNameKey, displayNameDefault,
+                         cls, messageKey, messageDefault, messageArguments) {
+        var displayNameSpan = '<span class="nickname" ';
+        if(displayName)
+        {
+            displayNameSpan += ">" + displayName;
+        }
+        else
+        {
+            displayNameSpan += "data-i18n='" + displayNameKey +
+                "'>" + APP.translation.translateString(displayNameKey, null,
+                {defaultValue: displayNameDefault});
+        }
+        displayNameSpan += "</span>";
+        var lMessageArguments = messageArguments;
+        if(!messageArguments)
+            lMessageArguments = {};
+        lMessageArguments.defaultValue = messageDefault;
         toastr.info(
-            '<span class="nickname">' +
-                displayName +
-            '</span><br>' +
-            '<span class=' + cls + '>' +
-                message +
+            displayNameSpan + '<br>' +
+            '<span class=' + cls + ' data-i18n="' + messageKey + '"' +
+                (messageArguments?
+                    " i18n-options='" + JSON.stringify(messageArguments) + "'"
+                    : "") + ">" +
+            APP.translation.translateString(messageKey, null,
+                lMessageArguments) +
             '</span>');
     };
 
@@ -7507,7 +7535,7 @@ var VideoLayout = (function (my) {
                     "top");
                 videoMutedSpan.appendChild(mutedIndicator);
                 //translate texts for muted indicator
-                APP.translation.translateElement($('#' + videoSpanId  + " > i"));
+                APP.translation.translateElement($('#' + videoSpanId  + " > span > i"));
             }
 
             VideoLayout.updateMutePosition(videoSpanId);
@@ -11443,13 +11471,13 @@ module.exports = {
             options.lng = lang;
         i18n.init(options, initCompleted);
     },
-    translateString: function (key, cb) {
+    translateString: function (key, cb, defaultValue) {
         if(!cb)
-            return i18n.t(key);
+            return i18n.t(key, defaultValue);
 
         if(initialized)
         {
-            cb(i18n.t(key));
+            cb(i18n.t(key, defaultValue));
         }
         else
         {
@@ -14506,11 +14534,13 @@ var Moderator = {
                 var waitMs = getNextErrorTimeout();
                 console.error("Focus error, retry after " + waitMs, error);
                 // Show message
-                APP.UI.messageHandler.notify(
-                    'Conference focus', 'disconnected',
+                APP.UI.messageHandler.notify( null, "notify.focus",
+                    'Conference focus', 'disconnected',"notify.focusFail",
                         Moderator.getFocusComponent() +
                         ' not available - retry in ' +
-                        (waitMs / 1000) + ' sec');
+                        (waitMs / 1000) + ' sec',
+                    {component: Moderator.getFocusComponent(),
+                        ms: (waitMs / 1000)});
                 // Reset response timeout
                 getNextTimeout(true);
                 window.setTimeout(

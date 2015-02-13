@@ -82,13 +82,13 @@ module.exports = {
             options.lng = lang;
         i18n.init(options, initCompleted);
     },
-    translateString: function (key, cb) {
+    translateString: function (key, cb, defaultValue) {
         if(!cb)
-            return i18n.t(key);
+            return i18n.t(key, defaultValue);
 
         if(initialized)
         {
-            cb(i18n.t(key));
+            cb(i18n.t(key, defaultValue));
         }
         else
         {

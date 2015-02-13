@@ -1422,7 +1422,7 @@ var VideoLayout = (function (my) {
                     "top");
                 videoMutedSpan.appendChild(mutedIndicator);
                 //translate texts for muted indicator
-                APP.translation.translateElement($('#' + videoSpanId  + " > i"));
+                APP.translation.translateElement($('#' + videoSpanId  + " > span > i"));
             }
 
             VideoLayout.updateMutePosition(videoSpanId);

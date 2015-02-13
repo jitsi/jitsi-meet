@@ -149,13 +149,32 @@ var messageHandler = (function(my) {
         messageHandler.openMessageDialog(title, message);
     };
 
-    my.notify = function(displayName, cls, message) {
+    my.notify = function(displayName, displayNameKey, displayNameDefault,
+                         cls, messageKey, messageDefault, messageArguments) {
+        var displayNameSpan = '<span class="nickname" ';
+        if(displayName)
+        {
+            displayNameSpan += ">" + displayName;
+        }
+        else
+        {
+            displayNameSpan += "data-i18n='" + displayNameKey +
+                "'>" + APP.translation.translateString(displayNameKey, null,
+                {defaultValue: displayNameDefault});
+        }
+        displayNameSpan += "</span>";
+        var lMessageArguments = messageArguments;
+        if(!messageArguments)
+            lMessageArguments = {};
+        lMessageArguments.defaultValue = messageDefault;
         toastr.info(
-            '<span class="nickname">' +
-                displayName +
-            '</span><br>' +
-            '<span class=' + cls + '>' +
-                message +
+            displayNameSpan + '<br>' +
+            '<span class=' + cls + ' data-i18n="' + messageKey + '"' +
+                (messageArguments?
+                    " i18n-options='" + JSON.stringify(messageArguments) + "'"
+                    : "") + ">" +
+            APP.translation.translateString(messageKey, null,
+                lMessageArguments) +
             '</span>');
     };
 

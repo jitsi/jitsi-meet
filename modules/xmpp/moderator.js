@@ -231,11 +231,13 @@ var Moderator = {
                 var waitMs = getNextErrorTimeout();
                 console.error("Focus error, retry after " + waitMs, error);
                 // Show message
-                APP.UI.messageHandler.notify(
-                    'Conference focus', 'disconnected',
+                APP.UI.messageHandler.notify( null, "notify.focus",
+                    'Conference focus', 'disconnected',"notify.focusFail",
                         Moderator.getFocusComponent() +
                         ' not available - retry in ' +
-                        (waitMs / 1000) + ' sec');
+                        (waitMs / 1000) + ' sec',
+                    {component: Moderator.getFocusComponent(),
+                        ms: (waitMs / 1000)});
                 // Reset response timeout
                 getNextTimeout(true);
                 window.setTimeout(
