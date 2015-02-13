@@ -1337,8 +1337,7 @@ function registerListeners() {
         function (endpointSimulcastLayers) {
             VideoLayout.onSimulcastLayersChanging(endpointSimulcastLayers);
         });
-    VideoLayout.init(eventEmitter);
-    AudioLevels.init();
+
     APP.statistics.addAudioLevelListener(function(jid, audioLevel)
     {
         var resourceJid;
@@ -1512,7 +1511,8 @@ UI.start = function (init) {
     // Set the defaults for prompt dialogs.
     jQuery.prompt.setDefaults({persistent: false});
 
-
+    VideoLayout.init(eventEmitter);
+    AudioLevels.init();
     NicknameHandler.init(eventEmitter);
     registerListeners();
     bindEvents();
