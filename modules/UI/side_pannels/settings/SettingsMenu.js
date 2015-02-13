@@ -1,5 +1,5 @@
 var Avatar = require("../../avatar/Avatar");
-var Settings = require("./Settings");
+var Settings = require("./../../../settings/Settings");
 var UIUtil = require("../../util/UIUtil");
 var languages = require("../../../../service/translation/languages");
 

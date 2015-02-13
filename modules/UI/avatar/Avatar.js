@@ -1,4 +1,4 @@
-var Settings = require("../side_pannels/settings/Settings");
+var Settings = require("../../settings/Settings");
 var MediaStreamType = require("../../../service/RTC/MediaStreamTypes");
 
 var users = {};

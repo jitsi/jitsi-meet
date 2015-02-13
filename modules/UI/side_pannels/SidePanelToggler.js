@@ -1,6 +1,6 @@
 var Chat = require("./chat/Chat");
 var ContactList = require("./contactlist/ContactList");
-var Settings = require("./settings/Settings");
+var Settings = require("./../../settings/Settings");
 var SettingsMenu = require("./settings/SettingsMenu");
 var VideoLayout = require("../videolayout/VideoLayout");
 var ToolbarToggler = require("../toolbars/ToolbarToggler");

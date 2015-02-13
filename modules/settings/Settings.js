@@ -15,13 +15,13 @@ function supportsLocalStorage() {
 
 function generateUniqueId() {
     function _p8() {
-        return (Math.random().toString(16)+"000000000").substr(2,8);
+        return (Math.random().toString(16) + "000000000").substr(2, 8);
     }
     return _p8() + _p8() + _p8() + _p8();
 }
 
-if(supportsLocalStorage()) {
-    if(!window.localStorage.jitsiMeetId) {
+if (supportsLocalStorage()) {
+    if (!window.localStorage.jitsiMeetId) {
         window.localStorage.jitsiMeetId = generateUniqueId();
         console.log("generated id", window.localStorage.jitsiMeetId);
     }
@@ -40,7 +40,7 @@ var Settings =
         window.localStorage.displayname = displayName;
         return displayName;
     },
-    setEmail: function(newEmail)
+    setEmail: function (newEmail)
     {
         email = newEmail;
         window.localStorage.email = newEmail;
