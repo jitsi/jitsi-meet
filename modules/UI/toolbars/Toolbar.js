@@ -1,4 +1,4 @@
-/* global $, buttonClick, config, lockRoom,
+/* global APP,$, buttonClick, config, lockRoom,
    setSharedKey, Util */
 var messageHandler = require("../util/MessageHandler");
 var BottomToolbar = require("./BottomToolbar");
@@ -7,6 +7,8 @@ var Etherpad = require("../etherpad/Etherpad");
 var PanelToggler = require("../side_pannels/SidePanelToggler");
 var Authentication = require("../authentication/Authentication");
 var UIUtil = require("../util/UIUtil");
+var AuthenticationEvents
+    = require("../../../service/authentication/AuthenticationEvents");
 
 var roomUrl = null;
 var sharedKey = '';
@@ -20,9 +22,9 @@ var buttonHandlers =
     "toolbar_button_camera": function () {
         return APP.UI.toggleVideo();
     },
-    "toolbar_button_authentication": function () {
+    /*"toolbar_button_authentication": function () {
         return Toolbar.authenticateClicked();
-    },
+    },*/
     "toolbar_button_record": function () {
         return toggleRecording();
     },
@@ -57,6 +59,27 @@ var buttonHandlers =
     },
     "toolbar_button_hangup": function () {
         return hangup();
+    },
+    "toolbar_button_login": function () {
+        Toolbar.authenticateClicked();
+    },
+    "toolbar_button_logout": function () {
+        // Ask for confirmation
+        messageHandler.openTwoButtonDialog(
+            "Logout",
+            "Are you sure you want to logout and stop the conference ?",
+            false, "Yes",
+            function (evt, yes) {
+                if (yes) {
+                    APP.xmpp.logout(function (url) {
+                        if (url) {
+                            window.location.href = url;
+                        } else {
+                            hangup();
+                        }
+                    });
+                }
+            });
     }
 };
 
@@ -222,7 +245,33 @@ var Toolbar = (function (my) {
         for(var k in buttonHandlers)
             $("#" + k).click(buttonHandlers[k]);
         UI = ui;
-    }
+        // Update login info
+        APP.xmpp.addListener(
+            AuthenticationEvents.IDENTITY_UPDATED,
+            function (authenticationEnabled, userIdentity) {
+
+                var loggedIn = false;
+                if (userIdentity) {
+                    loggedIn = true;
+                }
+
+                //FIXME: XMPP authentication need improvements for "live" login
+                if (!APP.xmpp.isExternalAuthEnabled() && !loggedIn)
+                {
+                    authenticationEnabled = false;
+                }
+
+                Toolbar.showAuthenticateButton(authenticationEnabled);
+
+                if (authenticationEnabled) {
+                    Toolbar.setAuthenticatedIdentity(userIdentity);
+
+                    Toolbar.showLoginButton(!loggedIn);
+                    Toolbar.showLogoutButton(loggedIn);
+                }
+            }
+        );
+    },
 
     /**
      * Sets shared key
@@ -235,20 +284,30 @@ var Toolbar = (function (my) {
     my.authenticateClicked = function () {
         Authentication.focusAuthenticationWindow();
         // Get authentication URL
-        APP.xmpp.getAuthUrl(APP.UI.getRoomName(), function (url) {
-            // Open popup with authentication URL
-            var authenticationWindow = Authentication.createAuthenticationWindow(function () {
-                // On popup closed - retry room allocation
-                APP.xmpp.allocateConferenceFocus(APP.UI.getRoomName(), APP.UI.checkForNicknameAndJoin);
-            }, url);
-            if (!authenticationWindow) {
-                Toolbar.showAuthenticateButton(true);
-                messageHandler.openMessageDialog(
-                    null, "Your browser is blocking popup windows from this site." +
+        if (!APP.xmpp.getMUCJoined()) {
+            APP.xmpp.getLoginUrl(UI.getRoomName(), function (url) {
+                // If conference has not been started yet - redirect to login page
+                window.location.href = url;
+            });
+        } else {
+            APP.xmpp.getPopupLoginUrl(UI.getRoomName(), function (url) {
+                // Otherwise - open popup with authentication URL
+                var authenticationWindow = Authentication.createAuthenticationWindow(
+                    function () {
+                        // On popup closed - retry room allocation
+                        APP.xmpp.allocateConferenceFocus(
+                            APP.UI.getRoomName(),
+                            function () { console.info("AUTH DONE"); }
+                        );
+                    }, url);
+                if (!authenticationWindow) {
+                    messageHandler.openMessageDialog(
+                        null, "Your browser is blocking popup windows from this site." +
                         " Please enable popups in your browser security settings" +
                         " and try again.");
-            }
-        });
+                }
+            });
+        }
     };
 
     /**
@@ -489,9 +548,46 @@ var Toolbar = (function (my) {
     // Shows or hides SIP calls button
     my.showSipCallButton = function (show) {
         if (APP.xmpp.isSipGatewayEnabled() && show) {
-            $('#sipCallButton').css({display: "inline"});
+            $('#sipCallButton').css({display: "inline-block"});
         } else {
             $('#sipCallButton').css({display: "none"});
+        }
+    };
+
+    /**
+     * Displays user authenticated identity name(login).
+     * @param authIdentity identity name to be displayed.
+     */
+    my.setAuthenticatedIdentity = function (authIdentity) {
+        if (authIdentity) {
+            $('#toolbar_auth_identity').css({display: "list-item"});
+            $('#toolbar_auth_identity').text(authIdentity);
+        } else {
+            $('#toolbar_auth_identity').css({display: "none"});
+        }
+    };
+
+    /**
+     * Shows/hides login button.
+     * @param show <tt>true</tt> to show
+     */
+    my.showLoginButton = function (show) {
+        if (show) {
+            $('#toolbar_button_login').css({display: "list-item"});
+        } else {
+            $('#toolbar_button_login').css({display: "none"});
+        }
+    };
+
+    /**
+     * Shows/hides logout button.
+     * @param show <tt>true</tt> to show
+     */
+    my.showLogoutButton = function (show) {
+        if (show) {
+            $('#toolbar_button_logout').css({display: "list-item"});
+        } else {
+            $('#toolbar_button_logout').css({display: "none"});
         }
     };
 

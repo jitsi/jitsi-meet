@@ -30,6 +30,7 @@
     <link rel="stylesheet" href="css/jquery-impromptu.css?v=4">
     <link rel="stylesheet" href="css/modaldialog.css?v=3">
     <link rel="stylesheet" href="css/popup_menu.css?v=4">
+    <link rel="stylesheet" href="css/login_menu.css?v=1">
     <link rel="stylesheet" href="css/popover.css?v=2">
     <link rel="stylesheet" href="css/jitsi_popover.css?v=2">
     <link rel="stylesheet" href="css/contact_list.css?v=4">
@@ -121,6 +122,22 @@
         <div style="position: relative;" id="header_container">
             <div id="header">
                 <span id="toolbar">
+                    <span id="authentication" class="authentication" style="display: none">
+                        <a class="button" id="toolbar_button_authentication" >
+                            <i id="authButton" class="icon-avatar"></i>
+                        </a>
+                        <ul class="loginmenu">
+                            <span class="loginmenuPadding"></span>
+                            <li id="toolbar_auth_identity" class="identity"></li>
+                            <li id="toolbar_button_login">
+                                <a class="authButton" data-i18n="toolbar.login"></a>
+                            </li>
+                            <li id="toolbar_button_logout">
+                                <a class="authButton" data-i18n="toolbar.logout"></a>
+                            </li>
+                        </ul>
+                        <div class="header_button_separator"></div>
+                    </span>
                     <a class="button" id="toolbar_button_mute" data-container="body" data-toggle="popover" data-placement="bottom" shortcut="mutePopover" data-i18n="[content]toolbar.mute" content="Mute / Unmute">
                         <i id="mute" class="icon-microphone"></i>
                     </a>
@@ -128,12 +145,6 @@
                     <a class="button" id="toolbar_button_camera" data-container="body" data-toggle="popover" data-placement="bottom" shortcut="toggleVideoPopover" data-i18n="[content]toolbar.videomute" content="Start / stop camera">
                         <i id="video" class="icon-camera"></i>
                     </a>
-                    <span id="authentication" style="display: none">
-                        <div class="header_button_separator"></div>
-                        <a class="button" id="toolbar_button_authentication" data-container="body" data-toggle="popover" data-placement="bottom" data-i18n="[content]toolbar.authenticate" content="Authenticate">
-                            <i id="authButton" class="icon-avatar"></i>
-                        </a>
-                    </span>
                     <span id="recording" style="display: none">
                         <div class="header_button_separator"></div>
                         <a class="button" id="toolbar_button_record" data-container="body" data-toggle="popover" data-placement="bottom" data-i18n="[content]toolbar.record" content="Record">

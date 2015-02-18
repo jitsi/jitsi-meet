@@ -1,6 +1,10 @@
 /* global $, $iq, config, connection, UI, messageHandler,
  roomName, sessionTerminated, Strophe, Util */
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
+var Settings = require("../settings/Settings");
+
+var AuthenticationEvents
+    = require("../../service/authentication/AuthenticationEvents");
 
 /**
  * Contains logic responsible for enabling/disabling functionality available
@@ -60,6 +64,25 @@ var Moderator = {
     init: function (xmpp, emitter) {
         this.xmppService = xmpp;
         eventEmitter = emitter;
+
+        // Message listener that talks to POPUP window
+        function listener(event) {
+            if (event.data && event.data.sessionId) {
+                if (event.origin !== window.location.origin) {
+                    console.warn(
+                        "Ignoring sessionId from different origin: " + event.origin);
+                    return;
+                }
+                localStorage.setItem('sessionId', event.data.sessionId);
+                // After popup is closed we will authenticate
+            }
+        }
+        // Register
+        if (window.addEventListener) {
+            window.addEventListener("message", listener, false);
+        } else {
+            window.attachEvent("onmessage", listener);
+        }
     },
 
     onMucLeft: function (jid) {
@@ -99,10 +122,24 @@ var Moderator = {
     createConferenceIq: function (roomName) {
         // Generate create conference IQ
         var elem = $iq({to: Moderator.getFocusComponent(), type: 'set'});
+
+        // Session Id used for authentication
+        var sessionId = localStorage.getItem('sessionId');
+        var machineUID = Settings.getSettings().uid;
+
+        console.info(
+            "Session ID: " + sessionId + " machine UID: " + machineUID);
+
         elem.c('conference', {
             xmlns: 'http://jitsi.org/protocol/focus',
-            room: roomName
+            room: roomName,
+            'machine-uid': machineUID
         });
+
+        if (sessionId) {
+            elem.attrs({ 'session-id': sessionId});
+        }
+
         if (config.hosts.bridge !== undefined) {
             elem.c(
                 'property',
@@ -152,22 +189,44 @@ var Moderator = {
     },
 
     parseConfigOptions: function (resultIq) {
-    
+
         Moderator.setFocusUserJid(
             $(resultIq).find('conference').attr('focusjid'));
-    
-        var extAuthParam
-            = $(resultIq).find('>conference>property[name=\'externalAuth\']');
-        if (extAuthParam.length) {
-            externalAuthEnabled = extAuthParam.attr('value') === 'true';
+
+        var authenticationEnabled
+            = $(resultIq).find(
+                '>conference>property' +
+                '[name=\'authentication\'][value=\'true\']').length > 0;
+
+        console.info("Authentication enabled: " + authenticationEnabled);
+
+        externalAuthEnabled
+            = $(resultIq).find(
+                '>conference>property' +
+                '[name=\'externalAuth\'][value=\'true\']').length > 0;
+
+        console.info('External authentication enabled: ' + externalAuthEnabled);
+
+        if (!externalAuthEnabled) {
+            // We expect to receive sessionId in 'internal' authentication mode
+            var sessionId
+                = $(resultIq).find('conference').attr('session-id');
+            if (sessionId) {
+                console.info('Received sessionId: ' + sessionId);
+                localStorage.setItem('sessionId', sessionId);
+            }
         }
-    
-        console.info("External authentication enabled: " + externalAuthEnabled);
+
+        var authIdentity = $(resultIq).find('>conference').attr('identity');
+
+        eventEmitter.emit(AuthenticationEvents.IDENTITY_UPDATED,
+            authenticationEnabled, authIdentity);
     
         // Check if focus has auto-detected Jigasi component(this will be also
         // included if we have passed our host from the config)
         if ($(resultIq).find(
-            '>conference>property[name=\'sipGatewayEnabled\']').length) {
+            '>conference>property' +
+            '[name=\'sipGatewayEnabled\'][value=\'true\']').length) {
             sipGatewayEnabled = true;
         }
     
@@ -185,12 +244,14 @@ var Moderator = {
         connection.sendIQ(
             iq,
             function (result) {
+
+                // Setup config options
+                Moderator.parseConfigOptions(result);
+
                 if ('true' === $(result).find('conference').attr('ready')) {
                     // Reset both timers
                     getNextTimeout(true);
                     getNextErrorTimeout(true);
-                    // Setup config options
-                    Moderator.parseConfigOptions(result);
                     // Exec callback
                     callback();
                 } else {
@@ -208,7 +269,14 @@ var Moderator = {
             function (error) {
                 // Not authorized to create new room
                 if ($(error).find('>error>not-authorized').length) {
-                    console.warn("Unauthorized to start the conference");
+                    console.warn("Unauthorized to start the conference", error);
+
+                    if ($(error).find('>error>session-invalid').length) {
+                        // FIXME: just retry
+                        console.info("Session expired! - removing");
+                        localStorage.removeItem("sessionId");
+                    }
+
                     var toDomain
                         = Strophe.getDomainFromJid(error.getAttribute('to'));
                     if (toDomain === config.hosts.anonymousdomain) {
@@ -248,26 +316,81 @@ var Moderator = {
         );
     },
 
-    getAuthUrl: function (roomName, urlCallback) {
+    getLoginUrl: function (roomName, urlCallback) {
         var iq = $iq({to: Moderator.getFocusComponent(), type: 'get'});
-        iq.c('auth-url', {
+        iq.c('login-url', {
             xmlns: 'http://jitsi.org/protocol/focus',
-            room: roomName
+            room: roomName,
+            'machine-uid': Settings.getSettings().uid
         });
         connection.sendIQ(
             iq,
             function (result) {
-                var url = $(result).find('auth-url').attr('url');
+                var url = $(result).find('login-url').attr('url');
+                url = url = decodeURIComponent(url);
                 if (url) {
                     console.info("Got auth url: " + url);
                     urlCallback(url);
                 } else {
                     console.error(
-                        "Failed to get auth url fro mthe focus", result);
+                        "Failed to get auth url from the focus", result);
                 }
             },
             function (error) {
                 console.error("Get auth url error", error);
+            }
+        );
+    },
+    getPopupLoginUrl: function (roomName, urlCallback) {
+        var iq = $iq({to: Moderator.getFocusComponent(), type: 'get'});
+        iq.c('login-url', {
+            xmlns: 'http://jitsi.org/protocol/focus',
+            room: roomName,
+            'machine-uid': Settings.getSettings().uid,
+            popup: true
+        });
+        connection.sendIQ(
+            iq,
+            function (result) {
+                var url = $(result).find('login-url').attr('url');
+                url = url = decodeURIComponent(url);
+                if (url) {
+                    console.info("Got POPUP auth url: " + url);
+                    urlCallback(url);
+                } else {
+                    console.error(
+                        "Failed to get POPUP auth url from the focus", result);
+                }
+            },
+            function (error) {
+                console.error('Get POPUP auth url error', error);
+            }
+        );
+    },
+    logout: function (callback) {
+        var iq = $iq({to: Moderator.getFocusComponent(), type: 'set'});
+        var sessionId = localStorage.getItem('sessionId');
+        if (!sessionId) {
+            callback();
+            return;
+        }
+        iq.c('logout', {
+            xmlns: 'http://jitsi.org/protocol/focus',
+            'session-id': sessionId
+        });
+        connection.sendIQ(
+            iq,
+            function (result) {
+                var logoutUrl = $(result).find('logout').attr('logout-url');
+                if (logoutUrl) {
+                    logoutUrl = decodeURIComponent(logoutUrl);
+                }
+                console.info("Log out OK, url: " + logoutUrl, result);
+                localStorage.removeItem('sessionId');
+                callback(logoutUrl);
+            },
+            function (error) {
+                console.error("Logout error", error);
             }
         );
     }

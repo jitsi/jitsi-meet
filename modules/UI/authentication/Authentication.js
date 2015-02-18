@@ -16,7 +16,7 @@ var Authentication = {
         // extract room name from 'room@muc.server.net'
         var room = roomName.substr(0, roomName.indexOf('@'));
 
-        authDialog = messageHandler.openDialog(
+        authDialog = APP.UI.messageHandler.openDialog(
             'Stop',
                 'Authentication is required to create room:<br/><b>' + room +
                 '</b></br> You can either authenticate to create the room or ' +
@@ -58,7 +58,7 @@ var Authentication = {
         }
     },
     createAuthenticationWindow: function (callback, url) {
-        authenticationWindow = messageHandler.openCenteredPopup(
+        authenticationWindow = APP.UI.messageHandler.openCenteredPopup(
             url, 910, 660,
             // On closed
             function () {

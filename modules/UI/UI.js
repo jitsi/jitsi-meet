@@ -371,10 +371,6 @@ function onMucJoined(jid, info) {
     // Once we've joined the muc show the toolbar
     ToolbarToggler.showToolbar();
 
-    // Show authenticate button if needed
-    Toolbar.showAuthenticateButton(
-            APP.xmpp.isExternalAuthEnabled() && !APP.xmpp.isModerator());
-
     var displayName = !config.displayJids
         ? info.displayName : Strophe.getResourceFromJid(jid);
 
@@ -413,14 +409,12 @@ function onMucLeft(jid) {
 };
 
 
-function onLocalRoleChange(jid, info, pres, isModerator, isExternalAuthEnabled)
+function onLocalRoleChange(jid, info, pres, isModerator)
 {
 
     console.info("My role changed, new role: " + info.role);
     onModeratorStatusChanged(isModerator);
     VideoLayout.showModeratorIndicator();
-    Toolbar.showAuthenticateButton(
-            isExternalAuthEnabled && !isModerator);
 
     if (isModerator) {
         Authentication.closeAuthenticationWindow();

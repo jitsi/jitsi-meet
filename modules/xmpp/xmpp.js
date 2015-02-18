@@ -230,6 +230,12 @@ var XMPP = {
     allocateConferenceFocus: function(roomName, callback) {
         Moderator.allocateConferenceFocus(roomName, callback);
     },
+    getLoginUrl: function (roomName, callback) {
+        Moderator.getLoginUrl(roomName, callback);
+    },
+    getPopupLoginUrl: function (roomName, callback) {
+        Moderator.getPopupLoginUrl(roomName, callback);
+    },
     isModerator: function () {
         return Moderator.isModerator();
     },
@@ -420,6 +426,9 @@ var XMPP = {
     },
     eject: function (jid) {
         connection.moderate.eject(jid);
+    },
+    logout: function (callback) {
+        Moderator.logout(callback);
     },
     findJidFromResource: function (resource) {
         return connection.emuc.findJidFromResource(resource);

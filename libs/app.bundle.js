@@ -1,4 +1,307 @@
 !function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.APP=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+function EventEmitter() {
+  this._events = this._events || {};
+  this._maxListeners = this._maxListeners || undefined;
+}
+module.exports = EventEmitter;
+
+// Backwards-compat with node 0.10.x
+EventEmitter.EventEmitter = EventEmitter;
+
+EventEmitter.prototype._events = undefined;
+EventEmitter.prototype._maxListeners = undefined;
+
+// By default EventEmitters will print a warning if more than 10 listeners are
+// added to it. This is a useful default which helps finding memory leaks.
+EventEmitter.defaultMaxListeners = 10;
+
+// Obviously not all Emitters should be limited to 10. This function allows
+// that to be increased. Set to zero for unlimited.
+EventEmitter.prototype.setMaxListeners = function(n) {
+  if (!isNumber(n) || n < 0 || isNaN(n))
+    throw TypeError('n must be a positive number');
+  this._maxListeners = n;
+  return this;
+};
+
+EventEmitter.prototype.emit = function(type) {
+  var er, handler, len, args, i, listeners;
+
+  if (!this._events)
+    this._events = {};
+
+  // If there is no 'error' event listener then throw.
+  if (type === 'error') {
+    if (!this._events.error ||
+        (isObject(this._events.error) && !this._events.error.length)) {
+      er = arguments[1];
+      if (er instanceof Error) {
+        throw er; // Unhandled 'error' event
+      }
+      throw TypeError('Uncaught, unspecified "error" event.');
+    }
+  }
+
+  handler = this._events[type];
+
+  if (isUndefined(handler))
+    return false;
+
+  if (isFunction(handler)) {
+    switch (arguments.length) {
+      // fast cases
+      case 1:
+        handler.call(this);
+        break;
+      case 2:
+        handler.call(this, arguments[1]);
+        break;
+      case 3:
+        handler.call(this, arguments[1], arguments[2]);
+        break;
+      // slower
+      default:
+        len = arguments.length;
+        args = new Array(len - 1);
+        for (i = 1; i < len; i++)
+          args[i - 1] = arguments[i];
+        handler.apply(this, args);
+    }
+  } else if (isObject(handler)) {
+    len = arguments.length;
+    args = new Array(len - 1);
+    for (i = 1; i < len; i++)
+      args[i - 1] = arguments[i];
+
+    listeners = handler.slice();
+    len = listeners.length;
+    for (i = 0; i < len; i++)
+      listeners[i].apply(this, args);
+  }
+
+  return true;
+};
+
+EventEmitter.prototype.addListener = function(type, listener) {
+  var m;
+
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  if (!this._events)
+    this._events = {};
+
+  // To avoid recursion in the case that type === "newListener"! Before
+  // adding it to the listeners, first emit "newListener".
+  if (this._events.newListener)
+    this.emit('newListener', type,
+              isFunction(listener.listener) ?
+              listener.listener : listener);
+
+  if (!this._events[type])
+    // Optimize the case of one listener. Don't need the extra array object.
+    this._events[type] = listener;
+  else if (isObject(this._events[type]))
+    // If we've already got an array, just append.
+    this._events[type].push(listener);
+  else
+    // Adding the second element, need to change to array.
+    this._events[type] = [this._events[type], listener];
+
+  // Check for listener leak
+  if (isObject(this._events[type]) && !this._events[type].warned) {
+    var m;
+    if (!isUndefined(this._maxListeners)) {
+      m = this._maxListeners;
+    } else {
+      m = EventEmitter.defaultMaxListeners;
+    }
+
+    if (m && m > 0 && this._events[type].length > m) {
+      this._events[type].warned = true;
+      console.error('(node) warning: possible EventEmitter memory ' +
+                    'leak detected. %d listeners added. ' +
+                    'Use emitter.setMaxListeners() to increase limit.',
+                    this._events[type].length);
+      if (typeof console.trace === 'function') {
+        // not supported in IE 10
+        console.trace();
+      }
+    }
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.on = EventEmitter.prototype.addListener;
+
+EventEmitter.prototype.once = function(type, listener) {
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  var fired = false;
+
+  function g() {
+    this.removeListener(type, g);
+
+    if (!fired) {
+      fired = true;
+      listener.apply(this, arguments);
+    }
+  }
+
+  g.listener = listener;
+  this.on(type, g);
+
+  return this;
+};
+
+// emits a 'removeListener' event iff the listener was removed
+EventEmitter.prototype.removeListener = function(type, listener) {
+  var list, position, length, i;
+
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  if (!this._events || !this._events[type])
+    return this;
+
+  list = this._events[type];
+  length = list.length;
+  position = -1;
+
+  if (list === listener ||
+      (isFunction(list.listener) && list.listener === listener)) {
+    delete this._events[type];
+    if (this._events.removeListener)
+      this.emit('removeListener', type, listener);
+
+  } else if (isObject(list)) {
+    for (i = length; i-- > 0;) {
+      if (list[i] === listener ||
+          (list[i].listener && list[i].listener === listener)) {
+        position = i;
+        break;
+      }
+    }
+
+    if (position < 0)
+      return this;
+
+    if (list.length === 1) {
+      list.length = 0;
+      delete this._events[type];
+    } else {
+      list.splice(position, 1);
+    }
+
+    if (this._events.removeListener)
+      this.emit('removeListener', type, listener);
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.removeAllListeners = function(type) {
+  var key, listeners;
+
+  if (!this._events)
+    return this;
+
+  // not listening for removeListener, no need to emit
+  if (!this._events.removeListener) {
+    if (arguments.length === 0)
+      this._events = {};
+    else if (this._events[type])
+      delete this._events[type];
+    return this;
+  }
+
+  // emit removeListener for all listeners on all events
+  if (arguments.length === 0) {
+    for (key in this._events) {
+      if (key === 'removeListener') continue;
+      this.removeAllListeners(key);
+    }
+    this.removeAllListeners('removeListener');
+    this._events = {};
+    return this;
+  }
+
+  listeners = this._events[type];
+
+  if (isFunction(listeners)) {
+    this.removeListener(type, listeners);
+  } else {
+    // LIFO order
+    while (listeners.length)
+      this.removeListener(type, listeners[listeners.length - 1]);
+  }
+  delete this._events[type];
+
+  return this;
+};
+
+EventEmitter.prototype.listeners = function(type) {
+  var ret;
+  if (!this._events || !this._events[type])
+    ret = [];
+  else if (isFunction(this._events[type]))
+    ret = [this._events[type]];
+  else
+    ret = this._events[type].slice();
+  return ret;
+};
+
+EventEmitter.listenerCount = function(emitter, type) {
+  var ret;
+  if (!emitter._events || !emitter._events[type])
+    ret = 0;
+  else if (isFunction(emitter._events[type]))
+    ret = 1;
+  else
+    ret = emitter._events[type].length;
+  return ret;
+};
+
+function isFunction(arg) {
+  return typeof arg === 'function';
+}
+
+function isNumber(arg) {
+  return typeof arg === 'number';
+}
+
+function isObject(arg) {
+  return typeof arg === 'object' && arg !== null;
+}
+
+function isUndefined(arg) {
+  return arg === void 0;
+}
+
+},{}],2:[function(require,module,exports){
 /* jshint -W117 */
 /* application specific logic */
 
@@ -53,7 +356,7 @@ $(window).bind('beforeunload', function () {
 module.exports = APP;
 
 
-},{"./modules/API/API":2,"./modules/RTC/RTC":6,"./modules/UI/UI":8,"./modules/connectionquality/connectionquality":35,"./modules/desktopsharing/desktopsharing":36,"./modules/keyboardshortcut/keyboardshortcut":37,"./modules/simulcast/simulcast":42,"./modules/statistics/statistics":45,"./modules/translation/translation":46,"./modules/xmpp/xmpp":60}],2:[function(require,module,exports){
+},{"./modules/API/API":3,"./modules/RTC/RTC":7,"./modules/UI/UI":9,"./modules/connectionquality/connectionquality":35,"./modules/desktopsharing/desktopsharing":36,"./modules/keyboardshortcut/keyboardshortcut":37,"./modules/simulcast/simulcast":43,"./modules/statistics/statistics":46,"./modules/translation/translation":47,"./modules/xmpp/xmpp":61}],3:[function(require,module,exports){
 /**
  * Implements API class that communicates with external api class
  * and provides interface to access Jitsi Meet features by external
@@ -285,7 +588,7 @@ var API = {
 };
 
 module.exports = API;
-},{"../../service/xmpp/XMPPEvents":87}],3:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":89}],4:[function(require,module,exports){
 /* global Strophe, updateLargeVideo, focusedVideoSrc*/
 
 // cache datachannels to avoid garbage collection
@@ -324,7 +627,7 @@ var DataChannels =
             // selections so that it can do adaptive simulcast,
             // we want the notification to trigger even if userJid is undefined,
             // or null.
-            var userJid = APP.UI.getLargeVideoState().userResourceJid;
+            var userJid = APP.UI.getLargeVideoState().userJid;
             // we want the notification to trigger even if userJid is undefined,
             // or null.
             onSelectedEndpointChanged(userJid);
@@ -482,7 +785,6 @@ function onSelectedEndpointChanged(userResource)
         _dataChannels.some(function (dataChannel) {
             if (dataChannel.readyState == 'open')
             {
-                console.log('sending data channel notification that the selected endpoint changed: ', userResource);
                 dataChannel.send(JSON.stringify({
                     'colibriClass': 'SelectedEndpointChangedEvent',
                     'selectedEndpoint':
@@ -520,7 +822,7 @@ function onPinnedEndpointChanged(userResource)
 module.exports = DataChannels;
 
 
-},{"../../service/RTC/RTCEvents":80}],4:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":81}],5:[function(require,module,exports){
 var StreamEventTypes = require("../../service/RTC/StreamEventTypes.js");
 
 function LocalStream(stream, type, eventEmitter, videoType)
@@ -608,7 +910,7 @@ LocalStream.prototype.getId = function () {
 
 module.exports = LocalStream;
 
-},{"../../service/RTC/StreamEventTypes.js":82}],5:[function(require,module,exports){
+},{"../../service/RTC/StreamEventTypes.js":83}],6:[function(require,module,exports){
 ////These lines should be uncommented when require works in app.js
 var RTCBrowserType = require("../../service/RTC/RTCBrowserType.js");
 var MediaStreamType = require("../../service/RTC/MediaStreamTypes");
@@ -668,7 +970,7 @@ MediaStream.prototype.setMute = function (value)
 
 module.exports = MediaStream;
 
-},{"../../service/RTC/MediaStreamTypes":78,"../../service/RTC/RTCBrowserType.js":79}],6:[function(require,module,exports){
+},{"../../service/RTC/MediaStreamTypes":79,"../../service/RTC/RTCBrowserType.js":80}],7:[function(require,module,exports){
 var EventEmitter = require("events");
 var RTCUtils = require("./RTCUtils.js");
 var LocalStream = require("./LocalStream.js");
@@ -874,7 +1176,7 @@ var RTC = {
 
 module.exports = RTC;
 
-},{"../../service/RTC/MediaStreamTypes":78,"../../service/RTC/StreamEventTypes.js":82,"../../service/UI/UIEvents":83,"../../service/desktopsharing/DesktopSharingEventTypes":85,"../../service/xmpp/XMPPEvents":87,"./DataChannels":3,"./LocalStream.js":4,"./MediaStream.js":5,"./RTCUtils.js":7,"events":88}],7:[function(require,module,exports){
+},{"../../service/RTC/MediaStreamTypes":79,"../../service/RTC/StreamEventTypes.js":83,"../../service/UI/UIEvents":84,"../../service/desktopsharing/DesktopSharingEventTypes":87,"../../service/xmpp/XMPPEvents":89,"./DataChannels":4,"./LocalStream.js":5,"./MediaStream.js":6,"./RTCUtils.js":8,"events":1}],8:[function(require,module,exports){
 var RTCBrowserType = require("../../service/RTC/RTCBrowserType.js");
 var Resolutions = require("../../service/RTC/Resolutions");
 
@@ -1233,7 +1535,7 @@ RTCUtils.prototype.handleLocalStream = function(stream)
 
 
 module.exports = RTCUtils;
-},{"../../service/RTC/RTCBrowserType.js":79,"../../service/RTC/Resolutions":81}],8:[function(require,module,exports){
+},{"../../service/RTC/RTCBrowserType.js":80,"../../service/RTC/Resolutions":82}],9:[function(require,module,exports){
 var UI = {};
 
 var VideoLayout = require("./videolayout/VideoLayout.js");
@@ -1248,7 +1550,7 @@ var ContactList = require("./side_pannels/contactlist/ContactList");
 var Avatar = require("./avatar/Avatar");
 var EventEmitter = require("events");
 var SettingsMenu = require("./side_pannels/settings/SettingsMenu");
-var Settings = require("./side_pannels/settings/Settings");
+var Settings = require("./../settings/Settings");
 var PanelToggler = require("./side_pannels/SidePanelToggler");
 var RoomNameGenerator = require("./welcome_page/RoomnameGenerator");
 UI.messageHandler = require("./util/MessageHandler");
@@ -1607,10 +1909,6 @@ function onMucJoined(jid, info) {
     // Once we've joined the muc show the toolbar
     ToolbarToggler.showToolbar();
 
-    // Show authenticate button if needed
-    Toolbar.showAuthenticateButton(
-            APP.xmpp.isExternalAuthEnabled() && !APP.xmpp.isModerator());
-
     var displayName = !config.displayJids
         ? info.displayName : Strophe.getResourceFromJid(jid);
 
@@ -1649,14 +1947,12 @@ function onMucLeft(jid) {
 };
 
 
-function onLocalRoleChange(jid, info, pres, isModerator, isExternalAuthEnabled)
+function onLocalRoleChange(jid, info, pres, isModerator)
 {
 
     console.info("My role changed, new role: " + info.role);
     onModeratorStatusChanged(isModerator);
     VideoLayout.showModeratorIndicator();
-    Toolbar.showAuthenticateButton(
-            isExternalAuthEnabled && !isModerator);
 
     if (isModerator) {
         Authentication.closeAuthenticationWindow();
@@ -1963,7 +2259,7 @@ UI.dockToolbar = function (isDock) {
 module.exports = UI;
 
 
-},{"../../service/RTC/RTCEvents":80,"../../service/RTC/StreamEventTypes":82,"../../service/connectionquality/CQEvents":84,"../../service/desktopsharing/DesktopSharingEventTypes":85,"../../service/xmpp/XMPPEvents":87,"./audio_levels/AudioLevels.js":9,"./authentication/Authentication":11,"./avatar/Avatar":12,"./etherpad/Etherpad.js":13,"./prezi/Prezi.js":14,"./side_pannels/SidePanelToggler":16,"./side_pannels/chat/Chat.js":17,"./side_pannels/contactlist/ContactList":21,"./side_pannels/settings/Settings":22,"./side_pannels/settings/SettingsMenu":23,"./toolbars/BottomToolbar":24,"./toolbars/Toolbar":25,"./toolbars/ToolbarToggler":26,"./util/MessageHandler":28,"./util/NicknameHandler":29,"./util/UIUtil":30,"./videolayout/VideoLayout.js":32,"./welcome_page/RoomnameGenerator":33,"./welcome_page/WelcomePage":34,"events":88}],9:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":81,"../../service/RTC/StreamEventTypes":83,"../../service/connectionquality/CQEvents":86,"../../service/desktopsharing/DesktopSharingEventTypes":87,"../../service/xmpp/XMPPEvents":89,"./../settings/Settings":38,"./audio_levels/AudioLevels.js":10,"./authentication/Authentication":12,"./avatar/Avatar":13,"./etherpad/Etherpad.js":14,"./prezi/Prezi.js":15,"./side_pannels/SidePanelToggler":17,"./side_pannels/chat/Chat.js":18,"./side_pannels/contactlist/ContactList":22,"./side_pannels/settings/SettingsMenu":23,"./toolbars/BottomToolbar":24,"./toolbars/Toolbar":25,"./toolbars/ToolbarToggler":26,"./util/MessageHandler":28,"./util/NicknameHandler":29,"./util/UIUtil":30,"./videolayout/VideoLayout.js":32,"./welcome_page/RoomnameGenerator":33,"./welcome_page/WelcomePage":34,"events":1}],10:[function(require,module,exports){
 var CanvasUtil = require("./CanvasUtils");
 
 var ASDrawContext = $('#activeSpeakerAudioLevel')[0].getContext('2d');
@@ -2229,7 +2525,7 @@ var AudioLevels = (function(my) {
 })(AudioLevels || {});
 
 module.exports = AudioLevels;
-},{"./CanvasUtils":10}],10:[function(require,module,exports){
+},{"./CanvasUtils":11}],11:[function(require,module,exports){
 /**
  * Utility class for drawing canvas shapes.
  */
@@ -2341,7 +2637,7 @@ var CanvasUtil = (function(my) {
 })(CanvasUtil || {});
 
 module.exports = CanvasUtil;
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 /* Initial "authentication required" dialog */
 var authDialog = null;
 /* Loop retry ID that wits for other user to create the room */
@@ -2360,7 +2656,7 @@ var Authentication = {
         // extract room name from 'room@muc.server.net'
         var room = roomName.substr(0, roomName.indexOf('@'));
 
-        authDialog = messageHandler.openDialog(
+        authDialog = APP.UI.messageHandler.openDialog(
             'Stop',
                 'Authentication is required to create room:<br/><b>' + room +
                 '</b></br> You can either authenticate to create the room or ' +
@@ -2402,7 +2698,7 @@ var Authentication = {
         }
     },
     createAuthenticationWindow: function (callback, url) {
-        authenticationWindow = messageHandler.openCenteredPopup(
+        authenticationWindow = APP.UI.messageHandler.openCenteredPopup(
             url, 910, 660,
             // On closed
             function () {
@@ -2426,8 +2722,8 @@ var Authentication = {
 };
 
 module.exports = Authentication;
-},{}],12:[function(require,module,exports){
-var Settings = require("../side_pannels/settings/Settings");
+},{}],13:[function(require,module,exports){
+var Settings = require("../../settings/Settings");
 var MediaStreamType = require("../../../service/RTC/MediaStreamTypes");
 
 var users = {};
@@ -2582,7 +2878,7 @@ var Avatar = {
 
 
 module.exports = Avatar;
-},{"../../../service/RTC/MediaStreamTypes":78,"../side_pannels/settings/Settings":22,"../videolayout/VideoLayout":32}],13:[function(require,module,exports){
+},{"../../../service/RTC/MediaStreamTypes":79,"../../settings/Settings":38,"../videolayout/VideoLayout":32}],14:[function(require,module,exports){
 /* global $, config,
    setLargeVideoVisible, Util */
 
@@ -2778,7 +3074,7 @@ var Etherpad = {
 
 module.exports = Etherpad;
 
-},{"../prezi/Prezi":14,"../util/UIUtil":30,"../videolayout/VideoLayout":32}],14:[function(require,module,exports){
+},{"../prezi/Prezi":15,"../util/UIUtil":30,"../videolayout/VideoLayout":32}],15:[function(require,module,exports){
 var ToolbarToggler = require("../toolbars/ToolbarToggler");
 var UIUtil = require("../util/UIUtil");
 var VideoLayout = require("../videolayout/VideoLayout");
@@ -3131,7 +3427,7 @@ $(window).resize(function () {
 
 module.exports = Prezi;
 
-},{"../toolbars/ToolbarToggler":26,"../util/MessageHandler":28,"../util/UIUtil":30,"../videolayout/VideoLayout":32,"./PreziPlayer":15}],15:[function(require,module,exports){
+},{"../toolbars/ToolbarToggler":26,"../util/MessageHandler":28,"../util/UIUtil":30,"../videolayout/VideoLayout":32,"./PreziPlayer":16}],16:[function(require,module,exports){
 (function() {
     "use strict";
     var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
@@ -3167,21 +3463,22 @@ module.exports = Prezi;
             var message, item, player;
             try {
                 message = JSON.parse(event.data);
-            } catch (e) {}
-            if (message.id && (player = PreziPlayer.players[message.id])){
-                if (player.options.debug === true) {
-                    if (console && console.log) console.log('received', message);
-                }
-                if (message.type === "changes"){
-                    player.changesHandler(message);
-                }
-                for (var i=0; i<player.callbacks.length; i++) {
-                    item = player.callbacks[i];
-                    if (item && message.type === item.event){
-                        item.callback(message);
+                if (message.id && (player = PreziPlayer.players[message.id])) {
+                    if (player.options.debug === true) {
+                        if (console && console.log)
+                            console.log('received', message);
+                    }
+                    if (message.type === "changes") {
+                        player.changesHandler(message);
+                    }
+                    for (var i = 0; i < player.callbacks.length; i++) {
+                        item = player.callbacks[i];
+                        if (item && message.type === item.event) {
+                            item.callback(message);
+                        }
                     }
                 }
-            }
+            } catch (e) { }
         };
 
         function PreziPlayer(id, options) {
@@ -3426,10 +3723,10 @@ module.exports = Prezi;
 
 module.exports = PreziPlayer;
 
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 var Chat = require("./chat/Chat");
 var ContactList = require("./contactlist/ContactList");
-var Settings = require("./settings/Settings");
+var Settings = require("./../../settings/Settings");
 var SettingsMenu = require("./settings/SettingsMenu");
 var VideoLayout = require("../videolayout/VideoLayout");
 var ToolbarToggler = require("../toolbars/ToolbarToggler");
@@ -3683,7 +3980,7 @@ var PanelToggler = (function(my) {
 }(PanelToggler || {}));
 
 module.exports = PanelToggler;
-},{"../toolbars/ToolbarToggler":26,"../util/UIUtil":30,"../videolayout/VideoLayout":32,"./chat/Chat":17,"./contactlist/ContactList":21,"./settings/Settings":22,"./settings/SettingsMenu":23}],17:[function(require,module,exports){
+},{"../toolbars/ToolbarToggler":26,"../util/UIUtil":30,"../videolayout/VideoLayout":32,"./../../settings/Settings":38,"./chat/Chat":18,"./contactlist/ContactList":22,"./settings/SettingsMenu":23}],18:[function(require,module,exports){
 /* global $, Util, nickname:true */
 var Replacement = require("./Replacement");
 var CommandsProcessor = require("./Commands");
@@ -4041,7 +4338,7 @@ var Chat = (function (my) {
     return my;
 }(Chat || {}));
 module.exports = Chat;
-},{"../../../../service/UI/UIEvents":83,"../../toolbars/ToolbarToggler":26,"../../util/NicknameHandler":29,"../../util/UIUtil":30,"../SidePanelToggler":16,"./Commands":18,"./Replacement":19,"./smileys.json":20}],18:[function(require,module,exports){
+},{"../../../../service/UI/UIEvents":84,"../../toolbars/ToolbarToggler":26,"../../util/NicknameHandler":29,"../../util/UIUtil":30,"../SidePanelToggler":17,"./Commands":19,"./Replacement":20,"./smileys.json":21}],19:[function(require,module,exports){
 var UIUtil = require("../../util/UIUtil");
 
 /**
@@ -4139,7 +4436,7 @@ CommandsProcessor.prototype.processCommand = function()
 };
 
 module.exports = CommandsProcessor;
-},{"../../util/UIUtil":30}],19:[function(require,module,exports){
+},{"../../util/UIUtil":30}],20:[function(require,module,exports){
 var Smileys = require("./smileys.json");
 /**
  * Processes links and smileys in "body"
@@ -4203,7 +4500,7 @@ module.exports = {
     linkify: linkify
 };
 
-},{"./smileys.json":20}],20:[function(require,module,exports){
+},{"./smileys.json":21}],21:[function(require,module,exports){
 module.exports={
     "smileys": {
         "smiley1": ":)",
@@ -4253,7 +4550,7 @@ module.exports={
     }
 }
 
-},{}],21:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 
 var numberOfContacts = 0;
 var notificationInterval;
@@ -4437,69 +4734,9 @@ var ContactList = {
 };
 
 module.exports = ContactList;
-},{}],22:[function(require,module,exports){
-var email = '';
-var displayName = '';
-var userId;
-
-
-function supportsLocalStorage() {
-    try {
-        return 'localStorage' in window && window.localStorage !== null;
-    } catch (e) {
-        console.log("localstorage is not supported");
-        return false;
-    }
-}
-
-
-function generateUniqueId() {
-    function _p8() {
-        return (Math.random().toString(16)+"000000000").substr(2,8);
-    }
-    return _p8() + _p8() + _p8() + _p8();
-}
-
-if(supportsLocalStorage()) {
-    if(!window.localStorage.jitsiMeetId) {
-        window.localStorage.jitsiMeetId = generateUniqueId();
-        console.log("generated id", window.localStorage.jitsiMeetId);
-    }
-    userId = window.localStorage.jitsiMeetId || '';
-    email = window.localStorage.email || '';
-    displayName = window.localStorage.displayname || '';
-} else {
-    console.log("local storage is not supported");
-    userId = generateUniqueId();
-}
-
-var Settings =
-{
-    setDisplayName: function (newDisplayName) {
-        displayName = newDisplayName;
-        window.localStorage.displayname = displayName;
-        return displayName;
-    },
-    setEmail: function(newEmail)
-    {
-        email = newEmail;
-        window.localStorage.email = newEmail;
-        return email;
-    },
-    getSettings: function () {
-        return {
-            email: email,
-            displayName: displayName,
-            uid: userId
-        };
-    }
-};
-
-module.exports = Settings;
-
 },{}],23:[function(require,module,exports){
 var Avatar = require("../../avatar/Avatar");
-var Settings = require("./Settings");
+var Settings = require("./../../../settings/Settings");
 var UIUtil = require("../../util/UIUtil");
 var languages = require("../../../../service/translation/languages");
 
@@ -4575,7 +4812,7 @@ var SettingsMenu = {
 
 
 module.exports = SettingsMenu;
-},{"../../../../service/translation/languages":86,"../../avatar/Avatar":12,"../../util/UIUtil":30,"./Settings":22}],24:[function(require,module,exports){
+},{"../../../../service/translation/languages":88,"../../avatar/Avatar":13,"../../util/UIUtil":30,"./../../../settings/Settings":38}],24:[function(require,module,exports){
 var PanelToggler = require("../side_pannels/SidePanelToggler");
 
 var buttonHandlers = {
@@ -4620,8 +4857,8 @@ var BottomToolbar = (function (my) {
 
 module.exports = BottomToolbar;
 
-},{"../side_pannels/SidePanelToggler":16}],25:[function(require,module,exports){
-/* global $, buttonClick, config, lockRoom,
+},{"../side_pannels/SidePanelToggler":17}],25:[function(require,module,exports){
+/* global APP,$, buttonClick, config, lockRoom,
    setSharedKey, Util */
 var messageHandler = require("../util/MessageHandler");
 var BottomToolbar = require("./BottomToolbar");
@@ -4630,6 +4867,8 @@ var Etherpad = require("../etherpad/Etherpad");
 var PanelToggler = require("../side_pannels/SidePanelToggler");
 var Authentication = require("../authentication/Authentication");
 var UIUtil = require("../util/UIUtil");
+var AuthenticationEvents
+    = require("../../../service/authentication/AuthenticationEvents");
 
 var roomUrl = null;
 var sharedKey = '';
@@ -4643,9 +4882,9 @@ var buttonHandlers =
     "toolbar_button_camera": function () {
         return APP.UI.toggleVideo();
     },
-    "toolbar_button_authentication": function () {
+    /*"toolbar_button_authentication": function () {
         return Toolbar.authenticateClicked();
-    },
+    },*/
     "toolbar_button_record": function () {
         return toggleRecording();
     },
@@ -4680,6 +4919,27 @@ var buttonHandlers =
     },
     "toolbar_button_hangup": function () {
         return hangup();
+    },
+    "toolbar_button_login": function () {
+        Toolbar.authenticateClicked();
+    },
+    "toolbar_button_logout": function () {
+        // Ask for confirmation
+        messageHandler.openTwoButtonDialog(
+            "Logout",
+            "Are you sure you want to logout and stop the conference ?",
+            false, "Yes",
+            function (evt, yes) {
+                if (yes) {
+                    APP.xmpp.logout(function (url) {
+                        if (url) {
+                            window.location.href = url;
+                        } else {
+                            hangup();
+                        }
+                    });
+                }
+            });
     }
 };
 
@@ -4845,7 +5105,33 @@ var Toolbar = (function (my) {
         for(var k in buttonHandlers)
             $("#" + k).click(buttonHandlers[k]);
         UI = ui;
-    }
+        // Update login info
+        APP.xmpp.addListener(
+            AuthenticationEvents.IDENTITY_UPDATED,
+            function (authenticationEnabled, userIdentity) {
+
+                var loggedIn = false;
+                if (userIdentity) {
+                    loggedIn = true;
+                }
+
+                //FIXME: XMPP authentication need improvements for "live" login
+                if (!APP.xmpp.isExternalAuthEnabled() && !loggedIn)
+                {
+                    authenticationEnabled = false;
+                }
+
+                Toolbar.showAuthenticateButton(authenticationEnabled);
+
+                if (authenticationEnabled) {
+                    Toolbar.setAuthenticatedIdentity(userIdentity);
+
+                    Toolbar.showLoginButton(!loggedIn);
+                    Toolbar.showLogoutButton(loggedIn);
+                }
+            }
+        );
+    },
 
     /**
      * Sets shared key
@@ -4858,20 +5144,30 @@ var Toolbar = (function (my) {
     my.authenticateClicked = function () {
         Authentication.focusAuthenticationWindow();
         // Get authentication URL
-        APP.xmpp.getAuthUrl(APP.UI.getRoomName(), function (url) {
-            // Open popup with authentication URL
-            var authenticationWindow = Authentication.createAuthenticationWindow(function () {
-                // On popup closed - retry room allocation
-                APP.xmpp.allocateConferenceFocus(APP.UI.getRoomName(), APP.UI.checkForNicknameAndJoin);
-            }, url);
-            if (!authenticationWindow) {
-                Toolbar.showAuthenticateButton(true);
-                messageHandler.openMessageDialog(
-                    null, "Your browser is blocking popup windows from this site." +
+        if (!APP.xmpp.getMUCJoined()) {
+            APP.xmpp.getLoginUrl(UI.getRoomName(), function (url) {
+                // If conference has not been started yet - redirect to login page
+                window.location.href = url;
+            });
+        } else {
+            APP.xmpp.getPopupLoginUrl(UI.getRoomName(), function (url) {
+                // Otherwise - open popup with authentication URL
+                var authenticationWindow = Authentication.createAuthenticationWindow(
+                    function () {
+                        // On popup closed - retry room allocation
+                        APP.xmpp.allocateConferenceFocus(
+                            APP.UI.getRoomName(),
+                            function () { console.info("AUTH DONE"); }
+                        );
+                    }, url);
+                if (!authenticationWindow) {
+                    messageHandler.openMessageDialog(
+                        null, "Your browser is blocking popup windows from this site." +
                         " Please enable popups in your browser security settings" +
                         " and try again.");
-            }
-        });
+                }
+            });
+        }
     };
 
     /**
@@ -5112,9 +5408,46 @@ var Toolbar = (function (my) {
     // Shows or hides SIP calls button
     my.showSipCallButton = function (show) {
         if (APP.xmpp.isSipGatewayEnabled() && show) {
-            $('#sipCallButton').css({display: "inline"});
+            $('#sipCallButton').css({display: "inline-block"});
         } else {
             $('#sipCallButton').css({display: "none"});
+        }
+    };
+
+    /**
+     * Displays user authenticated identity name(login).
+     * @param authIdentity identity name to be displayed.
+     */
+    my.setAuthenticatedIdentity = function (authIdentity) {
+        if (authIdentity) {
+            $('#toolbar_auth_identity').css({display: "list-item"});
+            $('#toolbar_auth_identity').text(authIdentity);
+        } else {
+            $('#toolbar_auth_identity').css({display: "none"});
+        }
+    };
+
+    /**
+     * Shows/hides login button.
+     * @param show <tt>true</tt> to show
+     */
+    my.showLoginButton = function (show) {
+        if (show) {
+            $('#toolbar_button_login').css({display: "list-item"});
+        } else {
+            $('#toolbar_button_login').css({display: "none"});
+        }
+    };
+
+    /**
+     * Shows/hides logout button.
+     * @param show <tt>true</tt> to show
+     */
+    my.showLogoutButton = function (show) {
+        if (show) {
+            $('#toolbar_button_logout').css({display: "list-item"});
+        } else {
+            $('#toolbar_button_logout').css({display: "none"});
         }
     };
 
@@ -5139,7 +5472,7 @@ var Toolbar = (function (my) {
 }(Toolbar || {}));
 
 module.exports = Toolbar;
-},{"../authentication/Authentication":11,"../etherpad/Etherpad":13,"../prezi/Prezi":14,"../side_pannels/SidePanelToggler":16,"../util/MessageHandler":28,"../util/UIUtil":30,"./BottomToolbar":24}],26:[function(require,module,exports){
+},{"../../../service/authentication/AuthenticationEvents":85,"../authentication/Authentication":12,"../etherpad/Etherpad":14,"../prezi/Prezi":15,"../side_pannels/SidePanelToggler":17,"../util/MessageHandler":28,"../util/UIUtil":30,"./BottomToolbar":24}],26:[function(require,module,exports){
 /* global $, interfaceConfig, Moderator, DesktopStreaming.showDesktopSharingButton */
 
 var toolbarTimeoutObject,
@@ -5597,7 +5930,7 @@ var NickanameHandler = {
 };
 
 module.exports = NickanameHandler;
-},{"../../../service/UI/UIEvents":83}],30:[function(require,module,exports){
+},{"../../../service/UI/UIEvents":84}],30:[function(require,module,exports){
 /**
  * Created by hristo on 12/22/14.
  */
@@ -5679,7 +6012,7 @@ module.exports = {
 
 
 };
-},{"../side_pannels/SidePanelToggler":16}],31:[function(require,module,exports){
+},{"../side_pannels/SidePanelToggler":17}],31:[function(require,module,exports){
 var JitsiPopover = require("../util/JitsiPopover");
 
 /**
@@ -8314,7 +8647,7 @@ var VideoLayout = (function (my) {
 }(VideoLayout || {}));
 
 module.exports = VideoLayout;
-},{"../../../service/RTC/MediaStreamTypes":78,"../../../service/UI/UIEvents":83,"../audio_levels/AudioLevels":9,"../avatar/Avatar":12,"../etherpad/Etherpad":13,"../prezi/Prezi":14,"../side_pannels/chat/Chat":17,"../side_pannels/contactlist/ContactList":21,"../util/NicknameHandler":29,"../util/UIUtil":30,"./ConnectionIndicator":31}],33:[function(require,module,exports){
+},{"../../../service/RTC/MediaStreamTypes":79,"../../../service/UI/UIEvents":84,"../audio_levels/AudioLevels":10,"../avatar/Avatar":13,"../etherpad/Etherpad":14,"../prezi/Prezi":15,"../side_pannels/chat/Chat":18,"../side_pannels/contactlist/ContactList":22,"../util/NicknameHandler":29,"../util/UIUtil":30,"./ConnectionIndicator":31}],33:[function(require,module,exports){
 //var nouns = [
 //];
 var pluralNouns = [
@@ -8732,7 +9065,7 @@ var ConnectionQuality = {
 };
 
 module.exports = ConnectionQuality;
-},{"../../service/connectionquality/CQEvents":84,"../../service/xmpp/XMPPEvents":87,"events":88}],36:[function(require,module,exports){
+},{"../../service/connectionquality/CQEvents":86,"../../service/xmpp/XMPPEvents":89,"events":1}],36:[function(require,module,exports){
 /* global $, alert, changeLocalVideo, chrome, config, getConferenceHandler, getUserMediaWithConstraints */
 /**
  * Indicates that desktop stream is currently in use(for toggle purpose).
@@ -9057,7 +9390,7 @@ module.exports = {
 };
 
 
-},{"../../service/desktopsharing/DesktopSharingEventTypes":85,"events":88}],37:[function(require,module,exports){
+},{"../../service/desktopsharing/DesktopSharingEventTypes":87,"events":1}],37:[function(require,module,exports){
 //maps keycode to character, id of popover for given function and function
 var shortcuts = {
     67: {
@@ -9151,6 +9484,66 @@ var KeyboardShortcut = {
 module.exports = KeyboardShortcut;
 
 },{}],38:[function(require,module,exports){
+var email = '';
+var displayName = '';
+var userId;
+
+
+function supportsLocalStorage() {
+    try {
+        return 'localStorage' in window && window.localStorage !== null;
+    } catch (e) {
+        console.log("localstorage is not supported");
+        return false;
+    }
+}
+
+
+function generateUniqueId() {
+    function _p8() {
+        return (Math.random().toString(16) + "000000000").substr(2, 8);
+    }
+    return _p8() + _p8() + _p8() + _p8();
+}
+
+if (supportsLocalStorage()) {
+    if (!window.localStorage.jitsiMeetId) {
+        window.localStorage.jitsiMeetId = generateUniqueId();
+        console.log("generated id", window.localStorage.jitsiMeetId);
+    }
+    userId = window.localStorage.jitsiMeetId || '';
+    email = window.localStorage.email || '';
+    displayName = window.localStorage.displayname || '';
+} else {
+    console.log("local storage is not supported");
+    userId = generateUniqueId();
+}
+
+var Settings =
+{
+    setDisplayName: function (newDisplayName) {
+        displayName = newDisplayName;
+        window.localStorage.displayname = displayName;
+        return displayName;
+    },
+    setEmail: function (newEmail)
+    {
+        email = newEmail;
+        window.localStorage.email = newEmail;
+        return email;
+    },
+    getSettings: function () {
+        return {
+            email: email,
+            displayName: displayName,
+            uid: userId
+        };
+    }
+};
+
+module.exports = Settings;
+
+},{}],39:[function(require,module,exports){
 /**
  *
  * @constructor
@@ -9183,7 +9576,7 @@ SimulcastLogger.prototype.error = function (text) {
 };
 
 module.exports = SimulcastLogger;
-},{}],39:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 var SimulcastLogger = require("./SimulcastLogger");
 var SimulcastUtils = require("./SimulcastUtils");
 var MediaStreamType = require("../../service/RTC/MediaStreamTypes");
@@ -9452,7 +9845,7 @@ SimulcastReceiver.prototype.transformRemoteDescription = function (desc) {
 };
 
 module.exports = SimulcastReceiver;
-},{"../../service/RTC/MediaStreamTypes":78,"./SimulcastLogger":38,"./SimulcastUtils":41}],40:[function(require,module,exports){
+},{"../../service/RTC/MediaStreamTypes":79,"./SimulcastLogger":39,"./SimulcastUtils":42}],41:[function(require,module,exports){
 var SimulcastLogger = require("./SimulcastLogger");
 var SimulcastUtils = require("./SimulcastUtils");
 
@@ -9975,7 +10368,7 @@ module.exports = {
     "no": NoSimulcastSender
 }
 
-},{"./SimulcastLogger":38,"./SimulcastUtils":41}],41:[function(require,module,exports){
+},{"./SimulcastLogger":39,"./SimulcastUtils":42}],42:[function(require,module,exports){
 var SimulcastLogger = require("./SimulcastLogger");
 
 /**
@@ -10209,7 +10602,7 @@ SimulcastUtils.prototype._compileVideoSources = function (videoSources) {
 };
 
 module.exports = SimulcastUtils;
-},{"./SimulcastLogger":38}],42:[function(require,module,exports){
+},{"./SimulcastLogger":39}],43:[function(require,module,exports){
 /*jslint plusplus: true */
 /*jslint nomen: true*/
 
@@ -10412,7 +10805,7 @@ SimulcastManager.prototype.resetSender = function() {
 var simulcast = new SimulcastManager();
 
 module.exports = simulcast;
-},{"../../service/RTC/RTCEvents":80,"./SimulcastReceiver":39,"./SimulcastSender":40,"./SimulcastUtils":41}],43:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":81,"./SimulcastReceiver":40,"./SimulcastSender":41,"./SimulcastUtils":42}],44:[function(require,module,exports){
 /**
  * Provides statistics for the local stream.
  */
@@ -10543,7 +10936,7 @@ LocalStatsCollector.prototype.stop = function () {
 };
 
 module.exports = LocalStatsCollector;
-},{}],44:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 /* global ssrc2jid */
 /* jshint -W117 */
 var RTCBrowserType = require("../../service/RTC/RTCBrowserType");
@@ -11254,7 +11647,7 @@ StatsCollector.prototype.processAudioLevelReport = function ()
 
 
 };
-},{"../../service/RTC/RTCBrowserType":79}],45:[function(require,module,exports){
+},{"../../service/RTC/RTCBrowserType":80}],46:[function(require,module,exports){
 /**
  * Created by hristo on 8/4/14.
  */
@@ -11387,7 +11780,7 @@ var statistics =
 
 
 module.exports = statistics;
-},{"../../service/RTC/StreamEventTypes.js":82,"../../service/xmpp/XMPPEvents":87,"./LocalStatsCollector.js":43,"./RTPStatsCollector.js":44,"events":88}],46:[function(require,module,exports){
+},{"../../service/RTC/StreamEventTypes.js":83,"../../service/xmpp/XMPPEvents":89,"./LocalStatsCollector.js":44,"./RTPStatsCollector.js":45,"events":1}],47:[function(require,module,exports){
 var i18n = require("i18next-client");
 var languages = require("../../service/translation/languages");
 var DEFAULT_LANG = languages.EN;
@@ -11499,7 +11892,7 @@ module.exports = {
     }
 };
 
-},{"../../service/translation/languages":86,"i18next-client":61}],47:[function(require,module,exports){
+},{"../../service/translation/languages":88,"i18next-client":62}],48:[function(require,module,exports){
 /* jshint -W117 */
 var TraceablePeerConnection = require("./TraceablePeerConnection");
 var SDPDiffer = require("./SDPDiffer");
@@ -12895,7 +13288,7 @@ JingleSession.prototype.remoteStreamAdded = function (data) {
 
 module.exports = JingleSession;
 
-},{"../../service/RTC/RTCBrowserType":79,"./SDP":48,"./SDPDiffer":49,"./SDPUtil":50,"./TraceablePeerConnection":51}],48:[function(require,module,exports){
+},{"../../service/RTC/RTCBrowserType":80,"./SDP":49,"./SDPDiffer":50,"./SDPUtil":51,"./TraceablePeerConnection":52}],49:[function(require,module,exports){
 /* jshint -W117 */
 var SDPUtil = require("./SDPUtil");
 
@@ -13517,7 +13910,7 @@ SDP.prototype.jingle2media = function (content) {
 module.exports = SDP;
 
 
-},{"./SDPUtil":50}],49:[function(require,module,exports){
+},{"./SDPUtil":51}],50:[function(require,module,exports){
 function SDPDiffer(mySDP, otherSDP) {
     this.mySDP = mySDP;
     this.otherSDP = otherSDP;
@@ -13683,7 +14076,7 @@ SDPDiffer.prototype.toJingle = function(modify) {
 };
 
 module.exports = SDPDiffer;
-},{}],50:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 SDPUtil = {
     iceparams: function (mediadesc, sessiondesc) {
         var data = null;
@@ -14033,7 +14426,7 @@ SDPUtil = {
     }
 };
 module.exports = SDPUtil;
-},{}],51:[function(require,module,exports){
+},{}],52:[function(require,module,exports){
 function TraceablePeerConnection(ice_config, constraints) {
     var self = this;
     var RTCPeerconnection = navigator.mozGetUserMedia ? mozRTCPeerConnection : webkitRTCPeerConnection;
@@ -14301,10 +14694,14 @@ TraceablePeerConnection.prototype.getStats = function(callback, errback) {
 module.exports = TraceablePeerConnection;
 
 
-},{}],52:[function(require,module,exports){
+},{}],53:[function(require,module,exports){
 /* global $, $iq, config, connection, UI, messageHandler,
  roomName, sessionTerminated, Strophe, Util */
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
+var Settings = require("../settings/Settings");
+
+var AuthenticationEvents
+    = require("../../service/authentication/AuthenticationEvents");
 
 /**
  * Contains logic responsible for enabling/disabling functionality available
@@ -14364,6 +14761,25 @@ var Moderator = {
     init: function (xmpp, emitter) {
         this.xmppService = xmpp;
         eventEmitter = emitter;
+
+        // Message listener that talks to POPUP window
+        function listener(event) {
+            if (event.data && event.data.sessionId) {
+                if (event.origin !== window.location.origin) {
+                    console.warn(
+                        "Ignoring sessionId from different origin: " + event.origin);
+                    return;
+                }
+                localStorage.setItem('sessionId', event.data.sessionId);
+                // After popup is closed we will authenticate
+            }
+        }
+        // Register
+        if (window.addEventListener) {
+            window.addEventListener("message", listener, false);
+        } else {
+            window.attachEvent("onmessage", listener);
+        }
     },
 
     onMucLeft: function (jid) {
@@ -14403,10 +14819,24 @@ var Moderator = {
     createConferenceIq: function (roomName) {
         // Generate create conference IQ
         var elem = $iq({to: Moderator.getFocusComponent(), type: 'set'});
+
+        // Session Id used for authentication
+        var sessionId = localStorage.getItem('sessionId');
+        var machineUID = Settings.getSettings().uid;
+
+        console.info(
+            "Session ID: " + sessionId + " machine UID: " + machineUID);
+
         elem.c('conference', {
             xmlns: 'http://jitsi.org/protocol/focus',
-            room: roomName
+            room: roomName,
+            'machine-uid': machineUID
         });
+
+        if (sessionId) {
+            elem.attrs({ 'session-id': sessionId});
+        }
+
         if (config.hosts.bridge !== undefined) {
             elem.c(
                 'property',
@@ -14456,22 +14886,44 @@ var Moderator = {
     },
 
     parseConfigOptions: function (resultIq) {
-    
+
         Moderator.setFocusUserJid(
             $(resultIq).find('conference').attr('focusjid'));
-    
-        var extAuthParam
-            = $(resultIq).find('>conference>property[name=\'externalAuth\']');
-        if (extAuthParam.length) {
-            externalAuthEnabled = extAuthParam.attr('value') === 'true';
+
+        var authenticationEnabled
+            = $(resultIq).find(
+                '>conference>property' +
+                '[name=\'authentication\'][value=\'true\']').length > 0;
+
+        console.info("Authentication enabled: " + authenticationEnabled);
+
+        externalAuthEnabled
+            = $(resultIq).find(
+                '>conference>property' +
+                '[name=\'externalAuth\'][value=\'true\']').length > 0;
+
+        console.info('External authentication enabled: ' + externalAuthEnabled);
+
+        if (!externalAuthEnabled) {
+            // We expect to receive sessionId in 'internal' authentication mode
+            var sessionId
+                = $(resultIq).find('conference').attr('session-id');
+            if (sessionId) {
+                console.info('Received sessionId: ' + sessionId);
+                localStorage.setItem('sessionId', sessionId);
+            }
         }
-    
-        console.info("External authentication enabled: " + externalAuthEnabled);
+
+        var authIdentity = $(resultIq).find('>conference').attr('identity');
+
+        eventEmitter.emit(AuthenticationEvents.IDENTITY_UPDATED,
+            authenticationEnabled, authIdentity);
     
         // Check if focus has auto-detected Jigasi component(this will be also
         // included if we have passed our host from the config)
         if ($(resultIq).find(
-            '>conference>property[name=\'sipGatewayEnabled\']').length) {
+            '>conference>property' +
+            '[name=\'sipGatewayEnabled\'][value=\'true\']').length) {
             sipGatewayEnabled = true;
         }
     
@@ -14489,12 +14941,14 @@ var Moderator = {
         connection.sendIQ(
             iq,
             function (result) {
+
+                // Setup config options
+                Moderator.parseConfigOptions(result);
+
                 if ('true' === $(result).find('conference').attr('ready')) {
                     // Reset both timers
                     getNextTimeout(true);
                     getNextErrorTimeout(true);
-                    // Setup config options
-                    Moderator.parseConfigOptions(result);
                     // Exec callback
                     callback();
                 } else {
@@ -14512,7 +14966,14 @@ var Moderator = {
             function (error) {
                 // Not authorized to create new room
                 if ($(error).find('>error>not-authorized').length) {
-                    console.warn("Unauthorized to start the conference");
+                    console.warn("Unauthorized to start the conference", error);
+
+                    if ($(error).find('>error>session-invalid').length) {
+                        // FIXME: just retry
+                        console.info("Session expired! - removing");
+                        localStorage.removeItem("sessionId");
+                    }
+
                     var toDomain
                         = Strophe.getDomainFromJid(error.getAttribute('to'));
                     if (toDomain === config.hosts.anonymousdomain) {
@@ -14552,26 +15013,81 @@ var Moderator = {
         );
     },
 
-    getAuthUrl: function (roomName, urlCallback) {
+    getLoginUrl: function (roomName, urlCallback) {
         var iq = $iq({to: Moderator.getFocusComponent(), type: 'get'});
-        iq.c('auth-url', {
+        iq.c('login-url', {
             xmlns: 'http://jitsi.org/protocol/focus',
-            room: roomName
+            room: roomName,
+            'machine-uid': Settings.getSettings().uid
         });
         connection.sendIQ(
             iq,
             function (result) {
-                var url = $(result).find('auth-url').attr('url');
+                var url = $(result).find('login-url').attr('url');
+                url = url = decodeURIComponent(url);
                 if (url) {
                     console.info("Got auth url: " + url);
                     urlCallback(url);
                 } else {
                     console.error(
-                        "Failed to get auth url fro mthe focus", result);
+                        "Failed to get auth url from the focus", result);
                 }
             },
             function (error) {
                 console.error("Get auth url error", error);
+            }
+        );
+    },
+    getPopupLoginUrl: function (roomName, urlCallback) {
+        var iq = $iq({to: Moderator.getFocusComponent(), type: 'get'});
+        iq.c('login-url', {
+            xmlns: 'http://jitsi.org/protocol/focus',
+            room: roomName,
+            'machine-uid': Settings.getSettings().uid,
+            popup: true
+        });
+        connection.sendIQ(
+            iq,
+            function (result) {
+                var url = $(result).find('login-url').attr('url');
+                url = url = decodeURIComponent(url);
+                if (url) {
+                    console.info("Got POPUP auth url: " + url);
+                    urlCallback(url);
+                } else {
+                    console.error(
+                        "Failed to get POPUP auth url from the focus", result);
+                }
+            },
+            function (error) {
+                console.error('Get POPUP auth url error', error);
+            }
+        );
+    },
+    logout: function (callback) {
+        var iq = $iq({to: Moderator.getFocusComponent(), type: 'set'});
+        var sessionId = localStorage.getItem('sessionId');
+        if (!sessionId) {
+            callback();
+            return;
+        }
+        iq.c('logout', {
+            xmlns: 'http://jitsi.org/protocol/focus',
+            'session-id': sessionId
+        });
+        connection.sendIQ(
+            iq,
+            function (result) {
+                var logoutUrl = $(result).find('logout').attr('logout-url');
+                if (logoutUrl) {
+                    logoutUrl = decodeURIComponent(logoutUrl);
+                }
+                console.info("Log out OK, url: " + logoutUrl, result);
+                localStorage.removeItem('sessionId');
+                callback(logoutUrl);
+            },
+            function (error) {
+                console.error("Logout error", error);
             }
         );
     }
@@ -14582,7 +15098,7 @@ module.exports = Moderator;
 
 
 
-},{"../../service/xmpp/XMPPEvents":87}],53:[function(require,module,exports){
+},{"../../service/authentication/AuthenticationEvents":85,"../../service/xmpp/XMPPEvents":89,"../settings/Settings":38}],54:[function(require,module,exports){
 /* global $, $iq, config, connection, focusMucJid, messageHandler, Moderator,
    Toolbar, Util */
 var Moderator = require("./moderator");
@@ -14737,7 +15253,7 @@ var Recording = {
 }
 
 module.exports = Recording;
-},{"./moderator":52}],54:[function(require,module,exports){
+},{"./moderator":53}],55:[function(require,module,exports){
 /* jshint -W117 */
 /* a simple MUC connection plugin
  * can only handle a single MUC room
@@ -14923,8 +15439,7 @@ module.exports = function(XMPP, eventEmitter) {
                     this.role = member.role;
 
                     eventEmitter.emit(XMPPEvents.LOCALROLE_CHANGED,
-                        from, member, pres, Moderator.isModerator(),
-                        Moderator.isExternalAuthEnabled());
+                        from, member, pres, Moderator.isModerator());
                 }
                 if (!this.joined) {
                     this.joined = true;
@@ -15354,7 +15869,7 @@ module.exports = function(XMPP, eventEmitter) {
 };
 
 
-},{"../../service/xmpp/XMPPEvents":87,"./JingleSession":47,"./moderator":52}],55:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":89,"./JingleSession":48,"./moderator":53}],56:[function(require,module,exports){
 /* jshint -W117 */
 
 var JingleSession = require("./JingleSession");
@@ -15693,7 +16208,7 @@ module.exports = function(XMPP, eventEmitter)
 };
 
 
-},{"../../service/xmpp/XMPPEvents":87,"./JingleSession":47}],56:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":89,"./JingleSession":48}],57:[function(require,module,exports){
 /* global Strophe */
 module.exports = function () {
 
@@ -15714,7 +16229,7 @@ module.exports = function () {
         }
     });
 };
-},{}],57:[function(require,module,exports){
+},{}],58:[function(require,module,exports){
 /* global $, $iq, config, connection, focusMucJid, forceMuted,
    setAudioMuted, Strophe */
 /**
@@ -15773,7 +16288,7 @@ module.exports = function (XMPP) {
         }
     });
 }
-},{}],58:[function(require,module,exports){
+},{}],59:[function(require,module,exports){
 /* jshint -W117 */
 module.exports = function() {
     Strophe.addConnectionPlugin('rayo',
@@ -15870,7 +16385,7 @@ module.exports = function() {
     );
 };
 
-},{}],59:[function(require,module,exports){
+},{}],60:[function(require,module,exports){
 /**
  * Strophe logger implementation. Logs from level WARN and above.
  */
@@ -15914,7 +16429,7 @@ module.exports = function () {
     };
 };
 
-},{}],60:[function(require,module,exports){
+},{}],61:[function(require,module,exports){
 var Moderator = require("./moderator");
 var EventEmitter = require("events");
 var Recording = require("./recording");
@@ -16147,6 +16662,12 @@ var XMPP = {
     allocateConferenceFocus: function(roomName, callback) {
         Moderator.allocateConferenceFocus(roomName, callback);
     },
+    getLoginUrl: function (roomName, callback) {
+        Moderator.getLoginUrl(roomName, callback);
+    },
+    getPopupLoginUrl: function (roomName, callback) {
+        Moderator.getPopupLoginUrl(roomName, callback);
+    },
     isModerator: function () {
         return Moderator.isModerator();
     },
@@ -16338,6 +16859,9 @@ var XMPP = {
     eject: function (jid) {
         connection.moderate.eject(jid);
     },
+    logout: function (callback) {
+        Moderator.logout(callback);
+    },
     findJidFromResource: function (resource) {
         return connection.emuc.findJidFromResource(resource);
     },
@@ -16360,7 +16884,7 @@ var XMPP = {
 
 module.exports = XMPP;
 
-},{"../../service/RTC/StreamEventTypes":82,"../../service/UI/UIEvents":83,"../../service/xmpp/XMPPEvents":87,"./SDP":48,"./moderator":52,"./recording":53,"./strophe.emuc":54,"./strophe.jingle":55,"./strophe.logger":56,"./strophe.moderate":57,"./strophe.rayo":58,"./strophe.util":59,"events":88,"pako":62}],61:[function(require,module,exports){
+},{"../../service/RTC/StreamEventTypes":83,"../../service/UI/UIEvents":84,"../../service/xmpp/XMPPEvents":89,"./SDP":49,"./moderator":53,"./recording":54,"./strophe.emuc":55,"./strophe.jingle":56,"./strophe.logger":57,"./strophe.moderate":58,"./strophe.rayo":59,"./strophe.util":60,"events":1,"pako":63}],62:[function(require,module,exports){
 // i18next, v1.7.7
 // Copyright (c)2014 Jan Mühlemann (jamuhl).
 // Distributed under MIT license
@@ -18483,7 +19007,7 @@ module.exports = XMPP;
     i18n.options = o;
 
 })();
-},{"jquery":"jquery"}],62:[function(require,module,exports){
+},{"jquery":"jquery"}],63:[function(require,module,exports){
 // Top level file is just a mixin of submodules & constants
 'use strict';
 
@@ -18498,7 +19022,7 @@ var pako = {};
 assign(pako, deflate, inflate, constants);
 
 module.exports = pako;
-},{"./lib/deflate":63,"./lib/inflate":64,"./lib/utils/common":65,"./lib/zlib/constants":68}],63:[function(require,module,exports){
+},{"./lib/deflate":64,"./lib/inflate":65,"./lib/utils/common":66,"./lib/zlib/constants":69}],64:[function(require,module,exports){
 'use strict';
 
 
@@ -18860,7 +19384,7 @@ exports.Deflate = Deflate;
 exports.deflate = deflate;
 exports.deflateRaw = deflateRaw;
 exports.gzip = gzip;
-},{"./utils/common":65,"./utils/strings":66,"./zlib/deflate.js":70,"./zlib/messages":75,"./zlib/zstream":77}],64:[function(require,module,exports){
+},{"./utils/common":66,"./utils/strings":67,"./zlib/deflate.js":71,"./zlib/messages":76,"./zlib/zstream":78}],65:[function(require,module,exports){
 'use strict';
 
 
@@ -19226,7 +19750,7 @@ exports.inflate = inflate;
 exports.inflateRaw = inflateRaw;
 exports.ungzip  = inflate;
 
-},{"./utils/common":65,"./utils/strings":66,"./zlib/constants":68,"./zlib/gzheader":71,"./zlib/inflate.js":73,"./zlib/messages":75,"./zlib/zstream":77}],65:[function(require,module,exports){
+},{"./utils/common":66,"./utils/strings":67,"./zlib/constants":69,"./zlib/gzheader":72,"./zlib/inflate.js":74,"./zlib/messages":76,"./zlib/zstream":78}],66:[function(require,module,exports){
 'use strict';
 
 
@@ -19329,7 +19853,7 @@ exports.setTyped = function (on) {
 };
 
 exports.setTyped(TYPED_OK);
-},{}],66:[function(require,module,exports){
+},{}],67:[function(require,module,exports){
 // String encode/decode helpers
 'use strict';
 
@@ -19516,7 +20040,7 @@ exports.utf8border = function(buf, max) {
   return (pos + _utf8len[buf[pos]] > max) ? pos : max;
 };
 
-},{"./common":65}],67:[function(require,module,exports){
+},{"./common":66}],68:[function(require,module,exports){
 'use strict';
 
 // Note: adler32 takes 12% for level 0 and 2% for level 6.
@@ -19549,7 +20073,7 @@ function adler32(adler, buf, len, pos) {
 
 
 module.exports = adler32;
-},{}],68:[function(require,module,exports){
+},{}],69:[function(require,module,exports){
 module.exports = {
 
   /* Allowed flush values; see deflate() and inflate() below for details */
@@ -19597,7 +20121,7 @@ module.exports = {
   Z_DEFLATED:               8
   //Z_NULL:                 null // Use -1 or null inline, depending on var type
 };
-},{}],69:[function(require,module,exports){
+},{}],70:[function(require,module,exports){
 'use strict';
 
 // Note: we can't get significant speed boost here.
@@ -19639,7 +20163,7 @@ function crc32(crc, buf, len, pos) {
 
 
 module.exports = crc32;
-},{}],70:[function(require,module,exports){
+},{}],71:[function(require,module,exports){
 'use strict';
 
 var utils   = require('../utils/common');
@@ -21405,7 +21929,7 @@ exports.deflatePending = deflatePending;
 exports.deflatePrime = deflatePrime;
 exports.deflateTune = deflateTune;
 */
-},{"../utils/common":65,"./adler32":67,"./crc32":69,"./messages":75,"./trees":76}],71:[function(require,module,exports){
+},{"../utils/common":66,"./adler32":68,"./crc32":70,"./messages":76,"./trees":77}],72:[function(require,module,exports){
 'use strict';
 
 
@@ -21446,7 +21970,7 @@ function GZheader() {
 }
 
 module.exports = GZheader;
-},{}],72:[function(require,module,exports){
+},{}],73:[function(require,module,exports){
 'use strict';
 
 // See state defs from inflate.js
@@ -21773,7 +22297,7 @@ module.exports = function inflate_fast(strm, start) {
   return;
 };
 
-},{}],73:[function(require,module,exports){
+},{}],74:[function(require,module,exports){
 'use strict';
 
 
@@ -23277,7 +23801,7 @@ exports.inflateSync = inflateSync;
 exports.inflateSyncPoint = inflateSyncPoint;
 exports.inflateUndermine = inflateUndermine;
 */
-},{"../utils/common":65,"./adler32":67,"./crc32":69,"./inffast":72,"./inftrees":74}],74:[function(require,module,exports){
+},{"../utils/common":66,"./adler32":68,"./crc32":70,"./inffast":73,"./inftrees":75}],75:[function(require,module,exports){
 'use strict';
 
 
@@ -23604,7 +24128,7 @@ module.exports = function inflate_table(type, lens, lens_index, codes, table, ta
   return 0;
 };
 
-},{"../utils/common":65}],75:[function(require,module,exports){
+},{"../utils/common":66}],76:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -23618,7 +24142,7 @@ module.exports = {
   '-5':   'buffer error',        /* Z_BUF_ERROR     (-5) */
   '-6':   'incompatible version' /* Z_VERSION_ERROR (-6) */
 };
-},{}],76:[function(require,module,exports){
+},{}],77:[function(require,module,exports){
 'use strict';
 
 
@@ -24818,7 +25342,7 @@ exports._tr_stored_block = _tr_stored_block;
 exports._tr_flush_block  = _tr_flush_block;
 exports._tr_tally = _tr_tally;
 exports._tr_align = _tr_align;
-},{"../utils/common":65}],77:[function(require,module,exports){
+},{"../utils/common":66}],78:[function(require,module,exports){
 'use strict';
 
 
@@ -24848,14 +25372,14 @@ function ZStream() {
 }
 
 module.exports = ZStream;
-},{}],78:[function(require,module,exports){
+},{}],79:[function(require,module,exports){
 var MediaStreamType = {
     VIDEO_TYPE: "Video",
 
     AUDIO_TYPE: "Audio"
 };
 module.exports = MediaStreamType;
-},{}],79:[function(require,module,exports){
+},{}],80:[function(require,module,exports){
 var RTCBrowserType = {
     RTC_BROWSER_CHROME: "rtc_browser.chrome",
 
@@ -24863,7 +25387,7 @@ var RTCBrowserType = {
 };
 
 module.exports = RTCBrowserType;
-},{}],80:[function(require,module,exports){
+},{}],81:[function(require,module,exports){
 var RTCEvents = {
     LASTN_CHANGED: "rtc.lastn_changed",
     DOMINANTSPEAKER_CHANGED: "rtc.dominantspeaker_changed",
@@ -24875,7 +25399,7 @@ var RTCEvents = {
 };
 
 module.exports = RTCEvents;
-},{}],81:[function(require,module,exports){
+},{}],82:[function(require,module,exports){
 var Resolutions = {
     "1080": {
         width: 1920,
@@ -24929,7 +25453,7 @@ var Resolutions = {
     }
 };
 module.exports = Resolutions;
-},{}],82:[function(require,module,exports){
+},{}],83:[function(require,module,exports){
 var StreamEventTypes = {
     EVENT_TYPE_LOCAL_CREATED: "stream.local_created",
 
@@ -24943,14 +25467,28 @@ var StreamEventTypes = {
 };
 
 module.exports = StreamEventTypes;
-},{}],83:[function(require,module,exports){
+},{}],84:[function(require,module,exports){
 var UIEvents = {
     NICKNAME_CHANGED: "UI.nickname_changed",
     SELECTED_ENDPOINT: "UI.selected_endpoint",
     PINNED_ENDPOINT: "UI.pinned_endpoint"
 };
 module.exports = UIEvents;
-},{}],84:[function(require,module,exports){
+},{}],85:[function(require,module,exports){
+var AuthenticationEvents = {
+    /**
+     * Event callback arguments:
+     * function(authenticationEnabled, userIdentity)
+     * authenticationEnabled - indicates whether authentication has been enabled
+     *                         in this session
+     * userIdentity - if user has been logged in then it contains user name. If
+     *                contains 'null' or 'undefined' then user is not logged in.
+     */
+    IDENTITY_UPDATED: "authentication.identity_updated"
+};
+module.exports = AuthenticationEvents;
+
+},{}],86:[function(require,module,exports){
 var CQEvents = {
     LOCALSTATS_UPDATED: "cq.localstats_updated",
     REMOTESTATS_UPDATED: "cq.remotestats_updated",
@@ -24958,7 +25496,7 @@ var CQEvents = {
 };
 
 module.exports = CQEvents;
-},{}],85:[function(require,module,exports){
+},{}],87:[function(require,module,exports){
 var DesktopSharingEventTypes = {
     INIT: "ds.init",
 
@@ -24968,7 +25506,7 @@ var DesktopSharingEventTypes = {
 };
 
 module.exports = DesktopSharingEventTypes;
-},{}],86:[function(require,module,exports){
+},{}],88:[function(require,module,exports){
 module.exports = {
     getLanguages : function () {
         var languages = [];
@@ -24981,7 +25519,7 @@ module.exports = {
     },
     EN: "en"
 }
-},{}],87:[function(require,module,exports){
+},{}],89:[function(require,module,exports){
 var XMPPEvents = {
     CONFERENCE_CERATED: "xmpp.conferenceCreated.jingle",
     CALL_TERMINATED: "xmpp.callterminated.jingle",
@@ -25008,308 +25546,5 @@ var XMPPEvents = {
     ETHERPAD: "xmpp.etherpad"
 };
 module.exports = XMPPEvents;
-},{}],88:[function(require,module,exports){
-// Copyright Joyent, Inc. and other Node contributors.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the
-// following conditions:
-//
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-// USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-function EventEmitter() {
-  this._events = this._events || {};
-  this._maxListeners = this._maxListeners || undefined;
-}
-module.exports = EventEmitter;
-
-// Backwards-compat with node 0.10.x
-EventEmitter.EventEmitter = EventEmitter;
-
-EventEmitter.prototype._events = undefined;
-EventEmitter.prototype._maxListeners = undefined;
-
-// By default EventEmitters will print a warning if more than 10 listeners are
-// added to it. This is a useful default which helps finding memory leaks.
-EventEmitter.defaultMaxListeners = 10;
-
-// Obviously not all Emitters should be limited to 10. This function allows
-// that to be increased. Set to zero for unlimited.
-EventEmitter.prototype.setMaxListeners = function(n) {
-  if (!isNumber(n) || n < 0 || isNaN(n))
-    throw TypeError('n must be a positive number');
-  this._maxListeners = n;
-  return this;
-};
-
-EventEmitter.prototype.emit = function(type) {
-  var er, handler, len, args, i, listeners;
-
-  if (!this._events)
-    this._events = {};
-
-  // If there is no 'error' event listener then throw.
-  if (type === 'error') {
-    if (!this._events.error ||
-        (isObject(this._events.error) && !this._events.error.length)) {
-      er = arguments[1];
-      if (er instanceof Error) {
-        throw er; // Unhandled 'error' event
-      }
-      throw TypeError('Uncaught, unspecified "error" event.');
-    }
-  }
-
-  handler = this._events[type];
-
-  if (isUndefined(handler))
-    return false;
-
-  if (isFunction(handler)) {
-    switch (arguments.length) {
-      // fast cases
-      case 1:
-        handler.call(this);
-        break;
-      case 2:
-        handler.call(this, arguments[1]);
-        break;
-      case 3:
-        handler.call(this, arguments[1], arguments[2]);
-        break;
-      // slower
-      default:
-        len = arguments.length;
-        args = new Array(len - 1);
-        for (i = 1; i < len; i++)
-          args[i - 1] = arguments[i];
-        handler.apply(this, args);
-    }
-  } else if (isObject(handler)) {
-    len = arguments.length;
-    args = new Array(len - 1);
-    for (i = 1; i < len; i++)
-      args[i - 1] = arguments[i];
-
-    listeners = handler.slice();
-    len = listeners.length;
-    for (i = 0; i < len; i++)
-      listeners[i].apply(this, args);
-  }
-
-  return true;
-};
-
-EventEmitter.prototype.addListener = function(type, listener) {
-  var m;
-
-  if (!isFunction(listener))
-    throw TypeError('listener must be a function');
-
-  if (!this._events)
-    this._events = {};
-
-  // To avoid recursion in the case that type === "newListener"! Before
-  // adding it to the listeners, first emit "newListener".
-  if (this._events.newListener)
-    this.emit('newListener', type,
-              isFunction(listener.listener) ?
-              listener.listener : listener);
-
-  if (!this._events[type])
-    // Optimize the case of one listener. Don't need the extra array object.
-    this._events[type] = listener;
-  else if (isObject(this._events[type]))
-    // If we've already got an array, just append.
-    this._events[type].push(listener);
-  else
-    // Adding the second element, need to change to array.
-    this._events[type] = [this._events[type], listener];
-
-  // Check for listener leak
-  if (isObject(this._events[type]) && !this._events[type].warned) {
-    var m;
-    if (!isUndefined(this._maxListeners)) {
-      m = this._maxListeners;
-    } else {
-      m = EventEmitter.defaultMaxListeners;
-    }
-
-    if (m && m > 0 && this._events[type].length > m) {
-      this._events[type].warned = true;
-      console.error('(node) warning: possible EventEmitter memory ' +
-                    'leak detected. %d listeners added. ' +
-                    'Use emitter.setMaxListeners() to increase limit.',
-                    this._events[type].length);
-      if (typeof console.trace === 'function') {
-        // not supported in IE 10
-        console.trace();
-      }
-    }
-  }
-
-  return this;
-};
-
-EventEmitter.prototype.on = EventEmitter.prototype.addListener;
-
-EventEmitter.prototype.once = function(type, listener) {
-  if (!isFunction(listener))
-    throw TypeError('listener must be a function');
-
-  var fired = false;
-
-  function g() {
-    this.removeListener(type, g);
-
-    if (!fired) {
-      fired = true;
-      listener.apply(this, arguments);
-    }
-  }
-
-  g.listener = listener;
-  this.on(type, g);
-
-  return this;
-};
-
-// emits a 'removeListener' event iff the listener was removed
-EventEmitter.prototype.removeListener = function(type, listener) {
-  var list, position, length, i;
-
-  if (!isFunction(listener))
-    throw TypeError('listener must be a function');
-
-  if (!this._events || !this._events[type])
-    return this;
-
-  list = this._events[type];
-  length = list.length;
-  position = -1;
-
-  if (list === listener ||
-      (isFunction(list.listener) && list.listener === listener)) {
-    delete this._events[type];
-    if (this._events.removeListener)
-      this.emit('removeListener', type, listener);
-
-  } else if (isObject(list)) {
-    for (i = length; i-- > 0;) {
-      if (list[i] === listener ||
-          (list[i].listener && list[i].listener === listener)) {
-        position = i;
-        break;
-      }
-    }
-
-    if (position < 0)
-      return this;
-
-    if (list.length === 1) {
-      list.length = 0;
-      delete this._events[type];
-    } else {
-      list.splice(position, 1);
-    }
-
-    if (this._events.removeListener)
-      this.emit('removeListener', type, listener);
-  }
-
-  return this;
-};
-
-EventEmitter.prototype.removeAllListeners = function(type) {
-  var key, listeners;
-
-  if (!this._events)
-    return this;
-
-  // not listening for removeListener, no need to emit
-  if (!this._events.removeListener) {
-    if (arguments.length === 0)
-      this._events = {};
-    else if (this._events[type])
-      delete this._events[type];
-    return this;
-  }
-
-  // emit removeListener for all listeners on all events
-  if (arguments.length === 0) {
-    for (key in this._events) {
-      if (key === 'removeListener') continue;
-      this.removeAllListeners(key);
-    }
-    this.removeAllListeners('removeListener');
-    this._events = {};
-    return this;
-  }
-
-  listeners = this._events[type];
-
-  if (isFunction(listeners)) {
-    this.removeListener(type, listeners);
-  } else {
-    // LIFO order
-    while (listeners.length)
-      this.removeListener(type, listeners[listeners.length - 1]);
-  }
-  delete this._events[type];
-
-  return this;
-};
-
-EventEmitter.prototype.listeners = function(type) {
-  var ret;
-  if (!this._events || !this._events[type])
-    ret = [];
-  else if (isFunction(this._events[type]))
-    ret = [this._events[type]];
-  else
-    ret = this._events[type].slice();
-  return ret;
-};
-
-EventEmitter.listenerCount = function(emitter, type) {
-  var ret;
-  if (!emitter._events || !emitter._events[type])
-    ret = 0;
-  else if (isFunction(emitter._events[type]))
-    ret = 1;
-  else
-    ret = emitter._events[type].length;
-  return ret;
-};
-
-function isFunction(arg) {
-  return typeof arg === 'function';
-}
-
-function isNumber(arg) {
-  return typeof arg === 'number';
-}
-
-function isObject(arg) {
-  return typeof arg === 'object' && arg !== null;
-}
-
-function isUndefined(arg) {
-  return arg === void 0;
-}
-
-},{}]},{},[1])(1)
+},{}]},{},[2])(2)
 });

@@ -54,7 +54,9 @@
         "fullscreen": "Enter / Exit Full Screen",
         "sip": "Call SIP number",
         "Settings": "Settings",
-        "hangup": "Hang Up"
+        "hangup": "Hang Up",
+        "login": "Login",
+        "logout": "Logout"
     },
     "bottomtoolbar": {
         "chat": "Open / close chat",

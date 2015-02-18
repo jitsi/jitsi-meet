@@ -183,8 +183,7 @@ module.exports = function(XMPP, eventEmitter) {
                     this.role = member.role;
 
                     eventEmitter.emit(XMPPEvents.LOCALROLE_CHANGED,
-                        from, member, pres, Moderator.isModerator(),
-                        Moderator.isExternalAuthEnabled());
+                        from, member, pres, Moderator.isModerator());
                 }
                 if (!this.joined) {
                     this.joined = true;
