@@ -482,6 +482,7 @@ function onSelectedEndpointChanged(userResource)
         _dataChannels.some(function (dataChannel) {
             if (dataChannel.readyState == 'open')
             {
+                console.log('sending data channel notification that the selected endpoint changed: ', userResource);
                 dataChannel.send(JSON.stringify({
                     'colibriClass': 'SelectedEndpointChangedEvent',
                     'selectedEndpoint':
