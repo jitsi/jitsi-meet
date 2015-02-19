@@ -1,4 +1,4 @@
-/* global $, $iq, config, connection, UI, messageHandler,
+/* global $, $iq, APP, config, connection, UI, messageHandler,
  roomName, sessionTerminated, Strophe, Util */
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 var Settings = require("../settings/Settings");
@@ -267,45 +267,49 @@ var Moderator = {
                 }
             },
             function (error) {
+                // Invalid session ? remove and try again
+                // without session ID to get a new one
+                var invalidSession
+                    = $(error).find('>error>session-invalid').length;
+                if (invalidSession) {
+                    console.info("Session expired! - removing");
+                    localStorage.removeItem("sessionId");
+                }
                 // Not authorized to create new room
                 if ($(error).find('>error>not-authorized').length) {
                     console.warn("Unauthorized to start the conference", error);
-
-                    if ($(error).find('>error>session-invalid').length) {
-                        // FIXME: just retry
-                        console.info("Session expired! - removing");
-                        localStorage.removeItem("sessionId");
-                    }
-
                     var toDomain
                         = Strophe.getDomainFromJid(error.getAttribute('to'));
                     if (toDomain === config.hosts.anonymousdomain) {
                         // we are connected with anonymous domain and
                         // only non anonymous users can create rooms
                         // we must authorize the user
-
                         self.xmppService.promptLogin();
                     } else {
-
-                        eventEmitter.emit(XMPPEvents.AUTHENTICATION_REQUIRED, // External authentication mode
+                        // External authentication mode
+                        eventEmitter.emit(
+                            XMPPEvents.AUTHENTICATION_REQUIRED,
                             function () {
                                 Moderator.allocateConferenceFocus(
                                     roomName, callback);
                             });
-
                     }
                     return;
                 }
                 var waitMs = getNextErrorTimeout();
                 console.error("Focus error, retry after " + waitMs, error);
                 // Show message
-                APP.UI.messageHandler.notify( null, "notify.focus",
-                    'Conference focus', 'disconnected',"notify.focusFail",
-                        Moderator.getFocusComponent() +
-                        ' not available - retry in ' +
-                        (waitMs / 1000) + ' sec',
-                    {component: Moderator.getFocusComponent(),
-                        ms: (waitMs / 1000)});
+                var focusComponent = Moderator.getFocusComponent();
+                var retrySec = waitMs / 1000;
+                // FIXME: message is duplicated ?
+                // Do not show in case of session invalid
+                // which means just a retry
+                if (!invalidSession) {
+                    APP.UI.messageHandler.notify(
+                        null, "notify.focus",
+                        'Conference focus', 'disconnected', "notify.focusFail",
+                        {component: focusComponent, ms: retrySec});
+                }
                 // Reset response timeout
                 getNextTimeout(true);
                 window.setTimeout(
