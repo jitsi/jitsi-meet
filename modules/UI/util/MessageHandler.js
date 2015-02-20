@@ -7,10 +7,19 @@ var messageHandler = (function(my) {
      * @param titleString the title of the message
      * @param messageString the text of the message
      */
-    my.openMessageDialog = function(titleString, messageString) {
-        $.prompt(messageString,
+    my.openMessageDialog = function(titleKey, titleString,
+                                    messageKey, messageString) {
+        var title = null;
+        if(titleKey)
+        {
+            title = APP.translation.generateTranslatonHTML(titleKey,
+                titleString);
+        }
+        var message = APP.translation.generateTranslatonHTML(messageKey,
+            messageString);
+        $.prompt(message,
             {
-                title: titleString,
+                title: title,
                 persistent: false
             }
         );
@@ -27,13 +36,26 @@ var messageHandler = (function(my) {
      * @param loadedFunction function to be called after the prompt is fully loaded
      * @param closeFunction function to be called after the prompt is closed
      */
-    my.openTwoButtonDialog = function(titleString, msgString, persistent, leftButton,
-                                      submitFunction, loadedFunction, closeFunction) {
+    my.openTwoButtonDialog = function(titleKey, titleString, msgKey, msgString,
+        persistent, leftButtonKey, submitFunction, loadedFunction,
+        closeFunction)
+    {
+        var leftButton = APP.translation.generateTranslatonHTML(leftButtonKey);
         var buttons = {};
-        buttons[leftButton] = true;
-        buttons.Cancel = false;
-        $.prompt(msgString, {
-            title: titleString,
+        buttons.leftButton = {title: leftButton, value: true};
+        var cancelButton = APP.translation.generateTranslatonHTML("dialog.Cancel",
+            "Cancel");
+        buttons.Cancel = {title: cancelButton, value: false};
+        var message = msgString, title = titleString;
+        if(titleKey)
+        {
+            title = APP.translation.generateTranslatonHTML(titleKey, titleString);
+        }
+        if(msgKey) {
+            message = APP.translation.generateTranslatonHTML(msgKey, msgString);
+        }
+        $.prompt(message, {
+            title: title,
             persistent: false,
             buttons: buttons,
             defaultButton: 1,
@@ -130,8 +152,9 @@ var messageHandler = (function(my) {
      * @param msgString the text of the message
      * @param error the error that is being reported
      */
-    my.openReportDialog = function(titleString, msgString, error) {
-        my.openMessageDialog(titleString, msgString);
+    my.openReportDialog = function(titleKey, titleString, msgKey,
+                                   msgString, error) {
+        my.openMessageDialog(titleKey, titleString, msgKey, msgString);
         console.log(error);
         //FIXME send the error to the server
     };
@@ -141,12 +164,18 @@ var messageHandler = (function(my) {
      * @param title the title of the message
      * @param message the text of the messafe
      */
-    my.showError = function(title, message) {
-        if(!(title || message)) {
-            title = title || "Oops!";
-            message = message || "There was some kind of error";
+    my.showError = function(titleKey, title, msgKey, message) {
+
+        if(!titleKey) {
+            title = "Oops!";
+            titleKey = "dialog.oops";
         }
-        messageHandler.openMessageDialog(title, message);
+        if(!msgKey)
+        {
+            message = "There was some kind of error";
+            msgKey = "dialog.defaultError";
+        }
+        messageHandler.openMessageDialog(titleKey, title, msgKey, message);
     };
 
     my.notify = function(displayName, displayNameKey, displayNameDefault,

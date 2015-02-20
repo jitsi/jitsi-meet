@@ -271,21 +271,26 @@ module.exports = function(XMPP, eventEmitter) {
                     // We're either missing Jicofo/Prosody config for anonymous
                     // domains or something is wrong.
 //                    XMPP.promptLogin();
-                    APP.UI.messageHandler.openReportDialog(null,
+                    APP.UI.messageHandler.openReportDialog(null, null,
+                        "dialog.joinError",
                         'Oops ! We couldn`t join the conference.' +
                         ' There might be some problem with security' +
                         ' configuration. Please contact service' +
                         ' administrator.', pres);
                 } else {
                     console.warn('onPresError ', pres);
-                    APP.UI.messageHandler.openReportDialog(null,
-                        'Oops! Something went wrong and we couldn`t connect to the conference.',
+                    APP.UI.messageHandler.openReportDialog(null, null,
+                        "dialog.connectError",
+                        'Oops! Something went wrong and we couldn`t ' +
+                            'connect to the conference.',
                         pres);
                 }
             } else {
                 console.warn('onPresError ', pres);
-                APP.UI.messageHandler.openReportDialog(null,
-                    'Oops! Something went wrong and we couldn`t connect to the conference.',
+                APP.UI.messageHandler.openReportDialog(null, null,
+                    "dialog.connectError",
+                    'Oops! Something went wrong and we couldn`t ' +
+                        'connect to the conference.',
                     pres);
             }
             return true;

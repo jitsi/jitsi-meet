@@ -1226,7 +1226,8 @@ JingleSession.onJingleFatalError = function (session, error)
 {
     this.service.sessionTerminated = true;
     this.connection.emuc.doLeave();
-    APP.UI.messageHandler.showError(  "Sorry",
+    APP.UI.messageHandler.showError("dialog.sorry", "Sorry",
+        "dialog.internalError",
         "Internal application error[setRemoteDescription]");
 }
 

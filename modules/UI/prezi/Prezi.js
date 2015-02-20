@@ -33,10 +33,11 @@ var Prezi = {
     openPreziDialog: function() {
         var myprezi = APP.xmpp.getPrezi();
         if (myprezi) {
-            messageHandler.openTwoButtonDialog("Remove Prezi",
+            messageHandler.openTwoButtonDialog("dialog.removePreziTitle",
+                "Remove Prezi", "dialog.removePreziMsg",
                 "Are you sure you would like to remove your Prezi?",
                 false,
-                "Remove",
+                "dialog.Remove",
                 function(e,v,m,f) {
                     if(v) {
                         APP.xmpp.removePreziFromPresence();
@@ -45,25 +46,41 @@ var Prezi = {
             );
         }
         else if (preziPlayer != null) {
-            messageHandler.openTwoButtonDialog("Share a Prezi",
+            messageHandler.openTwoButtonDialog("dialog.sharePreziTitle",
+                "Share a Prezi", "dialog.sharePreziMsg",
                 "Another participant is already sharing a Prezi." +
                     "This conference allows only one Prezi at a time.",
                 false,
-                "Ok",
+                "dialog.Ok",
                 function(e,v,m,f) {
                     $.prompt.close();
                 }
             );
         }
         else {
+            var html = APP.translation.generateTranslatonHTML(
+                "dialog.sharePreziTitle", "Share a Prezi");
+            var cancelButton = APP.translation.generateTranslatonHTML(
+                "dialog.Cancel", "Cancel");
+            var shareButton = APP.translation.generateTranslatonHTML(
+                "dialog.Share", "Share");
+            var backButton = APP.translation.generateTranslatonHTML(
+                "dialog.Back", "Back");
+            var buttons = {};
+            var buttons1 = {};
+            buttons1.Cancel = buttons.Cancel = {title: cancelButton, value: false};
+            buttons.share = {title: shareButton, value: true};
+            buttons1.Back = {title: backButton, value: true};
+            var linkError = APP.translation.generateTranslatonHTML(
+                "dialog.preziLinkError", "Please provide a correct prezi link.")
             var openPreziState = {
                 state0: {
-                    html:   '<h2>Share a Prezi</h2>' +
+                    html:   '<h2>' + html + '</h2>' +
                             '<input id="preziUrl" type="text" ' +
                             'placeholder="e.g. ' +
                             'http://prezi.com/wz7vhjycl7e6/my-prezi" autofocus>',
                     persistent: false,
-                    buttons: { "Share": true , "Cancel": false},
+                    buttons: buttons,
                     defaultButton: 1,
                     submit: function(e,v,m,f){
                         e.preventDefault();
@@ -102,10 +119,10 @@ var Prezi = {
                     }
                 },
                 state1: {
-                    html:   '<h2>Share a Prezi</h2>' +
-                            'Please provide a correct prezi link.',
+                    html:   '<h2>' + html + '</h2>' +
+                            linkError,
                     persistent: false,
-                    buttons: { "Back": true, "Cancel": false },
+                    buttons: buttons1,
                     defaultButton: 1,
                     submit:function(e,v,m,f) {
                         e.preventDefault();

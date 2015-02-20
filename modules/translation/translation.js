@@ -14,6 +14,7 @@ var defaultOptions = {
     detectLngQS: "lang",
     useCookie: false,
     fallbackLng: DEFAULT_LANG,
+    shortcutFunction: 'defaultValue',
     load: "unspecific",
     resGetPath: 'lang/__ns__-__lng__.json',
     ns: {
@@ -82,13 +83,13 @@ module.exports = {
             options.lng = lang;
         i18n.init(options, initCompleted);
     },
-    translateString: function (key, cb, defaultValue) {
+    translateString: function (key, cb, options) {
         if(!cb)
-            return i18n.t(key, defaultValue);
+            return i18n.t(key, options);
 
         if(initialized)
         {
-            cb(i18n.t(key, defaultValue));
+            cb(i18n.t(key, options));
         }
         else
         {
@@ -106,5 +107,23 @@ module.exports = {
     },
     translateElement: function (selector) {
         selector.i18n();
+    },
+    generateTranslatonHTML: function (key, defaultString, options) {
+        var str = "<span data-i18n=\"" + key + "\"";
+        if(options)
+        {
+            str += " data-i18n-options=\"" + JSON.stringify(options) + "\"";
+        }
+        str += ">";
+        if(!options)
+            options = {};
+        if(defaultString)
+        {
+            options.defaultValue = defaultString;
+        }
+        str += this.translateString(key, null, options);
+        str += "</span>";
+        return str;
+
     }
 };

@@ -252,8 +252,8 @@ var XMPP = {
         } else {
             // We are done immediately
             console.error("No conference handler");
-            APP.UI.messageHandler.showError('Error',
-                'Unable to switch video stream.');
+            APP.UI.messageHandler.showError("dialog.error", 'Error',
+                "dialog.unableToSwitch", 'Unable to switch video stream.');
             callback();
         }
     },
@@ -314,9 +314,10 @@ var XMPP = {
                             },
                             function (error) {
                                 console.log('mute SLD error');
-                                APP.UI.messageHandler.showError('Error',
-                                        'Oops! Something went wrong and we failed to ' +
-                                        'mute! (SLD Failure)');
+                                APP.UI.messageHandler.showError("dialog.error",
+                                    'Error', "dialog.SLDFailure",
+                                    'Oops! Something went wrong and we failed to ' +
+                                    'mute! (SLD Failure)');
                             }
                         );
                     },
@@ -328,9 +329,10 @@ var XMPP = {
             },
             function (error) {
                 console.log('muteVideo SRD error');
-                APP.UI.messageHandler.showError('Error',
-                        'Oops! Something went wrong and we failed to stop video!' +
-                        '(SRD Failure)');
+                APP.UI.messageHandler.showError("dialog.error", 'Error',
+                    "dialog.SRDFailure",
+                    'Oops! Something went wrong and we failed to stop video!' +
+                    '(SRD Failure)');
 
             }
         );

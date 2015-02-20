@@ -315,10 +315,12 @@ RTCUtils.prototype.errorCallback = function (error) {
                 return self.successCallback(stream);
             },
             function (error) {
-                console.error('failed to obtain audio/video stream - stop', error);
-                APP.UI.messageHandler.showError("Error",
-                        "Failed to obtain permissions to use the local microphone" +
-                        "and/or camera.");
+                console.error('failed to obtain audio/video stream - stop',
+                    error);
+                APP.UI.messageHandler.showError("dialog.error", "Error",
+                    "dialog.failedpermissions",
+                    "Failed to obtain permissions to use the local microphone " +
+                    "and/or camera.");
             }
         );
     }

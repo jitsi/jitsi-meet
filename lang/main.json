@@ -118,11 +118,59 @@
         "grantedTo": "Moderator rights granted to __to__!",
         "grantedToUnknown": "Moderator rights granted to $t(somebody)!"
 
+    },
+    "dialog": {
+        "kickMessage": "Ouch! You have been kicked out of the meet!",
+        "popupError": "Your browser is blocking popup windows from this site. Please enable popups in your browser security settings and try again.",
+        "passwordError": "This conversation is currently protected by a password. Only the owner of the conference could set a password.",
+        "passwordError2": "This conversation isn't currently protected by a password. Only the owner of the conference could set a password.",
+        "joinError": "Oops ! We couldn`t join the conference. There might be some problem with security configuration. Please contact service administrator.",
+        "connectError": "Oops! Something went wrong and we couldn`t connect to the conference.",
+        "error": "Error",
+        "detectext": "Error when trying to detect desktopsharing extension.",
+        "failtoinstall": "Failed to install desktop sharing extension",
+        "failedpermissions": "Failed to obtain permissions to use the local microphone and/or camera.",
+        "bridgeUnavailable": "Jitsi Videobridge is currently unavailable. Please try again later!",
+        "lockTitle": "Lock failed",
+        "lockMessage": "Failed to lock conference.",
+        "warning": "Warning",
+        "passwordNotSupported": "Room passwords are currently not supported.",
+        "sorry": "Sorry",
+        "internalError": "Internal application error[setRemoteDescription]",
+        "unableToSwitch": "Unable to switch video stream.",
+        "SLDFailure": "Oops! Something went wrong and we failed to mute! (SLD Failure)",
+        "SRDFailure": "Oops! Something went wrong and we failed to stop video!(SRD Failure)",
+        "oops": "Oops!",
+        "defaultError": "There was some kind of error",
+        "passwordRequired": "Password required",
+        "Ok": "Ok",
+        "removePreziTitle": "Remove Prezi",
+        "removePreziMsg": "Are you sure you would like to remove your Prezi?",
+        "sharePreziTitle": "Share a Prezi",
+        "sharePreziMsg": "Another participant is already sharing a Prezi.This conference allows only one Prezi at a time.",
+        "Remove": "Remove",
+        "Stop": "Stop",
+        "AuthMsg": "Authentication is required to create room:<br/><b>__room__ </b></br> You can either authenticate to create the room or just wait for someone else to do so.",
+        "Authenticate": "Authenticate",
+        "Cancel": "Cancel",
+        "sessTerminated": "Session Terminated",
+        "hungUp": "You hung up the call",
+        "joinAgain": "Join again",
+        "Share": "Share",
+        "preziLinkError": "Please provide a correct prezi link.",
+        "Save": "Save",
+        "recordingToken": "Enter recording token",
+        "Dial": "Dial",
+        "sipMsg": "Enter SIP number",
+        "passwordCheck": "Are you sure you would like to remove your password?",
+        "Remove": "Remove",
+        "passwordMsg": "Set a password to lock your room",
+        "Invite": "Invite",
+        "shareLink": "Share this link with everyone you want to invite",
+        "settings1": "Configure your conference",
+        "settings2": "Participants join muted",
+        "settings3": "Require nicknames<br/><br/>Set a password to lock your room:",
+        "yourPassword": "your password",
+        "Back": "Back"
     }
-
-
-
-
-
-
 }

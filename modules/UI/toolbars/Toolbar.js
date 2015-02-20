@@ -95,11 +95,20 @@ function hangup() {
 
     }
 
+    var title = APP.translation.generateTranslatonHTML(
+        "dialog.sessTerminated", "Session Terminated");
+    var msg = APP.translation.generateTranslatonHTML(
+        "dialog.hungUp","You hung up the call");
+    var button = APP.translation.generateTranslatonHTML(
+        "dialog.joinAgain", "Join again");
+    var buttons = {};
+    buttons.joinAgain = {title: button, value: true};
+
     UI.messageHandler.openDialog(
-        "Session Terminated",
-        "You hung up the call",
+        title,
+        msg,
         true,
-        { "Join again": true },
+        buttons,
         function(event, value, message, formVals)
         {
             window.location.reload();
@@ -114,12 +123,14 @@ function hangup() {
 
 function toggleRecording() {
     APP.xmpp.toggleRecording(function (callback) {
-        APP.UI.messageHandler.openTwoButtonDialog(null,
-                '<h2>Enter recording token</h2>' +
+        var msg = APP.translation.generateTranslatonHTML(
+            "dialog.recordingToken", "Enter recording token");
+        APP.UI.messageHandler.openTwoButtonDialog(null, null, null,
+                '<h2>' + msg + '</h2>' +
                 '<input id="recordingToken" type="text" ' +
                 'placeholder="token" autofocus>',
             false,
-            "Save",
+            "dialog.Save",
             function (e, v, m, f) {
                 if (v) {
                     var token = document.getElementById('recordingToken');
@@ -160,13 +171,15 @@ function lockRoom(lock) {
         }
     }, function (err) {
         console.warn('setting password failed', err);
-        messageHandler.showError('Lock failed',
+        messageHandler.showError("dialog.lockTitle", 'Lock failed',
+            "dialog.lockMessage",
             'Failed to lock conference.',
             err);
         Toolbar.setSharedKey('');
     }, function () {
         console.warn('room passwords not supported');
-        messageHandler.showError('Warning',
+        messageHandler.showError("dialog.warning", 'Warning',
+            "dialog.passwordNotSupported",
             'Room passwords are currently not supported.');
         Toolbar.setSharedKey('');
     });
@@ -218,12 +231,14 @@ function callSipButtonClicked()
     var defaultNumber
         = config.defaultSipNumber ? config.defaultSipNumber : '';
 
-    messageHandler.openTwoButtonDialog(null,
-        '<h2>Enter SIP number</h2>' +
+    var sipMsg = APP.translation.generateTranslatonHTML(
+        "dialog.sipMsg", "Enter SIP number");
+    messageHandler.openTwoButtonDialog(null, null, null,
+        '<h2>' + sipMsg + '</h2>' +
         '<input id="sipNumber" type="text"' +
         ' value="' + defaultNumber + '" autofocus>',
         false,
-        "Dial",
+        "dialog.Dial",
         function (e, v, m, f) {
             if (v) {
                 var numberInput = document.getElementById('sipNumber');
@@ -302,7 +317,8 @@ var Toolbar = (function (my) {
                     }, url);
                 if (!authenticationWindow) {
                     messageHandler.openMessageDialog(
-                        null, "Your browser is blocking popup windows from this site." +
+                        null, null, "dialog.popupError",
+                        "Your browser is blocking popup windows from this site." +
                         " Please enable popups in your browser security settings" +
                         " and try again.");
                 }
@@ -342,14 +358,15 @@ var Toolbar = (function (my) {
         // Only the focus is able to set a shared key.
         if (!APP.xmpp.isModerator()) {
             if (sharedKey) {
-                messageHandler.openMessageDialog(null,
+                messageHandler.openMessageDialog(null, null,
+                    "dialog.passwordError",
                         "This conversation is currently protected by" +
                         " a password. Only the owner of the conference" +
                         " could set a password.",
                     false,
                     "Password");
             } else {
-                messageHandler.openMessageDialog(null,
+                messageHandler.openMessageDialog(null, null, "dialog.passwordError2",
                     "This conversation isn't currently protected by" +
                         " a password. Only the owner of the conference" +
                         " could set a password.",
@@ -358,10 +375,11 @@ var Toolbar = (function (my) {
             }
         } else {
             if (sharedKey) {
-                messageHandler.openTwoButtonDialog(null,
+                messageHandler.openTwoButtonDialog(null, null,
+                    "dialog.passwordCheck",
                     "Are you sure you would like to remove your password?",
                     false,
-                    "Remove",
+                    "dialog.Remove",
                     function (e, v) {
                         if (v) {
                             Toolbar.setSharedKey('');
@@ -369,12 +387,16 @@ var Toolbar = (function (my) {
                         }
                     });
             } else {
-                messageHandler.openTwoButtonDialog(null,
-                    '<h2>Set a password to lock your room</h2>' +
+                var msg = APP.translation.generateTranslatonHTML(
+                    "dialog.passwordMsg", "Set a password to lock your room");
+                var yourPassword = APP.translation.translateString(
+                    "dialog.yourPassword", null, "your password");
+                messageHandler.openTwoButtonDialog(null, null, null,
+                    '<h2>' + msg + '</h2>' +
                         '<input id="lockKey" type="text"' +
-                        'placeholder="your password" autofocus>',
+                        'placeholder="' + yourPassword + '" autofocus>',
                     false,
-                    "Save",
+                    "dialog.Save",
                     function (e, v) {
                         if (v) {
                             var lockKey = document.getElementById('lockKey');
@@ -403,12 +425,12 @@ var Toolbar = (function (my) {
         } else {
             inviteLink = encodeURI(roomUrl);
         }
-        messageHandler.openTwoButtonDialog(
-            "Share this link with everyone you want to invite",
+        messageHandler.openTwoButtonDialog("dialog.shareLink",
+            "Share this link with everyone you want to invite", null,
             '<input id="inviteLinkRef" type="text" value="' +
                 inviteLink + '" onclick="this.select();" readonly>',
             false,
-            "Invite",
+            "dialog.Invite",
             function (e, v) {
                 if (v) {
                     if (roomUrl) {
@@ -431,18 +453,29 @@ var Toolbar = (function (my) {
      * Opens the settings dialog.
      */
     my.openSettingsDialog = function () {
-        messageHandler.openTwoButtonDialog(
-            '<h2>Configure your conference</h2>' +
+        var settings1 = APP.translation.generateTranslatonHTML(
+            "dialog.settings1", "Configure your conference");
+        var settings2 = APP.translation.generateTranslatonHTML(
+            "dialog.settings2", "Participants join muted");
+        var settings3 = APP.translation.generateTranslatonHTML(
+            "dialog.settings3", "Require nicknames<br/><br/>" +
+                "Set a password to lock your room:");
+
+        var yourPassword = APP.translation.translateString(
+            "dialog.yourPassword", null, "your password");
+
+        messageHandler.openTwoButtonDialog(null,
+            '<h2>' + settings1 + '</h2>' +
                 '<input type="checkbox" id="initMuted">' +
-                'Participants join muted<br/>' +
+                settings2 + '<br/>' +
                 '<input type="checkbox" id="requireNicknames">' +
-                'Require nicknames<br/><br/>' +
-                'Set a password to lock your room:' +
-                '<input id="lockKey" type="text" placeholder="your password"' +
-                'autofocus>',
+                 settings3 +
+                '<input id="lockKey" type="text" placeholder="' + yourPassword +
+                '" data-i18n="[placeholder]dialog.yourPassword" autofocus>',
+            null,
             null,
             false,
-            "Save",
+            "dialog.Save",
             function () {
                 document.getElementById('lockKey').focus();
             },

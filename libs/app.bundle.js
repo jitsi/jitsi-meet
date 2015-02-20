@@ -1,307 +1,4 @@
 !function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.APP=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-// Copyright Joyent, Inc. and other Node contributors.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the
-// following conditions:
-//
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-// USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-function EventEmitter() {
-  this._events = this._events || {};
-  this._maxListeners = this._maxListeners || undefined;
-}
-module.exports = EventEmitter;
-
-// Backwards-compat with node 0.10.x
-EventEmitter.EventEmitter = EventEmitter;
-
-EventEmitter.prototype._events = undefined;
-EventEmitter.prototype._maxListeners = undefined;
-
-// By default EventEmitters will print a warning if more than 10 listeners are
-// added to it. This is a useful default which helps finding memory leaks.
-EventEmitter.defaultMaxListeners = 10;
-
-// Obviously not all Emitters should be limited to 10. This function allows
-// that to be increased. Set to zero for unlimited.
-EventEmitter.prototype.setMaxListeners = function(n) {
-  if (!isNumber(n) || n < 0 || isNaN(n))
-    throw TypeError('n must be a positive number');
-  this._maxListeners = n;
-  return this;
-};
-
-EventEmitter.prototype.emit = function(type) {
-  var er, handler, len, args, i, listeners;
-
-  if (!this._events)
-    this._events = {};
-
-  // If there is no 'error' event listener then throw.
-  if (type === 'error') {
-    if (!this._events.error ||
-        (isObject(this._events.error) && !this._events.error.length)) {
-      er = arguments[1];
-      if (er instanceof Error) {
-        throw er; // Unhandled 'error' event
-      }
-      throw TypeError('Uncaught, unspecified "error" event.');
-    }
-  }
-
-  handler = this._events[type];
-
-  if (isUndefined(handler))
-    return false;
-
-  if (isFunction(handler)) {
-    switch (arguments.length) {
-      // fast cases
-      case 1:
-        handler.call(this);
-        break;
-      case 2:
-        handler.call(this, arguments[1]);
-        break;
-      case 3:
-        handler.call(this, arguments[1], arguments[2]);
-        break;
-      // slower
-      default:
-        len = arguments.length;
-        args = new Array(len - 1);
-        for (i = 1; i < len; i++)
-          args[i - 1] = arguments[i];
-        handler.apply(this, args);
-    }
-  } else if (isObject(handler)) {
-    len = arguments.length;
-    args = new Array(len - 1);
-    for (i = 1; i < len; i++)
-      args[i - 1] = arguments[i];
-
-    listeners = handler.slice();
-    len = listeners.length;
-    for (i = 0; i < len; i++)
-      listeners[i].apply(this, args);
-  }
-
-  return true;
-};
-
-EventEmitter.prototype.addListener = function(type, listener) {
-  var m;
-
-  if (!isFunction(listener))
-    throw TypeError('listener must be a function');
-
-  if (!this._events)
-    this._events = {};
-
-  // To avoid recursion in the case that type === "newListener"! Before
-  // adding it to the listeners, first emit "newListener".
-  if (this._events.newListener)
-    this.emit('newListener', type,
-              isFunction(listener.listener) ?
-              listener.listener : listener);
-
-  if (!this._events[type])
-    // Optimize the case of one listener. Don't need the extra array object.
-    this._events[type] = listener;
-  else if (isObject(this._events[type]))
-    // If we've already got an array, just append.
-    this._events[type].push(listener);
-  else
-    // Adding the second element, need to change to array.
-    this._events[type] = [this._events[type], listener];
-
-  // Check for listener leak
-  if (isObject(this._events[type]) && !this._events[type].warned) {
-    var m;
-    if (!isUndefined(this._maxListeners)) {
-      m = this._maxListeners;
-    } else {
-      m = EventEmitter.defaultMaxListeners;
-    }
-
-    if (m && m > 0 && this._events[type].length > m) {
-      this._events[type].warned = true;
-      console.error('(node) warning: possible EventEmitter memory ' +
-                    'leak detected. %d listeners added. ' +
-                    'Use emitter.setMaxListeners() to increase limit.',
-                    this._events[type].length);
-      if (typeof console.trace === 'function') {
-        // not supported in IE 10
-        console.trace();
-      }
-    }
-  }
-
-  return this;
-};
-
-EventEmitter.prototype.on = EventEmitter.prototype.addListener;
-
-EventEmitter.prototype.once = function(type, listener) {
-  if (!isFunction(listener))
-    throw TypeError('listener must be a function');
-
-  var fired = false;
-
-  function g() {
-    this.removeListener(type, g);
-
-    if (!fired) {
-      fired = true;
-      listener.apply(this, arguments);
-    }
-  }
-
-  g.listener = listener;
-  this.on(type, g);
-
-  return this;
-};
-
-// emits a 'removeListener' event iff the listener was removed
-EventEmitter.prototype.removeListener = function(type, listener) {
-  var list, position, length, i;
-
-  if (!isFunction(listener))
-    throw TypeError('listener must be a function');
-
-  if (!this._events || !this._events[type])
-    return this;
-
-  list = this._events[type];
-  length = list.length;
-  position = -1;
-
-  if (list === listener ||
-      (isFunction(list.listener) && list.listener === listener)) {
-    delete this._events[type];
-    if (this._events.removeListener)
-      this.emit('removeListener', type, listener);
-
-  } else if (isObject(list)) {
-    for (i = length; i-- > 0;) {
-      if (list[i] === listener ||
-          (list[i].listener && list[i].listener === listener)) {
-        position = i;
-        break;
-      }
-    }
-
-    if (position < 0)
-      return this;
-
-    if (list.length === 1) {
-      list.length = 0;
-      delete this._events[type];
-    } else {
-      list.splice(position, 1);
-    }
-
-    if (this._events.removeListener)
-      this.emit('removeListener', type, listener);
-  }
-
-  return this;
-};
-
-EventEmitter.prototype.removeAllListeners = function(type) {
-  var key, listeners;
-
-  if (!this._events)
-    return this;
-
-  // not listening for removeListener, no need to emit
-  if (!this._events.removeListener) {
-    if (arguments.length === 0)
-      this._events = {};
-    else if (this._events[type])
-      delete this._events[type];
-    return this;
-  }
-
-  // emit removeListener for all listeners on all events
-  if (arguments.length === 0) {
-    for (key in this._events) {
-      if (key === 'removeListener') continue;
-      this.removeAllListeners(key);
-    }
-    this.removeAllListeners('removeListener');
-    this._events = {};
-    return this;
-  }
-
-  listeners = this._events[type];
-
-  if (isFunction(listeners)) {
-    this.removeListener(type, listeners);
-  } else {
-    // LIFO order
-    while (listeners.length)
-      this.removeListener(type, listeners[listeners.length - 1]);
-  }
-  delete this._events[type];
-
-  return this;
-};
-
-EventEmitter.prototype.listeners = function(type) {
-  var ret;
-  if (!this._events || !this._events[type])
-    ret = [];
-  else if (isFunction(this._events[type]))
-    ret = [this._events[type]];
-  else
-    ret = this._events[type].slice();
-  return ret;
-};
-
-EventEmitter.listenerCount = function(emitter, type) {
-  var ret;
-  if (!emitter._events || !emitter._events[type])
-    ret = 0;
-  else if (isFunction(emitter._events[type]))
-    ret = 1;
-  else
-    ret = emitter._events[type].length;
-  return ret;
-};
-
-function isFunction(arg) {
-  return typeof arg === 'function';
-}
-
-function isNumber(arg) {
-  return typeof arg === 'number';
-}
-
-function isObject(arg) {
-  return typeof arg === 'object' && arg !== null;
-}
-
-function isUndefined(arg) {
-  return arg === void 0;
-}
-
-},{}],2:[function(require,module,exports){
 /* jshint -W117 */
 /* application specific logic */
 
@@ -356,7 +53,7 @@ $(window).bind('beforeunload', function () {
 module.exports = APP;
 
 
-},{"./modules/API/API":3,"./modules/RTC/RTC":7,"./modules/UI/UI":9,"./modules/connectionquality/connectionquality":35,"./modules/desktopsharing/desktopsharing":36,"./modules/keyboardshortcut/keyboardshortcut":37,"./modules/simulcast/simulcast":43,"./modules/statistics/statistics":46,"./modules/translation/translation":47,"./modules/xmpp/xmpp":61}],3:[function(require,module,exports){
+},{"./modules/API/API":2,"./modules/RTC/RTC":6,"./modules/UI/UI":8,"./modules/connectionquality/connectionquality":34,"./modules/desktopsharing/desktopsharing":35,"./modules/keyboardshortcut/keyboardshortcut":36,"./modules/simulcast/simulcast":42,"./modules/statistics/statistics":45,"./modules/translation/translation":46,"./modules/xmpp/xmpp":60}],2:[function(require,module,exports){
 /**
  * Implements API class that communicates with external api class
  * and provides interface to access Jitsi Meet features by external
@@ -588,7 +285,7 @@ var API = {
 };
 
 module.exports = API;
-},{"../../service/xmpp/XMPPEvents":89}],4:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":88}],3:[function(require,module,exports){
 /* global Strophe, updateLargeVideo, focusedVideoSrc*/
 
 // cache datachannels to avoid garbage collection
@@ -824,7 +521,7 @@ function onPinnedEndpointChanged(userResource)
 module.exports = DataChannels;
 
 
-},{"../../service/RTC/RTCEvents":81}],5:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":80}],4:[function(require,module,exports){
 var StreamEventTypes = require("../../service/RTC/StreamEventTypes.js");
 
 function LocalStream(stream, type, eventEmitter, videoType)
@@ -912,7 +609,7 @@ LocalStream.prototype.getId = function () {
 
 module.exports = LocalStream;
 
-},{"../../service/RTC/StreamEventTypes.js":83}],6:[function(require,module,exports){
+},{"../../service/RTC/StreamEventTypes.js":82}],5:[function(require,module,exports){
 ////These lines should be uncommented when require works in app.js
 var RTCBrowserType = require("../../service/RTC/RTCBrowserType.js");
 var MediaStreamType = require("../../service/RTC/MediaStreamTypes");
@@ -972,7 +669,7 @@ MediaStream.prototype.setMute = function (value)
 
 module.exports = MediaStream;
 
-},{"../../service/RTC/MediaStreamTypes":79,"../../service/RTC/RTCBrowserType.js":80}],7:[function(require,module,exports){
+},{"../../service/RTC/MediaStreamTypes":78,"../../service/RTC/RTCBrowserType.js":79}],6:[function(require,module,exports){
 var EventEmitter = require("events");
 var RTCUtils = require("./RTCUtils.js");
 var LocalStream = require("./LocalStream.js");
@@ -1178,7 +875,7 @@ var RTC = {
 
 module.exports = RTC;
 
-},{"../../service/RTC/MediaStreamTypes":79,"../../service/RTC/StreamEventTypes.js":83,"../../service/UI/UIEvents":84,"../../service/desktopsharing/DesktopSharingEventTypes":87,"../../service/xmpp/XMPPEvents":89,"./DataChannels":4,"./LocalStream.js":5,"./MediaStream.js":6,"./RTCUtils.js":8,"events":1}],8:[function(require,module,exports){
+},{"../../service/RTC/MediaStreamTypes":78,"../../service/RTC/StreamEventTypes.js":82,"../../service/UI/UIEvents":83,"../../service/desktopsharing/DesktopSharingEventTypes":86,"../../service/xmpp/XMPPEvents":88,"./DataChannels":3,"./LocalStream.js":4,"./MediaStream.js":5,"./RTCUtils.js":7,"events":89}],7:[function(require,module,exports){
 var RTCBrowserType = require("../../service/RTC/RTCBrowserType.js");
 var Resolutions = require("../../service/RTC/Resolutions");
 
@@ -1496,10 +1193,12 @@ RTCUtils.prototype.errorCallback = function (error) {
                 return self.successCallback(stream);
             },
             function (error) {
-                console.error('failed to obtain audio/video stream - stop', error);
-                APP.UI.messageHandler.showError("Error",
-                        "Failed to obtain permissions to use the local microphone" +
-                        "and/or camera.");
+                console.error('failed to obtain audio/video stream - stop',
+                    error);
+                APP.UI.messageHandler.showError("dialog.error", "Error",
+                    "dialog.failedpermissions",
+                    "Failed to obtain permissions to use the local microphone " +
+                    "and/or camera.");
             }
         );
     }
@@ -1537,7 +1236,7 @@ RTCUtils.prototype.handleLocalStream = function(stream)
 
 
 module.exports = RTCUtils;
-},{"../../service/RTC/RTCBrowserType.js":80,"../../service/RTC/Resolutions":82}],9:[function(require,module,exports){
+},{"../../service/RTC/RTCBrowserType.js":79,"../../service/RTC/Resolutions":81}],8:[function(require,module,exports){
 var UI = {};
 
 var VideoLayout = require("./videolayout/VideoLayout.js");
@@ -1676,11 +1375,12 @@ function registerListeners() {
         VideoLayout.onStatsStop);
     APP.xmpp.addListener(XMPPEvents.DISPOSE_CONFERENCE, onDisposeConference);
     APP.xmpp.addListener(XMPPEvents.KICKED, function () {
-        messageHandler.openMessageDialog("Session Terminated",
-            "Ouch! You have been kicked out of the meet!");
+        messageHandler.openMessageDialog("dialog.sessTerminated", "Session Terminated",
+            "dialog.kickMessage", "Ouch! You have been kicked out of the meet!");
     });
     APP.xmpp.addListener(XMPPEvents.BRIDGE_DOWN, function () {
-        messageHandler.showError("Error",
+        messageHandler.showError("dialog.error","Error",
+            "dialog.bridgeUnavailable",
             "Jitsi Videobridge is currently unavailable. Please try again later!");
     });
     APP.xmpp.addListener(XMPPEvents.USER_ID_CHANGED, function (from, id) {
@@ -1982,12 +1682,15 @@ function onModeratorStatusChanged(isModerator) {
 function onPasswordReqiured(callback) {
     // password is required
     Toolbar.lockLockButton();
+    var message = '<h2 data-i18n="dialog.passwordRequired">';
+    message += APP.translation.translateString(
+        "dialog.passwordRequired", null, "Password required");
+    message += '</h2>' +
+        '<input id="lockKey" type="text" placeholder="password" autofocus>';
 
-    messageHandler.openTwoButtonDialog(null,
-            '<h2>Password required</h2>' +
-            '<input id="lockKey" type="text" placeholder="password" autofocus>',
+    messageHandler.openTwoButtonDialog(null, null, null, message,
         true,
-        "Ok",
+        "dialog.Ok",
         function (e, v, m, f) {},
         function (event) {
             document.getElementById('lockKey').focus();
@@ -2145,13 +1848,17 @@ UI.disableConnect = function () {
 UI.showLoginPopup = function(callback)
 {
     console.log('password is required');
-
-    UI.messageHandler.openTwoButtonDialog(null,
-            '<h2>Password required</h2>' +
-            '<input id="passwordrequired.username" type="text" placeholder="user@domain.net" autofocus>' +
-            '<input id="passwordrequired.password" type="password" placeholder="user password">',
+    var message = '<h2 data-i18n="dialog.passwordRequired">';
+    message += APP.translation.translateString(
+        "dialog.passwordRequired", null, "Password required");
+    message += '</h2>' +
+        '<input id="passwordrequired.username" type="text" ' +
+        'placeholder="user@domain.net" autofocus>' +
+        '<input id="passwordrequired.password" ' +
+        'type="password" placeholder="user password">';
+    UI.messageHandler.openTwoButtonDialog(null, null, null, message,
         true,
-        "Ok",
+        "dialog.Ok",
         function (e, v, m, f) {
             if (v) {
                 var username = document.getElementById('passwordrequired.username');
@@ -2261,7 +1968,7 @@ UI.dockToolbar = function (isDock) {
 module.exports = UI;
 
 
-},{"../../service/RTC/RTCEvents":81,"../../service/RTC/StreamEventTypes":83,"../../service/connectionquality/CQEvents":86,"../../service/desktopsharing/DesktopSharingEventTypes":87,"../../service/xmpp/XMPPEvents":89,"./../settings/Settings":38,"./audio_levels/AudioLevels.js":10,"./authentication/Authentication":12,"./avatar/Avatar":13,"./etherpad/Etherpad.js":14,"./prezi/Prezi.js":15,"./side_pannels/SidePanelToggler":17,"./side_pannels/chat/Chat.js":18,"./side_pannels/contactlist/ContactList":22,"./side_pannels/settings/SettingsMenu":23,"./toolbars/BottomToolbar":24,"./toolbars/Toolbar":25,"./toolbars/ToolbarToggler":26,"./util/MessageHandler":28,"./util/NicknameHandler":29,"./util/UIUtil":30,"./videolayout/VideoLayout.js":32,"./welcome_page/RoomnameGenerator":33,"./welcome_page/WelcomePage":34,"events":1}],10:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":80,"../../service/RTC/StreamEventTypes":82,"../../service/connectionquality/CQEvents":85,"../../service/desktopsharing/DesktopSharingEventTypes":86,"../../service/xmpp/XMPPEvents":88,"./../settings/Settings":37,"./audio_levels/AudioLevels.js":9,"./authentication/Authentication":11,"./avatar/Avatar":12,"./etherpad/Etherpad.js":13,"./prezi/Prezi.js":14,"./side_pannels/SidePanelToggler":16,"./side_pannels/chat/Chat.js":17,"./side_pannels/contactlist/ContactList":21,"./side_pannels/settings/SettingsMenu":22,"./toolbars/BottomToolbar":23,"./toolbars/Toolbar":24,"./toolbars/ToolbarToggler":25,"./util/MessageHandler":27,"./util/NicknameHandler":28,"./util/UIUtil":29,"./videolayout/VideoLayout.js":31,"./welcome_page/RoomnameGenerator":32,"./welcome_page/WelcomePage":33,"events":89}],9:[function(require,module,exports){
 var CanvasUtil = require("./CanvasUtils");
 
 var ASDrawContext = $('#activeSpeakerAudioLevel')[0].getContext('2d');
@@ -2527,7 +2234,7 @@ var AudioLevels = (function(my) {
 })(AudioLevels || {});
 
 module.exports = AudioLevels;
-},{"./CanvasUtils":11}],11:[function(require,module,exports){
+},{"./CanvasUtils":10}],10:[function(require,module,exports){
 /**
  * Utility class for drawing canvas shapes.
  */
@@ -2639,7 +2346,7 @@ var CanvasUtil = (function(my) {
 })(CanvasUtil || {});
 
 module.exports = CanvasUtil;
-},{}],12:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 /* Initial "authentication required" dialog */
 var authDialog = null;
 /* Loop retry ID that wits for other user to create the room */
@@ -2658,15 +2365,24 @@ var Authentication = {
         // extract room name from 'room@muc.server.net'
         var room = roomName.substr(0, roomName.indexOf('@'));
 
+        var title = APP.translation.generateTranslatonHTML("dialog.Stop",
+            "Stop");
+        var defMsg = 'Authentication is required to create room:<br/><b>' +
+            room +
+            '</b></br> You can either authenticate to create the room or ' +
+            'just wait for someone else to do so.';
+        var msg = APP.translation.generateTranslatonHTML("dialog.AuthMsg",
+            defMsg, {room: room});
+        var button = APP.translation.generateTranslatonHTML(
+            "dialog.Authenticate", "Authenticate");
+        var buttons = {};
+        buttons.authenticate = {title: button, value: "authNow"};
+
         authDialog = APP.UI.messageHandler.openDialog(
-            'Stop',
-                'Authentication is required to create room:<br/><b>' + room +
-                '</b></br> You can either authenticate to create the room or ' +
-                'just wait for someone else to do so.',
+            title,
+            msg,
             true,
-            {
-                Authenticate: 'authNow'
-            },
+            buttons,
             function (onSubmitEvent, submitValue) {
 
                 // Do not close the dialog yet
@@ -2724,7 +2440,7 @@ var Authentication = {
 };
 
 module.exports = Authentication;
-},{}],13:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 var Settings = require("../../settings/Settings");
 var MediaStreamType = require("../../../service/RTC/MediaStreamTypes");
 
@@ -2880,7 +2596,7 @@ var Avatar = {
 
 
 module.exports = Avatar;
-},{"../../../service/RTC/MediaStreamTypes":79,"../../settings/Settings":38,"../videolayout/VideoLayout":32}],14:[function(require,module,exports){
+},{"../../../service/RTC/MediaStreamTypes":78,"../../settings/Settings":37,"../videolayout/VideoLayout":31}],13:[function(require,module,exports){
 /* global $, config,
    setLargeVideoVisible, Util */
 
@@ -3076,7 +2792,7 @@ var Etherpad = {
 
 module.exports = Etherpad;
 
-},{"../prezi/Prezi":15,"../util/UIUtil":30,"../videolayout/VideoLayout":32}],15:[function(require,module,exports){
+},{"../prezi/Prezi":14,"../util/UIUtil":29,"../videolayout/VideoLayout":31}],14:[function(require,module,exports){
 var ToolbarToggler = require("../toolbars/ToolbarToggler");
 var UIUtil = require("../util/UIUtil");
 var VideoLayout = require("../videolayout/VideoLayout");
@@ -3112,10 +2828,11 @@ var Prezi = {
     openPreziDialog: function() {
         var myprezi = APP.xmpp.getPrezi();
         if (myprezi) {
-            messageHandler.openTwoButtonDialog("Remove Prezi",
+            messageHandler.openTwoButtonDialog("dialog.removePreziTitle",
+                "Remove Prezi", "dialog.removePreziMsg",
                 "Are you sure you would like to remove your Prezi?",
                 false,
-                "Remove",
+                "dialog.Remove",
                 function(e,v,m,f) {
                     if(v) {
                         APP.xmpp.removePreziFromPresence();
@@ -3124,25 +2841,41 @@ var Prezi = {
             );
         }
         else if (preziPlayer != null) {
-            messageHandler.openTwoButtonDialog("Share a Prezi",
+            messageHandler.openTwoButtonDialog("dialog.sharePreziTitle",
+                "Share a Prezi", "dialog.sharePreziMsg",
                 "Another participant is already sharing a Prezi." +
                     "This conference allows only one Prezi at a time.",
                 false,
-                "Ok",
+                "dialog.Ok",
                 function(e,v,m,f) {
                     $.prompt.close();
                 }
             );
         }
         else {
+            var html = APP.translation.generateTranslatonHTML(
+                "dialog.sharePreziTitle", "Share a Prezi");
+            var cancelButton = APP.translation.generateTranslatonHTML(
+                "dialog.Cancel", "Cancel");
+            var shareButton = APP.translation.generateTranslatonHTML(
+                "dialog.Share", "Share");
+            var backButton = APP.translation.generateTranslatonHTML(
+                "dialog.Back", "Back");
+            var buttons = {};
+            var buttons1 = {};
+            buttons1.Cancel = buttons.Cancel = {title: cancelButton, value: false};
+            buttons.share = {title: shareButton, value: true};
+            buttons1.Back = {title: backButton, value: true};
+            var linkError = APP.translation.generateTranslatonHTML(
+                "dialog.preziLinkError", "Please provide a correct prezi link.")
             var openPreziState = {
                 state0: {
-                    html:   '<h2>Share a Prezi</h2>' +
+                    html:   '<h2>' + html + '</h2>' +
                             '<input id="preziUrl" type="text" ' +
                             'placeholder="e.g. ' +
                             'http://prezi.com/wz7vhjycl7e6/my-prezi" autofocus>',
                     persistent: false,
-                    buttons: { "Share": true , "Cancel": false},
+                    buttons: buttons,
                     defaultButton: 1,
                     submit: function(e,v,m,f){
                         e.preventDefault();
@@ -3181,10 +2914,10 @@ var Prezi = {
                     }
                 },
                 state1: {
-                    html:   '<h2>Share a Prezi</h2>' +
-                            'Please provide a correct prezi link.',
+                    html:   '<h2>' + html + '</h2>' +
+                            linkError,
                     persistent: false,
-                    buttons: { "Back": true, "Cancel": false },
+                    buttons: buttons1,
                     defaultButton: 1,
                     submit:function(e,v,m,f) {
                         e.preventDefault();
@@ -3429,7 +3162,7 @@ $(window).resize(function () {
 
 module.exports = Prezi;
 
-},{"../toolbars/ToolbarToggler":26,"../util/MessageHandler":28,"../util/UIUtil":30,"../videolayout/VideoLayout":32,"./PreziPlayer":16}],16:[function(require,module,exports){
+},{"../toolbars/ToolbarToggler":25,"../util/MessageHandler":27,"../util/UIUtil":29,"../videolayout/VideoLayout":31,"./PreziPlayer":15}],15:[function(require,module,exports){
 (function() {
     "use strict";
     var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
@@ -3725,7 +3458,7 @@ module.exports = Prezi;
 
 module.exports = PreziPlayer;
 
-},{}],17:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 var Chat = require("./chat/Chat");
 var ContactList = require("./contactlist/ContactList");
 var Settings = require("./../../settings/Settings");
@@ -3982,7 +3715,7 @@ var PanelToggler = (function(my) {
 }(PanelToggler || {}));
 
 module.exports = PanelToggler;
-},{"../toolbars/ToolbarToggler":26,"../util/UIUtil":30,"../videolayout/VideoLayout":32,"./../../settings/Settings":38,"./chat/Chat":18,"./contactlist/ContactList":22,"./settings/SettingsMenu":23}],18:[function(require,module,exports){
+},{"../toolbars/ToolbarToggler":25,"../util/UIUtil":29,"../videolayout/VideoLayout":31,"./../../settings/Settings":37,"./chat/Chat":17,"./contactlist/ContactList":21,"./settings/SettingsMenu":22}],17:[function(require,module,exports){
 /* global $, Util, nickname:true */
 var Replacement = require("./Replacement");
 var CommandsProcessor = require("./Commands");
@@ -4340,7 +4073,7 @@ var Chat = (function (my) {
     return my;
 }(Chat || {}));
 module.exports = Chat;
-},{"../../../../service/UI/UIEvents":84,"../../toolbars/ToolbarToggler":26,"../../util/NicknameHandler":29,"../../util/UIUtil":30,"../SidePanelToggler":17,"./Commands":19,"./Replacement":20,"./smileys.json":21}],19:[function(require,module,exports){
+},{"../../../../service/UI/UIEvents":83,"../../toolbars/ToolbarToggler":25,"../../util/NicknameHandler":28,"../../util/UIUtil":29,"../SidePanelToggler":16,"./Commands":18,"./Replacement":19,"./smileys.json":20}],18:[function(require,module,exports){
 var UIUtil = require("../../util/UIUtil");
 
 /**
@@ -4438,7 +4171,7 @@ CommandsProcessor.prototype.processCommand = function()
 };
 
 module.exports = CommandsProcessor;
-},{"../../util/UIUtil":30}],20:[function(require,module,exports){
+},{"../../util/UIUtil":29}],19:[function(require,module,exports){
 var Smileys = require("./smileys.json");
 /**
  * Processes links and smileys in "body"
@@ -4502,7 +4235,7 @@ module.exports = {
     linkify: linkify
 };
 
-},{"./smileys.json":21}],21:[function(require,module,exports){
+},{"./smileys.json":20}],20:[function(require,module,exports){
 module.exports={
     "smileys": {
         "smiley1": ":)",
@@ -4552,7 +4285,7 @@ module.exports={
     }
 }
 
-},{}],22:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 
 var numberOfContacts = 0;
 var notificationInterval;
@@ -4736,7 +4469,7 @@ var ContactList = {
 };
 
 module.exports = ContactList;
-},{}],23:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 var Avatar = require("../../avatar/Avatar");
 var Settings = require("./../../../settings/Settings");
 var UIUtil = require("../../util/UIUtil");
@@ -4814,7 +4547,7 @@ var SettingsMenu = {
 
 
 module.exports = SettingsMenu;
-},{"../../../../service/translation/languages":88,"../../avatar/Avatar":13,"../../util/UIUtil":30,"./../../../settings/Settings":38}],24:[function(require,module,exports){
+},{"../../../../service/translation/languages":87,"../../avatar/Avatar":12,"../../util/UIUtil":29,"./../../../settings/Settings":37}],23:[function(require,module,exports){
 var PanelToggler = require("../side_pannels/SidePanelToggler");
 
 var buttonHandlers = {
@@ -4859,7 +4592,7 @@ var BottomToolbar = (function (my) {
 
 module.exports = BottomToolbar;
 
-},{"../side_pannels/SidePanelToggler":17}],25:[function(require,module,exports){
+},{"../side_pannels/SidePanelToggler":16}],24:[function(require,module,exports){
 /* global APP,$, buttonClick, config, lockRoom,
    setSharedKey, Util */
 var messageHandler = require("../util/MessageHandler");
@@ -4957,11 +4690,20 @@ function hangup() {
 
     }
 
+    var title = APP.translation.generateTranslatonHTML(
+        "dialog.sessTerminated", "Session Terminated");
+    var msg = APP.translation.generateTranslatonHTML(
+        "dialog.hungUp","You hung up the call");
+    var button = APP.translation.generateTranslatonHTML(
+        "dialog.joinAgain", "Join again");
+    var buttons = {};
+    buttons.joinAgain = {title: button, value: true};
+
     UI.messageHandler.openDialog(
-        "Session Terminated",
-        "You hung up the call",
+        title,
+        msg,
         true,
-        { "Join again": true },
+        buttons,
         function(event, value, message, formVals)
         {
             window.location.reload();
@@ -4976,12 +4718,14 @@ function hangup() {
 
 function toggleRecording() {
     APP.xmpp.toggleRecording(function (callback) {
-        APP.UI.messageHandler.openTwoButtonDialog(null,
-                '<h2>Enter recording token</h2>' +
+        var msg = APP.translation.generateTranslatonHTML(
+            "dialog.recordingToken", "Enter recording token");
+        APP.UI.messageHandler.openTwoButtonDialog(null, null, null,
+                '<h2>' + msg + '</h2>' +
                 '<input id="recordingToken" type="text" ' +
                 'placeholder="token" autofocus>',
             false,
-            "Save",
+            "dialog.Save",
             function (e, v, m, f) {
                 if (v) {
                     var token = document.getElementById('recordingToken');
@@ -5022,13 +4766,15 @@ function lockRoom(lock) {
         }
     }, function (err) {
         console.warn('setting password failed', err);
-        messageHandler.showError('Lock failed',
+        messageHandler.showError("dialog.lockTitle", 'Lock failed',
+            "dialog.lockMessage",
             'Failed to lock conference.',
             err);
         Toolbar.setSharedKey('');
     }, function () {
         console.warn('room passwords not supported');
-        messageHandler.showError('Warning',
+        messageHandler.showError("dialog.warning", 'Warning',
+            "dialog.passwordNotSupported",
             'Room passwords are currently not supported.');
         Toolbar.setSharedKey('');
     });
@@ -5080,12 +4826,14 @@ function callSipButtonClicked()
     var defaultNumber
         = config.defaultSipNumber ? config.defaultSipNumber : '';
 
-    messageHandler.openTwoButtonDialog(null,
-        '<h2>Enter SIP number</h2>' +
+    var sipMsg = APP.translation.generateTranslatonHTML(
+        "dialog.sipMsg", "Enter SIP number");
+    messageHandler.openTwoButtonDialog(null, null, null,
+        '<h2>' + sipMsg + '</h2>' +
         '<input id="sipNumber" type="text"' +
         ' value="' + defaultNumber + '" autofocus>',
         false,
-        "Dial",
+        "dialog.Dial",
         function (e, v, m, f) {
             if (v) {
                 var numberInput = document.getElementById('sipNumber');
@@ -5164,7 +4912,8 @@ var Toolbar = (function (my) {
                     }, url);
                 if (!authenticationWindow) {
                     messageHandler.openMessageDialog(
-                        null, "Your browser is blocking popup windows from this site." +
+                        null, null, "dialog.popupError",
+                        "Your browser is blocking popup windows from this site." +
                         " Please enable popups in your browser security settings" +
                         " and try again.");
                 }
@@ -5204,14 +4953,15 @@ var Toolbar = (function (my) {
         // Only the focus is able to set a shared key.
         if (!APP.xmpp.isModerator()) {
             if (sharedKey) {
-                messageHandler.openMessageDialog(null,
+                messageHandler.openMessageDialog(null, null,
+                    "dialog.passwordError",
                         "This conversation is currently protected by" +
                         " a password. Only the owner of the conference" +
                         " could set a password.",
                     false,
                     "Password");
             } else {
-                messageHandler.openMessageDialog(null,
+                messageHandler.openMessageDialog(null, null, "dialog.passwordError2",
                     "This conversation isn't currently protected by" +
                         " a password. Only the owner of the conference" +
                         " could set a password.",
@@ -5220,10 +4970,11 @@ var Toolbar = (function (my) {
             }
         } else {
             if (sharedKey) {
-                messageHandler.openTwoButtonDialog(null,
+                messageHandler.openTwoButtonDialog(null, null,
+                    "dialog.passwordCheck",
                     "Are you sure you would like to remove your password?",
                     false,
-                    "Remove",
+                    "dialog.Remove",
                     function (e, v) {
                         if (v) {
                             Toolbar.setSharedKey('');
@@ -5231,12 +4982,16 @@ var Toolbar = (function (my) {
                         }
                     });
             } else {
-                messageHandler.openTwoButtonDialog(null,
-                    '<h2>Set a password to lock your room</h2>' +
+                var msg = APP.translation.generateTranslatonHTML(
+                    "dialog.passwordMsg", "Set a password to lock your room");
+                var yourPassword = APP.translation.translateString(
+                    "dialog.yourPassword", null, "your password");
+                messageHandler.openTwoButtonDialog(null, null, null,
+                    '<h2>' + msg + '</h2>' +
                         '<input id="lockKey" type="text"' +
-                        'placeholder="your password" autofocus>',
+                        'placeholder="' + yourPassword + '" autofocus>',
                     false,
-                    "Save",
+                    "dialog.Save",
                     function (e, v) {
                         if (v) {
                             var lockKey = document.getElementById('lockKey');
@@ -5265,12 +5020,12 @@ var Toolbar = (function (my) {
         } else {
             inviteLink = encodeURI(roomUrl);
         }
-        messageHandler.openTwoButtonDialog(
-            "Share this link with everyone you want to invite",
+        messageHandler.openTwoButtonDialog("dialog.shareLink",
+            "Share this link with everyone you want to invite", null,
             '<input id="inviteLinkRef" type="text" value="' +
                 inviteLink + '" onclick="this.select();" readonly>',
             false,
-            "Invite",
+            "dialog.Invite",
             function (e, v) {
                 if (v) {
                     if (roomUrl) {
@@ -5293,18 +5048,29 @@ var Toolbar = (function (my) {
      * Opens the settings dialog.
      */
     my.openSettingsDialog = function () {
-        messageHandler.openTwoButtonDialog(
-            '<h2>Configure your conference</h2>' +
+        var settings1 = APP.translation.generateTranslatonHTML(
+            "dialog.settings1", "Configure your conference");
+        var settings2 = APP.translation.generateTranslatonHTML(
+            "dialog.settings2", "Participants join muted");
+        var settings3 = APP.translation.generateTranslatonHTML(
+            "dialog.settings3", "Require nicknames<br/><br/>" +
+                "Set a password to lock your room:");
+
+        var yourPassword = APP.translation.translateString(
+            "dialog.yourPassword", null, "your password");
+
+        messageHandler.openTwoButtonDialog(null,
+            '<h2>' + settings1 + '</h2>' +
                 '<input type="checkbox" id="initMuted">' +
-                'Participants join muted<br/>' +
+                settings2 + '<br/>' +
                 '<input type="checkbox" id="requireNicknames">' +
-                'Require nicknames<br/><br/>' +
-                'Set a password to lock your room:' +
-                '<input id="lockKey" type="text" placeholder="your password"' +
-                'autofocus>',
+                 settings3 +
+                '<input id="lockKey" type="text" placeholder="' + yourPassword +
+                '" data-i18n="[placeholder]dialog.yourPassword" autofocus>',
+            null,
             null,
             false,
-            "Save",
+            "dialog.Save",
             function () {
                 document.getElementById('lockKey').focus();
             },
@@ -5474,7 +5240,7 @@ var Toolbar = (function (my) {
 }(Toolbar || {}));
 
 module.exports = Toolbar;
-},{"../../../service/authentication/AuthenticationEvents":85,"../authentication/Authentication":12,"../etherpad/Etherpad":14,"../prezi/Prezi":15,"../side_pannels/SidePanelToggler":17,"../util/MessageHandler":28,"../util/UIUtil":30,"./BottomToolbar":24}],26:[function(require,module,exports){
+},{"../../../service/authentication/AuthenticationEvents":84,"../authentication/Authentication":11,"../etherpad/Etherpad":13,"../prezi/Prezi":14,"../side_pannels/SidePanelToggler":16,"../util/MessageHandler":27,"../util/UIUtil":29,"./BottomToolbar":23}],25:[function(require,module,exports){
 /* global $, interfaceConfig, Moderator, DesktopStreaming.showDesktopSharingButton */
 
 var toolbarTimeoutObject,
@@ -5589,7 +5355,7 @@ var ToolbarToggler = {
 };
 
 module.exports = ToolbarToggler;
-},{}],27:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 var JitsiPopover = (function () {
     /**
      * Constructs new JitsiPopover and attaches it to the element
@@ -5713,7 +5479,7 @@ var JitsiPopover = (function () {
 })();
 
 module.exports = JitsiPopover;
-},{}],28:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 /* global $, jQuery */
 var messageHandler = (function(my) {
 
@@ -5723,10 +5489,19 @@ var messageHandler = (function(my) {
      * @param titleString the title of the message
      * @param messageString the text of the message
      */
-    my.openMessageDialog = function(titleString, messageString) {
-        $.prompt(messageString,
+    my.openMessageDialog = function(titleKey, titleString,
+                                    messageKey, messageString) {
+        var title = null;
+        if(titleKey)
+        {
+            title = APP.translation.generateTranslatonHTML(titleKey,
+                titleString);
+        }
+        var message = APP.translation.generateTranslatonHTML(messageKey,
+            messageString);
+        $.prompt(message,
             {
-                title: titleString,
+                title: title,
                 persistent: false
             }
         );
@@ -5743,13 +5518,26 @@ var messageHandler = (function(my) {
      * @param loadedFunction function to be called after the prompt is fully loaded
      * @param closeFunction function to be called after the prompt is closed
      */
-    my.openTwoButtonDialog = function(titleString, msgString, persistent, leftButton,
-                                      submitFunction, loadedFunction, closeFunction) {
+    my.openTwoButtonDialog = function(titleKey, titleString, msgKey, msgString,
+        persistent, leftButtonKey, submitFunction, loadedFunction,
+        closeFunction)
+    {
+        var leftButton = APP.translation.generateTranslatonHTML(leftButtonKey);
         var buttons = {};
-        buttons[leftButton] = true;
-        buttons.Cancel = false;
-        $.prompt(msgString, {
-            title: titleString,
+        buttons.leftButton = {title: leftButton, value: true};
+        var cancelButton = APP.translation.generateTranslatonHTML("dialog.Cancel",
+            "Cancel");
+        buttons.Cancel = {title: cancelButton, value: false};
+        var message = msgString, title = titleString;
+        if(titleKey)
+        {
+            title = APP.translation.generateTranslatonHTML(titleKey, titleString);
+        }
+        if(msgKey) {
+            message = APP.translation.generateTranslatonHTML(msgKey, msgString);
+        }
+        $.prompt(message, {
+            title: title,
             persistent: false,
             buttons: buttons,
             defaultButton: 1,
@@ -5846,8 +5634,9 @@ var messageHandler = (function(my) {
      * @param msgString the text of the message
      * @param error the error that is being reported
      */
-    my.openReportDialog = function(titleString, msgString, error) {
-        my.openMessageDialog(titleString, msgString);
+    my.openReportDialog = function(titleKey, titleString, msgKey,
+                                   msgString, error) {
+        my.openMessageDialog(titleKey, titleString, msgKey, msgString);
         console.log(error);
         //FIXME send the error to the server
     };
@@ -5857,12 +5646,18 @@ var messageHandler = (function(my) {
      * @param title the title of the message
      * @param message the text of the messafe
      */
-    my.showError = function(title, message) {
-        if(!(title || message)) {
-            title = title || "Oops!";
-            message = message || "There was some kind of error";
+    my.showError = function(titleKey, title, msgKey, message) {
+
+        if(!titleKey) {
+            title = "Oops!";
+            titleKey = "dialog.oops";
         }
-        messageHandler.openMessageDialog(title, message);
+        if(!msgKey)
+        {
+            message = "There was some kind of error";
+            msgKey = "dialog.defaultError";
+        }
+        messageHandler.openMessageDialog(titleKey, title, msgKey, message);
     };
 
     my.notify = function(displayName, displayNameKey, displayNameDefault,
@@ -5901,7 +5696,7 @@ module.exports = messageHandler;
 
 
 
-},{}],29:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 var UIEvents = require("../../../service/UI/UIEvents");
 
 var nickname = null;
@@ -5932,7 +5727,7 @@ var NickanameHandler = {
 };
 
 module.exports = NickanameHandler;
-},{"../../../service/UI/UIEvents":84}],30:[function(require,module,exports){
+},{"../../../service/UI/UIEvents":83}],29:[function(require,module,exports){
 /**
  * Created by hristo on 12/22/14.
  */
@@ -6014,7 +5809,7 @@ module.exports = {
 
 
 };
-},{"../side_pannels/SidePanelToggler":17}],31:[function(require,module,exports){
+},{"../side_pannels/SidePanelToggler":16}],30:[function(require,module,exports){
 var JitsiPopover = require("../util/JitsiPopover");
 
 /**
@@ -6446,7 +6241,7 @@ ConnectionIndicator.prototype.hideIndicator = function () {
 };
 
 module.exports = ConnectionIndicator;
-},{"../util/JitsiPopover":27}],32:[function(require,module,exports){
+},{"../util/JitsiPopover":26}],31:[function(require,module,exports){
 var AudioLevels = require("../audio_levels/AudioLevels");
 var Avatar = require("../avatar/Avatar");
 var Chat = require("../side_pannels/chat/Chat");
@@ -8649,7 +8444,7 @@ var VideoLayout = (function (my) {
 }(VideoLayout || {}));
 
 module.exports = VideoLayout;
-},{"../../../service/RTC/MediaStreamTypes":79,"../../../service/UI/UIEvents":84,"../audio_levels/AudioLevels":10,"../avatar/Avatar":13,"../etherpad/Etherpad":14,"../prezi/Prezi":15,"../side_pannels/chat/Chat":18,"../side_pannels/contactlist/ContactList":22,"../util/NicknameHandler":29,"../util/UIUtil":30,"./ConnectionIndicator":31}],33:[function(require,module,exports){
+},{"../../../service/RTC/MediaStreamTypes":78,"../../../service/UI/UIEvents":83,"../audio_levels/AudioLevels":9,"../avatar/Avatar":12,"../etherpad/Etherpad":13,"../prezi/Prezi":14,"../side_pannels/chat/Chat":17,"../side_pannels/contactlist/ContactList":21,"../util/NicknameHandler":28,"../util/UIUtil":29,"./ConnectionIndicator":30}],32:[function(require,module,exports){
 //var nouns = [
 //];
 var pluralNouns = [
@@ -8830,7 +8625,7 @@ var RoomNameGenerator = {
 
 module.exports = RoomNameGenerator;
 
-},{}],34:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 var animateTimeout, updateTimeout;
 
 var RoomNameGenerator = require("./RoomnameGenerator");
@@ -8932,7 +8727,7 @@ function setupWelcomePage()
 }
 
 module.exports = setupWelcomePage;
-},{"./RoomnameGenerator":33}],35:[function(require,module,exports){
+},{"./RoomnameGenerator":32}],34:[function(require,module,exports){
 var EventEmitter = require("events");
 var eventEmitter = new EventEmitter();
 var CQEvents = require("../../service/connectionquality/CQEvents");
@@ -9067,7 +8862,7 @@ var ConnectionQuality = {
 };
 
 module.exports = ConnectionQuality;
-},{"../../service/connectionquality/CQEvents":86,"../../service/xmpp/XMPPEvents":89,"events":1}],36:[function(require,module,exports){
+},{"../../service/connectionquality/CQEvents":85,"../../service/xmpp/XMPPEvents":88,"events":89}],35:[function(require,module,exports){
 /* global $, alert, changeLocalVideo, chrome, config, getConferenceHandler, getUserMediaWithConstraints */
 /**
  * Indicates that desktop stream is currently in use(for toggle purpose).
@@ -9162,7 +8957,8 @@ function isUpdateRequired(minVersion, extVersion)
     catch (e)
     {
         console.error("Failed to parse extension version", e);
-        APP.UI.messageHandler.showError('Error',
+        APP.UI.messageHandler.showError("dialog.error", 'Error',
+            "dialod.detectext",
             'Error when trying to detect desktopsharing extension.');
         return true;
     }
@@ -9244,7 +9040,8 @@ function obtainScreenFromExtension(streamCallback, failCallback) {
                     function (arg) {
                         console.log("Failed to install the extension", arg);
                         failCallback(arg);
-                        APP.UI.messageHandler.showError('Error',
+                        APP.UI.messageHandler.showError("dialog.error", 'Error',
+                            "dialog.failtoinstall",
                             'Failed to install desktop sharing extension');
                     }
                 );
@@ -9392,7 +9189,7 @@ module.exports = {
 };
 
 
-},{"../../service/desktopsharing/DesktopSharingEventTypes":87,"events":1}],37:[function(require,module,exports){
+},{"../../service/desktopsharing/DesktopSharingEventTypes":86,"events":89}],36:[function(require,module,exports){
 //maps keycode to character, id of popover for given function and function
 var shortcuts = {
     67: {
@@ -9485,7 +9282,7 @@ var KeyboardShortcut = {
 
 module.exports = KeyboardShortcut;
 
-},{}],38:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 var email = '';
 var displayName = '';
 var userId;
@@ -9545,7 +9342,7 @@ var Settings =
 
 module.exports = Settings;
 
-},{}],39:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 /**
  *
  * @constructor
@@ -9578,7 +9375,7 @@ SimulcastLogger.prototype.error = function (text) {
 };
 
 module.exports = SimulcastLogger;
-},{}],40:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 var SimulcastLogger = require("./SimulcastLogger");
 var SimulcastUtils = require("./SimulcastUtils");
 var MediaStreamType = require("../../service/RTC/MediaStreamTypes");
@@ -9847,7 +9644,7 @@ SimulcastReceiver.prototype.transformRemoteDescription = function (desc) {
 };
 
 module.exports = SimulcastReceiver;
-},{"../../service/RTC/MediaStreamTypes":79,"./SimulcastLogger":39,"./SimulcastUtils":42}],41:[function(require,module,exports){
+},{"../../service/RTC/MediaStreamTypes":78,"./SimulcastLogger":38,"./SimulcastUtils":41}],40:[function(require,module,exports){
 var SimulcastLogger = require("./SimulcastLogger");
 var SimulcastUtils = require("./SimulcastUtils");
 
@@ -10370,7 +10167,7 @@ module.exports = {
     "no": NoSimulcastSender
 }
 
-},{"./SimulcastLogger":39,"./SimulcastUtils":42}],42:[function(require,module,exports){
+},{"./SimulcastLogger":38,"./SimulcastUtils":41}],41:[function(require,module,exports){
 var SimulcastLogger = require("./SimulcastLogger");
 
 /**
@@ -10604,7 +10401,7 @@ SimulcastUtils.prototype._compileVideoSources = function (videoSources) {
 };
 
 module.exports = SimulcastUtils;
-},{"./SimulcastLogger":39}],43:[function(require,module,exports){
+},{"./SimulcastLogger":38}],42:[function(require,module,exports){
 /*jslint plusplus: true */
 /*jslint nomen: true*/
 
@@ -10807,7 +10604,7 @@ SimulcastManager.prototype.resetSender = function() {
 var simulcast = new SimulcastManager();
 
 module.exports = simulcast;
-},{"../../service/RTC/RTCEvents":81,"./SimulcastReceiver":40,"./SimulcastSender":41,"./SimulcastUtils":42}],44:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":80,"./SimulcastReceiver":39,"./SimulcastSender":40,"./SimulcastUtils":41}],43:[function(require,module,exports){
 /**
  * Provides statistics for the local stream.
  */
@@ -10938,7 +10735,7 @@ LocalStatsCollector.prototype.stop = function () {
 };
 
 module.exports = LocalStatsCollector;
-},{}],45:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 /* global ssrc2jid */
 /* jshint -W117 */
 var RTCBrowserType = require("../../service/RTC/RTCBrowserType");
@@ -11649,7 +11446,7 @@ StatsCollector.prototype.processAudioLevelReport = function ()
 
 
 };
-},{"../../service/RTC/RTCBrowserType":80}],46:[function(require,module,exports){
+},{"../../service/RTC/RTCBrowserType":79}],45:[function(require,module,exports){
 /**
  * Created by hristo on 8/4/14.
  */
@@ -11782,7 +11579,7 @@ var statistics =
 
 
 module.exports = statistics;
-},{"../../service/RTC/StreamEventTypes.js":83,"../../service/xmpp/XMPPEvents":89,"./LocalStatsCollector.js":44,"./RTPStatsCollector.js":45,"events":1}],47:[function(require,module,exports){
+},{"../../service/RTC/StreamEventTypes.js":82,"../../service/xmpp/XMPPEvents":88,"./LocalStatsCollector.js":43,"./RTPStatsCollector.js":44,"events":89}],46:[function(require,module,exports){
 var i18n = require("i18next-client");
 var languages = require("../../service/translation/languages");
 var DEFAULT_LANG = languages.EN;
@@ -11799,6 +11596,7 @@ var defaultOptions = {
     detectLngQS: "lang",
     useCookie: false,
     fallbackLng: DEFAULT_LANG,
+    shortcutFunction: 'defaultValue',
     load: "unspecific",
     resGetPath: 'lang/__ns__-__lng__.json',
     ns: {
@@ -11867,13 +11665,13 @@ module.exports = {
             options.lng = lang;
         i18n.init(options, initCompleted);
     },
-    translateString: function (key, cb, defaultValue) {
+    translateString: function (key, cb, options) {
         if(!cb)
-            return i18n.t(key, defaultValue);
+            return i18n.t(key, options);
 
         if(initialized)
         {
-            cb(i18n.t(key, defaultValue));
+            cb(i18n.t(key, options));
         }
         else
         {
@@ -11891,10 +11689,28 @@ module.exports = {
     },
     translateElement: function (selector) {
         selector.i18n();
+    },
+    generateTranslatonHTML: function (key, defaultString, options) {
+        var str = "<span data-i18n=\"" + key + "\"";
+        if(options)
+        {
+            str += " data-i18n-options=\"" + JSON.stringify(options) + "\"";
+        }
+        str += ">";
+        if(!options)
+            options = {};
+        if(defaultString)
+        {
+            options.defaultValue = defaultString;
+        }
+        str += this.translateString(key, null, options);
+        str += "</span>";
+        return str;
+
     }
 };
 
-},{"../../service/translation/languages":88,"i18next-client":62}],48:[function(require,module,exports){
+},{"../../service/translation/languages":87,"i18next-client":61}],47:[function(require,module,exports){
 /* jshint -W117 */
 var TraceablePeerConnection = require("./TraceablePeerConnection");
 var SDPDiffer = require("./SDPDiffer");
@@ -13123,7 +12939,8 @@ JingleSession.onJingleFatalError = function (session, error)
 {
     this.service.sessionTerminated = true;
     this.connection.emuc.doLeave();
-    APP.UI.messageHandler.showError(  "Sorry",
+    APP.UI.messageHandler.showError("dialog.sorry", "Sorry",
+        "dialog.internalError",
         "Internal application error[setRemoteDescription]");
 }
 
@@ -13290,7 +13107,7 @@ JingleSession.prototype.remoteStreamAdded = function (data) {
 
 module.exports = JingleSession;
 
-},{"../../service/RTC/RTCBrowserType":80,"./SDP":49,"./SDPDiffer":50,"./SDPUtil":51,"./TraceablePeerConnection":52}],49:[function(require,module,exports){
+},{"../../service/RTC/RTCBrowserType":79,"./SDP":48,"./SDPDiffer":49,"./SDPUtil":50,"./TraceablePeerConnection":51}],48:[function(require,module,exports){
 /* jshint -W117 */
 var SDPUtil = require("./SDPUtil");
 
@@ -13912,7 +13729,7 @@ SDP.prototype.jingle2media = function (content) {
 module.exports = SDP;
 
 
-},{"./SDPUtil":51}],50:[function(require,module,exports){
+},{"./SDPUtil":50}],49:[function(require,module,exports){
 function SDPDiffer(mySDP, otherSDP) {
     this.mySDP = mySDP;
     this.otherSDP = otherSDP;
@@ -14078,7 +13895,7 @@ SDPDiffer.prototype.toJingle = function(modify) {
 };
 
 module.exports = SDPDiffer;
-},{}],51:[function(require,module,exports){
+},{}],50:[function(require,module,exports){
 SDPUtil = {
     iceparams: function (mediadesc, sessiondesc) {
         var data = null;
@@ -14428,7 +14245,7 @@ SDPUtil = {
     }
 };
 module.exports = SDPUtil;
-},{}],52:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 function TraceablePeerConnection(ice_config, constraints) {
     var self = this;
     var RTCPeerconnection = navigator.mozGetUserMedia ? mozRTCPeerConnection : webkitRTCPeerConnection;
@@ -14696,7 +14513,7 @@ TraceablePeerConnection.prototype.getStats = function(callback, errback) {
 module.exports = TraceablePeerConnection;
 
 
-},{}],53:[function(require,module,exports){
+},{}],52:[function(require,module,exports){
 /* global $, $iq, APP, config, connection, UI, messageHandler,
  roomName, sessionTerminated, Strophe, Util */
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
@@ -15104,7 +14921,7 @@ module.exports = Moderator;
 
 
 
-},{"../../service/authentication/AuthenticationEvents":85,"../../service/xmpp/XMPPEvents":89,"../settings/Settings":38}],54:[function(require,module,exports){
+},{"../../service/authentication/AuthenticationEvents":84,"../../service/xmpp/XMPPEvents":88,"../settings/Settings":37}],53:[function(require,module,exports){
 /* global $, $iq, config, connection, focusMucJid, messageHandler, Moderator,
    Toolbar, Util */
 var Moderator = require("./moderator");
@@ -15259,7 +15076,7 @@ var Recording = {
 }
 
 module.exports = Recording;
-},{"./moderator":53}],55:[function(require,module,exports){
+},{"./moderator":52}],54:[function(require,module,exports){
 /* jshint -W117 */
 /* a simple MUC connection plugin
  * can only handle a single MUC room
@@ -15533,21 +15350,26 @@ module.exports = function(XMPP, eventEmitter) {
                     // We're either missing Jicofo/Prosody config for anonymous
                     // domains or something is wrong.
 //                    XMPP.promptLogin();
-                    APP.UI.messageHandler.openReportDialog(null,
+                    APP.UI.messageHandler.openReportDialog(null, null,
+                        "dialog.joinError",
                         'Oops ! We couldn`t join the conference.' +
                         ' There might be some problem with security' +
                         ' configuration. Please contact service' +
                         ' administrator.', pres);
                 } else {
                     console.warn('onPresError ', pres);
-                    APP.UI.messageHandler.openReportDialog(null,
-                        'Oops! Something went wrong and we couldn`t connect to the conference.',
+                    APP.UI.messageHandler.openReportDialog(null, null,
+                        "dialog.connectError",
+                        'Oops! Something went wrong and we couldn`t ' +
+                            'connect to the conference.',
                         pres);
                 }
             } else {
                 console.warn('onPresError ', pres);
-                APP.UI.messageHandler.openReportDialog(null,
-                    'Oops! Something went wrong and we couldn`t connect to the conference.',
+                APP.UI.messageHandler.openReportDialog(null, null,
+                    "dialog.connectError",
+                    'Oops! Something went wrong and we couldn`t ' +
+                        'connect to the conference.',
                     pres);
             }
             return true;
@@ -15875,7 +15697,7 @@ module.exports = function(XMPP, eventEmitter) {
 };
 
 
-},{"../../service/xmpp/XMPPEvents":89,"./JingleSession":48,"./moderator":53}],56:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":88,"./JingleSession":47,"./moderator":52}],55:[function(require,module,exports){
 /* jshint -W117 */
 
 var JingleSession = require("./JingleSession");
@@ -16214,7 +16036,7 @@ module.exports = function(XMPP, eventEmitter)
 };
 
 
-},{"../../service/xmpp/XMPPEvents":89,"./JingleSession":48}],57:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":88,"./JingleSession":47}],56:[function(require,module,exports){
 /* global Strophe */
 module.exports = function () {
 
@@ -16235,7 +16057,7 @@ module.exports = function () {
         }
     });
 };
-},{}],58:[function(require,module,exports){
+},{}],57:[function(require,module,exports){
 /* global $, $iq, config, connection, focusMucJid, forceMuted,
    setAudioMuted, Strophe */
 /**
@@ -16294,7 +16116,7 @@ module.exports = function (XMPP) {
         }
     });
 }
-},{}],59:[function(require,module,exports){
+},{}],58:[function(require,module,exports){
 /* jshint -W117 */
 module.exports = function() {
     Strophe.addConnectionPlugin('rayo',
@@ -16391,7 +16213,7 @@ module.exports = function() {
     );
 };
 
-},{}],60:[function(require,module,exports){
+},{}],59:[function(require,module,exports){
 /**
  * Strophe logger implementation. Logs from level WARN and above.
  */
@@ -16435,7 +16257,7 @@ module.exports = function () {
     };
 };
 
-},{}],61:[function(require,module,exports){
+},{}],60:[function(require,module,exports){
 var Moderator = require("./moderator");
 var EventEmitter = require("events");
 var Recording = require("./recording");
@@ -16690,8 +16512,8 @@ var XMPP = {
         } else {
             // We are done immediately
             console.error("No conference handler");
-            APP.UI.messageHandler.showError('Error',
-                'Unable to switch video stream.');
+            APP.UI.messageHandler.showError("dialog.error", 'Error',
+                "dialog.unableToSwitch", 'Unable to switch video stream.');
             callback();
         }
     },
@@ -16752,9 +16574,10 @@ var XMPP = {
                             },
                             function (error) {
                                 console.log('mute SLD error');
-                                APP.UI.messageHandler.showError('Error',
-                                        'Oops! Something went wrong and we failed to ' +
-                                        'mute! (SLD Failure)');
+                                APP.UI.messageHandler.showError("dialog.error",
+                                    'Error', "dialog.SLDFailure",
+                                    'Oops! Something went wrong and we failed to ' +
+                                    'mute! (SLD Failure)');
                             }
                         );
                     },
@@ -16766,9 +16589,10 @@ var XMPP = {
             },
             function (error) {
                 console.log('muteVideo SRD error');
-                APP.UI.messageHandler.showError('Error',
-                        'Oops! Something went wrong and we failed to stop video!' +
-                        '(SRD Failure)');
+                APP.UI.messageHandler.showError("dialog.error", 'Error',
+                    "dialog.SRDFailure",
+                    'Oops! Something went wrong and we failed to stop video!' +
+                    '(SRD Failure)');
 
             }
         );
@@ -16890,7 +16714,7 @@ var XMPP = {
 
 module.exports = XMPP;
 
-},{"../../service/RTC/StreamEventTypes":83,"../../service/UI/UIEvents":84,"../../service/xmpp/XMPPEvents":89,"./SDP":49,"./moderator":53,"./recording":54,"./strophe.emuc":55,"./strophe.jingle":56,"./strophe.logger":57,"./strophe.moderate":58,"./strophe.rayo":59,"./strophe.util":60,"events":1,"pako":63}],62:[function(require,module,exports){
+},{"../../service/RTC/StreamEventTypes":82,"../../service/UI/UIEvents":83,"../../service/xmpp/XMPPEvents":88,"./SDP":48,"./moderator":52,"./recording":53,"./strophe.emuc":54,"./strophe.jingle":55,"./strophe.logger":56,"./strophe.moderate":57,"./strophe.rayo":58,"./strophe.util":59,"events":89,"pako":62}],61:[function(require,module,exports){
 // i18next, v1.7.7
 // Copyright (c)2014 Jan Mühlemann (jamuhl).
 // Distributed under MIT license
@@ -19013,7 +18837,7 @@ module.exports = XMPP;
     i18n.options = o;
 
 })();
-},{"jquery":"jquery"}],63:[function(require,module,exports){
+},{"jquery":"jquery"}],62:[function(require,module,exports){
 // Top level file is just a mixin of submodules & constants
 'use strict';
 
@@ -19028,7 +18852,7 @@ var pako = {};
 assign(pako, deflate, inflate, constants);
 
 module.exports = pako;
-},{"./lib/deflate":64,"./lib/inflate":65,"./lib/utils/common":66,"./lib/zlib/constants":69}],64:[function(require,module,exports){
+},{"./lib/deflate":63,"./lib/inflate":64,"./lib/utils/common":65,"./lib/zlib/constants":68}],63:[function(require,module,exports){
 'use strict';
 
 
@@ -19390,7 +19214,7 @@ exports.Deflate = Deflate;
 exports.deflate = deflate;
 exports.deflateRaw = deflateRaw;
 exports.gzip = gzip;
-},{"./utils/common":66,"./utils/strings":67,"./zlib/deflate.js":71,"./zlib/messages":76,"./zlib/zstream":78}],65:[function(require,module,exports){
+},{"./utils/common":65,"./utils/strings":66,"./zlib/deflate.js":70,"./zlib/messages":75,"./zlib/zstream":77}],64:[function(require,module,exports){
 'use strict';
 
 
@@ -19756,7 +19580,7 @@ exports.inflate = inflate;
 exports.inflateRaw = inflateRaw;
 exports.ungzip  = inflate;
 
-},{"./utils/common":66,"./utils/strings":67,"./zlib/constants":69,"./zlib/gzheader":72,"./zlib/inflate.js":74,"./zlib/messages":76,"./zlib/zstream":78}],66:[function(require,module,exports){
+},{"./utils/common":65,"./utils/strings":66,"./zlib/constants":68,"./zlib/gzheader":71,"./zlib/inflate.js":73,"./zlib/messages":75,"./zlib/zstream":77}],65:[function(require,module,exports){
 'use strict';
 
 
@@ -19859,7 +19683,7 @@ exports.setTyped = function (on) {
 };
 
 exports.setTyped(TYPED_OK);
-},{}],67:[function(require,module,exports){
+},{}],66:[function(require,module,exports){
 // String encode/decode helpers
 'use strict';
 
@@ -20046,7 +19870,7 @@ exports.utf8border = function(buf, max) {
   return (pos + _utf8len[buf[pos]] > max) ? pos : max;
 };
 
-},{"./common":66}],68:[function(require,module,exports){
+},{"./common":65}],67:[function(require,module,exports){
 'use strict';
 
 // Note: adler32 takes 12% for level 0 and 2% for level 6.
@@ -20079,7 +19903,7 @@ function adler32(adler, buf, len, pos) {
 
 
 module.exports = adler32;
-},{}],69:[function(require,module,exports){
+},{}],68:[function(require,module,exports){
 module.exports = {
 
   /* Allowed flush values; see deflate() and inflate() below for details */
@@ -20127,7 +19951,7 @@ module.exports = {
   Z_DEFLATED:               8
   //Z_NULL:                 null // Use -1 or null inline, depending on var type
 };
-},{}],70:[function(require,module,exports){
+},{}],69:[function(require,module,exports){
 'use strict';
 
 // Note: we can't get significant speed boost here.
@@ -20169,7 +19993,7 @@ function crc32(crc, buf, len, pos) {
 
 
 module.exports = crc32;
-},{}],71:[function(require,module,exports){
+},{}],70:[function(require,module,exports){
 'use strict';
 
 var utils   = require('../utils/common');
@@ -21935,7 +21759,7 @@ exports.deflatePending = deflatePending;
 exports.deflatePrime = deflatePrime;
 exports.deflateTune = deflateTune;
 */
-},{"../utils/common":66,"./adler32":68,"./crc32":70,"./messages":76,"./trees":77}],72:[function(require,module,exports){
+},{"../utils/common":65,"./adler32":67,"./crc32":69,"./messages":75,"./trees":76}],71:[function(require,module,exports){
 'use strict';
 
 
@@ -21976,7 +21800,7 @@ function GZheader() {
 }
 
 module.exports = GZheader;
-},{}],73:[function(require,module,exports){
+},{}],72:[function(require,module,exports){
 'use strict';
 
 // See state defs from inflate.js
@@ -22303,7 +22127,7 @@ module.exports = function inflate_fast(strm, start) {
   return;
 };
 
-},{}],74:[function(require,module,exports){
+},{}],73:[function(require,module,exports){
 'use strict';
 
 
@@ -23807,7 +23631,7 @@ exports.inflateSync = inflateSync;
 exports.inflateSyncPoint = inflateSyncPoint;
 exports.inflateUndermine = inflateUndermine;
 */
-},{"../utils/common":66,"./adler32":68,"./crc32":70,"./inffast":73,"./inftrees":75}],75:[function(require,module,exports){
+},{"../utils/common":65,"./adler32":67,"./crc32":69,"./inffast":72,"./inftrees":74}],74:[function(require,module,exports){
 'use strict';
 
 
@@ -24134,7 +23958,7 @@ module.exports = function inflate_table(type, lens, lens_index, codes, table, ta
   return 0;
 };
 
-},{"../utils/common":66}],76:[function(require,module,exports){
+},{"../utils/common":65}],75:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -24148,7 +23972,7 @@ module.exports = {
   '-5':   'buffer error',        /* Z_BUF_ERROR     (-5) */
   '-6':   'incompatible version' /* Z_VERSION_ERROR (-6) */
 };
-},{}],77:[function(require,module,exports){
+},{}],76:[function(require,module,exports){
 'use strict';
 
 
@@ -25348,7 +25172,7 @@ exports._tr_stored_block = _tr_stored_block;
 exports._tr_flush_block  = _tr_flush_block;
 exports._tr_tally = _tr_tally;
 exports._tr_align = _tr_align;
-},{"../utils/common":66}],78:[function(require,module,exports){
+},{"../utils/common":65}],77:[function(require,module,exports){
 'use strict';
 
 
@@ -25378,14 +25202,14 @@ function ZStream() {
 }
 
 module.exports = ZStream;
-},{}],79:[function(require,module,exports){
+},{}],78:[function(require,module,exports){
 var MediaStreamType = {
     VIDEO_TYPE: "Video",
 
     AUDIO_TYPE: "Audio"
 };
 module.exports = MediaStreamType;
-},{}],80:[function(require,module,exports){
+},{}],79:[function(require,module,exports){
 var RTCBrowserType = {
     RTC_BROWSER_CHROME: "rtc_browser.chrome",
 
@@ -25393,7 +25217,7 @@ var RTCBrowserType = {
 };
 
 module.exports = RTCBrowserType;
-},{}],81:[function(require,module,exports){
+},{}],80:[function(require,module,exports){
 var RTCEvents = {
     LASTN_CHANGED: "rtc.lastn_changed",
     DOMINANTSPEAKER_CHANGED: "rtc.dominantspeaker_changed",
@@ -25405,7 +25229,7 @@ var RTCEvents = {
 };
 
 module.exports = RTCEvents;
-},{}],82:[function(require,module,exports){
+},{}],81:[function(require,module,exports){
 var Resolutions = {
     "1080": {
         width: 1920,
@@ -25459,7 +25283,7 @@ var Resolutions = {
     }
 };
 module.exports = Resolutions;
-},{}],83:[function(require,module,exports){
+},{}],82:[function(require,module,exports){
 var StreamEventTypes = {
     EVENT_TYPE_LOCAL_CREATED: "stream.local_created",
 
@@ -25473,14 +25297,14 @@ var StreamEventTypes = {
 };
 
 module.exports = StreamEventTypes;
-},{}],84:[function(require,module,exports){
+},{}],83:[function(require,module,exports){
 var UIEvents = {
     NICKNAME_CHANGED: "UI.nickname_changed",
     SELECTED_ENDPOINT: "UI.selected_endpoint",
     PINNED_ENDPOINT: "UI.pinned_endpoint"
 };
 module.exports = UIEvents;
-},{}],85:[function(require,module,exports){
+},{}],84:[function(require,module,exports){
 var AuthenticationEvents = {
     /**
      * Event callback arguments:
@@ -25494,7 +25318,7 @@ var AuthenticationEvents = {
 };
 module.exports = AuthenticationEvents;
 
-},{}],86:[function(require,module,exports){
+},{}],85:[function(require,module,exports){
 var CQEvents = {
     LOCALSTATS_UPDATED: "cq.localstats_updated",
     REMOTESTATS_UPDATED: "cq.remotestats_updated",
@@ -25502,7 +25326,7 @@ var CQEvents = {
 };
 
 module.exports = CQEvents;
-},{}],87:[function(require,module,exports){
+},{}],86:[function(require,module,exports){
 var DesktopSharingEventTypes = {
     INIT: "ds.init",
 
@@ -25512,7 +25336,7 @@ var DesktopSharingEventTypes = {
 };
 
 module.exports = DesktopSharingEventTypes;
-},{}],88:[function(require,module,exports){
+},{}],87:[function(require,module,exports){
 module.exports = {
     getLanguages : function () {
         var languages = [];
@@ -25525,7 +25349,7 @@ module.exports = {
     },
     EN: "en"
 }
-},{}],89:[function(require,module,exports){
+},{}],88:[function(require,module,exports){
 var XMPPEvents = {
     CONFERENCE_CERATED: "xmpp.conferenceCreated.jingle",
     CALL_TERMINATED: "xmpp.callterminated.jingle",
@@ -25552,5 +25376,308 @@ var XMPPEvents = {
     ETHERPAD: "xmpp.etherpad"
 };
 module.exports = XMPPEvents;
-},{}]},{},[2])(2)
+},{}],89:[function(require,module,exports){
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+function EventEmitter() {
+  this._events = this._events || {};
+  this._maxListeners = this._maxListeners || undefined;
+}
+module.exports = EventEmitter;
+
+// Backwards-compat with node 0.10.x
+EventEmitter.EventEmitter = EventEmitter;
+
+EventEmitter.prototype._events = undefined;
+EventEmitter.prototype._maxListeners = undefined;
+
+// By default EventEmitters will print a warning if more than 10 listeners are
+// added to it. This is a useful default which helps finding memory leaks.
+EventEmitter.defaultMaxListeners = 10;
+
+// Obviously not all Emitters should be limited to 10. This function allows
+// that to be increased. Set to zero for unlimited.
+EventEmitter.prototype.setMaxListeners = function(n) {
+  if (!isNumber(n) || n < 0 || isNaN(n))
+    throw TypeError('n must be a positive number');
+  this._maxListeners = n;
+  return this;
+};
+
+EventEmitter.prototype.emit = function(type) {
+  var er, handler, len, args, i, listeners;
+
+  if (!this._events)
+    this._events = {};
+
+  // If there is no 'error' event listener then throw.
+  if (type === 'error') {
+    if (!this._events.error ||
+        (isObject(this._events.error) && !this._events.error.length)) {
+      er = arguments[1];
+      if (er instanceof Error) {
+        throw er; // Unhandled 'error' event
+      }
+      throw TypeError('Uncaught, unspecified "error" event.');
+    }
+  }
+
+  handler = this._events[type];
+
+  if (isUndefined(handler))
+    return false;
+
+  if (isFunction(handler)) {
+    switch (arguments.length) {
+      // fast cases
+      case 1:
+        handler.call(this);
+        break;
+      case 2:
+        handler.call(this, arguments[1]);
+        break;
+      case 3:
+        handler.call(this, arguments[1], arguments[2]);
+        break;
+      // slower
+      default:
+        len = arguments.length;
+        args = new Array(len - 1);
+        for (i = 1; i < len; i++)
+          args[i - 1] = arguments[i];
+        handler.apply(this, args);
+    }
+  } else if (isObject(handler)) {
+    len = arguments.length;
+    args = new Array(len - 1);
+    for (i = 1; i < len; i++)
+      args[i - 1] = arguments[i];
+
+    listeners = handler.slice();
+    len = listeners.length;
+    for (i = 0; i < len; i++)
+      listeners[i].apply(this, args);
+  }
+
+  return true;
+};
+
+EventEmitter.prototype.addListener = function(type, listener) {
+  var m;
+
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  if (!this._events)
+    this._events = {};
+
+  // To avoid recursion in the case that type === "newListener"! Before
+  // adding it to the listeners, first emit "newListener".
+  if (this._events.newListener)
+    this.emit('newListener', type,
+              isFunction(listener.listener) ?
+              listener.listener : listener);
+
+  if (!this._events[type])
+    // Optimize the case of one listener. Don't need the extra array object.
+    this._events[type] = listener;
+  else if (isObject(this._events[type]))
+    // If we've already got an array, just append.
+    this._events[type].push(listener);
+  else
+    // Adding the second element, need to change to array.
+    this._events[type] = [this._events[type], listener];
+
+  // Check for listener leak
+  if (isObject(this._events[type]) && !this._events[type].warned) {
+    var m;
+    if (!isUndefined(this._maxListeners)) {
+      m = this._maxListeners;
+    } else {
+      m = EventEmitter.defaultMaxListeners;
+    }
+
+    if (m && m > 0 && this._events[type].length > m) {
+      this._events[type].warned = true;
+      console.error('(node) warning: possible EventEmitter memory ' +
+                    'leak detected. %d listeners added. ' +
+                    'Use emitter.setMaxListeners() to increase limit.',
+                    this._events[type].length);
+      if (typeof console.trace === 'function') {
+        // not supported in IE 10
+        console.trace();
+      }
+    }
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.on = EventEmitter.prototype.addListener;
+
+EventEmitter.prototype.once = function(type, listener) {
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  var fired = false;
+
+  function g() {
+    this.removeListener(type, g);
+
+    if (!fired) {
+      fired = true;
+      listener.apply(this, arguments);
+    }
+  }
+
+  g.listener = listener;
+  this.on(type, g);
+
+  return this;
+};
+
+// emits a 'removeListener' event iff the listener was removed
+EventEmitter.prototype.removeListener = function(type, listener) {
+  var list, position, length, i;
+
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  if (!this._events || !this._events[type])
+    return this;
+
+  list = this._events[type];
+  length = list.length;
+  position = -1;
+
+  if (list === listener ||
+      (isFunction(list.listener) && list.listener === listener)) {
+    delete this._events[type];
+    if (this._events.removeListener)
+      this.emit('removeListener', type, listener);
+
+  } else if (isObject(list)) {
+    for (i = length; i-- > 0;) {
+      if (list[i] === listener ||
+          (list[i].listener && list[i].listener === listener)) {
+        position = i;
+        break;
+      }
+    }
+
+    if (position < 0)
+      return this;
+
+    if (list.length === 1) {
+      list.length = 0;
+      delete this._events[type];
+    } else {
+      list.splice(position, 1);
+    }
+
+    if (this._events.removeListener)
+      this.emit('removeListener', type, listener);
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.removeAllListeners = function(type) {
+  var key, listeners;
+
+  if (!this._events)
+    return this;
+
+  // not listening for removeListener, no need to emit
+  if (!this._events.removeListener) {
+    if (arguments.length === 0)
+      this._events = {};
+    else if (this._events[type])
+      delete this._events[type];
+    return this;
+  }
+
+  // emit removeListener for all listeners on all events
+  if (arguments.length === 0) {
+    for (key in this._events) {
+      if (key === 'removeListener') continue;
+      this.removeAllListeners(key);
+    }
+    this.removeAllListeners('removeListener');
+    this._events = {};
+    return this;
+  }
+
+  listeners = this._events[type];
+
+  if (isFunction(listeners)) {
+    this.removeListener(type, listeners);
+  } else {
+    // LIFO order
+    while (listeners.length)
+      this.removeListener(type, listeners[listeners.length - 1]);
+  }
+  delete this._events[type];
+
+  return this;
+};
+
+EventEmitter.prototype.listeners = function(type) {
+  var ret;
+  if (!this._events || !this._events[type])
+    ret = [];
+  else if (isFunction(this._events[type]))
+    ret = [this._events[type]];
+  else
+    ret = this._events[type].slice();
+  return ret;
+};
+
+EventEmitter.listenerCount = function(emitter, type) {
+  var ret;
+  if (!emitter._events || !emitter._events[type])
+    ret = 0;
+  else if (isFunction(emitter._events[type]))
+    ret = 1;
+  else
+    ret = emitter._events[type].length;
+  return ret;
+};
+
+function isFunction(arg) {
+  return typeof arg === 'function';
+}
+
+function isNumber(arg) {
+  return typeof arg === 'number';
+}
+
+function isObject(arg) {
+  return typeof arg === 'object' && arg !== null;
+}
+
+function isUndefined(arg) {
+  return arg === void 0;
+}
+
+},{}]},{},[1])(1)
 });

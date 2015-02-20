@@ -136,11 +136,12 @@ function registerListeners() {
         VideoLayout.onStatsStop);
     APP.xmpp.addListener(XMPPEvents.DISPOSE_CONFERENCE, onDisposeConference);
     APP.xmpp.addListener(XMPPEvents.KICKED, function () {
-        messageHandler.openMessageDialog("Session Terminated",
-            "Ouch! You have been kicked out of the meet!");
+        messageHandler.openMessageDialog("dialog.sessTerminated", "Session Terminated",
+            "dialog.kickMessage", "Ouch! You have been kicked out of the meet!");
     });
     APP.xmpp.addListener(XMPPEvents.BRIDGE_DOWN, function () {
-        messageHandler.showError("Error",
+        messageHandler.showError("dialog.error","Error",
+            "dialog.bridgeUnavailable",
             "Jitsi Videobridge is currently unavailable. Please try again later!");
     });
     APP.xmpp.addListener(XMPPEvents.USER_ID_CHANGED, function (from, id) {
@@ -442,12 +443,15 @@ function onModeratorStatusChanged(isModerator) {
 function onPasswordReqiured(callback) {
     // password is required
     Toolbar.lockLockButton();
+    var message = '<h2 data-i18n="dialog.passwordRequired">';
+    message += APP.translation.translateString(
+        "dialog.passwordRequired", null, "Password required");
+    message += '</h2>' +
+        '<input id="lockKey" type="text" placeholder="password" autofocus>';
 
-    messageHandler.openTwoButtonDialog(null,
-            '<h2>Password required</h2>' +
-            '<input id="lockKey" type="text" placeholder="password" autofocus>',
+    messageHandler.openTwoButtonDialog(null, null, null, message,
         true,
-        "Ok",
+        "dialog.Ok",
         function (e, v, m, f) {},
         function (event) {
             document.getElementById('lockKey').focus();
@@ -605,13 +609,17 @@ UI.disableConnect = function () {
 UI.showLoginPopup = function(callback)
 {
     console.log('password is required');
-
-    UI.messageHandler.openTwoButtonDialog(null,
-            '<h2>Password required</h2>' +
-            '<input id="passwordrequired.username" type="text" placeholder="user@domain.net" autofocus>' +
-            '<input id="passwordrequired.password" type="password" placeholder="user password">',
+    var message = '<h2 data-i18n="dialog.passwordRequired">';
+    message += APP.translation.translateString(
+        "dialog.passwordRequired", null, "Password required");
+    message += '</h2>' +
+        '<input id="passwordrequired.username" type="text" ' +
+        'placeholder="user@domain.net" autofocus>' +
+        '<input id="passwordrequired.password" ' +
+        'type="password" placeholder="user password">';
+    UI.messageHandler.openTwoButtonDialog(null, null, null, message,
         true,
-        "Ok",
+        "dialog.Ok",
         function (e, v, m, f) {
             if (v) {
                 var username = document.getElementById('passwordrequired.username');
