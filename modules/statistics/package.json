@@ -1,8 +1,0 @@
-{
-    "name": "statistics",
-    "version": "0.0.1",
-    "main": "statistics.js",
-    "description": "Statistics module for Jitsi Meet",
-    "dependencies": {
-    }
-}

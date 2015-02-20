@@ -1,8 +1,0 @@
-{
-    "name": "RTC",
-    "version": "0.0.1",
-    "main": "RTC.js",
-    "description": "Provedes media streams and data channels utilities for Jitsi Meet",
-    "dependencies": {
-    }
-}
