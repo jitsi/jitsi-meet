@@ -60,8 +60,8 @@
     },
     "bottomtoolbar": {
         "chat": "Open / close chat",
-        "filmstrip": "Open / close contact list",
-        "contactlist": "Show / hide film strip"
+        "filmstrip": "Show / hide film strip",
+        "contactlist": "Open / close contact list"
     },
     "chat":{
         "nickname": {
