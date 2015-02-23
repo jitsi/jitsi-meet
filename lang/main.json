@@ -153,6 +153,8 @@
         "AuthMsg": "Authentication is required to create room:<br/><b>__room__ </b></br> You can either authenticate to create the room or just wait for someone else to do so.",
         "Authenticate": "Authenticate",
         "Cancel": "Cancel",
+        "logoutTitle" : "Logout",
+        "logoutQuestion" : "Are you sure you want to logout and stop the conference ?",
         "sessTerminated": "Session Terminated",
         "hungUp": "You hung up the call",
         "joinAgain": "Join again",

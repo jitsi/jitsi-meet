@@ -66,7 +66,8 @@ var buttonHandlers =
     "toolbar_button_logout": function () {
         // Ask for confirmation
         messageHandler.openTwoButtonDialog(
-            "Logout",
+            "dialog.logoutTitle", "Logout",
+            "dialog.logoutQuestion",
             "Are you sure you want to logout and stop the conference ?",
             false, "Yes",
             function (evt, yes) {
