@@ -1,0 +1,170 @@
+{
+    "contactlist": "СПИСЪК С КОНТАКТИ",
+    "connectionsettings": "Настройки на връзката",
+    "poweredby": "",
+    "downloadlogs": "",
+    "welcomepage": {
+        "go": "",
+        "roomname": "",
+        "disable": "",
+        "feature1": {
+            "title": "",
+            "content": ""
+        },
+        "feature2": {
+            "title": "",
+            "content": ""
+        },
+        "feature3": {
+            "title": "",
+            "content": ""
+        },
+        "feature4": {
+            "title": "",
+            "content": ""
+        },
+        "feature5": {
+            "title": "",
+            "content": ""
+        },
+        "feature6": {
+            "title": "",
+            "content": ""
+        },
+        "feature7": {
+            "title": "",
+            "content": ""
+        },
+        "feature8": {
+            "title": "",
+            "content": ""
+        }
+    },
+    "toolbar": {
+        "mute": "",
+        "videomute": "",
+        "authenticate": "",
+        "record": "",
+        "lock": "",
+        "invite": "",
+        "chat": "",
+        "prezi": "",
+        "etherpad": "",
+        "sharescreen": "",
+        "fullscreen": "",
+        "sip": "",
+        "Settings": "",
+        "hangup": "",
+        "login": "",
+        "logout": ""
+    },
+    "bottomtoolbar": {
+        "chat": "",
+        "filmstrip": "",
+        "contactlist": ""
+    },
+    "chat": {
+        "nickname": {
+            "title": "",
+            "popover": ""
+        },
+        "messagebox": ""
+    },
+    "settings": {
+        "title": "НАСТРОЙКИ",
+        "update": "",
+        "name": ""
+    },
+    "videothumbnail": {
+        "editnickname": "",
+        "moderator": "",
+        "videomute": "",
+        "mute": "",
+        "kick": "",
+        "muted": "",
+        "domute": ""
+    },
+    "connectionindicator": {
+        "bitrate": "",
+        "packetloss": "",
+        "resolution": "",
+        "less": "",
+        "more": "",
+        "address": "",
+        "remoteports": "",
+        "localports": "",
+        "remoteport": "",
+        "localport": "",
+        "localaddress": "",
+        "localaddresses": "",
+        "remoteaddress": "",
+        "remoteaddresses": "",
+        "transport": "",
+        "bandwidth": "",
+        "na": ""
+    },
+    "notify": {
+        "disconnected": "",
+        "moderator": "",
+        "connected": "",
+        "somebody": "",
+        "me": "",
+        "focus": "",
+        "focusFail": "",
+        "grantedTo": "",
+        "grantedToUnknown": ""
+    },
+    "dialog": {
+        "kickMessage": "",
+        "popupError": "",
+        "passwordError": "",
+        "passwordError2": "",
+        "joinError": "",
+        "connectError": "",
+        "error": "",
+        "detectext": "",
+        "failtoinstall": "",
+        "failedpermissions": "",
+        "bridgeUnavailable": "",
+        "lockTitle": "",
+        "lockMessage": "",
+        "warning": "",
+        "passwordNotSupported": "",
+        "sorry": "",
+        "internalError": "",
+        "unableToSwitch": "",
+        "SLDFailure": "",
+        "SRDFailure": "",
+        "oops": "",
+        "defaultError": "",
+        "passwordRequired": "",
+        "Ok": "",
+        "removePreziTitle": "",
+        "removePreziMsg": "",
+        "sharePreziTitle": "",
+        "sharePreziMsg": "",
+        "Remove": "",
+        "Stop": "",
+        "AuthMsg": "",
+        "Authenticate": "",
+        "Cancel": "",
+        "sessTerminated": "",
+        "hungUp": "",
+        "joinAgain": "",
+        "Share": "",
+        "preziLinkError": "",
+        "Save": "",
+        "recordingToken": "",
+        "Dial": "",
+        "sipMsg": "",
+        "passwordCheck": "",
+        "passwordMsg": "",
+        "Invite": "",
+        "shareLink": "",
+        "settings1": "",
+        "settings2": "",
+        "settings3": "",
+        "yourPassword": "",
+        "Back": ""
+    }
+}
