@@ -108,7 +108,8 @@ var Recording = {
         if (!recordingToken && !useJirecon) {
             tokenEmptyCallback(function (value) {
                 setRecordingToken(value);
-                self.toggleRecording();
+                self.toggleRecording(tokenEmptyCallback,
+                    startingCallback, startedCallback, connection);
             });
 
             return;
