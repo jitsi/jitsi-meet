@@ -139,6 +139,17 @@ function registerListeners() {
         messageHandler.openMessageDialog("dialog.sessTerminated", "Session Terminated",
             "dialog.kickMessage", "Ouch! You have been kicked out of the meet!");
     });
+    APP.xmpp.addListener(XMPPEvents.MUC_DESTROYED, function (reason) {
+        //FIXME: use Session Terminated from translation, but
+        // 'reason' text comes from XMPP packet and is not translated
+        messageHandler.openDialog(
+            "Session Terminated", reason, true, {},
+            function (event, value, message, formVals)
+            {
+                return false;
+            }
+        );
+    });
     APP.xmpp.addListener(XMPPEvents.BRIDGE_DOWN, function () {
         messageHandler.showError("dialog.error","Error",
             "dialog.bridgeUnavailable",

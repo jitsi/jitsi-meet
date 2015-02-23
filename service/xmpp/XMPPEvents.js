@@ -11,6 +11,7 @@ var XMPPEvents = {
     MUC_ENTER: "xmpp.muc_enter",
     MUC_ROLE_CHANGED: "xmpp.muc_role_changed",
     MUC_LEFT: "xmpp.muc_left",
+    MUC_DESTROYED: "xmpp.muc_destroyed",
     DISPLAY_NAME_CHANGED: "xmpp.display_name_changed",
     REMOTE_STATS: "xmpp.remote_stats",
     LOCALROLE_CHANGED: "xmpp.localrole_changed",

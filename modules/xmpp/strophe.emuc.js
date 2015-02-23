@@ -229,6 +229,20 @@ module.exports = function(XMPP, eventEmitter) {
         },
         onPresenceUnavailable: function (pres) {
             var from = pres.getAttribute('from');
+            // room destroyed ?
+            if ($(pres).find('>x[xmlns="http://jabber.org/protocol/muc#user"]' +
+                             '>destroy').length) {
+                var reason;
+                var reasonSelect = $(pres).find(
+                    '>x[xmlns="http://jabber.org/protocol/muc#user"]' +
+                    '>destroy>reason');
+                if (reasonSelect.length) {
+                    reason = reasonSelect.text();
+                }
+                XMPP.disposeConference(false);
+                eventEmitter.emit(XMPPEvents.MUC_DESTROYED, reason);
+                return true;
+            }
             // Status code 110 indicates that this notification is "self-presence".
             if (!$(pres).find('>x[xmlns="http://jabber.org/protocol/muc#user"]>status[code="110"]').length) {
                 delete this.members[from];
