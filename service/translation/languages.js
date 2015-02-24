@@ -8,5 +8,7 @@ module.exports = {
         }
         return languages;
     },
-    EN: "en"
+    EN: "en",
+    BG: "bg",
+    DE: "de"
 }

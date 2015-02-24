@@ -4530,7 +4530,9 @@ var SettingsMenu = {
             APP.xmpp.addToPresence("displayName", displayName, true);
         }
 
-        APP.translation.setLanguage($("#languages_selectbox").val());
+        var language = $("#languages_selectbox").val();
+        APP.translation.setLanguage(language);
+        Settings.setLanguage(language);
 
         APP.xmpp.addToPresence("email", newEmail);
         var email = Settings.setEmail(newEmail);
@@ -9298,6 +9300,7 @@ module.exports = KeyboardShortcut;
 var email = '';
 var displayName = '';
 var userId;
+var language = null;
 
 
 function supportsLocalStorage() {
@@ -9325,6 +9328,7 @@ if (supportsLocalStorage()) {
     userId = window.localStorage.jitsiMeetId || '';
     email = window.localStorage.email || '';
     displayName = window.localStorage.displayname || '';
+    language = window.localStorage.language;
 } else {
     console.log("local storage is not supported");
     userId = generateUniqueId();
@@ -9347,8 +9351,13 @@ var Settings =
         return {
             email: email,
             displayName: displayName,
-            uid: userId
+            uid: userId,
+            language: language
         };
+    },
+    setLanguage: function (lang) {
+        language = lang;
+        window.localStorage.language = lang;
     }
 };
 
@@ -11594,6 +11603,7 @@ module.exports = statistics;
 },{"../../service/RTC/StreamEventTypes.js":82,"../../service/xmpp/XMPPEvents":88,"./LocalStatsCollector.js":43,"./RTPStatsCollector.js":44,"events":89}],46:[function(require,module,exports){
 var i18n = require("i18next-client");
 var languages = require("../../service/translation/languages");
+var Settings = require("../settings/Settings");
 var DEFAULT_LANG = languages.EN;
 var initialized = false;
 var waitingForInit = [];
@@ -11617,6 +11627,7 @@ var defaultOptions = {
     },
     lngWhitelist : languages.getLanguages(),
     fallbackOnNull: true,
+    fallbackOnEmpty: true,
     useDataAttrOptions: true,
     app: interfaceConfig.APP_NAME,
     getAsync: true,
@@ -11669,12 +11680,40 @@ function initCompleted(t)
     waitingForInit = [];
 }
 
+function checkForParameter() {
+    var query = window.location.search.substring(1);
+    var vars = query.split("&");
+    for (var i=0;i<vars.length;i++) {
+        var pair = vars[i].split("=");
+        if(pair[0] == "lang")
+        {
+            return pair[1];
+        }
+    }
+    return null;
+}
+
 module.exports = {
     init: function (lang) {
         initialized = false;
         var options = defaultOptions;
-        if(lang)
+
+
+        if(!lang)
+        {
+            lang = checkForParameter();
+            if(!lang)
+            {
+                var settings = Settings.getSettings();
+                if(settings)
+                    lang = settings.language;
+            }
+        }
+
+        if(lang) {
             options.lng = lang;
+        }
+
         i18n.init(options, initCompleted);
     },
     translateString: function (key, cb, options) {
@@ -11722,7 +11761,7 @@ module.exports = {
     }
 };
 
-},{"../../service/translation/languages":87,"i18next-client":61}],47:[function(require,module,exports){
+},{"../../service/translation/languages":87,"../settings/Settings":37,"i18next-client":61}],47:[function(require,module,exports){
 /* jshint -W117 */
 var TraceablePeerConnection = require("./TraceablePeerConnection");
 var SDPDiffer = require("./SDPDiffer");
@@ -25376,7 +25415,9 @@ module.exports = {
         }
         return languages;
     },
-    EN: "en"
+    EN: "en",
+    BG: "bg",
+    DE: "de"
 }
 },{}],88:[function(require,module,exports){
 var XMPPEvents = {

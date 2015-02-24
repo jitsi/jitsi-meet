@@ -47,7 +47,9 @@ var SettingsMenu = {
             APP.xmpp.addToPresence("displayName", displayName, true);
         }
 
-        APP.translation.setLanguage($("#languages_selectbox").val());
+        var language = $("#languages_selectbox").val();
+        APP.translation.setLanguage(language);
+        Settings.setLanguage(language);
 
         APP.xmpp.addToPresence("email", newEmail);
         var email = Settings.setEmail(newEmail);

@@ -1,5 +1,6 @@
 var i18n = require("i18next-client");
 var languages = require("../../service/translation/languages");
+var Settings = require("../settings/Settings");
 var DEFAULT_LANG = languages.EN;
 var initialized = false;
 var waitingForInit = [];
@@ -23,6 +24,7 @@ var defaultOptions = {
     },
     lngWhitelist : languages.getLanguages(),
     fallbackOnNull: true,
+    fallbackOnEmpty: true,
     useDataAttrOptions: true,
     app: interfaceConfig.APP_NAME,
     getAsync: true,
@@ -75,12 +77,40 @@ function initCompleted(t)
     waitingForInit = [];
 }
 
+function checkForParameter() {
+    var query = window.location.search.substring(1);
+    var vars = query.split("&");
+    for (var i=0;i<vars.length;i++) {
+        var pair = vars[i].split("=");
+        if(pair[0] == "lang")
+        {
+            return pair[1];
+        }
+    }
+    return null;
+}
+
 module.exports = {
     init: function (lang) {
         initialized = false;
         var options = defaultOptions;
-        if(lang)
+
+
+        if(!lang)
+        {
+            lang = checkForParameter();
+            if(!lang)
+            {
+                var settings = Settings.getSettings();
+                if(settings)
+                    lang = settings.language;
+            }
+        }
+
+        if(lang) {
             options.lng = lang;
+        }
+
         i18n.init(options, initCompleted);
     },
     translateString: function (key, cb, options) {

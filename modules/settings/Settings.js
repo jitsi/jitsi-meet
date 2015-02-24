@@ -1,6 +1,7 @@
 var email = '';
 var displayName = '';
 var userId;
+var language = null;
 
 
 function supportsLocalStorage() {
@@ -28,6 +29,7 @@ if (supportsLocalStorage()) {
     userId = window.localStorage.jitsiMeetId || '';
     email = window.localStorage.email || '';
     displayName = window.localStorage.displayname || '';
+    language = window.localStorage.language;
 } else {
     console.log("local storage is not supported");
     userId = generateUniqueId();
@@ -50,8 +52,13 @@ var Settings =
         return {
             email: email,
             displayName: displayName,
-            uid: userId
+            uid: userId,
+            language: language
         };
+    },
+    setLanguage: function (lang) {
+        language = lang;
+        window.localStorage.language = lang;
     }
 };
 
