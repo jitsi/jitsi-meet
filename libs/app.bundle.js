@@ -1079,7 +1079,7 @@ function RTCUtils(RTCService)
 
     if (this.browser !== RTCBrowserType.RTC_BROWSER_CHROME &&
         config.enableFirefoxSupport !== true) {
-        window.location.href = 'chromeonly.html';
+        window.location.href = 'unsupported_browser.html';
         return;
     }
 
