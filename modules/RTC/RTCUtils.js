@@ -346,7 +346,7 @@ RTCUtils.prototype.handleLocalStream = function(stream)
         }
 
 
-        this.service.createLocalStream(videoStream, "video");
+        this.service.createLocalStream(videoStream, "video", false, "video");
     }
     else
     {//firefox
