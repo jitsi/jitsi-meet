@@ -42,10 +42,10 @@ var messageHandler = (function(my) {
     {
         var leftButton = APP.translation.generateTranslatonHTML(leftButtonKey);
         var buttons = {};
-        buttons.leftButton = {title: leftButton, value: true};
+        buttons.button1 = {title: leftButton, value: true};
         var cancelButton = APP.translation.generateTranslatonHTML("dialog.Cancel",
             "Cancel");
-        buttons.Cancel = {title: cancelButton, value: false};
+        buttons.button2 = {title: cancelButton, value: false};
         var message = msgString, title = titleString;
         if(titleKey)
         {

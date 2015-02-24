@@ -68,9 +68,9 @@ var Prezi = {
                 "dialog.Back", "Back");
             var buttons = {};
             var buttons1 = {};
-            buttons1.Cancel = buttons.Cancel = {title: cancelButton, value: false};
-            buttons.share = {title: shareButton, value: true};
-            buttons1.Back = {title: backButton, value: true};
+            buttons1.button1 = buttons.button1 = {title: cancelButton, value: false};
+            buttons.button2 = {title: shareButton, value: true};
+            buttons1.button2 = {title: backButton, value: true};
             var linkError = APP.translation.generateTranslatonHTML(
                 "dialog.preziLinkError", "Please provide a correct prezi link.")
             var openPreziState = {
