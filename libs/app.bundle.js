@@ -1073,7 +1073,7 @@ function RTCUtils(RTCService)
     {
         try { console.log('Browser does not appear to be WebRTC-capable'); } catch (e) { }
 
-        window.location.href = 'webrtcrequired.html';
+        window.location.href = 'unsupported_browser.html';
         return;
     }
 
