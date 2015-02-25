@@ -173,6 +173,8 @@
         "settings2": "Participants join muted",
         "settings3": "Require nicknames<br/><br/>Set a password to lock your room:",
         "yourPassword": "your password",
-        "Back": "Back"
+        "Back": "Back",
+        "serviceUnavailable": "Service unavailable",
+        "gracefulShutdown": "Our service is currently down for maintenance. Please try again later."
     }
 }

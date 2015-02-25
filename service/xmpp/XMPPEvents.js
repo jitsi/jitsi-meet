@@ -3,6 +3,7 @@ var XMPPEvents = {
     CALL_TERMINATED: "xmpp.callterminated.jingle",
     CALL_INCOMING: "xmpp.callincoming.jingle",
     DISPOSE_CONFERENCE: "xmpp.dispoce_confernce",
+    GRACEFUL_SHUTDOWN: "xmpp.graceful_shutdown",
     KICKED: "xmpp.kicked",
     BRIDGE_DOWN: "xmpp.bridge_down",
     USER_ID_CHANGED: "xmpp.user_id_changed",

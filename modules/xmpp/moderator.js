@@ -275,6 +275,10 @@ var Moderator = {
                     console.info("Session expired! - removing");
                     localStorage.removeItem("sessionId");
                 }
+                if ($(error).find('>error>graceful-shutdown').length) {
+                    eventEmitter.emit(XMPPEvents.GRACEFUL_SHUTDOWN);
+                    return;
+                }
                 // Not authorized to create new room
                 if ($(error).find('>error>not-authorized').length) {
                     console.warn("Unauthorized to start the conference", error);

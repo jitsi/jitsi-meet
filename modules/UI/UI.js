@@ -135,6 +135,14 @@ function registerListeners() {
     APP.connectionquality.addListener(CQEvents.STOP,
         VideoLayout.onStatsStop);
     APP.xmpp.addListener(XMPPEvents.DISPOSE_CONFERENCE, onDisposeConference);
+    APP.xmpp.addListener(XMPPEvents.GRACEFUL_SHUTDOWN, function () {
+        messageHandler.openMessageDialog(
+            'dialog.serviceUnavailable', 'Service unavailable',
+            'dialog.gracefulShutdown',
+            'Our service is currently down for maintenance.' +
+            ' Please try again later.'
+        );
+    });
     APP.xmpp.addListener(XMPPEvents.KICKED, function () {
         messageHandler.openMessageDialog("dialog.sessTerminated", "Session Terminated",
             "dialog.kickMessage", "Ouch! You have been kicked out of the meet!");
