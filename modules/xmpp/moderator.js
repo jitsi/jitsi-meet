@@ -279,6 +279,19 @@ var Moderator = {
                     eventEmitter.emit(XMPPEvents.GRACEFUL_SHUTDOWN);
                     return;
                 }
+                // Check for error returned by the reservation system
+                var reservationErr = $(error).find('>error>reservation-error');
+                if (reservationErr.length) {
+                    // Trigger error event
+                    var errorCode = reservationErr.attr('error-code');
+                    var errorMsg;
+                    if ($(error).find('>error>text')) {
+                        errorMsg = $(error).find('>error>text').text();
+                    }
+                    eventEmitter.emit(
+                        XMPPEvents.RESERVATION_ERROR, errorCode, errorMsg);
+                    return;
+                }
                 // Not authorized to create new room
                 if ($(error).find('>error>not-authorized').length) {
                     console.warn("Unauthorized to start the conference", error);

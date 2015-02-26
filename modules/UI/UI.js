@@ -143,6 +143,17 @@ function registerListeners() {
             ' Please try again later.'
         );
     });
+    APP.xmpp.addListener(XMPPEvents.RESERVATION_ERROR, function (code, msg) {
+        messageHandler.openDialog(
+            'Reservation system error',
+            'Error code: ' + code + ', message: ' + msg,
+            true, {},
+            function (event, value, message, formVals)
+            {
+                return false;
+            }
+        );
+    });
     APP.xmpp.addListener(XMPPEvents.KICKED, function () {
         messageHandler.openMessageDialog("dialog.sessTerminated", "Session Terminated",
             "dialog.kickMessage", "Ouch! You have been kicked out of the meet!");

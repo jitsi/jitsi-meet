@@ -17,6 +17,7 @@ var XMPPEvents = {
     REMOTE_STATS: "xmpp.remote_stats",
     LOCALROLE_CHANGED: "xmpp.localrole_changed",
     PRESENCE_STATUS: "xmpp.presence_status",
+    RESERVATION_ERROR: "xmpp.room_reservation_error",
     SUBJECT_CHANGED: "xmpp.subject_changed",
     MESSAGE_RECEIVED: "xmpp.message_received",
     SENDING_CHAT_MESSAGE: "xmpp.sending_chat_message",
