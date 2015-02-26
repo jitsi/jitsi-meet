@@ -342,7 +342,7 @@ function acceptReport(id, type) {
         id.substring(0, 20) == "googLibjingleSession")
         return false;
 
-    if (type == "goodComponent")
+    if (type == "googComponent")
         return false;
 
     return true;

@@ -369,9 +369,15 @@ var XMPP = {
         if(!dontSend)
             connection.emuc.sendPresence();
     },
+    /**
+     * Sends 'data' as a log message to the focus. Returns true iff a message
+     * was sent.
+     * @param data
+     * @returns {boolean} true iff a message was sent.
+     */
     sendLogs: function (data) {
         if(!connection.emuc.focusMucJid)
-            return;
+            return false;
 
         var deflate = true;
 
@@ -391,6 +397,7 @@ var XMPP = {
         message.up();
 
         connection.send(message);
+        return true;
     },
     populateData: function () {
         var data = {};
