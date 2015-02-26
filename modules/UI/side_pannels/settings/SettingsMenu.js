@@ -27,6 +27,7 @@ var SettingsMenu = {
 
     init: function () {
         $("#updateSettings").before(generateLanguagesSelectBox());
+        APP.translation.translateElement($("#languages_selectbox"));
         $('#settingsmenu>input').keyup(function(event){
             if(event.keyCode === 13) {//enter
                 SettingsMenu.update();

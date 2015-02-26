@@ -66,10 +66,12 @@ var buttonHandlers =
     "toolbar_button_logout": function () {
         // Ask for confirmation
         messageHandler.openTwoButtonDialog(
-            "dialog.logoutTitle", "Logout",
+            "dialog.logoutTitle",
+            null,
             "dialog.logoutQuestion",
-            "Are you sure you want to logout and stop the conference ?",
-            false, "Yes",
+            null,
+            false,
+            "dialog.Yes",
             function (evt, yes) {
                 if (yes) {
                     APP.xmpp.logout(function (url) {
@@ -97,11 +99,11 @@ function hangup() {
     }
 
     var title = APP.translation.generateTranslatonHTML(
-        "dialog.sessTerminated", "Session Terminated");
+        "dialog.sessTerminated");
     var msg = APP.translation.generateTranslatonHTML(
-        "dialog.hungUp","You hung up the call");
+        "dialog.hungUp");
     var button = APP.translation.generateTranslatonHTML(
-        "dialog.joinAgain", "Join again");
+        "dialog.joinAgain");
     var buttons = {};
     buttons.joinAgain = {title: button, value: true};
 
@@ -125,7 +127,7 @@ function hangup() {
 function toggleRecording() {
     APP.xmpp.toggleRecording(function (callback) {
         var msg = APP.translation.generateTranslatonHTML(
-            "dialog.recordingToken", "Enter recording token");
+            "dialog.recordingToken");
         APP.UI.messageHandler.openTwoButtonDialog(null, null, null,
                 '<h2>' + msg + '</h2>' +
                 '<input id="recordingToken" type="text" ' +
@@ -172,16 +174,13 @@ function lockRoom(lock) {
         }
     }, function (err) {
         console.warn('setting password failed', err);
-        messageHandler.showError("dialog.lockTitle", 'Lock failed',
-            "dialog.lockMessage",
-            'Failed to lock conference.',
-            err);
+        messageHandler.showError("dialog.lockTitle",
+            "dialog.lockMessage");
         Toolbar.setSharedKey('');
     }, function () {
         console.warn('room passwords not supported');
-        messageHandler.showError("dialog.warning", 'Warning',
-            "dialog.passwordNotSupported",
-            'Room passwords are currently not supported.');
+        messageHandler.showError("dialog.warning",
+            "dialog.passwordNotSupported");
         Toolbar.setSharedKey('');
     });
 };
@@ -233,7 +232,7 @@ function callSipButtonClicked()
         = config.defaultSipNumber ? config.defaultSipNumber : '';
 
     var sipMsg = APP.translation.generateTranslatonHTML(
-        "dialog.sipMsg", "Enter SIP number");
+        "dialog.sipMsg");
     messageHandler.openTwoButtonDialog(null, null, null,
         '<h2>' + sipMsg + '</h2>' +
         '<input id="sipNumber" type="text"' +
@@ -318,10 +317,7 @@ var Toolbar = (function (my) {
                     }, url);
                 if (!authenticationWindow) {
                     messageHandler.openMessageDialog(
-                        null, null, "dialog.popupError",
-                        "Your browser is blocking popup windows from this site." +
-                        " Please enable popups in your browser security settings" +
-                        " and try again.");
+                        null, "dialog.popupError");
                 }
             });
         }
@@ -359,26 +355,16 @@ var Toolbar = (function (my) {
         // Only the focus is able to set a shared key.
         if (!APP.xmpp.isModerator()) {
             if (sharedKey) {
-                messageHandler.openMessageDialog(null, null,
-                    "dialog.passwordError",
-                        "This conversation is currently protected by" +
-                        " a password. Only the owner of the conference" +
-                        " could set a password.",
-                    false,
-                    "Password");
+                messageHandler.openMessageDialog(null,
+                    "dialog.passwordError");
             } else {
-                messageHandler.openMessageDialog(null, null, "dialog.passwordError2",
-                    "This conversation isn't currently protected by" +
-                        " a password. Only the owner of the conference" +
-                        " could set a password.",
-                    false,
-                    "Password");
+                messageHandler.openMessageDialog(null, "dialog.passwordError2");
             }
         } else {
             if (sharedKey) {
                 messageHandler.openTwoButtonDialog(null, null,
                     "dialog.passwordCheck",
-                    "Are you sure you would like to remove your password?",
+                    null,
                     false,
                     "dialog.Remove",
                     function (e, v) {
@@ -389,9 +375,9 @@ var Toolbar = (function (my) {
                     });
             } else {
                 var msg = APP.translation.generateTranslatonHTML(
-                    "dialog.passwordMsg", "Set a password to lock your room");
+                    "dialog.passwordMsg");
                 var yourPassword = APP.translation.translateString(
-                    "dialog.yourPassword", null, "your password");
+                    "dialog.yourPassword");
                 messageHandler.openTwoButtonDialog(null, null, null,
                     '<h2>' + msg + '</h2>' +
                         '<input id="lockKey" type="text"' +
@@ -427,7 +413,7 @@ var Toolbar = (function (my) {
             inviteLink = encodeURI(roomUrl);
         }
         messageHandler.openTwoButtonDialog("dialog.shareLink",
-            "Share this link with everyone you want to invite", null,
+            null, null,
             '<input id="inviteLinkRef" type="text" value="' +
                 inviteLink + '" onclick="this.select();" readonly>',
             false,
@@ -455,15 +441,14 @@ var Toolbar = (function (my) {
      */
     my.openSettingsDialog = function () {
         var settings1 = APP.translation.generateTranslatonHTML(
-            "dialog.settings1", "Configure your conference");
+            "dialog.settings1");
         var settings2 = APP.translation.generateTranslatonHTML(
-            "dialog.settings2", "Participants join muted");
+            "dialog.settings2");
         var settings3 = APP.translation.generateTranslatonHTML(
-            "dialog.settings3", "Require nicknames<br/><br/>" +
-                "Set a password to lock your room:");
+            "dialog.settings3");
 
         var yourPassword = APP.translation.translateString(
-            "dialog.yourPassword", null, "your password");
+            "dialog.yourPassword");
 
         messageHandler.openTwoButtonDialog(null,
             '<h2>' + settings1 + '</h2>' +

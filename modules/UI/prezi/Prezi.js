@@ -34,8 +34,9 @@ var Prezi = {
         var myprezi = APP.xmpp.getPrezi();
         if (myprezi) {
             messageHandler.openTwoButtonDialog("dialog.removePreziTitle",
-                "Remove Prezi", "dialog.removePreziMsg",
-                "Are you sure you would like to remove your Prezi?",
+                null,
+                "dialog.removePreziMsg",
+                null,
                 false,
                 "dialog.Remove",
                 function(e,v,m,f) {
@@ -47,9 +48,8 @@ var Prezi = {
         }
         else if (preziPlayer != null) {
             messageHandler.openTwoButtonDialog("dialog.sharePreziTitle",
-                "Share a Prezi", "dialog.sharePreziMsg",
-                "Another participant is already sharing a Prezi." +
-                    "This conference allows only one Prezi at a time.",
+                null, "dialog.sharePreziMsg",
+                null,
                 false,
                 "dialog.Ok",
                 function(e,v,m,f) {
@@ -59,20 +59,20 @@ var Prezi = {
         }
         else {
             var html = APP.translation.generateTranslatonHTML(
-                "dialog.sharePreziTitle", "Share a Prezi");
+                "dialog.sharePreziTitle");
             var cancelButton = APP.translation.generateTranslatonHTML(
-                "dialog.Cancel", "Cancel");
+                "dialog.Cancel");
             var shareButton = APP.translation.generateTranslatonHTML(
-                "dialog.Share", "Share");
+                "dialog.Share");
             var backButton = APP.translation.generateTranslatonHTML(
-                "dialog.Back", "Back");
+                "dialog.Back");
             var buttons = {};
             var buttons1 = {};
             buttons1.button1 = buttons.button1 = {title: cancelButton, value: false};
             buttons.button2 = {title: shareButton, value: true};
             buttons1.button2 = {title: backButton, value: true};
             var linkError = APP.translation.generateTranslatonHTML(
-                "dialog.preziLinkError", "Please provide a correct prezi link.")
+                "dialog.preziLinkError");
             var openPreziState = {
                 state0: {
                     html:   '<h2>' + html + '</h2>' +

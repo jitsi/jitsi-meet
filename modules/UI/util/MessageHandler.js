@@ -7,16 +7,13 @@ var messageHandler = (function(my) {
      * @param titleString the title of the message
      * @param messageString the text of the message
      */
-    my.openMessageDialog = function(titleKey, titleString,
-                                    messageKey, messageString) {
+    my.openMessageDialog = function(titleKey, messageKey) {
         var title = null;
         if(titleKey)
         {
-            title = APP.translation.generateTranslatonHTML(titleKey,
-                titleString);
+            title = APP.translation.generateTranslatonHTML(titleKey);
         }
-        var message = APP.translation.generateTranslatonHTML(messageKey,
-            messageString);
+        var message = APP.translation.generateTranslatonHTML(messageKey);
         $.prompt(message,
             {
                 title: title,
@@ -43,16 +40,15 @@ var messageHandler = (function(my) {
         var leftButton = APP.translation.generateTranslatonHTML(leftButtonKey);
         var buttons = {};
         buttons.button1 = {title: leftButton, value: true};
-        var cancelButton = APP.translation.generateTranslatonHTML("dialog.Cancel",
-            "Cancel");
+        var cancelButton = APP.translation.generateTranslatonHTML("dialog.Cancel");
         buttons.button2 = {title: cancelButton, value: false};
         var message = msgString, title = titleString;
         if(titleKey)
         {
-            title = APP.translation.generateTranslatonHTML(titleKey, titleString);
+            title = APP.translation.generateTranslatonHTML(titleKey);
         }
         if(msgKey) {
-            message = APP.translation.generateTranslatonHTML(msgKey, msgString);
+            message = APP.translation.generateTranslatonHTML(msgKey);
         }
         $.prompt(message, {
             title: title,
@@ -76,7 +72,7 @@ var messageHandler = (function(my) {
      * @param submitFunction function to be called on submit
      * @param loadedFunction function to be called after the prompt is fully loaded
      */
-    my.openDialog = function (titleString,    msgString, persistent, buttons,
+    my.openDialog = function (titleString, msgString, persistent, buttons,
                               submitFunction, loadedFunction) {
         var args = {
             title: titleString,
@@ -152,9 +148,8 @@ var messageHandler = (function(my) {
      * @param msgString the text of the message
      * @param error the error that is being reported
      */
-    my.openReportDialog = function(titleKey, titleString, msgKey,
-                                   msgString, error) {
-        my.openMessageDialog(titleKey, titleString, msgKey, msgString);
+    my.openReportDialog = function(titleKey, msgKey, error) {
+        my.openMessageDialog(titleKey, msgKey);
         console.log(error);
         //FIXME send the error to the server
     };
@@ -164,22 +159,20 @@ var messageHandler = (function(my) {
      * @param title the title of the message
      * @param message the text of the messafe
      */
-    my.showError = function(titleKey, title, msgKey, message) {
+    my.showError = function(titleKey, msgKey) {
 
         if(!titleKey) {
-            title = "Oops!";
             titleKey = "dialog.oops";
         }
         if(!msgKey)
         {
-            message = "There was some kind of error";
             msgKey = "dialog.defaultError";
         }
-        messageHandler.openMessageDialog(titleKey, title, msgKey, message);
+        messageHandler.openMessageDialog(titleKey, msgKey);
     };
 
-    my.notify = function(displayName, displayNameKey, displayNameDefault,
-                         cls, messageKey, messageDefault, messageArguments) {
+    my.notify = function(displayName, displayNameKey,
+                         cls, messageKey, messageArguments) {
         var displayNameSpan = '<span class="nickname" ';
         if(displayName)
         {
@@ -188,22 +181,17 @@ var messageHandler = (function(my) {
         else
         {
             displayNameSpan += "data-i18n='" + displayNameKey +
-                "'>" + APP.translation.translateString(displayNameKey, null,
-                {defaultValue: displayNameDefault});
+                "'>" + APP.translation.translateString(displayNameKey);
         }
         displayNameSpan += "</span>";
-        var lMessageArguments = messageArguments;
-        if(!messageArguments)
-            lMessageArguments = {};
-        lMessageArguments.defaultValue = messageDefault;
         toastr.info(
             displayNameSpan + '<br>' +
             '<span class=' + cls + ' data-i18n="' + messageKey + '"' +
                 (messageArguments?
                     " i18n-options='" + JSON.stringify(messageArguments) + "'"
                     : "") + ">" +
-            APP.translation.translateString(messageKey, null,
-                lMessageArguments) +
+            APP.translation.translateString(messageKey,
+                messageArguments) +
             '</span>');
     };
 

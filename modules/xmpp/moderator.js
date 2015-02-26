@@ -324,9 +324,7 @@ var Moderator = {
                 if (!invalidSession) {
                     APP.UI.messageHandler.notify(
                         null, "notify.focus",
-                        'Conference focus', 'disconnected', "notify.focusFail",
-                        focusComponent + " not available - retry in " +
-                            retrySec + " sec",
+                        'disconnected', "notify.focusFail",
                         {component: focusComponent, ms: retrySec});
                 }
                 // Reset response timeout

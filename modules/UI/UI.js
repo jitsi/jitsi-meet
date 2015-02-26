@@ -137,16 +137,18 @@ function registerListeners() {
     APP.xmpp.addListener(XMPPEvents.DISPOSE_CONFERENCE, onDisposeConference);
     APP.xmpp.addListener(XMPPEvents.GRACEFUL_SHUTDOWN, function () {
         messageHandler.openMessageDialog(
-            'dialog.serviceUnavailable', 'Service unavailable',
-            'dialog.gracefulShutdown',
-            'Our service is currently down for maintenance.' +
-            ' Please try again later.'
+            'dialog.serviceUnavailable',
+            'dialog.gracefulShutdown'
         );
     });
     APP.xmpp.addListener(XMPPEvents.RESERVATION_ERROR, function (code, msg) {
+        var title = APP.translation.generateTranslatonHTML(
+            "dialog.reservationError");
+        var message = APP.translation.generateTranslatonHTML(
+            "dialog.reservationErrorMsg", {code: code, msg: msg});
         messageHandler.openDialog(
-            'Reservation system error',
-            'Error code: ' + code + ', message: ' + msg,
+            title,
+            message,
             true, {},
             function (event, value, message, formVals)
             {
@@ -155,14 +157,15 @@ function registerListeners() {
         );
     });
     APP.xmpp.addListener(XMPPEvents.KICKED, function () {
-        messageHandler.openMessageDialog("dialog.sessTerminated", "Session Terminated",
-            "dialog.kickMessage", "Ouch! You have been kicked out of the meet!");
+        messageHandler.openMessageDialog("dialog.sessTerminated",
+            "dialog.kickMessage");
     });
     APP.xmpp.addListener(XMPPEvents.MUC_DESTROYED, function (reason) {
         //FIXME: use Session Terminated from translation, but
         // 'reason' text comes from XMPP packet and is not translated
+        var title = APP.translation.generateTranslatonHTML("dialog.sessTerminated");
         messageHandler.openDialog(
-            "Session Terminated", reason, true, {},
+            title, reason, true, {},
             function (event, value, message, formVals)
             {
                 return false;
@@ -170,9 +173,8 @@ function registerListeners() {
         );
     });
     APP.xmpp.addListener(XMPPEvents.BRIDGE_DOWN, function () {
-        messageHandler.showError("dialog.error","Error",
-            "dialog.bridgeUnavailable",
-            "Jitsi Videobridge is currently unavailable. Please try again later!");
+        messageHandler.showError("dialog.error",
+            "dialog.bridgeUnavailable");
     });
     APP.xmpp.addListener(XMPPEvents.USER_ID_CHANGED, function (from, id) {
         Avatar.setUserAvatar(from, id);
@@ -417,9 +419,9 @@ function onMucLeft(jid) {
     console.log('left.muc', jid);
     var displayName = $('#participant_' + Strophe.getResourceFromJid(jid) +
         '>.displayname').html();
-    messageHandler.notify(displayName,'notify.somebody', "Somebody",
+    messageHandler.notify(displayName,'notify.somebody',
         'disconnected',
-        'notify.disconnected', "disconnected");
+        'notify.disconnected');
     // Need to call this with a slight delay, otherwise the element couldn't be
     // found for some reason.
     // XXX(gp) it works fine without the timeout for me (with Chrome 38).
@@ -450,8 +452,7 @@ function onLocalRoleChange(jid, info, pres, isModerator)
     if (isModerator) {
         Authentication.closeAuthenticationWindow();
         messageHandler.notify(null, "notify.me",
-            'Me', 'connected', "notify.moderator",
-            'Moderator rights granted !');
+            'connected', "notify.moderator");
     }
 }
 
@@ -475,7 +476,7 @@ function onPasswordReqiured(callback) {
     Toolbar.lockLockButton();
     var message = '<h2 data-i18n="dialog.passwordRequired">';
     message += APP.translation.translateString(
-        "dialog.passwordRequired", null, "Password required");
+        "dialog.passwordRequired");
     message += '</h2>' +
         '<input id="lockKey" type="text" placeholder="password" autofocus>';
 
@@ -498,9 +499,9 @@ function onPasswordReqiured(callback) {
     );
 }
 function onMucEntered(jid, id, displayName) {
-    messageHandler.notify(displayName,'notify.somebody', "Somebody",
+    messageHandler.notify(displayName,'notify.somebody',
         'connected',
-        'notify.connected', "connected");
+        'notify.connected');
 
     // Add Peer's container
     VideoLayout.ensurePeerContainerExists(jid,id);
@@ -516,9 +517,7 @@ function onMucRoleChanged(role, displayName) {
 
     if (role === 'moderator') {
         var messageKey, messageOptions = {};
-        var lDisplayName = displayName;
-        if (!lDisplayName) {
-            lDisplayName = 'Somebody';
+        if (!displayName) {
             messageKey = "notify.grantedToUnknown";
         }
         else
@@ -527,9 +526,8 @@ function onMucRoleChanged(role, displayName) {
             messageOptions = {to: displayName};
         }
         messageHandler.notify(
-            displayName,'notify.somebody', "Somebody",
+            displayName,'notify.somebody',
             'connected', messageKey,
-            'Moderator rights granted to ' + lDisplayName + '!',
             messageOptions);
     }
 }
@@ -641,7 +639,7 @@ UI.showLoginPopup = function(callback)
     console.log('password is required');
     var message = '<h2 data-i18n="dialog.passwordRequired">';
     message += APP.translation.translateString(
-        "dialog.passwordRequired", null, "Password required");
+        "dialog.passwordRequired");
     message += '</h2>' +
         '<input id="passwordrequired.username" type="text" ' +
         'placeholder="user@domain.net" autofocus>' +

@@ -16,16 +16,11 @@ var Authentication = {
         // extract room name from 'room@muc.server.net'
         var room = roomName.substr(0, roomName.indexOf('@'));
 
-        var title = APP.translation.generateTranslatonHTML("dialog.Stop",
-            "Stop");
-        var defMsg = 'Authentication is required to create room:<br/><b>' +
-            room +
-            '</b></br> You can either authenticate to create the room or ' +
-            'just wait for someone else to do so.';
+        var title = APP.translation.generateTranslatonHTML("dialog.Stop");
         var msg = APP.translation.generateTranslatonHTML("dialog.AuthMsg",
-            defMsg, {room: room});
+            {room: room});
         var button = APP.translation.generateTranslatonHTML(
-            "dialog.Authenticate", "Authenticate");
+            "dialog.Authenticate");
         var buttons = {};
         buttons.authenticate = {title: button, value: "authNow"};
 

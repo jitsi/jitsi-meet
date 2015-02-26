@@ -2,8 +2,6 @@ var i18n = require("i18next-client");
 var languages = require("../../service/translation/languages");
 var Settings = require("../settings/Settings");
 var DEFAULT_LANG = languages.EN;
-var initialized = false;
-var waitingForInit = [];
 
 i18n.addPostProcessor("resolveAppName", function(value, key, options) {
     return value.replace("__app__", interfaceConfig.APP_NAME);
@@ -27,13 +25,12 @@ var defaultOptions = {
     fallbackOnEmpty: true,
     useDataAttrOptions: true,
     app: interfaceConfig.APP_NAME,
-    getAsync: true,
+    getAsync: false,
     customLoad: function(lng, ns, options, done) {
         var resPath = "lang/__ns__-__lng__.json";
         if(lng === languages.EN)
             resPath = "lang/__ns__.json";
         var url = i18n.functions.applyReplacement(resPath, { lng: lng, ns: ns });
-        initialized = false;
         i18n.functions.ajax({
             url: url,
             success: function(data, status, xhr) {
@@ -67,14 +64,7 @@ var defaultOptions = {
 
 function initCompleted(t)
 {
-    initialized = true;
     $("[data-i18n]").i18n();
-    for(var i = 0; i < waitingForInit.length; i++)
-    {
-        var obj = waitingForInit[i];
-        obj.callback(i18n.t(obj.key));
-    }
-    waitingForInit = [];
 }
 
 function checkForParameter() {
@@ -92,7 +82,6 @@ function checkForParameter() {
 
 module.exports = {
     init: function (lang) {
-        initialized = false;
         var options = defaultOptions;
 
 
@@ -113,21 +102,10 @@ module.exports = {
 
         i18n.init(options, initCompleted);
     },
-    translateString: function (key, cb, options) {
-        if(!cb)
-            return i18n.t(key, options);
-
-        if(initialized)
-        {
-            cb(i18n.t(key, options));
-        }
-        else
-        {
-            waitingForInit.push({"callback": cb, "key": key});
-        }
+    translateString: function (key, options) {
+        return i18n.t(key, options);
     },
     setLanguage: function (lang) {
-        initialized = false;
         if(!lang)
             lang = DEFAULT_LANG;
         i18n.setLng(lang, defaultOptions, initCompleted);
@@ -138,20 +116,14 @@ module.exports = {
     translateElement: function (selector) {
         selector.i18n();
     },
-    generateTranslatonHTML: function (key, defaultString, options) {
+    generateTranslatonHTML: function (key, options) {
         var str = "<span data-i18n=\"" + key + "\"";
         if(options)
         {
             str += " data-i18n-options=\"" + JSON.stringify(options) + "\"";
         }
         str += ">";
-        if(!options)
-            options = {};
-        if(defaultString)
-        {
-            options.defaultValue = defaultString;
-        }
-        str += this.translateString(key, null, options);
+        str += this.translateString(key, options);
         str += "</span>";
         return str;
 

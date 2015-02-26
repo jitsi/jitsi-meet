@@ -92,9 +92,8 @@ function isUpdateRequired(minVersion, extVersion)
     catch (e)
     {
         console.error("Failed to parse extension version", e);
-        APP.UI.messageHandler.showError("dialog.error", 'Error',
-            "dialod.detectext",
-            'Error when trying to detect desktopsharing extension.');
+        APP.UI.messageHandler.showError("dialog.error",
+            "dialog.detectext");
         return true;
     }
 }
@@ -175,9 +174,8 @@ function obtainScreenFromExtension(streamCallback, failCallback) {
                     function (arg) {
                         console.log("Failed to install the extension", arg);
                         failCallback(arg);
-                        APP.UI.messageHandler.showError("dialog.error", 'Error',
-                            "dialog.failtoinstall",
-                            'Failed to install desktop sharing extension');
+                        APP.UI.messageHandler.showError("dialog.error",
+                            "dialog.failtoinstall");
                     }
                 );
             }
