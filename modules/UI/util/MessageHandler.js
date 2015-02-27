@@ -188,7 +188,7 @@ var messageHandler = (function(my) {
             displayNameSpan + '<br>' +
             '<span class=' + cls + ' data-i18n="' + messageKey + '"' +
                 (messageArguments?
-                    " i18n-options='" + JSON.stringify(messageArguments) + "'"
+                    " data-i18n-options='" + JSON.stringify(messageArguments) + "'"
                     : "") + ">" +
             APP.translation.translateString(messageKey,
                 messageArguments) +

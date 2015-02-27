@@ -13,7 +13,6 @@ var defaultOptions = {
     detectLngQS: "lang",
     useCookie: false,
     fallbackLng: DEFAULT_LANG,
-    shortcutFunction: 'defaultValue',
     load: "unspecific",
     resGetPath: 'lang/__ns__-__lng__.json',
     ns: {
@@ -24,6 +23,7 @@ var defaultOptions = {
     fallbackOnNull: true,
     fallbackOnEmpty: true,
     useDataAttrOptions: true,
+    defaultValueFromContent: false,
     app: interfaceConfig.APP_NAME,
     getAsync: false,
     customLoad: function(lng, ns, options, done) {
