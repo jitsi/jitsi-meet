@@ -6039,47 +6039,43 @@ ConnectionIndicator.prototype.generateText = function () {
 
             }
 
-            var local_address_key = "connectionindicator." +
-                (data.localIP.length > 1? "localaddresses" : "localaddress");
-            var remote_address_key = "connectionindicator." +
-                (data.remoteIP.length > 1? "remoteaddresses" : "remoteaddress");
+            var local_address_key = "connectionindicator.localaddress";
+            var remote_address_key = "connectionindicator.remoteaddress";
             var localTransport =
                 "<tr><td><span class='jitsipopover_blue' data-i18n='" +
-                local_address_key +"'>" +
-                    translate(local_address_key) + "</span></td><td> " +
+                local_address_key +"' data-i18n-options='" +
+                    JSON.stringify({count: data.localIP.length}) + "'>" +
+                    translate(local_address_key, {count: data.localIP.length}) +
+                    "</span></td><td> " +
                 ConnectionIndicator.getStringFromArray(data.localIP) +
                 "</td></tr>";
             transport =
                 "<tr><td><span class='jitsipopover_blue' data-i18n='" +
-                remote_address_key + "'>" +
-                    translate(remote_address_key) + "</span></td><td> " +
+                remote_address_key + "' data-i18n-options='" +
+                    JSON.stringify({count: data.remoteIP.length}) + "'>" +
+                    translate(remote_address_key,
+                        {count: data.remoteIP.length}) +
+                    "</span></td><td> " +
                 ConnectionIndicator.getStringFromArray(data.remoteIP) +
                 "</td></tr>";
 
-            var key_remote = "connectionindicator.",
-                key_local = "connectionindicator.";
-
-            if(this.transport.length > 1)
-            {
-                key_remote += "remoteports";
-                key_local += "localports";
-            }
-            else
-            {
-                key_remote += "remoteport";
-                key_local += "localport";
-            }
+            var key_remote = "connectionindicator.remoteport",
+                key_local = "connectionindicator.localport";
 
             transport += "<tr>" +
                 "<td>" +
                 "<span class='jitsipopover_blue' data-i18n='" + key_remote +
-                "'>" +
-                translate(key_remote) + "</span></td><td>";
+                "' data-i18n-options='" +
+                JSON.stringify({count: this.transport.length}) + "'>" +
+                translate(key_remote, {count: this.transport.length}) +
+                "</span></td><td>";
             localTransport += "<tr>" +
                 "<td>" +
                 "<span class='jitsipopover_blue' data-i18n='" + key_local +
-                "'>" +
-                translate(key_local) + "</span></td><td>";
+                "' data-i18n-options='" +
+                JSON.stringify({count: this.transport.length}) + "'>" +
+                translate(key_local, {count: this.transport.length}) +
+                "</span></td><td>";
 
             transport +=
                 ConnectionIndicator.getStringFromArray(data.remotePort);
@@ -11630,7 +11626,6 @@ var defaultOptions = {
     detectLngQS: "lang",
     useCookie: false,
     fallbackLng: DEFAULT_LANG,
-    shortcutFunction: 'defaultValue',
     load: "unspecific",
     resGetPath: 'lang/__ns__-__lng__.json',
     ns: {
@@ -11643,6 +11638,7 @@ var defaultOptions = {
     useDataAttrOptions: true,
     app: interfaceConfig.APP_NAME,
     getAsync: false,
+    defaultValueFromContent: false,
     customLoad: function(lng, ns, options, done) {
         var resPath = "lang/__ns__-__lng__.json";
         if(lng === languages.EN)
