@@ -736,7 +736,7 @@ JingleSession.prototype.addSource = function (elem, fromJid) {
     $(elem).each(function (idx, content) {
         var name = $(content).attr('name');
         var lines = '';
-        tmp = $(content).find('ssrc-group[xmlns="urn:xmpp:jingle:apps:rtp:ssma:0"]').each(function() {
+        $(content).find('ssrc-group[xmlns="urn:xmpp:jingle:apps:rtp:ssma:0"]').each(function() {
             var semantics = this.getAttribute('semantics');
             var ssrcs = $(this).find('>source').map(function () {
                 return this.getAttribute('ssrc');
@@ -746,7 +746,7 @@ JingleSession.prototype.addSource = function (elem, fromJid) {
                 lines += 'a=ssrc-group:' + semantics + ' ' + ssrcs.join(' ') + '\r\n';
             }
         });
-        tmp = $(content).find('source[xmlns="urn:xmpp:jingle:apps:rtp:ssma:0"]'); // can handle both >source and >description>source
+        var tmp = $(content).find('source[xmlns="urn:xmpp:jingle:apps:rtp:ssma:0"]'); // can handle both >source and >description>source
         tmp.each(function () {
             var ssrc = $(this).attr('ssrc');
             if(mySdp.containsSSRC(ssrc)){
@@ -801,7 +801,7 @@ JingleSession.prototype.removeSource = function (elem, fromJid) {
     $(elem).each(function (idx, content) {
         var name = $(content).attr('name');
         var lines = '';
-        tmp = $(content).find('ssrc-group[xmlns="urn:xmpp:jingle:apps:rtp:ssma:0"]').each(function() {
+        $(content).find('ssrc-group[xmlns="urn:xmpp:jingle:apps:rtp:ssma:0"]').each(function() {
             var semantics = this.getAttribute('semantics');
             var ssrcs = $(this).find('>source').map(function () {
                 return this.getAttribute('ssrc');
@@ -811,7 +811,7 @@ JingleSession.prototype.removeSource = function (elem, fromJid) {
                 lines += 'a=ssrc-group:' + semantics + ' ' + ssrcs.join(' ') + '\r\n';
             }
         });
-        tmp = $(content).find('source[xmlns="urn:xmpp:jingle:apps:rtp:ssma:0"]'); // can handle both >source and >description>source
+        var tmp = $(content).find('source[xmlns="urn:xmpp:jingle:apps:rtp:ssma:0"]'); // can handle both >source and >description>source
         tmp.each(function () {
             var ssrc = $(this).attr('ssrc');
             // This should never happen, but can be useful for bug detection
@@ -1310,7 +1310,7 @@ function sendKeyframe(pc) {
 }
 
 
-JingleSession.prototype.remoteStreamAdded = function (data) {
+JingleSession.prototype.remoteStreamAdded = function (data, times) {
     var self = this;
     var thessrc;
     var ssrc2jid = this.connection.emuc.ssrc2jid;
@@ -1339,12 +1339,24 @@ JingleSession.prototype.remoteStreamAdded = function (data) {
             // presence to arrive.
 
             if (!ssrc2jid[thessrc]) {
-                // TODO(gp) limit wait duration to 1 sec.
-                setTimeout(function(d) {
-                    return function() {
-                        self.remoteStreamAdded(d);
-                    }
-                }(data), 250);
+
+                if (typeof times === 'undefined')
+                {
+                    times = 0;
+                }
+
+                if (times > 10)
+                {
+                    console.warning('Waiting for jid timed out', thessrc);
+                }
+                else
+                {
+                    setTimeout(function(d) {
+                        return function() {
+                            self.remoteStreamAdded(d, times++);
+                        }
+                    }(data), 250);
+                }
                 return;
             }
 
@@ -1353,27 +1365,6 @@ JingleSession.prototype.remoteStreamAdded = function (data) {
             if (ssrc2jid[thessrc]) {
                 data.peerjid = ssrc2jid[thessrc];
             }
-        }
-    }
-
-    //TODO: this code should be removed when firefox implement multistream support
-    if(APP.RTC.getBrowserType() == RTCBrowserType.RTC_BROWSER_FIREFOX)
-    {
-        if((JingleSession.notReceivedSSRCs.length == 0) ||
-            !ssrc2jid[JingleSession.notReceivedSSRCs[JingleSession.notReceivedSSRCs.length - 1]])
-        {
-            // TODO(gp) limit wait duration to 1 sec.
-            setTimeout(function(d) {
-                return function() {
-                    self.remoteStreamAdded(d);
-                }
-            }(data), 250);
-            return;
-        }
-
-        thessrc = JingleSession.notReceivedSSRCs.pop();
-        if (ssrc2jid[thessrc]) {
-            data.peerjid = ssrc2jid[thessrc];
         }
     }
 

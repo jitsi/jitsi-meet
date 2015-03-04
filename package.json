@@ -17,7 +17,8 @@
   "dependencies": {
       "events": "*",
       "pako": "*",
-      "i18next-client": "*"
+      "i18next-client": "*",
+      "sdp-interop": "https://github.com/jitsi/sdp-interop/tarball/master"
   },
   "devDependencies": {
   },

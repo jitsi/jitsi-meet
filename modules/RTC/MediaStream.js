@@ -33,13 +33,6 @@ function MediaStream(data, sid, ssrc, browser) {
         MediaStreamType.VIDEO_TYPE : MediaStreamType.AUDIO_TYPE;
     this.videoType = null;
     this.muted = false;
-    if(browser == RTCBrowserType.RTC_BROWSER_FIREFOX)
-    {
-        if (!this.getVideoTracks)
-            this.getVideoTracks = function () { return []; };
-        if (!this.getAudioTracks)
-            this.getAudioTracks = function () { return []; };
-    }
 }
 
 
