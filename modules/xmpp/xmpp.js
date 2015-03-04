@@ -251,9 +251,7 @@ var XMPP = {
             connection.jingle.activecall.switchStreams(stream, oldStream, callback);
         } else {
             // We are done immediately
-            console.error("No conference handler");
-            APP.UI.messageHandler.showError("dialog.error",
-                "dialog.unableToSwitch");
+            console.warn("No conference handler or conference not started yet");
             callback();
         }
     },
