@@ -26,6 +26,7 @@ var defaultOptions = {
     defaultValueFromContent: false,
     app: interfaceConfig.APP_NAME,
     getAsync: false,
+    defaultValueFromContent: false,
     customLoad: function(lng, ns, options, done) {
         var resPath = "lang/__ns__-__lng__.json";
         if(lng === languages.EN)
