@@ -1715,7 +1715,10 @@ function onPasswordReqiured(callback) {
     message += APP.translation.translateString(
         "dialog.passwordRequired");
     message += '</h2>' +
-        '<input id="lockKey" type="text" placeholder="password" autofocus>';
+        '<input id="lockKey" type="text" data-i18n=' +
+        '"[placeholder]dialog.password" placeholder="' +
+        APP.translation.translateString("dialog.password") +
+        '" autofocus>';
 
     messageHandler.openTwoButtonDialog(null, null, null, message,
         true,
@@ -1881,7 +1884,8 @@ UI.showLoginPopup = function(callback)
         '<input id="passwordrequired.username" type="text" ' +
         'placeholder="user@domain.net" autofocus>' +
         '<input id="passwordrequired.password" ' +
-        'type="password" placeholder="user password">';
+        'type="password" data-i18n="[placeholder]dialog.userPassword"' +
+        ' placeholder="user password">';
     UI.messageHandler.openTwoButtonDialog(null, null, null, message,
         true,
         "dialog.Ok",
@@ -4747,10 +4751,12 @@ function toggleRecording() {
     APP.xmpp.toggleRecording(function (callback) {
         var msg = APP.translation.generateTranslatonHTML(
             "dialog.recordingToken");
+        var token = APP.translation.translateString("dialog.token");
         APP.UI.messageHandler.openTwoButtonDialog(null, null, null,
                 '<h2>' + msg + '</h2>' +
                 '<input id="recordingToken" type="text" ' +
-                'placeholder="token" autofocus>',
+                ' data-i18n="[placeholder]dialog.token" ' +
+                'placeholder="' + token + '" autofocus>',
             false,
             "dialog.Save",
             function (e, v, m, f) {
@@ -5000,6 +5006,7 @@ var Toolbar = (function (my) {
                 messageHandler.openTwoButtonDialog(null, null, null,
                     '<h2>' + msg + '</h2>' +
                         '<input id="lockKey" type="text"' +
+                        ' data-i18n="[placeholder]dialog.yourPassword" ' +
                         'placeholder="' + yourPassword + '" autofocus>',
                     false,
                     "dialog.Save",

@@ -478,7 +478,10 @@ function onPasswordReqiured(callback) {
     message += APP.translation.translateString(
         "dialog.passwordRequired");
     message += '</h2>' +
-        '<input id="lockKey" type="text" placeholder="password" autofocus>';
+        '<input id="lockKey" type="text" data-i18n=' +
+        '"[placeholder]dialog.password" placeholder="' +
+        APP.translation.translateString("dialog.password") +
+        '" autofocus>';
 
     messageHandler.openTwoButtonDialog(null, null, null, message,
         true,
@@ -644,7 +647,8 @@ UI.showLoginPopup = function(callback)
         '<input id="passwordrequired.username" type="text" ' +
         'placeholder="user@domain.net" autofocus>' +
         '<input id="passwordrequired.password" ' +
-        'type="password" placeholder="user password">';
+        'type="password" data-i18n="[placeholder]dialog.userPassword"' +
+        ' placeholder="user password">';
     UI.messageHandler.openTwoButtonDialog(null, null, null, message,
         true,
         "dialog.Ok",

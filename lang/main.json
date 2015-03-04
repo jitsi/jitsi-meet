@@ -178,7 +178,10 @@
         "gracefulShutdown": "Our service is currently down for maintenance. Please try again later.",
         "Yes": "Yes",
         "reservationError": "Reservation system error",
-        "reservationErrorMsg": "Error code: __code__, message: __msg__"
+        "reservationErrorMsg": "Error code: __code__, message: __msg__",
+        "password": "password",
+        "userPassword": "user password",
+        "token": "token"
 
     }
 }

@@ -128,10 +128,12 @@ function toggleRecording() {
     APP.xmpp.toggleRecording(function (callback) {
         var msg = APP.translation.generateTranslatonHTML(
             "dialog.recordingToken");
+        var token = APP.translation.translateString("dialog.token");
         APP.UI.messageHandler.openTwoButtonDialog(null, null, null,
                 '<h2>' + msg + '</h2>' +
                 '<input id="recordingToken" type="text" ' +
-                'placeholder="token" autofocus>',
+                ' data-i18n="[placeholder]dialog.token" ' +
+                'placeholder="' + token + '" autofocus>',
             false,
             "dialog.Save",
             function (e, v, m, f) {
@@ -381,6 +383,7 @@ var Toolbar = (function (my) {
                 messageHandler.openTwoButtonDialog(null, null, null,
                     '<h2>' + msg + '</h2>' +
                         '<input id="lockKey" type="text"' +
+                        ' data-i18n="[placeholder]dialog.yourPassword" ' +
                         'placeholder="' + yourPassword + '" autofocus>',
                     false,
                     "dialog.Save",
