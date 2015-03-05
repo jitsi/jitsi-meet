@@ -37,10 +37,6 @@ case "$1" in
             sed -i "s/jitsi-meet.example.com/$JVB_HOSTNAME/g" /etc/nginx/sites-available/$JVB_HOSTNAME.conf
         fi
 
-        if grep "# server_names_hash_bucket_size 64" /etc/nginx/nginx.conf > /dev/null; then
-            sed -i "s/#\ server_names_hash_bucket_size\ 64/\ server_names_hash_bucket_size\ 64/" /etc/nginx/nginx.conf
-        fi
-
         # SSL for nginx
         db_get jitsi-meet/cert-choice
         CERT_CHOICE="$RET"
