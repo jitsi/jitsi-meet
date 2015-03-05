@@ -1007,8 +1007,14 @@ function RTCUtils(RTCService)
             this.getUserMedia = navigator.mozGetUserMedia.bind(navigator);
             this.pc_constraints = {};
             this.attachMediaStream =  function (element, stream) {
-                console.log('Attaching', stream, ' to ', element);
-                element[0].src = URL.createObjectURL(stream);
+                //  srcObject is being standardized and FF will eventually
+                //  support that unprefixed. FF also supports the
+                //  "element.src = URL.createObjectURL(...)" combo, but that
+                //  will be deprecated in favour of srcObject.
+                //
+                // https://groups.google.com/forum/#!topic/mozilla.dev.media/pKOiioXonJg
+                // https://github.com/webrtc/samples/issues/302
+                element[0].mozSrcObject = stream;
                 element[0].play();
             };
             this.getStreamID =  function (stream) {
@@ -1020,10 +1026,10 @@ function RTCUtils(RTCService)
                 return tracks[0].id.replace(/[\{,\}]/g,"");
             };
             this.getVideoSrc = function (element) {
-                return element.src;
+                return element.mozSrcObject;
             };
             this.setVideoSrc = function (element, src) {
-                element.src = src;
+                element.mozSrcObject = src;
             };
             RTCSessionDescription = mozRTCSessionDescription;
             RTCIceCandidate = mozRTCIceCandidate;
