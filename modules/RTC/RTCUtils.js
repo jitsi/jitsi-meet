@@ -136,6 +136,13 @@ function RTCUtils(RTCService)
             this.getUserMedia = navigator.mozGetUserMedia.bind(navigator);
             this.pc_constraints = {};
             this.attachMediaStream =  function (element, stream) {
+                //  srcObject is being standardized and FF will eventually
+                //  support that unprefixed. FF also supports the
+                //  "element.src = URL.createObjectURL(...)" combo, but that
+                //  will be deprecated in favour of srcObject.
+                //
+                // https://groups.google.com/forum/#!topic/mozilla.dev.media/pKOiioXonJg
+                // https://github.com/webrtc/samples/issues/302
                 element[0].mozSrcObject = stream;
                 element[0].play();
             };
