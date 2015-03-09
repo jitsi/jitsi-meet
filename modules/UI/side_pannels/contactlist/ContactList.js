@@ -38,9 +38,15 @@ function createAvatar(id) {
  *
  * @param displayName the display name to set
  */
-function createDisplayNameParagraph(displayName) {
+function createDisplayNameParagraph(key, displayName) {
     var p = document.createElement('p');
-    p.innerText = displayName;
+    if(displayName)
+        p.innerText = displayName;
+    else if(key)
+    {
+        p.setAttribute("data-i18n",key);
+        p.innerText = APP.translation.translateString(key);
+    }
 
     return p;
 }
@@ -106,7 +112,7 @@ var ContactList = {
         };
 
         newContact.appendChild(createAvatar(id));
-        newContact.appendChild(createDisplayNameParagraph("Participant"));
+        newContact.appendChild(createDisplayNameParagraph("participant"));
 
         var clElement = contactlist.get(0);
 

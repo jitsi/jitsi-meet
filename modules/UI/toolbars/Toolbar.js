@@ -197,25 +197,16 @@ function inviteParticipants() {
     var sharedKeyText = "";
     if (sharedKey && sharedKey.length > 0) {
         sharedKeyText =
-            "This conference is password protected. Please use the " +
-            "following pin when joining:%0D%0A%0D%0A" +
-            sharedKey + "%0D%0A%0D%0A";
+            APP.translation.translateString("email.sharedKey",
+                {sharedKey: sharedKey});
     }
 
     var conferenceName = roomUrl.substring(roomUrl.lastIndexOf('/') + 1);
-    var subject = "Invitation to a " + interfaceConfig.APP_NAME + " (" + conferenceName + ")";
-    var body = "Hey there, I%27d like to invite you to a " + interfaceConfig.APP_NAME +
-        " conference I%27ve just set up.%0D%0A%0D%0A" +
-        "Please click on the following link in order" +
-        " to join the conference.%0D%0A%0D%0A" +
-        roomUrl +
-        "%0D%0A%0D%0A" +
-        sharedKeyText +
-        "Note that " + interfaceConfig.APP_NAME + " is currently" +
-        " only supported by Chromium," +
-        " Google Chrome and Opera, so you need" +
-        " to be using one of these browsers.%0D%0A%0D%0A" +
-        "Talk to you in a sec!";
+    var subject = APP.translation.translateString("email.subject",
+        {appName:interfaceConfig.APP_NAME, conferenceName: conferenceName});
+    var body = APP.translation.translateString("email.body",
+        {appName:interfaceConfig.APP_NAME, sharedKeyText: sharedKeyText,
+            roomUrl: roomUrl});
 
     if (window.localStorage.displayname) {
         body += "%0D%0A%0D%0A" + window.localStorage.displayname;
@@ -409,16 +400,18 @@ var Toolbar = (function (my) {
      * Opens the invite link dialog.
      */
     my.openLinkDialog = function () {
-        var inviteLink;
+        var inviteAttreibutes;
+
         if (roomUrl === null) {
-            inviteLink = "Your conference is currently being created...";
+            inviteAttreibutes = 'data-i18n="[value]roomUrlDefaultMsg" value="' +
+            APP.translation.translateString("roomUrlDefaultMsg") + '"';
         } else {
-            inviteLink = encodeURI(roomUrl);
+            inviteAttreibutes = "value=\"" + encodeURI(roomUrl) + "\"";
         }
         messageHandler.openTwoButtonDialog("dialog.shareLink",
             null, null,
-            '<input id="inviteLinkRef" type="text" value="' +
-                inviteLink + '" onclick="this.select();" readonly>',
+            '<input id="inviteLinkRef" type="text" ' +
+                inviteAttreibutes + ' onclick="this.select();" readonly>',
             false,
             "dialog.Invite",
             function (e, v) {

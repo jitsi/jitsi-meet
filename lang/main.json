@@ -3,6 +3,12 @@
     "connectionsettings": "Connection Settings",
     "poweredby": "powered by",
     "downloadlogs": "Download logs",
+    "roomUrlDefaultMsg": "Your conference is currently being created...",
+    "participant": "Participant",
+    "me": "me",
+    "speaker": "Speaker",
+    "defaultNickname": "ex. __name__",
+    "defaultPreziLink": "e.g. __url__",
     "welcomepage":{
         "go": "GO",
         "roomname": "Enter room name",
@@ -60,8 +66,8 @@
     },
     "bottomtoolbar": {
         "chat": "Open / close chat",
-        "filmstrip": "Open / close contact list",
-        "contactlist": "Show / hide film strip"
+        "filmstrip": "Show / hide film strip",
+        "contactlist": "Open / close contact list"
     },
     "chat":{
         "nickname": {
@@ -182,6 +188,11 @@
         "password": "password",
         "userPassword": "user password",
         "token": "token"
-
+    },
+    "email":
+    {
+        "sharedKey": "This conference is password protected. Please use the following pin when joining:%0D%0A%0D%0A __sharedKey__ %0D%0A%0D%0A",
+        "subject": "Invitation to a __appName__ (__conferenceName__)",
+        "body": "Hey there, I%27d like to invite you to a __appName__ conference I%27ve just set up.%0D%0A%0D%0APlease click on the following link in order to join the conference.%0D%0A%0D%0A __roomUrl__%0D%0A%0D%0A__sharedKeyText__ Note that __appName__ is currently only supported by Chromium, Google Chrome and Opera, so you need to be using one of these browsers.%0D%0A%0D%0ATalk to you in a sec!"
     }
 }

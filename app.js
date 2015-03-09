@@ -14,6 +14,7 @@ var APP =
         this.xmpp = require("./modules/xmpp/xmpp");
         this.keyboardshortcut = require("./modules/keyboardshortcut/keyboardshortcut");
         this.translation = require("./modules/translation/translation");
+        this.settings = require("./modules/settings/Settings");
     }
 };
 

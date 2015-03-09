@@ -191,9 +191,10 @@ function getCameraVideoSize(videoWidth,
 /**
  * Sets the display name for the given video span id.
  */
-function setDisplayName(videoSpanId, displayName) {
+function setDisplayName(videoSpanId, displayName, key) {
     var nameSpan = $('#' + videoSpanId + '>span.displayname');
-    var defaultLocalDisplayName = interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME;
+    var defaultLocalDisplayName = APP.translation.generateTranslatonHTML(
+        interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME);
 
     // If we already have a display name for this video.
     if (nameSpan.length > 0) {
@@ -202,14 +203,25 @@ function setDisplayName(videoSpanId, displayName) {
         if (nameSpanElement.id === 'localDisplayName' &&
             $('#localDisplayName').text() !== displayName) {
             if (displayName && displayName.length > 0)
-                $('#localDisplayName').html(displayName + ' (me)');
+            {
+                var meHTML = APP.translation.generateTranslatonHTML("me");
+                $('#localDisplayName').html(displayName + ' (' + meHTML + ')');
+            }
             else
-                $('#localDisplayName').text(defaultLocalDisplayName);
+                $('#localDisplayName').html(defaultLocalDisplayName);
         } else {
             if (displayName && displayName.length > 0)
+            {
                 $('#' + videoSpanId + '_name').html(displayName);
+            }
+            else if (key && key.length > 0)
+            {
+                var nameHtml = APP.translation.generateTranslatonHTML(key);
+                $('#' + videoSpanId + '_name').html(nameHtml);
+            }
             else
-                $('#' + videoSpanId + '_name').text(interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME);
+                $('#' + videoSpanId + '_name').text(
+                    interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME);
         }
     } else {
         var editButton = null;
@@ -220,15 +232,22 @@ function setDisplayName(videoSpanId, displayName) {
 
         if (videoSpanId === 'localVideoContainer') {
             editButton = createEditDisplayNameButton();
-            nameSpan.innerText = defaultLocalDisplayName;
+            if (displayName && displayName.length > 0) {
+                var meHTML = APP.translation.generateTranslatonHTML("me");
+                nameSpan.innerHTML = displayName + meHTML;
+            }
+            else
+                nameSpan.innerHTML = defaultLocalDisplayName;
         }
         else {
-            nameSpan.innerText = interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME;
+            if (displayName && displayName.length > 0) {
+
+                nameSpan.innerText = displayName;
+            }
+            else
+                nameSpan.innerText = interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME;
         }
 
-        if (displayName && displayName.length > 0) {
-            nameSpan.innerText = displayName;
-        }
 
         if (!editButton) {
             nameSpan.id = videoSpanId + '_name';
@@ -245,11 +264,18 @@ function setDisplayName(videoSpanId, displayName) {
 
             if (displayName && displayName.length) {
                 editableText.value
-                    = displayName.substring(0, displayName.indexOf(' (me)'));
+                    = displayName;
             }
 
+            var defaultNickname = APP.translation.translateString(
+                "defaultNickname", {name: "Jane Pink"});
             editableText.setAttribute('style', 'display:none;');
-            editableText.setAttribute('placeholder', 'ex. Jane Pink');
+            editableText.setAttribute('data-18n',
+                '[placeholder]defaultNickname');
+            editableText.setAttribute("data-i18n-options",
+                JSON.stringify({name: "Jane Pink"}));
+            editableText.setAttribute("placeholder", defaultNickname);
+
             $('#' + videoSpanId)[0].appendChild(editableText);
 
             $('#localVideoContainer .displayname')
@@ -1270,10 +1296,17 @@ var VideoLayout = (function (my) {
 
         if (!$('#localDisplayName').is(":visible")) {
             if (NicknameHandler.getNickname())
-                $('#localDisplayName').text(NicknameHandler.getNickname() + " (me)");
+            {
+                var meHTML = APP.translation.generateTranslatonHTML("me");
+                $('#localDisplayName').html(NicknameHandler.getNickname() + " (" + meHTML + ")");
+            }
             else
+            {
+                var defaultHTML = APP.translation.generateTranslatonHTML(
+                    interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME);
                 $('#localDisplayName')
-                    .text(interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME);
+                    .html(defaultHTML);
+            }
             $('#localDisplayName').show();
         }
 
@@ -1796,17 +1829,20 @@ var VideoLayout = (function (my) {
                 === APP.xmpp.myResource())
             return;
 
+        var members = APP.xmpp.getMembers();
         // Update the current dominant speaker.
         if (resourceJid !== currentDominantSpeaker) {
             var oldSpeakerVideoSpanId = "participant_" + currentDominantSpeaker,
                 newSpeakerVideoSpanId = "participant_" + resourceJid;
-            if($("#" + oldSpeakerVideoSpanId + ">span.displayname").text() ===
-                interfaceConfig.DEFAULT_DOMINANT_SPEAKER_DISPLAY_NAME) {
+            var currentJID = APP.xmpp.findJidFromResource(currentDominantSpeaker);
+            var newJID = APP.xmpp.findJidFromResource(resourceJid);
+            if(currentDominantSpeaker && (!members || !members[currentJID] ||
+                !members[currentJID].displayName)) {
                 setDisplayName(oldSpeakerVideoSpanId, null);
             }
-            if($("#" + newSpeakerVideoSpanId + ">span.displayname").text() ===
-                interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME) {
-                setDisplayName(newSpeakerVideoSpanId,
+            if(resourceJid && (!members || !members[newJID] ||
+                !members[newJID].displayName)) {
+                setDisplayName(newSpeakerVideoSpanId, null,
                     interfaceConfig.DEFAULT_DOMINANT_SPEAKER_DISPLAY_NAME);
             }
             currentDominantSpeaker = resourceJid;

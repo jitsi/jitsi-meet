@@ -73,12 +73,15 @@ var Prezi = {
             buttons1.button2 = {title: backButton, value: true};
             var linkError = APP.translation.generateTranslatonHTML(
                 "dialog.preziLinkError");
+            var defaultUrl = APP.translation.translateString("defaultPreziLink",
+                {url: "http://prezi.com/wz7vhjycl7e6/my-prezi"});
             var openPreziState = {
                 state0: {
                     html:   '<h2>' + html + '</h2>' +
                             '<input id="preziUrl" type="text" ' +
-                            'placeholder="e.g. ' +
-                            'http://prezi.com/wz7vhjycl7e6/my-prezi" autofocus>',
+                            'data-i18n="[placeholder]defaultPreziLink" data-i18n-options=\'' +
+                            JSON.stringify({"url": "http://prezi.com/wz7vhjycl7e6/my-prezi"}) +
+                            '\' placeholder="' + defaultUrl + '" autofocus>',
                     persistent: false,
                     buttons: buttons,
                     defaultButton: 1,

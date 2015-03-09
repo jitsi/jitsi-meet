@@ -393,9 +393,8 @@ function updateChatConversation(from, displayName, message) {
 
 function onMucJoined(jid, info) {
     Toolbar.updateRoomUrl(window.location.href);
-    document.getElementById('localNick').appendChild(
-        document.createTextNode(Strophe.getResourceFromJid(jid) + ' (me)')
-    );
+    var meHTML = APP.translation.generateTranslatonHTML("me");
+    $("#localNick").html(Strophe.getResourceFromJid(jid) + " (" + meHTML + ")");
 
     var settings = Settings.getSettings();
     // Add myself to the contact list.
@@ -408,7 +407,7 @@ function onMucJoined(jid, info) {
         ? info.displayName : Strophe.getResourceFromJid(jid);
 
     if (displayName)
-        onDisplayNameChanged('localVideoContainer', displayName + ' (me)');
+        onDisplayNameChanged('localVideoContainer', displayName);
 }
 
 function initEtherpad(name) {

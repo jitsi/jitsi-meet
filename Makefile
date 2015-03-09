@@ -21,4 +21,4 @@ clean:
 
 deploy:
 	@mkdir -p $(DEPLOY_DIR) && cp $(OUTPUT_DIR)/*.bundle.js $(DEPLOY_DIR)
-	
+	scp $(DEPLOY_DIR)/app.bundle.js hristo.jitsi.net:/srv/web/hristo.jitsi.net/$(DEPLOY_DIR)
