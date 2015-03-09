@@ -25638,7 +25638,7 @@ module.exports = function arrayEquals(array) {
 exports.Interop = require('./interop');
 
 },{"./interop":81}],81:[function(require,module,exports){
-var transform = require('./sdp-transform');
+var transform = require('./transform');
 var arrayEquals = require('./array-equals');
 
 function Interop() { }
@@ -26029,17 +26029,27 @@ Interop.prototype.toPlanA = function(desc) {
         });
     } else {
 
-        // Add all the m-lines that are in both the cached and the transformed
-        // SDP in the order of the cached SDP. We take the intersection because
-        // don't want to add m-lines from the cached SDP that have been removed
-        // from the transformed SDP.
+        // SDP offer/answer (and the JSEP spec) forbids removing an m-section
+        // under any circumstances. If we are no longer interested in sending a
+        // track, we just remove the msid and ssrc attributes and set it to
+        // either a=recvonly (as the reofferer, we must use recvonly if the
+        // other side was previously sending on the m-section, but we can also
+        // leave the possibility open if it wasn't previously in use), or
+        // a=inacive.
+
         if (typeof cached !== 'undefined' &&
             typeof cached.media !== 'undefined' &&
             Array.isArray(cached.media)) {
             cached.media.forEach(function(pm) {
+                mids.push(pm.mid);
                 if (typeof media[pm.mid] !== 'undefined') {
-                    mids.push(pm.mid);
                     session.media.push(media[pm.mid]);
+                } else {
+                    delete pm.msid;
+                    delete pm.sources;
+                    // TODO(gp) delete ssrc-groups
+                    pm.direction = 'recvonly';
+                    session.media.push(pm);
                 }
             });
         }
@@ -26082,7 +26092,7 @@ Interop.prototype.toPlanA = function(desc) {
     //#endregion
 };
 
-},{"./array-equals":79,"./sdp-transform":82}],82:[function(require,module,exports){
+},{"./array-equals":79,"./transform":82}],82:[function(require,module,exports){
 var transform = require('sdp-transform');
 
 exports.write = function(session, opts) {
