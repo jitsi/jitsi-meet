@@ -626,22 +626,6 @@ UI.connectionIndicatorShowMore = function(id)
     return VideoLayout.connectionIndicators[id].showMore();
 };
 
-UI.getCredentials = function () {
-    var settings = this.getSettings();
-    return {
-        bosh: document.getElementById('boshURL').value,
-        password: document.getElementById('password').value,
-        jid: document.getElementById('jid').value,
-        email: settings.email,
-        displayName: settings.displayName,
-        uid: settings.uid
-    };
-};
-
-UI.disableConnect = function () {
-    document.getElementById('connect').disabled = true;
-};
-
 UI.showLoginPopup = function(callback)
 {
     console.log('password is required');

@@ -29,10 +29,6 @@ html, body{
     z-index: 5;
 }
 
-#settings {
-    display:none;
-}
-
 #nowebrtc {
     display:none;
 }

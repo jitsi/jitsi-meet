@@ -21,7 +21,7 @@ var APP =
 function init() {
 
     APP.RTC.start();
-    APP.xmpp.start(APP.UI.getCredentials());
+    APP.xmpp.start();
     APP.statistics.start();
     APP.connectionquality.init();
 

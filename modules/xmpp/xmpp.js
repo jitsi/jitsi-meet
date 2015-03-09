@@ -1,3 +1,4 @@
+/* global $, APP, config, Strophe*/
 var Moderator = require("./moderator");
 var EventEmitter = require("events");
 var Recording = require("./recording");
@@ -11,25 +12,10 @@ var eventEmitter = new EventEmitter();
 var connection = null;
 var authenticatedUser = false;
 
-function connect(jid, password, uiCredentials) {
-    var bosh
-        = (uiCredentials && uiCredentials.bosh? uiCredentials.bosh : null)
-        || config.bosh || '/http-bind';
+function connect(jid, password) {
+    var bosh = config.bosh || '/http-bind';
     connection = new Strophe.Connection(bosh);
     Moderator.setConnection(connection);
-
-    if(uiCredentials) {
-        var email = uiCredentials.email;
-        var displayName = uiCredentials.displayName;
-        if (email) {
-            connection.emuc.addEmailToPresence(email);
-        } else {
-            connection.emuc.addUserIdToPresence(uiCredentials.uid);
-        }
-        if (displayName) {
-            connection.emuc.addDisplayNameToPresence(displayName);
-        }
-    }
 
     if (connection.disco) {
         // for chrome, add multistream cap
@@ -42,9 +28,6 @@ function connect(jid, password, uiCredentials) {
         connection.jingle.pc_constraints.optional.push({googIPv6: true});
     }
 
-    if(!password)
-        password = uiCredentials.password;
-
     var anonymousConnectionFailed = false;
     connection.connect(jid, password, function (status, msg) {
         console.log('Strophe status changed to',
@@ -53,7 +36,6 @@ function connect(jid, password, uiCredentials) {
             if (config.useStunTurn) {
                 connection.jingle.getStunAndTurnCredentials();
             }
-            APP.UI.disableConnect();
 
             console.info("My Jabber ID: " + connection.jid);
 
@@ -150,7 +132,7 @@ var XMPP = {
      * @type {boolean}
      */
     forceMuted: false,
-    start: function (uiCredentials) {
+    start: function () {
         setupEvents();
         initStrophePlugins();
         registerListeners();
@@ -161,8 +143,8 @@ var XMPP = {
             window.location.search.indexOf("login=true") !== -1) {
             configDomain = config.hosts.domain;
         }
-        var jid = uiCredentials.jid || configDomain || window.location.hostname;
-        connect(jid, null, uiCredentials);
+        var jid = configDomain || window.location.hostname;
+        connect(jid, null);
     },
     promptLogin: function () {
         APP.UI.showLoginPopup(connect);
