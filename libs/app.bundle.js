@@ -25733,9 +25733,26 @@ Interop.prototype.toPlanB = function(desc) {
                 // Assign the sources to the channel.
                 channels[mLine.type].sources[ssrc] = mLine.sources[ssrc];
 
-                // In Plan B the msid is an SSRC attribute.
+                // In Plan B the msid is an SSRC attribute. Also, we don't care
+                // about the obsolete label and mslabel attributes.
                 channels[mLine.type].sources[ssrc].msid = mLine.msid;
+
+                // NOTE ssrcs in ssrc groups will share msids, as
+                // draft-uberti-rtcweb-plan-00 mandates.
             });
+        }
+
+        // Add ssrc groups to the channel.
+        if (typeof mLine.ssrcGroups !== 'undefined' &&
+                Array.isArray(mLine.ssrcGroups)) {
+
+            // Create the ssrcGroups array, if it's not defined.
+            if (typeof channel.ssrcGroups === 'undefined' ||
+                    !Array.isArray(channel.ssrcGroups)) {
+                channel.ssrcGroups = [];
+            }
+
+            channel.ssrcGroups = channel.ssrcGroups.concat(mLine.ssrcGroups);
         }
 
         if (channels[mLine.type] === mLine) {
@@ -25760,8 +25777,6 @@ Interop.prototype.toPlanB = function(desc) {
             // Add the channel to the new media array.
             session.media.push(mLine);
         }
-
-        // TODO(gp) add support for ssrc-group.
     });
 
     // We regenerate the BUNDLE group with the new mids.
@@ -25888,6 +25903,7 @@ Interop.prototype.toPlanA = function(desc) {
         // With rtcp-mux and bundle all the channels should have the same ICE
         // stuff.
         var sources = channel.sources;
+        var ssrcGroups = channel.ssrcGroups;
         var candidates = channel.candidates;
         var iceUfrag = channel.iceUfrag;
         var icePwd = channel.icePwd;
@@ -25897,6 +25913,7 @@ Interop.prototype.toPlanA = function(desc) {
         // We'll use the "channel" object as a prototype for each new "mLine"
         // that we create, but first we need to clean it up a bit.
         delete channel.sources;
+        delete channel.ssrcGroups;
         delete channel.candidates;
         delete channel.iceUfrag;
         delete channel.icePwd;
@@ -25904,13 +25921,63 @@ Interop.prototype.toPlanA = function(desc) {
         delete channel.port;
         delete channel.mid;
 
+        // inverted ssrc group map
+        var invertedGroups = {};
+        if (typeof ssrcGroups !== 'undefined' && Array.isArray(ssrcGroups)) {
+            ssrcGroups.forEach(function (ssrcGroup) {
+
+                // TODO(gp) find out how to receive simulcast with FF. For the
+                // time being, hide it.
+                if (ssrcGroup.semantics === 'SIM') {
+                    return;
+                }
+
+                if (typeof ssrcGroup.ssrcs !== 'undefined' &&
+                    Array.isArray(ssrcGroup.ssrcs)) {
+                    ssrcGroup.ssrcs.forEach(function (ssrc) {
+                        if (typeof invertedGroups[ssrc] === 'undefined') {
+                            invertedGroups[ssrc] = [];
+                        }
+
+                        invertedGroups[ssrc].push(ssrcGroup);
+                    });
+                }
+            });
+        }
+
+        // ssrc to m-line index.
+        var mLines = {};
+
         if (typeof sources === 'object') {
 
             // Explode the Plan B channel sources with one m-line per source.
             Object.keys(sources).forEach(function(ssrc) {
 
+                var mLine;
+                if (typeof invertedGroups[ssrc] !== 'undefined' &&
+                    Array.isArray(invertedGroups[ssrc])) {
+                    invertedGroups[ssrc].every(function (ssrcGroup) {
+                        // ssrcGroup.ssrcs *is* an Array, no need to check
+                        // again here.
+                        return ssrcGroup.ssrcs.every(function (related) {
+                            if (typeof mLines[related] === 'object') {
+                                mLine = mLines[related];
+                                return false;
+                            } else {
+                                return true;
+                            }
+                        });
+                    });
+                }
+
+                if (typeof mLine === 'object') {
+                    // the m-line already exists. Just add the source.
+                    mLine.sources[ssrc] = sources[ssrc];
+                    delete sources[ssrc].msid;
+                } else {
                 // Use the "channel" as a prototype for the "mLine".
-                var mLine = Object.create(channel);
+                mLine = Object.create(channel);
+                mLines[ssrc] = mLine;
 
                 // Assign the msid of the source to the m-line.
                 mLine.msid = sources[ssrc].msid;
@@ -25919,6 +25986,7 @@ Interop.prototype.toPlanA = function(desc) {
                 // We assign one SSRC per media line.
                 mLine.sources = {};
                 mLine.sources[ssrc] = sources[ssrc];
+                mLine.ssrcGroups = invertedGroups[ssrc];
 
                 // Use the cached Plan A SDP (if it exists) to assign SSRCs to
                 // mids.
@@ -25966,9 +26034,9 @@ Interop.prototype.toPlanA = function(desc) {
                 mLine.port = port;
 
                 media[mLine.mid] = mLine;
+                }
             });
         }
-        // TODO(gp) add support for ssrc-groups
     });
 
     // Rebuild the media array in the right order and add the missing mLines
@@ -26047,7 +26115,7 @@ Interop.prototype.toPlanA = function(desc) {
                 } else {
                     delete pm.msid;
                     delete pm.sources;
-                    // TODO(gp) delete ssrc-groups
+                    delete pm.ssrcGroups;
                     pm.direction = 'recvonly';
                     session.media.push(pm);
                 }
@@ -26097,12 +26165,12 @@ var transform = require('sdp-transform');
 
 exports.write = function(session, opts) {
 
-  // expand sources to ssrcs
   if (typeof session !== 'undefined' &&
       typeof session.media !== 'undefined' &&
       Array.isArray(session.media)) {
 
     session.media.forEach(function (mLine) {
+      // expand sources to ssrcs
       if (typeof mLine.sources !== 'undefined' &&
         Object.keys(mLine.sources).length !== 0) {
           mLine.ssrcs = [];
@@ -26117,6 +26185,17 @@ exports.write = function(session, opts) {
             });
           });
           delete mLine.sources;
+        }
+
+      // join ssrcs in ssrc groups
+      if (typeof mLine.ssrcGroups !== 'undefined' &&
+        Array.isArray(mLine.ssrcGroups)) {
+          mLine.ssrcGroups.forEach(function (ssrcGroup) {
+            if (typeof ssrcGroup.ssrcs !== 'undefined' &&
+                Array.isArray(ssrcGroup.ssrcs)) {
+              ssrcGroup.ssrcs = ssrcGroup.ssrcs.join(' ');
+            }
+          });
         }
     });
   }
@@ -26141,8 +26220,8 @@ exports.parse = function(sdp) {
   if (typeof session !== 'undefined' && typeof session.media !== 'undefined' &&
       Array.isArray(session.media)) {
 
-    // group sources attributes by ssrc
     session.media.forEach(function (mLine) {
+      // group sources attributes by ssrc
       if (typeof mLine.ssrcs !== 'undefined' && Array.isArray(mLine.ssrcs)) {
         mLine.sources = {};
         mLine.ssrcs.forEach(function (ssrc) {
@@ -26153,6 +26232,16 @@ exports.parse = function(sdp) {
 
         delete mLine.ssrcs;
       }
+
+      // split ssrcs in ssrc groups
+      if (typeof mLine.ssrcGroups !== 'undefined' &&
+        Array.isArray(mLine.ssrcGroups)) {
+          mLine.ssrcGroups.forEach(function (ssrcGroup) {
+            if (typeof ssrcGroup.ssrcs === 'string') {
+              ssrcGroup.ssrcs = ssrcGroup.ssrcs.split(' ');
+            }
+          });
+        }
     });
   }
   // split group mids
@@ -26316,10 +26405,6 @@ var grammar = module.exports = {
       name: 'direction',
       reg: /^(sendrecv|recvonly|sendonly|inactive)/
     },
-    { //a=bundle-only
-      name: 'bundleOnly',
-      reg: /^(bundle-only)/
-    },
     { //a=ice-lite
       name: 'icelite',
       reg: /^(ice-lite)/
@@ -26372,6 +26457,12 @@ var grammar = module.exports = {
       reg: /^ssrc:(\d*) ([\w_]*):(.*)/,
       names: ['id', 'attribute', 'value'],
       format: "ssrc:%d %s:%s"
+    },
+    { //a=ssrc-group:FEC 1 2
+      push: "ssrcGroups",
+      reg: /^ssrc-group:(\w*) (.*)/,
+      names: ['semantics', 'ssrcs'],
+      format: "ssrc-group:%s %s"
     },
     { //a=msid-semantic: WMS Jvlam5X3SX1OP6pn20zWogvaKJz5Hjf9OnlV
       name: "msidSemantic",
@@ -26482,30 +26573,6 @@ exports.parse = function (sdp) {
   });
 
   session.media = media; // link it up
-
-  // group sources attributes by ssrc
-  media.forEach(function (mLine) {
-    if (typeof mLine.ssrcs !== 'undefined' && Array.isArray(mLine.ssrcs)) {
-      mLine.sources = {};
-      mLine.ssrcs.forEach(function (ssrc) {
-        if (!mLine.sources[ssrc.id])
-          mLine.sources[ssrc.id] = {};
-        mLine.sources[ssrc.id][ssrc.attribute] = ssrc.value;
-      });
-
-      delete mLine.ssrcs;
-    }
-  });
-
-  // split group mids
-  if (typeof session.groups !== 'undefined' && Array.isArray(session.groups)) {
-    session.groups.forEach(function (g) {
-      if (typeof g.mids === 'string') {
-        g.mids = g.mids.split(' ');
-      }
-    });
-  }
-
   return session;
 };
 
@@ -26613,28 +26680,7 @@ module.exports = function (session, opts) {
     if (mLine.payloads == null) {
       mLine.payloads = "";
     }
-
-    // expand sources to ssrcs
-    if (typeof mLine.sources !== 'undefined' && Object.keys(mLine.sources).length !== 0) {
-      mLine.ssrcs = [];
-      Object.keys(mLine.sources).forEach(function (ssrc) {
-        var source = mLine.sources[ssrc];
-        Object.keys(source).forEach(function (attribute) {
-          mLine.ssrcs.push({id: ssrc, attribute: attribute, value: source[attribute]})
-        });
-      });
-      delete mLine.sources;
-    }
   });
-
-  // join group mids
-  if (typeof session.groups !== 'undefined' && Array.isArray(session.groups)) {
-    session.groups.forEach(function (g) {
-      if (typeof g.mids !== 'undefined' && Array.isArray(g.mids)) {
-        g.mids = g.mids.join(' ');
-      }
-    });
-  }
 
   var outerOrder = opts.outerOrder || defaultOuterOrder;
   var innerOrder = opts.innerOrder || defaultInnerOrder;
@@ -26643,10 +26689,10 @@ module.exports = function (session, opts) {
   // loop through outerOrder for matching properties on session
   outerOrder.forEach(function (type) {
     grammar[type].forEach(function (obj) {
-      if (obj.name in session && typeof session[obj.name] !== 'undefined') {
+      if (obj.name in session && session[obj.name] != null) {
         sdp.push(makeLine(type, obj, session));
       }
-      else if (obj.push in session && typeof session[obj.push] !== 'undefined') {
+      else if (obj.push in session && session[obj.push] != null) {
         session[obj.push].forEach(function (el) {
           sdp.push(makeLine(type, obj, el));
         });
@@ -26660,10 +26706,10 @@ module.exports = function (session, opts) {
 
     innerOrder.forEach(function (type) {
       grammar[type].forEach(function (obj) {
-        if (obj.name in mLine && typeof mLine[obj.name] !== 'undefined') {
+        if (obj.name in mLine && mLine[obj.name] != null) {
           sdp.push(makeLine(type, obj, mLine));
         }
-        else if (obj.push in mLine && typeof mLine[obj.push] !== 'undefined') {
+        else if (obj.push in mLine && mLine[obj.push] != null) {
           mLine[obj.push].forEach(function (el) {
             sdp.push(makeLine(type, obj, el));
           });
