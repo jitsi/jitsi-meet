@@ -1,3 +1,4 @@
+NPM = npm
 BROWSERIFY = browserify
 GLOBAL_FLAGS = -x jquery -e
 OUTPUT_DIR = .
@@ -14,7 +15,7 @@ compile-debug:FLAGS = -d $(GLOBAL_FLAGS)
 compile-debug: app
 
 app:
-	$(BROWSERIFY) $(FLAGS) app.js -s APP -o $(OUTPUT_DIR)/app.bundle.js
+	$(NPM) update && $(BROWSERIFY) $(FLAGS) app.js -s APP -o $(OUTPUT_DIR)/app.bundle.js
 
 clean:
 	@rm -f $(OUTPUT_DIR)/*.bundle.js
