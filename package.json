@@ -18,7 +18,7 @@
       "events": "*",
       "pako": "*",
       "i18next-client": "*",
-      "sdp-interop": "https://github.com/jitsi/sdp-interop/tarball/master"
+      "sdp-interop": "jitsi/sdp-interop#f65fedfe57a"
   },
   "devDependencies": {
   },
