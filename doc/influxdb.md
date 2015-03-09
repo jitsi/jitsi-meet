@@ -10,11 +10,13 @@ The details are outside the scope of the document, see http://influxdb.com/downl
 ## Enable logging for Jitsi Videobridge
 Add the following properties to <code>/usr/share/jitsi-videobridge/.sip-communicator/sip-communicator.properties</code>.
 
-###org.jitsi.videobridge.log.INFLUX\_DB\_ENABLED=true
-###org.jitsi.videobridge.log.INFLUX\_URL\_BASE=http://influxdb.example.com:8086
-###org.jitsi.videobridge.log.INFLUX\_DATABASE=jitsi_database
-###org.jitsi.videobridge.log.INFLUX\_USER=user
-###org.jitsi.videobridge.log.INFLUX\_PASS=pass
+<ul>
+<li>org.jitsi.videobridge.log.INFLUX_DB_ENABLED=true</li>
+<li>org.jitsi.videobridge.log.INFLUX_URL_BASE=http://influxdb.example.com:8086</li>
+<li>org.jitsi.videobridge.log.INFLUX_DATABASE=jitsi_database</li>
+<li>org.jitsi.videobridge.log.INFLUX_USER=user</li>
+<li>org.jitsi.videobridge.log.INFLUX_PASS=pass</li>
+</ul>
 
 ## Enable logging for Jicofo
 Add the same properties as above to <code>/usr/share/jitsi-videobridge/.sip-communicator/sip-communicator.properties</code>.
