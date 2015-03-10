@@ -1,4 +1,4 @@
-/* global $, jQuery */
+/* global $, APP, jQuery, toastr */
 var messageHandler = (function(my) {
 
     /**
@@ -37,17 +37,21 @@ var messageHandler = (function(my) {
         persistent, leftButtonKey, submitFunction, loadedFunction,
         closeFunction)
     {
+        var buttons = [];
+
         var leftButton = APP.translation.generateTranslatonHTML(leftButtonKey);
-        var buttons = {};
-        buttons.button1 = {title: leftButton, value: true};
-        var cancelButton = APP.translation.generateTranslatonHTML("dialog.Cancel");
-        buttons.button2 = {title: cancelButton, value: false};
+        buttons.push({ title: leftButton, value: true});
+
+        var cancelButton
+            = APP.translation.generateTranslatonHTML("dialog.Cancel");
+        buttons.push({title: cancelButton, value: false});
+
         var message = msgString, title = titleString;
-        if(titleKey)
+        if (titleKey)
         {
             title = APP.translation.generateTranslatonHTML(titleKey);
         }
-        if(msgKey) {
+        if (msgKey) {
             message = APP.translation.generateTranslatonHTML(msgKey);
         }
         $.prompt(message, {

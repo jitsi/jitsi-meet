@@ -1,3 +1,5 @@
+/* global $, APP */
+
 /* Initial "authentication required" dialog */
 var authDialog = null;
 /* Loop retry ID that wits for other user to create the room */
@@ -8,7 +10,7 @@ var Authentication = {
     openAuthenticationDialog: function (roomName, intervalCallback, callback) {
         // This is the loop that will wait for the room to be created by
         // someone else. 'auth_required.moderator' will bring us back here.
-        authRetryId = window.setTimeout(intervalCallback , 5000);
+        authRetryId = window.setTimeout(intervalCallback, 5000);
         // Show prompt only if it's not open
         if (authDialog !== null) {
             return;
@@ -19,10 +21,11 @@ var Authentication = {
         var title = APP.translation.generateTranslatonHTML("dialog.Stop");
         var msg = APP.translation.generateTranslatonHTML("dialog.AuthMsg",
             {room: room});
-        var button = APP.translation.generateTranslatonHTML(
-            "dialog.Authenticate");
-        var buttons = {};
-        buttons.authenticate = {title: button, value: "authNow"};
+
+        var buttonTxt
+            = APP.translation.generateTranslatonHTML("dialog.Authenticate");
+        var buttons = [];
+        buttons.push({title: buttonTxt, value: "authNow"});
 
         authDialog = APP.UI.messageHandler.openDialog(
             title,
@@ -41,7 +44,7 @@ var Authentication = {
             }
         );
     },
-    closeAuthenticationWindow:function () {
+    closeAuthenticationWindow: function () {
         if (authenticationWindow) {
             authenticationWindow.close();
             authenticationWindow = null;

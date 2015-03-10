@@ -104,8 +104,8 @@ function hangup() {
         "dialog.hungUp");
     var button = APP.translation.generateTranslatonHTML(
         "dialog.joinAgain");
-    var buttons = {};
-    buttons.joinAgain = {title: button, value: true};
+    var buttons = [];
+    buttons.push({title: button, value: true});
 
     UI.messageHandler.openDialog(
         title,

@@ -66,11 +66,15 @@ var Prezi = {
                 "dialog.Share");
             var backButton = APP.translation.generateTranslatonHTML(
                 "dialog.Back");
-            var buttons = {};
-            var buttons1 = {};
-            buttons1.button1 = buttons.button1 = {title: cancelButton, value: false};
-            buttons.button2 = {title: shareButton, value: true};
-            buttons1.button2 = {title: backButton, value: true};
+            var buttons = [];
+            var buttons1 = [];
+            // Cancel button to both states
+            buttons.push({title: cancelButton, value: false});
+            buttons1.push({title: cancelButton, value: false});
+            // Share button
+            buttons.push({title: shareButton, value: true});
+            // Back button
+            buttons1.push({title: backButton, value: true});
             var linkError = APP.translation.generateTranslatonHTML(
                 "dialog.preziLinkError");
             var defaultUrl = APP.translation.translateString("defaultPreziLink",
