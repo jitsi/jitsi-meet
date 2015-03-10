@@ -4,6 +4,7 @@ var SDPDiffer = require("./SDPDiffer");
 var SDPUtil = require("./SDPUtil");
 var SDP = require("./SDP");
 var RTCBrowserType = require("../../service/RTC/RTCBrowserType");
+var RTC = require("../RTC/RTC");
 
 // Jingle stuff
 function JingleSession(me, sid, connection, service) {

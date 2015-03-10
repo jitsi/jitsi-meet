@@ -3,7 +3,7 @@ var UIEvents = require("../../../service/UI/UIEvents");
 var nickname = null;
 var eventEmitter = null;
 
-var NickanameHandler = {
+var NicknameHandler = {
     init: function (emitter) {
         eventEmitter = emitter;
         var storedDisplayName = window.localStorage.displayname;
@@ -27,4 +27,4 @@ var NickanameHandler = {
     }
 };
 
-module.exports = NickanameHandler;
+module.exports = NicknameHandler;

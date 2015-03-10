@@ -30,9 +30,9 @@ var RTC = {
 
         eventEmitter.removeListener(eventType, listener);
     },
-    createLocalStream: function (stream, type, change) {
+    createLocalStream: function (stream, type, change, videoType) {
 
-        var localStream =  new LocalStream(stream, type, eventEmitter);
+        var localStream =  new LocalStream(stream, type, eventEmitter, videoType);
         //in firefox we have only one stream object
         if(this.localStreams.length == 0 ||
             this.localStreams[0].getOriginalStream() != stream)
@@ -188,7 +188,8 @@ var RTC = {
             // local video
             stream = this.localVideo;
         } else {
-            var peerStreams = this.remoteStreams[jid];
+            var peerJid = APP.xmpp.findJidFromResource(jid);
+            var peerStreams = this.remoteStreams[peerJid];
             if(!peerStreams)
                 return false;
             stream = peerStreams[MediaStreamType.VIDEO_TYPE];
