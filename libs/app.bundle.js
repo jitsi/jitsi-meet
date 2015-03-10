@@ -1,4 +1,4 @@
-(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.APP = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.APP=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 /* jshint -W117 */
 /* application specific logic */
 
@@ -15,6 +15,7 @@ var APP =
         this.xmpp = require("./modules/xmpp/xmpp");
         this.keyboardshortcut = require("./modules/keyboardshortcut/keyboardshortcut");
         this.translation = require("./modules/translation/translation");
+        this.settings = require("./modules/settings/Settings");
     }
 };
 
@@ -53,7 +54,7 @@ $(window).bind('beforeunload', function () {
 module.exports = APP;
 
 
-},{"./modules/API/API":2,"./modules/RTC/RTC":6,"./modules/UI/UI":8,"./modules/connectionquality/connectionquality":34,"./modules/desktopsharing/desktopsharing":35,"./modules/keyboardshortcut/keyboardshortcut":36,"./modules/simulcast/simulcast":42,"./modules/statistics/statistics":45,"./modules/translation/translation":46,"./modules/xmpp/xmpp":60}],2:[function(require,module,exports){
+},{"./modules/API/API":2,"./modules/RTC/RTC":6,"./modules/UI/UI":8,"./modules/connectionquality/connectionquality":34,"./modules/desktopsharing/desktopsharing":35,"./modules/keyboardshortcut/keyboardshortcut":36,"./modules/settings/Settings":37,"./modules/simulcast/simulcast":42,"./modules/statistics/statistics":45,"./modules/translation/translation":46,"./modules/xmpp/xmpp":60}],2:[function(require,module,exports){
 /**
  * Implements API class that communicates with external api class
  * and provides interface to access Jitsi Meet features by external
@@ -285,7 +286,7 @@ var API = {
 };
 
 module.exports = API;
-},{"../../service/xmpp/XMPPEvents":97}],3:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":96}],3:[function(require,module,exports){
 /* global Strophe, updateLargeVideo, focusedVideoSrc*/
 
 // cache datachannels to avoid garbage collection
@@ -521,7 +522,7 @@ function onPinnedEndpointChanged(userResource)
 module.exports = DataChannels;
 
 
-},{"../../service/RTC/RTCEvents":89}],4:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":88}],4:[function(require,module,exports){
 var StreamEventTypes = require("../../service/RTC/StreamEventTypes.js");
 
 function LocalStream(stream, type, eventEmitter, videoType)
@@ -609,7 +610,7 @@ LocalStream.prototype.getId = function () {
 
 module.exports = LocalStream;
 
-},{"../../service/RTC/StreamEventTypes.js":91}],5:[function(require,module,exports){
+},{"../../service/RTC/StreamEventTypes.js":90}],5:[function(require,module,exports){
 ////These lines should be uncommented when require works in app.js
 var RTCBrowserType = require("../../service/RTC/RTCBrowserType.js");
 var MediaStreamType = require("../../service/RTC/MediaStreamTypes");
@@ -662,7 +663,7 @@ MediaStream.prototype.setMute = function (value)
 
 module.exports = MediaStream;
 
-},{"../../service/RTC/MediaStreamTypes":87,"../../service/RTC/RTCBrowserType.js":88}],6:[function(require,module,exports){
+},{"../../service/RTC/MediaStreamTypes":86,"../../service/RTC/RTCBrowserType.js":87}],6:[function(require,module,exports){
 var EventEmitter = require("events");
 var RTCUtils = require("./RTCUtils.js");
 var LocalStream = require("./LocalStream.js");
@@ -868,7 +869,7 @@ var RTC = {
 
 module.exports = RTC;
 
-},{"../../service/RTC/MediaStreamTypes":87,"../../service/RTC/StreamEventTypes.js":91,"../../service/UI/UIEvents":92,"../../service/desktopsharing/DesktopSharingEventTypes":95,"../../service/xmpp/XMPPEvents":97,"./DataChannels":3,"./LocalStream.js":4,"./MediaStream.js":5,"./RTCUtils.js":7,"events":61}],7:[function(require,module,exports){
+},{"../../service/RTC/MediaStreamTypes":86,"../../service/RTC/StreamEventTypes.js":90,"../../service/UI/UIEvents":91,"../../service/desktopsharing/DesktopSharingEventTypes":94,"../../service/xmpp/XMPPEvents":96,"./DataChannels":3,"./LocalStream.js":4,"./MediaStream.js":5,"./RTCUtils.js":7,"events":97}],7:[function(require,module,exports){
 var RTCBrowserType = require("../../service/RTC/RTCBrowserType.js");
 var Resolutions = require("../../service/RTC/Resolutions");
 
@@ -1235,7 +1236,7 @@ RTCUtils.prototype.handleLocalStream = function(stream)
 
 module.exports = RTCUtils;
 
-},{"../../service/RTC/RTCBrowserType.js":88,"../../service/RTC/Resolutions":90}],8:[function(require,module,exports){
+},{"../../service/RTC/RTCBrowserType.js":87,"../../service/RTC/Resolutions":89}],8:[function(require,module,exports){
 var UI = {};
 
 var VideoLayout = require("./videolayout/VideoLayout.js");
@@ -1631,9 +1632,8 @@ function updateChatConversation(from, displayName, message) {
 
 function onMucJoined(jid, info) {
     Toolbar.updateRoomUrl(window.location.href);
-    document.getElementById('localNick').appendChild(
-        document.createTextNode(Strophe.getResourceFromJid(jid) + ' (me)')
-    );
+    var meHTML = APP.translation.generateTranslatonHTML("me");
+    $("#localNick").html(Strophe.getResourceFromJid(jid) + " (" + meHTML + ")");
 
     var settings = Settings.getSettings();
     // Add myself to the contact list.
@@ -1646,7 +1646,7 @@ function onMucJoined(jid, info) {
         ? info.displayName : Strophe.getResourceFromJid(jid);
 
     if (displayName)
-        onDisplayNameChanged('localVideoContainer', displayName + ' (me)');
+        onDisplayNameChanged('localVideoContainer', displayName);
 }
 
 function initEtherpad(name) {
@@ -1999,7 +1999,7 @@ UI.dockToolbar = function (isDock) {
 module.exports = UI;
 
 
-},{"../../service/RTC/RTCEvents":89,"../../service/RTC/StreamEventTypes":91,"../../service/connectionquality/CQEvents":94,"../../service/desktopsharing/DesktopSharingEventTypes":95,"../../service/xmpp/XMPPEvents":97,"./../settings/Settings":37,"./audio_levels/AudioLevels.js":9,"./authentication/Authentication":11,"./avatar/Avatar":12,"./etherpad/Etherpad.js":13,"./prezi/Prezi.js":14,"./side_pannels/SidePanelToggler":16,"./side_pannels/chat/Chat.js":17,"./side_pannels/contactlist/ContactList":21,"./side_pannels/settings/SettingsMenu":22,"./toolbars/BottomToolbar":23,"./toolbars/Toolbar":24,"./toolbars/ToolbarToggler":25,"./util/MessageHandler":27,"./util/NicknameHandler":28,"./util/UIUtil":29,"./videolayout/VideoLayout.js":31,"./welcome_page/RoomnameGenerator":32,"./welcome_page/WelcomePage":33,"events":61}],9:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":88,"../../service/RTC/StreamEventTypes":90,"../../service/connectionquality/CQEvents":93,"../../service/desktopsharing/DesktopSharingEventTypes":94,"../../service/xmpp/XMPPEvents":96,"./../settings/Settings":37,"./audio_levels/AudioLevels.js":9,"./authentication/Authentication":11,"./avatar/Avatar":12,"./etherpad/Etherpad.js":13,"./prezi/Prezi.js":14,"./side_pannels/SidePanelToggler":16,"./side_pannels/chat/Chat.js":17,"./side_pannels/contactlist/ContactList":21,"./side_pannels/settings/SettingsMenu":22,"./toolbars/BottomToolbar":23,"./toolbars/Toolbar":24,"./toolbars/ToolbarToggler":25,"./util/MessageHandler":27,"./util/NicknameHandler":28,"./util/UIUtil":29,"./videolayout/VideoLayout.js":31,"./welcome_page/RoomnameGenerator":32,"./welcome_page/WelcomePage":33,"events":97}],9:[function(require,module,exports){
 var CanvasUtil = require("./CanvasUtils");
 
 var ASDrawContext = $('#activeSpeakerAudioLevel')[0].getContext('2d');
@@ -2622,7 +2622,7 @@ var Avatar = {
 
 
 module.exports = Avatar;
-},{"../../../service/RTC/MediaStreamTypes":87,"../../settings/Settings":37,"../videolayout/VideoLayout":31}],13:[function(require,module,exports){
+},{"../../../service/RTC/MediaStreamTypes":86,"../../settings/Settings":37,"../videolayout/VideoLayout":31}],13:[function(require,module,exports){
 /* global $, config,
    setLargeVideoVisible, Util */
 
@@ -2894,12 +2894,15 @@ var Prezi = {
             buttons1.button2 = {title: backButton, value: true};
             var linkError = APP.translation.generateTranslatonHTML(
                 "dialog.preziLinkError");
+            var defaultUrl = APP.translation.translateString("defaultPreziLink",
+                {url: "http://prezi.com/wz7vhjycl7e6/my-prezi"});
             var openPreziState = {
                 state0: {
                     html:   '<h2>' + html + '</h2>' +
                             '<input id="preziUrl" type="text" ' +
-                            'placeholder="e.g. ' +
-                            'http://prezi.com/wz7vhjycl7e6/my-prezi" autofocus>',
+                            'data-i18n="[placeholder]defaultPreziLink" data-i18n-options=\'' +
+                            JSON.stringify({"url": "http://prezi.com/wz7vhjycl7e6/my-prezi"}) +
+                            '\' placeholder="' + defaultUrl + '" autofocus>',
                     persistent: false,
                     buttons: buttons,
                     defaultButton: 1,
@@ -4099,7 +4102,7 @@ var Chat = (function (my) {
     return my;
 }(Chat || {}));
 module.exports = Chat;
-},{"../../../../service/UI/UIEvents":92,"../../toolbars/ToolbarToggler":25,"../../util/NicknameHandler":28,"../../util/UIUtil":29,"../SidePanelToggler":16,"./Commands":18,"./Replacement":19,"./smileys.json":20}],18:[function(require,module,exports){
+},{"../../../../service/UI/UIEvents":91,"../../toolbars/ToolbarToggler":25,"../../util/NicknameHandler":28,"../../util/UIUtil":29,"../SidePanelToggler":16,"./Commands":18,"./Replacement":19,"./smileys.json":20}],18:[function(require,module,exports){
 var UIUtil = require("../../util/UIUtil");
 
 /**
@@ -4352,9 +4355,15 @@ function createAvatar(id) {
  *
  * @param displayName the display name to set
  */
-function createDisplayNameParagraph(displayName) {
+function createDisplayNameParagraph(key, displayName) {
     var p = document.createElement('p');
-    p.innerText = displayName;
+    if(displayName)
+        p.innerText = displayName;
+    else if(key)
+    {
+        p.setAttribute("data-i18n",key);
+        p.innerText = APP.translation.translateString(key);
+    }
 
     return p;
 }
@@ -4420,7 +4429,7 @@ var ContactList = {
         };
 
         newContact.appendChild(createAvatar(id));
-        newContact.appendChild(createDisplayNameParagraph("Participant"));
+        newContact.appendChild(createDisplayNameParagraph("participant"));
 
         var clElement = contactlist.get(0);
 
@@ -4576,7 +4585,7 @@ var SettingsMenu = {
 
 
 module.exports = SettingsMenu;
-},{"../../../../service/translation/languages":96,"../../avatar/Avatar":12,"../../util/UIUtil":29,"./../../../settings/Settings":37}],23:[function(require,module,exports){
+},{"../../../../service/translation/languages":95,"../../avatar/Avatar":12,"../../util/UIUtil":29,"./../../../settings/Settings":37}],23:[function(require,module,exports){
 var PanelToggler = require("../side_pannels/SidePanelToggler");
 
 var buttonHandlers = {
@@ -4821,25 +4830,16 @@ function inviteParticipants() {
     var sharedKeyText = "";
     if (sharedKey && sharedKey.length > 0) {
         sharedKeyText =
-            "This conference is password protected. Please use the " +
-            "following pin when joining:%0D%0A%0D%0A" +
-            sharedKey + "%0D%0A%0D%0A";
+            APP.translation.translateString("email.sharedKey",
+                {sharedKey: sharedKey});
     }
 
     var conferenceName = roomUrl.substring(roomUrl.lastIndexOf('/') + 1);
-    var subject = "Invitation to a " + interfaceConfig.APP_NAME + " (" + conferenceName + ")";
-    var body = "Hey there, I%27d like to invite you to a " + interfaceConfig.APP_NAME +
-        " conference I%27ve just set up.%0D%0A%0D%0A" +
-        "Please click on the following link in order" +
-        " to join the conference.%0D%0A%0D%0A" +
-        roomUrl +
-        "%0D%0A%0D%0A" +
-        sharedKeyText +
-        "Note that " + interfaceConfig.APP_NAME + " is currently" +
-        " only supported by Chromium," +
-        " Google Chrome and Opera, so you need" +
-        " to be using one of these browsers.%0D%0A%0D%0A" +
-        "Talk to you in a sec!";
+    var subject = APP.translation.translateString("email.subject",
+        {appName:interfaceConfig.APP_NAME, conferenceName: conferenceName});
+    var body = APP.translation.translateString("email.body",
+        {appName:interfaceConfig.APP_NAME, sharedKeyText: sharedKeyText,
+            roomUrl: roomUrl});
 
     if (window.localStorage.displayname) {
         body += "%0D%0A%0D%0A" + window.localStorage.displayname;
@@ -5033,16 +5033,18 @@ var Toolbar = (function (my) {
      * Opens the invite link dialog.
      */
     my.openLinkDialog = function () {
-        var inviteLink;
+        var inviteAttreibutes;
+
         if (roomUrl === null) {
-            inviteLink = "Your conference is currently being created...";
+            inviteAttreibutes = 'data-i18n="[value]roomUrlDefaultMsg" value="' +
+            APP.translation.translateString("roomUrlDefaultMsg") + '"';
         } else {
-            inviteLink = encodeURI(roomUrl);
+            inviteAttreibutes = "value=\"" + encodeURI(roomUrl) + "\"";
         }
         messageHandler.openTwoButtonDialog("dialog.shareLink",
             null, null,
-            '<input id="inviteLinkRef" type="text" value="' +
-                inviteLink + '" onclick="this.select();" readonly>',
+            '<input id="inviteLinkRef" type="text" ' +
+                inviteAttreibutes + ' onclick="this.select();" readonly>',
             false,
             "dialog.Invite",
             function (e, v) {
@@ -5258,7 +5260,7 @@ var Toolbar = (function (my) {
 }(Toolbar || {}));
 
 module.exports = Toolbar;
-},{"../../../service/authentication/AuthenticationEvents":93,"../authentication/Authentication":11,"../etherpad/Etherpad":13,"../prezi/Prezi":14,"../side_pannels/SidePanelToggler":16,"../util/MessageHandler":27,"../util/UIUtil":29,"./BottomToolbar":23}],25:[function(require,module,exports){
+},{"../../../service/authentication/AuthenticationEvents":92,"../authentication/Authentication":11,"../etherpad/Etherpad":13,"../prezi/Prezi":14,"../side_pannels/SidePanelToggler":16,"../util/MessageHandler":27,"../util/UIUtil":29,"./BottomToolbar":23}],25:[function(require,module,exports){
 /* global $, interfaceConfig, Moderator, DesktopStreaming.showDesktopSharingButton */
 
 var toolbarTimeoutObject,
@@ -5733,7 +5735,7 @@ var NickanameHandler = {
 };
 
 module.exports = NickanameHandler;
-},{"../../../service/UI/UIEvents":92}],29:[function(require,module,exports){
+},{"../../../service/UI/UIEvents":91}],29:[function(require,module,exports){
 /**
  * Created by hristo on 12/22/14.
  */
@@ -6437,9 +6439,10 @@ function getCameraVideoSize(videoWidth,
 /**
  * Sets the display name for the given video span id.
  */
-function setDisplayName(videoSpanId, displayName) {
+function setDisplayName(videoSpanId, displayName, key) {
     var nameSpan = $('#' + videoSpanId + '>span.displayname');
-    var defaultLocalDisplayName = interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME;
+    var defaultLocalDisplayName = APP.translation.generateTranslatonHTML(
+        interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME);
 
     // If we already have a display name for this video.
     if (nameSpan.length > 0) {
@@ -6448,14 +6451,25 @@ function setDisplayName(videoSpanId, displayName) {
         if (nameSpanElement.id === 'localDisplayName' &&
             $('#localDisplayName').text() !== displayName) {
             if (displayName && displayName.length > 0)
-                $('#localDisplayName').html(displayName + ' (me)');
+            {
+                var meHTML = APP.translation.generateTranslatonHTML("me");
+                $('#localDisplayName').html(displayName + ' (' + meHTML + ')');
+            }
             else
-                $('#localDisplayName').text(defaultLocalDisplayName);
+                $('#localDisplayName').html(defaultLocalDisplayName);
         } else {
             if (displayName && displayName.length > 0)
+            {
                 $('#' + videoSpanId + '_name').html(displayName);
+            }
+            else if (key && key.length > 0)
+            {
+                var nameHtml = APP.translation.generateTranslatonHTML(key);
+                $('#' + videoSpanId + '_name').html(nameHtml);
+            }
             else
-                $('#' + videoSpanId + '_name').text(interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME);
+                $('#' + videoSpanId + '_name').text(
+                    interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME);
         }
     } else {
         var editButton = null;
@@ -6466,15 +6480,22 @@ function setDisplayName(videoSpanId, displayName) {
 
         if (videoSpanId === 'localVideoContainer') {
             editButton = createEditDisplayNameButton();
-            nameSpan.innerText = defaultLocalDisplayName;
+            if (displayName && displayName.length > 0) {
+                var meHTML = APP.translation.generateTranslatonHTML("me");
+                nameSpan.innerHTML = displayName + meHTML;
+            }
+            else
+                nameSpan.innerHTML = defaultLocalDisplayName;
         }
         else {
-            nameSpan.innerText = interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME;
+            if (displayName && displayName.length > 0) {
+
+                nameSpan.innerText = displayName;
+            }
+            else
+                nameSpan.innerText = interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME;
         }
 
-        if (displayName && displayName.length > 0) {
-            nameSpan.innerText = displayName;
-        }
 
         if (!editButton) {
             nameSpan.id = videoSpanId + '_name';
@@ -6491,11 +6512,18 @@ function setDisplayName(videoSpanId, displayName) {
 
             if (displayName && displayName.length) {
                 editableText.value
-                    = displayName.substring(0, displayName.indexOf(' (me)'));
+                    = displayName;
             }
 
+            var defaultNickname = APP.translation.translateString(
+                "defaultNickname", {name: "Jane Pink"});
             editableText.setAttribute('style', 'display:none;');
-            editableText.setAttribute('placeholder', 'ex. Jane Pink');
+            editableText.setAttribute('data-18n',
+                '[placeholder]defaultNickname');
+            editableText.setAttribute("data-i18n-options",
+                JSON.stringify({name: "Jane Pink"}));
+            editableText.setAttribute("placeholder", defaultNickname);
+
             $('#' + videoSpanId)[0].appendChild(editableText);
 
             $('#localVideoContainer .displayname')
@@ -7516,10 +7544,17 @@ var VideoLayout = (function (my) {
 
         if (!$('#localDisplayName').is(":visible")) {
             if (NicknameHandler.getNickname())
-                $('#localDisplayName').text(NicknameHandler.getNickname() + " (me)");
+            {
+                var meHTML = APP.translation.generateTranslatonHTML("me");
+                $('#localDisplayName').html(NicknameHandler.getNickname() + " (" + meHTML + ")");
+            }
             else
+            {
+                var defaultHTML = APP.translation.generateTranslatonHTML(
+                    interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME);
                 $('#localDisplayName')
-                    .text(interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME);
+                    .html(defaultHTML);
+            }
             $('#localDisplayName').show();
         }
 
@@ -8042,17 +8077,20 @@ var VideoLayout = (function (my) {
                 === APP.xmpp.myResource())
             return;
 
+        var members = APP.xmpp.getMembers();
         // Update the current dominant speaker.
         if (resourceJid !== currentDominantSpeaker) {
             var oldSpeakerVideoSpanId = "participant_" + currentDominantSpeaker,
                 newSpeakerVideoSpanId = "participant_" + resourceJid;
-            if($("#" + oldSpeakerVideoSpanId + ">span.displayname").text() ===
-                interfaceConfig.DEFAULT_DOMINANT_SPEAKER_DISPLAY_NAME) {
+            var currentJID = APP.xmpp.findJidFromResource(currentDominantSpeaker);
+            var newJID = APP.xmpp.findJidFromResource(resourceJid);
+            if(currentDominantSpeaker && (!members || !members[currentJID] ||
+                !members[currentJID].displayName)) {
                 setDisplayName(oldSpeakerVideoSpanId, null);
             }
-            if($("#" + newSpeakerVideoSpanId + ">span.displayname").text() ===
-                interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME) {
-                setDisplayName(newSpeakerVideoSpanId,
+            if(resourceJid && (!members || !members[newJID] ||
+                !members[newJID].displayName)) {
+                setDisplayName(newSpeakerVideoSpanId, null,
                     interfaceConfig.DEFAULT_DOMINANT_SPEAKER_DISPLAY_NAME);
             }
             currentDominantSpeaker = resourceJid;
@@ -8446,7 +8484,7 @@ var VideoLayout = (function (my) {
 }(VideoLayout || {}));
 
 module.exports = VideoLayout;
-},{"../../../service/RTC/MediaStreamTypes":87,"../../../service/UI/UIEvents":92,"../audio_levels/AudioLevels":9,"../avatar/Avatar":12,"../etherpad/Etherpad":13,"../prezi/Prezi":14,"../side_pannels/chat/Chat":17,"../side_pannels/contactlist/ContactList":21,"../util/NicknameHandler":28,"../util/UIUtil":29,"./ConnectionIndicator":30}],32:[function(require,module,exports){
+},{"../../../service/RTC/MediaStreamTypes":86,"../../../service/UI/UIEvents":91,"../audio_levels/AudioLevels":9,"../avatar/Avatar":12,"../etherpad/Etherpad":13,"../prezi/Prezi":14,"../side_pannels/chat/Chat":17,"../side_pannels/contactlist/ContactList":21,"../util/NicknameHandler":28,"../util/UIUtil":29,"./ConnectionIndicator":30}],32:[function(require,module,exports){
 //var nouns = [
 //];
 var pluralNouns = [
@@ -8864,7 +8902,7 @@ var ConnectionQuality = {
 };
 
 module.exports = ConnectionQuality;
-},{"../../service/connectionquality/CQEvents":94,"../../service/xmpp/XMPPEvents":97,"events":61}],35:[function(require,module,exports){
+},{"../../service/connectionquality/CQEvents":93,"../../service/xmpp/XMPPEvents":96,"events":97}],35:[function(require,module,exports){
 /* global $, alert, changeLocalVideo, chrome, config, getConferenceHandler, getUserMediaWithConstraints */
 /**
  * Indicates that desktop stream is currently in use(for toggle purpose).
@@ -9189,7 +9227,7 @@ module.exports = {
 };
 
 
-},{"../../service/desktopsharing/DesktopSharingEventTypes":95,"events":61}],36:[function(require,module,exports){
+},{"../../service/desktopsharing/DesktopSharingEventTypes":94,"events":97}],36:[function(require,module,exports){
 //maps keycode to character, id of popover for given function and function
 var shortcuts = {
     67: {
@@ -9651,7 +9689,7 @@ SimulcastReceiver.prototype.transformRemoteDescription = function (desc) {
 };
 
 module.exports = SimulcastReceiver;
-},{"../../service/RTC/MediaStreamTypes":87,"./SimulcastLogger":38,"./SimulcastUtils":41}],40:[function(require,module,exports){
+},{"../../service/RTC/MediaStreamTypes":86,"./SimulcastLogger":38,"./SimulcastUtils":41}],40:[function(require,module,exports){
 var SimulcastLogger = require("./SimulcastLogger");
 var SimulcastUtils = require("./SimulcastUtils");
 
@@ -10611,7 +10649,7 @@ SimulcastManager.prototype.resetSender = function() {
 var simulcast = new SimulcastManager();
 
 module.exports = simulcast;
-},{"../../service/RTC/RTCEvents":89,"./SimulcastReceiver":39,"./SimulcastSender":40,"./SimulcastUtils":41}],43:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":88,"./SimulcastReceiver":39,"./SimulcastSender":40,"./SimulcastUtils":41}],43:[function(require,module,exports){
 /**
  * Provides statistics for the local stream.
  */
@@ -11485,7 +11523,7 @@ StatsCollector.prototype.processAudioLevelReport = function ()
 
 };
 
-},{"../../service/RTC/RTCBrowserType":88}],45:[function(require,module,exports){
+},{"../../service/RTC/RTCBrowserType":87}],45:[function(require,module,exports){
 /**
  * Created by hristo on 8/4/14.
  */
@@ -11618,7 +11656,7 @@ var statistics =
 
 
 module.exports = statistics;
-},{"../../service/RTC/StreamEventTypes.js":91,"../../service/xmpp/XMPPEvents":97,"./LocalStatsCollector.js":43,"./RTPStatsCollector.js":44,"events":61}],46:[function(require,module,exports){
+},{"../../service/RTC/StreamEventTypes.js":90,"../../service/xmpp/XMPPEvents":96,"./LocalStatsCollector.js":43,"./RTPStatsCollector.js":44,"events":97}],46:[function(require,module,exports){
 var i18n = require("i18next-client");
 var languages = require("../../service/translation/languages");
 var Settings = require("../settings/Settings");
@@ -11752,7 +11790,7 @@ module.exports = {
     }
 };
 
-},{"../../service/translation/languages":96,"../settings/Settings":37,"i18next-client":62}],47:[function(require,module,exports){
+},{"../../service/translation/languages":95,"../settings/Settings":37,"i18next-client":61}],47:[function(require,module,exports){
 /* jshint -W117 */
 var TraceablePeerConnection = require("./TraceablePeerConnection");
 var SDPDiffer = require("./SDPDiffer");
@@ -13139,7 +13177,7 @@ JingleSession.prototype.remoteStreamAdded = function (data, times) {
 
 module.exports = JingleSession;
 
-},{"../../service/RTC/RTCBrowserType":88,"./SDP":48,"./SDPDiffer":49,"./SDPUtil":50,"./TraceablePeerConnection":51}],48:[function(require,module,exports){
+},{"../../service/RTC/RTCBrowserType":87,"./SDP":48,"./SDPDiffer":49,"./SDPUtil":50,"./TraceablePeerConnection":51}],48:[function(require,module,exports){
 /* jshint -W117 */
 var SDPUtil = require("./SDPUtil");
 
@@ -14591,7 +14629,7 @@ TraceablePeerConnection.prototype.getStats = function(callback, errback) {
 module.exports = TraceablePeerConnection;
 
 
-},{"sdp-interop":80}],52:[function(require,module,exports){
+},{"sdp-interop":79}],52:[function(require,module,exports){
 /* global $, $iq, APP, config, connection, UI, messageHandler,
  roomName, sessionTerminated, Strophe, Util */
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
@@ -15016,7 +15054,7 @@ module.exports = Moderator;
 
 
 
-},{"../../service/authentication/AuthenticationEvents":93,"../../service/xmpp/XMPPEvents":97,"../settings/Settings":37}],53:[function(require,module,exports){
+},{"../../service/authentication/AuthenticationEvents":92,"../../service/xmpp/XMPPEvents":96,"../settings/Settings":37}],53:[function(require,module,exports){
 /* global $, $iq, config, connection, focusMucJid, messageHandler, Moderator,
    Toolbar, Util */
 var Moderator = require("./moderator");
@@ -15799,7 +15837,7 @@ module.exports = function(XMPP, eventEmitter) {
 };
 
 
-},{"../../service/xmpp/XMPPEvents":97,"./JingleSession":47,"./moderator":52}],55:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":96,"./JingleSession":47,"./moderator":52}],55:[function(require,module,exports){
 /* jshint -W117 */
 
 var JingleSession = require("./JingleSession");
@@ -16138,7 +16176,7 @@ module.exports = function(XMPP, eventEmitter)
 };
 
 
-},{"../../service/xmpp/XMPPEvents":97,"./JingleSession":47}],56:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":96,"./JingleSession":47}],56:[function(require,module,exports){
 /* global Strophe */
 module.exports = function () {
 
@@ -16817,310 +16855,7 @@ var XMPP = {
 
 module.exports = XMPP;
 
-},{"../../service/RTC/StreamEventTypes":91,"../../service/UI/UIEvents":92,"../../service/xmpp/XMPPEvents":97,"./SDP":48,"./moderator":52,"./recording":53,"./strophe.emuc":54,"./strophe.jingle":55,"./strophe.logger":56,"./strophe.moderate":57,"./strophe.rayo":58,"./strophe.util":59,"events":61,"pako":63}],61:[function(require,module,exports){
-// Copyright Joyent, Inc. and other Node contributors.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the
-// following conditions:
-//
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-// USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-function EventEmitter() {
-  this._events = this._events || {};
-  this._maxListeners = this._maxListeners || undefined;
-}
-module.exports = EventEmitter;
-
-// Backwards-compat with node 0.10.x
-EventEmitter.EventEmitter = EventEmitter;
-
-EventEmitter.prototype._events = undefined;
-EventEmitter.prototype._maxListeners = undefined;
-
-// By default EventEmitters will print a warning if more than 10 listeners are
-// added to it. This is a useful default which helps finding memory leaks.
-EventEmitter.defaultMaxListeners = 10;
-
-// Obviously not all Emitters should be limited to 10. This function allows
-// that to be increased. Set to zero for unlimited.
-EventEmitter.prototype.setMaxListeners = function(n) {
-  if (!isNumber(n) || n < 0 || isNaN(n))
-    throw TypeError('n must be a positive number');
-  this._maxListeners = n;
-  return this;
-};
-
-EventEmitter.prototype.emit = function(type) {
-  var er, handler, len, args, i, listeners;
-
-  if (!this._events)
-    this._events = {};
-
-  // If there is no 'error' event listener then throw.
-  if (type === 'error') {
-    if (!this._events.error ||
-        (isObject(this._events.error) && !this._events.error.length)) {
-      er = arguments[1];
-      if (er instanceof Error) {
-        throw er; // Unhandled 'error' event
-      }
-      throw TypeError('Uncaught, unspecified "error" event.');
-    }
-  }
-
-  handler = this._events[type];
-
-  if (isUndefined(handler))
-    return false;
-
-  if (isFunction(handler)) {
-    switch (arguments.length) {
-      // fast cases
-      case 1:
-        handler.call(this);
-        break;
-      case 2:
-        handler.call(this, arguments[1]);
-        break;
-      case 3:
-        handler.call(this, arguments[1], arguments[2]);
-        break;
-      // slower
-      default:
-        len = arguments.length;
-        args = new Array(len - 1);
-        for (i = 1; i < len; i++)
-          args[i - 1] = arguments[i];
-        handler.apply(this, args);
-    }
-  } else if (isObject(handler)) {
-    len = arguments.length;
-    args = new Array(len - 1);
-    for (i = 1; i < len; i++)
-      args[i - 1] = arguments[i];
-
-    listeners = handler.slice();
-    len = listeners.length;
-    for (i = 0; i < len; i++)
-      listeners[i].apply(this, args);
-  }
-
-  return true;
-};
-
-EventEmitter.prototype.addListener = function(type, listener) {
-  var m;
-
-  if (!isFunction(listener))
-    throw TypeError('listener must be a function');
-
-  if (!this._events)
-    this._events = {};
-
-  // To avoid recursion in the case that type === "newListener"! Before
-  // adding it to the listeners, first emit "newListener".
-  if (this._events.newListener)
-    this.emit('newListener', type,
-              isFunction(listener.listener) ?
-              listener.listener : listener);
-
-  if (!this._events[type])
-    // Optimize the case of one listener. Don't need the extra array object.
-    this._events[type] = listener;
-  else if (isObject(this._events[type]))
-    // If we've already got an array, just append.
-    this._events[type].push(listener);
-  else
-    // Adding the second element, need to change to array.
-    this._events[type] = [this._events[type], listener];
-
-  // Check for listener leak
-  if (isObject(this._events[type]) && !this._events[type].warned) {
-    var m;
-    if (!isUndefined(this._maxListeners)) {
-      m = this._maxListeners;
-    } else {
-      m = EventEmitter.defaultMaxListeners;
-    }
-
-    if (m && m > 0 && this._events[type].length > m) {
-      this._events[type].warned = true;
-      console.error('(node) warning: possible EventEmitter memory ' +
-                    'leak detected. %d listeners added. ' +
-                    'Use emitter.setMaxListeners() to increase limit.',
-                    this._events[type].length);
-      if (typeof console.trace === 'function') {
-        // not supported in IE 10
-        console.trace();
-      }
-    }
-  }
-
-  return this;
-};
-
-EventEmitter.prototype.on = EventEmitter.prototype.addListener;
-
-EventEmitter.prototype.once = function(type, listener) {
-  if (!isFunction(listener))
-    throw TypeError('listener must be a function');
-
-  var fired = false;
-
-  function g() {
-    this.removeListener(type, g);
-
-    if (!fired) {
-      fired = true;
-      listener.apply(this, arguments);
-    }
-  }
-
-  g.listener = listener;
-  this.on(type, g);
-
-  return this;
-};
-
-// emits a 'removeListener' event iff the listener was removed
-EventEmitter.prototype.removeListener = function(type, listener) {
-  var list, position, length, i;
-
-  if (!isFunction(listener))
-    throw TypeError('listener must be a function');
-
-  if (!this._events || !this._events[type])
-    return this;
-
-  list = this._events[type];
-  length = list.length;
-  position = -1;
-
-  if (list === listener ||
-      (isFunction(list.listener) && list.listener === listener)) {
-    delete this._events[type];
-    if (this._events.removeListener)
-      this.emit('removeListener', type, listener);
-
-  } else if (isObject(list)) {
-    for (i = length; i-- > 0;) {
-      if (list[i] === listener ||
-          (list[i].listener && list[i].listener === listener)) {
-        position = i;
-        break;
-      }
-    }
-
-    if (position < 0)
-      return this;
-
-    if (list.length === 1) {
-      list.length = 0;
-      delete this._events[type];
-    } else {
-      list.splice(position, 1);
-    }
-
-    if (this._events.removeListener)
-      this.emit('removeListener', type, listener);
-  }
-
-  return this;
-};
-
-EventEmitter.prototype.removeAllListeners = function(type) {
-  var key, listeners;
-
-  if (!this._events)
-    return this;
-
-  // not listening for removeListener, no need to emit
-  if (!this._events.removeListener) {
-    if (arguments.length === 0)
-      this._events = {};
-    else if (this._events[type])
-      delete this._events[type];
-    return this;
-  }
-
-  // emit removeListener for all listeners on all events
-  if (arguments.length === 0) {
-    for (key in this._events) {
-      if (key === 'removeListener') continue;
-      this.removeAllListeners(key);
-    }
-    this.removeAllListeners('removeListener');
-    this._events = {};
-    return this;
-  }
-
-  listeners = this._events[type];
-
-  if (isFunction(listeners)) {
-    this.removeListener(type, listeners);
-  } else {
-    // LIFO order
-    while (listeners.length)
-      this.removeListener(type, listeners[listeners.length - 1]);
-  }
-  delete this._events[type];
-
-  return this;
-};
-
-EventEmitter.prototype.listeners = function(type) {
-  var ret;
-  if (!this._events || !this._events[type])
-    ret = [];
-  else if (isFunction(this._events[type]))
-    ret = [this._events[type]];
-  else
-    ret = this._events[type].slice();
-  return ret;
-};
-
-EventEmitter.listenerCount = function(emitter, type) {
-  var ret;
-  if (!emitter._events || !emitter._events[type])
-    ret = 0;
-  else if (isFunction(emitter._events[type]))
-    ret = 1;
-  else
-    ret = emitter._events[type].length;
-  return ret;
-};
-
-function isFunction(arg) {
-  return typeof arg === 'function';
-}
-
-function isNumber(arg) {
-  return typeof arg === 'number';
-}
-
-function isObject(arg) {
-  return typeof arg === 'object' && arg !== null;
-}
-
-function isUndefined(arg) {
-  return arg === void 0;
-}
-
-},{}],62:[function(require,module,exports){
+},{"../../service/RTC/StreamEventTypes":90,"../../service/UI/UIEvents":91,"../../service/xmpp/XMPPEvents":96,"./SDP":48,"./moderator":52,"./recording":53,"./strophe.emuc":54,"./strophe.jingle":55,"./strophe.logger":56,"./strophe.moderate":57,"./strophe.rayo":58,"./strophe.util":59,"events":97,"pako":62}],61:[function(require,module,exports){
 // i18next, v1.7.7
 // Copyright (c)2014 Jan Mühlemann (jamuhl).
 // Distributed under MIT license
@@ -19243,7 +18978,7 @@ function isUndefined(arg) {
     i18n.options = o;
 
 })();
-},{"jquery":"jquery"}],63:[function(require,module,exports){
+},{"jquery":"jquery"}],62:[function(require,module,exports){
 // Top level file is just a mixin of submodules & constants
 'use strict';
 
@@ -19258,7 +18993,7 @@ var pako = {};
 assign(pako, deflate, inflate, constants);
 
 module.exports = pako;
-},{"./lib/deflate":64,"./lib/inflate":65,"./lib/utils/common":66,"./lib/zlib/constants":69}],64:[function(require,module,exports){
+},{"./lib/deflate":63,"./lib/inflate":64,"./lib/utils/common":65,"./lib/zlib/constants":68}],63:[function(require,module,exports){
 'use strict';
 
 
@@ -19620,7 +19355,7 @@ exports.Deflate = Deflate;
 exports.deflate = deflate;
 exports.deflateRaw = deflateRaw;
 exports.gzip = gzip;
-},{"./utils/common":66,"./utils/strings":67,"./zlib/deflate.js":71,"./zlib/messages":76,"./zlib/zstream":78}],65:[function(require,module,exports){
+},{"./utils/common":65,"./utils/strings":66,"./zlib/deflate.js":70,"./zlib/messages":75,"./zlib/zstream":77}],64:[function(require,module,exports){
 'use strict';
 
 
@@ -19986,7 +19721,7 @@ exports.inflate = inflate;
 exports.inflateRaw = inflateRaw;
 exports.ungzip  = inflate;
 
-},{"./utils/common":66,"./utils/strings":67,"./zlib/constants":69,"./zlib/gzheader":72,"./zlib/inflate.js":74,"./zlib/messages":76,"./zlib/zstream":78}],66:[function(require,module,exports){
+},{"./utils/common":65,"./utils/strings":66,"./zlib/constants":68,"./zlib/gzheader":71,"./zlib/inflate.js":73,"./zlib/messages":75,"./zlib/zstream":77}],65:[function(require,module,exports){
 'use strict';
 
 
@@ -20089,7 +19824,7 @@ exports.setTyped = function (on) {
 };
 
 exports.setTyped(TYPED_OK);
-},{}],67:[function(require,module,exports){
+},{}],66:[function(require,module,exports){
 // String encode/decode helpers
 'use strict';
 
@@ -20276,7 +20011,7 @@ exports.utf8border = function(buf, max) {
   return (pos + _utf8len[buf[pos]] > max) ? pos : max;
 };
 
-},{"./common":66}],68:[function(require,module,exports){
+},{"./common":65}],67:[function(require,module,exports){
 'use strict';
 
 // Note: adler32 takes 12% for level 0 and 2% for level 6.
@@ -20309,7 +20044,7 @@ function adler32(adler, buf, len, pos) {
 
 
 module.exports = adler32;
-},{}],69:[function(require,module,exports){
+},{}],68:[function(require,module,exports){
 module.exports = {
 
   /* Allowed flush values; see deflate() and inflate() below for details */
@@ -20357,7 +20092,7 @@ module.exports = {
   Z_DEFLATED:               8
   //Z_NULL:                 null // Use -1 or null inline, depending on var type
 };
-},{}],70:[function(require,module,exports){
+},{}],69:[function(require,module,exports){
 'use strict';
 
 // Note: we can't get significant speed boost here.
@@ -20399,7 +20134,7 @@ function crc32(crc, buf, len, pos) {
 
 
 module.exports = crc32;
-},{}],71:[function(require,module,exports){
+},{}],70:[function(require,module,exports){
 'use strict';
 
 var utils   = require('../utils/common');
@@ -22165,7 +21900,7 @@ exports.deflatePending = deflatePending;
 exports.deflatePrime = deflatePrime;
 exports.deflateTune = deflateTune;
 */
-},{"../utils/common":66,"./adler32":68,"./crc32":70,"./messages":76,"./trees":77}],72:[function(require,module,exports){
+},{"../utils/common":65,"./adler32":67,"./crc32":69,"./messages":75,"./trees":76}],71:[function(require,module,exports){
 'use strict';
 
 
@@ -22206,7 +21941,7 @@ function GZheader() {
 }
 
 module.exports = GZheader;
-},{}],73:[function(require,module,exports){
+},{}],72:[function(require,module,exports){
 'use strict';
 
 // See state defs from inflate.js
@@ -22533,7 +22268,7 @@ module.exports = function inflate_fast(strm, start) {
   return;
 };
 
-},{}],74:[function(require,module,exports){
+},{}],73:[function(require,module,exports){
 'use strict';
 
 
@@ -24037,7 +23772,7 @@ exports.inflateSync = inflateSync;
 exports.inflateSyncPoint = inflateSyncPoint;
 exports.inflateUndermine = inflateUndermine;
 */
-},{"../utils/common":66,"./adler32":68,"./crc32":70,"./inffast":73,"./inftrees":75}],75:[function(require,module,exports){
+},{"../utils/common":65,"./adler32":67,"./crc32":69,"./inffast":72,"./inftrees":74}],74:[function(require,module,exports){
 'use strict';
 
 
@@ -24364,7 +24099,7 @@ module.exports = function inflate_table(type, lens, lens_index, codes, table, ta
   return 0;
 };
 
-},{"../utils/common":66}],76:[function(require,module,exports){
+},{"../utils/common":65}],75:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -24378,7 +24113,7 @@ module.exports = {
   '-5':   'buffer error',        /* Z_BUF_ERROR     (-5) */
   '-6':   'incompatible version' /* Z_VERSION_ERROR (-6) */
 };
-},{}],77:[function(require,module,exports){
+},{}],76:[function(require,module,exports){
 'use strict';
 
 
@@ -25578,7 +25313,7 @@ exports._tr_stored_block = _tr_stored_block;
 exports._tr_flush_block  = _tr_flush_block;
 exports._tr_tally = _tr_tally;
 exports._tr_align = _tr_align;
-},{"../utils/common":66}],78:[function(require,module,exports){
+},{"../utils/common":65}],77:[function(require,module,exports){
 'use strict';
 
 
@@ -25608,7 +25343,7 @@ function ZStream() {
 }
 
 module.exports = ZStream;
-},{}],79:[function(require,module,exports){
+},{}],78:[function(require,module,exports){
 module.exports = function arrayEquals(array) {
     // if the other array is a falsy value, return
     if (!array)
@@ -25634,10 +25369,10 @@ module.exports = function arrayEquals(array) {
 }
 
 
-},{}],80:[function(require,module,exports){
+},{}],79:[function(require,module,exports){
 exports.Interop = require('./interop');
 
-},{"./interop":81}],81:[function(require,module,exports){
+},{"./interop":80}],80:[function(require,module,exports){
 var transform = require('./transform');
 var arrayEquals = require('./array-equals');
 
@@ -25733,26 +25468,9 @@ Interop.prototype.toPlanB = function(desc) {
                 // Assign the sources to the channel.
                 channels[mLine.type].sources[ssrc] = mLine.sources[ssrc];
 
-                // In Plan B the msid is an SSRC attribute. Also, we don't care
-                // about the obsolete label and mslabel attributes.
+                // In Plan B the msid is an SSRC attribute.
                 channels[mLine.type].sources[ssrc].msid = mLine.msid;
-
-                // NOTE ssrcs in ssrc groups will share msids, as
-                // draft-uberti-rtcweb-plan-00 mandates.
             });
-        }
-
-        // Add ssrc groups to the channel.
-        if (typeof mLine.ssrcGroups !== 'undefined' &&
-                Array.isArray(mLine.ssrcGroups)) {
-
-            // Create the ssrcGroups array, if it's not defined.
-            if (typeof channel.ssrcGroups === 'undefined' ||
-                    !Array.isArray(channel.ssrcGroups)) {
-                channel.ssrcGroups = [];
-            }
-
-            channel.ssrcGroups = channel.ssrcGroups.concat(mLine.ssrcGroups);
         }
 
         if (channels[mLine.type] === mLine) {
@@ -25777,6 +25495,8 @@ Interop.prototype.toPlanB = function(desc) {
             // Add the channel to the new media array.
             session.media.push(mLine);
         }
+
+        // TODO(gp) add support for ssrc-group.
     });
 
     // We regenerate the BUNDLE group with the new mids.
@@ -25903,7 +25623,6 @@ Interop.prototype.toPlanA = function(desc) {
         // With rtcp-mux and bundle all the channels should have the same ICE
         // stuff.
         var sources = channel.sources;
-        var ssrcGroups = channel.ssrcGroups;
         var candidates = channel.candidates;
         var iceUfrag = channel.iceUfrag;
         var icePwd = channel.icePwd;
@@ -25913,7 +25632,6 @@ Interop.prototype.toPlanA = function(desc) {
         // We'll use the "channel" object as a prototype for each new "mLine"
         // that we create, but first we need to clean it up a bit.
         delete channel.sources;
-        delete channel.ssrcGroups;
         delete channel.candidates;
         delete channel.iceUfrag;
         delete channel.icePwd;
@@ -25921,63 +25639,13 @@ Interop.prototype.toPlanA = function(desc) {
         delete channel.port;
         delete channel.mid;
 
-        // inverted ssrc group map
-        var invertedGroups = {};
-        if (typeof ssrcGroups !== 'undefined' && Array.isArray(ssrcGroups)) {
-            ssrcGroups.forEach(function (ssrcGroup) {
-
-                // TODO(gp) find out how to receive simulcast with FF. For the
-                // time being, hide it.
-                if (ssrcGroup.semantics === 'SIM') {
-                    return;
-                }
-
-                if (typeof ssrcGroup.ssrcs !== 'undefined' &&
-                    Array.isArray(ssrcGroup.ssrcs)) {
-                    ssrcGroup.ssrcs.forEach(function (ssrc) {
-                        if (typeof invertedGroups[ssrc] === 'undefined') {
-                            invertedGroups[ssrc] = [];
-                        }
-
-                        invertedGroups[ssrc].push(ssrcGroup);
-                    });
-                }
-            });
-        }
-
-        // ssrc to m-line index.
-        var mLines = {};
-
         if (typeof sources === 'object') {
 
             // Explode the Plan B channel sources with one m-line per source.
             Object.keys(sources).forEach(function(ssrc) {
 
-                var mLine;
-                if (typeof invertedGroups[ssrc] !== 'undefined' &&
-                    Array.isArray(invertedGroups[ssrc])) {
-                    invertedGroups[ssrc].every(function (ssrcGroup) {
-                        // ssrcGroup.ssrcs *is* an Array, no need to check
-                        // again here.
-                        return ssrcGroup.ssrcs.every(function (related) {
-                            if (typeof mLines[related] === 'object') {
-                                mLine = mLines[related];
-                                return false;
-                            } else {
-                                return true;
-                            }
-                        });
-                    });
-                }
-
-                if (typeof mLine === 'object') {
-                    // the m-line already exists. Just add the source.
-                    mLine.sources[ssrc] = sources[ssrc];
-                    delete sources[ssrc].msid;
-                } else {
                 // Use the "channel" as a prototype for the "mLine".
-                mLine = Object.create(channel);
-                mLines[ssrc] = mLine;
+                var mLine = Object.create(channel);
 
                 // Assign the msid of the source to the m-line.
                 mLine.msid = sources[ssrc].msid;
@@ -25986,7 +25654,6 @@ Interop.prototype.toPlanA = function(desc) {
                 // We assign one SSRC per media line.
                 mLine.sources = {};
                 mLine.sources[ssrc] = sources[ssrc];
-                mLine.ssrcGroups = invertedGroups[ssrc];
 
                 // Use the cached Plan A SDP (if it exists) to assign SSRCs to
                 // mids.
@@ -26034,9 +25701,9 @@ Interop.prototype.toPlanA = function(desc) {
                 mLine.port = port;
 
                 media[mLine.mid] = mLine;
-                }
             });
         }
+        // TODO(gp) add support for ssrc-groups
     });
 
     // Rebuild the media array in the right order and add the missing mLines
@@ -26097,27 +25764,17 @@ Interop.prototype.toPlanA = function(desc) {
         });
     } else {
 
-        // SDP offer/answer (and the JSEP spec) forbids removing an m-section
-        // under any circumstances. If we are no longer interested in sending a
-        // track, we just remove the msid and ssrc attributes and set it to
-        // either a=recvonly (as the reofferer, we must use recvonly if the
-        // other side was previously sending on the m-section, but we can also
-        // leave the possibility open if it wasn't previously in use), or
-        // a=inacive.
-
+        // Add all the m-lines that are in both the cached and the transformed
+        // SDP in the order of the cached SDP. We take the intersection because
+        // don't want to add m-lines from the cached SDP that have been removed
+        // from the transformed SDP.
         if (typeof cached !== 'undefined' &&
             typeof cached.media !== 'undefined' &&
             Array.isArray(cached.media)) {
             cached.media.forEach(function(pm) {
-                mids.push(pm.mid);
                 if (typeof media[pm.mid] !== 'undefined') {
+                    mids.push(pm.mid);
                     session.media.push(media[pm.mid]);
-                } else {
-                    delete pm.msid;
-                    delete pm.sources;
-                    delete pm.ssrcGroups;
-                    pm.direction = 'recvonly';
-                    session.media.push(pm);
                 }
             });
         }
@@ -26160,17 +25817,17 @@ Interop.prototype.toPlanA = function(desc) {
     //#endregion
 };
 
-},{"./array-equals":79,"./transform":82}],82:[function(require,module,exports){
+},{"./array-equals":78,"./transform":81}],81:[function(require,module,exports){
 var transform = require('sdp-transform');
 
 exports.write = function(session, opts) {
 
+  // expand sources to ssrcs
   if (typeof session !== 'undefined' &&
       typeof session.media !== 'undefined' &&
       Array.isArray(session.media)) {
 
     session.media.forEach(function (mLine) {
-      // expand sources to ssrcs
       if (typeof mLine.sources !== 'undefined' &&
         Object.keys(mLine.sources).length !== 0) {
           mLine.ssrcs = [];
@@ -26185,17 +25842,6 @@ exports.write = function(session, opts) {
             });
           });
           delete mLine.sources;
-        }
-
-      // join ssrcs in ssrc groups
-      if (typeof mLine.ssrcGroups !== 'undefined' &&
-        Array.isArray(mLine.ssrcGroups)) {
-          mLine.ssrcGroups.forEach(function (ssrcGroup) {
-            if (typeof ssrcGroup.ssrcs !== 'undefined' &&
-                Array.isArray(ssrcGroup.ssrcs)) {
-              ssrcGroup.ssrcs = ssrcGroup.ssrcs.join(' ');
-            }
-          });
         }
     });
   }
@@ -26220,8 +25866,8 @@ exports.parse = function(sdp) {
   if (typeof session !== 'undefined' && typeof session.media !== 'undefined' &&
       Array.isArray(session.media)) {
 
+    // group sources attributes by ssrc
     session.media.forEach(function (mLine) {
-      // group sources attributes by ssrc
       if (typeof mLine.ssrcs !== 'undefined' && Array.isArray(mLine.ssrcs)) {
         mLine.sources = {};
         mLine.ssrcs.forEach(function (ssrc) {
@@ -26232,16 +25878,6 @@ exports.parse = function(sdp) {
 
         delete mLine.ssrcs;
       }
-
-      // split ssrcs in ssrc groups
-      if (typeof mLine.ssrcGroups !== 'undefined' &&
-        Array.isArray(mLine.ssrcGroups)) {
-          mLine.ssrcGroups.forEach(function (ssrcGroup) {
-            if (typeof ssrcGroup.ssrcs === 'string') {
-              ssrcGroup.ssrcs = ssrcGroup.ssrcs.split(' ');
-            }
-          });
-        }
     });
   }
   // split group mids
@@ -26259,7 +25895,7 @@ exports.parse = function(sdp) {
 };
 
 
-},{"sdp-transform":84}],83:[function(require,module,exports){
+},{"sdp-transform":83}],82:[function(require,module,exports){
 var grammar = module.exports = {
   v: [{
       name: 'version',
@@ -26458,12 +26094,6 @@ var grammar = module.exports = {
       names: ['id', 'attribute', 'value'],
       format: "ssrc:%d %s:%s"
     },
-    { //a=ssrc-group:FEC 1 2
-      push: "ssrcGroups",
-      reg: /^ssrc-group:(\w*) (.*)/,
-      names: ['semantics', 'ssrcs'],
-      format: "ssrc-group:%s %s"
-    },
     { //a=msid-semantic: WMS Jvlam5X3SX1OP6pn20zWogvaKJz5Hjf9OnlV
       name: "msidSemantic",
       reg: /^msid-semantic:\s?(\w*) (\S*)/,
@@ -26500,7 +26130,7 @@ Object.keys(grammar).forEach(function (key) {
   });
 }); 
 
-},{}],84:[function(require,module,exports){
+},{}],83:[function(require,module,exports){
 var parser = require('./parser');
 var writer = require('./writer');
 
@@ -26510,7 +26140,7 @@ exports.parseFmtpConfig = parser.parseFmtpConfig;
 exports.parsePayloads = parser.parsePayloads;
 exports.parseRemoteCandidates = parser.parseRemoteCandidates;
 
-},{"./parser":85,"./writer":86}],85:[function(require,module,exports){
+},{"./parser":84,"./writer":85}],84:[function(require,module,exports){
 var toIntIfInt = function (v) {
   return String(Number(v)) === v ? Number(v) : v;
 };
@@ -26605,7 +26235,7 @@ exports.parseRemoteCandidates = function (str) {
   return candidates;
 };
 
-},{"./grammar":83}],86:[function(require,module,exports){
+},{"./grammar":82}],85:[function(require,module,exports){
 var grammar = require('./grammar');
 
 // customized util.format - discards excess arguments and can void middle ones
@@ -26689,10 +26319,10 @@ module.exports = function (session, opts) {
   // loop through outerOrder for matching properties on session
   outerOrder.forEach(function (type) {
     grammar[type].forEach(function (obj) {
-      if (obj.name in session && session[obj.name] != null) {
+      if (obj.name in session && typeof session[obj.name] !== 'undefined') {
         sdp.push(makeLine(type, obj, session));
       }
-      else if (obj.push in session && session[obj.push] != null) {
+      else if (obj.push in session && typeof session[obj.push] !== 'undefined') {
         session[obj.push].forEach(function (el) {
           sdp.push(makeLine(type, obj, el));
         });
@@ -26706,10 +26336,10 @@ module.exports = function (session, opts) {
 
     innerOrder.forEach(function (type) {
       grammar[type].forEach(function (obj) {
-        if (obj.name in mLine && mLine[obj.name] != null) {
+        if (obj.name in mLine && typeof mLine[obj.name] !== 'undefined') {
           sdp.push(makeLine(type, obj, mLine));
         }
-        else if (obj.push in mLine && mLine[obj.push] != null) {
+        else if (obj.push in mLine && typeof mLine[obj.push] !== 'undefined') {
           mLine[obj.push].forEach(function (el) {
             sdp.push(makeLine(type, obj, el));
           });
@@ -26721,14 +26351,14 @@ module.exports = function (session, opts) {
   return sdp.join('\r\n') + '\r\n';
 };
 
-},{"./grammar":83}],87:[function(require,module,exports){
+},{"./grammar":82}],86:[function(require,module,exports){
 var MediaStreamType = {
     VIDEO_TYPE: "Video",
 
     AUDIO_TYPE: "Audio"
 };
 module.exports = MediaStreamType;
-},{}],88:[function(require,module,exports){
+},{}],87:[function(require,module,exports){
 var RTCBrowserType = {
     RTC_BROWSER_CHROME: "rtc_browser.chrome",
 
@@ -26736,7 +26366,7 @@ var RTCBrowserType = {
 };
 
 module.exports = RTCBrowserType;
-},{}],89:[function(require,module,exports){
+},{}],88:[function(require,module,exports){
 var RTCEvents = {
     LASTN_CHANGED: "rtc.lastn_changed",
     DOMINANTSPEAKER_CHANGED: "rtc.dominantspeaker_changed",
@@ -26748,7 +26378,7 @@ var RTCEvents = {
 };
 
 module.exports = RTCEvents;
-},{}],90:[function(require,module,exports){
+},{}],89:[function(require,module,exports){
 var Resolutions = {
     "1080": {
         width: 1920,
@@ -26802,7 +26432,7 @@ var Resolutions = {
     }
 };
 module.exports = Resolutions;
-},{}],91:[function(require,module,exports){
+},{}],90:[function(require,module,exports){
 var StreamEventTypes = {
     EVENT_TYPE_LOCAL_CREATED: "stream.local_created",
 
@@ -26816,14 +26446,14 @@ var StreamEventTypes = {
 };
 
 module.exports = StreamEventTypes;
-},{}],92:[function(require,module,exports){
+},{}],91:[function(require,module,exports){
 var UIEvents = {
     NICKNAME_CHANGED: "UI.nickname_changed",
     SELECTED_ENDPOINT: "UI.selected_endpoint",
     PINNED_ENDPOINT: "UI.pinned_endpoint"
 };
 module.exports = UIEvents;
-},{}],93:[function(require,module,exports){
+},{}],92:[function(require,module,exports){
 var AuthenticationEvents = {
     /**
      * Event callback arguments:
@@ -26837,7 +26467,7 @@ var AuthenticationEvents = {
 };
 module.exports = AuthenticationEvents;
 
-},{}],94:[function(require,module,exports){
+},{}],93:[function(require,module,exports){
 var CQEvents = {
     LOCALSTATS_UPDATED: "cq.localstats_updated",
     REMOTESTATS_UPDATED: "cq.remotestats_updated",
@@ -26845,7 +26475,7 @@ var CQEvents = {
 };
 
 module.exports = CQEvents;
-},{}],95:[function(require,module,exports){
+},{}],94:[function(require,module,exports){
 var DesktopSharingEventTypes = {
     INIT: "ds.init",
 
@@ -26855,7 +26485,7 @@ var DesktopSharingEventTypes = {
 };
 
 module.exports = DesktopSharingEventTypes;
-},{}],96:[function(require,module,exports){
+},{}],95:[function(require,module,exports){
 module.exports = {
     getLanguages : function () {
         var languages = [];
@@ -26870,7 +26500,7 @@ module.exports = {
     BG: "bg",
     DE: "de"
 }
-},{}],97:[function(require,module,exports){
+},{}],96:[function(require,module,exports){
 var XMPPEvents = {
     CONFERENCE_CERATED: "xmpp.conferenceCreated.jingle",
     CALL_TERMINATED: "xmpp.callterminated.jingle",
@@ -26900,5 +26530,308 @@ var XMPPEvents = {
     ETHERPAD: "xmpp.etherpad"
 };
 module.exports = XMPPEvents;
+},{}],97:[function(require,module,exports){
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+function EventEmitter() {
+  this._events = this._events || {};
+  this._maxListeners = this._maxListeners || undefined;
+}
+module.exports = EventEmitter;
+
+// Backwards-compat with node 0.10.x
+EventEmitter.EventEmitter = EventEmitter;
+
+EventEmitter.prototype._events = undefined;
+EventEmitter.prototype._maxListeners = undefined;
+
+// By default EventEmitters will print a warning if more than 10 listeners are
+// added to it. This is a useful default which helps finding memory leaks.
+EventEmitter.defaultMaxListeners = 10;
+
+// Obviously not all Emitters should be limited to 10. This function allows
+// that to be increased. Set to zero for unlimited.
+EventEmitter.prototype.setMaxListeners = function(n) {
+  if (!isNumber(n) || n < 0 || isNaN(n))
+    throw TypeError('n must be a positive number');
+  this._maxListeners = n;
+  return this;
+};
+
+EventEmitter.prototype.emit = function(type) {
+  var er, handler, len, args, i, listeners;
+
+  if (!this._events)
+    this._events = {};
+
+  // If there is no 'error' event listener then throw.
+  if (type === 'error') {
+    if (!this._events.error ||
+        (isObject(this._events.error) && !this._events.error.length)) {
+      er = arguments[1];
+      if (er instanceof Error) {
+        throw er; // Unhandled 'error' event
+      }
+      throw TypeError('Uncaught, unspecified "error" event.');
+    }
+  }
+
+  handler = this._events[type];
+
+  if (isUndefined(handler))
+    return false;
+
+  if (isFunction(handler)) {
+    switch (arguments.length) {
+      // fast cases
+      case 1:
+        handler.call(this);
+        break;
+      case 2:
+        handler.call(this, arguments[1]);
+        break;
+      case 3:
+        handler.call(this, arguments[1], arguments[2]);
+        break;
+      // slower
+      default:
+        len = arguments.length;
+        args = new Array(len - 1);
+        for (i = 1; i < len; i++)
+          args[i - 1] = arguments[i];
+        handler.apply(this, args);
+    }
+  } else if (isObject(handler)) {
+    len = arguments.length;
+    args = new Array(len - 1);
+    for (i = 1; i < len; i++)
+      args[i - 1] = arguments[i];
+
+    listeners = handler.slice();
+    len = listeners.length;
+    for (i = 0; i < len; i++)
+      listeners[i].apply(this, args);
+  }
+
+  return true;
+};
+
+EventEmitter.prototype.addListener = function(type, listener) {
+  var m;
+
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  if (!this._events)
+    this._events = {};
+
+  // To avoid recursion in the case that type === "newListener"! Before
+  // adding it to the listeners, first emit "newListener".
+  if (this._events.newListener)
+    this.emit('newListener', type,
+              isFunction(listener.listener) ?
+              listener.listener : listener);
+
+  if (!this._events[type])
+    // Optimize the case of one listener. Don't need the extra array object.
+    this._events[type] = listener;
+  else if (isObject(this._events[type]))
+    // If we've already got an array, just append.
+    this._events[type].push(listener);
+  else
+    // Adding the second element, need to change to array.
+    this._events[type] = [this._events[type], listener];
+
+  // Check for listener leak
+  if (isObject(this._events[type]) && !this._events[type].warned) {
+    var m;
+    if (!isUndefined(this._maxListeners)) {
+      m = this._maxListeners;
+    } else {
+      m = EventEmitter.defaultMaxListeners;
+    }
+
+    if (m && m > 0 && this._events[type].length > m) {
+      this._events[type].warned = true;
+      console.error('(node) warning: possible EventEmitter memory ' +
+                    'leak detected. %d listeners added. ' +
+                    'Use emitter.setMaxListeners() to increase limit.',
+                    this._events[type].length);
+      if (typeof console.trace === 'function') {
+        // not supported in IE 10
+        console.trace();
+      }
+    }
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.on = EventEmitter.prototype.addListener;
+
+EventEmitter.prototype.once = function(type, listener) {
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  var fired = false;
+
+  function g() {
+    this.removeListener(type, g);
+
+    if (!fired) {
+      fired = true;
+      listener.apply(this, arguments);
+    }
+  }
+
+  g.listener = listener;
+  this.on(type, g);
+
+  return this;
+};
+
+// emits a 'removeListener' event iff the listener was removed
+EventEmitter.prototype.removeListener = function(type, listener) {
+  var list, position, length, i;
+
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  if (!this._events || !this._events[type])
+    return this;
+
+  list = this._events[type];
+  length = list.length;
+  position = -1;
+
+  if (list === listener ||
+      (isFunction(list.listener) && list.listener === listener)) {
+    delete this._events[type];
+    if (this._events.removeListener)
+      this.emit('removeListener', type, listener);
+
+  } else if (isObject(list)) {
+    for (i = length; i-- > 0;) {
+      if (list[i] === listener ||
+          (list[i].listener && list[i].listener === listener)) {
+        position = i;
+        break;
+      }
+    }
+
+    if (position < 0)
+      return this;
+
+    if (list.length === 1) {
+      list.length = 0;
+      delete this._events[type];
+    } else {
+      list.splice(position, 1);
+    }
+
+    if (this._events.removeListener)
+      this.emit('removeListener', type, listener);
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.removeAllListeners = function(type) {
+  var key, listeners;
+
+  if (!this._events)
+    return this;
+
+  // not listening for removeListener, no need to emit
+  if (!this._events.removeListener) {
+    if (arguments.length === 0)
+      this._events = {};
+    else if (this._events[type])
+      delete this._events[type];
+    return this;
+  }
+
+  // emit removeListener for all listeners on all events
+  if (arguments.length === 0) {
+    for (key in this._events) {
+      if (key === 'removeListener') continue;
+      this.removeAllListeners(key);
+    }
+    this.removeAllListeners('removeListener');
+    this._events = {};
+    return this;
+  }
+
+  listeners = this._events[type];
+
+  if (isFunction(listeners)) {
+    this.removeListener(type, listeners);
+  } else {
+    // LIFO order
+    while (listeners.length)
+      this.removeListener(type, listeners[listeners.length - 1]);
+  }
+  delete this._events[type];
+
+  return this;
+};
+
+EventEmitter.prototype.listeners = function(type) {
+  var ret;
+  if (!this._events || !this._events[type])
+    ret = [];
+  else if (isFunction(this._events[type]))
+    ret = [this._events[type]];
+  else
+    ret = this._events[type].slice();
+  return ret;
+};
+
+EventEmitter.listenerCount = function(emitter, type) {
+  var ret;
+  if (!emitter._events || !emitter._events[type])
+    ret = 0;
+  else if (isFunction(emitter._events[type]))
+    ret = 1;
+  else
+    ret = emitter._events[type].length;
+  return ret;
+};
+
+function isFunction(arg) {
+  return typeof arg === 'function';
+}
+
+function isNumber(arg) {
+  return typeof arg === 'number';
+}
+
+function isObject(arg) {
+  return typeof arg === 'object' && arg !== null;
+}
+
+function isUndefined(arg) {
+  return arg === void 0;
+}
+
 },{}]},{},[1])(1)
 });
