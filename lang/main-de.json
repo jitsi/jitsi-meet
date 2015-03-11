@@ -3,6 +3,12 @@
     "connectionsettings": "Verbindungseinstellungen",
     "poweredby": "Betrieben von",
     "downloadlogs": "Log herunterladen",
+    "roomUrlDefaultMsg": "Die Konferenz wird erstellt...",
+    "participant": "Teilnehmer",
+    "me": "ich",
+    "speaker": "Sprecher",
+    "defaultNickname": "Bsp.: __name__",
+    "defaultPreziLink": "Bsp.: __url__",
     "welcomepage": {
         "go": "Los",
         "roomname": "Raumnamen eingeben",
@@ -45,7 +51,7 @@
         "videomute": "Kamera starten / stoppen",
         "authenticate": "Anmelden",
         "record": "Aufnehmen",
-        "lock": "Raum sperren / entsperren",
+        "lock": "Raum schützen / Schutz aufheben",
         "invite": "Andere einladen",
         "chat": "Chat öffnen / schliessen",
         "prezi": "Prezi freigeben",
@@ -60,8 +66,8 @@
     },
     "bottomtoolbar": {
         "chat": "Chat öffnen / schliessen",
-        "filmstrip": "Kontaktliste öffnen / schliessen",
-        "contactlist": "Videovorschauen anzeigen / verstecken"
+        "filmstrip": "Videovorschauen anzeigen / verstecken",
+        "contactlist": "Kontaktliste öffnen / schliessen"
     },
     "chat": {
         "nickname": {
@@ -77,7 +83,7 @@
     },
     "videothumbnail": {
         "editnickname": "Klicken um den Anzeigenamen zu bearbeiten",
-        "moderator": "Der Besitzer dieser Konferenz",
+        "moderator": "Besitzer dieser Konferenz",
         "videomute": "Teilnehmer hat die Kamera pausiert.",
         "mute": "Teilnehmer ist stumm geschaltet",
         "kick": "Hinauswerfen",
@@ -160,18 +166,42 @@
         "Dial": "Wählen",
         "sipMsg": "Geben Sie eine SIP Nummer ein",
         "passwordCheck": "Sind Sie sicher dass Sie das Passwort entfernen möchten?",
-        "passwordMsg": "Passwort setzen um den Raum zu sperren",
+        "passwordMsg": "Passwort setzen um den Raum zu schützen",
         "Invite": "Einladen",
         "shareLink": "Teilen Sie diesen Link mit jedem den Sie einladen möchten",
         "settings1": "Konferenz einrichten",
         "settings2": "Teilnehmer treten stummgeschaltet bei",
-        "settings3": "Nickname erforderlich<br/><br/>Setzen Sie ein Passwort um den Raum zu sperren:",
+        "settings3": "Nickname erforderlich<br/><br/>Setzen Sie ein Passwort um den Raum zu schützen:",
         "yourPassword": "Ihr Passwort",
         "Back": "Zurück",
         "serviceUnavailable": "Dienst nicht verfügbar",
         "gracefulShutdown": "Der Dienst steht momentan wegen Wartungsarbeiten nicht zur Verfügung. Bitte versuchen Sie es später noch einmal.",
         "Yes": "Ja",
         "reservationError": "Fehler im Reservationssystem",
-        "reservationErrorMsg": "Fehler, Nummer: __code__, Nachricht: __msg__"
+        "reservationErrorMsg": "Fehler, Nummer: __code__, Nachricht: __msg__",
+        "password": "Passwort",
+        "userPassword": "Benutzerpasswort",
+        "token": "Token"
+    },
+    "email": {
+        "sharedKeyThis conference is password protected. Please use the following pin when joining:\n\n __sharedKey__ \n\n": [
+            "Diese Konferenz ist Passwortgeschützt. Bitte verwenden Sie diesen PIN zum Beitreten:",
+            "",
+            " __sharedKey__",
+            "",
+            "",
+            ""
+        ],
+        "subject": "Einladung zu einer __appName__ (__conferenceName__)",
+        "bodyHey there, I%27d like to invite you to a __appName__ conference I%27ve just set up.\n\nPlease click on the following link in order to join the conference.\n\n __roomUrl__\n\n__sharedKeyText__ Note that __appName__ is currently only supported by Chromium, Google Chrome and Opera, so you need to be using one of these browsers.\n\nTalk to you in a sec!": [
+            "Hallo!",
+            "Ich möchte dich zu einer eben erstellten __appName__-Konferenz einladen.",
+            "",
+            "Bitte klicke auf den folgenden Link um der Konferenz ebenfalls beizutreten:\\",
+            " __roomUrl__",
+            "__sharedKeyText__ Bitte beachte, dass __appName__ momentan nur mit einem der Browser Chromium, Google und Opera verwendet werden kann.",
+            "",
+            "Bis gleich!"
+        ]
     }
 }
