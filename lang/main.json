@@ -193,6 +193,7 @@
     {
         "sharedKey": "This conference is password protected. Please use the following pin when joining:\n\n __sharedKey__ \n\n",
         "subject": "Invitation to a __appName__ (__conferenceName__)",
-        "body": "Hey there, I%27d like to invite you to a __appName__ conference I%27ve just set up.\n\nPlease click on the following link in order to join the conference.\n\n __roomUrl__\n\n__sharedKeyText__ Note that __appName__ is currently only supported by Chromium, Google Chrome and Opera, so you need to be using one of these browsers.\n\nTalk to you in a sec!"
+        "body": "Hey there, I%27d like to invite you to a __appName__ conference I%27ve just set up.\n\nPlease click on the following link in order to join the conference.\n\n __roomUrl__\n\n__sharedKeyText__ Note that __appName__ is currently only supported by __supportedBrowsers__, so you need to be using one of these browsers.\n\nTalk to you in a sec!",
+        "and": "and"
     }
 }
