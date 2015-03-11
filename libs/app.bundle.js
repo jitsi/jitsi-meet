@@ -4832,6 +4832,7 @@ function inviteParticipants() {
         sharedKeyText =
             APP.translation.translateString("email.sharedKey",
                 {sharedKey: sharedKey});
+        sharedKeyText = sharedKeyText.replace(/\n/g, "%0D%0A");
     }
 
     var conferenceName = roomUrl.substring(roomUrl.lastIndexOf('/') + 1);
@@ -4840,6 +4841,7 @@ function inviteParticipants() {
     var body = APP.translation.translateString("email.body",
         {appName:interfaceConfig.APP_NAME, sharedKeyText: sharedKeyText,
             roomUrl: roomUrl});
+    body = body.replace(/\n/g, "%0D%0A");
 
     if (window.localStorage.displayname) {
         body += "%0D%0A%0D%0A" + window.localStorage.displayname;
