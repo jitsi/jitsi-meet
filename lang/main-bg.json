@@ -3,9 +3,15 @@
     "connectionsettings": "Настройки на връзката",
     "poweredby": "",
     "downloadlogs": "",
+    "roomUrlDefaultMsg": "",
+    "participant": "Участник",
+    "me": "аз",
+    "speaker": "",
+    "defaultNickname": "",
+    "defaultPreziLink": "",
     "welcomepage": {
         "go": "",
-        "roomname": "",
+        "roomname": "Въведете име на стаята",
         "disable": "",
         "feature1": {
             "title": "",
@@ -91,14 +97,14 @@
         "less": "",
         "more": "",
         "address": "",
-        "remoteports": "",
-        "localports": "",
         "remoteport": "",
+        "remoteport_plural": "",
         "localport": "",
+        "localport_plural": "",
         "localaddress": "",
-        "localaddresses": "",
+        "localaddress_plural": "",
         "remoteaddress": "",
-        "remoteaddresses": "",
+        "remoteaddress_plural": "",
         "transport": "",
         "bandwidth": "",
         "na": ""
@@ -148,6 +154,8 @@
         "AuthMsg": "",
         "Authenticate": "",
         "Cancel": "",
+        "logoutTitle": "",
+        "logoutQuestion": "",
         "sessTerminated": "",
         "hungUp": "",
         "joinAgain": "",
@@ -165,6 +173,32 @@
         "settings2": "",
         "settings3": "",
         "yourPassword": "",
-        "Back": ""
+        "Back": "",
+        "serviceUnavailable": "",
+        "gracefulShutdown": "",
+        "Yes": "",
+        "reservationError": "",
+        "reservationErrorMsg": "",
+        "password": "",
+        "userPassword": "",
+        "token": ""
+    },
+    "email": {
+        "sharedKeyThis conference is password protected. Please use the following pin when joining:\n\n\n__sharedKey__\n\n": "",
+        "subject": "",
+        "bodyHey there, I%27d like to invite you to a __appName__ conference I%27ve just set up.\n\n\nPlease click on the following link in order to join the conference.\n\n\n__roomUrl__\n\n\n__sharedKeyText__\n Note that __appName__ is currently only supported by __supportedBrowsers__, so you need to be using one of these browsers.\n\n\nTalk to you in a sec!": [
+            "Здравей, Бих искал да те поканя в една __appName__ конференция, която създадох.",
+            "",
+            "",
+            "Кликни на следния линк за да се присъединиш в конференцията.",
+            "",
+            "",
+            "__sharedKeyText__",
+            "__appName__ поддържа __supportedBrowsers__, така че трябва да използваш един от тези браузъри.",
+            "",
+            "",
+            "Ще се видим след секунда!"
+        ],
+        "and": ""
     }
 }
