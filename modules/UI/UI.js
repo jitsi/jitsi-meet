@@ -483,7 +483,7 @@ function onPasswordReqiured(callback) {
     message += APP.translation.translateString(
         "dialog.passwordRequired");
     message += '</h2>' +
-        '<input id="lockKey" type="text" data-i18n=' +
+        '<input name="lockKey" type="text" data-i18n=' +
         '"[placeholder]dialog.password" placeholder="' +
         APP.translation.translateString("dialog.password") +
         '" autofocus>';
@@ -492,18 +492,17 @@ function onPasswordReqiured(callback) {
         true,
         "dialog.Ok",
         function (e, v, m, f) {},
-        function (event) {
-            document.getElementById('lockKey').focus();
-        },
+        null,
         function (e, v, m, f) {
             if (v) {
-                var lockKey = document.getElementById('lockKey');
-                if (lockKey.value !== null) {
-                    Toolbar.setSharedKey(lockKey.value);
-                    callback(lockKey.value);
+                var lockKey = f.lockKey;
+                if (lockKey) {
+                    Toolbar.setSharedKey(lockKey);
+                    callback(lockKey);
                 }
             }
-        }
+        },
+        ':input:first'
     );
 }
 function onMucEntered(jid, id, displayName) {
@@ -633,9 +632,9 @@ UI.showLoginPopup = function(callback)
     message += APP.translation.translateString(
         "dialog.passwordRequired");
     message += '</h2>' +
-        '<input id="passwordrequired.username" type="text" ' +
+        '<input name="username" type="text" ' +
         'placeholder="user@domain.net" autofocus>' +
-        '<input id="passwordrequired.password" ' +
+        '<input name="password" ' +
         'type="password" data-i18n="[placeholder]dialog.userPassword"' +
         ' placeholder="user password">';
     UI.messageHandler.openTwoButtonDialog(null, null, null, message,
@@ -643,17 +642,13 @@ UI.showLoginPopup = function(callback)
         "dialog.Ok",
         function (e, v, m, f) {
             if (v) {
-                var username = document.getElementById('passwordrequired.username');
-                var password = document.getElementById('passwordrequired.password');
-
-                if (username.value !== null && password.value != null) {
-                    callback(username.value, password.value);
+                if (f.username !== null && f.password != null) {
+                    callback(f.username, f.password);
                 }
             }
         },
-        function (event) {
-            document.getElementById('passwordrequired.username').focus();
-        }
+        null, null, ':input:first'
+
     );
 }
 

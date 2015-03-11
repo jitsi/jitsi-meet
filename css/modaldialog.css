@@ -27,3 +27,8 @@
 button.jqidefaultbutton #inviteLinkRef {
     color: #2c8ad2;
 }
+
+#inviteLinkRef {
+    -webkit-user-select: text;
+    user-select: text;
+}

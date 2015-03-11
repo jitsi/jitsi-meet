@@ -32,10 +32,14 @@ var messageHandler = (function(my) {
      * @param submitFunction function to be called on submit
      * @param loadedFunction function to be called after the prompt is fully loaded
      * @param closeFunction function to be called after the prompt is closed
+     * @param focus optional focus selector or button index to be focused after
+     *        the dialog is opened
+     * @param defaultButton index of default button which will be activated when
+     *        the user press 'enter'. Indexed from 0.
      */
     my.openTwoButtonDialog = function(titleKey, titleString, msgKey, msgString,
         persistent, leftButtonKey, submitFunction, loadedFunction,
-        closeFunction)
+        closeFunction, focus, defaultButton)
     {
         var buttons = [];
 
@@ -58,7 +62,8 @@ var messageHandler = (function(my) {
             title: title,
             persistent: false,
             buttons: buttons,
-            defaultButton: 1,
+            defaultButton: defaultButton,
+            focus: focus,
             loaded: loadedFunction,
             submit: submitFunction,
             close: closeFunction

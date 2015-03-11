@@ -131,25 +131,23 @@ function toggleRecording() {
         var token = APP.translation.translateString("dialog.token");
         APP.UI.messageHandler.openTwoButtonDialog(null, null, null,
                 '<h2>' + msg + '</h2>' +
-                '<input id="recordingToken" type="text" ' +
+                '<input name="recordingToken" type="text" ' +
                 ' data-i18n="[placeholder]dialog.token" ' +
                 'placeholder="' + token + '" autofocus>',
             false,
             "dialog.Save",
             function (e, v, m, f) {
                 if (v) {
-                    var token = document.getElementById('recordingToken');
+                    var token = f.recordingToken;
 
-                    if (token.value) {
-                        callback(UIUtil.escapeHtml(token.value));
+                    if (token) {
+                        callback(UIUtil.escapeHtml(token));
                     }
                 }
             },
-            function (event) {
-                document.getElementById('recordingToken').focus();
-            },
-            function () {
-            }
+            null,
+            function () { },
+            ':input:first'
         );
     }, Toolbar.setRecordingButtonState, Toolbar.setRecordingButtonState);
 }
@@ -232,22 +230,21 @@ function callSipButtonClicked()
         "dialog.sipMsg");
     messageHandler.openTwoButtonDialog(null, null, null,
         '<h2>' + sipMsg + '</h2>' +
-        '<input id="sipNumber" type="text"' +
+        '<input name="sipNumber" type="text"' +
         ' value="' + defaultNumber + '" autofocus>',
         false,
         "dialog.Dial",
         function (e, v, m, f) {
             if (v) {
-                var numberInput = document.getElementById('sipNumber');
-                if (numberInput.value) {
-                    APP.xmpp.dial(numberInput.value, 'fromnumber',
-                        UI.getRoomName(), sharedKey);
+                var numberInput = f.sipNumber;
+                if (numberInput) {
+                    APP.xmpp.dial(
+                        numberInput, 'fromnumber', UI.getRoomName(), sharedKey);
                 }
             }
         },
-        function (event) {
-            document.getElementById('sipNumber').focus();
-        }
+        null,
+        ':input:first'
     );
 }
 
@@ -377,24 +374,23 @@ var Toolbar = (function (my) {
                     "dialog.yourPassword");
                 messageHandler.openTwoButtonDialog(null, null, null,
                     '<h2>' + msg + '</h2>' +
-                        '<input id="lockKey" type="text"' +
+                        '<input name="lockKey" type="text"' +
                         ' data-i18n="[placeholder]dialog.yourPassword" ' +
                         'placeholder="' + yourPassword + '" autofocus>',
                     false,
                     "dialog.Save",
-                    function (e, v) {
+                    function (e, v, m, f) {
                         if (v) {
-                            var lockKey = document.getElementById('lockKey');
+                            var lockKey = f.lockKey;
 
-                            if (lockKey.value) {
-                                Toolbar.setSharedKey(UIUtil.escapeHtml(lockKey.value));
+                            if (lockKey) {
+                                Toolbar.setSharedKey(
+                                    UIUtil.escapeHtml(lockKey));
                                 lockRoom(true);
                             }
                         }
                     },
-                    function () {
-                        document.getElementById('lockKey').focus();
-                    }
+                    null, null, 'input:first'
                 );
             }
         }
@@ -438,6 +434,7 @@ var Toolbar = (function (my) {
 
     /**
      * Opens the settings dialog.
+     * FIXME: not used ?
      */
     my.openSettingsDialog = function () {
         var settings1 = APP.translation.generateTranslatonHTML(

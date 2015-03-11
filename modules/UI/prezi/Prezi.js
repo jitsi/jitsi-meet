@@ -82,23 +82,24 @@ var Prezi = {
             var openPreziState = {
                 state0: {
                     html:   '<h2>' + html + '</h2>' +
-                            '<input id="preziUrl" type="text" ' +
+                            '<input name="preziUrl" type="text" ' +
                             'data-i18n="[placeholder]defaultPreziLink" data-i18n-options=\'' +
                             JSON.stringify({"url": "http://prezi.com/wz7vhjycl7e6/my-prezi"}) +
                             '\' placeholder="' + defaultUrl + '" autofocus>',
                     persistent: false,
                     buttons: buttons,
-                    defaultButton: 1,
-                    submit: function(e,v,m,f){
+                    focus: ':input:first',
+                    defaultButton: 0,
+                    submit: function (e, v, m, f) {
                         e.preventDefault();
                         if(v)
                         {
-                            var preziUrl = document.getElementById('preziUrl');
+                            var preziUrl = f.preziUrl;
 
-                            if (preziUrl.value)
+                            if (preziUrl)
                             {
                                 var urlValue
-                                    = encodeURI(UIUtil.escapeHtml(preziUrl.value));
+                                    = encodeURI(UIUtil.escapeHtml(preziUrl));
 
                                 if (urlValue.indexOf('http://prezi.com/') != 0
                                     && urlValue.indexOf('https://prezi.com/') != 0)
@@ -130,10 +131,11 @@ var Prezi = {
                             linkError,
                     persistent: false,
                     buttons: buttons1,
+                    focus: ':input:first',
                     defaultButton: 1,
-                    submit:function(e,v,m,f) {
+                    submit: function (e, v, m, f) {
                         e.preventDefault();
-                        if(v==0)
+                        if (v === 0)
                             $.prompt.close();
                         else
                             $.prompt.goToState('state0');
