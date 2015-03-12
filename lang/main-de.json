@@ -97,14 +97,6 @@
         "less": "Weniger anzeigen",
         "more": "Mehr anzeigen",
         "address": "Adresse:",
-        "remoteport": "Entfernter Port:",
-        "remoteport_plural": "Entfernte Ports:",
-        "localport": "Lokaler Port:",
-        "localport_plural": "Lokale Ports:",
-        "localaddress": "Lokale Adresse:",
-        "localaddress_plural": "Lokale Adressen:",
-        "remoteaddress": "Entfernte Adresse:",
-        "remoteaddress_plural": "Entfernte Adressen:",
         "transport": "Protokoll:",
         "bandwidth": "Geschätzte Bandbreite:",
         "na": "Verbindungsdaten erneut anzeigen wenn die Konferenz begonnen hat"
@@ -184,7 +176,7 @@
         "token": "Token"
     },
     "email": {
-        "sharedKeyThis conference is password protected. Please use the following pin when joining:\n\n __sharedKey__ \n\n": [
+        "sharedKey": [
             "Diese Konferenz ist Passwortgeschützt. Bitte verwenden Sie diesen PIN zum Beitreten:",
             "",
             " __sharedKey__",
@@ -193,7 +185,7 @@
             ""
         ],
         "subject": "Einladung zu einer __appName__ (__conferenceName__)",
-        "bodyHey there, I%27d like to invite you to a __appName__ conference I%27ve just set up.\n\nPlease click on the following link in order to join the conference.\n\n __roomUrl__\n\n__sharedKeyText__ Note that __appName__ is currently only supported by Chromium, Google Chrome and Opera, so you need to be using one of these browsers.\n\nTalk to you in a sec!": [
+        "body": [
             "Hallo!",
             "Ich möchte dich zu einer eben erstellten __appName__-Konferenz einladen.",
             "",
