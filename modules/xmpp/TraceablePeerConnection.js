@@ -161,7 +161,13 @@ TraceablePeerConnection.prototype.removeStream = function (stream, stopStreams) 
             track.stop();
         });
     }
-    this.peerconnection.removeStream(stream);
+
+    try {
+        // FF doesn't support this yet.
+        this.peerconnection.removeStream(stream);
+    } catch (e) {
+        console.error(e);
+    }
 };
 
 TraceablePeerConnection.prototype.createDataChannel = function (label, opts) {
