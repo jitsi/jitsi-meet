@@ -19,7 +19,7 @@
     <script src="libs/popover.js?v=1"></script><!-- bootstrap tooltip lib -->
     <script src="libs/toastr.js?v=1"></script><!-- notifications lib -->
     <script src="interface_config.js?v=5"></script>
-    <script src="libs/app.bundle.js?v=34"></script>
+    <script src="libs/app.bundle.js?v=35"></script>
     <script src="analytics.js?v=1"></script><!-- google analytics plugin -->
     <link rel="stylesheet" href="css/font.css?v=6"/>
     <link rel="stylesheet" href="css/toastr.css?v=1">
@@ -28,6 +28,7 @@
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
     <link rel="stylesheet" href="css/jquery-impromptu.css?v=4">
     <link rel="stylesheet" href="css/modaldialog.css?v=3">
+    <link rel="stylesheet" href="css/notice.css?v=1">
     <link rel="stylesheet" href="css/popup_menu.css?v=4">
     <link rel="stylesheet" href="css/login_menu.css?v=1">
     <link rel="stylesheet" href="css/popover.css?v=2">
@@ -120,6 +121,9 @@
     <div id="videoconference_page">
         <div style="position: relative;" id="header_container">
             <div id="header">
+                <div id="notice" class="notice" style="display: none">
+                    <span id="noticeText" class="noticeText"></span>
+                </div>
                 <span id="toolbar">
                     <span id="authentication" class="authentication" style="display: none">
                         <a class="button" id="toolbar_button_authentication" >

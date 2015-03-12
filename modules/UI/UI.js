@@ -337,6 +337,12 @@ UI.start = function (init) {
 
     $("#welcome_page").hide();
 
+    // Display notice message at the top of the toolbar
+    if (config.noticeMessage) {
+        $('#noticeText').text(config.noticeMessage);
+        $('#notice').css({display: 'block'});
+    }
+
     document.getElementById('largeVideo').volume = 0;
 
     if (!$('#settings').is(':visible')) {

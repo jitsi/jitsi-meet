@@ -33,5 +33,8 @@ var config = {
     enableSimulcast: false,
     enableFirefoxSupport: true, //firefox support is still experimental and
     // will work when simulcast is *disabled* and rtcpMux & bundle are *enabled*.
-    logStats: false // Enable logging of PeerConnection stats via the focus
+    logStats: false, // Enable logging of PeerConnection stats via the focus
+    /*noticeMessage: 'Service update is scheduled for 16th March 2015. ' +
+    'During that time service will not be available. ' +
+    'Apologise for inconvenience.'*/
 };
