@@ -97,6 +97,14 @@
         "less": "Weniger anzeigen",
         "more": "Mehr anzeigen",
         "address": "Adresse:",
+        "remoteport": "Entfernter Port:",
+        "remoteport_plural": "Entfernte Ports:",
+        "localport": "Lokaler Port:",
+        "localport_plural": "Lokale Ports:",
+        "localaddress": "Lokale Adresse:",
+        "localaddress_plural": "Lokale Adressen:",
+        "remoteaddress": "Entfernte Adresse:",
+        "remoteaddress_plural": "Entfernte Adressen:",
         "transport": "Protokoll:",
         "bandwidth": "Geschätzte Bandbreite:",
         "na": "Verbindungsdaten erneut anzeigen wenn die Konferenz begonnen hat"
@@ -177,23 +185,33 @@
     },
     "email": {
         "sharedKey": [
-            "Diese Konferenz ist Passwortgeschützt. Bitte verwenden Sie diesen PIN zum Beitreten:",
+            "Diese Konferenz ist Passwortgeschützt. Bitte verwenden Sie diese PIN zum Beitreten:",
             "",
-            " __sharedKey__",
             "",
+            "__sharedKey__",
             "",
             ""
         ],
         "subject": "Einladung zu einer __appName__ (__conferenceName__)",
         "body": [
             "Hallo!",
+            "",
+            "",
             "Ich möchte dich zu einer eben erstellten __appName__-Konferenz einladen.",
             "",
-            "Bitte klicke auf den folgenden Link um der Konferenz ebenfalls beizutreten:\\",
-            " __roomUrl__",
-            "__sharedKeyText__ Bitte beachte, dass __appName__ momentan nur mit einem der Browser Chromium, Google und Opera verwendet werden kann.",
+            "",
+            "Bitte klicke auf den folgenden Link um der Konferenz ebenfalls beizutreten:",
+            "",
+            "",
+            "__roomUrl__",
+            "",
+            "",
+            "__sharedKeyText__",
+            " Bitte beachte, dass __appName__ momentan nur mit einem der Browser __supportedBrowsers__ verwendet werden kann.",
+            "",
             "",
             "Bis gleich!"
-        ]
+        ],
+        "and": "und"
     }
 }
