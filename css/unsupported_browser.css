@@ -62,7 +62,7 @@ a {
 .supported_browsers
 {
     margin: 0px auto 0px auto;
-    width: 460px;
+    width: 660px;
 }
 
 .clear
@@ -101,6 +101,13 @@ a {
     height: 79px;
     background-image: url('/images/chromium.png');
 }
+#firefox-nightly_logo
+{
+    width: 73px;
+    height: 79px;
+    background-image: url('/images/firefox-nightly.png');
+}
+
 #opera_logo
 {
     width: 73px;

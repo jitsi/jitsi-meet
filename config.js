@@ -31,7 +31,7 @@ var config = {
     enableRecording: false,
     enableWelcomePage: true,
     enableSimulcast: false,
-    enableFirefoxSupport: false, //firefox support is still experimental, only one-to-one conferences with chrome focus
-    // will work when simulcast, bundle, mux, lastN and SCTP are disabled.
+    enableFirefoxSupport: true, //firefox support is still experimental and
+    // will work when simulcast is *disabled* and rtcpMux & bundle are *enabled*.
     logStats: false // Enable logging of PeerConnection stats via the focus
 };
