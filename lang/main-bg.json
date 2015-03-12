@@ -184,9 +184,9 @@
         "token": ""
     },
     "email": {
-        "sharedKeyThis conference is password protected. Please use the following pin when joining:\n\n\n__sharedKey__\n\n": "",
+        "sharedKey": "",
         "subject": "",
-        "bodyHey there, I%27d like to invite you to a __appName__ conference I%27ve just set up.\n\n\nPlease click on the following link in order to join the conference.\n\n\n__roomUrl__\n\n\n__sharedKeyText__\n Note that __appName__ is currently only supported by __supportedBrowsers__, so you need to be using one of these browsers.\n\n\nTalk to you in a sec!": [
+        "body": [
             "Здравей, Бих искал да те поканя в една __appName__ конференция, която създадох.",
             "",
             "",
