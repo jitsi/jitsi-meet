@@ -1,4 +1,307 @@
-!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.APP=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.APP = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+function EventEmitter() {
+  this._events = this._events || {};
+  this._maxListeners = this._maxListeners || undefined;
+}
+module.exports = EventEmitter;
+
+// Backwards-compat with node 0.10.x
+EventEmitter.EventEmitter = EventEmitter;
+
+EventEmitter.prototype._events = undefined;
+EventEmitter.prototype._maxListeners = undefined;
+
+// By default EventEmitters will print a warning if more than 10 listeners are
+// added to it. This is a useful default which helps finding memory leaks.
+EventEmitter.defaultMaxListeners = 10;
+
+// Obviously not all Emitters should be limited to 10. This function allows
+// that to be increased. Set to zero for unlimited.
+EventEmitter.prototype.setMaxListeners = function(n) {
+  if (!isNumber(n) || n < 0 || isNaN(n))
+    throw TypeError('n must be a positive number');
+  this._maxListeners = n;
+  return this;
+};
+
+EventEmitter.prototype.emit = function(type) {
+  var er, handler, len, args, i, listeners;
+
+  if (!this._events)
+    this._events = {};
+
+  // If there is no 'error' event listener then throw.
+  if (type === 'error') {
+    if (!this._events.error ||
+        (isObject(this._events.error) && !this._events.error.length)) {
+      er = arguments[1];
+      if (er instanceof Error) {
+        throw er; // Unhandled 'error' event
+      }
+      throw TypeError('Uncaught, unspecified "error" event.');
+    }
+  }
+
+  handler = this._events[type];
+
+  if (isUndefined(handler))
+    return false;
+
+  if (isFunction(handler)) {
+    switch (arguments.length) {
+      // fast cases
+      case 1:
+        handler.call(this);
+        break;
+      case 2:
+        handler.call(this, arguments[1]);
+        break;
+      case 3:
+        handler.call(this, arguments[1], arguments[2]);
+        break;
+      // slower
+      default:
+        len = arguments.length;
+        args = new Array(len - 1);
+        for (i = 1; i < len; i++)
+          args[i - 1] = arguments[i];
+        handler.apply(this, args);
+    }
+  } else if (isObject(handler)) {
+    len = arguments.length;
+    args = new Array(len - 1);
+    for (i = 1; i < len; i++)
+      args[i - 1] = arguments[i];
+
+    listeners = handler.slice();
+    len = listeners.length;
+    for (i = 0; i < len; i++)
+      listeners[i].apply(this, args);
+  }
+
+  return true;
+};
+
+EventEmitter.prototype.addListener = function(type, listener) {
+  var m;
+
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  if (!this._events)
+    this._events = {};
+
+  // To avoid recursion in the case that type === "newListener"! Before
+  // adding it to the listeners, first emit "newListener".
+  if (this._events.newListener)
+    this.emit('newListener', type,
+              isFunction(listener.listener) ?
+              listener.listener : listener);
+
+  if (!this._events[type])
+    // Optimize the case of one listener. Don't need the extra array object.
+    this._events[type] = listener;
+  else if (isObject(this._events[type]))
+    // If we've already got an array, just append.
+    this._events[type].push(listener);
+  else
+    // Adding the second element, need to change to array.
+    this._events[type] = [this._events[type], listener];
+
+  // Check for listener leak
+  if (isObject(this._events[type]) && !this._events[type].warned) {
+    var m;
+    if (!isUndefined(this._maxListeners)) {
+      m = this._maxListeners;
+    } else {
+      m = EventEmitter.defaultMaxListeners;
+    }
+
+    if (m && m > 0 && this._events[type].length > m) {
+      this._events[type].warned = true;
+      console.error('(node) warning: possible EventEmitter memory ' +
+                    'leak detected. %d listeners added. ' +
+                    'Use emitter.setMaxListeners() to increase limit.',
+                    this._events[type].length);
+      if (typeof console.trace === 'function') {
+        // not supported in IE 10
+        console.trace();
+      }
+    }
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.on = EventEmitter.prototype.addListener;
+
+EventEmitter.prototype.once = function(type, listener) {
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  var fired = false;
+
+  function g() {
+    this.removeListener(type, g);
+
+    if (!fired) {
+      fired = true;
+      listener.apply(this, arguments);
+    }
+  }
+
+  g.listener = listener;
+  this.on(type, g);
+
+  return this;
+};
+
+// emits a 'removeListener' event iff the listener was removed
+EventEmitter.prototype.removeListener = function(type, listener) {
+  var list, position, length, i;
+
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  if (!this._events || !this._events[type])
+    return this;
+
+  list = this._events[type];
+  length = list.length;
+  position = -1;
+
+  if (list === listener ||
+      (isFunction(list.listener) && list.listener === listener)) {
+    delete this._events[type];
+    if (this._events.removeListener)
+      this.emit('removeListener', type, listener);
+
+  } else if (isObject(list)) {
+    for (i = length; i-- > 0;) {
+      if (list[i] === listener ||
+          (list[i].listener && list[i].listener === listener)) {
+        position = i;
+        break;
+      }
+    }
+
+    if (position < 0)
+      return this;
+
+    if (list.length === 1) {
+      list.length = 0;
+      delete this._events[type];
+    } else {
+      list.splice(position, 1);
+    }
+
+    if (this._events.removeListener)
+      this.emit('removeListener', type, listener);
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.removeAllListeners = function(type) {
+  var key, listeners;
+
+  if (!this._events)
+    return this;
+
+  // not listening for removeListener, no need to emit
+  if (!this._events.removeListener) {
+    if (arguments.length === 0)
+      this._events = {};
+    else if (this._events[type])
+      delete this._events[type];
+    return this;
+  }
+
+  // emit removeListener for all listeners on all events
+  if (arguments.length === 0) {
+    for (key in this._events) {
+      if (key === 'removeListener') continue;
+      this.removeAllListeners(key);
+    }
+    this.removeAllListeners('removeListener');
+    this._events = {};
+    return this;
+  }
+
+  listeners = this._events[type];
+
+  if (isFunction(listeners)) {
+    this.removeListener(type, listeners);
+  } else {
+    // LIFO order
+    while (listeners.length)
+      this.removeListener(type, listeners[listeners.length - 1]);
+  }
+  delete this._events[type];
+
+  return this;
+};
+
+EventEmitter.prototype.listeners = function(type) {
+  var ret;
+  if (!this._events || !this._events[type])
+    ret = [];
+  else if (isFunction(this._events[type]))
+    ret = [this._events[type]];
+  else
+    ret = this._events[type].slice();
+  return ret;
+};
+
+EventEmitter.listenerCount = function(emitter, type) {
+  var ret;
+  if (!emitter._events || !emitter._events[type])
+    ret = 0;
+  else if (isFunction(emitter._events[type]))
+    ret = 1;
+  else
+    ret = emitter._events[type].length;
+  return ret;
+};
+
+function isFunction(arg) {
+  return typeof arg === 'function';
+}
+
+function isNumber(arg) {
+  return typeof arg === 'number';
+}
+
+function isObject(arg) {
+  return typeof arg === 'object' && arg !== null;
+}
+
+function isUndefined(arg) {
+  return arg === void 0;
+}
+
+},{}],2:[function(require,module,exports){
 /* jshint -W117 */
 /* application specific logic */
 
@@ -22,7 +325,7 @@ var APP =
 function init() {
 
     APP.RTC.start();
-    APP.xmpp.start(APP.UI.getCredentials());
+    APP.xmpp.start();
     APP.statistics.start();
     APP.connectionquality.init();
 
@@ -54,7 +357,7 @@ $(window).bind('beforeunload', function () {
 module.exports = APP;
 
 
-},{"./modules/API/API":2,"./modules/RTC/RTC":6,"./modules/UI/UI":8,"./modules/connectionquality/connectionquality":34,"./modules/desktopsharing/desktopsharing":35,"./modules/keyboardshortcut/keyboardshortcut":36,"./modules/settings/Settings":37,"./modules/simulcast/simulcast":42,"./modules/statistics/statistics":45,"./modules/translation/translation":46,"./modules/xmpp/xmpp":60}],2:[function(require,module,exports){
+},{"./modules/API/API":3,"./modules/RTC/RTC":7,"./modules/UI/UI":9,"./modules/connectionquality/connectionquality":36,"./modules/desktopsharing/desktopsharing":37,"./modules/keyboardshortcut/keyboardshortcut":38,"./modules/settings/Settings":39,"./modules/simulcast/simulcast":44,"./modules/statistics/statistics":47,"./modules/translation/translation":48,"./modules/xmpp/xmpp":62}],3:[function(require,module,exports){
 /**
  * Implements API class that communicates with external api class
  * and provides interface to access Jitsi Meet features by external
@@ -286,7 +589,7 @@ var API = {
 };
 
 module.exports = API;
-},{"../../service/xmpp/XMPPEvents":97}],3:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":98}],4:[function(require,module,exports){
 /* global Strophe, updateLargeVideo, focusedVideoSrc*/
 
 // cache datachannels to avoid garbage collection
@@ -522,7 +825,7 @@ function onPinnedEndpointChanged(userResource)
 module.exports = DataChannels;
 
 
-},{"../../service/RTC/RTCEvents":89}],4:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":90}],5:[function(require,module,exports){
 var StreamEventTypes = require("../../service/RTC/StreamEventTypes.js");
 
 function LocalStream(stream, type, eventEmitter, videoType)
@@ -610,7 +913,7 @@ LocalStream.prototype.getId = function () {
 
 module.exports = LocalStream;
 
-},{"../../service/RTC/StreamEventTypes.js":91}],5:[function(require,module,exports){
+},{"../../service/RTC/StreamEventTypes.js":92}],6:[function(require,module,exports){
 ////These lines should be uncommented when require works in app.js
 var RTCBrowserType = require("../../service/RTC/RTCBrowserType.js");
 var MediaStreamType = require("../../service/RTC/MediaStreamTypes");
@@ -663,7 +966,7 @@ MediaStream.prototype.setMute = function (value)
 
 module.exports = MediaStream;
 
-},{"../../service/RTC/MediaStreamTypes":87,"../../service/RTC/RTCBrowserType.js":88}],6:[function(require,module,exports){
+},{"../../service/RTC/MediaStreamTypes":88,"../../service/RTC/RTCBrowserType.js":89}],7:[function(require,module,exports){
 var EventEmitter = require("events");
 var RTCUtils = require("./RTCUtils.js");
 var LocalStream = require("./LocalStream.js");
@@ -869,7 +1172,7 @@ var RTC = {
 
 module.exports = RTC;
 
-},{"../../service/RTC/MediaStreamTypes":87,"../../service/RTC/StreamEventTypes.js":91,"../../service/UI/UIEvents":92,"../../service/desktopsharing/DesktopSharingEventTypes":95,"../../service/xmpp/XMPPEvents":97,"./DataChannels":3,"./LocalStream.js":4,"./MediaStream.js":5,"./RTCUtils.js":7,"events":61}],7:[function(require,module,exports){
+},{"../../service/RTC/MediaStreamTypes":88,"../../service/RTC/StreamEventTypes.js":92,"../../service/UI/UIEvents":93,"../../service/desktopsharing/DesktopSharingEventTypes":96,"../../service/xmpp/XMPPEvents":98,"./DataChannels":4,"./LocalStream.js":5,"./MediaStream.js":6,"./RTCUtils.js":8,"events":1}],8:[function(require,module,exports){
 var RTCBrowserType = require("../../service/RTC/RTCBrowserType.js");
 var Resolutions = require("../../service/RTC/Resolutions");
 
@@ -1233,7 +1536,7 @@ RTCUtils.prototype.handleLocalStream = function(stream)
 
 module.exports = RTCUtils;
 
-},{"../../service/RTC/RTCBrowserType.js":88,"../../service/RTC/Resolutions":90}],8:[function(require,module,exports){
+},{"../../service/RTC/RTCBrowserType.js":89,"../../service/RTC/Resolutions":91}],9:[function(require,module,exports){
 var UI = {};
 
 var VideoLayout = require("./videolayout/VideoLayout.js");
@@ -1719,7 +2022,7 @@ function onPasswordReqiured(callback) {
     message += APP.translation.translateString(
         "dialog.passwordRequired");
     message += '</h2>' +
-        '<input id="lockKey" type="text" data-i18n=' +
+        '<input name="lockKey" type="text" data-i18n=' +
         '"[placeholder]dialog.password" placeholder="' +
         APP.translation.translateString("dialog.password") +
         '" autofocus>';
@@ -1728,18 +2031,17 @@ function onPasswordReqiured(callback) {
         true,
         "dialog.Ok",
         function (e, v, m, f) {},
-        function (event) {
-            document.getElementById('lockKey').focus();
-        },
+        null,
         function (e, v, m, f) {
             if (v) {
-                var lockKey = document.getElementById('lockKey');
-                if (lockKey.value !== null) {
-                    Toolbar.setSharedKey(lockKey.value);
-                    callback(lockKey.value);
+                var lockKey = f.lockKey;
+                if (lockKey) {
+                    Toolbar.setSharedKey(lockKey);
+                    callback(lockKey);
                 }
             }
-        }
+        },
+        ':input:first'
     );
 }
 function onMucEntered(jid, id, displayName) {
@@ -1862,22 +2164,6 @@ UI.connectionIndicatorShowMore = function(id)
     return VideoLayout.connectionIndicators[id].showMore();
 };
 
-UI.getCredentials = function () {
-    var settings = this.getSettings();
-    return {
-        bosh: document.getElementById('boshURL').value,
-        password: document.getElementById('password').value,
-        jid: document.getElementById('jid').value,
-        email: settings.email,
-        displayName: settings.displayName,
-        uid: settings.uid
-    };
-};
-
-UI.disableConnect = function () {
-    document.getElementById('connect').disabled = true;
-};
-
 UI.showLoginPopup = function(callback)
 {
     console.log('password is required');
@@ -1885,9 +2171,9 @@ UI.showLoginPopup = function(callback)
     message += APP.translation.translateString(
         "dialog.passwordRequired");
     message += '</h2>' +
-        '<input id="passwordrequired.username" type="text" ' +
+        '<input name="username" type="text" ' +
         'placeholder="user@domain.net" autofocus>' +
-        '<input id="passwordrequired.password" ' +
+        '<input name="password" ' +
         'type="password" data-i18n="[placeholder]dialog.userPassword"' +
         ' placeholder="user password">';
     UI.messageHandler.openTwoButtonDialog(null, null, null, message,
@@ -1895,17 +2181,13 @@ UI.showLoginPopup = function(callback)
         "dialog.Ok",
         function (e, v, m, f) {
             if (v) {
-                var username = document.getElementById('passwordrequired.username');
-                var password = document.getElementById('passwordrequired.password');
-
-                if (username.value !== null && password.value != null) {
-                    callback(username.value, password.value);
+                if (f.username !== null && f.password != null) {
+                    callback(f.username, f.password);
                 }
             }
         },
-        function (event) {
-            document.getElementById('passwordrequired.username').focus();
-        }
+        null, null, ':input:first'
+
     );
 }
 
@@ -2002,7 +2284,7 @@ UI.dockToolbar = function (isDock) {
 module.exports = UI;
 
 
-},{"../../service/RTC/RTCEvents":89,"../../service/RTC/StreamEventTypes":91,"../../service/connectionquality/CQEvents":94,"../../service/desktopsharing/DesktopSharingEventTypes":95,"../../service/xmpp/XMPPEvents":97,"./../settings/Settings":37,"./audio_levels/AudioLevels.js":9,"./authentication/Authentication":11,"./avatar/Avatar":12,"./etherpad/Etherpad.js":13,"./prezi/Prezi.js":14,"./side_pannels/SidePanelToggler":16,"./side_pannels/chat/Chat.js":17,"./side_pannels/contactlist/ContactList":21,"./side_pannels/settings/SettingsMenu":22,"./toolbars/BottomToolbar":23,"./toolbars/Toolbar":24,"./toolbars/ToolbarToggler":25,"./util/MessageHandler":27,"./util/NicknameHandler":28,"./util/UIUtil":29,"./videolayout/VideoLayout.js":31,"./welcome_page/RoomnameGenerator":32,"./welcome_page/WelcomePage":33,"events":61}],9:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":90,"../../service/RTC/StreamEventTypes":92,"../../service/connectionquality/CQEvents":95,"../../service/desktopsharing/DesktopSharingEventTypes":96,"../../service/xmpp/XMPPEvents":98,"./../settings/Settings":39,"./audio_levels/AudioLevels.js":10,"./authentication/Authentication":12,"./avatar/Avatar":14,"./etherpad/Etherpad.js":15,"./prezi/Prezi.js":16,"./side_pannels/SidePanelToggler":18,"./side_pannels/chat/Chat.js":19,"./side_pannels/contactlist/ContactList":23,"./side_pannels/settings/SettingsMenu":24,"./toolbars/BottomToolbar":25,"./toolbars/Toolbar":26,"./toolbars/ToolbarToggler":27,"./util/MessageHandler":29,"./util/NicknameHandler":30,"./util/UIUtil":31,"./videolayout/VideoLayout.js":33,"./welcome_page/RoomnameGenerator":34,"./welcome_page/WelcomePage":35,"events":1}],10:[function(require,module,exports){
 var CanvasUtil = require("./CanvasUtils");
 
 var ASDrawContext = $('#activeSpeakerAudioLevel')[0].getContext('2d');
@@ -2268,7 +2550,7 @@ var AudioLevels = (function(my) {
 })(AudioLevels || {});
 
 module.exports = AudioLevels;
-},{"./CanvasUtils":10}],10:[function(require,module,exports){
+},{"./CanvasUtils":11}],11:[function(require,module,exports){
 /**
  * Utility class for drawing canvas shapes.
  */
@@ -2380,7 +2662,12 @@ var CanvasUtil = (function(my) {
 })(CanvasUtil || {});
 
 module.exports = CanvasUtil;
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
+/* global $, APP*/
+
+var LoginDialog = require('./LoginDialog');
+var Moderator = require('../../xmpp/moderator');
+
 /* Initial "authentication required" dialog */
 var authDialog = null;
 /* Loop retry ID that wits for other user to create the room */
@@ -2391,7 +2678,7 @@ var Authentication = {
     openAuthenticationDialog: function (roomName, intervalCallback, callback) {
         // This is the loop that will wait for the room to be created by
         // someone else. 'auth_required.moderator' will bring us back here.
-        authRetryId = window.setTimeout(intervalCallback , 5000);
+        authRetryId = window.setTimeout(intervalCallback, 5000);
         // Show prompt only if it's not open
         if (authDialog !== null) {
             return;
@@ -2402,10 +2689,11 @@ var Authentication = {
         var title = APP.translation.generateTranslatonHTML("dialog.Stop");
         var msg = APP.translation.generateTranslatonHTML("dialog.AuthMsg",
             {room: room});
-        var button = APP.translation.generateTranslatonHTML(
-            "dialog.Authenticate");
-        var buttons = {};
-        buttons.authenticate = {title: button, value: "authNow"};
+
+        var buttonTxt
+            = APP.translation.generateTranslatonHTML("dialog.Authenticate");
+        var buttons = [];
+        buttons.push({title: buttonTxt, value: "authNow"});
 
         authDialog = APP.UI.messageHandler.openDialog(
             title,
@@ -2424,11 +2712,42 @@ var Authentication = {
             }
         );
     },
-    closeAuthenticationWindow:function () {
+    closeAuthenticationWindow: function () {
         if (authenticationWindow) {
             authenticationWindow.close();
             authenticationWindow = null;
         }
+    },
+    xmppAuthenticate: function () {
+
+        var loginDialog = LoginDialog.show(
+            function (connection, state) {
+                if (!state) {
+                    // User cancelled
+                    loginDialog.close();
+                    return;
+                } else if (state == APP.xmpp.Status.CONNECTED) {
+
+                    loginDialog.close();
+
+                    Authentication.stopInterval();
+                    Authentication.closeAuthenticationDialog();
+
+                    // Close the connection as anonymous one will be used
+                    // to create the conference. Session-id will authorize
+                    // the request.
+                    connection.disconnect();
+
+                    var roomName = APP.UI.generateRoomName();
+                    Moderator.allocateConferenceFocus(roomName, function () {
+                        // If it's not "on the fly" authentication now join
+                        // the conference room
+                        if (!APP.xmpp.getMUCJoined()) {
+                            APP.UI.checkForNicknameAndJoin();
+                        }
+                    });
+                }
+            }, true);
     },
     focusAuthenticationWindow: function () {
         // If auth window exists just bring it to the front
@@ -2440,7 +2759,7 @@ var Authentication = {
     closeAuthenticationDialog: function () {
         // Close authentication dialog if opened
         if (authDialog) {
-            APP.UI.messageHandler.closeDialog();
+            authDialog.close();
             authDialog = null;
         }
     },
@@ -2450,10 +2769,7 @@ var Authentication = {
             // On closed
             function () {
                 // Close authentication dialog if opened
-                if (authDialog) {
-                    messageHandler.closeDialog();
-                    authDialog = null;
-                }
+                Authentication.closeAuthenticationDialog();
                 callback();
                 authenticationWindow = null;
             });
@@ -2469,7 +2785,236 @@ var Authentication = {
 };
 
 module.exports = Authentication;
-},{}],12:[function(require,module,exports){
+},{"../../xmpp/moderator":54,"./LoginDialog":13}],13:[function(require,module,exports){
+/* global $, APP, config*/
+
+var XMPP = require('../../xmpp/xmpp');
+var Moderator = require('../../xmpp/moderator');
+
+//FIXME: use LoginDialog to add retries to XMPP.connect method used when
+// anonymous domain is not enabled
+
+/**
+ * Creates new <tt>Dialog</tt> instance.
+ * @param callback <tt>function(Strophe.Connection, Strophe.Status)</tt> called
+ *        when we either fail to connect or succeed(check Strophe.Status).
+ * @param obtainSession <tt>true</tt> if we want to send ConferenceIQ to Jicofo
+ *        in order to create session-id after the connection is established.
+ * @constructor
+ */
+function Dialog(callback, obtainSession) {
+
+    var self = this;
+
+    var stop = false;
+
+    var connection = APP.xmpp.createConnection();
+
+    var message = '<h2 data-i18n="dialog.passwordRequired">';
+    message += APP.translation.translateString("dialog.passwordRequired");
+    message += '</h2>' +
+        '<input name="username" type="text" ' +
+        'placeholder="user@domain.net" autofocus>' +
+        '<input name="password" ' +
+        'type="password" data-i18n="[placeholder]dialog.userPassword"' +
+        ' placeholder="user password">';
+
+    var okButton = APP.translation.generateTranslatonHTML("dialog.Ok");
+
+    var cancelButton = APP.translation.generateTranslatonHTML("dialog.Cancel");
+
+    var states = {
+        login: {
+            html: message,
+            buttons: [
+                { title: okButton, value: true},
+                { title: cancelButton, value: false}
+            ],
+            focus: ':input:first',
+            submit: function (e, v, m, f) {
+                e.preventDefault();
+                if (v) {
+                    var jid = f.username;
+                    var password = f.password;
+                    if (jid && password) {
+                        stop = false;
+                        connection.reset();
+                        connDialog.goToState('connecting');
+                        connection.connect(jid, password, stateHandler);
+                    }
+                } else {
+                    // User cancelled
+                    stop = true;
+                    callback();
+                }
+            }
+        },
+        connecting: {
+            title: APP.translation.translateString('dialog.connecting'),
+            html:   '<div id="connectionStatus"></div>',
+            buttons: [],
+            defaultButton: 0
+        },
+        finished: {
+            title: APP.translation.translateString('dialog.error'),
+            html:   '<div id="errorMessage"></div>',
+            buttons: [
+                {
+                    title: APP.translation.translateString('dialog.retry'),
+                    value: 'retry'
+                },
+                {
+                    title: APP.translation.translateString('dialog.Cancel'),
+                    value: 'cancel'
+                },
+            ],
+            defaultButton: 0,
+            submit: function (e, v, m, f) {
+                e.preventDefault();
+                if (v === 'retry')
+                    connDialog.goToState('login');
+                else
+                    callback();
+            }
+        }
+    };
+
+    var connDialog
+        = APP.UI.messageHandler.openDialogWithStates(states,
+                { persistent: true, closeText: '' }, null);
+
+    var stateHandler = function (status, message) {
+        if (stop) {
+            return;
+        }
+
+        var translateKey = "connection." + XMPP.getStatusString(status);
+        var statusStr = APP.translation.translateString(translateKey);
+
+        // Display current state
+        var connectionStatus =
+            connDialog.getState('connecting').find('#connectionStatus');
+
+        connectionStatus.text(statusStr);
+
+        switch (status) {
+            case XMPP.Status.CONNECTED:
+
+                stop = true;
+                if (!obtainSession) {
+                    callback(connection, status);
+                    return;
+                }
+                // Obtaining session-id status
+                connectionStatus.text(
+                    APP.translation.translateString(
+                        'connection.FETCH_SESSION_ID'));
+
+                // Authenticate with Jicofo and obtain session-id
+                var roomName = APP.UI.generateRoomName();
+
+                // Jicofo will return new session-id when connected
+                // from authenticated domain
+                connection.sendIQ(
+                    Moderator.createConferenceIq(roomName),
+                    function (result) {
+
+                        connectionStatus.text(
+                            APP.translation.translateString(
+                                'connection.GOT_SESSION_ID'));
+
+                        stop = true;
+
+                        // Parse session-id
+                        Moderator.parseSessionId(result);
+
+                        callback(connection, status);
+                    },
+                    function (error) {
+                        console.error("Auth on the fly failed", error);
+
+                        stop = true;
+
+                        var errorMsg =
+                            APP.translation.translateString(
+                                'connection.GET_SESSION_ID_ERROR') +
+                                $(error).find('>error').attr('code');
+
+                        self.displayError(errorMsg);
+
+                        connection.disconnect();
+                    });
+
+                break;
+            case XMPP.Status.AUTHFAIL:
+            case XMPP.Status.CONNFAIL:
+            case XMPP.Status.DISCONNECTED:
+
+                stop = true;
+
+                callback(connection, status);
+
+                var errorMessage = statusStr;
+
+                if (message)
+                {
+                    errorMessage += ': ' + message;
+                }
+                self.displayError(errorMessage);
+
+                break;
+            default:
+                break;
+        }
+    };
+
+    /**
+     * Displays error message in 'finished' state which allows either to cancel
+     * or retry.
+     * @param message the final message to be displayed.
+     */
+    this.displayError = function (message) {
+
+        var finishedState = connDialog.getState('finished');
+
+        var errorMessageElem = finishedState.find('#errorMessage');
+        errorMessageElem.text(message);
+
+        connDialog.goToState('finished');
+    };
+
+    /**
+     * Closes LoginDialog.
+     */
+    this.close = function () {
+        stop = true;
+        connDialog.close();
+    };
+}
+
+var LoginDialog = {
+
+    /**
+     * Displays login prompt used to establish new XMPP connection. Given
+     * <tt>callback(Strophe.Connection, Strophe.Status)</tt> function will be
+     * called when we connect successfully(status === CONNECTED) or when we fail
+     * to do so. On connection failure program can call Dialog.close() method in
+     * order to cancel or do nothing to let the user retry.
+     * @param callback <tt>function(Strophe.Connection, Strophe.Status)</tt>
+     *        called when we either fail to connect or succeed(check
+     *        Strophe.Status).
+     * @param obtainSession <tt>true</tt> if we want to send ConferenceIQ to
+     *        Jicofo in order to create session-id after the connection is
+     *        established.
+     * @returns {Dialog}
+     */
+    show: function (callback, obtainSession) {
+        return new Dialog(callback, obtainSession);
+    }
+};
+
+module.exports = LoginDialog;
+},{"../../xmpp/moderator":54,"../../xmpp/xmpp":62}],14:[function(require,module,exports){
 var Settings = require("../../settings/Settings");
 var MediaStreamType = require("../../../service/RTC/MediaStreamTypes");
 
@@ -2625,7 +3170,7 @@ var Avatar = {
 
 
 module.exports = Avatar;
-},{"../../../service/RTC/MediaStreamTypes":87,"../../settings/Settings":37,"../videolayout/VideoLayout":31}],13:[function(require,module,exports){
+},{"../../../service/RTC/MediaStreamTypes":88,"../../settings/Settings":39,"../videolayout/VideoLayout":33}],15:[function(require,module,exports){
 /* global $, config,
    setLargeVideoVisible, Util */
 
@@ -2821,7 +3366,7 @@ var Etherpad = {
 
 module.exports = Etherpad;
 
-},{"../prezi/Prezi":14,"../util/UIUtil":29,"../videolayout/VideoLayout":31}],14:[function(require,module,exports){
+},{"../prezi/Prezi":16,"../util/UIUtil":31,"../videolayout/VideoLayout":33}],16:[function(require,module,exports){
 var ToolbarToggler = require("../toolbars/ToolbarToggler");
 var UIUtil = require("../util/UIUtil");
 var VideoLayout = require("../videolayout/VideoLayout");
@@ -2890,11 +3435,15 @@ var Prezi = {
                 "dialog.Share");
             var backButton = APP.translation.generateTranslatonHTML(
                 "dialog.Back");
-            var buttons = {};
-            var buttons1 = {};
-            buttons1.button1 = buttons.button1 = {title: cancelButton, value: false};
-            buttons.button2 = {title: shareButton, value: true};
-            buttons1.button2 = {title: backButton, value: true};
+            var buttons = [];
+            var buttons1 = [];
+            // Cancel button to both states
+            buttons.push({title: cancelButton, value: false});
+            buttons1.push({title: cancelButton, value: false});
+            // Share button
+            buttons.push({title: shareButton, value: true});
+            // Back button
+            buttons1.push({title: backButton, value: true});
             var linkError = APP.translation.generateTranslatonHTML(
                 "dialog.preziLinkError");
             var defaultUrl = APP.translation.translateString("defaultPreziLink",
@@ -2902,23 +3451,24 @@ var Prezi = {
             var openPreziState = {
                 state0: {
                     html:   '<h2>' + html + '</h2>' +
-                            '<input id="preziUrl" type="text" ' +
+                            '<input name="preziUrl" type="text" ' +
                             'data-i18n="[placeholder]defaultPreziLink" data-i18n-options=\'' +
                             JSON.stringify({"url": "http://prezi.com/wz7vhjycl7e6/my-prezi"}) +
                             '\' placeholder="' + defaultUrl + '" autofocus>',
                     persistent: false,
                     buttons: buttons,
-                    defaultButton: 1,
-                    submit: function(e,v,m,f){
+                    focus: ':input:first',
+                    defaultButton: 0,
+                    submit: function (e, v, m, f) {
                         e.preventDefault();
                         if(v)
                         {
-                            var preziUrl = document.getElementById('preziUrl');
+                            var preziUrl = f.preziUrl;
 
-                            if (preziUrl.value)
+                            if (preziUrl)
                             {
                                 var urlValue
-                                    = encodeURI(UIUtil.escapeHtml(preziUrl.value));
+                                    = encodeURI(UIUtil.escapeHtml(preziUrl));
 
                                 if (urlValue.indexOf('http://prezi.com/') != 0
                                     && urlValue.indexOf('https://prezi.com/') != 0)
@@ -2950,20 +3500,18 @@ var Prezi = {
                             linkError,
                     persistent: false,
                     buttons: buttons1,
+                    focus: ':input:first',
                     defaultButton: 1,
-                    submit:function(e,v,m,f) {
+                    submit: function (e, v, m, f) {
                         e.preventDefault();
-                        if(v==0)
+                        if (v === 0)
                             $.prompt.close();
                         else
                             $.prompt.goToState('state0');
                     }
                 }
             };
-            var focusPreziUrl =  function(e) {
-                    document.getElementById('preziUrl').focus();
-                };
-            messageHandler.openDialogWithStates(openPreziState, focusPreziUrl, focusPreziUrl);
+            messageHandler.openDialogWithStates(openPreziState);
         }
     }
 
@@ -3194,7 +3742,7 @@ $(window).resize(function () {
 
 module.exports = Prezi;
 
-},{"../toolbars/ToolbarToggler":25,"../util/MessageHandler":27,"../util/UIUtil":29,"../videolayout/VideoLayout":31,"./PreziPlayer":15}],15:[function(require,module,exports){
+},{"../toolbars/ToolbarToggler":27,"../util/MessageHandler":29,"../util/UIUtil":31,"../videolayout/VideoLayout":33,"./PreziPlayer":17}],17:[function(require,module,exports){
 (function() {
     "use strict";
     var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
@@ -3490,7 +4038,7 @@ module.exports = Prezi;
 
 module.exports = PreziPlayer;
 
-},{}],16:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 var Chat = require("./chat/Chat");
 var ContactList = require("./contactlist/ContactList");
 var Settings = require("./../../settings/Settings");
@@ -3747,7 +4295,7 @@ var PanelToggler = (function(my) {
 }(PanelToggler || {}));
 
 module.exports = PanelToggler;
-},{"../toolbars/ToolbarToggler":25,"../util/UIUtil":29,"../videolayout/VideoLayout":31,"./../../settings/Settings":37,"./chat/Chat":17,"./contactlist/ContactList":21,"./settings/SettingsMenu":22}],17:[function(require,module,exports){
+},{"../toolbars/ToolbarToggler":27,"../util/UIUtil":31,"../videolayout/VideoLayout":33,"./../../settings/Settings":39,"./chat/Chat":19,"./contactlist/ContactList":23,"./settings/SettingsMenu":24}],19:[function(require,module,exports){
 /* global $, Util, nickname:true */
 var Replacement = require("./Replacement");
 var CommandsProcessor = require("./Commands");
@@ -4105,7 +4653,7 @@ var Chat = (function (my) {
     return my;
 }(Chat || {}));
 module.exports = Chat;
-},{"../../../../service/UI/UIEvents":92,"../../toolbars/ToolbarToggler":25,"../../util/NicknameHandler":28,"../../util/UIUtil":29,"../SidePanelToggler":16,"./Commands":18,"./Replacement":19,"./smileys.json":20}],18:[function(require,module,exports){
+},{"../../../../service/UI/UIEvents":93,"../../toolbars/ToolbarToggler":27,"../../util/NicknameHandler":30,"../../util/UIUtil":31,"../SidePanelToggler":18,"./Commands":20,"./Replacement":21,"./smileys.json":22}],20:[function(require,module,exports){
 var UIUtil = require("../../util/UIUtil");
 
 /**
@@ -4203,7 +4751,7 @@ CommandsProcessor.prototype.processCommand = function()
 };
 
 module.exports = CommandsProcessor;
-},{"../../util/UIUtil":29}],19:[function(require,module,exports){
+},{"../../util/UIUtil":31}],21:[function(require,module,exports){
 var Smileys = require("./smileys.json");
 /**
  * Processes links and smileys in "body"
@@ -4267,7 +4815,7 @@ module.exports = {
     linkify: linkify
 };
 
-},{"./smileys.json":20}],20:[function(require,module,exports){
+},{"./smileys.json":22}],22:[function(require,module,exports){
 module.exports={
     "smileys": {
         "smiley1": ":)",
@@ -4317,7 +4865,7 @@ module.exports={
     }
 }
 
-},{}],21:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 
 var numberOfContacts = 0;
 var notificationInterval;
@@ -4507,7 +5055,7 @@ var ContactList = {
 };
 
 module.exports = ContactList;
-},{}],22:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 var Avatar = require("../../avatar/Avatar");
 var Settings = require("./../../../settings/Settings");
 var UIUtil = require("../../util/UIUtil");
@@ -4588,7 +5136,7 @@ var SettingsMenu = {
 
 
 module.exports = SettingsMenu;
-},{"../../../../service/translation/languages":96,"../../avatar/Avatar":12,"../../util/UIUtil":29,"./../../../settings/Settings":37}],23:[function(require,module,exports){
+},{"../../../../service/translation/languages":97,"../../avatar/Avatar":14,"../../util/UIUtil":31,"./../../../settings/Settings":39}],25:[function(require,module,exports){
 var PanelToggler = require("../side_pannels/SidePanelToggler");
 
 var buttonHandlers = {
@@ -4633,7 +5181,7 @@ var BottomToolbar = (function (my) {
 
 module.exports = BottomToolbar;
 
-},{"../side_pannels/SidePanelToggler":16}],24:[function(require,module,exports){
+},{"../side_pannels/SidePanelToggler":18}],26:[function(require,module,exports){
 /* global APP,$, buttonClick, config, lockRoom,
    setSharedKey, Util */
 var messageHandler = require("../util/MessageHandler");
@@ -4740,8 +5288,8 @@ function hangup() {
         "dialog.hungUp");
     var button = APP.translation.generateTranslatonHTML(
         "dialog.joinAgain");
-    var buttons = {};
-    buttons.joinAgain = {title: button, value: true};
+    var buttons = [];
+    buttons.push({title: button, value: true});
 
     UI.messageHandler.openDialog(
         title,
@@ -4767,25 +5315,23 @@ function toggleRecording() {
         var token = APP.translation.translateString("dialog.token");
         APP.UI.messageHandler.openTwoButtonDialog(null, null, null,
                 '<h2>' + msg + '</h2>' +
-                '<input id="recordingToken" type="text" ' +
+                '<input name="recordingToken" type="text" ' +
                 ' data-i18n="[placeholder]dialog.token" ' +
                 'placeholder="' + token + '" autofocus>',
             false,
             "dialog.Save",
             function (e, v, m, f) {
                 if (v) {
-                    var token = document.getElementById('recordingToken');
+                    var token = f.recordingToken;
 
-                    if (token.value) {
-                        callback(UIUtil.escapeHtml(token.value));
+                    if (token) {
+                        callback(UIUtil.escapeHtml(token));
                     }
                 }
             },
-            function (event) {
-                document.getElementById('recordingToken').focus();
-            },
-            function () {
-            }
+            null,
+            function () { },
+            ':input:first'
         );
     }, Toolbar.setRecordingButtonState, Toolbar.setRecordingButtonState);
 }
@@ -4868,22 +5414,21 @@ function callSipButtonClicked()
         "dialog.sipMsg");
     messageHandler.openTwoButtonDialog(null, null, null,
         '<h2>' + sipMsg + '</h2>' +
-        '<input id="sipNumber" type="text"' +
+        '<input name="sipNumber" type="text"' +
         ' value="' + defaultNumber + '" autofocus>',
         false,
         "dialog.Dial",
         function (e, v, m, f) {
             if (v) {
-                var numberInput = document.getElementById('sipNumber');
-                if (numberInput.value) {
-                    APP.xmpp.dial(numberInput.value, 'fromnumber',
-                        UI.getRoomName(), sharedKey);
+                var numberInput = f.sipNumber;
+                if (numberInput) {
+                    APP.xmpp.dial(
+                        numberInput, 'fromnumber', UI.getRoomName(), sharedKey);
                 }
             }
         },
-        function (event) {
-            document.getElementById('sipNumber').focus();
-        }
+        null,
+        ':input:first'
     );
 }
 
@@ -4901,12 +5446,6 @@ var Toolbar = (function (my) {
                 var loggedIn = false;
                 if (userIdentity) {
                     loggedIn = true;
-                }
-
-                //FIXME: XMPP authentication need improvements for "live" login
-                if (!APP.xmpp.isExternalAuthEnabled() && !loggedIn)
-                {
-                    authenticationEnabled = false;
                 }
 
                 Toolbar.showAuthenticateButton(authenticationEnabled);
@@ -4931,6 +5470,10 @@ var Toolbar = (function (my) {
 
     my.authenticateClicked = function () {
         Authentication.focusAuthenticationWindow();
+        if (!APP.xmpp.isExternalAuthEnabled()) {
+            Authentication.xmppAuthenticate();
+            return;
+        }
         // Get authentication URL
         if (!APP.xmpp.getMUCJoined()) {
             APP.xmpp.getLoginUrl(UI.getRoomName(), function (url) {
@@ -5013,24 +5556,23 @@ var Toolbar = (function (my) {
                     "dialog.yourPassword");
                 messageHandler.openTwoButtonDialog(null, null, null,
                     '<h2>' + msg + '</h2>' +
-                        '<input id="lockKey" type="text"' +
+                        '<input name="lockKey" type="text"' +
                         ' data-i18n="[placeholder]dialog.yourPassword" ' +
                         'placeholder="' + yourPassword + '" autofocus>',
                     false,
                     "dialog.Save",
-                    function (e, v) {
+                    function (e, v, m, f) {
                         if (v) {
-                            var lockKey = document.getElementById('lockKey');
+                            var lockKey = f.lockKey;
 
-                            if (lockKey.value) {
-                                Toolbar.setSharedKey(UIUtil.escapeHtml(lockKey.value));
+                            if (lockKey) {
+                                Toolbar.setSharedKey(
+                                    UIUtil.escapeHtml(lockKey));
                                 lockRoom(true);
                             }
                         }
                     },
-                    function () {
-                        document.getElementById('lockKey').focus();
-                    }
+                    null, null, 'input:first'
                 );
             }
         }
@@ -5074,6 +5616,7 @@ var Toolbar = (function (my) {
 
     /**
      * Opens the settings dialog.
+     * FIXME: not used ?
      */
     my.openSettingsDialog = function () {
         var settings1 = APP.translation.generateTranslatonHTML(
@@ -5267,7 +5810,7 @@ var Toolbar = (function (my) {
 }(Toolbar || {}));
 
 module.exports = Toolbar;
-},{"../../../service/authentication/AuthenticationEvents":93,"../authentication/Authentication":11,"../etherpad/Etherpad":13,"../prezi/Prezi":14,"../side_pannels/SidePanelToggler":16,"../util/MessageHandler":27,"../util/UIUtil":29,"./BottomToolbar":23}],25:[function(require,module,exports){
+},{"../../../service/authentication/AuthenticationEvents":94,"../authentication/Authentication":12,"../etherpad/Etherpad":15,"../prezi/Prezi":16,"../side_pannels/SidePanelToggler":18,"../util/MessageHandler":29,"../util/UIUtil":31,"./BottomToolbar":25}],27:[function(require,module,exports){
 /* global $, interfaceConfig, Moderator, DesktopStreaming.showDesktopSharingButton */
 
 var toolbarTimeoutObject,
@@ -5382,7 +5925,7 @@ var ToolbarToggler = {
 };
 
 module.exports = ToolbarToggler;
-},{}],26:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 var JitsiPopover = (function () {
     /**
      * Constructs new JitsiPopover and attaches it to the element
@@ -5506,8 +6049,8 @@ var JitsiPopover = (function () {
 })();
 
 module.exports = JitsiPopover;
-},{}],27:[function(require,module,exports){
-/* global $, jQuery */
+},{}],29:[function(require,module,exports){
+/* global $, APP, jQuery, toastr */
 var messageHandler = (function(my) {
 
     /**
@@ -5541,29 +6084,38 @@ var messageHandler = (function(my) {
      * @param submitFunction function to be called on submit
      * @param loadedFunction function to be called after the prompt is fully loaded
      * @param closeFunction function to be called after the prompt is closed
+     * @param focus optional focus selector or button index to be focused after
+     *        the dialog is opened
+     * @param defaultButton index of default button which will be activated when
+     *        the user press 'enter'. Indexed from 0.
      */
     my.openTwoButtonDialog = function(titleKey, titleString, msgKey, msgString,
         persistent, leftButtonKey, submitFunction, loadedFunction,
-        closeFunction)
+        closeFunction, focus, defaultButton)
     {
+        var buttons = [];
+
         var leftButton = APP.translation.generateTranslatonHTML(leftButtonKey);
-        var buttons = {};
-        buttons.button1 = {title: leftButton, value: true};
-        var cancelButton = APP.translation.generateTranslatonHTML("dialog.Cancel");
-        buttons.button2 = {title: cancelButton, value: false};
+        buttons.push({ title: leftButton, value: true});
+
+        var cancelButton
+            = APP.translation.generateTranslatonHTML("dialog.Cancel");
+        buttons.push({title: cancelButton, value: false});
+
         var message = msgString, title = titleString;
-        if(titleKey)
+        if (titleKey)
         {
             title = APP.translation.generateTranslatonHTML(titleKey);
         }
-        if(msgKey) {
+        if (msgKey) {
             message = APP.translation.generateTranslatonHTML(msgKey);
         }
         $.prompt(message, {
             title: title,
             persistent: false,
             buttons: buttons,
-            defaultButton: 1,
+            defaultButton: defaultButton,
+            focus: focus,
             loaded: loadedFunction,
             submit: submitFunction,
             close: closeFunction
@@ -5594,7 +6146,7 @@ var messageHandler = (function(my) {
         if (persistent) {
             args.closeText = '';
         }
-        return $.prompt(msgString, args);
+        return new Impromptu(msgString, args);
     };
 
     /**
@@ -5608,16 +6160,10 @@ var messageHandler = (function(my) {
      * Shows a dialog with different states to the user.
      *
      * @param statesObject object containing all the states of the dialog
-     * @param loadedFunction function to be called after the prompt is fully loaded
-     * @param stateChangedFunction function to be called when the state of the dialog is changed
      */
-    my.openDialogWithStates = function(statesObject, loadedFunction, stateChangedFunction) {
+    my.openDialogWithStates = function (statesObject, options) {
 
-
-        var myPrompt = $.prompt(statesObject);
-
-        myPrompt.on('impromptu:loaded', loadedFunction);
-        myPrompt.on('impromptu:statechanged', stateChangedFunction);
+        return new Impromptu(statesObject, options);
     };
 
     /**
@@ -5711,7 +6257,7 @@ module.exports = messageHandler;
 
 
 
-},{}],28:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 var UIEvents = require("../../../service/UI/UIEvents");
 
 var nickname = null;
@@ -5742,7 +6288,7 @@ var NickanameHandler = {
 };
 
 module.exports = NickanameHandler;
-},{"../../../service/UI/UIEvents":92}],29:[function(require,module,exports){
+},{"../../../service/UI/UIEvents":93}],31:[function(require,module,exports){
 /**
  * Created by hristo on 12/22/14.
  */
@@ -5824,7 +6370,7 @@ module.exports = {
 
 
 };
-},{"../side_pannels/SidePanelToggler":16}],30:[function(require,module,exports){
+},{"../side_pannels/SidePanelToggler":18}],32:[function(require,module,exports){
 var JitsiPopover = require("../util/JitsiPopover");
 
 /**
@@ -6252,7 +6798,7 @@ ConnectionIndicator.prototype.hideIndicator = function () {
 };
 
 module.exports = ConnectionIndicator;
-},{"../util/JitsiPopover":26}],31:[function(require,module,exports){
+},{"../util/JitsiPopover":28}],33:[function(require,module,exports){
 var AudioLevels = require("../audio_levels/AudioLevels");
 var Avatar = require("../avatar/Avatar");
 var Chat = require("../side_pannels/chat/Chat");
@@ -8491,7 +9037,7 @@ var VideoLayout = (function (my) {
 }(VideoLayout || {}));
 
 module.exports = VideoLayout;
-},{"../../../service/RTC/MediaStreamTypes":87,"../../../service/UI/UIEvents":92,"../audio_levels/AudioLevels":9,"../avatar/Avatar":12,"../etherpad/Etherpad":13,"../prezi/Prezi":14,"../side_pannels/chat/Chat":17,"../side_pannels/contactlist/ContactList":21,"../util/NicknameHandler":28,"../util/UIUtil":29,"./ConnectionIndicator":30}],32:[function(require,module,exports){
+},{"../../../service/RTC/MediaStreamTypes":88,"../../../service/UI/UIEvents":93,"../audio_levels/AudioLevels":10,"../avatar/Avatar":14,"../etherpad/Etherpad":15,"../prezi/Prezi":16,"../side_pannels/chat/Chat":19,"../side_pannels/contactlist/ContactList":23,"../util/NicknameHandler":30,"../util/UIUtil":31,"./ConnectionIndicator":32}],34:[function(require,module,exports){
 //var nouns = [
 //];
 var pluralNouns = [
@@ -8672,7 +9218,7 @@ var RoomNameGenerator = {
 
 module.exports = RoomNameGenerator;
 
-},{}],33:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 var animateTimeout, updateTimeout;
 
 var RoomNameGenerator = require("./RoomnameGenerator");
@@ -8774,7 +9320,7 @@ function setupWelcomePage()
 }
 
 module.exports = setupWelcomePage;
-},{"./RoomnameGenerator":32}],34:[function(require,module,exports){
+},{"./RoomnameGenerator":34}],36:[function(require,module,exports){
 var EventEmitter = require("events");
 var eventEmitter = new EventEmitter();
 var CQEvents = require("../../service/connectionquality/CQEvents");
@@ -8909,7 +9455,7 @@ var ConnectionQuality = {
 };
 
 module.exports = ConnectionQuality;
-},{"../../service/connectionquality/CQEvents":94,"../../service/xmpp/XMPPEvents":97,"events":61}],35:[function(require,module,exports){
+},{"../../service/connectionquality/CQEvents":95,"../../service/xmpp/XMPPEvents":98,"events":1}],37:[function(require,module,exports){
 /* global $, alert, changeLocalVideo, chrome, config, getConferenceHandler, getUserMediaWithConstraints */
 /**
  * Indicates that desktop stream is currently in use(for toggle purpose).
@@ -9234,7 +9780,7 @@ module.exports = {
 };
 
 
-},{"../../service/desktopsharing/DesktopSharingEventTypes":95,"events":61}],36:[function(require,module,exports){
+},{"../../service/desktopsharing/DesktopSharingEventTypes":96,"events":1}],38:[function(require,module,exports){
 //maps keycode to character, id of popover for given function and function
 var shortcuts = {
     67: {
@@ -9327,7 +9873,7 @@ var KeyboardShortcut = {
 
 module.exports = KeyboardShortcut;
 
-},{}],37:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 var email = '';
 var displayName = '';
 var userId;
@@ -9394,7 +9940,7 @@ var Settings =
 
 module.exports = Settings;
 
-},{}],38:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 /**
  *
  * @constructor
@@ -9427,7 +9973,7 @@ SimulcastLogger.prototype.error = function (text) {
 };
 
 module.exports = SimulcastLogger;
-},{}],39:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 var SimulcastLogger = require("./SimulcastLogger");
 var SimulcastUtils = require("./SimulcastUtils");
 var MediaStreamType = require("../../service/RTC/MediaStreamTypes");
@@ -9696,7 +10242,7 @@ SimulcastReceiver.prototype.transformRemoteDescription = function (desc) {
 };
 
 module.exports = SimulcastReceiver;
-},{"../../service/RTC/MediaStreamTypes":87,"./SimulcastLogger":38,"./SimulcastUtils":41}],40:[function(require,module,exports){
+},{"../../service/RTC/MediaStreamTypes":88,"./SimulcastLogger":40,"./SimulcastUtils":43}],42:[function(require,module,exports){
 var SimulcastLogger = require("./SimulcastLogger");
 var SimulcastUtils = require("./SimulcastUtils");
 
@@ -10219,7 +10765,7 @@ module.exports = {
     "no": NoSimulcastSender
 }
 
-},{"./SimulcastLogger":38,"./SimulcastUtils":41}],41:[function(require,module,exports){
+},{"./SimulcastLogger":40,"./SimulcastUtils":43}],43:[function(require,module,exports){
 var SimulcastLogger = require("./SimulcastLogger");
 
 /**
@@ -10453,7 +10999,7 @@ SimulcastUtils.prototype._compileVideoSources = function (videoSources) {
 };
 
 module.exports = SimulcastUtils;
-},{"./SimulcastLogger":38}],42:[function(require,module,exports){
+},{"./SimulcastLogger":40}],44:[function(require,module,exports){
 /*jslint plusplus: true */
 /*jslint nomen: true*/
 
@@ -10656,7 +11202,7 @@ SimulcastManager.prototype.resetSender = function() {
 var simulcast = new SimulcastManager();
 
 module.exports = simulcast;
-},{"../../service/RTC/RTCEvents":89,"./SimulcastReceiver":39,"./SimulcastSender":40,"./SimulcastUtils":41}],43:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":90,"./SimulcastReceiver":41,"./SimulcastSender":42,"./SimulcastUtils":43}],45:[function(require,module,exports){
 /**
  * Provides statistics for the local stream.
  */
@@ -10787,7 +11333,7 @@ LocalStatsCollector.prototype.stop = function () {
 };
 
 module.exports = LocalStatsCollector;
-},{}],44:[function(require,module,exports){
+},{}],46:[function(require,module,exports){
 /* global ssrc2jid */
 /* jshint -W117 */
 var RTCBrowserType = require("../../service/RTC/RTCBrowserType");
@@ -11530,7 +12076,7 @@ StatsCollector.prototype.processAudioLevelReport = function ()
 
 };
 
-},{"../../service/RTC/RTCBrowserType":88}],45:[function(require,module,exports){
+},{"../../service/RTC/RTCBrowserType":89}],47:[function(require,module,exports){
 /**
  * Created by hristo on 8/4/14.
  */
@@ -11663,7 +12209,7 @@ var statistics =
 
 
 module.exports = statistics;
-},{"../../service/RTC/StreamEventTypes.js":91,"../../service/xmpp/XMPPEvents":97,"./LocalStatsCollector.js":43,"./RTPStatsCollector.js":44,"events":61}],46:[function(require,module,exports){
+},{"../../service/RTC/StreamEventTypes.js":92,"../../service/xmpp/XMPPEvents":98,"./LocalStatsCollector.js":45,"./RTPStatsCollector.js":46,"events":1}],48:[function(require,module,exports){
 var i18n = require("i18next-client");
 var languages = require("../../service/translation/languages");
 var Settings = require("../settings/Settings");
@@ -11797,7 +12343,7 @@ module.exports = {
     }
 };
 
-},{"../../service/translation/languages":96,"../settings/Settings":37,"i18next-client":62}],47:[function(require,module,exports){
+},{"../../service/translation/languages":97,"../settings/Settings":39,"i18next-client":63}],49:[function(require,module,exports){
 /* jshint -W117 */
 var TraceablePeerConnection = require("./TraceablePeerConnection");
 var SDPDiffer = require("./SDPDiffer");
@@ -13184,7 +13730,7 @@ JingleSession.prototype.remoteStreamAdded = function (data, times) {
 
 module.exports = JingleSession;
 
-},{"../../service/RTC/RTCBrowserType":88,"./SDP":48,"./SDPDiffer":49,"./SDPUtil":50,"./TraceablePeerConnection":51}],48:[function(require,module,exports){
+},{"../../service/RTC/RTCBrowserType":89,"./SDP":50,"./SDPDiffer":51,"./SDPUtil":52,"./TraceablePeerConnection":53}],50:[function(require,module,exports){
 /* jshint -W117 */
 var SDPUtil = require("./SDPUtil");
 
@@ -13806,7 +14352,7 @@ SDP.prototype.jingle2media = function (content) {
 module.exports = SDP;
 
 
-},{"./SDPUtil":50}],49:[function(require,module,exports){
+},{"./SDPUtil":52}],51:[function(require,module,exports){
 function SDPDiffer(mySDP, otherSDP) {
     this.mySDP = mySDP;
     this.otherSDP = otherSDP;
@@ -13972,7 +14518,7 @@ SDPDiffer.prototype.toJingle = function(modify) {
 };
 
 module.exports = SDPDiffer;
-},{}],50:[function(require,module,exports){
+},{}],52:[function(require,module,exports){
 SDPUtil = {
     iceparams: function (mediadesc, sessiondesc) {
         var data = null;
@@ -14322,7 +14868,7 @@ SDPUtil = {
     }
 };
 module.exports = SDPUtil;
-},{}],51:[function(require,module,exports){
+},{}],53:[function(require,module,exports){
 function TraceablePeerConnection(ice_config, constraints) {
     var self = this;
     var RTCPeerconnection = navigator.mozGetUserMedia ? mozRTCPeerConnection : webkitRTCPeerConnection;
@@ -14642,7 +15188,7 @@ TraceablePeerConnection.prototype.getStats = function(callback, errback) {
 module.exports = TraceablePeerConnection;
 
 
-},{"sdp-interop":80}],52:[function(require,module,exports){
+},{"sdp-interop":81}],54:[function(require,module,exports){
 /* global $, $iq, APP, config, connection, UI, messageHandler,
  roomName, sessionTerminated, Strophe, Util */
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
@@ -14833,6 +15379,14 @@ var Moderator = {
         return elem;
     },
 
+    parseSessionId: function (resultIq) {
+        var sessionId = $(resultIq).find('conference').attr('session-id');
+        if (sessionId) {
+            console.info('Received sessionId: ' + sessionId);
+            localStorage.setItem('sessionId', sessionId);
+        }
+    },
+
     parseConfigOptions: function (resultIq) {
 
         Moderator.setFocusUserJid(
@@ -14854,12 +15408,7 @@ var Moderator = {
 
         if (!externalAuthEnabled) {
             // We expect to receive sessionId in 'internal' authentication mode
-            var sessionId
-                = $(resultIq).find('conference').attr('session-id');
-            if (sessionId) {
-                console.info('Received sessionId: ' + sessionId);
-                localStorage.setItem('sessionId', sessionId);
-            }
+            Moderator.parseSessionId(resultIq);
         }
 
         var authIdentity = $(resultIq).find('>conference').attr('identity');
@@ -14940,22 +15489,12 @@ var Moderator = {
                 // Not authorized to create new room
                 if ($(error).find('>error>not-authorized').length) {
                     console.warn("Unauthorized to start the conference", error);
-                    var toDomain
-                        = Strophe.getDomainFromJid(error.getAttribute('to'));
-                    if (toDomain === config.hosts.anonymousdomain) {
-                        // we are connected with anonymous domain and
-                        // only non anonymous users can create rooms
-                        // we must authorize the user
-                        self.xmppService.promptLogin();
-                    } else {
-                        // External authentication mode
-                        eventEmitter.emit(
-                            XMPPEvents.AUTHENTICATION_REQUIRED,
-                            function () {
-                                Moderator.allocateConferenceFocus(
-                                    roomName, callback);
-                            });
-                    }
+                    eventEmitter.emit(
+                        XMPPEvents.AUTHENTICATION_REQUIRED,
+                        function () {
+                            Moderator.allocateConferenceFocus(
+                                roomName, callback);
+                        });
                     return;
                 }
                 var waitMs = getNextErrorTimeout();
@@ -15067,7 +15606,7 @@ module.exports = Moderator;
 
 
 
-},{"../../service/authentication/AuthenticationEvents":93,"../../service/xmpp/XMPPEvents":97,"../settings/Settings":37}],53:[function(require,module,exports){
+},{"../../service/authentication/AuthenticationEvents":94,"../../service/xmpp/XMPPEvents":98,"../settings/Settings":39}],55:[function(require,module,exports){
 /* global $, $iq, config, connection, focusMucJid, messageHandler, Moderator,
    Toolbar, Util */
 var Moderator = require("./moderator");
@@ -15223,7 +15762,7 @@ var Recording = {
 }
 
 module.exports = Recording;
-},{"./moderator":52}],54:[function(require,module,exports){
+},{"./moderator":54}],56:[function(require,module,exports){
 /* jshint -W117 */
 /* a simple MUC connection plugin
  * can only handle a single MUC room
@@ -15850,7 +16389,7 @@ module.exports = function(XMPP, eventEmitter) {
 };
 
 
-},{"../../service/xmpp/XMPPEvents":97,"./JingleSession":47,"./moderator":52}],55:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":98,"./JingleSession":49,"./moderator":54}],57:[function(require,module,exports){
 /* jshint -W117 */
 
 var JingleSession = require("./JingleSession");
@@ -16189,7 +16728,7 @@ module.exports = function(XMPP, eventEmitter)
 };
 
 
-},{"../../service/xmpp/XMPPEvents":97,"./JingleSession":47}],56:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":98,"./JingleSession":49}],58:[function(require,module,exports){
 /* global Strophe */
 module.exports = function () {
 
@@ -16210,7 +16749,7 @@ module.exports = function () {
         }
     });
 };
-},{}],57:[function(require,module,exports){
+},{}],59:[function(require,module,exports){
 /* global $, $iq, config, connection, focusMucJid, forceMuted,
    setAudioMuted, Strophe */
 /**
@@ -16269,7 +16808,7 @@ module.exports = function (XMPP) {
         }
     });
 }
-},{}],58:[function(require,module,exports){
+},{}],60:[function(require,module,exports){
 /* jshint -W117 */
 module.exports = function() {
     Strophe.addConnectionPlugin('rayo',
@@ -16366,7 +16905,7 @@ module.exports = function() {
     );
 };
 
-},{}],59:[function(require,module,exports){
+},{}],61:[function(require,module,exports){
 /**
  * Strophe logger implementation. Logs from level WARN and above.
  */
@@ -16410,7 +16949,8 @@ module.exports = function () {
     };
 };
 
-},{}],60:[function(require,module,exports){
+},{}],62:[function(require,module,exports){
+/* global $, APP, config, Strophe*/
 var Moderator = require("./moderator");
 var EventEmitter = require("events");
 var Recording = require("./recording");
@@ -16424,25 +16964,9 @@ var eventEmitter = new EventEmitter();
 var connection = null;
 var authenticatedUser = false;
 
-function connect(jid, password, uiCredentials) {
-    var bosh
-        = (uiCredentials && uiCredentials.bosh? uiCredentials.bosh : null)
-        || config.bosh || '/http-bind';
-    connection = new Strophe.Connection(bosh);
+function connect(jid, password) {
+    connection = XMPP.createConnection();
     Moderator.setConnection(connection);
-
-    if(uiCredentials) {
-        var email = uiCredentials.email;
-        var displayName = uiCredentials.displayName;
-        if (email) {
-            connection.emuc.addEmailToPresence(email);
-        } else {
-            connection.emuc.addUserIdToPresence(uiCredentials.uid);
-        }
-        if (displayName) {
-            connection.emuc.addDisplayNameToPresence(displayName);
-        }
-    }
 
     if (connection.disco) {
         // for chrome, add multistream cap
@@ -16455,9 +16979,6 @@ function connect(jid, password, uiCredentials) {
         connection.jingle.pc_constraints.optional.push({googIPv6: true});
     }
 
-    if(!password)
-        password = uiCredentials.password;
-
     var anonymousConnectionFailed = false;
     connection.connect(jid, password, function (status, msg) {
         console.log('Strophe status changed to',
@@ -16466,7 +16987,6 @@ function connect(jid, password, uiCredentials) {
             if (config.useStunTurn) {
                 connection.jingle.getStunAndTurnCredentials();
             }
-            APP.UI.disableConnect();
 
             console.info("My Jabber ID: " + connection.jid);
 
@@ -16558,12 +17078,18 @@ function setupEvents() {
 
 var XMPP = {
     sessionTerminated: false,
+
+    /**
+     * XMPP connection status
+     */
+    Status: Strophe.Status,
+
     /**
      * Remembers if we were muted by the focus.
      * @type {boolean}
      */
     forceMuted: false,
-    start: function (uiCredentials) {
+    start: function () {
         setupEvents();
         initStrophePlugins();
         registerListeners();
@@ -16574,10 +17100,19 @@ var XMPP = {
             window.location.search.indexOf("login=true") !== -1) {
             configDomain = config.hosts.domain;
         }
-        var jid = uiCredentials.jid || configDomain || window.location.hostname;
-        connect(jid, null, uiCredentials);
+        var jid = configDomain || window.location.hostname;
+        connect(jid, null);
+    },
+    createConnection: function () {
+        var bosh = config.bosh || '/http-bind';
+
+        return new Strophe.Connection(bosh);
+    },
+    getStatusString: function (status) {
+        return Strophe.getStatusString(status);
     },
     promptLogin: function () {
+        // FIXME: re-use LoginDialog which supports retries
         APP.UI.showLoginPopup(connect);
     },
     joinRoom: function(roomName, useNicks, nick)
@@ -16868,310 +17403,7 @@ var XMPP = {
 
 module.exports = XMPP;
 
-},{"../../service/RTC/StreamEventTypes":91,"../../service/UI/UIEvents":92,"../../service/xmpp/XMPPEvents":97,"./SDP":48,"./moderator":52,"./recording":53,"./strophe.emuc":54,"./strophe.jingle":55,"./strophe.logger":56,"./strophe.moderate":57,"./strophe.rayo":58,"./strophe.util":59,"events":61,"pako":63}],61:[function(require,module,exports){
-// Copyright Joyent, Inc. and other Node contributors.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the
-// following conditions:
-//
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-// USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-function EventEmitter() {
-  this._events = this._events || {};
-  this._maxListeners = this._maxListeners || undefined;
-}
-module.exports = EventEmitter;
-
-// Backwards-compat with node 0.10.x
-EventEmitter.EventEmitter = EventEmitter;
-
-EventEmitter.prototype._events = undefined;
-EventEmitter.prototype._maxListeners = undefined;
-
-// By default EventEmitters will print a warning if more than 10 listeners are
-// added to it. This is a useful default which helps finding memory leaks.
-EventEmitter.defaultMaxListeners = 10;
-
-// Obviously not all Emitters should be limited to 10. This function allows
-// that to be increased. Set to zero for unlimited.
-EventEmitter.prototype.setMaxListeners = function(n) {
-  if (!isNumber(n) || n < 0 || isNaN(n))
-    throw TypeError('n must be a positive number');
-  this._maxListeners = n;
-  return this;
-};
-
-EventEmitter.prototype.emit = function(type) {
-  var er, handler, len, args, i, listeners;
-
-  if (!this._events)
-    this._events = {};
-
-  // If there is no 'error' event listener then throw.
-  if (type === 'error') {
-    if (!this._events.error ||
-        (isObject(this._events.error) && !this._events.error.length)) {
-      er = arguments[1];
-      if (er instanceof Error) {
-        throw er; // Unhandled 'error' event
-      }
-      throw TypeError('Uncaught, unspecified "error" event.');
-    }
-  }
-
-  handler = this._events[type];
-
-  if (isUndefined(handler))
-    return false;
-
-  if (isFunction(handler)) {
-    switch (arguments.length) {
-      // fast cases
-      case 1:
-        handler.call(this);
-        break;
-      case 2:
-        handler.call(this, arguments[1]);
-        break;
-      case 3:
-        handler.call(this, arguments[1], arguments[2]);
-        break;
-      // slower
-      default:
-        len = arguments.length;
-        args = new Array(len - 1);
-        for (i = 1; i < len; i++)
-          args[i - 1] = arguments[i];
-        handler.apply(this, args);
-    }
-  } else if (isObject(handler)) {
-    len = arguments.length;
-    args = new Array(len - 1);
-    for (i = 1; i < len; i++)
-      args[i - 1] = arguments[i];
-
-    listeners = handler.slice();
-    len = listeners.length;
-    for (i = 0; i < len; i++)
-      listeners[i].apply(this, args);
-  }
-
-  return true;
-};
-
-EventEmitter.prototype.addListener = function(type, listener) {
-  var m;
-
-  if (!isFunction(listener))
-    throw TypeError('listener must be a function');
-
-  if (!this._events)
-    this._events = {};
-
-  // To avoid recursion in the case that type === "newListener"! Before
-  // adding it to the listeners, first emit "newListener".
-  if (this._events.newListener)
-    this.emit('newListener', type,
-              isFunction(listener.listener) ?
-              listener.listener : listener);
-
-  if (!this._events[type])
-    // Optimize the case of one listener. Don't need the extra array object.
-    this._events[type] = listener;
-  else if (isObject(this._events[type]))
-    // If we've already got an array, just append.
-    this._events[type].push(listener);
-  else
-    // Adding the second element, need to change to array.
-    this._events[type] = [this._events[type], listener];
-
-  // Check for listener leak
-  if (isObject(this._events[type]) && !this._events[type].warned) {
-    var m;
-    if (!isUndefined(this._maxListeners)) {
-      m = this._maxListeners;
-    } else {
-      m = EventEmitter.defaultMaxListeners;
-    }
-
-    if (m && m > 0 && this._events[type].length > m) {
-      this._events[type].warned = true;
-      console.error('(node) warning: possible EventEmitter memory ' +
-                    'leak detected. %d listeners added. ' +
-                    'Use emitter.setMaxListeners() to increase limit.',
-                    this._events[type].length);
-      if (typeof console.trace === 'function') {
-        // not supported in IE 10
-        console.trace();
-      }
-    }
-  }
-
-  return this;
-};
-
-EventEmitter.prototype.on = EventEmitter.prototype.addListener;
-
-EventEmitter.prototype.once = function(type, listener) {
-  if (!isFunction(listener))
-    throw TypeError('listener must be a function');
-
-  var fired = false;
-
-  function g() {
-    this.removeListener(type, g);
-
-    if (!fired) {
-      fired = true;
-      listener.apply(this, arguments);
-    }
-  }
-
-  g.listener = listener;
-  this.on(type, g);
-
-  return this;
-};
-
-// emits a 'removeListener' event iff the listener was removed
-EventEmitter.prototype.removeListener = function(type, listener) {
-  var list, position, length, i;
-
-  if (!isFunction(listener))
-    throw TypeError('listener must be a function');
-
-  if (!this._events || !this._events[type])
-    return this;
-
-  list = this._events[type];
-  length = list.length;
-  position = -1;
-
-  if (list === listener ||
-      (isFunction(list.listener) && list.listener === listener)) {
-    delete this._events[type];
-    if (this._events.removeListener)
-      this.emit('removeListener', type, listener);
-
-  } else if (isObject(list)) {
-    for (i = length; i-- > 0;) {
-      if (list[i] === listener ||
-          (list[i].listener && list[i].listener === listener)) {
-        position = i;
-        break;
-      }
-    }
-
-    if (position < 0)
-      return this;
-
-    if (list.length === 1) {
-      list.length = 0;
-      delete this._events[type];
-    } else {
-      list.splice(position, 1);
-    }
-
-    if (this._events.removeListener)
-      this.emit('removeListener', type, listener);
-  }
-
-  return this;
-};
-
-EventEmitter.prototype.removeAllListeners = function(type) {
-  var key, listeners;
-
-  if (!this._events)
-    return this;
-
-  // not listening for removeListener, no need to emit
-  if (!this._events.removeListener) {
-    if (arguments.length === 0)
-      this._events = {};
-    else if (this._events[type])
-      delete this._events[type];
-    return this;
-  }
-
-  // emit removeListener for all listeners on all events
-  if (arguments.length === 0) {
-    for (key in this._events) {
-      if (key === 'removeListener') continue;
-      this.removeAllListeners(key);
-    }
-    this.removeAllListeners('removeListener');
-    this._events = {};
-    return this;
-  }
-
-  listeners = this._events[type];
-
-  if (isFunction(listeners)) {
-    this.removeListener(type, listeners);
-  } else {
-    // LIFO order
-    while (listeners.length)
-      this.removeListener(type, listeners[listeners.length - 1]);
-  }
-  delete this._events[type];
-
-  return this;
-};
-
-EventEmitter.prototype.listeners = function(type) {
-  var ret;
-  if (!this._events || !this._events[type])
-    ret = [];
-  else if (isFunction(this._events[type]))
-    ret = [this._events[type]];
-  else
-    ret = this._events[type].slice();
-  return ret;
-};
-
-EventEmitter.listenerCount = function(emitter, type) {
-  var ret;
-  if (!emitter._events || !emitter._events[type])
-    ret = 0;
-  else if (isFunction(emitter._events[type]))
-    ret = 1;
-  else
-    ret = emitter._events[type].length;
-  return ret;
-};
-
-function isFunction(arg) {
-  return typeof arg === 'function';
-}
-
-function isNumber(arg) {
-  return typeof arg === 'number';
-}
-
-function isObject(arg) {
-  return typeof arg === 'object' && arg !== null;
-}
-
-function isUndefined(arg) {
-  return arg === void 0;
-}
-
-},{}],62:[function(require,module,exports){
+},{"../../service/RTC/StreamEventTypes":92,"../../service/UI/UIEvents":93,"../../service/xmpp/XMPPEvents":98,"./SDP":50,"./moderator":54,"./recording":55,"./strophe.emuc":56,"./strophe.jingle":57,"./strophe.logger":58,"./strophe.moderate":59,"./strophe.rayo":60,"./strophe.util":61,"events":1,"pako":64}],63:[function(require,module,exports){
 // i18next, v1.7.7
 // Copyright (c)2014 Jan Mühlemann (jamuhl).
 // Distributed under MIT license
@@ -19294,7 +19526,7 @@ function isUndefined(arg) {
     i18n.options = o;
 
 })();
-},{"jquery":"jquery"}],63:[function(require,module,exports){
+},{"jquery":"jquery"}],64:[function(require,module,exports){
 // Top level file is just a mixin of submodules & constants
 'use strict';
 
@@ -19309,7 +19541,7 @@ var pako = {};
 assign(pako, deflate, inflate, constants);
 
 module.exports = pako;
-},{"./lib/deflate":64,"./lib/inflate":65,"./lib/utils/common":66,"./lib/zlib/constants":69}],64:[function(require,module,exports){
+},{"./lib/deflate":65,"./lib/inflate":66,"./lib/utils/common":67,"./lib/zlib/constants":70}],65:[function(require,module,exports){
 'use strict';
 
 
@@ -19671,7 +19903,7 @@ exports.Deflate = Deflate;
 exports.deflate = deflate;
 exports.deflateRaw = deflateRaw;
 exports.gzip = gzip;
-},{"./utils/common":66,"./utils/strings":67,"./zlib/deflate.js":71,"./zlib/messages":76,"./zlib/zstream":78}],65:[function(require,module,exports){
+},{"./utils/common":67,"./utils/strings":68,"./zlib/deflate.js":72,"./zlib/messages":77,"./zlib/zstream":79}],66:[function(require,module,exports){
 'use strict';
 
 
@@ -20037,7 +20269,7 @@ exports.inflate = inflate;
 exports.inflateRaw = inflateRaw;
 exports.ungzip  = inflate;
 
-},{"./utils/common":66,"./utils/strings":67,"./zlib/constants":69,"./zlib/gzheader":72,"./zlib/inflate.js":74,"./zlib/messages":76,"./zlib/zstream":78}],66:[function(require,module,exports){
+},{"./utils/common":67,"./utils/strings":68,"./zlib/constants":70,"./zlib/gzheader":73,"./zlib/inflate.js":75,"./zlib/messages":77,"./zlib/zstream":79}],67:[function(require,module,exports){
 'use strict';
 
 
@@ -20140,7 +20372,7 @@ exports.setTyped = function (on) {
 };
 
 exports.setTyped(TYPED_OK);
-},{}],67:[function(require,module,exports){
+},{}],68:[function(require,module,exports){
 // String encode/decode helpers
 'use strict';
 
@@ -20327,7 +20559,7 @@ exports.utf8border = function(buf, max) {
   return (pos + _utf8len[buf[pos]] > max) ? pos : max;
 };
 
-},{"./common":66}],68:[function(require,module,exports){
+},{"./common":67}],69:[function(require,module,exports){
 'use strict';
 
 // Note: adler32 takes 12% for level 0 and 2% for level 6.
@@ -20360,7 +20592,7 @@ function adler32(adler, buf, len, pos) {
 
 
 module.exports = adler32;
-},{}],69:[function(require,module,exports){
+},{}],70:[function(require,module,exports){
 module.exports = {
 
   /* Allowed flush values; see deflate() and inflate() below for details */
@@ -20408,7 +20640,7 @@ module.exports = {
   Z_DEFLATED:               8
   //Z_NULL:                 null // Use -1 or null inline, depending on var type
 };
-},{}],70:[function(require,module,exports){
+},{}],71:[function(require,module,exports){
 'use strict';
 
 // Note: we can't get significant speed boost here.
@@ -20450,7 +20682,7 @@ function crc32(crc, buf, len, pos) {
 
 
 module.exports = crc32;
-},{}],71:[function(require,module,exports){
+},{}],72:[function(require,module,exports){
 'use strict';
 
 var utils   = require('../utils/common');
@@ -22216,7 +22448,7 @@ exports.deflatePending = deflatePending;
 exports.deflatePrime = deflatePrime;
 exports.deflateTune = deflateTune;
 */
-},{"../utils/common":66,"./adler32":68,"./crc32":70,"./messages":76,"./trees":77}],72:[function(require,module,exports){
+},{"../utils/common":67,"./adler32":69,"./crc32":71,"./messages":77,"./trees":78}],73:[function(require,module,exports){
 'use strict';
 
 
@@ -22257,7 +22489,7 @@ function GZheader() {
 }
 
 module.exports = GZheader;
-},{}],73:[function(require,module,exports){
+},{}],74:[function(require,module,exports){
 'use strict';
 
 // See state defs from inflate.js
@@ -22584,7 +22816,7 @@ module.exports = function inflate_fast(strm, start) {
   return;
 };
 
-},{}],74:[function(require,module,exports){
+},{}],75:[function(require,module,exports){
 'use strict';
 
 
@@ -24088,7 +24320,7 @@ exports.inflateSync = inflateSync;
 exports.inflateSyncPoint = inflateSyncPoint;
 exports.inflateUndermine = inflateUndermine;
 */
-},{"../utils/common":66,"./adler32":68,"./crc32":70,"./inffast":73,"./inftrees":75}],75:[function(require,module,exports){
+},{"../utils/common":67,"./adler32":69,"./crc32":71,"./inffast":74,"./inftrees":76}],76:[function(require,module,exports){
 'use strict';
 
 
@@ -24415,7 +24647,7 @@ module.exports = function inflate_table(type, lens, lens_index, codes, table, ta
   return 0;
 };
 
-},{"../utils/common":66}],76:[function(require,module,exports){
+},{"../utils/common":67}],77:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -24429,7 +24661,7 @@ module.exports = {
   '-5':   'buffer error',        /* Z_BUF_ERROR     (-5) */
   '-6':   'incompatible version' /* Z_VERSION_ERROR (-6) */
 };
-},{}],77:[function(require,module,exports){
+},{}],78:[function(require,module,exports){
 'use strict';
 
 
@@ -25629,7 +25861,7 @@ exports._tr_stored_block = _tr_stored_block;
 exports._tr_flush_block  = _tr_flush_block;
 exports._tr_tally = _tr_tally;
 exports._tr_align = _tr_align;
-},{"../utils/common":66}],78:[function(require,module,exports){
+},{"../utils/common":67}],79:[function(require,module,exports){
 'use strict';
 
 
@@ -25659,7 +25891,7 @@ function ZStream() {
 }
 
 module.exports = ZStream;
-},{}],79:[function(require,module,exports){
+},{}],80:[function(require,module,exports){
 module.exports = function arrayEquals(array) {
     // if the other array is a falsy value, return
     if (!array)
@@ -25685,10 +25917,10 @@ module.exports = function arrayEquals(array) {
 }
 
 
-},{}],80:[function(require,module,exports){
+},{}],81:[function(require,module,exports){
 exports.Interop = require('./interop');
 
-},{"./interop":81}],81:[function(require,module,exports){
+},{"./interop":82}],82:[function(require,module,exports){
 var transform = require('./transform');
 var arrayEquals = require('./array-equals');
 
@@ -26211,7 +26443,7 @@ Interop.prototype.toPlanA = function(desc) {
     //#endregion
 };
 
-},{"./array-equals":79,"./transform":82}],82:[function(require,module,exports){
+},{"./array-equals":80,"./transform":83}],83:[function(require,module,exports){
 var transform = require('sdp-transform');
 
 exports.write = function(session, opts) {
@@ -26310,7 +26542,7 @@ exports.parse = function(sdp) {
 };
 
 
-},{"sdp-transform":84}],83:[function(require,module,exports){
+},{"sdp-transform":85}],84:[function(require,module,exports){
 var grammar = module.exports = {
   v: [{
       name: 'version',
@@ -26551,7 +26783,7 @@ Object.keys(grammar).forEach(function (key) {
   });
 }); 
 
-},{}],84:[function(require,module,exports){
+},{}],85:[function(require,module,exports){
 var parser = require('./parser');
 var writer = require('./writer');
 
@@ -26561,7 +26793,7 @@ exports.parseFmtpConfig = parser.parseFmtpConfig;
 exports.parsePayloads = parser.parsePayloads;
 exports.parseRemoteCandidates = parser.parseRemoteCandidates;
 
-},{"./parser":85,"./writer":86}],85:[function(require,module,exports){
+},{"./parser":86,"./writer":87}],86:[function(require,module,exports){
 var toIntIfInt = function (v) {
   return String(Number(v)) === v ? Number(v) : v;
 };
@@ -26656,7 +26888,7 @@ exports.parseRemoteCandidates = function (str) {
   return candidates;
 };
 
-},{"./grammar":83}],86:[function(require,module,exports){
+},{"./grammar":84}],87:[function(require,module,exports){
 var grammar = require('./grammar');
 
 // customized util.format - discards excess arguments and can void middle ones
@@ -26772,14 +27004,14 @@ module.exports = function (session, opts) {
   return sdp.join('\r\n') + '\r\n';
 };
 
-},{"./grammar":83}],87:[function(require,module,exports){
+},{"./grammar":84}],88:[function(require,module,exports){
 var MediaStreamType = {
     VIDEO_TYPE: "Video",
 
     AUDIO_TYPE: "Audio"
 };
 module.exports = MediaStreamType;
-},{}],88:[function(require,module,exports){
+},{}],89:[function(require,module,exports){
 var RTCBrowserType = {
     RTC_BROWSER_CHROME: "rtc_browser.chrome",
 
@@ -26787,7 +27019,7 @@ var RTCBrowserType = {
 };
 
 module.exports = RTCBrowserType;
-},{}],89:[function(require,module,exports){
+},{}],90:[function(require,module,exports){
 var RTCEvents = {
     LASTN_CHANGED: "rtc.lastn_changed",
     DOMINANTSPEAKER_CHANGED: "rtc.dominantspeaker_changed",
@@ -26799,7 +27031,7 @@ var RTCEvents = {
 };
 
 module.exports = RTCEvents;
-},{}],90:[function(require,module,exports){
+},{}],91:[function(require,module,exports){
 var Resolutions = {
     "1080": {
         width: 1920,
@@ -26853,7 +27085,7 @@ var Resolutions = {
     }
 };
 module.exports = Resolutions;
-},{}],91:[function(require,module,exports){
+},{}],92:[function(require,module,exports){
 var StreamEventTypes = {
     EVENT_TYPE_LOCAL_CREATED: "stream.local_created",
 
@@ -26867,14 +27099,14 @@ var StreamEventTypes = {
 };
 
 module.exports = StreamEventTypes;
-},{}],92:[function(require,module,exports){
+},{}],93:[function(require,module,exports){
 var UIEvents = {
     NICKNAME_CHANGED: "UI.nickname_changed",
     SELECTED_ENDPOINT: "UI.selected_endpoint",
     PINNED_ENDPOINT: "UI.pinned_endpoint"
 };
 module.exports = UIEvents;
-},{}],93:[function(require,module,exports){
+},{}],94:[function(require,module,exports){
 var AuthenticationEvents = {
     /**
      * Event callback arguments:
@@ -26888,7 +27120,7 @@ var AuthenticationEvents = {
 };
 module.exports = AuthenticationEvents;
 
-},{}],94:[function(require,module,exports){
+},{}],95:[function(require,module,exports){
 var CQEvents = {
     LOCALSTATS_UPDATED: "cq.localstats_updated",
     REMOTESTATS_UPDATED: "cq.remotestats_updated",
@@ -26896,7 +27128,7 @@ var CQEvents = {
 };
 
 module.exports = CQEvents;
-},{}],95:[function(require,module,exports){
+},{}],96:[function(require,module,exports){
 var DesktopSharingEventTypes = {
     INIT: "ds.init",
 
@@ -26906,7 +27138,7 @@ var DesktopSharingEventTypes = {
 };
 
 module.exports = DesktopSharingEventTypes;
-},{}],96:[function(require,module,exports){
+},{}],97:[function(require,module,exports){
 module.exports = {
     getLanguages : function () {
         var languages = [];
@@ -26922,7 +27154,7 @@ module.exports = {
     DE: "de",
     TR: "tr"
 }
-},{}],97:[function(require,module,exports){
+},{}],98:[function(require,module,exports){
 var XMPPEvents = {
     CONFERENCE_CERATED: "xmpp.conferenceCreated.jingle",
     CALL_TERMINATED: "xmpp.callterminated.jingle",
@@ -26952,5 +27184,5 @@ var XMPPEvents = {
     ETHERPAD: "xmpp.etherpad"
 };
 module.exports = XMPPEvents;
-},{}]},{},[1])(1)
+},{}]},{},[2])(2)
 });
