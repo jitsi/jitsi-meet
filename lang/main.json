@@ -132,6 +132,7 @@
         "passwordError2": "This conversation isn't currently protected by a password. Only the owner of the conference could set a password.",
         "joinError": "Oops! We couldn't join the conference. There might be some problem with security configuration. Please contact service administrator.",
         "connectError": "Oops! Something went wrong and we couldn't connect to the conference.",
+        "connecting": "Connecting",
         "error": "Error",
         "detectext": "Error when trying to detect desktopsharing extension.",
         "failtoinstall": "Failed to install desktop sharing extension",
@@ -159,6 +160,7 @@
         "AuthMsg": "Authentication is required to create room:<br/><b>__room__ </b></br> You can either authenticate to create the room or just wait for someone else to do so.",
         "Authenticate": "Authenticate",
         "Cancel": "Cancel",
+        "retry": "Retry",
         "logoutTitle" : "Logout",
         "logoutQuestion" : "Are you sure you want to logout and stop the conference?",
         "sessTerminated": "Session Terminated",
@@ -216,5 +218,20 @@
             "Talk to you in a sec!"
         ],
         "and": "and"
+    },
+    "connection":
+    {
+        "ERROR": "Error",
+        "CONNECTING": "Connecting",
+        "CONNFAIL": "Connection failed",
+        "AUTHENTICATING": "Authenticating",
+        "AUTHFAIL": "Authentication failed",
+        "CONNECTED": "Connected",
+        "DISCONNECTED": "Disconnected",
+        "DISCONNECTING": "Disconnecting",
+        "ATTACHED": "Attached",
+        "FETCH_SESSION_ID": "Obtaining session-id...",
+        "GOT_SESSION_ID": "Obtaining session-id... Done",
+        "GET_SESSION_ID_ERROR": "Get session-id error: "
     }
 }

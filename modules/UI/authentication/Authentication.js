@@ -1,4 +1,7 @@
-/* global $, APP */
+/* global $, APP*/
+
+var LoginDialog = require('./LoginDialog');
+var Moderator = require('../../xmpp/moderator');
 
 /* Initial "authentication required" dialog */
 var authDialog = null;
@@ -50,6 +53,37 @@ var Authentication = {
             authenticationWindow = null;
         }
     },
+    xmppAuthenticate: function () {
+
+        var loginDialog = LoginDialog.show(
+            function (connection, state) {
+                if (!state) {
+                    // User cancelled
+                    loginDialog.close();
+                    return;
+                } else if (state == APP.xmpp.Status.CONNECTED) {
+
+                    loginDialog.close();
+
+                    Authentication.stopInterval();
+                    Authentication.closeAuthenticationDialog();
+
+                    // Close the connection as anonymous one will be used
+                    // to create the conference. Session-id will authorize
+                    // the request.
+                    connection.disconnect();
+
+                    var roomName = APP.UI.generateRoomName();
+                    Moderator.allocateConferenceFocus(roomName, function () {
+                        // If it's not "on the fly" authentication now join
+                        // the conference room
+                        if (!APP.xmpp.getMUCJoined()) {
+                            APP.UI.checkForNicknameAndJoin();
+                        }
+                    });
+                }
+            }, true);
+    },
     focusAuthenticationWindow: function () {
         // If auth window exists just bring it to the front
         if (authenticationWindow) {
@@ -60,7 +94,7 @@ var Authentication = {
     closeAuthenticationDialog: function () {
         // Close authentication dialog if opened
         if (authDialog) {
-            APP.UI.messageHandler.closeDialog();
+            authDialog.close();
             authDialog = null;
         }
     },
@@ -70,10 +104,7 @@ var Authentication = {
             // On closed
             function () {
                 // Close authentication dialog if opened
-                if (authDialog) {
-                    messageHandler.closeDialog();
-                    authDialog = null;
-                }
+                Authentication.closeAuthenticationDialog();
                 callback();
                 authenticationWindow = null;
             });

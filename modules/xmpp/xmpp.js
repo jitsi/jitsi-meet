@@ -13,8 +13,7 @@ var connection = null;
 var authenticatedUser = false;
 
 function connect(jid, password) {
-    var bosh = config.bosh || '/http-bind';
-    connection = new Strophe.Connection(bosh);
+    connection = XMPP.createConnection();
     Moderator.setConnection(connection);
 
     if (connection.disco) {
@@ -127,6 +126,12 @@ function setupEvents() {
 
 var XMPP = {
     sessionTerminated: false,
+
+    /**
+     * XMPP connection status
+     */
+    Status: Strophe.Status,
+
     /**
      * Remembers if we were muted by the focus.
      * @type {boolean}
@@ -146,7 +151,16 @@ var XMPP = {
         var jid = configDomain || window.location.hostname;
         connect(jid, null);
     },
+    createConnection: function () {
+        var bosh = config.bosh || '/http-bind';
+
+        return new Strophe.Connection(bosh);
+    },
+    getStatusString: function (status) {
+        return Strophe.getStatusString(status);
+    },
     promptLogin: function () {
+        // FIXME: re-use LoginDialog which supports retries
         APP.UI.showLoginPopup(connect);
     },
     joinRoom: function(roomName, useNicks, nick)

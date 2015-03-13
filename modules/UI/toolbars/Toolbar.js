@@ -264,12 +264,6 @@ var Toolbar = (function (my) {
                     loggedIn = true;
                 }
 
-                //FIXME: XMPP authentication need improvements for "live" login
-                if (!APP.xmpp.isExternalAuthEnabled() && !loggedIn)
-                {
-                    authenticationEnabled = false;
-                }
-
                 Toolbar.showAuthenticateButton(authenticationEnabled);
 
                 if (authenticationEnabled) {
@@ -292,6 +286,10 @@ var Toolbar = (function (my) {
 
     my.authenticateClicked = function () {
         Authentication.focusAuthenticationWindow();
+        if (!APP.xmpp.isExternalAuthEnabled()) {
+            Authentication.xmppAuthenticate();
+            return;
+        }
         // Get authentication URL
         if (!APP.xmpp.getMUCJoined()) {
             APP.xmpp.getLoginUrl(UI.getRoomName(), function (url) {

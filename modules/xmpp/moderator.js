@@ -188,6 +188,14 @@ var Moderator = {
         return elem;
     },
 
+    parseSessionId: function (resultIq) {
+        var sessionId = $(resultIq).find('conference').attr('session-id');
+        if (sessionId) {
+            console.info('Received sessionId: ' + sessionId);
+            localStorage.setItem('sessionId', sessionId);
+        }
+    },
+
     parseConfigOptions: function (resultIq) {
 
         Moderator.setFocusUserJid(
@@ -209,12 +217,7 @@ var Moderator = {
 
         if (!externalAuthEnabled) {
             // We expect to receive sessionId in 'internal' authentication mode
-            var sessionId
-                = $(resultIq).find('conference').attr('session-id');
-            if (sessionId) {
-                console.info('Received sessionId: ' + sessionId);
-                localStorage.setItem('sessionId', sessionId);
-            }
+            Moderator.parseSessionId(resultIq);
         }
 
         var authIdentity = $(resultIq).find('>conference').attr('identity');
@@ -295,22 +298,12 @@ var Moderator = {
                 // Not authorized to create new room
                 if ($(error).find('>error>not-authorized').length) {
                     console.warn("Unauthorized to start the conference", error);
-                    var toDomain
-                        = Strophe.getDomainFromJid(error.getAttribute('to'));
-                    if (toDomain === config.hosts.anonymousdomain) {
-                        // we are connected with anonymous domain and
-                        // only non anonymous users can create rooms
-                        // we must authorize the user
-                        self.xmppService.promptLogin();
-                    } else {
-                        // External authentication mode
-                        eventEmitter.emit(
-                            XMPPEvents.AUTHENTICATION_REQUIRED,
-                            function () {
-                                Moderator.allocateConferenceFocus(
-                                    roomName, callback);
-                            });
-                    }
+                    eventEmitter.emit(
+                        XMPPEvents.AUTHENTICATION_REQUIRED,
+                        function () {
+                            Moderator.allocateConferenceFocus(
+                                roomName, callback);
+                        });
                     return;
                 }
                 var waitMs = getNextErrorTimeout();

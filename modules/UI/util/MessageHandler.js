@@ -94,7 +94,7 @@ var messageHandler = (function(my) {
         if (persistent) {
             args.closeText = '';
         }
-        return $.prompt(msgString, args);
+        return new Impromptu(msgString, args);
     };
 
     /**
@@ -108,16 +108,10 @@ var messageHandler = (function(my) {
      * Shows a dialog with different states to the user.
      *
      * @param statesObject object containing all the states of the dialog
-     * @param loadedFunction function to be called after the prompt is fully loaded
-     * @param stateChangedFunction function to be called when the state of the dialog is changed
      */
-    my.openDialogWithStates = function(statesObject, loadedFunction, stateChangedFunction) {
+    my.openDialogWithStates = function (statesObject, options) {
 
-
-        var myPrompt = $.prompt(statesObject);
-
-        myPrompt.on('impromptu:loaded', loadedFunction);
-        myPrompt.on('impromptu:statechanged', stateChangedFunction);
+        return new Impromptu(statesObject, options);
     };
 
     /**
