@@ -7,6 +7,9 @@ The following needs to be done to enable this functionality.
 ## Install InfluxDB
 The details are outside the scope of the document, see http://influxdb.com/download/ .
 
+## Create an InfluxDB database
+Use the InfluxDB admin interface (running on port 8083) and create a database. In this example we name it <code>jitsi_database</code>
+
 ## Enable logging for Jitsi Videobridge
 Add the following properties to <code>/usr/share/jitsi-videobridge/.sip-communicator/sip-communicator.properties</code>.
 
