@@ -142,10 +142,7 @@ var Prezi = {
                     }
                 }
             };
-            var focusPreziUrl =  function(e) {
-                    document.getElementById('preziUrl').focus();
-                };
-            messageHandler.openDialogWithStates(openPreziState, focusPreziUrl, focusPreziUrl);
+            messageHandler.openDialogWithStates(openPreziState);
         }
     }
 
