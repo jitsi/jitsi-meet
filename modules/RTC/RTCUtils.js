@@ -130,7 +130,7 @@ function RTCUtils(RTCService)
     if (navigator.mozGetUserMedia) {
         console.log('This appears to be Firefox');
         var version = parseInt(navigator.userAgent.match(/Firefox\/([0-9]+)\./)[1], 10);
-        if (version >= 22) {
+        if (version >= 39) {
             this.peerconnection = mozRTCPeerConnection;
             this.browser = RTCBrowserType.RTC_BROWSER_FIREFOX;
             this.getUserMedia = navigator.mozGetUserMedia.bind(navigator);
@@ -162,7 +162,11 @@ function RTCUtils(RTCService)
             };
             RTCSessionDescription = mozRTCSessionDescription;
             RTCIceCandidate = mozRTCIceCandidate;
+        } else {
+            window.location.href = 'unsupported_browser.html';
+            return;
         }
+
     } else if (navigator.webkitGetUserMedia) {
         console.log('This appears to be Chrome');
         this.peerconnection = webkitRTCPeerConnection;
@@ -205,13 +209,6 @@ function RTCUtils(RTCService)
         window.location.href = 'unsupported_browser.html';
         return;
     }
-
-    if (this.browser !== RTCBrowserType.RTC_BROWSER_CHROME &&
-        config.enableFirefoxSupport !== true) {
-        window.location.href = 'unsupported_browser.html';
-        return;
-    }
-
 }
 
 
