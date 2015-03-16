@@ -1,3 +1,4 @@
+Description: Update the used js files for jquery to generic ones, to be able to use local system installed version (through symlinks).
 Index: jitsi-meet/index.html
 ===================================================================
 --- jitsi-meet.orig/index.html
