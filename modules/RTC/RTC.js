@@ -63,14 +63,13 @@ var RTC = {
     },
     createRemoteStream: function (data, sid, thessrc) {
         var remoteStream = new MediaStream(data, sid, thessrc,
-            this.getBrowserType());
+            this.getBrowserType(), eventEmitter);
         var jid = data.peerjid || APP.xmpp.myJid();
         if(!this.remoteStreams[jid]) {
             this.remoteStreams[jid] = {};
         }
         this.remoteStreams[jid][remoteStream.type]= remoteStream;
         eventEmitter.emit(StreamEventTypes.EVENT_TYPE_REMOTE_CREATED, remoteStream);
-        console.debug("ADD remote stream ", remoteStream.type, " ", jid, " ", thessrc);
         return remoteStream;
     },
     getBrowserType: function () {
@@ -122,7 +121,7 @@ var RTC = {
                     var videoStream = peerStreams[MediaStreamType.VIDEO_TYPE];
                     if(!videoStream)
                         continue;
-                    videoStream.videoType = changedStreams[i].type;
+                    videoStream.setVideoType(changedStreams[i].type);
                 }
             }
         });
@@ -183,8 +182,7 @@ var RTC = {
             return false;
         var isDesktop = false;
         var stream = null;
-        if (APP.xmpp.myJid() &&
-            APP.xmpp.myResource() === jid) {
+        if (APP.xmpp.myJid() === jid) {
             // local video
             stream = this.localVideo;
         } else {

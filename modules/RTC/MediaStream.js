@@ -1,6 +1,6 @@
 ////These lines should be uncommented when require works in app.js
-var RTCBrowserType = require("../../service/RTC/RTCBrowserType.js");
 var MediaStreamType = require("../../service/RTC/MediaStreamTypes");
+var StreamEventType = require("../../service/RTC/StreamEventTypes");
 
 /**
  * Creates a MediaStream object for the given data, session id and ssrc.
@@ -13,7 +13,7 @@ var MediaStreamType = require("../../service/RTC/MediaStreamTypes");
  *
  * @constructor
  */
-function MediaStream(data, sid, ssrc, browser) {
+function MediaStream(data, sid, ssrc, browser, eventEmitter) {
 
     // XXX(gp) to minimize headaches in the future, we should build our
     // abstractions around tracks and not streams. ORTC is track based API.
@@ -33,19 +33,28 @@ function MediaStream(data, sid, ssrc, browser) {
         MediaStreamType.VIDEO_TYPE : MediaStreamType.AUDIO_TYPE;
     this.videoType = null;
     this.muted = false;
+    this.eventEmitter = eventEmitter;
 }
 
 
 MediaStream.prototype.getOriginalStream = function()
 {
     return this.stream;
-}
+};
 
 MediaStream.prototype.setMute = function (value)
 {
     this.stream.muted = value;
     this.muted = value;
-}
+};
+
+MediaStream.prototype.setVideoType = function (value) {
+    if(this.videoType === value)
+        return;
+    this.videoType = value;
+    this.eventEmitter.emit(StreamEventType.EVENT_TYPE_REMOTE_CHANGED,
+        this.peerjid);
+};
 
 
 module.exports = MediaStream;

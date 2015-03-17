@@ -234,7 +234,6 @@ StatsCollector.prototype.start = function ()
 {
     var self = this;
     if(!config.disableAudioLevels) {
-        console.debug("set audio levels interval");
         this.audioLevelsIntervalId = setInterval(
             function () {
                 // Interval updates
@@ -262,7 +261,6 @@ StatsCollector.prototype.start = function ()
     }
 
     if(!config.disableStats) {
-        console.debug("set stats interval");
         this.statsIntervalId = setInterval(
             function () {
                 // Interval updates

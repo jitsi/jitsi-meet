@@ -1,4 +1,4 @@
-/* global Strophe, updateLargeVideo, focusedVideoSrc*/
+/* global Strophe, focusedVideoSrc*/
 
 // cache datachannels to avoid garbage collection
 // https://code.google.com/p/chromium/issues/detail?id=405545

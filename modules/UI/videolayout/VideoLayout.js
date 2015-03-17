@@ -748,7 +748,9 @@ var VideoLayout = (function (my) {
 
             largeVideoState.newSrc = newSrc;
             largeVideoState.isVisible = $('#largeVideo').is(':visible');
-            largeVideoState.isDesktop = APP.RTC.isVideoSrcDesktop(resourceJid);
+            largeVideoState.isDesktop = APP.RTC.isVideoSrcDesktop(
+                APP.xmpp.findJidFromResource(resourceJid));
+
             if(largeVideoState.userResourceJid) {
                 largeVideoState.oldResourceJid = largeVideoState.userResourceJid;
             } else {
@@ -2229,6 +2231,21 @@ var VideoLayout = (function (my) {
         {
             console.info("Focused video owner has left the conference");
             focusedVideoInfo = null;
+        }
+    }
+    
+    my.onVideoTypeChanged = function (jid) {
+        if(jid &&
+            Strophe.getResourceFromJid(jid) === largeVideoState.userResourceJid)
+        {
+            largeVideoState.isDesktop = APP.RTC.isVideoSrcDesktop(jid);
+            VideoLayout.getVideoSize = largeVideoState.isDesktop
+                ? getDesktopVideoSize
+                : getCameraVideoSize;
+            VideoLayout.getVideoPosition = largeVideoState.isDesktop
+                ? getDesktopVideoPosition
+                : getCameraVideoPosition;
+            VideoLayout.positionLarge(null, null);
         }
     }
 

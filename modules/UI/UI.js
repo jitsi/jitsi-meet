@@ -85,6 +85,9 @@ function registerListeners() {
     APP.RTC.addStreamListener(function (stream) {
         VideoLayout.onRemoteStreamAdded(stream);
     }, StreamEventTypes.EVENT_TYPE_REMOTE_CREATED);
+    APP.RTC.addStreamListener(function (jid) {
+        VideoLayout.onVideoTypeChanged(jid);
+    }, StreamEventTypes.EVENT_TYPE_REMOTE_CHANGED);
     APP.RTC.addListener(RTCEvents.LASTN_CHANGED, onLastNChanged);
     APP.RTC.addListener(RTCEvents.DOMINANTSPEAKER_CHANGED, function (resourceJid) {
         VideoLayout.onDominantSpeakerChanged(resourceJid);
