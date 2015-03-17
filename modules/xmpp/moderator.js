@@ -298,6 +298,13 @@ var Moderator = {
                 // Not authorized to create new room
                 if ($(error).find('>error>not-authorized').length) {
                     console.warn("Unauthorized to start the conference", error);
+                    var toDomain
+                        = Strophe.getDomainFromJid(error.getAttribute('to'));
+                    if (toDomain !== config.hosts.anonymousdomain) {
+                        // FIXME: "is external" should come either from
+                        // the focus or config.js
+                        externalAuthEnabled = true;
+                    }
                     eventEmitter.emit(
                         XMPPEvents.AUTHENTICATION_REQUIRED,
                         function () {

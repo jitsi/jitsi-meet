@@ -15489,6 +15489,13 @@ var Moderator = {
                 // Not authorized to create new room
                 if ($(error).find('>error>not-authorized').length) {
                     console.warn("Unauthorized to start the conference", error);
+                    var toDomain
+                        = Strophe.getDomainFromJid(error.getAttribute('to'));
+                    if (toDomain !== config.hosts.anonymousdomain) {
+                        // FIXME: "is external" should come either from
+                        // the focus or config.js
+                        externalAuthEnabled = true;
+                    }
                     eventEmitter.emit(
                         XMPPEvents.AUTHENTICATION_REQUIRED,
                         function () {
@@ -17404,11 +17411,11 @@ var XMPP = {
 module.exports = XMPP;
 
 },{"../../service/RTC/StreamEventTypes":92,"../../service/UI/UIEvents":93,"../../service/xmpp/XMPPEvents":98,"./SDP":50,"./moderator":54,"./recording":55,"./strophe.emuc":56,"./strophe.jingle":57,"./strophe.logger":58,"./strophe.moderate":59,"./strophe.rayo":60,"./strophe.util":61,"events":1,"pako":64}],63:[function(require,module,exports){
-// i18next, v1.7.7
-// Copyright (c)2014 Jan Mühlemann (jamuhl).
+// i18next, v1.8.0
+// Copyright (c)2015 Jan Mühlemann (jamuhl).
 // Distributed under MIT license
 // http://i18next.com
-(function() {
+(function(root) {
 
     // add indexOf to non ECMA-262 standard compliant browsers
     if (!Array.prototype.indexOf) {
@@ -17482,8 +17489,7 @@ module.exports = XMPP;
         }
     }
 
-    var root = this
-      , $ = root.jQuery || root.Zepto
+    var $ = root.jQuery || root.Zepto
       , i18n = {}
       , resStore = {}
       , currentLng
@@ -17498,16 +17504,6 @@ module.exports = XMPP;
     // If we're not in CommonJS, add `i18n` to the
     // global object or to jquery.
     if (typeof module !== 'undefined' && module.exports) {
-        if (!$) {
-          try {
-            $ = require('jquery');
-          } catch(e) {
-            // just ignore
-          }
-        }
-        if ($) {
-            $.i18n = $.i18n || i18n;
-        }
         module.exports = i18n;
     } else {
         if ($) {
@@ -17553,7 +17549,7 @@ module.exports = XMPP;
                 var todo = lngs.length;
     
                 f.each(lngs, function(key, lng) {
-                    var local = window.localStorage.getItem('res_' + lng);
+                    var local = f.localStorage.getItem('res_' + lng);
     
                     if (local) {
                         local = JSON.parse(local);
@@ -18273,6 +18269,16 @@ module.exports = XMPP;
                         f.log('failed to set value for key "' + key + '" to localStorage.');
                     }
                 }
+            },
+            getItem: function(key, value) {
+                if (window.localStorage) {
+                    try {
+                        return window.localStorage.getItem(key, value);
+                    } catch (e) {
+                        f.log('failed to get value for key "' + key + '" from localStorage.');
+                        return undefined;
+                    }
+                }
             }
         }
     };
@@ -18406,6 +18412,9 @@ module.exports = XMPP;
         } else {
             f.extend(resStore[lng][ns], resources);
         }
+        if (o.useLocalStorage) {
+            sync._storeLocal(resStore);
+        }
     }
     
     function hasResourceBundle(lng, ns) {
@@ -18426,6 +18435,15 @@ module.exports = XMPP;
         return hasValues;
     }
     
+    function getResourceBundle(lng, ns) {
+        if (typeof ns !== 'string') {
+            ns = o.ns.defaultNs;
+        }
+    
+        resStore[lng] = resStore[lng] || {};
+        return f.extend({}, resStore[lng][ns]);
+    }
+    
     function removeResourceBundle(lng, ns) {
         if (typeof ns !== 'string') {
             ns = o.ns.defaultNs;
@@ -18433,6 +18451,9 @@ module.exports = XMPP;
     
         resStore[lng] = resStore[lng] || {};
         resStore[lng][ns] = {};
+        if (o.useLocalStorage) {
+            sync._storeLocal(resStore);
+        }
     }
     
     function addResource(lng, ns, key, value) {
@@ -18461,6 +18482,9 @@ module.exports = XMPP;
                 node = node[keys[x]];
             }
             x++;
+        }
+        if (o.useLocalStorage) {
+            sync._storeLocal(resStore);
         }
     }
     
@@ -18803,6 +18827,10 @@ module.exports = XMPP;
     
         if (potentialKeys === undefined || potentialKeys === null || potentialKeys === '') return '';
     
+        if (typeof potentialKeys === 'number') {
+            potentialKeys = String(potentialKeys);
+        }
+    
         if (typeof potentialKeys === 'string') {
             potentialKeys = [potentialKeys];
         }
@@ -18839,11 +18867,27 @@ module.exports = XMPP;
             }
         }
     
-        var postProcessor = options.postProcess || o.postProcess;
-        if (found !== undefined && postProcessor) {
-            if (postProcessors[postProcessor]) {
-                found = postProcessors[postProcessor](found, key, options);
-            }
+        var postProcessorsToApply;
+        if (typeof o.postProcess === 'string' && o.postProcess !== '') {
+            postProcessorsToApply = [o.postProcess];
+        } else if (typeof o.postProcess === 'array' || typeof o.postProcess === 'object') {
+            postProcessorsToApply = o.postProcess;
+        } else {
+            postProcessorsToApply = [];
+        }
+    
+        if (typeof options.postProcess === 'string' && options.postProcess !== '') {
+            postProcessorsToApply = postProcessorsToApply.concat([options.postProcess]);
+        } else if (typeof options.postProcess === 'array' || typeof options.postProcess === 'object') {
+            postProcessorsToApply = postProcessorsToApply.concat(options.postProcess);
+        }
+    
+        if (found !== undefined && postProcessorsToApply.length) {
+            postProcessorsToApply.forEach(function(postProcessor) {
+                if (postProcessors[postProcessor]) {
+                    found = postProcessors[postProcessor](found, key, options);
+                }
+            });
         }
     
         // process notFound if function exists
@@ -18860,9 +18904,13 @@ module.exports = XMPP;
             notFound = applyReplacement(notFound, options);
             notFound = applyReuse(notFound, options);
     
-            if (postProcessor && postProcessors[postProcessor]) {
+            if (postProcessorsToApply.length) {
                 var val = _getDefaultValue(key, options);
-                found = postProcessors[postProcessor](val, key, options);
+                postProcessorsToApply.forEach(function(postProcessor) {
+                    if (postProcessors[postProcessor]) {
+                        found = postProcessors[postProcessor](val, key, options);
+                    }
+                });
             }
         }
     
@@ -18920,6 +18968,7 @@ module.exports = XMPP;
         if (needsPlural(options, lngs[0])) {
             optionWithoutCount = f.extend({ lngs: [lngs[0]]}, options);
             delete optionWithoutCount.count;
+            optionWithoutCount._origLng = optionWithoutCount._origLng || optionWithoutCount.lng || lngs[0];
             delete optionWithoutCount.lng;
             optionWithoutCount.defaultValue = o.pluralNotFound;
     
@@ -18949,12 +18998,21 @@ module.exports = XMPP;
                 var clone = lngs.slice();
                 clone.shift();
                 options = f.extend(options, { lngs: clone });
+                options._origLng = optionWithoutCount._origLng;
                 delete options.lng;
                 // retry with fallbacks
                 translated = translate(ns + o.nsseparator + key, options);
                 if (translated != o.pluralNotFound) return translated;
             } else {
-                return translated;
+                optionWithoutCount.lng = optionWithoutCount._origLng;
+                delete optionWithoutCount._origLng;
+                translated = translate(ns + o.nsseparator + key, optionWithoutCount);
+                
+                return applyReplacement(translated, {
+                    count: options.count,
+                    interpolationPrefix: options.interpolationPrefix,
+                    interpolationSuffix: options.interpolationSuffix
+                });
             }
         }
     
@@ -19075,7 +19133,7 @@ module.exports = XMPP;
     
         // get from localStorage
         if (o.detectLngFromLocalStorage && typeof window !== 'undefined' && window.localStorage) {
-            userLngChoices.push(window.localStorage.getItem('i18next_lng'));
+            userLngChoices.push(f.localStorage.getItem('i18next_lng'));
         }
     
         // get from navigator
@@ -19508,6 +19566,7 @@ module.exports = XMPP;
     i18n.preload = preload;
     i18n.addResourceBundle = addResourceBundle;
     i18n.hasResourceBundle = hasResourceBundle;
+    i18n.getResourceBundle = getResourceBundle;
     i18n.addResource = addResource;
     i18n.addResources = addResources;
     i18n.removeResourceBundle = removeResourceBundle;
@@ -19523,10 +19582,11 @@ module.exports = XMPP;
     i18n.functions = f;
     i18n.lng = lng;
     i18n.addPostProcessor = addPostProcessor;
+    i18n.applyReplacement = f.applyReplacement;
     i18n.options = o;
 
-})();
-},{"jquery":"jquery"}],64:[function(require,module,exports){
+})(typeof exports === 'undefined' ? window : exports);
+},{}],64:[function(require,module,exports){
 // Top level file is just a mixin of submodules & constants
 'use strict';
 
@@ -26725,6 +26785,10 @@ var grammar = module.exports = {
         return str;
       }
     },
+    { //a=end-of-candidates (keep after the candidates line for readability)
+      name: 'endOfCandidates',
+      reg: /^(end-of-candidates)/
+    },
     { //a=remote-candidates:1 203.0.113.1 54400 2 203.0.113.1 54401 ...
       name: 'remoteCandidates',
       reg: /^remote-candidates:(.*)/,
@@ -26781,7 +26845,7 @@ Object.keys(grammar).forEach(function (key) {
       obj.format = "%s";
     }
   });
-}); 
+});
 
 },{}],85:[function(require,module,exports){
 var parser = require('./parser');
