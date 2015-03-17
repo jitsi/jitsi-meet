@@ -17,7 +17,7 @@
   "dependencies": {
       "events": "*",
       "pako": "*",
-      "i18next-client": "*",
+      "i18next-client": "1.7.7",
       "sdp-interop": "jitsi/sdp-interop#f65fedfe57a"
   },
   "devDependencies": {
