@@ -1,11 +1,13 @@
-/* global $, alert, changeLocalVideo, chrome, config, getConferenceHandler, getUserMediaWithConstraints */
+/* global $, alert, APP, changeLocalVideo, chrome, config, getConferenceHandler,
+ getUserMediaWithConstraints */
 /**
  * Indicates that desktop stream is currently in use(for toggle purpose).
  * @type {boolean}
  */
 var isUsingScreenStream = false;
 /**
- * Indicates that switch stream operation is in progress and prevent from triggering new events.
+ * Indicates that switch stream operation is in progress and prevent from
+ * triggering new events.
  * @type {boolean}
  */
 var switchInProgress = false;
@@ -18,7 +20,21 @@ var switchInProgress = false;
 var obtainDesktopStream = null;
 
 /**
- * Flag used to cache desktop sharing enabled state. Do not use directly as it can be <tt>null</tt>.
+ * Indicates whether desktop sharing extension is installed.
+ * @type {boolean}
+ */
+var extInstalled = false;
+
+/**
+ * Indicates whether update of desktop sharing extension is required.
+ * @type {boolean}
+ */
+var extUpdateRequired = false;
+
+/**
+ * Flag used to cache desktop sharing enabled state. Do not use directly as
+ * it can be <tt>null</tt>.
+ *
  * @type {null|boolean}
  */
 var _desktopSharingEnabled = null;
@@ -27,7 +43,8 @@ var EventEmitter = require("events");
 
 var eventEmitter = new EventEmitter();
 
-var DesktopSharingEventTypes = require("../../service/desktopsharing/DesktopSharingEventTypes");
+var DesktopSharingEventTypes
+    = require("../../service/desktopsharing/DesktopSharingEventTypes");
 
 /**
  * Method obtains desktop stream from WebRTC 'screen' source.
@@ -48,7 +65,8 @@ function obtainWebRTCScreen(streamCallback, failCallback) {
  */
 function getWebStoreInstallUrl()
 {
-    return "https://chrome.google.com/webstore/detail/" + config.chromeExtensionId;
+    return "https://chrome.google.com/webstore/detail/" +
+        config.chromeExtensionId;
 }
 
 /**
@@ -98,11 +116,10 @@ function isUpdateRequired(minVersion, extVersion)
     }
 }
 
-
-function checkExtInstalled(isInstalledCallback) {
+function checkExtInstalled(callback) {
     if (!chrome.runtime) {
         // No API, so no extension for sure
-        isInstalledCallback(false);
+        callback(false, false);
         return;
     }
     chrome.runtime.sendMessage(
@@ -111,26 +128,24 @@ function checkExtInstalled(isInstalledCallback) {
         function (response) {
             if (!response || !response.version) {
                 // Communication failure - assume that no endpoint exists
-                console.warn("Extension not installed?: " + chrome.runtime.lastError);
-                isInstalledCallback(false);
-            } else {
-                // Check installed extension version
-                var extVersion = response.version;
-                console.log('Extension version is: ' + extVersion);
-                var updateRequired = isUpdateRequired(config.minChromeExtVersion, extVersion);
-                if (updateRequired) {
-                    alert(
-                        'Jitsi Desktop Streamer requires update. ' +
-                        'Changes will take effect after next Chrome restart.');
-                }
-                isInstalledCallback(!updateRequired);
+                console.warn(
+                    "Extension not installed?: ", chrome.runtime.lastError);
+                callback(false, false);
+                return;
             }
+            // Check installed extension version
+            var extVersion = response.version;
+            console.log('Extension version is: ' + extVersion);
+            var updateRequired
+                = isUpdateRequired(config.minChromeExtVersion, extVersion);
+            callback(!updateRequired, updateRequired);
         }
     );
 }
 
 function doGetStreamFromExtension(streamCallback, failCallback) {
-    // Sends 'getStream' msg to the extension. Extension id must be defined in the config.
+    // Sends 'getStream' msg to the extension.
+    // Extension id must be defined in the config.
     chrome.runtime.sendMessage(
         config.chromeExtensionId,
         { getStream: true, sources: config.desktopSharingSources },
@@ -156,38 +171,44 @@ function doGetStreamFromExtension(streamCallback, failCallback) {
     );
 }
 /**
- * Asks Chrome extension to call chooseDesktopMedia and gets chrome 'desktop' stream for returned stream token.
+ * Asks Chrome extension to call chooseDesktopMedia and gets chrome 'desktop'
+ * stream for returned stream token.
  */
 function obtainScreenFromExtension(streamCallback, failCallback) {
-    checkExtInstalled(
-        function (isInstalled) {
-            if (isInstalled) {
-                doGetStreamFromExtension(streamCallback, failCallback);
-            } else {
-                chrome.webstore.install(
-                    getWebStoreInstallUrl(),
-                    function (arg) {
-                        console.log("Extension installed successfully", arg);
-                        // We need to reload the page in order to get the access to chrome.runtime
-                        window.location.reload(false);
-                    },
-                    function (arg) {
-                        console.log("Failed to install the extension", arg);
-                        failCallback(arg);
-                        APP.UI.messageHandler.showError("dialog.error",
-                            "dialog.failtoinstall");
-                    }
-                );
-            }
+    if (extInstalled) {
+        doGetStreamFromExtension(streamCallback, failCallback);
+    } else {
+        if (extUpdateRequired) {
+            alert(
+                'Jitsi Desktop Streamer requires update. ' +
+                'Changes will take effect after next Chrome restart.');
         }
-    );
+
+        chrome.webstore.install(
+            getWebStoreInstallUrl(),
+            function (arg) {
+                console.log("Extension installed successfully", arg);
+                // We need to reload the page in order to get the access to
+                // chrome.runtime
+                window.location.reload(false);
+            },
+            function (arg) {
+                console.log("Failed to install the extension", arg);
+                failCallback(arg);
+                APP.UI.messageHandler.showError("dialog.error",
+                    "dialog.failtoinstall");
+            }
+        );
+    }
 }
 
 /**
  * Call this method to toggle desktop sharing feature.
- * @param method pass "ext" to use chrome extension for desktop capture(chrome extension required),
- *        pass "webrtc" to use WebRTC "screen" desktop source('chrome://flags/#enable-usermedia-screen-capture'
- *        must be enabled), pass any other string or nothing in order to disable this feature completely.
+ * @param method pass "ext" to use chrome extension for desktop capture(chrome
+ *        extension required), pass "webrtc" to use WebRTC "screen" desktop
+ *        source('chrome://flags/#enable-usermedia-screen-capture' must be
+ *        enabled), pass any other string or nothing in order to disable this
+ *        feature completely.
  */
 function setDesktopSharing(method) {
     // Check if we are running chrome
@@ -207,8 +228,9 @@ function setDesktopSharing(method) {
 }
 
 /**
- * Initializes <link rel=chrome-webstore-item /> with extension id set in config.js to support inline installs.
- * Host site must be selected as main website of published extension.
+ * Initializes <link rel=chrome-webstore-item /> with extension id set in
+ * config.js to support inline installs. Host site must be selected as main
+ * website of published extension.
  */
 function initInlineInstalls()
 {
@@ -240,19 +262,22 @@ module.exports = {
     },
 
     /**
-     * @returns {boolean} <tt>true</tt> if desktop sharing feature is available and enabled.
+     * @returns {boolean} <tt>true</tt> if desktop sharing feature is available
+     *          and enabled.
      */
     isDesktopSharingEnabled: function () {
         if (_desktopSharingEnabled === null) {
             if (obtainDesktopStream === obtainScreenFromExtension) {
                 // Parse chrome version
                 var userAgent = navigator.userAgent.toLowerCase();
-                // We can assume that user agent is chrome, because it's enforced when 'ext' streaming method is set
+                // We can assume that user agent is chrome, because it's
+                // enforced when 'ext' streaming method is set
                 var ver = parseInt(userAgent.match(/chrome\/(\d+)\./)[1], 10);
                 console.log("Chrome version" + userAgent, ver);
                 _desktopSharingEnabled = ver >= 34;
             } else {
-                _desktopSharingEnabled = obtainDesktopStream === obtainWebRTCScreen;
+                _desktopSharingEnabled =
+                    obtainDesktopStream === obtainWebRTCScreen;
             }
         }
         return _desktopSharingEnabled;
@@ -263,18 +288,28 @@ module.exports = {
 
         // Initialize Chrome extension inline installs
         if (config.chromeExtensionId) {
+
             initInlineInstalls();
+
+            // Check if extension is installed
+            checkExtInstalled(function (installed, updateRequired) {
+                extInstalled = installed;
+                extUpdateRequired = updateRequired;
+                console.info(
+                    "Chrome extension installed: " + extInstalled +
+                    " updateRequired: " + extUpdateRequired);
+            });
         }
 
         eventEmitter.emit(DesktopSharingEventTypes.INIT);
     },
 
-    addListener: function(listener, type)
+    addListener: function (listener, type)
     {
         eventEmitter.on(type, listener);
     },
 
-    removeListener: function (listener,type) {
+    removeListener: function (listener, type) {
         eventEmitter.removeListener(type, listener);
     },
 
@@ -295,11 +330,12 @@ module.exports = {
                 function (stream) {
                     // We now use screen stream
                     isUsingScreenStream = true;
-                    // Hook 'ended' event to restore camera when screen stream stops
+                    // Hook 'ended' event to restore camera
+                    // when screen stream stops
                     stream.addEventListener('ended',
                         function (e) {
                             if (!switchInProgress && isUsingScreenStream) {
-                                toggleScreenSharing();
+                                APP.desktopsharing.toggleScreenSharing();
                             }
                         }
                     );
