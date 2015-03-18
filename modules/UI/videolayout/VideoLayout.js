@@ -1787,7 +1787,7 @@ var VideoLayout = (function (my) {
      */
     $(document).bind('videomuted.muc', function (event, jid, value) {
         var isMuted = (value === "true");
-        if(!APP.RTC.muteRemoteVideoStream(jid, isMuted))
+        if(jid !== APP.xmpp.myJid() && !APP.RTC.muteRemoteVideoStream(jid, isMuted))
             return;
 
         Avatar.showUserAvatar(jid, isMuted);

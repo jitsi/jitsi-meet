@@ -694,8 +694,6 @@ UI.getRoomName = function () {
  * Mutes/unmutes the local video.
  */
 UI.toggleVideo = function () {
-    UIUtil.buttonClick("#video", "icon-camera icon-camera-disabled");
-
     setVideoMute(!APP.RTC.localVideo.isMuted());
 };
 

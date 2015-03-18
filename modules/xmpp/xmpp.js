@@ -252,10 +252,37 @@ var XMPP = {
         }
     },
     setVideoMute: function (mute, callback, options) {
-       if(connection && APP.RTC.localVideo && connection.jingle.activecall)
-       {
-           connection.jingle.activecall.setVideoMute(mute, callback, options);
-       }
+        if(!connection || !APP.RTC.localVideo)
+            return;
+
+        var localCallback = function (mute) {
+            connection.emuc.addVideoInfoToPresence(mute);
+            connection.emuc.sendPresence();
+            return callback(mute);
+        };
+
+        if (mute == APP.RTC.localVideo.isMuted())
+        {
+            // Even if no change occurs, the specified callback is to be executed.
+            // The specified callback may, optionally, return a successCallback
+            // which is to be executed as well.
+            var successCallback = localCallback(mute);
+
+            if (successCallback) {
+                successCallback();
+            }
+        } else {
+            APP.RTC.localVideo.setMute(!mute);
+            if(connection.jingle.activecall)
+            {
+                connection.jingle.activecall.setVideoMute(
+                    mute, localCallback, options);
+            }
+            else {
+                localCallback(mute);
+            }
+
+        }
     },
     setAudioMute: function (mute, callback) {
         if (!(connection && APP.RTC.localAudio)) {

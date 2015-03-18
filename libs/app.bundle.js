@@ -1937,8 +1937,6 @@ UI.getRoomName = function () {
  * Mutes/unmutes the local video.
  */
 UI.toggleVideo = function () {
-    UIUtil.buttonClick("#video", "icon-camera icon-camera-disabled");
-
     setVideoMute(!APP.RTC.localVideo.isMuted());
 };
 
@@ -8295,7 +8293,7 @@ var VideoLayout = (function (my) {
      */
     $(document).bind('videomuted.muc', function (event, jid, value) {
         var isMuted = (value === "true");
-        if(!APP.RTC.muteRemoteVideoStream(jid, isMuted))
+        if(jid !== APP.xmpp.myJid() && !APP.RTC.muteRemoteVideoStream(jid, isMuted))
             return;
 
         Avatar.showUserAvatar(jid, isMuted);
@@ -13177,30 +13175,9 @@ JingleSession.prototype.setVideoMute = function (mute, callback, options) {
         return;
     }
 
-    var self = this;
-    var localCallback = function (mute) {
-        self.connection.emuc.addVideoInfoToPresence(mute);
-        self.connection.emuc.sendPresence();
-        return callback(mute)
-    };
+    this.hardMuteVideo(mute);
 
-    if (mute == APP.RTC.localVideo.isMuted())
-    {
-        // Even if no change occurs, the specified callback is to be executed.
-        // The specified callback may, optionally, return a successCallback
-        // which is to be executed as well.
-        var successCallback = localCallback(mute);
-
-        if (successCallback) {
-            successCallback();
-        }
-    } else {
-        APP.RTC.localVideo.setMute(!mute);
-
-        this.hardMuteVideo(mute);
-
-        this.modifySources(localCallback(mute));
-    }
+    this.modifySources(callback(mute));
 };
 
 // SDP-based mute by going recvonly/sendrecv
@@ -16933,10 +16910,37 @@ var XMPP = {
         }
     },
     setVideoMute: function (mute, callback, options) {
-       if(connection && APP.RTC.localVideo && connection.jingle.activecall)
-       {
-           connection.jingle.activecall.setVideoMute(mute, callback, options);
-       }
+        if(!connection || !APP.RTC.localVideo)
+            return;
+
+        var localCallback = function (mute) {
+            connection.emuc.addVideoInfoToPresence(mute);
+            connection.emuc.sendPresence();
+            return callback(mute);
+        };
+
+        if (mute == APP.RTC.localVideo.isMuted())
+        {
+            // Even if no change occurs, the specified callback is to be executed.
+            // The specified callback may, optionally, return a successCallback
+            // which is to be executed as well.
+            var successCallback = localCallback(mute);
+
+            if (successCallback) {
+                successCallback();
+            }
+        } else {
+            APP.RTC.localVideo.setMute(!mute);
+            if(connection.jingle.activecall)
+            {
+                connection.jingle.activecall.setVideoMute(
+                    mute, localCallback, options);
+            }
+            else {
+                localCallback(mute);
+            }
+
+        }
     },
     setAudioMute: function (mute, callback) {
         if (!(connection && APP.RTC.localAudio)) {
