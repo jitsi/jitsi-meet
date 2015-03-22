@@ -21,4 +21,4 @@ clean:
 	@rm -f $(OUTPUT_DIR)/*.bundle.js
 
 deploy:
-	@mkdir -p $(DEPLOY_DIR) && cp $(OUTPUT_DIR)/*.bundle.js $(DEPLOY_DIR)
+	@mkdir -p $(DEPLOY_DIR) && cp $(OUTPUT_DIR)/*.bundle.js $(DEPLOY_DIR) && ./bump-js-versions.sh
