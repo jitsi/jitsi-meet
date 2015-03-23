@@ -27226,6 +27226,7 @@ module.exports = {
         return languages;
     },
     EN: "en",
+    IT: "it",
     BG: "bg",
     DE: "de",
     TR: "tr"
