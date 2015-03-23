@@ -286,7 +286,7 @@ var API = {
 };
 
 module.exports = API;
-},{"../../service/xmpp/XMPPEvents":98}],3:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":97}],3:[function(require,module,exports){
 /* global Strophe, focusedVideoSrc*/
 
 // cache datachannels to avoid garbage collection
@@ -522,8 +522,9 @@ function onPinnedEndpointChanged(userResource)
 module.exports = DataChannels;
 
 
-},{"../../service/RTC/RTCEvents":90}],4:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":89}],4:[function(require,module,exports){
 var StreamEventTypes = require("../../service/RTC/StreamEventTypes.js");
+
 
 function LocalStream(stream, type, eventEmitter, videoType)
 {
@@ -578,10 +579,29 @@ LocalStream.prototype.mute = function()
 
 LocalStream.prototype.setMute = function(mute)
 {
-    var tracks = this.getTracks();
 
-    for (var idx = 0; idx < tracks.length; idx++) {
-        tracks[idx].enabled = mute;
+    if(window.location.protocol != "https:" ||
+        this.isAudioStream() || this.videoType === "screen")
+    {
+        var tracks = this.getTracks();
+
+        for (var idx = 0; idx < tracks.length; idx++) {
+            tracks[idx].enabled = mute;
+        }
+    }
+    else
+    {
+        if(mute === false) {
+            APP.xmpp.removeStream(this.stream);
+            this.stream.stop();
+        }
+        else
+        {
+            APP.RTC.rtcUtils.obtainAudioAndVideoPermissions(["video"],
+                function (stream) {
+                    APP.RTC.changeLocalVideo(stream, false, function () {});
+                });
+        }
     }
 };
 
@@ -593,6 +613,8 @@ LocalStream.prototype.isMuted = function () {
     }
     else
     {
+        if(this.stream.ended)
+            return true;
         tracks = this.stream.getVideoTracks();
     }
     for (var idx = 0; idx < tracks.length; idx++) {
@@ -606,11 +628,9 @@ LocalStream.prototype.getId = function () {
     return this.stream.getTracks()[0].id;
 }
 
-
-
 module.exports = LocalStream;
 
-},{"../../service/RTC/StreamEventTypes.js":92}],5:[function(require,module,exports){
+},{"../../service/RTC/StreamEventTypes.js":91}],5:[function(require,module,exports){
 ////These lines should be uncommented when require works in app.js
 var MediaStreamType = require("../../service/RTC/MediaStreamTypes");
 var StreamEventType = require("../../service/RTC/StreamEventTypes");
@@ -672,7 +692,7 @@ MediaStream.prototype.setVideoType = function (value) {
 
 module.exports = MediaStream;
 
-},{"../../service/RTC/MediaStreamTypes":88,"../../service/RTC/StreamEventTypes":92}],6:[function(require,module,exports){
+},{"../../service/RTC/MediaStreamTypes":87,"../../service/RTC/StreamEventTypes":91}],6:[function(require,module,exports){
 var EventEmitter = require("events");
 var RTCUtils = require("./RTCUtils.js");
 var LocalStream = require("./LocalStream.js");
@@ -841,10 +861,18 @@ var RTC = {
     changeLocalVideo: function (stream, isUsingScreenStream, callback) {
         var oldStream = this.localVideo.getOriginalStream();
         var type = (isUsingScreenStream? "screen" : "video");
+        var localCallback = callback;
+        if(this.localVideo.isMuted() && this.localVideo.videoType !== type)
+        {
+            localCallback = function() {
+                APP.xmpp.setVideoMute(false, APP.UI.setVideoMuteButtonsState);
+                callback();
+            };
+        }
         this.localVideo = this.createLocalStream(stream, "video", true, type);
         // Stop the stream to trigger onended event for old stream
         oldStream.stop();
-        APP.xmpp.switchStreams(stream, oldStream,callback);
+        APP.xmpp.switchStreams(stream, oldStream,localCallback);
     },
     /**
      * Checks if video identified by given src is desktop stream.
@@ -871,12 +899,31 @@ var RTC = {
             isDesktop = (stream.videoType === "screen");
 
         return isDesktop;
+    },
+    setVideoMute: function(mute, callback, options) {
+        if(!this.localVideo)
+            return;
+
+        if (mute == APP.RTC.localVideo.isMuted())
+        {
+            APP.xmpp.sendVideoInfoPresence(mute);
+            if(callback)
+                callback();
+        }
+        else
+        {
+            APP.RTC.localVideo.setMute(!mute);
+            APP.xmpp.setVideoMute(
+                mute,
+                callback,
+                options);
+        }
     }
 };
 
 module.exports = RTC;
 
-},{"../../service/RTC/MediaStreamTypes":88,"../../service/RTC/StreamEventTypes.js":92,"../../service/UI/UIEvents":93,"../../service/desktopsharing/DesktopSharingEventTypes":96,"../../service/xmpp/XMPPEvents":98,"./DataChannels":3,"./LocalStream.js":4,"./MediaStream.js":5,"./RTCUtils.js":7,"events":62}],7:[function(require,module,exports){
+},{"../../service/RTC/MediaStreamTypes":87,"../../service/RTC/StreamEventTypes.js":91,"../../service/UI/UIEvents":92,"../../service/desktopsharing/DesktopSharingEventTypes":95,"../../service/xmpp/XMPPEvents":97,"./DataChannels":3,"./LocalStream.js":4,"./MediaStream.js":5,"./RTCUtils.js":7,"events":98}],7:[function(require,module,exports){
 var RTCBrowserType = require("../../service/RTC/RTCBrowserType.js");
 var Resolutions = require("../../service/RTC/Resolutions");
 
@@ -1151,14 +1198,20 @@ RTCUtils.prototype.getUserMediaWithConstraints = function(
  * We ask for audio and video combined stream in order to get permissions and
  * not to ask twice.
  */
-RTCUtils.prototype.obtainAudioAndVideoPermissions = function() {
+RTCUtils.prototype.obtainAudioAndVideoPermissions = function(devices, callback) {
     var self = this;
     // Get AV
 
+    if(!devices)
+        devices = ['audio', 'video'];
+
     this.getUserMediaWithConstraints(
-        ['audio', 'video'],
+        devices,
         function (stream) {
-            self.successCallback(stream);
+            if(callback)
+                callback(stream);
+            else
+                self.successCallback(stream);
         },
         function (error) {
             self.errorCallback(error);
@@ -1236,11 +1289,9 @@ RTCUtils.prototype.handleLocalStream = function(stream)
 
 };
 
-
-
 module.exports = RTCUtils;
 
-},{"../../service/RTC/RTCBrowserType.js":89,"../../service/RTC/Resolutions":91}],8:[function(require,module,exports){
+},{"../../service/RTC/RTCBrowserType.js":88,"../../service/RTC/Resolutions":90}],8:[function(require,module,exports){
 var UI = {};
 
 var VideoLayout = require("./videolayout/VideoLayout.js");
@@ -1473,21 +1524,8 @@ function registerListeners() {
  * contrast to an automatic decision taken by the application logic)
  */
 function setVideoMute(mute, options) {
-    APP.xmpp.setVideoMute(
-        mute,
-        function (mute) {
-            var video = $('#video');
-            var communicativeClass = "icon-camera";
-            var muteClass = "icon-camera icon-camera-disabled";
-
-            if (mute) {
-                video.removeClass(communicativeClass);
-                video.addClass(muteClass);
-            } else {
-                video.removeClass(muteClass);
-                video.addClass(communicativeClass);
-            }
-        },
+    APP.RTC.setVideoMute(mute,
+        UI.setVideoMuteButtonsState,
         options);
 }
 
@@ -1986,10 +2024,24 @@ UI.dockToolbar = function (isDock) {
     return ToolbarToggler.dockToolbar(isDock);
 }
 
+UI.setVideoMuteButtonsState = function (mute) {
+    var video = $('#video');
+    var communicativeClass = "icon-camera";
+    var muteClass = "icon-camera icon-camera-disabled";
+
+    if (mute) {
+        video.removeClass(communicativeClass);
+        video.addClass(muteClass);
+    } else {
+        video.removeClass(muteClass);
+        video.addClass(communicativeClass);
+    }
+}
+
 module.exports = UI;
 
 
-},{"../../service/RTC/RTCEvents":90,"../../service/RTC/StreamEventTypes":92,"../../service/connectionquality/CQEvents":95,"../../service/desktopsharing/DesktopSharingEventTypes":96,"../../service/xmpp/XMPPEvents":98,"./../settings/Settings":38,"./audio_levels/AudioLevels.js":9,"./authentication/Authentication":11,"./avatar/Avatar":13,"./etherpad/Etherpad.js":14,"./prezi/Prezi.js":15,"./side_pannels/SidePanelToggler":17,"./side_pannels/chat/Chat.js":18,"./side_pannels/contactlist/ContactList":22,"./side_pannels/settings/SettingsMenu":23,"./toolbars/BottomToolbar":24,"./toolbars/Toolbar":25,"./toolbars/ToolbarToggler":26,"./util/MessageHandler":28,"./util/NicknameHandler":29,"./util/UIUtil":30,"./videolayout/VideoLayout.js":32,"./welcome_page/RoomnameGenerator":33,"./welcome_page/WelcomePage":34,"events":62}],9:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":89,"../../service/RTC/StreamEventTypes":91,"../../service/connectionquality/CQEvents":94,"../../service/desktopsharing/DesktopSharingEventTypes":95,"../../service/xmpp/XMPPEvents":97,"./../settings/Settings":38,"./audio_levels/AudioLevels.js":9,"./authentication/Authentication":11,"./avatar/Avatar":13,"./etherpad/Etherpad.js":14,"./prezi/Prezi.js":15,"./side_pannels/SidePanelToggler":17,"./side_pannels/chat/Chat.js":18,"./side_pannels/contactlist/ContactList":22,"./side_pannels/settings/SettingsMenu":23,"./toolbars/BottomToolbar":24,"./toolbars/Toolbar":25,"./toolbars/ToolbarToggler":26,"./util/MessageHandler":28,"./util/NicknameHandler":29,"./util/UIUtil":30,"./videolayout/VideoLayout.js":32,"./welcome_page/RoomnameGenerator":33,"./welcome_page/WelcomePage":34,"events":98}],9:[function(require,module,exports){
 var CanvasUtil = require("./CanvasUtils");
 
 var ASDrawContext = $('#activeSpeakerAudioLevel')[0].getContext('2d');
@@ -2875,7 +2927,7 @@ var Avatar = {
 
 
 module.exports = Avatar;
-},{"../../../service/RTC/MediaStreamTypes":88,"../../settings/Settings":38,"../videolayout/VideoLayout":32}],14:[function(require,module,exports){
+},{"../../../service/RTC/MediaStreamTypes":87,"../../settings/Settings":38,"../videolayout/VideoLayout":32}],14:[function(require,module,exports){
 /* global $, config,
    setLargeVideoVisible, Util */
 
@@ -4358,7 +4410,7 @@ var Chat = (function (my) {
     return my;
 }(Chat || {}));
 module.exports = Chat;
-},{"../../../../service/UI/UIEvents":93,"../../toolbars/ToolbarToggler":26,"../../util/NicknameHandler":29,"../../util/UIUtil":30,"../SidePanelToggler":17,"./Commands":19,"./Replacement":20,"./smileys.json":21}],19:[function(require,module,exports){
+},{"../../../../service/UI/UIEvents":92,"../../toolbars/ToolbarToggler":26,"../../util/NicknameHandler":29,"../../util/UIUtil":30,"../SidePanelToggler":17,"./Commands":19,"./Replacement":20,"./smileys.json":21}],19:[function(require,module,exports){
 var UIUtil = require("../../util/UIUtil");
 
 /**
@@ -4841,7 +4893,7 @@ var SettingsMenu = {
 
 
 module.exports = SettingsMenu;
-},{"../../../../service/translation/languages":97,"../../avatar/Avatar":13,"../../util/UIUtil":30,"./../../../settings/Settings":38}],24:[function(require,module,exports){
+},{"../../../../service/translation/languages":96,"../../avatar/Avatar":13,"../../util/UIUtil":30,"./../../../settings/Settings":38}],24:[function(require,module,exports){
 var PanelToggler = require("../side_pannels/SidePanelToggler");
 
 var buttonHandlers = {
@@ -5515,7 +5567,7 @@ var Toolbar = (function (my) {
 }(Toolbar || {}));
 
 module.exports = Toolbar;
-},{"../../../service/authentication/AuthenticationEvents":94,"../authentication/Authentication":11,"../etherpad/Etherpad":14,"../prezi/Prezi":15,"../side_pannels/SidePanelToggler":17,"../util/MessageHandler":28,"../util/UIUtil":30,"./BottomToolbar":24}],26:[function(require,module,exports){
+},{"../../../service/authentication/AuthenticationEvents":93,"../authentication/Authentication":11,"../etherpad/Etherpad":14,"../prezi/Prezi":15,"../side_pannels/SidePanelToggler":17,"../util/MessageHandler":28,"../util/UIUtil":30,"./BottomToolbar":24}],26:[function(require,module,exports){
 /* global $, interfaceConfig, Moderator, DesktopStreaming.showDesktopSharingButton */
 
 var toolbarTimeoutObject,
@@ -5993,7 +6045,7 @@ var NickanameHandler = {
 };
 
 module.exports = NickanameHandler;
-},{"../../../service/UI/UIEvents":93}],30:[function(require,module,exports){
+},{"../../../service/UI/UIEvents":92}],30:[function(require,module,exports){
 /**
  * Created by hristo on 12/22/14.
  */
@@ -8759,7 +8811,7 @@ var VideoLayout = (function (my) {
 }(VideoLayout || {}));
 
 module.exports = VideoLayout;
-},{"../../../service/RTC/MediaStreamTypes":88,"../../../service/UI/UIEvents":93,"../audio_levels/AudioLevels":9,"../avatar/Avatar":13,"../etherpad/Etherpad":14,"../prezi/Prezi":15,"../side_pannels/chat/Chat":18,"../side_pannels/contactlist/ContactList":22,"../util/NicknameHandler":29,"../util/UIUtil":30,"./ConnectionIndicator":31}],33:[function(require,module,exports){
+},{"../../../service/RTC/MediaStreamTypes":87,"../../../service/UI/UIEvents":92,"../audio_levels/AudioLevels":9,"../avatar/Avatar":13,"../etherpad/Etherpad":14,"../prezi/Prezi":15,"../side_pannels/chat/Chat":18,"../side_pannels/contactlist/ContactList":22,"../util/NicknameHandler":29,"../util/UIUtil":30,"./ConnectionIndicator":31}],33:[function(require,module,exports){
 //var nouns = [
 //];
 var pluralNouns = [
@@ -9177,7 +9229,7 @@ var ConnectionQuality = {
 };
 
 module.exports = ConnectionQuality;
-},{"../../service/connectionquality/CQEvents":95,"../../service/xmpp/XMPPEvents":98,"events":62}],36:[function(require,module,exports){
+},{"../../service/connectionquality/CQEvents":94,"../../service/xmpp/XMPPEvents":97,"events":98}],36:[function(require,module,exports){
 /* global $, alert, APP, changeLocalVideo, chrome, config, getConferenceHandler,
  getUserMediaWithConstraints */
 /**
@@ -9538,7 +9590,7 @@ module.exports = {
 };
 
 
-},{"../../service/desktopsharing/DesktopSharingEventTypes":96,"events":62}],37:[function(require,module,exports){
+},{"../../service/desktopsharing/DesktopSharingEventTypes":95,"events":98}],37:[function(require,module,exports){
 //maps keycode to character, id of popover for given function and function
 var shortcuts = {
     67: {
@@ -10000,7 +10052,7 @@ SimulcastReceiver.prototype.transformRemoteDescription = function (desc) {
 };
 
 module.exports = SimulcastReceiver;
-},{"../../service/RTC/MediaStreamTypes":88,"./SimulcastLogger":39,"./SimulcastUtils":42}],41:[function(require,module,exports){
+},{"../../service/RTC/MediaStreamTypes":87,"./SimulcastLogger":39,"./SimulcastUtils":42}],41:[function(require,module,exports){
 var SimulcastLogger = require("./SimulcastLogger");
 var SimulcastUtils = require("./SimulcastUtils");
 
@@ -10960,7 +11012,7 @@ SimulcastManager.prototype.resetSender = function() {
 var simulcast = new SimulcastManager();
 
 module.exports = simulcast;
-},{"../../service/RTC/RTCEvents":90,"./SimulcastReceiver":40,"./SimulcastSender":41,"./SimulcastUtils":42}],44:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":89,"./SimulcastReceiver":40,"./SimulcastSender":41,"./SimulcastUtils":42}],44:[function(require,module,exports){
 /**
  * Provides statistics for the local stream.
  */
@@ -11832,7 +11884,7 @@ StatsCollector.prototype.processAudioLevelReport = function ()
 
 };
 
-},{"../../service/RTC/RTCBrowserType":89}],46:[function(require,module,exports){
+},{"../../service/RTC/RTCBrowserType":88}],46:[function(require,module,exports){
 /**
  * Created by hristo on 8/4/14.
  */
@@ -11965,7 +12017,7 @@ var statistics =
 
 
 module.exports = statistics;
-},{"../../service/RTC/StreamEventTypes.js":92,"../../service/xmpp/XMPPEvents":98,"./LocalStatsCollector.js":44,"./RTPStatsCollector.js":45,"events":62}],47:[function(require,module,exports){
+},{"../../service/RTC/StreamEventTypes.js":91,"../../service/xmpp/XMPPEvents":97,"./LocalStatsCollector.js":44,"./RTPStatsCollector.js":45,"events":98}],47:[function(require,module,exports){
 var i18n = require("i18next-client");
 var languages = require("../../service/translation/languages");
 var Settings = require("../settings/Settings");
@@ -12099,7 +12151,7 @@ module.exports = {
     }
 };
 
-},{"../../service/translation/languages":97,"../settings/Settings":38,"i18next-client":63}],48:[function(require,module,exports){
+},{"../../service/translation/languages":96,"../settings/Settings":38,"i18next-client":62}],48:[function(require,module,exports){
 /* jshint -W117 */
 var TraceablePeerConnection = require("./TraceablePeerConnection");
 var SDPDiffer = require("./SDPDiffer");
@@ -13159,26 +13211,6 @@ JingleSession.prototype.notifyMySSRCUpdate = function (old_sdp, new_sdp) {
 };
 
 /**
- * Determines whether the (local) video is mute i.e. all video tracks are
- * disabled.
- *
- * @return <tt>true</tt> if the (local) video is mute i.e. all video tracks are
- * disabled; otherwise, <tt>false</tt>
- */
-JingleSession.prototype.isVideoMute = function () {
-    var tracks = APP.RTC.localVideo.getVideoTracks();
-    var mute = true;
-
-    for (var i = 0; i < tracks.length; ++i) {
-        if (tracks[i].enabled) {
-            mute = false;
-            break;
-        }
-    }
-    return mute;
-};
-
-/**
  * Mutes/unmutes the (local) video i.e. enables/disables all video tracks.
  *
  * @param mute <tt>true</tt> to mute the (local) video i.e. to disable all video
@@ -13214,12 +13246,6 @@ JingleSession.prototype.setVideoMute = function (mute, callback, options) {
     this.hardMuteVideo(mute);
 
     this.modifySources(callback(mute));
-};
-
-// SDP-based mute by going recvonly/sendrecv
-// FIXME: should probably black out the screen as well
-JingleSession.prototype.toggleVideoMute = function (callback) {
-    this.service.setVideoMute(APP.RTC.localVideo.isMuted(), callback);
 };
 
 JingleSession.prototype.hardMuteVideo = function (muted) {
@@ -13465,7 +13491,7 @@ JingleSession.prototype.remoteStreamAdded = function (data, times) {
 
 module.exports = JingleSession;
 
-},{"../../service/RTC/RTCBrowserType":89,"./SDP":49,"./SDPDiffer":50,"./SDPUtil":51,"./TraceablePeerConnection":52}],49:[function(require,module,exports){
+},{"../../service/RTC/RTCBrowserType":88,"./SDP":49,"./SDPDiffer":50,"./SDPUtil":51,"./TraceablePeerConnection":52}],49:[function(require,module,exports){
 /* jshint -W117 */
 var SDPUtil = require("./SDPUtil");
 
@@ -14923,7 +14949,7 @@ TraceablePeerConnection.prototype.getStats = function(callback, errback) {
 module.exports = TraceablePeerConnection;
 
 
-},{"sdp-interop":81}],53:[function(require,module,exports){
+},{"sdp-interop":80}],53:[function(require,module,exports){
 /* global $, $iq, APP, config, connection, UI, messageHandler,
  roomName, sessionTerminated, Strophe, Util */
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
@@ -15350,7 +15376,7 @@ module.exports = Moderator;
 
 
 
-},{"../../service/authentication/AuthenticationEvents":94,"../../service/xmpp/XMPPEvents":98,"../settings/Settings":38}],54:[function(require,module,exports){
+},{"../../service/authentication/AuthenticationEvents":93,"../../service/xmpp/XMPPEvents":97,"../settings/Settings":38}],54:[function(require,module,exports){
 /* global $, $iq, config, connection, focusMucJid, messageHandler, Moderator,
    Toolbar, Util */
 var Moderator = require("./moderator");
@@ -16133,7 +16159,7 @@ module.exports = function(XMPP, eventEmitter) {
 };
 
 
-},{"../../service/xmpp/XMPPEvents":98,"./JingleSession":48,"./moderator":53}],56:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":97,"./JingleSession":48,"./moderator":53}],56:[function(require,module,exports){
 /* jshint -W117 */
 
 var JingleSession = require("./JingleSession");
@@ -16472,7 +16498,7 @@ module.exports = function(XMPP, eventEmitter)
 };
 
 
-},{"../../service/xmpp/XMPPEvents":98,"./JingleSession":48}],57:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":97,"./JingleSession":48}],57:[function(require,module,exports){
 /* global Strophe */
 module.exports = function () {
 
@@ -16898,10 +16924,12 @@ var XMPP = {
             // FIXME: probably removing streams is not required and close() should
             // be enough
             if (APP.RTC.localAudio) {
-                handler.peerconnection.removeStream(APP.RTC.localAudio.getOriginalStream(), onUnload);
+                handler.peerconnection.removeStream(
+                    APP.RTC.localAudio.getOriginalStream(), onUnload);
             }
             if (APP.RTC.localVideo) {
-                handler.peerconnection.removeStream(APP.RTC.localVideo.getOriginalStream(), onUnload);
+                handler.peerconnection.removeStream(
+                    APP.RTC.localVideo.getOriginalStream(), onUnload);
             }
             handler.peerconnection.close();
         }
@@ -16947,38 +16975,28 @@ var XMPP = {
             callback();
         }
     },
+    sendVideoInfoPresence: function (mute) {
+        connection.emuc.addVideoInfoToPresence(mute);
+        connection.emuc.sendPresence();
+    },
     setVideoMute: function (mute, callback, options) {
-        if(!connection || !APP.RTC.localVideo)
+        if(!connection)
             return;
-
+        var self = this;
         var localCallback = function (mute) {
-            connection.emuc.addVideoInfoToPresence(mute);
-            connection.emuc.sendPresence();
+            self.sendVideoInfoPresence(mute);
             return callback(mute);
         };
 
-        if (mute == APP.RTC.localVideo.isMuted())
+        if(connection.jingle.activecall)
         {
-            // Even if no change occurs, the specified callback is to be executed.
-            // The specified callback may, optionally, return a successCallback
-            // which is to be executed as well.
-            var successCallback = localCallback(mute);
-
-            if (successCallback) {
-                successCallback();
-            }
-        } else {
-            APP.RTC.localVideo.setMute(!mute);
-            if(connection.jingle.activecall)
-            {
-                connection.jingle.activecall.setVideoMute(
-                    mute, localCallback, options);
-            }
-            else {
-                localCallback(mute);
-            }
-
+            connection.jingle.activecall.setVideoMute(
+                mute, localCallback, options);
         }
+        else {
+            localCallback(mute);
+        }
+
     },
     setAudioMute: function (mute, callback) {
         if (!(connection && APP.RTC.localAudio)) {
@@ -17168,316 +17186,18 @@ var XMPP = {
     },
     getSessions: function () {
         return connection.jingle.sessions;
+    },
+    removeStream: function (stream) {
+        if(!connection || !connection.jingle.activecall ||
+            !connection.jingle.activecall.peerconnection)
+            return;
+        connection.jingle.activecall.peerconnection.removeStream(stream);
     }
-
 };
 
 module.exports = XMPP;
 
-},{"../../service/RTC/StreamEventTypes":92,"../../service/UI/UIEvents":93,"../../service/xmpp/XMPPEvents":98,"./SDP":49,"./moderator":53,"./recording":54,"./strophe.emuc":55,"./strophe.jingle":56,"./strophe.logger":57,"./strophe.moderate":58,"./strophe.rayo":59,"./strophe.util":60,"events":62,"pako":64}],62:[function(require,module,exports){
-// Copyright Joyent, Inc. and other Node contributors.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the
-// following conditions:
-//
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-// USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-function EventEmitter() {
-  this._events = this._events || {};
-  this._maxListeners = this._maxListeners || undefined;
-}
-module.exports = EventEmitter;
-
-// Backwards-compat with node 0.10.x
-EventEmitter.EventEmitter = EventEmitter;
-
-EventEmitter.prototype._events = undefined;
-EventEmitter.prototype._maxListeners = undefined;
-
-// By default EventEmitters will print a warning if more than 10 listeners are
-// added to it. This is a useful default which helps finding memory leaks.
-EventEmitter.defaultMaxListeners = 10;
-
-// Obviously not all Emitters should be limited to 10. This function allows
-// that to be increased. Set to zero for unlimited.
-EventEmitter.prototype.setMaxListeners = function(n) {
-  if (!isNumber(n) || n < 0 || isNaN(n))
-    throw TypeError('n must be a positive number');
-  this._maxListeners = n;
-  return this;
-};
-
-EventEmitter.prototype.emit = function(type) {
-  var er, handler, len, args, i, listeners;
-
-  if (!this._events)
-    this._events = {};
-
-  // If there is no 'error' event listener then throw.
-  if (type === 'error') {
-    if (!this._events.error ||
-        (isObject(this._events.error) && !this._events.error.length)) {
-      er = arguments[1];
-      if (er instanceof Error) {
-        throw er; // Unhandled 'error' event
-      }
-      throw TypeError('Uncaught, unspecified "error" event.');
-    }
-  }
-
-  handler = this._events[type];
-
-  if (isUndefined(handler))
-    return false;
-
-  if (isFunction(handler)) {
-    switch (arguments.length) {
-      // fast cases
-      case 1:
-        handler.call(this);
-        break;
-      case 2:
-        handler.call(this, arguments[1]);
-        break;
-      case 3:
-        handler.call(this, arguments[1], arguments[2]);
-        break;
-      // slower
-      default:
-        len = arguments.length;
-        args = new Array(len - 1);
-        for (i = 1; i < len; i++)
-          args[i - 1] = arguments[i];
-        handler.apply(this, args);
-    }
-  } else if (isObject(handler)) {
-    len = arguments.length;
-    args = new Array(len - 1);
-    for (i = 1; i < len; i++)
-      args[i - 1] = arguments[i];
-
-    listeners = handler.slice();
-    len = listeners.length;
-    for (i = 0; i < len; i++)
-      listeners[i].apply(this, args);
-  }
-
-  return true;
-};
-
-EventEmitter.prototype.addListener = function(type, listener) {
-  var m;
-
-  if (!isFunction(listener))
-    throw TypeError('listener must be a function');
-
-  if (!this._events)
-    this._events = {};
-
-  // To avoid recursion in the case that type === "newListener"! Before
-  // adding it to the listeners, first emit "newListener".
-  if (this._events.newListener)
-    this.emit('newListener', type,
-              isFunction(listener.listener) ?
-              listener.listener : listener);
-
-  if (!this._events[type])
-    // Optimize the case of one listener. Don't need the extra array object.
-    this._events[type] = listener;
-  else if (isObject(this._events[type]))
-    // If we've already got an array, just append.
-    this._events[type].push(listener);
-  else
-    // Adding the second element, need to change to array.
-    this._events[type] = [this._events[type], listener];
-
-  // Check for listener leak
-  if (isObject(this._events[type]) && !this._events[type].warned) {
-    var m;
-    if (!isUndefined(this._maxListeners)) {
-      m = this._maxListeners;
-    } else {
-      m = EventEmitter.defaultMaxListeners;
-    }
-
-    if (m && m > 0 && this._events[type].length > m) {
-      this._events[type].warned = true;
-      console.error('(node) warning: possible EventEmitter memory ' +
-                    'leak detected. %d listeners added. ' +
-                    'Use emitter.setMaxListeners() to increase limit.',
-                    this._events[type].length);
-      if (typeof console.trace === 'function') {
-        // not supported in IE 10
-        console.trace();
-      }
-    }
-  }
-
-  return this;
-};
-
-EventEmitter.prototype.on = EventEmitter.prototype.addListener;
-
-EventEmitter.prototype.once = function(type, listener) {
-  if (!isFunction(listener))
-    throw TypeError('listener must be a function');
-
-  var fired = false;
-
-  function g() {
-    this.removeListener(type, g);
-
-    if (!fired) {
-      fired = true;
-      listener.apply(this, arguments);
-    }
-  }
-
-  g.listener = listener;
-  this.on(type, g);
-
-  return this;
-};
-
-// emits a 'removeListener' event iff the listener was removed
-EventEmitter.prototype.removeListener = function(type, listener) {
-  var list, position, length, i;
-
-  if (!isFunction(listener))
-    throw TypeError('listener must be a function');
-
-  if (!this._events || !this._events[type])
-    return this;
-
-  list = this._events[type];
-  length = list.length;
-  position = -1;
-
-  if (list === listener ||
-      (isFunction(list.listener) && list.listener === listener)) {
-    delete this._events[type];
-    if (this._events.removeListener)
-      this.emit('removeListener', type, listener);
-
-  } else if (isObject(list)) {
-    for (i = length; i-- > 0;) {
-      if (list[i] === listener ||
-          (list[i].listener && list[i].listener === listener)) {
-        position = i;
-        break;
-      }
-    }
-
-    if (position < 0)
-      return this;
-
-    if (list.length === 1) {
-      list.length = 0;
-      delete this._events[type];
-    } else {
-      list.splice(position, 1);
-    }
-
-    if (this._events.removeListener)
-      this.emit('removeListener', type, listener);
-  }
-
-  return this;
-};
-
-EventEmitter.prototype.removeAllListeners = function(type) {
-  var key, listeners;
-
-  if (!this._events)
-    return this;
-
-  // not listening for removeListener, no need to emit
-  if (!this._events.removeListener) {
-    if (arguments.length === 0)
-      this._events = {};
-    else if (this._events[type])
-      delete this._events[type];
-    return this;
-  }
-
-  // emit removeListener for all listeners on all events
-  if (arguments.length === 0) {
-    for (key in this._events) {
-      if (key === 'removeListener') continue;
-      this.removeAllListeners(key);
-    }
-    this.removeAllListeners('removeListener');
-    this._events = {};
-    return this;
-  }
-
-  listeners = this._events[type];
-
-  if (isFunction(listeners)) {
-    this.removeListener(type, listeners);
-  } else {
-    // LIFO order
-    while (listeners.length)
-      this.removeListener(type, listeners[listeners.length - 1]);
-  }
-  delete this._events[type];
-
-  return this;
-};
-
-EventEmitter.prototype.listeners = function(type) {
-  var ret;
-  if (!this._events || !this._events[type])
-    ret = [];
-  else if (isFunction(this._events[type]))
-    ret = [this._events[type]];
-  else
-    ret = this._events[type].slice();
-  return ret;
-};
-
-EventEmitter.listenerCount = function(emitter, type) {
-  var ret;
-  if (!emitter._events || !emitter._events[type])
-    ret = 0;
-  else if (isFunction(emitter._events[type]))
-    ret = 1;
-  else
-    ret = emitter._events[type].length;
-  return ret;
-};
-
-function isFunction(arg) {
-  return typeof arg === 'function';
-}
-
-function isNumber(arg) {
-  return typeof arg === 'number';
-}
-
-function isObject(arg) {
-  return typeof arg === 'object' && arg !== null;
-}
-
-function isUndefined(arg) {
-  return arg === void 0;
-}
-
-},{}],63:[function(require,module,exports){
+},{"../../service/RTC/StreamEventTypes":91,"../../service/UI/UIEvents":92,"../../service/xmpp/XMPPEvents":97,"./SDP":49,"./moderator":53,"./recording":54,"./strophe.emuc":55,"./strophe.jingle":56,"./strophe.logger":57,"./strophe.moderate":58,"./strophe.rayo":59,"./strophe.util":60,"events":98,"pako":63}],62:[function(require,module,exports){
 // i18next, v1.7.7
 // Copyright (c)2014 Jan Mühlemann (jamuhl).
 // Distributed under MIT license
@@ -19600,7 +19320,7 @@ function isUndefined(arg) {
     i18n.options = o;
 
 })();
-},{"jquery":"jquery"}],64:[function(require,module,exports){
+},{"jquery":"jquery"}],63:[function(require,module,exports){
 // Top level file is just a mixin of submodules & constants
 'use strict';
 
@@ -19615,7 +19335,7 @@ var pako = {};
 assign(pako, deflate, inflate, constants);
 
 module.exports = pako;
-},{"./lib/deflate":65,"./lib/inflate":66,"./lib/utils/common":67,"./lib/zlib/constants":70}],65:[function(require,module,exports){
+},{"./lib/deflate":64,"./lib/inflate":65,"./lib/utils/common":66,"./lib/zlib/constants":69}],64:[function(require,module,exports){
 'use strict';
 
 
@@ -19977,7 +19697,7 @@ exports.Deflate = Deflate;
 exports.deflate = deflate;
 exports.deflateRaw = deflateRaw;
 exports.gzip = gzip;
-},{"./utils/common":67,"./utils/strings":68,"./zlib/deflate.js":72,"./zlib/messages":77,"./zlib/zstream":79}],66:[function(require,module,exports){
+},{"./utils/common":66,"./utils/strings":67,"./zlib/deflate.js":71,"./zlib/messages":76,"./zlib/zstream":78}],65:[function(require,module,exports){
 'use strict';
 
 
@@ -20343,7 +20063,7 @@ exports.inflate = inflate;
 exports.inflateRaw = inflateRaw;
 exports.ungzip  = inflate;
 
-},{"./utils/common":67,"./utils/strings":68,"./zlib/constants":70,"./zlib/gzheader":73,"./zlib/inflate.js":75,"./zlib/messages":77,"./zlib/zstream":79}],67:[function(require,module,exports){
+},{"./utils/common":66,"./utils/strings":67,"./zlib/constants":69,"./zlib/gzheader":72,"./zlib/inflate.js":74,"./zlib/messages":76,"./zlib/zstream":78}],66:[function(require,module,exports){
 'use strict';
 
 
@@ -20446,7 +20166,7 @@ exports.setTyped = function (on) {
 };
 
 exports.setTyped(TYPED_OK);
-},{}],68:[function(require,module,exports){
+},{}],67:[function(require,module,exports){
 // String encode/decode helpers
 'use strict';
 
@@ -20633,7 +20353,7 @@ exports.utf8border = function(buf, max) {
   return (pos + _utf8len[buf[pos]] > max) ? pos : max;
 };
 
-},{"./common":67}],69:[function(require,module,exports){
+},{"./common":66}],68:[function(require,module,exports){
 'use strict';
 
 // Note: adler32 takes 12% for level 0 and 2% for level 6.
@@ -20666,7 +20386,7 @@ function adler32(adler, buf, len, pos) {
 
 
 module.exports = adler32;
-},{}],70:[function(require,module,exports){
+},{}],69:[function(require,module,exports){
 module.exports = {
 
   /* Allowed flush values; see deflate() and inflate() below for details */
@@ -20714,7 +20434,7 @@ module.exports = {
   Z_DEFLATED:               8
   //Z_NULL:                 null // Use -1 or null inline, depending on var type
 };
-},{}],71:[function(require,module,exports){
+},{}],70:[function(require,module,exports){
 'use strict';
 
 // Note: we can't get significant speed boost here.
@@ -20756,7 +20476,7 @@ function crc32(crc, buf, len, pos) {
 
 
 module.exports = crc32;
-},{}],72:[function(require,module,exports){
+},{}],71:[function(require,module,exports){
 'use strict';
 
 var utils   = require('../utils/common');
@@ -22522,7 +22242,7 @@ exports.deflatePending = deflatePending;
 exports.deflatePrime = deflatePrime;
 exports.deflateTune = deflateTune;
 */
-},{"../utils/common":67,"./adler32":69,"./crc32":71,"./messages":77,"./trees":78}],73:[function(require,module,exports){
+},{"../utils/common":66,"./adler32":68,"./crc32":70,"./messages":76,"./trees":77}],72:[function(require,module,exports){
 'use strict';
 
 
@@ -22563,7 +22283,7 @@ function GZheader() {
 }
 
 module.exports = GZheader;
-},{}],74:[function(require,module,exports){
+},{}],73:[function(require,module,exports){
 'use strict';
 
 // See state defs from inflate.js
@@ -22890,7 +22610,7 @@ module.exports = function inflate_fast(strm, start) {
   return;
 };
 
-},{}],75:[function(require,module,exports){
+},{}],74:[function(require,module,exports){
 'use strict';
 
 
@@ -24394,7 +24114,7 @@ exports.inflateSync = inflateSync;
 exports.inflateSyncPoint = inflateSyncPoint;
 exports.inflateUndermine = inflateUndermine;
 */
-},{"../utils/common":67,"./adler32":69,"./crc32":71,"./inffast":74,"./inftrees":76}],76:[function(require,module,exports){
+},{"../utils/common":66,"./adler32":68,"./crc32":70,"./inffast":73,"./inftrees":75}],75:[function(require,module,exports){
 'use strict';
 
 
@@ -24721,7 +24441,7 @@ module.exports = function inflate_table(type, lens, lens_index, codes, table, ta
   return 0;
 };
 
-},{"../utils/common":67}],77:[function(require,module,exports){
+},{"../utils/common":66}],76:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -24735,7 +24455,7 @@ module.exports = {
   '-5':   'buffer error',        /* Z_BUF_ERROR     (-5) */
   '-6':   'incompatible version' /* Z_VERSION_ERROR (-6) */
 };
-},{}],78:[function(require,module,exports){
+},{}],77:[function(require,module,exports){
 'use strict';
 
 
@@ -25935,7 +25655,7 @@ exports._tr_stored_block = _tr_stored_block;
 exports._tr_flush_block  = _tr_flush_block;
 exports._tr_tally = _tr_tally;
 exports._tr_align = _tr_align;
-},{"../utils/common":67}],79:[function(require,module,exports){
+},{"../utils/common":66}],78:[function(require,module,exports){
 'use strict';
 
 
@@ -25965,7 +25685,7 @@ function ZStream() {
 }
 
 module.exports = ZStream;
-},{}],80:[function(require,module,exports){
+},{}],79:[function(require,module,exports){
 module.exports = function arrayEquals(array) {
     // if the other array is a falsy value, return
     if (!array)
@@ -25991,10 +25711,10 @@ module.exports = function arrayEquals(array) {
 }
 
 
-},{}],81:[function(require,module,exports){
+},{}],80:[function(require,module,exports){
 exports.Interop = require('./interop');
 
-},{"./interop":82}],82:[function(require,module,exports){
+},{"./interop":81}],81:[function(require,module,exports){
 var transform = require('./transform');
 var arrayEquals = require('./array-equals');
 
@@ -26517,7 +26237,7 @@ Interop.prototype.toPlanA = function(desc) {
     //#endregion
 };
 
-},{"./array-equals":80,"./transform":83}],83:[function(require,module,exports){
+},{"./array-equals":79,"./transform":82}],82:[function(require,module,exports){
 var transform = require('sdp-transform');
 
 exports.write = function(session, opts) {
@@ -26616,7 +26336,7 @@ exports.parse = function(sdp) {
 };
 
 
-},{"sdp-transform":85}],84:[function(require,module,exports){
+},{"sdp-transform":84}],83:[function(require,module,exports){
 var grammar = module.exports = {
   v: [{
       name: 'version',
@@ -26799,6 +26519,10 @@ var grammar = module.exports = {
         return str;
       }
     },
+    { //a=end-of-candidates (keep after the candidates line for readability)
+      name: 'endOfCandidates',
+      reg: /^(end-of-candidates)/
+    },
     { //a=remote-candidates:1 203.0.113.1 54400 2 203.0.113.1 54401 ...
       name: 'remoteCandidates',
       reg: /^remote-candidates:(.*)/,
@@ -26855,9 +26579,9 @@ Object.keys(grammar).forEach(function (key) {
       obj.format = "%s";
     }
   });
-}); 
+});
 
-},{}],85:[function(require,module,exports){
+},{}],84:[function(require,module,exports){
 var parser = require('./parser');
 var writer = require('./writer');
 
@@ -26867,7 +26591,7 @@ exports.parseFmtpConfig = parser.parseFmtpConfig;
 exports.parsePayloads = parser.parsePayloads;
 exports.parseRemoteCandidates = parser.parseRemoteCandidates;
 
-},{"./parser":86,"./writer":87}],86:[function(require,module,exports){
+},{"./parser":85,"./writer":86}],85:[function(require,module,exports){
 var toIntIfInt = function (v) {
   return String(Number(v)) === v ? Number(v) : v;
 };
@@ -26962,7 +26686,7 @@ exports.parseRemoteCandidates = function (str) {
   return candidates;
 };
 
-},{"./grammar":84}],87:[function(require,module,exports){
+},{"./grammar":83}],86:[function(require,module,exports){
 var grammar = require('./grammar');
 
 // customized util.format - discards excess arguments and can void middle ones
@@ -27078,14 +26802,14 @@ module.exports = function (session, opts) {
   return sdp.join('\r\n') + '\r\n';
 };
 
-},{"./grammar":84}],88:[function(require,module,exports){
+},{"./grammar":83}],87:[function(require,module,exports){
 var MediaStreamType = {
     VIDEO_TYPE: "Video",
 
     AUDIO_TYPE: "Audio"
 };
 module.exports = MediaStreamType;
-},{}],89:[function(require,module,exports){
+},{}],88:[function(require,module,exports){
 var RTCBrowserType = {
     RTC_BROWSER_CHROME: "rtc_browser.chrome",
 
@@ -27093,7 +26817,7 @@ var RTCBrowserType = {
 };
 
 module.exports = RTCBrowserType;
-},{}],90:[function(require,module,exports){
+},{}],89:[function(require,module,exports){
 var RTCEvents = {
     LASTN_CHANGED: "rtc.lastn_changed",
     DOMINANTSPEAKER_CHANGED: "rtc.dominantspeaker_changed",
@@ -27105,7 +26829,7 @@ var RTCEvents = {
 };
 
 module.exports = RTCEvents;
-},{}],91:[function(require,module,exports){
+},{}],90:[function(require,module,exports){
 var Resolutions = {
     "1080": {
         width: 1920,
@@ -27159,7 +26883,7 @@ var Resolutions = {
     }
 };
 module.exports = Resolutions;
-},{}],92:[function(require,module,exports){
+},{}],91:[function(require,module,exports){
 var StreamEventTypes = {
     EVENT_TYPE_LOCAL_CREATED: "stream.local_created",
 
@@ -27175,14 +26899,14 @@ var StreamEventTypes = {
 };
 
 module.exports = StreamEventTypes;
-},{}],93:[function(require,module,exports){
+},{}],92:[function(require,module,exports){
 var UIEvents = {
     NICKNAME_CHANGED: "UI.nickname_changed",
     SELECTED_ENDPOINT: "UI.selected_endpoint",
     PINNED_ENDPOINT: "UI.pinned_endpoint"
 };
 module.exports = UIEvents;
-},{}],94:[function(require,module,exports){
+},{}],93:[function(require,module,exports){
 var AuthenticationEvents = {
     /**
      * Event callback arguments:
@@ -27196,7 +26920,7 @@ var AuthenticationEvents = {
 };
 module.exports = AuthenticationEvents;
 
-},{}],95:[function(require,module,exports){
+},{}],94:[function(require,module,exports){
 var CQEvents = {
     LOCALSTATS_UPDATED: "cq.localstats_updated",
     REMOTESTATS_UPDATED: "cq.remotestats_updated",
@@ -27204,7 +26928,7 @@ var CQEvents = {
 };
 
 module.exports = CQEvents;
-},{}],96:[function(require,module,exports){
+},{}],95:[function(require,module,exports){
 var DesktopSharingEventTypes = {
     INIT: "ds.init",
 
@@ -27214,7 +26938,7 @@ var DesktopSharingEventTypes = {
 };
 
 module.exports = DesktopSharingEventTypes;
-},{}],97:[function(require,module,exports){
+},{}],96:[function(require,module,exports){
 module.exports = {
     getLanguages : function () {
         var languages = [];
@@ -27230,7 +26954,7 @@ module.exports = {
     DE: "de",
     TR: "tr"
 }
-},{}],98:[function(require,module,exports){
+},{}],97:[function(require,module,exports){
 var XMPPEvents = {
     CONFERENCE_CERATED: "xmpp.conferenceCreated.jingle",
     CALL_TERMINATED: "xmpp.callterminated.jingle",
@@ -27260,5 +26984,308 @@ var XMPPEvents = {
     ETHERPAD: "xmpp.etherpad"
 };
 module.exports = XMPPEvents;
+},{}],98:[function(require,module,exports){
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+function EventEmitter() {
+  this._events = this._events || {};
+  this._maxListeners = this._maxListeners || undefined;
+}
+module.exports = EventEmitter;
+
+// Backwards-compat with node 0.10.x
+EventEmitter.EventEmitter = EventEmitter;
+
+EventEmitter.prototype._events = undefined;
+EventEmitter.prototype._maxListeners = undefined;
+
+// By default EventEmitters will print a warning if more than 10 listeners are
+// added to it. This is a useful default which helps finding memory leaks.
+EventEmitter.defaultMaxListeners = 10;
+
+// Obviously not all Emitters should be limited to 10. This function allows
+// that to be increased. Set to zero for unlimited.
+EventEmitter.prototype.setMaxListeners = function(n) {
+  if (!isNumber(n) || n < 0 || isNaN(n))
+    throw TypeError('n must be a positive number');
+  this._maxListeners = n;
+  return this;
+};
+
+EventEmitter.prototype.emit = function(type) {
+  var er, handler, len, args, i, listeners;
+
+  if (!this._events)
+    this._events = {};
+
+  // If there is no 'error' event listener then throw.
+  if (type === 'error') {
+    if (!this._events.error ||
+        (isObject(this._events.error) && !this._events.error.length)) {
+      er = arguments[1];
+      if (er instanceof Error) {
+        throw er; // Unhandled 'error' event
+      }
+      throw TypeError('Uncaught, unspecified "error" event.');
+    }
+  }
+
+  handler = this._events[type];
+
+  if (isUndefined(handler))
+    return false;
+
+  if (isFunction(handler)) {
+    switch (arguments.length) {
+      // fast cases
+      case 1:
+        handler.call(this);
+        break;
+      case 2:
+        handler.call(this, arguments[1]);
+        break;
+      case 3:
+        handler.call(this, arguments[1], arguments[2]);
+        break;
+      // slower
+      default:
+        len = arguments.length;
+        args = new Array(len - 1);
+        for (i = 1; i < len; i++)
+          args[i - 1] = arguments[i];
+        handler.apply(this, args);
+    }
+  } else if (isObject(handler)) {
+    len = arguments.length;
+    args = new Array(len - 1);
+    for (i = 1; i < len; i++)
+      args[i - 1] = arguments[i];
+
+    listeners = handler.slice();
+    len = listeners.length;
+    for (i = 0; i < len; i++)
+      listeners[i].apply(this, args);
+  }
+
+  return true;
+};
+
+EventEmitter.prototype.addListener = function(type, listener) {
+  var m;
+
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  if (!this._events)
+    this._events = {};
+
+  // To avoid recursion in the case that type === "newListener"! Before
+  // adding it to the listeners, first emit "newListener".
+  if (this._events.newListener)
+    this.emit('newListener', type,
+              isFunction(listener.listener) ?
+              listener.listener : listener);
+
+  if (!this._events[type])
+    // Optimize the case of one listener. Don't need the extra array object.
+    this._events[type] = listener;
+  else if (isObject(this._events[type]))
+    // If we've already got an array, just append.
+    this._events[type].push(listener);
+  else
+    // Adding the second element, need to change to array.
+    this._events[type] = [this._events[type], listener];
+
+  // Check for listener leak
+  if (isObject(this._events[type]) && !this._events[type].warned) {
+    var m;
+    if (!isUndefined(this._maxListeners)) {
+      m = this._maxListeners;
+    } else {
+      m = EventEmitter.defaultMaxListeners;
+    }
+
+    if (m && m > 0 && this._events[type].length > m) {
+      this._events[type].warned = true;
+      console.error('(node) warning: possible EventEmitter memory ' +
+                    'leak detected. %d listeners added. ' +
+                    'Use emitter.setMaxListeners() to increase limit.',
+                    this._events[type].length);
+      if (typeof console.trace === 'function') {
+        // not supported in IE 10
+        console.trace();
+      }
+    }
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.on = EventEmitter.prototype.addListener;
+
+EventEmitter.prototype.once = function(type, listener) {
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  var fired = false;
+
+  function g() {
+    this.removeListener(type, g);
+
+    if (!fired) {
+      fired = true;
+      listener.apply(this, arguments);
+    }
+  }
+
+  g.listener = listener;
+  this.on(type, g);
+
+  return this;
+};
+
+// emits a 'removeListener' event iff the listener was removed
+EventEmitter.prototype.removeListener = function(type, listener) {
+  var list, position, length, i;
+
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  if (!this._events || !this._events[type])
+    return this;
+
+  list = this._events[type];
+  length = list.length;
+  position = -1;
+
+  if (list === listener ||
+      (isFunction(list.listener) && list.listener === listener)) {
+    delete this._events[type];
+    if (this._events.removeListener)
+      this.emit('removeListener', type, listener);
+
+  } else if (isObject(list)) {
+    for (i = length; i-- > 0;) {
+      if (list[i] === listener ||
+          (list[i].listener && list[i].listener === listener)) {
+        position = i;
+        break;
+      }
+    }
+
+    if (position < 0)
+      return this;
+
+    if (list.length === 1) {
+      list.length = 0;
+      delete this._events[type];
+    } else {
+      list.splice(position, 1);
+    }
+
+    if (this._events.removeListener)
+      this.emit('removeListener', type, listener);
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.removeAllListeners = function(type) {
+  var key, listeners;
+
+  if (!this._events)
+    return this;
+
+  // not listening for removeListener, no need to emit
+  if (!this._events.removeListener) {
+    if (arguments.length === 0)
+      this._events = {};
+    else if (this._events[type])
+      delete this._events[type];
+    return this;
+  }
+
+  // emit removeListener for all listeners on all events
+  if (arguments.length === 0) {
+    for (key in this._events) {
+      if (key === 'removeListener') continue;
+      this.removeAllListeners(key);
+    }
+    this.removeAllListeners('removeListener');
+    this._events = {};
+    return this;
+  }
+
+  listeners = this._events[type];
+
+  if (isFunction(listeners)) {
+    this.removeListener(type, listeners);
+  } else {
+    // LIFO order
+    while (listeners.length)
+      this.removeListener(type, listeners[listeners.length - 1]);
+  }
+  delete this._events[type];
+
+  return this;
+};
+
+EventEmitter.prototype.listeners = function(type) {
+  var ret;
+  if (!this._events || !this._events[type])
+    ret = [];
+  else if (isFunction(this._events[type]))
+    ret = [this._events[type]];
+  else
+    ret = this._events[type].slice();
+  return ret;
+};
+
+EventEmitter.listenerCount = function(emitter, type) {
+  var ret;
+  if (!emitter._events || !emitter._events[type])
+    ret = 0;
+  else if (isFunction(emitter._events[type]))
+    ret = 1;
+  else
+    ret = emitter._events[type].length;
+  return ret;
+};
+
+function isFunction(arg) {
+  return typeof arg === 'function';
+}
+
+function isNumber(arg) {
+  return typeof arg === 'number';
+}
+
+function isObject(arg) {
+  return typeof arg === 'object' && arg !== null;
+}
+
+function isUndefined(arg) {
+  return arg === void 0;
+}
+
 },{}]},{},[1])(1)
 });

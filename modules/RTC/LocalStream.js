@@ -1,5 +1,6 @@
 var StreamEventTypes = require("../../service/RTC/StreamEventTypes.js");
 
+
 function LocalStream(stream, type, eventEmitter, videoType)
 {
     this.stream = stream;
@@ -53,10 +54,29 @@ LocalStream.prototype.mute = function()
 
 LocalStream.prototype.setMute = function(mute)
 {
-    var tracks = this.getTracks();
 
-    for (var idx = 0; idx < tracks.length; idx++) {
-        tracks[idx].enabled = mute;
+    if(window.location.protocol != "https:" ||
+        this.isAudioStream() || this.videoType === "screen")
+    {
+        var tracks = this.getTracks();
+
+        for (var idx = 0; idx < tracks.length; idx++) {
+            tracks[idx].enabled = mute;
+        }
+    }
+    else
+    {
+        if(mute === false) {
+            APP.xmpp.removeStream(this.stream);
+            this.stream.stop();
+        }
+        else
+        {
+            APP.RTC.rtcUtils.obtainAudioAndVideoPermissions(["video"],
+                function (stream) {
+                    APP.RTC.changeLocalVideo(stream, false, function () {});
+                });
+        }
     }
 };
 
@@ -68,6 +88,8 @@ LocalStream.prototype.isMuted = function () {
     }
     else
     {
+        if(this.stream.ended)
+            return true;
         tracks = this.stream.getVideoTracks();
     }
     for (var idx = 0; idx < tracks.length; idx++) {
@@ -80,7 +102,5 @@ LocalStream.prototype.isMuted = function () {
 LocalStream.prototype.getId = function () {
     return this.stream.getTracks()[0].id;
 }
-
-
 
 module.exports = LocalStream;

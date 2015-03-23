@@ -230,21 +230,8 @@ function registerListeners() {
  * contrast to an automatic decision taken by the application logic)
  */
 function setVideoMute(mute, options) {
-    APP.xmpp.setVideoMute(
-        mute,
-        function (mute) {
-            var video = $('#video');
-            var communicativeClass = "icon-camera";
-            var muteClass = "icon-camera icon-camera-disabled";
-
-            if (mute) {
-                video.removeClass(communicativeClass);
-                video.addClass(muteClass);
-            } else {
-                video.removeClass(muteClass);
-                video.addClass(communicativeClass);
-            }
-        },
+    APP.RTC.setVideoMute(mute,
+        UI.setVideoMuteButtonsState,
         options);
 }
 
@@ -741,6 +728,20 @@ UI.showToolbar = function () {
 //Used by torture
 UI.dockToolbar = function (isDock) {
     return ToolbarToggler.dockToolbar(isDock);
+}
+
+UI.setVideoMuteButtonsState = function (mute) {
+    var video = $('#video');
+    var communicativeClass = "icon-camera";
+    var muteClass = "icon-camera icon-camera-disabled";
+
+    if (mute) {
+        video.removeClass(communicativeClass);
+        video.addClass(muteClass);
+    } else {
+        video.removeClass(muteClass);
+        video.addClass(communicativeClass);
+    }
 }
 
 module.exports = UI;

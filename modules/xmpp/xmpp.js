@@ -202,10 +202,12 @@ var XMPP = {
             // FIXME: probably removing streams is not required and close() should
             // be enough
             if (APP.RTC.localAudio) {
-                handler.peerconnection.removeStream(APP.RTC.localAudio.getOriginalStream(), onUnload);
+                handler.peerconnection.removeStream(
+                    APP.RTC.localAudio.getOriginalStream(), onUnload);
             }
             if (APP.RTC.localVideo) {
-                handler.peerconnection.removeStream(APP.RTC.localVideo.getOriginalStream(), onUnload);
+                handler.peerconnection.removeStream(
+                    APP.RTC.localVideo.getOriginalStream(), onUnload);
             }
             handler.peerconnection.close();
         }
@@ -251,38 +253,28 @@ var XMPP = {
             callback();
         }
     },
+    sendVideoInfoPresence: function (mute) {
+        connection.emuc.addVideoInfoToPresence(mute);
+        connection.emuc.sendPresence();
+    },
     setVideoMute: function (mute, callback, options) {
-        if(!connection || !APP.RTC.localVideo)
+        if(!connection)
             return;
-
+        var self = this;
         var localCallback = function (mute) {
-            connection.emuc.addVideoInfoToPresence(mute);
-            connection.emuc.sendPresence();
+            self.sendVideoInfoPresence(mute);
             return callback(mute);
         };
 
-        if (mute == APP.RTC.localVideo.isMuted())
+        if(connection.jingle.activecall)
         {
-            // Even if no change occurs, the specified callback is to be executed.
-            // The specified callback may, optionally, return a successCallback
-            // which is to be executed as well.
-            var successCallback = localCallback(mute);
-
-            if (successCallback) {
-                successCallback();
-            }
-        } else {
-            APP.RTC.localVideo.setMute(!mute);
-            if(connection.jingle.activecall)
-            {
-                connection.jingle.activecall.setVideoMute(
-                    mute, localCallback, options);
-            }
-            else {
-                localCallback(mute);
-            }
-
+            connection.jingle.activecall.setVideoMute(
+                mute, localCallback, options);
         }
+        else {
+            localCallback(mute);
+        }
+
     },
     setAudioMute: function (mute, callback) {
         if (!(connection && APP.RTC.localAudio)) {
@@ -472,8 +464,13 @@ var XMPP = {
     },
     getSessions: function () {
         return connection.jingle.sessions;
+    },
+    removeStream: function (stream) {
+        if(!connection || !connection.jingle.activecall ||
+            !connection.jingle.activecall.peerconnection)
+            return;
+        connection.jingle.activecall.peerconnection.removeStream(stream);
     }
-
 };
 
 module.exports = XMPP;

@@ -1057,26 +1057,6 @@ JingleSession.prototype.notifyMySSRCUpdate = function (old_sdp, new_sdp) {
 };
 
 /**
- * Determines whether the (local) video is mute i.e. all video tracks are
- * disabled.
- *
- * @return <tt>true</tt> if the (local) video is mute i.e. all video tracks are
- * disabled; otherwise, <tt>false</tt>
- */
-JingleSession.prototype.isVideoMute = function () {
-    var tracks = APP.RTC.localVideo.getVideoTracks();
-    var mute = true;
-
-    for (var i = 0; i < tracks.length; ++i) {
-        if (tracks[i].enabled) {
-            mute = false;
-            break;
-        }
-    }
-    return mute;
-};
-
-/**
  * Mutes/unmutes the (local) video i.e. enables/disables all video tracks.
  *
  * @param mute <tt>true</tt> to mute the (local) video i.e. to disable all video
@@ -1112,12 +1092,6 @@ JingleSession.prototype.setVideoMute = function (mute, callback, options) {
     this.hardMuteVideo(mute);
 
     this.modifySources(callback(mute));
-};
-
-// SDP-based mute by going recvonly/sendrecv
-// FIXME: should probably black out the screen as well
-JingleSession.prototype.toggleVideoMute = function (callback) {
-    this.service.setVideoMute(APP.RTC.localVideo.isMuted(), callback);
 };
 
 JingleSession.prototype.hardMuteVideo = function (muted) {
