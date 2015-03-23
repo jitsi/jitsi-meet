@@ -6,7 +6,7 @@
     "roomUrlDefaultMsg": "",
     "participant": "Участник",
     "me": "аз",
-    "speaker": "",
+    "speaker": "Говорител",
     "defaultNickname": "",
     "defaultPreziLink": "",
     "welcomepage": {
@@ -26,7 +26,7 @@
             "content": ""
         },
         "feature4": {
-            "title": "",
+            "title": "Неограничен брой потребители",
             "content": ""
         },
         "feature5": {
