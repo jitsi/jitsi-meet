@@ -28,6 +28,15 @@ case "$1" in
         # loading debconf
         . /usr/share/debconf/confmodule
 
+        # detect dpkg-reconfigure, just delete old links
+        db_get jitsi-meet/jvb-hostname
+        JVB_HOSTNAME_OLD=$RET
+        if [ -n "$RET" ] && [ ! "$JVB_HOSTNAME_OLD" = "$JVB_HOSTNAME" ] ; then
+            rm -f /etc/prosody/conf.d/$JVB_HOSTNAME_OLD.cfg.lua
+            rm -f /etc/prosody/certs/$JVB_HOSTNAME_OLD.key
+            rm -f /etc/prosody/certs/$JVB_HOSTNAME_OLD.crt
+        fi
+
         # stores the hostname so we will reuse it later, like in purge
         db_set jitsi-meet-prosody/jvb-hostname $JVB_HOSTNAME
 

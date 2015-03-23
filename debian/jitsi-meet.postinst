@@ -25,6 +25,14 @@ case "$1" in
         # loading debconf
         . /usr/share/debconf/confmodule
 
+        # detect dpkg-reconfigure, just delete old links
+        db_get jitsi-meet/jvb-hostname
+        JVB_HOSTNAME_OLD=$RET
+        if [ -n "$RET" ] && [ ! "$JVB_HOSTNAME_OLD" = "$JVB_HOSTNAME" ] ; then
+            rm -f /etc/nginx/sites-enabled/$JVB_HOSTNAME_OLD.conf
+            rm -f /etc/jitsi/meet/$JVB_HOSTNAME_OLD-config.js
+        fi
+
         # stores the hostname so we will reuse it later, like in purge
         db_set jitsi-meet/jvb-hostname $JVB_HOSTNAME
 
