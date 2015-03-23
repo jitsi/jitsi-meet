@@ -1835,6 +1835,7 @@ UI.generateRoomName = function() {
         return roomName;
     var roomnode = null;
     var path = window.location.pathname;
+    path = path.substring(0, path.lastIndexOf("/"));      // Removing possible "/" char from the meeting room (happens with a fixed URL from apache. Ex: '/meeting/')
 
     // determinde the room node from the url
     // TODO: just the roomnode or the whole bare jid?
