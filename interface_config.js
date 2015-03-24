@@ -8,7 +8,7 @@ var interfaceConfig = {
     DEFAULT_DOMINANT_SPEAKER_DISPLAY_NAME: "speaker",
     DEFAULT_LOCAL_DISPLAY_NAME: "me",
     SHOW_JITSI_WATERMARK: true,
-    JITSI_WATERMARK_LINK: "http://jitsi.org",
+    JITSI_WATERMARK_LINK: "https://jitsi.org",
     SHOW_BRAND_WATERMARK: false,
     BRAND_WATERMARK_LINK: "",
     SHOW_POWERED_BY: false,
