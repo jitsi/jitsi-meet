@@ -294,8 +294,9 @@ RTCUtils.prototype.obtainAudioAndVideoPermissions = function(devices, callback) 
 }
 
 RTCUtils.prototype.successCallback = function (stream) {
-    console.log('got', stream, stream.getAudioTracks().length,
-        stream.getVideoTracks().length);
+    if(stream)
+        console.log('got', stream, stream.getAudioTracks().length,
+            stream.getVideoTracks().length);
     this.handleLocalStream(stream);
 };
 
@@ -327,8 +328,9 @@ RTCUtils.prototype.errorCallback = function (error) {
             function (error) {
                 console.error('failed to obtain audio/video stream - stop',
                     error);
-                APP.UI.messageHandler.showError("dialog.error",
-                    "dialog.failedpermissions");
+//                APP.UI.messageHandler.showError("dialog.error",
+//                    "dialog.failedpermissions");
+                return self.successCallback(null);
             }
         );
     }
@@ -341,18 +343,21 @@ RTCUtils.prototype.handleLocalStream = function(stream)
     {
         var audioStream = new webkitMediaStream();
         var videoStream = new webkitMediaStream();
-        var audioTracks = stream.getAudioTracks();
-        var videoTracks = stream.getVideoTracks();
-        for (var i = 0; i < audioTracks.length; i++) {
-            audioStream.addTrack(audioTracks[i]);
+        if(stream) {
+            var audioTracks = stream.getAudioTracks();
+
+            for (var i = 0; i < audioTracks.length; i++) {
+                audioStream.addTrack(audioTracks[i]);
+            }
+
+            var videoTracks = stream.getVideoTracks();
+
+            for (i = 0; i < videoTracks.length; i++) {
+                videoStream.addTrack(videoTracks[i]);
+            }
         }
 
         this.service.createLocalStream(audioStream, "audio");
-
-        for (i = 0; i < videoTracks.length; i++) {
-            videoStream.addTrack(videoTracks[i]);
-        }
-
 
         this.service.createLocalStream(videoStream, "video");
     }
@@ -361,6 +366,28 @@ RTCUtils.prototype.handleLocalStream = function(stream)
         this.service.createLocalStream(stream, "stream");
     }
 
+};
+
+RTCUtils.prototype.createVideoStream = function(stream)
+{
+    var videoStream = null;
+    if(window.webkitMediaStream)
+    {
+        videoStream = new webkitMediaStream();
+        if(stream)
+        {
+            var videoTracks = stream.getVideoTracks();
+
+            for (i = 0; i < videoTracks.length; i++) {
+                videoStream.addTrack(videoTracks[i]);
+            }
+        }
+
+    }
+    else
+        videoStream = stream;
+
+    return videoStream;
 };
 
 module.exports = RTCUtils;

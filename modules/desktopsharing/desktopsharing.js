@@ -240,6 +240,8 @@ function initInlineInstalls()
 function getSwitchStreamFailed(error) {
     console.error("Failed to obtain the stream to switch to", error);
     switchInProgress = false;
+    isUsingScreenStream = false;
+    newStreamCreated(null);
 }
 
 function streamSwitchDone() {

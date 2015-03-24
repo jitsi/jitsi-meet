@@ -869,10 +869,11 @@ var RTC = {
                 callback();
             };
         }
-        this.localVideo = this.createLocalStream(stream, "video", true, type);
+        var videoStream = this.rtcUtils.createVideoStream(stream);
+        this.localVideo = this.createLocalStream(videoStream, "video", true, type);
         // Stop the stream to trigger onended event for old stream
         oldStream.stop();
-        APP.xmpp.switchStreams(stream, oldStream,localCallback);
+        APP.xmpp.switchStreams(videoStream, oldStream,localCallback);
     },
     /**
      * Checks if video identified by given src is desktop stream.
@@ -1220,8 +1221,9 @@ RTCUtils.prototype.obtainAudioAndVideoPermissions = function(devices, callback) 
 }
 
 RTCUtils.prototype.successCallback = function (stream) {
-    console.log('got', stream, stream.getAudioTracks().length,
-        stream.getVideoTracks().length);
+    if(stream)
+        console.log('got', stream, stream.getAudioTracks().length,
+            stream.getVideoTracks().length);
     this.handleLocalStream(stream);
 };
 
@@ -1253,8 +1255,9 @@ RTCUtils.prototype.errorCallback = function (error) {
             function (error) {
                 console.error('failed to obtain audio/video stream - stop',
                     error);
-                APP.UI.messageHandler.showError("dialog.error",
-                    "dialog.failedpermissions");
+//                APP.UI.messageHandler.showError("dialog.error",
+//                    "dialog.failedpermissions");
+                return self.successCallback(null);
             }
         );
     }
@@ -1267,18 +1270,21 @@ RTCUtils.prototype.handleLocalStream = function(stream)
     {
         var audioStream = new webkitMediaStream();
         var videoStream = new webkitMediaStream();
-        var audioTracks = stream.getAudioTracks();
-        var videoTracks = stream.getVideoTracks();
-        for (var i = 0; i < audioTracks.length; i++) {
-            audioStream.addTrack(audioTracks[i]);
+        if(stream) {
+            var audioTracks = stream.getAudioTracks();
+
+            for (var i = 0; i < audioTracks.length; i++) {
+                audioStream.addTrack(audioTracks[i]);
+            }
+
+            var videoTracks = stream.getVideoTracks();
+
+            for (i = 0; i < videoTracks.length; i++) {
+                videoStream.addTrack(videoTracks[i]);
+            }
         }
 
         this.service.createLocalStream(audioStream, "audio");
-
-        for (i = 0; i < videoTracks.length; i++) {
-            videoStream.addTrack(videoTracks[i]);
-        }
-
 
         this.service.createLocalStream(videoStream, "video");
     }
@@ -1287,6 +1293,28 @@ RTCUtils.prototype.handleLocalStream = function(stream)
         this.service.createLocalStream(stream, "stream");
     }
 
+};
+
+RTCUtils.prototype.createVideoStream = function(stream)
+{
+    var videoStream = null;
+    if(window.webkitMediaStream)
+    {
+        videoStream = new webkitMediaStream();
+        if(stream)
+        {
+            var videoTracks = stream.getVideoTracks();
+
+            for (i = 0; i < videoTracks.length; i++) {
+                videoStream.addTrack(videoTracks[i]);
+            }
+        }
+
+    }
+    else
+        videoStream = stream;
+
+    return videoStream;
 };
 
 module.exports = RTCUtils;
@@ -9472,6 +9500,8 @@ function initInlineInstalls()
 function getSwitchStreamFailed(error) {
     console.error("Failed to obtain the stream to switch to", error);
     switchInProgress = false;
+    isUsingScreenStream = false;
+    newStreamCreated(null);
 }
 
 function streamSwitchDone() {
@@ -13125,7 +13155,8 @@ JingleSession.prototype.switchStreams = function (new_stream, oldStream, success
             oldSdp = new SDP(self.peerconnection.localDescription.sdp);
         }
         self.peerconnection.removeStream(oldStream, true);
-        self.peerconnection.addStream(new_stream);
+        if(new_stream)
+            self.peerconnection.addStream(new_stream);
     }
 
     APP.RTC.switchVideoStreams(new_stream, oldStream);
@@ -19345,6 +19376,7 @@ var strings = require('./utils/strings');
 var msg = require('./zlib/messages');
 var zstream = require('./zlib/zstream');
 
+var toString = Object.prototype.toString;
 
 /* Public constants ==========================================================*/
 /* ===========================================================================*/
@@ -19500,8 +19532,8 @@ var Deflate = function(options) {
 
 /**
  * Deflate#push(data[, mode]) -> Boolean
- * - data (Uint8Array|Array|String): input data. Strings will be converted to
- *   utf8 byte sequence.
+ * - data (Uint8Array|Array|ArrayBuffer|String): input data. Strings will be
+ *   converted to utf8 byte sequence.
  * - mode (Number|Boolean): 0..6 for corresponding Z_NO_FLUSH..Z_TREE modes.
  *   See constants. Skipped or `false` means Z_NO_FLUSH, `true` meansh Z_FINISH.
  *
@@ -19539,6 +19571,8 @@ Deflate.prototype.push = function(data, mode) {
   if (typeof data === 'string') {
     // If we need to compress text, change encoding to utf8.
     strm.input = strings.string2buf(data);
+  } else if (toString.call(data) === '[object ArrayBuffer]') {
+    strm.input = new Uint8Array(data);
   } else {
     strm.input = data;
   }
@@ -19709,6 +19743,7 @@ var msg = require('./zlib/messages');
 var zstream = require('./zlib/zstream');
 var gzheader = require('./zlib/gzheader');
 
+var toString = Object.prototype.toString;
 
 /**
  * class Inflate
@@ -19843,7 +19878,7 @@ var Inflate = function(options) {
 
 /**
  * Inflate#push(data[, mode]) -> Boolean
- * - data (Uint8Array|Array|String): input data
+ * - data (Uint8Array|Array|ArrayBuffer|String): input data
  * - mode (Number|Boolean): 0..6 for corresponding Z_NO_FLUSH..Z_TREE modes.
  *   See constants. Skipped or `false` means Z_NO_FLUSH, `true` meansh Z_FINISH.
  *
@@ -19881,6 +19916,8 @@ Inflate.prototype.push = function(data, mode) {
   if (typeof data === 'string') {
     // Only binary strings can be decompressed on practice
     strm.input = strings.binstring2buf(data);
+  } else if (toString.call(data) === '[object ArrayBuffer]') {
+    strm.input = new Uint8Array(data);
   } else {
     strm.input = data;
   }

@@ -174,10 +174,11 @@ var RTC = {
                 callback();
             };
         }
-        this.localVideo = this.createLocalStream(stream, "video", true, type);
+        var videoStream = this.rtcUtils.createVideoStream(stream);
+        this.localVideo = this.createLocalStream(videoStream, "video", true, type);
         // Stop the stream to trigger onended event for old stream
         oldStream.stop();
-        APP.xmpp.switchStreams(stream, oldStream,localCallback);
+        APP.xmpp.switchStreams(videoStream, oldStream,localCallback);
     },
     /**
      * Checks if video identified by given src is desktop stream.

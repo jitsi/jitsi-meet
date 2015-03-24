@@ -971,7 +971,8 @@ JingleSession.prototype.switchStreams = function (new_stream, oldStream, success
             oldSdp = new SDP(self.peerconnection.localDescription.sdp);
         }
         self.peerconnection.removeStream(oldStream, true);
-        self.peerconnection.addStream(new_stream);
+        if(new_stream)
+            self.peerconnection.addStream(new_stream);
     }
 
     APP.RTC.switchVideoStreams(new_stream, oldStream);
