@@ -127,6 +127,7 @@
         "passwordError2": "Diese Konferenzt ist nicht mit einem Passwort geschützt. Nur der Besitzer der Konferenz kann ein Passwort vergeben.",
         "joinError": "Oh! Der Konferenz konnte nicht beigetreten werden. Diese könnte ein Problem mit den Sicherheitseinstellungen sein. Bitte kontaktieren Sie den Administrator des Dienstes.",
         "connectError": "Oh! Es hat etwas nicht geklappt und der Konferenz konnte nicht beigetreten werden.",
+        "connecting": "",
         "error": "Fehler",
         "detectext": "Fehler bei der Erkennung der Bildschirmfreigabeerweiterung.",
         "failtoinstall": "Die Bildschirmfreigabeerweiterung konnte nicht installiert werden.",
@@ -154,6 +155,7 @@
         "AuthMsg": "Für die Erstellung des Raums ist eine Authentifizierung erforderlich. <br/><b>__room__</b><br/>Sie können sich entweder anmelden oder warten bis jemand anderes die Authentifizierung vornimmt.",
         "Authenticate": "Anmelden",
         "Cancel": "Abbrechen",
+        "retry": "Wiederholen",
         "logoutTitle": "Abmelden",
         "logoutQuestion": "Sind Sie sicher dass Sie sich abmelden und die Konferenz verlassen möchten?",
         "sessTerminated": "Sitzung beendet",
@@ -213,5 +215,16 @@
             "Bis gleich!"
         ],
         "and": "und"
+    },
+    "connection": {
+        "ERROR": "Fehler",
+        "CONNECTING": "Verbindung wird hergestellt",
+        "CONNFAIL": "Verbindungsaufbau gescheitert",
+        "AUTHENTICATING": "Anmeldung läuft",
+        "AUTHFAIL": "Authentifizierung fehlgeschlagen",
+        "CONNECTED": "Verbunden",
+        "DISCONNECTED": "Getrennt",
+        "DISCONNECTING": "Verbindung wird getrennt",
+        "ATTACHED": "Angehängt"
     }
 }
