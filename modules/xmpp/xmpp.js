@@ -3,6 +3,7 @@ var Moderator = require("./moderator");
 var EventEmitter = require("events");
 var Recording = require("./recording");
 var SDP = require("./SDP");
+var Settings = require("../settings/Settings");
 var Pako = require("pako");
 var StreamEventTypes = require("../../service/RTC/StreamEventTypes");
 var UIEvents = require("../../service/UI/UIEvents");
@@ -25,6 +26,18 @@ function connect(jid, password) {
         if (!connection.jingle.pc_constraints.optional)
             connection.jingle.pc_constraints.optional = [];
         connection.jingle.pc_constraints.optional.push({googIPv6: true});
+    }
+
+    // Include user info in MUC presence
+    var settings = Settings.getSettings();
+    if (settings.email) {
+        connection.emuc.addEmailToPresence(settings.email);
+    }
+    if (settings.uid) {
+        connection.emuc.addUserIdToPresence(settings.uid);
+    }
+    if (settings.displayName) {
+        connection.emuc.addDisplayNameToPresence(settings.displayName);
     }
 
     var anonymousConnectionFailed = false;
@@ -371,11 +384,12 @@ var XMPP = {
                 break;
             case "email":
                 connection.emuc.addEmailToPresence(value);
+                break;
             default :
-                console.log("Unknown tag for presence.");
+                console.log("Unknown tag for presence: " + name);
                 return;
         }
-        if(!dontSend)
+        if (!dontSend)
             connection.emuc.sendPresence();
     },
     /**
