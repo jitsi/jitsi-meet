@@ -243,8 +243,7 @@ function callSipButtonClicked()
                 }
             }
         },
-        null,
-        ':input:first'
+        null, null, ':input:first'
     );
 }
 
