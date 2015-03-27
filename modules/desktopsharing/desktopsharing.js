@@ -237,11 +237,16 @@ function initInlineInstalls()
     $("link[rel=chrome-webstore-item]").attr("href", getWebStoreInstallUrl());
 }
 
-function getSwitchStreamFailed(error) {
+function getVideoStreamFailed(error) {
     console.error("Failed to obtain the stream to switch to", error);
     switchInProgress = false;
     isUsingScreenStream = false;
     newStreamCreated(null);
+}
+
+function getDesktopStreamFailed(error) {
+    console.error("Failed to obtain the stream to switch to", error);
+    switchInProgress = false;
 }
 
 function streamSwitchDone() {
@@ -343,7 +348,7 @@ module.exports = {
                     );
                     newStreamCreated(stream);
                 },
-                getSwitchStreamFailed);
+                getDesktopStreamFailed);
         } else {
             // Disable screen stream
             APP.RTC.getUserMediaWithConstraints(
@@ -353,7 +358,7 @@ module.exports = {
                     isUsingScreenStream = false;
                     newStreamCreated(stream);
                 },
-                getSwitchStreamFailed, config.resolution || '360'
+                getVideoStreamFailed, config.resolution || '360'
             );
         }
     }
