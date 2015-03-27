@@ -7,6 +7,7 @@ var DesktopSharingEventTypes
     = require("../../service/desktopsharing/DesktopSharingEventTypes");
 var MediaStreamType = require("../../service/RTC/MediaStreamTypes");
 var StreamEventTypes = require("../../service/RTC/StreamEventTypes.js");
+var RTCEvents = require("../../service/RTC/RTCEvents.js");
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 var UIEvents = require("../../service/UI/UIEvents");
 
@@ -14,6 +15,10 @@ var eventEmitter = new EventEmitter();
 
 var RTC = {
     rtcUtils: null,
+    devices: {
+        audio: false,
+        video: false
+    },
     localStreams: [],
     remoteStreams: {},
     localAudio: null,
@@ -37,6 +42,7 @@ var RTC = {
         if(this.localStreams.length == 0 ||
             this.localStreams[0].getOriginalStream() != stream)
             this.localStreams.push(localStream);
+
         if(type == "audio")
         {
             this.localAudio = localStream;
@@ -224,6 +230,11 @@ var RTC = {
                 callback,
                 options);
         }
+    },
+    setDeviceAvailability: function (devices) {
+        this.devices.audio = (devices && devices.audio === true);
+        this.devices.video = (devices && devices.video === true);
+        eventEmitter.emit(RTCEvents.AVAILABLE_DEVICES_CHANGED, this.devices);
     }
 };
 

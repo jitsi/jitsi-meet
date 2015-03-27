@@ -225,6 +225,8 @@ RTCUtils.prototype.getUserMediaWithConstraints = function(
 
     var isFF = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
 
+    var self = this;
+
     try {
         if (config.enableSimulcast
             && constraints.video
@@ -236,10 +238,12 @@ RTCUtils.prototype.getUserMediaWithConstraints = function(
             && !isFF) {
             APP.simulcast.getUserMedia(constraints, function (stream) {
                     console.log('onUserMediaSuccess');
+                    self.setAvailableDevices(um, true);
                     success_callback(stream);
                 },
                 function (error) {
                     console.warn('Failed to get access to local media. Error ', error);
+                    self.setAvailableDevices(um, false);
                     if (failure_callback) {
                         failure_callback(error);
                     }
@@ -249,9 +253,11 @@ RTCUtils.prototype.getUserMediaWithConstraints = function(
             this.getUserMedia(constraints,
                 function (stream) {
                     console.log('onUserMediaSuccess');
+                    self.setAvailableDevices(um, true);
                     success_callback(stream);
                 },
                 function (error) {
+                    self.setAvailableDevices(um, false);
                     console.warn('Failed to get access to local media. Error ',
                         error, constraints);
                     if (failure_callback) {
@@ -267,6 +273,19 @@ RTCUtils.prototype.getUserMediaWithConstraints = function(
         }
     }
 };
+
+RTCUtils.prototype.setAvailableDevices = function (um, available) {
+    var devices = {};
+    if(um.indexOf("video") != -1)
+    {
+        devices.video = available;
+    }
+    if(um.indexOf("audio") != -1)
+    {
+        devices.audio = available;
+    }
+    this.service.setDeviceAvailability(devices);
+}
 
 /**
  * We ask for audio and video combined stream in order to get permissions and
@@ -328,8 +347,6 @@ RTCUtils.prototype.errorCallback = function (error) {
             function (error) {
                 console.error('failed to obtain audio/video stream - stop',
                     error);
-//                APP.UI.messageHandler.showError("dialog.error",
-//                    "dialog.failedpermissions");
                 return self.successCallback(null);
             }
         );

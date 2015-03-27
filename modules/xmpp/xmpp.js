@@ -6,6 +6,7 @@ var SDP = require("./SDP");
 var Settings = require("../settings/Settings");
 var Pako = require("pako");
 var StreamEventTypes = require("../../service/RTC/StreamEventTypes");
+var RTCEvents = require("../../service/RTC/RTCEvents");
 var UIEvents = require("../../service/UI/UIEvents");
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 
@@ -102,6 +103,9 @@ function initStrophePlugins()
 function registerListeners() {
     APP.RTC.addStreamListener(maybeDoJoin,
         StreamEventTypes.EVENT_TYPE_LOCAL_CREATED);
+    APP.RTC.addListener(RTCEvents.AVAILABLE_DEVICES_CHANGED, function (devices) {
+        XMPP.addToPresence("devices", devices);
+    })
     APP.UI.addListener(UIEvents.NICKNAME_CHANGED, function (nickname) {
         XMPP.addToPresence("displayName", nickname);
     });
@@ -384,6 +388,9 @@ var XMPP = {
                 break;
             case "email":
                 connection.emuc.addEmailToPresence(value);
+                break;
+            case "devices":
+                connection.emuc.addDevicesToPresence(value);
                 break;
             default :
                 console.log("Unknown tag for presence: " + name);

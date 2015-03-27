@@ -415,3 +415,28 @@
     left: 35px;
     border-radius: 200px;
 }
+
+.noMic {
+    position: absolute;
+    border-radius: 8px;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    background-image: url("../images/noMic.png");
+    background-color: #000;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.noVideo {
+    position: absolute;
+    border-radius: 8px;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    background-image: url("../images/noVideo.png");
+    background-color: #000;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+

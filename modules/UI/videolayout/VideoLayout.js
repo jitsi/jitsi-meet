@@ -640,6 +640,48 @@ var VideoLayout = (function (my) {
     };
 
     /**
+     * Adds or removes icons for not available camera and microphone.
+     * @param resourceJid the jid of user
+     * @param devices available devices
+     */
+    my.setDeviceAvailabilityIcons = function (resourceJid, devices) {
+        if(!devices)
+            return;
+
+        var container = null
+        if(!resourceJid)
+        {
+            container = $("#localVideoContainer")[0];
+        }
+        else
+        {
+            container = $("#participant_" + resourceJid)[0];
+        }
+
+        if(!container)
+            return;
+
+        $("#" + container.id + " > .noMic").remove();
+        $("#" + container.id + " > .noVideo").remove();
+        if(!devices.audio)
+        {
+            container.appendChild(document.createElement("div")).setAttribute("class","noMic");
+        }
+
+        if(!devices.video)
+        {
+            container.appendChild(document.createElement("div")).setAttribute("class","noVideo");
+        }
+
+        if(!devices.audio && !devices.video)
+        {
+            $("#" + container.id + " > .noMic").css("background-position", "75%");
+            $("#" + container.id + " > .noVideo").css("background-position", "25%");
+            $("#" + container.id + " > .noVideo").css("background-color", "transparent");
+        }
+    }
+
+    /**
      * Checks if removed video is currently displayed and tries to display
      * another one instead.
      * @param removedVideoSrc src stream identifier of the video.
