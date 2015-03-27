@@ -927,8 +927,12 @@ var RTC = {
         }
     },
     setDeviceAvailability: function (devices) {
-        this.devices.audio = (devices && devices.audio === true);
-        this.devices.video = (devices && devices.video === true);
+        if(!devices)
+            return;
+        if(devices.audio === true || devices.audio === false)
+            this.devices.audio = devices.audio;
+        if(devices.video === true || devices.video === false)
+            this.devices.video = devices.video;
         eventEmitter.emit(RTCEvents.AVAILABLE_DEVICES_CHANGED, this.devices);
     }
 };
