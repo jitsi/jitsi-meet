@@ -151,7 +151,7 @@ var RTC = {
         }
 
         if(!stream)
-            return false;
+            return true;
 
         if (value != stream.muted) {
             stream.setMute(value);
