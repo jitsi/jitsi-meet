@@ -2,19 +2,19 @@
     "contactlist": "СПИСЪК С КОНТАКТИ",
     "connectionsettings": "Настройки на връзката",
     "poweredby": "",
-    "downloadlogs": "",
+    "downloadlogs": "Изтегли логовете",
     "roomUrlDefaultMsg": "",
     "participant": "Участник",
     "me": "аз",
     "speaker": "Говорител",
-    "defaultNickname": "",
-    "defaultPreziLink": "",
+    "defaultNickname": "например __name__",
+    "defaultPreziLink": "например __url__",
     "welcomepage": {
         "go": "",
         "roomname": "Въведете име на стаята",
-        "disable": "",
+        "disable": "Не показвай страницата следващия път",
         "feature1": {
-            "title": "",
+            "title": "Лесен за употреба",
             "content": ""
         },
         "feature2": {
@@ -22,23 +22,23 @@
             "content": ""
         },
         "feature3": {
-            "title": "",
-            "content": ""
+            "title": "Отворен код",
+            "content": "__app__ е лицензиран под MIT лиценз. Можете свободно да го изтеглите, използвате, променяте и споделяте според тези лицензи."
         },
         "feature4": {
             "title": "Неограничен брой потребители",
-            "content": ""
+            "content": "Няма изкуствени ограничения за броя на потребителите или участниците в конференция. Единствените ограничения са мощността на вашия сървър и качеството на интернет връзката му."
         },
         "feature5": {
-            "title": "",
-            "content": ""
+            "title": "Споделяне на екрана",
+            "content": "Лесно е да споделите екрана си с другите. __app__ е идеален за онлайн презентации, лекции и техническа подръжка."
         },
         "feature6": {
-            "title": "",
-            "content": ""
+            "title": "Сигурни стаи",
+            "content": "Нуждаете се от уединение? _app__ конферентните стай могат да бъдат защитени от парола за да се препазите от нежелани гости или прекъсвания."
         },
         "feature7": {
-            "title": "",
+            "title": "Споделени бележки",
             "content": ""
         },
         "feature8": {
@@ -48,18 +48,18 @@
     },
     "toolbar": {
         "mute": "",
-        "videomute": "",
+        "videomute": "Спри / пусни камерата",
         "authenticate": "",
-        "record": "",
-        "lock": "",
-        "invite": "",
+        "record": "Запис",
+        "lock": "Заключи / отключи стаята",
+        "invite": "Поканване на други",
         "chat": "",
-        "prezi": "",
-        "etherpad": "",
-        "sharescreen": "",
+        "prezi": "Сподели Prezi",
+        "etherpad": "Споделяне на документ",
+        "sharescreen": "Споделяне на екрана",
         "fullscreen": "",
-        "sip": "",
-        "Settings": "",
+        "sip": "Обади се на SIP номер",
+        "Settings": "Настройки",
         "hangup": "",
         "login": "",
         "logout": ""
@@ -67,45 +67,45 @@
     "bottomtoolbar": {
         "chat": "",
         "filmstrip": "",
-        "contactlist": ""
+        "contactlist": "Отвори / затвори контакт листа"
     },
     "chat": {
         "nickname": {
-            "title": "",
-            "popover": ""
+            "title": "Въведете име в полето",
+            "popover": "Избор на име"
         },
-        "messagebox": ""
+        "messagebox": "Въведете текст..."
     },
     "settings": {
         "title": "НАСТРОЙКИ",
-        "update": "",
-        "name": ""
+        "update": "Актуализиране",
+        "name": "Име"
     },
     "videothumbnail": {
-        "editnickname": "",
-        "moderator": "",
+        "editnickname": "Натиснете за да<br/>промените името",
+        "moderator": "Създателя на<br/>конференцията",
         "videomute": "",
         "mute": "",
-        "kick": "",
+        "kick": "Изгони",
         "muted": "",
         "domute": ""
     },
     "connectionindicator": {
         "bitrate": "",
-        "packetloss": "",
-        "resolution": "",
-        "less": "",
-        "more": "",
-        "address": "",
-        "remoteport": "",
-        "remoteport_plural": "",
-        "localport": "",
-        "localport_plural": "",
-        "localaddress": "",
-        "localaddress_plural": "",
-        "remoteaddress": "",
-        "remoteaddress_plural": "",
-        "transport": "",
+        "packetloss": "Загуба на пакети:",
+        "resolution": "Резолюция:",
+        "less": "Скрий",
+        "more": "Покажи",
+        "address": "Адрес:",
+        "remoteport": "Отдалечен порт:",
+        "remoteport_plural": "Отдалечени портове:",
+        "localport": "Локален порт:",
+        "localport_plural": "Локални портове:",
+        "localaddress": "Локален адрес:",
+        "localaddress_plural": "Локални адреси:",
+        "remoteaddress": "Отдалечен адрес:",
+        "remoteaddress_plural": "Отдалечени адреси:",
+        "transport": "Транспорт:",
         "bandwidth": "",
         "na": ""
     },
@@ -113,20 +113,21 @@
         "disconnected": "",
         "moderator": "",
         "connected": "",
-        "somebody": "",
-        "me": "",
+        "somebody": "Някой",
+        "me": "Аз",
         "focus": "",
         "focusFail": "",
         "grantedTo": "",
         "grantedToUnknown": ""
     },
     "dialog": {
-        "kickMessage": "",
+        "kickMessage": "Бяхте изгонен от срещата!",
         "popupError": "",
-        "passwordError": "",
-        "passwordError2": "",
-        "joinError": "",
+        "passwordError": "Тази конференция е защитена с парола. Само създателя и може да промени паролата.",
+        "passwordError2": "Тази конференция не е защитена с парола. Само създателя и може да сложи парола.",
+        "joinError": "Не можете да се присъедините към конференцията. Може би имате проблем с конфигурацията на сифурността. Моля обърнете се към администратора на услугата.",
         "connectError": "",
+        "connecting": "",
         "error": "",
         "detectext": "",
         "failtoinstall": "",
@@ -136,40 +137,41 @@
         "lockMessage": "",
         "warning": "",
         "passwordNotSupported": "",
-        "sorry": "",
-        "internalError": "",
+        "sorry": "Съжаляваме",
+        "internalError": "Вътрешна грешка [setRemoteDescription]",
         "unableToSwitch": "",
         "SLDFailure": "",
         "SRDFailure": "",
         "oops": "",
-        "defaultError": "",
-        "passwordRequired": "",
+        "defaultError": "Възникна грешка",
+        "passwordRequired": "Изисква се парола",
         "Ok": "",
         "removePreziTitle": "",
         "removePreziMsg": "",
         "sharePreziTitle": "",
-        "sharePreziMsg": "",
-        "Remove": "",
-        "Stop": "",
+        "sharePreziMsg": "Друг участник вече е споделил Prezi. Тази конференция позволява само да се споделя само едно Prezi.",
+        "Remove": "Премахване",
+        "Stop": "Спиране",
         "AuthMsg": "",
         "Authenticate": "",
-        "Cancel": "",
-        "logoutTitle": "",
-        "logoutQuestion": "",
+        "Cancel": "Отказ",
+        "retry": "Повторен опит",
+        "logoutTitle": "Изход",
+        "logoutQuestion": "Сигурни ли сте, че искате да излезете и да прекъснете конференцията?",
         "sessTerminated": "",
         "hungUp": "",
         "joinAgain": "",
         "Share": "",
         "preziLinkError": "",
-        "Save": "",
+        "Save": "Запазване",
         "recordingToken": "",
-        "Dial": "",
-        "sipMsg": "",
-        "passwordCheck": "",
-        "passwordMsg": "",
-        "Invite": "",
-        "shareLink": "",
-        "settings1": "",
+        "Dial": "Набиране",
+        "sipMsg": "Въведете SIP номер",
+        "passwordCheck": "Сигурни ли сте, че искате да махнете паролата?",
+        "passwordMsg": "Въведете парола, за да заключите стаята",
+        "Invite": "Покани",
+        "shareLink": "Сподели този линк с всеки, който искаш да поканиш",
+        "settings1": "Конфигурирай конференцията",
         "settings2": "",
         "settings3": "",
         "yourPassword": "",
@@ -177,10 +179,10 @@
         "serviceUnavailable": "",
         "gracefulShutdown": "",
         "Yes": "",
-        "reservationError": "",
+        "reservationError": "Грешка в системата за резервации",
         "reservationErrorMsg": "",
-        "password": "",
-        "userPassword": "",
+        "password": "парола",
+        "userPassword": "потребителска парола",
         "token": ""
     },
     "email": {
@@ -199,6 +201,17 @@
             "",
             "Ще се видим след секунда!"
         ],
-        "and": ""
+        "and": "и"
+    },
+    "connection": {
+        "ERROR": "Грешка",
+        "CONNECTING": "Свързване",
+        "CONNFAIL": "Връзката е неуспешна",
+        "AUTHENTICATING": "",
+        "AUTHFAIL": "",
+        "CONNECTED": "Свързан",
+        "DISCONNECTED": "Изключен",
+        "DISCONNECTING": "Прекъсване на връзката",
+        "ATTACHED": "Прикрепен"
     }
 }
