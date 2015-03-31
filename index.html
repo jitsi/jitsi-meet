@@ -43,6 +43,7 @@
     <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/diibjkoicjeejcmhdnailmkgecihlobk">
     <script src="libs/jquery-impromptu.js?v=2"></script>
     <script src="libs/jquery.autosize.js"></script>
+    <!--#include virtual="plugin.head.html" -->
   </head>
   <body>
     <div id="welcome_page">
@@ -69,7 +70,9 @@
             <div id="brand_header"></div>
             <input type='checkbox' name='checkbox' id="disable_welcome"/>
             <label for="disable_welcome" class="disable_welcome_position" data-i18n="welcomepage.disable"></label>
-            <div id="header_text"></div>
+            <div id="header_text">
+                <!--#include virtual="plugin.header.text.html" -->
+            </div>
         </div>
         <div id="welcome_page_main">
             <div id="features">
@@ -117,6 +120,7 @@
                 </div>
             </div>
         </div>
+        <!--#include virtual="plugin.welcomepage.footer.html" -->
     </div>
     <div id="videoconference_page">
         <div style="position: relative;" id="header_container">
