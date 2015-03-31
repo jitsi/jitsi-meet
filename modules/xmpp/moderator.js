@@ -177,15 +177,6 @@ var Moderator = {
                 { name: 'openSctp', value: config.openSctp})
                 .up();
         }
-        var roomName = APP.UI.generateRoomName();
-        if (typeof roomName !== 'string') roomName = '';
-        if (config.enableFirefoxSupport !== undefined && roomName.indexOf('rembson@') === -1) {
-            elem.c(
-                'property',
-                { name: 'enableFirefoxHacks',
-                    value: config.enableFirefoxSupport})
-                .up();
-        }
         elem.up();
         return elem;
     },

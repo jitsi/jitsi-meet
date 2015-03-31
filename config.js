@@ -26,13 +26,11 @@ var config = {
     channelLastN: -1, // The default value of the channel attribute last-n.
     adaptiveLastN: false,
     adaptiveSimulcast: false,
-    useRtcpMux: true,
-    useBundle: true,
+    useRtcpMux: true, // required for FF support
+    useBundle: true, // required for FF support
     enableRecording: false,
     enableWelcomePage: true,
-    enableSimulcast: false,
-    enableFirefoxSupport: false, //firefox support is still experimental and
-    // will work when simulcast is *disabled* and rtcpMux & bundle are *enabled*.
+    enableSimulcast: false, // blocks FF support
     logStats: false, // Enable logging of PeerConnection stats via the focus
     /*noticeMessage: 'Service update is scheduled for 16th March 2015. ' +
     'During that time service will not be available. ' +
