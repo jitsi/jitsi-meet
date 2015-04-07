@@ -142,6 +142,7 @@ function setupEvents() {
 }
 
 var XMPP = {
+    getConnection: function(){ return connection; },
     sessionTerminated: false,
 
     /**

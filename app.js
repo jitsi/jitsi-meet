@@ -15,6 +15,7 @@ var APP =
         this.keyboardshortcut = require("./modules/keyboardshortcut/keyboardshortcut");
         this.translation = require("./modules/translation/translation");
         this.settings = require("./modules/settings/Settings");
+        this.DTMF = require("./modules/DTMF/DTMF");
     }
 };
 
