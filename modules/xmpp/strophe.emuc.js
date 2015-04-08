@@ -201,7 +201,7 @@ module.exports = function(XMPP, eventEmitter) {
                 if (this.role !== member.role) {
                     this.role = member.role;
 
-                    eventEmitter.emit(XMPPEvents.LOCALROLE_CHANGED,
+                    eventEmitter.emit(XMPPEvents.LOCAL_ROLE_CHANGED,
                         from, member, pres, Moderator.isModerator());
                 }
                 if (!this.joined) {
@@ -224,7 +224,7 @@ module.exports = function(XMPP, eventEmitter) {
                     if (email.length > 0) {
                         id = email.text();
                     }
-                    eventEmitter.emit(XMPPEvents.MUC_ENTER, from, id, member.displayName);
+                    eventEmitter.emit(XMPPEvents.MUC_MEMBER_JOINED, from, id, member.displayName);
                 }
             } else {
                 // Presence update for existing participant
@@ -584,7 +584,7 @@ module.exports = function(XMPP, eventEmitter) {
         },
         onParticipantLeft: function (jid) {
 
-            eventEmitter.emit(XMPPEvents.MUC_LEFT, jid);
+            eventEmitter.emit(XMPPEvents.MUC_MEMBER_LEFT, jid);
 
             this.connection.jingle.terminateByJid(jid);
 
@@ -593,7 +593,7 @@ module.exports = function(XMPP, eventEmitter) {
                     [jid, this.getPrezi(jid)]);
             }
 
-            Moderator.onMucLeft(jid);
+            Moderator.onMucMemberLeft(jid);
         },
         parsePresence: function (from, memeber, pres) {
             if($(pres).find(">bridgeIsDown").length > 0 && !bridgeIsDown) {
@@ -628,7 +628,7 @@ module.exports = function(XMPP, eventEmitter) {
 
             });
 
-            eventEmitter.emit(XMPPEvents.CHANGED_STREAMS, from, changedStreams);
+            eventEmitter.emit(XMPPEvents.STREAMS_CHANGED, from, changedStreams);
 
             var displayName = !config.displayJids
                 ? memeber.displayName : Strophe.getResourceFromJid(from);

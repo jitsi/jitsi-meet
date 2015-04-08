@@ -85,7 +85,7 @@ var Moderator = {
         }
     },
 
-    onMucLeft: function (jid) {
+    onMucMemberLeft: function (jid) {
         console.info("Someone left is it focus ? " + jid);
         var resource = Strophe.getResourceFromJid(jid);
         if (resource === 'focus' && !this.xmppService.sessionTerminated) {

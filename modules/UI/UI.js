@@ -185,7 +185,7 @@ function registerListeners() {
     APP.xmpp.addListener(XMPPEvents.USER_ID_CHANGED, function (from, id) {
         Avatar.setUserAvatar(from, id);
     });
-    APP.xmpp.addListener(XMPPEvents.CHANGED_STREAMS, function (jid, changedStreams) {
+    APP.xmpp.addListener(XMPPEvents.STREAMS_CHANGED, function (jid, changedStreams) {
         for(stream in changedStreams)
         {
             // might need to update the direction if participant just went from sendrecv to recvonly
@@ -207,13 +207,13 @@ function registerListeners() {
     });
     APP.xmpp.addListener(XMPPEvents.DISPLAY_NAME_CHANGED, onDisplayNameChanged);
     APP.xmpp.addListener(XMPPEvents.MUC_JOINED, onMucJoined);
-    APP.xmpp.addListener(XMPPEvents.LOCALROLE_CHANGED, onLocalRoleChange);
-    APP.xmpp.addListener(XMPPEvents.MUC_ENTER, onMucEntered);
+    APP.xmpp.addListener(XMPPEvents.LOCAL_ROLE_CHANGED, onLocalRoleChanged);
+    APP.xmpp.addListener(XMPPEvents.MUC_MEMBER_JOINED, onMucMemberJoined);
     APP.xmpp.addListener(XMPPEvents.MUC_ROLE_CHANGED, onMucRoleChanged);
     APP.xmpp.addListener(XMPPEvents.PRESENCE_STATUS, onMucPresenceStatus);
     APP.xmpp.addListener(XMPPEvents.SUBJECT_CHANGED, chatSetSubject);
     APP.xmpp.addListener(XMPPEvents.MESSAGE_RECEIVED, updateChatConversation);
-    APP.xmpp.addListener(XMPPEvents.MUC_LEFT, onMucLeft);
+    APP.xmpp.addListener(XMPPEvents.MUC_MEMBER_LEFT, onMucMemberLeft);
     APP.xmpp.addListener(XMPPEvents.PASSWORD_REQUIRED, onPasswordRequired);
     APP.xmpp.addListener(XMPPEvents.CHAT_ERROR_RECEIVED, chatAddError);
     APP.xmpp.addListener(XMPPEvents.ETHERPAD, initEtherpad);
@@ -417,7 +417,7 @@ function initEtherpad(name) {
     Etherpad.init(name);
 };
 
-function onMucLeft(jid) {
+function onMucMemberLeft(jid) {
     console.log('left.muc', jid);
     var displayName = $('#participant_' + Strophe.getResourceFromJid(jid) +
         '>.displayname').html();
@@ -444,7 +444,7 @@ function onMucLeft(jid) {
 };
 
 
-function onLocalRoleChange(jid, info, pres, isModerator)
+function onLocalRoleChanged(jid, info, pres, isModerator)
 {
 
     console.info("My role changed, new role: " + info.role);
@@ -502,7 +502,7 @@ function onPasswordRequired(callback) {
         ':input:first'
     );
 }
-function onMucEntered(jid, id, displayName) {
+function onMucMemberJoined(jid, id, displayName) {
     messageHandler.notify(displayName,'notify.somebody',
         'connected',
         'notify.connected');
