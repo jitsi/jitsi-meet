@@ -549,12 +549,13 @@ var Toolbar = (function (my) {
 
     // Sets the state of the recording button
     my.setRecordingButtonState = function (isRecording) {
+        var selector = $('#recordButton');
         if (isRecording) {
-            $('#recordButton').removeClass("icon-recEnable");
-            $('#recordButton').addClass("icon-recEnable active");
+            selector.removeClass("icon-recEnable");
+            selector.addClass("icon-recEnable active");
         } else {
-            $('#recordButton').removeClass("icon-recEnable active");
-            $('#recordButton').addClass("icon-recEnable");
+            selector.removeClass("icon-recEnable active");
+            selector.addClass("icon-recEnable");
         }
     };
 
@@ -573,8 +574,9 @@ var Toolbar = (function (my) {
      */
     my.setAuthenticatedIdentity = function (authIdentity) {
         if (authIdentity) {
-            $('#toolbar_auth_identity').css({display: "list-item"});
-            $('#toolbar_auth_identity').text(authIdentity);
+            var selector = $('#toolbar_auth_identity');
+            selector.css({display: "list-item"});
+            selector.text(authIdentity);
         } else {
             $('#toolbar_auth_identity').css({display: "none"});
         }
