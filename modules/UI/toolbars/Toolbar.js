@@ -54,6 +54,9 @@ var buttonHandlers =
     "toolbar_button_sip": function () {
         return callSipButtonClicked();
     },
+    "toolbar_button_dialpad": function () {
+        return dialpadButtonClicked();
+    },
     "toolbar_button_settings": function () {
         PanelToggler.toggleSettingsMenu();
     },
@@ -219,6 +222,11 @@ function inviteParticipants() {
     }
 
     window.open("mailto:?subject=" + subject + "&body=" + body, '_blank');
+}
+
+function dialpadButtonClicked()
+{
+    //TODO show the dialpad window
 }
 
 function callSipButtonClicked()
@@ -565,6 +573,15 @@ var Toolbar = (function (my) {
             $('#sipCallButton').css({display: "inline-block"});
         } else {
             $('#sipCallButton').css({display: "none"});
+        }
+    };
+
+    // Shows or hides the dialpad button
+    my.showDialPadButton = function (show) {
+        if (show) {
+            $('#dialPadButton').css({display: "inline-block"});
+        } else {
+            $('#dialPadButton').css({display: "none"});
         }
     };
 

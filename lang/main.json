@@ -62,7 +62,8 @@
         "Settings": "Settings",
         "hangup": "Hang Up",
         "login": "Login",
-        "logout": "Logout"
+        "logout": "Logout",
+        "dialpad": "Show dialpad"
     },
     "bottomtoolbar": {
         "chat": "Open / close chat",
