@@ -2814,12 +2814,14 @@ var Authentication = {
         // extract room name from 'room@muc.server.net'
         var room = roomName.substr(0, roomName.indexOf('@'));
 
-        var title = APP.translation.generateTranslatonHTML("dialog.Stop");
-        var msg = APP.translation.generateTranslatonHTML("dialog.AuthMsg",
-            {room: room});
+        var title
+            = APP.translation.generateTranslatonHTML("dialog.WaitingForHost");
+        var msg
+            = APP.translation.generateTranslatonHTML(
+                    "dialog.WaitForHostMsg", {room: room});
 
         var buttonTxt
-            = APP.translation.generateTranslatonHTML("dialog.Authenticate");
+            = APP.translation.generateTranslatonHTML("dialog.IamHost");
         var buttons = [];
         buttons.push({title: buttonTxt, value: "authNow"});
 
