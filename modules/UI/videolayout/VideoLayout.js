@@ -1179,7 +1179,7 @@ var VideoLayout = (function (my) {
                 console.log('stream ended', this);
 
                 VideoLayout.removeRemoteStreamElement(
-                    stream, isVideo, container);
+                    stream, isVideo, container, newElementId);
 
                 // NOTE(gp) it seems that under certain circumstances, the
                 // onended event is not fired and thus the contact list is not
@@ -1249,14 +1249,14 @@ var VideoLayout = (function (my) {
      * @param isVideo <tt>true</tt> if given <tt>stream</tt> is a video one.
      * @param container
      */
-    my.removeRemoteStreamElement = function (stream, isVideo, container) {
+    my.removeRemoteStreamElement = function (stream, isVideo, container, id) {
         if (!container)
             return;
 
         var select = null;
         var removedVideoSrc = null;
         if (isVideo) {
-            select = $('#' + container.id + '>video');
+            select = $('#' + id);
             removedVideoSrc = APP.RTC.getVideoSrc(select.get(0));
         }
         else
