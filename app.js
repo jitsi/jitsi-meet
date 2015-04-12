@@ -16,6 +16,7 @@ var APP =
         this.translation = require("./modules/translation/translation");
         this.settings = require("./modules/settings/Settings");
         this.DTMF = require("./modules/DTMF/DTMF");
+        this.members = require("./modules/members/MemberList");
     }
 };
 
@@ -30,6 +31,7 @@ function init() {
     APP.desktopsharing.init();
 
     APP.keyboardshortcut.init();
+    APP.members.start();
 }
 
 

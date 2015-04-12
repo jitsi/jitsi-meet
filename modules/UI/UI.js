@@ -26,6 +26,7 @@ var DesktopSharingEventTypes
 var RTCEvents = require("../../service/RTC/RTCEvents");
 var StreamEventTypes = require("../../service/RTC/StreamEventTypes");
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
+var MemberEvents = require("../../service/members/Events");
 
 var eventEmitter = new EventEmitter();
 var roomName = null;
@@ -224,6 +225,8 @@ function registerListeners() {
             VideoLayout.setDeviceAvailabilityIcons(resource, devices);
         });
 
+    APP.members.addListener(MemberEvents.DTMF_SUPPORT_CHANGED,
+                            onDtmfSupportChanged);
 }
 
 
@@ -502,6 +505,16 @@ function onPasswordRequired(callback) {
         ':input:first'
     );
 }
+
+/**
+ * The dialpad button is shown iff there is at least one member that supports
+ * DTMF (e.g. jigasi).
+ */
+function onDtmfSupportChanged(dtmfSupport) {
+    //TODO: enable when the UI is ready
+    //Toolbar.showDialPadButton(dtmfSupport);
+}
+
 function onMucMemberJoined(jid, id, displayName) {
     messageHandler.notify(displayName,'notify.somebody',
         'connected',
