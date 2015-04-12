@@ -13,11 +13,12 @@ var initDtmfSender = function() {
     var localAudio = APP.RTC.localAudio;
     if (localAudio && localAudio.getTracks().length > 0)
     {
-        var peerconnection =
-            APP.xmpp.getConnection().jingle.activecall.peerconnection.peerconnection;
+        var peerconnection
+            = APP.xmpp.getConnection().jingle.activecall.peerconnection;
         if (peerconnection) {
             DTMFSender =
-                peerconnection.createDTMFSender(localAudio.getTracks()[0]);
+                peerconnection.peerconnection
+                    .createDTMFSender(localAudio.getTracks()[0]);
             console.log("Initialized DTMFSender");
         }
         else {
@@ -30,12 +31,14 @@ var initDtmfSender = function() {
 };
 
 var DTMF = {
-    sendTones: function (tones) {
+    sendTones: function (tones, duration, pause) {
         if (!DTMFSender)
             initDtmfSender();
 
         if (DTMFSender){
-            DTMFSender.insertDTMF(tones);
+            DTMFSender.insertDTMF(tones,
+                                  (duration || 200),
+                                  (pause || 200));
         }
     }
 };
