@@ -120,3 +120,7 @@
 .icon-settings:before {
     content: "\e61b";
 }
+
+.icon-dialPad:before {
+    content: "\e61c";
+}

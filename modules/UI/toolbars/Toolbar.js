@@ -54,6 +54,9 @@ var buttonHandlers =
     "toolbar_button_sip": function () {
         return callSipButtonClicked();
     },
+    "toolbar_button_dialpad": function () {
+        return dialpadButtonClicked();
+    },
     "toolbar_button_settings": function () {
         PanelToggler.toggleSettingsMenu();
     },
@@ -219,6 +222,11 @@ function inviteParticipants() {
     }
 
     window.open("mailto:?subject=" + subject + "&body=" + body, '_blank');
+}
+
+function dialpadButtonClicked()
+{
+    //TODO show the dialpad window
 }
 
 function callSipButtonClicked()
@@ -549,12 +557,13 @@ var Toolbar = (function (my) {
 
     // Sets the state of the recording button
     my.setRecordingButtonState = function (isRecording) {
+        var selector = $('#recordButton');
         if (isRecording) {
-            $('#recordButton').removeClass("icon-recEnable");
-            $('#recordButton').addClass("icon-recEnable active");
+            selector.removeClass("icon-recEnable");
+            selector.addClass("icon-recEnable active");
         } else {
-            $('#recordButton').removeClass("icon-recEnable active");
-            $('#recordButton').addClass("icon-recEnable");
+            selector.removeClass("icon-recEnable active");
+            selector.addClass("icon-recEnable");
         }
     };
 
@@ -567,14 +576,24 @@ var Toolbar = (function (my) {
         }
     };
 
+    // Shows or hides the dialpad button
+    my.showDialPadButton = function (show) {
+        if (show) {
+            $('#dialPadButton').css({display: "inline-block"});
+        } else {
+            $('#dialPadButton').css({display: "none"});
+        }
+    };
+
     /**
      * Displays user authenticated identity name(login).
      * @param authIdentity identity name to be displayed.
      */
     my.setAuthenticatedIdentity = function (authIdentity) {
         if (authIdentity) {
-            $('#toolbar_auth_identity').css({display: "list-item"});
-            $('#toolbar_auth_identity').text(authIdentity);
+            var selector = $('#toolbar_auth_identity');
+            selector.css({display: "list-item"});
+            selector.text(authIdentity);
         } else {
             $('#toolbar_auth_identity').css({display: "none"});
         }
