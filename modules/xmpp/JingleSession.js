@@ -4,6 +4,7 @@ var SDPDiffer = require("./SDPDiffer");
 var SDPUtil = require("./SDPUtil");
 var SDP = require("./SDP");
 var RTCBrowserType = require("../../service/RTC/RTCBrowserType");
+var async = require("async");
 
 // Jingle stuff
 function JingleSession(me, sid, connection, service) {
@@ -52,6 +53,7 @@ function JingleSession(me, sid, connection, service) {
      * by the application logic.
      */
     this.videoMuteByUser = false;
+    this.modifySourcesQueue = async.queue(this._modifySources.bind(this), 1);
 }
 
 //TODO: this array must be removed when firefox implement multistream support
@@ -774,7 +776,7 @@ JingleSession.prototype.addSource = function (elem, fromJid) {
         });
         sdp.raw = sdp.session + sdp.media.join('');
     });
-    this.modifySources();
+    this.modifySourcesQueue.push();
 };
 
 JingleSession.prototype.removeSource = function (elem, fromJid) {
@@ -835,11 +837,12 @@ JingleSession.prototype.removeSource = function (elem, fromJid) {
         });
         sdp.raw = sdp.session + sdp.media.join('');
     });
-    this.modifySources();
+    this.modifySourcesQueue.push();
 };
 
-JingleSession.prototype.modifySources = function (successCallback) {
+JingleSession.prototype._modifySources = function (successCallback, queueCallback) {
     var self = this;
+
     if (this.peerconnection.signalingState == 'closed') return;
     if (!(this.addssrc.length || this.removessrc.length || this.pendingop !== null || this.switchstreams)){
         // There is nothing to do since scheduled job might have been executed by another succeeding call
@@ -847,21 +850,7 @@ JingleSession.prototype.modifySources = function (successCallback) {
         if(successCallback){
             successCallback();
         }
-        return;
-    }
-
-    // FIXME: this is a big hack
-    // https://code.google.com/p/webrtc/issues/detail?id=2688
-    // ^ has been fixed.
-    if (!(this.peerconnection.signalingState == 'stable' && this.peerconnection.iceConnectionState == 'connected')) {
-        console.warn('modifySources not yet', this.peerconnection.signalingState, this.peerconnection.iceConnectionState);
-        this.wait = true;
-        window.setTimeout(function() { self.modifySources(successCallback); }, 250);
-        return;
-    }
-    if (this.wait) {
-        window.setTimeout(function() { self.modifySources(successCallback); }, 2500);
-        this.wait = false;
+        queueCallback();
         return;
     }
 
@@ -901,6 +890,7 @@ JingleSession.prototype.modifySources = function (successCallback) {
 
             if(self.signalingState == 'closed') {
                 console.error("createAnswer attempt on closed state");
+                queueCallback("createAnswer attempt on closed state");
                 return;
             }
 
@@ -937,22 +927,27 @@ JingleSession.prototype.modifySources = function (successCallback) {
                             if(successCallback){
                                 successCallback();
                             }
+                            queueCallback();
                         },
                         function(error) {
                             console.error('modified setLocalDescription failed', error);
+                            queueCallback(error);
                         }
                     );
                 },
                 function(error) {
                     console.error('modified answer failed', error);
+                    queueCallback(error);
                 }
             );
         },
         function(error) {
             console.error('modify failed', error);
+            queueCallback(error);
         }
     );
 };
+
 
 /**
  * Switches video streams.
@@ -984,7 +979,7 @@ JingleSession.prototype.switchStreams = function (new_stream, oldStream, success
     }
 
     self.switchstreams = true;
-    self.modifySources(function() {
+    self.modifySourcesQueue.push(function() {
         console.log('modify sources done');
 
         success_callback();
@@ -1092,7 +1087,7 @@ JingleSession.prototype.setVideoMute = function (mute, callback, options) {
 
     this.hardMuteVideo(mute);
 
-    this.modifySources(callback(mute));
+    this.modifySourcesQueue.push(callback(mute));
 };
 
 JingleSession.prototype.hardMuteVideo = function (muted) {
