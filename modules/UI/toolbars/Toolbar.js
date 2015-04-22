@@ -333,7 +333,8 @@ var Toolbar = (function (my) {
         if (inviteLink) {
             inviteLink.value = roomUrl;
             inviteLink.select();
-            document.getElementById('jqi_state0_buttonInvite').disabled = false;
+            $('#inviteLinkRef').parent()
+                .find('button[value=true]').prop('disabled', false);
         }
     };
 
@@ -426,12 +427,13 @@ var Toolbar = (function (my) {
                     }
                 }
             },
-            function () {
+            function (event) {
                 if (roomUrl) {
                     document.getElementById('inviteLinkRef').select();
                 } else {
-                    document.getElementById('jqi_state0_buttonInvite')
-                        .disabled = true;
+                    if (event && event.target)
+                        $(event.target)
+                            .find('button[value=true]').prop('disabled', true);
                 }
             }
         );
