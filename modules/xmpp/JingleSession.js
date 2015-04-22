@@ -1088,7 +1088,23 @@ JingleSession.prototype.setVideoMute = function (mute, callback, options) {
 
     this.hardMuteVideo(mute);
 
-    this.modifySourcesQueue.push(callback(mute));
+    var self = this;
+    var oldSdp = null;
+    if(self.peerconnection) {
+        if(self.peerconnection.localDescription) {
+            oldSdp = new SDP(self.peerconnection.localDescription.sdp);
+        }
+    }
+
+    this.modifySourcesQueue.push(function() {
+        console.log('modify sources done');
+
+        callback(mute);
+
+        var newSdp = new SDP(self.peerconnection.localDescription.sdp);
+        console.log("SDPs", oldSdp, newSdp);
+        self.notifyMySSRCUpdate(oldSdp, newSdp);
+    });
 };
 
 JingleSession.prototype.hardMuteVideo = function (muted) {
