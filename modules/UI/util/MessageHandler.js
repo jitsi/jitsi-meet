@@ -175,7 +175,7 @@ var messageHandler = (function(my) {
     };
 
     my.notify = function(displayName, displayNameKey,
-                         cls, messageKey, messageArguments) {
+                         cls, messageKey, messageArguments, options) {
         var displayNameSpan = '<span class="nickname" ';
         if(displayName)
         {
@@ -195,7 +195,7 @@ var messageHandler = (function(my) {
                     : "") + ">" +
             APP.translation.translateString(messageKey,
                 messageArguments) +
-            '</span>');
+            '</span>', null, options);
     };
 
     return my;

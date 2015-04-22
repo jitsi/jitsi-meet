@@ -36,7 +36,7 @@ function notifyForInitialMute()
 {
     if(config.startAudioMuted || config.startVideoMuted)
     {
-        messageHandler.notify(null, "notify.me", "connected", "notify.muted");
+        messageHandler.notify(null, "notify.mutedTitle", "connected", "notify.muted", null, {timeOut: 120000});
     }
 }
 

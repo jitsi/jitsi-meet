@@ -1524,7 +1524,7 @@ function notifyForInitialMute()
 {
     if(config.startAudioMuted || config.startVideoMuted)
     {
-        messageHandler.notify(null, "notify.me", "connected", "notify.muted");
+        messageHandler.notify(null, "notify.mutedTitle", "connected", "notify.muted", null, {timeOut: 120000});
     }
 }
 
@@ -6249,7 +6249,7 @@ var messageHandler = (function(my) {
     };
 
     my.notify = function(displayName, displayNameKey,
-                         cls, messageKey, messageArguments) {
+                         cls, messageKey, messageArguments, options) {
         var displayNameSpan = '<span class="nickname" ';
         if(displayName)
         {
@@ -6269,7 +6269,7 @@ var messageHandler = (function(my) {
                     : "") + ">" +
             APP.translation.translateString(messageKey,
                 messageArguments) +
-            '</span>');
+            '</span>', null, options);
     };
 
     return my;
