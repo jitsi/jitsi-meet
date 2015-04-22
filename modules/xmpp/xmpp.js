@@ -9,76 +9,145 @@ var StreamEventTypes = require("../../service/RTC/StreamEventTypes");
 var RTCEvents = require("../../service/RTC/RTCEvents");
 var UIEvents = require("../../service/UI/UIEvents");
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
+var retry = require('retry');
 
 var eventEmitter = new EventEmitter();
 var connection = null;
 var authenticatedUser = false;
 
 function connect(jid, password) {
-    connection = XMPP.createConnection();
-    Moderator.setConnection(connection);
 
-    if (connection.disco) {
-        // for chrome, add multistream cap
-    }
-    connection.jingle.pc_constraints = APP.RTC.getPCConstraints();
-    if (config.useIPv6) {
-        // https://code.google.com/p/webrtc/issues/detail?id=2828
-        if (!connection.jingle.pc_constraints.optional)
-            connection.jingle.pc_constraints.optional = [];
-        connection.jingle.pc_constraints.optional.push({googIPv6: true});
-    }
+    var faultTolerantConnect = retry.operation({
+        retries: 3
+    });
 
-    // Include user info in MUC presence
-    var settings = Settings.getSettings();
-    if (settings.email) {
-        connection.emuc.addEmailToPresence(settings.email);
-    }
-    if (settings.uid) {
-        connection.emuc.addUserIdToPresence(settings.uid);
-    }
-    if (settings.displayName) {
-        connection.emuc.addDisplayNameToPresence(settings.displayName);
-    }
+    // fault tolerant connect
+    faultTolerantConnect.attempt(function () {
 
-    var anonymousConnectionFailed = false;
-    var wasConnected = false;
-    var lastErrorMsg;
-    connection.connect(jid, password, function (status, msg) {
-        console.log('Strophe status changed to',
-            Strophe.getStatusString(status), msg);
-        if (status === Strophe.Status.CONNECTED) {
+        connection = XMPP.createConnection();
+        Moderator.setConnection(connection);
 
-            wasConnected = true;
-
-            if (config.useStunTurn) {
-                connection.jingle.getStunAndTurnCredentials();
-            }
-
-            console.info("My Jabber ID: " + connection.jid);
-
-            if (password)
-                authenticatedUser = true;
-            maybeDoJoin();
-        } else if (status === Strophe.Status.CONNFAIL) {
-            if (msg === 'x-strophe-bad-non-anon-jid') {
-                anonymousConnectionFailed = true;
-            }
-            lastErrorMsg = msg;
-        } else if (status === Strophe.Status.DISCONNECTED) {
-            if (anonymousConnectionFailed) {
-                // prompt user for username and password
-                XMPP.promptLogin();
-            } else if (!wasConnected) {
-                eventEmitter.emit(
-                    XMPPEvents.CONNECTION_FAILED,
-                    msg ? msg : lastErrorMsg);
-            }
-        } else if (status === Strophe.Status.AUTHFAIL) {
-            // wrong password or username, prompt user
-            XMPP.promptLogin();
-
+        if (connection.disco) {
+            // for chrome, add multistream cap
         }
+        connection.jingle.pc_constraints = APP.RTC.getPCConstraints();
+        if (config.useIPv6) {
+            // https://code.google.com/p/webrtc/issues/detail?id=2828
+            if (!connection.jingle.pc_constraints.optional)
+                connection.jingle.pc_constraints.optional = [];
+            connection.jingle.pc_constraints.optional.push({googIPv6: true});
+        }
+
+        // Include user info in MUC presence
+        var settings = Settings.getSettings();
+        if (settings.email) {
+            connection.emuc.addEmailToPresence(settings.email);
+        }
+        if (settings.uid) {
+            connection.emuc.addUserIdToPresence(settings.uid);
+        }
+        if (settings.displayName) {
+            connection.emuc.addDisplayNameToPresence(settings.displayName);
+        }
+
+
+        // connection.connect() starts the connection process.
+        //
+        // As the connection process proceeds, the user supplied callback will
+        // be triggered multiple times with status updates. The callback should
+        // take two arguments - the status code and the error condition.
+        //
+        // The status code will be one of the values in the Strophe.Status
+        // constants. The error condition will be one of the conditions defined
+        // in RFC 3920 or the condition ‘strophe-parsererror’.
+        //
+        // The Parameters wait, hold and route are optional and only relevant
+        // for BOSH connections. Please see XEP 124 for a more detailed
+        // explanation of the optional parameters.
+        //
+        // Connection status constants for use by the connection handler
+        // callback.
+        //
+        //  Status.ERROR - An error has occurred (websockets specific)
+        //  Status.CONNECTING - The connection is currently being made
+        //  Status.CONNFAIL - The connection attempt failed
+        //  Status.AUTHENTICATING - The connection is authenticating
+        //  Status.AUTHFAIL - The authentication attempt failed
+        //  Status.CONNECTED - The connection has succeeded
+        //  Status.DISCONNECTED - The connection has been terminated
+        //  Status.DISCONNECTING - The connection is currently being terminated
+        //  Status.ATTACHED - The connection has been attached
+
+        var anonymousConnectionFailed = false;
+        var connectionFailed = false;
+        var lastErrorMsg;
+        connection.connect(jid, password, function (status, msg) {
+            console.log('Strophe status changed to',
+                Strophe.getStatusString(status), msg);
+            if (status === Strophe.Status.CONNECTED) {
+                if (config.useStunTurn) {
+                    connection.jingle.getStunAndTurnCredentials();
+                }
+
+                console.info("My Jabber ID: " + connection.jid);
+
+                if (password)
+                    authenticatedUser = true;
+                maybeDoJoin();
+            } else if (status === Strophe.Status.CONNFAIL) {
+                if (msg === 'x-strophe-bad-non-anon-jid') {
+                    anonymousConnectionFailed = true;
+                } else {
+                    connectionFailed = true;
+                }
+                lastErrorMsg = msg;
+            } else if (status === Strophe.Status.DISCONNECTED) {
+                if (anonymousConnectionFailed) {
+                    // prompt user for username and password
+                    XMPP.promptLogin();
+                } else {
+
+                    // Strophe already has built-in HTTP/BOSH error handling and
+                    // request retry logic. Requests are resent automatically
+                    // until their error count reaches 5. Strophe.js disconnects
+                    // if the error count is > 5. We are not replicating this
+                    // here.
+                    //
+                    // The "problem" is that failed HTTP/BOSH requests don't
+                    // trigger a callback with a status update, so when a
+                    // callback with status Strophe.Status.DISCONNECTED arrives,
+                    // we can't be sure if it's a graceful disconnect or if it's
+                    // triggered by some HTTP/BOSH error.
+                    //
+                    // But that's a minor issue in Jitsi Meet as we never
+                    // disconnect anyway, not even when the user closes the
+                    // browser window (which is kind of wrong, but the point is
+                    // that we should never ever get disconnected).
+                    //
+                    // On the other hand, failed connections due to XMPP layer
+                    // errors, trigger a callback with status Strophe.Status.CONNFAIL.
+                    //
+                    // Here we implement retry logic for failed connections due
+                    // to XMPP layer errors and we display an error to the user
+                    // if we get disconnected from the XMPP server permanently.
+
+                    // If the connection failed, retry.
+                    if (connectionFailed
+                        && faultTolerantConnect.retry("connection-failed")) {
+                        return;
+                    }
+
+                    // If we failed to connect to the XMPP server, fire an event
+                    // to let all the interested module now about it.
+                    eventEmitter.emit(XMPPEvents.CONNECTION_FAILED,
+                        msg ? msg : lastErrorMsg);
+                }
+            } else if (status === Strophe.Status.AUTHFAIL) {
+                // wrong password or username, prompt user
+                XMPP.promptLogin();
+
+            }
+        });
     });
 }
 
