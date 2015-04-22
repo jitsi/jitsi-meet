@@ -550,24 +550,58 @@ var VideoLayout = (function (my) {
             || (lastNEndpointsCache && lastNEndpointsCache.indexOf(resource) !== -1);
     };
 
-    my.changeLocalStream = function (stream) {
-        VideoLayout.changeLocalVideo(stream);
+    my.changeLocalStream = function (stream, isMuted) {
+        VideoLayout.changeLocalVideo(stream, isMuted);
     };
 
-    my.changeLocalAudio = function(stream) {
+    my.changeLocalAudio = function(stream, isMuted) {
+        if(isMuted)
+            APP.UI.setAudioMuted(true, true);
         APP.RTC.attachMediaStream($('#localAudio'), stream.getOriginalStream());
         document.getElementById('localAudio').autoplay = true;
         document.getElementById('localAudio').volume = 0;
-        if (preMuted) {
-            if(!APP.UI.setAudioMuted(true))
-            {
-                preMuted = mute;
-            }
-            preMuted = false;
-        }
     };
 
-    my.changeLocalVideo = function(stream) {
+    my.changeLocalVideo = function(stream, isMuted) {
+        // Set default display name.
+        setDisplayName('localVideoContainer');
+
+        if(!VideoLayout.connectionIndicators["localVideoContainer"]) {
+            VideoLayout.connectionIndicators["localVideoContainer"]
+                = new ConnectionIndicator($("#localVideoContainer")[0], null, VideoLayout);
+        }
+
+        AudioLevels.updateAudioLevelCanvas(null, VideoLayout);
+
+        var localVideo = null;
+
+        function localVideoClick(event) {
+            event.stopPropagation();
+            VideoLayout.handleVideoThumbClicked(
+                APP.RTC.getVideoSrc(localVideo),
+                false,
+                APP.xmpp.myResource());
+        }
+
+        $('#localVideoContainer').click(localVideoClick);
+
+        // Add hover handler
+        $('#localVideoContainer').hover(
+            function() {
+                VideoLayout.showDisplayName('localVideoContainer', true);
+            },
+            function() {
+                if (!VideoLayout.isLargeVideoVisible()
+                    || APP.RTC.getVideoSrc(localVideo) !== APP.RTC.getVideoSrc($('#largeVideo')[0]))
+                    VideoLayout.showDisplayName('localVideoContainer', false);
+            }
+        );
+
+        if(isMuted)
+        {
+            APP.UI.setVideoMute(true);
+            return;
+        }
         var flipX = true;
         if(stream.videoType == "screen")
             flipX = false;
@@ -581,54 +615,28 @@ var VideoLayout = (function (my) {
         var localVideoContainer = document.getElementById('localVideoWrapper');
         localVideoContainer.appendChild(localVideo);
 
-        // Set default display name.
-        setDisplayName('localVideoContainer');
-
-        if(!VideoLayout.connectionIndicators["localVideoContainer"]) {
-            VideoLayout.connectionIndicators["localVideoContainer"]
-                = new ConnectionIndicator($("#localVideoContainer")[0], null, VideoLayout);
-        }
-
-        AudioLevels.updateAudioLevelCanvas(null, VideoLayout);
-
         var localVideoSelector = $('#' + localVideo.id);
 
-        function localVideoClick(event) {
-            event.stopPropagation();
-            VideoLayout.handleVideoThumbClicked(
-                APP.RTC.getVideoSrc(localVideo),
-                false,
-                APP.xmpp.myResource());
-        }
         // Add click handler to both video and video wrapper elements in case
         // there's no video.
         localVideoSelector.click(localVideoClick);
-        $('#localVideoContainer').click(localVideoClick);
 
-        // Add hover handler
-        $('#localVideoContainer').hover(
-            function() {
-                VideoLayout.showDisplayName('localVideoContainer', true);
-            },
-            function() {
-                if (!VideoLayout.isLargeVideoVisible()
-                        || APP.RTC.getVideoSrc(localVideo) !== APP.RTC.getVideoSrc($('#largeVideo')[0]))
-                    VideoLayout.showDisplayName('localVideoContainer', false);
-            }
-        );
-        // Add stream ended handler
-        stream.getOriginalStream().onended = function () {
-            localVideoContainer.removeChild(localVideo);
-            VideoLayout.updateRemovedVideo(APP.RTC.getVideoSrc(localVideo));
-        };
         // Flip video x axis if needed
         flipXLocalVideo = flipX;
         if (flipX) {
             localVideoSelector.addClass("flipVideoX");
         }
+
         // Attach WebRTC stream
         var videoStream = APP.simulcast.getLocalVideoStream();
         APP.RTC.attachMediaStream(localVideoSelector, videoStream);
+
+        // Add stream ended handler
+        stream.getOriginalStream().onended = function () {
+            localVideoContainer.removeChild(localVideo);
+            VideoLayout.updateRemovedVideo(APP.RTC.getVideoSrc(localVideo));
+        };
+
 
         localVideoSrc = APP.RTC.getVideoSrc(localVideo);
 
@@ -637,6 +645,14 @@ var VideoLayout = (function (my) {
         VideoLayout.updateLargeVideo(localVideoSrc, 0,
             myResourceJid);
 
+    };
+
+    my.mucJoined = function () {
+        var myResourceJid = APP.xmpp.myResource();
+
+        if(!largeVideoState.userResourceJid)
+            VideoLayout.updateLargeVideo(localVideoSrc, 0,
+                myResourceJid, true);
     };
 
     /**
@@ -706,26 +722,34 @@ var VideoLayout = (function (my) {
                 }
             }
 
+            var src = null, volume = null;
             // mute if localvideo
             if (pick) {
                 var container = pick.parentNode;
-                var jid = null;
-                if(container)
-                {
-                    if(container.id == "localVideoWrapper")
-                    {
-                        jid = APP.xmpp.myResource();
-                    }
-                    else
-                    {
-                        jid = VideoLayout.getPeerContainerResourceJid(container);
-                    }
-                }
-
-                VideoLayout.updateLargeVideo(APP.RTC.getVideoSrc(pick), pick.volume, jid);
+                src = APP.RTC.getVideoSrc(pick);
+                volume = pick.volume;
             } else {
                 console.warn("Failed to elect large video");
+                container = $('#remoteVideos>span[id!="mixedstream"]:visible:last').get(0);
+
             }
+
+            var jid = null;
+            if(container)
+            {
+                if(container.id == "localVideoWrapper")
+                {
+                    jid = APP.xmpp.myResource();
+                }
+                else
+                {
+                    jid = VideoLayout.getPeerContainerResourceJid(container);
+                }
+            }
+            else
+                return;
+
+            VideoLayout.updateLargeVideo(src, volume, jid);
         }
     };
     
@@ -774,11 +798,10 @@ var VideoLayout = (function (my) {
     /**
      * Updates the large video with the given new video source.
      */
-    my.updateLargeVideo = function(newSrc, vol, resourceJid) {
-        console.log('hover in', newSrc);
+    my.updateLargeVideo = function(newSrc, vol, resourceJid, forceUpdate) {
+        console.log('hover in', newSrc, resourceJid);
 
-        if (APP.RTC.getVideoSrc($('#largeVideo')[0]) !== newSrc) {
-
+        if (APP.RTC.getVideoSrc($('#largeVideo')[0]) !== newSrc || forceUpdate) {
             $('#activeSpeaker').css('visibility', 'hidden');
             // Due to the simulcast the localVideoSrc may have changed when the
             // fadeOut event triggers. In that case the getJidFromVideoSrc and
@@ -816,7 +839,6 @@ var VideoLayout = (function (my) {
                 largeVideoState.updateInProgress = true;
 
                 var doUpdate = function () {
-
                     Avatar.updateActiveSpeakerAvatarSrc(
                         APP.xmpp.findJidFromResource(
                             largeVideoState.userResourceJid));
@@ -1661,10 +1683,9 @@ var VideoLayout = (function (my) {
                 if (videoSpan.classList.contains("dominantspeaker"))
                     videoSpan.classList.remove("dominantspeaker");
             }
-
-            Avatar.showUserAvatar(
-                APP.xmpp.findJidFromResource(resourceJid));
         }
+        Avatar.showUserAvatar(
+            APP.xmpp.findJidFromResource(resourceJid));
     };
 
     /**

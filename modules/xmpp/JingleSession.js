@@ -955,7 +955,7 @@ JingleSession.prototype._modifySources = function (successCallback, queueCallbac
  * @param oldStream old video stream of this session.
  * @param success_callback callback executed after successful stream switch.
  */
-JingleSession.prototype.switchStreams = function (new_stream, oldStream, success_callback) {
+JingleSession.prototype.switchStreams = function (new_stream, oldStream, success_callback, isAudio) {
 
     var self = this;
 
@@ -970,7 +970,8 @@ JingleSession.prototype.switchStreams = function (new_stream, oldStream, success
             self.peerconnection.addStream(new_stream);
     }
 
-    APP.RTC.switchVideoStreams(new_stream, oldStream);
+    if(!isAudio)
+        APP.RTC.switchVideoStreams(new_stream, oldStream);
 
     // Conference is not active
     if(!oldSdp || !self.peerconnection) {

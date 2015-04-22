@@ -1,12 +1,15 @@
 var StreamEventTypes = require("../../service/RTC/StreamEventTypes.js");
 
 
-function LocalStream(stream, type, eventEmitter, videoType)
+function LocalStream(stream, type, eventEmitter, videoType, isGUMStream)
 {
     this.stream = stream;
     this.eventEmitter = eventEmitter;
     this.type = type;
     this.videoType = videoType;
+    this.isGUMStream = true;
+    if(isGUMStream === false)
+        this.isGUMStream = isGUMStream;
     var self = this;
     if(type == "audio")
     {
@@ -37,26 +40,14 @@ LocalStream.prototype.getOriginalStream = function()
 }
 
 LocalStream.prototype.isAudioStream = function () {
-    return (this.stream.getAudioTracks() && this.stream.getAudioTracks().length > 0);
-};
-
-LocalStream.prototype.mute = function()
-{
-    var ismuted = false;
-    var tracks = this.getTracks();
-
-    for (var idx = 0; idx < tracks.length; idx++) {
-        ismuted = !tracks[idx].enabled;
-        tracks[idx].enabled = ismuted;
-    }
-    return ismuted;
+    return this.type === "audio";
 };
 
 LocalStream.prototype.setMute = function(mute)
 {
 
-    if(window.location.protocol != "https:" ||
-        this.isAudioStream() || this.videoType === "screen")
+    if((window.location.protocol != "https:" && this.isGUMStream) ||
+        (this.isAudioStream() && this.isGUMStream) || this.videoType === "screen")
     {
         var tracks = this.getTracks();
 
@@ -72,9 +63,18 @@ LocalStream.prototype.setMute = function(mute)
         }
         else
         {
-            APP.RTC.rtcUtils.obtainAudioAndVideoPermissions(["video"],
+            var self = this;
+            APP.RTC.rtcUtils.obtainAudioAndVideoPermissions(
+                (this.isAudioStream() ? ["audio"] : ["video"]),
                 function (stream) {
-                    APP.RTC.changeLocalVideo(stream, false, function () {});
+                    if(self.isAudioStream())
+                    {
+                        APP.RTC.changeLocalAudio(stream, function () {});
+                    }
+                    else
+                    {
+                        APP.RTC.changeLocalVideo(stream, false, function () {});
+                    }
                 });
         }
     }

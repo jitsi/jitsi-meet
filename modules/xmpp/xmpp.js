@@ -261,10 +261,10 @@ var XMPP = {
     isExternalAuthEnabled: function () {
         return Moderator.isExternalAuthEnabled();
     },
-    switchStreams: function (stream, oldStream, callback) {
+    switchStreams: function (stream, oldStream, callback, isAudio) {
         if (connection && connection.jingle.activecall) {
             // FIXME: will block switchInProgress on true value in case of exception
-            connection.jingle.activecall.switchStreams(stream, oldStream, callback);
+            connection.jingle.activecall.switchStreams(stream, oldStream, callback, isAudio);
         } else {
             // We are done immediately
             console.warn("No conference handler or conference not started yet");
@@ -272,6 +272,8 @@ var XMPP = {
         }
     },
     sendVideoInfoPresence: function (mute) {
+        if(!connection)
+            return;
         connection.emuc.addVideoInfoToPresence(mute);
         connection.emuc.sendPresence();
     },
@@ -315,10 +317,17 @@ var XMPP = {
         // It is not clear what is the right way to handle multiple tracks.
         // So at least make sure that they are all muted or all unmuted and
         // that we send presence just once.
-        APP.RTC.localAudio.mute();
+        APP.RTC.localAudio.setMute(!mute);
         // isMuted is the opposite of audioEnabled
-        connection.emuc.addAudioInfoToPresence(mute);
-        connection.emuc.sendPresence();
+        this.sendAudioInfoPresence(mute, callback);
+        return true;
+    },
+    sendAudioInfoPresence: function(mute, callback)
+    {
+        if(connection) {
+            connection.emuc.addAudioInfoToPresence(mute);
+            connection.emuc.sendPresence();
+        }
         callback();
         return true;
     },

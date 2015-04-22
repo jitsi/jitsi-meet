@@ -32,6 +32,14 @@ var eventEmitter = new EventEmitter();
 var roomName = null;
 
 
+function notifyForInitialMute()
+{
+    if(config.startAudioMuted || config.startVideoMuted)
+    {
+        messageHandler.notify(null, "notify.me", "connected", "notify.muted");
+    }
+}
+
 function setupPrezi()
 {
     $("#reloadPresentationLink").click(function()
@@ -54,17 +62,17 @@ function setupToolbars() {
     BottomToolbar.init();
 }
 
-function streamHandler(stream) {
+function streamHandler(stream, isMuted) {
     switch (stream.type)
     {
         case "audio":
-            VideoLayout.changeLocalAudio(stream);
+            VideoLayout.changeLocalAudio(stream, isMuted);
             break;
         case "video":
-            VideoLayout.changeLocalVideo(stream);
+            VideoLayout.changeLocalVideo(stream, isMuted);
             break;
         case "stream":
-            VideoLayout.changeLocalStream(stream);
+            VideoLayout.changeLocalStream(stream, isMuted);
             break;
     }
 }
@@ -381,6 +389,8 @@ UI.start = function (init) {
 
     SettingsMenu.init();
 
+    notifyForInitialMute();
+
 };
 
 function chatAddError(errorMessage, originalText)
@@ -414,6 +424,9 @@ function onMucJoined(jid, info) {
 
     if (displayName)
         onDisplayNameChanged('localVideoContainer', displayName);
+
+
+    VideoLayout.mucJoined();
 }
 
 function initEtherpad(name) {
@@ -714,9 +727,17 @@ UI.toggleAudio = function() {
 /**
  * Sets muted audio state for the local participant.
  */
-UI.setAudioMuted = function (mute) {
-
-    if(!APP.xmpp.setAudioMute(mute, function () {
+UI.setAudioMuted = function (mute, earlyMute) {
+    var audioMute = null;
+    if(earlyMute)
+        audioMute = function (mute, cb) {
+            return APP.xmpp.sendAudioInfoPresence(mute, cb);
+        };
+    else
+        audioMute = function (mute, cb) {
+            return APP.xmpp.setAudioMute(mute, cb);
+        }
+    if(!audioMute(mute, function () {
         VideoLayout.showLocalAudioIndicator(mute);
 
         UIUtil.buttonClick("#mute", "icon-microphone icon-mic-disabled");
@@ -763,6 +784,9 @@ UI.setVideoMuteButtonsState = function (mute) {
         video.addClass(communicativeClass);
     }
 }
+
+
+UI.setVideoMute = setVideoMute;
 
 module.exports = UI;
 

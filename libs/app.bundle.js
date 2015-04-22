@@ -1,4 +1,4 @@
-(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.APP = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.APP=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 /* jshint -W117 */
 /* application specific logic */
 
@@ -578,12 +578,15 @@ module.exports = DataChannels;
 var StreamEventTypes = require("../../service/RTC/StreamEventTypes.js");
 
 
-function LocalStream(stream, type, eventEmitter, videoType)
+function LocalStream(stream, type, eventEmitter, videoType, isGUMStream)
 {
     this.stream = stream;
     this.eventEmitter = eventEmitter;
     this.type = type;
     this.videoType = videoType;
+    this.isGUMStream = true;
+    if(isGUMStream === false)
+        this.isGUMStream = isGUMStream;
     var self = this;
     if(type == "audio")
     {
@@ -614,26 +617,14 @@ LocalStream.prototype.getOriginalStream = function()
 }
 
 LocalStream.prototype.isAudioStream = function () {
-    return (this.stream.getAudioTracks() && this.stream.getAudioTracks().length > 0);
-};
-
-LocalStream.prototype.mute = function()
-{
-    var ismuted = false;
-    var tracks = this.getTracks();
-
-    for (var idx = 0; idx < tracks.length; idx++) {
-        ismuted = !tracks[idx].enabled;
-        tracks[idx].enabled = ismuted;
-    }
-    return ismuted;
+    return this.type === "audio";
 };
 
 LocalStream.prototype.setMute = function(mute)
 {
 
-    if(window.location.protocol != "https:" ||
-        this.isAudioStream() || this.videoType === "screen")
+    if((window.location.protocol != "https:" && this.isGUMStream) ||
+        (this.isAudioStream() && this.isGUMStream) || this.videoType === "screen")
     {
         var tracks = this.getTracks();
 
@@ -649,9 +640,18 @@ LocalStream.prototype.setMute = function(mute)
         }
         else
         {
-            APP.RTC.rtcUtils.obtainAudioAndVideoPermissions(["video"],
+            var self = this;
+            APP.RTC.rtcUtils.obtainAudioAndVideoPermissions(
+                (this.isAudioStream() ? ["audio"] : ["video"]),
                 function (stream) {
-                    APP.RTC.changeLocalVideo(stream, false, function () {});
+                    if(self.isAudioStream())
+                    {
+                        APP.RTC.changeLocalAudio(stream, function () {});
+                    }
+                    else
+                    {
+                        APP.RTC.changeLocalVideo(stream, false, function () {});
+                    }
                 });
         }
     }
@@ -760,11 +760,41 @@ var UIEvents = require("../../service/UI/UIEvents");
 
 var eventEmitter = new EventEmitter();
 
+
+function getMediaStreamUsage()
+{
+    var result = {
+        audio: 1,
+        video: 1
+    };
+    if( config.startAudioMuted === true)
+        result.audio = 0;
+    if( config.startVideoMuted === true)
+        result.video = 0;
+
+    /** There are some issues with the desktop sharing
+     * when this property is enabled.
+
+     if(result.audio > 0 && result.video > 0)
+        return result;
+     var isSecureConnection = window.location.protocol == "https:";
+
+    if(config.disableEarlyMediaPermissionRequests || !isSecureConnection)
+    {
+        if(result.audio === 0)
+            result.audio = -1;
+        if(result.video === 0)
+            result.video = -1;
+    }**/
+
+    return result;
+}
+
 var RTC = {
     rtcUtils: null,
     devices: {
-        audio: false,
-        video: false
+        audio: true,
+        video: true
     },
     localStreams: [],
     remoteStreams: {},
@@ -782,13 +812,15 @@ var RTC = {
 
         eventEmitter.removeListener(eventType, listener);
     },
-    createLocalStream: function (stream, type, change, videoType) {
+    createLocalStream: function (stream, type, change, videoType, isMuted, isGUMStream) {
 
-        var localStream =  new LocalStream(stream, type, eventEmitter, videoType);
+        var localStream =  new LocalStream(stream, type, eventEmitter, videoType, isGUMStream);
         //in firefox we have only one stream object
         if(this.localStreams.length == 0 ||
             this.localStreams[0].getOriginalStream() != stream)
             this.localStreams.push(localStream);
+        if(isMuted === true)
+            localStream.setMute(false);
 
         if(type == "audio")
         {
@@ -802,7 +834,7 @@ var RTC = {
         if(change)
             eventType = StreamEventTypes.EVENT_TYPE_LOCAL_CHANGED;
 
-        eventEmitter.emit(eventType, localStream);
+        eventEmitter.emit(eventType, localStream, isMuted);
         return localStream;
     },
     removeLocalStream: function (stream) {
@@ -886,7 +918,8 @@ var RTC = {
         APP.UI.addListener(UIEvents.PINNED_ENDPOINT,
             DataChannels.handlePinnedEndpointEvent);
         this.rtcUtils = new RTCUtils(this);
-        this.rtcUtils.obtainAudioAndVideoPermissions();
+        this.rtcUtils.obtainAudioAndVideoPermissions(
+            null, null, getMediaStreamUsage());
     },
     muteRemoteVideoStream: function (jid, value) {
         var stream;
@@ -927,11 +960,19 @@ var RTC = {
                 callback();
             };
         }
-        var videoStream = this.rtcUtils.createVideoStream(stream);
+        var videoStream = this.rtcUtils.createStream(stream, true);
         this.localVideo = this.createLocalStream(videoStream, "video", true, type);
         // Stop the stream to trigger onended event for old stream
         oldStream.stop();
         APP.xmpp.switchStreams(videoStream, oldStream,localCallback);
+    },
+    changeLocalAudio: function (stream, callback) {
+        var oldStream = this.localAudio.getOriginalStream();
+        var newStream = this.rtcUtils.createStream(stream);
+        this.localAudio = this.createLocalStream(newStream, "audio", true);
+        // Stop the stream to trigger onended event for old stream
+        oldStream.stop();
+        APP.xmpp.switchStreams(newStream, oldStream, callback, true);
     },
     /**
      * Checks if video identified by given src is desktop stream.
@@ -967,7 +1008,7 @@ var RTC = {
         {
             APP.xmpp.sendVideoInfoPresence(mute);
             if(callback)
-                callback();
+                callback(mute);
         }
         else
         {
@@ -1138,6 +1179,8 @@ function RTCUtils(RTCService)
                 //
                 // https://groups.google.com/forum/#!topic/mozilla.dev.media/pKOiioXonJg
                 // https://github.com/webrtc/samples/issues/302
+                if(!element[0])
+                    return;
                 element[0].mozSrcObject = stream;
                 element[0].play();
             };
@@ -1150,10 +1193,13 @@ function RTCUtils(RTCService)
                 return tracks[0].id.replace(/[\{,\}]/g,"");
             };
             this.getVideoSrc = function (element) {
+                if(!element)
+                    return null;
                 return element.mozSrcObject;
             };
             this.setVideoSrc = function (element, src) {
-                element.mozSrcObject = src;
+                if(element)
+                    element.mozSrcObject = src;
             };
             RTCSessionDescription = mozRTCSessionDescription;
             RTCIceCandidate = mozRTCIceCandidate;
@@ -1176,10 +1222,13 @@ function RTCUtils(RTCService)
             return stream.id.replace(/[\{,\}]/g,"");
         };
         this.getVideoSrc = function (element) {
+            if(!element)
+                return null;
             return element.getAttribute("src");
         };
         this.setVideoSrc = function (element, src) {
-            element.setAttribute("src", src);
+            if(element)
+                element.setAttribute("src", src);
         };
         // DTLS should now be enabled by default but..
         this.pc_constraints = {'optional': [{'DtlsSrtpKeyAgreement': 'true'}]};
@@ -1286,20 +1335,43 @@ RTCUtils.prototype.setAvailableDevices = function (um, available) {
  * We ask for audio and video combined stream in order to get permissions and
  * not to ask twice.
  */
-RTCUtils.prototype.obtainAudioAndVideoPermissions = function(devices, callback) {
+RTCUtils.prototype.obtainAudioAndVideoPermissions = function(devices, callback, usageOptions) {
     var self = this;
     // Get AV
+
+    var successCallback = function (stream) {
+        if(callback)
+            callback(stream, usageOptions);
+        else
+            self.successCallback(stream, usageOptions);
+    };
 
     if(!devices)
         devices = ['audio', 'video'];
 
+    var newDevices = [];
+
+
+    if(usageOptions)
+        for(var i = 0; i < devices.length; i++)
+        {
+            var device = devices[i];
+            if(usageOptions[device] !== -1)
+                newDevices.push(device);
+        }
+    else
+        newDevices = devices;
+
+    if(newDevices.length === 0)
+    {
+        successCallback();
+        return;
+    }
+
     this.getUserMediaWithConstraints(
-        devices,
+        newDevices,
         function (stream) {
-            if(callback)
-                callback(stream);
-            else
-                self.successCallback(stream);
+            successCallback(stream);
         },
         function (error) {
             self.errorCallback(error);
@@ -1307,11 +1379,11 @@ RTCUtils.prototype.obtainAudioAndVideoPermissions = function(devices, callback) 
         config.resolution || '360');
 }
 
-RTCUtils.prototype.successCallback = function (stream) {
+RTCUtils.prototype.successCallback = function (stream, usageOptions) {
     if(stream)
         console.log('got', stream, stream.getAudioTracks().length,
             stream.getVideoTracks().length);
-    this.handleLocalStream(stream);
+    this.handleLocalStream(stream, usageOptions);
 };
 
 RTCUtils.prototype.errorCallback = function (error) {
@@ -1349,7 +1421,7 @@ RTCUtils.prototype.errorCallback = function (error) {
 
 }
 
-RTCUtils.prototype.handleLocalStream = function(stream)
+RTCUtils.prototype.handleLocalStream = function(stream, usageOptions)
 {
     if(window.webkitMediaStream)
     {
@@ -1369,9 +1441,18 @@ RTCUtils.prototype.handleLocalStream = function(stream)
             }
         }
 
-        this.service.createLocalStream(audioStream, "audio");
+        var audioMuted = (usageOptions && usageOptions.audio != 1),
+            videoMuted = (usageOptions && usageOptions.video != 1);
 
-        this.service.createLocalStream(videoStream, "video");
+        var audioGUM = (!usageOptions || usageOptions.audio != -1),
+            videoGUM = (!usageOptions || usageOptions.video != -1);
+
+
+        this.service.createLocalStream(audioStream, "audio", null, null,
+            audioMuted, audioGUM);
+
+        this.service.createLocalStream(videoStream, "video", null, null,
+            videoMuted, videoGUM);
     }
     else
     {//firefox
@@ -1380,26 +1461,26 @@ RTCUtils.prototype.handleLocalStream = function(stream)
 
 };
 
-RTCUtils.prototype.createVideoStream = function(stream)
+RTCUtils.prototype.createStream = function(stream, isVideo)
 {
-    var videoStream = null;
+    var newStream = null;
     if(window.webkitMediaStream)
     {
-        videoStream = new webkitMediaStream();
-        if(stream)
+        newStream = new webkitMediaStream();
+        if(newStream)
         {
-            var videoTracks = stream.getVideoTracks();
+            var tracks = (isVideo? stream.getVideoTracks() : stream.getAudioTracks());
 
-            for (i = 0; i < videoTracks.length; i++) {
-                videoStream.addTrack(videoTracks[i]);
+            for (i = 0; i < tracks.length; i++) {
+                newStream.addTrack(tracks[i]);
             }
         }
 
     }
     else
-        videoStream = stream;
+        newStream = stream;
 
-    return videoStream;
+    return newStream;
 };
 
 module.exports = RTCUtils;
@@ -1439,6 +1520,14 @@ var eventEmitter = new EventEmitter();
 var roomName = null;
 
 
+function notifyForInitialMute()
+{
+    if(config.startAudioMuted || config.startVideoMuted)
+    {
+        messageHandler.notify(null, "notify.me", "connected", "notify.muted");
+    }
+}
+
 function setupPrezi()
 {
     $("#reloadPresentationLink").click(function()
@@ -1461,17 +1550,17 @@ function setupToolbars() {
     BottomToolbar.init();
 }
 
-function streamHandler(stream) {
+function streamHandler(stream, isMuted) {
     switch (stream.type)
     {
         case "audio":
-            VideoLayout.changeLocalAudio(stream);
+            VideoLayout.changeLocalAudio(stream, isMuted);
             break;
         case "video":
-            VideoLayout.changeLocalVideo(stream);
+            VideoLayout.changeLocalVideo(stream, isMuted);
             break;
         case "stream":
-            VideoLayout.changeLocalStream(stream);
+            VideoLayout.changeLocalStream(stream, isMuted);
             break;
     }
 }
@@ -1788,6 +1877,8 @@ UI.start = function (init) {
 
     SettingsMenu.init();
 
+    notifyForInitialMute();
+
 };
 
 function chatAddError(errorMessage, originalText)
@@ -1821,6 +1912,9 @@ function onMucJoined(jid, info) {
 
     if (displayName)
         onDisplayNameChanged('localVideoContainer', displayName);
+
+
+    VideoLayout.mucJoined();
 }
 
 function initEtherpad(name) {
@@ -2121,9 +2215,17 @@ UI.toggleAudio = function() {
 /**
  * Sets muted audio state for the local participant.
  */
-UI.setAudioMuted = function (mute) {
-
-    if(!APP.xmpp.setAudioMute(mute, function () {
+UI.setAudioMuted = function (mute, earlyMute) {
+    var audioMute = null;
+    if(earlyMute)
+        audioMute = function (mute, cb) {
+            return APP.xmpp.sendAudioInfoPresence(mute, cb);
+        };
+    else
+        audioMute = function (mute, cb) {
+            return APP.xmpp.setAudioMute(mute, cb);
+        }
+    if(!audioMute(mute, function () {
         VideoLayout.showLocalAudioIndicator(mute);
 
         UIUtil.buttonClick("#mute", "icon-microphone icon-mic-disabled");
@@ -2170,6 +2272,9 @@ UI.setVideoMuteButtonsState = function (mute) {
         video.addClass(communicativeClass);
     }
 }
+
+
+UI.setVideoMute = setVideoMute;
 
 module.exports = UI;
 
@@ -2929,6 +3034,12 @@ function isUserMuted(jid) {
         }
     }
 
+    if(jid && jid == APP.xmpp.myJid())
+    {
+        var localVideo = APP.RTC.localVideo;
+        return (!localVideo || localVideo.isMuted());
+    }
+
     if (!APP.RTC.remoteStreams[jid] || !APP.RTC.remoteStreams[jid][MediaStreamType.VIDEO_TYPE]) {
         return null;
     }
@@ -3028,8 +3139,9 @@ var Avatar = {
             } else {
                 if (video && video.length > 0) {
                     setVisibility(video, !show);
-                    setVisibility(avatar, show);
                 }
+                setVisibility(avatar, show);
+
             }
         }
     },
@@ -7261,24 +7373,58 @@ var VideoLayout = (function (my) {
             || (lastNEndpointsCache && lastNEndpointsCache.indexOf(resource) !== -1);
     };
 
-    my.changeLocalStream = function (stream) {
-        VideoLayout.changeLocalVideo(stream);
+    my.changeLocalStream = function (stream, isMuted) {
+        VideoLayout.changeLocalVideo(stream, isMuted);
     };
 
-    my.changeLocalAudio = function(stream) {
+    my.changeLocalAudio = function(stream, isMuted) {
+        if(isMuted)
+            APP.UI.setAudioMuted(true, true);
         APP.RTC.attachMediaStream($('#localAudio'), stream.getOriginalStream());
         document.getElementById('localAudio').autoplay = true;
         document.getElementById('localAudio').volume = 0;
-        if (preMuted) {
-            if(!APP.UI.setAudioMuted(true))
-            {
-                preMuted = mute;
-            }
-            preMuted = false;
-        }
     };
 
-    my.changeLocalVideo = function(stream) {
+    my.changeLocalVideo = function(stream, isMuted) {
+        // Set default display name.
+        setDisplayName('localVideoContainer');
+
+        if(!VideoLayout.connectionIndicators["localVideoContainer"]) {
+            VideoLayout.connectionIndicators["localVideoContainer"]
+                = new ConnectionIndicator($("#localVideoContainer")[0], null, VideoLayout);
+        }
+
+        AudioLevels.updateAudioLevelCanvas(null, VideoLayout);
+
+        var localVideo = null;
+
+        function localVideoClick(event) {
+            event.stopPropagation();
+            VideoLayout.handleVideoThumbClicked(
+                APP.RTC.getVideoSrc(localVideo),
+                false,
+                APP.xmpp.myResource());
+        }
+
+        $('#localVideoContainer').click(localVideoClick);
+
+        // Add hover handler
+        $('#localVideoContainer').hover(
+            function() {
+                VideoLayout.showDisplayName('localVideoContainer', true);
+            },
+            function() {
+                if (!VideoLayout.isLargeVideoVisible()
+                    || APP.RTC.getVideoSrc(localVideo) !== APP.RTC.getVideoSrc($('#largeVideo')[0]))
+                    VideoLayout.showDisplayName('localVideoContainer', false);
+            }
+        );
+
+        if(isMuted)
+        {
+            APP.UI.setVideoMute(true);
+            return;
+        }
         var flipX = true;
         if(stream.videoType == "screen")
             flipX = false;
@@ -7292,54 +7438,28 @@ var VideoLayout = (function (my) {
         var localVideoContainer = document.getElementById('localVideoWrapper');
         localVideoContainer.appendChild(localVideo);
 
-        // Set default display name.
-        setDisplayName('localVideoContainer');
-
-        if(!VideoLayout.connectionIndicators["localVideoContainer"]) {
-            VideoLayout.connectionIndicators["localVideoContainer"]
-                = new ConnectionIndicator($("#localVideoContainer")[0], null, VideoLayout);
-        }
-
-        AudioLevels.updateAudioLevelCanvas(null, VideoLayout);
-
         var localVideoSelector = $('#' + localVideo.id);
 
-        function localVideoClick(event) {
-            event.stopPropagation();
-            VideoLayout.handleVideoThumbClicked(
-                APP.RTC.getVideoSrc(localVideo),
-                false,
-                APP.xmpp.myResource());
-        }
         // Add click handler to both video and video wrapper elements in case
         // there's no video.
         localVideoSelector.click(localVideoClick);
-        $('#localVideoContainer').click(localVideoClick);
 
-        // Add hover handler
-        $('#localVideoContainer').hover(
-            function() {
-                VideoLayout.showDisplayName('localVideoContainer', true);
-            },
-            function() {
-                if (!VideoLayout.isLargeVideoVisible()
-                        || APP.RTC.getVideoSrc(localVideo) !== APP.RTC.getVideoSrc($('#largeVideo')[0]))
-                    VideoLayout.showDisplayName('localVideoContainer', false);
-            }
-        );
-        // Add stream ended handler
-        stream.getOriginalStream().onended = function () {
-            localVideoContainer.removeChild(localVideo);
-            VideoLayout.updateRemovedVideo(APP.RTC.getVideoSrc(localVideo));
-        };
         // Flip video x axis if needed
         flipXLocalVideo = flipX;
         if (flipX) {
             localVideoSelector.addClass("flipVideoX");
         }
+
         // Attach WebRTC stream
         var videoStream = APP.simulcast.getLocalVideoStream();
         APP.RTC.attachMediaStream(localVideoSelector, videoStream);
+
+        // Add stream ended handler
+        stream.getOriginalStream().onended = function () {
+            localVideoContainer.removeChild(localVideo);
+            VideoLayout.updateRemovedVideo(APP.RTC.getVideoSrc(localVideo));
+        };
+
 
         localVideoSrc = APP.RTC.getVideoSrc(localVideo);
 
@@ -7348,6 +7468,14 @@ var VideoLayout = (function (my) {
         VideoLayout.updateLargeVideo(localVideoSrc, 0,
             myResourceJid);
 
+    };
+
+    my.mucJoined = function () {
+        var myResourceJid = APP.xmpp.myResource();
+
+        if(!largeVideoState.userResourceJid)
+            VideoLayout.updateLargeVideo(localVideoSrc, 0,
+                myResourceJid, true);
     };
 
     /**
@@ -7417,26 +7545,34 @@ var VideoLayout = (function (my) {
                 }
             }
 
+            var src = null, volume = null;
             // mute if localvideo
             if (pick) {
                 var container = pick.parentNode;
-                var jid = null;
-                if(container)
-                {
-                    if(container.id == "localVideoWrapper")
-                    {
-                        jid = APP.xmpp.myResource();
-                    }
-                    else
-                    {
-                        jid = VideoLayout.getPeerContainerResourceJid(container);
-                    }
-                }
-
-                VideoLayout.updateLargeVideo(APP.RTC.getVideoSrc(pick), pick.volume, jid);
+                src = APP.RTC.getVideoSrc(pick);
+                volume = pick.volume;
             } else {
                 console.warn("Failed to elect large video");
+                container = $('#remoteVideos>span[id!="mixedstream"]:visible:last').get(0);
+
             }
+
+            var jid = null;
+            if(container)
+            {
+                if(container.id == "localVideoWrapper")
+                {
+                    jid = APP.xmpp.myResource();
+                }
+                else
+                {
+                    jid = VideoLayout.getPeerContainerResourceJid(container);
+                }
+            }
+            else
+                return;
+
+            VideoLayout.updateLargeVideo(src, volume, jid);
         }
     };
     
@@ -7485,11 +7621,10 @@ var VideoLayout = (function (my) {
     /**
      * Updates the large video with the given new video source.
      */
-    my.updateLargeVideo = function(newSrc, vol, resourceJid) {
-        console.log('hover in', newSrc);
+    my.updateLargeVideo = function(newSrc, vol, resourceJid, forceUpdate) {
+        console.log('hover in', newSrc, resourceJid);
 
-        if (APP.RTC.getVideoSrc($('#largeVideo')[0]) !== newSrc) {
-
+        if (APP.RTC.getVideoSrc($('#largeVideo')[0]) !== newSrc || forceUpdate) {
             $('#activeSpeaker').css('visibility', 'hidden');
             // Due to the simulcast the localVideoSrc may have changed when the
             // fadeOut event triggers. In that case the getJidFromVideoSrc and
@@ -7527,7 +7662,6 @@ var VideoLayout = (function (my) {
                 largeVideoState.updateInProgress = true;
 
                 var doUpdate = function () {
-
                     Avatar.updateActiveSpeakerAvatarSrc(
                         APP.xmpp.findJidFromResource(
                             largeVideoState.userResourceJid));
@@ -8372,10 +8506,9 @@ var VideoLayout = (function (my) {
                 if (videoSpan.classList.contains("dominantspeaker"))
                     videoSpan.classList.remove("dominantspeaker");
             }
-
-            Avatar.showUserAvatar(
-                APP.xmpp.findJidFromResource(resourceJid));
         }
+        Avatar.showUserAvatar(
+            APP.xmpp.findJidFromResource(resourceJid));
     };
 
     /**
@@ -13436,7 +13569,7 @@ JingleSession.prototype._modifySources = function (successCallback, queueCallbac
  * @param oldStream old video stream of this session.
  * @param success_callback callback executed after successful stream switch.
  */
-JingleSession.prototype.switchStreams = function (new_stream, oldStream, success_callback) {
+JingleSession.prototype.switchStreams = function (new_stream, oldStream, success_callback, isAudio) {
 
     var self = this;
 
@@ -13451,7 +13584,8 @@ JingleSession.prototype.switchStreams = function (new_stream, oldStream, success
             self.peerconnection.addStream(new_stream);
     }
 
-    APP.RTC.switchVideoStreams(new_stream, oldStream);
+    if(!isAudio)
+        APP.RTC.switchVideoStreams(new_stream, oldStream);
 
     // Conference is not active
     if(!oldSdp || !self.peerconnection) {
@@ -15877,6 +16011,15 @@ module.exports = function(XMPP, eventEmitter) {
         initPresenceMap: function (myroomjid) {
             this.presMap['to'] = myroomjid;
             this.presMap['xns'] = 'http://jabber.org/protocol/muc';
+            if(APP.RTC.localAudio.isMuted())
+            {
+                this.addAudioInfoToPresence(true);
+            }
+
+            if(APP.RTC.localVideo.isMuted())
+            {
+                this.addVideoInfoToPresence(true);
+            }
         },
         doJoin: function (jid, password) {
             this.myroomjid = jid;
@@ -17328,10 +17471,10 @@ var XMPP = {
     isExternalAuthEnabled: function () {
         return Moderator.isExternalAuthEnabled();
     },
-    switchStreams: function (stream, oldStream, callback) {
+    switchStreams: function (stream, oldStream, callback, isAudio) {
         if (connection && connection.jingle.activecall) {
             // FIXME: will block switchInProgress on true value in case of exception
-            connection.jingle.activecall.switchStreams(stream, oldStream, callback);
+            connection.jingle.activecall.switchStreams(stream, oldStream, callback, isAudio);
         } else {
             // We are done immediately
             console.warn("No conference handler or conference not started yet");
@@ -17339,6 +17482,8 @@ var XMPP = {
         }
     },
     sendVideoInfoPresence: function (mute) {
+        if(!connection)
+            return;
         connection.emuc.addVideoInfoToPresence(mute);
         connection.emuc.sendPresence();
     },
@@ -17382,10 +17527,17 @@ var XMPP = {
         // It is not clear what is the right way to handle multiple tracks.
         // So at least make sure that they are all muted or all unmuted and
         // that we send presence just once.
-        APP.RTC.localAudio.mute();
+        APP.RTC.localAudio.setMute(!mute);
         // isMuted is the opposite of audioEnabled
-        connection.emuc.addAudioInfoToPresence(mute);
-        connection.emuc.sendPresence();
+        this.sendAudioInfoPresence(mute, callback);
+        return true;
+    },
+    sendAudioInfoPresence: function(mute, callback)
+    {
+        if(connection) {
+            connection.emuc.addAudioInfoToPresence(mute);
+            connection.emuc.sendPresence();
+        }
         callback();
         return true;
     },

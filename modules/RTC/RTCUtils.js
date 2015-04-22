@@ -144,6 +144,8 @@ function RTCUtils(RTCService)
                 //
                 // https://groups.google.com/forum/#!topic/mozilla.dev.media/pKOiioXonJg
                 // https://github.com/webrtc/samples/issues/302
+                if(!element[0])
+                    return;
                 element[0].mozSrcObject = stream;
                 element[0].play();
             };
@@ -156,10 +158,13 @@ function RTCUtils(RTCService)
                 return tracks[0].id.replace(/[\{,\}]/g,"");
             };
             this.getVideoSrc = function (element) {
+                if(!element)
+                    return null;
                 return element.mozSrcObject;
             };
             this.setVideoSrc = function (element, src) {
-                element.mozSrcObject = src;
+                if(element)
+                    element.mozSrcObject = src;
             };
             RTCSessionDescription = mozRTCSessionDescription;
             RTCIceCandidate = mozRTCIceCandidate;
@@ -182,10 +187,13 @@ function RTCUtils(RTCService)
             return stream.id.replace(/[\{,\}]/g,"");
         };
         this.getVideoSrc = function (element) {
+            if(!element)
+                return null;
             return element.getAttribute("src");
         };
         this.setVideoSrc = function (element, src) {
-            element.setAttribute("src", src);
+            if(element)
+                element.setAttribute("src", src);
         };
         // DTLS should now be enabled by default but..
         this.pc_constraints = {'optional': [{'DtlsSrtpKeyAgreement': 'true'}]};
@@ -292,20 +300,43 @@ RTCUtils.prototype.setAvailableDevices = function (um, available) {
  * We ask for audio and video combined stream in order to get permissions and
  * not to ask twice.
  */
-RTCUtils.prototype.obtainAudioAndVideoPermissions = function(devices, callback) {
+RTCUtils.prototype.obtainAudioAndVideoPermissions = function(devices, callback, usageOptions) {
     var self = this;
     // Get AV
+
+    var successCallback = function (stream) {
+        if(callback)
+            callback(stream, usageOptions);
+        else
+            self.successCallback(stream, usageOptions);
+    };
 
     if(!devices)
         devices = ['audio', 'video'];
 
+    var newDevices = [];
+
+
+    if(usageOptions)
+        for(var i = 0; i < devices.length; i++)
+        {
+            var device = devices[i];
+            if(usageOptions[device] !== -1)
+                newDevices.push(device);
+        }
+    else
+        newDevices = devices;
+
+    if(newDevices.length === 0)
+    {
+        successCallback();
+        return;
+    }
+
     this.getUserMediaWithConstraints(
-        devices,
+        newDevices,
         function (stream) {
-            if(callback)
-                callback(stream);
-            else
-                self.successCallback(stream);
+            successCallback(stream);
         },
         function (error) {
             self.errorCallback(error);
@@ -313,11 +344,11 @@ RTCUtils.prototype.obtainAudioAndVideoPermissions = function(devices, callback) 
         config.resolution || '360');
 }
 
-RTCUtils.prototype.successCallback = function (stream) {
+RTCUtils.prototype.successCallback = function (stream, usageOptions) {
     if(stream)
         console.log('got', stream, stream.getAudioTracks().length,
             stream.getVideoTracks().length);
-    this.handleLocalStream(stream);
+    this.handleLocalStream(stream, usageOptions);
 };
 
 RTCUtils.prototype.errorCallback = function (error) {
@@ -355,7 +386,7 @@ RTCUtils.prototype.errorCallback = function (error) {
 
 }
 
-RTCUtils.prototype.handleLocalStream = function(stream)
+RTCUtils.prototype.handleLocalStream = function(stream, usageOptions)
 {
     if(window.webkitMediaStream)
     {
@@ -375,9 +406,18 @@ RTCUtils.prototype.handleLocalStream = function(stream)
             }
         }
 
-        this.service.createLocalStream(audioStream, "audio");
+        var audioMuted = (usageOptions && usageOptions.audio != 1),
+            videoMuted = (usageOptions && usageOptions.video != 1);
 
-        this.service.createLocalStream(videoStream, "video");
+        var audioGUM = (!usageOptions || usageOptions.audio != -1),
+            videoGUM = (!usageOptions || usageOptions.video != -1);
+
+
+        this.service.createLocalStream(audioStream, "audio", null, null,
+            audioMuted, audioGUM);
+
+        this.service.createLocalStream(videoStream, "video", null, null,
+            videoMuted, videoGUM);
     }
     else
     {//firefox
@@ -386,26 +426,26 @@ RTCUtils.prototype.handleLocalStream = function(stream)
 
 };
 
-RTCUtils.prototype.createVideoStream = function(stream)
+RTCUtils.prototype.createStream = function(stream, isVideo)
 {
-    var videoStream = null;
+    var newStream = null;
     if(window.webkitMediaStream)
     {
-        videoStream = new webkitMediaStream();
-        if(stream)
+        newStream = new webkitMediaStream();
+        if(newStream)
         {
-            var videoTracks = stream.getVideoTracks();
+            var tracks = (isVideo? stream.getVideoTracks() : stream.getAudioTracks());
 
-            for (i = 0; i < videoTracks.length; i++) {
-                videoStream.addTrack(videoTracks[i]);
+            for (i = 0; i < tracks.length; i++) {
+                newStream.addTrack(tracks[i]);
             }
         }
 
     }
     else
-        videoStream = stream;
+        newStream = stream;
 
-    return videoStream;
+    return newStream;
 };
 
 module.exports = RTCUtils;

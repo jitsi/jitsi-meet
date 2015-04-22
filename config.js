@@ -32,6 +32,8 @@ var config = {
     enableWelcomePage: true,
     enableSimulcast: false, // blocks FF support
     logStats: false, // Enable logging of PeerConnection stats via the focus
+    startVideoMuted: false,
+    startAudioMuted: false,
     /*noticeMessage: 'Service update is scheduled for 16th March 2015. ' +
     'During that time service will not be available. ' +
     'Apologise for inconvenience.'*/

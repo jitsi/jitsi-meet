@@ -13,11 +13,41 @@ var UIEvents = require("../../service/UI/UIEvents");
 
 var eventEmitter = new EventEmitter();
 
+
+function getMediaStreamUsage()
+{
+    var result = {
+        audio: 1,
+        video: 1
+    };
+    if( config.startAudioMuted === true)
+        result.audio = 0;
+    if( config.startVideoMuted === true)
+        result.video = 0;
+
+    /** There are some issues with the desktop sharing
+     * when this property is enabled.
+
+     if(result.audio > 0 && result.video > 0)
+        return result;
+     var isSecureConnection = window.location.protocol == "https:";
+
+    if(config.disableEarlyMediaPermissionRequests || !isSecureConnection)
+    {
+        if(result.audio === 0)
+            result.audio = -1;
+        if(result.video === 0)
+            result.video = -1;
+    }**/
+
+    return result;
+}
+
 var RTC = {
     rtcUtils: null,
     devices: {
-        audio: false,
-        video: false
+        audio: true,
+        video: true
     },
     localStreams: [],
     remoteStreams: {},
@@ -35,13 +65,15 @@ var RTC = {
 
         eventEmitter.removeListener(eventType, listener);
     },
-    createLocalStream: function (stream, type, change, videoType) {
+    createLocalStream: function (stream, type, change, videoType, isMuted, isGUMStream) {
 
-        var localStream =  new LocalStream(stream, type, eventEmitter, videoType);
+        var localStream =  new LocalStream(stream, type, eventEmitter, videoType, isGUMStream);
         //in firefox we have only one stream object
         if(this.localStreams.length == 0 ||
             this.localStreams[0].getOriginalStream() != stream)
             this.localStreams.push(localStream);
+        if(isMuted === true)
+            localStream.setMute(false);
 
         if(type == "audio")
         {
@@ -55,7 +87,7 @@ var RTC = {
         if(change)
             eventType = StreamEventTypes.EVENT_TYPE_LOCAL_CHANGED;
 
-        eventEmitter.emit(eventType, localStream);
+        eventEmitter.emit(eventType, localStream, isMuted);
         return localStream;
     },
     removeLocalStream: function (stream) {
@@ -139,7 +171,8 @@ var RTC = {
         APP.UI.addListener(UIEvents.PINNED_ENDPOINT,
             DataChannels.handlePinnedEndpointEvent);
         this.rtcUtils = new RTCUtils(this);
-        this.rtcUtils.obtainAudioAndVideoPermissions();
+        this.rtcUtils.obtainAudioAndVideoPermissions(
+            null, null, getMediaStreamUsage());
     },
     muteRemoteVideoStream: function (jid, value) {
         var stream;
@@ -180,11 +213,19 @@ var RTC = {
                 callback();
             };
         }
-        var videoStream = this.rtcUtils.createVideoStream(stream);
+        var videoStream = this.rtcUtils.createStream(stream, true);
         this.localVideo = this.createLocalStream(videoStream, "video", true, type);
         // Stop the stream to trigger onended event for old stream
         oldStream.stop();
         APP.xmpp.switchStreams(videoStream, oldStream,localCallback);
+    },
+    changeLocalAudio: function (stream, callback) {
+        var oldStream = this.localAudio.getOriginalStream();
+        var newStream = this.rtcUtils.createStream(stream);
+        this.localAudio = this.createLocalStream(newStream, "audio", true);
+        // Stop the stream to trigger onended event for old stream
+        oldStream.stop();
+        APP.xmpp.switchStreams(newStream, oldStream, callback, true);
     },
     /**
      * Checks if video identified by given src is desktop stream.
@@ -220,7 +261,7 @@ var RTC = {
         {
             APP.xmpp.sendVideoInfoPresence(mute);
             if(callback)
-                callback();
+                callback(mute);
         }
         else
         {

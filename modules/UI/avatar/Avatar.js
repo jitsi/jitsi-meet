@@ -20,6 +20,12 @@ function isUserMuted(jid) {
         }
     }
 
+    if(jid && jid == APP.xmpp.myJid())
+    {
+        var localVideo = APP.RTC.localVideo;
+        return (!localVideo || localVideo.isMuted());
+    }
+
     if (!APP.RTC.remoteStreams[jid] || !APP.RTC.remoteStreams[jid][MediaStreamType.VIDEO_TYPE]) {
         return null;
     }
@@ -119,8 +125,9 @@ var Avatar = {
             } else {
                 if (video && video.length > 0) {
                     setVisibility(video, !show);
-                    setVisibility(avatar, show);
                 }
+                setVisibility(avatar, show);
+
             }
         }
     },
