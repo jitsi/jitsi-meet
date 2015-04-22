@@ -1,4 +1,5 @@
 var XMPPEvents = {
+    CONNECTION_FAILED: "xmpp.connection.failed",
     CONFERENCE_CREATED: "xmpp.conferenceCreated.jingle",
     CALL_TERMINATED: "xmpp.callterminated.jingle",
     CALL_INCOMING: "xmpp.callincoming.jingle",

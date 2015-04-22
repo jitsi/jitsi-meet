@@ -42,27 +42,37 @@ function connect(jid, password) {
     }
 
     var anonymousConnectionFailed = false;
+    var wasConnected = false;
+    var lastErrorMsg;
     connection.connect(jid, password, function (status, msg) {
         console.log('Strophe status changed to',
-            Strophe.getStatusString(status));
+            Strophe.getStatusString(status), msg);
         if (status === Strophe.Status.CONNECTED) {
+
+            wasConnected = true;
+
             if (config.useStunTurn) {
                 connection.jingle.getStunAndTurnCredentials();
             }
 
             console.info("My Jabber ID: " + connection.jid);
 
-            if(password)
+            if (password)
                 authenticatedUser = true;
             maybeDoJoin();
         } else if (status === Strophe.Status.CONNFAIL) {
-            if(msg === 'x-strophe-bad-non-anon-jid') {
+            if (msg === 'x-strophe-bad-non-anon-jid') {
                 anonymousConnectionFailed = true;
             }
+            lastErrorMsg = msg;
         } else if (status === Strophe.Status.DISCONNECTED) {
-            if(anonymousConnectionFailed) {
+            if (anonymousConnectionFailed) {
                 // prompt user for username and password
                 XMPP.promptLogin();
+            } else if (!wasConnected) {
+                eventEmitter.emit(
+                    XMPPEvents.CONNECTION_FAILED,
+                    msg ? msg : lastErrorMsg);
             }
         } else if (status === Strophe.Status.AUTHFAIL) {
             // wrong password or username, prompt user

@@ -77,9 +77,27 @@ function streamHandler(stream, isMuted) {
     }
 }
 
+function onXmppConnectionFailed(stropheErrorMsg) {
+
+    var title = APP.translation.generateTranslatonHTML(
+        "dialog.error");
+
+    var message;
+    if (stropheErrorMsg) {
+        message = APP.translation.generateTranslatonHTML(
+            "dialog.connectErrorWithMsg", {msg: stropheErrorMsg});
+    } else {
+        message = APP.translation.generateTranslatonHTML(
+            "dialog.connectError");
+    }
+
+    messageHandler.openDialog(
+        title, message, true, {}, function (e, v, m, f) { return false; });
+}
+
 function onDisposeConference(unload) {
     Toolbar.showAuthenticateButton(false);
-};
+}
 
 function onDisplayNameChanged(jid, displayName) {
     ContactList.onDisplayNameChange(jid, displayName);
@@ -149,6 +167,7 @@ function registerListeners() {
         VideoLayout.updateConnectionStats);
     APP.connectionquality.addListener(CQEvents.STOP,
         VideoLayout.onStatsStop);
+    APP.xmpp.addListener(XMPPEvents.CONNECTION_FAILED, onXmppConnectionFailed);
     APP.xmpp.addListener(XMPPEvents.DISPOSE_CONFERENCE, onDisposeConference);
     APP.xmpp.addListener(XMPPEvents.GRACEFUL_SHUTDOWN, function () {
         messageHandler.openMessageDialog(
