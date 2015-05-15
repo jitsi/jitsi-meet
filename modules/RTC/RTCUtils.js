@@ -333,7 +333,43 @@ RTCUtils.prototype.obtainAudioAndVideoPermissions = function(devices, callback, 
         return;
     }
 
-    this.getUserMediaWithConstraints(
+    if (navigator.mozGetUserMedia) {
+
+        // With FF we can't split the stream into audio and video because FF
+        // doesn't support media stream constructors. So, we need to get the
+        // audio stream separately from the video stream using two distinct GUM
+        // calls. Not very user friendly :-( but we don't have many other
+        // options neither.
+        //
+        // Note that we pack those 2 streams in a single object and pass it to
+        // the successCallback method.
+
+        self.getUserMediaWithConstraints(
+            ['audio'],
+            function (audioStream) {
+                self.getUserMediaWithConstraints(
+                    ['video'],
+                    function (videoStream) {
+                        return self.successCallback({
+                            audioStream: audioStream,
+                            videoStream: videoStream
+                        });
+                    },
+                    function (error) {
+                        console.error('failed to obtain video stream - stop',
+                            error);
+                        return self.successCallback(null);
+                    },
+                    config.resolution || '360');
+            },
+            function (error) {
+                console.error('failed to obtain audio stream - stop',
+                        error);
+                return self.successCallback(null);
+            }
+        );
+    } else {
+        this.getUserMediaWithConstraints(
         newDevices,
         function (stream) {
             successCallback(stream);
@@ -342,10 +378,14 @@ RTCUtils.prototype.obtainAudioAndVideoPermissions = function(devices, callback, 
             self.errorCallback(error);
         },
         config.resolution || '360');
+    }
+
 }
 
 RTCUtils.prototype.successCallback = function (stream, usageOptions) {
-    if(stream)
+    // If this is FF, the stream parameter is *not* a MediaStream object, it's
+    // an object with two properties: audioStream, videoStream.
+    if(stream && !navigator.mozGetUserMedia)
         console.log('got', stream, stream.getAudioTracks().length,
             stream.getVideoTracks().length);
     this.handleLocalStream(stream, usageOptions);
@@ -388,10 +428,13 @@ RTCUtils.prototype.errorCallback = function (error) {
 
 RTCUtils.prototype.handleLocalStream = function(stream, usageOptions)
 {
+    // If this is FF, the stream parameter is *not* a MediaStream object, it's
+    // an object with two properties: audioStream, videoStream.
+    var audioStream, videoStream;
     if(window.webkitMediaStream)
     {
-        var audioStream = new webkitMediaStream();
-        var videoStream = new webkitMediaStream();
+        audioStream = new webkitMediaStream();
+        videoStream = new webkitMediaStream();
         if(stream) {
             var audioTracks = stream.getAudioTracks();
 
@@ -405,25 +448,24 @@ RTCUtils.prototype.handleLocalStream = function(stream, usageOptions)
                 videoStream.addTrack(videoTracks[i]);
             }
         }
-
-        var audioMuted = (usageOptions && usageOptions.audio != 1),
-            videoMuted = (usageOptions && usageOptions.video != 1);
-
-        var audioGUM = (!usageOptions || usageOptions.audio != -1),
-            videoGUM = (!usageOptions || usageOptions.video != -1);
-
-
-        this.service.createLocalStream(audioStream, "audio", null, null,
-            audioMuted, audioGUM);
-
-        this.service.createLocalStream(videoStream, "video", null, null,
-            videoMuted, videoGUM);
     }
     else
     {//firefox
-        this.service.createLocalStream(stream, "stream");
+        audioStream = stream.audioStream;
+        videoStream = stream.videoStream;
     }
 
+    var audioMuted = (usageOptions && usageOptions.audio != 1),
+        videoMuted = (usageOptions && usageOptions.video != 1);
+
+    var audioGUM = (!usageOptions || usageOptions.audio != -1),
+        videoGUM = (!usageOptions || usageOptions.video != -1);
+
+    this.service.createLocalStream(audioStream, "audio", null, null,
+        audioMuted, audioGUM);
+
+    this.service.createLocalStream(videoStream, "video", null, null,
+        videoMuted, videoGUM);
 };
 
 RTCUtils.prototype.createStream = function(stream, isVideo)
