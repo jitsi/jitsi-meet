@@ -179,7 +179,7 @@ TraceablePeerConnection.prototype.setLocalDescription = function (description, s
     this.trace('setLocalDescription::preTransform (Plan B)', dumpSDP(description));
     // if we're running on FF, transform to Plan A first.
     if (navigator.mozGetUserMedia) {
-        description = this.interop.toPlanA(description);
+        description = this.interop.toUnifiedPlan(description);
     } else {
         description = APP.simulcast.transformLocalDescription(description);
     }
@@ -206,7 +206,7 @@ TraceablePeerConnection.prototype.setRemoteDescription = function (description, 
     this.trace('setRemoteDescription::preTransform (Plan B)', dumpSDP(description));
     // if we're running on FF, transform to Plan A first.
     if (navigator.mozGetUserMedia) {
-        description = this.interop.toPlanA(description);
+        description = this.interop.toUnifiedPlan(description);
     }
     else {
         description = APP.simulcast.transformRemoteDescription(description);
