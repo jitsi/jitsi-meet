@@ -69,9 +69,6 @@ JingleSession.prototype.updateModifySourcesQueue = function() {
     }
 };
 
-//TODO: this array must be removed when firefox implement multistream support
-JingleSession.notReceivedSSRCs = [];
-
 JingleSession.prototype.initiate = function (peerjid, isInitiator) {
     var self = this;
     if (this.state !== null) {
