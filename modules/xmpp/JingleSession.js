@@ -54,7 +54,20 @@ function JingleSession(me, sid, connection, service) {
      */
     this.videoMuteByUser = false;
     this.modifySourcesQueue = async.queue(this._modifySources.bind(this), 1);
+    // We start with the queue paused. We resume it when the signaling state is
+    // stable and the ice connection state is connected.
+    this.modifySourcesQueue.pause();
 }
+
+JingleSession.prototype.updateModifySourcesQueue = function() {
+    var signalingState = this.peerconnection.signalingState;
+    var iceConnectionState = this.peerconnection.iceConnectionState;
+    if (signalingState === 'stable' && iceConnectionState === 'connected') {
+        this.modifySourcesQueue.resume();
+    } else {
+        this.modifySourcesQueue.pause();
+    }
+};
 
 //TODO: this array must be removed when firefox implement multistream support
 JingleSession.notReceivedSSRCs = [];
@@ -94,9 +107,11 @@ JingleSession.prototype.initiate = function (peerjid, isInitiator) {
     };
     this.peerconnection.onsignalingstatechange = function (event) {
         if (!(self && self.peerconnection)) return;
+        self.updateModifySourcesQueue();
     };
     this.peerconnection.oniceconnectionstatechange = function (event) {
         if (!(self && self.peerconnection)) return;
+        self.updateModifySourcesQueue();
         switch (self.peerconnection.iceConnectionState) {
             case 'connected':
                 this.startTime = new Date();
@@ -776,7 +791,17 @@ JingleSession.prototype.addSource = function (elem, fromJid) {
         });
         sdp.raw = sdp.session + sdp.media.join('');
     });
-    this.modifySourcesQueue.push();
+
+    this.modifySourcesQueue.push(function() {
+        // When a source is added and if this is FF, a new channel is allocated
+        // for receiving the added source. We need to diffuse the SSRC of this
+        // new recvonly channel to the rest of the peers.
+        console.log('modify sources done');
+
+        var newSdp = new SDP(self.peerconnection.localDescription.sdp);
+        console.log("SDPs", mySdp, newSdp);
+        self.notifyMySSRCUpdate(mySdp, newSdp);
+    });
 };
 
 JingleSession.prototype.removeSource = function (elem, fromJid) {
@@ -837,7 +862,17 @@ JingleSession.prototype.removeSource = function (elem, fromJid) {
         });
         sdp.raw = sdp.session + sdp.media.join('');
     });
-    this.modifySourcesQueue.push();
+
+    this.modifySourcesQueue.push(function() {
+        // When a source is removed and if this is FF, the recvonly channel that
+        // receives the remote stream is deactivated . We need to diffuse the
+        // recvonly SSRC removal to the rest of the peers.
+        console.log('modify sources done');
+
+        var newSdp = new SDP(self.peerconnection.localDescription.sdp);
+        console.log("SDPs", mySdp, newSdp);
+        self.notifyMySSRCUpdate(mySdp, newSdp);
+    });
 };
 
 JingleSession.prototype._modifySources = function (successCallback, queueCallback) {
