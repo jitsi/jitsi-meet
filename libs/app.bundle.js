@@ -12672,7 +12672,20 @@ function JingleSession(me, sid, connection, service) {
      */
     this.videoMuteByUser = false;
     this.modifySourcesQueue = async.queue(this._modifySources.bind(this), 1);
+    // We start with the queue paused. We resume it when the signaling state is
+    // stable and the ice connection state is connected.
+    this.modifySourcesQueue.pause();
 }
+
+JingleSession.prototype.updateModifySourcesQueue = function() {
+    var signalingState = this.peerconnection.signalingState;
+    var iceConnectionState = this.peerconnection.iceConnectionState;
+    if (signalingState === 'stable' && iceConnectionState === 'connected') {
+        this.modifySourcesQueue.resume();
+    } else {
+        this.modifySourcesQueue.pause();
+    }
+};
 
 //TODO: this array must be removed when firefox implement multistream support
 JingleSession.notReceivedSSRCs = [];
@@ -12712,9 +12725,11 @@ JingleSession.prototype.initiate = function (peerjid, isInitiator) {
     };
     this.peerconnection.onsignalingstatechange = function (event) {
         if (!(self && self.peerconnection)) return;
+        self.updateModifySourcesQueue();
     };
     this.peerconnection.oniceconnectionstatechange = function (event) {
         if (!(self && self.peerconnection)) return;
+        self.updateModifySourcesQueue();
         switch (self.peerconnection.iceConnectionState) {
             case 'connected':
                 this.startTime = new Date();
@@ -13394,7 +13409,17 @@ JingleSession.prototype.addSource = function (elem, fromJid) {
         });
         sdp.raw = sdp.session + sdp.media.join('');
     });
-    this.modifySourcesQueue.push();
+
+    this.modifySourcesQueue.push(function() {
+        // When a source is added and if this is FF, a new channel is allocated
+        // for receiving the added source. We need to diffuse the SSRC of this
+        // new recvonly channel to the rest of the peers.
+        console.log('modify sources done');
+
+        var newSdp = new SDP(self.peerconnection.localDescription.sdp);
+        console.log("SDPs", mySdp, newSdp);
+        self.notifyMySSRCUpdate(mySdp, newSdp);
+    });
 };
 
 JingleSession.prototype.removeSource = function (elem, fromJid) {
@@ -13455,7 +13480,17 @@ JingleSession.prototype.removeSource = function (elem, fromJid) {
         });
         sdp.raw = sdp.session + sdp.media.join('');
     });
-    this.modifySourcesQueue.push();
+
+    this.modifySourcesQueue.push(function() {
+        // When a source is removed and if this is FF, the recvonly channel that
+        // receives the remote stream is deactivated . We need to diffuse the
+        // recvonly SSRC removal to the rest of the peers.
+        console.log('modify sources done');
+
+        var newSdp = new SDP(self.peerconnection.localDescription.sdp);
+        console.log("SDPs", mySdp, newSdp);
+        self.notifyMySSRCUpdate(mySdp, newSdp);
+    });
 };
 
 JingleSession.prototype._modifySources = function (successCallback, queueCallback) {
@@ -28287,7 +28322,7 @@ Interop.prototype.toUnifiedPlan = function(desc) {
 
     // A helper map that sends mids to m-line objects. We use it later to
     // rebuild the Unified Plan style session.media array.
-    var media = {};
+    var mid2ml = {};
     session.media.forEach(function(channel) {
         if (typeof channel.rtcpMux !== 'string' ||
             channel.rtcpMux !== 'rtcp-mux') {
@@ -28317,7 +28352,7 @@ Interop.prototype.toUnifiedPlan = function(desc) {
         delete channel.mid;
 
         // inverted ssrc group map
-        var invertedGroups = {};
+        var ssrc2group = {};
         if (typeof ssrcGroups !== 'undefined' && Array.isArray(ssrcGroups)) {
             ssrcGroups.forEach(function (ssrcGroup) {
 
@@ -28330,33 +28365,37 @@ Interop.prototype.toUnifiedPlan = function(desc) {
                 if (typeof ssrcGroup.ssrcs !== 'undefined' &&
                     Array.isArray(ssrcGroup.ssrcs)) {
                     ssrcGroup.ssrcs.forEach(function (ssrc) {
-                        if (typeof invertedGroups[ssrc] === 'undefined') {
-                            invertedGroups[ssrc] = [];
+                        if (typeof ssrc2group[ssrc] === 'undefined') {
+                            ssrc2group[ssrc] = [];
                         }
 
-                        invertedGroups[ssrc].push(ssrcGroup);
+                        ssrc2group[ssrc].push(ssrcGroup);
                     });
                 }
             });
         }
 
         // ssrc to m-line index.
-        var mLines = {};
+        var ssrc2ml = {};
 
         if (typeof sources === 'object') {
 
             // Explode the Plan B channel sources with one m-line per source.
             Object.keys(sources).forEach(function(ssrc) {
 
+                // The m-line for this SSRC. We either create it from scratch
+                // or, if it's a grouped SSRC, we re-use a related mline. In
+                // other words, if the source is grouped with another source,
+                // put the two together in the same m-line.
                 var mLine;
-                if (typeof invertedGroups[ssrc] !== 'undefined' &&
-                    Array.isArray(invertedGroups[ssrc])) {
-                    invertedGroups[ssrc].some(function (ssrcGroup) {
+                if (typeof ssrc2group[ssrc] !== 'undefined' &&
+                    Array.isArray(ssrc2group[ssrc])) {
+                    ssrc2group[ssrc].some(function (ssrcGroup) {
                         // ssrcGroup.ssrcs *is* an Array, no need to check
                         // again here.
                         return ssrcGroup.ssrcs.some(function (related) {
-                            if (typeof mLines[related] === 'object') {
-                                mLine = mLines[related];
+                            if (typeof ssrc2ml[related] === 'object') {
+                                mLine = ssrc2ml[related];
                                 return true;
                             }
                         });
@@ -28370,7 +28409,7 @@ Interop.prototype.toUnifiedPlan = function(desc) {
                 } else {
                     // Use the "channel" as a prototype for the "mLine".
                     mLine = Object.create(channel);
-                    mLines[ssrc] = mLine;
+                    ssrc2ml[ssrc] = mLine;
 
                     if (typeof sources[ssrc].msid !== 'undefined') {
                         // Assign the msid of the source to the m-line. Note
@@ -28385,7 +28424,7 @@ Interop.prototype.toUnifiedPlan = function(desc) {
                     // We assign one SSRC per media line.
                     mLine.sources = {};
                     mLine.sources[ssrc] = sources[ssrc];
-                    mLine.ssrcGroups = invertedGroups[ssrc];
+                    mLine.ssrcGroups = ssrc2group[ssrc];
 
                     // Use the cached Unified Plan SDP (if it exists) to assign
                     // SSRCs to mids.
@@ -28393,9 +28432,9 @@ Interop.prototype.toUnifiedPlan = function(desc) {
                         typeof cached.media !== 'undefined' &&
                         Array.isArray(cached.media)) {
 
-                        cached.media.forEach(function(m) {
+                        cached.media.forEach(function (m) {
                             if (typeof m.sources === 'object') {
-                                Object.keys(m.sources).forEach(function(s) {
+                                Object.keys(m.sources).forEach(function (s) {
                                     if (s === ssrc) {
                                         mLine.mid = m.mid;
                                     }
@@ -28433,7 +28472,7 @@ Interop.prototype.toUnifiedPlan = function(desc) {
                     mLine.fingerprint = fingerprint;
                     mLine.port = port;
 
-                    media[mLine.mid] = mLine;
+                    mid2ml[mLine.mid] = mLine;
                 }
             });
         }
@@ -28470,7 +28509,7 @@ Interop.prototype.toUnifiedPlan = function(desc) {
             var mLine;
             cached.media.some(function(ma) {
                 if (mo.mid == ma.mid) {
-                    if (typeof media[mo.mid] === 'undefined') {
+                    if (typeof mid2ml[mo.mid] === 'undefined') {
 
                         // This is either an m-line containing a remote
                         // track only, or an m-line containing a remote
@@ -28527,8 +28566,8 @@ Interop.prototype.toUnifiedPlan = function(desc) {
             Array.isArray(cached.media)) {
             cached.media.forEach(function(pm) {
                 mids.push(pm.mid);
-                if (typeof media[pm.mid] !== 'undefined') {
-                    session.media.push(media[pm.mid]);
+                if (typeof mid2ml[pm.mid] !== 'undefined') {
+                    session.media.push(mid2ml[pm.mid]);
                 } else {
                     delete pm.msid;
                     delete pm.sources;
@@ -28540,10 +28579,27 @@ Interop.prototype.toUnifiedPlan = function(desc) {
         }
 
         // Add all the remaining (new) m-lines of the transformed SDP.
-        Object.keys(media).forEach(function(mid) {
+        Object.keys(mid2ml).forEach(function(mid) {
             if (mids.indexOf(mid) === -1) {
                 mids.push(mid);
-                session.media.push(media[mid]);
+                if (typeof mid2ml[mid].msid === 'undefined') {
+                    // This is a remote recvonly channel. Add its SSRC to the
+                    // sendrecv channel.
+                    // TODO(gp) what if there is no sendrecv channel?
+                    session.media.some(function (ml) {
+                        if (ml.direction === 'sendrecv' && ml.type == mid2ml[mid].type) {
+
+                            // this shouldn't have any ssrc-groups
+                            Object.keys(mid2ml[mid].sources).forEach(function (ssrc) {
+                                ml.sources[ssrc] = mid2ml[mid].sources[ssrc];
+                            });
+
+                            return true;
+                        }
+                    });
+                } else {
+                    session.media.push(mid2ml[mid]);
+                }
             }
         });
     }
