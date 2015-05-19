@@ -47,3 +47,21 @@
 #languages_selectbox{
     height: 40px;
 }
+
+
+#startMutedOptions {
+    padding-left: 10%;
+    text-indent: -10%;
+}
+
+#startAudioMuted {
+    width: 13px !important;
+}
+
+#startVideoMuted {
+    width: 13px !important;
+}
+
+.startMutedLabel {
+    float: left;
+}

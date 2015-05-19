@@ -29,6 +29,7 @@ var XMPPEvents = {
     AUTHENTICATION_REQUIRED: "xmpp.authentication_required",
     CHAT_ERROR_RECEIVED: "xmpp.chat_error_received",
     ETHERPAD: "xmpp.etherpad",
-    DEVICE_AVAILABLE: "xmpp.device_available"
+    DEVICE_AVAILABLE: "xmpp.device_available",
+    START_MUTED: "xmpp.start_muted"
 };
 module.exports = XMPPEvents;

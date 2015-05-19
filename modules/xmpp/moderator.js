@@ -177,6 +177,20 @@ var Moderator = {
                 { name: 'openSctp', value: config.openSctp})
                 .up();
         }
+        if(config.startAudioMuted !== undefined)
+        {
+            elem.c(
+                'property',
+                { name: 'startAudioMuted', value: config.startAudioMuted})
+                .up();
+        }
+        if(config.startVideoMuted !== undefined)
+        {
+            elem.c(
+                'property',
+                { name: 'startVideoMuted', value: config.startVideoMuted})
+                .up();
+        }
         elem.up();
         return elem;
     },

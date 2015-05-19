@@ -300,7 +300,9 @@ RTCUtils.prototype.setAvailableDevices = function (um, available) {
  * We ask for audio and video combined stream in order to get permissions and
  * not to ask twice.
  */
-RTCUtils.prototype.obtainAudioAndVideoPermissions = function(devices, callback, usageOptions) {
+RTCUtils.prototype.obtainAudioAndVideoPermissions =
+    function(devices, callback, usageOptions)
+{
     var self = this;
     // Get AV
 
@@ -321,7 +323,7 @@ RTCUtils.prototype.obtainAudioAndVideoPermissions = function(devices, callback, 
         for(var i = 0; i < devices.length; i++)
         {
             var device = devices[i];
-            if(usageOptions[device] !== -1)
+            if(usageOptions[device] === true)
                 newDevices.push(device);
         }
     else
@@ -455,11 +457,12 @@ RTCUtils.prototype.handleLocalStream = function(stream, usageOptions)
         videoStream = stream.videoStream;
     }
 
-    var audioMuted = (usageOptions && usageOptions.audio != 1),
-        videoMuted = (usageOptions && usageOptions.video != 1);
+    var audioMuted = (usageOptions && usageOptions.audio === false),
+        videoMuted = (usageOptions && usageOptions.video === false);
 
-    var audioGUM = (!usageOptions || usageOptions.audio != -1),
-        videoGUM = (!usageOptions || usageOptions.video != -1);
+    var audioGUM = (!usageOptions || usageOptions.audio !== false),
+        videoGUM = (!usageOptions || usageOptions.video !== false);
+
 
     this.service.createLocalStream(audioStream, "audio", null, null,
         audioMuted, audioGUM);

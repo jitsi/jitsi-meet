@@ -481,6 +481,12 @@ var XMPP = {
             case "devices":
                 connection.emuc.addDevicesToPresence(value);
                 break;
+            case "startMuted":
+                if(!Moderator.isModerator())
+                    return;
+                connection.emuc.addStartMutedToPresence(value[0],
+                    value[1]);
+                break;
             default :
                 console.log("Unknown tag for presence: " + name);
                 return;

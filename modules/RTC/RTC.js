@@ -17,28 +17,26 @@ var eventEmitter = new EventEmitter();
 function getMediaStreamUsage()
 {
     var result = {
-        audio: 1,
-        video: 1
+        audio: true,
+        video: true
     };
-    if( config.startAudioMuted === true)
-        result.audio = 0;
-    if( config.startVideoMuted === true)
-        result.video = 0;
 
     /** There are some issues with the desktop sharing
      * when this property is enabled.
+     * WARNING: We must change the implementation to start video/audio if we
+     * receive from the focus that the peer is not muted.
 
-     if(result.audio > 0 && result.video > 0)
-        return result;
      var isSecureConnection = window.location.protocol == "https:";
 
     if(config.disableEarlyMediaPermissionRequests || !isSecureConnection)
     {
-        if(result.audio === 0)
-            result.audio = -1;
-        if(result.video === 0)
-            result.video = -1;
-    }**/
+        result = {
+            audio: false,
+            video: false
+        };
+
+    }
+    **/
 
     return result;
 }

@@ -152,6 +152,13 @@ module.exports = function(XMPP, eventEmitter) {
                 $(document).trigger('videomuted.muc', [from, videoMuted.text()]);
             }
 
+            var startMuted = $(pres).find('>startmuted');
+            if (startMuted.length)
+            {
+                eventEmitter.emit(XMPPEvents.START_MUTED,
+                    startMuted.attr("audio") === "true", startMuted.attr("video") === "true");
+            }
+
             var devices = $(pres).find('>devices');
             if(devices.length)
             {
@@ -506,6 +513,15 @@ module.exports = function(XMPP, eventEmitter) {
                                     || 'sendrecv' }
                         ).up();
                     }
+                pres.up();
+            }
+
+            if(this.presMap["startMuted"] !== undefined)
+            {
+                pres.c("startmuted", {audio: this.presMap["startMuted"].audio,
+                    video: this.presMap["startMuted"].video,
+                    xmlns: "http://jitsi.org/jitmeet/start-muted"});
+                delete this.presMap["startMuted"];
             }
 
             pres.up();
@@ -585,6 +601,9 @@ module.exports = function(XMPP, eventEmitter) {
         },
         addUserIdToPresence: function (userId) {
             this.presMap['userId'] = userId;
+        },
+        addStartMutedToPresence: function (audio, video) {
+            this.presMap["startMuted"] = {audio: audio, video: video};
         },
         isModerator: function () {
             return this.role === 'moderator';

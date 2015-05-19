@@ -34,10 +34,8 @@ var roomName = null;
 
 function notifyForInitialMute()
 {
-    if(config.startAudioMuted || config.startVideoMuted)
-    {
-        messageHandler.notify(null, "notify.mutedTitle", "connected", "notify.muted", null, {timeOut: 120000});
-    }
+    messageHandler.notify(null, "notify.mutedTitle", "connected",
+        "notify.muted", null, {timeOut: 120000});
 }
 
 function setupPrezi()
@@ -254,6 +252,9 @@ function registerListeners() {
 
     APP.members.addListener(MemberEvents.DTMF_SUPPORT_CHANGED,
                             onDtmfSupportChanged);
+    APP.xmpp.addListener(XMPPEvents.START_MUTED, function (audio, video) {
+        SettingsMenu.setStartMuted(audio, video);
+    });
 }
 
 
@@ -408,8 +409,6 @@ UI.start = function (init) {
 
     SettingsMenu.init();
 
-    notifyForInitialMute();
-
 };
 
 function chatAddError(errorMessage, originalText)
@@ -485,6 +484,7 @@ function onLocalRoleChanged(jid, info, pres, isModerator)
     console.info("My role changed, new role: " + info.role);
     onModeratorStatusChanged(isModerator);
     VideoLayout.showModeratorIndicator();
+    SettingsMenu.onRoleChanged();
 
     if (isModerator) {
         Authentication.closeAuthenticationWindow();
@@ -728,6 +728,12 @@ function dump(elem, filename) {
 UI.getRoomName = function () {
     return roomName;
 };
+
+UI.setInitialMuteFromFocus = function (muteAudio, muteVideo) {
+    if(muteAudio || muteVideo) notifyForInitialMute();
+    if(muteAudio) UI.setAudioMuted(true);
+    if(muteVideo) UI.setVideoMute(true);
+}
 
 /**
  * Mutes/unmutes the local video.
