@@ -18,7 +18,7 @@
       "events": "*",
       "pako": "*",
       "i18next-client": "1.7.7",
-      "sdp-interop": "0.1.2",
+      "sdp-interop": "0.1.3",
       "sdp-transform": "1.4.0",
       "async": "0.9.0",
       "retry": "0.6.1"
