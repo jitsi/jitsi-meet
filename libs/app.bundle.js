@@ -705,28 +705,26 @@ var eventEmitter = new EventEmitter();
 function getMediaStreamUsage()
 {
     var result = {
-        audio: 1,
-        video: 1
+        audio: true,
+        video: true
     };
-    if( config.startAudioMuted === true)
-        result.audio = 0;
-    if( config.startVideoMuted === true)
-        result.video = 0;
 
     /** There are some issues with the desktop sharing
      * when this property is enabled.
+     * WARNING: We must change the implementation to start video/audio if we
+     * receive from the focus that the peer is not muted.
 
-     if(result.audio > 0 && result.video > 0)
-        return result;
      var isSecureConnection = window.location.protocol == "https:";
 
     if(config.disableEarlyMediaPermissionRequests || !isSecureConnection)
     {
-        if(result.audio === 0)
-            result.audio = -1;
-        if(result.video === 0)
-            result.video = -1;
-    }**/
+        result = {
+            audio: false,
+            video: false
+        };
+
+    }
+    **/
 
     return result;
 }
@@ -1276,7 +1274,9 @@ RTCUtils.prototype.setAvailableDevices = function (um, available) {
  * We ask for audio and video combined stream in order to get permissions and
  * not to ask twice.
  */
-RTCUtils.prototype.obtainAudioAndVideoPermissions = function(devices, callback, usageOptions) {
+RTCUtils.prototype.obtainAudioAndVideoPermissions =
+    function(devices, callback, usageOptions)
+{
     var self = this;
     // Get AV
 
@@ -1297,7 +1297,7 @@ RTCUtils.prototype.obtainAudioAndVideoPermissions = function(devices, callback, 
         for(var i = 0; i < devices.length; i++)
         {
             var device = devices[i];
-            if(usageOptions[device] !== -1)
+            if(usageOptions[device] === true)
                 newDevices.push(device);
         }
     else
@@ -1431,11 +1431,12 @@ RTCUtils.prototype.handleLocalStream = function(stream, usageOptions)
         videoStream = stream.videoStream;
     }
 
-    var audioMuted = (usageOptions && usageOptions.audio != 1),
-        videoMuted = (usageOptions && usageOptions.video != 1);
+    var audioMuted = (usageOptions && usageOptions.audio === false),
+        videoMuted = (usageOptions && usageOptions.video === false);
 
-    var audioGUM = (!usageOptions || usageOptions.audio != -1),
-        videoGUM = (!usageOptions || usageOptions.video != -1);
+    var audioGUM = (!usageOptions || usageOptions.audio !== false),
+        videoGUM = (!usageOptions || usageOptions.video !== false);
+
 
     this.service.createLocalStream(audioStream, "audio", null, null,
         audioMuted, audioGUM);
@@ -1505,10 +1506,8 @@ var roomName = null;
 
 function notifyForInitialMute()
 {
-    if(config.startAudioMuted || config.startVideoMuted)
-    {
-        messageHandler.notify(null, "notify.mutedTitle", "connected", "notify.muted", null, {timeOut: 120000});
-    }
+    messageHandler.notify(null, "notify.mutedTitle", "connected",
+        "notify.muted", null, {timeOut: 120000});
 }
 
 function setupPrezi()
@@ -1725,6 +1724,9 @@ function registerListeners() {
 
     APP.members.addListener(MemberEvents.DTMF_SUPPORT_CHANGED,
                             onDtmfSupportChanged);
+    APP.xmpp.addListener(XMPPEvents.START_MUTED, function (audio, video) {
+        SettingsMenu.setStartMuted(audio, video);
+    });
 }
 
 
@@ -1879,8 +1881,6 @@ UI.start = function (init) {
 
     SettingsMenu.init();
 
-    notifyForInitialMute();
-
 };
 
 function chatAddError(errorMessage, originalText)
@@ -1956,6 +1956,7 @@ function onLocalRoleChanged(jid, info, pres, isModerator)
     console.info("My role changed, new role: " + info.role);
     onModeratorStatusChanged(isModerator);
     VideoLayout.showModeratorIndicator();
+    SettingsMenu.onRoleChanged();
 
     if (isModerator) {
         Authentication.closeAuthenticationWindow();
@@ -2199,6 +2200,12 @@ function dump(elem, filename) {
 UI.getRoomName = function () {
     return roomName;
 };
+
+UI.setInitialMuteFromFocus = function (muteAudio, muteVideo) {
+    if(muteAudio || muteVideo) notifyForInitialMute();
+    if(muteAudio) UI.setAudioMuted(true);
+    if(muteVideo) UI.setVideoMute(true);
+}
 
 /**
  * Mutes/unmutes the local video.
@@ -5090,7 +5097,7 @@ function generateLanguagesSelectBox()
 var SettingsMenu = {
 
     init: function () {
-        $("#updateSettings").before(generateLanguagesSelectBox());
+        $("#startMutedOptions").before(generateLanguagesSelectBox());
         APP.translation.translateElement($("#languages_selectbox"));
         $('#settingsmenu>input').keyup(function(event){
             if(event.keyCode === 13) {//enter
@@ -5098,9 +5105,34 @@ var SettingsMenu = {
             }
         });
 
+        if(APP.xmpp.isModerator())
+        {
+            $("#startMutedOptions").css("display", "block");
+        }
+        else
+        {
+            $("#startMutedOptions").css("display", "none");
+        }
+
         $("#updateSettings").click(function () {
             SettingsMenu.update();
         });
+    },
+
+    onRoleChanged: function () {
+        if(APP.xmpp.isModerator())
+        {
+            $("#startMutedOptions").css("display", "block");
+        }
+        else
+        {
+            $("#startMutedOptions").css("display", "none");
+        }
+    },
+
+    setStartMuted: function (audio, video) {
+        $("#startAudioMuted").attr("checked", audio);
+        $("#startVideoMuted").attr("checked", video);
     },
 
     update: function() {
@@ -5119,6 +5151,10 @@ var SettingsMenu = {
         APP.xmpp.addToPresence("email", newEmail);
         var email = Settings.setEmail(newEmail);
 
+        var startAudioMuted = ($("#startAudioMuted").is(":checked"));
+        var startVideoMuted = ($("#startVideoMuted").is(":checked"));
+        APP.xmpp.addToPresence("startMuted",
+            [startAudioMuted, startVideoMuted]);
 
         Avatar.setUserAvatar(APP.xmpp.myJid(), email);
     },
@@ -15638,6 +15674,20 @@ var Moderator = {
                 { name: 'openSctp', value: config.openSctp})
                 .up();
         }
+        if(config.startAudioMuted !== undefined)
+        {
+            elem.c(
+                'property',
+                { name: 'startAudioMuted', value: config.startAudioMuted})
+                .up();
+        }
+        if(config.startVideoMuted !== undefined)
+        {
+            elem.c(
+                'property',
+                { name: 'startVideoMuted', value: config.startVideoMuted})
+                .up();
+        }
         elem.up();
         return elem;
     },
@@ -16187,6 +16237,13 @@ module.exports = function(XMPP, eventEmitter) {
                 $(document).trigger('videomuted.muc', [from, videoMuted.text()]);
             }
 
+            var startMuted = $(pres).find('>startmuted');
+            if (startMuted.length)
+            {
+                eventEmitter.emit(XMPPEvents.START_MUTED,
+                    startMuted.attr("audio") === "true", startMuted.attr("video") === "true");
+            }
+
             var devices = $(pres).find('>devices');
             if(devices.length)
             {
@@ -16541,6 +16598,15 @@ module.exports = function(XMPP, eventEmitter) {
                                     || 'sendrecv' }
                         ).up();
                     }
+                pres.up();
+            }
+
+            if(this.presMap["startMuted"] !== undefined)
+            {
+                pres.c("startmuted", {audio: this.presMap["startMuted"].audio,
+                    video: this.presMap["startMuted"].video,
+                    xmlns: "http://jitsi.org/jitmeet/start-muted"});
+                delete this.presMap["startMuted"];
             }
 
             pres.up();
@@ -16620,6 +16686,9 @@ module.exports = function(XMPP, eventEmitter) {
         },
         addUserIdToPresence: function (userId) {
             this.presMap['userId'] = userId;
+        },
+        addStartMutedToPresence: function (audio, video) {
+            this.presMap["startMuted"] = {audio: audio, video: video};
         },
         isModerator: function () {
             return this.role === 'moderator';
@@ -16808,6 +16877,14 @@ module.exports = function(XMPP, eventEmitter)
             // see http://xmpp.org/extensions/xep-0166.html#concepts-session
             switch (action) {
                 case 'session-initiate':
+                    var startMuted = $(iq).find('jingle>startmuted');
+                    if(startMuted && startMuted.length > 0)
+                    {
+                        var audioMuted = startMuted.attr("audio");
+                        var videoMuted = startMuted.attr("video");
+                        APP.UI.setInitialMuteFromFocus((audioMuted === "true"),
+                            (videoMuted === "true"));
+                    }
                     sess = new JingleSession(
                         $(iq).attr('to'), $(iq).find('jingle').attr('sid'),
                         this.connection, XMPP);
@@ -17450,8 +17527,13 @@ function registerListeners() {
     });
 }
 
-function setupEvents() {
-    $(window).bind('beforeunload', function () {
+var unload = (function () {
+    var unloaded = false;
+
+    return function () {
+        if (unloaded) { return; }
+        unloaded = true;
+
         if (connection && connection.connected) {
             // ensure signout
             $.ajax({
@@ -17460,24 +17542,41 @@ function setupEvents() {
                 async: false,
                 cache: false,
                 contentType: 'application/xml',
-                data: "<body rid='" + (connection.rid || connection._proto.rid)
-                    + "' xmlns='http://jabber.org/protocol/httpbind' sid='"
-                    + (connection.sid || connection._proto.sid)
-                    + "' type='terminate'>" +
-                    "<presence xmlns='jabber:client' type='unavailable'/>" +
-                    "</body>",
+                data: "<body rid='" + (connection.rid || connection._proto.rid) +
+                    "' xmlns='http://jabber.org/protocol/httpbind' sid='" +
+                    (connection.sid || connection._proto.sid)  +
+                    "' type='terminate'>" +
+                "<presence xmlns='jabber:client' type='unavailable'/>" +
+                "</body>",
                 success: function (data) {
                     console.log('signed out');
                     console.log(data);
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
                     console.log('signout error',
-                            textStatus + ' (' + errorThrown + ')');
+                        textStatus + ' (' + errorThrown + ')');
                 }
             });
         }
         XMPP.disposeConference(true);
-    });
+    };
+})();
+
+function setupEvents() {
+    // In recent versions of FF the 'beforeunload' event is not fired when the
+    // window or the tab is closed. It is only fired when we leave the page
+    // (change URL). If this participant doesn't unload properly, then it
+    // becomes a ghost for the rest of the participants that stay in the
+    // conference. Thankfully handling the 'unload' event in addition to the
+    // 'beforeunload' event seems to garante the execution of the 'unload'
+    // method at least once.
+    //
+    // The 'unload' method can safely be run multiple times, it will actually do
+    // something only the first time that it's run, so we're don't have to worry
+    // about browsers that fire both events.
+
+    $(window).bind('beforeunload', unload);
+    $(window).bind('unload', unload);
 }
 
 var XMPP = {
@@ -17740,6 +17839,12 @@ var XMPP = {
                 break;
             case "devices":
                 connection.emuc.addDevicesToPresence(value);
+                break;
+            case "startMuted":
+                if(!Moderator.isModerator())
+                    return;
+                connection.emuc.addStartMutedToPresence(value[0],
+                    value[1]);
                 break;
             default :
                 console.log("Unknown tag for presence: " + name);
@@ -28054,6 +28159,8 @@ module.exports = function arrayEquals(array) {
 exports.Interop = require('./interop');
 
 },{"./interop":88}],88:[function(require,module,exports){
+"use strict";
+
 var transform = require('./transform');
 var arrayEquals = require('./array-equals');
 
@@ -28122,46 +28229,47 @@ Interop.prototype.toPlanB = function(desc) {
     session.media = [];
 
     // Associative array that maps channel types to channel objects for fast
-    // access to channel objects by their type, e.g. channels['audio']->channel
+    // access to channel objects by their type, e.g. type2bl['audio']->channel
     // obj.
-    var channels = {};
+    var type2bl = {};
 
     // Used to build the group:BUNDLE value after the channels construction
     // loop.
     var types = [];
 
-    // Implode the Unified Plan m-lines/tracks into Plan B "channels".
-    media.forEach(function(mLine) {
+    // Implode the Unified Plan m-lines/tracks into Plan B channels.
+    media.forEach(function(unifiedLine) {
 
         // rtcp-mux is required in the Plan B SDP.
-        if (typeof mLine.rtcpMux !== 'string' ||
-            mLine.rtcpMux !== 'rtcp-mux') {
+        if ((typeof unifiedLine.rtcpMux !== 'string' ||
+            unifiedLine.rtcpMux !== 'rtcp-mux') &&
+            unifiedLine.direction !== 'inactive') {
             throw new Error('Cannot convert to Plan B because m-lines ' +
                 'without the rtcp-mux attribute were found.');
         }
 
-        // If we don't have a channel for this mLine.type, then use this mLine
+        // If we don't have a channel for this unifiedLine.type, then use this unifiedLine
         // as the channel basis.
-        if (typeof channels[mLine.type] === 'undefined') {
-            channels[mLine.type] = mLine;
+        if (typeof type2bl[unifiedLine.type] === 'undefined') {
+            type2bl[unifiedLine.type] = unifiedLine;
         }
 
         // Add sources to the channel and handle a=msid.
-        if (typeof mLine.sources === 'object') {
-            Object.keys(mLine.sources).forEach(function(ssrc) {
-                if (typeof channels[mLine.type].sources !== 'object')
-                    channels[mLine.type].sources = {};
+        if (typeof unifiedLine.sources === 'object') {
+            Object.keys(unifiedLine.sources).forEach(function(ssrc) {
+                if (typeof type2bl[unifiedLine.type].sources !== 'object')
+                    type2bl[unifiedLine.type].sources = {};
 
                 // Assign the sources to the channel.
-                channels[mLine.type].sources[ssrc] = mLine.sources[ssrc];
+                type2bl[unifiedLine.type].sources[ssrc] = unifiedLine.sources[ssrc];
 
-                if (typeof mLine.msid !== 'undefined') {
+                if (typeof unifiedLine.msid !== 'undefined') {
                     // In Plan B the msid is an SSRC attribute. Also, we don't
                     // care about the obsolete label and mslabel attributes.
                     //
-                    // Note that it is not guaranteed that the mLine will have
+                    // Note that it is not guaranteed that the unifiedLine will have
                     // an msid. recvonly channels in particular don't have one.
-                    channels[mLine.type].sources[ssrc].msid = mLine.msid;
+                    type2bl[unifiedLine.type].sources[ssrc].msid = unifiedLine.msid;
                 }
                 // NOTE ssrcs in ssrc groups will share msids, as
                 // draft-uberti-rtcweb-plan-00 mandates.
@@ -28169,39 +28277,39 @@ Interop.prototype.toPlanB = function(desc) {
         }
 
         // Add ssrc groups to the channel.
-        if (typeof mLine.ssrcGroups !== 'undefined' &&
-                Array.isArray(mLine.ssrcGroups)) {
+        if (typeof unifiedLine.ssrcGroups !== 'undefined' &&
+                Array.isArray(unifiedLine.ssrcGroups)) {
 
             // Create the ssrcGroups array, if it's not defined.
-            if (typeof channel.ssrcGroups === 'undefined' ||
-                    !Array.isArray(channel.ssrcGroups)) {
-                channel.ssrcGroups = [];
+            if (typeof type2bl[unifiedLine.type].ssrcGroups === 'undefined' ||
+                    !Array.isArray(type2bl[unifiedLine.type].ssrcGroups)) {
+                type2bl[unifiedLine.type].ssrcGroups = [];
             }
 
-            channel.ssrcGroups = channel.ssrcGroups.concat(mLine.ssrcGroups);
+            type2bl[unifiedLine.type].ssrcGroups = type2bl[unifiedLine.type].ssrcGroups.concat(unifiedLine.ssrcGroups);
         }
 
-        if (channels[mLine.type] === mLine) {
+        if (type2bl[unifiedLine.type] === unifiedLine) {
             // Copy ICE related stuff from the principal media line.
-            mLine.candidates = media[0].candidates;
-            mLine.iceUfrag = media[0].iceUfrag;
-            mLine.icePwd = media[0].icePwd;
-            mLine.fingerprint = media[0].fingerprint;
+            unifiedLine.candidates = media[0].candidates;
+            unifiedLine.iceUfrag = media[0].iceUfrag;
+            unifiedLine.icePwd = media[0].icePwd;
+            unifiedLine.fingerprint = media[0].fingerprint;
 
             // Plan B mids are in ['audio', 'video', 'data']
-            mLine.mid = mLine.type;
+            unifiedLine.mid = unifiedLine.type;
 
             // Plan B doesn't support/need the bundle-only attribute.
-            delete mLine.bundleOnly;
+            delete unifiedLine.bundleOnly;
 
             // In Plan B the msid is an SSRC attribute.
-            delete mLine.msid;
+            delete unifiedLine.msid;
 
             // Used to build the group:BUNDLE value after this loop.
-            types.push(mLine.type);
+            types.push(unifiedLine.type);
 
             // Add the channel to the new media array.
-            session.media.push(mLine);
+            session.media.push(unifiedLine);
         }
     });
 
@@ -28317,34 +28425,35 @@ Interop.prototype.toUnifiedPlan = function(desc) {
 
     // A helper map that sends mids to m-line objects. We use it later to
     // rebuild the Unified Plan style session.media array.
-    var mid2ml = {};
-    session.media.forEach(function(channel) {
-        if (typeof channel.rtcpMux !== 'string' ||
-            channel.rtcpMux !== 'rtcp-mux') {
+    var mid2ul = {};
+    session.media.forEach(function(bLine) {
+        if ((typeof bLine.rtcpMux !== 'string' ||
+            bLine.rtcpMux !== 'rtcp-mux') &&
+            bLine.direction !== 'inactive') {
             throw new Error("Cannot convert to Unified Plan because m-lines " +
                 "without the rtcp-mux attribute were found.");
         }
 
         // With rtcp-mux and bundle all the channels should have the same ICE
         // stuff.
-        var sources = channel.sources;
-        var ssrcGroups = channel.ssrcGroups;
-        var candidates = channel.candidates;
-        var iceUfrag = channel.iceUfrag;
-        var icePwd = channel.icePwd;
-        var fingerprint = channel.fingerprint;
-        var port = channel.port;
+        var sources = bLine.sources;
+        var ssrcGroups = bLine.ssrcGroups;
+        var candidates = bLine.candidates;
+        var iceUfrag = bLine.iceUfrag;
+        var icePwd = bLine.icePwd;
+        var fingerprint = bLine.fingerprint;
+        var port = bLine.port;
 
-        // We'll use the "channel" object as a prototype for each new "mLine"
+        // We'll use the "bLine" object as a prototype for each new "mLine"
         // that we create, but first we need to clean it up a bit.
-        delete channel.sources;
-        delete channel.ssrcGroups;
-        delete channel.candidates;
-        delete channel.iceUfrag;
-        delete channel.icePwd;
-        delete channel.fingerprint;
-        delete channel.port;
-        delete channel.mid;
+        delete bLine.sources;
+        delete bLine.ssrcGroups;
+        delete bLine.candidates;
+        delete bLine.iceUfrag;
+        delete bLine.icePwd;
+        delete bLine.fingerprint;
+        delete bLine.port;
+        delete bLine.mid;
 
         // inverted ssrc group map
         var ssrc2group = {};
@@ -28378,11 +28487,11 @@ Interop.prototype.toUnifiedPlan = function(desc) {
             // Explode the Plan B channel sources with one m-line per source.
             Object.keys(sources).forEach(function(ssrc) {
 
-                // The m-line for this SSRC. We either create it from scratch
-                // or, if it's a grouped SSRC, we re-use a related mline. In
-                // other words, if the source is grouped with another source,
-                // put the two together in the same m-line.
-                var mLine;
+                // The (unified) m-line for this SSRC. We either create it from
+                // scratch or, if it's a grouped SSRC, we re-use a related
+                // mline. In other words, if the source is grouped with another
+                // source, put the two together in the same m-line.
+                var unifiedLine;
                 if (typeof ssrc2group[ssrc] !== 'undefined' &&
                     Array.isArray(ssrc2group[ssrc])) {
                     ssrc2group[ssrc].some(function (ssrcGroup) {
@@ -28390,21 +28499,21 @@ Interop.prototype.toUnifiedPlan = function(desc) {
                         // again here.
                         return ssrcGroup.ssrcs.some(function (related) {
                             if (typeof ssrc2ml[related] === 'object') {
-                                mLine = ssrc2ml[related];
+                                unifiedLine = ssrc2ml[related];
                                 return true;
                             }
                         });
                     });
                 }
 
-                if (typeof mLine === 'object') {
+                if (typeof unifiedLine === 'object') {
                     // the m-line already exists. Just add the source.
-                    mLine.sources[ssrc] = sources[ssrc];
+                    unifiedLine.sources[ssrc] = sources[ssrc];
                     delete sources[ssrc].msid;
                 } else {
-                    // Use the "channel" as a prototype for the "mLine".
-                    mLine = Object.create(channel);
-                    ssrc2ml[ssrc] = mLine;
+                    // Use the "bLine" as a prototype for the "unifiedLine".
+                    unifiedLine = Object.create(bLine);
+                    ssrc2ml[ssrc] = unifiedLine;
 
                     if (typeof sources[ssrc].msid !== 'undefined') {
                         // Assign the msid of the source to the m-line. Note
@@ -28412,14 +28521,14 @@ Interop.prototype.toUnifiedPlan = function(desc) {
                         // msid. In particular "recvonly" sources don't have an
                         // msid. Note that "recvonly" is a term only defined
                         // for m-lines.
-                        mLine.msid = sources[ssrc].msid;
+                        unifiedLine.msid = sources[ssrc].msid;
                         delete sources[ssrc].msid;
                     }
 
                     // We assign one SSRC per media line.
-                    mLine.sources = {};
-                    mLine.sources[ssrc] = sources[ssrc];
-                    mLine.ssrcGroups = ssrc2group[ssrc];
+                    unifiedLine.sources = {};
+                    unifiedLine.sources[ssrc] = sources[ssrc];
+                    unifiedLine.ssrcGroups = ssrc2group[ssrc];
 
                     // Use the cached Unified Plan SDP (if it exists) to assign
                     // SSRCs to mids.
@@ -28431,14 +28540,14 @@ Interop.prototype.toUnifiedPlan = function(desc) {
                             if (typeof m.sources === 'object') {
                                 Object.keys(m.sources).forEach(function (s) {
                                     if (s === ssrc) {
-                                        mLine.mid = m.mid;
+                                        unifiedLine.mid = m.mid;
                                     }
                                 });
                             }
                         });
                     }
 
-                    if (typeof mLine.mid === 'undefined') {
+                    if (typeof unifiedLine.mid === 'undefined') {
 
                         // If this is an SSRC that we see for the first time
                         // assign it a new mid. This is typically the case when
@@ -28451,23 +28560,23 @@ Interop.prototype.toUnifiedPlan = function(desc) {
                         //
                         // Because FF generates answers in Unified Plan style,
                         // we MUST already have a cached answer with all the
-                        // local SSRCs mapped to some mLine/mid.
+                        // local SSRCs mapped to some m-line/mid.
 
                         if (desc.type === 'answer') {
                             throw new Error("An unmapped SSRC was found.");
                         }
 
-                        mLine.mid = [channel.type, '-', ssrc].join('');
+                        unifiedLine.mid = [bLine.type, '-', ssrc].join('');
                     }
 
                     // Include the candidates in the 1st media line.
-                    mLine.candidates = candidates;
-                    mLine.iceUfrag = iceUfrag;
-                    mLine.icePwd = icePwd;
-                    mLine.fingerprint = fingerprint;
-                    mLine.port = port;
+                    unifiedLine.candidates = candidates;
+                    unifiedLine.iceUfrag = iceUfrag;
+                    unifiedLine.icePwd = icePwd;
+                    unifiedLine.fingerprint = fingerprint;
+                    unifiedLine.port = port;
 
-                    mid2ml[mLine.mid] = mLine;
+                    mid2ul[unifiedLine.mid] = unifiedLine;
                 }
             });
         }
@@ -28481,71 +28590,57 @@ Interop.prototype.toUnifiedPlan = function(desc) {
     if (desc.type === 'answer') {
 
         // The media lines in the answer must match the media lines in the
-        // offer. The order is important too. Here we use the cached offer to
-        // find the m-lines that are missing (from the converted answer), and
-        // use the cached answer to complete the converted answer.
+        // offer. The order is important too. Here we assume that Firefox is the
+        // answerer, so we merely have to use the reconstructed (unified) answer
+        // to update the cached (unified) answer accordingly.
+        //
+        // In the general case, one would have to use the cached (unified) offer
+        // to find the m-lines that are missing from the reconstructed answer,
+        // potentially grabbing them from the cached (unified) answer. One has
+        // to be carefull with this approach because inactive m-lines do not
+        // always have an mid, making it tricky (impossible?) to find where
+        // exactly and which m-lines are missing from the reconstructed answer.
 
-        if (typeof this.cache['offer'] === 'undefined') {
-            throw new Error("An answer is being processed but we couldn't " +
-                    "find a cached offer.");
-        }
+        for (var i = 0; i < cached.media.length; i++) {
+            var unifiedLine = cached.media[i];
 
-        var cachedOffer = transform.parse(this.cache['offer']);
+            if (typeof mid2ul[unifiedLine.mid] === 'undefined') {
 
-        if (typeof cachedOffer === 'undefined' ||
-            typeof cachedOffer.media === 'undefined' ||
-            !Array.isArray(cachedOffer.media)) {
-                // FIXME(gp) is this really a problem in the general case?
-                throw new Error("The cached offer has no media.");
-        }
+                // The mid isn't in the reconstructed (unified) answer.
+                // This is either a (unified) m-line containing a remote
+                // track only, or a (unified) m-line containing a remote
+                // track and a local track that has been removed.
+                // In either case, it MUST exist in the cached
+                // (unified) answer.
+                //
+                // In case this is a removed local track, clean-up
+                // the (unified) m-line and make sure it's 'recvonly' or
+                // 'inactive'.
 
-        cachedOffer.media.forEach(function(mo) {
-
-            var mLine;
-            cached.media.some(function(ma) {
-                if (mo.mid == ma.mid) {
-                    if (typeof mid2ml[mo.mid] === 'undefined') {
-
-                        // This is either an m-line containing a remote
-                        // track only, or an m-line containing a remote
-                        // track and a local track that has been removed.
-                        // In either case, it MUST exist in the cached
-                        // answer.
-                        //
-                        // In case this is a removed local track, clean-up
-                        // the m-line and make sure it's 'recvonly'.
-
-                        // TODO sendonly -> inactive makes more sense.
-                        delete ma.msid;
-                        delete ma.sources;
-                        delete ma.ssrcGroups;
-                        if (!ma.direction
-                            || ma.direction === 'sendonly'
-                            || ma.direction === 'sendrecv')
-                            ma.direction = 'recvonly';
-                    } else {
-                        // This is an m-line/channel that contains a local
-                        // track (sendrecv or sendonly channel) or it's a
-                        // recvonly m-line/channel. In either case, since we're
-                        // going from PlanB -> Unified Plan this m-line MUST
-                        // exist in the cached answer.
-                    }
-
-                    // assign the found object.
-                    mLine = ma;
-                    return true;
-                }
-            });
-
-            if (typeof mLine === 'undefined') {
-                throw new Error("The cached offer contains an m-line that " +
-                        "doesn't exist neither in the cached answer nor in " +
-                        "the converted answer.");
+                delete unifiedLine.msid;
+                delete unifiedLine.sources;
+                delete unifiedLine.ssrcGroups;
+                if (!unifiedLine.direction
+                    || unifiedLine.direction === 'sendrecv')
+                    unifiedLine.direction = 'recvonly';
+                if (!unifiedLine.direction
+                    || unifiedLine.direction === 'sendonly')
+                    unifiedLine.direction = 'inactive';
+            } else {
+                // This is an (unified) m-line/channel that contains a local
+                // track (sendrecv or sendonly channel) or it's a unified
+                // recvonly m-line/channel. In either case, since we're
+                // going from PlanB -> Unified Plan this m-line MUST
+                // exist in the cached answer.
             }
 
-            session.media.push(mLine);
-            mids.push(mLine.mid);
-        });
+            session.media.push(unifiedLine);
+
+            if (typeof unifiedLine.mid === 'string') {
+                // inactive lines don't/may not have an mid.
+                mids.push(unifiedLine.mid);
+            }
+        }
     } else {
 
         // SDP offer/answer (and the JSEP spec) forbids removing an m-section
@@ -28559,41 +28654,48 @@ Interop.prototype.toUnifiedPlan = function(desc) {
         if (typeof cached !== 'undefined' &&
             typeof cached.media !== 'undefined' &&
             Array.isArray(cached.media)) {
-            cached.media.forEach(function(pm) {
-                mids.push(pm.mid);
-                if (typeof mid2ml[pm.mid] !== 'undefined') {
-                    session.media.push(mid2ml[pm.mid]);
+            cached.media.forEach(function(unifiedLine) {
+                mids.push(unifiedLine.mid);
+                if (typeof mid2ul[unifiedLine.mid] !== 'undefined') {
+                    session.media.push(mid2ul[unifiedLine.mid]);
                 } else {
-                    delete pm.msid;
-                    delete pm.sources;
-                    delete pm.ssrcGroups;
-                    pm.direction = 'recvonly';
-                    session.media.push(pm);
+                    delete unifiedLine.msid;
+                    delete unifiedLine.sources;
+                    delete unifiedLine.ssrcGroups;
+                    if (!unifiedLine.direction
+                        || unifiedLine.direction === 'sendrecv')
+                        unifiedLine.direction = 'recvonly';
+                    if (!unifiedLine.direction
+                        || unifiedLine.direction === 'sendonly')
+                        unifiedLine.direction = 'inactive';
+                    session.media.push(unifiedLine);
                 }
             });
         }
 
         // Add all the remaining (new) m-lines of the transformed SDP.
-        Object.keys(mid2ml).forEach(function(mid) {
+        Object.keys(mid2ul).forEach(function(mid) {
             if (mids.indexOf(mid) === -1) {
                 mids.push(mid);
-                if (typeof mid2ml[mid].msid === 'undefined') {
+                if (typeof mid2ul[mid].direction === 'recvonly') {
                     // This is a remote recvonly channel. Add its SSRC to the
-                    // sendrecv channel.
-                    // TODO(gp) what if there is no sendrecv channel?
-                    session.media.some(function (ml) {
-                        if (ml.direction === 'sendrecv' && ml.type == mid2ml[mid].type) {
+                    // appropriate sendrecv or sendonly channel.
+                    // TODO(gp) what if we don't have sendrecv/sendonly channel?
+                    session.media.some(function (unifiedLine) {
+                        if ((unifiedLine.direction === 'sendrecv' ||
+                            unifiedLine.direction === 'sendonly') &&
+                            unifiedLine.type === mid2ul[mid].type) {
 
-                            // this shouldn't have any ssrc-groups
-                            Object.keys(mid2ml[mid].sources).forEach(function (ssrc) {
-                                ml.sources[ssrc] = mid2ml[mid].sources[ssrc];
+                            // mid2ul[mid] shouldn't have any ssrc-groups
+                            Object.keys(mid2ul[mid].sources).forEach(function (ssrc) {
+                                unifiedLine.sources[ssrc] = mid2ul[mid].sources[ssrc];
                             });
 
                             return true;
                         }
                     });
                 } else {
-                    session.media.push(mid2ml[mid]);
+                    session.media.push(mid2ul[mid]);
                 }
             }
         });
@@ -29388,7 +29490,8 @@ var XMPPEvents = {
     AUTHENTICATION_REQUIRED: "xmpp.authentication_required",
     CHAT_ERROR_RECEIVED: "xmpp.chat_error_received",
     ETHERPAD: "xmpp.etherpad",
-    DEVICE_AVAILABLE: "xmpp.device_available"
+    DEVICE_AVAILABLE: "xmpp.device_available",
+    START_MUTED: "xmpp.start_muted"
 };
 module.exports = XMPPEvents;
 },{}],106:[function(require,module,exports){
