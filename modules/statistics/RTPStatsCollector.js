@@ -294,7 +294,7 @@ StatsCollector.prototype.start = function ()
         );
     }
 
-    if (config.logStats) {
+    if (config.logStats && !navigator.mozGetUserMedia) {
         this.gatherStatsIntervalId = setInterval(
             function () {
                 self.peerconnection.getStats(
