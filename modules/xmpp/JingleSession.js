@@ -94,8 +94,16 @@ JingleSession.prototype.initiate = function (peerjid, isInitiator) {
         self.sendIceCandidate(event.candidate);
     };
     this.peerconnection.onaddstream = function (event) {
-        console.log("REMOTE STREAM ADDED: " + event.stream + " - " + event.stream.id);
-        self.remoteStreamAdded(event);
+        if (event.stream.id !== 'default') {
+            console.log("REMOTE STREAM ADDED: " + event.stream + " - " + event.stream.id);
+            self.remoteStreamAdded(event);
+        } else {
+            // This is a recvonly stream. Clients that implement Unified Plan,
+            // such as Firefox use recvonly "streams/channels/tracks" for
+            // receiving remote stream/tracks, as opposed to Plan B where there
+            // are only 3 channels: audio, video and data.
+            console.log("RECVONLY REMOTE STREAM IGNORED: " + event.stream + " - " + event.stream.id);
+        }
     };
     this.peerconnection.onremovestream = function (event) {
         // Remove the stream from remoteStreams
