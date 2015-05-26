@@ -7706,7 +7706,9 @@ var VideoLayout = (function (my) {
             container.id = 'mixedstream';
             container.className = 'videocontainer';
             remotes.appendChild(container);
-            UIUtil.playSoundNotification('userJoined');
+            if(!config.startAudioMuted ||
+                config.startAudioMuted > APP.members.size())
+                UIUtil.playSoundNotification('userJoined');
         }
 
         if (container) {
@@ -8227,7 +8229,9 @@ var VideoLayout = (function (my) {
             // Remove whole container
             container.remove();
 
-            UIUtil.playSoundNotification('userLeft');
+            if(!config.startAudioMuted ||
+                config.startAudioMuted > APP.members.size())
+                UIUtil.playSoundNotification('userLeft');
             VideoLayout.resizeThumbnails();
         }
 
@@ -10283,6 +10287,12 @@ var Members = {
     },
     removeListener: function (type, listener) {
         eventEmitter.removeListener(type, listener);
+    },
+    size: function () {
+        return Object.keys(members).length;
+    },
+    getMembers: function () {
+        return members;
     }
 };
 

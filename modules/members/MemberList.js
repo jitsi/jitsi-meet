@@ -117,6 +117,12 @@ var Members = {
     },
     removeListener: function (type, listener) {
         eventEmitter.removeListener(type, listener);
+    },
+    size: function () {
+        return Object.keys(members).length;
+    },
+    getMembers: function () {
+        return members;
     }
 };
 
