@@ -202,54 +202,6 @@ Restart nginx to get the new configuration:
 invoke-rc.d nginx restart
 ```
 
-
-## Install [Turn server](https://github.com/andyet/otalk-server/tree/master/restund)
-```sh
-apt-get install make gcc
-wget http://creytiv.com/pub/re-0.4.7.tar.gz
-tar zxvf re-0.4.7.tar.gz
-ln -s re-0.4.7 re
-cd re-0.4.7
-sudo make install PREFIX=/usr
-cd ..
-wget http://creytiv.com/pub/restund-0.4.2.tar.gz
-wget https://raw.github.com/andyet/otalk-server/master/restund/restund-auth.patch
-tar zxvf restund-0.4.2.tar.gz
-cd restund-0.4.2/
-patch -p1 < ../restund-auth.patch
-sudo make install PREFIX=/usr
-cp debian/restund.init /etc/init.d/restund
-chmod +x /etc/init.d/restund
-cd /etc
-wget https://raw.github.com/andyet/otalk-server/master/restund/restund.conf
-```
-
-Configure addresses and ports as desired, and the password to be configured in prosody:
-```
-realm           jitsi.example.com
-# share this with your prosody server
-auth_shared     YOURSECRET4
-
-# modules
-module_path     /usr/lib/restund/modules
-turn_relay_addr [turn ip address]
-```
-
-Configure prosody to use it in `/etc/prosody/prosody.cfg.lua`.  Add to your virtual host:
-```
-turncredentials_secret = "YOURSECRET4";
-turncredentials = {
-    { type = "turn", host = "turn.address.ip.configured", port = 3478, transport = "tcp" }
-}
-```
-
-Add turncredentials module in the "modules_enabled" section
-
-Reload prosody if needed
-```
-prosodyctl restart
-```
-
 ## Running behind NAT
 In case of videobridge being installed on a machine behind NAT, add the following extra lines to the file `~/.sip-communicator/sip-communicator.properties` (in the home of user running the videobridge):
 ```
