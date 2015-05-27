@@ -1,6 +1,6 @@
 # Server Installation for Jitsi Meet
 
-This describes configuring a server `jitsi.example.com`.  You will need to
+This describes configuring a server `jitsi.example.com` running Debian or a Debian Derivative. You will need to
 change references to that to match your host, and generate some passwords for
 `YOURSECRET1`, `YOURSECRET2`, `YOURSECRET3` and `YOURSECRET4`.
 
