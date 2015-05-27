@@ -140,6 +140,8 @@ Install JRE if missing:
 apt-get install default-jre
 ```
 
+_NOTE: When installing on older Debian releases keep in mind that you need JRE >= 1.7._
+
 In the user home that will be starting Jitsi Videobridge create `.sip-communicator` folder and add the file `sip-communicator.properties` with one line in it:
 ```
 org.jitsi.impl.neomedia.transform.srtp.SRTPCryptoContext.checkReplay=false
@@ -154,7 +156,15 @@ Or autostart it by adding the line in `/etc/rc.local`:
 /bin/bash /root/jitsi-videobridge-linux-{arch-buildnum}/jvb.sh --host=localhost --domain=jitsi.example.com --port=5347 --secret=YOURSECRET1 </dev/null >> /var/log/jvb.log 2>&1
 ```
 
-## Install Jitsi Conference Focus(jicofo)
+## Install Jitsi Conference Focus (jicofo)
+
+Install JDK and Ant if missing:
+```
+apt-get install default-jdk ant
+```
+
+_NOTE: When installing on older Debian releases keep in mind that you need JDK >= 1.7._
+
 Clone source from Github repo:
 ```sh
 git clone https://github.com/jitsi/jicofo.git
