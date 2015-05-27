@@ -6,7 +6,7 @@ change references to that to match your host, and generate some passwords for
 
 There are also some complete [example config files](https://github.com/jitsi/jitsi-meet/tree/master/doc/example-config-files/) available, mentioned in each section.
 
-## Install prosody and otalk modules
+## Install prosody
 ```sh
 apt-get install lsb-release
 echo deb http://packages.prosody.im/debian $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list
@@ -14,9 +14,6 @@ wget --no-check-certificate https://prosody.im/files/prosody-debian-packages.key
 apt-get update
 apt-get install prosody-trunk
 apt-get install git lua-zlib lua-sec-prosody lua-dbi-sqlite3 liblua5.1-bitop-dev liblua5.1-bitop0
-git clone https://github.com/andyet/otalk-server.git
-cd otalk-server
-cp -r mod* /usr/lib/prosody/modules
 ```
 
 ## Configure prosody
