@@ -81,7 +81,7 @@ prosodyctl restart
 apt-get install nginx
 ```
 
-Add nginx config for domain in `/etc/nginx/nginx.conf`:
+Optionally, add nginx config for domain in `/etc/nginx/nginx.conf`:
 ```
 tcp_nopush on;
 types_hash_max_size 2048;
