@@ -696,9 +696,10 @@ StatsCollector.prototype.processAudioLevelReport = function ()
 
         var ssrc = getStatValue(now, 'ssrc');
         var jid = APP.xmpp.getJidFromSSRC(ssrc);
-        if (!jid && (Date.now() - now.timestamp) < 3000)
+        if (!jid)
         {
-            console.warn("No jid for ssrc: " + ssrc);
+            if((Date.now() - now.timestamp) < 3000)
+                console.warn("No jid for ssrc: " + ssrc);
             continue;
         }
 

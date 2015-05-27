@@ -278,6 +278,15 @@ module.exports = function(XMPP, eventEmitter) {
                 eventEmitter.emit(XMPPEvents.MUC_DESTROYED, reason);
                 return true;
             }
+
+            var self = this;
+            // Remove old ssrcs coming from the jid
+            Object.keys(this.ssrc2jid).forEach(function (ssrc) {
+                if (self.ssrc2jid[ssrc] == from) {
+                    delete self.ssrc2jid[ssrc];
+                }
+            });
+
             // Status code 110 indicates that this notification is "self-presence".
             if (!$(pres).find('>x[xmlns="http://jabber.org/protocol/muc#user"]>status[code="110"]').length) {
                 delete this.members[from];

@@ -12457,9 +12457,10 @@ StatsCollector.prototype.processAudioLevelReport = function ()
 
         var ssrc = getStatValue(now, 'ssrc');
         var jid = APP.xmpp.getJidFromSSRC(ssrc);
-        if (!jid && (Date.now() - now.timestamp) < 3000)
+        if (!jid)
         {
-            console.warn("No jid for ssrc: " + ssrc);
+            if((Date.now() - now.timestamp) < 3000)
+                console.warn("No jid for ssrc: " + ssrc);
             continue;
         }
 
@@ -16486,6 +16487,15 @@ module.exports = function(XMPP, eventEmitter) {
                 eventEmitter.emit(XMPPEvents.MUC_DESTROYED, reason);
                 return true;
             }
+
+            var self = this;
+            // Remove old ssrcs coming from the jid
+            Object.keys(this.ssrc2jid).forEach(function (ssrc) {
+                if (self.ssrc2jid[ssrc] == from) {
+                    delete self.ssrc2jid[ssrc];
+                }
+            });
+
             // Status code 110 indicates that this notification is "self-presence".
             if (!$(pres).find('>x[xmlns="http://jabber.org/protocol/muc#user"]>status[code="110"]').length) {
                 delete this.members[from];
