@@ -458,6 +458,9 @@ function onMucMemberLeft(jid) {
     messageHandler.notify(displayName,'notify.somebody',
         'disconnected',
         'notify.disconnected');
+    if(!config.startAudioMuted ||
+        config.startAudioMuted > APP.members.size())
+        UIUtil.playSoundNotification('userLeft');
     // Need to call this with a slight delay, otherwise the element couldn't be
     // found for some reason.
     // XXX(gp) it works fine without the timeout for me (with Chrome 38).
@@ -552,6 +555,9 @@ function onMucMemberJoined(jid, id, displayName) {
         'connected',
         'notify.connected');
 
+    if(!config.startAudioMuted ||
+        config.startAudioMuted > APP.members.size())
+        UIUtil.playSoundNotification('userJoined');
     // Add Peer's container
     VideoLayout.ensurePeerContainerExists(jid,id);
 }

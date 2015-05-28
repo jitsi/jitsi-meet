@@ -27,12 +27,6 @@ var eventEmitter = null;
  */
 var focusedVideoInfo = null;
 
-/**
- * Indicates if we have muted our audio before the conference has started.
- * @type {boolean}
- */
-var preMuted = false;
-
 var mutedAudios = {};
 
 var flipXLocalVideo = true;
@@ -779,9 +773,6 @@ var VideoLayout = (function (my) {
             container.id = 'mixedstream';
             container.className = 'videocontainer';
             remotes.appendChild(container);
-            if(!config.startAudioMuted ||
-                config.startAudioMuted > APP.members.size())
-                UIUtil.playSoundNotification('userJoined');
         }
 
         if (container) {
@@ -1302,9 +1293,6 @@ var VideoLayout = (function (my) {
             // Remove whole container
             container.remove();
 
-            if(!config.startAudioMuted ||
-                config.startAudioMuted > APP.members.size())
-                UIUtil.playSoundNotification('userLeft');
             VideoLayout.resizeThumbnails();
         }
 
