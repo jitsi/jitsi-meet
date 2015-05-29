@@ -11,5 +11,6 @@ module.exports = {
     EN: "en",
     BG: "bg",
     DE: "de",
-    TR: "tr"
+    TR: "tr",
+    FR: "fr"
 }

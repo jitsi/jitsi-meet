@@ -29199,7 +29199,8 @@ module.exports = {
     EN: "en",
     BG: "bg",
     DE: "de",
-    TR: "tr"
+    TR: "tr",
+    FR: "fr"
 }
 },{}],105:[function(require,module,exports){
 var XMPPEvents = {
