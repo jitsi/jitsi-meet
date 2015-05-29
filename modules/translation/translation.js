@@ -94,6 +94,11 @@ module.exports = {
                 var settings = Settings.getSettings();
                 if(settings)
                     lang = settings.language;
+
+                if(!lang && config.defaultLanguage)
+                {
+                    lang = config.defaultLanguage;
+                }
             }
         }
 
