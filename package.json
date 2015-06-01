@@ -12,6 +12,9 @@
     "xmpp",
     "browser"
   ],
+  "scripts": {
+    "test": "make compile"
+  },
   "author": "",
   "readmeFilename": "README.md",
   "//": "Callstats.io does not work with recent versions of jsSHA (2.0.1 in particular)",
