@@ -82,8 +82,8 @@
         "title": "SETTINGS",
         "update": "Update",
         "name": "Name",
-        "startAudioMuted": "everyone join audio muted",
-        "startVideoMuted": "everyone join video muted"
+        "startAudioMuted": "start without audio",
+        "startVideoMuted": "start without video"
     },
     "videothumbnail":
     {
