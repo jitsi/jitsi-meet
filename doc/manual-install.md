@@ -8,29 +8,14 @@ There are also some complete [example config files](https://github.com/jitsi/jit
 
 ## Install prosody
 ```sh
-apt-get install lsb-release
-echo deb http://packages.prosody.im/debian $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list
-wget --no-check-certificate https://prosody.im/files/prosody-debian-packages.key -O- | sudo apt-key add -
-apt-get update
-apt-get install prosody-trunk
-apt-get install git lua-zlib lua-sec-prosody lua-dbi-sqlite3 liblua5.1-bitop-dev liblua5.1-bitop0
+apt-get install prosody
 ```
 
 ## Configure prosody
-Modify the config file in `/etc/prosody/prosody.cfg.lua` (see also the example config file):
+Add config file in `/etc/prosody/conf.avail/jitsi.example.com.cfg.lua` :
 
-- modules to enable/add: compression, bosh, smacks, carbons, mam, lastactivity, offline, pubsub, adhoc, websocket, http_altconnect
-- comment out: `c2s_require_encryption = true`, and `s2s_secure_auth = false`
-- change `authentication = "internal_hashed"`
-- add this:
-```
-daemonize = true
-cross_domain_bosh = true;
-storage = {archive2 = "sql2"}
-sql = { driver = "SQLite3", database = "prosody.sqlite" }
-default_archive_policy = "roster"
-```
-- configure your domain by editing the example.com virtual host section section:
+- add your domain virtual host section:
+
 ```
 VirtualHost "jitsi.example.com"
     authentication = "anonymous"
@@ -38,15 +23,15 @@ VirtualHost "jitsi.example.com"
         key = "/var/lib/prosody/jitsi.example.com.key";
         certificate = "/var/lib/prosody/jitsi.example.com.crt";
     }
+    modules_enabled = {
+        "bosh";
+        "pubsub";
+    }
 ```
 - add domain with authentication for conference focus user:
 ```
 VirtualHost "auth.jitsi.example.com"
     authentication = "internal_plain"
-    ssl = {
-        key = "/var/lib/prosody/jitsi.example.com.key";
-        certificate = "/var/lib/prosody/jitsi.example.com.crt";
-    }
 ```
 - add focus user to server admins:
 ```
@@ -59,6 +44,11 @@ Component "jitsi-videobridge.jitsi.example.com"
     component_secret = "YOURSECRET1"
 Component "focus.jitsi.example.com"
     component_secret = "YOURSECRET2"
+```
+
+Add link for the added configuration
+```sh
+ln -s /etc/prosody/conf.avail/jitsi.example.com.cfg.lua /etc/prosody/conf.d/jitsi.example.com.cfg.lua
 ```
 
 Generate certs for the domain:
@@ -81,38 +71,27 @@ prosodyctl restart
 apt-get install nginx
 ```
 
-Optionally, add nginx config for domain in `/etc/nginx/nginx.conf`:
-```
-tcp_nopush on;
-types_hash_max_size 2048;
-server_names_hash_bucket_size 64;
-```
-
 Add a new file `jitsi.example.com` in `/etc/nginx/sites-available` (see also the example config file):
 ```
+server_names_hash_bucket_size 64;
+
 server {
     listen 80;
     server_name jitsi.example.com;
     # set the root
     root /srv/jitsi.example.com;
     index index.html;
-    location ~ ^/([a-zA-Z0-9]+)$ {
+    location ~ ^/([a-zA-Z0-9=\?]+)$ {
         rewrite ^/(.*)$ / break;
+    }
+    location / {
+        ssi on;
     }
     # BOSH
     location /http-bind {
         proxy_pass      http://localhost:5280/http-bind;
         proxy_set_header X-Forwarded-For $remote_addr;
         proxy_set_header Host $http_host;
-    }
-    # xmpp websockets
-    location /xmpp-websocket {
-        proxy_pass http://localhost:5280;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection "upgrade";
-        proxy_set_header Host $host;
-        tcp_nodelay on;
     }
 }
 ```
@@ -121,12 +100,6 @@ Add link for the added configuration
 ```sh
 cd /etc/nginx/sites-enabled
 ln -s ../sites-available/jitsi.example.com jitsi.example.com
-```
-
-## Fix firewall if needed
-```sh
-ufw allow 80
-ufw allow 5222
 ```
 
 ## Install Jitsi Videobridge
