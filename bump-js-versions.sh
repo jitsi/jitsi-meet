@@ -1,5 +1,14 @@
 #!/bin/sh
 
+if ! which git > /dev/null 2>&1 ;then
+    echo "Cannot find git executable, not bumping js versions."
+    exit
+fi
+if ! git status > /dev/null 2>&1 ;then
+    echo "Not a git repository, not bumping js versions."
+    exit
+fi
+
 # This script finds all js files included from index.html which have been
 # modified and bumps their version (the value of the "v" parameter used
 # in index.html)
