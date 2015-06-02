@@ -636,17 +636,15 @@ var VideoLayout = (function (my) {
 
         var myResourceJid = APP.xmpp.myResource();
 
-        VideoLayout.updateLargeVideo(localVideoSrc, 0,
-            myResourceJid);
+        VideoLayout.updateLargeVideo(localVideoSrc, 0, myResourceJid);
 
     };
 
     my.mucJoined = function () {
         var myResourceJid = APP.xmpp.myResource();
 
-        if(!largeVideoState.userResourceJid)
-            VideoLayout.updateLargeVideo(localVideoSrc, 0,
-                myResourceJid, true);
+        if (!largeVideoState.userResourceJid)
+            VideoLayout.updateLargeVideo(localVideoSrc, 0, myResourceJid, true);
     };
 
     /**
@@ -1882,8 +1880,7 @@ var VideoLayout = (function (my) {
      */
     my.onDominantSpeakerChanged = function (resourceJid) {
         // We ignore local user events.
-        if (resourceJid
-                === APP.xmpp.myResource())
+        if (resourceJid === APP.xmpp.myResource())
             return;
 
         var members = APP.xmpp.getMembers();
@@ -1919,8 +1916,10 @@ var VideoLayout = (function (my) {
 
             // Update the large video if the video source is already available,
             // otherwise wait for the "videoactive.jingle" event.
-            if (video.length && video[0].currentTime > 0)
-                VideoLayout.updateLargeVideo(APP.RTC.getVideoSrc(video[0]), resourceJid);
+            if (video.length && video[0].currentTime > 0) {
+                VideoLayout.updateLargeVideo(
+                        APP.RTC.getVideoSrc(video[0]), 1, resourceJid);
+            }
         }
     };
 
@@ -2065,7 +2064,7 @@ var VideoLayout = (function (my) {
                     continue;
 
                 // videoSrcToSsrc needs to be update for this call to succeed.
-                VideoLayout.updateLargeVideo(src);
+                VideoLayout.updateLargeVideo(src, 1, resource);
                 break;
 
             }
