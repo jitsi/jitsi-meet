@@ -186,6 +186,13 @@ function getCameraVideoSize(videoWidth,
  * Sets the display name for the given video span id.
  */
 function setDisplayName(videoSpanId, displayName, key) {
+
+    if (!$('#' + videoSpanId).length) {
+        console.warn(
+            "Unable to set displayName - " + videoSpanId + " does not exist");
+        return;
+    }
+
     var nameSpan = $('#' + videoSpanId + '>span.displayname');
     var defaultLocalDisplayName = APP.translation.generateTranslatonHTML(
         interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME);
@@ -2281,7 +2288,8 @@ var VideoLayout = (function (my) {
 
     my.participantLeft = function (jid) {
         // Unlock large video
-        if (focusedVideoInfo && focusedVideoInfo.jid === jid)
+        var resourceJid = Strophe.getResourceFromJid(jid);
+        if (focusedVideoInfo && focusedVideoInfo.resourceJid === resourceJid)
         {
             console.info("Focused video owner has left the conference");
             focusedVideoInfo = null;
