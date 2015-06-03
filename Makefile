@@ -1,5 +1,5 @@
 NPM = npm
-BROWSERIFY = browserify
+BROWSERIFY = node_modules/.bin/browserify
 GLOBAL_FLAGS = -x jquery -e
 OUTPUT_DIR = .
 DEPLOY_DIR = libs
