@@ -122,14 +122,6 @@ function registerListeners() {
             VideoLayout.onLastNEndpointsChanged(lastNEndpoints,
                 endpointsEnteringLastN, stream);
         });
-    APP.RTC.addListener(RTCEvents.SIMULCAST_LAYER_CHANGED,
-        function (endpointSimulcastLayers) {
-           VideoLayout.onSimulcastLayersChanged(endpointSimulcastLayers);
-        });
-    APP.RTC.addListener(RTCEvents.SIMULCAST_LAYER_CHANGING,
-        function (endpointSimulcastLayers) {
-            VideoLayout.onSimulcastLayersChanging(endpointSimulcastLayers);
-        });
     APP.RTC.addListener(RTCEvents.AVAILABLE_DEVICES_CHANGED,
         function (devices) {
             VideoLayout.setDeviceAvailabilityIcons(null, devices);
