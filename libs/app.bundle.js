@@ -7119,6 +7119,13 @@ function getCameraVideoSize(videoWidth,
  * Sets the display name for the given video span id.
  */
 function setDisplayName(videoSpanId, displayName, key) {
+
+    if (!$('#' + videoSpanId).length) {
+        console.warn(
+            "Unable to set displayName - " + videoSpanId + " does not exist");
+        return;
+    }
+
     var nameSpan = $('#' + videoSpanId + '>span.displayname');
     var defaultLocalDisplayName = APP.translation.generateTranslatonHTML(
         interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME);
@@ -7569,17 +7576,15 @@ var VideoLayout = (function (my) {
 
         var myResourceJid = APP.xmpp.myResource();
 
-        VideoLayout.updateLargeVideo(localVideoSrc, 0,
-            myResourceJid);
+        VideoLayout.updateLargeVideo(localVideoSrc, 0, myResourceJid);
 
     };
 
     my.mucJoined = function () {
         var myResourceJid = APP.xmpp.myResource();
 
-        if(!largeVideoState.userResourceJid)
-            VideoLayout.updateLargeVideo(localVideoSrc, 0,
-                myResourceJid, true);
+        if (!largeVideoState.userResourceJid)
+            VideoLayout.updateLargeVideo(localVideoSrc, 0, myResourceJid, true);
     };
 
     /**
@@ -8815,8 +8820,7 @@ var VideoLayout = (function (my) {
      */
     my.onDominantSpeakerChanged = function (resourceJid) {
         // We ignore local user events.
-        if (resourceJid
-                === APP.xmpp.myResource())
+        if (resourceJid === APP.xmpp.myResource())
             return;
 
         var members = APP.xmpp.getMembers();
@@ -8852,8 +8856,10 @@ var VideoLayout = (function (my) {
 
             // Update the large video if the video source is already available,
             // otherwise wait for the "videoactive.jingle" event.
-            if (video.length && video[0].currentTime > 0)
-                VideoLayout.updateLargeVideo(APP.RTC.getVideoSrc(video[0]), resourceJid);
+            if (video.length && video[0].currentTime > 0) {
+                VideoLayout.updateLargeVideo(
+                        APP.RTC.getVideoSrc(video[0]), 1, resourceJid);
+            }
         }
     };
 
@@ -8998,7 +9004,7 @@ var VideoLayout = (function (my) {
                     continue;
 
                 // videoSrcToSsrc needs to be update for this call to succeed.
-                VideoLayout.updateLargeVideo(src);
+                VideoLayout.updateLargeVideo(src, 1, resource);
                 break;
 
             }
@@ -9215,7 +9221,8 @@ var VideoLayout = (function (my) {
 
     my.participantLeft = function (jid) {
         // Unlock large video
-        if (focusedVideoInfo && focusedVideoInfo.jid === jid)
+        var resourceJid = Strophe.getResourceFromJid(jid);
+        if (focusedVideoInfo && focusedVideoInfo.resourceJid === resourceJid)
         {
             console.info("Focused video owner has left the conference");
             focusedVideoInfo = null;
@@ -16945,6 +16952,7 @@ module.exports = function(XMPP, eventEmitter)
                 this.connection.disco.addFeature('urn:xmpp:jingle:1');
                 this.connection.disco.addFeature('urn:xmpp:jingle:apps:rtp:1');
                 this.connection.disco.addFeature('urn:xmpp:jingle:transports:ice-udp:1');
+                this.connection.disco.addFeature('urn:xmpp:jingle:apps:dtls:0');
                 this.connection.disco.addFeature('urn:xmpp:jingle:transports:dtls-sctp:1');
                 this.connection.disco.addFeature('urn:xmpp:jingle:apps:rtp:audio');
                 this.connection.disco.addFeature('urn:xmpp:jingle:apps:rtp:video');
