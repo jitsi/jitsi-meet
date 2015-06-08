@@ -13,7 +13,7 @@
     "browser"
   ],
   "scripts": {
-    "test": "make compile"
+    "test": "make"
   },
   "author": "",
   "readmeFilename": "README.md",
@@ -27,7 +27,22 @@
     "retry": "0.6.1"
   },
   "devDependencies": {
-    "browserify": "^10.2.3"
+    "browserify": "^10.2.3",
+    "chai": "^3.0.0",
+    "chai-jquery": "^2.0.0",
+    "coffee-script": "^1.9.3",
+    "coffeelint": "^1.10.1",
+    "jquery": "^2.1.4",
+    "karma": "^0.12.36",
+    "karma-chai": "^0.1.0",
+    "karma-chai-jquery": "^1.0.0",
+    "karma-coffee-preprocessor": "^0.2.1",
+    "karma-commonjs-plus": "^1.0.0",
+    "karma-jquery": "^0.1.0",
+    "karma-mocha": "^0.1.10",
+    "karma-phantomjs-launcher": "^0.2.0",
+    "mocha": "^2.2.5",
+    "phantomjs": "^1.9.17"
   },
   "license": "MIT"
 }
