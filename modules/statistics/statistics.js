@@ -6,7 +6,7 @@ var RTPStats = require("./RTPStatsCollector.js");
 var EventEmitter = require("events");
 var StreamEventTypes = require("../../service/RTC/StreamEventTypes.js");
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
-var CallStats = require("./callstats");
+var CallStats = require("./CallStats");
 var RTCEvents = require("../../service/RTC/RTCEvents");
 
 var eventEmitter = new EventEmitter();
