@@ -6,6 +6,7 @@ module.exports = (config) ->
     frameworks: [
       'mocha'
       'commonjs'
+      'chai-sinon'
       'chai-jquery'
       'chai'
       'jquery-2.1.0'
@@ -15,6 +16,10 @@ module.exports = (config) ->
       # Modules under test - list specific
       './modules/**/Settings.js'
       './modules/**/UIUtil.js'
+      './modules/**/RTC.js'
+
+      # Module services
+      './service/**/*.js'
 
       # Spec files
       './test/spec/**/*Spec.coffee'
@@ -23,8 +28,8 @@ module.exports = (config) ->
     exclude: []
 
     preprocessors:
-      # Modules under test
-      './modules/**/*.js': [ 'commonjs' ]
+      # Modules and services under test
+      './{modules,service}/**/*.js': [ 'commonjs' ]
 
       # Spec files
       './test/spec/**/*Spec.coffee': [ 'coffee', 'commonjs' ]
@@ -40,7 +45,7 @@ module.exports = (config) ->
         bare: true
         sourceMap: false
 
-    reporters: [ 'progress' ]
+    reporters: [ 'spec' ]
     port: 9876
     colors: true
     logLevel: config.LOG_INFO
