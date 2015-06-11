@@ -328,8 +328,9 @@ module.exports = function(XMPP, eventEmitter)
          */
         populateData: function () {
             var data = {};
+            var self = this;
             Object.keys(this.sessions).forEach(function (sid) {
-                var session = this.sessions[sid];
+                var session = self.sessions[sid];
                 if (session.peerconnection && session.peerconnection.updateLog) {
                     // FIXME: should probably be a .dump call
                     data["jingle_" + session.sid] = {
