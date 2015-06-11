@@ -9,7 +9,7 @@ Index: jitsi-meet/index.html
      <meta itemprop="image" content="/images/jitsilogo.png"/>
 -    <script src="libs/jquery-2.1.1.min.js"></script>
 +    <script src="libs/jquery.min.js"></script>
-     <script src="config.js?v=6"></script><!-- adapt to your needs, i.e. set hosts and bosh path -->
+     <script src="config.js?v=9"></script><!-- adapt to your needs, i.e. set hosts and bosh path -->
      <script src="libs/strophe/strophe.min.js?v=1"></script>
      <script src="libs/strophe/strophe.disco.min.js?v=1"></script>
      <script src="libs/strophe/strophe.caps.jsonly.min.js?v=1"></script>
