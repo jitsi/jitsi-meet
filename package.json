@@ -28,8 +28,6 @@
   },
   "devDependencies": {
     "browserify": "^10.2.3",
-    "chai": "^2.3.0",
-    "chai-jquery": "^2.0.0",
     "coffee-script": "^1.9.3",
     "coffeelint": "^1.10.1",
     "karma": "^0.12.35",
@@ -43,9 +41,7 @@
     "karma-phantomjs-launcher": "^0.2.0",
     "karma-spec-reporter": "0.0.19",
     "mocha": "^2.2.5",
-    "phantomjs": "^1.9.17",
-    "sinon": "^1.14.1",
-    "sinon-chai": "^2.7.0"
+    "phantomjs": "^1.9.17"
   },
   "license": "MIT"
 }
