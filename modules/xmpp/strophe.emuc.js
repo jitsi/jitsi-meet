@@ -389,7 +389,7 @@ module.exports = function(XMPP, eventEmitter) {
             if (txt) {
                 console.log('chat', nick, txt);
                 eventEmitter.emit(XMPPEvents.MESSAGE_RECEIVED,
-                    from, nick, txt, this.myroomjid);
+                    from, nick, txt, this.myroomjid, $(msg).find('>delay').attr('stamp'));
             }
             return true;
         },
