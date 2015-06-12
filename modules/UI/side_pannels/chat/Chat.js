@@ -85,8 +85,8 @@ function setVisualNotification(show) {
  * Returns the current time in the format it is shown to the user
  * @returns {string}
  */
-function getCurrentTime() {
-    var now     = new Date();
+function getCurrentTime(stamp) {
+    var now     = (stamp? new Date(stamp): new Date());
     var hour    = now.getHours();
     var minute  = now.getMinutes();
     var second  = now.getSeconds();
@@ -228,7 +228,7 @@ var Chat = (function (my) {
     /**
      * Appends the given message to the chat conversation.
      */
-    my.updateChatConversation = function (from, displayName, message) {
+    my.updateChatConversation = function (from, displayName, message, myjid, stamp) {
         var divClassName = '';
 
         if (APP.xmpp.myJid() === from) {
@@ -256,7 +256,7 @@ var Chat = (function (my) {
             '<div class="chatmessage">'+
                 '<img src="../images/chatArrow.svg" class="chatArrow">' +
                 '<div class="username ' + divClassName +'">' + escDisplayName +
-                '</div>' + '<div class="timestamp">' + getCurrentTime() +
+                '</div>' + '<div class="timestamp">' + getCurrentTime(stamp) +
                 '</div>' + '<div class="usermessage">' + message + '</div>' +
             '</div>';
 
