@@ -1,4 +1,4 @@
-!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.APP=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.APP = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 /* jshint -W117 */
 /* application specific logic */
 
@@ -199,10 +199,10 @@ function setupListeners() {
     APP.xmpp.addListener(XMPPEvents.MUC_MEMBER_JOINED, function (from) {
         API.triggerEvent("participantJoined", {jid: from});
     });
-    APP.xmpp.addListener(XMPPEvents.MESSAGE_RECEIVED, function (from, nick, txt, myjid) {
+    APP.xmpp.addListener(XMPPEvents.MESSAGE_RECEIVED, function (from, nick, txt, myjid, stamp) {
         if (from != myjid)
             API.triggerEvent("incomingMessage",
-                {"from": from, "nick": nick, "message": txt});
+                {"from": from, "nick": nick, "message": txt, "stamp": stamp});
     });
     APP.xmpp.addListener(XMPPEvents.MUC_MEMBER_LEFT, function (jid) {
         API.triggerEvent("participantLeft", {jid: jid});
@@ -1896,16 +1896,16 @@ UI.start = function (init) {
 function chatAddError(errorMessage, originalText)
 {
     return Chat.chatAddError(errorMessage, originalText);
-};
+}
 
 function chatSetSubject(text)
 {
     return Chat.chatSetSubject(text);
-};
+}
 
-function updateChatConversation(from, displayName, message) {
-    return Chat.updateChatConversation(from, displayName, message);
-};
+function updateChatConversation(from, displayName, message, myjid, stamp) {
+    return Chat.updateChatConversation(from, displayName, message, myjid, stamp);
+}
 
 function onMucJoined(jid, info) {
     Toolbar.updateRoomUrl(window.location.href);
@@ -1991,7 +1991,7 @@ function onModeratorStatusChanged(isModerator) {
     if (isModerator && config.etherpad_base) {
         Etherpad.init();
     }
-};
+}
 
 function onPasswordRequired(callback) {
     // password is required
@@ -2074,7 +2074,7 @@ function onAuthenticationRequired(intervalCallback) {
         roomName, intervalCallback, function () {
             Toolbar.authenticateClicked();
         });
-};
+}
 
 
 function onLastNChanged(oldValue, newValue) {
@@ -4412,8 +4412,8 @@ function setVisualNotification(show) {
  * Returns the current time in the format it is shown to the user
  * @returns {string}
  */
-function getCurrentTime() {
-    var now     = new Date();
+function getCurrentTime(stamp) {
+    var now     = (stamp? new Date(stamp): new Date());
     var hour    = now.getHours();
     var minute  = now.getMinutes();
     var second  = now.getSeconds();
@@ -4555,7 +4555,7 @@ var Chat = (function (my) {
     /**
      * Appends the given message to the chat conversation.
      */
-    my.updateChatConversation = function (from, displayName, message) {
+    my.updateChatConversation = function (from, displayName, message, myjid, stamp) {
         var divClassName = '';
 
         if (APP.xmpp.myJid() === from) {
@@ -4583,7 +4583,7 @@ var Chat = (function (my) {
             '<div class="chatmessage">'+
                 '<img src="../images/chatArrow.svg" class="chatArrow">' +
                 '<div class="username ' + divClassName +'">' + escDisplayName +
-                '</div>' + '<div class="timestamp">' + getCurrentTime() +
+                '</div>' + '<div class="timestamp">' + getCurrentTime(stamp) +
                 '</div>' + '<div class="usermessage">' + message + '</div>' +
             '</div>';
 
@@ -15104,7 +15104,7 @@ module.exports = function(XMPP, eventEmitter) {
             if (txt) {
                 console.log('chat', nick, txt);
                 eventEmitter.emit(XMPPEvents.MESSAGE_RECEIVED,
-                    from, nick, txt, this.myroomjid);
+                    from, nick, txt, this.myroomjid, $(msg).find('>delay').attr('stamp'));
             }
             return true;
         },
@@ -28595,6 +28595,7 @@ process.browser = true;
 process.env = {};
 process.argv = [];
 process.version = ''; // empty string to avoid regexp issues
+process.versions = {};
 
 function noop() {}
 

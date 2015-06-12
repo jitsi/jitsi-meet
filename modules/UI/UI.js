@@ -406,16 +406,16 @@ UI.start = function (init) {
 function chatAddError(errorMessage, originalText)
 {
     return Chat.chatAddError(errorMessage, originalText);
-};
+}
 
 function chatSetSubject(text)
 {
     return Chat.chatSetSubject(text);
-};
+}
 
-function updateChatConversation(from, displayName, message) {
-    return Chat.updateChatConversation(from, displayName, message);
-};
+function updateChatConversation(from, displayName, message, myjid, stamp) {
+    return Chat.updateChatConversation(from, displayName, message, myjid, stamp);
+}
 
 function onMucJoined(jid, info) {
     Toolbar.updateRoomUrl(window.location.href);
@@ -501,7 +501,7 @@ function onModeratorStatusChanged(isModerator) {
     if (isModerator && config.etherpad_base) {
         Etherpad.init();
     }
-};
+}
 
 function onPasswordRequired(callback) {
     // password is required
@@ -584,7 +584,7 @@ function onAuthenticationRequired(intervalCallback) {
         roomName, intervalCallback, function () {
             Toolbar.authenticateClicked();
         });
-};
+}
 
 
 function onLastNChanged(oldValue, newValue) {
