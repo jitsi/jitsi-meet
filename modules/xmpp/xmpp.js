@@ -485,9 +485,6 @@ var XMPP = {
             case "displayName":
                 connection.emuc.addDisplayNameToPresence(value);
                 break;
-            case "etherpad":
-                connection.emuc.addEtherpadToPresence(value);
-                break;
             case "prezi":
                 connection.emuc.addPreziToPresence(value, 0);
                 break;
