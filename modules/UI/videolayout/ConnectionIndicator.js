@@ -96,17 +96,9 @@ ConnectionIndicator.prototype.generateText = function () {
     if(this.resolution && this.jid != null)
     {
         var keys = Object.keys(this.resolution);
-        if(keys.length == 1)
+        for(var ssrc in this.resolution)
         {
-            for(var ssrc in this.resolution)
-            {
-                resolutionValue = this.resolution[ssrc];
-            }
-        }
-        else if(keys.length > 1)
-        {
-            var displayedSsrc = APP.simulcast.getReceivingSSRC(this.jid);
-            resolutionValue = this.resolution[displayedSsrc];
+            resolutionValue = this.resolution[ssrc];
         }
     }
 

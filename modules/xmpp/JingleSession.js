@@ -5,6 +5,7 @@ var SDPUtil = require("./SDPUtil");
 var SDP = require("./SDP");
 var RTCBrowserType = require("../../service/RTC/RTCBrowserType");
 var async = require("async");
+var transform = require("sdp-transform");
 
 // Jingle stuff
 function JingleSession(me, sid, connection, service) {
@@ -95,8 +96,8 @@ JingleSession.prototype.initiate = function (peerjid, isInitiator) {
     };
     this.peerconnection.onaddstream = function (event) {
         if (event.stream.id !== 'default') {
-            console.log("REMOTE STREAM ADDED: " + event.stream + " - " + event.stream.id);
-            self.remoteStreamAdded(event);
+        console.log("REMOTE STREAM ADDED: " + event.stream + " - " + event.stream.id);
+        self.remoteStreamAdded(event);
         } else {
             // This is a recvonly stream. Clients that implement Unified Plan,
             // such as Firefox use recvonly "streams/channels/tracks" for
@@ -199,7 +200,6 @@ JingleSession.prototype.accept = function () {
         // FIXME: change any inactive to sendrecv or whatever they were originally
         pranswer.sdp = pranswer.sdp.replace('a=inactive', 'a=sendrecv');
     }
-    pranswer = APP.simulcast.reverseTransformLocalDescription(pranswer);
     var prsdp = new SDP(pranswer.sdp);
     var accept = $iq({to: this.peerjid,
         type: 'set'})
@@ -652,9 +652,7 @@ JingleSession.prototype.createdAnswer = function (sdp, provisional) {
                         initiator: self.initiator,
                         responder: self.responder,
                         sid: self.sid });
-                var publicLocalDesc = APP.simulcast.reverseTransformLocalDescription(sdp);
-                var publicLocalSDP = new SDP(publicLocalDesc.sdp);
-                publicLocalSDP.toJingle(accept, self.initiator == self.me ? 'initiator' : 'responder', ssrcs);
+                self.localSDP.toJingle(accept, self.initiator == self.me ? 'initiator' : 'responder', ssrcs);
                 self.connection.sendIQ(accept,
                     function () {
                         var ack = {};
@@ -1011,7 +1009,7 @@ JingleSession.prototype.switchStreams = function (new_stream, oldStream, success
     }
 
     if(!isAudio)
-        APP.RTC.switchVideoStreams(new_stream, oldStream);
+    APP.RTC.switchVideoStreams(new_stream, oldStream);
 
     // Conference is not active
     if(!oldSdp || !self.peerconnection) {
@@ -1239,14 +1237,17 @@ JingleSession.onJingleFatalError = function (session, error)
 JingleSession.prototype.setLocalDescription = function () {
     // put our ssrcs into presence so other clients can identify our stream
     var newssrcs = [];
-    var media = APP.simulcast.parseMedia(this.peerconnection.localDescription);
-    media.forEach(function (media) {
+    var session = transform.parse(this.peerconnection.localDescription.sdp);
+    session.media.forEach(function (media) {
 
-        if(Object.keys(media.sources).length > 0) {
+        if (media.ssrcs != null && media.ssrcs.length > 0) {
             // TODO(gp) maybe exclude FID streams?
-            Object.keys(media.sources).forEach(function (ssrc) {
+            media.ssrcs.forEach(function (ssrc) {
+                if (ssrc.attribute !== 'cname') {
+                    return;
+                }
                 newssrcs.push({
-                    'ssrc': ssrc,
+                    'ssrc': ssrc.id,
                     'type': media.type,
                     'direction': media.direction
                 });

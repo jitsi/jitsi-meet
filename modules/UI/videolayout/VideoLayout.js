@@ -93,8 +93,7 @@ function waitForRemoteVideo(selector, ssrc, stream, jid) {
     if (stream.id === 'mixedmslabel') return;
 
     if (selector[0].currentTime > 0) {
-        var videoStream = APP.simulcast.getReceivingVideoStream(stream);
-        APP.RTC.attachMediaStream(selector, videoStream); // FIXME: why do i have to do this for FF?
+        APP.RTC.attachMediaStream(selector, stream); // FIXME: why do i have to do this for FF?
         videoactive(selector);
     } else {
         setTimeout(function () {
@@ -629,8 +628,7 @@ var VideoLayout = (function (my) {
         }
 
         // Attach WebRTC stream
-        var videoStream = APP.simulcast.getLocalVideoStream();
-        APP.RTC.attachMediaStream(localVideoSelector, videoStream);
+        APP.RTC.attachMediaStream(localVideoSelector, stream.getOriginalStream());
 
         // Add stream ended handler
         stream.getOriginalStream().onended = function () {
@@ -824,113 +822,67 @@ var VideoLayout = (function (my) {
             // Screen stream is already rotated
             largeVideoState.flipX = (newSrc === localVideoSrc) && flipXLocalVideo;
 
-            var userChanged = false;
             if (largeVideoState.oldResourceJid !== largeVideoState.userResourceJid) {
-                userChanged = true;
                 // we want the notification to trigger even if userJid is undefined,
                 // or null.
                 eventEmitter.emit(UIEvents.SELECTED_ENDPOINT,
                     largeVideoState.userResourceJid);
             }
 
-            if (!largeVideoState.updateInProgress) {
-                largeVideoState.updateInProgress = true;
+            $('#largeVideo').fadeOut(300, function () {
+                Avatar.updateActiveSpeakerAvatarSrc(
+                    APP.xmpp.findJidFromResource(
+                        largeVideoState.userResourceJid));
 
-                var doUpdate = function () {
-                    Avatar.updateActiveSpeakerAvatarSrc(
-                        APP.xmpp.findJidFromResource(
-                            largeVideoState.userResourceJid));
+                APP.RTC.setVideoSrc($('#largeVideo')[0], largeVideoState.newSrc);
 
-                    if (!userChanged && largeVideoState.preload &&
-                        largeVideoState.preload !== null &&
-                        APP.RTC.getVideoSrc($(largeVideoState.preload)[0]) === newSrc)
-                    {
+                var videoTransform = document.getElementById('largeVideo')
+                    .style.webkitTransform;
 
-                        console.info('Switching to preloaded video');
-                        var attributes = $('#largeVideo').prop("attributes");
-
-                        // loop through largeVideo attributes and apply them on
-                        // preload.
-                        $.each(attributes, function () {
-                            if (this.name !== 'id' && this.name !== 'src') {
-                                largeVideoState.preload.attr(this.name, this.value);
-                            }
-                        });
-
-                        largeVideoState.preload.appendTo($('#largeVideoContainer'));
-                        $('#largeVideo').attr('id', 'previousLargeVideo');
-                        largeVideoState.preload.attr('id', 'largeVideo');
-                        $('#previousLargeVideo').remove();
-
-                        largeVideoState.preload.on('loadedmetadata', function (e) {
-                            currentVideoWidth = this.videoWidth;
-                            currentVideoHeight = this.videoHeight;
-                            VideoLayout.positionLarge(currentVideoWidth, currentVideoHeight);
-                        });
-                        largeVideoState.preload = null;
-                        largeVideoState.preload_ssrc = 0;
-                    } else {
-                        APP.RTC.setVideoSrc($('#largeVideo')[0], largeVideoState.newSrc);
-                    }
-
-                    var videoTransform = document.getElementById('largeVideo')
-                        .style.webkitTransform;
-
-                    if (largeVideoState.flipX && videoTransform !== 'scaleX(-1)') {
-                        document.getElementById('largeVideo').style.webkitTransform
-                            = "scaleX(-1)";
-                    }
-                    else if (!largeVideoState.flipX && videoTransform === 'scaleX(-1)') {
-                        document.getElementById('largeVideo').style.webkitTransform
-                            = "none";
-                    }
-
-                    // Change the way we'll be measuring and positioning large video
-
-                    VideoLayout.getVideoSize = largeVideoState.isDesktop
-                        ? getDesktopVideoSize
-                        : getCameraVideoSize;
-                    VideoLayout.getVideoPosition = largeVideoState.isDesktop
-                        ? getDesktopVideoPosition
-                        : getCameraVideoPosition;
-
-
-                    // Only if the large video is currently visible.
-                    // Disable previous dominant speaker video.
-                    if (largeVideoState.oldResourceJid) {
-                        VideoLayout.enableDominantSpeaker(
-                            largeVideoState.oldResourceJid,
-                            false);
-                    }
-
-                    // Enable new dominant speaker in the remote videos section.
-                    if (largeVideoState.userResourceJid) {
-                        VideoLayout.enableDominantSpeaker(
-                            largeVideoState.userResourceJid,
-                            true);
-                    }
-
-                    if (userChanged && largeVideoState.isVisible) {
-                        // using "this" should be ok because we're called
-                        // from within the fadeOut event.
-                        $(this).fadeIn(300);
-                    }
-
-                    if(userChanged) {
-                        Avatar.showUserAvatar(
-                            APP.xmpp.findJidFromResource(
-                                largeVideoState.oldResourceJid));
-                    }
-
-                    largeVideoState.updateInProgress = false;
-                };
-
-                if (userChanged) {
-                    $('#largeVideo').fadeOut(300, doUpdate);
-                } else {
-                    doUpdate();
+                if (largeVideoState.flipX && videoTransform !== 'scaleX(-1)') {
+                    document.getElementById('largeVideo').style.webkitTransform
+                        = "scaleX(-1)";
                 }
-            }
+                else if (!largeVideoState.flipX && videoTransform === 'scaleX(-1)') {
+                    document.getElementById('largeVideo').style.webkitTransform
+                        = "none";
+                }
+
+                // Change the way we'll be measuring and positioning large video
+
+                VideoLayout.getVideoSize = largeVideoState.isDesktop
+                    ? getDesktopVideoSize
+                    : getCameraVideoSize;
+                VideoLayout.getVideoPosition = largeVideoState.isDesktop
+                    ? getDesktopVideoPosition
+                    : getCameraVideoPosition;
+
+
+                // Only if the large video is currently visible.
+                // Disable previous dominant speaker video.
+                if (largeVideoState.oldResourceJid) {
+                    VideoLayout.enableDominantSpeaker(
+                        largeVideoState.oldResourceJid,
+                        false);
+                }
+
+                // Enable new dominant speaker in the remote videos section.
+                if (largeVideoState.userResourceJid) {
+                    VideoLayout.enableDominantSpeaker(
+                        largeVideoState.userResourceJid,
+                        true);
+                }
+
+                if (largeVideoState.isVisible) {
+                    // using "this" should be ok because we're called
+                    // from within the fadeOut event.
+                    $(this).fadeIn(300);
+                }
+
+                Avatar.showUserAvatar(
+                    APP.xmpp.findJidFromResource(
+                        largeVideoState.oldResourceJid));
+            });
         } else {
             Avatar.showUserAvatar(
                 APP.xmpp.findJidFromResource(
@@ -1188,8 +1140,7 @@ var VideoLayout = (function (my) {
             // If the container is currently visible we attach the stream.
             if (!isVideo
                 || (container.offsetParent !== null && isVideo)) {
-                var videoStream = APP.simulcast.getReceivingVideoStream(stream);
-                APP.RTC.attachMediaStream(sel, videoStream);
+                APP.RTC.attachMediaStream(sel, stream);
 
                 if (isVideo)
                     waitForRemoteVideo(sel, thessrc, stream, peerJid);
@@ -2025,9 +1976,7 @@ var VideoLayout = (function (my) {
                     var mediaStream = APP.RTC.remoteStreams[jid][MediaStreamType.VIDEO_TYPE];
                     var sel = $('#participant_' + resourceJid + '>video');
 
-                    var videoStream = APP.simulcast.getReceivingVideoStream(
-                        mediaStream.stream);
-                    APP.RTC.attachMediaStream(sel, videoStream);
+                    APP.RTC.attachMediaStream(sel, mediaStream.stream);
                     if (lastNPickupJid == mediaStream.peerjid) {
                         // Clean up the lastN pickup jid.
                         lastNPickupJid = null;
@@ -2076,146 +2025,6 @@ var VideoLayout = (function (my) {
 
             }
         }
-    };
-
-    my.onSimulcastLayersChanging = function (endpointSimulcastLayers) {
-        endpointSimulcastLayers.forEach(function (esl) {
-
-            var resource = esl.endpoint;
-
-            // if lastN is enabled *and* the endpoint is *not* in the lastN set,
-            // then ignore the event (= do not preload anything).
-            //
-            // The bridge could probably stop sending this message if it's for
-            // an endpoint that's not in lastN.
-
-            if (lastNCount != -1
-                && (lastNCount < 1 || lastNEndpointsCache.indexOf(resource) === -1)) {
-                return;
-            }
-
-            var primarySSRC = esl.simulcastLayer.primarySSRC;
-
-            // Get session and stream from primary ssrc.
-            var res = APP.simulcast.getReceivingVideoStreamBySSRC(primarySSRC);
-            var sid = res.sid;
-            var electedStream = res.stream;
-
-            if (sid && electedStream) {
-                var msid = APP.simulcast.getRemoteVideoStreamIdBySSRC(primarySSRC);
-
-                console.info([esl, primarySSRC, msid, sid, electedStream]);
-
-                var preload = (Strophe.getResourceFromJid(APP.xmpp.getJidFromSSRC(primarySSRC)) == largeVideoState.userResourceJid);
-
-                if (preload) {
-                    if (largeVideoState.preload)
-                    {
-                        $(largeVideoState.preload).remove();
-                    }
-                    console.info('Preloading remote video');
-                    largeVideoState.preload = $('<video autoplay></video>');
-                    // ssrcs are unique in an rtp session
-                    largeVideoState.preload_ssrc = primarySSRC;
-
-                    APP.RTC.attachMediaStream(largeVideoState.preload, electedStream)
-                }
-
-            } else {
-                console.error('Could not find a stream or a session.', sid, electedStream);
-            }
-        });
-    };
-
-    /**
-     * On simulcast layers changed event.
-     */
-    my.onSimulcastLayersChanged = function (endpointSimulcastLayers) {
-        endpointSimulcastLayers.forEach(function (esl) {
-
-            var resource = esl.endpoint;
-
-            // if lastN is enabled *and* the endpoint is *not* in the lastN set,
-            // then ignore the event (= do not change large video/thumbnail
-            // SRCs).
-            //
-            // Note that even if we ignore the "changed" event in this event
-            // handler, the bridge must continue sending these events because
-            // the simulcast code in simulcast.js uses it to know what's going
-            // to be streamed by the bridge when/if the endpoint gets back into
-            // the lastN set.
-
-            if (lastNCount != -1
-                && (lastNCount < 1 || lastNEndpointsCache.indexOf(resource) === -1)) {
-                return;
-            }
-
-            var primarySSRC = esl.simulcastLayer.primarySSRC;
-
-            // Get session and stream from primary ssrc.
-            var res = APP.simulcast.getReceivingVideoStreamBySSRC(primarySSRC);
-            var sid = res.sid;
-            var electedStream = res.stream;
-
-            if (sid && electedStream) {
-                var msid = APP.simulcast.getRemoteVideoStreamIdBySSRC(primarySSRC);
-
-                console.info('Switching simulcast substream.');
-                console.info([esl, primarySSRC, msid, sid, electedStream]);
-
-                var msidParts = msid.split(' ');
-                var selRemoteVideo = $(['#', 'remoteVideo_', sid, '_', msidParts[0]].join(''));
-
-                var updateLargeVideo = (Strophe.getResourceFromJid(APP.xmpp.getJidFromSSRC(primarySSRC))
-                    == largeVideoState.userResourceJid);
-                var updateFocusedVideoSrc = (focusedVideoInfo && focusedVideoInfo.src && focusedVideoInfo.src != '' &&
-                    (APP.RTC.getVideoSrc(selRemoteVideo[0]) == focusedVideoInfo.src));
-
-                var electedStreamUrl;
-                if (largeVideoState.preload_ssrc == primarySSRC)
-                {
-                    APP.RTC.setVideoSrc(selRemoteVideo[0], APP.RTC.getVideoSrc(largeVideoState.preload[0]));
-                }
-                else
-                {
-                    if (largeVideoState.preload
-                        && largeVideoState.preload != null) {
-                        $(largeVideoState.preload).remove();
-                    }
-
-                    largeVideoState.preload_ssrc = 0;
-
-                    APP.RTC.attachMediaStream(selRemoteVideo, electedStream);
-                }
-
-                var jid = APP.xmpp.getJidFromSSRC(primarySSRC);
-
-                if (updateLargeVideo) {
-                    VideoLayout.updateLargeVideo(APP.RTC.getVideoSrc(selRemoteVideo[0]), null,
-                        Strophe.getResourceFromJid(jid));
-                }
-
-                if (updateFocusedVideoSrc) {
-                    focusedVideoInfo.src = APP.RTC.getVideoSrc(selRemoteVideo[0]);
-                }
-
-                var videoId;
-                if(resource == APP.xmpp.myResource())
-                {
-                    videoId = "localVideoContainer";
-                }
-                else
-                {
-                    videoId = "participant_" + resource;
-                }
-                var connectionIndicator = VideoLayout.connectionIndicators[videoId];
-                if(connectionIndicator)
-                    connectionIndicator.updatePopoverData();
-
-            } else {
-                console.error('Could not find a stream or a sid.', sid, electedStream);
-            }
-        });
     };
 
     /**

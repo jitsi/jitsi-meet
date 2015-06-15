@@ -122,14 +122,6 @@ function registerListeners() {
             VideoLayout.onLastNEndpointsChanged(lastNEndpoints,
                 endpointsEnteringLastN, stream);
         });
-    APP.RTC.addListener(RTCEvents.SIMULCAST_LAYER_CHANGED,
-        function (endpointSimulcastLayers) {
-           VideoLayout.onSimulcastLayersChanged(endpointSimulcastLayers);
-        });
-    APP.RTC.addListener(RTCEvents.SIMULCAST_LAYER_CHANGING,
-        function (endpointSimulcastLayers) {
-            VideoLayout.onSimulcastLayersChanging(endpointSimulcastLayers);
-        });
     APP.RTC.addListener(RTCEvents.AVAILABLE_DEVICES_CHANGED,
         function (devices) {
             VideoLayout.setDeviceAvailabilityIcons(null, devices);
@@ -449,7 +441,7 @@ function onMucJoined(jid, info) {
 
 function initEtherpad(name) {
     Etherpad.init(name);
-};
+}
 
 function onMucMemberLeft(jid) {
     console.log('left.muc', jid);
@@ -505,11 +497,7 @@ function onModeratorStatusChanged(isModerator) {
     // Recording visible if
     // there are at least 2(+ 1 focus) participants
     //Object.keys(connection.emuc.members).length >= 3);
-
-    if (isModerator && config.etherpad_base) {
-        Etherpad.init();
-    }
-};
+}
 
 function onPasswordRequired(callback) {
     // password is required

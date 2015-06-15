@@ -112,24 +112,6 @@ var DataChannels =
                     eventEmitter.emit(RTCEvents.LASTN_ENDPOINT_CHANGED,
                         lastNEndpoints, endpointsEnteringLastN, obj);
                 }
-                else if ("SimulcastLayersChangedEvent" === colibriClass)
-                {
-                    eventEmitter.emit(RTCEvents.SIMULCAST_LAYER_CHANGED,
-                        obj.endpointSimulcastLayers);
-                }
-                else if ("SimulcastLayersChangingEvent" === colibriClass)
-                {
-                    eventEmitter.emit(RTCEvents.SIMULCAST_LAYER_CHANGING,
-                        obj.endpointSimulcastLayers);
-                }
-                else if ("StartSimulcastLayerEvent" === colibriClass)
-                {
-                    eventEmitter.emit(RTCEvents.SIMULCAST_START, obj.simulcastLayer);
-                }
-                else if ("StopSimulcastLayerEvent" === colibriClass)
-                {
-                    eventEmitter.emit(RTCEvents.SIMULCAST_STOP, obj.simulcastLayer);
-                }
                 else
                 {
                     console.debug("Data channel JSON-formatted message: ", obj);

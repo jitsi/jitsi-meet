@@ -131,7 +131,7 @@ function RTCUtils(RTCService)
         console.log('This appears to be Firefox');
         var version = parseInt(navigator.userAgent.match(/Firefox\/([0-9]+)\./)[1], 10);
         if (version >= 40
-            && !config.enableSimulcast && config.useBundle && config.useRtcpMux) {
+            && config.useBundle && config.useRtcpMux) {
             this.peerconnection = mozRTCPeerConnection;
             this.browser = RTCBrowserType.RTC_BROWSER_FIREFOX;
             this.getUserMedia = navigator.mozGetUserMedia.bind(navigator);
@@ -237,44 +237,20 @@ RTCUtils.prototype.getUserMediaWithConstraints = function(
     var self = this;
 
     try {
-        if (config.enableSimulcast
-            && constraints.video
-            && constraints.video.chromeMediaSource !== 'screen'
-            && constraints.video.chromeMediaSource !== 'desktop'
-            && !isAndroid
-
-            // We currently do not support FF, as it doesn't have multistream support.
-            && !isFF) {
-            APP.simulcast.getUserMedia(constraints, function (stream) {
-                    console.log('onUserMediaSuccess');
-                    self.setAvailableDevices(um, true);
-                    success_callback(stream);
-                },
-                function (error) {
-                    console.warn('Failed to get access to local media. Error ', error);
-                    self.setAvailableDevices(um, false);
-                    if (failure_callback) {
-                        failure_callback(error);
-                    }
-                });
-        } else {
-
-            this.getUserMedia(constraints,
-                function (stream) {
-                    console.log('onUserMediaSuccess');
-                    self.setAvailableDevices(um, true);
-                    success_callback(stream);
-                },
-                function (error) {
-                    self.setAvailableDevices(um, false);
-                    console.warn('Failed to get access to local media. Error ',
-                        error, constraints);
-                    if (failure_callback) {
-                        failure_callback(error);
-                    }
-                });
-
-        }
+        this.getUserMedia(constraints,
+            function (stream) {
+                console.log('onUserMediaSuccess');
+                self.setAvailableDevices(um, true);
+                success_callback(stream);
+            },
+            function (error) {
+                self.setAvailableDevices(um, false);
+                console.warn('Failed to get access to local media. Error ',
+                    error, constraints);
+                if (failure_callback) {
+                    failure_callback(error);
+                }
+            });
     } catch (e) {
         console.error('GUM failed: ', e);
         if(failure_callback) {

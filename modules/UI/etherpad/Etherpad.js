@@ -27,13 +27,6 @@ function resize() {
 }
 
 /**
- * Shares the Etherpad name with other participants.
- */
-function shareEtherpad() {
-    APP.xmpp.addToPresence("etherpad", etherpadName);
-}
-
-/**
  * Creates the Etherpad button and adds it to the toolbar.
  */
 function enableEtherpadButton() {
@@ -115,18 +108,11 @@ var Etherpad = {
      */
     init: function (name) {
 
-        if (config.etherpad_base && !etherpadName) {
+        if (config.etherpad_base && !etherpadName && name) {
 
             domain = config.etherpad_base;
 
-            if (!name) {
-                // In case we're the focus we generate the name.
-                etherpadName = Math.random().toString(36).substring(7) +
-                                '_' + (new Date().getTime()).toString();
-                shareEtherpad();
-            }
-            else
-                etherpadName = name;
+            etherpadName = name;
 
             enableEtherpadButton();
 

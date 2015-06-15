@@ -191,6 +191,10 @@ var Moderator = {
                 { name: 'startVideoMuted', value: config.startVideoMuted})
                 .up();
         }
+        elem.c(
+            'property',
+            { name: 'simulcastMode', value: 'rewriting'})
+            .up();
         elem.up();
         return elem;
     },
