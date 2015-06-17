@@ -188,9 +188,11 @@ function obtainScreenFromExtension(streamCallback, failCallback) {
             getWebStoreInstallUrl(),
             function (arg) {
                 console.log("Extension installed successfully", arg);
-                // We need to reload the page in order to get the access to
-                // chrome.runtime
-                window.location.reload(false);
+                extInstalled = true;
+                // We need to give a moment for the endpoint to become available
+                window.setTimeout(function () {
+                    doGetStreamFromExtension(streamCallback, failCallback);
+                }, 500);
             },
             function (arg) {
                 console.log("Failed to install the extension", arg);
