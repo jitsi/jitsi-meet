@@ -103,7 +103,7 @@ var RTC = {
         for(var i = 0; i < this.localStreams.length; i++)
         {
             if(this.localStreams[i].getOriginalStream() === stream) {
-                delete this.localStreams[i];
+                this.localStreams.splice(i, 1);
                 return;
             }
         }

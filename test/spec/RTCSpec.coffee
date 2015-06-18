@@ -7,6 +7,16 @@ describe 'RTC', ->
   sandbox = undefined
   RTC = undefined
 
+  basicRTCProps =
+    rtcUtils: null
+    devices:
+      audio: true
+      video: true
+    localStreams: []
+    remoteStreams: {}
+    localAudio: null
+    localVideo: null
+
   # Mock objects
   MockEventEmitter = mockEventEmitter = undefined
   MockLocalStream = mockLocalStream = undefined
@@ -37,20 +47,8 @@ describe 'RTC', ->
   afterEach ->
     sandbox.restore()
 
-  describe 'init', ->
-
-    props =
-      rtcUtils: null
-      devices:
-        audio: true
-        video: true
-      localStreams: []
-      remoteStreams: {}
-      localAudio: null
-      localVideo: null
-
-    it 'should init basic properties', ->
-      RTC.should.have.deep.property prop for prop of props
+  it 'should init basic properties', ->
+    RTC.should.have.deep.property prop for prop of basicRTCProps
 
   describe '#addStreamListener', ->
     listener = 'bogus'
@@ -163,3 +161,20 @@ describe 'RTC', ->
     it 'should return created localStream', ->
       mockLocalStream.should.deep.equal(
         RTC.createLocalStream stream, type, change, videoType, isMuted, isGUMStream)
+
+  describe '#removeLocalStream', ->
+    stream = undefined
+
+    beforeEach ->
+      RTC.localStreams = []
+
+    it 'should remove stream from this.localStreams', ->
+      stream = 'foo'
+
+      RTC.localStreams.push getOriginalStream: -> stream
+      RTC.removeLocalStream stream
+      RTC.localStreams.length.should.equal 0
+
+      RTC.localStreams.push getOriginalStream: -> 'bar'
+      RTC.removeLocalStream stream
+      RTC.localStreams.length.should.equal 1
