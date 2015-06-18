@@ -155,7 +155,7 @@ module.exports = function(XMPP, eventEmitter) {
             var startMuted = $(pres).find('>startmuted');
             if (startMuted.length)
             {
-                eventEmitter.emit(XMPPEvents.START_MUTED,
+                eventEmitter.emit(XMPPEvents.START_MUTED_SETTING_CHANGED,
                     startMuted.attr("audio") === "true", startMuted.attr("video") === "true");
             }
 
@@ -321,19 +321,15 @@ module.exports = function(XMPP, eventEmitter) {
                     // We're either missing Jicofo/Prosody config for anonymous
                     // domains or something is wrong.
 //                    XMPP.promptLogin();
-                    APP.UI.messageHandler.openReportDialog(null,
-                        "dialog.joinError", pres);
+                    eventEmitter.emit(XMPPEvents.ROOM_JOIN_ERROR, pres);
+
                 } else {
                     console.warn('onPresError ', pres);
-                    APP.UI.messageHandler.openReportDialog(null,
-                        "dialog.connectError",
-                        pres);
+                    eventEmitter.emit(XMPPEvents.ROOM_CONNECT_ERROR, pres);
                 }
             } else {
                 console.warn('onPresError ', pres);
-                APP.UI.messageHandler.openReportDialog(null,
-                    "dialog.connectError",
-                    pres);
+                eventEmitter.emit(XMPPEvents.ROOM_CONNECT_ERROR, pres);
             }
             return true;
         },

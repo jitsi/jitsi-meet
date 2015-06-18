@@ -3,7 +3,9 @@
 /**
  * Moderate connection plugin.
  */
-module.exports = function (XMPP) {
+var XMPPEvents = require("../../service/xmpp/XMPPEvents");
+
+module.exports = function (XMPP, eventEmitter) {
     Strophe.addConnectionPlugin('moderate', {
         connection: null,
         init: function (conn) {
@@ -44,7 +46,7 @@ module.exports = function (XMPP) {
             var mute = $(iq).find('mute');
             if (mute.length) {
                 var doMuteAudio = mute.text() === "true";
-                APP.UI.setAudioMuted(doMuteAudio);
+                eventEmitter.emit(XMPPEvents.AUDIO_MUTED_BY_FOCUS, doMuteAudio);
                 XMPP.forceMuted = doMuteAudio;
             }
             return true;

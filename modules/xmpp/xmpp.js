@@ -7,7 +7,6 @@ var Settings = require("../settings/Settings");
 var Pako = require("pako");
 var StreamEventTypes = require("../../service/RTC/StreamEventTypes");
 var RTCEvents = require("../../service/RTC/RTCEvents");
-var UIEvents = require("../../service/UI/UIEvents");
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 var retry = require('retry');
 
@@ -163,17 +162,14 @@ function maybeDoJoin() {
 }
 
 function doJoin() {
-    var roomName = APP.UI.generateRoomName();
-
-    Moderator.allocateConferenceFocus(
-        roomName, APP.UI.checkForNicknameAndJoin);
+    eventEmitter.emit(XMPPEvents.READY_TO_JOIN);
 }
 
 function initStrophePlugins()
 {
     require("./strophe.emuc")(XMPP, eventEmitter);
     require("./strophe.jingle")(XMPP, eventEmitter);
-    require("./strophe.moderate")(XMPP);
+    require("./strophe.moderate")(XMPP, eventEmitter);
     require("./strophe.util")();
     require("./strophe.rayo")();
     require("./strophe.logger")();
@@ -184,9 +180,6 @@ function registerListeners() {
         StreamEventTypes.EVENT_TYPE_LOCAL_CREATED);
     APP.RTC.addListener(RTCEvents.AVAILABLE_DEVICES_CHANGED, function (devices) {
         XMPP.addToPresence("devices", devices);
-    })
-    APP.UI.addListener(UIEvents.NICKNAME_CHANGED, function (nickname) {
-        XMPP.addToPresence("displayName", nickname);
     });
 }
 
@@ -279,8 +272,7 @@ var XMPP = {
         return Strophe.getStatusString(status);
     },
     promptLogin: function () {
-        // FIXME: re-use LoginDialog which supports retries
-        APP.UI.showLoginPopup(connect);
+        eventEmitter.emit(XMPPEvents.PROMPT_FOR_LOGIN);
     },
     joinRoom: function(roomName, useNicks, nick)
     {
@@ -459,22 +451,19 @@ var XMPP = {
                             },
                             function (error) {
                                 console.log('mute SLD error');
-                                APP.UI.messageHandler.showError("dialog.error",
-                                    "dialog.SLDFailure");
+                                eventEmitter.emit(XMPPEvents.SET_LOCAL_DESCRIPTION_ERROR);
                             }
                         );
                     },
                     function (error) {
                         console.log(error);
-                        APP.UI.messageHandler.showError();
+                        eventEmitter.emit(XMPPEvents.CREATE_ANSWER_ERROR);
                     }
                 );
             },
             function (error) {
                 console.log('muteVideo SRD error');
-                APP.UI.messageHandler.showError("dialog.error",
-                    "dialog.SRDFailure");
-
+                eventEmitter.emit(XMPPEvents.SET_REMOTE_DESCRIPTION_ERROR);
             }
         );
     },
