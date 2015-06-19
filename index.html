@@ -19,7 +19,7 @@
     <script src="libs/popover.js?v=1"></script><!-- bootstrap tooltip lib -->
     <script src="libs/toastr.js?v=1"></script><!-- notifications lib -->
     <script src="interface_config.js?v=5"></script>
-    <script src="libs/app.bundle.js?v=87"></script>
+    <script src="libs/app.bundle.js?v=88"></script>
     <script src="analytics.js?v=1"></script><!-- google analytics plugin -->
     <link rel="stylesheet" href="css/font.css?v=7"/>
     <link rel="stylesheet" href="css/toastr.css?v=1">
@@ -289,9 +289,10 @@
             </div>
         </div>
         <div id="contactlist" class="right-panel">
-            <ul>
-                <li class="title"><i class="icon-contact-list"></i><span data-i18n="contactlist"></span></li>
-            </ul>
+            <div class="title">
+                <i class="icon-contactList"><span data-i18n="contactlist"></span></i>
+            </div>
+            <ul id="contacts"></ul>
         </div>
         <div id="settingsmenu" class="right-panel">
             <div class="icon-settings" data-i18n="settings.title"></div>

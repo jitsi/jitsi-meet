@@ -3,12 +3,27 @@
     cursor: default;
 }
 
-#contactlist>ul {
-    margin: 0px;
-    padding: 0px;
+#contactlist>div.title {
+    text-align: left;
+    padding: 7px 10px;
+    margin: 2px;
+    color: #00ccff;
+    font-size: 11pt;
+    border-bottom: 1px solid #676767;
 }
 
-#contactlist>ul>li {
+#contactlist>ul#contacts {
+    position: absolute;
+    top: 31px;
+    bottom: 0px;
+    width: 100%;
+    margin: 0px;
+    padding: 0px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+#contacts>li {
     list-style-type: none;
     text-align: left;
     color: #FFF;
@@ -17,16 +32,10 @@
     margin: 2px;
 }
 
-#contactlist>ul>li>p {
+#contacts>li>p {
     display: inline-block;
     vertical-align: middle;
     margin: 0px;
-}
-
-#contactlist>ul>li.title {
-    color: #00ccff;
-    font-size: 11pt;
-    border-bottom: 1px solid #676767;
 }
 
 .avatar {

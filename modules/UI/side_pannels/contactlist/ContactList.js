@@ -85,7 +85,7 @@ var ContactList = {
     ensureAddContact: function (peerJid, id) {
         var resourceJid = Strophe.getResourceFromJid(peerJid);
 
-        var contact = $('#contactlist>ul>li[id="' + resourceJid + '"]');
+        var contact = $('#contacts>li[id="' + resourceJid + '"]');
 
         if (!contact || contact.length <= 0)
             ContactList.addContact(peerJid, id);
@@ -100,7 +100,7 @@ var ContactList = {
     addContact: function (peerJid, id) {
         var resourceJid = Strophe.getResourceFromJid(peerJid);
 
-        var contactlist = $('#contactlist>ul');
+        var contactlist = $('#contacts');
 
         var newContact = document.createElement('li');
         newContact.id = resourceJid;
@@ -114,15 +114,11 @@ var ContactList = {
         newContact.appendChild(createAvatar(id));
         newContact.appendChild(createDisplayNameParagraph("participant"));
 
-        var clElement = contactlist.get(0);
-
-        if (resourceJid === APP.xmpp.myResource()
-            && $('#contactlist>ul .title')[0].nextSibling.nextSibling) {
-            clElement.insertBefore(newContact,
-                $('#contactlist>ul .title')[0].nextSibling.nextSibling);
+        if (resourceJid === APP.xmpp.myResource()) {
+            contactlist.prepend(newContact);
         }
         else {
-            clElement.appendChild(newContact);
+            contactlist.append(newContact);
         }
         updateNumberOfParticipants(1);
     },
@@ -135,7 +131,7 @@ var ContactList = {
     removeContact: function (peerJid) {
         var resourceJid = Strophe.getResourceFromJid(peerJid);
 
-        var contact = $('#contactlist>ul>li[id="' + resourceJid + '"]');
+        var contact = $('#contacts>li[id="' + resourceJid + '"]');
 
         if (contact && contact.length > 0) {
             var contactlist = $('#contactlist>ul');
@@ -165,7 +161,7 @@ var ContactList = {
     },
 
     setClickable: function (resourceJid, isClickable) {
-        var contact = $('#contactlist>ul>li[id="' + resourceJid + '"]');
+        var contact = $('#contacts>li[id="' + resourceJid + '"]');
         if (isClickable) {
             contact.addClass('clickable');
         } else {
@@ -179,7 +175,7 @@ var ContactList = {
 
         var resourceJid = Strophe.getResourceFromJid(peerJid);
 
-        var contactName = $('#contactlist #' + resourceJid + '>p');
+        var contactName = $('#contacts #' + resourceJid + '>p');
 
         if (contactName && displayName && displayName.length > 0)
             contactName.html(displayName);
