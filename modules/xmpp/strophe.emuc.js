@@ -385,11 +385,24 @@ module.exports = function(XMPP, eventEmitter) {
                 }
             }
 
+            // xep-0203 delay
+            var stamp = $(msg).find('>delay').attr('stamp');
+
+            if (!stamp) {
+                // or xep-0091 delay, UTC timestamp
+                stamp = $(msg).find('>[xmlns="jabber:x:delay"]').attr('stamp');
+
+                if (stamp) {
+                    // the format is CCYYMMDDThh:mm:ss
+                    var dateParts = stamp.match(/(\d{4})(\d{2})(\d{2}T\d{2}:\d{2}:\d{2})/);
+                    stamp = dateParts[1] + "-" + dateParts[2] + "-" + dateParts[3] + "Z";
+                }
+            }
 
             if (txt) {
                 console.log('chat', nick, txt);
                 eventEmitter.emit(XMPPEvents.MESSAGE_RECEIVED,
-                    from, nick, txt, this.myroomjid, $(msg).find('>delay').attr('stamp'));
+                    from, nick, txt, this.myroomjid, stamp);
             }
             return true;
         },

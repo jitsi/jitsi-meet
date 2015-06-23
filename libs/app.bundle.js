@@ -199,10 +199,10 @@ function setupListeners() {
     APP.xmpp.addListener(XMPPEvents.MUC_MEMBER_JOINED, function (from) {
         API.triggerEvent("participantJoined", {jid: from});
     });
-    APP.xmpp.addListener(XMPPEvents.MESSAGE_RECEIVED, function (from, nick, txt, myjid) {
+    APP.xmpp.addListener(XMPPEvents.MESSAGE_RECEIVED, function (from, nick, txt, myjid, stamp) {
         if (from != myjid)
             API.triggerEvent("incomingMessage",
-                {"from": from, "nick": nick, "message": txt});
+                {"from": from, "nick": nick, "message": txt, "stamp": stamp});
     });
     APP.xmpp.addListener(XMPPEvents.MUC_MEMBER_LEFT, function (jid) {
         API.triggerEvent("participantLeft", {jid: jid});
@@ -290,7 +290,7 @@ var API = {
 };
 
 module.exports = API;
-},{"../../service/xmpp/XMPPEvents":110}],3:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":106}],3:[function(require,module,exports){
 /* global APP */
 
 /**
@@ -557,7 +557,7 @@ function onPinnedEndpointChanged(userResource)
 module.exports = DataChannels;
 
 
-},{"../../service/RTC/RTCEvents":101}],5:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":97}],5:[function(require,module,exports){
 var StreamEventTypes = require("../../service/RTC/StreamEventTypes.js");
 
 
@@ -665,7 +665,7 @@ LocalStream.prototype.getId = function () {
 
 module.exports = LocalStream;
 
-},{"../../service/RTC/StreamEventTypes.js":103}],6:[function(require,module,exports){
+},{"../../service/RTC/StreamEventTypes.js":99}],6:[function(require,module,exports){
 ////These lines should be uncommented when require works in app.js
 var MediaStreamType = require("../../service/RTC/MediaStreamTypes");
 var StreamEventType = require("../../service/RTC/StreamEventTypes");
@@ -727,7 +727,7 @@ MediaStream.prototype.setVideoType = function (value) {
 
 module.exports = MediaStream;
 
-},{"../../service/RTC/MediaStreamTypes":99,"../../service/RTC/StreamEventTypes":103}],7:[function(require,module,exports){
+},{"../../service/RTC/MediaStreamTypes":95,"../../service/RTC/StreamEventTypes":99}],7:[function(require,module,exports){
 var EventEmitter = require("events");
 var RTCUtils = require("./RTCUtils.js");
 var LocalStream = require("./LocalStream.js");
@@ -1013,7 +1013,7 @@ var RTC = {
 
 module.exports = RTC;
 
-},{"../../service/RTC/MediaStreamTypes":99,"../../service/RTC/RTCEvents.js":101,"../../service/RTC/StreamEventTypes.js":103,"../../service/UI/UIEvents":104,"../../service/desktopsharing/DesktopSharingEventTypes":107,"../../service/xmpp/XMPPEvents":110,"./DataChannels":4,"./LocalStream.js":5,"./MediaStream.js":6,"./RTCUtils.js":8,"events":111}],8:[function(require,module,exports){
+},{"../../service/RTC/MediaStreamTypes":95,"../../service/RTC/RTCEvents.js":97,"../../service/RTC/StreamEventTypes.js":99,"../../service/UI/UIEvents":100,"../../service/desktopsharing/DesktopSharingEventTypes":103,"../../service/xmpp/XMPPEvents":106,"./DataChannels":4,"./LocalStream.js":5,"./MediaStream.js":6,"./RTCUtils.js":8,"events":107}],8:[function(require,module,exports){
 var RTCBrowserType = require("../../service/RTC/RTCBrowserType.js");
 var Resolutions = require("../../service/RTC/Resolutions");
 
@@ -1487,7 +1487,7 @@ RTCUtils.prototype.createStream = function(stream, isVideo)
 
 module.exports = RTCUtils;
 
-},{"../../service/RTC/RTCBrowserType.js":100,"../../service/RTC/Resolutions":102}],9:[function(require,module,exports){
+},{"../../service/RTC/RTCBrowserType.js":96,"../../service/RTC/Resolutions":98}],9:[function(require,module,exports){
 var UI = {};
 
 var VideoLayout = require("./videolayout/VideoLayout.js");
@@ -1898,9 +1898,9 @@ function chatSetSubject(text)
     return Chat.chatSetSubject(text);
 };
 
-function updateChatConversation(from, displayName, message) {
-    return Chat.updateChatConversation(from, displayName, message);
-};
+function updateChatConversation(from, displayName, message, myjid, stamp) {
+    return Chat.updateChatConversation(from, displayName, message, myjid, stamp);
+}
 
 function onMucJoined(jid, info) {
     Toolbar.updateRoomUrl(window.location.href);
@@ -2294,7 +2294,7 @@ UI.setVideoMute = setVideoMute;
 module.exports = UI;
 
 
-},{"../../service/RTC/RTCEvents":101,"../../service/RTC/StreamEventTypes":103,"../../service/connectionquality/CQEvents":106,"../../service/desktopsharing/DesktopSharingEventTypes":107,"../../service/members/Events":108,"../../service/xmpp/XMPPEvents":110,"./../settings/Settings":45,"./audio_levels/AudioLevels.js":10,"./authentication/Authentication":12,"./avatar/Avatar":14,"./etherpad/Etherpad.js":15,"./prezi/Prezi.js":16,"./side_pannels/SidePanelToggler":18,"./side_pannels/chat/Chat.js":19,"./side_pannels/contactlist/ContactList":23,"./side_pannels/settings/SettingsMenu":24,"./toolbars/BottomToolbar":25,"./toolbars/Toolbar":26,"./toolbars/ToolbarToggler":27,"./util/MessageHandler":29,"./util/NicknameHandler":30,"./util/UIUtil":31,"./videolayout/VideoLayout.js":37,"./welcome_page/RoomnameGenerator":38,"./welcome_page/WelcomePage":39,"events":111}],10:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":97,"../../service/RTC/StreamEventTypes":99,"../../service/connectionquality/CQEvents":102,"../../service/desktopsharing/DesktopSharingEventTypes":103,"../../service/members/Events":104,"../../service/xmpp/XMPPEvents":106,"./../settings/Settings":45,"./audio_levels/AudioLevels.js":10,"./authentication/Authentication":12,"./avatar/Avatar":14,"./etherpad/Etherpad.js":15,"./prezi/Prezi.js":16,"./side_pannels/SidePanelToggler":18,"./side_pannels/chat/Chat.js":19,"./side_pannels/contactlist/ContactList":23,"./side_pannels/settings/SettingsMenu":24,"./toolbars/BottomToolbar":25,"./toolbars/Toolbar":26,"./toolbars/ToolbarToggler":27,"./util/MessageHandler":29,"./util/NicknameHandler":30,"./util/UIUtil":31,"./videolayout/VideoLayout.js":37,"./welcome_page/RoomnameGenerator":38,"./welcome_page/WelcomePage":39,"events":107}],10:[function(require,module,exports){
 var CanvasUtil = require("./CanvasUtils");
 
 var ASDrawContext = $('#activeSpeakerAudioLevel')[0].getContext('2d');
@@ -3184,7 +3184,7 @@ var Avatar = {
 
 
 module.exports = Avatar;
-},{"../../../service/RTC/MediaStreamTypes":99,"../../settings/Settings":45,"../videolayout/LargeVideo":33,"../videolayout/VideoLayout":37}],15:[function(require,module,exports){
+},{"../../../service/RTC/MediaStreamTypes":95,"../../settings/Settings":45,"../videolayout/LargeVideo":33,"../videolayout/VideoLayout":37}],15:[function(require,module,exports){
 /* global $, config,
    setLargeVideoVisible, Util */
 
@@ -4300,8 +4300,8 @@ function setVisualNotification(show) {
  * Returns the current time in the format it is shown to the user
  * @returns {string}
  */
-function getCurrentTime() {
-    var now     = new Date();
+function getCurrentTime(stamp) {
+    var now     = (stamp? new Date(stamp): new Date());
     var hour    = now.getHours();
     var minute  = now.getMinutes();
     var second  = now.getSeconds();
@@ -4443,7 +4443,7 @@ var Chat = (function (my) {
     /**
      * Appends the given message to the chat conversation.
      */
-    my.updateChatConversation = function (from, displayName, message) {
+    my.updateChatConversation = function (from, displayName, message, myjid, stamp) {
         var divClassName = '';
 
         if (APP.xmpp.myJid() === from) {
@@ -4471,7 +4471,7 @@ var Chat = (function (my) {
             '<div class="chatmessage">'+
                 '<img src="../images/chatArrow.svg" class="chatArrow">' +
                 '<div class="username ' + divClassName +'">' + escDisplayName +
-                '</div>' + '<div class="timestamp">' + getCurrentTime() +
+                '</div>' + '<div class="timestamp">' + getCurrentTime(stamp) +
                 '</div>' + '<div class="usermessage">' + message + '</div>' +
             '</div>';
 
@@ -4570,7 +4570,7 @@ var Chat = (function (my) {
     return my;
 }(Chat || {}));
 module.exports = Chat;
-},{"../../../../service/UI/UIEvents":104,"../../toolbars/ToolbarToggler":27,"../../util/NicknameHandler":30,"../../util/UIUtil":31,"../SidePanelToggler":18,"./Commands":20,"./Replacement":21,"./smileys.json":22}],20:[function(require,module,exports){
+},{"../../../../service/UI/UIEvents":100,"../../toolbars/ToolbarToggler":27,"../../util/NicknameHandler":30,"../../util/UIUtil":31,"../SidePanelToggler":18,"./Commands":20,"./Replacement":21,"./smileys.json":22}],20:[function(require,module,exports){
 var UIUtil = require("../../util/UIUtil");
 
 /**
@@ -5078,7 +5078,7 @@ var SettingsMenu = {
 
 
 module.exports = SettingsMenu;
-},{"../../../../service/translation/languages":109,"../../avatar/Avatar":14,"../../util/UIUtil":31,"./../../../settings/Settings":45}],25:[function(require,module,exports){
+},{"../../../../service/translation/languages":105,"../../avatar/Avatar":14,"../../util/UIUtil":31,"./../../../settings/Settings":45}],25:[function(require,module,exports){
 var PanelToggler = require("../side_pannels/SidePanelToggler");
 
 var buttonHandlers = {
@@ -5772,7 +5772,7 @@ var Toolbar = (function (my) {
 }(Toolbar || {}));
 
 module.exports = Toolbar;
-},{"../../../service/authentication/AuthenticationEvents":105,"../authentication/Authentication":12,"../etherpad/Etherpad":15,"../prezi/Prezi":16,"../side_pannels/SidePanelToggler":18,"../util/MessageHandler":29,"../util/UIUtil":31,"./BottomToolbar":25}],27:[function(require,module,exports){
+},{"../../../service/authentication/AuthenticationEvents":101,"../authentication/Authentication":12,"../etherpad/Etherpad":15,"../prezi/Prezi":16,"../side_pannels/SidePanelToggler":18,"../util/MessageHandler":29,"../util/UIUtil":31,"./BottomToolbar":25}],27:[function(require,module,exports){
 /* global $, interfaceConfig, Moderator, DesktopStreaming.showDesktopSharingButton */
 
 var toolbarTimeoutObject,
@@ -6253,7 +6253,7 @@ var NickanameHandler = {
 };
 
 module.exports = NickanameHandler;
-},{"../../../service/UI/UIEvents":104}],31:[function(require,module,exports){
+},{"../../../service/UI/UIEvents":100}],31:[function(require,module,exports){
 /**
  * Created by hristo on 12/22/14.
  */
@@ -7177,7 +7177,7 @@ var LargeVideo = {
 
 
 module.exports = LargeVideo;
-},{"../../../service/UI/UIEvents":104,"../../xmpp/xmpp":63,"../avatar/Avatar":14,"../etherpad/Etherpad":15,"../prezi/Prezi":16,"../util/UIUtil":31}],34:[function(require,module,exports){
+},{"../../../service/UI/UIEvents":100,"../../xmpp/xmpp":63,"../avatar/Avatar":14,"../etherpad/Etherpad":15,"../prezi/Prezi":16,"../util/UIUtil":31}],34:[function(require,module,exports){
 var SmallVideo = require("./SmallVideo");
 var ConnectionIndicator = require("./ConnectionIndicator");
 var NicknameHandler = require("../util/NicknameHandler");
@@ -8977,7 +8977,7 @@ var VideoLayout = (function (my) {
 }(VideoLayout || {}));
 
 module.exports = VideoLayout;
-},{"../../../service/RTC/MediaStreamTypes":99,"../../../service/UI/UIEvents":104,"../audio_levels/AudioLevels":10,"../avatar/Avatar":14,"../prezi/Prezi":16,"../side_pannels/contactlist/ContactList":23,"./LargeVideo":33,"./LocalVideo":34,"./RemoteVideo":35}],38:[function(require,module,exports){
+},{"../../../service/RTC/MediaStreamTypes":95,"../../../service/UI/UIEvents":100,"../audio_levels/AudioLevels":10,"../avatar/Avatar":14,"../prezi/Prezi":16,"../side_pannels/contactlist/ContactList":23,"./LargeVideo":33,"./LocalVideo":34,"./RemoteVideo":35}],38:[function(require,module,exports){
 //var nouns = [
 //];
 var pluralNouns = [
@@ -9436,7 +9436,7 @@ var ConnectionQuality = {
 };
 
 module.exports = ConnectionQuality;
-},{"../../service/connectionquality/CQEvents":106,"../../service/xmpp/XMPPEvents":110,"events":111}],42:[function(require,module,exports){
+},{"../../service/connectionquality/CQEvents":102,"../../service/xmpp/XMPPEvents":106,"events":107}],42:[function(require,module,exports){
 /* global $, alert, APP, changeLocalVideo, chrome, config, getConferenceHandler,
  getUserMediaWithConstraints */
 /**
@@ -9806,7 +9806,7 @@ module.exports = {
 };
 
 
-},{"../../service/desktopsharing/DesktopSharingEventTypes":107,"events":111}],43:[function(require,module,exports){
+},{"../../service/desktopsharing/DesktopSharingEventTypes":103,"events":107}],43:[function(require,module,exports){
 //maps keycode to character, id of popover for given function and function
 var shortcuts = {
     67: {
@@ -10030,7 +10030,7 @@ var Members = {
 
 module.exports = Members;
 
-},{"../../service/members/Events":108,"../../service/xmpp/XMPPEvents":110,"events":111}],45:[function(require,module,exports){
+},{"../../service/members/Events":104,"../../service/xmpp/XMPPEvents":106,"events":107}],45:[function(require,module,exports){
 var email = '';
 var displayName = '';
 var userId;
@@ -10970,7 +10970,7 @@ StatsCollector.prototype.processAudioLevelReport = function ()
 
 };
 
-},{"../../service/RTC/RTCBrowserType":100}],48:[function(require,module,exports){
+},{"../../service/RTC/RTCBrowserType":96}],48:[function(require,module,exports){
 /**
  * Created by hristo on 8/4/14.
  */
@@ -11103,7 +11103,7 @@ var statistics =
 
 
 module.exports = statistics;
-},{"../../service/RTC/StreamEventTypes.js":103,"../../service/xmpp/XMPPEvents":110,"./LocalStatsCollector.js":46,"./RTPStatsCollector.js":47,"events":111}],49:[function(require,module,exports){
+},{"../../service/RTC/StreamEventTypes.js":99,"../../service/xmpp/XMPPEvents":106,"./LocalStatsCollector.js":46,"./RTPStatsCollector.js":47,"events":107}],49:[function(require,module,exports){
 var i18n = require("i18next-client");
 var languages = require("../../service/translation/languages");
 var Settings = require("../settings/Settings");
@@ -11242,7 +11242,7 @@ module.exports = {
     }
 };
 
-},{"../../service/translation/languages":109,"../settings/Settings":45,"i18next-client":65}],50:[function(require,module,exports){
+},{"../../service/translation/languages":105,"../settings/Settings":45,"i18next-client":65}],50:[function(require,module,exports){
 /* jshint -W117 */
 var TraceablePeerConnection = require("./TraceablePeerConnection");
 var SDPDiffer = require("./SDPDiffer");
@@ -12636,7 +12636,7 @@ JingleSession.prototype.remoteStreamAdded = function (data, times) {
 
 module.exports = JingleSession;
 
-},{"../../service/RTC/RTCBrowserType":100,"./SDP":51,"./SDPDiffer":52,"./SDPUtil":53,"./TraceablePeerConnection":54,"async":64,"sdp-transform":96}],51:[function(require,module,exports){
+},{"../../service/RTC/RTCBrowserType":96,"./SDP":51,"./SDPDiffer":52,"./SDPUtil":53,"./TraceablePeerConnection":54,"async":64,"sdp-transform":92}],51:[function(require,module,exports){
 /* jshint -W117 */
 var SDPUtil = require("./SDPUtil");
 
@@ -14101,7 +14101,7 @@ TraceablePeerConnection.prototype.getStats = function(callback, errback) {
 module.exports = TraceablePeerConnection;
 
 
-},{"sdp-interop":86,"sdp-simulcast":93}],55:[function(require,module,exports){
+},{"sdp-interop":86,"sdp-simulcast":89}],55:[function(require,module,exports){
 /* global $, $iq, APP, config, connection, UI, messageHandler,
  roomName, sessionTerminated, Strophe, Util */
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
@@ -14537,7 +14537,7 @@ module.exports = Moderator;
 
 
 
-},{"../../service/authentication/AuthenticationEvents":105,"../../service/xmpp/XMPPEvents":110,"../settings/Settings":45}],56:[function(require,module,exports){
+},{"../../service/authentication/AuthenticationEvents":101,"../../service/xmpp/XMPPEvents":106,"../settings/Settings":45}],56:[function(require,module,exports){
 /* global $, $iq, config, connection, focusMucJid, messageHandler, Moderator,
    Toolbar, Util */
 var Moderator = require("./moderator");
@@ -15081,11 +15081,24 @@ module.exports = function(XMPP, eventEmitter) {
                 }
             }
 
+            // xep-0203 delay
+            var stamp = $(msg).find('>delay').attr('stamp');
+
+            if (!stamp) {
+                // or xep-0091 delay, UTC timestamp
+                stamp = $(msg).find('>[xmlns="jabber:x:delay"]').attr('stamp');
+
+                if (stamp) {
+                    // the format is CCYYMMDDThh:mm:ss
+                    var dateParts = stamp.match(/(\d{4})(\d{2})(\d{2}T\d{2}:\d{2}:\d{2})/);
+                    stamp = dateParts[1] + "-" + dateParts[2] + "-" + dateParts[3] + "Z";
+                }
+            }
 
             if (txt) {
                 console.log('chat', nick, txt);
                 eventEmitter.emit(XMPPEvents.MESSAGE_RECEIVED,
-                    from, nick, txt, this.myroomjid);
+                    from, nick, txt, this.myroomjid, stamp);
             }
             return true;
         },
@@ -15377,7 +15390,7 @@ module.exports = function(XMPP, eventEmitter) {
 };
 
 
-},{"../../service/xmpp/XMPPEvents":110,"./JingleSession":50,"./moderator":55}],58:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":106,"./JingleSession":50,"./moderator":55}],58:[function(require,module,exports){
 /* jshint -W117 */
 
 var JingleSession = require("./JingleSession");
@@ -15726,7 +15739,7 @@ module.exports = function(XMPP, eventEmitter)
 };
 
 
-},{"../../service/xmpp/XMPPEvents":110,"./JingleSession":50}],59:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":106,"./JingleSession":50}],59:[function(require,module,exports){
 /* global Strophe */
 module.exports = function () {
 
@@ -16560,7 +16573,7 @@ var XMPP = {
 
 module.exports = XMPP;
 
-},{"../../service/RTC/RTCEvents":101,"../../service/RTC/StreamEventTypes":103,"../../service/UI/UIEvents":104,"../../service/xmpp/XMPPEvents":110,"../settings/Settings":45,"./SDP":51,"./moderator":55,"./recording":56,"./strophe.emuc":57,"./strophe.jingle":58,"./strophe.logger":59,"./strophe.moderate":60,"./strophe.rayo":61,"./strophe.util":62,"events":111,"pako":66,"retry":82}],64:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":97,"../../service/RTC/StreamEventTypes":99,"../../service/UI/UIEvents":100,"../../service/xmpp/XMPPEvents":106,"../settings/Settings":45,"./SDP":51,"./moderator":55,"./recording":56,"./strophe.emuc":57,"./strophe.jingle":58,"./strophe.logger":59,"./strophe.moderate":60,"./strophe.rayo":61,"./strophe.util":62,"events":107,"pako":66,"retry":82}],64:[function(require,module,exports){
 (function (process){
 /*!
  * async
@@ -17687,7 +17700,7 @@ module.exports = XMPP;
 }());
 
 }).call(this,require('_process'))
-},{"_process":112}],65:[function(require,module,exports){
+},{"_process":108}],65:[function(require,module,exports){
 // i18next, v1.7.7
 // Copyright (c)2014 Jan Mühlemann (jamuhl).
 // Distributed under MIT license
@@ -27092,477 +27105,7 @@ exports.parse = function(sdp) {
 };
 
 
-},{"sdp-transform":90}],89:[function(require,module,exports){
-var grammar = module.exports = {
-  v: [{
-      name: 'version',
-      reg: /^(\d*)$/
-  }],
-  o: [{ //o=- 20518 0 IN IP4 203.0.113.1
-    // NB: sessionId will be a String in most cases because it is huge
-    name: 'origin',
-    reg: /^(\S*) (\d*) (\d*) (\S*) IP(\d) (\S*)/,
-    names: ['username', 'sessionId', 'sessionVersion', 'netType', 'ipVer', 'address'],
-    format: "%s %s %d %s IP%d %s"
-  }],
-  // default parsing of these only (though some of these feel outdated)
-  s: [{ name: 'name' }],
-  i: [{ name: 'description' }],
-  u: [{ name: 'uri' }],
-  e: [{ name: 'email' }],
-  p: [{ name: 'phone' }],
-  z: [{ name: 'timezones' }], // TODO: this one can actually be parsed properly..
-  r: [{ name: 'repeats' }],   // TODO: this one can also be parsed properly
-  //k: [{}], // outdated thing ignored
-  t: [{ //t=0 0
-    name: 'timing',
-    reg: /^(\d*) (\d*)/,
-    names: ['start', 'stop'],
-    format: "%d %d"
-  }],
-  c: [{ //c=IN IP4 10.47.197.26
-      name: 'connection',
-      reg: /^IN IP(\d) (\S*)/,
-      names: ['version', 'ip'],
-      format: "IN IP%d %s"
-  }],
-  b: [{ //b=AS:4000
-      push: 'bandwidth',
-      reg: /^(TIAS|AS|CT|RR|RS):(\d*)/,
-      names: ['type', 'limit'],
-      format: "%s:%s"
-  }],
-  m: [{ //m=video 51744 RTP/AVP 126 97 98 34 31
-      // NB: special - pushes to session
-      // TODO: rtp/fmtp should be filtered by the payloads found here?
-      reg: /^(\w*) (\d*) ([\w\/]*)(?: (.*))?/,
-      names: ['type', 'port', 'protocol', 'payloads'],
-      format: "%s %d %s %s"
-  }],
-  a: [
-    { //a=rtpmap:110 opus/48000/2
-      push: 'rtp',
-      reg: /^rtpmap:(\d*) ([\w\-]*)\/(\d*)(?:\s*\/(\S*))?/,
-      names: ['payload', 'codec', 'rate', 'encoding'],
-      format: function (o) {
-        return (o.encoding) ?
-          "rtpmap:%d %s/%s/%s":
-          "rtpmap:%d %s/%s";
-      }
-    },
-    { //a=fmtp:108 profile-level-id=24;object=23;bitrate=64000
-      push: 'fmtp',
-      reg: /^fmtp:(\d*) (\S*)/,
-      names: ['payload', 'config'],
-      format: "fmtp:%d %s"
-    },
-    { //a=control:streamid=0
-        name: 'control',
-        reg: /^control:(.*)/,
-        format: "control:%s"
-    },
-    { //a=rtcp:65179 IN IP4 193.84.77.194
-      name: 'rtcp',
-      reg: /^rtcp:(\d*)(?: (\S*) IP(\d) (\S*))?/,
-      names: ['port', 'netType', 'ipVer', 'address'],
-      format: function (o) {
-        return (o.address != null) ?
-          "rtcp:%d %s IP%d %s":
-          "rtcp:%d";
-      }
-    },
-    { //a=rtcp-fb:98 trr-int 100
-      push: 'rtcpFbTrrInt',
-      reg: /^rtcp-fb:(\*|\d*) trr-int (\d*)/,
-      names: ['payload', 'value'],
-      format: "rtcp-fb:%d trr-int %d"
-    },
-    { //a=rtcp-fb:98 nack rpsi
-      push: 'rtcpFb',
-      reg: /^rtcp-fb:(\*|\d*) ([\w-_]*)(?: ([\w-_]*))?/,
-      names: ['payload', 'type', 'subtype'],
-      format: function (o) {
-        return (o.subtype != null) ?
-          "rtcp-fb:%s %s %s":
-          "rtcp-fb:%s %s";
-      }
-    },
-    { //a=extmap:2 urn:ietf:params:rtp-hdrext:toffset
-      //a=extmap:1/recvonly URI-gps-string
-      push: 'ext',
-      reg: /^extmap:([\w_\/]*) (\S*)(?: (\S*))?/,
-      names: ['value', 'uri', 'config'], // value may include "/direction" suffix
-      format: function (o) {
-        return (o.config != null) ?
-          "extmap:%s %s %s":
-          "extmap:%s %s";
-      }
-    },
-    {
-      //a=crypto:1 AES_CM_128_HMAC_SHA1_80 inline:PS1uQCVeeCFCanVmcjkpPywjNWhcYD0mXXtxaVBR|2^20|1:32
-      push: 'crypto',
-      reg: /^crypto:(\d*) ([\w_]*) (\S*)(?: (\S*))?/,
-      names: ['id', 'suite', 'config', 'sessionConfig'],
-      format: function (o) {
-        return (o.sessionConfig != null) ?
-          "crypto:%d %s %s %s":
-          "crypto:%d %s %s";
-      }
-    },
-    { //a=setup:actpass
-      name: 'setup',
-      reg: /^setup:(\w*)/,
-      format: "setup:%s"
-    },
-    { //a=mid:1
-      name: 'mid',
-      reg: /^mid:([^\s]*)/,
-      format: "mid:%s"
-    },
-    { //a=msid:0c8b064d-d807-43b4-b434-f92a889d8587 98178685-d409-46e0-8e16-7ef0db0db64a
-      name: 'msid',
-      reg: /^msid:(.*)/,
-      format: "msid:%s"
-    },
-    { //a=ptime:20
-      name: 'ptime',
-      reg: /^ptime:(\d*)/,
-      format: "ptime:%d"
-    },
-    { //a=maxptime:60
-      name: 'maxptime',
-      reg: /^maxptime:(\d*)/,
-      format: "maxptime:%d"
-    },
-    { //a=sendrecv
-      name: 'direction',
-      reg: /^(sendrecv|recvonly|sendonly|inactive)/
-    },
-    { //a=ice-lite
-      name: 'icelite',
-      reg: /^(ice-lite)/
-    },
-    { //a=ice-ufrag:F7gI
-      name: 'iceUfrag',
-      reg: /^ice-ufrag:(\S*)/,
-      format: "ice-ufrag:%s"
-    },
-    { //a=ice-pwd:x9cml/YzichV2+XlhiMu8g
-      name: 'icePwd',
-      reg: /^ice-pwd:(\S*)/,
-      format: "ice-pwd:%s"
-    },
-    { //a=fingerprint:SHA-1 00:11:22:33:44:55:66:77:88:99:AA:BB:CC:DD:EE:FF:00:11:22:33
-      name: 'fingerprint',
-      reg: /^fingerprint:(\S*) (\S*)/,
-      names: ['type', 'hash'],
-      format: "fingerprint:%s %s"
-    },
-    {
-      //a=candidate:0 1 UDP 2113667327 203.0.113.1 54400 typ host
-      //a=candidate:1162875081 1 udp 2113937151 192.168.34.75 60017 typ host generation 0
-      //a=candidate:3289912957 2 udp 1845501695 193.84.77.194 60017 typ srflx raddr 192.168.34.75 rport 60017 generation 0
-      push:'candidates',
-      reg: /^candidate:(\S*) (\d*) (\S*) (\d*) (\S*) (\d*) typ (\S*)(?: raddr (\S*) rport (\d*))?(?: generation (\d*))?/,
-      names: ['foundation', 'component', 'transport', 'priority', 'ip', 'port', 'type', 'raddr', 'rport', 'generation'],
-      format: function (o) {
-        var str = "candidate:%s %d %s %d %s %d typ %s";
-        // NB: candidate has two optional chunks, so %void middle one if it's missing
-        str += (o.raddr != null) ? " raddr %s rport %d" : "%v%v";
-        if (o.generation != null) {
-          str += " generation %d";
-        }
-        return str;
-      }
-    },
-    { //a=end-of-candidates (keep after the candidates line for readability)
-      name: 'endOfCandidates',
-      reg: /^(end-of-candidates)/
-    },
-    { //a=remote-candidates:1 203.0.113.1 54400 2 203.0.113.1 54401 ...
-      name: 'remoteCandidates',
-      reg: /^remote-candidates:(.*)/,
-      format: "remote-candidates:%s"
-    },
-    { //a=ice-options:google-ice
-      name: 'iceOptions',
-      reg: /^ice-options:(\S*)/,
-      format: "ice-options:%s"
-    },
-    { //a=ssrc:2566107569 cname:t9YU8M1UxTF8Y1A1
-      push: "ssrcs",
-      reg: /^ssrc:(\d*) ([\w_]*):(.*)/,
-      names: ['id', 'attribute', 'value'],
-      format: "ssrc:%d %s:%s"
-    },
-    { //a=ssrc-group:FEC 1 2
-      push: "ssrcGroups",
-      reg: /^ssrc-group:(\w*) (.*)/,
-      names: ['semantics', 'ssrcs'],
-      format: "ssrc-group:%s %s"
-    },
-    { //a=msid-semantic: WMS Jvlam5X3SX1OP6pn20zWogvaKJz5Hjf9OnlV
-      name: "msidSemantic",
-      reg: /^msid-semantic:\s?(\w*) (\S*)/,
-      names: ['semantic', 'token'],
-      format: "msid-semantic: %s %s" // space after ":" is not accidental
-    },
-    { //a=group:BUNDLE audio video
-      push: 'groups',
-      reg: /^group:(\w*) (.*)/,
-      names: ['type', 'mids'],
-      format: "group:%s %s"
-    },
-    { //a=rtcp-mux
-      name: 'rtcpMux',
-      reg: /^(rtcp-mux)/
-    },
-    { //a=rtcp-rsize
-      name: 'rtcpRsize',
-      reg: /^(rtcp-rsize)/
-    },
-    { // any a= that we don't understand is kepts verbatim on media.invalid
-      push: 'invalid',
-      names: ["value"]
-    }
-  ]
-};
-
-// set sensible defaults to avoid polluting the grammar with boring details
-Object.keys(grammar).forEach(function (key) {
-  var objs = grammar[key];
-  objs.forEach(function (obj) {
-    if (!obj.reg) {
-      obj.reg = /(.*)/;
-    }
-    if (!obj.format) {
-      obj.format = "%s";
-    }
-  });
-});
-
-},{}],90:[function(require,module,exports){
-var parser = require('./parser');
-var writer = require('./writer');
-
-exports.write = writer;
-exports.parse = parser.parse;
-exports.parseFmtpConfig = parser.parseFmtpConfig;
-exports.parsePayloads = parser.parsePayloads;
-exports.parseRemoteCandidates = parser.parseRemoteCandidates;
-
-},{"./parser":91,"./writer":92}],91:[function(require,module,exports){
-var toIntIfInt = function (v) {
-  return String(Number(v)) === v ? Number(v) : v;
-};
-
-var attachProperties = function (match, location, names, rawName) {
-  if (rawName && !names) {
-    location[rawName] = toIntIfInt(match[1]);
-  }
-  else {
-    for (var i = 0; i < names.length; i += 1) {
-      if (match[i+1] != null) {
-        location[names[i]] = toIntIfInt(match[i+1]);
-      }
-    }
-  }
-};
-
-var parseReg = function (obj, location, content) {
-  var needsBlank = obj.name && obj.names;
-  if (obj.push && !location[obj.push]) {
-    location[obj.push] = [];
-  }
-  else if (needsBlank && !location[obj.name]) {
-    location[obj.name] = {};
-  }
-  var keyLocation = obj.push ?
-    {} :  // blank object that will be pushed
-    needsBlank ? location[obj.name] : location; // otherwise, named location or root
-
-  attachProperties(content.match(obj.reg), keyLocation, obj.names, obj.name);
-
-  if (obj.push) {
-    location[obj.push].push(keyLocation);
-  }
-};
-
-var grammar = require('./grammar');
-var validLine = RegExp.prototype.test.bind(/^([a-z])=(.*)/);
-
-exports.parse = function (sdp) {
-  var session = {}
-    , media = []
-    , location = session; // points at where properties go under (one of the above)
-
-  // parse lines we understand
-  sdp.split(/(\r\n|\r|\n)/).filter(validLine).forEach(function (l) {
-    var type = l[0];
-    var content = l.slice(2);
-    if (type === 'm') {
-      media.push({rtp: [], fmtp: []});
-      location = media[media.length-1]; // point at latest media line
-    }
-
-    for (var j = 0; j < (grammar[type] || []).length; j += 1) {
-      var obj = grammar[type][j];
-      if (obj.reg.test(content)) {
-        return parseReg(obj, location, content);
-      }
-    }
-  });
-
-  session.media = media; // link it up
-  return session;
-};
-
-var fmtpReducer = function (acc, expr) {
-  var s = expr.split('=');
-  if (s.length === 2) {
-    acc[s[0]] = toIntIfInt(s[1]);
-  }
-  return acc;
-};
-
-exports.parseFmtpConfig = function (str) {
-  return str.split(';').reduce(fmtpReducer, {});
-};
-
-exports.parsePayloads = function (str) {
-  return str.split(' ').map(Number);
-};
-
-exports.parseRemoteCandidates = function (str) {
-  var candidates = [];
-  var parts = str.split(' ').map(toIntIfInt);
-  for (var i = 0; i < parts.length; i += 3) {
-    candidates.push({
-      component: parts[i],
-      ip: parts[i + 1],
-      port: parts[i + 2]
-    });
-  }
-  return candidates;
-};
-
-},{"./grammar":89}],92:[function(require,module,exports){
-var grammar = require('./grammar');
-
-// customized util.format - discards excess arguments and can void middle ones
-var formatRegExp = /%[sdv%]/g;
-var format = function (formatStr) {
-  var i = 1;
-  var args = arguments;
-  var len = args.length;
-  return formatStr.replace(formatRegExp, function (x) {
-    if (i >= len) {
-      return x; // missing argument
-    }
-    var arg = args[i];
-    i += 1;
-    switch (x) {
-      case '%%':
-        return '%';
-      case '%s':
-        return String(arg);
-      case '%d':
-        return Number(arg);
-      case '%v':
-        return '';
-    }
-  });
-  // NB: we discard excess arguments - they are typically undefined from makeLine
-};
-
-var makeLine = function (type, obj, location) {
-  var str = obj.format instanceof Function ?
-    (obj.format(obj.push ? location : location[obj.name])) :
-    obj.format;
-
-  var args = [type + '=' + str];
-  if (obj.names) {
-    for (var i = 0; i < obj.names.length; i += 1) {
-      var n = obj.names[i];
-      if (obj.name) {
-        args.push(location[obj.name][n]);
-      }
-      else { // for mLine and push attributes
-        args.push(location[obj.names[i]]);
-      }
-    }
-  }
-  else {
-    args.push(location[obj.name]);
-  }
-  return format.apply(null, args);
-};
-
-// RFC specified order
-// TODO: extend this with all the rest
-var defaultOuterOrder = [
-  'v', 'o', 's', 'i',
-  'u', 'e', 'p', 'c',
-  'b', 't', 'r', 'z', 'a'
-];
-var defaultInnerOrder = ['i', 'c', 'b', 'a'];
-
-
-module.exports = function (session, opts) {
-  opts = opts || {};
-  // ensure certain properties exist
-  if (session.version == null) {
-    session.version = 0; // "v=0" must be there (only defined version atm)
-  }
-  if (session.name == null) {
-    session.name = " "; // "s= " must be there if no meaningful name set
-  }
-  session.media.forEach(function (mLine) {
-    if (mLine.payloads == null) {
-      mLine.payloads = "";
-    }
-  });
-
-  var outerOrder = opts.outerOrder || defaultOuterOrder;
-  var innerOrder = opts.innerOrder || defaultInnerOrder;
-  var sdp = [];
-
-  // loop through outerOrder for matching properties on session
-  outerOrder.forEach(function (type) {
-    grammar[type].forEach(function (obj) {
-      if (obj.name in session && session[obj.name] != null) {
-        sdp.push(makeLine(type, obj, session));
-      }
-      else if (obj.push in session && session[obj.push] != null) {
-        session[obj.push].forEach(function (el) {
-          sdp.push(makeLine(type, obj, el));
-        });
-      }
-    });
-  });
-
-  // then for each media line, follow the innerOrder
-  session.media.forEach(function (mLine) {
-    sdp.push(makeLine('m', grammar.m[0], mLine));
-
-    innerOrder.forEach(function (type) {
-      grammar[type].forEach(function (obj) {
-        if (obj.name in mLine && mLine[obj.name] != null) {
-          sdp.push(makeLine(type, obj, mLine));
-        }
-        else if (obj.push in mLine && mLine[obj.push] != null) {
-          mLine[obj.push].forEach(function (el) {
-            sdp.push(makeLine(type, obj, el));
-          });
-        }
-      });
-    });
-  });
-
-  return sdp.join('\r\n') + '\r\n';
-};
-
-},{"./grammar":89}],93:[function(require,module,exports){
+},{"sdp-transform":92}],89:[function(require,module,exports){
 var transform = require('sdp-transform');
 var transformUtils = require('./transform-utils');
 var parseSsrcs = transformUtils.parseSsrcs;
@@ -27964,7 +27507,7 @@ Simulcast.prototype.mungeLocalDescription = function (desc) {
 
 module.exports = Simulcast;
 
-},{"./transform-utils":94,"sdp-transform":96}],94:[function(require,module,exports){
+},{"./transform-utils":90,"sdp-transform":92}],90:[function(require,module,exports){
 exports.writeSsrcs = function(sources, order) {
   var ssrcs = [];
 
@@ -28015,22 +27558,484 @@ exports.parseSsrcs = function (mLine) {
 };
 
 
-},{}],95:[function(require,module,exports){
-arguments[4][89][0].apply(exports,arguments)
-},{"dup":89}],96:[function(require,module,exports){
-arguments[4][90][0].apply(exports,arguments)
-},{"./parser":97,"./writer":98,"dup":90}],97:[function(require,module,exports){
-arguments[4][91][0].apply(exports,arguments)
-},{"./grammar":95,"dup":91}],98:[function(require,module,exports){
-arguments[4][92][0].apply(exports,arguments)
-},{"./grammar":95,"dup":92}],99:[function(require,module,exports){
+},{}],91:[function(require,module,exports){
+var grammar = module.exports = {
+  v: [{
+      name: 'version',
+      reg: /^(\d*)$/
+  }],
+  o: [{ //o=- 20518 0 IN IP4 203.0.113.1
+    // NB: sessionId will be a String in most cases because it is huge
+    name: 'origin',
+    reg: /^(\S*) (\d*) (\d*) (\S*) IP(\d) (\S*)/,
+    names: ['username', 'sessionId', 'sessionVersion', 'netType', 'ipVer', 'address'],
+    format: "%s %s %d %s IP%d %s"
+  }],
+  // default parsing of these only (though some of these feel outdated)
+  s: [{ name: 'name' }],
+  i: [{ name: 'description' }],
+  u: [{ name: 'uri' }],
+  e: [{ name: 'email' }],
+  p: [{ name: 'phone' }],
+  z: [{ name: 'timezones' }], // TODO: this one can actually be parsed properly..
+  r: [{ name: 'repeats' }],   // TODO: this one can also be parsed properly
+  //k: [{}], // outdated thing ignored
+  t: [{ //t=0 0
+    name: 'timing',
+    reg: /^(\d*) (\d*)/,
+    names: ['start', 'stop'],
+    format: "%d %d"
+  }],
+  c: [{ //c=IN IP4 10.47.197.26
+      name: 'connection',
+      reg: /^IN IP(\d) (\S*)/,
+      names: ['version', 'ip'],
+      format: "IN IP%d %s"
+  }],
+  b: [{ //b=AS:4000
+      push: 'bandwidth',
+      reg: /^(TIAS|AS|CT|RR|RS):(\d*)/,
+      names: ['type', 'limit'],
+      format: "%s:%s"
+  }],
+  m: [{ //m=video 51744 RTP/AVP 126 97 98 34 31
+      // NB: special - pushes to session
+      // TODO: rtp/fmtp should be filtered by the payloads found here?
+      reg: /^(\w*) (\d*) ([\w\/]*)(?: (.*))?/,
+      names: ['type', 'port', 'protocol', 'payloads'],
+      format: "%s %d %s %s"
+  }],
+  a: [
+    { //a=rtpmap:110 opus/48000/2
+      push: 'rtp',
+      reg: /^rtpmap:(\d*) ([\w\-]*)\/(\d*)(?:\s*\/(\S*))?/,
+      names: ['payload', 'codec', 'rate', 'encoding'],
+      format: function (o) {
+        return (o.encoding) ?
+          "rtpmap:%d %s/%s/%s":
+          "rtpmap:%d %s/%s";
+      }
+    },
+    { //a=fmtp:108 profile-level-id=24;object=23;bitrate=64000
+      push: 'fmtp',
+      reg: /^fmtp:(\d*) (\S*)/,
+      names: ['payload', 'config'],
+      format: "fmtp:%d %s"
+    },
+    { //a=control:streamid=0
+        name: 'control',
+        reg: /^control:(.*)/,
+        format: "control:%s"
+    },
+    { //a=rtcp:65179 IN IP4 193.84.77.194
+      name: 'rtcp',
+      reg: /^rtcp:(\d*)(?: (\S*) IP(\d) (\S*))?/,
+      names: ['port', 'netType', 'ipVer', 'address'],
+      format: function (o) {
+        return (o.address != null) ?
+          "rtcp:%d %s IP%d %s":
+          "rtcp:%d";
+      }
+    },
+    { //a=rtcp-fb:98 trr-int 100
+      push: 'rtcpFbTrrInt',
+      reg: /^rtcp-fb:(\*|\d*) trr-int (\d*)/,
+      names: ['payload', 'value'],
+      format: "rtcp-fb:%d trr-int %d"
+    },
+    { //a=rtcp-fb:98 nack rpsi
+      push: 'rtcpFb',
+      reg: /^rtcp-fb:(\*|\d*) ([\w-_]*)(?: ([\w-_]*))?/,
+      names: ['payload', 'type', 'subtype'],
+      format: function (o) {
+        return (o.subtype != null) ?
+          "rtcp-fb:%s %s %s":
+          "rtcp-fb:%s %s";
+      }
+    },
+    { //a=extmap:2 urn:ietf:params:rtp-hdrext:toffset
+      //a=extmap:1/recvonly URI-gps-string
+      push: 'ext',
+      reg: /^extmap:([\w_\/]*) (\S*)(?: (\S*))?/,
+      names: ['value', 'uri', 'config'], // value may include "/direction" suffix
+      format: function (o) {
+        return (o.config != null) ?
+          "extmap:%s %s %s":
+          "extmap:%s %s";
+      }
+    },
+    {
+      //a=crypto:1 AES_CM_128_HMAC_SHA1_80 inline:PS1uQCVeeCFCanVmcjkpPywjNWhcYD0mXXtxaVBR|2^20|1:32
+      push: 'crypto',
+      reg: /^crypto:(\d*) ([\w_]*) (\S*)(?: (\S*))?/,
+      names: ['id', 'suite', 'config', 'sessionConfig'],
+      format: function (o) {
+        return (o.sessionConfig != null) ?
+          "crypto:%d %s %s %s":
+          "crypto:%d %s %s";
+      }
+    },
+    { //a=setup:actpass
+      name: 'setup',
+      reg: /^setup:(\w*)/,
+      format: "setup:%s"
+    },
+    { //a=mid:1
+      name: 'mid',
+      reg: /^mid:([^\s]*)/,
+      format: "mid:%s"
+    },
+    { //a=msid:0c8b064d-d807-43b4-b434-f92a889d8587 98178685-d409-46e0-8e16-7ef0db0db64a
+      name: 'msid',
+      reg: /^msid:(.*)/,
+      format: "msid:%s"
+    },
+    { //a=ptime:20
+      name: 'ptime',
+      reg: /^ptime:(\d*)/,
+      format: "ptime:%d"
+    },
+    { //a=maxptime:60
+      name: 'maxptime',
+      reg: /^maxptime:(\d*)/,
+      format: "maxptime:%d"
+    },
+    { //a=sendrecv
+      name: 'direction',
+      reg: /^(sendrecv|recvonly|sendonly|inactive)/
+    },
+    { //a=ice-lite
+      name: 'icelite',
+      reg: /^(ice-lite)/
+    },
+    { //a=ice-ufrag:F7gI
+      name: 'iceUfrag',
+      reg: /^ice-ufrag:(\S*)/,
+      format: "ice-ufrag:%s"
+    },
+    { //a=ice-pwd:x9cml/YzichV2+XlhiMu8g
+      name: 'icePwd',
+      reg: /^ice-pwd:(\S*)/,
+      format: "ice-pwd:%s"
+    },
+    { //a=fingerprint:SHA-1 00:11:22:33:44:55:66:77:88:99:AA:BB:CC:DD:EE:FF:00:11:22:33
+      name: 'fingerprint',
+      reg: /^fingerprint:(\S*) (\S*)/,
+      names: ['type', 'hash'],
+      format: "fingerprint:%s %s"
+    },
+    {
+      //a=candidate:0 1 UDP 2113667327 203.0.113.1 54400 typ host
+      //a=candidate:1162875081 1 udp 2113937151 192.168.34.75 60017 typ host generation 0
+      //a=candidate:3289912957 2 udp 1845501695 193.84.77.194 60017 typ srflx raddr 192.168.34.75 rport 60017 generation 0
+      push:'candidates',
+      reg: /^candidate:(\S*) (\d*) (\S*) (\d*) (\S*) (\d*) typ (\S*)(?: raddr (\S*) rport (\d*))?(?: generation (\d*))?/,
+      names: ['foundation', 'component', 'transport', 'priority', 'ip', 'port', 'type', 'raddr', 'rport', 'generation'],
+      format: function (o) {
+        var str = "candidate:%s %d %s %d %s %d typ %s";
+        // NB: candidate has two optional chunks, so %void middle one if it's missing
+        str += (o.raddr != null) ? " raddr %s rport %d" : "%v%v";
+        if (o.generation != null) {
+          str += " generation %d";
+        }
+        return str;
+      }
+    },
+    { //a=end-of-candidates (keep after the candidates line for readability)
+      name: 'endOfCandidates',
+      reg: /^(end-of-candidates)/
+    },
+    { //a=remote-candidates:1 203.0.113.1 54400 2 203.0.113.1 54401 ...
+      name: 'remoteCandidates',
+      reg: /^remote-candidates:(.*)/,
+      format: "remote-candidates:%s"
+    },
+    { //a=ice-options:google-ice
+      name: 'iceOptions',
+      reg: /^ice-options:(\S*)/,
+      format: "ice-options:%s"
+    },
+    { //a=ssrc:2566107569 cname:t9YU8M1UxTF8Y1A1
+      push: "ssrcs",
+      reg: /^ssrc:(\d*) ([\w_]*):(.*)/,
+      names: ['id', 'attribute', 'value'],
+      format: "ssrc:%d %s:%s"
+    },
+    { //a=ssrc-group:FEC 1 2
+      push: "ssrcGroups",
+      reg: /^ssrc-group:(\w*) (.*)/,
+      names: ['semantics', 'ssrcs'],
+      format: "ssrc-group:%s %s"
+    },
+    { //a=msid-semantic: WMS Jvlam5X3SX1OP6pn20zWogvaKJz5Hjf9OnlV
+      name: "msidSemantic",
+      reg: /^msid-semantic:\s?(\w*) (\S*)/,
+      names: ['semantic', 'token'],
+      format: "msid-semantic: %s %s" // space after ":" is not accidental
+    },
+    { //a=group:BUNDLE audio video
+      push: 'groups',
+      reg: /^group:(\w*) (.*)/,
+      names: ['type', 'mids'],
+      format: "group:%s %s"
+    },
+    { //a=rtcp-mux
+      name: 'rtcpMux',
+      reg: /^(rtcp-mux)/
+    },
+    { //a=rtcp-rsize
+      name: 'rtcpRsize',
+      reg: /^(rtcp-rsize)/
+    },
+    { // any a= that we don't understand is kepts verbatim on media.invalid
+      push: 'invalid',
+      names: ["value"]
+    }
+  ]
+};
+
+// set sensible defaults to avoid polluting the grammar with boring details
+Object.keys(grammar).forEach(function (key) {
+  var objs = grammar[key];
+  objs.forEach(function (obj) {
+    if (!obj.reg) {
+      obj.reg = /(.*)/;
+    }
+    if (!obj.format) {
+      obj.format = "%s";
+    }
+  });
+});
+
+},{}],92:[function(require,module,exports){
+var parser = require('./parser');
+var writer = require('./writer');
+
+exports.write = writer;
+exports.parse = parser.parse;
+exports.parseFmtpConfig = parser.parseFmtpConfig;
+exports.parsePayloads = parser.parsePayloads;
+exports.parseRemoteCandidates = parser.parseRemoteCandidates;
+
+},{"./parser":93,"./writer":94}],93:[function(require,module,exports){
+var toIntIfInt = function (v) {
+  return String(Number(v)) === v ? Number(v) : v;
+};
+
+var attachProperties = function (match, location, names, rawName) {
+  if (rawName && !names) {
+    location[rawName] = toIntIfInt(match[1]);
+  }
+  else {
+    for (var i = 0; i < names.length; i += 1) {
+      if (match[i+1] != null) {
+        location[names[i]] = toIntIfInt(match[i+1]);
+      }
+    }
+  }
+};
+
+var parseReg = function (obj, location, content) {
+  var needsBlank = obj.name && obj.names;
+  if (obj.push && !location[obj.push]) {
+    location[obj.push] = [];
+  }
+  else if (needsBlank && !location[obj.name]) {
+    location[obj.name] = {};
+  }
+  var keyLocation = obj.push ?
+    {} :  // blank object that will be pushed
+    needsBlank ? location[obj.name] : location; // otherwise, named location or root
+
+  attachProperties(content.match(obj.reg), keyLocation, obj.names, obj.name);
+
+  if (obj.push) {
+    location[obj.push].push(keyLocation);
+  }
+};
+
+var grammar = require('./grammar');
+var validLine = RegExp.prototype.test.bind(/^([a-z])=(.*)/);
+
+exports.parse = function (sdp) {
+  var session = {}
+    , media = []
+    , location = session; // points at where properties go under (one of the above)
+
+  // parse lines we understand
+  sdp.split(/(\r\n|\r|\n)/).filter(validLine).forEach(function (l) {
+    var type = l[0];
+    var content = l.slice(2);
+    if (type === 'm') {
+      media.push({rtp: [], fmtp: []});
+      location = media[media.length-1]; // point at latest media line
+    }
+
+    for (var j = 0; j < (grammar[type] || []).length; j += 1) {
+      var obj = grammar[type][j];
+      if (obj.reg.test(content)) {
+        return parseReg(obj, location, content);
+      }
+    }
+  });
+
+  session.media = media; // link it up
+  return session;
+};
+
+var fmtpReducer = function (acc, expr) {
+  var s = expr.split('=');
+  if (s.length === 2) {
+    acc[s[0]] = toIntIfInt(s[1]);
+  }
+  return acc;
+};
+
+exports.parseFmtpConfig = function (str) {
+  return str.split(';').reduce(fmtpReducer, {});
+};
+
+exports.parsePayloads = function (str) {
+  return str.split(' ').map(Number);
+};
+
+exports.parseRemoteCandidates = function (str) {
+  var candidates = [];
+  var parts = str.split(' ').map(toIntIfInt);
+  for (var i = 0; i < parts.length; i += 3) {
+    candidates.push({
+      component: parts[i],
+      ip: parts[i + 1],
+      port: parts[i + 2]
+    });
+  }
+  return candidates;
+};
+
+},{"./grammar":91}],94:[function(require,module,exports){
+var grammar = require('./grammar');
+
+// customized util.format - discards excess arguments and can void middle ones
+var formatRegExp = /%[sdv%]/g;
+var format = function (formatStr) {
+  var i = 1;
+  var args = arguments;
+  var len = args.length;
+  return formatStr.replace(formatRegExp, function (x) {
+    if (i >= len) {
+      return x; // missing argument
+    }
+    var arg = args[i];
+    i += 1;
+    switch (x) {
+      case '%%':
+        return '%';
+      case '%s':
+        return String(arg);
+      case '%d':
+        return Number(arg);
+      case '%v':
+        return '';
+    }
+  });
+  // NB: we discard excess arguments - they are typically undefined from makeLine
+};
+
+var makeLine = function (type, obj, location) {
+  var str = obj.format instanceof Function ?
+    (obj.format(obj.push ? location : location[obj.name])) :
+    obj.format;
+
+  var args = [type + '=' + str];
+  if (obj.names) {
+    for (var i = 0; i < obj.names.length; i += 1) {
+      var n = obj.names[i];
+      if (obj.name) {
+        args.push(location[obj.name][n]);
+      }
+      else { // for mLine and push attributes
+        args.push(location[obj.names[i]]);
+      }
+    }
+  }
+  else {
+    args.push(location[obj.name]);
+  }
+  return format.apply(null, args);
+};
+
+// RFC specified order
+// TODO: extend this with all the rest
+var defaultOuterOrder = [
+  'v', 'o', 's', 'i',
+  'u', 'e', 'p', 'c',
+  'b', 't', 'r', 'z', 'a'
+];
+var defaultInnerOrder = ['i', 'c', 'b', 'a'];
+
+
+module.exports = function (session, opts) {
+  opts = opts || {};
+  // ensure certain properties exist
+  if (session.version == null) {
+    session.version = 0; // "v=0" must be there (only defined version atm)
+  }
+  if (session.name == null) {
+    session.name = " "; // "s= " must be there if no meaningful name set
+  }
+  session.media.forEach(function (mLine) {
+    if (mLine.payloads == null) {
+      mLine.payloads = "";
+    }
+  });
+
+  var outerOrder = opts.outerOrder || defaultOuterOrder;
+  var innerOrder = opts.innerOrder || defaultInnerOrder;
+  var sdp = [];
+
+  // loop through outerOrder for matching properties on session
+  outerOrder.forEach(function (type) {
+    grammar[type].forEach(function (obj) {
+      if (obj.name in session && session[obj.name] != null) {
+        sdp.push(makeLine(type, obj, session));
+      }
+      else if (obj.push in session && session[obj.push] != null) {
+        session[obj.push].forEach(function (el) {
+          sdp.push(makeLine(type, obj, el));
+        });
+      }
+    });
+  });
+
+  // then for each media line, follow the innerOrder
+  session.media.forEach(function (mLine) {
+    sdp.push(makeLine('m', grammar.m[0], mLine));
+
+    innerOrder.forEach(function (type) {
+      grammar[type].forEach(function (obj) {
+        if (obj.name in mLine && mLine[obj.name] != null) {
+          sdp.push(makeLine(type, obj, mLine));
+        }
+        else if (obj.push in mLine && mLine[obj.push] != null) {
+          mLine[obj.push].forEach(function (el) {
+            sdp.push(makeLine(type, obj, el));
+          });
+        }
+      });
+    });
+  });
+
+  return sdp.join('\r\n') + '\r\n';
+};
+
+},{"./grammar":91}],95:[function(require,module,exports){
 var MediaStreamType = {
     VIDEO_TYPE: "Video",
 
     AUDIO_TYPE: "Audio"
 };
 module.exports = MediaStreamType;
-},{}],100:[function(require,module,exports){
+},{}],96:[function(require,module,exports){
 var RTCBrowserType = {
     RTC_BROWSER_CHROME: "rtc_browser.chrome",
 
@@ -28038,7 +28043,7 @@ var RTCBrowserType = {
 };
 
 module.exports = RTCBrowserType;
-},{}],101:[function(require,module,exports){
+},{}],97:[function(require,module,exports){
 var RTCEvents = {
     LASTN_CHANGED: "rtc.lastn_changed",
     DOMINANTSPEAKER_CHANGED: "rtc.dominantspeaker_changed",
@@ -28047,7 +28052,7 @@ var RTCEvents = {
 };
 
 module.exports = RTCEvents;
-},{}],102:[function(require,module,exports){
+},{}],98:[function(require,module,exports){
 var Resolutions = {
     "1080": {
         width: 1920,
@@ -28101,7 +28106,7 @@ var Resolutions = {
     }
 };
 module.exports = Resolutions;
-},{}],103:[function(require,module,exports){
+},{}],99:[function(require,module,exports){
 var StreamEventTypes = {
     EVENT_TYPE_LOCAL_CREATED: "stream.local_created",
 
@@ -28117,14 +28122,14 @@ var StreamEventTypes = {
 };
 
 module.exports = StreamEventTypes;
-},{}],104:[function(require,module,exports){
+},{}],100:[function(require,module,exports){
 var UIEvents = {
     NICKNAME_CHANGED: "UI.nickname_changed",
     SELECTED_ENDPOINT: "UI.selected_endpoint",
     PINNED_ENDPOINT: "UI.pinned_endpoint"
 };
 module.exports = UIEvents;
-},{}],105:[function(require,module,exports){
+},{}],101:[function(require,module,exports){
 var AuthenticationEvents = {
     /**
      * Event callback arguments:
@@ -28138,7 +28143,7 @@ var AuthenticationEvents = {
 };
 module.exports = AuthenticationEvents;
 
-},{}],106:[function(require,module,exports){
+},{}],102:[function(require,module,exports){
 var CQEvents = {
     LOCALSTATS_UPDATED: "cq.localstats_updated",
     REMOTESTATS_UPDATED: "cq.remotestats_updated",
@@ -28146,7 +28151,7 @@ var CQEvents = {
 };
 
 module.exports = CQEvents;
-},{}],107:[function(require,module,exports){
+},{}],103:[function(require,module,exports){
 var DesktopSharingEventTypes = {
     INIT: "ds.init",
 
@@ -28156,14 +28161,14 @@ var DesktopSharingEventTypes = {
 };
 
 module.exports = DesktopSharingEventTypes;
-},{}],108:[function(require,module,exports){
+},{}],104:[function(require,module,exports){
 var Events = {
     DTMF_SUPPORT_CHANGED: "members.dtmf_support_changed"
 };
 
 module.exports = Events;
 
-},{}],109:[function(require,module,exports){
+},{}],105:[function(require,module,exports){
 module.exports = {
     getLanguages : function () {
         var languages = [];
@@ -28180,7 +28185,7 @@ module.exports = {
     TR: "tr",
     FR: "fr"
 }
-},{}],110:[function(require,module,exports){
+},{}],106:[function(require,module,exports){
 var XMPPEvents = {
     CONNECTION_FAILED: "xmpp.connection.failed",
     CONFERENCE_CREATED: "xmpp.conferenceCreated.jingle",
@@ -28216,7 +28221,7 @@ var XMPPEvents = {
     START_MUTED: "xmpp.start_muted"
 };
 module.exports = XMPPEvents;
-},{}],111:[function(require,module,exports){
+},{}],107:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -28519,43 +28524,73 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],112:[function(require,module,exports){
+},{}],108:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
-var queue = [];
-var draining = false;
 
-function drainQueue() {
-    if (draining) {
-        return;
+process.nextTick = (function () {
+    var canSetImmediate = typeof window !== 'undefined'
+    && window.setImmediate;
+    var canMutationObserver = typeof window !== 'undefined'
+    && window.MutationObserver;
+    var canPost = typeof window !== 'undefined'
+    && window.postMessage && window.addEventListener
+    ;
+
+    if (canSetImmediate) {
+        return function (f) { return window.setImmediate(f) };
     }
-    draining = true;
-    var currentQueue;
-    var len = queue.length;
-    while(len) {
-        currentQueue = queue;
-        queue = [];
-        var i = -1;
-        while (++i < len) {
-            currentQueue[i]();
-        }
-        len = queue.length;
+
+    var queue = [];
+
+    if (canMutationObserver) {
+        var hiddenDiv = document.createElement("div");
+        var observer = new MutationObserver(function () {
+            var queueList = queue.slice();
+            queue.length = 0;
+            queueList.forEach(function (fn) {
+                fn();
+            });
+        });
+
+        observer.observe(hiddenDiv, { attributes: true });
+
+        return function nextTick(fn) {
+            if (!queue.length) {
+                hiddenDiv.setAttribute('yes', 'no');
+            }
+            queue.push(fn);
+        };
     }
-    draining = false;
-}
-process.nextTick = function (fun) {
-    queue.push(fun);
-    if (!draining) {
-        setTimeout(drainQueue, 0);
+
+    if (canPost) {
+        window.addEventListener('message', function (ev) {
+            var source = ev.source;
+            if ((source === window || source === null) && ev.data === 'process-tick') {
+                ev.stopPropagation();
+                if (queue.length > 0) {
+                    var fn = queue.shift();
+                    fn();
+                }
+            }
+        }, true);
+
+        return function nextTick(fn) {
+            queue.push(fn);
+            window.postMessage('process-tick', '*');
+        };
     }
-};
+
+    return function nextTick(fn) {
+        setTimeout(fn, 0);
+    };
+})();
 
 process.title = 'browser';
 process.browser = true;
 process.env = {};
 process.argv = [];
-process.version = ''; // empty string to avoid regexp issues
 
 function noop() {}
 
@@ -28576,7 +28611,6 @@ process.cwd = function () { return '/' };
 process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
-process.umask = function() { return 0; };
 
 },{}]},{},[1])(1)
 });
