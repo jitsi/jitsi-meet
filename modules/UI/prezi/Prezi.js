@@ -165,10 +165,10 @@ function presentationAdded(event, jid, presUrl, currentSlide) {
         + Strophe.getResourceFromJid(jid)
         + '_' + presId;
 
-    // We explicitly don't specify the peer jid here, because we don't want
-    // this video to be dealt with as a peer related one (for example we
-    // don't want to show a mute/kick menu for this one, etc.).
-    VideoLayout.addRemoteVideoContainer(null, elementId);
+
+
+
+    VideoLayout.addPreziContainer(elementId);
     VideoLayout.resizeThumbnails();
 
     var controlsEnabled = false;

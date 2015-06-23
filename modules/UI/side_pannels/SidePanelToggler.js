@@ -5,6 +5,7 @@ var SettingsMenu = require("./settings/SettingsMenu");
 var VideoLayout = require("../videolayout/VideoLayout");
 var ToolbarToggler = require("../toolbars/ToolbarToggler");
 var UIUtil = require("../util/UIUtil");
+var LargeVideo = require("../videolayout/LargeVideo");
 
 /**
  * Toggler for the chat, contact list, settings menu, etc..
@@ -16,90 +17,6 @@ var PanelToggler = (function(my) {
         '#chatspace': '#chatBottomButton',
         '#contactlist': '#contactListButton',
         '#settingsmenu': '#settingsButton'
-    };
-
-    /**
-     * Resizes the video area
-     * @param isClosing whether the side panel is going to be closed or is going to open / remain opened
-     * @param completeFunction a function to be called when the video space is resized
-     */
-    var resizeVideoArea = function(isClosing, completeFunction) {
-        var videospace = $('#videospace');
-
-        var panelSize = isClosing ? [0, 0] : PanelToggler.getPanelSize();
-        var videospaceWidth = window.innerWidth - panelSize[0];
-        var videospaceHeight = window.innerHeight;
-        var videoSize
-            = VideoLayout.getVideoSize(null, null, videospaceWidth, videospaceHeight);
-        var videoWidth = videoSize[0];
-        var videoHeight = videoSize[1];
-        var videoPosition = VideoLayout.getVideoPosition(videoWidth,
-            videoHeight,
-            videospaceWidth,
-            videospaceHeight);
-        var horizontalIndent = videoPosition[0];
-        var verticalIndent = videoPosition[1];
-
-        var thumbnailSize = VideoLayout.calculateThumbnailSize(videospaceWidth);
-        var thumbnailsWidth = thumbnailSize[0];
-        var thumbnailsHeight = thumbnailSize[1];
-        //for chat
-
-        videospace.animate({
-                right: panelSize[0],
-                width: videospaceWidth,
-                height: videospaceHeight
-            },
-            {
-                queue: false,
-                duration: 500,
-                complete: completeFunction
-            });
-
-        $('#remoteVideos').animate({
-                height: thumbnailsHeight
-            },
-            {
-                queue: false,
-                duration: 500
-            });
-
-        $('#remoteVideos>span').animate({
-                height: thumbnailsHeight,
-                width: thumbnailsWidth
-            },
-            {
-                queue: false,
-                duration: 500,
-                complete: function () {
-                    $(document).trigger(
-                        "remotevideo.resized",
-                        [thumbnailsWidth,
-                            thumbnailsHeight]);
-                }
-            });
-
-        $('#largeVideoContainer').animate({
-                width: videospaceWidth,
-                height: videospaceHeight
-            },
-            {
-                queue: false,
-                duration: 500
-            });
-
-        $('#largeVideo').animate({
-                width: videoWidth,
-                height: videoHeight,
-                top: verticalIndent,
-                bottom: verticalIndent,
-                left: horizontalIndent,
-                right: horizontalIndent
-            },
-            {
-                queue: false,
-                duration: 500
-            });
     };
 
     /**
@@ -135,7 +52,7 @@ var PanelToggler = (function(my) {
         else {
             // Undock the toolbar when the chat is shown and if we're in a
             // video mode.
-            if (VideoLayout.isLargeVideoVisible()) {
+            if (LargeVideo.isLargeVideoVisible()) {
                 ToolbarToggler.dockToolbar(false);
             }
 
@@ -180,7 +97,7 @@ var PanelToggler = (function(my) {
             $('#chatspace').trigger('shown');
         };
 
-        resizeVideoArea(Chat.isVisible(), chatCompleteFunction);
+        VideoLayout.resizeVideoArea(!Chat.isVisible(), chatCompleteFunction);
 
         toggle(Chat,
             '#chatspace',
@@ -203,7 +120,7 @@ var PanelToggler = (function(my) {
     my.toggleContactList = function () {
         var completeFunction = ContactList.isVisible() ?
             function() {} : function () { $('#contactlist').trigger('shown');};
-        resizeVideoArea(ContactList.isVisible(), completeFunction);
+        VideoLayout.resizeVideoArea(!ContactList.isVisible(), completeFunction);
 
         toggle(ContactList,
             '#contactlist',
@@ -218,7 +135,7 @@ var PanelToggler = (function(my) {
      * Opens / closes the settings menu
      */
     my.toggleSettingsMenu = function() {
-        resizeVideoArea(SettingsMenu.isVisible(), function (){});
+        VideoLayout.resizeVideoArea(!SettingsMenu.isVisible(), function (){});
         toggle(SettingsMenu,
             '#settingsmenu',
             null,

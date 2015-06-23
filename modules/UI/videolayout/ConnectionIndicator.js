@@ -5,7 +5,7 @@ var JitsiPopover = require("../util/JitsiPopover");
  * @param videoContainer the video container associated with the indicator.
  * @constructor
  */
-function ConnectionIndicator(videoContainer, jid, VideoLayout)
+function ConnectionIndicator(videoContainer, jid)
 {
     this.videoContainer = videoContainer;
     this.bandwidth = null;
@@ -17,7 +17,6 @@ function ConnectionIndicator(videoContainer, jid, VideoLayout)
     this.popover = null;
     this.jid = jid;
     this.create();
-    this.videoLayout = VideoLayout;
 }
 
 /**
@@ -153,10 +152,10 @@ ConnectionIndicator.prototype.generateText = function () {
         translate("connectionindicator.resolution") + "</span></td>" +
         "<td>" + resolution + "</td></tr></table>";
 
-    if(this.videoContainer.id == "localVideoContainer") {
+    if(this.videoContainer.videoSpanId == "localVideoContainer") {
         result += "<div class=\"jitsipopover_showmore\" " +
             "onclick = \"APP.UI.connectionIndicatorShowMore('" +
-            this.videoContainer.id + "')\"  data-i18n='connectionindicator." +
+            this.jid + "')\"  data-i18n='connectionindicator." +
                 (this.showMoreValue ? "less" : "more") + "'>" +
             translate("connectionindicator." + (this.showMoreValue ? "less" : "more")) +
             "</div><br />";
@@ -318,9 +317,9 @@ ConnectionIndicator.prototype.create = function () {
     this.connectionIndicatorContainer = document.createElement("div");
     this.connectionIndicatorContainer.className = "connectionindicator";
     this.connectionIndicatorContainer.style.display = "none";
-    this.videoContainer.appendChild(this.connectionIndicatorContainer);
+    this.videoContainer.container.appendChild(this.connectionIndicatorContainer);
     this.popover = new JitsiPopover(
-        $("#" + this.videoContainer.id + " > .connectionindicator"),
+        $("#" + this.videoContainer.videoSpanId + " > .connectionindicator"),
         {content: "<div class=\"connection_info\" data-i18n='connectionindicator.na'>" +
             APP.translation.translateString("connectionindicator.na") + "</div>",
             skin: "black"});
@@ -360,7 +359,7 @@ function (percent, object) {
     {
         if(this.connectionIndicatorContainer.style.display == "none") {
             this.connectionIndicatorContainer.style.display = "block";
-            this.videoLayout.updateMutePosition(this.videoContainer.id);
+            this.videoContainer.updateIconPositions();
         }
     }
     this.bandwidth = object.bandwidth;

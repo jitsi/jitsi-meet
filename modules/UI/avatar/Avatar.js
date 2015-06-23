@@ -13,14 +13,13 @@ function setVisibility(selector, show) {
 function isUserMuted(jid) {
     // XXX(gp) we may want to rename this method to something like
     // isUserStreaming, for example.
-    if (jid && jid != APP.xmpp.myJid()) {
+    if (jid != APP.xmpp.myJid()) {
         var resource = Strophe.getResourceFromJid(jid);
         if (!require("../videolayout/VideoLayout").isInLastN(resource)) {
             return true;
         }
     }
-
-    if(jid && jid == APP.xmpp.myJid())
+    else
     {
         var localVideo = APP.RTC.localVideo;
         return (!localVideo || localVideo.isMuted());
@@ -117,7 +116,7 @@ var Avatar = {
             //if the user is the currently focused, the dominant speaker or if
             //there is no focused and no dominant speaker and the large video is
             //currently shown
-            if (activeSpeakerJid === jid && require("../videolayout/VideoLayout").isLargeVideoOnTop()) {
+            if (activeSpeakerJid === jid && require("../videolayout/LargeVideo").isLargeVideoOnTop()) {
                 setVisibility($("#largeVideo"), !show);
                 setVisibility($('#activeSpeaker'), show);
                 setVisibility(avatar, false);
@@ -137,10 +136,6 @@ var Avatar = {
      * @param jid of the current active speaker
      */
     updateActiveSpeakerAvatarSrc: function (jid) {
-        if (!jid) {
-            jid = APP.xmpp.findJidFromResource(
-                require("../videolayout/VideoLayout").getLargeVideoState().userResourceJid);
-        }
         var avatar = $("#activeSpeakerAvatar")[0];
         var url = getGravatarUrl(users[jid],
             interfaceConfig.ACTIVE_SPEAKER_AVATAR_SIZE);

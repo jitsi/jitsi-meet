@@ -143,7 +143,7 @@ function registerListeners() {
         }
 
         AudioLevels.updateAudioLevel(resourceJid, audioLevel,
-            UI.getLargeVideoState().userResourceJid);
+            UI.getLargeVideoJid());
     });
     APP.desktopsharing.addListener(function () {
         ToolbarToggler.showDesktopSharingButton();
@@ -215,8 +215,6 @@ function registerListeners() {
                         break;
                     case 'recvonly':
                         el.hide();
-                        // FIXME: Check if we have to change large video
-                        //VideoLayout.updateLargeVideo(el);
                         break;
                 }
             }
@@ -265,6 +263,11 @@ function setVideoMute(mute, options) {
         options);
 }
 
+function onResize()
+{
+    Chat.resizeChat();
+    VideoLayout.resizeLargeVideoContainer();
+}
 
 function bindEvents()
 {
@@ -272,16 +275,9 @@ function bindEvents()
      * Resizes and repositions videos in full screen mode.
      */
     $(document).on('webkitfullscreenchange mozfullscreenchange fullscreenchange',
-        function () {
-            VideoLayout.resizeLargeVideoContainer();
-            VideoLayout.positionLarge();
-        }
-    );
+        onResize);
 
-    $(window).resize(function () {
-        VideoLayout.resizeLargeVideoContainer();
-        VideoLayout.positionLarge();
-    });
+    $(window).resize(onResize);
 }
 
 UI.start = function (init) {
@@ -322,7 +318,6 @@ UI.start = function (init) {
 
     $("#welcome_page").hide();
 
-    VideoLayout.resizeLargeVideoContainer();
     $("#videospace").mousemove(function () {
         return ToolbarToggler.showToolbar();
     });
@@ -550,9 +545,8 @@ function onMucMemberJoined(jid, id, displayName) {
     VideoLayout.ensurePeerContainerExists(jid,id);
 }
 
-function onMucPresenceStatus( jid, info) {
-    VideoLayout.setPresenceStatus(
-            'participant_' + Strophe.getResourceFromJid(jid), info.status);
+function onMucPresenceStatus(jid, info) {
+    VideoLayout.setPresenceStatus(Strophe.getResourceFromJid(jid), info.status);
 }
 
 function onMucRoleChanged(role, displayName) {
@@ -615,9 +609,9 @@ UI.inputDisplayNameHandler = function (value) {
 };
 
 
-UI.getLargeVideoState = function()
+UI.getLargeVideoJid = function()
 {
-    return VideoLayout.getLargeVideoState();
+    return VideoLayout.getLargeVideoJid();
 };
 
 UI.generateRoomName = function() {
@@ -656,9 +650,9 @@ UI.generateRoomName = function() {
 };
 
 
-UI.connectionIndicatorShowMore = function(id)
+UI.connectionIndicatorShowMore = function(jid)
 {
-    return VideoLayout.connectionIndicators[id].showMore();
+    return VideoLayout.showMore(jid);
 };
 
 UI.showLoginPopup = function(callback)

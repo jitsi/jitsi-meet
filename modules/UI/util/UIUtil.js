@@ -5,10 +5,12 @@ module.exports = {
     /**
      * Returns the available video width.
      */
-    getAvailableVideoWidth: function () {
+    getAvailableVideoWidth: function (isVisible) {
         var PanelToggler = require("../side_pannels/SidePanelToggler");
+        if(typeof isVisible === "undefined" || isVisible === null)
+            isVisible = PanelToggler.isVisible();
         var rightPanelWidth
-            = PanelToggler.isVisible() ? PanelToggler.getPanelSize()[0] : 0;
+            = isVisible ? PanelToggler.getPanelSize()[0] : 0;
 
         return window.innerWidth - rightPanelWidth;
     },
