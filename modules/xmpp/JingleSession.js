@@ -3,12 +3,12 @@ var TraceablePeerConnection = require("./TraceablePeerConnection");
 var SDPDiffer = require("./SDPDiffer");
 var SDPUtil = require("./SDPUtil");
 var SDP = require("./SDP");
-var RTCBrowserType = require("../../service/RTC/RTCBrowserType");
 var async = require("async");
 var transform = require("sdp-transform");
+var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 
 // Jingle stuff
-function JingleSession(me, sid, connection, service) {
+function JingleSession(me, sid, connection, service, eventEmitter) {
     this.me = me;
     this.sid = sid;
     this.connection = connection;
@@ -47,6 +47,7 @@ function JingleSession(me, sid, connection, service) {
 
     this.wait = true;
     this.localStreamsSSRC = null;
+    this.eventEmitter = eventEmitter;
 
     /**
      * The indicator which determines whether the (local) video has been muted
@@ -89,7 +90,8 @@ JingleSession.prototype.initiate = function (peerjid, isInitiator) {
     this.peerconnection
         = new TraceablePeerConnection(
             this.connection.jingle.ice_config,
-            this.connection.jingle.pc_constraints );
+            this.connection.jingle.pc_constraints,
+            this);
 
     this.peerconnection.onicecandidate = function (event) {
         self.sendIceCandidate(event.candidate);
@@ -125,8 +127,14 @@ JingleSession.prototype.initiate = function (peerjid, isInitiator) {
             case 'disconnected':
                 this.stopTime = new Date();
                 break;
+            case 'failed':
+                self.eventEmitter(XMPPEvents.CONFERENCE_SETUP_FAILED);
+                break;
         }
         onIceConnectionStateChange(self.sid, self);
+    };
+    this.peerconnection.onnegotiationneeded = function (event) {
+        self.eventEmitter.emit(XMPPEvents.PEERCONNECTION_READY, self);
     };
     // add any local and relayed stream
     APP.RTC.localStreams.forEach(function(stream) {
@@ -238,6 +246,7 @@ JingleSession.prototype.accept = function () {
         },
         function (e) {
             console.error('setLocalDescription failed', e);
+            self.eventEmitter.emit(XMPPEvents.CONFERENCE_SETUP_FAILED);
         }
     );
 };
@@ -448,6 +457,7 @@ JingleSession.prototype.createdOffer = function (sdp) {
         },
         function (e) {
             console.error('setLocalDescription failed', e);
+            self.eventEmitter.emit(XMPPEvents.CONFERENCE_SETUP_FAILED);
         }
     );
     var cands = SDPUtil.find_lines(this.localSDP.raw, 'a=candidate:');
@@ -622,6 +632,7 @@ JingleSession.prototype.sendAnswer = function (provisional) {
         },
         function (e) {
             console.error('createAnswer failed', e);
+            self.eventEmitter.emit(XMPPEvents.CONFERENCE_SETUP_FAILED);
         },
         this.media_constraints
     );
@@ -681,6 +692,7 @@ JingleSession.prototype.createdAnswer = function (sdp, provisional) {
         },
         function (e) {
             console.error('setLocalDescription failed', e);
+            self.eventEmitter.emit(XMPPEvents.CONFERENCE_SETUP_FAILED);
         }
     );
     var cands = SDPUtil.find_lines(this.localSDP.raw, 'a=candidate:');
@@ -1232,6 +1244,7 @@ JingleSession.onJingleFatalError = function (session, error)
     this.connection.emuc.doLeave();
     APP.UI.messageHandler.showError("dialog.sorry",
         "dialog.internalError");
+    this.eventEmitter.emit(XMPPEvents.CONFERENCE_SETUP_FAILED);
 }
 
 JingleSession.prototype.setLocalDescription = function () {
@@ -1287,6 +1300,7 @@ JingleSession.prototype.setLocalDescription = function () {
 function sendKeyframe(pc) {
     console.log('sendkeyframe', pc.iceConnectionState);
     if (pc.iceConnectionState !== 'connected') return; // safe...
+    var self = this;
     pc.setRemoteDescription(
         pc.remoteDescription,
         function () {

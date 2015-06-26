@@ -315,7 +315,6 @@ var XMPP = {
         return Strophe.getResourceFromJid(connection.emuc.myroomjid);
     },
     disposeConference: function (onUnload) {
-        eventEmitter.emit(XMPPEvents.DISPOSE_CONFERENCE, onUnload);
         var handler = connection.jingle.activecall;
         if (handler && handler.peerconnection) {
             // FIXME: probably removing streams is not required and close() should
@@ -330,6 +329,7 @@ var XMPP = {
             }
             handler.peerconnection.close();
         }
+        eventEmitter.emit(XMPPEvents.DISPOSE_CONFERENCE, onUnload);
         connection.jingle.activecall = null;
         if(!onUnload)
         {

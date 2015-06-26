@@ -1,7 +1,6 @@
 var XMPPEvents = {
     CONNECTION_FAILED: "xmpp.connection.failed",
     CONFERENCE_CREATED: "xmpp.conferenceCreated.jingle",
-    CALL_TERMINATED: "xmpp.callterminated.jingle",
     CALL_INCOMING: "xmpp.callincoming.jingle",
     DISPOSE_CONFERENCE: "xmpp.dispose_conference",
     GRACEFUL_SHUTDOWN: "xmpp.graceful_shutdown",
@@ -30,6 +29,8 @@ var XMPPEvents = {
     CHAT_ERROR_RECEIVED: "xmpp.chat_error_received",
     ETHERPAD: "xmpp.etherpad",
     DEVICE_AVAILABLE: "xmpp.device_available",
-    START_MUTED: "xmpp.start_muted"
+    START_MUTED: "xmpp.start_muted",
+    PEERCONNECTION_READY: "xmpp.peerconnection_ready",
+    CONFERENCE_SETUP_FAILED: "xmpp.conference_setup_failed"
 };
 module.exports = XMPPEvents;

@@ -1,4 +1,5 @@
 var StreamEventTypes = require("../../service/RTC/StreamEventTypes.js");
+var RTCEvents = require("../../service/RTC/RTCEvents");
 
 
 function LocalStream(stream, type, eventEmitter, videoType, isGUMStream)
@@ -54,12 +55,18 @@ LocalStream.prototype.setMute = function(mute)
         for (var idx = 0; idx < tracks.length; idx++) {
             tracks[idx].enabled = mute;
         }
+        this.eventEmitter.emit(
+            (this.type == "audio"? RTCEvents.AUDIO_MUTE : RTCEvents.VIDEO_MUTE),
+            !mute);
     }
     else
     {
         if(mute === false) {
             APP.xmpp.removeStream(this.stream);
             this.stream.stop();
+            this.eventEmitter.emit(
+                (this.type == "audio"? RTCEvents.AUDIO_MUTE : RTCEvents.VIDEO_MUTE),
+                true);
         }
         else
         {
@@ -69,11 +76,21 @@ LocalStream.prototype.setMute = function(mute)
                 function (stream) {
                     if(self.isAudioStream())
                     {
-                        APP.RTC.changeLocalAudio(stream, function () {});
+                        APP.RTC.changeLocalAudio(stream,
+                            function () {
+                                self.eventEmitter.emit(
+                                    (self.type == "audio"? RTCEvents.AUDIO_MUTE : RTCEvents.VIDEO_MUTE),
+                                    true);
+                            });
                     }
                     else
                     {
-                        APP.RTC.changeLocalVideo(stream, false, function () {});
+                        APP.RTC.changeLocalVideo(stream, false,
+                            function () {
+                                self.eventEmitter.emit(
+                                    (self.type == "audio"? RTCEvents.AUDIO_MUTE : RTCEvents.VIDEO_MUTE),
+                                    true);
+                            });
                     }
                 });
         }

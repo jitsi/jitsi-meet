@@ -808,7 +808,7 @@ var VideoLayout = (function (my) {
     my.onStatsStop = function () {
         for(var video in remoteVideos)
         {
-            video.hideIndicator();
+            remoteVideos[video].hideIndicator();
         }
         localVideoThumbnail.hideIndicator();
     };

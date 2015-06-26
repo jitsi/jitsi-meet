@@ -35,6 +35,9 @@ var config = {
 //    startAudioMuted: 10, //every participant after the Nth will start audio muted
 //    startVideoMuted: 10, //every participant after the Nth will start video muted
 //    defaultLanguage: "en",
+// To enable sending statistics to callstats.io you should provide Applicaiton ID and Secret.
+//    callStatsID: "",//Application ID for callstats.io API
+//    callStatsSecret: ""//Secret for callstats.io API
     /*noticeMessage: 'Service update is scheduled for 16th March 2015. ' +
     'During that time service will not be available. ' +
     'Apologise for inconvenience.'*/

@@ -1,4 +1,6 @@
-function TraceablePeerConnection(ice_config, constraints) {
+var XMPPEvents = require("../../service/xmpp/XMPPEvents");
+
+function TraceablePeerConnection(ice_config, constraints, session) {
     var self = this;
     var RTCPeerconnection = navigator.mozGetUserMedia ? mozRTCPeerConnection : webkitRTCPeerConnection;
     this.peerconnection = new RTCPeerconnection(ice_config, constraints);

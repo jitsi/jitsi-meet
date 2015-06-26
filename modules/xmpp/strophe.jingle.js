@@ -119,7 +119,7 @@ module.exports = function(XMPP, eventEmitter)
                     }
                     sess = new JingleSession(
                         $(iq).attr('to'), $(iq).find('jingle').attr('sid'),
-                        this.connection, XMPP);
+                        this.connection, XMPP, eventEmitter);
                     // configure session
 
                     sess.media_constraints = this.media_constraints;
@@ -199,7 +199,7 @@ module.exports = function(XMPP, eventEmitter)
         initiate: function (peerjid, myjid) { // initiate a new jinglesession to peerjid
             var sess = new JingleSession(myjid || this.connection.jid,
                 Math.random().toString(36).substr(2, 12), // random string
-                this.connection, XMPP);
+                this.connection, XMPP, eventEmitter);
             // configure session
 
             sess.media_constraints = this.media_constraints;
