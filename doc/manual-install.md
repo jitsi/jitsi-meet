@@ -220,4 +220,4 @@ enableRecording: true
 
 Restart jitsi-videobridge and start a new conference (making sure that the page
 is reloaded with the new config.js) -- the organizer of the conference should
-now have a "recoriding" button in the floating menu, near the "mute" button.
+now have a "recording" button in the floating menu, near the "mute" button.
