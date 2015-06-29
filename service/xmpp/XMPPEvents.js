@@ -31,6 +31,8 @@ var XMPPEvents = {
     DEVICE_AVAILABLE: "xmpp.device_available",
     START_MUTED: "xmpp.start_muted",
     PEERCONNECTION_READY: "xmpp.peerconnection_ready",
-    CONFERENCE_SETUP_FAILED: "xmpp.conference_setup_failed"
+    CONFERENCE_SETUP_FAILED: "xmpp.conference_setup_failed",
+    AUDIO_MUTED: "xmpp.audio_muted",
+    VIDEO_MUTED: "xmpp.video_muted"
 };
 module.exports = XMPPEvents;

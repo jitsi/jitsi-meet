@@ -3,6 +3,13 @@ var LargeVideo = require("./LargeVideo");
 
 function SmallVideo(){
     this.isMuted = false;
+    this.hasAvatar = false;
+}
+
+function setVisibility(selector, show) {
+    if (selector && selector.length > 0) {
+        selector.css("visibility", show ? "visible" : "hidden");
+    }
 }
 
 SmallVideo.prototype.showDisplayName = function(isShow) {
@@ -149,6 +156,8 @@ SmallVideo.prototype.showAudioIndicator = function(isMuted) {
  * Shows video muted indicator over small videos.
  */
 SmallVideo.prototype.showVideoIndicator = function(isMuted) {
+    this.showAvatar(isMuted);
+
     var videoMutedSpan = $('#' + this.videoSpanId + '>span.videoMuted');
 
     if (isMuted === false) {
@@ -211,6 +220,8 @@ SmallVideo.prototype.enableDominantSpeaker = function (isEnable)
                 this.container.classList.remove("dominantspeaker");
         }
     }
+
+    this.showAvatar();
 };
 
 SmallVideo.prototype.updateIconPositions = function () {
@@ -280,6 +291,61 @@ SmallVideo.prototype.focus = function(isFocused)
 
 SmallVideo.prototype.hasVideo = function () {
     return $("#" + this.videoSpanId).find("video").length !== 0;
+}
+
+/**
+ * Hides or shows the user's avatar
+ * @param show whether we should show the avatar or not
+ * video because there is no dominant speaker and no focused speaker
+ */
+SmallVideo.prototype.showAvatar = function (show) {
+    if(!this.hasAvatar)
+        return;
+
+    var video = $('#' + this.videoSpanId).find("video");
+    var avatar = $('#avatar_' + this.resourceJid);
+
+    if (show === undefined || show === null) {
+        if(!this.VideoLayout.isInLastN(this.resourceJid)) {
+            show = true;
+        }
+        else
+        {
+            show = APP.RTC.isVideoMuted(this.peerJid);
+        }
+
+    }
+
+    if (LargeVideo.showAvatar(this.resourceJid, show))
+    {
+        setVisibility(avatar, false);
+        setVisibility(video, false);
+    } else {
+        if (video && video.length > 0) {
+            setVisibility(video, !show);
+        }
+        setVisibility(avatar, show);
+
+    }
+}
+
+SmallVideo.prototype.avatarChanged = function (thumbUrl) {
+    var thumbnail = $('#' + this.videoSpanId);
+    var avatar = $('#avatar_' + this.resourceJid);
+    this.hasAvatar = true;
+
+    // set the avatar in the thumbnail
+    if (avatar && avatar.length > 0) {
+        avatar[0].src = thumbUrl;
+    } else {
+        if (thumbnail && thumbnail.length > 0) {
+            avatar = document.createElement('img');
+            avatar.id = 'avatar_' + this.resourceJid;
+            avatar.className = 'userAvatar';
+            avatar.src = thumbUrl;
+            thumbnail.append(avatar);
+        }
+    }
 }
 
 module.exports = SmallVideo;

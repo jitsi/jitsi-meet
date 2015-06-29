@@ -409,9 +409,6 @@ var VideoLayout = (function (my) {
             remoteVideos[resourceJid].enableDominantSpeaker(isEnable);
         }
 
-
-        Avatar.showUserAvatar(
-            APP.xmpp.findJidFromResource(resourceJid));
     };
 
     /**
@@ -516,7 +513,7 @@ var VideoLayout = (function (my) {
     /**
      * On audio muted event.
      */
-    $(document).bind('audiomuted.muc', function (event, jid, isMuted) {
+    my.onAudioMute = function (jid, isMuted) {
         var resourceJid = Strophe.getResourceFromJid(jid);
         if (resourceJid === APP.xmpp.myResource()) {
             localVideoThumbnail.showAudioIndicator(isMuted);
@@ -529,24 +526,22 @@ var VideoLayout = (function (my) {
         }
 
 
-    });
+    };
 
     /**
      * On video muted event.
      */
-    $(document).bind('videomuted.muc', function (event, jid, value) {
-        var isMuted = (value === "true");
-        if(jid !== APP.xmpp.myJid() && !APP.RTC.muteRemoteVideoStream(jid, isMuted))
+    my.onVideoMute = function (jid, value) {
+        if(jid !== APP.xmpp.myJid() && !APP.RTC.muteRemoteVideoStream(jid, value))
             return;
 
-        Avatar.showUserAvatar(jid, isMuted);
         if (jid === APP.xmpp.myJid()) {
-            localVideoThumbnail.showVideoIndicator(isMuted);
+            localVideoThumbnail.showVideoIndicator(value);
         } else {
             VideoLayout.ensurePeerContainerExists(jid);
-            remoteVideos[Strophe.getResourceFromJid(jid)].showVideoIndicator(isMuted);
+            remoteVideos[Strophe.getResourceFromJid(jid)].showVideoIndicator(value);
         }
-    });
+    };
 
     /**
      * Display name changed.
@@ -850,10 +845,8 @@ var VideoLayout = (function (my) {
             var smallVideo = VideoLayout.getSmallVideo(focusedVideoResourceJid);
             if(smallVideo)
                 smallVideo.focus(false);
-            Avatar.showUserAvatar(
-                APP.xmpp.findJidFromResource(focusedVideoResourceJid));
+            smallVideo.showAvatar();
             focusedVideoResourceJid = null;
-
         }
     }
 
@@ -879,7 +872,16 @@ var VideoLayout = (function (my) {
                 return null;
             return remoteVideos[resourceJid];
         }
-    }
+    };
+
+    my.userAvatarChanged = function(resourceJid, thumbUrl)
+    {
+        var smallVideo = VideoLayout.getSmallVideo(resourceJid);
+        if(smallVideo)
+            smallVideo.avatarChanged(thumbUrl);
+        LargeVideo.updateAvatar(resourceJid, thumbUrl);
+    };
+
     return my;
 }(VideoLayout || {}));
 

@@ -176,9 +176,34 @@ function getCameraVideoSize(videoWidth,
     return [availableWidth, availableHeight];
 }
 
+/**
+ * Updates the src of the active speaker avatar
+ * @param jid of the current active speaker
+ */
+function updateActiveSpeakerAvatarSrc() {
+    var avatar = $("#activeSpeakerAvatar")[0];
+    var jid = currentSmallVideo.peerJid;
+    var url = Avatar.getGravatarUrl(jid);
+    if(avatar.src === url)
+        return;
+    var isMuted = null;
+    if(!LargeVideo.VideoLayout.isInLastN(currentSmallVideo.resourceJid)) {
+        isMuted = true;
+    }
+    else
+    {
+        isMuted = APP.RTC.isVideoMuted(jid);
+    }
+
+    if (jid && isMuted !== null) {
+        avatar.src = url;
+        $("#largeVideo").css("visibility", isMuted ? "hidden" : "visible");
+        currentSmallVideo.showAvatar(isMuted);
+    }
+}
 
 function changeVideo(isVisible) {
-    Avatar.updateActiveSpeakerAvatarSrc(currentSmallVideo.peerJid);
+    updateActiveSpeakerAvatarSrc();
 
     APP.RTC.setVideoSrc($('#largeVideo')[0], currentSmallVideo.getSrc());
 
@@ -225,7 +250,7 @@ function changeVideo(isVisible) {
     }
 
     if(oldSmallVideo)
-        Avatar.showUserAvatar(oldSmallVideo.peerJid);
+        oldSmallVideo.showAvatar();
 }
 
 var LargeVideo = {
@@ -281,10 +306,9 @@ var LargeVideo = {
 
             video.fadeOut(300, changeVideo.bind(video, this.isLargeVideoVisible()));
         } else {
-            var jid = null;
-            if(currentSmallVideo)
-                jid = currentSmallVideo.peerJid;
-            Avatar.showUserAvatar(jid);
+            if(currentSmallVideo) {
+                currentSmallVideo.showAvatar();
+            }
         }
 
     },
@@ -411,7 +435,22 @@ var LargeVideo = {
     getResourceJid: function () {
         if(!currentSmallVideo)
             return null;
-        return currentSmallVideo.peerJid;
+        return currentSmallVideo.resourceJid;
+    },
+    updateAvatar: function (resourceJid) {
+        if (resourceJid === this.getResourceJid()) {
+            updateActiveSpeakerAvatarSrc();
+        }
+    },
+    showAvatar: function (resourceJid, show) {
+        if(this.getResourceJid() === resourceJid
+            && LargeVideo.isLargeVideoOnTop())
+        {
+            $("#largeVideo").css("visibility", show ? "hidden" : "visible");
+            $('#activeSpeaker').css("visibility", show ? "visible" : "hidden");
+            return true;
+        }
+        return false;
     }
 
 }

@@ -215,7 +215,7 @@ LocalVideo.prototype.changeVideo = function (stream, isMuted) {
     // Add stream ended handler
     stream.getOriginalStream().onended = function () {
         localVideoContainer.removeChild(localVideo);
-        self.VideoLayout.updateRemovedVideo(APP.RTC.getVideoSrc(localVideo));
+        self.VideoLayout.updateRemovedVideo(APP.xmpp.myResource());
     };
 }
 

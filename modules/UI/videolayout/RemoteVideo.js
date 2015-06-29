@@ -133,10 +133,8 @@ RemoteVideo.prototype.removeRemoteStreamElement = function (stream, isVideo, id)
         return false;
 
     var select = null;
-    var removedVideoSrc = null;
     if (isVideo) {
         select = $('#' + id);
-        removedVideoSrc = APP.RTC.getVideoSrc(select.get(0));
     }
     else
         select = $('#' + this.videoSpanId + '>audio');
@@ -160,8 +158,8 @@ RemoteVideo.prototype.removeRemoteStreamElement = function (stream, isVideo, id)
         this.VideoLayout.resizeThumbnails();
     }
 
-    if (removedVideoSrc)
-        this.VideoLayout.updateRemovedVideo(removedVideoSrc);
+    if (isVideo)
+        this.VideoLayout.updateRemovedVideo(this.resourceJid);
 };
 
 RemoteVideo.prototype.addRemoteStreamElement = function (sid, stream, thessrc) {
@@ -270,7 +268,7 @@ RemoteVideo.prototype.showPeerContainer = function (state) {
             $(this.container).show();
         }
 
-        Avatar.showUserAvatar(this.peerJid, (state !== 'show'));
+        this.showAvatar(state !== 'show');
     }
     else if ($(this.container).is(':visible') && isHide)
     {
@@ -394,5 +392,6 @@ RemoteVideo.createContainer = function (spanId) {
     var remotes = document.getElementById('remoteVideos');
     return remotes.appendChild(container);
 };
+
 
 module.exports = RemoteVideo;

@@ -102,6 +102,9 @@ var SettingsMenu = {
             peerJid === APP.xmpp.myJid()) {
             this.setDisplayName(newDisplayName);
         }
+    },
+    changeAvatar: function (thumbUrl) {
+        $('#avatar').get(0).src = thumbUrl;
     }
 };
 

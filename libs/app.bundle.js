@@ -972,6 +972,19 @@ var RTC = {
         oldStream.stop();
         APP.xmpp.switchStreams(newStream, oldStream, callback, true);
     },
+    isVideoMuted: function (jid) {
+        if (jid === APP.xmpp.myJid()) {
+            var localVideo = APP.RTC.localVideo;
+            return (!localVideo || localVideo.isMuted());
+        }
+        else
+        {
+            if (!APP.RTC.remoteStreams[jid] || !APP.RTC.remoteStreams[jid][MediaStreamType.VIDEO_TYPE]) {
+                return null;
+            }
+            return APP.RTC.remoteStreams[jid][MediaStreamType.VIDEO_TYPE].muted;
+        }
+    },
     /**
      * Checks if video identified by given src is desktop stream.
      * @param videoSrc eg.
@@ -1747,6 +1760,8 @@ function registerListeners() {
             VideoLayout.setDeviceAvailabilityIcons(resource, devices);
         });
 
+    APP.xmpp.addListener(XMPPEvents.AUDIO_MUTED, VideoLayout.onAudioMute);
+    APP.xmpp.addListener(XMPPEvents.VIDEO_MUTED, VideoLayout.onVideoMute);
     APP.members.addListener(MemberEvents.DTMF_SUPPORT_CHANGED,
                             onDtmfSupportChanged);
     APP.xmpp.addListener(XMPPEvents.START_MUTED, function (audio, video) {
@@ -2305,6 +2320,12 @@ UI.setVideoMuteButtonsState = function (mute) {
     }
 }
 
+UI.userAvatarChanged = function (resourceJid, thumbUrl, contactListUrl) {
+    VideoLayout.userAvatarChanged(resourceJid, thumbUrl);
+    ContactList.userAvatarChanged(resourceJid, contactListUrl);
+    if(resourceJid === APP.xmpp.myResource())
+        SettingsMenu.changeAvatar(thumbUrl);
+}
 
 UI.setVideoMute = setVideoMute;
 
@@ -3045,46 +3066,8 @@ var LoginDialog = {
 module.exports = LoginDialog;
 },{"../../xmpp/moderator":56,"../../xmpp/xmpp":64}],14:[function(require,module,exports){
 var Settings = require("../../settings/Settings");
-var MediaStreamType = require("../../../service/RTC/MediaStreamTypes");
 
 var users = {};
-var activeSpeakerJid;
-
-function setVisibility(selector, show) {
-    if (selector && selector.length > 0) {
-        selector.css("visibility", show ? "visible" : "hidden");
-    }
-}
-
-function isUserMuted(jid) {
-    // XXX(gp) we may want to rename this method to something like
-    // isUserStreaming, for example.
-    if (jid != APP.xmpp.myJid()) {
-        var resource = Strophe.getResourceFromJid(jid);
-        if (!require("../videolayout/VideoLayout").isInLastN(resource)) {
-            return true;
-        }
-    }
-    else
-    {
-        var localVideo = APP.RTC.localVideo;
-        return (!localVideo || localVideo.isMuted());
-    }
-
-    if (!APP.RTC.remoteStreams[jid] || !APP.RTC.remoteStreams[jid][MediaStreamType.VIDEO_TYPE]) {
-        return null;
-    }
-    return APP.RTC.remoteStreams[jid][MediaStreamType.VIDEO_TYPE].muted;
-}
-
-function getGravatarUrl(id, size) {
-    if(id === APP.xmpp.myJid() || !id) {
-        id = Settings.getSettings().uid;
-    }
-    return 'https://www.gravatar.com/avatar/' +
-        MD5.hexdigest(id.trim().toLowerCase()) +
-        "?d=wavatar&size=" + (size || "30");
-}
 
 var Avatar = {
 
@@ -3101,107 +3084,26 @@ var Avatar = {
             }
             users[jid] = id;
         }
-        var thumbUrl = getGravatarUrl(users[jid] || jid, 100);
-        var contactListUrl = getGravatarUrl(users[jid] || jid);
+        var thumbUrl = this.getGravatarUrl(users[jid] || jid, 100);
+        var contactListUrl = this.getGravatarUrl(users[jid] || jid);
         var resourceJid = Strophe.getResourceFromJid(jid);
-        var thumbnail = $('#participant_' + resourceJid);
-        var avatar = $('#avatar_' + resourceJid);
 
-        // set the avatar in the settings menu if it is local user and get the
-        // local video container
-        if (jid === APP.xmpp.myJid()) {
-            $('#avatar').get(0).src = thumbUrl;
-            thumbnail = $('#localVideoContainer');
-        }
-
-        // set the avatar in the contact list
-        var contact = $('#' + resourceJid + '>img');
-        if (contact && contact.length > 0) {
-            contact.get(0).src = contactListUrl;
-        }
-
-        // set the avatar in the thumbnail
-        if (avatar && avatar.length > 0) {
-            avatar[0].src = thumbUrl;
-        } else {
-            if (thumbnail && thumbnail.length > 0) {
-                avatar = document.createElement('img');
-                avatar.id = 'avatar_' + resourceJid;
-                avatar.className = 'userAvatar';
-                avatar.src = thumbUrl;
-                thumbnail.append(avatar);
-            }
-        }
-
-        //if the user is the current active speaker - update the active speaker
-        // avatar
-        if (jid === activeSpeakerJid) {
-            this.updateActiveSpeakerAvatarSrc(jid);
-        }
+        APP.UI.userAvatarChanged(resourceJid, thumbUrl, contactListUrl);
     },
-
-    /**
-     * Hides or shows the user's avatar
-     * @param jid jid of the user
-     * @param show whether we should show the avatar or not
-     * video because there is no dominant speaker and no focused speaker
-     */
-    showUserAvatar: function (jid, show) {
-        if (users[jid]) {
-            var resourceJid = Strophe.getResourceFromJid(jid);
-            var video = $('#participant_' + resourceJid + '>video');
-            var avatar = $('#avatar_' + resourceJid);
-
-            if (jid === APP.xmpp.myJid()) {
-                video = $('#localVideoWrapper>video');
-            }
-            if (show === undefined || show === null) {
-                show = isUserMuted(jid);
-            }
-
-            //if the user is the currently focused, the dominant speaker or if
-            //there is no focused and no dominant speaker and the large video is
-            //currently shown
-            if (activeSpeakerJid === jid && require("../videolayout/LargeVideo").isLargeVideoOnTop()) {
-                setVisibility($("#largeVideo"), !show);
-                setVisibility($('#activeSpeaker'), show);
-                setVisibility(avatar, false);
-                setVisibility(video, false);
-            } else {
-                if (video && video.length > 0) {
-                    setVisibility(video, !show);
-                }
-                setVisibility(avatar, show);
-
-            }
+    getGravatarUrl: function (id, size) {
+        if(id === APP.xmpp.myJid() || !id) {
+            id = Settings.getSettings().uid;
         }
-    },
-
-    /**
-     * Updates the src of the active speaker avatar
-     * @param jid of the current active speaker
-     */
-    updateActiveSpeakerAvatarSrc: function (jid) {
-        var avatar = $("#activeSpeakerAvatar")[0];
-        var url = getGravatarUrl(users[jid],
-            interfaceConfig.ACTIVE_SPEAKER_AVATAR_SIZE);
-        if (jid === activeSpeakerJid && avatar.src === url) {
-            return;
-        }
-        activeSpeakerJid = jid;
-        var isMuted = isUserMuted(jid);
-        if (jid && isMuted !== null) {
-            avatar.src = url;
-            setVisibility($("#largeVideo"), !isMuted);
-            Avatar.showUserAvatar(jid, isMuted);
-        }
+        return 'https://www.gravatar.com/avatar/' +
+            MD5.hexdigest(id.trim().toLowerCase()) +
+            "?d=wavatar&size=" + (size || "30");
     }
 
 };
 
 
 module.exports = Avatar;
-},{"../../../service/RTC/MediaStreamTypes":100,"../../settings/Settings":45,"../videolayout/LargeVideo":33,"../videolayout/VideoLayout":37}],15:[function(require,module,exports){
+},{"../../settings/Settings":45}],15:[function(require,module,exports){
 /* global $, config,
    setLargeVideoVisible, Util */
 
@@ -4981,6 +4883,15 @@ var ContactList = {
 
         if (contactName && displayName && displayName.length > 0)
             contactName.html(displayName);
+    },
+
+    userAvatarChanged: function (resourceJid, contactListUrl) {
+        // set the avatar in the contact list
+        var contact = $('#' + resourceJid + '>img');
+        if (contact && contact.length > 0) {
+            contact.get(0).src = contactListUrl;
+        }
+
     }
 };
 
@@ -5090,6 +5001,9 @@ var SettingsMenu = {
             peerJid === APP.xmpp.myJid()) {
             this.setDisplayName(newDisplayName);
         }
+    },
+    changeAvatar: function (thumbUrl) {
+        $('#avatar').get(0).src = thumbUrl;
     }
 };
 
@@ -6952,9 +6866,34 @@ function getCameraVideoSize(videoWidth,
     return [availableWidth, availableHeight];
 }
 
+/**
+ * Updates the src of the active speaker avatar
+ * @param jid of the current active speaker
+ */
+function updateActiveSpeakerAvatarSrc() {
+    var avatar = $("#activeSpeakerAvatar")[0];
+    var jid = currentSmallVideo.peerJid;
+    var url = Avatar.getGravatarUrl(jid);
+    if(avatar.src === url)
+        return;
+    var isMuted = null;
+    if(!LargeVideo.VideoLayout.isInLastN(currentSmallVideo.resourceJid)) {
+        isMuted = true;
+    }
+    else
+    {
+        isMuted = APP.RTC.isVideoMuted(jid);
+    }
+
+    if (jid && isMuted !== null) {
+        avatar.src = url;
+        $("#largeVideo").css("visibility", isMuted ? "hidden" : "visible");
+        currentSmallVideo.showAvatar(isMuted);
+    }
+}
 
 function changeVideo(isVisible) {
-    Avatar.updateActiveSpeakerAvatarSrc(currentSmallVideo.peerJid);
+    updateActiveSpeakerAvatarSrc();
 
     APP.RTC.setVideoSrc($('#largeVideo')[0], currentSmallVideo.getSrc());
 
@@ -7001,7 +6940,7 @@ function changeVideo(isVisible) {
     }
 
     if(oldSmallVideo)
-        Avatar.showUserAvatar(oldSmallVideo.peerJid);
+        oldSmallVideo.showAvatar();
 }
 
 var LargeVideo = {
@@ -7057,10 +6996,9 @@ var LargeVideo = {
 
             video.fadeOut(300, changeVideo.bind(video, this.isLargeVideoVisible()));
         } else {
-            var jid = null;
-            if(currentSmallVideo)
-                jid = currentSmallVideo.peerJid;
-            Avatar.showUserAvatar(jid);
+            if(currentSmallVideo) {
+                currentSmallVideo.showAvatar();
+            }
         }
 
     },
@@ -7187,7 +7125,22 @@ var LargeVideo = {
     getResourceJid: function () {
         if(!currentSmallVideo)
             return null;
-        return currentSmallVideo.peerJid;
+        return currentSmallVideo.resourceJid;
+    },
+    updateAvatar: function (resourceJid) {
+        if (resourceJid === this.getResourceJid()) {
+            updateActiveSpeakerAvatarSrc();
+        }
+    },
+    showAvatar: function (resourceJid, show) {
+        if(this.getResourceJid() === resourceJid
+            && LargeVideo.isLargeVideoOnTop())
+        {
+            $("#largeVideo").css("visibility", show ? "hidden" : "visible");
+            $('#activeSpeaker').css("visibility", show ? "visible" : "hidden");
+            return true;
+        }
+        return false;
     }
 
 }
@@ -7412,7 +7365,7 @@ LocalVideo.prototype.changeVideo = function (stream, isMuted) {
     // Add stream ended handler
     stream.getOriginalStream().onended = function () {
         localVideoContainer.removeChild(localVideo);
-        self.VideoLayout.updateRemovedVideo(APP.RTC.getVideoSrc(localVideo));
+        self.VideoLayout.updateRemovedVideo(APP.xmpp.myResource());
     };
 }
 
@@ -7558,10 +7511,8 @@ RemoteVideo.prototype.removeRemoteStreamElement = function (stream, isVideo, id)
         return false;
 
     var select = null;
-    var removedVideoSrc = null;
     if (isVideo) {
         select = $('#' + id);
-        removedVideoSrc = APP.RTC.getVideoSrc(select.get(0));
     }
     else
         select = $('#' + this.videoSpanId + '>audio');
@@ -7585,8 +7536,8 @@ RemoteVideo.prototype.removeRemoteStreamElement = function (stream, isVideo, id)
         this.VideoLayout.resizeThumbnails();
     }
 
-    if (removedVideoSrc)
-        this.VideoLayout.updateRemovedVideo(removedVideoSrc);
+    if (isVideo)
+        this.VideoLayout.updateRemovedVideo(this.resourceJid);
 };
 
 RemoteVideo.prototype.addRemoteStreamElement = function (sid, stream, thessrc) {
@@ -7695,7 +7646,7 @@ RemoteVideo.prototype.showPeerContainer = function (state) {
             $(this.container).show();
         }
 
-        Avatar.showUserAvatar(this.peerJid, (state !== 'show'));
+        this.showAvatar(state !== 'show');
     }
     else if ($(this.container).is(':visible') && isHide)
     {
@@ -7820,6 +7771,7 @@ RemoteVideo.createContainer = function (spanId) {
     return remotes.appendChild(container);
 };
 
+
 module.exports = RemoteVideo;
 },{"../audio_levels/AudioLevels":10,"../avatar/Avatar":14,"./ConnectionIndicator":32,"./LargeVideo":33,"./SmallVideo":36}],36:[function(require,module,exports){
 var UIUtil = require("../util/UIUtil");
@@ -7827,6 +7779,13 @@ var LargeVideo = require("./LargeVideo");
 
 function SmallVideo(){
     this.isMuted = false;
+    this.hasAvatar = false;
+}
+
+function setVisibility(selector, show) {
+    if (selector && selector.length > 0) {
+        selector.css("visibility", show ? "visible" : "hidden");
+    }
 }
 
 SmallVideo.prototype.showDisplayName = function(isShow) {
@@ -7973,6 +7932,8 @@ SmallVideo.prototype.showAudioIndicator = function(isMuted) {
  * Shows video muted indicator over small videos.
  */
 SmallVideo.prototype.showVideoIndicator = function(isMuted) {
+    this.showAvatar(isMuted);
+
     var videoMutedSpan = $('#' + this.videoSpanId + '>span.videoMuted');
 
     if (isMuted === false) {
@@ -8035,6 +7996,8 @@ SmallVideo.prototype.enableDominantSpeaker = function (isEnable)
                 this.container.classList.remove("dominantspeaker");
         }
     }
+
+    this.showAvatar();
 };
 
 SmallVideo.prototype.updateIconPositions = function () {
@@ -8104,6 +8067,61 @@ SmallVideo.prototype.focus = function(isFocused)
 
 SmallVideo.prototype.hasVideo = function () {
     return $("#" + this.videoSpanId).find("video").length !== 0;
+}
+
+/**
+ * Hides or shows the user's avatar
+ * @param show whether we should show the avatar or not
+ * video because there is no dominant speaker and no focused speaker
+ */
+SmallVideo.prototype.showAvatar = function (show) {
+    if(!this.hasAvatar)
+        return;
+
+    var video = $('#' + this.videoSpanId).find("video");
+    var avatar = $('#avatar_' + this.resourceJid);
+
+    if (show === undefined || show === null) {
+        if(!this.VideoLayout.isInLastN(this.resourceJid)) {
+            show = true;
+        }
+        else
+        {
+            show = APP.RTC.isVideoMuted(this.peerJid);
+        }
+
+    }
+
+    if (LargeVideo.showAvatar(this.resourceJid, show))
+    {
+        setVisibility(avatar, false);
+        setVisibility(video, false);
+    } else {
+        if (video && video.length > 0) {
+            setVisibility(video, !show);
+        }
+        setVisibility(avatar, show);
+
+    }
+}
+
+SmallVideo.prototype.avatarChanged = function (thumbUrl) {
+    var thumbnail = $('#' + this.videoSpanId);
+    var avatar = $('#avatar_' + this.resourceJid);
+    this.hasAvatar = true;
+
+    // set the avatar in the thumbnail
+    if (avatar && avatar.length > 0) {
+        avatar[0].src = thumbUrl;
+    } else {
+        if (thumbnail && thumbnail.length > 0) {
+            avatar = document.createElement('img');
+            avatar.id = 'avatar_' + this.resourceJid;
+            avatar.className = 'userAvatar';
+            avatar.src = thumbUrl;
+            thumbnail.append(avatar);
+        }
+    }
 }
 
 module.exports = SmallVideo;
@@ -8519,9 +8537,6 @@ var VideoLayout = (function (my) {
             remoteVideos[resourceJid].enableDominantSpeaker(isEnable);
         }
 
-
-        Avatar.showUserAvatar(
-            APP.xmpp.findJidFromResource(resourceJid));
     };
 
     /**
@@ -8626,7 +8641,7 @@ var VideoLayout = (function (my) {
     /**
      * On audio muted event.
      */
-    $(document).bind('audiomuted.muc', function (event, jid, isMuted) {
+    my.onAudioMute = function (jid, isMuted) {
         var resourceJid = Strophe.getResourceFromJid(jid);
         if (resourceJid === APP.xmpp.myResource()) {
             localVideoThumbnail.showAudioIndicator(isMuted);
@@ -8639,24 +8654,22 @@ var VideoLayout = (function (my) {
         }
 
 
-    });
+    };
 
     /**
      * On video muted event.
      */
-    $(document).bind('videomuted.muc', function (event, jid, value) {
-        var isMuted = (value === "true");
-        if(jid !== APP.xmpp.myJid() && !APP.RTC.muteRemoteVideoStream(jid, isMuted))
+    my.onVideoMute = function (jid, value) {
+        if(jid !== APP.xmpp.myJid() && !APP.RTC.muteRemoteVideoStream(jid, value))
             return;
 
-        Avatar.showUserAvatar(jid, isMuted);
         if (jid === APP.xmpp.myJid()) {
-            localVideoThumbnail.showVideoIndicator(isMuted);
+            localVideoThumbnail.showVideoIndicator(value);
         } else {
             VideoLayout.ensurePeerContainerExists(jid);
-            remoteVideos[Strophe.getResourceFromJid(jid)].showVideoIndicator(isMuted);
+            remoteVideos[Strophe.getResourceFromJid(jid)].showVideoIndicator(value);
         }
-    });
+    };
 
     /**
      * Display name changed.
@@ -8960,10 +8973,8 @@ var VideoLayout = (function (my) {
             var smallVideo = VideoLayout.getSmallVideo(focusedVideoResourceJid);
             if(smallVideo)
                 smallVideo.focus(false);
-            Avatar.showUserAvatar(
-                APP.xmpp.findJidFromResource(focusedVideoResourceJid));
+            smallVideo.showAvatar();
             focusedVideoResourceJid = null;
-
         }
     }
 
@@ -8989,7 +9000,16 @@ var VideoLayout = (function (my) {
                 return null;
             return remoteVideos[resourceJid];
         }
-    }
+    };
+
+    my.userAvatarChanged = function(resourceJid, thumbUrl)
+    {
+        var smallVideo = VideoLayout.getSmallVideo(resourceJid);
+        if(smallVideo)
+            smallVideo.avatarChanged(thumbUrl);
+        LargeVideo.updateAvatar(resourceJid, thumbUrl);
+    };
+
     return my;
 }(VideoLayout || {}));
 
@@ -14966,13 +14986,17 @@ module.exports = function(XMPP, eventEmitter) {
             // Parse audio info tag.
             var audioMuted = $(pres).find('>audiomuted');
             if (audioMuted.length) {
-                $(document).trigger('audiomuted.muc', [from, audioMuted.text()]);
+                eventEmitter.emit(XMPPEvents.AUDIO_MUTED,
+                    from, (audioMuted.text() === "true"));
+                $(document).trigger('audiomuted.muc', [from, ]);
             }
 
             // Parse video info tag.
             var videoMuted = $(pres).find('>videomuted');
             if (videoMuted.length) {
-                $(document).trigger('videomuted.muc', [from, videoMuted.text()]);
+                eventEmitter.emit(XMPPEvents.VIDEO_MUTED,
+                    from, (videoMuted.text() === "true"));
+                $(document).trigger('videomuted.muc', [from, ]);
             }
 
             var startMuted = $(pres).find('>startmuted');
@@ -28356,7 +28380,9 @@ var XMPPEvents = {
     DEVICE_AVAILABLE: "xmpp.device_available",
     START_MUTED: "xmpp.start_muted",
     PEERCONNECTION_READY: "xmpp.peerconnection_ready",
-    CONFERENCE_SETUP_FAILED: "xmpp.conference_setup_failed"
+    CONFERENCE_SETUP_FAILED: "xmpp.conference_setup_failed",
+    AUDIO_MUTED: "xmpp.audio_muted",
+    VIDEO_MUTED: "xmpp.video_muted"
 };
 module.exports = XMPPEvents;
 },{}],112:[function(require,module,exports){

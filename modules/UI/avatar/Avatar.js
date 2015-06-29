@@ -1,44 +1,6 @@
 var Settings = require("../../settings/Settings");
-var MediaStreamType = require("../../../service/RTC/MediaStreamTypes");
 
 var users = {};
-var activeSpeakerJid;
-
-function setVisibility(selector, show) {
-    if (selector && selector.length > 0) {
-        selector.css("visibility", show ? "visible" : "hidden");
-    }
-}
-
-function isUserMuted(jid) {
-    // XXX(gp) we may want to rename this method to something like
-    // isUserStreaming, for example.
-    if (jid != APP.xmpp.myJid()) {
-        var resource = Strophe.getResourceFromJid(jid);
-        if (!require("../videolayout/VideoLayout").isInLastN(resource)) {
-            return true;
-        }
-    }
-    else
-    {
-        var localVideo = APP.RTC.localVideo;
-        return (!localVideo || localVideo.isMuted());
-    }
-
-    if (!APP.RTC.remoteStreams[jid] || !APP.RTC.remoteStreams[jid][MediaStreamType.VIDEO_TYPE]) {
-        return null;
-    }
-    return APP.RTC.remoteStreams[jid][MediaStreamType.VIDEO_TYPE].muted;
-}
-
-function getGravatarUrl(id, size) {
-    if(id === APP.xmpp.myJid() || !id) {
-        id = Settings.getSettings().uid;
-    }
-    return 'https://www.gravatar.com/avatar/' +
-        MD5.hexdigest(id.trim().toLowerCase()) +
-        "?d=wavatar&size=" + (size || "30");
-}
 
 var Avatar = {
 
@@ -55,100 +17,19 @@ var Avatar = {
             }
             users[jid] = id;
         }
-        var thumbUrl = getGravatarUrl(users[jid] || jid, 100);
-        var contactListUrl = getGravatarUrl(users[jid] || jid);
+        var thumbUrl = this.getGravatarUrl(users[jid] || jid, 100);
+        var contactListUrl = this.getGravatarUrl(users[jid] || jid);
         var resourceJid = Strophe.getResourceFromJid(jid);
-        var thumbnail = $('#participant_' + resourceJid);
-        var avatar = $('#avatar_' + resourceJid);
 
-        // set the avatar in the settings menu if it is local user and get the
-        // local video container
-        if (jid === APP.xmpp.myJid()) {
-            $('#avatar').get(0).src = thumbUrl;
-            thumbnail = $('#localVideoContainer');
-        }
-
-        // set the avatar in the contact list
-        var contact = $('#' + resourceJid + '>img');
-        if (contact && contact.length > 0) {
-            contact.get(0).src = contactListUrl;
-        }
-
-        // set the avatar in the thumbnail
-        if (avatar && avatar.length > 0) {
-            avatar[0].src = thumbUrl;
-        } else {
-            if (thumbnail && thumbnail.length > 0) {
-                avatar = document.createElement('img');
-                avatar.id = 'avatar_' + resourceJid;
-                avatar.className = 'userAvatar';
-                avatar.src = thumbUrl;
-                thumbnail.append(avatar);
-            }
-        }
-
-        //if the user is the current active speaker - update the active speaker
-        // avatar
-        if (jid === activeSpeakerJid) {
-            this.updateActiveSpeakerAvatarSrc(jid);
-        }
+        APP.UI.userAvatarChanged(resourceJid, thumbUrl, contactListUrl);
     },
-
-    /**
-     * Hides or shows the user's avatar
-     * @param jid jid of the user
-     * @param show whether we should show the avatar or not
-     * video because there is no dominant speaker and no focused speaker
-     */
-    showUserAvatar: function (jid, show) {
-        if (users[jid]) {
-            var resourceJid = Strophe.getResourceFromJid(jid);
-            var video = $('#participant_' + resourceJid + '>video');
-            var avatar = $('#avatar_' + resourceJid);
-
-            if (jid === APP.xmpp.myJid()) {
-                video = $('#localVideoWrapper>video');
-            }
-            if (show === undefined || show === null) {
-                show = isUserMuted(jid);
-            }
-
-            //if the user is the currently focused, the dominant speaker or if
-            //there is no focused and no dominant speaker and the large video is
-            //currently shown
-            if (activeSpeakerJid === jid && require("../videolayout/LargeVideo").isLargeVideoOnTop()) {
-                setVisibility($("#largeVideo"), !show);
-                setVisibility($('#activeSpeaker'), show);
-                setVisibility(avatar, false);
-                setVisibility(video, false);
-            } else {
-                if (video && video.length > 0) {
-                    setVisibility(video, !show);
-                }
-                setVisibility(avatar, show);
-
-            }
+    getGravatarUrl: function (id, size) {
+        if(id === APP.xmpp.myJid() || !id) {
+            id = Settings.getSettings().uid;
         }
-    },
-
-    /**
-     * Updates the src of the active speaker avatar
-     * @param jid of the current active speaker
-     */
-    updateActiveSpeakerAvatarSrc: function (jid) {
-        var avatar = $("#activeSpeakerAvatar")[0];
-        var url = getGravatarUrl(users[jid],
-            interfaceConfig.ACTIVE_SPEAKER_AVATAR_SIZE);
-        if (jid === activeSpeakerJid && avatar.src === url) {
-            return;
-        }
-        activeSpeakerJid = jid;
-        var isMuted = isUserMuted(jid);
-        if (jid && isMuted !== null) {
-            avatar.src = url;
-            setVisibility($("#largeVideo"), !isMuted);
-            Avatar.showUserAvatar(jid, isMuted);
-        }
+        return 'https://www.gravatar.com/avatar/' +
+            MD5.hexdigest(id.trim().toLowerCase()) +
+            "?d=wavatar&size=" + (size || "30");
     }
 
 };

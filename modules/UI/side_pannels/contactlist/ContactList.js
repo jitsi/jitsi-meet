@@ -179,6 +179,15 @@ var ContactList = {
 
         if (contactName && displayName && displayName.length > 0)
             contactName.html(displayName);
+    },
+
+    userAvatarChanged: function (resourceJid, contactListUrl) {
+        // set the avatar in the contact list
+        var contact = $('#' + resourceJid + '>img');
+        if (contact && contact.length > 0) {
+            contact.get(0).src = contactListUrl;
+        }
+
     }
 };
 

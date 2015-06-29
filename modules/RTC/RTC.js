@@ -225,6 +225,19 @@ var RTC = {
         oldStream.stop();
         APP.xmpp.switchStreams(newStream, oldStream, callback, true);
     },
+    isVideoMuted: function (jid) {
+        if (jid === APP.xmpp.myJid()) {
+            var localVideo = APP.RTC.localVideo;
+            return (!localVideo || localVideo.isMuted());
+        }
+        else
+        {
+            if (!APP.RTC.remoteStreams[jid] || !APP.RTC.remoteStreams[jid][MediaStreamType.VIDEO_TYPE]) {
+                return null;
+            }
+            return APP.RTC.remoteStreams[jid][MediaStreamType.VIDEO_TYPE].muted;
+        }
+    },
     /**
      * Checks if video identified by given src is desktop stream.
      * @param videoSrc eg.
