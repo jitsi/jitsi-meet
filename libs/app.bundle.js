@@ -7902,7 +7902,7 @@ SmallVideo.prototype.hideIndicator = function () {
 SmallVideo.prototype.showAudioIndicator = function(isMuted) {
     var audioMutedSpan = $('#' + this.videoSpanId + '>span.audioMuted');
 
-    if (isMuted === 'false') {
+    if (!isMuted) {
         if (audioMutedSpan.length > 0) {
             audioMutedSpan.popover('hide');
             audioMutedSpan.remove();
@@ -8456,7 +8456,7 @@ var VideoLayout = (function (my) {
      * @param {boolean} isMuted
      */
     my.showLocalAudioIndicator = function(isMuted) {
-        localVideoThumbnail.showAudioIndicator(isMuted.toString());
+        localVideoThumbnail.showAudioIndicator(isMuted);
     };
 
     /**
@@ -14988,7 +14988,6 @@ module.exports = function(XMPP, eventEmitter) {
             if (audioMuted.length) {
                 eventEmitter.emit(XMPPEvents.AUDIO_MUTED,
                     from, (audioMuted.text() === "true"));
-                $(document).trigger('audiomuted.muc', [from, ]);
             }
 
             // Parse video info tag.
@@ -14996,7 +14995,6 @@ module.exports = function(XMPP, eventEmitter) {
             if (videoMuted.length) {
                 eventEmitter.emit(XMPPEvents.VIDEO_MUTED,
                     from, (videoMuted.text() === "true"));
-                $(document).trigger('videomuted.muc', [from, ]);
             }
 
             var startMuted = $(pres).find('>startmuted');

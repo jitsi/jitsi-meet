@@ -126,7 +126,7 @@ SmallVideo.prototype.hideIndicator = function () {
 SmallVideo.prototype.showAudioIndicator = function(isMuted) {
     var audioMutedSpan = $('#' + this.videoSpanId + '>span.audioMuted');
 
-    if (isMuted === 'false') {
+    if (!isMuted) {
         if (audioMutedSpan.length > 0) {
             audioMutedSpan.popover('hide');
             audioMutedSpan.remove();

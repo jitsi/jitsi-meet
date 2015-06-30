@@ -145,7 +145,6 @@ module.exports = function(XMPP, eventEmitter) {
             if (audioMuted.length) {
                 eventEmitter.emit(XMPPEvents.AUDIO_MUTED,
                     from, (audioMuted.text() === "true"));
-                $(document).trigger('audiomuted.muc', [from, ]);
             }
 
             // Parse video info tag.
@@ -153,7 +152,6 @@ module.exports = function(XMPP, eventEmitter) {
             if (videoMuted.length) {
                 eventEmitter.emit(XMPPEvents.VIDEO_MUTED,
                     from, (videoMuted.text() === "true"));
-                $(document).trigger('videomuted.muc', [from, ]);
             }
 
             var startMuted = $(pres).find('>startmuted');
