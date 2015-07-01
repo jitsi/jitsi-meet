@@ -8399,10 +8399,10 @@ var VideoLayout = (function (my) {
         // current dominant, focused speaker or prezi playing or update it to
         // the current dominant speaker.
         if ((!focusedVideoResourceJid &&
-            !VideoLayout.getDominantSpeakerResourceJid() &&
+            !currentDominantSpeaker &&
             !require("../prezi/Prezi").isPresentationVisible()) ||
             (resourceJid &&
-                VideoLayout.getDominantSpeakerResourceJid() === resourceJid)) {
+                currentDominantSpeaker === resourceJid)) {
             LargeVideo.updateLargeVideo(resourceJid, true);
         }
     }
@@ -8520,26 +8520,6 @@ var VideoLayout = (function (my) {
     };
 
     /**
-     * Enables the dominant speaker UI.
-     *
-     * @param resourceJid the jid indicating the video element to
-     * activate/deactivate
-     * @param isEnable indicates if the dominant speaker should be enabled or
-     * disabled
-     */
-    my.enableDominantSpeaker = function(resourceJid, isEnable) {
-
-        if (resourceJid
-                === APP.xmpp.myResource()) {
-            localVideoThumbnail.enableDominantSpeaker(isEnable);
-        }
-        else {
-            remoteVideos[resourceJid].enableDominantSpeaker(isEnable);
-        }
-
-    };
-
-    /**
      * Calculates the thumbnail size.
      *
      * @param videoSpaceWidth the width of the video space
@@ -8571,13 +8551,6 @@ var VideoLayout = (function (my) {
 
        return [availableWidth, availableHeight];
    };
-
-    /**
-     * Returns the current dominant speaker resource jid.
-     */
-    my.getDominantSpeakerResourceJid = function () {
-        return currentDominantSpeaker;
-    };
 
     /**
      * Returns the corresponding resource jid to the given peer container
@@ -8842,7 +8815,7 @@ var VideoLayout = (function (my) {
                     }
                     remoteVideos[resourceJid].waitForRemoteVideo(sel, mediaStream.ssrc, mediaStream.stream);
                 }
-            })
+            });
         }
 
         // The endpoint that was being shown in the large video has dropped out
@@ -8944,11 +8917,11 @@ var VideoLayout = (function (my) {
             console.info("Focused video owner has left the conference");
             focusedVideoResourceJid = null;
         }
-    }
+    };
     
     my.onVideoTypeChanged = function (jid) {
-        LargeVideo.onVideoTypeChanged();
-    }
+        LargeVideo.onVideoTypeChanged(jid);
+    };
 
     my.showMore = function (jid) {
         if(APP.xmpp.myJid = jid)
@@ -8960,11 +8933,11 @@ var VideoLayout = (function (my) {
             remoteVideos[Strophe.getResourceFromJid(jid)].connectionIndicator.showMore();
         }
 
-    }
+    };
 
     my.addPreziContainer = function (id) {
         return RemoteVideo.createContainer(id);
-    }
+    };
 
     my.setLargeVideoVisible = function (isVisible) {
         LargeVideo.setLargeVideoVisible(isVisible);
@@ -8976,7 +8949,7 @@ var VideoLayout = (function (my) {
             smallVideo.showAvatar();
             focusedVideoResourceJid = null;
         }
-    }
+    };
 
 
     /**
