@@ -163,10 +163,11 @@ RemoteVideo.prototype.removeRemoteStreamElement = function (stream, isVideo, id)
 };
 
 RemoteVideo.prototype.addRemoteStreamElement = function (sid, stream, thessrc) {
-    var isVideo = stream.getVideoTracks().length > 0;
-    if(!this.container)
+    if (!this.container)
         return;
 
+    var self = this;
+    var isVideo = stream.getVideoTracks().length > 0;
     var streamElement = SmallVideo.createStreamElement(sid, stream);
     var newElementId = streamElement.id;
 
@@ -178,10 +179,20 @@ RemoteVideo.prototype.addRemoteStreamElement = function (sid, stream, thessrc) {
     // If the container is currently visible we attach the stream.
     if (!isVideo
         || (this.container.offsetParent !== null && isVideo)) {
-        APP.RTC.attachMediaStream(sel, stream);
 
-        if (isVideo)
-            this.waitForRemoteVideo(sel, thessrc, stream);
+        // Register 'onplaying' listener to trigger 'videoactive' on VideoLayout
+        // when video playback starts
+        if (isVideo && stream.id !== 'mixedmslabel') {
+            var onPlayingHandler = function () {
+                // FIXME: why do i have to do this for FF?
+                APP.RTC.attachMediaStream(sel, stream);
+                self.VideoLayout.videoactive(sel, self.resourceJid);
+                sel.off("playing", onPlayingHandler);
+            };
+            sel.on("playing", onPlayingHandler);
+        }
+
+        APP.RTC.attachMediaStream(sel, stream);
     }
 
     var self = this;
@@ -230,26 +241,6 @@ RemoteVideo.prototype.addRemoteStreamElement = function (sid, stream, thessrc) {
                 self.showDisplayName(false);
         }
     );
-}
-
-
-RemoteVideo.prototype.waitForRemoteVideo = function(selector, ssrc, stream) {
-    if (selector.removed || !selector.parent().is(":visible")) {
-        console.warn("Media removed before had started", selector);
-        return;
-    }
-
-    if (stream.id === 'mixedmslabel') return;
-
-    if (selector[0].currentTime > 0) {
-        APP.RTC.attachMediaStream(selector, stream); // FIXME: why do i have to do this for FF?
-        this.VideoLayout.videoactive(selector, this.resourceJid);
-    } else {
-        var self = this;
-        setTimeout(function () {
-            self.waitForRemoteVideo(selector, ssrc, stream);
-        }, 250);
-    }
 }
 
 /**
