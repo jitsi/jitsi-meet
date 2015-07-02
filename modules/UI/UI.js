@@ -32,6 +32,51 @@ var eventEmitter = new EventEmitter();
 var roomName = null;
 
 
+function promptDisplayName() {
+    var message = '<h2 data-i18n="dialog.displayNameRequired">';
+    message += APP.translation.translateString(
+        "dialog.displayNameRequired");
+    message += '</h2>' +
+        '<input name="displayName" type="text" data-i18n=' +
+        '"[placeholder]defaultNickname" placeholder="' +
+        APP.translation.translateString(
+            "defaultNickname", {name: "Jane Pink"}) +
+        '" autofocus>';
+
+    var buttonTxt
+        = APP.translation.generateTranslatonHTML("dialog.Ok");
+    var buttons = [];
+    buttons.push({title: buttonTxt, value: "ok"});
+
+    messageHandler.openDialog(null, message,
+        true,
+        buttons,
+        function (e, v, m, f) {
+            if (v == "ok") {
+                var displayName = f.displayName;
+                if (displayName) {
+                    VideoLayout.inputDisplayNameHandler(displayName);
+                    return true;
+                }
+            }
+            e.preventDefault();
+        },
+        function () {
+            var form  = $.prompt.getPrompt();
+            var input = form.find("input[name='displayName']");
+            var button = form.find("button");
+            button.attr("disabled", "disabled");
+            input.keyup(function () {
+                if(!input.val())
+                    button.attr("disabled", "disabled");
+                else
+                    button.removeAttr("disabled");
+            });
+        }
+    );
+}
+
+
 function notifyForInitialMute()
 {
     messageHandler.notify(null, "notify.mutedTitle", "connected",
@@ -362,16 +407,14 @@ UI.start = function (init) {
 
     document.getElementById('largeVideo').volume = 0;
 
-    if (!$('#settings').is(':visible')) {
-        console.log('init');
-        init();
-    } else {
-        loginInfo.onsubmit = function (e) {
-            if (e.preventDefault) e.preventDefault();
-            $('#settings').hide();
-            init();
-        };
+    if(config.requireDisplayName) {
+        var currentSettings = Settings.getSettings();
+        if (!currentSettings.displayName) {
+            promptDisplayName();
+        }
     }
+
+    init();
 
     toastr.options = {
         "closeButton": true,

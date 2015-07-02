@@ -194,7 +194,8 @@
         "reservationErrorMsg": "Error code: __code__, message: __msg__",
         "password": "password",
         "userPassword": "user password",
-        "token": "token"
+        "token": "token",
+        "displayNameRequired": "Please enter your display name:"
     },
     "email":
     {
