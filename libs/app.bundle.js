@@ -73,15 +73,19 @@ var XMPPEvents = require("../../service/xmpp/XMPPEvents");
  *              filmStrip: toggleFilmStrip
  *          }}
  */
-var commands =
-{
-    displayName: APP.UI.inputDisplayNameHandler,
-    muteAudio: APP.UI.toggleAudio,
-    muteVideo: APP.UI.toggleVideo,
-    toggleFilmStrip: APP.UI.toggleFilmStrip,
-    toggleChat: APP.UI.toggleChat,
-    toggleContactList: APP.UI.toggleContactList
-};
+var commands = {};
+
+function initCommands() {
+    commands =
+    {
+        displayName: APP.UI.inputDisplayNameHandler,
+        muteAudio: APP.UI.toggleAudio,
+        muteVideo: APP.UI.toggleVideo,
+        toggleFilmStrip: APP.UI.toggleFilmStrip,
+        toggleChat: APP.UI.toggleChat,
+        toggleContactList: APP.UI.toggleContactList
+    };
+}
 
 
 /**
@@ -234,6 +238,7 @@ var API = {
      * is initialized.
      */
     init: function () {
+        initCommands();
         if (window.addEventListener)
         {
             window.addEventListener('message',
@@ -11503,40 +11508,44 @@ module.exports = {
 
 },{"../../service/RTC/RTCEvents":99,"../../service/desktopsharing/DesktopSharingEventTypes":105,"../RTC/RTCBrowserType":8,"../RTC/adapter.screenshare":10,"events":109}],45:[function(require,module,exports){
 //maps keycode to character, id of popover for given function and function
-var shortcuts = {
-    67: {
-        character: "C",
-        id: "toggleChatPopover",
-        function: APP.UI.toggleChat
-    },
-    70: {
-        character: "F",
-        id: "filmstripPopover",
-        function: APP.UI.toggleFilmStrip
-    },
-    77: {
-        character: "M",
-        id: "mutePopover",
-        function: APP.UI.toggleAudio
-    },
-    84: {
-        character: "T",
-        function: function() {
-            if(!APP.RTC.localAudio.isMuted()) {
-                APP.UI.toggleAudio();
+var shortcuts = {};
+function initShortcutHandlers() {
+    shortcuts = {
+        67: {
+            character: "C",
+            id: "toggleChatPopover",
+            function: APP.UI.toggleChat
+        },
+        70: {
+            character: "F",
+            id: "filmstripPopover",
+            function: APP.UI.toggleFilmStrip
+        },
+        77: {
+            character: "M",
+            id: "mutePopover",
+            function: APP.UI.toggleAudio
+        },
+        84: {
+            character: "T",
+            function: function() {
+                if(!APP.RTC.localAudio.isMuted()) {
+                    APP.UI.toggleAudio();
+                }
             }
+        },
+        86: {
+            character: "V",
+            id: "toggleVideoPopover",
+            function: APP.UI.toggleVideo
         }
-    },
-    86: {
-        character: "V",
-        id: "toggleVideoPopover",
-        function: APP.UI.toggleVideo
-    }
-};
+    };
+}
 
 
 var KeyboardShortcut = {
     init: function () {
+        initShortcutHandlers();
         window.onkeyup = function(e) {
             var keycode = e.which;
             if(!($(":focus").is("input[type=text]") ||
@@ -30348,70 +30357,37 @@ function isUndefined(arg) {
 var process = module.exports = {};
 var queue = [];
 var draining = false;
-var currentQueue;
-var queueIndex = -1;
-
-function cleanUpNextTick() {
-    draining = false;
-    if (currentQueue.length) {
-        queue = currentQueue.concat(queue);
-    } else {
-        queueIndex = -1;
-    }
-    if (queue.length) {
-        drainQueue();
-    }
-}
 
 function drainQueue() {
     if (draining) {
         return;
     }
-    var timeout = setTimeout(cleanUpNextTick);
     draining = true;
-
+    var currentQueue;
     var len = queue.length;
     while(len) {
         currentQueue = queue;
         queue = [];
-        while (++queueIndex < len) {
-            currentQueue[queueIndex].run();
+        var i = -1;
+        while (++i < len) {
+            currentQueue[i]();
         }
-        queueIndex = -1;
         len = queue.length;
     }
-    currentQueue = null;
     draining = false;
-    clearTimeout(timeout);
 }
-
 process.nextTick = function (fun) {
-    var args = new Array(arguments.length - 1);
-    if (arguments.length > 1) {
-        for (var i = 1; i < arguments.length; i++) {
-            args[i - 1] = arguments[i];
-        }
-    }
-    queue.push(new Item(fun, args));
-    if (queue.length === 1 && !draining) {
+    queue.push(fun);
+    if (!draining) {
         setTimeout(drainQueue, 0);
     }
 };
 
-// v8 likes predictible objects
-function Item(fun, array) {
-    this.fun = fun;
-    this.array = array;
-}
-Item.prototype.run = function () {
-    this.fun.apply(null, this.array);
-};
 process.title = 'browser';
 process.browser = true;
 process.env = {};
 process.argv = [];
 process.version = ''; // empty string to avoid regexp issues
-process.versions = {};
 
 function noop() {}
 

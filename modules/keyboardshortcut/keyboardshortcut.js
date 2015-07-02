@@ -1,38 +1,42 @@
 //maps keycode to character, id of popover for given function and function
-var shortcuts = {
-    67: {
-        character: "C",
-        id: "toggleChatPopover",
-        function: APP.UI.toggleChat
-    },
-    70: {
-        character: "F",
-        id: "filmstripPopover",
-        function: APP.UI.toggleFilmStrip
-    },
-    77: {
-        character: "M",
-        id: "mutePopover",
-        function: APP.UI.toggleAudio
-    },
-    84: {
-        character: "T",
-        function: function() {
-            if(!APP.RTC.localAudio.isMuted()) {
-                APP.UI.toggleAudio();
+var shortcuts = {};
+function initShortcutHandlers() {
+    shortcuts = {
+        67: {
+            character: "C",
+            id: "toggleChatPopover",
+            function: APP.UI.toggleChat
+        },
+        70: {
+            character: "F",
+            id: "filmstripPopover",
+            function: APP.UI.toggleFilmStrip
+        },
+        77: {
+            character: "M",
+            id: "mutePopover",
+            function: APP.UI.toggleAudio
+        },
+        84: {
+            character: "T",
+            function: function() {
+                if(!APP.RTC.localAudio.isMuted()) {
+                    APP.UI.toggleAudio();
+                }
             }
+        },
+        86: {
+            character: "V",
+            id: "toggleVideoPopover",
+            function: APP.UI.toggleVideo
         }
-    },
-    86: {
-        character: "V",
-        id: "toggleVideoPopover",
-        function: APP.UI.toggleVideo
-    }
-};
+    };
+}
 
 
 var KeyboardShortcut = {
     init: function () {
+        initShortcutHandlers();
         window.onkeyup = function(e) {
             var keycode = e.which;
             if(!($(":focus").is("input[type=text]") ||

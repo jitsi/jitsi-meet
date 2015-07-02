@@ -15,15 +15,19 @@ var XMPPEvents = require("../../service/xmpp/XMPPEvents");
  *              filmStrip: toggleFilmStrip
  *          }}
  */
-var commands =
-{
-    displayName: APP.UI.inputDisplayNameHandler,
-    muteAudio: APP.UI.toggleAudio,
-    muteVideo: APP.UI.toggleVideo,
-    toggleFilmStrip: APP.UI.toggleFilmStrip,
-    toggleChat: APP.UI.toggleChat,
-    toggleContactList: APP.UI.toggleContactList
-};
+var commands = {};
+
+function initCommands() {
+    commands =
+    {
+        displayName: APP.UI.inputDisplayNameHandler,
+        muteAudio: APP.UI.toggleAudio,
+        muteVideo: APP.UI.toggleVideo,
+        toggleFilmStrip: APP.UI.toggleFilmStrip,
+        toggleChat: APP.UI.toggleChat,
+        toggleContactList: APP.UI.toggleContactList
+    };
+}
 
 
 /**
@@ -176,6 +180,7 @@ var API = {
      * is initialized.
      */
     init: function () {
+        initCommands();
         if (window.addEventListener)
         {
             window.addEventListener('message',
