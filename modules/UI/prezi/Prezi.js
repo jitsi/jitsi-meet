@@ -58,13 +58,13 @@ var Prezi = {
             );
         }
         else {
-            var html = APP.translation.generateTranslatonHTML(
+            var html = APP.translation.generateTranslationHTML(
                 "dialog.sharePreziTitle");
-            var cancelButton = APP.translation.generateTranslatonHTML(
+            var cancelButton = APP.translation.generateTranslationHTML(
                 "dialog.Cancel");
-            var shareButton = APP.translation.generateTranslatonHTML(
+            var shareButton = APP.translation.generateTranslationHTML(
                 "dialog.Share");
-            var backButton = APP.translation.generateTranslatonHTML(
+            var backButton = APP.translation.generateTranslationHTML(
                 "dialog.Back");
             var buttons = [];
             var buttons1 = [];
@@ -75,7 +75,7 @@ var Prezi = {
             buttons.push({title: shareButton, value: true});
             // Back button
             buttons1.push({title: backButton, value: true});
-            var linkError = APP.translation.generateTranslatonHTML(
+            var linkError = APP.translation.generateTranslationHTML(
                 "dialog.preziLinkError");
             var defaultUrl = APP.translation.translateString("defaultPreziLink",
                 {url: "http://prezi.com/wz7vhjycl7e6/my-prezi"});

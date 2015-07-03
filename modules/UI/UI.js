@@ -44,7 +44,7 @@ function promptDisplayName() {
         '" autofocus>';
 
     var buttonTxt
-        = APP.translation.generateTranslatonHTML("dialog.Ok");
+        = APP.translation.generateTranslationHTML("dialog.Ok");
     var buttons = [];
     buttons.push({title: buttonTxt, value: "ok"});
 
@@ -122,15 +122,15 @@ function streamHandler(stream, isMuted) {
 
 function onXmppConnectionFailed(stropheErrorMsg) {
 
-    var title = APP.translation.generateTranslatonHTML(
+    var title = APP.translation.generateTranslationHTML(
         "dialog.error");
 
     var message;
     if (stropheErrorMsg) {
-        message = APP.translation.generateTranslatonHTML(
+        message = APP.translation.generateTranslationHTML(
             "dialog.connectErrorWithMsg", {msg: stropheErrorMsg});
     } else {
-        message = APP.translation.generateTranslatonHTML(
+        message = APP.translation.generateTranslationHTML(
             "dialog.connectError");
     }
 
@@ -211,9 +211,9 @@ function registerListeners() {
         );
     });
     APP.xmpp.addListener(XMPPEvents.RESERVATION_ERROR, function (code, msg) {
-        var title = APP.translation.generateTranslatonHTML(
+        var title = APP.translation.generateTranslationHTML(
             "dialog.reservationError");
-        var message = APP.translation.generateTranslatonHTML(
+        var message = APP.translation.generateTranslationHTML(
             "dialog.reservationErrorMsg", {code: code, msg: msg});
         messageHandler.openDialog(
             title,
@@ -232,7 +232,7 @@ function registerListeners() {
     APP.xmpp.addListener(XMPPEvents.MUC_DESTROYED, function (reason) {
         //FIXME: use Session Terminated from translation, but
         // 'reason' text comes from XMPP packet and is not translated
-        var title = APP.translation.generateTranslatonHTML("dialog.sessTerminated");
+        var title = APP.translation.generateTranslationHTML("dialog.sessTerminated");
         messageHandler.openDialog(
             title, reason, true, {},
             function (event, value, message, formVals)
@@ -459,7 +459,7 @@ function updateChatConversation(from, displayName, message, myjid, stamp) {
 
 function onMucJoined(jid, info) {
     Toolbar.updateRoomUrl(window.location.href);
-    var meHTML = APP.translation.generateTranslatonHTML("me");
+    var meHTML = APP.translation.generateTranslationHTML("me");
     $("#localNick").html(Strophe.getResourceFromJid(jid) + " (" + meHTML + ")");
 
     var settings = Settings.getSettings();

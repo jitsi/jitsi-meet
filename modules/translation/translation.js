@@ -122,7 +122,7 @@ module.exports = {
     translateElement: function (selector) {
         selector.i18n();
     },
-    generateTranslatonHTML: function (key, options) {
+    generateTranslationHTML: function (key, options) {
         var str = "<span data-i18n=\"" + key + "\"";
         if(options)
         {

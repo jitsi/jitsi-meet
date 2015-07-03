@@ -11,9 +11,9 @@ var messageHandler = (function(my) {
         var title = null;
         if(titleKey)
         {
-            title = APP.translation.generateTranslatonHTML(titleKey);
+            title = APP.translation.generateTranslationHTML(titleKey);
         }
-        var message = APP.translation.generateTranslatonHTML(messageKey);
+        var message = APP.translation.generateTranslationHTML(messageKey);
         $.prompt(message,
             {
                 title: title,
@@ -43,20 +43,20 @@ var messageHandler = (function(my) {
     {
         var buttons = [];
 
-        var leftButton = APP.translation.generateTranslatonHTML(leftButtonKey);
+        var leftButton = APP.translation.generateTranslationHTML(leftButtonKey);
         buttons.push({ title: leftButton, value: true});
 
         var cancelButton
-            = APP.translation.generateTranslatonHTML("dialog.Cancel");
+            = APP.translation.generateTranslationHTML("dialog.Cancel");
         buttons.push({title: cancelButton, value: false});
 
         var message = msgString, title = titleString;
         if (titleKey)
         {
-            title = APP.translation.generateTranslatonHTML(titleKey);
+            title = APP.translation.generateTranslationHTML(titleKey);
         }
         if (msgKey) {
-            message = APP.translation.generateTranslatonHTML(msgKey);
+            message = APP.translation.generateTranslationHTML(msgKey);
         }
         $.prompt(message, {
             title: title,

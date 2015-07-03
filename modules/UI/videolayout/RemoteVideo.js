@@ -347,7 +347,7 @@ RemoteVideo.prototype.setDisplayName = function(displayName, key) {
         }
         else if (key && key.length > 0)
         {
-            var nameHtml = APP.translation.generateTranslatonHTML(key);
+            var nameHtml = APP.translation.generateTranslationHTML(key);
             $('#' + this.videoSpanId + '_name').html(nameHtml);
         }
         else

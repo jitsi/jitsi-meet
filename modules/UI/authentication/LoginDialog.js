@@ -31,9 +31,9 @@ function Dialog(callback, obtainSession) {
         'type="password" data-i18n="[placeholder]dialog.userPassword"' +
         ' placeholder="user password">';
 
-    var okButton = APP.translation.generateTranslatonHTML("dialog.Ok");
+    var okButton = APP.translation.generateTranslationHTML("dialog.Ok");
 
-    var cancelButton = APP.translation.generateTranslatonHTML("dialog.Cancel");
+    var cancelButton = APP.translation.generateTranslationHTML("dialog.Cancel");
 
     var states = {
         login: {

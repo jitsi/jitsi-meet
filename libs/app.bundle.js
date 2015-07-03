@@ -1564,7 +1564,7 @@ function promptDisplayName() {
         '" autofocus>';
 
     var buttonTxt
-        = APP.translation.generateTranslatonHTML("dialog.Ok");
+        = APP.translation.generateTranslationHTML("dialog.Ok");
     var buttons = [];
     buttons.push({title: buttonTxt, value: "ok"});
 
@@ -1642,15 +1642,15 @@ function streamHandler(stream, isMuted) {
 
 function onXmppConnectionFailed(stropheErrorMsg) {
 
-    var title = APP.translation.generateTranslatonHTML(
+    var title = APP.translation.generateTranslationHTML(
         "dialog.error");
 
     var message;
     if (stropheErrorMsg) {
-        message = APP.translation.generateTranslatonHTML(
+        message = APP.translation.generateTranslationHTML(
             "dialog.connectErrorWithMsg", {msg: stropheErrorMsg});
     } else {
-        message = APP.translation.generateTranslatonHTML(
+        message = APP.translation.generateTranslationHTML(
             "dialog.connectError");
     }
 
@@ -1731,9 +1731,9 @@ function registerListeners() {
         );
     });
     APP.xmpp.addListener(XMPPEvents.RESERVATION_ERROR, function (code, msg) {
-        var title = APP.translation.generateTranslatonHTML(
+        var title = APP.translation.generateTranslationHTML(
             "dialog.reservationError");
-        var message = APP.translation.generateTranslatonHTML(
+        var message = APP.translation.generateTranslationHTML(
             "dialog.reservationErrorMsg", {code: code, msg: msg});
         messageHandler.openDialog(
             title,
@@ -1752,7 +1752,7 @@ function registerListeners() {
     APP.xmpp.addListener(XMPPEvents.MUC_DESTROYED, function (reason) {
         //FIXME: use Session Terminated from translation, but
         // 'reason' text comes from XMPP packet and is not translated
-        var title = APP.translation.generateTranslatonHTML("dialog.sessTerminated");
+        var title = APP.translation.generateTranslationHTML("dialog.sessTerminated");
         messageHandler.openDialog(
             title, reason, true, {},
             function (event, value, message, formVals)
@@ -1979,7 +1979,7 @@ function updateChatConversation(from, displayName, message, myjid, stamp) {
 
 function onMucJoined(jid, info) {
     Toolbar.updateRoomUrl(window.location.href);
-    var meHTML = APP.translation.generateTranslatonHTML("me");
+    var meHTML = APP.translation.generateTranslationHTML("me");
     $("#localNick").html(Strophe.getResourceFromJid(jid) + " (" + meHTML + ")");
 
     var settings = Settings.getSettings();
@@ -2778,13 +2778,13 @@ var Authentication = {
         var room = roomName.substr(0, roomName.indexOf('@'));
 
         var title
-            = APP.translation.generateTranslatonHTML("dialog.WaitingForHost");
+            = APP.translation.generateTranslationHTML("dialog.WaitingForHost");
         var msg
-            = APP.translation.generateTranslatonHTML(
+            = APP.translation.generateTranslationHTML(
                     "dialog.WaitForHostMsg", {room: room});
 
         var buttonTxt
-            = APP.translation.generateTranslatonHTML("dialog.IamHost");
+            = APP.translation.generateTranslationHTML("dialog.IamHost");
         var buttons = [];
         buttons.push({title: buttonTxt, value: "authNow"});
 
@@ -2912,9 +2912,9 @@ function Dialog(callback, obtainSession) {
         'type="password" data-i18n="[placeholder]dialog.userPassword"' +
         ' placeholder="user password">';
 
-    var okButton = APP.translation.generateTranslatonHTML("dialog.Ok");
+    var okButton = APP.translation.generateTranslationHTML("dialog.Ok");
 
-    var cancelButton = APP.translation.generateTranslatonHTML("dialog.Cancel");
+    var cancelButton = APP.translation.generateTranslationHTML("dialog.Cancel");
 
     var states = {
         login: {
@@ -3389,13 +3389,13 @@ var Prezi = {
             );
         }
         else {
-            var html = APP.translation.generateTranslatonHTML(
+            var html = APP.translation.generateTranslationHTML(
                 "dialog.sharePreziTitle");
-            var cancelButton = APP.translation.generateTranslatonHTML(
+            var cancelButton = APP.translation.generateTranslationHTML(
                 "dialog.Cancel");
-            var shareButton = APP.translation.generateTranslatonHTML(
+            var shareButton = APP.translation.generateTranslationHTML(
                 "dialog.Share");
-            var backButton = APP.translation.generateTranslatonHTML(
+            var backButton = APP.translation.generateTranslationHTML(
                 "dialog.Back");
             var buttons = [];
             var buttons1 = [];
@@ -3406,7 +3406,7 @@ var Prezi = {
             buttons.push({title: shareButton, value: true});
             // Back button
             buttons1.push({title: backButton, value: true});
-            var linkError = APP.translation.generateTranslatonHTML(
+            var linkError = APP.translation.generateTranslationHTML(
                 "dialog.preziLinkError");
             var defaultUrl = APP.translation.translateString("defaultPreziLink",
                 {url: "http://prezi.com/wz7vhjycl7e6/my-prezi"});
@@ -5201,11 +5201,11 @@ function hangup() {
 
     }
 
-    var title = APP.translation.generateTranslatonHTML(
+    var title = APP.translation.generateTranslationHTML(
         "dialog.sessTerminated");
-    var msg = APP.translation.generateTranslatonHTML(
+    var msg = APP.translation.generateTranslationHTML(
         "dialog.hungUp");
-    var button = APP.translation.generateTranslatonHTML(
+    var button = APP.translation.generateTranslationHTML(
         "dialog.joinAgain");
     var buttons = [];
     buttons.push({title: button, value: true});
@@ -5229,7 +5229,7 @@ function hangup() {
 
 function toggleRecording() {
     APP.xmpp.toggleRecording(function (callback) {
-        var msg = APP.translation.generateTranslatonHTML(
+        var msg = APP.translation.generateTranslationHTML(
             "dialog.recordingToken");
         var token = APP.translation.translateString("dialog.token");
         APP.UI.messageHandler.openTwoButtonDialog(null, null, null,
@@ -5334,7 +5334,7 @@ function callSipButtonClicked()
     var defaultNumber
         = config.defaultSipNumber ? config.defaultSipNumber : '';
 
-    var sipMsg = APP.translation.generateTranslatonHTML(
+    var sipMsg = APP.translation.generateTranslationHTML(
         "dialog.sipMsg");
     messageHandler.openTwoButtonDialog(null, null, null,
         '<h2>' + sipMsg + '</h2>' +
@@ -5474,7 +5474,7 @@ var Toolbar = (function (my) {
                         }
                     });
             } else {
-                var msg = APP.translation.generateTranslatonHTML(
+                var msg = APP.translation.generateTranslationHTML(
                     "dialog.passwordMsg");
                 var yourPassword = APP.translation.translateString(
                     "dialog.yourPassword");
@@ -5544,11 +5544,11 @@ var Toolbar = (function (my) {
      * FIXME: not used ?
      */
     my.openSettingsDialog = function () {
-        var settings1 = APP.translation.generateTranslatonHTML(
+        var settings1 = APP.translation.generateTranslationHTML(
             "dialog.settings1");
-        var settings2 = APP.translation.generateTranslatonHTML(
+        var settings2 = APP.translation.generateTranslationHTML(
             "dialog.settings2");
-        var settings3 = APP.translation.generateTranslatonHTML(
+        var settings3 = APP.translation.generateTranslationHTML(
             "dialog.settings3");
 
         var yourPassword = APP.translation.translateString(
@@ -6002,9 +6002,9 @@ var messageHandler = (function(my) {
         var title = null;
         if(titleKey)
         {
-            title = APP.translation.generateTranslatonHTML(titleKey);
+            title = APP.translation.generateTranslationHTML(titleKey);
         }
-        var message = APP.translation.generateTranslatonHTML(messageKey);
+        var message = APP.translation.generateTranslationHTML(messageKey);
         $.prompt(message,
             {
                 title: title,
@@ -6034,20 +6034,20 @@ var messageHandler = (function(my) {
     {
         var buttons = [];
 
-        var leftButton = APP.translation.generateTranslatonHTML(leftButtonKey);
+        var leftButton = APP.translation.generateTranslationHTML(leftButtonKey);
         buttons.push({ title: leftButton, value: true});
 
         var cancelButton
-            = APP.translation.generateTranslatonHTML("dialog.Cancel");
+            = APP.translation.generateTranslationHTML("dialog.Cancel");
         buttons.push({title: cancelButton, value: false});
 
         var message = msgString, title = titleString;
         if (titleKey)
         {
-            title = APP.translation.generateTranslatonHTML(titleKey);
+            title = APP.translation.generateTranslationHTML(titleKey);
         }
         if (msgKey) {
-            message = APP.translation.generateTranslatonHTML(msgKey);
+            message = APP.translation.generateTranslationHTML(msgKey);
         }
         $.prompt(message, {
             title: title,
@@ -7239,7 +7239,7 @@ LocalVideo.prototype.setDisplayName = function(displayName, key) {
     }
 
     var nameSpan = $('#' + this.videoSpanId + '>span.displayname');
-    var defaultLocalDisplayName = APP.translation.generateTranslatonHTML(
+    var defaultLocalDisplayName = APP.translation.generateTranslationHTML(
         interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME);
 
     // If we already have a display name for this video.
@@ -7248,7 +7248,7 @@ LocalVideo.prototype.setDisplayName = function(displayName, key) {
         if (nameSpan.text() !== displayName) {
             if (displayName && displayName.length > 0)
             {
-                var meHTML = APP.translation.generateTranslatonHTML("me");
+                var meHTML = APP.translation.generateTranslationHTML("me");
                 $('#localDisplayName').html(displayName + ' (' + meHTML + ')');
             }
             else
@@ -7263,7 +7263,7 @@ LocalVideo.prototype.setDisplayName = function(displayName, key) {
 
 
         if (displayName && displayName.length > 0) {
-            var meHTML = APP.translation.generateTranslatonHTML("me");
+            var meHTML = APP.translation.generateTranslationHTML("me");
             nameSpan.innerHTML = displayName + meHTML;
         }
         else {
@@ -7327,12 +7327,12 @@ LocalVideo.prototype.inputDisplayNameHandler = function (name) {
     if (!$('#localDisplayName').is(":visible")) {
         if (NicknameHandler.getNickname())
         {
-            var meHTML = APP.translation.generateTranslatonHTML("me");
+            var meHTML = APP.translation.generateTranslationHTML("me");
             $('#localDisplayName').html(NicknameHandler.getNickname() + " (" + meHTML + ")");
         }
         else
         {
-            var defaultHTML = APP.translation.generateTranslatonHTML(
+            var defaultHTML = APP.translation.generateTranslationHTML(
                 interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME);
             $('#localDisplayName')
                 .html(defaultHTML);
@@ -7768,7 +7768,7 @@ RemoteVideo.prototype.setDisplayName = function(displayName, key) {
         }
         else if (key && key.length > 0)
         {
-            var nameHtml = APP.translation.generateTranslatonHTML(key);
+            var nameHtml = APP.translation.generateTranslationHTML(key);
             $('#' + this.videoSpanId + '_name').html(nameHtml);
         }
         else
@@ -11375,7 +11375,7 @@ module.exports = {
     translateElement: function (selector) {
         selector.i18n();
     },
-    generateTranslatonHTML: function (key, options) {
+    generateTranslationHTML: function (key, options) {
         var str = "<span data-i18n=\"" + key + "\"";
         if(options)
         {

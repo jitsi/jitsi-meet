@@ -46,7 +46,7 @@ LocalVideo.prototype.setDisplayName = function(displayName, key) {
     }
 
     var nameSpan = $('#' + this.videoSpanId + '>span.displayname');
-    var defaultLocalDisplayName = APP.translation.generateTranslatonHTML(
+    var defaultLocalDisplayName = APP.translation.generateTranslationHTML(
         interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME);
 
     // If we already have a display name for this video.
@@ -55,7 +55,7 @@ LocalVideo.prototype.setDisplayName = function(displayName, key) {
         if (nameSpan.text() !== displayName) {
             if (displayName && displayName.length > 0)
             {
-                var meHTML = APP.translation.generateTranslatonHTML("me");
+                var meHTML = APP.translation.generateTranslationHTML("me");
                 $('#localDisplayName').html(displayName + ' (' + meHTML + ')');
             }
             else
@@ -70,7 +70,7 @@ LocalVideo.prototype.setDisplayName = function(displayName, key) {
 
 
         if (displayName && displayName.length > 0) {
-            var meHTML = APP.translation.generateTranslatonHTML("me");
+            var meHTML = APP.translation.generateTranslationHTML("me");
             nameSpan.innerHTML = displayName + meHTML;
         }
         else {
@@ -134,12 +134,12 @@ LocalVideo.prototype.inputDisplayNameHandler = function (name) {
     if (!$('#localDisplayName').is(":visible")) {
         if (NicknameHandler.getNickname())
         {
-            var meHTML = APP.translation.generateTranslatonHTML("me");
+            var meHTML = APP.translation.generateTranslationHTML("me");
             $('#localDisplayName').html(NicknameHandler.getNickname() + " (" + meHTML + ")");
         }
         else
         {
-            var defaultHTML = APP.translation.generateTranslatonHTML(
+            var defaultHTML = APP.translation.generateTranslationHTML(
                 interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME);
             $('#localDisplayName')
                 .html(defaultHTML);

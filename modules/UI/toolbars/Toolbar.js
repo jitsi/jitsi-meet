@@ -101,11 +101,11 @@ function hangup() {
 
     }
 
-    var title = APP.translation.generateTranslatonHTML(
+    var title = APP.translation.generateTranslationHTML(
         "dialog.sessTerminated");
-    var msg = APP.translation.generateTranslatonHTML(
+    var msg = APP.translation.generateTranslationHTML(
         "dialog.hungUp");
-    var button = APP.translation.generateTranslatonHTML(
+    var button = APP.translation.generateTranslationHTML(
         "dialog.joinAgain");
     var buttons = [];
     buttons.push({title: button, value: true});
@@ -129,7 +129,7 @@ function hangup() {
 
 function toggleRecording() {
     APP.xmpp.toggleRecording(function (callback) {
-        var msg = APP.translation.generateTranslatonHTML(
+        var msg = APP.translation.generateTranslationHTML(
             "dialog.recordingToken");
         var token = APP.translation.translateString("dialog.token");
         APP.UI.messageHandler.openTwoButtonDialog(null, null, null,
@@ -234,7 +234,7 @@ function callSipButtonClicked()
     var defaultNumber
         = config.defaultSipNumber ? config.defaultSipNumber : '';
 
-    var sipMsg = APP.translation.generateTranslatonHTML(
+    var sipMsg = APP.translation.generateTranslationHTML(
         "dialog.sipMsg");
     messageHandler.openTwoButtonDialog(null, null, null,
         '<h2>' + sipMsg + '</h2>' +
@@ -374,7 +374,7 @@ var Toolbar = (function (my) {
                         }
                     });
             } else {
-                var msg = APP.translation.generateTranslatonHTML(
+                var msg = APP.translation.generateTranslationHTML(
                     "dialog.passwordMsg");
                 var yourPassword = APP.translation.translateString(
                     "dialog.yourPassword");
@@ -444,11 +444,11 @@ var Toolbar = (function (my) {
      * FIXME: not used ?
      */
     my.openSettingsDialog = function () {
-        var settings1 = APP.translation.generateTranslatonHTML(
+        var settings1 = APP.translation.generateTranslationHTML(
             "dialog.settings1");
-        var settings2 = APP.translation.generateTranslatonHTML(
+        var settings2 = APP.translation.generateTranslationHTML(
             "dialog.settings2");
-        var settings3 = APP.translation.generateTranslatonHTML(
+        var settings3 = APP.translation.generateTranslationHTML(
             "dialog.settings3");
 
         var yourPassword = APP.translation.translateString(

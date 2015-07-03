@@ -30,11 +30,11 @@ You can add translatable text in the HTML:
  ```
 
 
- You can also use APP.translation.generateTranslatonHTML(key, options) to get this HTML code as Javascript string.
+ You can also use APP.translation.generateTranslationHTML(key, options) to get this HTML code as Javascript string.
 
 
  ```
- APP.translation.generateTranslatonHTML("dialog.OK") // returns <span data-i18n="dialog.OK">OK</span>
+ APP.translation.generateTranslationHTML("dialog.OK") // returns <span data-i18n="dialog.OK">OK</span>
  ```
  
  The value in the options parameter will be added in data-i18n-options attribute of the element.
