@@ -9,14 +9,16 @@ var notificationInterval;
  * left(-1)
  */
 function updateNumberOfParticipants(delta) {
-    //when the user is alone we don't show the number of participants
-    if(numberOfContacts === 0) {
+    numberOfContacts += delta;
+    if (numberOfContacts === 1) {
+        // when the user is alone we don't show the number of participants
         $("#numberOfParticipants").text('');
-        numberOfContacts += delta;
-    } else if(numberOfContacts !== 0 && !ContactList.isVisible()) {
-        ContactList.setVisualNotification(true);
-        numberOfContacts += delta;
+        ContactList.setVisualNotification(false);
+    } else if (numberOfContacts > 1) {
+        ContactList.setVisualNotification(!ContactList.isVisible());
         $("#numberOfParticipants").text(numberOfContacts);
+    } else {
+        console.error("Invalid number of participants: " + numberOfContacts);
     }
 }
 
