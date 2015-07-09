@@ -62,7 +62,8 @@
         "Settings": "Einstellungen",
         "hangup": "Auflegen",
         "login": "Anmelden",
-        "logout": "Abmelden"
+        "logout": "Abmelden",
+        "dialpad": "Tastenblock anzeigen"
     },
     "bottomtoolbar": {
         "chat": "Chat öffnen / schliessen",
@@ -79,7 +80,9 @@
     "settings": {
         "title": "Einstellungen",
         "update": "Aktualisieren",
-        "name": "Name"
+        "name": "Name",
+        "startAudioMuted": "Neue Teilnehmer stummschalten",
+        "startVideoMuted": "Video für neue Teilnehmer pausieren"
     },
     "videothumbnail": {
         "editnickname": "Klicken um den Anzeigenamen zu bearbeiten",
@@ -118,7 +121,9 @@
         "focus": "Konferenz-Organisator",
         "focusFail": "__component__ ist im Moment nicht verfügbar - wiederholen in __ms__ Sekunden",
         "grantedTo": "Moderatorenrechte an __to__ vergeben.",
-        "grantedToUnknown": "Moderatorenrechte an $t(somebody) vergeben."
+        "grantedToUnknown": "Moderatorenrechte an $t(somebody) vergeben.",
+        "muted": "Der Konferenz wurde stumm beigetreten.",
+        "mutedTitle": "Stummschaltung aktiv."
     },
     "dialog": {
         "kickMessage": "Oh! Sie wurden aus der Konferenz ausgeschlossen.",
@@ -127,7 +132,8 @@
         "passwordError2": "Diese Konferenzt ist nicht mit einem Passwort geschützt. Nur der Besitzer der Konferenz kann ein Passwort vergeben.",
         "joinError": "Oh! Der Konferenz konnte nicht beigetreten werden. Diese könnte ein Problem mit den Sicherheitseinstellungen sein. Bitte kontaktieren Sie den Administrator des Dienstes.",
         "connectError": "Oh! Es hat etwas nicht geklappt und der Konferenz konnte nicht beigetreten werden.",
-        "connecting": "",
+        "connectErrorWithMsg": "Oh! Es hat etwas nicht geklappt und der Konferenz konnte nicht beigetreten werden: __msg__",
+        "connecting": "Verbindung wird hergestellt",
         "error": "Fehler",
         "detectext": "Fehler bei der Erkennung der Bildschirmfreigabeerweiterung.",
         "failtoinstall": "Die Bildschirmfreigabeerweiterung konnte nicht installiert werden.",
@@ -151,9 +157,9 @@
         "sharePreziTitle": "Ein Prezi teilen",
         "sharePreziMsg": "Ein anderer Teilnehmer teilt bereits ein Prezi. Diese Konferenz kann nur eine Prezi auf einmal anzeigen.",
         "Remove": "Entfernen",
-        "Stop": "Stopp",
-        "AuthMsg": "Für die Erstellung des Raums ist eine Authentifizierung erforderlich. <br/><b>__room__</b><br/>Sie können sich entweder anmelden oder warten bis jemand anderes die Authentifizierung vornimmt.",
-        "Authenticate": "Anmelden",
+        "WaitingForHost": "Warten auf den Organisator...",
+        "WaitForHostMsg": "Die Konferenz <b>__room__</b> hat noch nicht begonnen. Wenn Sie der Organisator sind, melden Sie sich bitte an. Anderenfalls warten Sie bitte bis der Organisator beigetreten ist.",
+        "IamHost": "Ich bin der Organisator",
         "Cancel": "Abbrechen",
         "retry": "Wiederholen",
         "logoutTitle": "Abmelden",
