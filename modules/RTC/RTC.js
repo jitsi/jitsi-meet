@@ -41,6 +41,17 @@ function getMediaStreamUsage()
     return result;
 }
 
+function containsValue(singleton, value)
+{
+    var containsValue = false;
+    for(var prop in singleton)
+    {
+        if(singleton[prop] === value)
+            containsValue = true;
+    }
+    return containsValue;
+}
+
 var RTC = {
     rtcUtils: null,
     devices: {
@@ -58,14 +69,14 @@ var RTC = {
         eventEmitter.on(type, listener);
     },
     removeStreamListener: function (listener, eventType) {
-        if(!(eventType instanceof StreamEventTypes))
+        if(!containsValue(StreamEventTypes, eventType))
             throw "Illegal argument";
 
         eventEmitter.removeListener(eventType, listener);
     },
     createLocalStream: function (stream, type, change, videoType, isMuted, isGUMStream) {
 
-        var localStream =  new LocalStream(stream, type, eventEmitter, videoType, isGUMStream);
+        var localStream = new LocalStream(stream, type, eventEmitter, videoType, isGUMStream);
         //in firefox we have only one stream object
         if(this.localStreams.length == 0 ||
             this.localStreams[0].getOriginalStream() != stream)
@@ -92,7 +103,7 @@ var RTC = {
         for(var i = 0; i < this.localStreams.length; i++)
         {
             if(this.localStreams[i].getOriginalStream() === stream) {
-                delete this.localStreams[i];
+                this.localStreams.splice(i, 1);
                 return;
             }
         }
