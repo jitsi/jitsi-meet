@@ -1325,6 +1325,9 @@ var RTC = {
         this.localVideo = this.createLocalStream(videoStream, "video", true, type);
         // Stop the stream to trigger onended event for old stream
         oldStream.stop();
+
+        this.switchVideoStreams(videoStream, oldStream);
+
         APP.xmpp.switchStreams(videoStream, oldStream,localCallback);
     },
     changeLocalAudio: function (stream, callback) {
@@ -8591,7 +8594,10 @@ var VideoLayout = (function (my) {
 
         localVideoThumbnail.changeVideo(stream, isMuted);
 
-        LargeVideo.updateLargeVideo(APP.xmpp.myResource());
+        LargeVideo.updateLargeVideo(
+            APP.xmpp.myResource(),
+            /* force update only before conference starts */
+            !APP.xmpp.isConferenceInProgress());
 
     };
 
@@ -12768,9 +12774,6 @@ JingleSession.prototype.switchStreams = function (new_stream, oldStream, success
             self.peerconnection.addStream(new_stream);
     }
 
-    if(!isAudio)
-    APP.RTC.switchVideoStreams(new_stream, oldStream);
-
     // Conference is not active
     if(!oldSdp || !self.peerconnection) {
         success_callback();
@@ -16846,8 +16849,12 @@ var XMPP = {
     isExternalAuthEnabled: function () {
         return Moderator.isExternalAuthEnabled();
     },
+    isConferenceInProgress: function () {
+        return connection && connection.jingle.activecall &&
+            connection.jingle.activecall.peerconnection;
+    },
     switchStreams: function (stream, oldStream, callback, isAudio) {
-        if (connection && connection.jingle.activecall) {
+        if (this.isConferenceInProgress()) {
             // FIXME: will block switchInProgress on true value in case of exception
             connection.jingle.activecall.switchStreams(stream, oldStream, callback, isAudio);
         } else {
@@ -17085,8 +17092,7 @@ var XMPP = {
         return connection.jingle.sessions;
     },
     removeStream: function (stream) {
-        if(!connection || !connection.jingle.activecall ||
-            !connection.jingle.activecall.peerconnection)
+        if (!this.isConferenceInProgress())
             return;
         connection.jingle.activecall.peerconnection.removeStream(stream);
     }

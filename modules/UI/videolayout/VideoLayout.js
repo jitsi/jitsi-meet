@@ -64,7 +64,10 @@ var VideoLayout = (function (my) {
 
         localVideoThumbnail.changeVideo(stream, isMuted);
 
-        LargeVideo.updateLargeVideo(APP.xmpp.myResource());
+        LargeVideo.updateLargeVideo(
+            APP.xmpp.myResource(),
+            /* force update only before conference starts */
+            !APP.xmpp.isConferenceInProgress());
 
     };
 

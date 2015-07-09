@@ -362,8 +362,12 @@ var XMPP = {
     isExternalAuthEnabled: function () {
         return Moderator.isExternalAuthEnabled();
     },
+    isConferenceInProgress: function () {
+        return connection && connection.jingle.activecall &&
+            connection.jingle.activecall.peerconnection;
+    },
     switchStreams: function (stream, oldStream, callback, isAudio) {
-        if (connection && connection.jingle.activecall) {
+        if (this.isConferenceInProgress()) {
             // FIXME: will block switchInProgress on true value in case of exception
             connection.jingle.activecall.switchStreams(stream, oldStream, callback, isAudio);
         } else {
@@ -601,8 +605,7 @@ var XMPP = {
         return connection.jingle.sessions;
     },
     removeStream: function (stream) {
-        if(!connection || !connection.jingle.activecall ||
-            !connection.jingle.activecall.peerconnection)
+        if (!this.isConferenceInProgress())
             return;
         connection.jingle.activecall.peerconnection.removeStream(stream);
     }

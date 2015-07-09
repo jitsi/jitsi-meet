@@ -215,6 +215,9 @@ var RTC = {
         this.localVideo = this.createLocalStream(videoStream, "video", true, type);
         // Stop the stream to trigger onended event for old stream
         oldStream.stop();
+
+        this.switchVideoStreams(videoStream, oldStream);
+
         APP.xmpp.switchStreams(videoStream, oldStream,localCallback);
     },
     changeLocalAudio: function (stream, callback) {
