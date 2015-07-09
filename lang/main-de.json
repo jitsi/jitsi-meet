@@ -81,8 +81,8 @@
         "title": "Einstellungen",
         "update": "Aktualisieren",
         "name": "Name",
-        "startAudioMuted": "Neue Teilnehmer stummschalten",
-        "startVideoMuted": "Video für neue Teilnehmer pausieren"
+        "startAudioMuted": "Stumm beitreten",
+        "startVideoMuted": "Ohne Video beitreten"
     },
     "videothumbnail": {
         "editnickname": "Klicken um den Anzeigenamen zu bearbeiten",
@@ -189,7 +189,8 @@
         "reservationErrorMsg": "Fehler, Nummer: __code__, Nachricht: __msg__",
         "password": "Passwort",
         "userPassword": "Benutzerpasswort",
-        "token": "Token"
+        "token": "Token",
+        "displayNameRequired": "Geben Sie Ihren Anzeigenamen ein:"
     },
     "email": {
         "sharedKey": [
