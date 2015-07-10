@@ -1,4 +1,7 @@
 SDPUtil = {
+    filter_special_chars: function (text) {
+        return text.replace(/[\\\/\{,\}\+]/g, "");
+    },
     iceparams: function (mediadesc, sessiondesc) {
         var data = null;
         if (SDPUtil.find_line(mediadesc, 'a=ice-ufrag:', sessiondesc) &&

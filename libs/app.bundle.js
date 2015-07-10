@@ -385,14 +385,11 @@ var APP =
 
 function init() {
 
+    APP.desktopsharing.init();
     APP.RTC.start();
     APP.xmpp.start();
     APP.statistics.start();
     APP.connectionquality.init();
-
-    // Set default desktop sharing method
-    APP.desktopsharing.init();
-
     APP.keyboardshortcut.init();
     APP.members.start();
 }
@@ -421,7 +418,7 @@ $(window).bind('beforeunload', function () {
 module.exports = APP;
 
 
-},{"./modules/API/API":4,"./modules/DTMF/DTMF":5,"./modules/RTC/RTC":9,"./modules/UI/UI":11,"./modules/URLProcessor/URLProcessor":42,"./modules/connectionquality/connectionquality":43,"./modules/desktopsharing/desktopsharing":44,"./modules/keyboardshortcut/keyboardshortcut":45,"./modules/members/MemberList":46,"./modules/settings/Settings":47,"./modules/statistics/statistics":51,"./modules/translation/translation":52,"./modules/xmpp/xmpp":66}],4:[function(require,module,exports){
+},{"./modules/API/API":4,"./modules/DTMF/DTMF":5,"./modules/RTC/RTC":9,"./modules/UI/UI":13,"./modules/URLProcessor/URLProcessor":44,"./modules/connectionquality/connectionquality":45,"./modules/desktopsharing/desktopsharing":46,"./modules/keyboardshortcut/keyboardshortcut":47,"./modules/members/MemberList":48,"./modules/settings/Settings":49,"./modules/statistics/statistics":53,"./modules/translation/translation":54,"./modules/xmpp/xmpp":68}],4:[function(require,module,exports){
 /**
  * Implements API class that communicates with external api class
  * and provides interface to access Jitsi Meet features by external
@@ -653,7 +650,7 @@ var API = {
 };
 
 module.exports = API;
-},{"../../service/xmpp/XMPPEvents":109}],5:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":110}],5:[function(require,module,exports){
 /* global APP */
 
 /**
@@ -920,7 +917,7 @@ function onPinnedEndpointChanged(userResource)
 module.exports = DataChannels;
 
 
-},{"../../service/RTC/RTCEvents":100}],7:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":101}],7:[function(require,module,exports){
 var StreamEventTypes = require("../../service/RTC/StreamEventTypes.js");
 var RTCEvents = require("../../service/RTC/RTCEvents");
 
@@ -1045,7 +1042,7 @@ LocalStream.prototype.getId = function () {
 
 module.exports = LocalStream;
 
-},{"../../service/RTC/RTCEvents":100,"../../service/RTC/StreamEventTypes.js":102}],8:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":101,"../../service/RTC/StreamEventTypes.js":103}],8:[function(require,module,exports){
 ////These lines should be uncommented when require works in app.js
 var MediaStreamType = require("../../service/RTC/MediaStreamTypes");
 var StreamEventType = require("../../service/RTC/StreamEventTypes");
@@ -1107,8 +1104,9 @@ MediaStream.prototype.setVideoType = function (value) {
 
 module.exports = MediaStream;
 
-},{"../../service/RTC/MediaStreamTypes":98,"../../service/RTC/StreamEventTypes":102}],9:[function(require,module,exports){
+},{"../../service/RTC/MediaStreamTypes":100,"../../service/RTC/StreamEventTypes":103}],9:[function(require,module,exports){
 var EventEmitter = require("events");
+var RTCBrowserType = require("./RTCBrowserType");
 var RTCUtils = require("./RTCUtils.js");
 var LocalStream = require("./LocalStream.js");
 var DataChannels = require("./DataChannels");
@@ -1209,7 +1207,7 @@ var RTC = {
     },
     createRemoteStream: function (data, sid, thessrc) {
         var remoteStream = new MediaStream(data, sid, thessrc,
-            this.getBrowserType(), eventEmitter);
+            RTCBrowserType.getBrowserType(), eventEmitter);
         var jid = data.peerjid || APP.xmpp.myJid();
         if(!this.remoteStreams[jid]) {
             this.remoteStreams[jid] = {};
@@ -1217,9 +1215,6 @@ var RTC = {
         this.remoteStreams[jid][remoteStream.type]= remoteStream;
         eventEmitter.emit(StreamEventTypes.EVENT_TYPE_REMOTE_CREATED, remoteStream);
         return remoteStream;
-    },
-    getBrowserType: function () {
-        return this.rtcUtils.browser;
     },
     getPCConstraints: function () {
         return this.rtcUtils.pc_constraints;
@@ -1242,6 +1237,9 @@ var RTC = {
     },
     setVideoSrc: function (element, src) {
         this.rtcUtils.setVideoSrc(element, src);
+    },
+    getVideoElementName: function () {
+        return RTCBrowserType.isTemasysPluginUsed() ? 'object' : 'video';
     },
     dispose: function() {
         if (this.rtcUtils) {
@@ -1278,9 +1276,22 @@ var RTC = {
             DataChannels.handleSelectedEndpointEvent);
         APP.UI.addListener(UIEvents.PINNED_ENDPOINT,
             DataChannels.handlePinnedEndpointEvent);
-        this.rtcUtils = new RTCUtils(this);
-        this.rtcUtils.obtainAudioAndVideoPermissions(
-            null, null, getMediaStreamUsage());
+
+        // In case of IE we continue from 'onReady' callback
+        // passed to RTCUtils constructor. It will be invoked by Temasys plugin
+        // once it is initialized.
+        var onReady = function () {
+            eventEmitter.emit(RTCEvents.RTC_READY, true);
+            self.rtcUtils.obtainAudioAndVideoPermissions(
+                null, null, getMediaStreamUsage());
+        };
+
+        this.rtcUtils = new RTCUtils(this, onReady);
+
+        // Call onReady() if Temasys plugin is not used
+        if (!RTCBrowserType.isTemasysPluginUsed()) {
+            onReady();
+        }
     },
     muteRemoteVideoStream: function (jid, value) {
         var stream;
@@ -1320,6 +1331,10 @@ var RTC = {
                 APP.xmpp.setVideoMute(false, APP.UI.setVideoMuteButtonsState);
                 callback();
             };
+        }
+        // FIXME: Workaround for FF/IE/Safari
+        if (stream && stream.videoStream) {
+            stream = stream.videoStream;
         }
         var videoStream = this.rtcUtils.createStream(stream, true);
         this.localVideo = this.createLocalStream(videoStream, "video", true, type);
@@ -1409,9 +1424,164 @@ var RTC = {
 
 module.exports = RTC;
 
-},{"../../service/RTC/MediaStreamTypes":98,"../../service/RTC/RTCEvents.js":100,"../../service/RTC/StreamEventTypes.js":102,"../../service/UI/UIEvents":103,"../../service/desktopsharing/DesktopSharingEventTypes":106,"../../service/xmpp/XMPPEvents":109,"./DataChannels":6,"./LocalStream.js":7,"./MediaStream.js":8,"./RTCUtils.js":10,"events":1}],10:[function(require,module,exports){
-var RTCBrowserType = require("../../service/RTC/RTCBrowserType.js");
+},{"../../service/RTC/MediaStreamTypes":100,"../../service/RTC/RTCEvents.js":101,"../../service/RTC/StreamEventTypes.js":103,"../../service/UI/UIEvents":104,"../../service/desktopsharing/DesktopSharingEventTypes":107,"../../service/xmpp/XMPPEvents":110,"./DataChannels":6,"./LocalStream.js":7,"./MediaStream.js":8,"./RTCBrowserType":10,"./RTCUtils.js":11,"events":1}],10:[function(require,module,exports){
+
+var currentBrowser;
+
+var browserVersion;
+
+var RTCBrowserType = {
+
+    RTC_BROWSER_CHROME: "rtc_browser.chrome",
+
+    RTC_BROWSER_OPERA: "rtc_browser.opera",
+
+    RTC_BROWSER_FIREFOX: "rtc_browser.firefox",
+
+    RTC_BROWSER_IEXPLORER: "rtc_browser.iexplorer",
+
+    RTC_BROWSER_SAFARI: "rtc_browser.safari",
+
+    getBrowserType: function () {
+        return currentBrowser;
+    },
+
+    isChrome: function () {
+        return currentBrowser === RTCBrowserType.RTC_BROWSER_CHROME;
+    },
+
+    isOpera: function () {
+        return currentBrowser === RTCBrowserType.RTC_BROWSER_OPERA;
+    },
+    isFirefox: function () {
+        return currentBrowser === RTCBrowserType.RTC_BROWSER_FIREFOX;
+    },
+
+    isIExplorer: function () {
+        return currentBrowser === RTCBrowserType.RTC_BROWSER_IEXPLORER;
+    },
+
+    isSafari: function () {
+        return currentBrowser === RTCBrowserType.RTC_BROWSER_SAFARI;
+    },
+    isTemasysPluginUsed: function () {
+        return RTCBrowserType.isIExplorer() || RTCBrowserType.isSafari();
+    },
+    getFirefoxVersion: function () {
+        return RTCBrowserType.isFirefox() ? browserVersion : null;
+    },
+
+    getChromeVersion: function () {
+        return RTCBrowserType.isChrome() ? browserVersion : null;
+    }
+
+    // Add version getters for other browsers when needed
+};
+
+// detectOpera() must be called before detectChrome() !!!
+// otherwise Opera wil be detected as Chrome
+function detectChrome() {
+    if (navigator.webkitGetUserMedia) {
+        currentBrowser = RTCBrowserType.RTC_BROWSER_CHROME;
+        var userAgent = navigator.userAgent.toLowerCase();
+        // We can assume that user agent is chrome, because it's
+        // enforced when 'ext' streaming method is set
+        var ver = parseInt(userAgent.match(/chrome\/(\d+)\./)[1], 10);
+        console.log("This appears to be Chrome, ver: " + ver);
+        return ver;
+    }
+    return null;
+}
+
+function detectOpera() {
+    var userAgent = navigator.userAgent;
+    if (userAgent.match(/Opera|OPR/)) {
+        currentBrowser = RTCBrowserType.RTC_BROWSER_OPERA;
+        var version = userAgent.match(/(Opera|OPR) ?\/?(\d+)\.?/)[2];
+        console.info("This appears to be Opera, ver: " + version);
+        return version;
+    }
+    return null;
+}
+
+function detectFirefox() {
+    if (navigator.mozGetUserMedia) {
+        currentBrowser = RTCBrowserType.RTC_BROWSER_FIREFOX;
+        var version = parseInt(
+            navigator.userAgent.match(/Firefox\/([0-9]+)\./)[1], 10);
+        console.log('This appears to be Firefox, ver: ' + version);
+        return version;
+    }
+    return null;
+}
+
+function detectSafari() {
+    if ((/^((?!chrome).)*safari/i.test(navigator.userAgent))) {
+        currentBrowser = RTCBrowserType.RTC_BROWSER_SAFARI;
+        console.info("This appears to be Safari");
+        // FIXME detect Safari version when needed
+        return 1;
+    }
+    return null;
+}
+
+function detectIE() {
+    var version;
+    var ua = window.navigator.userAgent;
+
+    var msie = ua.indexOf('MSIE ');
+    if (msie > 0) {
+        // IE 10 or older => return version number
+        version = parseInt(ua.substring(msie + 5, ua.indexOf('.', msie)), 10);
+    }
+
+    var trident = ua.indexOf('Trident/');
+    if (!version && trident > 0) {
+        // IE 11 => return version number
+        var rv = ua.indexOf('rv:');
+        version = parseInt(ua.substring(rv + 3, ua.indexOf('.', rv)), 10);
+    }
+
+    var edge = ua.indexOf('Edge/');
+    if (!version && edge > 0) {
+        // IE 12 => return version number
+        version = parseInt(ua.substring(edge + 5, ua.indexOf('.', edge)), 10);
+    }
+
+    if (version) {
+        currentBrowser = RTCBrowserType.RTC_BROWSER_IEXPLORER;
+        console.info("This appears to be IExplorer, ver: " + version);
+    }
+    return version;
+}
+
+function detectBrowser() {
+    var version;
+    var detectors = [
+        detectOpera,
+        detectChrome,
+        detectFirefox,
+        detectIE,
+        detectSafari
+    ];
+    // Try all browser detectors
+    for (var i = 0; i < detectors.length; i++) {
+        version = detectors[i]();
+        if (version)
+            return version;
+    }
+    console.error("Failed to detect browser type");
+    return undefined;
+}
+
+browserVersion = detectBrowser();
+
+module.exports = RTCBrowserType;
+},{}],11:[function(require,module,exports){
+var RTCBrowserType = require("./RTCBrowserType");
 var Resolutions = require("../../service/RTC/Resolutions");
+var AdapterJS = require("./adapter.screenshare");
+var SDPUtil = require("../xmpp/SDPUtil");
 
 var currentResolution = null;
 
@@ -1470,16 +1640,30 @@ function getConstraints(um, resolution, bandwidth, fps, desktopStream, isAndroid
         constraints.audio = { mandatory: {}, optional: []};// same behaviour as true
     }
     if (um.indexOf('screen') >= 0) {
-        constraints.video = {
-            mandatory: {
-                chromeMediaSource: "screen",
-                googLeakyBucket: true,
-                maxWidth: window.screen.width,
-                maxHeight: window.screen.height,
-                maxFrameRate: 3
-            },
-            optional: []
-        };
+        if (RTCBrowserType.isChrome()) {
+            constraints.video = {
+                mandatory: {
+                    chromeMediaSource: "screen",
+                    googLeakyBucket: true,
+                    maxWidth: window.screen.width,
+                    maxHeight: window.screen.height,
+                    maxFrameRate: 3
+                },
+                optional: []
+            };
+        } else if (RTCBrowserType.isTemasysPluginUsed()) {
+            constraints.video = {
+                optional: [
+                    {
+                        sourceId: AdapterJS.WebRTCPlugin.plugin.screensharingKey
+                    }
+                ]
+            };
+        } else {
+            console.error(
+                "'screen' WebRTC media source is supported only in Chrome" +
+                " and with Temasys plugin");
+        }
     }
     if (um.indexOf('desktop') >= 0) {
         constraints.video = {
@@ -1536,16 +1720,14 @@ function getConstraints(um, resolution, bandwidth, fps, desktopStream, isAndroid
 }
 
 
-function RTCUtils(RTCService)
+function RTCUtils(RTCService, onTemasysPluginReady)
 {
+    var self = this;
     this.service = RTCService;
-    if (navigator.mozGetUserMedia) {
-        console.log('This appears to be Firefox');
-        var version = parseInt(navigator.userAgent.match(/Firefox\/([0-9]+)\./)[1], 10);
-        if (version >= 40
-            && config.useBundle && config.useRtcpMux) {
+    if (RTCBrowserType.isFirefox()) {
+        var FFversion = RTCBrowserType.getFirefoxVersion();
+        if (FFversion >= 40 && config.useBundle && config.useRtcpMux) {
             this.peerconnection = mozRTCPeerConnection;
-            this.browser = RTCBrowserType.RTC_BROWSER_FIREFOX;
             this.getUserMedia = navigator.mozGetUserMedia.bind(navigator);
             this.pc_constraints = {};
             this.attachMediaStream =  function (element, stream) {
@@ -1567,7 +1749,7 @@ function RTCUtils(RTCService)
                 {
                     tracks = stream.getAudioTracks();
                 }
-                return tracks[0].id.replace(/[\{,\}]/g,"");
+                return SDPUtil.filter_special_chars(tracks[0].id);
             };
             this.getVideoSrc = function (element) {
                 if(!element)
@@ -1581,14 +1763,16 @@ function RTCUtils(RTCService)
             RTCSessionDescription = mozRTCSessionDescription;
             RTCIceCandidate = mozRTCIceCandidate;
         } else {
+            console.error(
+                "Firefox requirements not met, ver: " + FFversion +
+                ", bundle: " + config.useBundle +
+                ", rtcp-mux: " + config.useRtcpMux);
             window.location.href = 'unsupported_browser.html';
             return;
         }
 
-    } else if (navigator.webkitGetUserMedia) {
-        console.log('This appears to be Chrome');
+    } else if (RTCBrowserType.isChrome() || RTCBrowserType.isOpera()) {
         this.peerconnection = webkitRTCPeerConnection;
-        this.browser = RTCBrowserType.RTC_BROWSER_CHROME;
         this.getUserMedia = navigator.webkitGetUserMedia.bind(navigator);
         this.attachMediaStream = function (element, stream) {
             element.attr('src', webkitURL.createObjectURL(stream));
@@ -1596,7 +1780,7 @@ function RTCUtils(RTCService)
         this.getStreamID = function (stream) {
             // streams from FF endpoints have the characters '{' and '}'
             // that make jQuery choke.
-            return stream.id.replace(/[\{,\}]/g,"");
+            return SDPUtil.filter_special_chars(stream.id);
         };
         this.getVideoSrc = function (element) {
             if(!element)
@@ -1623,12 +1807,62 @@ function RTCUtils(RTCService)
             };
         }
     }
-    else
-    {
-        try { console.log('Browser does not appear to be WebRTC-capable'); } catch (e) { }
+    // Detect IE/Safari
+    else if (RTCBrowserType.isTemasysPluginUsed()) {
 
+        AdapterJS.WebRTCPlugin.setLogLevel(
+            AdapterJS.WebRTCPlugin.PLUGIN_LOG_LEVELS.VERBOSE);
+
+        AdapterJS.webRTCReady(function (isPlugin) {
+
+            self.peerconnection = RTCPeerConnection;
+            self.getUserMedia = getUserMedia;
+            self.attachMediaStream = function (element, stream) {
+
+                if (stream.id === "dummyAudio" || stream.id === "dummyVideo") {
+                    return;
+                }
+
+                attachMediaStream(element[0], stream);
+            };
+            self.getStreamID = function (stream) {
+                var id = SDPUtil.filter_special_chars(stream.label);
+                return id;
+            };
+            self.getVideoSrc = function (element) {
+                if (!element) {
+                    console.warn("Attempt to get video SRC of null element");
+                    return null;
+                }
+                var src = null;
+                var children = element.children;
+                for (var i = 0; i !== children.length; ++i) {
+                    if (children[i].name === 'streamId') {
+                        return children[i].value;
+                    }
+                }
+                //console.info(element.id + " SRC: " + src);
+                return null;
+            };
+            self.setVideoSrc = function (element, src) {
+                //console.info("Set video src: ", element, src);
+                if (!src) {
+                    console.warn("Not attaching video stream, 'src' is null");
+                    return;
+                }
+                AdapterJS.WebRTCPlugin.WaitForPluginReady();
+                var stream = AdapterJS.WebRTCPlugin.plugin
+                    .getStreamWithId(AdapterJS.WebRTCPlugin.pageId, src);
+                attachMediaStream(element, stream);
+            };
+
+            onTemasysPluginReady(isPlugin);
+        });
+    } else {
+        try {
+            console.log('Browser does not appear to be WebRTC-capable');
+        } catch (e) { }
         window.location.href = 'unsupported_browser.html';
-        return;
     }
 }
 
@@ -1644,7 +1878,7 @@ RTCUtils.prototype.getUserMediaWithConstraints = function(
     var constraints = getConstraints(
         um, resolution, bandwidth, fps, desktopStream, isAndroid);
 
-    var isFF = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+    console.info("Get media constraints", constraints);
 
     var self = this;
 
@@ -1723,9 +1957,9 @@ RTCUtils.prototype.obtainAudioAndVideoPermissions =
         return;
     }
 
-    if (navigator.mozGetUserMedia) {
+    if (RTCBrowserType.isFirefox() || RTCBrowserType.isTemasysPluginUsed()) {
 
-        // With FF we can't split the stream into audio and video because FF
+        // With FF/IE we can't split the stream into audio and video because FF
         // doesn't support media stream constructors. So, we need to get the
         // audio stream separately from the video stream using two distinct GUM
         // calls. Not very user friendly :-( but we don't have many other
@@ -1733,31 +1967,41 @@ RTCUtils.prototype.obtainAudioAndVideoPermissions =
         //
         // Note that we pack those 2 streams in a single object and pass it to
         // the successCallback method.
-
-        self.getUserMediaWithConstraints(
-            ['audio'],
-            function (audioStream) {
-                self.getUserMediaWithConstraints(
-                    ['video'],
-                    function (videoStream) {
-                        return self.successCallback({
-                            audioStream: audioStream,
-                            videoStream: videoStream
-                        });
-                    },
-                    function (error) {
-                        console.error('failed to obtain video stream - stop',
-                            error);
-                        return self.successCallback(null);
-                    },
-                    config.resolution || '360');
-            },
-            function (error) {
-                console.error('failed to obtain audio stream - stop',
-                        error);
-                return self.successCallback(null);
-            }
-        );
+        var obtainVideo = function (audioStream) {
+            self.getUserMediaWithConstraints(
+                ['video'],
+                function (videoStream) {
+                    return successCallback({
+                        audioStream: audioStream,
+                        videoStream: videoStream
+                    });
+                },
+                function (error) {
+                    console.error(
+                        'failed to obtain video stream - stop', error);
+                    self.errorCallback(error);
+                },
+                config.resolution || '360');
+        };
+        var obtainAudio = function () {
+            self.getUserMediaWithConstraints(
+                ['audio'],
+                function (audioStream) {
+                    if (newDevices.indexOf('video') !== -1)
+                        obtainVideo(audioStream);
+                },
+                function (error) {
+                    console.error(
+                        'failed to obtain audio stream - stop', error);
+                    self.errorCallback(error);
+                }
+            );
+        };
+        if (newDevices.indexOf('audio') !== -1) {
+            obtainAudio();
+        } else {
+            obtainVideo(null);
+        }
     } else {
         this.getUserMediaWithConstraints(
         newDevices,
@@ -1770,12 +2014,12 @@ RTCUtils.prototype.obtainAudioAndVideoPermissions =
         config.resolution || '360');
     }
 
-}
+};
 
 RTCUtils.prototype.successCallback = function (stream, usageOptions) {
-    // If this is FF, the stream parameter is *not* a MediaStream object, it's
-    // an object with two properties: audioStream, videoStream.
-    if(stream && !navigator.mozGetUserMedia)
+    // If this is FF or IE, the stream parameter is *not* a MediaStream object,
+    // it's an object with two properties: audioStream, videoStream.
+    if (stream && stream.getAudioTracks && stream.getVideoTracks)
         console.log('got', stream, stream.getAudioTracks().length,
             stream.getVideoTracks().length);
     this.handleLocalStream(stream, usageOptions);
@@ -1839,10 +2083,17 @@ RTCUtils.prototype.handleLocalStream = function(stream, usageOptions)
             }
         }
     }
-    else
-    {//firefox
-        audioStream = stream.audioStream;
-        videoStream = stream.videoStream;
+    else if (RTCBrowserType.isFirefox() || RTCBrowserType.isTemasysPluginUsed())
+    {   // Firefox and Temasys plugin
+        if (stream && stream.audioStream)
+            audioStream = stream.audioStream;
+        else
+            audioStream = new DummyMediaStream("dummyAudio");
+
+        if (stream && stream.videoStream)
+            videoStream = stream.videoStream;
+        else
+            videoStream = new DummyMediaStream("dummyVideo");
     }
 
     var audioMuted = (usageOptions && usageOptions.audio === false),
@@ -1859,15 +2110,20 @@ RTCUtils.prototype.handleLocalStream = function(stream, usageOptions)
         videoMuted, videoGUM);
 };
 
-RTCUtils.prototype.createStream = function(stream, isVideo)
-{
+function DummyMediaStream(id) {
+    this.id = id;
+    this.label = id;
+    this.stop = function() { };
+    this.getAudioTracks = function() { return []; }
+    this.getVideoTracks = function() { return []; }
+}
+
+RTCUtils.prototype.createStream = function(stream, isVideo) {
     var newStream = null;
-    if(window.webkitMediaStream)
-    {
+    if (window.webkitMediaStream) {
         newStream = new webkitMediaStream();
-        if(newStream)
-        {
-            var tracks = (isVideo? stream.getVideoTracks() : stream.getAudioTracks());
+        if (newStream) {
+            var tracks = (isVideo ? stream.getVideoTracks() : stream.getAudioTracks());
 
             for (i = 0; i < tracks.length; i++) {
                 newStream.addTrack(tracks[i]);
@@ -1875,15 +2131,1332 @@ RTCUtils.prototype.createStream = function(stream, isVideo)
         }
 
     }
-    else
-        newStream = stream;
+    else {
+        // FIXME: this is duplicated with 'handleLocalStream' !!!
+        if (stream) {
+            newStream = stream;
+        } else {
+            newStream = new DummyMediaStream(isVideo ? "dummyVideo" : "dummyAudio");
+        }
+    }
 
     return newStream;
 };
 
 module.exports = RTCUtils;
 
-},{"../../service/RTC/RTCBrowserType.js":99,"../../service/RTC/Resolutions":101}],11:[function(require,module,exports){
+},{"../../service/RTC/Resolutions":102,"../xmpp/SDPUtil":58,"./RTCBrowserType":10,"./adapter.screenshare":12}],12:[function(require,module,exports){
+/*! adapterjs - v0.11.0 - 2015-06-08 */
+
+// Adapter's interface.
+var AdapterJS = AdapterJS || {};
+
+// Browserify compatibility
+if(typeof exports !== 'undefined') {
+  module.exports = AdapterJS;
+}
+
+AdapterJS.options = AdapterJS.options || {};
+
+// uncomment to get virtual webcams
+// AdapterJS.options.getAllCams = true;
+
+// uncomment to prevent the install prompt when the plugin in not yet installed
+// AdapterJS.options.hidePluginInstallPrompt = true;
+
+// AdapterJS version
+AdapterJS.VERSION = '0.11.0';
+
+// This function will be called when the WebRTC API is ready to be used
+// Whether it is the native implementation (Chrome, Firefox, Opera) or
+// the plugin
+// You may Override this function to synchronise the start of your application
+// with the WebRTC API being ready.
+// If you decide not to override use this synchronisation, it may result in
+// an extensive CPU usage on the plugin start (once per tab loaded)
+// Params:
+//    - isUsingPlugin: true is the WebRTC plugin is being used, false otherwise
+//
+AdapterJS.onwebrtcready = AdapterJS.onwebrtcready || function(isUsingPlugin) {
+  // The WebRTC API is ready.
+  // Override me and do whatever you want here
+};
+
+// Sets a callback function to be called when the WebRTC interface is ready.
+// The first argument is the function to callback.\
+// Throws an error if the first argument is not a function
+AdapterJS.webRTCReady = function (callback) {
+  if (typeof callback !== 'function') {
+    throw new Error('Callback provided is not a function');
+  }
+
+  if (true === AdapterJS.onwebrtcreadyDone) {
+    // All WebRTC interfaces are ready, just call the callback
+    callback(null !== AdapterJS.WebRTCPlugin.plugin);
+  } else {
+    // will be triggered automatically when your browser/plugin is ready.
+    AdapterJS.onwebrtcready = callback;
+  }
+};
+
+// Plugin namespace
+AdapterJS.WebRTCPlugin = AdapterJS.WebRTCPlugin || {};
+
+// The object to store plugin information
+AdapterJS.WebRTCPlugin.pluginInfo = {
+  prefix : 'Tem',
+  plugName : 'TemWebRTCPlugin',
+  pluginId : 'plugin0',
+  type : 'application/x-temwebrtcplugin',
+  onload : '__TemWebRTCReady0',
+  portalLink : 'http://skylink.io/plugin/',
+  downloadLink : null, //set below
+  companyName: 'Temasys'
+};
+if(!!navigator.platform.match(/^Mac/i)) {
+  AdapterJS.WebRTCPlugin.pluginInfo.downloadLink = 'http://bit.ly/1n77hco';
+}
+else if(!!navigator.platform.match(/^Win/i)) {
+  AdapterJS.WebRTCPlugin.pluginInfo.downloadLink = 'http://bit.ly/1kkS4FN';
+}
+
+// Unique identifier of each opened page
+AdapterJS.WebRTCPlugin.pageId = Math.random().toString(36).slice(2);
+
+// Use this whenever you want to call the plugin.
+AdapterJS.WebRTCPlugin.plugin = null;
+
+// Set log level for the plugin once it is ready.
+// The different values are
+// This is an asynchronous function that will run when the plugin is ready
+AdapterJS.WebRTCPlugin.setLogLevel = null;
+
+// Defines webrtc's JS interface according to the plugin's implementation.
+// Define plugin Browsers as WebRTC Interface.
+AdapterJS.WebRTCPlugin.defineWebRTCInterface = null;
+
+// This function detects whether or not a plugin is installed.
+// Checks if Not IE (firefox, for example), else if it's IE,
+// we're running IE and do something. If not it is not supported.
+AdapterJS.WebRTCPlugin.isPluginInstalled = null;
+
+ // Lets adapter.js wait until the the document is ready before injecting the plugin
+AdapterJS.WebRTCPlugin.pluginInjectionInterval = null;
+
+// Inject the HTML DOM object element into the page.
+AdapterJS.WebRTCPlugin.injectPlugin = null;
+
+// States of readiness that the plugin goes through when
+// being injected and stated
+AdapterJS.WebRTCPlugin.PLUGIN_STATES = {
+  NONE : 0,           // no plugin use
+  INITIALIZING : 1,   // Detected need for plugin
+  INJECTING : 2,      // Injecting plugin
+  INJECTED: 3,        // Plugin element injected but not usable yet
+  READY: 4            // Plugin ready to be used
+};
+
+// Current state of the plugin. You cannot use the plugin before this is
+// equal to AdapterJS.WebRTCPlugin.PLUGIN_STATES.READY
+AdapterJS.WebRTCPlugin.pluginState = AdapterJS.WebRTCPlugin.PLUGIN_STATES.NONE;
+
+// True is AdapterJS.onwebrtcready was already called, false otherwise
+// Used to make sure AdapterJS.onwebrtcready is only called once
+AdapterJS.onwebrtcreadyDone = false;
+
+// Log levels for the plugin.
+// To be set by calling AdapterJS.WebRTCPlugin.setLogLevel
+/*
+Log outputs are prefixed in some cases.
+  INFO: Information reported by the plugin.
+  ERROR: Errors originating from within the plugin.
+  WEBRTC: Error originating from within the libWebRTC library
+*/
+// From the least verbose to the most verbose
+AdapterJS.WebRTCPlugin.PLUGIN_LOG_LEVELS = {
+  NONE : 'NONE',
+  ERROR : 'ERROR',
+  WARNING : 'WARNING',
+  INFO: 'INFO',
+  VERBOSE: 'VERBOSE',
+  SENSITIVE: 'SENSITIVE'
+};
+
+// Does a waiting check before proceeding to load the plugin.
+AdapterJS.WebRTCPlugin.WaitForPluginReady = null;
+
+// This methid will use an interval to wait for the plugin to be ready.
+AdapterJS.WebRTCPlugin.callWhenPluginReady = null;
+
+// !!!! WARNING: DO NOT OVERRIDE THIS FUNCTION. !!!
+// This function will be called when plugin is ready. It sends necessary
+// details to the plugin.
+// The function will wait for the document to be ready and the set the
+// plugin state to AdapterJS.WebRTCPlugin.PLUGIN_STATES.READY,
+// indicating that it can start being requested.
+// This function is not in the IE/Safari condition brackets so that
+// TemPluginLoaded function might be called on Chrome/Firefox.
+// This function is the only private function that is not encapsulated to
+// allow the plugin method to be called.
+__TemWebRTCReady0 = function () {
+  if (document.readyState === 'complete') {
+    AdapterJS.WebRTCPlugin.pluginState = AdapterJS.WebRTCPlugin.PLUGIN_STATES.READY;
+
+    AdapterJS.maybeThroughWebRTCReady();
+  } else {
+    AdapterJS.WebRTCPlugin.documentReadyInterval = setInterval(function () {
+      if (document.readyState === 'complete') {
+        // TODO: update comments, we wait for the document to be ready
+        clearInterval(AdapterJS.WebRTCPlugin.documentReadyInterval);
+        AdapterJS.WebRTCPlugin.pluginState = AdapterJS.WebRTCPlugin.PLUGIN_STATES.READY;
+
+        AdapterJS.maybeThroughWebRTCReady();
+      }
+    }, 100);
+  }
+};
+
+AdapterJS.maybeThroughWebRTCReady = function() {
+  if (!AdapterJS.onwebrtcreadyDone) {
+    AdapterJS.onwebrtcreadyDone = true;
+
+    if (typeof(AdapterJS.onwebrtcready) === 'function') {
+      AdapterJS.onwebrtcready(AdapterJS.WebRTCPlugin.plugin !== null);
+    }
+  }
+};
+
+// Text namespace
+AdapterJS.TEXT = {
+  PLUGIN: {
+    REQUIRE_INSTALLATION: 'This website requires you to install a WebRTC-enabling plugin ' +
+      'to work on this browser.',
+    NOT_SUPPORTED: 'Your browser does not support WebRTC.',
+    BUTTON: 'Install Now'
+  },
+  REFRESH: {
+    REQUIRE_REFRESH: 'Please refresh page',
+    BUTTON: 'Refresh Page'
+  }
+};
+
+// The result of ice connection states.
+// - starting: Ice connection is starting.
+// - checking: Ice connection is checking.
+// - connected Ice connection is connected.
+// - completed Ice connection is connected.
+// - done Ice connection has been completed.
+// - disconnected Ice connection has been disconnected.
+// - failed Ice connection has failed.
+// - closed Ice connection is closed.
+AdapterJS._iceConnectionStates = {
+  starting : 'starting',
+  checking : 'checking',
+  connected : 'connected',
+  completed : 'connected',
+  done : 'completed',
+  disconnected : 'disconnected',
+  failed : 'failed',
+  closed : 'closed'
+};
+
+//The IceConnection states that has been fired for each peer.
+AdapterJS._iceConnectionFiredStates = [];
+
+
+// Check if WebRTC Interface is defined.
+AdapterJS.isDefined = null;
+
+// This function helps to retrieve the webrtc detected browser information.
+// This sets:
+// - webrtcDetectedBrowser: The browser agent name.
+// - webrtcDetectedVersion: The browser version.
+// - webrtcDetectedType: The types of webRTC support.
+//   - 'moz': Mozilla implementation of webRTC.
+//   - 'webkit': WebKit implementation of webRTC.
+//   - 'plugin': Using the plugin implementation.
+AdapterJS.parseWebrtcDetectedBrowser = function () {
+  var hasMatch, checkMatch = navigator.userAgent.match(
+    /(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
+  if (/trident/i.test(checkMatch[1])) {
+    hasMatch = /\brv[ :]+(\d+)/g.exec(navigator.userAgent) || [];
+    webrtcDetectedBrowser = 'IE';
+    webrtcDetectedVersion = parseInt(hasMatch[1] || '0', 10);
+  } else if (checkMatch[1] === 'Chrome') {
+    hasMatch = navigator.userAgent.match(/\bOPR\/(\d+)/);
+    if (hasMatch !== null) {
+      webrtcDetectedBrowser = 'opera';
+      webrtcDetectedVersion = parseInt(hasMatch[1], 10);
+    }
+  }
+  if (navigator.userAgent.indexOf('Safari')) {
+    if (typeof InstallTrigger !== 'undefined') {
+      webrtcDetectedBrowser = 'firefox';
+    } else if (/*@cc_on!@*/ false || !!document.documentMode) {
+      webrtcDetectedBrowser = 'IE';
+    } else if (
+      Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0) {
+      webrtcDetectedBrowser = 'safari';
+    } else if (!!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0) {
+      webrtcDetectedBrowser = 'opera';
+    } else if (!!window.chrome) {
+      webrtcDetectedBrowser = 'chrome';
+    }
+  }
+  if (!webrtcDetectedBrowser) {
+    webrtcDetectedVersion = checkMatch[1];
+  }
+  if (!webrtcDetectedVersion) {
+    try {
+      checkMatch = (checkMatch[2]) ? [checkMatch[1], checkMatch[2]] :
+        [navigator.appName, navigator.appVersion, '-?'];
+      if ((hasMatch = navigator.userAgent.match(/version\/(\d+)/i)) !== null) {
+        checkMatch.splice(1, 1, hasMatch[1]);
+      }
+      webrtcDetectedVersion = parseInt(checkMatch[1], 10);
+    } catch (error) { }
+  }
+};
+
+// To fix configuration as some browsers does not support
+// the 'urls' attribute.
+AdapterJS.maybeFixConfiguration = function (pcConfig) {
+  if (pcConfig === null) {
+    return;
+  }
+  for (var i = 0; i < pcConfig.iceServers.length; i++) {
+    if (pcConfig.iceServers[i].hasOwnProperty('urls')) {
+      pcConfig.iceServers[i].url = pcConfig.iceServers[i].urls;
+      delete pcConfig.iceServers[i].urls;
+    }
+  }
+};
+
+AdapterJS.addEvent = function(elem, evnt, func) {
+  if (elem.addEventListener) { // W3C DOM
+    elem.addEventListener(evnt, func, false);
+  } else if (elem.attachEvent) {// OLD IE DOM
+    elem.attachEvent('on'+evnt, func);
+  } else { // No much to do
+    elem[evnt] = func;
+  }
+};
+
+AdapterJS.renderNotificationBar = function (text, buttonText, buttonLink, openNewTab, displayRefreshBar) {
+  // only inject once the page is ready
+  if (document.readyState !== 'complete') {
+    return;
+  }
+
+  var w = window;
+  var i = document.createElement('iframe');
+  i.style.position = 'fixed';
+  i.style.top = '-41px';
+  i.style.left = 0;
+  i.style.right = 0;
+  i.style.width = '100%';
+  i.style.height = '40px';
+  i.style.backgroundColor = '#ffffe1';
+  i.style.border = 'none';
+  i.style.borderBottom = '1px solid #888888';
+  i.style.zIndex = '9999999';
+  if(typeof i.style.webkitTransition === 'string') {
+    i.style.webkitTransition = 'all .5s ease-out';
+  } else if(typeof i.style.transition === 'string') {
+    i.style.transition = 'all .5s ease-out';
+  }
+  document.body.appendChild(i);
+  c = (i.contentWindow) ? i.contentWindow :
+    (i.contentDocument.document) ? i.contentDocument.document : i.contentDocument;
+  c.document.open();
+  c.document.write('<span style="display: inline-block; font-family: Helvetica, Arial,' +
+    'sans-serif; font-size: .9rem; padding: 4px; vertical-align: ' +
+    'middle; cursor: default;">' + text + '</span>');
+  if(buttonText && buttonLink) {
+    c.document.write('<button id="okay">' + buttonText + '</button><button>Cancel</button>');
+    c.document.close();
+
+    AdapterJS.addEvent(c.document.getElementById('okay'), 'click', function(e) {
+      if (!!displayRefreshBar) {
+        AdapterJS.renderNotificationBar(AdapterJS.TEXT.EXTENSION ?
+          AdapterJS.TEXT.EXTENSION.REQUIRE_REFRESH : AdapterJS.TEXT.REFRESH.REQUIRE_REFRESH,
+          AdapterJS.TEXT.REFRESH.BUTTON, 'javascript:location.reload()');
+      }
+      window.open(buttonLink, !!openNewTab ? '_blank' : '_top');
+
+      e.preventDefault();
+      try {
+        event.cancelBubble = true;
+      } catch(error) { }
+    });
+  }
+  else {
+    c.document.close();
+  }
+  AdapterJS.addEvent(c.document, 'click', function() {
+    w.document.body.removeChild(i);
+  });
+  setTimeout(function() {
+    if(typeof i.style.webkitTransform === 'string') {
+      i.style.webkitTransform = 'translateY(40px)';
+    } else if(typeof i.style.transform === 'string') {
+      i.style.transform = 'translateY(40px)';
+    } else {
+      i.style.top = '0px';
+    }
+  }, 300);
+};
+
+// -----------------------------------------------------------
+// Detected webrtc implementation. Types are:
+// - 'moz': Mozilla implementation of webRTC.
+// - 'webkit': WebKit implementation of webRTC.
+// - 'plugin': Using the plugin implementation.
+webrtcDetectedType = null;
+
+// Detected webrtc datachannel support. Types are:
+// - 'SCTP': SCTP datachannel support.
+// - 'RTP': RTP datachannel support.
+webrtcDetectedDCSupport = null;
+
+// Set the settings for creating DataChannels, MediaStream for
+// Cross-browser compability.
+// - This is only for SCTP based support browsers.
+// the 'urls' attribute.
+checkMediaDataChannelSettings =
+  function (peerBrowserAgent, peerBrowserVersion, callback, constraints) {
+  if (typeof callback !== 'function') {
+    return;
+  }
+  var beOfferer = true;
+  var isLocalFirefox = webrtcDetectedBrowser === 'firefox';
+  // Nightly version does not require MozDontOfferDataChannel for interop
+  var isLocalFirefoxInterop = webrtcDetectedType === 'moz' && webrtcDetectedVersion > 30;
+  var isPeerFirefox = peerBrowserAgent === 'firefox';
+  var isPeerFirefoxInterop = peerBrowserAgent === 'firefox' &&
+    ((peerBrowserVersion) ? (peerBrowserVersion > 30) : false);
+
+  // Resends an updated version of constraints for MozDataChannel to work
+  // If other userAgent is firefox and user is firefox, remove MozDataChannel
+  if ((isLocalFirefox && isPeerFirefox) || (isLocalFirefoxInterop)) {
+    try {
+      delete constraints.mandatory.MozDontOfferDataChannel;
+    } catch (error) {
+      console.error('Failed deleting MozDontOfferDataChannel');
+      console.error(error);
+    }
+  } else if ((isLocalFirefox && !isPeerFirefox)) {
+    constraints.mandatory.MozDontOfferDataChannel = true;
+  }
+  if (!isLocalFirefox) {
+    // temporary measure to remove Moz* constraints in non Firefox browsers
+    for (var prop in constraints.mandatory) {
+      if (constraints.mandatory.hasOwnProperty(prop)) {
+        if (prop.indexOf('Moz') !== -1) {
+          delete constraints.mandatory[prop];
+        }
+      }
+    }
+  }
+  // Firefox (not interopable) cannot offer DataChannel as it will cause problems to the
+  // interopability of the media stream
+  if (isLocalFirefox && !isPeerFirefox && !isLocalFirefoxInterop) {
+    beOfferer = false;
+  }
+  callback(beOfferer, constraints);
+};
+
+// Handles the differences for all browsers ice connection state output.
+// - Tested outcomes are:
+//   - Chrome (offerer)  : 'checking' > 'completed' > 'completed'
+//   - Chrome (answerer) : 'checking' > 'connected'
+//   - Firefox (offerer) : 'checking' > 'connected'
+//   - Firefox (answerer): 'checking' > 'connected'
+checkIceConnectionState = function (peerId, iceConnectionState, callback) {
+  if (typeof callback !== 'function') {
+    console.warn('No callback specified in checkIceConnectionState. Aborted.');
+    return;
+  }
+  peerId = (peerId) ? peerId : 'peer';
+
+  if (!AdapterJS._iceConnectionFiredStates[peerId] ||
+    iceConnectionState === AdapterJS._iceConnectionStates.disconnected ||
+    iceConnectionState === AdapterJS._iceConnectionStates.failed ||
+    iceConnectionState === AdapterJS._iceConnectionStates.closed) {
+    AdapterJS._iceConnectionFiredStates[peerId] = [];
+  }
+  iceConnectionState = AdapterJS._iceConnectionStates[iceConnectionState];
+  if (AdapterJS._iceConnectionFiredStates[peerId].indexOf(iceConnectionState) < 0) {
+    AdapterJS._iceConnectionFiredStates[peerId].push(iceConnectionState);
+    if (iceConnectionState === AdapterJS._iceConnectionStates.connected) {
+      setTimeout(function () {
+        AdapterJS._iceConnectionFiredStates[peerId]
+          .push(AdapterJS._iceConnectionStates.done);
+        callback(AdapterJS._iceConnectionStates.done);
+      }, 1000);
+    }
+    callback(iceConnectionState);
+  }
+  return;
+};
+
+// Firefox:
+// - Creates iceServer from the url for Firefox.
+// - Create iceServer with stun url.
+// - Create iceServer with turn url.
+//   - Ignore the transport parameter from TURN url for FF version <=27.
+//   - Return null for createIceServer if transport=tcp.
+// - FF 27 and above supports transport parameters in TURN url,
+// - So passing in the full url to create iceServer.
+// Chrome:
+// - Creates iceServer from the url for Chrome M33 and earlier.
+//   - Create iceServer with stun url.
+//   - Chrome M28 & above uses below TURN format.
+// Plugin:
+// - Creates Ice Server for Plugin Browsers
+//   - If Stun - Create iceServer with stun url.
+//   - Else - Create iceServer with turn url
+//   - This is a WebRTC Function
+createIceServer = null;
+
+// Firefox:
+// - Creates IceServers for Firefox
+//   - Use .url for FireFox.
+//   - Multiple Urls support
+// Chrome:
+// - Creates iceServers from the urls for Chrome M34 and above.
+//   - .urls is supported since Chrome M34.
+//   - Multiple Urls support
+// Plugin:
+// - Creates Ice Servers for Plugin Browsers
+//   - Multiple Urls support
+//   - This is a WebRTC Function
+createIceServers = null;
+//------------------------------------------------------------
+
+//The RTCPeerConnection object.
+RTCPeerConnection = null;
+
+// Creates RTCSessionDescription object for Plugin Browsers
+RTCSessionDescription = (typeof RTCSessionDescription === 'function') ?
+  RTCSessionDescription : null;
+
+// Creates RTCIceCandidate object for Plugin Browsers
+RTCIceCandidate = (typeof RTCIceCandidate === 'function') ?
+  RTCIceCandidate : null;
+
+// Get UserMedia (only difference is the prefix).
+// Code from Adam Barth.
+getUserMedia = null;
+
+// Attach a media stream to an element.
+attachMediaStream = null;
+
+// Re-attach a media stream to an element.
+reattachMediaStream = null;
+
+
+// Detected browser agent name. Types are:
+// - 'firefox': Firefox browser.
+// - 'chrome': Chrome browser.
+// - 'opera': Opera browser.
+// - 'safari': Safari browser.
+// - 'IE' - Internet Explorer browser.
+webrtcDetectedBrowser = null;
+
+// Detected browser version.
+webrtcDetectedVersion = null;
+
+// Check for browser types and react accordingly
+if (navigator.mozGetUserMedia) {
+  webrtcDetectedBrowser = 'firefox';
+  webrtcDetectedVersion = parseInt(navigator
+    .userAgent.match(/Firefox\/([0-9]+)\./)[1], 10);
+  webrtcDetectedType = 'moz';
+  webrtcDetectedDCSupport = 'SCTP';
+
+  RTCPeerConnection = function (pcConfig, pcConstraints) {
+    AdapterJS.maybeFixConfiguration(pcConfig);
+    return new mozRTCPeerConnection(pcConfig, pcConstraints);
+  };
+
+ // The RTCSessionDescription object.
+  RTCSessionDescription = mozRTCSessionDescription;
+  window.RTCSessionDescription = RTCSessionDescription;
+
+  // The RTCIceCandidate object.
+  RTCIceCandidate = mozRTCIceCandidate;
+  window.RTCIceCandidate = RTCIceCandidate;
+
+  window.getUserMedia = navigator.mozGetUserMedia.bind(navigator);
+  navigator.getUserMedia = window.getUserMedia;
+
+  // Shim for MediaStreamTrack.getSources.
+  MediaStreamTrack.getSources = function(successCb) {
+    setTimeout(function() {
+      var infos = [
+        { kind: 'audio', id: 'default', label:'', facing:'' },
+        { kind: 'video', id: 'default', label:'', facing:'' }
+      ];
+      successCb(infos);
+    }, 0);
+  };
+
+  createIceServer = function (url, username, password) {
+    var iceServer = null;
+    var url_parts = url.split(':');
+    if (url_parts[0].indexOf('stun') === 0) {
+      iceServer = { url : url };
+    } else if (url_parts[0].indexOf('turn') === 0) {
+      if (webrtcDetectedVersion < 27) {
+        var turn_url_parts = url.split('?');
+        if (turn_url_parts.length === 1 ||
+          turn_url_parts[1].indexOf('transport=udp') === 0) {
+          iceServer = {
+            url : turn_url_parts[0],
+            credential : password,
+            username : username
+          };
+        }
+      } else {
+        iceServer = {
+          url : url,
+          credential : password,
+          username : username
+        };
+      }
+    }
+    return iceServer;
+  };
+
+  createIceServers = function (urls, username, password) {
+    var iceServers = [];
+    for (i = 0; i < urls.length; i++) {
+      var iceServer = createIceServer(urls[i], username, password);
+      if (iceServer !== null) {
+        iceServers.push(iceServer);
+      }
+    }
+    return iceServers;
+  };
+
+  attachMediaStream = function (element, stream) {
+    element.mozSrcObject = stream;
+    if (stream !== null)
+      element.play();
+
+    return element;
+  };
+
+  reattachMediaStream = function (to, from) {
+    to.mozSrcObject = from.mozSrcObject;
+    to.play();
+    return to;
+  };
+
+  MediaStreamTrack.getSources = MediaStreamTrack.getSources || function (callback) {
+    if (!callback) {
+      throw new TypeError('Failed to execute \'getSources\' on \'MediaStreamTrack\'' +
+        ': 1 argument required, but only 0 present.');
+    }
+    return callback([]);
+  };
+
+  // Fake get{Video,Audio}Tracks
+  if (!MediaStream.prototype.getVideoTracks) {
+    MediaStream.prototype.getVideoTracks = function () {
+      return [];
+    };
+  }
+  if (!MediaStream.prototype.getAudioTracks) {
+    MediaStream.prototype.getAudioTracks = function () {
+      return [];
+    };
+  }
+
+  AdapterJS.maybeThroughWebRTCReady();
+} else if (navigator.webkitGetUserMedia) {
+  webrtcDetectedBrowser = 'chrome';
+  webrtcDetectedType = 'webkit';
+  webrtcDetectedVersion = parseInt(navigator
+    .userAgent.match(/Chrom(e|ium)\/([0-9]+)\./)[2], 10);
+  // check if browser is opera 20+
+  var checkIfOpera = navigator.userAgent.match(/\bOPR\/(\d+)/);
+  if (checkIfOpera !== null) {
+    webrtcDetectedBrowser = 'opera';
+    webrtcDetectedVersion = parseInt(checkIfOpera[1], 10);
+  }
+  // check browser datachannel support
+  if ((webrtcDetectedBrowser === 'chrome' && webrtcDetectedVersion >= 31) ||
+    (webrtcDetectedBrowser === 'opera' && webrtcDetectedVersion >= 20)) {
+    webrtcDetectedDCSupport = 'SCTP';
+  } else if (webrtcDetectedBrowser === 'chrome' && webrtcDetectedVersion < 30 &&
+    webrtcDetectedVersion > 24) {
+    webrtcDetectedDCSupport = 'RTP';
+  } else {
+    webrtcDetectedDCSupport = '';
+  }
+
+  createIceServer = function (url, username, password) {
+    var iceServer = null;
+    var url_parts = url.split(':');
+    if (url_parts[0].indexOf('stun') === 0) {
+      iceServer = { 'url' : url };
+    } else if (url_parts[0].indexOf('turn') === 0) {
+      iceServer = {
+        'url' : url,
+        'credential' : password,
+        'username' : username
+      };
+    }
+    return iceServer;
+  };
+
+  createIceServers = function (urls, username, password) {
+    var iceServers = [];
+    if (webrtcDetectedVersion >= 34) {
+      iceServers = {
+        'urls' : urls,
+        'credential' : password,
+        'username' : username
+      };
+    } else {
+      for (i = 0; i < urls.length; i++) {
+        var iceServer = createIceServer(urls[i], username, password);
+        if (iceServer !== null) {
+          iceServers.push(iceServer);
+        }
+      }
+    }
+    return iceServers;
+  };
+
+  RTCPeerConnection = function (pcConfig, pcConstraints) {
+    if (webrtcDetectedVersion < 34) {
+      AdapterJS.maybeFixConfiguration(pcConfig);
+    }
+    return new webkitRTCPeerConnection(pcConfig, pcConstraints);
+  };
+
+  window.getUserMedia = navigator.webkitGetUserMedia.bind(navigator);
+  navigator.getUserMedia = window.getUserMedia;
+
+  attachMediaStream = function (element, stream) {
+    if (typeof element.srcObject !== 'undefined') {
+      element.srcObject = stream;
+    } else if (typeof element.mozSrcObject !== 'undefined') {
+      element.mozSrcObject = stream;
+    } else if (typeof element.src !== 'undefined') {
+      element.src = (stream === null ? '' : URL.createObjectURL(stream));
+    } else {
+      console.log('Error attaching stream to element.');
+    }
+    return element;
+  };
+
+  reattachMediaStream = function (to, from) {
+    to.src = from.src;
+    return to;
+  };
+
+  AdapterJS.maybeThroughWebRTCReady();
+} else { // TRY TO USE PLUGIN
+  // IE 9 is not offering an implementation of console.log until you open a console
+  if (typeof console !== 'object' || typeof console.log !== 'function') {
+    /* jshint -W020 */
+    console = {} || console;
+    // Implemented based on console specs from MDN
+    // You may override these functions
+    console.log = function (arg) {};
+    console.info = function (arg) {};
+    console.error = function (arg) {};
+    console.dir = function (arg) {};
+    console.exception = function (arg) {};
+    console.trace = function (arg) {};
+    console.warn = function (arg) {};
+    console.count = function (arg) {};
+    console.debug = function (arg) {};
+    console.count = function (arg) {};
+    console.time = function (arg) {};
+    console.timeEnd = function (arg) {};
+    console.group = function (arg) {};
+    console.groupCollapsed = function (arg) {};
+    console.groupEnd = function (arg) {};
+    /* jshint +W020 */
+  }
+  webrtcDetectedType = 'plugin';
+  webrtcDetectedDCSupport = 'plugin';
+  AdapterJS.parseWebrtcDetectedBrowser();
+  isIE = webrtcDetectedBrowser === 'IE';
+
+  /* jshint -W035 */
+  AdapterJS.WebRTCPlugin.WaitForPluginReady = function() {
+    while (AdapterJS.WebRTCPlugin.pluginState !== AdapterJS.WebRTCPlugin.PLUGIN_STATES.READY) {
+      /* empty because it needs to prevent the function from running. */
+    }
+  };
+  /* jshint +W035 */
+
+  AdapterJS.WebRTCPlugin.callWhenPluginReady = function (callback) {
+    if (AdapterJS.WebRTCPlugin.pluginState === AdapterJS.WebRTCPlugin.PLUGIN_STATES.READY) {
+      // Call immediately if possible
+      // Once the plugin is set, the code will always take this path
+      callback();
+    } else {
+      // otherwise start a 100ms interval
+      var checkPluginReadyState = setInterval(function () {
+        if (AdapterJS.WebRTCPlugin.pluginState === AdapterJS.WebRTCPlugin.PLUGIN_STATES.READY) {
+          clearInterval(checkPluginReadyState);
+          callback();
+        }
+      }, 100);
+    }
+  };
+
+  AdapterJS.WebRTCPlugin.setLogLevel = function(logLevel) {
+    AdapterJS.WebRTCPlugin.callWhenPluginReady(function() {
+      AdapterJS.WebRTCPlugin.plugin.setLogLevel(logLevel);
+    });
+  };
+
+  AdapterJS.WebRTCPlugin.injectPlugin = function () {
+    // only inject once the page is ready
+    if (document.readyState !== 'complete') {
+      return;
+    }
+
+    // Prevent multiple injections
+    if (AdapterJS.WebRTCPlugin.pluginState !== AdapterJS.WebRTCPlugin.PLUGIN_STATES.INITIALIZING) {
+      return;
+    }
+
+    AdapterJS.WebRTCPlugin.pluginState = AdapterJS.WebRTCPlugin.PLUGIN_STATES.INJECTING;
+
+    if (webrtcDetectedBrowser === 'IE' && webrtcDetectedVersion <= 10) {
+      var frag = document.createDocumentFragment();
+      AdapterJS.WebRTCPlugin.plugin = document.createElement('div');
+      AdapterJS.WebRTCPlugin.plugin.innerHTML = '<object id="' +
+        AdapterJS.WebRTCPlugin.pluginInfo.pluginId + '" type="' +
+        AdapterJS.WebRTCPlugin.pluginInfo.type + '" ' + 'width="1" height="1">' +
+        '<param name="pluginId" value="' +
+        AdapterJS.WebRTCPlugin.pluginInfo.pluginId + '" /> ' +
+        '<param name="windowless" value="false" /> ' +
+        '<param name="pageId" value="' + AdapterJS.WebRTCPlugin.pageId + '" /> ' +
+        '<param name="onload" value="' + AdapterJS.WebRTCPlugin.pluginInfo.onload +
+        '" />' +
+        // uncomment to be able to use virtual cams
+        (AdapterJS.options.getAllCams ? '<param name="forceGetAllCams" value="True" />':'') +
+
+        '</object>';
+      while (AdapterJS.WebRTCPlugin.plugin.firstChild) {
+        frag.appendChild(AdapterJS.WebRTCPlugin.plugin.firstChild);
+      }
+      document.body.appendChild(frag);
+
+      // Need to re-fetch the plugin
+      AdapterJS.WebRTCPlugin.plugin =
+        document.getElementById(AdapterJS.WebRTCPlugin.pluginInfo.pluginId);
+    } else {
+      // Load Plugin
+      AdapterJS.WebRTCPlugin.plugin = document.createElement('object');
+      AdapterJS.WebRTCPlugin.plugin.id =
+        AdapterJS.WebRTCPlugin.pluginInfo.pluginId;
+      // IE will only start the plugin if it's ACTUALLY visible
+      if (isIE) {
+        AdapterJS.WebRTCPlugin.plugin.width = '1px';
+        AdapterJS.WebRTCPlugin.plugin.height = '1px';
+      } else { // The size of the plugin on Safari should be 0x0px
+              // so that the autorisation prompt is at the top
+        AdapterJS.WebRTCPlugin.plugin.width = '0px';
+        AdapterJS.WebRTCPlugin.plugin.height = '0px';
+      }
+      AdapterJS.WebRTCPlugin.plugin.type = AdapterJS.WebRTCPlugin.pluginInfo.type;
+      AdapterJS.WebRTCPlugin.plugin.innerHTML = '<param name="onload" value="' +
+        AdapterJS.WebRTCPlugin.pluginInfo.onload + '">' +
+        '<param name="pluginId" value="' +
+        AdapterJS.WebRTCPlugin.pluginInfo.pluginId + '">' +
+        '<param name="windowless" value="false" /> ' +
+        (AdapterJS.options.getAllCams ? '<param name="forceGetAllCams" value="True" />':'') +
+        '<param name="pageId" value="' + AdapterJS.WebRTCPlugin.pageId + '">';
+      document.body.appendChild(AdapterJS.WebRTCPlugin.plugin);
+    }
+
+
+    AdapterJS.WebRTCPlugin.pluginState = AdapterJS.WebRTCPlugin.PLUGIN_STATES.INJECTED;
+  };
+
+  AdapterJS.WebRTCPlugin.isPluginInstalled =
+    function (comName, plugName, installedCb, notInstalledCb) {
+    if (!isIE) {
+      var pluginArray = navigator.plugins;
+      for (var i = 0; i < pluginArray.length; i++) {
+        if (pluginArray[i].name.indexOf(plugName) >= 0) {
+          installedCb();
+          return;
+        }
+      }
+      notInstalledCb();
+    } else {
+      try {
+        var axo = new ActiveXObject(comName + '.' + plugName);
+      } catch (e) {
+        notInstalledCb();
+        return;
+      }
+      installedCb();
+    }
+  };
+
+  AdapterJS.WebRTCPlugin.defineWebRTCInterface = function () {
+    AdapterJS.WebRTCPlugin.pluginState = AdapterJS.WebRTCPlugin.PLUGIN_STATES.INITIALIZING;
+
+    AdapterJS.isDefined = function (variable) {
+      return variable !== null && variable !== undefined;
+    };
+
+    createIceServer = function (url, username, password) {
+      var iceServer = null;
+      var url_parts = url.split(':');
+      if (url_parts[0].indexOf('stun') === 0) {
+        iceServer = {
+          'url' : url,
+          'hasCredentials' : false
+        };
+      } else if (url_parts[0].indexOf('turn') === 0) {
+        iceServer = {
+          'url' : url,
+          'hasCredentials' : true,
+          'credential' : password,
+          'username' : username
+        };
+      }
+      return iceServer;
+    };
+
+    createIceServers = function (urls, username, password) {
+      var iceServers = [];
+      for (var i = 0; i < urls.length; ++i) {
+        iceServers.push(createIceServer(urls[i], username, password));
+      }
+      return iceServers;
+    };
+
+    RTCSessionDescription = function (info) {
+      AdapterJS.WebRTCPlugin.WaitForPluginReady();
+      return AdapterJS.WebRTCPlugin.plugin.
+        ConstructSessionDescription(info.type, info.sdp);
+    };
+
+    RTCPeerConnection = function (servers, constraints) {
+      var iceServers = null;
+      if (servers) {
+        iceServers = servers.iceServers;
+        for (var i = 0; i < iceServers.length; i++) {
+          if (iceServers[i].urls && !iceServers[i].url) {
+            iceServers[i].url = iceServers[i].urls;
+          }
+          iceServers[i].hasCredentials = AdapterJS.
+            isDefined(iceServers[i].username) &&
+            AdapterJS.isDefined(iceServers[i].credential);
+        }
+      }
+      var mandatory = (constraints && constraints.mandatory) ?
+        constraints.mandatory : null;
+      var optional = (constraints && constraints.optional) ?
+        constraints.optional : null;
+
+      AdapterJS.WebRTCPlugin.WaitForPluginReady();
+      return AdapterJS.WebRTCPlugin.plugin.
+        PeerConnection(AdapterJS.WebRTCPlugin.pageId,
+        iceServers, mandatory, optional);
+    };
+
+    MediaStreamTrack = {};
+    MediaStreamTrack.getSources = function (callback) {
+      AdapterJS.WebRTCPlugin.callWhenPluginReady(function() {
+        AdapterJS.WebRTCPlugin.plugin.GetSources(callback);
+      });
+    };
+
+    window.getUserMedia = function (constraints, successCallback, failureCallback) {
+      constraints.audio = constraints.audio || false;
+      constraints.video = constraints.video || false;
+
+      AdapterJS.WebRTCPlugin.callWhenPluginReady(function() {
+        AdapterJS.WebRTCPlugin.plugin.
+          getUserMedia(constraints, successCallback, failureCallback);
+      });
+    };
+    window.navigator.getUserMedia = window.getUserMedia;
+
+    attachMediaStream = function (element, stream) {
+      if (!element || !element.parentNode) {
+        return;
+      }
+
+      var streamId
+      if (stream === null) {
+        streamId = '';
+      }
+      else {
+        stream.enableSoundTracks(true);
+        streamId = stream.id;
+      }
+
+      if (element.nodeName.toLowerCase() !== 'audio') {
+        var elementId = element.id.length === 0 ? Math.random().toString(36).slice(2) : element.id;
+        if (!element.isWebRTCPlugin || !element.isWebRTCPlugin()) {
+          var frag = document.createDocumentFragment();
+          var temp = document.createElement('div');
+          var classHTML = '';
+          if (element.className) {
+            classHTML = 'class="' + element.className + '" ';
+          } else if (element.attributes && element.attributes['class']) {
+            classHTML = 'class="' + element.attributes['class'].value + '" ';
+          }
+
+          temp.innerHTML = '<object id="' + elementId + '" ' + classHTML +
+            'type="' + AdapterJS.WebRTCPlugin.pluginInfo.type + '">' +
+            '<param name="pluginId" value="' + elementId + '" /> ' +
+            '<param name="pageId" value="' + AdapterJS.WebRTCPlugin.pageId + '" /> ' +
+            '<param name="windowless" value="true" /> ' +
+            '<param name="streamId" value="' + streamId + '" /> ' +
+            '</object>';
+          while (temp.firstChild) {
+            frag.appendChild(temp.firstChild);
+          }
+
+          var height = '';
+          var width = '';
+          if (element.getBoundingClientRect) {
+            var rectObject = element.getBoundingClientRect();
+            width = rectObject.width + 'px';
+            height = rectObject.height + 'px';
+          }
+          else if (element.width) {
+            width = element.width;
+            height = element.height;
+          } else {
+            // TODO: What scenario could bring us here?
+          }
+
+          element.parentNode.insertBefore(frag, element);
+          frag = document.getElementById(elementId);
+          frag.width = width;
+          frag.height = height;
+          element.parentNode.removeChild(element);
+        } else {
+          var children = element.children;
+          for (var i = 0; i !== children.length; ++i) {
+            if (children[i].name === 'streamId') {
+              children[i].value = streamId;
+              break;
+            }
+          }
+          element.setStreamId(streamId);
+        }
+        var newElement = document.getElementById(elementId);
+        newElement.onplaying = (element.onplaying) ? element.onplaying : function (arg) {};
+        if (isIE) { // on IE the event needs to be plugged manually
+          newElement.attachEvent('onplaying', newElement.onplaying);
+          newElement.onclick = (element.onclick) ? element.onclick : function (arg) {};
+          newElement._TemOnClick = function (id) {
+            var arg = {
+              srcElement : document.getElementById(id)
+            };
+            newElement.onclick(arg);
+          };
+        }
+        return newElement;
+      } else {
+        return element;
+      }
+    };
+
+    reattachMediaStream = function (to, from) {
+      var stream = null;
+      var children = from.children;
+      for (var i = 0; i !== children.length; ++i) {
+        if (children[i].name === 'streamId') {
+          AdapterJS.WebRTCPlugin.WaitForPluginReady();
+          stream = AdapterJS.WebRTCPlugin.plugin
+            .getStreamWithId(AdapterJS.WebRTCPlugin.pageId, children[i].value);
+          break;
+        }
+      }
+      if (stream !== null) {
+        return attachMediaStream(to, stream);
+      } else {
+        console.log('Could not find the stream associated with this element');
+      }
+    };
+
+    RTCIceCandidate = function (candidate) {
+      if (!candidate.sdpMid) {
+        candidate.sdpMid = '';
+      }
+
+      AdapterJS.WebRTCPlugin.WaitForPluginReady();
+      return AdapterJS.WebRTCPlugin.plugin.ConstructIceCandidate(
+        candidate.sdpMid, candidate.sdpMLineIndex, candidate.candidate
+      );
+    };
+
+    // inject plugin
+    AdapterJS.addEvent(document, 'readystatechange', AdapterJS.WebRTCPlugin.injectPlugin);
+    AdapterJS.WebRTCPlugin.injectPlugin();
+  };
+
+  // This function will be called if the plugin is needed (browser different
+  // from Chrome or Firefox), but the plugin is not installed.
+  AdapterJS.WebRTCPlugin.pluginNeededButNotInstalledCb = AdapterJS.WebRTCPlugin.pluginNeededButNotInstalledCb ||
+    function() {
+      AdapterJS.addEvent(document,
+                        'readystatechange',
+                         AdapterJS.WebRTCPlugin.pluginNeededButNotInstalledCbPriv);
+      AdapterJS.WebRTCPlugin.pluginNeededButNotInstalledCbPriv();
+    };
+
+  AdapterJS.WebRTCPlugin.pluginNeededButNotInstalledCbPriv = function () {
+    if (AdapterJS.options.hidePluginInstallPrompt) {
+      return;
+    }
+
+    var downloadLink = AdapterJS.WebRTCPlugin.pluginInfo.downloadLink;
+    if(downloadLink) { // if download link
+      var popupString;
+      if (AdapterJS.WebRTCPlugin.pluginInfo.portalLink) { // is portal link
+       popupString = 'This website requires you to install the ' +
+        ' <a href="' + AdapterJS.WebRTCPlugin.pluginInfo.portalLink +
+        '" target="_blank">' + AdapterJS.WebRTCPlugin.pluginInfo.companyName +
+        ' WebRTC Plugin</a>' +
+        ' to work on this browser.';
+      } else { // no portal link, just print a generic explanation
+       popupString = AdapterJS.TEXT.PLUGIN.REQUIRE_INSTALLATION;
+      }
+
+      AdapterJS.renderNotificationBar(popupString, AdapterJS.TEXT.PLUGIN.BUTTON, downloadLink);
+    } else { // no download link, just print a generic explanation
+      AdapterJS.renderNotificationBar(AdapterJS.TEXT.PLUGIN.NOT_SUPPORTED);
+    }
+  };
+
+  // Try to detect the plugin and act accordingly
+  AdapterJS.WebRTCPlugin.isPluginInstalled(
+    AdapterJS.WebRTCPlugin.pluginInfo.prefix,
+    AdapterJS.WebRTCPlugin.pluginInfo.plugName,
+    AdapterJS.WebRTCPlugin.defineWebRTCInterface,
+    AdapterJS.WebRTCPlugin.pluginNeededButNotInstalledCb);
+}
+
+
+
+(function () {
+
+  'use strict';
+
+  var baseGetUserMedia = null;
+
+  AdapterJS.TEXT.EXTENSION = {
+    REQUIRE_INSTALLATION_FF: 'To enable screensharing you need to install the Skylink WebRTC tools Firefox Add-on.',
+    REQUIRE_INSTALLATION_CHROME: 'To enable screensharing you need to install the Skylink WebRTC tools Chrome Extension.',
+    REQUIRE_REFRESH: 'Please refresh this page after the Skylink WebRTC tools extension has been installed.',
+    BUTTON_FF: 'Install Now',
+    BUTTON_CHROME: 'Go to Chrome Web Store'
+  };
+
+  var clone = function(obj) {
+    if (null == obj || "object" != typeof obj) return obj;
+    var copy = obj.constructor();
+    for (var attr in obj) {
+        if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
+    }
+    return copy;
+  };
+
+  if (window.navigator.mozGetUserMedia) {
+    baseGetUserMedia = window.navigator.getUserMedia;
+
+    navigator.getUserMedia = function (constraints, successCb, failureCb) {
+
+      if (constraints && constraints.video && !!constraints.video.mediaSource) {
+        // intercepting screensharing requests
+
+        if (constraints.video.mediaSource !== 'screen' && constraints.video.mediaSource !== 'window') {
+          throw new Error('Only "screen" and "window" option is available as mediaSource');
+        }
+
+        var updatedConstraints = clone(constraints);
+
+        //constraints.video.mediaSource = constraints.video.mediaSource;
+        updatedConstraints.video.mozMediaSource = updatedConstraints.video.mediaSource;
+
+        // so generally, it requires for document.readyState to be completed before the getUserMedia could be invoked.
+        // strange but this works anyway
+        var checkIfReady = setInterval(function () {
+          if (document.readyState === 'complete') {
+            clearInterval(checkIfReady);
+
+            baseGetUserMedia(updatedConstraints, successCb, function (error) {
+              if (error.name === 'PermissionDeniedError' && window.parent.location.protocol === 'https:') {
+                AdapterJS.renderNotificationBar(AdapterJS.TEXT.EXTENSION.REQUIRE_INSTALLATION_FF,
+                  AdapterJS.TEXT.EXTENSION.BUTTON_FF,
+                  'http://skylink.io/screensharing/ff_addon.php?domain=' + window.location.hostname, false, true);
+                //window.location.href = 'http://skylink.io/screensharing/ff_addon.php?domain=' + window.location.hostname;
+              } else {
+                failureCb(error);
+              }
+            });
+          }
+        }, 1);
+
+      } else { // regular GetUserMediaRequest
+        baseGetUserMedia(constraints, successCb, failureCb);
+      }
+    };
+
+    getUserMedia = navigator.getUserMedia;
+
+  } else if (window.navigator.webkitGetUserMedia) {
+    baseGetUserMedia = window.navigator.getUserMedia;
+
+    navigator.getUserMedia = function (constraints, successCb, failureCb) {
+
+      if (constraints && constraints.video && !!constraints.video.mediaSource) {
+        if (window.webrtcDetectedBrowser !== 'chrome') {
+          throw new Error('Current browser does not support screensharing');
+        }
+
+        // would be fine since no methods
+        var updatedConstraints = clone(constraints);
+
+        var chromeCallback = function(error, sourceId) {
+          if(!error) {
+            updatedConstraints.video.mandatory = updatedConstraints.video.mandatory || {};
+            updatedConstraints.video.mandatory.chromeMediaSource = 'desktop';
+            updatedConstraints.video.mandatory.maxWidth = window.screen.width > 1920 ? window.screen.width : 1920;
+            updatedConstraints.video.mandatory.maxHeight = window.screen.height > 1080 ? window.screen.height : 1080;
+
+            if (sourceId) {
+              updatedConstraints.video.mandatory.chromeMediaSourceId = sourceId;
+            }
+
+            delete updatedConstraints.video.mediaSource;
+
+            baseGetUserMedia(updatedConstraints, successCb, failureCb);
+
+          } else {
+            if (error === 'permission-denied') {
+              throw new Error('Permission denied for screen retrieval');
+            } else {
+              throw new Error('Failed retrieving selected screen');
+            }
+          }
+        };
+
+        var onIFrameCallback = function (event) {
+          if (!event.data) {
+            return;
+          }
+
+          if (event.data.chromeMediaSourceId) {
+            if (event.data.chromeMediaSourceId === 'PermissionDeniedError') {
+                chromeCallback('permission-denied');
+            } else {
+              chromeCallback(null, event.data.chromeMediaSourceId);
+            }
+          }
+
+          if (event.data.chromeExtensionStatus) {
+            if (event.data.chromeExtensionStatus === 'not-installed') {
+              AdapterJS.renderNotificationBar(AdapterJS.TEXT.EXTENSION.REQUIRE_INSTALLATION_CHROME,
+                AdapterJS.TEXT.EXTENSION.BUTTON_CHROME,
+                event.data.data, true, true);
+            } else {
+              chromeCallback(event.data.chromeExtensionStatus, null);
+            }
+          }
+
+          // this event listener is no more needed
+          window.removeEventListener('message', onIFrameCallback);
+        };
+
+        window.addEventListener('message', onIFrameCallback);
+
+        postFrameMessage({
+          captureSourceId: true
+        });
+
+      } else {
+        baseGetUserMedia(constraints, successCb, failureCb);
+      }
+    };
+
+    getUserMedia = navigator.getUserMedia;
+
+  } else {
+    baseGetUserMedia = window.navigator.getUserMedia;
+
+    navigator.getUserMedia = function (constraints, successCb, failureCb) {
+      if (constraints && constraints.video && !!constraints.video.mediaSource) {
+        // would be fine since no methods
+        var updatedConstraints = clone(constraints);
+
+        // wait for plugin to be ready
+        AdapterJS.WebRTCPlugin.callWhenPluginReady(function() {
+          // check if screensharing feature is available
+          if (!!AdapterJS.WebRTCPlugin.plugin.HasScreensharingFeature &&
+            !!AdapterJS.WebRTCPlugin.plugin.isScreensharingAvailable) {
+
+
+            // set the constraints
+            updatedConstraints.video.optional = updatedConstraints.video.optional || [];
+            updatedConstraints.video.optional.push({
+              sourceId: AdapterJS.WebRTCPlugin.plugin.screensharingKey || 'Screensharing'
+            });
+
+            delete updatedConstraints.video.mediaSource;
+          } else {
+            throw new Error('Your WebRTC plugin does not support screensharing');
+          }
+          baseGetUserMedia(updatedConstraints, successCb, failureCb);
+        });
+      } else {
+        baseGetUserMedia(constraints, successCb, failureCb);
+      }
+    };
+
+    getUserMedia = window.navigator.getUserMedia;
+  }
+
+  if (window.webrtcDetectedBrowser === 'chrome') {
+    var iframe = document.createElement('iframe');
+
+    iframe.onload = function() {
+      iframe.isLoaded = true;
+    };
+
+    iframe.src = 'https://cdn.temasys.com.sg/skylink/extensions/detectRTC.html';
+      //'https://temasys-cdn.s3.amazonaws.com/skylink/extensions/detection-script-dev/detectRTC.html';
+    iframe.style.display = 'none';
+
+    (document.body || document.documentElement).appendChild(iframe);
+
+    var postFrameMessage = function (object) {
+      object = object || {};
+
+      if (!iframe.isLoaded) {
+        setTimeout(function () {
+          iframe.contentWindow.postMessage(object, '*');
+        }, 100);
+        return;
+      }
+
+      iframe.contentWindow.postMessage(object, '*');
+    };
+  }
+})();
+},{}],13:[function(require,module,exports){
 var UI = {};
 
 var VideoLayout = require("./videolayout/VideoLayout.js");
@@ -1910,6 +3483,7 @@ var CQEvents = require("../../service/connectionquality/CQEvents");
 var DesktopSharingEventTypes
     = require("../../service/desktopsharing/DesktopSharingEventTypes");
 var RTCEvents = require("../../service/RTC/RTCEvents");
+var RTCBrowserType = require("../RTC/RTCBrowserType");
 var StreamEventTypes = require("../../service/RTC/StreamEventTypes");
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 var MemberEvents = require("../../service/members/Events");
@@ -2139,7 +3713,7 @@ function registerListeners() {
         {
             // might need to update the direction if participant just went from sendrecv to recvonly
             if (stream.type === 'video' || stream.type === 'screen') {
-                var el = $('#participant_'  + Strophe.getResourceFromJid(jid) + '>video');
+                var el = $('#participant_' + Strophe.getResourceFromJid(jid) + '>' + APP.RTC.getVideoElementName());
                 switch (stream.direction) {
                     case 'sendrecv':
                         el.show();
@@ -2291,7 +3865,9 @@ UI.start = function (init) {
         $('#notice').css({display: 'block'});
     }
 
-    document.getElementById('largeVideo').volume = 0;
+    if (!RTCBrowserType.isIExplorer()) {
+        document.getElementById('largeVideo').volume = 0;
+    }
 
     if(config.requireDisplayName) {
         var currentSettings = Settings.getSettings();
@@ -2741,7 +4317,7 @@ UI.setVideoMute = setVideoMute;
 module.exports = UI;
 
 
-},{"../../service/RTC/RTCEvents":100,"../../service/RTC/StreamEventTypes":102,"../../service/connectionquality/CQEvents":105,"../../service/desktopsharing/DesktopSharingEventTypes":106,"../../service/members/Events":107,"../../service/xmpp/XMPPEvents":109,"./../settings/Settings":47,"./audio_levels/AudioLevels.js":12,"./authentication/Authentication":14,"./avatar/Avatar":16,"./etherpad/Etherpad.js":17,"./prezi/Prezi.js":18,"./side_pannels/SidePanelToggler":20,"./side_pannels/chat/Chat.js":21,"./side_pannels/contactlist/ContactList":25,"./side_pannels/settings/SettingsMenu":26,"./toolbars/BottomToolbar":27,"./toolbars/Toolbar":28,"./toolbars/ToolbarToggler":29,"./util/MessageHandler":31,"./util/NicknameHandler":32,"./util/UIUtil":33,"./videolayout/VideoLayout.js":39,"./welcome_page/RoomnameGenerator":40,"./welcome_page/WelcomePage":41,"events":1}],12:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":101,"../../service/RTC/StreamEventTypes":103,"../../service/connectionquality/CQEvents":106,"../../service/desktopsharing/DesktopSharingEventTypes":107,"../../service/members/Events":108,"../../service/xmpp/XMPPEvents":110,"../RTC/RTCBrowserType":10,"./../settings/Settings":49,"./audio_levels/AudioLevels.js":14,"./authentication/Authentication":16,"./avatar/Avatar":18,"./etherpad/Etherpad.js":19,"./prezi/Prezi.js":20,"./side_pannels/SidePanelToggler":22,"./side_pannels/chat/Chat.js":23,"./side_pannels/contactlist/ContactList":27,"./side_pannels/settings/SettingsMenu":28,"./toolbars/BottomToolbar":29,"./toolbars/Toolbar":30,"./toolbars/ToolbarToggler":31,"./util/MessageHandler":33,"./util/NicknameHandler":34,"./util/UIUtil":35,"./videolayout/VideoLayout.js":41,"./welcome_page/RoomnameGenerator":42,"./welcome_page/WelcomePage":43,"events":1}],14:[function(require,module,exports){
 var CanvasUtil = require("./CanvasUtils");
 
 var ASDrawContext = $('#activeSpeakerAudioLevel')[0].getContext('2d');
@@ -3007,7 +4583,7 @@ var AudioLevels = (function(my) {
 })(AudioLevels || {});
 
 module.exports = AudioLevels;
-},{"./CanvasUtils":13}],13:[function(require,module,exports){
+},{"./CanvasUtils":15}],15:[function(require,module,exports){
 /**
  * Utility class for drawing canvas shapes.
  */
@@ -3119,7 +4695,7 @@ var CanvasUtil = (function(my) {
 })(CanvasUtil || {});
 
 module.exports = CanvasUtil;
-},{}],14:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 /* global $, APP*/
 
 var LoginDialog = require('./LoginDialog');
@@ -3244,7 +4820,7 @@ var Authentication = {
 };
 
 module.exports = Authentication;
-},{"../../xmpp/moderator":58,"./LoginDialog":15}],15:[function(require,module,exports){
+},{"../../xmpp/moderator":60,"./LoginDialog":17}],17:[function(require,module,exports){
 /* global $, APP, config*/
 
 var XMPP = require('../../xmpp/xmpp');
@@ -3473,7 +5049,7 @@ var LoginDialog = {
 };
 
 module.exports = LoginDialog;
-},{"../../xmpp/moderator":58,"../../xmpp/xmpp":66}],16:[function(require,module,exports){
+},{"../../xmpp/moderator":60,"../../xmpp/xmpp":68}],18:[function(require,module,exports){
 var Settings = require("../../settings/Settings");
 
 var users = {};
@@ -3512,7 +5088,7 @@ var Avatar = {
 
 
 module.exports = Avatar;
-},{"../../settings/Settings":47}],17:[function(require,module,exports){
+},{"../../settings/Settings":49}],19:[function(require,module,exports){
 /* global $, config,
    setLargeVideoVisible, Util */
 
@@ -3694,7 +5270,7 @@ var Etherpad = {
 
 module.exports = Etherpad;
 
-},{"../prezi/Prezi":18,"../util/UIUtil":33,"../videolayout/VideoLayout":39}],18:[function(require,module,exports){
+},{"../prezi/Prezi":20,"../util/UIUtil":35,"../videolayout/VideoLayout":41}],20:[function(require,module,exports){
 var ToolbarToggler = require("../toolbars/ToolbarToggler");
 var UIUtil = require("../util/UIUtil");
 var VideoLayout = require("../videolayout/VideoLayout");
@@ -4070,7 +5646,7 @@ $(window).resize(function () {
 
 module.exports = Prezi;
 
-},{"../toolbars/ToolbarToggler":29,"../util/MessageHandler":31,"../util/UIUtil":33,"../videolayout/VideoLayout":39,"./PreziPlayer":19}],19:[function(require,module,exports){
+},{"../toolbars/ToolbarToggler":31,"../util/MessageHandler":33,"../util/UIUtil":35,"../videolayout/VideoLayout":41,"./PreziPlayer":21}],21:[function(require,module,exports){
 (function() {
     "use strict";
     var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
@@ -4366,7 +5942,7 @@ module.exports = Prezi;
 
 module.exports = PreziPlayer;
 
-},{}],20:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 var Chat = require("./chat/Chat");
 var ContactList = require("./contactlist/ContactList");
 var Settings = require("./../../settings/Settings");
@@ -4540,7 +6116,7 @@ var PanelToggler = (function(my) {
 }(PanelToggler || {}));
 
 module.exports = PanelToggler;
-},{"../toolbars/ToolbarToggler":29,"../util/UIUtil":33,"../videolayout/LargeVideo":35,"../videolayout/VideoLayout":39,"./../../settings/Settings":47,"./chat/Chat":21,"./contactlist/ContactList":25,"./settings/SettingsMenu":26}],21:[function(require,module,exports){
+},{"../toolbars/ToolbarToggler":31,"../util/UIUtil":35,"../videolayout/LargeVideo":37,"../videolayout/VideoLayout":41,"./../../settings/Settings":49,"./chat/Chat":23,"./contactlist/ContactList":27,"./settings/SettingsMenu":28}],23:[function(require,module,exports){
 /* global $, Util, nickname:true */
 var Replacement = require("./Replacement");
 var CommandsProcessor = require("./Commands");
@@ -4898,7 +6474,7 @@ var Chat = (function (my) {
     return my;
 }(Chat || {}));
 module.exports = Chat;
-},{"../../../../service/UI/UIEvents":103,"../../toolbars/ToolbarToggler":29,"../../util/NicknameHandler":32,"../../util/UIUtil":33,"../SidePanelToggler":20,"./Commands":22,"./Replacement":23,"./smileys.json":24}],22:[function(require,module,exports){
+},{"../../../../service/UI/UIEvents":104,"../../toolbars/ToolbarToggler":31,"../../util/NicknameHandler":34,"../../util/UIUtil":35,"../SidePanelToggler":22,"./Commands":24,"./Replacement":25,"./smileys.json":26}],24:[function(require,module,exports){
 var UIUtil = require("../../util/UIUtil");
 
 /**
@@ -4996,7 +6572,7 @@ CommandsProcessor.prototype.processCommand = function()
 };
 
 module.exports = CommandsProcessor;
-},{"../../util/UIUtil":33}],23:[function(require,module,exports){
+},{"../../util/UIUtil":35}],25:[function(require,module,exports){
 var Smileys = require("./smileys.json");
 /**
  * Processes links and smileys in "body"
@@ -5060,7 +6636,7 @@ module.exports = {
     linkify: linkify
 };
 
-},{"./smileys.json":24}],24:[function(require,module,exports){
+},{"./smileys.json":26}],26:[function(require,module,exports){
 module.exports={
     "smileys": {
         "smiley1": ":)",
@@ -5110,7 +6686,7 @@ module.exports={
     }
 }
 
-},{}],25:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 
 var numberOfContacts = 0;
 var notificationInterval;
@@ -5307,7 +6883,7 @@ var ContactList = {
 };
 
 module.exports = ContactList;
-},{}],26:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 var Avatar = require("../../avatar/Avatar");
 var Settings = require("./../../../settings/Settings");
 var UIUtil = require("../../util/UIUtil");
@@ -5420,7 +6996,7 @@ var SettingsMenu = {
 
 
 module.exports = SettingsMenu;
-},{"../../../../service/translation/languages":108,"../../avatar/Avatar":16,"../../util/UIUtil":33,"./../../../settings/Settings":47}],27:[function(require,module,exports){
+},{"../../../../service/translation/languages":109,"../../avatar/Avatar":18,"../../util/UIUtil":35,"./../../../settings/Settings":49}],29:[function(require,module,exports){
 var PanelToggler = require("../side_pannels/SidePanelToggler");
 
 var buttonHandlers = {
@@ -5465,7 +7041,7 @@ var BottomToolbar = (function (my) {
 
 module.exports = BottomToolbar;
 
-},{"../side_pannels/SidePanelToggler":20}],28:[function(require,module,exports){
+},{"../side_pannels/SidePanelToggler":22}],30:[function(require,module,exports){
 /* global APP,$, buttonClick, config, lockRoom,
    setSharedKey, Util */
 var messageHandler = require("../util/MessageHandler");
@@ -6114,7 +7690,7 @@ var Toolbar = (function (my) {
 }(Toolbar || {}));
 
 module.exports = Toolbar;
-},{"../../../service/authentication/AuthenticationEvents":104,"../authentication/Authentication":14,"../etherpad/Etherpad":17,"../prezi/Prezi":18,"../side_pannels/SidePanelToggler":20,"../util/MessageHandler":31,"../util/UIUtil":33,"./BottomToolbar":27}],29:[function(require,module,exports){
+},{"../../../service/authentication/AuthenticationEvents":105,"../authentication/Authentication":16,"../etherpad/Etherpad":19,"../prezi/Prezi":20,"../side_pannels/SidePanelToggler":22,"../util/MessageHandler":33,"../util/UIUtil":35,"./BottomToolbar":29}],31:[function(require,module,exports){
 /* global $, interfaceConfig, Moderator, DesktopStreaming.showDesktopSharingButton */
 
 var toolbarTimeoutObject,
@@ -6232,7 +7808,7 @@ var ToolbarToggler = {
 };
 
 module.exports = ToolbarToggler;
-},{}],30:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 var JitsiPopover = (function () {
     /**
      * Constructs new JitsiPopover and attaches it to the element
@@ -6356,7 +7932,7 @@ var JitsiPopover = (function () {
 })();
 
 module.exports = JitsiPopover;
-},{}],31:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 /* global $, APP, jQuery, toastr */
 var messageHandler = (function(my) {
 
@@ -6564,7 +8140,7 @@ module.exports = messageHandler;
 
 
 
-},{}],32:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 var UIEvents = require("../../../service/UI/UIEvents");
 
 var nickname = null;
@@ -6595,7 +8171,7 @@ var NickanameHandler = {
 };
 
 module.exports = NickanameHandler;
-},{"../../../service/UI/UIEvents":103}],33:[function(require,module,exports){
+},{"../../../service/UI/UIEvents":104}],35:[function(require,module,exports){
 /**
  * Created by hristo on 12/22/14.
  */
@@ -6679,7 +8255,7 @@ module.exports = {
 
 
 };
-},{"../side_pannels/SidePanelToggler":20}],34:[function(require,module,exports){
+},{"../side_pannels/SidePanelToggler":22}],36:[function(require,module,exports){
 var JitsiPopover = require("../util/JitsiPopover");
 
 /**
@@ -7018,7 +8594,10 @@ ConnectionIndicator.prototype.create = function () {
  */
 ConnectionIndicator.prototype.remove = function()
 {
-    this.connectionIndicatorContainer.remove();
+    if (this.connectionIndicatorContainer.parentNode) {
+        this.connectionIndicatorContainer.parentNode.removeChild(
+            this.connectionIndicatorContainer);
+    }
     this.popover.forceHide();
 
 };
@@ -7098,13 +8677,15 @@ ConnectionIndicator.prototype.hideIndicator = function () {
 };
 
 module.exports = ConnectionIndicator;
-},{"../util/JitsiPopover":30}],35:[function(require,module,exports){
+},{"../util/JitsiPopover":32}],37:[function(require,module,exports){
 var Avatar = require("../avatar/Avatar");
+var RTCBrowserType = require("../../RTC/RTCBrowserType");
 var UIUtil = require("../util/UIUtil");
 var UIEvents = require("../../../service/UI/UIEvents");
 var xmpp = require("../../xmpp/xmpp");
 
-var video = $('#largeVideo');
+// FIXME: With Temasys we have to re-select everytime
+//var video = $('#largeVideo');
 
 var currentVideoWidth = null;
 var currentVideoHeight = null;
@@ -7345,9 +8926,7 @@ function changeVideo(isVisible) {
     }
 
     if (isVisible) {
-        // using "this" should be ok because we're called
-        // from within the fadeOut event.
-        $(this).fadeIn(300);
+        $('#largeVideo').fadeIn(300);
     }
 
     if(oldSmallVideo)
@@ -7361,12 +8940,16 @@ var LargeVideo = {
         this.eventEmitter = emitter;
         var self = this;
         // Listen for large video size updates
-        document.getElementById('largeVideo')
-            .addEventListener('loadedmetadata', function (e) {
-                currentVideoWidth = this.videoWidth;
-                currentVideoHeight = this.videoHeight;
-                self.position(currentVideoWidth, currentVideoHeight);
-            });
+        var largeVideo = $('#largeVideo')[0];
+        var onplaying = function (arg1, arg2, arg3) {
+            // re-select
+            if (RTCBrowserType.isTemasysPluginUsed())
+                largeVideo = $('#largeVideo')[0];
+            currentVideoWidth = largeVideo.videoWidth;
+            currentVideoHeight = largeVideo.videoHeight;
+            self.position(currentVideoWidth, currentVideoHeight);
+        };
+        largeVideo.onplaying = onplaying;
     },
     /**
      * Indicates if the large video is currently visible.
@@ -7374,14 +8957,14 @@ var LargeVideo = {
      * @return <tt>true</tt> if visible, <tt>false</tt> - otherwise
      */
     isLargeVideoVisible: function() {
-        return video.is(':visible');
+        return $('#largeVideo').is(':visible');
     },
     /**
      * Updates the large video with the given new video source.
      */
     updateLargeVideo: function(resourceJid, forceUpdate) {
-        console.log('hover in', resourceJid);
         var newSmallVideo = this.VideoLayout.getSmallVideo(resourceJid);
+        console.log('hover in ' + resourceJid + ', video: ', newSmallVideo);
 
         if ((currentSmallVideo && currentSmallVideo.resourceJid !== resourceJid)
             || forceUpdate) {
@@ -7404,8 +8987,8 @@ var LargeVideo = {
                 this.eventEmitter.emit(UIEvents.SELECTED_ENDPOINT,
                     resourceJid);
             }
-
-            video.fadeOut(300, changeVideo.bind(video, this.isLargeVideoVisible()));
+            $('#largeVideo').fadeOut(300,
+                changeVideo.bind($('#largeVideo'), this.isLargeVideoVisible()));
         } else {
             if(currentSmallVideo) {
                 currentSmallVideo.showAvatar();
@@ -7558,12 +9141,13 @@ var LargeVideo = {
 
 
 module.exports = LargeVideo;
-},{"../../../service/UI/UIEvents":103,"../../xmpp/xmpp":66,"../avatar/Avatar":16,"../etherpad/Etherpad":17,"../prezi/Prezi":18,"../util/UIUtil":33}],36:[function(require,module,exports){
+},{"../../../service/UI/UIEvents":104,"../../RTC/RTCBrowserType":10,"../../xmpp/xmpp":68,"../avatar/Avatar":18,"../etherpad/Etherpad":19,"../prezi/Prezi":20,"../util/UIUtil":35}],38:[function(require,module,exports){
 var SmallVideo = require("./SmallVideo");
 var ConnectionIndicator = require("./ConnectionIndicator");
 var NicknameHandler = require("../util/NicknameHandler");
 var UIUtil = require("../util/UIUtil");
 var LargeVideo = require("./LargeVideo");
+var RTCBrowserType = require("../../RTC/RTCBrowserType");
 
 function LocalVideo(VideoLayout)
 {
@@ -7724,13 +9308,18 @@ LocalVideo.prototype.changeVideo = function (stream, isMuted) {
     var self = this;
 
     function localVideoClick(event) {
-        event.stopPropagation();
+        // FIXME: with Temasys plugin event arg is not an event, but
+        // the clicked object itself, so we have to skip this call
+        if (event.stopPropagation) {
+            event.stopPropagation();
+        }
         self.VideoLayout.handleVideoThumbClicked(
             false,
             APP.xmpp.myResource());
     }
 
-    $('#localVideoContainer').click(localVideoClick);
+    $('#localVideoContainer').off('click');
+    $('#localVideoContainer').on('click', localVideoClick);
 
     // Add hover handler
     $('#localVideoContainer').hover(
@@ -7753,8 +9342,10 @@ LocalVideo.prototype.changeVideo = function (stream, isMuted) {
     var localVideo = document.createElement('video');
     localVideo.id = 'localVideo_' +
         APP.RTC.getStreamID(stream.getOriginalStream());
-    localVideo.autoplay = true;
-    localVideo.volume = 0; // is it required if audio is separated ?
+    if (!RTCBrowserType.isIExplorer()) {
+        localVideo.autoplay = true;
+        localVideo.volume = 0; // is it required if audio is separated ?
+    }
     localVideo.oncontextmenu = function () { return false; };
 
     var localVideoContainer = document.getElementById('localVideoWrapper');
@@ -7764,7 +9355,9 @@ LocalVideo.prototype.changeVideo = function (stream, isMuted) {
 
     // Add click handler to both video and video wrapper elements in case
     // there's no video.
-    localVideoSelector.click(localVideoClick);
+
+    // onclick has to be used with Temasys plugin
+    localVideo.onclick = localVideoClick;
 
     if (this.flipX) {
         localVideoSelector.addClass("flipVideoX");
@@ -7775,6 +9368,9 @@ LocalVideo.prototype.changeVideo = function (stream, isMuted) {
 
     // Add stream ended handler
     stream.getOriginalStream().onended = function () {
+        // We have to re-select after attach when Temasys plugin is used,
+        // because <video> element is replaced with <object>
+        localVideo = $('#' + localVideo.id)[0];
         localVideoContainer.removeChild(localVideo);
         self.VideoLayout.updateRemovedVideo(APP.xmpp.myResource());
     };
@@ -7786,12 +9382,13 @@ LocalVideo.prototype.joined = function (jid) {
 }
 
 module.exports = LocalVideo;
-},{"../util/NicknameHandler":32,"../util/UIUtil":33,"./ConnectionIndicator":34,"./LargeVideo":35,"./SmallVideo":38}],37:[function(require,module,exports){
+},{"../../RTC/RTCBrowserType":10,"../util/NicknameHandler":34,"../util/UIUtil":35,"./ConnectionIndicator":36,"./LargeVideo":37,"./SmallVideo":40}],39:[function(require,module,exports){
 var ConnectionIndicator = require("./ConnectionIndicator");
 var SmallVideo = require("./SmallVideo");
 var AudioLevels = require("../audio_levels/AudioLevels");
 var LargeVideo = require("./LargeVideo");
 var Avatar = require("../avatar/Avatar");
+var RTCBrowserType = require("../../RTC/RTCBrowserType");
 
 function RemoteVideo(peerJid, VideoLayout)
 {
@@ -7935,14 +9532,15 @@ RemoteVideo.prototype.removeRemoteStreamElement = function (stream, isVideo, id)
     select.remove();
 
     var audioCount = $('#' + this.videoSpanId + '>audio').length;
-    var videoCount = $('#' + this.videoSpanId + '>video').length;
+    var videoCount = $('#' + this.videoSpanId + '>' + APP.RTC.getVideoElementName()).length;
 
     if (!audioCount && !videoCount) {
         console.log("Remove whole user", this.videoSpanId);
         if(this.connectionIndicator)
             this.connectionIndicator.remove();
         // Remove whole container
-        this.container.remove();
+        if (this.container.parentNode)
+            this.container.parentNode.removeChild(this.container);
 
         this.VideoLayout.resizeThumbnails();
     }
@@ -7974,11 +9572,21 @@ RemoteVideo.prototype.addRemoteStreamElement = function (sid, stream, thessrc) {
         if (isVideo && stream.id !== 'mixedmslabel') {
             var onPlayingHandler = function () {
                 // FIXME: why do i have to do this for FF?
-                APP.RTC.attachMediaStream(sel, stream);
+                if (RTCBrowserType.isFirefox()) {
+                    APP.RTC.attachMediaStream(sel, stream);
+                }
+                if (RTCBrowserType.isTemasysPluginUsed()) {
+                    sel = $('#' + newElementId);
+                }
                 self.VideoLayout.videoactive(sel, self.resourceJid);
-                sel.off("playing", onPlayingHandler);
+                sel[0].onplaying = null;
+                if (RTCBrowserType.isTemasysPluginUsed()) {
+                    // 'currentTime' is used to check if the video has started
+                    // and the value is not set by the plugin, so we do it
+                    sel[0].currentTime = 1;
+                }
             };
-            sel.on("playing", onPlayingHandler);
+            sel[0].onplaying = onPlayingHandler;
         }
 
         APP.RTC.attachMediaStream(sel, stream);
@@ -7992,23 +9600,35 @@ RemoteVideo.prototype.addRemoteStreamElement = function (sid, stream, thessrc) {
 
     };
 
+    // Name of video element name is different for IE/Safari
+    var videoElem = APP.RTC.getVideoElementName();
+
     // Add click handler.
-    this.container.onclick = function (event) {
+    var onClickHandler = function (event) {
         /*
          * FIXME It turns out that videoThumb may not exist (if there is
          * no actual video).
          */
-        var videoThumb = $('#' + self.videoSpanId + '>video').get(0);
+        var videoThumb = $('#' + self.videoSpanId + '>' + videoElem).get(0);
         if (videoThumb) {
             self.VideoLayout.handleVideoThumbClicked(
                 false,
                 self.resourceJid);
         }
-
-        event.stopPropagation();
-        event.preventDefault();
+        // On IE we need to populate this handler on video <object>
+        // and it does not give event instance as an argument,
+        // so we check here for methods.
+        if (event.stopPropagation && event.preventDefault) {
+            event.stopPropagation();
+            event.preventDefault();
+        }
         return false;
     };
+    this.container.onclick = onClickHandler;
+    // reselect
+    if (RTCBrowserType.isTemasysPluginUsed())
+        sel = $('#' + newElementId);
+    sel[0].onclick = onClickHandler;
 
     //FIXME
     // Add hover handler
@@ -8018,9 +9638,9 @@ RemoteVideo.prototype.addRemoteStreamElement = function (sid, stream, thessrc) {
         },
         function() {
             var videoSrc = null;
-            if ($('#' + self.videoSpanId + '>video')
-                && $('#' + self.videoSpanId + '>video').length > 0) {
-                videoSrc = APP.RTC.getVideoSrc($('#' + self.videoSpanId + '>video').get(0));
+            var videoSelector = $('#' + self.videoSpanId + '>' + videoElem);
+            if (videoSelector && videoSelector.length > 0) {
+                videoSrc = APP.RTC.getVideoSrc(videoSelector.get(0));
             }
 
             // If the video has been "pinned" by the user we want to
@@ -8030,7 +9650,7 @@ RemoteVideo.prototype.addRemoteStreamElement = function (sid, stream, thessrc) {
                 self.showDisplayName(false);
         }
     );
-}
+},
 
 /**
  * Show/hide peer container for the given resourceJid.
@@ -8175,9 +9795,10 @@ RemoteVideo.createContainer = function (spanId) {
 
 
 module.exports = RemoteVideo;
-},{"../audio_levels/AudioLevels":12,"../avatar/Avatar":16,"./ConnectionIndicator":34,"./LargeVideo":35,"./SmallVideo":38}],38:[function(require,module,exports){
+},{"../../RTC/RTCBrowserType":10,"../audio_levels/AudioLevels":14,"../avatar/Avatar":18,"./ConnectionIndicator":36,"./LargeVideo":37,"./SmallVideo":40}],40:[function(require,module,exports){
 var UIUtil = require("../util/UIUtil");
 var LargeVideo = require("./LargeVideo");
+var RTCBrowserType = require("../../RTC/RTCBrowserType");
 
 function SmallVideo(){
     this.isMuted = false;
@@ -8274,7 +9895,9 @@ SmallVideo.createStreamElement = function (sid, stream) {
         + sid + '_' + APP.RTC.getStreamID(stream);
 
     element.id = id;
-    element.autoplay = true;
+    if (!RTCBrowserType.isIExplorer()) {
+        element.autoplay = true;
+    }
     element.oncontextmenu = function () { return false; };
 
     return element;
@@ -8382,7 +10005,7 @@ SmallVideo.prototype.enableDominantSpeaker = function (isEnable)
         return;
     }
 
-    var video = $('#' + this.videoSpanId + '>video');
+    var video = $('#' + this.videoSpanId + '>' + APP.RTC.getVideoElementName());
 
     if (video && video.length > 0) {
         if (isEnable) {
@@ -8453,8 +10076,10 @@ SmallVideo.prototype.createModeratorIndicatorElement = function () {
 
 
 SmallVideo.prototype.getSrc = function () {
-    return APP.RTC.getVideoSrc($('#' + this.videoSpanId).find("video").get(0));
-}
+    var videoElement = APP.RTC.getVideoElementName();
+    return APP.RTC.getVideoSrc(
+            $('#' + this.videoSpanId).find(videoElement).get(0));
+},
 
 SmallVideo.prototype.focus = function(isFocused)
 {
@@ -8468,7 +10093,8 @@ SmallVideo.prototype.focus = function(isFocused)
 }
 
 SmallVideo.prototype.hasVideo = function () {
-    return $("#" + this.videoSpanId).find("video").length !== 0;
+    return $("#" + this.videoSpanId).find(
+                APP.RTC.getVideoElementName()).length !== 0;
 }
 
 /**
@@ -8480,7 +10106,8 @@ SmallVideo.prototype.showAvatar = function (show) {
     if(!this.hasAvatar)
         return;
 
-    var video = $('#' + this.videoSpanId).find("video");
+    var videoElem = APP.RTC.getVideoElementName();
+    var video = $('#' + this.videoSpanId).find(videoElem);
     var avatar = $('#avatar_' + this.resourceJid);
 
     if (show === undefined || show === null) {
@@ -8527,12 +10154,16 @@ SmallVideo.prototype.avatarChanged = function (thumbUrl) {
 }
 
 module.exports = SmallVideo;
-},{"../util/UIUtil":33,"./LargeVideo":35}],39:[function(require,module,exports){
+},{"../../RTC/RTCBrowserType":10,"../util/UIUtil":35,"./LargeVideo":37}],41:[function(require,module,exports){
 var AudioLevels = require("../audio_levels/AudioLevels");
 var Avatar = require("../avatar/Avatar");
 var ContactList = require("../side_pannels/contactlist/ContactList");
 var MediaStreamType = require("../../../service/RTC/MediaStreamTypes");
 var UIEvents = require("../../../service/UI/UIEvents");
+
+var RTC = require("../../RTC/RTC");
+var RTCBrowserType = require('../../RTC/RTCBrowserType');
+
 var RemoteVideo = require("./RemoteVideo");
 var LargeVideo = require("./LargeVideo");
 var LocalVideo = require("./LocalVideo");
@@ -8578,11 +10209,15 @@ var VideoLayout = (function (my) {
     };
 
     my.changeLocalAudio = function(stream, isMuted) {
-        if(isMuted)
+        if (isMuted)
             APP.UI.setAudioMuted(true, true);
         APP.RTC.attachMediaStream($('#localAudio'), stream.getOriginalStream());
-        document.getElementById('localAudio').autoplay = true;
-        document.getElementById('localAudio').volume = 0;
+        var localAudio = document.getElementById('localAudio');
+        // Writing volume not allowed in IE
+        if (!RTCBrowserType.isIExplorer()) {
+            localAudio.autoplay = true;
+            localAudio.volume = 0;
+        }
     };
 
     my.changeLocalVideo = function(stream, isMuted) {
@@ -8637,22 +10272,26 @@ var VideoLayout = (function (my) {
      * @param removedVideoSrc src stream identifier of the video.
      */
     my.updateRemovedVideo = function(resourceJid) {
+
+        var videoElem = RTC.getVideoElementName();
+
         if (resourceJid === LargeVideo.getResourceJid()) {
             // this is currently displayed as large
             // pick the last visible video in the row
             // if nobody else is left, this picks the local video
             var pick
-                = $('#remoteVideos>span[id!="mixedstream"]:visible:last>video')
-                    .get(0);
+                = $('#remoteVideos>' +
+                    'span[id!="mixedstream"]:visible:last>' + videoElem).get(0);
 
             if (!pick) {
                 console.info("Last visible video no longer exists");
-                pick = $('#remoteVideos>span[id!="mixedstream"]>video').get(0);
+                pick = $('#remoteVideos>' +
+                    'span[id!="mixedstream"]>' + videoElem).get(0);
 
                 if (!pick || !APP.RTC.getVideoSrc(pick)) {
                     // Try local video
                     console.info("Fallback to local video...");
-                    pick = $('#remoteVideos>span>span>video').get(0);
+                    pick = $('#remoteVideos>span>span>' + videoElem).get(0);
                 }
             }
 
@@ -8753,10 +10392,13 @@ var VideoLayout = (function (my) {
 
         LargeVideo.updateLargeVideo(resourceJid);
 
-        $('audio').each(function (idx, el) {
-            el.volume = 0;
-            el.volume = 1;
-        });
+        // Writing volume not allowed in IE
+        if (!RTCBrowserType.isIExplorer()) {
+            $('audio').each(function (idx, el) {
+                el.volume = 0;
+                el.volume = 1;
+            });
+        }
     };
 
 
@@ -8982,7 +10624,8 @@ var VideoLayout = (function (my) {
         var resource = Strophe.getResourceFromJid(jid);
         var videoContainer = $("#participant_" + resource);
         if (videoContainer.length > 0) {
-            var videoThumb = $('video', videoContainer).get(0);
+            var videoThumb
+                    = $(RTC.getVideoElementName(), videoContainer).get(0);
             // It is not always the case that a videoThumb exists (if there is
             // no actual video).
             if (videoThumb) {
@@ -9101,7 +10744,8 @@ var VideoLayout = (function (my) {
         // since we don't want to switch to local video.
         if (container && !focusedVideoResourceJid)
         {
-            var video = container.getElementsByTagName("video");
+            var video
+                = container.getElementsByTagName(RTC.getVideoElementName());
 
             // Update the large video if the video source is already available,
             // otherwise wait for the "videoactive.jingle" event.
@@ -9203,7 +10847,8 @@ var VideoLayout = (function (my) {
 
                     var jid = APP.xmpp.findJidFromResource(resourceJid);
                     var mediaStream = APP.RTC.remoteStreams[jid][MediaStreamType.VIDEO_TYPE];
-                    var sel = $('#participant_' + resourceJid + '>video');
+                    var sel = $('#participant_' + resourceJid +
+                                '>' + RTC.getVideoElementName());
 
                     APP.RTC.attachMediaStream(sel, mediaStream.stream);
                     if (lastNPickupJid == mediaStream.peerjid) {
@@ -9392,7 +11037,7 @@ var VideoLayout = (function (my) {
 }(VideoLayout || {}));
 
 module.exports = VideoLayout;
-},{"../../../service/RTC/MediaStreamTypes":98,"../../../service/UI/UIEvents":103,"../audio_levels/AudioLevels":12,"../avatar/Avatar":16,"../prezi/Prezi":18,"../side_pannels/contactlist/ContactList":25,"./LargeVideo":35,"./LocalVideo":36,"./RemoteVideo":37}],40:[function(require,module,exports){
+},{"../../../service/RTC/MediaStreamTypes":100,"../../../service/UI/UIEvents":104,"../../RTC/RTC":9,"../../RTC/RTCBrowserType":10,"../audio_levels/AudioLevels":14,"../avatar/Avatar":18,"../prezi/Prezi":20,"../side_pannels/contactlist/ContactList":27,"./LargeVideo":37,"./LocalVideo":38,"./RemoteVideo":39}],42:[function(require,module,exports){
 //var nouns = [
 //];
 var pluralNouns = [
@@ -9573,7 +11218,7 @@ var RoomNameGenerator = {
 
 module.exports = RoomNameGenerator;
 
-},{}],41:[function(require,module,exports){
+},{}],43:[function(require,module,exports){
 var animateTimeout, updateTimeout;
 
 var RoomNameGenerator = require("./RoomnameGenerator");
@@ -9675,7 +11320,7 @@ function setupWelcomePage()
 }
 
 module.exports = setupWelcomePage;
-},{"./RoomnameGenerator":40}],42:[function(require,module,exports){
+},{"./RoomnameGenerator":42}],44:[function(require,module,exports){
 var params = {};
 function getConfigParamsFromUrl() {
     if(!location.hash)
@@ -9716,7 +11361,7 @@ var URLProcessor = {
 };
 
 module.exports = URLProcessor;
-},{}],43:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 var EventEmitter = require("events");
 var eventEmitter = new EventEmitter();
 var CQEvents = require("../../service/connectionquality/CQEvents");
@@ -9851,7 +11496,7 @@ var ConnectionQuality = {
 };
 
 module.exports = ConnectionQuality;
-},{"../../service/connectionquality/CQEvents":105,"../../service/xmpp/XMPPEvents":109,"events":1}],44:[function(require,module,exports){
+},{"../../service/connectionquality/CQEvents":106,"../../service/xmpp/XMPPEvents":110,"events":1}],46:[function(require,module,exports){
 /* global $, alert, APP, changeLocalVideo, chrome, config, getConferenceHandler,
  getUserMediaWithConstraints */
 /**
@@ -9885,13 +11530,7 @@ var extInstalled = false;
  */
 var extUpdateRequired = false;
 
-/**
- * Flag used to cache desktop sharing enabled state. Do not use directly as
- * it can be <tt>null</tt>.
- *
- * @type {null|boolean}
- */
-var _desktopSharingEnabled = null;
+var AdapterJS = require("../RTC/adapter.screenshare");
 
 var EventEmitter = require("events");
 
@@ -9899,6 +11538,10 @@ var eventEmitter = new EventEmitter();
 
 var DesktopSharingEventTypes
     = require("../../service/desktopsharing/DesktopSharingEventTypes");
+
+var RTCBrowserType = require("../RTC/RTCBrowserType");
+
+var RTCEvents = require("../../service/RTC/RTCEvents");
 
 /**
  * Method obtains desktop stream from WebRTC 'screen' source.
@@ -9970,7 +11613,7 @@ function isUpdateRequired(minVersion, extVersion)
     }
 }
 
-function checkExtInstalled(callback) {
+function checkChromeExtInstalled(callback) {
     if (!chrome.runtime) {
         // No API, so no extension for sure
         callback(false, false);
@@ -10067,20 +11710,39 @@ function obtainScreenFromExtension(streamCallback, failCallback) {
  *        feature completely.
  */
 function setDesktopSharing(method) {
-    // Check if we are running chrome
-    if (!navigator.webkitGetUserMedia) {
-        obtainDesktopStream = null;
-        console.info("Desktop sharing disabled");
-    } else if (method == "ext") {
-        obtainDesktopStream = obtainScreenFromExtension;
-        console.info("Using Chrome extension for desktop sharing");
-    } else if (method == "webrtc") {
-        obtainDesktopStream = obtainWebRTCScreen;
-        console.info("Using Chrome WebRTC for desktop sharing");
+
+    obtainDesktopStream = null;
+
+    // When TemasysWebRTC plugin is used we always use getUserMedia, so we don't
+    // care about 'method' parameter
+    if (RTCBrowserType.isTemasysPluginUsed()) {
+        if (!AdapterJS.WebRTCPlugin.plugin.HasScreensharingFeature) {
+            console.info("Screensharing not supported by this plugin version");
+        } else if (!AdapterJS.WebRTCPlugin.plugin.isScreensharingAvailable) {
+            console.info(
+            "Screensharing not available with Temasys plugin on this site");
+        } else {
+            obtainDesktopStream = obtainWebRTCScreen;
+            console.info("Using Temasys plugin for desktop sharing");
+        }
+    } else if (RTCBrowserType.isChrome()) {
+        if (method == "ext") {
+            if (RTCBrowserType.getChromeVersion() >= 34) {
+                obtainDesktopStream = obtainScreenFromExtension;
+                console.info("Using Chrome extension for desktop sharing");
+                initChromeExtension();
+            } else {
+                console.info("Chrome extension not supported until ver 34");
+            }
+        } else if (method == "webrtc") {
+            obtainDesktopStream = obtainWebRTCScreen;
+            console.info("Using Chrome WebRTC for desktop sharing");
+        }
     }
 
-    // Reset enabled cache
-    _desktopSharingEnabled = null;
+    if (!obtainDesktopStream) {
+        console.info("Desktop sharing disabled");
+    }
 }
 
 /**
@@ -10091,6 +11753,19 @@ function setDesktopSharing(method) {
 function initInlineInstalls()
 {
     $("link[rel=chrome-webstore-item]").attr("href", getWebStoreInstallUrl());
+}
+
+function initChromeExtension() {
+    // Initialize Chrome extension inline installs
+    initInlineInstalls();
+    // Check if extension is installed
+    checkChromeExtInstalled(function (installed, updateRequired) {
+        extInstalled = installed;
+        extUpdateRequired = updateRequired;
+        console.info(
+            "Chrome extension installed: " + extInstalled +
+            " updateRequired: " + extUpdateRequired);
+    });
 }
 
 function getVideoStreamFailed(error) {
@@ -10118,6 +11793,25 @@ function newStreamCreated(stream)
         stream, isUsingScreenStream, streamSwitchDone);
 }
 
+function onEndedHandler(stream) {
+    if (!switchInProgress && isUsingScreenStream) {
+        APP.desktopsharing.toggleScreenSharing();
+    }
+    //FIXME: to be verified
+    if (stream.removeEventListener) {
+        stream.removeEventListener('ended', onEndedHandler);
+    } else {
+        stream.detachEvent('ended', onEndedHandler);
+    }
+}
+
+// Called when RTC finishes initialization
+function onWebRtcReady() {
+
+    setDesktopSharing(config.desktopSharing);
+
+    eventEmitter.emit(DesktopSharingEventTypes.INIT);
+}
 
 module.exports = {
     isUsingScreenStream: function () {
@@ -10128,43 +11822,10 @@ module.exports = {
      * @returns {boolean} <tt>true</tt> if desktop sharing feature is available
      *          and enabled.
      */
-    isDesktopSharingEnabled: function () {
-        if (_desktopSharingEnabled === null) {
-            if (obtainDesktopStream === obtainScreenFromExtension) {
-                // Parse chrome version
-                var userAgent = navigator.userAgent.toLowerCase();
-                // We can assume that user agent is chrome, because it's
-                // enforced when 'ext' streaming method is set
-                var ver = parseInt(userAgent.match(/chrome\/(\d+)\./)[1], 10);
-                console.log("Chrome version" + userAgent, ver);
-                _desktopSharingEnabled = ver >= 34;
-            } else {
-                _desktopSharingEnabled =
-                    obtainDesktopStream === obtainWebRTCScreen;
-            }
-        }
-        return _desktopSharingEnabled;
-    },
+    isDesktopSharingEnabled: function () { return !!obtainDesktopStream; },
     
     init: function () {
-        setDesktopSharing(config.desktopSharing);
-
-        // Initialize Chrome extension inline installs
-        if (config.chromeExtensionId) {
-
-            initInlineInstalls();
-
-            // Check if extension is installed
-            checkExtInstalled(function (installed, updateRequired) {
-                extInstalled = installed;
-                extUpdateRequired = updateRequired;
-                console.info(
-                    "Chrome extension installed: " + extInstalled +
-                    " updateRequired: " + extUpdateRequired);
-            });
-        }
-
-        eventEmitter.emit(DesktopSharingEventTypes.INIT);
+        APP.RTC.addListener(RTCEvents.RTC_READY, onWebRtcReady);
     },
 
     addListener: function (listener, type)
@@ -10195,13 +11856,16 @@ module.exports = {
                     isUsingScreenStream = true;
                     // Hook 'ended' event to restore camera
                     // when screen stream stops
-                    stream.addEventListener('ended',
-                        function (e) {
-                            if (!switchInProgress && isUsingScreenStream) {
-                                APP.desktopsharing.toggleScreenSharing();
-                            }
-                        }
-                    );
+                    //FIXME: to be verified
+                    if (stream.addEventListener) {
+                        stream.addEventListener('ended', function () {
+                            onEndedHandler(stream);
+                        });
+                    } else {
+                        stream.attachEvent('ended', function () {
+                            onEndedHandler(stream);
+                        });
+                    }
                     newStreamCreated(stream);
                 },
                 getDesktopStreamFailed);
@@ -10221,7 +11885,7 @@ module.exports = {
 };
 
 
-},{"../../service/desktopsharing/DesktopSharingEventTypes":106,"events":1}],45:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":101,"../../service/desktopsharing/DesktopSharingEventTypes":107,"../RTC/RTCBrowserType":10,"../RTC/adapter.screenshare":12,"events":1}],47:[function(require,module,exports){
 //maps keycode to character, id of popover for given function and function
 var shortcuts = {
     67: {
@@ -10314,7 +11978,7 @@ var KeyboardShortcut = {
 
 module.exports = KeyboardShortcut;
 
-},{}],46:[function(require,module,exports){
+},{}],48:[function(require,module,exports){
 /* global APP */
 
 /**
@@ -10445,7 +12109,7 @@ var Members = {
 
 module.exports = Members;
 
-},{"../../service/members/Events":107,"../../service/xmpp/XMPPEvents":109,"events":1}],47:[function(require,module,exports){
+},{"../../service/members/Events":108,"../../service/xmpp/XMPPEvents":110,"events":1}],49:[function(require,module,exports){
 var email = '';
 var displayName = '';
 var userId;
@@ -10512,7 +12176,7 @@ var Settings =
 
 module.exports = Settings;
 
-},{}],48:[function(require,module,exports){
+},{}],50:[function(require,module,exports){
 /**
  * Provides statistics for the local stream.
  */
@@ -10643,10 +12307,10 @@ LocalStatsCollector.prototype.stop = function () {
 };
 
 module.exports = LocalStatsCollector;
-},{}],49:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 /* global ssrc2jid */
 /* jshint -W117 */
-var RTCBrowserType = require("../../service/RTC/RTCBrowserType");
+var RTCBrowserType = require("../RTC/RTCBrowserType");
 
 
 /**
@@ -10663,10 +12327,12 @@ function calculatePacketLoss(lostPackets, totalPackets) {
 }
 
 function getStatValue(item, name) {
-    if(!keyMap[APP.RTC.getBrowserType()][name])
+    var browserType = RTCBrowserType.getBrowserType();
+    if (!keyMap[browserType][name])
         throw "The property isn't supported!";
-    var key = keyMap[APP.RTC.getBrowserType()][name];
-    return APP.RTC.getBrowserType() == RTCBrowserType.RTC_BROWSER_CHROME? item.stat(key) : item[key];
+    var key = keyMap[browserType][name];
+    return (RTCBrowserType.isChrome() || RTCBrowserType.isOpera()) ?
+        item.stat(key) : item[key];
 }
 
 /**
@@ -11061,6 +12727,8 @@ keyMap[RTCBrowserType.RTC_BROWSER_CHROME] = {
     "audioInputLevel": "audioInputLevel",
     "audioOutputLevel": "audioOutputLevel"
 };
+keyMap[RTCBrowserType.RTC_BROWSER_OPERA] =
+    keyMap[RTCBrowserType.RTC_BROWSER_CHROME];
 
 
 /**
@@ -11385,7 +13053,7 @@ StatsCollector.prototype.processAudioLevelReport = function ()
 
 };
 
-},{"../../service/RTC/RTCBrowserType":99}],50:[function(require,module,exports){
+},{"../RTC/RTCBrowserType":10}],52:[function(require,module,exports){
 var callStats = null;
 
 function initCallback (err, msg) {
@@ -11462,7 +13130,7 @@ var CallStats = {
 
 };
 module.exports = CallStats;
-},{}],51:[function(require,module,exports){
+},{}],53:[function(require,module,exports){
 /**
  * Created by hristo on 8/4/14.
  */
@@ -11612,7 +13280,7 @@ var statistics =
 
 
 module.exports = statistics;
-},{"../../service/RTC/RTCEvents":100,"../../service/RTC/StreamEventTypes.js":102,"../../service/xmpp/XMPPEvents":109,"./LocalStatsCollector.js":48,"./RTPStatsCollector.js":49,"./callstats":50,"events":1}],52:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":101,"../../service/RTC/StreamEventTypes.js":103,"../../service/xmpp/XMPPEvents":110,"./LocalStatsCollector.js":50,"./RTPStatsCollector.js":51,"./callstats":52,"events":1}],54:[function(require,module,exports){
 var i18n = require("i18next-client");
 var languages = require("../../service/translation/languages");
 var Settings = require("../settings/Settings");
@@ -11751,7 +13419,7 @@ module.exports = {
     }
 };
 
-},{"../../service/translation/languages":108,"../settings/Settings":47,"i18next-client":68}],53:[function(require,module,exports){
+},{"../../service/translation/languages":109,"../settings/Settings":49,"i18next-client":70}],55:[function(require,module,exports){
 /* jshint -W117 */
 var TraceablePeerConnection = require("./TraceablePeerConnection");
 var SDPDiffer = require("./SDPDiffer");
@@ -11760,6 +13428,7 @@ var SDP = require("./SDP");
 var async = require("async");
 var transform = require("sdp-transform");
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
+var RTCBrowserType = require("../RTC/RTCBrowserType");
 
 // Jingle stuff
 function JingleSession(me, sid, connection, service, eventEmitter) {
@@ -13086,9 +14755,10 @@ JingleSession.prototype.remoteStreamAdded = function (data, times) {
     var self = this;
     var thessrc;
     var ssrc2jid = this.connection.emuc.ssrc2jid;
+    var streamId = APP.RTC.getStreamID(data.stream);
 
     // look up an associated JID for a stream id
-    if (data.stream.id && data.stream.id.indexOf('mixedmslabel') === -1) {
+    if (streamId && streamId.indexOf('mixedmslabel') === -1) {
         // look only at a=ssrc: and _not_ at a=ssrc-group: lines
 
         var ssrclines
@@ -13098,7 +14768,11 @@ JingleSession.prototype.remoteStreamAdded = function (data, times) {
             // is not always present.
             // return line.indexOf('mslabel:' + data.stream.label) !== -1;
 
-            return ((line.indexOf('msid:' + data.stream.id) !== -1));
+            if (RTCBrowserType.isTemasysPluginUsed()) {
+                return ((line.indexOf('mslabel:' + streamId) !== -1));
+            } else {
+                return ((line.indexOf('msid:' + streamId) !== -1));
+            }
         });
         if (ssrclines.length) {
             thessrc = ssrclines[0].substring(7).split(' ')[0];
@@ -13133,7 +14807,7 @@ JingleSession.prototype.remoteStreamAdded = function (data, times) {
             }
 
             // ok to overwrite the one from focus? might save work in colibri.js
-            console.log('associated jid', ssrc2jid[thessrc], data.peerjid);
+            console.log('associated jid', ssrc2jid[thessrc], thessrc);
             if (ssrc2jid[thessrc]) {
                 data.peerjid = ssrc2jid[thessrc];
             }
@@ -13156,7 +14830,7 @@ JingleSession.prototype.remoteStreamAdded = function (data, times) {
 
 module.exports = JingleSession;
 
-},{"../../service/xmpp/XMPPEvents":109,"./SDP":54,"./SDPDiffer":55,"./SDPUtil":56,"./TraceablePeerConnection":57,"async":67,"sdp-transform":95}],54:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":110,"../RTC/RTCBrowserType":10,"./SDP":56,"./SDPDiffer":57,"./SDPUtil":58,"./TraceablePeerConnection":59,"async":69,"sdp-transform":97}],56:[function(require,module,exports){
 /* jshint -W117 */
 var SDPUtil = require("./SDPUtil");
 
@@ -13377,8 +15051,12 @@ SDP.prototype.toJingle = function (elem, thecreator, ssrcs) {
                         if (kv.indexOf(':') == -1) {
                             elem.attrs({ name: kv });
                         } else {
-                            elem.attrs({ name: kv.split(':', 2)[0] });
-                            elem.attrs({ value: kv.split(':', 2)[1] });
+                            var k = kv.split(':', 2)[0];
+                            elem.attrs({ name: k });
+
+                            var v = kv.split(':', 2)[1];
+                            v = SDPUtil.filter_special_chars(v);
+                            elem.attrs({ value: v });
                         }
                         elem.up();
                     });
@@ -13402,7 +15080,7 @@ SDP.prototype.toJingle = function (elem, thecreator, ssrcs) {
                     }
                     if(msid != null)
                     {
-                        msid = msid.replace(/[\{,\}]/g,"");
+                        msid = SDPUtil.filter_special_chars(msid);
                         elem.c('parameter');
                         elem.attrs({name: "msid", value:msid});
                         elem.up();
@@ -13764,9 +15442,12 @@ SDP.prototype.jingle2media = function (content) {
     tmp.each(function () {
         var ssrc = this.getAttribute('ssrc');
         $(this).find('>parameter').each(function () {
-            media += 'a=ssrc:' + ssrc + ' ' + this.getAttribute('name');
-            if (this.getAttribute('value') && this.getAttribute('value').length)
-                media += ':' + this.getAttribute('value');
+            var name = this.getAttribute('name');
+            var value = this.getAttribute('value');
+            value = SDPUtil.filter_special_chars(value);
+            media += 'a=ssrc:' + ssrc + ' ' + name;
+            if (value && value.length)
+                media += ':' + value;
             media += '\r\n';
         });
     });
@@ -13778,7 +15459,10 @@ SDP.prototype.jingle2media = function (content) {
 module.exports = SDP;
 
 
-},{"./SDPUtil":56}],55:[function(require,module,exports){
+},{"./SDPUtil":58}],57:[function(require,module,exports){
+
+var SDPUtil = require("./SDPUtil");
+
 function SDPDiffer(mySDP, otherSDP) {
     this.mySDP = mySDP;
     this.otherSDP = otherSDP;
@@ -13911,8 +15595,11 @@ SDPDiffer.prototype.toJingle = function(modify) {
                 if (kv.indexOf(':') == -1) {
                     modify.attrs({ name: kv });
                 } else {
-                    modify.attrs({ name: kv.split(':', 2)[0] });
-                    modify.attrs({ value: kv.split(':', 2)[1] });
+                    var nv = kv.split(':', 2);
+                    var name = nv[0];
+                    var value = SDPUtil.filter_special_chars(nv[1]);
+                    modify.attrs({ name: name });
+                    modify.attrs({ value: value });
                 }
                 modify.up(); // end of parameter
             });
@@ -13944,8 +15631,11 @@ SDPDiffer.prototype.toJingle = function(modify) {
 };
 
 module.exports = SDPDiffer;
-},{}],56:[function(require,module,exports){
+},{"./SDPUtil":58}],58:[function(require,module,exports){
 SDPUtil = {
+    filter_special_chars: function (text) {
+        return text.replace(/[\\\/\{,\}\+]/g, "");
+    },
     iceparams: function (mediadesc, sessiondesc) {
         var data = null;
         if (SDPUtil.find_line(mediadesc, 'a=ice-ufrag:', sessiondesc) &&
@@ -14294,13 +15984,22 @@ SDPUtil = {
     }
 };
 module.exports = SDPUtil;
-},{}],57:[function(require,module,exports){
+},{}],59:[function(require,module,exports){
+var RTC = require('../RTC/RTC');
+var RTCBrowserType = require("../RTC/RTCBrowserType.js");
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 
 function TraceablePeerConnection(ice_config, constraints, session) {
     var self = this;
-    var RTCPeerconnection = navigator.mozGetUserMedia ? mozRTCPeerConnection : webkitRTCPeerConnection;
-    this.peerconnection = new RTCPeerconnection(ice_config, constraints);
+    var RTCPeerconnectionType = null;
+    if (RTCBrowserType.isFirefox()) {
+        RTCPeerconnectionType = mozRTCPeerConnection;
+    } else if (RTCBrowserType.isTemasysPluginUsed()) {
+        RTCPeerconnectionType = RTCPeerConnection;
+    } else {
+        RTCPeerconnectionType = webkitRTCPeerConnection;
+    }
+    this.peerconnection = new RTCPeerconnectionType(ice_config, constraints);
     this.updateLog = [];
     this.stats = {};
     this.statsinterval = null;
@@ -14312,7 +16011,15 @@ function TraceablePeerConnection(ice_config, constraints, session) {
 
     // override as desired
     this.trace = function (what, info) {
-        //console.warn('WTRACE', what, info);
+        /*console.warn('WTRACE', what, info);
+        if (info && RTCBrowserType.isIExplorer()) {
+            if (info.length > 1024) {
+                console.warn('WTRACE', what, info.substr(1024));
+            }
+            if (info.length > 2048) {
+                console.warn('WTRACE', what, info.substr(2048));
+            }
+        }*/
         self.updateLog.push({
             time: new Date(),
             type: what,
@@ -14321,7 +16028,9 @@ function TraceablePeerConnection(ice_config, constraints, session) {
     };
     this.onicecandidate = null;
     this.peerconnection.onicecandidate = function (event) {
-        self.trace('onicecandidate', JSON.stringify(event.candidate, null, ' '));
+        // FIXME: this causes stack overflow with Temasys Plugin
+        if (!RTCBrowserType.isTemasysPluginUsed())
+            self.trace('onicecandidate', JSON.stringify(event.candidate, null, ' '));
         if (self.onicecandidate !== null) {
             self.onicecandidate(event);
         }
@@ -14452,16 +16161,26 @@ TraceablePeerConnection.prototype.removeStream = function (stream, stopStreams) 
     this.trace('removeStream', stream.id);
     if(stopStreams) {
         stream.getAudioTracks().forEach(function (track) {
-            track.stop();
+            // stop() not supported with IE
+            if (track.stop) {
+                track.stop();
+            }
         });
         stream.getVideoTracks().forEach(function (track) {
-            track.stop();
+            // stop() not supported with IE
+            if (track.stop) {
+                track.stop();
+            }
         });
+        if (stream.stop) {
+            stream.stop();
+        }
     }
 
     try {
         // FF doesn't support this yet.
-        this.peerconnection.removeStream(stream);
+        if (this.peerconnection.removeStream)
+            this.peerconnection.removeStream(stream);
     } catch (e) {
         console.error(e);
     }
@@ -14623,7 +16342,7 @@ TraceablePeerConnection.prototype.getStats = function(callback, errback) {
 module.exports = TraceablePeerConnection;
 
 
-},{"../../service/xmpp/XMPPEvents":109,"sdp-interop":89,"sdp-simulcast":92}],58:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":110,"../RTC/RTC":9,"../RTC/RTCBrowserType.js":10,"sdp-interop":91,"sdp-simulcast":94}],60:[function(require,module,exports){
 /* global $, $iq, APP, config, connection, UI, messageHandler,
  roomName, sessionTerminated, Strophe, Util */
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
@@ -15059,7 +16778,7 @@ module.exports = Moderator;
 
 
 
-},{"../../service/authentication/AuthenticationEvents":104,"../../service/xmpp/XMPPEvents":109,"../settings/Settings":47}],59:[function(require,module,exports){
+},{"../../service/authentication/AuthenticationEvents":105,"../../service/xmpp/XMPPEvents":110,"../settings/Settings":49}],61:[function(require,module,exports){
 /* global $, $iq, config, connection, focusMucJid, messageHandler, Moderator,
    Toolbar, Util */
 var Moderator = require("./moderator");
@@ -15215,7 +16934,7 @@ var Recording = {
 }
 
 module.exports = Recording;
-},{"./moderator":58}],60:[function(require,module,exports){
+},{"./moderator":60}],62:[function(require,module,exports){
 /* jshint -W117 */
 /* a simple MUC connection plugin
  * can only handle a single MUC room
@@ -15246,12 +16965,11 @@ module.exports = function(XMPP, eventEmitter) {
         initPresenceMap: function (myroomjid) {
             this.presMap['to'] = myroomjid;
             this.presMap['xns'] = 'http://jabber.org/protocol/muc';
-            if(APP.RTC.localAudio.isMuted())
+            if (APP.RTC.localAudio && APP.RTC.localAudio.isMuted())
             {
                 this.addAudioInfoToPresence(true);
             }
-
-            if(APP.RTC.localVideo.isMuted())
+            if (APP.RTC.localVideo && APP.RTC.localVideo.isMuted())
             {
                 this.addVideoInfoToPresence(true);
             }
@@ -15914,7 +17632,7 @@ module.exports = function(XMPP, eventEmitter) {
 };
 
 
-},{"../../service/xmpp/XMPPEvents":109,"./JingleSession":53,"./moderator":58}],61:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":110,"./JingleSession":55,"./moderator":60}],63:[function(require,module,exports){
 /* jshint -W117 */
 
 var JingleSession = require("./JingleSession");
@@ -16263,7 +17981,7 @@ module.exports = function(XMPP, eventEmitter)
 };
 
 
-},{"../../service/xmpp/XMPPEvents":109,"./JingleSession":53}],62:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":110,"./JingleSession":55}],64:[function(require,module,exports){
 /* global Strophe */
 module.exports = function () {
 
@@ -16284,7 +18002,7 @@ module.exports = function () {
         }
     });
 };
-},{}],63:[function(require,module,exports){
+},{}],65:[function(require,module,exports){
 /* global $, $iq, config, connection, focusMucJid, forceMuted,
    setAudioMuted, Strophe */
 /**
@@ -16343,7 +18061,7 @@ module.exports = function (XMPP) {
         }
     });
 }
-},{}],64:[function(require,module,exports){
+},{}],66:[function(require,module,exports){
 /* jshint -W117 */
 module.exports = function() {
     Strophe.addConnectionPlugin('rayo',
@@ -16440,7 +18158,7 @@ module.exports = function() {
     );
 };
 
-},{}],65:[function(require,module,exports){
+},{}],67:[function(require,module,exports){
 /**
  * Strophe logger implementation. Logs from level WARN and above.
  */
@@ -16484,7 +18202,7 @@ module.exports = function () {
     };
 };
 
-},{}],66:[function(require,module,exports){
+},{}],68:[function(require,module,exports){
 /* global $, APP, config, Strophe*/
 var Moderator = require("./moderator");
 var EventEmitter = require("events");
@@ -17100,7 +18818,7 @@ var XMPP = {
 
 module.exports = XMPP;
 
-},{"../../service/RTC/RTCEvents":100,"../../service/RTC/StreamEventTypes":102,"../../service/UI/UIEvents":103,"../../service/xmpp/XMPPEvents":109,"../settings/Settings":47,"./SDP":54,"./moderator":58,"./recording":59,"./strophe.emuc":60,"./strophe.jingle":61,"./strophe.logger":62,"./strophe.moderate":63,"./strophe.rayo":64,"./strophe.util":65,"events":1,"pako":69,"retry":85}],67:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":101,"../../service/RTC/StreamEventTypes":103,"../../service/UI/UIEvents":104,"../../service/xmpp/XMPPEvents":110,"../settings/Settings":49,"./SDP":56,"./moderator":60,"./recording":61,"./strophe.emuc":62,"./strophe.jingle":63,"./strophe.logger":64,"./strophe.moderate":65,"./strophe.rayo":66,"./strophe.util":67,"events":1,"pako":71,"retry":87}],69:[function(require,module,exports){
 (function (process){
 /*!
  * async
@@ -18227,7 +19945,7 @@ module.exports = XMPP;
 }());
 
 }).call(this,require('_process'))
-},{"_process":2}],68:[function(require,module,exports){
+},{"_process":2}],70:[function(require,module,exports){
 // i18next, v1.7.7
 // Copyright (c)2014 Jan Mühlemann (jamuhl).
 // Distributed under MIT license
@@ -20350,7 +22068,7 @@ module.exports = XMPP;
     i18n.options = o;
 
 })();
-},{"jquery":"jquery"}],69:[function(require,module,exports){
+},{"jquery":"jquery"}],71:[function(require,module,exports){
 // Top level file is just a mixin of submodules & constants
 'use strict';
 
@@ -20366,7 +22084,7 @@ assign(pako, deflate, inflate, constants);
 
 module.exports = pako;
 
-},{"./lib/deflate":70,"./lib/inflate":71,"./lib/utils/common":72,"./lib/zlib/constants":75}],70:[function(require,module,exports){
+},{"./lib/deflate":72,"./lib/inflate":73,"./lib/utils/common":74,"./lib/zlib/constants":77}],72:[function(require,module,exports){
 'use strict';
 
 
@@ -20744,7 +22462,7 @@ exports.deflate = deflate;
 exports.deflateRaw = deflateRaw;
 exports.gzip = gzip;
 
-},{"./utils/common":72,"./utils/strings":73,"./zlib/deflate.js":77,"./zlib/messages":82,"./zlib/zstream":84}],71:[function(require,module,exports){
+},{"./utils/common":74,"./utils/strings":75,"./zlib/deflate.js":79,"./zlib/messages":84,"./zlib/zstream":86}],73:[function(require,module,exports){
 'use strict';
 
 
@@ -21125,7 +22843,7 @@ exports.inflate = inflate;
 exports.inflateRaw = inflateRaw;
 exports.ungzip  = inflate;
 
-},{"./utils/common":72,"./utils/strings":73,"./zlib/constants":75,"./zlib/gzheader":78,"./zlib/inflate.js":80,"./zlib/messages":82,"./zlib/zstream":84}],72:[function(require,module,exports){
+},{"./utils/common":74,"./utils/strings":75,"./zlib/constants":77,"./zlib/gzheader":80,"./zlib/inflate.js":82,"./zlib/messages":84,"./zlib/zstream":86}],74:[function(require,module,exports){
 'use strict';
 
 
@@ -21229,7 +22947,7 @@ exports.setTyped = function (on) {
 
 exports.setTyped(TYPED_OK);
 
-},{}],73:[function(require,module,exports){
+},{}],75:[function(require,module,exports){
 // String encode/decode helpers
 'use strict';
 
@@ -21416,7 +23134,7 @@ exports.utf8border = function(buf, max) {
   return (pos + _utf8len[buf[pos]] > max) ? pos : max;
 };
 
-},{"./common":72}],74:[function(require,module,exports){
+},{"./common":74}],76:[function(require,module,exports){
 'use strict';
 
 // Note: adler32 takes 12% for level 0 and 2% for level 6.
@@ -21450,7 +23168,7 @@ function adler32(adler, buf, len, pos) {
 
 module.exports = adler32;
 
-},{}],75:[function(require,module,exports){
+},{}],77:[function(require,module,exports){
 module.exports = {
 
   /* Allowed flush values; see deflate() and inflate() below for details */
@@ -21499,7 +23217,7 @@ module.exports = {
   //Z_NULL:                 null // Use -1 or null inline, depending on var type
 };
 
-},{}],76:[function(require,module,exports){
+},{}],78:[function(require,module,exports){
 'use strict';
 
 // Note: we can't get significant speed boost here.
@@ -21542,7 +23260,7 @@ function crc32(crc, buf, len, pos) {
 
 module.exports = crc32;
 
-},{}],77:[function(require,module,exports){
+},{}],79:[function(require,module,exports){
 'use strict';
 
 var utils   = require('../utils/common');
@@ -23309,7 +25027,7 @@ exports.deflatePrime = deflatePrime;
 exports.deflateTune = deflateTune;
 */
 
-},{"../utils/common":72,"./adler32":74,"./crc32":76,"./messages":82,"./trees":83}],78:[function(require,module,exports){
+},{"../utils/common":74,"./adler32":76,"./crc32":78,"./messages":84,"./trees":85}],80:[function(require,module,exports){
 'use strict';
 
 
@@ -23351,7 +25069,7 @@ function GZheader() {
 
 module.exports = GZheader;
 
-},{}],79:[function(require,module,exports){
+},{}],81:[function(require,module,exports){
 'use strict';
 
 // See state defs from inflate.js
@@ -23678,7 +25396,7 @@ module.exports = function inflate_fast(strm, start) {
   return;
 };
 
-},{}],80:[function(require,module,exports){
+},{}],82:[function(require,module,exports){
 'use strict';
 
 
@@ -25183,7 +26901,7 @@ exports.inflateSyncPoint = inflateSyncPoint;
 exports.inflateUndermine = inflateUndermine;
 */
 
-},{"../utils/common":72,"./adler32":74,"./crc32":76,"./inffast":79,"./inftrees":81}],81:[function(require,module,exports){
+},{"../utils/common":74,"./adler32":76,"./crc32":78,"./inffast":81,"./inftrees":83}],83:[function(require,module,exports){
 'use strict';
 
 
@@ -25512,7 +27230,7 @@ module.exports = function inflate_table(type, lens, lens_index, codes, table, ta
   return 0;
 };
 
-},{"../utils/common":72}],82:[function(require,module,exports){
+},{"../utils/common":74}],84:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -25527,7 +27245,7 @@ module.exports = {
   '-6':   'incompatible version' /* Z_VERSION_ERROR (-6) */
 };
 
-},{}],83:[function(require,module,exports){
+},{}],85:[function(require,module,exports){
 'use strict';
 
 
@@ -26728,7 +28446,7 @@ exports._tr_flush_block  = _tr_flush_block;
 exports._tr_tally = _tr_tally;
 exports._tr_align = _tr_align;
 
-},{"../utils/common":72}],84:[function(require,module,exports){
+},{"../utils/common":74}],86:[function(require,module,exports){
 'use strict';
 
 
@@ -26759,9 +28477,9 @@ function ZStream() {
 
 module.exports = ZStream;
 
-},{}],85:[function(require,module,exports){
+},{}],87:[function(require,module,exports){
 module.exports = require('./lib/retry');
-},{"./lib/retry":86}],86:[function(require,module,exports){
+},{"./lib/retry":88}],88:[function(require,module,exports){
 var RetryOperation = require('./retry_operation');
 
 exports.operation = function(options) {
@@ -26812,7 +28530,7 @@ exports._createTimeout = function(attempt, opts) {
 
   return timeout;
 };
-},{"./retry_operation":87}],87:[function(require,module,exports){
+},{"./retry_operation":89}],89:[function(require,module,exports){
 function RetryOperation(timeouts) {
   this._timeouts = timeouts;
   this._fn = null;
@@ -26922,7 +28640,7 @@ RetryOperation.prototype.mainError = function() {
 
   return mainError;
 };
-},{}],88:[function(require,module,exports){
+},{}],90:[function(require,module,exports){
 module.exports = function arrayEquals(array) {
     // if the other array is a falsy value, return
     if (!array)
@@ -26948,10 +28666,10 @@ module.exports = function arrayEquals(array) {
 }
 
 
-},{}],89:[function(require,module,exports){
+},{}],91:[function(require,module,exports){
 exports.Interop = require('./interop');
 
-},{"./interop":90}],90:[function(require,module,exports){
+},{"./interop":92}],92:[function(require,module,exports){
 "use strict";
 
 var transform = require('./transform');
@@ -27533,7 +29251,7 @@ Interop.prototype.toUnifiedPlan = function(desc) {
     //#endregion
 };
 
-},{"./array-equals":88,"./transform":91}],91:[function(require,module,exports){
+},{"./array-equals":90,"./transform":93}],93:[function(require,module,exports){
 var transform = require('sdp-transform');
 
 exports.write = function(session, opts) {
@@ -27632,7 +29350,7 @@ exports.parse = function(sdp) {
 };
 
 
-},{"sdp-transform":95}],92:[function(require,module,exports){
+},{"sdp-transform":97}],94:[function(require,module,exports){
 var transform = require('sdp-transform');
 var transformUtils = require('./transform-utils');
 var parseSsrcs = transformUtils.parseSsrcs;
@@ -28034,7 +29752,7 @@ Simulcast.prototype.mungeLocalDescription = function (desc) {
 
 module.exports = Simulcast;
 
-},{"./transform-utils":93,"sdp-transform":95}],93:[function(require,module,exports){
+},{"./transform-utils":95,"sdp-transform":97}],95:[function(require,module,exports){
 exports.writeSsrcs = function(sources, order) {
   var ssrcs = [];
 
@@ -28085,7 +29803,7 @@ exports.parseSsrcs = function (mLine) {
 };
 
 
-},{}],94:[function(require,module,exports){
+},{}],96:[function(require,module,exports){
 var grammar = module.exports = {
   v: [{
       name: 'version',
@@ -28334,7 +30052,7 @@ Object.keys(grammar).forEach(function (key) {
   });
 });
 
-},{}],95:[function(require,module,exports){
+},{}],97:[function(require,module,exports){
 var parser = require('./parser');
 var writer = require('./writer');
 
@@ -28344,7 +30062,7 @@ exports.parseFmtpConfig = parser.parseFmtpConfig;
 exports.parsePayloads = parser.parsePayloads;
 exports.parseRemoteCandidates = parser.parseRemoteCandidates;
 
-},{"./parser":96,"./writer":97}],96:[function(require,module,exports){
+},{"./parser":98,"./writer":99}],98:[function(require,module,exports){
 var toIntIfInt = function (v) {
   return String(Number(v)) === v ? Number(v) : v;
 };
@@ -28439,7 +30157,7 @@ exports.parseRemoteCandidates = function (str) {
   return candidates;
 };
 
-},{"./grammar":94}],97:[function(require,module,exports){
+},{"./grammar":96}],99:[function(require,module,exports){
 var grammar = require('./grammar');
 
 // customized util.format - discards excess arguments and can void middle ones
@@ -28555,23 +30273,16 @@ module.exports = function (session, opts) {
   return sdp.join('\r\n') + '\r\n';
 };
 
-},{"./grammar":94}],98:[function(require,module,exports){
+},{"./grammar":96}],100:[function(require,module,exports){
 var MediaStreamType = {
     VIDEO_TYPE: "Video",
 
     AUDIO_TYPE: "Audio"
 };
 module.exports = MediaStreamType;
-},{}],99:[function(require,module,exports){
-var RTCBrowserType = {
-    RTC_BROWSER_CHROME: "rtc_browser.chrome",
-
-    RTC_BROWSER_FIREFOX: "rtc_browser.firefox"
-};
-
-module.exports = RTCBrowserType;
-},{}],100:[function(require,module,exports){
+},{}],101:[function(require,module,exports){
 var RTCEvents = {
+    RTC_READY: "rtc.ready",
     LASTN_CHANGED: "rtc.lastn_changed",
     DOMINANTSPEAKER_CHANGED: "rtc.dominantspeaker_changed",
     LASTN_ENDPOINT_CHANGED: "rtc.lastn_endpoint_changed",
@@ -28581,7 +30292,7 @@ var RTCEvents = {
 };
 
 module.exports = RTCEvents;
-},{}],101:[function(require,module,exports){
+},{}],102:[function(require,module,exports){
 var Resolutions = {
     "1080": {
         width: 1920,
@@ -28635,7 +30346,7 @@ var Resolutions = {
     }
 };
 module.exports = Resolutions;
-},{}],102:[function(require,module,exports){
+},{}],103:[function(require,module,exports){
 var StreamEventTypes = {
     EVENT_TYPE_LOCAL_CREATED: "stream.local_created",
 
@@ -28651,14 +30362,14 @@ var StreamEventTypes = {
 };
 
 module.exports = StreamEventTypes;
-},{}],103:[function(require,module,exports){
+},{}],104:[function(require,module,exports){
 var UIEvents = {
     NICKNAME_CHANGED: "UI.nickname_changed",
     SELECTED_ENDPOINT: "UI.selected_endpoint",
     PINNED_ENDPOINT: "UI.pinned_endpoint"
 };
 module.exports = UIEvents;
-},{}],104:[function(require,module,exports){
+},{}],105:[function(require,module,exports){
 var AuthenticationEvents = {
     /**
      * Event callback arguments:
@@ -28672,7 +30383,7 @@ var AuthenticationEvents = {
 };
 module.exports = AuthenticationEvents;
 
-},{}],105:[function(require,module,exports){
+},{}],106:[function(require,module,exports){
 var CQEvents = {
     LOCALSTATS_UPDATED: "cq.localstats_updated",
     REMOTESTATS_UPDATED: "cq.remotestats_updated",
@@ -28680,7 +30391,7 @@ var CQEvents = {
 };
 
 module.exports = CQEvents;
-},{}],106:[function(require,module,exports){
+},{}],107:[function(require,module,exports){
 var DesktopSharingEventTypes = {
     INIT: "ds.init",
 
@@ -28690,14 +30401,14 @@ var DesktopSharingEventTypes = {
 };
 
 module.exports = DesktopSharingEventTypes;
-},{}],107:[function(require,module,exports){
+},{}],108:[function(require,module,exports){
 var Events = {
     DTMF_SUPPORT_CHANGED: "members.dtmf_support_changed"
 };
 
 module.exports = Events;
 
-},{}],108:[function(require,module,exports){
+},{}],109:[function(require,module,exports){
 module.exports = {
     getLanguages : function () {
         var languages = [];
@@ -28714,7 +30425,7 @@ module.exports = {
     TR: "tr",
     FR: "fr"
 }
-},{}],109:[function(require,module,exports){
+},{}],110:[function(require,module,exports){
 var XMPPEvents = {
     CONNECTION_FAILED: "xmpp.connection.failed",
     CONFERENCE_CREATED: "xmpp.conferenceCreated.jingle",

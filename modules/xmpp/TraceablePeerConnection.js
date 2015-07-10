@@ -1,9 +1,18 @@
+var RTC = require('../RTC/RTC');
+var RTCBrowserType = require("../RTC/RTCBrowserType.js");
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 
 function TraceablePeerConnection(ice_config, constraints, session) {
     var self = this;
-    var RTCPeerconnection = navigator.mozGetUserMedia ? mozRTCPeerConnection : webkitRTCPeerConnection;
-    this.peerconnection = new RTCPeerconnection(ice_config, constraints);
+    var RTCPeerconnectionType = null;
+    if (RTCBrowserType.isFirefox()) {
+        RTCPeerconnectionType = mozRTCPeerConnection;
+    } else if (RTCBrowserType.isTemasysPluginUsed()) {
+        RTCPeerconnectionType = RTCPeerConnection;
+    } else {
+        RTCPeerconnectionType = webkitRTCPeerConnection;
+    }
+    this.peerconnection = new RTCPeerconnectionType(ice_config, constraints);
     this.updateLog = [];
     this.stats = {};
     this.statsinterval = null;
@@ -15,7 +24,15 @@ function TraceablePeerConnection(ice_config, constraints, session) {
 
     // override as desired
     this.trace = function (what, info) {
-        //console.warn('WTRACE', what, info);
+        /*console.warn('WTRACE', what, info);
+        if (info && RTCBrowserType.isIExplorer()) {
+            if (info.length > 1024) {
+                console.warn('WTRACE', what, info.substr(1024));
+            }
+            if (info.length > 2048) {
+                console.warn('WTRACE', what, info.substr(2048));
+            }
+        }*/
         self.updateLog.push({
             time: new Date(),
             type: what,
@@ -24,7 +41,9 @@ function TraceablePeerConnection(ice_config, constraints, session) {
     };
     this.onicecandidate = null;
     this.peerconnection.onicecandidate = function (event) {
-        self.trace('onicecandidate', JSON.stringify(event.candidate, null, ' '));
+        // FIXME: this causes stack overflow with Temasys Plugin
+        if (!RTCBrowserType.isTemasysPluginUsed())
+            self.trace('onicecandidate', JSON.stringify(event.candidate, null, ' '));
         if (self.onicecandidate !== null) {
             self.onicecandidate(event);
         }
@@ -155,16 +174,26 @@ TraceablePeerConnection.prototype.removeStream = function (stream, stopStreams) 
     this.trace('removeStream', stream.id);
     if(stopStreams) {
         stream.getAudioTracks().forEach(function (track) {
-            track.stop();
+            // stop() not supported with IE
+            if (track.stop) {
+                track.stop();
+            }
         });
         stream.getVideoTracks().forEach(function (track) {
-            track.stop();
+            // stop() not supported with IE
+            if (track.stop) {
+                track.stop();
+            }
         });
+        if (stream.stop) {
+            stream.stop();
+        }
     }
 
     try {
         // FF doesn't support this yet.
-        this.peerconnection.removeStream(stream);
+        if (this.peerconnection.removeStream)
+            this.peerconnection.removeStream(stream);
     } catch (e) {
         console.error(e);
     }

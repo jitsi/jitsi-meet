@@ -31,13 +31,7 @@ var extInstalled = false;
  */
 var extUpdateRequired = false;
 
-/**
- * Flag used to cache desktop sharing enabled state. Do not use directly as
- * it can be <tt>null</tt>.
- *
- * @type {null|boolean}
- */
-var _desktopSharingEnabled = null;
+var AdapterJS = require("../RTC/adapter.screenshare");
 
 var EventEmitter = require("events");
 
@@ -45,6 +39,10 @@ var eventEmitter = new EventEmitter();
 
 var DesktopSharingEventTypes
     = require("../../service/desktopsharing/DesktopSharingEventTypes");
+
+var RTCBrowserType = require("../RTC/RTCBrowserType");
+
+var RTCEvents = require("../../service/RTC/RTCEvents");
 
 /**
  * Method obtains desktop stream from WebRTC 'screen' source.
@@ -116,7 +114,7 @@ function isUpdateRequired(minVersion, extVersion)
     }
 }
 
-function checkExtInstalled(callback) {
+function checkChromeExtInstalled(callback) {
     if (!chrome.runtime) {
         // No API, so no extension for sure
         callback(false, false);
@@ -213,20 +211,39 @@ function obtainScreenFromExtension(streamCallback, failCallback) {
  *        feature completely.
  */
 function setDesktopSharing(method) {
-    // Check if we are running chrome
-    if (!navigator.webkitGetUserMedia) {
-        obtainDesktopStream = null;
-        console.info("Desktop sharing disabled");
-    } else if (method == "ext") {
-        obtainDesktopStream = obtainScreenFromExtension;
-        console.info("Using Chrome extension for desktop sharing");
-    } else if (method == "webrtc") {
-        obtainDesktopStream = obtainWebRTCScreen;
-        console.info("Using Chrome WebRTC for desktop sharing");
+
+    obtainDesktopStream = null;
+
+    // When TemasysWebRTC plugin is used we always use getUserMedia, so we don't
+    // care about 'method' parameter
+    if (RTCBrowserType.isTemasysPluginUsed()) {
+        if (!AdapterJS.WebRTCPlugin.plugin.HasScreensharingFeature) {
+            console.info("Screensharing not supported by this plugin version");
+        } else if (!AdapterJS.WebRTCPlugin.plugin.isScreensharingAvailable) {
+            console.info(
+            "Screensharing not available with Temasys plugin on this site");
+        } else {
+            obtainDesktopStream = obtainWebRTCScreen;
+            console.info("Using Temasys plugin for desktop sharing");
+        }
+    } else if (RTCBrowserType.isChrome()) {
+        if (method == "ext") {
+            if (RTCBrowserType.getChromeVersion() >= 34) {
+                obtainDesktopStream = obtainScreenFromExtension;
+                console.info("Using Chrome extension for desktop sharing");
+                initChromeExtension();
+            } else {
+                console.info("Chrome extension not supported until ver 34");
+            }
+        } else if (method == "webrtc") {
+            obtainDesktopStream = obtainWebRTCScreen;
+            console.info("Using Chrome WebRTC for desktop sharing");
+        }
     }
 
-    // Reset enabled cache
-    _desktopSharingEnabled = null;
+    if (!obtainDesktopStream) {
+        console.info("Desktop sharing disabled");
+    }
 }
 
 /**
@@ -237,6 +254,19 @@ function setDesktopSharing(method) {
 function initInlineInstalls()
 {
     $("link[rel=chrome-webstore-item]").attr("href", getWebStoreInstallUrl());
+}
+
+function initChromeExtension() {
+    // Initialize Chrome extension inline installs
+    initInlineInstalls();
+    // Check if extension is installed
+    checkChromeExtInstalled(function (installed, updateRequired) {
+        extInstalled = installed;
+        extUpdateRequired = updateRequired;
+        console.info(
+            "Chrome extension installed: " + extInstalled +
+            " updateRequired: " + extUpdateRequired);
+    });
 }
 
 function getVideoStreamFailed(error) {
@@ -264,6 +294,25 @@ function newStreamCreated(stream)
         stream, isUsingScreenStream, streamSwitchDone);
 }
 
+function onEndedHandler(stream) {
+    if (!switchInProgress && isUsingScreenStream) {
+        APP.desktopsharing.toggleScreenSharing();
+    }
+    //FIXME: to be verified
+    if (stream.removeEventListener) {
+        stream.removeEventListener('ended', onEndedHandler);
+    } else {
+        stream.detachEvent('ended', onEndedHandler);
+    }
+}
+
+// Called when RTC finishes initialization
+function onWebRtcReady() {
+
+    setDesktopSharing(config.desktopSharing);
+
+    eventEmitter.emit(DesktopSharingEventTypes.INIT);
+}
 
 module.exports = {
     isUsingScreenStream: function () {
@@ -274,43 +323,10 @@ module.exports = {
      * @returns {boolean} <tt>true</tt> if desktop sharing feature is available
      *          and enabled.
      */
-    isDesktopSharingEnabled: function () {
-        if (_desktopSharingEnabled === null) {
-            if (obtainDesktopStream === obtainScreenFromExtension) {
-                // Parse chrome version
-                var userAgent = navigator.userAgent.toLowerCase();
-                // We can assume that user agent is chrome, because it's
-                // enforced when 'ext' streaming method is set
-                var ver = parseInt(userAgent.match(/chrome\/(\d+)\./)[1], 10);
-                console.log("Chrome version" + userAgent, ver);
-                _desktopSharingEnabled = ver >= 34;
-            } else {
-                _desktopSharingEnabled =
-                    obtainDesktopStream === obtainWebRTCScreen;
-            }
-        }
-        return _desktopSharingEnabled;
-    },
+    isDesktopSharingEnabled: function () { return !!obtainDesktopStream; },
     
     init: function () {
-        setDesktopSharing(config.desktopSharing);
-
-        // Initialize Chrome extension inline installs
-        if (config.chromeExtensionId) {
-
-            initInlineInstalls();
-
-            // Check if extension is installed
-            checkExtInstalled(function (installed, updateRequired) {
-                extInstalled = installed;
-                extUpdateRequired = updateRequired;
-                console.info(
-                    "Chrome extension installed: " + extInstalled +
-                    " updateRequired: " + extUpdateRequired);
-            });
-        }
-
-        eventEmitter.emit(DesktopSharingEventTypes.INIT);
+        APP.RTC.addListener(RTCEvents.RTC_READY, onWebRtcReady);
     },
 
     addListener: function (listener, type)
@@ -341,13 +357,16 @@ module.exports = {
                     isUsingScreenStream = true;
                     // Hook 'ended' event to restore camera
                     // when screen stream stops
-                    stream.addEventListener('ended',
-                        function (e) {
-                            if (!switchInProgress && isUsingScreenStream) {
-                                APP.desktopsharing.toggleScreenSharing();
-                            }
-                        }
-                    );
+                    //FIXME: to be verified
+                    if (stream.addEventListener) {
+                        stream.addEventListener('ended', function () {
+                            onEndedHandler(stream);
+                        });
+                    } else {
+                        stream.attachEvent('ended', function () {
+                            onEndedHandler(stream);
+                        });
+                    }
                     newStreamCreated(stream);
                 },
                 getDesktopStreamFailed);

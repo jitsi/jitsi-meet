@@ -3,6 +3,7 @@ var SmallVideo = require("./SmallVideo");
 var AudioLevels = require("../audio_levels/AudioLevels");
 var LargeVideo = require("./LargeVideo");
 var Avatar = require("../avatar/Avatar");
+var RTCBrowserType = require("../../RTC/RTCBrowserType");
 
 function RemoteVideo(peerJid, VideoLayout)
 {
@@ -146,14 +147,15 @@ RemoteVideo.prototype.removeRemoteStreamElement = function (stream, isVideo, id)
     select.remove();
 
     var audioCount = $('#' + this.videoSpanId + '>audio').length;
-    var videoCount = $('#' + this.videoSpanId + '>video').length;
+    var videoCount = $('#' + this.videoSpanId + '>' + APP.RTC.getVideoElementName()).length;
 
     if (!audioCount && !videoCount) {
         console.log("Remove whole user", this.videoSpanId);
         if(this.connectionIndicator)
             this.connectionIndicator.remove();
         // Remove whole container
-        this.container.remove();
+        if (this.container.parentNode)
+            this.container.parentNode.removeChild(this.container);
 
         this.VideoLayout.resizeThumbnails();
     }
@@ -185,11 +187,21 @@ RemoteVideo.prototype.addRemoteStreamElement = function (sid, stream, thessrc) {
         if (isVideo && stream.id !== 'mixedmslabel') {
             var onPlayingHandler = function () {
                 // FIXME: why do i have to do this for FF?
-                APP.RTC.attachMediaStream(sel, stream);
+                if (RTCBrowserType.isFirefox()) {
+                    APP.RTC.attachMediaStream(sel, stream);
+                }
+                if (RTCBrowserType.isTemasysPluginUsed()) {
+                    sel = $('#' + newElementId);
+                }
                 self.VideoLayout.videoactive(sel, self.resourceJid);
-                sel.off("playing", onPlayingHandler);
+                sel[0].onplaying = null;
+                if (RTCBrowserType.isTemasysPluginUsed()) {
+                    // 'currentTime' is used to check if the video has started
+                    // and the value is not set by the plugin, so we do it
+                    sel[0].currentTime = 1;
+                }
             };
-            sel.on("playing", onPlayingHandler);
+            sel[0].onplaying = onPlayingHandler;
         }
 
         APP.RTC.attachMediaStream(sel, stream);
@@ -203,23 +215,35 @@ RemoteVideo.prototype.addRemoteStreamElement = function (sid, stream, thessrc) {
 
     };
 
+    // Name of video element name is different for IE/Safari
+    var videoElem = APP.RTC.getVideoElementName();
+
     // Add click handler.
-    this.container.onclick = function (event) {
+    var onClickHandler = function (event) {
         /*
          * FIXME It turns out that videoThumb may not exist (if there is
          * no actual video).
          */
-        var videoThumb = $('#' + self.videoSpanId + '>video').get(0);
+        var videoThumb = $('#' + self.videoSpanId + '>' + videoElem).get(0);
         if (videoThumb) {
             self.VideoLayout.handleVideoThumbClicked(
                 false,
                 self.resourceJid);
         }
-
-        event.stopPropagation();
-        event.preventDefault();
+        // On IE we need to populate this handler on video <object>
+        // and it does not give event instance as an argument,
+        // so we check here for methods.
+        if (event.stopPropagation && event.preventDefault) {
+            event.stopPropagation();
+            event.preventDefault();
+        }
         return false;
     };
+    this.container.onclick = onClickHandler;
+    // reselect
+    if (RTCBrowserType.isTemasysPluginUsed())
+        sel = $('#' + newElementId);
+    sel[0].onclick = onClickHandler;
 
     //FIXME
     // Add hover handler
@@ -229,9 +253,9 @@ RemoteVideo.prototype.addRemoteStreamElement = function (sid, stream, thessrc) {
         },
         function() {
             var videoSrc = null;
-            if ($('#' + self.videoSpanId + '>video')
-                && $('#' + self.videoSpanId + '>video').length > 0) {
-                videoSrc = APP.RTC.getVideoSrc($('#' + self.videoSpanId + '>video').get(0));
+            var videoSelector = $('#' + self.videoSpanId + '>' + videoElem);
+            if (videoSelector && videoSelector.length > 0) {
+                videoSrc = APP.RTC.getVideoSrc(videoSelector.get(0));
             }
 
             // If the video has been "pinned" by the user we want to
@@ -241,7 +265,7 @@ RemoteVideo.prototype.addRemoteStreamElement = function (sid, stream, thessrc) {
                 self.showDisplayName(false);
         }
     );
-}
+},
 
 /**
  * Show/hide peer container for the given resourceJid.

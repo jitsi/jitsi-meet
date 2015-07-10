@@ -28,12 +28,11 @@ module.exports = function(XMPP, eventEmitter) {
         initPresenceMap: function (myroomjid) {
             this.presMap['to'] = myroomjid;
             this.presMap['xns'] = 'http://jabber.org/protocol/muc';
-            if(APP.RTC.localAudio.isMuted())
+            if (APP.RTC.localAudio && APP.RTC.localAudio.isMuted())
             {
                 this.addAudioInfoToPresence(true);
             }
-
-            if(APP.RTC.localVideo.isMuted())
+            if (APP.RTC.localVideo && APP.RTC.localVideo.isMuted())
             {
                 this.addVideoInfoToPresence(true);
             }

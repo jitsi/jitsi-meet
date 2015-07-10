@@ -1,6 +1,6 @@
 /* global ssrc2jid */
 /* jshint -W117 */
-var RTCBrowserType = require("../../service/RTC/RTCBrowserType");
+var RTCBrowserType = require("../RTC/RTCBrowserType");
 
 
 /**
@@ -17,10 +17,12 @@ function calculatePacketLoss(lostPackets, totalPackets) {
 }
 
 function getStatValue(item, name) {
-    if(!keyMap[APP.RTC.getBrowserType()][name])
+    var browserType = RTCBrowserType.getBrowserType();
+    if (!keyMap[browserType][name])
         throw "The property isn't supported!";
-    var key = keyMap[APP.RTC.getBrowserType()][name];
-    return APP.RTC.getBrowserType() == RTCBrowserType.RTC_BROWSER_CHROME? item.stat(key) : item[key];
+    var key = keyMap[browserType][name];
+    return (RTCBrowserType.isChrome() || RTCBrowserType.isOpera()) ?
+        item.stat(key) : item[key];
 }
 
 /**
@@ -415,6 +417,8 @@ keyMap[RTCBrowserType.RTC_BROWSER_CHROME] = {
     "audioInputLevel": "audioInputLevel",
     "audioOutputLevel": "audioOutputLevel"
 };
+keyMap[RTCBrowserType.RTC_BROWSER_OPERA] =
+    keyMap[RTCBrowserType.RTC_BROWSER_CHROME];
 
 
 /**

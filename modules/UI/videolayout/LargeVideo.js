@@ -1,9 +1,11 @@
 var Avatar = require("../avatar/Avatar");
+var RTCBrowserType = require("../../RTC/RTCBrowserType");
 var UIUtil = require("../util/UIUtil");
 var UIEvents = require("../../../service/UI/UIEvents");
 var xmpp = require("../../xmpp/xmpp");
 
-var video = $('#largeVideo');
+// FIXME: With Temasys we have to re-select everytime
+//var video = $('#largeVideo');
 
 var currentVideoWidth = null;
 var currentVideoHeight = null;
@@ -244,9 +246,7 @@ function changeVideo(isVisible) {
     }
 
     if (isVisible) {
-        // using "this" should be ok because we're called
-        // from within the fadeOut event.
-        $(this).fadeIn(300);
+        $('#largeVideo').fadeIn(300);
     }
 
     if(oldSmallVideo)
@@ -260,12 +260,16 @@ var LargeVideo = {
         this.eventEmitter = emitter;
         var self = this;
         // Listen for large video size updates
-        document.getElementById('largeVideo')
-            .addEventListener('loadedmetadata', function (e) {
-                currentVideoWidth = this.videoWidth;
-                currentVideoHeight = this.videoHeight;
-                self.position(currentVideoWidth, currentVideoHeight);
-            });
+        var largeVideo = $('#largeVideo')[0];
+        var onplaying = function (arg1, arg2, arg3) {
+            // re-select
+            if (RTCBrowserType.isTemasysPluginUsed())
+                largeVideo = $('#largeVideo')[0];
+            currentVideoWidth = largeVideo.videoWidth;
+            currentVideoHeight = largeVideo.videoHeight;
+            self.position(currentVideoWidth, currentVideoHeight);
+        };
+        largeVideo.onplaying = onplaying;
     },
     /**
      * Indicates if the large video is currently visible.
@@ -273,14 +277,14 @@ var LargeVideo = {
      * @return <tt>true</tt> if visible, <tt>false</tt> - otherwise
      */
     isLargeVideoVisible: function() {
-        return video.is(':visible');
+        return $('#largeVideo').is(':visible');
     },
     /**
      * Updates the large video with the given new video source.
      */
     updateLargeVideo: function(resourceJid, forceUpdate) {
-        console.log('hover in', resourceJid);
         var newSmallVideo = this.VideoLayout.getSmallVideo(resourceJid);
+        console.log('hover in ' + resourceJid + ', video: ', newSmallVideo);
 
         if ((currentSmallVideo && currentSmallVideo.resourceJid !== resourceJid)
             || forceUpdate) {
@@ -303,8 +307,8 @@ var LargeVideo = {
                 this.eventEmitter.emit(UIEvents.SELECTED_ENDPOINT,
                     resourceJid);
             }
-
-            video.fadeOut(300, changeVideo.bind(video, this.isLargeVideoVisible()));
+            $('#largeVideo').fadeOut(300,
+                changeVideo.bind($('#largeVideo'), this.isLargeVideoVisible()));
         } else {
             if(currentSmallVideo) {
                 currentSmallVideo.showAvatar();

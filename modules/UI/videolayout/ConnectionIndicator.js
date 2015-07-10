@@ -336,7 +336,10 @@ ConnectionIndicator.prototype.create = function () {
  */
 ConnectionIndicator.prototype.remove = function()
 {
-    this.connectionIndicatorContainer.remove();
+    if (this.connectionIndicatorContainer.parentNode) {
+        this.connectionIndicatorContainer.parentNode.removeChild(
+            this.connectionIndicatorContainer);
+    }
     this.popover.forceHide();
 
 };

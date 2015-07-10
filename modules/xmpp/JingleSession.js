@@ -6,6 +6,7 @@ var SDP = require("./SDP");
 var async = require("async");
 var transform = require("sdp-transform");
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
+var RTCBrowserType = require("../RTC/RTCBrowserType");
 
 // Jingle stuff
 function JingleSession(me, sid, connection, service, eventEmitter) {
@@ -1332,9 +1333,10 @@ JingleSession.prototype.remoteStreamAdded = function (data, times) {
     var self = this;
     var thessrc;
     var ssrc2jid = this.connection.emuc.ssrc2jid;
+    var streamId = APP.RTC.getStreamID(data.stream);
 
     // look up an associated JID for a stream id
-    if (data.stream.id && data.stream.id.indexOf('mixedmslabel') === -1) {
+    if (streamId && streamId.indexOf('mixedmslabel') === -1) {
         // look only at a=ssrc: and _not_ at a=ssrc-group: lines
 
         var ssrclines
@@ -1344,7 +1346,11 @@ JingleSession.prototype.remoteStreamAdded = function (data, times) {
             // is not always present.
             // return line.indexOf('mslabel:' + data.stream.label) !== -1;
 
-            return ((line.indexOf('msid:' + data.stream.id) !== -1));
+            if (RTCBrowserType.isTemasysPluginUsed()) {
+                return ((line.indexOf('mslabel:' + streamId) !== -1));
+            } else {
+                return ((line.indexOf('msid:' + streamId) !== -1));
+            }
         });
         if (ssrclines.length) {
             thessrc = ssrclines[0].substring(7).split(' ')[0];
@@ -1379,7 +1385,7 @@ JingleSession.prototype.remoteStreamAdded = function (data, times) {
             }
 
             // ok to overwrite the one from focus? might save work in colibri.js
-            console.log('associated jid', ssrc2jid[thessrc], data.peerjid);
+            console.log('associated jid', ssrc2jid[thessrc], thessrc);
             if (ssrc2jid[thessrc]) {
                 data.peerjid = ssrc2jid[thessrc];
             }

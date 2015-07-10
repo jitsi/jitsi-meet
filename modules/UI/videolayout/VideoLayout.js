@@ -3,6 +3,10 @@ var Avatar = require("../avatar/Avatar");
 var ContactList = require("../side_pannels/contactlist/ContactList");
 var MediaStreamType = require("../../../service/RTC/MediaStreamTypes");
 var UIEvents = require("../../../service/UI/UIEvents");
+
+var RTC = require("../../RTC/RTC");
+var RTCBrowserType = require('../../RTC/RTCBrowserType');
+
 var RemoteVideo = require("./RemoteVideo");
 var LargeVideo = require("./LargeVideo");
 var LocalVideo = require("./LocalVideo");
@@ -48,11 +52,15 @@ var VideoLayout = (function (my) {
     };
 
     my.changeLocalAudio = function(stream, isMuted) {
-        if(isMuted)
+        if (isMuted)
             APP.UI.setAudioMuted(true, true);
         APP.RTC.attachMediaStream($('#localAudio'), stream.getOriginalStream());
-        document.getElementById('localAudio').autoplay = true;
-        document.getElementById('localAudio').volume = 0;
+        var localAudio = document.getElementById('localAudio');
+        // Writing volume not allowed in IE
+        if (!RTCBrowserType.isIExplorer()) {
+            localAudio.autoplay = true;
+            localAudio.volume = 0;
+        }
     };
 
     my.changeLocalVideo = function(stream, isMuted) {
@@ -107,22 +115,26 @@ var VideoLayout = (function (my) {
      * @param removedVideoSrc src stream identifier of the video.
      */
     my.updateRemovedVideo = function(resourceJid) {
+
+        var videoElem = RTC.getVideoElementName();
+
         if (resourceJid === LargeVideo.getResourceJid()) {
             // this is currently displayed as large
             // pick the last visible video in the row
             // if nobody else is left, this picks the local video
             var pick
-                = $('#remoteVideos>span[id!="mixedstream"]:visible:last>video')
-                    .get(0);
+                = $('#remoteVideos>' +
+                    'span[id!="mixedstream"]:visible:last>' + videoElem).get(0);
 
             if (!pick) {
                 console.info("Last visible video no longer exists");
-                pick = $('#remoteVideos>span[id!="mixedstream"]>video').get(0);
+                pick = $('#remoteVideos>' +
+                    'span[id!="mixedstream"]>' + videoElem).get(0);
 
                 if (!pick || !APP.RTC.getVideoSrc(pick)) {
                     // Try local video
                     console.info("Fallback to local video...");
-                    pick = $('#remoteVideos>span>span>video').get(0);
+                    pick = $('#remoteVideos>span>span>' + videoElem).get(0);
                 }
             }
 
@@ -223,10 +235,13 @@ var VideoLayout = (function (my) {
 
         LargeVideo.updateLargeVideo(resourceJid);
 
-        $('audio').each(function (idx, el) {
-            el.volume = 0;
-            el.volume = 1;
-        });
+        // Writing volume not allowed in IE
+        if (!RTCBrowserType.isIExplorer()) {
+            $('audio').each(function (idx, el) {
+                el.volume = 0;
+                el.volume = 1;
+            });
+        }
     };
 
 
@@ -452,7 +467,8 @@ var VideoLayout = (function (my) {
         var resource = Strophe.getResourceFromJid(jid);
         var videoContainer = $("#participant_" + resource);
         if (videoContainer.length > 0) {
-            var videoThumb = $('video', videoContainer).get(0);
+            var videoThumb
+                    = $(RTC.getVideoElementName(), videoContainer).get(0);
             // It is not always the case that a videoThumb exists (if there is
             // no actual video).
             if (videoThumb) {
@@ -571,7 +587,8 @@ var VideoLayout = (function (my) {
         // since we don't want to switch to local video.
         if (container && !focusedVideoResourceJid)
         {
-            var video = container.getElementsByTagName("video");
+            var video
+                = container.getElementsByTagName(RTC.getVideoElementName());
 
             // Update the large video if the video source is already available,
             // otherwise wait for the "videoactive.jingle" event.
@@ -673,7 +690,8 @@ var VideoLayout = (function (my) {
 
                     var jid = APP.xmpp.findJidFromResource(resourceJid);
                     var mediaStream = APP.RTC.remoteStreams[jid][MediaStreamType.VIDEO_TYPE];
-                    var sel = $('#participant_' + resourceJid + '>video');
+                    var sel = $('#participant_' + resourceJid +
+                                '>' + RTC.getVideoElementName());
 
                     APP.RTC.attachMediaStream(sel, mediaStream.stream);
                     if (lastNPickupJid == mediaStream.peerjid) {

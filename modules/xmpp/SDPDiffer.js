@@ -1,3 +1,6 @@
+
+var SDPUtil = require("./SDPUtil");
+
 function SDPDiffer(mySDP, otherSDP) {
     this.mySDP = mySDP;
     this.otherSDP = otherSDP;
@@ -130,8 +133,11 @@ SDPDiffer.prototype.toJingle = function(modify) {
                 if (kv.indexOf(':') == -1) {
                     modify.attrs({ name: kv });
                 } else {
-                    modify.attrs({ name: kv.split(':', 2)[0] });
-                    modify.attrs({ value: kv.split(':', 2)[1] });
+                    var nv = kv.split(':', 2);
+                    var name = nv[0];
+                    var value = SDPUtil.filter_special_chars(nv[1]);
+                    modify.attrs({ name: name });
+                    modify.attrs({ value: value });
                 }
                 modify.up(); // end of parameter
             });

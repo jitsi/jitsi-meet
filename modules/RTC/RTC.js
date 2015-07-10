@@ -1,4 +1,5 @@
 var EventEmitter = require("events");
+var RTCBrowserType = require("./RTCBrowserType");
 var RTCUtils = require("./RTCUtils.js");
 var LocalStream = require("./LocalStream.js");
 var DataChannels = require("./DataChannels");
@@ -99,7 +100,7 @@ var RTC = {
     },
     createRemoteStream: function (data, sid, thessrc) {
         var remoteStream = new MediaStream(data, sid, thessrc,
-            this.getBrowserType(), eventEmitter);
+            RTCBrowserType.getBrowserType(), eventEmitter);
         var jid = data.peerjid || APP.xmpp.myJid();
         if(!this.remoteStreams[jid]) {
             this.remoteStreams[jid] = {};
@@ -107,9 +108,6 @@ var RTC = {
         this.remoteStreams[jid][remoteStream.type]= remoteStream;
         eventEmitter.emit(StreamEventTypes.EVENT_TYPE_REMOTE_CREATED, remoteStream);
         return remoteStream;
-    },
-    getBrowserType: function () {
-        return this.rtcUtils.browser;
     },
     getPCConstraints: function () {
         return this.rtcUtils.pc_constraints;
@@ -132,6 +130,9 @@ var RTC = {
     },
     setVideoSrc: function (element, src) {
         this.rtcUtils.setVideoSrc(element, src);
+    },
+    getVideoElementName: function () {
+        return RTCBrowserType.isTemasysPluginUsed() ? 'object' : 'video';
     },
     dispose: function() {
         if (this.rtcUtils) {
@@ -168,9 +169,22 @@ var RTC = {
             DataChannels.handleSelectedEndpointEvent);
         APP.UI.addListener(UIEvents.PINNED_ENDPOINT,
             DataChannels.handlePinnedEndpointEvent);
-        this.rtcUtils = new RTCUtils(this);
-        this.rtcUtils.obtainAudioAndVideoPermissions(
-            null, null, getMediaStreamUsage());
+
+        // In case of IE we continue from 'onReady' callback
+        // passed to RTCUtils constructor. It will be invoked by Temasys plugin
+        // once it is initialized.
+        var onReady = function () {
+            eventEmitter.emit(RTCEvents.RTC_READY, true);
+            self.rtcUtils.obtainAudioAndVideoPermissions(
+                null, null, getMediaStreamUsage());
+        };
+
+        this.rtcUtils = new RTCUtils(this, onReady);
+
+        // Call onReady() if Temasys plugin is not used
+        if (!RTCBrowserType.isTemasysPluginUsed()) {
+            onReady();
+        }
     },
     muteRemoteVideoStream: function (jid, value) {
         var stream;
@@ -210,6 +224,10 @@ var RTC = {
                 APP.xmpp.setVideoMute(false, APP.UI.setVideoMuteButtonsState);
                 callback();
             };
+        }
+        // FIXME: Workaround for FF/IE/Safari
+        if (stream && stream.videoStream) {
+            stream = stream.videoStream;
         }
         var videoStream = this.rtcUtils.createStream(stream, true);
         this.localVideo = this.createLocalStream(videoStream, "video", true, type);

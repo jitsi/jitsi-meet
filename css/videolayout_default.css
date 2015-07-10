@@ -60,28 +60,31 @@
 }
 
 #remoteVideos .videocontainer:hover {
-    -webkit-box-shadow: inset 0 0 10px #FFFFFF, 0 0 10px #FFFFFF;
+    box-shadow:  inset 0 0 10px #FFFFFF, 0 0 10px #FFFFFF;
     border: 2px solid #FFFFFF;
 }
 
 #remoteVideos .videocontainer.videoContainerFocused {
-    -webkit-box-shadow: inset 0 0 28px #006d91;
+    box-shadow: inset 0 0 28px #006d91;
     border: 2px solid #006d91;
 }
 
 #remoteVideos .videocontainer.videoContainerFocused:hover {
-    -webkit-box-shadow: inset 0 0 5px #FFFFFF, 0 0 10px #FFFFFF, inset 0 0 60px #006d91;
+    box-shadow: inset 0 0 5px #FFFFFF, 0 0 10px #FFFFFF, inset 0 0 60px #006d91;
     border: 2px solid #FFFFFF;
 }
 
 #localVideoWrapper {
     display:inline-block;
     -webkit-mask-box-image: url(../images/videomask.svg);
-    border-radius:0px !important;
+    border-radius:4px !important;
     border: 0px !important;
 }
 
-#remoteVideos .videocontainer>video {
+/* With TemasysWebRTC plugin <object/> element is used
+   instead of <video/> */
+#remoteVideos .videocontainer>video,
+#remoteVideos .videocontainer>object {
     border-radius:4px;
 }
 
@@ -92,8 +95,9 @@
     -o-transform: scale(-1, 1);
 }
 
-#localVideoWrapper>video {
-    border-radius:0px !important;
+#localVideoWrapper>video,
+#localVideoWrapper>object {
+    border-radius:4px !important;
 }
 
 #largeVideo,
@@ -110,8 +114,10 @@
 #presentation,
 #etherpad,
 #localVideoWrapper>video,
+#localVideoWrapper>object,
 #localVideoWrapper,
-.videocontainer>video {
+.videocontainer>video,
+.videocontainer>object {
     position: absolute;
     left: 0;
     top: 0;
@@ -363,7 +369,7 @@
     margin-right: 40%;
     text-align: center;
     background: linear-gradient(to bottom, rgba(255,255,255,.85) , rgba(255,255,255,.35));
-    -webkit-box-shadow: 0 0 2px #000000, 0 0 10px #000000;
+    box-shadow: 0 0 2px #000000, 0 0 10px #000000;
     border-bottom-left-radius: 12px;
     border-bottom-right-radius: 12px;
     display: none;

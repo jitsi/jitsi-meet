@@ -1,5 +1,6 @@
 var UIUtil = require("../util/UIUtil");
 var LargeVideo = require("./LargeVideo");
+var RTCBrowserType = require("../../RTC/RTCBrowserType");
 
 function SmallVideo(){
     this.isMuted = false;
@@ -96,7 +97,9 @@ SmallVideo.createStreamElement = function (sid, stream) {
         + sid + '_' + APP.RTC.getStreamID(stream);
 
     element.id = id;
-    element.autoplay = true;
+    if (!RTCBrowserType.isIExplorer()) {
+        element.autoplay = true;
+    }
     element.oncontextmenu = function () { return false; };
 
     return element;
@@ -204,7 +207,7 @@ SmallVideo.prototype.enableDominantSpeaker = function (isEnable)
         return;
     }
 
-    var video = $('#' + this.videoSpanId + '>video');
+    var video = $('#' + this.videoSpanId + '>' + APP.RTC.getVideoElementName());
 
     if (video && video.length > 0) {
         if (isEnable) {
@@ -275,8 +278,10 @@ SmallVideo.prototype.createModeratorIndicatorElement = function () {
 
 
 SmallVideo.prototype.getSrc = function () {
-    return APP.RTC.getVideoSrc($('#' + this.videoSpanId).find("video").get(0));
-}
+    var videoElement = APP.RTC.getVideoElementName();
+    return APP.RTC.getVideoSrc(
+            $('#' + this.videoSpanId).find(videoElement).get(0));
+},
 
 SmallVideo.prototype.focus = function(isFocused)
 {
@@ -290,7 +295,8 @@ SmallVideo.prototype.focus = function(isFocused)
 }
 
 SmallVideo.prototype.hasVideo = function () {
-    return $("#" + this.videoSpanId).find("video").length !== 0;
+    return $("#" + this.videoSpanId).find(
+                APP.RTC.getVideoElementName()).length !== 0;
 }
 
 /**
@@ -302,7 +308,8 @@ SmallVideo.prototype.showAvatar = function (show) {
     if(!this.hasAvatar)
         return;
 
-    var video = $('#' + this.videoSpanId).find("video");
+    var videoElem = APP.RTC.getVideoElementName();
+    var video = $('#' + this.videoSpanId).find(videoElem);
     var avatar = $('#avatar_' + this.resourceJid);
 
     if (show === undefined || show === null) {

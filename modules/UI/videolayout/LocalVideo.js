@@ -3,6 +3,7 @@ var ConnectionIndicator = require("./ConnectionIndicator");
 var NicknameHandler = require("../util/NicknameHandler");
 var UIUtil = require("../util/UIUtil");
 var LargeVideo = require("./LargeVideo");
+var RTCBrowserType = require("../../RTC/RTCBrowserType");
 
 function LocalVideo(VideoLayout)
 {
@@ -163,13 +164,18 @@ LocalVideo.prototype.changeVideo = function (stream, isMuted) {
     var self = this;
 
     function localVideoClick(event) {
-        event.stopPropagation();
+        // FIXME: with Temasys plugin event arg is not an event, but
+        // the clicked object itself, so we have to skip this call
+        if (event.stopPropagation) {
+            event.stopPropagation();
+        }
         self.VideoLayout.handleVideoThumbClicked(
             false,
             APP.xmpp.myResource());
     }
 
-    $('#localVideoContainer').click(localVideoClick);
+    $('#localVideoContainer').off('click');
+    $('#localVideoContainer').on('click', localVideoClick);
 
     // Add hover handler
     $('#localVideoContainer').hover(
@@ -192,8 +198,10 @@ LocalVideo.prototype.changeVideo = function (stream, isMuted) {
     var localVideo = document.createElement('video');
     localVideo.id = 'localVideo_' +
         APP.RTC.getStreamID(stream.getOriginalStream());
-    localVideo.autoplay = true;
-    localVideo.volume = 0; // is it required if audio is separated ?
+    if (!RTCBrowserType.isIExplorer()) {
+        localVideo.autoplay = true;
+        localVideo.volume = 0; // is it required if audio is separated ?
+    }
     localVideo.oncontextmenu = function () { return false; };
 
     var localVideoContainer = document.getElementById('localVideoWrapper');
@@ -203,7 +211,9 @@ LocalVideo.prototype.changeVideo = function (stream, isMuted) {
 
     // Add click handler to both video and video wrapper elements in case
     // there's no video.
-    localVideoSelector.click(localVideoClick);
+
+    // onclick has to be used with Temasys plugin
+    localVideo.onclick = localVideoClick;
 
     if (this.flipX) {
         localVideoSelector.addClass("flipVideoX");
@@ -214,6 +224,9 @@ LocalVideo.prototype.changeVideo = function (stream, isMuted) {
 
     // Add stream ended handler
     stream.getOriginalStream().onended = function () {
+        // We have to re-select after attach when Temasys plugin is used,
+        // because <video> element is replaced with <object>
+        localVideo = $('#' + localVideo.id)[0];
         localVideoContainer.removeChild(localVideo);
         self.VideoLayout.updateRemovedVideo(APP.xmpp.myResource());
     };

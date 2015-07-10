@@ -1,5 +1,7 @@
-var RTCBrowserType = require("../../service/RTC/RTCBrowserType.js");
+var RTCBrowserType = require("./RTCBrowserType");
 var Resolutions = require("../../service/RTC/Resolutions");
+var AdapterJS = require("./adapter.screenshare");
+var SDPUtil = require("../xmpp/SDPUtil");
 
 var currentResolution = null;
 
@@ -58,16 +60,30 @@ function getConstraints(um, resolution, bandwidth, fps, desktopStream, isAndroid
         constraints.audio = { mandatory: {}, optional: []};// same behaviour as true
     }
     if (um.indexOf('screen') >= 0) {
-        constraints.video = {
-            mandatory: {
-                chromeMediaSource: "screen",
-                googLeakyBucket: true,
-                maxWidth: window.screen.width,
-                maxHeight: window.screen.height,
-                maxFrameRate: 3
-            },
-            optional: []
-        };
+        if (RTCBrowserType.isChrome()) {
+            constraints.video = {
+                mandatory: {
+                    chromeMediaSource: "screen",
+                    googLeakyBucket: true,
+                    maxWidth: window.screen.width,
+                    maxHeight: window.screen.height,
+                    maxFrameRate: 3
+                },
+                optional: []
+            };
+        } else if (RTCBrowserType.isTemasysPluginUsed()) {
+            constraints.video = {
+                optional: [
+                    {
+                        sourceId: AdapterJS.WebRTCPlugin.plugin.screensharingKey
+                    }
+                ]
+            };
+        } else {
+            console.error(
+                "'screen' WebRTC media source is supported only in Chrome" +
+                " and with Temasys plugin");
+        }
     }
     if (um.indexOf('desktop') >= 0) {
         constraints.video = {
@@ -124,16 +140,14 @@ function getConstraints(um, resolution, bandwidth, fps, desktopStream, isAndroid
 }
 
 
-function RTCUtils(RTCService)
+function RTCUtils(RTCService, onTemasysPluginReady)
 {
+    var self = this;
     this.service = RTCService;
-    if (navigator.mozGetUserMedia) {
-        console.log('This appears to be Firefox');
-        var version = parseInt(navigator.userAgent.match(/Firefox\/([0-9]+)\./)[1], 10);
-        if (version >= 40
-            && config.useBundle && config.useRtcpMux) {
+    if (RTCBrowserType.isFirefox()) {
+        var FFversion = RTCBrowserType.getFirefoxVersion();
+        if (FFversion >= 40 && config.useBundle && config.useRtcpMux) {
             this.peerconnection = mozRTCPeerConnection;
-            this.browser = RTCBrowserType.RTC_BROWSER_FIREFOX;
             this.getUserMedia = navigator.mozGetUserMedia.bind(navigator);
             this.pc_constraints = {};
             this.attachMediaStream =  function (element, stream) {
@@ -155,7 +169,7 @@ function RTCUtils(RTCService)
                 {
                     tracks = stream.getAudioTracks();
                 }
-                return tracks[0].id.replace(/[\{,\}]/g,"");
+                return SDPUtil.filter_special_chars(tracks[0].id);
             };
             this.getVideoSrc = function (element) {
                 if(!element)
@@ -169,14 +183,16 @@ function RTCUtils(RTCService)
             RTCSessionDescription = mozRTCSessionDescription;
             RTCIceCandidate = mozRTCIceCandidate;
         } else {
+            console.error(
+                "Firefox requirements not met, ver: " + FFversion +
+                ", bundle: " + config.useBundle +
+                ", rtcp-mux: " + config.useRtcpMux);
             window.location.href = 'unsupported_browser.html';
             return;
         }
 
-    } else if (navigator.webkitGetUserMedia) {
-        console.log('This appears to be Chrome');
+    } else if (RTCBrowserType.isChrome() || RTCBrowserType.isOpera()) {
         this.peerconnection = webkitRTCPeerConnection;
-        this.browser = RTCBrowserType.RTC_BROWSER_CHROME;
         this.getUserMedia = navigator.webkitGetUserMedia.bind(navigator);
         this.attachMediaStream = function (element, stream) {
             element.attr('src', webkitURL.createObjectURL(stream));
@@ -184,7 +200,7 @@ function RTCUtils(RTCService)
         this.getStreamID = function (stream) {
             // streams from FF endpoints have the characters '{' and '}'
             // that make jQuery choke.
-            return stream.id.replace(/[\{,\}]/g,"");
+            return SDPUtil.filter_special_chars(stream.id);
         };
         this.getVideoSrc = function (element) {
             if(!element)
@@ -211,12 +227,62 @@ function RTCUtils(RTCService)
             };
         }
     }
-    else
-    {
-        try { console.log('Browser does not appear to be WebRTC-capable'); } catch (e) { }
+    // Detect IE/Safari
+    else if (RTCBrowserType.isTemasysPluginUsed()) {
 
+        AdapterJS.WebRTCPlugin.setLogLevel(
+            AdapterJS.WebRTCPlugin.PLUGIN_LOG_LEVELS.VERBOSE);
+
+        AdapterJS.webRTCReady(function (isPlugin) {
+
+            self.peerconnection = RTCPeerConnection;
+            self.getUserMedia = getUserMedia;
+            self.attachMediaStream = function (element, stream) {
+
+                if (stream.id === "dummyAudio" || stream.id === "dummyVideo") {
+                    return;
+                }
+
+                attachMediaStream(element[0], stream);
+            };
+            self.getStreamID = function (stream) {
+                var id = SDPUtil.filter_special_chars(stream.label);
+                return id;
+            };
+            self.getVideoSrc = function (element) {
+                if (!element) {
+                    console.warn("Attempt to get video SRC of null element");
+                    return null;
+                }
+                var src = null;
+                var children = element.children;
+                for (var i = 0; i !== children.length; ++i) {
+                    if (children[i].name === 'streamId') {
+                        return children[i].value;
+                    }
+                }
+                //console.info(element.id + " SRC: " + src);
+                return null;
+            };
+            self.setVideoSrc = function (element, src) {
+                //console.info("Set video src: ", element, src);
+                if (!src) {
+                    console.warn("Not attaching video stream, 'src' is null");
+                    return;
+                }
+                AdapterJS.WebRTCPlugin.WaitForPluginReady();
+                var stream = AdapterJS.WebRTCPlugin.plugin
+                    .getStreamWithId(AdapterJS.WebRTCPlugin.pageId, src);
+                attachMediaStream(element, stream);
+            };
+
+            onTemasysPluginReady(isPlugin);
+        });
+    } else {
+        try {
+            console.log('Browser does not appear to be WebRTC-capable');
+        } catch (e) { }
         window.location.href = 'unsupported_browser.html';
-        return;
     }
 }
 
@@ -232,7 +298,7 @@ RTCUtils.prototype.getUserMediaWithConstraints = function(
     var constraints = getConstraints(
         um, resolution, bandwidth, fps, desktopStream, isAndroid);
 
-    var isFF = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+    console.info("Get media constraints", constraints);
 
     var self = this;
 
@@ -311,9 +377,9 @@ RTCUtils.prototype.obtainAudioAndVideoPermissions =
         return;
     }
 
-    if (navigator.mozGetUserMedia) {
+    if (RTCBrowserType.isFirefox() || RTCBrowserType.isTemasysPluginUsed()) {
 
-        // With FF we can't split the stream into audio and video because FF
+        // With FF/IE we can't split the stream into audio and video because FF
         // doesn't support media stream constructors. So, we need to get the
         // audio stream separately from the video stream using two distinct GUM
         // calls. Not very user friendly :-( but we don't have many other
@@ -321,31 +387,41 @@ RTCUtils.prototype.obtainAudioAndVideoPermissions =
         //
         // Note that we pack those 2 streams in a single object and pass it to
         // the successCallback method.
-
-        self.getUserMediaWithConstraints(
-            ['audio'],
-            function (audioStream) {
-                self.getUserMediaWithConstraints(
-                    ['video'],
-                    function (videoStream) {
-                        return self.successCallback({
-                            audioStream: audioStream,
-                            videoStream: videoStream
-                        });
-                    },
-                    function (error) {
-                        console.error('failed to obtain video stream - stop',
-                            error);
-                        return self.successCallback(null);
-                    },
-                    config.resolution || '360');
-            },
-            function (error) {
-                console.error('failed to obtain audio stream - stop',
-                        error);
-                return self.successCallback(null);
-            }
-        );
+        var obtainVideo = function (audioStream) {
+            self.getUserMediaWithConstraints(
+                ['video'],
+                function (videoStream) {
+                    return successCallback({
+                        audioStream: audioStream,
+                        videoStream: videoStream
+                    });
+                },
+                function (error) {
+                    console.error(
+                        'failed to obtain video stream - stop', error);
+                    self.errorCallback(error);
+                },
+                config.resolution || '360');
+        };
+        var obtainAudio = function () {
+            self.getUserMediaWithConstraints(
+                ['audio'],
+                function (audioStream) {
+                    if (newDevices.indexOf('video') !== -1)
+                        obtainVideo(audioStream);
+                },
+                function (error) {
+                    console.error(
+                        'failed to obtain audio stream - stop', error);
+                    self.errorCallback(error);
+                }
+            );
+        };
+        if (newDevices.indexOf('audio') !== -1) {
+            obtainAudio();
+        } else {
+            obtainVideo(null);
+        }
     } else {
         this.getUserMediaWithConstraints(
         newDevices,
@@ -358,12 +434,12 @@ RTCUtils.prototype.obtainAudioAndVideoPermissions =
         config.resolution || '360');
     }
 
-}
+};
 
 RTCUtils.prototype.successCallback = function (stream, usageOptions) {
-    // If this is FF, the stream parameter is *not* a MediaStream object, it's
-    // an object with two properties: audioStream, videoStream.
-    if(stream && !navigator.mozGetUserMedia)
+    // If this is FF or IE, the stream parameter is *not* a MediaStream object,
+    // it's an object with two properties: audioStream, videoStream.
+    if (stream && stream.getAudioTracks && stream.getVideoTracks)
         console.log('got', stream, stream.getAudioTracks().length,
             stream.getVideoTracks().length);
     this.handleLocalStream(stream, usageOptions);
@@ -427,10 +503,17 @@ RTCUtils.prototype.handleLocalStream = function(stream, usageOptions)
             }
         }
     }
-    else
-    {//firefox
-        audioStream = stream.audioStream;
-        videoStream = stream.videoStream;
+    else if (RTCBrowserType.isFirefox() || RTCBrowserType.isTemasysPluginUsed())
+    {   // Firefox and Temasys plugin
+        if (stream && stream.audioStream)
+            audioStream = stream.audioStream;
+        else
+            audioStream = new DummyMediaStream("dummyAudio");
+
+        if (stream && stream.videoStream)
+            videoStream = stream.videoStream;
+        else
+            videoStream = new DummyMediaStream("dummyVideo");
     }
 
     var audioMuted = (usageOptions && usageOptions.audio === false),
@@ -447,15 +530,20 @@ RTCUtils.prototype.handleLocalStream = function(stream, usageOptions)
         videoMuted, videoGUM);
 };
 
-RTCUtils.prototype.createStream = function(stream, isVideo)
-{
+function DummyMediaStream(id) {
+    this.id = id;
+    this.label = id;
+    this.stop = function() { };
+    this.getAudioTracks = function() { return []; }
+    this.getVideoTracks = function() { return []; }
+}
+
+RTCUtils.prototype.createStream = function(stream, isVideo) {
     var newStream = null;
-    if(window.webkitMediaStream)
-    {
+    if (window.webkitMediaStream) {
         newStream = new webkitMediaStream();
-        if(newStream)
-        {
-            var tracks = (isVideo? stream.getVideoTracks() : stream.getAudioTracks());
+        if (newStream) {
+            var tracks = (isVideo ? stream.getVideoTracks() : stream.getAudioTracks());
 
             for (i = 0; i < tracks.length; i++) {
                 newStream.addTrack(tracks[i]);
@@ -463,8 +551,14 @@ RTCUtils.prototype.createStream = function(stream, isVideo)
         }
 
     }
-    else
-        newStream = stream;
+    else {
+        // FIXME: this is duplicated with 'handleLocalStream' !!!
+        if (stream) {
+            newStream = stream;
+        } else {
+            newStream = new DummyMediaStream(isVideo ? "dummyVideo" : "dummyAudio");
+        }
+    }
 
     return newStream;
 };

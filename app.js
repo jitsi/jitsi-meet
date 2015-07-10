@@ -21,14 +21,11 @@ var APP =
 
 function init() {
 
+    APP.desktopsharing.init();
     APP.RTC.start();
     APP.xmpp.start();
     APP.statistics.start();
     APP.connectionquality.init();
-
-    // Set default desktop sharing method
-    APP.desktopsharing.init();
-
     APP.keyboardshortcut.init();
     APP.members.start();
 }

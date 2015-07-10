@@ -218,8 +218,12 @@ SDP.prototype.toJingle = function (elem, thecreator, ssrcs) {
                         if (kv.indexOf(':') == -1) {
                             elem.attrs({ name: kv });
                         } else {
-                            elem.attrs({ name: kv.split(':', 2)[0] });
-                            elem.attrs({ value: kv.split(':', 2)[1] });
+                            var k = kv.split(':', 2)[0];
+                            elem.attrs({ name: k });
+
+                            var v = kv.split(':', 2)[1];
+                            v = SDPUtil.filter_special_chars(v);
+                            elem.attrs({ value: v });
                         }
                         elem.up();
                     });
@@ -243,7 +247,7 @@ SDP.prototype.toJingle = function (elem, thecreator, ssrcs) {
                     }
                     if(msid != null)
                     {
-                        msid = msid.replace(/[\{,\}]/g,"");
+                        msid = SDPUtil.filter_special_chars(msid);
                         elem.c('parameter');
                         elem.attrs({name: "msid", value:msid});
                         elem.up();
@@ -605,9 +609,12 @@ SDP.prototype.jingle2media = function (content) {
     tmp.each(function () {
         var ssrc = this.getAttribute('ssrc');
         $(this).find('>parameter').each(function () {
-            media += 'a=ssrc:' + ssrc + ' ' + this.getAttribute('name');
-            if (this.getAttribute('value') && this.getAttribute('value').length)
-                media += ':' + this.getAttribute('value');
+            var name = this.getAttribute('name');
+            var value = this.getAttribute('value');
+            value = SDPUtil.filter_special_chars(value);
+            media += 'a=ssrc:' + ssrc + ' ' + name;
+            if (value && value.length)
+                media += ':' + value;
             media += '\r\n';
         });
     });

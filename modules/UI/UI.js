@@ -24,6 +24,7 @@ var CQEvents = require("../../service/connectionquality/CQEvents");
 var DesktopSharingEventTypes
     = require("../../service/desktopsharing/DesktopSharingEventTypes");
 var RTCEvents = require("../../service/RTC/RTCEvents");
+var RTCBrowserType = require("../RTC/RTCBrowserType");
 var StreamEventTypes = require("../../service/RTC/StreamEventTypes");
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 var MemberEvents = require("../../service/members/Events");
@@ -253,7 +254,7 @@ function registerListeners() {
         {
             // might need to update the direction if participant just went from sendrecv to recvonly
             if (stream.type === 'video' || stream.type === 'screen') {
-                var el = $('#participant_'  + Strophe.getResourceFromJid(jid) + '>video');
+                var el = $('#participant_' + Strophe.getResourceFromJid(jid) + '>' + APP.RTC.getVideoElementName());
                 switch (stream.direction) {
                     case 'sendrecv':
                         el.show();
@@ -405,7 +406,9 @@ UI.start = function (init) {
         $('#notice').css({display: 'block'});
     }
 
-    document.getElementById('largeVideo').volume = 0;
+    if (!RTCBrowserType.isIExplorer()) {
+        document.getElementById('largeVideo').volume = 0;
+    }
 
     if(config.requireDisplayName) {
         var currentSettings = Settings.getSettings();
