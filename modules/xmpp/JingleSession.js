@@ -190,7 +190,6 @@ function onIceConnectionStateChange(sid, session) {
 }
 
 JingleSession.prototype.accept = function () {
-    var self = this;
     this.state = 'active';
 
     var pranswer = this.peerconnection.localDescription;
