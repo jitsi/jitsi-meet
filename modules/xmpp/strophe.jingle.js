@@ -2,6 +2,7 @@
 
 var JingleSession = require("./JingleSession");
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
+var RTCBrowserType = require("../RTC/RTCBrowserType");
 
 
 module.exports = function(XMPP, eventEmitter)
@@ -49,6 +50,10 @@ module.exports = function(XMPP, eventEmitter)
                 this.connection.disco.addFeature('urn:xmpp:jingle:apps:rtp:audio');
                 this.connection.disco.addFeature('urn:xmpp:jingle:apps:rtp:video');
 
+                if (RTCBrowserType.isChrome() || RTCBrowserType.isOpera()
+                    || RTCBrowserType.isTemasysPluginUsed()) {
+                    this.connection.disco.addFeature('urn:ietf:rfc:4588');
+                }
 
                 // this is dealt with by SDP O/A so we don't need to annouce this
                 //this.connection.disco.addFeature('urn:xmpp:jingle:apps:rtp:rtcp-fb:0'); // XEP-0293
