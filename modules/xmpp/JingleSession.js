@@ -978,15 +978,6 @@ JingleSession.prototype._modifySources = function (successCallback, queueCallbac
     });
     this.removessrc = [];
 
-    // FIXME:
-    // this was a hack for the situation when only one peer exists
-    // in the conference.
-    // check if still required and remove
-    if (sdp.media[0])
-        sdp.media[0] = sdp.media[0].replace('a=recvonly', 'a=sendrecv');
-    if (sdp.media[1])
-        sdp.media[1] = sdp.media[1].replace('a=recvonly', 'a=sendrecv');
-
     sdp.raw = sdp.session + sdp.media.join('');
     this.peerconnection.setRemoteDescription(new RTCSessionDescription({type: 'offer', sdp: sdp.raw}),
         function() {
