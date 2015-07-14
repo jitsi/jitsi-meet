@@ -249,24 +249,6 @@ function registerListeners() {
     APP.xmpp.addListener(XMPPEvents.USER_ID_CHANGED, function (from, id) {
         Avatar.setUserAvatar(from, id);
     });
-    APP.xmpp.addListener(XMPPEvents.STREAMS_CHANGED, function (jid, changedStreams) {
-        for(stream in changedStreams)
-        {
-            // might need to update the direction if participant just went from sendrecv to recvonly
-            if (stream.type === 'video' || stream.type === 'screen') {
-                var el = $('#participant_' + Strophe.getResourceFromJid(jid) + '>' + APP.RTC.getVideoElementName());
-                switch (stream.direction) {
-                    case 'sendrecv':
-                        el.show();
-                        break;
-                    case 'recvonly':
-                        el.hide();
-                        break;
-                }
-            }
-        }
-
-    });
     APP.xmpp.addListener(XMPPEvents.DISPLAY_NAME_CHANGED, onDisplayNameChanged);
     APP.xmpp.addListener(XMPPEvents.MUC_JOINED, onMucJoined);
     APP.xmpp.addListener(XMPPEvents.LOCAL_ROLE_CHANGED, onLocalRoleChanged);

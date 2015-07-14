@@ -125,7 +125,7 @@ SDP.prototype.removeMediaLines = function(mediaindex, prefix) {
 }
 
 // add content's to a jingle element
-SDP.prototype.toJingle = function (elem, thecreator, ssrcs) {
+SDP.prototype.toJingle = function (elem, thecreator, ssrcs, videoType) {
 //    console.log("SSRC" + ssrcs["audio"] + " - " + ssrcs["video"]);
     var i, j, k, mline, ssrc, rtpmap, tmp, line, lines;
     var self = this;
@@ -227,7 +227,6 @@ SDP.prototype.toJingle = function (elem, thecreator, ssrcs) {
                         }
                         elem.up();
                     });
-                    elem.up();
                 }
                 else
                 {
@@ -257,11 +256,17 @@ SDP.prototype.toJingle = function (elem, thecreator, ssrcs) {
                         elem.c('parameter');
                         elem.attrs({name: "label", value:msid});
                         elem.up();
-                        elem.up();
                     }
-
-
                 }
+                // Video type
+                if (videoType && mline.media == "video") {
+                    elem.c('ssrc-info',
+                        {
+                            xmlns: 'http://jitsi.org/jitmeet',
+                            'video-type': videoType
+                        }).up();
+                }
+                elem.up();
 
                 // XEP-0339 handle ssrc-group attributes
                 var ssrc_group_lines = SDPUtil.find_lines(this.media[i], 'a=ssrc-group:');

@@ -148,20 +148,6 @@ var RTC = {
             function (stream, isUsingScreenStream, callback) {
                 self.changeLocalVideo(stream, isUsingScreenStream, callback);
             }, DesktopSharingEventTypes.NEW_STREAM_CREATED);
-        APP.xmpp.addListener(XMPPEvents.STREAMS_CHANGED, function (jid, changedStreams) {
-            for(var i = 0; i < changedStreams.length; i++) {
-                var type = changedStreams[i].type;
-                if (type != "audio") {
-                    var peerStreams = self.remoteStreams[jid];
-                    if(!peerStreams)
-                        continue;
-                    var videoStream = peerStreams[MediaStreamType.VIDEO_TYPE];
-                    if(!videoStream)
-                        continue;
-                    videoStream.setVideoType(changedStreams[i].type);
-                }
-            }
-        });
         APP.xmpp.addListener(XMPPEvents.CALL_INCOMING, function(event) {
             DataChannels.init(event.peerconnection, eventEmitter);
         });

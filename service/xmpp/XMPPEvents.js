@@ -7,7 +7,6 @@ var XMPPEvents = {
     KICKED: "xmpp.kicked",
     BRIDGE_DOWN: "xmpp.bridge_down",
     USER_ID_CHANGED: "xmpp.user_id_changed",
-    STREAMS_CHANGED: "xmpp.streams_changed",
     // We joined the MUC
     MUC_JOINED: "xmpp.muc_joined",
     // A member joined the MUC

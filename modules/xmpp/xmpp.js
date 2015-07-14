@@ -594,9 +594,9 @@ var XMPP = {
         return connection.emuc.members;
     },
     getJidFromSSRC: function (ssrc) {
-        if(!connection)
+        if (!this.isConferenceInProgress())
             return null;
-        return connection.emuc.ssrc2jid[ssrc];
+        return connection.jingle.activecall.getSsrcOwner(ssrc);
     },
     getMUCJoined: function () {
         return connection.emuc.joined;

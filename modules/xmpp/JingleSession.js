@@ -48,6 +48,8 @@ function JingleSession(me, sid, connection, service, eventEmitter) {
 
     this.wait = true;
     this.localStreamsSSRC = null;
+    this.ssrcOwners = {};
+    this.ssrcVideoTypes = {};
     this.eventEmitter = eventEmitter;
 
     /**
@@ -189,6 +191,10 @@ function onIceConnectionStateChange(sid, session) {
     }
 }
 
+JingleSession.prototype.getVideoType = function () {
+    return APP.desktopsharing.isUsingScreenStream() ? 'screen' : 'camera';
+};
+
 JingleSession.prototype.accept = function () {
     this.state = 'active';
 
@@ -216,7 +222,12 @@ JingleSession.prototype.accept = function () {
             initiator: this.initiator,
             responder: this.responder,
             sid: this.sid });
-    prsdp.toJingle(accept, this.initiator == this.me ? 'initiator' : 'responder', this.localStreamsSSRC);
+    // FIXME why do we generate session-accept in 3 different places ?
+    prsdp.toJingle(
+        accept,
+        this.initiator == this.me ? 'initiator' : 'responder',
+        this.localStreamsSSRC,
+        self.getVideoType());
     var sdp = this.peerconnection.localDescription.sdp;
     while (SDPUtil.find_line(sdp, 'a=inactive')) {
         // FIXME: change any inactive to sendrecv or whatever they were originally
@@ -303,6 +314,7 @@ JingleSession.prototype.sendIceCandidate = function (candidate) {
         //console.log('sendIceCandidate: last candidate.');
         if (!this.usetrickle) {
             //console.log('should send full offer now...');
+            //FIXME why do we generate session-accept in 3 different places ?
             var init = $iq({to: this.peerjid,
                 type: 'set'})
                 .c('jingle', {xmlns: 'urn:xmpp:jingle:1',
@@ -314,7 +326,11 @@ JingleSession.prototype.sendIceCandidate = function (candidate) {
             var sendJingle = function (ssrc) {
                 if(!ssrc)
                     ssrc = {};
-                self.localSDP.toJingle(init, self.initiator == self.me ? 'initiator' : 'responder', ssrc);
+                self.localSDP.toJingle(
+                    init,
+                    self.initiator == self.me ? 'initiator' : 'responder',
+                    ssrc,
+                    self.getVideoType());
                 self.connection.sendIQ(init,
                     function () {
                         //console.log('session initiate ack');
@@ -414,6 +430,7 @@ JingleSession.prototype.sendOffer = function () {
     );
 };
 
+// FIXME createdOffer is never used in jitsi-meet
 JingleSession.prototype.createdOffer = function (sdp) {
     //console.log('createdOffer', sdp);
     var self = this;
@@ -426,7 +443,11 @@ JingleSession.prototype.createdOffer = function (sdp) {
                 action: 'session-initiate',
                 initiator: this.initiator,
                 sid: this.sid});
-        self.localSDP.toJingle(init, this.initiator == this.me ? 'initiator' : 'responder', this.localStreamsSSRC);
+        self.localSDP.toJingle(
+            init,
+            this.initiator == this.me ? 'initiator' : 'responder',
+            this.localStreamsSSRC,
+            self.getVideoType());
         self.connection.sendIQ(init,
             function () {
                 var ack = {};
@@ -471,10 +492,35 @@ JingleSession.prototype.createdOffer = function (sdp) {
     }
 };
 
+JingleSession.prototype.readSsrcInfo = function (contents) {
+    var self = this;
+    $(contents).each(function (idx, content) {
+        var name = $(content).attr('name');
+        var mediaType = this.getAttribute('name');
+        var ssrcs = $(content).find('description>source[xmlns="urn:xmpp:jingle:apps:rtp:ssma:0"]');
+        ssrcs.each(function () {
+            var ssrc = this.getAttribute('ssrc');
+            $(this).find('>ssrc-info[xmlns="http://jitsi.org/jitmeet"]').each(
+                function () {
+                    var owner = this.getAttribute('owner');
+                    var videoType = this.getAttribute('video-type');
+                    self.ssrcOwners[ssrc] = owner;
+                    self.ssrcVideoTypes[ssrc] = videoType;
+                }
+            );
+        });
+    });
+};
+
+JingleSession.prototype.getSsrcOwner = function (ssrc) {
+    return this.ssrcOwners[ssrc];
+};
+
 JingleSession.prototype.setRemoteDescription = function (elem, desctype) {
     //console.log('setting remote description... ', desctype);
     this.remoteSDP = new SDP('');
     this.remoteSDP.fromJingle(elem);
+    this.readSsrcInfo($(elem).find(">content"));
     if (this.peerconnection.remoteDescription !== null) {
         console.log('setRemoteDescription when remote description is not null, should be pranswer', this.peerconnection.remoteDescription);
         if (this.peerconnection.remoteDescription.type == 'pranswer') {
@@ -655,7 +701,7 @@ JingleSession.prototype.createdAnswer = function (sdp, provisional) {
     }
     var self = this;
     var sendJingle = function (ssrcs) {
-
+                // FIXME why do we generate session-accept in 3 different places ?
                 var accept = $iq({to: self.peerjid,
                     type: 'set'})
                     .c('jingle', {xmlns: 'urn:xmpp:jingle:1',
@@ -663,7 +709,11 @@ JingleSession.prototype.createdAnswer = function (sdp, provisional) {
                         initiator: self.initiator,
                         responder: self.responder,
                         sid: self.sid });
-                self.localSDP.toJingle(accept, self.initiator == self.me ? 'initiator' : 'responder', ssrcs);
+                self.localSDP.toJingle(
+                    accept,
+                    self.initiator == self.me ? 'initiator' : 'responder',
+                    ssrcs,
+                    self.getVideoType());
                 self.connection.sendIQ(accept,
                     function () {
                         var ack = {};
@@ -762,6 +812,9 @@ JingleSession.prototype.addSource = function (elem, fromJid) {
 
     console.log('addssrc', new Date().getTime());
     console.log('ice', this.peerconnection.iceConnectionState);
+
+    this.readSsrcInfo(elem);
+
     var sdp = new SDP(this.peerconnection.remoteDescription.sdp);
     var mySdp = new SDP(this.peerconnection.localDescription.sdp);
 
@@ -1085,7 +1138,7 @@ JingleSession.prototype.notifyMySSRCUpdate = function (old_sdp, new_sdp) {
             sid: this.sid
         }
     );
-    var added = sdpDiffer.toJingle(add);
+    var added = sdpDiffer.toJingle(add, this.getVideoType());
     if (added) {
         this.connection.sendIQ(add,
             function (res) {
@@ -1245,7 +1298,7 @@ JingleSession.onJingleFatalError = function (session, error)
 }
 
 JingleSession.prototype.setLocalDescription = function () {
-    // put our ssrcs into presence so other clients can identify our stream
+    var self = this;
     var newssrcs = [];
     var session = transform.parse(this.peerconnection.localDescription.sdp);
     session.media.forEach(function (media) {
@@ -1258,17 +1311,15 @@ JingleSession.prototype.setLocalDescription = function () {
                 }
                 newssrcs.push({
                     'ssrc': ssrc.id,
-                    'type': media.type,
-                    'direction': media.direction
+                    'type': media.type
                 });
             });
         }
-        else if(this.localStreamsSSRC && this.localStreamsSSRC[media.type])
+        else if(self.localStreamsSSRC && self.localStreamsSSRC[media.type])
         {
             newssrcs.push({
-                'ssrc': this.localStreamsSSRC[media.type],
-                'type': media.type,
-                'direction': media.direction
+                'ssrc': self.localStreamsSSRC[media.type],
+                'type': media.type
             });
         }
 
@@ -1276,20 +1327,16 @@ JingleSession.prototype.setLocalDescription = function () {
 
     console.log('new ssrcs', newssrcs);
 
-    // Have to clear presence map to get rid of removed streams
-    this.connection.emuc.clearPresenceMedia();
-
+    // Bind us as local SSRCs owner
     if (newssrcs.length > 0) {
         for (var i = 1; i <= newssrcs.length; i ++) {
-            // Change video type to screen
-            if (newssrcs[i-1].type === 'video' && APP.desktopsharing.isUsingScreenStream()) {
-                newssrcs[i-1].type = 'screen';
+            var ssrc = newssrcs[i-1].ssrc;
+            var myJid = self.connection.emuc.myroomjid;
+            self.ssrcOwners[ssrc] = myJid;
+            if (newssrcs[i-1].type === 'video'){
+                self.ssrcVideoTypes[ssrc] = self.getVideoType();
             }
-            this.connection.emuc.addMediaToPresence(i,
-                newssrcs[i-1].type, newssrcs[i-1].ssrc, newssrcs[i-1].direction);
         }
-
-        this.connection.emuc.sendPresence();
     }
 }
 
@@ -1331,7 +1378,6 @@ function sendKeyframe(pc) {
 JingleSession.prototype.remoteStreamAdded = function (data, times) {
     var self = this;
     var thessrc;
-    var ssrc2jid = this.connection.emuc.ssrc2jid;
     var streamId = APP.RTC.getStreamID(data.stream);
 
     // look up an associated JID for a stream id
@@ -1354,40 +1400,14 @@ JingleSession.prototype.remoteStreamAdded = function (data, times) {
         if (ssrclines.length) {
             thessrc = ssrclines[0].substring(7).split(' ')[0];
 
-            // We signal our streams (through Jingle to the focus) before we set
-            // our presence (through which peers associate remote streams to
-            // jids). So, it might arrive that a remote stream is added but
-            // ssrc2jid is not yet updated and thus data.peerjid cannot be
-            // successfully set. Here we wait for up to a second for the
-            // presence to arrive.
-
-            if (!ssrc2jid[thessrc]) {
-
-                if (typeof times === 'undefined')
-                {
-                    times = 0;
-                }
-
-                if (times > 10)
-                {
-                    console.warning('Waiting for jid timed out', thessrc);
-                }
-                else
-                {
-                    setTimeout(function(d) {
-                        return function() {
-                            self.remoteStreamAdded(d, times++);
-                        }
-                    }(data), 250);
-                }
+            if (!self.ssrcOwners[thessrc]) {
+                console.error("No SSRC owner known for: " + thessrc);
                 return;
             }
-
-            // ok to overwrite the one from focus? might save work in colibri.js
-            console.log('associated jid', ssrc2jid[thessrc], thessrc);
-            if (ssrc2jid[thessrc]) {
-                data.peerjid = ssrc2jid[thessrc];
-            }
+            data.peerjid = self.ssrcOwners[thessrc];
+            data.videoType = self.ssrcVideoTypes[thessrc]
+            console.log('associated jid', self.ssrcOwners[thessrc],
+                                          thessrc, data.videoType);
         }
     }
 

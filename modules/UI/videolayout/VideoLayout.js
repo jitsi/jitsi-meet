@@ -532,6 +532,13 @@ var VideoLayout = (function (my) {
         } else {
             VideoLayout.ensurePeerContainerExists(jid);
             remoteVideos[Strophe.getResourceFromJid(jid)].showVideoIndicator(value);
+
+            var el = $('#participant_'  + Strophe.getResourceFromJid(jid)
+                        + '>' + APP.RTC.getVideoElementName());
+            if (!value)
+                el.show();
+            else
+                el.hide();
         }
     };
 

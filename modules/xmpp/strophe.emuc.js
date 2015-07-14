@@ -21,7 +21,6 @@ module.exports = function(XMPP, eventEmitter) {
         isOwner: false,
         role: null,
         focusMucJid: null,
-        ssrc2jid: {},
         init: function (conn) {
             this.connection = conn;
         },
@@ -280,14 +279,6 @@ module.exports = function(XMPP, eventEmitter) {
                 return true;
             }
 
-            var self = this;
-            // Remove old ssrcs coming from the jid
-            Object.keys(this.ssrc2jid).forEach(function (ssrc) {
-                if (self.ssrc2jid[ssrc] == from) {
-                    delete self.ssrc2jid[ssrc];
-                }
-            });
-
             // Status code 110 indicates that this notification is "self-presence".
             if (!$(pres).find('>x[xmlns="http://jabber.org/protocol/muc#user"]>status[code="110"]').length) {
                 delete this.members[from];
@@ -514,26 +505,6 @@ module.exports = function(XMPP, eventEmitter) {
                     .c('current').t(this.presMap['prezicurrent']).up().up();
             }
 
-            if (this.presMap['medians']) {
-                pres.c('media', {xmlns: this.presMap['medians']});
-                var sourceNumber = 0;
-                Object.keys(this.presMap).forEach(function (key) {
-                    if (key.indexOf('source') >= 0) {
-                        sourceNumber++;
-                    }
-                });
-                if (sourceNumber > 0)
-                    for (var i = 1; i <= sourceNumber / 3; i++) {
-                        pres.c('source',
-                            {type: this.presMap['source' + i + '_type'],
-                                ssrc: this.presMap['source' + i + '_ssrc'],
-                                direction: this.presMap['source' + i + '_direction']
-                                    || 'sendrecv' }
-                        ).up();
-                    }
-                pres.up();
-            }
-
             if(this.presMap["startMuted"] !== undefined)
             {
                 pres.c("startmuted", {audio: this.presMap["startMuted"].audio,
@@ -548,24 +519,8 @@ module.exports = function(XMPP, eventEmitter) {
         addDisplayNameToPresence: function (displayName) {
             this.presMap['displayName'] = displayName;
         },
-        addMediaToPresence: function (sourceNumber, mtype, ssrcs, direction) {
-            if (!this.presMap['medians'])
-                this.presMap['medians'] = 'http://estos.de/ns/mjs';
-
-            this.presMap['source' + sourceNumber + '_type'] = mtype;
-            this.presMap['source' + sourceNumber + '_ssrc'] = ssrcs;
-            this.presMap['source' + sourceNumber + '_direction'] = direction;
-        },
         addDevicesToPresence: function (devices) {
             this.presMap['devices'] = devices;
-        },
-        clearPresenceMedia: function () {
-            var self = this;
-            Object.keys(this.presMap).forEach(function (key) {
-                if (key.indexOf('source') != -1) {
-                    delete self.presMap[key];
-                }
-            });
         },
         addPreziToPresence: function (url, currentSlide) {
             this.presMap['prezins'] = 'http://jitsi.org/jitmeet/prezi';
@@ -649,30 +604,6 @@ module.exports = function(XMPP, eventEmitter) {
 
             if(memeber.isFocus)
                 return;
-
-            var self = this;
-            // Remove old ssrcs coming from the jid
-            Object.keys(this.ssrc2jid).forEach(function (ssrc) {
-                if (self.ssrc2jid[ssrc] == from) {
-                    delete self.ssrc2jid[ssrc];
-                }
-            });
-
-            var changedStreams = [];
-            $(pres).find('>media[xmlns="http://estos.de/ns/mjs"]>source').each(function (idx, ssrc) {
-                //console.log(jid, 'assoc ssrc', ssrc.getAttribute('type'), ssrc.getAttribute('ssrc'));
-                var ssrcV = ssrc.getAttribute('ssrc');
-                self.ssrc2jid[ssrcV] = from;
-
-                var type = ssrc.getAttribute('type');
-
-                var direction = ssrc.getAttribute('direction');
-
-                changedStreams.push({type: type, direction: direction});
-
-            });
-
-            eventEmitter.emit(XMPPEvents.STREAMS_CHANGED, from, changedStreams);
 
             var displayName = !config.displayJids
                 ? memeber.displayName : Strophe.getResourceFromJid(from);
