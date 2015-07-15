@@ -65,6 +65,7 @@ function promptDisplayName() {
         function () {
             var form  = $.prompt.getPrompt();
             var input = form.find("input[name='displayName']");
+            input.focus();
             var button = form.find("button");
             button.attr("disabled", "disabled");
             input.keyup(function () {
