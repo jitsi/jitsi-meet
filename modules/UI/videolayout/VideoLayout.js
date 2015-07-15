@@ -480,8 +480,7 @@ var VideoLayout = (function (my) {
             var videoThumb = videoSel[0];
             // It is not always the case that a videoThumb exists (if there is
             // no actual video).
-            // FIXME: checking on .src will not work with Temasys plugin
-            if (videoThumb.src && videoThumb.src !== '') {
+            if (RTC.getVideoSrc(videoThumb)) {
 
                 // We have a video src, great! Let's update the large video
                 // now.
