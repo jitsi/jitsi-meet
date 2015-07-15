@@ -9558,7 +9558,7 @@ RemoteVideo.prototype.addRemoteStreamElement = function (sid, stream, thessrc) {
 
     // If the container is currently visible we attach the stream.
     if (!isVideo || (this.container.offsetParent !== null && isVideo)) {
-        waitForPlayback(stream);
+        this.waitForPlayback(stream);
 
         APP.RTC.attachMediaStream(sel, stream);
     }
