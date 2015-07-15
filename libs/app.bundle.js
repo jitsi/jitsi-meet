@@ -1217,8 +1217,8 @@ var RTC = {
         return this.rtcUtils.getUserMediaWithConstraints(um, success_callback,
             failure_callback, resolution, bandwidth, fps, desktopStream);
     },
-    attachMediaStream:  function (element, stream) {
-        this.rtcUtils.attachMediaStream(element, stream);
+    attachMediaStream:  function (elSelector, stream) {
+        this.rtcUtils.attachMediaStream(elSelector, stream);
     },
     getStreamID:  function (stream) {
         return this.rtcUtils.getStreamID(stream);
@@ -1794,13 +1794,13 @@ function RTCUtils(RTCService, onTemasysPluginReady)
 
             self.peerconnection = RTCPeerConnection;
             self.getUserMedia = getUserMedia;
-            self.attachMediaStream = function (element, stream) {
+            self.attachMediaStream = function (elSel, stream) {
 
                 if (stream.id === "dummyAudio" || stream.id === "dummyVideo") {
                     return;
                 }
 
-                attachMediaStream(element[0], stream);
+                attachMediaStream(elSel[0], stream);
             };
             self.getStreamID = function (stream) {
                 var id = SDPUtil.filter_special_chars(stream.label);
@@ -8825,10 +8825,11 @@ function updateActiveSpeakerAvatarSrc() {
     var avatar = $("#activeSpeakerAvatar")[0];
     var jid = currentSmallVideo.peerJid;
     var url = Avatar.getGravatarUrl(jid);
-    if(avatar.src === url)
+    if (avatar.src === url)
         return;
     var isMuted = null;
-    if(!LargeVideo.VideoLayout.isInLastN(currentSmallVideo.resourceJid)) {
+    if (!currentSmallVideo.isLocal &&
+       !LargeVideo.VideoLayout.isInLastN(currentSmallVideo.resourceJid)) {
         isMuted = true;
     }
     else
@@ -9114,6 +9115,7 @@ function LocalVideo(VideoLayout)
     this.container = $("#localVideoContainer").get(0);
     this.VideoLayout = VideoLayout;
     this.flipX = true;
+    this.isLocal = true;
     this.peerJid = null;
     this.resourceJid = null;
 }
@@ -9364,6 +9366,7 @@ function RemoteVideo(peerJid, VideoLayout)
     nickfield.appendChild(document.createTextNode(this.resourceJid));
     this.container.appendChild(nickfield);
     this.flipX = false;
+    this.isLocal = false;
 }
 
 RemoteVideo.prototype = Object.create(SmallVideo.prototype);
@@ -10062,7 +10065,7 @@ SmallVideo.prototype.hasVideo = function () {
  * video because there is no dominant speaker and no focused speaker
  */
 SmallVideo.prototype.showAvatar = function (show) {
-    if(!this.hasAvatar)
+    if (!this.hasAvatar)
         return;
 
     var videoElem = APP.RTC.getVideoElementName();
@@ -10070,7 +10073,8 @@ SmallVideo.prototype.showAvatar = function (show) {
     var avatar = $('#avatar_' + this.resourceJid);
 
     if (show === undefined || show === null) {
-        if(!this.VideoLayout.isInLastN(this.resourceJid)) {
+        if (!this.isLocal &&
+            !this.VideoLayout.isInLastN(this.resourceJid)) {
             show = true;
         }
         else
@@ -10091,7 +10095,7 @@ SmallVideo.prototype.showAvatar = function (show) {
         setVisibility(avatar, show);
 
     }
-}
+};
 
 SmallVideo.prototype.avatarChanged = function (thumbUrl) {
     var thumbnail = $('#' + this.videoSpanId);
@@ -10572,6 +10576,11 @@ var VideoLayout = (function (my) {
             return containerElement.id.substring(i + 12); 
     };
 
+    my.getPeerVideoSel = function (peerResourceJid) {
+        return $('#participant_'  + peerResourceJid +
+                 '>' + APP.RTC.getVideoElementName());
+    };
+
     /**
      * On contact list item clicked.
      */
@@ -10580,40 +10589,39 @@ var VideoLayout = (function (my) {
             return;
         }
 
+        if (jid == APP.xmpp.myJid()) {
+            $("#localVideoContainer").click();
+            return;
+        }
+
         var resource = Strophe.getResourceFromJid(jid);
-        var videoContainer = $("#participant_" + resource);
-        if (videoContainer.length > 0) {
-            var videoThumb
-                    = $(RTC.getVideoElementName(), videoContainer).get(0);
+        var videoSel = VideoLayout.getVideoSelector(resource);
+        if (videoSel.length > 0) {
+            var videoThumb = videoSel[0];
             // It is not always the case that a videoThumb exists (if there is
             // no actual video).
-            if (videoThumb) {
-                if (videoThumb.src && videoThumb.src != '') {
+            if (RTC.getVideoSrc(videoThumb)) {
 
-                    // We have a video src, great! Let's update the large video
-                    // now.
+                // We have a video src, great! Let's update the large video
+                // now.
+                VideoLayout.handleVideoThumbClicked(
+                    false,
+                    Strophe.getResourceFromJid(jid));
+            } else {
 
-                    VideoLayout.handleVideoThumbClicked(
-                        false,
-                        Strophe.getResourceFromJid(jid));
-                } else {
+                // If we don't have a video src for jid, there's absolutely
+                // no point in calling handleVideoThumbClicked; Quite
+                // simply, it won't work because it needs an src to attach
+                // to the large video.
+                //
+                // Instead, we trigger the pinned endpoint changed event to
+                // let the bridge adjust its lastN set for myjid and store
+                // the pinned user in the lastNPickupJid variable to be
+                // picked up later by the lastN changed event handler.
 
-                    // If we don't have a video src for jid, there's absolutely
-                    // no point in calling handleVideoThumbClicked; Quite
-                    // simply, it won't work because it needs an src to attach
-                    // to the large video.
-                    //
-                    // Instead, we trigger the pinned endpoint changed event to
-                    // let the bridge adjust its lastN set for myjid and store
-                    // the pinned user in the lastNPickupJid variable to be
-                    // picked up later by the lastN changed event handler.
-
-                    lastNPickupJid = jid;
-                    eventEmitter.emit(UIEvents.PINNED_ENDPOINT,
-                        Strophe.getResourceFromJid(jid));
-                }
-            } else if (jid == APP.xmpp.myJid()) {
-                $("#localVideoContainer").click();
+                lastNPickupJid = jid;
+                eventEmitter.emit(UIEvents.PINNED_ENDPOINT,
+                    Strophe.getResourceFromJid(jid));
             }
         }
     });
@@ -10646,11 +10654,12 @@ var VideoLayout = (function (my) {
         if (jid === APP.xmpp.myJid()) {
             localVideoThumbnail.showVideoIndicator(value);
         } else {
-            VideoLayout.ensurePeerContainerExists(jid);
-            remoteVideos[Strophe.getResourceFromJid(jid)].showVideoIndicator(value);
+            var resource = Strophe.getResourceFromJid(jid);
 
-            var el = $('#participant_'  + Strophe.getResourceFromJid(jid)
-                        + '>' + APP.RTC.getVideoElementName());
+            VideoLayout.ensurePeerContainerExists(jid);
+            remoteVideos[resource].showVideoIndicator(value);
+
+            var el = VideoLayout.getPeerVideoSel(resource);
             if (!value)
                 el.show();
             else
@@ -10703,19 +10712,15 @@ var VideoLayout = (function (my) {
         }
 
         // Obtain container for new dominant speaker.
-        var container  = document.getElementById(
-                'participant_' + resourceJid);
+        var videoSel  = VideoLayout.getPeerVideoSel(resourceJid);
 
         // Local video will not have container found, but that's ok
         // since we don't want to switch to local video.
-        if (container && !focusedVideoResourceJid)
+        if (!focusedVideoResourceJid && videoSel.length)
         {
-            var video
-                = container.getElementsByTagName(RTC.getVideoElementName());
-
             // Update the large video if the video source is already available,
             // otherwise wait for the "videoactive.jingle" event.
-            if (video.length && video[0].currentTime > 0) {
+            if (videoSel[0].currentTime > 0) {
                 LargeVideo.updateLargeVideo(resourceJid);
             }
         }
@@ -10813,8 +10818,7 @@ var VideoLayout = (function (my) {
 
                     var jid = APP.xmpp.findJidFromResource(resourceJid);
                     var mediaStream = APP.RTC.remoteStreams[jid][MediaStreamType.VIDEO_TYPE];
-                    var sel = $('#participant_' + resourceJid +
-                                '>' + RTC.getVideoElementName());
+                    var sel = VideoLayout.getPeerVideoSel(resourceJid);
 
                     APP.RTC.attachMediaStream(sel, mediaStream.stream);
                     if (lastNPickupJid == mediaStream.peerjid) {

@@ -305,7 +305,7 @@ SmallVideo.prototype.hasVideo = function () {
  * video because there is no dominant speaker and no focused speaker
  */
 SmallVideo.prototype.showAvatar = function (show) {
-    if(!this.hasAvatar)
+    if (!this.hasAvatar)
         return;
 
     var videoElem = APP.RTC.getVideoElementName();
@@ -313,7 +313,8 @@ SmallVideo.prototype.showAvatar = function (show) {
     var avatar = $('#avatar_' + this.resourceJid);
 
     if (show === undefined || show === null) {
-        if(!this.VideoLayout.isInLastN(this.resourceJid)) {
+        if (!this.isLocal &&
+            !this.VideoLayout.isInLastN(this.resourceJid)) {
             show = true;
         }
         else
@@ -334,7 +335,7 @@ SmallVideo.prototype.showAvatar = function (show) {
         setVisibility(avatar, show);
 
     }
-}
+};
 
 SmallVideo.prototype.avatarChanged = function (thumbUrl) {
     var thumbnail = $('#' + this.videoSpanId);

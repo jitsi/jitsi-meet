@@ -186,10 +186,11 @@ function updateActiveSpeakerAvatarSrc() {
     var avatar = $("#activeSpeakerAvatar")[0];
     var jid = currentSmallVideo.peerJid;
     var url = Avatar.getGravatarUrl(jid);
-    if(avatar.src === url)
+    if (avatar.src === url)
         return;
     var isMuted = null;
-    if(!LargeVideo.VideoLayout.isInLastN(currentSmallVideo.resourceJid)) {
+    if (!currentSmallVideo.isLocal &&
+       !LargeVideo.VideoLayout.isInLastN(currentSmallVideo.resourceJid)) {
         isMuted = true;
     }
     else

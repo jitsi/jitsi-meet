@@ -11,6 +11,7 @@ function LocalVideo(VideoLayout)
     this.container = $("#localVideoContainer").get(0);
     this.VideoLayout = VideoLayout;
     this.flipX = true;
+    this.isLocal = true;
     this.peerJid = null;
     this.resourceJid = null;
 }

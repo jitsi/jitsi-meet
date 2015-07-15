@@ -20,6 +20,7 @@ function RemoteVideo(peerJid, VideoLayout)
     nickfield.appendChild(document.createTextNode(this.resourceJid));
     this.container.appendChild(nickfield);
     this.flipX = false;
+    this.isLocal = false;
 }
 
 RemoteVideo.prototype = Object.create(SmallVideo.prototype);
