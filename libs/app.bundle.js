@@ -9511,6 +9511,37 @@ RemoteVideo.prototype.removeRemoteStreamElement = function (stream, isVideo, id)
         this.VideoLayout.updateRemovedVideo(this.resourceJid);
 };
 
+RemoteVideo.prototype.waitForPlayback = function (stream) {
+
+    var isVideo = stream.getVideoTracks().length > 0;
+    if (!isVideo || stream.id === 'mixedmslabel') {
+        return;
+    }
+
+    var self = this;
+    var sel = this.VideoLayout.getPeerVideoSel(this.resourceJid);
+
+    // Register 'onplaying' listener to trigger 'videoactive' on VideoLayout
+    // when video playback starts
+    var onPlayingHandler = function () {
+        // FIXME: why do i have to do this for FF?
+        if (RTCBrowserType.isFirefox()) {
+            APP.RTC.attachMediaStream(sel, stream);
+        }
+        if (RTCBrowserType.isTemasysPluginUsed()) {
+            sel = $('#' + newElementId);
+        }
+        self.VideoLayout.videoactive(sel, self.resourceJid);
+        sel[0].onplaying = null;
+        if (RTCBrowserType.isTemasysPluginUsed()) {
+            // 'currentTime' is used to check if the video has started
+            // and the value is not set by the plugin, so we do it
+            sel[0].currentTime = 1;
+        }
+    };
+    sel[0].onplaying = onPlayingHandler;
+};
+
 RemoteVideo.prototype.addRemoteStreamElement = function (sid, stream, thessrc) {
     if (!this.container)
         return;
@@ -9526,35 +9557,12 @@ RemoteVideo.prototype.addRemoteStreamElement = function (sid, stream, thessrc) {
     sel.hide();
 
     // If the container is currently visible we attach the stream.
-    if (!isVideo
-        || (this.container.offsetParent !== null && isVideo)) {
-
-        // Register 'onplaying' listener to trigger 'videoactive' on VideoLayout
-        // when video playback starts
-        if (isVideo && stream.id !== 'mixedmslabel') {
-            var onPlayingHandler = function () {
-                // FIXME: why do i have to do this for FF?
-                if (RTCBrowserType.isFirefox()) {
-                    APP.RTC.attachMediaStream(sel, stream);
-                }
-                if (RTCBrowserType.isTemasysPluginUsed()) {
-                    sel = $('#' + newElementId);
-                }
-                self.VideoLayout.videoactive(sel, self.resourceJid);
-                sel[0].onplaying = null;
-                if (RTCBrowserType.isTemasysPluginUsed()) {
-                    // 'currentTime' is used to check if the video has started
-                    // and the value is not set by the plugin, so we do it
-                    sel[0].currentTime = 1;
-                }
-            };
-            sel[0].onplaying = onPlayingHandler;
-        }
+    if (!isVideo || (this.container.offsetParent !== null && isVideo)) {
+        waitForPlayback(stream);
 
         APP.RTC.attachMediaStream(sel, stream);
     }
 
-    var self = this;
     stream.onended = function () {
         console.log('stream ended', this);
 
@@ -10595,7 +10603,7 @@ var VideoLayout = (function (my) {
         }
 
         var resource = Strophe.getResourceFromJid(jid);
-        var videoSel = VideoLayout.getVideoSelector(resource);
+        var videoSel = VideoLayout.getPeerVideoSel(resource);
         if (videoSel.length > 0) {
             var videoThumb = videoSel[0];
             // It is not always the case that a videoThumb exists (if there is
@@ -10833,7 +10841,7 @@ var VideoLayout = (function (my) {
 
                         updateLargeVideo = false;
                     }
-                    remoteVideos[resourceJid].waitForRemoteVideo(sel, mediaStream.ssrc, mediaStream.stream);
+                    remoteVideos[resourceJid].waitForPlayback(mediaStream.stream);
                 }
             });
         }
@@ -14369,15 +14377,6 @@ JingleSession.prototype._modifySources = function (successCallback, queueCallbac
         });
     });
     this.removessrc = [];
-
-    // FIXME:
-    // this was a hack for the situation when only one peer exists
-    // in the conference.
-    // check if still required and remove
-    if (sdp.media[0])
-        sdp.media[0] = sdp.media[0].replace('a=recvonly', 'a=sendrecv');
-    if (sdp.media[1])
-        sdp.media[1] = sdp.media[1].replace('a=recvonly', 'a=sendrecv');
 
     sdp.raw = sdp.session + sdp.media.join('');
     this.peerconnection.setRemoteDescription(new RTCSessionDescription({type: 'offer', sdp: sdp.raw}),

@@ -165,6 +165,37 @@ RemoteVideo.prototype.removeRemoteStreamElement = function (stream, isVideo, id)
         this.VideoLayout.updateRemovedVideo(this.resourceJid);
 };
 
+RemoteVideo.prototype.waitForPlayback = function (stream) {
+
+    var isVideo = stream.getVideoTracks().length > 0;
+    if (!isVideo || stream.id === 'mixedmslabel') {
+        return;
+    }
+
+    var self = this;
+    var sel = this.VideoLayout.getPeerVideoSel(this.resourceJid);
+
+    // Register 'onplaying' listener to trigger 'videoactive' on VideoLayout
+    // when video playback starts
+    var onPlayingHandler = function () {
+        // FIXME: why do i have to do this for FF?
+        if (RTCBrowserType.isFirefox()) {
+            APP.RTC.attachMediaStream(sel, stream);
+        }
+        if (RTCBrowserType.isTemasysPluginUsed()) {
+            sel = $('#' + newElementId);
+        }
+        self.VideoLayout.videoactive(sel, self.resourceJid);
+        sel[0].onplaying = null;
+        if (RTCBrowserType.isTemasysPluginUsed()) {
+            // 'currentTime' is used to check if the video has started
+            // and the value is not set by the plugin, so we do it
+            sel[0].currentTime = 1;
+        }
+    };
+    sel[0].onplaying = onPlayingHandler;
+};
+
 RemoteVideo.prototype.addRemoteStreamElement = function (sid, stream, thessrc) {
     if (!this.container)
         return;
@@ -180,35 +211,12 @@ RemoteVideo.prototype.addRemoteStreamElement = function (sid, stream, thessrc) {
     sel.hide();
 
     // If the container is currently visible we attach the stream.
-    if (!isVideo
-        || (this.container.offsetParent !== null && isVideo)) {
-
-        // Register 'onplaying' listener to trigger 'videoactive' on VideoLayout
-        // when video playback starts
-        if (isVideo && stream.id !== 'mixedmslabel') {
-            var onPlayingHandler = function () {
-                // FIXME: why do i have to do this for FF?
-                if (RTCBrowserType.isFirefox()) {
-                    APP.RTC.attachMediaStream(sel, stream);
-                }
-                if (RTCBrowserType.isTemasysPluginUsed()) {
-                    sel = $('#' + newElementId);
-                }
-                self.VideoLayout.videoactive(sel, self.resourceJid);
-                sel[0].onplaying = null;
-                if (RTCBrowserType.isTemasysPluginUsed()) {
-                    // 'currentTime' is used to check if the video has started
-                    // and the value is not set by the plugin, so we do it
-                    sel[0].currentTime = 1;
-                }
-            };
-            sel[0].onplaying = onPlayingHandler;
-        }
+    if (!isVideo || (this.container.offsetParent !== null && isVideo)) {
+        waitForPlayback(stream);
 
         APP.RTC.attachMediaStream(sel, stream);
     }
 
-    var self = this;
     stream.onended = function () {
         console.log('stream ended', this);
 

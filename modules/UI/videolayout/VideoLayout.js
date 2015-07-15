@@ -475,7 +475,7 @@ var VideoLayout = (function (my) {
         }
 
         var resource = Strophe.getResourceFromJid(jid);
-        var videoSel = VideoLayout.getVideoSelector(resource);
+        var videoSel = VideoLayout.getPeerVideoSel(resource);
         if (videoSel.length > 0) {
             var videoThumb = videoSel[0];
             // It is not always the case that a videoThumb exists (if there is
@@ -713,7 +713,7 @@ var VideoLayout = (function (my) {
 
                         updateLargeVideo = false;
                     }
-                    remoteVideos[resourceJid].waitForRemoteVideo(sel, mediaStream.ssrc, mediaStream.stream);
+                    remoteVideos[resourceJid].waitForPlayback(mediaStream.stream);
                 }
             });
         }
