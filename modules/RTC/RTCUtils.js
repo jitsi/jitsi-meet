@@ -237,13 +237,13 @@ function RTCUtils(RTCService, onTemasysPluginReady)
 
             self.peerconnection = RTCPeerConnection;
             self.getUserMedia = getUserMedia;
-            self.attachMediaStream = function (element, stream) {
+            self.attachMediaStream = function (elSel, stream) {
 
                 if (stream.id === "dummyAudio" || stream.id === "dummyVideo") {
                     return;
                 }
 
-                attachMediaStream(element[0], stream);
+                attachMediaStream(elSel[0], stream);
             };
             self.getStreamID = function (stream) {
                 var id = SDPUtil.filter_special_chars(stream.label);
