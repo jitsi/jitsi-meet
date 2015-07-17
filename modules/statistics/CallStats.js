@@ -17,8 +17,9 @@ var CallStats = {
 
         this.userID =  APP.xmpp.myResource();
 
-        var roomJid = APP.UI.getRoomName();
-        this.confID = roomJid? Strophe.getNodeFromJid(roomJid) : null;
+        var location = window.location;
+        this.confID = location.protocol + "//" +
+            location.hostname + location.pathname;
 
         //userID is generated or given by the origin server
         callStats.initialize(config.callStatsID,
