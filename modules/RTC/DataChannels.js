@@ -32,14 +32,7 @@ var DataChannels =
             // Sends 12 bytes binary message to the bridge
             //dataChannel.send(new ArrayBuffer(12));
 
-            // when the data channel becomes available, tell the bridge about video
-            // selections so that it can do adaptive simulcast,
-            // we want the notification to trigger even if userJid is undefined,
-            // or null.
-            var userJid = APP.UI.getLargeVideoJid();
-            // we want the notification to trigger even if userJid is undefined,
-            // or null.
-            onSelectedEndpointChanged(userJid);
+            eventEmitter.emit(RTCEvents.DATA_CHANNEL_OPEN);
         };
 
         dataChannel.onerror = function (error) {

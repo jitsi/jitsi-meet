@@ -25,6 +25,7 @@ var DesktopSharingEventTypes
     = require("../../service/desktopsharing/DesktopSharingEventTypes");
 var RTCEvents = require("../../service/RTC/RTCEvents");
 var RTCBrowserType = require("../RTC/RTCBrowserType");
+var DataChannels = require("../RTC/DataChannels");
 var StreamEventTypes = require("../../service/RTC/StreamEventTypes");
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 var UIEvents = require("../../service/UI/UIEvents");
@@ -173,7 +174,16 @@ function registerListeners() {
     APP.RTC.addListener(RTCEvents.AVAILABLE_DEVICES_CHANGED,
         function (devices) {
             VideoLayout.setDeviceAvailabilityIcons(null, devices);
-        })
+        });
+    APP.RTC.addListener(RTCEvents.VIDEO_MUTE, UI.setVideoMuteButtonsState);
+    APP.RTC.addListener(RTCEvents.DATA_CHANNEL_OPEN, function() {
+        // when the data channel becomes available, tell the bridge about video
+        // selections so that it can do adaptive simulcast,
+        // we want the notification to trigger even if userJid is undefined,
+        // or null.
+        var userJid = APP.UI.getLargeVideoJid();
+        eventEmitter.emit(UIEvents.SELECTED_ENDPOINT, userJid);
+    });
     APP.statistics.addAudioLevelListener(function(jid, audioLevel)
     {
         var resourceJid;
@@ -272,6 +282,9 @@ function registerListeners() {
 
     APP.xmpp.addListener(XMPPEvents.AUDIO_MUTED, VideoLayout.onAudioMute);
     APP.xmpp.addListener(XMPPEvents.VIDEO_MUTED, VideoLayout.onVideoMute);
+    APP.xmpp.addListener(XMPPEvents.AUDIO_MUTED_BY_FOCUS, function(doMuteAudio) {
+        UI.setAudioMuted(doMuteAudio);
+    });
     APP.members.addListener(MemberEvents.DTMF_SUPPORT_CHANGED,
                             onDtmfSupportChanged);
     APP.xmpp.addListener(XMPPEvents.START_MUTED_SETTING_CHANGED, function (audio, video) {
@@ -320,10 +333,6 @@ function registerListeners() {
         UI.messageHandler.openReportDialog(null,
             "dialog.connectError", pres);
     });
-    
-    APP.xmpp.addListener(XMPPEvents.AUDIO_MUTED_BY_FOCUS, function(doMuteAudio) {
-        UI.setAudioMuted(doMuteAudio);
-    });
 
     APP.xmpp.addListener(XMPPEvents.READY_TO_JOIN, function() {
         var roomName = UI.generateRoomName();
@@ -334,6 +343,10 @@ function registerListeners() {
     UI.addListener(UIEvents.NICKNAME_CHANGED, function (nickname) {
         APP.xmpp.addToPresence("displayName", nickname);
     });
+    UI.addListener(UIEvents.SELECTED_ENDPOINT,
+        DataChannels.handleSelectedEndpointEvent);
+    UI.addListener(UIEvents.PINNED_ENDPOINT,
+        DataChannels.handlePinnedEndpointEvent);
 }
 
 

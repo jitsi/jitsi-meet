@@ -376,14 +376,7 @@ var DataChannels =
             // Sends 12 bytes binary message to the bridge
             //dataChannel.send(new ArrayBuffer(12));
 
-            // when the data channel becomes available, tell the bridge about video
-            // selections so that it can do adaptive simulcast,
-            // we want the notification to trigger even if userJid is undefined,
-            // or null.
-            var userJid = APP.UI.getLargeVideoJid();
-            // we want the notification to trigger even if userJid is undefined,
-            // or null.
-            onSelectedEndpointChanged(userJid);
+            eventEmitter.emit(RTCEvents.DATA_CHANNEL_OPEN);
         };
 
         dataChannel.onerror = function (error) {
@@ -891,10 +884,6 @@ var RTC = {
         APP.xmpp.addListener(XMPPEvents.CALL_INCOMING, function(event) {
             DataChannels.init(event.peerconnection, eventEmitter);
         });
-        APP.UI.addListener(UIEvents.SELECTED_ENDPOINT,
-            DataChannels.handleSelectedEndpointEvent);
-        APP.UI.addListener(UIEvents.PINNED_ENDPOINT,
-            DataChannels.handlePinnedEndpointEvent);
 
         // In case of IE we continue from 'onReady' callback
         // passed to RTCUtils constructor. It will be invoked by Temasys plugin
@@ -947,7 +936,10 @@ var RTC = {
         if(this.localVideo.isMuted() && this.localVideo.videoType !== type)
         {
             localCallback = function() {
-                APP.xmpp.setVideoMute(false, APP.UI.setVideoMuteButtonsState);
+                APP.xmpp.setVideoMute(false, function(mute) {
+                    eventEmitter.emit(RTCEvents.VIDEO_MUTE, mute);
+                });
+                
                 callback();
             };
         }
@@ -3116,6 +3108,7 @@ var DesktopSharingEventTypes
     = require("../../service/desktopsharing/DesktopSharingEventTypes");
 var RTCEvents = require("../../service/RTC/RTCEvents");
 var RTCBrowserType = require("../RTC/RTCBrowserType");
+var DataChannels = require("../RTC/DataChannels");
 var StreamEventTypes = require("../../service/RTC/StreamEventTypes");
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 var UIEvents = require("../../service/UI/UIEvents");
@@ -3264,7 +3257,16 @@ function registerListeners() {
     APP.RTC.addListener(RTCEvents.AVAILABLE_DEVICES_CHANGED,
         function (devices) {
             VideoLayout.setDeviceAvailabilityIcons(null, devices);
-        })
+        });
+    APP.RTC.addListener(RTCEvents.VIDEO_MUTE, UI.setVideoMuteButtonsState);
+    APP.RTC.addListener(RTCEvents.DATA_CHANNEL_OPEN, function() {
+        // when the data channel becomes available, tell the bridge about video
+        // selections so that it can do adaptive simulcast,
+        // we want the notification to trigger even if userJid is undefined,
+        // or null.
+        var userJid = APP.UI.getLargeVideoJid();
+        eventEmitter.emit(UIEvents.SELECTED_ENDPOINT, userJid);
+    });
     APP.statistics.addAudioLevelListener(function(jid, audioLevel)
     {
         var resourceJid;
@@ -3363,6 +3365,9 @@ function registerListeners() {
 
     APP.xmpp.addListener(XMPPEvents.AUDIO_MUTED, VideoLayout.onAudioMute);
     APP.xmpp.addListener(XMPPEvents.VIDEO_MUTED, VideoLayout.onVideoMute);
+    APP.xmpp.addListener(XMPPEvents.AUDIO_MUTED_BY_FOCUS, function(doMuteAudio) {
+        UI.setAudioMuted(doMuteAudio);
+    });
     APP.members.addListener(MemberEvents.DTMF_SUPPORT_CHANGED,
                             onDtmfSupportChanged);
     APP.xmpp.addListener(XMPPEvents.START_MUTED_SETTING_CHANGED, function (audio, video) {
@@ -3411,10 +3416,6 @@ function registerListeners() {
         UI.messageHandler.openReportDialog(null,
             "dialog.connectError", pres);
     });
-    
-    APP.xmpp.addListener(XMPPEvents.AUDIO_MUTED_BY_FOCUS, function(doMuteAudio) {
-        UI.setAudioMuted(doMuteAudio);
-    });
 
     APP.xmpp.addListener(XMPPEvents.READY_TO_JOIN, function() {
         var roomName = UI.generateRoomName();
@@ -3425,6 +3426,10 @@ function registerListeners() {
     UI.addListener(UIEvents.NICKNAME_CHANGED, function (nickname) {
         APP.xmpp.addToPresence("displayName", nickname);
     });
+    UI.addListener(UIEvents.SELECTED_ENDPOINT,
+        DataChannels.handleSelectedEndpointEvent);
+    UI.addListener(UIEvents.PINNED_ENDPOINT,
+        DataChannels.handlePinnedEndpointEvent);
 }
 
 
@@ -3998,7 +4003,7 @@ UI.setVideoMute = setVideoMute;
 module.exports = UI;
 
 
-},{"../../service/RTC/RTCEvents":99,"../../service/RTC/StreamEventTypes":101,"../../service/UI/UIEvents":102,"../../service/connectionquality/CQEvents":104,"../../service/desktopsharing/DesktopSharingEventTypes":105,"../../service/members/Events":106,"../../service/xmpp/XMPPEvents":108,"../RTC/RTCBrowserType":8,"./../settings/Settings":47,"./audio_levels/AudioLevels.js":12,"./authentication/Authentication":14,"./avatar/Avatar":16,"./etherpad/Etherpad.js":17,"./prezi/Prezi.js":18,"./side_pannels/SidePanelToggler":20,"./side_pannels/chat/Chat.js":21,"./side_pannels/contactlist/ContactList":25,"./side_pannels/settings/SettingsMenu":26,"./toolbars/BottomToolbar":27,"./toolbars/Toolbar":28,"./toolbars/ToolbarToggler":29,"./util/MessageHandler":31,"./util/NicknameHandler":32,"./util/UIUtil":33,"./videolayout/VideoLayout.js":39,"./welcome_page/RoomnameGenerator":40,"./welcome_page/WelcomePage":41,"events":109}],12:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":99,"../../service/RTC/StreamEventTypes":101,"../../service/UI/UIEvents":102,"../../service/connectionquality/CQEvents":104,"../../service/desktopsharing/DesktopSharingEventTypes":105,"../../service/members/Events":106,"../../service/xmpp/XMPPEvents":108,"../RTC/DataChannels":4,"../RTC/RTCBrowserType":8,"./../settings/Settings":47,"./audio_levels/AudioLevels.js":12,"./authentication/Authentication":14,"./avatar/Avatar":16,"./etherpad/Etherpad.js":17,"./prezi/Prezi.js":18,"./side_pannels/SidePanelToggler":20,"./side_pannels/chat/Chat.js":21,"./side_pannels/contactlist/ContactList":25,"./side_pannels/settings/SettingsMenu":26,"./toolbars/BottomToolbar":27,"./toolbars/Toolbar":28,"./toolbars/ToolbarToggler":29,"./util/MessageHandler":31,"./util/NicknameHandler":32,"./util/UIUtil":33,"./videolayout/VideoLayout.js":39,"./welcome_page/RoomnameGenerator":40,"./welcome_page/WelcomePage":41,"events":109}],12:[function(require,module,exports){
 var CanvasUtil = require("./CanvasUtils");
 
 var ASDrawContext = $('#activeSpeakerAudioLevel')[0].getContext('2d');
@@ -30050,6 +30055,7 @@ module.exports = MediaStreamType;
 },{}],99:[function(require,module,exports){
 var RTCEvents = {
     RTC_READY: "rtc.ready",
+    DATA_CHANNEL_OPEN: "rtc.data_channel_open",
     LASTN_CHANGED: "rtc.lastn_changed",
     DOMINANTSPEAKER_CHANGED: "rtc.dominantspeaker_changed",
     LASTN_ENDPOINT_CHANGED: "rtc.lastn_endpoint_changed",
