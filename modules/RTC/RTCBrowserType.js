@@ -46,6 +46,15 @@ var RTCBrowserType = {
 
     getChromeVersion: function () {
         return RTCBrowserType.isChrome() ? browserVersion : null;
+    },
+
+    usesPlanB: function() {
+        return RTCBrowserType.isChrome() || RTCBrowserType.isOpera()
+            || RTCBrowserType.isTemasysPluginUsed();
+    },
+
+    usesUnifiedPlan: function() {
+        return RTCBrowserType.isFirefox();
     }
 
     // Add version getters for other browsers when needed

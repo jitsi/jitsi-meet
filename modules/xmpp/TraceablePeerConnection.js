@@ -90,7 +90,8 @@ function TraceablePeerConnection(ice_config, constraints, session) {
             self.ondatachannel(event);
         }
     };
-    if (!navigator.mozGetUserMedia && this.maxstats) {
+    // XXX: do all non-firefox browsers which we support also support this?
+    if (!RTCBrowserType.isFirefox() && this.maxstats) {
         this.statsinterval = window.setInterval(function() {
             self.peerconnection.getStats(function(stats) {
                 var results = stats.result();
@@ -138,7 +139,7 @@ if (TraceablePeerConnection.prototype.__defineGetter__ !== undefined) {
         this.trace('getLocalDescription::preTransform', dumpSDP(desc));
 
         // if we're running on FF, transform to Plan B first.
-        if (navigator.mozGetUserMedia) {
+        if (RTCBrowserType.usesUnifiedPlan()) {
             desc = this.interop.toPlanB(desc);
             this.trace('getLocalDescription::postTransform (Plan B)', dumpSDP(desc));
         }
@@ -149,7 +150,7 @@ if (TraceablePeerConnection.prototype.__defineGetter__ !== undefined) {
         this.trace('getRemoteDescription::preTransform', dumpSDP(desc));
 
         // if we're running on FF, transform to Plan B first.
-        if (navigator.mozGetUserMedia) {
+        if (RTCBrowserType.usesUnifiedPlan()) {
             desc = this.interop.toPlanB(desc);
             this.trace('getRemoteDescription::postTransform (Plan B)', dumpSDP(desc));
         }
@@ -207,7 +208,7 @@ TraceablePeerConnection.prototype.createDataChannel = function (label, opts) {
 TraceablePeerConnection.prototype.setLocalDescription = function (description, successCallback, failureCallback) {
     this.trace('setLocalDescription::preTransform', dumpSDP(description));
     // if we're running on FF, transform to Plan A first.
-    if (navigator.mozGetUserMedia) {
+    if (RTCBrowserType.usesUnifiedPlan()) {
         description = this.interop.toUnifiedPlan(description);
         this.trace('setLocalDescription::postTransform (Plan A)', dumpSDP(description));
     }
@@ -237,7 +238,7 @@ TraceablePeerConnection.prototype.setRemoteDescription = function (description, 
     this.trace('setRemoteDescription::postTransform (simulcast)', dumpSDP(description));
 
     // if we're running on FF, transform to Plan A first.
-    if (navigator.mozGetUserMedia) {
+    if (RTCBrowserType.usesUnifiedPlan()) {
         description = this.interop.toUnifiedPlan(description);
         this.trace('setRemoteDescription::postTransform (Plan A)', dumpSDP(description));
     }
@@ -277,7 +278,7 @@ TraceablePeerConnection.prototype.createOffer = function (successCallback, failu
             // if we're running on FF, transform to Plan B first.
             // NOTE this is not tested because in meet the focus generates the
             // offer.
-            if (navigator.mozGetUserMedia) {
+            if (RTCBrowserType.usesUnifiedPlan()) {
                 offer = self.interop.toPlanB(offer);
                 self.trace('createOfferOnSuccess::postTransform (Plan B)', dumpSDP(offer));
             }
@@ -303,7 +304,7 @@ TraceablePeerConnection.prototype.createAnswer = function (successCallback, fail
         function (answer) {
             self.trace('createAnswerOnSuccess::preTransfom', dumpSDP(answer));
             // if we're running on FF, transform to Plan A first.
-            if (navigator.mozGetUserMedia) {
+            if (RTCBrowserType.usesUnifiedPlan()) {
                 answer = self.interop.toPlanB(answer);
                 self.trace('createAnswerOnSuccess::postTransfom (Plan B)', dumpSDP(answer));
             }
@@ -340,12 +341,11 @@ TraceablePeerConnection.prototype.addIceCandidate = function (candidate, success
 };
 
 TraceablePeerConnection.prototype.getStats = function(callback, errback) {
-    if (navigator.mozGetUserMedia) {
+    // TODO: Is this the correct way to handle Opera, Temasys?
+    if (RTCBrowserType.isFirefox()) {
         // ignore for now...
         if(!errback)
-            errback = function () {
-
-            }
+            errback = function () {};
         this.peerconnection.getStats(null,callback,errback);
     } else {
         this.peerconnection.getStats(callback);
