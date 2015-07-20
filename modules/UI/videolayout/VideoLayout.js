@@ -72,11 +72,10 @@ var VideoLayout = (function (my) {
 
         localVideoThumbnail.changeVideo(stream, isMuted);
 
-        LargeVideo.updateLargeVideo(
-            APP.xmpp.myResource(),
-            /* force update only before conference starts */
-            !APP.xmpp.isConferenceInProgress());
-
+        /* force update if we're currently being displayed */
+        if (LargeVideo.isCurrentlyOnLarge(APP.xmpp.myResource())) {
+            LargeVideo.updateLargeVideo(APP.xmpp.myResource(), true);
+        }
     };
 
     my.mucJoined = function () {
@@ -116,53 +115,39 @@ var VideoLayout = (function (my) {
      */
     my.updateRemovedVideo = function(resourceJid) {
 
-        var videoElem = RTC.getVideoElementName();
-
         if (resourceJid === LargeVideo.getResourceJid()) {
-            // this is currently displayed as large
-            // pick the last visible video in the row
-            // if nobody else is left, this picks the local video
-            var pick
-                = $('#remoteVideos>' +
-                    'span[id!="mixedstream"]:visible:last>' + videoElem).get(0);
-
-            if (!pick) {
-                console.info("Last visible video no longer exists");
-                pick = $('#remoteVideos>' +
-                    'span[id!="mixedstream"]>' + videoElem).get(0);
-
-                if (!pick || !APP.RTC.getVideoSrc(pick)) {
-                    // Try local video
-                    console.info("Fallback to local video...");
-                    pick = $('#remoteVideos>span>span>' + videoElem).get(0);
-                }
-            }
-
-            // mute if localvideo
-            if (pick) {
-                var container = pick.parentNode;
+            var newResourceJid;
+            // We'll show user's avatar if he is the dominant speaker or if
+            // his video thumbnail is pinned
+            if (resourceJid === focusedVideoResourceJid ||
+                resourceJid === currentDominantSpeaker) {
+                newResourceJid = resourceJid;
             } else {
-                console.warn("Failed to elect large video");
-                container = $('#remoteVideos>span[id!="mixedstream"]:visible:last').get(0);
-
+                // Otherwise select last visible video
+                newResourceJid = this.electLastVisibleVideo();
             }
+            LargeVideo.updateLargeVideo(newResourceJid);
+        }
+    };
 
-            var jid = null;
-            if(container)
-            {
-                if(container.id == "localVideoWrapper")
-                {
-                    jid = APP.xmpp.myResource();
-                }
-                else
-                {
-                    jid = VideoLayout.getPeerContainerResourceJid(container);
-                }
+    my.electLastVisibleVideo = function() {
+        // pick the last visible video in the row
+        // if nobody else is left, this picks the local video
+        var jid;
+        var videoElem = RTC.getVideoElementName();
+        var pick = $('#remoteVideos>span[id!="mixedstream"]:visible:last>' + videoElem);
+        if (pick.length && APP.RTC.getVideoSrc(pick[0])) {
+            return VideoLayout.getPeerContainerResourceJid(pick[0].parentNode);
+        } else {
+            console.info("Last visible video no longer exists");
+            pick = $('#remoteVideos>span[id!="mixedstream"]>' + videoElem);
+            if (pick.length && APP.RTC.getVideoSrc(pick[0])) {
+                return VideoLayout.getPeerContainerResourceJid(pick[0].parentNode);
+            } else {
+                // Try local video
+                console.info("Fallback to local video...");
+                return APP.xmpp.myResource();
             }
-            else
-                return;
-
-            LargeVideo.updateLargeVideo(jid);
         }
     };
     
@@ -224,11 +209,6 @@ var VideoLayout = (function (my) {
             }
         }
 
-        if (LargeVideo.getResourceJid() === resourceJid &&
-            LargeVideo.isLargeVideoOnTop()) {
-            return;
-        }
-
         // Triggers a "video.selected" event. The "false" parameter indicates
         // this isn't a prezi.
         $(document).trigger("video.selected", [false]);
@@ -250,20 +230,18 @@ var VideoLayout = (function (my) {
      * in the document and creates it eventually.
      * 
      * @param peerJid peer Jid to check.
-     * @param userId user email or id for setting the avatar
      * 
      * @return Returns <tt>true</tt> if the peer container exists,
      * <tt>false</tt> - otherwise
      */
-    my.ensurePeerContainerExists = function(peerJid, userId) {
-        ContactList.ensureAddContact(peerJid, userId);
+    my.ensurePeerContainerExists = function(peerJid) {
+        ContactList.ensureAddContact(peerJid);
 
         var resourceJid = Strophe.getResourceFromJid(peerJid);
 
         if(!remoteVideos[resourceJid])
         {
             remoteVideos[resourceJid] = new RemoteVideo(peerJid, VideoLayout);
-            Avatar.setUserAvatar(peerJid, userId);
 
             // In case this is not currently in the last n we don't show it.
             if (localLastNCount
@@ -282,6 +260,9 @@ var VideoLayout = (function (my) {
     };
 
     my.videoactive = function (videoelem, resourceJid) {
+
+        console.info(resourceJid + " video is now active");
+
         videoelem.show();
         VideoLayout.resizeThumbnails();
 
@@ -291,6 +272,7 @@ var VideoLayout = (function (my) {
         if ((!focusedVideoResourceJid &&
             !currentDominantSpeaker &&
             !require("../prezi/Prezi").isPresentationVisible()) ||
+            focusedVideoResourceJid === resourceJid ||
             (resourceJid &&
                 currentDominantSpeaker === resourceJid)) {
             LargeVideo.updateLargeVideo(resourceJid, true);
@@ -469,7 +451,7 @@ var VideoLayout = (function (my) {
             return;
         }
 
-        if (jid == APP.xmpp.myJid()) {
+        if (jid === APP.xmpp.myJid()) {
             $("#localVideoContainer").click();
             return;
         }
@@ -824,13 +806,18 @@ var VideoLayout = (function (my) {
     };
 
     my.showMore = function (jid) {
-        if(APP.xmpp.myJid = jid)
+        if (jid === 'local')
         {
             localVideoThumbnail.connectionIndicator.showMore();
         }
         else
         {
-            remoteVideos[Strophe.getResourceFromJid(jid)].connectionIndicator.showMore();
+            var remoteVideo = remoteVideos[Strophe.getResourceFromJid(jid)];
+            if (remoteVideo) {
+                remoteVideo.connectionIndicator.showMore();
+            } else {
+                console.info("Error - no remote video for jid: " + jid);
+            }
         }
 
     };
@@ -880,6 +867,9 @@ var VideoLayout = (function (my) {
         var smallVideo = VideoLayout.getSmallVideo(resourceJid);
         if(smallVideo)
             smallVideo.avatarChanged(thumbUrl);
+        else
+            console.warn(
+                "Missed avatar update - no small video yet for " + resourceJid);
         LargeVideo.updateAvatar(resourceJid, thumbUrl);
     };
 

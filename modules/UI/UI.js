@@ -449,8 +449,12 @@ function onMucJoined(jid, info) {
     $("#localNick").html(Strophe.getResourceFromJid(jid) + " (" + meHTML + ")");
 
     var settings = Settings.getSettings();
+
+    // Make sure we configure our avatar id, before creating avatar for us
+    Avatar.setUserAvatar(jid, settings.email || settings.uid);
+
     // Add myself to the contact list.
-    ContactList.addContact(jid, settings.email || settings.uid);
+    ContactList.addContact(jid);
 
     // Once we've joined the muc show the toolbar
     ToolbarToggler.showToolbar();
@@ -572,8 +576,12 @@ function onMucMemberJoined(jid, id, displayName) {
     if(!config.startAudioMuted ||
         config.startAudioMuted > APP.members.size())
         UIUtil.playSoundNotification('userJoined');
+
+    // Configure avatar
+    Avatar.setUserAvatar(jid, id);
+
     // Add Peer's container
-    VideoLayout.ensurePeerContainerExists(jid,id);
+    VideoLayout.ensurePeerContainerExists(jid);
 }
 
 function onMucPresenceStatus(jid, info) {

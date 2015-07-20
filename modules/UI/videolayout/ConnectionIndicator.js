@@ -155,7 +155,9 @@ ConnectionIndicator.prototype.generateText = function () {
     if(this.videoContainer.videoSpanId == "localVideoContainer") {
         result += "<div class=\"jitsipopover_showmore\" " +
             "onclick = \"APP.UI.connectionIndicatorShowMore('" +
-            this.jid + "')\"  data-i18n='connectionindicator." +
+            // FIXME: we do not know local jid when this text is generated
+            //this.jid + "')\"  data-i18n='connectionindicator." +
+            "local')\"  data-i18n='connectionindicator." +
                 (this.showMoreValue ? "less" : "more") + "'>" +
             translate("connectionindicator." + (this.showMoreValue ? "less" : "more")) +
             "</div><br />";

@@ -13,7 +13,6 @@ function LocalVideo(VideoLayout)
     this.flipX = true;
     this.isLocal = true;
     this.peerJid = null;
-    this.resourceJid = null;
 }
 
 LocalVideo.prototype = Object.create(SmallVideo.prototype);
@@ -184,8 +183,8 @@ LocalVideo.prototype.changeVideo = function (stream, isMuted) {
             self.showDisplayName(true);
         },
         function() {
-            if (!LargeVideo.isLargeVideoVisible()
-                || APP.xmpp.myResource() !== LargeVideo.getResourceJid())
+            if (!LargeVideo.isLargeVideoVisible() ||
+                !LargeVideo.isCurrentlyOnLarge(self.getResourceJid()))
                 self.showDisplayName(false);
         }
     );
@@ -231,11 +230,18 @@ LocalVideo.prototype.changeVideo = function (stream, isMuted) {
         localVideoContainer.removeChild(localVideo);
         self.VideoLayout.updateRemovedVideo(APP.xmpp.myResource());
     };
-}
+};
 
 LocalVideo.prototype.joined = function (jid) {
     this.peerJid = jid;
-    this.resourceJid = Strophe.getResourceFromJid(jid);
-}
+};
+
+LocalVideo.prototype.getResourceJid = function () {
+    var myResource = APP.xmpp.myResource();
+    if (!myResource) {
+        console.error("Requested local resource before we're in the MUC");
+    }
+    return myResource;
+};
 
 module.exports = LocalVideo;

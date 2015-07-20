@@ -1,3 +1,4 @@
+var Avatar = require("../avatar/Avatar");
 var UIUtil = require("../util/UIUtil");
 var LargeVideo = require("./LargeVideo");
 var RTCBrowserType = require("../../RTC/RTCBrowserType");
@@ -192,14 +193,15 @@ SmallVideo.prototype.showVideoIndicator = function(isMuted) {
 
 SmallVideo.prototype.enableDominantSpeaker = function (isEnable)
 {
-    var displayName = this.resourceJid;
+    var resourceJid = this.getResourceJid();
+    var displayName = resourceJid;
     var nameSpan = $('#' + this.videoSpanId + '>span.displayname');
     if (nameSpan.length > 0)
         displayName = nameSpan.html();
 
     console.log("UI enable dominant speaker",
         displayName,
-        this.resourceJid,
+        resourceJid,
         isEnable);
 
 
@@ -207,21 +209,17 @@ SmallVideo.prototype.enableDominantSpeaker = function (isEnable)
         return;
     }
 
-    var video = $('#' + this.videoSpanId + '>' + APP.RTC.getVideoElementName());
+    if (isEnable) {
+        this.showDisplayName(LargeVideo.isLargeVideoOnTop());
 
-    if (video && video.length > 0) {
-        if (isEnable) {
-            this.showDisplayName(LargeVideo.isLargeVideoOnTop());
+        if (!this.container.classList.contains("dominantspeaker"))
+            this.container.classList.add("dominantspeaker");
+    }
+    else {
+        this.showDisplayName(false);
 
-            if (!this.container.classList.contains("dominantspeaker"))
-                this.container.classList.add("dominantspeaker");
-        }
-        else {
-            this.showDisplayName(false);
-
-            if (this.container.classList.contains("dominantspeaker"))
-                this.container.classList.remove("dominantspeaker");
-        }
+        if (this.container.classList.contains("dominantspeaker"))
+            this.container.classList.remove("dominantspeaker");
     }
 
     this.showAvatar();
@@ -305,16 +303,24 @@ SmallVideo.prototype.hasVideo = function () {
  * video because there is no dominant speaker and no focused speaker
  */
 SmallVideo.prototype.showAvatar = function (show) {
-    if (!this.hasAvatar)
-        return;
+    if (!this.hasAvatar) {
+        if (this.peerJid) {
+            // Init avatar
+            this.avatarChanged(Avatar.getThumbUrl(this.peerJid));
+        } else {
+            console.error("Unable to init avatar - no peerjid", this);
+            return;
+        }
+    }
 
+    var resourceJid = this.getResourceJid();
     var videoElem = APP.RTC.getVideoElementName();
     var video = $('#' + this.videoSpanId).find(videoElem);
-    var avatar = $('#avatar_' + this.resourceJid);
+    var avatar = $('#avatar_' + resourceJid);
 
     if (show === undefined || show === null) {
         if (!this.isLocal &&
-            !this.VideoLayout.isInLastN(this.resourceJid)) {
+            !this.VideoLayout.isInLastN(resourceJid)) {
             show = true;
         }
         else
@@ -324,7 +330,7 @@ SmallVideo.prototype.showAvatar = function (show) {
 
     }
 
-    if (LargeVideo.showAvatar(this.resourceJid, show))
+    if (LargeVideo.showAvatar(resourceJid, show))
     {
         setVisibility(avatar, false);
         setVisibility(video, false);
@@ -339,7 +345,8 @@ SmallVideo.prototype.showAvatar = function (show) {
 
 SmallVideo.prototype.avatarChanged = function (thumbUrl) {
     var thumbnail = $('#' + this.videoSpanId);
-    var avatar = $('#avatar_' + this.resourceJid);
+    var resourceJid = this.getResourceJid();
+    var avatar = $('#avatar_' + resourceJid);
     this.hasAvatar = true;
 
     // set the avatar in the thumbnail
@@ -348,7 +355,7 @@ SmallVideo.prototype.avatarChanged = function (thumbUrl) {
     } else {
         if (thumbnail && thumbnail.length > 0) {
             avatar = document.createElement('img');
-            avatar.id = 'avatar_' + this.resourceJid;
+            avatar.id = 'avatar_' + resourceJid;
             avatar.className = 'userAvatar';
             avatar.src = thumbUrl;
             thumbnail.append(avatar);

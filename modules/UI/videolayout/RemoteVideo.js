@@ -57,7 +57,7 @@ RemoteVideo.prototype.addRemoteVideoMenu = function () {
     var popupmenuElement = document.createElement('ul');
     popupmenuElement.className = 'popupmenu';
     popupmenuElement.id
-        = 'remote_popupmenu_' + this.resourceJid;
+        = 'remote_popupmenu_' + this.getResourceJid();
     spanElement.appendChild(popupmenuElement);
 
     var muteMenuItem = document.createElement('li');
@@ -162,7 +162,7 @@ RemoteVideo.prototype.removeRemoteStreamElement = function (stream, isVideo, id)
     }
 
     if (isVideo)
-        this.VideoLayout.updateRemovedVideo(this.resourceJid);
+        this.VideoLayout.updateRemovedVideo(this.getResourceJid());
 };
 
 RemoteVideo.prototype.waitForPlayback = function (stream) {
@@ -173,7 +173,8 @@ RemoteVideo.prototype.waitForPlayback = function (stream) {
     }
 
     var self = this;
-    var sel = this.VideoLayout.getPeerVideoSel(this.resourceJid);
+    var resourceJid = this.getResourceJid();
+    var sel = this.VideoLayout.getPeerVideoSel(resourceJid);
 
     // Register 'onplaying' listener to trigger 'videoactive' on VideoLayout
     // when video playback starts
@@ -183,9 +184,9 @@ RemoteVideo.prototype.waitForPlayback = function (stream) {
             APP.RTC.attachMediaStream(sel, stream);
         }
         if (RTCBrowserType.isTemasysPluginUsed()) {
-            sel = $('#' + newElementId);
+            sel = self.VideoLayout.getPeerVideoSel(resourceJid);
         }
-        self.VideoLayout.videoactive(sel, self.resourceJid);
+        self.VideoLayout.videoactive(sel, resourceJid);
         sel[0].onplaying = null;
         if (RTCBrowserType.isTemasysPluginUsed()) {
             // 'currentTime' is used to check if the video has started
@@ -229,16 +230,9 @@ RemoteVideo.prototype.addRemoteStreamElement = function (sid, stream, thessrc) {
 
     // Add click handler.
     var onClickHandler = function (event) {
-        /*
-         * FIXME It turns out that videoThumb may not exist (if there is
-         * no actual video).
-         */
-        var videoThumb = $('#' + self.videoSpanId + '>' + videoElem).get(0);
-        if (videoThumb) {
-            self.VideoLayout.handleVideoThumbClicked(
-                false,
-                self.resourceJid);
-        }
+
+        self.VideoLayout.handleVideoThumbClicked(false, self.getResourceJid());
+
         // On IE we need to populate this handler on video <object>
         // and it does not give event instance as an argument,
         // so we check here for methods.
@@ -261,16 +255,10 @@ RemoteVideo.prototype.addRemoteStreamElement = function (sid, stream, thessrc) {
             self.showDisplayName(true);
         },
         function() {
-            var videoSrc = null;
-            var videoSelector = $('#' + self.videoSpanId + '>' + videoElem);
-            if (videoSelector && videoSelector.length > 0) {
-                videoSrc = APP.RTC.getVideoSrc(videoSelector.get(0));
-            }
-
             // If the video has been "pinned" by the user we want to
             // keep the display name on place.
-            if (!LargeVideo.isLargeVideoVisible()
-                || videoSrc !== APP.RTC.getVideoSrc($('#largeVideo')[0]))
+            if (!LargeVideo.isLargeVideoVisible() ||
+                !LargeVideo.isCurrentlyOnLarge(self.getResourceJid()))
                 self.showDisplayName(false);
         }
     );
@@ -330,9 +318,7 @@ RemoteVideo.prototype.hideConnectionIndicator = function () {
  */
 RemoteVideo.prototype.updateRemoteVideoMenu = function (isMuted) {
     var muteMenuItem
-        = $('#remote_popupmenu_'
-        + this.resourceJid
-        + '>li>a.mutelink');
+        = $('#remote_popupmenu_' + this.getResourceJid() + '>li>a.mutelink');
 
     var mutedIndicator = "<i class='icon-mic-disabled'></i>";
 
@@ -348,7 +334,7 @@ RemoteVideo.prototype.updateRemoteVideoMenu = function (isMuted) {
             muteLink.className = 'mutelink';
         }
     }
-}
+};
 
 /**
  * Sets the display name for the given video span id.
@@ -407,7 +393,14 @@ RemoteVideo.prototype.removeRemoteVideoMenu = function() {
     if (menuSpan.length) {
         menuSpan.remove();
     }
-}
+};
+
+RemoteVideo.prototype.getResourceJid = function () {
+    if (!this.resourceJid) {
+        console.error("Undefined resource jid");
+    }
+    return this.resourceJid;
+};
 
 RemoteVideo.createContainer = function (spanId) {
     var container = document.createElement('span');

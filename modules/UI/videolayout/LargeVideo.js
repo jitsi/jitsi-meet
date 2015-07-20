@@ -185,12 +185,12 @@ function getCameraVideoSize(videoWidth,
 function updateActiveSpeakerAvatarSrc() {
     var avatar = $("#activeSpeakerAvatar")[0];
     var jid = currentSmallVideo.peerJid;
-    var url = Avatar.getGravatarUrl(jid);
+    var url = Avatar.getActiveSpeakerUrl(jid);
     if (avatar.src === url)
         return;
     var isMuted = null;
     if (!currentSmallVideo.isLocal &&
-       !LargeVideo.VideoLayout.isInLastN(currentSmallVideo.resourceJid)) {
+       !LargeVideo.VideoLayout.isInLastN(currentSmallVideo.getResourceJid())) {
         isMuted = true;
     }
     else
@@ -281,14 +281,20 @@ var LargeVideo = {
         return $('#largeVideo').is(':visible');
     },
     /**
+     * Returns <tt>true</tt> if the user is currently displayed on large video.
+     */
+    isCurrentlyOnLarge: function (resourceJid) {
+        return currentSmallVideo && resourceJid &&
+            currentSmallVideo.getResourceJid() === resourceJid;
+    },
+    /**
      * Updates the large video with the given new video source.
      */
     updateLargeVideo: function(resourceJid, forceUpdate) {
         var newSmallVideo = this.VideoLayout.getSmallVideo(resourceJid);
         console.log('hover in ' + resourceJid + ', video: ', newSmallVideo);
 
-        if ((currentSmallVideo && currentSmallVideo.resourceJid !== resourceJid)
-            || forceUpdate) {
+        if (!LargeVideo.isCurrentlyOnLarge(resourceJid) || forceUpdate) {
             $('#activeSpeaker').css('visibility', 'hidden');
 
             if(currentSmallVideo) {
@@ -337,7 +343,8 @@ var LargeVideo = {
         }
     },
     onVideoTypeChanged: function (jid) {
-        if(jid && currentSmallVideo && jid === currentSmallVideo.peerJid)
+        var resourceJid = Strophe.getResourceFromJid(jid);
+        if (LargeVideo.isCurrentlyOnLarge(resourceJid))
         {
             var isDesktop = APP.RTC.isVideoSrcDesktop(jid);
             getVideoSize = isDesktop
@@ -438,9 +445,7 @@ var LargeVideo = {
         this.position(null, null, size[0], size[1], true);
     },
     getResourceJid: function () {
-        if(!currentSmallVideo)
-            return null;
-        return currentSmallVideo.resourceJid;
+        return currentSmallVideo ? currentSmallVideo.getResourceJid() : null;
     },
     updateAvatar: function (resourceJid) {
         if (resourceJid === this.getResourceJid()) {

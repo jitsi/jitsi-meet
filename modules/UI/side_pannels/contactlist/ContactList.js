@@ -1,4 +1,6 @@
 
+var Avatar = require('../../avatar/Avatar');
+
 var numberOfContacts = 0;
 var notificationInterval;
 
@@ -27,10 +29,10 @@ function updateNumberOfParticipants(delta) {
  *
  * @return the newly created avatar element
  */
-function createAvatar(id) {
+function createAvatar(jid) {
     var avatar = document.createElement('img');
     avatar.className = "icon-avatar avatar";
-    avatar.src = "https://www.gravatar.com/avatar/" + id + "?d=wavatar&size=30";
+    avatar.src = Avatar.getContactListUrl(jid);
 
     return avatar;
 }
@@ -82,24 +84,22 @@ var ContactList = {
      * Adds a contact for the given peerJid if such doesn't yet exist.
      *
      * @param peerJid the peerJid corresponding to the contact
-     * @param id the user's email or userId used to get the user's avatar
      */
-    ensureAddContact: function (peerJid, id) {
+    ensureAddContact: function (peerJid) {
         var resourceJid = Strophe.getResourceFromJid(peerJid);
 
         var contact = $('#contacts>li[id="' + resourceJid + '"]');
 
         if (!contact || contact.length <= 0)
-            ContactList.addContact(peerJid, id);
+            ContactList.addContact(peerJid);
     },
 
     /**
      * Adds a contact for the given peer jid.
      *
      * @param peerJid the jid of the contact to add
-     * @param id the email or userId of the user
      */
-    addContact: function (peerJid, id) {
+    addContact: function (peerJid) {
         var resourceJid = Strophe.getResourceFromJid(peerJid);
 
         var contactlist = $('#contacts');
@@ -113,7 +113,7 @@ var ContactList = {
             }
         };
 
-        newContact.appendChild(createAvatar(id));
+        newContact.appendChild(createAvatar(peerJid));
         newContact.appendChild(createDisplayNameParagraph("participant"));
 
         if (resourceJid === APP.xmpp.myResource()) {
