@@ -151,6 +151,10 @@ var RTC = {
         APP.xmpp.addListener(XMPPEvents.CALL_INCOMING, function(event) {
             DataChannels.init(event.peerconnection, eventEmitter);
         });
+        APP.UI.addListener(UIEvents.SELECTED_ENDPOINT,
+            DataChannels.handleSelectedEndpointEvent);
+        APP.UI.addListener(UIEvents.PINNED_ENDPOINT,
+            DataChannels.handlePinnedEndpointEvent);
 
         // In case of IE we continue from 'onReady' callback
         // passed to RTCUtils constructor. It will be invoked by Temasys plugin

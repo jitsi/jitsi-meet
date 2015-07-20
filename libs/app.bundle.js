@@ -884,6 +884,10 @@ var RTC = {
         APP.xmpp.addListener(XMPPEvents.CALL_INCOMING, function(event) {
             DataChannels.init(event.peerconnection, eventEmitter);
         });
+        APP.UI.addListener(UIEvents.SELECTED_ENDPOINT,
+            DataChannels.handleSelectedEndpointEvent);
+        APP.UI.addListener(UIEvents.PINNED_ENDPOINT,
+            DataChannels.handlePinnedEndpointEvent);
 
         // In case of IE we continue from 'onReady' callback
         // passed to RTCUtils constructor. It will be invoked by Temasys plugin
@@ -3108,7 +3112,6 @@ var DesktopSharingEventTypes
     = require("../../service/desktopsharing/DesktopSharingEventTypes");
 var RTCEvents = require("../../service/RTC/RTCEvents");
 var RTCBrowserType = require("../RTC/RTCBrowserType");
-var DataChannels = require("../RTC/DataChannels");
 var StreamEventTypes = require("../../service/RTC/StreamEventTypes");
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 var UIEvents = require("../../service/UI/UIEvents");
@@ -3393,9 +3396,6 @@ function registerListeners() {
     APP.xmpp.addListener(XMPPEvents.CREATE_ANSWER_ERROR, function() {
         messageHandler.showError();
     });
-    APP.xmpp.addListener(XMPPEvents.CREATE_ANSWER_ERROR, function() {
-        messageHandler.showError();
-    });
     APP.xmpp.addListener(XMPPEvents.PROMPT_FOR_LOGIN, function() {
         // FIXME: re-use LoginDialog which supports retries
         UI.showLoginPopup(connect);
@@ -3426,10 +3426,6 @@ function registerListeners() {
     UI.addListener(UIEvents.NICKNAME_CHANGED, function (nickname) {
         APP.xmpp.addToPresence("displayName", nickname);
     });
-    UI.addListener(UIEvents.SELECTED_ENDPOINT,
-        DataChannels.handleSelectedEndpointEvent);
-    UI.addListener(UIEvents.PINNED_ENDPOINT,
-        DataChannels.handlePinnedEndpointEvent);
 }
 
 
@@ -4003,7 +3999,7 @@ UI.setVideoMute = setVideoMute;
 module.exports = UI;
 
 
-},{"../../service/RTC/RTCEvents":99,"../../service/RTC/StreamEventTypes":101,"../../service/UI/UIEvents":102,"../../service/connectionquality/CQEvents":104,"../../service/desktopsharing/DesktopSharingEventTypes":105,"../../service/members/Events":106,"../../service/xmpp/XMPPEvents":108,"../RTC/DataChannels":4,"../RTC/RTCBrowserType":8,"./../settings/Settings":47,"./audio_levels/AudioLevels.js":12,"./authentication/Authentication":14,"./avatar/Avatar":16,"./etherpad/Etherpad.js":17,"./prezi/Prezi.js":18,"./side_pannels/SidePanelToggler":20,"./side_pannels/chat/Chat.js":21,"./side_pannels/contactlist/ContactList":25,"./side_pannels/settings/SettingsMenu":26,"./toolbars/BottomToolbar":27,"./toolbars/Toolbar":28,"./toolbars/ToolbarToggler":29,"./util/MessageHandler":31,"./util/NicknameHandler":32,"./util/UIUtil":33,"./videolayout/VideoLayout.js":39,"./welcome_page/RoomnameGenerator":40,"./welcome_page/WelcomePage":41,"events":109}],12:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":99,"../../service/RTC/StreamEventTypes":101,"../../service/UI/UIEvents":102,"../../service/connectionquality/CQEvents":104,"../../service/desktopsharing/DesktopSharingEventTypes":105,"../../service/members/Events":106,"../../service/xmpp/XMPPEvents":108,"../RTC/RTCBrowserType":8,"./../settings/Settings":47,"./audio_levels/AudioLevels.js":12,"./authentication/Authentication":14,"./avatar/Avatar":16,"./etherpad/Etherpad.js":17,"./prezi/Prezi.js":18,"./side_pannels/SidePanelToggler":20,"./side_pannels/chat/Chat.js":21,"./side_pannels/contactlist/ContactList":25,"./side_pannels/settings/SettingsMenu":26,"./toolbars/BottomToolbar":27,"./toolbars/Toolbar":28,"./toolbars/ToolbarToggler":29,"./util/MessageHandler":31,"./util/NicknameHandler":32,"./util/UIUtil":33,"./videolayout/VideoLayout.js":39,"./welcome_page/RoomnameGenerator":40,"./welcome_page/WelcomePage":41,"events":109}],12:[function(require,module,exports){
 var CanvasUtil = require("./CanvasUtils");
 
 var ASDrawContext = $('#activeSpeakerAudioLevel')[0].getContext('2d');
@@ -17531,7 +17527,7 @@ module.exports = function(XMPP, eventEmitter)
                         var audioMuted = startMuted.attr("audio");
                         var videoMuted = startMuted.attr("video");
                         eventEmitter.emit(XMPPEvents.START_MUTED_FROM_FOCUS,
-                                startMuted.attr("audio") === "true", startMuted.attr("video") === "true");
+                                autioMuted === "true", videoMuted === "true");
                     }
                     sess = new JingleSession(
                         $(iq).attr('to'), $(iq).find('jingle').attr('sid'),

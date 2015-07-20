@@ -25,7 +25,6 @@ var DesktopSharingEventTypes
     = require("../../service/desktopsharing/DesktopSharingEventTypes");
 var RTCEvents = require("../../service/RTC/RTCEvents");
 var RTCBrowserType = require("../RTC/RTCBrowserType");
-var DataChannels = require("../RTC/DataChannels");
 var StreamEventTypes = require("../../service/RTC/StreamEventTypes");
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 var UIEvents = require("../../service/UI/UIEvents");
@@ -310,9 +309,6 @@ function registerListeners() {
     APP.xmpp.addListener(XMPPEvents.CREATE_ANSWER_ERROR, function() {
         messageHandler.showError();
     });
-    APP.xmpp.addListener(XMPPEvents.CREATE_ANSWER_ERROR, function() {
-        messageHandler.showError();
-    });
     APP.xmpp.addListener(XMPPEvents.PROMPT_FOR_LOGIN, function() {
         // FIXME: re-use LoginDialog which supports retries
         UI.showLoginPopup(connect);
@@ -343,10 +339,6 @@ function registerListeners() {
     UI.addListener(UIEvents.NICKNAME_CHANGED, function (nickname) {
         APP.xmpp.addToPresence("displayName", nickname);
     });
-    UI.addListener(UIEvents.SELECTED_ENDPOINT,
-        DataChannels.handleSelectedEndpointEvent);
-    UI.addListener(UIEvents.PINNED_ENDPOINT,
-        DataChannels.handlePinnedEndpointEvent);
 }
 
 
