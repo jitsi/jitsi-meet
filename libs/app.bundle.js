@@ -1726,12 +1726,16 @@ function RTCUtils(RTCService, onTemasysPluginReady)
                 element[0].play();
             };
             this.getStreamID =  function (stream) {
-                var tracks = stream.getVideoTracks();
-                if(!tracks || tracks.length == 0)
-                {
-                    tracks = stream.getAudioTracks();
+                var id = stream.id;
+                if (!id) {
+                    var tracks = stream.getVideoTracks();
+                    if (!tracks || tracks.length === 0)
+                    {
+                        tracks = stream.getAudioTracks();
+                    }
+                    id = tracks[0].id;
                 }
-                return SDPUtil.filter_special_chars(tracks[0].id);
+                return SDPUtil.filter_special_chars(id);
             };
             this.getVideoSrc = function (element) {
                 if(!element)
@@ -13551,7 +13555,7 @@ JingleSession.prototype.initiate = function (peerjid, isInitiator) {
     };
     this.peerconnection.onaddstream = function (event) {
         if (event.stream.id !== 'default') {
-        console.log("REMOTE STREAM ADDED: " + event.stream + " - " + event.stream.id);
+        console.log("REMOTE STREAM ADDED: ", event.stream , event.stream.id);
         self.remoteStreamAdded(event);
         } else {
             // This is a recvonly stream. Clients that implement Unified Plan,
@@ -14822,7 +14826,9 @@ JingleSession.prototype.remoteStreamAdded = function (data, times) {
     var streamId = APP.RTC.getStreamID(data.stream);
 
     // look up an associated JID for a stream id
-    if (streamId && streamId.indexOf('mixedmslabel') === -1) {
+    if (!streamId) {
+        console.error("No stream ID for", data.stream);
+    } else if (streamId && streamId.indexOf('mixedmslabel') === -1) {
         // look only at a=ssrc: and _not_ at a=ssrc-group: lines
 
         var ssrclines
@@ -14849,6 +14855,8 @@ JingleSession.prototype.remoteStreamAdded = function (data, times) {
             data.videoType = self.ssrcVideoTypes[thessrc]
             console.log('associated jid', self.ssrcOwners[thessrc],
                                           thessrc, data.videoType);
+        } else {
+            console.error("No SSRC lines for ", streamId);
         }
     }
 
