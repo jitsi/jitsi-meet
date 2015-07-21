@@ -131,6 +131,73 @@ dumpSDP = function(description) {
     return 'type: ' + description.type + '\r\n' + description.sdp;
 };
 
+/**
+ * Takes a SessionDescription object and returns a "normalized" version.
+ * Currently it only takes care of ordering the a=ssrc lines.
+ */
+normalizePlanB = function(desc) {
+    if (typeof desc !== 'object' || desc === null ||
+        typeof desc.sdp !== 'string') {
+        console.warn('An empty description was passed as an argument.');
+        return desc;
+    }
+
+    var transform = require('sdp-transform');
+    var session = transform.parse(desc.sdp);
+
+    if (typeof session !== 'undefined' && typeof session.media !== 'undefined' &&
+        Array.isArray(session.media)) {
+        session.media.forEach(function (mLine) {
+
+            // Chrome appears to be picky about the order in which a=ssrc lines
+            // are listed in an m-line when rtx is enabled (and thus there are
+            // a=ssrc-group lines with FID semantics). Specifically if we have
+            // "a=ssrc-group:FID S1 S2" and the "a=ssrc:S2" lines appear before
+            // the "a=ssrc:S1" lines, SRD fails.
+            // So, put SSRC which appear as the first SSRC in an FID ssrc-group
+            // first.
+            var firstSsrcs = [];
+            var newSsrcLines = [];
+
+            if (typeof mLine.ssrcGroups !== 'undefined' && Array.isArray(mLine.ssrcGroups)) {
+                mLine.ssrcGroups.forEach(function (group) {
+                    if (typeof group.semantics !== 'undefined' &&
+                        group.semantics === 'FID') {
+                        if (typeof group.ssrcs !== 'undefined') {
+                            firstSsrcs.push(Number(group.ssrcs.split(' ')[0]));
+                        }
+                    }
+                });
+            }
+
+            if (typeof mLine.ssrcs !== 'undefined' && Array.isArray(mLine.ssrcs)) {
+                for (var i = 0; i<mLine.ssrcs.length; i++){
+                    if (typeof mLine.ssrcs[i] === 'object'
+                        && typeof mLine.ssrcs[i].id !== 'undefined'
+                        && $.inArray(mLine.ssrcs[i].id, firstSsrcs) == 0) {
+                        newSsrcLines.push(mLine.ssrcs[i]);
+                        delete mLine.ssrcs[i];
+                    }
+                }
+
+                for (var i = 0; i<mLine.ssrcs.length; i++){
+                    if (typeof mLine.ssrcs[i] !== 'undefined') {
+                        newSsrcLines.push(mLine.ssrcs[i]);
+                    }
+                }
+
+                mLine.ssrcs = newSsrcLines;
+            }
+        });
+    }
+
+    var resStr = transform.write(session);
+    return new RTCSessionDescription({
+        type: desc.type,
+        sdp: resStr
+    });
+};
+
 if (TraceablePeerConnection.prototype.__defineGetter__ !== undefined) {
     TraceablePeerConnection.prototype.__defineGetter__('signalingState', function() { return this.peerconnection.signalingState; });
     TraceablePeerConnection.prototype.__defineGetter__('iceConnectionState', function() { return this.peerconnection.iceConnectionState; });
@@ -242,6 +309,11 @@ TraceablePeerConnection.prototype.setRemoteDescription = function (description, 
         description = this.interop.toUnifiedPlan(description);
         this.trace('setRemoteDescription::postTransform (Plan A)', dumpSDP(description));
     }
+
+    if (RTCBrowserType.usesPlanB()) {
+        description = normalizePlanB(description);
+    }
+
     var self = this;
     this.peerconnection.setRemoteDescription(description,
         function () {
