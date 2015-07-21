@@ -164,12 +164,16 @@ function RTCUtils(RTCService, onTemasysPluginReady)
                 element[0].play();
             };
             this.getStreamID =  function (stream) {
-                var tracks = stream.getVideoTracks();
-                if(!tracks || tracks.length == 0)
-                {
-                    tracks = stream.getAudioTracks();
+                var id = stream.id;
+                if (!id) {
+                    var tracks = stream.getVideoTracks();
+                    if (!tracks || tracks.length === 0)
+                    {
+                        tracks = stream.getAudioTracks();
+                    }
+                    id = tracks[0].id;
                 }
-                return SDPUtil.filter_special_chars(tracks[0].id);
+                return SDPUtil.filter_special_chars(id);
             };
             this.getVideoSrc = function (element) {
                 if(!element)
