@@ -715,7 +715,7 @@ var VideoLayout = (function (my) {
 
                         updateLargeVideo = false;
                     }
-                    remoteVideos[resourceJid].waitForPlayback(mediaStream.stream);
+                    remoteVideos[resourceJid].waitForPlayback(sel, mediaStream.stream);
                 }
             });
         }

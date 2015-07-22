@@ -165,7 +165,7 @@ RemoteVideo.prototype.removeRemoteStreamElement = function (stream, isVideo, id)
         this.VideoLayout.updateRemovedVideo(this.getResourceJid());
 };
 
-RemoteVideo.prototype.waitForPlayback = function (stream) {
+RemoteVideo.prototype.waitForPlayback = function (sel, stream) {
 
     var isVideo = stream.getVideoTracks().length > 0;
     if (!isVideo || stream.id === 'mixedmslabel') {
@@ -174,7 +174,6 @@ RemoteVideo.prototype.waitForPlayback = function (stream) {
 
     var self = this;
     var resourceJid = this.getResourceJid();
-    var sel = this.VideoLayout.getPeerVideoSel(resourceJid);
 
     // Register 'onplaying' listener to trigger 'videoactive' on VideoLayout
     // when video playback starts
@@ -213,7 +212,7 @@ RemoteVideo.prototype.addRemoteStreamElement = function (sid, stream, thessrc) {
 
     // If the container is currently visible we attach the stream.
     if (!isVideo || (this.container.offsetParent !== null && isVideo)) {
-        this.waitForPlayback(stream);
+        this.waitForPlayback(sel, stream);
 
         APP.RTC.attachMediaStream(sel, stream);
     }

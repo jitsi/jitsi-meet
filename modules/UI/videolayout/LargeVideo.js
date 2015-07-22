@@ -299,8 +299,13 @@ var LargeVideo = {
                 // or null.
                 this.eventEmitter.emit(UIEvents.SELECTED_ENDPOINT, resourceJid);
             }
-            $('#largeVideo').fadeOut(300,
-                changeVideo.bind($('#largeVideo'), this.isLargeVideoVisible()));
+            if (RTCBrowserType.isSafari()) {
+                // FIXME In Safari fadeOut works only for the first time
+                changeVideo(this.isLargeVideoVisible());
+            } else {
+                $('#largeVideo').fadeOut(300,
+                    changeVideo.bind($('#largeVideo'), this.isLargeVideoVisible()));
+            }
         } else {
             if (currentSmallVideo) {
                 currentSmallVideo.showAvatar();

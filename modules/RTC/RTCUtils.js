@@ -234,8 +234,8 @@ function RTCUtils(RTCService, onTemasysPluginReady)
     // Detect IE/Safari
     else if (RTCBrowserType.isTemasysPluginUsed()) {
 
-        AdapterJS.WebRTCPlugin.setLogLevel(
-            AdapterJS.WebRTCPlugin.PLUGIN_LOG_LEVELS.VERBOSE);
+        //AdapterJS.WebRTCPlugin.setLogLevel(
+        //    AdapterJS.WebRTCPlugin.PLUGIN_LOG_LEVELS.VERBOSE);
 
         AdapterJS.webRTCReady(function (isPlugin) {
 

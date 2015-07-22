@@ -2,6 +2,7 @@
  * Provides statistics for the local stream.
  */
 
+var RTCBrowserType = require('../RTC/RTCBrowserType');
 
 /**
  * Size of the webaudio analizer buffer.
@@ -84,7 +85,8 @@ function LocalStatsCollector(stream, interval, statisticsService, eventEmitter) 
  * Starts the collecting the statistics.
  */
 LocalStatsCollector.prototype.start = function () {
-    if (config.disableAudioLevels || !window.AudioContext)
+    if (config.disableAudioLevels || !window.AudioContext
+        || RTCBrowserType.isTemasysPluginUsed())
         return;
 
     var context = new AudioContext();
