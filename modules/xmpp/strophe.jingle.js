@@ -329,9 +329,9 @@ module.exports = function(XMPP, eventEmitter)
         },
 
         /**
-         * Populates the log data
+         * Returns the data saved in 'updateLog' in a format to be logged.
          */
-        populateData: function () {
+        getLog: function () {
             var data = {};
             var self = this;
             Object.keys(this.sessions).forEach(function (sid) {
