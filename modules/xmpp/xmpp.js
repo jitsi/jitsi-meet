@@ -295,7 +295,7 @@ var XMPP = {
      * @type {boolean}
      */
     forceMuted: false,
-    start: function () {
+    start: function (jid, password) {
         setupEvents();
         initStrophePlugins();
         registerListeners();
