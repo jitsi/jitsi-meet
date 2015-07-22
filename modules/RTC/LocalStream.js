@@ -1,7 +1,6 @@
 var StreamEventTypes = require("../../service/RTC/StreamEventTypes.js");
 var RTCEvents = require("../../service/RTC/RTCEvents");
 
-
 function LocalStream(stream, type, eventEmitter, videoType, isGUMStream)
 {
     this.stream = stream;
@@ -12,56 +11,45 @@ function LocalStream(stream, type, eventEmitter, videoType, isGUMStream)
     if(isGUMStream === false)
         this.isGUMStream = isGUMStream;
     var self = this;
-    if(type == "audio")
-    {
-        this.getTracks = function () {
-            return self.stream.getAudioTracks();
-        };
-    }
-    else
-    {
-        this.getTracks = function () {
-            return self.stream.getVideoTracks();
-        };
-    }
 
-    this.stream.onended = function()
-    {
+    this.stream.onended = function() {
         self.streamEnded();
     };
 }
 
+LocalStream.prototype.getTracks = function () {
+    return this.isAudioStream ?
+        this.stream.getAudioTracks() : this.stream.getVideoTracks();
+};
+
 LocalStream.prototype.streamEnded = function () {
     this.eventEmitter.emit(StreamEventTypes.EVENT_TYPE_LOCAL_ENDED, this);
-}
+};
 
-LocalStream.prototype.getOriginalStream = function()
-{
+LocalStream.prototype.getOriginalStream = function() {
     return this.stream;
-}
+};
 
 LocalStream.prototype.isAudioStream = function () {
     return this.type === "audio";
 };
 
+// Mutes (if 'mute' is true) or unmutes (if 'mute' is false) the stream.
 LocalStream.prototype.setMute = function(mute)
 {
-
     if((window.location.protocol != "https:" && this.isGUMStream) ||
         (this.isAudioStream() && this.isGUMStream) || this.videoType === "screen")
     {
         var tracks = this.getTracks();
 
         for (var idx = 0; idx < tracks.length; idx++) {
-            tracks[idx].enabled = mute;
+            tracks[idx].enabled = !mute;
         }
         this.eventEmitter.emit(
             this.isAudioStream() ? RTCEvents.AUDIO_MUTE : RTCEvents.VIDEO_MUTE,
-            !mute);
-    }
-    else
-    {
-        if (mute === false) {
+            mute);
+    } else {
+        if (mute === true) {
             APP.xmpp.removeStream(this.stream);
             this.stream.stop();
             this.eventEmitter.emit(
@@ -72,21 +60,18 @@ LocalStream.prototype.setMute = function(mute)
             APP.RTC.rtcUtils.obtainAudioAndVideoPermissions(
                 (this.isAudioStream() ? ["audio"] : ["video"]),
                 function (stream) {
-                    if(self.isAudioStream())
-                    {
+                    if(self.isAudioStream()) {
                         APP.RTC.changeLocalAudio(stream,
                             function () {
                                 self.eventEmitter.emit(
-                                    (self.type == "audio"? RTCEvents.AUDIO_MUTE : RTCEvents.VIDEO_MUTE),
+                                    self.isAudioStream() ? RTCEvents.AUDIO_MUTE : RTCEvents.VIDEO_MUTE,
                                     true);
                             });
-                    }
-                    else
-                    {
+                    } else {
                         APP.RTC.changeLocalVideo(stream, false,
                             function () {
                                 self.eventEmitter.emit(
-                                    (self.type == "audio"? RTCEvents.AUDIO_MUTE : RTCEvents.VIDEO_MUTE),
+                                    self.isAudioStream ? RTCEvents.AUDIO_MUTE : RTCEvents.VIDEO_MUTE,
                                     true);
                             });
                     }
@@ -96,14 +81,10 @@ LocalStream.prototype.setMute = function(mute)
 };
 
 LocalStream.prototype.isMuted = function () {
-    var tracks = [];
-    if (this.isAudioStream()) {
-        tracks = this.stream.getAudioTracks();
-    } else {
-        if (this.stream.ended)
-            return true;
-        tracks = this.stream.getVideoTracks();
-    }
+    if (!this.isAudioStream() && this.stream.ended)
+        return true;
+
+    var tracks = this.getTracks();
     for (var idx = 0; idx < tracks.length; idx++) {
         if(tracks[idx].enabled)
             return false;

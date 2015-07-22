@@ -72,7 +72,7 @@ var RTC = {
             this.localStreams[0].getOriginalStream() != stream)
             this.localStreams.push(localStream);
         if(isMuted === true)
-            localStream.setMute(false);
+            localStream.setMute(true);
 
         if(type == "audio")
         {
@@ -278,15 +278,12 @@ var RTC = {
         if(!this.localVideo)
             return;
 
-        if (mute == APP.RTC.localVideo.isMuted())
-        {
+        if (mute == APP.RTC.localVideo.isMuted()) {
             APP.xmpp.sendVideoInfoPresence(mute);
-            if(callback)
+            if (callback)
                 callback(mute);
-        }
-        else
-        {
-            APP.RTC.localVideo.setMute(!mute);
+        } else {
+            APP.RTC.localVideo.setMute(mute);
             APP.xmpp.setVideoMute(
                 mute,
                 callback,

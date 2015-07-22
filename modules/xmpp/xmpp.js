@@ -402,7 +402,7 @@ var XMPP = {
             return true;
         }
 
-        APP.RTC.localAudio.setMute(!mute);
+        APP.RTC.localAudio.setMute(mute);
         // isMuted is the opposite of audioEnabled
         this.sendAudioInfoPresence(mute, callback);
         return true;
