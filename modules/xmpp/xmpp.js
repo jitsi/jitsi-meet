@@ -406,56 +406,13 @@ var XMPP = {
         this.sendAudioInfoPresence(mute, callback);
         return true;
     },
-    sendAudioInfoPresence: function(mute, callback)
-    {
+    sendAudioInfoPresence: function(mute, callback) {
         if(connection) {
             connection.emuc.addAudioInfoToPresence(mute);
             connection.emuc.sendPresence();
         }
         callback();
         return true;
-    },
-    // Really mute video, i.e. dont even send black frames
-    muteVideo: function (pc, unmute) {
-        // FIXME: this probably needs another of those lovely state safeguards...
-        // which checks for iceconn == connected and sigstate == stable
-        pc.setRemoteDescription(pc.remoteDescription,
-            function () {
-                pc.createAnswer(
-                    function (answer) {
-                        var sdp = new SDP(answer.sdp);
-                        if (sdp.media.length > 1) {
-                            if (unmute)
-                                sdp.media[1] = sdp.media[1].replace(
-                                    'a=recvonly', 'a=sendrecv');
-                            else
-                                sdp.media[1] = sdp.media[1].replace(
-                                    'a=sendrecv', 'a=recvonly');
-                            sdp.raw = sdp.session + sdp.media.join('');
-                            answer.sdp = sdp.raw;
-                        }
-                        pc.setLocalDescription(answer,
-                            function () {
-                                console.log('mute SLD ok');
-                            },
-                            function (error) {
-                                console.log('mute SLD error');
-                                eventEmitter.emit(
-                                    XMPPEvents.SET_LOCAL_DESCRIPTION_ERROR);
-                            }
-                        );
-                    },
-                    function (error) {
-                        console.log(error);
-                        eventEmitter.emit(XMPPEvents.CREATE_ANSWER_ERROR);
-                    }
-                );
-            },
-            function (error) {
-                console.log('muteVideo SRD error');
-                eventEmitter.emit(XMPPEvents.SET_REMOTE_DESCRIPTION_ERROR);
-            }
-        );
     },
     toggleRecording: function (tokenEmptyCallback,
                                startingCallback, startedCallback) {
