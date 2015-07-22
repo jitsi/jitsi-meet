@@ -51,7 +51,7 @@ var JitsiMeetExternalAPI = (function()
         this.url = "//" + domain + "/";
         if(room_name)
             this.url += room_name;
-        this.url += "#external";
+        this.url += "#external=true";
         JitsiMeetExternalAPI.id++;
 
         this.frame = document.createElement("iframe");
