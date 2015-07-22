@@ -207,7 +207,10 @@ var RTC = {
         if(this.localVideo.isMuted() && this.localVideo.videoType !== type)
         {
             localCallback = function() {
-                APP.xmpp.setVideoMute(false, APP.UI.setVideoMuteButtonsState);
+                APP.xmpp.setVideoMute(false, function(mute) {
+                    eventEmitter.emit(RTCEvents.VIDEO_MUTE, mute);
+                });
+                
                 callback();
             };
         }

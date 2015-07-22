@@ -28,10 +28,22 @@ var XMPPEvents = {
     CHAT_ERROR_RECEIVED: "xmpp.chat_error_received",
     ETHERPAD: "xmpp.etherpad",
     DEVICE_AVAILABLE: "xmpp.device_available",
-    START_MUTED: "xmpp.start_muted",
     PEERCONNECTION_READY: "xmpp.peerconnection_ready",
     CONFERENCE_SETUP_FAILED: "xmpp.conference_setup_failed",
     AUDIO_MUTED: "xmpp.audio_muted",
-    VIDEO_MUTED: "xmpp.video_muted"
+    VIDEO_MUTED: "xmpp.video_muted",
+    AUDIO_MUTED_BY_FOCUS: "xmpp.audio_muted_by_focus",
+    START_MUTED_SETTING_CHANGED: "xmpp.start_muted_setting_changed",
+    START_MUTED_FROM_FOCUS: "xmpp.start_muted_from_focus",
+    SET_LOCAL_DESCRIPTION_ERROR: 'xmpp.set_local_description_error',
+    SET_REMOTE_DESCRIPTION_ERROR: 'xmpp.set_remote_description_error',
+    CREATE_ANSWER_ERROR: 'xmpp.create_answer_error',
+    JINGLE_FATAL_ERROR: 'xmpp.jingle_fatal_error',
+    PROMPT_FOR_LOGIN: 'xmpp.prompt_for_login',
+    FOCUS_DISCONNECTED: 'xmpp.focus_disconnected',
+    ROOM_JOIN_ERROR: 'xmpp.room_join_error',
+    ROOM_CONNECT_ERROR: 'xmpp.room_connect_error',
+    // xmpp is connected and obtained user media
+    READY_TO_JOIN: 'xmpp.ready_to_join'
 };
 module.exports = XMPPEvents;

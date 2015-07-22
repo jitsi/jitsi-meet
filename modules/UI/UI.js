@@ -27,6 +27,7 @@ var RTCEvents = require("../../service/RTC/RTCEvents");
 var RTCBrowserType = require("../RTC/RTCBrowserType");
 var StreamEventTypes = require("../../service/RTC/StreamEventTypes");
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
+var UIEvents = require("../../service/UI/UIEvents");
 var MemberEvents = require("../../service/members/Events");
 
 var eventEmitter = new EventEmitter();
@@ -172,7 +173,16 @@ function registerListeners() {
     APP.RTC.addListener(RTCEvents.AVAILABLE_DEVICES_CHANGED,
         function (devices) {
             VideoLayout.setDeviceAvailabilityIcons(null, devices);
-        })
+        });
+    APP.RTC.addListener(RTCEvents.VIDEO_MUTE, UI.setVideoMuteButtonsState);
+    APP.RTC.addListener(RTCEvents.DATA_CHANNEL_OPEN, function() {
+        // when the data channel becomes available, tell the bridge about video
+        // selections so that it can do adaptive simulcast,
+        // we want the notification to trigger even if userJid is undefined,
+        // or null.
+        var userJid = APP.UI.getLargeVideoJid();
+        eventEmitter.emit(UIEvents.SELECTED_ENDPOINT, userJid);
+    });
     APP.statistics.addAudioLevelListener(function(jid, audioLevel)
     {
         var resourceJid;
@@ -271,10 +281,63 @@ function registerListeners() {
 
     APP.xmpp.addListener(XMPPEvents.AUDIO_MUTED, VideoLayout.onAudioMute);
     APP.xmpp.addListener(XMPPEvents.VIDEO_MUTED, VideoLayout.onVideoMute);
+    APP.xmpp.addListener(XMPPEvents.AUDIO_MUTED_BY_FOCUS, function(doMuteAudio) {
+        UI.setAudioMuted(doMuteAudio);
+    });
     APP.members.addListener(MemberEvents.DTMF_SUPPORT_CHANGED,
                             onDtmfSupportChanged);
-    APP.xmpp.addListener(XMPPEvents.START_MUTED, function (audio, video) {
+    APP.xmpp.addListener(XMPPEvents.START_MUTED_SETTING_CHANGED, function (audio, video) {
         SettingsMenu.setStartMuted(audio, video);
+    });
+    APP.xmpp.addListener(XMPPEvents.START_MUTED_FROM_FOCUS, function (audio, video) {
+        UI.setInitialMuteFromFocus(audio, video);
+    });
+
+    APP.xmpp.addListener(XMPPEvents.JINGLE_FATAL_ERROR, function (session, error) {
+        UI.messageHandler.showError("dialog.sorry",
+            "dialog.internalError");
+    });
+
+    APP.xmpp.addListener(XMPPEvents.SET_LOCAL_DESCRIPTION_ERROR, function() {
+        messageHandler.showError("dialog.error",
+                                        "dialog.SLDFailure");
+    });
+    APP.xmpp.addListener(XMPPEvents.SET_REMOTE_DESCRIPTION_ERROR, function() {
+        messageHandler.showError("dialog.error",
+            "dialog.SRDFailure");
+    });
+    APP.xmpp.addListener(XMPPEvents.CREATE_ANSWER_ERROR, function() {
+        messageHandler.showError();
+    });
+    APP.xmpp.addListener(XMPPEvents.PROMPT_FOR_LOGIN, function() {
+        // FIXME: re-use LoginDialog which supports retries
+        UI.showLoginPopup(connect);
+    });
+    
+    APP.xmpp.addListener(XMPPEvents.FOCUS_DISCONNECTED, function(focusComponent, retrySec) {
+        UI.messageHandler.notify(
+            null, "notify.focus",
+            'disconnected', "notify.focusFail",
+            {component: focusComponent, ms: retrySec});
+    });
+    
+    APP.xmpp.addListener(XMPPEvents.ROOM_JOIN_ERROR, function(pres) {
+        UI.messageHandler.openReportDialog(null,
+            "dialog.joinError", pres);
+    });
+    APP.xmpp.addListener(XMPPEvents.ROOM_CONNECT_ERROR, function(pres) {
+        UI.messageHandler.openReportDialog(null,
+            "dialog.connectError", pres);
+    });
+
+    APP.xmpp.addListener(XMPPEvents.READY_TO_JOIN, function() {
+        var roomName = UI.generateRoomName();
+        APP.xmpp.allocateConferenceFocus(roomName, UI.checkForNicknameAndJoin);
+    });
+    
+    //NicknameHandler emits this event
+    UI.addListener(UIEvents.NICKNAME_CHANGED, function (nickname) {
+        APP.xmpp.addToPresence("displayName", nickname);
     });
 }
 

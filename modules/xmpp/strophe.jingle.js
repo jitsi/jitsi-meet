@@ -119,8 +119,8 @@ module.exports = function(XMPP, eventEmitter)
                     {
                         var audioMuted = startMuted.attr("audio");
                         var videoMuted = startMuted.attr("video");
-                        APP.UI.setInitialMuteFromFocus((audioMuted === "true"),
-                            (videoMuted === "true"));
+                        eventEmitter.emit(XMPPEvents.START_MUTED_FROM_FOCUS,
+                                autioMuted === "true", videoMuted === "true");
                     }
                     sess = new JingleSession(
                         $(iq).attr('to'), $(iq).find('jingle').attr('sid'),
