@@ -167,6 +167,26 @@ var VideoLayout = (function (my) {
         return LargeVideo.getResourceJid();
     };
 
+    /**
+     * Called when large video update is finished
+     * @param currentSmallVideo small video currently displayed on large video
+     */
+    my.largeVideoUpdated = function (currentSmallVideo) {
+        // Makes sure that dominant speaker UI
+        // is enabled only on current small video
+        localVideoThumbnail.enableDominantSpeaker(
+            localVideoThumbnail === currentSmallVideo);
+        Object.keys(remoteVideos).forEach(
+            function (resourceJid) {
+                var remoteVideo = remoteVideos[resourceJid];
+                if (remoteVideo) {
+                    remoteVideo.enableDominantSpeaker(
+                        remoteVideo === currentSmallVideo);
+                }
+            }
+        );
+    };
+
     my.handleVideoThumbClicked = function(noPinnedEndpointChangedEvent,
                                           resourceJid) {
         if(focusedVideoResourceJid) {

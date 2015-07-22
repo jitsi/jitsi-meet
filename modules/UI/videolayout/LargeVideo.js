@@ -13,7 +13,6 @@ var currentVideoHeight = null;
 var getVideoSize = getCameraVideoSize;
 var getVideoPosition = getCameraVideoPosition;
 var currentSmallVideo = null;
-var oldSmallVideo = null;
 
 
 
@@ -236,22 +235,11 @@ function changeVideo(isVisible) {
 
 
     // Only if the large video is currently visible.
-    // Disable previous dominant speaker video.
-    if (oldSmallVideo) {
-        oldSmallVideo.enableDominantSpeaker(false);
-    }
-
-    // Enable new dominant speaker in the remote videos section.
-    if (currentSmallVideo) {
-        currentSmallVideo.enableDominantSpeaker(true);
-    }
-
     if (isVisible) {
+        LargeVideo.VideoLayout.largeVideoUpdated(currentSmallVideo);
+
         $('#largeVideo').fadeIn(300);
     }
-
-    if(oldSmallVideo)
-        oldSmallVideo.showAvatar();
 }
 
 var LargeVideo = {
@@ -290,34 +278,31 @@ var LargeVideo = {
     /**
      * Updates the large video with the given new video source.
      */
-    updateLargeVideo: function(resourceJid, forceUpdate) {
+    updateLargeVideo: function (resourceJid, forceUpdate) {
         var newSmallVideo = this.VideoLayout.getSmallVideo(resourceJid);
         console.log('hover in ' + resourceJid + ', video: ', newSmallVideo);
 
         if (!LargeVideo.isCurrentlyOnLarge(resourceJid) || forceUpdate) {
             $('#activeSpeaker').css('visibility', 'hidden');
 
-            if(currentSmallVideo) {
+            var oldSmallVideo = null;
+            if (currentSmallVideo) {
                 oldSmallVideo = currentSmallVideo;
-            } else {
-                oldSmallVideo = null;
             }
-
             currentSmallVideo = newSmallVideo;
-            var oldJid = null;
-            if(oldSmallVideo)
-                oldJid = oldSmallVideo.peerJid;
 
+            var oldJid = null;
+            if (oldSmallVideo)
+                oldJid = oldSmallVideo.peerJid;
             if (oldJid !== resourceJid) {
                 // we want the notification to trigger even if userJid is undefined,
                 // or null.
-                this.eventEmitter.emit(UIEvents.SELECTED_ENDPOINT,
-                    resourceJid);
+                this.eventEmitter.emit(UIEvents.SELECTED_ENDPOINT, resourceJid);
             }
             $('#largeVideo').fadeOut(300,
                 changeVideo.bind($('#largeVideo'), this.isLargeVideoVisible()));
         } else {
-            if(currentSmallVideo) {
+            if (currentSmallVideo) {
                 currentSmallVideo.showAvatar();
             }
         }
