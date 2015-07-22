@@ -146,7 +146,7 @@ function RTCUtils(RTCService, onTemasysPluginReady)
     this.service = RTCService;
     if (RTCBrowserType.isFirefox()) {
         var FFversion = RTCBrowserType.getFirefoxVersion();
-        if (FFversion >= 40 && config.useBundle && config.useRtcpMux) {
+        if (FFversion >= 40) {
             this.peerconnection = mozRTCPeerConnection;
             this.getUserMedia = navigator.mozGetUserMedia.bind(navigator);
             this.pc_constraints = {};
@@ -188,9 +188,7 @@ function RTCUtils(RTCService, onTemasysPluginReady)
             RTCIceCandidate = mozRTCIceCandidate;
         } else {
             console.error(
-                "Firefox requirements not met, ver: " + FFversion +
-                ", bundle: " + config.useBundle +
-                ", rtcp-mux: " + config.useRtcpMux);
+                "Firefox version too old: " + FFversion + ". Required >= 40.");
             window.location.href = 'unsupported_browser.html';
             return;
         }

@@ -27,9 +27,7 @@ var CallStats = {
             this.userID,
             initCallback);
 
-        var usage = callStats.fabricUsage.unbundled;
-        if(config.useBundle)
-            usage = callStats.fabricUsage.multiplex;
+        var usage = callStats.fabricUsage.multiplex;
 
         callStats.addNewFabric(this.peerconnection,
             Strophe.getResourceFromJid(jingleSession.peerjid),
