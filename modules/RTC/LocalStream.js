@@ -93,13 +93,10 @@ LocalStream.prototype.setMute = function (mute)
 
 LocalStream.prototype.isMuted = function () {
     var tracks = [];
-    if(this.type == "audio")
-    {
+    if (this.isAudioStream()) {
         tracks = this.stream.getAudioTracks();
-    }
-    else
-    {
-        if(this.stream.ended)
+    } else {
+        if (this.stream.ended)
             return true;
         tracks = this.stream.getVideoTracks();
     }
@@ -108,7 +105,7 @@ LocalStream.prototype.isMuted = function () {
             return false;
     }
     return true;
-}
+};
 
 LocalStream.prototype.getId = function () {
     return this.stream.getTracks()[0].id;

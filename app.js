@@ -33,8 +33,8 @@ function init() {
 
 $(document).ready(function () {
 
-    var URLPRocessor = require("./modules/URLProcessor/URLProcessor");
-    URLPRocessor.setConfigParametersFromUrl();
+    var URLProcessor = require("./modules/URLProcessor/URLProcessor");
+    URLProcessor.setConfigParametersFromUrl();
     APP.init();
 
     APP.translation.init();

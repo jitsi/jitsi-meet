@@ -26,9 +26,6 @@ function connect(jid, password) {
         connection = XMPP.createConnection();
         Moderator.setConnection(connection);
 
-        if (connection.disco) {
-            // for chrome, add multistream cap
-        }
         connection.jingle.pc_constraints = APP.RTC.getPCConstraints();
         if (config.useIPv6) {
             // https://code.google.com/p/webrtc/issues/detail?id=2828
@@ -131,8 +128,8 @@ function connect(jid, password) {
                     // if we get disconnected from the XMPP server permanently.
 
                     // If the connection failed, retry.
-                    if (connectionFailed
-                        && faultTolerantConnect.retry("connection-failed")) {
+                    if (connectionFailed &&
+                        faultTolerantConnect.retry("connection-failed")) {
                         return;
                     }
 
@@ -151,11 +148,10 @@ function connect(jid, password) {
 }
 
 
-
 function maybeDoJoin() {
     if (connection && connection.connected &&
-        Strophe.getResourceFromJid(connection.jid)
-        && (APP.RTC.localAudio || APP.RTC.localVideo)) {
+        Strophe.getResourceFromJid(connection.jid) &&
+        (APP.RTC.localAudio || APP.RTC.localVideo)) {
         // .connected is true while connecting?
         doJoin();
     }
@@ -198,7 +194,8 @@ var unload = (function () {
                 async: false,
                 cache: false,
                 contentType: 'application/xml',
-                data: "<body rid='" + (connection.rid || connection._proto.rid) +
+                data: "<body rid='" +
+                    (connection.rid || connection._proto.rid) +
                     "' xmlns='http://jabber.org/protocol/httpbind' sid='" +
                     (connection.sid || connection._proto.sid)  +
                     "' type='terminate'>" +
@@ -224,7 +221,7 @@ function setupEvents() {
     // (change URL). If this participant doesn't unload properly, then it
     // becomes a ghost for the rest of the participants that stay in the
     // conference. Thankfully handling the 'unload' event in addition to the
-    // 'beforeunload' event seems to garante the execution of the 'unload'
+    // 'beforeunload' event seems to guarantee the execution of the 'unload'
     // method at least once.
     //
     // The 'unload' method can safely be run multiple times, it will actually do
@@ -274,10 +271,8 @@ var XMPP = {
     promptLogin: function () {
         eventEmitter.emit(XMPPEvents.PROMPT_FOR_LOGIN);
     },
-    joinRoom: function(roomName, useNicks, nick)
-    {
-        var roomjid;
-        roomjid = roomName;
+    joinRoom: function(roomName, useNicks, nick) {
+        var roomjid = roomName;
 
         if (useNicks) {
             if (nick) {
@@ -286,7 +281,6 @@ var XMPP = {
                 roomjid += '/' + Strophe.getNodeFromJid(connection.jid);
             }
         } else {
-
             var tmpJid = Strophe.getNodeFromJid(connection.jid);
 
             if(!authenticatedUser)
@@ -323,14 +317,12 @@ var XMPP = {
         }
         eventEmitter.emit(XMPPEvents.DISPOSE_CONFERENCE, onUnload);
         connection.jingle.activecall = null;
-        if(!onUnload)
-        {
+        if (!onUnload) {
             this.sessionTerminated = true;
             connection.emuc.doLeave();
         }
     },
-    addListener: function(type, listener)
-    {
+    addListener: function(type, listener) {
         eventEmitter.on(type, listener);
     },
     removeListener: function (type, listener) {
@@ -398,7 +390,6 @@ var XMPP = {
             return false;
         }
 
-
         if (this.forceMuted && !mute) {
             console.info("Asking focus for unmute");
             connection.moderate.setMute(connection.emuc.myroomjid, mute);
@@ -411,11 +402,7 @@ var XMPP = {
             return true;
         }
 
-        // It is not clear what is the right way to handle multiple tracks.
-        // So at least make sure that they are all muted or all unmuted and
-        // that we send presence just once.
         APP.RTC.localAudio.setMute(mute);
-        // isMuted is the opposite of audioEnabled
         this.sendAudioInfoPresence(mute, callback);
         return true;
     },
@@ -439,9 +426,11 @@ var XMPP = {
                         var sdp = new SDP(answer.sdp);
                         if (sdp.media.length > 1) {
                             if (unmute)
-                                sdp.media[1] = sdp.media[1].replace('a=recvonly', 'a=sendrecv');
+                                sdp.media[1] = sdp.media[1].replace(
+                                    'a=recvonly', 'a=sendrecv');
                             else
-                                sdp.media[1] = sdp.media[1].replace('a=sendrecv', 'a=recvonly');
+                                sdp.media[1] = sdp.media[1].replace(
+                                    'a=sendrecv', 'a=recvonly');
                             sdp.raw = sdp.session + sdp.media.join('');
                             answer.sdp = sdp.raw;
                         }
@@ -451,7 +440,8 @@ var XMPP = {
                             },
                             function (error) {
                                 console.log('mute SLD error');
-                                eventEmitter.emit(XMPPEvents.SET_LOCAL_DESCRIPTION_ERROR);
+                                eventEmitter.emit(
+                                    XMPPEvents.SET_LOCAL_DESCRIPTION_ERROR);
                             }
                         );
                     },
@@ -473,8 +463,7 @@ var XMPP = {
             startingCallback, startedCallback, connection);
     },
     addToPresence: function (name, value, dontSend) {
-        switch (name)
-        {
+        switch (name) {
             case "displayName":
                 connection.emuc.addDisplayNameToPresence(value);
                 break;
