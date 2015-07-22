@@ -298,7 +298,7 @@ var Toolbar = (function (my) {
             return;
         }
         // Get authentication URL
-        if (!APP.xmpp.getMUCJoined()) {
+        if (!APP.xmpp.isMUCJoined()) {
             APP.xmpp.getLoginUrl(UI.getRoomName(), function (url) {
                 // If conference has not been started yet - redirect to login page
                 window.location.href = url;

@@ -4,7 +4,6 @@
  */
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 var Moderator = require("./moderator");
-var JingleSession = require("./JingleSession");
 
 var bridgeIsDown = false;
 

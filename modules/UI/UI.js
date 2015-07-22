@@ -767,12 +767,12 @@ function dump(elem, filename) {
     elem = elem.parentNode;
     elem.download = filename || 'meetlog.json';
     elem.href = 'data:application/json;charset=utf-8,\n';
-    var data = APP.xmpp.populateData();
+    var data = APP.xmpp.getJingleLog();
     var metadata = {};
     metadata.time = new Date();
     metadata.url = window.location.href;
     metadata.ua = navigator.userAgent;
-    var log = APP.xmpp.getLogger();
+    var log = APP.xmpp.getXmppLog();
     if (log) {
         metadata.xmpp = log;
     }

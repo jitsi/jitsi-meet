@@ -79,7 +79,7 @@ var Authentication = {
                     Moderator.allocateConferenceFocus(roomName, function () {
                         // If it's not "on the fly" authentication now join
                         // the conference room
-                        if (!APP.xmpp.getMUCJoined()) {
+                        if (!APP.xmpp.isMUCJoined()) {
                             APP.UI.checkForNicknameAndJoin();
                         }
                     });

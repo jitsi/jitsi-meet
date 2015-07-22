@@ -482,17 +482,13 @@ var XMPP = {
         connection.send(message);
         return true;
     },
-    populateData: function () {
-        var data = {};
-        if (connection.jingle) {
-            data = connection.jingle.populateData();
-        }
-        return data;
+    // Gets the logs from strophe.jingle.
+    getJingleLog: function () {
+        return connection.jingle ? connection.jingle.getLog() : {};
     },
-    getLogger: function () {
-        if(connection.logger)
-            return connection.logger.log;
-        return null;
+    // Gets the logs from strophe.
+    getXmppLog: function () {
+        return connection.logger ? connection.logger.log : null;
     },
     getPrezi: function () {
         return connection.emuc.getPrezi(this.myJid());
@@ -533,7 +529,8 @@ var XMPP = {
             return null;
         return connection.jingle.activecall.getSsrcOwner(ssrc);
     },
-    getMUCJoined: function () {
+    // Returns true iff we have joined the MUC.
+    isMUCJoined: function () {
         return connection.emuc.joined;
     },
     getSessions: function () {
