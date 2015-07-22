@@ -88,9 +88,8 @@ module.exports = function(XMPP, eventEmitter)
                     this.connection.send(ack);
                     return true;
                 }
-                // compare from to sess.peerjid (bare jid comparison for later compat with message-mode)
                 // local jid is not checked
-                if (Strophe.getBareJidFromJid(fromJid) != Strophe.getBareJidFromJid(sess.peerjid)) {
+                if (fromJid != sess.peerjid) {
                     console.warn('jid mismatch for session id', sid, fromJid, sess.peerjid);
                     ack.type = 'error';
                     ack.c('error', {type: 'cancel'})
