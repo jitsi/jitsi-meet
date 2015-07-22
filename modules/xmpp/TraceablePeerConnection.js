@@ -4,15 +4,15 @@ var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 
 function TraceablePeerConnection(ice_config, constraints, session) {
     var self = this;
-    var RTCPeerconnectionType = null;
+    var RTCPeerConnectionType = null;
     if (RTCBrowserType.isFirefox()) {
-        RTCPeerconnectionType = mozRTCPeerConnection;
+        RTCPeerConnectionType = mozRTCPeerConnection;
     } else if (RTCBrowserType.isTemasysPluginUsed()) {
-        RTCPeerconnectionType = RTCPeerConnection;
+        RTCPeerConnectionType = RTCPeerConnection;
     } else {
-        RTCPeerconnectionType = webkitRTCPeerConnection;
+        RTCPeerConnectionType = webkitRTCPeerConnection;
     }
-    this.peerconnection = new RTCPeerconnectionType(ice_config, constraints);
+    this.peerconnection = new RTCPeerConnectionType(ice_config, constraints);
     this.updateLog = [];
     this.stats = {};
     this.statsinterval = null;
@@ -95,9 +95,8 @@ function TraceablePeerConnection(ice_config, constraints, session) {
         this.statsinterval = window.setInterval(function() {
             self.peerconnection.getStats(function(stats) {
                 var results = stats.result();
+                var now = new Date();
                 for (var i = 0; i < results.length; ++i) {
-                    //console.log(results[i].type, results[i].id, results[i].names())
-                    var now = new Date();
                     results[i].names().forEach(function (name) {
                         var id = results[i].id + '-' + name;
                         if (!self.stats[id]) {
@@ -121,9 +120,12 @@ function TraceablePeerConnection(ice_config, constraints, session) {
 
         }, 1000);
     }
-};
+}
 
-dumpSDP = function(description) {
+/**
+ * Returns a string representation of a SessionDescription object.
+ */
+var dumpSDP = function(description) {
     if (typeof description === 'undefined' || description == null) {
         return '';
     }
@@ -135,7 +137,7 @@ dumpSDP = function(description) {
  * Takes a SessionDescription object and returns a "normalized" version.
  * Currently it only takes care of ordering the a=ssrc lines.
  */
-normalizePlanB = function(desc) {
+var normalizePlanB = function(desc) {
     if (typeof desc !== 'object' || desc === null ||
         typeof desc.sdp !== 'string') {
         console.warn('An empty description was passed as an argument.');
@@ -199,30 +201,38 @@ normalizePlanB = function(desc) {
 };
 
 if (TraceablePeerConnection.prototype.__defineGetter__ !== undefined) {
-    TraceablePeerConnection.prototype.__defineGetter__('signalingState', function() { return this.peerconnection.signalingState; });
-    TraceablePeerConnection.prototype.__defineGetter__('iceConnectionState', function() { return this.peerconnection.iceConnectionState; });
-    TraceablePeerConnection.prototype.__defineGetter__('localDescription', function() {
-        var desc = this.peerconnection.localDescription;
-        this.trace('getLocalDescription::preTransform', dumpSDP(desc));
+    TraceablePeerConnection.prototype.__defineGetter__(
+        'signalingState',
+        function() { return this.peerconnection.signalingState; });
+    TraceablePeerConnection.prototype.__defineGetter__(
+        'iceConnectionState',
+        function() { return this.peerconnection.iceConnectionState; });
+    TraceablePeerConnection.prototype.__defineGetter__(
+        'localDescription',
+        function() {
+            var desc = this.peerconnection.localDescription;
+            this.trace('getLocalDescription::preTransform', dumpSDP(desc));
 
-        // if we're running on FF, transform to Plan B first.
-        if (RTCBrowserType.usesUnifiedPlan()) {
-            desc = this.interop.toPlanB(desc);
-            this.trace('getLocalDescription::postTransform (Plan B)', dumpSDP(desc));
-        }
-        return desc;
-    });
-    TraceablePeerConnection.prototype.__defineGetter__('remoteDescription', function() {
-        var desc = this.peerconnection.remoteDescription;
-        this.trace('getRemoteDescription::preTransform', dumpSDP(desc));
+            // if we're running on FF, transform to Plan B first.
+            if (RTCBrowserType.usesUnifiedPlan()) {
+                desc = this.interop.toPlanB(desc);
+                this.trace('getLocalDescription::postTransform (Plan B)', dumpSDP(desc));
+            }
+            return desc;
+        });
+    TraceablePeerConnection.prototype.__defineGetter__(
+        'remoteDescription',
+        function() {
+            var desc = this.peerconnection.remoteDescription;
+            this.trace('getRemoteDescription::preTransform', dumpSDP(desc));
 
-        // if we're running on FF, transform to Plan B first.
-        if (RTCBrowserType.usesUnifiedPlan()) {
-            desc = this.interop.toPlanB(desc);
-            this.trace('getRemoteDescription::postTransform (Plan B)', dumpSDP(desc));
-        }
-        return desc;
-    });
+            // if we're running on FF, transform to Plan B first.
+            if (RTCBrowserType.usesUnifiedPlan()) {
+                desc = this.interop.toPlanB(desc);
+                this.trace('getRemoteDescription::postTransform (Plan B)', dumpSDP(desc));
+            }
+            return desc;
+        });
 }
 
 TraceablePeerConnection.prototype.addStream = function (stream) {
@@ -234,7 +244,6 @@ TraceablePeerConnection.prototype.addStream = function (stream) {
     catch (e)
     {
         console.error(e);
-        return;
     }
 };
 
@@ -272,7 +281,8 @@ TraceablePeerConnection.prototype.createDataChannel = function (label, opts) {
     return this.peerconnection.createDataChannel(label, opts);
 };
 
-TraceablePeerConnection.prototype.setLocalDescription = function (description, successCallback, failureCallback) {
+TraceablePeerConnection.prototype.setLocalDescription
+        = function (description, successCallback, failureCallback) {
     this.trace('setLocalDescription::preTransform', dumpSDP(description));
     // if we're running on FF, transform to Plan A first.
     if (RTCBrowserType.usesUnifiedPlan()) {
@@ -298,7 +308,8 @@ TraceablePeerConnection.prototype.setLocalDescription = function (description, s
      */
 };
 
-TraceablePeerConnection.prototype.setRemoteDescription = function (description, successCallback, failureCallback) {
+TraceablePeerConnection.prototype.setRemoteDescription
+        = function (description, successCallback, failureCallback) {
     this.trace('setRemoteDescription::preTransform', dumpSDP(description));
     // TODO the focus should squeze or explode the remote simulcast
     description = this.simulcast.mungeRemoteDescription(description);
@@ -341,7 +352,8 @@ TraceablePeerConnection.prototype.close = function () {
     this.peerconnection.close();
 };
 
-TraceablePeerConnection.prototype.createOffer = function (successCallback, failureCallback, constraints) {
+TraceablePeerConnection.prototype.createOffer
+        = function (successCallback, failureCallback, constraints) {
     var self = this;
     this.trace('createOffer', JSON.stringify(constraints, null, ' '));
     this.peerconnection.createOffer(
@@ -369,20 +381,21 @@ TraceablePeerConnection.prototype.createOffer = function (successCallback, failu
     );
 };
 
-TraceablePeerConnection.prototype.createAnswer = function (successCallback, failureCallback, constraints) {
+TraceablePeerConnection.prototype.createAnswer
+        = function (successCallback, failureCallback, constraints) {
     var self = this;
     this.trace('createAnswer', JSON.stringify(constraints, null, ' '));
     this.peerconnection.createAnswer(
         function (answer) {
-            self.trace('createAnswerOnSuccess::preTransfom', dumpSDP(answer));
+            self.trace('createAnswerOnSuccess::preTransform', dumpSDP(answer));
             // if we're running on FF, transform to Plan A first.
             if (RTCBrowserType.usesUnifiedPlan()) {
                 answer = self.interop.toPlanB(answer);
-                self.trace('createAnswerOnSuccess::postTransfom (Plan B)', dumpSDP(answer));
+                self.trace('createAnswerOnSuccess::postTransform (Plan B)', dumpSDP(answer));
             }
             if (config.enableSimulcast && self.simulcast.isSupported()) {
                 answer = self.simulcast.mungeLocalDescription(answer);
-                self.trace('createAnswerOnSuccess::postTransfom (simulcast)', dumpSDP(answer));
+                self.trace('createAnswerOnSuccess::postTransform (simulcast)', dumpSDP(answer));
             }
             successCallback(answer);
         },
@@ -394,8 +407,9 @@ TraceablePeerConnection.prototype.createAnswer = function (successCallback, fail
     );
 };
 
-TraceablePeerConnection.prototype.addIceCandidate = function (candidate, successCallback, failureCallback) {
-    var self = this;
+TraceablePeerConnection.prototype.addIceCandidate
+        = function (candidate, successCallback, failureCallback) {
+    //var self = this;
     this.trace('addIceCandidate', JSON.stringify(candidate, null, ' '));
     this.peerconnection.addIceCandidate(candidate);
     /* maybe later
@@ -418,7 +432,7 @@ TraceablePeerConnection.prototype.getStats = function(callback, errback) {
         // ignore for now...
         if(!errback)
             errback = function () {};
-        this.peerconnection.getStats(null,callback,errback);
+        this.peerconnection.getStats(null, callback, errback);
     } else {
         this.peerconnection.getStats(callback);
     }

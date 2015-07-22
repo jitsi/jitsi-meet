@@ -56,20 +56,18 @@ LocalStream.prototype.setMute = function(mute)
             tracks[idx].enabled = mute;
         }
         this.eventEmitter.emit(
-            (this.type == "audio"? RTCEvents.AUDIO_MUTE : RTCEvents.VIDEO_MUTE),
+            this.isAudioStream() ? RTCEvents.AUDIO_MUTE : RTCEvents.VIDEO_MUTE,
             !mute);
     }
     else
     {
-        if(mute === false) {
+        if (mute === false) {
             APP.xmpp.removeStream(this.stream);
             this.stream.stop();
             this.eventEmitter.emit(
-                (this.type == "audio"? RTCEvents.AUDIO_MUTE : RTCEvents.VIDEO_MUTE),
+                this.isAudioStream() ? RTCEvents.AUDIO_MUTE : RTCEvents.VIDEO_MUTE,
                 true);
-        }
-        else
-        {
+        } else {
             var self = this;
             APP.RTC.rtcUtils.obtainAudioAndVideoPermissions(
                 (this.isAudioStream() ? ["audio"] : ["video"]),
@@ -99,13 +97,10 @@ LocalStream.prototype.setMute = function(mute)
 
 LocalStream.prototype.isMuted = function () {
     var tracks = [];
-    if(this.type == "audio")
-    {
+    if (this.isAudioStream()) {
         tracks = this.stream.getAudioTracks();
-    }
-    else
-    {
-        if(this.stream.ended)
+    } else {
+        if (this.stream.ended)
             return true;
         tracks = this.stream.getVideoTracks();
     }
@@ -114,7 +109,7 @@ LocalStream.prototype.isMuted = function () {
             return false;
     }
     return true;
-}
+};
 
 LocalStream.prototype.getId = function () {
     return this.stream.getTracks()[0].id;

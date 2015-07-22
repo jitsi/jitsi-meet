@@ -27,13 +27,15 @@ var JitsiMeetExternalAPI = (function()
      */
     function JitsiMeetExternalAPI(domain, room_name, width, height, parent_node)
     {
+        if(!width || width < MIN_WIDTH)
+            width = MIN_WIDTH;
+        if(!height || height < MIN_HEIGHT)
+            height = MIN_HEIGHT;
+
         this.parentNode = null;
-        if(parent_node)
-        {
+        if(parent_node) {
             this.parentNode = parent_node;
-        }
-        else
-        {
+        } else {
             var scriptTag = document.scripts[document.scripts.length - 1];
             this.parentNode = scriptTag.parentNode;
         }
@@ -41,10 +43,6 @@ var JitsiMeetExternalAPI = (function()
         this.iframeHolder =
             this.parentNode.appendChild(document.createElement("div"));
         this.iframeHolder.id = "jitsiConference" + JitsiMeetExternalAPI.id;
-        if(width < MIN_WIDTH)
-            width = MIN_WIDTH;
-        if(height < MIN_HEIGHT)
-            height = MIN_HEIGHT;
         this.iframeHolder.style.width = width + "px";
         this.iframeHolder.style.height = height + "px";
         this.frameName = "jitsiConferenceFrame" + JitsiMeetExternalAPI.id;
