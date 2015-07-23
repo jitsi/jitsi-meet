@@ -119,7 +119,8 @@ var VideoLayout = (function (my) {
             var newResourceJid;
             // We'll show user's avatar if he is the dominant speaker or if
             // his video thumbnail is pinned
-            if (resourceJid === focusedVideoResourceJid ||
+            if (remoteVideos[resourceJid] &&
+                resourceJid === focusedVideoResourceJid ||
                 resourceJid === currentDominantSpeaker) {
                 newResourceJid = resourceJid;
             } else {
@@ -137,18 +138,20 @@ var VideoLayout = (function (my) {
         var videoElem = RTC.getVideoElementName();
         var pick = $('#remoteVideos>span[id!="mixedstream"]:visible:last>' + videoElem);
         if (pick.length && APP.RTC.getVideoSrc(pick[0])) {
-            return VideoLayout.getPeerContainerResourceJid(pick[0].parentNode);
+            jid = VideoLayout.getPeerContainerResourceJid(pick[0].parentNode);
         } else {
             console.info("Last visible video no longer exists");
             pick = $('#remoteVideos>span[id!="mixedstream"]>' + videoElem);
             if (pick.length && APP.RTC.getVideoSrc(pick[0])) {
-                return VideoLayout.getPeerContainerResourceJid(pick[0].parentNode);
+                jid = VideoLayout.getPeerContainerResourceJid(pick[0].parentNode);
             } else {
                 // Try local video
                 console.info("Fallback to local video...");
-                return APP.xmpp.myResource();
+                jid = APP.xmpp.myResource();
             }
         }
+        console.info("electLastVisibleVideo: " + jid);
+        return jid;
     };
     
     my.onRemoteStreamAdded = function (stream) {
@@ -785,14 +788,6 @@ var VideoLayout = (function (my) {
     };
 
     /**
-     * Removes the connection
-     * @param jid
-     */
-    my.removeConnectionIndicator = function (jid) {
-        remoteVideos[Strophe.getResourceFromJid(jid)].removeConnectionIndicator();
-    };
-
-    /**
      * Hides the connection indicator
      * @param jid
      */
@@ -819,6 +814,23 @@ var VideoLayout = (function (my) {
             console.info("Focused video owner has left the conference");
             focusedVideoResourceJid = null;
         }
+
+        if (currentDominantSpeaker === resourceJid)
+        {
+            console.info("Dominant speaker has left the conference");
+            currentDominantSpeaker = null;
+        }
+
+        var remoteVideo = remoteVideos[resourceJid];
+        if (remoteVideo) {
+            remoteVideo.removeConnectionIndicator();
+            // Remove remote video
+            delete remoteVideos[resourceJid];
+        } else {
+            console.warn("No remote video for " + resourceJid);
+        }
+
+        VideoLayout.resizeThumbnails();
     };
     
     my.onVideoTypeChanged = function (jid) {

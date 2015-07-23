@@ -205,6 +205,12 @@ function updateActiveSpeakerAvatarSrc() {
 }
 
 function changeVideo(isVisible) {
+
+    if (!currentSmallVideo) {
+        console.error("Unable to change large video - no 'currentSmallVideo'");
+        return;
+    }
+
     updateActiveSpeakerAvatarSrc();
 
     APP.RTC.setVideoSrc($('#largeVideo')[0], currentSmallVideo.getSrc());

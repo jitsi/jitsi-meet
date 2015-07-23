@@ -546,23 +546,10 @@ function onMucMemberLeft(jid) {
     if(!config.startAudioMuted ||
         config.startAudioMuted > APP.members.size())
         UIUtil.playSoundNotification('userLeft');
-    // Need to call this with a slight delay, otherwise the element couldn't be
-    // found for some reason.
-    // XXX(gp) it works fine without the timeout for me (with Chrome 38).
-    window.setTimeout(function () {
-        var container = document.getElementById(
-                'participant_' + Strophe.getResourceFromJid(jid));
-        if (container) {
-            ContactList.removeContact(jid);
-            VideoLayout.removeConnectionIndicator(jid);
-            // hide here, wait for video to close before removing
-            $(container).hide();
-            VideoLayout.resizeThumbnails();
-        }
-    }, 10);
+
+    ContactList.removeContact(jid);
 
     VideoLayout.participantLeft(jid);
-
 };
 
 
