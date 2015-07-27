@@ -10,14 +10,15 @@ Homepage: https://jitsi.org/meet
 
 Package: jitsi-meet
 Architecture: all
-Depends: ${misc:Depends}, jitsi-videobridge, nginx, jitsi-meet-prosody, libjs-strophe (>= 1.1.3),
- libjs-jquery, libjs-jquery-ui
+Depends: ${misc:Depends}, jitsi-videobridge, jitsi-meet-prosody, libjs-strophe (>= 1.1.3),
+ libjs-jquery, libjs-jquery-ui, openjdk-8-jre-headless
 Description: WebRTC JavaScript video conferences
  Jitsi Meet is a WebRTC JavaScript application that uses Jitsi
  Videobridge to provide high quality, scalable video conferences.
  .
  It is a web interface to Jitsi Videobridge for audio and video
- forwarding and relaying, configured to work with nginx
+ forwarding and relaying, configured to work with jetty instance
+ running embedded into Jitsi Videobridge
 
 Package: jitsi-meet-prosody
 Architecture: all
@@ -27,7 +28,8 @@ Description: Prosody configuration for Jitsi Meet
  Videobridge to provide high quality, scalable video conferences.
  .
  It is a web interface to Jitsi Videobridge for audio and video
- forwarding and relaying, configured to work with nginx
+ forwarding and relaying, configured to work with jetty instance
+ running embedded into Jitsi Videobridge
  .
  This package contains configuration for Prosody to be used with
  Jitsi Meet.

@@ -1,7 +1,3 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 #, fuzzy
 msgid ""
@@ -74,7 +70,6 @@ msgid ""
 "uploaded it, now is a good time to upload it in another console."
 msgstr ""
 
-
 #. Type: string
 #. Description
 #: ../jitsi-meet.templates:4001
@@ -86,4 +81,18 @@ msgstr ""
 #: ../jitsi-meet.templates:4001
 msgid ""
 "The value for the hostname that is set in Jitsi Videobridge installation."
+msgstr ""
+
+
+#. Type: string
+#. Description
+#: ../jitsi-meet.templates:5001
+msgid "for internal use"
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../jitsi-meet.templates:5001
+msgid ""
+"Jitsi Videobridge installation can use its internal jetty to serve static meet pages."
 msgstr ""
