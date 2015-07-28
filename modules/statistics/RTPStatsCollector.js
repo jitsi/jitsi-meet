@@ -1,8 +1,10 @@
-/* global ssrc2jid */
+/* global require, ssrc2jid */
 /* jshint -W117 */
 var RTCBrowserType = require("../RTC/RTCBrowserType");
 
-
+/* Whether we support the browser we are running into for logging statistics */
+var browserSupported = RTCBrowserType.isChrome() ||
+    RTCBrowserType.isChrome();
 /**
  * Calculates packet lost percent using the number of lost packets and the
  * number of all packet.
@@ -260,7 +262,7 @@ StatsCollector.prototype.start = function ()
         );
     }
 
-    if(!config.disableStats && !navigator.mozGetUserMedia) {
+    if (!config.disableStats && browserSupported) {
         this.statsIntervalId = setInterval(
             function () {
                 // Interval updates
@@ -294,7 +296,7 @@ StatsCollector.prototype.start = function ()
         );
     }
 
-    if (config.logStats && !navigator.mozGetUserMedia) {
+    if (config.logStats && browserSupported) {
         this.gatherStatsIntervalId = setInterval(
             function () {
                 self.peerconnection.getStats(
