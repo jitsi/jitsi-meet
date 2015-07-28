@@ -1,3 +1,4 @@
+/* global config */
 /**
  * Provides statistics for the local stream.
  */
@@ -33,7 +34,7 @@ function timeDomainDataToAudioLevel(samples) {
     }
 
     return parseFloat(((maxVolume - 127) / 128).toFixed(3));
-};
+}
 
 /**
  * Animates audio level change
@@ -41,20 +42,16 @@ function timeDomainDataToAudioLevel(samples) {
  * @param lastLevel the last audio level
  * @returns {Number} the audio level to be set
  */
-function animateLevel(newLevel, lastLevel)
-{
+function animateLevel(newLevel, lastLevel) {
     var value = 0;
     var diff = lastLevel - newLevel;
-    if(diff > 0.2)
-    {
+    if(diff > 0.2) {
         value = lastLevel - 0.2;
     }
-    else if(diff < -0.4)
-    {
+    else if(diff < -0.4) {
         value = lastLevel + 0.4;
     }
-    else
-    {
+    else {
         value = newLevel;
     }
 
@@ -85,8 +82,8 @@ function LocalStatsCollector(stream, interval, statisticsService, eventEmitter) 
  * Starts the collecting the statistics.
  */
 LocalStatsCollector.prototype.start = function () {
-    if (config.disableAudioLevels || !window.AudioContext
-        || RTCBrowserType.isTemasysPluginUsed())
+    if (config.disableAudioLevels || !window.AudioContext ||
+        RTCBrowserType.isTemasysPluginUsed())
         return;
 
     var context = new AudioContext();
@@ -116,7 +113,6 @@ LocalStatsCollector.prototype.start = function () {
         },
         this.intervalMilis
     );
-
 };
 
 /**

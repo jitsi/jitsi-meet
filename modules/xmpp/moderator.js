@@ -1,4 +1,4 @@
-/* global $, $iq, APP, config, connection, messageHandler,
+/* global $, $iq, APP, config, messageHandler,
  roomName, sessionTerminated, Strophe, Util */
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 var Settings = require("../settings/Settings");
@@ -69,8 +69,8 @@ var Moderator = {
         function listener(event) {
             if (event.data && event.data.sessionId) {
                 if (event.origin !== window.location.origin) {
-                    console.warn(
-                        "Ignoring sessionId from different origin: " + event.origin);
+                    console.warn("Ignoring sessionId from different origin: " +
+                        event.origin);
                     return;
                 }
                 localStorage.setItem('sessionId', event.data.sessionId);
@@ -219,8 +219,7 @@ var Moderator = {
 
         console.info("Authentication enabled: " + authenticationEnabled);
 
-        externalAuthEnabled
-            = $(resultIq).find(
+        externalAuthEnabled = $(resultIq).find(
                 '>conference>property' +
                 '[name=\'externalAuth\'][value=\'true\']').length > 0;
 
@@ -333,7 +332,8 @@ var Moderator = {
                 // Do not show in case of session invalid
                 // which means just a retry
                 if (!invalidSession) {
-                    eventEmitter.emit(XMPPEvents.FOCUS_DISCONNECTED, focusComponent, retrySec);
+                    eventEmitter.emit(XMPPEvents.FOCUS_DISCONNECTED,
+                        focusComponent, retrySec);
                 }
                 // Reset response timeout
                 getNextTimeout(true);

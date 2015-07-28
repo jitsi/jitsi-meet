@@ -1,3 +1,4 @@
+/* global $, $iq, config */
 var params = {};
 function getConfigParamsFromUrl() {
     if(!location.hash)
