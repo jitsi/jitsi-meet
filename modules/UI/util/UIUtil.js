@@ -1,3 +1,4 @@
+/* global $ */
 /**
  * Created by hristo on 12/22/14.
  */
@@ -61,7 +62,7 @@ module.exports = {
 
         for (var i = 0, n = pixels.length; i < n; i += 4) {
             var grayscale
-                = pixels[i] * .3 + pixels[i+1] * .59 + pixels[i+2] * .11;
+                = pixels[i] * 0.3 + pixels[i+1] * 0.59 + pixels[i+2] * 0.11;
             pixels[i  ] = grayscale;        // red
             pixels[i+1] = grayscale;        // green
             pixels[i+2] = grayscale;        // blue
@@ -78,6 +79,4 @@ module.exports = {
         element.setAttribute("data-html", true);
         element.setAttribute("data-container", "body");
     }
-
-
 };

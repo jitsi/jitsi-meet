@@ -1,3 +1,4 @@
+/* global APP, require */
 var UIUtil = require("../../util/UIUtil");
 
 /**
@@ -14,47 +15,39 @@ var commands = {
  * @param message the received message
  * @returns {string} the command
  */
-function getCommand(message)
-{
-    if(message)
-    {
-        for(var command in commands)
-        {
+function getCommand(message) {
+    if(message) {
+        for(var command in commands) {
             if(message.indexOf("/" + command) == 0)
                 return command;
         }
     }
     return "";
-};
+}
 
 /**
  * Processes the data for topic command.
  * @param commandArguments the arguments of the topic command.
  */
-function processTopic(commandArguments)
-{
+function processTopic(commandArguments) {
     var topic = UIUtil.escapeHtml(commandArguments);
     APP.xmpp.setSubject(topic);
 }
 
 /**
- * Constructs new CommandProccessor instance from a message that
+ * Constructs a new CommandProccessor instance from a message that
  * handles commands received via chat messages.
  * @param message the message
  * @constructor
  */
-function CommandsProcessor(message)
-{
-
-
+function CommandsProcessor(message) {
     var command = getCommand(message);
 
     /**
      * Returns the name of the command.
      * @returns {String} the command
      */
-    this.getCommand = function()
-    {
+    this.getCommand = function() {
         return command;
     };
 
@@ -65,8 +58,7 @@ function CommandsProcessor(message)
      * Returns the arguments of the command.
      * @returns {string}
      */
-    this.getArgument = function()
-    {
+    this.getArgument = function() {
         return messageArgument;
     };
 }
@@ -75,9 +67,8 @@ function CommandsProcessor(message)
  * Checks whether this instance is valid command or not.
  * @returns {boolean}
  */
-CommandsProcessor.prototype.isCommand = function()
-{
-    if(this.getCommand())
+CommandsProcessor.prototype.isCommand = function() {
+    if (this.getCommand())
         return true;
     return false;
 };
@@ -85,13 +76,11 @@ CommandsProcessor.prototype.isCommand = function()
 /**
  * Processes the command.
  */
-CommandsProcessor.prototype.processCommand = function()
-{
+CommandsProcessor.prototype.processCommand = function() {
     if(!this.isCommand())
         return;
 
     commands[this.getCommand()](this.getArgument());
-
 };
 
 module.exports = CommandsProcessor;

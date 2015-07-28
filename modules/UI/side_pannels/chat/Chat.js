@@ -1,4 +1,4 @@
-/* global $, Util, nickname:true */
+/* global APP, $, Util, nickname:true */
 var Replacement = require("./Replacement");
 var CommandsProcessor = require("./Commands");
 var ToolbarToggler = require("../../toolbars/ToolbarToggler");
@@ -102,8 +102,7 @@ function getCurrentTime(stamp) {
     return hour+':'+minute+':'+second;
 }
 
-function toggleSmileys()
-{
+function toggleSmileys() {
     var smileys = $('#smileysContainer');
     if(!smileys.is(':visible')) {
         smileys.show("slide", { direction: "down", duration: 300});
@@ -191,19 +190,18 @@ var Chat = (function (my) {
             }
         });
 
-        $('#usermsg').keydown(function (event) {
+        var usermsg = $('#usermsg');
+        usermsg.keydown(function (event) {
             if (event.keyCode === 13) {
                 event.preventDefault();
                 var value = this.value;
-                $('#usermsg').val('').trigger('autosize.resize');
+                usermsg.val('').trigger('autosize.resize');
                 this.focus();
                 var command = new CommandsProcessor(value);
-                if(command.isCommand())
-                {
+                if(command.isCommand()) {
                     command.processCommand();
                 }
-                else
-                {
+                else {
                     var message = UIUtil.escapeHtml(value);
                     APP.xmpp.sendChatMessage(message, NicknameHandler.getNickname());
                 }
@@ -214,7 +212,7 @@ var Chat = (function (my) {
             resizeChatConversation();
             Chat.scrollChatToBottom();
         };
-        $('#usermsg').autosize({callback: onTextAreaResize});
+        usermsg.autosize({callback: onTextAreaResize});
 
         $("#chatspace").bind("shown",
             function () {
@@ -228,7 +226,8 @@ var Chat = (function (my) {
     /**
      * Appends the given message to the chat conversation.
      */
-    my.updateChatConversation = function (from, displayName, message, myjid, stamp) {
+    my.updateChatConversation =
+        function (from, displayName, message, myjid, stamp) {
         var divClassName = '';
 
         if (APP.xmpp.myJid() === from) {
@@ -270,8 +269,7 @@ var Chat = (function (my) {
      * @param errorMessage the received error message.
      * @param originalText the original message.
      */
-    my.chatAddError = function(errorMessage, originalText)
-    {
+    my.chatAddError = function(errorMessage, originalText) {
         errorMessage = UIUtil.escapeHtml(errorMessage);
         originalText = UIUtil.escapeHtml(originalText);
 
@@ -288,22 +286,17 @@ var Chat = (function (my) {
      * Sets the subject to the UI
      * @param subject the subject
      */
-    my.chatSetSubject = function(subject)
-    {
-        if(subject)
+    my.chatSetSubject = function(subject) {
+        if (subject)
             subject = subject.trim();
         $('#subject').html(Replacement.linkify(UIUtil.escapeHtml(subject)));
-        if(subject === "")
-        {
+        if(subject === "") {
             $("#subject").css({display: "none"});
         }
-        else
-        {
+        else {
             $("#subject").css({display: "block"});
         }
     };
-
-
 
     /**
      * Sets the chat conversation mode.

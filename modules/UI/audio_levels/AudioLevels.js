@@ -1,3 +1,4 @@
+/* global APP, interfaceConfig, $, Strophe */
 var CanvasUtil = require("./CanvasUtils");
 
 var ASDrawContext = $('#activeSpeakerAudioLevel')[0].getContext('2d');
@@ -6,10 +7,10 @@ function initActiveSpeakerAudioLevels() {
     var ASRadius = interfaceConfig.ACTIVE_SPEAKER_AVATAR_SIZE / 2;
     var ASCenter = (interfaceConfig.ACTIVE_SPEAKER_AVATAR_SIZE + ASRadius) / 2;
 
-// Draw a circle.
+    // Draw a circle.
     ASDrawContext.arc(ASCenter, ASCenter, ASRadius, 0, 2 * Math.PI);
 
-// Add a shadow around the circle
+    // Add a shadow around the circle
     ASDrawContext.shadowColor = interfaceConfig.SHADOW_COLOR;
     ASDrawContext.shadowOffsetX = 0;
     ASDrawContext.shadowOffsetY = 0;
@@ -25,7 +26,7 @@ var AudioLevels = (function(my) {
 
     my.init = function () {
         initActiveSpeakerAudioLevels();
-    }
+    };
 
     /**
      * Updates the audio level canvas for the given peerJid. If the canvas
@@ -112,7 +113,7 @@ var AudioLevels = (function(my) {
             resourceJid = APP.xmpp.myResource();
         }
 
-        if(resourceJid  === largeVideoResourceJid) {
+        if(resourceJid === largeVideoResourceJid) {
             window.requestAnimationFrame(function () {
                 AudioLevels.updateActiveSpeakerAudioLevel(audioLevel);
             });
@@ -122,7 +123,6 @@ var AudioLevels = (function(my) {
     my.updateActiveSpeakerAudioLevel = function(audioLevel) {
         if($("#activeSpeaker").css("visibility") == "hidden")
             return;
-
 
         ASDrawContext.clearRect(0, 0, 300, 300);
         if(audioLevel == 0)
@@ -165,10 +165,9 @@ var AudioLevels = (function(my) {
              * error. Since audio levels are frequently updated, the errors have
              * been observed to pile into the console, strain the CPU.
              */
-            if (audioLevelCanvasOrig)
-            {
-                audioLevelCanvasCache[resourceJid]
-                    = CanvasUtil.cloneCanvas(audioLevelCanvasOrig);
+            if (audioLevelCanvasOrig) {
+                audioLevelCanvasCache[resourceJid] =
+                    CanvasUtil.cloneCanvas(audioLevelCanvasOrig);
             }
         }
 
@@ -183,15 +182,16 @@ var AudioLevels = (function(my) {
 
         var shadowLevel = getShadowLevel(audioLevel);
 
-        if (shadowLevel > 0)
+        if (shadowLevel > 0) {
             // drawContext, x, y, w, h, r, shadowColor, shadowLevel
-            CanvasUtil.drawRoundRectGlow(   drawContext,
-                interfaceConfig.CANVAS_EXTRA/2, interfaceConfig.CANVAS_EXTRA/2,
+            CanvasUtil.drawRoundRectGlow(drawContext,
+                interfaceConfig.CANVAS_EXTRA / 2, interfaceConfig.CANVAS_EXTRA / 2,
                 canvas.width - interfaceConfig.CANVAS_EXTRA,
                 canvas.height - interfaceConfig.CANVAS_EXTRA,
                 interfaceConfig.CANVAS_RADIUS,
                 interfaceConfig.SHADOW_COLOR,
                 shadowLevel);
+        }
     }
 
     /**
@@ -221,9 +221,8 @@ var AudioLevels = (function(my) {
      */
     function getVideoSpanId(resourceJid) {
         var videoSpanId = null;
-        if (resourceJid === AudioLevels.LOCAL_LEVEL
-                || (APP.xmpp.myResource() && resourceJid
-                    === APP.xmpp.myResource()))
+        if (resourceJid === AudioLevels.LOCAL_LEVEL ||
+            (APP.xmpp.myResource() && resourceJid === APP.xmpp.myResource()))
             videoSpanId = 'localVideoContainer';
         else
             videoSpanId = 'participant_' + resourceJid;
@@ -251,10 +250,10 @@ var AudioLevels = (function(my) {
 
         if (resized)
             Object.keys(audioLevelCanvasCache).forEach(function (resourceJid) {
-                audioLevelCanvasCache[resourceJid].width
-                    = width + interfaceConfig.CANVAS_EXTRA;
-                audioLevelCanvasCache[resourceJid].height
-                    = height + interfaceConfig.CANVAS_EXTRA;
+                audioLevelCanvasCache[resourceJid].width =
+                    width + interfaceConfig.CANVAS_EXTRA;
+                audioLevelCanvasCache[resourceJid].height =
+                    height + interfaceConfig.CANVAS_EXTRA;
             });
     });
 

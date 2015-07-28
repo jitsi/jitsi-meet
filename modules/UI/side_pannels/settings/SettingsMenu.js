@@ -1,15 +1,14 @@
+/* global APP, $ */
 var Avatar = require("../../avatar/Avatar");
 var Settings = require("./../../../settings/Settings");
 var UIUtil = require("../../util/UIUtil");
 var languages = require("../../../../service/translation/languages");
 
-function generateLanguagesSelectBox()
-{
+function generateLanguagesSelectBox() {
     var currentLang = APP.translation.getCurrentLanguage();
     var html = "<select id=\"languages_selectbox\">";
     var langArray = languages.getLanguages();
-    for(var i = 0; i < langArray.length; i++)
-    {
+    for(var i = 0; i < langArray.length; i++) {
         var lang = langArray[i];
         html += "<option ";
         if(lang === currentLang)
@@ -26,7 +25,8 @@ function generateLanguagesSelectBox()
 var SettingsMenu = {
 
     init: function () {
-        $("#startMutedOptions").before(generateLanguagesSelectBox());
+        var startMutedSelector = $("#startMutedOptions");
+        startMutedSelector.before(generateLanguagesSelectBox());
         APP.translation.translateElement($("#languages_selectbox"));
         $('#settingsmenu>input').keyup(function(event){
             if(event.keyCode === 13) {//enter
@@ -34,13 +34,11 @@ var SettingsMenu = {
             }
         });
 
-        if(APP.xmpp.isModerator())
-        {
-            $("#startMutedOptions").css("display", "block");
+        if (APP.xmpp.isModerator()) {
+            startMutedSelector.css("display", "block");
         }
-        else
-        {
-            $("#startMutedOptions").css("display", "none");
+        else {
+            startMutedSelector.css("display", "none");
         }
 
         $("#updateSettings").click(function () {
@@ -49,12 +47,10 @@ var SettingsMenu = {
     },
 
     onRoleChanged: function () {
-        if(APP.xmpp.isModerator())
-        {
+        if(APP.xmpp.isModerator()) {
             $("#startMutedOptions").css("display", "block");
         }
-        else
-        {
+        else {
             $("#startMutedOptions").css("display", "none");
         }
     },

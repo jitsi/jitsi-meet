@@ -1,3 +1,4 @@
+/* global $, interfaceConfig, APP */
 var SmallVideo = require("./SmallVideo");
 var ConnectionIndicator = require("./ConnectionIndicator");
 var NicknameHandler = require("../util/NicknameHandler");
@@ -5,8 +6,7 @@ var UIUtil = require("../util/UIUtil");
 var LargeVideo = require("./LargeVideo");
 var RTCBrowserType = require("../../RTC/RTCBrowserType");
 
-function LocalVideo(VideoLayout)
-{
+function LocalVideo(VideoLayout) {
     this.videoSpanId = "localVideoContainer";
     this.container = $("#localVideoContainer").get(0);
     this.VideoLayout = VideoLayout;
@@ -21,7 +21,7 @@ LocalVideo.prototype.constructor = LocalVideo;
 /**
  * Creates the edit display name button.
  *
- * @returns the edit button
+ * @returns {object} the edit button
  */
 function createEditDisplayNameButton() {
     var editButton = document.createElement('a');
@@ -34,15 +34,14 @@ function createEditDisplayNameButton() {
     return editButton;
 }
 
-
 /**
  * Sets the display name for the given video span id.
  */
 LocalVideo.prototype.setDisplayName = function(displayName, key) {
-
     if (!this.container) {
         console.warn(
-                "Unable to set displayName - " + this.videoSpanId + " does not exist");
+                "Unable to set displayName - " + this.videoSpanId +
+                " does not exist");
         return;
     }
 
@@ -50,17 +49,16 @@ LocalVideo.prototype.setDisplayName = function(displayName, key) {
     var defaultLocalDisplayName = APP.translation.generateTranslationHTML(
         interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME);
 
+    var meHTML;
     // If we already have a display name for this video.
     if (nameSpan.length > 0) {
-
         if (nameSpan.text() !== displayName) {
-            if (displayName && displayName.length > 0)
-            {
-                var meHTML = APP.translation.generateTranslationHTML("me");
+            if (displayName && displayName.length > 0) {
+                meHTML = APP.translation.generateTranslationHTML("me");
                 $('#localDisplayName').html(displayName + ' (' + meHTML + ')');
-            }
-            else
+            } else {
                 $('#localDisplayName').html(defaultLocalDisplayName);
+            }
         }
     } else {
         var editButton = createEditDisplayNameButton();
@@ -71,7 +69,7 @@ LocalVideo.prototype.setDisplayName = function(displayName, key) {
 
 
         if (displayName && displayName.length > 0) {
-            var meHTML = APP.translation.generateTranslationHTML("me");
+            meHTML = APP.translation.generateTranslationHTML("me");
             nameSpan.innerHTML = displayName + meHTML;
         }
         else {
@@ -108,18 +106,19 @@ LocalVideo.prototype.setDisplayName = function(displayName, key) {
         $('#localVideoContainer .displayname')
             .bind("click", function (e) {
 
+                var editDisplayName = $('#editDisplayName');
                 e.preventDefault();
                 e.stopPropagation();
                 $('#localDisplayName').hide();
-                $('#editDisplayName').show();
-                $('#editDisplayName').focus();
-                $('#editDisplayName').select();
+                editDisplayName.show();
+                editDisplayName.focus();
+                editDisplayName.select();
 
-                $('#editDisplayName').one("focusout", function (e) {
+                editDisplayName.one("focusout", function (e) {
                     self.VideoLayout.inputDisplayNameHandler(this.value);
                 });
 
-                $('#editDisplayName').on('keydown', function (e) {
+                editDisplayName.on('keydown', function (e) {
                     if (e.keyCode === 13) {
                         e.preventDefault();
                         self.VideoLayout.inputDisplayNameHandler(this.value);
@@ -127,38 +126,34 @@ LocalVideo.prototype.setDisplayName = function(displayName, key) {
                 });
             });
     }
-}
+};
 
 LocalVideo.prototype.inputDisplayNameHandler = function (name) {
     NicknameHandler.setNickname(name);
 
-    if (!$('#localDisplayName').is(":visible")) {
-        if (NicknameHandler.getNickname())
-        {
+    var localDisplayName = $('#localDisplayName');
+    if (!localDisplayName.is(":visible")) {
+        if (NicknameHandler.getNickname()) {
             var meHTML = APP.translation.generateTranslationHTML("me");
-            $('#localDisplayName').html(NicknameHandler.getNickname() + " (" + meHTML + ")");
-        }
-        else
-        {
+            localDisplayName.html(NicknameHandler.getNickname() + " (" +
+            meHTML + ")");
+        } else {
             var defaultHTML = APP.translation.generateTranslationHTML(
                 interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME);
-            $('#localDisplayName')
-                .html(defaultHTML);
+            localDisplayName .html(defaultHTML);
         }
-        $('#localDisplayName').show();
+        localDisplayName.show();
     }
 
     $('#editDisplayName').hide();
-}
+};
 
-LocalVideo.prototype.createConnectionIndicator = function()
-{
+LocalVideo.prototype.createConnectionIndicator = function() {
     if(this.connectionIndicator)
         return;
 
-    this.connectionIndicator
-        = new ConnectionIndicator(this, null);
-}
+    this.connectionIndicator = new ConnectionIndicator(this, null);
+};
 
 LocalVideo.prototype.changeVideo = function (stream, isMuted) {
     var self = this;
@@ -174,27 +169,28 @@ LocalVideo.prototype.changeVideo = function (stream, isMuted) {
             APP.xmpp.myResource());
     }
 
-    $('#localVideoContainer').off('click');
-    $('#localVideoContainer').on('click', localVideoClick);
+    var localVideoContainerSelector = $('#localVideoContainer');
+    localVideoContainerSelector.off('click');
+    localVideoContainerSelector.on('click', localVideoClick);
 
     // Add hover handler
-    $('#localVideoContainer').hover(
+    localVideoContainerSelector.hover(
         function() {
             self.showDisplayName(true);
         },
         function() {
             if (!LargeVideo.isLargeVideoVisible() ||
-                !LargeVideo.isCurrentlyOnLarge(self.getResourceJid()))
+                !LargeVideo.isCurrentlyOnLarge(self.getResourceJid())) {
                 self.showDisplayName(false);
+            }
         }
     );
 
-    if(isMuted)
-    {
+    if(isMuted) {
         APP.UI.setVideoMute(true);
         return;
     }
-    this.flipX = (stream.videoType == "screen")? false : true;
+    this.flipX = stream.videoType != "screen";
     var localVideo = document.createElement('video');
     localVideo.id = 'localVideo_' +
         APP.RTC.getStreamID(stream.getOriginalStream());

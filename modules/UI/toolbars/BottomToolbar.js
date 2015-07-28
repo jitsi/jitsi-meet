@@ -1,3 +1,4 @@
+/* global $ */
 var PanelToggler = require("../side_pannels/SidePanelToggler");
 
 var buttonHandlers = {

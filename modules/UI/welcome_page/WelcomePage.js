@@ -1,9 +1,9 @@
+/* global $, interfaceConfig */
 var animateTimeout, updateTimeout;
 
 var RoomNameGenerator = require("./RoomnameGenerator");
 
-function enter_room()
-{
+function enter_room() {
     var val = $("#enter_room_field").val();
     if(!val) {
         val = $("#enter_room_field").attr("room_name");
@@ -21,8 +21,7 @@ function animate(word) {
     }, 70);
 }
 
-function update_roomname()
-{
+function update_roomname() {
     var word = RoomNameGenerator.generateRoomWithoutSeparator();
     $("#enter_room_field").attr("room_name", word);
     $("#enter_room_field").attr("placeholder", "");
@@ -31,33 +30,30 @@ function update_roomname()
     updateTimeout = setTimeout(update_roomname, 10000);
 }
 
-
-function setupWelcomePage()
-{
+function setupWelcomePage() {
     $("#videoconference_page").hide();
     $("#domain_name").text(
             window.location.protocol + "//" + window.location.host + "/");
     if (interfaceConfig.SHOW_JITSI_WATERMARK) {
-        var leftWatermarkDiv
-            = $("#welcome_page_header div[class='watermark leftwatermark']");
-        if(leftWatermarkDiv && leftWatermarkDiv.length > 0)
-        {
+        var leftWatermarkDiv =
+            $("#welcome_page_header div[class='watermark leftwatermark']");
+        if(leftWatermarkDiv && leftWatermarkDiv.length > 0) {
             leftWatermarkDiv.css({display: 'block'});
-            leftWatermarkDiv.parent().get(0).href
-                = interfaceConfig.JITSI_WATERMARK_LINK;
+            leftWatermarkDiv.parent().get(0).href =
+                interfaceConfig.JITSI_WATERMARK_LINK;
         }
 
     }
 
     if (interfaceConfig.SHOW_BRAND_WATERMARK) {
-        var rightWatermarkDiv
-            = $("#welcome_page_header div[class='watermark rightwatermark']");
+        var rightWatermarkDiv =
+            $("#welcome_page_header div[class='watermark rightwatermark']");
         if(rightWatermarkDiv && rightWatermarkDiv.length > 0) {
             rightWatermarkDiv.css({display: 'block'});
-            rightWatermarkDiv.parent().get(0).href
-                = interfaceConfig.BRAND_WATERMARK_LINK;
-            rightWatermarkDiv.get(0).style.backgroundImage
-                = "url(images/rightwatermark.png)";
+            rightWatermarkDiv.parent().get(0).href =
+                interfaceConfig.BRAND_WATERMARK_LINK;
+            rightWatermarkDiv.get(0).style.backgroundImage =
+                "url(images/rightwatermark.png)";
         }
     }
 
@@ -66,8 +62,7 @@ function setupWelcomePage()
             .css({display: 'block'});
     }
 
-    $("#enter_room_button").click(function()
-    {
+    $("#enter_room_button").click(function() {
         enter_room();
     });
 
@@ -77,23 +72,23 @@ function setupWelcomePage()
         }
     });
 
-    if (!(interfaceConfig.GENERATE_ROOMNAMES_ON_WELCOME_PAGE === false)){
+    if (interfaceConfig.GENERATE_ROOMNAMES_ON_WELCOME_PAGE !== false) {
         var updateTimeout;
         var animateTimeout;
-        $("#reload_roomname").click(function () {
+        var selector = $("#reload_roomname");
+        selector.click(function () {
             clearTimeout(updateTimeout);
             clearTimeout(animateTimeout);
             update_roomname();
         });
-        $("#reload_roomname").show();
-
+        selector.show();
 
         update_roomname();
     }
 
     $("#disable_welcome").click(function () {
-        window.localStorage.welcomePageDisabled
-            = $("#disable_welcome").is(":checked");
+        window.localStorage.welcomePageDisabled =
+            $("#disable_welcome").is(":checked");
     });
 
 }

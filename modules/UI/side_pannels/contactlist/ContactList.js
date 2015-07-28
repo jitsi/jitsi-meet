@@ -1,4 +1,4 @@
-
+/* global $, APP, Strophe */
 var Avatar = require('../../avatar/Avatar');
 
 var numberOfContacts = 0;
@@ -27,7 +27,7 @@ function updateNumberOfParticipants(delta) {
 /**
  * Creates the avatar element.
  *
- * @return the newly created avatar element
+ * @return {object} the newly created avatar element
  */
 function createAvatar(jid) {
     var avatar = document.createElement('img');
@@ -46,8 +46,7 @@ function createDisplayNameParagraph(key, displayName) {
     var p = document.createElement('p');
     if(displayName)
         p.innerText = displayName;
-    else if(key)
-    {
+    else if(key) {
         p.setAttribute("data-i18n",key);
         p.innerText = APP.translation.translateString(key);
     }
@@ -64,7 +63,6 @@ function stopGlowing(glower) {
         glower.removeClass('active');
     }
 }
-
 
 /**
  * Contact list.

@@ -1,5 +1,5 @@
-/* global APP,$, buttonClick, config, lockRoom,
-   setSharedKey, Util */
+/* global APP, $, buttonClick, config, lockRoom, interfaceConfig, setSharedKey,
+ Util */
 var messageHandler = require("../util/MessageHandler");
 var BottomToolbar = require("./BottomToolbar");
 var Prezi = require("../prezi/Prezi");
@@ -14,8 +14,7 @@ var roomUrl = null;
 var sharedKey = '';
 var UI = null;
 
-var buttonHandlers =
-{
+var buttonHandlers = {
     "toolbar_button_mute": function () {
         return APP.UI.toggleAudio();
     },
@@ -46,8 +45,7 @@ var buttonHandlers =
     "toolbar_button_desktopsharing": function () {
         return APP.desktopsharing.toggleScreenSharing();
     },
-    "toolbar_button_fullScreen": function()
-    {
+    "toolbar_button_fullScreen": function() {
         UIUtil.buttonClick("#fullScreen", "icon-full-screen icon-exit-full-screen");
         return Toolbar.toggleFullScreen();
     },
@@ -91,10 +89,8 @@ var buttonHandlers =
 
 function hangup() {
     APP.xmpp.disposeConference();
-    if(config.enableWelcomePage)
-    {
-        setTimeout(function()
-        {
+    if(config.enableWelcomePage) {
+        setTimeout(function() {
             window.localStorage.welcomePageDisabled = false;
             window.location.pathname = "/";
         }, 10000);
@@ -115,8 +111,7 @@ function hangup() {
         msg,
         true,
         buttons,
-        function(event, value, message, formVals)
-        {
+        function(event, value, message, formVals) {
             window.location.reload();
             return false;
         }
@@ -165,13 +160,11 @@ function lockRoom(lock) {
 
     APP.xmpp.lockRoom(currentSharedKey, function (res) {
         // password is required
-        if (sharedKey)
-        {
+        if (sharedKey) {
             console.log('set room password');
             Toolbar.lockLockButton();
         }
-        else
-        {
+        else {
             console.log('removed room password');
             Toolbar.unlockLockButton();
         }
@@ -186,7 +179,7 @@ function lockRoom(lock) {
             "dialog.passwordNotSupported");
         Toolbar.setSharedKey('');
     });
-};
+}
 
 /**
  * Invite participants to conference.
@@ -224,13 +217,11 @@ function inviteParticipants() {
     window.open("mailto:?subject=" + subject + "&body=" + body, '_blank');
 }
 
-function dialpadButtonClicked()
-{
-    //TODO show the dialpad window
+function dialpadButtonClicked() {
+    //TODO show the dialpad box
 }
 
-function callSipButtonClicked()
-{
+function callSipButtonClicked() {
     var defaultNumber
         = config.defaultSipNumber ? config.defaultSipNumber : '';
 
@@ -281,7 +272,7 @@ var Toolbar = (function (my) {
                 }
             }
         );
-    },
+    };
 
     /**
      * Sets shared key
@@ -342,8 +333,7 @@ var Toolbar = (function (my) {
      * Disables and enables some of the buttons.
      */
     my.setupButtonsFromConfig = function () {
-        if (config.disablePrezi)
-        {
+        if (config.disablePrezi) {
             $("#prezi_button").css({display: "none"});
         }
     };
@@ -632,12 +622,9 @@ var Toolbar = (function (my) {
      */
     my.changeDesktopSharingButtonState = function (active) {
         var button = $("#desktopsharing > a");
-        if (active)
-        {
+        if (active) {
             button.addClass("glow");
-        }
-        else
-        {
+        } else {
             button.removeClass("glow");
         }
     };
