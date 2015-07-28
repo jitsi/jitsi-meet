@@ -1,6 +1,4 @@
-////These lines should be uncommented when require works in app.js
 var MediaStreamType = require("../../service/RTC/MediaStreamTypes");
-var StreamEventType = require("../../service/RTC/StreamEventTypes");
 
 /**
  * Creates a MediaStream object for the given data, session id and ssrc.
@@ -37,13 +35,11 @@ function MediaStream(data, sid, ssrc, browser, eventEmitter) {
 }
 
 
-MediaStream.prototype.getOriginalStream = function()
-{
+MediaStream.prototype.getOriginalStream = function() {
     return this.stream;
 };
 
-MediaStream.prototype.setMute = function (value)
-{
+MediaStream.prototype.setMute = function (value) {
     this.stream.muted = value;
     this.muted = value;
 };

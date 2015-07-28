@@ -1,3 +1,4 @@
+/* global APP */
 var EventEmitter = require("events");
 var RTCBrowserType = require("./RTCBrowserType");
 var RTCUtils = require("./RTCUtils.js");
@@ -74,12 +75,10 @@ var RTC = {
         if(isMuted === true)
             localStream.setMute(true);
 
-        if(type == "audio")
-        {
+        if(type == "audio") {
             this.localAudio = localStream;
         }
-        else
-        {
+        else {
             this.localVideo = localStream;
         }
         var eventType = StreamEventTypes.EVENT_TYPE_LOCAL_CREATED;
@@ -90,8 +89,7 @@ var RTC = {
         return localStream;
     },
     removeLocalStream: function (stream) {
-        for(var i = 0; i < this.localStreams.length; i++)
-        {
+        for(var i = 0; i < this.localStreams.length; i++) {
             if(this.localStreams[i].getOriginalStream() === stream) {
                 delete this.localStreams[i];
                 return;
@@ -176,8 +174,7 @@ var RTC = {
         var stream;
 
         if(this.remoteStreams[jid] &&
-            this.remoteStreams[jid][MediaStreamType.VIDEO_TYPE])
-        {
+            this.remoteStreams[jid][MediaStreamType.VIDEO_TYPE]) {
             stream = this.remoteStreams[jid][MediaStreamType.VIDEO_TYPE];
         }
 
@@ -204,8 +201,7 @@ var RTC = {
         var oldStream = this.localVideo.getOriginalStream();
         var type = (isUsingScreenStream? "screen" : "video");
         var localCallback = callback;
-        if(this.localVideo.isMuted() && this.localVideo.videoType !== type)
-        {
+        if(this.localVideo.isMuted() && this.localVideo.videoType !== type) {
             localCallback = function() {
                 APP.xmpp.setVideoMute(false, function(mute) {
                     eventEmitter.emit(RTCEvents.VIDEO_MUTE, mute);
@@ -219,7 +215,8 @@ var RTC = {
             stream = stream.videoStream;
         }
         var videoStream = this.rtcUtils.createStream(stream, true);
-        this.localVideo = this.createLocalStream(videoStream, "video", true, type);
+        this.localVideo
+            = this.createLocalStream(videoStream, "video", true, type);
         // Stop the stream to trigger onended event for old stream
         oldStream.stop();
 
@@ -240,9 +237,9 @@ var RTC = {
             var localVideo = APP.RTC.localVideo;
             return (!localVideo || localVideo.isMuted());
         }
-        else
-        {
-            if (!APP.RTC.remoteStreams[jid] || !APP.RTC.remoteStreams[jid][MediaStreamType.VIDEO_TYPE]) {
+        else {
+            if (!APP.RTC.remoteStreams[jid] ||
+                !APP.RTC.remoteStreams[jid][MediaStreamType.VIDEO_TYPE]) {
                 return null;
             }
             return APP.RTC.remoteStreams[jid][MediaStreamType.VIDEO_TYPE].muted;

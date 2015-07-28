@@ -49,8 +49,8 @@ var RTCBrowserType = {
     },
 
     usesPlanB: function() {
-        return RTCBrowserType.isChrome() || RTCBrowserType.isOpera()
-            || RTCBrowserType.isTemasysPluginUsed();
+        return RTCBrowserType.isChrome() || RTCBrowserType.isOpera() ||
+            RTCBrowserType.isTemasysPluginUsed();
     },
 
     usesUnifiedPlan: function() {

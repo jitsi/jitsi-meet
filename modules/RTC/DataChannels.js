@@ -1,4 +1,4 @@
-/* global Strophe, focusedVideoSrc*/
+/* global config, APP, Strophe */
 
 // cache datachannels to avoid garbage collection
 // https://code.google.com/p/chromium/issues/detail?id=405545
@@ -8,19 +8,13 @@ var _dataChannels = [];
 var eventEmitter = null;
 
 
-
-
-var DataChannels =
-{
-
+var DataChannels = {
     /**
      * Callback triggered by PeerConnection when new data channel is opened
      * on the bridge.
      * @param event the event info object.
      */
-
-    onDataChannel: function (event)
-    {
+    onDataChannel: function (event) {
         var dataChannel = event.channel;
 
         dataChannel.onopen = function () {
@@ -65,8 +59,7 @@ var DataChannels =
                         dominantSpeakerEndpoint);
                     eventEmitter.emit(RTCEvents.DOMINANTSPEAKER_CHANGED, dominantSpeakerEndpoint);
                 }
-                else if ("InLastNChangeEvent" === colibriClass)
-                {
+                else if ("InLastNChangeEvent" === colibriClass) {
                     var oldValue = obj.oldValue;
                     var newValue = obj.newValue;
                     // Make sure that oldValue and newValue are of type boolean.
@@ -89,15 +82,13 @@ var DataChannels =
 
                     eventEmitter.emit(RTCEvents.LASTN_CHANGED, oldValue, newValue);
                 }
-                else if ("LastNEndpointsChangeEvent" === colibriClass)
-                {
+                else if ("LastNEndpointsChangeEvent" === colibriClass) {
                     // The new/latest list of last-n endpoint IDs.
                     var lastNEndpoints = obj.lastNEndpoints;
                     // The list of endpoint IDs which are entering the list of
                     // last-n at this time i.e. were not in the old list of last-n
                     // endpoint IDs.
                     var endpointsEnteringLastN = obj.endpointsEnteringLastN;
-                    var stream = obj.stream;
 
                     console.log(
                         "Data channel new last-n event: ",
@@ -105,15 +96,13 @@ var DataChannels =
                     eventEmitter.emit(RTCEvents.LASTN_ENDPOINT_CHANGED,
                         lastNEndpoints, endpointsEnteringLastN, obj);
                 }
-                else
-                {
+                else {
                     console.debug("Data channel JSON-formatted message: ", obj);
                 }
             }
         };
 
-        dataChannel.onclose = function ()
-        {
+        dataChannel.onclose = function () {
             console.info("The Data Channel closed", dataChannel);
             var idx = _dataChannels.indexOf(dataChannel);
             if (idx > -1)
@@ -158,19 +147,15 @@ var DataChannels =
     },
     handleSelectedEndpointEvent: onSelectedEndpointChanged,
     handlePinnedEndpointEvent: onPinnedEndpointChanged
-
 };
 
-function onSelectedEndpointChanged(userResource)
-{
+function onSelectedEndpointChanged(userResource) {
     console.log('selected endpoint changed: ', userResource);
-    if (_dataChannels && _dataChannels.length != 0)
-    {
+    if (_dataChannels && _dataChannels.length != 0) {
         _dataChannels.some(function (dataChannel) {
-            if (dataChannel.readyState == 'open')
-            {
-                console.log('sending selected endpoint changed ' 
-                    + 'notification to the bridge: ', userResource);
+            if (dataChannel.readyState == 'open') {
+                console.log('sending selected endpoint changed ' +
+                    'notification to the bridge: ', userResource);
                 dataChannel.send(JSON.stringify({
                     'colibriClass': 'SelectedEndpointChangedEvent',
                     'selectedEndpoint':
@@ -184,14 +169,11 @@ function onSelectedEndpointChanged(userResource)
     }
 }
 
-function onPinnedEndpointChanged(userResource)
-{
+function onPinnedEndpointChanged(userResource) {
     console.log('pinned endpoint changed: ', userResource);
-    if (_dataChannels && _dataChannels.length != 0)
-    {
+    if (_dataChannels && _dataChannels.length != 0) {
         _dataChannels.some(function (dataChannel) {
-            if (dataChannel.readyState == 'open')
-            {
+            if (dataChannel.readyState == 'open') {
                 dataChannel.send(JSON.stringify({
                     'colibriClass': 'PinnedEndpointChangedEvent',
                     'pinnedEndpoint':
