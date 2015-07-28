@@ -1,4 +1,5 @@
-/* global $, interfaceConfig, Moderator, DesktopStreaming.showDesktopSharingButton */
+/* global APP, config, $, interfaceConfig, Moderator,
+ DesktopStreaming.showDesktopSharingButton */
 
 var toolbarTimeoutObject,
     toolbarTimeout = interfaceConfig.INITIAL_TOOLBAR_TIMEOUT;
@@ -81,7 +82,6 @@ var ToolbarToggler = {
         showDesktopSharingButton();
     },
 
-
     /**
      * Docks/undocks the toolbar.
      *
@@ -111,7 +111,6 @@ var ToolbarToggler = {
     },
 
     showDesktopSharingButton: showDesktopSharingButton
-
 };
 
 module.exports = ToolbarToggler;

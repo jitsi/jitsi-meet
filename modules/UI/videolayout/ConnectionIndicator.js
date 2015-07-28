@@ -1,3 +1,4 @@
+/* global APP, $ */
 var JitsiPopover = require("../util/JitsiPopover");
 
 /**
@@ -5,8 +6,7 @@ var JitsiPopover = require("../util/JitsiPopover");
  * @param videoContainer the video container associated with the indicator.
  * @constructor
  */
-function ConnectionIndicator(videoContainer, jid)
-{
+function ConnectionIndicator(videoContainer, jid) {
     this.videoContainer = videoContainer;
     this.bandwidth = null;
     this.packetLoss = null;
@@ -37,20 +37,17 @@ ConnectionIndicator.connectionQualityValues = {
     0: "0px"//empty
 };
 
-ConnectionIndicator.getIP = function(value)
-{
+ConnectionIndicator.getIP = function(value) {
     return value.substring(0, value.lastIndexOf(":"));
 };
 
-ConnectionIndicator.getPort = function(value)
-{
+ConnectionIndicator.getPort = function(value) {
     return value.substring(value.lastIndexOf(":") + 1, value.length);
 };
 
 ConnectionIndicator.getStringFromArray = function (array) {
     var res = "";
-    for(var i = 0; i < array.length; i++)
-    {
+    for(var i = 0; i < array.length; i++) {
         res += (i === 0? "" : ", ") + array[i];
     }
     return res;
@@ -65,74 +62,60 @@ ConnectionIndicator.prototype.generateText = function () {
 
     var translate = APP.translation.translateString;
 
-    if(this.bitrate === null)
-    {
+    if(this.bitrate === null) {
         downloadBitrate = "N/A";
         uploadBitrate = "N/A";
     }
-    else
-    {
+    else {
         downloadBitrate =
             this.bitrate.download? this.bitrate.download + " Kbps" : "N/A";
         uploadBitrate =
             this.bitrate.upload? this.bitrate.upload + " Kbps" : "N/A";
     }
 
-    if(this.packetLoss === null)
-    {
+    if(this.packetLoss === null) {
         packetLoss = "N/A";
-    }
-    else
-    {
+    } else {
 
         packetLoss = "<span class='jitsipopover_green'>&darr;</span>" +
-            (this.packetLoss.download !== null? this.packetLoss.download : "N/A") +
+            (this.packetLoss.download !== null ?
+                this.packetLoss.download : "N/A") +
             "% <span class='jitsipopover_orange'>&uarr;</span>" +
-            (this.packetLoss.upload !== null? this.packetLoss.upload : "N/A") + "%";
+            (this.packetLoss.upload !== null? this.packetLoss.upload : "N/A") +
+            "%";
     }
 
     var resolutionValue = null;
-    if(this.resolution && this.jid != null)
-    {
+    if(this.resolution && this.jid != null) {
         var keys = Object.keys(this.resolution);
-        for(var ssrc in this.resolution)
-        {
+        for(var ssrc in this.resolution) {
             resolutionValue = this.resolution[ssrc];
         }
     }
 
-    if(this.jid === null)
-    {
+    if(this.jid === null) {
         resolution = "";
         if(this.resolution === null || !Object.keys(this.resolution) ||
-            Object.keys(this.resolution).length === 0)
-        {
+            Object.keys(this.resolution).length === 0) {
             resolution = "N/A";
-        }
-        else
-            for(i in this.resolution)
-            {
+        } else {
+            for (i in this.resolution) {
                 resolutionValue = this.resolution[i];
-                if(resolutionValue)
-                {
-                    if(resolutionValue.height &&
-                        resolutionValue.width)
-                    {
-                        resolution += (resolution === ""? "" : ", ") +
-                            resolutionValue.width + "x" +
-                            resolutionValue.height;
+                if (resolutionValue) {
+                    if (resolutionValue.height &&
+                        resolutionValue.width) {
+                        resolution += (resolution === "" ? "" : ", ") +
+                        resolutionValue.width + "x" +
+                        resolutionValue.height;
                     }
                 }
             }
-    }
-    else if(!resolutionValue ||
+        }
+    } else if(!resolutionValue ||
         !resolutionValue.height ||
-        !resolutionValue.width)
-    {
+        !resolutionValue.width) {
         resolution = "N/A";
-    }
-    else
-    {
+    } else {
         resolution = resolutionValue.width + "x" + resolutionValue.height;
     }
 
@@ -163,16 +146,12 @@ ConnectionIndicator.prototype.generateText = function () {
             "</div><br />";
     }
 
-    if(this.showMoreValue)
-    {
+    if (this.showMoreValue) {
         var downloadBandwidth, uploadBandwidth, transport;
-        if(this.bandwidth === null)
-        {
+        if (this.bandwidth === null) {
             downloadBandwidth = "N/A";
             uploadBandwidth = "N/A";
-        }
-        else
-        {
+        } else {
             downloadBandwidth = this.bandwidth.download?
                 this.bandwidth.download + " Kbps" :
                 "N/A";
@@ -181,45 +160,36 @@ ConnectionIndicator.prototype.generateText = function () {
                 "N/A";
         }
 
-        if(!this.transport || this.transport.length === 0)
-        {
+        if (!this.transport || this.transport.length === 0) {
             transport = "<tr>" +
                 "<td><span class='jitsipopover_blue' " +
                 "data-i18n='connectionindicator.address'>" +
                 translate("connectionindicator.address") + "</span></td>" +
                 "<td> N/A</td></tr>";
-        }
-        else
-        {
+        } else {
             var data = {remoteIP: [], localIP:[], remotePort:[], localPort:[]};
-            for(i = 0; i < this.transport.length; i++)
-            {
+            for(i = 0; i < this.transport.length; i++) {
                 var ip =  ConnectionIndicator.getIP(this.transport[i].ip);
                 var port = ConnectionIndicator.getPort(this.transport[i].ip);
                 var localIP =
                     ConnectionIndicator.getIP(this.transport[i].localip);
                 var localPort =
                     ConnectionIndicator.getPort(this.transport[i].localip);
-                if(data.remoteIP.indexOf(ip) == -1)
-                {
+                if(data.remoteIP.indexOf(ip) == -1) {
                     data.remoteIP.push(ip);
                 }
 
-                if(data.remotePort.indexOf(port) == -1)
-                {
+                if(data.remotePort.indexOf(port) == -1) {
                     data.remotePort.push(port);
                 }
 
-                if(data.localIP.indexOf(localIP) == -1)
-                {
+                if(data.localIP.indexOf(localIP) == -1) {
                     data.localIP.push(localIP);
                 }
 
-                if(data.localPort.indexOf(localPort) == -1)
-                {
+                if(data.localPort.indexOf(localPort) == -1) {
                     data.localPort.push(localPort);
                 }
-
             }
 
             var local_address_key = "connectionindicator.localaddress";
@@ -285,7 +255,6 @@ ConnectionIndicator.prototype.generateText = function () {
             uploadBandwidth + "</td></tr>";
 
         result += transport + "</table>";
-
     }
 
     return result;
@@ -300,11 +269,9 @@ ConnectionIndicator.prototype.showMore = function () {
 };
 
 
-function createIcon(classes)
-{
+function createIcon(classes) {
     var icon = document.createElement("span");
-    for(var i in classes)
-    {
+    for(var i in classes) {
         icon.classList.add(classes[i]);
     }
     icon.appendChild(
@@ -319,7 +286,8 @@ ConnectionIndicator.prototype.create = function () {
     this.connectionIndicatorContainer = document.createElement("div");
     this.connectionIndicatorContainer.className = "connectionindicator";
     this.connectionIndicatorContainer.style.display = "none";
-    this.videoContainer.container.appendChild(this.connectionIndicatorContainer);
+    this.videoContainer.container.appendChild(
+        this.connectionIndicatorContainer);
     this.popover = new JitsiPopover(
         $("#" + this.videoContainer.videoSpanId + " > .connectionindicator"),
         {content: "<div class=\"connection_info\" data-i18n='connectionindicator.na'>" +
@@ -330,20 +298,17 @@ ConnectionIndicator.prototype.create = function () {
         createIcon(["connection", "connection_empty"]));
     this.fullIcon = this.connectionIndicatorContainer.appendChild(
         createIcon(["connection", "connection_full"]));
-
 };
 
 /**
  * Removes the indicator
  */
-ConnectionIndicator.prototype.remove = function()
-{
+ConnectionIndicator.prototype.remove = function() {
     if (this.connectionIndicatorContainer.parentNode) {
         this.connectionIndicatorContainer.parentNode.removeChild(
             this.connectionIndicatorContainer);
     }
     this.popover.forceHide();
-
 };
 
 /**
@@ -352,16 +317,13 @@ ConnectionIndicator.prototype.remove = function()
  * @param object the statistics data.
  */
 ConnectionIndicator.prototype.updateConnectionQuality =
-function (percent, object) {
+    function (percent, object) {
 
-    if(percent === null)
-    {
+    if (percent === null) {
         this.connectionIndicatorContainer.style.display = "none";
         this.popover.forceHide();
         return;
-    }
-    else
-    {
+    } else {
         if(this.connectionIndicatorContainer.style.display == "none") {
             this.connectionIndicatorContainer.style.display = "block";
             this.videoContainer.updateIconPositions();
@@ -371,14 +333,11 @@ function (percent, object) {
     this.bitrate = object.bitrate;
     this.packetLoss = object.packetLoss;
     this.transport = object.transport;
-    if(object.resolution)
-    {
+    if (object.resolution) {
         this.resolution = object.resolution;
     }
-    for(var quality in ConnectionIndicator.connectionQualityValues)
-    {
-        if(percent >= quality)
-        {
+    for (var quality in ConnectionIndicator.connectionQualityValues) {
+        if (percent >= quality) {
             this.fullIcon.style.width =
                 ConnectionIndicator.connectionQualityValues[quality];
         }

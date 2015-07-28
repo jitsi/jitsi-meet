@@ -1,3 +1,4 @@
+/* global $, APP, require, Strophe, interfaceConfig */
 var ConnectionIndicator = require("./ConnectionIndicator");
 var SmallVideo = require("./SmallVideo");
 var AudioLevels = require("../audio_levels/AudioLevels");
@@ -5,8 +6,7 @@ var LargeVideo = require("./LargeVideo");
 var Avatar = require("../avatar/Avatar");
 var RTCBrowserType = require("../../RTC/RTCBrowserType");
 
-function RemoteVideo(peerJid, VideoLayout)
-{
+function RemoteVideo(peerJid, VideoLayout) {
     this.peerJid = peerJid;
     this.resourceJid = Strophe.getResourceFromJid(peerJid);
     this.videoSpanId = 'participant_' + this.resourceJid;
@@ -56,8 +56,7 @@ RemoteVideo.prototype.addRemoteVideoMenu = function () {
 
     var popupmenuElement = document.createElement('ul');
     popupmenuElement.className = 'popupmenu';
-    popupmenuElement.id
-        = 'remote_popupmenu_' + this.getResourceJid();
+    popupmenuElement.id = 'remote_popupmenu_' + this.getResourceJid();
     spanElement.appendChild(popupmenuElement);
 
     var muteMenuItem = document.createElement('li');
@@ -118,8 +117,9 @@ RemoteVideo.prototype.addRemoteVideoMenu = function () {
     var paddingSpan = document.createElement('span');
     paddingSpan.className = 'popupmenuPadding';
     popupmenuElement.appendChild(paddingSpan);
-    APP.translation.translateElement($("#" + popupmenuElement.id + " > li > a > div"));
-}
+    APP.translation.translateElement(
+        $("#" + popupmenuElement.id + " > li > a > div"));
+};
 
 
 /**
@@ -128,9 +128,9 @@ RemoteVideo.prototype.addRemoteVideoMenu = function () {
  *
  * @param stream the stream
  * @param isVideo <tt>true</tt> if given <tt>stream</tt> is a video one.
- * @param container
  */
-RemoteVideo.prototype.removeRemoteStreamElement = function (stream, isVideo, id) {
+RemoteVideo.prototype.removeRemoteStreamElement =
+    function (stream, isVideo, id) {
     if (!this.container)
         return false;
 
@@ -337,8 +337,8 @@ RemoteVideo.prototype.updateRemoteVideoMenu = function (isMuted) {
 RemoteVideo.prototype.setDisplayName = function(displayName, key) {
 
     if (!this.container) {
-        console.warn(
-                "Unable to set displayName - " + this.videoSpanId + " does not exist");
+        console.warn( "Unable to set displayName - " + this.videoSpanId +
+                " does not exist");
         return;
     }
 
@@ -346,12 +346,10 @@ RemoteVideo.prototype.setDisplayName = function(displayName, key) {
 
     // If we already have a display name for this video.
     if (nameSpan.length > 0) {
-        if (displayName && displayName.length > 0)
-        {
+        if (displayName && displayName.length > 0) {
             $('#' + this.videoSpanId + '_name').html(displayName);
         }
-        else if (key && key.length > 0)
-        {
+        else if (key && key.length > 0) {
             var nameHtml = APP.translation.generateTranslationHTML(key);
             $('#' + this.videoSpanId + '_name').html(nameHtml);
         }
@@ -365,17 +363,14 @@ RemoteVideo.prototype.setDisplayName = function(displayName, key) {
 
 
         if (displayName && displayName.length > 0) {
-
             nameSpan.innerText = displayName;
         }
         else
             nameSpan.innerText = interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME;
 
-
         nameSpan.id = this.videoSpanId + '_name';
-
     }
-}
+};
 
 /**
  * Removes remote video menu element from video element identified by

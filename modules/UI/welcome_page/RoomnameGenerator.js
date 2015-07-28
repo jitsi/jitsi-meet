@@ -49,7 +49,8 @@ var adverbs = [
     "Obviously", "Often", "Painfully", "Patiently", "Playfully", "Politely", "Poorly", "Precisely", "Promptly",
     "Quickly", "Quietly", "Randomly", "Rapidly", "Rarely", "Recklessly", "Regularly", "Remorsefully", "Responsibly",
     "Rudely", "Ruthlessly", "Sadly", "Scornfully", "Seamlessly", "Seldom", "Selfishly", "Seriously", "Shakily",
-    "Sharply", "Sideways", "Silently", "Sleepily", "Slightly", "Slowly", "Slyly", "Smoothly", "Softly", "Solemnly", "Steadily", "Sternly", "Strangely", "Strongly", "Stunningly", "Surely", "Tenderly", "Thoughtfully",
+    "Sharply", "Sideways", "Silently", "Sleepily", "Slightly", "Slowly", "Slyly", "Smoothly", "Softly", "Solemnly",
+    "Steadily", "Sternly", "Strangely", "Strongly", "Stunningly", "Surely", "Tenderly", "Thoughtfully",
     "Tightly", "Uneasily", "Vanishingly", "Violently", "Warmly", "Weakly", "Wearily", "Weekly", "Weirdly", "Well",
     "Well", "Wickedly", "Wildly", "Wisely", "Wonderfully", "Yearly"
 ];
@@ -137,8 +138,7 @@ var PATTERNS = [
 /*
  * Returns a random element from the array 'arr'
  */
-function randomElement(arr)
-{
+function randomElement(arr) {
     return arr[Math.floor(Math.random() * arr.length)];
 }
 
@@ -146,8 +146,7 @@ function randomElement(arr)
  * Returns true if the string 's' contains one of the
  * template strings.
  */
-function hasTemplate(s)
-{
+function hasTemplate(s) {
     for (var template in CATEGORIES){
         if (s.indexOf(template) >= 0){
             return true;
@@ -159,14 +158,15 @@ function hasTemplate(s)
  * Generates new room name.
  */
 var RoomNameGenerator = {
-    generateRoomWithoutSeparator: function()
-    {
-        // Note that if more than one pattern is available, the choice of 'name' won't be random (names from patterns
-        // with fewer options will have higher probability of being chosen that names from patterns with more options).
+    generateRoomWithoutSeparator: function() {
+        // Note that if more than one pattern is available, the choice of
+        // 'name' won't have a uniform distribution amongst all patterns (names
+        // from patterns with fewer options will have higher probability of
+        // being chosen that names from patterns with more options).
         var name = randomElement(PATTERNS);
         var word;
-        while (hasTemplate(name)){
-            for (var template in CATEGORIES){
+        while (hasTemplate(name)) {
+            for (var template in CATEGORIES) {
                 word = randomElement(CATEGORIES[template]);
                 name = name.replace(template, word);
             }
@@ -174,6 +174,6 @@ var RoomNameGenerator = {
 
         return name;
     }
-}
+};
 
 module.exports = RoomNameGenerator;

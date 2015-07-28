@@ -1,3 +1,4 @@
+/* global Strophe, APP, $, config, interfaceConfig, toastr */
 var UI = {};
 
 var VideoLayout = require("./videolayout/VideoLayout.js");
@@ -79,23 +80,18 @@ function promptDisplayName() {
     );
 }
 
-
-function notifyForInitialMute()
-{
+function notifyForInitialMute() {
     messageHandler.notify(null, "notify.mutedTitle", "connected",
         "notify.muted", null, {timeOut: 120000});
 }
 
-function setupPrezi()
-{
-    $("#reloadPresentationLink").click(function()
-    {
+function setupPrezi() {
+    $("#reloadPresentationLink").click(function() {
         Prezi.reloadPresentation();
     });
 }
 
-function setupChat()
-{
+function setupChat() {
     Chat.init();
     $("#toggle_smileys").click(function() {
         Chat.toggleSmileys();
@@ -109,8 +105,7 @@ function setupToolbars() {
 }
 
 function streamHandler(stream, isMuted) {
-    switch (stream.type)
-    {
+    switch (stream.type) {
         case "audio":
             VideoLayout.changeLocalAudio(stream, isMuted);
             break;
@@ -152,9 +147,10 @@ function onDisplayNameChanged(jid, displayName) {
 }
 
 function registerListeners() {
-    APP.RTC.addStreamListener(streamHandler, StreamEventTypes.EVENT_TYPE_LOCAL_CREATED);
-
-    APP.RTC.addStreamListener(streamHandler, StreamEventTypes.EVENT_TYPE_LOCAL_CHANGED);
+    APP.RTC.addStreamListener(streamHandler,
+        StreamEventTypes.EVENT_TYPE_LOCAL_CREATED);
+    APP.RTC.addStreamListener(streamHandler,
+        StreamEventTypes.EVENT_TYPE_LOCAL_CHANGED);
     APP.RTC.addStreamListener(function (stream) {
         VideoLayout.onRemoteStreamAdded(stream);
     }, StreamEventTypes.EVENT_TYPE_REMOTE_CREATED);
@@ -162,7 +158,8 @@ function registerListeners() {
         VideoLayout.onVideoTypeChanged(jid);
     }, StreamEventTypes.EVENT_TYPE_REMOTE_CHANGED);
     APP.RTC.addListener(RTCEvents.LASTN_CHANGED, onLastNChanged);
-    APP.RTC.addListener(RTCEvents.DOMINANTSPEAKER_CHANGED, function (resourceJid) {
+    APP.RTC.addListener(RTCEvents.DOMINANTSPEAKER_CHANGED,
+        function (resourceJid) {
         VideoLayout.onDominantSpeakerChanged(resourceJid);
     });
     APP.RTC.addListener(RTCEvents.LASTN_ENDPOINT_CHANGED,
@@ -183,19 +180,14 @@ function registerListeners() {
         var userJid = APP.UI.getLargeVideoJid();
         eventEmitter.emit(UIEvents.SELECTED_ENDPOINT, userJid);
     });
-    APP.statistics.addAudioLevelListener(function(jid, audioLevel)
-    {
+    APP.statistics.addAudioLevelListener(function(jid, audioLevel) {
         var resourceJid;
-        if(jid === APP.statistics.LOCAL_JID)
-        {
+        if(jid === APP.statistics.LOCAL_JID) {
             resourceJid = AudioLevels.LOCAL_LEVEL;
-            if(APP.RTC.localAudio.isMuted())
-            {
+            if(APP.RTC.localAudio.isMuted()) {
                 audioLevel = 0;
             }
-        }
-        else
-        {
+        } else {
             resourceJid = Strophe.getResourceFromJid(jid);
         }
 
@@ -231,8 +223,7 @@ function registerListeners() {
             title,
             message,
             true, {},
-            function (event, value, message, formVals)
-            {
+            function (event, value, message, formVals) {
                 return false;
             }
         );
@@ -247,8 +238,7 @@ function registerListeners() {
         var title = APP.translation.generateTranslationHTML("dialog.sessTerminated");
         messageHandler.openDialog(
             title, reason, true, {},
-            function (event, value, message, formVals)
-            {
+            function (event, value, message, formVals) {
                 return false;
             }
         );
@@ -361,14 +351,12 @@ function setVideoMute(mute, options) {
         options);
 }
 
-function onResize()
-{
+function onResize() {
     Chat.resizeChat();
     VideoLayout.resizeLargeVideoContainer();
 }
 
-function bindEvents()
-{
+function bindEvents() {
     /**
      * Resizes and repositions videos in full screen mode.
      */
@@ -380,16 +368,17 @@ function bindEvents()
 
 UI.start = function (init) {
     document.title = interfaceConfig.APP_NAME;
+    var setupWelcomePage = null;
     if(config.enableWelcomePage && window.location.pathname == "/" &&
-        (!window.localStorage.welcomePageDisabled || window.localStorage.welcomePageDisabled == "false"))
-    {
+        (!window.localStorage.welcomePageDisabled ||
+            window.localStorage.welcomePageDisabled == "false")) {
         $("#videoconference_page").hide();
-        var setupWelcomePage = require("./welcome_page/WelcomePage");
+        if (!setupWelcomePage)
+            setupWelcomePage = require("./welcome_page/WelcomePage");
         setupWelcomePage();
 
         return;
     }
-
 
     $("#welcome_page").hide();
 
@@ -397,7 +386,7 @@ UI.start = function (init) {
         return ToolbarToggler.showToolbar();
     });
     // Set the defaults for prompt dialogs.
-    jQuery.prompt.setDefaults({persistent: false});
+    $.prompt.setDefaults({persistent: false});
 
 
     registerListeners();
@@ -418,10 +407,11 @@ UI.start = function (init) {
     });
 
     if(config.enableWelcomePage && window.location.pathname == "/" &&
-        (!window.localStorage.welcomePageDisabled || window.localStorage.welcomePageDisabled == "false"))
-    {
+        (!window.localStorage.welcomePageDisabled ||
+            window.localStorage.welcomePageDisabled == "false")) {
         $("#videoconference_page").hide();
-        var setupWelcomePage = require("./welcome_page/WelcomePage");
+        if (!setupWelcomePage)
+            setupWelcomePage = require("./welcome_page/WelcomePage");
         setupWelcomePage();
 
         return;
@@ -471,15 +461,13 @@ UI.start = function (init) {
 
 };
 
-function chatAddError(errorMessage, originalText)
-{
+function chatAddError(errorMessage, originalText) {
     return Chat.chatAddError(errorMessage, originalText);
-};
+}
 
-function chatSetSubject(text)
-{
+function chatSetSubject(text) {
     return Chat.chatSetSubject(text);
-};
+}
 
 function updateChatConversation(from, displayName, message, myjid, stamp) {
     return Chat.updateChatConversation(from, displayName, message, myjid, stamp);
@@ -501,8 +489,8 @@ function onMucJoined(jid, info) {
     // Once we've joined the muc show the toolbar
     ToolbarToggler.showToolbar();
 
-    var displayName = !config.displayJids
-        ? info.displayName : Strophe.getResourceFromJid(jid);
+    var displayName =
+        config.displayJids ? Strophe.getResourceFromJid(jid) : info.displayName;
 
     if (displayName)
         onDisplayNameChanged('localVideoContainer', displayName);
@@ -522,19 +510,17 @@ function onMucMemberLeft(jid) {
     messageHandler.notify(displayName,'notify.somebody',
         'disconnected',
         'notify.disconnected');
-    if(!config.startAudioMuted ||
-        config.startAudioMuted > APP.members.size())
+    if (!config.startAudioMuted ||
+        config.startAudioMuted > APP.members.size()) {
         UIUtil.playSoundNotification('userLeft');
+    }
 
     ContactList.removeContact(jid);
 
     VideoLayout.participantLeft(jid);
-};
+}
 
-
-function onLocalRoleChanged(jid, info, pres, isModerator)
-{
-
+function onLocalRoleChanged(jid, info, pres, isModerator) {
     console.info("My role changed, new role: " + info.role);
     onModeratorStatusChanged(isModerator);
     VideoLayout.showModeratorIndicator();
@@ -548,7 +534,6 @@ function onLocalRoleChanged(jid, info, pres, isModerator)
 }
 
 function onModeratorStatusChanged(isModerator) {
-
     Toolbar.showSipCallButton(isModerator);
     Toolbar.showRecordingButton(
         isModerator); //&&
@@ -602,7 +587,7 @@ function onMucMemberJoined(jid, id, displayName) {
         'connected',
         'notify.connected');
 
-    if(!config.startAudioMuted ||
+    if (!config.startAudioMuted ||
         config.startAudioMuted > APP.members.size())
         UIUtil.playSoundNotification('userJoined');
 
@@ -625,8 +610,7 @@ function onMucRoleChanged(role, displayName) {
         if (!displayName) {
             messageKey = "notify.grantedToUnknown";
         }
-        else
-        {
+        else {
             messageKey = "notify.grantedTo";
             messageOptions = {to: displayName};
         }
@@ -642,7 +626,7 @@ function onAuthenticationRequired(intervalCallback) {
         roomName, intervalCallback, function () {
             Toolbar.authenticateClicked();
         });
-};
+}
 
 
 function onLastNChanged(oldValue, newValue) {
@@ -676,9 +660,7 @@ UI.inputDisplayNameHandler = function (value) {
     VideoLayout.inputDisplayNameHandler(value);
 };
 
-
-UI.getLargeVideoJid = function()
-{
+UI.getLargeVideoJid = function() {
     return VideoLayout.getLargeVideoJid();
 };
 
@@ -718,13 +700,11 @@ UI.generateRoomName = function() {
 };
 
 
-UI.connectionIndicatorShowMore = function(jid)
-{
+UI.connectionIndicatorShowMore = function(jid) {
     return VideoLayout.showMore(jid);
 };
 
-UI.showLoginPopup = function(callback)
-{
+UI.showLoginPopup = function(callback) {
     console.log('password is required');
     var message = '<h2 data-i18n="dialog.passwordRequired">';
     message += APP.translation.translateString(
@@ -748,7 +728,7 @@ UI.showLoginPopup = function(callback)
         null, null, ':input:first'
 
     );
-}
+};
 
 UI.checkForNicknameAndJoin = function () {
 
@@ -813,47 +793,45 @@ UI.toggleAudio = function() {
  */
 UI.setAudioMuted = function (mute, earlyMute) {
     var audioMute = null;
-    if(earlyMute)
+    if (earlyMute)
         audioMute = function (mute, cb) {
             return APP.xmpp.sendAudioInfoPresence(mute, cb);
         };
     else
         audioMute = function (mute, cb) {
             return APP.xmpp.setAudioMute(mute, cb);
-        }
-    if(!audioMute(mute, function () {
-        VideoLayout.showLocalAudioIndicator(mute);
+        };
+    if (!audioMute(mute, function () {
+            VideoLayout.showLocalAudioIndicator(mute);
 
-        UIUtil.buttonClick("#mute", "icon-microphone icon-mic-disabled");
-    }))
-    {
+            UIUtil.buttonClick("#mute", "icon-microphone icon-mic-disabled");
+        })) {
         // We still click the button.
         UIUtil.buttonClick("#mute", "icon-microphone icon-mic-disabled");
         return;
     }
-
-}
+};
 
 UI.addListener = function (type, listener) {
     eventEmitter.on(type, listener);
-}
+};
 
 UI.clickOnVideo = function (videoNumber) {
     var remoteVideos = $(".videocontainer:not(#mixedstream)");
     if (remoteVideos.length > videoNumber) {
         remoteVideos[videoNumber].click();
     }
-}
+};
 
 //Used by torture
 UI.showToolbar = function () {
     return ToolbarToggler.showToolbar();
-}
+};
 
 //Used by torture
 UI.dockToolbar = function (isDock) {
     return ToolbarToggler.dockToolbar(isDock);
-}
+};
 
 UI.setVideoMuteButtonsState = function (mute) {
     var video = $('#video');
@@ -867,14 +845,14 @@ UI.setVideoMuteButtonsState = function (mute) {
         video.removeClass(muteClass);
         video.addClass(communicativeClass);
     }
-}
+};
 
 UI.userAvatarChanged = function (resourceJid, thumbUrl, contactListUrl) {
     VideoLayout.userAvatarChanged(resourceJid, thumbUrl);
     ContactList.userAvatarChanged(resourceJid, contactListUrl);
     if(resourceJid === APP.xmpp.myResource())
         SettingsMenu.changeAvatar(thumbUrl);
-}
+};
 
 UI.setVideoMute = setVideoMute;
 

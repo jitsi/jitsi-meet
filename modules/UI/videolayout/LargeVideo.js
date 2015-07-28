@@ -1,3 +1,4 @@
+/* global $, APP, Strophe, interfaceConfig */
 var Avatar = require("../avatar/Avatar");
 var RTCBrowserType = require("../../RTC/RTCBrowserType");
 var UIUtil = require("../util/UIUtil");
@@ -68,8 +69,7 @@ function positionVideo(video,
                        horizontalIndent,
                        verticalIndent,
                        animate) {
-    if(animate)
-    {
+    if (animate) {
         video.animate({
                 width: width,
                 height: height,
@@ -82,9 +82,7 @@ function positionVideo(video,
                 queue: false,
                 duration: 500
             });
-    }
-    else
-    {
+    } else {
         video.width(width);
         video.height(height);
         video.css({  top: verticalIndent + 'px',
@@ -94,7 +92,6 @@ function positionVideo(video,
     }
 
 }
-
 
 /**
  * Returns an array of the video dimensions, so that it keeps it's aspect
@@ -251,23 +248,19 @@ function changeVideo(isVisible) {
     var flipX = currentSmallVideo.flipX;
 
     if (flipX && videoTransform !== 'scaleX(-1)') {
-        document.getElementById('largeVideo').style.webkitTransform
-            = "scaleX(-1)";
-    }
-    else if (!flipX && videoTransform === 'scaleX(-1)') {
-        document.getElementById('largeVideo').style.webkitTransform
-            = "none";
+        document.getElementById('largeVideo').style.webkitTransform =
+            "scaleX(-1)";
+    } else if (!flipX && videoTransform === 'scaleX(-1)') {
+        document.getElementById('largeVideo').style.webkitTransform =
+            "none";
     }
 
     var isDesktop = APP.RTC.isVideoSrcDesktop(currentSmallVideo.peerJid);
     // Change the way we'll be measuring and positioning large video
 
-    getVideoSize = isDesktop
-        ? getDesktopVideoSize
-        : getCameraVideoSize;
-    getVideoPosition = isDesktop
-        ? getDesktopVideoPosition
-        : getCameraVideoPosition;
+    getVideoSize = isDesktop ? getDesktopVideoSize : getCameraVideoSize;
+    getVideoPosition = isDesktop ? getDesktopVideoPosition :
+        getCameraVideoPosition;
 
 
     // Only if the large video is currently visible.
@@ -434,11 +427,8 @@ var LargeVideo = {
         if (LargeVideo.isCurrentlyOnLarge(resourceJid))
         {
             var isDesktop = APP.RTC.isVideoSrcDesktop(jid);
-            getVideoSize = isDesktop
-                ? getDesktopVideoSize
-                : getCameraVideoSize;
-            getVideoPosition = isDesktop
-                ? getDesktopVideoPosition
+            getVideoSize = isDesktop ? getDesktopVideoSize : getCameraVideoSize;
+            getVideoPosition = isDesktop ? getDesktopVideoPosition
                 : getCameraVideoPosition;
             this.position(null, null);
         }
@@ -491,8 +481,7 @@ var LargeVideo = {
         var top = availableHeight / 2 - avatarSize / 4 * 3;
         $('#activeSpeaker').css('top', top);
 
-        if(animate)
-        {
+        if(animate) {
             $('#videospace').animate({
                     right: window.innerWidth - availableWidth,
                     width: availableWidth,
@@ -512,18 +501,13 @@ var LargeVideo = {
                     queue: false,
                     duration: 500
                 });
-
-
-        }
-        else
-        {
+        } else {
             $('#videospace').width(availableWidth);
             $('#videospace').height(availableHeight);
             $('#largeVideoContainer').width(availableWidth);
             $('#largeVideoContainer').height(availableHeight);
         }
         return [availableWidth, availableHeight];
-
     },
     resizeVideoAreaAnimated: function (isVisible, completeFunction) {
         if(!isEnabled)
@@ -544,9 +528,7 @@ var LargeVideo = {
     showAvatar: function (resourceJid, show) {
         if(!isEnabled)
             return;
-        if(this.getResourceJid() === resourceJid
-            && state === "video")
-        {
+        if(this.getResourceJid() === resourceJid && state === "video") {
             $("#largeVideo").css("visibility", show ? "hidden" : "visible");
             $('#activeSpeaker').css("visibility", show ? "visible" : "hidden");
             return true;
@@ -679,7 +661,6 @@ var LargeVideo = {
     {
         $('#largeVideoContainer').hover(inHandler, outHandler);
     }
-
 };
 
 
