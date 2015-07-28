@@ -786,10 +786,13 @@ UI.getRoomName = function () {
 };
 
 UI.setInitialMuteFromFocus = function (muteAudio, muteVideo) {
-    if(muteAudio || muteVideo) notifyForInitialMute();
-    if(muteAudio) UI.setAudioMuted(true);
-    if(muteVideo) UI.setVideoMute(true);
-}
+    if (muteAudio || muteVideo)
+        notifyForInitialMute();
+    if (muteAudio)
+        UI.setAudioMuted(true);
+    if (muteVideo)
+        UI.setVideoMute(true);
+};
 
 /**
  * Mutes/unmutes the local video.

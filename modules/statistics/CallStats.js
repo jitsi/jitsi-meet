@@ -1,3 +1,4 @@
+/* global config, $, APP, Strophe, callstats */
 var callStats = null;
 
 function initCallback (err, msg) {
@@ -38,37 +39,37 @@ var CallStats = {
             this.pcCallback.bind(this));
     },
     pcCallback: function (err, msg) {
-        if(!callStats)
+        if (!callStats)
             return;
         console.log("Monitoring status: "+ err + " msg: " + msg);
         callStats.sendFabricEvent(this.peerconnection,
             callStats.fabricEvent.fabricSetup, this.confID);
     },
     sendMuteEvent: function (mute, type) {
-        if(!callStats)
+        if (!callStats)
             return;
         var event = null;
-        if(type === "video")
-        {
+        if (type === "video") {
             event = (mute? callStats.fabricEvent.videoPause :
                 callStats.fabricEvent.videoResume);
         }
-        else
-        {
+        else {
             event = (mute? callStats.fabricEvent.audioMute :
                 callStats.fabricEvent.audioUnmute);
         }
         callStats.sendFabricEvent(this.peerconnection, event, this.confID);
     },
     sendTerminateEvent: function () {
-        if(!callStats)
+        if(!callStats) {
             return;
+        }
         callStats.sendFabricEvent(this.peerconnection,
             callStats.fabricEvent.fabricTerminated, this.confID);
     },
     sendSetupFailedEvent: function () {
-        if(!callStats)
+        if(!callStats) {
             return;
+        }
         callStats.sendFabricEvent(this.peerconnection,
             callStats.fabricEvent.fabricSetupFailed, this.confID);
     }

@@ -35,15 +35,13 @@ if (supportsLocalStorage()) {
     userId = generateUniqueId();
 }
 
-var Settings =
-{
+var Settings = {
     setDisplayName: function (newDisplayName) {
         displayName = newDisplayName;
         window.localStorage.displayname = displayName;
         return displayName;
     },
-    setEmail: function (newEmail)
-    {
+    setEmail: function (newEmail) {
         email = newEmail;
         window.localStorage.email = newEmail;
         return email;
