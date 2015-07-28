@@ -1,3 +1,4 @@
+/* global APP, $ */
 //maps keycode to character, id of popover for given function and function
 var shortcuts = {};
 function initShortcutHandlers() {

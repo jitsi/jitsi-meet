@@ -1,3 +1,4 @@
+/* global APP, require */
 var EventEmitter = require("events");
 var eventEmitter = new EventEmitter();
 var CQEvents = require("../../service/connectionquality/CQEvents");
@@ -53,7 +54,7 @@ function convertToMUCStats(stats) {
 }
 
 /**
- * Converts statitistics to format used by VideoLayout
+ * Converts statistics to format used by VideoLayout
  * @param stats
  * @returns {{bitrate: {download: *, upload: *}, packetLoss: {total: *, download: *, upload: *}}}
  */
@@ -70,7 +71,6 @@ function parseMUCStats(stats) {
         }
     };
 }
-
 
 var ConnectionQuality = {
     init: function () {

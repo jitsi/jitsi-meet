@@ -1,4 +1,4 @@
-/* global APP */
+/* global APP, require, $ */
 
 /**
  * This module is meant to (eventually) contain and manage all information
@@ -87,7 +87,7 @@ function updateDtmf(jid, newValue) {
  * Checks each member's 'supportsDtmf' field and updates
  * 'atLastOneSupportsDtmf'.
  */
-function updateAtLeastOneDtmf(){
+function updateAtLeastOneDtmf() {
     var newAtLeastOneDtmf = false;
     for (var key in members) {
         if (typeof members[key].supportsDtmf !== 'undefined'
@@ -108,11 +108,10 @@ function updateAtLeastOneDtmf(){
  * Exported interface.
  */
 var Members = {
-    start: function(){
+    start: function() {
         registerListeners();
     },
-    addListener: function(type, listener)
-    {
+    addListener: function(type, listener) {
         eventEmitter.on(type, listener);
     },
     removeListener: function (type, listener) {

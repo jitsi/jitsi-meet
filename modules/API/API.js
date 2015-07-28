@@ -1,3 +1,4 @@
+/* global APP */
 /**
  * Implements API class that communicates with external api class
  * and provides interface to access Jitsi Meet features by external
@@ -12,14 +13,15 @@ var XMPPEvents = require("../../service/xmpp/XMPPEvents");
  *              displayName: inputDisplayNameHandler,
  *              muteAudio: toggleAudio,
  *              muteVideo: toggleVideo,
- *              filmStrip: toggleFilmStrip
+ *              toggleFilmStrip: toggleFilmStrip,
+ *              toggleChat: toggleChat,
+ *              toggleContactList: toggleContactList
  *          }}
  */
 var commands = {};
 
 function initCommands() {
-    commands =
-    {
+    commands = {
         displayName: APP.UI.inputDisplayNameHandler,
         muteAudio: APP.UI.toggleAudio,
         muteVideo: APP.UI.toggleVideo,
@@ -41,8 +43,7 @@ function initCommands() {
  *              participantLeft: boolean
  *      }}
  */
-var events =
-{
+var events = {
     incomingMessage: false,
     outgoingMessage:false,
     displayNameChange: false,
@@ -53,18 +54,15 @@ var events =
 var displayName = {};
 
 /**
- * Processes commands from external applicaiton.
+ * Processes commands from external application.
  * @param message the object with the command
  */
-function processCommand(message)
-{
-    if(message.action != "execute")
-    {
+function processCommand(message) {
+    if (message.action != "execute") {
         console.error("Unknown action of the message");
         return;
     }
-    for(var key in message)
-    {
+    for (var key in message) {
         if(commands[key])
             commands[key].apply(null, message[key]);
     }
@@ -75,31 +73,26 @@ function processCommand(message)
  * @param event the event
  */
 function processEvent(event) {
-    if(!event.action)
-    {
+    if (!event.action) {
         console.error("Event with no action is received.");
         return;
     }
 
     var i = 0;
-    switch(event.action)
-    {
+    switch(event.action) {
         case "add":
-            for(; i < event.events.length; i++)
-            {
+            for (; i < event.events.length; i++) {
                 events[event.events[i]] = true;
             }
             break;
         case "remove":
-            for(; i < event.events.length; i++)
-            {
+            for (; i < event.events.length; i++) {
                 events[event.events[i]] = false;
             }
             break;
         default:
             console.error("Unknown action for event.");
     }
-
 }
 
 /**
@@ -114,8 +107,7 @@ function sendMessage(object) {
  * Processes a message event from the external application
  * @param event the message event
  */
-function processMessage(event)
-{
+function processMessage(event) {
     var message;
     try {
         message = JSON.parse(event.data);
@@ -123,8 +115,7 @@ function processMessage(event)
 
     if(!message.type)
         return;
-    switch (message.type)
-    {
+    switch (message.type) {
         case "command":
             processCommand(message);
             break;
@@ -135,7 +126,6 @@ function processMessage(event)
             console.error("Unknown type of the message");
             return;
     }
-
 }
 
 function setupListeners() {
@@ -151,7 +141,7 @@ function setupListeners() {
         API.triggerEvent("participantLeft", {jid: jid});
     });
     APP.xmpp.addListener(XMPPEvents.DISPLAY_NAME_CHANGED, function (jid, newDisplayName) {
-        name = displayName[jid];
+        var name = displayName[jid];
         if(!name || name != newDisplayName) {
             API.triggerEvent("displayNameChange", {jid: jid, displayname: newDisplayName});
             displayName[jid] = newDisplayName;
@@ -169,7 +159,7 @@ var API = {
      */
     isEnabled: function () {
         var hash = location.hash;
-        if(hash && hash.indexOf("external") > -1 && window.postMessage)
+        if (hash && hash.indexOf("external") > -1 && window.postMessage)
             return true;
         return false;
     },
@@ -181,13 +171,11 @@ var API = {
      */
     init: function () {
         initCommands();
-        if (window.addEventListener)
-        {
+        if (window.addEventListener) {
             window.addEventListener('message',
                 processMessage, false);
         }
-        else
-        {
+        else {
             window.attachEvent('onmessage', processMessage);
         }
         sendMessage({type: "system", loaded: true});
@@ -218,19 +206,14 @@ var API = {
      * Removes the listeners.
      */
     dispose: function () {
-        if(window.removeEventListener)
-        {
+        if(window.removeEventListener) {
             window.removeEventListener("message",
                 processMessage, false);
         }
-        else
-        {
+        else {
             window.detachEvent('onmessage', processMessage);
         }
-
     }
-
-
 };
 
 module.exports = API;

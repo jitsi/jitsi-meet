@@ -25,16 +25,15 @@ var JitsiMeetExternalAPI = (function()
      * @param parent_node the node that will contain the iframe
      * @constructor
      */
-    function JitsiMeetExternalAPI(domain, room_name, width, height, parent_node)
-    {
+    function JitsiMeetExternalAPI(domain, room_name, width, height, parentNode) {
         if(!width || width < MIN_WIDTH)
             width = MIN_WIDTH;
         if(!height || height < MIN_HEIGHT)
             height = MIN_HEIGHT;
 
         this.parentNode = null;
-        if(parent_node) {
-            this.parentNode = parent_node;
+        if (parentNode) {
+            this.parentNode = parentNode;
         } else {
             var scriptTag = document.scripts[document.scripts.length - 1];
             this.parentNode = scriptTag.parentNode;
@@ -78,15 +77,12 @@ var JitsiMeetExternalAPI = (function()
      * Sends the passed object to Jitsi Meet
      * @param object the object to be sent
      */
-    JitsiMeetExternalAPI.prototype.sendMessage = function(object)
-    {
-        if(this.frameLoaded)
-        {
+    JitsiMeetExternalAPI.prototype.sendMessage = function(object) {
+        if (this.frameLoaded) {
             this.frame.contentWindow.postMessage(
                 JSON.stringify(object), this.frame.src);
         }
-        else
-        {
+        else {
             this.initialCommands.push(object);
         }
 
@@ -105,10 +101,9 @@ var JitsiMeetExternalAPI = (function()
      * @param arguments array of arguments
      */
     JitsiMeetExternalAPI.prototype.executeCommand = function(name,
-                                                             argumentsList)
-    {
+                                                             argumentsList) {
         var argumentsArray = argumentsList;
-        if(!argumentsArray)
+        if (!argumentsArray)
             argumentsArray = [];
         var object = {type: "command", action: "execute"};
         object[name] = argumentsArray;
@@ -133,8 +128,8 @@ var JitsiMeetExternalAPI = (function()
     };
 
     /**
-     * Adds event listeners to Meet Jitsi. The object key should be the name of the
-     * event and value - the listener.
+     * Adds event listeners to Meet Jitsi. The object key should be the name of
+     * the event and value - the listener.
      * Currently we support the following
      * events:
      * incomingMessage - receives event notifications about incoming
@@ -168,8 +163,7 @@ var JitsiMeetExternalAPI = (function()
      * @param object
      */
     JitsiMeetExternalAPI.prototype.addEventListeners
-        = function (object)
-    {
+        = function (object) {
 
         var message = {type: "event", action: "add", events: []};
         for(var i in object)
@@ -215,8 +209,7 @@ var JitsiMeetExternalAPI = (function()
      * @param listener the listener
      */
     JitsiMeetExternalAPI.prototype.addEventListener
-        = function (event, listener)
-    {
+        = function (event, listener) {
 
         var message = {type: "event", action: "add", events: [event]};
         this.eventHandlers[event] = listener;
@@ -228,8 +221,7 @@ var JitsiMeetExternalAPI = (function()
      * @param event the name of the event.
      */
     JitsiMeetExternalAPI.prototype.removeEventListener
-        = function (event)
-    {
+        = function (event) {
         if(!this.eventHandlers[event])
         {
             console.error("The event " + event + " is not registered.");
@@ -245,8 +237,7 @@ var JitsiMeetExternalAPI = (function()
      * @param events array with the names of the events.
      */
     JitsiMeetExternalAPI.prototype.removeEventListeners
-        = function (events)
-    {
+        = function (events) {
         var eventsArray = [];
         for(var i = 0; i < events.length; i++)
         {
@@ -272,8 +263,7 @@ var JitsiMeetExternalAPI = (function()
      * Processes message events sent from Jitsi Meet
      * @param event the event
      */
-    JitsiMeetExternalAPI.prototype.processMessage = function(event)
-    {
+    JitsiMeetExternalAPI.prototype.processMessage = function(event) {
         var message;
         try {
             message = JSON.parse(event.data);
@@ -283,18 +273,15 @@ var JitsiMeetExternalAPI = (function()
             console.error("Message without type is received.");
             return;
         }
-        switch (message.type)
-        {
+        switch (message.type) {
             case "system":
-                if(message.loaded)
-                {
+                if(message.loaded) {
                     this.onFrameLoaded();
                 }
                 break;
             case "event":
                 if(message.action != "result" ||
-                    !message.event || !this.eventHandlers[message.event])
-                {
+                    !message.event || !this.eventHandlers[message.event]) {
                     console.warn("The received event cannot be parsed.");
                     return;
                 }
@@ -304,8 +291,6 @@ var JitsiMeetExternalAPI = (function()
                 console.error("Unknown message type.");
                 return;
         }
-
-
     };
 
     /**
@@ -314,8 +299,7 @@ var JitsiMeetExternalAPI = (function()
      */
     JitsiMeetExternalAPI.prototype.onFrameLoaded = function () {
         this.frameLoaded = true;
-        for (var i = 0; i < this.initialCommands.length; i++)
-        {
+        for (var i = 0; i < this.initialCommands.length; i++) {
             this.sendMessage(this.initialCommands[i]);
         }
         this.initialCommands = null;
@@ -329,13 +313,11 @@ var JitsiMeetExternalAPI = (function()
         this.eventListener = function (event) {
             self.processMessage(event);
         };
-        if (window.addEventListener)
-        {
+        if (window.addEventListener) {
             window.addEventListener('message',
                 this.eventListener, false);
         }
-        else
-        {
+        else {
             window.attachEvent('onmessage', this.eventListener);
         }
     };
@@ -344,13 +326,11 @@ var JitsiMeetExternalAPI = (function()
      * Removes the listeners and removes the Jitsi Meet frame.
      */
     JitsiMeetExternalAPI.prototype.dispose = function () {
-        if (window.removeEventListener)
-        {
+        if (window.removeEventListener) {
             window.removeEventListener('message',
                 this.eventListener, false);
         }
-        else
-        {
+        else {
             window.detachEvent('onmessage',
                 this.eventListener);
         }
