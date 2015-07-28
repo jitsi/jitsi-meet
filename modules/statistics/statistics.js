@@ -1,3 +1,4 @@
+/* global require, APP */
 /**
  * Created by hristo on 8/4/14.
  */
@@ -15,19 +16,15 @@ var localStats = null;
 
 var rtpStats = null;
 
-function stopLocal()
-{
-    if(localStats)
-    {
+function stopLocal() {
+    if (localStats) {
         localStats.stop();
         localStats = null;
     }
 }
 
-function stopRemote()
-{
-    if(rtpStats)
-    {
+function stopRemote() {
+    if (rtpStats) {
         rtpStats.stop();
         eventEmitter.emit("statistics.stop");
         rtpStats = null;
@@ -35,20 +32,18 @@ function stopRemote()
 }
 
 function startRemoteStats (peerconnection) {
-    if(rtpStats)
-    {
+    if (rtpStats) {
         rtpStats.stop();
-        rtpStats = null;
     }
 
     rtpStats = new RTPStats(peerconnection, 200, 2000, eventEmitter);
     rtpStats.start();
 }
 
-function onStreamCreated(stream)
-{
-    if(stream.getOriginalStream().getAudioTracks().length === 0)
+function onStreamCreated(stream) {
+    if(stream.getOriginalStream().getAudioTracks().length === 0) {
         return;
+    }
 
     localStats = new LocalStats(stream.getOriginalStream(), 200, statistics,
         eventEmitter);
@@ -64,9 +59,7 @@ function onDisposeConference(onUnload) {
     }
 }
 
-
-var statistics =
-{
+var statistics = {
     /**
      * Indicates that this audio level is for local jid.
      * @type {string}
@@ -129,18 +122,17 @@ var statistics =
         });
         APP.xmpp.addListener(XMPPEvents.PEERCONNECTION_READY, function (session) {
             CallStats.init(session);
-        })
+        });
         APP.RTC.addListener(RTCEvents.AUDIO_MUTE, function (mute) {
             CallStats.sendMuteEvent(mute, "audio");
         });
         APP.xmpp.addListener(XMPPEvents.CONFERENCE_SETUP_FAILED, function () {
             CallStats.sendSetupFailedEvent();
-        })
+        });
         APP.RTC.addListener(RTCEvents.VIDEO_MUTE, function (mute) {
             CallStats.sendMuteEvent(mute, "video");
         });
     }
-
 };
 
 

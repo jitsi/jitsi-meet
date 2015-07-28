@@ -1,4 +1,4 @@
-/* global $, $iq, config, connection, focusMucJid, messageHandler, Moderator,
+/* global $, $iq, config, connection, focusMucJid, messageHandler,
    Toolbar, Util */
 var Moderator = require("./moderator");
 
@@ -21,14 +21,6 @@ var jireconRid = null;
 
 function setRecordingToken(token) {
     recordingToken = token;
-}
-
-function setRecording(state, token, callback, connection) {
-    if (useJirecon){
-        setRecordingJirecon(state, token, callback, connection);
-    } else {
-        setRecordingColibri(state, token, callback, connection);
-    }
 }
 
 function setRecordingJirecon(state, token, callback, connection) {
@@ -93,6 +85,14 @@ function setRecordingColibri(state, token, callback, connection) {
     );
 }
 
+function setRecording(state, token, callback, connection) {
+    if (useJirecon){
+        setRecordingJirecon(state, token, callback, connection);
+    } else {
+        setRecordingColibri(state, token, callback, connection);
+    }
+}
+
 var Recording = {
     toggleRecording: function (tokenEmptyCallback,
                                startingCallback, startedCallback, connection) {
@@ -150,6 +150,6 @@ var Recording = {
         );
     }
 
-}
+};
 
 module.exports = Recording;

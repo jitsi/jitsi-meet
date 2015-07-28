@@ -5,8 +5,6 @@
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 var Moderator = require("./moderator");
 
-var bridgeIsDown = false;
-
 module.exports = function(XMPP, eventEmitter) {
     Strophe.addConnectionPlugin('emuc', {
         connection: null,
@@ -20,18 +18,17 @@ module.exports = function(XMPP, eventEmitter) {
         isOwner: false,
         role: null,
         focusMucJid: null,
+        bridgeIsDown: false,
         init: function (conn) {
             this.connection = conn;
         },
         initPresenceMap: function (myroomjid) {
             this.presMap['to'] = myroomjid;
             this.presMap['xns'] = 'http://jabber.org/protocol/muc';
-            if (APP.RTC.localAudio && APP.RTC.localAudio.isMuted())
-            {
+            if (APP.RTC.localAudio && APP.RTC.localAudio.isMuted()) {
                 this.addAudioInfoToPresence(true);
             }
-            if (APP.RTC.localVideo && APP.RTC.localVideo.isMuted())
-            {
+            if (APP.RTC.localVideo && APP.RTC.localVideo.isMuted()) {
                 this.addVideoInfoToPresence(true);
             }
         },
@@ -591,27 +588,25 @@ module.exports = function(XMPP, eventEmitter) {
 
             Moderator.onMucMemberLeft(jid);
         },
-        parsePresence: function (from, memeber, pres) {
-            if($(pres).find(">bridgeIsDown").length > 0 && !bridgeIsDown) {
-                bridgeIsDown = true;
+        parsePresence: function (from, member, pres) {
+            if($(pres).find(">bridgeIsDown").length > 0 && !this.bridgeIsDown) {
+                this.bridgeIsDown = true;
                 eventEmitter.emit(XMPPEvents.BRIDGE_DOWN);
             }
 
-            if(memeber.isFocus)
+            if(member.isFocus)
                 return;
 
             var displayName = !config.displayJids
-                ? memeber.displayName : Strophe.getResourceFromJid(from);
+                ? member.displayName : Strophe.getResourceFromJid(from);
 
-            if (displayName && displayName.length > 0)
-            {
+            if (displayName && displayName.length > 0) {
                 eventEmitter.emit(XMPPEvents.DISPLAY_NAME_CHANGED, from, displayName);
             }
 
-
             var id = $(pres).find('>userID').text();
             var email = $(pres).find('>email');
-            if(email.length > 0) {
+            if (email.length > 0) {
                 id = email.text();
             }
 

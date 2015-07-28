@@ -1,3 +1,4 @@
+/* global $, require, config, interfaceConfig */
 var i18n = require("i18next-client");
 var languages = require("../../service/translation/languages");
 var Settings = require("../settings/Settings");
@@ -23,7 +24,6 @@ var defaultOptions = {
     fallbackOnNull: true,
     fallbackOnEmpty: true,
     useDataAttrOptions: true,
-    defaultValueFromContent: false,
     app: interfaceConfig.APP_NAME,
     getAsync: false,
     defaultValueFromContent: false,
@@ -63,8 +63,7 @@ var defaultOptions = {
 //                localStorageExpirationTime: 86400000 // in ms, default 1 week
 };
 
-function initCompleted(t)
-{
+function initCompleted(t) {
     $("[data-i18n]").i18n();
 }
 

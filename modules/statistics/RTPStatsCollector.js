@@ -49,8 +49,6 @@ PeerStats.bandwidth = {};
  */
 PeerStats.bitrate = {};
 
-
-
 /**
  * The packet loss rate
  * @type {{}}
@@ -235,7 +233,7 @@ StatsCollector.prototype.errorCallback = function (error)
 StatsCollector.prototype.start = function ()
 {
     var self = this;
-    if(!config.disableAudioLevels) {
+    if (!config.disableAudioLevels) {
         this.audioLevelsIntervalId = setInterval(
             function () {
                 // Interval updates
@@ -675,41 +673,34 @@ StatsCollector.prototype.processStatsReport = function () {
 /**
  * Stats processing logic.
  */
-StatsCollector.prototype.processAudioLevelReport = function ()
-{
-    if (!this.baselineAudioLevelsReport)
-    {
+StatsCollector.prototype.processAudioLevelReport = function () {
+    if (!this.baselineAudioLevelsReport) {
         return;
     }
 
-    for (var idx in this.currentAudioLevelsReport)
-    {
+    for (var idx in this.currentAudioLevelsReport) {
         var now = this.currentAudioLevelsReport[idx];
 
-        if (now.type != 'ssrc')
-        {
+        if (now.type != 'ssrc') {
             continue;
         }
 
         var before = this.baselineAudioLevelsReport[idx];
-        if (!before)
-        {
+        if (!before) {
             console.warn(getStatValue(now, 'ssrc') + ' not enough data');
             continue;
         }
 
         var ssrc = getStatValue(now, 'ssrc');
         var jid = APP.xmpp.getJidFromSSRC(ssrc);
-        if (!jid)
-        {
+        if (!jid) {
             if((Date.now() - now.timestamp) < 3000)
                 console.warn("No jid for ssrc: " + ssrc);
             continue;
         }
 
         var jidStats = this.jid2stats[jid];
-        if (!jidStats)
-        {
+        if (!jidStats) {
             jidStats = new PeerStats();
             this.jid2stats[jid] = jidStats;
         }
@@ -728,8 +719,7 @@ StatsCollector.prototype.processAudioLevelReport = function ()
             return;
         }
 
-        if (audioLevel)
-        {
+        if (audioLevel) {
             // TODO: can't find specs about what this value really is,
             // but it seems to vary between 0 and around 32k.
             audioLevel = audioLevel / 32767;
@@ -737,8 +727,5 @@ StatsCollector.prototype.processAudioLevelReport = function ()
             if(jid != APP.xmpp.myJid())
                 this.eventEmitter.emit("statistics.audioLevel", jid, audioLevel);
         }
-
     }
-
-
 };
