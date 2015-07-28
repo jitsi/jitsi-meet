@@ -49,13 +49,13 @@ the new display name to be set
 ```
 api.executeCommand('displayName', ['New Nickname']);
 ```
-* **muteAudio** - mutes / unmutes the audio for the local participant. No arguments are required.
+* **toggleAudio** - mutes / unmutes the audio for the local participant. No arguments are required.
 ```
-api.executeCommand('muteAudio', [])
+api.executeCommand('toggleAudio', [])
 ```
-* **muteVideo** - mutes / unmutes the video for the local participant. No arguments are required.
+* **toggleVideo** - mutes / unmutes the video for the local participant. No arguments are required.
 ```
-api.executeCommand('muteVideo', [])
+api.executeCommand('toggleVideo', [])
 ```
 * **toggleFilmStrip** - hides / shows the film strip. No arguments are required.
 ```
@@ -78,7 +78,7 @@ The ```commands``` parameter is object with keys the names of the commands and v
 commands.
 
 ```
-api.executeCommands({displayName: ['nickname'], muteAudio: []});
+api.executeCommands({displayName: ['nickname'], toggleAudio: []});
 ```
 
 You can add event listeners to the embedded Jitsi Meet using ```addEventListener``` method.
