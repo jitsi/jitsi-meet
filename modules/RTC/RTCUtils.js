@@ -1,3 +1,4 @@
+/* global config, require, attachMediaStream, getUserMedia */
 var RTCBrowserType = require("./RTCBrowserType");
 var Resolutions = require("../../service/RTC/Resolutions");
 var AdapterJS = require("./adapter.screenshare");
@@ -11,11 +12,9 @@ function getPreviousResolution(resolution) {
     var order = Resolutions[resolution].order;
     var res = null;
     var resName = null;
-    for(var i in Resolutions)
-    {
+    for(var i in Resolutions) {
         var tmp = Resolutions[i];
-        if(res == null || (res.order < tmp.order && tmp.order < order))
-        {
+        if(res == null || (res.order < tmp.order && tmp.order < order)) {
             resName = i;
             res = tmp;
         }
@@ -23,19 +22,17 @@ function getPreviousResolution(resolution) {
     return resName;
 }
 
-function setResolutionConstraints(constraints, resolution, isAndroid)
-{
+function setResolutionConstraints(constraints, resolution, isAndroid) {
     if (resolution && !constraints.video || isAndroid) {
-        constraints.video = { mandatory: {}, optional: [] };// same behaviour as true
+        // same behaviour as true
+        constraints.video = { mandatory: {}, optional: [] };
     }
 
-    if(Resolutions[resolution])
-    {
+    if(Resolutions[resolution]) {
         constraints.video.mandatory.minWidth = Resolutions[resolution].width;
         constraints.video.mandatory.minHeight = Resolutions[resolution].height;
     }
-    else
-    {
+    else {
         if (isAndroid) {
             constraints.video.mandatory.minWidth = 320;
             constraints.video.mandatory.minHeight = 240;
@@ -44,9 +41,11 @@ function setResolutionConstraints(constraints, resolution, isAndroid)
     }
 
     if (constraints.video.mandatory.minWidth)
-        constraints.video.mandatory.maxWidth = constraints.video.mandatory.minWidth;
+        constraints.video.mandatory.maxWidth =
+            constraints.video.mandatory.minWidth;
     if (constraints.video.mandatory.minHeight)
-        constraints.video.mandatory.maxHeight = constraints.video.mandatory.minHeight;
+        constraints.video.mandatory.maxHeight =
+            constraints.video.mandatory.minHeight;
 }
 
 function getConstraints(um, resolution, bandwidth, fps, desktopStream, isAndroid)
@@ -54,10 +53,12 @@ function getConstraints(um, resolution, bandwidth, fps, desktopStream, isAndroid
     var constraints = {audio: false, video: false};
 
     if (um.indexOf('video') >= 0) {
-        constraints.video = { mandatory: {}, optional: [] };// same behaviour as true
+        // same behaviour as true
+        constraints.video = { mandatory: {}, optional: [] };
     }
     if (um.indexOf('audio') >= 0) {
-        constraints.audio = { mandatory: {}, optional: []};// same behaviour as true
+        // same behaviour as true
+        constraints.audio = { mandatory: {}, optional: []};
     }
     if (um.indexOf('screen') >= 0) {
         if (RTCBrowserType.isChrome()) {
@@ -126,13 +127,20 @@ function getConstraints(um, resolution, bandwidth, fps, desktopStream, isAndroid
         setResolutionConstraints(constraints, resolution, isAndroid);
     }
 
-    if (bandwidth) { // doesn't work currently, see webrtc issue 1846
-        if (!constraints.video) constraints.video = {mandatory: {}, optional: []};//same behaviour as true
+    if (bandwidth) {
+        if (!constraints.video) {
+            //same behaviour as true
+            constraints.video = {mandatory: {}, optional: []};
+        }
         constraints.video.optional.push({bandwidth: bandwidth});
     }
-    if (fps) { // for some cameras it might be necessary to request 30fps
+    if (fps) {
+        // for some cameras it might be necessary to request 30fps
         // so they choose 30fps mjpg over 10fps yuy2
-        if (!constraints.video) constraints.video = {mandatory: {}, optional: []};// same behaviour as true;
+        if (!constraints.video) {
+            // same behaviour as true;
+            constraints.video = {mandatory: {}, optional: []};
+        }
         constraints.video.mandatory.minFrameRate = fps;
     }
 
@@ -167,8 +175,7 @@ function RTCUtils(RTCService, onTemasysPluginReady)
                 var id = stream.id;
                 if (!id) {
                     var tracks = stream.getVideoTracks();
-                    if (!tracks || tracks.length === 0)
-                    {
+                    if (!tracks || tracks.length === 0) {
                         tracks = stream.getAudioTracks();
                     }
                     id = tracks[0].id;
@@ -258,7 +265,6 @@ function RTCUtils(RTCService, onTemasysPluginReady)
                     console.warn("Attempt to get video SRC of null element");
                     return null;
                 }
-                var src = null;
                 var children = element.children;
                 for (var i = 0; i !== children.length; ++i) {
                     if (children[i].name === 'streamId') {
@@ -293,8 +299,7 @@ function RTCUtils(RTCService, onTemasysPluginReady)
 
 RTCUtils.prototype.getUserMediaWithConstraints = function(
     um, success_callback, failure_callback, resolution,bandwidth, fps,
-    desktopStream)
-{
+    desktopStream) {
     currentResolution = resolution;
     // Check if we are running on Android device
     var isAndroid = navigator.userAgent.indexOf('Android') != -1;
@@ -331,16 +336,14 @@ RTCUtils.prototype.getUserMediaWithConstraints = function(
 
 RTCUtils.prototype.setAvailableDevices = function (um, available) {
     var devices = {};
-    if(um.indexOf("video") != -1)
-    {
+    if(um.indexOf("video") != -1) {
         devices.video = available;
     }
-    if(um.indexOf("audio") != -1)
-    {
+    if(um.indexOf("audio") != -1) {
         devices.audio = available;
     }
     this.service.setDeviceAvailability(devices);
-}
+};
 
 /**
  * We ask for audio and video combined stream in order to get permissions and
@@ -366,8 +369,7 @@ RTCUtils.prototype.obtainAudioAndVideoPermissions =
 
 
     if(usageOptions)
-        for(var i = 0; i < devices.length; i++)
-        {
+        for(var i = 0; i < devices.length; i++) {
             var device = devices[i];
             if(usageOptions[device] === true)
                 newDevices.push(device);
@@ -375,8 +377,7 @@ RTCUtils.prototype.obtainAudioAndVideoPermissions =
     else
         newDevices = devices;
 
-    if(newDevices.length === 0)
-    {
+    if(newDevices.length === 0) {
         successCallback();
         return;
     }
@@ -437,7 +438,6 @@ RTCUtils.prototype.obtainAudioAndVideoPermissions =
         },
         config.resolution || '360');
     }
-
 };
 
 RTCUtils.prototype.successCallback = function (stream, usageOptions) {
@@ -467,8 +467,7 @@ RTCUtils.prototype.errorCallback = function (error) {
                 return self.errorCallback(error);
             }, resolution);
     }
-    else
-    {
+    else {
         self.getUserMediaWithConstraints(
             ['audio'],
             function (stream) {
@@ -481,11 +480,9 @@ RTCUtils.prototype.errorCallback = function (error) {
             }
         );
     }
+};
 
-}
-
-RTCUtils.prototype.handleLocalStream = function(stream, usageOptions)
-{
+RTCUtils.prototype.handleLocalStream = function(stream, usageOptions) {
     // If this is FF, the stream parameter is *not* a MediaStream object, it's
     // an object with two properties: audioStream, videoStream.
     var audioStream, videoStream;
@@ -538,8 +535,8 @@ function DummyMediaStream(id) {
     this.id = id;
     this.label = id;
     this.stop = function() { };
-    this.getAudioTracks = function() { return []; }
-    this.getVideoTracks = function() { return []; }
+    this.getAudioTracks = function() { return []; };
+    this.getVideoTracks = function() { return []; };
 }
 
 RTCUtils.prototype.createStream = function(stream, isVideo) {
@@ -549,7 +546,7 @@ RTCUtils.prototype.createStream = function(stream, isVideo) {
         if (newStream) {
             var tracks = (isVideo ? stream.getVideoTracks() : stream.getAudioTracks());
 
-            for (i = 0; i < tracks.length; i++) {
+            for (var i = 0; i < tracks.length; i++) {
                 newStream.addTrack(tracks[i]);
             }
         }
@@ -560,7 +557,8 @@ RTCUtils.prototype.createStream = function(stream, isVideo) {
         if (stream) {
             newStream = stream;
         } else {
-            newStream = new DummyMediaStream(isVideo ? "dummyVideo" : "dummyAudio");
+            newStream =
+                new DummyMediaStream(isVideo ? "dummyVideo" : "dummyAudio");
         }
     }
 
