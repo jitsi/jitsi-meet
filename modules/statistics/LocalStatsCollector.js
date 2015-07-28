@@ -6,20 +6,20 @@
 var RTCBrowserType = require('../RTC/RTCBrowserType');
 
 /**
- * Size of the webaudio analizer buffer.
+ * Size of the webaudio analyzer buffer.
  * @type {number}
  */
-var WEBAUDIO_ANALIZER_FFT_SIZE = 2048;
+var WEBAUDIO_ANALYZER_FFT_SIZE = 2048;
 
 /**
- * Value of the webaudio analizer smoothing time parameter.
+ * Value of the webaudio analyzer smoothing time parameter.
  * @type {number}
  */
-var WEBAUDIO_ANALIZER_SMOOTING_TIME = 0.8;
+var WEBAUDIO_ANALYZER_SMOOTING_TIME = 0.8;
 
 /**
  * Converts time domain data array to audio level.
- * @param array the time domain data array.
+ * @param samples the time domain data array.
  * @returns {number} the audio level
  */
 function timeDomainDataToAudioLevel(samples) {
@@ -64,8 +64,6 @@ function animateLevel(newLevel, lastLevel) {
  *
  * @param stream the local stream
  * @param interval stats refresh interval given in ms.
- * @param {function(LocalStatsCollector)} updateCallback the callback called on stats
- *                                   update.
  * @constructor
  */
 function LocalStatsCollector(stream, interval, statisticsService, eventEmitter) {
@@ -88,8 +86,8 @@ LocalStatsCollector.prototype.start = function () {
 
     var context = new AudioContext();
     var analyser = context.createAnalyser();
-    analyser.smoothingTimeConstant = WEBAUDIO_ANALIZER_SMOOTING_TIME;
-    analyser.fftSize = WEBAUDIO_ANALIZER_FFT_SIZE;
+    analyser.smoothingTimeConstant = WEBAUDIO_ANALYZER_SMOOTING_TIME;
+    analyser.fftSize = WEBAUDIO_ANALYZER_FFT_SIZE;
 
 
     var source = context.createMediaStreamSource(this.stream);
@@ -103,7 +101,7 @@ LocalStatsCollector.prototype.start = function () {
             var array = new Uint8Array(analyser.frequencyBinCount);
             analyser.getByteTimeDomainData(array);
             var audioLevel = timeDomainDataToAudioLevel(array);
-            if(audioLevel != self.audioLevel) {
+            if (audioLevel != self.audioLevel) {
                 self.audioLevel = animateLevel(audioLevel, self.audioLevel);
                 self.eventEmitter.emit(
                     "statistics.audioLevel",
