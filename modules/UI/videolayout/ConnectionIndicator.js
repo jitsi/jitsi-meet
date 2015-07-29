@@ -291,7 +291,7 @@ ConnectionIndicator.prototype.create = function () {
     this.popover = new JitsiPopover(
         $("#" + this.videoContainer.videoSpanId + " > .connectionindicator"),
         {content: "<div class=\"connection_info\" data-i18n='connectionindicator.na'>" +
-            translate("connectionindicator.na") + "</div>",
+        APP.translation.translateString("connectionindicator.na") + "</div>",
             skin: "black"});
 
     this.emptyIcon = this.connectionIndicatorContainer.appendChild(

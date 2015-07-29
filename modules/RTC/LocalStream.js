@@ -18,7 +18,7 @@ function LocalStream(stream, type, eventEmitter, videoType, isGUMStream) {
 }
 
 LocalStream.prototype.getTracks = function () {
-    return this.isAudioStream ?
+    return this.isAudioStream() ?
         this.stream.getAudioTracks() : this.stream.getVideoTracks();
 };
 
@@ -38,9 +38,9 @@ LocalStream.prototype.isAudioStream = function () {
  * Gets the correct "mute" RTC Event depending on the stream type.
  * @returns {string}
  */
-function getMuteEvent() {
+LocalStream.prototype.getMuteEvent = function () {
     return this.isAudioStream() ? RTCEvents.AUDIO_MUTE : RTCEvents.VIDEO_MUTE;
-}
+};
 
 // Mutes (if 'mute' is true) or unmutes (if 'mute' is false) the stream.
 LocalStream.prototype.setMute = function(mute) {
@@ -52,12 +52,12 @@ LocalStream.prototype.setMute = function(mute) {
         for (var idx = 0; idx < tracks.length; idx++) {
             tracks[idx].enabled = !mute;
         }
-        this.eventEmitter.emit(getMuteEvent(), mute);
+        this.eventEmitter.emit(this.getMuteEvent(), mute);
     } else {
         if (mute === true) {
             APP.xmpp.removeStream(this.stream);
             this.stream.stop();
-            this.eventEmitter.emit(getMuteEvent(), true);
+            this.eventEmitter.emit(this.getMuteEvent(), true);
         } else {
             var self = this;
             APP.RTC.rtcUtils.obtainAudioAndVideoPermissions(
@@ -66,12 +66,12 @@ LocalStream.prototype.setMute = function(mute) {
                     if(self.isAudioStream()) {
                         APP.RTC.changeLocalAudio(stream,
                             function () {
-                                self.eventEmitter.emit(getMuteEvent(), true);
+                                self.eventEmitter.emit(self.getMuteEvent(), true);
                             });
                     } else {
                         APP.RTC.changeLocalVideo(stream, false,
                             function () {
-                                self.eventEmitter.emit(getMuteEvent, true);
+                                self.eventEmitter.emit(self.getMuteEvent, true);
                             });
                     }
                 });
