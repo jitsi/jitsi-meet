@@ -821,8 +821,9 @@ var VideoLayout = (function (my) {
 
         var remoteVideo = remoteVideos[resourceJid];
         if (remoteVideo) {
-            remoteVideo.removeConnectionIndicator();
             // Remove remote video
+            console.info("Removing remote video: " + resourceJid);
+            remoteVideo.remove();
             delete remoteVideos[resourceJid];
         } else {
             console.warn("No remote video for " + resourceJid);

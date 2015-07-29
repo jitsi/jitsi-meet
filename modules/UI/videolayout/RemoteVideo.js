@@ -147,22 +147,19 @@ RemoteVideo.prototype.removeRemoteStreamElement = function (stream, isVideo, id)
     select.removed = true;
     select.remove();
 
-    var audioCount = $('#' + this.videoSpanId + '>audio').length;
-    var videoCount = $('#' + this.videoSpanId + '>' + APP.RTC.getVideoElementName()).length;
-
-    if (!audioCount && !videoCount) {
-        console.log("Remove whole user", this.videoSpanId);
-        if(this.connectionIndicator)
-            this.connectionIndicator.remove();
-        // Remove whole container
-        if (this.container.parentNode)
-            this.container.parentNode.removeChild(this.container);
-
-        this.VideoLayout.resizeThumbnails();
-    }
-
     if (isVideo)
         this.VideoLayout.updateRemovedVideo(this.getResourceJid());
+};
+
+/**
+ * Removes RemoteVideo from the page.
+ */
+RemoteVideo.prototype.remove = function () {
+    console.log("Remove thumbnail", this.peerJid);
+    this.removeConnectionIndicator();
+    // Remove whole container
+    if (this.container.parentNode)
+        this.container.parentNode.removeChild(this.container);
 };
 
 RemoteVideo.prototype.waitForPlayback = function (sel, stream) {
@@ -300,14 +297,14 @@ RemoteVideo.prototype.showPeerContainer = function (state) {
 };
 
 RemoteVideo.prototype.removeConnectionIndicator = function () {
-    if(this.connectionIndicator)
+    if (this.connectionIndicator)
         this.connectionIndicator.remove();
-}
+};
 
 RemoteVideo.prototype.hideConnectionIndicator = function () {
-    if(this.connectionIndicator)
+    if (this.connectionIndicator)
         this.connectionIndicator.hide();
-}
+};
 
 /**
  * Updates the remote video menu.
