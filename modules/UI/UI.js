@@ -339,6 +339,10 @@ function registerListeners() {
     UI.addListener(UIEvents.NICKNAME_CHANGED, function (nickname) {
         APP.xmpp.addToPresence("displayName", nickname);
     });
+
+    UI.addListener(UIEvents.LARGEVIDEO_INIT, function () {
+        AudioLevels.init();
+    });
 }
 
 
@@ -386,29 +390,6 @@ UI.start = function (init) {
         return;
     }
 
-    if (interfaceConfig.SHOW_JITSI_WATERMARK) {
-        var leftWatermarkDiv
-            = $("#largeVideoContainer div[class='watermark leftwatermark']");
-
-        leftWatermarkDiv.css({display: 'block'});
-        leftWatermarkDiv.parent().get(0).href
-            = interfaceConfig.JITSI_WATERMARK_LINK;
-    }
-
-    if (interfaceConfig.SHOW_BRAND_WATERMARK) {
-        var rightWatermarkDiv
-            = $("#largeVideoContainer div[class='watermark rightwatermark']");
-
-        rightWatermarkDiv.css({display: 'block'});
-        rightWatermarkDiv.parent().get(0).href
-            = interfaceConfig.BRAND_WATERMARK_LINK;
-        rightWatermarkDiv.get(0).style.backgroundImage
-            = "url(images/rightwatermark.png)";
-    }
-
-    if (interfaceConfig.SHOW_POWERED_BY) {
-        $("#largeVideoContainer>a[class='poweredby']").css({display: 'block'});
-    }
 
     $("#welcome_page").hide();
 
@@ -418,10 +399,12 @@ UI.start = function (init) {
     // Set the defaults for prompt dialogs.
     jQuery.prompt.setDefaults({persistent: false});
 
-    VideoLayout.init(eventEmitter);
-    AudioLevels.init();
-    NicknameHandler.init(eventEmitter);
+
     registerListeners();
+
+    VideoLayout.init(eventEmitter);
+    NicknameHandler.init(eventEmitter);
+
     bindEvents();
     setupPrezi();
     setupToolbars();
@@ -450,10 +433,6 @@ UI.start = function (init) {
     if (config.noticeMessage) {
         $('#noticeText').text(config.noticeMessage);
         $('#notice').css({display: 'block'});
-    }
-
-    if (!RTCBrowserType.isIExplorer()) {
-        document.getElementById('largeVideo').volume = 0;
     }
 
     if(config.requireDisplayName) {

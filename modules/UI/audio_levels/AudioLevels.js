@@ -1,6 +1,6 @@
 var CanvasUtil = require("./CanvasUtils");
 
-var ASDrawContext = $('#activeSpeakerAudioLevel')[0].getContext('2d');
+var ASDrawContext = null;
 
 function initActiveSpeakerAudioLevels() {
     var ASRadius = interfaceConfig.ACTIVE_SPEAKER_AVATAR_SIZE / 2;
@@ -24,6 +24,7 @@ var AudioLevels = (function(my) {
     my.LOCAL_LEVEL = 'local';
 
     my.init = function () {
+        ASDrawContext = $('#activeSpeakerAudioLevel')[0].getContext('2d');
         initActiveSpeakerAudioLevels();
     }
 
@@ -120,7 +121,7 @@ var AudioLevels = (function(my) {
     };
 
     my.updateActiveSpeakerAudioLevel = function(audioLevel) {
-        if($("#activeSpeaker").css("visibility") == "hidden")
+        if($("#activeSpeaker").css("visibility") == "hidden" || ASDrawContext === null)
             return;
 
 

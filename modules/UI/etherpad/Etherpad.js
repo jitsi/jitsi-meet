@@ -38,31 +38,22 @@ function enableEtherpadButton() {
  * Creates the IFrame for the etherpad.
  */
 function createIFrame() {
-    etherpadIFrame = document.createElement('iframe');
-    etherpadIFrame.src = domain + etherpadName + options;
-    etherpadIFrame.frameBorder = 0;
-    etherpadIFrame.scrolling = "no";
-    etherpadIFrame.width = $('#largeVideoContainer').width() || 640;
-    etherpadIFrame.height = $('#largeVideoContainer').height() || 480;
-    etherpadIFrame.setAttribute('style', 'visibility: hidden;');
+    etherpadIFrame = VideoLayout.createEtherpadIframe(
+            domain + etherpadName + options, function() {
 
-    document.getElementById('etherpad').appendChild(etherpadIFrame);
-
-    etherpadIFrame.onload = function() {
-
-        document.domain = document.domain;
-        bubbleIframeMouseMove(etherpadIFrame);
-        setTimeout(function() {
-            // the iframes inside of the etherpad are
-            // not yet loaded when the etherpad iframe is loaded
-            var outer = etherpadIFrame.
-                contentDocument.getElementsByName("ace_outer")[0];
-            bubbleIframeMouseMove(outer);
-            var inner = outer.
-                contentDocument.getElementsByName("ace_inner")[0];
-            bubbleIframeMouseMove(inner);
-        }, 2000);
-    };
+                document.domain = document.domain;
+                bubbleIframeMouseMove(etherpadIFrame);
+                setTimeout(function() {
+                    // the iframes inside of the etherpad are
+                    // not yet loaded when the etherpad iframe is loaded
+                    var outer = etherpadIFrame.
+                        contentDocument.getElementsByName("ace_outer")[0];
+                    bubbleIframeMouseMove(outer);
+                    var inner = outer.
+                        contentDocument.getElementsByName("ace_inner")[0];
+                    bubbleIframeMouseMove(inner);
+                }, 2000);
+            });
 }
 
 function bubbleIframeMouseMove(iframe){
@@ -91,15 +82,6 @@ function bubbleIframeMouseMove(iframe){
         iframe.dispatchEvent(evt);
     };
 }
-
-
-/**
- * On video selected event.
- */
-$(document).bind('video.selected', function (event, isPresentation) {
-    if (config.etherpad_base && etherpadIFrame && etherpadIFrame.style.visibility !== 'hidden')
-        Etherpad.toggleEtherpad(isPresentation);
-});
 
 
 var Etherpad = {
@@ -132,49 +114,17 @@ var Etherpad = {
         if (!etherpadIFrame)
             createIFrame();
 
-        var largeVideo = null;
-        if (Prezi.isPresentationVisible())
-            largeVideo = $('#presentation>iframe');
-        else
-            largeVideo = $('#largeVideo');
 
-        if ($('#etherpad>iframe').css('visibility') === 'hidden') {
-            $('#activeSpeaker').css('visibility', 'hidden');
-            largeVideo.fadeOut(300, function () {
-                if (Prezi.isPresentationVisible()) {
-                    largeVideo.css({opacity: '0'});
-                } else {
-                    VideoLayout.setLargeVideoVisible(false);
-                }
-            });
-
-            $('#etherpad>iframe').fadeIn(300, function () {
-                document.body.style.background = '#eeeeee';
-                $('#etherpad>iframe').css({visibility: 'visible'});
-                $('#etherpad').css({zIndex: 2});
-            });
+        if(VideoLayout.getLargeVideoState() === "etherpad")
+        {
+            VideoLayout.setLargeVideoState("video");
         }
-        else if ($('#etherpad>iframe')) {
-            $('#etherpad>iframe').fadeOut(300, function () {
-                $('#etherpad>iframe').css({visibility: 'hidden'});
-                $('#etherpad').css({zIndex: 0});
-                document.body.style.background = 'black';
-            });
-
-            if (!isPresentation) {
-                $('#largeVideo').fadeIn(300, function () {
-                    VideoLayout.setLargeVideoVisible(true);
-                });
-            }
+        else
+        {
+            VideoLayout.setLargeVideoState("etherpad");
         }
         resize();
-    },
-
-    isVisible: function() {
-        var etherpadIframe = $('#etherpad>iframe');
-        return etherpadIframe && etherpadIframe.is(':visible');
     }
-
 };
 
 module.exports = Etherpad;

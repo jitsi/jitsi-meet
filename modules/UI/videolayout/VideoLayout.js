@@ -1,5 +1,4 @@
 var AudioLevels = require("../audio_levels/AudioLevels");
-var Avatar = require("../avatar/Avatar");
 var ContactList = require("../side_pannels/contactlist/ContactList");
 var MediaStreamType = require("../../../service/RTC/MediaStreamTypes");
 var UIEvents = require("../../../service/UI/UIEvents");
@@ -14,9 +13,6 @@ var LocalVideo = require("./LocalVideo");
 var remoteVideos = {};
 var localVideoThumbnail = null;
 
-
-
-
 var currentDominantSpeaker = null;
 var lastNCount = config.channelLastN;
 var localLastNCount = config.channelLastN;
@@ -25,6 +21,8 @@ var lastNEndpointsCache = [];
 var lastNPickupJid = null;
 
 var eventEmitter = null;
+
+var showLargeVideo = true;
 
 
 /**
@@ -37,8 +35,10 @@ var VideoLayout = (function (my) {
     my.init = function (emitter) {
         eventEmitter = emitter;
         localVideoThumbnail = new LocalVideo(VideoLayout);
-        VideoLayout.resizeLargeVideoContainer();
+
         LargeVideo.init(VideoLayout, emitter);
+        VideoLayout.resizeLargeVideoContainer();
+
     };
 
     my.isInLastN = function(resource) {
@@ -232,9 +232,7 @@ var VideoLayout = (function (my) {
             }
         }
 
-        // Triggers a "video.selected" event. The "false" parameter indicates
-        // this isn't a prezi.
-        $(document).trigger("video.selected", [false]);
+        LargeVideo.setState("video");
 
         LargeVideo.updateLargeVideo(resourceJid);
 
@@ -583,11 +581,11 @@ var VideoLayout = (function (my) {
             var currentJID = APP.xmpp.findJidFromResource(currentDominantSpeaker);
             var newJID = APP.xmpp.findJidFromResource(resourceJid);
             if(currentDominantSpeaker && (!members || !members[currentJID] ||
-                !members[currentJID].displayName)) {
+                !members[currentJID].displayName) && remoteVideos[resourceJid]) {
                 remoteVideos[resourceJid].setDisplayName(null);
             }
             if(resourceJid && (!members || !members[newJID] ||
-                !members[newJID].displayName)) {
+                !members[newJID].displayName) && remoteVideos[resourceJid]) {
                 remoteVideos[resourceJid].setDisplayName(null,
                     interfaceConfig.DEFAULT_DOMINANT_SPEAKER_DISPLAY_NAME);
             }
@@ -855,7 +853,9 @@ var VideoLayout = (function (my) {
     };
 
     my.addPreziContainer = function (id) {
-        return RemoteVideo.createContainer(id);
+        var container = RemoteVideo.createContainer(id);
+        VideoLayout.resizeThumbnails();
+        return container;
     };
 
     my.setLargeVideoVisible = function (isVisible) {
@@ -903,6 +903,23 @@ var VideoLayout = (function (my) {
             console.warn(
                 "Missed avatar update - no small video yet for " + resourceJid);
         LargeVideo.updateAvatar(resourceJid, thumbUrl);
+    };
+
+    my.createEtherpadIframe = function(src, onloadHandler)
+    {
+        return LargeVideo.createEtherpadIframe(src, onloadHandler);
+    };
+
+    my.setLargeVideoState = function (state) {
+        LargeVideo.setState(state);
+    };
+
+    my.getLargeVideoState = function () {
+        return LargeVideo.getState();
+    };
+
+    my.setLargeVideoHover = function (inHandler, outHandler) {
+        LargeVideo.setHover(inHandler, outHandler);
     };
 
     return my;

@@ -210,7 +210,7 @@ SmallVideo.prototype.enableDominantSpeaker = function (isEnable)
     }
 
     if (isEnable) {
-        this.showDisplayName(LargeVideo.isLargeVideoOnTop());
+        this.showDisplayName(LargeVideo.getState() === "video");
 
         if (!this.container.classList.contains("dominantspeaker"))
             this.container.classList.add("dominantspeaker");
