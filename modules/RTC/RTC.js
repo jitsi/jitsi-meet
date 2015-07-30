@@ -274,19 +274,19 @@ var RTC = {
 
         return isDesktop;
     },
-    setVideoMute: function(mute, callback, options) {
-        if(!this.localVideo)
+    setVideoMute: function (mute, callback, options) {
+        if (!this.localVideo)
             return;
 
         if (mute == APP.RTC.localVideo.isMuted())
         {
             APP.xmpp.sendVideoInfoPresence(mute);
-            if(callback)
+            if (callback)
                 callback(mute);
         }
         else
         {
-            APP.RTC.localVideo.setMute(!mute);
+            APP.RTC.localVideo.setMute(mute);
             APP.xmpp.setVideoMute(
                 mute,
                 callback,

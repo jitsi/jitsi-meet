@@ -44,29 +44,27 @@ LocalStream.prototype.isAudioStream = function () {
     return this.type === "audio";
 };
 
-LocalStream.prototype.setMute = function(mute)
+LocalStream.prototype.setMute = function (mute)
 {
+    var isAudio = this.isAudioStream();
+    var eventType = isAudio ? RTCEvents.AUDIO_MUTE : RTCEvents.VIDEO_MUTE;
 
-    if((window.location.protocol != "https:" && this.isGUMStream) ||
-        (this.isAudioStream() && this.isGUMStream) || this.videoType === "screen")
+    if ((window.location.protocol != "https:" && this.isGUMStream) ||
+        (isAudio && this.isGUMStream) || this.videoType === "screen")
     {
         var tracks = this.getTracks();
 
         for (var idx = 0; idx < tracks.length; idx++) {
-            tracks[idx].enabled = mute;
+            tracks[idx].enabled = !mute;
         }
-        this.eventEmitter.emit(
-            (this.type == "audio"? RTCEvents.AUDIO_MUTE : RTCEvents.VIDEO_MUTE),
-            !mute);
+        this.eventEmitter.emit(eventType, mute);
     }
     else
     {
-        if(mute === false) {
+        if (mute) {
             APP.xmpp.removeStream(this.stream);
             this.stream.stop();
-            this.eventEmitter.emit(
-                (this.type == "audio"? RTCEvents.AUDIO_MUTE : RTCEvents.VIDEO_MUTE),
-                true);
+            this.eventEmitter.emit(eventType, true);
         }
         else
         {
@@ -74,22 +72,18 @@ LocalStream.prototype.setMute = function(mute)
             APP.RTC.rtcUtils.obtainAudioAndVideoPermissions(
                 (this.isAudioStream() ? ["audio"] : ["video"]),
                 function (stream) {
-                    if(self.isAudioStream())
+                    if (isAudio)
                     {
                         APP.RTC.changeLocalAudio(stream,
                             function () {
-                                self.eventEmitter.emit(
-                                    (self.type == "audio"? RTCEvents.AUDIO_MUTE : RTCEvents.VIDEO_MUTE),
-                                    true);
+                                self.eventEmitter.emit(eventType, false);
                             });
                     }
                     else
                     {
                         APP.RTC.changeLocalVideo(stream, false,
                             function () {
-                                self.eventEmitter.emit(
-                                    (self.type == "audio"? RTCEvents.AUDIO_MUTE : RTCEvents.VIDEO_MUTE),
-                                    true);
+                                self.eventEmitter.emit(eventType, false);
                             });
                     }
                 });
