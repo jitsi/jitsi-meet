@@ -6,22 +6,6 @@ var RTCBrowserType = require("../RTC/RTCBrowserType");
 
 
 module.exports = function(XMPP, eventEmitter) {
-    function CallIncomingJingle(sid, connection) {
-        var sess = connection.jingle.sessions[sid];
-
-        // TODO: do we check activecall == null?
-        connection.jingle.activecall = sess;
-
-        eventEmitter.emit(XMPPEvents.CALL_INCOMING, sess);
-
-        // TODO: check affiliation and/or role
-        console.log('emuc data for', sess.peerjid, connection.emuc.members[sess.peerjid]);
-        sess.usedrip = true; // not-so-naive trickle ice
-        sess.sendAnswer();
-        sess.accept();
-
-    }
-
     Strophe.addConnectionPlugin('jingle', {
         connection: null,
         sessions: {},
@@ -136,7 +120,18 @@ module.exports = function(XMPP, eventEmitter) {
                     // the callback should either
                     // .sendAnswer and .accept
                     // or .sendTerminate -- not necessarily synchronus
-                    CallIncomingJingle(sess.sid, this.connection);
+
+                    // TODO: do we check activecall == null?
+                    this.connection.jingle.activecall = sess;
+
+                    eventEmitter.emit(XMPPEvents.CALL_INCOMING, sess);
+
+                    // TODO: check affiliation and/or role
+                    console.log('emuc data for', sess.peerjid,
+                        this.connection.emuc.members[sess.peerjid]);
+                    sess.usedrip = true; // not-so-naive trickle ice
+                    sess.sendAnswer();
+                    sess.accept();
                     break;
                 case 'session-accept':
                     sess.setRemoteDescription($(iq).find('>jingle'), 'answer');
