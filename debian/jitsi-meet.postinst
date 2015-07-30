@@ -47,9 +47,7 @@ case "$1" in
         db_set jitsi-meet/jvb-hostname $JVB_HOSTNAME
 
         NGINX_INSTALL_CHECK="$(dpkg-query -W -f '${PackageSpec}:${Status}\n' nginx 2>&1 | grep -v "ok installed" || :)"
-        if [ -n "${NGINX_INSTALL_CHECK}" ]; then
-            FORCE_NGINX="false"
-        else
+        if [ -z "${NGINX_INSTALL_CHECK}" ]; then
             FORCE_NGINX="true"
         fi
 
