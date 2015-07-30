@@ -141,11 +141,10 @@ RemoteVideo.prototype.removeRemoteStreamElement = function (stream, isVideo, id)
     else
         select = $('#' + this.videoSpanId + '>audio');
 
-
-    // Mark video as removed to cancel waiting loop(if video is removed
-    // before has started)
-    select.removed = true;
     select.remove();
+
+    console.info((isVideo ? "Video" : "Audio") +
+                 " removed " + this.getResourceJid(), select);
 
     if (isVideo)
         this.VideoLayout.updateRemovedVideo(this.getResourceJid());
