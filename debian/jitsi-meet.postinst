@@ -46,6 +46,13 @@ case "$1" in
         # stores the hostname so we will reuse it later, like in purge
         db_set jitsi-meet/jvb-hostname $JVB_HOSTNAME
 
+        NGINX_INSTALL_CHECK="$(dpkg-query -W -f '${PackageSpec}:${Status}\n' nginx 2>&1 | grep -v "ok installed" || :)"
+        if [ -n "${NGINX_INSTALL_CHECK}" ]; then
+            FORCE_NGINX="false"
+        else
+            FORCE_NGINX="true"
+        fi
+
         # SSL for nginx
         db_get jitsi-meet/cert-choice
         CERT_CHOICE="$RET"
