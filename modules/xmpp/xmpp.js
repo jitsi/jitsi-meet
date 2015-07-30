@@ -414,7 +414,7 @@ var XMPP = {
         // It is not clear what is the right way to handle multiple tracks.
         // So at least make sure that they are all muted or all unmuted and
         // that we send presence just once.
-        APP.RTC.localAudio.setMute(!mute);
+        APP.RTC.localAudio.setMute(mute);
         // isMuted is the opposite of audioEnabled
         this.sendAudioInfoPresence(mute, callback);
         return true;
