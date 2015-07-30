@@ -325,7 +325,9 @@ SmallVideo.prototype.showAvatar = function (show) {
         }
         else
         {
-            show = APP.RTC.isVideoMuted(this.peerJid);
+            // We want to show the avatar when the video is muted or not exists
+            // that is when 'true' or 'null' is returned
+            show = APP.RTC.isVideoMuted(this.peerJid) !== false;
         }
 
     }

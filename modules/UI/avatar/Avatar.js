@@ -52,8 +52,9 @@ var Avatar = {
         }
         var id = users[jid];
         if (!id) {
-            console.warn("No avatar stored yet for " + jid);
-            return null;
+            console.warn(
+                "No avatar stored yet for " + jid + " - using JID as ID");
+            id = jid;
         }
         return 'https://www.gravatar.com/avatar/' +
             MD5.hexdigest(id.trim().toLowerCase()) +

@@ -224,20 +224,9 @@ function updateActiveSpeakerAvatarSrc() {
     var url = Avatar.getActiveSpeakerUrl(jid);
     if (avatar.src === url)
         return;
-    var isMuted = null;
-    if (!currentSmallVideo.isLocal &&
-       !LargeVideo.VideoLayout.isInLastN(currentSmallVideo.getResourceJid())) {
-        isMuted = true;
-    }
-    else
-    {
-        isMuted = APP.RTC.isVideoMuted(jid);
-    }
-
-    if (jid && isMuted !== null) {
+    if (jid) {
         avatar.src = url;
-        $("#largeVideo").css("visibility", isMuted ? "hidden" : "visible");
-        currentSmallVideo.showAvatar(isMuted);
+        currentSmallVideo.showAvatar();
     }
 }
 

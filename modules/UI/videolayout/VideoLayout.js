@@ -864,9 +864,10 @@ var VideoLayout = (function (my) {
         if(!isVisible && focusedVideoResourceJid)
         {
             var smallVideo = VideoLayout.getSmallVideo(focusedVideoResourceJid);
-            if(smallVideo)
+            if(smallVideo) {
                 smallVideo.focus(false);
-            smallVideo.showAvatar();
+                smallVideo.showAvatar();
+            }
             focusedVideoResourceJid = null;
         }
     };
