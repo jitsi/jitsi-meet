@@ -72,14 +72,11 @@ var RTC = {
             this.localStreams[0].getOriginalStream() != stream)
             this.localStreams.push(localStream);
         if(isMuted === true)
-            localStream.setMute(false);
+            localStream.setMute(true);
 
-        if(type == "audio")
-        {
+        if(type == "audio") {
             this.localAudio = localStream;
-        }
-        else
-        {
+        } else {
             this.localVideo = localStream;
         }
         var eventType = StreamEventTypes.EVENT_TYPE_LOCAL_CREATED;
