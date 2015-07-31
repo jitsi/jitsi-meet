@@ -844,6 +844,10 @@ JingleSession.prototype.addSource = function (elem, fromJid) {
                 console.warn("Got add stream request for my own ssrc: "+ssrc);
                 return;
             }
+            if (sdp.containsSSRC(ssrc)) {
+                console.warn("Source-add request for existing SSRC: " + ssrc);
+                return;
+            }
             $(this).find('>parameter').each(function () {
                 lines += 'a=ssrc:' + ssrc + ' ' + $(this).attr('name');
                 if ($(this).attr('value') && $(this).attr('value').length)
