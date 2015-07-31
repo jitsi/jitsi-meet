@@ -1,367 +1,4 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.APP = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-// Copyright Joyent, Inc. and other Node contributors.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the
-// following conditions:
-//
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-// USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-function EventEmitter() {
-  this._events = this._events || {};
-  this._maxListeners = this._maxListeners || undefined;
-}
-module.exports = EventEmitter;
-
-// Backwards-compat with node 0.10.x
-EventEmitter.EventEmitter = EventEmitter;
-
-EventEmitter.prototype._events = undefined;
-EventEmitter.prototype._maxListeners = undefined;
-
-// By default EventEmitters will print a warning if more than 10 listeners are
-// added to it. This is a useful default which helps finding memory leaks.
-EventEmitter.defaultMaxListeners = 10;
-
-// Obviously not all Emitters should be limited to 10. This function allows
-// that to be increased. Set to zero for unlimited.
-EventEmitter.prototype.setMaxListeners = function(n) {
-  if (!isNumber(n) || n < 0 || isNaN(n))
-    throw TypeError('n must be a positive number');
-  this._maxListeners = n;
-  return this;
-};
-
-EventEmitter.prototype.emit = function(type) {
-  var er, handler, len, args, i, listeners;
-
-  if (!this._events)
-    this._events = {};
-
-  // If there is no 'error' event listener then throw.
-  if (type === 'error') {
-    if (!this._events.error ||
-        (isObject(this._events.error) && !this._events.error.length)) {
-      er = arguments[1];
-      if (er instanceof Error) {
-        throw er; // Unhandled 'error' event
-      }
-      throw TypeError('Uncaught, unspecified "error" event.');
-    }
-  }
-
-  handler = this._events[type];
-
-  if (isUndefined(handler))
-    return false;
-
-  if (isFunction(handler)) {
-    switch (arguments.length) {
-      // fast cases
-      case 1:
-        handler.call(this);
-        break;
-      case 2:
-        handler.call(this, arguments[1]);
-        break;
-      case 3:
-        handler.call(this, arguments[1], arguments[2]);
-        break;
-      // slower
-      default:
-        len = arguments.length;
-        args = new Array(len - 1);
-        for (i = 1; i < len; i++)
-          args[i - 1] = arguments[i];
-        handler.apply(this, args);
-    }
-  } else if (isObject(handler)) {
-    len = arguments.length;
-    args = new Array(len - 1);
-    for (i = 1; i < len; i++)
-      args[i - 1] = arguments[i];
-
-    listeners = handler.slice();
-    len = listeners.length;
-    for (i = 0; i < len; i++)
-      listeners[i].apply(this, args);
-  }
-
-  return true;
-};
-
-EventEmitter.prototype.addListener = function(type, listener) {
-  var m;
-
-  if (!isFunction(listener))
-    throw TypeError('listener must be a function');
-
-  if (!this._events)
-    this._events = {};
-
-  // To avoid recursion in the case that type === "newListener"! Before
-  // adding it to the listeners, first emit "newListener".
-  if (this._events.newListener)
-    this.emit('newListener', type,
-              isFunction(listener.listener) ?
-              listener.listener : listener);
-
-  if (!this._events[type])
-    // Optimize the case of one listener. Don't need the extra array object.
-    this._events[type] = listener;
-  else if (isObject(this._events[type]))
-    // If we've already got an array, just append.
-    this._events[type].push(listener);
-  else
-    // Adding the second element, need to change to array.
-    this._events[type] = [this._events[type], listener];
-
-  // Check for listener leak
-  if (isObject(this._events[type]) && !this._events[type].warned) {
-    var m;
-    if (!isUndefined(this._maxListeners)) {
-      m = this._maxListeners;
-    } else {
-      m = EventEmitter.defaultMaxListeners;
-    }
-
-    if (m && m > 0 && this._events[type].length > m) {
-      this._events[type].warned = true;
-      console.error('(node) warning: possible EventEmitter memory ' +
-                    'leak detected. %d listeners added. ' +
-                    'Use emitter.setMaxListeners() to increase limit.',
-                    this._events[type].length);
-      if (typeof console.trace === 'function') {
-        // not supported in IE 10
-        console.trace();
-      }
-    }
-  }
-
-  return this;
-};
-
-EventEmitter.prototype.on = EventEmitter.prototype.addListener;
-
-EventEmitter.prototype.once = function(type, listener) {
-  if (!isFunction(listener))
-    throw TypeError('listener must be a function');
-
-  var fired = false;
-
-  function g() {
-    this.removeListener(type, g);
-
-    if (!fired) {
-      fired = true;
-      listener.apply(this, arguments);
-    }
-  }
-
-  g.listener = listener;
-  this.on(type, g);
-
-  return this;
-};
-
-// emits a 'removeListener' event iff the listener was removed
-EventEmitter.prototype.removeListener = function(type, listener) {
-  var list, position, length, i;
-
-  if (!isFunction(listener))
-    throw TypeError('listener must be a function');
-
-  if (!this._events || !this._events[type])
-    return this;
-
-  list = this._events[type];
-  length = list.length;
-  position = -1;
-
-  if (list === listener ||
-      (isFunction(list.listener) && list.listener === listener)) {
-    delete this._events[type];
-    if (this._events.removeListener)
-      this.emit('removeListener', type, listener);
-
-  } else if (isObject(list)) {
-    for (i = length; i-- > 0;) {
-      if (list[i] === listener ||
-          (list[i].listener && list[i].listener === listener)) {
-        position = i;
-        break;
-      }
-    }
-
-    if (position < 0)
-      return this;
-
-    if (list.length === 1) {
-      list.length = 0;
-      delete this._events[type];
-    } else {
-      list.splice(position, 1);
-    }
-
-    if (this._events.removeListener)
-      this.emit('removeListener', type, listener);
-  }
-
-  return this;
-};
-
-EventEmitter.prototype.removeAllListeners = function(type) {
-  var key, listeners;
-
-  if (!this._events)
-    return this;
-
-  // not listening for removeListener, no need to emit
-  if (!this._events.removeListener) {
-    if (arguments.length === 0)
-      this._events = {};
-    else if (this._events[type])
-      delete this._events[type];
-    return this;
-  }
-
-  // emit removeListener for all listeners on all events
-  if (arguments.length === 0) {
-    for (key in this._events) {
-      if (key === 'removeListener') continue;
-      this.removeAllListeners(key);
-    }
-    this.removeAllListeners('removeListener');
-    this._events = {};
-    return this;
-  }
-
-  listeners = this._events[type];
-
-  if (isFunction(listeners)) {
-    this.removeListener(type, listeners);
-  } else {
-    // LIFO order
-    while (listeners.length)
-      this.removeListener(type, listeners[listeners.length - 1]);
-  }
-  delete this._events[type];
-
-  return this;
-};
-
-EventEmitter.prototype.listeners = function(type) {
-  var ret;
-  if (!this._events || !this._events[type])
-    ret = [];
-  else if (isFunction(this._events[type]))
-    ret = [this._events[type]];
-  else
-    ret = this._events[type].slice();
-  return ret;
-};
-
-EventEmitter.listenerCount = function(emitter, type) {
-  var ret;
-  if (!emitter._events || !emitter._events[type])
-    ret = 0;
-  else if (isFunction(emitter._events[type]))
-    ret = 1;
-  else
-    ret = emitter._events[type].length;
-  return ret;
-};
-
-function isFunction(arg) {
-  return typeof arg === 'function';
-}
-
-function isNumber(arg) {
-  return typeof arg === 'number';
-}
-
-function isObject(arg) {
-  return typeof arg === 'object' && arg !== null;
-}
-
-function isUndefined(arg) {
-  return arg === void 0;
-}
-
-},{}],2:[function(require,module,exports){
-// shim for using process in browser
-
-var process = module.exports = {};
-var queue = [];
-var draining = false;
-
-function drainQueue() {
-    if (draining) {
-        return;
-    }
-    draining = true;
-    var currentQueue;
-    var len = queue.length;
-    while(len) {
-        currentQueue = queue;
-        queue = [];
-        var i = -1;
-        while (++i < len) {
-            currentQueue[i]();
-        }
-        len = queue.length;
-    }
-    draining = false;
-}
-process.nextTick = function (fun) {
-    queue.push(fun);
-    if (!draining) {
-        setTimeout(drainQueue, 0);
-    }
-};
-
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-process.version = ''; // empty string to avoid regexp issues
-process.versions = {};
-
-function noop() {}
-
-process.on = noop;
-process.addListener = noop;
-process.once = noop;
-process.off = noop;
-process.removeListener = noop;
-process.removeAllListeners = noop;
-process.emit = noop;
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-};
-
-// TODO(shtylman)
-process.cwd = function () { return '/' };
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-};
-process.umask = function() { return 0; };
-
-},{}],3:[function(require,module,exports){
 /* jshint -W117 */
 /* application specific logic */
 
@@ -397,8 +34,8 @@ function init() {
 
 $(document).ready(function () {
 
-    var URLPRocessor = require("./modules/URLProcessor/URLProcessor");
-    URLPRocessor.setConfigParametersFromUrl();
+    var URLProcessor = require("./modules/URLProcessor/URLProcessor");
+    URLProcessor.setConfigParametersFromUrl();
     APP.init();
 
     APP.translation.init();
@@ -418,7 +55,8 @@ $(window).bind('beforeunload', function () {
 module.exports = APP;
 
 
-},{"./modules/API/API":4,"./modules/DTMF/DTMF":5,"./modules/RTC/RTC":9,"./modules/UI/UI":13,"./modules/URLProcessor/URLProcessor":44,"./modules/connectionquality/connectionquality":45,"./modules/desktopsharing/desktopsharing":46,"./modules/keyboardshortcut/keyboardshortcut":47,"./modules/members/MemberList":48,"./modules/settings/Settings":49,"./modules/statistics/statistics":53,"./modules/translation/translation":54,"./modules/xmpp/xmpp":68}],4:[function(require,module,exports){
+},{"./modules/API/API":2,"./modules/DTMF/DTMF":3,"./modules/RTC/RTC":7,"./modules/UI/UI":11,"./modules/URLProcessor/URLProcessor":42,"./modules/connectionquality/connectionquality":43,"./modules/desktopsharing/desktopsharing":44,"./modules/keyboardshortcut/keyboardshortcut":45,"./modules/members/MemberList":46,"./modules/settings/Settings":47,"./modules/statistics/statistics":51,"./modules/translation/translation":52,"./modules/xmpp/xmpp":66}],2:[function(require,module,exports){
+/* global APP */
 /**
  * Implements API class that communicates with external api class
  * and provides interface to access Jitsi Meet features by external
@@ -433,14 +71,15 @@ var XMPPEvents = require("../../service/xmpp/XMPPEvents");
  *              displayName: inputDisplayNameHandler,
  *              muteAudio: toggleAudio,
  *              muteVideo: toggleVideo,
- *              filmStrip: toggleFilmStrip
+ *              toggleFilmStrip: toggleFilmStrip,
+ *              toggleChat: toggleChat,
+ *              toggleContactList: toggleContactList
  *          }}
  */
 var commands = {};
 
 function initCommands() {
-    commands =
-    {
+    commands = {
         displayName: APP.UI.inputDisplayNameHandler,
         muteAudio: APP.UI.toggleAudio,
         muteVideo: APP.UI.toggleVideo,
@@ -462,8 +101,7 @@ function initCommands() {
  *              participantLeft: boolean
  *      }}
  */
-var events =
-{
+var events = {
     incomingMessage: false,
     outgoingMessage:false,
     displayNameChange: false,
@@ -474,18 +112,15 @@ var events =
 var displayName = {};
 
 /**
- * Processes commands from external applicaiton.
+ * Processes commands from external application.
  * @param message the object with the command
  */
-function processCommand(message)
-{
-    if(message.action != "execute")
-    {
+function processCommand(message) {
+    if (message.action != "execute") {
         console.error("Unknown action of the message");
         return;
     }
-    for(var key in message)
-    {
+    for (var key in message) {
         if(commands[key])
             commands[key].apply(null, message[key]);
     }
@@ -496,31 +131,26 @@ function processCommand(message)
  * @param event the event
  */
 function processEvent(event) {
-    if(!event.action)
-    {
+    if (!event.action) {
         console.error("Event with no action is received.");
         return;
     }
 
     var i = 0;
-    switch(event.action)
-    {
+    switch(event.action) {
         case "add":
-            for(; i < event.events.length; i++)
-            {
+            for (; i < event.events.length; i++) {
                 events[event.events[i]] = true;
             }
             break;
         case "remove":
-            for(; i < event.events.length; i++)
-            {
+            for (; i < event.events.length; i++) {
                 events[event.events[i]] = false;
             }
             break;
         default:
             console.error("Unknown action for event.");
     }
-
 }
 
 /**
@@ -535,8 +165,7 @@ function sendMessage(object) {
  * Processes a message event from the external application
  * @param event the message event
  */
-function processMessage(event)
-{
+function processMessage(event) {
     var message;
     try {
         message = JSON.parse(event.data);
@@ -544,8 +173,7 @@ function processMessage(event)
 
     if(!message.type)
         return;
-    switch (message.type)
-    {
+    switch (message.type) {
         case "command":
             processCommand(message);
             break;
@@ -556,7 +184,6 @@ function processMessage(event)
             console.error("Unknown type of the message");
             return;
     }
-
 }
 
 function setupListeners() {
@@ -572,7 +199,7 @@ function setupListeners() {
         API.triggerEvent("participantLeft", {jid: jid});
     });
     APP.xmpp.addListener(XMPPEvents.DISPLAY_NAME_CHANGED, function (jid, newDisplayName) {
-        name = displayName[jid];
+        var name = displayName[jid];
         if(!name || name != newDisplayName) {
             API.triggerEvent("displayNameChange", {jid: jid, displayname: newDisplayName});
             displayName[jid] = newDisplayName;
@@ -590,7 +217,7 @@ var API = {
      */
     isEnabled: function () {
         var hash = location.hash;
-        if(hash && hash.indexOf("external") > -1 && window.postMessage)
+        if (hash && hash.indexOf("external") > -1 && window.postMessage)
             return true;
         return false;
     },
@@ -602,13 +229,11 @@ var API = {
      */
     init: function () {
         initCommands();
-        if (window.addEventListener)
-        {
+        if (window.addEventListener) {
             window.addEventListener('message',
                 processMessage, false);
         }
-        else
-        {
+        else {
             window.attachEvent('onmessage', processMessage);
         }
         sendMessage({type: "system", loaded: true});
@@ -639,23 +264,18 @@ var API = {
      * Removes the listeners.
      */
     dispose: function () {
-        if(window.removeEventListener)
-        {
+        if(window.removeEventListener) {
             window.removeEventListener("message",
                 processMessage, false);
         }
-        else
-        {
+        else {
             window.detachEvent('onmessage', processMessage);
         }
-
     }
-
-
 };
 
 module.exports = API;
-},{"../../service/xmpp/XMPPEvents":110}],5:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":108}],3:[function(require,module,exports){
 /* global APP */
 
 /**
@@ -704,8 +324,8 @@ var DTMF = {
 module.exports = DTMF;
 
 
-},{}],6:[function(require,module,exports){
-/* global Strophe, focusedVideoSrc*/
+},{}],4:[function(require,module,exports){
+/* global config, APP, Strophe */
 
 // cache datachannels to avoid garbage collection
 // https://code.google.com/p/chromium/issues/detail?id=405545
@@ -715,19 +335,13 @@ var _dataChannels = [];
 var eventEmitter = null;
 
 
-
-
-var DataChannels =
-{
-
+var DataChannels = {
     /**
      * Callback triggered by PeerConnection when new data channel is opened
      * on the bridge.
      * @param event the event info object.
      */
-
-    onDataChannel: function (event)
-    {
+    onDataChannel: function (event) {
         var dataChannel = event.channel;
 
         dataChannel.onopen = function () {
@@ -772,8 +386,7 @@ var DataChannels =
                         dominantSpeakerEndpoint);
                     eventEmitter.emit(RTCEvents.DOMINANTSPEAKER_CHANGED, dominantSpeakerEndpoint);
                 }
-                else if ("InLastNChangeEvent" === colibriClass)
-                {
+                else if ("InLastNChangeEvent" === colibriClass) {
                     var oldValue = obj.oldValue;
                     var newValue = obj.newValue;
                     // Make sure that oldValue and newValue are of type boolean.
@@ -796,15 +409,13 @@ var DataChannels =
 
                     eventEmitter.emit(RTCEvents.LASTN_CHANGED, oldValue, newValue);
                 }
-                else if ("LastNEndpointsChangeEvent" === colibriClass)
-                {
+                else if ("LastNEndpointsChangeEvent" === colibriClass) {
                     // The new/latest list of last-n endpoint IDs.
                     var lastNEndpoints = obj.lastNEndpoints;
                     // The list of endpoint IDs which are entering the list of
                     // last-n at this time i.e. were not in the old list of last-n
                     // endpoint IDs.
                     var endpointsEnteringLastN = obj.endpointsEnteringLastN;
-                    var stream = obj.stream;
 
                     console.log(
                         "Data channel new last-n event: ",
@@ -812,15 +423,13 @@ var DataChannels =
                     eventEmitter.emit(RTCEvents.LASTN_ENDPOINT_CHANGED,
                         lastNEndpoints, endpointsEnteringLastN, obj);
                 }
-                else
-                {
+                else {
                     console.debug("Data channel JSON-formatted message: ", obj);
                 }
             }
         };
 
-        dataChannel.onclose = function ()
-        {
+        dataChannel.onclose = function () {
             console.info("The Data Channel closed", dataChannel);
             var idx = _dataChannels.indexOf(dataChannel);
             if (idx > -1)
@@ -865,19 +474,15 @@ var DataChannels =
     },
     handleSelectedEndpointEvent: onSelectedEndpointChanged,
     handlePinnedEndpointEvent: onPinnedEndpointChanged
-
 };
 
-function onSelectedEndpointChanged(userResource)
-{
+function onSelectedEndpointChanged(userResource) {
     console.log('selected endpoint changed: ', userResource);
-    if (_dataChannels && _dataChannels.length != 0)
-    {
+    if (_dataChannels && _dataChannels.length != 0) {
         _dataChannels.some(function (dataChannel) {
-            if (dataChannel.readyState == 'open')
-            {
-                console.log('sending selected endpoint changed ' 
-                    + 'notification to the bridge: ', userResource);
+            if (dataChannel.readyState == 'open') {
+                console.log('sending selected endpoint changed ' +
+                    'notification to the bridge: ', userResource);
                 dataChannel.send(JSON.stringify({
                     'colibriClass': 'SelectedEndpointChangedEvent',
                     'selectedEndpoint':
@@ -891,14 +496,11 @@ function onSelectedEndpointChanged(userResource)
     }
 }
 
-function onPinnedEndpointChanged(userResource)
-{
+function onPinnedEndpointChanged(userResource) {
     console.log('pinned endpoint changed: ', userResource);
-    if (_dataChannels && _dataChannels.length != 0)
-    {
+    if (_dataChannels && _dataChannels.length != 0) {
         _dataChannels.some(function (dataChannel) {
-            if (dataChannel.readyState == 'open')
-            {
+            if (dataChannel.readyState == 'open') {
                 dataChannel.send(JSON.stringify({
                     'colibriClass': 'PinnedEndpointChangedEvent',
                     'pinnedEndpoint':
@@ -915,13 +517,12 @@ function onPinnedEndpointChanged(userResource)
 module.exports = DataChannels;
 
 
-},{"../../service/RTC/RTCEvents":101}],7:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":99}],5:[function(require,module,exports){
+/* global APP */
 var StreamEventTypes = require("../../service/RTC/StreamEventTypes.js");
 var RTCEvents = require("../../service/RTC/RTCEvents");
 
-
-function LocalStream(stream, type, eventEmitter, videoType, isGUMStream)
-{
+function LocalStream(stream, type, eventEmitter, videoType, isGUMStream) {
     this.stream = stream;
     this.eventEmitter = eventEmitter;
     this.type = type;
@@ -930,33 +531,29 @@ function LocalStream(stream, type, eventEmitter, videoType, isGUMStream)
     if(isGUMStream === false)
         this.isGUMStream = isGUMStream;
     var self = this;
-    if(type == "audio")
-    {
+    if(type == "audio") {
         this.getTracks = function () {
             return self.stream.getAudioTracks();
         };
-    }
-    else
-    {
+    } else {
         this.getTracks = function () {
             return self.stream.getVideoTracks();
         };
     }
 
-    this.stream.onended = function()
-    {
+    this.stream.onended = function() {
         self.streamEnded();
     };
 }
 
 LocalStream.prototype.streamEnded = function () {
     this.eventEmitter.emit(StreamEventTypes.EVENT_TYPE_LOCAL_ENDED, this);
-}
+};
 
 LocalStream.prototype.getOriginalStream = function()
 {
     return this.stream;
-}
+};
 
 LocalStream.prototype.isAudioStream = function () {
     return this.type === "audio";
@@ -968,37 +565,29 @@ LocalStream.prototype.setMute = function (mute)
     var eventType = isAudio ? RTCEvents.AUDIO_MUTE : RTCEvents.VIDEO_MUTE;
 
     if ((window.location.protocol != "https:" && this.isGUMStream) ||
-        (isAudio && this.isGUMStream) || this.videoType === "screen")
-    {
+        (isAudio && this.isGUMStream) || this.videoType === "screen") {
         var tracks = this.getTracks();
 
         for (var idx = 0; idx < tracks.length; idx++) {
             tracks[idx].enabled = !mute;
         }
         this.eventEmitter.emit(eventType, mute);
-    }
-    else
-    {
+    } else {
         if (mute) {
             APP.xmpp.removeStream(this.stream);
             this.stream.stop();
             this.eventEmitter.emit(eventType, true);
-        }
-        else
-        {
+        } else {
             var self = this;
             APP.RTC.rtcUtils.obtainAudioAndVideoPermissions(
                 (this.isAudioStream() ? ["audio"] : ["video"]),
                 function (stream) {
-                    if (isAudio)
-                    {
+                    if (isAudio) {
                         APP.RTC.changeLocalAudio(stream,
                             function () {
                                 self.eventEmitter.emit(eventType, false);
                             });
-                    }
-                    else
-                    {
+                    } else {
                         APP.RTC.changeLocalVideo(stream, false,
                             function () {
                                 self.eventEmitter.emit(eventType, false);
@@ -1011,13 +600,10 @@ LocalStream.prototype.setMute = function (mute)
 
 LocalStream.prototype.isMuted = function () {
     var tracks = [];
-    if(this.type == "audio")
-    {
+    if (this.isAudioStream()) {
         tracks = this.stream.getAudioTracks();
-    }
-    else
-    {
-        if(this.stream.ended)
+    } else {
+        if (this.stream.ended)
             return true;
         tracks = this.stream.getVideoTracks();
     }
@@ -1026,18 +612,16 @@ LocalStream.prototype.isMuted = function () {
             return false;
     }
     return true;
-}
+};
 
 LocalStream.prototype.getId = function () {
     return this.stream.getTracks()[0].id;
-}
+};
 
 module.exports = LocalStream;
 
-},{"../../service/RTC/RTCEvents":101,"../../service/RTC/StreamEventTypes.js":103}],8:[function(require,module,exports){
-////These lines should be uncommented when require works in app.js
+},{"../../service/RTC/RTCEvents":99,"../../service/RTC/StreamEventTypes.js":101}],6:[function(require,module,exports){
 var MediaStreamType = require("../../service/RTC/MediaStreamTypes");
-var StreamEventType = require("../../service/RTC/StreamEventTypes");
 
 /**
  * Creates a MediaStream object for the given data, session id and ssrc.
@@ -1074,20 +658,19 @@ function MediaStream(data, sid, ssrc, browser, eventEmitter) {
 }
 
 
-MediaStream.prototype.getOriginalStream = function()
-{
+MediaStream.prototype.getOriginalStream = function() {
     return this.stream;
 };
 
-MediaStream.prototype.setMute = function (value)
-{
+MediaStream.prototype.setMute = function (value) {
     this.stream.muted = value;
     this.muted = value;
 };
 
 module.exports = MediaStream;
 
-},{"../../service/RTC/MediaStreamTypes":100,"../../service/RTC/StreamEventTypes":103}],9:[function(require,module,exports){
+},{"../../service/RTC/MediaStreamTypes":98}],7:[function(require,module,exports){
+/* global APP */
 var EventEmitter = require("events");
 var RTCBrowserType = require("./RTCBrowserType");
 var RTCUtils = require("./RTCUtils.js");
@@ -1177,8 +760,7 @@ var RTC = {
         return localStream;
     },
     removeLocalStream: function (stream) {
-        for(var i = 0; i < this.localStreams.length; i++)
-        {
+        for(var i = 0; i < this.localStreams.length; i++) {
             if(this.localStreams[i].getOriginalStream() === stream) {
                 delete this.localStreams[i];
                 return;
@@ -1263,8 +845,7 @@ var RTC = {
         var stream;
 
         if(this.remoteStreams[jid] &&
-            this.remoteStreams[jid][MediaStreamType.VIDEO_TYPE])
-        {
+            this.remoteStreams[jid][MediaStreamType.VIDEO_TYPE]) {
             stream = this.remoteStreams[jid][MediaStreamType.VIDEO_TYPE];
         }
 
@@ -1291,8 +872,7 @@ var RTC = {
         var oldStream = this.localVideo.getOriginalStream();
         var type = (isUsingScreenStream? "screen" : "video");
         var localCallback = callback;
-        if(this.localVideo.isMuted() && this.localVideo.videoType !== type)
-        {
+        if(this.localVideo.isMuted() && this.localVideo.videoType !== type) {
             localCallback = function() {
                 APP.xmpp.setVideoMute(false, function(mute) {
                     eventEmitter.emit(RTCEvents.VIDEO_MUTE, mute);
@@ -1326,10 +906,9 @@ var RTC = {
         if (jid === APP.xmpp.myJid()) {
             var localVideo = APP.RTC.localVideo;
             return (!localVideo || localVideo.isMuted());
-        }
-        else
-        {
-            if (!APP.RTC.remoteStreams[jid] || !APP.RTC.remoteStreams[jid][MediaStreamType.VIDEO_TYPE]) {
+        } else {
+            if (!APP.RTC.remoteStreams[jid] ||
+                !APP.RTC.remoteStreams[jid][MediaStreamType.VIDEO_TYPE]) {
                 return null;
             }
             return APP.RTC.remoteStreams[jid][MediaStreamType.VIDEO_TYPE].muted;
@@ -1393,7 +972,7 @@ var RTC = {
 
 module.exports = RTC;
 
-},{"../../service/RTC/MediaStreamTypes":100,"../../service/RTC/RTCEvents.js":101,"../../service/RTC/StreamEventTypes.js":103,"../../service/UI/UIEvents":104,"../../service/desktopsharing/DesktopSharingEventTypes":107,"../../service/xmpp/XMPPEvents":110,"./DataChannels":6,"./LocalStream.js":7,"./MediaStream.js":8,"./RTCBrowserType":10,"./RTCUtils.js":11,"events":1}],10:[function(require,module,exports){
+},{"../../service/RTC/MediaStreamTypes":98,"../../service/RTC/RTCEvents.js":99,"../../service/RTC/StreamEventTypes.js":101,"../../service/UI/UIEvents":102,"../../service/desktopsharing/DesktopSharingEventTypes":105,"../../service/xmpp/XMPPEvents":108,"./DataChannels":4,"./LocalStream.js":5,"./MediaStream.js":6,"./RTCBrowserType":8,"./RTCUtils.js":9,"events":109}],8:[function(require,module,exports){
 
 var currentBrowser;
 
@@ -1445,8 +1024,8 @@ var RTCBrowserType = {
     },
 
     usesPlanB: function() {
-        return RTCBrowserType.isChrome() || RTCBrowserType.isOpera()
-            || RTCBrowserType.isTemasysPluginUsed();
+        return RTCBrowserType.isChrome() || RTCBrowserType.isOpera() ||
+            RTCBrowserType.isTemasysPluginUsed();
     },
 
     usesUnifiedPlan: function() {
@@ -1555,7 +1134,8 @@ function detectBrowser() {
 browserVersion = detectBrowser();
 
 module.exports = RTCBrowserType;
-},{}],11:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
+/* global config, require, attachMediaStream, getUserMedia */
 var RTCBrowserType = require("./RTCBrowserType");
 var Resolutions = require("../../service/RTC/Resolutions");
 var AdapterJS = require("./adapter.screenshare");
@@ -1569,11 +1149,9 @@ function getPreviousResolution(resolution) {
     var order = Resolutions[resolution].order;
     var res = null;
     var resName = null;
-    for(var i in Resolutions)
-    {
+    for(var i in Resolutions) {
         var tmp = Resolutions[i];
-        if(res == null || (res.order < tmp.order && tmp.order < order))
-        {
+        if(res == null || (res.order < tmp.order && tmp.order < order)) {
             resName = i;
             res = tmp;
         }
@@ -1581,19 +1159,17 @@ function getPreviousResolution(resolution) {
     return resName;
 }
 
-function setResolutionConstraints(constraints, resolution, isAndroid)
-{
+function setResolutionConstraints(constraints, resolution, isAndroid) {
     if (resolution && !constraints.video || isAndroid) {
-        constraints.video = { mandatory: {}, optional: [] };// same behaviour as true
+        // same behaviour as true
+        constraints.video = { mandatory: {}, optional: [] };
     }
 
-    if(Resolutions[resolution])
-    {
+    if(Resolutions[resolution]) {
         constraints.video.mandatory.minWidth = Resolutions[resolution].width;
         constraints.video.mandatory.minHeight = Resolutions[resolution].height;
     }
-    else
-    {
+    else {
         if (isAndroid) {
             constraints.video.mandatory.minWidth = 320;
             constraints.video.mandatory.minHeight = 240;
@@ -1602,9 +1178,11 @@ function setResolutionConstraints(constraints, resolution, isAndroid)
     }
 
     if (constraints.video.mandatory.minWidth)
-        constraints.video.mandatory.maxWidth = constraints.video.mandatory.minWidth;
+        constraints.video.mandatory.maxWidth =
+            constraints.video.mandatory.minWidth;
     if (constraints.video.mandatory.minHeight)
-        constraints.video.mandatory.maxHeight = constraints.video.mandatory.minHeight;
+        constraints.video.mandatory.maxHeight =
+            constraints.video.mandatory.minHeight;
 }
 
 function getConstraints(um, resolution, bandwidth, fps, desktopStream, isAndroid)
@@ -1612,10 +1190,12 @@ function getConstraints(um, resolution, bandwidth, fps, desktopStream, isAndroid
     var constraints = {audio: false, video: false};
 
     if (um.indexOf('video') >= 0) {
-        constraints.video = { mandatory: {}, optional: [] };// same behaviour as true
+        // same behaviour as true
+        constraints.video = { mandatory: {}, optional: [] };
     }
     if (um.indexOf('audio') >= 0) {
-        constraints.audio = { mandatory: {}, optional: []};// same behaviour as true
+        // same behaviour as true
+        constraints.audio = { mandatory: {}, optional: []};
     }
     if (um.indexOf('screen') >= 0) {
         if (RTCBrowserType.isChrome()) {
@@ -1684,13 +1264,20 @@ function getConstraints(um, resolution, bandwidth, fps, desktopStream, isAndroid
         setResolutionConstraints(constraints, resolution, isAndroid);
     }
 
-    if (bandwidth) { // doesn't work currently, see webrtc issue 1846
-        if (!constraints.video) constraints.video = {mandatory: {}, optional: []};//same behaviour as true
+    if (bandwidth) {
+        if (!constraints.video) {
+            //same behaviour as true
+            constraints.video = {mandatory: {}, optional: []};
+        }
         constraints.video.optional.push({bandwidth: bandwidth});
     }
-    if (fps) { // for some cameras it might be necessary to request 30fps
+    if (fps) {
+        // for some cameras it might be necessary to request 30fps
         // so they choose 30fps mjpg over 10fps yuy2
-        if (!constraints.video) constraints.video = {mandatory: {}, optional: []};// same behaviour as true;
+        if (!constraints.video) {
+            // same behaviour as true;
+            constraints.video = {mandatory: {}, optional: []};
+        }
         constraints.video.mandatory.minFrameRate = fps;
     }
 
@@ -1725,8 +1312,7 @@ function RTCUtils(RTCService, onTemasysPluginReady)
                 var id = stream.id;
                 if (!id) {
                     var tracks = stream.getVideoTracks();
-                    if (!tracks || tracks.length === 0)
-                    {
+                    if (!tracks || tracks.length === 0) {
                         tracks = stream.getAudioTracks();
                     }
                     id = tracks[0].id;
@@ -1816,7 +1402,6 @@ function RTCUtils(RTCService, onTemasysPluginReady)
                     console.warn("Attempt to get video SRC of null element");
                     return null;
                 }
-                var src = null;
                 var children = element.children;
                 for (var i = 0; i !== children.length; ++i) {
                     if (children[i].name === 'streamId') {
@@ -1851,8 +1436,7 @@ function RTCUtils(RTCService, onTemasysPluginReady)
 
 RTCUtils.prototype.getUserMediaWithConstraints = function(
     um, success_callback, failure_callback, resolution,bandwidth, fps,
-    desktopStream)
-{
+    desktopStream) {
     currentResolution = resolution;
     // Check if we are running on Android device
     var isAndroid = navigator.userAgent.indexOf('Android') != -1;
@@ -1889,16 +1473,14 @@ RTCUtils.prototype.getUserMediaWithConstraints = function(
 
 RTCUtils.prototype.setAvailableDevices = function (um, available) {
     var devices = {};
-    if(um.indexOf("video") != -1)
-    {
+    if(um.indexOf("video") != -1) {
         devices.video = available;
     }
-    if(um.indexOf("audio") != -1)
-    {
+    if(um.indexOf("audio") != -1) {
         devices.audio = available;
     }
     this.service.setDeviceAvailability(devices);
-}
+};
 
 /**
  * We ask for audio and video combined stream in order to get permissions and
@@ -1924,8 +1506,7 @@ RTCUtils.prototype.obtainAudioAndVideoPermissions =
 
 
     if(usageOptions)
-        for(var i = 0; i < devices.length; i++)
-        {
+        for(var i = 0; i < devices.length; i++) {
             var device = devices[i];
             if(usageOptions[device] === true)
                 newDevices.push(device);
@@ -1933,8 +1514,7 @@ RTCUtils.prototype.obtainAudioAndVideoPermissions =
     else
         newDevices = devices;
 
-    if(newDevices.length === 0)
-    {
+    if(newDevices.length === 0) {
         successCallback();
         return;
     }
@@ -1995,7 +1575,6 @@ RTCUtils.prototype.obtainAudioAndVideoPermissions =
         },
         config.resolution || '360');
     }
-
 };
 
 RTCUtils.prototype.successCallback = function (stream, usageOptions) {
@@ -2025,8 +1604,7 @@ RTCUtils.prototype.errorCallback = function (error) {
                 return self.errorCallback(error);
             }, resolution);
     }
-    else
-    {
+    else {
         self.getUserMediaWithConstraints(
             ['audio'],
             function (stream) {
@@ -2039,11 +1617,9 @@ RTCUtils.prototype.errorCallback = function (error) {
             }
         );
     }
+};
 
-}
-
-RTCUtils.prototype.handleLocalStream = function(stream, usageOptions)
-{
+RTCUtils.prototype.handleLocalStream = function(stream, usageOptions) {
     // If this is FF, the stream parameter is *not* a MediaStream object, it's
     // an object with two properties: audioStream, videoStream.
     var audioStream, videoStream;
@@ -2096,8 +1672,8 @@ function DummyMediaStream(id) {
     this.id = id;
     this.label = id;
     this.stop = function() { };
-    this.getAudioTracks = function() { return []; }
-    this.getVideoTracks = function() { return []; }
+    this.getAudioTracks = function() { return []; };
+    this.getVideoTracks = function() { return []; };
 }
 
 RTCUtils.prototype.createStream = function(stream, isVideo) {
@@ -2107,7 +1683,7 @@ RTCUtils.prototype.createStream = function(stream, isVideo) {
         if (newStream) {
             var tracks = (isVideo ? stream.getVideoTracks() : stream.getAudioTracks());
 
-            for (i = 0; i < tracks.length; i++) {
+            for (var i = 0; i < tracks.length; i++) {
                 newStream.addTrack(tracks[i]);
             }
         }
@@ -2118,7 +1694,8 @@ RTCUtils.prototype.createStream = function(stream, isVideo) {
         if (stream) {
             newStream = stream;
         } else {
-            newStream = new DummyMediaStream(isVideo ? "dummyVideo" : "dummyAudio");
+            newStream =
+                new DummyMediaStream(isVideo ? "dummyVideo" : "dummyAudio");
         }
     }
 
@@ -2127,7 +1704,7 @@ RTCUtils.prototype.createStream = function(stream, isVideo) {
 
 module.exports = RTCUtils;
 
-},{"../../service/RTC/Resolutions":102,"../xmpp/SDPUtil":58,"./RTCBrowserType":10,"./adapter.screenshare":12}],12:[function(require,module,exports){
+},{"../../service/RTC/Resolutions":100,"../xmpp/SDPUtil":56,"./RTCBrowserType":8,"./adapter.screenshare":10}],10:[function(require,module,exports){
 /*! adapterjs - v0.11.0 - 2015-06-08 */
 
 // Adapter's interface.
@@ -3438,7 +3015,8 @@ if (navigator.mozGetUserMedia) {
     };
   }
 })();
-},{}],13:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
+/* global Strophe, APP, $, config, interfaceConfig, toastr */
 var UI = {};
 
 var VideoLayout = require("./videolayout/VideoLayout.js");
@@ -3520,23 +3098,18 @@ function promptDisplayName() {
     );
 }
 
-
-function notifyForInitialMute()
-{
+function notifyForInitialMute() {
     messageHandler.notify(null, "notify.mutedTitle", "connected",
         "notify.muted", null, {timeOut: 120000});
 }
 
-function setupPrezi()
-{
-    $("#reloadPresentationLink").click(function()
-    {
+function setupPrezi() {
+    $("#reloadPresentationLink").click(function() {
         Prezi.reloadPresentation();
     });
 }
 
-function setupChat()
-{
+function setupChat() {
     Chat.init();
     $("#toggle_smileys").click(function() {
         Chat.toggleSmileys();
@@ -3550,8 +3123,7 @@ function setupToolbars() {
 }
 
 function streamHandler(stream, isMuted) {
-    switch (stream.type)
-    {
+    switch (stream.type) {
         case "audio":
             VideoLayout.changeLocalAudio(stream, isMuted);
             break;
@@ -3593,9 +3165,10 @@ function onDisplayNameChanged(jid, displayName) {
 }
 
 function registerListeners() {
-    APP.RTC.addStreamListener(streamHandler, StreamEventTypes.EVENT_TYPE_LOCAL_CREATED);
-
-    APP.RTC.addStreamListener(streamHandler, StreamEventTypes.EVENT_TYPE_LOCAL_CHANGED);
+    APP.RTC.addStreamListener(streamHandler,
+        StreamEventTypes.EVENT_TYPE_LOCAL_CREATED);
+    APP.RTC.addStreamListener(streamHandler,
+        StreamEventTypes.EVENT_TYPE_LOCAL_CHANGED);
     APP.RTC.addStreamListener(function (stream) {
         VideoLayout.onRemoteStreamAdded(stream);
     }, StreamEventTypes.EVENT_TYPE_REMOTE_CREATED);
@@ -3603,7 +3176,8 @@ function registerListeners() {
         VideoLayout.onVideoTypeChanged(jid);
     }, StreamEventTypes.EVENT_TYPE_REMOTE_CHANGED);
     APP.RTC.addListener(RTCEvents.LASTN_CHANGED, onLastNChanged);
-    APP.RTC.addListener(RTCEvents.DOMINANTSPEAKER_CHANGED, function (resourceJid) {
+    APP.RTC.addListener(RTCEvents.DOMINANTSPEAKER_CHANGED,
+        function (resourceJid) {
         VideoLayout.onDominantSpeakerChanged(resourceJid);
     });
     APP.RTC.addListener(RTCEvents.LASTN_ENDPOINT_CHANGED,
@@ -3624,19 +3198,14 @@ function registerListeners() {
         var userJid = APP.UI.getLargeVideoJid();
         eventEmitter.emit(UIEvents.SELECTED_ENDPOINT, userJid);
     });
-    APP.statistics.addAudioLevelListener(function(jid, audioLevel)
-    {
+    APP.statistics.addAudioLevelListener(function(jid, audioLevel) {
         var resourceJid;
-        if(jid === APP.statistics.LOCAL_JID)
-        {
+        if(jid === APP.statistics.LOCAL_JID) {
             resourceJid = AudioLevels.LOCAL_LEVEL;
-            if(APP.RTC.localAudio.isMuted())
-            {
+            if(APP.RTC.localAudio.isMuted()) {
                 audioLevel = 0;
             }
-        }
-        else
-        {
+        } else {
             resourceJid = Strophe.getResourceFromJid(jid);
         }
 
@@ -3672,8 +3241,7 @@ function registerListeners() {
             title,
             message,
             true, {},
-            function (event, value, message, formVals)
-            {
+            function (event, value, message, formVals) {
                 return false;
             }
         );
@@ -3688,8 +3256,7 @@ function registerListeners() {
         var title = APP.translation.generateTranslationHTML("dialog.sessTerminated");
         messageHandler.openDialog(
             title, reason, true, {},
-            function (event, value, message, formVals)
-            {
+            function (event, value, message, formVals) {
                 return false;
             }
         );
@@ -3802,14 +3369,12 @@ function setVideoMute(mute, options) {
         options);
 }
 
-function onResize()
-{
+function onResize() {
     Chat.resizeChat();
     VideoLayout.resizeLargeVideoContainer();
 }
 
-function bindEvents()
-{
+function bindEvents() {
     /**
      * Resizes and repositions videos in full screen mode.
      */
@@ -3821,16 +3386,17 @@ function bindEvents()
 
 UI.start = function (init) {
     document.title = interfaceConfig.APP_NAME;
+    var setupWelcomePage = null;
     if(config.enableWelcomePage && window.location.pathname == "/" &&
-        (!window.localStorage.welcomePageDisabled || window.localStorage.welcomePageDisabled == "false"))
-    {
+        (!window.localStorage.welcomePageDisabled ||
+            window.localStorage.welcomePageDisabled == "false")) {
         $("#videoconference_page").hide();
-        var setupWelcomePage = require("./welcome_page/WelcomePage");
+        if (!setupWelcomePage)
+            setupWelcomePage = require("./welcome_page/WelcomePage");
         setupWelcomePage();
 
         return;
     }
-
 
     $("#welcome_page").hide();
 
@@ -3838,7 +3404,7 @@ UI.start = function (init) {
         return ToolbarToggler.showToolbar();
     });
     // Set the defaults for prompt dialogs.
-    jQuery.prompt.setDefaults({persistent: false});
+    $.prompt.setDefaults({persistent: false});
 
 
     registerListeners();
@@ -3859,10 +3425,11 @@ UI.start = function (init) {
     });
 
     if(config.enableWelcomePage && window.location.pathname == "/" &&
-        (!window.localStorage.welcomePageDisabled || window.localStorage.welcomePageDisabled == "false"))
-    {
+        (!window.localStorage.welcomePageDisabled ||
+            window.localStorage.welcomePageDisabled == "false")) {
         $("#videoconference_page").hide();
-        var setupWelcomePage = require("./welcome_page/WelcomePage");
+        if (!setupWelcomePage)
+            setupWelcomePage = require("./welcome_page/WelcomePage");
         setupWelcomePage();
 
         return;
@@ -3912,15 +3479,13 @@ UI.start = function (init) {
 
 };
 
-function chatAddError(errorMessage, originalText)
-{
+function chatAddError(errorMessage, originalText) {
     return Chat.chatAddError(errorMessage, originalText);
-};
+}
 
-function chatSetSubject(text)
-{
+function chatSetSubject(text) {
     return Chat.chatSetSubject(text);
-};
+}
 
 function updateChatConversation(from, displayName, message, myjid, stamp) {
     return Chat.updateChatConversation(from, displayName, message, myjid, stamp);
@@ -3942,8 +3507,8 @@ function onMucJoined(jid, info) {
     // Once we've joined the muc show the toolbar
     ToolbarToggler.showToolbar();
 
-    var displayName = !config.displayJids
-        ? info.displayName : Strophe.getResourceFromJid(jid);
+    var displayName =
+        config.displayJids ? Strophe.getResourceFromJid(jid) : info.displayName;
 
     if (displayName)
         onDisplayNameChanged('localVideoContainer', displayName);
@@ -3963,19 +3528,17 @@ function onMucMemberLeft(jid) {
     messageHandler.notify(displayName,'notify.somebody',
         'disconnected',
         'notify.disconnected');
-    if(!config.startAudioMuted ||
-        config.startAudioMuted > APP.members.size())
+    if (!config.startAudioMuted ||
+        config.startAudioMuted > APP.members.size()) {
         UIUtil.playSoundNotification('userLeft');
+    }
 
     ContactList.removeContact(jid);
 
     VideoLayout.participantLeft(jid);
-};
+}
 
-
-function onLocalRoleChanged(jid, info, pres, isModerator)
-{
-
+function onLocalRoleChanged(jid, info, pres, isModerator) {
     console.info("My role changed, new role: " + info.role);
     onModeratorStatusChanged(isModerator);
     VideoLayout.showModeratorIndicator();
@@ -3989,7 +3552,6 @@ function onLocalRoleChanged(jid, info, pres, isModerator)
 }
 
 function onModeratorStatusChanged(isModerator) {
-
     Toolbar.showSipCallButton(isModerator);
     Toolbar.showRecordingButton(
         isModerator); //&&
@@ -4043,7 +3605,7 @@ function onMucMemberJoined(jid, id, displayName) {
         'connected',
         'notify.connected');
 
-    if(!config.startAudioMuted ||
+    if (!config.startAudioMuted ||
         config.startAudioMuted > APP.members.size())
         UIUtil.playSoundNotification('userJoined');
 
@@ -4066,8 +3628,7 @@ function onMucRoleChanged(role, displayName) {
         if (!displayName) {
             messageKey = "notify.grantedToUnknown";
         }
-        else
-        {
+        else {
             messageKey = "notify.grantedTo";
             messageOptions = {to: displayName};
         }
@@ -4083,7 +3644,7 @@ function onAuthenticationRequired(intervalCallback) {
         roomName, intervalCallback, function () {
             Toolbar.authenticateClicked();
         });
-};
+}
 
 
 function onLastNChanged(oldValue, newValue) {
@@ -4117,9 +3678,7 @@ UI.inputDisplayNameHandler = function (value) {
     VideoLayout.inputDisplayNameHandler(value);
 };
 
-
-UI.getLargeVideoJid = function()
-{
+UI.getLargeVideoJid = function() {
     return VideoLayout.getLargeVideoJid();
 };
 
@@ -4159,13 +3718,11 @@ UI.generateRoomName = function() {
 };
 
 
-UI.connectionIndicatorShowMore = function(jid)
-{
+UI.connectionIndicatorShowMore = function(jid) {
     return VideoLayout.showMore(jid);
 };
 
-UI.showLoginPopup = function(callback)
-{
+UI.showLoginPopup = function(callback) {
     console.log('password is required');
     var message = '<h2 data-i18n="dialog.passwordRequired">';
     message += APP.translation.translateString(
@@ -4189,7 +3746,7 @@ UI.showLoginPopup = function(callback)
         null, null, ':input:first'
 
     );
-}
+};
 
 UI.checkForNicknameAndJoin = function () {
 
@@ -4208,12 +3765,12 @@ function dump(elem, filename) {
     elem = elem.parentNode;
     elem.download = filename || 'meetlog.json';
     elem.href = 'data:application/json;charset=utf-8,\n';
-    var data = APP.xmpp.populateData();
+    var data = APP.xmpp.getJingleLog();
     var metadata = {};
     metadata.time = new Date();
     metadata.url = window.location.href;
     metadata.ua = navigator.userAgent;
-    var log = APP.xmpp.getLogger();
+    var log = APP.xmpp.getXmppLog();
     if (log) {
         metadata.xmpp = log;
     }
@@ -4227,10 +3784,13 @@ UI.getRoomName = function () {
 };
 
 UI.setInitialMuteFromFocus = function (muteAudio, muteVideo) {
-    if(muteAudio || muteVideo) notifyForInitialMute();
-    if(muteAudio) UI.setAudioMuted(true);
-    if(muteVideo) UI.setVideoMute(true);
-}
+    if (muteAudio || muteVideo)
+        notifyForInitialMute();
+    if (muteAudio)
+        UI.setAudioMuted(true);
+    if (muteVideo)
+        UI.setVideoMute(true);
+};
 
 /**
  * Mutes/unmutes the local video.
@@ -4251,47 +3811,45 @@ UI.toggleAudio = function() {
  */
 UI.setAudioMuted = function (mute, earlyMute) {
     var audioMute = null;
-    if(earlyMute)
+    if (earlyMute)
         audioMute = function (mute, cb) {
             return APP.xmpp.sendAudioInfoPresence(mute, cb);
         };
     else
         audioMute = function (mute, cb) {
             return APP.xmpp.setAudioMute(mute, cb);
-        }
-    if(!audioMute(mute, function () {
-        VideoLayout.showLocalAudioIndicator(mute);
+        };
+    if (!audioMute(mute, function () {
+            VideoLayout.showLocalAudioIndicator(mute);
 
-        UIUtil.buttonClick("#mute", "icon-microphone icon-mic-disabled");
-    }))
-    {
+            UIUtil.buttonClick("#mute", "icon-microphone icon-mic-disabled");
+        })) {
         // We still click the button.
         UIUtil.buttonClick("#mute", "icon-microphone icon-mic-disabled");
         return;
     }
-
-}
+};
 
 UI.addListener = function (type, listener) {
     eventEmitter.on(type, listener);
-}
+};
 
 UI.clickOnVideo = function (videoNumber) {
     var remoteVideos = $(".videocontainer:not(#mixedstream)");
     if (remoteVideos.length > videoNumber) {
         remoteVideos[videoNumber].click();
     }
-}
+};
 
 //Used by torture
 UI.showToolbar = function () {
     return ToolbarToggler.showToolbar();
-}
+};
 
 //Used by torture
 UI.dockToolbar = function (isDock) {
     return ToolbarToggler.dockToolbar(isDock);
-}
+};
 
 UI.setVideoMuteButtonsState = function (mute) {
     var video = $('#video');
@@ -4305,21 +3863,22 @@ UI.setVideoMuteButtonsState = function (mute) {
         video.removeClass(muteClass);
         video.addClass(communicativeClass);
     }
-}
+};
 
 UI.userAvatarChanged = function (resourceJid, thumbUrl, contactListUrl) {
     VideoLayout.userAvatarChanged(resourceJid, thumbUrl);
     ContactList.userAvatarChanged(resourceJid, contactListUrl);
     if(resourceJid === APP.xmpp.myResource())
         SettingsMenu.changeAvatar(thumbUrl);
-}
+};
 
 UI.setVideoMute = setVideoMute;
 
 module.exports = UI;
 
 
-},{"../../service/RTC/RTCEvents":101,"../../service/RTC/StreamEventTypes":103,"../../service/UI/UIEvents":104,"../../service/connectionquality/CQEvents":106,"../../service/desktopsharing/DesktopSharingEventTypes":107,"../../service/members/Events":108,"../../service/xmpp/XMPPEvents":110,"../RTC/RTCBrowserType":10,"./../settings/Settings":49,"./audio_levels/AudioLevels.js":14,"./authentication/Authentication":16,"./avatar/Avatar":18,"./etherpad/Etherpad.js":19,"./prezi/Prezi.js":20,"./side_pannels/SidePanelToggler":22,"./side_pannels/chat/Chat.js":23,"./side_pannels/contactlist/ContactList":27,"./side_pannels/settings/SettingsMenu":28,"./toolbars/BottomToolbar":29,"./toolbars/Toolbar":30,"./toolbars/ToolbarToggler":31,"./util/MessageHandler":33,"./util/NicknameHandler":34,"./util/UIUtil":35,"./videolayout/VideoLayout.js":41,"./welcome_page/RoomnameGenerator":42,"./welcome_page/WelcomePage":43,"events":1}],14:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":99,"../../service/RTC/StreamEventTypes":101,"../../service/UI/UIEvents":102,"../../service/connectionquality/CQEvents":104,"../../service/desktopsharing/DesktopSharingEventTypes":105,"../../service/members/Events":106,"../../service/xmpp/XMPPEvents":108,"../RTC/RTCBrowserType":8,"./../settings/Settings":47,"./audio_levels/AudioLevels.js":12,"./authentication/Authentication":14,"./avatar/Avatar":16,"./etherpad/Etherpad.js":17,"./prezi/Prezi.js":18,"./side_pannels/SidePanelToggler":20,"./side_pannels/chat/Chat.js":21,"./side_pannels/contactlist/ContactList":25,"./side_pannels/settings/SettingsMenu":26,"./toolbars/BottomToolbar":27,"./toolbars/Toolbar":28,"./toolbars/ToolbarToggler":29,"./util/MessageHandler":31,"./util/NicknameHandler":32,"./util/UIUtil":33,"./videolayout/VideoLayout.js":39,"./welcome_page/RoomnameGenerator":40,"./welcome_page/WelcomePage":41,"events":109}],12:[function(require,module,exports){
+/* global APP, interfaceConfig, $, Strophe */
 var CanvasUtil = require("./CanvasUtils");
 
 var ASDrawContext = null;
@@ -4328,10 +3887,10 @@ function initActiveSpeakerAudioLevels() {
     var ASRadius = interfaceConfig.ACTIVE_SPEAKER_AVATAR_SIZE / 2;
     var ASCenter = (interfaceConfig.ACTIVE_SPEAKER_AVATAR_SIZE + ASRadius) / 2;
 
-// Draw a circle.
+    // Draw a circle.
     ASDrawContext.arc(ASCenter, ASCenter, ASRadius, 0, 2 * Math.PI);
 
-// Add a shadow around the circle
+    // Add a shadow around the circle
     ASDrawContext.shadowColor = interfaceConfig.SHADOW_COLOR;
     ASDrawContext.shadowOffsetX = 0;
     ASDrawContext.shadowOffsetY = 0;
@@ -4348,7 +3907,7 @@ var AudioLevels = (function(my) {
     my.init = function () {
         ASDrawContext = $('#activeSpeakerAudioLevel')[0].getContext('2d');
         initActiveSpeakerAudioLevels();
-    }
+    };
 
     /**
      * Updates the audio level canvas for the given peerJid. If the canvas
@@ -4435,7 +3994,7 @@ var AudioLevels = (function(my) {
             resourceJid = APP.xmpp.myResource();
         }
 
-        if(resourceJid  === largeVideoResourceJid) {
+        if(resourceJid === largeVideoResourceJid) {
             window.requestAnimationFrame(function () {
                 AudioLevels.updateActiveSpeakerAudioLevel(audioLevel);
             });
@@ -4445,7 +4004,6 @@ var AudioLevels = (function(my) {
     my.updateActiveSpeakerAudioLevel = function(audioLevel) {
         if($("#activeSpeaker").css("visibility") == "hidden" || ASDrawContext === null)
             return;
-
 
         ASDrawContext.clearRect(0, 0, 300, 300);
         if(audioLevel == 0)
@@ -4488,10 +4046,9 @@ var AudioLevels = (function(my) {
              * error. Since audio levels are frequently updated, the errors have
              * been observed to pile into the console, strain the CPU.
              */
-            if (audioLevelCanvasOrig)
-            {
-                audioLevelCanvasCache[resourceJid]
-                    = CanvasUtil.cloneCanvas(audioLevelCanvasOrig);
+            if (audioLevelCanvasOrig) {
+                audioLevelCanvasCache[resourceJid] =
+                    CanvasUtil.cloneCanvas(audioLevelCanvasOrig);
             }
         }
 
@@ -4506,15 +4063,16 @@ var AudioLevels = (function(my) {
 
         var shadowLevel = getShadowLevel(audioLevel);
 
-        if (shadowLevel > 0)
+        if (shadowLevel > 0) {
             // drawContext, x, y, w, h, r, shadowColor, shadowLevel
-            CanvasUtil.drawRoundRectGlow(   drawContext,
-                interfaceConfig.CANVAS_EXTRA/2, interfaceConfig.CANVAS_EXTRA/2,
+            CanvasUtil.drawRoundRectGlow(drawContext,
+                interfaceConfig.CANVAS_EXTRA / 2, interfaceConfig.CANVAS_EXTRA / 2,
                 canvas.width - interfaceConfig.CANVAS_EXTRA,
                 canvas.height - interfaceConfig.CANVAS_EXTRA,
                 interfaceConfig.CANVAS_RADIUS,
                 interfaceConfig.SHADOW_COLOR,
                 shadowLevel);
+        }
     }
 
     /**
@@ -4544,9 +4102,8 @@ var AudioLevels = (function(my) {
      */
     function getVideoSpanId(resourceJid) {
         var videoSpanId = null;
-        if (resourceJid === AudioLevels.LOCAL_LEVEL
-                || (APP.xmpp.myResource() && resourceJid
-                    === APP.xmpp.myResource()))
+        if (resourceJid === AudioLevels.LOCAL_LEVEL ||
+            (APP.xmpp.myResource() && resourceJid === APP.xmpp.myResource()))
             videoSpanId = 'localVideoContainer';
         else
             videoSpanId = 'participant_' + resourceJid;
@@ -4574,10 +4131,10 @@ var AudioLevels = (function(my) {
 
         if (resized)
             Object.keys(audioLevelCanvasCache).forEach(function (resourceJid) {
-                audioLevelCanvasCache[resourceJid].width
-                    = width + interfaceConfig.CANVAS_EXTRA;
-                audioLevelCanvasCache[resourceJid].height
-                    = height + interfaceConfig.CANVAS_EXTRA;
+                audioLevelCanvasCache[resourceJid].width =
+                    width + interfaceConfig.CANVAS_EXTRA;
+                audioLevelCanvasCache[resourceJid].height =
+                    height + interfaceConfig.CANVAS_EXTRA;
             });
     });
 
@@ -4586,7 +4143,7 @@ var AudioLevels = (function(my) {
 })(AudioLevels || {});
 
 module.exports = AudioLevels;
-},{"./CanvasUtils":15}],15:[function(require,module,exports){
+},{"./CanvasUtils":13}],13:[function(require,module,exports){
 /**
  * Utility class for drawing canvas shapes.
  */
@@ -4698,7 +4255,7 @@ var CanvasUtil = (function(my) {
 })(CanvasUtil || {});
 
 module.exports = CanvasUtil;
-},{}],16:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 /* global $, APP*/
 
 var LoginDialog = require('./LoginDialog');
@@ -4780,7 +4337,7 @@ var Authentication = {
                     Moderator.allocateConferenceFocus(roomName, function () {
                         // If it's not "on the fly" authentication now join
                         // the conference room
-                        if (!APP.xmpp.getMUCJoined()) {
+                        if (!APP.xmpp.isMUCJoined()) {
                             APP.UI.checkForNicknameAndJoin();
                         }
                     });
@@ -4823,7 +4380,7 @@ var Authentication = {
 };
 
 module.exports = Authentication;
-},{"../../xmpp/moderator":60,"./LoginDialog":17}],17:[function(require,module,exports){
+},{"../../xmpp/moderator":58,"./LoginDialog":15}],15:[function(require,module,exports){
 /* global $, APP, config*/
 
 var XMPP = require('../../xmpp/xmpp');
@@ -5052,7 +4609,7 @@ var LoginDialog = {
 };
 
 module.exports = LoginDialog;
-},{"../../xmpp/moderator":60,"../../xmpp/xmpp":68}],18:[function(require,module,exports){
+},{"../../xmpp/moderator":58,"../../xmpp/xmpp":66}],16:[function(require,module,exports){
 var Settings = require("../../settings/Settings");
 
 var users = {};
@@ -5120,7 +4677,7 @@ var Avatar = {
 
 
 module.exports = Avatar;
-},{"../../settings/Settings":49}],19:[function(require,module,exports){
+},{"../../settings/Settings":47}],17:[function(require,module,exports){
 /* global $, config,
    setLargeVideoVisible, Util */
 
@@ -5252,7 +4809,7 @@ var Etherpad = {
 
 module.exports = Etherpad;
 
-},{"../prezi/Prezi":20,"../util/UIUtil":35,"../videolayout/VideoLayout":41}],20:[function(require,module,exports){
+},{"../prezi/Prezi":18,"../util/UIUtil":33,"../videolayout/VideoLayout":39}],18:[function(require,module,exports){
 var ToolbarToggler = require("../toolbars/ToolbarToggler");
 var UIUtil = require("../util/UIUtil");
 var VideoLayout = require("../videolayout/VideoLayout");
@@ -5597,7 +5154,7 @@ $(window).resize(function () {
 
 module.exports = Prezi;
 
-},{"../toolbars/ToolbarToggler":31,"../util/MessageHandler":33,"../util/UIUtil":35,"../videolayout/VideoLayout":41,"./PreziPlayer":21}],21:[function(require,module,exports){
+},{"../toolbars/ToolbarToggler":29,"../util/MessageHandler":31,"../util/UIUtil":33,"../videolayout/VideoLayout":39,"./PreziPlayer":19}],19:[function(require,module,exports){
 (function() {
     "use strict";
     var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
@@ -5893,7 +5450,8 @@ module.exports = Prezi;
 
 module.exports = PreziPlayer;
 
-},{}],22:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
+/* global require, $ */
 var Chat = require("./chat/Chat");
 var ContactList = require("./contactlist/ContactList");
 var Settings = require("./../../settings/Settings");
@@ -6067,8 +5625,8 @@ var PanelToggler = (function(my) {
 }(PanelToggler || {}));
 
 module.exports = PanelToggler;
-},{"../toolbars/ToolbarToggler":31,"../util/UIUtil":35,"../videolayout/LargeVideo":37,"../videolayout/VideoLayout":41,"./../../settings/Settings":49,"./chat/Chat":23,"./contactlist/ContactList":27,"./settings/SettingsMenu":28}],23:[function(require,module,exports){
-/* global $, Util, nickname:true */
+},{"../toolbars/ToolbarToggler":29,"../util/UIUtil":33,"../videolayout/LargeVideo":35,"../videolayout/VideoLayout":39,"./../../settings/Settings":47,"./chat/Chat":21,"./contactlist/ContactList":25,"./settings/SettingsMenu":26}],21:[function(require,module,exports){
+/* global APP, $, Util, nickname:true */
 var Replacement = require("./Replacement");
 var CommandsProcessor = require("./Commands");
 var ToolbarToggler = require("../../toolbars/ToolbarToggler");
@@ -6172,8 +5730,7 @@ function getCurrentTime(stamp) {
     return hour+':'+minute+':'+second;
 }
 
-function toggleSmileys()
-{
+function toggleSmileys() {
     var smileys = $('#smileysContainer');
     if(!smileys.is(':visible')) {
         smileys.show("slide", { direction: "down", duration: 300});
@@ -6261,19 +5818,18 @@ var Chat = (function (my) {
             }
         });
 
-        $('#usermsg').keydown(function (event) {
+        var usermsg = $('#usermsg');
+        usermsg.keydown(function (event) {
             if (event.keyCode === 13) {
                 event.preventDefault();
                 var value = this.value;
-                $('#usermsg').val('').trigger('autosize.resize');
+                usermsg.val('').trigger('autosize.resize');
                 this.focus();
                 var command = new CommandsProcessor(value);
-                if(command.isCommand())
-                {
+                if(command.isCommand()) {
                     command.processCommand();
                 }
-                else
-                {
+                else {
                     var message = UIUtil.escapeHtml(value);
                     APP.xmpp.sendChatMessage(message, NicknameHandler.getNickname());
                 }
@@ -6284,7 +5840,7 @@ var Chat = (function (my) {
             resizeChatConversation();
             Chat.scrollChatToBottom();
         };
-        $('#usermsg').autosize({callback: onTextAreaResize});
+        usermsg.autosize({callback: onTextAreaResize});
 
         $("#chatspace").bind("shown",
             function () {
@@ -6298,7 +5854,8 @@ var Chat = (function (my) {
     /**
      * Appends the given message to the chat conversation.
      */
-    my.updateChatConversation = function (from, displayName, message, myjid, stamp) {
+    my.updateChatConversation =
+        function (from, displayName, message, myjid, stamp) {
         var divClassName = '';
 
         if (APP.xmpp.myJid() === from) {
@@ -6340,8 +5897,7 @@ var Chat = (function (my) {
      * @param errorMessage the received error message.
      * @param originalText the original message.
      */
-    my.chatAddError = function(errorMessage, originalText)
-    {
+    my.chatAddError = function(errorMessage, originalText) {
         errorMessage = UIUtil.escapeHtml(errorMessage);
         originalText = UIUtil.escapeHtml(originalText);
 
@@ -6358,22 +5914,17 @@ var Chat = (function (my) {
      * Sets the subject to the UI
      * @param subject the subject
      */
-    my.chatSetSubject = function(subject)
-    {
-        if(subject)
+    my.chatSetSubject = function(subject) {
+        if (subject)
             subject = subject.trim();
         $('#subject').html(Replacement.linkify(UIUtil.escapeHtml(subject)));
-        if(subject === "")
-        {
+        if(subject === "") {
             $("#subject").css({display: "none"});
         }
-        else
-        {
+        else {
             $("#subject").css({display: "block"});
         }
     };
-
-
 
     /**
      * Sets the chat conversation mode.
@@ -6425,7 +5976,8 @@ var Chat = (function (my) {
     return my;
 }(Chat || {}));
 module.exports = Chat;
-},{"../../../../service/UI/UIEvents":104,"../../toolbars/ToolbarToggler":31,"../../util/NicknameHandler":34,"../../util/UIUtil":35,"../SidePanelToggler":22,"./Commands":24,"./Replacement":25,"./smileys.json":26}],24:[function(require,module,exports){
+},{"../../../../service/UI/UIEvents":102,"../../toolbars/ToolbarToggler":29,"../../util/NicknameHandler":32,"../../util/UIUtil":33,"../SidePanelToggler":20,"./Commands":22,"./Replacement":23,"./smileys.json":24}],22:[function(require,module,exports){
+/* global APP, require */
 var UIUtil = require("../../util/UIUtil");
 
 /**
@@ -6442,47 +5994,39 @@ var commands = {
  * @param message the received message
  * @returns {string} the command
  */
-function getCommand(message)
-{
-    if(message)
-    {
-        for(var command in commands)
-        {
+function getCommand(message) {
+    if(message) {
+        for(var command in commands) {
             if(message.indexOf("/" + command) == 0)
                 return command;
         }
     }
     return "";
-};
+}
 
 /**
  * Processes the data for topic command.
  * @param commandArguments the arguments of the topic command.
  */
-function processTopic(commandArguments)
-{
+function processTopic(commandArguments) {
     var topic = UIUtil.escapeHtml(commandArguments);
     APP.xmpp.setSubject(topic);
 }
 
 /**
- * Constructs new CommandProccessor instance from a message that
+ * Constructs a new CommandProccessor instance from a message that
  * handles commands received via chat messages.
  * @param message the message
  * @constructor
  */
-function CommandsProcessor(message)
-{
-
-
+function CommandsProcessor(message) {
     var command = getCommand(message);
 
     /**
      * Returns the name of the command.
      * @returns {String} the command
      */
-    this.getCommand = function()
-    {
+    this.getCommand = function() {
         return command;
     };
 
@@ -6493,8 +6037,7 @@ function CommandsProcessor(message)
      * Returns the arguments of the command.
      * @returns {string}
      */
-    this.getArgument = function()
-    {
+    this.getArgument = function() {
         return messageArgument;
     };
 }
@@ -6503,9 +6046,8 @@ function CommandsProcessor(message)
  * Checks whether this instance is valid command or not.
  * @returns {boolean}
  */
-CommandsProcessor.prototype.isCommand = function()
-{
-    if(this.getCommand())
+CommandsProcessor.prototype.isCommand = function() {
+    if (this.getCommand())
         return true;
     return false;
 };
@@ -6513,17 +6055,15 @@ CommandsProcessor.prototype.isCommand = function()
 /**
  * Processes the command.
  */
-CommandsProcessor.prototype.processCommand = function()
-{
+CommandsProcessor.prototype.processCommand = function() {
     if(!this.isCommand())
         return;
 
     commands[this.getCommand()](this.getArgument());
-
 };
 
 module.exports = CommandsProcessor;
-},{"../../util/UIUtil":35}],25:[function(require,module,exports){
+},{"../../util/UIUtil":33}],23:[function(require,module,exports){
 var Smileys = require("./smileys.json");
 /**
  * Processes links and smileys in "body"
@@ -6587,7 +6127,7 @@ module.exports = {
     linkify: linkify
 };
 
-},{"./smileys.json":26}],26:[function(require,module,exports){
+},{"./smileys.json":24}],24:[function(require,module,exports){
 module.exports={
     "smileys": {
         "smiley1": ":)",
@@ -6637,8 +6177,8 @@ module.exports={
     }
 }
 
-},{}],27:[function(require,module,exports){
-
+},{}],25:[function(require,module,exports){
+/* global $, APP, Strophe */
 var Avatar = require('../../avatar/Avatar');
 
 var numberOfContacts = 0;
@@ -6667,7 +6207,7 @@ function updateNumberOfParticipants(delta) {
 /**
  * Creates the avatar element.
  *
- * @return the newly created avatar element
+ * @return {object} the newly created avatar element
  */
 function createAvatar(jid) {
     var avatar = document.createElement('img');
@@ -6686,8 +6226,7 @@ function createDisplayNameParagraph(key, displayName) {
     var p = document.createElement('p');
     if(displayName)
         p.innerText = displayName;
-    else if(key)
-    {
+    else if(key) {
         p.setAttribute("data-i18n",key);
         p.innerText = APP.translation.translateString(key);
     }
@@ -6704,7 +6243,6 @@ function stopGlowing(glower) {
         glower.removeClass('active');
     }
 }
-
 
 /**
  * Contact list.
@@ -6834,19 +6372,18 @@ var ContactList = {
 };
 
 module.exports = ContactList;
-},{"../../avatar/Avatar":18}],28:[function(require,module,exports){
+},{"../../avatar/Avatar":16}],26:[function(require,module,exports){
+/* global APP, $ */
 var Avatar = require("../../avatar/Avatar");
 var Settings = require("./../../../settings/Settings");
 var UIUtil = require("../../util/UIUtil");
 var languages = require("../../../../service/translation/languages");
 
-function generateLanguagesSelectBox()
-{
+function generateLanguagesSelectBox() {
     var currentLang = APP.translation.getCurrentLanguage();
     var html = "<select id=\"languages_selectbox\">";
     var langArray = languages.getLanguages();
-    for(var i = 0; i < langArray.length; i++)
-    {
+    for(var i = 0; i < langArray.length; i++) {
         var lang = langArray[i];
         html += "<option ";
         if(lang === currentLang)
@@ -6863,7 +6400,8 @@ function generateLanguagesSelectBox()
 var SettingsMenu = {
 
     init: function () {
-        $("#startMutedOptions").before(generateLanguagesSelectBox());
+        var startMutedSelector = $("#startMutedOptions");
+        startMutedSelector.before(generateLanguagesSelectBox());
         APP.translation.translateElement($("#languages_selectbox"));
         $('#settingsmenu>input').keyup(function(event){
             if(event.keyCode === 13) {//enter
@@ -6871,13 +6409,11 @@ var SettingsMenu = {
             }
         });
 
-        if(APP.xmpp.isModerator())
-        {
-            $("#startMutedOptions").css("display", "block");
+        if (APP.xmpp.isModerator()) {
+            startMutedSelector.css("display", "block");
         }
-        else
-        {
-            $("#startMutedOptions").css("display", "none");
+        else {
+            startMutedSelector.css("display", "none");
         }
 
         $("#updateSettings").click(function () {
@@ -6886,12 +6422,10 @@ var SettingsMenu = {
     },
 
     onRoleChanged: function () {
-        if(APP.xmpp.isModerator())
-        {
+        if(APP.xmpp.isModerator()) {
             $("#startMutedOptions").css("display", "block");
         }
-        else
-        {
+        else {
             $("#startMutedOptions").css("display", "none");
         }
     },
@@ -6947,7 +6481,8 @@ var SettingsMenu = {
 
 
 module.exports = SettingsMenu;
-},{"../../../../service/translation/languages":109,"../../avatar/Avatar":18,"../../util/UIUtil":35,"./../../../settings/Settings":49}],29:[function(require,module,exports){
+},{"../../../../service/translation/languages":107,"../../avatar/Avatar":16,"../../util/UIUtil":33,"./../../../settings/Settings":47}],27:[function(require,module,exports){
+/* global $ */
 var PanelToggler = require("../side_pannels/SidePanelToggler");
 
 var buttonHandlers = {
@@ -6992,9 +6527,9 @@ var BottomToolbar = (function (my) {
 
 module.exports = BottomToolbar;
 
-},{"../side_pannels/SidePanelToggler":22}],30:[function(require,module,exports){
-/* global APP,$, buttonClick, config, lockRoom,
-   setSharedKey, Util */
+},{"../side_pannels/SidePanelToggler":20}],28:[function(require,module,exports){
+/* global APP, $, buttonClick, config, lockRoom, interfaceConfig, setSharedKey,
+ Util */
 var messageHandler = require("../util/MessageHandler");
 var BottomToolbar = require("./BottomToolbar");
 var Prezi = require("../prezi/Prezi");
@@ -7009,8 +6544,7 @@ var roomUrl = null;
 var sharedKey = '';
 var UI = null;
 
-var buttonHandlers =
-{
+var buttonHandlers = {
     "toolbar_button_mute": function () {
         return APP.UI.toggleAudio();
     },
@@ -7041,8 +6575,7 @@ var buttonHandlers =
     "toolbar_button_desktopsharing": function () {
         return APP.desktopsharing.toggleScreenSharing();
     },
-    "toolbar_button_fullScreen": function()
-    {
+    "toolbar_button_fullScreen": function() {
         UIUtil.buttonClick("#fullScreen", "icon-full-screen icon-exit-full-screen");
         return Toolbar.toggleFullScreen();
     },
@@ -7086,10 +6619,8 @@ var buttonHandlers =
 
 function hangup() {
     APP.xmpp.disposeConference();
-    if(config.enableWelcomePage)
-    {
-        setTimeout(function()
-        {
+    if(config.enableWelcomePage) {
+        setTimeout(function() {
             window.localStorage.welcomePageDisabled = false;
             window.location.pathname = "/";
         }, 10000);
@@ -7110,8 +6641,7 @@ function hangup() {
         msg,
         true,
         buttons,
-        function(event, value, message, formVals)
-        {
+        function(event, value, message, formVals) {
             window.location.reload();
             return false;
         }
@@ -7160,13 +6690,11 @@ function lockRoom(lock) {
 
     APP.xmpp.lockRoom(currentSharedKey, function (res) {
         // password is required
-        if (sharedKey)
-        {
+        if (sharedKey) {
             console.log('set room password');
             Toolbar.lockLockButton();
         }
-        else
-        {
+        else {
             console.log('removed room password');
             Toolbar.unlockLockButton();
         }
@@ -7181,7 +6709,7 @@ function lockRoom(lock) {
             "dialog.passwordNotSupported");
         Toolbar.setSharedKey('');
     });
-};
+}
 
 /**
  * Invite participants to conference.
@@ -7219,13 +6747,11 @@ function inviteParticipants() {
     window.open("mailto:?subject=" + subject + "&body=" + body, '_blank');
 }
 
-function dialpadButtonClicked()
-{
-    //TODO show the dialpad window
+function dialpadButtonClicked() {
+    //TODO show the dialpad box
 }
 
-function callSipButtonClicked()
-{
+function callSipButtonClicked() {
     var defaultNumber
         = config.defaultSipNumber ? config.defaultSipNumber : '';
 
@@ -7276,7 +6802,7 @@ var Toolbar = (function (my) {
                 }
             }
         );
-    },
+    };
 
     /**
      * Sets shared key
@@ -7293,7 +6819,7 @@ var Toolbar = (function (my) {
             return;
         }
         // Get authentication URL
-        if (!APP.xmpp.getMUCJoined()) {
+        if (!APP.xmpp.isMUCJoined()) {
             APP.xmpp.getLoginUrl(UI.getRoomName(), function (url) {
                 // If conference has not been started yet - redirect to login page
                 window.location.href = url;
@@ -7337,8 +6863,7 @@ var Toolbar = (function (my) {
      * Disables and enables some of the buttons.
      */
     my.setupButtonsFromConfig = function () {
-        if (config.disablePrezi)
-        {
+        if (config.disablePrezi) {
             $("#prezi_button").css({display: "none"});
         }
     };
@@ -7627,12 +7152,9 @@ var Toolbar = (function (my) {
      */
     my.changeDesktopSharingButtonState = function (active) {
         var button = $("#desktopsharing > a");
-        if (active)
-        {
+        if (active) {
             button.addClass("glow");
-        }
-        else
-        {
+        } else {
             button.removeClass("glow");
         }
     };
@@ -7641,8 +7163,9 @@ var Toolbar = (function (my) {
 }(Toolbar || {}));
 
 module.exports = Toolbar;
-},{"../../../service/authentication/AuthenticationEvents":105,"../authentication/Authentication":16,"../etherpad/Etherpad":19,"../prezi/Prezi":20,"../side_pannels/SidePanelToggler":22,"../util/MessageHandler":33,"../util/UIUtil":35,"./BottomToolbar":29}],31:[function(require,module,exports){
-/* global $, interfaceConfig, Moderator, DesktopStreaming.showDesktopSharingButton */
+},{"../../../service/authentication/AuthenticationEvents":103,"../authentication/Authentication":14,"../etherpad/Etherpad":17,"../prezi/Prezi":18,"../side_pannels/SidePanelToggler":20,"../util/MessageHandler":31,"../util/UIUtil":33,"./BottomToolbar":27}],29:[function(require,module,exports){
+/* global APP, config, $, interfaceConfig, Moderator,
+ DesktopStreaming.showDesktopSharingButton */
 
 var toolbarTimeoutObject,
     toolbarTimeout = interfaceConfig.INITIAL_TOOLBAR_TIMEOUT;
@@ -7725,7 +7248,6 @@ var ToolbarToggler = {
         showDesktopSharingButton();
     },
 
-
     /**
      * Docks/undocks the toolbar.
      *
@@ -7755,11 +7277,11 @@ var ToolbarToggler = {
     },
 
     showDesktopSharingButton: showDesktopSharingButton
-
 };
 
 module.exports = ToolbarToggler;
-},{}],32:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
+/* global $ */
 var JitsiPopover = (function () {
     /**
      * Constructs new JitsiPopover and attaches it to the element
@@ -7809,21 +7331,20 @@ var JitsiPopover = (function () {
     JitsiPopover.prototype.show = function () {
         this.createPopover();
         this.popoverShown = true;
-
     };
 
     /**
      * Hides the popover
      */
     JitsiPopover.prototype.hide = function () {
-        if(!this.elementIsHovered && !this.popoverIsHovered && this.popoverShown)
-        {
+        if(!this.elementIsHovered && !this.popoverIsHovered &&
+            this.popoverShown) {
             this.forceHide();
         }
     };
 
     /**
-     * Hides the popover
+     * Hides the popover.
      */
     JitsiPopover.prototype.forceHide = function () {
         $(".jitsipopover").remove();
@@ -7831,7 +7352,7 @@ var JitsiPopover = (function () {
     };
 
     /**
-     * Creates the popover html
+     * Creates the popover html.
      */
     JitsiPopover.prototype.createPopover = function () {
         $("body").append(this.template);
@@ -7848,7 +7369,7 @@ var JitsiPopover = (function () {
     };
 
     /**
-     * Refreshes the position of the popover
+     * Refreshes the position of the popover.
      */
     JitsiPopover.prototype.refreshPosition = function () {
         $(".jitsipopover").position({
@@ -7857,10 +7378,13 @@ var JitsiPopover = (function () {
             collision: "fit",
             of: this.element,
             using: function (position, elements) {
-                var calcLeft = elements.target.left - elements.element.left + elements.target.width/2;
-                $(".jitsipopover").css({top: position.top, left: position.left, display: "table"});
+                var calcLeft = elements.target.left - elements.element.left +
+                    elements.target.width/2;
+                $(".jitsipopover").css(
+                    {top: position.top, left: position.left, display: "table"});
                 $(".jitsipopover > .arrow").css({left: calcLeft});
-                $(".jitsipopover > .jitsiPopupmenuPadding").css({left: calcLeft - 50});
+                $(".jitsipopover > .jitsiPopupmenuPadding").css(
+                    {left: calcLeft - 50});
             }
         });
     };
@@ -7878,45 +7402,42 @@ var JitsiPopover = (function () {
     };
 
     return JitsiPopover;
-
-
 })();
 
 module.exports = JitsiPopover;
-},{}],33:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 /* global $, APP, jQuery, toastr */
 var messageHandler = (function(my) {
 
     /**
      * Shows a message to the user.
      *
-     * @param titleString the title of the message
-     * @param messageString the text of the message
+     * @param titleKey the title of the message
+     * @param messageKey the text of the message
      */
     my.openMessageDialog = function(titleKey, messageKey) {
         var title = null;
-        if(titleKey)
-        {
+        if(titleKey) {
             title = APP.translation.generateTranslationHTML(titleKey);
         }
         var message = APP.translation.generateTranslationHTML(messageKey);
         $.prompt(message,
-            {
-                title: title,
-                persistent: false
-            }
+            {title: title, persistent: false}
         );
     };
 
     /**
-     * Shows a message to the user with two buttons: first is given as a parameter and the second is Cancel.
+     * Shows a message to the user with two buttons: first is given as a
+     * parameter and the second is Cancel.
      *
      * @param titleString the title of the message
      * @param msgString the text of the message
-     * @param persistent boolean value which determines whether the message is persistent or not
+     * @param persistent boolean value which determines whether the message is
+     *        persistent or not
      * @param leftButton the fist button's text
      * @param submitFunction function to be called on submit
-     * @param loadedFunction function to be called after the prompt is fully loaded
+     * @param loadedFunction function to be called after the prompt is fully
+     *        loaded
      * @param closeFunction function to be called after the prompt is closed
      * @param focus optional focus selector or button index to be focused after
      *        the dialog is opened
@@ -7925,8 +7446,7 @@ var messageHandler = (function(my) {
      */
     my.openTwoButtonDialog = function(titleKey, titleString, msgKey, msgString,
         persistent, leftButtonKey, submitFunction, loadedFunction,
-        closeFunction, focus, defaultButton)
-    {
+        closeFunction, focus, defaultButton) {
         var buttons = [];
 
         var leftButton = APP.translation.generateTranslationHTML(leftButtonKey);
@@ -7937,8 +7457,7 @@ var messageHandler = (function(my) {
         buttons.push({title: cancelButton, value: false});
 
         var message = msgString, title = titleString;
-        if (titleKey)
-        {
+        if (titleKey) {
             title = APP.translation.generateTranslationHTML(titleKey);
         }
         if (msgKey) {
@@ -7961,11 +7480,14 @@ var messageHandler = (function(my) {
      *
      * @param titleString the title of the message
      * @param msgString the text of the message
-     * @param persistent boolean value which determines whether the message is persistent or not
-     * @param buttons object with the buttons. The keys must be the name of the button and value is the value
-     * that will be passed to submitFunction
+     * @param persistent boolean value which determines whether the message is
+     *        persistent or not
+     * @param buttons object with the buttons. The keys must be the name of the
+     *        button and value is the value that will be passed to
+     *        submitFunction
      * @param submitFunction function to be called on submit
-     * @param loadedFunction function to be called after the prompt is fully loaded
+     * @param loadedFunction function to be called after the prompt is fully
+     *        loaded
      */
     my.openDialog = function (titleString, msgString, persistent, buttons,
                               submitFunction, loadedFunction) {
@@ -7993,10 +7515,9 @@ var messageHandler = (function(my) {
     /**
      * Shows a dialog with different states to the user.
      *
-     * @param statesObject object containing all the states of the dialog
+     * @param statesObject object containing all the states of the dialog.
      */
     my.openDialogWithStates = function (statesObject, options) {
-
         return new Impromptu(statesObject, options);
     };
 
@@ -8010,7 +7531,7 @@ var messageHandler = (function(my) {
      * @param onPopupClosed optional callback function called when popup window
      *        has been closed.
      *
-     * @returns popup window object if opened successfully or undefined
+     * @returns {object} popup window object if opened successfully or undefined
      *          in case we failed to open it(popup blocked)
      */
     my.openCenteredPopup = function (url, w, h, onPopupClosed) {
@@ -8033,8 +7554,8 @@ var messageHandler = (function(my) {
     /**
      * Shows a dialog prompting the user to send an error report.
      *
-     * @param titleString the title of the message
-     * @param msgString the text of the message
+     * @param titleKey the title of the message
+     * @param msgKey the text of the message
      * @param error the error that is being reported
      */
     my.openReportDialog = function(titleKey, msgKey, error) {
@@ -8045,16 +7566,15 @@ var messageHandler = (function(my) {
 
     /**
      *  Shows an error dialog to the user.
-     * @param title the title of the message
-     * @param message the text of the messafe
+     * @param titleKey the title of the message.
+     * @param msgKey the text of the message.
      */
     my.showError = function(titleKey, msgKey) {
 
-        if(!titleKey) {
+        if (!titleKey) {
             titleKey = "dialog.oops";
         }
-        if(!msgKey)
-        {
+        if (!msgKey) {
             msgKey = "dialog.defaultError";
         }
         messageHandler.openMessageDialog(titleKey, msgKey);
@@ -8063,12 +7583,9 @@ var messageHandler = (function(my) {
     my.notify = function(displayName, displayNameKey,
                          cls, messageKey, messageArguments, options) {
         var displayNameSpan = '<span class="nickname" ';
-        if(displayName)
-        {
+        if (displayName) {
             displayNameSpan += ">" + displayName;
-        }
-        else
-        {
+        } else {
             displayNameSpan += "data-i18n='" + displayNameKey +
                 "'>" + APP.translation.translateString(displayNameKey);
         }
@@ -8091,13 +7608,13 @@ module.exports = messageHandler;
 
 
 
-},{}],34:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 var UIEvents = require("../../../service/UI/UIEvents");
 
 var nickname = null;
 var eventEmitter = null;
 
-var NickanameHandler = {
+var NicknameHandler = {
     init: function (emitter) {
         eventEmitter = emitter;
         var storedDisplayName = window.localStorage.displayname;
@@ -8121,8 +7638,9 @@ var NickanameHandler = {
     }
 };
 
-module.exports = NickanameHandler;
-},{"../../../service/UI/UIEvents":104}],35:[function(require,module,exports){
+module.exports = NicknameHandler;
+},{"../../../service/UI/UIEvents":102}],33:[function(require,module,exports){
+/* global $ */
 /**
  * Created by hristo on 12/22/14.
  */
@@ -8186,7 +7704,7 @@ module.exports = {
 
         for (var i = 0, n = pixels.length; i < n; i += 4) {
             var grayscale
-                = pixels[i] * .3 + pixels[i+1] * .59 + pixels[i+2] * .11;
+                = pixels[i] * 0.3 + pixels[i+1] * 0.59 + pixels[i+2] * 0.11;
             pixels[i  ] = grayscale;        // red
             pixels[i+1] = grayscale;        // green
             pixels[i+2] = grayscale;        // blue
@@ -8203,10 +7721,9 @@ module.exports = {
         element.setAttribute("data-html", true);
         element.setAttribute("data-container", "body");
     }
-
-
 };
-},{"../side_pannels/SidePanelToggler":22}],36:[function(require,module,exports){
+},{"../side_pannels/SidePanelToggler":20}],34:[function(require,module,exports){
+/* global APP, $ */
 var JitsiPopover = require("../util/JitsiPopover");
 
 /**
@@ -8214,8 +7731,7 @@ var JitsiPopover = require("../util/JitsiPopover");
  * @param videoContainer the video container associated with the indicator.
  * @constructor
  */
-function ConnectionIndicator(videoContainer, jid)
-{
+function ConnectionIndicator(videoContainer, jid) {
     this.videoContainer = videoContainer;
     this.bandwidth = null;
     this.packetLoss = null;
@@ -8246,20 +7762,17 @@ ConnectionIndicator.connectionQualityValues = {
     0: "0px"//empty
 };
 
-ConnectionIndicator.getIP = function(value)
-{
+ConnectionIndicator.getIP = function(value) {
     return value.substring(0, value.lastIndexOf(":"));
 };
 
-ConnectionIndicator.getPort = function(value)
-{
+ConnectionIndicator.getPort = function(value) {
     return value.substring(value.lastIndexOf(":") + 1, value.length);
 };
 
 ConnectionIndicator.getStringFromArray = function (array) {
     var res = "";
-    for(var i = 0; i < array.length; i++)
-    {
+    for(var i = 0; i < array.length; i++) {
         res += (i === 0? "" : ", ") + array[i];
     }
     return res;
@@ -8274,74 +7787,60 @@ ConnectionIndicator.prototype.generateText = function () {
 
     var translate = APP.translation.translateString;
 
-    if(this.bitrate === null)
-    {
+    if(this.bitrate === null) {
         downloadBitrate = "N/A";
         uploadBitrate = "N/A";
     }
-    else
-    {
+    else {
         downloadBitrate =
             this.bitrate.download? this.bitrate.download + " Kbps" : "N/A";
         uploadBitrate =
             this.bitrate.upload? this.bitrate.upload + " Kbps" : "N/A";
     }
 
-    if(this.packetLoss === null)
-    {
+    if(this.packetLoss === null) {
         packetLoss = "N/A";
-    }
-    else
-    {
+    } else {
 
         packetLoss = "<span class='jitsipopover_green'>&darr;</span>" +
-            (this.packetLoss.download !== null? this.packetLoss.download : "N/A") +
+            (this.packetLoss.download !== null ?
+                this.packetLoss.download : "N/A") +
             "% <span class='jitsipopover_orange'>&uarr;</span>" +
-            (this.packetLoss.upload !== null? this.packetLoss.upload : "N/A") + "%";
+            (this.packetLoss.upload !== null? this.packetLoss.upload : "N/A") +
+            "%";
     }
 
     var resolutionValue = null;
-    if(this.resolution && this.jid != null)
-    {
+    if(this.resolution && this.jid != null) {
         var keys = Object.keys(this.resolution);
-        for(var ssrc in this.resolution)
-        {
+        for(var ssrc in this.resolution) {
             resolutionValue = this.resolution[ssrc];
         }
     }
 
-    if(this.jid === null)
-    {
+    if(this.jid === null) {
         resolution = "";
         if(this.resolution === null || !Object.keys(this.resolution) ||
-            Object.keys(this.resolution).length === 0)
-        {
+            Object.keys(this.resolution).length === 0) {
             resolution = "N/A";
-        }
-        else
-            for(i in this.resolution)
-            {
+        } else {
+            for (i in this.resolution) {
                 resolutionValue = this.resolution[i];
-                if(resolutionValue)
-                {
-                    if(resolutionValue.height &&
-                        resolutionValue.width)
-                    {
-                        resolution += (resolution === ""? "" : ", ") +
-                            resolutionValue.width + "x" +
-                            resolutionValue.height;
+                if (resolutionValue) {
+                    if (resolutionValue.height &&
+                        resolutionValue.width) {
+                        resolution += (resolution === "" ? "" : ", ") +
+                        resolutionValue.width + "x" +
+                        resolutionValue.height;
                     }
                 }
             }
-    }
-    else if(!resolutionValue ||
+        }
+    } else if(!resolutionValue ||
         !resolutionValue.height ||
-        !resolutionValue.width)
-    {
+        !resolutionValue.width) {
         resolution = "N/A";
-    }
-    else
-    {
+    } else {
         resolution = resolutionValue.width + "x" + resolutionValue.height;
     }
 
@@ -8372,16 +7871,12 @@ ConnectionIndicator.prototype.generateText = function () {
             "</div><br />";
     }
 
-    if(this.showMoreValue)
-    {
+    if (this.showMoreValue) {
         var downloadBandwidth, uploadBandwidth, transport;
-        if(this.bandwidth === null)
-        {
+        if (this.bandwidth === null) {
             downloadBandwidth = "N/A";
             uploadBandwidth = "N/A";
-        }
-        else
-        {
+        } else {
             downloadBandwidth = this.bandwidth.download?
                 this.bandwidth.download + " Kbps" :
                 "N/A";
@@ -8390,45 +7885,36 @@ ConnectionIndicator.prototype.generateText = function () {
                 "N/A";
         }
 
-        if(!this.transport || this.transport.length === 0)
-        {
+        if (!this.transport || this.transport.length === 0) {
             transport = "<tr>" +
                 "<td><span class='jitsipopover_blue' " +
                 "data-i18n='connectionindicator.address'>" +
                 translate("connectionindicator.address") + "</span></td>" +
                 "<td> N/A</td></tr>";
-        }
-        else
-        {
+        } else {
             var data = {remoteIP: [], localIP:[], remotePort:[], localPort:[]};
-            for(i = 0; i < this.transport.length; i++)
-            {
+            for(i = 0; i < this.transport.length; i++) {
                 var ip =  ConnectionIndicator.getIP(this.transport[i].ip);
                 var port = ConnectionIndicator.getPort(this.transport[i].ip);
                 var localIP =
                     ConnectionIndicator.getIP(this.transport[i].localip);
                 var localPort =
                     ConnectionIndicator.getPort(this.transport[i].localip);
-                if(data.remoteIP.indexOf(ip) == -1)
-                {
+                if(data.remoteIP.indexOf(ip) == -1) {
                     data.remoteIP.push(ip);
                 }
 
-                if(data.remotePort.indexOf(port) == -1)
-                {
+                if(data.remotePort.indexOf(port) == -1) {
                     data.remotePort.push(port);
                 }
 
-                if(data.localIP.indexOf(localIP) == -1)
-                {
+                if(data.localIP.indexOf(localIP) == -1) {
                     data.localIP.push(localIP);
                 }
 
-                if(data.localPort.indexOf(localPort) == -1)
-                {
+                if(data.localPort.indexOf(localPort) == -1) {
                     data.localPort.push(localPort);
                 }
-
             }
 
             var local_address_key = "connectionindicator.localaddress";
@@ -8494,7 +7980,6 @@ ConnectionIndicator.prototype.generateText = function () {
             uploadBandwidth + "</td></tr>";
 
         result += transport + "</table>";
-
     }
 
     return result;
@@ -8509,11 +7994,9 @@ ConnectionIndicator.prototype.showMore = function () {
 };
 
 
-function createIcon(classes)
-{
+function createIcon(classes) {
     var icon = document.createElement("span");
-    for(var i in classes)
-    {
+    for(var i in classes) {
         icon.classList.add(classes[i]);
     }
     icon.appendChild(
@@ -8528,7 +8011,8 @@ ConnectionIndicator.prototype.create = function () {
     this.connectionIndicatorContainer = document.createElement("div");
     this.connectionIndicatorContainer.className = "connectionindicator";
     this.connectionIndicatorContainer.style.display = "none";
-    this.videoContainer.container.appendChild(this.connectionIndicatorContainer);
+    this.videoContainer.container.appendChild(
+        this.connectionIndicatorContainer);
     this.popover = new JitsiPopover(
         $("#" + this.videoContainer.videoSpanId + " > .connectionindicator"),
         {content: "<div class=\"connection_info\" data-i18n='connectionindicator.na'>" +
@@ -8539,20 +8023,17 @@ ConnectionIndicator.prototype.create = function () {
         createIcon(["connection", "connection_empty"]));
     this.fullIcon = this.connectionIndicatorContainer.appendChild(
         createIcon(["connection", "connection_full"]));
-
 };
 
 /**
  * Removes the indicator
  */
-ConnectionIndicator.prototype.remove = function()
-{
+ConnectionIndicator.prototype.remove = function() {
     if (this.connectionIndicatorContainer.parentNode) {
         this.connectionIndicatorContainer.parentNode.removeChild(
             this.connectionIndicatorContainer);
     }
     this.popover.forceHide();
-
 };
 
 /**
@@ -8561,16 +8042,13 @@ ConnectionIndicator.prototype.remove = function()
  * @param object the statistics data.
  */
 ConnectionIndicator.prototype.updateConnectionQuality =
-function (percent, object) {
+    function (percent, object) {
 
-    if(percent === null)
-    {
+    if (percent === null) {
         this.connectionIndicatorContainer.style.display = "none";
         this.popover.forceHide();
         return;
-    }
-    else
-    {
+    } else {
         if(this.connectionIndicatorContainer.style.display == "none") {
             this.connectionIndicatorContainer.style.display = "block";
             this.videoContainer.updateIconPositions();
@@ -8580,14 +8058,11 @@ function (percent, object) {
     this.bitrate = object.bitrate;
     this.packetLoss = object.packetLoss;
     this.transport = object.transport;
-    if(object.resolution)
-    {
+    if (object.resolution) {
         this.resolution = object.resolution;
     }
-    for(var quality in ConnectionIndicator.connectionQualityValues)
-    {
-        if(percent >= quality)
-        {
+    for (var quality in ConnectionIndicator.connectionQualityValues) {
+        if (percent >= quality) {
             this.fullIcon.style.width =
                 ConnectionIndicator.connectionQualityValues[quality];
         }
@@ -8630,7 +8105,8 @@ ConnectionIndicator.prototype.hideIndicator = function () {
 };
 
 module.exports = ConnectionIndicator;
-},{"../util/JitsiPopover":32}],37:[function(require,module,exports){
+},{"../util/JitsiPopover":30}],35:[function(require,module,exports){
+/* global $, APP, Strophe, interfaceConfig */
 var Avatar = require("../avatar/Avatar");
 var RTCBrowserType = require("../../RTC/RTCBrowserType");
 var UIUtil = require("../util/UIUtil");
@@ -8701,8 +8177,7 @@ function positionVideo(video,
                        horizontalIndent,
                        verticalIndent,
                        animate) {
-    if(animate)
-    {
+    if (animate) {
         video.animate({
                 width: width,
                 height: height,
@@ -8715,9 +8190,7 @@ function positionVideo(video,
                 queue: false,
                 duration: 500
             });
-    }
-    else
-    {
+    } else {
         video.width(width);
         video.height(height);
         video.css({  top: verticalIndent + 'px',
@@ -8727,7 +8200,6 @@ function positionVideo(video,
     }
 
 }
-
 
 /**
  * Returns an array of the video dimensions, so that it keeps it's aspect
@@ -8884,23 +8356,19 @@ function changeVideo(isVisible) {
     var flipX = currentSmallVideo.flipX;
 
     if (flipX && videoTransform !== 'scaleX(-1)') {
-        document.getElementById('largeVideo').style.webkitTransform
-            = "scaleX(-1)";
-    }
-    else if (!flipX && videoTransform === 'scaleX(-1)') {
-        document.getElementById('largeVideo').style.webkitTransform
-            = "none";
+        document.getElementById('largeVideo').style.webkitTransform =
+            "scaleX(-1)";
+    } else if (!flipX && videoTransform === 'scaleX(-1)') {
+        document.getElementById('largeVideo').style.webkitTransform =
+            "none";
     }
 
     var isDesktop = APP.RTC.isVideoSrcDesktop(currentSmallVideo.peerJid);
     // Change the way we'll be measuring and positioning large video
 
-    getVideoSize = isDesktop
-        ? getDesktopVideoSize
-        : getCameraVideoSize;
-    getVideoPosition = isDesktop
-        ? getDesktopVideoPosition
-        : getCameraVideoPosition;
+    getVideoSize = isDesktop ? getDesktopVideoSize : getCameraVideoSize;
+    getVideoPosition = isDesktop ? getDesktopVideoPosition :
+        getCameraVideoPosition;
 
 
     // Only if the large video is currently visible.
@@ -9067,11 +8535,8 @@ var LargeVideo = {
         if (LargeVideo.isCurrentlyOnLarge(resourceJid))
         {
             var isDesktop = APP.RTC.isVideoSrcDesktop(jid);
-            getVideoSize = isDesktop
-                ? getDesktopVideoSize
-                : getCameraVideoSize;
-            getVideoPosition = isDesktop
-                ? getDesktopVideoPosition
+            getVideoSize = isDesktop ? getDesktopVideoSize : getCameraVideoSize;
+            getVideoPosition = isDesktop ? getDesktopVideoPosition
                 : getCameraVideoPosition;
             this.position(null, null);
         }
@@ -9124,8 +8589,7 @@ var LargeVideo = {
         var top = availableHeight / 2 - avatarSize / 4 * 3;
         $('#activeSpeaker').css('top', top);
 
-        if(animate)
-        {
+        if(animate) {
             $('#videospace').animate({
                     right: window.innerWidth - availableWidth,
                     width: availableWidth,
@@ -9145,18 +8609,13 @@ var LargeVideo = {
                     queue: false,
                     duration: 500
                 });
-
-
-        }
-        else
-        {
+        } else {
             $('#videospace').width(availableWidth);
             $('#videospace').height(availableHeight);
             $('#largeVideoContainer').width(availableWidth);
             $('#largeVideoContainer').height(availableHeight);
         }
         return [availableWidth, availableHeight];
-
     },
     resizeVideoAreaAnimated: function (isVisible, completeFunction) {
         if(!isEnabled)
@@ -9177,9 +8636,7 @@ var LargeVideo = {
     showAvatar: function (resourceJid, show) {
         if(!isEnabled)
             return;
-        if(this.getResourceJid() === resourceJid
-            && state === "video")
-        {
+        if(this.getResourceJid() === resourceJid && state === "video") {
             $("#largeVideo").css("visibility", show ? "hidden" : "visible");
             $('#activeSpeaker').css("visibility", show ? "visible" : "hidden");
             return true;
@@ -9312,12 +8769,12 @@ var LargeVideo = {
     {
         $('#largeVideoContainer').hover(inHandler, outHandler);
     }
-
 };
 
 
 module.exports = LargeVideo;
-},{"../../../service/UI/UIEvents":104,"../../RTC/RTCBrowserType":10,"../../xmpp/xmpp":68,"../avatar/Avatar":18,"../toolbars/ToolbarToggler":31,"../util/UIUtil":35}],38:[function(require,module,exports){
+},{"../../../service/UI/UIEvents":102,"../../RTC/RTCBrowserType":8,"../../xmpp/xmpp":66,"../avatar/Avatar":16,"../toolbars/ToolbarToggler":29,"../util/UIUtil":33}],36:[function(require,module,exports){
+/* global $, interfaceConfig, APP */
 var SmallVideo = require("./SmallVideo");
 var ConnectionIndicator = require("./ConnectionIndicator");
 var NicknameHandler = require("../util/NicknameHandler");
@@ -9325,8 +8782,7 @@ var UIUtil = require("../util/UIUtil");
 var LargeVideo = require("./LargeVideo");
 var RTCBrowserType = require("../../RTC/RTCBrowserType");
 
-function LocalVideo(VideoLayout)
-{
+function LocalVideo(VideoLayout) {
     this.videoSpanId = "localVideoContainer";
     this.container = $("#localVideoContainer").get(0);
     this.VideoLayout = VideoLayout;
@@ -9341,7 +8797,7 @@ LocalVideo.prototype.constructor = LocalVideo;
 /**
  * Creates the edit display name button.
  *
- * @returns the edit button
+ * @returns {object} the edit button
  */
 function createEditDisplayNameButton() {
     var editButton = document.createElement('a');
@@ -9354,15 +8810,14 @@ function createEditDisplayNameButton() {
     return editButton;
 }
 
-
 /**
  * Sets the display name for the given video span id.
  */
 LocalVideo.prototype.setDisplayName = function(displayName, key) {
-
     if (!this.container) {
         console.warn(
-                "Unable to set displayName - " + this.videoSpanId + " does not exist");
+                "Unable to set displayName - " + this.videoSpanId +
+                " does not exist");
         return;
     }
 
@@ -9370,17 +8825,16 @@ LocalVideo.prototype.setDisplayName = function(displayName, key) {
     var defaultLocalDisplayName = APP.translation.generateTranslationHTML(
         interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME);
 
+    var meHTML;
     // If we already have a display name for this video.
     if (nameSpan.length > 0) {
-
         if (nameSpan.text() !== displayName) {
-            if (displayName && displayName.length > 0)
-            {
-                var meHTML = APP.translation.generateTranslationHTML("me");
+            if (displayName && displayName.length > 0) {
+                meHTML = APP.translation.generateTranslationHTML("me");
                 $('#localDisplayName').html(displayName + ' (' + meHTML + ')');
-            }
-            else
+            } else {
                 $('#localDisplayName').html(defaultLocalDisplayName);
+            }
         }
     } else {
         var editButton = createEditDisplayNameButton();
@@ -9391,7 +8845,7 @@ LocalVideo.prototype.setDisplayName = function(displayName, key) {
 
 
         if (displayName && displayName.length > 0) {
-            var meHTML = APP.translation.generateTranslationHTML("me");
+            meHTML = APP.translation.generateTranslationHTML("me");
             nameSpan.innerHTML = displayName + meHTML;
         }
         else {
@@ -9428,18 +8882,19 @@ LocalVideo.prototype.setDisplayName = function(displayName, key) {
         $('#localVideoContainer .displayname')
             .bind("click", function (e) {
 
+                var editDisplayName = $('#editDisplayName');
                 e.preventDefault();
                 e.stopPropagation();
                 $('#localDisplayName').hide();
-                $('#editDisplayName').show();
-                $('#editDisplayName').focus();
-                $('#editDisplayName').select();
+                editDisplayName.show();
+                editDisplayName.focus();
+                editDisplayName.select();
 
-                $('#editDisplayName').one("focusout", function (e) {
+                editDisplayName.one("focusout", function (e) {
                     self.VideoLayout.inputDisplayNameHandler(this.value);
                 });
 
-                $('#editDisplayName').on('keydown', function (e) {
+                editDisplayName.on('keydown', function (e) {
                     if (e.keyCode === 13) {
                         e.preventDefault();
                         self.VideoLayout.inputDisplayNameHandler(this.value);
@@ -9447,38 +8902,34 @@ LocalVideo.prototype.setDisplayName = function(displayName, key) {
                 });
             });
     }
-}
+};
 
 LocalVideo.prototype.inputDisplayNameHandler = function (name) {
     NicknameHandler.setNickname(name);
 
-    if (!$('#localDisplayName').is(":visible")) {
-        if (NicknameHandler.getNickname())
-        {
+    var localDisplayName = $('#localDisplayName');
+    if (!localDisplayName.is(":visible")) {
+        if (NicknameHandler.getNickname()) {
             var meHTML = APP.translation.generateTranslationHTML("me");
-            $('#localDisplayName').html(NicknameHandler.getNickname() + " (" + meHTML + ")");
-        }
-        else
-        {
+            localDisplayName.html(NicknameHandler.getNickname() + " (" +
+            meHTML + ")");
+        } else {
             var defaultHTML = APP.translation.generateTranslationHTML(
                 interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME);
-            $('#localDisplayName')
-                .html(defaultHTML);
+            localDisplayName .html(defaultHTML);
         }
-        $('#localDisplayName').show();
+        localDisplayName.show();
     }
 
     $('#editDisplayName').hide();
-}
+};
 
-LocalVideo.prototype.createConnectionIndicator = function()
-{
+LocalVideo.prototype.createConnectionIndicator = function() {
     if(this.connectionIndicator)
         return;
 
-    this.connectionIndicator
-        = new ConnectionIndicator(this, null);
-}
+    this.connectionIndicator = new ConnectionIndicator(this, null);
+};
 
 LocalVideo.prototype.changeVideo = function (stream, isMuted) {
     var self = this;
@@ -9494,27 +8945,28 @@ LocalVideo.prototype.changeVideo = function (stream, isMuted) {
             APP.xmpp.myResource());
     }
 
-    $('#localVideoContainer').off('click');
-    $('#localVideoContainer').on('click', localVideoClick);
+    var localVideoContainerSelector = $('#localVideoContainer');
+    localVideoContainerSelector.off('click');
+    localVideoContainerSelector.on('click', localVideoClick);
 
     // Add hover handler
-    $('#localVideoContainer').hover(
+    localVideoContainerSelector.hover(
         function() {
             self.showDisplayName(true);
         },
         function() {
             if (!LargeVideo.isLargeVideoVisible() ||
-                !LargeVideo.isCurrentlyOnLarge(self.getResourceJid()))
+                !LargeVideo.isCurrentlyOnLarge(self.getResourceJid())) {
                 self.showDisplayName(false);
+            }
         }
     );
 
-    if(isMuted)
-    {
+    if(isMuted) {
         APP.UI.setVideoMute(true);
         return;
     }
-    this.flipX = (stream.videoType == "screen")? false : true;
+    this.flipX = stream.videoType != "screen";
     var localVideo = document.createElement('video');
     localVideo.id = 'localVideo_' +
         APP.RTC.getStreamID(stream.getOriginalStream());
@@ -9565,7 +9017,8 @@ LocalVideo.prototype.getResourceJid = function () {
 };
 
 module.exports = LocalVideo;
-},{"../../RTC/RTCBrowserType":10,"../util/NicknameHandler":34,"../util/UIUtil":35,"./ConnectionIndicator":36,"./LargeVideo":37,"./SmallVideo":40}],39:[function(require,module,exports){
+},{"../../RTC/RTCBrowserType":8,"../util/NicknameHandler":32,"../util/UIUtil":33,"./ConnectionIndicator":34,"./LargeVideo":35,"./SmallVideo":38}],37:[function(require,module,exports){
+/* global $, APP, require, Strophe, interfaceConfig */
 var ConnectionIndicator = require("./ConnectionIndicator");
 var SmallVideo = require("./SmallVideo");
 var AudioLevels = require("../audio_levels/AudioLevels");
@@ -9573,8 +9026,7 @@ var LargeVideo = require("./LargeVideo");
 var Avatar = require("../avatar/Avatar");
 var RTCBrowserType = require("../../RTC/RTCBrowserType");
 
-function RemoteVideo(peerJid, VideoLayout)
-{
+function RemoteVideo(peerJid, VideoLayout) {
     this.peerJid = peerJid;
     this.resourceJid = Strophe.getResourceFromJid(peerJid);
     this.videoSpanId = 'participant_' + this.resourceJid;
@@ -9624,8 +9076,7 @@ RemoteVideo.prototype.addRemoteVideoMenu = function () {
 
     var popupmenuElement = document.createElement('ul');
     popupmenuElement.className = 'popupmenu';
-    popupmenuElement.id
-        = 'remote_popupmenu_' + this.getResourceJid();
+    popupmenuElement.id = 'remote_popupmenu_' + this.getResourceJid();
     spanElement.appendChild(popupmenuElement);
 
     var muteMenuItem = document.createElement('li');
@@ -9686,8 +9137,9 @@ RemoteVideo.prototype.addRemoteVideoMenu = function () {
     var paddingSpan = document.createElement('span');
     paddingSpan.className = 'popupmenuPadding';
     popupmenuElement.appendChild(paddingSpan);
-    APP.translation.translateElement($("#" + popupmenuElement.id + " > li > a > div"));
-}
+    APP.translation.translateElement(
+        $("#" + popupmenuElement.id + " > li > a > div"));
+};
 
 
 /**
@@ -9696,9 +9148,9 @@ RemoteVideo.prototype.addRemoteVideoMenu = function () {
  *
  * @param stream the stream
  * @param isVideo <tt>true</tt> if given <tt>stream</tt> is a video one.
- * @param container
  */
-RemoteVideo.prototype.removeRemoteStreamElement = function (stream, isVideo, id) {
+RemoteVideo.prototype.removeRemoteStreamElement =
+    function (stream, isVideo, id) {
     if (!this.container)
         return false;
 
@@ -9905,8 +9357,8 @@ RemoteVideo.prototype.updateRemoteVideoMenu = function (isMuted) {
 RemoteVideo.prototype.setDisplayName = function(displayName, key) {
 
     if (!this.container) {
-        console.warn(
-                "Unable to set displayName - " + this.videoSpanId + " does not exist");
+        console.warn( "Unable to set displayName - " + this.videoSpanId +
+                " does not exist");
         return;
     }
 
@@ -9914,12 +9366,10 @@ RemoteVideo.prototype.setDisplayName = function(displayName, key) {
 
     // If we already have a display name for this video.
     if (nameSpan.length > 0) {
-        if (displayName && displayName.length > 0)
-        {
+        if (displayName && displayName.length > 0) {
             $('#' + this.videoSpanId + '_name').html(displayName);
         }
-        else if (key && key.length > 0)
-        {
+        else if (key && key.length > 0) {
             var nameHtml = APP.translation.generateTranslationHTML(key);
             $('#' + this.videoSpanId + '_name').html(nameHtml);
         }
@@ -9933,17 +9383,14 @@ RemoteVideo.prototype.setDisplayName = function(displayName, key) {
 
 
         if (displayName && displayName.length > 0) {
-
             nameSpan.innerText = displayName;
         }
         else
             nameSpan.innerText = interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME;
 
-
         nameSpan.id = this.videoSpanId + '_name';
-
     }
-}
+};
 
 /**
  * Removes remote video menu element from video element identified by
@@ -9975,13 +9422,14 @@ RemoteVideo.createContainer = function (spanId) {
 
 
 module.exports = RemoteVideo;
-},{"../../RTC/RTCBrowserType":10,"../audio_levels/AudioLevels":14,"../avatar/Avatar":18,"./ConnectionIndicator":36,"./LargeVideo":37,"./SmallVideo":40}],40:[function(require,module,exports){
+},{"../../RTC/RTCBrowserType":8,"../audio_levels/AudioLevels":12,"../avatar/Avatar":16,"./ConnectionIndicator":34,"./LargeVideo":35,"./SmallVideo":38}],38:[function(require,module,exports){
+/* global $, APP, require */
 var Avatar = require("../avatar/Avatar");
 var UIUtil = require("../util/UIUtil");
 var LargeVideo = require("./LargeVideo");
 var RTCBrowserType = require("../../RTC/RTCBrowserType");
 
-function SmallVideo(){
+function SmallVideo() {
     this.isMuted = false;
     this.hasAvatar = false;
 }
@@ -10008,33 +9456,32 @@ SmallVideo.prototype.setDeviceAvailabilityIcons = function (devices) {
     if(!this.container)
         return;
 
-    $("#" + this.videoSpanId + " > .noMic").remove();
-    $("#" + this.videoSpanId + " > .noVideo").remove();
-    if(!devices.audio)
-    {
+    var noMic = $("#" + this.videoSpanId + " > .noMic");
+    var noVideo =  $("#" + this.videoSpanId + " > .noVideo");
+
+    noMic.remove();
+    noVideo.remove();
+    if (!devices.audio) {
         this.container.appendChild(
-            document.createElement("div")).setAttribute("class","noMic");
+            document.createElement("div")).setAttribute("class", "noMic");
     }
 
-    if(!devices.video)
-    {
+    if (!devices.video) {
         this.container.appendChild(
-            document.createElement("div")).setAttribute("class","noVideo");
+            document.createElement("div")).setAttribute("class", "noVideo");
     }
 
-    if(!devices.audio && !devices.video)
-    {
-        $("#" + this.videoSpanId + " > .noMic").css("background-position", "75%");
-        $("#" + this.videoSpanId + " > .noVideo").css("background-position", "25%");
-        $("#" + this.videoSpanId + " > .noVideo").css("background-color", "transparent");
+    if (!devices.audio && !devices.video) {
+        noMic.css("background-position", "75%");
+        noVideo.css("background-position", "25%");
+        noVideo.css("background-color", "transparent");
     }
-}
+};
 
 /**
  * Shows the presence status message for the given video.
  */
 SmallVideo.prototype.setPresenceStatus = function (statusMsg) {
-
     if (!this.container) {
         // No container
         return;
@@ -10065,15 +9512,13 @@ SmallVideo.prototype.setPresenceStatus = function (statusMsg) {
 /**
  * Creates an audio or video stream element.
  */
-
 SmallVideo.createStreamElement = function (sid, stream) {
     var isVideo = stream.getVideoTracks().length > 0;
 
-    var element = isVideo
-        ? document.createElement('video')
+    var element = isVideo ? document.createElement('video')
         : document.createElement('audio');
-    var id = (isVideo ? 'remoteVideo_' : 'remoteAudio_')
-        + sid + '_' + APP.RTC.getStreamID(stream);
+    var id = (isVideo ? 'remoteVideo_' : 'remoteAudio_') + sid + '_' +
+        APP.RTC.getStreamID(stream);
 
     element.id = id;
     if (!RTCBrowserType.isIExplorer()) {
@@ -10093,12 +9538,12 @@ SmallVideo.createStreamElement = function (sid, stream) {
 SmallVideo.prototype.updateStatsIndicator = function (percent, object) {
     if(this.connectionIndicator)
         this.connectionIndicator.updateConnectionQuality(percent, object);
-}
+};
 
 SmallVideo.prototype.hideIndicator = function () {
     if(this.connectionIndicator)
         this.connectionIndicator.hideIndicator();
-}
+};
 
 
 /**
@@ -10169,8 +9614,7 @@ SmallVideo.prototype.showVideoIndicator = function(isMuted) {
     }
 };
 
-SmallVideo.prototype.enableDominantSpeaker = function (isEnable)
-{
+SmallVideo.prototype.enableDominantSpeaker = function (isEnable) {
     var resourceJid = this.getResourceJid();
     var displayName = resourceJid;
     var nameSpan = $('#' + this.videoSpanId + '>span.displayname');
@@ -10207,18 +9651,15 @@ SmallVideo.prototype.updateIconPositions = function () {
     var audioMutedSpan = $('#' + this.videoSpanId + '>span.audioMuted');
     var connectionIndicator = $('#' + this.videoSpanId + '>div.connectionindicator');
     var videoMutedSpan = $('#' + this.videoSpanId + '>span.videoMuted');
-    if(connectionIndicator.length > 0
-        && connectionIndicator[0].style.display != "none") {
+    if(connectionIndicator.length > 0 &&
+        connectionIndicator[0].style.display != "none") {
         audioMutedSpan.css({right: "23px"});
         videoMutedSpan.css({right: ((audioMutedSpan.length > 0? 23 : 0) + 30) + "px"});
-    }
-    else
-    {
+    } else {
         audioMutedSpan.css({right: "0px"});
         videoMutedSpan.css({right: (audioMutedSpan.length > 0? 30 : 0) + "px"});
     }
-}
-
+};
 
 /**
  * Creates the element indicating the moderator(owner) of the conference.
@@ -10250,30 +9691,26 @@ SmallVideo.prototype.createModeratorIndicatorElement = function () {
 
     //translates text in focus indicators
     APP.translation.translateElement($('#' + this.videoSpanId + ' .focusindicator'));
-}
-
+};
 
 SmallVideo.prototype.getSrc = function () {
     var videoElement = APP.RTC.getVideoElementName();
     return APP.RTC.getVideoSrc(
             $('#' + this.videoSpanId).find(videoElement).get(0));
-},
+};
 
-SmallVideo.prototype.focus = function(isFocused)
-{
+SmallVideo.prototype.focus = function(isFocused) {
     if(!isFocused) {
         this.container.classList.remove("videoContainerFocused");
-    }
-    else
-    {
+    } else {
         this.container.classList.add("videoContainerFocused");
     }
-}
+};
 
 SmallVideo.prototype.hasVideo = function () {
     return $("#" + this.videoSpanId).find(
                 APP.RTC.getVideoElementName()).length !== 0;
-}
+};
 
 /**
  * Hides or shows the user's avatar
@@ -10300,18 +9737,14 @@ SmallVideo.prototype.showAvatar = function (show) {
         if (!this.isLocal &&
             !this.VideoLayout.isInLastN(resourceJid)) {
             show = true;
-        }
-        else
-        {
+        } else {
             // We want to show the avatar when the video is muted or not exists
             // that is when 'true' or 'null' is returned
             show = APP.RTC.isVideoMuted(this.peerJid) !== false;
         }
-
     }
 
-    if (LargeVideo.showAvatar(resourceJid, show))
-    {
+    if (LargeVideo.showAvatar(resourceJid, show)) {
         setVisibility(avatar, false);
         setVisibility(video, false);
     } else {
@@ -10319,7 +9752,6 @@ SmallVideo.prototype.showAvatar = function (show) {
             setVisibility(video, !show);
         }
         setVisibility(avatar, show);
-
     }
 };
 
@@ -10341,10 +9773,11 @@ SmallVideo.prototype.avatarChanged = function (thumbUrl) {
             thumbnail.append(avatar);
         }
     }
-}
+};
 
 module.exports = SmallVideo;
-},{"../../RTC/RTCBrowserType":10,"../avatar/Avatar":18,"../util/UIUtil":35,"./LargeVideo":37}],41:[function(require,module,exports){
+},{"../../RTC/RTCBrowserType":8,"../avatar/Avatar":16,"../util/UIUtil":33,"./LargeVideo":35}],39:[function(require,module,exports){
+/* global config, APP, $, Strophe, require, interfaceConfig */
 var AudioLevels = require("../audio_levels/AudioLevels");
 var ContactList = require("../side_pannels/contactlist/ContactList");
 var MediaStreamType = require("../../../service/RTC/MediaStreamTypes");
@@ -10369,9 +9802,6 @@ var lastNPickupJid = null;
 
 var eventEmitter = null;
 
-var showLargeVideo = true;
-
-
 /**
  * Currently focused video jid
  * @type {String}
@@ -10389,9 +9819,11 @@ var VideoLayout = (function (my) {
     };
 
     my.isInLastN = function(resource) {
-        return lastNCount < 0 // lastN is disabled, return true
-            || (lastNCount > 0 && lastNEndpointsCache.length == 0) // lastNEndpoints cache not built yet, return true
-            || (lastNEndpointsCache && lastNEndpointsCache.indexOf(resource) !== -1);
+        return lastNCount < 0 || // lastN is disabled
+             // lastNEndpoints cache not built yet
+            (lastNCount > 0 && lastNEndpointsCache.length == 0) ||
+            (lastNEndpointsCache &&
+                lastNEndpointsCache.indexOf(resource) !== -1);
     };
 
     my.changeLocalStream = function (stream, isMuted) {
@@ -10442,18 +9874,13 @@ var VideoLayout = (function (my) {
         if(!devices)
             return;
 
-        if(!resourceJid)
-        {
+        if(!resourceJid) {
             localVideoThumbnail.setDeviceAvailabilityIcons(devices);
-        }
-        else
-        {
+        } else {
             if(remoteVideos[resourceJid])
                 remoteVideos[resourceJid].setDeviceAvailabilityIcons(devices);
         }
-
-
-    }
+    };
 
     /**
      * Checks if removed video is currently displayed and tries to display
@@ -10552,8 +9979,7 @@ var VideoLayout = (function (my) {
             focusedVideoResourceJid = null;
             // Enable the currently set dominant speaker.
             if (currentDominantSpeaker) {
-                if(smallVideo && smallVideo.hasVideo())
-                {
+                if(smallVideo && smallVideo.hasVideo()) {
                     LargeVideo.updateLargeVideo(currentDominantSpeaker);
                 }
             }
@@ -10564,13 +9990,11 @@ var VideoLayout = (function (my) {
             return;
         }
 
-
         // Lock new video
         focusedVideoResourceJid = resourceJid;
 
         // Update focused/pinned interface.
-        if (resourceJid)
-        {
+        if (resourceJid) {
             if(smallVideo)
                 smallVideo.focus(true);
 
@@ -10607,14 +10031,13 @@ var VideoLayout = (function (my) {
 
         var resourceJid = Strophe.getResourceFromJid(peerJid);
 
-        if(!remoteVideos[resourceJid])
-        {
+        if(!remoteVideos[resourceJid]) {
             remoteVideos[resourceJid] = new RemoteVideo(peerJid, VideoLayout);
 
             // In case this is not currently in the last n we don't show it.
-            if (localLastNCount
-                && localLastNCount > 0
-                && $('#remoteVideos>span').length >= localLastNCount + 2) {
+            if (localLastNCount &&
+                localLastNCount > 0 &&
+                $('#remoteVideos>span').length >= localLastNCount + 2) {
                 remoteVideos[resourceJid].showPeerContainer('hide');
             }
             else
@@ -10645,7 +10068,7 @@ var VideoLayout = (function (my) {
                 currentDominantSpeaker === resourceJid)) {
             LargeVideo.updateLargeVideo(resourceJid, true);
         }
-    }
+    };
 
     /**
      * Shows the presence status message for the given video.
@@ -10674,13 +10097,10 @@ var VideoLayout = (function (my) {
             }
 
             var resourceJid = Strophe.getResourceFromJid(jid);
-
             var member = members[jid];
 
             if (member.role === 'moderator') {
-
                 remoteVideos[resourceJid].removeRemoteVideoMenu();
-
                 remoteVideos[resourceJid].createModeratorIndicatorElement();
             } else if (isModerator) {
                 // We are moderator, but user is not - add menu
@@ -10720,8 +10140,7 @@ var VideoLayout = (function (my) {
 
         $('.userAvatar').css('left', (width - height) / 2);
 
-        if(animate)
-        {
+        if(animate) {
             $('#remoteVideos').animate({
                     height: height
                 },
@@ -10745,15 +10164,12 @@ var VideoLayout = (function (my) {
                     }
                 });
 
-        }
-        else
-        {
+        } else {
             // size videos so that while keeping AR and max height, we have a
             // nice fit
             $('#remoteVideos').height(height);
             $('#remoteVideos>span').width(width);
             $('#remoteVideos>span').height(height);
-
 
             $(document).trigger("remotevideo.resized", [width, height]);
         }
@@ -10870,15 +10286,14 @@ var VideoLayout = (function (my) {
                 remoteVideos[resourceJid].updateRemoteVideoMenu(isMuted);
             }
         }
-
-
     };
 
     /**
      * On video muted event.
      */
     my.onVideoMute = function (jid, value) {
-        if(jid !== APP.xmpp.myJid() && !APP.RTC.muteRemoteVideoStream(jid, value))
+        if (jid !== APP.xmpp.myJid() &&
+            !APP.RTC.muteRemoteVideoStream(jid, value))
             return;
 
         if (jid === APP.xmpp.myJid()) {
@@ -10902,8 +10317,8 @@ var VideoLayout = (function (my) {
      */
     my.onDisplayNameChanged =
                     function (jid, displayName, status) {
-        if (jid === 'localVideoContainer'
-            || jid === APP.xmpp.myJid()) {
+        if (jid === 'localVideoContainer' ||
+            jid === APP.xmpp.myJid()) {
             localVideoThumbnail.setDisplayName(displayName);
         } else {
             VideoLayout.ensurePeerContainerExists(jid);
@@ -10911,7 +10326,6 @@ var VideoLayout = (function (my) {
                 displayName,
                 status);
         }
-
     };
 
     /**
@@ -10946,8 +10360,7 @@ var VideoLayout = (function (my) {
 
         // Local video will not have container found, but that's ok
         // since we don't want to switch to local video.
-        if (!focusedVideoResourceJid && videoSel.length)
-        {
+        if (!focusedVideoResourceJid && videoSel.length) {
             // Update the large video if the video source is already available,
             // otherwise wait for the "videoactive.jingle" event.
             if (videoSel[0].currentTime > 0) {
@@ -10963,9 +10376,9 @@ var VideoLayout = (function (my) {
      * @param endpointsEnteringLastN the list currently entering last N
      * endpoints
      */
-    my.onLastNEndpointsChanged = function ( lastNEndpoints,
-                                                endpointsEnteringLastN,
-                                                stream) {
+    my.onLastNEndpointsChanged = function (lastNEndpoints,
+                                           endpointsEnteringLastN,
+                                           stream) {
         if (lastNCount !== lastNEndpoints.length)
             lastNCount = lastNEndpoints.length;
 
@@ -11002,7 +10415,6 @@ var VideoLayout = (function (my) {
         }
 
         localLastNSet = nextLocalLastNSet;
-
         var updateLargeVideo = false;
 
         // Handle LastN/local LastN changes.
@@ -11010,16 +10422,16 @@ var VideoLayout = (function (my) {
             var resourceJid = VideoLayout.getPeerContainerResourceJid(element);
 
             var isReceived = true;
-            if (resourceJid
-                && lastNEndpoints.indexOf(resourceJid) < 0
-                && localLastNSet.indexOf(resourceJid) < 0) {
+            if (resourceJid &&
+                lastNEndpoints.indexOf(resourceJid) < 0 &&
+                localLastNSet.indexOf(resourceJid) < 0) {
                 console.log("Remove from last N", resourceJid);
                 remoteVideos[resourceJid].showPeerContainer('hide');
                 isReceived = false;
-            } else if (resourceJid
-                && $('#participant_' + resourceJid).is(':visible')
-                && lastNEndpoints.indexOf(resourceJid) < 0
-                && localLastNSet.indexOf(resourceJid) >= 0) {
+            } else if (resourceJid &&
+                $('#participant_' + resourceJid).is(':visible') &&
+                lastNEndpoints.indexOf(resourceJid) < 0 &&
+                localLastNSet.indexOf(resourceJid) >= 0) {
                 remoteVideos[resourceJid].showPeerContainer('avatar');
                 isReceived = false;
             }
@@ -11029,7 +10441,8 @@ var VideoLayout = (function (my) {
                 // it is no longer being received. If resourceJid was being
                 // displayed in the large video we have to switch to another
                 // user.
-                if (!updateLargeVideo && resourceJid === LargeVideo.getResourceJid()) {
+                if (!updateLargeVideo &&
+                    resourceJid === LargeVideo.getResourceJid()) {
                     updateLargeVideo = true;
                 }
             }
@@ -11047,7 +10460,8 @@ var VideoLayout = (function (my) {
                     console.log("Add to last N", resourceJid);
 
                     var jid = APP.xmpp.findJidFromResource(resourceJid);
-                    var mediaStream = APP.RTC.remoteStreams[jid][MediaStreamType.VIDEO_TYPE];
+                    var mediaStream =
+                        APP.RTC.remoteStreams[jid][MediaStreamType.VIDEO_TYPE];
                     var sel = VideoLayout.getPeerVideoSel(resourceJid);
 
                     APP.RTC.attachMediaStream(sel, mediaStream.stream);
@@ -11063,7 +10477,8 @@ var VideoLayout = (function (my) {
 
                         updateLargeVideo = false;
                     }
-                    remoteVideos[resourceJid].waitForPlayback(sel, mediaStream.stream);
+                    remoteVideos[resourceJid].
+                        waitForPlayback(sel, mediaStream.stream);
                 }
             });
         }
@@ -11073,13 +10488,12 @@ var VideoLayout = (function (my) {
         // the large video now.
 
         if (updateLargeVideo) {
-
-            var resource, container, src;
+            var resource;
             var myResource
                 = APP.xmpp.myResource();
 
             // Find out which endpoint to show in the large video.
-            for (var i = 0; i < lastNEndpoints.length; i++) {
+            for (i = 0; i < lastNEndpoints.length; i++) {
                 resource = lastNEndpoints[i];
                 if (!resource || resource === myResource)
                     continue;
@@ -11087,7 +10501,6 @@ var VideoLayout = (function (my) {
                 // videoSrcToSsrc needs to be update for this call to succeed.
                 LargeVideo.updateLargeVideo(resource);
                 break;
-
             }
         }
     };
@@ -11099,24 +10512,22 @@ var VideoLayout = (function (my) {
      */
     my.updateLocalConnectionStats = function (percent, object) {
         var resolution = null;
-        if(object.resolution !== null)
-        {
+        if (object.resolution !== null) {
             resolution = object.resolution;
             object.resolution = resolution[APP.xmpp.myJid()];
             delete resolution[APP.xmpp.myJid()];
         }
         localVideoThumbnail.updateStatsIndicator(percent, object);
-        for(var jid in resolution)
-        {
-            if(resolution[jid] === null)
+        for (var jid in resolution) {
+            if (resolution[jid] === null)
                 continue;
             var resourceJid = Strophe.getResourceFromJid(jid);
-            if(remoteVideos[resourceJid] && remoteVideos[resourceJid].connectionIndicator)
-            {
-                remoteVideos[resourceJid].connectionIndicator.updateResolution(resolution[jid]);
+            if (remoteVideos[resourceJid] &&
+                remoteVideos[resourceJid].connectionIndicator) {
+                remoteVideos[resourceJid].connectionIndicator.
+                    updateResolution(resolution[jid]);
             }
         }
-
     };
 
     /**
@@ -11128,7 +10539,7 @@ var VideoLayout = (function (my) {
     my.updateConnectionStats = function (jid, percent, object) {
         var resourceJid = Strophe.getResourceFromJid(jid);
 
-        if(remoteVideos[resourceJid])
+        if (remoteVideos[resourceJid])
             remoteVideos[resourceJid].updateStatsIndicator(percent, object);
     };
 
@@ -11144,8 +10555,7 @@ var VideoLayout = (function (my) {
      * Hides all the indicators
      */
     my.onStatsStop = function () {
-        for(var video in remoteVideos)
-        {
+        for(var video in remoteVideos) {
             remoteVideos[video].hideIndicator();
         }
         localVideoThumbnail.hideIndicator();
@@ -11154,8 +10564,7 @@ var VideoLayout = (function (my) {
     my.participantLeft = function (jid) {
         // Unlock large video
         var resourceJid = Strophe.getResourceFromJid(jid);
-        if (focusedVideoResourceJid === resourceJid)
-        {
+        if (focusedVideoResourceJid === resourceJid) {
             console.info("Focused video owner has left the conference");
             focusedVideoResourceJid = null;
         }
@@ -11184,12 +10593,9 @@ var VideoLayout = (function (my) {
     };
 
     my.showMore = function (jid) {
-        if (jid === 'local')
-        {
+        if (jid === 'local') {
             localVideoThumbnail.connectionIndicator.showMore();
-        }
-        else
-        {
+        } else {
             var remoteVideo = remoteVideos[Strophe.getResourceFromJid(jid)];
             if (remoteVideo) {
                 remoteVideo.connectionIndicator.showMore();
@@ -11197,7 +10603,6 @@ var VideoLayout = (function (my) {
                 console.info("Error - no remote video for jid: " + jid);
             }
         }
-
     };
 
     my.addPreziContainer = function (id) {
@@ -11208,8 +10613,7 @@ var VideoLayout = (function (my) {
 
     my.setLargeVideoVisible = function (isVisible) {
         LargeVideo.setLargeVideoVisible(isVisible);
-        if(!isVisible && focusedVideoResourceJid)
-        {
+        if(!isVisible && focusedVideoResourceJid) {
             var smallVideo = VideoLayout.getSmallVideo(focusedVideoResourceJid);
             if(smallVideo) {
                 smallVideo.focus(false);
@@ -11219,32 +10623,27 @@ var VideoLayout = (function (my) {
         }
     };
 
-
     /**
      * Resizes the video area
-     * @param completeFunction a function to be called when the video space is resized
+     * @param callback a function to be called when the video space is
+     * resized.
      */
-    my.resizeVideoArea = function(isVisible, completeFunction) {
-        LargeVideo.resizeVideoAreaAnimated(isVisible, completeFunction);
+    my.resizeVideoArea = function(isVisible, callback) {
+        LargeVideo.resizeVideoAreaAnimated(isVisible, callback);
         VideoLayout.resizeThumbnails(true);
-
     };
 
     my.getSmallVideo = function (resourceJid) {
-        if(resourceJid == APP.xmpp.myResource())
-        {
+        if(resourceJid == APP.xmpp.myResource()) {
             return localVideoThumbnail;
-        }
-        else
-        {
+        } else {
             if(!remoteVideos[resourceJid])
                 return null;
             return remoteVideos[resourceJid];
         }
     };
 
-    my.userAvatarChanged = function(resourceJid, thumbUrl)
-    {
+    my.userAvatarChanged = function(resourceJid, thumbUrl) {
         var smallVideo = VideoLayout.getSmallVideo(resourceJid);
         if(smallVideo)
             smallVideo.avatarChanged(thumbUrl);
@@ -11275,7 +10674,7 @@ var VideoLayout = (function (my) {
 }(VideoLayout || {}));
 
 module.exports = VideoLayout;
-},{"../../../service/RTC/MediaStreamTypes":100,"../../../service/UI/UIEvents":104,"../../RTC/RTC":9,"../../RTC/RTCBrowserType":10,"../audio_levels/AudioLevels":14,"../prezi/Prezi":20,"../side_pannels/contactlist/ContactList":27,"./LargeVideo":37,"./LocalVideo":38,"./RemoteVideo":39}],42:[function(require,module,exports){
+},{"../../../service/RTC/MediaStreamTypes":98,"../../../service/UI/UIEvents":102,"../../RTC/RTC":7,"../../RTC/RTCBrowserType":8,"../audio_levels/AudioLevels":12,"../prezi/Prezi":18,"../side_pannels/contactlist/ContactList":25,"./LargeVideo":35,"./LocalVideo":36,"./RemoteVideo":37}],40:[function(require,module,exports){
 //var nouns = [
 //];
 var pluralNouns = [
@@ -11327,7 +10726,8 @@ var adverbs = [
     "Obviously", "Often", "Painfully", "Patiently", "Playfully", "Politely", "Poorly", "Precisely", "Promptly",
     "Quickly", "Quietly", "Randomly", "Rapidly", "Rarely", "Recklessly", "Regularly", "Remorsefully", "Responsibly",
     "Rudely", "Ruthlessly", "Sadly", "Scornfully", "Seamlessly", "Seldom", "Selfishly", "Seriously", "Shakily",
-    "Sharply", "Sideways", "Silently", "Sleepily", "Slightly", "Slowly", "Slyly", "Smoothly", "Softly", "Solemnly", "Steadily", "Sternly", "Strangely", "Strongly", "Stunningly", "Surely", "Tenderly", "Thoughtfully",
+    "Sharply", "Sideways", "Silently", "Sleepily", "Slightly", "Slowly", "Slyly", "Smoothly", "Softly", "Solemnly",
+    "Steadily", "Sternly", "Strangely", "Strongly", "Stunningly", "Surely", "Tenderly", "Thoughtfully",
     "Tightly", "Uneasily", "Vanishingly", "Violently", "Warmly", "Weakly", "Wearily", "Weekly", "Weirdly", "Well",
     "Well", "Wickedly", "Wildly", "Wisely", "Wonderfully", "Yearly"
 ];
@@ -11415,8 +10815,7 @@ var PATTERNS = [
 /*
  * Returns a random element from the array 'arr'
  */
-function randomElement(arr)
-{
+function randomElement(arr) {
     return arr[Math.floor(Math.random() * arr.length)];
 }
 
@@ -11424,8 +10823,7 @@ function randomElement(arr)
  * Returns true if the string 's' contains one of the
  * template strings.
  */
-function hasTemplate(s)
-{
+function hasTemplate(s) {
     for (var template in CATEGORIES){
         if (s.indexOf(template) >= 0){
             return true;
@@ -11437,14 +10835,15 @@ function hasTemplate(s)
  * Generates new room name.
  */
 var RoomNameGenerator = {
-    generateRoomWithoutSeparator: function()
-    {
-        // Note that if more than one pattern is available, the choice of 'name' won't be random (names from patterns
-        // with fewer options will have higher probability of being chosen that names from patterns with more options).
+    generateRoomWithoutSeparator: function() {
+        // Note that if more than one pattern is available, the choice of
+        // 'name' won't have a uniform distribution amongst all patterns (names
+        // from patterns with fewer options will have higher probability of
+        // being chosen that names from patterns with more options).
         var name = randomElement(PATTERNS);
         var word;
-        while (hasTemplate(name)){
-            for (var template in CATEGORIES){
+        while (hasTemplate(name)) {
+            for (var template in CATEGORIES) {
                 word = randomElement(CATEGORIES[template]);
                 name = name.replace(template, word);
             }
@@ -11452,17 +10851,17 @@ var RoomNameGenerator = {
 
         return name;
     }
-}
+};
 
 module.exports = RoomNameGenerator;
 
-},{}],43:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
+/* global $, interfaceConfig */
 var animateTimeout, updateTimeout;
 
 var RoomNameGenerator = require("./RoomnameGenerator");
 
-function enter_room()
-{
+function enter_room() {
     var val = $("#enter_room_field").val();
     if(!val) {
         val = $("#enter_room_field").attr("room_name");
@@ -11480,8 +10879,7 @@ function animate(word) {
     }, 70);
 }
 
-function update_roomname()
-{
+function update_roomname() {
     var word = RoomNameGenerator.generateRoomWithoutSeparator();
     $("#enter_room_field").attr("room_name", word);
     $("#enter_room_field").attr("placeholder", "");
@@ -11490,33 +10888,30 @@ function update_roomname()
     updateTimeout = setTimeout(update_roomname, 10000);
 }
 
-
-function setupWelcomePage()
-{
+function setupWelcomePage() {
     $("#videoconference_page").hide();
     $("#domain_name").text(
             window.location.protocol + "//" + window.location.host + "/");
     if (interfaceConfig.SHOW_JITSI_WATERMARK) {
-        var leftWatermarkDiv
-            = $("#welcome_page_header div[class='watermark leftwatermark']");
-        if(leftWatermarkDiv && leftWatermarkDiv.length > 0)
-        {
+        var leftWatermarkDiv =
+            $("#welcome_page_header div[class='watermark leftwatermark']");
+        if(leftWatermarkDiv && leftWatermarkDiv.length > 0) {
             leftWatermarkDiv.css({display: 'block'});
-            leftWatermarkDiv.parent().get(0).href
-                = interfaceConfig.JITSI_WATERMARK_LINK;
+            leftWatermarkDiv.parent().get(0).href =
+                interfaceConfig.JITSI_WATERMARK_LINK;
         }
 
     }
 
     if (interfaceConfig.SHOW_BRAND_WATERMARK) {
-        var rightWatermarkDiv
-            = $("#welcome_page_header div[class='watermark rightwatermark']");
+        var rightWatermarkDiv =
+            $("#welcome_page_header div[class='watermark rightwatermark']");
         if(rightWatermarkDiv && rightWatermarkDiv.length > 0) {
             rightWatermarkDiv.css({display: 'block'});
-            rightWatermarkDiv.parent().get(0).href
-                = interfaceConfig.BRAND_WATERMARK_LINK;
-            rightWatermarkDiv.get(0).style.backgroundImage
-                = "url(images/rightwatermark.png)";
+            rightWatermarkDiv.parent().get(0).href =
+                interfaceConfig.BRAND_WATERMARK_LINK;
+            rightWatermarkDiv.get(0).style.backgroundImage =
+                "url(images/rightwatermark.png)";
         }
     }
 
@@ -11525,8 +10920,7 @@ function setupWelcomePage()
             .css({display: 'block'});
     }
 
-    $("#enter_room_button").click(function()
-    {
+    $("#enter_room_button").click(function() {
         enter_room();
     });
 
@@ -11536,29 +10930,30 @@ function setupWelcomePage()
         }
     });
 
-    if (!(interfaceConfig.GENERATE_ROOMNAMES_ON_WELCOME_PAGE === false)){
+    if (interfaceConfig.GENERATE_ROOMNAMES_ON_WELCOME_PAGE !== false) {
         var updateTimeout;
         var animateTimeout;
-        $("#reload_roomname").click(function () {
+        var selector = $("#reload_roomname");
+        selector.click(function () {
             clearTimeout(updateTimeout);
             clearTimeout(animateTimeout);
             update_roomname();
         });
-        $("#reload_roomname").show();
-
+        selector.show();
 
         update_roomname();
     }
 
     $("#disable_welcome").click(function () {
-        window.localStorage.welcomePageDisabled
-            = $("#disable_welcome").is(":checked");
+        window.localStorage.welcomePageDisabled =
+            $("#disable_welcome").is(":checked");
     });
 
 }
 
 module.exports = setupWelcomePage;
-},{"./RoomnameGenerator":42}],44:[function(require,module,exports){
+},{"./RoomnameGenerator":40}],42:[function(require,module,exports){
+/* global $, $iq, config */
 var params = {};
 function getConfigParamsFromUrl() {
     if(!location.hash)
@@ -11599,7 +10994,8 @@ var URLProcessor = {
 };
 
 module.exports = URLProcessor;
-},{}],45:[function(require,module,exports){
+},{}],43:[function(require,module,exports){
+/* global APP, require */
 var EventEmitter = require("events");
 var eventEmitter = new EventEmitter();
 var CQEvents = require("../../service/connectionquality/CQEvents");
@@ -11655,7 +11051,7 @@ function convertToMUCStats(stats) {
 }
 
 /**
- * Converts statitistics to format used by VideoLayout
+ * Converts statistics to format used by VideoLayout
  * @param stats
  * @returns {{bitrate: {download: *, upload: *}, packetLoss: {total: *, download: *, upload: *}}}
  */
@@ -11672,7 +11068,6 @@ function parseMUCStats(stats) {
         }
     };
 }
-
 
 var ConnectionQuality = {
     init: function () {
@@ -11734,7 +11129,7 @@ var ConnectionQuality = {
 };
 
 module.exports = ConnectionQuality;
-},{"../../service/connectionquality/CQEvents":106,"../../service/xmpp/XMPPEvents":110,"events":1}],46:[function(require,module,exports){
+},{"../../service/connectionquality/CQEvents":104,"../../service/xmpp/XMPPEvents":108,"events":109}],44:[function(require,module,exports){
 /* global $, alert, APP, changeLocalVideo, chrome, config, getConferenceHandler,
  getUserMediaWithConstraints */
 /**
@@ -12123,7 +11518,8 @@ module.exports = {
 };
 
 
-},{"../../service/RTC/RTCEvents":101,"../../service/desktopsharing/DesktopSharingEventTypes":107,"../RTC/RTCBrowserType":10,"../RTC/adapter.screenshare":12,"events":1}],47:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":99,"../../service/desktopsharing/DesktopSharingEventTypes":105,"../RTC/RTCBrowserType":8,"../RTC/adapter.screenshare":10,"events":109}],45:[function(require,module,exports){
+/* global APP, $ */
 //maps keycode to character, id of popover for given function and function
 var shortcuts = {};
 function initShortcutHandlers() {
@@ -12220,8 +11616,8 @@ var KeyboardShortcut = {
 
 module.exports = KeyboardShortcut;
 
-},{}],48:[function(require,module,exports){
-/* global APP */
+},{}],46:[function(require,module,exports){
+/* global APP, require, $ */
 
 /**
  * This module is meant to (eventually) contain and manage all information
@@ -12310,7 +11706,7 @@ function updateDtmf(jid, newValue) {
  * Checks each member's 'supportsDtmf' field and updates
  * 'atLastOneSupportsDtmf'.
  */
-function updateAtLeastOneDtmf(){
+function updateAtLeastOneDtmf() {
     var newAtLeastOneDtmf = false;
     for (var key in members) {
         if (typeof members[key].supportsDtmf !== 'undefined'
@@ -12331,11 +11727,10 @@ function updateAtLeastOneDtmf(){
  * Exported interface.
  */
 var Members = {
-    start: function(){
+    start: function() {
         registerListeners();
     },
-    addListener: function(type, listener)
-    {
+    addListener: function(type, listener) {
         eventEmitter.on(type, listener);
     },
     removeListener: function (type, listener) {
@@ -12351,7 +11746,7 @@ var Members = {
 
 module.exports = Members;
 
-},{"../../service/members/Events":108,"../../service/xmpp/XMPPEvents":110,"events":1}],49:[function(require,module,exports){
+},{"../../service/members/Events":106,"../../service/xmpp/XMPPEvents":108,"events":109}],47:[function(require,module,exports){
 var email = '';
 var displayName = '';
 var userId;
@@ -12389,15 +11784,13 @@ if (supportsLocalStorage()) {
     userId = generateUniqueId();
 }
 
-var Settings =
-{
+var Settings = {
     setDisplayName: function (newDisplayName) {
         displayName = newDisplayName;
         window.localStorage.displayname = displayName;
         return displayName;
     },
-    setEmail: function (newEmail)
-    {
+    setEmail: function (newEmail) {
         email = newEmail;
         window.localStorage.email = newEmail;
         return email;
@@ -12418,7 +11811,8 @@ var Settings =
 
 module.exports = Settings;
 
-},{}],50:[function(require,module,exports){
+},{}],48:[function(require,module,exports){
+/* global config, $, APP, Strophe, callstats */
 var callStats = null;
 
 function initCallback (err, msg) {
@@ -12459,44 +11853,45 @@ var CallStats = {
             this.pcCallback.bind(this));
     },
     pcCallback: function (err, msg) {
-        if(!callStats)
+        if (!callStats)
             return;
         console.log("Monitoring status: "+ err + " msg: " + msg);
         callStats.sendFabricEvent(this.peerconnection,
             callStats.fabricEvent.fabricSetup, this.confID);
     },
     sendMuteEvent: function (mute, type) {
-        if(!callStats)
+        if (!callStats)
             return;
         var event = null;
-        if(type === "video")
-        {
+        if (type === "video") {
             event = (mute? callStats.fabricEvent.videoPause :
                 callStats.fabricEvent.videoResume);
         }
-        else
-        {
+        else {
             event = (mute? callStats.fabricEvent.audioMute :
                 callStats.fabricEvent.audioUnmute);
         }
         callStats.sendFabricEvent(this.peerconnection, event, this.confID);
     },
     sendTerminateEvent: function () {
-        if(!callStats)
+        if(!callStats) {
             return;
+        }
         callStats.sendFabricEvent(this.peerconnection,
             callStats.fabricEvent.fabricTerminated, this.confID);
     },
     sendSetupFailedEvent: function () {
-        if(!callStats)
+        if(!callStats) {
             return;
+        }
         callStats.sendFabricEvent(this.peerconnection,
             callStats.fabricEvent.fabricSetupFailed, this.confID);
     }
 
 };
 module.exports = CallStats;
-},{}],51:[function(require,module,exports){
+},{}],49:[function(require,module,exports){
+/* global config */
 /**
  * Provides statistics for the local stream.
  */
@@ -12504,20 +11899,20 @@ module.exports = CallStats;
 var RTCBrowserType = require('../RTC/RTCBrowserType');
 
 /**
- * Size of the webaudio analizer buffer.
+ * Size of the webaudio analyzer buffer.
  * @type {number}
  */
-var WEBAUDIO_ANALIZER_FFT_SIZE = 2048;
+var WEBAUDIO_ANALYZER_FFT_SIZE = 2048;
 
 /**
- * Value of the webaudio analizer smoothing time parameter.
+ * Value of the webaudio analyzer smoothing time parameter.
  * @type {number}
  */
-var WEBAUDIO_ANALIZER_SMOOTING_TIME = 0.8;
+var WEBAUDIO_ANALYZER_SMOOTING_TIME = 0.8;
 
 /**
  * Converts time domain data array to audio level.
- * @param array the time domain data array.
+ * @param samples the time domain data array.
  * @returns {number} the audio level
  */
 function timeDomainDataToAudioLevel(samples) {
@@ -12532,7 +11927,7 @@ function timeDomainDataToAudioLevel(samples) {
     }
 
     return parseFloat(((maxVolume - 127) / 128).toFixed(3));
-};
+}
 
 /**
  * Animates audio level change
@@ -12540,20 +11935,16 @@ function timeDomainDataToAudioLevel(samples) {
  * @param lastLevel the last audio level
  * @returns {Number} the audio level to be set
  */
-function animateLevel(newLevel, lastLevel)
-{
+function animateLevel(newLevel, lastLevel) {
     var value = 0;
     var diff = lastLevel - newLevel;
-    if(diff > 0.2)
-    {
+    if(diff > 0.2) {
         value = lastLevel - 0.2;
     }
-    else if(diff < -0.4)
-    {
+    else if(diff < -0.4) {
         value = lastLevel + 0.4;
     }
-    else
-    {
+    else {
         value = newLevel;
     }
 
@@ -12566,8 +11957,6 @@ function animateLevel(newLevel, lastLevel)
  *
  * @param stream the local stream
  * @param interval stats refresh interval given in ms.
- * @param {function(LocalStatsCollector)} updateCallback the callback called on stats
- *                                   update.
  * @constructor
  */
 function LocalStatsCollector(stream, interval, statisticsService, eventEmitter) {
@@ -12584,14 +11973,14 @@ function LocalStatsCollector(stream, interval, statisticsService, eventEmitter) 
  * Starts the collecting the statistics.
  */
 LocalStatsCollector.prototype.start = function () {
-    if (config.disableAudioLevels || !window.AudioContext
-        || RTCBrowserType.isTemasysPluginUsed())
+    if (config.disableAudioLevels || !window.AudioContext ||
+        RTCBrowserType.isTemasysPluginUsed())
         return;
 
     var context = new AudioContext();
     var analyser = context.createAnalyser();
-    analyser.smoothingTimeConstant = WEBAUDIO_ANALIZER_SMOOTING_TIME;
-    analyser.fftSize = WEBAUDIO_ANALIZER_FFT_SIZE;
+    analyser.smoothingTimeConstant = WEBAUDIO_ANALYZER_SMOOTING_TIME;
+    analyser.fftSize = WEBAUDIO_ANALYZER_FFT_SIZE;
 
 
     var source = context.createMediaStreamSource(this.stream);
@@ -12605,7 +11994,7 @@ LocalStatsCollector.prototype.start = function () {
             var array = new Uint8Array(analyser.frequencyBinCount);
             analyser.getByteTimeDomainData(array);
             var audioLevel = timeDomainDataToAudioLevel(array);
-            if(audioLevel != self.audioLevel) {
+            if (audioLevel != self.audioLevel) {
                 self.audioLevel = animateLevel(audioLevel, self.audioLevel);
                 self.eventEmitter.emit(
                     "statistics.audioLevel",
@@ -12615,7 +12004,6 @@ LocalStatsCollector.prototype.start = function () {
         },
         this.intervalMilis
     );
-
 };
 
 /**
@@ -12629,12 +12017,14 @@ LocalStatsCollector.prototype.stop = function () {
 };
 
 module.exports = LocalStatsCollector;
-},{"../RTC/RTCBrowserType":10}],52:[function(require,module,exports){
-/* global ssrc2jid */
+},{"../RTC/RTCBrowserType":8}],50:[function(require,module,exports){
+/* global require, ssrc2jid */
 /* jshint -W117 */
 var RTCBrowserType = require("../RTC/RTCBrowserType");
 
-
+/* Whether we support the browser we are running into for logging statistics */
+var browserSupported = RTCBrowserType.isChrome() ||
+    RTCBrowserType.isChrome();
 /**
  * Calculates packet lost percent using the number of lost packets and the
  * number of all packet.
@@ -12680,8 +12070,6 @@ PeerStats.bandwidth = {};
  * @type {{}}
  */
 PeerStats.bitrate = {};
-
-
 
 /**
  * The packet loss rate
@@ -12867,7 +12255,7 @@ StatsCollector.prototype.errorCallback = function (error)
 StatsCollector.prototype.start = function ()
 {
     var self = this;
-    if(!config.disableAudioLevels) {
+    if (!config.disableAudioLevels) {
         this.audioLevelsIntervalId = setInterval(
             function () {
                 // Interval updates
@@ -12894,7 +12282,7 @@ StatsCollector.prototype.start = function ()
         );
     }
 
-    if(!config.disableStats && !navigator.mozGetUserMedia) {
+    if (!config.disableStats && browserSupported) {
         this.statsIntervalId = setInterval(
             function () {
                 // Interval updates
@@ -12928,7 +12316,7 @@ StatsCollector.prototype.start = function ()
         );
     }
 
-    if (config.logStats && !navigator.mozGetUserMedia) {
+    if (config.logStats && browserSupported) {
         this.gatherStatsIntervalId = setInterval(
             function () {
                 self.peerconnection.getStats(
@@ -13307,41 +12695,34 @@ StatsCollector.prototype.processStatsReport = function () {
 /**
  * Stats processing logic.
  */
-StatsCollector.prototype.processAudioLevelReport = function ()
-{
-    if (!this.baselineAudioLevelsReport)
-    {
+StatsCollector.prototype.processAudioLevelReport = function () {
+    if (!this.baselineAudioLevelsReport) {
         return;
     }
 
-    for (var idx in this.currentAudioLevelsReport)
-    {
+    for (var idx in this.currentAudioLevelsReport) {
         var now = this.currentAudioLevelsReport[idx];
 
-        if (now.type != 'ssrc')
-        {
+        if (now.type != 'ssrc') {
             continue;
         }
 
         var before = this.baselineAudioLevelsReport[idx];
-        if (!before)
-        {
+        if (!before) {
             console.warn(getStatValue(now, 'ssrc') + ' not enough data');
             continue;
         }
 
         var ssrc = getStatValue(now, 'ssrc');
         var jid = APP.xmpp.getJidFromSSRC(ssrc);
-        if (!jid)
-        {
+        if (!jid) {
             if((Date.now() - now.timestamp) < 3000)
                 console.warn("No jid for ssrc: " + ssrc);
             continue;
         }
 
         var jidStats = this.jid2stats[jid];
-        if (!jidStats)
-        {
+        if (!jidStats) {
             jidStats = new PeerStats();
             this.jid2stats[jid] = jidStats;
         }
@@ -13360,8 +12741,7 @@ StatsCollector.prototype.processAudioLevelReport = function ()
             return;
         }
 
-        if (audioLevel)
-        {
+        if (audioLevel) {
             // TODO: can't find specs about what this value really is,
             // but it seems to vary between 0 and around 32k.
             audioLevel = audioLevel / 32767;
@@ -13369,13 +12749,11 @@ StatsCollector.prototype.processAudioLevelReport = function ()
             if(jid != APP.xmpp.myJid())
                 this.eventEmitter.emit("statistics.audioLevel", jid, audioLevel);
         }
-
     }
-
-
 };
 
-},{"../RTC/RTCBrowserType":10}],53:[function(require,module,exports){
+},{"../RTC/RTCBrowserType":8}],51:[function(require,module,exports){
+/* global require, APP */
 /**
  * Created by hristo on 8/4/14.
  */
@@ -13393,19 +12771,15 @@ var localStats = null;
 
 var rtpStats = null;
 
-function stopLocal()
-{
-    if(localStats)
-    {
+function stopLocal() {
+    if (localStats) {
         localStats.stop();
         localStats = null;
     }
 }
 
-function stopRemote()
-{
-    if(rtpStats)
-    {
+function stopRemote() {
+    if (rtpStats) {
         rtpStats.stop();
         eventEmitter.emit("statistics.stop");
         rtpStats = null;
@@ -13413,20 +12787,18 @@ function stopRemote()
 }
 
 function startRemoteStats (peerconnection) {
-    if(rtpStats)
-    {
+    if (rtpStats) {
         rtpStats.stop();
-        rtpStats = null;
     }
 
     rtpStats = new RTPStats(peerconnection, 200, 2000, eventEmitter);
     rtpStats.start();
 }
 
-function onStreamCreated(stream)
-{
-    if(stream.getOriginalStream().getAudioTracks().length === 0)
+function onStreamCreated(stream) {
+    if(stream.getOriginalStream().getAudioTracks().length === 0) {
         return;
+    }
 
     localStats = new LocalStats(stream.getOriginalStream(), 200, statistics,
         eventEmitter);
@@ -13442,9 +12814,7 @@ function onDisposeConference(onUnload) {
     }
 }
 
-
-var statistics =
-{
+var statistics = {
     /**
      * Indicates that this audio level is for local jid.
      * @type {string}
@@ -13507,25 +12877,25 @@ var statistics =
         });
         APP.xmpp.addListener(XMPPEvents.PEERCONNECTION_READY, function (session) {
             CallStats.init(session);
-        })
+        });
         APP.RTC.addListener(RTCEvents.AUDIO_MUTE, function (mute) {
             CallStats.sendMuteEvent(mute, "audio");
         });
         APP.xmpp.addListener(XMPPEvents.CONFERENCE_SETUP_FAILED, function () {
             CallStats.sendSetupFailedEvent();
-        })
+        });
         APP.RTC.addListener(RTCEvents.VIDEO_MUTE, function (mute) {
             CallStats.sendMuteEvent(mute, "video");
         });
     }
-
 };
 
 
 
 
 module.exports = statistics;
-},{"../../service/RTC/RTCEvents":101,"../../service/RTC/StreamEventTypes.js":103,"../../service/xmpp/XMPPEvents":110,"./CallStats":50,"./LocalStatsCollector.js":51,"./RTPStatsCollector.js":52,"events":1}],54:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":99,"../../service/RTC/StreamEventTypes.js":101,"../../service/xmpp/XMPPEvents":108,"./CallStats":48,"./LocalStatsCollector.js":49,"./RTPStatsCollector.js":50,"events":109}],52:[function(require,module,exports){
+/* global $, require, config, interfaceConfig */
 var i18n = require("i18next-client");
 var languages = require("../../service/translation/languages");
 var Settings = require("../settings/Settings");
@@ -13551,7 +12921,6 @@ var defaultOptions = {
     fallbackOnNull: true,
     fallbackOnEmpty: true,
     useDataAttrOptions: true,
-    defaultValueFromContent: false,
     app: interfaceConfig.APP_NAME,
     getAsync: false,
     defaultValueFromContent: false,
@@ -13591,8 +12960,7 @@ var defaultOptions = {
 //                localStorageExpirationTime: 86400000 // in ms, default 1 week
 };
 
-function initCompleted(t)
-{
+function initCompleted(t) {
     $("[data-i18n]").i18n();
 }
 
@@ -13664,7 +13032,7 @@ module.exports = {
     }
 };
 
-},{"../../service/translation/languages":109,"../settings/Settings":49,"i18next-client":70}],55:[function(require,module,exports){
+},{"../../service/translation/languages":107,"../settings/Settings":47,"i18next-client":68}],53:[function(require,module,exports){
 /* jshint -W117 */
 var TraceablePeerConnection = require("./TraceablePeerConnection");
 var SDPDiffer = require("./SDPDiffer");
@@ -15093,7 +14461,7 @@ JingleSession.prototype.remoteStreamAdded = function (data, times) {
 
 module.exports = JingleSession;
 
-},{"../../service/xmpp/XMPPEvents":110,"../RTC/RTCBrowserType":10,"./SDP":56,"./SDPDiffer":57,"./SDPUtil":58,"./TraceablePeerConnection":59,"async":69,"sdp-transform":97}],56:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":108,"../RTC/RTCBrowserType":8,"./SDP":54,"./SDPDiffer":55,"./SDPUtil":56,"./TraceablePeerConnection":57,"async":67,"sdp-transform":95}],54:[function(require,module,exports){
 /* jshint -W117 */
 var SDPUtil = require("./SDPUtil");
 
@@ -15727,7 +15095,7 @@ SDP.prototype.jingle2media = function (content) {
 module.exports = SDP;
 
 
-},{"./SDPUtil":58}],57:[function(require,module,exports){
+},{"./SDPUtil":56}],55:[function(require,module,exports){
 
 var SDPUtil = require("./SDPUtil");
 
@@ -15908,7 +15276,7 @@ SDPDiffer.prototype.toJingle = function(modify, videoType) {
 };
 
 module.exports = SDPDiffer;
-},{"./SDPUtil":58}],58:[function(require,module,exports){
+},{"./SDPUtil":56}],56:[function(require,module,exports){
 SDPUtil = {
     filter_special_chars: function (text) {
         return text.replace(/[\\\/\{,\}\+]/g, "");
@@ -16261,22 +15629,22 @@ SDPUtil = {
     }
 };
 module.exports = SDPUtil;
-},{}],59:[function(require,module,exports){
+},{}],57:[function(require,module,exports){
 var RTC = require('../RTC/RTC');
 var RTCBrowserType = require("../RTC/RTCBrowserType.js");
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 
 function TraceablePeerConnection(ice_config, constraints, session) {
     var self = this;
-    var RTCPeerconnectionType = null;
+    var RTCPeerConnectionType = null;
     if (RTCBrowserType.isFirefox()) {
-        RTCPeerconnectionType = mozRTCPeerConnection;
+        RTCPeerConnectionType = mozRTCPeerConnection;
     } else if (RTCBrowserType.isTemasysPluginUsed()) {
-        RTCPeerconnectionType = RTCPeerConnection;
+        RTCPeerConnectionType = RTCPeerConnection;
     } else {
-        RTCPeerconnectionType = webkitRTCPeerConnection;
+        RTCPeerConnectionType = webkitRTCPeerConnection;
     }
-    this.peerconnection = new RTCPeerconnectionType(ice_config, constraints);
+    this.peerconnection = new RTCPeerConnectionType(ice_config, constraints);
     this.updateLog = [];
     this.stats = {};
     this.statsinterval = null;
@@ -16359,9 +15727,8 @@ function TraceablePeerConnection(ice_config, constraints, session) {
         this.statsinterval = window.setInterval(function() {
             self.peerconnection.getStats(function(stats) {
                 var results = stats.result();
+                var now = new Date();
                 for (var i = 0; i < results.length; ++i) {
-                    //console.log(results[i].type, results[i].id, results[i].names())
-                    var now = new Date();
                     results[i].names().forEach(function (name) {
                         var id = results[i].id + '-' + name;
                         if (!self.stats[id]) {
@@ -16385,9 +15752,12 @@ function TraceablePeerConnection(ice_config, constraints, session) {
 
         }, 1000);
     }
-};
+}
 
-dumpSDP = function(description) {
+/**
+ * Returns a string representation of a SessionDescription object.
+ */
+var dumpSDP = function(description) {
     if (typeof description === 'undefined' || description == null) {
         return '';
     }
@@ -16399,7 +15769,7 @@ dumpSDP = function(description) {
  * Takes a SessionDescription object and returns a "normalized" version.
  * Currently it only takes care of ordering the a=ssrc lines.
  */
-normalizePlanB = function(desc) {
+var normalizePlanB = function(desc) {
     if (typeof desc !== 'object' || desc === null ||
         typeof desc.sdp !== 'string') {
         console.warn('An empty description was passed as an argument.');
@@ -16463,30 +15833,38 @@ normalizePlanB = function(desc) {
 };
 
 if (TraceablePeerConnection.prototype.__defineGetter__ !== undefined) {
-    TraceablePeerConnection.prototype.__defineGetter__('signalingState', function() { return this.peerconnection.signalingState; });
-    TraceablePeerConnection.prototype.__defineGetter__('iceConnectionState', function() { return this.peerconnection.iceConnectionState; });
-    TraceablePeerConnection.prototype.__defineGetter__('localDescription', function() {
-        var desc = this.peerconnection.localDescription;
-        this.trace('getLocalDescription::preTransform', dumpSDP(desc));
+    TraceablePeerConnection.prototype.__defineGetter__(
+        'signalingState',
+        function() { return this.peerconnection.signalingState; });
+    TraceablePeerConnection.prototype.__defineGetter__(
+        'iceConnectionState',
+        function() { return this.peerconnection.iceConnectionState; });
+    TraceablePeerConnection.prototype.__defineGetter__(
+        'localDescription',
+        function() {
+            var desc = this.peerconnection.localDescription;
+            this.trace('getLocalDescription::preTransform', dumpSDP(desc));
 
-        // if we're running on FF, transform to Plan B first.
-        if (RTCBrowserType.usesUnifiedPlan()) {
-            desc = this.interop.toPlanB(desc);
-            this.trace('getLocalDescription::postTransform (Plan B)', dumpSDP(desc));
-        }
-        return desc;
-    });
-    TraceablePeerConnection.prototype.__defineGetter__('remoteDescription', function() {
-        var desc = this.peerconnection.remoteDescription;
-        this.trace('getRemoteDescription::preTransform', dumpSDP(desc));
+            // if we're running on FF, transform to Plan B first.
+            if (RTCBrowserType.usesUnifiedPlan()) {
+                desc = this.interop.toPlanB(desc);
+                this.trace('getLocalDescription::postTransform (Plan B)', dumpSDP(desc));
+            }
+            return desc;
+        });
+    TraceablePeerConnection.prototype.__defineGetter__(
+        'remoteDescription',
+        function() {
+            var desc = this.peerconnection.remoteDescription;
+            this.trace('getRemoteDescription::preTransform', dumpSDP(desc));
 
-        // if we're running on FF, transform to Plan B first.
-        if (RTCBrowserType.usesUnifiedPlan()) {
-            desc = this.interop.toPlanB(desc);
-            this.trace('getRemoteDescription::postTransform (Plan B)', dumpSDP(desc));
-        }
-        return desc;
-    });
+            // if we're running on FF, transform to Plan B first.
+            if (RTCBrowserType.usesUnifiedPlan()) {
+                desc = this.interop.toPlanB(desc);
+                this.trace('getRemoteDescription::postTransform (Plan B)', dumpSDP(desc));
+            }
+            return desc;
+        });
 }
 
 TraceablePeerConnection.prototype.addStream = function (stream) {
@@ -16498,7 +15876,6 @@ TraceablePeerConnection.prototype.addStream = function (stream) {
     catch (e)
     {
         console.error(e);
-        return;
     }
 };
 
@@ -16536,7 +15913,8 @@ TraceablePeerConnection.prototype.createDataChannel = function (label, opts) {
     return this.peerconnection.createDataChannel(label, opts);
 };
 
-TraceablePeerConnection.prototype.setLocalDescription = function (description, successCallback, failureCallback) {
+TraceablePeerConnection.prototype.setLocalDescription
+        = function (description, successCallback, failureCallback) {
     this.trace('setLocalDescription::preTransform', dumpSDP(description));
     // if we're running on FF, transform to Plan A first.
     if (RTCBrowserType.usesUnifiedPlan()) {
@@ -16562,7 +15940,8 @@ TraceablePeerConnection.prototype.setLocalDescription = function (description, s
      */
 };
 
-TraceablePeerConnection.prototype.setRemoteDescription = function (description, successCallback, failureCallback) {
+TraceablePeerConnection.prototype.setRemoteDescription
+        = function (description, successCallback, failureCallback) {
     this.trace('setRemoteDescription::preTransform', dumpSDP(description));
     // TODO the focus should squeze or explode the remote simulcast
     description = this.simulcast.mungeRemoteDescription(description);
@@ -16605,7 +15984,8 @@ TraceablePeerConnection.prototype.close = function () {
     this.peerconnection.close();
 };
 
-TraceablePeerConnection.prototype.createOffer = function (successCallback, failureCallback, constraints) {
+TraceablePeerConnection.prototype.createOffer
+        = function (successCallback, failureCallback, constraints) {
     var self = this;
     this.trace('createOffer', JSON.stringify(constraints, null, ' '));
     this.peerconnection.createOffer(
@@ -16633,20 +16013,21 @@ TraceablePeerConnection.prototype.createOffer = function (successCallback, failu
     );
 };
 
-TraceablePeerConnection.prototype.createAnswer = function (successCallback, failureCallback, constraints) {
+TraceablePeerConnection.prototype.createAnswer
+        = function (successCallback, failureCallback, constraints) {
     var self = this;
     this.trace('createAnswer', JSON.stringify(constraints, null, ' '));
     this.peerconnection.createAnswer(
         function (answer) {
-            self.trace('createAnswerOnSuccess::preTransfom', dumpSDP(answer));
+            self.trace('createAnswerOnSuccess::preTransform', dumpSDP(answer));
             // if we're running on FF, transform to Plan A first.
             if (RTCBrowserType.usesUnifiedPlan()) {
                 answer = self.interop.toPlanB(answer);
-                self.trace('createAnswerOnSuccess::postTransfom (Plan B)', dumpSDP(answer));
+                self.trace('createAnswerOnSuccess::postTransform (Plan B)', dumpSDP(answer));
             }
             if (config.enableSimulcast && self.simulcast.isSupported()) {
                 answer = self.simulcast.mungeLocalDescription(answer);
-                self.trace('createAnswerOnSuccess::postTransfom (simulcast)', dumpSDP(answer));
+                self.trace('createAnswerOnSuccess::postTransform (simulcast)', dumpSDP(answer));
             }
             successCallback(answer);
         },
@@ -16658,8 +16039,9 @@ TraceablePeerConnection.prototype.createAnswer = function (successCallback, fail
     );
 };
 
-TraceablePeerConnection.prototype.addIceCandidate = function (candidate, successCallback, failureCallback) {
-    var self = this;
+TraceablePeerConnection.prototype.addIceCandidate
+        = function (candidate, successCallback, failureCallback) {
+    //var self = this;
     this.trace('addIceCandidate', JSON.stringify(candidate, null, ' '));
     this.peerconnection.addIceCandidate(candidate);
     /* maybe later
@@ -16682,7 +16064,7 @@ TraceablePeerConnection.prototype.getStats = function(callback, errback) {
         // ignore for now...
         if(!errback)
             errback = function () {};
-        this.peerconnection.getStats(null,callback,errback);
+        this.peerconnection.getStats(null, callback, errback);
     } else {
         this.peerconnection.getStats(callback);
     }
@@ -16691,8 +16073,8 @@ TraceablePeerConnection.prototype.getStats = function(callback, errback) {
 module.exports = TraceablePeerConnection;
 
 
-},{"../../service/xmpp/XMPPEvents":110,"../RTC/RTC":9,"../RTC/RTCBrowserType.js":10,"sdp-interop":91,"sdp-simulcast":94,"sdp-transform":97}],60:[function(require,module,exports){
-/* global $, $iq, APP, config, connection, messageHandler,
+},{"../../service/xmpp/XMPPEvents":108,"../RTC/RTC":7,"../RTC/RTCBrowserType.js":8,"sdp-interop":89,"sdp-simulcast":92,"sdp-transform":95}],58:[function(require,module,exports){
+/* global $, $iq, APP, config, messageHandler,
  roomName, sessionTerminated, Strophe, Util */
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 var Settings = require("../settings/Settings");
@@ -16763,8 +16145,8 @@ var Moderator = {
         function listener(event) {
             if (event.data && event.data.sessionId) {
                 if (event.origin !== window.location.origin) {
-                    console.warn(
-                        "Ignoring sessionId from different origin: " + event.origin);
+                    console.warn("Ignoring sessionId from different origin: " +
+                        event.origin);
                     return;
                 }
                 localStorage.setItem('sessionId', event.data.sessionId);
@@ -16913,8 +16295,7 @@ var Moderator = {
 
         console.info("Authentication enabled: " + authenticationEnabled);
 
-        externalAuthEnabled
-            = $(resultIq).find(
+        externalAuthEnabled = $(resultIq).find(
                 '>conference>property' +
                 '[name=\'externalAuth\'][value=\'true\']').length > 0;
 
@@ -17027,7 +16408,8 @@ var Moderator = {
                 // Do not show in case of session invalid
                 // which means just a retry
                 if (!invalidSession) {
-                    eventEmitter.emit(XMPPEvents.FOCUS_DISCONNECTED, focusComponent, retrySec);
+                    eventEmitter.emit(XMPPEvents.FOCUS_DISCONNECTED,
+                        focusComponent, retrySec);
                 }
                 // Reset response timeout
                 getNextTimeout(true);
@@ -17124,8 +16506,8 @@ module.exports = Moderator;
 
 
 
-},{"../../service/authentication/AuthenticationEvents":105,"../../service/xmpp/XMPPEvents":110,"../settings/Settings":49}],61:[function(require,module,exports){
-/* global $, $iq, config, connection, focusMucJid, messageHandler, Moderator,
+},{"../../service/authentication/AuthenticationEvents":103,"../../service/xmpp/XMPPEvents":108,"../settings/Settings":47}],59:[function(require,module,exports){
+/* global $, $iq, config, connection, focusMucJid, messageHandler,
    Toolbar, Util */
 var Moderator = require("./moderator");
 
@@ -17148,14 +16530,6 @@ var jireconRid = null;
 
 function setRecordingToken(token) {
     recordingToken = token;
-}
-
-function setRecording(state, token, callback, connection) {
-    if (useJirecon){
-        setRecordingJirecon(state, token, callback, connection);
-    } else {
-        setRecordingColibri(state, token, callback, connection);
-    }
 }
 
 function setRecordingJirecon(state, token, callback, connection) {
@@ -17220,6 +16594,14 @@ function setRecordingColibri(state, token, callback, connection) {
     );
 }
 
+function setRecording(state, token, callback, connection) {
+    if (useJirecon){
+        setRecordingJirecon(state, token, callback, connection);
+    } else {
+        setRecordingColibri(state, token, callback, connection);
+    }
+}
+
 var Recording = {
     toggleRecording: function (tokenEmptyCallback,
                                startingCallback, startedCallback, connection) {
@@ -17277,19 +16659,16 @@ var Recording = {
         );
     }
 
-}
+};
 
 module.exports = Recording;
-},{"./moderator":60}],62:[function(require,module,exports){
+},{"./moderator":58}],60:[function(require,module,exports){
 /* jshint -W117 */
 /* a simple MUC connection plugin
  * can only handle a single MUC room
  */
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 var Moderator = require("./moderator");
-var JingleSession = require("./JingleSession");
-
-var bridgeIsDown = false;
 
 module.exports = function(XMPP, eventEmitter) {
     Strophe.addConnectionPlugin('emuc', {
@@ -17304,18 +16683,17 @@ module.exports = function(XMPP, eventEmitter) {
         isOwner: false,
         role: null,
         focusMucJid: null,
+        bridgeIsDown: false,
         init: function (conn) {
             this.connection = conn;
         },
         initPresenceMap: function (myroomjid) {
             this.presMap['to'] = myroomjid;
             this.presMap['xns'] = 'http://jabber.org/protocol/muc';
-            if (APP.RTC.localAudio && APP.RTC.localAudio.isMuted())
-            {
+            if (APP.RTC.localAudio && APP.RTC.localAudio.isMuted()) {
                 this.addAudioInfoToPresence(true);
             }
-            if (APP.RTC.localVideo && APP.RTC.localVideo.isMuted())
-            {
+            if (APP.RTC.localVideo && APP.RTC.localVideo.isMuted()) {
                 this.addVideoInfoToPresence(true);
             }
         },
@@ -17875,27 +17253,25 @@ module.exports = function(XMPP, eventEmitter) {
 
             Moderator.onMucMemberLeft(jid);
         },
-        parsePresence: function (from, memeber, pres) {
-            if($(pres).find(">bridgeIsDown").length > 0 && !bridgeIsDown) {
-                bridgeIsDown = true;
+        parsePresence: function (from, member, pres) {
+            if($(pres).find(">bridgeIsDown").length > 0 && !this.bridgeIsDown) {
+                this.bridgeIsDown = true;
                 eventEmitter.emit(XMPPEvents.BRIDGE_DOWN);
             }
 
-            if(memeber.isFocus)
+            if(member.isFocus)
                 return;
 
             var displayName = !config.displayJids
-                ? memeber.displayName : Strophe.getResourceFromJid(from);
+                ? member.displayName : Strophe.getResourceFromJid(from);
 
-            if (displayName && displayName.length > 0)
-            {
+            if (displayName && displayName.length > 0) {
                 eventEmitter.emit(XMPPEvents.DISPLAY_NAME_CHANGED, from, displayName);
             }
 
-
             var id = $(pres).find('>userID').text();
             var email = $(pres).find('>email');
-            if(email.length > 0) {
+            if (email.length > 0) {
                 id = email.text();
             }
 
@@ -17905,7 +17281,7 @@ module.exports = function(XMPP, eventEmitter) {
 };
 
 
-},{"../../service/xmpp/XMPPEvents":110,"./JingleSession":55,"./moderator":60}],63:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":108,"./moderator":58}],61:[function(require,module,exports){
 /* jshint -W117 */
 
 var JingleSession = require("./JingleSession");
@@ -17913,8 +17289,7 @@ var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 var RTCBrowserType = require("../RTC/RTCBrowserType");
 
 
-module.exports = function(XMPP, eventEmitter)
-{
+module.exports = function(XMPP, eventEmitter) {
     function CallIncomingJingle(sid, connection) {
         var sess = connection.jingle.sessions[sid];
 
@@ -17929,7 +17304,7 @@ module.exports = function(XMPP, eventEmitter)
         sess.sendAnswer();
         sess.accept();
 
-    };
+    }
 
     Strophe.addConnectionPlugin('jingle', {
         connection: null,
@@ -18023,8 +17398,7 @@ module.exports = function(XMPP, eventEmitter)
             switch (action) {
                 case 'session-initiate':
                     var startMuted = $(iq).find('jingle>startmuted');
-                    if (startMuted && startMuted.length > 0)
-                    {
+                    if (startMuted && startMuted.length > 0) {
                         var audioMuted = startMuted.attr("audio");
                         var videoMuted = startMuted.attr("video");
                         eventEmitter.emit(XMPPEvents.START_MUTED_FROM_FOCUS,
@@ -18237,9 +17611,9 @@ module.exports = function(XMPP, eventEmitter)
         },
 
         /**
-         * Populates the log data
+         * Returns the data saved in 'updateLog' in a format to be logged.
          */
-        populateData: function () {
+        getLog: function () {
             var data = {};
             var self = this;
             Object.keys(this.sessions).forEach(function (sid) {
@@ -18259,7 +17633,7 @@ module.exports = function(XMPP, eventEmitter)
 };
 
 
-},{"../../service/xmpp/XMPPEvents":110,"../RTC/RTCBrowserType":10,"./JingleSession":55}],64:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":108,"../RTC/RTCBrowserType":8,"./JingleSession":53}],62:[function(require,module,exports){
 /* global Strophe */
 module.exports = function () {
 
@@ -18280,7 +17654,7 @@ module.exports = function () {
         }
     });
 };
-},{}],65:[function(require,module,exports){
+},{}],63:[function(require,module,exports){
 /* global $, $iq, config, connection, focusMucJid, forceMuted,
    setAudioMuted, Strophe */
 /**
@@ -18341,7 +17715,7 @@ module.exports = function (XMPP, eventEmitter) {
         }
     });
 }
-},{"../../service/xmpp/XMPPEvents":110}],66:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":108}],64:[function(require,module,exports){
 /* jshint -W117 */
 module.exports = function() {
     Strophe.addConnectionPlugin('rayo',
@@ -18438,7 +17812,7 @@ module.exports = function() {
     );
 };
 
-},{}],67:[function(require,module,exports){
+},{}],65:[function(require,module,exports){
 /**
  * Strophe logger implementation. Logs from level WARN and above.
  */
@@ -18482,7 +17856,7 @@ module.exports = function () {
     };
 };
 
-},{}],68:[function(require,module,exports){
+},{}],66:[function(require,module,exports){
 /* global $, APP, config, Strophe*/
 var Moderator = require("./moderator");
 var EventEmitter = require("events");
@@ -18511,9 +17885,6 @@ function connect(jid, password) {
         connection = XMPP.createConnection();
         Moderator.setConnection(connection);
 
-        if (connection.disco) {
-            // for chrome, add multistream cap
-        }
         connection.jingle.pc_constraints = APP.RTC.getPCConstraints();
         if (config.useIPv6) {
             // https://code.google.com/p/webrtc/issues/detail?id=2828
@@ -18616,8 +17987,8 @@ function connect(jid, password) {
                     // if we get disconnected from the XMPP server permanently.
 
                     // If the connection failed, retry.
-                    if (connectionFailed
-                        && faultTolerantConnect.retry("connection-failed")) {
+                    if (connectionFailed &&
+                        faultTolerantConnect.retry("connection-failed")) {
                         return;
                     }
 
@@ -18636,11 +18007,10 @@ function connect(jid, password) {
 }
 
 
-
 function maybeDoJoin() {
     if (connection && connection.connected &&
-        Strophe.getResourceFromJid(connection.jid)
-        && (APP.RTC.localAudio || APP.RTC.localVideo)) {
+        Strophe.getResourceFromJid(connection.jid) &&
+        (APP.RTC.localAudio || APP.RTC.localVideo)) {
         // .connected is true while connecting?
         doJoin();
     }
@@ -18683,7 +18053,8 @@ var unload = (function () {
                 async: false,
                 cache: false,
                 contentType: 'application/xml',
-                data: "<body rid='" + (connection.rid || connection._proto.rid) +
+                data: "<body rid='" +
+                    (connection.rid || connection._proto.rid) +
                     "' xmlns='http://jabber.org/protocol/httpbind' sid='" +
                     (connection.sid || connection._proto.sid)  +
                     "' type='terminate'>" +
@@ -18709,7 +18080,7 @@ function setupEvents() {
     // (change URL). If this participant doesn't unload properly, then it
     // becomes a ghost for the rest of the participants that stay in the
     // conference. Thankfully handling the 'unload' event in addition to the
-    // 'beforeunload' event seems to garante the execution of the 'unload'
+    // 'beforeunload' event seems to guarantee the execution of the 'unload'
     // method at least once.
     //
     // The 'unload' method can safely be run multiple times, it will actually do
@@ -18759,10 +18130,8 @@ var XMPP = {
     promptLogin: function () {
         eventEmitter.emit(XMPPEvents.PROMPT_FOR_LOGIN);
     },
-    joinRoom: function(roomName, useNicks, nick)
-    {
-        var roomjid;
-        roomjid = roomName;
+    joinRoom: function(roomName, useNicks, nick) {
+        var roomjid = roomName;
 
         if (useNicks) {
             if (nick) {
@@ -18771,7 +18140,6 @@ var XMPP = {
                 roomjid += '/' + Strophe.getNodeFromJid(connection.jid);
             }
         } else {
-
             var tmpJid = Strophe.getNodeFromJid(connection.jid);
 
             if(!authenticatedUser)
@@ -18808,14 +18176,12 @@ var XMPP = {
         }
         eventEmitter.emit(XMPPEvents.DISPOSE_CONFERENCE, onUnload);
         connection.jingle.activecall = null;
-        if(!onUnload)
-        {
+        if (!onUnload) {
             this.sessionTerminated = true;
             connection.emuc.doLeave();
         }
     },
-    addListener: function(type, listener)
-    {
+    addListener: function(type, listener) {
         eventEmitter.on(type, listener);
     },
     removeListener: function (type, listener) {
@@ -18883,7 +18249,6 @@ var XMPP = {
             return false;
         }
 
-
         if (this.forceMuted && !mute) {
             console.info("Asking focus for unmute");
             connection.moderate.setMute(connection.emuc.myroomjid, mute);
@@ -18896,16 +18261,11 @@ var XMPP = {
             return true;
         }
 
-        // It is not clear what is the right way to handle multiple tracks.
-        // So at least make sure that they are all muted or all unmuted and
-        // that we send presence just once.
         APP.RTC.localAudio.setMute(mute);
-        // isMuted is the opposite of audioEnabled
         this.sendAudioInfoPresence(mute, callback);
         return true;
     },
-    sendAudioInfoPresence: function(mute, callback)
-    {
+    sendAudioInfoPresence: function(mute, callback) {
         if(connection) {
             connection.emuc.addAudioInfoToPresence(mute);
             connection.emuc.sendPresence();
@@ -18913,53 +18273,13 @@ var XMPP = {
         callback();
         return true;
     },
-    // Really mute video, i.e. dont even send black frames
-    muteVideo: function (pc, unmute) {
-        // FIXME: this probably needs another of those lovely state safeguards...
-        // which checks for iceconn == connected and sigstate == stable
-        pc.setRemoteDescription(pc.remoteDescription,
-            function () {
-                pc.createAnswer(
-                    function (answer) {
-                        var sdp = new SDP(answer.sdp);
-                        if (sdp.media.length > 1) {
-                            if (unmute)
-                                sdp.media[1] = sdp.media[1].replace('a=recvonly', 'a=sendrecv');
-                            else
-                                sdp.media[1] = sdp.media[1].replace('a=sendrecv', 'a=recvonly');
-                            sdp.raw = sdp.session + sdp.media.join('');
-                            answer.sdp = sdp.raw;
-                        }
-                        pc.setLocalDescription(answer,
-                            function () {
-                                console.log('mute SLD ok');
-                            },
-                            function (error) {
-                                console.log('mute SLD error');
-                                eventEmitter.emit(XMPPEvents.SET_LOCAL_DESCRIPTION_ERROR);
-                            }
-                        );
-                    },
-                    function (error) {
-                        console.log(error);
-                        eventEmitter.emit(XMPPEvents.CREATE_ANSWER_ERROR);
-                    }
-                );
-            },
-            function (error) {
-                console.log('muteVideo SRD error');
-                eventEmitter.emit(XMPPEvents.SET_REMOTE_DESCRIPTION_ERROR);
-            }
-        );
-    },
     toggleRecording: function (tokenEmptyCallback,
                                startingCallback, startedCallback) {
         Recording.toggleRecording(tokenEmptyCallback,
             startingCallback, startedCallback, connection);
     },
     addToPresence: function (name, value, dontSend) {
-        switch (name)
-        {
+        switch (name) {
             case "displayName":
                 connection.emuc.addDisplayNameToPresence(value);
                 break;
@@ -19021,17 +18341,13 @@ var XMPP = {
         connection.send(message);
         return true;
     },
-    populateData: function () {
-        var data = {};
-        if (connection.jingle) {
-            data = connection.jingle.populateData();
-        }
-        return data;
+    // Gets the logs from strophe.jingle.
+    getJingleLog: function () {
+        return connection.jingle ? connection.jingle.getLog() : {};
     },
-    getLogger: function () {
-        if(connection.logger)
-            return connection.logger.log;
-        return null;
+    // Gets the logs from strophe.
+    getXmppLog: function () {
+        return connection.logger ? connection.logger.log : null;
     },
     getPrezi: function () {
         return connection.emuc.getPrezi(this.myJid());
@@ -19072,7 +18388,8 @@ var XMPP = {
             return null;
         return connection.jingle.activecall.getSsrcOwner(ssrc);
     },
-    getMUCJoined: function () {
+    // Returns true iff we have joined the MUC.
+    isMUCJoined: function () {
         return connection.emuc.joined;
     },
     getSessions: function () {
@@ -19087,7 +18404,7 @@ var XMPP = {
 
 module.exports = XMPP;
 
-},{"../../service/RTC/RTCEvents":101,"../../service/RTC/StreamEventTypes":103,"../../service/xmpp/XMPPEvents":110,"../settings/Settings":49,"./SDP":56,"./moderator":60,"./recording":61,"./strophe.emuc":62,"./strophe.jingle":63,"./strophe.logger":64,"./strophe.moderate":65,"./strophe.rayo":66,"./strophe.util":67,"events":1,"pako":71,"retry":87}],69:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":99,"../../service/RTC/StreamEventTypes":101,"../../service/xmpp/XMPPEvents":108,"../settings/Settings":47,"./SDP":54,"./moderator":58,"./recording":59,"./strophe.emuc":60,"./strophe.jingle":61,"./strophe.logger":62,"./strophe.moderate":63,"./strophe.rayo":64,"./strophe.util":65,"events":109,"pako":69,"retry":85}],67:[function(require,module,exports){
 (function (process){
 /*!
  * async
@@ -20214,7 +19531,7 @@ module.exports = XMPP;
 }());
 
 }).call(this,require('_process'))
-},{"_process":2}],70:[function(require,module,exports){
+},{"_process":110}],68:[function(require,module,exports){
 // i18next, v1.7.7
 // Copyright (c)2014 Jan Mühlemann (jamuhl).
 // Distributed under MIT license
@@ -22337,7 +21654,7 @@ module.exports = XMPP;
     i18n.options = o;
 
 })();
-},{"jquery":"jquery"}],71:[function(require,module,exports){
+},{"jquery":"jquery"}],69:[function(require,module,exports){
 // Top level file is just a mixin of submodules & constants
 'use strict';
 
@@ -22353,7 +21670,7 @@ assign(pako, deflate, inflate, constants);
 
 module.exports = pako;
 
-},{"./lib/deflate":72,"./lib/inflate":73,"./lib/utils/common":74,"./lib/zlib/constants":77}],72:[function(require,module,exports){
+},{"./lib/deflate":70,"./lib/inflate":71,"./lib/utils/common":72,"./lib/zlib/constants":75}],70:[function(require,module,exports){
 'use strict';
 
 
@@ -22731,7 +22048,7 @@ exports.deflate = deflate;
 exports.deflateRaw = deflateRaw;
 exports.gzip = gzip;
 
-},{"./utils/common":74,"./utils/strings":75,"./zlib/deflate.js":79,"./zlib/messages":84,"./zlib/zstream":86}],73:[function(require,module,exports){
+},{"./utils/common":72,"./utils/strings":73,"./zlib/deflate.js":77,"./zlib/messages":82,"./zlib/zstream":84}],71:[function(require,module,exports){
 'use strict';
 
 
@@ -23112,7 +22429,7 @@ exports.inflate = inflate;
 exports.inflateRaw = inflateRaw;
 exports.ungzip  = inflate;
 
-},{"./utils/common":74,"./utils/strings":75,"./zlib/constants":77,"./zlib/gzheader":80,"./zlib/inflate.js":82,"./zlib/messages":84,"./zlib/zstream":86}],74:[function(require,module,exports){
+},{"./utils/common":72,"./utils/strings":73,"./zlib/constants":75,"./zlib/gzheader":78,"./zlib/inflate.js":80,"./zlib/messages":82,"./zlib/zstream":84}],72:[function(require,module,exports){
 'use strict';
 
 
@@ -23216,7 +22533,7 @@ exports.setTyped = function (on) {
 
 exports.setTyped(TYPED_OK);
 
-},{}],75:[function(require,module,exports){
+},{}],73:[function(require,module,exports){
 // String encode/decode helpers
 'use strict';
 
@@ -23403,7 +22720,7 @@ exports.utf8border = function(buf, max) {
   return (pos + _utf8len[buf[pos]] > max) ? pos : max;
 };
 
-},{"./common":74}],76:[function(require,module,exports){
+},{"./common":72}],74:[function(require,module,exports){
 'use strict';
 
 // Note: adler32 takes 12% for level 0 and 2% for level 6.
@@ -23437,7 +22754,7 @@ function adler32(adler, buf, len, pos) {
 
 module.exports = adler32;
 
-},{}],77:[function(require,module,exports){
+},{}],75:[function(require,module,exports){
 module.exports = {
 
   /* Allowed flush values; see deflate() and inflate() below for details */
@@ -23486,7 +22803,7 @@ module.exports = {
   //Z_NULL:                 null // Use -1 or null inline, depending on var type
 };
 
-},{}],78:[function(require,module,exports){
+},{}],76:[function(require,module,exports){
 'use strict';
 
 // Note: we can't get significant speed boost here.
@@ -23529,7 +22846,7 @@ function crc32(crc, buf, len, pos) {
 
 module.exports = crc32;
 
-},{}],79:[function(require,module,exports){
+},{}],77:[function(require,module,exports){
 'use strict';
 
 var utils   = require('../utils/common');
@@ -25296,7 +24613,7 @@ exports.deflatePrime = deflatePrime;
 exports.deflateTune = deflateTune;
 */
 
-},{"../utils/common":74,"./adler32":76,"./crc32":78,"./messages":84,"./trees":85}],80:[function(require,module,exports){
+},{"../utils/common":72,"./adler32":74,"./crc32":76,"./messages":82,"./trees":83}],78:[function(require,module,exports){
 'use strict';
 
 
@@ -25338,7 +24655,7 @@ function GZheader() {
 
 module.exports = GZheader;
 
-},{}],81:[function(require,module,exports){
+},{}],79:[function(require,module,exports){
 'use strict';
 
 // See state defs from inflate.js
@@ -25665,7 +24982,7 @@ module.exports = function inflate_fast(strm, start) {
   return;
 };
 
-},{}],82:[function(require,module,exports){
+},{}],80:[function(require,module,exports){
 'use strict';
 
 
@@ -27170,7 +26487,7 @@ exports.inflateSyncPoint = inflateSyncPoint;
 exports.inflateUndermine = inflateUndermine;
 */
 
-},{"../utils/common":74,"./adler32":76,"./crc32":78,"./inffast":81,"./inftrees":83}],83:[function(require,module,exports){
+},{"../utils/common":72,"./adler32":74,"./crc32":76,"./inffast":79,"./inftrees":81}],81:[function(require,module,exports){
 'use strict';
 
 
@@ -27499,7 +26816,7 @@ module.exports = function inflate_table(type, lens, lens_index, codes, table, ta
   return 0;
 };
 
-},{"../utils/common":74}],84:[function(require,module,exports){
+},{"../utils/common":72}],82:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -27514,7 +26831,7 @@ module.exports = {
   '-6':   'incompatible version' /* Z_VERSION_ERROR (-6) */
 };
 
-},{}],85:[function(require,module,exports){
+},{}],83:[function(require,module,exports){
 'use strict';
 
 
@@ -28715,7 +28032,7 @@ exports._tr_flush_block  = _tr_flush_block;
 exports._tr_tally = _tr_tally;
 exports._tr_align = _tr_align;
 
-},{"../utils/common":74}],86:[function(require,module,exports){
+},{"../utils/common":72}],84:[function(require,module,exports){
 'use strict';
 
 
@@ -28746,9 +28063,9 @@ function ZStream() {
 
 module.exports = ZStream;
 
-},{}],87:[function(require,module,exports){
+},{}],85:[function(require,module,exports){
 module.exports = require('./lib/retry');
-},{"./lib/retry":88}],88:[function(require,module,exports){
+},{"./lib/retry":86}],86:[function(require,module,exports){
 var RetryOperation = require('./retry_operation');
 
 exports.operation = function(options) {
@@ -28799,7 +28116,7 @@ exports._createTimeout = function(attempt, opts) {
 
   return timeout;
 };
-},{"./retry_operation":89}],89:[function(require,module,exports){
+},{"./retry_operation":87}],87:[function(require,module,exports){
 function RetryOperation(timeouts) {
   this._timeouts = timeouts;
   this._fn = null;
@@ -28909,7 +28226,7 @@ RetryOperation.prototype.mainError = function() {
 
   return mainError;
 };
-},{}],90:[function(require,module,exports){
+},{}],88:[function(require,module,exports){
 module.exports = function arrayEquals(array) {
     // if the other array is a falsy value, return
     if (!array)
@@ -28935,10 +28252,10 @@ module.exports = function arrayEquals(array) {
 }
 
 
-},{}],91:[function(require,module,exports){
+},{}],89:[function(require,module,exports){
 exports.Interop = require('./interop');
 
-},{"./interop":92}],92:[function(require,module,exports){
+},{"./interop":90}],90:[function(require,module,exports){
 "use strict";
 
 var transform = require('./transform');
@@ -29520,7 +28837,7 @@ Interop.prototype.toUnifiedPlan = function(desc) {
     //#endregion
 };
 
-},{"./array-equals":90,"./transform":93}],93:[function(require,module,exports){
+},{"./array-equals":88,"./transform":91}],91:[function(require,module,exports){
 var transform = require('sdp-transform');
 
 exports.write = function(session, opts) {
@@ -29619,7 +28936,7 @@ exports.parse = function(sdp) {
 };
 
 
-},{"sdp-transform":97}],94:[function(require,module,exports){
+},{"sdp-transform":95}],92:[function(require,module,exports){
 var transform = require('sdp-transform');
 var transformUtils = require('./transform-utils');
 var parseSsrcs = transformUtils.parseSsrcs;
@@ -30021,7 +29338,7 @@ Simulcast.prototype.mungeLocalDescription = function (desc) {
 
 module.exports = Simulcast;
 
-},{"./transform-utils":95,"sdp-transform":97}],95:[function(require,module,exports){
+},{"./transform-utils":93,"sdp-transform":95}],93:[function(require,module,exports){
 exports.writeSsrcs = function(sources, order) {
   var ssrcs = [];
 
@@ -30072,7 +29389,7 @@ exports.parseSsrcs = function (mLine) {
 };
 
 
-},{}],96:[function(require,module,exports){
+},{}],94:[function(require,module,exports){
 var grammar = module.exports = {
   v: [{
       name: 'version',
@@ -30321,7 +29638,7 @@ Object.keys(grammar).forEach(function (key) {
   });
 });
 
-},{}],97:[function(require,module,exports){
+},{}],95:[function(require,module,exports){
 var parser = require('./parser');
 var writer = require('./writer');
 
@@ -30331,7 +29648,7 @@ exports.parseFmtpConfig = parser.parseFmtpConfig;
 exports.parsePayloads = parser.parsePayloads;
 exports.parseRemoteCandidates = parser.parseRemoteCandidates;
 
-},{"./parser":98,"./writer":99}],98:[function(require,module,exports){
+},{"./parser":96,"./writer":97}],96:[function(require,module,exports){
 var toIntIfInt = function (v) {
   return String(Number(v)) === v ? Number(v) : v;
 };
@@ -30426,7 +29743,7 @@ exports.parseRemoteCandidates = function (str) {
   return candidates;
 };
 
-},{"./grammar":96}],99:[function(require,module,exports){
+},{"./grammar":94}],97:[function(require,module,exports){
 var grammar = require('./grammar');
 
 // customized util.format - discards excess arguments and can void middle ones
@@ -30542,14 +29859,14 @@ module.exports = function (session, opts) {
   return sdp.join('\r\n') + '\r\n';
 };
 
-},{"./grammar":96}],100:[function(require,module,exports){
+},{"./grammar":94}],98:[function(require,module,exports){
 var MediaStreamType = {
     VIDEO_TYPE: "Video",
 
     AUDIO_TYPE: "Audio"
 };
 module.exports = MediaStreamType;
-},{}],101:[function(require,module,exports){
+},{}],99:[function(require,module,exports){
 var RTCEvents = {
     RTC_READY: "rtc.ready",
     DATA_CHANNEL_OPEN: "rtc.data_channel_open",
@@ -30562,7 +29879,7 @@ var RTCEvents = {
 };
 
 module.exports = RTCEvents;
-},{}],102:[function(require,module,exports){
+},{}],100:[function(require,module,exports){
 var Resolutions = {
     "1080": {
         width: 1920,
@@ -30616,7 +29933,7 @@ var Resolutions = {
     }
 };
 module.exports = Resolutions;
-},{}],103:[function(require,module,exports){
+},{}],101:[function(require,module,exports){
 var StreamEventTypes = {
     EVENT_TYPE_LOCAL_CREATED: "stream.local_created",
 
@@ -30632,7 +29949,7 @@ var StreamEventTypes = {
 };
 
 module.exports = StreamEventTypes;
-},{}],104:[function(require,module,exports){
+},{}],102:[function(require,module,exports){
 var UIEvents = {
     NICKNAME_CHANGED: "UI.nickname_changed",
     SELECTED_ENDPOINT: "UI.selected_endpoint",
@@ -30640,7 +29957,7 @@ var UIEvents = {
     LARGEVIDEO_INIT: "UI.largevideo_init"
 };
 module.exports = UIEvents;
-},{}],105:[function(require,module,exports){
+},{}],103:[function(require,module,exports){
 var AuthenticationEvents = {
     /**
      * Event callback arguments:
@@ -30654,7 +29971,7 @@ var AuthenticationEvents = {
 };
 module.exports = AuthenticationEvents;
 
-},{}],106:[function(require,module,exports){
+},{}],104:[function(require,module,exports){
 var CQEvents = {
     LOCALSTATS_UPDATED: "cq.localstats_updated",
     REMOTESTATS_UPDATED: "cq.remotestats_updated",
@@ -30662,7 +29979,7 @@ var CQEvents = {
 };
 
 module.exports = CQEvents;
-},{}],107:[function(require,module,exports){
+},{}],105:[function(require,module,exports){
 var DesktopSharingEventTypes = {
     INIT: "ds.init",
 
@@ -30672,14 +29989,14 @@ var DesktopSharingEventTypes = {
 };
 
 module.exports = DesktopSharingEventTypes;
-},{}],108:[function(require,module,exports){
+},{}],106:[function(require,module,exports){
 var Events = {
     DTMF_SUPPORT_CHANGED: "members.dtmf_support_changed"
 };
 
 module.exports = Events;
 
-},{}],109:[function(require,module,exports){
+},{}],107:[function(require,module,exports){
 module.exports = {
     getLanguages : function () {
         var languages = [];
@@ -30696,7 +30013,7 @@ module.exports = {
     TR: "tr",
     FR: "fr"
 }
-},{}],110:[function(require,module,exports){
+},{}],108:[function(require,module,exports){
 var XMPPEvents = {
     CONNECTION_FAILED: "xmpp.connection.failed",
     CONFERENCE_CREATED: "xmpp.conferenceCreated.jingle",
@@ -30746,5 +30063,400 @@ var XMPPEvents = {
     READY_TO_JOIN: 'xmpp.ready_to_join'
 };
 module.exports = XMPPEvents;
-},{}]},{},[3])(3)
+},{}],109:[function(require,module,exports){
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+function EventEmitter() {
+  this._events = this._events || {};
+  this._maxListeners = this._maxListeners || undefined;
+}
+module.exports = EventEmitter;
+
+// Backwards-compat with node 0.10.x
+EventEmitter.EventEmitter = EventEmitter;
+
+EventEmitter.prototype._events = undefined;
+EventEmitter.prototype._maxListeners = undefined;
+
+// By default EventEmitters will print a warning if more than 10 listeners are
+// added to it. This is a useful default which helps finding memory leaks.
+EventEmitter.defaultMaxListeners = 10;
+
+// Obviously not all Emitters should be limited to 10. This function allows
+// that to be increased. Set to zero for unlimited.
+EventEmitter.prototype.setMaxListeners = function(n) {
+  if (!isNumber(n) || n < 0 || isNaN(n))
+    throw TypeError('n must be a positive number');
+  this._maxListeners = n;
+  return this;
+};
+
+EventEmitter.prototype.emit = function(type) {
+  var er, handler, len, args, i, listeners;
+
+  if (!this._events)
+    this._events = {};
+
+  // If there is no 'error' event listener then throw.
+  if (type === 'error') {
+    if (!this._events.error ||
+        (isObject(this._events.error) && !this._events.error.length)) {
+      er = arguments[1];
+      if (er instanceof Error) {
+        throw er; // Unhandled 'error' event
+      }
+      throw TypeError('Uncaught, unspecified "error" event.');
+    }
+  }
+
+  handler = this._events[type];
+
+  if (isUndefined(handler))
+    return false;
+
+  if (isFunction(handler)) {
+    switch (arguments.length) {
+      // fast cases
+      case 1:
+        handler.call(this);
+        break;
+      case 2:
+        handler.call(this, arguments[1]);
+        break;
+      case 3:
+        handler.call(this, arguments[1], arguments[2]);
+        break;
+      // slower
+      default:
+        len = arguments.length;
+        args = new Array(len - 1);
+        for (i = 1; i < len; i++)
+          args[i - 1] = arguments[i];
+        handler.apply(this, args);
+    }
+  } else if (isObject(handler)) {
+    len = arguments.length;
+    args = new Array(len - 1);
+    for (i = 1; i < len; i++)
+      args[i - 1] = arguments[i];
+
+    listeners = handler.slice();
+    len = listeners.length;
+    for (i = 0; i < len; i++)
+      listeners[i].apply(this, args);
+  }
+
+  return true;
+};
+
+EventEmitter.prototype.addListener = function(type, listener) {
+  var m;
+
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  if (!this._events)
+    this._events = {};
+
+  // To avoid recursion in the case that type === "newListener"! Before
+  // adding it to the listeners, first emit "newListener".
+  if (this._events.newListener)
+    this.emit('newListener', type,
+              isFunction(listener.listener) ?
+              listener.listener : listener);
+
+  if (!this._events[type])
+    // Optimize the case of one listener. Don't need the extra array object.
+    this._events[type] = listener;
+  else if (isObject(this._events[type]))
+    // If we've already got an array, just append.
+    this._events[type].push(listener);
+  else
+    // Adding the second element, need to change to array.
+    this._events[type] = [this._events[type], listener];
+
+  // Check for listener leak
+  if (isObject(this._events[type]) && !this._events[type].warned) {
+    var m;
+    if (!isUndefined(this._maxListeners)) {
+      m = this._maxListeners;
+    } else {
+      m = EventEmitter.defaultMaxListeners;
+    }
+
+    if (m && m > 0 && this._events[type].length > m) {
+      this._events[type].warned = true;
+      console.error('(node) warning: possible EventEmitter memory ' +
+                    'leak detected. %d listeners added. ' +
+                    'Use emitter.setMaxListeners() to increase limit.',
+                    this._events[type].length);
+      if (typeof console.trace === 'function') {
+        // not supported in IE 10
+        console.trace();
+      }
+    }
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.on = EventEmitter.prototype.addListener;
+
+EventEmitter.prototype.once = function(type, listener) {
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  var fired = false;
+
+  function g() {
+    this.removeListener(type, g);
+
+    if (!fired) {
+      fired = true;
+      listener.apply(this, arguments);
+    }
+  }
+
+  g.listener = listener;
+  this.on(type, g);
+
+  return this;
+};
+
+// emits a 'removeListener' event iff the listener was removed
+EventEmitter.prototype.removeListener = function(type, listener) {
+  var list, position, length, i;
+
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  if (!this._events || !this._events[type])
+    return this;
+
+  list = this._events[type];
+  length = list.length;
+  position = -1;
+
+  if (list === listener ||
+      (isFunction(list.listener) && list.listener === listener)) {
+    delete this._events[type];
+    if (this._events.removeListener)
+      this.emit('removeListener', type, listener);
+
+  } else if (isObject(list)) {
+    for (i = length; i-- > 0;) {
+      if (list[i] === listener ||
+          (list[i].listener && list[i].listener === listener)) {
+        position = i;
+        break;
+      }
+    }
+
+    if (position < 0)
+      return this;
+
+    if (list.length === 1) {
+      list.length = 0;
+      delete this._events[type];
+    } else {
+      list.splice(position, 1);
+    }
+
+    if (this._events.removeListener)
+      this.emit('removeListener', type, listener);
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.removeAllListeners = function(type) {
+  var key, listeners;
+
+  if (!this._events)
+    return this;
+
+  // not listening for removeListener, no need to emit
+  if (!this._events.removeListener) {
+    if (arguments.length === 0)
+      this._events = {};
+    else if (this._events[type])
+      delete this._events[type];
+    return this;
+  }
+
+  // emit removeListener for all listeners on all events
+  if (arguments.length === 0) {
+    for (key in this._events) {
+      if (key === 'removeListener') continue;
+      this.removeAllListeners(key);
+    }
+    this.removeAllListeners('removeListener');
+    this._events = {};
+    return this;
+  }
+
+  listeners = this._events[type];
+
+  if (isFunction(listeners)) {
+    this.removeListener(type, listeners);
+  } else {
+    // LIFO order
+    while (listeners.length)
+      this.removeListener(type, listeners[listeners.length - 1]);
+  }
+  delete this._events[type];
+
+  return this;
+};
+
+EventEmitter.prototype.listeners = function(type) {
+  var ret;
+  if (!this._events || !this._events[type])
+    ret = [];
+  else if (isFunction(this._events[type]))
+    ret = [this._events[type]];
+  else
+    ret = this._events[type].slice();
+  return ret;
+};
+
+EventEmitter.listenerCount = function(emitter, type) {
+  var ret;
+  if (!emitter._events || !emitter._events[type])
+    ret = 0;
+  else if (isFunction(emitter._events[type]))
+    ret = 1;
+  else
+    ret = emitter._events[type].length;
+  return ret;
+};
+
+function isFunction(arg) {
+  return typeof arg === 'function';
+}
+
+function isNumber(arg) {
+  return typeof arg === 'number';
+}
+
+function isObject(arg) {
+  return typeof arg === 'object' && arg !== null;
+}
+
+function isUndefined(arg) {
+  return arg === void 0;
+}
+
+},{}],110:[function(require,module,exports){
+// shim for using process in browser
+
+var process = module.exports = {};
+var queue = [];
+var draining = false;
+var currentQueue;
+var queueIndex = -1;
+
+function cleanUpNextTick() {
+    draining = false;
+    if (currentQueue.length) {
+        queue = currentQueue.concat(queue);
+    } else {
+        queueIndex = -1;
+    }
+    if (queue.length) {
+        drainQueue();
+    }
+}
+
+function drainQueue() {
+    if (draining) {
+        return;
+    }
+    var timeout = setTimeout(cleanUpNextTick);
+    draining = true;
+
+    var len = queue.length;
+    while(len) {
+        currentQueue = queue;
+        queue = [];
+        while (++queueIndex < len) {
+            currentQueue[queueIndex].run();
+        }
+        queueIndex = -1;
+        len = queue.length;
+    }
+    currentQueue = null;
+    draining = false;
+    clearTimeout(timeout);
+}
+
+process.nextTick = function (fun) {
+    var args = new Array(arguments.length - 1);
+    if (arguments.length > 1) {
+        for (var i = 1; i < arguments.length; i++) {
+            args[i - 1] = arguments[i];
+        }
+    }
+    queue.push(new Item(fun, args));
+    if (queue.length === 1 && !draining) {
+        setTimeout(drainQueue, 0);
+    }
+};
+
+// v8 likes predictible objects
+function Item(fun, array) {
+    this.fun = fun;
+    this.array = array;
+}
+Item.prototype.run = function () {
+    this.fun.apply(null, this.array);
+};
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+process.version = ''; // empty string to avoid regexp issues
+process.versions = {};
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+};
+
+// TODO(shtylman)
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+process.umask = function() { return 0; };
+
+},{}]},{},[1])(1)
 });
