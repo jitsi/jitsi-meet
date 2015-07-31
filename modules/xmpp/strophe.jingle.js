@@ -115,12 +115,12 @@ module.exports = function(XMPP, eventEmitter)
             switch (action) {
                 case 'session-initiate':
                     var startMuted = $(iq).find('jingle>startmuted');
-                    if(startMuted && startMuted.length > 0)
+                    if (startMuted && startMuted.length > 0)
                     {
                         var audioMuted = startMuted.attr("audio");
                         var videoMuted = startMuted.attr("video");
                         eventEmitter.emit(XMPPEvents.START_MUTED_FROM_FOCUS,
-                                autioMuted === "true", videoMuted === "true");
+                                audioMuted === "true", videoMuted === "true");
                     }
                     sess = new JingleSession(
                         $(iq).attr('to'), $(iq).find('jingle').attr('sid'),
