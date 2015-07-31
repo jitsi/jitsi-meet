@@ -1162,14 +1162,11 @@ var RTC = {
             this.localStreams[0].getOriginalStream() != stream)
             this.localStreams.push(localStream);
         if(isMuted === true)
-            localStream.setMute(false);
+            localStream.setMute(true);
 
-        if(type == "audio")
-        {
+        if(type == "audio") {
             this.localAudio = localStream;
-        }
-        else
-        {
+        } else {
             this.localVideo = localStream;
         }
         var eventType = StreamEventTypes.EVENT_TYPE_LOCAL_CREATED;
@@ -14514,6 +14511,10 @@ JingleSession.prototype.addSource = function (elem, fromJid) {
                 console.warn("Got add stream request for my own ssrc: "+ssrc);
                 return;
             }
+            if (sdp.containsSSRC(ssrc)) {
+                console.warn("Source-add request for existing SSRC: " + ssrc);
+                return;
+            }
             $(this).find('>parameter').each(function () {
                 lines += 'a=ssrc:' + ssrc + ' ' + $(this).attr('name');
                 if ($(this).attr('value') && $(this).attr('value').length)
@@ -18022,12 +18023,12 @@ module.exports = function(XMPP, eventEmitter)
             switch (action) {
                 case 'session-initiate':
                     var startMuted = $(iq).find('jingle>startmuted');
-                    if(startMuted && startMuted.length > 0)
+                    if (startMuted && startMuted.length > 0)
                     {
                         var audioMuted = startMuted.attr("audio");
                         var videoMuted = startMuted.attr("video");
                         eventEmitter.emit(XMPPEvents.START_MUTED_FROM_FOCUS,
-                                autioMuted === "true", videoMuted === "true");
+                                audioMuted === "true", videoMuted === "true");
                     }
                     sess = new JingleSession(
                         $(iq).attr('to'), $(iq).find('jingle').attr('sid'),
@@ -18898,7 +18899,7 @@ var XMPP = {
         // It is not clear what is the right way to handle multiple tracks.
         // So at least make sure that they are all muted or all unmuted and
         // that we send presence just once.
-        APP.RTC.localAudio.setMute(!mute);
+        APP.RTC.localAudio.setMute(mute);
         // isMuted is the opposite of audioEnabled
         this.sendAudioInfoPresence(mute, callback);
         return true;
