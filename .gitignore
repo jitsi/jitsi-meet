@@ -3,3 +3,4 @@ node_modules
 .idea/
 *.iml
 .*.tmp
+deploy-local.sh
