@@ -26,8 +26,6 @@ var config = {
     channelLastN: -1, // The default value of the channel attribute last-n.
     adaptiveLastN: false,
     adaptiveSimulcast: false,
-    useRtcpMux: true, // required for FF support
-    useBundle: true, // required for FF support
     enableRecording: false,
     enableWelcomePage: true,
     enableSimulcast: false, // blocks FF support
