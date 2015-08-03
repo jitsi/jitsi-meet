@@ -134,19 +134,19 @@ JingleSession.prototype.initiate = function (peerjid, isInitiator) {
         self.updateModifySourcesQueue();
         switch (self.peerconnection.iceConnectionState) {
             case 'connected':
-                this.startTime = new Date();
+                self.startTime = new Date();
 
                 // Informs interested parties that the connection has been restored.
-                if (this.peerconnection.signalingState === 'stable' && this.isreconnect)
+                if (self.peerconnection.signalingState === 'stable' && self.isreconnect)
                     self.eventEmitter.emit(XMPPEvents.CONNECTION_RESTORED);
-                this.isreconnect = false;
+                self.isreconnect = false;
 
                 break;
             case 'disconnected':
-                this.isreconnect = true;
-                this.stopTime = new Date();
+                self.isreconnect = true;
+                self.stopTime = new Date();
                 // Informs interested parties that the connection has been interrupted.
-                if (this.peerconnection.signalingState === 'stable')
+                if (self.peerconnection.signalingState === 'stable')
                     self.eventEmitter.emit(XMPPEvents.CONNECTION_INTERRUPTED);
                 break;
             case 'failed':
