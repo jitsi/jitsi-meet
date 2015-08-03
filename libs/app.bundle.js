@@ -3352,7 +3352,9 @@ function registerListeners() {
         AudioLevels.init();
     });
 
+    // Listens for video interruption events.
     APP.xmpp.addListener(XMPPEvents.CONNECTION_INTERRUPTED, VideoLayout.onVideoInterrupted);
+    // Listens for video restores events.
     APP.xmpp.addListener(XMPPEvents.CONNECTION_RESTORED, VideoLayout.onVideoRestored);
 }
 
@@ -8766,6 +8768,7 @@ var LargeVideo = {
     },
     /**
      * Sets hover handlers for the large video container div.
+     *
      * @param inHandler
      * @param outHandler
      */
@@ -8774,6 +8777,11 @@ var LargeVideo = {
         $('#largeVideoContainer').hover(inHandler, outHandler);
     },
 
+    /**
+     * Enables/disables the filter indicating a video problem to the user.
+     *
+     * @param enable <tt>true</tt> to enable, <tt>false</tt> to disable
+     */
     enableVideoProblemFilter: function (enable) {
         $("#largeVideo").toggleClass("videoProblemFilter", enable);
     }
@@ -10677,6 +10685,9 @@ var VideoLayout = (function (my) {
         LargeVideo.setHover(inHandler, outHandler);
     };
 
+    /**
+     * Indicates that the video has been interrupted.
+     */
     my.onVideoInterrupted = function () {
         LargeVideo.enableVideoProblemFilter(true);
         var reconnectingKey = "connection.RECONNECTING";
@@ -10685,6 +10696,9 @@ var VideoLayout = (function (my) {
         $('#videoConnectionMessage').css({display: "block"});
     };
 
+    /**
+     * Indicates that the video has been restored.
+     */
     my.onVideoRestored = function () {
         LargeVideo.enableVideoProblemFilter(false);
         $('#videoConnectionMessage').css({display: "none"});
@@ -13177,6 +13191,13 @@ JingleSession.prototype.initiate = function (peerjid, isInitiator) {
         if (!(self && self.peerconnection)) return;
         self.updateModifySourcesQueue();
     };
+    /**
+     * The oniceconnectionstatechange event handler contains the code to execute when the iceconnectionstatechange event,
+     * of type Event, is received by this RTCPeerConnection. Such an event is sent when the value of
+     * RTCPeerConnection.iceConnectionState changes.
+     *
+     * @param event the event containing information about the change
+     */
     this.peerconnection.oniceconnectionstatechange = function (event) {
         if (!(self && self.peerconnection)) return;
         self.updateModifySourcesQueue();
@@ -13184,6 +13205,7 @@ JingleSession.prototype.initiate = function (peerjid, isInitiator) {
             case 'connected':
                 this.startTime = new Date();
 
+                // Informs interested parties that the connection has been restored.
                 if (this.peerconnection.signalingState === 'stable' && this.isreconnect)
                     self.eventEmitter.emit(XMPPEvents.CONNECTION_RESTORED);
                 this.isreconnect = false;
@@ -13192,6 +13214,7 @@ JingleSession.prototype.initiate = function (peerjid, isInitiator) {
             case 'disconnected':
                 this.isreconnect = true;
                 this.stopTime = new Date();
+                // Informs interested parties that the connection has been interrupted.
                 if (this.peerconnection.signalingState === 'stable')
                     self.eventEmitter.emit(XMPPEvents.CONNECTION_INTERRUPTED);
                 break;
@@ -30061,7 +30084,9 @@ module.exports = {
 },{}],116:[function(require,module,exports){
 var XMPPEvents = {
     CONNECTION_FAILED: "xmpp.connection.failed",
+    // Indicates an interrupted connection event.
     CONNECTION_INTERRUPTED: "xmpp.connection.interrupted",
+    // Indicates a restored connection event.
     CONNECTION_RESTORED: "xmpp.connection.restored",
     CONFERENCE_CREATED: "xmpp.conferenceCreated.jingle",
     CALL_INCOMING: "xmpp.callincoming.jingle",

@@ -891,6 +891,9 @@ var VideoLayout = (function (my) {
         LargeVideo.setHover(inHandler, outHandler);
     };
 
+    /**
+     * Indicates that the video has been interrupted.
+     */
     my.onVideoInterrupted = function () {
         LargeVideo.enableVideoProblemFilter(true);
         var reconnectingKey = "connection.RECONNECTING";
@@ -899,6 +902,9 @@ var VideoLayout = (function (my) {
         $('#videoConnectionMessage').css({display: "block"});
     };
 
+    /**
+     * Indicates that the video has been restored.
+     */
     my.onVideoRestored = function () {
         LargeVideo.enableVideoProblemFilter(false);
         $('#videoConnectionMessage').css({display: "none"});

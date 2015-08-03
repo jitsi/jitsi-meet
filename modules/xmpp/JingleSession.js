@@ -122,6 +122,13 @@ JingleSession.prototype.initiate = function (peerjid, isInitiator) {
         if (!(self && self.peerconnection)) return;
         self.updateModifySourcesQueue();
     };
+    /**
+     * The oniceconnectionstatechange event handler contains the code to execute when the iceconnectionstatechange event,
+     * of type Event, is received by this RTCPeerConnection. Such an event is sent when the value of
+     * RTCPeerConnection.iceConnectionState changes.
+     *
+     * @param event the event containing information about the change
+     */
     this.peerconnection.oniceconnectionstatechange = function (event) {
         if (!(self && self.peerconnection)) return;
         self.updateModifySourcesQueue();
@@ -129,6 +136,7 @@ JingleSession.prototype.initiate = function (peerjid, isInitiator) {
             case 'connected':
                 this.startTime = new Date();
 
+                // Informs interested parties that the connection has been restored.
                 if (this.peerconnection.signalingState === 'stable' && this.isreconnect)
                     self.eventEmitter.emit(XMPPEvents.CONNECTION_RESTORED);
                 this.isreconnect = false;
@@ -137,6 +145,7 @@ JingleSession.prototype.initiate = function (peerjid, isInitiator) {
             case 'disconnected':
                 this.isreconnect = true;
                 this.stopTime = new Date();
+                // Informs interested parties that the connection has been interrupted.
                 if (this.peerconnection.signalingState === 'stable')
                     self.eventEmitter.emit(XMPPEvents.CONNECTION_INTERRUPTED);
                 break;

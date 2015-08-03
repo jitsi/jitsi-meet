@@ -655,6 +655,7 @@ var LargeVideo = {
     },
     /**
      * Sets hover handlers for the large video container div.
+     *
      * @param inHandler
      * @param outHandler
      */
@@ -663,6 +664,11 @@ var LargeVideo = {
         $('#largeVideoContainer').hover(inHandler, outHandler);
     },
 
+    /**
+     * Enables/disables the filter indicating a video problem to the user.
+     *
+     * @param enable <tt>true</tt> to enable, <tt>false</tt> to disable
+     */
     enableVideoProblemFilter: function (enable) {
         $("#largeVideo").toggleClass("videoProblemFilter", enable);
     }

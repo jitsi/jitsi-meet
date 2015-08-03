@@ -1,6 +1,8 @@
 var XMPPEvents = {
     CONNECTION_FAILED: "xmpp.connection.failed",
+    // Indicates an interrupted connection event.
     CONNECTION_INTERRUPTED: "xmpp.connection.interrupted",
+    // Indicates a restored connection event.
     CONNECTION_RESTORED: "xmpp.connection.restored",
     CONFERENCE_CREATED: "xmpp.conferenceCreated.jingle",
     CALL_INCOMING: "xmpp.callincoming.jingle",

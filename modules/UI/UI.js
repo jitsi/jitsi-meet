@@ -334,7 +334,9 @@ function registerListeners() {
         AudioLevels.init();
     });
 
+    // Listens for video interruption events.
     APP.xmpp.addListener(XMPPEvents.CONNECTION_INTERRUPTED, VideoLayout.onVideoInterrupted);
+    // Listens for video restores events.
     APP.xmpp.addListener(XMPPEvents.CONNECTION_RESTORED, VideoLayout.onVideoRestored);
 }
 
