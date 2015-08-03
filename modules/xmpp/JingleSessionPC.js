@@ -1,4 +1,5 @@
 /* jshint -W117 */
+var JingleSession = require("./JingleSession");
 var TraceablePeerConnection = require("./TraceablePeerConnection");
 var SDPDiffer = require("./SDPDiffer");
 var SDPUtil = require("./SDPUtil");
@@ -11,6 +12,7 @@ var SSRCReplacement = require("./LocalSSRCReplacement");
 
 // Jingle stuff
 function JingleSessionPC(me, sid, connection, service, eventEmitter) {
+    JingleSession.call(this, me, sid, connection, service, eventEmitter);
     this.me = me;
     this.sid = sid;
     this.connection = connection;
@@ -33,7 +35,6 @@ function JingleSessionPC(me, sid, connection, service, eventEmitter) {
 
     this.usetrickle = true;
     this.usepranswer = false; // early transport warmup -- mind you, this might fail. depends on webrtc issue 1718
-    this.usedrip = false; // dripping is sending trickle candidates not one-by-one
 
     this.hadstuncandidate = false;
     this.hadturncandidate = false;
@@ -65,6 +66,17 @@ function JingleSessionPC(me, sid, connection, service, eventEmitter) {
     // stable and the ice connection state is connected.
     this.modifySourcesQueue.pause();
 }
+JingleSessionPC.prototype = JingleSession.prototype;
+JingleSessionPC.prototype.constructor = JingleSessionPC;
+
+
+JingleSessionPC.prototype.setOffer = function(offer) {
+    this.setRemoteDescription(offer, 'offer');
+};
+
+JingleSessionPC.prototype.setAnswer = function(answer) {
+    this.setRemoteDescription(answer, 'answer');
+};
 
 JingleSessionPC.prototype.updateModifySourcesQueue = function() {
     var signalingState = this.peerconnection.signalingState;
@@ -339,7 +351,6 @@ JingleSessionPC.prototype.sendIceCandidate = function (candidate) {
                     initiator: this.initiator,
                     sid: this.sid});
             this.localSDP = new SDP(this.peerconnection.localDescription.sdp);
-            var self = this;
             var sendJingle = function (ssrc) {
                 if(!ssrc)
                     ssrc = {};
@@ -368,7 +379,7 @@ JingleSessionPC.prototype.sendIceCandidate = function (candidate) {
                         JingleSessionPC.onJingleError(self.sid, error);
                     },
                     10000);
-            }
+            };
             sendJingle();
         }
         this.lasticecandidate = true;
