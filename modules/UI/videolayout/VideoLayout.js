@@ -891,6 +891,19 @@ var VideoLayout = (function (my) {
         LargeVideo.setHover(inHandler, outHandler);
     };
 
+    my.onVideoInterrupted = function () {
+        LargeVideo.enableVideoProblemFilter(true);
+        var reconnectingKey = "connection.RECONNECTING";
+        $('#videoConnectionMessage').attr("data-i18n", reconnectingKey);
+        $('#videoConnectionMessage').text(APP.translation.translateString(reconnectingKey));
+        $('#videoConnectionMessage').css({display: "block"});
+    };
+
+    my.onVideoRestored = function () {
+        LargeVideo.enableVideoProblemFilter(false);
+        $('#videoConnectionMessage').css({display: "none"});
+    };
+
     return my;
 }(VideoLayout || {}));
 

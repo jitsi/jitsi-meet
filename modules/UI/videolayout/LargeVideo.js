@@ -288,7 +288,8 @@ function createLargeVideoHTML()
                 '<img id="activeSpeakerAvatar" src=""/>' +
                 '<canvas id="activeSpeakerAudioLevel"></canvas>' +
             '</div>' +
-            '<video id="largeVideo" autoplay oncontextmenu="return false;"></video>';
+            '<video id="largeVideo" autoplay oncontextmenu="return false;"></video>' +
+            '<span id="videoConnectionMessage"></span>';
     html += '</div>';
     $(html).prependTo("#videospace");
 
@@ -660,8 +661,11 @@ var LargeVideo = {
     setHover: function(inHandler, outHandler)
     {
         $('#largeVideoContainer').hover(inHandler, outHandler);
+    },
+
+    enableVideoProblemFilter: function (enable) {
+        $("#largeVideo").toggleClass("videoProblemFilter", enable);
     }
 };
-
 
 module.exports = LargeVideo;

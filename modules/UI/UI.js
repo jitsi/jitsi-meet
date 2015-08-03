@@ -333,6 +333,9 @@ function registerListeners() {
     UI.addListener(UIEvents.LARGEVIDEO_INIT, function () {
         AudioLevels.init();
     });
+
+    APP.xmpp.addListener(XMPPEvents.CONNECTION_INTERRUPTED, VideoLayout.onVideoInterrupted);
+    APP.xmpp.addListener(XMPPEvents.CONNECTION_RESTORED, VideoLayout.onVideoRestored);
 }
 
 

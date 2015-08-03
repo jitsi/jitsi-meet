@@ -90,6 +90,7 @@ JingleSession.prototype.initiate = function (peerjid, isInitiator) {
     this.hadstuncandidate = false;
     this.hadturncandidate = false;
     this.lasticecandidate = false;
+    this.isreconnect = false;
 
     this.peerconnection
         = new TraceablePeerConnection(
@@ -127,9 +128,17 @@ JingleSession.prototype.initiate = function (peerjid, isInitiator) {
         switch (self.peerconnection.iceConnectionState) {
             case 'connected':
                 this.startTime = new Date();
+
+                if (this.peerconnection.signalingState === 'stable' && this.isreconnect)
+                    self.eventEmitter.emit(XMPPEvents.CONNECTION_RESTORED);
+                this.isreconnect = false;
+
                 break;
             case 'disconnected':
+                this.isreconnect = true;
                 this.stopTime = new Date();
+                if (this.peerconnection.signalingState === 'stable')
+                    self.eventEmitter.emit(XMPPEvents.CONNECTION_INTERRUPTED);
                 break;
             case 'failed':
                 self.eventEmitter.emit(XMPPEvents.CONFERENCE_SETUP_FAILED);

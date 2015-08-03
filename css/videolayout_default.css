@@ -446,3 +446,24 @@
     background-position: center;
 }
 
+.videoProblemFilter {
+    -webkit-filter: blur(10px) grayscale(.5) opacity(0.8);
+    filter: blur(10px) grayscale(.5) opacity(0.8);
+}
+
+#videoConnectionMessage {
+    display: none;
+    position: absolute;
+    width: 100%;
+    top:50%;
+    z-index: 10000;
+    font-weight: 600;
+    font-size: 14px;
+    text-align: center;
+    color: #FFF;
+    opacity: .80;
+    text-shadow:    0px 0px 1px rgba(0,0,0,0.3),
+                    0px 1px 1px rgba(0,0,0,0.3),
+                    1px 0px 1px rgba(0,0,0,0.3),
+                    0px 0px 1px rgba(0,0,0,0.3);
+}

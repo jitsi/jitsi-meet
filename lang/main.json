@@ -229,6 +229,7 @@
     {
         "ERROR": "Error",
         "CONNECTING": "Connecting",
+        "RECONNECTING": "A network problem occurred. Reconnecting...",
         "CONNFAIL": "Connection failed",
         "AUTHENTICATING": "Authenticating",
         "AUTHFAIL": "Authentication failed",
