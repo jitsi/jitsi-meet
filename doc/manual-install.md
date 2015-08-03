@@ -150,7 +150,7 @@ ant dist.{os-name}
 Run jicofo:
 ```sh
 cd dist/{os-name}'
-./jicofo.sh --domain=jitsi.exmaple.com --secret=YOURSECRET2 --user_domain=auth.jitsi.example.com --user_name=focus --user_password=YOURSECRET3
+./jicofo.sh --domain=jitsi.example.com --secret=YOURSECRET2 --user_domain=auth.jitsi.example.com --user_name=focus --user_password=YOURSECRET3
 ```
 
 ## Deploy Jitsi Meet
