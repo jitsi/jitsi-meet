@@ -11,8 +11,8 @@ var XMPPEvents = require("../../service/xmpp/XMPPEvents");
  * List of the available commands.
  * @type {{
  *              displayName: inputDisplayNameHandler,
- *              muteAudio: toggleAudio,
- *              muteVideo: toggleVideo,
+ *              toggleAudio: toggleAudio,
+ *              toggleVideo: toggleVideo,
  *              toggleFilmStrip: toggleFilmStrip,
  *              toggleChat: toggleChat,
  *              toggleContactList: toggleContactList
@@ -23,8 +23,8 @@ var commands = {};
 function initCommands() {
     commands = {
         displayName: APP.UI.inputDisplayNameHandler,
-        muteAudio: APP.UI.toggleAudio,
-        muteVideo: APP.UI.toggleVideo,
+        toggleAudio: APP.UI.toggleAudio,
+        toggleVideo: APP.UI.toggleVideo,
         toggleFilmStrip: APP.UI.toggleFilmStrip,
         toggleChat: APP.UI.toggleChat,
         toggleContactList: APP.UI.toggleContactList

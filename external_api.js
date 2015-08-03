@@ -92,8 +92,8 @@ var JitsiMeetExternalAPI = (function()
      * Executes command. The available commands are:
      * displayName - sets the display name of the local participant to the value
      * passed in the arguments array.
-     * muteAudio - mutes / unmutes audio with no arguments
-     * muteVideo - mutes / unmutes video with no arguments
+     * toggleAudio - mutes / unmutes audio with no arguments
+     * toggleVideo - mutes / unmutes video with no arguments
      * filmStrip - hides / shows the film strip with no arguments
      * If the command doesn't require any arguments the parameter should be set
      * to empty array or it may be omitted.
@@ -114,8 +114,8 @@ var JitsiMeetExternalAPI = (function()
      * Executes commands. The available commands are:
      * displayName - sets the display name of the local participant to the value
      * passed in the arguments array.
-     * muteAudio - mutes / unmutes audio with no arguments
-     * muteVideo - mutes / unmutes video with no arguments
+     * toggleAudio - mutes / unmutes audio with no arguments
+     * toggleVideo - mutes / unmutes video with no arguments
      * filmStrip - hides / shows the film strip with no arguments
      * @param object the object with commands to be executed. The keys of the
      * object are the commands that will be executed and the values are the
