@@ -1,6 +1,6 @@
 Jitsi Meet - Secure, Simple and Scalable Video Conferences 
 ====
-Jitsi Meet is an open-source (MIT) WebRTC JavaScript application that uses [Jitsi Videobridge](https://jitsi.org/videobridge) to provide high quality, scalable video conferences. You can see [Jitsi Meet in action](http://youtu.be/7vFUVClsNh0) here at the 482 session of the VoIP Users Conference.
+Jitsi Meet is an open-source (MIT) WebRTC JavaScript application that uses [Jitsi Videobridge](https://jitsi.org/videobridge) to provide high quality, scalable video conferences. You can see [Jitsi Meet in action](http://youtu.be/7vFUVClsNh0) here at the session #482 of the VoIP Users Conference.
 
 You can also try it out yourself at https://meet.jit.si .
 
@@ -30,7 +30,7 @@ make
 ```
 
 ## Discuss
-Please use the [Jitsi dev mailing list](http://lists.jitsi.org/pipermail/dev/) to discuss feature requests before opening an issue on github. 
+Please use the [Jitsi dev mailing list](http://lists.jitsi.org/pipermail/dev/) to discuss feature requests before opening an issue on Github. 
 
 ## Acknowledgements
 
@@ -38,7 +38,7 @@ Jitsi Meet started out as a sample conferencing application using Jitsi Videobri
 
 ## Miscellaneous
 
-This project was originally contributed to the community under the MIT licesne and with the following notice:
+This project was originally contributed to the community under the MIT license and with the following notice:
 
 The MIT License (MIT)
 
