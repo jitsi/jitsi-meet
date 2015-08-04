@@ -4,7 +4,7 @@ var RTCBrowserType = require("../RTC/RTCBrowserType");
 
 /* Whether we support the browser we are running into for logging statistics */
 var browserSupported = RTCBrowserType.isChrome() ||
-    RTCBrowserType.isChrome();
+    RTCBrowserType.isOpera();
 /**
  * Calculates packet lost percent using the number of lost packets and the
  * number of all packet.
