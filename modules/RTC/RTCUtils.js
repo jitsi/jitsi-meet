@@ -522,7 +522,7 @@ RTCUtils.prototype.handleLocalStream = function(stream, usageOptions) {
     this.service.createLocalStream(audioStream, "audio", null, null,
         audioMuted, audioGUM);
 
-    this.service.createLocalStream(videoStream, "video", null, null,
+    this.service.createLocalStream(videoStream, "video", null, 'camera',
         videoMuted, videoGUM);
 };
 

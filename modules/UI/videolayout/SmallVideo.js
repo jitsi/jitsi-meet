@@ -54,6 +54,22 @@ SmallVideo.prototype.setDeviceAvailabilityIcons = function (devices) {
 };
 
 /**
+ * Sets the type of the video displayed by this instance.
+ * @param videoType 'camera' or 'screen'
+ */
+SmallVideo.prototype.setVideoType = function (videoType) {
+    this.videoType = videoType;
+};
+
+/**
+ * Returns the type of the video displayed by this instance.
+ * @returns {String} 'camera', 'screen' or undefined.
+ */
+SmallVideo.prototype.getVideoType = function () {
+    return this.videoType;
+};
+
+/**
  * Shows the presence status message for the given video.
  */
 SmallVideo.prototype.setPresenceStatus = function (statusMsg) {

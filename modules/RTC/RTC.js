@@ -198,7 +198,7 @@ var RTC = {
     },
     changeLocalVideo: function (stream, isUsingScreenStream, callback) {
         var oldStream = this.localVideo.getOriginalStream();
-        var type = (isUsingScreenStream? "screen" : "video");
+        var type = (isUsingScreenStream ? "screen" : "camera");
         var localCallback = callback;
         if(this.localVideo.isMuted() && this.localVideo.videoType !== type) {
             localCallback = function() {
@@ -241,32 +241,6 @@ var RTC = {
             }
             return APP.RTC.remoteStreams[jid][MediaStreamType.VIDEO_TYPE].muted;
         }
-    },
-    /**
-     * Checks if video identified by given src is desktop stream.
-     * @param videoSrc eg.
-     * blob:https%3A//pawel.jitsi.net/9a46e0bd-131e-4d18-9c14-a9264e8db395
-     * @returns {boolean}
-     */
-    isVideoSrcDesktop: function (jid) {
-        if(!jid)
-            return false;
-        var isDesktop = false;
-        var stream = null;
-        if (APP.xmpp.myJid() === jid) {
-            // local video
-            stream = this.localVideo;
-        } else {
-            var peerStreams = this.remoteStreams[jid];
-            if(!peerStreams)
-                return false;
-            stream = peerStreams[MediaStreamType.VIDEO_TYPE];
-        }
-
-        if(stream)
-            isDesktop = (stream.videoType === "screen");
-
-        return isDesktop;
     },
     setVideoMute: function (mute, callback, options) {
         if (!this.localVideo)

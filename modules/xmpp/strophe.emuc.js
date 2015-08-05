@@ -174,6 +174,16 @@ module.exports = function(XMPP, eventEmitter) {
                     Strophe.getResourceFromJid(from), devicesValues);
             }
 
+            var videoType = $(pres).find('>videoType');
+            if (videoType.length)
+            {
+                if (videoType.text().length)
+                {
+                    eventEmitter.emit(XMPPEvents.VIDEO_TYPE,
+                        Strophe.getResourceFromJid(from), videoType.text());
+                }
+            }
+
             var stats = $(pres).find('>stats');
             if (stats.length) {
                 var statsObj = {};
@@ -482,6 +492,11 @@ module.exports = function(XMPP, eventEmitter) {
                     .t(this.presMap['videomuted']).up();
             }
 
+            if (this.presMap['videoTypeNs']) {
+                pres.c('videoType', { xmlns: this.presMap['videoTypeNs'] })
+                    .t(this.presMap['videoType']).up();
+            }
+
             if (this.presMap['statsns']) {
                 var stats = pres.c('stats', {xmlns: this.presMap['statsns']});
                 for (var stat in this.presMap["stats"])
@@ -513,6 +528,14 @@ module.exports = function(XMPP, eventEmitter) {
         },
         addDevicesToPresence: function (devices) {
             this.presMap['devices'] = devices;
+        },
+        /**
+         * Adds the info about the type of our video stream.
+         * @param videoType 'camera' or 'screen'
+         */
+        addVideoTypeToPresence: function (videoType) {
+            this.presMap['videoTypeNs'] = 'http://jitsi.org/jitmeet/video';
+            this.presMap['videoType'] = videoType;
         },
         addPreziToPresence: function (url, currentSlide) {
             this.presMap['prezins'] = 'http://jitsi.org/jitmeet/prezi';

@@ -7,9 +7,7 @@ var StreamEventTypes = {
 
     EVENT_TYPE_REMOTE_CREATED: "stream.remote_created",
 
-    EVENT_TYPE_REMOTE_ENDED: "stream.remote_ended",
-
-    EVENT_TYPE_REMOTE_CHANGED: "stream.changed"
+    EVENT_TYPE_REMOTE_ENDED: "stream.remote_ended"
 };
 
 module.exports = StreamEventTypes;

@@ -32,6 +32,7 @@ var XMPPEvents = {
     CHAT_ERROR_RECEIVED: "xmpp.chat_error_received",
     ETHERPAD: "xmpp.etherpad",
     DEVICE_AVAILABLE: "xmpp.device_available",
+    VIDEO_TYPE: "xmpp.video_type",
     PEERCONNECTION_READY: "xmpp.peerconnection_ready",
     CONFERENCE_SETUP_FAILED: "xmpp.conference_setup_failed",
     AUDIO_MUTED: "xmpp.audio_muted",

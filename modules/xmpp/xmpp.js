@@ -171,9 +171,28 @@ function initStrophePlugins()
     require("./strophe.logger")();
 }
 
+/**
+ * If given <tt>localStream</tt> is video one this method will advertise it's
+ * video type in MUC presence.
+ * @param localStream new or modified <tt>LocalStream</tt>.
+ */
+function broadcastLocalVideoType(localStream) {
+    if (localStream.videoType)
+        XMPP.addToPresence('videoType', localStream.videoType);
+}
+
 function registerListeners() {
-    APP.RTC.addStreamListener(maybeDoJoin,
-        StreamEventTypes.EVENT_TYPE_LOCAL_CREATED);
+    APP.RTC.addStreamListener(
+        function (localStream) {
+            maybeDoJoin();
+            broadcastLocalVideoType(localStream);
+        },
+        StreamEventTypes.EVENT_TYPE_LOCAL_CREATED
+    );
+    APP.RTC.addStreamListener(
+        broadcastLocalVideoType,
+        StreamEventTypes.EVENT_TYPE_LOCAL_CHANGED
+    );
     APP.RTC.addListener(RTCEvents.AVAILABLE_DEVICES_CHANGED, function (devices) {
         XMPP.addToPresence("devices", devices);
     });
@@ -438,6 +457,9 @@ var XMPP = {
                 break;
             case "devices":
                 connection.emuc.addDevicesToPresence(value);
+                break;
+            case "videoType":
+                connection.emuc.addVideoTypeToPresence(value);
                 break;
             case "startMuted":
                 if(!Moderator.isModerator())

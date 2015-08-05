@@ -12,6 +12,7 @@ var LargeVideo = require("./LargeVideo");
 var LocalVideo = require("./LocalVideo");
 
 var remoteVideos = {};
+var remoteVideoTypes = {};
 var localVideoThumbnail = null;
 
 var currentDominantSpeaker = null;
@@ -67,6 +68,8 @@ var VideoLayout = (function (my) {
         // Set default display name.
         localVideoThumbnail.setDisplayName();
         localVideoThumbnail.createConnectionIndicator();
+
+        this.onVideoTypeChanged(APP.xmpp.myResource(), stream.videoType);
 
         AudioLevels.updateAudioLevelCanvas(null, VideoLayout);
 
@@ -252,14 +255,21 @@ var VideoLayout = (function (my) {
 
         var resourceJid = Strophe.getResourceFromJid(peerJid);
 
-        if(!remoteVideos[resourceJid]) {
-            remoteVideos[resourceJid] = new RemoteVideo(peerJid, VideoLayout);
+        if (!remoteVideos[resourceJid]) {
+
+            var remoteVideo = new RemoteVideo(peerJid, VideoLayout);
+            remoteVideos[resourceJid] = remoteVideo;
+
+            var videoType = remoteVideoTypes[resourceJid];
+            if (videoType) {
+                remoteVideo.setVideoType(videoType);
+            }
 
             // In case this is not currently in the last n we don't show it.
             if (localLastNCount &&
                 localLastNCount > 0 &&
                 $('#remoteVideos>span').length >= localLastNCount + 2) {
-                remoteVideos[resourceJid].showPeerContainer('hide');
+                remoteVideo.showPeerContainer('hide');
             }
             else
                 VideoLayout.resizeThumbnails();
@@ -809,8 +819,30 @@ var VideoLayout = (function (my) {
         VideoLayout.resizeThumbnails();
     };
     
-    my.onVideoTypeChanged = function (jid) {
-        LargeVideo.onVideoTypeChanged(jid);
+    my.onVideoTypeChanged = function (resourceJid, newVideoType) {
+        if (remoteVideoTypes[resourceJid] === newVideoType) {
+            return;
+        }
+
+        console.info("Peer video type changed: ", resourceJid, newVideoType);
+        remoteVideoTypes[resourceJid] = newVideoType;
+
+        var smallVideo;
+        if (resourceJid === APP.xmpp.myResource()) {
+            if (!localVideoThumbnail) {
+                console.warn("Local video not ready yet");
+                return;
+            }
+            smallVideo = localVideoThumbnail;
+        } else if (remoteVideos[resourceJid]) {
+            smallVideo = remoteVideos[resourceJid];
+        } else {
+            return;
+        }
+
+        smallVideo.setVideoType(newVideoType);
+        LargeVideo.onVideoTypeChanged(resourceJid, newVideoType);
+
     };
 
     my.showMore = function (jid) {

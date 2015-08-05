@@ -1,6 +1,7 @@
 var RTC = require('../RTC/RTC');
 var RTCBrowserType = require("../RTC/RTCBrowserType.js");
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
+var VideoSSRCHack = require("./VideoSSRCHack");
 
 function TraceablePeerConnection(ice_config, constraints, session) {
     var self = this;
@@ -211,6 +212,9 @@ if (TraceablePeerConnection.prototype.__defineGetter__ !== undefined) {
         'localDescription',
         function() {
             var desc = this.peerconnection.localDescription;
+
+            desc = VideoSSRCHack.mungeLocalVideoSSRC(desc);
+            
             this.trace('getLocalDescription::preTransform', dumpSDP(desc));
 
             // if we're running on FF, transform to Plan B first.
@@ -359,13 +363,16 @@ TraceablePeerConnection.prototype.createOffer
     this.peerconnection.createOffer(
         function (offer) {
             self.trace('createOfferOnSuccess::preTransform', dumpSDP(offer));
-            // if we're running on FF, transform to Plan B first.
             // NOTE this is not tested because in meet the focus generates the
             // offer.
+
+            // if we're running on FF, transform to Plan B first.
             if (RTCBrowserType.usesUnifiedPlan()) {
                 offer = self.interop.toPlanB(offer);
                 self.trace('createOfferOnSuccess::postTransform (Plan B)', dumpSDP(offer));
             }
+
+            offer = VideoSSRCHack.mungeLocalVideoSSRC(offer);
 
             if (config.enableSimulcast && self.simulcast.isSupported()) {
                 offer = self.simulcast.mungeLocalDescription(offer);
@@ -393,6 +400,10 @@ TraceablePeerConnection.prototype.createAnswer
                 answer = self.interop.toPlanB(answer);
                 self.trace('createAnswerOnSuccess::postTransform (Plan B)', dumpSDP(answer));
             }
+
+            // munge local video SSRC
+            answer = VideoSSRCHack.mungeLocalVideoSSRC(answer);
+
             if (config.enableSimulcast && self.simulcast.isSupported()) {
                 answer = self.simulcast.mungeLocalDescription(answer);
                 self.trace('createAnswerOnSuccess::postTransform (simulcast)', dumpSDP(answer));

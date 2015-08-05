@@ -125,7 +125,7 @@ SDP.prototype.removeMediaLines = function(mediaindex, prefix) {
 }
 
 // add content's to a jingle element
-SDP.prototype.toJingle = function (elem, thecreator, ssrcs, videoType) {
+SDP.prototype.toJingle = function (elem, thecreator, ssrcs) {
 //    console.log("SSRC" + ssrcs["audio"] + " - " + ssrcs["video"]);
     var i, j, k, mline, ssrc, rtpmap, tmp, line, lines;
     var self = this;
@@ -257,14 +257,6 @@ SDP.prototype.toJingle = function (elem, thecreator, ssrcs, videoType) {
                         elem.attrs({name: "label", value:msid});
                         elem.up();
                     }
-                }
-                // Video type
-                if (videoType && mline.media == "video") {
-                    elem.c('ssrc-info',
-                        {
-                            xmlns: 'http://jitsi.org/jitmeet',
-                            'video-type': videoType
-                        }).up();
                 }
                 elem.up();
 

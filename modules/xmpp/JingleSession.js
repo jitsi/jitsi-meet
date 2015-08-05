@@ -7,6 +7,7 @@ var async = require("async");
 var transform = require("sdp-transform");
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 var RTCBrowserType = require("../RTC/RTCBrowserType");
+var VideoSSRCHack = require("./VideoSSRCHack");
 
 // Jingle stuff
 function JingleSession(me, sid, connection, service, eventEmitter) {
@@ -210,10 +211,6 @@ function onIceConnectionStateChange(sid, session) {
     }
 }
 
-JingleSession.prototype.getVideoType = function () {
-    return APP.desktopsharing.isUsingScreenStream() ? 'screen' : 'camera';
-};
-
 JingleSession.prototype.accept = function () {
     this.state = 'active';
 
@@ -245,8 +242,7 @@ JingleSession.prototype.accept = function () {
     prsdp.toJingle(
         accept,
         this.initiator == this.me ? 'initiator' : 'responder',
-        this.localStreamsSSRC,
-        self.getVideoType());
+        this.localStreamsSSRC);
     var sdp = this.peerconnection.localDescription.sdp;
     while (SDPUtil.find_line(sdp, 'a=inactive')) {
         // FIXME: change any inactive to sendrecv or whatever they were originally
@@ -257,6 +253,8 @@ JingleSession.prototype.accept = function () {
         function () {
             //console.log('setLocalDescription success');
             self.setLocalDescription();
+
+            VideoSSRCHack.processSessionInit(accept);
 
             self.connection.sendIQ(accept,
                 function () {
@@ -348,8 +346,10 @@ JingleSession.prototype.sendIceCandidate = function (candidate) {
                 self.localSDP.toJingle(
                     init,
                     self.initiator == self.me ? 'initiator' : 'responder',
-                    ssrc,
-                    self.getVideoType());
+                    ssrc);
+
+                VideoSSRCHack.processSessionInit(init);
+
                 self.connection.sendIQ(init,
                     function () {
                         //console.log('session initiate ack');
@@ -465,8 +465,10 @@ JingleSession.prototype.createdOffer = function (sdp) {
         self.localSDP.toJingle(
             init,
             this.initiator == this.me ? 'initiator' : 'responder',
-            this.localStreamsSSRC,
-            self.getVideoType());
+            this.localStreamsSSRC);
+
+        VideoSSRCHack.processSessionInit(init);
+
         self.connection.sendIQ(init,
             function () {
                 var ack = {};
@@ -522,9 +524,7 @@ JingleSession.prototype.readSsrcInfo = function (contents) {
             $(this).find('>ssrc-info[xmlns="http://jitsi.org/jitmeet"]').each(
                 function () {
                     var owner = this.getAttribute('owner');
-                    var videoType = this.getAttribute('video-type');
                     self.ssrcOwners[ssrc] = owner;
-                    self.ssrcVideoTypes[ssrc] = videoType;
                 }
             );
         });
@@ -731,8 +731,10 @@ JingleSession.prototype.createdAnswer = function (sdp, provisional) {
                 self.localSDP.toJingle(
                     accept,
                     self.initiator == self.me ? 'initiator' : 'responder',
-                    ssrcs,
-                    self.getVideoType());
+                    ssrcs);
+
+                VideoSSRCHack.processSessionInit(accept);
+
                 self.connection.sendIQ(accept,
                     function () {
                         var ack = {};
@@ -1129,7 +1131,13 @@ JingleSession.prototype.notifyMySSRCUpdate = function (old_sdp, new_sdp) {
         }
     );
     var removed = sdpDiffer.toJingle(remove);
-    if (removed) {
+
+    // Let 'source-remove' IQ through the hack and see if we're allowed to send
+    // it in the current form
+    if (removed)
+        remove = VideoSSRCHack.processSourceRemove(remove);
+
+    if (removed && remove) {
         this.connection.sendIQ(remove,
             function (res) {
                 console.info('got remove result', res);
@@ -1152,8 +1160,14 @@ JingleSession.prototype.notifyMySSRCUpdate = function (old_sdp, new_sdp) {
             sid: this.sid
         }
     );
-    var added = sdpDiffer.toJingle(add, this.getVideoType());
-    if (added) {
+    var added = sdpDiffer.toJingle(add);
+
+    // Let 'source-add' IQ through the hack and see if we're allowed to send
+    // it in the current form
+    if (added)
+        add = VideoSSRCHack.processSourceAdd(add);
+
+    if (added & add) {
         this.connection.sendIQ(add,
             function (res) {
                 console.info('got add result', res);
@@ -1346,9 +1360,6 @@ JingleSession.prototype.setLocalDescription = function () {
             var ssrc = newssrcs[i-1].ssrc;
             var myJid = self.connection.emuc.myroomjid;
             self.ssrcOwners[ssrc] = myJid;
-            if (newssrcs[i-1].type === 'video'){
-                self.ssrcVideoTypes[ssrc] = self.getVideoType();
-            }
         }
     }
 }
@@ -1420,9 +1431,7 @@ JingleSession.prototype.remoteStreamAdded = function (data, times) {
                 return;
             }
             data.peerjid = self.ssrcOwners[thessrc];
-            data.videoType = self.ssrcVideoTypes[thessrc]
-            console.log('associated jid', self.ssrcOwners[thessrc],
-                                          thessrc, data.videoType);
+            console.log('associated jid', self.ssrcOwners[thessrc]);
         } else {
             console.error("No SSRC lines for ", streamId);
         }

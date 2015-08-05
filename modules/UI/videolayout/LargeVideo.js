@@ -255,7 +255,7 @@ function changeVideo(isVisible) {
             "none";
     }
 
-    var isDesktop = APP.RTC.isVideoSrcDesktop(currentSmallVideo.peerJid);
+    var isDesktop = currentSmallVideo.getVideoType() === 'screen';
     // Change the way we'll be measuring and positioning large video
 
     getVideoSize = isDesktop ? getDesktopVideoSize : getCameraVideoSize;
@@ -421,13 +421,12 @@ var LargeVideo = {
                 currentSmallVideo.enableDominantSpeaker(false);
         }
     },
-    onVideoTypeChanged: function (jid) {
-        if(!isEnabled)
+    onVideoTypeChanged: function (resourceJid, newVideoType) {
+        if (!isEnabled)
             return;
-        var resourceJid = Strophe.getResourceFromJid(jid);
         if (LargeVideo.isCurrentlyOnLarge(resourceJid))
         {
-            var isDesktop = APP.RTC.isVideoSrcDesktop(jid);
+            var isDesktop = newVideoType === 'screen';
             getVideoSize = isDesktop ? getDesktopVideoSize : getCameraVideoSize;
             getVideoPosition = isDesktop ? getDesktopVideoPosition
                 : getCameraVideoPosition;

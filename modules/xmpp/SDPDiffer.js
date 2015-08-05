@@ -106,7 +106,7 @@ SDPDiffer.prototype.getNewMedia = function() {
  * @param toJid destination Jid
  * @param isAdd indicates if this is remove or add operation.
  */
-SDPDiffer.prototype.toJingle = function(modify, videoType) {
+SDPDiffer.prototype.toJingle = function(modify) {
     var sdpMediaSsrcs = this.getNewMedia();
     var self = this;
 
@@ -141,15 +141,6 @@ SDPDiffer.prototype.toJingle = function(modify, videoType) {
                 }
                 modify.up(); // end of parameter
             });
-            // indicate video type
-            if (videoType && media.mid == 'video') {
-                modify.c('ssrc-info',
-                    {
-                        xmlns: 'http://jitsi.org/jitmeet',
-                        'video-type': videoType
-                    })
-                    .up();
-            }
             modify.up(); // end of source
         });
 
