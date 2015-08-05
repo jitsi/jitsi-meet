@@ -811,10 +811,10 @@ UI.setAudioMuted = function (mute, earlyMute) {
     if (!audioMute(mute, function () {
             VideoLayout.showLocalAudioIndicator(mute);
 
-            UIUtil.buttonClick("#mute", "icon-microphone icon-mic-disabled");
+            UIUtil.buttonClick("#toolbar_button_mute", "icon-microphone icon-mic-disabled");
         })) {
         // We still click the button.
-        UIUtil.buttonClick("#mute", "icon-microphone icon-mic-disabled");
+        UIUtil.buttonClick("#toolbar_button_mute", "icon-microphone icon-mic-disabled");
         return;
     }
 };
@@ -841,7 +841,7 @@ UI.dockToolbar = function (isDock) {
 };
 
 UI.setVideoMuteButtonsState = function (mute) {
-    var video = $('#video');
+    var video = $('#toolbar_button_camera');
     var communicativeClass = "icon-camera";
     var muteClass = "icon-camera icon-camera-disabled";
 

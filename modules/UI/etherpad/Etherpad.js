@@ -30,8 +30,8 @@ function resize() {
  * Creates the Etherpad button and adds it to the toolbar.
  */
 function enableEtherpadButton() {
-    if (!$('#etherpadButton').is(":visible"))
-        $('#etherpadButton').css({display: 'inline-block'});
+    if (!$('#toolbar_button_etherpad').is(":visible"))
+        $('#toolbar_button_etherpad').css({display: 'inline-block'});
 }
 
 /**

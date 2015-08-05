@@ -19,7 +19,7 @@ function setVisualNotification(show) {
     var unreadMsgBottomElement
         = document.getElementById('bottomUnreadMessages');
 
-    var glower = $('#chatButton');
+    var glower = $('#toolbar_button_chat');
     var bottomGlower = $('#chatBottomButton');
 
     if (unreadMessages) {
@@ -29,7 +29,7 @@ function setVisualNotification(show) {
         ToolbarToggler.dockToolbar(true);
 
         var chatButtonElement
-            = document.getElementById('chatButton').parentNode;
+            = document.getElementById('toolbar_button_chat');
         var leftIndent = (UIUtil.getTextWidth(chatButtonElement) -
             UIUtil.getTextWidth(unreadMsgElement)) / 2;
         var topIndent = (UIUtil.getTextHeight(chatButtonElement) -

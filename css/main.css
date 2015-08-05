@@ -38,17 +38,30 @@ html, body{
     position: relative;
 }
 
+#toolbar a.button::after {
+    content: '';
+    display: inline-block;
+    position: absolute;
+    left: 40px;
+    width: 1px;
+    height: 20px;
+    background: #373737;
+}
+
+#toolbar a.button:last-child::after {
+    content: none;
+}
+
 .button {
     display: inline-block;
     position: relative;
     color: #FFFFFF;
-    top: 0px;
-    padding: 10px 0px;
+    top: 0;
+    padding: 10px 0;
     width: 38px;
     cursor: pointer;
-    font-size: 11pt;
     text-align: center;
-    text-shadow: 0px 1px 0px rgba(255,255,255,.3), 0px -1px 0px rgba(0,0,0,.6);
+    text-shadow: 0 1px 0 rgba(255,255,255,.3), 0 -1px 0 rgba(0,0,0,.6);
     z-index: 1;
 }
 
@@ -61,13 +74,13 @@ html, body{
     cursor: pointer;
 }
 
-#chatButton, #chatBottomButton, #contactListButton, #numberOfParticipants {
+#toolbar_button_chat, #chatBottomButton, #contactListButton, #numberOfParticipants {
     -webkit-transition: all .5s ease-in-out;
        -moz-transition: all .5s ease-in-out;
             transition: all .5s ease-in-out;
 }
 /*#ffde00*/
-#chatButton.active, #contactListButton.glowing, #chatBottomButton.glowing {
+#toolbar_button_chat.active, #contactListButton.glowing, #chatBottomButton.glowing {
     -webkit-text-shadow:    -1px 0 10px #00ccff,
                             0 1px 10px #00ccff,
                             1px 0 10px #00ccff,
@@ -100,13 +113,13 @@ html, body{
     color: #00ccff;
 }
 
-#recordButton {
+#toolbar_button_record {
     -webkit-transition: all .5s ease-in-out;
     -moz-transition: all .5s ease-in-out;
     transition: all .5s ease-in-out;
 }
 /*#ffde00*/
-#recordButton.active {
+#toolbar_button_record.active {
     -webkit-text-shadow:    -1px 0 10px #00ccff,
     0 1px 10px #00ccff,
     1px 0 10px #00ccff,

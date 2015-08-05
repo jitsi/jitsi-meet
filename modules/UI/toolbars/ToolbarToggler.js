@@ -6,9 +6,9 @@ var toolbarTimeoutObject,
 
 function showDesktopSharingButton() {
     if (APP.desktopsharing.isDesktopSharingEnabled()) {
-        $('#desktopsharing').css({display: "inline"});
+        $('#toolbar_button_desktopsharing').css({display: "inline"});
     } else {
-        $('#desktopsharing').css({display: "none"});
+        $('#toolbar_button_desktopsharing').css({display: "none"});
     }
 }
 

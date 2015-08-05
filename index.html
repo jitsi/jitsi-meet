@@ -22,7 +22,7 @@
     <script src="libs/popover.js?v=1"></script><!-- bootstrap tooltip lib -->
     <script src="libs/toastr.js?v=1"></script><!-- notifications lib -->
     <script src="interface_config.js?v=5"></script>
-    <script src="libs/app.bundle.js?v=119"></script>
+    <script src="libs/app.bundle.js?v=120"></script>
     <script src="analytics.js?v=1"></script><!-- google analytics plugin -->
     <link rel="stylesheet" href="css/font.css?v=7"/>
     <link rel="stylesheet" href="css/toastr.css?v=1">
@@ -133,9 +133,7 @@
                 </div>
                 <span id="toolbar">
                     <span id="authentication" class="authentication" style="display: none">
-                        <a class="button" id="toolbar_button_authentication" >
-                            <i id="authButton" class="icon-avatar"></i>
-                        </a>
+                        <a class="button icon-avatar" id="toolbar_button_authentication" data-i18n="[content]toolbar.authenticate"></a>
                         <ul class="loginmenu">
                             <span class="loginmenuPadding"></span>
                             <li id="toolbar_auth_identity" class="identity"></li>
@@ -146,79 +144,23 @@
                                 <a class="authButton" data-i18n="toolbar.logout"></a>
                             </li>
                         </ul>
-                        <div class="header_button_separator"></div>
                     </span>
-                    <a class="button" id="toolbar_button_mute" data-container="body" data-toggle="popover" data-placement="bottom" shortcut="mutePopover" data-i18n="[content]toolbar.mute" content="Mute / Unmute">
-                        <i id="mute" class="icon-microphone"></i>
+                    <a class="button icon-microphone" id="toolbar_button_mute" data-container="body" data-toggle="popover" data-placement="bottom" shortcut="mutePopover" data-i18n="[content]toolbar.mute" content="Mute / Unmute"></a>
+                    <a class="button icon-camera" id="toolbar_button_camera" data-container="body" data-toggle="popover" data-placement="bottom" shortcut="toggleVideoPopover" data-i18n="[content]toolbar.videomute" content="Start / stop camera"></a>
+                    <a class="button icon-recEnable" id="toolbar_button_record" data-container="body" data-toggle="popover" data-placement="bottom" data-i18n="[content]toolbar.record" content="Record" style="display: none"></a>
+                    <a class="button icon-security" id="toolbar_button_security" data-container="body" data-toggle="popover" data-placement="bottom" data-i18n="[content]toolbar.lock" content="Lock / unlock room"></a>
+                    <a class="button icon-link" id="toolbar_button_link" data-container="body" data-toggle="popover" data-placement="bottom" data-i18n="[content]toolbar.invite" content="Invite others"></a>
+                    <a class="button icon-chat" id="toolbar_button_chat" data-container="body" data-toggle="popover" shortcut="toggleChatPopover" data-placement="bottom" data-i18n="[content]toolbar.chat" content="Open / close chat">
+                        <span id="unreadMessages"></span>
                     </a>
-                    <div class="header_button_separator"></div>
-                    <a class="button" id="toolbar_button_camera" data-container="body" data-toggle="popover" data-placement="bottom" shortcut="toggleVideoPopover" data-i18n="[content]toolbar.videomute" content="Start / stop camera">
-                        <i id="video" class="icon-camera"></i>
-                    </a>
-                    <span id="recording" style="display: none">
-                        <div class="header_button_separator"></div>
-                        <a class="button" id="toolbar_button_record" data-container="body" data-toggle="popover" data-placement="bottom" data-i18n="[content]toolbar.record" content="Record">
-                            <i id="recordButton" class="icon-recEnable"></i>
-                        </a>
-                    </span>
-                    <div class="header_button_separator"></div>
-                    <a class="button" id="toolbar_button_security" data-container="body" data-toggle="popover" data-placement="bottom" data-i18n="[content]toolbar.lock" content="Lock / unlock room">
-                        <i id="lockIcon" class="icon-security"></i>
-                    </a>
-                    <div class="header_button_separator"></div>
-                    <a class="button" id="toolbar_button_link" data-container="body" data-toggle="popover" data-placement="bottom" data-i18n="[content]toolbar.invite" content="Invite others">
-                        <i class="icon-link"></i>
-                    </a>
-                    <div class="header_button_separator"></div>
-                    <span class="toolbar_span">
-                        <a class="button" id="toolbar_button_chat" data-container="body" data-toggle="popover" shortcut="toggleChatPopover" data-placement="bottom" data-i18n="[content]toolbar.chat" content="Open / close chat">
-                            <i id="chatButton" class="icon-chat">
-                                <span id="unreadMessages"></span>
-                            </i>
-                        </a>
-                    </span>
-                    <span id="prezi_button">
-                        <div class="header_button_separator"></div>
-                        <a class="button" id="toolbar_button_prezi" data-container="body" data-toggle="popover" data-placement="bottom" data-i18n="[content]toolbar.prezi" content="Share Prezi">
-                            <i class="icon-prezi"></i>
-                        </a>
-                    </span>
-                    <span id="etherpadButton">
-                        <div class="header_button_separator"></div>
-                        <a class="button" id="toolbar_button_etherpad" data-container="body" data-toggle="popover" data-placement="bottom" content="Shared document" data-i18n="[content]toolbar.etherpad">
-                            <i class="icon-share-doc"></i>
-                        </a>
-                    </span>
-                    <span id="desktopsharing" style="display: none">
-                        <div class="header_button_separator"></div>
-                        <a class="button" id="toolbar_button_desktopsharing" data-container="body" data-toggle="popover" data-placement="bottom" content="Share screen" data-i18n="[content]toolbar.sharescreen">
-                            <i class="icon-share-desktop"></i>
-                        </a>
-                    </span>
-                    <div class="header_button_separator"></div>
-                    <a class="button" id="toolbar_button_fullScreen" data-container="body" data-toggle="popover" data-placement="bottom" content="Enter / Exit Full Screen" data-i18n="[content]toolbar.fullscreen">
-                        <i id="fullScreen" class="icon-full-screen"></i>
-                    </a>
-                    <span id="sipCallButton" style="display: none">
-                        <div class="header_button_separator"></div>
-                        <a class="button" id="toolbar_button_sip" data-container="body" data-toggle="popover" data-placement="bottom" content="Call SIP number" data-i18n="[content]toolbar.sip">
-                            <i class="icon-telephone"></i></a>
-                    </span>
-                    <span id="dialPadButton" style="display: none">
-                        <div class="header_button_separator"></div>
-                        <a class="button" id="toolbar_button_dialpad" data-container="body" data-toggle="popover" data-placement="bottom" content="Open dialpad" data-i18n="[content]toolbar.dialpad">
-                            <i class="icon-dialpad"></i></a>
-                    </span>
-                    <div class="header_button_separator"></div>
-                    <a class="button" id="toolbar_button_settings" data-container="body" data-toggle="popover" data-placement="bottom" content="Settings" data-i18n="[content]toolbar.Settings">
-                        <i id="settingsButton" class="icon-settings"></i>
-                    </a>
-                    <div class="header_button_separator"></div>
-                    <span id="hangup">
-                        <a class="button" id="toolbar_button_hangup" data-container="body" data-toggle="popover" data-placement="bottom" content="Hang Up" data-i18n="[content]toolbar.hangup">
-                            <i class="icon-hangup" style="color:#ff0000;font-size: 1.4em;"></i>
-                        </a>
-                    </span>
+                    <a class="button icon-prezi" id="toolbar_button_prezi" data-container="body" data-toggle="popover" data-placement="bottom" data-i18n="[content]toolbar.prezi" content="Share Prezi"></a>
+                    <a class="button icon-share-doc" id="toolbar_button_etherpad" data-container="body" data-toggle="popover" data-placement="bottom" content="Shared document" data-i18n="[content]toolbar.etherpad"></a>
+                    <a class="button icon-share-desktop" id="toolbar_button_desktopsharing" data-container="body" data-toggle="popover" data-placement="bottom" content="Share screen" data-i18n="[content]toolbar.sharescreen" style="display: none"></a>
+                    <a class="button icon-full-screen" id="toolbar_button_fullScreen" data-container="body" data-toggle="popover" data-placement="bottom" content="Enter / Exit Full Screen" data-i18n="[content]toolbar.fullscreen"></a>
+                    <a class="button icon-telephone" id="toolbar_button_sip" data-container="body" data-toggle="popover" data-placement="bottom" content="Call SIP number" data-i18n="[content]toolbar.sip" style="display: none"></a>
+                    <a class="button icon-dialpad" id="toolbar_button_dialpad" data-container="body" data-toggle="popover" data-placement="bottom" content="Open dialpad" data-i18n="[content]toolbar.dialpad" style="display: none"></a>
+                    <a class="button icon-settings" id="toolbar_button_settings" data-container="body" data-toggle="popover" data-placement="bottom" content="Settings" data-i18n="[content]toolbar.Settings"></a>
+                    <a class="button icon-hangup" id="toolbar_button_hangup" data-container="body" data-toggle="popover" data-placement="bottom" content="Hang Up" data-i18n="[content]toolbar.hangup"></a>
                 </span>
             </div>
             <div id="subject"></div>
