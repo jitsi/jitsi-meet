@@ -1,6 +1,24 @@
 /* global APP */
 var StreamEventTypes = require("../../service/RTC/StreamEventTypes.js");
 var RTCEvents = require("../../service/RTC/RTCEvents");
+var RTCBrowserType = require("./RTCBrowserType");
+
+/**
+ * This implements 'onended' callback normally fired by WebRTC after the stream
+ * is stopped. There is no such behaviour yet in FF, so we have to add it.
+ * @param stream original WebRTC stream object to which 'onended' handling
+ *               will be added.
+ */
+function implementOnEndedHandling(stream) {
+    var originalStop = stream.stop;
+    stream.stop = function () {
+        originalStop.apply(stream);
+        if (!stream.ended) {
+            stream.ended = true;
+            stream.onended();
+        }
+    };
+}
 
 function LocalStream(stream, type, eventEmitter, videoType, isGUMStream) {
     this.stream = stream;
@@ -21,9 +39,12 @@ function LocalStream(stream, type, eventEmitter, videoType, isGUMStream) {
         };
     }
 
-    this.stream.onended = function() {
+    this.stream.onended = function () {
         self.streamEnded();
     };
+    if (RTCBrowserType.isFirefox()) {
+        implementOnEndedHandling(this.stream);
+    }
 }
 
 LocalStream.prototype.streamEnded = function () {
