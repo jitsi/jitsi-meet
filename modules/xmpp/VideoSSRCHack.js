@@ -36,16 +36,17 @@ var localVideoSSRC;
  *          other SSRCs left to be signaled after removing it.
  */
 var filterOutSource = function (modifyIq, actionName) {
-    if (!localVideoSSRC)
-        return modifyIq;
-
     var modifyIqTree = $(modifyIq.tree());
+
+    if (!localVideoSSRC)
+        return modifyIqTree[0];
+
     var videoSSRC = modifyIqTree.find(
         '>jingle>content[name="video"]' +
         '>description>source[ssrc="' + localVideoSSRC + '"]');
 
     if (!videoSSRC.length) {
-        return modifyIqTree;
+        return modifyIqTree[0];
     }
 
     console.info(
@@ -55,7 +56,7 @@ var filterOutSource = function (modifyIq, actionName) {
 
     // Check if any sources still left to be added/removed
     if (modifyIqTree.find('>jingle>content>description>source').length) {
-        return modifyIqTree;
+        return modifyIqTree[0];
     } else {
         return null;
     }

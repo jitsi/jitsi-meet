@@ -1138,6 +1138,7 @@ JingleSession.prototype.notifyMySSRCUpdate = function (old_sdp, new_sdp) {
         remove = VideoSSRCHack.processSourceRemove(remove);
 
     if (removed && remove) {
+        console.info("Sending source-remove", remove);
         this.connection.sendIQ(remove,
             function (res) {
                 console.info('got remove result', res);
@@ -1167,7 +1168,8 @@ JingleSession.prototype.notifyMySSRCUpdate = function (old_sdp, new_sdp) {
     if (added)
         add = VideoSSRCHack.processSourceAdd(add);
 
-    if (added & add) {
+    if (added && add) {
+        console.info("Sending source-add", add);
         this.connection.sendIQ(add,
             function (res) {
                 console.info('got add result', res);
