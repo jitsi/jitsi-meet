@@ -36,7 +36,7 @@ var VideoLayout = (function (my) {
     my.init = function (emitter) {
         eventEmitter = emitter;
         localVideoThumbnail = new LocalVideo(VideoLayout);
-        if(config.minimized)
+        if(config.filmStripOnly)
         {
             showLargeVideo = false;
             LargeVideo.disable();
@@ -202,7 +202,7 @@ var VideoLayout = (function (my) {
                                           resourceJid) {
         if(focusedVideoResourceJid) {
             var oldSmallVideo = VideoLayout.getSmallVideo(focusedVideoResourceJid);
-            if(oldSmallVideo && !config.minimized)
+            if(oldSmallVideo && !config.filmStripOnly)
                 oldSmallVideo.focus(false);
         }
 
@@ -229,7 +229,7 @@ var VideoLayout = (function (my) {
 
         // Update focused/pinned interface.
         if (resourceJid) {
-            if(smallVideo && !config.minimized)
+            if(smallVideo && !config.filmStripOnly)
                 smallVideo.focus(true);
 
             if (!noPinnedEndpointChangedEvent) {

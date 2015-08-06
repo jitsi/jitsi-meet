@@ -3318,7 +3318,7 @@ function registerListeners() {
         AudioLevels.init();
     });
 
-    if (!config.minimized) {
+    if (!config.filmStripOnly) {
         APP.xmpp.addListener(XMPPEvents.MESSAGE_RECEIVED, updateChatConversation);
         APP.xmpp.addListener(XMPPEvents.CHAT_ERROR_RECEIVED, chatAddError);
         // Listens for video interruption events.
@@ -3386,7 +3386,7 @@ UI.start = function (init) {
 
     bindEvents();
     setupPrezi();
-    if(!config.minimized) {
+    if(!config.filmStripOnly) {
         $("#videospace").mousemove(function () {
             return ToolbarToggler.showToolbar();
         });
@@ -3429,7 +3429,7 @@ UI.start = function (init) {
 
     init();
 
-    if(!config.minimized) {
+    if(!config.filmStripOnly) {
         toastr.options = {
             "closeButton": true,
             "debug": false,
@@ -7234,7 +7234,7 @@ var ToolbarToggler = {
      * Shows the main toolbar.
      */
     showToolbar: function () {
-        if(config.minimized)
+        if(config.filmStripOnly)
             return;
         var header = $("#header"),
             bottomToolbar = $("#bottomToolbar");
@@ -7271,7 +7271,7 @@ var ToolbarToggler = {
      * @param isDock indicates what operation to perform
      */
     dockToolbar: function (isDock) {
-        if(config.minimized)
+        if(config.filmStripOnly)
             return;
 
         if (isDock) {
@@ -9132,7 +9132,7 @@ RemoteVideo.prototype.addRemoteVideoContainer = function() {
  * @param parentElement the parent element where this menu will be added
  */
 
-if(!config.minimized) {
+if(!config.filmStripOnly) {
     RemoteVideo.prototype.addRemoteVideoMenu = function () {
         var spanElement = document.createElement('span');
         spanElement.className = 'remotevideomenu';
@@ -9911,7 +9911,7 @@ var VideoLayout = (function (my) {
     my.init = function (emitter) {
         eventEmitter = emitter;
         localVideoThumbnail = new LocalVideo(VideoLayout);
-        if(config.minimized)
+        if(config.filmStripOnly)
         {
             showLargeVideo = false;
             LargeVideo.disable();
@@ -10077,7 +10077,7 @@ var VideoLayout = (function (my) {
                                           resourceJid) {
         if(focusedVideoResourceJid) {
             var oldSmallVideo = VideoLayout.getSmallVideo(focusedVideoResourceJid);
-            if(oldSmallVideo && !config.minimized)
+            if(oldSmallVideo && !config.filmStripOnly)
                 oldSmallVideo.focus(false);
         }
 
@@ -10104,7 +10104,7 @@ var VideoLayout = (function (my) {
 
         // Update focused/pinned interface.
         if (resourceJid) {
-            if(smallVideo && !config.minimized)
+            if(smallVideo && !config.filmStripOnly)
                 smallVideo.focus(true);
 
             if (!noPinnedEndpointChangedEvent) {
