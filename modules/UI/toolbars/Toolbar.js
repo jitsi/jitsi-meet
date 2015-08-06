@@ -13,6 +13,7 @@ var AuthenticationEvents
 var roomUrl = null;
 var sharedKey = '';
 var UI = null;
+var recordingToaster = null;
 
 var buttonHandlers = {
     "toolbar_button_mute": function () {
@@ -147,7 +148,7 @@ function toggleRecording() {
             function () { },
             ':input:first'
         );
-    }, Toolbar.setRecordingButtonState, Toolbar.setRecordingButtonState);
+    }, Toolbar.setRecordingButtonState);
 }
 
 /**
@@ -548,14 +549,44 @@ var Toolbar = (function (my) {
     };
 
     // Sets the state of the recording button
-    my.setRecordingButtonState = function (isRecording) {
+    my.setRecordingButtonState = function (recordingState) {
         var selector = $('#recordButton');
-        if (isRecording) {
+
+        if (recordingState === 'on') {
             selector.removeClass("icon-recEnable");
             selector.addClass("icon-recEnable active");
-        } else {
+
+            $("#largeVideo").toggleClass("videoMessageFilter", true);
+            var recordOnKey = "recording.on";
+            $('#videoConnectionMessage').attr("data-i18n", recordOnKey);
+            $('#videoConnectionMessage').text(APP.translation.translateString(recordOnKey));
+
+            setTimeout(function(){
+                $("#largeVideo").toggleClass("videoMessageFilter", false);
+                $('#videoConnectionMessage').css({display: "none"});
+            }, 1500);
+
+            recordingToaster = messageHandler.notify(null, "recording.toaster", null,
+                null, null, {timeOut: 0, closeButton: null});
+        } else if (recordingState === 'off') {
             selector.removeClass("icon-recEnable active");
             selector.addClass("icon-recEnable");
+
+            $("#largeVideo").toggleClass("videoMessageFilter", false);
+            $('#videoConnectionMessage').css({display: "none"});
+
+            if (recordingToaster)
+                messageHandler.remove(recordingToaster);
+
+        } else if (recordingState === 'pending') {
+            selector.removeClass("icon-recEnable active");
+            selector.addClass("icon-recEnable");
+
+            $("#largeVideo").toggleClass("videoMessageFilter", true);
+            var recordPendingKey = "recording.pending";
+            $('#videoConnectionMessage').attr("data-i18n", recordPendingKey);
+            $('#videoConnectionMessage').text(APP.translation.translateString(recordPendingKey));
+            $('#videoConnectionMessage').css({display: "block"});
         }
     };
 

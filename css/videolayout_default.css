@@ -446,6 +446,11 @@
     background-position: center;
 }
 
+.videoMessageFilter {
+    -webkit-filter: grayscale(.5) opacity(0.8);
+    filter: grayscale(.5) opacity(0.8);
+}
+
 .videoProblemFilter {
     -webkit-filter: blur(10px) grayscale(.5) opacity(0.8);
     filter: blur(10px) grayscale(.5) opacity(0.8);

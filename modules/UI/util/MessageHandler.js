@@ -182,7 +182,7 @@ var messageHandler = (function(my) {
                 "'>" + APP.translation.translateString(displayNameKey);
         }
         displayNameSpan += "</span>";
-        toastr.info(
+        return toastr.info(
             displayNameSpan + '<br>' +
             '<span class=' + cls + ' data-i18n="' + messageKey + '"' +
                 (messageArguments?
@@ -191,6 +191,14 @@ var messageHandler = (function(my) {
             APP.translation.translateString(messageKey,
                 messageArguments) +
             '</span>', null, options);
+    };
+
+    /**
+     * Removes the toaster.
+     * @param toasterElement
+     */
+    my.remove = function(toasterElement) {
+        toasterElement.remove();
     };
 
     return my;
