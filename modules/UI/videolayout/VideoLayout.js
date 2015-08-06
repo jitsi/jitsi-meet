@@ -3,6 +3,7 @@ var AudioLevels = require("../audio_levels/AudioLevels");
 var ContactList = require("../side_pannels/contactlist/ContactList");
 var MediaStreamType = require("../../../service/RTC/MediaStreamTypes");
 var UIEvents = require("../../../service/UI/UIEvents");
+var UIUtil = require("../util/UIUtil");
 
 var RTC = require("../../RTC/RTC");
 var RTCBrowserType = require('../../RTC/RTCBrowserType');
@@ -10,6 +11,7 @@ var RTCBrowserType = require('../../RTC/RTCBrowserType');
 var RemoteVideo = require("./RemoteVideo");
 var LargeVideo = require("./LargeVideo");
 var LocalVideo = require("./LocalVideo");
+
 
 var remoteVideos = {};
 var remoteVideoTypes = {};
@@ -34,8 +36,16 @@ var VideoLayout = (function (my) {
     my.init = function (emitter) {
         eventEmitter = emitter;
         localVideoThumbnail = new LocalVideo(VideoLayout);
+        if(config.minimized)
+        {
+            showLargeVideo = false;
+            LargeVideo.disable();
+        }
+        else
+        {
+            LargeVideo.init(VideoLayout, emitter);
+        }
 
-        LargeVideo.init(VideoLayout, emitter);
         VideoLayout.resizeLargeVideoContainer();
 
     };
@@ -192,7 +202,7 @@ var VideoLayout = (function (my) {
                                           resourceJid) {
         if(focusedVideoResourceJid) {
             var oldSmallVideo = VideoLayout.getSmallVideo(focusedVideoResourceJid);
-            if(oldSmallVideo)
+            if(oldSmallVideo && !config.minimized)
                 oldSmallVideo.focus(false);
         }
 
@@ -219,7 +229,7 @@ var VideoLayout = (function (my) {
 
         // Update focused/pinned interface.
         if (resourceJid) {
-            if(smallVideo)
+            if(smallVideo && !config.minimized)
                 smallVideo.focus(true);
 
             if (!noPinnedEndpointChangedEvent) {
@@ -354,7 +364,11 @@ var VideoLayout = (function (my) {
      * Resizes the large video container.
      */
     my.resizeLargeVideoContainer = function () {
-        LargeVideo.resize();
+        if(LargeVideo.isEnabled()) {
+            LargeVideo.resize();
+        } else {
+            VideoLayout.resizeVideoSpace();
+        }
         VideoLayout.resizeThumbnails();
         LargeVideo.position();
     };
@@ -373,7 +387,7 @@ var VideoLayout = (function (my) {
 
         if(animate) {
             $('#remoteVideos').animate({
-                    height: height
+                    height: height + 2 // adds 2 px because of small video 1px border
                 },
                 {
                     queue: false,
@@ -398,7 +412,7 @@ var VideoLayout = (function (my) {
         } else {
             // size videos so that while keeping AR and max height, we have a
             // nice fit
-            $('#remoteVideos').height(height);
+            $('#remoteVideos').height(height + 2);// adds 2 px because of small video 1px border
             $('#remoteVideos>span').width(width);
             $('#remoteVideos>span').height(height);
 
@@ -431,7 +445,7 @@ var VideoLayout = (function (my) {
        var availableWidth = availableWinWidth / numvids;
        var aspectRatio = 16.0 / 9.0;
        var maxHeight = Math.min(160, availableHeight);
-       availableHeight = Math.min(maxHeight, availableWidth / aspectRatio);
+       availableHeight = Math.min(maxHeight, availableWidth / aspectRatio, window.innerHeight - 18);
        if (availableHeight < availableWidth / aspectRatio) {
            availableWidth = Math.floor(availableHeight * aspectRatio);
        }
@@ -884,6 +898,37 @@ var VideoLayout = (function (my) {
     my.resizeVideoArea = function(isVisible, callback) {
         LargeVideo.resizeVideoAreaAnimated(isVisible, callback);
         VideoLayout.resizeThumbnails(true);
+    };
+
+    /**
+     * Resizes the #videospace html element
+     * @param animate boolean property that indicates whether the resize should be animated or not.
+     * @param isChatVisible boolean property that indicates whether the chat area is displayed or not.
+     * If that parameter is null the method will check the chat pannel visibility.
+     * @param completeFunction a function to be called when the video space is resized
+     */
+    my.resizeVideoSpace = function (animate, isChatVisible, completeFunction) {
+        var availableHeight = window.innerHeight;
+        var availableWidth = UIUtil.getAvailableVideoWidth(isChatVisible);
+
+        if (availableWidth < 0 || availableHeight < 0) return;
+
+        if(animate) {
+            $('#videospace').animate({
+                    right: window.innerWidth - availableWidth,
+                    width: availableWidth,
+                    height: availableHeight
+                },
+                {
+                    queue: false,
+                    duration: 500,
+                    complete: completeFunction
+                });
+        } else {
+            $('#videospace').width(availableWidth);
+            $('#videospace').height(availableHeight);
+        }
+
     };
 
     my.getSmallVideo = function (resourceJid) {

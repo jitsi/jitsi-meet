@@ -21,6 +21,7 @@ var messageHandler = UI.messageHandler;
 var Authentication  = require("./authentication/Authentication");
 var UIUtil = require("./util/UIUtil");
 var NicknameHandler = require("./util/NicknameHandler");
+var JitsiPopover = require("./util/JitsiPopover");
 var CQEvents = require("../../service/connectionquality/CQEvents");
 var DesktopSharingEventTypes
     = require("../../service/desktopsharing/DesktopSharingEventTypes");
@@ -169,7 +170,7 @@ function registerListeners() {
             VideoLayout.setDeviceAvailabilityIcons(null, devices);
         });
     APP.RTC.addListener(RTCEvents.VIDEO_MUTE, UI.setVideoMuteButtonsState);
-    APP.RTC.addListener(RTCEvents.DATA_CHANNEL_OPEN, function() {
+    APP.RTC.addListener(RTCEvents.DATA_CHANNEL_OPEN, function () {
         // when the data channel becomes available, tell the bridge about video
         // selections so that it can do adaptive simulcast,
         // we want the notification to trigger even if userJid is undefined,
@@ -254,10 +255,8 @@ function registerListeners() {
     APP.xmpp.addListener(XMPPEvents.MUC_ROLE_CHANGED, onMucRoleChanged);
     APP.xmpp.addListener(XMPPEvents.PRESENCE_STATUS, onMucPresenceStatus);
     APP.xmpp.addListener(XMPPEvents.SUBJECT_CHANGED, chatSetSubject);
-    APP.xmpp.addListener(XMPPEvents.MESSAGE_RECEIVED, updateChatConversation);
     APP.xmpp.addListener(XMPPEvents.MUC_MEMBER_LEFT, onMucMemberLeft);
     APP.xmpp.addListener(XMPPEvents.PASSWORD_REQUIRED, onPasswordRequired);
-    APP.xmpp.addListener(XMPPEvents.CHAT_ERROR_RECEIVED, chatAddError);
     APP.xmpp.addListener(XMPPEvents.ETHERPAD, initEtherpad);
     APP.xmpp.addListener(XMPPEvents.AUTHENTICATION_REQUIRED,
         onAuthenticationRequired);
@@ -269,11 +268,11 @@ function registerListeners() {
 
     APP.xmpp.addListener(XMPPEvents.AUDIO_MUTED, VideoLayout.onAudioMute);
     APP.xmpp.addListener(XMPPEvents.VIDEO_MUTED, VideoLayout.onVideoMute);
-    APP.xmpp.addListener(XMPPEvents.AUDIO_MUTED_BY_FOCUS, function(doMuteAudio) {
+    APP.xmpp.addListener(XMPPEvents.AUDIO_MUTED_BY_FOCUS, function (doMuteAudio) {
         UI.setAudioMuted(doMuteAudio);
     });
     APP.members.addListener(MemberEvents.DTMF_SUPPORT_CHANGED,
-                            onDtmfSupportChanged);
+        onDtmfSupportChanged);
     APP.xmpp.addListener(XMPPEvents.START_MUTED_SETTING_CHANGED, function (audio, video) {
         SettingsMenu.setStartMuted(audio, video);
     });
@@ -286,43 +285,43 @@ function registerListeners() {
             "dialog.internalError");
     });
 
-    APP.xmpp.addListener(XMPPEvents.SET_LOCAL_DESCRIPTION_ERROR, function() {
+    APP.xmpp.addListener(XMPPEvents.SET_LOCAL_DESCRIPTION_ERROR, function () {
         messageHandler.showError("dialog.error",
-                                        "dialog.SLDFailure");
+            "dialog.SLDFailure");
     });
-    APP.xmpp.addListener(XMPPEvents.SET_REMOTE_DESCRIPTION_ERROR, function() {
+    APP.xmpp.addListener(XMPPEvents.SET_REMOTE_DESCRIPTION_ERROR, function () {
         messageHandler.showError("dialog.error",
             "dialog.SRDFailure");
     });
-    APP.xmpp.addListener(XMPPEvents.CREATE_ANSWER_ERROR, function() {
+    APP.xmpp.addListener(XMPPEvents.CREATE_ANSWER_ERROR, function () {
         messageHandler.showError();
     });
-    APP.xmpp.addListener(XMPPEvents.PROMPT_FOR_LOGIN, function() {
+    APP.xmpp.addListener(XMPPEvents.PROMPT_FOR_LOGIN, function () {
         // FIXME: re-use LoginDialog which supports retries
         UI.showLoginPopup(connect);
     });
-    
-    APP.xmpp.addListener(XMPPEvents.FOCUS_DISCONNECTED, function(focusComponent, retrySec) {
+
+    APP.xmpp.addListener(XMPPEvents.FOCUS_DISCONNECTED, function (focusComponent, retrySec) {
         UI.messageHandler.notify(
             null, "notify.focus",
             'disconnected', "notify.focusFail",
             {component: focusComponent, ms: retrySec});
     });
-    
-    APP.xmpp.addListener(XMPPEvents.ROOM_JOIN_ERROR, function(pres) {
+
+    APP.xmpp.addListener(XMPPEvents.ROOM_JOIN_ERROR, function (pres) {
         UI.messageHandler.openReportDialog(null,
             "dialog.joinError", pres);
     });
-    APP.xmpp.addListener(XMPPEvents.ROOM_CONNECT_ERROR, function(pres) {
+    APP.xmpp.addListener(XMPPEvents.ROOM_CONNECT_ERROR, function (pres) {
         UI.messageHandler.openReportDialog(null,
             "dialog.connectError", pres);
     });
 
-    APP.xmpp.addListener(XMPPEvents.READY_TO_JOIN, function() {
+    APP.xmpp.addListener(XMPPEvents.READY_TO_JOIN, function () {
         var roomName = UI.generateRoomName();
         APP.xmpp.allocateConferenceFocus(roomName, UI.checkForNicknameAndJoin);
     });
-    
+
     //NicknameHandler emits this event
     UI.addListener(UIEvents.NICKNAME_CHANGED, function (nickname) {
         APP.xmpp.addToPresence("displayName", nickname);
@@ -332,10 +331,14 @@ function registerListeners() {
         AudioLevels.init();
     });
 
-    // Listens for video interruption events.
-    APP.xmpp.addListener(XMPPEvents.CONNECTION_INTERRUPTED, VideoLayout.onVideoInterrupted);
-    // Listens for video restores events.
-    APP.xmpp.addListener(XMPPEvents.CONNECTION_RESTORED, VideoLayout.onVideoRestored);
+    if (!config.minimized) {
+        APP.xmpp.addListener(XMPPEvents.MESSAGE_RECEIVED, updateChatConversation);
+        APP.xmpp.addListener(XMPPEvents.CHAT_ERROR_RECEIVED, chatAddError);
+        // Listens for video interruption events.
+        APP.xmpp.addListener(XMPPEvents.CONNECTION_INTERRUPTED, VideoLayout.onVideoInterrupted);
+        // Listens for video restores events.
+        APP.xmpp.addListener(XMPPEvents.CONNECTION_RESTORED, VideoLayout.onVideoRestored);
+    }
 }
 
 
@@ -385,9 +388,6 @@ UI.start = function (init) {
 
     $("#welcome_page").hide();
 
-    $("#videospace").mousemove(function () {
-        return ToolbarToggler.showToolbar();
-    });
     // Set the defaults for prompt dialogs.
     $.prompt.setDefaults({persistent: false});
 
@@ -399,34 +399,39 @@ UI.start = function (init) {
 
     bindEvents();
     setupPrezi();
-    setupToolbars();
-    setupChat();
-
+    if(!config.minimized) {
+        $("#videospace").mousemove(function () {
+            return ToolbarToggler.showToolbar();
+        });
+        setupToolbars();
+        setupChat();
+        // Display notice message at the top of the toolbar
+        if (config.noticeMessage) {
+            $('#noticeText').text(config.noticeMessage);
+            $('#notice').css({display: 'block'});
+        }
+        $("#downloadlog").click(function (event) {
+            dump(event.target);
+        });
+    }
+    else
+    {
+        $("#header").css("display", "none");
+        $("#bottomToolbar").css("display", "none");
+        $("#downloadlog").css("display", "none");
+        $("#remoteVideos").css("padding", "0px 0px 18px 0px");
+        $("#remoteVideos").css("right", "0px");
+        messageHandler.disableNotifications();
+        $('body').popover("disable");
+//        $("[data-toggle=popover]").popover("disable");
+        JitsiPopover.enabled = false;
+    }
 
     document.title = interfaceConfig.APP_NAME;
 
-    $("#downloadlog").click(function (event) {
-        dump(event.target);
-    });
 
-    if(config.enableWelcomePage && window.location.pathname == "/" &&
-        (!window.localStorage.welcomePageDisabled ||
-            window.localStorage.welcomePageDisabled == "false")) {
-        $("#videoconference_page").hide();
-        if (!setupWelcomePage)
-            setupWelcomePage = require("./welcome_page/WelcomePage");
-        setupWelcomePage();
 
-        return;
-    }
 
-    $("#welcome_page").hide();
-
-    // Display notice message at the top of the toolbar
-    if (config.noticeMessage) {
-        $('#noticeText').text(config.noticeMessage);
-        $('#notice').css({display: 'block'});
-    }
 
     if(config.requireDisplayName) {
         var currentSettings = Settings.getSettings();
@@ -437,30 +442,33 @@ UI.start = function (init) {
 
     init();
 
-    toastr.options = {
-        "closeButton": true,
-        "debug": false,
-        "positionClass": "notification-bottom-right",
-        "onclick": null,
-        "showDuration": "300",
-        "hideDuration": "1000",
-        "timeOut": "2000",
-        "extendedTimeOut": "1000",
-        "showEasing": "swing",
-        "hideEasing": "linear",
-        "showMethod": "fadeIn",
-        "hideMethod": "fadeOut",
-        "reposition": function() {
-            if(PanelToggler.isVisible()) {
-                $("#toast-container").addClass("notification-bottom-right-center");
-            } else {
-                $("#toast-container").removeClass("notification-bottom-right-center");
-            }
-        },
-        "newestOnTop": false
-    };
+    if(!config.minimized) {
+        toastr.options = {
+            "closeButton": true,
+            "debug": false,
+            "positionClass": "notification-bottom-right",
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "timeOut": "2000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut",
+            "reposition": function () {
+                if (PanelToggler.isVisible()) {
+                    $("#toast-container").addClass("notification-bottom-right-center");
+                } else {
+                    $("#toast-container").removeClass("notification-bottom-right-center");
+                }
+            },
+            "newestOnTop": false
+        };
 
-    SettingsMenu.init();
+
+        SettingsMenu.init();
+    }
 
 };
 

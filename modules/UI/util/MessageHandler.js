@@ -1,4 +1,11 @@
 /* global $, APP, jQuery, toastr */
+
+/**
+ * Flag for enable/disable of the notifications.
+ * @type {boolean}
+ */
+var notificationsEnabled = true;
+
 var messageHandler = (function(my) {
 
     /**
@@ -172,8 +179,19 @@ var messageHandler = (function(my) {
         messageHandler.openMessageDialog(titleKey, msgKey);
     };
 
+    /**
+     * Displayes notification.
+     * @param displayName display name of the participant that is associated with the notification.
+     * @param displayNameKey the key from the language file for the display name.
+     * @param cls css class for the notification
+     * @param messageKey the key from the language file for the text of the message.
+     * @param messageArguments object with the arguments for the message.
+     * @param options object with language options.
+     */
     my.notify = function(displayName, displayNameKey,
                          cls, messageKey, messageArguments, options) {
+        if(!notificationsEnabled)
+            return;
         var displayNameSpan = '<span class="nickname" ';
         if (displayName) {
             displayNameSpan += ">" + displayName;
@@ -199,6 +217,20 @@ var messageHandler = (function(my) {
      */
     my.remove = function(toasterElement) {
         toasterElement.remove();
+    };
+
+    /**
+     * Disables notifications.
+     */
+    my.disableNotifications = function () {
+        notificationsEnabled = false;
+    };
+
+    /**
+     * Enables notifications.
+     */
+    my.enableNotifications = function () {
+        notificationsEnabled = true;
     };
 
     return my;

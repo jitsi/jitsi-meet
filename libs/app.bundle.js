@@ -1,4 +1,4 @@
-(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.APP = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.APP=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 /* jshint -W117 */
 /* application specific logic */
 
@@ -275,7 +275,7 @@ var API = {
 };
 
 module.exports = API;
-},{"../../service/xmpp/XMPPEvents":117}],3:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":113}],3:[function(require,module,exports){
 /* global APP */
 
 /**
@@ -517,7 +517,7 @@ function onPinnedEndpointChanged(userResource) {
 module.exports = DataChannels;
 
 
-},{"../../service/RTC/RTCEvents":108}],5:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":104}],5:[function(require,module,exports){
 /* global APP */
 var StreamEventTypes = require("../../service/RTC/StreamEventTypes.js");
 var RTCEvents = require("../../service/RTC/RTCEvents");
@@ -620,7 +620,7 @@ LocalStream.prototype.getId = function () {
 
 module.exports = LocalStream;
 
-},{"../../service/RTC/RTCEvents":108,"../../service/RTC/StreamEventTypes.js":110}],6:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":104,"../../service/RTC/StreamEventTypes.js":106}],6:[function(require,module,exports){
 var MediaStreamType = require("../../service/RTC/MediaStreamTypes");
 
 /**
@@ -669,7 +669,7 @@ MediaStream.prototype.setMute = function (value) {
 
 module.exports = MediaStream;
 
-},{"../../service/RTC/MediaStreamTypes":107}],7:[function(require,module,exports){
+},{"../../service/RTC/MediaStreamTypes":103}],7:[function(require,module,exports){
 /* global APP */
 var EventEmitter = require("events");
 var RTCBrowserType = require("./RTCBrowserType");
@@ -946,7 +946,7 @@ var RTC = {
 
 module.exports = RTC;
 
-},{"../../service/RTC/MediaStreamTypes":107,"../../service/RTC/RTCEvents.js":108,"../../service/RTC/StreamEventTypes.js":110,"../../service/UI/UIEvents":111,"../../service/desktopsharing/DesktopSharingEventTypes":114,"../../service/xmpp/XMPPEvents":117,"./DataChannels":4,"./LocalStream.js":5,"./MediaStream.js":6,"./RTCBrowserType":8,"./RTCUtils.js":9,"events":118}],8:[function(require,module,exports){
+},{"../../service/RTC/MediaStreamTypes":103,"../../service/RTC/RTCEvents.js":104,"../../service/RTC/StreamEventTypes.js":106,"../../service/UI/UIEvents":107,"../../service/desktopsharing/DesktopSharingEventTypes":110,"../../service/xmpp/XMPPEvents":113,"./DataChannels":4,"./LocalStream.js":5,"./MediaStream.js":6,"./RTCBrowserType":8,"./RTCUtils.js":9,"events":114}],8:[function(require,module,exports){
 
 var currentBrowser;
 
@@ -1673,7 +1673,7 @@ RTCUtils.prototype.createStream = function(stream, isVideo) {
 
 module.exports = RTCUtils;
 
-},{"../../service/RTC/Resolutions":109,"../xmpp/SDPUtil":56,"./RTCBrowserType":8,"./adapter.screenshare":10}],10:[function(require,module,exports){
+},{"../../service/RTC/Resolutions":105,"../xmpp/SDPUtil":56,"./RTCBrowserType":8,"./adapter.screenshare":10}],10:[function(require,module,exports){
 /*! adapterjs - v0.11.0 - 2015-06-08 */
 
 // Adapter's interface.
@@ -3008,6 +3008,7 @@ var messageHandler = UI.messageHandler;
 var Authentication  = require("./authentication/Authentication");
 var UIUtil = require("./util/UIUtil");
 var NicknameHandler = require("./util/NicknameHandler");
+var JitsiPopover = require("./util/JitsiPopover");
 var CQEvents = require("../../service/connectionquality/CQEvents");
 var DesktopSharingEventTypes
     = require("../../service/desktopsharing/DesktopSharingEventTypes");
@@ -3156,7 +3157,7 @@ function registerListeners() {
             VideoLayout.setDeviceAvailabilityIcons(null, devices);
         });
     APP.RTC.addListener(RTCEvents.VIDEO_MUTE, UI.setVideoMuteButtonsState);
-    APP.RTC.addListener(RTCEvents.DATA_CHANNEL_OPEN, function() {
+    APP.RTC.addListener(RTCEvents.DATA_CHANNEL_OPEN, function () {
         // when the data channel becomes available, tell the bridge about video
         // selections so that it can do adaptive simulcast,
         // we want the notification to trigger even if userJid is undefined,
@@ -3241,10 +3242,8 @@ function registerListeners() {
     APP.xmpp.addListener(XMPPEvents.MUC_ROLE_CHANGED, onMucRoleChanged);
     APP.xmpp.addListener(XMPPEvents.PRESENCE_STATUS, onMucPresenceStatus);
     APP.xmpp.addListener(XMPPEvents.SUBJECT_CHANGED, chatSetSubject);
-    APP.xmpp.addListener(XMPPEvents.MESSAGE_RECEIVED, updateChatConversation);
     APP.xmpp.addListener(XMPPEvents.MUC_MEMBER_LEFT, onMucMemberLeft);
     APP.xmpp.addListener(XMPPEvents.PASSWORD_REQUIRED, onPasswordRequired);
-    APP.xmpp.addListener(XMPPEvents.CHAT_ERROR_RECEIVED, chatAddError);
     APP.xmpp.addListener(XMPPEvents.ETHERPAD, initEtherpad);
     APP.xmpp.addListener(XMPPEvents.AUTHENTICATION_REQUIRED,
         onAuthenticationRequired);
@@ -3256,11 +3255,11 @@ function registerListeners() {
 
     APP.xmpp.addListener(XMPPEvents.AUDIO_MUTED, VideoLayout.onAudioMute);
     APP.xmpp.addListener(XMPPEvents.VIDEO_MUTED, VideoLayout.onVideoMute);
-    APP.xmpp.addListener(XMPPEvents.AUDIO_MUTED_BY_FOCUS, function(doMuteAudio) {
+    APP.xmpp.addListener(XMPPEvents.AUDIO_MUTED_BY_FOCUS, function (doMuteAudio) {
         UI.setAudioMuted(doMuteAudio);
     });
     APP.members.addListener(MemberEvents.DTMF_SUPPORT_CHANGED,
-                            onDtmfSupportChanged);
+        onDtmfSupportChanged);
     APP.xmpp.addListener(XMPPEvents.START_MUTED_SETTING_CHANGED, function (audio, video) {
         SettingsMenu.setStartMuted(audio, video);
     });
@@ -3273,43 +3272,43 @@ function registerListeners() {
             "dialog.internalError");
     });
 
-    APP.xmpp.addListener(XMPPEvents.SET_LOCAL_DESCRIPTION_ERROR, function() {
+    APP.xmpp.addListener(XMPPEvents.SET_LOCAL_DESCRIPTION_ERROR, function () {
         messageHandler.showError("dialog.error",
-                                        "dialog.SLDFailure");
+            "dialog.SLDFailure");
     });
-    APP.xmpp.addListener(XMPPEvents.SET_REMOTE_DESCRIPTION_ERROR, function() {
+    APP.xmpp.addListener(XMPPEvents.SET_REMOTE_DESCRIPTION_ERROR, function () {
         messageHandler.showError("dialog.error",
             "dialog.SRDFailure");
     });
-    APP.xmpp.addListener(XMPPEvents.CREATE_ANSWER_ERROR, function() {
+    APP.xmpp.addListener(XMPPEvents.CREATE_ANSWER_ERROR, function () {
         messageHandler.showError();
     });
-    APP.xmpp.addListener(XMPPEvents.PROMPT_FOR_LOGIN, function() {
+    APP.xmpp.addListener(XMPPEvents.PROMPT_FOR_LOGIN, function () {
         // FIXME: re-use LoginDialog which supports retries
         UI.showLoginPopup(connect);
     });
-    
-    APP.xmpp.addListener(XMPPEvents.FOCUS_DISCONNECTED, function(focusComponent, retrySec) {
+
+    APP.xmpp.addListener(XMPPEvents.FOCUS_DISCONNECTED, function (focusComponent, retrySec) {
         UI.messageHandler.notify(
             null, "notify.focus",
             'disconnected', "notify.focusFail",
             {component: focusComponent, ms: retrySec});
     });
-    
-    APP.xmpp.addListener(XMPPEvents.ROOM_JOIN_ERROR, function(pres) {
+
+    APP.xmpp.addListener(XMPPEvents.ROOM_JOIN_ERROR, function (pres) {
         UI.messageHandler.openReportDialog(null,
             "dialog.joinError", pres);
     });
-    APP.xmpp.addListener(XMPPEvents.ROOM_CONNECT_ERROR, function(pres) {
+    APP.xmpp.addListener(XMPPEvents.ROOM_CONNECT_ERROR, function (pres) {
         UI.messageHandler.openReportDialog(null,
             "dialog.connectError", pres);
     });
 
-    APP.xmpp.addListener(XMPPEvents.READY_TO_JOIN, function() {
+    APP.xmpp.addListener(XMPPEvents.READY_TO_JOIN, function () {
         var roomName = UI.generateRoomName();
         APP.xmpp.allocateConferenceFocus(roomName, UI.checkForNicknameAndJoin);
     });
-    
+
     //NicknameHandler emits this event
     UI.addListener(UIEvents.NICKNAME_CHANGED, function (nickname) {
         APP.xmpp.addToPresence("displayName", nickname);
@@ -3319,10 +3318,14 @@ function registerListeners() {
         AudioLevels.init();
     });
 
-    // Listens for video interruption events.
-    APP.xmpp.addListener(XMPPEvents.CONNECTION_INTERRUPTED, VideoLayout.onVideoInterrupted);
-    // Listens for video restores events.
-    APP.xmpp.addListener(XMPPEvents.CONNECTION_RESTORED, VideoLayout.onVideoRestored);
+    if (!config.minimized) {
+        APP.xmpp.addListener(XMPPEvents.MESSAGE_RECEIVED, updateChatConversation);
+        APP.xmpp.addListener(XMPPEvents.CHAT_ERROR_RECEIVED, chatAddError);
+        // Listens for video interruption events.
+        APP.xmpp.addListener(XMPPEvents.CONNECTION_INTERRUPTED, VideoLayout.onVideoInterrupted);
+        // Listens for video restores events.
+        APP.xmpp.addListener(XMPPEvents.CONNECTION_RESTORED, VideoLayout.onVideoRestored);
+    }
 }
 
 
@@ -3372,9 +3375,6 @@ UI.start = function (init) {
 
     $("#welcome_page").hide();
 
-    $("#videospace").mousemove(function () {
-        return ToolbarToggler.showToolbar();
-    });
     // Set the defaults for prompt dialogs.
     $.prompt.setDefaults({persistent: false});
 
@@ -3386,34 +3386,39 @@ UI.start = function (init) {
 
     bindEvents();
     setupPrezi();
-    setupToolbars();
-    setupChat();
-
+    if(!config.minimized) {
+        $("#videospace").mousemove(function () {
+            return ToolbarToggler.showToolbar();
+        });
+        setupToolbars();
+        setupChat();
+        // Display notice message at the top of the toolbar
+        if (config.noticeMessage) {
+            $('#noticeText').text(config.noticeMessage);
+            $('#notice').css({display: 'block'});
+        }
+        $("#downloadlog").click(function (event) {
+            dump(event.target);
+        });
+    }
+    else
+    {
+        $("#header").css("display", "none");
+        $("#bottomToolbar").css("display", "none");
+        $("#downloadlog").css("display", "none");
+        $("#remoteVideos").css("padding", "0px 0px 18px 0px");
+        $("#remoteVideos").css("right", "0px");
+        messageHandler.disableNotifications();
+        $('body').popover("disable");
+//        $("[data-toggle=popover]").popover("disable");
+        JitsiPopover.enabled = false;
+    }
 
     document.title = interfaceConfig.APP_NAME;
 
-    $("#downloadlog").click(function (event) {
-        dump(event.target);
-    });
 
-    if(config.enableWelcomePage && window.location.pathname == "/" &&
-        (!window.localStorage.welcomePageDisabled ||
-            window.localStorage.welcomePageDisabled == "false")) {
-        $("#videoconference_page").hide();
-        if (!setupWelcomePage)
-            setupWelcomePage = require("./welcome_page/WelcomePage");
-        setupWelcomePage();
 
-        return;
-    }
 
-    $("#welcome_page").hide();
-
-    // Display notice message at the top of the toolbar
-    if (config.noticeMessage) {
-        $('#noticeText').text(config.noticeMessage);
-        $('#notice').css({display: 'block'});
-    }
 
     if(config.requireDisplayName) {
         var currentSettings = Settings.getSettings();
@@ -3424,30 +3429,33 @@ UI.start = function (init) {
 
     init();
 
-    toastr.options = {
-        "closeButton": true,
-        "debug": false,
-        "positionClass": "notification-bottom-right",
-        "onclick": null,
-        "showDuration": "300",
-        "hideDuration": "1000",
-        "timeOut": "2000",
-        "extendedTimeOut": "1000",
-        "showEasing": "swing",
-        "hideEasing": "linear",
-        "showMethod": "fadeIn",
-        "hideMethod": "fadeOut",
-        "reposition": function() {
-            if(PanelToggler.isVisible()) {
-                $("#toast-container").addClass("notification-bottom-right-center");
-            } else {
-                $("#toast-container").removeClass("notification-bottom-right-center");
-            }
-        },
-        "newestOnTop": false
-    };
+    if(!config.minimized) {
+        toastr.options = {
+            "closeButton": true,
+            "debug": false,
+            "positionClass": "notification-bottom-right",
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "timeOut": "2000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut",
+            "reposition": function () {
+                if (PanelToggler.isVisible()) {
+                    $("#toast-container").addClass("notification-bottom-right-center");
+                } else {
+                    $("#toast-container").removeClass("notification-bottom-right-center");
+                }
+            },
+            "newestOnTop": false
+        };
 
-    SettingsMenu.init();
+
+        SettingsMenu.init();
+    }
 
 };
 
@@ -3853,7 +3861,7 @@ UI.setVideoMute = setVideoMute;
 module.exports = UI;
 
 
-},{"../../service/RTC/RTCEvents":108,"../../service/RTC/StreamEventTypes":110,"../../service/UI/UIEvents":111,"../../service/connectionquality/CQEvents":113,"../../service/desktopsharing/DesktopSharingEventTypes":114,"../../service/members/Events":115,"../../service/xmpp/XMPPEvents":117,"../RTC/RTCBrowserType":8,"./../settings/Settings":47,"./audio_levels/AudioLevels.js":12,"./authentication/Authentication":14,"./avatar/Avatar":16,"./etherpad/Etherpad.js":17,"./prezi/Prezi.js":18,"./side_pannels/SidePanelToggler":20,"./side_pannels/chat/Chat.js":21,"./side_pannels/contactlist/ContactList":25,"./side_pannels/settings/SettingsMenu":26,"./toolbars/BottomToolbar":27,"./toolbars/Toolbar":28,"./toolbars/ToolbarToggler":29,"./util/MessageHandler":31,"./util/NicknameHandler":32,"./util/UIUtil":33,"./videolayout/VideoLayout.js":39,"./welcome_page/RoomnameGenerator":40,"./welcome_page/WelcomePage":41,"events":118}],12:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":104,"../../service/RTC/StreamEventTypes":106,"../../service/UI/UIEvents":107,"../../service/connectionquality/CQEvents":109,"../../service/desktopsharing/DesktopSharingEventTypes":110,"../../service/members/Events":111,"../../service/xmpp/XMPPEvents":113,"../RTC/RTCBrowserType":8,"./../settings/Settings":47,"./audio_levels/AudioLevels.js":12,"./authentication/Authentication":14,"./avatar/Avatar":16,"./etherpad/Etherpad.js":17,"./prezi/Prezi.js":18,"./side_pannels/SidePanelToggler":20,"./side_pannels/chat/Chat.js":21,"./side_pannels/contactlist/ContactList":25,"./side_pannels/settings/SettingsMenu":26,"./toolbars/BottomToolbar":27,"./toolbars/Toolbar":28,"./toolbars/ToolbarToggler":29,"./util/JitsiPopover":30,"./util/MessageHandler":31,"./util/NicknameHandler":32,"./util/UIUtil":33,"./videolayout/VideoLayout.js":39,"./welcome_page/RoomnameGenerator":40,"./welcome_page/WelcomePage":41,"events":114}],12:[function(require,module,exports){
 /* global APP, interfaceConfig, $, Strophe */
 var CanvasUtil = require("./CanvasUtils");
 
@@ -5952,7 +5960,7 @@ var Chat = (function (my) {
     return my;
 }(Chat || {}));
 module.exports = Chat;
-},{"../../../../service/UI/UIEvents":111,"../../toolbars/ToolbarToggler":29,"../../util/NicknameHandler":32,"../../util/UIUtil":33,"../SidePanelToggler":20,"./Commands":22,"./Replacement":23,"./smileys.json":24}],22:[function(require,module,exports){
+},{"../../../../service/UI/UIEvents":107,"../../toolbars/ToolbarToggler":29,"../../util/NicknameHandler":32,"../../util/UIUtil":33,"../SidePanelToggler":20,"./Commands":22,"./Replacement":23,"./smileys.json":24}],22:[function(require,module,exports){
 /* global APP, require */
 var UIUtil = require("../../util/UIUtil");
 
@@ -6457,7 +6465,7 @@ var SettingsMenu = {
 
 
 module.exports = SettingsMenu;
-},{"../../../../service/translation/languages":116,"../../avatar/Avatar":16,"../../util/UIUtil":33,"./../../../settings/Settings":47}],27:[function(require,module,exports){
+},{"../../../../service/translation/languages":112,"../../avatar/Avatar":16,"../../util/UIUtil":33,"./../../../settings/Settings":47}],27:[function(require,module,exports){
 /* global $ */
 var PanelToggler = require("../side_pannels/SidePanelToggler");
 
@@ -7170,7 +7178,7 @@ var Toolbar = (function (my) {
 }(Toolbar || {}));
 
 module.exports = Toolbar;
-},{"../../../service/authentication/AuthenticationEvents":112,"../authentication/Authentication":14,"../etherpad/Etherpad":17,"../prezi/Prezi":18,"../side_pannels/SidePanelToggler":20,"../util/MessageHandler":31,"../util/UIUtil":33,"./BottomToolbar":27}],29:[function(require,module,exports){
+},{"../../../service/authentication/AuthenticationEvents":108,"../authentication/Authentication":14,"../etherpad/Etherpad":17,"../prezi/Prezi":18,"../side_pannels/SidePanelToggler":20,"../util/MessageHandler":31,"../util/UIUtil":33,"./BottomToolbar":27}],29:[function(require,module,exports){
 /* global APP, config, $, interfaceConfig, Moderator,
  DesktopStreaming.showDesktopSharingButton */
 
@@ -7226,6 +7234,8 @@ var ToolbarToggler = {
      * Shows the main toolbar.
      */
     showToolbar: function () {
+        if(config.minimized)
+            return;
         var header = $("#header"),
             bottomToolbar = $("#bottomToolbar");
         if (!header.is(':visible') || !bottomToolbar.is(":visible")) {
@@ -7261,6 +7271,9 @@ var ToolbarToggler = {
      * @param isDock indicates what operation to perform
      */
     dockToolbar: function (isDock) {
+        if(config.minimized)
+            return;
+
         if (isDock) {
             // First make sure the toolbar is shown.
             if (!$('#header').is(':visible')) {
@@ -7336,6 +7349,8 @@ var JitsiPopover = (function () {
      * Shows the popover
      */
     JitsiPopover.prototype.show = function () {
+        if(!JitsiPopover.enabled)
+            return;
         this.createPopover();
         this.popoverShown = true;
     };
@@ -7408,12 +7423,21 @@ var JitsiPopover = (function () {
         this.createPopover();
     };
 
+    JitsiPopover.enabled = true;
+
     return JitsiPopover;
 })();
 
 module.exports = JitsiPopover;
 },{}],31:[function(require,module,exports){
 /* global $, APP, jQuery, toastr */
+
+/**
+ * Flag for enable/disable of the notifications.
+ * @type {boolean}
+ */
+var notificationsEnabled = true;
+
 var messageHandler = (function(my) {
 
     /**
@@ -7587,8 +7611,19 @@ var messageHandler = (function(my) {
         messageHandler.openMessageDialog(titleKey, msgKey);
     };
 
+    /**
+     * Displayes notification.
+     * @param displayName display name of the participant that is associated with the notification.
+     * @param displayNameKey the key from the language file for the display name.
+     * @param cls css class for the notification
+     * @param messageKey the key from the language file for the text of the message.
+     * @param messageArguments object with the arguments for the message.
+     * @param options object with language options.
+     */
     my.notify = function(displayName, displayNameKey,
                          cls, messageKey, messageArguments, options) {
+        if(!notificationsEnabled)
+            return;
         var displayNameSpan = '<span class="nickname" ';
         if (displayName) {
             displayNameSpan += ">" + displayName;
@@ -7608,8 +7643,26 @@ var messageHandler = (function(my) {
             '</span>', null, options);
     };
 
+    /**
+     * Removes the toaster.
+     * @param toasterElement
+     */
     my.remove = function(toasterElement) {
         toasterElement.remove();
+    };
+
+    /**
+     * Disables notifications.
+     */
+    my.disableNotifications = function () {
+        notificationsEnabled = false;
+    };
+
+    /**
+     * Enables notifications.
+     */
+    my.enableNotifications = function () {
+        notificationsEnabled = true;
     };
 
     return my;
@@ -7650,7 +7703,7 @@ var NicknameHandler = {
 };
 
 module.exports = NicknameHandler;
-},{"../../../service/UI/UIEvents":111}],33:[function(require,module,exports){
+},{"../../../service/UI/UIEvents":107}],33:[function(require,module,exports){
 /* global $ */
 /**
  * Created by hristo on 12/22/14.
@@ -8588,6 +8641,14 @@ var LargeVideo = {
             largeVideoHeight,
             horizontalIndent, verticalIndent, animate);
     },
+    /**
+     * Resizes the large html elements.
+     * @param animate boolean property that indicates whether the resize should be animated or not.
+     * @param isChatVisible boolean property that indicates whether the chat area is displayed or not.
+     * If that parameter is null the method will check the chat pannel visibility.
+     * @param completeFunction a function to be called when the video space is resized
+     * @returns {*[]} array with the current width and height values of the largeVideo html element.
+     */
     resize: function (animate, isVisible, completeFunction) {
         if(!isEnabled)
             return;
@@ -8600,18 +8661,8 @@ var LargeVideo = {
         var top = availableHeight / 2 - avatarSize / 4 * 3;
         $('#activeSpeaker').css('top', top);
 
+        this.VideoLayout.resizeVideoSpace(animate, isVisible, completeFunction);
         if(animate) {
-            $('#videospace').animate({
-                    right: window.innerWidth - availableWidth,
-                    width: availableWidth,
-                    height: availableHeight
-                },
-                {
-                    queue: false,
-                    duration: 500,
-                    complete: completeFunction
-                });
-
             $('#largeVideoContainer').animate({
                     width: availableWidth,
                     height: availableHeight
@@ -8621,8 +8672,6 @@ var LargeVideo = {
                     duration: 500
                 });
         } else {
-            $('#videospace').width(availableWidth);
-            $('#videospace').height(availableHeight);
             $('#largeVideoContainer').width(availableWidth);
             $('#largeVideoContainer').height(availableHeight);
         }
@@ -8793,7 +8842,7 @@ var LargeVideo = {
 };
 
 module.exports = LargeVideo;
-},{"../../../service/UI/UIEvents":111,"../../RTC/RTCBrowserType":8,"../../xmpp/xmpp":67,"../avatar/Avatar":16,"../toolbars/ToolbarToggler":29,"../util/UIUtil":33}],36:[function(require,module,exports){
+},{"../../../service/UI/UIEvents":107,"../../RTC/RTCBrowserType":8,"../../xmpp/xmpp":67,"../avatar/Avatar":16,"../toolbars/ToolbarToggler":29,"../util/UIUtil":33}],36:[function(require,module,exports){
 /* global $, interfaceConfig, APP */
 var SmallVideo = require("./SmallVideo");
 var ConnectionIndicator = require("./ConnectionIndicator");
@@ -9082,85 +9131,96 @@ RemoteVideo.prototype.addRemoteVideoContainer = function() {
  * @param jid the jid indicating the video for which we're adding a menu.
  * @param parentElement the parent element where this menu will be added
  */
-RemoteVideo.prototype.addRemoteVideoMenu = function () {
-    var spanElement = document.createElement('span');
-    spanElement.className = 'remotevideomenu';
 
-    this.container.appendChild(spanElement);
+if(!config.minimized) {
+    RemoteVideo.prototype.addRemoteVideoMenu = function () {
+        var spanElement = document.createElement('span');
+        spanElement.className = 'remotevideomenu';
 
-    var menuElement = document.createElement('i');
-    menuElement.className = 'fa fa-angle-down';
-    menuElement.title = 'Remote user controls';
-    spanElement.appendChild(menuElement);
+        this.container.appendChild(spanElement);
+
+        var menuElement = document.createElement('i');
+        menuElement.className = 'fa fa-angle-down';
+        menuElement.title = 'Remote user controls';
+        spanElement.appendChild(menuElement);
 
 
-    var popupmenuElement = document.createElement('ul');
-    popupmenuElement.className = 'popupmenu';
-    popupmenuElement.id = 'remote_popupmenu_' + this.getResourceJid();
-    spanElement.appendChild(popupmenuElement);
+        var popupmenuElement = document.createElement('ul');
+        popupmenuElement.className = 'popupmenu';
+        popupmenuElement.id = 'remote_popupmenu_' + this.getResourceJid();
+        spanElement.appendChild(popupmenuElement);
 
-    var muteMenuItem = document.createElement('li');
-    var muteLinkItem = document.createElement('a');
+        var muteMenuItem = document.createElement('li');
+        var muteLinkItem = document.createElement('a');
 
-    var mutedIndicator = "<i style='float:left;' class='icon-mic-disabled'></i>";
+        var mutedIndicator = "<i style='float:left;' " +
+            "class='icon-mic-disabled'></i>";
 
-    if (!this.isMuted) {
-        muteLinkItem.innerHTML = mutedIndicator +
-            " <div style='width: 90px;margin-left: 20px;' data-i18n='videothumbnail.domute'></div>";
-        muteLinkItem.className = 'mutelink';
-    }
-    else {
-        muteLinkItem.innerHTML = mutedIndicator +
-            " <div style='width: 90px;margin-left: 20px;' data-i18n='videothumbnail.muted'></div>";
-        muteLinkItem.className = 'mutelink disabled';
-    }
-
-    var self = this;
-    muteLinkItem.onclick = function(){
-        if ($(this).attr('disabled') != undefined) {
-            event.preventDefault();
-        }
-        var isMute = self.isMuted == true;
-        APP.xmpp.setMute(self.peerJid, !isMute);
-
-        popupmenuElement.setAttribute('style', 'display:none;');
-
-        if (isMute) {
-            this.innerHTML = mutedIndicator +
-                " <div style='width: 90px;margin-left: 20px;' data-i18n='videothumbnail.muted'></div>";
-            this.className = 'mutelink disabled';
+        if (!this.isMuted) {
+            muteLinkItem.innerHTML = mutedIndicator +
+                " <div style='width: 90px;margin-left: 20px;' " +
+                "data-i18n='videothumbnail.domute'></div>";
+            muteLinkItem.className = 'mutelink';
         }
         else {
-            this.innerHTML = mutedIndicator +
-                " <div style='width: 90px;margin-left: 20px;' data-i18n='videothumbnail.domute'></div>";
-            this.className = 'mutelink';
+            muteLinkItem.innerHTML = mutedIndicator +
+                " <div style='width: 90px;margin-left: 20px;' " +
+                "data-i18n='videothumbnail.muted'></div>";
+            muteLinkItem.className = 'mutelink disabled';
         }
+
+        var self = this;
+        muteLinkItem.onclick = function(){
+            if ($(this).attr('disabled') != undefined) {
+                event.preventDefault();
+            }
+            var isMute = self.isMuted == true;
+            APP.xmpp.setMute(self.peerJid, !isMute);
+
+            popupmenuElement.setAttribute('style', 'display:none;');
+
+            if (isMute) {
+                this.innerHTML = mutedIndicator +
+                    " <div style='width: 90px;margin-left: 20px;' " +
+                    "data-i18n='videothumbnail.muted'></div>";
+                this.className = 'mutelink disabled';
+            }
+            else {
+                this.innerHTML = mutedIndicator +
+                    " <div style='width: 90px;margin-left: 20px;' " +
+                    "data-i18n='videothumbnail.domute'></div>";
+                this.className = 'mutelink';
+            }
+        };
+
+        muteMenuItem.appendChild(muteLinkItem);
+        popupmenuElement.appendChild(muteMenuItem);
+
+        var ejectIndicator = "<i style='float:left;' class='fa fa-eject'></i>";
+
+        var ejectMenuItem = document.createElement('li');
+        var ejectLinkItem = document.createElement('a');
+        var ejectText = "<div style='width: 90px;margin-left: 20px;' " +
+            "data-i18n='videothumbnail.kick'>&nbsp;</div>";
+        ejectLinkItem.innerHTML = ejectIndicator + ' ' + ejectText;
+        ejectLinkItem.onclick = function(){
+            APP.xmpp.eject(self.peerJid);
+            popupmenuElement.setAttribute('style', 'display:none;');
+        };
+
+        ejectMenuItem.appendChild(ejectLinkItem);
+        popupmenuElement.appendChild(ejectMenuItem);
+
+        var paddingSpan = document.createElement('span');
+        paddingSpan.className = 'popupmenuPadding';
+        popupmenuElement.appendChild(paddingSpan);
+        APP.translation.translateElement(
+            $("#" + popupmenuElement.id + " > li > a > div"));
     };
 
-    muteMenuItem.appendChild(muteLinkItem);
-    popupmenuElement.appendChild(muteMenuItem);
-
-    var ejectIndicator = "<i style='float:left;' class='fa fa-eject'></i>";
-
-    var ejectMenuItem = document.createElement('li');
-    var ejectLinkItem = document.createElement('a');
-    var ejectText = "<div style='width: 90px;margin-left: 20px;' data-i18n='videothumbnail.kick'>&nbsp;</div>";
-    ejectLinkItem.innerHTML = ejectIndicator + ' ' + ejectText;
-    ejectLinkItem.onclick = function(){
-        APP.xmpp.eject(self.peerJid);
-        popupmenuElement.setAttribute('style', 'display:none;');
-    };
-
-    ejectMenuItem.appendChild(ejectLinkItem);
-    popupmenuElement.appendChild(ejectMenuItem);
-
-    var paddingSpan = document.createElement('span');
-    paddingSpan.className = 'popupmenuPadding';
-    popupmenuElement.appendChild(paddingSpan);
-    APP.translation.translateElement(
-        $("#" + popupmenuElement.id + " > li > a > div"));
-};
-
+} else {
+    RemoteVideo.prototype.addRemoteVideoMenu = function() {}
+}
 
 /**
  * Removes the remote stream element corresponding to the given stream and
@@ -9818,6 +9878,7 @@ var AudioLevels = require("../audio_levels/AudioLevels");
 var ContactList = require("../side_pannels/contactlist/ContactList");
 var MediaStreamType = require("../../../service/RTC/MediaStreamTypes");
 var UIEvents = require("../../../service/UI/UIEvents");
+var UIUtil = require("../util/UIUtil");
 
 var RTC = require("../../RTC/RTC");
 var RTCBrowserType = require('../../RTC/RTCBrowserType');
@@ -9825,6 +9886,7 @@ var RTCBrowserType = require('../../RTC/RTCBrowserType');
 var RemoteVideo = require("./RemoteVideo");
 var LargeVideo = require("./LargeVideo");
 var LocalVideo = require("./LocalVideo");
+
 
 var remoteVideos = {};
 var remoteVideoTypes = {};
@@ -9849,8 +9911,16 @@ var VideoLayout = (function (my) {
     my.init = function (emitter) {
         eventEmitter = emitter;
         localVideoThumbnail = new LocalVideo(VideoLayout);
+        if(config.minimized)
+        {
+            showLargeVideo = false;
+            LargeVideo.disable();
+        }
+        else
+        {
+            LargeVideo.init(VideoLayout, emitter);
+        }
 
-        LargeVideo.init(VideoLayout, emitter);
         VideoLayout.resizeLargeVideoContainer();
 
     };
@@ -10007,7 +10077,7 @@ var VideoLayout = (function (my) {
                                           resourceJid) {
         if(focusedVideoResourceJid) {
             var oldSmallVideo = VideoLayout.getSmallVideo(focusedVideoResourceJid);
-            if(oldSmallVideo)
+            if(oldSmallVideo && !config.minimized)
                 oldSmallVideo.focus(false);
         }
 
@@ -10034,7 +10104,7 @@ var VideoLayout = (function (my) {
 
         // Update focused/pinned interface.
         if (resourceJid) {
-            if(smallVideo)
+            if(smallVideo && !config.minimized)
                 smallVideo.focus(true);
 
             if (!noPinnedEndpointChangedEvent) {
@@ -10169,7 +10239,11 @@ var VideoLayout = (function (my) {
      * Resizes the large video container.
      */
     my.resizeLargeVideoContainer = function () {
-        LargeVideo.resize();
+        if(LargeVideo.isEnabled()) {
+            LargeVideo.resize();
+        } else {
+            VideoLayout.resizeVideoSpace();
+        }
         VideoLayout.resizeThumbnails();
         LargeVideo.position();
     };
@@ -10188,7 +10262,7 @@ var VideoLayout = (function (my) {
 
         if(animate) {
             $('#remoteVideos').animate({
-                    height: height
+                    height: height + 2 // adds 2 px because of small video 1px border
                 },
                 {
                     queue: false,
@@ -10213,7 +10287,7 @@ var VideoLayout = (function (my) {
         } else {
             // size videos so that while keeping AR and max height, we have a
             // nice fit
-            $('#remoteVideos').height(height);
+            $('#remoteVideos').height(height + 2);// adds 2 px because of small video 1px border
             $('#remoteVideos>span').width(width);
             $('#remoteVideos>span').height(height);
 
@@ -10246,7 +10320,7 @@ var VideoLayout = (function (my) {
        var availableWidth = availableWinWidth / numvids;
        var aspectRatio = 16.0 / 9.0;
        var maxHeight = Math.min(160, availableHeight);
-       availableHeight = Math.min(maxHeight, availableWidth / aspectRatio);
+       availableHeight = Math.min(maxHeight, availableWidth / aspectRatio, window.innerHeight - 18);
        if (availableHeight < availableWidth / aspectRatio) {
            availableWidth = Math.floor(availableHeight * aspectRatio);
        }
@@ -10701,6 +10775,37 @@ var VideoLayout = (function (my) {
         VideoLayout.resizeThumbnails(true);
     };
 
+    /**
+     * Resizes the #videospace html element
+     * @param animate boolean property that indicates whether the resize should be animated or not.
+     * @param isChatVisible boolean property that indicates whether the chat area is displayed or not.
+     * If that parameter is null the method will check the chat pannel visibility.
+     * @param completeFunction a function to be called when the video space is resized
+     */
+    my.resizeVideoSpace = function (animate, isChatVisible, completeFunction) {
+        var availableHeight = window.innerHeight;
+        var availableWidth = UIUtil.getAvailableVideoWidth(isChatVisible);
+
+        if (availableWidth < 0 || availableHeight < 0) return;
+
+        if(animate) {
+            $('#videospace').animate({
+                    right: window.innerWidth - availableWidth,
+                    width: availableWidth,
+                    height: availableHeight
+                },
+                {
+                    queue: false,
+                    duration: 500,
+                    complete: completeFunction
+                });
+        } else {
+            $('#videospace').width(availableWidth);
+            $('#videospace').height(availableHeight);
+        }
+
+    };
+
     my.getSmallVideo = function (resourceJid) {
         if(resourceJid == APP.xmpp.myResource()) {
             return localVideoThumbnail;
@@ -10761,7 +10866,7 @@ var VideoLayout = (function (my) {
 }(VideoLayout || {}));
 
 module.exports = VideoLayout;
-},{"../../../service/RTC/MediaStreamTypes":107,"../../../service/UI/UIEvents":111,"../../RTC/RTC":7,"../../RTC/RTCBrowserType":8,"../audio_levels/AudioLevels":12,"../prezi/Prezi":18,"../side_pannels/contactlist/ContactList":25,"./LargeVideo":35,"./LocalVideo":36,"./RemoteVideo":37}],40:[function(require,module,exports){
+},{"../../../service/RTC/MediaStreamTypes":103,"../../../service/UI/UIEvents":107,"../../RTC/RTC":7,"../../RTC/RTCBrowserType":8,"../audio_levels/AudioLevels":12,"../prezi/Prezi":18,"../side_pannels/contactlist/ContactList":25,"../util/UIUtil":33,"./LargeVideo":35,"./LocalVideo":36,"./RemoteVideo":37}],40:[function(require,module,exports){
 //var nouns = [
 //];
 var pluralNouns = [
@@ -11216,7 +11321,7 @@ var ConnectionQuality = {
 };
 
 module.exports = ConnectionQuality;
-},{"../../service/connectionquality/CQEvents":113,"../../service/xmpp/XMPPEvents":117,"events":118}],44:[function(require,module,exports){
+},{"../../service/connectionquality/CQEvents":109,"../../service/xmpp/XMPPEvents":113,"events":114}],44:[function(require,module,exports){
 /* global $, alert, APP, changeLocalVideo, chrome, config, getConferenceHandler,
  getUserMediaWithConstraints */
 /**
@@ -11605,7 +11710,7 @@ module.exports = {
 };
 
 
-},{"../../service/RTC/RTCEvents":108,"../../service/desktopsharing/DesktopSharingEventTypes":114,"../RTC/RTCBrowserType":8,"../RTC/adapter.screenshare":10,"events":118}],45:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":104,"../../service/desktopsharing/DesktopSharingEventTypes":110,"../RTC/RTCBrowserType":8,"../RTC/adapter.screenshare":10,"events":114}],45:[function(require,module,exports){
 /* global APP, $ */
 //maps keycode to character, id of popover for given function and function
 var shortcuts = {};
@@ -11833,7 +11938,7 @@ var Members = {
 
 module.exports = Members;
 
-},{"../../service/members/Events":115,"../../service/xmpp/XMPPEvents":117,"events":118}],47:[function(require,module,exports){
+},{"../../service/members/Events":111,"../../service/xmpp/XMPPEvents":113,"events":114}],47:[function(require,module,exports){
 var email = '';
 var displayName = '';
 var userId;
@@ -12979,7 +13084,7 @@ var statistics = {
 
 
 module.exports = statistics;
-},{"../../service/RTC/RTCEvents":108,"../../service/RTC/StreamEventTypes.js":110,"../../service/xmpp/XMPPEvents":117,"./CallStats":48,"./LocalStatsCollector.js":49,"./RTPStatsCollector.js":50,"events":118}],52:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":104,"../../service/RTC/StreamEventTypes.js":106,"../../service/xmpp/XMPPEvents":113,"./CallStats":48,"./LocalStatsCollector.js":49,"./RTPStatsCollector.js":50,"events":114}],52:[function(require,module,exports){
 /* global $, require, config, interfaceConfig */
 var i18n = require("i18next-client");
 var languages = require("../../service/translation/languages");
@@ -13117,7 +13222,7 @@ module.exports = {
     }
 };
 
-},{"../../service/translation/languages":116,"../settings/Settings":47,"i18next-client":69}],53:[function(require,module,exports){
+},{"../../service/translation/languages":112,"../settings/Settings":47,"i18next-client":69}],53:[function(require,module,exports){
 /* jshint -W117 */
 var TraceablePeerConnection = require("./TraceablePeerConnection");
 var SDPDiffer = require("./SDPDiffer");
@@ -14573,7 +14678,7 @@ JingleSession.prototype.remoteStreamAdded = function (data, times) {
 
 module.exports = JingleSession;
 
-},{"../../service/xmpp/XMPPEvents":117,"../RTC/RTCBrowserType":8,"./SDP":54,"./SDPDiffer":55,"./SDPUtil":56,"./TraceablePeerConnection":57,"./VideoSSRCHack":58,"async":68,"sdp-transform":104}],54:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":113,"../RTC/RTCBrowserType":8,"./SDP":54,"./SDPDiffer":55,"./SDPUtil":56,"./TraceablePeerConnection":57,"./VideoSSRCHack":58,"async":68,"sdp-transform":100}],54:[function(require,module,exports){
 /* jshint -W117 */
 var SDPUtil = require("./SDPUtil");
 
@@ -16179,7 +16284,7 @@ TraceablePeerConnection.prototype.getStats = function(callback, errback) {
 module.exports = TraceablePeerConnection;
 
 
-},{"../../service/xmpp/XMPPEvents":117,"../RTC/RTC":7,"../RTC/RTCBrowserType.js":8,"./VideoSSRCHack":58,"sdp-interop":90,"sdp-simulcast":97,"sdp-transform":104}],58:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":113,"../RTC/RTC":7,"../RTC/RTCBrowserType.js":8,"./VideoSSRCHack":58,"sdp-interop":90,"sdp-simulcast":97,"sdp-transform":100}],58:[function(require,module,exports){
 /* global $ */
 
 /*
@@ -16783,7 +16888,7 @@ module.exports = Moderator;
 
 
 
-},{"../../service/authentication/AuthenticationEvents":112,"../../service/xmpp/XMPPEvents":117,"../settings/Settings":47}],60:[function(require,module,exports){
+},{"../../service/authentication/AuthenticationEvents":108,"../../service/xmpp/XMPPEvents":113,"../settings/Settings":47}],60:[function(require,module,exports){
 /* global $, $iq, config, connection, focusMucJid, messageHandler,
    Toolbar, Util */
 var Moderator = require("./moderator");
@@ -16870,8 +16975,7 @@ function setRecordingColibri(state, token, callback, connection) {
             recordingEnabled = newState;
             callback(newState);
 
-            if (newState === 'pending' && recordingStateChangeCallback == null)
-            {
+            if (newState === 'pending' && recordingStateChangeCallback == null) {
                 recordingStateChangeCallback = callback;
                 connection.addHandler(function(iq){
                     var state = $(iq).find('recording').attr('state');
@@ -17596,7 +17700,7 @@ module.exports = function(XMPP, eventEmitter) {
 };
 
 
-},{"../../service/xmpp/XMPPEvents":117,"./moderator":59}],62:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":113,"./moderator":59}],62:[function(require,module,exports){
 /* jshint -W117 */
 
 var JingleSession = require("./JingleSession");
@@ -17945,7 +18049,7 @@ module.exports = function(XMPP, eventEmitter) {
 };
 
 
-},{"../../service/xmpp/XMPPEvents":117,"../RTC/RTCBrowserType":8,"./JingleSession":53}],63:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":113,"../RTC/RTCBrowserType":8,"./JingleSession":53}],63:[function(require,module,exports){
 /* global Strophe */
 module.exports = function () {
 
@@ -18027,7 +18131,7 @@ module.exports = function (XMPP, eventEmitter) {
         }
     });
 }
-},{"../../service/xmpp/XMPPEvents":117}],65:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":113}],65:[function(require,module,exports){
 /* jshint -W117 */
 module.exports = function() {
     Strophe.addConnectionPlugin('rayo',
@@ -18738,7 +18842,7 @@ var XMPP = {
 
 module.exports = XMPP;
 
-},{"../../service/RTC/RTCEvents":108,"../../service/RTC/StreamEventTypes":110,"../../service/xmpp/XMPPEvents":117,"../settings/Settings":47,"./SDP":54,"./moderator":59,"./recording":60,"./strophe.emuc":61,"./strophe.jingle":62,"./strophe.logger":63,"./strophe.moderate":64,"./strophe.rayo":65,"./strophe.util":66,"events":118,"pako":70,"retry":86}],68:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":104,"../../service/RTC/StreamEventTypes":106,"../../service/xmpp/XMPPEvents":113,"../settings/Settings":47,"./SDP":54,"./moderator":59,"./recording":60,"./strophe.emuc":61,"./strophe.jingle":62,"./strophe.logger":63,"./strophe.moderate":64,"./strophe.rayo":65,"./strophe.util":66,"events":114,"pako":70,"retry":86}],68:[function(require,module,exports){
 (function (process){
 /*!
  * async
@@ -19865,7 +19969,7 @@ module.exports = XMPP;
 }());
 
 }).call(this,require('_process'))
-},{"_process":119}],69:[function(require,module,exports){
+},{"_process":115}],69:[function(require,module,exports){
 // i18next, v1.7.7
 // Copyright (c)2014 Jan Mühlemann (jamuhl).
 // Distributed under MIT license
@@ -30202,21 +30306,13 @@ arguments[4][95][0].apply(exports,arguments)
 },{"./grammar":99,"dup":95}],102:[function(require,module,exports){
 arguments[4][96][0].apply(exports,arguments)
 },{"./grammar":99,"dup":96}],103:[function(require,module,exports){
-arguments[4][93][0].apply(exports,arguments)
-},{"dup":93}],104:[function(require,module,exports){
-arguments[4][94][0].apply(exports,arguments)
-},{"./parser":105,"./writer":106,"dup":94}],105:[function(require,module,exports){
-arguments[4][95][0].apply(exports,arguments)
-},{"./grammar":103,"dup":95}],106:[function(require,module,exports){
-arguments[4][96][0].apply(exports,arguments)
-},{"./grammar":103,"dup":96}],107:[function(require,module,exports){
 var MediaStreamType = {
     VIDEO_TYPE: "Video",
 
     AUDIO_TYPE: "Audio"
 };
 module.exports = MediaStreamType;
-},{}],108:[function(require,module,exports){
+},{}],104:[function(require,module,exports){
 var RTCEvents = {
     RTC_READY: "rtc.ready",
     DATA_CHANNEL_OPEN: "rtc.data_channel_open",
@@ -30229,7 +30325,7 @@ var RTCEvents = {
 };
 
 module.exports = RTCEvents;
-},{}],109:[function(require,module,exports){
+},{}],105:[function(require,module,exports){
 var Resolutions = {
     "1080": {
         width: 1920,
@@ -30283,7 +30379,7 @@ var Resolutions = {
     }
 };
 module.exports = Resolutions;
-},{}],110:[function(require,module,exports){
+},{}],106:[function(require,module,exports){
 var StreamEventTypes = {
     EVENT_TYPE_LOCAL_CREATED: "stream.local_created",
 
@@ -30297,7 +30393,7 @@ var StreamEventTypes = {
 };
 
 module.exports = StreamEventTypes;
-},{}],111:[function(require,module,exports){
+},{}],107:[function(require,module,exports){
 var UIEvents = {
     NICKNAME_CHANGED: "UI.nickname_changed",
     SELECTED_ENDPOINT: "UI.selected_endpoint",
@@ -30305,7 +30401,7 @@ var UIEvents = {
     LARGEVIDEO_INIT: "UI.largevideo_init"
 };
 module.exports = UIEvents;
-},{}],112:[function(require,module,exports){
+},{}],108:[function(require,module,exports){
 var AuthenticationEvents = {
     /**
      * Event callback arguments:
@@ -30319,7 +30415,7 @@ var AuthenticationEvents = {
 };
 module.exports = AuthenticationEvents;
 
-},{}],113:[function(require,module,exports){
+},{}],109:[function(require,module,exports){
 var CQEvents = {
     LOCALSTATS_UPDATED: "cq.localstats_updated",
     REMOTESTATS_UPDATED: "cq.remotestats_updated",
@@ -30327,7 +30423,7 @@ var CQEvents = {
 };
 
 module.exports = CQEvents;
-},{}],114:[function(require,module,exports){
+},{}],110:[function(require,module,exports){
 var DesktopSharingEventTypes = {
     INIT: "ds.init",
 
@@ -30337,14 +30433,14 @@ var DesktopSharingEventTypes = {
 };
 
 module.exports = DesktopSharingEventTypes;
-},{}],115:[function(require,module,exports){
+},{}],111:[function(require,module,exports){
 var Events = {
     DTMF_SUPPORT_CHANGED: "members.dtmf_support_changed"
 };
 
 module.exports = Events;
 
-},{}],116:[function(require,module,exports){
+},{}],112:[function(require,module,exports){
 module.exports = {
     getLanguages : function () {
         var languages = [];
@@ -30361,7 +30457,7 @@ module.exports = {
     TR: "tr",
     FR: "fr"
 }
-},{}],117:[function(require,module,exports){
+},{}],113:[function(require,module,exports){
 var XMPPEvents = {
     CONNECTION_FAILED: "xmpp.connection.failed",
     // Indicates an interrupted connection event.
@@ -30416,7 +30512,7 @@ var XMPPEvents = {
     READY_TO_JOIN: 'xmpp.ready_to_join'
 };
 module.exports = XMPPEvents;
-},{}],118:[function(require,module,exports){
+},{}],114:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -30719,76 +30815,43 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],119:[function(require,module,exports){
+},{}],115:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
 var queue = [];
 var draining = false;
-var currentQueue;
-var queueIndex = -1;
-
-function cleanUpNextTick() {
-    draining = false;
-    if (currentQueue.length) {
-        queue = currentQueue.concat(queue);
-    } else {
-        queueIndex = -1;
-    }
-    if (queue.length) {
-        drainQueue();
-    }
-}
 
 function drainQueue() {
     if (draining) {
         return;
     }
-    var timeout = setTimeout(cleanUpNextTick);
     draining = true;
-
+    var currentQueue;
     var len = queue.length;
     while(len) {
         currentQueue = queue;
         queue = [];
-        while (++queueIndex < len) {
-            currentQueue[queueIndex].run();
+        var i = -1;
+        while (++i < len) {
+            currentQueue[i]();
         }
-        queueIndex = -1;
         len = queue.length;
     }
-    currentQueue = null;
     draining = false;
-    clearTimeout(timeout);
 }
-
 process.nextTick = function (fun) {
-    var args = new Array(arguments.length - 1);
-    if (arguments.length > 1) {
-        for (var i = 1; i < arguments.length; i++) {
-            args[i - 1] = arguments[i];
-        }
-    }
-    queue.push(new Item(fun, args));
-    if (queue.length === 1 && !draining) {
+    queue.push(fun);
+    if (!draining) {
         setTimeout(drainQueue, 0);
     }
 };
 
-// v8 likes predictible objects
-function Item(fun, array) {
-    this.fun = fun;
-    this.array = array;
-}
-Item.prototype.run = function () {
-    this.fun.apply(null, this.array);
-};
 process.title = 'browser';
 process.browser = true;
 process.env = {};
 process.argv = [];
 process.version = ''; // empty string to avoid regexp issues
-process.versions = {};
 
 function noop() {}
 

@@ -46,6 +46,8 @@ var JitsiPopover = (function () {
      * Shows the popover
      */
     JitsiPopover.prototype.show = function () {
+        if(!JitsiPopover.enabled)
+            return;
         this.createPopover();
         this.popoverShown = true;
     };
@@ -117,6 +119,8 @@ var JitsiPopover = (function () {
         $(".jitsipopover").remove();
         this.createPopover();
     };
+
+    JitsiPopover.enabled = true;
 
     return JitsiPopover;
 })();

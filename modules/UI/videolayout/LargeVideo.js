@@ -469,6 +469,14 @@ var LargeVideo = {
             largeVideoHeight,
             horizontalIndent, verticalIndent, animate);
     },
+    /**
+     * Resizes the large html elements.
+     * @param animate boolean property that indicates whether the resize should be animated or not.
+     * @param isChatVisible boolean property that indicates whether the chat area is displayed or not.
+     * If that parameter is null the method will check the chat pannel visibility.
+     * @param completeFunction a function to be called when the video space is resized
+     * @returns {*[]} array with the current width and height values of the largeVideo html element.
+     */
     resize: function (animate, isVisible, completeFunction) {
         if(!isEnabled)
             return;
@@ -481,18 +489,8 @@ var LargeVideo = {
         var top = availableHeight / 2 - avatarSize / 4 * 3;
         $('#activeSpeaker').css('top', top);
 
+        this.VideoLayout.resizeVideoSpace(animate, isVisible, completeFunction);
         if(animate) {
-            $('#videospace').animate({
-                    right: window.innerWidth - availableWidth,
-                    width: availableWidth,
-                    height: availableHeight
-                },
-                {
-                    queue: false,
-                    duration: 500,
-                    complete: completeFunction
-                });
-
             $('#largeVideoContainer').animate({
                     width: availableWidth,
                     height: availableHeight
@@ -502,8 +500,6 @@ var LargeVideo = {
                     duration: 500
                 });
         } else {
-            $('#videospace').width(availableWidth);
-            $('#videospace').height(availableHeight);
             $('#largeVideoContainer').width(availableWidth);
             $('#largeVideoContainer').height(availableHeight);
         }
