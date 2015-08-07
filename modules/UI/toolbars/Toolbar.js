@@ -123,8 +123,13 @@ function hangup() {
  * Starts or stops the recording for the conference.
  */
 
-function toggleRecording() {
+function toggleRecording(predefinedToken) {
     APP.xmpp.toggleRecording(function (callback) {
+        if (predefinedToken) {
+            callback(UIUtil.escapeHtml(predefinedToken));
+            return;
+        }
+
         var msg = APP.translation.generateTranslationHTML(
             "dialog.recordingToken");
         var token = APP.translation.translateString("dialog.token");
@@ -567,7 +572,7 @@ var Toolbar = (function (my) {
             }, 1500);
 
             recordingToaster = messageHandler.notify(null, "recording.toaster", null,
-                null, null, {timeOut: 0, closeButton: null});
+                null, null, {timeOut: 0, closeButton: null, tapToDismiss: false});
         } else if (recordingState === 'off') {
             selector.removeClass("icon-recEnable active");
             selector.addClass("icon-recEnable");
@@ -589,6 +594,13 @@ var Toolbar = (function (my) {
             $('#videoConnectionMessage').css({display: "block"});
         }
     };
+
+    // checks whether recording is enabled and whether we have params to start automatically recording
+    my.checkAutoRecord = function () {
+        if (config.enableRecording && config.autoRecord) {
+            toggleRecording(config.autoRecordToken);
+        }
+    }
 
     // Shows or hides SIP calls button
     my.showSipCallButton = function (show) {

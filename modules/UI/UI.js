@@ -541,6 +541,8 @@ function onLocalRoleChanged(jid, info, pres, isModerator) {
         Authentication.closeAuthenticationWindow();
         messageHandler.notify(null, "notify.me",
             'connected', "notify.moderator");
+
+        Toolbar.checkAutoRecord();
     }
 }
 
