@@ -1,8 +1,21 @@
 /* global $ */
 
 /*
- The purpose of this hack is to re-use SSRC of first video stream ever created
- for any video streams created later on. In order to do that this hack:
+ Here we do modifications of local video SSRCs. There are 2 situations we have
+ to handle:
+
+ 1. We generate SSRC for local recvonly video stream. This is the case when we
+    have no local camera and it is not generated automatically, but SSRC=1 is
+    used implicitly. If that happens RTCP packets will be dropped by the JVB
+    and we won't be able to request video key frames correctly.
+
+ 2. A hack to re-use SSRC of the first video stream for any new stream created
+    in future. It turned out that Chrome may keep on using the SSRC of removed
+    video stream in RTCP even though a new one has been created. So we just
+    want to avoid that by re-using it. Jingle 'source-remove'/'source-add'
+    notifications are blocked once first video SSRC is advertised to the focus.
+
+ What this hack does:
 
  1. Stores the SSRC of the first video stream created by
    a) scanning Jingle session-accept/session-invite for existing video SSRC
@@ -32,6 +45,18 @@ var isEnabled = !RTCBrowserType.isFirefox();
  * Stored SSRC of local video stream.
  */
 var localVideoSSRC;
+
+/**
+ * SSRC used for recvonly video stream when we have no local camera.
+ * This is in order to tell Chrome what SSRC should be used in RTCP requests
+ * instead of 1.
+ */
+var localRecvOnlySSRC;
+
+/**
+ * cname for <tt>localRecvOnlySSRC</tt>
+ */
+var localRecvOnlyCName;
 
 /**
  * Method removes <source> element which describes <tt>localVideoSSRC</tt>
@@ -79,21 +104,41 @@ var storeLocalVideoSSRC = function (jingleIq) {
         $(jingleIq.tree())
             .find('>jingle>content[name="video"]>description>source');
 
-    console.info('Video desc: ', videoSSRCs);
-    if (!videoSSRCs.length)
-        return;
-
-    var ssrc = videoSSRCs.attr('ssrc');
-    if (ssrc) {
-        localVideoSSRC = ssrc;
-        console.info(
-            'Stored local video SSRC for future re-use: ' + localVideoSSRC);
-    } else {
-        console.error('No "ssrc" attribute present in <source> element');
-    }
+    videoSSRCs.each(function (idx, ssrcElem) {
+        if (localVideoSSRC)
+            return;
+        // We consider SSRC real only if it has msid attribute
+        // recvonly streams in FF do not have it as well as local SSRCs
+        // we generate for recvonly streams in Chrome
+        var ssrSel = $(ssrcElem);
+        var msid = ssrSel.find('>parameter[name="msid"]');
+        if (msid.length) {
+            var ssrcVal = ssrSel.attr('ssrc');
+            if (ssrcVal) {
+                localVideoSSRC = ssrcVal;
+                console.info('Stored local video SSRC' +
+                             ' for future re-use: ' + localVideoSSRC);
+            }
+        }
+    });
 };
 
-var LocalVideoSSRCHack = {
+/**
+ * Generates new SSRC for local video recvonly stream.
+ * FIXME what about eventual SSRC collision ?
+ */
+function generateRecvonlySSRC() {
+    //
+    localRecvOnlySSRC =
+        Math.random().toString(10).substring(2, 11);
+    localRecvOnlyCName =
+        Math.random().toString(36).substring(2);
+    console.info(
+        "Generated local recvonly SSRC: " + localRecvOnlySSRC +
+        ", cname: " + localRecvOnlyCName);
+}
+
+var LocalSSRCReplacement = {
     /**
      * Method must be called before 'session-initiate' or 'session-invite' is
      * sent. Scans the IQ for local video SSRC and stores it if detected.
@@ -143,6 +188,25 @@ var LocalVideoSSRCHack = {
                     newSdp.raw.replace(
                         new RegExp('a=ssrc:' + newSSRC, 'g'),
                         'a=ssrc:' + localVideoSSRC);
+            }
+        } else {
+            // Make sure we have any SSRC for recvonly video stream
+            var sdp = new SDP(localDescription.sdp);
+
+            if (sdp.media[1] && sdp.media[1].indexOf('a=ssrc:') === -1 &&
+                sdp.media[1].indexOf('a=recvonly') !== -1) {
+
+                if (!localRecvOnlySSRC) {
+                    generateRecvonlySSRC();
+                }
+
+                console.info('No SSRC in video recvonly stream' +
+                             ' - adding SSRC: ' + localRecvOnlySSRC);
+
+                sdp.media[1] += 'a=ssrc:' + localRecvOnlySSRC +
+                                ' cname:' + localRecvOnlyCName + '\r\n';
+
+                localDescription.sdp = sdp.session + sdp.media.join('');
             }
         }
         return localDescription;
@@ -196,4 +260,4 @@ var LocalVideoSSRCHack = {
     }
 };
 
-module.exports = LocalVideoSSRCHack;
+module.exports = LocalSSRCReplacement;

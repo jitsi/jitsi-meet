@@ -7,7 +7,7 @@ var async = require("async");
 var transform = require("sdp-transform");
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 var RTCBrowserType = require("../RTC/RTCBrowserType");
-var VideoSSRCHack = require("./VideoSSRCHack");
+var SSRCReplacement = require("./LocalSSRCReplacement");
 
 // Jingle stuff
 function JingleSession(me, sid, connection, service, eventEmitter) {
@@ -254,7 +254,7 @@ JingleSession.prototype.accept = function () {
             //console.log('setLocalDescription success');
             self.setLocalDescription();
 
-            VideoSSRCHack.processSessionInit(accept);
+            SSRCReplacement.processSessionInit(accept);
 
             self.connection.sendIQ(accept,
                 function () {
@@ -348,7 +348,7 @@ JingleSession.prototype.sendIceCandidate = function (candidate) {
                     self.initiator == self.me ? 'initiator' : 'responder',
                     ssrc);
 
-                VideoSSRCHack.processSessionInit(init);
+                SSRCReplacement.processSessionInit(init);
 
                 self.connection.sendIQ(init,
                     function () {
@@ -467,7 +467,7 @@ JingleSession.prototype.createdOffer = function (sdp) {
             this.initiator == this.me ? 'initiator' : 'responder',
             this.localStreamsSSRC);
 
-        VideoSSRCHack.processSessionInit(init);
+        SSRCReplacement.processSessionInit(init);
 
         self.connection.sendIQ(init,
             function () {
@@ -733,7 +733,7 @@ JingleSession.prototype.createdAnswer = function (sdp, provisional) {
                     self.initiator == self.me ? 'initiator' : 'responder',
                     ssrcs);
 
-                VideoSSRCHack.processSessionInit(accept);
+                SSRCReplacement.processSessionInit(accept);
 
                 self.connection.sendIQ(accept,
                     function () {
@@ -1135,7 +1135,7 @@ JingleSession.prototype.notifyMySSRCUpdate = function (old_sdp, new_sdp) {
     // Let 'source-remove' IQ through the hack and see if we're allowed to send
     // it in the current form
     if (removed)
-        remove = VideoSSRCHack.processSourceRemove(remove);
+        remove = SSRCReplacement.processSourceRemove(remove);
 
     if (removed && remove) {
         console.info("Sending source-remove", remove);
@@ -1166,7 +1166,7 @@ JingleSession.prototype.notifyMySSRCUpdate = function (old_sdp, new_sdp) {
     // Let 'source-add' IQ through the hack and see if we're allowed to send
     // it in the current form
     if (added)
-        add = VideoSSRCHack.processSourceAdd(add);
+        add = SSRCReplacement.processSourceAdd(add);
 
     if (added && add) {
         console.info("Sending source-add", add);
