@@ -66,9 +66,11 @@ LocalStream.prototype.setMute = function (mute)
     var eventType = isAudio ? RTCEvents.AUDIO_MUTE : RTCEvents.VIDEO_MUTE;
 
     if ((window.location.protocol != "https:" && this.isGUMStream) ||
-        (isAudio && this.isGUMStream) || this.videoType === "screen") {
-        var tracks = this.getTracks();
+        (isAudio && this.isGUMStream) || this.videoType === "screen" ||
+        // FIXME FF does not support 'removeStream' method used to mute
+        RTCBrowserType.isFirefox()) {
 
+        var tracks = this.getTracks();
         for (var idx = 0; idx < tracks.length; idx++) {
             tracks[idx].enabled = !mute;
         }

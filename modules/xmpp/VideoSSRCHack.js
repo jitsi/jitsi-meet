@@ -19,6 +19,14 @@
  */
 
 var SDP = require('./SDP');
+var RTCBrowserType = require('../RTC/RTCBrowserType');
+
+/**
+ * The hack is enabled on all browsers except FF by default
+ * FIXME finish the hack once removeStream method is implemented in FF
+ * @type {boolean}
+ */
+var isEnabled = !RTCBrowserType.isFirefox();
 
 /**
  * Stored SSRC of local video stream.
@@ -94,6 +102,9 @@ var LocalVideoSSRCHack = {
      *        which will be scanned for local video SSRC.
      */
     processSessionInit: function (sessionInit) {
+        if (!isEnabled)
+            return;
+
         if (localVideoSSRC) {
             console.error("Local SSRC stored already: " + localVideoSSRC);
             return;
@@ -109,6 +120,9 @@ var LocalVideoSSRCHack = {
      * @returns modified <tt>localDescription</tt> object.
      */
     mungeLocalVideoSSRC: function (localDescription) {
+        if (!isEnabled)
+            return localDescription;
+
         // IF we have local video SSRC stored make sure it is replaced
         // with old SSRC
         if (localVideoSSRC) {
@@ -144,6 +158,9 @@ var LocalVideoSSRCHack = {
      *          a Strophe IQ Builder instance, but DOM element tree.
      */
     processSourceAdd: function (sourceAdd) {
+        if (!isEnabled)
+            return sourceAdd;
+
         if (!localVideoSSRC) {
             // Store local SSRC if available
             storeLocalVideoSSRC(sourceAdd);
@@ -163,7 +180,19 @@ var LocalVideoSSRCHack = {
      *          a Strophe IQ Builder instance, but DOM element tree.
      */
     processSourceRemove: function (sourceRemove) {
+        if (!isEnabled)
+            return sourceRemove;
+
         return filterOutSource(sourceRemove, 'source-remove');
+    },
+
+    /**
+     * Turns the hack on or off
+     * @param enabled <tt>true</tt> to enable the hack or <tt>false</tt>
+     *                to disable it
+     */
+    setEnabled: function (enabled) {
+        isEnabled = enabled;
     }
 };
 
