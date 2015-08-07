@@ -29,6 +29,11 @@ constructor.
 ``` 
 If you don't specify room the user will enter in new conference with random room name.
 
+You can enable the "film strip only" mode(only the small videos are visible) by setting 6th parameter to ```true```:
+```javascript
+    var api = new JitsiMeetExternalAPI(domain, room, width, height, htmlElement, true);
+``` 
+
 Controlling embedded Jitsi Meet Conference
 =========
 
