@@ -13,25 +13,14 @@ var SSRCReplacement = require("./LocalSSRCReplacement");
 // Jingle stuff
 function JingleSessionPC(me, sid, connection, service, eventEmitter) {
     JingleSession.call(this, me, sid, connection, service, eventEmitter);
-    this.me = me;
-    this.sid = sid;
-    this.connection = connection;
     this.initiator = null;
     this.responder = null;
-    this.isInitiator = null;
     this.peerjid = null;
     this.state = null;
     this.localSDP = null;
     this.remoteSDP = null;
     this.relayedStreams = [];
-    this.startTime = null;
-    this.stopTime = null;
-    this.media_constraints = null;
     this.pc_constraints = null;
-    this.ice_config = {};
-    this.drip_container = [];
-    this.service = service;
-    this.eventEmitter = eventEmitter;
 
     this.usetrickle = true;
     this.usepranswer = false; // early transport warmup -- mind you, this might fail. depends on webrtc issue 1718
@@ -88,25 +77,15 @@ JingleSessionPC.prototype.updateModifySourcesQueue = function() {
     }
 };
 
-JingleSessionPC.prototype.initiate = function (peerjid, isInitiator) {
+JingleSessionPC.prototype.doInitialize = function () {
     var self = this;
-    if (this.state !== null) {
-        console.error('attempt to initiate on session ' + this.sid +
-            'in state ' + this.state);
-        return;
-    }
-    this.isInitiator = isInitiator;
-    this.state = 'pending';
-    this.initiator = isInitiator ? this.me : peerjid;
-    this.responder = !isInitiator ? this.me : peerjid;
-    this.peerjid = peerjid;
+
     this.hadstuncandidate = false;
     this.hadturncandidate = false;
     this.lasticecandidate = false;
     this.isreconnect = false;
 
-    this.peerconnection
-        = new TraceablePeerConnection(
+    this.peerconnection = new TraceablePeerConnection(
             this.connection.jingle.ice_config,
             this.connection.jingle.pc_constraints,
             this);
@@ -147,7 +126,6 @@ JingleSessionPC.prototype.initiate = function (peerjid, isInitiator) {
         self.updateModifySourcesQueue();
         switch (self.peerconnection.iceConnectionState) {
             case 'connected':
-                self.startTime = new Date();
 
                 // Informs interested parties that the connection has been restored.
                 if (self.peerconnection.signalingState === 'stable' && self.isreconnect)
@@ -157,7 +135,6 @@ JingleSessionPC.prototype.initiate = function (peerjid, isInitiator) {
                 break;
             case 'disconnected':
                 self.isreconnect = true;
-                self.stopTime = new Date();
                 // Informs interested parties that the connection has been interrupted.
                 if (self.peerconnection.signalingState === 'stable')
                     self.eventEmitter.emit(XMPPEvents.CONNECTION_INTERRUPTED);

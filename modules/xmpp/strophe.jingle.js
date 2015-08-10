@@ -110,7 +110,7 @@ module.exports = function(XMPP, eventEmitter) {
                     sess.pc_constraints = this.pc_constraints;
                     sess.ice_config = this.ice_config;
 
-                    sess.initiate(fromJid, false);
+                    sess.initialize(fromJid, false);
                     // FIXME: setRemoteDescription should only be done when this call is to be accepted
                     sess.setOffer($(iq).find('>jingle'));
 
@@ -200,7 +200,7 @@ module.exports = function(XMPP, eventEmitter) {
             sess.pc_constraints = this.pc_constraints;
             sess.ice_config = this.ice_config;
 
-            sess.initiate(peerjid, true);
+            sess.initialize(peerjid, true);
             this.sessions[sess.sid] = sess;
             this.jid2session[sess.peerjid] = sess;
             sess.sendOffer();
