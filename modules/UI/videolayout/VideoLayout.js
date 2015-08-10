@@ -36,13 +36,9 @@ var VideoLayout = (function (my) {
     my.init = function (emitter) {
         eventEmitter = emitter;
         localVideoThumbnail = new LocalVideo(VideoLayout);
-        if (interfaceConfig.filmStripOnly)
-        {
-            showLargeVideo = false;
+        if (interfaceConfig.filmStripOnly) {
             LargeVideo.disable();
-        }
-        else
-        {
+        } else {
             LargeVideo.init(VideoLayout, emitter);
         }
 
