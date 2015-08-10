@@ -10,7 +10,7 @@ var RTCBrowserType = require("../RTC/RTCBrowserType");
 var SSRCReplacement = require("./LocalSSRCReplacement");
 
 // Jingle stuff
-function JingleSession(me, sid, connection, service, eventEmitter) {
+function JingleSessionPC(me, sid, connection, service, eventEmitter) {
     this.me = me;
     this.sid = sid;
     this.connection = connection;
@@ -66,7 +66,7 @@ function JingleSession(me, sid, connection, service, eventEmitter) {
     this.modifySourcesQueue.pause();
 }
 
-JingleSession.prototype.updateModifySourcesQueue = function() {
+JingleSessionPC.prototype.updateModifySourcesQueue = function() {
     var signalingState = this.peerconnection.signalingState;
     var iceConnectionState = this.peerconnection.iceConnectionState;
     if (signalingState === 'stable' && iceConnectionState === 'connected') {
@@ -76,7 +76,7 @@ JingleSession.prototype.updateModifySourcesQueue = function() {
     }
 };
 
-JingleSession.prototype.initiate = function (peerjid, isInitiator) {
+JingleSessionPC.prototype.initiate = function (peerjid, isInitiator) {
     var self = this;
     if (this.state !== null) {
         console.error('attempt to initiate on session ' + this.sid +
@@ -211,7 +211,7 @@ function onIceConnectionStateChange(sid, session) {
     }
 }
 
-JingleSession.prototype.accept = function () {
+JingleSessionPC.prototype.accept = function () {
     this.state = 'active';
 
     var pranswer = this.peerconnection.localDescription;
@@ -268,7 +268,7 @@ JingleSession.prototype.accept = function () {
                         reason: $(stanza).find('error :first')[0].tagName
                     }:{};
                     error.source = 'answer';
-                    JingleSession.onJingleError(self.sid, error);
+                    JingleSessionPC.onJingleError(self.sid, error);
                 },
                 10000);
         },
@@ -279,7 +279,7 @@ JingleSession.prototype.accept = function () {
     );
 };
 
-JingleSession.prototype.terminate = function (reason) {
+JingleSessionPC.prototype.terminate = function (reason) {
     this.state = 'ended';
     this.reason = reason;
     this.peerconnection.close();
@@ -289,11 +289,11 @@ JingleSession.prototype.terminate = function (reason) {
     }
 };
 
-JingleSession.prototype.active = function () {
+JingleSessionPC.prototype.active = function () {
     return this.state == 'active';
 };
 
-JingleSession.prototype.sendIceCandidate = function (candidate) {
+JingleSessionPC.prototype.sendIceCandidate = function (candidate) {
     var self = this;
     if (candidate && !this.lasticecandidate) {
         var ice = SDPUtil.iceparams(this.localSDP.media[candidate.sdpMLineIndex], this.localSDP.session);
@@ -365,7 +365,7 @@ JingleSession.prototype.sendIceCandidate = function (candidate) {
                             reason: $(stanza).find('error :first')[0].tagName,
                         }:{};
                         error.source = 'offer';
-                        JingleSession.onJingleError(self.sid, error);
+                        JingleSessionPC.onJingleError(self.sid, error);
                     },
                     10000);
             }
@@ -381,7 +381,7 @@ JingleSession.prototype.sendIceCandidate = function (candidate) {
     }
 };
 
-JingleSession.prototype.sendIceCandidates = function (candidates) {
+JingleSessionPC.prototype.sendIceCandidates = function (candidates) {
     console.log('sendIceCandidates', candidates);
     var cand = $iq({to: this.peerjid, type: 'set'})
         .c('jingle', {xmlns: 'urn:xmpp:jingle:1',
@@ -430,13 +430,13 @@ JingleSession.prototype.sendIceCandidates = function (candidates) {
                 reason: $(stanza).find('error :first')[0].tagName,
             }:{};
             error.source = 'transportinfo';
-            JingleSession.onJingleError(this.sid, error);
+            JingleSessionPC.onJingleError(this.sid, error);
         },
         10000);
 };
 
 
-JingleSession.prototype.sendOffer = function () {
+JingleSessionPC.prototype.sendOffer = function () {
     //console.log('sendOffer...');
     var self = this;
     this.peerconnection.createOffer(function (sdp) {
@@ -450,7 +450,7 @@ JingleSession.prototype.sendOffer = function () {
 };
 
 // FIXME createdOffer is never used in jitsi-meet
-JingleSession.prototype.createdOffer = function (sdp) {
+JingleSessionPC.prototype.createdOffer = function (sdp) {
     //console.log('createdOffer', sdp);
     var self = this;
     this.localSDP = new SDP(sdp.sdp);
@@ -483,7 +483,7 @@ JingleSession.prototype.createdOffer = function (sdp) {
                     reason: $(stanza).find('error :first')[0].tagName,
                 }:{};
                 error.source = 'offer';
-                JingleSession.onJingleError(self.sid, error);
+                JingleSessionPC.onJingleError(self.sid, error);
             },
             10000);
     }
@@ -513,7 +513,7 @@ JingleSession.prototype.createdOffer = function (sdp) {
     }
 };
 
-JingleSession.prototype.readSsrcInfo = function (contents) {
+JingleSessionPC.prototype.readSsrcInfo = function (contents) {
     var self = this;
     $(contents).each(function (idx, content) {
         var name = $(content).attr('name');
@@ -531,11 +531,11 @@ JingleSession.prototype.readSsrcInfo = function (contents) {
     });
 };
 
-JingleSession.prototype.getSsrcOwner = function (ssrc) {
+JingleSessionPC.prototype.getSsrcOwner = function (ssrc) {
     return this.ssrcOwners[ssrc];
 };
 
-JingleSession.prototype.setRemoteDescription = function (elem, desctype) {
+JingleSessionPC.prototype.setRemoteDescription = function (elem, desctype) {
     //console.log('setting remote description... ', desctype);
     this.remoteSDP = new SDP('');
     this.remoteSDP.fromJingle(elem);
@@ -575,12 +575,12 @@ JingleSession.prototype.setRemoteDescription = function (elem, desctype) {
         },
         function (e) {
             console.error('setRemoteDescription error', e);
-            JingleSession.onJingleFatalError(self, e);
+            JingleSessionPC.onJingleFatalError(self, e);
         }
     );
 };
 
-JingleSession.prototype.addIceCandidate = function (elem) {
+JingleSessionPC.prototype.addIceCandidate = function (elem) {
     var self = this;
     if (this.peerconnection.signalingState == 'closed') {
         return;
@@ -688,7 +688,7 @@ JingleSession.prototype.addIceCandidate = function (elem) {
     });
 };
 
-JingleSession.prototype.sendAnswer = function (provisional) {
+JingleSessionPC.prototype.sendAnswer = function (provisional) {
     //console.log('createAnswer', provisional);
     var self = this;
     this.peerconnection.createAnswer(
@@ -703,7 +703,7 @@ JingleSession.prototype.sendAnswer = function (provisional) {
     );
 };
 
-JingleSession.prototype.createdAnswer = function (sdp, provisional) {
+JingleSessionPC.prototype.createdAnswer = function (sdp, provisional) {
     //console.log('createAnswer callback');
     var self = this;
     this.localSDP = new SDP(sdp.sdp);
@@ -747,7 +747,7 @@ JingleSession.prototype.createdAnswer = function (sdp, provisional) {
                             reason: $(stanza).find('error :first')[0].tagName,
                         }:{};
                         error.source = 'answer';
-                        JingleSession.onJingleError(self.sid, error);
+                        JingleSessionPC.onJingleError(self.sid, error);
                     },
                     10000);
     }
@@ -777,7 +777,7 @@ JingleSession.prototype.createdAnswer = function (sdp, provisional) {
     }
 };
 
-JingleSession.prototype.sendTerminate = function (reason, text) {
+JingleSessionPC.prototype.sendTerminate = function (reason, text) {
     var self = this,
         term = $iq({to: this.peerjid,
             type: 'set'})
@@ -815,7 +815,7 @@ JingleSession.prototype.sendTerminate = function (reason, text) {
     }
 };
 
-JingleSession.prototype.addSource = function (elem, fromJid) {
+JingleSessionPC.prototype.addSource = function (elem, fromJid) {
 
     var self = this;
     // FIXME: dirty waiting
@@ -897,7 +897,7 @@ JingleSession.prototype.addSource = function (elem, fromJid) {
     });
 };
 
-JingleSession.prototype.removeSource = function (elem, fromJid) {
+JingleSessionPC.prototype.removeSource = function (elem, fromJid) {
 
     var self = this;
     // FIXME: dirty waiting
@@ -968,7 +968,7 @@ JingleSession.prototype.removeSource = function (elem, fromJid) {
     });
 };
 
-JingleSession.prototype._modifySources = function (successCallback, queueCallback) {
+JingleSessionPC.prototype._modifySources = function (successCallback, queueCallback) {
     var self = this;
 
     if (this.peerconnection.signalingState == 'closed') return;
@@ -1074,7 +1074,7 @@ JingleSession.prototype._modifySources = function (successCallback, queueCallbac
  * @param oldStream old video stream of this session.
  * @param success_callback callback executed after successful stream switch.
  */
-JingleSession.prototype.switchStreams = function (new_stream, oldStream, success_callback, isAudio) {
+JingleSessionPC.prototype.switchStreams = function (new_stream, oldStream, success_callback, isAudio) {
 
     var self = this;
 
@@ -1112,7 +1112,7 @@ JingleSession.prototype.switchStreams = function (new_stream, oldStream, success
  * @param old_sdp SDP object for old description.
  * @param new_sdp SDP object for new description.
  */
-JingleSession.prototype.notifyMySSRCUpdate = function (old_sdp, new_sdp) {
+JingleSessionPC.prototype.notifyMySSRCUpdate = function (old_sdp, new_sdp) {
 
     if (!(this.peerconnection.signalingState == 'stable' &&
         this.peerconnection.iceConnectionState == 'connected')){
@@ -1197,7 +1197,7 @@ JingleSession.prototype.notifyMySSRCUpdate = function (old_sdp, new_sdp) {
  * specifies whether the method was initiated in response to a user command (in
  * contrast to an automatic decision made by the application logic)
  */
-JingleSession.prototype.setVideoMute = function (mute, callback, options) {
+JingleSessionPC.prototype.setVideoMute = function (mute, callback, options) {
     var byUser;
 
     if (options) {
@@ -1237,11 +1237,11 @@ JingleSession.prototype.setVideoMute = function (mute, callback, options) {
     });
 };
 
-JingleSession.prototype.hardMuteVideo = function (muted) {
+JingleSessionPC.prototype.hardMuteVideo = function (muted) {
     this.pendingop = muted ? 'mute' : 'unmute';
 };
 
-JingleSession.prototype.sendMute = function (muted, content) {
+JingleSessionPC.prototype.sendMute = function (muted, content) {
     var info = $iq({to: this.peerjid,
         type: 'set'})
         .c('jingle', {xmlns: 'urn:xmpp:jingle:1',
@@ -1256,7 +1256,7 @@ JingleSession.prototype.sendMute = function (muted, content) {
     this.connection.send(info);
 };
 
-JingleSession.prototype.sendRinging = function () {
+JingleSessionPC.prototype.sendRinging = function () {
     var info = $iq({to: this.peerjid,
         type: 'set'})
         .c('jingle', {xmlns: 'urn:xmpp:jingle:1',
@@ -1267,7 +1267,7 @@ JingleSession.prototype.sendRinging = function () {
     this.connection.send(info);
 };
 
-JingleSession.prototype.getStats = function (interval) {
+JingleSessionPC.prototype.getStats = function (interval) {
     var self = this;
     var recv = {audio: 0, video: 0};
     var lost = {audio: 0, video: 0};
@@ -1313,12 +1313,12 @@ JingleSession.prototype.getStats = function (interval) {
     return this.statsinterval;
 };
 
-JingleSession.onJingleError = function (session, error)
+JingleSessionPC.onJingleError = function (session, error)
 {
     console.error("Jingle error", error);
 }
 
-JingleSession.onJingleFatalError = function (session, error)
+JingleSessionPC.onJingleFatalError = function (session, error)
 {
     this.service.sessionTerminated = true;
     this.connection.emuc.doLeave();
@@ -1326,7 +1326,7 @@ JingleSession.onJingleFatalError = function (session, error)
     this.eventEmitter.emit(XMPPEvents.JINGLE_FATAL_ERROR, session, error);
 }
 
-JingleSession.prototype.setLocalDescription = function () {
+JingleSessionPC.prototype.setLocalDescription = function () {
     var self = this;
     var newssrcs = [];
     var session = transform.parse(this.peerconnection.localDescription.sdp);
@@ -1401,7 +1401,7 @@ function sendKeyframe(pc) {
 }
 
 
-JingleSession.prototype.remoteStreamAdded = function (data, times) {
+JingleSessionPC.prototype.remoteStreamAdded = function (data, times) {
     var self = this;
     var thessrc;
     var streamId = APP.RTC.getStreamID(data.stream);
@@ -1453,4 +1453,4 @@ JingleSession.prototype.remoteStreamAdded = function (data, times) {
     }
 }
 
-module.exports = JingleSession;
+module.exports = JingleSessionPC;
