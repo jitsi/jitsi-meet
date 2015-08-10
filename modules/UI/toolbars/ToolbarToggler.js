@@ -53,7 +53,7 @@ var ToolbarToggler = {
      * Shows the main toolbar.
      */
     showToolbar: function () {
-        if(config.filmStripOnly)
+        if (interfaceConfig.filmStripOnly)
             return;
         var header = $("#header"),
             bottomToolbar = $("#bottomToolbar");
@@ -90,7 +90,7 @@ var ToolbarToggler = {
      * @param isDock indicates what operation to perform
      */
     dockToolbar: function (isDock) {
-        if(config.filmStripOnly)
+        if (interfaceConfig.filmStripOnly)
             return;
 
         if (isDock) {

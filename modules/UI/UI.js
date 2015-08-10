@@ -331,7 +331,7 @@ function registerListeners() {
         AudioLevels.init();
     });
 
-    if (!config.filmStripOnly) {
+    if (!interfaceConfig.filmStripOnly) {
         APP.xmpp.addListener(XMPPEvents.MESSAGE_RECEIVED, updateChatConversation);
         APP.xmpp.addListener(XMPPEvents.CHAT_ERROR_RECEIVED, chatAddError);
         // Listens for video interruption events.
@@ -399,7 +399,7 @@ UI.start = function (init) {
 
     bindEvents();
     setupPrezi();
-    if(!config.filmStripOnly) {
+    if (!interfaceConfig.filmStripOnly) {
         $("#videospace").mousemove(function () {
             return ToolbarToggler.showToolbar();
         });
@@ -442,7 +442,7 @@ UI.start = function (init) {
 
     init();
 
-    if(!config.filmStripOnly) {
+    if (!interfaceConfig.filmStripOnly) {
         toastr.options = {
             "closeButton": true,
             "debug": false,

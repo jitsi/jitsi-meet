@@ -53,7 +53,7 @@ var JitsiMeetExternalAPI = (function()
             this.url += room_name;
         this.url += "#external=true";
         if(filmStripOnly)
-            this.url += "&config.filmStripOnly=true";
+            this.url += "&interfaceConfig.filmStripOnly=true";
 
         JitsiMeetExternalAPI.id++;
 
