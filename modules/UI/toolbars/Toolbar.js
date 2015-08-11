@@ -255,6 +255,19 @@ function callSipButtonClicked() {
 var Toolbar = (function (my) {
 
     my.init = function (ui) {
+        if (interfaceConfig.TOOLBAR_DISPLAY_MODE === 'minimal') {
+            var btnToHide = ["#toolbar_button_security",
+                "#toolbar_button_link",
+                "#chat_button",
+                "#prezi_button",
+                "#bottom_toolbar_chat",
+                "#bottom_toolbar_contact_list"];
+            $.each(btnToHide, function (idx, btn) {
+                $(btn).hide();
+                $(btn).next('.header_button_separator').hide();
+            });
+        }
+
         for(var k in buttonHandlers)
             $("#" + k).click(buttonHandlers[k]);
         UI = ui;
