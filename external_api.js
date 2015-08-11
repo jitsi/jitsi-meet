@@ -23,9 +23,12 @@ var JitsiMeetExternalAPI = (function()
      * @param width width of the iframe
      * @param height height of the iframe
      * @param parent_node the node that will contain the iframe
+     * @param filmStripOnly if the value is true only the small videos will be
+     * visible.
      * @constructor
      */
-    function JitsiMeetExternalAPI(domain, room_name, width, height, parentNode) {
+    function JitsiMeetExternalAPI(domain, room_name, width, height, parentNode,
+        filmStripOnly) {
         if(!width || width < MIN_WIDTH)
             width = MIN_WIDTH;
         if(!height || height < MIN_HEIGHT)
@@ -49,6 +52,9 @@ var JitsiMeetExternalAPI = (function()
         if(room_name)
             this.url += room_name;
         this.url += "#external=true";
+        if(filmStripOnly)
+            this.url += "&interfaceConfig.filmStripOnly=true";
+
         JitsiMeetExternalAPI.id++;
 
         this.frame = document.createElement("iframe");

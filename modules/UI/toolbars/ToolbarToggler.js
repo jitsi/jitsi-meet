@@ -53,6 +53,8 @@ var ToolbarToggler = {
      * Shows the main toolbar.
      */
     showToolbar: function () {
+        if (interfaceConfig.filmStripOnly)
+            return;
         var header = $("#header"),
             bottomToolbar = $("#bottomToolbar");
         if (!header.is(':visible') || !bottomToolbar.is(":visible")) {
@@ -88,6 +90,9 @@ var ToolbarToggler = {
      * @param isDock indicates what operation to perform
      */
     dockToolbar: function (isDock) {
+        if (interfaceConfig.filmStripOnly)
+            return;
+
         if (isDock) {
             // First make sure the toolbar is shown.
             if (!$('#header').is(':visible')) {

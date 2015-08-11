@@ -42,85 +42,96 @@ RemoteVideo.prototype.addRemoteVideoContainer = function() {
  * @param jid the jid indicating the video for which we're adding a menu.
  * @param parentElement the parent element where this menu will be added
  */
-RemoteVideo.prototype.addRemoteVideoMenu = function () {
-    var spanElement = document.createElement('span');
-    spanElement.className = 'remotevideomenu';
 
-    this.container.appendChild(spanElement);
+if (!interfaceConfig.filmStripOnly) {
+    RemoteVideo.prototype.addRemoteVideoMenu = function () {
+        var spanElement = document.createElement('span');
+        spanElement.className = 'remotevideomenu';
 
-    var menuElement = document.createElement('i');
-    menuElement.className = 'fa fa-angle-down';
-    menuElement.title = 'Remote user controls';
-    spanElement.appendChild(menuElement);
+        this.container.appendChild(spanElement);
+
+        var menuElement = document.createElement('i');
+        menuElement.className = 'fa fa-angle-down';
+        menuElement.title = 'Remote user controls';
+        spanElement.appendChild(menuElement);
 
 
-    var popupmenuElement = document.createElement('ul');
-    popupmenuElement.className = 'popupmenu';
-    popupmenuElement.id = 'remote_popupmenu_' + this.getResourceJid();
-    spanElement.appendChild(popupmenuElement);
+        var popupmenuElement = document.createElement('ul');
+        popupmenuElement.className = 'popupmenu';
+        popupmenuElement.id = 'remote_popupmenu_' + this.getResourceJid();
+        spanElement.appendChild(popupmenuElement);
 
-    var muteMenuItem = document.createElement('li');
-    var muteLinkItem = document.createElement('a');
+        var muteMenuItem = document.createElement('li');
+        var muteLinkItem = document.createElement('a');
 
-    var mutedIndicator = "<i style='float:left;' class='icon-mic-disabled'></i>";
+        var mutedIndicator = "<i style='float:left;' " +
+            "class='icon-mic-disabled'></i>";
 
-    if (!this.isMuted) {
-        muteLinkItem.innerHTML = mutedIndicator +
-            " <div style='width: 90px;margin-left: 20px;' data-i18n='videothumbnail.domute'></div>";
-        muteLinkItem.className = 'mutelink';
-    }
-    else {
-        muteLinkItem.innerHTML = mutedIndicator +
-            " <div style='width: 90px;margin-left: 20px;' data-i18n='videothumbnail.muted'></div>";
-        muteLinkItem.className = 'mutelink disabled';
-    }
-
-    var self = this;
-    muteLinkItem.onclick = function(){
-        if ($(this).attr('disabled') != undefined) {
-            event.preventDefault();
-        }
-        var isMute = self.isMuted == true;
-        APP.xmpp.setMute(self.peerJid, !isMute);
-
-        popupmenuElement.setAttribute('style', 'display:none;');
-
-        if (isMute) {
-            this.innerHTML = mutedIndicator +
-                " <div style='width: 90px;margin-left: 20px;' data-i18n='videothumbnail.muted'></div>";
-            this.className = 'mutelink disabled';
+        if (!this.isMuted) {
+            muteLinkItem.innerHTML = mutedIndicator +
+                " <div style='width: 90px;margin-left: 20px;' " +
+                "data-i18n='videothumbnail.domute'></div>";
+            muteLinkItem.className = 'mutelink';
         }
         else {
-            this.innerHTML = mutedIndicator +
-                " <div style='width: 90px;margin-left: 20px;' data-i18n='videothumbnail.domute'></div>";
-            this.className = 'mutelink';
+            muteLinkItem.innerHTML = mutedIndicator +
+                " <div style='width: 90px;margin-left: 20px;' " +
+                "data-i18n='videothumbnail.muted'></div>";
+            muteLinkItem.className = 'mutelink disabled';
         }
+
+        var self = this;
+        muteLinkItem.onclick = function(){
+            if ($(this).attr('disabled') != undefined) {
+                event.preventDefault();
+            }
+            var isMute = self.isMuted == true;
+            APP.xmpp.setMute(self.peerJid, !isMute);
+
+            popupmenuElement.setAttribute('style', 'display:none;');
+
+            if (isMute) {
+                this.innerHTML = mutedIndicator +
+                    " <div style='width: 90px;margin-left: 20px;' " +
+                    "data-i18n='videothumbnail.muted'></div>";
+                this.className = 'mutelink disabled';
+            }
+            else {
+                this.innerHTML = mutedIndicator +
+                    " <div style='width: 90px;margin-left: 20px;' " +
+                    "data-i18n='videothumbnail.domute'></div>";
+                this.className = 'mutelink';
+            }
+        };
+
+        muteMenuItem.appendChild(muteLinkItem);
+        popupmenuElement.appendChild(muteMenuItem);
+
+        var ejectIndicator = "<i style='float:left;' class='fa fa-eject'></i>";
+
+        var ejectMenuItem = document.createElement('li');
+        var ejectLinkItem = document.createElement('a');
+        var ejectText = "<div style='width: 90px;margin-left: 20px;' " +
+            "data-i18n='videothumbnail.kick'>&nbsp;</div>";
+        ejectLinkItem.innerHTML = ejectIndicator + ' ' + ejectText;
+        ejectLinkItem.onclick = function(){
+            APP.xmpp.eject(self.peerJid);
+            popupmenuElement.setAttribute('style', 'display:none;');
+        };
+
+        ejectMenuItem.appendChild(ejectLinkItem);
+        popupmenuElement.appendChild(ejectMenuItem);
+
+        var paddingSpan = document.createElement('span');
+        paddingSpan.className = 'popupmenuPadding';
+        popupmenuElement.appendChild(paddingSpan);
+        APP.translation.translateElement(
+            $("#" + popupmenuElement.id + " > li > a > div"));
     };
 
-    muteMenuItem.appendChild(muteLinkItem);
-    popupmenuElement.appendChild(muteMenuItem);
-
-    var ejectIndicator = "<i style='float:left;' class='fa fa-eject'></i>";
-
-    var ejectMenuItem = document.createElement('li');
-    var ejectLinkItem = document.createElement('a');
-    var ejectText = "<div style='width: 90px;margin-left: 20px;' data-i18n='videothumbnail.kick'>&nbsp;</div>";
-    ejectLinkItem.innerHTML = ejectIndicator + ' ' + ejectText;
-    ejectLinkItem.onclick = function(){
-        APP.xmpp.eject(self.peerJid);
-        popupmenuElement.setAttribute('style', 'display:none;');
-    };
-
-    ejectMenuItem.appendChild(ejectLinkItem);
-    popupmenuElement.appendChild(ejectMenuItem);
-
-    var paddingSpan = document.createElement('span');
-    paddingSpan.className = 'popupmenuPadding';
-    popupmenuElement.appendChild(paddingSpan);
-    APP.translation.translateElement(
-        $("#" + popupmenuElement.id + " > li > a > div"));
-};
-
+} else {
+    RemoteVideo.prototype.addRemoteVideoMenu = function() {}
+}
 
 /**
  * Removes the remote stream element corresponding to the given stream and

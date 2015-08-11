@@ -1,7 +1,7 @@
 var RTC = require('../RTC/RTC');
 var RTCBrowserType = require("../RTC/RTCBrowserType.js");
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
-var VideoSSRCHack = require("./VideoSSRCHack");
+var SSRCReplacement = require("./LocalSSRCReplacement");
 
 function TraceablePeerConnection(ice_config, constraints, session) {
     var self = this;
@@ -213,7 +213,7 @@ if (TraceablePeerConnection.prototype.__defineGetter__ !== undefined) {
         function() {
             var desc = this.peerconnection.localDescription;
 
-            desc = VideoSSRCHack.mungeLocalVideoSSRC(desc);
+            desc = SSRCReplacement.mungeLocalVideoSSRC(desc);
             
             this.trace('getLocalDescription::preTransform', dumpSDP(desc));
 
@@ -372,7 +372,7 @@ TraceablePeerConnection.prototype.createOffer
                 self.trace('createOfferOnSuccess::postTransform (Plan B)', dumpSDP(offer));
             }
 
-            offer = VideoSSRCHack.mungeLocalVideoSSRC(offer);
+            offer = SSRCReplacement.mungeLocalVideoSSRC(offer);
 
             if (config.enableSimulcast && self.simulcast.isSupported()) {
                 offer = self.simulcast.mungeLocalDescription(offer);
@@ -402,7 +402,7 @@ TraceablePeerConnection.prototype.createAnswer
             }
 
             // munge local video SSRC
-            answer = VideoSSRCHack.mungeLocalVideoSSRC(answer);
+            answer = SSRCReplacement.mungeLocalVideoSSRC(answer);
 
             if (config.enableSimulcast && self.simulcast.isSupported()) {
                 answer = self.simulcast.mungeLocalDescription(answer);

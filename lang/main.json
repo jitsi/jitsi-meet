@@ -240,5 +240,11 @@
         "FETCH_SESSION_ID": "Obtaining session-id...",
         "GOT_SESSION_ID": "Obtaining session-id... Done",
         "GET_SESSION_ID_ERROR": "Get session-id error: "
+    },
+    "recording":
+    {
+        "toaster": "Currently recording!",
+        "pending": "Your recording will start as soon as another participant joins",
+        "on": "Recording has been started"
     }
 }

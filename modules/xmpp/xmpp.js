@@ -434,9 +434,9 @@ var XMPP = {
         return true;
     },
     toggleRecording: function (tokenEmptyCallback,
-                               startingCallback, startedCallback) {
+                               recordingStateChangeCallback) {
         Recording.toggleRecording(tokenEmptyCallback,
-            startingCallback, startedCallback, connection);
+            recordingStateChangeCallback, connection);
     },
     addToPresence: function (name, value, dontSend) {
         switch (name) {

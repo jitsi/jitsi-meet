@@ -18,7 +18,10 @@ app:
 	$(NPM) update && $(BROWSERIFY) $(FLAGS) app.js -s APP -o $(OUTPUT_DIR)/app.bundle.js
 
 clean:
-	@rm -f $(OUTPUT_DIR)/*.bundle.js
+	rm -f $(OUTPUT_DIR)/*.bundle.js
 
 deploy:
-	@mkdir -p $(DEPLOY_DIR) && cp $(OUTPUT_DIR)/*.bundle.js $(DEPLOY_DIR) && ./bump-js-versions.sh
+	mkdir -p $(DEPLOY_DIR) && \
+	cp $(OUTPUT_DIR)/*.bundle.js $(DEPLOY_DIR) && \
+	./bump-js-versions.sh && \
+	([ ! -x deploy-local.sh ] || ./deploy-local.sh)

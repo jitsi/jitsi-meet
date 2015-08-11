@@ -19,6 +19,12 @@ var useJirecon = (typeof config.hosts.jirecon != "undefined");
  */
 var jireconRid = null;
 
+/**
+ * The callback to update the recording button. Currently used from colibri
+ * after receiving a pending status.
+ */
+var recordingStateChangeCallback = null;
+
 function setRecordingToken(token) {
     recordingToken = token;
 }
@@ -30,9 +36,9 @@ function setRecordingJirecon(state, token, callback, connection) {
 
     var iq = $iq({to: config.hosts.jirecon, type: 'set'})
         .c('recording', {xmlns: 'http://jitsi.org/protocol/jirecon',
-            action: state ? 'start' : 'stop',
+            action: (state === 'on') ? 'start' : 'stop',
             mucjid: connection.emuc.roomjid});
-    if (!state){
+    if (state === 'off'){
         iq.attrs({rid: jireconRid});
     }
 
@@ -44,10 +50,10 @@ function setRecordingJirecon(state, token, callback, connection) {
             // TODO wait for an IQ with the real status, since this is
             // provisional?
             jireconRid = $(result).find('recording').attr('rid');
-            console.log('Recording ' + (state ? 'started' : 'stopped') +
+            console.log('Recording ' + ((state === 'on') ? 'started' : 'stopped') +
                 '(jirecon)' + result);
             recordingEnabled = state;
-            if (!state){
+            if (state === 'off'){
                 jireconRid = null;
             }
 
@@ -73,10 +79,19 @@ function setRecordingColibri(state, token, callback, connection) {
         function (result) {
             console.log('Set recording "', state, '". Result:', result);
             var recordingElem = $(result).find('>conference>recording');
-            var newState = ('true' === recordingElem.attr('state'));
+            var newState = recordingElem.attr('state');
 
             recordingEnabled = newState;
             callback(newState);
+
+            if (newState === 'pending' && recordingStateChangeCallback == null) {
+                recordingStateChangeCallback = callback;
+                connection.addHandler(function(iq){
+                    var state = $(iq).find('recording').attr('state');
+                    if (state)
+                        recordingStateChangeCallback(state);
+                }, 'http://jitsi.org/protocol/colibri', 'iq', null, null, null);
+            }
         },
         function (error) {
             console.warn(error);
@@ -94,8 +109,7 @@ function setRecording(state, token, callback, connection) {
 }
 
 var Recording = {
-    toggleRecording: function (tokenEmptyCallback,
-                               startingCallback, startedCallback, connection) {
+    toggleRecording: function (tokenEmptyCallback, recordingStateChangeCallback, connection) {
         if (!Moderator.isModerator()) {
             console.log(
                     'non-focus, or conference not yet organized:' +
@@ -108,16 +122,16 @@ var Recording = {
         if (!recordingToken && !useJirecon) {
             tokenEmptyCallback(function (value) {
                 setRecordingToken(value);
-                self.toggleRecording(tokenEmptyCallback,
-                    startingCallback, startedCallback, connection);
+                self.toggleRecording(tokenEmptyCallback, recordingStateChangeCallback, connection);
             });
 
             return;
         }
 
         var oldState = recordingEnabled;
-        startingCallback(!oldState);
-        setRecording(!oldState,
+        var newState = (oldState === 'off' || !oldState) ? 'on' : 'off';
+
+        setRecording(newState,
             recordingToken,
             function (state) {
                 console.log("New recording state: ", state);
@@ -143,7 +157,7 @@ var Recording = {
                     // have been wrong
                     setRecordingToken(null);
                 }
-                startedCallback(state);
+                recordingStateChangeCallback(state);
 
             },
             connection

@@ -1,4 +1,4 @@
-/* global $, $iq, config */
+/* global $, $iq, config, interfaceConfig */
 var params = {};
 function getConfigParamsFromUrl() {
     if(!location.hash)
@@ -17,22 +17,31 @@ params = getConfigParamsFromUrl();
 
 var URLProcessor = {
     setConfigParametersFromUrl: function () {
-        for(var k in params)
-        {
-            if(typeof k !== "string" || k.indexOf("config.") === -1)
+        for(var key in params) {
+            if(typeof key !== "string")
                 continue;
 
-            var v = params[k];
-            var confKey = k.substr(7);
-            if(config[confKey] && typeof config[confKey] !== typeof v)
+            var confObj = null, confKey;
+            if (key.indexOf("config.") === 0) {
+                confObj = config;
+                confKey = key.substr("config.".length);
+            } else if (key.indexOf("interfaceConfig.") === 0) {
+                confObj = interfaceConfig;
+                confKey = key.substr("interfaceConfig.".length);
+            }
+
+            if (!confObj)
+                continue;
+
+            var value = params[key];
+            if (confObj[confKey] && typeof confObj[confKey] !== typeof value)
             {
-                console.warn("The type of " + k +
+                console.warn("The type of " + key +
                     " is wrong. That parameter won't be updated in config.js.");
                 continue;
             }
 
-            config[confKey] = v;
-
+            confObj[confKey] = value;
         }
 
     }

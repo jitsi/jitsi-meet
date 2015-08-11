@@ -15,5 +15,9 @@ var interfaceConfig = {
     GENERATE_ROOMNAMES_ON_WELCOME_PAGE: true,
     APP_NAME: "Jitsi Meet",
     INVITATION_POWERED_BY: true,
-    ACTIVE_SPEAKER_AVATAR_SIZE: 100
+    ACTIVE_SPEAKER_AVATAR_SIZE: 100,
+    /**
+     * Whether to only show the filmstrip (and hide the toolbar).
+     */
+    filmStripOnly: false
 };

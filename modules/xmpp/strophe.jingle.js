@@ -1,27 +1,11 @@
 /* jshint -W117 */
 
-var JingleSession = require("./JingleSession");
+var JingleSession = require("./JingleSessionPC");
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 var RTCBrowserType = require("../RTC/RTCBrowserType");
 
 
 module.exports = function(XMPP, eventEmitter) {
-    function CallIncomingJingle(sid, connection) {
-        var sess = connection.jingle.sessions[sid];
-
-        // TODO: do we check activecall == null?
-        connection.jingle.activecall = sess;
-
-        eventEmitter.emit(XMPPEvents.CALL_INCOMING, sess);
-
-        // TODO: check affiliation and/or role
-        console.log('emuc data for', sess.peerjid, connection.emuc.members[sess.peerjid]);
-        sess.usedrip = true; // not-so-naive trickle ice
-        sess.sendAnswer();
-        sess.accept();
-
-    }
-
     Strophe.addConnectionPlugin('jingle', {
         connection: null,
         sessions: {},
@@ -126,20 +110,30 @@ module.exports = function(XMPP, eventEmitter) {
                     sess.pc_constraints = this.pc_constraints;
                     sess.ice_config = this.ice_config;
 
-                    sess.initiate(fromJid, false);
+                    sess.initialize(fromJid, false);
                     // FIXME: setRemoteDescription should only be done when this call is to be accepted
-                    sess.setRemoteDescription($(iq).find('>jingle'), 'offer');
+                    sess.setOffer($(iq).find('>jingle'));
 
                     this.sessions[sess.sid] = sess;
                     this.jid2session[sess.peerjid] = sess;
 
                     // the callback should either
                     // .sendAnswer and .accept
-                    // or .sendTerminate -- not necessarily synchronus
-                    CallIncomingJingle(sess.sid, this.connection);
+                    // or .sendTerminate -- not necessarily synchronous
+
+                    // TODO: do we check activecall == null?
+                    this.connection.jingle.activecall = sess;
+
+                    eventEmitter.emit(XMPPEvents.CALL_INCOMING, sess);
+
+                    // TODO: check affiliation and/or role
+                    console.log('emuc data for', sess.peerjid,
+                        this.connection.emuc.members[sess.peerjid]);
+                    sess.sendAnswer();
+                    sess.accept();
                     break;
                 case 'session-accept':
-                    sess.setRemoteDescription($(iq).find('>jingle'), 'answer');
+                    sess.setAnswer($(iq).find('>jingle'));
                     sess.accept();
                     $(document).trigger('callaccepted.jingle', [sess.sid]);
                     break;
@@ -206,7 +200,7 @@ module.exports = function(XMPP, eventEmitter) {
             sess.pc_constraints = this.pc_constraints;
             sess.ice_config = this.ice_config;
 
-            sess.initiate(peerjid, true);
+            sess.initialize(peerjid, true);
             this.sessions[sess.sid] = sess;
             this.jid2session[sess.peerjid] = sess;
             sess.sendOffer();

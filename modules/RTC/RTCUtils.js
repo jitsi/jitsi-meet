@@ -23,21 +23,17 @@ function getPreviousResolution(resolution) {
 }
 
 function setResolutionConstraints(constraints, resolution, isAndroid) {
-    if (resolution && !constraints.video || isAndroid) {
-        // same behaviour as true
-        constraints.video = { mandatory: {}, optional: [] };
-    }
 
-    if(Resolutions[resolution]) {
+    if (Resolutions[resolution]) {
         constraints.video.mandatory.minWidth = Resolutions[resolution].width;
         constraints.video.mandatory.minHeight = Resolutions[resolution].height;
     }
-    else {
-        if (isAndroid) {
-            constraints.video.mandatory.minWidth = 320;
-            constraints.video.mandatory.minHeight = 240;
-            constraints.video.mandatory.maxFrameRate = 15;
-        }
+    else if (isAndroid) {
+        // FIXME can't remember if the purpose of this was to always request
+        //       low resolution on Android ? if yes it should be moved up front
+        constraints.video.mandatory.minWidth = 320;
+        constraints.video.mandatory.minHeight = 240;
+        constraints.video.mandatory.maxFrameRate = 15;
     }
 
     if (constraints.video.mandatory.minWidth)
@@ -55,10 +51,28 @@ function getConstraints(um, resolution, bandwidth, fps, desktopStream, isAndroid
     if (um.indexOf('video') >= 0) {
         // same behaviour as true
         constraints.video = { mandatory: {}, optional: [] };
+
+        constraints.video.optional.push({ googLeakyBucket: true });
+
+        setResolutionConstraints(constraints, resolution, isAndroid);
     }
     if (um.indexOf('audio') >= 0) {
-        // same behaviour as true
-        constraints.audio = { mandatory: {}, optional: []};
+        if (!RTCBrowserType.isFirefox()) {
+            // same behaviour as true
+            constraints.audio = { mandatory: {}, optional: []};
+            // if it is good enough for hangouts...
+            constraints.audio.optional.push(
+                {googEchoCancellation: true},
+                {googAutoGainControl: true},
+                {googNoiseSupression: true},
+                {googHighpassFilter: true},
+                {googNoisesuppression2: true},
+                {googEchoCancellation2: true},
+                {googAutoGainControl2: true}
+            );
+        } else {
+            constraints.audio = true;
+        }
     }
     if (um.indexOf('screen') >= 0) {
         if (RTCBrowserType.isChrome()) {
@@ -98,30 +112,6 @@ function getConstraints(um, resolution, bandwidth, fps, desktopStream, isAndroid
             },
             optional: []
         };
-    }
-
-    if (constraints.audio) {
-        // if it is good enough for hangouts...
-        constraints.audio.optional.push(
-            {googEchoCancellation: true},
-            {googAutoGainControl: true},
-            {googNoiseSupression: true},
-            {googHighpassFilter: true},
-            {googNoisesuppression2: true},
-            {googEchoCancellation2: true},
-            {googAutoGainControl2: true}
-        );
-    }
-    if (constraints.video) {
-        if (um.indexOf('video') >= 0) {
-            constraints.video.optional.push(
-                {googLeakyBucket: true}
-            );
-        }
-    }
-
-    if (um.indexOf('video') >= 0) {
-        setResolutionConstraints(constraints, resolution, isAndroid);
     }
 
     if (bandwidth) {

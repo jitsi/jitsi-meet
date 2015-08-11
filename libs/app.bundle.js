@@ -450,7 +450,7 @@ $(window).bind('beforeunload', function () {
 module.exports = APP;
 
 
-},{"./modules/API/API":4,"./modules/DTMF/DTMF":5,"./modules/RTC/RTC":9,"./modules/UI/UI":13,"./modules/URLProcessor/URLProcessor":44,"./modules/connectionquality/connectionquality":45,"./modules/desktopsharing/desktopsharing":46,"./modules/keyboardshortcut/keyboardshortcut":47,"./modules/members/MemberList":48,"./modules/settings/Settings":49,"./modules/statistics/statistics":53,"./modules/translation/translation":54,"./modules/xmpp/xmpp":69}],4:[function(require,module,exports){
+},{"./modules/API/API":4,"./modules/DTMF/DTMF":5,"./modules/RTC/RTC":9,"./modules/UI/UI":13,"./modules/URLProcessor/URLProcessor":44,"./modules/connectionquality/connectionquality":45,"./modules/desktopsharing/desktopsharing":46,"./modules/keyboardshortcut/keyboardshortcut":47,"./modules/members/MemberList":48,"./modules/settings/Settings":49,"./modules/statistics/statistics":53,"./modules/translation/translation":54,"./modules/xmpp/xmpp":70}],4:[function(require,module,exports){
 /* global APP */
 /**
  * Implements API class that communicates with external api class
@@ -670,7 +670,7 @@ var API = {
 };
 
 module.exports = API;
-},{"../../service/xmpp/XMPPEvents":119}],5:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":120}],5:[function(require,module,exports){
 /* global APP */
 
 /**
@@ -912,10 +912,28 @@ function onPinnedEndpointChanged(userResource) {
 module.exports = DataChannels;
 
 
-},{"../../service/RTC/RTCEvents":110}],7:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":111}],7:[function(require,module,exports){
 /* global APP */
 var StreamEventTypes = require("../../service/RTC/StreamEventTypes.js");
 var RTCEvents = require("../../service/RTC/RTCEvents");
+var RTCBrowserType = require("./RTCBrowserType");
+
+/**
+ * This implements 'onended' callback normally fired by WebRTC after the stream
+ * is stopped. There is no such behaviour yet in FF, so we have to add it.
+ * @param stream original WebRTC stream object to which 'onended' handling
+ *               will be added.
+ */
+function implementOnEndedHandling(stream) {
+    var originalStop = stream.stop;
+    stream.stop = function () {
+        originalStop.apply(stream);
+        if (!stream.ended) {
+            stream.ended = true;
+            stream.onended();
+        }
+    };
+}
 
 function LocalStream(stream, type, eventEmitter, videoType, isGUMStream) {
     this.stream = stream;
@@ -936,9 +954,12 @@ function LocalStream(stream, type, eventEmitter, videoType, isGUMStream) {
         };
     }
 
-    this.stream.onended = function() {
+    this.stream.onended = function () {
         self.streamEnded();
     };
+    if (RTCBrowserType.isFirefox()) {
+        implementOnEndedHandling(this.stream);
+    }
 }
 
 LocalStream.prototype.streamEnded = function () {
@@ -960,9 +981,11 @@ LocalStream.prototype.setMute = function (mute)
     var eventType = isAudio ? RTCEvents.AUDIO_MUTE : RTCEvents.VIDEO_MUTE;
 
     if ((window.location.protocol != "https:" && this.isGUMStream) ||
-        (isAudio && this.isGUMStream) || this.videoType === "screen") {
-        var tracks = this.getTracks();
+        (isAudio && this.isGUMStream) || this.videoType === "screen" ||
+        // FIXME FF does not support 'removeStream' method used to mute
+        RTCBrowserType.isFirefox()) {
 
+        var tracks = this.getTracks();
         for (var idx = 0; idx < tracks.length; idx++) {
             tracks[idx].enabled = !mute;
         }
@@ -1015,7 +1038,7 @@ LocalStream.prototype.getId = function () {
 
 module.exports = LocalStream;
 
-},{"../../service/RTC/RTCEvents":110,"../../service/RTC/StreamEventTypes.js":112}],8:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":111,"../../service/RTC/StreamEventTypes.js":113,"./RTCBrowserType":10}],8:[function(require,module,exports){
 var MediaStreamType = require("../../service/RTC/MediaStreamTypes");
 
 /**
@@ -1064,7 +1087,7 @@ MediaStream.prototype.setMute = function (value) {
 
 module.exports = MediaStream;
 
-},{"../../service/RTC/MediaStreamTypes":109}],9:[function(require,module,exports){
+},{"../../service/RTC/MediaStreamTypes":110}],9:[function(require,module,exports){
 /* global APP */
 var EventEmitter = require("events");
 var RTCBrowserType = require("./RTCBrowserType");
@@ -1341,7 +1364,7 @@ var RTC = {
 
 module.exports = RTC;
 
-},{"../../service/RTC/MediaStreamTypes":109,"../../service/RTC/RTCEvents.js":110,"../../service/RTC/StreamEventTypes.js":112,"../../service/UI/UIEvents":113,"../../service/desktopsharing/DesktopSharingEventTypes":116,"../../service/xmpp/XMPPEvents":119,"./DataChannels":6,"./LocalStream.js":7,"./MediaStream.js":8,"./RTCBrowserType":10,"./RTCUtils.js":11,"events":1}],10:[function(require,module,exports){
+},{"../../service/RTC/MediaStreamTypes":110,"../../service/RTC/RTCEvents.js":111,"../../service/RTC/StreamEventTypes.js":113,"../../service/UI/UIEvents":114,"../../service/desktopsharing/DesktopSharingEventTypes":117,"../../service/xmpp/XMPPEvents":120,"./DataChannels":6,"./LocalStream.js":7,"./MediaStream.js":8,"./RTCBrowserType":10,"./RTCUtils.js":11,"events":1}],10:[function(require,module,exports){
 
 var currentBrowser;
 
@@ -1529,21 +1552,17 @@ function getPreviousResolution(resolution) {
 }
 
 function setResolutionConstraints(constraints, resolution, isAndroid) {
-    if (resolution && !constraints.video || isAndroid) {
-        // same behaviour as true
-        constraints.video = { mandatory: {}, optional: [] };
-    }
 
-    if(Resolutions[resolution]) {
+    if (Resolutions[resolution]) {
         constraints.video.mandatory.minWidth = Resolutions[resolution].width;
         constraints.video.mandatory.minHeight = Resolutions[resolution].height;
     }
-    else {
-        if (isAndroid) {
-            constraints.video.mandatory.minWidth = 320;
-            constraints.video.mandatory.minHeight = 240;
-            constraints.video.mandatory.maxFrameRate = 15;
-        }
+    else if (isAndroid) {
+        // FIXME can't remember if the purpose of this was to always request
+        //       low resolution on Android ? if yes it should be moved up front
+        constraints.video.mandatory.minWidth = 320;
+        constraints.video.mandatory.minHeight = 240;
+        constraints.video.mandatory.maxFrameRate = 15;
     }
 
     if (constraints.video.mandatory.minWidth)
@@ -1561,10 +1580,28 @@ function getConstraints(um, resolution, bandwidth, fps, desktopStream, isAndroid
     if (um.indexOf('video') >= 0) {
         // same behaviour as true
         constraints.video = { mandatory: {}, optional: [] };
+
+        constraints.video.optional.push({ googLeakyBucket: true });
+
+        setResolutionConstraints(constraints, resolution, isAndroid);
     }
     if (um.indexOf('audio') >= 0) {
-        // same behaviour as true
-        constraints.audio = { mandatory: {}, optional: []};
+        if (!RTCBrowserType.isFirefox()) {
+            // same behaviour as true
+            constraints.audio = { mandatory: {}, optional: []};
+            // if it is good enough for hangouts...
+            constraints.audio.optional.push(
+                {googEchoCancellation: true},
+                {googAutoGainControl: true},
+                {googNoiseSupression: true},
+                {googHighpassFilter: true},
+                {googNoisesuppression2: true},
+                {googEchoCancellation2: true},
+                {googAutoGainControl2: true}
+            );
+        } else {
+            constraints.audio = true;
+        }
     }
     if (um.indexOf('screen') >= 0) {
         if (RTCBrowserType.isChrome()) {
@@ -1604,30 +1641,6 @@ function getConstraints(um, resolution, bandwidth, fps, desktopStream, isAndroid
             },
             optional: []
         };
-    }
-
-    if (constraints.audio) {
-        // if it is good enough for hangouts...
-        constraints.audio.optional.push(
-            {googEchoCancellation: true},
-            {googAutoGainControl: true},
-            {googNoiseSupression: true},
-            {googHighpassFilter: true},
-            {googNoisesuppression2: true},
-            {googEchoCancellation2: true},
-            {googAutoGainControl2: true}
-        );
-    }
-    if (constraints.video) {
-        if (um.indexOf('video') >= 0) {
-            constraints.video.optional.push(
-                {googLeakyBucket: true}
-            );
-        }
-    }
-
-    if (um.indexOf('video') >= 0) {
-        setResolutionConstraints(constraints, resolution, isAndroid);
     }
 
     if (bandwidth) {
@@ -2068,7 +2081,7 @@ RTCUtils.prototype.createStream = function(stream, isVideo) {
 
 module.exports = RTCUtils;
 
-},{"../../service/RTC/Resolutions":111,"../xmpp/SDPUtil":58,"./RTCBrowserType":10,"./adapter.screenshare":12}],12:[function(require,module,exports){
+},{"../../service/RTC/Resolutions":112,"../xmpp/SDPUtil":60,"./RTCBrowserType":10,"./adapter.screenshare":12}],12:[function(require,module,exports){
 /*! adapterjs - v0.11.0 - 2015-06-08 */
 
 // Adapter's interface.
@@ -3403,6 +3416,7 @@ var messageHandler = UI.messageHandler;
 var Authentication  = require("./authentication/Authentication");
 var UIUtil = require("./util/UIUtil");
 var NicknameHandler = require("./util/NicknameHandler");
+var JitsiPopover = require("./util/JitsiPopover");
 var CQEvents = require("../../service/connectionquality/CQEvents");
 var DesktopSharingEventTypes
     = require("../../service/desktopsharing/DesktopSharingEventTypes");
@@ -3551,13 +3565,13 @@ function registerListeners() {
             VideoLayout.setDeviceAvailabilityIcons(null, devices);
         });
     APP.RTC.addListener(RTCEvents.VIDEO_MUTE, UI.setVideoMuteButtonsState);
-    APP.RTC.addListener(RTCEvents.DATA_CHANNEL_OPEN, function() {
+    APP.RTC.addListener(RTCEvents.DATA_CHANNEL_OPEN, function () {
         // when the data channel becomes available, tell the bridge about video
         // selections so that it can do adaptive simulcast,
         // we want the notification to trigger even if userJid is undefined,
         // or null.
-        var userJid = APP.UI.getLargeVideoJid();
-        eventEmitter.emit(UIEvents.SELECTED_ENDPOINT, userJid);
+        var userResource = APP.UI.getLargeVideoResource();
+        eventEmitter.emit(UIEvents.SELECTED_ENDPOINT, userResource);
     });
     APP.statistics.addAudioLevelListener(function(jid, audioLevel) {
         var resourceJid;
@@ -3571,7 +3585,7 @@ function registerListeners() {
         }
 
         AudioLevels.updateAudioLevel(resourceJid, audioLevel,
-            UI.getLargeVideoJid());
+            UI.getLargeVideoResource());
     });
     APP.desktopsharing.addListener(function () {
         ToolbarToggler.showDesktopSharingButton();
@@ -3636,10 +3650,8 @@ function registerListeners() {
     APP.xmpp.addListener(XMPPEvents.MUC_ROLE_CHANGED, onMucRoleChanged);
     APP.xmpp.addListener(XMPPEvents.PRESENCE_STATUS, onMucPresenceStatus);
     APP.xmpp.addListener(XMPPEvents.SUBJECT_CHANGED, chatSetSubject);
-    APP.xmpp.addListener(XMPPEvents.MESSAGE_RECEIVED, updateChatConversation);
     APP.xmpp.addListener(XMPPEvents.MUC_MEMBER_LEFT, onMucMemberLeft);
     APP.xmpp.addListener(XMPPEvents.PASSWORD_REQUIRED, onPasswordRequired);
-    APP.xmpp.addListener(XMPPEvents.CHAT_ERROR_RECEIVED, chatAddError);
     APP.xmpp.addListener(XMPPEvents.ETHERPAD, initEtherpad);
     APP.xmpp.addListener(XMPPEvents.AUTHENTICATION_REQUIRED,
         onAuthenticationRequired);
@@ -3651,11 +3663,11 @@ function registerListeners() {
 
     APP.xmpp.addListener(XMPPEvents.AUDIO_MUTED, VideoLayout.onAudioMute);
     APP.xmpp.addListener(XMPPEvents.VIDEO_MUTED, VideoLayout.onVideoMute);
-    APP.xmpp.addListener(XMPPEvents.AUDIO_MUTED_BY_FOCUS, function(doMuteAudio) {
+    APP.xmpp.addListener(XMPPEvents.AUDIO_MUTED_BY_FOCUS, function (doMuteAudio) {
         UI.setAudioMuted(doMuteAudio);
     });
     APP.members.addListener(MemberEvents.DTMF_SUPPORT_CHANGED,
-                            onDtmfSupportChanged);
+        onDtmfSupportChanged);
     APP.xmpp.addListener(XMPPEvents.START_MUTED_SETTING_CHANGED, function (audio, video) {
         SettingsMenu.setStartMuted(audio, video);
     });
@@ -3668,43 +3680,43 @@ function registerListeners() {
             "dialog.internalError");
     });
 
-    APP.xmpp.addListener(XMPPEvents.SET_LOCAL_DESCRIPTION_ERROR, function() {
+    APP.xmpp.addListener(XMPPEvents.SET_LOCAL_DESCRIPTION_ERROR, function () {
         messageHandler.showError("dialog.error",
-                                        "dialog.SLDFailure");
+            "dialog.SLDFailure");
     });
-    APP.xmpp.addListener(XMPPEvents.SET_REMOTE_DESCRIPTION_ERROR, function() {
+    APP.xmpp.addListener(XMPPEvents.SET_REMOTE_DESCRIPTION_ERROR, function () {
         messageHandler.showError("dialog.error",
             "dialog.SRDFailure");
     });
-    APP.xmpp.addListener(XMPPEvents.CREATE_ANSWER_ERROR, function() {
+    APP.xmpp.addListener(XMPPEvents.CREATE_ANSWER_ERROR, function () {
         messageHandler.showError();
     });
-    APP.xmpp.addListener(XMPPEvents.PROMPT_FOR_LOGIN, function() {
+    APP.xmpp.addListener(XMPPEvents.PROMPT_FOR_LOGIN, function () {
         // FIXME: re-use LoginDialog which supports retries
         UI.showLoginPopup(connect);
     });
-    
-    APP.xmpp.addListener(XMPPEvents.FOCUS_DISCONNECTED, function(focusComponent, retrySec) {
+
+    APP.xmpp.addListener(XMPPEvents.FOCUS_DISCONNECTED, function (focusComponent, retrySec) {
         UI.messageHandler.notify(
             null, "notify.focus",
             'disconnected', "notify.focusFail",
             {component: focusComponent, ms: retrySec});
     });
-    
-    APP.xmpp.addListener(XMPPEvents.ROOM_JOIN_ERROR, function(pres) {
+
+    APP.xmpp.addListener(XMPPEvents.ROOM_JOIN_ERROR, function (pres) {
         UI.messageHandler.openReportDialog(null,
             "dialog.joinError", pres);
     });
-    APP.xmpp.addListener(XMPPEvents.ROOM_CONNECT_ERROR, function(pres) {
+    APP.xmpp.addListener(XMPPEvents.ROOM_CONNECT_ERROR, function (pres) {
         UI.messageHandler.openReportDialog(null,
             "dialog.connectError", pres);
     });
 
-    APP.xmpp.addListener(XMPPEvents.READY_TO_JOIN, function() {
+    APP.xmpp.addListener(XMPPEvents.READY_TO_JOIN, function () {
         var roomName = UI.generateRoomName();
         APP.xmpp.allocateConferenceFocus(roomName, UI.checkForNicknameAndJoin);
     });
-    
+
     //NicknameHandler emits this event
     UI.addListener(UIEvents.NICKNAME_CHANGED, function (nickname) {
         APP.xmpp.addToPresence("displayName", nickname);
@@ -3714,10 +3726,14 @@ function registerListeners() {
         AudioLevels.init();
     });
 
-    // Listens for video interruption events.
-    APP.xmpp.addListener(XMPPEvents.CONNECTION_INTERRUPTED, VideoLayout.onVideoInterrupted);
-    // Listens for video restores events.
-    APP.xmpp.addListener(XMPPEvents.CONNECTION_RESTORED, VideoLayout.onVideoRestored);
+    if (!interfaceConfig.filmStripOnly) {
+        APP.xmpp.addListener(XMPPEvents.MESSAGE_RECEIVED, updateChatConversation);
+        APP.xmpp.addListener(XMPPEvents.CHAT_ERROR_RECEIVED, chatAddError);
+        // Listens for video interruption events.
+        APP.xmpp.addListener(XMPPEvents.CONNECTION_INTERRUPTED, VideoLayout.onVideoInterrupted);
+        // Listens for video restores events.
+        APP.xmpp.addListener(XMPPEvents.CONNECTION_RESTORED, VideoLayout.onVideoRestored);
+    }
 }
 
 
@@ -3767,9 +3783,6 @@ UI.start = function (init) {
 
     $("#welcome_page").hide();
 
-    $("#videospace").mousemove(function () {
-        return ToolbarToggler.showToolbar();
-    });
     // Set the defaults for prompt dialogs.
     $.prompt.setDefaults({persistent: false});
 
@@ -3781,34 +3794,39 @@ UI.start = function (init) {
 
     bindEvents();
     setupPrezi();
-    setupToolbars();
-    setupChat();
-
+    if (!interfaceConfig.filmStripOnly) {
+        $("#videospace").mousemove(function () {
+            return ToolbarToggler.showToolbar();
+        });
+        setupToolbars();
+        setupChat();
+        // Display notice message at the top of the toolbar
+        if (config.noticeMessage) {
+            $('#noticeText').text(config.noticeMessage);
+            $('#notice').css({display: 'block'});
+        }
+        $("#downloadlog").click(function (event) {
+            dump(event.target);
+        });
+    }
+    else
+    {
+        $("#header").css("display", "none");
+        $("#bottomToolbar").css("display", "none");
+        $("#downloadlog").css("display", "none");
+        $("#remoteVideos").css("padding", "0px 0px 18px 0px");
+        $("#remoteVideos").css("right", "0px");
+        messageHandler.disableNotifications();
+        $('body').popover("disable");
+//        $("[data-toggle=popover]").popover("disable");
+        JitsiPopover.enabled = false;
+    }
 
     document.title = interfaceConfig.APP_NAME;
 
-    $("#downloadlog").click(function (event) {
-        dump(event.target);
-    });
 
-    if(config.enableWelcomePage && window.location.pathname == "/" &&
-        (!window.localStorage.welcomePageDisabled ||
-            window.localStorage.welcomePageDisabled == "false")) {
-        $("#videoconference_page").hide();
-        if (!setupWelcomePage)
-            setupWelcomePage = require("./welcome_page/WelcomePage");
-        setupWelcomePage();
 
-        return;
-    }
 
-    $("#welcome_page").hide();
-
-    // Display notice message at the top of the toolbar
-    if (config.noticeMessage) {
-        $('#noticeText').text(config.noticeMessage);
-        $('#notice').css({display: 'block'});
-    }
 
     if(config.requireDisplayName) {
         var currentSettings = Settings.getSettings();
@@ -3819,30 +3837,33 @@ UI.start = function (init) {
 
     init();
 
-    toastr.options = {
-        "closeButton": true,
-        "debug": false,
-        "positionClass": "notification-bottom-right",
-        "onclick": null,
-        "showDuration": "300",
-        "hideDuration": "1000",
-        "timeOut": "2000",
-        "extendedTimeOut": "1000",
-        "showEasing": "swing",
-        "hideEasing": "linear",
-        "showMethod": "fadeIn",
-        "hideMethod": "fadeOut",
-        "reposition": function() {
-            if(PanelToggler.isVisible()) {
-                $("#toast-container").addClass("notification-bottom-right-center");
-            } else {
-                $("#toast-container").removeClass("notification-bottom-right-center");
-            }
-        },
-        "newestOnTop": false
-    };
+    if (!interfaceConfig.filmStripOnly) {
+        toastr.options = {
+            "closeButton": true,
+            "debug": false,
+            "positionClass": "notification-bottom-right",
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "timeOut": "2000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut",
+            "reposition": function () {
+                if (PanelToggler.isVisible()) {
+                    $("#toast-container").addClass("notification-bottom-right-center");
+                } else {
+                    $("#toast-container").removeClass("notification-bottom-right-center");
+                }
+            },
+            "newestOnTop": false
+        };
 
-    SettingsMenu.init();
+
+        SettingsMenu.init();
+    }
 
 };
 
@@ -3915,6 +3936,8 @@ function onLocalRoleChanged(jid, info, pres, isModerator) {
         Authentication.closeAuthenticationWindow();
         messageHandler.notify(null, "notify.me",
             'connected', "notify.moderator");
+
+        Toolbar.checkAutoRecord();
     }
 }
 
@@ -4049,8 +4072,8 @@ UI.inputDisplayNameHandler = function (value) {
     VideoLayout.inputDisplayNameHandler(value);
 };
 
-UI.getLargeVideoJid = function() {
-    return VideoLayout.getLargeVideoJid();
+UI.getLargeVideoResource = function () {
+    return VideoLayout.getLargeVideoResource();
 };
 
 UI.generateRoomName = function() {
@@ -4248,7 +4271,7 @@ UI.setVideoMute = setVideoMute;
 module.exports = UI;
 
 
-},{"../../service/RTC/RTCEvents":110,"../../service/RTC/StreamEventTypes":112,"../../service/UI/UIEvents":113,"../../service/connectionquality/CQEvents":115,"../../service/desktopsharing/DesktopSharingEventTypes":116,"../../service/members/Events":117,"../../service/xmpp/XMPPEvents":119,"../RTC/RTCBrowserType":10,"./../settings/Settings":49,"./audio_levels/AudioLevels.js":14,"./authentication/Authentication":16,"./avatar/Avatar":18,"./etherpad/Etherpad.js":19,"./prezi/Prezi.js":20,"./side_pannels/SidePanelToggler":22,"./side_pannels/chat/Chat.js":23,"./side_pannels/contactlist/ContactList":27,"./side_pannels/settings/SettingsMenu":28,"./toolbars/BottomToolbar":29,"./toolbars/Toolbar":30,"./toolbars/ToolbarToggler":31,"./util/MessageHandler":33,"./util/NicknameHandler":34,"./util/UIUtil":35,"./videolayout/VideoLayout.js":41,"./welcome_page/RoomnameGenerator":42,"./welcome_page/WelcomePage":43,"events":1}],14:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":111,"../../service/RTC/StreamEventTypes":113,"../../service/UI/UIEvents":114,"../../service/connectionquality/CQEvents":116,"../../service/desktopsharing/DesktopSharingEventTypes":117,"../../service/members/Events":118,"../../service/xmpp/XMPPEvents":120,"../RTC/RTCBrowserType":10,"./../settings/Settings":49,"./audio_levels/AudioLevels.js":14,"./authentication/Authentication":16,"./avatar/Avatar":18,"./etherpad/Etherpad.js":19,"./prezi/Prezi.js":20,"./side_pannels/SidePanelToggler":22,"./side_pannels/chat/Chat.js":23,"./side_pannels/contactlist/ContactList":27,"./side_pannels/settings/SettingsMenu":28,"./toolbars/BottomToolbar":29,"./toolbars/Toolbar":30,"./toolbars/ToolbarToggler":31,"./util/JitsiPopover":32,"./util/MessageHandler":33,"./util/NicknameHandler":34,"./util/UIUtil":35,"./videolayout/VideoLayout.js":41,"./welcome_page/RoomnameGenerator":42,"./welcome_page/WelcomePage":43,"events":1}],14:[function(require,module,exports){
 /* global APP, interfaceConfig, $, Strophe */
 var CanvasUtil = require("./CanvasUtils");
 
@@ -4751,7 +4774,7 @@ var Authentication = {
 };
 
 module.exports = Authentication;
-},{"../../xmpp/moderator":61,"./LoginDialog":17}],17:[function(require,module,exports){
+},{"../../xmpp/moderator":62,"./LoginDialog":17}],17:[function(require,module,exports){
 /* global $, APP, config*/
 
 var XMPP = require('../../xmpp/xmpp');
@@ -4980,7 +5003,7 @@ var LoginDialog = {
 };
 
 module.exports = LoginDialog;
-},{"../../xmpp/moderator":61,"../../xmpp/xmpp":69}],18:[function(require,module,exports){
+},{"../../xmpp/moderator":62,"../../xmpp/xmpp":70}],18:[function(require,module,exports){
 var Settings = require("../../settings/Settings");
 
 var users = {};
@@ -6347,7 +6370,7 @@ var Chat = (function (my) {
     return my;
 }(Chat || {}));
 module.exports = Chat;
-},{"../../../../service/UI/UIEvents":113,"../../toolbars/ToolbarToggler":31,"../../util/NicknameHandler":34,"../../util/UIUtil":35,"../SidePanelToggler":22,"./Commands":24,"./Replacement":25,"./smileys.json":26}],24:[function(require,module,exports){
+},{"../../../../service/UI/UIEvents":114,"../../toolbars/ToolbarToggler":31,"../../util/NicknameHandler":34,"../../util/UIUtil":35,"../SidePanelToggler":22,"./Commands":24,"./Replacement":25,"./smileys.json":26}],24:[function(require,module,exports){
 /* global APP, require */
 var UIUtil = require("../../util/UIUtil");
 
@@ -6852,7 +6875,7 @@ var SettingsMenu = {
 
 
 module.exports = SettingsMenu;
-},{"../../../../service/translation/languages":118,"../../avatar/Avatar":18,"../../util/UIUtil":35,"./../../../settings/Settings":49}],29:[function(require,module,exports){
+},{"../../../../service/translation/languages":119,"../../avatar/Avatar":18,"../../util/UIUtil":35,"./../../../settings/Settings":49}],29:[function(require,module,exports){
 /* global $ */
 var PanelToggler = require("../side_pannels/SidePanelToggler");
 
@@ -6914,6 +6937,7 @@ var AuthenticationEvents
 var roomUrl = null;
 var sharedKey = '';
 var UI = null;
+var recordingToaster = null;
 
 var buttonHandlers = {
     "toolbar_button_mute": function () {
@@ -7023,8 +7047,13 @@ function hangup() {
  * Starts or stops the recording for the conference.
  */
 
-function toggleRecording() {
+function toggleRecording(predefinedToken) {
     APP.xmpp.toggleRecording(function (callback) {
+        if (predefinedToken) {
+            callback(UIUtil.escapeHtml(predefinedToken));
+            return;
+        }
+
         var msg = APP.translation.generateTranslationHTML(
             "dialog.recordingToken");
         var token = APP.translation.translateString("dialog.token");
@@ -7048,7 +7077,7 @@ function toggleRecording() {
             function () { },
             ':input:first'
         );
-    }, Toolbar.setRecordingButtonState, Toolbar.setRecordingButtonState);
+    }, Toolbar.setRecordingButtonState);
 }
 
 /**
@@ -7449,16 +7478,53 @@ var Toolbar = (function (my) {
     };
 
     // Sets the state of the recording button
-    my.setRecordingButtonState = function (isRecording) {
+    my.setRecordingButtonState = function (recordingState) {
         var selector = $('#toolbar_button_record');
-        if (isRecording) {
+
+        if (recordingState === 'on') {
             selector.removeClass("icon-recEnable");
             selector.addClass("icon-recEnable active");
-        } else {
+
+            $("#largeVideo").toggleClass("videoMessageFilter", true);
+            var recordOnKey = "recording.on";
+            $('#videoConnectionMessage').attr("data-i18n", recordOnKey);
+            $('#videoConnectionMessage').text(APP.translation.translateString(recordOnKey));
+
+            setTimeout(function(){
+                $("#largeVideo").toggleClass("videoMessageFilter", false);
+                $('#videoConnectionMessage').css({display: "none"});
+            }, 1500);
+
+            recordingToaster = messageHandler.notify(null, "recording.toaster", null,
+                null, null, {timeOut: 0, closeButton: null, tapToDismiss: false});
+        } else if (recordingState === 'off') {
             selector.removeClass("icon-recEnable active");
             selector.addClass("icon-recEnable");
+
+            $("#largeVideo").toggleClass("videoMessageFilter", false);
+            $('#videoConnectionMessage').css({display: "none"});
+
+            if (recordingToaster)
+                messageHandler.remove(recordingToaster);
+
+        } else if (recordingState === 'pending') {
+            selector.removeClass("icon-recEnable active");
+            selector.addClass("icon-recEnable");
+
+            $("#largeVideo").toggleClass("videoMessageFilter", true);
+            var recordPendingKey = "recording.pending";
+            $('#videoConnectionMessage').attr("data-i18n", recordPendingKey);
+            $('#videoConnectionMessage').text(APP.translation.translateString(recordPendingKey));
+            $('#videoConnectionMessage').css({display: "block"});
         }
     };
+
+    // checks whether recording is enabled and whether we have params to start automatically recording
+    my.checkAutoRecord = function () {
+        if (config.enableRecording && config.autoRecord) {
+            toggleRecording(config.autoRecordToken);
+        }
+    }
 
     // Shows or hides SIP calls button
     my.showSipCallButton = function (show) {
@@ -7534,7 +7600,7 @@ var Toolbar = (function (my) {
 }(Toolbar || {}));
 
 module.exports = Toolbar;
-},{"../../../service/authentication/AuthenticationEvents":114,"../authentication/Authentication":16,"../etherpad/Etherpad":19,"../prezi/Prezi":20,"../side_pannels/SidePanelToggler":22,"../util/MessageHandler":33,"../util/UIUtil":35,"./BottomToolbar":29}],31:[function(require,module,exports){
+},{"../../../service/authentication/AuthenticationEvents":115,"../authentication/Authentication":16,"../etherpad/Etherpad":19,"../prezi/Prezi":20,"../side_pannels/SidePanelToggler":22,"../util/MessageHandler":33,"../util/UIUtil":35,"./BottomToolbar":29}],31:[function(require,module,exports){
 /* global APP, config, $, interfaceConfig, Moderator,
  DesktopStreaming.showDesktopSharingButton */
 
@@ -7590,6 +7656,8 @@ var ToolbarToggler = {
      * Shows the main toolbar.
      */
     showToolbar: function () {
+        if (interfaceConfig.filmStripOnly)
+            return;
         var header = $("#header"),
             bottomToolbar = $("#bottomToolbar");
         if (!header.is(':visible') || !bottomToolbar.is(":visible")) {
@@ -7625,6 +7693,9 @@ var ToolbarToggler = {
      * @param isDock indicates what operation to perform
      */
     dockToolbar: function (isDock) {
+        if (interfaceConfig.filmStripOnly)
+            return;
+
         if (isDock) {
             // First make sure the toolbar is shown.
             if (!$('#header').is(':visible')) {
@@ -7700,6 +7771,8 @@ var JitsiPopover = (function () {
      * Shows the popover
      */
     JitsiPopover.prototype.show = function () {
+        if(!JitsiPopover.enabled)
+            return;
         this.createPopover();
         this.popoverShown = true;
     };
@@ -7772,12 +7845,21 @@ var JitsiPopover = (function () {
         this.createPopover();
     };
 
+    JitsiPopover.enabled = true;
+
     return JitsiPopover;
 })();
 
 module.exports = JitsiPopover;
 },{}],33:[function(require,module,exports){
 /* global $, APP, jQuery, toastr */
+
+/**
+ * Flag for enable/disable of the notifications.
+ * @type {boolean}
+ */
+var notificationsEnabled = true;
+
 var messageHandler = (function(my) {
 
     /**
@@ -7951,8 +8033,19 @@ var messageHandler = (function(my) {
         messageHandler.openMessageDialog(titleKey, msgKey);
     };
 
+    /**
+     * Displayes notification.
+     * @param displayName display name of the participant that is associated with the notification.
+     * @param displayNameKey the key from the language file for the display name.
+     * @param cls css class for the notification
+     * @param messageKey the key from the language file for the text of the message.
+     * @param messageArguments object with the arguments for the message.
+     * @param options object with language options.
+     */
     my.notify = function(displayName, displayNameKey,
                          cls, messageKey, messageArguments, options) {
+        if(!notificationsEnabled)
+            return;
         var displayNameSpan = '<span class="nickname" ';
         if (displayName) {
             displayNameSpan += ">" + displayName;
@@ -7961,7 +8054,7 @@ var messageHandler = (function(my) {
                 "'>" + APP.translation.translateString(displayNameKey);
         }
         displayNameSpan += "</span>";
-        toastr.info(
+        return toastr.info(
             displayNameSpan + '<br>' +
             '<span class=' + cls + ' data-i18n="' + messageKey + '"' +
                 (messageArguments?
@@ -7970,6 +8063,28 @@ var messageHandler = (function(my) {
             APP.translation.translateString(messageKey,
                 messageArguments) +
             '</span>', null, options);
+    };
+
+    /**
+     * Removes the toaster.
+     * @param toasterElement
+     */
+    my.remove = function(toasterElement) {
+        toasterElement.remove();
+    };
+
+    /**
+     * Disables notifications.
+     */
+    my.disableNotifications = function () {
+        notificationsEnabled = false;
+    };
+
+    /**
+     * Enables notifications.
+     */
+    my.enableNotifications = function () {
+        notificationsEnabled = true;
     };
 
     return my;
@@ -8010,7 +8125,7 @@ var NicknameHandler = {
 };
 
 module.exports = NicknameHandler;
-},{"../../../service/UI/UIEvents":113}],35:[function(require,module,exports){
+},{"../../../service/UI/UIEvents":114}],35:[function(require,module,exports){
 /* global $ */
 /**
  * Created by hristo on 12/22/14.
@@ -8948,6 +9063,14 @@ var LargeVideo = {
             largeVideoHeight,
             horizontalIndent, verticalIndent, animate);
     },
+    /**
+     * Resizes the large html elements.
+     * @param animate boolean property that indicates whether the resize should be animated or not.
+     * @param isChatVisible boolean property that indicates whether the chat area is displayed or not.
+     * If that parameter is null the method will check the chat pannel visibility.
+     * @param completeFunction a function to be called when the video space is resized
+     * @returns {*[]} array with the current width and height values of the largeVideo html element.
+     */
     resize: function (animate, isVisible, completeFunction) {
         if(!isEnabled)
             return;
@@ -8960,18 +9083,8 @@ var LargeVideo = {
         var top = availableHeight / 2 - avatarSize / 4 * 3;
         $('#activeSpeaker').css('top', top);
 
+        this.VideoLayout.resizeVideoSpace(animate, isVisible, completeFunction);
         if(animate) {
-            $('#videospace').animate({
-                    right: window.innerWidth - availableWidth,
-                    width: availableWidth,
-                    height: availableHeight
-                },
-                {
-                    queue: false,
-                    duration: 500,
-                    complete: completeFunction
-                });
-
             $('#largeVideoContainer').animate({
                     width: availableWidth,
                     height: availableHeight
@@ -8981,8 +9094,6 @@ var LargeVideo = {
                     duration: 500
                 });
         } else {
-            $('#videospace').width(availableWidth);
-            $('#videospace').height(availableHeight);
             $('#largeVideoContainer').width(availableWidth);
             $('#largeVideoContainer').height(availableHeight);
         }
@@ -9153,7 +9264,7 @@ var LargeVideo = {
 };
 
 module.exports = LargeVideo;
-},{"../../../service/UI/UIEvents":113,"../../RTC/RTCBrowserType":10,"../../xmpp/xmpp":69,"../avatar/Avatar":18,"../toolbars/ToolbarToggler":31,"../util/UIUtil":35}],38:[function(require,module,exports){
+},{"../../../service/UI/UIEvents":114,"../../RTC/RTCBrowserType":10,"../../xmpp/xmpp":70,"../avatar/Avatar":18,"../toolbars/ToolbarToggler":31,"../util/UIUtil":35}],38:[function(require,module,exports){
 /* global $, interfaceConfig, APP */
 var SmallVideo = require("./SmallVideo");
 var ConnectionIndicator = require("./ConnectionIndicator");
@@ -9442,85 +9553,96 @@ RemoteVideo.prototype.addRemoteVideoContainer = function() {
  * @param jid the jid indicating the video for which we're adding a menu.
  * @param parentElement the parent element where this menu will be added
  */
-RemoteVideo.prototype.addRemoteVideoMenu = function () {
-    var spanElement = document.createElement('span');
-    spanElement.className = 'remotevideomenu';
 
-    this.container.appendChild(spanElement);
+if (!interfaceConfig.filmStripOnly) {
+    RemoteVideo.prototype.addRemoteVideoMenu = function () {
+        var spanElement = document.createElement('span');
+        spanElement.className = 'remotevideomenu';
 
-    var menuElement = document.createElement('i');
-    menuElement.className = 'fa fa-angle-down';
-    menuElement.title = 'Remote user controls';
-    spanElement.appendChild(menuElement);
+        this.container.appendChild(spanElement);
+
+        var menuElement = document.createElement('i');
+        menuElement.className = 'fa fa-angle-down';
+        menuElement.title = 'Remote user controls';
+        spanElement.appendChild(menuElement);
 
 
-    var popupmenuElement = document.createElement('ul');
-    popupmenuElement.className = 'popupmenu';
-    popupmenuElement.id = 'remote_popupmenu_' + this.getResourceJid();
-    spanElement.appendChild(popupmenuElement);
+        var popupmenuElement = document.createElement('ul');
+        popupmenuElement.className = 'popupmenu';
+        popupmenuElement.id = 'remote_popupmenu_' + this.getResourceJid();
+        spanElement.appendChild(popupmenuElement);
 
-    var muteMenuItem = document.createElement('li');
-    var muteLinkItem = document.createElement('a');
+        var muteMenuItem = document.createElement('li');
+        var muteLinkItem = document.createElement('a');
 
-    var mutedIndicator = "<i style='float:left;' class='icon-mic-disabled'></i>";
+        var mutedIndicator = "<i style='float:left;' " +
+            "class='icon-mic-disabled'></i>";
 
-    if (!this.isMuted) {
-        muteLinkItem.innerHTML = mutedIndicator +
-            " <div style='width: 90px;margin-left: 20px;' data-i18n='videothumbnail.domute'></div>";
-        muteLinkItem.className = 'mutelink';
-    }
-    else {
-        muteLinkItem.innerHTML = mutedIndicator +
-            " <div style='width: 90px;margin-left: 20px;' data-i18n='videothumbnail.muted'></div>";
-        muteLinkItem.className = 'mutelink disabled';
-    }
-
-    var self = this;
-    muteLinkItem.onclick = function(){
-        if ($(this).attr('disabled') != undefined) {
-            event.preventDefault();
-        }
-        var isMute = self.isMuted == true;
-        APP.xmpp.setMute(self.peerJid, !isMute);
-
-        popupmenuElement.setAttribute('style', 'display:none;');
-
-        if (isMute) {
-            this.innerHTML = mutedIndicator +
-                " <div style='width: 90px;margin-left: 20px;' data-i18n='videothumbnail.muted'></div>";
-            this.className = 'mutelink disabled';
+        if (!this.isMuted) {
+            muteLinkItem.innerHTML = mutedIndicator +
+                " <div style='width: 90px;margin-left: 20px;' " +
+                "data-i18n='videothumbnail.domute'></div>";
+            muteLinkItem.className = 'mutelink';
         }
         else {
-            this.innerHTML = mutedIndicator +
-                " <div style='width: 90px;margin-left: 20px;' data-i18n='videothumbnail.domute'></div>";
-            this.className = 'mutelink';
+            muteLinkItem.innerHTML = mutedIndicator +
+                " <div style='width: 90px;margin-left: 20px;' " +
+                "data-i18n='videothumbnail.muted'></div>";
+            muteLinkItem.className = 'mutelink disabled';
         }
+
+        var self = this;
+        muteLinkItem.onclick = function(){
+            if ($(this).attr('disabled') != undefined) {
+                event.preventDefault();
+            }
+            var isMute = self.isMuted == true;
+            APP.xmpp.setMute(self.peerJid, !isMute);
+
+            popupmenuElement.setAttribute('style', 'display:none;');
+
+            if (isMute) {
+                this.innerHTML = mutedIndicator +
+                    " <div style='width: 90px;margin-left: 20px;' " +
+                    "data-i18n='videothumbnail.muted'></div>";
+                this.className = 'mutelink disabled';
+            }
+            else {
+                this.innerHTML = mutedIndicator +
+                    " <div style='width: 90px;margin-left: 20px;' " +
+                    "data-i18n='videothumbnail.domute'></div>";
+                this.className = 'mutelink';
+            }
+        };
+
+        muteMenuItem.appendChild(muteLinkItem);
+        popupmenuElement.appendChild(muteMenuItem);
+
+        var ejectIndicator = "<i style='float:left;' class='fa fa-eject'></i>";
+
+        var ejectMenuItem = document.createElement('li');
+        var ejectLinkItem = document.createElement('a');
+        var ejectText = "<div style='width: 90px;margin-left: 20px;' " +
+            "data-i18n='videothumbnail.kick'>&nbsp;</div>";
+        ejectLinkItem.innerHTML = ejectIndicator + ' ' + ejectText;
+        ejectLinkItem.onclick = function(){
+            APP.xmpp.eject(self.peerJid);
+            popupmenuElement.setAttribute('style', 'display:none;');
+        };
+
+        ejectMenuItem.appendChild(ejectLinkItem);
+        popupmenuElement.appendChild(ejectMenuItem);
+
+        var paddingSpan = document.createElement('span');
+        paddingSpan.className = 'popupmenuPadding';
+        popupmenuElement.appendChild(paddingSpan);
+        APP.translation.translateElement(
+            $("#" + popupmenuElement.id + " > li > a > div"));
     };
 
-    muteMenuItem.appendChild(muteLinkItem);
-    popupmenuElement.appendChild(muteMenuItem);
-
-    var ejectIndicator = "<i style='float:left;' class='fa fa-eject'></i>";
-
-    var ejectMenuItem = document.createElement('li');
-    var ejectLinkItem = document.createElement('a');
-    var ejectText = "<div style='width: 90px;margin-left: 20px;' data-i18n='videothumbnail.kick'>&nbsp;</div>";
-    ejectLinkItem.innerHTML = ejectIndicator + ' ' + ejectText;
-    ejectLinkItem.onclick = function(){
-        APP.xmpp.eject(self.peerJid);
-        popupmenuElement.setAttribute('style', 'display:none;');
-    };
-
-    ejectMenuItem.appendChild(ejectLinkItem);
-    popupmenuElement.appendChild(ejectMenuItem);
-
-    var paddingSpan = document.createElement('span');
-    paddingSpan.className = 'popupmenuPadding';
-    popupmenuElement.appendChild(paddingSpan);
-    APP.translation.translateElement(
-        $("#" + popupmenuElement.id + " > li > a > div"));
-};
-
+} else {
+    RemoteVideo.prototype.addRemoteVideoMenu = function() {}
+}
 
 /**
  * Removes the remote stream element corresponding to the given stream and
@@ -10178,6 +10300,7 @@ var AudioLevels = require("../audio_levels/AudioLevels");
 var ContactList = require("../side_pannels/contactlist/ContactList");
 var MediaStreamType = require("../../../service/RTC/MediaStreamTypes");
 var UIEvents = require("../../../service/UI/UIEvents");
+var UIUtil = require("../util/UIUtil");
 
 var RTC = require("../../RTC/RTC");
 var RTCBrowserType = require('../../RTC/RTCBrowserType');
@@ -10185,6 +10308,7 @@ var RTCBrowserType = require('../../RTC/RTCBrowserType');
 var RemoteVideo = require("./RemoteVideo");
 var LargeVideo = require("./LargeVideo");
 var LocalVideo = require("./LocalVideo");
+
 
 var remoteVideos = {};
 var remoteVideoTypes = {};
@@ -10209,8 +10333,12 @@ var VideoLayout = (function (my) {
     my.init = function (emitter) {
         eventEmitter = emitter;
         localVideoThumbnail = new LocalVideo(VideoLayout);
+        if (interfaceConfig.filmStripOnly) {
+            LargeVideo.disable();
+        } else {
+            LargeVideo.init(VideoLayout, emitter);
+        }
 
-        LargeVideo.init(VideoLayout, emitter);
         VideoLayout.resizeLargeVideoContainer();
 
     };
@@ -10339,7 +10467,7 @@ var VideoLayout = (function (my) {
         }
     };
 
-    my.getLargeVideoJid = function () {
+    my.getLargeVideoResource = function () {
         return LargeVideo.getResourceJid();
     };
 
@@ -10367,7 +10495,7 @@ var VideoLayout = (function (my) {
                                           resourceJid) {
         if(focusedVideoResourceJid) {
             var oldSmallVideo = VideoLayout.getSmallVideo(focusedVideoResourceJid);
-            if(oldSmallVideo)
+            if (oldSmallVideo && !interfaceConfig.filmStripOnly)
                 oldSmallVideo.focus(false);
         }
 
@@ -10394,7 +10522,7 @@ var VideoLayout = (function (my) {
 
         // Update focused/pinned interface.
         if (resourceJid) {
-            if(smallVideo)
+            if (smallVideo && !interfaceConfig.filmStripOnly)
                 smallVideo.focus(true);
 
             if (!noPinnedEndpointChangedEvent) {
@@ -10529,7 +10657,11 @@ var VideoLayout = (function (my) {
      * Resizes the large video container.
      */
     my.resizeLargeVideoContainer = function () {
-        LargeVideo.resize();
+        if(LargeVideo.isEnabled()) {
+            LargeVideo.resize();
+        } else {
+            VideoLayout.resizeVideoSpace();
+        }
         VideoLayout.resizeThumbnails();
         LargeVideo.position();
     };
@@ -10548,7 +10680,7 @@ var VideoLayout = (function (my) {
 
         if(animate) {
             $('#remoteVideos').animate({
-                    height: height
+                    height: height + 2 // adds 2 px because of small video 1px border
                 },
                 {
                     queue: false,
@@ -10573,7 +10705,7 @@ var VideoLayout = (function (my) {
         } else {
             // size videos so that while keeping AR and max height, we have a
             // nice fit
-            $('#remoteVideos').height(height);
+            $('#remoteVideos').height(height + 2);// adds 2 px because of small video 1px border
             $('#remoteVideos>span').width(width);
             $('#remoteVideos>span').height(height);
 
@@ -10606,7 +10738,7 @@ var VideoLayout = (function (my) {
        var availableWidth = availableWinWidth / numvids;
        var aspectRatio = 16.0 / 9.0;
        var maxHeight = Math.min(160, availableHeight);
-       availableHeight = Math.min(maxHeight, availableWidth / aspectRatio);
+       availableHeight = Math.min(maxHeight, availableWidth / aspectRatio, window.innerHeight - 18);
        if (availableHeight < availableWidth / aspectRatio) {
            availableWidth = Math.floor(availableHeight * aspectRatio);
        }
@@ -11061,6 +11193,37 @@ var VideoLayout = (function (my) {
         VideoLayout.resizeThumbnails(true);
     };
 
+    /**
+     * Resizes the #videospace html element
+     * @param animate boolean property that indicates whether the resize should be animated or not.
+     * @param isChatVisible boolean property that indicates whether the chat area is displayed or not.
+     * If that parameter is null the method will check the chat pannel visibility.
+     * @param completeFunction a function to be called when the video space is resized
+     */
+    my.resizeVideoSpace = function (animate, isChatVisible, completeFunction) {
+        var availableHeight = window.innerHeight;
+        var availableWidth = UIUtil.getAvailableVideoWidth(isChatVisible);
+
+        if (availableWidth < 0 || availableHeight < 0) return;
+
+        if(animate) {
+            $('#videospace').animate({
+                    right: window.innerWidth - availableWidth,
+                    width: availableWidth,
+                    height: availableHeight
+                },
+                {
+                    queue: false,
+                    duration: 500,
+                    complete: completeFunction
+                });
+        } else {
+            $('#videospace').width(availableWidth);
+            $('#videospace').height(availableHeight);
+        }
+
+    };
+
     my.getSmallVideo = function (resourceJid) {
         if(resourceJid == APP.xmpp.myResource()) {
             return localVideoThumbnail;
@@ -11121,7 +11284,7 @@ var VideoLayout = (function (my) {
 }(VideoLayout || {}));
 
 module.exports = VideoLayout;
-},{"../../../service/RTC/MediaStreamTypes":109,"../../../service/UI/UIEvents":113,"../../RTC/RTC":9,"../../RTC/RTCBrowserType":10,"../audio_levels/AudioLevels":14,"../prezi/Prezi":20,"../side_pannels/contactlist/ContactList":27,"./LargeVideo":37,"./LocalVideo":38,"./RemoteVideo":39}],42:[function(require,module,exports){
+},{"../../../service/RTC/MediaStreamTypes":110,"../../../service/UI/UIEvents":114,"../../RTC/RTC":9,"../../RTC/RTCBrowserType":10,"../audio_levels/AudioLevels":14,"../prezi/Prezi":20,"../side_pannels/contactlist/ContactList":27,"../util/UIUtil":35,"./LargeVideo":37,"./LocalVideo":38,"./RemoteVideo":39}],42:[function(require,module,exports){
 //var nouns = [
 //];
 var pluralNouns = [
@@ -11400,7 +11563,7 @@ function setupWelcomePage() {
 
 module.exports = setupWelcomePage;
 },{"./RoomnameGenerator":42}],44:[function(require,module,exports){
-/* global $, $iq, config */
+/* global $, $iq, config, interfaceConfig */
 var params = {};
 function getConfigParamsFromUrl() {
     if(!location.hash)
@@ -11419,22 +11582,31 @@ params = getConfigParamsFromUrl();
 
 var URLProcessor = {
     setConfigParametersFromUrl: function () {
-        for(var k in params)
-        {
-            if(typeof k !== "string" || k.indexOf("config.") === -1)
+        for(var key in params) {
+            if(typeof key !== "string")
                 continue;
 
-            var v = params[k];
-            var confKey = k.substr(7);
-            if(config[confKey] && typeof config[confKey] !== typeof v)
+            var confObj = null, confKey;
+            if (key.indexOf("config.") === 0) {
+                confObj = config;
+                confKey = key.substr("config.".length);
+            } else if (key.indexOf("interfaceConfig.") === 0) {
+                confObj = interfaceConfig;
+                confKey = key.substr("interfaceConfig.".length);
+            }
+
+            if (!confObj)
+                continue;
+
+            var value = params[key];
+            if (confObj[confKey] && typeof confObj[confKey] !== typeof value)
             {
-                console.warn("The type of " + k +
+                console.warn("The type of " + key +
                     " is wrong. That parameter won't be updated in config.js.");
                 continue;
             }
 
-            config[confKey] = v;
-
+            confObj[confKey] = value;
         }
 
     }
@@ -11576,7 +11748,7 @@ var ConnectionQuality = {
 };
 
 module.exports = ConnectionQuality;
-},{"../../service/connectionquality/CQEvents":115,"../../service/xmpp/XMPPEvents":119,"events":1}],46:[function(require,module,exports){
+},{"../../service/connectionquality/CQEvents":116,"../../service/xmpp/XMPPEvents":120,"events":1}],46:[function(require,module,exports){
 /* global $, alert, APP, changeLocalVideo, chrome, config, getConferenceHandler,
  getUserMediaWithConstraints */
 /**
@@ -11965,7 +12137,7 @@ module.exports = {
 };
 
 
-},{"../../service/RTC/RTCEvents":110,"../../service/desktopsharing/DesktopSharingEventTypes":116,"../RTC/RTCBrowserType":10,"../RTC/adapter.screenshare":12,"events":1}],47:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":111,"../../service/desktopsharing/DesktopSharingEventTypes":117,"../RTC/RTCBrowserType":10,"../RTC/adapter.screenshare":12,"events":1}],47:[function(require,module,exports){
 /* global APP, $ */
 //maps keycode to character, id of popover for given function and function
 var shortcuts = {};
@@ -12193,7 +12365,7 @@ var Members = {
 
 module.exports = Members;
 
-},{"../../service/members/Events":117,"../../service/xmpp/XMPPEvents":119,"events":1}],49:[function(require,module,exports){
+},{"../../service/members/Events":118,"../../service/xmpp/XMPPEvents":120,"events":1}],49:[function(require,module,exports){
 var email = '';
 var displayName = '';
 var userId;
@@ -13339,7 +13511,7 @@ var statistics = {
 
 
 module.exports = statistics;
-},{"../../service/RTC/RTCEvents":110,"../../service/RTC/StreamEventTypes.js":112,"../../service/xmpp/XMPPEvents":119,"./CallStats":50,"./LocalStatsCollector.js":51,"./RTPStatsCollector.js":52,"events":1}],54:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":111,"../../service/RTC/StreamEventTypes.js":113,"../../service/xmpp/XMPPEvents":120,"./CallStats":50,"./LocalStatsCollector.js":51,"./RTPStatsCollector.js":52,"events":1}],54:[function(require,module,exports){
 /* global $, require, config, interfaceConfig */
 var i18n = require("i18next-client");
 var languages = require("../../service/translation/languages");
@@ -13477,8 +13649,138 @@ module.exports = {
     }
 };
 
-},{"../../service/translation/languages":118,"../settings/Settings":49,"i18next-client":71}],55:[function(require,module,exports){
+},{"../../service/translation/languages":119,"../settings/Settings":49,"i18next-client":72}],55:[function(require,module,exports){
+/*
+ * JingleSession provides an API to manage a single Jingle session. We will
+ * have different implementations depending on the underlying interface used
+ * (i.e. WebRTC and ORTC) and here we hold the code common to all of them.
+ */
+function JingleSession(me, sid, connection, service, eventEmitter) {
+    /**
+     * Our JID.
+     */
+    this.me = me;
+
+    /**
+     * The Jingle session identifier.
+     */
+    this.sid = sid;
+
+    /**
+     * The XMPP connection.
+     */
+    this.connection = connection;
+
+    /**
+     * The XMPP service.
+     */
+    this.service = service;
+
+    /**
+     * The event emitter.
+     */
+    this.eventEmitter = eventEmitter;
+
+    /**
+     * Whether to use dripping or not. Dripping is sending trickle candidates
+     * not one-by-one.
+     * Note: currently we do not support 'false'.
+     */
+    this.usedrip = true;
+
+    /**
+     *  When dripping is used, stores ICE candidates which are to be sent.
+     */
+    this.drip_container = [];
+
+    // Media constraints. Is this WebRTC only?
+    this.media_constraints = null;
+
+    // ICE servers config (RTCConfiguration?).
+    this.ice_config = {};
+}
+
+/**
+ * Prepares this object to initiate a session.
+ * @param peerjid the JID of the remote peer.
+ * @param isInitiator whether we will be the Jingle initiator.
+ * @param media_constraints
+ * @param ice_config
+ */
+JingleSession.prototype.initialize = function(peerjid, isInitiator,
+                                              media_constraints, ice_config) {
+    this.media_constraints = media_constraints;
+    this.ice_config = ice_config;
+
+    if (this.state !== null) {
+        console.error('attempt to initiate on session ' + this.sid +
+        'in state ' + this.state);
+        return;
+    }
+    this.state = 'pending';
+    this.initiator = isInitiator ? this.me : peerjid;
+    this.responder = !isInitiator ? this.me : peerjid;
+    this.peerjid = peerjid;
+
+    this.doInitialize();
+};
+
+/**
+ * Finishes initialization.
+ */
+JingleSession.prototype.doInitialize = function() {};
+
+/**
+ * Adds the ICE candidates found in the 'contents' array as remote candidates?
+ * Note: currently only used on transport-info
+ */
+JingleSession.prototype.addIceCandidates = function(contents) {};
+
+/**
+ * Handles an 'add-source' event.
+ *
+ * @param contents an array of Jingle 'content' elements.
+ */
+JingleSession.prototype.addSources = function(contents) {};
+
+/**
+ * Handles a 'remove-source' event.
+ *
+ * @param contents an array of Jingle 'content' elements.
+ */
+JingleSession.prototype.removeSources = function(contents) {};
+
+/**
+ * Terminates this Jingle session (stops sending media and closes the streams?)
+ */
+JingleSession.prototype.terminate = function() {};
+
+/**
+ * Sends a Jingle session-terminate message to the peer and terminates the
+ * session.
+ * @param reason
+ * @param text
+ */
+JingleSession.prototype.sendTerminate = function(reason, text) {};
+
+/**
+ * Handles an offer from the remote peer (prepares to accept a session).
+ * @param jingle the 'jingle' XML element.
+ */
+JingleSession.prototype.setOffer = function(jingle) {};
+
+/**
+ * Handles an answer from the remote peer (prepares to accept a session).
+ * @param jingle the 'jingle' XML element.
+ */
+JingleSession.prototype.setAnswer = function(jingle) {};
+
+
+module.exports = JingleSession;
+
+},{}],56:[function(require,module,exports){
 /* jshint -W117 */
+var JingleSession = require("./JingleSession");
 var TraceablePeerConnection = require("./TraceablePeerConnection");
 var SDPDiffer = require("./SDPDiffer");
 var SDPUtil = require("./SDPUtil");
@@ -13487,33 +13789,22 @@ var async = require("async");
 var transform = require("sdp-transform");
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 var RTCBrowserType = require("../RTC/RTCBrowserType");
-var VideoSSRCHack = require("./VideoSSRCHack");
+var SSRCReplacement = require("./LocalSSRCReplacement");
 
 // Jingle stuff
-function JingleSession(me, sid, connection, service, eventEmitter) {
-    this.me = me;
-    this.sid = sid;
-    this.connection = connection;
+function JingleSessionPC(me, sid, connection, service, eventEmitter) {
+    JingleSession.call(this, me, sid, connection, service, eventEmitter);
     this.initiator = null;
     this.responder = null;
-    this.isInitiator = null;
     this.peerjid = null;
     this.state = null;
     this.localSDP = null;
     this.remoteSDP = null;
     this.relayedStreams = [];
-    this.startTime = null;
-    this.stopTime = null;
-    this.media_constraints = null;
     this.pc_constraints = null;
-    this.ice_config = {};
-    this.drip_container = [];
-    this.service = service;
-    this.eventEmitter = eventEmitter;
 
     this.usetrickle = true;
     this.usepranswer = false; // early transport warmup -- mind you, this might fail. depends on webrtc issue 1718
-    this.usedrip = false; // dripping is sending trickle candidates not one-by-one
 
     this.hadstuncandidate = false;
     this.hadturncandidate = false;
@@ -13545,8 +13836,19 @@ function JingleSession(me, sid, connection, service, eventEmitter) {
     // stable and the ice connection state is connected.
     this.modifySourcesQueue.pause();
 }
+JingleSessionPC.prototype = JingleSession.prototype;
+JingleSessionPC.prototype.constructor = JingleSessionPC;
 
-JingleSession.prototype.updateModifySourcesQueue = function() {
+
+JingleSessionPC.prototype.setOffer = function(offer) {
+    this.setRemoteDescription(offer, 'offer');
+};
+
+JingleSessionPC.prototype.setAnswer = function(answer) {
+    this.setRemoteDescription(answer, 'answer');
+};
+
+JingleSessionPC.prototype.updateModifySourcesQueue = function() {
     var signalingState = this.peerconnection.signalingState;
     var iceConnectionState = this.peerconnection.iceConnectionState;
     if (signalingState === 'stable' && iceConnectionState === 'connected') {
@@ -13556,25 +13858,15 @@ JingleSession.prototype.updateModifySourcesQueue = function() {
     }
 };
 
-JingleSession.prototype.initiate = function (peerjid, isInitiator) {
+JingleSessionPC.prototype.doInitialize = function () {
     var self = this;
-    if (this.state !== null) {
-        console.error('attempt to initiate on session ' + this.sid +
-            'in state ' + this.state);
-        return;
-    }
-    this.isInitiator = isInitiator;
-    this.state = 'pending';
-    this.initiator = isInitiator ? this.me : peerjid;
-    this.responder = !isInitiator ? this.me : peerjid;
-    this.peerjid = peerjid;
+
     this.hadstuncandidate = false;
     this.hadturncandidate = false;
     this.lasticecandidate = false;
     this.isreconnect = false;
 
-    this.peerconnection
-        = new TraceablePeerConnection(
+    this.peerconnection = new TraceablePeerConnection(
             this.connection.jingle.ice_config,
             this.connection.jingle.pc_constraints,
             this);
@@ -13615,7 +13907,6 @@ JingleSession.prototype.initiate = function (peerjid, isInitiator) {
         self.updateModifySourcesQueue();
         switch (self.peerconnection.iceConnectionState) {
             case 'connected':
-                self.startTime = new Date();
 
                 // Informs interested parties that the connection has been restored.
                 if (self.peerconnection.signalingState === 'stable' && self.isreconnect)
@@ -13625,7 +13916,6 @@ JingleSession.prototype.initiate = function (peerjid, isInitiator) {
                 break;
             case 'disconnected':
                 self.isreconnect = true;
-                self.stopTime = new Date();
                 // Informs interested parties that the connection has been interrupted.
                 if (self.peerconnection.signalingState === 'stable')
                     self.eventEmitter.emit(XMPPEvents.CONNECTION_INTERRUPTED);
@@ -13691,7 +13981,7 @@ function onIceConnectionStateChange(sid, session) {
     }
 }
 
-JingleSession.prototype.accept = function () {
+JingleSessionPC.prototype.accept = function () {
     this.state = 'active';
 
     var pranswer = this.peerconnection.localDescription;
@@ -13734,7 +14024,7 @@ JingleSession.prototype.accept = function () {
             //console.log('setLocalDescription success');
             self.setLocalDescription();
 
-            VideoSSRCHack.processSessionInit(accept);
+            SSRCReplacement.processSessionInit(accept);
 
             self.connection.sendIQ(accept,
                 function () {
@@ -13748,7 +14038,7 @@ JingleSession.prototype.accept = function () {
                         reason: $(stanza).find('error :first')[0].tagName
                     }:{};
                     error.source = 'answer';
-                    JingleSession.onJingleError(self.sid, error);
+                    JingleSessionPC.onJingleError(self.sid, error);
                 },
                 10000);
         },
@@ -13759,7 +14049,7 @@ JingleSession.prototype.accept = function () {
     );
 };
 
-JingleSession.prototype.terminate = function (reason) {
+JingleSessionPC.prototype.terminate = function (reason) {
     this.state = 'ended';
     this.reason = reason;
     this.peerconnection.close();
@@ -13769,11 +14059,11 @@ JingleSession.prototype.terminate = function (reason) {
     }
 };
 
-JingleSession.prototype.active = function () {
+JingleSessionPC.prototype.active = function () {
     return this.state == 'active';
 };
 
-JingleSession.prototype.sendIceCandidate = function (candidate) {
+JingleSessionPC.prototype.sendIceCandidate = function (candidate) {
     var self = this;
     if (candidate && !this.lasticecandidate) {
         var ice = SDPUtil.iceparams(this.localSDP.media[candidate.sdpMLineIndex], this.localSDP.session);
@@ -13819,7 +14109,6 @@ JingleSession.prototype.sendIceCandidate = function (candidate) {
                     initiator: this.initiator,
                     sid: this.sid});
             this.localSDP = new SDP(this.peerconnection.localDescription.sdp);
-            var self = this;
             var sendJingle = function (ssrc) {
                 if(!ssrc)
                     ssrc = {};
@@ -13828,7 +14117,7 @@ JingleSession.prototype.sendIceCandidate = function (candidate) {
                     self.initiator == self.me ? 'initiator' : 'responder',
                     ssrc);
 
-                VideoSSRCHack.processSessionInit(init);
+                SSRCReplacement.processSessionInit(init);
 
                 self.connection.sendIQ(init,
                     function () {
@@ -13845,10 +14134,10 @@ JingleSession.prototype.sendIceCandidate = function (candidate) {
                             reason: $(stanza).find('error :first')[0].tagName,
                         }:{};
                         error.source = 'offer';
-                        JingleSession.onJingleError(self.sid, error);
+                        JingleSessionPC.onJingleError(self.sid, error);
                     },
                     10000);
-            }
+            };
             sendJingle();
         }
         this.lasticecandidate = true;
@@ -13861,7 +14150,7 @@ JingleSession.prototype.sendIceCandidate = function (candidate) {
     }
 };
 
-JingleSession.prototype.sendIceCandidates = function (candidates) {
+JingleSessionPC.prototype.sendIceCandidates = function (candidates) {
     console.log('sendIceCandidates', candidates);
     var cand = $iq({to: this.peerjid, type: 'set'})
         .c('jingle', {xmlns: 'urn:xmpp:jingle:1',
@@ -13910,13 +14199,13 @@ JingleSession.prototype.sendIceCandidates = function (candidates) {
                 reason: $(stanza).find('error :first')[0].tagName,
             }:{};
             error.source = 'transportinfo';
-            JingleSession.onJingleError(this.sid, error);
+            JingleSessionPC.onJingleError(this.sid, error);
         },
         10000);
 };
 
 
-JingleSession.prototype.sendOffer = function () {
+JingleSessionPC.prototype.sendOffer = function () {
     //console.log('sendOffer...');
     var self = this;
     this.peerconnection.createOffer(function (sdp) {
@@ -13930,7 +14219,7 @@ JingleSession.prototype.sendOffer = function () {
 };
 
 // FIXME createdOffer is never used in jitsi-meet
-JingleSession.prototype.createdOffer = function (sdp) {
+JingleSessionPC.prototype.createdOffer = function (sdp) {
     //console.log('createdOffer', sdp);
     var self = this;
     this.localSDP = new SDP(sdp.sdp);
@@ -13947,7 +14236,7 @@ JingleSession.prototype.createdOffer = function (sdp) {
             this.initiator == this.me ? 'initiator' : 'responder',
             this.localStreamsSSRC);
 
-        VideoSSRCHack.processSessionInit(init);
+        SSRCReplacement.processSessionInit(init);
 
         self.connection.sendIQ(init,
             function () {
@@ -13963,7 +14252,7 @@ JingleSession.prototype.createdOffer = function (sdp) {
                     reason: $(stanza).find('error :first')[0].tagName,
                 }:{};
                 error.source = 'offer';
-                JingleSession.onJingleError(self.sid, error);
+                JingleSessionPC.onJingleError(self.sid, error);
             },
             10000);
     }
@@ -13993,7 +14282,7 @@ JingleSession.prototype.createdOffer = function (sdp) {
     }
 };
 
-JingleSession.prototype.readSsrcInfo = function (contents) {
+JingleSessionPC.prototype.readSsrcInfo = function (contents) {
     var self = this;
     $(contents).each(function (idx, content) {
         var name = $(content).attr('name');
@@ -14011,11 +14300,11 @@ JingleSession.prototype.readSsrcInfo = function (contents) {
     });
 };
 
-JingleSession.prototype.getSsrcOwner = function (ssrc) {
+JingleSessionPC.prototype.getSsrcOwner = function (ssrc) {
     return this.ssrcOwners[ssrc];
 };
 
-JingleSession.prototype.setRemoteDescription = function (elem, desctype) {
+JingleSessionPC.prototype.setRemoteDescription = function (elem, desctype) {
     //console.log('setting remote description... ', desctype);
     this.remoteSDP = new SDP('');
     this.remoteSDP.fromJingle(elem);
@@ -14055,12 +14344,12 @@ JingleSession.prototype.setRemoteDescription = function (elem, desctype) {
         },
         function (e) {
             console.error('setRemoteDescription error', e);
-            JingleSession.onJingleFatalError(self, e);
+            JingleSessionPC.onJingleFatalError(self, e);
         }
     );
 };
 
-JingleSession.prototype.addIceCandidate = function (elem) {
+JingleSessionPC.prototype.addIceCandidate = function (elem) {
     var self = this;
     if (this.peerconnection.signalingState == 'closed') {
         return;
@@ -14168,7 +14457,7 @@ JingleSession.prototype.addIceCandidate = function (elem) {
     });
 };
 
-JingleSession.prototype.sendAnswer = function (provisional) {
+JingleSessionPC.prototype.sendAnswer = function (provisional) {
     //console.log('createAnswer', provisional);
     var self = this;
     this.peerconnection.createAnswer(
@@ -14183,7 +14472,7 @@ JingleSession.prototype.sendAnswer = function (provisional) {
     );
 };
 
-JingleSession.prototype.createdAnswer = function (sdp, provisional) {
+JingleSessionPC.prototype.createdAnswer = function (sdp, provisional) {
     //console.log('createAnswer callback');
     var self = this;
     this.localSDP = new SDP(sdp.sdp);
@@ -14213,7 +14502,7 @@ JingleSession.prototype.createdAnswer = function (sdp, provisional) {
                     self.initiator == self.me ? 'initiator' : 'responder',
                     ssrcs);
 
-                VideoSSRCHack.processSessionInit(accept);
+                SSRCReplacement.processSessionInit(accept);
 
                 self.connection.sendIQ(accept,
                     function () {
@@ -14227,7 +14516,7 @@ JingleSession.prototype.createdAnswer = function (sdp, provisional) {
                             reason: $(stanza).find('error :first')[0].tagName,
                         }:{};
                         error.source = 'answer';
-                        JingleSession.onJingleError(self.sid, error);
+                        JingleSessionPC.onJingleError(self.sid, error);
                     },
                     10000);
     }
@@ -14257,7 +14546,7 @@ JingleSession.prototype.createdAnswer = function (sdp, provisional) {
     }
 };
 
-JingleSession.prototype.sendTerminate = function (reason, text) {
+JingleSessionPC.prototype.sendTerminate = function (reason, text) {
     var self = this,
         term = $iq({to: this.peerjid,
             type: 'set'})
@@ -14295,7 +14584,7 @@ JingleSession.prototype.sendTerminate = function (reason, text) {
     }
 };
 
-JingleSession.prototype.addSource = function (elem, fromJid) {
+JingleSessionPC.prototype.addSource = function (elem, fromJid) {
 
     var self = this;
     // FIXME: dirty waiting
@@ -14377,7 +14666,7 @@ JingleSession.prototype.addSource = function (elem, fromJid) {
     });
 };
 
-JingleSession.prototype.removeSource = function (elem, fromJid) {
+JingleSessionPC.prototype.removeSource = function (elem, fromJid) {
 
     var self = this;
     // FIXME: dirty waiting
@@ -14448,7 +14737,7 @@ JingleSession.prototype.removeSource = function (elem, fromJid) {
     });
 };
 
-JingleSession.prototype._modifySources = function (successCallback, queueCallback) {
+JingleSessionPC.prototype._modifySources = function (successCallback, queueCallback) {
     var self = this;
 
     if (this.peerconnection.signalingState == 'closed') return;
@@ -14554,7 +14843,7 @@ JingleSession.prototype._modifySources = function (successCallback, queueCallbac
  * @param oldStream old video stream of this session.
  * @param success_callback callback executed after successful stream switch.
  */
-JingleSession.prototype.switchStreams = function (new_stream, oldStream, success_callback, isAudio) {
+JingleSessionPC.prototype.switchStreams = function (new_stream, oldStream, success_callback, isAudio) {
 
     var self = this;
 
@@ -14592,7 +14881,7 @@ JingleSession.prototype.switchStreams = function (new_stream, oldStream, success
  * @param old_sdp SDP object for old description.
  * @param new_sdp SDP object for new description.
  */
-JingleSession.prototype.notifyMySSRCUpdate = function (old_sdp, new_sdp) {
+JingleSessionPC.prototype.notifyMySSRCUpdate = function (old_sdp, new_sdp) {
 
     if (!(this.peerconnection.signalingState == 'stable' &&
         this.peerconnection.iceConnectionState == 'connected')){
@@ -14615,9 +14904,10 @@ JingleSession.prototype.notifyMySSRCUpdate = function (old_sdp, new_sdp) {
     // Let 'source-remove' IQ through the hack and see if we're allowed to send
     // it in the current form
     if (removed)
-        remove = VideoSSRCHack.processSourceRemove(remove);
+        remove = SSRCReplacement.processSourceRemove(remove);
 
     if (removed && remove) {
+        console.info("Sending source-remove", remove);
         this.connection.sendIQ(remove,
             function (res) {
                 console.info('got remove result', res);
@@ -14645,9 +14935,10 @@ JingleSession.prototype.notifyMySSRCUpdate = function (old_sdp, new_sdp) {
     // Let 'source-add' IQ through the hack and see if we're allowed to send
     // it in the current form
     if (added)
-        add = VideoSSRCHack.processSourceAdd(add);
+        add = SSRCReplacement.processSourceAdd(add);
 
-    if (added & add) {
+    if (added && add) {
+        console.info("Sending source-add", add);
         this.connection.sendIQ(add,
             function (res) {
                 console.info('got add result', res);
@@ -14675,7 +14966,7 @@ JingleSession.prototype.notifyMySSRCUpdate = function (old_sdp, new_sdp) {
  * specifies whether the method was initiated in response to a user command (in
  * contrast to an automatic decision made by the application logic)
  */
-JingleSession.prototype.setVideoMute = function (mute, callback, options) {
+JingleSessionPC.prototype.setVideoMute = function (mute, callback, options) {
     var byUser;
 
     if (options) {
@@ -14715,11 +15006,11 @@ JingleSession.prototype.setVideoMute = function (mute, callback, options) {
     });
 };
 
-JingleSession.prototype.hardMuteVideo = function (muted) {
+JingleSessionPC.prototype.hardMuteVideo = function (muted) {
     this.pendingop = muted ? 'mute' : 'unmute';
 };
 
-JingleSession.prototype.sendMute = function (muted, content) {
+JingleSessionPC.prototype.sendMute = function (muted, content) {
     var info = $iq({to: this.peerjid,
         type: 'set'})
         .c('jingle', {xmlns: 'urn:xmpp:jingle:1',
@@ -14734,7 +15025,7 @@ JingleSession.prototype.sendMute = function (muted, content) {
     this.connection.send(info);
 };
 
-JingleSession.prototype.sendRinging = function () {
+JingleSessionPC.prototype.sendRinging = function () {
     var info = $iq({to: this.peerjid,
         type: 'set'})
         .c('jingle', {xmlns: 'urn:xmpp:jingle:1',
@@ -14745,7 +15036,7 @@ JingleSession.prototype.sendRinging = function () {
     this.connection.send(info);
 };
 
-JingleSession.prototype.getStats = function (interval) {
+JingleSessionPC.prototype.getStats = function (interval) {
     var self = this;
     var recv = {audio: 0, video: 0};
     var lost = {audio: 0, video: 0};
@@ -14791,12 +15082,12 @@ JingleSession.prototype.getStats = function (interval) {
     return this.statsinterval;
 };
 
-JingleSession.onJingleError = function (session, error)
+JingleSessionPC.onJingleError = function (session, error)
 {
     console.error("Jingle error", error);
 }
 
-JingleSession.onJingleFatalError = function (session, error)
+JingleSessionPC.onJingleFatalError = function (session, error)
 {
     this.service.sessionTerminated = true;
     this.connection.emuc.doLeave();
@@ -14804,7 +15095,7 @@ JingleSession.onJingleFatalError = function (session, error)
     this.eventEmitter.emit(XMPPEvents.JINGLE_FATAL_ERROR, session, error);
 }
 
-JingleSession.prototype.setLocalDescription = function () {
+JingleSessionPC.prototype.setLocalDescription = function () {
     var self = this;
     var newssrcs = [];
     var session = transform.parse(this.peerconnection.localDescription.sdp);
@@ -14879,7 +15170,7 @@ function sendKeyframe(pc) {
 }
 
 
-JingleSession.prototype.remoteStreamAdded = function (data, times) {
+JingleSessionPC.prototype.remoteStreamAdded = function (data, times) {
     var self = this;
     var thessrc;
     var streamId = APP.RTC.getStreamID(data.stream);
@@ -14931,9 +15222,274 @@ JingleSession.prototype.remoteStreamAdded = function (data, times) {
     }
 }
 
-module.exports = JingleSession;
+module.exports = JingleSessionPC;
 
-},{"../../service/xmpp/XMPPEvents":119,"../RTC/RTCBrowserType":10,"./SDP":56,"./SDPDiffer":57,"./SDPUtil":58,"./TraceablePeerConnection":59,"./VideoSSRCHack":60,"async":70,"sdp-transform":106}],56:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":120,"../RTC/RTCBrowserType":10,"./JingleSession":55,"./LocalSSRCReplacement":57,"./SDP":58,"./SDPDiffer":59,"./SDPUtil":60,"./TraceablePeerConnection":61,"async":71,"sdp-transform":107}],57:[function(require,module,exports){
+/* global $ */
+
+/*
+ Here we do modifications of local video SSRCs. There are 2 situations we have
+ to handle:
+
+ 1. We generate SSRC for local recvonly video stream. This is the case when we
+    have no local camera and it is not generated automatically, but SSRC=1 is
+    used implicitly. If that happens RTCP packets will be dropped by the JVB
+    and we won't be able to request video key frames correctly.
+
+ 2. A hack to re-use SSRC of the first video stream for any new stream created
+    in future. It turned out that Chrome may keep on using the SSRC of removed
+    video stream in RTCP even though a new one has been created. So we just
+    want to avoid that by re-using it. Jingle 'source-remove'/'source-add'
+    notifications are blocked once first video SSRC is advertised to the focus.
+
+ What this hack does:
+
+ 1. Stores the SSRC of the first video stream created by
+   a) scanning Jingle session-accept/session-invite for existing video SSRC
+   b) watching for 'source-add' for new video stream if it has not been
+      created in step a)
+ 2. Exposes method 'mungeLocalVideoSSRC' which replaces any new video SSRC with
+    the stored one. It is called by 'TracablePeerConnection' before local SDP is
+    returned to the other parts of the application.
+ 3. Scans 'source-remove'/'source-add' notifications for stored video SSRC and
+    blocks those notifications. This makes Jicofo and all participants think
+    that it exists all the time even if the video stream has been removed or
+    replaced locally. Thanks to that there is no additional signaling activity
+    on video mute or when switching to the desktop stream.
+ */
+
+var SDP = require('./SDP');
+var RTCBrowserType = require('../RTC/RTCBrowserType');
+
+/**
+ * The hack is enabled on all browsers except FF by default
+ * FIXME finish the hack once removeStream method is implemented in FF
+ * @type {boolean}
+ */
+var isEnabled = !RTCBrowserType.isFirefox();
+
+/**
+ * Stored SSRC of local video stream.
+ */
+var localVideoSSRC;
+
+/**
+ * SSRC used for recvonly video stream when we have no local camera.
+ * This is in order to tell Chrome what SSRC should be used in RTCP requests
+ * instead of 1.
+ */
+var localRecvOnlySSRC;
+
+/**
+ * cname for <tt>localRecvOnlySSRC</tt>
+ */
+var localRecvOnlyCName;
+
+/**
+ * Method removes <source> element which describes <tt>localVideoSSRC</tt>
+ * from given Jingle IQ.
+ * @param modifyIq 'source-add' or 'source-remove' Jingle IQ.
+ * @param actionName display name of the action which will be printed in log
+ *        messages.
+ * @returns {*} modified Jingle IQ, so that it does not contain <source> element
+ *          corresponding to <tt>localVideoSSRC</tt> or <tt>null</tt> if no
+ *          other SSRCs left to be signaled after removing it.
+ */
+var filterOutSource = function (modifyIq, actionName) {
+    var modifyIqTree = $(modifyIq.tree());
+
+    if (!localVideoSSRC)
+        return modifyIqTree[0];
+
+    var videoSSRC = modifyIqTree.find(
+        '>jingle>content[name="video"]' +
+        '>description>source[ssrc="' + localVideoSSRC + '"]');
+
+    if (!videoSSRC.length) {
+        return modifyIqTree[0];
+    }
+
+    console.info(
+        'Blocking ' + actionName + ' for local video SSRC: ' + localVideoSSRC);
+
+    videoSSRC.remove();
+
+    // Check if any sources still left to be added/removed
+    if (modifyIqTree.find('>jingle>content>description>source').length) {
+        return modifyIqTree[0];
+    } else {
+        return null;
+    }
+};
+
+/**
+ * Scans given Jingle IQ for video SSRC and stores it.
+ * @param jingleIq the Jingle IQ to be scanned for video SSRC.
+ */
+var storeLocalVideoSSRC = function (jingleIq) {
+    var videoSSRCs =
+        $(jingleIq.tree())
+            .find('>jingle>content[name="video"]>description>source');
+
+    videoSSRCs.each(function (idx, ssrcElem) {
+        if (localVideoSSRC)
+            return;
+        // We consider SSRC real only if it has msid attribute
+        // recvonly streams in FF do not have it as well as local SSRCs
+        // we generate for recvonly streams in Chrome
+        var ssrSel = $(ssrcElem);
+        var msid = ssrSel.find('>parameter[name="msid"]');
+        if (msid.length) {
+            var ssrcVal = ssrSel.attr('ssrc');
+            if (ssrcVal) {
+                localVideoSSRC = ssrcVal;
+                console.info('Stored local video SSRC' +
+                             ' for future re-use: ' + localVideoSSRC);
+            }
+        }
+    });
+};
+
+/**
+ * Generates new SSRC for local video recvonly stream.
+ * FIXME what about eventual SSRC collision ?
+ */
+function generateRecvonlySSRC() {
+    //
+    localRecvOnlySSRC =
+        Math.random().toString(10).substring(2, 11);
+    localRecvOnlyCName =
+        Math.random().toString(36).substring(2);
+    console.info(
+        "Generated local recvonly SSRC: " + localRecvOnlySSRC +
+        ", cname: " + localRecvOnlyCName);
+}
+
+var LocalSSRCReplacement = {
+    /**
+     * Method must be called before 'session-initiate' or 'session-invite' is
+     * sent. Scans the IQ for local video SSRC and stores it if detected.
+     *
+     * @param sessionInit our 'session-initiate' or 'session-accept' Jingle IQ
+     *        which will be scanned for local video SSRC.
+     */
+    processSessionInit: function (sessionInit) {
+        if (!isEnabled)
+            return;
+
+        if (localVideoSSRC) {
+            console.error("Local SSRC stored already: " + localVideoSSRC);
+            return;
+        }
+        storeLocalVideoSSRC(sessionInit);
+    },
+    /**
+     * If we have local video SSRC stored searched given
+     * <tt>localDescription</tt> for video SSRC and makes sure it is replaced
+     * with the stored one.
+     * @param localDescription local description object that will have local
+     *        video SSRC replaced with the stored one
+     * @returns modified <tt>localDescription</tt> object.
+     */
+    mungeLocalVideoSSRC: function (localDescription) {
+        if (!isEnabled)
+            return localDescription;
+
+        // IF we have local video SSRC stored make sure it is replaced
+        // with old SSRC
+        if (localVideoSSRC) {
+            var newSdp = new SDP(localDescription.sdp);
+            if (newSdp.media[1].indexOf("a=ssrc:") !== -1 &&
+                !newSdp.containsSSRC(localVideoSSRC)) {
+                // Get new video SSRC
+                var map = newSdp.getMediaSsrcMap();
+                var videoPart = map[1];
+                var videoSSRCs = videoPart.ssrcs;
+                var newSSRC = Object.keys(videoSSRCs)[0];
+
+                console.info(
+                    "Replacing new video SSRC: " + newSSRC +
+                    " with " + localVideoSSRC);
+
+                localDescription.sdp =
+                    newSdp.raw.replace(
+                        new RegExp('a=ssrc:' + newSSRC, 'g'),
+                        'a=ssrc:' + localVideoSSRC);
+            }
+        } else {
+            // Make sure we have any SSRC for recvonly video stream
+            var sdp = new SDP(localDescription.sdp);
+
+            if (sdp.media[1] && sdp.media[1].indexOf('a=ssrc:') === -1 &&
+                sdp.media[1].indexOf('a=recvonly') !== -1) {
+
+                if (!localRecvOnlySSRC) {
+                    generateRecvonlySSRC();
+                }
+
+                console.info('No SSRC in video recvonly stream' +
+                             ' - adding SSRC: ' + localRecvOnlySSRC);
+
+                sdp.media[1] += 'a=ssrc:' + localRecvOnlySSRC +
+                                ' cname:' + localRecvOnlyCName + '\r\n';
+
+                localDescription.sdp = sdp.session + sdp.media.join('');
+            }
+        }
+        return localDescription;
+    },
+    /**
+     * Method must be called before 'source-add' notification is sent. In case
+     * we have local video SSRC advertised already it will be removed from the
+     * notification. If no other SSRCs are described by given IQ null will be
+     * returned which means that there is no point in sending the notification.
+     * @param sourceAdd 'source-add' Jingle IQ to be processed
+     * @returns modified 'source-add' IQ which can be sent to the focus or
+     *          <tt>null</tt> if no notification shall be sent. It is no longer
+     *          a Strophe IQ Builder instance, but DOM element tree.
+     */
+    processSourceAdd: function (sourceAdd) {
+        if (!isEnabled)
+            return sourceAdd;
+
+        if (!localVideoSSRC) {
+            // Store local SSRC if available
+            storeLocalVideoSSRC(sourceAdd);
+            return sourceAdd;
+        } else {
+            return filterOutSource(sourceAdd, 'source-add');
+        }
+    },
+    /**
+     * Method must be called before 'source-remove' notification is sent.
+     * Removes local video SSRC from the notification. If there are no other
+     * SSRCs described in the given IQ <tt>null</tt> will be returned which
+     * means that there is no point in sending the notification.
+     * @param sourceRemove 'source-remove' Jingle IQ to be processed
+     * @returns modified 'source-remove' IQ which can be sent to the focus or
+     *          <tt>null</tt> if no notification shall be sent. It is no longer
+     *          a Strophe IQ Builder instance, but DOM element tree.
+     */
+    processSourceRemove: function (sourceRemove) {
+        if (!isEnabled)
+            return sourceRemove;
+
+        return filterOutSource(sourceRemove, 'source-remove');
+    },
+
+    /**
+     * Turns the hack on or off
+     * @param enabled <tt>true</tt> to enable the hack or <tt>false</tt>
+     *                to disable it
+     */
+    setEnabled: function (enabled) {
+        isEnabled = enabled;
+    }
+};
+
+module.exports = LocalSSRCReplacement;
+
+},{"../RTC/RTCBrowserType":10,"./SDP":58}],58:[function(require,module,exports){
 /* jshint -W117 */
 var SDPUtil = require("./SDPUtil");
 
@@ -15559,7 +16115,7 @@ SDP.prototype.jingle2media = function (content) {
 module.exports = SDP;
 
 
-},{"./SDPUtil":58}],57:[function(require,module,exports){
+},{"./SDPUtil":60}],59:[function(require,module,exports){
 
 var SDPUtil = require("./SDPUtil");
 
@@ -15731,7 +16287,7 @@ SDPDiffer.prototype.toJingle = function(modify) {
 };
 
 module.exports = SDPDiffer;
-},{"./SDPUtil":58}],58:[function(require,module,exports){
+},{"./SDPUtil":60}],60:[function(require,module,exports){
 SDPUtil = {
     filter_special_chars: function (text) {
         return text.replace(/[\\\/\{,\}\+]/g, "");
@@ -16084,11 +16640,11 @@ SDPUtil = {
     }
 };
 module.exports = SDPUtil;
-},{}],59:[function(require,module,exports){
+},{}],61:[function(require,module,exports){
 var RTC = require('../RTC/RTC');
 var RTCBrowserType = require("../RTC/RTCBrowserType.js");
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
-var VideoSSRCHack = require("./VideoSSRCHack");
+var SSRCReplacement = require("./LocalSSRCReplacement");
 
 function TraceablePeerConnection(ice_config, constraints, session) {
     var self = this;
@@ -16300,7 +16856,7 @@ if (TraceablePeerConnection.prototype.__defineGetter__ !== undefined) {
         function() {
             var desc = this.peerconnection.localDescription;
 
-            desc = VideoSSRCHack.mungeLocalVideoSSRC(desc);
+            desc = SSRCReplacement.mungeLocalVideoSSRC(desc);
             
             this.trace('getLocalDescription::preTransform', dumpSDP(desc));
 
@@ -16459,7 +17015,7 @@ TraceablePeerConnection.prototype.createOffer
                 self.trace('createOfferOnSuccess::postTransform (Plan B)', dumpSDP(offer));
             }
 
-            offer = VideoSSRCHack.mungeLocalVideoSSRC(offer);
+            offer = SSRCReplacement.mungeLocalVideoSSRC(offer);
 
             if (config.enableSimulcast && self.simulcast.isSupported()) {
                 offer = self.simulcast.mungeLocalDescription(offer);
@@ -16489,7 +17045,7 @@ TraceablePeerConnection.prototype.createAnswer
             }
 
             // munge local video SSRC
-            answer = VideoSSRCHack.mungeLocalVideoSSRC(answer);
+            answer = SSRCReplacement.mungeLocalVideoSSRC(answer);
 
             if (config.enableSimulcast && self.simulcast.isSupported()) {
                 answer = self.simulcast.mungeLocalDescription(answer);
@@ -16539,178 +17095,7 @@ TraceablePeerConnection.prototype.getStats = function(callback, errback) {
 module.exports = TraceablePeerConnection;
 
 
-},{"../../service/xmpp/XMPPEvents":119,"../RTC/RTC":9,"../RTC/RTCBrowserType.js":10,"./VideoSSRCHack":60,"sdp-interop":92,"sdp-simulcast":99,"sdp-transform":106}],60:[function(require,module,exports){
-/* global $ */
-
-/*
- The purpose of this hack is to re-use SSRC of first video stream ever created
- for any video streams created later on. In order to do that this hack:
-
- 1. Stores the SSRC of the first video stream created by
-   a) scanning Jingle session-accept/session-invite for existing video SSRC
-   b) watching for 'source-add' for new video stream if it has not been
-      created in step a)
- 2. Exposes method 'mungeLocalVideoSSRC' which replaces any new video SSRC with
-    the stored one. It is called by 'TracablePeerConnection' before local SDP is
-    returned to the other parts of the application.
- 3. Scans 'source-remove'/'source-add' notifications for stored video SSRC and
-    blocks those notifications. This makes Jicofo and all participants think
-    that it exists all the time even if the video stream has been removed or
-    replaced locally. Thanks to that there is no additional signaling activity
-    on video mute or when switching to the desktop stream.
- */
-
-var SDP = require('./SDP');
-
-/**
- * Stored SSRC of local video stream.
- */
-var localVideoSSRC;
-
-/**
- * Method removes <source> element which describes <tt>localVideoSSRC</tt>
- * from given Jingle IQ.
- * @param modifyIq 'source-add' or 'source-remove' Jingle IQ.
- * @param actionName display name of the action which will be printed in log
- *        messages.
- * @returns {*} modified Jingle IQ, so that it does not contain <source> element
- *          corresponding to <tt>localVideoSSRC</tt> or <tt>null</tt> if no
- *          other SSRCs left to be signaled after removing it.
- */
-var filterOutSource = function (modifyIq, actionName) {
-    if (!localVideoSSRC)
-        return modifyIq;
-
-    var modifyIqTree = $(modifyIq.tree());
-    var videoSSRC = modifyIqTree.find(
-        '>jingle>content[name="video"]' +
-        '>description>source[ssrc="' + localVideoSSRC + '"]');
-
-    if (!videoSSRC.length) {
-        return modifyIqTree;
-    }
-
-    console.info(
-        'Blocking ' + actionName + ' for local video SSRC: ' + localVideoSSRC);
-
-    videoSSRC.remove();
-
-    // Check if any sources still left to be added/removed
-    if (modifyIqTree.find('>jingle>content>description>source').length) {
-        return modifyIqTree;
-    } else {
-        return null;
-    }
-};
-
-/**
- * Scans given Jingle IQ for video SSRC and stores it.
- * @param jingleIq the Jingle IQ to be scanned for video SSRC.
- */
-var storeLocalVideoSSRC = function (jingleIq) {
-    var videoSSRCs =
-        $(jingleIq.tree())
-            .find('>jingle>content[name="video"]>description>source');
-
-    console.info('Video desc: ', videoSSRCs);
-    if (!videoSSRCs.length)
-        return;
-
-    var ssrc = videoSSRCs.attr('ssrc');
-    if (ssrc) {
-        localVideoSSRC = ssrc;
-        console.info(
-            'Stored local video SSRC for future re-use: ' + localVideoSSRC);
-    } else {
-        console.error('No "ssrc" attribute present in <source> element');
-    }
-};
-
-var LocalVideoSSRCHack = {
-    /**
-     * Method must be called before 'session-initiate' or 'session-invite' is
-     * sent. Scans the IQ for local video SSRC and stores it if detected.
-     *
-     * @param sessionInit our 'session-initiate' or 'session-accept' Jingle IQ
-     *        which will be scanned for local video SSRC.
-     */
-    processSessionInit: function (sessionInit) {
-        if (localVideoSSRC) {
-            console.error("Local SSRC stored already: " + localVideoSSRC);
-            return;
-        }
-        storeLocalVideoSSRC(sessionInit);
-    },
-    /**
-     * If we have local video SSRC stored searched given
-     * <tt>localDescription</tt> for video SSRC and makes sure it is replaced
-     * with the stored one.
-     * @param localDescription local description object that will have local
-     *        video SSRC replaced with the stored one
-     * @returns modified <tt>localDescription</tt> object.
-     */
-    mungeLocalVideoSSRC: function (localDescription) {
-        // IF we have local video SSRC stored make sure it is replaced
-        // with old SSRC
-        if (localVideoSSRC) {
-            var newSdp = new SDP(localDescription.sdp);
-            if (newSdp.media[1].indexOf("a=ssrc:") !== -1 &&
-                !newSdp.containsSSRC(localVideoSSRC)) {
-                // Get new video SSRC
-                var map = newSdp.getMediaSsrcMap();
-                var videoPart = map[1];
-                var videoSSRCs = videoPart.ssrcs;
-                var newSSRC = Object.keys(videoSSRCs)[0];
-
-                console.info(
-                    "Replacing new video SSRC: " + newSSRC +
-                    " with " + localVideoSSRC);
-
-                localDescription.sdp =
-                    newSdp.raw.replace(
-                        new RegExp('a=ssrc:' + newSSRC, 'g'),
-                        'a=ssrc:' + localVideoSSRC);
-            }
-        }
-        return localDescription;
-    },
-    /**
-     * Method must be called before 'source-add' notification is sent. In case
-     * we have local video SSRC advertised already it will be removed from the
-     * notification. If no other SSRCs are described by given IQ null will be
-     * returned which means that there is no point in sending the notification.
-     * @param sourceAdd 'source-add' Jingle IQ to be processed
-     * @returns modified 'source-add' IQ which can be sent to the focus or
-     *          <tt>null</tt> if no notification shall be sent. It is no longer
-     *          a Strophe IQ Builder instance, but DOM element tree.
-     */
-    processSourceAdd: function (sourceAdd) {
-        if (!localVideoSSRC) {
-            // Store local SSRC if available
-            storeLocalVideoSSRC(sourceAdd);
-            return sourceAdd;
-        } else {
-            return filterOutSource(sourceAdd, 'source-add');
-        }
-    },
-    /**
-     * Method must be called before 'source-remove' notification is sent.
-     * Removes local video SSRC from the notification. If there are no other
-     * SSRCs described in the given IQ <tt>null</tt> will be returned which
-     * means that there is no point in sending the notification.
-     * @param sourceRemove 'source-remove' Jingle IQ to be processed
-     * @returns modified 'source-remove' IQ which can be sent to the focus or
-     *          <tt>null</tt> if no notification shall be sent. It is no longer
-     *          a Strophe IQ Builder instance, but DOM element tree.
-     */
-    processSourceRemove: function (sourceRemove) {
-        return filterOutSource(sourceRemove, 'source-remove');
-    }
-};
-
-module.exports = LocalVideoSSRCHack;
-
-},{"./SDP":56}],61:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":120,"../RTC/RTC":9,"../RTC/RTCBrowserType.js":10,"./LocalSSRCReplacement":57,"sdp-interop":93,"sdp-simulcast":100,"sdp-transform":107}],62:[function(require,module,exports){
 /* global $, $iq, APP, config, messageHandler,
  roomName, sessionTerminated, Strophe, Util */
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
@@ -17143,7 +17528,7 @@ module.exports = Moderator;
 
 
 
-},{"../../service/authentication/AuthenticationEvents":114,"../../service/xmpp/XMPPEvents":119,"../settings/Settings":49}],62:[function(require,module,exports){
+},{"../../service/authentication/AuthenticationEvents":115,"../../service/xmpp/XMPPEvents":120,"../settings/Settings":49}],63:[function(require,module,exports){
 /* global $, $iq, config, connection, focusMucJid, messageHandler,
    Toolbar, Util */
 var Moderator = require("./moderator");
@@ -17165,6 +17550,12 @@ var useJirecon = (typeof config.hosts.jirecon != "undefined");
  */
 var jireconRid = null;
 
+/**
+ * The callback to update the recording button. Currently used from colibri
+ * after receiving a pending status.
+ */
+var recordingStateChangeCallback = null;
+
 function setRecordingToken(token) {
     recordingToken = token;
 }
@@ -17176,9 +17567,9 @@ function setRecordingJirecon(state, token, callback, connection) {
 
     var iq = $iq({to: config.hosts.jirecon, type: 'set'})
         .c('recording', {xmlns: 'http://jitsi.org/protocol/jirecon',
-            action: state ? 'start' : 'stop',
+            action: (state === 'on') ? 'start' : 'stop',
             mucjid: connection.emuc.roomjid});
-    if (!state){
+    if (state === 'off'){
         iq.attrs({rid: jireconRid});
     }
 
@@ -17190,10 +17581,10 @@ function setRecordingJirecon(state, token, callback, connection) {
             // TODO wait for an IQ with the real status, since this is
             // provisional?
             jireconRid = $(result).find('recording').attr('rid');
-            console.log('Recording ' + (state ? 'started' : 'stopped') +
+            console.log('Recording ' + ((state === 'on') ? 'started' : 'stopped') +
                 '(jirecon)' + result);
             recordingEnabled = state;
-            if (!state){
+            if (state === 'off'){
                 jireconRid = null;
             }
 
@@ -17219,10 +17610,19 @@ function setRecordingColibri(state, token, callback, connection) {
         function (result) {
             console.log('Set recording "', state, '". Result:', result);
             var recordingElem = $(result).find('>conference>recording');
-            var newState = ('true' === recordingElem.attr('state'));
+            var newState = recordingElem.attr('state');
 
             recordingEnabled = newState;
             callback(newState);
+
+            if (newState === 'pending' && recordingStateChangeCallback == null) {
+                recordingStateChangeCallback = callback;
+                connection.addHandler(function(iq){
+                    var state = $(iq).find('recording').attr('state');
+                    if (state)
+                        recordingStateChangeCallback(state);
+                }, 'http://jitsi.org/protocol/colibri', 'iq', null, null, null);
+            }
         },
         function (error) {
             console.warn(error);
@@ -17240,8 +17640,7 @@ function setRecording(state, token, callback, connection) {
 }
 
 var Recording = {
-    toggleRecording: function (tokenEmptyCallback,
-                               startingCallback, startedCallback, connection) {
+    toggleRecording: function (tokenEmptyCallback, recordingStateChangeCallback, connection) {
         if (!Moderator.isModerator()) {
             console.log(
                     'non-focus, or conference not yet organized:' +
@@ -17254,16 +17653,16 @@ var Recording = {
         if (!recordingToken && !useJirecon) {
             tokenEmptyCallback(function (value) {
                 setRecordingToken(value);
-                self.toggleRecording(tokenEmptyCallback,
-                    startingCallback, startedCallback, connection);
+                self.toggleRecording(tokenEmptyCallback, recordingStateChangeCallback, connection);
             });
 
             return;
         }
 
         var oldState = recordingEnabled;
-        startingCallback(!oldState);
-        setRecording(!oldState,
+        var newState = (oldState === 'off' || !oldState) ? 'on' : 'off';
+
+        setRecording(newState,
             recordingToken,
             function (state) {
                 console.log("New recording state: ", state);
@@ -17289,7 +17688,7 @@ var Recording = {
                     // have been wrong
                     setRecordingToken(null);
                 }
-                startedCallback(state);
+                recordingStateChangeCallback(state);
 
             },
             connection
@@ -17299,7 +17698,7 @@ var Recording = {
 };
 
 module.exports = Recording;
-},{"./moderator":61}],63:[function(require,module,exports){
+},{"./moderator":62}],64:[function(require,module,exports){
 /* jshint -W117 */
 /* a simple MUC connection plugin
  * can only handle a single MUC room
@@ -17941,31 +18340,15 @@ module.exports = function(XMPP, eventEmitter) {
 };
 
 
-},{"../../service/xmpp/XMPPEvents":119,"./moderator":61}],64:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":120,"./moderator":62}],65:[function(require,module,exports){
 /* jshint -W117 */
 
-var JingleSession = require("./JingleSession");
+var JingleSession = require("./JingleSessionPC");
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 var RTCBrowserType = require("../RTC/RTCBrowserType");
 
 
 module.exports = function(XMPP, eventEmitter) {
-    function CallIncomingJingle(sid, connection) {
-        var sess = connection.jingle.sessions[sid];
-
-        // TODO: do we check activecall == null?
-        connection.jingle.activecall = sess;
-
-        eventEmitter.emit(XMPPEvents.CALL_INCOMING, sess);
-
-        // TODO: check affiliation and/or role
-        console.log('emuc data for', sess.peerjid, connection.emuc.members[sess.peerjid]);
-        sess.usedrip = true; // not-so-naive trickle ice
-        sess.sendAnswer();
-        sess.accept();
-
-    }
-
     Strophe.addConnectionPlugin('jingle', {
         connection: null,
         sessions: {},
@@ -18070,20 +18453,30 @@ module.exports = function(XMPP, eventEmitter) {
                     sess.pc_constraints = this.pc_constraints;
                     sess.ice_config = this.ice_config;
 
-                    sess.initiate(fromJid, false);
+                    sess.initialize(fromJid, false);
                     // FIXME: setRemoteDescription should only be done when this call is to be accepted
-                    sess.setRemoteDescription($(iq).find('>jingle'), 'offer');
+                    sess.setOffer($(iq).find('>jingle'));
 
                     this.sessions[sess.sid] = sess;
                     this.jid2session[sess.peerjid] = sess;
 
                     // the callback should either
                     // .sendAnswer and .accept
-                    // or .sendTerminate -- not necessarily synchronus
-                    CallIncomingJingle(sess.sid, this.connection);
+                    // or .sendTerminate -- not necessarily synchronous
+
+                    // TODO: do we check activecall == null?
+                    this.connection.jingle.activecall = sess;
+
+                    eventEmitter.emit(XMPPEvents.CALL_INCOMING, sess);
+
+                    // TODO: check affiliation and/or role
+                    console.log('emuc data for', sess.peerjid,
+                        this.connection.emuc.members[sess.peerjid]);
+                    sess.sendAnswer();
+                    sess.accept();
                     break;
                 case 'session-accept':
-                    sess.setRemoteDescription($(iq).find('>jingle'), 'answer');
+                    sess.setAnswer($(iq).find('>jingle'));
                     sess.accept();
                     $(document).trigger('callaccepted.jingle', [sess.sid]);
                     break;
@@ -18150,7 +18543,7 @@ module.exports = function(XMPP, eventEmitter) {
             sess.pc_constraints = this.pc_constraints;
             sess.ice_config = this.ice_config;
 
-            sess.initiate(peerjid, true);
+            sess.initialize(peerjid, true);
             this.sessions[sess.sid] = sess;
             this.jid2session[sess.peerjid] = sess;
             sess.sendOffer();
@@ -18290,7 +18683,7 @@ module.exports = function(XMPP, eventEmitter) {
 };
 
 
-},{"../../service/xmpp/XMPPEvents":119,"../RTC/RTCBrowserType":10,"./JingleSession":55}],65:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":120,"../RTC/RTCBrowserType":10,"./JingleSessionPC":56}],66:[function(require,module,exports){
 /* global Strophe */
 module.exports = function () {
 
@@ -18311,7 +18704,7 @@ module.exports = function () {
         }
     });
 };
-},{}],66:[function(require,module,exports){
+},{}],67:[function(require,module,exports){
 /* global $, $iq, config, connection, focusMucJid, forceMuted,
    setAudioMuted, Strophe */
 /**
@@ -18372,7 +18765,7 @@ module.exports = function (XMPP, eventEmitter) {
         }
     });
 }
-},{"../../service/xmpp/XMPPEvents":119}],67:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":120}],68:[function(require,module,exports){
 /* jshint -W117 */
 module.exports = function() {
     Strophe.addConnectionPlugin('rayo',
@@ -18469,7 +18862,7 @@ module.exports = function() {
     );
 };
 
-},{}],68:[function(require,module,exports){
+},{}],69:[function(require,module,exports){
 /**
  * Strophe logger implementation. Logs from level WARN and above.
  */
@@ -18513,7 +18906,7 @@ module.exports = function () {
     };
 };
 
-},{}],69:[function(require,module,exports){
+},{}],70:[function(require,module,exports){
 /* global $, APP, config, Strophe*/
 var Moderator = require("./moderator");
 var EventEmitter = require("events");
@@ -18950,9 +19343,9 @@ var XMPP = {
         return true;
     },
     toggleRecording: function (tokenEmptyCallback,
-                               startingCallback, startedCallback) {
+                               recordingStateChangeCallback) {
         Recording.toggleRecording(tokenEmptyCallback,
-            startingCallback, startedCallback, connection);
+            recordingStateChangeCallback, connection);
     },
     addToPresence: function (name, value, dontSend) {
         switch (name) {
@@ -19083,7 +19476,7 @@ var XMPP = {
 
 module.exports = XMPP;
 
-},{"../../service/RTC/RTCEvents":110,"../../service/RTC/StreamEventTypes":112,"../../service/xmpp/XMPPEvents":119,"../settings/Settings":49,"./SDP":56,"./moderator":61,"./recording":62,"./strophe.emuc":63,"./strophe.jingle":64,"./strophe.logger":65,"./strophe.moderate":66,"./strophe.rayo":67,"./strophe.util":68,"events":1,"pako":72,"retry":88}],70:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":111,"../../service/RTC/StreamEventTypes":113,"../../service/xmpp/XMPPEvents":120,"../settings/Settings":49,"./SDP":58,"./moderator":62,"./recording":63,"./strophe.emuc":64,"./strophe.jingle":65,"./strophe.logger":66,"./strophe.moderate":67,"./strophe.rayo":68,"./strophe.util":69,"events":1,"pako":73,"retry":89}],71:[function(require,module,exports){
 (function (process){
 /*!
  * async
@@ -20210,7 +20603,7 @@ module.exports = XMPP;
 }());
 
 }).call(this,require('_process'))
-},{"_process":2}],71:[function(require,module,exports){
+},{"_process":2}],72:[function(require,module,exports){
 // i18next, v1.7.7
 // Copyright (c)2014 Jan Mühlemann (jamuhl).
 // Distributed under MIT license
@@ -22333,7 +22726,7 @@ module.exports = XMPP;
     i18n.options = o;
 
 })();
-},{"jquery":"jquery"}],72:[function(require,module,exports){
+},{"jquery":"jquery"}],73:[function(require,module,exports){
 // Top level file is just a mixin of submodules & constants
 'use strict';
 
@@ -22349,7 +22742,7 @@ assign(pako, deflate, inflate, constants);
 
 module.exports = pako;
 
-},{"./lib/deflate":73,"./lib/inflate":74,"./lib/utils/common":75,"./lib/zlib/constants":78}],73:[function(require,module,exports){
+},{"./lib/deflate":74,"./lib/inflate":75,"./lib/utils/common":76,"./lib/zlib/constants":79}],74:[function(require,module,exports){
 'use strict';
 
 
@@ -22727,7 +23120,7 @@ exports.deflate = deflate;
 exports.deflateRaw = deflateRaw;
 exports.gzip = gzip;
 
-},{"./utils/common":75,"./utils/strings":76,"./zlib/deflate.js":80,"./zlib/messages":85,"./zlib/zstream":87}],74:[function(require,module,exports){
+},{"./utils/common":76,"./utils/strings":77,"./zlib/deflate.js":81,"./zlib/messages":86,"./zlib/zstream":88}],75:[function(require,module,exports){
 'use strict';
 
 
@@ -23108,7 +23501,7 @@ exports.inflate = inflate;
 exports.inflateRaw = inflateRaw;
 exports.ungzip  = inflate;
 
-},{"./utils/common":75,"./utils/strings":76,"./zlib/constants":78,"./zlib/gzheader":81,"./zlib/inflate.js":83,"./zlib/messages":85,"./zlib/zstream":87}],75:[function(require,module,exports){
+},{"./utils/common":76,"./utils/strings":77,"./zlib/constants":79,"./zlib/gzheader":82,"./zlib/inflate.js":84,"./zlib/messages":86,"./zlib/zstream":88}],76:[function(require,module,exports){
 'use strict';
 
 
@@ -23212,7 +23605,7 @@ exports.setTyped = function (on) {
 
 exports.setTyped(TYPED_OK);
 
-},{}],76:[function(require,module,exports){
+},{}],77:[function(require,module,exports){
 // String encode/decode helpers
 'use strict';
 
@@ -23399,7 +23792,7 @@ exports.utf8border = function(buf, max) {
   return (pos + _utf8len[buf[pos]] > max) ? pos : max;
 };
 
-},{"./common":75}],77:[function(require,module,exports){
+},{"./common":76}],78:[function(require,module,exports){
 'use strict';
 
 // Note: adler32 takes 12% for level 0 and 2% for level 6.
@@ -23433,7 +23826,7 @@ function adler32(adler, buf, len, pos) {
 
 module.exports = adler32;
 
-},{}],78:[function(require,module,exports){
+},{}],79:[function(require,module,exports){
 module.exports = {
 
   /* Allowed flush values; see deflate() and inflate() below for details */
@@ -23482,7 +23875,7 @@ module.exports = {
   //Z_NULL:                 null // Use -1 or null inline, depending on var type
 };
 
-},{}],79:[function(require,module,exports){
+},{}],80:[function(require,module,exports){
 'use strict';
 
 // Note: we can't get significant speed boost here.
@@ -23525,7 +23918,7 @@ function crc32(crc, buf, len, pos) {
 
 module.exports = crc32;
 
-},{}],80:[function(require,module,exports){
+},{}],81:[function(require,module,exports){
 'use strict';
 
 var utils   = require('../utils/common');
@@ -25292,7 +25685,7 @@ exports.deflatePrime = deflatePrime;
 exports.deflateTune = deflateTune;
 */
 
-},{"../utils/common":75,"./adler32":77,"./crc32":79,"./messages":85,"./trees":86}],81:[function(require,module,exports){
+},{"../utils/common":76,"./adler32":78,"./crc32":80,"./messages":86,"./trees":87}],82:[function(require,module,exports){
 'use strict';
 
 
@@ -25334,7 +25727,7 @@ function GZheader() {
 
 module.exports = GZheader;
 
-},{}],82:[function(require,module,exports){
+},{}],83:[function(require,module,exports){
 'use strict';
 
 // See state defs from inflate.js
@@ -25661,7 +26054,7 @@ module.exports = function inflate_fast(strm, start) {
   return;
 };
 
-},{}],83:[function(require,module,exports){
+},{}],84:[function(require,module,exports){
 'use strict';
 
 
@@ -27166,7 +27559,7 @@ exports.inflateSyncPoint = inflateSyncPoint;
 exports.inflateUndermine = inflateUndermine;
 */
 
-},{"../utils/common":75,"./adler32":77,"./crc32":79,"./inffast":82,"./inftrees":84}],84:[function(require,module,exports){
+},{"../utils/common":76,"./adler32":78,"./crc32":80,"./inffast":83,"./inftrees":85}],85:[function(require,module,exports){
 'use strict';
 
 
@@ -27495,7 +27888,7 @@ module.exports = function inflate_table(type, lens, lens_index, codes, table, ta
   return 0;
 };
 
-},{"../utils/common":75}],85:[function(require,module,exports){
+},{"../utils/common":76}],86:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -27510,7 +27903,7 @@ module.exports = {
   '-6':   'incompatible version' /* Z_VERSION_ERROR (-6) */
 };
 
-},{}],86:[function(require,module,exports){
+},{}],87:[function(require,module,exports){
 'use strict';
 
 
@@ -28711,7 +29104,7 @@ exports._tr_flush_block  = _tr_flush_block;
 exports._tr_tally = _tr_tally;
 exports._tr_align = _tr_align;
 
-},{"../utils/common":75}],87:[function(require,module,exports){
+},{"../utils/common":76}],88:[function(require,module,exports){
 'use strict';
 
 
@@ -28742,9 +29135,9 @@ function ZStream() {
 
 module.exports = ZStream;
 
-},{}],88:[function(require,module,exports){
+},{}],89:[function(require,module,exports){
 module.exports = require('./lib/retry');
-},{"./lib/retry":89}],89:[function(require,module,exports){
+},{"./lib/retry":90}],90:[function(require,module,exports){
 var RetryOperation = require('./retry_operation');
 
 exports.operation = function(options) {
@@ -28795,7 +29188,7 @@ exports._createTimeout = function(attempt, opts) {
 
   return timeout;
 };
-},{"./retry_operation":90}],90:[function(require,module,exports){
+},{"./retry_operation":91}],91:[function(require,module,exports){
 function RetryOperation(timeouts) {
   this._timeouts = timeouts;
   this._fn = null;
@@ -28905,7 +29298,7 @@ RetryOperation.prototype.mainError = function() {
 
   return mainError;
 };
-},{}],91:[function(require,module,exports){
+},{}],92:[function(require,module,exports){
 module.exports = function arrayEquals(array) {
     // if the other array is a falsy value, return
     if (!array)
@@ -28931,10 +29324,10 @@ module.exports = function arrayEquals(array) {
 }
 
 
-},{}],92:[function(require,module,exports){
+},{}],93:[function(require,module,exports){
 exports.Interop = require('./interop');
 
-},{"./interop":93}],93:[function(require,module,exports){
+},{"./interop":94}],94:[function(require,module,exports){
 "use strict";
 
 var transform = require('./transform');
@@ -29516,7 +29909,7 @@ Interop.prototype.toUnifiedPlan = function(desc) {
     //#endregion
 };
 
-},{"./array-equals":91,"./transform":94}],94:[function(require,module,exports){
+},{"./array-equals":92,"./transform":95}],95:[function(require,module,exports){
 var transform = require('sdp-transform');
 
 exports.write = function(session, opts) {
@@ -29615,7 +30008,7 @@ exports.parse = function(sdp) {
 };
 
 
-},{"sdp-transform":96}],95:[function(require,module,exports){
+},{"sdp-transform":97}],96:[function(require,module,exports){
 var grammar = module.exports = {
   v: [{
       name: 'version',
@@ -29864,7 +30257,7 @@ Object.keys(grammar).forEach(function (key) {
   });
 });
 
-},{}],96:[function(require,module,exports){
+},{}],97:[function(require,module,exports){
 var parser = require('./parser');
 var writer = require('./writer');
 
@@ -29874,7 +30267,7 @@ exports.parseFmtpConfig = parser.parseFmtpConfig;
 exports.parsePayloads = parser.parsePayloads;
 exports.parseRemoteCandidates = parser.parseRemoteCandidates;
 
-},{"./parser":97,"./writer":98}],97:[function(require,module,exports){
+},{"./parser":98,"./writer":99}],98:[function(require,module,exports){
 var toIntIfInt = function (v) {
   return String(Number(v)) === v ? Number(v) : v;
 };
@@ -29969,7 +30362,7 @@ exports.parseRemoteCandidates = function (str) {
   return candidates;
 };
 
-},{"./grammar":95}],98:[function(require,module,exports){
+},{"./grammar":96}],99:[function(require,module,exports){
 var grammar = require('./grammar');
 
 // customized util.format - discards excess arguments and can void middle ones
@@ -30085,7 +30478,7 @@ module.exports = function (session, opts) {
   return sdp.join('\r\n') + '\r\n';
 };
 
-},{"./grammar":95}],99:[function(require,module,exports){
+},{"./grammar":96}],100:[function(require,module,exports){
 var transform = require('sdp-transform');
 var transformUtils = require('./transform-utils');
 var parseSsrcs = transformUtils.parseSsrcs;
@@ -30487,7 +30880,7 @@ Simulcast.prototype.mungeLocalDescription = function (desc) {
 
 module.exports = Simulcast;
 
-},{"./transform-utils":100,"sdp-transform":102}],100:[function(require,module,exports){
+},{"./transform-utils":101,"sdp-transform":103}],101:[function(require,module,exports){
 exports.writeSsrcs = function(sources, order) {
   var ssrcs = [];
 
@@ -30538,30 +30931,30 @@ exports.parseSsrcs = function (mLine) {
 };
 
 
-},{}],101:[function(require,module,exports){
-arguments[4][95][0].apply(exports,arguments)
-},{"dup":95}],102:[function(require,module,exports){
+},{}],102:[function(require,module,exports){
 arguments[4][96][0].apply(exports,arguments)
-},{"./parser":103,"./writer":104,"dup":96}],103:[function(require,module,exports){
+},{"dup":96}],103:[function(require,module,exports){
 arguments[4][97][0].apply(exports,arguments)
-},{"./grammar":101,"dup":97}],104:[function(require,module,exports){
+},{"./parser":104,"./writer":105,"dup":97}],104:[function(require,module,exports){
 arguments[4][98][0].apply(exports,arguments)
-},{"./grammar":101,"dup":98}],105:[function(require,module,exports){
-arguments[4][95][0].apply(exports,arguments)
-},{"dup":95}],106:[function(require,module,exports){
+},{"./grammar":102,"dup":98}],105:[function(require,module,exports){
+arguments[4][99][0].apply(exports,arguments)
+},{"./grammar":102,"dup":99}],106:[function(require,module,exports){
 arguments[4][96][0].apply(exports,arguments)
-},{"./parser":107,"./writer":108,"dup":96}],107:[function(require,module,exports){
+},{"dup":96}],107:[function(require,module,exports){
 arguments[4][97][0].apply(exports,arguments)
-},{"./grammar":105,"dup":97}],108:[function(require,module,exports){
+},{"./parser":108,"./writer":109,"dup":97}],108:[function(require,module,exports){
 arguments[4][98][0].apply(exports,arguments)
-},{"./grammar":105,"dup":98}],109:[function(require,module,exports){
+},{"./grammar":106,"dup":98}],109:[function(require,module,exports){
+arguments[4][99][0].apply(exports,arguments)
+},{"./grammar":106,"dup":99}],110:[function(require,module,exports){
 var MediaStreamType = {
     VIDEO_TYPE: "Video",
 
     AUDIO_TYPE: "Audio"
 };
 module.exports = MediaStreamType;
-},{}],110:[function(require,module,exports){
+},{}],111:[function(require,module,exports){
 var RTCEvents = {
     RTC_READY: "rtc.ready",
     DATA_CHANNEL_OPEN: "rtc.data_channel_open",
@@ -30574,7 +30967,7 @@ var RTCEvents = {
 };
 
 module.exports = RTCEvents;
-},{}],111:[function(require,module,exports){
+},{}],112:[function(require,module,exports){
 var Resolutions = {
     "1080": {
         width: 1920,
@@ -30628,7 +31021,7 @@ var Resolutions = {
     }
 };
 module.exports = Resolutions;
-},{}],112:[function(require,module,exports){
+},{}],113:[function(require,module,exports){
 var StreamEventTypes = {
     EVENT_TYPE_LOCAL_CREATED: "stream.local_created",
 
@@ -30642,7 +31035,7 @@ var StreamEventTypes = {
 };
 
 module.exports = StreamEventTypes;
-},{}],113:[function(require,module,exports){
+},{}],114:[function(require,module,exports){
 var UIEvents = {
     NICKNAME_CHANGED: "UI.nickname_changed",
     SELECTED_ENDPOINT: "UI.selected_endpoint",
@@ -30650,7 +31043,7 @@ var UIEvents = {
     LARGEVIDEO_INIT: "UI.largevideo_init"
 };
 module.exports = UIEvents;
-},{}],114:[function(require,module,exports){
+},{}],115:[function(require,module,exports){
 var AuthenticationEvents = {
     /**
      * Event callback arguments:
@@ -30664,7 +31057,7 @@ var AuthenticationEvents = {
 };
 module.exports = AuthenticationEvents;
 
-},{}],115:[function(require,module,exports){
+},{}],116:[function(require,module,exports){
 var CQEvents = {
     LOCALSTATS_UPDATED: "cq.localstats_updated",
     REMOTESTATS_UPDATED: "cq.remotestats_updated",
@@ -30672,7 +31065,7 @@ var CQEvents = {
 };
 
 module.exports = CQEvents;
-},{}],116:[function(require,module,exports){
+},{}],117:[function(require,module,exports){
 var DesktopSharingEventTypes = {
     INIT: "ds.init",
 
@@ -30682,14 +31075,14 @@ var DesktopSharingEventTypes = {
 };
 
 module.exports = DesktopSharingEventTypes;
-},{}],117:[function(require,module,exports){
+},{}],118:[function(require,module,exports){
 var Events = {
     DTMF_SUPPORT_CHANGED: "members.dtmf_support_changed"
 };
 
 module.exports = Events;
 
-},{}],118:[function(require,module,exports){
+},{}],119:[function(require,module,exports){
 module.exports = {
     getLanguages : function () {
         var languages = [];
@@ -30706,7 +31099,7 @@ module.exports = {
     TR: "tr",
     FR: "fr"
 }
-},{}],119:[function(require,module,exports){
+},{}],120:[function(require,module,exports){
 var XMPPEvents = {
     CONNECTION_FAILED: "xmpp.connection.failed",
     // Indicates an interrupted connection event.
