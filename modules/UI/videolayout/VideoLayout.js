@@ -170,7 +170,7 @@ var VideoLayout = (function (my) {
         }
     };
 
-    my.getLargeVideoJid = function () {
+    my.getLargeVideoResource = function () {
         return LargeVideo.getResourceJid();
     };
 

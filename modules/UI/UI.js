@@ -175,8 +175,8 @@ function registerListeners() {
         // selections so that it can do adaptive simulcast,
         // we want the notification to trigger even if userJid is undefined,
         // or null.
-        var userJid = APP.UI.getLargeVideoJid();
-        eventEmitter.emit(UIEvents.SELECTED_ENDPOINT, userJid);
+        var userResource = APP.UI.getLargeVideoResource();
+        eventEmitter.emit(UIEvents.SELECTED_ENDPOINT, userResource);
     });
     APP.statistics.addAudioLevelListener(function(jid, audioLevel) {
         var resourceJid;
@@ -190,7 +190,7 @@ function registerListeners() {
         }
 
         AudioLevels.updateAudioLevel(resourceJid, audioLevel,
-            UI.getLargeVideoJid());
+            UI.getLargeVideoResource());
     });
     APP.desktopsharing.addListener(function () {
         ToolbarToggler.showDesktopSharingButton();
@@ -677,8 +677,8 @@ UI.inputDisplayNameHandler = function (value) {
     VideoLayout.inputDisplayNameHandler(value);
 };
 
-UI.getLargeVideoJid = function() {
-    return VideoLayout.getLargeVideoJid();
+UI.getLargeVideoResource = function () {
+    return VideoLayout.getLargeVideoResource();
 };
 
 UI.generateRoomName = function() {
