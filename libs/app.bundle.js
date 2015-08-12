@@ -2082,7 +2082,7 @@ RTCUtils.prototype.createStream = function(stream, isVideo) {
 module.exports = RTCUtils;
 
 },{"../../service/RTC/Resolutions":112,"../xmpp/SDPUtil":60,"./RTCBrowserType":10,"./adapter.screenshare":12}],12:[function(require,module,exports){
-/*! adapterjs - v0.11.0 - 2015-06-08 */
+/*! adapterjs - custom version from - 2015-08-12 */
 
 // Adapter's interface.
 var AdapterJS = AdapterJS || {};
@@ -2101,7 +2101,7 @@ AdapterJS.options = AdapterJS.options || {};
 // AdapterJS.options.hidePluginInstallPrompt = true;
 
 // AdapterJS version
-AdapterJS.VERSION = '0.11.0';
+AdapterJS.VERSION = '0.11.1';
 
 // This function will be called when the WebRTC API is ready to be used
 // Whether it is the native implementation (Chrome, Firefox, Opera) or
@@ -2424,9 +2424,24 @@ AdapterJS.renderNotificationBar = function (text, buttonText, buttonLink, openNe
       try {
         event.cancelBubble = true;
       } catch(error) { }
-    });
-  }
-  else {
+
+        var pluginInstallInterval = setInterval(function(){
+            if(! isIE) {
+              navigator.plugins.refresh(false);
+            }
+            AdapterJS.WebRTCPlugin.isPluginInstalled(
+              AdapterJS.WebRTCPlugin.pluginInfo.prefix,
+              AdapterJS.WebRTCPlugin.pluginInfo.plugName,
+              function() {
+                clearInterval(pluginInstallInterval);
+                AdapterJS.WebRTCPlugin.defineWebRTCInterface()
+              },
+              function() { //Does nothing because not used here
+              });
+          } , 500);
+    });   
+
+  }else {
     c.document.close();
   }
   AdapterJS.addEvent(c.document, 'click', function() {
@@ -2944,6 +2959,11 @@ if (navigator.mozGetUserMedia) {
   };
 
   AdapterJS.WebRTCPlugin.defineWebRTCInterface = function () {
+    if (AdapterJS.WebRTCPlugin.pluginState ===
+        AdapterJS.WebRTCPlugin.PLUGIN_STATES.READY) {
+      console.error("WebRTC interface has been defined already");
+      return;
+    }
     AdapterJS.WebRTCPlugin.pluginState = AdapterJS.WebRTCPlugin.PLUGIN_STATES.INITIALIZING;
 
     AdapterJS.isDefined = function (variable) {
@@ -8206,6 +8226,20 @@ module.exports = {
         element.setAttribute("data-placement", position);
         element.setAttribute("data-html", true);
         element.setAttribute("data-container", "body");
+    },
+
+    /**
+     * Inserts given child element as the first one into the container.
+     * @param container the container to which new child element will be added
+     * @param newChild the new element that will be inserted into the container
+     */
+    prependChild: function (container, newChild) {
+        var firstChild = container.childNodes[0];
+        if (firstChild) {
+            container.insertBefore(newChild, firstChild);
+        } else {
+            container.appendChild(newChild);
+        }
     }
 };
 },{"../side_pannels/SidePanelToggler":22}],36:[function(require,module,exports){
@@ -9468,7 +9502,8 @@ LocalVideo.prototype.changeVideo = function (stream, isMuted) {
     localVideo.oncontextmenu = function () { return false; };
 
     var localVideoContainer = document.getElementById('localVideoWrapper');
-    localVideoContainer.appendChild(localVideo);
+    // Put the new video always in front
+    UIUtil.prependChild(localVideoContainer, localVideo);
 
     var localVideoSelector = $('#' + localVideo.id);
 
@@ -9516,6 +9551,7 @@ var AudioLevels = require("../audio_levels/AudioLevels");
 var LargeVideo = require("./LargeVideo");
 var Avatar = require("../avatar/Avatar");
 var RTCBrowserType = require("../../RTC/RTCBrowserType");
+var UIUtils = require("../util/UIUtil");
 
 function RemoteVideo(peerJid, VideoLayout) {
     this.peerJid = peerJid;
@@ -9723,7 +9759,8 @@ RemoteVideo.prototype.addRemoteStreamElement = function (sid, stream, thessrc) {
     var streamElement = SmallVideo.createStreamElement(sid, stream);
     var newElementId = streamElement.id;
 
-    this.container.appendChild(streamElement);
+    // Put new stream element always in front
+    UIUtils.prependChild(this.container, streamElement);
 
     var sel = $('#' + newElementId);
     sel.hide();
@@ -9924,7 +9961,7 @@ RemoteVideo.createContainer = function (spanId) {
 
 
 module.exports = RemoteVideo;
-},{"../../RTC/RTCBrowserType":10,"../audio_levels/AudioLevels":14,"../avatar/Avatar":18,"./ConnectionIndicator":36,"./LargeVideo":37,"./SmallVideo":40}],40:[function(require,module,exports){
+},{"../../RTC/RTCBrowserType":10,"../audio_levels/AudioLevels":14,"../avatar/Avatar":18,"../util/UIUtil":35,"./ConnectionIndicator":36,"./LargeVideo":37,"./SmallVideo":40}],40:[function(require,module,exports){
 /* global $, APP, require */
 var Avatar = require("../avatar/Avatar");
 var UIUtil = require("../util/UIUtil");
@@ -15394,6 +15431,11 @@ var LocalSSRCReplacement = {
     mungeLocalVideoSSRC: function (localDescription) {
         if (!isEnabled)
             return localDescription;
+
+        if (!localDescription) {
+            console.warn("localDescription is null or undefined");
+            return localDescription;
+        }
 
         // IF we have local video SSRC stored make sure it is replaced
         // with old SSRC

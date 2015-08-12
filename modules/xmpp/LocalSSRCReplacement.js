@@ -168,6 +168,11 @@ var LocalSSRCReplacement = {
         if (!isEnabled)
             return localDescription;
 
+        if (!localDescription) {
+            console.warn("localDescription is null or undefined");
+            return localDescription;
+        }
+
         // IF we have local video SSRC stored make sure it is replaced
         // with old SSRC
         if (localVideoSSRC) {
