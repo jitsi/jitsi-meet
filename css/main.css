@@ -95,6 +95,11 @@ html, body{
                     0 -1px 10px #00ccff;
 }
 
+#toolbar_button_hangup {
+    color: #ff0000;
+    font-size: 1.4em;
+}
+
 #numberOfParticipants {
     position: absolute;
     top: 0px;

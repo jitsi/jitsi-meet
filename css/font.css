@@ -104,11 +104,6 @@
     content: "\e617";
 }
 
-.icon-hangup {
-    color:#ff0000;
-    font-size: 1.4em;
-}
-
 .icon-reload:before {
     content: "\e618";
 }
