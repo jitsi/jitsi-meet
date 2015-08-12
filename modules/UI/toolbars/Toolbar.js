@@ -47,7 +47,7 @@ var buttonHandlers = {
         return APP.desktopsharing.toggleScreenSharing();
     },
     "toolbar_button_fullScreen": function() {
-        UIUtil.buttonClick("#fullScreen", "icon-full-screen icon-exit-full-screen");
+        UIUtil.buttonClick("#toolbar_button_fullScreen", "icon-full-screen icon-exit-full-screen");
         return Toolbar.toggleFullScreen();
     },
     "toolbar_button_sip": function () {
@@ -340,7 +340,7 @@ var Toolbar = (function (my) {
      */
     my.setupButtonsFromConfig = function () {
         if (config.disablePrezi) {
-            $("#prezi_button").css({display: "none"});
+            $("#toolbar_button_prezi").css({display: "none"});
         }
     };
 
@@ -515,15 +515,15 @@ var Toolbar = (function (my) {
      * Unlocks the lock button state.
      */
     my.unlockLockButton = function () {
-        if ($("#lockIcon").hasClass("icon-security-locked"))
-            UIUtil.buttonClick("#lockIcon", "icon-security icon-security-locked");
+        if ($("#toolbar_button_security").hasClass("icon-security-locked"))
+            UIUtil.buttonClick("#toolbar_button_security", "icon-security icon-security-locked");
     };
     /**
      * Updates the lock button state to locked.
      */
     my.lockLockButton = function () {
-        if ($("#lockIcon").hasClass("icon-security"))
-            UIUtil.buttonClick("#lockIcon", "icon-security icon-security-locked");
+        if ($("#toolbar_button_security").hasClass("icon-security"))
+            UIUtil.buttonClick("#toolbar_button_security", "icon-security icon-security-locked");
     };
 
     /**
@@ -546,16 +546,16 @@ var Toolbar = (function (my) {
         }
 
         if (show) {
-            $('#recording').css({display: "inline"});
+            $('#toolbar_button_record').css({display: "inline-block"});
         }
         else {
-            $('#recording').css({display: "none"});
+            $('#toolbar_button_record').css({display: "none"});
         }
     };
 
     // Sets the state of the recording button
     my.setRecordingButtonState = function (recordingState) {
-        var selector = $('#recordButton');
+        var selector = $('#toolbar_button_record');
 
         if (recordingState === 'on') {
             selector.removeClass("icon-recEnable");
@@ -605,18 +605,18 @@ var Toolbar = (function (my) {
     // Shows or hides SIP calls button
     my.showSipCallButton = function (show) {
         if (APP.xmpp.isSipGatewayEnabled() && show) {
-            $('#sipCallButton').css({display: "inline-block"});
+            $('#toolbar_button_sip').css({display: "inline-block"});
         } else {
-            $('#sipCallButton').css({display: "none"});
+            $('#toolbar_button_sip').css({display: "none"});
         }
     };
 
     // Shows or hides the dialpad button
     my.showDialPadButton = function (show) {
         if (show) {
-            $('#dialPadButton').css({display: "inline-block"});
+            $('#toolbar_button_dialpad').css({display: "inline-block"});
         } else {
-            $('#dialPadButton').css({display: "none"});
+            $('#toolbar_button_dialpad').css({display: "none"});
         }
     };
 
@@ -664,7 +664,7 @@ var Toolbar = (function (my) {
      * @param active the state of the desktop streaming.
      */
     my.changeDesktopSharingButtonState = function (active) {
-        var button = $("#desktopsharing > a");
+        var button = $("#toolbar_button_desktopsharing");
         if (active) {
             button.addClass("glow");
         } else {
