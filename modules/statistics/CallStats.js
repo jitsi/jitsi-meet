@@ -1,4 +1,6 @@
 /* global config, $, APP, Strophe, callstats */
+var jsSHA = require('jssha');
+var io = require('socket.io-client');
 var callStats = null;
 
 function initCallback (err, msg) {
@@ -11,7 +13,7 @@ var CallStats = {
         if(!config.callStatsID || !config.callStatsSecret || callStats !== null)
             return;
 
-        callStats = new callstats($,io,jsSHA);
+        callStats = new callstats($, io, jsSHA);
 
         this.session = jingleSession;
         this.peerconnection = jingleSession.peerconnection.peerconnection;
