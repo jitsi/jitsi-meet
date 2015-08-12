@@ -7490,7 +7490,7 @@ var Toolbar = (function (my) {
         }
 
         if (show) {
-            $('#toolbar_button_record').css({display: "inline"});
+            $('#toolbar_button_record').css({display: "inline-block"});
         }
         else {
             $('#toolbar_button_record').css({display: "none"});
@@ -7629,7 +7629,7 @@ var toolbarTimeoutObject,
 
 function showDesktopSharingButton() {
     if (APP.desktopsharing.isDesktopSharingEnabled()) {
-        $('#toolbar_button_desktopsharing').css({display: "inline"});
+        $('#toolbar_button_desktopsharing').css({display: "inline-block"});
     } else {
         $('#toolbar_button_desktopsharing').css({display: "none"});
     }

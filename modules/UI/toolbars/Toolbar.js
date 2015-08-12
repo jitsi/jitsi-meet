@@ -546,7 +546,7 @@ var Toolbar = (function (my) {
         }
 
         if (show) {
-            $('#toolbar_button_record').css({display: "inline"});
+            $('#toolbar_button_record').css({display: "inline-block"});
         }
         else {
             $('#toolbar_button_record').css({display: "none"});
