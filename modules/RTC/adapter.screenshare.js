@@ -350,7 +350,7 @@ AdapterJS.renderNotificationBar = function (text, buttonText, buttonLink, openNe
               AdapterJS.WebRTCPlugin.pluginInfo.plugName,
               function() {
                 clearInterval(pluginInstallInterval);
-                AdapterJS.WebRTCPlugin.defineWebRTCInterface()
+                AdapterJS.WebRTCPlugin.defineWebRTCInterface();
               },
               function() { //Does nothing because not used here
               });
