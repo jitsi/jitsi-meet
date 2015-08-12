@@ -5,6 +5,7 @@ var AudioLevels = require("../audio_levels/AudioLevels");
 var LargeVideo = require("./LargeVideo");
 var Avatar = require("../avatar/Avatar");
 var RTCBrowserType = require("../../RTC/RTCBrowserType");
+var UIUtils = require("../util/UIUtil");
 
 function RemoteVideo(peerJid, VideoLayout) {
     this.peerJid = peerJid;
@@ -212,7 +213,8 @@ RemoteVideo.prototype.addRemoteStreamElement = function (sid, stream, thessrc) {
     var streamElement = SmallVideo.createStreamElement(sid, stream);
     var newElementId = streamElement.id;
 
-    this.container.appendChild(streamElement);
+    // Put new stream element always in front
+    UIUtils.prependChild(this.container, streamElement);
 
     var sel = $('#' + newElementId);
     sel.hide();

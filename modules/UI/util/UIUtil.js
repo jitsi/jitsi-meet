@@ -78,5 +78,19 @@ module.exports = {
         element.setAttribute("data-placement", position);
         element.setAttribute("data-html", true);
         element.setAttribute("data-container", "body");
+    },
+
+    /**
+     * Inserts given child element as the first one into the container.
+     * @param container the container to which new child element will be added
+     * @param newChild the new element that will be inserted into the container
+     */
+    prependChild: function (container, newChild) {
+        var firstChild = container.childNodes[0];
+        if (firstChild) {
+            container.insertBefore(newChild, firstChild);
+        } else {
+            container.appendChild(newChild);
+        }
     }
 };

@@ -201,7 +201,8 @@ LocalVideo.prototype.changeVideo = function (stream, isMuted) {
     localVideo.oncontextmenu = function () { return false; };
 
     var localVideoContainer = document.getElementById('localVideoWrapper');
-    localVideoContainer.appendChild(localVideo);
+    // Put the new video always in front
+    UIUtil.prependChild(localVideoContainer, localVideo);
 
     var localVideoSelector = $('#' + localVideo.id);
 
