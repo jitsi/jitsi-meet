@@ -23,8 +23,7 @@ var CallStats = {
         this.userID =  APP.xmpp.myResource();
 
         var location = window.location;
-        this.confID = location.protocol + "//" +
-            location.hostname + location.pathname;
+        this.confID = location.hostname + location.pathname;
 
         //userID is generated or given by the origin server
         callStats.initialize(config.callStatsID,
