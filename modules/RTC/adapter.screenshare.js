@@ -1,4 +1,4 @@
-/*! adapterjs - v0.11.0 - 2015-06-08 */
+/*! adapterjs - v0.11.1 - 2015-07-28 */
 
 // Adapter's interface.
 var AdapterJS = AdapterJS || {};
@@ -17,7 +17,7 @@ AdapterJS.options = AdapterJS.options || {};
 // AdapterJS.options.hidePluginInstallPrompt = true;
 
 // AdapterJS version
-AdapterJS.VERSION = '0.11.0';
+AdapterJS.VERSION = '0.11.1';
 
 // This function will be called when the WebRTC API is ready to be used
 // Whether it is the native implementation (Chrome, Firefox, Opera) or
@@ -340,9 +340,21 @@ AdapterJS.renderNotificationBar = function (text, buttonText, buttonLink, openNe
       try {
         event.cancelBubble = true;
       } catch(error) { }
-    });
-  }
-  else {
+
+        var pluginInstallInterval = setInterval(function(){
+            if(! isIE) {
+              navigator.plugins.refresh(false);
+            }
+            AdapterJS.WebRTCPlugin.isPluginInstalled(
+              AdapterJS.WebRTCPlugin.pluginInfo.prefix,
+              AdapterJS.WebRTCPlugin.pluginInfo.plugName,
+              AdapterJS.WebRTCPlugin.defineWebRTCInterface,
+              function() { //Does nothing because not used here
+              });
+          } , 500);
+    });   
+
+  }else {
     c.document.close();
   }
   AdapterJS.addEvent(c.document, 'click', function() {
