@@ -226,6 +226,7 @@
     "connection": {
         "ERROR": "Fehler",
         "CONNECTING": "Verbindung wird hergestellt",
+        "RECONNECTING": "Es ist ein Netzwerkproblem aufgetreten. Verbinde...",
         "CONNFAIL": "Verbindungsaufbau gescheitert",
         "AUTHENTICATING": "Anmeldung läuft",
         "AUTHFAIL": "Authentifizierung fehlgeschlagen",
@@ -233,5 +234,10 @@
         "DISCONNECTED": "Getrennt",
         "DISCONNECTING": "Verbindung wird getrennt",
         "ATTACHED": "Angehängt"
+    },
+    "recording": {
+        "toaster": "Wird aufgezeichnet",
+        "pending": "Die Aufzeichnung wird gestartet sobald ein weiterer Teilnehmer beitritt",
+        "on": "Aufzeichnung wurde gestartet"
     }
 }
