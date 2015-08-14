@@ -173,6 +173,8 @@ a.bottomToolbarButton:hover {
 }
 
 input[type='text'], input[type='password'], textarea {
+    -webkit-user-select: text;
+    user-select: text;
     display: inline-block;
     font-size: 14px;
     padding: 5px;
