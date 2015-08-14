@@ -216,7 +216,7 @@ module.exports = function(XMPP, eventEmitter) {
             }
 
             var nicktag = $(pres).find('>nick[xmlns="http://jabber.org/protocol/nick"]');
-            member.displayName = (nicktag.length > 0 ? nicktag.html() : null);
+            member.displayName = (nicktag.length > 0 ? nicktag.text() : null);
 
             if (from == this.myroomjid) {
                 if (member.affiliation == 'owner') this.isOwner = true;
@@ -626,6 +626,7 @@ module.exports = function(XMPP, eventEmitter) {
             if (displayName && displayName.length > 0) {
                 eventEmitter.emit(XMPPEvents.DISPLAY_NAME_CHANGED, from, displayName);
             }
+            console.info("Display name: " + displayName, pres);
 
             var id = $(pres).find('>userID').text();
             var email = $(pres).find('>email');
