@@ -61,6 +61,9 @@ var XMPPEvents = {
     // Designates an event indicating that we should join the conference with
     // audio and/or video muted.
     START_MUTED_FROM_FOCUS: "xmpp.start_muted_from_focus",
+    // Designates an event indicating that there was an error joining the XMPP
+    // MUC.
+    ROOM_JOIN_ERROR: 'xmpp.room_join_error',
 
 
     PEERCONNECTION_READY: "xmpp.peerconnection_ready",
@@ -84,8 +87,6 @@ var XMPPEvents = {
     JINGLE_FATAL_ERROR: 'xmpp.jingle_fatal_error',
     PROMPT_FOR_LOGIN: 'xmpp.prompt_for_login',
     FOCUS_DISCONNECTED: 'xmpp.focus_disconnected',
-    ROOM_JOIN_ERROR: 'xmpp.room_join_error',
-    ROOM_CONNECT_ERROR: 'xmpp.room_connect_error',
     // xmpp is connected and obtained user media
     READY_TO_JOIN: 'xmpp.ready_to_join'
 };

@@ -319,7 +319,9 @@ module.exports = function(XMPP, eventEmitter) {
                 eventEmitter.emit(XMPPEvents.PASSWORD_REQUIRED, function (value) {
                     self.doJoin(from, value);
                 });
-            } else if ($(pres).find(
+            }
+            /*
+            else if ($(pres).find(
                 '>error[type="cancel"]>not-allowed[xmlns="urn:ietf:params:xml:ns:xmpp-stanzas"]').length) {
                 var toDomain = Strophe.getDomainFromJid(pres.getAttribute('to'));
                 if (toDomain === config.hosts.anonymousdomain) {
@@ -329,15 +331,13 @@ module.exports = function(XMPP, eventEmitter) {
                     // domains or something is wrong.
 //                    XMPP.promptLogin();
                     eventEmitter.emit(XMPPEvents.ROOM_JOIN_ERROR, pres);
-
-                } else {
-                    console.warn('onPresError ', pres);
-                    eventEmitter.emit(XMPPEvents.ROOM_CONNECT_ERROR, pres);
-                }
-            } else {
-                console.warn('onPresError ', pres);
-                eventEmitter.emit(XMPPEvents.ROOM_CONNECT_ERROR, pres);
             }
+            */
+            else {
+                console.warn('onPresError ', pres);
+                eventEmitter.emit(XMPPEvents.ROOM_JOIN_ERROR, pres);
+            }
+
             return true;
         },
         sendMessage: function (body, nickname) {
