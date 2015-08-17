@@ -138,14 +138,14 @@ module.exports = function(XMPP, eventEmitter) {
             // Parse audio info tag.
             var audioMuted = $(pres).find('>audiomuted');
             if (audioMuted.length) {
-                eventEmitter.emit(XMPPEvents.AUDIO_MUTED,
+                eventEmitter.emit(XMPPEvents.PARTICIPANT_AUDIO_MUTED,
                     from, (audioMuted.text() === "true"));
             }
 
             // Parse video info tag.
             var videoMuted = $(pres).find('>videomuted');
             if (videoMuted.length) {
-                eventEmitter.emit(XMPPEvents.VIDEO_MUTED,
+                eventEmitter.emit(XMPPEvents.PARTICIPANT_VIDEO_MUTED,
                     from, (videoMuted.text() === "true"));
             }
 
@@ -180,7 +180,7 @@ module.exports = function(XMPP, eventEmitter) {
             {
                 if (videoType.text().length)
                 {
-                    eventEmitter.emit(XMPPEvents.VIDEO_TYPE,
+                    eventEmitter.emit(XMPPEvents.PARTICIPANT_VIDEO_TYPE_CHANGED,
                         Strophe.getResourceFromJid(from), videoType.text());
                 }
             }

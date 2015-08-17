@@ -1355,10 +1355,11 @@ JingleSessionPC.prototype.setLocalDescription = function () {
 }
 
 // an attempt to work around https://github.com/jitsi/jitmeet/issues/32
+// TODO: is this hack (along with the XMPPEvent-s used only for it) still needed
+// now that we announce an SSRC for receive-only streams?
 function sendKeyframe(pc) {
     console.log('sendkeyframe', pc.iceConnectionState);
     if (pc.iceConnectionState !== 'connected') return; // safe...
-    var self = this;
     pc.setRemoteDescription(
         pc.remoteDescription,
         function () {
@@ -1431,6 +1432,8 @@ JingleSessionPC.prototype.remoteStreamAdded = function (data, times) {
 
     var isVideo = data.stream.getVideoTracks().length > 0;
     // an attempt to work around https://github.com/jitsi/jitmeet/issues/32
+    // TODO: is this hack still needed now that we announce an SSRC for
+    // receive-only streams?
     if (isVideo &&
         data.peerjid && this.peerjid === data.peerjid &&
         data.stream.getVideoTracks().length === 0 &&

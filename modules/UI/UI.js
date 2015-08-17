@@ -260,14 +260,17 @@ function registerListeners() {
     APP.xmpp.addListener(XMPPEvents.ETHERPAD, initEtherpad);
     APP.xmpp.addListener(XMPPEvents.AUTHENTICATION_REQUIRED,
         onAuthenticationRequired);
-    APP.xmpp.addListener(XMPPEvents.VIDEO_TYPE, onPeerVideoTypeChanged);
+    APP.xmpp.addListener(XMPPEvents.PARTICIPANT_VIDEO_TYPE_CHANGED,
+        onPeerVideoTypeChanged);
     APP.xmpp.addListener(XMPPEvents.DEVICE_AVAILABLE,
         function (resource, devices) {
             VideoLayout.setDeviceAvailabilityIcons(resource, devices);
         });
 
-    APP.xmpp.addListener(XMPPEvents.AUDIO_MUTED, VideoLayout.onAudioMute);
-    APP.xmpp.addListener(XMPPEvents.VIDEO_MUTED, VideoLayout.onVideoMute);
+    APP.xmpp.addListener(XMPPEvents.PARTICIPANT_AUDIO_MUTED,
+        VideoLayout.onAudioMute);
+    APP.xmpp.addListener(XMPPEvents.PARTICIPANT_VIDEO_MUTED,
+        VideoLayout.onVideoMute);
     APP.xmpp.addListener(XMPPEvents.AUDIO_MUTED_BY_FOCUS, function (doMuteAudio) {
         UI.setAudioMuted(doMuteAudio);
     });
