@@ -975,6 +975,8 @@ var currentBrowser;
 
 var browserVersion;
 
+var isAndroid;
+
 var RTCBrowserType = {
 
     RTC_BROWSER_CHROME: "rtc_browser.chrome",
@@ -1027,6 +1029,13 @@ var RTCBrowserType = {
 
     usesUnifiedPlan: function() {
         return RTCBrowserType.isFirefox();
+    },
+
+    /**
+     * Whether the browser is running on an android device.
+     */
+    isAndroid: function() {
+        return isAndroid;
     }
 
     // Add version getters for other browsers when needed
@@ -1129,6 +1138,7 @@ function detectBrowser() {
 }
 
 browserVersion = detectBrowser();
+isAndroid = navigator.userAgent.indexOf('Android') != -1;
 
 module.exports = RTCBrowserType;
 },{}],9:[function(require,module,exports){
@@ -1156,7 +1166,8 @@ function getPreviousResolution(resolution) {
     return resName;
 }
 
-function setResolutionConstraints(constraints, resolution, isAndroid) {
+function setResolutionConstraints(constraints, resolution) {
+    var isAndroid = RTCBrowserType.isAndroid();
 
     if (Resolutions[resolution]) {
         constraints.video.mandatory.minWidth = Resolutions[resolution].width;
@@ -1178,8 +1189,7 @@ function setResolutionConstraints(constraints, resolution, isAndroid) {
             constraints.video.mandatory.minHeight;
 }
 
-function getConstraints(um, resolution, bandwidth, fps, desktopStream, isAndroid)
-{
+function getConstraints(um, resolution, bandwidth, fps, desktopStream) {
     var constraints = {audio: false, video: false};
 
     if (um.indexOf('video') >= 0) {
@@ -1188,7 +1198,7 @@ function getConstraints(um, resolution, bandwidth, fps, desktopStream, isAndroid
 
         constraints.video.optional.push({ googLeakyBucket: true });
 
-        setResolutionConstraints(constraints, resolution, isAndroid);
+        setResolutionConstraints(constraints, resolution);
     }
     if (um.indexOf('audio') >= 0) {
         if (!RTCBrowserType.isFirefox()) {
@@ -1343,7 +1353,7 @@ function RTCUtils(RTCService, onTemasysPluginReady)
         };
         // DTLS should now be enabled by default but..
         this.pc_constraints = {'optional': [{'DtlsSrtpKeyAgreement': 'true'}]};
-        if (navigator.userAgent.indexOf('Android') != -1) {
+        if (RTCBrowserType.isAndroid()) {
             this.pc_constraints = {}; // disable DTLS on Android
         }
         if (!webkitMediaStream.prototype.getVideoTracks) {
@@ -1420,11 +1430,9 @@ RTCUtils.prototype.getUserMediaWithConstraints = function(
     um, success_callback, failure_callback, resolution,bandwidth, fps,
     desktopStream) {
     currentResolution = resolution;
-    // Check if we are running on Android device
-    var isAndroid = navigator.userAgent.indexOf('Android') != -1;
 
     var constraints = getConstraints(
-        um, resolution, bandwidth, fps, desktopStream, isAndroid);
+        um, resolution, bandwidth, fps, desktopStream);
 
     console.info("Get media constraints", constraints);
 
@@ -3280,14 +3288,17 @@ function registerListeners() {
     APP.xmpp.addListener(XMPPEvents.ETHERPAD, initEtherpad);
     APP.xmpp.addListener(XMPPEvents.AUTHENTICATION_REQUIRED,
         onAuthenticationRequired);
-    APP.xmpp.addListener(XMPPEvents.VIDEO_TYPE, onPeerVideoTypeChanged);
+    APP.xmpp.addListener(XMPPEvents.PARTICIPANT_VIDEO_TYPE_CHANGED,
+        onPeerVideoTypeChanged);
     APP.xmpp.addListener(XMPPEvents.DEVICE_AVAILABLE,
         function (resource, devices) {
             VideoLayout.setDeviceAvailabilityIcons(resource, devices);
         });
 
-    APP.xmpp.addListener(XMPPEvents.AUDIO_MUTED, VideoLayout.onAudioMute);
-    APP.xmpp.addListener(XMPPEvents.VIDEO_MUTED, VideoLayout.onVideoMute);
+    APP.xmpp.addListener(XMPPEvents.PARTICIPANT_AUDIO_MUTED,
+        VideoLayout.onAudioMute);
+    APP.xmpp.addListener(XMPPEvents.PARTICIPANT_VIDEO_MUTED,
+        VideoLayout.onVideoMute);
     APP.xmpp.addListener(XMPPEvents.AUDIO_MUTED_BY_FOCUS, function (doMuteAudio) {
         UI.setAudioMuted(doMuteAudio);
     });
@@ -14780,10 +14791,11 @@ JingleSessionPC.prototype.setLocalDescription = function () {
 }
 
 // an attempt to work around https://github.com/jitsi/jitmeet/issues/32
+// TODO: is this hack (along with the XMPPEvent-s used only for it) still needed
+// now that we announce an SSRC for receive-only streams?
 function sendKeyframe(pc) {
     console.log('sendkeyframe', pc.iceConnectionState);
     if (pc.iceConnectionState !== 'connected') return; // safe...
-    var self = this;
     pc.setRemoteDescription(
         pc.remoteDescription,
         function () {
@@ -14856,6 +14868,8 @@ JingleSessionPC.prototype.remoteStreamAdded = function (data, times) {
 
     var isVideo = data.stream.getVideoTracks().length > 0;
     // an attempt to work around https://github.com/jitsi/jitmeet/issues/32
+    // TODO: is this hack still needed now that we announce an SSRC for
+    // receive-only streams?
     if (isVideo &&
         data.peerjid && this.peerjid === data.peerjid &&
         data.stream.getVideoTracks().length === 0 &&
@@ -17461,10 +17475,11 @@ module.exports = function(XMPP, eventEmitter) {
                 }
             }
 
+            var url;
             // Parse prezi tag.
             var presentation = $(pres).find('>prezi');
             if (presentation.length) {
-                var url = presentation.attr('url');
+                url = presentation.attr('url');
                 var current = presentation.find('>current').text();
 
                 console.log('presentation info received from', from, url);
@@ -17479,7 +17494,7 @@ module.exports = function(XMPP, eventEmitter) {
                 }
             }
             else if (this.preziMap[from] != null) {
-                var url = this.preziMap[from];
+                url = this.preziMap[from];
                 delete this.preziMap[from];
                 $(document).trigger('presentationremoved.muc', [from, url]);
             }
@@ -17487,22 +17502,22 @@ module.exports = function(XMPP, eventEmitter) {
             // Parse audio info tag.
             var audioMuted = $(pres).find('>audiomuted');
             if (audioMuted.length) {
-                eventEmitter.emit(XMPPEvents.AUDIO_MUTED,
+                eventEmitter.emit(XMPPEvents.PARTICIPANT_AUDIO_MUTED,
                     from, (audioMuted.text() === "true"));
             }
 
             // Parse video info tag.
             var videoMuted = $(pres).find('>videomuted');
             if (videoMuted.length) {
-                eventEmitter.emit(XMPPEvents.VIDEO_MUTED,
+                eventEmitter.emit(XMPPEvents.PARTICIPANT_VIDEO_MUTED,
                     from, (videoMuted.text() === "true"));
             }
 
             var startMuted = $(pres).find('>startmuted');
-            if (startMuted.length)
-            {
+            if (startMuted.length && Moderator.isPeerModerator(from)) {
                 eventEmitter.emit(XMPPEvents.START_MUTED_SETTING_CHANGED,
-                    startMuted.attr("audio") === "true", startMuted.attr("video") === "true");
+                    startMuted.attr("audio") === "true",
+                    startMuted.attr("video") === "true");
             }
 
             var devices = $(pres).find('>devices');
@@ -17529,7 +17544,7 @@ module.exports = function(XMPP, eventEmitter) {
             {
                 if (videoType.text().length)
                 {
-                    eventEmitter.emit(XMPPEvents.VIDEO_TYPE,
+                    eventEmitter.emit(XMPPEvents.PARTICIPANT_VIDEO_TYPE_CHANGED,
                         Strophe.getResourceFromJid(from), videoType.text());
                 }
             }
@@ -37770,49 +37785,87 @@ module.exports = {
 }
 },{}],161:[function(require,module,exports){
 var XMPPEvents = {
+    // Designates an event indicating that the connection to the XMPP server
+    // failed.
     CONNECTION_FAILED: "xmpp.connection.failed",
-    // Indicates an interrupted connection event.
+    // Designates an event indicating that the media (ICE) connection was
+    // interrupted. This should go to the RTC module.
     CONNECTION_INTERRUPTED: "xmpp.connection.interrupted",
-    // Indicates a restored connection event.
+    // Designates an event indicating that the media (ICE) connection was
+    // restored. This should go to the RTC module.
     CONNECTION_RESTORED: "xmpp.connection.restored",
-    CONFERENCE_CREATED: "xmpp.conferenceCreated.jingle",
+    // Designates an event indicating that an offer (e.g. Jingle
+    // session-initiate) was received.
     CALL_INCOMING: "xmpp.callincoming.jingle",
-    DISPOSE_CONFERENCE: "xmpp.dispose_conference",
-    GRACEFUL_SHUTDOWN: "xmpp.graceful_shutdown",
+    // Designates an event indicating that we were kicked from the XMPP MUC.
     KICKED: "xmpp.kicked",
-    BRIDGE_DOWN: "xmpp.bridge_down",
+    // Designates an event indicating that the userID for a specific JID has
+    // changed.
     USER_ID_CHANGED: "xmpp.user_id_changed",
-    // We joined the MUC
+    // Designates an event indicating that we have joined the XMPP MUC.
     MUC_JOINED: "xmpp.muc_joined",
-    // A member joined the MUC
+    // Designates an event indicating that a participant joined the XMPP MUC.
     MUC_MEMBER_JOINED: "xmpp.muc_member_joined",
-    // A member left the MUC
+    // Designates an event indicating that a participant left the XMPP MUC.
     MUC_MEMBER_LEFT: "xmpp.muc_member_left",
+    // Designates an event indicating that the MUC role of a participant has
+    // changed.
     MUC_ROLE_CHANGED: "xmpp.muc_role_changed",
+    // Designates an event indicating that the XMPP MUC was destroyed.
     MUC_DESTROYED: "xmpp.muc_destroyed",
+    // Designates an event indicating that the display name of a participant
+    // has changed.
     DISPLAY_NAME_CHANGED: "xmpp.display_name_changed",
+    // Designates an event indicating that we received statistics from a
+    // participant in the MUC.
     REMOTE_STATS: "xmpp.remote_stats",
+    // Designates an event indicating that our role in the XMPP MUC has changed.
     LOCAL_ROLE_CHANGED: "xmpp.localrole_changed",
-    PRESENCE_STATUS: "xmpp.presence_status",
-    RESERVATION_ERROR: "xmpp.room_reservation_error",
+    // Designates an event indicating that the subject of the XMPP MUC has
+    // changed.
     SUBJECT_CHANGED: "xmpp.subject_changed",
+    // Designates an event indicating that an XMPP message in the MUC was
+    // received.
     MESSAGE_RECEIVED: "xmpp.message_received",
+    // Designates an event indicating that we sent an XMPP message to the MUC.
     SENDING_CHAT_MESSAGE: "xmpp.sending_chat_message",
+    // Designates an event indicating that the video type (e.g. 'camera' or
+    // 'screen') for a participant has changed.
+    PARTICIPANT_VIDEO_TYPE_CHANGED: "xmpp.video_type",
+    // Designates an event indicating that a participant in the XMPP MUC has
+    // advertised that they have audio muted (or unmuted).
+    PARTICIPANT_AUDIO_MUTED: "xmpp.audio_muted",
+    // Designates an event indicating that a participant in the XMPP MUC has
+    // advertised that they have video muted (or unmuted).
+    PARTICIPANT_VIDEO_MUTED: "xmpp.video_muted",
+    // Designates an event indicating that the focus has asked us to mute our
+    // audio.
+    AUDIO_MUTED_BY_FOCUS: "xmpp.audio_muted_by_focus",
+    // Designates an event indicating that a moderator in the room changed the
+    // "start muted" settings for the conference.
+    START_MUTED_SETTING_CHANGED: "xmpp.start_muted_setting_changed",
+    // Designates an event indicating that we should join the conference with
+    // audio and/or video muted.
+    START_MUTED_FROM_FOCUS: "xmpp.start_muted_from_focus",
+
+
+    PEERCONNECTION_READY: "xmpp.peerconnection_ready",
+    CONFERENCE_SETUP_FAILED: "xmpp.conference_setup_failed",
     PASSWORD_REQUIRED: "xmpp.password_required",
     AUTHENTICATION_REQUIRED: "xmpp.authentication_required",
     CHAT_ERROR_RECEIVED: "xmpp.chat_error_received",
     ETHERPAD: "xmpp.etherpad",
     DEVICE_AVAILABLE: "xmpp.device_available",
-    VIDEO_TYPE: "xmpp.video_type",
-    PEERCONNECTION_READY: "xmpp.peerconnection_ready",
-    CONFERENCE_SETUP_FAILED: "xmpp.conference_setup_failed",
-    AUDIO_MUTED: "xmpp.audio_muted",
-    VIDEO_MUTED: "xmpp.video_muted",
-    AUDIO_MUTED_BY_FOCUS: "xmpp.audio_muted_by_focus",
-    START_MUTED_SETTING_CHANGED: "xmpp.start_muted_setting_changed",
-    START_MUTED_FROM_FOCUS: "xmpp.start_muted_from_focus",
+    BRIDGE_DOWN: "xmpp.bridge_down",
+    PRESENCE_STATUS: "xmpp.presence_status",
+    RESERVATION_ERROR: "xmpp.room_reservation_error",
+    DISPOSE_CONFERENCE: "xmpp.dispose_conference",
+    GRACEFUL_SHUTDOWN: "xmpp.graceful_shutdown",
+    // TODO: only used in a hack, should probably be removed.
     SET_LOCAL_DESCRIPTION_ERROR: 'xmpp.set_local_description_error',
+    // TODO: only used in a hack, should probably be removed.
     SET_REMOTE_DESCRIPTION_ERROR: 'xmpp.set_remote_description_error',
+    // TODO: only used in a hack, should probably be removed.
     CREATE_ANSWER_ERROR: 'xmpp.create_answer_error',
     JINGLE_FATAL_ERROR: 'xmpp.jingle_fatal_error',
     PROMPT_FOR_LOGIN: 'xmpp.prompt_for_login',
