@@ -22,7 +22,8 @@ function getPreviousResolution(resolution) {
     return resName;
 }
 
-function setResolutionConstraints(constraints, resolution, isAndroid) {
+function setResolutionConstraints(constraints, resolution) {
+    var isAndroid = RTCBrowserType.isAndroid();
 
     if (Resolutions[resolution]) {
         constraints.video.mandatory.minWidth = Resolutions[resolution].width;
@@ -44,8 +45,7 @@ function setResolutionConstraints(constraints, resolution, isAndroid) {
             constraints.video.mandatory.minHeight;
 }
 
-function getConstraints(um, resolution, bandwidth, fps, desktopStream, isAndroid)
-{
+function getConstraints(um, resolution, bandwidth, fps, desktopStream) {
     var constraints = {audio: false, video: false};
 
     if (um.indexOf('video') >= 0) {
@@ -54,7 +54,7 @@ function getConstraints(um, resolution, bandwidth, fps, desktopStream, isAndroid
 
         constraints.video.optional.push({ googLeakyBucket: true });
 
-        setResolutionConstraints(constraints, resolution, isAndroid);
+        setResolutionConstraints(constraints, resolution);
     }
     if (um.indexOf('audio') >= 0) {
         if (!RTCBrowserType.isFirefox()) {
@@ -209,7 +209,7 @@ function RTCUtils(RTCService, onTemasysPluginReady)
         };
         // DTLS should now be enabled by default but..
         this.pc_constraints = {'optional': [{'DtlsSrtpKeyAgreement': 'true'}]};
-        if (navigator.userAgent.indexOf('Android') != -1) {
+        if (RTCBrowserType.isAndroid()) {
             this.pc_constraints = {}; // disable DTLS on Android
         }
         if (!webkitMediaStream.prototype.getVideoTracks) {
@@ -286,11 +286,9 @@ RTCUtils.prototype.getUserMediaWithConstraints = function(
     um, success_callback, failure_callback, resolution,bandwidth, fps,
     desktopStream) {
     currentResolution = resolution;
-    // Check if we are running on Android device
-    var isAndroid = navigator.userAgent.indexOf('Android') != -1;
 
     var constraints = getConstraints(
-        um, resolution, bandwidth, fps, desktopStream, isAndroid);
+        um, resolution, bandwidth, fps, desktopStream);
 
     console.info("Get media constraints", constraints);
 
