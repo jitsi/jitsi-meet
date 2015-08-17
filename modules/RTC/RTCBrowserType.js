@@ -3,6 +3,8 @@ var currentBrowser;
 
 var browserVersion;
 
+var isAndroid;
+
 var RTCBrowserType = {
 
     RTC_BROWSER_CHROME: "rtc_browser.chrome",
@@ -55,6 +57,13 @@ var RTCBrowserType = {
 
     usesUnifiedPlan: function() {
         return RTCBrowserType.isFirefox();
+    },
+
+    /**
+     * Whether the browser is running on an android device.
+     */
+    isAndroid: function() {
+        return isAndroid;
     }
 
     // Add version getters for other browsers when needed
@@ -157,5 +166,6 @@ function detectBrowser() {
 }
 
 browserVersion = detectBrowser();
+isAndroid = navigator.userAgent.indexOf('Android') != -1;
 
 module.exports = RTCBrowserType;

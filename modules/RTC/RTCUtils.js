@@ -29,7 +29,8 @@ function getPreviousResolution(resolution) {
     return resName;
 }
 
-function setResolutionConstraints(constraints, resolution, isAndroid) {
+function setResolutionConstraints(constraints, resolution) {
+    var isAndroid = RTCBrowserType.isAndroid();
 
     if (Resolutions[resolution]) {
         constraints.video.mandatory.minWidth = Resolutions[resolution].width;
@@ -51,8 +52,7 @@ function setResolutionConstraints(constraints, resolution, isAndroid) {
             constraints.video.mandatory.minHeight;
 }
 
-function getConstraints(um, resolution, bandwidth, fps, desktopStream, isAndroid)
-{
+function getConstraints(um, resolution, bandwidth, fps, desktopStream) {
     var constraints = {audio: false, video: false};
 
     if (um.indexOf('video') >= 0) {
@@ -61,7 +61,7 @@ function getConstraints(um, resolution, bandwidth, fps, desktopStream, isAndroid
 
         constraints.video.optional.push({ googLeakyBucket: true });
 
-        setResolutionConstraints(constraints, resolution, isAndroid);
+        setResolutionConstraints(constraints, resolution);
     }
     if (um.indexOf('audio') >= 0) {
         if (!RTCBrowserType.isFirefox()) {
@@ -222,7 +222,7 @@ var RTCUtils = {
                 // https://code.google.com/p/webrtc/issues/detail?id=2828
                 this.pc_constraints.optional.push({googIPv6: true});
             }
-            if (navigator.userAgent.indexOf('Android') != -1) {
+            if (RTCBrowserType.isAndroid()) {
                 this.pc_constraints = {}; // disable DTLS on Android
             }
             if (!webkitMediaStream.prototype.getVideoTracks) {
@@ -298,11 +298,8 @@ var RTCUtils = {
 
 
     getUserMediaWithConstraints: function (RTC, um, success_callback, failure_callback, resolution, bandwidth, fps, desktopStream) {
-        // Check if we are running on Android device
-        var isAndroid = navigator.userAgent.indexOf('Android') != -1;
-
         var constraints = getConstraints(
-            um, resolution, bandwidth, fps, desktopStream, isAndroid);
+            um, resolution, bandwidth, fps, desktopStream);
 
         console.info("Get media constraints", constraints);
 
