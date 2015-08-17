@@ -111,10 +111,11 @@ module.exports = function(XMPP, eventEmitter) {
                 }
             }
 
+            var url;
             // Parse prezi tag.
             var presentation = $(pres).find('>prezi');
             if (presentation.length) {
-                var url = presentation.attr('url');
+                url = presentation.attr('url');
                 var current = presentation.find('>current').text();
 
                 console.log('presentation info received from', from, url);
@@ -129,7 +130,7 @@ module.exports = function(XMPP, eventEmitter) {
                 }
             }
             else if (this.preziMap[from] != null) {
-                var url = this.preziMap[from];
+                url = this.preziMap[from];
                 delete this.preziMap[from];
                 $(document).trigger('presentationremoved.muc', [from, url]);
             }
