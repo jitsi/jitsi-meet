@@ -131,6 +131,15 @@ function getConstraints(um, resolution, bandwidth, fps, desktopStream) {
         constraints.video.mandatory.minFrameRate = fps;
     }
 
+    // we turn audio for both audio and video tracks, the fake audio & video seems to work
+    // only when enabled in one getUserMedia call, we cannot get fake audio separate by fake video
+    // this later can be a problem with some of the tests
+    if(RTCBrowserType.isFirefox() && config.firefox_fake_device)
+    {
+        constraints.audio = true;
+        constraints.fake = true;
+    }
+
     return constraints;
 }
 
