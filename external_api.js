@@ -29,9 +29,9 @@ var JitsiMeetExternalAPI = (function()
      */
     function JitsiMeetExternalAPI(domain, room_name, width, height, parentNode,
         filmStripOnly) {
-        if(!width || width < MIN_WIDTH)
+        if((!width || width < MIN_WIDTH) && !filmStripOnly)
             width = MIN_WIDTH;
-        if(!height || height < MIN_HEIGHT)
+        if((!height || height < MIN_HEIGHT) && !filmStripOnly)
             height = MIN_HEIGHT;
 
         this.parentNode = null;
@@ -45,8 +45,10 @@ var JitsiMeetExternalAPI = (function()
         this.iframeHolder =
             this.parentNode.appendChild(document.createElement("div"));
         this.iframeHolder.id = "jitsiConference" + JitsiMeetExternalAPI.id;
-        this.iframeHolder.style.width = width + "px";
-        this.iframeHolder.style.height = height + "px";
+        if(width)
+            this.iframeHolder.style.width = width + "px";
+        if(height)
+            this.iframeHolder.style.height = height + "px";
         this.frameName = "jitsiConferenceFrame" + JitsiMeetExternalAPI.id;
         this.url = "//" + domain + "/";
         if(room_name)
