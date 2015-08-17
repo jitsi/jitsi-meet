@@ -150,10 +150,10 @@ module.exports = function(XMPP, eventEmitter) {
             }
 
             var startMuted = $(pres).find('>startmuted');
-            if (startMuted.length)
-            {
+            if (startMuted.length && Moderator.isPeerModerator(from)) {
                 eventEmitter.emit(XMPPEvents.START_MUTED_SETTING_CHANGED,
-                    startMuted.attr("audio") === "true", startMuted.attr("video") === "true");
+                    startMuted.attr("audio") === "true",
+                    startMuted.attr("video") === "true");
             }
 
             var devices = $(pres).find('>devices');
