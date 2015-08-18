@@ -627,7 +627,6 @@ module.exports = function(XMPP, eventEmitter) {
             if (displayName && displayName.length > 0) {
                 eventEmitter.emit(XMPPEvents.DISPLAY_NAME_CHANGED, from, displayName);
             }
-            console.info("Display name: " + displayName, pres);
 
             var id = $(pres).find('>userID').text();
             var email = $(pres).find('>email');
