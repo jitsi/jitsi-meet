@@ -4,7 +4,7 @@ var RTCBrowserType = require("../RTC/RTCBrowserType");
 
 /* Whether we support the browser we are running into for logging statistics */
 var browserSupported = RTCBrowserType.isChrome() ||
-    RTCBrowserType.isOpera();
+    RTCBrowserType.isOpera() || RTCBrowserType.isFirefox();
 /**
  * Calculates packet lost percent using the number of lost packets and the
  * number of all packet.
@@ -296,7 +296,8 @@ StatsCollector.prototype.start = function ()
         );
     }
 
-    if (config.logStats && browserSupported) {
+    // Logging statistics does not support firefox
+    if (config.logStats && (browserSupported && !RTCBrowserType.isFirefox())) {
         this.gatherStatsIntervalId = setInterval(
             function () {
                 self.peerconnection.getStats(
