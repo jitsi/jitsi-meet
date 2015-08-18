@@ -315,10 +315,6 @@ function registerListeners() {
         UI.messageHandler.openReportDialog(null,
             "dialog.joinError", pres);
     });
-    APP.xmpp.addListener(XMPPEvents.ROOM_CONNECT_ERROR, function (pres) {
-        UI.messageHandler.openReportDialog(null,
-            "dialog.connectError", pres);
-    });
 
     APP.xmpp.addListener(XMPPEvents.READY_TO_JOIN, function () {
         var roomName = UI.generateRoomName();
