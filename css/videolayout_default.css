@@ -101,12 +101,14 @@
 }
 
 #largeVideo,
+#largeVideoWrapper,
 #largeVideoContainer {
     overflow: hidden;
     text-align: center;
 }
 
-#largeVideo
+#largeVideo,
+#largeVideoWrapper
 {
     object-fit: cover;
 }
@@ -116,6 +118,9 @@
 #localVideoWrapper>video,
 #localVideoWrapper>object,
 #localVideoWrapper,
+#largeVideoWrapper,
+#largeVideoWrapper>video,
+#largeVideoWrapper>object,
 .videocontainer>video,
 .videocontainer>object {
     position: absolute;

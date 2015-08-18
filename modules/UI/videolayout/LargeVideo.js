@@ -267,7 +267,7 @@ function changeVideo(isVisible) {
     if (isVisible) {
         LargeVideo.VideoLayout.largeVideoUpdated(currentSmallVideo);
 
-        $('#largeVideo').fadeIn(300);
+        $('#largeVideoWrapper').fadeIn(300);
     }
 }
 
@@ -288,7 +288,9 @@ function createLargeVideoHTML()
                 '<img id="activeSpeakerAvatar" src=""/>' +
                 '<canvas id="activeSpeakerAudioLevel"></canvas>' +
             '</div>' +
-            '<video id="largeVideo" autoplay oncontextmenu="return false;"></video>' +
+            '<div id="largeVideoWrapper">' +
+                '<video id="largeVideo" autoplay oncontextmenu="return false;"></video>' +
+            '</div id="largeVideoWrapper">' +
             '<span id="videoConnectionMessage"></span>';
     html += '</div>';
     $(html).prependTo("#videospace");
@@ -386,13 +388,13 @@ var LargeVideo = {
                 // or null.
                 this.eventEmitter.emit(UIEvents.SELECTED_ENDPOINT, resourceJid);
             }
-            if (RTCBrowserType.isSafari()) {
-                // FIXME In Safari fadeOut works only for the first time
-                changeVideo(this.isLargeVideoVisible());
-            } else {
-                $('#largeVideo').fadeOut(300,
-                    changeVideo.bind($('#largeVideo'), this.isLargeVideoVisible()));
-            }
+            // We are doing fadeOut/fadeIn animations on parent div which wraps
+            // largeVideo, because when Temasys plugin is in use it replaces
+            // <video> elements with plugin <object> tag. In Safari jQuery is
+            // unable to store values on this plugin object which breaks all
+            // animation effects performed on it directly.
+            $('#largeVideoWrapper').fadeOut(300,
+                changeVideo.bind($('#largeVideo'), this.isLargeVideoVisible()));
         } else {
             if (currentSmallVideo) {
                 currentSmallVideo.showAvatar();
@@ -430,7 +432,7 @@ var LargeVideo = {
             getVideoSize = isDesktop ? getDesktopVideoSize : getCameraVideoSize;
             getVideoPosition = isDesktop ? getDesktopVideoPosition
                 : getCameraVideoPosition;
-            this.position(null, null);
+            this.position(null, null, null, null, true);
         }
     },
     /**
@@ -464,7 +466,7 @@ var LargeVideo = {
         var horizontalIndent = videoPosition[0];
         var verticalIndent = videoPosition[1];
 
-        positionVideo($('#largeVideo'),
+        positionVideo($('#largeVideoWrapper'),
             largeVideoWidth,
             largeVideoHeight,
             horizontalIndent, verticalIndent, animate);
@@ -632,7 +634,7 @@ var LargeVideo = {
                     document.body.style.background = 'black';
                     ToolbarToggler.dockToolbar(false);//fix that
                 });
-                $('#largeVideo').fadeIn(300, function () {
+                $('#largeVideoWrapper').fadeIn(300, function () {
                     self.setLargeVideoVisible(true);
                 });
                 break;
