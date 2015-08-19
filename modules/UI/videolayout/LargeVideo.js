@@ -267,7 +267,7 @@ function changeVideo(isVisible) {
     if (isVisible) {
         LargeVideo.VideoLayout.largeVideoUpdated(currentSmallVideo);
 
-        $('#largeVideoWrapper').fadeIn(300);
+        $('#largeVideoWrapper').fadeTo(300, 1);
     }
 }
 
@@ -402,7 +402,7 @@ var LargeVideo = {
             // If for any reason large video was hidden before calling fadeOut
             // changeVideo will never be called, so we call show() in chain just
             // to be sure
-            $('#largeVideoWrapper').show().fadeOut(300,
+            $('#largeVideoWrapper').show().fadeTo(300, 0,
                 changeVideo.bind($('#largeVideo'), this.isLargeVideoVisible()));
         } else {
             if (currentSmallVideo) {
