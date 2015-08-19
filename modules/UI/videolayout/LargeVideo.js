@@ -42,7 +42,7 @@ function getContainerByState(state)
     switch (state)
     {
         case "video":
-            selector = "#largeVideo";
+            selector = "#largeVideoWrapper";
             break;
         case "etherpad":
             selector = "#etherpad>iframe";
@@ -353,7 +353,7 @@ var LargeVideo = {
      * @return <tt>true</tt> if visible, <tt>false</tt> - otherwise
      */
     isLargeVideoVisible: function() {
-        return $('#largeVideo').is(':visible');
+        return $('#largeVideoWrapper').is(':visible');
     },
     /**
      * Returns <tt>true</tt> if the user is currently displayed on large video.
@@ -370,6 +370,11 @@ var LargeVideo = {
             return;
         var newSmallVideo = this.VideoLayout.getSmallVideo(resourceJid);
         console.log('hover in ' + resourceJid + ', video: ', newSmallVideo);
+
+        if (!newSmallVideo) {
+            console.error("Small video not found for: " + resourceJid);
+            return;
+        }
 
         if (!LargeVideo.isCurrentlyOnLarge(resourceJid) || forceUpdate) {
             $('#activeSpeaker').css('visibility', 'hidden');
@@ -393,7 +398,11 @@ var LargeVideo = {
             // <video> elements with plugin <object> tag. In Safari jQuery is
             // unable to store values on this plugin object which breaks all
             // animation effects performed on it directly.
-            $('#largeVideoWrapper').fadeOut(300,
+            //
+            // If for any reason large video was hidden before calling fadeOut
+            // changeVideo will never be called, so we call show() in chain just
+            // to be sure
+            $('#largeVideoWrapper').show().fadeOut(300,
                 changeVideo.bind($('#largeVideo'), this.isLargeVideoVisible()));
         } else {
             if (currentSmallVideo) {
@@ -410,13 +419,13 @@ var LargeVideo = {
         if(!isEnabled)
             return;
         if (isVisible) {
-            $('#largeVideo').css({visibility: 'visible'});
+            $('#largeVideoWrapper').css({visibility: 'visible'});
             $('.watermark').css({visibility: 'visible'});
             if(currentSmallVideo)
                 currentSmallVideo.enableDominantSpeaker(true);
         }
         else {
-            $('#largeVideo').css({visibility: 'hidden'});
+            $('#largeVideoWrapper').css({visibility: 'hidden'});
             $('#activeSpeaker').css('visibility', 'hidden');
             $('.watermark').css({visibility: 'hidden'});
             if(currentSmallVideo)
@@ -524,10 +533,11 @@ var LargeVideo = {
         }
     },
     showAvatar: function (resourceJid, show) {
-        if(!isEnabled)
+        if (!isEnabled)
             return;
-        if(this.getResourceJid() === resourceJid && state === "video") {
-            $("#largeVideo").css("visibility", show ? "hidden" : "visible");
+        if (this.getResourceJid() === resourceJid && state === "video") {
+            $("#largeVideoWrapper")
+                .css("visibility", show ? "hidden" : "visible");
             $('#activeSpeaker').css("visibility", show ? "visible" : "hidden");
             return true;
         }
