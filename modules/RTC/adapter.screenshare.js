@@ -1,4 +1,4 @@
-/*! adapterjs - custom version from - 2015-08-18 */
+/*! adapterjs - custom version from - 2015-08-19 */
 
 // Adapter's interface.
 var AdapterJS = AdapterJS || {};
@@ -354,13 +354,12 @@ AdapterJS.renderNotificationBar = function (text, buttonText, buttonLink, openNe
         AdapterJS.WebRTCPlugin.isPluginInstalled(
           AdapterJS.WebRTCPlugin.pluginInfo.prefix,
           AdapterJS.WebRTCPlugin.pluginInfo.plugName,
-          AdapterJS.WebRTCPlugin.defineWebRTCInterface,
-          function() {
+          function() { // plugin now installed
             clearInterval(pluginInstallInterval);
             AdapterJS.WebRTCPlugin.defineWebRTCInterface();
           },
-          function() {
-            //Does nothing because not used here
+          function() { 
+            // still no plugin detected, nothing to do
           });
       } , 500);
     });   
@@ -734,6 +733,28 @@ if (navigator.mozGetUserMedia) {
   };
 
   AdapterJS.maybeThroughWebRTCReady();
+} else if (navigator.mediaDevices && navigator.userAgent.match(
+    /Edge\/(\d+).(\d+)$/)) {
+  webrtcDetectedBrowser = 'edge';
+
+  webrtcDetectedVersion =
+    parseInt(navigator.userAgent.match(/Edge\/(\d+).(\d+)$/)[2], 10);
+
+  // the minimum version still supported by adapter.
+  webrtcMinimumVersion = 12;
+
+  getUserMedia = navigator.getUserMedia;
+
+  attachMediaStream = function(element, stream) {
+    element.srcObject = stream;
+    return element;
+  };
+  reattachMediaStream = function(to, from) {
+    to.srcObject = from.srcObject;
+    return to;
+  };
+
+  AdapterJS.maybeThroughWebRTCReady();
 } else { // TRY TO USE PLUGIN
   // IE 9 is not offering an implementation of console.log until you open a console
   if (typeof console !== 'object' || typeof console.log !== 'function') {
@@ -885,9 +906,10 @@ if (navigator.mozGetUserMedia) {
   AdapterJS.WebRTCPlugin.defineWebRTCInterface = function () {
     if (AdapterJS.WebRTCPlugin.pluginState ===
         AdapterJS.WebRTCPlugin.PLUGIN_STATES.READY) {
-      console.error("WebRTC interface has been defined already");
+      console.error("AdapterJS - WebRTC interface has already been defined");
       return;
     }
+
     AdapterJS.WebRTCPlugin.pluginState = AdapterJS.WebRTCPlugin.PLUGIN_STATES.INITIALIZING;
 
     AdapterJS.isDefined = function (variable) {
@@ -984,9 +1006,10 @@ if (navigator.mozGetUserMedia) {
       }
 
       var elementId = element.id.length === 0 ? Math.random().toString(36).slice(2) : element.id;
-      if (!element.isWebRTCPlugin || !element.isWebRTCPlugin()) {
+      var nodeName = element.nodeName.toLowerCase();
+      if (nodeName !== 'object') { // not a plugin <object> tag yet
         var tag;
-        switch(element.nodeName.toLowerCase()) {
+        switch(nodeName) {
           case 'audio':
             tag = AdapterJS.WebRTCPlugin.TAGS.AUDIO;
             break;
@@ -1037,7 +1060,7 @@ if (navigator.mozGetUserMedia) {
         frag.width = width;
         frag.height = height;
         element.parentNode.removeChild(element);
-      } else {
+      } else { // already an <object> tag, just change the stream id
         var children = element.children;
         for (var i = 0; i !== children.length; ++i) {
           if (children[i].name === 'streamId') {
@@ -1049,9 +1072,9 @@ if (navigator.mozGetUserMedia) {
       }
       var newElement = document.getElementById(elementId);
       newElement.onplaying = (element.onplaying) ? element.onplaying : function (arg) {};
+      newElement.onclick   = (element.onclick)   ? element.onclick   : function (arg) {};
       if (isIE) { // on IE the event needs to be plugged manually
         newElement.attachEvent('onplaying', newElement.onplaying);
-        newElement.onclick = (element.onclick) ? element.onclick : function (arg) {};
         newElement._TemOnClick = function (id) {
           var arg = {
             srcElement : document.getElementById(id)
