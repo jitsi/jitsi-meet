@@ -28,7 +28,7 @@ var JitsiMeetExternalAPI = (function()
      * @constructor
      */
     function JitsiMeetExternalAPI(domain, room_name, width, height, parentNode,
-        filmStripOnly) {
+        configOverwrite, interfaceConfigOverwrite) {
         if((!width || width < MIN_WIDTH) && !filmStripOnly)
             width = MIN_WIDTH;
         if((!height || height < MIN_HEIGHT) && !filmStripOnly)
@@ -54,8 +54,25 @@ var JitsiMeetExternalAPI = (function()
         if(room_name)
             this.url += room_name;
         this.url += "#external=true";
-        if(filmStripOnly)
-            this.url += "&interfaceConfig.filmStripOnly=true";
+
+        var key;
+        if (configOverwrite) {
+            for (key in configOverwrite) {
+                if (!configOverwrite.hasOwnProperty(key) ||
+                    typeof key !== 'string')
+                    continue;
+                this.url += "&config." + key + "=" + configOverwrite[key];
+            }
+        }
+
+        if (interfaceConfigOverwrite) {
+            for (key in interfaceConfigOverwrite) {
+                if (!interfaceConfigOverwrite.hasOwnProperty(key) ||
+                    typeof key !== 'string')
+                    continue;
+                this.url += "&interfaceConfig." + key + "=" + interfaceConfigOverwrite[key];
+            }
+        }
 
         JitsiMeetExternalAPI.id++;
 
