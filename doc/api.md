@@ -29,9 +29,11 @@ constructor.
 ``` 
 If you don't specify room the user will enter in new conference with random room name.
 
-You can enable the "film strip only" mode(only the small videos are visible) by setting 6th parameter to ```true```:
+You can overwrite options set in config.js and interface_config.js. For example, to enable the film-strip-only interface mode and disable simulcast, you can use:
 ```javascript
-    var api = new JitsiMeetExternalAPI(domain, room, width, height, htmlElement, true);
+    var configOverwrite = {enableSimulcast: false};
+    var interfaceConfigOverwrite = {filmStripOnly: true};
+    var api = new JitsiMeetExternalAPI(domain, room, width, height, htmlElement, true, configOverwrite, interfaceConfigOverwrite);
 ``` 
 
 Controlling embedded Jitsi Meet Conference
