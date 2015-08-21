@@ -270,6 +270,7 @@ var XMPP = {
         initStrophePlugins();
         registerListeners();
         Moderator.init(this, eventEmitter);
+        Recording.init();
         var configDomain = config.hosts.anonymousdomain || config.hosts.domain;
         // Force authenticated domain if room is appended with '?login=true'
         if (config.hosts.anonymousdomain &&

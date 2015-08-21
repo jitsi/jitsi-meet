@@ -1,4 +1,5 @@
 var config = {
+//    configLocation: './config.json', // see ./modules/HttpConfigFetch.js
     hosts: {
         domain: 'jitsi-meet.example.com',
         //anonymousdomain: 'guest.example.com',

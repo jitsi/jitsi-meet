@@ -10,7 +10,7 @@ var recordingEnabled;
  * Whether to use a jirecon component for recording, or use the videobridge
  * through COLIBRI.
  */
-var useJirecon = (typeof config.hosts.jirecon != "undefined");
+var useJirecon;
 
 /**
  * The ID of the jirecon recording session. Jirecon generates it when we
@@ -109,6 +109,10 @@ function setRecording(state, token, callback, connection) {
 }
 
 var Recording = {
+    init: function () {
+        useJirecon = config.hosts &&
+            (typeof config.hosts.jirecon != "undefined");
+    },
     toggleRecording: function (tokenEmptyCallback, recordingStateChangeCallback, connection) {
         if (!Moderator.isModerator()) {
             console.log(

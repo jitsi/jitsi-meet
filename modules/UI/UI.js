@@ -33,6 +33,7 @@ var UIEvents = require("../../service/UI/UIEvents");
 var MemberEvents = require("../../service/members/Events");
 
 var eventEmitter = new EventEmitter();
+var roomNode = null;
 var roomName = null;
 
 
@@ -684,17 +685,16 @@ UI.getLargeVideoResource = function () {
     return VideoLayout.getLargeVideoResource();
 };
 
-UI.generateRoomName = function() {
-    if(roomName)
-        return roomName;
-    var roomnode = null;
+UI.getRoomNode = function () {
+    if (roomNode)
+        return roomNode;
     var path = window.location.pathname;
 
     // determinde the room node from the url
     // TODO: just the roomnode or the whole bare jid?
     if (config.getroomnode && typeof config.getroomnode === 'function') {
         // custom function might be responsible for doing the pushstate
-        roomnode = config.getroomnode(path);
+        roomNode = config.getroomnode(path);
     } else {
         /* fall back to default strategy
          * this is making assumptions about how the URL->room mapping happens.
@@ -705,17 +705,22 @@ UI.generateRoomName = function() {
          }
          */
         if (path.length > 1) {
-            roomnode = path.substr(1).toLowerCase();
+            roomNode = path.substr(1).toLowerCase();
         } else {
             var word = RoomNameGenerator.generateRoomWithoutSeparator();
-            roomnode = word.toLowerCase();
-
+            roomNode = word.toLowerCase();
             window.history.pushState('VideoChat',
-                    'Room: ' + word, window.location.pathname + word);
+                'Room: ' + word, window.location.pathname + word);
         }
     }
+    return roomNode;
+};
 
-    roomName = roomnode + '@' + config.hosts.muc;
+UI.generateRoomName = function () {
+    if (roomName)
+        return roomName;
+    var roomNode = UI.getRoomNode();
+    roomName = roomNode + '@' + config.hosts.muc;
     return roomName;
 };
 

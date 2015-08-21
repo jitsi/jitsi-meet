@@ -35,7 +35,7 @@ var externalAuthEnabled = false;
 // Sip gateway can be enabled by configuring Jigasi host in config.js or
 // it will be enabled automatically if focus detects the component through
 // service discovery.
-var sipGatewayEnabled = config.hosts.call_control !== undefined;
+var sipGatewayEnabled;
 
 var eventEmitter = null;
 
@@ -64,6 +64,9 @@ var Moderator = {
     init: function (xmpp, emitter) {
         this.xmppService = xmpp;
         eventEmitter = emitter;
+
+        sipGatewayEnabled =
+            config.hosts && config.hosts.call_control !== undefined;
 
         // Message listener that talks to POPUP window
         function listener(event) {
