@@ -9,6 +9,7 @@ var RTCBrowserType = require("../../RTC/RTCBrowserType");
 function LocalVideo(VideoLayout) {
     this.videoSpanId = "localVideoContainer";
     this.container = $("#localVideoContainer").get(0);
+    this.bindHoverHandler();
     this.VideoLayout = VideoLayout;
     this.flipX = true;
     this.isLocal = true;
@@ -172,19 +173,6 @@ LocalVideo.prototype.changeVideo = function (stream, isMuted) {
     var localVideoContainerSelector = $('#localVideoContainer');
     localVideoContainerSelector.off('click');
     localVideoContainerSelector.on('click', localVideoClick);
-
-    // Add hover handler
-    localVideoContainerSelector.hover(
-        function() {
-            self.showDisplayName(true);
-        },
-        function() {
-            if (!LargeVideo.isLargeVideoVisible() ||
-                !LargeVideo.isCurrentlyOnLarge(self.getResourceJid())) {
-                self.showDisplayName(false);
-            }
-        }
-    );
 
     if(isMuted) {
         APP.UI.setVideoMute(true);

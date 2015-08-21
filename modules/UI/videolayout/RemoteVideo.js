@@ -20,6 +20,7 @@ function RemoteVideo(peerJid, VideoLayout) {
     nickfield.className = "nick";
     nickfield.appendChild(document.createTextNode(this.resourceJid));
     this.container.appendChild(nickfield);
+    this.bindHoverHandler();
     this.flipX = false;
     this.isLocal = false;
 }
@@ -252,21 +253,6 @@ RemoteVideo.prototype.addRemoteStreamElement = function (sid, stream, thessrc) {
     if (RTCBrowserType.isTemasysPluginUsed())
         sel = $('#' + newElementId);
     sel[0].onclick = onClickHandler;
-
-    //FIXME
-    // Add hover handler
-    $(this.container).hover(
-        function() {
-            self.showDisplayName(true);
-        },
-        function() {
-            // If the video has been "pinned" by the user we want to
-            // keep the display name on place.
-            if (!LargeVideo.isLargeVideoVisible() ||
-                !LargeVideo.isCurrentlyOnLarge(self.getResourceJid()))
-                self.showDisplayName(false);
-        }
-    );
 },
 
 /**
