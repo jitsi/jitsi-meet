@@ -191,7 +191,7 @@ RemoteVideo.prototype.waitForPlayback = function (sel, stream) {
             APP.RTC.attachMediaStream(sel, stream);
         }
         if (RTCBrowserType.isTemasysPluginUsed()) {
-            sel = self.VideoLayout.getPeerVideoSel(resourceJid);
+            sel = self.selectVideoElement();
         }
         self.VideoLayout.videoactive(sel, resourceJid);
         sel[0].onplaying = null;
@@ -232,9 +232,6 @@ RemoteVideo.prototype.addRemoteStreamElement = function (sid, stream, thessrc) {
         self.removeRemoteStreamElement(stream, isVideo, newElementId);
 
     };
-
-    // Name of video element name is different for IE/Safari
-    var videoElem = APP.RTC.getVideoElementName();
 
     // Add click handler.
     var onClickHandler = function (event) {

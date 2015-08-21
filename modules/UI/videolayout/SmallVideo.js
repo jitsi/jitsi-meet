@@ -284,10 +284,20 @@ SmallVideo.prototype.createModeratorIndicatorElement = function () {
     APP.translation.translateElement($('#' + this.videoSpanId + ' .focusindicator'));
 };
 
+SmallVideo.prototype.selectVideoElement = function () {
+    var videoElem = APP.RTC.getVideoElementName();
+    if (!RTCBrowserType.isTemasysPluginUsed()) {
+        return $('#' + this.videoSpanId).find(videoElem);
+    } else {
+        return $('#' + this.videoSpanId +
+               (this.isLocal ? '>>' : '>') +
+               videoElem + '>param[value="video"]').parent();
+    }
+};
+
 SmallVideo.prototype.getSrc = function () {
-    var videoElement = APP.RTC.getVideoElementName();
-    return APP.RTC.getVideoSrc(
-            $('#' + this.videoSpanId).find(videoElement).get(0));
+    var videoElement = this.selectVideoElement().get(0);
+    return APP.RTC.getVideoSrc(videoElement);
 };
 
 SmallVideo.prototype.focus = function(isFocused) {
@@ -299,8 +309,7 @@ SmallVideo.prototype.focus = function(isFocused) {
 };
 
 SmallVideo.prototype.hasVideo = function () {
-    return $("#" + this.videoSpanId).find(
-                APP.RTC.getVideoElementName()).length !== 0;
+    return this.selectVideoElement().length !== 0;
 };
 
 /**
@@ -320,8 +329,8 @@ SmallVideo.prototype.showAvatar = function (show) {
     }
 
     var resourceJid = this.getResourceJid();
-    var videoElem = APP.RTC.getVideoElementName();
-    var video = $('#' + this.videoSpanId).find(videoElem);
+    var video = this.selectVideoElement();
+
     var avatar = $('#avatar_' + resourceJid);
 
     if (show === undefined || show === null) {

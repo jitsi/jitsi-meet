@@ -145,21 +145,21 @@ var VideoLayout = (function (my) {
         }
     };
 
-    my.electLastVisibleVideo = function() {
+    my.electLastVisibleVideo = function () {
         // pick the last visible video in the row
         // if nobody else is left, this picks the local video
         var jid;
-        var videoElem = RTC.getVideoElementName();
-        var pick = $('#remoteVideos>span[id!="mixedstream"]:visible:last>' + videoElem);
-        if (pick.length && APP.RTC.getVideoSrc(pick[0])) {
-            jid = VideoLayout.getPeerContainerResourceJid(pick[0].parentNode);
+        var pick = $('#remoteVideos>span[id!="mixedstream"]:visible:last');
+        if (pick.length) {
+            jid = VideoLayout.getPeerContainerResourceJid(pick[0]);
         } else {
             console.info("Last visible video no longer exists");
-            pick = $('#remoteVideos>span[id!="mixedstream"]>' + videoElem);
-            if (pick.length && APP.RTC.getVideoSrc(pick[0])) {
-                jid = VideoLayout.getPeerContainerResourceJid(pick[0].parentNode);
-            } else {
-                // Try local video
+            pick = $('#remoteVideos>span[id!="mixedstream"]');
+            if (pick.length) {
+                jid = VideoLayout.getPeerContainerResourceJid(pick[0]);
+            }
+            if (!jid) {
+                // Go with local video
                 console.info("Fallback to local video...");
                 jid = APP.xmpp.myResource();
             }
@@ -467,15 +467,14 @@ var VideoLayout = (function (my) {
      * DOM element
      */
     my.getPeerContainerResourceJid = function (containerElement) {
+        if (localVideoThumbnail.container === containerElement) {
+            return localVideoThumbnail.getResourceJid();
+        }
+
         var i = containerElement.id.indexOf('participant_');
 
         if (i >= 0)
-            return containerElement.id.substring(i + 12); 
-    };
-
-    my.getPeerVideoSel = function (peerResourceJid) {
-        return $('#participant_'  + peerResourceJid +
-                 '>' + APP.RTC.getVideoElementName());
+            return containerElement.id.substring(i + 12);
     };
 
     /**
@@ -492,9 +491,9 @@ var VideoLayout = (function (my) {
         }
 
         var resource = Strophe.getResourceFromJid(jid);
-        var videoSel = VideoLayout.getPeerVideoSel(resource);
-        if (videoSel.length > 0) {
-            var videoThumb = videoSel[0];
+        var remoteVideo = remoteVideos[resource];
+        if (remoteVideo && remoteVideo.selectVideoElement().length) {
+            var videoThumb = remoteVideo.selectVideoElement()[0];
             // It is not always the case that a videoThumb exists (if there is
             // no actual video).
             if (RTC.getVideoSrc(videoThumb)) {
@@ -553,9 +552,10 @@ var VideoLayout = (function (my) {
             var resource = Strophe.getResourceFromJid(jid);
 
             VideoLayout.ensurePeerContainerExists(jid);
-            remoteVideos[resource].showVideoIndicator(value);
+            var remoteVideo = remoteVideos[resource];
+            remoteVideo.showVideoIndicator(value);
 
-            var el = VideoLayout.getPeerVideoSel(resource);
+            var el = remoteVideo.selectVideoElement();
             if (!value)
                 el.show();
             else
@@ -587,18 +587,19 @@ var VideoLayout = (function (my) {
         if (resourceJid === APP.xmpp.myResource())
             return;
 
+        var remoteVideo = remoteVideos[resourceJid];
         var members = APP.xmpp.getMembers();
         // Update the current dominant speaker.
         if (resourceJid !== currentDominantSpeaker) {
             var currentJID = APP.xmpp.findJidFromResource(currentDominantSpeaker);
             var newJID = APP.xmpp.findJidFromResource(resourceJid);
-            if(currentDominantSpeaker && (!members || !members[currentJID] ||
-                !members[currentJID].displayName) && remoteVideos[resourceJid]) {
-                remoteVideos[resourceJid].setDisplayName(null);
+            if (currentDominantSpeaker && (!members || !members[currentJID] ||
+                !members[currentJID].displayName) && remoteVideo) {
+                remoteVideo.setDisplayName(null);
             }
-            if(resourceJid && (!members || !members[newJID] ||
-                !members[newJID].displayName) && remoteVideos[resourceJid]) {
-                remoteVideos[resourceJid].setDisplayName(null,
+            if (resourceJid && (!members || !members[newJID] ||
+                !members[newJID].displayName) && remoteVideo) {
+                remoteVideo.setDisplayName(null,
                     interfaceConfig.DEFAULT_DOMINANT_SPEAKER_DISPLAY_NAME);
             }
             currentDominantSpeaker = resourceJid;
@@ -606,8 +607,11 @@ var VideoLayout = (function (my) {
             return;
         }
 
+        if (!remoteVideo)
+            return;
+
         // Obtain container for new dominant speaker.
-        var videoSel  = VideoLayout.getPeerVideoSel(resourceJid);
+        var videoSel  = remoteVideo.selectVideoElement();
 
         // Local video will not have container found, but that's ok
         // since we don't want to switch to local video.
@@ -706,14 +710,15 @@ var VideoLayout = (function (my) {
             endpointsEnteringLastN.forEach(function (resourceJid) {
 
                 var isVisible = $('#participant_' + resourceJid).is(':visible');
-                remoteVideos[resourceJid].showPeerContainer('show');
+                var remoteVideo = remoteVideos[resourceJid];
+                remoteVideo.showPeerContainer('show');
                 if (!isVisible) {
                     console.log("Add to last N", resourceJid);
 
                     var jid = APP.xmpp.findJidFromResource(resourceJid);
                     var mediaStream =
                         APP.RTC.remoteStreams[jid][MediaStreamType.VIDEO_TYPE];
-                    var sel = VideoLayout.getPeerVideoSel(resourceJid);
+                    var sel = remoteVideo.selectVideoElement();
 
                     APP.RTC.attachMediaStream(sel, mediaStream.stream);
                     if (lastNPickupJid == mediaStream.peerjid) {
