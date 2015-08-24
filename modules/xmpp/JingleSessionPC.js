@@ -1067,28 +1067,29 @@ JingleSessionPC.prototype._modifySources = function (successCallback, queueCallb
 
 /**
  * Switches video streams.
- * @param new_stream new stream that will be used as video of this session.
+ * @param newStream new stream that will be used as video of this session.
  * @param oldStream old video stream of this session.
- * @param success_callback callback executed after successful stream switch.
+ * @param successCallback callback executed after successful stream switch.
  */
-JingleSessionPC.prototype.switchStreams = function (new_stream, oldStream, success_callback, isAudio) {
+JingleSessionPC.prototype.switchStreams =
+    function (newStream, oldStream, successCallback) {
 
     var self = this;
 
     // Remember SDP to figure out added/removed SSRCs
     var oldSdp = null;
-    if(self.peerconnection) {
-        if(self.peerconnection.localDescription) {
+    if (self.peerconnection) {
+        if (self.peerconnection.localDescription) {
             oldSdp = new SDP(self.peerconnection.localDescription.sdp);
         }
         self.peerconnection.removeStream(oldStream, true);
-        if(new_stream)
-            self.peerconnection.addStream(new_stream);
+        if (newStream)
+            self.peerconnection.addStream(newStream);
     }
 
     // Conference is not active
-    if(!oldSdp || !self.peerconnection) {
-        success_callback();
+    if (!oldSdp) {
+        successCallback();
         return;
     }
 
@@ -1096,7 +1097,7 @@ JingleSessionPC.prototype.switchStreams = function (new_stream, oldStream, succe
     self.modifySourcesQueue.push(function() {
         logger.log('modify sources done');
 
-        success_callback();
+        successCallback();
 
         var newSdp = new SDP(self.peerconnection.localDescription.sdp);
         logger.log("SDPs", oldSdp, newSdp);

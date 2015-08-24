@@ -22,10 +22,10 @@ function RTC(room, options) {
     this.eventEmitter = new EventEmitter();
     var self = this;
     this.options = options || {};
-    desktopsharing.addListener(
+    desktopsharing.addListener(DesktopSharingEventTypes.NEW_STREAM_CREATED,
         function (stream, isUsingScreenStream, callback) {
             self.changeLocalVideo(stream, isUsingScreenStream, callback);
-        }, DesktopSharingEventTypes.NEW_STREAM_CREATED);
+        });
     room.addPresenceListener("videomuted", function (values, from) {
         if(self.remoteStreams[from])
             self.remoteStreams[from][JitsiTrack.VIDEO].setMute(values.value == "true");
@@ -208,13 +208,13 @@ RTC.prototype.muteRemoteVideoStream = function (jid, value) {
     return false;
 };
 
-RTC.prototype.switchVideoStreams = function (new_stream) {
-    this.localVideo.stream = new_stream;
+RTC.prototype.switchVideoStreams = function (newStream) {
+    this.localVideo.stream = newStream;
 
     this.localStreams = [];
 
     //in firefox we have only one stream object
-    if (this.localAudio.getOriginalStream() != new_stream)
+    if (this.localAudio.getOriginalStream() != newStream)
         this.localStreams.push(this.localAudio);
     this.localStreams.push(this.localVideo);
 };
