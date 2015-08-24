@@ -1,5 +1,12 @@
 /* global $, alert, APP, changeLocalVideo, chrome, config, getConferenceHandler,
  getUserMediaWithConstraints */
+var AdapterJS = require("../RTC/adapter.screenshare");
+var EventEmitter = require("events");
+var DesktopSharingEventTypes
+    = require("../../service/desktopsharing/DesktopSharingEventTypes");
+var RTCBrowserType = require("../RTC/RTCBrowserType");
+var RTCEvents = require("../../service/RTC/RTCEvents");
+
 /**
  * Indicates that desktop stream is currently in use(for toggle purpose).
  * @type {boolean}
@@ -31,18 +38,7 @@ var extInstalled = false;
  */
 var extUpdateRequired = false;
 
-var AdapterJS = require("../RTC/adapter.screenshare");
-
-var EventEmitter = require("events");
-
 var eventEmitter = new EventEmitter();
-
-var DesktopSharingEventTypes
-    = require("../../service/desktopsharing/DesktopSharingEventTypes");
-
-var RTCBrowserType = require("../RTC/RTCBrowserType");
-
-var RTCEvents = require("../../service/RTC/RTCEvents");
 
 /**
  * Method obtains desktop stream from WebRTC 'screen' source.
