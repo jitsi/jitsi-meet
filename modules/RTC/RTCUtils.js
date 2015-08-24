@@ -93,6 +93,12 @@ function getConstraints(um, resolution, bandwidth, fps, desktopStream) {
                     }
                 ]
             };
+        } else if (RTCBrowserType.isFirefox()) {
+            constraints.video = {
+                mozMediaSource: "window",
+                mediaSource: "window"
+            };
+
         } else {
             console.error(
                 "'screen' WebRTC media source is supported only in Chrome" +

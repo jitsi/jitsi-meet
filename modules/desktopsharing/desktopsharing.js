@@ -235,6 +235,8 @@ function setDesktopSharing(method) {
             obtainDesktopStream = obtainWebRTCScreen;
             console.info("Using Chrome WebRTC for desktop sharing");
         }
+    } else if (RTCBrowserType.isFirefox()) {
+        obtainDesktopStream = obtainWebRTCScreen;
     }
 
     if (!obtainDesktopStream) {
