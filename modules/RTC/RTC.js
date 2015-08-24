@@ -151,9 +151,10 @@ var RTC = {
     start: function () {
         var self = this;
         APP.desktopsharing.addListener(
+            DesktopSharingEventTypes.NEW_STREAM_CREATED,
             function (stream, isUsingScreenStream, callback) {
                 self.changeLocalVideo(stream, isUsingScreenStream, callback);
-            }, DesktopSharingEventTypes.NEW_STREAM_CREATED);
+        });
         APP.xmpp.addListener(XMPPEvents.CALL_INCOMING, function(event) {
             DataChannels.init(event.peerconnection, eventEmitter);
         });
@@ -195,13 +196,13 @@ var RTC = {
         }
         return false;
     },
-    switchVideoStreams: function (new_stream) {
-        this.localVideo.stream = new_stream;
+    switchVideoStreams: function (newStream) {
+        this.localVideo.stream = newStream;
 
         this.localStreams = [];
 
         //in firefox we have only one stream object
-        if (this.localAudio.getOriginalStream() != new_stream)
+        if (this.localAudio.getOriginalStream() != newStream)
             this.localStreams.push(this.localAudio);
         this.localStreams.push(this.localVideo);
     },
@@ -227,7 +228,7 @@ var RTC = {
         // Stop the stream to trigger onended event for old stream
         oldStream.stop();
 
-        this.switchVideoStreams(videoStream, oldStream);
+        this.switchVideoStreams(videoStream);
 
         APP.xmpp.switchStreams(videoStream, oldStream,localCallback);
     },

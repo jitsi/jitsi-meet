@@ -329,12 +329,11 @@ module.exports = {
         APP.RTC.addListener(RTCEvents.RTC_READY, onWebRtcReady);
     },
 
-    addListener: function (listener, type)
-    {
+    addListener: function (type, listener) {
         eventEmitter.on(type, listener);
     },
 
-    removeListener: function (listener, type) {
+    removeListener: function (type, listener) {
         eventEmitter.removeListener(type, listener);
     },
 

@@ -193,12 +193,12 @@ function registerListeners() {
         AudioLevels.updateAudioLevel(resourceJid, audioLevel,
             UI.getLargeVideoResource());
     });
-    APP.desktopsharing.addListener(function () {
-        ToolbarToggler.showDesktopSharingButton();
-    }, DesktopSharingEventTypes.INIT);
     APP.desktopsharing.addListener(
-        Toolbar.changeDesktopSharingButtonState,
-        DesktopSharingEventTypes.SWITCHING_DONE);
+        DesktopSharingEventTypes.INIT,
+        ToolbarToggler.showToolbar);
+    APP.desktopsharing.addListener(
+        DesktopSharingEventTypes.SWITCHING_DONE,
+        Toolbar.changeDesktopSharingButtonState);
     APP.connectionquality.addListener(CQEvents.LOCALSTATS_UPDATED,
         VideoLayout.updateLocalConnectionStats);
     APP.connectionquality.addListener(CQEvents.REMOTESTATS_UPDATED,
