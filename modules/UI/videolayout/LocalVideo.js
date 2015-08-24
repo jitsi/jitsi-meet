@@ -166,7 +166,7 @@ LocalVideo.prototype.changeVideo = function (stream, isMuted) {
             event.stopPropagation();
         }
         self.VideoLayout.handleVideoThumbClicked(
-            false,
+            true,
             APP.xmpp.myResource());
     }
 

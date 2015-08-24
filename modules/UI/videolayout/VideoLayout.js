@@ -681,13 +681,19 @@ var VideoLayout = (function (my) {
                 lastNEndpoints.indexOf(resourceJid) < 0 &&
                 localLastNSet.indexOf(resourceJid) < 0) {
                 console.log("Remove from last N", resourceJid);
-                remoteVideos[resourceJid].showPeerContainer('hide');
+                if (remoteVideos[resourceJid])
+                    remoteVideos[resourceJid].showPeerContainer('hide');
+                else if (APP.xmpp.myResource() !== resourceJid)
+                    console.error("No remote video for: " + resourceJid);
                 isReceived = false;
             } else if (resourceJid &&
                 $('#participant_' + resourceJid).is(':visible') &&
                 lastNEndpoints.indexOf(resourceJid) < 0 &&
                 localLastNSet.indexOf(resourceJid) >= 0) {
-                remoteVideos[resourceJid].showPeerContainer('avatar');
+                if (remoteVideos[resourceJid])
+                    remoteVideos[resourceJid].showPeerContainer('avatar');
+                else if (APP.xmpp.myResource() !== resourceJid)
+                    console.error("No remote video for: " + resourceJid);
                 isReceived = false;
             }
 
