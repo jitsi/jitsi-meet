@@ -15,6 +15,8 @@ var XMPPEvents = {
     KICKED: "xmpp.kicked",
     // Designates an event indicating that the userID for a specific JID has
     // changed.
+    // Note: currently this event fires every time we receive presence from
+    // someone (regardless of whether or not the "userID" changed).
     USER_ID_CHANGED: "xmpp.user_id_changed",
     // Designates an event indicating that we have joined the XMPP MUC.
     MUC_JOINED: "xmpp.muc_joined",
@@ -45,6 +47,8 @@ var XMPPEvents = {
     SENDING_CHAT_MESSAGE: "xmpp.sending_chat_message",
     // Designates an event indicating that the video type (e.g. 'camera' or
     // 'screen') for a participant has changed.
+    // Note: currently this event fires every time we receive presence from
+    // someone (regardless of whether or not the "video type" changed).
     PARTICIPANT_VIDEO_TYPE_CHANGED: "xmpp.video_type",
     // Designates an event indicating that a participant in the XMPP MUC has
     // advertised that they have audio muted (or unmuted).
@@ -61,6 +65,11 @@ var XMPPEvents = {
     // Designates an event indicating that we should join the conference with
     // audio and/or video muted.
     START_MUTED_FROM_FOCUS: "xmpp.start_muted_from_focus",
+    // Designates an event indicating that a remote participant's available
+    // devices (whether he supports a audio and/or video) changed.
+    // Note: currently this event fires every time we receive presence from
+    // someone (regardless of whether or not the devices changed).
+    DEVICE_AVAILABLE: "xmpp.device_available",
 
 
     PEERCONNECTION_READY: "xmpp.peerconnection_ready",
@@ -69,7 +78,6 @@ var XMPPEvents = {
     AUTHENTICATION_REQUIRED: "xmpp.authentication_required",
     CHAT_ERROR_RECEIVED: "xmpp.chat_error_received",
     ETHERPAD: "xmpp.etherpad",
-    DEVICE_AVAILABLE: "xmpp.device_available",
     BRIDGE_DOWN: "xmpp.bridge_down",
     PRESENCE_STATUS: "xmpp.presence_status",
     RESERVATION_ERROR: "xmpp.room_reservation_error",
