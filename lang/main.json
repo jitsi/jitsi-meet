@@ -12,7 +12,7 @@
     "welcomepage":{
         "go": "GO",
         "roomname": "Enter room name",
-        "disable": "Don't show this page next time I enter",
+        "disable": "Don't show this page the next time I enter",
         "feature1": {
             "title": "Simple to use",
             "content": "No downloads required. __app__ works directly within your browser. Simply share your conference URL with others to get started."
@@ -23,7 +23,7 @@
         },
         "feature3": {
             "title": "Open source",
-            "content": "__app__ is licensed under MIT. You are free to download, use, modify, and share them as per these licenses."
+            "content": "__app__ is licensed under the Apache License. You are free to download, use, modify, and share it as per this license."
         },
         "feature4": {
             "title": "Unlimited users",
@@ -131,10 +131,9 @@
     },
     "dialog": {
         "kickMessage": "Ouch! You have been kicked out of the meet!",
-        "popupError": "Your browser is blocking popup windows from this site. Please enable popups in your browser security settings and try again.",
-        "passwordError": "This conversation is currently protected by a password. Only the owner of the conference could set a password.",
-        "passwordError2": "This conversation isn't currently protected by a password. Only the owner of the conference could set a password.",
-        "joinError": "Oops! We couldn't join the conference. There might be some problem with security configuration. Please contact service administrator.",
+        "popupError": "Your browser is blocking popup windows from this site. Please enable popups in your browser's security settings and try again.",
+        "passwordError": "This conversation is currently protected by a password. Only the owner of the conference can set a password.",
+        "passwordError2": "This conversation isn't currently protected by a password. Only the owner of the conference can set a password.",
         "connectError": "Oops! Something went wrong and we couldn't connect to the conference.",
         "connectErrorWithMsg": "Oops! Something went wrong and we couldn't connect to the conference: __msg__",
         "connecting": "Connecting",
@@ -144,7 +143,7 @@
         "failedpermissions": "Failed to obtain permissions to use the local microphone and/or camera.",
         "bridgeUnavailable": "Jitsi Videobridge is currently unavailable. Please try again later!",
         "lockTitle": "Lock failed",
-        "lockMessage": "Failed to lock conference.",
+        "lockMessage": "Failed to lock the conference.",
         "warning": "Warning",
         "passwordNotSupported": "Room passwords are currently not supported.",
         "sorry": "Sorry",
@@ -159,7 +158,7 @@
         "removePreziTitle": "Remove Prezi",
         "removePreziMsg": "Are you sure you would like to remove your Prezi?",
         "sharePreziTitle": "Share a Prezi",
-        "sharePreziMsg": "Another participant is already sharing a Prezi.This conference allows only one Prezi at a time.",
+        "sharePreziMsg": "Another participant is already sharing a Prezi. This conference allows only one Prezi at a time.",
         "Remove": "Remove",
         "WaitingForHost": "Waiting for the host ...",
         "WaitForHostMsg": "The conference <b>__room__ </b> has not yet started. If you are the host then please authenticate. Otherwise, please wait for the host to arrive.",
@@ -169,7 +168,7 @@
         "logoutTitle" : "Logout",
         "logoutQuestion" : "Are you sure you want to logout and stop the conference?",
         "sessTerminated": "Session Terminated",
-        "hungUp": "You hung up the call",
+        "hungUp": "You hung up",
         "joinAgain": "Join again",
         "Share": "Share",
         "preziLinkError": "Please provide a correct prezi link.",
@@ -200,7 +199,7 @@
     "email":
     {
         "sharedKey": [
-            "This conference is password protected. Please use the following pin when joining:",
+            "This conference is password-protected. Please use the following pin when joining:",
             "",
             "",
             "__sharedKey__",

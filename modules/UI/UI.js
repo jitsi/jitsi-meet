@@ -314,7 +314,7 @@ function registerListeners() {
 
     APP.xmpp.addListener(XMPPEvents.ROOM_JOIN_ERROR, function (pres) {
         UI.messageHandler.openReportDialog(null,
-            "dialog.joinError", pres);
+            "dialog.connectError", pres);
     });
     APP.xmpp.addListener(XMPPEvents.ROOM_CONNECT_ERROR, function (pres) {
         UI.messageHandler.openReportDialog(null,
