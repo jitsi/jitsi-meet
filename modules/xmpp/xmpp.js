@@ -27,7 +27,7 @@ function initStrophePlugins(XMPP)
     require("./strophe.jingle")(XMPP, XMPP.eventEmitter);
 //    require("./strophe.moderate")(XMPP, eventEmitter);
     require("./strophe.util")();
-    require("./strophe.ping")();
+    require("./strophe.ping")(XMPP, XMPP.eventEmitter);
     require("./strophe.rayo")();
     require("./strophe.logger")();
 }

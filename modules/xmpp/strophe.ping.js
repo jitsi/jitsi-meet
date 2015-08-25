@@ -2,19 +2,32 @@
 
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 
-var PING_INTERVAL = 15000;
+/**
+ * Ping every 20 sec
+ */
+var PING_INTERVAL = 20000;
 
-var PING_TIMEOUT = 10000;
+/**
+ * Ping timeout error after 15 sec of waiting.
+ */
+var PING_TIMEOUT = 15000;
+
+/**
+ * Will close the connection after 3 consecutive ping errors.
+ */
+var PING_THRESHOLD = 3;
 
 /**
  * XEP-0199 ping plugin.
  *
  * Registers "urn:xmpp:ping" namespace under Strophe.NS.PING.
  */
-module.exports = function () {
+module.exports = function (XMPP, eventEmitter) {
     Strophe.addConnectionPlugin('ping', {
 
         connection: null,
+
+        failedPings: 0,
 
         /**
          * Initializes the plugin. Method called by Strophe.
@@ -59,11 +72,15 @@ module.exports = function () {
                 self.ping(remoteJid,
                 function (result) {
                     // Ping OK
+                    self.failedPings = 0;
                 },
                 function (error) {
+                    self.failedPings += 1;
                     console.error(
                         "Ping " + (error ? "error" : "timeout"), error);
-                    //FIXME: react
+                    if (self.failedPings >= PING_THRESHOLD) {
+                        self.connection.disconnect();
+                    }
                 }, PING_TIMEOUT);
             }, interval);
             console.info("XMPP pings will be sent every " + interval + " ms");
@@ -76,6 +93,7 @@ module.exports = function () {
             if (this.intervalId) {
                 window.clearInterval(this.intervalId);
                 this.intervalId = null;
+                this.failedPings = 0;
                 console.info("Ping interval cleared");
             }
         }
