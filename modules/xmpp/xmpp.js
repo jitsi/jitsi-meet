@@ -87,6 +87,8 @@ function connect(jid, password) {
 
                 console.info("My Jabber ID: " + connection.jid);
 
+                connection.ping.startInterval(config.hosts.domain);
+
                 if (password)
                     authenticatedUser = true;
                 maybeDoJoin();
@@ -98,6 +100,8 @@ function connect(jid, password) {
                 }
                 lastErrorMsg = msg;
             } else if (status === Strophe.Status.DISCONNECTED) {
+                // Stop ping interval
+                connection.ping.stopInterval();
                 if (anonymousConnectionFailed) {
                     // prompt user for username and password
                     XMPP.promptLogin();
@@ -167,6 +171,7 @@ function initStrophePlugins()
     require("./strophe.jingle")(XMPP, eventEmitter);
     require("./strophe.moderate")(XMPP, eventEmitter);
     require("./strophe.util")();
+    require("./strophe.ping")();
     require("./strophe.rayo")();
     require("./strophe.logger")();
 }
