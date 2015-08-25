@@ -171,7 +171,7 @@ function initStrophePlugins()
     require("./strophe.jingle")(XMPP, eventEmitter);
     require("./strophe.moderate")(XMPP, eventEmitter);
     require("./strophe.util")();
-    require("./strophe.ping")();
+    require("./strophe.ping")(XMPP, eventEmitter);
     require("./strophe.rayo")();
     require("./strophe.logger")();
 }
