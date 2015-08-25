@@ -44,10 +44,6 @@
 
 #remoteVideos .videocontainer:hover,
 #remoteVideos .videocontainer.videoContainerFocused {
-    width: 100%;
-    height: 100%;
-    content:"";
-    cursor: pointer;
     cursor: hand;
     /* transform:scale(1.08, 1.08);
     -webkit-transform:scale(1.08, 1.08); */
@@ -85,6 +81,7 @@
    instead of <video/> */
 #remoteVideos .videocontainer>video,
 #remoteVideos .videocontainer>object {
+    cursor: hand;
     border-radius:4px;
 }
 
@@ -97,6 +94,7 @@
 
 #localVideoWrapper>video,
 #localVideoWrapper>object {
+    cursor: hand;
     border-radius:4px !important;
 }
 
