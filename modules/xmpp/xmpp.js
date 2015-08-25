@@ -27,6 +27,7 @@ function initStrophePlugins(XMPP)
     require("./strophe.jingle")(XMPP, XMPP.eventEmitter);
 //    require("./strophe.moderate")(XMPP, eventEmitter);
     require("./strophe.util")();
+    require("./strophe.ping")();
     require("./strophe.rayo")();
     require("./strophe.logger")();
 }
@@ -112,6 +113,8 @@ XMPP.prototype._connect = function (jid, password) {
 
             logger.info("My Jabber ID: " + self.connection.jid);
 
+            self.connection.ping.startInterval(config.hosts.domain);
+            
             if (password)
                 authenticatedUser = true;
             if (self.connection && self.connection.connected &&
@@ -131,6 +134,8 @@ XMPP.prototype._connect = function (jid, password) {
             }
             lastErrorMsg = msg;
         } else if (status === Strophe.Status.DISCONNECTED) {
+            // Stop ping interval
+            self.connection.ping.stopInterval();
             self.disconnectInProgress = false;
             if (anonymousConnectionFailed) {
                 // prompt user for username and password
