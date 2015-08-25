@@ -1,27 +1,25 @@
-NPM = npm
 BROWSERIFY = browserify
-GLOBAL_FLAGS = -x jquery -e
+GLOBAL_FLAGS =
 OUTPUT_DIR = .
-DEPLOY_DIR = libs
+DEPLOY_DIR = ../../jitsi-meet
 
-all: compile deploy clean
+all: compile deploy
 
 compile:FLAGS = $(GLOBAL_FLAGS)
 compile: app
 
-debug: compile-debug deploy clean
+debug: compile-debug deploy
 
 compile-debug:FLAGS = -d $(GLOBAL_FLAGS)
 compile-debug: app
 
 app:
-	$(NPM) update && $(BROWSERIFY) $(FLAGS) app.js -s APP -o $(OUTPUT_DIR)/app.bundle.js
+	$(BROWSERIFY) $(FLAGS) JitsiMeetJS.js -s JitsiMeetJS -o $(OUTPUT_DIR)/lib-jitsi-meet.js
 
 clean:
-	rm -f $(OUTPUT_DIR)/*.bundle.js
+	rm -f $(OUTPUT_DIR)/lib-jitsi-meet.js
 
 deploy:
 	mkdir -p $(DEPLOY_DIR) && \
-	cp $(OUTPUT_DIR)/*.bundle.js $(DEPLOY_DIR) && \
-	./bump-js-versions.sh && \
+	cp $(OUTPUT_DIR)/lib-jitsi-meet.js $(DEPLOY_DIR) && \
 	([ ! -x deploy-local.sh ] || ./deploy-local.sh)

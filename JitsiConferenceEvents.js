@@ -2,15 +2,15 @@
  * Enumeration with the events for the conference.
  * @type {{string: string}}
  */
-var ConferenceEvents = {
+var JitsiConferenceEvents = {
     /**
-     * New media stream was added to the conference.
+     * A new media track was added to the conference.
      */
-    STREAM_ADDED: "conference.streamAdded",
+    TRACK_ADDED: "conference.trackAdded",
     /**
-     * The media stream was removed to the conference.
+     * The media track was removed to the conference.
      */
-    STREAM_REMOVED: "conference.streamRemoved",
+    TRACK_REMOVED: "conference.trackRemoved",
     /**
      * The active speaker was changed.
      */
@@ -44,17 +44,17 @@ var ConferenceEvents = {
      */
     LAST_N_CHANGED: "conference.lastNChanged",
     /**
-     * Stream was muted.
+     * A media track was muted.
      */
-    STREAM_MUTED: "conference.streamMuted",
+    TRACK_MUTED: "conference.trackMuted",
     /**
-     * Stream was unmuted.
+     * A media track was unmuted.
      */
-    STREAM_UNMUTED: "conference.streamUnmuted",
+    TRACK_UNMUTED: "conference.trackUnmuted",
     /**
-     * Audio levels of a stream was changed.
+     * Audio levels of a media track was changed.
      */
-    STREAM_AUDIO_LEVEL_CHANGED: "conference.audioLevelsChanged",
+    TRACK_AUDIO_LEVEL_CHANGED: "conference.audioLevelsChanged",
     /**
      * Indicates that the connection to the conference has been interrupted for some reason.
      */
@@ -62,7 +62,7 @@ var ConferenceEvents = {
     /**
      * Indicates that the connection to the conference has been restored.
      */
-    CONNECTION_RESTORED: "conference.connecionRestored"
+    CONNECTION_ESTABLISHED: "conference.connecionEstablished"
 };
 
-module.exports = ConferenceEvents;
+module.exports = JitsiConferenceEvents;

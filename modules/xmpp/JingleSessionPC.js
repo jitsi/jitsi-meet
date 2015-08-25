@@ -20,7 +20,6 @@ function JingleSessionPC(me, sid, connection, service, eventEmitter) {
     this.localSDP = null;
     this.remoteSDP = null;
     this.relayedStreams = [];
-    this.pc_constraints = null;
 
     this.usetrickle = true;
     this.usepranswer = false; // early transport warmup -- mind you, this might fail. depends on webrtc issue 1718
@@ -87,7 +86,7 @@ JingleSessionPC.prototype.doInitialize = function () {
 
     this.peerconnection = new TraceablePeerConnection(
             this.connection.jingle.ice_config,
-            this.connection.jingle.pc_constraints,
+            APP.RTC.getPCConstraints(),
             this);
 
     this.peerconnection.onicecandidate = function (event) {

@@ -1,8 +1,8 @@
 /**
- * Enumeration with the erros for the conference.
+ * Enumeration with the errors for the conference.
  * @type {{string: string}}
  */
-var ConferenceErrors = {
+var JitsiConferenceErrors = {
     /**
      * Indicates that a password is required in order to join the conference.
      */
@@ -12,12 +12,12 @@ var ConferenceErrors = {
      */
     CONNECTION_ERROR: "conference.connectionError",
     /**
-     * Indicates that the video bridge is down.
+     * Indicates that there is no available videobridge.
      */
-    BRIDGE_DOWN: "conference.bridgeDown"
+    VIDEOBRIDGE_NOT_AVAILABLE: "conference.videobridgeNotAvailable"
     /**
      * Many more errors TBD here.
      */
 };
 
-module.exports = ConferenceErrors;
+module.exports = JitsiConferenceErrors;

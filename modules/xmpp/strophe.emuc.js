@@ -321,7 +321,7 @@ module.exports = function(XMPP, eventEmitter) {
             } else if ($(pres).find(
                 '>error[type="cancel"]>not-allowed[xmlns="urn:ietf:params:xml:ns:xmpp-stanzas"]').length) {
                 var toDomain = Strophe.getDomainFromJid(pres.getAttribute('to'));
-                if (toDomain === config.hosts.anonymousdomain) {
+                if (toDomain === XMPP.options.hosts.anonymousdomain) {
                     // enter the room by replying with 'not-authorized'. This would
                     // result in reconnection from authorized domain.
                     // We're either missing Jicofo/Prosody config for anonymous
@@ -452,7 +452,7 @@ module.exports = function(XMPP, eventEmitter) {
 
             // Send XEP-0115 'c' stanza that contains our capabilities info
             if (this.connection.caps) {
-                this.connection.caps.node = config.clientNode;
+                this.connection.caps.node = XMPP.options.clientNode;
                 pres.c('c', this.connection.caps.generateCapsAttrs()).up();
             }
 
@@ -620,7 +620,7 @@ module.exports = function(XMPP, eventEmitter) {
             if(member.isFocus)
                 return;
 
-            var displayName = !config.displayJids
+            var displayName = !XMPP.options.displayJids
                 ? member.displayName : Strophe.getResourceFromJid(from);
 
             if (displayName && displayName.length > 0) {

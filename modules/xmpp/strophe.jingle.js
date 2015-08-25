@@ -11,7 +11,6 @@ module.exports = function(XMPP, eventEmitter) {
         sessions: {},
         jid2session: {},
         ice_config: {iceServers: []},
-        pc_constraints: {},
         activecall: null,
         media_constraints: {
             mandatory: {
@@ -107,7 +106,6 @@ module.exports = function(XMPP, eventEmitter) {
                     // configure session
 
                     sess.media_constraints = this.media_constraints;
-                    sess.pc_constraints = this.pc_constraints;
                     sess.ice_config = this.ice_config;
 
                     sess.initialize(fromJid, false);
@@ -197,7 +195,6 @@ module.exports = function(XMPP, eventEmitter) {
             // configure session
 
             sess.media_constraints = this.media_constraints;
-            sess.pc_constraints = this.pc_constraints;
             sess.ice_config = this.ice_config;
 
             sess.initialize(peerjid, true);

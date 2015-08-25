@@ -134,8 +134,8 @@ function getConstraints(um, resolution, bandwidth, fps, desktopStream, isAndroid
     return constraints;
 }
 
-
-function RTCUtils(RTCService, onTemasysPluginReady)
+//Options parameter is to pass config options. Currently uses only "useIPv6".
+function RTCUtils(RTCService, onTemasysPluginReady, options)
 {
     var self = this;
     this.service = RTCService;
@@ -209,6 +209,10 @@ function RTCUtils(RTCService, onTemasysPluginReady)
         };
         // DTLS should now be enabled by default but..
         this.pc_constraints = {'optional': [{'DtlsSrtpKeyAgreement': 'true'}]};
+        if (options.useIPv6) {
+            // https://code.google.com/p/webrtc/issues/detail?id=2828
+            this.pc_constraints.optional.push({googIPv6: true});
+        }
         if (navigator.userAgent.indexOf('Android') != -1) {
             this.pc_constraints = {}; // disable DTLS on Android
         }
@@ -279,6 +283,7 @@ function RTCUtils(RTCService, onTemasysPluginReady)
         } catch (e) { }
         window.location.href = 'unsupported_browser.html';
     }
+
 }
 
 
