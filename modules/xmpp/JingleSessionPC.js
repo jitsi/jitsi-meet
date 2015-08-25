@@ -83,7 +83,10 @@ JingleSessionPC.prototype.doInitialize = function () {
     this.hadstuncandidate = false;
     this.hadturncandidate = false;
     this.lasticecandidate = false;
+    // True if reconnect is in progress
     this.isreconnect = false;
+    // Set to true if the connection was ever stable
+    this.wasstable = false;
 
     this.peerconnection = new TraceablePeerConnection(
             this.connection.jingle.ice_config,
@@ -112,6 +115,10 @@ JingleSessionPC.prototype.doInitialize = function () {
     };
     this.peerconnection.onsignalingstatechange = function (event) {
         if (!(self && self.peerconnection)) return;
+        console.info("Signaling: " + this.peerconnection.signalingState);
+        if (self.peerconnection.signalingState === 'stable') {
+            self.wasstable = true;
+        }
         self.updateModifySourcesQueue();
     };
     /**
@@ -123,6 +130,7 @@ JingleSessionPC.prototype.doInitialize = function () {
      */
     this.peerconnection.oniceconnectionstatechange = function (event) {
         if (!(self && self.peerconnection)) return;
+        console.info("Ice: " + self.peerconnection.iceConnectionState);
         self.updateModifySourcesQueue();
         switch (self.peerconnection.iceConnectionState) {
             case 'connected':
@@ -136,7 +144,7 @@ JingleSessionPC.prototype.doInitialize = function () {
             case 'disconnected':
                 self.isreconnect = true;
                 // Informs interested parties that the connection has been interrupted.
-                if (self.peerconnection.signalingState === 'stable')
+                if (self.wasstable)
                     self.eventEmitter.emit(XMPPEvents.CONNECTION_INTERRUPTED);
                 break;
             case 'failed':
