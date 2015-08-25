@@ -447,7 +447,7 @@ $(window).bind('beforeunload', function () {
 module.exports = APP;
 
 
-},{"./modules/API/API":4,"./modules/DTMF/DTMF":5,"./modules/RTC/RTC":9,"./modules/UI/UI":13,"./modules/config/HttpConfigFetch":44,"./modules/config/URLProcessor":45,"./modules/connectionquality/connectionquality":47,"./modules/desktopsharing/desktopsharing":48,"./modules/keyboardshortcut/keyboardshortcut":49,"./modules/members/MemberList":50,"./modules/settings/Settings":51,"./modules/statistics/statistics":55,"./modules/translation/translation":56,"./modules/xmpp/xmpp":72}],4:[function(require,module,exports){
+},{"./modules/API/API":4,"./modules/DTMF/DTMF":5,"./modules/RTC/RTC":9,"./modules/UI/UI":13,"./modules/config/HttpConfigFetch":44,"./modules/config/URLProcessor":45,"./modules/connectionquality/connectionquality":47,"./modules/desktopsharing/desktopsharing":48,"./modules/keyboardshortcut/keyboardshortcut":49,"./modules/members/MemberList":50,"./modules/settings/Settings":51,"./modules/statistics/statistics":55,"./modules/translation/translation":56,"./modules/xmpp/xmpp":73}],4:[function(require,module,exports){
 /* global APP */
 /**
  * Implements API class that communicates with external api class
@@ -667,7 +667,7 @@ var API = {
 };
 
 module.exports = API;
-},{"../../service/xmpp/XMPPEvents":176}],5:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":177}],5:[function(require,module,exports){
 /* global APP */
 
 /**
@@ -909,7 +909,7 @@ function onPinnedEndpointChanged(userResource) {
 module.exports = DataChannels;
 
 
-},{"../../service/RTC/RTCEvents":167}],7:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":168}],7:[function(require,module,exports){
 /* global APP */
 var StreamEventTypes = require("../../service/RTC/StreamEventTypes.js");
 var RTCEvents = require("../../service/RTC/RTCEvents");
@@ -1035,7 +1035,7 @@ LocalStream.prototype.getId = function () {
 
 module.exports = LocalStream;
 
-},{"../../service/RTC/RTCEvents":167,"../../service/RTC/StreamEventTypes.js":169,"./RTCBrowserType":10}],8:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":168,"../../service/RTC/StreamEventTypes.js":170,"./RTCBrowserType":10}],8:[function(require,module,exports){
 var MediaStreamType = require("../../service/RTC/MediaStreamTypes");
 
 /**
@@ -1084,7 +1084,7 @@ MediaStream.prototype.setMute = function (value) {
 
 module.exports = MediaStream;
 
-},{"../../service/RTC/MediaStreamTypes":166}],9:[function(require,module,exports){
+},{"../../service/RTC/MediaStreamTypes":167}],9:[function(require,module,exports){
 /* global APP */
 var EventEmitter = require("events");
 var RTCBrowserType = require("./RTCBrowserType");
@@ -1361,7 +1361,7 @@ var RTC = {
 
 module.exports = RTC;
 
-},{"../../service/RTC/MediaStreamTypes":166,"../../service/RTC/RTCEvents.js":167,"../../service/RTC/StreamEventTypes.js":169,"../../service/UI/UIEvents":170,"../../service/desktopsharing/DesktopSharingEventTypes":173,"../../service/xmpp/XMPPEvents":176,"./DataChannels":6,"./LocalStream.js":7,"./MediaStream.js":8,"./RTCBrowserType":10,"./RTCUtils.js":11,"events":1}],10:[function(require,module,exports){
+},{"../../service/RTC/MediaStreamTypes":167,"../../service/RTC/RTCEvents.js":168,"../../service/RTC/StreamEventTypes.js":170,"../../service/UI/UIEvents":171,"../../service/desktopsharing/DesktopSharingEventTypes":174,"../../service/xmpp/XMPPEvents":177,"./DataChannels":6,"./LocalStream.js":7,"./MediaStream.js":8,"./RTCBrowserType":10,"./RTCUtils.js":11,"events":1}],10:[function(require,module,exports){
 
 var currentBrowser;
 
@@ -2095,7 +2095,7 @@ RTCUtils.prototype.createStream = function(stream, isVideo) {
 
 module.exports = RTCUtils;
 
-},{"../../service/RTC/Resolutions":168,"../xmpp/SDPUtil":62,"./RTCBrowserType":10,"./adapter.screenshare":12}],12:[function(require,module,exports){
+},{"../../service/RTC/Resolutions":169,"../xmpp/SDPUtil":62,"./RTCBrowserType":10,"./adapter.screenshare":12}],12:[function(require,module,exports){
 /*! adapterjs - custom version from - 2015-08-19 */
 
 // Adapter's interface.
@@ -4147,7 +4147,7 @@ UI.setVideoMute = setVideoMute;
 module.exports = UI;
 
 
-},{"../../service/RTC/RTCEvents":167,"../../service/RTC/StreamEventTypes":169,"../../service/UI/UIEvents":170,"../../service/connectionquality/CQEvents":172,"../../service/desktopsharing/DesktopSharingEventTypes":173,"../../service/members/Events":174,"../../service/xmpp/XMPPEvents":176,"../RTC/RTCBrowserType":10,"./../settings/Settings":51,"./audio_levels/AudioLevels.js":14,"./authentication/Authentication":16,"./avatar/Avatar":18,"./etherpad/Etherpad.js":19,"./prezi/Prezi.js":20,"./side_pannels/SidePanelToggler":22,"./side_pannels/chat/Chat.js":23,"./side_pannels/contactlist/ContactList":27,"./side_pannels/settings/SettingsMenu":28,"./toolbars/BottomToolbar":29,"./toolbars/Toolbar":30,"./toolbars/ToolbarToggler":31,"./util/JitsiPopover":32,"./util/MessageHandler":33,"./util/NicknameHandler":34,"./util/UIUtil":35,"./videolayout/VideoLayout.js":41,"./welcome_page/RoomnameGenerator":42,"./welcome_page/WelcomePage":43,"events":1}],14:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":168,"../../service/RTC/StreamEventTypes":170,"../../service/UI/UIEvents":171,"../../service/connectionquality/CQEvents":173,"../../service/desktopsharing/DesktopSharingEventTypes":174,"../../service/members/Events":175,"../../service/xmpp/XMPPEvents":177,"../RTC/RTCBrowserType":10,"./../settings/Settings":51,"./audio_levels/AudioLevels.js":14,"./authentication/Authentication":16,"./avatar/Avatar":18,"./etherpad/Etherpad.js":19,"./prezi/Prezi.js":20,"./side_pannels/SidePanelToggler":22,"./side_pannels/chat/Chat.js":23,"./side_pannels/contactlist/ContactList":27,"./side_pannels/settings/SettingsMenu":28,"./toolbars/BottomToolbar":29,"./toolbars/Toolbar":30,"./toolbars/ToolbarToggler":31,"./util/JitsiPopover":32,"./util/MessageHandler":33,"./util/NicknameHandler":34,"./util/UIUtil":35,"./videolayout/VideoLayout.js":41,"./welcome_page/RoomnameGenerator":42,"./welcome_page/WelcomePage":43,"events":1}],14:[function(require,module,exports){
 /* global APP, interfaceConfig, $, Strophe */
 var CanvasUtil = require("./CanvasUtils");
 
@@ -4879,7 +4879,7 @@ var LoginDialog = {
 };
 
 module.exports = LoginDialog;
-},{"../../xmpp/moderator":64,"../../xmpp/xmpp":72}],18:[function(require,module,exports){
+},{"../../xmpp/moderator":64,"../../xmpp/xmpp":73}],18:[function(require,module,exports){
 var Settings = require("../../settings/Settings");
 
 var users = {};
@@ -6246,7 +6246,7 @@ var Chat = (function (my) {
     return my;
 }(Chat || {}));
 module.exports = Chat;
-},{"../../../../service/UI/UIEvents":170,"../../toolbars/ToolbarToggler":31,"../../util/NicknameHandler":34,"../../util/UIUtil":35,"../SidePanelToggler":22,"./Commands":24,"./Replacement":25,"./smileys.json":26}],24:[function(require,module,exports){
+},{"../../../../service/UI/UIEvents":171,"../../toolbars/ToolbarToggler":31,"../../util/NicknameHandler":34,"../../util/UIUtil":35,"../SidePanelToggler":22,"./Commands":24,"./Replacement":25,"./smileys.json":26}],24:[function(require,module,exports){
 /* global APP, require */
 var UIUtil = require("../../util/UIUtil");
 
@@ -6751,7 +6751,7 @@ var SettingsMenu = {
 
 
 module.exports = SettingsMenu;
-},{"../../../../service/translation/languages":175,"../../avatar/Avatar":18,"../../util/UIUtil":35,"./../../../settings/Settings":51}],29:[function(require,module,exports){
+},{"../../../../service/translation/languages":176,"../../avatar/Avatar":18,"../../util/UIUtil":35,"./../../../settings/Settings":51}],29:[function(require,module,exports){
 /* global $ */
 var PanelToggler = require("../side_pannels/SidePanelToggler");
 
@@ -7476,7 +7476,7 @@ var Toolbar = (function (my) {
 }(Toolbar || {}));
 
 module.exports = Toolbar;
-},{"../../../service/authentication/AuthenticationEvents":171,"../authentication/Authentication":16,"../etherpad/Etherpad":19,"../prezi/Prezi":20,"../side_pannels/SidePanelToggler":22,"../util/MessageHandler":33,"../util/UIUtil":35,"./BottomToolbar":29}],31:[function(require,module,exports){
+},{"../../../service/authentication/AuthenticationEvents":172,"../authentication/Authentication":16,"../etherpad/Etherpad":19,"../prezi/Prezi":20,"../side_pannels/SidePanelToggler":22,"../util/MessageHandler":33,"../util/UIUtil":35,"./BottomToolbar":29}],31:[function(require,module,exports){
 /* global APP, config, $, interfaceConfig, Moderator,
  DesktopStreaming.showDesktopSharingButton */
 
@@ -8001,7 +8001,7 @@ var NicknameHandler = {
 };
 
 module.exports = NicknameHandler;
-},{"../../../service/UI/UIEvents":170}],35:[function(require,module,exports){
+},{"../../../service/UI/UIEvents":171}],35:[function(require,module,exports){
 /* global $ */
 /**
  * Created by hristo on 12/22/14.
@@ -9166,7 +9166,7 @@ var LargeVideo = {
 };
 
 module.exports = LargeVideo;
-},{"../../../service/UI/UIEvents":170,"../../RTC/RTCBrowserType":10,"../../xmpp/xmpp":72,"../avatar/Avatar":18,"../toolbars/ToolbarToggler":31,"../util/UIUtil":35}],38:[function(require,module,exports){
+},{"../../../service/UI/UIEvents":171,"../../RTC/RTCBrowserType":10,"../../xmpp/xmpp":73,"../avatar/Avatar":18,"../toolbars/ToolbarToggler":31,"../util/UIUtil":35}],38:[function(require,module,exports){
 /* global $, interfaceConfig, APP */
 var SmallVideo = require("./SmallVideo");
 var ConnectionIndicator = require("./ConnectionIndicator");
@@ -11210,7 +11210,7 @@ var VideoLayout = (function (my) {
 }(VideoLayout || {}));
 
 module.exports = VideoLayout;
-},{"../../../service/RTC/MediaStreamTypes":166,"../../../service/UI/UIEvents":170,"../../RTC/RTC":9,"../../RTC/RTCBrowserType":10,"../audio_levels/AudioLevels":14,"../prezi/Prezi":20,"../side_pannels/contactlist/ContactList":27,"../util/UIUtil":35,"./LargeVideo":37,"./LocalVideo":38,"./RemoteVideo":39}],42:[function(require,module,exports){
+},{"../../../service/RTC/MediaStreamTypes":167,"../../../service/UI/UIEvents":171,"../../RTC/RTC":9,"../../RTC/RTCBrowserType":10,"../audio_levels/AudioLevels":14,"../prezi/Prezi":20,"../side_pannels/contactlist/ContactList":27,"../util/UIUtil":35,"./LargeVideo":37,"./LocalVideo":38,"./RemoteVideo":39}],42:[function(require,module,exports){
 //var nouns = [
 //];
 var pluralNouns = [
@@ -11795,7 +11795,7 @@ var ConnectionQuality = {
 };
 
 module.exports = ConnectionQuality;
-},{"../../service/connectionquality/CQEvents":172,"../../service/xmpp/XMPPEvents":176,"events":1}],48:[function(require,module,exports){
+},{"../../service/connectionquality/CQEvents":173,"../../service/xmpp/XMPPEvents":177,"events":1}],48:[function(require,module,exports){
 /* global $, alert, APP, changeLocalVideo, chrome, config, getConferenceHandler,
  getUserMediaWithConstraints */
 /**
@@ -12184,7 +12184,7 @@ module.exports = {
 };
 
 
-},{"../../service/RTC/RTCEvents":167,"../../service/desktopsharing/DesktopSharingEventTypes":173,"../RTC/RTCBrowserType":10,"../RTC/adapter.screenshare":12,"events":1}],49:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":168,"../../service/desktopsharing/DesktopSharingEventTypes":174,"../RTC/RTCBrowserType":10,"../RTC/adapter.screenshare":12,"events":1}],49:[function(require,module,exports){
 /* global APP, $ */
 //maps keycode to character, id of popover for given function and function
 var shortcuts = {};
@@ -12412,7 +12412,7 @@ var Members = {
 
 module.exports = Members;
 
-},{"../../service/members/Events":174,"../../service/xmpp/XMPPEvents":176,"events":1}],51:[function(require,module,exports){
+},{"../../service/members/Events":175,"../../service/xmpp/XMPPEvents":177,"events":1}],51:[function(require,module,exports){
 var email = '';
 var displayName = '';
 var userId;
@@ -12556,7 +12556,7 @@ var CallStats = {
 
 };
 module.exports = CallStats;
-},{"jssha":75,"socket.io-client":113}],53:[function(require,module,exports){
+},{"jssha":76,"socket.io-client":114}],53:[function(require,module,exports){
 /* global config */
 /**
  * Provides statistics for the local stream.
@@ -13561,7 +13561,7 @@ var statistics = {
 
 
 module.exports = statistics;
-},{"../../service/RTC/RTCEvents":167,"../../service/RTC/StreamEventTypes.js":169,"../../service/xmpp/XMPPEvents":176,"./CallStats":52,"./LocalStatsCollector.js":53,"./RTPStatsCollector.js":54,"events":1}],56:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":168,"../../service/RTC/StreamEventTypes.js":170,"../../service/xmpp/XMPPEvents":177,"./CallStats":52,"./LocalStatsCollector.js":53,"./RTPStatsCollector.js":54,"events":1}],56:[function(require,module,exports){
 /* global $, require, config, interfaceConfig */
 var i18n = require("i18next-client");
 var languages = require("../../service/translation/languages");
@@ -13699,7 +13699,7 @@ module.exports = {
     }
 };
 
-},{"../../service/translation/languages":175,"../settings/Settings":51,"i18next-client":74}],57:[function(require,module,exports){
+},{"../../service/translation/languages":176,"../settings/Settings":51,"i18next-client":75}],57:[function(require,module,exports){
 /*
  * JingleSession provides an API to manage a single Jingle session. We will
  * have different implementations depending on the underlying interface used
@@ -13914,7 +13914,10 @@ JingleSessionPC.prototype.doInitialize = function () {
     this.hadstuncandidate = false;
     this.hadturncandidate = false;
     this.lasticecandidate = false;
+    // True if reconnect is in progress
     this.isreconnect = false;
+    // Set to true if the connection was ever stable
+    this.wasstable = false;
 
     this.peerconnection = new TraceablePeerConnection(
             this.connection.jingle.ice_config,
@@ -13943,6 +13946,10 @@ JingleSessionPC.prototype.doInitialize = function () {
     };
     this.peerconnection.onsignalingstatechange = function (event) {
         if (!(self && self.peerconnection)) return;
+        console.info("Signaling: " + this.peerconnection.signalingState);
+        if (self.peerconnection.signalingState === 'stable') {
+            self.wasstable = true;
+        }
         self.updateModifySourcesQueue();
     };
     /**
@@ -13954,6 +13961,7 @@ JingleSessionPC.prototype.doInitialize = function () {
      */
     this.peerconnection.oniceconnectionstatechange = function (event) {
         if (!(self && self.peerconnection)) return;
+        console.info("Ice: " + self.peerconnection.iceConnectionState);
         self.updateModifySourcesQueue();
         switch (self.peerconnection.iceConnectionState) {
             case 'connected':
@@ -13967,7 +13975,7 @@ JingleSessionPC.prototype.doInitialize = function () {
             case 'disconnected':
                 self.isreconnect = true;
                 // Informs interested parties that the connection has been interrupted.
-                if (self.peerconnection.signalingState === 'stable')
+                if (self.wasstable)
                     self.eventEmitter.emit(XMPPEvents.CONNECTION_INTERRUPTED);
                 break;
             case 'failed':
@@ -15277,7 +15285,7 @@ JingleSessionPC.prototype.remoteStreamAdded = function (data, times) {
 
 module.exports = JingleSessionPC;
 
-},{"../../service/xmpp/XMPPEvents":176,"../RTC/RTCBrowserType":10,"./JingleSession":57,"./LocalSSRCReplacement":59,"./SDP":60,"./SDPDiffer":61,"./SDPUtil":62,"./TraceablePeerConnection":63,"async":73,"sdp-transform":110}],59:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":177,"../RTC/RTCBrowserType":10,"./JingleSession":57,"./LocalSSRCReplacement":59,"./SDP":60,"./SDPDiffer":61,"./SDPUtil":62,"./TraceablePeerConnection":63,"async":74,"sdp-transform":111}],59:[function(require,module,exports){
 /* global $ */
 
 /*
@@ -17153,7 +17161,7 @@ TraceablePeerConnection.prototype.getStats = function(callback, errback) {
 module.exports = TraceablePeerConnection;
 
 
-},{"../../service/xmpp/XMPPEvents":176,"../RTC/RTC":9,"../RTC/RTCBrowserType.js":10,"./LocalSSRCReplacement":59,"sdp-interop":96,"sdp-simulcast":103,"sdp-transform":110}],64:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":177,"../RTC/RTC":9,"../RTC/RTCBrowserType.js":10,"./LocalSSRCReplacement":59,"sdp-interop":97,"sdp-simulcast":104,"sdp-transform":111}],64:[function(require,module,exports){
 /* global $, $iq, APP, config, messageHandler,
  roomName, sessionTerminated, Strophe, Util */
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
@@ -17589,7 +17597,7 @@ module.exports = Moderator;
 
 
 
-},{"../../service/authentication/AuthenticationEvents":171,"../../service/xmpp/XMPPEvents":176,"../settings/Settings":51}],65:[function(require,module,exports){
+},{"../../service/authentication/AuthenticationEvents":172,"../../service/xmpp/XMPPEvents":177,"../settings/Settings":51}],65:[function(require,module,exports){
 /* global $, $iq, config, connection, focusMucJid, messageHandler,
    Toolbar, Util */
 var Moderator = require("./moderator");
@@ -18406,7 +18414,7 @@ module.exports = function(XMPP, eventEmitter) {
 };
 
 
-},{"../../service/xmpp/XMPPEvents":176,"./moderator":64}],67:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":177,"./moderator":64}],67:[function(require,module,exports){
 /* jshint -W117 */
 
 var JingleSession = require("./JingleSessionPC");
@@ -18749,7 +18757,7 @@ module.exports = function(XMPP, eventEmitter) {
 };
 
 
-},{"../../service/xmpp/XMPPEvents":176,"../RTC/RTCBrowserType":10,"./JingleSessionPC":58}],68:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":177,"../RTC/RTCBrowserType":10,"./JingleSessionPC":58}],68:[function(require,module,exports){
 /* global Strophe */
 module.exports = function () {
 
@@ -18831,7 +18839,110 @@ module.exports = function (XMPP, eventEmitter) {
         }
     });
 }
-},{"../../service/xmpp/XMPPEvents":176}],70:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":177}],70:[function(require,module,exports){
+/* global $, $iq, Strophe */
+
+var XMPPEvents = require("../../service/xmpp/XMPPEvents");
+
+/**
+ * Ping every 20 sec
+ */
+var PING_INTERVAL = 20000;
+
+/**
+ * Ping timeout error after 15 sec of waiting.
+ */
+var PING_TIMEOUT = 15000;
+
+/**
+ * Will close the connection after 3 consecutive ping errors.
+ */
+var PING_THRESHOLD = 3;
+
+/**
+ * XEP-0199 ping plugin.
+ *
+ * Registers "urn:xmpp:ping" namespace under Strophe.NS.PING.
+ */
+module.exports = function (XMPP, eventEmitter) {
+    Strophe.addConnectionPlugin('ping', {
+
+        connection: null,
+
+        failedPings: 0,
+
+        /**
+         * Initializes the plugin. Method called by Strophe.
+         * @param connection Strophe connection instance.
+         */
+        init: function (connection) {
+            this.connection = connection;
+            Strophe.addNamespace('PING', "urn:xmpp:ping");
+        },
+
+        /**
+         * Sends "ping" to given <tt>jid</tt>
+         * @param jid the JID to which ping request will be sent.
+         * @param success callback called on success.
+         * @param error callback called on error.
+         * @param timeout ms how long are we going to wait for the response. On
+         *        timeout <tt>error<//t> callback is called with undefined error
+         *        argument.
+         */
+        ping: function (jid, success, error, timeout) {
+            var iq = $iq({type: 'get', to: jid});
+            iq.c('ping', {xmlns: Strophe.NS.PING});
+            this.connection.sendIQ(iq, success, error, timeout);
+        },
+
+        /**
+         * Starts to send ping in given interval to specified remote JID.
+         * This plugin supports only one such task and <tt>stopInterval</tt>
+         * must be called before starting a new one.
+         * @param remoteJid remote JID to which ping requests will be sent to.
+         * @param interval task interval in ms.
+         */
+        startInterval: function (remoteJid, interval) {
+            if (this.intervalId) {
+                console.error("Ping task scheduled already");
+                return;
+            }
+            if (!interval)
+                interval = PING_INTERVAL;
+            var self = this;
+            this.intervalId = window.setInterval(function () {
+                self.ping(remoteJid,
+                function (result) {
+                    // Ping OK
+                    self.failedPings = 0;
+                },
+                function (error) {
+                    self.failedPings += 1;
+                    console.error(
+                        "Ping " + (error ? "error" : "timeout"), error);
+                    if (self.failedPings >= PING_THRESHOLD) {
+                        self.connection.disconnect();
+                    }
+                }, PING_TIMEOUT);
+            }, interval);
+            console.info("XMPP pings will be sent every " + interval + " ms");
+        },
+
+        /**
+         * Stops current "ping"  interval task.
+         */
+        stopInterval: function () {
+            if (this.intervalId) {
+                window.clearInterval(this.intervalId);
+                this.intervalId = null;
+                this.failedPings = 0;
+                console.info("Ping interval cleared");
+            }
+        }
+    });
+};
+
+},{"../../service/xmpp/XMPPEvents":177}],71:[function(require,module,exports){
 /* jshint -W117 */
 module.exports = function() {
     Strophe.addConnectionPlugin('rayo',
@@ -18928,7 +19039,7 @@ module.exports = function() {
     );
 };
 
-},{}],71:[function(require,module,exports){
+},{}],72:[function(require,module,exports){
 /**
  * Strophe logger implementation. Logs from level WARN and above.
  */
@@ -18972,7 +19083,7 @@ module.exports = function () {
     };
 };
 
-},{}],72:[function(require,module,exports){
+},{}],73:[function(require,module,exports){
 /* global $, APP, config, Strophe*/
 var Moderator = require("./moderator");
 var EventEmitter = require("events");
@@ -19062,6 +19173,8 @@ function connect(jid, password) {
 
                 console.info("My Jabber ID: " + connection.jid);
 
+                connection.ping.startInterval(config.hosts.domain);
+
                 if (password)
                     authenticatedUser = true;
                 maybeDoJoin();
@@ -19073,6 +19186,8 @@ function connect(jid, password) {
                 }
                 lastErrorMsg = msg;
             } else if (status === Strophe.Status.DISCONNECTED) {
+                // Stop ping interval
+                connection.ping.stopInterval();
                 if (anonymousConnectionFailed) {
                     // prompt user for username and password
                     XMPP.promptLogin();
@@ -19142,6 +19257,7 @@ function initStrophePlugins()
     require("./strophe.jingle")(XMPP, eventEmitter);
     require("./strophe.moderate")(XMPP, eventEmitter);
     require("./strophe.util")();
+    require("./strophe.ping")(XMPP, eventEmitter);
     require("./strophe.rayo")();
     require("./strophe.logger")();
 }
@@ -19543,7 +19659,7 @@ var XMPP = {
 
 module.exports = XMPP;
 
-},{"../../service/RTC/RTCEvents":167,"../../service/RTC/StreamEventTypes":169,"../../service/xmpp/XMPPEvents":176,"../settings/Settings":51,"./SDP":60,"./moderator":64,"./recording":65,"./strophe.emuc":66,"./strophe.jingle":67,"./strophe.logger":68,"./strophe.moderate":69,"./strophe.rayo":70,"./strophe.util":71,"events":1,"pako":76,"retry":92}],73:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":168,"../../service/RTC/StreamEventTypes":170,"../../service/xmpp/XMPPEvents":177,"../settings/Settings":51,"./SDP":60,"./moderator":64,"./recording":65,"./strophe.emuc":66,"./strophe.jingle":67,"./strophe.logger":68,"./strophe.moderate":69,"./strophe.ping":70,"./strophe.rayo":71,"./strophe.util":72,"events":1,"pako":77,"retry":93}],74:[function(require,module,exports){
 (function (process){
 /*!
  * async
@@ -20670,7 +20786,7 @@ module.exports = XMPP;
 }());
 
 }).call(this,require('_process'))
-},{"_process":2}],74:[function(require,module,exports){
+},{"_process":2}],75:[function(require,module,exports){
 // i18next, v1.7.7
 // Copyright (c)2014 Jan Mühlemann (jamuhl).
 // Distributed under MIT license
@@ -22793,7 +22909,7 @@ module.exports = XMPP;
     i18n.options = o;
 
 })();
-},{"jquery":"jquery"}],75:[function(require,module,exports){
+},{"jquery":"jquery"}],76:[function(require,module,exports){
 /*
  A JavaScript implementation of the SHA family of hashes, as
  defined in FIPS PUB 180-2 as well as the corresponding HMAC implementation
@@ -22829,7 +22945,7 @@ d[2]),new e(355462360,d[3]),new e(1731405415,d[4]),new e(41048885895,d[5]),new e
 new e(a[m*x+p],a[m*x+p+1]):y(E(A[m-2]),A[m-7],D(A[m-15]),A[m-16]),v=C(u,G(l),H(l,r,t),k[m],A[m]),z=q(F(c),I(c,g,f)),u=t,t=r,r=l,l=q(h,v),h=f,f=g,g=c,c=q(v,z);d[0]=q(c,d[0]);d[1]=q(g,d[1]);d[2]=q(f,d[2]);d[3]=q(h,d[3]);d[4]=q(l,d[4]);d[5]=q(r,d[5]);d[6]=q(t,d[6]);d[7]=q(u,d[7])}if("SHA-224"===b)a=[d[0],d[1],d[2],d[3],d[4],d[5],d[6]];else if("SHA-256"===b)a=d;else if("SHA-384"===b)a=[d[0].a,d[0].b,d[1].a,d[1].b,d[2].a,d[2].b,d[3].a,d[3].b,d[4].a,d[4].b,d[5].a,d[5].b];else if("SHA-512"===b)a=[d[0].a,
 d[0].b,d[1].a,d[1].b,d[2].a,d[2].b,d[3].a,d[3].b,d[4].a,d[4].b,d[5].a,d[5].b,d[6].a,d[6].b,d[7].a,d[7].b];else throw"Unexpected error in SHA-2 implementation";return a}"function"===typeof define&&typeof define.amd?define(function(){return z}):"undefined"!==typeof exports?"undefined"!==typeof module&&module.exports?module.exports=exports=z:exports=z:T.jsSHA=z})(this);
 
-},{}],76:[function(require,module,exports){
+},{}],77:[function(require,module,exports){
 // Top level file is just a mixin of submodules & constants
 'use strict';
 
@@ -22845,7 +22961,7 @@ assign(pako, deflate, inflate, constants);
 
 module.exports = pako;
 
-},{"./lib/deflate":77,"./lib/inflate":78,"./lib/utils/common":79,"./lib/zlib/constants":82}],77:[function(require,module,exports){
+},{"./lib/deflate":78,"./lib/inflate":79,"./lib/utils/common":80,"./lib/zlib/constants":83}],78:[function(require,module,exports){
 'use strict';
 
 
@@ -23223,7 +23339,7 @@ exports.deflate = deflate;
 exports.deflateRaw = deflateRaw;
 exports.gzip = gzip;
 
-},{"./utils/common":79,"./utils/strings":80,"./zlib/deflate.js":84,"./zlib/messages":89,"./zlib/zstream":91}],78:[function(require,module,exports){
+},{"./utils/common":80,"./utils/strings":81,"./zlib/deflate.js":85,"./zlib/messages":90,"./zlib/zstream":92}],79:[function(require,module,exports){
 'use strict';
 
 
@@ -23604,7 +23720,7 @@ exports.inflate = inflate;
 exports.inflateRaw = inflateRaw;
 exports.ungzip  = inflate;
 
-},{"./utils/common":79,"./utils/strings":80,"./zlib/constants":82,"./zlib/gzheader":85,"./zlib/inflate.js":87,"./zlib/messages":89,"./zlib/zstream":91}],79:[function(require,module,exports){
+},{"./utils/common":80,"./utils/strings":81,"./zlib/constants":83,"./zlib/gzheader":86,"./zlib/inflate.js":88,"./zlib/messages":90,"./zlib/zstream":92}],80:[function(require,module,exports){
 'use strict';
 
 
@@ -23708,7 +23824,7 @@ exports.setTyped = function (on) {
 
 exports.setTyped(TYPED_OK);
 
-},{}],80:[function(require,module,exports){
+},{}],81:[function(require,module,exports){
 // String encode/decode helpers
 'use strict';
 
@@ -23895,7 +24011,7 @@ exports.utf8border = function(buf, max) {
   return (pos + _utf8len[buf[pos]] > max) ? pos : max;
 };
 
-},{"./common":79}],81:[function(require,module,exports){
+},{"./common":80}],82:[function(require,module,exports){
 'use strict';
 
 // Note: adler32 takes 12% for level 0 and 2% for level 6.
@@ -23929,7 +24045,7 @@ function adler32(adler, buf, len, pos) {
 
 module.exports = adler32;
 
-},{}],82:[function(require,module,exports){
+},{}],83:[function(require,module,exports){
 module.exports = {
 
   /* Allowed flush values; see deflate() and inflate() below for details */
@@ -23978,7 +24094,7 @@ module.exports = {
   //Z_NULL:                 null // Use -1 or null inline, depending on var type
 };
 
-},{}],83:[function(require,module,exports){
+},{}],84:[function(require,module,exports){
 'use strict';
 
 // Note: we can't get significant speed boost here.
@@ -24021,7 +24137,7 @@ function crc32(crc, buf, len, pos) {
 
 module.exports = crc32;
 
-},{}],84:[function(require,module,exports){
+},{}],85:[function(require,module,exports){
 'use strict';
 
 var utils   = require('../utils/common');
@@ -25788,7 +25904,7 @@ exports.deflatePrime = deflatePrime;
 exports.deflateTune = deflateTune;
 */
 
-},{"../utils/common":79,"./adler32":81,"./crc32":83,"./messages":89,"./trees":90}],85:[function(require,module,exports){
+},{"../utils/common":80,"./adler32":82,"./crc32":84,"./messages":90,"./trees":91}],86:[function(require,module,exports){
 'use strict';
 
 
@@ -25830,7 +25946,7 @@ function GZheader() {
 
 module.exports = GZheader;
 
-},{}],86:[function(require,module,exports){
+},{}],87:[function(require,module,exports){
 'use strict';
 
 // See state defs from inflate.js
@@ -26157,7 +26273,7 @@ module.exports = function inflate_fast(strm, start) {
   return;
 };
 
-},{}],87:[function(require,module,exports){
+},{}],88:[function(require,module,exports){
 'use strict';
 
 
@@ -27662,7 +27778,7 @@ exports.inflateSyncPoint = inflateSyncPoint;
 exports.inflateUndermine = inflateUndermine;
 */
 
-},{"../utils/common":79,"./adler32":81,"./crc32":83,"./inffast":86,"./inftrees":88}],88:[function(require,module,exports){
+},{"../utils/common":80,"./adler32":82,"./crc32":84,"./inffast":87,"./inftrees":89}],89:[function(require,module,exports){
 'use strict';
 
 
@@ -27991,7 +28107,7 @@ module.exports = function inflate_table(type, lens, lens_index, codes, table, ta
   return 0;
 };
 
-},{"../utils/common":79}],89:[function(require,module,exports){
+},{"../utils/common":80}],90:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -28006,7 +28122,7 @@ module.exports = {
   '-6':   'incompatible version' /* Z_VERSION_ERROR (-6) */
 };
 
-},{}],90:[function(require,module,exports){
+},{}],91:[function(require,module,exports){
 'use strict';
 
 
@@ -29207,7 +29323,7 @@ exports._tr_flush_block  = _tr_flush_block;
 exports._tr_tally = _tr_tally;
 exports._tr_align = _tr_align;
 
-},{"../utils/common":79}],91:[function(require,module,exports){
+},{"../utils/common":80}],92:[function(require,module,exports){
 'use strict';
 
 
@@ -29238,9 +29354,9 @@ function ZStream() {
 
 module.exports = ZStream;
 
-},{}],92:[function(require,module,exports){
+},{}],93:[function(require,module,exports){
 module.exports = require('./lib/retry');
-},{"./lib/retry":93}],93:[function(require,module,exports){
+},{"./lib/retry":94}],94:[function(require,module,exports){
 var RetryOperation = require('./retry_operation');
 
 exports.operation = function(options) {
@@ -29291,7 +29407,7 @@ exports._createTimeout = function(attempt, opts) {
 
   return timeout;
 };
-},{"./retry_operation":94}],94:[function(require,module,exports){
+},{"./retry_operation":95}],95:[function(require,module,exports){
 function RetryOperation(timeouts) {
   this._timeouts = timeouts;
   this._fn = null;
@@ -29401,7 +29517,7 @@ RetryOperation.prototype.mainError = function() {
 
   return mainError;
 };
-},{}],95:[function(require,module,exports){
+},{}],96:[function(require,module,exports){
 module.exports = function arrayEquals(array) {
     // if the other array is a falsy value, return
     if (!array)
@@ -29427,10 +29543,10 @@ module.exports = function arrayEquals(array) {
 }
 
 
-},{}],96:[function(require,module,exports){
+},{}],97:[function(require,module,exports){
 exports.Interop = require('./interop');
 
-},{"./interop":97}],97:[function(require,module,exports){
+},{"./interop":98}],98:[function(require,module,exports){
 "use strict";
 
 var transform = require('./transform');
@@ -30012,7 +30128,7 @@ Interop.prototype.toUnifiedPlan = function(desc) {
     //#endregion
 };
 
-},{"./array-equals":95,"./transform":98}],98:[function(require,module,exports){
+},{"./array-equals":96,"./transform":99}],99:[function(require,module,exports){
 var transform = require('sdp-transform');
 
 exports.write = function(session, opts) {
@@ -30111,7 +30227,7 @@ exports.parse = function(sdp) {
 };
 
 
-},{"sdp-transform":100}],99:[function(require,module,exports){
+},{"sdp-transform":101}],100:[function(require,module,exports){
 var grammar = module.exports = {
   v: [{
       name: 'version',
@@ -30360,7 +30476,7 @@ Object.keys(grammar).forEach(function (key) {
   });
 });
 
-},{}],100:[function(require,module,exports){
+},{}],101:[function(require,module,exports){
 var parser = require('./parser');
 var writer = require('./writer');
 
@@ -30370,7 +30486,7 @@ exports.parseFmtpConfig = parser.parseFmtpConfig;
 exports.parsePayloads = parser.parsePayloads;
 exports.parseRemoteCandidates = parser.parseRemoteCandidates;
 
-},{"./parser":101,"./writer":102}],101:[function(require,module,exports){
+},{"./parser":102,"./writer":103}],102:[function(require,module,exports){
 var toIntIfInt = function (v) {
   return String(Number(v)) === v ? Number(v) : v;
 };
@@ -30465,7 +30581,7 @@ exports.parseRemoteCandidates = function (str) {
   return candidates;
 };
 
-},{"./grammar":99}],102:[function(require,module,exports){
+},{"./grammar":100}],103:[function(require,module,exports){
 var grammar = require('./grammar');
 
 // customized util.format - discards excess arguments and can void middle ones
@@ -30581,7 +30697,7 @@ module.exports = function (session, opts) {
   return sdp.join('\r\n') + '\r\n';
 };
 
-},{"./grammar":99}],103:[function(require,module,exports){
+},{"./grammar":100}],104:[function(require,module,exports){
 var transform = require('sdp-transform');
 var transformUtils = require('./transform-utils');
 var parseSsrcs = transformUtils.parseSsrcs;
@@ -30983,7 +31099,7 @@ Simulcast.prototype.mungeLocalDescription = function (desc) {
 
 module.exports = Simulcast;
 
-},{"./transform-utils":104,"sdp-transform":106}],104:[function(require,module,exports){
+},{"./transform-utils":105,"sdp-transform":107}],105:[function(require,module,exports){
 exports.writeSsrcs = function(sources, order) {
   var ssrcs = [];
 
@@ -31034,15 +31150,15 @@ exports.parseSsrcs = function (mLine) {
 };
 
 
-},{}],105:[function(require,module,exports){
-arguments[4][99][0].apply(exports,arguments)
-},{"dup":99}],106:[function(require,module,exports){
+},{}],106:[function(require,module,exports){
 arguments[4][100][0].apply(exports,arguments)
-},{"./parser":107,"./writer":108,"dup":100}],107:[function(require,module,exports){
+},{"dup":100}],107:[function(require,module,exports){
 arguments[4][101][0].apply(exports,arguments)
-},{"./grammar":105,"dup":101}],108:[function(require,module,exports){
+},{"./parser":108,"./writer":109,"dup":101}],108:[function(require,module,exports){
 arguments[4][102][0].apply(exports,arguments)
-},{"./grammar":105,"dup":102}],109:[function(require,module,exports){
+},{"./grammar":106,"dup":102}],109:[function(require,module,exports){
+arguments[4][103][0].apply(exports,arguments)
+},{"./grammar":106,"dup":103}],110:[function(require,module,exports){
 var grammar = module.exports = {
   v: [{
       name: 'version',
@@ -31293,9 +31409,9 @@ Object.keys(grammar).forEach(function (key) {
   });
 });
 
-},{}],110:[function(require,module,exports){
-arguments[4][100][0].apply(exports,arguments)
-},{"./parser":111,"./writer":112,"dup":100}],111:[function(require,module,exports){
+},{}],111:[function(require,module,exports){
+arguments[4][101][0].apply(exports,arguments)
+},{"./parser":112,"./writer":113,"dup":101}],112:[function(require,module,exports){
 var toIntIfInt = function (v) {
   return String(Number(v)) === v ? Number(v) : v;
 };
@@ -31390,13 +31506,13 @@ exports.parseRemoteCandidates = function (str) {
   return candidates;
 };
 
-},{"./grammar":109}],112:[function(require,module,exports){
-arguments[4][102][0].apply(exports,arguments)
-},{"./grammar":109,"dup":102}],113:[function(require,module,exports){
+},{"./grammar":110}],113:[function(require,module,exports){
+arguments[4][103][0].apply(exports,arguments)
+},{"./grammar":110,"dup":103}],114:[function(require,module,exports){
 
 module.exports = require('./lib/');
 
-},{"./lib/":114}],114:[function(require,module,exports){
+},{"./lib/":115}],115:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -31485,7 +31601,7 @@ exports.connect = lookup;
 exports.Manager = require('./manager');
 exports.Socket = require('./socket');
 
-},{"./manager":115,"./socket":117,"./url":118,"debug":122,"socket.io-parser":159}],115:[function(require,module,exports){
+},{"./manager":116,"./socket":118,"./url":119,"debug":123,"socket.io-parser":160}],116:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -31990,7 +32106,7 @@ Manager.prototype.onreconnect = function(){
   this.emitAll('reconnect', attempt);
 };
 
-},{"./on":116,"./socket":117,"./url":118,"backo2":119,"component-bind":120,"component-emitter":121,"debug":122,"engine.io-client":123,"indexof":155,"object-component":156,"socket.io-parser":159}],116:[function(require,module,exports){
+},{"./on":117,"./socket":118,"./url":119,"backo2":120,"component-bind":121,"component-emitter":122,"debug":123,"engine.io-client":124,"indexof":156,"object-component":157,"socket.io-parser":160}],117:[function(require,module,exports){
 
 /**
  * Module exports.
@@ -32016,7 +32132,7 @@ function on(obj, ev, fn) {
   };
 }
 
-},{}],117:[function(require,module,exports){
+},{}],118:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -32403,7 +32519,7 @@ Socket.prototype.disconnect = function(){
   return this;
 };
 
-},{"./on":116,"component-bind":120,"component-emitter":121,"debug":122,"has-binary":153,"socket.io-parser":159,"to-array":165}],118:[function(require,module,exports){
+},{"./on":117,"component-bind":121,"component-emitter":122,"debug":123,"has-binary":154,"socket.io-parser":160,"to-array":166}],119:[function(require,module,exports){
 (function (global){
 
 /**
@@ -32480,7 +32596,7 @@ function url(uri, loc){
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"debug":122,"parseuri":157}],119:[function(require,module,exports){
+},{"debug":123,"parseuri":158}],120:[function(require,module,exports){
 
 /**
  * Expose `Backoff`.
@@ -32567,7 +32683,7 @@ Backoff.prototype.setJitter = function(jitter){
 };
 
 
-},{}],120:[function(require,module,exports){
+},{}],121:[function(require,module,exports){
 /**
  * Slice reference.
  */
@@ -32592,7 +32708,7 @@ module.exports = function(obj, fn){
   }
 };
 
-},{}],121:[function(require,module,exports){
+},{}],122:[function(require,module,exports){
 
 /**
  * Expose `Emitter`.
@@ -32758,7 +32874,7 @@ Emitter.prototype.hasListeners = function(event){
   return !! this.listeners(event).length;
 };
 
-},{}],122:[function(require,module,exports){
+},{}],123:[function(require,module,exports){
 
 /**
  * Expose `debug()` as the module.
@@ -32897,11 +33013,11 @@ try {
   if (window.localStorage) debug.enable(localStorage.debug);
 } catch(e){}
 
-},{}],123:[function(require,module,exports){
+},{}],124:[function(require,module,exports){
 
 module.exports =  require('./lib/');
 
-},{"./lib/":124}],124:[function(require,module,exports){
+},{"./lib/":125}],125:[function(require,module,exports){
 
 module.exports = require('./socket');
 
@@ -32913,7 +33029,7 @@ module.exports = require('./socket');
  */
 module.exports.parser = require('engine.io-parser');
 
-},{"./socket":125,"engine.io-parser":138}],125:[function(require,module,exports){
+},{"./socket":126,"engine.io-parser":139}],126:[function(require,module,exports){
 (function (global){
 /**
  * Module dependencies.
@@ -33622,7 +33738,7 @@ Socket.prototype.filterUpgrades = function (upgrades) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./transport":126,"./transports":127,"component-emitter":133,"debug":135,"engine.io-parser":138,"indexof":155,"parsejson":149,"parseqs":150,"parseuri":151}],126:[function(require,module,exports){
+},{"./transport":127,"./transports":128,"component-emitter":134,"debug":136,"engine.io-parser":139,"indexof":156,"parsejson":150,"parseqs":151,"parseuri":152}],127:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -33783,7 +33899,7 @@ Transport.prototype.onClose = function () {
   this.emit('close');
 };
 
-},{"component-emitter":133,"engine.io-parser":138}],127:[function(require,module,exports){
+},{"component-emitter":134,"engine.io-parser":139}],128:[function(require,module,exports){
 (function (global){
 /**
  * Module dependencies
@@ -33840,7 +33956,7 @@ function polling(opts){
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./polling-jsonp":128,"./polling-xhr":129,"./websocket":131,"xmlhttprequest":132}],128:[function(require,module,exports){
+},{"./polling-jsonp":129,"./polling-xhr":130,"./websocket":132,"xmlhttprequest":133}],129:[function(require,module,exports){
 (function (global){
 
 /**
@@ -34077,7 +34193,7 @@ JSONPPolling.prototype.doWrite = function (data, fn) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./polling":130,"component-inherit":134}],129:[function(require,module,exports){
+},{"./polling":131,"component-inherit":135}],130:[function(require,module,exports){
 (function (global){
 /**
  * Module requirements.
@@ -34465,7 +34581,7 @@ function unloadHandler() {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./polling":130,"component-emitter":133,"component-inherit":134,"debug":135,"xmlhttprequest":132}],130:[function(require,module,exports){
+},{"./polling":131,"component-emitter":134,"component-inherit":135,"debug":136,"xmlhttprequest":133}],131:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -34712,7 +34828,7 @@ Polling.prototype.uri = function(){
   return schema + '://' + this.hostname + port + this.path + query;
 };
 
-},{"../transport":126,"component-inherit":134,"debug":135,"engine.io-parser":138,"parseqs":150,"xmlhttprequest":132}],131:[function(require,module,exports){
+},{"../transport":127,"component-inherit":135,"debug":136,"engine.io-parser":139,"parseqs":151,"xmlhttprequest":133}],132:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -34952,7 +35068,7 @@ WS.prototype.check = function(){
   return !!WebSocket && !('__initialize' in WebSocket && this.name === WS.prototype.name);
 };
 
-},{"../transport":126,"component-inherit":134,"debug":135,"engine.io-parser":138,"parseqs":150,"ws":152}],132:[function(require,module,exports){
+},{"../transport":127,"component-inherit":135,"debug":136,"engine.io-parser":139,"parseqs":151,"ws":153}],133:[function(require,module,exports){
 // browser shim for xmlhttprequest module
 var hasCORS = require('has-cors');
 
@@ -34990,9 +35106,9 @@ module.exports = function(opts) {
   }
 }
 
-},{"has-cors":147}],133:[function(require,module,exports){
-arguments[4][121][0].apply(exports,arguments)
-},{"dup":121}],134:[function(require,module,exports){
+},{"has-cors":148}],134:[function(require,module,exports){
+arguments[4][122][0].apply(exports,arguments)
+},{"dup":122}],135:[function(require,module,exports){
 
 module.exports = function(a, b){
   var fn = function(){};
@@ -35000,7 +35116,7 @@ module.exports = function(a, b){
   a.prototype = new fn;
   a.prototype.constructor = a;
 };
-},{}],135:[function(require,module,exports){
+},{}],136:[function(require,module,exports){
 
 /**
  * This is the web browser implementation of `debug()`.
@@ -35149,7 +35265,7 @@ function load() {
 
 exports.enable(load());
 
-},{"./debug":136}],136:[function(require,module,exports){
+},{"./debug":137}],137:[function(require,module,exports){
 
 /**
  * This is the common logic for both the Node.js and web browser
@@ -35348,7 +35464,7 @@ function coerce(val) {
   return val;
 }
 
-},{"ms":137}],137:[function(require,module,exports){
+},{"ms":138}],138:[function(require,module,exports){
 /**
  * Helpers.
  */
@@ -35461,7 +35577,7 @@ function plural(ms, n, name) {
   return Math.ceil(ms / n) + ' ' + name + 's';
 }
 
-},{}],138:[function(require,module,exports){
+},{}],139:[function(require,module,exports){
 (function (global){
 /**
  * Module dependencies.
@@ -36059,7 +36175,7 @@ exports.decodePayloadAsBinary = function (data, binaryType, callback) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./keys":139,"after":140,"arraybuffer.slice":141,"base64-arraybuffer":142,"blob":143,"has-binary":144,"utf8":146}],139:[function(require,module,exports){
+},{"./keys":140,"after":141,"arraybuffer.slice":142,"base64-arraybuffer":143,"blob":144,"has-binary":145,"utf8":147}],140:[function(require,module,exports){
 
 /**
  * Gets the keys for an object.
@@ -36080,7 +36196,7 @@ module.exports = Object.keys || function keys (obj){
   return arr;
 };
 
-},{}],140:[function(require,module,exports){
+},{}],141:[function(require,module,exports){
 module.exports = after
 
 function after(count, callback, err_cb) {
@@ -36110,7 +36226,7 @@ function after(count, callback, err_cb) {
 
 function noop() {}
 
-},{}],141:[function(require,module,exports){
+},{}],142:[function(require,module,exports){
 /**
  * An abstraction for slicing an arraybuffer even when
  * ArrayBuffer.prototype.slice is not supported
@@ -36141,7 +36257,7 @@ module.exports = function(arraybuffer, start, end) {
   return result.buffer;
 };
 
-},{}],142:[function(require,module,exports){
+},{}],143:[function(require,module,exports){
 /*
  * base64-arraybuffer
  * https://github.com/niklasvh/base64-arraybuffer
@@ -36202,7 +36318,7 @@ module.exports = function(arraybuffer, start, end) {
   };
 })("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/");
 
-},{}],143:[function(require,module,exports){
+},{}],144:[function(require,module,exports){
 (function (global){
 /**
  * Create a blob builder even when vendor prefixes exist
@@ -36255,7 +36371,7 @@ module.exports = (function() {
 })();
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],144:[function(require,module,exports){
+},{}],145:[function(require,module,exports){
 (function (global){
 
 /*
@@ -36317,12 +36433,12 @@ function hasBinary(data) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"isarray":145}],145:[function(require,module,exports){
+},{"isarray":146}],146:[function(require,module,exports){
 module.exports = Array.isArray || function (arr) {
   return Object.prototype.toString.call(arr) == '[object Array]';
 };
 
-},{}],146:[function(require,module,exports){
+},{}],147:[function(require,module,exports){
 (function (global){
 /*! http://mths.be/utf8js v2.0.0 by @mathias */
 ;(function(root) {
@@ -36565,7 +36681,7 @@ module.exports = Array.isArray || function (arr) {
 }(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],147:[function(require,module,exports){
+},{}],148:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -36590,7 +36706,7 @@ try {
   module.exports = false;
 }
 
-},{"global":148}],148:[function(require,module,exports){
+},{"global":149}],149:[function(require,module,exports){
 
 /**
  * Returns `this`. Execute this without a "context" (i.e. without it being
@@ -36600,7 +36716,7 @@ try {
 
 module.exports = (function () { return this; })();
 
-},{}],149:[function(require,module,exports){
+},{}],150:[function(require,module,exports){
 (function (global){
 /**
  * JSON parse.
@@ -36635,7 +36751,7 @@ module.exports = function parsejson(data) {
   }
 };
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],150:[function(require,module,exports){
+},{}],151:[function(require,module,exports){
 /**
  * Compiles a querystring
  * Returns string representation of the object
@@ -36674,7 +36790,7 @@ exports.decode = function(qs){
   return qry;
 };
 
-},{}],151:[function(require,module,exports){
+},{}],152:[function(require,module,exports){
 /**
  * Parses an URI
  *
@@ -36715,7 +36831,7 @@ module.exports = function parseuri(str) {
     return uri;
 };
 
-},{}],152:[function(require,module,exports){
+},{}],153:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -36760,7 +36876,7 @@ function ws(uri, protocols, opts) {
 
 if (WebSocket) ws.prototype = WebSocket.prototype;
 
-},{}],153:[function(require,module,exports){
+},{}],154:[function(require,module,exports){
 (function (global){
 
 /*
@@ -36822,9 +36938,9 @@ function hasBinary(data) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"isarray":154}],154:[function(require,module,exports){
-arguments[4][145][0].apply(exports,arguments)
-},{"dup":145}],155:[function(require,module,exports){
+},{"isarray":155}],155:[function(require,module,exports){
+arguments[4][146][0].apply(exports,arguments)
+},{"dup":146}],156:[function(require,module,exports){
 
 var indexOf = [].indexOf;
 
@@ -36835,7 +36951,7 @@ module.exports = function(arr, obj){
   }
   return -1;
 };
-},{}],156:[function(require,module,exports){
+},{}],157:[function(require,module,exports){
 
 /**
  * HOP ref.
@@ -36920,7 +37036,7 @@ exports.length = function(obj){
 exports.isEmpty = function(obj){
   return 0 == exports.length(obj);
 };
-},{}],157:[function(require,module,exports){
+},{}],158:[function(require,module,exports){
 /**
  * Parses an URI
  *
@@ -36947,7 +37063,7 @@ module.exports = function parseuri(str) {
   return uri;
 };
 
-},{}],158:[function(require,module,exports){
+},{}],159:[function(require,module,exports){
 (function (global){
 /*global Blob,File*/
 
@@ -37092,7 +37208,7 @@ exports.removeBlobs = function(data, callback) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./is-buffer":160,"isarray":163}],159:[function(require,module,exports){
+},{"./is-buffer":161,"isarray":164}],160:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -37494,7 +37610,7 @@ function error(data){
   };
 }
 
-},{"./binary":158,"./is-buffer":160,"component-emitter":161,"debug":162,"isarray":163,"json3":164}],160:[function(require,module,exports){
+},{"./binary":159,"./is-buffer":161,"component-emitter":162,"debug":163,"isarray":164,"json3":165}],161:[function(require,module,exports){
 (function (global){
 
 module.exports = isBuf;
@@ -37511,13 +37627,13 @@ function isBuf(obj) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],161:[function(require,module,exports){
-arguments[4][121][0].apply(exports,arguments)
-},{"dup":121}],162:[function(require,module,exports){
+},{}],162:[function(require,module,exports){
 arguments[4][122][0].apply(exports,arguments)
 },{"dup":122}],163:[function(require,module,exports){
-arguments[4][145][0].apply(exports,arguments)
-},{"dup":145}],164:[function(require,module,exports){
+arguments[4][123][0].apply(exports,arguments)
+},{"dup":123}],164:[function(require,module,exports){
+arguments[4][146][0].apply(exports,arguments)
+},{"dup":146}],165:[function(require,module,exports){
 /*! JSON v3.2.6 | http://bestiejs.github.io/json3 | Copyright 2012-2013, Kit Cambridge | http://kit.mit-license.org */
 ;(function (window) {
   // Convenience aliases.
@@ -38380,7 +38496,7 @@ arguments[4][145][0].apply(exports,arguments)
   }
 }(this));
 
-},{}],165:[function(require,module,exports){
+},{}],166:[function(require,module,exports){
 module.exports = toArray
 
 function toArray(list, index) {
@@ -38395,14 +38511,14 @@ function toArray(list, index) {
     return array
 }
 
-},{}],166:[function(require,module,exports){
+},{}],167:[function(require,module,exports){
 var MediaStreamType = {
     VIDEO_TYPE: "Video",
 
     AUDIO_TYPE: "Audio"
 };
 module.exports = MediaStreamType;
-},{}],167:[function(require,module,exports){
+},{}],168:[function(require,module,exports){
 var RTCEvents = {
     RTC_READY: "rtc.ready",
     DATA_CHANNEL_OPEN: "rtc.data_channel_open",
@@ -38415,7 +38531,7 @@ var RTCEvents = {
 };
 
 module.exports = RTCEvents;
-},{}],168:[function(require,module,exports){
+},{}],169:[function(require,module,exports){
 var Resolutions = {
     "1080": {
         width: 1920,
@@ -38469,7 +38585,7 @@ var Resolutions = {
     }
 };
 module.exports = Resolutions;
-},{}],169:[function(require,module,exports){
+},{}],170:[function(require,module,exports){
 var StreamEventTypes = {
     EVENT_TYPE_LOCAL_CREATED: "stream.local_created",
 
@@ -38483,7 +38599,7 @@ var StreamEventTypes = {
 };
 
 module.exports = StreamEventTypes;
-},{}],170:[function(require,module,exports){
+},{}],171:[function(require,module,exports){
 var UIEvents = {
     NICKNAME_CHANGED: "UI.nickname_changed",
     SELECTED_ENDPOINT: "UI.selected_endpoint",
@@ -38491,7 +38607,7 @@ var UIEvents = {
     LARGEVIDEO_INIT: "UI.largevideo_init"
 };
 module.exports = UIEvents;
-},{}],171:[function(require,module,exports){
+},{}],172:[function(require,module,exports){
 var AuthenticationEvents = {
     /**
      * Event callback arguments:
@@ -38505,7 +38621,7 @@ var AuthenticationEvents = {
 };
 module.exports = AuthenticationEvents;
 
-},{}],172:[function(require,module,exports){
+},{}],173:[function(require,module,exports){
 var CQEvents = {
     LOCALSTATS_UPDATED: "cq.localstats_updated",
     REMOTESTATS_UPDATED: "cq.remotestats_updated",
@@ -38513,7 +38629,7 @@ var CQEvents = {
 };
 
 module.exports = CQEvents;
-},{}],173:[function(require,module,exports){
+},{}],174:[function(require,module,exports){
 var DesktopSharingEventTypes = {
     INIT: "ds.init",
 
@@ -38523,14 +38639,14 @@ var DesktopSharingEventTypes = {
 };
 
 module.exports = DesktopSharingEventTypes;
-},{}],174:[function(require,module,exports){
+},{}],175:[function(require,module,exports){
 var Events = {
     DTMF_SUPPORT_CHANGED: "members.dtmf_support_changed"
 };
 
 module.exports = Events;
 
-},{}],175:[function(require,module,exports){
+},{}],176:[function(require,module,exports){
 module.exports = {
     getLanguages : function () {
         var languages = [];
@@ -38547,7 +38663,7 @@ module.exports = {
     TR: "tr",
     FR: "fr"
 }
-},{}],176:[function(require,module,exports){
+},{}],177:[function(require,module,exports){
 var XMPPEvents = {
     // Designates an event indicating that the connection to the XMPP server
     // failed.
