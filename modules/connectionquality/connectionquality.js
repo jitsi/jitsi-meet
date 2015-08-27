@@ -35,7 +35,7 @@ function startSendingStats() {
  * Sends statistics to other participants
  */
 function sendStats() {
-    APP.xmpp.addToPresence("connectionQuality", convertToMUCStats(stats));
+    APP.xmpp.addToPresence("stats", convertToMUCStats(stats));
 }
 
 /**
@@ -45,11 +45,32 @@ function sendStats() {
  */
 function convertToMUCStats(stats) {
     return {
-        "bitrate_download": stats.bitrate.download,
-        "bitrate_upload": stats.bitrate.upload,
-        "packetLoss_total": stats.packetLoss.total,
-        "packetLoss_download": stats.packetLoss.download,
-        "packetLoss_upload": stats.packetLoss.upload
+        tagName: "stats",
+        attributes: {
+            xmlns: 'http://jitsi.org/jitmeet/stats'
+        },
+        children: [
+            {
+                tagName: "stat",
+                attributes: {name: "bitrate_download", value: stats.bitrate.download}
+            },
+            {
+                tagName: "stat",
+                attributes: {name: "bitrate_upload", value: stats.bitrate.upload}
+            },
+            {
+                tagName: "stat",
+                attributes: {name: "packetLoss_total", value: stats.packetLoss.total}
+            },
+            {
+                tagName: "stat",
+                attributes: {name: "packetLoss_download", value: stats.packetLoss.download}
+            },
+            {
+                tagName: "stat",
+                attributes: {name: "packetLoss_upload", value: stats.packetLoss.upload}
+            }
+        ]
     };
 }
 

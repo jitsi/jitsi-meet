@@ -10,7 +10,6 @@ var JitsiConnectionEvents = require("../../JitsiConnectionEvents");
 var RTC = require("../RTC/RTC");
 
 var authenticatedUser = false;
-var disconnectInProgress = false;
 
 function createConnection(bosh) {
     bosh = bosh || '/http-bind';
@@ -21,9 +20,9 @@ function createConnection(bosh) {
 
 
 //!!!!!!!!!! FIXME: ...
-function initStrophePlugins()
+function initStrophePlugins(XMPP)
 {
-//    require("./strophe.emuc")(XMPP, eventEmitter);
+    require("./strophe.emuc")(XMPP);
 //    require("./strophe.jingle")(XMPP, eventEmitter);
 //    require("./strophe.moderate")(XMPP, eventEmitter);
     require("./strophe.util")();
@@ -56,10 +55,11 @@ function XMPP(options) {
     this.sessionTerminated = false;
     this.eventEmitter = new EventEmitter();
     this.connection = null;
+    this.disconnectInProgress = false;
 
     this.forceMuted = false;
     this.options = options;
-    initStrophePlugins();
+    initStrophePlugins(this);
 //    registerListeners();
     Moderator.init(this, this.eventEmitter);
     this.connection = createConnection(options.bosh);
@@ -110,6 +110,7 @@ XMPP.prototype._connect = function (jid, password) {
                 self.connection.jingle.getStunAndTurnCredentials();
             }
 
+
             console.info("My Jabber ID: " + self.connection.jid);
 
             if (password)
@@ -117,6 +118,7 @@ XMPP.prototype._connect = function (jid, password) {
             if (self.connection && self.connection.connected &&
                 Strophe.getResourceFromJid(self.connection.jid)) {
                 // .connected is true while connecting?
+                self.connection.send($pres());
                 self.eventEmitter.emit(JitsiConnectionEvents.CONNECTION_ESTABLISHED,
                     Strophe.getResourceFromJid(self.connection.jid));
             }
@@ -130,6 +132,7 @@ XMPP.prototype._connect = function (jid, password) {
             }
             lastErrorMsg = msg;
         } else if (status === Strophe.Status.DISCONNECTED) {
+            self.disconnectInProgress = false;
             if (anonymousConnectionFailed) {
                 // prompt user for username and password
                 self.eventEmitter.emit(JitsiConnectionEvents.CONNECTION_FAILED,
@@ -165,7 +168,7 @@ XMPP.prototype.connect = function (jid, password) {
 };
 
 XMPP.prototype.joinRoom = function(roomName, useNicks, nick) {
-    var roomjid = roomName;
+    var roomjid = roomName  + '@' + Strophe.getDomainFromJid(this.connection.jid);
 
     if (useNicks) {
         if (nick) {
@@ -181,20 +184,9 @@ XMPP.prototype.joinRoom = function(roomName, useNicks, nick) {
 
         roomjid += '/' + tmpJid;
     }
-    this.connection.emuc.doJoin(roomjid);
+    return this.connection.emuc.doJoin(roomjid, null, this.eventEmitter);
 };
 
-XMPP.prototype.myJid = function () {
-    if(!this.connection)
-        return null;
-    return this.connection.emuc.myroomjid;
-}
-
-XMPP.prototype.myResource = function () {
-    if(!this.connection || ! this.connection.emuc.myroomjid)
-        return null;
-    return Strophe.getResourceFromJid(this.connection.emuc.myroomjid);
-}
 
 XMPP.prototype.disposeConference = function (onUnload) {
     var handler = this.connection.jingle.activecall;
@@ -227,8 +219,8 @@ XMPP.prototype.removeListener = function (type, listener) {
     this.eventEmitter.removeListener(type, listener);
 };
 
-XMPP.prototype.leaveRoom = function () {
-    this.connection.emuc.doLeave();
+XMPP.prototype.leaveRoom = function (jid) {
+    this.connection.emuc.doLeave(jid);
 };
 
 
@@ -330,43 +322,6 @@ XMPP.prototype.sendAudioInfoPresence = function(mute, callback) {
     return true;
 };
 
-XMPP.prototype.addToPresence = function (name, value, dontSend) {
-    switch (name) {
-        case "displayName":
-            this.connection.emuc.addDisplayNameToPresence(value);
-            break;
-        case "prezi":
-            this.connection.emuc.addPreziToPresence(value, 0);
-            break;
-        case "preziSlide":
-            this.connection.emuc.addCurrentSlideToPresence(value);
-            break;
-        case "connectionQuality":
-            this.connection.emuc.addConnectionInfoToPresence(value);
-            break;
-        case "email":
-            this.connection.emuc.addEmailToPresence(value);
-            break;
-        case "devices":
-            this.connection.emuc.addDevicesToPresence(value);
-            break;
-        case "videoType":
-            this.connection.emuc.addVideoTypeToPresence(value);
-            break;
-        case "startMuted":
-            if(!Moderator.isModerator())
-                return;
-            this.connection.emuc.addStartMutedToPresence(value[0],
-                value[1]);
-            break;
-        default :
-            console.log("Unknown tag for presence: " + name);
-            return;
-    }
-    if (!dontSend)
-        this.connection.emuc.sendPresence();
-};
-
 /**
  * Sends 'data' as a log message to the focus. Returns true iff a message
  * was sent.
@@ -408,17 +363,6 @@ XMPP.prototype.getXmppLog = function () {
     return this.connection.logger ? this.connection.logger.log : null;
 };
 
-XMPP.prototype.sendChatMessage = function (message, nickname) {
-    this.connection.emuc.sendMessage(message, nickname);
-};
-
-XMPP.prototype.setSubject = function (topic) {
-    this.connection.emuc.setSubject(topic);
-};
-
-XMPP.prototype.lockRoom = function (key, onSuccess, onError, onNotSupported) {
-    this.connection.emuc.lockRoom(key, onSuccess, onError, onNotSupported);
-};
 
 XMPP.prototype.dial = function (to, from, roomName,roomPass) {
     this.connection.rayo.dial(to, from, roomName,roomPass);
@@ -436,23 +380,10 @@ XMPP.prototype.logout = function (callback) {
     Moderator.logout(callback);
 };
 
-XMPP.prototype.findJidFromResource = function (resource) {
-    return this.connection.emuc.findJidFromResource(resource);
-};
-
-XMPP.prototype.getMembers = function () {
-    return this.connection.emuc.members;
-};
-
 XMPP.prototype.getJidFromSSRC = function (ssrc) {
     if (!this.isConferenceInProgress())
         return null;
     return this.connection.jingle.activecall.getSsrcOwner(ssrc);
-};
-
-// Returns true iff we have joined the MUC.
-XMPP.prototype.isMUCJoined = function () {
-    return this.connection.emuc.joined;
 };
 
 XMPP.prototype.getSessions = function () {
@@ -466,13 +397,13 @@ XMPP.prototype.removeStream = function (stream) {
 };
 
 XMPP.prototype.disconnect = function (callback) {
-    if (disconnectInProgress || !this.connection || !this.connection.connected)
+    if (this.disconnectInProgress || !this.connection || !this.connection.connected)
     {
         this.eventEmitter.emit(JitsiConnectionEvents.WRONG_STATE);
         return;
     }
 
-    disconnectInProgress = true;
+    this.disconnectInProgress = true;
 
     this.connection.disconnect();
 };

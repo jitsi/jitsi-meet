@@ -1,6 +1,11 @@
 var JitsiConference = require("./JitsiConference");
 var XMPP = require("./modules/xmpp/xmpp");
 
+function wrapper()
+{
+    var jitsiconnectioninstance = new JitsiConnection();
+    this.a = jitsiconnectioninstance.a();
+}
 /**
  * Creates new connection object for the Jitsi Meet server side video conferencing service. Provides access to the
  * JitsiConference interface.
@@ -57,7 +62,7 @@ JitsiConnection.prototype.initJitsiConference = function (name, options) {
  * @param event {JitsiConnectionEvents} the connection event.
  * @param listener {Function} the function that will receive the event
  */
-JitsiConnection.prototype.addListener = function (event, listener) {
+JitsiConnection.prototype.addEventListener = function (event, listener) {
     this.xmpp.addListener(event, listener);
 }
 
@@ -66,7 +71,7 @@ JitsiConnection.prototype.addListener = function (event, listener) {
  * @param event {JitsiConnectionEvents} the connection event.
  * @param listener {Function} the function that will receive the event
  */
-JitsiConnection.prototype.removeListener = function (event, listener) {
+JitsiConnection.prototype.removeEventListener = function (event, listener) {
     this.xmpp.removeListener(event, listener);
 }
 

@@ -1,4 +1,6 @@
-var xmpp = require("./modules/xmpp/xmpp");
+var room = null;
+
+
 /**
  * Creates a JitsiConference object with the given name and properties.
  * Note: this constructor is not a part of the public API (objects should be
@@ -10,21 +12,24 @@ var xmpp = require("./modules/xmpp/xmpp");
  */
 
 function JitsiConference(options) {
-   this.options = options;
+    this.options = options;
+    this.connection = this.options.connection;
+    this.xmpp = this.connection.xmpp;
 }
 
 /**
  * Joins the conference.
  */
 JitsiConference.prototype.join = function () {
-    xmpp.joinRoom(this.options.name, null, null);
+    room = this.xmpp.joinRoom(this.options.name, null, null);
 }
 
 /**
  * Leaves the conference.
  */
 JitsiConference.prototype.leave = function () {
-    xmpp.l
+    this.xmpp.leaveRoom(room.roomjid);
+    room = null;
 }
 
 /**
@@ -55,7 +60,7 @@ JitsiConference.prototype.getLocalTracks = function () {
  * Note: consider adding eventing functionality by extending an EventEmitter impl, instead of rolling ourselves
  */
 JitsiConference.prototype.on = function (eventId, handler) {
-
+    this.xmpp.addListener(eventId, handler);
 }
 
 /**
@@ -66,7 +71,7 @@ JitsiConference.prototype.on = function (eventId, handler) {
  * Note: consider adding eventing functionality by extending an EventEmitter impl, instead of rolling ourselves
  */
 JitsiConference.prototype.off = function (eventId, handler) {
-
+    this.xmpp.removeListener(event, listener);
 }
 
 // Common aliases for event emitter
@@ -95,7 +100,7 @@ JitsiConference.prototype.removeEventListener = JitsiConference.prototype.off
  * @param message the text message.
  */
 JitsiConference.prototype.sendTextMessage = function (message) {
-
+    room.send
 }
 
 /**
@@ -117,7 +122,7 @@ JitsiConference.prototype.sendCommand = function (name, values, persistent) {
  * @param name the display name to set
  */
 JitsiConference.prototype.setDisplayName = function(name) {
-
+    room.addToPresence("nick", {attributes: {xmlns: 'http://jabber.org/protocol/nick'}, value: name});
 }
 
 /**

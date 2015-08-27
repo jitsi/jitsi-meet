@@ -1,5 +1,7 @@
 !function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.JitsiMeetJS=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var xmpp = require("./modules/xmpp/xmpp");
+var room = null;
+
+
 /**
  * Creates a JitsiConference object with the given name and properties.
  * Note: this constructor is not a part of the public API (objects should be
@@ -11,21 +13,24 @@ var xmpp = require("./modules/xmpp/xmpp");
  */
 
 function JitsiConference(options) {
-   this.options = options;
+    this.options = options;
+    this.connection = this.options.connection;
+    this.xmpp = this.connection.xmpp;
 }
 
 /**
  * Joins the conference.
  */
 JitsiConference.prototype.join = function () {
-    xmpp.joinRoom(this.options.name, null, null);
+    room = this.xmpp.joinRoom(this.options.name, null, null);
 }
 
 /**
  * Leaves the conference.
  */
 JitsiConference.prototype.leave = function () {
-    xmpp.l
+    this.xmpp.leaveRoom(room.roomjid);
+    room = null;
 }
 
 /**
@@ -56,7 +61,7 @@ JitsiConference.prototype.getLocalTracks = function () {
  * Note: consider adding eventing functionality by extending an EventEmitter impl, instead of rolling ourselves
  */
 JitsiConference.prototype.on = function (eventId, handler) {
-
+    this.xmpp.addListener(eventId, handler);
 }
 
 /**
@@ -67,7 +72,7 @@ JitsiConference.prototype.on = function (eventId, handler) {
  * Note: consider adding eventing functionality by extending an EventEmitter impl, instead of rolling ourselves
  */
 JitsiConference.prototype.off = function (eventId, handler) {
-
+    this.xmpp.removeListener(event, listener);
 }
 
 // Common aliases for event emitter
@@ -96,7 +101,7 @@ JitsiConference.prototype.removeEventListener = JitsiConference.prototype.off
  * @param message the text message.
  */
 JitsiConference.prototype.sendTextMessage = function (message) {
-
+    this.xmpp.sendChatMessage(message);
 }
 
 /**
@@ -118,7 +123,7 @@ JitsiConference.prototype.sendCommand = function (name, values, persistent) {
  * @param name the display name to set
  */
 JitsiConference.prototype.setDisplayName = function(name) {
-
+    room.addToPresence("nick", {attributes: {xmlns: 'http://jabber.org/protocol/nick'}, value: name});
 }
 
 /**
@@ -140,7 +145,7 @@ JitsiConference.prototype.getParticipants = function() {
 
 module.exports = JitsiConference;
 
-},{"./modules/xmpp/xmpp":21}],2:[function(require,module,exports){
+},{}],2:[function(require,module,exports){
 /**
  * Enumeration with the errors for the conference.
  * @type {{string: string}}
@@ -239,6 +244,11 @@ module.exports = JitsiConferenceEvents;
 var JitsiConference = require("./JitsiConference");
 var XMPP = require("./modules/xmpp/xmpp");
 
+function wrapper()
+{
+    var jitsiconnectioninstance = new JitsiConnection();
+    this.a = jitsiconnectioninstance.a();
+}
 /**
  * Creates new connection object for the Jitsi Meet server side video conferencing service. Provides access to the
  * JitsiConference interface.
@@ -295,7 +305,7 @@ JitsiConnection.prototype.initJitsiConference = function (name, options) {
  * @param event {JitsiConnectionEvents} the connection event.
  * @param listener {Function} the function that will receive the event
  */
-JitsiConnection.prototype.addListener = function (event, listener) {
+JitsiConnection.prototype.addEventListener = function (event, listener) {
     this.xmpp.addListener(event, listener);
 }
 
@@ -304,13 +314,13 @@ JitsiConnection.prototype.addListener = function (event, listener) {
  * @param event {JitsiConnectionEvents} the connection event.
  * @param listener {Function} the function that will receive the event
  */
-JitsiConnection.prototype.removeListener = function (event, listener) {
+JitsiConnection.prototype.removeEventListener = function (event, listener) {
     this.xmpp.removeListener(event, listener);
 }
 
 module.exports = JitsiConnection;
 
-},{"./JitsiConference":1,"./modules/xmpp/xmpp":21}],5:[function(require,module,exports){
+},{"./JitsiConference":1,"./modules/xmpp/xmpp":22}],5:[function(require,module,exports){
 /**
  * Enumeration with the errors for the connection.
  * @type {{string: string}}
@@ -388,7 +398,7 @@ require("es6-promise").polyfill();
 
 module.exports = LibJitsiMeet;
 
-},{"./JitsiConferenceErrors":2,"./JitsiConferenceEvents":3,"./JitsiConnection":4,"./JitsiConnectionErrors":5,"./JitsiConnectionEvents":6,"es6-promise":22}],8:[function(require,module,exports){
+},{"./JitsiConferenceErrors":2,"./JitsiConferenceEvents":3,"./JitsiConnection":4,"./JitsiConnectionErrors":5,"./JitsiConnectionEvents":6,"es6-promise":23}],8:[function(require,module,exports){
 /* global config, APP, Strophe */
 
 // cache datachannels to avoid garbage collection
@@ -581,7 +591,7 @@ function onPinnedEndpointChanged(userResource) {
 module.exports = DataChannels;
 
 
-},{"../../service/RTC/RTCEvents":40}],9:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":41}],9:[function(require,module,exports){
 /* global APP */
 var StreamEventTypes = require("../../service/RTC/StreamEventTypes.js");
 var RTCEvents = require("../../service/RTC/RTCEvents");
@@ -707,7 +717,7 @@ LocalStream.prototype.getId = function () {
 
 module.exports = LocalStream;
 
-},{"../../service/RTC/RTCEvents":40,"../../service/RTC/StreamEventTypes.js":42,"./RTCBrowserType":12}],10:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":41,"../../service/RTC/StreamEventTypes.js":43,"./RTCBrowserType":12}],10:[function(require,module,exports){
 var MediaStreamType = require("../../service/RTC/MediaStreamTypes");
 
 /**
@@ -756,7 +766,7 @@ MediaStream.prototype.setMute = function (value) {
 
 module.exports = MediaStream;
 
-},{"../../service/RTC/MediaStreamTypes":39}],11:[function(require,module,exports){
+},{"../../service/RTC/MediaStreamTypes":40}],11:[function(require,module,exports){
 /* global APP */
 var EventEmitter = require("events");
 var RTCBrowserType = require("./RTCBrowserType");
@@ -1033,7 +1043,7 @@ var RTC = {
 
 module.exports = RTC;
 
-},{"../../service/RTC/MediaStreamTypes":39,"../../service/RTC/RTCEvents.js":40,"../../service/RTC/StreamEventTypes.js":42,"../../service/UI/UIEvents":43,"../../service/desktopsharing/DesktopSharingEventTypes":45,"../../service/xmpp/XMPPEvents":46,"./DataChannels":8,"./LocalStream.js":9,"./MediaStream.js":10,"./RTCBrowserType":12,"./RTCUtils.js":13,"events":47}],12:[function(require,module,exports){
+},{"../../service/RTC/MediaStreamTypes":40,"../../service/RTC/RTCEvents.js":41,"../../service/RTC/StreamEventTypes.js":43,"../../service/UI/UIEvents":44,"../../service/desktopsharing/DesktopSharingEventTypes":46,"../../service/xmpp/XMPPEvents":47,"./DataChannels":8,"./LocalStream.js":9,"./MediaStream.js":10,"./RTCBrowserType":12,"./RTCUtils.js":13,"events":48}],12:[function(require,module,exports){
 
 var currentBrowser;
 
@@ -1755,7 +1765,7 @@ RTCUtils.prototype.createStream = function(stream, isVideo) {
 
 module.exports = RTCUtils;
 
-},{"../../service/RTC/Resolutions":41,"../xmpp/SDPUtil":16,"./RTCBrowserType":12,"./adapter.screenshare":14}],14:[function(require,module,exports){
+},{"../../service/RTC/Resolutions":42,"../xmpp/SDPUtil":16,"./RTCBrowserType":12,"./adapter.screenshare":14}],14:[function(require,module,exports){
 /*! adapterjs - custom version from - 2015-08-12 */
 
 // Adapter's interface.
@@ -3087,12 +3097,6 @@ if (navigator.mozGetUserMedia) {
   }
 })();
 },{}],15:[function(require,module,exports){
-var email = '';
-var displayName = '';
-var userId;
-var language = null;
-
-
 function supportsLocalStorage() {
     try {
         return 'localStorage' in window && window.localStorage !== null;
@@ -3110,44 +3114,59 @@ function generateUniqueId() {
     return _p8() + _p8() + _p8() + _p8();
 }
 
-if (supportsLocalStorage()) {
-    if (!window.localStorage.jitsiMeetId) {
-        window.localStorage.jitsiMeetId = generateUniqueId();
-        console.log("generated id", window.localStorage.jitsiMeetId);
+function Settings(conferenceID) {
+    this.email = '';
+    this.displayName = '';
+    this.userId;
+    this.language = null;
+    this.confSettings = null;
+    if (supportsLocalStorage()) {
+        if(!window.localStorage.jitsiConferences)
+            window.localStorage.jitsiConferences = {}
+        if (!window.localStorage.jitsiConferences[conferenceID]) {
+            window.localStorage.jitsiConferences[conferenceID] = {}
+        }
+        this.confSettings = window.localStorage.jitsiConferences[conferenceID];
+        if(!this.confSettings.jitsiMeetId) {
+            this.confSettings.jitsiMeetId = generateUniqueId();
+            console.log("generated id",
+                this.confSettings.jitsiMeetId);
+        }
+        this.userId = this.confSettings.jitsiMeetId || '';
+        this.email = this.confSettings.email || '';
+        this.displayName = this.confSettings.displayname || '';
+        this.language = this.confSettings.language;
+    } else {
+        console.log("local storage is not supported");
+        this.userId = generateUniqueId();
     }
-    userId = window.localStorage.jitsiMeetId || '';
-    email = window.localStorage.email || '';
-    displayName = window.localStorage.displayname || '';
-    language = window.localStorage.language;
-} else {
-    console.log("local storage is not supported");
-    userId = generateUniqueId();
 }
 
-var Settings = {
-    setDisplayName: function (newDisplayName) {
-        displayName = newDisplayName;
-        window.localStorage.displayname = displayName;
-        return displayName;
-    },
-    setEmail: function (newEmail) {
-        email = newEmail;
-        window.localStorage.email = newEmail;
-        return email;
-    },
-    getSettings: function () {
-        return {
-            email: email,
-            displayName: displayName,
-            uid: userId,
-            language: language
-        };
-    },
-    setLanguage: function (lang) {
-        language = lang;
-        window.localStorage.language = lang;
-    }
-};
+Settings.prototype.setDisplayName = function (newDisplayName) {
+    this.displayName = newDisplayName;
+    if(this.confSettings != null)
+        this.confSettings.displayname = displayName;
+    return this.displayName;
+},
+Settings.prototype.setEmail = function (newEmail) {
+    this.email = newEmail;
+    if(this.confSettings != null)
+        this.confSettings.email = newEmail;
+    return this.email;
+},
+Settings.prototype.getSettings = function () {
+    return {
+        email: this.email,
+        displayName: this.displayName,
+        uid: this.userId,
+        language: this.language
+    };
+},
+Settings.prototype.setLanguage = function (lang) {
+    this.language = lang;
+    if(this.confSettings != null)
+        this.confSettings.language = lang;
+}
 
 module.exports = Settings;
 
@@ -3938,7 +3957,550 @@ module.exports = Moderator;
 
 
 
-},{"../../service/authentication/AuthenticationEvents":44,"../../service/xmpp/XMPPEvents":46,"../settings/Settings":15}],18:[function(require,module,exports){
+},{"../../service/authentication/AuthenticationEvents":45,"../../service/xmpp/XMPPEvents":47,"../settings/Settings":15}],18:[function(require,module,exports){
+/* jshint -W117 */
+/* a simple MUC connection plugin
+ * can only handle a single MUC room
+ */
+var XMPPEvents = require("../../service/xmpp/XMPPEvents");
+var Moderator = require("./moderator");
+var RTC = require("../RTC/RTC");
+
+var parser = {
+    packet2JSON: function (packet, nodes) {
+        var self = this;
+        $(packet).children().each(function (index) {
+            var tagName = $(this).prop("tagName");
+            var node = {}
+            node["tagName"] = tagName;
+            node.attributes = {};
+            $($(this)[0].attributes).each(function( index, attr ) {
+                node.attributes[ attr.name ] = attr.value;
+            } );
+            var text = Strophe.getText($(this)[0]);
+            if(text)
+                node.value = text;
+            node.children = [];
+            nodes.push(node);
+            self.packet2JSON($(this), node.children);
+        })
+    },
+    JSON2packet: function (nodes, packet) {
+        for(var i = 0; i < nodes.length; i++)
+        {
+            var node = nodes[i];
+            if(!node || node === null){
+                continue;
+            }
+            packet.c(node.tagName, node.attributes);
+            if(node.value)
+                packet.t(node.value);
+            if(node.children)
+                this.JSON2packet(node.children, packet);
+            packet.up();
+        }
+        packet.up();
+    }
+};
+
+function ChatRoom(connection, jid, password, XMPP, eventEmitter)
+{
+    this.eventEmitter = eventEmitter;
+    this.xmpp = XMPP;
+    this.connection = connection;
+    this.roomjid = Strophe.getBareJidFromJid(jid);
+    this.myroomjid = jid;
+    this.password = password;
+    console.info("Joined MUC as " + this.myroomjid);
+    this.members = {};
+    this.presMap = {};
+    this.joined = false;
+    this.role = null;
+    this.focusMucJid = null;
+    this.bridgeIsDown = false;
+    this.initPresenceMap();
+}
+
+ChatRoom.prototype.initPresenceMap = function () {
+    this.presMap['to'] = this.myroomjid;
+    this.presMap['xns'] = 'http://jabber.org/protocol/muc';
+    this.presMap["nodes"] = [];
+    if (RTC.localAudio && RTC.localAudio.isMuted()) {
+        this.nodes.push({
+            tagName: "audiomuted",
+            attributes: {xmlns: "http://jitsi.org/jitmeet/audio"},
+            value: "true"});
+    }
+    if (RTC.localVideo && RTC.localVideo.isMuted()) {
+        this.nodes.push({
+            tagName: "videomuted",
+            attributes: {xmlns: "http://jitsi.org/jitmeet/video"},
+            value: "true"});
+    }
+    this.presMap["nodes"].push( {
+        "tagName": "user-agent",
+        "value": navigator.userAgent,
+        "attributes": {xmlns: 'http://jitsi.org/jitmeet/user-agent'}
+    });
+};
+
+ChatRoom.prototype.sendPresence = function () {
+    if (!this.presMap['to']) {
+        // Too early to send presence - not initialized
+        return;
+    }
+    var pres = $pres({to: this.presMap['to'] });
+    pres.c('x', {xmlns: this.presMap['xns']});
+
+    if (this.password) {
+        pres.c('password').t(this.password).up();
+    }
+
+    pres.up();
+
+    // Send XEP-0115 'c' stanza that contains our capabilities info
+    if (this.connection.caps) {
+        this.connection.caps.node = this.xmpp.options.clientNode;
+        pres.c('c', this.connection.caps.generateCapsAttrs()).up();
+    }
+
+    parser.JSON2packet(this.presMap.nodes, pres);
+    this.connection.send(pres);
+};
+
+
+ChatRoom.prototype.doLeave = function () {
+    console.log("do leave", this.myroomjid);
+    var pres = $pres({to: this.myroomjid, type: 'unavailable' });
+    this.presMap.length = 0;
+    this.connection.send(pres);
+};
+
+
+ChatRoom.prototype.createNonAnonymousRoom = function () {
+    // http://xmpp.org/extensions/xep-0045.html#createroom-reserved
+
+    var getForm = $iq({type: 'get', to: this.roomjid})
+        .c('query', {xmlns: 'http://jabber.org/protocol/muc#owner'})
+        .c('x', {xmlns: 'jabber:x:data', type: 'submit'});
+
+    var self = this;
+
+    this.connection.sendIQ(getForm, function (form) {
+
+        if (!$(form).find(
+                '>query>x[xmlns="jabber:x:data"]' +
+                '>field[var="muc#roomconfig_whois"]').length) {
+
+            console.error('non-anonymous rooms not supported');
+            return;
+        }
+
+        var formSubmit = $iq({to: this.roomjid, type: 'set'})
+            .c('query', {xmlns: 'http://jabber.org/protocol/muc#owner'});
+
+        formSubmit.c('x', {xmlns: 'jabber:x:data', type: 'submit'});
+
+        formSubmit.c('field', {'var': 'FORM_TYPE'})
+            .c('value')
+            .t('http://jabber.org/protocol/muc#roomconfig').up().up();
+
+        formSubmit.c('field', {'var': 'muc#roomconfig_whois'})
+            .c('value').t('anyone').up().up();
+
+        self.connection.sendIQ(formSubmit);
+
+    }, function (error) {
+        console.error("Error getting room configuration form");
+    });
+};
+
+ChatRoom.prototype.onPresence = function (pres) {
+    var from = pres.getAttribute('from');
+    // Parse roles.
+    var member = {};
+    member.show = $(pres).find('>show').text();
+    member.status = $(pres).find('>status').text();
+    var tmp = $(pres).find('>x[xmlns="http://jabber.org/protocol/muc#user"]>item');
+    member.affiliation = tmp.attr('affiliation');
+    member.role = tmp.attr('role');
+
+    // Focus recognition
+    member.jid = tmp.attr('jid');
+    member.isFocus = false;
+    if (member.jid
+        && member.jid.indexOf(Moderator.getFocusUserJid() + "/") == 0) {
+        member.isFocus = true;
+    }
+
+    pres.find(">x").remove();
+    var nodes = [];
+    parser.packet2JSON(pres, nodes);
+    for(var i = 0; i < nodes.length; i++)
+    {
+        var node = nodes[i];
+        switch(node.tagName)
+        {
+            case "nick":
+                member.nick = node.value;
+                if(!member.isFocus) {
+                    var displayName = !this.xmpp.options.displayJids
+                        ? member.nick : Strophe.getResourceFromJid(from);
+
+                    if (displayName && displayName.length > 0) {
+                        this.eventEmitter.emit(XMPPEvents.DISPLAY_NAME_CHANGED, from, displayName);
+                    }
+                    console.info("Display name: " + displayName, pres);
+                }
+                break;
+            case "userId":
+                member.id = node.value;
+                break;
+            case "email":
+                member.email = node.value;
+                break;
+            case "bridgeIsDown":
+                if(!this.bridgeIsDown) {
+                    this.bridgeIsDown = true;
+                    this.eventEmitter.emit(XMPPEvents.BRIDGE_DOWN);
+                }
+                break;
+            default :
+                this.processNode(node);
+        }
+
+    }
+
+    if (from == this.myroomjid) {
+        if (member.affiliation == 'owner')
+
+        if (this.role !== member.role) {
+            this.role = member.role;
+
+            this.eventEmitter.emit(XMPPEvents.LOCAL_ROLE_CHANGED,
+                member, Moderator.isModerator());
+        }
+        if (!this.joined) {
+            this.joined = true;
+            this.eventEmitter.emit(XMPPEvents.MUC_JOINED, from, member);
+        }
+    } else if (this.members[from] === undefined) {
+        // new participant
+        this.members[from] = member;
+        console.log('entered', from, member);
+        if (member.isFocus) {
+            this.focusMucJid = from;
+            console.info("Ignore focus: " + from + ", real JID: " + member.jid);
+        }
+        else {
+            this.eventEmitter.emit(XMPPEvents.MUC_MEMBER_JOINED, from, member.id || member.email, member.nick);
+        }
+    } else {
+        // Presence update for existing participant
+        // Watch role change:
+        if (this.members[from].role != member.role) {
+            this.members[from].role = member.role;
+            this.eventEmitter.emit(XMPPEvents.MUC_ROLE_CHANGED,
+                member.role, member.nick);
+        }
+    }
+
+
+
+    if(!member.isFocus)
+        this.eventEmitter.emit(XMPPEvents.USER_ID_CHANGED, from, member.id || member.email);
+
+    // Trigger status message update
+    if (member.status) {
+        this.eventEmitter.emit(XMPPEvents.PRESENCE_STATUS, from, member);
+    }
+
+};
+
+ChatRoom.prototype.processNode = function (node) {
+    this.eventEmitter.emit(XMPPEvents.PRESENCE_SETTING, node);
+};
+
+ChatRoom.prototype.sendMessage = function (body, nickname) {
+    var msg = $msg({to: this.roomjid, type: 'groupchat'});
+    msg.c('body', body).up();
+    if (nickname) {
+        msg.c('nick', {xmlns: 'http://jabber.org/protocol/nick'}).t(nickname).up().up();
+    }
+    this.connection.send(msg);
+    this.eventEmitter.emit(XMPPEvents.SENDING_CHAT_MESSAGE, body);
+};
+
+ChatRoom.prototype.setSubject = function (subject) {
+    var msg = $msg({to: this.roomjid, type: 'groupchat'});
+    msg.c('subject', subject);
+    this.connection.send(msg);
+    console.log("topic changed to " + subject);
+};
+
+
+ChatRoom.prototype.onParticipantLeft = function (jid) {
+
+    this.eventEmitter.emit(XMPPEvents.MUC_MEMBER_LEFT, jid);
+
+    this.connection.jingle.terminateByJid(jid);
+
+    Moderator.onMucMemberLeft(jid);
+};
+
+ChatRoom.prototype.onPresenceUnavailable = function (pres, from) {
+    // room destroyed ?
+    if ($(pres).find('>x[xmlns="http://jabber.org/protocol/muc#user"]' +
+        '>destroy').length) {
+        var reason;
+        var reasonSelect = $(pres).find(
+                '>x[xmlns="http://jabber.org/protocol/muc#user"]' +
+                '>destroy>reason');
+        if (reasonSelect.length) {
+            reason = reasonSelect.text();
+        }
+
+        this.xmpp.disposeConference(false);
+        this.eventEmitter.emit(XMPPEvents.MUC_DESTROYED, reason);
+        delete this.connection.emuc.rooms[Strophe.getBareJidFromJid(jid)];
+        return true;
+    }
+
+    // Status code 110 indicates that this notification is "self-presence".
+    if (!$(pres).find('>x[xmlns="http://jabber.org/protocol/muc#user"]>status[code="110"]').length) {
+        delete this.members[from];
+        this.onParticipantLeft(from);
+    }
+    // If the status code is 110 this means we're leaving and we would like
+    // to remove everyone else from our view, so we trigger the event.
+    else if (Object.keys(this.members).length > 1) {
+        for (var i in this.members) {
+            var member = this.members[i];
+            delete this.members[i];
+            this.onParticipantLeft(member);
+        }
+    }
+    if ($(pres).find('>x[xmlns="http://jabber.org/protocol/muc#user"]>status[code="307"]').length) {
+        if (this.myroomjid === from) {
+            this.xmpp.disposeConference(false);
+            this.eventEmitter.emit(XMPPEvents.KICKED);
+        }
+    }
+};
+
+ChatRoom.prototype.onMessage = function (msg, from) {
+    var nick =
+        $(msg).find('>nick[xmlns="http://jabber.org/protocol/nick"]')
+            .text() ||
+        Strophe.getResourceFromJid(from);
+
+    var txt = $(msg).find('>body').text();
+    var type = msg.getAttribute("type");
+    if (type == "error") {
+        this.eventEmitter.emit(XMPPEvents.CHAT_ERROR_RECEIVED,
+            $(msg).find('>text').text(), txt);
+        return true;
+    }
+
+    var subject = $(msg).find('>subject');
+    if (subject.length) {
+        var subjectText = subject.text();
+        if (subjectText || subjectText == "") {
+            this.eventEmitter.emit(XMPPEvents.SUBJECT_CHANGED, subjectText);
+            console.log("Subject is changed to " + subjectText);
+        }
+    }
+
+    // xep-0203 delay
+    var stamp = $(msg).find('>delay').attr('stamp');
+
+    if (!stamp) {
+        // or xep-0091 delay, UTC timestamp
+        stamp = $(msg).find('>[xmlns="jabber:x:delay"]').attr('stamp');
+
+        if (stamp) {
+            // the format is CCYYMMDDThh:mm:ss
+            var dateParts = stamp.match(/(\d{4})(\d{2})(\d{2}T\d{2}:\d{2}:\d{2})/);
+            stamp = dateParts[1] + "-" + dateParts[2] + "-" + dateParts[3] + "Z";
+        }
+    }
+
+    if (txt) {
+        console.log('chat', nick, txt);
+        this.eventEmitter.emit(XMPPEvents.MESSAGE_RECEIVED,
+            from, nick, txt, this.myroomjid, stamp);
+    }
+}
+
+ChatRoom.prototype.onPresenceError = function (pres, from) {
+    if ($(pres).find('>error[type="auth"]>not-authorized[xmlns="urn:ietf:params:xml:ns:xmpp-stanzas"]').length) {
+        console.log('on password required', from);
+        this.eventEmitter.emit(XMPPEvents.PASSWORD_REQUIRED);
+    } else if ($(pres).find(
+        '>error[type="cancel"]>not-allowed[xmlns="urn:ietf:params:xml:ns:xmpp-stanzas"]').length) {
+        var toDomain = Strophe.getDomainFromJid(pres.getAttribute('to'));
+        if (toDomain === this.xmpp.options.hosts.anonymousdomain) {
+            // enter the room by replying with 'not-authorized'. This would
+            // result in reconnection from authorized domain.
+            // We're either missing Jicofo/Prosody config for anonymous
+            // domains or something is wrong.
+            this.eventEmitter.emit(XMPPEvents.ROOM_JOIN_ERROR, pres);
+
+        } else {
+            console.warn('onPresError ', pres);
+            this.eventEmitter.emit(XMPPEvents.ROOM_CONNECT_ERROR, pres);
+        }
+    } else {
+        console.warn('onPresError ', pres);
+        this.eventEmitter.emit(XMPPEvents.ROOM_CONNECT_ERROR, pres);
+    }
+};
+
+ChatRoom.prototype.kick = function (jid) {
+    var kickIQ = $iq({to: this.roomjid, type: 'set'})
+        .c('query', {xmlns: 'http://jabber.org/protocol/muc#admin'})
+        .c('item', {nick: Strophe.getResourceFromJid(jid), role: 'none'})
+        .c('reason').t('You have been kicked.').up().up().up();
+
+    this.connection.sendIQ(
+        kickIQ,
+        function (result) {
+            console.log('Kick participant with jid: ', jid, result);
+        },
+        function (error) {
+            console.log('Kick participant error: ', error);
+        });
+};
+
+ChatRoom.prototype.lockRoom = function (key, onSuccess, onError, onNotSupported) {
+    //http://xmpp.org/extensions/xep-0045.html#roomconfig
+    var ob = this;
+    this.connection.sendIQ($iq({to: this.roomjid, type: 'get'}).c('query', {xmlns: 'http://jabber.org/protocol/muc#owner'}),
+        function (res) {
+            if ($(res).find('>query>x[xmlns="jabber:x:data"]>field[var="muc#roomconfig_roomsecret"]').length) {
+                var formsubmit = $iq({to: ob.roomjid, type: 'set'}).c('query', {xmlns: 'http://jabber.org/protocol/muc#owner'});
+                formsubmit.c('x', {xmlns: 'jabber:x:data', type: 'submit'});
+                formsubmit.c('field', {'var': 'FORM_TYPE'}).c('value').t('http://jabber.org/protocol/muc#roomconfig').up().up();
+                formsubmit.c('field', {'var': 'muc#roomconfig_roomsecret'}).c('value').t(key).up().up();
+                // Fixes a bug in prosody 0.9.+ https://code.google.com/p/lxmppd/issues/detail?id=373
+                formsubmit.c('field', {'var': 'muc#roomconfig_whois'}).c('value').t('anyone').up().up();
+                // FIXME: is muc#roomconfig_passwordprotectedroom required?
+                ob.connection.sendIQ(formsubmit,
+                    onSuccess,
+                    onError);
+            } else {
+                onNotSupported();
+            }
+        }, onError);
+};
+
+ChatRoom.prototype.addToPresence = function (key, values) {
+    values.tagName = key;
+    this.presMap["nodes"].push(values);
+};
+
+ChatRoom.prototype.removeFromPresence = function (key) {
+    for(var i = 0; i < this.presMap.nodes.length; i++)
+    {
+        if(key === this.presMap.nodes[i].tagName)
+            this.presMap.nodes.splice(i, 1);
+    }
+};
+
+ChatRoom.prototype.isModerator = function (jid) {
+    return this.role === 'moderator';
+};
+
+ChatRoom.prototype.getMemberRole = function (peerJid) {
+    if (this.members[peerJid]) {
+        return this.members[peerJid].role;
+    }
+    return null;
+};
+
+
+module.exports = function(XMPP) {
+    Strophe.addConnectionPlugin('emuc', {
+        connection: null,
+        rooms: {},//map with the rooms
+        init: function (conn) {
+            this.connection = conn;
+            // add handlers (just once)
+            this.connection.addHandler(this.onPresence.bind(this), null, 'presence', null, null);
+            this.connection.addHandler(this.onPresenceUnavailable.bind(this), null, 'presence', 'unavailable', null);
+            this.connection.addHandler(this.onPresenceError.bind(this), null, 'presence', 'error', null);
+            this.connection.addHandler(this.onMessage.bind(this), null, 'message', null, null);
+        },
+        doJoin: function (jid, password, eventEmitter) {
+            var roomJid = Strophe.getBareJidFromJid(jid);
+            if(this.rooms[roomJid])
+            {
+                console.error("You are already in the room!");
+                return;
+            }
+            this.rooms[roomJid] = new ChatRoom(this.connection, jid, password, XMPP, eventEmitter);
+
+            this.rooms[roomJid].sendPresence();
+            return this.rooms[roomJid];
+        },
+        doLeave: function (jid) {
+            this.rooms[jid].doLeave();
+            delete this.rooms[jid];
+        },
+        onPresence: function (pres) {
+            var from = pres.getAttribute('from');
+
+            // What is this for? A workaround for something?
+            if (pres.getAttribute('type')) {
+                return true;
+            }
+
+            var room = this.rooms[Strophe.getBareJidFromJid(from)];
+            if(!room)
+                return;
+
+            // Parse status.
+            if ($(pres).find('>x[xmlns="http://jabber.org/protocol/muc#user"]>status[code="201"]').length) {
+                room.createNonAnonymousRoom();
+            }
+
+            room.onPresence(pres);
+
+            return true;
+        },
+        onPresenceUnavailable: function (pres) {
+            var from = pres.getAttribute('from');
+            var room = this.rooms[Strophe.getBareJidFromJid(from)];
+            if(!room)
+                return;
+
+            room.onPresenceUnavailable(pres, from);
+            return true;
+        },
+        onPresenceError: function (pres) {
+            var from = pres.getAttribute('from');
+            var room = this.rooms[Strophe.getBareJidFromJid(from)];
+            if(!room)
+                return;
+
+            room.onPresenceError(pres, from);
+            return true;
+        },
+        onMessage: function (msg) {
+            // FIXME: this is a hack. but jingle on muc makes nickchanges hard
+            var from = msg.getAttribute('from');
+            var room = this.rooms[Strophe.getBareJidFromJid(from)];
+            if(!room)
+                return;
+
+            room.onMessage(msg, from);
+            return true;
+        }
+    });
+};
+
+
+},{"../../service/xmpp/XMPPEvents":47,"../RTC/RTC":11,"./moderator":17}],19:[function(require,module,exports){
 /* global Strophe */
 module.exports = function () {
 
@@ -3959,7 +4521,7 @@ module.exports = function () {
         }
     });
 };
-},{}],19:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 /* jshint -W117 */
 module.exports = function() {
     Strophe.addConnectionPlugin('rayo',
@@ -4056,7 +4618,7 @@ module.exports = function() {
     );
 };
 
-},{}],20:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 /**
  * Strophe logger implementation. Logs from level WARN and above.
  */
@@ -4100,7 +4662,7 @@ module.exports = function () {
     };
 };
 
-},{}],21:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 /* global $, APP, config, Strophe*/
 var Moderator = require("./moderator");
 var EventEmitter = require("events");
@@ -4113,7 +4675,6 @@ var JitsiConnectionEvents = require("../../JitsiConnectionEvents");
 var RTC = require("../RTC/RTC");
 
 var authenticatedUser = false;
-var disconnectInProgress = false;
 
 function createConnection(bosh) {
     bosh = bosh || '/http-bind';
@@ -4124,9 +4685,9 @@ function createConnection(bosh) {
 
 
 //!!!!!!!!!! FIXME: ...
-function initStrophePlugins()
+function initStrophePlugins(XMPP)
 {
-//    require("./strophe.emuc")(XMPP, eventEmitter);
+    require("./strophe.emuc")(XMPP);
 //    require("./strophe.jingle")(XMPP, eventEmitter);
 //    require("./strophe.moderate")(XMPP, eventEmitter);
     require("./strophe.util")();
@@ -4159,10 +4720,11 @@ function XMPP(options) {
     this.sessionTerminated = false;
     this.eventEmitter = new EventEmitter();
     this.connection = null;
+    this.disconnectInProgress = false;
 
     this.forceMuted = false;
     this.options = options;
-    initStrophePlugins();
+    initStrophePlugins(this);
 //    registerListeners();
     Moderator.init(this, this.eventEmitter);
     this.connection = createConnection(options.bosh);
@@ -4213,6 +4775,7 @@ XMPP.prototype._connect = function (jid, password) {
                 self.connection.jingle.getStunAndTurnCredentials();
             }
 
+
             console.info("My Jabber ID: " + self.connection.jid);
 
             if (password)
@@ -4220,6 +4783,7 @@ XMPP.prototype._connect = function (jid, password) {
             if (self.connection && self.connection.connected &&
                 Strophe.getResourceFromJid(self.connection.jid)) {
                 // .connected is true while connecting?
+                self.connection.send($pres());
                 self.eventEmitter.emit(JitsiConnectionEvents.CONNECTION_ESTABLISHED,
                     Strophe.getResourceFromJid(self.connection.jid));
             }
@@ -4233,6 +4797,7 @@ XMPP.prototype._connect = function (jid, password) {
             }
             lastErrorMsg = msg;
         } else if (status === Strophe.Status.DISCONNECTED) {
+            self.disconnectInProgress = false;
             if (anonymousConnectionFailed) {
                 // prompt user for username and password
                 self.eventEmitter.emit(JitsiConnectionEvents.CONNECTION_FAILED,
@@ -4268,7 +4833,7 @@ XMPP.prototype.connect = function (jid, password) {
 };
 
 XMPP.prototype.joinRoom = function(roomName, useNicks, nick) {
-    var roomjid = roomName;
+    var roomjid = roomName  + '@' + Strophe.getDomainFromJid(this.connection.jid);
 
     if (useNicks) {
         if (nick) {
@@ -4284,20 +4849,9 @@ XMPP.prototype.joinRoom = function(roomName, useNicks, nick) {
 
         roomjid += '/' + tmpJid;
     }
-    this.connection.emuc.doJoin(roomjid);
+    return this.connection.emuc.doJoin(roomjid, null, this.eventEmitter);
 };
 
-XMPP.prototype.myJid = function () {
-    if(!this.connection)
-        return null;
-    return this.connection.emuc.myroomjid;
-}
-
-XMPP.prototype.myResource = function () {
-    if(!this.connection || ! this.connection.emuc.myroomjid)
-        return null;
-    return Strophe.getResourceFromJid(this.connection.emuc.myroomjid);
-}
 
 XMPP.prototype.disposeConference = function (onUnload) {
     var handler = this.connection.jingle.activecall;
@@ -4330,8 +4884,8 @@ XMPP.prototype.removeListener = function (type, listener) {
     this.eventEmitter.removeListener(type, listener);
 };
 
-XMPP.prototype.leaveRoom = function () {
-    this.connection.emuc.doLeave();
+XMPP.prototype.leaveRoom = function (jid) {
+    this.connection.emuc.doLeave(jid);
 };
 
 
@@ -4433,7 +4987,8 @@ XMPP.prototype.sendAudioInfoPresence = function(mute, callback) {
     return true;
 };
 
-XMPP.prototype.addToPresence = function (name, value, dontSend) {
+XMPP.prototype.addToPresence = function (name, values, dontSend) {
+    this.connection.emuc.addToPresence(name, values);
     switch (name) {
         case "displayName":
             this.connection.emuc.addDisplayNameToPresence(value);
@@ -4539,10 +5094,6 @@ XMPP.prototype.logout = function (callback) {
     Moderator.logout(callback);
 };
 
-XMPP.prototype.findJidFromResource = function (resource) {
-    return this.connection.emuc.findJidFromResource(resource);
-};
-
 XMPP.prototype.getMembers = function () {
     return this.connection.emuc.members;
 };
@@ -4569,13 +5120,13 @@ XMPP.prototype.removeStream = function (stream) {
 };
 
 XMPP.prototype.disconnect = function (callback) {
-    if (disconnectInProgress || !this.connection || !this.connection.connected)
+    if (this.disconnectInProgress || !this.connection || !this.connection.connected)
     {
         this.eventEmitter.emit(JitsiConnectionEvents.WRONG_STATE);
         return;
     }
 
-    disconnectInProgress = true;
+    this.disconnectInProgress = true;
 
     this.connection.disconnect();
 };
@@ -4583,7 +5134,7 @@ XMPP.prototype.disconnect = function (callback) {
 
 module.exports = XMPP;
 
-},{"../../JitsiConnectionErrors":5,"../../JitsiConnectionEvents":6,"../../service/RTC/RTCEvents":40,"../../service/RTC/StreamEventTypes":42,"../../service/xmpp/XMPPEvents":46,"../RTC/RTC":11,"./moderator":17,"./strophe.logger":18,"./strophe.rayo":19,"./strophe.util":20,"events":47,"pako":23}],22:[function(require,module,exports){
+},{"../../JitsiConnectionErrors":5,"../../JitsiConnectionEvents":6,"../../service/RTC/RTCEvents":41,"../../service/RTC/StreamEventTypes":43,"../../service/xmpp/XMPPEvents":47,"../RTC/RTC":11,"./moderator":17,"./strophe.emuc":18,"./strophe.logger":19,"./strophe.rayo":20,"./strophe.util":21,"events":48,"pako":24}],23:[function(require,module,exports){
 (function (process,global){
 /*!
  * @overview es6-promise - a tiny implementation of Promises/A+.
@@ -5554,7 +6105,7 @@ module.exports = XMPP;
 
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":48}],23:[function(require,module,exports){
+},{"_process":49}],24:[function(require,module,exports){
 // Top level file is just a mixin of submodules & constants
 'use strict';
 
@@ -5570,7 +6121,7 @@ assign(pako, deflate, inflate, constants);
 
 module.exports = pako;
 
-},{"./lib/deflate":24,"./lib/inflate":25,"./lib/utils/common":26,"./lib/zlib/constants":29}],24:[function(require,module,exports){
+},{"./lib/deflate":25,"./lib/inflate":26,"./lib/utils/common":27,"./lib/zlib/constants":30}],25:[function(require,module,exports){
 'use strict';
 
 
@@ -5948,7 +6499,7 @@ exports.deflate = deflate;
 exports.deflateRaw = deflateRaw;
 exports.gzip = gzip;
 
-},{"./utils/common":26,"./utils/strings":27,"./zlib/deflate.js":31,"./zlib/messages":36,"./zlib/zstream":38}],25:[function(require,module,exports){
+},{"./utils/common":27,"./utils/strings":28,"./zlib/deflate.js":32,"./zlib/messages":37,"./zlib/zstream":39}],26:[function(require,module,exports){
 'use strict';
 
 
@@ -6329,7 +6880,7 @@ exports.inflate = inflate;
 exports.inflateRaw = inflateRaw;
 exports.ungzip  = inflate;
 
-},{"./utils/common":26,"./utils/strings":27,"./zlib/constants":29,"./zlib/gzheader":32,"./zlib/inflate.js":34,"./zlib/messages":36,"./zlib/zstream":38}],26:[function(require,module,exports){
+},{"./utils/common":27,"./utils/strings":28,"./zlib/constants":30,"./zlib/gzheader":33,"./zlib/inflate.js":35,"./zlib/messages":37,"./zlib/zstream":39}],27:[function(require,module,exports){
 'use strict';
 
 
@@ -6433,7 +6984,7 @@ exports.setTyped = function (on) {
 
 exports.setTyped(TYPED_OK);
 
-},{}],27:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 // String encode/decode helpers
 'use strict';
 
@@ -6620,7 +7171,7 @@ exports.utf8border = function(buf, max) {
   return (pos + _utf8len[buf[pos]] > max) ? pos : max;
 };
 
-},{"./common":26}],28:[function(require,module,exports){
+},{"./common":27}],29:[function(require,module,exports){
 'use strict';
 
 // Note: adler32 takes 12% for level 0 and 2% for level 6.
@@ -6654,7 +7205,7 @@ function adler32(adler, buf, len, pos) {
 
 module.exports = adler32;
 
-},{}],29:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 module.exports = {
 
   /* Allowed flush values; see deflate() and inflate() below for details */
@@ -6703,7 +7254,7 @@ module.exports = {
   //Z_NULL:                 null // Use -1 or null inline, depending on var type
 };
 
-},{}],30:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 'use strict';
 
 // Note: we can't get significant speed boost here.
@@ -6746,7 +7297,7 @@ function crc32(crc, buf, len, pos) {
 
 module.exports = crc32;
 
-},{}],31:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 'use strict';
 
 var utils   = require('../utils/common');
@@ -8513,7 +9064,7 @@ exports.deflatePrime = deflatePrime;
 exports.deflateTune = deflateTune;
 */
 
-},{"../utils/common":26,"./adler32":28,"./crc32":30,"./messages":36,"./trees":37}],32:[function(require,module,exports){
+},{"../utils/common":27,"./adler32":29,"./crc32":31,"./messages":37,"./trees":38}],33:[function(require,module,exports){
 'use strict';
 
 
@@ -8555,7 +9106,7 @@ function GZheader() {
 
 module.exports = GZheader;
 
-},{}],33:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 'use strict';
 
 // See state defs from inflate.js
@@ -8882,7 +9433,7 @@ module.exports = function inflate_fast(strm, start) {
   return;
 };
 
-},{}],34:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 'use strict';
 
 
@@ -10387,7 +10938,7 @@ exports.inflateSyncPoint = inflateSyncPoint;
 exports.inflateUndermine = inflateUndermine;
 */
 
-},{"../utils/common":26,"./adler32":28,"./crc32":30,"./inffast":33,"./inftrees":35}],35:[function(require,module,exports){
+},{"../utils/common":27,"./adler32":29,"./crc32":31,"./inffast":34,"./inftrees":36}],36:[function(require,module,exports){
 'use strict';
 
 
@@ -10716,7 +11267,7 @@ module.exports = function inflate_table(type, lens, lens_index, codes, table, ta
   return 0;
 };
 
-},{"../utils/common":26}],36:[function(require,module,exports){
+},{"../utils/common":27}],37:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -10731,7 +11282,7 @@ module.exports = {
   '-6':   'incompatible version' /* Z_VERSION_ERROR (-6) */
 };
 
-},{}],37:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 'use strict';
 
 
@@ -11932,7 +12483,7 @@ exports._tr_flush_block  = _tr_flush_block;
 exports._tr_tally = _tr_tally;
 exports._tr_align = _tr_align;
 
-},{"../utils/common":26}],38:[function(require,module,exports){
+},{"../utils/common":27}],39:[function(require,module,exports){
 'use strict';
 
 
@@ -11963,14 +12514,14 @@ function ZStream() {
 
 module.exports = ZStream;
 
-},{}],39:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 var MediaStreamType = {
     VIDEO_TYPE: "Video",
 
     AUDIO_TYPE: "Audio"
 };
 module.exports = MediaStreamType;
-},{}],40:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 var RTCEvents = {
     RTC_READY: "rtc.ready",
     DATA_CHANNEL_OPEN: "rtc.data_channel_open",
@@ -11983,7 +12534,7 @@ var RTCEvents = {
 };
 
 module.exports = RTCEvents;
-},{}],41:[function(require,module,exports){
+},{}],42:[function(require,module,exports){
 var Resolutions = {
     "1080": {
         width: 1920,
@@ -12037,7 +12588,7 @@ var Resolutions = {
     }
 };
 module.exports = Resolutions;
-},{}],42:[function(require,module,exports){
+},{}],43:[function(require,module,exports){
 var StreamEventTypes = {
     EVENT_TYPE_LOCAL_CREATED: "stream.local_created",
 
@@ -12051,7 +12602,7 @@ var StreamEventTypes = {
 };
 
 module.exports = StreamEventTypes;
-},{}],43:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 var UIEvents = {
     NICKNAME_CHANGED: "UI.nickname_changed",
     SELECTED_ENDPOINT: "UI.selected_endpoint",
@@ -12059,7 +12610,7 @@ var UIEvents = {
     LARGEVIDEO_INIT: "UI.largevideo_init"
 };
 module.exports = UIEvents;
-},{}],44:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 var AuthenticationEvents = {
     /**
      * Event callback arguments:
@@ -12073,7 +12624,7 @@ var AuthenticationEvents = {
 };
 module.exports = AuthenticationEvents;
 
-},{}],45:[function(require,module,exports){
+},{}],46:[function(require,module,exports){
 var DesktopSharingEventTypes = {
     INIT: "ds.init",
 
@@ -12083,7 +12634,7 @@ var DesktopSharingEventTypes = {
 };
 
 module.exports = DesktopSharingEventTypes;
-},{}],46:[function(require,module,exports){
+},{}],47:[function(require,module,exports){
 var XMPPEvents = {
     CONNECTION_FAILED: "xmpp.connection.failed",
     // Indicates an interrupted connection event.
@@ -12138,7 +12689,7 @@ var XMPPEvents = {
     READY_TO_JOIN: 'xmpp.ready_to_join'
 };
 module.exports = XMPPEvents;
-},{}],47:[function(require,module,exports){
+},{}],48:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -12441,7 +12992,7 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],48:[function(require,module,exports){
+},{}],49:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
