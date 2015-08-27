@@ -13,6 +13,7 @@ VirtualHost "jitmeet.example.com"
         modules_enabled = {
             "bosh";
             "pubsub";
+            "ping"; -- Enable mod_ping
         }
 
 Component "conference.jitmeet.example.com" "muc"
