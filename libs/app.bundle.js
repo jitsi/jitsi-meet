@@ -3577,7 +3577,7 @@ function registerListeners() {
 
     APP.xmpp.addListener(XMPPEvents.ROOM_JOIN_ERROR, function (pres) {
         UI.messageHandler.openReportDialog(null,
-            "dialog.joinError", pres);
+            "dialog.connectError", pres);
     });
     APP.xmpp.addListener(XMPPEvents.ROOM_CONNECT_ERROR, function (pres) {
         UI.messageHandler.openReportDialog(null,
@@ -12501,8 +12501,7 @@ var CallStats = {
         this.userID =  APP.xmpp.myResource();
 
         var location = window.location;
-        this.confID = location.protocol + "//" +
-            location.hostname + location.pathname;
+        this.confID = location.hostname + location.pathname;
 
         //userID is generated or given by the origin server
         callStats.initialize(config.callStatsID,
@@ -18896,6 +18895,26 @@ module.exports = function (XMPP, eventEmitter) {
         },
 
         /**
+         * Checks if given <tt>jid</tt> has XEP-0199 ping support.
+         * @param jid the JID to be checked for ping support.
+         * @param callback function with boolean argument which will be
+         * <tt>true</tt> if XEP-0199 ping is supported by given <tt>jid</tt>
+         */
+        hasPingSupport: function (jid, callback) {
+            this.connection.disco.info(
+                jid, null,
+                function (result) {
+                    var ping = $(result).find('>>feature[var="urn:xmpp:ping"]');
+                    callback(ping.length > 0);
+                },
+                function (error) {
+                    console.error("Ping feature discovery error", error);
+                    callback(false);
+                }
+            );
+        },
+
+        /**
          * Starts to send ping in given interval to specified remote JID.
          * This plugin supports only one such task and <tt>stopInterval</tt>
          * must be called before starting a new one.
@@ -19173,7 +19192,17 @@ function connect(jid, password) {
 
                 console.info("My Jabber ID: " + connection.jid);
 
-                connection.ping.startInterval(config.hosts.domain);
+                // Schedule ping ?
+                var pingJid = connection.domain;
+                connection.ping.hasPingSupport(
+                    pingJid,
+                    function (hasPing) {
+                        if (hasPing)
+                            connection.ping.startInterval(pingJid);
+                        else
+                            console.warn("Ping NOT supported by " + pingJid);
+                    }
+                );
 
                 if (password)
                     authenticatedUser = true;
