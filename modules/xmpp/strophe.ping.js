@@ -54,6 +54,26 @@ module.exports = function (XMPP, eventEmitter) {
         },
 
         /**
+         * Checks if given <tt>jid</tt> has XEP-0199 ping support.
+         * @param jid the JID to be checked for ping support.
+         * @param callback function with boolean argument which will be
+         * <tt>true</tt> if XEP-0199 ping is supported by given <tt>jid</tt>
+         */
+        hasPingSupport: function (jid, callback) {
+            this.connection.disco.info(
+                jid, null,
+                function (result) {
+                    var ping = $(result).find('>>feature[var="urn:xmpp:ping"]');
+                    callback(ping.length > 0);
+                },
+                function (error) {
+                    console.error("Ping feature discovery error", error);
+                    callback(false);
+                }
+            );
+        },
+
+        /**
          * Starts to send ping in given interval to specified remote JID.
          * This plugin supports only one such task and <tt>stopInterval</tt>
          * must be called before starting a new one.

@@ -87,7 +87,17 @@ function connect(jid, password) {
 
                 console.info("My Jabber ID: " + connection.jid);
 
-                connection.ping.startInterval(config.hosts.domain);
+                // Schedule ping ?
+                var pingJid = config.hosts.domain;
+                connection.ping.hasPingSupport(
+                    pingJid,
+                    function (hasPing) {
+                        if (hasPing)
+                            connection.ping.startInterval(pingJid);
+                        else
+                            console.warn("Ping NOT supported by " + pingJid);
+                    }
+                );
 
                 if (password)
                     authenticatedUser = true;
