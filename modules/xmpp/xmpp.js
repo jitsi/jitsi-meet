@@ -113,8 +113,17 @@ XMPP.prototype._connect = function (jid, password) {
 
             logger.info("My Jabber ID: " + self.connection.jid);
 
-            self.connection.ping.startInterval(
-                Strophe.getDomainFromJid(self.connection.jid));
+            // Schedule ping ?
+            var pingJid = config.hosts.domain;
+            connection.ping.hasPingSupport(
+                pingJid,
+                function (hasPing) {
+                    if (hasPing)
+                        connection.ping.startInterval(pingJid);
+                    else
+                        console.warn("Ping NOT supported by " + pingJid);
+                }
+            );
             
             if (password)
                 authenticatedUser = true;
