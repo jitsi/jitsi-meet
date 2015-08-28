@@ -88,7 +88,7 @@ function connect(jid, password) {
                 console.info("My Jabber ID: " + connection.jid);
 
                 // Schedule ping ?
-                var pingJid = config.hosts.domain;
+                var pingJid = connection.domain;
                 connection.ping.hasPingSupport(
                     pingJid,
                     function (hasPing) {
