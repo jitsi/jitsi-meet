@@ -1,5 +1,7 @@
 !function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.JitsiMeetJS=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var room = null;
+var RTC = require("./modules/RTC/RTC");
+var XMPPEvents = require("./service/xmpp/XMPPEvents");
+
 /**
  * Creates a JitsiConference object with the given name and properties.
  * Note: this constructor is not a part of the public API (objects should be
@@ -14,14 +16,20 @@ function JitsiConference(options) {
     this.options = options;
     this.connection = this.options.connection;
     this.xmpp = this.connection.xmpp;
+    this.room = this.xmpp.createRoom(this.options.name, null, null);
+    this.rtc = new RTC();
+    this.xmpp.addListener(XMPPEvents.CALL_INCOMING,
+        this.rtc.onIncommingCall.bind(this.rtc));
+
 }
 
 /**
  * Joins the conference.
+ * @param password {string} the password
  */
-JitsiConference.prototype.join = function () {
+JitsiConference.prototype.join = function (password) {
 
-    room = this.xmpp.joinRoom(this.options.name, null, null);
+    this.room.join(password);
 }
 
 /**
@@ -29,7 +37,7 @@ JitsiConference.prototype.join = function () {
  */
 JitsiConference.prototype.leave = function () {
     this.xmpp.leaveRoom(room.roomjid);
-    room = null;
+    this.room = null;
 }
 
 /**
@@ -40,14 +48,14 @@ JitsiConference.prototype.leave = function () {
  *     or a JitsiConferenceError if rejected.
  */
 JitsiConference.prototype.createLocalTracks = function (options) {
-
+    return this.rtc.obtainAudioAndVideoPermissions(options || {});
 }
 
 /**
  * Returns the local tracks.
  */
 JitsiConference.prototype.getLocalTracks = function () {
-
+    return this.rtc.localStreams;
 };
 
 
@@ -60,7 +68,7 @@ JitsiConference.prototype.getLocalTracks = function () {
  * Note: consider adding eventing functionality by extending an EventEmitter impl, instead of rolling ourselves
  */
 JitsiConference.prototype.on = function (eventId, handler) {
-    this.xmpp.addListener(eventId, handler);
+    this.room.addListener(eventId, handler);
 }
 
 /**
@@ -71,7 +79,7 @@ JitsiConference.prototype.on = function (eventId, handler) {
  * Note: consider adding eventing functionality by extending an EventEmitter impl, instead of rolling ourselves
  */
 JitsiConference.prototype.off = function (eventId, handler) {
-    this.xmpp.removeListener(event, listener);
+    this.room.removeListener(eventId, listener);
 }
 
 // Common aliases for event emitter
@@ -84,7 +92,7 @@ JitsiConference.prototype.removeEventListener = JitsiConference.prototype.off
  * @param handler {Function} handler for the command
  */
  JitsiConference.prototype.addCommandListener = function (command, handler) {
-
+     this.room.addPresenceListener(command, handler);
  }
 
 /**
@@ -92,7 +100,7 @@ JitsiConference.prototype.removeEventListener = JitsiConference.prototype.off
   * @param command {String}  the name of the command
   */
  JitsiConference.prototype.removeCommandListener = function (command) {
-
+    this.room.removePresenceListener(command);
  }
 
 /**
@@ -100,7 +108,27 @@ JitsiConference.prototype.removeEventListener = JitsiConference.prototype.off
  * @param message the text message.
  */
 JitsiConference.prototype.sendTextMessage = function (message) {
-    room.sendMessage(message);
+    this.room.sendMessage(message);
+}
+
+/**
+ * Send presence command.
+ * @param name the name of the command.
+ * @param values Object with keys and values that will be send.
+ **/
+JitsiConference.prototype.sendCommand = function (name, values) {
+    this.room.addToPresence(name, values);
+    this.room.sendPresence();
+}
+
+/**
+ * Send presence command one time.
+ * @param name the name of the command.
+ * @param values Object with keys and values that will be send.
+ **/
+JitsiConference.prototype.sendCommandOnce = function (name, values) {
+    this.sendCommand(name, values);
+    this.removeCommand(name);
 }
 
 /**
@@ -108,13 +136,9 @@ JitsiConference.prototype.sendTextMessage = function (message) {
  * @param name the name of the command.
  * @param values Object with keys and values that will be send.
  * @param persistent if false the command will be sent only one time
- * @param successCallback will be called when the command is successfully send.
- * @param errorCallback will be called when the command is not sent successfully.
- * @returns {Promise.<{void}, JitsiConferenceError>} A promise that returns an array of created streams if resolved,
- *     or an JitsiConferenceError if rejected.
- */
-JitsiConference.prototype.sendCommand = function (name, values, persistent) {
-
+ **/
+JitsiConference.prototype.removeCommand = function (name) {
+    this.room.removeFromPresence(name);
 }
 
 /**
@@ -122,7 +146,7 @@ JitsiConference.prototype.sendCommand = function (name, values, persistent) {
  * @param name the display name to set
  */
 JitsiConference.prototype.setDisplayName = function(name) {
-    room.addToPresence("nick", {attributes: {xmlns: 'http://jabber.org/protocol/nick'}, value: name});
+    this.room.addToPresence("nick", {attributes: {xmlns: 'http://jabber.org/protocol/nick'}, value: name});
 }
 
 /**
@@ -130,7 +154,15 @@ JitsiConference.prototype.setDisplayName = function(name) {
  * @param id the identifier of the participant
  */
 JitsiConference.prototype.selectParticipant = function(participantId) {
+    this.rtc.selectedEndpoint(participantId);
+}
 
+/**
+ *
+ * @param id the identifier of the participant
+ */
+JitsiConference.prototype.pinParticipant = function(participantId) {
+    this.rtc.pinEndpoint(participantId);
 }
 
 /**
@@ -153,7 +185,7 @@ JitsiConference.prototype.getParticipantById = function(id) {
 
 module.exports = JitsiConference;
 
-},{}],2:[function(require,module,exports){
+},{"./modules/RTC/RTC":11,"./service/xmpp/XMPPEvents":74}],2:[function(require,module,exports){
 /**
  * Enumeration with the errors for the conference.
  * @type {{string: string}}
@@ -243,7 +275,15 @@ var JitsiConferenceEvents = {
     /**
      * Indicates that the connection to the conference has been restored.
      */
-    CONNECTION_ESTABLISHED: "conference.connecionEstablished"
+    CONNECTION_RESTORED: "conference.connecionRestored",
+    /**
+     * Indicates that conference has been joined.
+     */
+    CONFERENCE_JOINED: "conference.joined",
+    /**
+     * Indicates that conference has been left.
+     */
+    CONFERENCE_LEFT: "conference.left"
 };
 
 module.exports = JitsiConferenceEvents;
@@ -266,6 +306,7 @@ function JitsiConnection(appID, token, options) {
     this.token = token;
     this.options = options;
     this.xmpp = new XMPP(options);
+    this.conferences = {};
 }
 
 /**
@@ -300,7 +341,8 @@ JitsiConnection.prototype.setToken = function (token) {
  * @returns {JitsiConference} returns the new conference object.
  */
 JitsiConnection.prototype.initJitsiConference = function (name, options) {
-    return new JitsiConference({name: name, config: options, connection: this});
+    this.conferences[name] = new JitsiConference({name: name, config: options, connection: this});
+    return this.conferences[name];
 }
 
 /**
@@ -323,7 +365,7 @@ JitsiConnection.prototype.removeEventListener = function (event, listener) {
 
 module.exports = JitsiConnection;
 
-},{"./JitsiConference":1,"./modules/xmpp/xmpp":29}],5:[function(require,module,exports){
+},{"./JitsiConference":1,"./modules/xmpp/xmpp":30}],5:[function(require,module,exports){
 /**
  * Enumeration with the errors for the connection.
  * @type {{string: string}}
@@ -397,11 +439,11 @@ var LibJitsiMeet = {
 }
 
 //Setups the promise object.
-require("es6-promise").polyfill();
+window.Promise = window.Promise || require("es6-promise").polyfill();
 
 module.exports = LibJitsiMeet;
 
-},{"./JitsiConferenceErrors":2,"./JitsiConferenceEvents":3,"./JitsiConnection":4,"./JitsiConnectionErrors":5,"./JitsiConnectionEvents":6,"es6-promise":31}],8:[function(require,module,exports){
+},{"./JitsiConferenceErrors":2,"./JitsiConferenceEvents":3,"./JitsiConnection":4,"./JitsiConnectionErrors":5,"./JitsiConnectionEvents":6,"es6-promise":32}],8:[function(require,module,exports){
 /* global config, APP, Strophe */
 
 // cache datachannels to avoid garbage collection
@@ -594,7 +636,7 @@ function onPinnedEndpointChanged(userResource) {
 module.exports = DataChannels;
 
 
-},{"../../service/RTC/RTCEvents":67}],9:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":68}],9:[function(require,module,exports){
 /* global APP */
 var StreamEventTypes = require("../../service/RTC/StreamEventTypes.js");
 var RTCEvents = require("../../service/RTC/RTCEvents");
@@ -617,7 +659,8 @@ function implementOnEndedHandling(stream) {
     };
 }
 
-function LocalStream(stream, type, eventEmitter, videoType, isGUMStream) {
+function LocalStream(RTC, stream, type, eventEmitter, videoType, isGUMStream) {
+    this.rtc = RTC;
     this.stream = stream;
     this.eventEmitter = eventEmitter;
     this.type = type;
@@ -679,16 +722,16 @@ LocalStream.prototype.setMute = function (mute)
             this.eventEmitter.emit(eventType, true);
         } else {
             var self = this;
-            APP.RTC.rtcUtils.obtainAudioAndVideoPermissions(
-                (this.isAudioStream() ? ["audio"] : ["video"]),
-                function (stream) {
+            this.rtcUtils.obtainAudioAndVideoPermissions(
+                (this.isAudioStream() ? ["audio"] : ["video"]))
+                .then(function (stream) {
                     if (isAudio) {
-                        APP.RTC.changeLocalAudio(stream,
+                        self.rtc.changeLocalAudio(stream,
                             function () {
                                 self.eventEmitter.emit(eventType, false);
                             });
                     } else {
-                        APP.RTC.changeLocalVideo(stream, false,
+                        self.rtc.changeLocalVideo(stream, false,
                             function () {
                                 self.eventEmitter.emit(eventType, false);
                             });
@@ -720,7 +763,7 @@ LocalStream.prototype.getId = function () {
 
 module.exports = LocalStream;
 
-},{"../../service/RTC/RTCEvents":67,"../../service/RTC/StreamEventTypes.js":69,"./RTCBrowserType":12}],10:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":68,"../../service/RTC/StreamEventTypes.js":70,"./RTCBrowserType":12}],10:[function(require,module,exports){
 var MediaStreamType = require("../../service/RTC/MediaStreamTypes");
 
 /**
@@ -769,7 +812,7 @@ MediaStream.prototype.setMute = function (value) {
 
 module.exports = MediaStream;
 
-},{"../../service/RTC/MediaStreamTypes":66}],11:[function(require,module,exports){
+},{"../../service/RTC/MediaStreamTypes":67}],11:[function(require,module,exports){
 /* global APP */
 var EventEmitter = require("events");
 var RTCBrowserType = require("./RTCBrowserType");
@@ -784,9 +827,7 @@ var StreamEventTypes = require("../../service/RTC/StreamEventTypes.js");
 var RTCEvents = require("../../service/RTC/RTCEvents.js");
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 var UIEvents = require("../../service/UI/UIEvents");
-
-var eventEmitter = new EventEmitter();
-
+var desktopsharing = require("../desktopsharing/desktopsharing");
 
 function getMediaStreamUsage()
 {
@@ -815,238 +856,269 @@ function getMediaStreamUsage()
     return result;
 }
 
-var RTC = {
-    rtcUtils: null,
-    devices: {
+
+function RTC(options)
+{
+    this.rtcUtils = null;
+    this.devices = {
         audio: true,
         video: true
-    },
-    localStreams: [],
-    remoteStreams: {},
-    localAudio: null,
-    localVideo: null,
-    addStreamListener: function (listener, eventType) {
-        eventEmitter.on(eventType, listener);
-    },
-    addListener: function (type, listener) {
-        eventEmitter.on(type, listener);
-    },
-    removeStreamListener: function (listener, eventType) {
-        if(!(eventType instanceof StreamEventTypes))
-            throw "Illegal argument";
+    };
+    this.localStreams = [];
+    this.remoteStreams = {};
+    this.localAudio = null;
+    this.localVideo = null;
+    this.eventEmitter = new EventEmitter();
+    var self = this;
+    this.options = options || {};
+    desktopsharing.addListener(
+        function (stream, isUsingScreenStream, callback) {
+            self.changeLocalVideo(stream, isUsingScreenStream, callback);
+        }, DesktopSharingEventTypes.NEW_STREAM_CREATED);
 
-        eventEmitter.removeListener(eventType, listener);
-    },
-    createLocalStream: function (stream, type, change, videoType, isMuted, isGUMStream) {
+    // In case of IE we continue from 'onReady' callback
+    // passed to RTCUtils constructor. It will be invoked by Temasys plugin
+    // once it is initialized.
+    var onReady = function () {
+        self.eventEmitter.emit(RTCEvents.RTC_READY, true);
+    };
 
-        var localStream =  new LocalStream(stream, type, eventEmitter, videoType, isGUMStream);
-        //in firefox we have only one stream object
-        if(this.localStreams.length == 0 ||
-            this.localStreams[0].getOriginalStream() != stream)
-            this.localStreams.push(localStream);
-        if(isMuted === true)
+    this.rtcUtils = new RTCUtils(this, onReady);
+
+    // Call onReady() if Temasys plugin is not used
+    if (!RTCBrowserType.isTemasysPluginUsed()) {
+        onReady();
+    }
+}
+
+RTC.prototype.obtainAudioAndVideoPermissions = function (options) {
+    return this.rtcUtils.obtainAudioAndVideoPermissions(
+        null, getMediaStreamUsage(), options.resolution);
+}
+
+RTC.prototype.onIncommingCall = function(event) {
+    DataChannels.init(event.peerconnection, self.eventEmitter);
+}
+
+RTC.prototype.selectedEndpoint = function (id) {
+    DataChannels.handleSelectedEndpointEvent(id);
+}
+
+RTC.prototype.pinEndpoint = function (id) {
+    DataChannels.handlePinnedEndpointEvent(id);
+}
+
+RTC.prototype.addStreamListener = function (listener, eventType) {
+    this.eventEmitter.on(eventType, listener);
+};
+
+RTC.prototype.addListener = function (type, listener) {
+    this.eventEmitter.on(type, listener);
+};
+
+RTC.prototype.removeStreamListener = function (listener, eventType) {
+    if(!(eventType instanceof StreamEventTypes))
+        throw "Illegal argument";
+
+    this.removeListener(eventType, listener);
+};
+
+RTC.prototype.createLocalStreams = function (streams, change) {
+    for (var i = 0; i < streams.length; i++) {
+        var localStream = new LocalStream(this, streams[i].stream,
+            streams[i].type, this.eventEmitter, streams[i].videoType,
+            streams[i].isGUMStream);
+        this.localStreams.push(localStream);
+        if (streams[i].isMuted === true)
             localStream.setMute(true);
 
-        if(type == "audio") {
+        if (streams[i].type == "audio") {
             this.localAudio = localStream;
         } else {
             this.localVideo = localStream;
         }
         var eventType = StreamEventTypes.EVENT_TYPE_LOCAL_CREATED;
-        if(change)
+        if (change)
             eventType = StreamEventTypes.EVENT_TYPE_LOCAL_CHANGED;
 
-        eventEmitter.emit(eventType, localStream, isMuted);
-        return localStream;
-    },
-    removeLocalStream: function (stream) {
-        for(var i = 0; i < this.localStreams.length; i++) {
-            if(this.localStreams[i].getOriginalStream() === stream) {
-                delete this.localStreams[i];
-                return;
-            }
-        }
-    },
-    createRemoteStream: function (data, sid, thessrc) {
-        var remoteStream = new MediaStream(data, sid, thessrc,
-            RTCBrowserType.getBrowserType(), eventEmitter);
-        var jid = data.peerjid || APP.xmpp.myJid();
-        if(!this.remoteStreams[jid]) {
-            this.remoteStreams[jid] = {};
-        }
-        this.remoteStreams[jid][remoteStream.type]= remoteStream;
-        eventEmitter.emit(StreamEventTypes.EVENT_TYPE_REMOTE_CREATED, remoteStream);
-        return remoteStream;
-    },
-    getPCConstraints: function () {
-        return this.rtcUtils.pc_constraints;
-    },
-    getUserMediaWithConstraints:function(um, success_callback,
-                                         failure_callback, resolution,
-                                         bandwidth, fps, desktopStream)
-    {
-        return this.rtcUtils.getUserMediaWithConstraints(um, success_callback,
-            failure_callback, resolution, bandwidth, fps, desktopStream);
-    },
-    attachMediaStream:  function (elSelector, stream) {
-        this.rtcUtils.attachMediaStream(elSelector, stream);
-    },
-    getStreamID:  function (stream) {
-        return this.rtcUtils.getStreamID(stream);
-    },
-    getVideoSrc: function (element) {
-        return this.rtcUtils.getVideoSrc(element);
-    },
-    setVideoSrc: function (element, src) {
-        this.rtcUtils.setVideoSrc(element, src);
-    },
-    getVideoElementName: function () {
-        return RTCBrowserType.isTemasysPluginUsed() ? 'object' : 'video';
-    },
-    dispose: function() {
-        if (this.rtcUtils) {
-            this.rtcUtils = null;
-        }
-    },
-    stop:  function () {
-        this.dispose();
-    },
-    start: function () {
-        var self = this;
-        APP.desktopsharing.addListener(
-            function (stream, isUsingScreenStream, callback) {
-                self.changeLocalVideo(stream, isUsingScreenStream, callback);
-            }, DesktopSharingEventTypes.NEW_STREAM_CREATED);
-        APP.xmpp.addListener(XMPPEvents.CALL_INCOMING, function(event) {
-            DataChannels.init(event.peerconnection, eventEmitter);
-        });
-        APP.UI.addListener(UIEvents.SELECTED_ENDPOINT,
-            DataChannels.handleSelectedEndpointEvent);
-        APP.UI.addListener(UIEvents.PINNED_ENDPOINT,
-            DataChannels.handlePinnedEndpointEvent);
-
-        // In case of IE we continue from 'onReady' callback
-        // passed to RTCUtils constructor. It will be invoked by Temasys plugin
-        // once it is initialized.
-        var onReady = function () {
-            eventEmitter.emit(RTCEvents.RTC_READY, true);
-            self.rtcUtils.obtainAudioAndVideoPermissions(
-                null, null, getMediaStreamUsage());
-        };
-
-        this.rtcUtils = new RTCUtils(this, onReady);
-
-        // Call onReady() if Temasys plugin is not used
-        if (!RTCBrowserType.isTemasysPluginUsed()) {
-            onReady();
-        }
-    },
-    muteRemoteVideoStream: function (jid, value) {
-        var stream;
-
-        if(this.remoteStreams[jid] &&
-            this.remoteStreams[jid][MediaStreamType.VIDEO_TYPE]) {
-            stream = this.remoteStreams[jid][MediaStreamType.VIDEO_TYPE];
-        }
-
-        if(!stream)
-            return true;
-
-        if (value != stream.muted) {
-            stream.setMute(value);
-            return true;
-        }
-        return false;
-    },
-    switchVideoStreams: function (new_stream) {
-        this.localVideo.stream = new_stream;
-
-        this.localStreams = [];
-
-        //in firefox we have only one stream object
-        if (this.localAudio.getOriginalStream() != new_stream)
-            this.localStreams.push(this.localAudio);
-        this.localStreams.push(this.localVideo);
-    },
-    changeLocalVideo: function (stream, isUsingScreenStream, callback) {
-        var oldStream = this.localVideo.getOriginalStream();
-        var type = (isUsingScreenStream ? "screen" : "camera");
-        var localCallback = callback;
-        if(this.localVideo.isMuted() && this.localVideo.videoType !== type) {
-            localCallback = function() {
-                APP.xmpp.setVideoMute(false, function(mute) {
-                    eventEmitter.emit(RTCEvents.VIDEO_MUTE, mute);
-                });
-                
-                callback();
-            };
-        }
-        // FIXME: Workaround for FF/IE/Safari
-        if (stream && stream.videoStream) {
-            stream = stream.videoStream;
-        }
-        var videoStream = this.rtcUtils.createStream(stream, true);
-        this.localVideo = this.createLocalStream(videoStream, "video", true, type);
-        // Stop the stream to trigger onended event for old stream
-        oldStream.stop();
-
-        this.switchVideoStreams(videoStream, oldStream);
-
-        APP.xmpp.switchStreams(videoStream, oldStream,localCallback);
-    },
-    changeLocalAudio: function (stream, callback) {
-        var oldStream = this.localAudio.getOriginalStream();
-        var newStream = this.rtcUtils.createStream(stream);
-        this.localAudio = this.createLocalStream(newStream, "audio", true);
-        // Stop the stream to trigger onended event for old stream
-        oldStream.stop();
-        APP.xmpp.switchStreams(newStream, oldStream, callback, true);
-    },
-    isVideoMuted: function (jid) {
-        if (jid === APP.xmpp.myJid()) {
-            var localVideo = APP.RTC.localVideo;
-            return (!localVideo || localVideo.isMuted());
-        } else {
-            if (!APP.RTC.remoteStreams[jid] ||
-                !APP.RTC.remoteStreams[jid][MediaStreamType.VIDEO_TYPE]) {
-                return null;
-            }
-            return APP.RTC.remoteStreams[jid][MediaStreamType.VIDEO_TYPE].muted;
-        }
-    },
-    setVideoMute: function (mute, callback, options) {
-        if (!this.localVideo)
-            return;
-
-        if (mute == APP.RTC.localVideo.isMuted())
-        {
-            APP.xmpp.sendVideoInfoPresence(mute);
-            if (callback)
-                callback(mute);
-        }
-        else
-        {
-            APP.RTC.localVideo.setMute(mute);
-            APP.xmpp.setVideoMute(
-                mute,
-                callback,
-                options);
-        }
-    },
-    setDeviceAvailability: function (devices) {
-        if(!devices)
-            return;
-        if(devices.audio === true || devices.audio === false)
-            this.devices.audio = devices.audio;
-        if(devices.video === true || devices.video === false)
-            this.devices.video = devices.video;
-        eventEmitter.emit(RTCEvents.AVAILABLE_DEVICES_CHANGED, this.devices);
+        this.eventEmitter.emit(eventType, localStream, streams[i].isMuted);
     }
+    return this.localStreams;
+};
+
+RTC.prototype.removeLocalStream = function (stream) {
+    for(var i = 0; i < this.localStreams.length; i++) {
+        if(this.localStreams[i].getOriginalStream() === stream) {
+            delete this.localStreams[i];
+            return;
+        }
+    }
+};
+
+RTC.prototype.createRemoteStream = function (data, sid, thessrc) {
+    var remoteStream = new MediaStream(data, sid, thessrc,
+        RTCBrowserType.getBrowserType(), this.eventEmitter);
+    if(data.peerjid)
+        return;
+    var jid = data.peerjid;
+    if(!this.remoteStreams[jid]) {
+        this.remoteStreams[jid] = {};
+    }
+    this.remoteStreams[jid][remoteStream.type]= remoteStream;
+    this.eventEmitter.emit(StreamEventTypes.EVENT_TYPE_REMOTE_CREATED, remoteStream);
+    return remoteStream;
+};
+
+RTC.prototype.getPCConstraints = function () {
+    return this.rtcUtils.pc_constraints;
+};
+
+RTC.prototype.getUserMediaWithConstraints = function(um, success_callback,
+                                     failure_callback, resolution,
+                                     bandwidth, fps, desktopStream)
+{
+    return this.rtcUtils.getUserMediaWithConstraints(um, success_callback,
+        failure_callback, resolution, bandwidth, fps, desktopStream);
+};
+
+RTC.prototype.attachMediaStream =  function (elSelector, stream) {
+    this.rtcUtils.attachMediaStream(elSelector, stream);
+};
+
+RTC.prototype.getStreamID = function (stream) {
+    return this.rtcUtils.getStreamID(stream);
+};
+
+RTC.prototype.getVideoSrc = function (element) {
+    return this.rtcUtils.getVideoSrc(element);
+};
+
+RTC.prototype.setVideoSrc = function (element, src) {
+    this.rtcUtils.setVideoSrc(element, src);
+};
+
+RTC.prototype.getVideoElementName = function () {
+    return RTCBrowserType.isTemasysPluginUsed() ? 'object' : 'video';
+};
+
+RTC.prototype.dispose = function() {
+    if (this.rtcUtils) {
+        this.rtcUtils = null;
+    }
+};
+
+RTC.prototype.muteRemoteVideoStream = function (jid, value) {
+    var stream;
+
+    if(this.remoteStreams[jid] &&
+        this.remoteStreams[jid][MediaStreamType.VIDEO_TYPE]) {
+        stream = this.remoteStreams[jid][MediaStreamType.VIDEO_TYPE];
+    }
+
+    if(!stream)
+        return true;
+
+    if (value != stream.muted) {
+        stream.setMute(value);
+        return true;
+    }
+    return false;
+};
+
+RTC.prototype.switchVideoStreams = function (new_stream) {
+    this.localVideo.stream = new_stream;
+
+    this.localStreams = [];
+
+    //in firefox we have only one stream object
+    if (this.localAudio.getOriginalStream() != new_stream)
+        this.localStreams.push(this.localAudio);
+    this.localStreams.push(this.localVideo);
+};
+
+RTC.prototype.changeLocalVideo = function (stream, isUsingScreenStream, callback) {
+    var oldStream = this.localVideo.getOriginalStream();
+    var type = (isUsingScreenStream ? "screen" : "camera");
+    var localCallback = callback;
+
+    if(this.localVideo.isMuted() && this.localVideo.videoType !== type) {
+        localCallback = function() {
+            APP.xmpp.setVideoMute(false, function(mute) {
+                self.eventEmitter.emit(RTCEvents.VIDEO_MUTE, mute);
+            });
+            
+            callback();
+        };
+    }
+    // FIXME: Workaround for FF/IE/Safari
+    if (stream && stream.videoStream) {
+        stream = stream.videoStream;
+    }
+    var videoStream = this.rtcUtils.createStream(stream, true);
+    this.localVideo = this.createLocalStream(videoStream, "video", true, type);
+    // Stop the stream to trigger onended event for old stream
+    oldStream.stop();
+
+    this.switchVideoStreams(videoStream, oldStream);
+
+    APP.xmpp.switchStreams(videoStream, oldStream,localCallback);
+};
+
+RTC.prototype.changeLocalAudio = function (stream, callback) {
+    var oldStream = this.localAudio.getOriginalStream();
+    var newStream = this.rtcUtils.createStream(stream);
+    this.localAudio = this.createLocalStream(newStream, "audio", true);
+    // Stop the stream to trigger onended event for old stream
+    oldStream.stop();
+    APP.xmpp.switchStreams(newStream, oldStream, callback, true);
+};
+
+RTC.prototype.isVideoMuted = function (jid) {
+    if (jid === APP.xmpp.myJid()) {
+        var localVideo = APP.RTC.localVideo;
+        return (!localVideo || localVideo.isMuted());
+    } else {
+        if (!this.remoteStreams[jid] ||
+            !this.remoteStreams[jid][MediaStreamType.VIDEO_TYPE]) {
+            return null;
+        }
+        return this.remoteStreams[jid][MediaStreamType.VIDEO_TYPE].muted;
+    }
+};
+
+RTC.prototype.setVideoMute = function (mute, callback, options) {
+    if (!this.localVideo)
+        return;
+
+    if (mute == this.localVideo.isMuted())
+    {
+        APP.xmpp.sendVideoInfoPresence(mute);
+        if (callback)
+            callback(mute);
+    }
+    else
+    {
+        this.localVideo.setMute(mute);
+        APP.xmpp.setVideoMute(
+            mute,
+            callback,
+            options);
+    }
+};
+
+RTC.prototype.setDeviceAvailability = function (devices) {
+    if(!devices)
+        return;
+    if(devices.audio === true || devices.audio === false)
+        this.devices.audio = devices.audio;
+    if(devices.video === true || devices.video === false)
+        this.devices.video = devices.video;
+    this.eventEmitter.emit(RTCEvents.AVAILABLE_DEVICES_CHANGED, this.devices);
 };
 
 module.exports = RTC;
 
-},{"../../service/RTC/MediaStreamTypes":66,"../../service/RTC/RTCEvents.js":67,"../../service/RTC/StreamEventTypes.js":69,"../../service/UI/UIEvents":70,"../../service/desktopsharing/DesktopSharingEventTypes":72,"../../service/xmpp/XMPPEvents":73,"./DataChannels":8,"./LocalStream.js":9,"./MediaStream.js":10,"./RTCBrowserType":12,"./RTCUtils.js":13,"events":74}],12:[function(require,module,exports){
+},{"../../service/RTC/MediaStreamTypes":67,"../../service/RTC/RTCEvents.js":68,"../../service/RTC/StreamEventTypes.js":70,"../../service/UI/UIEvents":71,"../../service/desktopsharing/DesktopSharingEventTypes":73,"../../service/xmpp/XMPPEvents":74,"../desktopsharing/desktopsharing":15,"./DataChannels":8,"./LocalStream.js":9,"./MediaStream.js":10,"./RTCBrowserType":12,"./RTCUtils.js":13,"events":75}],12:[function(require,module,exports){
 
 var currentBrowser;
 
@@ -1346,7 +1418,7 @@ function getConstraints(um, resolution, bandwidth, fps, desktopStream, isAndroid
 }
 
 //Options parameter is to pass config options. Currently uses only "useIPv6".
-function RTCUtils(RTCService, onTemasysPluginReady, options)
+function RTCUtils(RTCService, onTemasysPluginReady)
 {
     var self = this;
     this.service = RTCService;
@@ -1420,7 +1492,7 @@ function RTCUtils(RTCService, onTemasysPluginReady, options)
         };
         // DTLS should now be enabled by default but..
         this.pc_constraints = {'optional': [{'DtlsSrtpKeyAgreement': 'true'}]};
-        if (options.useIPv6) {
+        if (this.service.options.useIPv6) {
             // https://code.google.com/p/webrtc/issues/detail?id=2828
             this.pc_constraints.optional.push({googIPv6: true});
         }
@@ -1551,94 +1623,93 @@ RTCUtils.prototype.setAvailableDevices = function (um, available) {
  * not to ask twice.
  */
 RTCUtils.prototype.obtainAudioAndVideoPermissions =
-    function(devices, callback, usageOptions)
+    function(devices, usageOptions, resolution)
 {
     var self = this;
     // Get AV
 
-    var successCallback = function (stream) {
-        if(callback)
-            callback(stream, usageOptions);
+    return new Promise(function(resolve, reject) {
+        var successCallback = function (stream) {
+            resolve(self.successCallback(stream, usageOptions));
+        };
+
+        if (!devices)
+            devices = ['audio', 'video'];
+
+        var newDevices = [];
+
+
+        if (usageOptions)
+            for (var i = 0; i < devices.length; i++) {
+                var device = devices[i];
+                if (usageOptions[device] === true)
+                    newDevices.push(device);
+            }
         else
-            self.successCallback(stream, usageOptions);
-    };
+            newDevices = devices;
 
-    if(!devices)
-        devices = ['audio', 'video'];
-
-    var newDevices = [];
-
-
-    if(usageOptions)
-        for(var i = 0; i < devices.length; i++) {
-            var device = devices[i];
-            if(usageOptions[device] === true)
-                newDevices.push(device);
+        if (newDevices.length === 0) {
+            successCallback();
+            return;
         }
-    else
-        newDevices = devices;
 
-    if(newDevices.length === 0) {
-        successCallback();
-        return;
-    }
+        if (RTCBrowserType.isFirefox() || RTCBrowserType.isTemasysPluginUsed()) {
 
-    if (RTCBrowserType.isFirefox() || RTCBrowserType.isTemasysPluginUsed()) {
-
-        // With FF/IE we can't split the stream into audio and video because FF
-        // doesn't support media stream constructors. So, we need to get the
-        // audio stream separately from the video stream using two distinct GUM
-        // calls. Not very user friendly :-( but we don't have many other
-        // options neither.
-        //
-        // Note that we pack those 2 streams in a single object and pass it to
-        // the successCallback method.
-        var obtainVideo = function (audioStream) {
-            self.getUserMediaWithConstraints(
-                ['video'],
-                function (videoStream) {
-                    return successCallback({
-                        audioStream: audioStream,
-                        videoStream: videoStream
-                    });
-                },
-                function (error) {
-                    console.error(
-                        'failed to obtain video stream - stop', error);
-                    self.errorCallback(error);
-                },
-                config.resolution || '360');
-        };
-        var obtainAudio = function () {
-            self.getUserMediaWithConstraints(
-                ['audio'],
-                function (audioStream) {
-                    if (newDevices.indexOf('video') !== -1)
-                        obtainVideo(audioStream);
-                },
-                function (error) {
-                    console.error(
-                        'failed to obtain audio stream - stop', error);
-                    self.errorCallback(error);
-                }
-            );
-        };
-        if (newDevices.indexOf('audio') !== -1) {
-            obtainAudio();
+            // With FF/IE we can't split the stream into audio and video because FF
+            // doesn't support media stream constructors. So, we need to get the
+            // audio stream separately from the video stream using two distinct GUM
+            // calls. Not very user friendly :-( but we don't have many other
+            // options neither.
+            //
+            // Note that we pack those 2 streams in a single object and pass it to
+            // the successCallback method.
+            var obtainVideo = function (audioStream) {
+                self.getUserMediaWithConstraints(
+                    ['video'],
+                    function (videoStream) {
+                        return successCallback({
+                            audioStream: audioStream,
+                            videoStream: videoStream
+                        });
+                    },
+                    function (error) {
+                        console.error(
+                            'failed to obtain video stream - stop', error);
+                        self.errorCallback(error, resolve);
+                    },
+                        config.resolution || '360');
+            };
+            var obtainAudio = function () {
+                self.getUserMediaWithConstraints(
+                    ['audio'],
+                    function (audioStream) {
+                        if (newDevices.indexOf('video') !== -1)
+                            obtainVideo(audioStream);
+                    },
+                    function (error) {
+                        console.error(
+                            'failed to obtain audio stream - stop', error);
+                        self.errorCallback(error, resolve);
+                    }
+                );
+            };
+            if (newDevices.indexOf('audio') !== -1) {
+                obtainAudio();
+            } else {
+                obtainVideo(null);
+            }
         } else {
-            obtainVideo(null);
+            this.getUserMediaWithConstraints(
+                newDevices,
+                function (stream) {
+                    successCallback(stream);
+                },
+                function (error) {
+                    self.errorCallback(error, resolve);
+                },
+                resolution || '360');
         }
-    } else {
-        this.getUserMediaWithConstraints(
-        newDevices,
-        function (stream) {
-            successCallback(stream);
-        },
-        function (error) {
-            self.errorCallback(error);
-        },
-        config.resolution || '360');
-    }
+    }.bind(this));
 };
 
 RTCUtils.prototype.successCallback = function (stream, usageOptions) {
@@ -1647,10 +1718,10 @@ RTCUtils.prototype.successCallback = function (stream, usageOptions) {
     if (stream && stream.getAudioTracks && stream.getVideoTracks)
         console.log('got', stream, stream.getAudioTracks().length,
             stream.getVideoTracks().length);
-    this.handleLocalStream(stream, usageOptions);
+    return this.handleLocalStream(stream, usageOptions);
 };
 
-RTCUtils.prototype.errorCallback = function (error) {
+RTCUtils.prototype.errorCallback = function (error, resolve) {
     var self = this;
     console.error('failed to obtain audio/video stream - trying audio only', error);
     var resolution = getPreviousResolution(currentResolution);
@@ -1663,7 +1734,7 @@ RTCUtils.prototype.errorCallback = function (error) {
     {
         self.getUserMediaWithConstraints(['audio', 'video'],
             function (stream) {
-                return self.successCallback(stream);
+                resolve(self.successCallback(stream));
             }, function (error) {
                 return self.errorCallback(error);
             }, resolution);
@@ -1672,12 +1743,12 @@ RTCUtils.prototype.errorCallback = function (error) {
         self.getUserMediaWithConstraints(
             ['audio'],
             function (stream) {
-                return self.successCallback(stream);
+                resolve(self.successCallback(stream));
             },
             function (error) {
                 console.error('failed to obtain audio/video stream - stop',
                     error);
-                return self.successCallback(null);
+                resolve(self.successCallback(null));
             }
         );
     }
@@ -1686,7 +1757,6 @@ RTCUtils.prototype.errorCallback = function (error) {
 RTCUtils.prototype.handleLocalStream = function(stream, usageOptions) {
     // If this is FF, the stream parameter is *not* a MediaStream object, it's
     // an object with two properties: audioStream, videoStream.
-    var audioStream, videoStream;
     if(window.webkitMediaStream)
     {
         audioStream = new webkitMediaStream();
@@ -1704,6 +1774,7 @@ RTCUtils.prototype.handleLocalStream = function(stream, usageOptions) {
                 videoStream.addTrack(videoTracks[i]);
             }
         }
+
     }
     else if (RTCBrowserType.isFirefox() || RTCBrowserType.isTemasysPluginUsed())
     {   // Firefox and Temasys plugin
@@ -1724,12 +1795,9 @@ RTCUtils.prototype.handleLocalStream = function(stream, usageOptions) {
     var audioGUM = (!usageOptions || usageOptions.audio !== false),
         videoGUM = (!usageOptions || usageOptions.video !== false);
 
-
-    this.service.createLocalStream(audioStream, "audio", null, null,
-        audioMuted, audioGUM);
-
-    this.service.createLocalStream(videoStream, "video", null, 'camera',
-        videoMuted, videoGUM);
+    return this.service.createLocalStreams(
+        [{stream: audioStream, type: "audio", isMuted: audioMuted, isGUMStream: audioGUM, videoType: null},
+        {stream: videoStream, type: "video", isMuted: videoMuted, isGUMStream: videoGUM, videoType: "camera"}]);
 };
 
 function DummyMediaStream(id) {
@@ -1768,7 +1836,7 @@ RTCUtils.prototype.createStream = function(stream, isVideo) {
 
 module.exports = RTCUtils;
 
-},{"../../service/RTC/Resolutions":68,"../xmpp/SDPUtil":21,"./RTCBrowserType":12,"./adapter.screenshare":14}],14:[function(require,module,exports){
+},{"../../service/RTC/Resolutions":69,"../xmpp/SDPUtil":22,"./RTCBrowserType":12,"./adapter.screenshare":14}],14:[function(require,module,exports){
 /*! adapterjs - custom version from - 2015-08-12 */
 
 // Adapter's interface.
@@ -3100,6 +3168,395 @@ if (navigator.mozGetUserMedia) {
   }
 })();
 },{}],15:[function(require,module,exports){
+/* global $, alert, APP, changeLocalVideo, chrome, config, getConferenceHandler,
+ getUserMediaWithConstraints */
+/**
+ * Indicates that desktop stream is currently in use(for toggle purpose).
+ * @type {boolean}
+ */
+var isUsingScreenStream = false;
+/**
+ * Indicates that switch stream operation is in progress and prevent from
+ * triggering new events.
+ * @type {boolean}
+ */
+var switchInProgress = false;
+
+/**
+ * Method used to get screen sharing stream.
+ *
+ * @type {function (stream_callback, failure_callback}
+ */
+var obtainDesktopStream = null;
+
+/**
+ * Indicates whether desktop sharing extension is installed.
+ * @type {boolean}
+ */
+var extInstalled = false;
+
+/**
+ * Indicates whether update of desktop sharing extension is required.
+ * @type {boolean}
+ */
+var extUpdateRequired = false;
+
+var AdapterJS = require("../RTC/adapter.screenshare");
+
+var EventEmitter = require("events");
+
+var eventEmitter = new EventEmitter();
+
+var DesktopSharingEventTypes
+    = require("../../service/desktopsharing/DesktopSharingEventTypes");
+
+var RTCBrowserType = require("../RTC/RTCBrowserType");
+
+var RTCEvents = require("../../service/RTC/RTCEvents");
+
+/**
+ * Method obtains desktop stream from WebRTC 'screen' source.
+ * Flag 'chrome://flags/#enable-usermedia-screen-capture' must be enabled.
+ */
+function obtainWebRTCScreen(streamCallback, failCallback) {
+    APP.RTC.getUserMediaWithConstraints(
+        ['screen'],
+        streamCallback,
+        failCallback
+    );
+}
+
+/**
+ * Constructs inline install URL for Chrome desktop streaming extension.
+ * The 'chromeExtensionId' must be defined in config.js.
+ * @returns {string}
+ */
+function getWebStoreInstallUrl()
+{
+    return "https://chrome.google.com/webstore/detail/" +
+        config.chromeExtensionId;
+}
+
+/**
+ * Checks whether extension update is required.
+ * @param minVersion minimal required version
+ * @param extVersion current extension version
+ * @returns {boolean}
+ */
+function isUpdateRequired(minVersion, extVersion)
+{
+    try
+    {
+        var s1 = minVersion.split('.');
+        var s2 = extVersion.split('.');
+
+        var len = Math.max(s1.length, s2.length);
+        for (var i = 0; i < len; i++)
+        {
+            var n1 = 0,
+                n2 = 0;
+
+            if (i < s1.length)
+                n1 = parseInt(s1[i]);
+            if (i < s2.length)
+                n2 = parseInt(s2[i]);
+
+            if (isNaN(n1) || isNaN(n2))
+            {
+                return true;
+            }
+            else if (n1 !== n2)
+            {
+                return n1 > n2;
+            }
+        }
+
+        // will happen if boths version has identical numbers in
+        // their components (even if one of them is longer, has more components)
+        return false;
+    }
+    catch (e)
+    {
+        console.error("Failed to parse extension version", e);
+        APP.UI.messageHandler.showError("dialog.error",
+            "dialog.detectext");
+        return true;
+    }
+}
+
+function checkChromeExtInstalled(callback) {
+    if (!chrome.runtime) {
+        // No API, so no extension for sure
+        callback(false, false);
+        return;
+    }
+    chrome.runtime.sendMessage(
+        config.chromeExtensionId,
+        { getVersion: true },
+        function (response) {
+            if (!response || !response.version) {
+                // Communication failure - assume that no endpoint exists
+                console.warn(
+                    "Extension not installed?: ", chrome.runtime.lastError);
+                callback(false, false);
+                return;
+            }
+            // Check installed extension version
+            var extVersion = response.version;
+            console.log('Extension version is: ' + extVersion);
+            var updateRequired
+                = isUpdateRequired(config.minChromeExtVersion, extVersion);
+            callback(!updateRequired, updateRequired);
+        }
+    );
+}
+
+function doGetStreamFromExtension(streamCallback, failCallback) {
+    // Sends 'getStream' msg to the extension.
+    // Extension id must be defined in the config.
+    chrome.runtime.sendMessage(
+        config.chromeExtensionId,
+        { getStream: true, sources: config.desktopSharingSources },
+        function (response) {
+            if (!response) {
+                failCallback(chrome.runtime.lastError);
+                return;
+            }
+            console.log("Response from extension: " + response);
+            if (response.streamId) {
+                APP.RTC.getUserMediaWithConstraints(
+                    ['desktop'],
+                    function (stream) {
+                        streamCallback(stream);
+                    },
+                    failCallback,
+                    null, null, null,
+                    response.streamId);
+            } else {
+                failCallback("Extension failed to get the stream");
+            }
+        }
+    );
+}
+/**
+ * Asks Chrome extension to call chooseDesktopMedia and gets chrome 'desktop'
+ * stream for returned stream token.
+ */
+function obtainScreenFromExtension(streamCallback, failCallback) {
+    if (extInstalled) {
+        doGetStreamFromExtension(streamCallback, failCallback);
+    } else {
+        if (extUpdateRequired) {
+            alert(
+                'Jitsi Desktop Streamer requires update. ' +
+                'Changes will take effect after next Chrome restart.');
+        }
+
+        chrome.webstore.install(
+            getWebStoreInstallUrl(),
+            function (arg) {
+                console.log("Extension installed successfully", arg);
+                extInstalled = true;
+                // We need to give a moment for the endpoint to become available
+                window.setTimeout(function () {
+                    doGetStreamFromExtension(streamCallback, failCallback);
+                }, 500);
+            },
+            function (arg) {
+                console.log("Failed to install the extension", arg);
+                failCallback(arg);
+                APP.UI.messageHandler.showError("dialog.error",
+                    "dialog.failtoinstall");
+            }
+        );
+    }
+}
+
+/**
+ * Call this method to toggle desktop sharing feature.
+ * @param method pass "ext" to use chrome extension for desktop capture(chrome
+ *        extension required), pass "webrtc" to use WebRTC "screen" desktop
+ *        source('chrome://flags/#enable-usermedia-screen-capture' must be
+ *        enabled), pass any other string or nothing in order to disable this
+ *        feature completely.
+ */
+function setDesktopSharing(method) {
+
+    obtainDesktopStream = null;
+
+    // When TemasysWebRTC plugin is used we always use getUserMedia, so we don't
+    // care about 'method' parameter
+    if (RTCBrowserType.isTemasysPluginUsed()) {
+        if (!AdapterJS.WebRTCPlugin.plugin.HasScreensharingFeature) {
+            console.info("Screensharing not supported by this plugin version");
+        } else if (!AdapterJS.WebRTCPlugin.plugin.isScreensharingAvailable) {
+            console.info(
+            "Screensharing not available with Temasys plugin on this site");
+        } else {
+            obtainDesktopStream = obtainWebRTCScreen;
+            console.info("Using Temasys plugin for desktop sharing");
+        }
+    } else if (RTCBrowserType.isChrome()) {
+        if (method == "ext") {
+            if (RTCBrowserType.getChromeVersion() >= 34) {
+                obtainDesktopStream = obtainScreenFromExtension;
+                console.info("Using Chrome extension for desktop sharing");
+                initChromeExtension();
+            } else {
+                console.info("Chrome extension not supported until ver 34");
+            }
+        } else if (method == "webrtc") {
+            obtainDesktopStream = obtainWebRTCScreen;
+            console.info("Using Chrome WebRTC for desktop sharing");
+        }
+    }
+
+    if (!obtainDesktopStream) {
+        console.info("Desktop sharing disabled");
+    }
+}
+
+/**
+ * Initializes <link rel=chrome-webstore-item /> with extension id set in
+ * config.js to support inline installs. Host site must be selected as main
+ * website of published extension.
+ */
+function initInlineInstalls()
+{
+    $("link[rel=chrome-webstore-item]").attr("href", getWebStoreInstallUrl());
+}
+
+function initChromeExtension() {
+    // Initialize Chrome extension inline installs
+    initInlineInstalls();
+    // Check if extension is installed
+    checkChromeExtInstalled(function (installed, updateRequired) {
+        extInstalled = installed;
+        extUpdateRequired = updateRequired;
+        console.info(
+            "Chrome extension installed: " + extInstalled +
+            " updateRequired: " + extUpdateRequired);
+    });
+}
+
+function getVideoStreamFailed(error) {
+    console.error("Failed to obtain the stream to switch to", error);
+    switchInProgress = false;
+    isUsingScreenStream = false;
+    newStreamCreated(null);
+}
+
+function getDesktopStreamFailed(error) {
+    console.error("Failed to obtain the stream to switch to", error);
+    switchInProgress = false;
+}
+
+function streamSwitchDone() {
+    switchInProgress = false;
+    eventEmitter.emit(
+        DesktopSharingEventTypes.SWITCHING_DONE,
+        isUsingScreenStream);
+}
+
+function newStreamCreated(stream)
+{
+    eventEmitter.emit(DesktopSharingEventTypes.NEW_STREAM_CREATED,
+        stream, isUsingScreenStream, streamSwitchDone);
+}
+
+function onEndedHandler(stream) {
+    if (!switchInProgress && isUsingScreenStream) {
+        APP.desktopsharing.toggleScreenSharing();
+    }
+    //FIXME: to be verified
+    if (stream.removeEventListener) {
+        stream.removeEventListener('ended', onEndedHandler);
+    } else {
+        stream.detachEvent('ended', onEndedHandler);
+    }
+}
+
+// Called when RTC finishes initialization
+function onWebRtcReady() {
+
+    setDesktopSharing(config.desktopSharing);
+
+    eventEmitter.emit(DesktopSharingEventTypes.INIT);
+}
+
+module.exports = {
+    isUsingScreenStream: function () {
+        return isUsingScreenStream;
+    },
+
+    /**
+     * @returns {boolean} <tt>true</tt> if desktop sharing feature is available
+     *          and enabled.
+     */
+    isDesktopSharingEnabled: function () { return !!obtainDesktopStream; },
+    
+    init: function () {
+        APP.RTC.addListener(RTCEvents.RTC_READY, onWebRtcReady);
+    },
+
+    addListener: function (listener, type)
+    {
+        eventEmitter.on(type, listener);
+    },
+
+    removeListener: function (listener, type) {
+        eventEmitter.removeListener(type, listener);
+    },
+
+    /*
+     * Toggles screen sharing.
+     */
+    toggleScreenSharing: function () {
+        if (switchInProgress || !obtainDesktopStream) {
+            console.warn("Switch in progress or no method defined");
+            return;
+        }
+        switchInProgress = true;
+
+        if (!isUsingScreenStream)
+        {
+            // Switch to desktop stream
+            obtainDesktopStream(
+                function (stream) {
+                    // We now use screen stream
+                    isUsingScreenStream = true;
+                    // Hook 'ended' event to restore camera
+                    // when screen stream stops
+                    //FIXME: to be verified
+                    if (stream.addEventListener) {
+                        stream.addEventListener('ended', function () {
+                            onEndedHandler(stream);
+                        });
+                    } else {
+                        stream.attachEvent('ended', function () {
+                            onEndedHandler(stream);
+                        });
+                    }
+                    newStreamCreated(stream);
+                },
+                getDesktopStreamFailed);
+        } else {
+            // Disable screen stream
+            APP.RTC.getUserMediaWithConstraints(
+                ['video'],
+                function (stream) {
+                    // We are now using camera stream
+                    isUsingScreenStream = false;
+                    newStreamCreated(stream);
+                },
+                getVideoStreamFailed, config.resolution || '360'
+            );
+        }
+    }
+};
+
+
+},{"../../service/RTC/RTCEvents":68,"../../service/desktopsharing/DesktopSharingEventTypes":73,"../RTC/RTCBrowserType":12,"../RTC/adapter.screenshare":14,"events":75}],16:[function(require,module,exports){
 function supportsLocalStorage() {
     try {
         return 'localStorage' in window && window.localStorage !== null;
@@ -3181,7 +3638,7 @@ Settings.prototype.setLanguage = function (lang) {
 
 module.exports = Settings;
 
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 /*
  * JingleSession provides an API to manage a single Jingle session. We will
  * have different implementations depending on the underlying interface used
@@ -3310,7 +3767,7 @@ JingleSession.prototype.setAnswer = function(jingle) {};
 
 module.exports = JingleSession;
 
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 /* jshint -W117 */
 var JingleSession = require("./JingleSession");
 var TraceablePeerConnection = require("./TraceablePeerConnection");
@@ -3322,7 +3779,6 @@ var transform = require("sdp-transform");
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 var RTCBrowserType = require("../RTC/RTCBrowserType");
 var SSRCReplacement = require("./LocalSSRCReplacement");
-var RTC = require("../RTC/RTC");
 
 // Jingle stuff
 function JingleSessionPC(me, sid, connection, service, eventEmitter) {
@@ -4626,7 +5082,6 @@ JingleSessionPC.onJingleError = function (session, error)
 
 JingleSessionPC.onJingleFatalError = function (session, error)
 {
-    this.service.sessionTerminated = true;
     this.eventEmitter.emit(XMPPEvents.CONFERENCE_SETUP_FAILED);
     this.eventEmitter.emit(XMPPEvents.JINGLE_FATAL_ERROR, session, error);
 }
@@ -4760,7 +5215,7 @@ JingleSessionPC.prototype.remoteStreamAdded = function (data, times) {
 
 module.exports = JingleSessionPC;
 
-},{"../../service/xmpp/XMPPEvents":73,"../RTC/RTC":11,"../RTC/RTCBrowserType":12,"./JingleSession":16,"./LocalSSRCReplacement":18,"./SDP":19,"./SDPDiffer":20,"./SDPUtil":21,"./TraceablePeerConnection":22,"async":30,"sdp-transform":63}],18:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":74,"../RTC/RTCBrowserType":12,"./JingleSession":17,"./LocalSSRCReplacement":19,"./SDP":20,"./SDPDiffer":21,"./SDPUtil":22,"./TraceablePeerConnection":23,"async":31,"sdp-transform":64}],19:[function(require,module,exports){
 /* global $ */
 
 /*
@@ -5030,7 +5485,7 @@ var LocalSSRCReplacement = {
 
 module.exports = LocalSSRCReplacement;
 
-},{"../RTC/RTCBrowserType":12,"./SDP":19}],19:[function(require,module,exports){
+},{"../RTC/RTCBrowserType":12,"./SDP":20}],20:[function(require,module,exports){
 /* jshint -W117 */
 var SDPUtil = require("./SDPUtil");
 
@@ -5656,7 +6111,7 @@ SDP.prototype.jingle2media = function (content) {
 module.exports = SDP;
 
 
-},{"./SDPUtil":21}],20:[function(require,module,exports){
+},{"./SDPUtil":22}],21:[function(require,module,exports){
 
 var SDPUtil = require("./SDPUtil");
 
@@ -5828,7 +6283,7 @@ SDPDiffer.prototype.toJingle = function(modify) {
 };
 
 module.exports = SDPDiffer;
-},{"./SDPUtil":21}],21:[function(require,module,exports){
+},{"./SDPUtil":22}],22:[function(require,module,exports){
 SDPUtil = {
     filter_special_chars: function (text) {
         return text.replace(/[\\\/\{,\}\+]/g, "");
@@ -6181,7 +6636,7 @@ SDPUtil = {
     }
 };
 module.exports = SDPUtil;
-},{}],22:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 var RTC = require('../RTC/RTC');
 var RTCBrowserType = require("../RTC/RTCBrowserType.js");
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
@@ -6636,7 +7091,7 @@ TraceablePeerConnection.prototype.getStats = function(callback, errback) {
 module.exports = TraceablePeerConnection;
 
 
-},{"../../service/xmpp/XMPPEvents":73,"../RTC/RTC":11,"../RTC/RTCBrowserType.js":12,"./LocalSSRCReplacement":18,"sdp-interop":49,"sdp-simulcast":56,"sdp-transform":63}],23:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":74,"../RTC/RTC":11,"../RTC/RTCBrowserType.js":12,"./LocalSSRCReplacement":19,"sdp-interop":50,"sdp-simulcast":57,"sdp-transform":64}],24:[function(require,module,exports){
 /* global $, $iq, APP, config, messageHandler,
  roomName, sessionTerminated, Strophe, Util */
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
@@ -7057,7 +7512,7 @@ module.exports = Moderator;
 
 
 
-},{"../../service/authentication/AuthenticationEvents":71,"../../service/xmpp/XMPPEvents":73,"../settings/Settings":15}],24:[function(require,module,exports){
+},{"../../service/authentication/AuthenticationEvents":72,"../../service/xmpp/XMPPEvents":74,"../settings/Settings":16}],25:[function(require,module,exports){
 /* jshint -W117 */
 /* a simple MUC connection plugin
  * can only handle a single MUC room
@@ -7065,6 +7520,7 @@ module.exports = Moderator;
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 var Moderator = require("./moderator");
 var RTC = require("../RTC/RTC");
+var EventEmitter = require("events");
 
 var parser = {
     packet2JSON: function (packet, nodes) {
@@ -7106,6 +7562,7 @@ var parser = {
 function ChatRoom(connection, jid, password, XMPP, eventEmitter)
 {
     this.eventEmitter = eventEmitter;
+    this.roomEmitter = new EventEmitter();
     this.xmpp = XMPP;
     this.connection = connection;
     this.roomjid = Strophe.getBareJidFromJid(jid);
@@ -7114,12 +7571,24 @@ function ChatRoom(connection, jid, password, XMPP, eventEmitter)
     console.info("Joined MUC as " + this.myroomjid);
     this.members = {};
     this.presMap = {};
+    this.presHandlers = {};
     this.joined = false;
     this.role = null;
     this.focusMucJid = null;
     this.bridgeIsDown = false;
     this.moderator = new Moderator(this.roomjid, this.xmpp, eventEmitter);
     this.initPresenceMap();
+    this.readyToJoin = false;
+    this.joinRequested = false;
+    var self = this;
+    this.moderator.allocateConferenceFocus(function()
+    {
+        self.readyToJoin = true;
+        if(self.joinRequested)
+        {
+            self.join();
+        }
+    });
 }
 
 ChatRoom.prototype.initPresenceMap = function () {
@@ -7145,8 +7614,16 @@ ChatRoom.prototype.initPresenceMap = function () {
     });
 };
 
-ChatRoom.prototype.join = function () {
-    this.moderator.allocateConferenceFocus(this.sendPresence.bind(this));
+ChatRoom.prototype.join = function (password) {
+    if(password)
+        this.password = password;
+    if(!this.readyToJoin)
+    {
+        this.joinRequested = true;
+        return;
+    }
+    this.joinRequested = false;
+    this.sendPresence();
 }
 
 ChatRoom.prototype.sendPresence = function () {
@@ -7271,7 +7748,7 @@ ChatRoom.prototype.onPresence = function (pres) {
                 }
                 break;
             default :
-                this.processNode(node);
+                this.processNode(node, from);
         }
 
     }
@@ -7322,8 +7799,9 @@ ChatRoom.prototype.onPresence = function (pres) {
 
 };
 
-ChatRoom.prototype.processNode = function (node) {
-    this.eventEmitter.emit(XMPPEvents.PRESENCE_SETTING, node);
+ChatRoom.prototype.processNode = function (node, from) {
+    if(this.presHandlers[node.tagName])
+        this.presHandlers[node.tagName](node, from);
 };
 
 ChatRoom.prototype.sendMessage = function (body, nickname) {
@@ -7510,6 +7988,14 @@ ChatRoom.prototype.removeFromPresence = function (key) {
     }
 };
 
+ChatRoom.prototype.addPresenceListener = function (name, handler) {
+    this.presHandlers[name] = handler;
+}
+
+ChatRoom.prototype.removePresenceListener = function (name) {
+    delete this.presHandlers[name];
+}
+
 ChatRoom.prototype.isModerator = function (jid) {
     return this.role === 'moderator';
 };
@@ -7534,15 +8020,13 @@ module.exports = function(XMPP) {
             this.connection.addHandler(this.onPresenceError.bind(this), null, 'presence', 'error', null);
             this.connection.addHandler(this.onMessage.bind(this), null, 'message', null, null);
         },
-        doJoin: function (jid, password, eventEmitter) {
+        createRoom: function (jid, password, eventEmitter) {
             var roomJid = Strophe.getBareJidFromJid(jid);
-            if(this.rooms[roomJid])
-            {
+            if (this.rooms[roomJid]) {
                 console.error("You are already in the room!");
                 return;
             }
             this.rooms[roomJid] = new ChatRoom(this.connection, jid, password, XMPP, eventEmitter);
-            this.rooms[roomJid].join();
             return this.rooms[roomJid];
         },
         doLeave: function (jid) {
@@ -7602,7 +8086,7 @@ module.exports = function(XMPP) {
 };
 
 
-},{"../../service/xmpp/XMPPEvents":73,"../RTC/RTC":11,"./moderator":23}],25:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":74,"../RTC/RTC":11,"./moderator":24,"events":75}],26:[function(require,module,exports){
 /* jshint -W117 */
 
 var JingleSession = require("./JingleSessionPC");
@@ -7891,7 +8375,7 @@ module.exports = function(XMPP, eventEmitter) {
 };
 
 
-},{"../../service/xmpp/XMPPEvents":73,"../RTC/RTCBrowserType":12,"./JingleSessionPC":17}],26:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":74,"../RTC/RTCBrowserType":12,"./JingleSessionPC":18}],27:[function(require,module,exports){
 /* global Strophe */
 module.exports = function () {
 
@@ -7912,7 +8396,7 @@ module.exports = function () {
         }
     });
 };
-},{}],27:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 /* jshint -W117 */
 module.exports = function() {
     Strophe.addConnectionPlugin('rayo',
@@ -8009,7 +8493,7 @@ module.exports = function() {
     );
 };
 
-},{}],28:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 /**
  * Strophe logger implementation. Logs from level WARN and above.
  */
@@ -8053,7 +8537,7 @@ module.exports = function () {
     };
 };
 
-},{}],29:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 /* global $, APP, config, Strophe*/
 var Moderator = require("./moderator");
 var EventEmitter = require("events");
@@ -8108,7 +8592,6 @@ function initStrophePlugins(XMPP)
 //}
 
 function XMPP(options) {
-    this.sessionTerminated = false;
     this.eventEmitter = new EventEmitter();
     this.connection = null;
     this.disconnectInProgress = false;
@@ -8222,7 +8705,7 @@ XMPP.prototype.connect = function (jid, password) {
     return this._connect(jid, password);
 };
 
-XMPP.prototype.joinRoom = function(roomName, useNicks, nick) {
+XMPP.prototype.createRoom = function (roomName, useNicks, nick) {
     var roomjid = roomName  + '@' + this.options.hosts.muc;
 
     if (useNicks) {
@@ -8239,32 +8722,9 @@ XMPP.prototype.joinRoom = function(roomName, useNicks, nick) {
 
         roomjid += '/' + tmpJid;
     }
-    return this.connection.emuc.doJoin(roomjid, null, this.eventEmitter);
-};
 
-
-XMPP.prototype.disposeConference = function (onUnload) {
-    var handler = this.connection.jingle.activecall;
-    if (handler && handler.peerconnection) {
-        // FIXME: probably removing streams is not required and close() should
-        // be enough
-        if (RTC.localAudio) {
-            handler.peerconnection.removeStream(
-                RTC.localAudio.getOriginalStream(), onUnload);
-        }
-        if (RTC.localVideo) {
-            handler.peerconnection.removeStream(
-                RTC.localVideo.getOriginalStream(), onUnload);
-        }
-        handler.peerconnection.close();
-    }
-    this.eventEmitter.emit(XMPPEvents.DISPOSE_CONFERENCE, onUnload);
-    this.connection.jingle.activecall = null;
-    if (!onUnload) {
-        this.sessionTerminated = true;
-        this.connection.emuc.doLeave();
-    }
-};
+    return this.connection.emuc.createRoom(roomjid, null, this.eventEmitter);
+}
 
 XMPP.prototype.addListener = function(type, listener) {
     this.eventEmitter.on(type, listener);
@@ -8275,6 +8735,21 @@ XMPP.prototype.removeListener = function (type, listener) {
 };
 
 XMPP.prototype.leaveRoom = function (jid) {
+    var handler = this.connection.jingle.jid2session[jid];
+    if (handler && handler.peerconnection) {
+        // FIXME: probably removing streams is not required and close() should
+        // be enough
+        if (RTC.localAudio) {
+            handler.peerconnection.removeStream(
+                RTC.localAudio.getOriginalStream(), true);
+        }
+        if (RTC.localVideo) {
+            handler.peerconnection.removeStream(
+                RTC.localVideo.getOriginalStream(), true);
+        }
+        handler.peerconnection.close();
+    }
+    this.eventEmitter.emit(XMPPEvents.DISPOSE_CONFERENCE);
     this.connection.emuc.doLeave(jid);
 };
 
@@ -8422,7 +8897,7 @@ XMPP.prototype.removeStream = function (stream) {
     this.connection.jingle.activecall.peerconnection.removeStream(stream);
 };
 
-XMPP.prototype.disconnect = function (callback) {
+XMPP.prototype.disconnect = function () {
     if (this.disconnectInProgress || !this.connection || !this.connection.connected)
     {
         this.eventEmitter.emit(JitsiConnectionEvents.WRONG_STATE);
@@ -8437,7 +8912,7 @@ XMPP.prototype.disconnect = function (callback) {
 
 module.exports = XMPP;
 
-},{"../../JitsiConnectionErrors":5,"../../JitsiConnectionEvents":6,"../../service/RTC/RTCEvents":67,"../../service/RTC/StreamEventTypes":69,"../../service/xmpp/XMPPEvents":73,"../RTC/RTC":11,"./moderator":23,"./strophe.emuc":24,"./strophe.jingle":25,"./strophe.logger":26,"./strophe.rayo":27,"./strophe.util":28,"events":74,"pako":32}],30:[function(require,module,exports){
+},{"../../JitsiConnectionErrors":5,"../../JitsiConnectionEvents":6,"../../service/RTC/RTCEvents":68,"../../service/RTC/StreamEventTypes":70,"../../service/xmpp/XMPPEvents":74,"../RTC/RTC":11,"./moderator":24,"./strophe.emuc":25,"./strophe.jingle":26,"./strophe.logger":27,"./strophe.rayo":28,"./strophe.util":29,"events":75,"pako":33}],31:[function(require,module,exports){
 (function (process){
 /*!
  * async
@@ -9564,7 +10039,7 @@ module.exports = XMPP;
 }());
 
 }).call(this,require('_process'))
-},{"_process":75}],31:[function(require,module,exports){
+},{"_process":76}],32:[function(require,module,exports){
 (function (process,global){
 /*!
  * @overview es6-promise - a tiny implementation of Promises/A+.
@@ -10535,7 +11010,7 @@ module.exports = XMPP;
 
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":75}],32:[function(require,module,exports){
+},{"_process":76}],33:[function(require,module,exports){
 // Top level file is just a mixin of submodules & constants
 'use strict';
 
@@ -10551,7 +11026,7 @@ assign(pako, deflate, inflate, constants);
 
 module.exports = pako;
 
-},{"./lib/deflate":33,"./lib/inflate":34,"./lib/utils/common":35,"./lib/zlib/constants":38}],33:[function(require,module,exports){
+},{"./lib/deflate":34,"./lib/inflate":35,"./lib/utils/common":36,"./lib/zlib/constants":39}],34:[function(require,module,exports){
 'use strict';
 
 
@@ -10929,7 +11404,7 @@ exports.deflate = deflate;
 exports.deflateRaw = deflateRaw;
 exports.gzip = gzip;
 
-},{"./utils/common":35,"./utils/strings":36,"./zlib/deflate.js":40,"./zlib/messages":45,"./zlib/zstream":47}],34:[function(require,module,exports){
+},{"./utils/common":36,"./utils/strings":37,"./zlib/deflate.js":41,"./zlib/messages":46,"./zlib/zstream":48}],35:[function(require,module,exports){
 'use strict';
 
 
@@ -11310,7 +11785,7 @@ exports.inflate = inflate;
 exports.inflateRaw = inflateRaw;
 exports.ungzip  = inflate;
 
-},{"./utils/common":35,"./utils/strings":36,"./zlib/constants":38,"./zlib/gzheader":41,"./zlib/inflate.js":43,"./zlib/messages":45,"./zlib/zstream":47}],35:[function(require,module,exports){
+},{"./utils/common":36,"./utils/strings":37,"./zlib/constants":39,"./zlib/gzheader":42,"./zlib/inflate.js":44,"./zlib/messages":46,"./zlib/zstream":48}],36:[function(require,module,exports){
 'use strict';
 
 
@@ -11414,7 +11889,7 @@ exports.setTyped = function (on) {
 
 exports.setTyped(TYPED_OK);
 
-},{}],36:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 // String encode/decode helpers
 'use strict';
 
@@ -11601,7 +12076,7 @@ exports.utf8border = function(buf, max) {
   return (pos + _utf8len[buf[pos]] > max) ? pos : max;
 };
 
-},{"./common":35}],37:[function(require,module,exports){
+},{"./common":36}],38:[function(require,module,exports){
 'use strict';
 
 // Note: adler32 takes 12% for level 0 and 2% for level 6.
@@ -11635,7 +12110,7 @@ function adler32(adler, buf, len, pos) {
 
 module.exports = adler32;
 
-},{}],38:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 module.exports = {
 
   /* Allowed flush values; see deflate() and inflate() below for details */
@@ -11684,7 +12159,7 @@ module.exports = {
   //Z_NULL:                 null // Use -1 or null inline, depending on var type
 };
 
-},{}],39:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 'use strict';
 
 // Note: we can't get significant speed boost here.
@@ -11727,7 +12202,7 @@ function crc32(crc, buf, len, pos) {
 
 module.exports = crc32;
 
-},{}],40:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 'use strict';
 
 var utils   = require('../utils/common');
@@ -13494,7 +13969,7 @@ exports.deflatePrime = deflatePrime;
 exports.deflateTune = deflateTune;
 */
 
-},{"../utils/common":35,"./adler32":37,"./crc32":39,"./messages":45,"./trees":46}],41:[function(require,module,exports){
+},{"../utils/common":36,"./adler32":38,"./crc32":40,"./messages":46,"./trees":47}],42:[function(require,module,exports){
 'use strict';
 
 
@@ -13536,7 +14011,7 @@ function GZheader() {
 
 module.exports = GZheader;
 
-},{}],42:[function(require,module,exports){
+},{}],43:[function(require,module,exports){
 'use strict';
 
 // See state defs from inflate.js
@@ -13863,7 +14338,7 @@ module.exports = function inflate_fast(strm, start) {
   return;
 };
 
-},{}],43:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 'use strict';
 
 
@@ -15368,7 +15843,7 @@ exports.inflateSyncPoint = inflateSyncPoint;
 exports.inflateUndermine = inflateUndermine;
 */
 
-},{"../utils/common":35,"./adler32":37,"./crc32":39,"./inffast":42,"./inftrees":44}],44:[function(require,module,exports){
+},{"../utils/common":36,"./adler32":38,"./crc32":40,"./inffast":43,"./inftrees":45}],45:[function(require,module,exports){
 'use strict';
 
 
@@ -15697,7 +16172,7 @@ module.exports = function inflate_table(type, lens, lens_index, codes, table, ta
   return 0;
 };
 
-},{"../utils/common":35}],45:[function(require,module,exports){
+},{"../utils/common":36}],46:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -15712,7 +16187,7 @@ module.exports = {
   '-6':   'incompatible version' /* Z_VERSION_ERROR (-6) */
 };
 
-},{}],46:[function(require,module,exports){
+},{}],47:[function(require,module,exports){
 'use strict';
 
 
@@ -16913,7 +17388,7 @@ exports._tr_flush_block  = _tr_flush_block;
 exports._tr_tally = _tr_tally;
 exports._tr_align = _tr_align;
 
-},{"../utils/common":35}],47:[function(require,module,exports){
+},{"../utils/common":36}],48:[function(require,module,exports){
 'use strict';
 
 
@@ -16944,7 +17419,7 @@ function ZStream() {
 
 module.exports = ZStream;
 
-},{}],48:[function(require,module,exports){
+},{}],49:[function(require,module,exports){
 module.exports = function arrayEquals(array) {
     // if the other array is a falsy value, return
     if (!array)
@@ -16970,10 +17445,10 @@ module.exports = function arrayEquals(array) {
 }
 
 
-},{}],49:[function(require,module,exports){
+},{}],50:[function(require,module,exports){
 exports.Interop = require('./interop');
 
-},{"./interop":50}],50:[function(require,module,exports){
+},{"./interop":51}],51:[function(require,module,exports){
 "use strict";
 
 var transform = require('./transform');
@@ -17555,7 +18030,7 @@ Interop.prototype.toUnifiedPlan = function(desc) {
     //#endregion
 };
 
-},{"./array-equals":48,"./transform":51}],51:[function(require,module,exports){
+},{"./array-equals":49,"./transform":52}],52:[function(require,module,exports){
 var transform = require('sdp-transform');
 
 exports.write = function(session, opts) {
@@ -17654,7 +18129,7 @@ exports.parse = function(sdp) {
 };
 
 
-},{"sdp-transform":53}],52:[function(require,module,exports){
+},{"sdp-transform":54}],53:[function(require,module,exports){
 var grammar = module.exports = {
   v: [{
       name: 'version',
@@ -17903,7 +18378,7 @@ Object.keys(grammar).forEach(function (key) {
   });
 });
 
-},{}],53:[function(require,module,exports){
+},{}],54:[function(require,module,exports){
 var parser = require('./parser');
 var writer = require('./writer');
 
@@ -17913,7 +18388,7 @@ exports.parseFmtpConfig = parser.parseFmtpConfig;
 exports.parsePayloads = parser.parsePayloads;
 exports.parseRemoteCandidates = parser.parseRemoteCandidates;
 
-},{"./parser":54,"./writer":55}],54:[function(require,module,exports){
+},{"./parser":55,"./writer":56}],55:[function(require,module,exports){
 var toIntIfInt = function (v) {
   return String(Number(v)) === v ? Number(v) : v;
 };
@@ -18008,7 +18483,7 @@ exports.parseRemoteCandidates = function (str) {
   return candidates;
 };
 
-},{"./grammar":52}],55:[function(require,module,exports){
+},{"./grammar":53}],56:[function(require,module,exports){
 var grammar = require('./grammar');
 
 // customized util.format - discards excess arguments and can void middle ones
@@ -18124,7 +18599,7 @@ module.exports = function (session, opts) {
   return sdp.join('\r\n') + '\r\n';
 };
 
-},{"./grammar":52}],56:[function(require,module,exports){
+},{"./grammar":53}],57:[function(require,module,exports){
 var transform = require('sdp-transform');
 var transformUtils = require('./transform-utils');
 var parseSsrcs = transformUtils.parseSsrcs;
@@ -18526,7 +19001,7 @@ Simulcast.prototype.mungeLocalDescription = function (desc) {
 
 module.exports = Simulcast;
 
-},{"./transform-utils":57,"sdp-transform":59}],57:[function(require,module,exports){
+},{"./transform-utils":58,"sdp-transform":60}],58:[function(require,module,exports){
 exports.writeSsrcs = function(sources, order) {
   var ssrcs = [];
 
@@ -18577,30 +19052,30 @@ exports.parseSsrcs = function (mLine) {
 };
 
 
-},{}],58:[function(require,module,exports){
-arguments[4][52][0].apply(exports,arguments)
-},{"dup":52}],59:[function(require,module,exports){
+},{}],59:[function(require,module,exports){
 arguments[4][53][0].apply(exports,arguments)
-},{"./parser":60,"./writer":61,"dup":53}],60:[function(require,module,exports){
+},{"dup":53}],60:[function(require,module,exports){
 arguments[4][54][0].apply(exports,arguments)
-},{"./grammar":58,"dup":54}],61:[function(require,module,exports){
+},{"./parser":61,"./writer":62,"dup":54}],61:[function(require,module,exports){
 arguments[4][55][0].apply(exports,arguments)
-},{"./grammar":58,"dup":55}],62:[function(require,module,exports){
-arguments[4][52][0].apply(exports,arguments)
-},{"dup":52}],63:[function(require,module,exports){
+},{"./grammar":59,"dup":55}],62:[function(require,module,exports){
+arguments[4][56][0].apply(exports,arguments)
+},{"./grammar":59,"dup":56}],63:[function(require,module,exports){
 arguments[4][53][0].apply(exports,arguments)
-},{"./parser":64,"./writer":65,"dup":53}],64:[function(require,module,exports){
+},{"dup":53}],64:[function(require,module,exports){
 arguments[4][54][0].apply(exports,arguments)
-},{"./grammar":62,"dup":54}],65:[function(require,module,exports){
+},{"./parser":65,"./writer":66,"dup":54}],65:[function(require,module,exports){
 arguments[4][55][0].apply(exports,arguments)
-},{"./grammar":62,"dup":55}],66:[function(require,module,exports){
+},{"./grammar":63,"dup":55}],66:[function(require,module,exports){
+arguments[4][56][0].apply(exports,arguments)
+},{"./grammar":63,"dup":56}],67:[function(require,module,exports){
 var MediaStreamType = {
     VIDEO_TYPE: "Video",
 
     AUDIO_TYPE: "Audio"
 };
 module.exports = MediaStreamType;
-},{}],67:[function(require,module,exports){
+},{}],68:[function(require,module,exports){
 var RTCEvents = {
     RTC_READY: "rtc.ready",
     DATA_CHANNEL_OPEN: "rtc.data_channel_open",
@@ -18613,7 +19088,7 @@ var RTCEvents = {
 };
 
 module.exports = RTCEvents;
-},{}],68:[function(require,module,exports){
+},{}],69:[function(require,module,exports){
 var Resolutions = {
     "1080": {
         width: 1920,
@@ -18667,7 +19142,7 @@ var Resolutions = {
     }
 };
 module.exports = Resolutions;
-},{}],69:[function(require,module,exports){
+},{}],70:[function(require,module,exports){
 var StreamEventTypes = {
     EVENT_TYPE_LOCAL_CREATED: "stream.local_created",
 
@@ -18681,7 +19156,7 @@ var StreamEventTypes = {
 };
 
 module.exports = StreamEventTypes;
-},{}],70:[function(require,module,exports){
+},{}],71:[function(require,module,exports){
 var UIEvents = {
     NICKNAME_CHANGED: "UI.nickname_changed",
     SELECTED_ENDPOINT: "UI.selected_endpoint",
@@ -18689,7 +19164,7 @@ var UIEvents = {
     LARGEVIDEO_INIT: "UI.largevideo_init"
 };
 module.exports = UIEvents;
-},{}],71:[function(require,module,exports){
+},{}],72:[function(require,module,exports){
 var AuthenticationEvents = {
     /**
      * Event callback arguments:
@@ -18703,7 +19178,7 @@ var AuthenticationEvents = {
 };
 module.exports = AuthenticationEvents;
 
-},{}],72:[function(require,module,exports){
+},{}],73:[function(require,module,exports){
 var DesktopSharingEventTypes = {
     INIT: "ds.init",
 
@@ -18713,7 +19188,7 @@ var DesktopSharingEventTypes = {
 };
 
 module.exports = DesktopSharingEventTypes;
-},{}],73:[function(require,module,exports){
+},{}],74:[function(require,module,exports){
 var XMPPEvents = {
     CONNECTION_FAILED: "xmpp.connection.failed",
     // Indicates an interrupted connection event.
@@ -18769,7 +19244,7 @@ var XMPPEvents = {
     FOCUS_LEFT: "xmpp.focus_left"
 };
 module.exports = XMPPEvents;
-},{}],74:[function(require,module,exports){
+},{}],75:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -19072,7 +19547,7 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],75:[function(require,module,exports){
+},{}],76:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};

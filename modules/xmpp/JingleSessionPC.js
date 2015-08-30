@@ -9,7 +9,6 @@ var transform = require("sdp-transform");
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 var RTCBrowserType = require("../RTC/RTCBrowserType");
 var SSRCReplacement = require("./LocalSSRCReplacement");
-var RTC = require("../RTC/RTC");
 
 // Jingle stuff
 function JingleSessionPC(me, sid, connection, service, eventEmitter) {

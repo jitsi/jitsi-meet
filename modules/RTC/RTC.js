@@ -42,7 +42,7 @@ function getMediaStreamUsage()
 }
 
 
-function RTC()
+function RTC(options)
 {
     this.rtcUtils = null;
     this.devices = {
@@ -55,6 +55,7 @@ function RTC()
     this.localVideo = null;
     this.eventEmitter = new EventEmitter();
     var self = this;
+    this.options = options || {};
     desktopsharing.addListener(
         function (stream, isUsingScreenStream, callback) {
             self.changeLocalVideo(stream, isUsingScreenStream, callback);
@@ -75,9 +76,9 @@ function RTC()
     }
 }
 
-RTC.prototype.obtainAudioAndVideoPermissions = function () {
-    this.rtcUtils.obtainAudioAndVideoPermissions(
-        null, null, getMediaStreamUsage());
+RTC.prototype.obtainAudioAndVideoPermissions = function (options) {
+    return this.rtcUtils.obtainAudioAndVideoPermissions(
+        null, getMediaStreamUsage(), options.resolution);
 }
 
 RTC.prototype.onIncommingCall = function(event) {
@@ -109,14 +110,14 @@ RTC.prototype.removeStreamListener = function (listener, eventType) {
 
 RTC.prototype.createLocalStreams = function (streams, change) {
     for (var i = 0; i < streams.length; i++) {
-        var localStream = new LocalStream(streams.stream,
-            streams.type, this.eventEmitter, streams.videoType,
-            streams.isGUMStream);
+        var localStream = new LocalStream(this, streams[i].stream,
+            streams[i].type, this.eventEmitter, streams[i].videoType,
+            streams[i].isGUMStream);
         this.localStreams.push(localStream);
-        if (streams.isMuted === true)
+        if (streams[i].isMuted === true)
             localStream.setMute(true);
 
-        if (streams.type == "audio") {
+        if (streams[i].type == "audio") {
             this.localAudio = localStream;
         } else {
             this.localVideo = localStream;
@@ -125,7 +126,7 @@ RTC.prototype.createLocalStreams = function (streams, change) {
         if (change)
             eventType = StreamEventTypes.EVENT_TYPE_LOCAL_CHANGED;
 
-        this.eventEmitter.emit(eventType, localStream, streams.isMuted);
+        this.eventEmitter.emit(eventType, localStream, streams[i].isMuted);
     }
     return this.localStreams;
 };

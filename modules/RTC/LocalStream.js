@@ -20,7 +20,8 @@ function implementOnEndedHandling(stream) {
     };
 }
 
-function LocalStream(stream, type, eventEmitter, videoType, isGUMStream) {
+function LocalStream(RTC, stream, type, eventEmitter, videoType, isGUMStream) {
+    this.rtc = RTC;
     this.stream = stream;
     this.eventEmitter = eventEmitter;
     this.type = type;
@@ -82,16 +83,16 @@ LocalStream.prototype.setMute = function (mute)
             this.eventEmitter.emit(eventType, true);
         } else {
             var self = this;
-            APP.RTC.rtcUtils.obtainAudioAndVideoPermissions(
-                (this.isAudioStream() ? ["audio"] : ["video"]),
-                function (stream) {
+            this.rtcUtils.obtainAudioAndVideoPermissions(
+                (this.isAudioStream() ? ["audio"] : ["video"]))
+                .then(function (stream) {
                     if (isAudio) {
-                        APP.RTC.changeLocalAudio(stream,
+                        self.rtc.changeLocalAudio(stream,
                             function () {
                                 self.eventEmitter.emit(eventType, false);
                             });
                     } else {
-                        APP.RTC.changeLocalVideo(stream, false,
+                        self.rtc.changeLocalVideo(stream, false,
                             function () {
                                 self.eventEmitter.emit(eventType, false);
                             });

@@ -22,6 +22,6 @@ var LibJitsiMeet = {
 }
 
 //Setups the promise object.
-require("es6-promise").polyfill();
+window.Promise = window.Promise || require("es6-promise").polyfill();
 
 module.exports = LibJitsiMeet;

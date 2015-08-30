@@ -135,7 +135,7 @@ function getConstraints(um, resolution, bandwidth, fps, desktopStream, isAndroid
 }
 
 //Options parameter is to pass config options. Currently uses only "useIPv6".
-function RTCUtils(RTCService, onTemasysPluginReady, options)
+function RTCUtils(RTCService, onTemasysPluginReady)
 {
     var self = this;
     this.service = RTCService;
@@ -209,7 +209,7 @@ function RTCUtils(RTCService, onTemasysPluginReady, options)
         };
         // DTLS should now be enabled by default but..
         this.pc_constraints = {'optional': [{'DtlsSrtpKeyAgreement': 'true'}]};
-        if (options.useIPv6) {
+        if (this.service.options.useIPv6) {
             // https://code.google.com/p/webrtc/issues/detail?id=2828
             this.pc_constraints.optional.push({googIPv6: true});
         }
@@ -340,94 +340,93 @@ RTCUtils.prototype.setAvailableDevices = function (um, available) {
  * not to ask twice.
  */
 RTCUtils.prototype.obtainAudioAndVideoPermissions =
-    function(devices, callback, usageOptions)
+    function(devices, usageOptions, resolution)
 {
     var self = this;
     // Get AV
 
-    var successCallback = function (stream) {
-        if(callback)
-            callback(stream, usageOptions);
+    return new Promise(function(resolve, reject) {
+        var successCallback = function (stream) {
+            resolve(self.successCallback(stream, usageOptions));
+        };
+
+        if (!devices)
+            devices = ['audio', 'video'];
+
+        var newDevices = [];
+
+
+        if (usageOptions)
+            for (var i = 0; i < devices.length; i++) {
+                var device = devices[i];
+                if (usageOptions[device] === true)
+                    newDevices.push(device);
+            }
         else
-            self.successCallback(stream, usageOptions);
-    };
+            newDevices = devices;
 
-    if(!devices)
-        devices = ['audio', 'video'];
-
-    var newDevices = [];
-
-
-    if(usageOptions)
-        for(var i = 0; i < devices.length; i++) {
-            var device = devices[i];
-            if(usageOptions[device] === true)
-                newDevices.push(device);
+        if (newDevices.length === 0) {
+            successCallback();
+            return;
         }
-    else
-        newDevices = devices;
 
-    if(newDevices.length === 0) {
-        successCallback();
-        return;
-    }
+        if (RTCBrowserType.isFirefox() || RTCBrowserType.isTemasysPluginUsed()) {
 
-    if (RTCBrowserType.isFirefox() || RTCBrowserType.isTemasysPluginUsed()) {
-
-        // With FF/IE we can't split the stream into audio and video because FF
-        // doesn't support media stream constructors. So, we need to get the
-        // audio stream separately from the video stream using two distinct GUM
-        // calls. Not very user friendly :-( but we don't have many other
-        // options neither.
-        //
-        // Note that we pack those 2 streams in a single object and pass it to
-        // the successCallback method.
-        var obtainVideo = function (audioStream) {
-            self.getUserMediaWithConstraints(
-                ['video'],
-                function (videoStream) {
-                    return successCallback({
-                        audioStream: audioStream,
-                        videoStream: videoStream
-                    });
-                },
-                function (error) {
-                    console.error(
-                        'failed to obtain video stream - stop', error);
-                    self.errorCallback(error);
-                },
-                config.resolution || '360');
-        };
-        var obtainAudio = function () {
-            self.getUserMediaWithConstraints(
-                ['audio'],
-                function (audioStream) {
-                    if (newDevices.indexOf('video') !== -1)
-                        obtainVideo(audioStream);
-                },
-                function (error) {
-                    console.error(
-                        'failed to obtain audio stream - stop', error);
-                    self.errorCallback(error);
-                }
-            );
-        };
-        if (newDevices.indexOf('audio') !== -1) {
-            obtainAudio();
+            // With FF/IE we can't split the stream into audio and video because FF
+            // doesn't support media stream constructors. So, we need to get the
+            // audio stream separately from the video stream using two distinct GUM
+            // calls. Not very user friendly :-( but we don't have many other
+            // options neither.
+            //
+            // Note that we pack those 2 streams in a single object and pass it to
+            // the successCallback method.
+            var obtainVideo = function (audioStream) {
+                self.getUserMediaWithConstraints(
+                    ['video'],
+                    function (videoStream) {
+                        return successCallback({
+                            audioStream: audioStream,
+                            videoStream: videoStream
+                        });
+                    },
+                    function (error) {
+                        console.error(
+                            'failed to obtain video stream - stop', error);
+                        self.errorCallback(error, resolve);
+                    },
+                        config.resolution || '360');
+            };
+            var obtainAudio = function () {
+                self.getUserMediaWithConstraints(
+                    ['audio'],
+                    function (audioStream) {
+                        if (newDevices.indexOf('video') !== -1)
+                            obtainVideo(audioStream);
+                    },
+                    function (error) {
+                        console.error(
+                            'failed to obtain audio stream - stop', error);
+                        self.errorCallback(error, resolve);
+                    }
+                );
+            };
+            if (newDevices.indexOf('audio') !== -1) {
+                obtainAudio();
+            } else {
+                obtainVideo(null);
+            }
         } else {
-            obtainVideo(null);
+            this.getUserMediaWithConstraints(
+                newDevices,
+                function (stream) {
+                    successCallback(stream);
+                },
+                function (error) {
+                    self.errorCallback(error, resolve);
+                },
+                resolution || '360');
         }
-    } else {
-        this.getUserMediaWithConstraints(
-        newDevices,
-        function (stream) {
-            successCallback(stream);
-        },
-        function (error) {
-            self.errorCallback(error);
-        },
-        config.resolution || '360');
-    }
+    }.bind(this));
 };
 
 RTCUtils.prototype.successCallback = function (stream, usageOptions) {
@@ -439,7 +438,7 @@ RTCUtils.prototype.successCallback = function (stream, usageOptions) {
     return this.handleLocalStream(stream, usageOptions);
 };
 
-RTCUtils.prototype.errorCallback = function (error) {
+RTCUtils.prototype.errorCallback = function (error, resolve) {
     var self = this;
     console.error('failed to obtain audio/video stream - trying audio only', error);
     var resolution = getPreviousResolution(currentResolution);
@@ -452,7 +451,7 @@ RTCUtils.prototype.errorCallback = function (error) {
     {
         self.getUserMediaWithConstraints(['audio', 'video'],
             function (stream) {
-                return self.successCallback(stream);
+                resolve(self.successCallback(stream));
             }, function (error) {
                 return self.errorCallback(error);
             }, resolution);
@@ -461,12 +460,12 @@ RTCUtils.prototype.errorCallback = function (error) {
         self.getUserMediaWithConstraints(
             ['audio'],
             function (stream) {
-                return self.successCallback(stream);
+                resolve(self.successCallback(stream));
             },
             function (error) {
                 console.error('failed to obtain audio/video stream - stop',
                     error);
-                return self.successCallback(null);
+                resolve(self.successCallback(null));
             }
         );
     }

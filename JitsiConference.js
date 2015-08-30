@@ -28,7 +28,7 @@ function JitsiConference(options) {
  */
 JitsiConference.prototype.join = function (password) {
 
-    this.room.joinRoom(password);
+    this.room.join(password);
 }
 
 /**
@@ -47,7 +47,7 @@ JitsiConference.prototype.leave = function () {
  *     or a JitsiConferenceError if rejected.
  */
 JitsiConference.prototype.createLocalTracks = function (options) {
-    this.rtc.obtainAudioAndVideoPermissions();
+    return this.rtc.obtainAudioAndVideoPermissions(options || {});
 }
 
 /**
