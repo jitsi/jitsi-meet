@@ -1,5 +1,3 @@
-var room = null;
-
 
 /**
  * Creates a JitsiConference object with the given name and properties.
@@ -15,13 +13,16 @@ function JitsiConference(options) {
     this.options = options;
     this.connection = this.options.connection;
     this.xmpp = this.connection.xmpp;
+    this.room = this.xmpp.createRoom(this.options.name, null, null);
 }
 
 /**
  * Joins the conference.
+ * @param password {string} the password
  */
-JitsiConference.prototype.join = function () {
-    room = this.xmpp.joinRoom(this.options.name, null, null);
+JitsiConference.prototype.join = function (password) {
+
+    this.room.joinRoom(password);
 }
 
 /**
@@ -29,7 +30,7 @@ JitsiConference.prototype.join = function () {
  */
 JitsiConference.prototype.leave = function () {
     this.xmpp.leaveRoom(room.roomjid);
-    room = null;
+    this.room = null;
 }
 
 /**
@@ -60,7 +61,7 @@ JitsiConference.prototype.getLocalTracks = function () {
  * Note: consider adding eventing functionality by extending an EventEmitter impl, instead of rolling ourselves
  */
 JitsiConference.prototype.on = function (eventId, handler) {
-    this.xmpp.addListener(eventId, handler);
+    this.add.addListener(eventId, handler);
 }
 
 /**
@@ -71,7 +72,7 @@ JitsiConference.prototype.on = function (eventId, handler) {
  * Note: consider adding eventing functionality by extending an EventEmitter impl, instead of rolling ourselves
  */
 JitsiConference.prototype.off = function (eventId, handler) {
-    this.xmpp.removeListener(event, listener);
+    this.room.removeListener(eventId, listener);
 }
 
 // Common aliases for event emitter
@@ -84,7 +85,7 @@ JitsiConference.prototype.removeEventListener = JitsiConference.prototype.off
  * @param handler {Function} handler for the command
  */
  JitsiConference.prototype.addCommandListener = function (command, handler) {
-
+     this.room.addPresenceListener(command, handler);
  }
 
 /**
@@ -92,7 +93,7 @@ JitsiConference.prototype.removeEventListener = JitsiConference.prototype.off
   * @param command {String}  the name of the command
   */
  JitsiConference.prototype.removeCommandListener = function (command) {
-
+    this.room.removePresenceListener(command);
  }
 
 /**
@@ -100,7 +101,27 @@ JitsiConference.prototype.removeEventListener = JitsiConference.prototype.off
  * @param message the text message.
  */
 JitsiConference.prototype.sendTextMessage = function (message) {
-    room.send
+    this.room.sendMessage(message);
+}
+
+/**
+ * Send presence command.
+ * @param name the name of the command.
+ * @param values Object with keys and values that will be send.
+ **/
+JitsiConference.prototype.sendCommand = function (name, values) {
+    this.room.addToPresence(name, values);
+    this.room.sendPresence();
+}
+
+/**
+ * Send presence command one time.
+ * @param name the name of the command.
+ * @param values Object with keys and values that will be send.
+ **/
+JitsiConference.prototype.sendCommandOnce = function (name, values) {
+    this.sendCommand(name, values);
+    this.removeCommand(name);
 }
 
 /**
@@ -108,13 +129,9 @@ JitsiConference.prototype.sendTextMessage = function (message) {
  * @param name the name of the command.
  * @param values Object with keys and values that will be send.
  * @param persistent if false the command will be sent only one time
- * @param successCallback will be called when the command is successfully send.
- * @param errorCallback will be called when the command is not sent successfully.
- * @returns {Promise.<{void}, JitsiConferenceError>} A promise that returns an array of created streams if resolved,
- *     or an JitsiConferenceError if rejected.
- */
-JitsiConference.prototype.sendCommand = function (name, values, persistent) {
-
+ **/
+JitsiConference.prototype.removeCommand = function (name) {
+    this.room.removeFromPresence(name);
 }
 
 /**
@@ -122,7 +139,7 @@ JitsiConference.prototype.sendCommand = function (name, values, persistent) {
  * @param name the display name to set
  */
 JitsiConference.prototype.setDisplayName = function(name) {
-    room.addToPresence("nick", {attributes: {xmlns: 'http://jabber.org/protocol/nick'}, value: name});
+    this.room.addToPresence("nick", {attributes: {xmlns: 'http://jabber.org/protocol/nick'}, value: name});
 }
 
 /**
@@ -138,6 +155,15 @@ JitsiConference.prototype.selectParticipant = function(participantId) {
  * @return Object a list of participant identifiers containing all conference participants.
  */
 JitsiConference.prototype.getParticipants = function() {
+
+}
+
+/**
+ * @returns {JitsiParticipant} the participant in this conference with the specified id (or
+ * null if there isn't one).
+ * @param id the id of the participant.
+ */
+JitsiConference.prototype.getParticipantById = function(id) {
 
 }
 

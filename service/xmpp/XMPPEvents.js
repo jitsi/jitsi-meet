@@ -49,6 +49,7 @@ var XMPPEvents = {
     ROOM_JOIN_ERROR: 'xmpp.room_join_error',
     ROOM_CONNECT_ERROR: 'xmpp.room_connect_error',
     // xmpp is connected and obtained user media
-    READY_TO_JOIN: 'xmpp.ready_to_join'
+    READY_TO_JOIN: 'xmpp.ready_to_join',
+    FOCUS_LEFT: "xmpp.focus_left"
 };
 module.exports = XMPPEvents;

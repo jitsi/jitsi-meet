@@ -21,17 +21,17 @@ function Settings(conferenceID) {
     this.userId;
     this.language = null;
     this.confSettings = null;
+    this.conferenceID = conferenceID;
     if (supportsLocalStorage()) {
-        if(!window.localStorage.jitsiConferences)
-            window.localStorage.jitsiConferences = {}
-        if (!window.localStorage.jitsiConferences[conferenceID]) {
-            window.localStorage.jitsiConferences[conferenceID] = {}
-        }
-        this.confSettings = window.localStorage.jitsiConferences[conferenceID];
+        if(!window.localStorage.getItem(conferenceID))
+            this.confSettings = {};
+        else
+            this.confSettings = JSON.parse(window.localStorage.getItem(conferenceID));
         if(!this.confSettings.jitsiMeetId) {
             this.confSettings.jitsiMeetId = generateUniqueId();
             console.log("generated id",
                 this.confSettings.jitsiMeetId);
+            this.save();
         }
         this.userId = this.confSettings.jitsiMeetId || '';
         this.email = this.confSettings.email || '';
@@ -43,16 +43,23 @@ function Settings(conferenceID) {
     }
 }
 
+Settings.prototype.save = function () {
+    if(!supportsLocalStorage())
+        window.localStorage.setItem(this.conferenceID, JSON.stringify(this.confSettings));
+}
+
 Settings.prototype.setDisplayName = function (newDisplayName) {
     this.displayName = newDisplayName;
     if(this.confSettings != null)
         this.confSettings.displayname = displayName;
+    this.save();
     return this.displayName;
 },
 Settings.prototype.setEmail = function (newEmail) {
     this.email = newEmail;
     if(this.confSettings != null)
         this.confSettings.email = newEmail;
+    this.save();
     return this.email;
 },
 Settings.prototype.getSettings = function () {
@@ -67,6 +74,7 @@ Settings.prototype.setLanguage = function (lang) {
     this.language = lang;
     if(this.confSettings != null)
         this.confSettings.language = lang;
+    this.save();
 }
 
 module.exports = Settings;

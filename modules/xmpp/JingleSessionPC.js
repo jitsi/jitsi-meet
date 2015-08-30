@@ -9,6 +9,7 @@ var transform = require("sdp-transform");
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 var RTCBrowserType = require("../RTC/RTCBrowserType");
 var SSRCReplacement = require("./LocalSSRCReplacement");
+var RTC = require("../RTC/RTC");
 
 // Jingle stuff
 function JingleSessionPC(me, sid, connection, service, eventEmitter) {
@@ -86,7 +87,7 @@ JingleSessionPC.prototype.doInitialize = function () {
 
     this.peerconnection = new TraceablePeerConnection(
             this.connection.jingle.ice_config,
-            APP.RTC.getPCConstraints(),
+            RTC.getPCConstraints(),
             this);
 
     this.peerconnection.onicecandidate = function (event) {
@@ -147,14 +148,19 @@ JingleSessionPC.prototype.doInitialize = function () {
     this.peerconnection.onnegotiationneeded = function (event) {
         self.eventEmitter.emit(XMPPEvents.PEERCONNECTION_READY, self);
     };
-    // add any local and relayed stream
-    APP.RTC.localStreams.forEach(function(stream) {
-        self.peerconnection.addStream(stream.getOriginalStream());
-    });
+
     this.relayedStreams.forEach(function(stream) {
         self.peerconnection.addStream(stream);
     });
 };
+
+JingleSessionPC.prototype.addLocalStreams = function (localStreams) {
+    var self = this;
+// add any local and relayed stream
+    localStreams.forEach(function(stream) {
+        self.peerconnection.addStream(stream.getOriginalStream());
+    });
+}
 
 function onIceConnectionStateChange(sid, session) {
     switch (session.peerconnection.iceConnectionState) {
@@ -1307,8 +1313,6 @@ JingleSessionPC.onJingleError = function (session, error)
 
 JingleSessionPC.onJingleFatalError = function (session, error)
 {
-    this.service.sessionTerminated = true;
-    this.connection.emuc.doLeave();
     this.eventEmitter.emit(XMPPEvents.CONFERENCE_SETUP_FAILED);
     this.eventEmitter.emit(XMPPEvents.JINGLE_FATAL_ERROR, session, error);
 }
@@ -1391,7 +1395,7 @@ function sendKeyframe(pc) {
 JingleSessionPC.prototype.remoteStreamAdded = function (data, times) {
     var self = this;
     var thessrc;
-    var streamId = APP.RTC.getStreamID(data.stream);
+    var streamId = RTC.getStreamID(data.stream);
 
     // look up an associated JID for a stream id
     if (!streamId) {
@@ -1426,14 +1430,14 @@ JingleSessionPC.prototype.remoteStreamAdded = function (data, times) {
         }
     }
 
-    APP.RTC.createRemoteStream(data, this.sid, thessrc);
+    RTC.createRemoteStream(data, this.sid, thessrc);
 
     var isVideo = data.stream.getVideoTracks().length > 0;
     // an attempt to work around https://github.com/jitsi/jitmeet/issues/32
     if (isVideo &&
         data.peerjid && this.peerjid === data.peerjid &&
         data.stream.getVideoTracks().length === 0 &&
-        APP.RTC.localVideo.getTracks().length > 0) {
+        RTC.localVideo.getTracks().length > 0) {
         window.setTimeout(function () {
             sendKeyframe(self.peerconnection);
         }, 3000);

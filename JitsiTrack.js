@@ -26,7 +26,7 @@ JitsiTrack.prototype.getType = function() {
 };
 
 /**
- * Returns the JitsiParticipant to which this track belongs, or null if it is a local track.
+ * @returns {JitsiParticipant} to which this track belongs, or null if it is a local track.
  */
 JitsiTrack.prototype.getParitcipant() = function() {
 

@@ -6,13 +6,6 @@ var Settings = require("../settings/Settings");
 var AuthenticationEvents
     = require("../../service/authentication/AuthenticationEvents");
 
-/**
- * Contains logic responsible for enabling/disabling functionality available
- * only to moderator users.
- */
-var connection = null;
-var focusUserJid;
-
 function createExpBackoffTimer(step) {
     var count = 1;
     return function (reset) {
@@ -28,402 +21,396 @@ function createExpBackoffTimer(step) {
     };
 }
 
-var getNextTimeout = createExpBackoffTimer(1000);
-var getNextErrorTimeout = createExpBackoffTimer(1000);
+
+
+
+
+function Moderator(roomName, xmpp, emitter) {
+    this.roomName = roomName;
+    this.xmppService = xmpp;
+    this.getNextTimeout = createExpBackoffTimer(1000);
+    this.getNextErrorTimeout = createExpBackoffTimer(1000);
 // External authentication stuff
-var externalAuthEnabled = false;
+    this.externalAuthEnabled = false;
+    this.settings = new Settings(roomName);
 // Sip gateway can be enabled by configuring Jigasi host in config.js or
 // it will be enabled automatically if focus detects the component through
 // service discovery.
-var sipGatewayEnabled = null;
+    this.sipGatewayEnabled = this.xmppService.options.hosts.call_control !== undefined;
 
-var eventEmitter = null;
+    this.eventEmitter = emitter;
 
-var Moderator = {
-    isModerator: function () {
-        return connection && connection.emuc.isModerator();
-    },
-
-    isPeerModerator: function (peerJid) {
-        return connection &&
-            connection.emuc.getMemberRole(peerJid) === 'moderator';
-    },
-
-    isExternalAuthEnabled: function () {
-        return externalAuthEnabled;
-    },
-
-    isSipGatewayEnabled: function () {
-        return sipGatewayEnabled;
-    },
-
-    setConnection: function (con) {
-        connection = con;
-    },
-
-    init: function (xmpp, emitter) {
-        this.xmppService = xmpp;
-        sipGatewayEnabled = this.xmppService.options.hosts.call_control !== undefined;
-        eventEmitter = emitter;
-
-        // Message listener that talks to POPUP window
-        function listener(event) {
-            if (event.data && event.data.sessionId) {
-                if (event.origin !== window.location.origin) {
-                    console.warn("Ignoring sessionId from different origin: " +
-                        event.origin);
-                    return;
-                }
-                localStorage.setItem('sessionId', event.data.sessionId);
-                // After popup is closed we will authenticate
+    this.connection = this.xmppService.connection;
+    this.focusUserJid;
+    //FIXME:
+    // Message listener that talks to POPUP window
+    function listener(event) {
+        if (event.data && event.data.sessionId) {
+            if (event.origin !== window.location.origin) {
+                console.warn("Ignoring sessionId from different origin: " +
+                    event.origin);
+                return;
             }
+            localStorage.setItem('sessionId', event.data.sessionId);
+            // After popup is closed we will authenticate
         }
-        // Register
-        if (window.addEventListener) {
-            window.addEventListener("message", listener, false);
-        } else {
-            window.attachEvent("onmessage", listener);
-        }
-    },
+    }
+    // Register
+    if (window.addEventListener) {
+        window.addEventListener("message", listener, false);
+    } else {
+        window.attachEvent("onmessage", listener);
+    }
+}
 
-    onMucMemberLeft: function (jid) {
-        console.info("Someone left is it focus ? " + jid);
-        var resource = Strophe.getResourceFromJid(jid);
-        if (resource === 'focus' && !this.xmppService.sessionTerminated) {
-            console.info(
-                "Focus has left the room - leaving conference");
-            //hangUp();
-            // We'd rather reload to have everything re-initialized
-            // FIXME: show some message before reload
-            location.reload();
-        }
-    },
-    
-    setFocusUserJid: function (focusJid) {
-        if (!focusUserJid) {
-            focusUserJid = focusJid;
-            console.info("Focus jid set to: " + focusUserJid);
-        }
-    },
+Moderator.prototype.isExternalAuthEnabled =  function () {
+    return this.externalAuthEnabled;
+};
 
-    getFocusUserJid: function () {
-        return focusUserJid;
-    },
+Moderator.prototype.isSipGatewayEnabled =  function () {
+    return this.sipGatewayEnabled;
+};
 
-    getFocusComponent: function () {
-        // Get focus component address
-        var focusComponent = this.xmppService.options.hosts.focus;
-        // If not specified use default: 'focus.domain'
-        if (!focusComponent) {
-            focusComponent = 'focus.' + this.xmppService.options.hosts.domain;
-        }
-        return focusComponent;
-    },
 
-    createConferenceIq: function (roomName) {
-        // Generate create conference IQ
-        var elem = $iq({to: Moderator.getFocusComponent(), type: 'set'});
-
-        // Session Id used for authentication
-        var sessionId = localStorage.getItem('sessionId');
-        var machineUID = Settings.getSettings().uid;
-
+Moderator.prototype.onMucMemberLeft =  function (jid) {
+    console.info("Someone left is it focus ? " + jid);
+    var resource = Strophe.getResourceFromJid(jid);
+    if (resource === 'focus' && !this.xmppService.sessionTerminated) {
         console.info(
+            "Focus has left the room - leaving conference");
+        //hangUp();
+        // We'd rather reload to have everything re-initialized
+        //FIXME: show some message before reload
+        this.eventEmitter.emit(XMPPEvents.FOCUS_LEFT);
+    }
+};
+
+
+Moderator.prototype.setFocusUserJid =  function (focusJid) {
+    if (!this.focusUserJid) {
+        this.focusUserJid = focusJid;
+        console.info("Focus jid set to:  " + this.focusUserJid);
+    }
+};
+
+
+Moderator.prototype.getFocusUserJid =  function () {
+    return this.focusUserJid;
+};
+
+Moderator.prototype.getFocusComponent =  function () {
+    // Get focus component address
+    var focusComponent = this.xmppService.options.hosts.focus;
+    // If not specified use default:  'focus.domain'
+    if (!focusComponent) {
+        focusComponent = 'focus.' + this.xmppService.options.hosts.domain;
+    }
+    return focusComponent;
+};
+
+Moderator.prototype.createConferenceIq =  function () {
+    // Generate create conference IQ
+    var elem = $iq({to: this.getFocusComponent(), type: 'set'});
+
+    // Session Id used for authentication
+    var sessionId = localStorage.getItem('sessionId');
+    var machineUID = this.settings.getSettings().uid;
+
+    console.info(
             "Session ID: " + sessionId + " machine UID: " + machineUID);
 
-        elem.c('conference', {
-            xmlns: 'http://jitsi.org/protocol/focus',
-            room: roomName,
-            'machine-uid': machineUID
-        });
+    elem.c('conference', {
+        xmlns: 'http://jitsi.org/protocol/focus',
+        room: this.roomName,
+        'machine-uid': machineUID
+    });
 
-        if (sessionId) {
-            elem.attrs({ 'session-id': sessionId});
-        }
-
-        if (this.xmppService.options.hosts.bridge !== undefined) {
-            elem.c(
-                'property',
-                { name: 'bridge', value: this.xmppService.options.hosts.bridge})
-                .up();
-        }
-        // Tell the focus we have Jigasi configured
-        if (this.xmppService.options.hosts.call_control !== undefined) {
-            elem.c(
-                'property',
-                { name: 'call_control', value: this.xmppService.options.hosts.call_control})
-                .up();
-        }
-        if (this.xmppService.options.channelLastN !== undefined) {
-            elem.c(
-                'property',
-                { name: 'channelLastN', value: this.xmppService.options.channelLastN})
-                .up();
-        }
-        if (this.xmppService.options.adaptiveLastN !== undefined) {
-            elem.c(
-                'property',
-                { name: 'adaptiveLastN', value: this.xmppService.options.adaptiveLastN})
-                .up();
-        }
-        if (this.xmppService.options.adaptiveSimulcast !== undefined) {
-            elem.c(
-                'property',
-                { name: 'adaptiveSimulcast', value: this.xmppService.options.adaptiveSimulcast})
-                .up();
-        }
-        if (this.xmppService.options.openSctp !== undefined) {
-            elem.c(
-                'property',
-                { name: 'openSctp', value: this.xmppService.options.openSctp})
-                .up();
-        }
-        if(this.xmppService.options.startAudioMuted !== undefined)
-        {
-            elem.c(
-                'property',
-                { name: 'startAudioMuted', value: this.xmppService.options.startAudioMuted})
-                .up();
-        }
-        if(this.xmppService.options.startVideoMuted !== undefined)
-        {
-            elem.c(
-                'property',
-                { name: 'startVideoMuted', value: this.xmppService.options.startVideoMuted})
-                .up();
-        }
+    if (sessionId) {
+        elem.attrs({ 'session-id': sessionId});
+    }
+    if (this.xmppService.options.hosts.bridge !== undefined) {
         elem.c(
             'property',
-            { name: 'simulcastMode', value: 'rewriting'})
+            {name: 'bridge',value: this.xmppService.options.hosts.bridge})
             .up();
-        elem.up();
-        return elem;
-    },
+    }
+    // Tell the focus we have Jigasi configured
+    if (this.xmppService.options.hosts.call_control !== undefined) {
+        elem.c(
+            'property',
+            {name: 'call_control',value:  this.xmppService.options.hosts.call_control})
+            .up();
+    }
+    if (this.xmppService.options.channelLastN !== undefined) {
+        elem.c(
+            'property',
+            {name: 'channelLastN',value: this.xmppService.options.channelLastN})
+            .up();
+    }
+    if (this.xmppService.options.adaptiveLastN !== undefined) {
+        elem.c(
+            'property',
+            {name: 'adaptiveLastN',value: this.xmppService.options.adaptiveLastN})
+            .up();
+    }
+    if (this.xmppService.options.adaptiveSimulcast !== undefined) {
+        elem.c(
+            'property',
+            {name: 'adaptiveSimulcast',value: this.xmppService.options.adaptiveSimulcast})
+            .up();
+    }
+    if (this.xmppService.options.openSctp !== undefined) {
+        elem.c(
+            'property',
+            {name: 'openSctp',value: this.xmppService.options.openSctp})
+            .up();
+    }
+    if(this.xmppService.options.startAudioMuted !== undefined)
+    {
+        elem.c(
+            'property',
+            {name: 'startAudioMuted',value: this.xmppService.options.startAudioMuted})
+            .up();
+    }
+    if(this.xmppService.options.startVideoMuted !== undefined)
+    {
+        elem.c(
+            'property',
+            {name: 'startVideoMuted',value: this.xmppService.options.startVideoMuted})
+            .up();
+    }
+    elem.c(
+        'property',
+        {name: 'simulcastMode',value: 'rewriting'})
+        .up();
+    elem.up();
+    return elem;
+};
 
-    parseSessionId: function (resultIq) {
-        var sessionId = $(resultIq).find('conference').attr('session-id');
-        if (sessionId) {
-            console.info('Received sessionId: ' + sessionId);
-            localStorage.setItem('sessionId', sessionId);
-        }
-    },
 
-    parseConfigOptions: function (resultIq) {
+Moderator.prototype.parseSessionId =  function (resultIq) {
+    var sessionId = $(resultIq).find('conference').attr('session-id');
+    if (sessionId) {
+        console.info('Received sessionId:  ' + sessionId);
+        localStorage.setItem('sessionId', sessionId);
+    }
+};
 
-        Moderator.setFocusUserJid(
-            $(resultIq).find('conference').attr('focusjid'));
+Moderator.prototype.parseConfigOptions =  function (resultIq) {
 
-        var authenticationEnabled
-            = $(resultIq).find(
-                '>conference>property' +
-                '[name=\'authentication\'][value=\'true\']').length > 0;
+    this.setFocusUserJid(
+        $(resultIq).find('conference').attr('focusjid'));
 
-        console.info("Authentication enabled: " + authenticationEnabled);
-
-        externalAuthEnabled = $(resultIq).find(
-                '>conference>property' +
-                '[name=\'externalAuth\'][value=\'true\']').length > 0;
-
-        console.info('External authentication enabled: ' + externalAuthEnabled);
-
-        if (!externalAuthEnabled) {
-            // We expect to receive sessionId in 'internal' authentication mode
-            Moderator.parseSessionId(resultIq);
-        }
-
-        var authIdentity = $(resultIq).find('>conference').attr('identity');
-
-        eventEmitter.emit(AuthenticationEvents.IDENTITY_UPDATED,
-            authenticationEnabled, authIdentity);
-    
-        // Check if focus has auto-detected Jigasi component(this will be also
-        // included if we have passed our host from the config)
-        if ($(resultIq).find(
+    var authenticationEnabled
+        = $(resultIq).find(
             '>conference>property' +
-            '[name=\'sipGatewayEnabled\'][value=\'true\']').length) {
-            sipGatewayEnabled = true;
-        }
-    
-        console.info("Sip gateway enabled: " + sipGatewayEnabled);
-    },
+            '[name=\'authentication\'][value=\'true\']').length > 0;
 
-    // FIXME: we need to show the fact that we're waiting for the focus
-    // to the user(or that focus is not available)
-    allocateConferenceFocus: function (roomName, callback) {
-        // Try to use focus user JID from the config
-        Moderator.setFocusUserJid(this.xmppService.options.focusUserJid);
-        // Send create conference IQ
-        var iq = Moderator.createConferenceIq(roomName);
-        var self = this;
-        connection.sendIQ(
-            iq,
-            function (result) {
+    console.info("Authentication enabled: " + authenticationEnabled);
 
-                // Setup config options
-                Moderator.parseConfigOptions(result);
+    this.externalAuthEnabled = $(resultIq).find(
+            '>conference>property' +
+            '[name=\'externalAuth\'][value=\'true\']').length > 0;
 
-                if ('true' === $(result).find('conference').attr('ready')) {
-                    // Reset both timers
-                    getNextTimeout(true);
-                    getNextErrorTimeout(true);
-                    // Exec callback
-                    callback();
-                } else {
-                    var waitMs = getNextTimeout();
-                    console.info("Waiting for the focus... " + waitMs);
-                    // Reset error timeout
-                    getNextErrorTimeout(true);
-                    window.setTimeout(
-                        function () {
-                            Moderator.allocateConferenceFocus(
-                                roomName, callback);
-                        }, waitMs);
-                }
-            },
-            function (error) {
-                // Invalid session ? remove and try again
-                // without session ID to get a new one
-                var invalidSession
-                    = $(error).find('>error>session-invalid').length;
-                if (invalidSession) {
-                    console.info("Session expired! - removing");
-                    localStorage.removeItem("sessionId");
-                }
-                if ($(error).find('>error>graceful-shutdown').length) {
-                    eventEmitter.emit(XMPPEvents.GRACEFUL_SHUTDOWN);
-                    return;
-                }
-                // Check for error returned by the reservation system
-                var reservationErr = $(error).find('>error>reservation-error');
-                if (reservationErr.length) {
-                    // Trigger error event
-                    var errorCode = reservationErr.attr('error-code');
-                    var errorMsg;
-                    if ($(error).find('>error>text')) {
-                        errorMsg = $(error).find('>error>text').text();
-                    }
-                    eventEmitter.emit(
-                        XMPPEvents.RESERVATION_ERROR, errorCode, errorMsg);
-                    return;
-                }
-                // Not authorized to create new room
-                if ($(error).find('>error>not-authorized').length) {
-                    console.warn("Unauthorized to start the conference", error);
-                    var toDomain
-                        = Strophe.getDomainFromJid(error.getAttribute('to'));
-                    if (toDomain !== this.xmppService.options.hosts.anonymousdomain) {
-                        // FIXME: "is external" should come either from
-                        // the focus or config.js
-                        externalAuthEnabled = true;
-                    }
-                    eventEmitter.emit(
-                        XMPPEvents.AUTHENTICATION_REQUIRED,
-                        function () {
-                            Moderator.allocateConferenceFocus(
-                                roomName, callback);
-                        });
-                    return;
-                }
-                var waitMs = getNextErrorTimeout();
-                console.error("Focus error, retry after " + waitMs, error);
-                // Show message
-                var focusComponent = Moderator.getFocusComponent();
-                var retrySec = waitMs / 1000;
-                // FIXME: message is duplicated ?
-                // Do not show in case of session invalid
-                // which means just a retry
-                if (!invalidSession) {
-                    eventEmitter.emit(XMPPEvents.FOCUS_DISCONNECTED,
-                        focusComponent, retrySec);
-                }
-                // Reset response timeout
-                getNextTimeout(true);
+    console.info('External authentication enabled: ' + this.externalAuthEnabled);
+
+    if (!this.externalAuthEnabled) {
+        // We expect to receive sessionId in 'internal' authentication mode
+        this.parseSessionId(resultIq);
+    }
+
+    var authIdentity = $(resultIq).find('>conference').attr('identity');
+
+    this.eventEmitter.emit(AuthenticationEvents.IDENTITY_UPDATED,
+        authenticationEnabled, authIdentity);
+
+    // Check if focus has auto-detected Jigasi component(this will be also
+    // included if we have passed our host from the config)
+    if ($(resultIq).find(
+        '>conference>property' +
+        '[name=\'sipGatewayEnabled\'][value=\'true\']').length) {
+        this.sipGatewayEnabled = true;
+    }
+
+    console.info("Sip gateway enabled:  " + this.sipGatewayEnabled);
+};
+
+// FIXME =  we need to show the fact that we're waiting for the focus
+// to the user(or that focus is not available)
+Moderator.prototype.allocateConferenceFocus =  function ( callback) {
+    // Try to use focus user JID from the config
+    this.setFocusUserJid(this.xmppService.options.focusUserJid);
+    // Send create conference IQ
+    var iq = this.createConferenceIq();
+    var self = this;
+    this.connection.sendIQ(
+        iq,
+        function (result) {
+
+            // Setup config options
+            self.parseConfigOptions(result);
+
+            if ('true' === $(result).find('conference').attr('ready')) {
+                // Reset both timers
+                self.getNextTimeout(true);
+                self.getNextErrorTimeout(true);
+                // Exec callback
+                callback();
+            } else {
+                var waitMs = self.getNextTimeout();
+                console.info("Waiting for the focus... " + waitMs);
+                // Reset error timeout
+                self.getNextErrorTimeout(true);
                 window.setTimeout(
                     function () {
-                        Moderator.allocateConferenceFocus(roomName, callback);
+                        self.allocateConferenceFocus(callback);
                     }, waitMs);
             }
-        );
-    },
-
-    getLoginUrl: function (roomName, urlCallback) {
-        var iq = $iq({to: Moderator.getFocusComponent(), type: 'get'});
-        iq.c('login-url', {
-            xmlns: 'http://jitsi.org/protocol/focus',
-            room: roomName,
-            'machine-uid': Settings.getSettings().uid
-        });
-        connection.sendIQ(
-            iq,
-            function (result) {
-                var url = $(result).find('login-url').attr('url');
-                url = url = decodeURIComponent(url);
-                if (url) {
-                    console.info("Got auth url: " + url);
-                    urlCallback(url);
-                } else {
-                    console.error(
-                        "Failed to get auth url from the focus", result);
-                }
-            },
-            function (error) {
-                console.error("Get auth url error", error);
+        },
+        function (error) {
+            // Invalid session ? remove and try again
+            // without session ID to get a new one
+            var invalidSession
+                = $(error).find('>error>session-invalid').length;
+            if (invalidSession) {
+                console.info("Session expired! - removing");
+                localStorage.removeItem("sessionId");
             }
-        );
-    },
-    getPopupLoginUrl: function (roomName, urlCallback) {
-        var iq = $iq({to: Moderator.getFocusComponent(), type: 'get'});
-        iq.c('login-url', {
-            xmlns: 'http://jitsi.org/protocol/focus',
-            room: roomName,
-            'machine-uid': Settings.getSettings().uid,
-            popup: true
-        });
-        connection.sendIQ(
-            iq,
-            function (result) {
-                var url = $(result).find('login-url').attr('url');
-                url = url = decodeURIComponent(url);
-                if (url) {
-                    console.info("Got POPUP auth url: " + url);
-                    urlCallback(url);
-                } else {
-                    console.error(
-                        "Failed to get POPUP auth url from the focus", result);
-                }
-            },
-            function (error) {
-                console.error('Get POPUP auth url error', error);
+            if ($(error).find('>error>graceful-shutdown').length) {
+                self.eventEmitter.emit(XMPPEvents.GRACEFUL_SHUTDOWN);
+                return;
             }
-        );
-    },
-    logout: function (callback) {
-        var iq = $iq({to: Moderator.getFocusComponent(), type: 'set'});
-        var sessionId = localStorage.getItem('sessionId');
-        if (!sessionId) {
-            callback();
-            return;
+            // Check for error returned by the reservation system
+            var reservationErr = $(error).find('>error>reservation-error');
+            if (reservationErr.length) {
+                // Trigger error event
+                var errorCode = reservationErr.attr('error-code');
+                var errorMsg;
+                if ($(error).find('>error>text')) {
+                    errorMsg = $(error).find('>error>text').text();
+                }
+                self.eventEmitter.emit(
+                    XMPPEvents.RESERVATION_ERROR, errorCode, errorMsg);
+                return;
+            }
+            // Not authorized to create new room
+            if ($(error).find('>error>not-authorized').length) {
+                console.warn("Unauthorized to start the conference", error);
+                var toDomain
+                    = Strophe.getDomainFromJid(error.getAttribute('to'));
+                if (toDomain !== this.xmppService.options.hosts.anonymousdomain) {
+                    //FIXME:  "is external" should come either from
+                    // the focus or config.js
+                    self.externalAuthEnabled = true;
+                }
+                self.eventEmitter.emit(
+                    XMPPEvents.AUTHENTICATION_REQUIRED,
+                    function () {
+                        self.allocateConferenceFocus(
+                            callback);
+                    });
+                return;
+            }
+            var waitMs = self.getNextErrorTimeout();
+            console.error("Focus error, retry after " + waitMs, error);
+            // Show message
+            var focusComponent = self.getFocusComponent();
+            var retrySec = waitMs / 1000;
+            //FIXME:  message is duplicated ?
+            // Do not show in case of session invalid
+            // which means just a retry
+            if (!invalidSession) {
+                self.eventEmitter.emit(XMPPEvents.FOCUS_DISCONNECTED,
+                    focusComponent, retrySec);
+            }
+            // Reset response timeout
+            self.getNextTimeout(true);
+            window.setTimeout(
+                function () {
+                    self.allocateConferenceFocus(callback);
+                }, waitMs);
         }
-        iq.c('logout', {
-            xmlns: 'http://jitsi.org/protocol/focus',
-            'session-id': sessionId
-        });
-        connection.sendIQ(
-            iq,
-            function (result) {
-                var logoutUrl = $(result).find('logout').attr('logout-url');
-                if (logoutUrl) {
-                    logoutUrl = decodeURIComponent(logoutUrl);
-                }
-                console.info("Log out OK, url: " + logoutUrl, result);
-                localStorage.removeItem('sessionId');
-                callback(logoutUrl);
-            },
-            function (error) {
-                console.error("Logout error", error);
+    );
+};
+
+Moderator.prototype.getLoginUrl =  function (urlCallback) {
+    var iq = $iq({to: this.getFocusComponent(), type: 'get'});
+    iq.c('login-url', {
+        xmlns: 'http://jitsi.org/protocol/focus',
+        room: this.roomName,
+        'machine-uid': this.settings.getSettings().uid
+    });
+    this.connection.sendIQ(
+        iq,
+        function (result) {
+            var url = $(result).find('login-url').attr('url');
+            url = url = decodeURIComponent(url);
+            if (url) {
+                console.info("Got auth url: " + url);
+                urlCallback(url);
+            } else {
+                console.error(
+                    "Failed to get auth url from the focus", result);
             }
-        );
+        },
+        function (error) {
+            console.error("Get auth url error", error);
+        }
+    );
+};
+Moderator.prototype.getPopupLoginUrl =  function (urlCallback) {
+    var iq = $iq({to: this.getFocusComponent(), type: 'get'});
+    iq.c('login-url', {
+        xmlns: 'http://jitsi.org/protocol/focus',
+        room: this.roomName,
+        'machine-uid': this.settings.getSettings().uid,
+        popup: true
+    });
+    this.connection.sendIQ(
+        iq,
+        function (result) {
+            var url = $(result).find('login-url').attr('url');
+            url = url = decodeURIComponent(url);
+            if (url) {
+                console.info("Got POPUP auth url:  " + url);
+                urlCallback(url);
+            } else {
+                console.error(
+                    "Failed to get POPUP auth url from the focus", result);
+            }
+        },
+        function (error) {
+            console.error('Get POPUP auth url error', error);
+        }
+    );
+};
+
+Moderator.prototype.logout =  function (callback) {
+    var iq = $iq({to: this.getFocusComponent(), type: 'set'});
+    var sessionId = localStorage.getItem('sessionId');
+    if (!sessionId) {
+        callback();
+        return;
     }
+    iq.c('logout', {
+        xmlns: 'http://jitsi.org/protocol/focus',
+        'session-id': sessionId
+    });
+    this.connection.sendIQ(
+        iq,
+        function (result) {
+            var logoutUrl = $(result).find('logout').attr('logout-url');
+            if (logoutUrl) {
+                logoutUrl = decodeURIComponent(logoutUrl);
+            }
+            console.info("Log out OK, url: " + logoutUrl, result);
+            localStorage.removeItem('sessionId');
+            callback(logoutUrl);
+        },
+        function (error) {
+            console.error("Logout error", error);
+        }
+    );
 };
 
 module.exports = Moderator;

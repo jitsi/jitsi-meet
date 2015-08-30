@@ -5,6 +5,7 @@
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 var Moderator = require("./moderator");
 var RTC = require("../RTC/RTC");
+var EventEmitter = require("events");
 
 var parser = {
     packet2JSON: function (packet, nodes) {
@@ -46,6 +47,7 @@ var parser = {
 function ChatRoom(connection, jid, password, XMPP, eventEmitter)
 {
     this.eventEmitter = eventEmitter;
+    this.roomEmitter = new EventEmitter();
     this.xmpp = XMPP;
     this.connection = connection;
     this.roomjid = Strophe.getBareJidFromJid(jid);
@@ -54,11 +56,24 @@ function ChatRoom(connection, jid, password, XMPP, eventEmitter)
     console.info("Joined MUC as " + this.myroomjid);
     this.members = {};
     this.presMap = {};
+    this.presHandlers = {};
     this.joined = false;
     this.role = null;
     this.focusMucJid = null;
     this.bridgeIsDown = false;
+    this.moderator = new Moderator(this.roomjid, this.xmpp, eventEmitter);
     this.initPresenceMap();
+    this.readyToJoin = false;
+    this.joinRequested = false;
+    var self = this;
+    this.moderator.allocateConferenceFocus(function()
+    {
+        self.readyToJoin = true;
+        if(self.joinRequested)
+        {
+            self.join();
+        }
+    });
 }
 
 ChatRoom.prototype.initPresenceMap = function () {
@@ -83,6 +98,18 @@ ChatRoom.prototype.initPresenceMap = function () {
         "attributes": {xmlns: 'http://jitsi.org/jitmeet/user-agent'}
     });
 };
+
+ChatRoom.prototype.join = function (password) {
+    if(password)
+        this.password = password;
+    if(!this.readyToJoin)
+    {
+        this.joinRequested = true;
+        return;
+    }
+    this.joinRequested = false;
+    this.sendPresence();
+}
 
 ChatRoom.prototype.sendPresence = function () {
     if (!this.presMap['to']) {
@@ -169,11 +196,11 @@ ChatRoom.prototype.onPresence = function (pres) {
     member.jid = tmp.attr('jid');
     member.isFocus = false;
     if (member.jid
-        && member.jid.indexOf(Moderator.getFocusUserJid() + "/") == 0) {
+        && member.jid.indexOf(this.moderator.getFocusUserJid() + "/") == 0) {
         member.isFocus = true;
     }
 
-    pres.find(">x").remove();
+    $(pres).find(">x").remove();
     var nodes = [];
     parser.packet2JSON(pres, nodes);
     for(var i = 0; i < nodes.length; i++)
@@ -206,7 +233,7 @@ ChatRoom.prototype.onPresence = function (pres) {
                 }
                 break;
             default :
-                this.processNode(node);
+                this.processNode(node, from);
         }
 
     }
@@ -218,7 +245,7 @@ ChatRoom.prototype.onPresence = function (pres) {
             this.role = member.role;
 
             this.eventEmitter.emit(XMPPEvents.LOCAL_ROLE_CHANGED,
-                member, Moderator.isModerator());
+                member, this.isModerator());
         }
         if (!this.joined) {
             this.joined = true;
@@ -257,8 +284,9 @@ ChatRoom.prototype.onPresence = function (pres) {
 
 };
 
-ChatRoom.prototype.processNode = function (node) {
-    this.eventEmitter.emit(XMPPEvents.PRESENCE_SETTING, node);
+ChatRoom.prototype.processNode = function (node, from) {
+    if(this.presHandlers[node.tagName])
+        this.presHandlers[node.tagName](node, from);
 };
 
 ChatRoom.prototype.sendMessage = function (body, nickname) {
@@ -283,9 +311,7 @@ ChatRoom.prototype.onParticipantLeft = function (jid) {
 
     this.eventEmitter.emit(XMPPEvents.MUC_MEMBER_LEFT, jid);
 
-    this.connection.jingle.terminateByJid(jid);
-
-    Moderator.onMucMemberLeft(jid);
+    this.moderator.onMucMemberLeft(jid);
 };
 
 ChatRoom.prototype.onPresenceUnavailable = function (pres, from) {
@@ -447,6 +473,14 @@ ChatRoom.prototype.removeFromPresence = function (key) {
     }
 };
 
+ChatRoom.prototype.addPresenceListener = function (name, handler) {
+    this.presHandlers[name] = handler;
+}
+
+ChatRoom.prototype.removePresenceListener = function (name) {
+    delete this.presHandlers[name];
+}
+
 ChatRoom.prototype.isModerator = function (jid) {
     return this.role === 'moderator';
 };
@@ -466,21 +500,18 @@ module.exports = function(XMPP) {
         init: function (conn) {
             this.connection = conn;
             // add handlers (just once)
-            this.connection.addHandler(this.onPresence.bind(this), null, 'presence', null, null);
+            this.connection.addHandler(this.onPresence.bind(this), null, 'presence', null, null, null, null);
             this.connection.addHandler(this.onPresenceUnavailable.bind(this), null, 'presence', 'unavailable', null);
             this.connection.addHandler(this.onPresenceError.bind(this), null, 'presence', 'error', null);
             this.connection.addHandler(this.onMessage.bind(this), null, 'message', null, null);
         },
-        doJoin: function (jid, password, eventEmitter) {
+        createRoom: function (jid, password, eventEmitter) {
             var roomJid = Strophe.getBareJidFromJid(jid);
-            if(this.rooms[roomJid])
-            {
+            if (this.rooms[roomJid]) {
                 console.error("You are already in the room!");
                 return;
             }
             this.rooms[roomJid] = new ChatRoom(this.connection, jid, password, XMPP, eventEmitter);
-
-            this.rooms[roomJid].sendPresence();
             return this.rooms[roomJid];
         },
         doLeave: function (jid) {

@@ -1,7 +1,5 @@
 !function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.JitsiMeetJS=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 var room = null;
-
-
 /**
  * Creates a JitsiConference object with the given name and properties.
  * Note: this constructor is not a part of the public API (objects should be
@@ -22,6 +20,7 @@ function JitsiConference(options) {
  * Joins the conference.
  */
 JitsiConference.prototype.join = function () {
+
     room = this.xmpp.joinRoom(this.options.name, null, null);
 }
 
@@ -101,7 +100,7 @@ JitsiConference.prototype.removeEventListener = JitsiConference.prototype.off
  * @param message the text message.
  */
 JitsiConference.prototype.sendTextMessage = function (message) {
-    this.xmpp.sendChatMessage(message);
+    room.sendMessage(message);
 }
 
 /**
@@ -139,6 +138,15 @@ JitsiConference.prototype.selectParticipant = function(participantId) {
  * @return Object a list of participant identifiers containing all conference participants.
  */
 JitsiConference.prototype.getParticipants = function() {
+
+}
+
+/**
+ * @returns {JitsiParticipant} the participant in this conference with the specified id (or
+ * null if there isn't one).
+ * @param id the id of the participant.
+ */
+JitsiConference.prototype.getParticipantById = function(id) {
 
 }
 
@@ -244,11 +252,6 @@ module.exports = JitsiConferenceEvents;
 var JitsiConference = require("./JitsiConference");
 var XMPP = require("./modules/xmpp/xmpp");
 
-function wrapper()
-{
-    var jitsiconnectioninstance = new JitsiConnection();
-    this.a = jitsiconnectioninstance.a();
-}
 /**
  * Creates new connection object for the Jitsi Meet server side video conferencing service. Provides access to the
  * JitsiConference interface.
@@ -320,7 +323,7 @@ JitsiConnection.prototype.removeEventListener = function (event, listener) {
 
 module.exports = JitsiConnection;
 
-},{"./JitsiConference":1,"./modules/xmpp/xmpp":22}],5:[function(require,module,exports){
+},{"./JitsiConference":1,"./modules/xmpp/xmpp":29}],5:[function(require,module,exports){
 /**
  * Enumeration with the errors for the connection.
  * @type {{string: string}}
@@ -398,7 +401,7 @@ require("es6-promise").polyfill();
 
 module.exports = LibJitsiMeet;
 
-},{"./JitsiConferenceErrors":2,"./JitsiConferenceEvents":3,"./JitsiConnection":4,"./JitsiConnectionErrors":5,"./JitsiConnectionEvents":6,"es6-promise":23}],8:[function(require,module,exports){
+},{"./JitsiConferenceErrors":2,"./JitsiConferenceEvents":3,"./JitsiConnection":4,"./JitsiConnectionErrors":5,"./JitsiConnectionEvents":6,"es6-promise":31}],8:[function(require,module,exports){
 /* global config, APP, Strophe */
 
 // cache datachannels to avoid garbage collection
@@ -591,7 +594,7 @@ function onPinnedEndpointChanged(userResource) {
 module.exports = DataChannels;
 
 
-},{"../../service/RTC/RTCEvents":41}],9:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":67}],9:[function(require,module,exports){
 /* global APP */
 var StreamEventTypes = require("../../service/RTC/StreamEventTypes.js");
 var RTCEvents = require("../../service/RTC/RTCEvents");
@@ -717,7 +720,7 @@ LocalStream.prototype.getId = function () {
 
 module.exports = LocalStream;
 
-},{"../../service/RTC/RTCEvents":41,"../../service/RTC/StreamEventTypes.js":43,"./RTCBrowserType":12}],10:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":67,"../../service/RTC/StreamEventTypes.js":69,"./RTCBrowserType":12}],10:[function(require,module,exports){
 var MediaStreamType = require("../../service/RTC/MediaStreamTypes");
 
 /**
@@ -766,7 +769,7 @@ MediaStream.prototype.setMute = function (value) {
 
 module.exports = MediaStream;
 
-},{"../../service/RTC/MediaStreamTypes":40}],11:[function(require,module,exports){
+},{"../../service/RTC/MediaStreamTypes":66}],11:[function(require,module,exports){
 /* global APP */
 var EventEmitter = require("events");
 var RTCBrowserType = require("./RTCBrowserType");
@@ -1043,7 +1046,7 @@ var RTC = {
 
 module.exports = RTC;
 
-},{"../../service/RTC/MediaStreamTypes":40,"../../service/RTC/RTCEvents.js":41,"../../service/RTC/StreamEventTypes.js":43,"../../service/UI/UIEvents":44,"../../service/desktopsharing/DesktopSharingEventTypes":46,"../../service/xmpp/XMPPEvents":47,"./DataChannels":8,"./LocalStream.js":9,"./MediaStream.js":10,"./RTCBrowserType":12,"./RTCUtils.js":13,"events":48}],12:[function(require,module,exports){
+},{"../../service/RTC/MediaStreamTypes":66,"../../service/RTC/RTCEvents.js":67,"../../service/RTC/StreamEventTypes.js":69,"../../service/UI/UIEvents":70,"../../service/desktopsharing/DesktopSharingEventTypes":72,"../../service/xmpp/XMPPEvents":73,"./DataChannels":8,"./LocalStream.js":9,"./MediaStream.js":10,"./RTCBrowserType":12,"./RTCUtils.js":13,"events":74}],12:[function(require,module,exports){
 
 var currentBrowser;
 
@@ -1765,7 +1768,7 @@ RTCUtils.prototype.createStream = function(stream, isVideo) {
 
 module.exports = RTCUtils;
 
-},{"../../service/RTC/Resolutions":42,"../xmpp/SDPUtil":16,"./RTCBrowserType":12,"./adapter.screenshare":14}],14:[function(require,module,exports){
+},{"../../service/RTC/Resolutions":68,"../xmpp/SDPUtil":21,"./RTCBrowserType":12,"./adapter.screenshare":14}],14:[function(require,module,exports){
 /*! adapterjs - custom version from - 2015-08-12 */
 
 // Adapter's interface.
@@ -3120,17 +3123,17 @@ function Settings(conferenceID) {
     this.userId;
     this.language = null;
     this.confSettings = null;
+    this.conferenceID = conferenceID;
     if (supportsLocalStorage()) {
-        if(!window.localStorage.jitsiConferences)
-            window.localStorage.jitsiConferences = {}
-        if (!window.localStorage.jitsiConferences[conferenceID]) {
-            window.localStorage.jitsiConferences[conferenceID] = {}
-        }
-        this.confSettings = window.localStorage.jitsiConferences[conferenceID];
+        if(!window.localStorage.getItem(conferenceID))
+            this.confSettings = {};
+        else
+            this.confSettings = JSON.parse(window.localStorage.getItem(conferenceID));
         if(!this.confSettings.jitsiMeetId) {
             this.confSettings.jitsiMeetId = generateUniqueId();
             console.log("generated id",
                 this.confSettings.jitsiMeetId);
+            this.save();
         }
         this.userId = this.confSettings.jitsiMeetId || '';
         this.email = this.confSettings.email || '';
@@ -3142,16 +3145,23 @@ function Settings(conferenceID) {
     }
 }
 
+Settings.prototype.save = function () {
+    if(!supportsLocalStorage())
+        window.localStorage.setItem(this.conferenceID, JSON.stringify(this.confSettings));
+}
+
 Settings.prototype.setDisplayName = function (newDisplayName) {
     this.displayName = newDisplayName;
     if(this.confSettings != null)
         this.confSettings.displayname = displayName;
+    this.save();
     return this.displayName;
 },
 Settings.prototype.setEmail = function (newEmail) {
     this.email = newEmail;
     if(this.confSettings != null)
         this.confSettings.email = newEmail;
+    this.save();
     return this.email;
 },
 Settings.prototype.getSettings = function () {
@@ -3166,11 +3176,2659 @@ Settings.prototype.setLanguage = function (lang) {
     this.language = lang;
     if(this.confSettings != null)
         this.confSettings.language = lang;
+    this.save();
 }
 
 module.exports = Settings;
 
 },{}],16:[function(require,module,exports){
+/*
+ * JingleSession provides an API to manage a single Jingle session. We will
+ * have different implementations depending on the underlying interface used
+ * (i.e. WebRTC and ORTC) and here we hold the code common to all of them.
+ */
+function JingleSession(me, sid, connection, service, eventEmitter) {
+    /**
+     * Our JID.
+     */
+    this.me = me;
+
+    /**
+     * The Jingle session identifier.
+     */
+    this.sid = sid;
+
+    /**
+     * The XMPP connection.
+     */
+    this.connection = connection;
+
+    /**
+     * The XMPP service.
+     */
+    this.service = service;
+
+    /**
+     * The event emitter.
+     */
+    this.eventEmitter = eventEmitter;
+
+    /**
+     * Whether to use dripping or not. Dripping is sending trickle candidates
+     * not one-by-one.
+     * Note: currently we do not support 'false'.
+     */
+    this.usedrip = true;
+
+    /**
+     *  When dripping is used, stores ICE candidates which are to be sent.
+     */
+    this.drip_container = [];
+
+    // Media constraints. Is this WebRTC only?
+    this.media_constraints = null;
+
+    // ICE servers config (RTCConfiguration?).
+    this.ice_config = {};
+}
+
+/**
+ * Prepares this object to initiate a session.
+ * @param peerjid the JID of the remote peer.
+ * @param isInitiator whether we will be the Jingle initiator.
+ * @param media_constraints
+ * @param ice_config
+ */
+JingleSession.prototype.initialize = function(peerjid, isInitiator,
+                                              media_constraints, ice_config) {
+    this.media_constraints = media_constraints;
+    this.ice_config = ice_config;
+
+    if (this.state !== null) {
+        console.error('attempt to initiate on session ' + this.sid +
+        'in state ' + this.state);
+        return;
+    }
+    this.state = 'pending';
+    this.initiator = isInitiator ? this.me : peerjid;
+    this.responder = !isInitiator ? this.me : peerjid;
+    this.peerjid = peerjid;
+
+    this.doInitialize();
+};
+
+/**
+ * Finishes initialization.
+ */
+JingleSession.prototype.doInitialize = function() {};
+
+/**
+ * Adds the ICE candidates found in the 'contents' array as remote candidates?
+ * Note: currently only used on transport-info
+ */
+JingleSession.prototype.addIceCandidates = function(contents) {};
+
+/**
+ * Handles an 'add-source' event.
+ *
+ * @param contents an array of Jingle 'content' elements.
+ */
+JingleSession.prototype.addSources = function(contents) {};
+
+/**
+ * Handles a 'remove-source' event.
+ *
+ * @param contents an array of Jingle 'content' elements.
+ */
+JingleSession.prototype.removeSources = function(contents) {};
+
+/**
+ * Terminates this Jingle session (stops sending media and closes the streams?)
+ */
+JingleSession.prototype.terminate = function() {};
+
+/**
+ * Sends a Jingle session-terminate message to the peer and terminates the
+ * session.
+ * @param reason
+ * @param text
+ */
+JingleSession.prototype.sendTerminate = function(reason, text) {};
+
+/**
+ * Handles an offer from the remote peer (prepares to accept a session).
+ * @param jingle the 'jingle' XML element.
+ */
+JingleSession.prototype.setOffer = function(jingle) {};
+
+/**
+ * Handles an answer from the remote peer (prepares to accept a session).
+ * @param jingle the 'jingle' XML element.
+ */
+JingleSession.prototype.setAnswer = function(jingle) {};
+
+
+module.exports = JingleSession;
+
+},{}],17:[function(require,module,exports){
+/* jshint -W117 */
+var JingleSession = require("./JingleSession");
+var TraceablePeerConnection = require("./TraceablePeerConnection");
+var SDPDiffer = require("./SDPDiffer");
+var SDPUtil = require("./SDPUtil");
+var SDP = require("./SDP");
+var async = require("async");
+var transform = require("sdp-transform");
+var XMPPEvents = require("../../service/xmpp/XMPPEvents");
+var RTCBrowserType = require("../RTC/RTCBrowserType");
+var SSRCReplacement = require("./LocalSSRCReplacement");
+var RTC = require("../RTC/RTC");
+
+// Jingle stuff
+function JingleSessionPC(me, sid, connection, service, eventEmitter) {
+    JingleSession.call(this, me, sid, connection, service, eventEmitter);
+    this.initiator = null;
+    this.responder = null;
+    this.peerjid = null;
+    this.state = null;
+    this.localSDP = null;
+    this.remoteSDP = null;
+    this.relayedStreams = [];
+
+    this.usetrickle = true;
+    this.usepranswer = false; // early transport warmup -- mind you, this might fail. depends on webrtc issue 1718
+
+    this.hadstuncandidate = false;
+    this.hadturncandidate = false;
+    this.lasticecandidate = false;
+
+    this.statsinterval = null;
+
+    this.reason = null;
+
+    this.addssrc = [];
+    this.removessrc = [];
+    this.pendingop = null;
+    this.switchstreams = false;
+
+    this.wait = true;
+    this.localStreamsSSRC = null;
+    this.ssrcOwners = {};
+    this.ssrcVideoTypes = {};
+    this.eventEmitter = eventEmitter;
+
+    /**
+     * The indicator which determines whether the (local) video has been muted
+     * in response to a user command in contrast to an automatic decision made
+     * by the application logic.
+     */
+    this.videoMuteByUser = false;
+    this.modifySourcesQueue = async.queue(this._modifySources.bind(this), 1);
+    // We start with the queue paused. We resume it when the signaling state is
+    // stable and the ice connection state is connected.
+    this.modifySourcesQueue.pause();
+}
+JingleSessionPC.prototype = JingleSession.prototype;
+JingleSessionPC.prototype.constructor = JingleSessionPC;
+
+
+JingleSessionPC.prototype.setOffer = function(offer) {
+    this.setRemoteDescription(offer, 'offer');
+};
+
+JingleSessionPC.prototype.setAnswer = function(answer) {
+    this.setRemoteDescription(answer, 'answer');
+};
+
+JingleSessionPC.prototype.updateModifySourcesQueue = function() {
+    var signalingState = this.peerconnection.signalingState;
+    var iceConnectionState = this.peerconnection.iceConnectionState;
+    if (signalingState === 'stable' && iceConnectionState === 'connected') {
+        this.modifySourcesQueue.resume();
+    } else {
+        this.modifySourcesQueue.pause();
+    }
+};
+
+JingleSessionPC.prototype.doInitialize = function () {
+    var self = this;
+
+    this.hadstuncandidate = false;
+    this.hadturncandidate = false;
+    this.lasticecandidate = false;
+    this.isreconnect = false;
+
+    this.peerconnection = new TraceablePeerConnection(
+            this.connection.jingle.ice_config,
+            RTC.getPCConstraints(),
+            this);
+
+    this.peerconnection.onicecandidate = function (event) {
+        self.sendIceCandidate(event.candidate);
+    };
+    this.peerconnection.onaddstream = function (event) {
+        if (event.stream.id !== 'default') {
+        console.log("REMOTE STREAM ADDED: ", event.stream , event.stream.id);
+        self.remoteStreamAdded(event);
+        } else {
+            // This is a recvonly stream. Clients that implement Unified Plan,
+            // such as Firefox use recvonly "streams/channels/tracks" for
+            // receiving remote stream/tracks, as opposed to Plan B where there
+            // are only 3 channels: audio, video and data.
+            console.log("RECVONLY REMOTE STREAM IGNORED: " + event.stream + " - " + event.stream.id);
+        }
+    };
+    this.peerconnection.onremovestream = function (event) {
+        // Remove the stream from remoteStreams
+        // FIXME: remotestreamremoved.jingle not defined anywhere(unused)
+        $(document).trigger('remotestreamremoved.jingle', [event, self.sid]);
+    };
+    this.peerconnection.onsignalingstatechange = function (event) {
+        if (!(self && self.peerconnection)) return;
+        self.updateModifySourcesQueue();
+    };
+    /**
+     * The oniceconnectionstatechange event handler contains the code to execute when the iceconnectionstatechange event,
+     * of type Event, is received by this RTCPeerConnection. Such an event is sent when the value of
+     * RTCPeerConnection.iceConnectionState changes.
+     *
+     * @param event the event containing information about the change
+     */
+    this.peerconnection.oniceconnectionstatechange = function (event) {
+        if (!(self && self.peerconnection)) return;
+        self.updateModifySourcesQueue();
+        switch (self.peerconnection.iceConnectionState) {
+            case 'connected':
+
+                // Informs interested parties that the connection has been restored.
+                if (self.peerconnection.signalingState === 'stable' && self.isreconnect)
+                    self.eventEmitter.emit(XMPPEvents.CONNECTION_RESTORED);
+                self.isreconnect = false;
+
+                break;
+            case 'disconnected':
+                self.isreconnect = true;
+                // Informs interested parties that the connection has been interrupted.
+                if (self.peerconnection.signalingState === 'stable')
+                    self.eventEmitter.emit(XMPPEvents.CONNECTION_INTERRUPTED);
+                break;
+            case 'failed':
+                self.eventEmitter.emit(XMPPEvents.CONFERENCE_SETUP_FAILED);
+                break;
+        }
+        onIceConnectionStateChange(self.sid, self);
+    };
+    this.peerconnection.onnegotiationneeded = function (event) {
+        self.eventEmitter.emit(XMPPEvents.PEERCONNECTION_READY, self);
+    };
+
+    this.relayedStreams.forEach(function(stream) {
+        self.peerconnection.addStream(stream);
+    });
+};
+
+JingleSessionPC.prototype.addLocalStreams = function (localStreams) {
+    var self = this;
+// add any local and relayed stream
+    localStreams.forEach(function(stream) {
+        self.peerconnection.addStream(stream.getOriginalStream());
+    });
+}
+
+function onIceConnectionStateChange(sid, session) {
+    switch (session.peerconnection.iceConnectionState) {
+        case 'checking':
+            session.timeChecking = (new Date()).getTime();
+            session.firstconnect = true;
+            break;
+        case 'completed': // on caller side
+        case 'connected':
+            if (session.firstconnect) {
+                session.firstconnect = false;
+                var metadata = {};
+                metadata.setupTime
+                    = (new Date()).getTime() - session.timeChecking;
+                session.peerconnection.getStats(function (res) {
+                    if(res && res.result) {
+                        res.result().forEach(function (report) {
+                            if (report.type == 'googCandidatePair' &&
+                                report.stat('googActiveConnection') == 'true') {
+                                metadata.localCandidateType
+                                    = report.stat('googLocalCandidateType');
+                                metadata.remoteCandidateType
+                                    = report.stat('googRemoteCandidateType');
+
+                                // log pair as well so we can get nice pie
+                                // charts
+                                metadata.candidatePair
+                                    = report.stat('googLocalCandidateType') +
+                                        ';' +
+                                        report.stat('googRemoteCandidateType');
+
+                                if (report.stat('googRemoteAddress').indexOf('[') === 0)
+                                {
+                                    metadata.ipv6 = true;
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+            break;
+    }
+}
+
+JingleSessionPC.prototype.accept = function () {
+    this.state = 'active';
+
+    var pranswer = this.peerconnection.localDescription;
+    if (!pranswer || pranswer.type != 'pranswer') {
+        return;
+    }
+    console.log('going from pranswer to answer');
+    if (this.usetrickle) {
+        // remove candidates already sent from session-accept
+        var lines = SDPUtil.find_lines(pranswer.sdp, 'a=candidate:');
+        for (var i = 0; i < lines.length; i++) {
+            pranswer.sdp = pranswer.sdp.replace(lines[i] + '\r\n', '');
+        }
+    }
+    while (SDPUtil.find_line(pranswer.sdp, 'a=inactive')) {
+        // FIXME: change any inactive to sendrecv or whatever they were originally
+        pranswer.sdp = pranswer.sdp.replace('a=inactive', 'a=sendrecv');
+    }
+    var prsdp = new SDP(pranswer.sdp);
+    var accept = $iq({to: this.peerjid,
+        type: 'set'})
+        .c('jingle', {xmlns: 'urn:xmpp:jingle:1',
+            action: 'session-accept',
+            initiator: this.initiator,
+            responder: this.responder,
+            sid: this.sid });
+    // FIXME why do we generate session-accept in 3 different places ?
+    prsdp.toJingle(
+        accept,
+        this.initiator == this.me ? 'initiator' : 'responder',
+        this.localStreamsSSRC);
+    var sdp = this.peerconnection.localDescription.sdp;
+    while (SDPUtil.find_line(sdp, 'a=inactive')) {
+        // FIXME: change any inactive to sendrecv or whatever they were originally
+        sdp = sdp.replace('a=inactive', 'a=sendrecv');
+    }
+    var self = this;
+    this.peerconnection.setLocalDescription(new RTCSessionDescription({type: 'answer', sdp: sdp}),
+        function () {
+            //console.log('setLocalDescription success');
+            self.setLocalDescription();
+
+            SSRCReplacement.processSessionInit(accept);
+
+            self.connection.sendIQ(accept,
+                function () {
+                    var ack = {};
+                    ack.source = 'answer';
+                    $(document).trigger('ack.jingle', [self.sid, ack]);
+                },
+                function (stanza) {
+                    var error = ($(stanza).find('error').length) ? {
+                        code: $(stanza).find('error').attr('code'),
+                        reason: $(stanza).find('error :first')[0].tagName
+                    }:{};
+                    error.source = 'answer';
+                    JingleSessionPC.onJingleError(self.sid, error);
+                },
+                10000);
+        },
+        function (e) {
+            console.error('setLocalDescription failed', e);
+            self.eventEmitter.emit(XMPPEvents.CONFERENCE_SETUP_FAILED);
+        }
+    );
+};
+
+JingleSessionPC.prototype.terminate = function (reason) {
+    this.state = 'ended';
+    this.reason = reason;
+    this.peerconnection.close();
+    if (this.statsinterval !== null) {
+        window.clearInterval(this.statsinterval);
+        this.statsinterval = null;
+    }
+};
+
+JingleSessionPC.prototype.active = function () {
+    return this.state == 'active';
+};
+
+JingleSessionPC.prototype.sendIceCandidate = function (candidate) {
+    var self = this;
+    if (candidate && !this.lasticecandidate) {
+        var ice = SDPUtil.iceparams(this.localSDP.media[candidate.sdpMLineIndex], this.localSDP.session);
+        var jcand = SDPUtil.candidateToJingle(candidate.candidate);
+        if (!(ice && jcand)) {
+            console.error('failed to get ice && jcand');
+            return;
+        }
+        ice.xmlns = 'urn:xmpp:jingle:transports:ice-udp:1';
+
+        if (jcand.type === 'srflx') {
+            this.hadstuncandidate = true;
+        } else if (jcand.type === 'relay') {
+            this.hadturncandidate = true;
+        }
+
+        if (this.usetrickle) {
+            if (this.usedrip) {
+                if (this.drip_container.length === 0) {
+                    // start 20ms callout
+                    window.setTimeout(function () {
+                        if (self.drip_container.length === 0) return;
+                        self.sendIceCandidates(self.drip_container);
+                        self.drip_container = [];
+                    }, 20);
+
+                }
+                this.drip_container.push(candidate);
+                return;
+            } else {
+                self.sendIceCandidate([candidate]);
+            }
+        }
+    } else {
+        //console.log('sendIceCandidate: last candidate.');
+        if (!this.usetrickle) {
+            //console.log('should send full offer now...');
+            //FIXME why do we generate session-accept in 3 different places ?
+            var init = $iq({to: this.peerjid,
+                type: 'set'})
+                .c('jingle', {xmlns: 'urn:xmpp:jingle:1',
+                    action: this.peerconnection.localDescription.type == 'offer' ? 'session-initiate' : 'session-accept',
+                    initiator: this.initiator,
+                    sid: this.sid});
+            this.localSDP = new SDP(this.peerconnection.localDescription.sdp);
+            var sendJingle = function (ssrc) {
+                if(!ssrc)
+                    ssrc = {};
+                self.localSDP.toJingle(
+                    init,
+                    self.initiator == self.me ? 'initiator' : 'responder',
+                    ssrc);
+
+                SSRCReplacement.processSessionInit(init);
+
+                self.connection.sendIQ(init,
+                    function () {
+                        //console.log('session initiate ack');
+                        var ack = {};
+                        ack.source = 'offer';
+                        $(document).trigger('ack.jingle', [self.sid, ack]);
+                    },
+                    function (stanza) {
+                        self.state = 'error';
+                        self.peerconnection.close();
+                        var error = ($(stanza).find('error').length) ? {
+                            code: $(stanza).find('error').attr('code'),
+                            reason: $(stanza).find('error :first')[0].tagName,
+                        }:{};
+                        error.source = 'offer';
+                        JingleSessionPC.onJingleError(self.sid, error);
+                    },
+                    10000);
+            };
+            sendJingle();
+        }
+        this.lasticecandidate = true;
+        console.log('Have we encountered any srflx candidates? ' + this.hadstuncandidate);
+        console.log('Have we encountered any relay candidates? ' + this.hadturncandidate);
+
+        if (!(this.hadstuncandidate || this.hadturncandidate) && this.peerconnection.signalingState != 'closed') {
+            $(document).trigger('nostuncandidates.jingle', [this.sid]);
+        }
+    }
+};
+
+JingleSessionPC.prototype.sendIceCandidates = function (candidates) {
+    console.log('sendIceCandidates', candidates);
+    var cand = $iq({to: this.peerjid, type: 'set'})
+        .c('jingle', {xmlns: 'urn:xmpp:jingle:1',
+            action: 'transport-info',
+            initiator: this.initiator,
+            sid: this.sid});
+    for (var mid = 0; mid < this.localSDP.media.length; mid++) {
+        var cands = candidates.filter(function (el) { return el.sdpMLineIndex == mid; });
+        var mline = SDPUtil.parse_mline(this.localSDP.media[mid].split('\r\n')[0]);
+        if (cands.length > 0) {
+            var ice = SDPUtil.iceparams(this.localSDP.media[mid], this.localSDP.session);
+            ice.xmlns = 'urn:xmpp:jingle:transports:ice-udp:1';
+            cand.c('content', {creator: this.initiator == this.me ? 'initiator' : 'responder',
+                name: (cands[0].sdpMid? cands[0].sdpMid : mline.media)
+            }).c('transport', ice);
+            for (var i = 0; i < cands.length; i++) {
+                cand.c('candidate', SDPUtil.candidateToJingle(cands[i].candidate)).up();
+            }
+            // add fingerprint
+            if (SDPUtil.find_line(this.localSDP.media[mid], 'a=fingerprint:', this.localSDP.session)) {
+                var tmp = SDPUtil.parse_fingerprint(SDPUtil.find_line(this.localSDP.media[mid], 'a=fingerprint:', this.localSDP.session));
+                tmp.required = true;
+                cand.c(
+                    'fingerprint',
+                    {xmlns: 'urn:xmpp:jingle:apps:dtls:0'})
+                    .t(tmp.fingerprint);
+                delete tmp.fingerprint;
+                cand.attrs(tmp);
+                cand.up();
+            }
+            cand.up(); // transport
+            cand.up(); // content
+        }
+    }
+    // might merge last-candidate notification into this, but it is called alot later. See webrtc issue #2340
+    //console.log('was this the last candidate', this.lasticecandidate);
+    this.connection.sendIQ(cand,
+        function () {
+            var ack = {};
+            ack.source = 'transportinfo';
+            $(document).trigger('ack.jingle', [this.sid, ack]);
+        },
+        function (stanza) {
+            var error = ($(stanza).find('error').length) ? {
+                code: $(stanza).find('error').attr('code'),
+                reason: $(stanza).find('error :first')[0].tagName,
+            }:{};
+            error.source = 'transportinfo';
+            JingleSessionPC.onJingleError(this.sid, error);
+        },
+        10000);
+};
+
+
+JingleSessionPC.prototype.sendOffer = function () {
+    //console.log('sendOffer...');
+    var self = this;
+    this.peerconnection.createOffer(function (sdp) {
+            self.createdOffer(sdp);
+        },
+        function (e) {
+            console.error('createOffer failed', e);
+        },
+        this.media_constraints
+    );
+};
+
+// FIXME createdOffer is never used in jitsi-meet
+JingleSessionPC.prototype.createdOffer = function (sdp) {
+    //console.log('createdOffer', sdp);
+    var self = this;
+    this.localSDP = new SDP(sdp.sdp);
+    //this.localSDP.mangle();
+    var sendJingle = function () {
+        var init = $iq({to: this.peerjid,
+            type: 'set'})
+            .c('jingle', {xmlns: 'urn:xmpp:jingle:1',
+                action: 'session-initiate',
+                initiator: this.initiator,
+                sid: this.sid});
+        self.localSDP.toJingle(
+            init,
+            this.initiator == this.me ? 'initiator' : 'responder',
+            this.localStreamsSSRC);
+
+        SSRCReplacement.processSessionInit(init);
+
+        self.connection.sendIQ(init,
+            function () {
+                var ack = {};
+                ack.source = 'offer';
+                $(document).trigger('ack.jingle', [self.sid, ack]);
+            },
+            function (stanza) {
+                self.state = 'error';
+                self.peerconnection.close();
+                var error = ($(stanza).find('error').length) ? {
+                    code: $(stanza).find('error').attr('code'),
+                    reason: $(stanza).find('error :first')[0].tagName,
+                }:{};
+                error.source = 'offer';
+                JingleSessionPC.onJingleError(self.sid, error);
+            },
+            10000);
+    }
+    sdp.sdp = this.localSDP.raw;
+    this.peerconnection.setLocalDescription(sdp,
+        function () {
+            if(self.usetrickle)
+            {
+                sendJingle();
+            }
+            self.setLocalDescription();
+            //console.log('setLocalDescription success');
+        },
+        function (e) {
+            console.error('setLocalDescription failed', e);
+            self.eventEmitter.emit(XMPPEvents.CONFERENCE_SETUP_FAILED);
+        }
+    );
+    var cands = SDPUtil.find_lines(this.localSDP.raw, 'a=candidate:');
+    for (var i = 0; i < cands.length; i++) {
+        var cand = SDPUtil.parse_icecandidate(cands[i]);
+        if (cand.type == 'srflx') {
+            this.hadstuncandidate = true;
+        } else if (cand.type == 'relay') {
+            this.hadturncandidate = true;
+        }
+    }
+};
+
+JingleSessionPC.prototype.readSsrcInfo = function (contents) {
+    var self = this;
+    $(contents).each(function (idx, content) {
+        var name = $(content).attr('name');
+        var mediaType = this.getAttribute('name');
+        var ssrcs = $(content).find('description>source[xmlns="urn:xmpp:jingle:apps:rtp:ssma:0"]');
+        ssrcs.each(function () {
+            var ssrc = this.getAttribute('ssrc');
+            $(this).find('>ssrc-info[xmlns="http://jitsi.org/jitmeet"]').each(
+                function () {
+                    var owner = this.getAttribute('owner');
+                    self.ssrcOwners[ssrc] = owner;
+                }
+            );
+        });
+    });
+};
+
+JingleSessionPC.prototype.getSsrcOwner = function (ssrc) {
+    return this.ssrcOwners[ssrc];
+};
+
+JingleSessionPC.prototype.setRemoteDescription = function (elem, desctype) {
+    //console.log('setting remote description... ', desctype);
+    this.remoteSDP = new SDP('');
+    this.remoteSDP.fromJingle(elem);
+    this.readSsrcInfo($(elem).find(">content"));
+    if (this.peerconnection.remoteDescription !== null) {
+        console.log('setRemoteDescription when remote description is not null, should be pranswer', this.peerconnection.remoteDescription);
+        if (this.peerconnection.remoteDescription.type == 'pranswer') {
+            var pranswer = new SDP(this.peerconnection.remoteDescription.sdp);
+            for (var i = 0; i < pranswer.media.length; i++) {
+                // make sure we have ice ufrag and pwd
+                if (!SDPUtil.find_line(this.remoteSDP.media[i], 'a=ice-ufrag:', this.remoteSDP.session)) {
+                    if (SDPUtil.find_line(pranswer.media[i], 'a=ice-ufrag:', pranswer.session)) {
+                        this.remoteSDP.media[i] += SDPUtil.find_line(pranswer.media[i], 'a=ice-ufrag:', pranswer.session) + '\r\n';
+                    } else {
+                        console.warn('no ice ufrag?');
+                    }
+                    if (SDPUtil.find_line(pranswer.media[i], 'a=ice-pwd:', pranswer.session)) {
+                        this.remoteSDP.media[i] += SDPUtil.find_line(pranswer.media[i], 'a=ice-pwd:', pranswer.session) + '\r\n';
+                    } else {
+                        console.warn('no ice pwd?');
+                    }
+                }
+                // copy over candidates
+                var lines = SDPUtil.find_lines(pranswer.media[i], 'a=candidate:');
+                for (var j = 0; j < lines.length; j++) {
+                    this.remoteSDP.media[i] += lines[j] + '\r\n';
+                }
+            }
+            this.remoteSDP.raw = this.remoteSDP.session + this.remoteSDP.media.join('');
+        }
+    }
+    var remotedesc = new RTCSessionDescription({type: desctype, sdp: this.remoteSDP.raw});
+
+    this.peerconnection.setRemoteDescription(remotedesc,
+        function () {
+            //console.log('setRemoteDescription success');
+        },
+        function (e) {
+            console.error('setRemoteDescription error', e);
+            JingleSessionPC.onJingleFatalError(self, e);
+        }
+    );
+};
+
+JingleSessionPC.prototype.addIceCandidate = function (elem) {
+    var self = this;
+    if (this.peerconnection.signalingState == 'closed') {
+        return;
+    }
+    if (!this.peerconnection.remoteDescription && this.peerconnection.signalingState == 'have-local-offer') {
+        console.log('trickle ice candidate arriving before session accept...');
+        // create a PRANSWER for setRemoteDescription
+        if (!this.remoteSDP) {
+            var cobbled = 'v=0\r\n' +
+                'o=- ' + '1923518516' + ' 2 IN IP4 0.0.0.0\r\n' +// FIXME
+                's=-\r\n' +
+                't=0 0\r\n';
+            // first, take some things from the local description
+            for (var i = 0; i < this.localSDP.media.length; i++) {
+                cobbled += SDPUtil.find_line(this.localSDP.media[i], 'm=') + '\r\n';
+                cobbled += SDPUtil.find_lines(this.localSDP.media[i], 'a=rtpmap:').join('\r\n') + '\r\n';
+                if (SDPUtil.find_line(this.localSDP.media[i], 'a=mid:')) {
+                    cobbled += SDPUtil.find_line(this.localSDP.media[i], 'a=mid:') + '\r\n';
+                }
+                cobbled += 'a=inactive\r\n';
+            }
+            this.remoteSDP = new SDP(cobbled);
+        }
+        // then add things like ice and dtls from remote candidate
+        elem.each(function () {
+            for (var i = 0; i < self.remoteSDP.media.length; i++) {
+                if (SDPUtil.find_line(self.remoteSDP.media[i], 'a=mid:' + $(this).attr('name')) ||
+                    self.remoteSDP.media[i].indexOf('m=' + $(this).attr('name')) === 0) {
+                    if (!SDPUtil.find_line(self.remoteSDP.media[i], 'a=ice-ufrag:')) {
+                        var tmp = $(this).find('transport');
+                        self.remoteSDP.media[i] += 'a=ice-ufrag:' + tmp.attr('ufrag') + '\r\n';
+                        self.remoteSDP.media[i] += 'a=ice-pwd:' + tmp.attr('pwd') + '\r\n';
+                        tmp = $(this).find('transport>fingerprint');
+                        if (tmp.length) {
+                            self.remoteSDP.media[i] += 'a=fingerprint:' + tmp.attr('hash') + ' ' + tmp.text() + '\r\n';
+                        } else {
+                            console.log('no dtls fingerprint (webrtc issue #1718?)');
+                            self.remoteSDP.media[i] += 'a=crypto:1 AES_CM_128_HMAC_SHA1_80 inline:BAADBAADBAADBAADBAADBAADBAADBAADBAADBAAD\r\n';
+                        }
+                        break;
+                    }
+                }
+            }
+        });
+        this.remoteSDP.raw = this.remoteSDP.session + this.remoteSDP.media.join('');
+
+        // we need a complete SDP with ice-ufrag/ice-pwd in all parts
+        // this makes the assumption that the PRANSWER is constructed such that the ice-ufrag is in all mediaparts
+        // but it could be in the session part as well. since the code above constructs this sdp this can't happen however
+        var iscomplete = this.remoteSDP.media.filter(function (mediapart) {
+            return SDPUtil.find_line(mediapart, 'a=ice-ufrag:');
+        }).length == this.remoteSDP.media.length;
+
+        if (iscomplete) {
+            console.log('setting pranswer');
+            try {
+                this.peerconnection.setRemoteDescription(new RTCSessionDescription({type: 'pranswer', sdp: this.remoteSDP.raw }),
+                    function() {
+                    },
+                    function(e) {
+                        console.log('setRemoteDescription pranswer failed', e.toString());
+                    });
+            } catch (e) {
+                console.error('setting pranswer failed', e);
+            }
+        } else {
+            //console.log('not yet setting pranswer');
+        }
+    }
+    // operate on each content element
+    elem.each(function () {
+        // would love to deactivate this, but firefox still requires it
+        var idx = -1;
+        var i;
+        for (i = 0; i < self.remoteSDP.media.length; i++) {
+            if (SDPUtil.find_line(self.remoteSDP.media[i], 'a=mid:' + $(this).attr('name')) ||
+                self.remoteSDP.media[i].indexOf('m=' + $(this).attr('name')) === 0) {
+                idx = i;
+                break;
+            }
+        }
+        if (idx == -1) { // fall back to localdescription
+            for (i = 0; i < self.localSDP.media.length; i++) {
+                if (SDPUtil.find_line(self.localSDP.media[i], 'a=mid:' + $(this).attr('name')) ||
+                    self.localSDP.media[i].indexOf('m=' + $(this).attr('name')) === 0) {
+                    idx = i;
+                    break;
+                }
+            }
+        }
+        var name = $(this).attr('name');
+        // TODO: check ice-pwd and ice-ufrag?
+        $(this).find('transport>candidate').each(function () {
+            var line, candidate;
+            line = SDPUtil.candidateFromJingle(this);
+            candidate = new RTCIceCandidate({sdpMLineIndex: idx,
+                sdpMid: name,
+                candidate: line});
+            try {
+                self.peerconnection.addIceCandidate(candidate);
+            } catch (e) {
+                console.error('addIceCandidate failed', e.toString(), line);
+            }
+        });
+    });
+};
+
+JingleSessionPC.prototype.sendAnswer = function (provisional) {
+    //console.log('createAnswer', provisional);
+    var self = this;
+    this.peerconnection.createAnswer(
+        function (sdp) {
+            self.createdAnswer(sdp, provisional);
+        },
+        function (e) {
+            console.error('createAnswer failed', e);
+            self.eventEmitter.emit(XMPPEvents.CONFERENCE_SETUP_FAILED);
+        },
+        this.media_constraints
+    );
+};
+
+JingleSessionPC.prototype.createdAnswer = function (sdp, provisional) {
+    //console.log('createAnswer callback');
+    var self = this;
+    this.localSDP = new SDP(sdp.sdp);
+    //this.localSDP.mangle();
+    this.usepranswer = provisional === true;
+    if (this.usetrickle) {
+        if (this.usepranswer) {
+            sdp.type = 'pranswer';
+            for (var i = 0; i < this.localSDP.media.length; i++) {
+                this.localSDP.media[i] = this.localSDP.media[i].replace('a=sendrecv\r\n', 'a=inactive\r\n');
+            }
+            this.localSDP.raw = this.localSDP.session + '\r\n' + this.localSDP.media.join('');
+        }
+    }
+    var self = this;
+    var sendJingle = function (ssrcs) {
+                // FIXME why do we generate session-accept in 3 different places ?
+                var accept = $iq({to: self.peerjid,
+                    type: 'set'})
+                    .c('jingle', {xmlns: 'urn:xmpp:jingle:1',
+                        action: 'session-accept',
+                        initiator: self.initiator,
+                        responder: self.responder,
+                        sid: self.sid });
+                self.localSDP.toJingle(
+                    accept,
+                    self.initiator == self.me ? 'initiator' : 'responder',
+                    ssrcs);
+
+                SSRCReplacement.processSessionInit(accept);
+
+                self.connection.sendIQ(accept,
+                    function () {
+                        var ack = {};
+                        ack.source = 'answer';
+                        $(document).trigger('ack.jingle', [self.sid, ack]);
+                    },
+                    function (stanza) {
+                        var error = ($(stanza).find('error').length) ? {
+                            code: $(stanza).find('error').attr('code'),
+                            reason: $(stanza).find('error :first')[0].tagName,
+                        }:{};
+                        error.source = 'answer';
+                        JingleSessionPC.onJingleError(self.sid, error);
+                    },
+                    10000);
+    }
+    sdp.sdp = this.localSDP.raw;
+    this.peerconnection.setLocalDescription(sdp,
+        function () {
+
+            //console.log('setLocalDescription success');
+            if (self.usetrickle && !self.usepranswer) {
+                sendJingle();
+            }
+            self.setLocalDescription();
+        },
+        function (e) {
+            console.error('setLocalDescription failed', e);
+            self.eventEmitter.emit(XMPPEvents.CONFERENCE_SETUP_FAILED);
+        }
+    );
+    var cands = SDPUtil.find_lines(this.localSDP.raw, 'a=candidate:');
+    for (var j = 0; j < cands.length; j++) {
+        var cand = SDPUtil.parse_icecandidate(cands[j]);
+        if (cand.type == 'srflx') {
+            this.hadstuncandidate = true;
+        } else if (cand.type == 'relay') {
+            this.hadturncandidate = true;
+        }
+    }
+};
+
+JingleSessionPC.prototype.sendTerminate = function (reason, text) {
+    var self = this,
+        term = $iq({to: this.peerjid,
+            type: 'set'})
+            .c('jingle', {xmlns: 'urn:xmpp:jingle:1',
+                action: 'session-terminate',
+                initiator: this.initiator,
+                sid: this.sid})
+            .c('reason')
+            .c(reason || 'success');
+
+    if (text) {
+        term.up().c('text').t(text);
+    }
+
+    this.connection.sendIQ(term,
+        function () {
+            self.peerconnection.close();
+            self.peerconnection = null;
+            self.terminate();
+            var ack = {};
+            ack.source = 'terminate';
+            $(document).trigger('ack.jingle', [self.sid, ack]);
+        },
+        function (stanza) {
+            var error = ($(stanza).find('error').length) ? {
+                code: $(stanza).find('error').attr('code'),
+                reason: $(stanza).find('error :first')[0].tagName,
+            }:{};
+            $(document).trigger('ack.jingle', [self.sid, error]);
+        },
+        10000);
+    if (this.statsinterval !== null) {
+        window.clearInterval(this.statsinterval);
+        this.statsinterval = null;
+    }
+};
+
+JingleSessionPC.prototype.addSource = function (elem, fromJid) {
+
+    var self = this;
+    // FIXME: dirty waiting
+    if (!this.peerconnection.localDescription)
+    {
+        console.warn("addSource - localDescription not ready yet")
+        setTimeout(function()
+            {
+                self.addSource(elem, fromJid);
+            },
+            200
+        );
+        return;
+    }
+
+    console.log('addssrc', new Date().getTime());
+    console.log('ice', this.peerconnection.iceConnectionState);
+
+    this.readSsrcInfo(elem);
+
+    var sdp = new SDP(this.peerconnection.remoteDescription.sdp);
+    var mySdp = new SDP(this.peerconnection.localDescription.sdp);
+
+    $(elem).each(function (idx, content) {
+        var name = $(content).attr('name');
+        var lines = '';
+        $(content).find('ssrc-group[xmlns="urn:xmpp:jingle:apps:rtp:ssma:0"]').each(function() {
+            var semantics = this.getAttribute('semantics');
+            var ssrcs = $(this).find('>source').map(function () {
+                return this.getAttribute('ssrc');
+            }).get();
+
+            if (ssrcs.length != 0) {
+                lines += 'a=ssrc-group:' + semantics + ' ' + ssrcs.join(' ') + '\r\n';
+            }
+        });
+        var tmp = $(content).find('source[xmlns="urn:xmpp:jingle:apps:rtp:ssma:0"]'); // can handle both >source and >description>source
+        tmp.each(function () {
+            var ssrc = $(this).attr('ssrc');
+            if(mySdp.containsSSRC(ssrc)){
+                /**
+                 * This happens when multiple participants change their streams at the same time and
+                 * ColibriFocus.modifySources have to wait for stable state. In the meantime multiple
+                 * addssrc are scheduled for update IQ. See
+                 */
+                console.warn("Got add stream request for my own ssrc: "+ssrc);
+                return;
+            }
+            if (sdp.containsSSRC(ssrc)) {
+                console.warn("Source-add request for existing SSRC: " + ssrc);
+                return;
+            }
+            $(this).find('>parameter').each(function () {
+                lines += 'a=ssrc:' + ssrc + ' ' + $(this).attr('name');
+                if ($(this).attr('value') && $(this).attr('value').length)
+                    lines += ':' + $(this).attr('value');
+                lines += '\r\n';
+            });
+        });
+        sdp.media.forEach(function(media, idx) {
+            if (!SDPUtil.find_line(media, 'a=mid:' + name))
+                return;
+            sdp.media[idx] += lines;
+            if (!self.addssrc[idx]) self.addssrc[idx] = '';
+            self.addssrc[idx] += lines;
+        });
+        sdp.raw = sdp.session + sdp.media.join('');
+    });
+
+    this.modifySourcesQueue.push(function() {
+        // When a source is added and if this is FF, a new channel is allocated
+        // for receiving the added source. We need to diffuse the SSRC of this
+        // new recvonly channel to the rest of the peers.
+        console.log('modify sources done');
+
+        var newSdp = new SDP(self.peerconnection.localDescription.sdp);
+        console.log("SDPs", mySdp, newSdp);
+        self.notifyMySSRCUpdate(mySdp, newSdp);
+    });
+};
+
+JingleSessionPC.prototype.removeSource = function (elem, fromJid) {
+
+    var self = this;
+    // FIXME: dirty waiting
+    if (!this.peerconnection.localDescription)
+    {
+        console.warn("removeSource - localDescription not ready yet")
+        setTimeout(function()
+            {
+                self.removeSource(elem, fromJid);
+            },
+            200
+        );
+        return;
+    }
+
+    console.log('removessrc', new Date().getTime());
+    console.log('ice', this.peerconnection.iceConnectionState);
+    var sdp = new SDP(this.peerconnection.remoteDescription.sdp);
+    var mySdp = new SDP(this.peerconnection.localDescription.sdp);
+
+    $(elem).each(function (idx, content) {
+        var name = $(content).attr('name');
+        var lines = '';
+        $(content).find('ssrc-group[xmlns="urn:xmpp:jingle:apps:rtp:ssma:0"]').each(function() {
+            var semantics = this.getAttribute('semantics');
+            var ssrcs = $(this).find('>source').map(function () {
+                return this.getAttribute('ssrc');
+            }).get();
+
+            if (ssrcs.length != 0) {
+                lines += 'a=ssrc-group:' + semantics + ' ' + ssrcs.join(' ') + '\r\n';
+            }
+        });
+        var tmp = $(content).find('source[xmlns="urn:xmpp:jingle:apps:rtp:ssma:0"]'); // can handle both >source and >description>source
+        tmp.each(function () {
+            var ssrc = $(this).attr('ssrc');
+            // This should never happen, but can be useful for bug detection
+            if(mySdp.containsSSRC(ssrc)){
+                console.error("Got remove stream request for my own ssrc: "+ssrc);
+                return;
+            }
+            $(this).find('>parameter').each(function () {
+                lines += 'a=ssrc:' + ssrc + ' ' + $(this).attr('name');
+                if ($(this).attr('value') && $(this).attr('value').length)
+                    lines += ':' + $(this).attr('value');
+                lines += '\r\n';
+            });
+        });
+        sdp.media.forEach(function(media, idx) {
+            if (!SDPUtil.find_line(media, 'a=mid:' + name))
+                return;
+            sdp.media[idx] += lines;
+            if (!self.removessrc[idx]) self.removessrc[idx] = '';
+            self.removessrc[idx] += lines;
+        });
+        sdp.raw = sdp.session + sdp.media.join('');
+    });
+
+    this.modifySourcesQueue.push(function() {
+        // When a source is removed and if this is FF, the recvonly channel that
+        // receives the remote stream is deactivated . We need to diffuse the
+        // recvonly SSRC removal to the rest of the peers.
+        console.log('modify sources done');
+
+        var newSdp = new SDP(self.peerconnection.localDescription.sdp);
+        console.log("SDPs", mySdp, newSdp);
+        self.notifyMySSRCUpdate(mySdp, newSdp);
+    });
+};
+
+JingleSessionPC.prototype._modifySources = function (successCallback, queueCallback) {
+    var self = this;
+
+    if (this.peerconnection.signalingState == 'closed') return;
+    if (!(this.addssrc.length || this.removessrc.length || this.pendingop !== null || this.switchstreams)){
+        // There is nothing to do since scheduled job might have been executed by another succeeding call
+        this.setLocalDescription();
+        if(successCallback){
+            successCallback();
+        }
+        queueCallback();
+        return;
+    }
+
+    // Reset switch streams flag
+    this.switchstreams = false;
+
+    var sdp = new SDP(this.peerconnection.remoteDescription.sdp);
+
+    // add sources
+    this.addssrc.forEach(function(lines, idx) {
+        sdp.media[idx] += lines;
+    });
+    this.addssrc = [];
+
+    // remove sources
+    this.removessrc.forEach(function(lines, idx) {
+        lines = lines.split('\r\n');
+        lines.pop(); // remove empty last element;
+        lines.forEach(function(line) {
+            sdp.media[idx] = sdp.media[idx].replace(line + '\r\n', '');
+        });
+    });
+    this.removessrc = [];
+
+    sdp.raw = sdp.session + sdp.media.join('');
+    this.peerconnection.setRemoteDescription(new RTCSessionDescription({type: 'offer', sdp: sdp.raw}),
+        function() {
+
+            if(self.signalingState == 'closed') {
+                console.error("createAnswer attempt on closed state");
+                queueCallback("createAnswer attempt on closed state");
+                return;
+            }
+
+            self.peerconnection.createAnswer(
+                function(modifiedAnswer) {
+                    // change video direction, see https://github.com/jitsi/jitmeet/issues/41
+                    if (self.pendingop !== null) {
+                        var sdp = new SDP(modifiedAnswer.sdp);
+                        if (sdp.media.length > 1) {
+                            switch(self.pendingop) {
+                                case 'mute':
+                                    sdp.media[1] = sdp.media[1].replace('a=sendrecv', 'a=recvonly');
+                                    break;
+                                case 'unmute':
+                                    sdp.media[1] = sdp.media[1].replace('a=recvonly', 'a=sendrecv');
+                                    break;
+                            }
+                            sdp.raw = sdp.session + sdp.media.join('');
+                            modifiedAnswer.sdp = sdp.raw;
+                        }
+                        self.pendingop = null;
+                    }
+
+                    // FIXME: pushing down an answer while ice connection state
+                    // is still checking is bad...
+                    //console.log(self.peerconnection.iceConnectionState);
+
+                    // trying to work around another chrome bug
+                    //modifiedAnswer.sdp = modifiedAnswer.sdp.replace(/a=setup:active/g, 'a=setup:actpass');
+                    self.peerconnection.setLocalDescription(modifiedAnswer,
+                        function() {
+                            //console.log('modified setLocalDescription ok');
+                            self.setLocalDescription();
+                            if(successCallback){
+                                successCallback();
+                            }
+                            queueCallback();
+                        },
+                        function(error) {
+                            console.error('modified setLocalDescription failed', error);
+                            queueCallback(error);
+                        }
+                    );
+                },
+                function(error) {
+                    console.error('modified answer failed', error);
+                    queueCallback(error);
+                }
+            );
+        },
+        function(error) {
+            console.error('modify failed', error);
+            queueCallback(error);
+        }
+    );
+};
+
+
+/**
+ * Switches video streams.
+ * @param new_stream new stream that will be used as video of this session.
+ * @param oldStream old video stream of this session.
+ * @param success_callback callback executed after successful stream switch.
+ */
+JingleSessionPC.prototype.switchStreams = function (new_stream, oldStream, success_callback, isAudio) {
+
+    var self = this;
+
+    // Remember SDP to figure out added/removed SSRCs
+    var oldSdp = null;
+    if(self.peerconnection) {
+        if(self.peerconnection.localDescription) {
+            oldSdp = new SDP(self.peerconnection.localDescription.sdp);
+        }
+        self.peerconnection.removeStream(oldStream, true);
+        if(new_stream)
+            self.peerconnection.addStream(new_stream);
+    }
+
+    // Conference is not active
+    if(!oldSdp || !self.peerconnection) {
+        success_callback();
+        return;
+    }
+
+    self.switchstreams = true;
+    self.modifySourcesQueue.push(function() {
+        console.log('modify sources done');
+
+        success_callback();
+
+        var newSdp = new SDP(self.peerconnection.localDescription.sdp);
+        console.log("SDPs", oldSdp, newSdp);
+        self.notifyMySSRCUpdate(oldSdp, newSdp);
+    });
+};
+
+/**
+ * Figures out added/removed ssrcs and send update IQs.
+ * @param old_sdp SDP object for old description.
+ * @param new_sdp SDP object for new description.
+ */
+JingleSessionPC.prototype.notifyMySSRCUpdate = function (old_sdp, new_sdp) {
+
+    if (!(this.peerconnection.signalingState == 'stable' &&
+        this.peerconnection.iceConnectionState == 'connected')){
+        console.log("Too early to send updates");
+        return;
+    }
+
+    // send source-remove IQ.
+    sdpDiffer = new SDPDiffer(new_sdp, old_sdp);
+    var remove = $iq({to: this.peerjid, type: 'set'})
+        .c('jingle', {
+            xmlns: 'urn:xmpp:jingle:1',
+            action: 'source-remove',
+            initiator: this.initiator,
+            sid: this.sid
+        }
+    );
+    var removed = sdpDiffer.toJingle(remove);
+
+    // Let 'source-remove' IQ through the hack and see if we're allowed to send
+    // it in the current form
+    if (removed)
+        remove = SSRCReplacement.processSourceRemove(remove);
+
+    if (removed && remove) {
+        console.info("Sending source-remove", remove);
+        this.connection.sendIQ(remove,
+            function (res) {
+                console.info('got remove result', res);
+            },
+            function (err) {
+                console.error('got remove error', err);
+            }
+        );
+    } else {
+        console.log('removal not necessary');
+    }
+
+    // send source-add IQ.
+    var sdpDiffer = new SDPDiffer(old_sdp, new_sdp);
+    var add = $iq({to: this.peerjid, type: 'set'})
+        .c('jingle', {
+            xmlns: 'urn:xmpp:jingle:1',
+            action: 'source-add',
+            initiator: this.initiator,
+            sid: this.sid
+        }
+    );
+    var added = sdpDiffer.toJingle(add);
+
+    // Let 'source-add' IQ through the hack and see if we're allowed to send
+    // it in the current form
+    if (added)
+        add = SSRCReplacement.processSourceAdd(add);
+
+    if (added && add) {
+        console.info("Sending source-add", add);
+        this.connection.sendIQ(add,
+            function (res) {
+                console.info('got add result', res);
+            },
+            function (err) {
+                console.error('got add error', err);
+            }
+        );
+    } else {
+        console.log('addition not necessary');
+    }
+};
+
+/**
+ * Mutes/unmutes the (local) video i.e. enables/disables all video tracks.
+ *
+ * @param mute <tt>true</tt> to mute the (local) video i.e. to disable all video
+ * tracks; otherwise, <tt>false</tt>
+ * @param callback a function to be invoked with <tt>mute</tt> after all video
+ * tracks have been enabled/disabled. The function may, optionally, return
+ * another function which is to be invoked after the whole mute/unmute operation
+ * has completed successfully.
+ * @param options an object which specifies optional arguments such as the
+ * <tt>boolean</tt> key <tt>byUser</tt> with default value <tt>true</tt> which
+ * specifies whether the method was initiated in response to a user command (in
+ * contrast to an automatic decision made by the application logic)
+ */
+JingleSessionPC.prototype.setVideoMute = function (mute, callback, options) {
+    var byUser;
+
+    if (options) {
+        byUser = options.byUser;
+        if (typeof byUser === 'undefined') {
+            byUser = true;
+        }
+    } else {
+        byUser = true;
+    }
+    // The user's command to mute the (local) video takes precedence over any
+    // automatic decision made by the application logic.
+    if (byUser) {
+        this.videoMuteByUser = mute;
+    } else if (this.videoMuteByUser) {
+        return;
+    }
+
+    this.hardMuteVideo(mute);
+
+    var self = this;
+    var oldSdp = null;
+    if(self.peerconnection) {
+        if(self.peerconnection.localDescription) {
+            oldSdp = new SDP(self.peerconnection.localDescription.sdp);
+        }
+    }
+
+    this.modifySourcesQueue.push(function() {
+        console.log('modify sources done');
+
+        callback(mute);
+
+        var newSdp = new SDP(self.peerconnection.localDescription.sdp);
+        console.log("SDPs", oldSdp, newSdp);
+        self.notifyMySSRCUpdate(oldSdp, newSdp);
+    });
+};
+
+JingleSessionPC.prototype.hardMuteVideo = function (muted) {
+    this.pendingop = muted ? 'mute' : 'unmute';
+};
+
+JingleSessionPC.prototype.sendMute = function (muted, content) {
+    var info = $iq({to: this.peerjid,
+        type: 'set'})
+        .c('jingle', {xmlns: 'urn:xmpp:jingle:1',
+            action: 'session-info',
+            initiator: this.initiator,
+            sid: this.sid });
+    info.c(muted ? 'mute' : 'unmute', {xmlns: 'urn:xmpp:jingle:apps:rtp:info:1'});
+    info.attrs({'creator': this.me == this.initiator ? 'creator' : 'responder'});
+    if (content) {
+        info.attrs({'name': content});
+    }
+    this.connection.send(info);
+};
+
+JingleSessionPC.prototype.sendRinging = function () {
+    var info = $iq({to: this.peerjid,
+        type: 'set'})
+        .c('jingle', {xmlns: 'urn:xmpp:jingle:1',
+            action: 'session-info',
+            initiator: this.initiator,
+            sid: this.sid });
+    info.c('ringing', {xmlns: 'urn:xmpp:jingle:apps:rtp:info:1'});
+    this.connection.send(info);
+};
+
+JingleSessionPC.prototype.getStats = function (interval) {
+    var self = this;
+    var recv = {audio: 0, video: 0};
+    var lost = {audio: 0, video: 0};
+    var lastrecv = {audio: 0, video: 0};
+    var lastlost = {audio: 0, video: 0};
+    var loss = {audio: 0, video: 0};
+    var delta = {audio: 0, video: 0};
+    this.statsinterval = window.setInterval(function () {
+        if (self && self.peerconnection && self.peerconnection.getStats) {
+            self.peerconnection.getStats(function (stats) {
+                var results = stats.result();
+                // TODO: there are so much statistics you can get from this..
+                for (var i = 0; i < results.length; ++i) {
+                    if (results[i].type == 'ssrc') {
+                        var packetsrecv = results[i].stat('packetsReceived');
+                        var packetslost = results[i].stat('packetsLost');
+                        if (packetsrecv && packetslost) {
+                            packetsrecv = parseInt(packetsrecv, 10);
+                            packetslost = parseInt(packetslost, 10);
+
+                            if (results[i].stat('googFrameRateReceived')) {
+                                lastlost.video = lost.video;
+                                lastrecv.video = recv.video;
+                                recv.video = packetsrecv;
+                                lost.video = packetslost;
+                            } else {
+                                lastlost.audio = lost.audio;
+                                lastrecv.audio = recv.audio;
+                                recv.audio = packetsrecv;
+                                lost.audio = packetslost;
+                            }
+                        }
+                    }
+                }
+                delta.audio = recv.audio - lastrecv.audio;
+                delta.video = recv.video - lastrecv.video;
+                loss.audio = (delta.audio > 0) ? Math.ceil(100 * (lost.audio - lastlost.audio) / delta.audio) : 0;
+                loss.video = (delta.video > 0) ? Math.ceil(100 * (lost.video - lastlost.video) / delta.video) : 0;
+                $(document).trigger('packetloss.jingle', [self.sid, loss]);
+            });
+        }
+    }, interval || 3000);
+    return this.statsinterval;
+};
+
+JingleSessionPC.onJingleError = function (session, error)
+{
+    console.error("Jingle error", error);
+}
+
+JingleSessionPC.onJingleFatalError = function (session, error)
+{
+    this.service.sessionTerminated = true;
+    this.eventEmitter.emit(XMPPEvents.CONFERENCE_SETUP_FAILED);
+    this.eventEmitter.emit(XMPPEvents.JINGLE_FATAL_ERROR, session, error);
+}
+
+JingleSessionPC.prototype.setLocalDescription = function () {
+    var self = this;
+    var newssrcs = [];
+    var session = transform.parse(this.peerconnection.localDescription.sdp);
+    session.media.forEach(function (media) {
+
+        if (media.ssrcs != null && media.ssrcs.length > 0) {
+            // TODO(gp) maybe exclude FID streams?
+            media.ssrcs.forEach(function (ssrc) {
+                if (ssrc.attribute !== 'cname') {
+                    return;
+                }
+                newssrcs.push({
+                    'ssrc': ssrc.id,
+                    'type': media.type
+                });
+            });
+        }
+        else if(self.localStreamsSSRC && self.localStreamsSSRC[media.type])
+        {
+            newssrcs.push({
+                'ssrc': self.localStreamsSSRC[media.type],
+                'type': media.type
+            });
+        }
+
+    });
+
+    console.log('new ssrcs', newssrcs);
+
+    // Bind us as local SSRCs owner
+    if (newssrcs.length > 0) {
+        for (var i = 1; i <= newssrcs.length; i ++) {
+            var ssrc = newssrcs[i-1].ssrc;
+            var myJid = self.connection.emuc.myroomjid;
+            self.ssrcOwners[ssrc] = myJid;
+        }
+    }
+}
+
+// an attempt to work around https://github.com/jitsi/jitmeet/issues/32
+function sendKeyframe(pc) {
+    console.log('sendkeyframe', pc.iceConnectionState);
+    if (pc.iceConnectionState !== 'connected') return; // safe...
+    var self = this;
+    pc.setRemoteDescription(
+        pc.remoteDescription,
+        function () {
+            pc.createAnswer(
+                function (modifiedAnswer) {
+                    pc.setLocalDescription(
+                        modifiedAnswer,
+                        function () {
+                            // noop
+                        },
+                        function (error) {
+                            console.log('triggerKeyframe setLocalDescription failed', error);
+                            eventEmitter.emit(XMPPEvents.SET_LOCAL_DESCRIPTION_ERROR);
+                        }
+                    );
+                },
+                function (error) {
+                    console.log('triggerKeyframe createAnswer failed', error);
+                    eventEmitter.emit(XMPPEvents.CREATE_ANSWER_ERROR);
+                }
+            );
+        },
+        function (error) {
+            console.log('triggerKeyframe setRemoteDescription failed', error);
+            eventEmitter.emit(XMPPEvents.SET_REMOTE_DESCRIPTION_ERROR);
+        }
+    );
+}
+
+
+JingleSessionPC.prototype.remoteStreamAdded = function (data, times) {
+    var self = this;
+    var thessrc;
+    var streamId = RTC.getStreamID(data.stream);
+
+    // look up an associated JID for a stream id
+    if (!streamId) {
+        console.error("No stream ID for", data.stream);
+    } else if (streamId && streamId.indexOf('mixedmslabel') === -1) {
+        // look only at a=ssrc: and _not_ at a=ssrc-group: lines
+
+        var ssrclines
+            = SDPUtil.find_lines(this.peerconnection.remoteDescription.sdp, 'a=ssrc:');
+        ssrclines = ssrclines.filter(function (line) {
+            // NOTE(gp) previously we filtered on the mslabel, but that property
+            // is not always present.
+            // return line.indexOf('mslabel:' + data.stream.label) !== -1;
+
+            if (RTCBrowserType.isTemasysPluginUsed()) {
+                return ((line.indexOf('mslabel:' + streamId) !== -1));
+            } else {
+                return ((line.indexOf('msid:' + streamId) !== -1));
+            }
+        });
+        if (ssrclines.length) {
+            thessrc = ssrclines[0].substring(7).split(' ')[0];
+
+            if (!self.ssrcOwners[thessrc]) {
+                console.error("No SSRC owner known for: " + thessrc);
+                return;
+            }
+            data.peerjid = self.ssrcOwners[thessrc];
+            console.log('associated jid', self.ssrcOwners[thessrc]);
+        } else {
+            console.error("No SSRC lines for ", streamId);
+        }
+    }
+
+    RTC.createRemoteStream(data, this.sid, thessrc);
+
+    var isVideo = data.stream.getVideoTracks().length > 0;
+    // an attempt to work around https://github.com/jitsi/jitmeet/issues/32
+    if (isVideo &&
+        data.peerjid && this.peerjid === data.peerjid &&
+        data.stream.getVideoTracks().length === 0 &&
+        RTC.localVideo.getTracks().length > 0) {
+        window.setTimeout(function () {
+            sendKeyframe(self.peerconnection);
+        }, 3000);
+    }
+}
+
+module.exports = JingleSessionPC;
+
+},{"../../service/xmpp/XMPPEvents":73,"../RTC/RTC":11,"../RTC/RTCBrowserType":12,"./JingleSession":16,"./LocalSSRCReplacement":18,"./SDP":19,"./SDPDiffer":20,"./SDPUtil":21,"./TraceablePeerConnection":22,"async":30,"sdp-transform":63}],18:[function(require,module,exports){
+/* global $ */
+
+/*
+ Here we do modifications of local video SSRCs. There are 2 situations we have
+ to handle:
+
+ 1. We generate SSRC for local recvonly video stream. This is the case when we
+    have no local camera and it is not generated automatically, but SSRC=1 is
+    used implicitly. If that happens RTCP packets will be dropped by the JVB
+    and we won't be able to request video key frames correctly.
+
+ 2. A hack to re-use SSRC of the first video stream for any new stream created
+    in future. It turned out that Chrome may keep on using the SSRC of removed
+    video stream in RTCP even though a new one has been created. So we just
+    want to avoid that by re-using it. Jingle 'source-remove'/'source-add'
+    notifications are blocked once first video SSRC is advertised to the focus.
+
+ What this hack does:
+
+ 1. Stores the SSRC of the first video stream created by
+   a) scanning Jingle session-accept/session-invite for existing video SSRC
+   b) watching for 'source-add' for new video stream if it has not been
+      created in step a)
+ 2. Exposes method 'mungeLocalVideoSSRC' which replaces any new video SSRC with
+    the stored one. It is called by 'TracablePeerConnection' before local SDP is
+    returned to the other parts of the application.
+ 3. Scans 'source-remove'/'source-add' notifications for stored video SSRC and
+    blocks those notifications. This makes Jicofo and all participants think
+    that it exists all the time even if the video stream has been removed or
+    replaced locally. Thanks to that there is no additional signaling activity
+    on video mute or when switching to the desktop stream.
+ */
+
+var SDP = require('./SDP');
+var RTCBrowserType = require('../RTC/RTCBrowserType');
+
+/**
+ * The hack is enabled on all browsers except FF by default
+ * FIXME finish the hack once removeStream method is implemented in FF
+ * @type {boolean}
+ */
+var isEnabled = !RTCBrowserType.isFirefox();
+
+/**
+ * Stored SSRC of local video stream.
+ */
+var localVideoSSRC;
+
+/**
+ * SSRC used for recvonly video stream when we have no local camera.
+ * This is in order to tell Chrome what SSRC should be used in RTCP requests
+ * instead of 1.
+ */
+var localRecvOnlySSRC;
+
+/**
+ * cname for <tt>localRecvOnlySSRC</tt>
+ */
+var localRecvOnlyCName;
+
+/**
+ * Method removes <source> element which describes <tt>localVideoSSRC</tt>
+ * from given Jingle IQ.
+ * @param modifyIq 'source-add' or 'source-remove' Jingle IQ.
+ * @param actionName display name of the action which will be printed in log
+ *        messages.
+ * @returns {*} modified Jingle IQ, so that it does not contain <source> element
+ *          corresponding to <tt>localVideoSSRC</tt> or <tt>null</tt> if no
+ *          other SSRCs left to be signaled after removing it.
+ */
+var filterOutSource = function (modifyIq, actionName) {
+    var modifyIqTree = $(modifyIq.tree());
+
+    if (!localVideoSSRC)
+        return modifyIqTree[0];
+
+    var videoSSRC = modifyIqTree.find(
+        '>jingle>content[name="video"]' +
+        '>description>source[ssrc="' + localVideoSSRC + '"]');
+
+    if (!videoSSRC.length) {
+        return modifyIqTree[0];
+    }
+
+    console.info(
+        'Blocking ' + actionName + ' for local video SSRC: ' + localVideoSSRC);
+
+    videoSSRC.remove();
+
+    // Check if any sources still left to be added/removed
+    if (modifyIqTree.find('>jingle>content>description>source').length) {
+        return modifyIqTree[0];
+    } else {
+        return null;
+    }
+};
+
+/**
+ * Scans given Jingle IQ for video SSRC and stores it.
+ * @param jingleIq the Jingle IQ to be scanned for video SSRC.
+ */
+var storeLocalVideoSSRC = function (jingleIq) {
+    var videoSSRCs =
+        $(jingleIq.tree())
+            .find('>jingle>content[name="video"]>description>source');
+
+    videoSSRCs.each(function (idx, ssrcElem) {
+        if (localVideoSSRC)
+            return;
+        // We consider SSRC real only if it has msid attribute
+        // recvonly streams in FF do not have it as well as local SSRCs
+        // we generate for recvonly streams in Chrome
+        var ssrSel = $(ssrcElem);
+        var msid = ssrSel.find('>parameter[name="msid"]');
+        if (msid.length) {
+            var ssrcVal = ssrSel.attr('ssrc');
+            if (ssrcVal) {
+                localVideoSSRC = ssrcVal;
+                console.info('Stored local video SSRC' +
+                             ' for future re-use: ' + localVideoSSRC);
+            }
+        }
+    });
+};
+
+/**
+ * Generates new SSRC for local video recvonly stream.
+ * FIXME what about eventual SSRC collision ?
+ */
+function generateRecvonlySSRC() {
+    //
+    localRecvOnlySSRC =
+        Math.random().toString(10).substring(2, 11);
+    localRecvOnlyCName =
+        Math.random().toString(36).substring(2);
+    console.info(
+        "Generated local recvonly SSRC: " + localRecvOnlySSRC +
+        ", cname: " + localRecvOnlyCName);
+}
+
+var LocalSSRCReplacement = {
+    /**
+     * Method must be called before 'session-initiate' or 'session-invite' is
+     * sent. Scans the IQ for local video SSRC and stores it if detected.
+     *
+     * @param sessionInit our 'session-initiate' or 'session-accept' Jingle IQ
+     *        which will be scanned for local video SSRC.
+     */
+    processSessionInit: function (sessionInit) {
+        if (!isEnabled)
+            return;
+
+        if (localVideoSSRC) {
+            console.error("Local SSRC stored already: " + localVideoSSRC);
+            return;
+        }
+        storeLocalVideoSSRC(sessionInit);
+    },
+    /**
+     * If we have local video SSRC stored searched given
+     * <tt>localDescription</tt> for video SSRC and makes sure it is replaced
+     * with the stored one.
+     * @param localDescription local description object that will have local
+     *        video SSRC replaced with the stored one
+     * @returns modified <tt>localDescription</tt> object.
+     */
+    mungeLocalVideoSSRC: function (localDescription) {
+        if (!isEnabled)
+            return localDescription;
+
+        if (!localDescription) {
+            console.warn("localDescription is null or undefined");
+            return localDescription;
+        }
+
+        // IF we have local video SSRC stored make sure it is replaced
+        // with old SSRC
+        if (localVideoSSRC) {
+            var newSdp = new SDP(localDescription.sdp);
+            if (newSdp.media[1].indexOf("a=ssrc:") !== -1 &&
+                !newSdp.containsSSRC(localVideoSSRC)) {
+                // Get new video SSRC
+                var map = newSdp.getMediaSsrcMap();
+                var videoPart = map[1];
+                var videoSSRCs = videoPart.ssrcs;
+                var newSSRC = Object.keys(videoSSRCs)[0];
+
+                console.info(
+                    "Replacing new video SSRC: " + newSSRC +
+                    " with " + localVideoSSRC);
+
+                localDescription.sdp =
+                    newSdp.raw.replace(
+                        new RegExp('a=ssrc:' + newSSRC, 'g'),
+                        'a=ssrc:' + localVideoSSRC);
+            }
+        } else {
+            // Make sure we have any SSRC for recvonly video stream
+            var sdp = new SDP(localDescription.sdp);
+
+            if (sdp.media[1] && sdp.media[1].indexOf('a=ssrc:') === -1 &&
+                sdp.media[1].indexOf('a=recvonly') !== -1) {
+
+                if (!localRecvOnlySSRC) {
+                    generateRecvonlySSRC();
+                }
+
+                console.info('No SSRC in video recvonly stream' +
+                             ' - adding SSRC: ' + localRecvOnlySSRC);
+
+                sdp.media[1] += 'a=ssrc:' + localRecvOnlySSRC +
+                                ' cname:' + localRecvOnlyCName + '\r\n';
+
+                localDescription.sdp = sdp.session + sdp.media.join('');
+            }
+        }
+        return localDescription;
+    },
+    /**
+     * Method must be called before 'source-add' notification is sent. In case
+     * we have local video SSRC advertised already it will be removed from the
+     * notification. If no other SSRCs are described by given IQ null will be
+     * returned which means that there is no point in sending the notification.
+     * @param sourceAdd 'source-add' Jingle IQ to be processed
+     * @returns modified 'source-add' IQ which can be sent to the focus or
+     *          <tt>null</tt> if no notification shall be sent. It is no longer
+     *          a Strophe IQ Builder instance, but DOM element tree.
+     */
+    processSourceAdd: function (sourceAdd) {
+        if (!isEnabled)
+            return sourceAdd;
+
+        if (!localVideoSSRC) {
+            // Store local SSRC if available
+            storeLocalVideoSSRC(sourceAdd);
+            return sourceAdd;
+        } else {
+            return filterOutSource(sourceAdd, 'source-add');
+        }
+    },
+    /**
+     * Method must be called before 'source-remove' notification is sent.
+     * Removes local video SSRC from the notification. If there are no other
+     * SSRCs described in the given IQ <tt>null</tt> will be returned which
+     * means that there is no point in sending the notification.
+     * @param sourceRemove 'source-remove' Jingle IQ to be processed
+     * @returns modified 'source-remove' IQ which can be sent to the focus or
+     *          <tt>null</tt> if no notification shall be sent. It is no longer
+     *          a Strophe IQ Builder instance, but DOM element tree.
+     */
+    processSourceRemove: function (sourceRemove) {
+        if (!isEnabled)
+            return sourceRemove;
+
+        return filterOutSource(sourceRemove, 'source-remove');
+    },
+
+    /**
+     * Turns the hack on or off
+     * @param enabled <tt>true</tt> to enable the hack or <tt>false</tt>
+     *                to disable it
+     */
+    setEnabled: function (enabled) {
+        isEnabled = enabled;
+    }
+};
+
+module.exports = LocalSSRCReplacement;
+
+},{"../RTC/RTCBrowserType":12,"./SDP":19}],19:[function(require,module,exports){
+/* jshint -W117 */
+var SDPUtil = require("./SDPUtil");
+
+// SDP STUFF
+function SDP(sdp) {
+    this.media = sdp.split('\r\nm=');
+    for (var i = 1; i < this.media.length; i++) {
+        this.media[i] = 'm=' + this.media[i];
+        if (i != this.media.length - 1) {
+            this.media[i] += '\r\n';
+        }
+    }
+    this.session = this.media.shift() + '\r\n';
+    this.raw = this.session + this.media.join('');
+}
+/**
+ * Returns map of MediaChannel mapped per channel idx.
+ */
+SDP.prototype.getMediaSsrcMap = function() {
+    var self = this;
+    var media_ssrcs = {};
+    var tmp;
+    for (var mediaindex = 0; mediaindex < self.media.length; mediaindex++) {
+        tmp = SDPUtil.find_lines(self.media[mediaindex], 'a=ssrc:');
+        var mid = SDPUtil.parse_mid(SDPUtil.find_line(self.media[mediaindex], 'a=mid:'));
+        var media = {
+            mediaindex: mediaindex,
+            mid: mid,
+            ssrcs: {},
+            ssrcGroups: []
+        };
+        media_ssrcs[mediaindex] = media;
+        tmp.forEach(function (line) {
+            var linessrc = line.substring(7).split(' ')[0];
+            // allocate new ChannelSsrc
+            if(!media.ssrcs[linessrc]) {
+                media.ssrcs[linessrc] = {
+                    ssrc: linessrc,
+                    lines: []
+                };
+            }
+            media.ssrcs[linessrc].lines.push(line);
+        });
+        tmp = SDPUtil.find_lines(self.media[mediaindex], 'a=ssrc-group:');
+        tmp.forEach(function(line){
+            var semantics = line.substr(0, idx).substr(13);
+            var ssrcs = line.substr(14 + semantics.length).split(' ');
+            if (ssrcs.length != 0) {
+                media.ssrcGroups.push({
+                    semantics: semantics,
+                    ssrcs: ssrcs
+                });
+            }
+        });
+    }
+    return media_ssrcs;
+};
+/**
+ * Returns <tt>true</tt> if this SDP contains given SSRC.
+ * @param ssrc the ssrc to check.
+ * @returns {boolean} <tt>true</tt> if this SDP contains given SSRC.
+ */
+SDP.prototype.containsSSRC = function(ssrc) {
+    var medias = this.getMediaSsrcMap();
+    var contains = false;
+    Object.keys(medias).forEach(function(mediaindex){
+        var media = medias[mediaindex];
+        //console.log("Check", channel, ssrc);
+        if(Object.keys(media.ssrcs).indexOf(ssrc) != -1){
+            contains = true;
+        }
+    });
+    return contains;
+};
+
+
+// remove iSAC and CN from SDP
+SDP.prototype.mangle = function () {
+    var i, j, mline, lines, rtpmap, newdesc;
+    for (i = 0; i < this.media.length; i++) {
+        lines = this.media[i].split('\r\n');
+        lines.pop(); // remove empty last element
+        mline = SDPUtil.parse_mline(lines.shift());
+        if (mline.media != 'audio')
+            continue;
+        newdesc = '';
+        mline.fmt.length = 0;
+        for (j = 0; j < lines.length; j++) {
+            if (lines[j].substr(0, 9) == 'a=rtpmap:') {
+                rtpmap = SDPUtil.parse_rtpmap(lines[j]);
+                if (rtpmap.name == 'CN' || rtpmap.name == 'ISAC')
+                    continue;
+                mline.fmt.push(rtpmap.id);
+                newdesc += lines[j] + '\r\n';
+            } else {
+                newdesc += lines[j] + '\r\n';
+            }
+        }
+        this.media[i] = SDPUtil.build_mline(mline) + '\r\n';
+        this.media[i] += newdesc;
+    }
+    this.raw = this.session + this.media.join('');
+};
+
+// remove lines matching prefix from session section
+SDP.prototype.removeSessionLines = function(prefix) {
+    var self = this;
+    var lines = SDPUtil.find_lines(this.session, prefix);
+    lines.forEach(function(line) {
+        self.session = self.session.replace(line + '\r\n', '');
+    });
+    this.raw = this.session + this.media.join('');
+    return lines;
+}
+// remove lines matching prefix from a media section specified by mediaindex
+// TODO: non-numeric mediaindex could match mid
+SDP.prototype.removeMediaLines = function(mediaindex, prefix) {
+    var self = this;
+    var lines = SDPUtil.find_lines(this.media[mediaindex], prefix);
+    lines.forEach(function(line) {
+        self.media[mediaindex] = self.media[mediaindex].replace(line + '\r\n', '');
+    });
+    this.raw = this.session + this.media.join('');
+    return lines;
+}
+
+// add content's to a jingle element
+SDP.prototype.toJingle = function (elem, thecreator, ssrcs) {
+//    console.log("SSRC" + ssrcs["audio"] + " - " + ssrcs["video"]);
+    var i, j, k, mline, ssrc, rtpmap, tmp, line, lines;
+    var self = this;
+    // new bundle plan
+    if (SDPUtil.find_line(this.session, 'a=group:')) {
+        lines = SDPUtil.find_lines(this.session, 'a=group:');
+        for (i = 0; i < lines.length; i++) {
+            tmp = lines[i].split(' ');
+            var semantics = tmp.shift().substr(8);
+            elem.c('group', {xmlns: 'urn:xmpp:jingle:apps:grouping:0', semantics:semantics});
+            for (j = 0; j < tmp.length; j++) {
+                elem.c('content', {name: tmp[j]}).up();
+            }
+            elem.up();
+        }
+    }
+    for (i = 0; i < this.media.length; i++) {
+        mline = SDPUtil.parse_mline(this.media[i].split('\r\n')[0]);
+        if (!(mline.media === 'audio' ||
+              mline.media === 'video' ||
+              mline.media === 'application'))
+        {
+            continue;
+        }
+        if (SDPUtil.find_line(this.media[i], 'a=ssrc:')) {
+            ssrc = SDPUtil.find_line(this.media[i], 'a=ssrc:').substring(7).split(' ')[0]; // take the first
+        } else {
+            if(ssrcs && ssrcs[mline.media])
+            {
+                ssrc = ssrcs[mline.media];
+            }
+            else
+                ssrc = false;
+        }
+
+        elem.c('content', {creator: thecreator, name: mline.media});
+        if (SDPUtil.find_line(this.media[i], 'a=mid:')) {
+            // prefer identifier from a=mid if present
+            var mid = SDPUtil.parse_mid(SDPUtil.find_line(this.media[i], 'a=mid:'));
+            elem.attrs({ name: mid });
+        }
+
+        if (SDPUtil.find_line(this.media[i], 'a=rtpmap:').length)
+        {
+            elem.c('description',
+                {xmlns: 'urn:xmpp:jingle:apps:rtp:1',
+                    media: mline.media });
+            if (ssrc) {
+                elem.attrs({ssrc: ssrc});
+            }
+            for (j = 0; j < mline.fmt.length; j++) {
+                rtpmap = SDPUtil.find_line(this.media[i], 'a=rtpmap:' + mline.fmt[j]);
+                elem.c('payload-type', SDPUtil.parse_rtpmap(rtpmap));
+                // put any 'a=fmtp:' + mline.fmt[j] lines into <param name=foo value=bar/>
+                if (SDPUtil.find_line(this.media[i], 'a=fmtp:' + mline.fmt[j])) {
+                    tmp = SDPUtil.parse_fmtp(SDPUtil.find_line(this.media[i], 'a=fmtp:' + mline.fmt[j]));
+                    for (k = 0; k < tmp.length; k++) {
+                        elem.c('parameter', tmp[k]).up();
+                    }
+                }
+                this.RtcpFbToJingle(i, elem, mline.fmt[j]); // XEP-0293 -- map a=rtcp-fb
+
+                elem.up();
+            }
+            if (SDPUtil.find_line(this.media[i], 'a=crypto:', this.session)) {
+                elem.c('encryption', {required: 1});
+                var crypto = SDPUtil.find_lines(this.media[i], 'a=crypto:', this.session);
+                crypto.forEach(function(line) {
+                    elem.c('crypto', SDPUtil.parse_crypto(line)).up();
+                });
+                elem.up(); // end of encryption
+            }
+
+            if (ssrc) {
+                // new style mapping
+                elem.c('source', { ssrc: ssrc, xmlns: 'urn:xmpp:jingle:apps:rtp:ssma:0' });
+                // FIXME: group by ssrc and support multiple different ssrcs
+                var ssrclines = SDPUtil.find_lines(this.media[i], 'a=ssrc:');
+                if(ssrclines.length > 0) {
+                    ssrclines.forEach(function (line) {
+                        idx = line.indexOf(' ');
+                        var linessrc = line.substr(0, idx).substr(7);
+                        if (linessrc != ssrc) {
+                            elem.up();
+                            ssrc = linessrc;
+                            elem.c('source', { ssrc: ssrc, xmlns: 'urn:xmpp:jingle:apps:rtp:ssma:0' });
+                        }
+                        var kv = line.substr(idx + 1);
+                        elem.c('parameter');
+                        if (kv.indexOf(':') == -1) {
+                            elem.attrs({ name: kv });
+                        } else {
+                            var k = kv.split(':', 2)[0];
+                            elem.attrs({ name: k });
+
+                            var v = kv.split(':', 2)[1];
+                            v = SDPUtil.filter_special_chars(v);
+                            elem.attrs({ value: v });
+                        }
+                        elem.up();
+                    });
+                }
+                else
+                {
+                    elem.up();
+                    elem.c('source', { ssrc: ssrc, xmlns: 'urn:xmpp:jingle:apps:rtp:ssma:0' });
+                    elem.c('parameter');
+                    elem.attrs({name: "cname", value:Math.random().toString(36).substring(7)});
+                    elem.up();
+                    var msid = null;
+                    if(mline.media == "audio")
+                    {
+                        msid = APP.RTC.localAudio.getId();
+                    }
+                    else
+                    {
+                        msid = APP.RTC.localVideo.getId();
+                    }
+                    if(msid != null)
+                    {
+                        msid = SDPUtil.filter_special_chars(msid);
+                        elem.c('parameter');
+                        elem.attrs({name: "msid", value:msid});
+                        elem.up();
+                        elem.c('parameter');
+                        elem.attrs({name: "mslabel", value:msid});
+                        elem.up();
+                        elem.c('parameter');
+                        elem.attrs({name: "label", value:msid});
+                        elem.up();
+                    }
+                }
+                elem.up();
+
+                // XEP-0339 handle ssrc-group attributes
+                var ssrc_group_lines = SDPUtil.find_lines(this.media[i], 'a=ssrc-group:');
+                ssrc_group_lines.forEach(function(line) {
+                    idx = line.indexOf(' ');
+                    var semantics = line.substr(0, idx).substr(13);
+                    var ssrcs = line.substr(14 + semantics.length).split(' ');
+                    if (ssrcs.length != 0) {
+                        elem.c('ssrc-group', { semantics: semantics, xmlns: 'urn:xmpp:jingle:apps:rtp:ssma:0' });
+                        ssrcs.forEach(function(ssrc) {
+                            elem.c('source', { ssrc: ssrc })
+                                .up();
+                        });
+                        elem.up();
+                    }
+                });
+            }
+
+            if (SDPUtil.find_line(this.media[i], 'a=rtcp-mux')) {
+                elem.c('rtcp-mux').up();
+            }
+
+            // XEP-0293 -- map a=rtcp-fb:*
+            this.RtcpFbToJingle(i, elem, '*');
+
+            // XEP-0294
+            if (SDPUtil.find_line(this.media[i], 'a=extmap:')) {
+                lines = SDPUtil.find_lines(this.media[i], 'a=extmap:');
+                for (j = 0; j < lines.length; j++) {
+                    tmp = SDPUtil.parse_extmap(lines[j]);
+                    elem.c('rtp-hdrext', { xmlns: 'urn:xmpp:jingle:apps:rtp:rtp-hdrext:0',
+                        uri: tmp.uri,
+                        id: tmp.value });
+                    if (tmp.hasOwnProperty('direction')) {
+                        switch (tmp.direction) {
+                            case 'sendonly':
+                                elem.attrs({senders: 'responder'});
+                                break;
+                            case 'recvonly':
+                                elem.attrs({senders: 'initiator'});
+                                break;
+                            case 'sendrecv':
+                                elem.attrs({senders: 'both'});
+                                break;
+                            case 'inactive':
+                                elem.attrs({senders: 'none'});
+                                break;
+                        }
+                    }
+                    // TODO: handle params
+                    elem.up();
+                }
+            }
+            elem.up(); // end of description
+        }
+
+        // map ice-ufrag/pwd, dtls fingerprint, candidates
+        this.TransportToJingle(i, elem);
+
+        if (SDPUtil.find_line(this.media[i], 'a=sendrecv', this.session)) {
+            elem.attrs({senders: 'both'});
+        } else if (SDPUtil.find_line(this.media[i], 'a=sendonly', this.session)) {
+            elem.attrs({senders: 'initiator'});
+        } else if (SDPUtil.find_line(this.media[i], 'a=recvonly', this.session)) {
+            elem.attrs({senders: 'responder'});
+        } else if (SDPUtil.find_line(this.media[i], 'a=inactive', this.session)) {
+            elem.attrs({senders: 'none'});
+        }
+        if (mline.port == '0') {
+            // estos hack to reject an m-line
+            elem.attrs({senders: 'rejected'});
+        }
+        elem.up(); // end of content
+    }
+    elem.up();
+    return elem;
+};
+
+SDP.prototype.TransportToJingle = function (mediaindex, elem) {
+    var i = mediaindex;
+    var tmp;
+    var self = this;
+    elem.c('transport');
+
+    // XEP-0343 DTLS/SCTP
+    if (SDPUtil.find_line(this.media[mediaindex], 'a=sctpmap:').length)
+    {
+        var sctpmap = SDPUtil.find_line(
+            this.media[i], 'a=sctpmap:', self.session);
+        if (sctpmap)
+        {
+            var sctpAttrs = SDPUtil.parse_sctpmap(sctpmap);
+            elem.c('sctpmap',
+                {
+                    xmlns: 'urn:xmpp:jingle:transports:dtls-sctp:1',
+                    number: sctpAttrs[0], /* SCTP port */
+                    protocol: sctpAttrs[1], /* protocol */
+                });
+            // Optional stream count attribute
+            if (sctpAttrs.length > 2)
+                elem.attrs({ streams: sctpAttrs[2]});
+            elem.up();
+        }
+    }
+    // XEP-0320
+    var fingerprints = SDPUtil.find_lines(this.media[mediaindex], 'a=fingerprint:', this.session);
+    fingerprints.forEach(function(line) {
+        tmp = SDPUtil.parse_fingerprint(line);
+        tmp.xmlns = 'urn:xmpp:jingle:apps:dtls:0';
+        elem.c('fingerprint').t(tmp.fingerprint);
+        delete tmp.fingerprint;
+        line = SDPUtil.find_line(self.media[mediaindex], 'a=setup:', self.session);
+        if (line) {
+            tmp.setup = line.substr(8);
+        }
+        elem.attrs(tmp);
+        elem.up(); // end of fingerprint
+    });
+    tmp = SDPUtil.iceparams(this.media[mediaindex], this.session);
+    if (tmp) {
+        tmp.xmlns = 'urn:xmpp:jingle:transports:ice-udp:1';
+        elem.attrs(tmp);
+        // XEP-0176
+        if (SDPUtil.find_line(this.media[mediaindex], 'a=candidate:', this.session)) { // add any a=candidate lines
+            var lines = SDPUtil.find_lines(this.media[mediaindex], 'a=candidate:', this.session);
+            lines.forEach(function (line) {
+                elem.c('candidate', SDPUtil.candidateToJingle(line)).up();
+            });
+        }
+    }
+    elem.up(); // end of transport
+}
+
+SDP.prototype.RtcpFbToJingle = function (mediaindex, elem, payloadtype) { // XEP-0293
+    var lines = SDPUtil.find_lines(this.media[mediaindex], 'a=rtcp-fb:' + payloadtype);
+    lines.forEach(function (line) {
+        var tmp = SDPUtil.parse_rtcpfb(line);
+        if (tmp.type == 'trr-int') {
+            elem.c('rtcp-fb-trr-int', {xmlns: 'urn:xmpp:jingle:apps:rtp:rtcp-fb:0', value: tmp.params[0]});
+            elem.up();
+        } else {
+            elem.c('rtcp-fb', {xmlns: 'urn:xmpp:jingle:apps:rtp:rtcp-fb:0', type: tmp.type});
+            if (tmp.params.length > 0) {
+                elem.attrs({'subtype': tmp.params[0]});
+            }
+            elem.up();
+        }
+    });
+};
+
+SDP.prototype.RtcpFbFromJingle = function (elem, payloadtype) { // XEP-0293
+    var media = '';
+    var tmp = elem.find('>rtcp-fb-trr-int[xmlns="urn:xmpp:jingle:apps:rtp:rtcp-fb:0"]');
+    if (tmp.length) {
+        media += 'a=rtcp-fb:' + '*' + ' ' + 'trr-int' + ' ';
+        if (tmp.attr('value')) {
+            media += tmp.attr('value');
+        } else {
+            media += '0';
+        }
+        media += '\r\n';
+    }
+    tmp = elem.find('>rtcp-fb[xmlns="urn:xmpp:jingle:apps:rtp:rtcp-fb:0"]');
+    tmp.each(function () {
+        media += 'a=rtcp-fb:' + payloadtype + ' ' + $(this).attr('type');
+        if ($(this).attr('subtype')) {
+            media += ' ' + $(this).attr('subtype');
+        }
+        media += '\r\n';
+    });
+    return media;
+};
+
+// construct an SDP from a jingle stanza
+SDP.prototype.fromJingle = function (jingle) {
+    var self = this;
+    this.raw = 'v=0\r\n' +
+        'o=- ' + '1923518516' + ' 2 IN IP4 0.0.0.0\r\n' +// FIXME
+        's=-\r\n' +
+        't=0 0\r\n';
+    // http://tools.ietf.org/html/draft-ietf-mmusic-sdp-bundle-negotiation-04#section-8
+    if ($(jingle).find('>group[xmlns="urn:xmpp:jingle:apps:grouping:0"]').length) {
+        $(jingle).find('>group[xmlns="urn:xmpp:jingle:apps:grouping:0"]').each(function (idx, group) {
+            var contents = $(group).find('>content').map(function (idx, content) {
+                return content.getAttribute('name');
+            }).get();
+            if (contents.length > 0) {
+                self.raw += 'a=group:' + (group.getAttribute('semantics') || group.getAttribute('type')) + ' ' + contents.join(' ') + '\r\n';
+            }
+        });
+    }
+
+    this.session = this.raw;
+    jingle.find('>content').each(function () {
+        var m = self.jingle2media($(this));
+        self.media.push(m);
+    });
+
+    // reconstruct msid-semantic -- apparently not necessary
+    /*
+     var msid = SDPUtil.parse_ssrc(this.raw);
+     if (msid.hasOwnProperty('mslabel')) {
+     this.session += "a=msid-semantic: WMS " + msid.mslabel + "\r\n";
+     }
+     */
+
+    this.raw = this.session + this.media.join('');
+};
+
+// translate a jingle content element into an an SDP media part
+SDP.prototype.jingle2media = function (content) {
+    var media = '',
+        desc = content.find('description'),
+        ssrc = desc.attr('ssrc'),
+        self = this,
+        tmp;
+    var sctp = content.find(
+        '>transport>sctpmap[xmlns="urn:xmpp:jingle:transports:dtls-sctp:1"]');
+
+    tmp = { media: desc.attr('media') };
+    tmp.port = '1';
+    if (content.attr('senders') == 'rejected') {
+        // estos hack to reject an m-line.
+        tmp.port = '0';
+    }
+    if (content.find('>transport>fingerprint').length || desc.find('encryption').length) {
+        if (sctp.length)
+            tmp.proto = 'DTLS/SCTP';
+        else
+            tmp.proto = 'RTP/SAVPF';
+    } else {
+        tmp.proto = 'RTP/AVPF';
+    }
+    if (!sctp.length)
+    {
+        tmp.fmt = desc.find('payload-type').map(
+            function () { return this.getAttribute('id'); }).get();
+        media += SDPUtil.build_mline(tmp) + '\r\n';
+    }
+    else
+    {
+        media += 'm=application 1 DTLS/SCTP ' + sctp.attr('number') + '\r\n';
+        media += 'a=sctpmap:' + sctp.attr('number') +
+            ' ' + sctp.attr('protocol');
+
+        var streamCount = sctp.attr('streams');
+        if (streamCount)
+            media += ' ' + streamCount + '\r\n';
+        else
+            media += '\r\n';
+    }
+
+    media += 'c=IN IP4 0.0.0.0\r\n';
+    if (!sctp.length)
+        media += 'a=rtcp:1 IN IP4 0.0.0.0\r\n';
+    tmp = content.find('>transport[xmlns="urn:xmpp:jingle:transports:ice-udp:1"]');
+    if (tmp.length) {
+        if (tmp.attr('ufrag')) {
+            media += SDPUtil.build_iceufrag(tmp.attr('ufrag')) + '\r\n';
+        }
+        if (tmp.attr('pwd')) {
+            media += SDPUtil.build_icepwd(tmp.attr('pwd')) + '\r\n';
+        }
+        tmp.find('>fingerprint').each(function () {
+            // FIXME: check namespace at some point
+            media += 'a=fingerprint:' + this.getAttribute('hash');
+            media += ' ' + $(this).text();
+            media += '\r\n';
+            if (this.getAttribute('setup')) {
+                media += 'a=setup:' + this.getAttribute('setup') + '\r\n';
+            }
+        });
+    }
+    switch (content.attr('senders')) {
+        case 'initiator':
+            media += 'a=sendonly\r\n';
+            break;
+        case 'responder':
+            media += 'a=recvonly\r\n';
+            break;
+        case 'none':
+            media += 'a=inactive\r\n';
+            break;
+        case 'both':
+            media += 'a=sendrecv\r\n';
+            break;
+    }
+    media += 'a=mid:' + content.attr('name') + '\r\n';
+
+    // <description><rtcp-mux/></description>
+    // see http://code.google.com/p/libjingle/issues/detail?id=309 -- no spec though
+    // and http://mail.jabber.org/pipermail/jingle/2011-December/001761.html
+    if (desc.find('rtcp-mux').length) {
+        media += 'a=rtcp-mux\r\n';
+    }
+
+    if (desc.find('encryption').length) {
+        desc.find('encryption>crypto').each(function () {
+            media += 'a=crypto:' + this.getAttribute('tag');
+            media += ' ' + this.getAttribute('crypto-suite');
+            media += ' ' + this.getAttribute('key-params');
+            if (this.getAttribute('session-params')) {
+                media += ' ' + this.getAttribute('session-params');
+            }
+            media += '\r\n';
+        });
+    }
+    desc.find('payload-type').each(function () {
+        media += SDPUtil.build_rtpmap(this) + '\r\n';
+        if ($(this).find('>parameter').length) {
+            media += 'a=fmtp:' + this.getAttribute('id') + ' ';
+            media += $(this).find('parameter').map(function () { return (this.getAttribute('name') ? (this.getAttribute('name') + '=') : '') + this.getAttribute('value'); }).get().join('; ');
+            media += '\r\n';
+        }
+        // xep-0293
+        media += self.RtcpFbFromJingle($(this), this.getAttribute('id'));
+    });
+
+    // xep-0293
+    media += self.RtcpFbFromJingle(desc, '*');
+
+    // xep-0294
+    tmp = desc.find('>rtp-hdrext[xmlns="urn:xmpp:jingle:apps:rtp:rtp-hdrext:0"]');
+    tmp.each(function () {
+        media += 'a=extmap:' + this.getAttribute('id') + ' ' + this.getAttribute('uri') + '\r\n';
+    });
+
+    content.find('>transport[xmlns="urn:xmpp:jingle:transports:ice-udp:1"]>candidate').each(function () {
+        media += SDPUtil.candidateFromJingle(this);
+    });
+
+    // XEP-0339 handle ssrc-group attributes
+    tmp = content.find('description>ssrc-group[xmlns="urn:xmpp:jingle:apps:rtp:ssma:0"]').each(function() {
+        var semantics = this.getAttribute('semantics');
+        var ssrcs = $(this).find('>source').map(function() {
+            return this.getAttribute('ssrc');
+        }).get();
+
+        if (ssrcs.length != 0) {
+            media += 'a=ssrc-group:' + semantics + ' ' + ssrcs.join(' ') + '\r\n';
+        }
+    });
+
+    tmp = content.find('description>source[xmlns="urn:xmpp:jingle:apps:rtp:ssma:0"]');
+    tmp.each(function () {
+        var ssrc = this.getAttribute('ssrc');
+        $(this).find('>parameter').each(function () {
+            var name = this.getAttribute('name');
+            var value = this.getAttribute('value');
+            value = SDPUtil.filter_special_chars(value);
+            media += 'a=ssrc:' + ssrc + ' ' + name;
+            if (value && value.length)
+                media += ':' + value;
+            media += '\r\n';
+        });
+    });
+
+    return media;
+};
+
+
+module.exports = SDP;
+
+
+},{"./SDPUtil":21}],20:[function(require,module,exports){
+
+var SDPUtil = require("./SDPUtil");
+
+function SDPDiffer(mySDP, otherSDP) {
+    this.mySDP = mySDP;
+    this.otherSDP = otherSDP;
+}
+
+/**
+ * Returns map of MediaChannel that contains only media not contained in <tt>otherSdp</tt>. Mapped by channel idx.
+ * @param otherSdp the other SDP to check ssrc with.
+ */
+SDPDiffer.prototype.getNewMedia = function() {
+
+    // this could be useful in Array.prototype.
+    function arrayEquals(array) {
+        // if the other array is a falsy value, return
+        if (!array)
+            return false;
+
+        // compare lengths - can save a lot of time
+        if (this.length != array.length)
+            return false;
+
+        for (var i = 0, l=this.length; i < l; i++) {
+            // Check if we have nested arrays
+            if (this[i] instanceof Array && array[i] instanceof Array) {
+                // recurse into the nested arrays
+                if (!this[i].equals(array[i]))
+                    return false;
+            }
+            else if (this[i] != array[i]) {
+                // Warning - two different object instances will never be equal: {x:20} != {x:20}
+                return false;
+            }
+        }
+        return true;
+    }
+
+    var myMedias = this.mySDP.getMediaSsrcMap();
+    var othersMedias = this.otherSDP.getMediaSsrcMap();
+    var newMedia = {};
+    Object.keys(othersMedias).forEach(function(othersMediaIdx) {
+        var myMedia = myMedias[othersMediaIdx];
+        var othersMedia = othersMedias[othersMediaIdx];
+        if(!myMedia && othersMedia) {
+            // Add whole channel
+            newMedia[othersMediaIdx] = othersMedia;
+            return;
+        }
+        // Look for new ssrcs accross the channel
+        Object.keys(othersMedia.ssrcs).forEach(function(ssrc) {
+            if(Object.keys(myMedia.ssrcs).indexOf(ssrc) === -1) {
+                // Allocate channel if we've found ssrc that doesn't exist in our channel
+                if(!newMedia[othersMediaIdx]){
+                    newMedia[othersMediaIdx] = {
+                        mediaindex: othersMedia.mediaindex,
+                        mid: othersMedia.mid,
+                        ssrcs: {},
+                        ssrcGroups: []
+                    };
+                }
+                newMedia[othersMediaIdx].ssrcs[ssrc] = othersMedia.ssrcs[ssrc];
+            }
+        });
+
+        // Look for new ssrc groups across the channels
+        othersMedia.ssrcGroups.forEach(function(otherSsrcGroup){
+
+            // try to match the other ssrc-group with an ssrc-group of ours
+            var matched = false;
+            for (var i = 0; i < myMedia.ssrcGroups.length; i++) {
+                var mySsrcGroup = myMedia.ssrcGroups[i];
+                if (otherSsrcGroup.semantics == mySsrcGroup.semantics
+                    && arrayEquals.apply(otherSsrcGroup.ssrcs, [mySsrcGroup.ssrcs])) {
+
+                    matched = true;
+                    break;
+                }
+            }
+
+            if (!matched) {
+                // Allocate channel if we've found an ssrc-group that doesn't
+                // exist in our channel
+
+                if(!newMedia[othersMediaIdx]){
+                    newMedia[othersMediaIdx] = {
+                        mediaindex: othersMedia.mediaindex,
+                        mid: othersMedia.mid,
+                        ssrcs: {},
+                        ssrcGroups: []
+                    };
+                }
+                newMedia[othersMediaIdx].ssrcGroups.push(otherSsrcGroup);
+            }
+        });
+    });
+    return newMedia;
+};
+
+/**
+ * Sends SSRC update IQ.
+ * @param sdpMediaSsrcs SSRCs map obtained from SDP.getNewMedia. Cntains SSRCs to add/remove.
+ * @param sid session identifier that will be put into the IQ.
+ * @param initiator initiator identifier.
+ * @param toJid destination Jid
+ * @param isAdd indicates if this is remove or add operation.
+ */
+SDPDiffer.prototype.toJingle = function(modify) {
+    var sdpMediaSsrcs = this.getNewMedia();
+    var self = this;
+
+    // FIXME: only announce video ssrcs since we mix audio and dont need
+    //      the audio ssrcs therefore
+    var modified = false;
+    Object.keys(sdpMediaSsrcs).forEach(function(mediaindex){
+        modified = true;
+        var media = sdpMediaSsrcs[mediaindex];
+        modify.c('content', {name: media.mid});
+
+        modify.c('description', {xmlns:'urn:xmpp:jingle:apps:rtp:1', media: media.mid});
+        // FIXME: not completly sure this operates on blocks and / or handles different ssrcs correctly
+        // generate sources from lines
+        Object.keys(media.ssrcs).forEach(function(ssrcNum) {
+            var mediaSsrc = media.ssrcs[ssrcNum];
+            modify.c('source', { xmlns: 'urn:xmpp:jingle:apps:rtp:ssma:0' });
+            modify.attrs({ssrc: mediaSsrc.ssrc});
+            // iterate over ssrc lines
+            mediaSsrc.lines.forEach(function (line) {
+                var idx = line.indexOf(' ');
+                var kv = line.substr(idx + 1);
+                modify.c('parameter');
+                if (kv.indexOf(':') == -1) {
+                    modify.attrs({ name: kv });
+                } else {
+                    var nv = kv.split(':', 2);
+                    var name = nv[0];
+                    var value = SDPUtil.filter_special_chars(nv[1]);
+                    modify.attrs({ name: name });
+                    modify.attrs({ value: value });
+                }
+                modify.up(); // end of parameter
+            });
+            modify.up(); // end of source
+        });
+
+        // generate source groups from lines
+        media.ssrcGroups.forEach(function(ssrcGroup) {
+            if (ssrcGroup.ssrcs.length != 0) {
+
+                modify.c('ssrc-group', {
+                    semantics: ssrcGroup.semantics,
+                    xmlns: 'urn:xmpp:jingle:apps:rtp:ssma:0'
+                });
+
+                ssrcGroup.ssrcs.forEach(function (ssrc) {
+                    modify.c('source', { ssrc: ssrc })
+                        .up(); // end of source
+                });
+                modify.up(); // end of ssrc-group
+            }
+        });
+
+        modify.up(); // end of description
+        modify.up(); // end of content
+    });
+
+    return modified;
+};
+
+module.exports = SDPDiffer;
+},{"./SDPUtil":21}],21:[function(require,module,exports){
 SDPUtil = {
     filter_special_chars: function (text) {
         return text.replace(/[\\\/\{,\}\+]/g, "");
@@ -3523,7 +6181,462 @@ SDPUtil = {
     }
 };
 module.exports = SDPUtil;
-},{}],17:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
+var RTC = require('../RTC/RTC');
+var RTCBrowserType = require("../RTC/RTCBrowserType.js");
+var XMPPEvents = require("../../service/xmpp/XMPPEvents");
+var SSRCReplacement = require("./LocalSSRCReplacement");
+
+function TraceablePeerConnection(ice_config, constraints, session) {
+    var self = this;
+    var RTCPeerConnectionType = null;
+    if (RTCBrowserType.isFirefox()) {
+        RTCPeerConnectionType = mozRTCPeerConnection;
+    } else if (RTCBrowserType.isTemasysPluginUsed()) {
+        RTCPeerConnectionType = RTCPeerConnection;
+    } else {
+        RTCPeerConnectionType = webkitRTCPeerConnection;
+    }
+    this.peerconnection = new RTCPeerConnectionType(ice_config, constraints);
+    this.updateLog = [];
+    this.stats = {};
+    this.statsinterval = null;
+    this.maxstats = 0; // limit to 300 values, i.e. 5 minutes; set to 0 to disable
+    var Interop = require('sdp-interop').Interop;
+    this.interop = new Interop();
+    var Simulcast = require('sdp-simulcast');
+    this.simulcast = new Simulcast({numOfLayers: 3, explodeRemoteSimulcast: false});
+
+    // override as desired
+    this.trace = function (what, info) {
+        /*console.warn('WTRACE', what, info);
+        if (info && RTCBrowserType.isIExplorer()) {
+            if (info.length > 1024) {
+                console.warn('WTRACE', what, info.substr(1024));
+            }
+            if (info.length > 2048) {
+                console.warn('WTRACE', what, info.substr(2048));
+            }
+        }*/
+        self.updateLog.push({
+            time: new Date(),
+            type: what,
+            value: info || ""
+        });
+    };
+    this.onicecandidate = null;
+    this.peerconnection.onicecandidate = function (event) {
+        // FIXME: this causes stack overflow with Temasys Plugin
+        if (!RTCBrowserType.isTemasysPluginUsed())
+            self.trace('onicecandidate', JSON.stringify(event.candidate, null, ' '));
+        if (self.onicecandidate !== null) {
+            self.onicecandidate(event);
+        }
+    };
+    this.onaddstream = null;
+    this.peerconnection.onaddstream = function (event) {
+        self.trace('onaddstream', event.stream.id);
+        if (self.onaddstream !== null) {
+            self.onaddstream(event);
+        }
+    };
+    this.onremovestream = null;
+    this.peerconnection.onremovestream = function (event) {
+        self.trace('onremovestream', event.stream.id);
+        if (self.onremovestream !== null) {
+            self.onremovestream(event);
+        }
+    };
+    this.onsignalingstatechange = null;
+    this.peerconnection.onsignalingstatechange = function (event) {
+        self.trace('onsignalingstatechange', self.signalingState);
+        if (self.onsignalingstatechange !== null) {
+            self.onsignalingstatechange(event);
+        }
+    };
+    this.oniceconnectionstatechange = null;
+    this.peerconnection.oniceconnectionstatechange = function (event) {
+        self.trace('oniceconnectionstatechange', self.iceConnectionState);
+        if (self.oniceconnectionstatechange !== null) {
+            self.oniceconnectionstatechange(event);
+        }
+    };
+    this.onnegotiationneeded = null;
+    this.peerconnection.onnegotiationneeded = function (event) {
+        self.trace('onnegotiationneeded');
+        if (self.onnegotiationneeded !== null) {
+            self.onnegotiationneeded(event);
+        }
+    };
+    self.ondatachannel = null;
+    this.peerconnection.ondatachannel = function (event) {
+        self.trace('ondatachannel', event);
+        if (self.ondatachannel !== null) {
+            self.ondatachannel(event);
+        }
+    };
+    // XXX: do all non-firefox browsers which we support also support this?
+    if (!RTCBrowserType.isFirefox() && this.maxstats) {
+        this.statsinterval = window.setInterval(function() {
+            self.peerconnection.getStats(function(stats) {
+                var results = stats.result();
+                var now = new Date();
+                for (var i = 0; i < results.length; ++i) {
+                    results[i].names().forEach(function (name) {
+                        var id = results[i].id + '-' + name;
+                        if (!self.stats[id]) {
+                            self.stats[id] = {
+                                startTime: now,
+                                endTime: now,
+                                values: [],
+                                times: []
+                            };
+                        }
+                        self.stats[id].values.push(results[i].stat(name));
+                        self.stats[id].times.push(now.getTime());
+                        if (self.stats[id].values.length > self.maxstats) {
+                            self.stats[id].values.shift();
+                            self.stats[id].times.shift();
+                        }
+                        self.stats[id].endTime = now;
+                    });
+                }
+            });
+
+        }, 1000);
+    }
+}
+
+/**
+ * Returns a string representation of a SessionDescription object.
+ */
+var dumpSDP = function(description) {
+    if (typeof description === 'undefined' || description == null) {
+        return '';
+    }
+
+    return 'type: ' + description.type + '\r\n' + description.sdp;
+};
+
+/**
+ * Takes a SessionDescription object and returns a "normalized" version.
+ * Currently it only takes care of ordering the a=ssrc lines.
+ */
+var normalizePlanB = function(desc) {
+    if (typeof desc !== 'object' || desc === null ||
+        typeof desc.sdp !== 'string') {
+        console.warn('An empty description was passed as an argument.');
+        return desc;
+    }
+
+    var transform = require('sdp-transform');
+    var session = transform.parse(desc.sdp);
+
+    if (typeof session !== 'undefined' && typeof session.media !== 'undefined' &&
+        Array.isArray(session.media)) {
+        session.media.forEach(function (mLine) {
+
+            // Chrome appears to be picky about the order in which a=ssrc lines
+            // are listed in an m-line when rtx is enabled (and thus there are
+            // a=ssrc-group lines with FID semantics). Specifically if we have
+            // "a=ssrc-group:FID S1 S2" and the "a=ssrc:S2" lines appear before
+            // the "a=ssrc:S1" lines, SRD fails.
+            // So, put SSRC which appear as the first SSRC in an FID ssrc-group
+            // first.
+            var firstSsrcs = [];
+            var newSsrcLines = [];
+
+            if (typeof mLine.ssrcGroups !== 'undefined' && Array.isArray(mLine.ssrcGroups)) {
+                mLine.ssrcGroups.forEach(function (group) {
+                    if (typeof group.semantics !== 'undefined' &&
+                        group.semantics === 'FID') {
+                        if (typeof group.ssrcs !== 'undefined') {
+                            firstSsrcs.push(Number(group.ssrcs.split(' ')[0]));
+                        }
+                    }
+                });
+            }
+
+            if (typeof mLine.ssrcs !== 'undefined' && Array.isArray(mLine.ssrcs)) {
+                for (var i = 0; i<mLine.ssrcs.length; i++){
+                    if (typeof mLine.ssrcs[i] === 'object'
+                        && typeof mLine.ssrcs[i].id !== 'undefined'
+                        && $.inArray(mLine.ssrcs[i].id, firstSsrcs) == 0) {
+                        newSsrcLines.push(mLine.ssrcs[i]);
+                        delete mLine.ssrcs[i];
+                    }
+                }
+
+                for (var i = 0; i<mLine.ssrcs.length; i++){
+                    if (typeof mLine.ssrcs[i] !== 'undefined') {
+                        newSsrcLines.push(mLine.ssrcs[i]);
+                    }
+                }
+
+                mLine.ssrcs = newSsrcLines;
+            }
+        });
+    }
+
+    var resStr = transform.write(session);
+    return new RTCSessionDescription({
+        type: desc.type,
+        sdp: resStr
+    });
+};
+
+if (TraceablePeerConnection.prototype.__defineGetter__ !== undefined) {
+    TraceablePeerConnection.prototype.__defineGetter__(
+        'signalingState',
+        function() { return this.peerconnection.signalingState; });
+    TraceablePeerConnection.prototype.__defineGetter__(
+        'iceConnectionState',
+        function() { return this.peerconnection.iceConnectionState; });
+    TraceablePeerConnection.prototype.__defineGetter__(
+        'localDescription',
+        function() {
+            var desc = this.peerconnection.localDescription;
+
+            desc = SSRCReplacement.mungeLocalVideoSSRC(desc);
+            
+            this.trace('getLocalDescription::preTransform', dumpSDP(desc));
+
+            // if we're running on FF, transform to Plan B first.
+            if (RTCBrowserType.usesUnifiedPlan()) {
+                desc = this.interop.toPlanB(desc);
+                this.trace('getLocalDescription::postTransform (Plan B)', dumpSDP(desc));
+            }
+            return desc;
+        });
+    TraceablePeerConnection.prototype.__defineGetter__(
+        'remoteDescription',
+        function() {
+            var desc = this.peerconnection.remoteDescription;
+            this.trace('getRemoteDescription::preTransform', dumpSDP(desc));
+
+            // if we're running on FF, transform to Plan B first.
+            if (RTCBrowserType.usesUnifiedPlan()) {
+                desc = this.interop.toPlanB(desc);
+                this.trace('getRemoteDescription::postTransform (Plan B)', dumpSDP(desc));
+            }
+            return desc;
+        });
+}
+
+TraceablePeerConnection.prototype.addStream = function (stream) {
+    this.trace('addStream', stream.id);
+    try
+    {
+        this.peerconnection.addStream(stream);
+    }
+    catch (e)
+    {
+        console.error(e);
+    }
+};
+
+TraceablePeerConnection.prototype.removeStream = function (stream, stopStreams) {
+    this.trace('removeStream', stream.id);
+    if(stopStreams) {
+        stream.getAudioTracks().forEach(function (track) {
+            // stop() not supported with IE
+            if (track.stop) {
+                track.stop();
+            }
+        });
+        stream.getVideoTracks().forEach(function (track) {
+            // stop() not supported with IE
+            if (track.stop) {
+                track.stop();
+            }
+        });
+        if (stream.stop) {
+            stream.stop();
+        }
+    }
+
+    try {
+        // FF doesn't support this yet.
+        if (this.peerconnection.removeStream)
+            this.peerconnection.removeStream(stream);
+    } catch (e) {
+        console.error(e);
+    }
+};
+
+TraceablePeerConnection.prototype.createDataChannel = function (label, opts) {
+    this.trace('createDataChannel', label, opts);
+    return this.peerconnection.createDataChannel(label, opts);
+};
+
+TraceablePeerConnection.prototype.setLocalDescription
+        = function (description, successCallback, failureCallback) {
+    this.trace('setLocalDescription::preTransform', dumpSDP(description));
+    // if we're running on FF, transform to Plan A first.
+    if (RTCBrowserType.usesUnifiedPlan()) {
+        description = this.interop.toUnifiedPlan(description);
+        this.trace('setLocalDescription::postTransform (Plan A)', dumpSDP(description));
+    }
+
+    var self = this;
+    this.peerconnection.setLocalDescription(description,
+        function () {
+            self.trace('setLocalDescriptionOnSuccess');
+            successCallback();
+        },
+        function (err) {
+            self.trace('setLocalDescriptionOnFailure', err);
+            failureCallback(err);
+        }
+    );
+    /*
+     if (this.statsinterval === null && this.maxstats > 0) {
+     // start gathering stats
+     }
+     */
+};
+
+TraceablePeerConnection.prototype.setRemoteDescription
+        = function (description, successCallback, failureCallback) {
+    this.trace('setRemoteDescription::preTransform', dumpSDP(description));
+    // TODO the focus should squeze or explode the remote simulcast
+    description = this.simulcast.mungeRemoteDescription(description);
+    this.trace('setRemoteDescription::postTransform (simulcast)', dumpSDP(description));
+
+    // if we're running on FF, transform to Plan A first.
+    if (RTCBrowserType.usesUnifiedPlan()) {
+        description = this.interop.toUnifiedPlan(description);
+        this.trace('setRemoteDescription::postTransform (Plan A)', dumpSDP(description));
+    }
+
+    if (RTCBrowserType.usesPlanB()) {
+        description = normalizePlanB(description);
+    }
+
+    var self = this;
+    this.peerconnection.setRemoteDescription(description,
+        function () {
+            self.trace('setRemoteDescriptionOnSuccess');
+            successCallback();
+        },
+        function (err) {
+            self.trace('setRemoteDescriptionOnFailure', err);
+            failureCallback(err);
+        }
+    );
+    /*
+     if (this.statsinterval === null && this.maxstats > 0) {
+     // start gathering stats
+     }
+     */
+};
+
+TraceablePeerConnection.prototype.close = function () {
+    this.trace('stop');
+    if (this.statsinterval !== null) {
+        window.clearInterval(this.statsinterval);
+        this.statsinterval = null;
+    }
+    this.peerconnection.close();
+};
+
+TraceablePeerConnection.prototype.createOffer
+        = function (successCallback, failureCallback, constraints) {
+    var self = this;
+    this.trace('createOffer', JSON.stringify(constraints, null, ' '));
+    this.peerconnection.createOffer(
+        function (offer) {
+            self.trace('createOfferOnSuccess::preTransform', dumpSDP(offer));
+            // NOTE this is not tested because in meet the focus generates the
+            // offer.
+
+            // if we're running on FF, transform to Plan B first.
+            if (RTCBrowserType.usesUnifiedPlan()) {
+                offer = self.interop.toPlanB(offer);
+                self.trace('createOfferOnSuccess::postTransform (Plan B)', dumpSDP(offer));
+            }
+
+            offer = SSRCReplacement.mungeLocalVideoSSRC(offer);
+
+            if (config.enableSimulcast && self.simulcast.isSupported()) {
+                offer = self.simulcast.mungeLocalDescription(offer);
+                self.trace('createOfferOnSuccess::postTransform (simulcast)', dumpSDP(offer));
+            }
+            successCallback(offer);
+        },
+        function(err) {
+            self.trace('createOfferOnFailure', err);
+            failureCallback(err);
+        },
+        constraints
+    );
+};
+
+TraceablePeerConnection.prototype.createAnswer
+        = function (successCallback, failureCallback, constraints) {
+    var self = this;
+    this.trace('createAnswer', JSON.stringify(constraints, null, ' '));
+    this.peerconnection.createAnswer(
+        function (answer) {
+            self.trace('createAnswerOnSuccess::preTransform', dumpSDP(answer));
+            // if we're running on FF, transform to Plan A first.
+            if (RTCBrowserType.usesUnifiedPlan()) {
+                answer = self.interop.toPlanB(answer);
+                self.trace('createAnswerOnSuccess::postTransform (Plan B)', dumpSDP(answer));
+            }
+
+            // munge local video SSRC
+            answer = SSRCReplacement.mungeLocalVideoSSRC(answer);
+
+            if (config.enableSimulcast && self.simulcast.isSupported()) {
+                answer = self.simulcast.mungeLocalDescription(answer);
+                self.trace('createAnswerOnSuccess::postTransform (simulcast)', dumpSDP(answer));
+            }
+            successCallback(answer);
+        },
+        function(err) {
+            self.trace('createAnswerOnFailure', err);
+            failureCallback(err);
+        },
+        constraints
+    );
+};
+
+TraceablePeerConnection.prototype.addIceCandidate
+        = function (candidate, successCallback, failureCallback) {
+    //var self = this;
+    this.trace('addIceCandidate', JSON.stringify(candidate, null, ' '));
+    this.peerconnection.addIceCandidate(candidate);
+    /* maybe later
+     this.peerconnection.addIceCandidate(candidate,
+     function () {
+     self.trace('addIceCandidateOnSuccess');
+     successCallback();
+     },
+     function (err) {
+     self.trace('addIceCandidateOnFailure', err);
+     failureCallback(err);
+     }
+     );
+     */
+};
+
+TraceablePeerConnection.prototype.getStats = function(callback, errback) {
+    // TODO: Is this the correct way to handle Opera, Temasys?
+    if (RTCBrowserType.isFirefox()) {
+        // ignore for now...
+        if(!errback)
+            errback = function () {};
+        this.peerconnection.getStats(null, callback, errback);
+    } else {
+        this.peerconnection.getStats(callback);
+    }
+};
+
+module.exports = TraceablePeerConnection;
+
+
+},{"../../service/xmpp/XMPPEvents":73,"../RTC/RTC":11,"../RTC/RTCBrowserType.js":12,"./LocalSSRCReplacement":18,"sdp-interop":49,"sdp-simulcast":56,"sdp-transform":63}],23:[function(require,module,exports){
 /* global $, $iq, APP, config, messageHandler,
  roomName, sessionTerminated, Strophe, Util */
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
@@ -3531,13 +6644,6 @@ var Settings = require("../settings/Settings");
 
 var AuthenticationEvents
     = require("../../service/authentication/AuthenticationEvents");
-
-/**
- * Contains logic responsible for enabling/disabling functionality available
- * only to moderator users.
- */
-var connection = null;
-var focusUserJid;
 
 function createExpBackoffTimer(step) {
     var count = 1;
@@ -3554,402 +6660,396 @@ function createExpBackoffTimer(step) {
     };
 }
 
-var getNextTimeout = createExpBackoffTimer(1000);
-var getNextErrorTimeout = createExpBackoffTimer(1000);
+
+
+
+
+function Moderator(roomName, xmpp, emitter) {
+    this.roomName = roomName;
+    this.xmppService = xmpp;
+    this.getNextTimeout = createExpBackoffTimer(1000);
+    this.getNextErrorTimeout = createExpBackoffTimer(1000);
 // External authentication stuff
-var externalAuthEnabled = false;
+    this.externalAuthEnabled = false;
+    this.settings = new Settings(roomName);
 // Sip gateway can be enabled by configuring Jigasi host in config.js or
 // it will be enabled automatically if focus detects the component through
 // service discovery.
-var sipGatewayEnabled = null;
+    this.sipGatewayEnabled = this.xmppService.options.hosts.call_control !== undefined;
 
-var eventEmitter = null;
+    this.eventEmitter = emitter;
 
-var Moderator = {
-    isModerator: function () {
-        return connection && connection.emuc.isModerator();
-    },
-
-    isPeerModerator: function (peerJid) {
-        return connection &&
-            connection.emuc.getMemberRole(peerJid) === 'moderator';
-    },
-
-    isExternalAuthEnabled: function () {
-        return externalAuthEnabled;
-    },
-
-    isSipGatewayEnabled: function () {
-        return sipGatewayEnabled;
-    },
-
-    setConnection: function (con) {
-        connection = con;
-    },
-
-    init: function (xmpp, emitter) {
-        this.xmppService = xmpp;
-        sipGatewayEnabled = this.xmppService.options.hosts.call_control !== undefined;
-        eventEmitter = emitter;
-
-        // Message listener that talks to POPUP window
-        function listener(event) {
-            if (event.data && event.data.sessionId) {
-                if (event.origin !== window.location.origin) {
-                    console.warn("Ignoring sessionId from different origin: " +
-                        event.origin);
-                    return;
-                }
-                localStorage.setItem('sessionId', event.data.sessionId);
-                // After popup is closed we will authenticate
+    this.connection = this.xmppService.connection;
+    this.focusUserJid;
+    //FIXME:
+    // Message listener that talks to POPUP window
+    function listener(event) {
+        if (event.data && event.data.sessionId) {
+            if (event.origin !== window.location.origin) {
+                console.warn("Ignoring sessionId from different origin: " +
+                    event.origin);
+                return;
             }
+            localStorage.setItem('sessionId', event.data.sessionId);
+            // After popup is closed we will authenticate
         }
-        // Register
-        if (window.addEventListener) {
-            window.addEventListener("message", listener, false);
-        } else {
-            window.attachEvent("onmessage", listener);
-        }
-    },
+    }
+    // Register
+    if (window.addEventListener) {
+        window.addEventListener("message", listener, false);
+    } else {
+        window.attachEvent("onmessage", listener);
+    }
+}
 
-    onMucMemberLeft: function (jid) {
-        console.info("Someone left is it focus ? " + jid);
-        var resource = Strophe.getResourceFromJid(jid);
-        if (resource === 'focus' && !this.xmppService.sessionTerminated) {
-            console.info(
-                "Focus has left the room - leaving conference");
-            //hangUp();
-            // We'd rather reload to have everything re-initialized
-            // FIXME: show some message before reload
-            location.reload();
-        }
-    },
-    
-    setFocusUserJid: function (focusJid) {
-        if (!focusUserJid) {
-            focusUserJid = focusJid;
-            console.info("Focus jid set to: " + focusUserJid);
-        }
-    },
+Moderator.prototype.isExternalAuthEnabled =  function () {
+    return this.externalAuthEnabled;
+};
 
-    getFocusUserJid: function () {
-        return focusUserJid;
-    },
+Moderator.prototype.isSipGatewayEnabled =  function () {
+    return this.sipGatewayEnabled;
+};
 
-    getFocusComponent: function () {
-        // Get focus component address
-        var focusComponent = this.xmppService.options.hosts.focus;
-        // If not specified use default: 'focus.domain'
-        if (!focusComponent) {
-            focusComponent = 'focus.' + this.xmppService.options.hosts.domain;
-        }
-        return focusComponent;
-    },
 
-    createConferenceIq: function (roomName) {
-        // Generate create conference IQ
-        var elem = $iq({to: Moderator.getFocusComponent(), type: 'set'});
-
-        // Session Id used for authentication
-        var sessionId = localStorage.getItem('sessionId');
-        var machineUID = Settings.getSettings().uid;
-
+Moderator.prototype.onMucMemberLeft =  function (jid) {
+    console.info("Someone left is it focus ? " + jid);
+    var resource = Strophe.getResourceFromJid(jid);
+    if (resource === 'focus' && !this.xmppService.sessionTerminated) {
         console.info(
+            "Focus has left the room - leaving conference");
+        //hangUp();
+        // We'd rather reload to have everything re-initialized
+        //FIXME: show some message before reload
+        this.eventEmitter.emit(XMPPEvents.FOCUS_LEFT);
+    }
+};
+
+
+Moderator.prototype.setFocusUserJid =  function (focusJid) {
+    if (!this.focusUserJid) {
+        this.focusUserJid = focusJid;
+        console.info("Focus jid set to:  " + this.focusUserJid);
+    }
+};
+
+
+Moderator.prototype.getFocusUserJid =  function () {
+    return this.focusUserJid;
+};
+
+Moderator.prototype.getFocusComponent =  function () {
+    // Get focus component address
+    var focusComponent = this.xmppService.options.hosts.focus;
+    // If not specified use default:  'focus.domain'
+    if (!focusComponent) {
+        focusComponent = 'focus.' + this.xmppService.options.hosts.domain;
+    }
+    return focusComponent;
+};
+
+Moderator.prototype.createConferenceIq =  function () {
+    // Generate create conference IQ
+    var elem = $iq({to: this.getFocusComponent(), type: 'set'});
+
+    // Session Id used for authentication
+    var sessionId = localStorage.getItem('sessionId');
+    var machineUID = this.settings.getSettings().uid;
+
+    console.info(
             "Session ID: " + sessionId + " machine UID: " + machineUID);
 
-        elem.c('conference', {
-            xmlns: 'http://jitsi.org/protocol/focus',
-            room: roomName,
-            'machine-uid': machineUID
-        });
+    elem.c('conference', {
+        xmlns: 'http://jitsi.org/protocol/focus',
+        room: this.roomName,
+        'machine-uid': machineUID
+    });
 
-        if (sessionId) {
-            elem.attrs({ 'session-id': sessionId});
-        }
-
-        if (this.xmppService.options.hosts.bridge !== undefined) {
-            elem.c(
-                'property',
-                { name: 'bridge', value: this.xmppService.options.hosts.bridge})
-                .up();
-        }
-        // Tell the focus we have Jigasi configured
-        if (this.xmppService.options.hosts.call_control !== undefined) {
-            elem.c(
-                'property',
-                { name: 'call_control', value: this.xmppService.options.hosts.call_control})
-                .up();
-        }
-        if (this.xmppService.options.channelLastN !== undefined) {
-            elem.c(
-                'property',
-                { name: 'channelLastN', value: this.xmppService.options.channelLastN})
-                .up();
-        }
-        if (this.xmppService.options.adaptiveLastN !== undefined) {
-            elem.c(
-                'property',
-                { name: 'adaptiveLastN', value: this.xmppService.options.adaptiveLastN})
-                .up();
-        }
-        if (this.xmppService.options.adaptiveSimulcast !== undefined) {
-            elem.c(
-                'property',
-                { name: 'adaptiveSimulcast', value: this.xmppService.options.adaptiveSimulcast})
-                .up();
-        }
-        if (this.xmppService.options.openSctp !== undefined) {
-            elem.c(
-                'property',
-                { name: 'openSctp', value: this.xmppService.options.openSctp})
-                .up();
-        }
-        if(this.xmppService.options.startAudioMuted !== undefined)
-        {
-            elem.c(
-                'property',
-                { name: 'startAudioMuted', value: this.xmppService.options.startAudioMuted})
-                .up();
-        }
-        if(this.xmppService.options.startVideoMuted !== undefined)
-        {
-            elem.c(
-                'property',
-                { name: 'startVideoMuted', value: this.xmppService.options.startVideoMuted})
-                .up();
-        }
+    if (sessionId) {
+        elem.attrs({ 'session-id': sessionId});
+    }
+    if (this.xmppService.options.hosts.bridge !== undefined) {
         elem.c(
             'property',
-            { name: 'simulcastMode', value: 'rewriting'})
+            {name: 'bridge',value: this.xmppService.options.hosts.bridge})
             .up();
-        elem.up();
-        return elem;
-    },
+    }
+    // Tell the focus we have Jigasi configured
+    if (this.xmppService.options.hosts.call_control !== undefined) {
+        elem.c(
+            'property',
+            {name: 'call_control',value:  this.xmppService.options.hosts.call_control})
+            .up();
+    }
+    if (this.xmppService.options.channelLastN !== undefined) {
+        elem.c(
+            'property',
+            {name: 'channelLastN',value: this.xmppService.options.channelLastN})
+            .up();
+    }
+    if (this.xmppService.options.adaptiveLastN !== undefined) {
+        elem.c(
+            'property',
+            {name: 'adaptiveLastN',value: this.xmppService.options.adaptiveLastN})
+            .up();
+    }
+    if (this.xmppService.options.adaptiveSimulcast !== undefined) {
+        elem.c(
+            'property',
+            {name: 'adaptiveSimulcast',value: this.xmppService.options.adaptiveSimulcast})
+            .up();
+    }
+    if (this.xmppService.options.openSctp !== undefined) {
+        elem.c(
+            'property',
+            {name: 'openSctp',value: this.xmppService.options.openSctp})
+            .up();
+    }
+    if(this.xmppService.options.startAudioMuted !== undefined)
+    {
+        elem.c(
+            'property',
+            {name: 'startAudioMuted',value: this.xmppService.options.startAudioMuted})
+            .up();
+    }
+    if(this.xmppService.options.startVideoMuted !== undefined)
+    {
+        elem.c(
+            'property',
+            {name: 'startVideoMuted',value: this.xmppService.options.startVideoMuted})
+            .up();
+    }
+    elem.c(
+        'property',
+        {name: 'simulcastMode',value: 'rewriting'})
+        .up();
+    elem.up();
+    return elem;
+};
 
-    parseSessionId: function (resultIq) {
-        var sessionId = $(resultIq).find('conference').attr('session-id');
-        if (sessionId) {
-            console.info('Received sessionId: ' + sessionId);
-            localStorage.setItem('sessionId', sessionId);
-        }
-    },
 
-    parseConfigOptions: function (resultIq) {
+Moderator.prototype.parseSessionId =  function (resultIq) {
+    var sessionId = $(resultIq).find('conference').attr('session-id');
+    if (sessionId) {
+        console.info('Received sessionId:  ' + sessionId);
+        localStorage.setItem('sessionId', sessionId);
+    }
+};
 
-        Moderator.setFocusUserJid(
-            $(resultIq).find('conference').attr('focusjid'));
+Moderator.prototype.parseConfigOptions =  function (resultIq) {
 
-        var authenticationEnabled
-            = $(resultIq).find(
-                '>conference>property' +
-                '[name=\'authentication\'][value=\'true\']').length > 0;
+    this.setFocusUserJid(
+        $(resultIq).find('conference').attr('focusjid'));
 
-        console.info("Authentication enabled: " + authenticationEnabled);
-
-        externalAuthEnabled = $(resultIq).find(
-                '>conference>property' +
-                '[name=\'externalAuth\'][value=\'true\']').length > 0;
-
-        console.info('External authentication enabled: ' + externalAuthEnabled);
-
-        if (!externalAuthEnabled) {
-            // We expect to receive sessionId in 'internal' authentication mode
-            Moderator.parseSessionId(resultIq);
-        }
-
-        var authIdentity = $(resultIq).find('>conference').attr('identity');
-
-        eventEmitter.emit(AuthenticationEvents.IDENTITY_UPDATED,
-            authenticationEnabled, authIdentity);
-    
-        // Check if focus has auto-detected Jigasi component(this will be also
-        // included if we have passed our host from the config)
-        if ($(resultIq).find(
+    var authenticationEnabled
+        = $(resultIq).find(
             '>conference>property' +
-            '[name=\'sipGatewayEnabled\'][value=\'true\']').length) {
-            sipGatewayEnabled = true;
-        }
-    
-        console.info("Sip gateway enabled: " + sipGatewayEnabled);
-    },
+            '[name=\'authentication\'][value=\'true\']').length > 0;
 
-    // FIXME: we need to show the fact that we're waiting for the focus
-    // to the user(or that focus is not available)
-    allocateConferenceFocus: function (roomName, callback) {
-        // Try to use focus user JID from the config
-        Moderator.setFocusUserJid(this.xmppService.options.focusUserJid);
-        // Send create conference IQ
-        var iq = Moderator.createConferenceIq(roomName);
-        var self = this;
-        connection.sendIQ(
-            iq,
-            function (result) {
+    console.info("Authentication enabled: " + authenticationEnabled);
 
-                // Setup config options
-                Moderator.parseConfigOptions(result);
+    this.externalAuthEnabled = $(resultIq).find(
+            '>conference>property' +
+            '[name=\'externalAuth\'][value=\'true\']').length > 0;
 
-                if ('true' === $(result).find('conference').attr('ready')) {
-                    // Reset both timers
-                    getNextTimeout(true);
-                    getNextErrorTimeout(true);
-                    // Exec callback
-                    callback();
-                } else {
-                    var waitMs = getNextTimeout();
-                    console.info("Waiting for the focus... " + waitMs);
-                    // Reset error timeout
-                    getNextErrorTimeout(true);
-                    window.setTimeout(
-                        function () {
-                            Moderator.allocateConferenceFocus(
-                                roomName, callback);
-                        }, waitMs);
-                }
-            },
-            function (error) {
-                // Invalid session ? remove and try again
-                // without session ID to get a new one
-                var invalidSession
-                    = $(error).find('>error>session-invalid').length;
-                if (invalidSession) {
-                    console.info("Session expired! - removing");
-                    localStorage.removeItem("sessionId");
-                }
-                if ($(error).find('>error>graceful-shutdown').length) {
-                    eventEmitter.emit(XMPPEvents.GRACEFUL_SHUTDOWN);
-                    return;
-                }
-                // Check for error returned by the reservation system
-                var reservationErr = $(error).find('>error>reservation-error');
-                if (reservationErr.length) {
-                    // Trigger error event
-                    var errorCode = reservationErr.attr('error-code');
-                    var errorMsg;
-                    if ($(error).find('>error>text')) {
-                        errorMsg = $(error).find('>error>text').text();
-                    }
-                    eventEmitter.emit(
-                        XMPPEvents.RESERVATION_ERROR, errorCode, errorMsg);
-                    return;
-                }
-                // Not authorized to create new room
-                if ($(error).find('>error>not-authorized').length) {
-                    console.warn("Unauthorized to start the conference", error);
-                    var toDomain
-                        = Strophe.getDomainFromJid(error.getAttribute('to'));
-                    if (toDomain !== this.xmppService.options.hosts.anonymousdomain) {
-                        // FIXME: "is external" should come either from
-                        // the focus or config.js
-                        externalAuthEnabled = true;
-                    }
-                    eventEmitter.emit(
-                        XMPPEvents.AUTHENTICATION_REQUIRED,
-                        function () {
-                            Moderator.allocateConferenceFocus(
-                                roomName, callback);
-                        });
-                    return;
-                }
-                var waitMs = getNextErrorTimeout();
-                console.error("Focus error, retry after " + waitMs, error);
-                // Show message
-                var focusComponent = Moderator.getFocusComponent();
-                var retrySec = waitMs / 1000;
-                // FIXME: message is duplicated ?
-                // Do not show in case of session invalid
-                // which means just a retry
-                if (!invalidSession) {
-                    eventEmitter.emit(XMPPEvents.FOCUS_DISCONNECTED,
-                        focusComponent, retrySec);
-                }
-                // Reset response timeout
-                getNextTimeout(true);
+    console.info('External authentication enabled: ' + this.externalAuthEnabled);
+
+    if (!this.externalAuthEnabled) {
+        // We expect to receive sessionId in 'internal' authentication mode
+        this.parseSessionId(resultIq);
+    }
+
+    var authIdentity = $(resultIq).find('>conference').attr('identity');
+
+    this.eventEmitter.emit(AuthenticationEvents.IDENTITY_UPDATED,
+        authenticationEnabled, authIdentity);
+
+    // Check if focus has auto-detected Jigasi component(this will be also
+    // included if we have passed our host from the config)
+    if ($(resultIq).find(
+        '>conference>property' +
+        '[name=\'sipGatewayEnabled\'][value=\'true\']').length) {
+        this.sipGatewayEnabled = true;
+    }
+
+    console.info("Sip gateway enabled:  " + this.sipGatewayEnabled);
+};
+
+// FIXME =  we need to show the fact that we're waiting for the focus
+// to the user(or that focus is not available)
+Moderator.prototype.allocateConferenceFocus =  function ( callback) {
+    // Try to use focus user JID from the config
+    this.setFocusUserJid(this.xmppService.options.focusUserJid);
+    // Send create conference IQ
+    var iq = this.createConferenceIq();
+    var self = this;
+    this.connection.sendIQ(
+        iq,
+        function (result) {
+
+            // Setup config options
+            self.parseConfigOptions(result);
+
+            if ('true' === $(result).find('conference').attr('ready')) {
+                // Reset both timers
+                self.getNextTimeout(true);
+                self.getNextErrorTimeout(true);
+                // Exec callback
+                callback();
+            } else {
+                var waitMs = self.getNextTimeout();
+                console.info("Waiting for the focus... " + waitMs);
+                // Reset error timeout
+                self.getNextErrorTimeout(true);
                 window.setTimeout(
                     function () {
-                        Moderator.allocateConferenceFocus(roomName, callback);
+                        self.allocateConferenceFocus(callback);
                     }, waitMs);
             }
-        );
-    },
-
-    getLoginUrl: function (roomName, urlCallback) {
-        var iq = $iq({to: Moderator.getFocusComponent(), type: 'get'});
-        iq.c('login-url', {
-            xmlns: 'http://jitsi.org/protocol/focus',
-            room: roomName,
-            'machine-uid': Settings.getSettings().uid
-        });
-        connection.sendIQ(
-            iq,
-            function (result) {
-                var url = $(result).find('login-url').attr('url');
-                url = url = decodeURIComponent(url);
-                if (url) {
-                    console.info("Got auth url: " + url);
-                    urlCallback(url);
-                } else {
-                    console.error(
-                        "Failed to get auth url from the focus", result);
-                }
-            },
-            function (error) {
-                console.error("Get auth url error", error);
+        },
+        function (error) {
+            // Invalid session ? remove and try again
+            // without session ID to get a new one
+            var invalidSession
+                = $(error).find('>error>session-invalid').length;
+            if (invalidSession) {
+                console.info("Session expired! - removing");
+                localStorage.removeItem("sessionId");
             }
-        );
-    },
-    getPopupLoginUrl: function (roomName, urlCallback) {
-        var iq = $iq({to: Moderator.getFocusComponent(), type: 'get'});
-        iq.c('login-url', {
-            xmlns: 'http://jitsi.org/protocol/focus',
-            room: roomName,
-            'machine-uid': Settings.getSettings().uid,
-            popup: true
-        });
-        connection.sendIQ(
-            iq,
-            function (result) {
-                var url = $(result).find('login-url').attr('url');
-                url = url = decodeURIComponent(url);
-                if (url) {
-                    console.info("Got POPUP auth url: " + url);
-                    urlCallback(url);
-                } else {
-                    console.error(
-                        "Failed to get POPUP auth url from the focus", result);
-                }
-            },
-            function (error) {
-                console.error('Get POPUP auth url error', error);
+            if ($(error).find('>error>graceful-shutdown').length) {
+                self.eventEmitter.emit(XMPPEvents.GRACEFUL_SHUTDOWN);
+                return;
             }
-        );
-    },
-    logout: function (callback) {
-        var iq = $iq({to: Moderator.getFocusComponent(), type: 'set'});
-        var sessionId = localStorage.getItem('sessionId');
-        if (!sessionId) {
-            callback();
-            return;
+            // Check for error returned by the reservation system
+            var reservationErr = $(error).find('>error>reservation-error');
+            if (reservationErr.length) {
+                // Trigger error event
+                var errorCode = reservationErr.attr('error-code');
+                var errorMsg;
+                if ($(error).find('>error>text')) {
+                    errorMsg = $(error).find('>error>text').text();
+                }
+                self.eventEmitter.emit(
+                    XMPPEvents.RESERVATION_ERROR, errorCode, errorMsg);
+                return;
+            }
+            // Not authorized to create new room
+            if ($(error).find('>error>not-authorized').length) {
+                console.warn("Unauthorized to start the conference", error);
+                var toDomain
+                    = Strophe.getDomainFromJid(error.getAttribute('to'));
+                if (toDomain !== this.xmppService.options.hosts.anonymousdomain) {
+                    //FIXME:  "is external" should come either from
+                    // the focus or config.js
+                    self.externalAuthEnabled = true;
+                }
+                self.eventEmitter.emit(
+                    XMPPEvents.AUTHENTICATION_REQUIRED,
+                    function () {
+                        self.allocateConferenceFocus(
+                            callback);
+                    });
+                return;
+            }
+            var waitMs = self.getNextErrorTimeout();
+            console.error("Focus error, retry after " + waitMs, error);
+            // Show message
+            var focusComponent = self.getFocusComponent();
+            var retrySec = waitMs / 1000;
+            //FIXME:  message is duplicated ?
+            // Do not show in case of session invalid
+            // which means just a retry
+            if (!invalidSession) {
+                self.eventEmitter.emit(XMPPEvents.FOCUS_DISCONNECTED,
+                    focusComponent, retrySec);
+            }
+            // Reset response timeout
+            self.getNextTimeout(true);
+            window.setTimeout(
+                function () {
+                    self.allocateConferenceFocus(callback);
+                }, waitMs);
         }
-        iq.c('logout', {
-            xmlns: 'http://jitsi.org/protocol/focus',
-            'session-id': sessionId
-        });
-        connection.sendIQ(
-            iq,
-            function (result) {
-                var logoutUrl = $(result).find('logout').attr('logout-url');
-                if (logoutUrl) {
-                    logoutUrl = decodeURIComponent(logoutUrl);
-                }
-                console.info("Log out OK, url: " + logoutUrl, result);
-                localStorage.removeItem('sessionId');
-                callback(logoutUrl);
-            },
-            function (error) {
-                console.error("Logout error", error);
+    );
+};
+
+Moderator.prototype.getLoginUrl =  function (urlCallback) {
+    var iq = $iq({to: this.getFocusComponent(), type: 'get'});
+    iq.c('login-url', {
+        xmlns: 'http://jitsi.org/protocol/focus',
+        room: this.roomName,
+        'machine-uid': this.settings.getSettings().uid
+    });
+    this.connection.sendIQ(
+        iq,
+        function (result) {
+            var url = $(result).find('login-url').attr('url');
+            url = url = decodeURIComponent(url);
+            if (url) {
+                console.info("Got auth url: " + url);
+                urlCallback(url);
+            } else {
+                console.error(
+                    "Failed to get auth url from the focus", result);
             }
-        );
+        },
+        function (error) {
+            console.error("Get auth url error", error);
+        }
+    );
+};
+Moderator.prototype.getPopupLoginUrl =  function (urlCallback) {
+    var iq = $iq({to: this.getFocusComponent(), type: 'get'});
+    iq.c('login-url', {
+        xmlns: 'http://jitsi.org/protocol/focus',
+        room: this.roomName,
+        'machine-uid': this.settings.getSettings().uid,
+        popup: true
+    });
+    this.connection.sendIQ(
+        iq,
+        function (result) {
+            var url = $(result).find('login-url').attr('url');
+            url = url = decodeURIComponent(url);
+            if (url) {
+                console.info("Got POPUP auth url:  " + url);
+                urlCallback(url);
+            } else {
+                console.error(
+                    "Failed to get POPUP auth url from the focus", result);
+            }
+        },
+        function (error) {
+            console.error('Get POPUP auth url error', error);
+        }
+    );
+};
+
+Moderator.prototype.logout =  function (callback) {
+    var iq = $iq({to: this.getFocusComponent(), type: 'set'});
+    var sessionId = localStorage.getItem('sessionId');
+    if (!sessionId) {
+        callback();
+        return;
     }
+    iq.c('logout', {
+        xmlns: 'http://jitsi.org/protocol/focus',
+        'session-id': sessionId
+    });
+    this.connection.sendIQ(
+        iq,
+        function (result) {
+            var logoutUrl = $(result).find('logout').attr('logout-url');
+            if (logoutUrl) {
+                logoutUrl = decodeURIComponent(logoutUrl);
+            }
+            console.info("Log out OK, url: " + logoutUrl, result);
+            localStorage.removeItem('sessionId');
+            callback(logoutUrl);
+        },
+        function (error) {
+            console.error("Logout error", error);
+        }
+    );
 };
 
 module.exports = Moderator;
@@ -3957,7 +7057,7 @@ module.exports = Moderator;
 
 
 
-},{"../../service/authentication/AuthenticationEvents":45,"../../service/xmpp/XMPPEvents":47,"../settings/Settings":15}],18:[function(require,module,exports){
+},{"../../service/authentication/AuthenticationEvents":71,"../../service/xmpp/XMPPEvents":73,"../settings/Settings":15}],24:[function(require,module,exports){
 /* jshint -W117 */
 /* a simple MUC connection plugin
  * can only handle a single MUC room
@@ -4018,6 +7118,7 @@ function ChatRoom(connection, jid, password, XMPP, eventEmitter)
     this.role = null;
     this.focusMucJid = null;
     this.bridgeIsDown = false;
+    this.moderator = new Moderator(this.roomjid, this.xmpp, eventEmitter);
     this.initPresenceMap();
 }
 
@@ -4043,6 +7144,10 @@ ChatRoom.prototype.initPresenceMap = function () {
         "attributes": {xmlns: 'http://jitsi.org/jitmeet/user-agent'}
     });
 };
+
+ChatRoom.prototype.join = function () {
+    this.moderator.allocateConferenceFocus(this.sendPresence.bind(this));
+}
 
 ChatRoom.prototype.sendPresence = function () {
     if (!this.presMap['to']) {
@@ -4129,11 +7234,11 @@ ChatRoom.prototype.onPresence = function (pres) {
     member.jid = tmp.attr('jid');
     member.isFocus = false;
     if (member.jid
-        && member.jid.indexOf(Moderator.getFocusUserJid() + "/") == 0) {
+        && member.jid.indexOf(this.moderator.getFocusUserJid() + "/") == 0) {
         member.isFocus = true;
     }
 
-    pres.find(">x").remove();
+    $(pres).find(">x").remove();
     var nodes = [];
     parser.packet2JSON(pres, nodes);
     for(var i = 0; i < nodes.length; i++)
@@ -4178,7 +7283,7 @@ ChatRoom.prototype.onPresence = function (pres) {
             this.role = member.role;
 
             this.eventEmitter.emit(XMPPEvents.LOCAL_ROLE_CHANGED,
-                member, Moderator.isModerator());
+                member, this.isModerator());
         }
         if (!this.joined) {
             this.joined = true;
@@ -4243,9 +7348,7 @@ ChatRoom.prototype.onParticipantLeft = function (jid) {
 
     this.eventEmitter.emit(XMPPEvents.MUC_MEMBER_LEFT, jid);
 
-    this.connection.jingle.terminateByJid(jid);
-
-    Moderator.onMucMemberLeft(jid);
+    this.moderator.onMucMemberLeft(jid);
 };
 
 ChatRoom.prototype.onPresenceUnavailable = function (pres, from) {
@@ -4426,7 +7529,7 @@ module.exports = function(XMPP) {
         init: function (conn) {
             this.connection = conn;
             // add handlers (just once)
-            this.connection.addHandler(this.onPresence.bind(this), null, 'presence', null, null);
+            this.connection.addHandler(this.onPresence.bind(this), null, 'presence', null, null, null, null);
             this.connection.addHandler(this.onPresenceUnavailable.bind(this), null, 'presence', 'unavailable', null);
             this.connection.addHandler(this.onPresenceError.bind(this), null, 'presence', 'error', null);
             this.connection.addHandler(this.onMessage.bind(this), null, 'message', null, null);
@@ -4439,8 +7542,7 @@ module.exports = function(XMPP) {
                 return;
             }
             this.rooms[roomJid] = new ChatRoom(this.connection, jid, password, XMPP, eventEmitter);
-
-            this.rooms[roomJid].sendPresence();
+            this.rooms[roomJid].join();
             return this.rooms[roomJid];
         },
         doLeave: function (jid) {
@@ -4500,7 +7602,296 @@ module.exports = function(XMPP) {
 };
 
 
-},{"../../service/xmpp/XMPPEvents":47,"../RTC/RTC":11,"./moderator":17}],19:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":73,"../RTC/RTC":11,"./moderator":23}],25:[function(require,module,exports){
+/* jshint -W117 */
+
+var JingleSession = require("./JingleSessionPC");
+var XMPPEvents = require("../../service/xmpp/XMPPEvents");
+var RTCBrowserType = require("../RTC/RTCBrowserType");
+
+
+module.exports = function(XMPP, eventEmitter) {
+    Strophe.addConnectionPlugin('jingle', {
+        connection: null,
+        sessions: {},
+        jid2session: {},
+        ice_config: {iceServers: []},
+        media_constraints: {
+            mandatory: {
+                'OfferToReceiveAudio': true,
+                'OfferToReceiveVideo': true
+            }
+            // MozDontOfferDataChannel: true when this is firefox
+        },
+        init: function (conn) {
+            this.connection = conn;
+            if (this.connection.disco) {
+                // http://xmpp.org/extensions/xep-0167.html#support
+                // http://xmpp.org/extensions/xep-0176.html#support
+                this.connection.disco.addFeature('urn:xmpp:jingle:1');
+                this.connection.disco.addFeature('urn:xmpp:jingle:apps:rtp:1');
+                this.connection.disco.addFeature('urn:xmpp:jingle:transports:ice-udp:1');
+                this.connection.disco.addFeature('urn:xmpp:jingle:apps:dtls:0');
+                this.connection.disco.addFeature('urn:xmpp:jingle:transports:dtls-sctp:1');
+                this.connection.disco.addFeature('urn:xmpp:jingle:apps:rtp:audio');
+                this.connection.disco.addFeature('urn:xmpp:jingle:apps:rtp:video');
+
+                if (RTCBrowserType.isChrome() || RTCBrowserType.isOpera()
+                    || RTCBrowserType.isTemasysPluginUsed()) {
+                    this.connection.disco.addFeature('urn:ietf:rfc:4588');
+                }
+
+                // this is dealt with by SDP O/A so we don't need to announce this
+                //this.connection.disco.addFeature('urn:xmpp:jingle:apps:rtp:rtcp-fb:0'); // XEP-0293
+                //this.connection.disco.addFeature('urn:xmpp:jingle:apps:rtp:rtp-hdrext:0'); // XEP-0294
+
+                this.connection.disco.addFeature('urn:ietf:rfc:5761'); // rtcp-mux
+                this.connection.disco.addFeature('urn:ietf:rfc:5888'); // a=group, e.g. bundle
+
+                //this.connection.disco.addFeature('urn:ietf:rfc:5576'); // a=ssrc
+            }
+            this.connection.addHandler(this.onJingle.bind(this), 'urn:xmpp:jingle:1', 'iq', 'set', null, null);
+        },
+        onJingle: function (iq) {
+            var sid = $(iq).find('jingle').attr('sid');
+            var action = $(iq).find('jingle').attr('action');
+            var fromJid = iq.getAttribute('from');
+            // send ack first
+            var ack = $iq({type: 'result',
+                to: fromJid,
+                id: iq.getAttribute('id')
+            });
+            console.log('on jingle ' + action + ' from ' + fromJid, iq);
+            var sess = this.sessions[sid];
+            if ('session-initiate' != action) {
+                if (sess === null) {
+                    ack.type = 'error';
+                    ack.c('error', {type: 'cancel'})
+                        .c('item-not-found', {xmlns: 'urn:ietf:params:xml:ns:xmpp-stanzas'}).up()
+                        .c('unknown-session', {xmlns: 'urn:xmpp:jingle:errors:1'});
+                    this.connection.send(ack);
+                    return true;
+                }
+                // local jid is not checked
+                if (fromJid != sess.peerjid) {
+                    console.warn('jid mismatch for session id', sid, fromJid, sess.peerjid);
+                    ack.type = 'error';
+                    ack.c('error', {type: 'cancel'})
+                        .c('item-not-found', {xmlns: 'urn:ietf:params:xml:ns:xmpp-stanzas'}).up()
+                        .c('unknown-session', {xmlns: 'urn:xmpp:jingle:errors:1'});
+                    this.connection.send(ack);
+                    return true;
+                }
+            } else if (sess !== undefined) {
+                // existing session with same session id
+                // this might be out-of-order if the sess.peerjid is the same as from
+                ack.type = 'error';
+                ack.c('error', {type: 'cancel'})
+                    .c('service-unavailable', {xmlns: 'urn:ietf:params:xml:ns:xmpp-stanzas'}).up();
+                console.warn('duplicate session id', sid);
+                this.connection.send(ack);
+                return true;
+            }
+            // FIXME: check for a defined action
+            this.connection.send(ack);
+            // see http://xmpp.org/extensions/xep-0166.html#concepts-session
+            switch (action) {
+                case 'session-initiate':
+                    var startMuted = $(iq).find('jingle>startmuted');
+                    if (startMuted && startMuted.length > 0) {
+                        var audioMuted = startMuted.attr("audio");
+                        var videoMuted = startMuted.attr("video");
+                        eventEmitter.emit(XMPPEvents.START_MUTED_FROM_FOCUS,
+                                audioMuted === "true", videoMuted === "true");
+                    }
+                    sess = new JingleSession(
+                        $(iq).attr('to'), $(iq).find('jingle').attr('sid'),
+                        this.connection, XMPP, eventEmitter);
+                    // configure session
+
+                    sess.media_constraints = this.media_constraints;
+                    sess.ice_config = this.ice_config;
+
+                    sess.initialize(Strophe.getBareJidFromJid(fromJid), false);
+                    // FIXME: setRemoteDescription should only be done when this call is to be accepted
+                    sess.setOffer($(iq).find('>jingle'));
+
+                    this.sessions[sess.sid] = sess;
+                    this.jid2session[sess.peerjid] = sess;
+
+                    // the callback should either
+                    // .sendAnswer and .accept
+                    // or .sendTerminate -- not necessarily synchronous
+
+                    eventEmitter.emit(XMPPEvents.CALL_INCOMING, sess);
+
+                    sess.sendAnswer();
+                    sess.accept();
+                    break;
+                case 'session-accept':
+                    sess.setAnswer($(iq).find('>jingle'));
+                    sess.accept();
+                    break;
+                case 'session-terminate':
+                    // If this is not the focus sending the terminate, we have
+                    // nothing more to do here.
+                    if (Object.keys(this.sessions).length < 1
+                        || !(this.sessions[Object.keys(this.sessions)[0]]
+                            instanceof JingleSession))
+                    {
+                        break;
+                    }
+                    console.log('terminating...', sess.sid);
+                    sess.terminate();
+                    this.terminate(sess.sid);
+                    if ($(iq).find('>jingle>reason').length) {
+                        $(document).trigger('callterminated.jingle', [
+                            sess.sid,
+                            sess.peerjid,
+                            $(iq).find('>jingle>reason>:first')[0].tagName,
+                            $(iq).find('>jingle>reason>text').text()
+                        ]);
+                    } else {
+                        $(document).trigger('callterminated.jingle',
+                            [sess.sid, sess.peerjid]);
+                    }
+                    break;
+                case 'transport-info':
+                    sess.addIceCandidate($(iq).find('>jingle>content'));
+                    break;
+                case 'session-info':
+                    var affected;
+                    if ($(iq).find('>jingle>ringing[xmlns="urn:xmpp:jingle:apps:rtp:info:1"]').length) {
+                        $(document).trigger('ringing.jingle', [sess.sid]);
+                    } else if ($(iq).find('>jingle>mute[xmlns="urn:xmpp:jingle:apps:rtp:info:1"]').length) {
+                        affected = $(iq).find('>jingle>mute[xmlns="urn:xmpp:jingle:apps:rtp:info:1"]').attr('name');
+                        $(document).trigger('mute.jingle', [sess.sid, affected]);
+                    } else if ($(iq).find('>jingle>unmute[xmlns="urn:xmpp:jingle:apps:rtp:info:1"]').length) {
+                        affected = $(iq).find('>jingle>unmute[xmlns="urn:xmpp:jingle:apps:rtp:info:1"]').attr('name');
+                        $(document).trigger('unmute.jingle', [sess.sid, affected]);
+                    }
+                    break;
+                case 'addsource': // FIXME: proprietary, un-jingleish
+                case 'source-add': // FIXME: proprietary
+                    sess.addSource($(iq).find('>jingle>content'), fromJid);
+                    break;
+                case 'removesource': // FIXME: proprietary, un-jingleish
+                case 'source-remove': // FIXME: proprietary
+                    sess.removeSource($(iq).find('>jingle>content'), fromJid);
+                    break;
+                default:
+                    console.warn('jingle action not implemented', action);
+                    break;
+            }
+            return true;
+        },
+        terminate: function (sid, reason, text) { // terminate by sessionid (or all sessions)
+            if (sid === null || sid === undefined) {
+                for (sid in this.sessions) {
+                    if (this.sessions[sid].state != 'ended') {
+                        this.sessions[sid].sendTerminate(reason || (!this.sessions[sid].active()) ? 'cancel' : null, text);
+                        this.sessions[sid].terminate();
+                    }
+                    delete this.jid2session[this.sessions[sid].peerjid];
+                    delete this.sessions[sid];
+                }
+            } else if (this.sessions.hasOwnProperty(sid)) {
+                if (this.sessions[sid].state != 'ended') {
+                    this.sessions[sid].sendTerminate(reason || (!this.sessions[sid].active()) ? 'cancel' : null, text);
+                    this.sessions[sid].terminate();
+                }
+                delete this.jid2session[this.sessions[sid].peerjid];
+                delete this.sessions[sid];
+            }
+        },
+        getStunAndTurnCredentials: function () {
+            // get stun and turn configuration from server via xep-0215
+            // uses time-limited credentials as described in
+            // http://tools.ietf.org/html/draft-uberti-behave-turn-rest-00
+            //
+            // see https://code.google.com/p/prosody-modules/source/browse/mod_turncredentials/mod_turncredentials.lua
+            // for a prosody module which implements this
+            //
+            // currently, this doesn't work with updateIce and therefore credentials with a long
+            // validity have to be fetched before creating the peerconnection
+            // TODO: implement refresh via updateIce as described in
+            //      https://code.google.com/p/webrtc/issues/detail?id=1650
+            var self = this;
+            this.connection.sendIQ(
+                $iq({type: 'get', to: this.connection.domain})
+                    .c('services', {xmlns: 'urn:xmpp:extdisco:1'}).c('service', {host: 'turn.' + this.connection.domain}),
+                function (res) {
+                    var iceservers = [];
+                    $(res).find('>services>service').each(function (idx, el) {
+                        el = $(el);
+                        var dict = {};
+                        var type = el.attr('type');
+                        switch (type) {
+                            case 'stun':
+                                dict.url = 'stun:' + el.attr('host');
+                                if (el.attr('port')) {
+                                    dict.url += ':' + el.attr('port');
+                                }
+                                iceservers.push(dict);
+                                break;
+                            case 'turn':
+                            case 'turns':
+                                dict.url = type + ':';
+                                if (el.attr('username')) { // https://code.google.com/p/webrtc/issues/detail?id=1508
+                                    if (navigator.userAgent.match(/Chrom(e|ium)\/([0-9]+)\./) && parseInt(navigator.userAgent.match(/Chrom(e|ium)\/([0-9]+)\./)[2], 10) < 28) {
+                                        dict.url += el.attr('username') + '@';
+                                    } else {
+                                        dict.username = el.attr('username'); // only works in M28
+                                    }
+                                }
+                                dict.url += el.attr('host');
+                                if (el.attr('port') && el.attr('port') != '3478') {
+                                    dict.url += ':' + el.attr('port');
+                                }
+                                if (el.attr('transport') && el.attr('transport') != 'udp') {
+                                    dict.url += '?transport=' + el.attr('transport');
+                                }
+                                if (el.attr('password')) {
+                                    dict.credential = el.attr('password');
+                                }
+                                iceservers.push(dict);
+                                break;
+                        }
+                    });
+                    self.ice_config.iceServers = iceservers;
+                },
+                function (err) {
+                    console.warn('getting turn credentials failed', err);
+                    console.warn('is mod_turncredentials or similar installed?');
+                }
+            );
+            // implement push?
+        },
+
+        /**
+         * Returns the data saved in 'updateLog' in a format to be logged.
+         */
+        getLog: function () {
+            var data = {};
+            var self = this;
+            Object.keys(this.sessions).forEach(function (sid) {
+                var session = self.sessions[sid];
+                if (session.peerconnection && session.peerconnection.updateLog) {
+                    // FIXME: should probably be a .dump call
+                    data["jingle_" + session.sid] = {
+                        updateLog: session.peerconnection.updateLog,
+                        stats: session.peerconnection.stats,
+                        url: window.location.href
+                    };
+                }
+            });
+            return data;
+        }
+    });
+};
+
+
+},{"../../service/xmpp/XMPPEvents":73,"../RTC/RTCBrowserType":12,"./JingleSessionPC":17}],26:[function(require,module,exports){
 /* global Strophe */
 module.exports = function () {
 
@@ -4521,7 +7912,7 @@ module.exports = function () {
         }
     });
 };
-},{}],20:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 /* jshint -W117 */
 module.exports = function() {
     Strophe.addConnectionPlugin('rayo',
@@ -4618,7 +8009,7 @@ module.exports = function() {
     );
 };
 
-},{}],21:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 /**
  * Strophe logger implementation. Logs from level WARN and above.
  */
@@ -4662,7 +8053,7 @@ module.exports = function () {
     };
 };
 
-},{}],22:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 /* global $, APP, config, Strophe*/
 var Moderator = require("./moderator");
 var EventEmitter = require("events");
@@ -4688,7 +8079,7 @@ function createConnection(bosh) {
 function initStrophePlugins(XMPP)
 {
     require("./strophe.emuc")(XMPP);
-//    require("./strophe.jingle")(XMPP, eventEmitter);
+    require("./strophe.jingle")(XMPP, XMPP.eventEmitter);
 //    require("./strophe.moderate")(XMPP, eventEmitter);
     require("./strophe.util")();
     require("./strophe.rayo")();
@@ -4726,9 +8117,8 @@ function XMPP(options) {
     this.options = options;
     initStrophePlugins(this);
 //    registerListeners();
-    Moderator.init(this, this.eventEmitter);
+
     this.connection = createConnection(options.bosh);
-    Moderator.setConnection(this.connection);
 }
 
 
@@ -4783,7 +8173,7 @@ XMPP.prototype._connect = function (jid, password) {
             if (self.connection && self.connection.connected &&
                 Strophe.getResourceFromJid(self.connection.jid)) {
                 // .connected is true while connecting?
-                self.connection.send($pres());
+//                self.connection.send($pres());
                 self.eventEmitter.emit(JitsiConnectionEvents.CONNECTION_ESTABLISHED,
                     Strophe.getResourceFromJid(self.connection.jid));
             }
@@ -4833,7 +8223,7 @@ XMPP.prototype.connect = function (jid, password) {
 };
 
 XMPP.prototype.joinRoom = function(roomName, useNicks, nick) {
-    var roomjid = roomName  + '@' + Strophe.getDomainFromJid(this.connection.jid);
+    var roomjid = roomName  + '@' + this.options.hosts.muc;
 
     if (useNicks) {
         if (nick) {
@@ -4886,31 +8276,6 @@ XMPP.prototype.removeListener = function (type, listener) {
 
 XMPP.prototype.leaveRoom = function (jid) {
     this.connection.emuc.doLeave(jid);
-};
-
-
-XMPP.prototype.allocateConferenceFocus = function(roomName, callback) {
-    Moderator.allocateConferenceFocus(roomName, callback);
-};
-
-XMPP.prototype.getLoginUrl = function (roomName, callback) {
-    Moderator.getLoginUrl(roomName, callback);
-}
-
-XMPP.prototype.getPopupLoginUrl = function (roomName, callback) {
-    Moderator.getPopupLoginUrl(roomName, callback);
-};
-
-XMPP.prototype.isModerator = function () {
-    return Moderator.isModerator();
-};
-
-XMPP.prototype.isSipGatewayEnabled = function () {
-    return Moderator.isSipGatewayEnabled();
-}
-
-XMPP.prototype.isExternalAuthEnabled = function () {
-    return Moderator.isExternalAuthEnabled();
 };
 
 XMPP.prototype.isConferenceInProgress = function () {
@@ -4987,44 +8352,6 @@ XMPP.prototype.sendAudioInfoPresence = function(mute, callback) {
     return true;
 };
 
-XMPP.prototype.addToPresence = function (name, values, dontSend) {
-    this.connection.emuc.addToPresence(name, values);
-    switch (name) {
-        case "displayName":
-            this.connection.emuc.addDisplayNameToPresence(value);
-            break;
-        case "prezi":
-            this.connection.emuc.addPreziToPresence(value, 0);
-            break;
-        case "preziSlide":
-            this.connection.emuc.addCurrentSlideToPresence(value);
-            break;
-        case "connectionQuality":
-            this.connection.emuc.addConnectionInfoToPresence(value);
-            break;
-        case "email":
-            this.connection.emuc.addEmailToPresence(value);
-            break;
-        case "devices":
-            this.connection.emuc.addDevicesToPresence(value);
-            break;
-        case "videoType":
-            this.connection.emuc.addVideoTypeToPresence(value);
-            break;
-        case "startMuted":
-            if(!Moderator.isModerator())
-                return;
-            this.connection.emuc.addStartMutedToPresence(value[0],
-                value[1]);
-            break;
-        default :
-            console.log("Unknown tag for presence: " + name);
-            return;
-    }
-    if (!dontSend)
-        this.connection.emuc.sendPresence();
-};
-
 /**
  * Sends 'data' as a log message to the focus. Returns true iff a message
  * was sent.
@@ -5066,17 +8393,6 @@ XMPP.prototype.getXmppLog = function () {
     return this.connection.logger ? this.connection.logger.log : null;
 };
 
-XMPP.prototype.sendChatMessage = function (message, nickname) {
-    this.connection.emuc.sendMessage(message, nickname);
-};
-
-XMPP.prototype.setSubject = function (topic) {
-    this.connection.emuc.setSubject(topic);
-};
-
-XMPP.prototype.lockRoom = function (key, onSuccess, onError, onNotSupported) {
-    this.connection.emuc.lockRoom(key, onSuccess, onError, onNotSupported);
-};
 
 XMPP.prototype.dial = function (to, from, roomName,roomPass) {
     this.connection.rayo.dial(to, from, roomName,roomPass);
@@ -5090,23 +8406,10 @@ XMPP.prototype.eject = function (jid) {
     this.connection.moderate.eject(jid);
 };
 
-XMPP.prototype.logout = function (callback) {
-    Moderator.logout(callback);
-};
-
-XMPP.prototype.getMembers = function () {
-    return this.connection.emuc.members;
-};
-
 XMPP.prototype.getJidFromSSRC = function (ssrc) {
     if (!this.isConferenceInProgress())
         return null;
     return this.connection.jingle.activecall.getSsrcOwner(ssrc);
-};
-
-// Returns true iff we have joined the MUC.
-XMPP.prototype.isMUCJoined = function () {
-    return this.connection.emuc.joined;
 };
 
 XMPP.prototype.getSessions = function () {
@@ -5134,7 +8437,1134 @@ XMPP.prototype.disconnect = function (callback) {
 
 module.exports = XMPP;
 
-},{"../../JitsiConnectionErrors":5,"../../JitsiConnectionEvents":6,"../../service/RTC/RTCEvents":41,"../../service/RTC/StreamEventTypes":43,"../../service/xmpp/XMPPEvents":47,"../RTC/RTC":11,"./moderator":17,"./strophe.emuc":18,"./strophe.logger":19,"./strophe.rayo":20,"./strophe.util":21,"events":48,"pako":24}],23:[function(require,module,exports){
+},{"../../JitsiConnectionErrors":5,"../../JitsiConnectionEvents":6,"../../service/RTC/RTCEvents":67,"../../service/RTC/StreamEventTypes":69,"../../service/xmpp/XMPPEvents":73,"../RTC/RTC":11,"./moderator":23,"./strophe.emuc":24,"./strophe.jingle":25,"./strophe.logger":26,"./strophe.rayo":27,"./strophe.util":28,"events":74,"pako":32}],30:[function(require,module,exports){
+(function (process){
+/*!
+ * async
+ * https://github.com/caolan/async
+ *
+ * Copyright 2010-2014 Caolan McMahon
+ * Released under the MIT license
+ */
+/*jshint onevar: false, indent:4 */
+/*global setImmediate: false, setTimeout: false, console: false */
+(function () {
+
+    var async = {};
+
+    // global on the server, window in the browser
+    var root, previous_async;
+
+    root = this;
+    if (root != null) {
+      previous_async = root.async;
+    }
+
+    async.noConflict = function () {
+        root.async = previous_async;
+        return async;
+    };
+
+    function only_once(fn) {
+        var called = false;
+        return function() {
+            if (called) throw new Error("Callback was already called.");
+            called = true;
+            fn.apply(root, arguments);
+        }
+    }
+
+    //// cross-browser compatiblity functions ////
+
+    var _toString = Object.prototype.toString;
+
+    var _isArray = Array.isArray || function (obj) {
+        return _toString.call(obj) === '[object Array]';
+    };
+
+    var _each = function (arr, iterator) {
+        if (arr.forEach) {
+            return arr.forEach(iterator);
+        }
+        for (var i = 0; i < arr.length; i += 1) {
+            iterator(arr[i], i, arr);
+        }
+    };
+
+    var _map = function (arr, iterator) {
+        if (arr.map) {
+            return arr.map(iterator);
+        }
+        var results = [];
+        _each(arr, function (x, i, a) {
+            results.push(iterator(x, i, a));
+        });
+        return results;
+    };
+
+    var _reduce = function (arr, iterator, memo) {
+        if (arr.reduce) {
+            return arr.reduce(iterator, memo);
+        }
+        _each(arr, function (x, i, a) {
+            memo = iterator(memo, x, i, a);
+        });
+        return memo;
+    };
+
+    var _keys = function (obj) {
+        if (Object.keys) {
+            return Object.keys(obj);
+        }
+        var keys = [];
+        for (var k in obj) {
+            if (obj.hasOwnProperty(k)) {
+                keys.push(k);
+            }
+        }
+        return keys;
+    };
+
+    //// exported async module functions ////
+
+    //// nextTick implementation with browser-compatible fallback ////
+    if (typeof process === 'undefined' || !(process.nextTick)) {
+        if (typeof setImmediate === 'function') {
+            async.nextTick = function (fn) {
+                // not a direct alias for IE10 compatibility
+                setImmediate(fn);
+            };
+            async.setImmediate = async.nextTick;
+        }
+        else {
+            async.nextTick = function (fn) {
+                setTimeout(fn, 0);
+            };
+            async.setImmediate = async.nextTick;
+        }
+    }
+    else {
+        async.nextTick = process.nextTick;
+        if (typeof setImmediate !== 'undefined') {
+            async.setImmediate = function (fn) {
+              // not a direct alias for IE10 compatibility
+              setImmediate(fn);
+            };
+        }
+        else {
+            async.setImmediate = async.nextTick;
+        }
+    }
+
+    async.each = function (arr, iterator, callback) {
+        callback = callback || function () {};
+        if (!arr.length) {
+            return callback();
+        }
+        var completed = 0;
+        _each(arr, function (x) {
+            iterator(x, only_once(done) );
+        });
+        function done(err) {
+          if (err) {
+              callback(err);
+              callback = function () {};
+          }
+          else {
+              completed += 1;
+              if (completed >= arr.length) {
+                  callback();
+              }
+          }
+        }
+    };
+    async.forEach = async.each;
+
+    async.eachSeries = function (arr, iterator, callback) {
+        callback = callback || function () {};
+        if (!arr.length) {
+            return callback();
+        }
+        var completed = 0;
+        var iterate = function () {
+            iterator(arr[completed], function (err) {
+                if (err) {
+                    callback(err);
+                    callback = function () {};
+                }
+                else {
+                    completed += 1;
+                    if (completed >= arr.length) {
+                        callback();
+                    }
+                    else {
+                        iterate();
+                    }
+                }
+            });
+        };
+        iterate();
+    };
+    async.forEachSeries = async.eachSeries;
+
+    async.eachLimit = function (arr, limit, iterator, callback) {
+        var fn = _eachLimit(limit);
+        fn.apply(null, [arr, iterator, callback]);
+    };
+    async.forEachLimit = async.eachLimit;
+
+    var _eachLimit = function (limit) {
+
+        return function (arr, iterator, callback) {
+            callback = callback || function () {};
+            if (!arr.length || limit <= 0) {
+                return callback();
+            }
+            var completed = 0;
+            var started = 0;
+            var running = 0;
+
+            (function replenish () {
+                if (completed >= arr.length) {
+                    return callback();
+                }
+
+                while (running < limit && started < arr.length) {
+                    started += 1;
+                    running += 1;
+                    iterator(arr[started - 1], function (err) {
+                        if (err) {
+                            callback(err);
+                            callback = function () {};
+                        }
+                        else {
+                            completed += 1;
+                            running -= 1;
+                            if (completed >= arr.length) {
+                                callback();
+                            }
+                            else {
+                                replenish();
+                            }
+                        }
+                    });
+                }
+            })();
+        };
+    };
+
+
+    var doParallel = function (fn) {
+        return function () {
+            var args = Array.prototype.slice.call(arguments);
+            return fn.apply(null, [async.each].concat(args));
+        };
+    };
+    var doParallelLimit = function(limit, fn) {
+        return function () {
+            var args = Array.prototype.slice.call(arguments);
+            return fn.apply(null, [_eachLimit(limit)].concat(args));
+        };
+    };
+    var doSeries = function (fn) {
+        return function () {
+            var args = Array.prototype.slice.call(arguments);
+            return fn.apply(null, [async.eachSeries].concat(args));
+        };
+    };
+
+
+    var _asyncMap = function (eachfn, arr, iterator, callback) {
+        arr = _map(arr, function (x, i) {
+            return {index: i, value: x};
+        });
+        if (!callback) {
+            eachfn(arr, function (x, callback) {
+                iterator(x.value, function (err) {
+                    callback(err);
+                });
+            });
+        } else {
+            var results = [];
+            eachfn(arr, function (x, callback) {
+                iterator(x.value, function (err, v) {
+                    results[x.index] = v;
+                    callback(err);
+                });
+            }, function (err) {
+                callback(err, results);
+            });
+        }
+    };
+    async.map = doParallel(_asyncMap);
+    async.mapSeries = doSeries(_asyncMap);
+    async.mapLimit = function (arr, limit, iterator, callback) {
+        return _mapLimit(limit)(arr, iterator, callback);
+    };
+
+    var _mapLimit = function(limit) {
+        return doParallelLimit(limit, _asyncMap);
+    };
+
+    // reduce only has a series version, as doing reduce in parallel won't
+    // work in many situations.
+    async.reduce = function (arr, memo, iterator, callback) {
+        async.eachSeries(arr, function (x, callback) {
+            iterator(memo, x, function (err, v) {
+                memo = v;
+                callback(err);
+            });
+        }, function (err) {
+            callback(err, memo);
+        });
+    };
+    // inject alias
+    async.inject = async.reduce;
+    // foldl alias
+    async.foldl = async.reduce;
+
+    async.reduceRight = function (arr, memo, iterator, callback) {
+        var reversed = _map(arr, function (x) {
+            return x;
+        }).reverse();
+        async.reduce(reversed, memo, iterator, callback);
+    };
+    // foldr alias
+    async.foldr = async.reduceRight;
+
+    var _filter = function (eachfn, arr, iterator, callback) {
+        var results = [];
+        arr = _map(arr, function (x, i) {
+            return {index: i, value: x};
+        });
+        eachfn(arr, function (x, callback) {
+            iterator(x.value, function (v) {
+                if (v) {
+                    results.push(x);
+                }
+                callback();
+            });
+        }, function (err) {
+            callback(_map(results.sort(function (a, b) {
+                return a.index - b.index;
+            }), function (x) {
+                return x.value;
+            }));
+        });
+    };
+    async.filter = doParallel(_filter);
+    async.filterSeries = doSeries(_filter);
+    // select alias
+    async.select = async.filter;
+    async.selectSeries = async.filterSeries;
+
+    var _reject = function (eachfn, arr, iterator, callback) {
+        var results = [];
+        arr = _map(arr, function (x, i) {
+            return {index: i, value: x};
+        });
+        eachfn(arr, function (x, callback) {
+            iterator(x.value, function (v) {
+                if (!v) {
+                    results.push(x);
+                }
+                callback();
+            });
+        }, function (err) {
+            callback(_map(results.sort(function (a, b) {
+                return a.index - b.index;
+            }), function (x) {
+                return x.value;
+            }));
+        });
+    };
+    async.reject = doParallel(_reject);
+    async.rejectSeries = doSeries(_reject);
+
+    var _detect = function (eachfn, arr, iterator, main_callback) {
+        eachfn(arr, function (x, callback) {
+            iterator(x, function (result) {
+                if (result) {
+                    main_callback(x);
+                    main_callback = function () {};
+                }
+                else {
+                    callback();
+                }
+            });
+        }, function (err) {
+            main_callback();
+        });
+    };
+    async.detect = doParallel(_detect);
+    async.detectSeries = doSeries(_detect);
+
+    async.some = function (arr, iterator, main_callback) {
+        async.each(arr, function (x, callback) {
+            iterator(x, function (v) {
+                if (v) {
+                    main_callback(true);
+                    main_callback = function () {};
+                }
+                callback();
+            });
+        }, function (err) {
+            main_callback(false);
+        });
+    };
+    // any alias
+    async.any = async.some;
+
+    async.every = function (arr, iterator, main_callback) {
+        async.each(arr, function (x, callback) {
+            iterator(x, function (v) {
+                if (!v) {
+                    main_callback(false);
+                    main_callback = function () {};
+                }
+                callback();
+            });
+        }, function (err) {
+            main_callback(true);
+        });
+    };
+    // all alias
+    async.all = async.every;
+
+    async.sortBy = function (arr, iterator, callback) {
+        async.map(arr, function (x, callback) {
+            iterator(x, function (err, criteria) {
+                if (err) {
+                    callback(err);
+                }
+                else {
+                    callback(null, {value: x, criteria: criteria});
+                }
+            });
+        }, function (err, results) {
+            if (err) {
+                return callback(err);
+            }
+            else {
+                var fn = function (left, right) {
+                    var a = left.criteria, b = right.criteria;
+                    return a < b ? -1 : a > b ? 1 : 0;
+                };
+                callback(null, _map(results.sort(fn), function (x) {
+                    return x.value;
+                }));
+            }
+        });
+    };
+
+    async.auto = function (tasks, callback) {
+        callback = callback || function () {};
+        var keys = _keys(tasks);
+        var remainingTasks = keys.length
+        if (!remainingTasks) {
+            return callback();
+        }
+
+        var results = {};
+
+        var listeners = [];
+        var addListener = function (fn) {
+            listeners.unshift(fn);
+        };
+        var removeListener = function (fn) {
+            for (var i = 0; i < listeners.length; i += 1) {
+                if (listeners[i] === fn) {
+                    listeners.splice(i, 1);
+                    return;
+                }
+            }
+        };
+        var taskComplete = function () {
+            remainingTasks--
+            _each(listeners.slice(0), function (fn) {
+                fn();
+            });
+        };
+
+        addListener(function () {
+            if (!remainingTasks) {
+                var theCallback = callback;
+                // prevent final callback from calling itself if it errors
+                callback = function () {};
+
+                theCallback(null, results);
+            }
+        });
+
+        _each(keys, function (k) {
+            var task = _isArray(tasks[k]) ? tasks[k]: [tasks[k]];
+            var taskCallback = function (err) {
+                var args = Array.prototype.slice.call(arguments, 1);
+                if (args.length <= 1) {
+                    args = args[0];
+                }
+                if (err) {
+                    var safeResults = {};
+                    _each(_keys(results), function(rkey) {
+                        safeResults[rkey] = results[rkey];
+                    });
+                    safeResults[k] = args;
+                    callback(err, safeResults);
+                    // stop subsequent errors hitting callback multiple times
+                    callback = function () {};
+                }
+                else {
+                    results[k] = args;
+                    async.setImmediate(taskComplete);
+                }
+            };
+            var requires = task.slice(0, Math.abs(task.length - 1)) || [];
+            var ready = function () {
+                return _reduce(requires, function (a, x) {
+                    return (a && results.hasOwnProperty(x));
+                }, true) && !results.hasOwnProperty(k);
+            };
+            if (ready()) {
+                task[task.length - 1](taskCallback, results);
+            }
+            else {
+                var listener = function () {
+                    if (ready()) {
+                        removeListener(listener);
+                        task[task.length - 1](taskCallback, results);
+                    }
+                };
+                addListener(listener);
+            }
+        });
+    };
+
+    async.retry = function(times, task, callback) {
+        var DEFAULT_TIMES = 5;
+        var attempts = [];
+        // Use defaults if times not passed
+        if (typeof times === 'function') {
+            callback = task;
+            task = times;
+            times = DEFAULT_TIMES;
+        }
+        // Make sure times is a number
+        times = parseInt(times, 10) || DEFAULT_TIMES;
+        var wrappedTask = function(wrappedCallback, wrappedResults) {
+            var retryAttempt = function(task, finalAttempt) {
+                return function(seriesCallback) {
+                    task(function(err, result){
+                        seriesCallback(!err || finalAttempt, {err: err, result: result});
+                    }, wrappedResults);
+                };
+            };
+            while (times) {
+                attempts.push(retryAttempt(task, !(times-=1)));
+            }
+            async.series(attempts, function(done, data){
+                data = data[data.length - 1];
+                (wrappedCallback || callback)(data.err, data.result);
+            });
+        }
+        // If a callback is passed, run this as a controll flow
+        return callback ? wrappedTask() : wrappedTask
+    };
+
+    async.waterfall = function (tasks, callback) {
+        callback = callback || function () {};
+        if (!_isArray(tasks)) {
+          var err = new Error('First argument to waterfall must be an array of functions');
+          return callback(err);
+        }
+        if (!tasks.length) {
+            return callback();
+        }
+        var wrapIterator = function (iterator) {
+            return function (err) {
+                if (err) {
+                    callback.apply(null, arguments);
+                    callback = function () {};
+                }
+                else {
+                    var args = Array.prototype.slice.call(arguments, 1);
+                    var next = iterator.next();
+                    if (next) {
+                        args.push(wrapIterator(next));
+                    }
+                    else {
+                        args.push(callback);
+                    }
+                    async.setImmediate(function () {
+                        iterator.apply(null, args);
+                    });
+                }
+            };
+        };
+        wrapIterator(async.iterator(tasks))();
+    };
+
+    var _parallel = function(eachfn, tasks, callback) {
+        callback = callback || function () {};
+        if (_isArray(tasks)) {
+            eachfn.map(tasks, function (fn, callback) {
+                if (fn) {
+                    fn(function (err) {
+                        var args = Array.prototype.slice.call(arguments, 1);
+                        if (args.length <= 1) {
+                            args = args[0];
+                        }
+                        callback.call(null, err, args);
+                    });
+                }
+            }, callback);
+        }
+        else {
+            var results = {};
+            eachfn.each(_keys(tasks), function (k, callback) {
+                tasks[k](function (err) {
+                    var args = Array.prototype.slice.call(arguments, 1);
+                    if (args.length <= 1) {
+                        args = args[0];
+                    }
+                    results[k] = args;
+                    callback(err);
+                });
+            }, function (err) {
+                callback(err, results);
+            });
+        }
+    };
+
+    async.parallel = function (tasks, callback) {
+        _parallel({ map: async.map, each: async.each }, tasks, callback);
+    };
+
+    async.parallelLimit = function(tasks, limit, callback) {
+        _parallel({ map: _mapLimit(limit), each: _eachLimit(limit) }, tasks, callback);
+    };
+
+    async.series = function (tasks, callback) {
+        callback = callback || function () {};
+        if (_isArray(tasks)) {
+            async.mapSeries(tasks, function (fn, callback) {
+                if (fn) {
+                    fn(function (err) {
+                        var args = Array.prototype.slice.call(arguments, 1);
+                        if (args.length <= 1) {
+                            args = args[0];
+                        }
+                        callback.call(null, err, args);
+                    });
+                }
+            }, callback);
+        }
+        else {
+            var results = {};
+            async.eachSeries(_keys(tasks), function (k, callback) {
+                tasks[k](function (err) {
+                    var args = Array.prototype.slice.call(arguments, 1);
+                    if (args.length <= 1) {
+                        args = args[0];
+                    }
+                    results[k] = args;
+                    callback(err);
+                });
+            }, function (err) {
+                callback(err, results);
+            });
+        }
+    };
+
+    async.iterator = function (tasks) {
+        var makeCallback = function (index) {
+            var fn = function () {
+                if (tasks.length) {
+                    tasks[index].apply(null, arguments);
+                }
+                return fn.next();
+            };
+            fn.next = function () {
+                return (index < tasks.length - 1) ? makeCallback(index + 1): null;
+            };
+            return fn;
+        };
+        return makeCallback(0);
+    };
+
+    async.apply = function (fn) {
+        var args = Array.prototype.slice.call(arguments, 1);
+        return function () {
+            return fn.apply(
+                null, args.concat(Array.prototype.slice.call(arguments))
+            );
+        };
+    };
+
+    var _concat = function (eachfn, arr, fn, callback) {
+        var r = [];
+        eachfn(arr, function (x, cb) {
+            fn(x, function (err, y) {
+                r = r.concat(y || []);
+                cb(err);
+            });
+        }, function (err) {
+            callback(err, r);
+        });
+    };
+    async.concat = doParallel(_concat);
+    async.concatSeries = doSeries(_concat);
+
+    async.whilst = function (test, iterator, callback) {
+        if (test()) {
+            iterator(function (err) {
+                if (err) {
+                    return callback(err);
+                }
+                async.whilst(test, iterator, callback);
+            });
+        }
+        else {
+            callback();
+        }
+    };
+
+    async.doWhilst = function (iterator, test, callback) {
+        iterator(function (err) {
+            if (err) {
+                return callback(err);
+            }
+            var args = Array.prototype.slice.call(arguments, 1);
+            if (test.apply(null, args)) {
+                async.doWhilst(iterator, test, callback);
+            }
+            else {
+                callback();
+            }
+        });
+    };
+
+    async.until = function (test, iterator, callback) {
+        if (!test()) {
+            iterator(function (err) {
+                if (err) {
+                    return callback(err);
+                }
+                async.until(test, iterator, callback);
+            });
+        }
+        else {
+            callback();
+        }
+    };
+
+    async.doUntil = function (iterator, test, callback) {
+        iterator(function (err) {
+            if (err) {
+                return callback(err);
+            }
+            var args = Array.prototype.slice.call(arguments, 1);
+            if (!test.apply(null, args)) {
+                async.doUntil(iterator, test, callback);
+            }
+            else {
+                callback();
+            }
+        });
+    };
+
+    async.queue = function (worker, concurrency) {
+        if (concurrency === undefined) {
+            concurrency = 1;
+        }
+        function _insert(q, data, pos, callback) {
+          if (!q.started){
+            q.started = true;
+          }
+          if (!_isArray(data)) {
+              data = [data];
+          }
+          if(data.length == 0) {
+             // call drain immediately if there are no tasks
+             return async.setImmediate(function() {
+                 if (q.drain) {
+                     q.drain();
+                 }
+             });
+          }
+          _each(data, function(task) {
+              var item = {
+                  data: task,
+                  callback: typeof callback === 'function' ? callback : null
+              };
+
+              if (pos) {
+                q.tasks.unshift(item);
+              } else {
+                q.tasks.push(item);
+              }
+
+              if (q.saturated && q.tasks.length === q.concurrency) {
+                  q.saturated();
+              }
+              async.setImmediate(q.process);
+          });
+        }
+
+        var workers = 0;
+        var q = {
+            tasks: [],
+            concurrency: concurrency,
+            saturated: null,
+            empty: null,
+            drain: null,
+            started: false,
+            paused: false,
+            push: function (data, callback) {
+              _insert(q, data, false, callback);
+            },
+            kill: function () {
+              q.drain = null;
+              q.tasks = [];
+            },
+            unshift: function (data, callback) {
+              _insert(q, data, true, callback);
+            },
+            process: function () {
+                if (!q.paused && workers < q.concurrency && q.tasks.length) {
+                    var task = q.tasks.shift();
+                    if (q.empty && q.tasks.length === 0) {
+                        q.empty();
+                    }
+                    workers += 1;
+                    var next = function () {
+                        workers -= 1;
+                        if (task.callback) {
+                            task.callback.apply(task, arguments);
+                        }
+                        if (q.drain && q.tasks.length + workers === 0) {
+                            q.drain();
+                        }
+                        q.process();
+                    };
+                    var cb = only_once(next);
+                    worker(task.data, cb);
+                }
+            },
+            length: function () {
+                return q.tasks.length;
+            },
+            running: function () {
+                return workers;
+            },
+            idle: function() {
+                return q.tasks.length + workers === 0;
+            },
+            pause: function () {
+                if (q.paused === true) { return; }
+                q.paused = true;
+                q.process();
+            },
+            resume: function () {
+                if (q.paused === false) { return; }
+                q.paused = false;
+                q.process();
+            }
+        };
+        return q;
+    };
+    
+    async.priorityQueue = function (worker, concurrency) {
+        
+        function _compareTasks(a, b){
+          return a.priority - b.priority;
+        };
+        
+        function _binarySearch(sequence, item, compare) {
+          var beg = -1,
+              end = sequence.length - 1;
+          while (beg < end) {
+            var mid = beg + ((end - beg + 1) >>> 1);
+            if (compare(item, sequence[mid]) >= 0) {
+              beg = mid;
+            } else {
+              end = mid - 1;
+            }
+          }
+          return beg;
+        }
+        
+        function _insert(q, data, priority, callback) {
+          if (!q.started){
+            q.started = true;
+          }
+          if (!_isArray(data)) {
+              data = [data];
+          }
+          if(data.length == 0) {
+             // call drain immediately if there are no tasks
+             return async.setImmediate(function() {
+                 if (q.drain) {
+                     q.drain();
+                 }
+             });
+          }
+          _each(data, function(task) {
+              var item = {
+                  data: task,
+                  priority: priority,
+                  callback: typeof callback === 'function' ? callback : null
+              };
+              
+              q.tasks.splice(_binarySearch(q.tasks, item, _compareTasks) + 1, 0, item);
+
+              if (q.saturated && q.tasks.length === q.concurrency) {
+                  q.saturated();
+              }
+              async.setImmediate(q.process);
+          });
+        }
+        
+        // Start with a normal queue
+        var q = async.queue(worker, concurrency);
+        
+        // Override push to accept second parameter representing priority
+        q.push = function (data, priority, callback) {
+          _insert(q, data, priority, callback);
+        };
+        
+        // Remove unshift function
+        delete q.unshift;
+
+        return q;
+    };
+
+    async.cargo = function (worker, payload) {
+        var working     = false,
+            tasks       = [];
+
+        var cargo = {
+            tasks: tasks,
+            payload: payload,
+            saturated: null,
+            empty: null,
+            drain: null,
+            drained: true,
+            push: function (data, callback) {
+                if (!_isArray(data)) {
+                    data = [data];
+                }
+                _each(data, function(task) {
+                    tasks.push({
+                        data: task,
+                        callback: typeof callback === 'function' ? callback : null
+                    });
+                    cargo.drained = false;
+                    if (cargo.saturated && tasks.length === payload) {
+                        cargo.saturated();
+                    }
+                });
+                async.setImmediate(cargo.process);
+            },
+            process: function process() {
+                if (working) return;
+                if (tasks.length === 0) {
+                    if(cargo.drain && !cargo.drained) cargo.drain();
+                    cargo.drained = true;
+                    return;
+                }
+
+                var ts = typeof payload === 'number'
+                            ? tasks.splice(0, payload)
+                            : tasks.splice(0, tasks.length);
+
+                var ds = _map(ts, function (task) {
+                    return task.data;
+                });
+
+                if(cargo.empty) cargo.empty();
+                working = true;
+                worker(ds, function () {
+                    working = false;
+
+                    var args = arguments;
+                    _each(ts, function (data) {
+                        if (data.callback) {
+                            data.callback.apply(null, args);
+                        }
+                    });
+
+                    process();
+                });
+            },
+            length: function () {
+                return tasks.length;
+            },
+            running: function () {
+                return working;
+            }
+        };
+        return cargo;
+    };
+
+    var _console_fn = function (name) {
+        return function (fn) {
+            var args = Array.prototype.slice.call(arguments, 1);
+            fn.apply(null, args.concat([function (err) {
+                var args = Array.prototype.slice.call(arguments, 1);
+                if (typeof console !== 'undefined') {
+                    if (err) {
+                        if (console.error) {
+                            console.error(err);
+                        }
+                    }
+                    else if (console[name]) {
+                        _each(args, function (x) {
+                            console[name](x);
+                        });
+                    }
+                }
+            }]));
+        };
+    };
+    async.log = _console_fn('log');
+    async.dir = _console_fn('dir');
+    /*async.info = _console_fn('info');
+    async.warn = _console_fn('warn');
+    async.error = _console_fn('error');*/
+
+    async.memoize = function (fn, hasher) {
+        var memo = {};
+        var queues = {};
+        hasher = hasher || function (x) {
+            return x;
+        };
+        var memoized = function () {
+            var args = Array.prototype.slice.call(arguments);
+            var callback = args.pop();
+            var key = hasher.apply(null, args);
+            if (key in memo) {
+                async.nextTick(function () {
+                    callback.apply(null, memo[key]);
+                });
+            }
+            else if (key in queues) {
+                queues[key].push(callback);
+            }
+            else {
+                queues[key] = [callback];
+                fn.apply(null, args.concat([function () {
+                    memo[key] = arguments;
+                    var q = queues[key];
+                    delete queues[key];
+                    for (var i = 0, l = q.length; i < l; i++) {
+                      q[i].apply(null, arguments);
+                    }
+                }]));
+            }
+        };
+        memoized.memo = memo;
+        memoized.unmemoized = fn;
+        return memoized;
+    };
+
+    async.unmemoize = function (fn) {
+      return function () {
+        return (fn.unmemoized || fn).apply(null, arguments);
+      };
+    };
+
+    async.times = function (count, iterator, callback) {
+        var counter = [];
+        for (var i = 0; i < count; i++) {
+            counter.push(i);
+        }
+        return async.map(counter, iterator, callback);
+    };
+
+    async.timesSeries = function (count, iterator, callback) {
+        var counter = [];
+        for (var i = 0; i < count; i++) {
+            counter.push(i);
+        }
+        return async.mapSeries(counter, iterator, callback);
+    };
+
+    async.seq = function (/* functions... */) {
+        var fns = arguments;
+        return function () {
+            var that = this;
+            var args = Array.prototype.slice.call(arguments);
+            var callback = args.pop();
+            async.reduce(fns, args, function (newargs, fn, cb) {
+                fn.apply(that, newargs.concat([function () {
+                    var err = arguments[0];
+                    var nextargs = Array.prototype.slice.call(arguments, 1);
+                    cb(err, nextargs);
+                }]))
+            },
+            function (err, results) {
+                callback.apply(that, [err].concat(results));
+            });
+        };
+    };
+
+    async.compose = function (/* functions... */) {
+      return async.seq.apply(null, Array.prototype.reverse.call(arguments));
+    };
+
+    var _applyEach = function (eachfn, fns /*args...*/) {
+        var go = function () {
+            var that = this;
+            var args = Array.prototype.slice.call(arguments);
+            var callback = args.pop();
+            return eachfn(fns, function (fn, cb) {
+                fn.apply(that, args.concat([cb]));
+            },
+            callback);
+        };
+        if (arguments.length > 2) {
+            var args = Array.prototype.slice.call(arguments, 2);
+            return go.apply(this, args);
+        }
+        else {
+            return go;
+        }
+    };
+    async.applyEach = doParallel(_applyEach);
+    async.applyEachSeries = doSeries(_applyEach);
+
+    async.forever = function (fn, callback) {
+        function next(err) {
+            if (err) {
+                if (callback) {
+                    return callback(err);
+                }
+                throw err;
+            }
+            fn(next);
+        }
+        next();
+    };
+
+    // Node.js
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = async;
+    }
+    // AMD / RequireJS
+    else if (typeof define !== 'undefined' && define.amd) {
+        define([], function () {
+            return async;
+        });
+    }
+    // included directly via <script> tag
+    else {
+        root.async = async;
+    }
+
+}());
+
+}).call(this,require('_process'))
+},{"_process":75}],31:[function(require,module,exports){
 (function (process,global){
 /*!
  * @overview es6-promise - a tiny implementation of Promises/A+.
@@ -6105,7 +10535,7 @@ module.exports = XMPP;
 
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":49}],24:[function(require,module,exports){
+},{"_process":75}],32:[function(require,module,exports){
 // Top level file is just a mixin of submodules & constants
 'use strict';
 
@@ -6121,7 +10551,7 @@ assign(pako, deflate, inflate, constants);
 
 module.exports = pako;
 
-},{"./lib/deflate":25,"./lib/inflate":26,"./lib/utils/common":27,"./lib/zlib/constants":30}],25:[function(require,module,exports){
+},{"./lib/deflate":33,"./lib/inflate":34,"./lib/utils/common":35,"./lib/zlib/constants":38}],33:[function(require,module,exports){
 'use strict';
 
 
@@ -6499,7 +10929,7 @@ exports.deflate = deflate;
 exports.deflateRaw = deflateRaw;
 exports.gzip = gzip;
 
-},{"./utils/common":27,"./utils/strings":28,"./zlib/deflate.js":32,"./zlib/messages":37,"./zlib/zstream":39}],26:[function(require,module,exports){
+},{"./utils/common":35,"./utils/strings":36,"./zlib/deflate.js":40,"./zlib/messages":45,"./zlib/zstream":47}],34:[function(require,module,exports){
 'use strict';
 
 
@@ -6880,7 +11310,7 @@ exports.inflate = inflate;
 exports.inflateRaw = inflateRaw;
 exports.ungzip  = inflate;
 
-},{"./utils/common":27,"./utils/strings":28,"./zlib/constants":30,"./zlib/gzheader":33,"./zlib/inflate.js":35,"./zlib/messages":37,"./zlib/zstream":39}],27:[function(require,module,exports){
+},{"./utils/common":35,"./utils/strings":36,"./zlib/constants":38,"./zlib/gzheader":41,"./zlib/inflate.js":43,"./zlib/messages":45,"./zlib/zstream":47}],35:[function(require,module,exports){
 'use strict';
 
 
@@ -6984,7 +11414,7 @@ exports.setTyped = function (on) {
 
 exports.setTyped(TYPED_OK);
 
-},{}],28:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
 // String encode/decode helpers
 'use strict';
 
@@ -7171,7 +11601,7 @@ exports.utf8border = function(buf, max) {
   return (pos + _utf8len[buf[pos]] > max) ? pos : max;
 };
 
-},{"./common":27}],29:[function(require,module,exports){
+},{"./common":35}],37:[function(require,module,exports){
 'use strict';
 
 // Note: adler32 takes 12% for level 0 and 2% for level 6.
@@ -7205,7 +11635,7 @@ function adler32(adler, buf, len, pos) {
 
 module.exports = adler32;
 
-},{}],30:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 module.exports = {
 
   /* Allowed flush values; see deflate() and inflate() below for details */
@@ -7254,7 +11684,7 @@ module.exports = {
   //Z_NULL:                 null // Use -1 or null inline, depending on var type
 };
 
-},{}],31:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 'use strict';
 
 // Note: we can't get significant speed boost here.
@@ -7297,7 +11727,7 @@ function crc32(crc, buf, len, pos) {
 
 module.exports = crc32;
 
-},{}],32:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 'use strict';
 
 var utils   = require('../utils/common');
@@ -9064,7 +13494,7 @@ exports.deflatePrime = deflatePrime;
 exports.deflateTune = deflateTune;
 */
 
-},{"../utils/common":27,"./adler32":29,"./crc32":31,"./messages":37,"./trees":38}],33:[function(require,module,exports){
+},{"../utils/common":35,"./adler32":37,"./crc32":39,"./messages":45,"./trees":46}],41:[function(require,module,exports){
 'use strict';
 
 
@@ -9106,7 +13536,7 @@ function GZheader() {
 
 module.exports = GZheader;
 
-},{}],34:[function(require,module,exports){
+},{}],42:[function(require,module,exports){
 'use strict';
 
 // See state defs from inflate.js
@@ -9433,7 +13863,7 @@ module.exports = function inflate_fast(strm, start) {
   return;
 };
 
-},{}],35:[function(require,module,exports){
+},{}],43:[function(require,module,exports){
 'use strict';
 
 
@@ -10938,7 +15368,7 @@ exports.inflateSyncPoint = inflateSyncPoint;
 exports.inflateUndermine = inflateUndermine;
 */
 
-},{"../utils/common":27,"./adler32":29,"./crc32":31,"./inffast":34,"./inftrees":36}],36:[function(require,module,exports){
+},{"../utils/common":35,"./adler32":37,"./crc32":39,"./inffast":42,"./inftrees":44}],44:[function(require,module,exports){
 'use strict';
 
 
@@ -11267,7 +15697,7 @@ module.exports = function inflate_table(type, lens, lens_index, codes, table, ta
   return 0;
 };
 
-},{"../utils/common":27}],37:[function(require,module,exports){
+},{"../utils/common":35}],45:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -11282,7 +15712,7 @@ module.exports = {
   '-6':   'incompatible version' /* Z_VERSION_ERROR (-6) */
 };
 
-},{}],38:[function(require,module,exports){
+},{}],46:[function(require,module,exports){
 'use strict';
 
 
@@ -12483,7 +16913,7 @@ exports._tr_flush_block  = _tr_flush_block;
 exports._tr_tally = _tr_tally;
 exports._tr_align = _tr_align;
 
-},{"../utils/common":27}],39:[function(require,module,exports){
+},{"../utils/common":35}],47:[function(require,module,exports){
 'use strict';
 
 
@@ -12514,14 +16944,1663 @@ function ZStream() {
 
 module.exports = ZStream;
 
-},{}],40:[function(require,module,exports){
+},{}],48:[function(require,module,exports){
+module.exports = function arrayEquals(array) {
+    // if the other array is a falsy value, return
+    if (!array)
+        return false;
+
+    // compare lengths - can save a lot of time
+    if (this.length != array.length)
+        return false;
+
+    for (var i = 0, l = this.length; i < l; i++) {
+        // Check if we have nested arrays
+        if (this[i] instanceof Array && array[i] instanceof Array) {
+            // recurse into the nested arrays
+            if (!arrayEquals.apply(this[i], [array[i]]))
+                return false;
+        } else if (this[i] != array[i]) {
+            // Warning - two different object instances will never be equal:
+            // {x:20} != {x:20}
+            return false;
+        }
+    }
+    return true;
+}
+
+
+},{}],49:[function(require,module,exports){
+exports.Interop = require('./interop');
+
+},{"./interop":50}],50:[function(require,module,exports){
+"use strict";
+
+var transform = require('./transform');
+var arrayEquals = require('./array-equals');
+
+function Interop() {
+
+    /**
+     * This map holds the most recent Unified Plan offer/answer SDP that was
+     * converted to Plan B, with the SDP type ('offer' or 'answer') as keys and
+     * the SDP string as values.
+     *
+     * @type {{}}
+     */
+    this.cache = {};
+}
+
+module.exports = Interop;
+
+
+/**
+ * This method transforms a Unified Plan SDP to an equivalent Plan B SDP. A
+ * PeerConnection wrapper transforms the SDP to Plan B before passing it to the
+ * application.
+ *
+ * @param desc
+ * @returns {*}
+ */
+Interop.prototype.toPlanB = function(desc) {
+
+    //#region Preliminary input validation.
+
+    if (typeof desc !== 'object' || desc === null ||
+        typeof desc.sdp !== 'string') {
+        console.warn('An empty description was passed as an argument.');
+        return desc;
+    }
+
+    // Objectify the SDP for easier manipulation.
+    var session = transform.parse(desc.sdp);
+
+    // If the SDP contains no media, there's nothing to transform.
+    if (typeof session.media === 'undefined' ||
+        !Array.isArray(session.media) || session.media.length === 0) {
+        console.warn('The description has no media.');
+        return desc;
+    }
+
+    // Try some heuristics to "make sure" this is a Unified Plan SDP. Plan B
+    // SDP has a video, an audio and a data "channel" at most.
+    if (session.media.length <= 3 && session.media.every(function(m) {
+            return ['video', 'audio', 'data'].indexOf(m.mid) !== -1;
+        })) {
+        console.warn('This description does not look like Unified Plan.');
+        return desc;
+    }
+
+    //#endregion
+
+    // Unified Plan SDP is our "precious". Cache it for later use in the Plan B
+    // -> Unified Plan transformation.
+    this.cache[desc.type] = desc.sdp;
+
+    //#region Convert from Unified Plan to Plan B.
+
+    // We rebuild the session.media array.
+    var media = session.media;
+    session.media = [];
+
+    // Associative array that maps channel types to channel objects for fast
+    // access to channel objects by their type, e.g. type2bl['audio']->channel
+    // obj.
+    var type2bl = {};
+
+    // Used to build the group:BUNDLE value after the channels construction
+    // loop.
+    var types = [];
+
+    // Implode the Unified Plan m-lines/tracks into Plan B channels.
+    media.forEach(function(unifiedLine) {
+
+        // rtcp-mux is required in the Plan B SDP.
+        if ((typeof unifiedLine.rtcpMux !== 'string' ||
+            unifiedLine.rtcpMux !== 'rtcp-mux') &&
+            unifiedLine.direction !== 'inactive') {
+            throw new Error('Cannot convert to Plan B because m-lines ' +
+                'without the rtcp-mux attribute were found.');
+        }
+
+        if (unifiedLine.type === 'application') {
+            session.media.push(unifiedLine);
+            types.push(unifiedLine.mid);
+            return;
+        }
+
+        // If we don't have a channel for this unifiedLine.type, then use this unifiedLine
+        // as the channel basis.
+        if (typeof type2bl[unifiedLine.type] === 'undefined') {
+            type2bl[unifiedLine.type] = unifiedLine;
+        }
+
+        // Add sources to the channel and handle a=msid.
+        if (typeof unifiedLine.sources === 'object') {
+            Object.keys(unifiedLine.sources).forEach(function(ssrc) {
+                if (typeof type2bl[unifiedLine.type].sources !== 'object')
+                    type2bl[unifiedLine.type].sources = {};
+
+                // Assign the sources to the channel.
+                type2bl[unifiedLine.type].sources[ssrc] = unifiedLine.sources[ssrc];
+
+                if (typeof unifiedLine.msid !== 'undefined') {
+                    // In Plan B the msid is an SSRC attribute. Also, we don't
+                    // care about the obsolete label and mslabel attributes.
+                    //
+                    // Note that it is not guaranteed that the unifiedLine will have
+                    // an msid. recvonly channels in particular don't have one.
+                    type2bl[unifiedLine.type].sources[ssrc].msid = unifiedLine.msid;
+                }
+                // NOTE ssrcs in ssrc groups will share msids, as
+                // draft-uberti-rtcweb-plan-00 mandates.
+            });
+        }
+
+        // Add ssrc groups to the channel.
+        if (typeof unifiedLine.ssrcGroups !== 'undefined' &&
+                Array.isArray(unifiedLine.ssrcGroups)) {
+
+            // Create the ssrcGroups array, if it's not defined.
+            if (typeof type2bl[unifiedLine.type].ssrcGroups === 'undefined' ||
+                    !Array.isArray(type2bl[unifiedLine.type].ssrcGroups)) {
+                type2bl[unifiedLine.type].ssrcGroups = [];
+            }
+
+            type2bl[unifiedLine.type].ssrcGroups = type2bl[unifiedLine.type].ssrcGroups.concat(unifiedLine.ssrcGroups);
+        }
+
+        if (type2bl[unifiedLine.type] === unifiedLine) {
+            // Copy ICE related stuff from the principal media line.
+            unifiedLine.candidates = media[0].candidates;
+            unifiedLine.iceUfrag = media[0].iceUfrag;
+            unifiedLine.icePwd = media[0].icePwd;
+            unifiedLine.fingerprint = media[0].fingerprint;
+
+            // Plan B mids are in ['audio', 'video', 'data']
+            unifiedLine.mid = unifiedLine.type;
+
+            // Plan B doesn't support/need the bundle-only attribute.
+            delete unifiedLine.bundleOnly;
+
+            // In Plan B the msid is an SSRC attribute.
+            delete unifiedLine.msid;
+
+            // Used to build the group:BUNDLE value after this loop.
+            types.push(unifiedLine.type);
+
+            // Add the channel to the new media array.
+            session.media.push(unifiedLine);
+        }
+    });
+
+    // We regenerate the BUNDLE group with the new mids.
+    session.groups.some(function(group) {
+        if (group.type === 'BUNDLE') {
+            group.mids = types.join(' ');
+            return true;
+        }
+    });
+
+    // msid semantic
+    session.msidSemantic = {
+        semantic: 'WMS',
+        token: '*'
+    };
+
+    var resStr = transform.write(session);
+
+    return new RTCSessionDescription({
+        type: desc.type,
+        sdp: resStr
+    });
+
+    //#endregion
+};
+
+/**
+ * This method transforms a Plan B SDP to an equivalent Unified Plan SDP. A
+ * PeerConnection wrapper transforms the SDP to Unified Plan before passing it
+ * to FF.
+ *
+ * @param desc
+ * @returns {*}
+ */
+Interop.prototype.toUnifiedPlan = function(desc) {
+
+    //#region Preliminary input validation.
+
+    if (typeof desc !== 'object' || desc === null ||
+        typeof desc.sdp !== 'string') {
+        console.warn('An empty description was passed as an argument.');
+        return desc;
+    }
+
+    var session = transform.parse(desc.sdp);
+
+    // If the SDP contains no media, there's nothing to transform.
+    if (typeof session.media === 'undefined' ||
+        !Array.isArray(session.media) || session.media.length === 0) {
+        console.warn('The description has no media.');
+        return desc;
+    }
+
+    // Try some heuristics to "make sure" this is a Plan B SDP. Plan B SDP has
+    // a video, an audio and a data "channel" at most.
+    if (session.media.length > 3 || !session.media.every(function(m) {
+            return ['video', 'audio', 'data'].indexOf(m.mid) !== -1;
+        })) {
+        console.warn('This description does not look like Plan B.');
+        return desc;
+    }
+
+    // Make sure this Plan B SDP can be converted to a Unified Plan SDP.
+    var mids = [];
+    session.media.forEach(function(m) {
+        mids.push(m.mid);
+    });
+
+    var hasBundle = false;
+    if (typeof session.groups !== 'undefined' &&
+        Array.isArray(session.groups)) {
+        hasBundle = session.groups.every(function(g) {
+            return g.type !== 'BUNDLE' ||
+                arrayEquals.apply(g.mids.sort(), [mids.sort()]);
+        });
+    }
+
+    if (!hasBundle) {
+        throw new Error("Cannot convert to Unified Plan because m-lines that" +
+            " are not bundled were found.");
+    }
+
+    //#endregion
+
+
+    //#region Convert from Plan B to Unified Plan.
+
+    // Unfortunately, a Plan B offer/answer doesn't have enough information to
+    // rebuild an equivalent Unified Plan offer/answer.
+    //
+    // For example, if this is a local answer (in Unified Plan style) that we
+    // convert to Plan B prior to handing it over to the application (the
+    // PeerConnection wrapper called us, for instance, after a successful
+    // createAnswer), we want to remember the m-line at which we've seen the
+    // (local) SSRC. That's because when the application wants to do call the
+    // SLD method, forcing us to do the inverse transformation (from Plan B to
+    // Unified Plan), we need to know to which m-line to assign the (local)
+    // SSRC. We also need to know all the other m-lines that the original
+    // answer had and include them in the transformed answer as well.
+    //
+    // Another example is if this is a remote offer that we convert to Plan B
+    // prior to giving it to the application, we want to remember the mid at
+    // which we've seen the (remote) SSRC.
+    //
+    // In the iteration that follows, we use the cached Unified Plan (if it
+    // exists) to assign mids to ssrcs.
+
+    var cached;
+    if (typeof this.cache[desc.type] !== 'undefined') {
+        cached = transform.parse(this.cache[desc.type]);
+    }
+
+    // A helper map that sends mids to m-line objects. We use it later to
+    // rebuild the Unified Plan style session.media array.
+    var mid2ul = {};
+    session.media.forEach(function(bLine) {
+        if ((typeof bLine.rtcpMux !== 'string' ||
+            bLine.rtcpMux !== 'rtcp-mux') &&
+            bLine.direction !== 'inactive') {
+            throw new Error("Cannot convert to Unified Plan because m-lines " +
+                "without the rtcp-mux attribute were found.");
+        }
+
+        if (bLine.type === 'application') {
+            mid2ul[bLine.mid] = bLine;
+            return;
+        }
+
+        // With rtcp-mux and bundle all the channels should have the same ICE
+        // stuff.
+        var sources = bLine.sources;
+        var ssrcGroups = bLine.ssrcGroups;
+        var candidates = bLine.candidates;
+        var iceUfrag = bLine.iceUfrag;
+        var icePwd = bLine.icePwd;
+        var fingerprint = bLine.fingerprint;
+        var port = bLine.port;
+
+        // We'll use the "bLine" object as a prototype for each new "mLine"
+        // that we create, but first we need to clean it up a bit.
+        delete bLine.sources;
+        delete bLine.ssrcGroups;
+        delete bLine.candidates;
+        delete bLine.iceUfrag;
+        delete bLine.icePwd;
+        delete bLine.fingerprint;
+        delete bLine.port;
+        delete bLine.mid;
+
+        // inverted ssrc group map
+        var ssrc2group = {};
+        if (typeof ssrcGroups !== 'undefined' && Array.isArray(ssrcGroups)) {
+            ssrcGroups.forEach(function (ssrcGroup) {
+
+                // TODO(gp) find out how to receive simulcast with FF. For the
+                // time being, hide it.
+                if (ssrcGroup.semantics === 'SIM') {
+                    return;
+                }
+
+                if (typeof ssrcGroup.ssrcs !== 'undefined' &&
+                    Array.isArray(ssrcGroup.ssrcs)) {
+                    ssrcGroup.ssrcs.forEach(function (ssrc) {
+                        if (typeof ssrc2group[ssrc] === 'undefined') {
+                            ssrc2group[ssrc] = [];
+                        }
+
+                        ssrc2group[ssrc].push(ssrcGroup);
+                    });
+                }
+            });
+        }
+
+        // ssrc to m-line index.
+        var ssrc2ml = {};
+
+        if (typeof sources === 'object') {
+
+            // Explode the Plan B channel sources with one m-line per source.
+            Object.keys(sources).forEach(function(ssrc) {
+
+                // The (unified) m-line for this SSRC. We either create it from
+                // scratch or, if it's a grouped SSRC, we re-use a related
+                // mline. In other words, if the source is grouped with another
+                // source, put the two together in the same m-line.
+                var unifiedLine;
+                if (typeof ssrc2group[ssrc] !== 'undefined' &&
+                    Array.isArray(ssrc2group[ssrc])) {
+                    ssrc2group[ssrc].some(function (ssrcGroup) {
+                        // ssrcGroup.ssrcs *is* an Array, no need to check
+                        // again here.
+                        return ssrcGroup.ssrcs.some(function (related) {
+                            if (typeof ssrc2ml[related] === 'object') {
+                                unifiedLine = ssrc2ml[related];
+                                return true;
+                            }
+                        });
+                    });
+                }
+
+                if (typeof unifiedLine === 'object') {
+                    // the m-line already exists. Just add the source.
+                    unifiedLine.sources[ssrc] = sources[ssrc];
+                    delete sources[ssrc].msid;
+                } else {
+                    // Use the "bLine" as a prototype for the "unifiedLine".
+                    unifiedLine = Object.create(bLine);
+                    ssrc2ml[ssrc] = unifiedLine;
+
+                    if (typeof sources[ssrc].msid !== 'undefined') {
+                        // Assign the msid of the source to the m-line. Note
+                        // that it is not guaranteed that the source will have
+                        // msid. In particular "recvonly" sources don't have an
+                        // msid. Note that "recvonly" is a term only defined
+                        // for m-lines.
+                        unifiedLine.msid = sources[ssrc].msid;
+                        delete sources[ssrc].msid;
+                    }
+
+                    // We assign one SSRC per media line.
+                    unifiedLine.sources = {};
+                    unifiedLine.sources[ssrc] = sources[ssrc];
+                    unifiedLine.ssrcGroups = ssrc2group[ssrc];
+
+                    // Use the cached Unified Plan SDP (if it exists) to assign
+                    // SSRCs to mids.
+                    if (typeof cached !== 'undefined' &&
+                        typeof cached.media !== 'undefined' &&
+                        Array.isArray(cached.media)) {
+
+                        cached.media.forEach(function (m) {
+                            if (typeof m.sources === 'object') {
+                                Object.keys(m.sources).forEach(function (s) {
+                                    if (s === ssrc) {
+                                        unifiedLine.mid = m.mid;
+                                    }
+                                });
+                            }
+                        });
+                    }
+
+                    if (typeof unifiedLine.mid === 'undefined') {
+
+                        // If this is an SSRC that we see for the first time
+                        // assign it a new mid. This is typically the case when
+                        // this method is called to transform a remote
+                        // description for the first time or when there is a
+                        // new SSRC in the remote description because a new
+                        // peer has joined the conference. Local SSRCs should
+                        // have already been added to the map in the toPlanB
+                        // method.
+                        //
+                        // Because FF generates answers in Unified Plan style,
+                        // we MUST already have a cached answer with all the
+                        // local SSRCs mapped to some m-line/mid.
+
+                        if (desc.type === 'answer') {
+                            throw new Error("An unmapped SSRC was found.");
+                        }
+
+                        unifiedLine.mid = [bLine.type, '-', ssrc].join('');
+                    }
+
+                    // Include the candidates in the 1st media line.
+                    unifiedLine.candidates = candidates;
+                    unifiedLine.iceUfrag = iceUfrag;
+                    unifiedLine.icePwd = icePwd;
+                    unifiedLine.fingerprint = fingerprint;
+                    unifiedLine.port = port;
+
+                    mid2ul[unifiedLine.mid] = unifiedLine;
+                }
+            });
+        }
+    });
+
+    // Rebuild the media array in the right order and add the missing mLines
+    // (missing from the Plan B SDP).
+    session.media = [];
+    mids = []; // reuse
+
+    if (desc.type === 'answer') {
+
+        // The media lines in the answer must match the media lines in the
+        // offer. The order is important too. Here we assume that Firefox is the
+        // answerer, so we merely have to use the reconstructed (unified) answer
+        // to update the cached (unified) answer accordingly.
+        //
+        // In the general case, one would have to use the cached (unified) offer
+        // to find the m-lines that are missing from the reconstructed answer,
+        // potentially grabbing them from the cached (unified) answer. One has
+        // to be carefull with this approach because inactive m-lines do not
+        // always have an mid, making it tricky (impossible?) to find where
+        // exactly and which m-lines are missing from the reconstructed answer.
+
+        for (var i = 0; i < cached.media.length; i++) {
+            var unifiedLine = cached.media[i];
+
+            if (typeof mid2ul[unifiedLine.mid] === 'undefined') {
+
+                // The mid isn't in the reconstructed (unified) answer.
+                // This is either a (unified) m-line containing a remote
+                // track only, or a (unified) m-line containing a remote
+                // track and a local track that has been removed.
+                // In either case, it MUST exist in the cached
+                // (unified) answer.
+                //
+                // In case this is a removed local track, clean-up
+                // the (unified) m-line and make sure it's 'recvonly' or
+                // 'inactive'.
+
+                delete unifiedLine.msid;
+                delete unifiedLine.sources;
+                delete unifiedLine.ssrcGroups;
+                if (!unifiedLine.direction
+                    || unifiedLine.direction === 'sendrecv')
+                    unifiedLine.direction = 'recvonly';
+                if (!unifiedLine.direction
+                    || unifiedLine.direction === 'sendonly')
+                    unifiedLine.direction = 'inactive';
+            } else {
+                // This is an (unified) m-line/channel that contains a local
+                // track (sendrecv or sendonly channel) or it's a unified
+                // recvonly m-line/channel. In either case, since we're
+                // going from PlanB -> Unified Plan this m-line MUST
+                // exist in the cached answer.
+            }
+
+            session.media.push(unifiedLine);
+
+            if (typeof unifiedLine.mid === 'string') {
+                // inactive lines don't/may not have an mid.
+                mids.push(unifiedLine.mid);
+            }
+        }
+    } else {
+
+        // SDP offer/answer (and the JSEP spec) forbids removing an m-section
+        // under any circumstances. If we are no longer interested in sending a
+        // track, we just remove the msid and ssrc attributes and set it to
+        // either a=recvonly (as the reofferer, we must use recvonly if the
+        // other side was previously sending on the m-section, but we can also
+        // leave the possibility open if it wasn't previously in use), or
+        // a=inacive.
+
+        if (typeof cached !== 'undefined' &&
+            typeof cached.media !== 'undefined' &&
+            Array.isArray(cached.media)) {
+            cached.media.forEach(function(unifiedLine) {
+                mids.push(unifiedLine.mid);
+                if (typeof mid2ul[unifiedLine.mid] !== 'undefined') {
+                    session.media.push(mid2ul[unifiedLine.mid]);
+                } else {
+                    delete unifiedLine.msid;
+                    delete unifiedLine.sources;
+                    delete unifiedLine.ssrcGroups;
+                    if (!unifiedLine.direction
+                        || unifiedLine.direction === 'sendrecv')
+                        unifiedLine.direction = 'recvonly';
+                    if (!unifiedLine.direction
+                        || unifiedLine.direction === 'sendonly')
+                        unifiedLine.direction = 'inactive';
+                    session.media.push(unifiedLine);
+                }
+            });
+        }
+
+        // Add all the remaining (new) m-lines of the transformed SDP.
+        Object.keys(mid2ul).forEach(function(mid) {
+            if (mids.indexOf(mid) === -1) {
+                mids.push(mid);
+                if (typeof mid2ul[mid].direction === 'recvonly') {
+                    // This is a remote recvonly channel. Add its SSRC to the
+                    // appropriate sendrecv or sendonly channel.
+                    // TODO(gp) what if we don't have sendrecv/sendonly channel?
+                    session.media.some(function (unifiedLine) {
+                        if ((unifiedLine.direction === 'sendrecv' ||
+                            unifiedLine.direction === 'sendonly') &&
+                            unifiedLine.type === mid2ul[mid].type) {
+
+                            // mid2ul[mid] shouldn't have any ssrc-groups
+                            Object.keys(mid2ul[mid].sources).forEach(function (ssrc) {
+                                unifiedLine.sources[ssrc] = mid2ul[mid].sources[ssrc];
+                            });
+
+                            return true;
+                        }
+                    });
+                } else {
+                    session.media.push(mid2ul[mid]);
+                }
+            }
+        });
+    }
+
+    // We regenerate the BUNDLE group (since we regenerated the mids)
+    session.groups.some(function(group) {
+        if (group.type === 'BUNDLE') {
+            group.mids = mids.join(' ');
+            return true;
+        }
+    });
+
+    // msid semantic
+    session.msidSemantic = {
+        semantic: 'WMS',
+        token: '*'
+    };
+
+    var resStr = transform.write(session);
+
+    // Cache the transformed SDP (Unified Plan) for later re-use in this
+    // function.
+    this.cache[desc.type] = resStr;
+
+    return new RTCSessionDescription({
+        type: desc.type,
+        sdp: resStr
+    });
+
+    //#endregion
+};
+
+},{"./array-equals":48,"./transform":51}],51:[function(require,module,exports){
+var transform = require('sdp-transform');
+
+exports.write = function(session, opts) {
+
+  if (typeof session !== 'undefined' &&
+      typeof session.media !== 'undefined' &&
+      Array.isArray(session.media)) {
+
+    session.media.forEach(function (mLine) {
+      // expand sources to ssrcs
+      if (typeof mLine.sources !== 'undefined' &&
+        Object.keys(mLine.sources).length !== 0) {
+          mLine.ssrcs = [];
+          Object.keys(mLine.sources).forEach(function (ssrc) {
+            var source = mLine.sources[ssrc];
+            Object.keys(source).forEach(function (attribute) {
+              mLine.ssrcs.push({
+                id: ssrc,
+                attribute: attribute,
+                value: source[attribute]
+              });
+            });
+          });
+          delete mLine.sources;
+        }
+
+      // join ssrcs in ssrc groups
+      if (typeof mLine.ssrcGroups !== 'undefined' &&
+        Array.isArray(mLine.ssrcGroups)) {
+          mLine.ssrcGroups.forEach(function (ssrcGroup) {
+            if (typeof ssrcGroup.ssrcs !== 'undefined' &&
+                Array.isArray(ssrcGroup.ssrcs)) {
+              ssrcGroup.ssrcs = ssrcGroup.ssrcs.join(' ');
+            }
+          });
+        }
+    });
+  }
+
+  // join group mids
+  if (typeof session !== 'undefined' &&
+      typeof session.groups !== 'undefined' && Array.isArray(session.groups)) {
+
+    session.groups.forEach(function (g) {
+      if (typeof g.mids !== 'undefined' && Array.isArray(g.mids)) {
+        g.mids = g.mids.join(' ');
+      }
+    });
+  }
+
+  return transform.write(session, opts);
+};
+
+exports.parse = function(sdp) {
+  var session = transform.parse(sdp);
+
+  if (typeof session !== 'undefined' && typeof session.media !== 'undefined' &&
+      Array.isArray(session.media)) {
+
+    session.media.forEach(function (mLine) {
+      // group sources attributes by ssrc
+      if (typeof mLine.ssrcs !== 'undefined' && Array.isArray(mLine.ssrcs)) {
+        mLine.sources = {};
+        mLine.ssrcs.forEach(function (ssrc) {
+          if (!mLine.sources[ssrc.id])
+          mLine.sources[ssrc.id] = {};
+        mLine.sources[ssrc.id][ssrc.attribute] = ssrc.value;
+        });
+
+        delete mLine.ssrcs;
+      }
+
+      // split ssrcs in ssrc groups
+      if (typeof mLine.ssrcGroups !== 'undefined' &&
+        Array.isArray(mLine.ssrcGroups)) {
+          mLine.ssrcGroups.forEach(function (ssrcGroup) {
+            if (typeof ssrcGroup.ssrcs === 'string') {
+              ssrcGroup.ssrcs = ssrcGroup.ssrcs.split(' ');
+            }
+          });
+        }
+    });
+  }
+  // split group mids
+  if (typeof session !== 'undefined' &&
+      typeof session.groups !== 'undefined' && Array.isArray(session.groups)) {
+
+    session.groups.forEach(function (g) {
+      if (typeof g.mids === 'string') {
+        g.mids = g.mids.split(' ');
+      }
+    });
+  }
+
+  return session;
+};
+
+
+},{"sdp-transform":53}],52:[function(require,module,exports){
+var grammar = module.exports = {
+  v: [{
+      name: 'version',
+      reg: /^(\d*)$/
+  }],
+  o: [{ //o=- 20518 0 IN IP4 203.0.113.1
+    // NB: sessionId will be a String in most cases because it is huge
+    name: 'origin',
+    reg: /^(\S*) (\d*) (\d*) (\S*) IP(\d) (\S*)/,
+    names: ['username', 'sessionId', 'sessionVersion', 'netType', 'ipVer', 'address'],
+    format: "%s %s %d %s IP%d %s"
+  }],
+  // default parsing of these only (though some of these feel outdated)
+  s: [{ name: 'name' }],
+  i: [{ name: 'description' }],
+  u: [{ name: 'uri' }],
+  e: [{ name: 'email' }],
+  p: [{ name: 'phone' }],
+  z: [{ name: 'timezones' }], // TODO: this one can actually be parsed properly..
+  r: [{ name: 'repeats' }],   // TODO: this one can also be parsed properly
+  //k: [{}], // outdated thing ignored
+  t: [{ //t=0 0
+    name: 'timing',
+    reg: /^(\d*) (\d*)/,
+    names: ['start', 'stop'],
+    format: "%d %d"
+  }],
+  c: [{ //c=IN IP4 10.47.197.26
+      name: 'connection',
+      reg: /^IN IP(\d) (\S*)/,
+      names: ['version', 'ip'],
+      format: "IN IP%d %s"
+  }],
+  b: [{ //b=AS:4000
+      push: 'bandwidth',
+      reg: /^(TIAS|AS|CT|RR|RS):(\d*)/,
+      names: ['type', 'limit'],
+      format: "%s:%s"
+  }],
+  m: [{ //m=video 51744 RTP/AVP 126 97 98 34 31
+      // NB: special - pushes to session
+      // TODO: rtp/fmtp should be filtered by the payloads found here?
+      reg: /^(\w*) (\d*) ([\w\/]*)(?: (.*))?/,
+      names: ['type', 'port', 'protocol', 'payloads'],
+      format: "%s %d %s %s"
+  }],
+  a: [
+    { //a=rtpmap:110 opus/48000/2
+      push: 'rtp',
+      reg: /^rtpmap:(\d*) ([\w\-]*)\/(\d*)(?:\s*\/(\S*))?/,
+      names: ['payload', 'codec', 'rate', 'encoding'],
+      format: function (o) {
+        return (o.encoding) ?
+          "rtpmap:%d %s/%s/%s":
+          "rtpmap:%d %s/%s";
+      }
+    },
+    { //a=fmtp:108 profile-level-id=24;object=23;bitrate=64000
+      push: 'fmtp',
+      reg: /^fmtp:(\d*) (\S*)/,
+      names: ['payload', 'config'],
+      format: "fmtp:%d %s"
+    },
+    { //a=control:streamid=0
+        name: 'control',
+        reg: /^control:(.*)/,
+        format: "control:%s"
+    },
+    { //a=rtcp:65179 IN IP4 193.84.77.194
+      name: 'rtcp',
+      reg: /^rtcp:(\d*)(?: (\S*) IP(\d) (\S*))?/,
+      names: ['port', 'netType', 'ipVer', 'address'],
+      format: function (o) {
+        return (o.address != null) ?
+          "rtcp:%d %s IP%d %s":
+          "rtcp:%d";
+      }
+    },
+    { //a=rtcp-fb:98 trr-int 100
+      push: 'rtcpFbTrrInt',
+      reg: /^rtcp-fb:(\*|\d*) trr-int (\d*)/,
+      names: ['payload', 'value'],
+      format: "rtcp-fb:%d trr-int %d"
+    },
+    { //a=rtcp-fb:98 nack rpsi
+      push: 'rtcpFb',
+      reg: /^rtcp-fb:(\*|\d*) ([\w-_]*)(?: ([\w-_]*))?/,
+      names: ['payload', 'type', 'subtype'],
+      format: function (o) {
+        return (o.subtype != null) ?
+          "rtcp-fb:%s %s %s":
+          "rtcp-fb:%s %s";
+      }
+    },
+    { //a=extmap:2 urn:ietf:params:rtp-hdrext:toffset
+      //a=extmap:1/recvonly URI-gps-string
+      push: 'ext',
+      reg: /^extmap:([\w_\/]*) (\S*)(?: (\S*))?/,
+      names: ['value', 'uri', 'config'], // value may include "/direction" suffix
+      format: function (o) {
+        return (o.config != null) ?
+          "extmap:%s %s %s":
+          "extmap:%s %s";
+      }
+    },
+    {
+      //a=crypto:1 AES_CM_128_HMAC_SHA1_80 inline:PS1uQCVeeCFCanVmcjkpPywjNWhcYD0mXXtxaVBR|2^20|1:32
+      push: 'crypto',
+      reg: /^crypto:(\d*) ([\w_]*) (\S*)(?: (\S*))?/,
+      names: ['id', 'suite', 'config', 'sessionConfig'],
+      format: function (o) {
+        return (o.sessionConfig != null) ?
+          "crypto:%d %s %s %s":
+          "crypto:%d %s %s";
+      }
+    },
+    { //a=setup:actpass
+      name: 'setup',
+      reg: /^setup:(\w*)/,
+      format: "setup:%s"
+    },
+    { //a=mid:1
+      name: 'mid',
+      reg: /^mid:([^\s]*)/,
+      format: "mid:%s"
+    },
+    { //a=msid:0c8b064d-d807-43b4-b434-f92a889d8587 98178685-d409-46e0-8e16-7ef0db0db64a
+      name: 'msid',
+      reg: /^msid:(.*)/,
+      format: "msid:%s"
+    },
+    { //a=ptime:20
+      name: 'ptime',
+      reg: /^ptime:(\d*)/,
+      format: "ptime:%d"
+    },
+    { //a=maxptime:60
+      name: 'maxptime',
+      reg: /^maxptime:(\d*)/,
+      format: "maxptime:%d"
+    },
+    { //a=sendrecv
+      name: 'direction',
+      reg: /^(sendrecv|recvonly|sendonly|inactive)/
+    },
+    { //a=ice-lite
+      name: 'icelite',
+      reg: /^(ice-lite)/
+    },
+    { //a=ice-ufrag:F7gI
+      name: 'iceUfrag',
+      reg: /^ice-ufrag:(\S*)/,
+      format: "ice-ufrag:%s"
+    },
+    { //a=ice-pwd:x9cml/YzichV2+XlhiMu8g
+      name: 'icePwd',
+      reg: /^ice-pwd:(\S*)/,
+      format: "ice-pwd:%s"
+    },
+    { //a=fingerprint:SHA-1 00:11:22:33:44:55:66:77:88:99:AA:BB:CC:DD:EE:FF:00:11:22:33
+      name: 'fingerprint',
+      reg: /^fingerprint:(\S*) (\S*)/,
+      names: ['type', 'hash'],
+      format: "fingerprint:%s %s"
+    },
+    {
+      //a=candidate:0 1 UDP 2113667327 203.0.113.1 54400 typ host
+      //a=candidate:1162875081 1 udp 2113937151 192.168.34.75 60017 typ host generation 0
+      //a=candidate:3289912957 2 udp 1845501695 193.84.77.194 60017 typ srflx raddr 192.168.34.75 rport 60017 generation 0
+      push:'candidates',
+      reg: /^candidate:(\S*) (\d*) (\S*) (\d*) (\S*) (\d*) typ (\S*)(?: raddr (\S*) rport (\d*))?(?: generation (\d*))?/,
+      names: ['foundation', 'component', 'transport', 'priority', 'ip', 'port', 'type', 'raddr', 'rport', 'generation'],
+      format: function (o) {
+        var str = "candidate:%s %d %s %d %s %d typ %s";
+        // NB: candidate has two optional chunks, so %void middle one if it's missing
+        str += (o.raddr != null) ? " raddr %s rport %d" : "%v%v";
+        if (o.generation != null) {
+          str += " generation %d";
+        }
+        return str;
+      }
+    },
+    { //a=end-of-candidates (keep after the candidates line for readability)
+      name: 'endOfCandidates',
+      reg: /^(end-of-candidates)/
+    },
+    { //a=remote-candidates:1 203.0.113.1 54400 2 203.0.113.1 54401 ...
+      name: 'remoteCandidates',
+      reg: /^remote-candidates:(.*)/,
+      format: "remote-candidates:%s"
+    },
+    { //a=ice-options:google-ice
+      name: 'iceOptions',
+      reg: /^ice-options:(\S*)/,
+      format: "ice-options:%s"
+    },
+    { //a=ssrc:2566107569 cname:t9YU8M1UxTF8Y1A1
+      push: "ssrcs",
+      reg: /^ssrc:(\d*) ([\w_]*):(.*)/,
+      names: ['id', 'attribute', 'value'],
+      format: "ssrc:%d %s:%s"
+    },
+    { //a=ssrc-group:FEC 1 2
+      push: "ssrcGroups",
+      reg: /^ssrc-group:(\w*) (.*)/,
+      names: ['semantics', 'ssrcs'],
+      format: "ssrc-group:%s %s"
+    },
+    { //a=msid-semantic: WMS Jvlam5X3SX1OP6pn20zWogvaKJz5Hjf9OnlV
+      name: "msidSemantic",
+      reg: /^msid-semantic:\s?(\w*) (\S*)/,
+      names: ['semantic', 'token'],
+      format: "msid-semantic: %s %s" // space after ":" is not accidental
+    },
+    { //a=group:BUNDLE audio video
+      push: 'groups',
+      reg: /^group:(\w*) (.*)/,
+      names: ['type', 'mids'],
+      format: "group:%s %s"
+    },
+    { //a=rtcp-mux
+      name: 'rtcpMux',
+      reg: /^(rtcp-mux)/
+    },
+    { //a=rtcp-rsize
+      name: 'rtcpRsize',
+      reg: /^(rtcp-rsize)/
+    },
+    { // any a= that we don't understand is kepts verbatim on media.invalid
+      push: 'invalid',
+      names: ["value"]
+    }
+  ]
+};
+
+// set sensible defaults to avoid polluting the grammar with boring details
+Object.keys(grammar).forEach(function (key) {
+  var objs = grammar[key];
+  objs.forEach(function (obj) {
+    if (!obj.reg) {
+      obj.reg = /(.*)/;
+    }
+    if (!obj.format) {
+      obj.format = "%s";
+    }
+  });
+});
+
+},{}],53:[function(require,module,exports){
+var parser = require('./parser');
+var writer = require('./writer');
+
+exports.write = writer;
+exports.parse = parser.parse;
+exports.parseFmtpConfig = parser.parseFmtpConfig;
+exports.parsePayloads = parser.parsePayloads;
+exports.parseRemoteCandidates = parser.parseRemoteCandidates;
+
+},{"./parser":54,"./writer":55}],54:[function(require,module,exports){
+var toIntIfInt = function (v) {
+  return String(Number(v)) === v ? Number(v) : v;
+};
+
+var attachProperties = function (match, location, names, rawName) {
+  if (rawName && !names) {
+    location[rawName] = toIntIfInt(match[1]);
+  }
+  else {
+    for (var i = 0; i < names.length; i += 1) {
+      if (match[i+1] != null) {
+        location[names[i]] = toIntIfInt(match[i+1]);
+      }
+    }
+  }
+};
+
+var parseReg = function (obj, location, content) {
+  var needsBlank = obj.name && obj.names;
+  if (obj.push && !location[obj.push]) {
+    location[obj.push] = [];
+  }
+  else if (needsBlank && !location[obj.name]) {
+    location[obj.name] = {};
+  }
+  var keyLocation = obj.push ?
+    {} :  // blank object that will be pushed
+    needsBlank ? location[obj.name] : location; // otherwise, named location or root
+
+  attachProperties(content.match(obj.reg), keyLocation, obj.names, obj.name);
+
+  if (obj.push) {
+    location[obj.push].push(keyLocation);
+  }
+};
+
+var grammar = require('./grammar');
+var validLine = RegExp.prototype.test.bind(/^([a-z])=(.*)/);
+
+exports.parse = function (sdp) {
+  var session = {}
+    , media = []
+    , location = session; // points at where properties go under (one of the above)
+
+  // parse lines we understand
+  sdp.split(/(\r\n|\r|\n)/).filter(validLine).forEach(function (l) {
+    var type = l[0];
+    var content = l.slice(2);
+    if (type === 'm') {
+      media.push({rtp: [], fmtp: []});
+      location = media[media.length-1]; // point at latest media line
+    }
+
+    for (var j = 0; j < (grammar[type] || []).length; j += 1) {
+      var obj = grammar[type][j];
+      if (obj.reg.test(content)) {
+        return parseReg(obj, location, content);
+      }
+    }
+  });
+
+  session.media = media; // link it up
+  return session;
+};
+
+var fmtpReducer = function (acc, expr) {
+  var s = expr.split('=');
+  if (s.length === 2) {
+    acc[s[0]] = toIntIfInt(s[1]);
+  }
+  return acc;
+};
+
+exports.parseFmtpConfig = function (str) {
+  return str.split(';').reduce(fmtpReducer, {});
+};
+
+exports.parsePayloads = function (str) {
+  return str.split(' ').map(Number);
+};
+
+exports.parseRemoteCandidates = function (str) {
+  var candidates = [];
+  var parts = str.split(' ').map(toIntIfInt);
+  for (var i = 0; i < parts.length; i += 3) {
+    candidates.push({
+      component: parts[i],
+      ip: parts[i + 1],
+      port: parts[i + 2]
+    });
+  }
+  return candidates;
+};
+
+},{"./grammar":52}],55:[function(require,module,exports){
+var grammar = require('./grammar');
+
+// customized util.format - discards excess arguments and can void middle ones
+var formatRegExp = /%[sdv%]/g;
+var format = function (formatStr) {
+  var i = 1;
+  var args = arguments;
+  var len = args.length;
+  return formatStr.replace(formatRegExp, function (x) {
+    if (i >= len) {
+      return x; // missing argument
+    }
+    var arg = args[i];
+    i += 1;
+    switch (x) {
+      case '%%':
+        return '%';
+      case '%s':
+        return String(arg);
+      case '%d':
+        return Number(arg);
+      case '%v':
+        return '';
+    }
+  });
+  // NB: we discard excess arguments - they are typically undefined from makeLine
+};
+
+var makeLine = function (type, obj, location) {
+  var str = obj.format instanceof Function ?
+    (obj.format(obj.push ? location : location[obj.name])) :
+    obj.format;
+
+  var args = [type + '=' + str];
+  if (obj.names) {
+    for (var i = 0; i < obj.names.length; i += 1) {
+      var n = obj.names[i];
+      if (obj.name) {
+        args.push(location[obj.name][n]);
+      }
+      else { // for mLine and push attributes
+        args.push(location[obj.names[i]]);
+      }
+    }
+  }
+  else {
+    args.push(location[obj.name]);
+  }
+  return format.apply(null, args);
+};
+
+// RFC specified order
+// TODO: extend this with all the rest
+var defaultOuterOrder = [
+  'v', 'o', 's', 'i',
+  'u', 'e', 'p', 'c',
+  'b', 't', 'r', 'z', 'a'
+];
+var defaultInnerOrder = ['i', 'c', 'b', 'a'];
+
+
+module.exports = function (session, opts) {
+  opts = opts || {};
+  // ensure certain properties exist
+  if (session.version == null) {
+    session.version = 0; // "v=0" must be there (only defined version atm)
+  }
+  if (session.name == null) {
+    session.name = " "; // "s= " must be there if no meaningful name set
+  }
+  session.media.forEach(function (mLine) {
+    if (mLine.payloads == null) {
+      mLine.payloads = "";
+    }
+  });
+
+  var outerOrder = opts.outerOrder || defaultOuterOrder;
+  var innerOrder = opts.innerOrder || defaultInnerOrder;
+  var sdp = [];
+
+  // loop through outerOrder for matching properties on session
+  outerOrder.forEach(function (type) {
+    grammar[type].forEach(function (obj) {
+      if (obj.name in session && session[obj.name] != null) {
+        sdp.push(makeLine(type, obj, session));
+      }
+      else if (obj.push in session && session[obj.push] != null) {
+        session[obj.push].forEach(function (el) {
+          sdp.push(makeLine(type, obj, el));
+        });
+      }
+    });
+  });
+
+  // then for each media line, follow the innerOrder
+  session.media.forEach(function (mLine) {
+    sdp.push(makeLine('m', grammar.m[0], mLine));
+
+    innerOrder.forEach(function (type) {
+      grammar[type].forEach(function (obj) {
+        if (obj.name in mLine && mLine[obj.name] != null) {
+          sdp.push(makeLine(type, obj, mLine));
+        }
+        else if (obj.push in mLine && mLine[obj.push] != null) {
+          mLine[obj.push].forEach(function (el) {
+            sdp.push(makeLine(type, obj, el));
+          });
+        }
+      });
+    });
+  });
+
+  return sdp.join('\r\n') + '\r\n';
+};
+
+},{"./grammar":52}],56:[function(require,module,exports){
+var transform = require('sdp-transform');
+var transformUtils = require('./transform-utils');
+var parseSsrcs = transformUtils.parseSsrcs;
+var writeSsrcs = transformUtils.writeSsrcs;
+
+//region Constants
+
+var DEFAULT_NUM_OF_LAYERS = 3;
+
+//endregion
+
+//region Ctor
+
+function Simulcast(options) {
+
+    this.options = options ? options : {};
+
+    if (!this.options.numOfLayers) {
+        this.options.numOfLayers = DEFAULT_NUM_OF_LAYERS;
+    }
+
+    this.layers = [];
+}
+
+//endregion
+
+//region Stateless private utility functions
+
+/**
+ * Returns a random integer between min (included) and max (excluded)
+ * Using Math.round() gives a non-uniform distribution!
+ * @returns {number}
+ */
+function generateSSRC() {
+    var min = 0, max = 0xffffffff;
+    return Math.floor(Math.random() * (max - min)) + min;
+};
+
+function processVideo(session, action) {
+    if (session == null || !Array.isArray(session.media)) {
+        return;
+    }
+
+    session.media.forEach(function (mLine) {
+        if (mLine.type === 'video') {
+            action(mLine);
+        }
+    });
+}
+
+function validateDescription(desc)
+{
+    return desc && desc != null
+        && desc.type && desc.type != ''
+        && desc.sdp && desc.sdp != '';
+}
+
+function explodeRemoteSimulcast(mLine) {
+
+    if (!mLine || !Array.isArray(mLine.ssrcGroups)) {
+        return;
+    }
+
+    var sources = parseSsrcs(mLine);
+    var order = [];
+
+    // Find the SIM group and explode its sources.
+    var j = mLine.ssrcGroups.length;
+    while (j--) {
+
+        if (mLine.ssrcGroups[j].semantics !== 'SIM') {
+            continue;
+        }
+
+        var simulcastSsrcs = mLine.ssrcGroups[j].ssrcs.split(' ');
+
+        for (var i = 0; i < simulcastSsrcs.length; i++) {
+
+            var ssrc = simulcastSsrcs[i];
+            order.push(ssrc);
+
+            var parts = sources[ssrc].msid.split(' ');
+            sources[ssrc].msid = [parts[0], '/', i, ' ', parts[1], '/', i].join('');
+            sources[ssrc].cname = [sources[ssrc].cname, '/', i].join('');
+
+            // Remove all the groups that this SSRC participates in.
+            mLine.ssrcGroups.forEach(function (relatedGroup) {
+                if (relatedGroup.semantics === 'SIM') {
+                    return;
+                }
+
+                var relatedSsrcs = relatedGroup.ssrcs.split(' ');
+                if (relatedSsrcs.indexOf(ssrc) === -1) {
+                    return;
+                }
+
+                // Nuke all the related SSRCs.
+                relatedSsrcs.forEach(function (relatedSSRC) {
+                    sources[relatedSSRC].msid = sources[ssrc].msid;
+                    sources[relatedSSRC].cname = sources[ssrc].cname;
+                    if (relatedSSRC !== ssrc) {
+                        order.push(relatedSSRC);
+                    }
+                });
+
+                // Schedule the related group for nuking.
+            })
+        }
+
+        mLine.ssrcs = writeSsrcs(sources, order);
+        mLine.ssrcGroups.splice(j, 1);
+    };
+}
+
+function squeezeRemoteSimulcast(mLine) {
+
+    if (!mLine || !Array.isArray(mLine.ssrcGroups)) {
+        return;
+    }
+
+    var sources = parseSsrcs(mLine);
+
+    // Find the SIM group and nuke it.
+    mLine.ssrcGroups.some(function (simulcastGroup) {
+        if (simulcastGroup.semantics !== 'SIM') {
+            return false;
+        }
+
+        // Schedule the SIM group for nuking.
+        simulcastGroup.nuke = true;
+
+        var simulcastSsrcs = simulcastGroup.ssrcs.split(' ');
+
+        // Nuke all the higher layer SSRCs.
+        for (var i = 1; i < simulcastSsrcs.length; i++) {
+
+            var ssrc = simulcastSsrcs[i];
+            delete sources[ssrc];
+
+            // Remove all the groups that this SSRC participates in.
+            mLine.ssrcGroups.forEach(function (relatedGroup) {
+                if (relatedGroup.semantics === 'SIM') {
+                    return;
+                }
+
+                var relatedSsrcs = relatedGroup.ssrcs.split(' ');
+                if (relatedSsrcs.indexOf(ssrc) === -1) {
+                    return;
+                }
+
+                // Nuke all the related SSRCs.
+                relatedSsrcs.forEach(function (relatedSSRC) {
+                    delete sources[relatedSSRC];
+                });
+
+                // Schedule the related group for nuking.
+                relatedGroup.nuke = true;
+            })
+        }
+
+        return true;
+    });
+
+    mLine.ssrcs = writeSsrcs(sources);
+
+    // Nuke all the scheduled groups.
+    var i = mLine.ssrcGroups.length;
+    while (i--) {
+        if (mLine.ssrcGroups[i].nuke) {
+            mLine.ssrcGroups.splice(i, 1);
+        }
+    }
+}
+
+function removeGoogConference(mLine) {
+    if (!mLine || !Array.isArray(mLine.invalid)) {
+        return;
+    }
+
+    var i = mLine.invalid.length;
+    while (i--) {
+        if (mLine.invalid[i].value == 'x-google-flag:conference') {
+            mLine.invalid.splice(i, 1);
+        }
+    }
+}
+
+function assertGoogConference(mLine) {
+    if (!mLine) {
+        return;
+    }
+
+    if (!Array.isArray(mLine.invalid)) {
+        mLine.invalid = [];
+    }
+
+    if (!mLine.invalid.some(
+            function (i) { return i.value === 'x-google-flag:conference' })) {
+        mLine.invalid.push({'value': 'x-google-flag:conference'});
+    }
+}
+
+//endregion
+
+//region "Private" functions
+
+/**
+ *
+ * @param mLine
+ * @private
+ */
+Simulcast.prototype._maybeInitializeLayers = function(mLine) {
+
+    if (!mLine || mLine.type !== 'video') {
+        return;
+    }
+
+    var sources = parseSsrcs(mLine);
+
+    if (Object.keys(sources).length === 0) {
+
+        // no sources, disable simulcast.
+        if (this.layers.length !== 0) {
+            this.layers = [];
+        }
+
+        return;
+    }
+
+    // find the base layer (we'll reuse its msid and cname).
+    var baseLayerSSRC = Object.keys(sources)[0];
+    var baseLayer = sources[baseLayerSSRC];
+
+    // todo(gp) handle screen sharing.
+
+    // check if base CNAME has changed and reinitialise layers.
+    if (this.layers.length > 0
+        && sources[baseLayerSSRC].cname !== this.layers[0].cname) {
+        this.layers = [];
+    }
+
+    // (re)initialise layers
+    if (this.layers.length < 1) {
+
+        // first push the base layer.
+        this.layers.push({
+            ssrc: baseLayerSSRC,
+            msid: baseLayer.msid,
+            cname: baseLayer.cname
+        });
+
+        var rtx = false; // RFC 4588
+        if (Array.isArray(mLine.rtp)) {
+            rtx = mLine.rtp.some(
+                function (rtpmap) { return rtpmap.codec === 'rtx'; });
+        }
+
+        if (rtx) {
+            this.layers[0].rtx = generateSSRC();
+        }
+
+        // now push additional layers.
+        for (var i = 1; i < Math.max(1, this.options.numOfLayers); i++) {
+
+            var layer = { ssrc: generateSSRC() };
+            if (rtx) {
+                layer.rtx = generateSSRC();
+            }
+
+            this.layers.push(layer);
+        }
+    }
+};
+
+/**
+ *
+ * @param mLine
+ * @private
+ */
+Simulcast.prototype._restoreSimulcastView = function(mLine) {
+    if (mLine && mLine.type === 'video' && this.layers.length !== 0) {
+
+        var sources = {};
+
+        var msid = this.layers[0].msid;
+        var cname = this.layers[0].cname;
+        var simulcastSsrcs = [];
+        var ssrcGroups = [];
+
+        for (var i = 0; i < this.layers.length; i++) {
+            var layer = this.layers[i];
+
+            sources[layer.ssrc] = { msid: msid, cname: cname };
+            simulcastSsrcs.push(layer.ssrc);
+
+            if (layer.rtx) {
+
+                sources[layer.rtx] = {
+                    msid: msid,
+                    cname: cname
+                }
+
+                ssrcGroups.push({
+                    semantics: 'FID',
+                    ssrcs: [layer.ssrc, layer.rtx].join(' ')
+                });
+            }
+        }
+
+        ssrcGroups.push({
+            semantics: 'SIM',
+            ssrcs: simulcastSsrcs.join(' ')
+        });
+
+        mLine.ssrcGroups = ssrcGroups;
+        mLine.ssrcs = writeSsrcs(sources);
+    }
+}
+
+//endregion
+
+//region "Public" functions
+
+Simulcast.prototype.isSupported = function () {
+    return window.chrome;
+
+    // TODO this needs improvements. For example I doubt that Chrome in Android
+    // has simulcast support. Also, only recent versions of Chromium have native
+    // simulcast support.
+}
+
+/**
+ *
+ * @param desc
+ * @returns {RTCSessionDescription}
+ */
+Simulcast.prototype.mungeRemoteDescription = function (desc) {
+
+    if (!validateDescription(desc)) {
+        return desc;
+    }
+
+    var session = transform.parse(desc.sdp);
+
+    var self = this;
+    processVideo(session, function (mLine) {
+
+        // Handle simulcast reception.
+        if (self.options.explodeRemoteSimulcast) {
+            explodeRemoteSimulcast(mLine);
+        } else {
+            squeezeRemoteSimulcast(mLine);
+        }
+
+        // If native simulcast is enabled, we must append the x-goog-conference
+        // attribute to the SDP.
+        if (self.layers.length < 1) {
+            removeGoogConference(mLine);
+        } else {
+            assertGoogConference(mLine);
+        }
+    });
+
+    return new RTCSessionDescription({
+        type: desc.type,
+        sdp: transform.write(session)
+    });
+};
+
+/**
+ *
+ * @param desc
+ * @returns {RTCSessionDescription}
+ */
+Simulcast.prototype.mungeLocalDescription = function (desc) {
+
+    if (!validateDescription(desc) || !this.isSupported()) {
+        return desc;
+    }
+
+    var session = transform.parse(desc.sdp);
+
+    var self = this;
+    processVideo(session, function (mLine) {
+        // Initialize native simulcast layers, if not already done.
+        self._maybeInitializeLayers(mLine);
+
+        // Update the SDP with the simulcast layers.
+        self._restoreSimulcastView(mLine);
+    });
+
+    return new RTCSessionDescription({
+        type: desc.type,
+        sdp: transform.write(session)
+    });
+};
+
+//endregion
+
+module.exports = Simulcast;
+
+},{"./transform-utils":57,"sdp-transform":59}],57:[function(require,module,exports){
+exports.writeSsrcs = function(sources, order) {
+  var ssrcs = [];
+
+  // expand sources to ssrcs
+  if (typeof sources !== 'undefined' &&
+      Object.keys(sources).length !== 0) {
+
+    if (Array.isArray(order)) {
+      for (var i = 0; i < order.length; i++) {
+        var ssrc = order[i];
+        var source = sources[ssrc];
+        Object.keys(source).forEach(function (attribute) {
+          ssrcs.push({
+            id: ssrc,
+            attribute: attribute,
+            value: source[attribute]
+          });
+        });
+      }
+    } else {
+      Object.keys(sources).forEach(function (ssrc) {
+        var source = sources[ssrc];
+        Object.keys(source).forEach(function (attribute) {
+          ssrcs.push({
+            id: ssrc,
+            attribute: attribute,
+            value: source[attribute]
+          });
+        });
+      });
+    }
+  }
+
+  return ssrcs;
+};
+
+exports.parseSsrcs = function (mLine) {
+  var sources = {};
+  // group sources attributes by ssrc.
+  if (typeof mLine.ssrcs !== 'undefined' && Array.isArray(mLine.ssrcs)) {
+    mLine.ssrcs.forEach(function (ssrc) {
+      if (!sources[ssrc.id])
+        sources[ssrc.id] = {};
+      sources[ssrc.id][ssrc.attribute] = ssrc.value;
+    });
+  }
+  return sources;
+};
+
+
+},{}],58:[function(require,module,exports){
+arguments[4][52][0].apply(exports,arguments)
+},{"dup":52}],59:[function(require,module,exports){
+arguments[4][53][0].apply(exports,arguments)
+},{"./parser":60,"./writer":61,"dup":53}],60:[function(require,module,exports){
+arguments[4][54][0].apply(exports,arguments)
+},{"./grammar":58,"dup":54}],61:[function(require,module,exports){
+arguments[4][55][0].apply(exports,arguments)
+},{"./grammar":58,"dup":55}],62:[function(require,module,exports){
+arguments[4][52][0].apply(exports,arguments)
+},{"dup":52}],63:[function(require,module,exports){
+arguments[4][53][0].apply(exports,arguments)
+},{"./parser":64,"./writer":65,"dup":53}],64:[function(require,module,exports){
+arguments[4][54][0].apply(exports,arguments)
+},{"./grammar":62,"dup":54}],65:[function(require,module,exports){
+arguments[4][55][0].apply(exports,arguments)
+},{"./grammar":62,"dup":55}],66:[function(require,module,exports){
 var MediaStreamType = {
     VIDEO_TYPE: "Video",
 
     AUDIO_TYPE: "Audio"
 };
 module.exports = MediaStreamType;
-},{}],41:[function(require,module,exports){
+},{}],67:[function(require,module,exports){
 var RTCEvents = {
     RTC_READY: "rtc.ready",
     DATA_CHANNEL_OPEN: "rtc.data_channel_open",
@@ -12534,7 +18613,7 @@ var RTCEvents = {
 };
 
 module.exports = RTCEvents;
-},{}],42:[function(require,module,exports){
+},{}],68:[function(require,module,exports){
 var Resolutions = {
     "1080": {
         width: 1920,
@@ -12588,7 +18667,7 @@ var Resolutions = {
     }
 };
 module.exports = Resolutions;
-},{}],43:[function(require,module,exports){
+},{}],69:[function(require,module,exports){
 var StreamEventTypes = {
     EVENT_TYPE_LOCAL_CREATED: "stream.local_created",
 
@@ -12602,7 +18681,7 @@ var StreamEventTypes = {
 };
 
 module.exports = StreamEventTypes;
-},{}],44:[function(require,module,exports){
+},{}],70:[function(require,module,exports){
 var UIEvents = {
     NICKNAME_CHANGED: "UI.nickname_changed",
     SELECTED_ENDPOINT: "UI.selected_endpoint",
@@ -12610,7 +18689,7 @@ var UIEvents = {
     LARGEVIDEO_INIT: "UI.largevideo_init"
 };
 module.exports = UIEvents;
-},{}],45:[function(require,module,exports){
+},{}],71:[function(require,module,exports){
 var AuthenticationEvents = {
     /**
      * Event callback arguments:
@@ -12624,7 +18703,7 @@ var AuthenticationEvents = {
 };
 module.exports = AuthenticationEvents;
 
-},{}],46:[function(require,module,exports){
+},{}],72:[function(require,module,exports){
 var DesktopSharingEventTypes = {
     INIT: "ds.init",
 
@@ -12634,7 +18713,7 @@ var DesktopSharingEventTypes = {
 };
 
 module.exports = DesktopSharingEventTypes;
-},{}],47:[function(require,module,exports){
+},{}],73:[function(require,module,exports){
 var XMPPEvents = {
     CONNECTION_FAILED: "xmpp.connection.failed",
     // Indicates an interrupted connection event.
@@ -12686,10 +18765,11 @@ var XMPPEvents = {
     ROOM_JOIN_ERROR: 'xmpp.room_join_error',
     ROOM_CONNECT_ERROR: 'xmpp.room_connect_error',
     // xmpp is connected and obtained user media
-    READY_TO_JOIN: 'xmpp.ready_to_join'
+    READY_TO_JOIN: 'xmpp.ready_to_join',
+    FOCUS_LEFT: "xmpp.focus_left"
 };
 module.exports = XMPPEvents;
-},{}],48:[function(require,module,exports){
+},{}],74:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -12992,7 +19072,7 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],49:[function(require,module,exports){
+},{}],75:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};

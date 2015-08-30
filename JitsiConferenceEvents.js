@@ -62,7 +62,15 @@ var JitsiConferenceEvents = {
     /**
      * Indicates that the connection to the conference has been restored.
      */
-    CONNECTION_ESTABLISHED: "conference.connecionEstablished"
+    CONNECTION_RESTORED: "conference.connecionRestored",
+    /**
+     * Indicates that conference has been joined.
+     */
+    CONFERENCE_JOINED: "conference.joined",
+    /**
+     * Indicates that conference has been left.
+     */
+    CONFERENCE_LEFT: "conference.left"
 };
 
 module.exports = JitsiConferenceEvents;

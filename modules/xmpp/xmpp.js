@@ -23,7 +23,7 @@ function createConnection(bosh) {
 function initStrophePlugins(XMPP)
 {
     require("./strophe.emuc")(XMPP);
-//    require("./strophe.jingle")(XMPP, eventEmitter);
+    require("./strophe.jingle")(XMPP, XMPP.eventEmitter);
 //    require("./strophe.moderate")(XMPP, eventEmitter);
     require("./strophe.util")();
     require("./strophe.rayo")();
@@ -52,7 +52,6 @@ function initStrophePlugins(XMPP)
 //}
 
 function XMPP(options) {
-    this.sessionTerminated = false;
     this.eventEmitter = new EventEmitter();
     this.connection = null;
     this.disconnectInProgress = false;
@@ -61,9 +60,8 @@ function XMPP(options) {
     this.options = options;
     initStrophePlugins(this);
 //    registerListeners();
-    Moderator.init(this, this.eventEmitter);
+
     this.connection = createConnection(options.bosh);
-    Moderator.setConnection(this.connection);
 }
 
 
@@ -118,7 +116,7 @@ XMPP.prototype._connect = function (jid, password) {
             if (self.connection && self.connection.connected &&
                 Strophe.getResourceFromJid(self.connection.jid)) {
                 // .connected is true while connecting?
-                self.connection.send($pres());
+//                self.connection.send($pres());
                 self.eventEmitter.emit(JitsiConnectionEvents.CONNECTION_ESTABLISHED,
                     Strophe.getResourceFromJid(self.connection.jid));
             }
@@ -167,8 +165,8 @@ XMPP.prototype.connect = function (jid, password) {
     return this._connect(jid, password);
 };
 
-XMPP.prototype.joinRoom = function(roomName, useNicks, nick) {
-    var roomjid = roomName  + '@' + Strophe.getDomainFromJid(this.connection.jid);
+XMPP.prototype.createRoom = function (roomName, useNicks, nick) {
+    var roomjid = roomName  + '@' + this.options.hosts.muc;
 
     if (useNicks) {
         if (nick) {
@@ -184,32 +182,9 @@ XMPP.prototype.joinRoom = function(roomName, useNicks, nick) {
 
         roomjid += '/' + tmpJid;
     }
-    return this.connection.emuc.doJoin(roomjid, null, this.eventEmitter);
-};
 
-
-XMPP.prototype.disposeConference = function (onUnload) {
-    var handler = this.connection.jingle.activecall;
-    if (handler && handler.peerconnection) {
-        // FIXME: probably removing streams is not required and close() should
-        // be enough
-        if (RTC.localAudio) {
-            handler.peerconnection.removeStream(
-                RTC.localAudio.getOriginalStream(), onUnload);
-        }
-        if (RTC.localVideo) {
-            handler.peerconnection.removeStream(
-                RTC.localVideo.getOriginalStream(), onUnload);
-        }
-        handler.peerconnection.close();
-    }
-    this.eventEmitter.emit(XMPPEvents.DISPOSE_CONFERENCE, onUnload);
-    this.connection.jingle.activecall = null;
-    if (!onUnload) {
-        this.sessionTerminated = true;
-        this.connection.emuc.doLeave();
-    }
-};
+    return this.connection.emuc.createRoom(roomjid, null, this.eventEmitter);
+}
 
 XMPP.prototype.addListener = function(type, listener) {
     this.eventEmitter.on(type, listener);
@@ -220,32 +195,22 @@ XMPP.prototype.removeListener = function (type, listener) {
 };
 
 XMPP.prototype.leaveRoom = function (jid) {
+    var handler = this.connection.jingle.jid2session[jid];
+    if (handler && handler.peerconnection) {
+        // FIXME: probably removing streams is not required and close() should
+        // be enough
+        if (RTC.localAudio) {
+            handler.peerconnection.removeStream(
+                RTC.localAudio.getOriginalStream(), true);
+        }
+        if (RTC.localVideo) {
+            handler.peerconnection.removeStream(
+                RTC.localVideo.getOriginalStream(), true);
+        }
+        handler.peerconnection.close();
+    }
+    this.eventEmitter.emit(XMPPEvents.DISPOSE_CONFERENCE);
     this.connection.emuc.doLeave(jid);
-};
-
-
-XMPP.prototype.allocateConferenceFocus = function(roomName, callback) {
-    Moderator.allocateConferenceFocus(roomName, callback);
-};
-
-XMPP.prototype.getLoginUrl = function (roomName, callback) {
-    Moderator.getLoginUrl(roomName, callback);
-}
-
-XMPP.prototype.getPopupLoginUrl = function (roomName, callback) {
-    Moderator.getPopupLoginUrl(roomName, callback);
-};
-
-XMPP.prototype.isModerator = function () {
-    return Moderator.isModerator();
-};
-
-XMPP.prototype.isSipGatewayEnabled = function () {
-    return Moderator.isSipGatewayEnabled();
-}
-
-XMPP.prototype.isExternalAuthEnabled = function () {
-    return Moderator.isExternalAuthEnabled();
 };
 
 XMPP.prototype.isConferenceInProgress = function () {
@@ -376,10 +341,6 @@ XMPP.prototype.eject = function (jid) {
     this.connection.moderate.eject(jid);
 };
 
-XMPP.prototype.logout = function (callback) {
-    Moderator.logout(callback);
-};
-
 XMPP.prototype.getJidFromSSRC = function (ssrc) {
     if (!this.isConferenceInProgress())
         return null;
@@ -396,7 +357,7 @@ XMPP.prototype.removeStream = function (stream) {
     this.connection.jingle.activecall.peerconnection.removeStream(stream);
 };
 
-XMPP.prototype.disconnect = function (callback) {
+XMPP.prototype.disconnect = function () {
     if (this.disconnectInProgress || !this.connection || !this.connection.connected)
     {
         this.eventEmitter.emit(JitsiConnectionEvents.WRONG_STATE);
