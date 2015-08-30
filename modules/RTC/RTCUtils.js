@@ -436,7 +436,7 @@ RTCUtils.prototype.successCallback = function (stream, usageOptions) {
     if (stream && stream.getAudioTracks && stream.getVideoTracks)
         console.log('got', stream, stream.getAudioTracks().length,
             stream.getVideoTracks().length);
-    this.handleLocalStream(stream, usageOptions);
+    return this.handleLocalStream(stream, usageOptions);
 };
 
 RTCUtils.prototype.errorCallback = function (error) {
@@ -475,7 +475,6 @@ RTCUtils.prototype.errorCallback = function (error) {
 RTCUtils.prototype.handleLocalStream = function(stream, usageOptions) {
     // If this is FF, the stream parameter is *not* a MediaStream object, it's
     // an object with two properties: audioStream, videoStream.
-    var audioStream, videoStream;
     if(window.webkitMediaStream)
     {
         audioStream = new webkitMediaStream();
@@ -493,6 +492,7 @@ RTCUtils.prototype.handleLocalStream = function(stream, usageOptions) {
                 videoStream.addTrack(videoTracks[i]);
             }
         }
+
     }
     else if (RTCBrowserType.isFirefox() || RTCBrowserType.isTemasysPluginUsed())
     {   // Firefox and Temasys plugin
@@ -513,12 +513,9 @@ RTCUtils.prototype.handleLocalStream = function(stream, usageOptions) {
     var audioGUM = (!usageOptions || usageOptions.audio !== false),
         videoGUM = (!usageOptions || usageOptions.video !== false);
 
-
-    this.service.createLocalStream(audioStream, "audio", null, null,
-        audioMuted, audioGUM);
-
-    this.service.createLocalStream(videoStream, "video", null, 'camera',
-        videoMuted, videoGUM);
+    return this.service.createLocalStreams(
+        [{stream: audioStream, type: "audio", isMuted: audioMuted, isGUMStream: audioGUM, videoType: null},
+        {stream: videoStream, type: "video", isMuted: videoMuted, isGUMStream: videoGUM, videoType: "camera"}]);
 };
 
 function DummyMediaStream(id) {

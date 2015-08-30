@@ -2,9 +2,9 @@
  * Represents a single media track (either audio or video).
  * @constructor
  */
-function JitsiTrack()
+function JitsiTrack(stream)
 {
-
+    this.stream = stream;
 }
 
 /**
@@ -23,34 +23,35 @@ JitsiTrack.AUDIO = "audio";
  * Returns the type (audio or video) of this track.
  */
 JitsiTrack.prototype.getType = function() {
+    return this.stream.type;
 };
 
 /**
  * @returns {JitsiParticipant} to which this track belongs, or null if it is a local track.
  */
-JitsiTrack.prototype.getParitcipant() = function() {
+JitsiTrack.prototype.getParitcipant = function() {
 
 };
 
 /**
  * Returns the RTCMediaStream from the browser (?).
  */
-JitsiTrack.prototype.getOriginalStream() {
-
+JitsiTrack.prototype.getOriginalStream = function() {
+    return this.stream.getOriginalStream();
 }
 
 /**
  * Mutes the track.
  */
 JitsiTrack.prototype.mute = function () {
-
+    this.stream.setMute(true);
 }
 
 /**
  * Unmutes the stream.
  */
 JitsiTrack.prototype.unmute = function () {
-
+    this.stream.setMute(false);
 }
 
 /**

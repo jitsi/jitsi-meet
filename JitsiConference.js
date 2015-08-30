@@ -1,3 +1,5 @@
+var RTC = require("./modules/RTC/RTC");
+var XMPPEvents = require("./service/xmpp/XMPPEvents");
 
 /**
  * Creates a JitsiConference object with the given name and properties.
@@ -14,6 +16,10 @@ function JitsiConference(options) {
     this.connection = this.options.connection;
     this.xmpp = this.connection.xmpp;
     this.room = this.xmpp.createRoom(this.options.name, null, null);
+    this.rtc = new RTC();
+    this.xmpp.addListener(XMPPEvents.CALL_INCOMING,
+        this.rtc.onIncommingCall.bind(this.rtc));
+
 }
 
 /**
@@ -41,14 +47,14 @@ JitsiConference.prototype.leave = function () {
  *     or a JitsiConferenceError if rejected.
  */
 JitsiConference.prototype.createLocalTracks = function (options) {
-
+    this.rtc.obtainAudioAndVideoPermissions();
 }
 
 /**
  * Returns the local tracks.
  */
 JitsiConference.prototype.getLocalTracks = function () {
-
+    return this.rtc.localStreams;
 };
 
 
@@ -61,7 +67,7 @@ JitsiConference.prototype.getLocalTracks = function () {
  * Note: consider adding eventing functionality by extending an EventEmitter impl, instead of rolling ourselves
  */
 JitsiConference.prototype.on = function (eventId, handler) {
-    this.add.addListener(eventId, handler);
+    this.room.addListener(eventId, handler);
 }
 
 /**
@@ -147,7 +153,15 @@ JitsiConference.prototype.setDisplayName = function(name) {
  * @param id the identifier of the participant
  */
 JitsiConference.prototype.selectParticipant = function(participantId) {
+    this.rtc.selectedEndpoint(participantId);
+}
 
+/**
+ *
+ * @param id the identifier of the participant
+ */
+JitsiConference.prototype.pinParticipant = function(participantId) {
+    this.rtc.pinEndpoint(participantId);
 }
 
 /**
