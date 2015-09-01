@@ -9,6 +9,7 @@ var transform = require("sdp-transform");
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 var RTCBrowserType = require("../RTC/RTCBrowserType");
 var SSRCReplacement = require("./LocalSSRCReplacement");
+var RTC = require("../RTC/RTC");
 
 // Jingle stuff
 function JingleSessionPC(me, sid, connection, service, eventEmitter) {
@@ -94,8 +95,8 @@ JingleSessionPC.prototype.doInitialize = function () {
     };
     this.peerconnection.onaddstream = function (event) {
         if (event.stream.id !== 'default') {
-        console.log("REMOTE STREAM ADDED: ", event.stream , event.stream.id);
-        self.remoteStreamAdded(event);
+            console.log("REMOTE STREAM ADDED: ", event.stream , event.stream.id);
+            self.remoteStreamAdded(event);
         } else {
             // This is a recvonly stream. Clients that implement Unified Plan,
             // such as Firefox use recvonly "streams/channels/tracks" for

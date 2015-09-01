@@ -11,7 +11,6 @@ var MediaStreamType = require("../../service/RTC/MediaStreamTypes");
 var StreamEventTypes = require("../../service/RTC/StreamEventTypes.js");
 var RTCEvents = require("../../service/RTC/RTCEvents.js");
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
-var UIEvents = require("../../service/UI/UIEvents");
 var desktopsharing = require("../desktopsharing/desktopsharing");
 
 function getMediaStreamUsage()
@@ -44,7 +43,6 @@ function getMediaStreamUsage()
 
 function RTC(options)
 {
-    this.rtcUtils = null;
     this.devices = {
         audio: true,
         video: true
@@ -68,7 +66,7 @@ function RTC(options)
         self.eventEmitter.emit(RTCEvents.RTC_READY, true);
     };
 
-    this.rtcUtils = new RTCUtils(this, onReady);
+    RTCUtils.init(onReady);
 
     // Call onReady() if Temasys plugin is not used
     if (!RTCBrowserType.isTemasysPluginUsed()) {
@@ -77,8 +75,8 @@ function RTC(options)
 }
 
 RTC.prototype.obtainAudioAndVideoPermissions = function (options) {
-    return this.rtcUtils.obtainAudioAndVideoPermissions(
-        null, getMediaStreamUsage(), options.resolution);
+    return RTCUtils.obtainAudioAndVideoPermissions(this,
+        options.devices, getMediaStreamUsage(), options.resolution);
 }
 
 RTC.prototype.onIncommingCall = function(event) {
@@ -154,32 +152,32 @@ RTC.prototype.createRemoteStream = function (data, sid, thessrc) {
     return remoteStream;
 };
 
-RTC.prototype.getPCConstraints = function () {
-    return this.rtcUtils.pc_constraints;
+RTC.getPCConstraints = function () {
+    return RTCUtils.pc_constraints;
 };
 
 RTC.prototype.getUserMediaWithConstraints = function(um, success_callback,
                                      failure_callback, resolution,
                                      bandwidth, fps, desktopStream)
 {
-    return this.rtcUtils.getUserMediaWithConstraints(um, success_callback,
+    return RTCUtils.getUserMediaWithConstraints(this, um, success_callback,
         failure_callback, resolution, bandwidth, fps, desktopStream);
 };
 
-RTC.prototype.attachMediaStream =  function (elSelector, stream) {
-    this.rtcUtils.attachMediaStream(elSelector, stream);
+RTC.attachMediaStream =  function (elSelector, stream) {
+    RTCUtils.attachMediaStream(elSelector, stream);
 };
 
-RTC.prototype.getStreamID = function (stream) {
-    return this.rtcUtils.getStreamID(stream);
+RTC.getStreamID = function (stream) {
+    return RTCUtils.getStreamID(stream);
 };
 
-RTC.prototype.getVideoSrc = function (element) {
-    return this.rtcUtils.getVideoSrc(element);
+RTC.getVideoSrc = function (element) {
+    return RTCUtils.getVideoSrc(element);
 };
 
-RTC.prototype.setVideoSrc = function (element, src) {
-    this.rtcUtils.setVideoSrc(element, src);
+RTC.setVideoSrc = function (element, src) {
+    RTCUtils.setVideoSrc(element, src);
 };
 
 RTC.prototype.getVideoElementName = function () {
@@ -187,9 +185,6 @@ RTC.prototype.getVideoElementName = function () {
 };
 
 RTC.prototype.dispose = function() {
-    if (this.rtcUtils) {
-        this.rtcUtils = null;
-    }
 };
 
 RTC.prototype.muteRemoteVideoStream = function (jid, value) {
@@ -239,7 +234,7 @@ RTC.prototype.changeLocalVideo = function (stream, isUsingScreenStream, callback
     if (stream && stream.videoStream) {
         stream = stream.videoStream;
     }
-    var videoStream = this.rtcUtils.createStream(stream, true);
+    var videoStream = RTCUtils.createStream(stream, true);
     this.localVideo = this.createLocalStream(videoStream, "video", true, type);
     // Stop the stream to trigger onended event for old stream
     oldStream.stop();
@@ -251,7 +246,7 @@ RTC.prototype.changeLocalVideo = function (stream, isUsingScreenStream, callback
 
 RTC.prototype.changeLocalAudio = function (stream, callback) {
     var oldStream = this.localAudio.getOriginalStream();
-    var newStream = this.rtcUtils.createStream(stream);
+    var newStream = RTCUtils.createStream(stream);
     this.localAudio = this.createLocalStream(newStream, "audio", true);
     // Stop the stream to trigger onended event for old stream
     oldStream.stop();
