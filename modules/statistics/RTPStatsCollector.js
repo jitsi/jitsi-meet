@@ -517,34 +517,33 @@ StatsCollector.prototype.processStatsReport = function () {
 
         var isDownloadStream = true;
         var key = 'packetsReceived';
-        if (!getStatValue(now, key))
-        {
+        var packetsNow = getStatValue(now, key);
+        if (typeof packetsNow === 'undefined' || packetsNow === null) {
             isDownloadStream = false;
             key = 'packetsSent';
-            if (!getStatValue(now, key))
-            {
-                logger.warn("No packetsReceived nor packetSent stat found");
+            packetsNow = getStatValue(now, key);
+            if (typeof packetsNow === 'undefined' || packetsNow === null) {
+                console.warn("No packetsReceived nor packetsSent stat found");
                 continue;
             }
         }
-        var packetsNow = getStatValue(now, key);
-        if(!packetsNow || packetsNow < 0)
+        if (!packetsNow || packetsNow < 0)
             packetsNow = 0;
 
         var packetsBefore = getStatValue(before, key);
-        if(!packetsBefore || packetsBefore < 0)
+        if (!packetsBefore || packetsBefore < 0)
             packetsBefore = 0;
         var packetRate = packetsNow - packetsBefore;
-        if(!packetRate || packetRate < 0)
+        if (!packetRate || packetRate < 0)
             packetRate = 0;
         var currentLoss = getStatValue(now, 'packetsLost');
-        if(!currentLoss || currentLoss < 0)
+        if (!currentLoss || currentLoss < 0)
             currentLoss = 0;
         var previousLoss = getStatValue(before, 'packetsLost');
-        if(!previousLoss || previousLoss < 0)
+        if (!previousLoss || previousLoss < 0)
             previousLoss = 0;
         var lossRate = currentLoss - previousLoss;
-        if(!lossRate || lossRate < 0)
+        if (!lossRate || lossRate < 0)
             lossRate = 0;
         var packetsTotal = (packetRate + lossRate);
 
@@ -555,34 +554,26 @@ StatsCollector.prototype.processStatsReport = function () {
 
 
         var bytesReceived = 0, bytesSent = 0;
-        if(getStatValue(now, "bytesReceived"))
-        {
+        if(getStatValue(now, "bytesReceived")) {
             bytesReceived = getStatValue(now, "bytesReceived") -
                 getStatValue(before, "bytesReceived");
         }
 
-        if(getStatValue(now, "bytesSent"))
-        {
+        if (getStatValue(now, "bytesSent")) {
             bytesSent = getStatValue(now, "bytesSent") -
                 getStatValue(before, "bytesSent");
         }
 
         var time = Math.round((now.timestamp - before.timestamp) / 1000);
-        if(bytesReceived <= 0 || time <= 0)
-        {
+        if (bytesReceived <= 0 || time <= 0) {
             bytesReceived = 0;
-        }
-        else
-        {
+        } else {
             bytesReceived = Math.round(((bytesReceived * 8) / time) / 1000);
         }
 
-        if(bytesSent <= 0 || time <= 0)
-        {
+        if (bytesSent <= 0 || time <= 0) {
             bytesSent = 0;
-        }
-        else
-        {
+        } else {
             bytesSent = Math.round(((bytesSent * 8) / time) / 1000);
         }
 
@@ -594,7 +585,8 @@ StatsCollector.prototype.processStatsReport = function () {
         try {
             if (getStatValue(now, "googFrameHeightReceived") &&
                 getStatValue(now, "googFrameWidthReceived")) {
-                resolution.height = getStatValue(now, "googFrameHeightReceived");
+                resolution.height =
+                    getStatValue(now, "googFrameHeightReceived");
                 resolution.width = getStatValue(now, "googFrameWidthReceived");
             }
             else if (getStatValue(now, "googFrameHeightSent") &&
@@ -605,16 +597,11 @@ StatsCollector.prototype.processStatsReport = function () {
         }
         catch(e){/*not supported*/}
 
-        if(resolution.height && resolution.width)
-        {
+        if (resolution.height && resolution.width) {
             ssrcStats.setSsrcResolution(ssrc, resolution);
-        }
-        else
-        {
+        } else {
             ssrcStats.setSsrcResolution(ssrc, null);
         }
-
-
     }
 
     var self = this;
@@ -625,11 +612,9 @@ StatsCollector.prototype.processStatsReport = function () {
     var bitrateUpload = 0;
     var resolutions = {};
     Object.keys(this.ssrc2stats).forEach(
-        function (jid)
-        {
+        function (jid) {
             Object.keys(self.ssrc2stats[jid].ssrc2Loss).forEach(
-                function (ssrc)
-                {
+                function (ssrc) {
                     var type = "upload";
                     if(self.ssrc2stats[jid].ssrc2Loss[ssrc].isDownloadStream)
                         type = "download";
