@@ -1,8 +1,7 @@
-/* global config, require, attachMediaStream, getUserMedia */
+/* global APP, config, require, attachMediaStream, getUserMedia */
 var RTCBrowserType = require("./RTCBrowserType");
 var Resolutions = require("../../service/RTC/Resolutions");
 var AdapterJS = require("./adapter.screenshare");
-var SDPUtil = require("../xmpp/SDPUtil");
 
 var currentResolution = null;
 
@@ -176,7 +175,7 @@ function RTCUtils(RTCService, onTemasysPluginReady)
                     }
                     id = tracks[0].id;
                 }
-                return SDPUtil.filter_special_chars(id);
+                return APP.xmpp.filter_special_chars(id);
             };
             this.getVideoSrc = function (element) {
                 if(!element)
@@ -205,7 +204,7 @@ function RTCUtils(RTCService, onTemasysPluginReady)
         this.getStreamID = function (stream) {
             // streams from FF endpoints have the characters '{' and '}'
             // that make jQuery choke.
-            return SDPUtil.filter_special_chars(stream.id);
+            return APP.xmpp.filter_special_chars(stream.id);
         };
         this.getVideoSrc = function (element) {
             if(!element)
@@ -251,7 +250,7 @@ function RTCUtils(RTCService, onTemasysPluginReady)
                 attachMediaStream(elSel[0], stream);
             };
             self.getStreamID = function (stream) {
-                var id = SDPUtil.filter_special_chars(stream.label);
+                var id = APP.xmpp.filter_special_chars(stream.label);
                 return id;
             };
             self.getVideoSrc = function (element) {

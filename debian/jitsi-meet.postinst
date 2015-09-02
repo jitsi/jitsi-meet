@@ -92,15 +92,15 @@ case "$1" in
             OWNER=$(stat -c '%U' /usr/share/jitsi-videobridge)
             GROUP=$(stat -c '%G' /usr/share/jitsi-videobridge)
             JVB_UID="`id -u $OWNER`"
-            if [ ! -f "/etc/authbind/byuid/$JVB_UID" ] ; then
-                if [ ! -d "/etc/authbind/byuid" ] ; then
-                        mkdir -p /etc/authbind/byuid
+            if [ ! -f "/etc/authbind/byport/443" ] ; then
+                if [ ! -d "/etc/authbind/byport" ] ; then
+                        mkdir -p /etc/authbind/byport
                         chmod 755 /etc/authbind
-                        chmod 755 /etc/authbind/byuid
+                        chmod 755 /etc/authbind/byport
                 fi
-                echo '::,443' >/etc/authbind/byuid/$JVB_UID
-                chown $OWNER:$GROUP /etc/authbind/byuid/$JVB_UID
-                chmod 700 /etc/authbind/byuid/$JVB_UID
+                touch /etc/authbind/byport/443
+                chown $OWNER /etc/authbind/byport/443
+                chmod 755 /etc/authbind/byport/443
             fi
 
             if [ "$CERT_CHOICE" = "$UPLOADED_CERT_CHOICE" ] ; then

@@ -3,6 +3,7 @@ var Moderator = require("./moderator");
 var EventEmitter = require("events");
 var Recording = require("./recording");
 var SDP = require("./SDP");
+var SDPUtil = require("./SDPUtil");
 var Settings = require("../settings/Settings");
 var Pako = require("pako");
 var StreamEventTypes = require("../../service/RTC/StreamEventTypes");
@@ -578,6 +579,9 @@ var XMPP = {
         if (!this.isConferenceInProgress())
             return;
         connection.jingle.activecall.peerconnection.removeStream(stream);
+    },
+    filter_special_chars: function (text) {
+        return SDPUtil.filter_special_chars(text);
     }
 };
 
