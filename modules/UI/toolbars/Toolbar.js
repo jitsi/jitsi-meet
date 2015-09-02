@@ -402,18 +402,18 @@ var Toolbar = (function (my) {
      * Opens the invite link dialog.
      */
     my.openLinkDialog = function () {
-        var inviteAttreibutes;
+        var inviteAttributes;
 
         if (roomUrl === null) {
-            inviteAttreibutes = 'data-i18n="[value]roomUrlDefaultMsg" value="' +
+            inviteAttributes = 'data-i18n="[value]roomUrlDefaultMsg" value="' +
             APP.translation.translateString("roomUrlDefaultMsg") + '"';
         } else {
-            inviteAttreibutes = "value=\"" + encodeURI(roomUrl) + "\"";
+            inviteAttributes = "value=\"" + encodeURI(roomUrl) + "\"";
         }
         messageHandler.openTwoButtonDialog("dialog.shareLink",
             null, null,
             '<input id="inviteLinkRef" type="text" ' +
-                inviteAttreibutes + ' onclick="this.select();" readonly>',
+                inviteAttributes + ' onclick="this.select();" readonly>',
             false,
             "dialog.Invite",
             function (e, v) {
