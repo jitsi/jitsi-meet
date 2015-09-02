@@ -1,14 +1,18 @@
 /* global $ */
 var PanelToggler = require("../side_pannels/SidePanelToggler");
+var AnalyticsAdapter = require("../../statistics/AnalyticsAdapter");
 
 var buttonHandlers = {
     "bottom_toolbar_contact_list": function () {
+        AnalyticsAdapter.sendEvent('bottomtoolbar.contacts.toggled');
         BottomToolbar.toggleContactList();
     },
     "bottom_toolbar_film_strip": function () {
+        AnalyticsAdapter.sendEvent('bottomtoolbar.filmstrip.toggled');
         BottomToolbar.toggleFilmStrip();
     },
     "bottom_toolbar_chat": function () {
+        AnalyticsAdapter.sendEvent('bottomtoolbar.chat.toggled');
         BottomToolbar.toggleChat();
     }
 };
