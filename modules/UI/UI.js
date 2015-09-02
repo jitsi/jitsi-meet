@@ -199,6 +199,16 @@ function registerListeners() {
     APP.desktopsharing.addListener(
         DesktopSharingEventTypes.SWITCHING_DONE,
         Toolbar.changeDesktopSharingButtonState);
+    APP.desktopsharing.addListener(
+        DesktopSharingEventTypes.FIREFOX_EXTENSION_NEEDED,
+        function (url) {
+            APP.UI.messageHandler.openMessageDialog(
+                "dialog.extensionRequired",
+                null,
+                null,
+                APP.translation.generateTranslationHTML(
+                    "dialog.firefoxExtensionPrompt", {url: url}));
+        });
     APP.connectionquality.addListener(CQEvents.LOCALSTATS_UPDATED,
         VideoLayout.updateLocalConnectionStats);
     APP.connectionquality.addListener(CQEvents.REMOTESTATS_UPDATED,

@@ -62,12 +62,6 @@ function onEndedHandler(stream) {
     }
 }
 
-// Called when RTC finishes initialization
-function onWebRtcReady() {
-    screenObtainer.init();
-    eventEmitter.emit(DesktopSharingEventTypes.INIT);
-}
-
 module.exports = {
     isUsingScreenStream: function () {
         return isUsingScreenStream;
@@ -82,7 +76,12 @@ module.exports = {
     },
     
     init: function () {
-        APP.RTC.addListener(RTCEvents.RTC_READY, onWebRtcReady);
+        // Called when RTC finishes initialization
+        APP.RTC.addListener(RTCEvents.RTC_READY,
+            function() {
+                screenObtainer.init(eventEmitter);
+                eventEmitter.emit(DesktopSharingEventTypes.INIT);
+            });
     },
 
     addListener: function (type, listener) {
@@ -139,6 +138,11 @@ module.exports = {
                 getVideoStreamFailed, config.resolution || '360'
             );
         }
-    }
+    },
+    /*
+     * Exports the event emitter to allow use by ScreenObtainer. Not for outside
+     * use.
+     */
+    eventEmitter: eventEmitter
 };
 

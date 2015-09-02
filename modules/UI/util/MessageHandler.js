@@ -11,15 +11,23 @@ var messageHandler = (function(my) {
     /**
      * Shows a message to the user.
      *
-     * @param titleKey the title of the message
-     * @param messageKey the text of the message
+     * @param titleKey the key used to find the translation of the title of the
+     * message, if a message title is not provided.
+     * @param messageKey the key used to find the translation of the message,
+     * if a message is not provided.
+     * @param title the title of the message. If a falsy value is provided,
+     * titleKey will be used to get a title via the translation API.
+     * @param message the message to show. If a falsy value is provided,
+     * messageKey will be used to get a message via the translation API.
      */
-    my.openMessageDialog = function(titleKey, messageKey) {
-        var title = null;
-        if(titleKey) {
+    my.openMessageDialog = function(titleKey, messageKey, title, message) {
+        if (!title) {
             title = APP.translation.generateTranslationHTML(titleKey);
         }
-        var message = APP.translation.generateTranslationHTML(messageKey);
+        if (!message) {
+            message = APP.translation.generateTranslationHTML(messageKey);
+        }
+
         $.prompt(message,
             {title: title, persistent: false}
         );

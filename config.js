@@ -17,10 +17,31 @@ var config = {
     clientNode: 'http://jitsi.org/jitsimeet', // The name of client node advertised in XEP-0115 'c' stanza
     //focusUserJid: 'focus@auth.jitsi-meet.example.com', // The real JID of focus participant - can be overridden here
     //defaultSipNumber: '', // Default SIP number
-    desktopSharing: 'ext', // Desktop sharing method. Can be set to 'ext', 'webrtc' or false to disable.
-    chromeExtensionId: 'diibjkoicjeejcmhdnailmkgecihlobk', // Id of desktop streamer Chrome extension
-    desktopSharingSources: ['screen', 'window'],
-    minChromeExtVersion: '0.1', // Required version of Chrome extension
+
+    // Desktop sharing method. Can be set to 'ext', 'webrtc' or false to disable.
+    desktopSharingChromeMethod: 'ext',
+    // The ID of the jidesha extension for Chrome.
+    desktopSharingChromeExtId: 'diibjkoicjeejcmhdnailmkgecihlobk',
+    // The media sources to use when using screen sharing with the Chrome
+    // extension.
+    desktopSharingChromeSources: ['screen', 'window'],
+    // Required version of Chrome extension
+    desktopSharingChromeMinExtVersion: '0.1',
+
+    // The ID of the jidesha extension for Firefox. If null, we assume that no
+    // extension is required.
+    desktopSharingFirefoxExtId: null,
+    // Whether desktop sharing should be disabled on Firefox.
+    desktopSharingFirefoxDisabled: true,
+    // The maximum version of Firefox which requires a jidesha extension.
+    // Example: if set to 41, we will require the extension for Firefox versions
+    // up to and including 41. On Firefox 42 and higher, we will run without the
+    // extension.
+    // If set to -1, an extension will be required for all versions of Firefox.
+    desktopSharingFirefoxMaxVersionExtRequired: -1,
+    // The URL to the Firefox extension for desktop sharing.
+    desktopSharingFirefoxExtensionURL: null,
+
     openSctp: true, // Toggle to enable/disable SCTP channels
     disableStats: false,
     disableAudioLevels: false,
