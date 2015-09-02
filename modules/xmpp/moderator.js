@@ -32,13 +32,14 @@ function Moderator(roomName, xmpp, emitter) {
     this.xmppService = xmpp;
     this.getNextTimeout = createExpBackoffTimer(1000);
     this.getNextErrorTimeout = createExpBackoffTimer(1000);
-// External authentication stuff
+    // External authentication stuff
     this.externalAuthEnabled = false;
     this.settings = new Settings(roomName);
-// Sip gateway can be enabled by configuring Jigasi host in config.js or
-// it will be enabled automatically if focus detects the component through
-// service discovery.
-    this.sipGatewayEnabled = this.xmppService.options.hosts.call_control !== undefined;
+    // Sip gateway can be enabled by configuring Jigasi host in config.js or
+    // it will be enabled automatically if focus detects the component through
+    // service discovery.
+    this.sipGatewayEnabled =
+        this.xmppService.options.hosts.call_control !== undefined;
 
     this.eventEmitter = emitter;
 
@@ -132,59 +133,68 @@ Moderator.prototype.createConferenceIq =  function () {
     }
     if (this.xmppService.options.hosts.bridge !== undefined) {
         elem.c(
-            'property',
-            {name: 'bridge',value: this.xmppService.options.hosts.bridge})
-            .up();
+            'property', {
+                name: 'bridge',
+                value: this.xmppService.options.hosts.bridge
+            }).up();
     }
     // Tell the focus we have Jigasi configured
     if (this.xmppService.options.hosts.call_control !== undefined) {
         elem.c(
-            'property',
-            {name: 'call_control',value:  this.xmppService.options.hosts.call_control})
-            .up();
+            'property', {
+                name: 'call_control',
+                value:  this.xmppService.options.hosts.call_control
+            }).up();
     }
     if (this.xmppService.options.channelLastN !== undefined) {
         elem.c(
-            'property',
-            {name: 'channelLastN',value: this.xmppService.options.channelLastN})
-            .up();
+            'property', {
+                name: 'channelLastN',
+                value: this.xmppService.options.channelLastN
+            }).up();
     }
     if (this.xmppService.options.adaptiveLastN !== undefined) {
         elem.c(
-            'property',
-            {name: 'adaptiveLastN',value: this.xmppService.options.adaptiveLastN})
-            .up();
+            'property', {
+                name: 'adaptiveLastN',
+                value: this.xmppService.options.adaptiveLastN
+            }).up();
     }
     if (this.xmppService.options.adaptiveSimulcast !== undefined) {
         elem.c(
-            'property',
-            {name: 'adaptiveSimulcast',value: this.xmppService.options.adaptiveSimulcast})
-            .up();
+            'property', {
+                name: 'adaptiveSimulcast',
+                value: this.xmppService.options.adaptiveSimulcast
+            }).up();
     }
     if (this.xmppService.options.openSctp !== undefined) {
         elem.c(
-            'property',
-            {name: 'openSctp',value: this.xmppService.options.openSctp})
-            .up();
+            'property', {
+                name: 'openSctp',
+                value: this.xmppService.options.openSctp
+            }).up();
     }
-    if(this.xmppService.options.startAudioMuted !== undefined)
+    if (this.xmppService.options.startAudioMuted !== undefined)
     {
         elem.c(
-            'property',
-            {name: 'startAudioMuted',value: this.xmppService.options.startAudioMuted})
-            .up();
+            'property', {
+                name: 'startAudioMuted',
+                value: this.xmppService.options.startAudioMuted
+            }).up();
     }
-    if(this.xmppService.options.startVideoMuted !== undefined)
+    if (this.xmppService.options.startVideoMuted !== undefined)
     {
         elem.c(
-            'property',
-            {name: 'startVideoMuted',value: this.xmppService.options.startVideoMuted})
-            .up();
+            'property', {
+                name: 'startVideoMuted',
+                value: this.xmppService.options.startVideoMuted
+            }).up();
     }
     elem.c(
-        'property',
-        {name: 'simulcastMode',value: 'rewriting'})
-        .up();
+        'property', {
+            name: 'simulcastMode',
+            value: 'rewriting'
+        }).up();
     elem.up();
     return elem;
 };
@@ -214,7 +224,8 @@ Moderator.prototype.parseConfigOptions =  function (resultIq) {
             '>conference>property' +
             '[name=\'externalAuth\'][value=\'true\']').length > 0;
 
-    logger.info('External authentication enabled: ' + this.externalAuthEnabled);
+    console.info(
+        'External authentication enabled: ' + this.externalAuthEnabled);
 
     if (!this.externalAuthEnabled) {
         // We expect to receive sessionId in 'internal' authentication mode
@@ -239,7 +250,7 @@ Moderator.prototype.parseConfigOptions =  function (resultIq) {
 
 // FIXME =  we need to show the fact that we're waiting for the focus
 // to the user(or that focus is not available)
-Moderator.prototype.allocateConferenceFocus =  function ( callback) {
+Moderator.prototype.allocateConferenceFocus =  function (callback) {
     // Try to use focus user JID from the config
     this.setFocusUserJid(this.xmppService.options.focusUserJid);
     // Send create conference IQ
@@ -300,7 +311,8 @@ Moderator.prototype.allocateConferenceFocus =  function ( callback) {
                 logger.warn("Unauthorized to start the conference", error);
                 var toDomain
                     = Strophe.getDomainFromJid(error.getAttribute('to'));
-                if (toDomain !== this.xmppService.options.hosts.anonymousdomain) {
+                if (toDomain !==
+                    this.xmppService.options.hosts.anonymousdomain) {
                     //FIXME:  "is external" should come either from
                     // the focus or config.js
                     self.externalAuthEnabled = true;
