@@ -96,9 +96,18 @@ var RTC = {
         }
     },
     createRemoteStream: function (data, sid, thessrc) {
-        var remoteStream = new MediaStream(data, sid, thessrc,
-            RTCBrowserType.getBrowserType(), eventEmitter);
         var jid = data.peerjid || APP.xmpp.myJid();
+
+        // check the video muted state from last stored presence if any
+        var muted = false;
+        var pres = APP.xmpp.getLastPresence(jid);
+        if(pres != null && pres.videoMuted) {
+            muted = pres.videoMuted;
+        }
+
+        var remoteStream = new MediaStream(data, sid, thessrc,
+            RTCBrowserType.getBrowserType(), eventEmitter, muted);
+
         if(!this.remoteStreams[jid]) {
             this.remoteStreams[jid] = {};
         }

@@ -336,6 +336,11 @@ var XMPP = {
             return null;
         return Strophe.getResourceFromJid(connection.emuc.myroomjid);
     },
+    getLastPresence: function (from) {
+        if(!connection)
+            return null;
+        return connection.emuc.lastPresenceMap[from];
+    },
     disposeConference: function (onUnload) {
         var handler = connection.jingle.activecall;
         if (handler && handler.peerconnection) {

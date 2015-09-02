@@ -8,10 +8,11 @@ var MediaStreamType = require("../../service/RTC/MediaStreamTypes");
  * the peerjid, etc.
  * @param sid the session id
  * @param ssrc the ssrc corresponding to this MediaStream
+ * @param mute the whether this MediaStream is muted
  *
  * @constructor
  */
-function MediaStream(data, sid, ssrc, browser, eventEmitter) {
+function MediaStream(data, sid, ssrc, browser, eventEmitter, mute) {
 
     // XXX(gp) to minimize headaches in the future, we should build our
     // abstractions around tracks and not streams. ORTC is track based API.
@@ -30,7 +31,7 @@ function MediaStream(data, sid, ssrc, browser, eventEmitter) {
     this.ssrc = ssrc;
     this.type = (this.stream.getVideoTracks().length > 0)?
         MediaStreamType.VIDEO_TYPE : MediaStreamType.AUDIO_TYPE;
-    this.muted = false;
+    this.muted = mute;
     this.eventEmitter = eventEmitter;
 }
 

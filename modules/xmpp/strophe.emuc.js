@@ -14,6 +14,7 @@ module.exports = function(XMPP, eventEmitter) {
         list_members: [], // so we can elect a new focus
         presMap: {},
         preziMap: {},
+        lastPresenceMap: {},
         joined: false,
         isOwner: false,
         role: null,
@@ -135,6 +136,9 @@ module.exports = function(XMPP, eventEmitter) {
                 $(document).trigger('presentationremoved.muc', [from, url]);
             }
 
+            // store the last presence for participant
+            this.lastPresenceMap[from] = {};
+
             // Parse audio info tag.
             var audioMuted = $(pres).find('>audiomuted');
             if (audioMuted.length) {
@@ -145,8 +149,9 @@ module.exports = function(XMPP, eventEmitter) {
             // Parse video info tag.
             var videoMuted = $(pres).find('>videomuted');
             if (videoMuted.length) {
-                eventEmitter.emit(XMPPEvents.PARTICIPANT_VIDEO_MUTED,
-                    from, (videoMuted.text() === "true"));
+                var value = (videoMuted.text() === "true");
+                this.lastPresenceMap[from].videoMuted = value;
+                eventEmitter.emit(XMPPEvents.PARTICIPANT_VIDEO_MUTED, from, value);
             }
 
             var startMuted = $(pres).find('>startmuted');
@@ -309,6 +314,11 @@ module.exports = function(XMPP, eventEmitter) {
                     eventEmitter.emit(XMPPEvents.KICKED);
                 }
             }
+
+            if (this.lastPresenceMap[from] != null) {
+                delete this.lastPresenceMap[from];
+            }
+
             return true;
         },
         onPresenceError: function (pres) {
