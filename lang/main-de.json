@@ -23,7 +23,7 @@
         },
         "feature3": {
             "title": "Open Source",
-            "content": "__app__ steht unter der MIT Lizenz. __app__ kann gemäss der Lizenz heruntergeladen, verwendet, verändert und weitergegeben werden."
+            "content": "__app__ steht unter der Apache Lizenz. Es steht ihnen frei __app__ gemäss dieser Lizenz herunterzuladen, zu verändern oder zu verbreiten."
         },
         "feature4": {
             "title": "Unbegrenzte Anzahl Benutzer",
@@ -127,10 +127,9 @@
     },
     "dialog": {
         "kickMessage": "Oh! Sie wurden aus der Konferenz ausgeschlossen.",
-        "popupError": "Ihr Browser blockiert Popups von dieser Webseite. Bitte erlauben Sie Popups in den Sicherheitseinstellungen und versuchen Sie es erneut.",
+        "popupError": "Ihr Browser blockiert Popup-Fenster von dieser Webseite. Bitte erlauben Sie dieser Seite Popups in den Sicherheitseinstellungen Ihres Browsers und versuchen Sie es erneut.",
         "passwordError": "Diese Konferenz ist mit einem Paswort geschützt. Nur der Besitzer der Konferenz kann ein Passwort vergeben.",
         "passwordError2": "Diese Konferenzt ist nicht mit einem Passwort geschützt. Nur der Besitzer der Konferenz kann ein Passwort vergeben.",
-        "joinError": "Oh! Der Konferenz konnte nicht beigetreten werden. Diese könnte ein Problem mit den Sicherheitseinstellungen sein. Bitte kontaktieren Sie den Administrator des Dienstes.",
         "connectError": "Oh! Es hat etwas nicht geklappt und der Konferenz konnte nicht beigetreten werden.",
         "connectErrorWithMsg": "Oh! Es hat etwas nicht geklappt und der Konferenz konnte nicht beigetreten werden: __msg__",
         "connecting": "Verbindung wird hergestellt",
@@ -190,7 +189,9 @@
         "password": "Passwort",
         "userPassword": "Benutzerpasswort",
         "token": "Token",
-        "displayNameRequired": "Geben Sie Ihren Anzeigenamen ein:"
+        "displayNameRequired": "Geben Sie Ihren Anzeigenamen ein:",
+        "extensionRequired": "Erweiterung erforderlich:",
+        "firefoxExtensionPrompt": "Um die Bildschirmfreigabe nutzen zu können, muss eine Firefox-Erweiterung installiert werden. Bitte versuchen Sie es erneut nachdem die <a href='__url__'>Erweiterung installiert</a> wurde."
     },
     "email": {
         "sharedKey": [
