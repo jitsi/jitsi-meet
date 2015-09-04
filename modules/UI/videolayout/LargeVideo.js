@@ -239,21 +239,13 @@ function changeVideo(isVisible) {
     }
 
     updateActiveSpeakerAvatarSrc();
+    var largeVideoElement = $('#largeVideo')[0];
 
-    APP.RTC.setVideoSrc($('#largeVideo')[0], currentSmallVideo.getSrc());
-
-    var videoTransform = document.getElementById('largeVideo')
-        .style.webkitTransform;
+    APP.RTC.setVideoSrc(largeVideoElement, currentSmallVideo.getSrc());
 
     var flipX = currentSmallVideo.flipX;
 
-    if (flipX && videoTransform !== 'scaleX(-1)') {
-        document.getElementById('largeVideo').style.webkitTransform =
-            "scaleX(-1)";
-    } else if (!flipX && videoTransform === 'scaleX(-1)') {
-        document.getElementById('largeVideo').style.webkitTransform =
-            "none";
-    }
+    largeVideoElement.style.transform = flipX ? "scaleX(-1)" : "none";
 
     var isDesktop = currentSmallVideo.getVideoType() === 'screen';
     // Change the way we'll be measuring and positioning large video
