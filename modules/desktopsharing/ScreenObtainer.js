@@ -225,7 +225,8 @@ function doGetStreamFromExtension(streamCallback, failCallback) {
     // Sends 'getStream' msg to the extension.
     // Extension id must be defined in the config.
     chrome.runtime.sendMessage(
-        config.chromeExtensionId,
+        //TODO: remove chromeExtensionId (deprecated)
+        (config.desktopSharingChromeExtId || config.chromeExtensionId),
         {
             getStream: true,
             //TODO: remove desktopSharingSources (deprecated).
