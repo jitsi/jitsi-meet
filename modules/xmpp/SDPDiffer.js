@@ -1,14 +1,14 @@
-
 var SDPUtil = require("./SDPUtil");
 
-function SDPDiffer(mySDP, otherSDP) {
+function SDPDiffer(mySDP, otherSDP)
+{
     this.mySDP = mySDP;
     this.otherSDP = otherSDP;
 }
 
 /**
- * Returns map of MediaChannel that contains only media not contained in <tt>otherSdp</tt>. Mapped by channel idx.
- * @param otherSdp the other SDP to check ssrc with.
+ * Returns map of MediaChannel that contains media contained in
+ * 'mySDP', but not contained in 'otherSdp'. Mapped by channel idx.
  */
 SDPDiffer.prototype.getNewMedia = function() {
 
@@ -30,7 +30,8 @@ SDPDiffer.prototype.getNewMedia = function() {
                     return false;
             }
             else if (this[i] != array[i]) {
-                // Warning - two different object instances will never be equal: {x:20} != {x:20}
+                // Warning - two different object instances will never be
+                // equal: {x:20} != {x:20}
                 return false;
             }
         }
@@ -48,10 +49,11 @@ SDPDiffer.prototype.getNewMedia = function() {
             newMedia[othersMediaIdx] = othersMedia;
             return;
         }
-        // Look for new ssrcs accross the channel
+        // Look for new ssrcs across the channel
         Object.keys(othersMedia.ssrcs).forEach(function(ssrc) {
             if(Object.keys(myMedia.ssrcs).indexOf(ssrc) === -1) {
-                // Allocate channel if we've found ssrc that doesn't exist in our channel
+                // Allocate channel if we've found ssrc that doesn't exist in
+                // our channel
                 if(!newMedia[othersMediaIdx]){
                     newMedia[othersMediaIdx] = {
                         mediaindex: othersMedia.mediaindex,
@@ -71,8 +73,9 @@ SDPDiffer.prototype.getNewMedia = function() {
             var matched = false;
             for (var i = 0; i < myMedia.ssrcGroups.length; i++) {
                 var mySsrcGroup = myMedia.ssrcGroups[i];
-                if (otherSsrcGroup.semantics == mySsrcGroup.semantics
-                    && arrayEquals.apply(otherSsrcGroup.ssrcs, [mySsrcGroup.ssrcs])) {
+                if (otherSsrcGroup.semantics == mySsrcGroup.semantics &&
+                    arrayEquals.apply(otherSsrcGroup.ssrcs,
+                                      [mySsrcGroup.ssrcs])) {
 
                     matched = true;
                     break;
@@ -99,27 +102,21 @@ SDPDiffer.prototype.getNewMedia = function() {
 };
 
 /**
- * Sends SSRC update IQ.
- * @param sdpMediaSsrcs SSRCs map obtained from SDP.getNewMedia. Cntains SSRCs to add/remove.
- * @param sid session identifier that will be put into the IQ.
- * @param initiator initiator identifier.
- * @param toJid destination Jid
- * @param isAdd indicates if this is remove or add operation.
+ * TODO: document!
  */
 SDPDiffer.prototype.toJingle = function(modify) {
     var sdpMediaSsrcs = this.getNewMedia();
-    var self = this;
 
-    // FIXME: only announce video ssrcs since we mix audio and dont need
-    //      the audio ssrcs therefore
     var modified = false;
     Object.keys(sdpMediaSsrcs).forEach(function(mediaindex){
         modified = true;
         var media = sdpMediaSsrcs[mediaindex];
         modify.c('content', {name: media.mid});
 
-        modify.c('description', {xmlns:'urn:xmpp:jingle:apps:rtp:1', media: media.mid});
-        // FIXME: not completly sure this operates on blocks and / or handles different ssrcs correctly
+        modify.c('description',
+                 {xmlns:'urn:xmpp:jingle:apps:rtp:1', media: media.mid});
+        // FIXME: not completely sure this operates on blocks and / or handles
+        // different ssrcs correctly
         // generate sources from lines
         Object.keys(media.ssrcs).forEach(function(ssrcNum) {
             var mediaSsrc = media.ssrcs[ssrcNum];

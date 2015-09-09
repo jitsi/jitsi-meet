@@ -1,3 +1,4 @@
+/* global $ */
 var RTC = require('../RTC/RTC');
 var RTCBrowserType = require("../RTC/RTCBrowserType.js");
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
@@ -174,7 +175,8 @@ var normalizePlanB = function(desc) {
             }
 
             if (typeof mLine.ssrcs !== 'undefined' && Array.isArray(mLine.ssrcs)) {
-                for (var i = 0; i<mLine.ssrcs.length; i++){
+                var i;
+                for (i = 0; i<mLine.ssrcs.length; i++){
                     if (typeof mLine.ssrcs[i] === 'object'
                         && typeof mLine.ssrcs[i].id !== 'undefined'
                         && $.inArray(mLine.ssrcs[i].id, firstSsrcs) == 0) {
@@ -183,7 +185,7 @@ var normalizePlanB = function(desc) {
                     }
                 }
 
-                for (var i = 0; i<mLine.ssrcs.length; i++){
+                for (i = 0; i<mLine.ssrcs.length; i++){
                     if (typeof mLine.ssrcs[i] !== 'undefined') {
                         newSsrcLines.push(mLine.ssrcs[i]);
                     }
