@@ -1,5 +1,6 @@
 /* global config, APP, chrome, $, alert */
 /* jshint -W003 */
+var EventEmitter = require("events");
 var RTCBrowserType = require("../RTC/RTCBrowserType");
 var AdapterJS = require("../RTC/adapter.screenshare");
 var DesktopSharingEventTypes
@@ -31,6 +32,8 @@ var firefoxExtInstalled = null;
  * user tries to enable screen sharing).
  */
 var reDetectFirefoxExtension = false;
+
+var eventEmitter = new EventEmitter();
 
 /**
  * Handles obtaining a stream from a screen capture on different browsers.
@@ -182,9 +185,8 @@ function isUpdateRequired(minVersion, extVersion) {
         return false;
     }
     catch (e) {
+        eventEmitter.emit(DesktopSharingEventTypes.EXTENSION_VERSION_ERROR);
         console.error("Failed to parse extension version", e);
-        APP.UI.messageHandler.showError("dialog.error",
-            "dialog.detectext");
         return true;
     }
 }
@@ -280,10 +282,10 @@ function obtainScreenFromExtension(streamCallback, failCallback) {
                 }, 500);
             },
             function (arg) {
+                eventEmitter
+                  .emit(DesktopSharingEventTypes.EXTENSION_INSTALLATION_ERROR);
                 console.log("Failed to install the extension", arg);
                 failCallback(arg);
-                APP.UI.messageHandler.showError("dialog.error",
-                    "dialog.failtoinstall");
             }
         );
     }

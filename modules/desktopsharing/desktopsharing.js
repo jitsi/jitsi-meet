@@ -39,6 +39,7 @@ function newStreamCreated(stream) {
 }
 
 function getVideoStreamFailed(error) {
+    eventEmitter.emit(DesktopSharingEventTypes.VIDEOSTREAM_ERROR);
     console.error("Failed to obtain the stream to switch to", error);
     switchInProgress = false;
     isUsingScreenStream = false;
@@ -46,6 +47,7 @@ function getVideoStreamFailed(error) {
 }
 
 function getDesktopStreamFailed(error) {
+    eventEmitter.emit(DesktopSharingEventTypes.EXTENSION_STREAM_ERROR);
     console.error("Failed to obtain the stream to switch to", error);
     switchInProgress = false;
 }
