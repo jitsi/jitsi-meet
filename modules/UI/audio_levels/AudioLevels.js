@@ -243,7 +243,7 @@ var AudioLevels = (function(my) {
                 resized = true;
             }
 
-            if (canvas.heigh !== height + interfaceConfig.CANVAS_EXTRA) {
+            if (canvas.height !== height + interfaceConfig.CANVAS_EXTRA) {
                 canvas.height = height + interfaceConfig.CANVAS_EXTRA;
                 resized = true;
             }
