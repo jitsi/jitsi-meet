@@ -84,7 +84,7 @@ function setRecordingColibri(state, token, callback, connection) {
             recordingEnabled = newState;
             callback(newState);
 
-            if (newState === 'pending' && recordingStateChangeCallback == null) {
+            if (newState === 'pending' && !recordingStateChangeCallback) {
                 recordingStateChangeCallback = callback;
                 connection.addHandler(function(iq){
                     var state = $(iq).find('recording').attr('state');

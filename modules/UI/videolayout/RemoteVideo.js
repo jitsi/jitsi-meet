@@ -2,8 +2,6 @@
 var ConnectionIndicator = require("./ConnectionIndicator");
 var SmallVideo = require("./SmallVideo");
 var AudioLevels = require("../audio_levels/AudioLevels");
-var LargeVideo = require("./LargeVideo");
-var Avatar = require("../avatar/Avatar");
 var RTCBrowserType = require("../../RTC/RTCBrowserType");
 var UIUtils = require("../util/UIUtil");
 
@@ -84,10 +82,10 @@ if (!interfaceConfig.filmStripOnly) {
 
         var self = this;
         muteLinkItem.onclick = function(){
-            if ($(this).attr('disabled') != undefined) {
+            if ($(this).attr('disabled')) {
                 event.preventDefault();
             }
-            var isMute = self.isMuted == true;
+            var isMute = !!self.isMuted;
             APP.xmpp.setMute(self.peerJid, !isMute);
 
             popupmenuElement.setAttribute('style', 'display:none;');

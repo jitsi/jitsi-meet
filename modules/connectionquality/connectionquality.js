@@ -87,7 +87,7 @@ var ConnectionQuality = {
     updateLocalStats: function (data) {
         stats = data;
         eventEmitter.emit(CQEvents.LOCALSTATS_UPDATED, 100 - stats.packetLoss.total, stats);
-        if (sendIntervalId == null) {
+        if (!sendIntervalId) {
             startSendingStats();
         }
     },
@@ -98,7 +98,7 @@ var ConnectionQuality = {
      * @param data the statistics
      */
     updateRemoteStats: function (jid, data) {
-        if (data == null || data.packetLoss_total == null) {
+        if (!data || !data.packetLoss_total) {
             eventEmitter.emit(CQEvents.REMOTESTATS_UPDATED, jid, null, null);
             return;
         }

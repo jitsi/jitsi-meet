@@ -13,7 +13,7 @@ function getPreviousResolution(resolution) {
     var resName = null;
     for(var i in Resolutions) {
         var tmp = Resolutions[i];
-        if(res == null || (res.order < tmp.order && tmp.order < order)) {
+        if (!res || (res.order < tmp.order && tmp.order < order)) {
             resName = i;
             res = tmp;
         }
@@ -455,7 +455,7 @@ RTCUtils.prototype.errorCallback = function (error) {
             error.name == "OverconstrainedError") &&
         (error.constraintName == "minWidth" || error.constraintName == "maxWidth" ||
             error.constraintName == "minHeight" || error.constraintName == "maxHeight")
-        && resolution != null)
+        && resolution)
     {
         self.getUserMediaWithConstraints(['audio', 'video'],
             function (stream) {

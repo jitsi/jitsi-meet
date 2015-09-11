@@ -171,7 +171,7 @@ SmallVideo.prototype.showAudioIndicator = function(isMuted) {
         }
     }
     else {
-        if(audioMutedSpan.length == 0 ) {
+        if (!audioMutedSpan.length) {
             audioMutedSpan = document.createElement('span');
             audioMutedSpan.className = 'audioMuted';
             UIUtil.setTooltip(audioMutedSpan,
@@ -204,7 +204,7 @@ SmallVideo.prototype.showVideoIndicator = function(isMuted) {
         }
     }
     else {
-        if(videoMutedSpan.length == 0) {
+        if (!videoMutedSpan.length) {
             videoMutedSpan = document.createElement('span');
             videoMutedSpan.className = 'videoMuted';
 

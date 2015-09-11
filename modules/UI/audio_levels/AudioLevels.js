@@ -126,7 +126,7 @@ var AudioLevels = (function(my) {
             return;
 
         ASDrawContext.clearRect(0, 0, 300, 300);
-        if(audioLevel == 0)
+        if (!audioLevel)
             return;
 
         ASDrawContext.shadowBlur = getShadowLevel(audioLevel);

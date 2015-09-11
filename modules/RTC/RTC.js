@@ -101,7 +101,7 @@ var RTC = {
         // check the video muted state from last stored presence if any
         var muted = false;
         var pres = APP.xmpp.getLastPresence(jid);
-        if(pres != null && pres.videoMuted) {
+        if (pres && pres.videoMuted) {
             muted = pres.videoMuted;
         }
 

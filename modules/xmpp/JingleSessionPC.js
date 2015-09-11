@@ -844,7 +844,7 @@ JingleSessionPC.prototype.addSource = function (elem, fromJid) {
                 return this.getAttribute('ssrc');
             }).get();
 
-            if (ssrcs.length != 0) {
+            if (!ssrcs.length) {
                 lines += 'a=ssrc-group:' + semantics + ' ' + ssrcs.join(' ') + '\r\n';
             }
         });
@@ -923,7 +923,7 @@ JingleSessionPC.prototype.removeSource = function (elem, fromJid) {
                 return this.getAttribute('ssrc');
             }).get();
 
-            if (ssrcs.length != 0) {
+            if (ssrcs.length) {
                 lines += 'a=ssrc-group:' + semantics + ' ' + ssrcs.join(' ') + '\r\n';
             }
         });
@@ -1328,7 +1328,7 @@ JingleSessionPC.prototype.setLocalDescription = function () {
     var session = transform.parse(this.peerconnection.localDescription.sdp);
     session.media.forEach(function (media) {
 
-        if (media.ssrcs != null && media.ssrcs.length > 0) {
+        if (media.ssrcs && media.ssrcs.length > 0) {
             // TODO(gp) maybe exclude FID streams?
             media.ssrcs.forEach(function (ssrc) {
                 if (ssrc.attribute !== 'cname') {

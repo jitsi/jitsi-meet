@@ -168,7 +168,7 @@
             }
             // jump to animation steps by calling flyToNextStep()
             function doAnimationSteps() {
-                if (obj.values.isMoving == true) {
+                if (obj.values.isMoving) {
                     setTimeout(doAnimationSteps, 100); // wait until the flight ends
                     return;
                 }

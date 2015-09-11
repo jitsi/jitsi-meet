@@ -49,7 +49,7 @@ var VideoLayout = (function (my) {
     my.isInLastN = function(resource) {
         return lastNCount < 0 || // lastN is disabled
              // lastNEndpoints cache not built yet
-            (lastNCount > 0 && lastNEndpointsCache.length == 0) ||
+            (lastNCount > 0 && !lastNEndpointsCache.length) ||
             (lastNEndpointsCache &&
                 lastNEndpointsCache.indexOf(resource) !== -1);
     };
