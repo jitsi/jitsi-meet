@@ -1,5 +1,6 @@
 /* global require, ssrc2jid */
 /* jshint -W117 */
+/* jshint -W101 */
 var RTCBrowserType = require("../RTC/RTCBrowserType");
 
 /* Whether we support the browser we are running into for logging statistics */

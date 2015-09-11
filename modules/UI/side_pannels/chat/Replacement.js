@@ -1,3 +1,4 @@
+/* jshint -W101 */
 var Smileys = require("./smileys.json");
 /**
  * Processes links and smileys in "body"

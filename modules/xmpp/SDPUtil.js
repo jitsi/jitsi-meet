@@ -1,3 +1,4 @@
+/* jshint -W101 */
 var SDPUtil = {
     filter_special_chars: function (text) {
         return text.replace(/[\\\/\{,\}\+]/g, "");

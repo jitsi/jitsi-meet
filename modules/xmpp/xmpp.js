@@ -1,4 +1,5 @@
 /* global $, APP, config, Strophe, Base64, $msg */
+/* jshint -W101 */
 var Moderator = require("./moderator");
 var EventEmitter = require("events");
 var Recording = require("./recording");

@@ -1,4 +1,5 @@
 /* global APP, require */
+/* jshint -W101 */
 var EventEmitter = require("events");
 var eventEmitter = new EventEmitter();
 var CQEvents = require("../../service/connectionquality/CQEvents");

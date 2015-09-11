@@ -1,4 +1,5 @@
 /* global PreziPlayer */
+/* jshint -W101 */
 (function() {
     "use strict";
     var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };

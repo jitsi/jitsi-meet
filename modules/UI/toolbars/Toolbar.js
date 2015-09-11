@@ -1,5 +1,6 @@
 /* global APP, $, buttonClick, config, lockRoom, interfaceConfig, setSharedKey,
  Util */
+/* jshint -W101 */
 var messageHandler = require("../util/MessageHandler");
 var BottomToolbar = require("./BottomToolbar");
 var Prezi = require("../prezi/Prezi");

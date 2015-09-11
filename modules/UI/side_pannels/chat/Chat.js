@@ -203,7 +203,8 @@ var Chat = (function (my) {
                 }
                 else {
                     var message = UIUtil.escapeHtml(value);
-                    APP.xmpp.sendChatMessage(message, NicknameHandler.getNickname());
+                    APP.xmpp.sendChatMessage(message,
+                                             NicknameHandler.getNickname());
                 }
             }
         });

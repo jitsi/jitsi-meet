@@ -1,5 +1,6 @@
 /* global $, config, mozRTCPeerConnection, RTCPeerConnection,
     webkitRTCPeerConnection, RTCSessionDescription */
+/* jshint -W101 */
 var RTC = require('../RTC/RTC');
 var RTCBrowserType = require("../RTC/RTCBrowserType.js");
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");

@@ -1,4 +1,5 @@
 /* global APP, interfaceConfig, $, Strophe */
+/* jshint -W101 */
 var CanvasUtil = require("./CanvasUtils");
 
 var ASDrawContext = null;

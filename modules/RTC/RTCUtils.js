@@ -1,6 +1,7 @@
 /* global APP, config, require, attachMediaStream, getUserMedia,
     RTCPeerConnection, webkitMediaStream, webkitURL, webkitRTCPeerConnection,
     mozRTCIceCandidate, mozRTCSessionDescription, mozRTCPeerConnection */
+/* jshint -W101 */
 var RTCBrowserType = require("./RTCBrowserType");
 var Resolutions = require("../../service/RTC/Resolutions");
 var AdapterJS = require("./adapter.screenshare");

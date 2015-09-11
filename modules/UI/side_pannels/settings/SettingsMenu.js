@@ -61,7 +61,8 @@ var SettingsMenu = {
     },
 
     update: function() {
-        var newDisplayName = UIUtil.escapeHtml($('#setDisplayName').get(0).value);
+        var newDisplayName =
+            UIUtil.escapeHtml($('#setDisplayName').get(0).value);
         var newEmail = UIUtil.escapeHtml($('#setEmail').get(0).value);
 
         if(newDisplayName) {

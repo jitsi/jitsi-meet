@@ -20,7 +20,8 @@ module.exports = function (XMPP, eventEmitter) {
         },
         setMute: function (jid, mute) {
             console.info("set mute", mute);
-            var iqToFocus = $iq({to: this.connection.emuc.focusMucJid, type: 'set'})
+            var iqToFocus =
+                $iq({to: this.connection.emuc.focusMucJid, type: 'set'})
                 .c('mute', {
                     xmlns: 'http://jitsi.org/jitmeet/audio',
                     jid: jid

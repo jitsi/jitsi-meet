@@ -1,4 +1,5 @@
 /* jshint -W117 */
+/* jshint -W101 */
 
 var JingleSession = require("./JingleSessionPC");
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");

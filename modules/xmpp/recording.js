@@ -50,7 +50,8 @@ function setRecordingJirecon(state, token, callback, connection) {
             // TODO wait for an IQ with the real status, since this is
             // provisional?
             jireconRid = $(result).find('recording').attr('rid');
-            console.log('Recording ' + ((state === 'on') ? 'started' : 'stopped') +
+            console.log('Recording ' +
+                ((state === 'on') ? 'started' : 'stopped') +
                 '(jirecon)' + result);
             recordingEnabled = state;
             if (state === 'off'){
@@ -113,7 +114,9 @@ var Recording = {
         useJirecon = config.hosts &&
             (typeof config.hosts.jirecon != "undefined");
     },
-    toggleRecording: function (tokenEmptyCallback, recordingStateChangeCallback, connection) {
+    toggleRecording: function (tokenEmptyCallback,
+                               recordingStateChangeCallback,
+                               connection) {
         if (!Moderator.isModerator()) {
             console.log(
                     'non-focus, or conference not yet organized:' +
@@ -126,7 +129,9 @@ var Recording = {
         if (!recordingToken && !useJirecon) {
             tokenEmptyCallback(function (value) {
                 setRecordingToken(value);
-                self.toggleRecording(tokenEmptyCallback, recordingStateChangeCallback, connection);
+                self.toggleRecording(tokenEmptyCallback,
+                                     recordingStateChangeCallback,
+                                     connection);
             });
 
             return;

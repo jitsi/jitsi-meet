@@ -1,3 +1,4 @@
+/* jshint -W101 */
 /* jshint -W117 */
 var SDPUtil = require("./SDPUtil");
 

@@ -13,8 +13,7 @@
     "indent": 4, // {int} Number of spaces to use for indentation
     "latedef": true, // true: Require variables/functions to be defined before being used
     "newcap": true, // true: Require capitalization of all constructor functions e.g. `new F()`
-    //TODO: set to 80 when the code is compliant..
-    "maxlen": 1000, // {int} Max number of characters per line
+    "maxlen": 80, // {int} Max number of characters per line
     "latedef": false, //This option prohibits the use of a variable before it was defined
     "laxbreak": true //Ignore line breaks around "=", "==", "&&", etc.
 }

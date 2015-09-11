@@ -1,4 +1,5 @@
 /* global Strophe, APP, $, config, interfaceConfig, toastr */
+/* jshint -W101 */
 var UI = {};
 
 var VideoLayout = require("./videolayout/VideoLayout.js");

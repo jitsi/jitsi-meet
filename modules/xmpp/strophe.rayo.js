@@ -11,7 +11,8 @@ module.exports = function() {
                 }
 
                 this.connection.addHandler(
-                    this.onRayo.bind(this), this.RAYO_XMLNS, 'iq', 'set', null, null);
+                    this.onRayo.bind(this), this.RAYO_XMLNS, 'iq', 'set',
+                    null, null);
             },
             onRayo: function (iq) {
                 console.info("Rayo IQ", iq);
@@ -51,9 +52,9 @@ module.exports = function() {
                         console.info('Dial result ', result);
 
                         var resource = $(result).find('ref').attr('uri');
-                        this.call_resource = resource.substr('xmpp:'.length);
+                        self.call_resource = resource.substr('xmpp:'.length);
                         console.info(
-                                "Received call resource: " + this.call_resource);
+                            "Received call resource: " + self.call_resource);
                     },
                     function (error) {
                         console.info('Dial error ', error);

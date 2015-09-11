@@ -8,7 +8,8 @@ var UIUtil = require("../util/UIUtil");
 var etherpadName = null;
 var etherpadIFrame = null;
 var domain = null;
-var options = "?showControls=true&showChat=false&showLineNumbers=true&useMonospaceFont=false";
+var options = "?showControls=true&showChat=false&showLineNumbers=true" +
+    "&useMonospaceFont=false";
 
 
 /**

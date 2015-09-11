@@ -31,7 +31,8 @@ var defaultOptions = {
         var resPath = "lang/__ns__-__lng__.json";
         if(lng === languages.EN)
             resPath = "lang/__ns__.json";
-        var url = i18n.functions.applyReplacement(resPath, { lng: lng, ns: ns });
+        var url = i18n.functions.applyReplacement(resPath,
+                                                 { lng: lng, ns: ns });
         i18n.functions.ajax({
             url: url,
             success: function(data, status, xhr) {

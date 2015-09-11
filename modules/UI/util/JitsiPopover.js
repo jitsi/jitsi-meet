@@ -28,7 +28,8 @@ var JitsiPopover = (function () {
         element.data("jitsi_popover", this);
         this.element = element;
         this.template = ' <div class="jitsipopover ' + this.options.skin +
-            '"><div class="arrow"></div><div class="jitsipopover-content"></div>' +
+            '"><div class="arrow"></div>' +
+            '<div class="jitsipopover-content"></div>' +
             '<div class="jitsiPopupmenuPadding"></div></div>';
         var self = this;
         this.element.on("mouseenter", function () {

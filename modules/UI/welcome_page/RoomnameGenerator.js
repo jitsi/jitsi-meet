@@ -1,3 +1,4 @@
+/* jshint -W101 */
 //var nouns = [
 //];
 var pluralNouns = [

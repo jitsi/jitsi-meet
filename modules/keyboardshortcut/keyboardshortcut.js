@@ -51,7 +51,8 @@ var KeyboardShortcut = {
                     APP.UI.clickOnVideo(keycode - "0".charCodeAt(0) + 1);
                 }
                 //esc while the smileys are visible hides them
-            } else if (keycode === 27 && $('#smileysContainer').is(':visible')) {
+            } else if (keycode === 27 &&
+                $('#smileysContainer').is(':visible')) {
                 APP.UI.toggleSmileys();
             }
         };

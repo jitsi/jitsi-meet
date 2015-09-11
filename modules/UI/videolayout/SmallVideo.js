@@ -1,4 +1,5 @@
 /* global $, APP, require */
+/* jshint -W101 */
 var Avatar = require("../avatar/Avatar");
 var UIUtil = require("../util/UIUtil");
 var LargeVideo = require("./LargeVideo");

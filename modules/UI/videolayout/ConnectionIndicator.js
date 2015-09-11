@@ -1,4 +1,5 @@
 /* global APP, $ */
+/* jshint -W101 */
 var JitsiPopover = require("../util/JitsiPopover");
 
 /**

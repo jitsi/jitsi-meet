@@ -1,4 +1,5 @@
 /* global $, APP, jQuery, toastr, Impromptu */
+/* jshint -W101 */
 
 /**
  * Flag for enable/disable of the notifications.

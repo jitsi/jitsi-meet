@@ -70,7 +70,8 @@ var JitsiMeetExternalAPI = (function()
                 if (!interfaceConfigOverwrite.hasOwnProperty(key) ||
                     typeof key !== 'string')
                     continue;
-                this.url += "&interfaceConfig." + key + "=" + interfaceConfigOverwrite[key];
+                this.url += "&interfaceConfig." + key + "=" +
+                    interfaceConfigOverwrite[key];
             }
         }
 
@@ -180,7 +181,8 @@ var JitsiMeetExternalAPI = (function()
      * {{
      * jid: jid //the jid of the participant
      * }}
-     * participantLeft - receives event notifications about participant that left room.
+     * participantLeft - receives event notifications about the participant that
+     * left the room.
      * The listener will receive object with the following structure:
      * {{
      * jid: jid //the jid of the participant
@@ -225,7 +227,8 @@ var JitsiMeetExternalAPI = (function()
      * {{
      * jid: jid //the jid of the participant
      * }}
-     * participantLeft - receives event notifications about participant that left room.
+     * participantLeft - receives event notifications about participant the that
+     * left the room.
      * The listener will receive object with the following structure:
      * {{
      * jid: jid //the jid of the participant

@@ -1,4 +1,5 @@
 /* global $, APP, Strophe, interfaceConfig */
+/* jshint -W101 */
 var Avatar = require("../avatar/Avatar");
 var RTCBrowserType = require("../../RTC/RTCBrowserType");
 var UIUtil = require("../util/UIUtil");

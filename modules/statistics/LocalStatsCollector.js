@@ -66,7 +66,8 @@ function animateLevel(newLevel, lastLevel) {
  * @param interval stats refresh interval given in ms.
  * @constructor
  */
-function LocalStatsCollector(stream, interval, statisticsService, eventEmitter) {
+function LocalStatsCollector(stream, interval,
+                             statisticsService, eventEmitter) {
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
     this.stream = stream;
     this.intervalId = null;

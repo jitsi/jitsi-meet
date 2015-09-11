@@ -103,7 +103,8 @@ var PanelToggler = (function(my) {
         toggle(Chat,
             '#chatspace',
             function () {
-                // Request the focus in the nickname field or the chat input field.
+                // Request the focus in the nickname field or the chat input
+                // field.
                 if ($('#nickname').css('visibility') === 'visible') {
                     $('#nickinput').focus();
                 } else {
@@ -164,7 +165,9 @@ var PanelToggler = (function(my) {
     };
 
     my.isVisible = function() {
-        return (Chat.isVisible() || ContactList.isVisible() || SettingsMenu.isVisible());
+        return (Chat.isVisible() ||
+                ContactList.isVisible() ||
+                SettingsMenu.isVisible());
     };
 
     return my;

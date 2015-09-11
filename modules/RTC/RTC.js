@@ -65,9 +65,11 @@ var RTC = {
 
         eventEmitter.removeListener(eventType, listener);
     },
-    createLocalStream: function (stream, type, change, videoType, isMuted, isGUMStream) {
+    createLocalStream: function (stream, type, change, videoType,
+                                 isMuted, isGUMStream) {
 
-        var localStream =  new LocalStream(stream, type, eventEmitter, videoType, isGUMStream);
+        var localStream =
+            new LocalStream(stream, type, eventEmitter, videoType, isGUMStream);
         //in firefox we have only one stream object
         if(this.localStreams.length === 0 ||
             this.localStreams[0].getOriginalStream() != stream)
@@ -112,7 +114,8 @@ var RTC = {
             this.remoteStreams[jid] = {};
         }
         this.remoteStreams[jid][remoteStream.type]= remoteStream;
-        eventEmitter.emit(StreamEventTypes.EVENT_TYPE_REMOTE_CREATED, remoteStream);
+        eventEmitter.emit(StreamEventTypes.EVENT_TYPE_REMOTE_CREATED,
+                          remoteStream);
         return remoteStream;
     },
     getPCConstraints: function () {
@@ -224,7 +227,8 @@ var RTC = {
             stream = stream.videoStream;
         }
         var videoStream = this.rtcUtils.createStream(stream, true);
-        this.localVideo = this.createLocalStream(videoStream, "video", true, type);
+        this.localVideo =
+            this.createLocalStream(videoStream, "video", true, type);
         // Stop the stream to trigger onended event for old stream
         oldStream.stop();
 

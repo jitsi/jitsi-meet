@@ -1,4 +1,5 @@
 /* jshint -W117 */
+/* jshint -W101 */
 var JingleSession = require("./JingleSession");
 var TraceablePeerConnection = require("./TraceablePeerConnection");
 var SDPDiffer = require("./SDPDiffer");

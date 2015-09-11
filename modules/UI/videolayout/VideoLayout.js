@@ -1,4 +1,5 @@
 /* global config, APP, $, Strophe, require, interfaceConfig */
+/* jshint -W101 */
 var AudioLevels = require("../audio_levels/AudioLevels");
 var ContactList = require("../side_pannels/contactlist/ContactList");
 var MediaStreamType = require("../../../service/RTC/MediaStreamTypes");
