@@ -87,6 +87,19 @@ var buttonHandlers = {
             });
     }
 };
+var defaultToolbarButtons = {
+    'microphone': '#toolbar_button_mute',
+    'camera': '#toolbar_button_camera',
+    'desktop': '#toolbar_button_desktopsharing',
+    'security': '#toolbar_button_security',
+    'invite': '#toolbar_button_link',
+    'chat': '#toolbar_button_chat',
+    'prezi': '#toolbar_button_prezi',
+    'ethherpad': '#toolbar_button_etherpad',
+    'fullscreen': '#toolbar_button_fullScreen',
+    'settings': '#toolbar_button_settings',
+    'hangup': '#toolbar_button_hangup'
+};
 
 function hangup() {
     APP.xmpp.disposeConference();
@@ -255,6 +268,8 @@ function callSipButtonClicked() {
 var Toolbar = (function (my) {
 
     my.init = function (ui) {
+        UIUtil.hideDisabledButtons(defaultToolbarButtons);
+
         for(var k in buttonHandlers)
             $("#" + k).click(buttonHandlers[k]);
         UI = ui;
@@ -339,7 +354,7 @@ var Toolbar = (function (my) {
      * Disables and enables some of the buttons.
      */
     my.setupButtonsFromConfig = function () {
-        if (config.disablePrezi) {
+        if (UIUtil.isButtonEnabled('prezi')) {
             $("#toolbar_button_prezi").css({display: "none"});
         }
     };
@@ -531,7 +546,7 @@ var Toolbar = (function (my) {
      * @param show <tt>true</tt> to show or <tt>false</tt> to hide
      */
     my.showAuthenticateButton = function (show) {
-        if (show) {
+        if (UIUtil.isButtonEnabled('authentication') && show) {
             $('#authentication').css({display: "inline"});
         }
         else {
@@ -541,11 +556,7 @@ var Toolbar = (function (my) {
 
     // Shows or hides the 'recording' button.
     my.showRecordingButton = function (show) {
-        if (!config.enableRecording) {
-            return;
-        }
-
-        if (show) {
+        if (UIUtil.isButtonEnabled('recording') && show) {
             $('#toolbar_button_record').css({display: "inline-block"});
         }
         else {
@@ -597,14 +608,14 @@ var Toolbar = (function (my) {
 
     // checks whether recording is enabled and whether we have params to start automatically recording
     my.checkAutoRecord = function () {
-        if (config.enableRecording && config.autoRecord) {
+        if (UIUtil.isButtonEnabled('recording') && config.autoRecord) {
             toggleRecording(config.autoRecordToken);
         }
     }
 
     // Shows or hides SIP calls button
     my.showSipCallButton = function (show) {
-        if (APP.xmpp.isSipGatewayEnabled() && show) {
+        if (APP.xmpp.isSipGatewayEnabled() && UIUtil.isButtonEnabled('sip') && show) {
             $('#toolbar_button_sip').css({display: "inline-block"});
         } else {
             $('#toolbar_button_sip').css({display: "none"});
@@ -613,7 +624,7 @@ var Toolbar = (function (my) {
 
     // Shows or hides the dialpad button
     my.showDialPadButton = function (show) {
-        if (show) {
+        if (UIUtil.isButtonEnabled('dialpad') && show) {
             $('#toolbar_button_dialpad').css({display: "inline-block"});
         } else {
             $('#toolbar_button_dialpad').css({display: "none"});
@@ -639,7 +650,7 @@ var Toolbar = (function (my) {
      * @param show <tt>true</tt> to show
      */
     my.showLoginButton = function (show) {
-        if (show) {
+        if (UIUtil.isButtonEnabled('authentication') && show) {
             $('#toolbar_button_login').css({display: "list-item"});
         } else {
             $('#toolbar_button_login').css({display: "none"});
@@ -651,7 +662,7 @@ var Toolbar = (function (my) {
      * @param show <tt>true</tt> to show
      */
     my.showLogoutButton = function (show) {
-        if (show) {
+        if (UIUtil.isButtonEnabled('authentication') && show) {
             $('#toolbar_button_logout').css({display: "list-item"});
         } else {
             $('#toolbar_button_logout').css({display: "none"});

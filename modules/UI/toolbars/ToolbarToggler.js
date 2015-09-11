@@ -2,10 +2,11 @@
  DesktopStreaming.showDesktopSharingButton */
 
 var toolbarTimeoutObject,
-    toolbarTimeout = interfaceConfig.INITIAL_TOOLBAR_TIMEOUT;
+    toolbarTimeout = interfaceConfig.INITIAL_TOOLBAR_TIMEOUT,
+    UIUtil = require("../util/UIUtil");
 
 function showDesktopSharingButton() {
-    if (APP.desktopsharing.isDesktopSharingEnabled()) {
+    if (APP.desktopsharing.isDesktopSharingEnabled() && UIUtil.isButtonEnabled('desktop')) {
         $('#toolbar_button_desktopsharing').css({display: "inline-block"});
     } else {
         $('#toolbar_button_desktopsharing').css({display: "none"});
