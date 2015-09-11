@@ -1,8 +1,8 @@
-/* global $ */
+/* global $, config, interfaceConfig */
 /**
  * Created by hristo on 12/22/14.
  */
-module.exports = {
+var UIUtil = module.exports = {
     /**
      * Returns the available video width.
      */
@@ -92,5 +92,23 @@ module.exports = {
         } else {
             container.appendChild(newChild);
         }
+    },
+
+    isButtonEnabled: function (name) {
+        var isEnabled = interfaceConfig.TOOLBAR_BUTTONS.indexOf(name) !== -1;
+        if (name === 'prezi') {
+            return isEnabled && !config.disablePrezi;
+        } else if (name === 'recording') {
+            return isEnabled && config.enableRecording;
+        }
+        return isEnabled;
+    },
+
+    hideDisabledButtons: function (mappings) {
+        var selector = Object.keys(mappings)
+          .map(function (buttonName) { return UIUtil.isButtonEnabled(buttonName) ? null : mappings[buttonName]; })
+          .filter(function (item) { return item; })
+          .join(',');
+        $(selector).hide();
     }
 };
