@@ -12,8 +12,8 @@ var SSRCReplacement = require("./LocalSSRCReplacement");
 var RTC = require("../RTC/RTC");
 
 // Jingle stuff
-function JingleSessionPC(me, sid, connection, service, eventEmitter) {
-    JingleSession.call(this, me, sid, connection, service, eventEmitter);
+function JingleSessionPC(me, sid, connection, service) {
+    JingleSession.call(this, me, sid, connection, service);
     this.initiator = null;
     this.responder = null;
     this.peerjid = null;
@@ -42,7 +42,6 @@ function JingleSessionPC(me, sid, connection, service, eventEmitter) {
     this.localStreamsSSRC = null;
     this.ssrcOwners = {};
     this.ssrcVideoTypes = {};
-    this.eventEmitter = eventEmitter;
 
     /**
      * The indicator which determines whether the (local) video has been muted
@@ -70,7 +69,6 @@ JingleSessionPC.prototype.setAnswer = function(answer) {
 JingleSessionPC.prototype.updateModifySourcesQueue = function() {
     var signalingState = this.peerconnection.signalingState;
     var iceConnectionState = this.peerconnection.iceConnectionState;
-    console.debug(signalingState + " + " + iceConnectionState);
     if (signalingState === 'stable' && iceConnectionState === 'connected') {
         this.modifySourcesQueue.resume();
     } else {
@@ -113,9 +111,7 @@ JingleSessionPC.prototype.doInitialize = function () {
         $(document).trigger('remotestreamremoved.jingle', [event, self.sid]);
     };
     this.peerconnection.onsignalingstatechange = function (event) {
-        console.debug("signaling state11");
         if (!(self && self.peerconnection)) return;
-        console.debug("signaling state222");
         self.updateModifySourcesQueue();
     };
     /**
@@ -126,16 +122,14 @@ JingleSessionPC.prototype.doInitialize = function () {
      * @param event the event containing information about the change
      */
     this.peerconnection.oniceconnectionstatechange = function (event) {
-        console.debug("ice state11");
         if (!(self && self.peerconnection)) return;
-        console.debug("ice state222");
         self.updateModifySourcesQueue();
         switch (self.peerconnection.iceConnectionState) {
             case 'connected':
 
                 // Informs interested parties that the connection has been restored.
                 if (self.peerconnection.signalingState === 'stable' && self.isreconnect)
-                    self.eventEmitter.emit(XMPPEvents.CONNECTION_RESTORED);
+                    self.room.eventEmitter.emit(XMPPEvents.CONNECTION_RESTORED);
                 self.isreconnect = false;
 
                 break;
@@ -143,16 +137,16 @@ JingleSessionPC.prototype.doInitialize = function () {
                 self.isreconnect = true;
                 // Informs interested parties that the connection has been interrupted.
                 if (self.peerconnection.signalingState === 'stable')
-                    self.eventEmitter.emit(XMPPEvents.CONNECTION_INTERRUPTED);
+                    self.room.eventEmitter.emit(XMPPEvents.CONNECTION_INTERRUPTED);
                 break;
             case 'failed':
-                self.eventEmitter.emit(XMPPEvents.CONFERENCE_SETUP_FAILED);
+                self.room.eventEmitter.emit(XMPPEvents.CONFERENCE_SETUP_FAILED);
                 break;
         }
         onIceConnectionStateChange(self.sid, self);
     };
     this.peerconnection.onnegotiationneeded = function (event) {
-        self.eventEmitter.emit(XMPPEvents.PEERCONNECTION_READY, self);
+        self.room.eventEmitter.emit(XMPPEvents.PEERCONNECTION_READY, self);
     };
 
     this.relayedStreams.forEach(function(stream) {
@@ -274,7 +268,7 @@ JingleSessionPC.prototype.accept = function () {
         },
         function (e) {
             console.error('setLocalDescription failed', e);
-            self.eventEmitter.emit(XMPPEvents.CONFERENCE_SETUP_FAILED);
+            self.room.eventEmitter.emit(XMPPEvents.CONFERENCE_SETUP_FAILED);
         }
     );
 };
@@ -498,7 +492,7 @@ JingleSessionPC.prototype.createdOffer = function (sdp) {
         },
         function (e) {
             console.error('setLocalDescription failed', e);
-            self.eventEmitter.emit(XMPPEvents.CONFERENCE_SETUP_FAILED);
+            self.room.eventEmitter.emit(XMPPEvents.CONFERENCE_SETUP_FAILED);
         }
     );
     var cands = SDPUtil.find_lines(this.localSDP.raw, 'a=candidate:');
@@ -696,7 +690,7 @@ JingleSessionPC.prototype.sendAnswer = function (provisional) {
         },
         function (e) {
             console.error('createAnswer failed', e);
-            self.eventEmitter.emit(XMPPEvents.CONFERENCE_SETUP_FAILED);
+            self.room.eventEmitter.emit(XMPPEvents.CONFERENCE_SETUP_FAILED);
         },
         this.media_constraints
     );
@@ -762,7 +756,7 @@ JingleSessionPC.prototype.createdAnswer = function (sdp, provisional) {
         },
         function (e) {
             console.error('setLocalDescription failed', e);
-            self.eventEmitter.emit(XMPPEvents.CONFERENCE_SETUP_FAILED);
+            self.room.eventEmitter.emit(XMPPEvents.CONFERENCE_SETUP_FAILED);
         }
     );
     var cands = SDPUtil.find_lines(this.localSDP.raw, 'a=candidate:');
@@ -1353,8 +1347,8 @@ JingleSessionPC.onJingleError = function (session, error)
 
 JingleSessionPC.onJingleFatalError = function (session, error)
 {
-    this.eventEmitter.emit(XMPPEvents.CONFERENCE_SETUP_FAILED);
-    this.eventEmitter.emit(XMPPEvents.JINGLE_FATAL_ERROR, session, error);
+    this.room.eventEmitter.emit(XMPPEvents.CONFERENCE_SETUP_FAILED);
+    this.room.eventEmitter.emit(XMPPEvents.JINGLE_FATAL_ERROR, session, error);
 }
 
 JingleSessionPC.prototype.setLocalDescription = function () {
@@ -1398,7 +1392,8 @@ JingleSessionPC.prototype.setLocalDescription = function () {
 }
 
 // an attempt to work around https://github.com/jitsi/jitmeet/issues/32
-function sendKeyframe(pc) {
+JingleSessionPC.prototype.sendKeyframe = function () {
+    var pc = this.peerconnection;
     console.log('sendkeyframe', pc.iceConnectionState);
     if (pc.iceConnectionState !== 'connected') return; // safe...
     var self = this;
@@ -1414,13 +1409,13 @@ function sendKeyframe(pc) {
                         },
                         function (error) {
                             console.log('triggerKeyframe setLocalDescription failed', error);
-                            eventEmitter.emit(XMPPEvents.SET_LOCAL_DESCRIPTION_ERROR);
+                            self.room.eventEmitter.emit(XMPPEvents.SET_LOCAL_DESCRIPTION_ERROR);
                         }
                     );
                 },
                 function (error) {
                     console.log('triggerKeyframe createAnswer failed', error);
-                    eventEmitter.emit(XMPPEvents.CREATE_ANSWER_ERROR);
+                    self.room.eventEmitter.emit(XMPPEvents.CREATE_ANSWER_ERROR);
                 }
             );
         },
@@ -1470,7 +1465,7 @@ JingleSessionPC.prototype.remoteStreamAdded = function (data, times) {
         }
     }
 
-    this.room.fireRemoteStreamEvent(data, this.sid, thessrc);
+    this.room.remoteStreamAdded(data, this.sid, thessrc);
 
     var isVideo = data.stream.getVideoTracks().length > 0;
     // an attempt to work around https://github.com/jitsi/jitmeet/issues/32
@@ -1479,7 +1474,7 @@ JingleSessionPC.prototype.remoteStreamAdded = function (data, times) {
         data.stream.getVideoTracks().length === 0 &&
         RTC.localVideo.getTracks().length > 0) {
         window.setTimeout(function () {
-            sendKeyframe(self.peerconnection);
+            self.sendKeyframe();
         }, 3000);
     }
 }

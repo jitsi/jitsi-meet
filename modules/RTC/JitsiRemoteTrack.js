@@ -24,6 +24,13 @@ JitsiRemoteTrack.prototype._setMute = function (value) {
     this.muted = value;
 };
 
+/**
+ * @returns {JitsiParticipant} to which this track belongs, or null if it is a local track.
+ */
+JitsiRemoteTrack.prototype.getParitcipantId = function() {
+    return Strophe.getResourceFromJid(this.peerjid);
+};
+
 delete JitsiRemoteTrack.prototype.stop;
 
 delete JitsiRemoteTrack.prototype.start;

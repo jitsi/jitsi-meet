@@ -42,7 +42,11 @@ var JitsiConferenceEvents = {
     /**
      * The Last N set is changed.
      */
-    LAST_N_CHANGED: "conference.lastNChanged",
+    LAST_N_ENDPOINTS_CHANGED: "conference.lastNEndpointsChanged",
+    /**
+     * You are included / excluded in somebody's last N set
+     */
+    IN_LAST_N_CHANGED: "conference.lastNEndpointsChanged",
     /**
      * A media track was muted.
      */

@@ -566,7 +566,7 @@ ChatRoom.prototype.removeListener = function (type, listener) {
     this.eventEmitter.removeListener(type, listener);
 };
 
-ChatRoom.prototype.fireRemoteStreamEvent = function(data, sid, thessrc) {
+ChatRoom.prototype.remoteStreamAdded = function(data, sid, thessrc) {
     this.eventEmitter.emit(XMPPEvents.REMOTE_STREAM_RECEIVED, data, sid, thessrc);
 }
 

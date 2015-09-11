@@ -41,13 +41,6 @@ JitsiTrack.prototype.getType = function() {
 };
 
 /**
- * @returns {JitsiParticipant} to which this track belongs, or null if it is a local track.
- */
-JitsiTrack.prototype.getParitcipant = function() {
-
-};
-
-/**
  * Returns the RTCMediaStream from the browser (?).
  */
 JitsiTrack.prototype.getOriginalStream = function() {

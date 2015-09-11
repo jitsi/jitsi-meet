@@ -1,6 +1,7 @@
 var RTC = require("./modules/RTC/RTC");
 var XMPPEvents = require("./service/xmpp/XMPPEvents");
 var StreamEventTypes = require("./service/RTC/StreamEventTypes");
+var RTCEvents = require("./service/RTC/RTCEvents");
 var EventEmitter = require("events");
 var JitsiConferenceEvents = require("./JitsiConferenceEvents");
 
@@ -182,6 +183,10 @@ JitsiConference.prototype.getParticipantById = function(id) {
 
 }
 
+/**
+ * Setups the listeners needed for the conference.
+ * @param conference the conference
+ */
 function setupListeners(conference) {
     conference.xmpp.addListener(XMPPEvents.CALL_INCOMING,
         conference.rtc.onIncommingCall.bind(conference.rtc));
@@ -195,7 +200,31 @@ function setupListeners(conference) {
     })
     conference.room.addListener(XMPPEvents.MUC_JOINED, function () {
         conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_JOINED);
-    })
+    });
+    conference.room.addListener(XMPPEvents.MUC_JOINED, function () {
+        conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_LEFT);
+    });
+    conference.rtc.addListener(RTCEvents.DOMINANTSPEAKER_CHANGED, function (id) {
+        conference.eventEmitter.emit(JitsiConferenceEvents.ACTIVE_SPEAKER_CHANGED);
+    });
+
+    conference.rtc.addListener(RTCEvents.LASTN_CHANGED, function (oldValue, newValue) {
+        conference.eventEmitter.emit(JitsiConferenceEvents.IN_LAST_N_CHANGED, oldValue, newValue);
+    });
+
+    conference.rtc.addListener(RTCEvents.LASTN_ENDPOINT_CHANGED,
+        function (lastNEndpoints, endpointsEnteringLastN) {
+            conference.eventEmitter.emit(JitsiConferenceEvents.LAST_N_ENDPOINTS_CHANGED,
+                lastNEndpoints, endpointsEnteringLastN);
+        });
+
+    conference.room.addListener(XMPPEvents.MUC_MEMBER_JOINED,
+        function (jid, email, nick) {
+            conference.eventEmitter.emit(JitsiConferenceEvents.USER_JOINED, Strophe.getResourceFromJid(jid));
+        });
+    conference.room.addListener(XMPPEvents.MUC_MEMBER_LEFT,function (jid) {
+        conference.eventEmitter.emit(JitsiConferenceEvents.USER_LEFT, Strophe.getResourceFromJid(jid));
+    });
 }
 
 

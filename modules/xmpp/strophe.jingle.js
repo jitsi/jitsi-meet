@@ -101,7 +101,7 @@ module.exports = function(XMPP, eventEmitter) {
                     }
                     sess = new JingleSession(
                         $(iq).attr('to'), $(iq).find('jingle').attr('sid'),
-                        this.connection, XMPP, eventEmitter);
+                        this.connection, XMPP);
                     // configure session
 
                     var fromBareJid = Strophe.getBareJidFromJid(fromJid);

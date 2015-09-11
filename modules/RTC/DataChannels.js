@@ -47,6 +47,7 @@ function DataChannels(peerConnection, emitter) {
  */
 DataChannels.prototype.onDataChannel = function (event) {
     var dataChannel = event.channel;
+    var self = this;
 
     dataChannel.onopen = function () {
         console.info("Data channel opened by the Videobridge!", dataChannel);
@@ -57,8 +58,8 @@ DataChannels.prototype.onDataChannel = function (event) {
         // Sends 12 bytes binary message to the bridge
         //dataChannel.send(new ArrayBuffer(12));
 
-        this.eventEmitter.emit(RTCEvents.DATA_CHANNEL_OPEN);
-    }.bind(this);
+        self.eventEmitter.emit(RTCEvents.DATA_CHANNEL_OPEN);
+    };
 
     dataChannel.onerror = function (error) {
         console.error("Data Channel Error:", error, dataChannel);
@@ -88,7 +89,7 @@ DataChannels.prototype.onDataChannel = function (event) {
                 console.info(
                     "Data channel new dominant speaker event: ",
                     dominantSpeakerEndpoint);
-                this.eventEmitter.emit(RTCEvents.DOMINANTSPEAKER_CHANGED, dominantSpeakerEndpoint);
+                self.eventEmitter.emit(RTCEvents.DOMINANTSPEAKER_CHANGED, dominantSpeakerEndpoint);
             }
             else if ("InLastNChangeEvent" === colibriClass) {
                 var oldValue = obj.oldValue;
@@ -111,7 +112,7 @@ DataChannels.prototype.onDataChannel = function (event) {
                     }
                 }
 
-                this.eventEmitter.emit(RTCEvents.LASTN_CHANGED, oldValue, newValue);
+                self.eventEmitter.emit(RTCEvents.LASTN_CHANGED, oldValue, newValue);
             }
             else if ("LastNEndpointsChangeEvent" === colibriClass) {
                 // The new/latest list of last-n endpoint IDs.
@@ -131,14 +132,14 @@ DataChannels.prototype.onDataChannel = function (event) {
                 console.debug("Data channel JSON-formatted message: ", obj);
             }
         }
-    }.bind(this);
+    };
 
     dataChannel.onclose = function () {
         console.info("The Data Channel closed", dataChannel);
-        var idx = this._dataChannels.indexOf(dataChannel);
+        var idx = self._dataChannels.indexOf(dataChannel);
         if (idx > -1)
-            this._dataChannels = this._dataChannels.splice(idx, 1);
-    }.bind(this);
+            self._dataChannels = self._dataChannels.splice(idx, 1);
+    };
     this._dataChannels.push(dataChannel);
 };
 
