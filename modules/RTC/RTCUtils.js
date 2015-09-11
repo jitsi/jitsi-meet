@@ -3,8 +3,8 @@ var RTCBrowserType = require("./RTCBrowserType");
 var Resolutions = require("../../service/RTC/Resolutions");
 var AdapterJS = require("./adapter.screenshare");
 var SDPUtil = require("../xmpp/SDPUtil");
+var EventEmitter = require("events");
 
-var currentResolution = null;
 function DummyMediaStream(id) {
     this.id = id;
     this.label = id;
@@ -143,7 +143,8 @@ function getConstraints(um, resolution, bandwidth, fps, desktopStream, isAndroid
 
 //Options parameter is to pass config options. Currently uses only "useIPv6".
 var RTCUtils = {
-    init: function (onTemasysPluginReady) {
+    eventEmitter: new EventEmitter(),
+    init: function (onTemasysPluginReady, options) {
         var self = this;
         if (RTCBrowserType.isFirefox()) {
             var FFversion = RTCBrowserType.getFirefoxVersion();
@@ -217,7 +218,7 @@ var RTCUtils = {
             this.pc_constraints = {'optional': [
                 {'DtlsSrtpKeyAgreement': 'true'}
             ]};
-            if (this.service.options.useIPv6) {
+            if (options.useIPv6) {
                 // https://code.google.com/p/webrtc/issues/detail?id=2828
                 this.pc_constraints.optional.push({googIPv6: true});
             }
@@ -351,7 +352,7 @@ var RTCUtils = {
 
         return new Promise(function (resolve, reject) {
             var successCallback = function (stream) {
-                resolve(self.successCallback(stream, usageOptions));
+                resolve(self.successCallback(RTC , stream, usageOptions));
             };
 
             if (!devices)
@@ -436,13 +437,13 @@ var RTCUtils = {
         }.bind(this));
     },
 
-    successCallback: function (stream, usageOptions) {
+    successCallback: function (RTC, stream, usageOptions) {
         // If this is FF or IE, the stream parameter is *not* a MediaStream object,
         // it's an object with two properties: audioStream, videoStream.
         if (stream && stream.getAudioTracks && stream.getVideoTracks)
             console.log('got', stream, stream.getAudioTracks().length,
                 stream.getVideoTracks().length);
-        return this.handleLocalStream(stream, usageOptions);
+        return this.handleLocalStream(RTC, stream, usageOptions);
     },
 
     errorCallback: function (error, resolve, RTC, currentResolution) {
@@ -457,7 +458,7 @@ var RTCUtils = {
             && resolution != null) {
             self.getUserMediaWithConstraints(RTC, ['audio', 'video'],
                 function (stream) {
-                    resolve(self.successCallback(stream));
+                    resolve(self.successCallback(RTC, stream));
                 }, function (error, resolution) {
                     return self.errorCallback(error, resolve, RTC, resolution);
                 }, resolution);
@@ -467,18 +468,18 @@ var RTCUtils = {
                 RTC,
                 ['audio'],
                 function (stream) {
-                    resolve(self.successCallback(stream));
+                    resolve(self.successCallback(RTC, stream));
                 },
                 function (error) {
                     console.error('failed to obtain audio/video stream - stop',
                         error);
-                    resolve(self.successCallback(null));
+                    resolve(self.successCallback(RTC, null));
                 }
             );
         }
     },
 
-    handleLocalStream: function (stream, usageOptions) {
+    handleLocalStream: function (service, stream, usageOptions) {
         // If this is FF, the stream parameter is *not* a MediaStream object, it's
         // an object with two properties: audioStream, videoStream.
         if (window.webkitMediaStream) {
@@ -517,7 +518,7 @@ var RTCUtils = {
         var audioGUM = (!usageOptions || usageOptions.audio !== false),
             videoGUM = (!usageOptions || usageOptions.video !== false);
 
-        return this.service.createLocalStreams(
+        return service.createLocalStreams(
             [
                 {stream: audioStream, type: "audio", isMuted: audioMuted, isGUMStream: audioGUM, videoType: null},
                 {stream: videoStream, type: "video", isMuted: videoMuted, isGUMStream: videoGUM, videoType: "camera"}

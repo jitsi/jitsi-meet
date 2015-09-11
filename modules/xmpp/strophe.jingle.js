@@ -104,10 +104,14 @@ module.exports = function(XMPP, eventEmitter) {
                         this.connection, XMPP, eventEmitter);
                     // configure session
 
+                    var fromBareJid = Strophe.getBareJidFromJid(fromJid);
+                    this.connection.emuc.setJingleSession(fromBareJid, sess);
+
                     sess.media_constraints = this.media_constraints;
                     sess.ice_config = this.ice_config;
 
-                    sess.initialize(Strophe.getBareJidFromJid(fromJid), false);
+                    sess.initialize(fromJid, false);
+                    eventEmitter.emit(XMPPEvents.CALL_INCOMING, sess);
                     // FIXME: setRemoteDescription should only be done when this call is to be accepted
                     sess.setOffer($(iq).find('>jingle'));
 
@@ -117,8 +121,6 @@ module.exports = function(XMPP, eventEmitter) {
                     // the callback should either
                     // .sendAnswer and .accept
                     // or .sendTerminate -- not necessarily synchronous
-
-                    eventEmitter.emit(XMPPEvents.CALL_INCOMING, sess);
 
                     sess.sendAnswer();
                     sess.accept();

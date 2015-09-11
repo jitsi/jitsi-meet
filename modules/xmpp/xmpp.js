@@ -1,5 +1,4 @@
 /* global $, APP, config, Strophe*/
-var Moderator = require("./moderator");
 var EventEmitter = require("events");
 var Pako = require("pako");
 var StreamEventTypes = require("../../service/RTC/StreamEventTypes");
@@ -165,7 +164,7 @@ XMPP.prototype.connect = function (jid, password) {
     return this._connect(jid, password);
 };
 
-XMPP.prototype.createRoom = function (roomName, useNicks, nick) {
+XMPP.prototype.createRoom = function (roomName, options, useNicks, nick) {
     var roomjid = roomName  + '@' + this.options.hosts.muc;
 
     if (useNicks) {
@@ -183,7 +182,7 @@ XMPP.prototype.createRoom = function (roomName, useNicks, nick) {
         roomjid += '/' + tmpJid;
     }
 
-    return this.connection.emuc.createRoom(roomjid, null, this.eventEmitter);
+    return this.connection.emuc.createRoom(roomjid, null, options);
 }
 
 XMPP.prototype.addListener = function(type, listener) {
@@ -194,6 +193,7 @@ XMPP.prototype.removeListener = function (type, listener) {
     this.eventEmitter.removeListener(type, listener);
 };
 
+//FIXME: this should work with the room
 XMPP.prototype.leaveRoom = function (jid) {
     var handler = this.connection.jingle.jid2session[jid];
     if (handler && handler.peerconnection) {
@@ -211,80 +211,6 @@ XMPP.prototype.leaveRoom = function (jid) {
     }
     this.eventEmitter.emit(XMPPEvents.DISPOSE_CONFERENCE);
     this.connection.emuc.doLeave(jid);
-};
-
-XMPP.prototype.isConferenceInProgress = function () {
-    return this.connection && this.connection.jingle.activecall &&
-        this.connection.jingle.activecall.peerconnection;
-};
-
-XMPP.prototype.switchStreams = function (stream, oldStream, callback, isAudio) {
-    if (this.isConferenceInProgress()) {
-        // FIXME: will block switchInProgress on true value in case of exception
-        this.connection.jingle.activecall.switchStreams(stream, oldStream, callback, isAudio);
-    } else {
-        // We are done immediately
-        console.warn("No conference handler or conference not started yet");
-        callback();
-    }
-};
-
-XMPP.prototype.sendVideoInfoPresence = function (mute) {
-    if(!this.connection)
-        return;
-    this.connection.emuc.addVideoInfoToPresence(mute);
-    this.connection.emuc.sendPresence();
-};
-
-XMPP.prototype.setVideoMute = function (mute, callback, options) {
-    if(!this.connection)
-        return;
-    var self = this;
-    var localCallback = function (mute) {
-        self.sendVideoInfoPresence(mute);
-        return callback(mute);
-    };
-
-    if(this.connection.jingle.activecall)
-    {
-        this.connection.jingle.activecall.setVideoMute(
-            mute, localCallback, options);
-    }
-    else {
-        localCallback(mute);
-    }
-
-};
-
-XMPP.prototype.setAudioMute = function (mute, callback) {
-    if (!(this.connection && RTC.localAudio)) {
-        return false;
-    }
-
-    if (this.forceMuted && !mute) {
-        console.info("Asking focus for unmute");
-        this.connection.moderate.setMute(this.connection.emuc.myroomjid, mute);
-        // FIXME: wait for result before resetting muted status
-        this.forceMuted = false;
-    }
-
-    if (mute == RTC.localAudio.isMuted()) {
-        // Nothing to do
-        return true;
-    }
-
-    RTC.localAudio.setMute(mute);
-    this.sendAudioInfoPresence(mute, callback);
-    return true;
-};
-
-XMPP.prototype.sendAudioInfoPresence = function(mute, callback) {
-    if(this.connection) {
-        this.connection.emuc.addAudioInfoToPresence(mute);
-        this.connection.emuc.sendPresence();
-    }
-    callback();
-    return true;
 };
 
 /**
@@ -351,11 +277,6 @@ XMPP.prototype.getSessions = function () {
     return this.connection.jingle.sessions;
 };
 
-XMPP.prototype.removeStream = function (stream) {
-    if (!this.isConferenceInProgress())
-        return;
-    this.connection.jingle.activecall.peerconnection.removeStream(stream);
-};
 
 XMPP.prototype.disconnect = function () {
     if (this.disconnectInProgress || !this.connection || !this.connection.connected)

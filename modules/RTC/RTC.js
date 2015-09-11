@@ -2,9 +2,9 @@
 var EventEmitter = require("events");
 var RTCBrowserType = require("./RTCBrowserType");
 var RTCUtils = require("./RTCUtils.js");
-var LocalStream = require("./LocalStream.js");
+var JitsiLocalTrack = require("./JitsiLocalTrack.js");
 var DataChannels = require("./DataChannels");
-var MediaStream = require("./MediaStream.js");
+var JitsiRemoteTrack = require("./JitsiRemoteTrack.js");
 var DesktopSharingEventTypes
     = require("../../service/desktopsharing/DesktopSharingEventTypes");
 var MediaStreamType = require("../../service/RTC/MediaStreamTypes");
@@ -40,13 +40,16 @@ function getMediaStreamUsage()
     return result;
 }
 
+var rtcReady = false;
 
-function RTC(options)
-{
+
+
+function RTC(room, options) {
     this.devices = {
         audio: true,
         video: true
     };
+    this.room = room;
     this.localStreams = [];
     this.remoteStreams = {};
     this.localAudio = null;
@@ -59,19 +62,6 @@ function RTC(options)
             self.changeLocalVideo(stream, isUsingScreenStream, callback);
         }, DesktopSharingEventTypes.NEW_STREAM_CREATED);
 
-    // In case of IE we continue from 'onReady' callback
-    // passed to RTCUtils constructor. It will be invoked by Temasys plugin
-    // once it is initialized.
-    var onReady = function () {
-        self.eventEmitter.emit(RTCEvents.RTC_READY, true);
-    };
-
-    RTCUtils.init(onReady);
-
-    // Call onReady() if Temasys plugin is not used
-    if (!RTCBrowserType.isTemasysPluginUsed()) {
-        onReady();
-    }
 }
 
 RTC.prototype.obtainAudioAndVideoPermissions = function (options) {
@@ -80,15 +70,19 @@ RTC.prototype.obtainAudioAndVideoPermissions = function (options) {
 }
 
 RTC.prototype.onIncommingCall = function(event) {
-    DataChannels.init(event.peerconnection, self.eventEmitter);
+    if(this.options.config.openSctp)
+        this.dataChannels = new DataChannels(event.peerconnection, this.eventEmitter);
+    this.room.addLocalStreams(this.localStreams);
 }
 
 RTC.prototype.selectedEndpoint = function (id) {
-    DataChannels.handleSelectedEndpointEvent(id);
+    if(this.dataChannels)
+        this.dataChannels.handleSelectedEndpointEvent(id);
 }
 
 RTC.prototype.pinEndpoint = function (id) {
-    DataChannels.handlePinnedEndpointEvent(id);
+    if(this.dataChannels)
+        this.dataChannels.handlePinnedEndpointEvent(id);
 }
 
 RTC.prototype.addStreamListener = function (listener, eventType) {
@@ -99,17 +93,50 @@ RTC.prototype.addListener = function (type, listener) {
     this.eventEmitter.on(type, listener);
 };
 
+RTC.prototype.removeListener = function (listener, eventType) {
+    this.eventEmitter.removeListener(eventType, listener);
+};
+
 RTC.prototype.removeStreamListener = function (listener, eventType) {
     if(!(eventType instanceof StreamEventTypes))
         throw "Illegal argument";
 
-    this.removeListener(eventType, listener);
+    this.eventEmitter.removeListener(eventType, listener);
 };
+
+RTC.addRTCReadyListener = function (listener) {
+    RTCUtils.eventEmitter.on(RTCEvents.RTC_READY, listener);
+}
+
+RTC.removeRTCReadyListener = function (listener) {
+    RTCUtils.eventEmitter.removeListener(RTCEvents.RTC_READY, listener);
+}
+
+RTC.isRTCReady = function () {
+    return rtcReady;
+}
+
+RTC.init = function (options) {
+    // In case of IE we continue from 'onReady' callback
+// passed to RTCUtils constructor. It will be invoked by Temasys plugin
+// once it is initialized.
+    var onReady = function () {
+        rtcReady = true;
+        RTCUtils.eventEmitter.emit(RTCEvents.RTC_READY, true);
+    };
+
+    RTCUtils.init(onReady, options || {});
+
+// Call onReady() if Temasys plugin is not used
+    if (!RTCBrowserType.isTemasysPluginUsed()) {
+        onReady();
+    }
+}
 
 RTC.prototype.createLocalStreams = function (streams, change) {
     for (var i = 0; i < streams.length; i++) {
-        var localStream = new LocalStream(this, streams[i].stream,
-            streams[i].type, this.eventEmitter, streams[i].videoType,
+        var localStream = new JitsiLocalTrack(this, streams[i].stream,
+            this.eventEmitter, streams[i].videoType,
             streams[i].isGUMStream);
         this.localStreams.push(localStream);
         if (streams[i].isMuted === true)
@@ -139,9 +166,9 @@ RTC.prototype.removeLocalStream = function (stream) {
 };
 
 RTC.prototype.createRemoteStream = function (data, sid, thessrc) {
-    var remoteStream = new MediaStream(data, sid, thessrc,
+    var remoteStream = new JitsiRemoteTrack(this, data, sid, thessrc,
         RTCBrowserType.getBrowserType(), this.eventEmitter);
-    if(data.peerjid)
+    if(!data.peerjid)
         return;
     var jid = data.peerjid;
     if(!this.remoteStreams[jid]) {
@@ -223,9 +250,9 @@ RTC.prototype.changeLocalVideo = function (stream, isUsingScreenStream, callback
 
     if(this.localVideo.isMuted() && this.localVideo.videoType !== type) {
         localCallback = function() {
-            APP.xmpp.setVideoMute(false, function(mute) {
-                self.eventEmitter.emit(RTCEvents.VIDEO_MUTE, mute);
-            });
+            this.room.setVideoMute(false, function(mute) {
+                this.eventEmitter.emit(RTCEvents.VIDEO_MUTE, mute);
+            }.bind(this));
             
             callback();
         };
@@ -241,7 +268,7 @@ RTC.prototype.changeLocalVideo = function (stream, isUsingScreenStream, callback
 
     this.switchVideoStreams(videoStream, oldStream);
 
-    APP.xmpp.switchStreams(videoStream, oldStream,localCallback);
+    this.room.switchStreams(videoStream, oldStream,localCallback);
 };
 
 RTC.prototype.changeLocalAudio = function (stream, callback) {
@@ -250,7 +277,7 @@ RTC.prototype.changeLocalAudio = function (stream, callback) {
     this.localAudio = this.createLocalStream(newStream, "audio", true);
     // Stop the stream to trigger onended event for old stream
     oldStream.stop();
-    APP.xmpp.switchStreams(newStream, oldStream, callback, true);
+    this.room.switchStreams(newStream, oldStream, callback, true);
 };
 
 RTC.prototype.isVideoMuted = function (jid) {
@@ -279,7 +306,7 @@ RTC.prototype.setVideoMute = function (mute, callback, options) {
     else
     {
         this.localVideo.setMute(mute);
-        APP.xmpp.setVideoMute(
+        this.room.setVideoMute(
             mute,
             callback,
             options);

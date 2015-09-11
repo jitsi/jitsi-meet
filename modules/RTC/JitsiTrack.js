@@ -1,10 +1,24 @@
+var RTC = require("./RTCUtils");
+
 /**
  * Represents a single media track (either audio or video).
  * @constructor
  */
-function JitsiTrack(stream)
+function JitsiTrack(RTC, stream)
 {
+    this.rtc = RTC;
     this.stream = stream;
+    this.type = (this.stream.getVideoTracks().length > 0)?
+        JitsiTrack.VIDEO : JitsiTrack.AUDIO;
+    if(this.type == "audio") {
+        this._getTracks = function () {
+            return this.stream.getAudioTracks();
+        }.bind(this);
+    } else {
+        this._getTracks = function () {
+            return this.stream.getVideoTracks();
+        }.bind(this);
+    }
 }
 
 /**
@@ -23,7 +37,7 @@ JitsiTrack.AUDIO = "audio";
  * Returns the type (audio or video) of this track.
  */
 JitsiTrack.prototype.getType = function() {
-    return this.stream.type;
+    return this.type;
 };
 
 /**
@@ -37,21 +51,21 @@ JitsiTrack.prototype.getParitcipant = function() {
  * Returns the RTCMediaStream from the browser (?).
  */
 JitsiTrack.prototype.getOriginalStream = function() {
-    return this.stream.getOriginalStream();
+    return this.stream;
 }
 
 /**
  * Mutes the track.
  */
 JitsiTrack.prototype.mute = function () {
-    this.stream.setMute(true);
+    this._setMute(true);
 }
 
 /**
  * Unmutes the stream.
  */
 JitsiTrack.prototype.unmute = function () {
-    this.stream.setMute(false);
+    this._setMute(false);
 }
 
 /**
@@ -59,7 +73,7 @@ JitsiTrack.prototype.unmute = function () {
  * @param container the HTML container
  */
 JitsiTrack.prototype.attach = function (container) {
-
+    RTC.attachMediaStream(container, this.stream);
 }
 
 /**
@@ -67,7 +81,7 @@ JitsiTrack.prototype.attach = function (container) {
  * @param container the HTML container
  */
 JitsiTrack.prototype.detach = function (container) {
-
+    $(container).find(">video").remove();
 }
 
 /**
@@ -76,6 +90,7 @@ JitsiTrack.prototype.detach = function (container) {
  */
 JitsiTrack.prototype.stop = function () {
 
+    this.detach();
 }
 
 
@@ -84,6 +99,7 @@ JitsiTrack.prototype.stop = function () {
  * NOTE: Works for local tracks only.
  */
 JitsiTrack.prototype.start = function() {
+
 }
 
 /**
@@ -91,6 +107,18 @@ JitsiTrack.prototype.start = function() {
  * screen capture as opposed to a camera.
  */
 JitsiTrack.prototype.isScreenSharing = function(){
+
 }
+
+/**
+ * Returns id of the track.
+ * @returns {string} id of the track or null if this is fake track.
+ */
+JitsiTrack.prototype.getId = function () {
+    var tracks = this.stream.getTracks();
+    if(!tracks || tracks.length === 0)
+        return null;
+    return tracks[0].id;
+};
 
 module.exports = JitsiTrack;

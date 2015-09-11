@@ -17,6 +17,9 @@ var LibJitsiMeet = {
     errors: {
         conference: JitsiConferenceErrors,
         connection: JitsiConnectionErrors
+    },
+    init: function (options) {
+        require("./modules/RTC/RTC").init(options || {});
     }
 
 }

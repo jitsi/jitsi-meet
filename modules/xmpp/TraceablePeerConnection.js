@@ -5,6 +5,7 @@ var SSRCReplacement = require("./LocalSSRCReplacement");
 
 function TraceablePeerConnection(ice_config, constraints, session) {
     var self = this;
+    this.session = session;
     var RTCPeerConnectionType = null;
     if (RTCBrowserType.isFirefox()) {
         RTCPeerConnectionType = mozRTCPeerConnection;
@@ -374,7 +375,7 @@ TraceablePeerConnection.prototype.createOffer
 
             offer = SSRCReplacement.mungeLocalVideoSSRC(offer);
 
-            if (config.enableSimulcast && self.simulcast.isSupported()) {
+            if (self.session.room.options.enableSimulcast && self.simulcast.isSupported()) {
                 offer = self.simulcast.mungeLocalDescription(offer);
                 self.trace('createOfferOnSuccess::postTransform (simulcast)', dumpSDP(offer));
             }
@@ -404,7 +405,7 @@ TraceablePeerConnection.prototype.createAnswer
             // munge local video SSRC
             answer = SSRCReplacement.mungeLocalVideoSSRC(answer);
 
-            if (config.enableSimulcast && self.simulcast.isSupported()) {
+            if (self.session.room.options.enableSimulcast && self.simulcast.isSupported()) {
                 answer = self.simulcast.mungeLocalDescription(answer);
                 self.trace('createAnswerOnSuccess::postTransform (simulcast)', dumpSDP(answer));
             }

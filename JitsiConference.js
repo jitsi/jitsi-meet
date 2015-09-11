@@ -1,5 +1,8 @@
 var RTC = require("./modules/RTC/RTC");
 var XMPPEvents = require("./service/xmpp/XMPPEvents");
+var StreamEventTypes = require("./service/RTC/StreamEventTypes");
+var EventEmitter = require("events");
+var JitsiConferenceEvents = require("./JitsiConferenceEvents");
 
 /**
  * Creates a JitsiConference object with the given name and properties.
@@ -15,11 +18,10 @@ function JitsiConference(options) {
     this.options = options;
     this.connection = this.options.connection;
     this.xmpp = this.connection.xmpp;
-    this.room = this.xmpp.createRoom(this.options.name, null, null);
-    this.rtc = new RTC();
-    this.xmpp.addListener(XMPPEvents.CALL_INCOMING,
-        this.rtc.onIncommingCall.bind(this.rtc));
-
+    this.eventEmitter = new EventEmitter();
+    this.room = this.xmpp.createRoom(this.options.name, null, null, this.options.config);
+    this.rtc = new RTC(this.room, options);
+    setupListeners(this);
 }
 
 /**
@@ -27,7 +29,6 @@ function JitsiConference(options) {
  * @param password {string} the password
  */
 JitsiConference.prototype.join = function (password) {
-
     this.room.join(password);
 }
 
@@ -67,7 +68,7 @@ JitsiConference.prototype.getLocalTracks = function () {
  * Note: consider adding eventing functionality by extending an EventEmitter impl, instead of rolling ourselves
  */
 JitsiConference.prototype.on = function (eventId, handler) {
-    this.room.addListener(eventId, handler);
+    this.eventEmitter.on(eventId, handler);
 }
 
 /**
@@ -78,7 +79,7 @@ JitsiConference.prototype.on = function (eventId, handler) {
  * Note: consider adding eventing functionality by extending an EventEmitter impl, instead of rolling ourselves
  */
 JitsiConference.prototype.off = function (eventId, handler) {
-    this.room.removeListener(eventId, listener);
+    this.eventEmitter.removeListener(eventId, listener);
 }
 
 // Common aliases for event emitter
@@ -179,6 +180,22 @@ JitsiConference.prototype.getParticipants = function() {
  */
 JitsiConference.prototype.getParticipantById = function(id) {
 
+}
+
+function setupListeners(conference) {
+    conference.xmpp.addListener(XMPPEvents.CALL_INCOMING,
+        conference.rtc.onIncommingCall.bind(conference.rtc));
+    conference.room.addListener(XMPPEvents.REMOTE_STREAM_RECEIVED,
+        conference.rtc.createRemoteStream.bind(conference.rtc));
+    conference.rtc.addListener(StreamEventTypes.EVENT_TYPE_REMOTE_CREATED, function (stream) {
+        conference.eventEmitter.emit(JitsiConferenceEvents.TRACK_ADDED, stream);
+    });
+    conference.rtc.addListener(StreamEventTypes.EVENT_TYPE_REMOTE_CREATED, function (stream) {
+        conference.eventEmitter.emit(JitsiConferenceEvents.TRACK_REMOVED, stream);
+    })
+    conference.room.addListener(XMPPEvents.MUC_JOINED, function () {
+        conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_JOINED);
+    })
 }
 
 

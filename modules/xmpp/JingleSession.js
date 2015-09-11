@@ -46,6 +46,9 @@ function JingleSession(me, sid, connection, service, eventEmitter) {
 
     // ICE servers config (RTCConfiguration?).
     this.ice_config = {};
+
+    // The chat room instance associated with the session.
+    this.room = null;
 }
 
 /**

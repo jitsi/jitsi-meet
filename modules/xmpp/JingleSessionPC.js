@@ -70,6 +70,7 @@ JingleSessionPC.prototype.setAnswer = function(answer) {
 JingleSessionPC.prototype.updateModifySourcesQueue = function() {
     var signalingState = this.peerconnection.signalingState;
     var iceConnectionState = this.peerconnection.iceConnectionState;
+    console.debug(signalingState + " + " + iceConnectionState);
     if (signalingState === 'stable' && iceConnectionState === 'connected') {
         this.modifySourcesQueue.resume();
     } else {
@@ -108,10 +109,13 @@ JingleSessionPC.prototype.doInitialize = function () {
     this.peerconnection.onremovestream = function (event) {
         // Remove the stream from remoteStreams
         // FIXME: remotestreamremoved.jingle not defined anywhere(unused)
+
         $(document).trigger('remotestreamremoved.jingle', [event, self.sid]);
     };
     this.peerconnection.onsignalingstatechange = function (event) {
+        console.debug("signaling state11");
         if (!(self && self.peerconnection)) return;
+        console.debug("signaling state222");
         self.updateModifySourcesQueue();
     };
     /**
@@ -122,7 +126,9 @@ JingleSessionPC.prototype.doInitialize = function () {
      * @param event the event containing information about the change
      */
     this.peerconnection.oniceconnectionstatechange = function (event) {
+        console.debug("ice state11");
         if (!(self && self.peerconnection)) return;
+        console.debug("ice state222");
         self.updateModifySourcesQueue();
         switch (self.peerconnection.iceConnectionState) {
             case 'connected':
@@ -1101,6 +1107,40 @@ JingleSessionPC.prototype.switchStreams = function (new_stream, oldStream, succe
 };
 
 /**
+ * Adds streams.
+ * @param stream new stream that will be added.
+ * @param success_callback callback executed after successful stream addition.
+ */
+JingleSessionPC.prototype.addStream = function (stream, callback) {
+
+    // Remember SDP to figure out added/removed SSRCs
+    var oldSdp = null;
+    if(this.peerconnection) {
+        if(this.peerconnection.localDescription) {
+            oldSdp = new SDP(this.peerconnection.localDescription.sdp);
+        }
+        if(stream)
+            this.peerconnection.addStream(stream);
+    }
+
+    // Conference is not active
+    if(!oldSdp || !this.peerconnection) {
+        callback();
+        return;
+    }
+
+    self.modifySourcesQueue.push(function() {
+        console.log('modify sources done');
+
+        callback();
+
+        var newSdp = new SDP(this.peerconnection.localDescription.sdp);
+        console.log("SDPs", oldSdp, newSdp);
+        this.notifyMySSRCUpdate(oldSdp, newSdp);
+    });
+}
+
+/**
  * Figures out added/removed ssrcs and send update IQs.
  * @param old_sdp SDP object for old description.
  * @param new_sdp SDP object for new description.
@@ -1430,7 +1470,7 @@ JingleSessionPC.prototype.remoteStreamAdded = function (data, times) {
         }
     }
 
-    RTC.createRemoteStream(data, this.sid, thessrc);
+    this.room.fireRemoteStreamEvent(data, this.sid, thessrc);
 
     var isVideo = data.stream.getVideoTracks().length > 0;
     // an attempt to work around https://github.com/jitsi/jitmeet/issues/32
