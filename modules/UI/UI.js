@@ -312,7 +312,10 @@ function registerListeners() {
     });
     APP.xmpp.addListener(XMPPEvents.PROMPT_FOR_LOGIN, function () {
         // FIXME: re-use LoginDialog which supports retries
+        // FIXME^2: This looks like a bug...connect is undefined.
+        /* jshint -W117 */
         UI.showLoginPopup(connect);
+        /* jshint +W117 */
     });
 
     APP.xmpp.addListener(XMPPEvents.FOCUS_DISCONNECTED, function (focusComponent, retrySec) {

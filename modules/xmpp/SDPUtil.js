@@ -1,4 +1,4 @@
-SDPUtil = {
+var SDPUtil = {
     filter_special_chars: function (text) {
         return text.replace(/[\\\/\{,\}\+]/g, "");
     },

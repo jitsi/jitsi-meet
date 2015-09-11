@@ -1,4 +1,4 @@
-/* global config */
+/* global config, AudioContext */
 /**
  * Provides statistics for the local stream.
  */

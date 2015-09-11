@@ -69,14 +69,14 @@ var DataChannels = {
                         if (type === 'string') {
                             oldValue = (oldValue == "true");
                         } else {
-                            oldValue = new Boolean(oldValue).valueOf();
+                            oldValue = Boolean(oldValue).valueOf();
                         }
                     }
                     if ((type = typeof newValue) !== 'boolean') {
                         if (type === 'string') {
                             newValue = (newValue == "true");
                         } else {
-                            newValue = new Boolean(newValue).valueOf();
+                            newValue = Boolean(newValue).valueOf();
                         }
                     }
 
@@ -151,7 +151,7 @@ var DataChannels = {
 
 function onSelectedEndpointChanged(userResource) {
     console.log('selected endpoint changed: ', userResource);
-    if (_dataChannels && _dataChannels.length != 0) {
+    if (_dataChannels && _dataChannels.length !== 0) {
         _dataChannels.some(function (dataChannel) {
             if (dataChannel.readyState == 'open') {
                 console.log('sending selected endpoint changed ' +

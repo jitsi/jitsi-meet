@@ -1,9 +1,9 @@
 module.exports = {
     getLanguages : function () {
         var languages = [];
-        for(var lang in this)
+        for (var lang in this)
         {
-            if(typeof this[lang] === "string")
+            if (typeof this[lang] === "string")
                 languages.push(this[lang]);
         }
         return languages;
@@ -13,4 +13,4 @@ module.exports = {
     DE: "de",
     TR: "tr",
     FR: "fr"
-}
+};

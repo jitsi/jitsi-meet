@@ -57,4 +57,4 @@ module.exports = function (XMPP, eventEmitter) {
             this.connection.emuc.kick(jid);
         }
     });
-}
+};

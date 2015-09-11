@@ -33,8 +33,8 @@ module.exports = function(XMPP, eventEmitter) {
                 this.connection.disco.addFeature('urn:xmpp:jingle:apps:rtp:audio');
                 this.connection.disco.addFeature('urn:xmpp:jingle:apps:rtp:video');
 
-                if (RTCBrowserType.isChrome() || RTCBrowserType.isOpera()
-                    || RTCBrowserType.isTemasysPluginUsed()) {
+                if (RTCBrowserType.isChrome() || RTCBrowserType.isOpera() ||
+                    RTCBrowserType.isTemasysPluginUsed()) {
                     this.connection.disco.addFeature('urn:ietf:rfc:4588');
                 }
 
@@ -138,12 +138,7 @@ module.exports = function(XMPP, eventEmitter) {
                     $(document).trigger('callaccepted.jingle', [sess.sid]);
                     break;
                 case 'session-terminate':
-                    // If this is not the focus sending the terminate, we have
-                    // nothing more to do here.
-                    if (Object.keys(this.sessions).length < 1
-                        || !(this.sessions[Object.keys(this.sessions)[0]]
-                            instanceof JingleSession))
-                    {
+                    if (!sess) {
                         break;
                     }
                     console.log('terminating...', sess.sid);

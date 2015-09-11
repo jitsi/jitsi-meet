@@ -1,4 +1,5 @@
-/* global $ */
+/* global $, config, mozRTCPeerConnection, RTCPeerConnection,
+    webkitRTCPeerConnection, RTCSessionDescription */
 var RTC = require('../RTC/RTC');
 var RTCBrowserType = require("../RTC/RTCBrowserType.js");
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
@@ -128,7 +129,7 @@ function TraceablePeerConnection(ice_config, constraints, session) {
  * Returns a string representation of a SessionDescription object.
  */
 var dumpSDP = function(description) {
-    if (typeof description === 'undefined' || description == null) {
+    if (typeof description === 'undefined' || description === null) {
         return '';
     }
 

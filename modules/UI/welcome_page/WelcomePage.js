@@ -17,7 +17,7 @@ function animate(word) {
     var currentVal = $("#enter_room_field").attr("placeholder");
     $("#enter_room_field").attr("placeholder", currentVal + word.substr(0, 1));
     animateTimeout = setTimeout(function() {
-        animate(word.substring(1, word.length))
+        animate(word.substring(1, word.length));
     }, 70);
 }
 

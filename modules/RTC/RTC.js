@@ -69,7 +69,7 @@ var RTC = {
 
         var localStream =  new LocalStream(stream, type, eventEmitter, videoType, isGUMStream);
         //in firefox we have only one stream object
-        if(this.localStreams.length == 0 ||
+        if(this.localStreams.length === 0 ||
             this.localStreams[0].getOriginalStream() != stream)
             this.localStreams.push(localStream);
         if(isMuted === true)

@@ -130,7 +130,7 @@ if (!interfaceConfig.filmStripOnly) {
     };
 
 } else {
-    RemoteVideo.prototype.addRemoteVideoMenu = function() {}
+    RemoteVideo.prototype.addRemoteVideoMenu = function() {};
 }
 
 /**

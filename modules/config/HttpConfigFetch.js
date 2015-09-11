@@ -1,4 +1,4 @@
-/* global $, $iq, config, interfaceConfig */
+/* global $, config, interfaceConfig */
 
 var configUtil = require('./Util');
 
@@ -28,8 +28,8 @@ var HttpConfig = {
                 data: JSON.stringify({"roomName": roomName}),
                 dataType: 'json',
                 error: function(jqXHR, textStatus, errorThrown) {
-                    console.error("Get config error: ", jqXHR, errorThrown)
-                    error = "Get config response status: " + textStatus;
+                    console.error("Get config error: ", jqXHR, errorThrown);
+                    var error = "Get config response status: " + textStatus;
                     complete(false, error);
                 },
                 success: function(data, textStatus, jqXHR) {
@@ -40,8 +40,7 @@ var HttpConfig = {
                         return;
                     } catch (exception) {
                         console.error("Parse config error: ", exception);
-                        error = exception;
-                        complete(false, error);
+                        complete(false, exception);
                     }
                 }
             }

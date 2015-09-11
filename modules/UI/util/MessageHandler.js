@@ -1,4 +1,4 @@
-/* global $, APP, jQuery, toastr */
+/* global $, APP, jQuery, toastr, Impromptu */
 
 /**
  * Flag for enable/disable of the notifications.

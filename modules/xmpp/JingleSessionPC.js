@@ -482,7 +482,7 @@ JingleSessionPC.prototype.createdOffer = function (sdp) {
                 JingleSessionPC.onJingleError(self.sid, error);
             },
             10000);
-    }
+    };
     sdp.sdp = this.localSDP.raw;
     this.peerconnection.setLocalDescription(sdp,
         function () {
@@ -714,7 +714,6 @@ JingleSessionPC.prototype.createdAnswer = function (sdp, provisional) {
             this.localSDP.raw = this.localSDP.session + '\r\n' + this.localSDP.media.join('');
         }
     }
-    var self = this;
     var sendJingle = function (ssrcs) {
                 // FIXME why do we generate session-accept in 3 different places ?
                 var accept = $iq({to: self.peerjid,
@@ -746,7 +745,7 @@ JingleSessionPC.prototype.createdAnswer = function (sdp, provisional) {
                         JingleSessionPC.onJingleError(self.sid, error);
                     },
                     10000);
-    }
+    };
     sdp.sdp = this.localSDP.raw;
     this.peerconnection.setLocalDescription(sdp,
         function () {
@@ -815,9 +814,8 @@ JingleSessionPC.prototype.addSource = function (elem, fromJid) {
 
     var self = this;
     // FIXME: dirty waiting
-    if (!this.peerconnection.localDescription)
-    {
-        console.warn("addSource - localDescription not ready yet")
+    if (!this.peerconnection.localDescription) {
+        console.warn("addSource - localDescription not ready yet");
         setTimeout(function()
             {
                 self.addSource(elem, fromJid);
@@ -897,11 +895,9 @@ JingleSessionPC.prototype.removeSource = function (elem, fromJid) {
 
     var self = this;
     // FIXME: dirty waiting
-    if (!this.peerconnection.localDescription)
-    {
-        console.warn("removeSource - localDescription not ready yet")
-        setTimeout(function()
-            {
+    if (!this.peerconnection.localDescription) {
+        console.warn("removeSource - localDescription not ready yet");
+        setTimeout(function() {
                 self.removeSource(elem, fromJid);
             },
             200
@@ -1312,7 +1308,7 @@ JingleSessionPC.prototype.getStats = function (interval) {
 JingleSessionPC.onJingleError = function (session, error)
 {
     console.error("Jingle error", error);
-}
+};
 
 JingleSessionPC.onJingleFatalError = function (session, error)
 {
@@ -1320,7 +1316,7 @@ JingleSessionPC.onJingleFatalError = function (session, error)
     this.connection.emuc.doLeave();
     this.eventEmitter.emit(XMPPEvents.CONFERENCE_SETUP_FAILED);
     this.eventEmitter.emit(XMPPEvents.JINGLE_FATAL_ERROR, session, error);
-}
+};
 
 JingleSessionPC.prototype.setLocalDescription = function () {
     var self = this;
@@ -1360,7 +1356,7 @@ JingleSessionPC.prototype.setLocalDescription = function () {
             self.ssrcOwners[ssrc] = myJid;
         }
     }
-}
+};
 
 // an attempt to work around https://github.com/jitsi/jitmeet/issues/32
 // TODO: is this hack (along with the XMPPEvent-s used only for it) still needed
@@ -1450,6 +1446,6 @@ JingleSessionPC.prototype.remoteStreamAdded = function (data, times) {
             sendKeyframe(self.peerconnection);
         }, 3000);
     }
-}
+};
 
 module.exports = JingleSessionPC;

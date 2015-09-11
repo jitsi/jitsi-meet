@@ -29,9 +29,9 @@ var JitsiMeetExternalAPI = (function()
      */
     function JitsiMeetExternalAPI(domain, room_name, width, height, parentNode,
         configOverwrite, interfaceConfigOverwrite) {
-        if((!width || width < MIN_WIDTH) && !filmStripOnly)
+        if (!width || width < MIN_WIDTH)
             width = MIN_WIDTH;
-        if((!height || height < MIN_HEIGHT) && !filmStripOnly)
+        if (!height || height < MIN_HEIGHT)
             height = MIN_HEIGHT;
 
         this.parentNode = null;

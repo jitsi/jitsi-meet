@@ -1,4 +1,4 @@
-/* global $, APP, config, Strophe*/
+/* global $, APP, config, Strophe, Base64, $msg */
 var Moderator = require("./moderator");
 var EventEmitter = require("events");
 var Recording = require("./recording");

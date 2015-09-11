@@ -18,7 +18,7 @@ var commands = {
 function getCommand(message) {
     if(message) {
         for(var command in commands) {
-            if(message.indexOf("/" + command) == 0)
+            if(message.indexOf("/" + command) === 0)
                 return command;
         }
     }

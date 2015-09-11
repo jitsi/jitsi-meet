@@ -1,4 +1,6 @@
-/* global APP, config, require, attachMediaStream, getUserMedia */
+/* global APP, config, require, attachMediaStream, getUserMedia,
+    RTCPeerConnection, webkitMediaStream, webkitURL, webkitRTCPeerConnection,
+    mozRTCIceCandidate, mozRTCSessionDescription, mozRTCPeerConnection */
 var RTCBrowserType = require("./RTCBrowserType");
 var Resolutions = require("../../service/RTC/Resolutions");
 var AdapterJS = require("./adapter.screenshare");
@@ -192,8 +194,8 @@ function RTCUtils(RTCService, onTemasysPluginReady)
                 if(element)
                     element.mozSrcObject = src;
             };
-            RTCSessionDescription = mozRTCSessionDescription;
-            RTCIceCandidate = mozRTCIceCandidate;
+            window.RTCSessionDescription = mozRTCSessionDescription;
+            window.RTCIceCandidate = mozRTCIceCandidate;
         } else {
             console.error(
                 "Firefox version too old: " + FFversion + ". Required >= 40.");

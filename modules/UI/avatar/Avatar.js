@@ -1,3 +1,4 @@
+/* global Strophe, APP, MD5 */
 var Settings = require("../../settings/Settings");
 
 var users = {};

@@ -600,7 +600,7 @@ var Toolbar = (function (my) {
         if (config.enableRecording && config.autoRecord) {
             toggleRecording(config.autoRecordToken);
         }
-    }
+    };
 
     // Shows or hides SIP calls button
     my.showSipCallButton = function (show) {

@@ -1,3 +1,4 @@
+/* global PreziPlayer */
 (function() {
     "use strict";
     var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
@@ -26,7 +27,7 @@
             for(var i=0; i<optionArray.length; i++) {
                 var optionSet = optionArray[i];
                 new PreziPlayer(optionSet.id, optionSet);
-            };
+            }
         };
 
         PreziPlayer.messageReceived = function(event){
@@ -51,7 +52,9 @@
             } catch (e) { }
         };
 
+/*jshint -W004 */
         function PreziPlayer(id, options) {
+/*jshint +W004 */
             var params, paramString = "", _this = this;
             if (PreziPlayer.players[id]){
                 PreziPlayer.players[id].destroy();
@@ -59,7 +62,7 @@
             for(var i=0; i<PreziPlayer.binded_methods.length; i++) {
                 var method_name = PreziPlayer.binded_methods[i];
                 _this[method_name] = __bind(_this[method_name], _this);
-            };
+            }
             options = options || {};
             this.options = options;
             this.values = {'status': PreziPlayer.STATUS_LOADING};
@@ -78,10 +81,10 @@
                 { name: 'explorable', value: options.explorable ? 1 : 0 },
                 { name: 'controls', value: options.controls ? 1 : 0 }
             ];
-            for(var i=0; i<params.length; i++) {
+            for (i=0; i<params.length; i++) {
                 var param = params[i];
                 paramString += (i===0 ? "?" : "&") + param.name + "=" + param.value;
-            };
+            }
             this.iframe.src = PreziPlayer.domain + PreziPlayer.path + paramString;
             this.iframe.frameBorder = 0;
             this.iframe.scrolling = "no";
@@ -249,14 +252,14 @@
             for (var parameter in dims) {
                 this.iframe[parameter] = dims[parameter];
             }
-        }
+        };
 
         PreziPlayer.prototype.getDimensions = function() {
             return {
                 width: parseInt(this.iframe.width, 10),
                 height: parseInt(this.iframe.height, 10)
-            }
-        }
+            };
+        };
 
         PreziPlayer.prototype.on = function(event, callback) {
             this.callbacks.push({

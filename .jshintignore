@@ -1,6 +1,8 @@
 node_modules
 libs
-replacement.js
-prezi.js
-muc.js
-app.js
+debian
+analytics.js
+
+modules/xmpp/strophe.emuc.js
+modules/UI/prezi/Prezi.js
+modules/RTC/adapter.screenshare.js

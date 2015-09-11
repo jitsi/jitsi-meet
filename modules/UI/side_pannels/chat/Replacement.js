@@ -45,7 +45,7 @@ function smilify(body)
         return body;
     }
 
-    var regexs = Smileys["regexs"];
+    var regexs = Smileys.regexs;
     for(var smiley in regexs) {
         if(regexs.hasOwnProperty(smiley)) {
             body = body.replace(regexs[smiley],
