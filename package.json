@@ -25,11 +25,11 @@
       "async": "0.9.0",
       "retry": "0.6.1",
       "jssha": "1.5.0",
-      "socket.io-client": "1.3.6",
-      "jshint": "2.8.0",
+      "socket.io-client": "1.3.6"
+  },
+  "devDependencies": {
       "precommit-hook": "3.0.0"
   },
-  "devDependencies": {},
   "license": "Apache",
   "scripts": {
     "lint": "jshint ."
