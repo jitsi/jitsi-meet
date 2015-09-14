@@ -10,7 +10,7 @@ var RTCEvents = require("../../service/RTC/RTCEvents");
  * @param peerConnection WebRTC peer connection instance.
  */
 function DataChannels(peerConnection, emitter) {
-    peerConnection.ondatachannel = this.onDataChannel;
+    peerConnection.ondatachannel = this.onDataChannel.bind(this);
     this.eventEmitter = emitter;
 
     this._dataChannels = [];
