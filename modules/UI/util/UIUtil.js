@@ -106,7 +106,9 @@ var UIUtil = module.exports = {
 
     hideDisabledButtons: function (mappings) {
         var selector = Object.keys(mappings)
-          .map(function (buttonName) { return UIUtil.isButtonEnabled(buttonName) ? null : mappings[buttonName]; })
+          .map(function (buttonName) {
+                return UIUtil.isButtonEnabled(buttonName)
+                    ? null : mappings[buttonName]; })
           .filter(function (item) { return item; })
           .join(',');
         $(selector).hide();

@@ -6,7 +6,8 @@ var toolbarTimeoutObject,
     UIUtil = require("../util/UIUtil");
 
 function showDesktopSharingButton() {
-    if (APP.desktopsharing.isDesktopSharingEnabled() && UIUtil.isButtonEnabled('desktop')) {
+    if (APP.desktopsharing.isDesktopSharingEnabled() &&
+        UIUtil.isButtonEnabled('desktop')) {
         $('#toolbar_button_desktopsharing').css({display: "inline-block"});
     } else {
         $('#toolbar_button_desktopsharing').css({display: "none"});
