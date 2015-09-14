@@ -30,7 +30,7 @@
   "devDependencies": {
       "precommit-hook": "3.0.0"
   },
-  "license": "Apache",
+  "license": "Apache-2.0",
   "scripts": {
     "lint": "jshint ."
   },
