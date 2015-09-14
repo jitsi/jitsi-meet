@@ -33,5 +33,5 @@
     "browserify": "11.1.x",
     "browserify-shim": "^3.8.10"
   },
-  "license": "Apache"
+  "license": "Apache-2.0"
 }
