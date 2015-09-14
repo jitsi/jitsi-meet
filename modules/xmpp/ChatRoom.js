@@ -501,7 +501,8 @@ ChatRoom.prototype.setVideoMute = function (mute, callback, options) {
     var self = this;
     var localCallback = function (mute) {
         self.sendVideoInfoPresence(mute);
-        return callback(mute);
+        if(callback)
+            callback(mute)
     };
 
     if(this.session)
@@ -540,7 +541,8 @@ ChatRoom.prototype.sendAudioInfoPresence = function(mute, callback) {
     if(this.connection) {
         this.sendPresence();
     }
-    callback();
+    if(callback)
+        callback();
 };
 
 ChatRoom.prototype.addVideoInfoToPresence = function (mute) {

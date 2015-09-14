@@ -56,7 +56,7 @@ JitsiLocalTrack.prototype._setMute = function (mute) {
         // FIXME FF does not support 'removeStream' method used to mute
         RTCBrowserType.isFirefox()) {
 
-        var tracks = this.getTracks();
+        var tracks = this._getTracks();
         for (var idx = 0; idx < tracks.length; idx++) {
             tracks[idx].enabled = !mute;
         }
