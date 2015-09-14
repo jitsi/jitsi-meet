@@ -28,7 +28,6 @@ deploy:
 
 uglify:
 	uglifyjs libs/app.bundle.js -o libs/app.bundle.min.js --source-map libs/app.bundle.js.map --source-map-url=app.bundle.js.map
-	rm -f libs/app.bundle.js
 
 source-package:
 	mkdir -p source_package/jitsi-meet && \
