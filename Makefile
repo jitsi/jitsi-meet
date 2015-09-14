@@ -27,7 +27,7 @@ deploy:
 	([ ! -x deploy-local.sh ] || ./deploy-local.sh)
 
 uglify:
-	uglifyjs libs/app.bundle.js -o libs/app.bundle.min.js --source-map libs/app.bundle.js.map
+	uglifyjs libs/app.bundle.js -o libs/app.bundle.min.js --source-map libs/app.bundle.js.map --source-map-url=app.bundle.js.map
 	rm -f libs/app.bundle.js
 
 source-package:
