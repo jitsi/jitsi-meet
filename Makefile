@@ -4,7 +4,7 @@ GLOBAL_FLAGS = -x jquery -e
 OUTPUT_DIR = .
 DEPLOY_DIR = libs
 
-all: compile deploy clean
+all: compile deploy clean uglify
 
 compile:FLAGS = $(GLOBAL_FLAGS)
 compile: app
