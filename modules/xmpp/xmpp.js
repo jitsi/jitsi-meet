@@ -306,7 +306,7 @@ var XMPP = {
         return Strophe.getStatusString(status);
     },
     promptLogin: function () {
-        eventEmitter.emit(XMPPEvents.PROMPT_FOR_LOGIN);
+        eventEmitter.emit(XMPPEvents.PROMPT_FOR_LOGIN, connect);
     },
     joinRoom: function(roomName, useNicks, nick) {
         var roomjid = roomName;
