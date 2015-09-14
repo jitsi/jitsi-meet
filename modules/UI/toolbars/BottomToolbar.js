@@ -1,5 +1,6 @@
 /* global $ */
 var PanelToggler = require("../side_pannels/SidePanelToggler");
+var UIUtil = require("../util/UIUtil");
 
 var buttonHandlers = {
     "bottom_toolbar_contact_list": function () {
@@ -13,8 +14,18 @@ var buttonHandlers = {
     }
 };
 
+
+var defaultBottomToolbarButtons = {
+    'chat': '#bottom_toolbar_chat',
+    'contacts': '#bottom_toolbar_contact_list',
+    'filmstrip': '#bottom_toolbar_film_strip'
+};
+
+
 var BottomToolbar = (function (my) {
     my.init = function () {
+        UIUtil.hideDisabledButtons(defaultBottomToolbarButtons);
+
         for(var k in buttonHandlers)
             $("#" + k).click(buttonHandlers[k]);
     };
