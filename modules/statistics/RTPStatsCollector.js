@@ -2,6 +2,7 @@
 /* jshint -W117 */
 /* jshint -W101 */
 var RTCBrowserType = require("../RTC/RTCBrowserType");
+var StatisticsEvents = require("../../service/statistics/Events");
 
 /* Whether we support the browser we are running into for logging statistics */
 var browserSupported = RTCBrowserType.isChrome() ||
@@ -646,7 +647,7 @@ StatsCollector.prototype.processStatsReport = function () {
         upload:
             calculatePacketLoss(lostPackets.upload, totalPackets.upload)
     };
-    this.eventEmitter.emit("statistics.connectionstats",
+    this.eventEmitter.emit(StatisticsEvents.CONNECTION_STATS,
         {
             "bitrate": PeerStats.bitrate,
             "packetLoss": PeerStats.packetLoss,
@@ -712,8 +713,10 @@ StatsCollector.prototype.processAudioLevelReport = function () {
             // but it seems to vary between 0 and around 32k.
             audioLevel = audioLevel / 32767;
             jidStats.setSsrcAudioLevel(ssrc, audioLevel);
-            if(jid != APP.xmpp.myJid())
-                this.eventEmitter.emit("statistics.audioLevel", jid, audioLevel);
+            if (jid != APP.xmpp.myJid()) {
+                this.eventEmitter.emit(
+                    StatisticsEvents.AUDIO_LEVEL, jid, audioLevel);
+            }
         }
     }
 };

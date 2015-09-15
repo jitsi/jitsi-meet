@@ -4,6 +4,7 @@
  */
 
 var RTCBrowserType = require('../RTC/RTCBrowserType');
+var StatisticsEvents = require('../../service/statistics/Events');
 
 /**
  * Size of the webaudio analyzer buffer.
@@ -105,7 +106,7 @@ LocalStatsCollector.prototype.start = function () {
             if (audioLevel != self.audioLevel) {
                 self.audioLevel = animateLevel(audioLevel, self.audioLevel);
                 self.eventEmitter.emit(
-                    "statistics.audioLevel",
+                    StatisticsEvents.AUDIO_LEVEL,
                     self.statisticsService.LOCAL_JID,
                     self.audioLevel);
             }

@@ -30,6 +30,7 @@ var RTCEvents = require("../../service/RTC/RTCEvents");
 var RTCBrowserType = require("../RTC/RTCBrowserType");
 var StreamEventTypes = require("../../service/RTC/StreamEventTypes");
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
+var StatisticsEvents = require("../../service/statistics/Events");
 var UIEvents = require("../../service/UI/UIEvents");
 var MemberEvents = require("../../service/members/Events");
 
@@ -180,7 +181,8 @@ function registerListeners() {
         var userResource = APP.UI.getLargeVideoResource();
         eventEmitter.emit(UIEvents.SELECTED_ENDPOINT, userResource);
     });
-    APP.statistics.addAudioLevelListener(function(jid, audioLevel) {
+    APP.statistics.addListener(StatisticsEvents.AUDIO_LEVEL,
+        function(jid, audioLevel) {
         var resourceJid;
         if(jid === APP.statistics.LOCAL_JID) {
             resourceJid = AudioLevels.LOCAL_LEVEL;
