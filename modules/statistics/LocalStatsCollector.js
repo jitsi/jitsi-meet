@@ -4,6 +4,7 @@
  */
 
 var RTCBrowserType = require('../RTC/RTCBrowserType');
+var StatisticsEvents = require('../../service/statistics/Events');
 
 var LOCAL_JID = require("../../service/statistics/constants").LOCAL_JID;
 
@@ -106,8 +107,8 @@ LocalStatsCollector.prototype.start = function () {
             if (audioLevel != self.audioLevel) {
                 self.audioLevel = animateLevel(audioLevel, self.audioLevel);
                 self.eventEmitter.emit(
-                    "statistics.audioLevel",
-                    LOCAL_JID,
+                    StatisticsEvents.AUDIO_LEVEL,
+                    self.statisticsService.LOCAL_JID,
                     self.audioLevel);
             }
         },

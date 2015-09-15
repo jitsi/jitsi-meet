@@ -3,6 +3,7 @@
 
 var logger = require("jitsi-meet-logger").getLogger(__filename);
 var RTCBrowserType = require("../RTC/RTCBrowserType");
+var StatisticsEvents = require("../../service/statistics/Events");
 
 /* Whether we support the browser we are running into for logging statistics */
 var browserSupported = RTCBrowserType.isChrome() ||
@@ -649,7 +650,7 @@ StatsCollector.prototype.processStatsReport = function () {
         upload:
             calculatePacketLoss(lostPackets.upload, totalPackets.upload)
     };
-    this.eventEmitter.emit("statistics.connectionstats",
+    this.eventEmitter.emit(StatisticsEvents.CONNECTION_STATS,
         {
             "bitrate": this.conferenceStats.bitrate,
             "packetLoss": this.conferenceStats.packetLoss,
@@ -715,7 +716,8 @@ StatsCollector.prototype.processAudioLevelReport = function () {
             // but it seems to vary between 0 and around 32k.
             audioLevel = audioLevel / 32767;
             ssrcStats.setSsrcAudioLevel(ssrc, audioLevel);
-            this.eventEmitter.emit("statistics.audioLevel", ssrc, audioLevel);
+            this.eventEmitter.emit(
+                StatisticsEvents.AUDIO_LEVEL, ssrc, audioLevel);
         }
     }
 };

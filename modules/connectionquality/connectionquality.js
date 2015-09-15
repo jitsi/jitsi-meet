@@ -3,6 +3,7 @@ var EventEmitter = require("events");
 var eventEmitter = new EventEmitter();
 var CQEvents = require("../../service/connectionquality/CQEvents");
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
+var StatisticsEvents = require("../../service/statistics/Events");
 
 /**
  * local stats
@@ -96,9 +97,10 @@ function parseMUCStats(stats) {
 var ConnectionQuality = {
     init: function () {
         APP.xmpp.addListener(XMPPEvents.REMOTE_STATS, this.updateRemoteStats);
-        APP.statistics.addConnectionStatsListener(this.updateLocalStats);
-        APP.statistics.addRemoteStatsStopListener(this.stopSendingStats);
-
+        APP.statistics.addListener(StatisticsEvents.CONNECTION_STATS,
+                                   this.updateLocalStats);
+        APP.statistics.addListener(StatisticsEvents.STOP,
+                                   this.stopSendingStats);
     },
 
     /**

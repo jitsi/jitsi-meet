@@ -2,6 +2,7 @@
 var LocalStats = require("./LocalStatsCollector.js");
 var RTPStats = require("./RTPStatsCollector.js");
 var EventEmitter = require("events");
+var StatisticsEvents = require("../../service/statistics/Events");
 //var StreamEventTypes = require("../../service/RTC/StreamEventTypes.js");
 //var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 //var CallStats = require("./CallStats");
@@ -43,12 +44,12 @@ Statistics.prototype.startLocalStats = function (stream) {
 
 Statistics.prototype.addAudioLevelListener = function(listener)
 {
-    this.eventEmitter.on("statistics.audioLevel", listener);
+    this.eventEmitter.on(StatisticsEvents.AUDIO_LEVEL, listener);
 }
 
 Statistics.prototype.removeAudioLevelListener = function(listener)
 {
-    this.eventEmitter.removeListener("statistics.audioLevel", listener);
+    this.eventEmitter.removeListener(StatisticsEvents.AUDIO_LEVEL, listener);
 }
 
 Statistics.prototype.dispose = function () {
@@ -71,7 +72,7 @@ Statistics.prototype.stopLocal = function () {
 Statistics.prototype.stopRemote = function () {
     if (this.rtpStats) {
         this.rtpStats.stop();
-        this.eventEmitter.emit("statistics.stop");
+        this.eventEmitter.emit(StatisticsEvents.STOP);
         this.rtpStats = null;
     }
 }
