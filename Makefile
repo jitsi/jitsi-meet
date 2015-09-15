@@ -1,8 +1,9 @@
-NPM = npm
 BROWSERIFY = browserify
-GLOBAL_FLAGS = -x jquery -e
-OUTPUT_DIR = .
 DEPLOY_DIR = libs
+GLOBAL_FLAGS = -x jquery -e
+NPM = npm
+OUTPUT_DIR = .
+UGLIFYJS = uglifyjs
 
 all: compile deploy clean uglify
 
@@ -27,7 +28,7 @@ deploy:
 	([ ! -x deploy-local.sh ] || ./deploy-local.sh)
 
 uglify:
-	uglifyjs -p relative libs/app.bundle.js -o libs/app.bundle.min.js --source-map libs/app.bundle.js.map --source-map-url=app.bundle.js.map
+	$(UGLIFYJS) -p relative libs/app.bundle.js -o libs/app.bundle.min.js --source-map libs/app.bundle.js.map --source-map-url=app.bundle.js.map
 
 source-package:
 	mkdir -p source_package/jitsi-meet && \
