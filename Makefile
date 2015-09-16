@@ -1,9 +1,9 @@
-BROWSERIFY = browserify
+BROWSERIFY = ./node_modules/.bin/browserify
 DEPLOY_DIR = libs
 GLOBAL_FLAGS = -x jquery -e
 NPM = npm
 OUTPUT_DIR = .
-UGLIFYJS = uglifyjs
+UGLIFYJS = ./node_modules/.bin/uglifyjs
 
 all: compile deploy clean uglify
 
