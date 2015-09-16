@@ -20,7 +20,7 @@ var recordingToaster = null;
 var buttonHandlers = {
     "toolbar_button_mute": function () {
         if (APP.RTC.localAudio.isMuted()) {
-            AnalyticsAdapter.sendEvent('toolbar.audio.unmuted')
+            AnalyticsAdapter.sendEvent('toolbar.audio.unmuted');
         } else {
             AnalyticsAdapter.sendEvent('toolbar.audio.muted');
         }
@@ -43,7 +43,7 @@ var buttonHandlers = {
     },
     "toolbar_button_security": function () {
         if (sharedKey) {
-            AnalyticsAdapter.sendEvent('toolbar.lock.disabled')
+            AnalyticsAdapter.sendEvent('toolbar.lock.disabled');
         } else {
             AnalyticsAdapter.sendEvent('toolbar.lock.enabled');
         }
