@@ -29,12 +29,13 @@
   },
   "devDependencies": {
       "precommit-hook": "3.0.0",
+      "jshint": "2.8.0",
       "uglify-js": "2.4.24",
       "browserify": "11.1.x"
   },
   "license": "Apache-2.0",
   "scripts": {
-    "lint": "jshint ."
+    "lint": "./node_modules/.bin/jshint ."
   },
   "pre-commit": ["lint"]
 }
