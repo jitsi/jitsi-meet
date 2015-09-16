@@ -10,6 +10,7 @@ var Authentication = require("../authentication/Authentication");
 var UIUtil = require("../util/UIUtil");
 var AuthenticationEvents
     = require("../../../service/authentication/AuthenticationEvents");
+var AnalyticsAdapter = require("../../statistics/AnalyticsAdapter");
 
 var roomUrl = null;
 var sharedKey = '';
@@ -18,55 +19,87 @@ var recordingToaster = null;
 
 var buttonHandlers = {
     "toolbar_button_mute": function () {
+        if (APP.RTC.localAudio.isMuted()) {
+            AnalyticsAdapter.sendEvent('toolbar.audio.unmuted')
+        } else {
+            AnalyticsAdapter.sendEvent('toolbar.audio.muted');
+        }
         return APP.UI.toggleAudio();
     },
     "toolbar_button_camera": function () {
+        if (APP.RTC.localVideo.isMuted()) {
+            AnalyticsAdapter.sendEvent('toolbar.video.enabled');
+        } else {
+            AnalyticsAdapter.sendEvent('toolbar.video.disabled');
+        }
         return APP.UI.toggleVideo();
     },
     /*"toolbar_button_authentication": function () {
         return Toolbar.authenticateClicked();
     },*/
     "toolbar_button_record": function () {
+        AnalyticsAdapter.sendEvent('toolbar.recording.toggled');
         return toggleRecording();
     },
     "toolbar_button_security": function () {
+        if (sharedKey) {
+            AnalyticsAdapter.sendEvent('toolbar.lock.disabled')
+        } else {
+            AnalyticsAdapter.sendEvent('toolbar.lock.enabled');
+        }
         return Toolbar.openLockDialog();
     },
     "toolbar_button_link": function () {
+        AnalyticsAdapter.sendEvent('toolbar.invite.clicked');
         return Toolbar.openLinkDialog();
     },
     "toolbar_button_chat": function () {
+        AnalyticsAdapter.sendEvent('toolbar.chat.toggled');
         return BottomToolbar.toggleChat();
     },
     "toolbar_button_prezi": function () {
+        AnalyticsAdapter.sendEvent('toolbar.prezi.clicked');
         return Prezi.openPreziDialog();
     },
     "toolbar_button_etherpad": function () {
+        AnalyticsAdapter.sendEvent('toolbar.etherpad.clicked');
         return Etherpad.toggleEtherpad(0);
     },
     "toolbar_button_desktopsharing": function () {
+        if (APP.desktopsharing.isUsingScreenStream) {
+            AnalyticsAdapter.sendEvent('toolbar.screen.disabled');
+        } else {
+            AnalyticsAdapter.sendEvent('toolbar.screen.enabled');
+        }
         return APP.desktopsharing.toggleScreenSharing();
     },
     "toolbar_button_fullScreen": function() {
+        AnalyticsAdapter.sendEvent('toolbar.fullscreen.enabled');
         UIUtil.buttonClick("#toolbar_button_fullScreen", "icon-full-screen icon-exit-full-screen");
         return Toolbar.toggleFullScreen();
     },
     "toolbar_button_sip": function () {
+        AnalyticsAdapter.sendEvent('toolbar.sip.clicked');
         return callSipButtonClicked();
     },
     "toolbar_button_dialpad": function () {
+        AnalyticsAdapter.sendEvent('toolbar.sip.dialpad.clicked');
         return dialpadButtonClicked();
     },
     "toolbar_button_settings": function () {
+        AnalyticsAdapter.sendEvent('toolbar.settings.toggled');
         PanelToggler.toggleSettingsMenu();
     },
     "toolbar_button_hangup": function () {
+        AnalyticsAdapter.sendEvent('toolbar.hangup');
         return hangup();
     },
     "toolbar_button_login": function () {
+        AnalyticsAdapter.sendEvent('toolbar.authenticate.login.clicked');
         Toolbar.authenticateClicked();
     },
     "toolbar_button_logout": function () {
+        AnalyticsAdapter.sendEvent('toolbar.authenticate.logout.clicked');
         // Ask for confirmation
         messageHandler.openTwoButtonDialog(
             "dialog.logoutTitle",
@@ -418,18 +451,18 @@ var Toolbar = (function (my) {
      * Opens the invite link dialog.
      */
     my.openLinkDialog = function () {
-        var inviteAttreibutes;
+        var inviteAttributes;
 
         if (roomUrl === null) {
-            inviteAttreibutes = 'data-i18n="[value]roomUrlDefaultMsg" value="' +
+            inviteAttributes = 'data-i18n="[value]roomUrlDefaultMsg" value="' +
             APP.translation.translateString("roomUrlDefaultMsg") + '"';
         } else {
-            inviteAttreibutes = "value=\"" + encodeURI(roomUrl) + "\"";
+            inviteAttributes = "value=\"" + encodeURI(roomUrl) + "\"";
         }
         messageHandler.openTwoButtonDialog("dialog.shareLink",
             null, null,
             '<input id="inviteLinkRef" type="text" ' +
-                inviteAttreibutes + ' onclick="this.select();" readonly>',
+                inviteAttributes + ' onclick="this.select();" readonly>',
             false,
             "dialog.Invite",
             function (e, v) {
