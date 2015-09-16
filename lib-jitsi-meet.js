@@ -43,7 +43,7 @@ JitsiConference.prototype.leave = function () {
 }
 
 /**
- * Creates the media tracks and returns them via the callback.
+ * Creates the media tracks and returns them trough the callback.
  * @param options Object with properties / settings specifying the tracks which should be created.
  * should be created or some additional configurations about resolution for example.
  * @returns {Promise.<{Array.<JitsiTrack>}, JitsiConferenceError>} A promise that returns an array of created JitsiTracks if resolved,
@@ -206,7 +206,7 @@ function setupListeners(conference) {
         conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_LEFT);
     });
     conference.rtc.addListener(RTCEvents.DOMINANTSPEAKER_CHANGED, function (id) {
-        conference.eventEmitter.emit(JitsiConferenceEvents.ACTIVE_SPEAKER_CHANGED);
+        conference.eventEmitter.emit(JitsiConferenceEvents.ACTIVE_SPEAKER_CHANGED, id);
     });
 
     conference.rtc.addListener(RTCEvents.LASTN_CHANGED, function (oldValue, newValue) {
