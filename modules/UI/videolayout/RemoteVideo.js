@@ -268,8 +268,10 @@ RemoteVideo.prototype.showPeerContainer = function (state) {
             resizeThumbnails = true;
             $(this.container).show();
         }
-
-        this.showAvatar(state !== 'show');
+        // Call showAvatar with undefined, so that we'll figure out if avatar
+        // should be displayed based on video muted status and whether or not
+        // it's in the lastN set
+        this.showAvatar(undefined);
     }
     else if ($(this.container).is(':visible') && isHide)
     {
