@@ -1,34 +1,27 @@
-BROWSERIFY = ./node_modules/.bin/browserify
-DEPLOY_DIR = libs
-GLOBAL_FLAGS = -x jquery -e
 NPM = npm
-OUTPUT_DIR = .
+BROWSERIFY = ./node_modules/.bin/browserify
 UGLIFYJS = ./node_modules/.bin/uglifyjs
+EXORCIST = ./node_modules/.bin/exorcist
+DEPLOY_DIR = libs
+BROWSERIFY_FLAGS = -d -x jquery 
+OUTPUT_DIR = .
 
-all: compile deploy clean uglify
+all: compile uglify deploy clean 
 
-compile:FLAGS = $(GLOBAL_FLAGS)
-compile: app
-
-debug: compile-debug deploy clean
-
-compile-debug:FLAGS = -d $(GLOBAL_FLAGS)
-compile-debug: app
-
-app:
-	$(NPM) update && $(BROWSERIFY) $(FLAGS) app.js -s APP -o $(OUTPUT_DIR)/app.bundle.js
+compile:
+	$(NPM) update && $(BROWSERIFY) $(BROWSERIFY_FLAGS) -e app.js -s APP | $(EXORCIST) $(OUTPUT_DIR)/app.bundle.js.map > $(OUTPUT_DIR)/app.bundle.js
 
 clean:
-	rm -f $(OUTPUT_DIR)/*.bundle.js
+	rm -f $(OUTPUT_DIR)/app.bundle.*
 
 deploy:
 	mkdir -p $(DEPLOY_DIR) && \
-	cp $(OUTPUT_DIR)/*.bundle.js $(DEPLOY_DIR) && \
+	cp $(OUTPUT_DIR)/app.bundle.min.js $(OUTPUT_DIR)/app.bundle.min.map $(DEPLOY_DIR) && \
 	./bump-js-versions.sh && \
 	([ ! -x deploy-local.sh ] || ./deploy-local.sh)
 
 uglify:
-	$(UGLIFYJS) -p relative libs/app.bundle.js -o libs/app.bundle.min.js --source-map libs/app.bundle.js.map --source-map-url=app.bundle.js.map
+	$(UGLIFYJS) -p relative $(OUTPUT_DIR)/app.bundle.js -o $(OUTPUT_DIR)/app.bundle.min.js --source-map $(OUTPUT_DIR)/app.bundle.min.map --in-source-map $(OUTPUT_DIR)/app.bundle.js.map
 
 source-package:
 	mkdir -p source_package/jitsi-meet && \
