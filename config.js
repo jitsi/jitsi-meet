@@ -43,6 +43,11 @@ var config = {
     // The URL to the Firefox extension for desktop sharing.
     desktopSharingFirefoxExtensionURL: null,
 
+    // Disables ICE/UDP by filtering out local and remote UDP candidates in signalling.
+    webrtcIceUdpDisable: false,
+    // Disables ICE/TCP by filtering out local and remote TCP candidates in signalling.
+    webrtcIceTcpDisable: false,
+
     openSctp: true, // Toggle to enable/disable SCTP channels
     disableStats: false,
     disableAudioLevels: false,
