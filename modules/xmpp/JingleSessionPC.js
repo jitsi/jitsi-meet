@@ -46,6 +46,9 @@ function JingleSessionPC(me, sid, connection, service) {
     this.ssrcOwners = {};
     this.ssrcVideoTypes = {};
 
+    this.webrtcIceUdpDisable = !!this.service.options.webrtcIceUdpDisable;
+    this.webrtcIceTcpDisable = !!this.service.options.webrtcIceTcpDisable;
+
     /**
      * The indicator which determines whether the (local) video has been muted
      * in response to a user command in contrast to an automatic decision made
@@ -58,6 +61,7 @@ function JingleSessionPC(me, sid, connection, service) {
     // stable and the ice connection state is connected.
     this.modifySourcesQueue.pause();
 }
+//XXX this is badly broken...
 JingleSessionPC.prototype = JingleSession.prototype;
 JingleSessionPC.prototype.constructor = JingleSessionPC;
 
@@ -97,6 +101,15 @@ JingleSessionPC.prototype.doInitialize = function () {
             this);
 
     this.peerconnection.onicecandidate = function (event) {
+        var protocol;
+        if (event && event.candidate) {
+            protocol = (typeof event.candidate.protocol === 'string')
+                ? event.candidate.protocol.toLowerCase() : '';
+            if ((self.webrtcIceTcpDisable && protocol == 'tcp') ||
+                (self.webrtcIceUdpDisable && protocol == 'udp')) {
+                return;
+            }
+        }
         self.sendIceCandidate(event.candidate);
     };
     this.peerconnection.onaddstream = function (event) {
@@ -227,6 +240,12 @@ JingleSessionPC.prototype.accept = function () {
         pranswer.sdp = pranswer.sdp.replace('a=inactive', 'a=sendrecv');
     }
     var prsdp = new SDP(pranswer.sdp);
+    if (self.webrtcIceTcpDisable) {
+        prsdp.removeTcpCandidates = true;
+    }
+    if (self.webrtcIceUdpDisable) {
+        prsdp.removeUdpCandidates = true;
+    }
     var accept = $iq({to: this.peerjid,
         type: 'set'})
         .c('jingle', {xmlns: 'urn:xmpp:jingle:1',
@@ -335,6 +354,12 @@ JingleSessionPC.prototype.sendIceCandidate = function (candidate) {
                     initiator: this.initiator,
                     sid: this.sid});
             this.localSDP = new SDP(this.peerconnection.localDescription.sdp);
+            if (self.webrtcIceTcpDisable) {
+                this.localSDP.removeTcpCandidates = true;
+            }
+            if (self.webrtcIceUdpDisable) {
+                this.localSDP.removeUdpCandidates = true;
+            }
             var sendJingle = function (ssrc) {
                 if(!ssrc)
                     ssrc = {};
@@ -533,6 +558,13 @@ JingleSessionPC.prototype.getSsrcOwner = function (ssrc) {
 JingleSessionPC.prototype.setRemoteDescription = function (elem, desctype) {
     //logger.log('setting remote description... ', desctype);
     this.remoteSDP = new SDP('');
+    if (self.webrtcIceTcpDisable) {
+        this.remoteSDP.removeTcpCandidates = true;
+    }
+    if (self.webrtcIceUdpDisable) {
+        this.remoteSDP.removeUdpCandidates = true;
+    }
+
     this.remoteSDP.fromJingle(elem);
     this.readSsrcInfo($(elem).find(">content"));
     if (this.peerconnection.remoteDescription) {
@@ -575,6 +607,10 @@ JingleSessionPC.prototype.setRemoteDescription = function (elem, desctype) {
     );
 };
 
+/**
+ * Adds remote ICE candidates to this Jingle session.
+ * @param elem An array of Jingle "content" elements?
+ */
 JingleSessionPC.prototype.addIceCandidate = function (elem) {
     var self = this;
     if (this.peerconnection.signalingState == 'closed') {
@@ -585,7 +621,7 @@ JingleSessionPC.prototype.addIceCandidate = function (elem) {
         // create a PRANSWER for setRemoteDescription
         if (!this.remoteSDP) {
             var cobbled = 'v=0\r\n' +
-                'o=- ' + '1923518516' + ' 2 IN IP4 0.0.0.0\r\n' +// FIXME
+                'o=- 1923518516 2 IN IP4 0.0.0.0\r\n' +// FIXME
                 's=-\r\n' +
                 't=0 0\r\n';
             // first, take some things from the local description
@@ -670,6 +706,14 @@ JingleSessionPC.prototype.addIceCandidate = function (elem) {
         // TODO: check ice-pwd and ice-ufrag?
         $(this).find('transport>candidate').each(function () {
             var line, candidate;
+            var protocol = this.getAttribute('protocol');
+            protocol =
+                (typeof protocol === 'string') ? protocol.toLowerCase() : '';
+            if ((self.webrtcIceTcpDisable && protocol == 'tcp') ||
+                (self.webrtcIceUdpDisable && protocol == 'udp')) {
+                return;
+            }
+
             line = SDPUtil.candidateFromJingle(this);
             candidate = new RTCIceCandidate({sdpMLineIndex: idx,
                 sdpMid: name,
@@ -723,6 +767,12 @@ JingleSessionPC.prototype.createdAnswer = function (sdp, provisional) {
                         initiator: self.initiator,
                         responder: self.responder,
                         sid: self.sid });
+                if (self.webrtcIceTcpDisable) {
+                    self.localSDP.removeTcpCandidates = true;
+                }
+                if (self.webrtcIceUdpDisable) {
+                    self.localSDP.removeUdpCandidates = true;
+                }
                 self.localSDP.toJingle(
                     accept,
                     self.initiator == self.me ? 'initiator' : 'responder',
