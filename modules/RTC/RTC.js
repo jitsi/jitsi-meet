@@ -44,6 +44,10 @@ function getMediaStreamUsage()
 }
 
 var RTC = {
+    // Exposes DataChannels to public consumption (e.g. jitsi-meet-torture)
+    // without the necessity to require the module.
+    "DataChannels": DataChannels,
+
     rtcUtils: null,
     devices: {
         audio: true,
