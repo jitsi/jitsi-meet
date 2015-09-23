@@ -4,6 +4,7 @@ var SmallVideo = require("./SmallVideo");
 var AudioLevels = require("../audio_levels/AudioLevels");
 var RTCBrowserType = require("../../RTC/RTCBrowserType");
 var UIUtils = require("../util/UIUtil");
+var XMPPEvents = require("../../../service/xmpp/XMPPEvents");
 
 function RemoteVideo(peerJid, VideoLayout) {
     this.peerJid = peerJid;
@@ -231,6 +232,19 @@ RemoteVideo.prototype.addRemoteStreamElement = function (sid, stream, thessrc) {
         self.removeRemoteStreamElement(stream, isVideo, newElementId);
 
     };
+
+    /**
+     * FF is missing onended event for remote streams. The problem we are fixing
+     * here is when the last participant leaves the room the video element is
+     * not updated. So the avatar or last video frame will stay, the fix updates
+     * the video elem and switches to local video the same as behavior in other
+     * browsers.
+     */
+    if (RTCBrowserType.isFirefox()) {
+        APP.xmpp.addListener(XMPPEvents.MUC_MEMBER_LEFT, function (jid) {
+            self.removeRemoteStreamElement(stream, isVideo, newElementId);
+        });
+    }
 
     // Add click handler.
     var onClickHandler = function (event) {
