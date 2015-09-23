@@ -1123,7 +1123,7 @@ JingleSessionPC.prototype.addStream = function (stream, callback) {
         return;
     }
 
-    self.modifySourcesQueue.push(function() {
+    this.modifySourcesQueue.push(function() {
         console.log('modify sources done');
 
         callback();
