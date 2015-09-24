@@ -1107,6 +1107,8 @@ JingleSessionPC.prototype.switchStreams = function (new_stream, oldStream, succe
  */
 JingleSessionPC.prototype.addStream = function (stream, callback) {
 
+    var self = this;
+
     // Remember SDP to figure out added/removed SSRCs
     var oldSdp = null;
     if(this.peerconnection) {
@@ -1128,9 +1130,9 @@ JingleSessionPC.prototype.addStream = function (stream, callback) {
 
         callback();
 
-        var newSdp = new SDP(this.peerconnection.localDescription.sdp);
+        var newSdp = new SDP(self.peerconnection.localDescription.sdp);
         console.log("SDPs", oldSdp, newSdp);
-        this.notifyMySSRCUpdate(oldSdp, newSdp);
+        self.notifyMySSRCUpdate(oldSdp, newSdp);
     });
 }
 
