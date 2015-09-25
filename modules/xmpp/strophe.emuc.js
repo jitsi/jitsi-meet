@@ -262,6 +262,10 @@ module.exports = function(XMPP, eventEmitter) {
                     eventEmitter.emit(XMPPEvents.MUC_ROLE_CHANGED,
                         member.role, member.displayName);
                 }
+
+                // store the new
+                if(member.displayName)
+                    this.members[from].displayName = member.displayName;
             }
 
             // Always trigger presence to update bindings
