@@ -339,13 +339,13 @@ var VideoLayout = (function (my) {
 
         Object.keys(members).forEach(function (jid) {
 
-            if (Strophe.getResourceFromJid(jid) === 'focus') {
+            var resourceJid = Strophe.getResourceFromJid(jid);
+            var member = members[jid];
+
+            if (member.isFocus) {
                 // Skip server side focus
                 return;
             }
-
-            var resourceJid = Strophe.getResourceFromJid(jid);
-            var member = members[jid];
 
             if (member.role === 'moderator') {
                 remoteVideos[resourceJid].removeRemoteVideoMenu();
