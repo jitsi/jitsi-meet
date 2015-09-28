@@ -362,7 +362,7 @@ var LargeVideo = {
         if(!isEnabled)
             return;
         var newSmallVideo = this.VideoLayout.getSmallVideo(resourceJid);
-        console.log('hover in ' + resourceJid + ', video: ', newSmallVideo);
+        console.info('hover in ' + resourceJid + ', video: ', newSmallVideo);
 
         if (!newSmallVideo) {
             console.error("Small video not found for: " + resourceJid);

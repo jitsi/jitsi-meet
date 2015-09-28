@@ -90,7 +90,7 @@ var DataChannels = {
                     // endpoint IDs.
                     var endpointsEnteringLastN = obj.endpointsEnteringLastN;
 
-                    console.log(
+                    console.info(
                         "Data channel new last-n event: ",
                         lastNEndpoints, endpointsEnteringLastN, obj);
                     eventEmitter.emit(RTCEvents.LASTN_ENDPOINT_CHANGED,
