@@ -76,6 +76,7 @@ function LocalStatsCollector(stream, interval,
     this.eventEmitter = eventEmitter;
     this.audioLevel = 0;
     this.statisticsService = statisticsService;
+    this.context;
 }
 
 /**
@@ -86,13 +87,13 @@ LocalStatsCollector.prototype.start = function () {
         RTCBrowserType.isTemasysPluginUsed())
         return;
 
-    var context = new AudioContext();
-    var analyser = context.createAnalyser();
+    this.context = new AudioContext();
+    var analyser = this.context.createAnalyser();
     analyser.smoothingTimeConstant = WEBAUDIO_ANALYZER_SMOOTING_TIME;
     analyser.fftSize = WEBAUDIO_ANALYZER_FFT_SIZE;
 
 
-    var source = context.createMediaStreamSource(this.stream);
+    var source = this.context.createMediaStreamSource(this.stream);
     source.connect(analyser);
 
 
@@ -123,6 +124,12 @@ LocalStatsCollector.prototype.stop = function () {
         clearInterval(this.intervalId);
         this.intervalId = null;
     }
+    // Clean up context
+    if (this.context && this.context.close && typeof this.context.close === 'function') {
+        this.context.close();
+    }
+    this.context = undefined;
+    delete this.context;
 };
 
 module.exports = LocalStatsCollector;
