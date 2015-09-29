@@ -576,7 +576,7 @@ var XMPP = {
     },
     // Returns true iff we have joined the MUC.
     isMUCJoined: function () {
-        return connection.emuc.joined;
+        return connection === null ? false : connection.emuc.joined;
     },
     getSessions: function () {
         return connection.jingle.sessions;
