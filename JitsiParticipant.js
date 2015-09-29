@@ -1,15 +1,17 @@
 /**
  * Represents a participant in (a member of) a conference.
  */
-function JitsiParticipant(){
-
+function JitsiParticipant(id, conference, displayName){
+    this._id = id;
+    this._conference = conference;
+    this._displayName = displayName;
 }
 
 /**
  * @returns {JitsiConference} The conference that this participant belongs to.
  */
 JitsiParticipant.prototype.getConference = function() {
-
+    return this._conference;
 }
 
 /**
@@ -23,21 +25,20 @@ JitsiParticipant.prototype.getTracks = function() {
  * @returns {String} The ID (i.e. JID) of this participant.
  */
 JitsiParticipant.prototype.getId = function() {
-
+    return this._id;
 }
 
 /**
  * @returns {String} The human-readable display name of this participant.
  */
 JitsiParticipant.prototype.getDisplayName = function() {
-
+    return this._displayName;
 }
 
 /**
  * @returns {Boolean} Whether this participant is a moderator or not.
  */
 JitsiParticipant.prototype.isModerator = function() {
-
 }
 
 // Gets a link to an etherpad instance advertised by the participant?

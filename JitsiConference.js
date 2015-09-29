@@ -4,6 +4,7 @@ var StreamEventTypes = require("./service/RTC/StreamEventTypes");
 var RTCEvents = require("./service/RTC/RTCEvents");
 var EventEmitter = require("events");
 var JitsiConferenceEvents = require("./JitsiConferenceEvents");
+var JitsiParticipant = require("./JitsiParticipant");
 
 /**
  * Creates a JitsiConference object with the given name and properties.
@@ -23,6 +24,7 @@ function JitsiConference(options) {
     this.room = this.xmpp.createRoom(this.options.name, null, null, this.options.config);
     this.rtc = new RTC(this.room, options);
     setupListeners(this);
+    this.participants = {};
 }
 
 /**
@@ -171,7 +173,7 @@ JitsiConference.prototype.pinParticipant = function(participantId) {
  * @return Object a list of participant identifiers containing all conference participants.
  */
 JitsiConference.prototype.getParticipants = function() {
-
+    return this.participants;
 }
 
 /**
@@ -180,7 +182,12 @@ JitsiConference.prototype.getParticipants = function() {
  * @param id the id of the participant.
  */
 JitsiConference.prototype.getParticipantById = function(id) {
+    return this.participants[id];
+}
 
+JitsiConference.prototype.onMemberJoined = function (jid, email, nick) {
+    this.eventEmitter.emit(JitsiConferenceEvents.USER_JOINED, Strophe.getResourceFromJid(jid));
+//    this.participants[jid] = new JitsiParticipant();
 }
 
 /**
@@ -195,15 +202,19 @@ function setupListeners(conference) {
     conference.rtc.addListener(StreamEventTypes.EVENT_TYPE_REMOTE_CREATED, function (stream) {
         conference.eventEmitter.emit(JitsiConferenceEvents.TRACK_ADDED, stream);
     });
-    conference.rtc.addListener(StreamEventTypes.EVENT_TYPE_REMOTE_CREATED, function (stream) {
+    conference.rtc.addListener(StreamEventTypes.EVENT_TYPE_REMOTE_ENDED, function (stream) {
+        conference.eventEmitter.emit(JitsiConferenceEvents.TRACK_REMOVED, stream);
+    });
+    conference.rtc.addListener(StreamEventTypes.EVENT_TYPE_LOCAL_ENDED, function (stream) {
         conference.eventEmitter.emit(JitsiConferenceEvents.TRACK_REMOVED, stream);
     })
     conference.room.addListener(XMPPEvents.MUC_JOINED, function () {
         conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_JOINED);
     });
-    conference.room.addListener(XMPPEvents.MUC_JOINED, function () {
-        conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_LEFT);
-    });
+//    FIXME
+//    conference.room.addListener(XMPPEvents.MUC_JOINED, function () {
+//        conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_LEFT);
+//    });
     conference.rtc.addListener(RTCEvents.DOMINANTSPEAKER_CHANGED, function (id) {
         conference.eventEmitter.emit(JitsiConferenceEvents.ACTIVE_SPEAKER_CHANGED, id);
     });
@@ -218,10 +229,7 @@ function setupListeners(conference) {
                 lastNEndpoints, endpointsEnteringLastN);
         });
 
-    conference.room.addListener(XMPPEvents.MUC_MEMBER_JOINED,
-        function (jid, email, nick) {
-            conference.eventEmitter.emit(JitsiConferenceEvents.USER_JOINED, Strophe.getResourceFromJid(jid));
-        });
+    conference.room.addListener(XMPPEvents.MUC_MEMBER_JOINED, conference.onMemberJoined.bind(conference));
     conference.room.addListener(XMPPEvents.MUC_MEMBER_LEFT,function (jid) {
         conference.eventEmitter.emit(JitsiConferenceEvents.USER_LEFT, Strophe.getResourceFromJid(jid));
     });

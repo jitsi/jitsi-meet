@@ -5,6 +5,7 @@ var StreamEventTypes = require("./service/RTC/StreamEventTypes");
 var RTCEvents = require("./service/RTC/RTCEvents");
 var EventEmitter = require("events");
 var JitsiConferenceEvents = require("./JitsiConferenceEvents");
+var JitsiParticipant = require("./JitsiParticipant");
 
 /**
  * Creates a JitsiConference object with the given name and properties.
@@ -24,6 +25,7 @@ function JitsiConference(options) {
     this.room = this.xmpp.createRoom(this.options.name, null, null, this.options.config);
     this.rtc = new RTC(this.room, options);
     setupListeners(this);
+    this.participants = {};
 }
 
 /**
@@ -172,7 +174,7 @@ JitsiConference.prototype.pinParticipant = function(participantId) {
  * @return Object a list of participant identifiers containing all conference participants.
  */
 JitsiConference.prototype.getParticipants = function() {
-
+    return this.participants;
 }
 
 /**
@@ -181,7 +183,12 @@ JitsiConference.prototype.getParticipants = function() {
  * @param id the id of the participant.
  */
 JitsiConference.prototype.getParticipantById = function(id) {
+    return this.participants[id];
+}
 
+JitsiConference.prototype.onMemberJoined = function (jid, email, nick) {
+    this.eventEmitter.emit(JitsiConferenceEvents.USER_JOINED, Strophe.getResourceFromJid(jid));
+//    this.participants[jid] = new JitsiParticipant();
 }
 
 /**
@@ -196,15 +203,19 @@ function setupListeners(conference) {
     conference.rtc.addListener(StreamEventTypes.EVENT_TYPE_REMOTE_CREATED, function (stream) {
         conference.eventEmitter.emit(JitsiConferenceEvents.TRACK_ADDED, stream);
     });
-    conference.rtc.addListener(StreamEventTypes.EVENT_TYPE_REMOTE_CREATED, function (stream) {
+    conference.rtc.addListener(StreamEventTypes.EVENT_TYPE_REMOTE_ENDED, function (stream) {
+        conference.eventEmitter.emit(JitsiConferenceEvents.TRACK_REMOVED, stream);
+    });
+    conference.rtc.addListener(StreamEventTypes.EVENT_TYPE_LOCAL_ENDED, function (stream) {
         conference.eventEmitter.emit(JitsiConferenceEvents.TRACK_REMOVED, stream);
     })
     conference.room.addListener(XMPPEvents.MUC_JOINED, function () {
         conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_JOINED);
     });
-    conference.room.addListener(XMPPEvents.MUC_JOINED, function () {
-        conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_LEFT);
-    });
+//    FIXME
+//    conference.room.addListener(XMPPEvents.MUC_JOINED, function () {
+//        conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_LEFT);
+//    });
     conference.rtc.addListener(RTCEvents.DOMINANTSPEAKER_CHANGED, function (id) {
         conference.eventEmitter.emit(JitsiConferenceEvents.ACTIVE_SPEAKER_CHANGED, id);
     });
@@ -219,10 +230,7 @@ function setupListeners(conference) {
                 lastNEndpoints, endpointsEnteringLastN);
         });
 
-    conference.room.addListener(XMPPEvents.MUC_MEMBER_JOINED,
-        function (jid, email, nick) {
-            conference.eventEmitter.emit(JitsiConferenceEvents.USER_JOINED, Strophe.getResourceFromJid(jid));
-        });
+    conference.room.addListener(XMPPEvents.MUC_MEMBER_JOINED, conference.onMemberJoined.bind(conference));
     conference.room.addListener(XMPPEvents.MUC_MEMBER_LEFT,function (jid) {
         conference.eventEmitter.emit(JitsiConferenceEvents.USER_LEFT, Strophe.getResourceFromJid(jid));
     });
@@ -231,7 +239,7 @@ function setupListeners(conference) {
 
 module.exports = JitsiConference;
 
-},{"./JitsiConferenceEvents":3,"./modules/RTC/RTC":12,"./service/RTC/RTCEvents":70,"./service/RTC/StreamEventTypes":72,"./service/xmpp/XMPPEvents":75,"events":76}],2:[function(require,module,exports){
+},{"./JitsiConferenceEvents":3,"./JitsiParticipant":8,"./modules/RTC/RTC":13,"./service/RTC/RTCEvents":71,"./service/RTC/StreamEventTypes":73,"./service/xmpp/XMPPEvents":76,"events":77}],2:[function(require,module,exports){
 /**
  * Enumeration with the errors for the conference.
  * @type {{string: string}}
@@ -415,7 +423,7 @@ JitsiConnection.prototype.removeEventListener = function (event, listener) {
 
 module.exports = JitsiConnection;
 
-},{"./JitsiConference":1,"./modules/xmpp/xmpp":32}],5:[function(require,module,exports){
+},{"./JitsiConference":1,"./modules/xmpp/xmpp":33}],5:[function(require,module,exports){
 /**
  * Enumeration with the errors for the connection.
  * @type {{string: string}}
@@ -496,7 +504,145 @@ window.Promise = window.Promise || require("es6-promise").polyfill();
 
 module.exports = LibJitsiMeet;
 
-},{"./JitsiConferenceErrors":2,"./JitsiConferenceEvents":3,"./JitsiConnection":4,"./JitsiConnectionErrors":5,"./JitsiConnectionEvents":6,"./modules/RTC/RTC":12,"es6-promise":34}],8:[function(require,module,exports){
+},{"./JitsiConferenceErrors":2,"./JitsiConferenceEvents":3,"./JitsiConnection":4,"./JitsiConnectionErrors":5,"./JitsiConnectionEvents":6,"./modules/RTC/RTC":13,"es6-promise":35}],8:[function(require,module,exports){
+/**
+ * Represents a participant in (a member of) a conference.
+ */
+function JitsiParticipant(id, conference, displayName){
+    this._id = id;
+    this._conference = conference;
+    this._displayName = displayName;
+}
+
+/**
+ * @returns {JitsiConference} The conference that this participant belongs to.
+ */
+JitsiParticipant.prototype.getConference = function() {
+    return this._conference;
+}
+
+/**
+ * @returns {Array.<JitsiTrack>} The list of media tracks for this participant.
+ */
+JitsiParticipant.prototype.getTracks = function() {
+
+}
+
+/**
+ * @returns {String} The ID (i.e. JID) of this participant.
+ */
+JitsiParticipant.prototype.getId = function() {
+    return this._id;
+}
+
+/**
+ * @returns {String} The human-readable display name of this participant.
+ */
+JitsiParticipant.prototype.getDisplayName = function() {
+    return this._displayName;
+}
+
+/**
+ * @returns {Boolean} Whether this participant is a moderator or not.
+ */
+JitsiParticipant.prototype.isModerator = function() {
+}
+
+// Gets a link to an etherpad instance advertised by the participant?
+//JitsiParticipant.prototype.getEtherpad = function() {
+//
+//}
+
+
+/*
+ * @returns {Boolean} Whether this participant has muted their audio.
+ */
+JitsiParticipant.prototype.isAudioMuted = function() {
+
+}
+
+/*
+ * @returns {Boolean} Whether this participant has muted their video.
+ */
+JitsiParticipant.prototype.isVideoMuted = function() {
+
+}
+
+/*
+ * @returns {???} The latest statistics reported by this participant (i.e. info used to populate the GSM bars)
+ * TODO: do we expose this or handle it internally?
+ */
+JitsiParticipant.prototype.getLatestStats = function() {
+
+}
+
+/**
+ * @returns {String} The role of this participant.
+ */
+JitsiParticipant.prototype.getRole = function() {
+
+}
+
+/*
+ * @returns {Boolean} Whether this participant is the conference focus (i.e. jicofo).
+ */
+JitsiParticipant.prototype.isFocus = function() {
+
+}
+
+/*
+ * @returns {Boolean} Whether this participant is a conference recorder (i.e. jirecon).
+ */
+JitsiParticipant.prototype.isRecorder = function() {
+
+}
+
+/*
+ * @returns {Boolean} Whether this participant is a SIP gateway (i.e. jigasi).
+ */
+JitsiParticipant.prototype.isSipGateway = function() {
+
+}
+
+/**
+ * @returns {String} The ID for this participant's avatar.
+ */
+JitsiParticipant.prototype.getAvatarId = function() {
+
+}
+
+/**
+ * @returns {Boolean} Whether this participant is currently sharing their screen.
+ */
+JitsiParticipant.prototype.isScreenSharing = function() {
+
+}
+
+/**
+ * @returns {String} The user agent of this participant (i.e. browser userAgent string).
+ */
+JitsiParticipant.prototype.getUserAgent = function() {
+
+}
+
+/**
+ * Kicks the participant from the conference (requires certain privileges).
+ */
+JitsiParticipant.prototype.kick = function() {
+
+}
+
+/**
+ * Asks this participant to mute themselves.
+ */
+JitsiParticipant.prototype.askToMute = function() {
+
+}
+
+
+module.exports = JitsiParticipant();
+
+},{}],9:[function(require,module,exports){
 /* global config, APP, Strophe */
 
 // cache datachannels to avoid garbage collection
@@ -683,28 +829,10 @@ DataChannels.prototype.handlePinnedEndpointEvent = function (userResource) {
 module.exports = DataChannels;
 
 
-},{"../../service/RTC/RTCEvents":70}],9:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":71}],10:[function(require,module,exports){
 var JitsiTrack = require("./JitsiTrack");
 var StreamEventTypes = require("../../service/RTC/StreamEventTypes");
 var RTCEvents = require("../../service/RTC/RTCEvents");
-var RTCBrowserType = require("./RTCBrowserType");
-
-/**
- * This implements 'onended' callback normally fired by WebRTC after the stream
- * is stopped. There is no such behaviour yet in FF, so we have to add it.
- * @param stream original WebRTC stream object to which 'onended' handling
- *               will be added.
- */
-function implementOnEndedHandling(stream) {
-    var originalStop = stream.stop;
-    stream.stop = function () {
-        originalStop.apply(stream);
-        if (!stream.ended) {
-            stream.ended = true;
-            stream.onended();
-        }
-    };
-}
 
 /**
  * Represents a single media track (either audio or video).
@@ -721,9 +849,6 @@ function JitsiLocalTrack(RTC, stream, eventEmitter, videoType, isGUMStream)
     this.stream.onended = function () {
         this.eventEmitter.emit(StreamEventTypes.EVENT_TYPE_LOCAL_ENDED, this);
     }.bind(this);
-    if (RTCBrowserType.isFirefox()) {
-        implementOnEndedHandling(this.stream);
-    }
 }
 
 JitsiLocalTrack.prototype = Object.create(JitsiTrack.prototype);
@@ -804,8 +929,9 @@ JitsiLocalTrack.prototype.start = function() {
 
 module.exports = JitsiLocalTrack;
 
-},{"../../service/RTC/RTCEvents":70,"../../service/RTC/StreamEventTypes":72,"./JitsiTrack":11,"./RTCBrowserType":13}],10:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":71,"../../service/RTC/StreamEventTypes":73,"./JitsiTrack":12}],11:[function(require,module,exports){
 var JitsiTrack = require("./JitsiTrack");
+var StreamEventTypes = require("../../service/RTC/StreamEventTypes");
 
 /**
  * Represents a single media track (either audio or video).
@@ -821,6 +947,11 @@ function JitsiRemoteTrack(RTC, data, sid, ssrc, browser, eventEmitter) {
     this.ssrc = ssrc;
     this.muted = false;
     this.eventEmitter = eventEmitter;
+    var self = this;
+    if(this.stream)
+        this.stream.onended = function () {
+            eventEmitter.emit(StreamEventTypes.EVENT_TYPE_REMOTE_ENDED, self);
+        }
 }
 
 JitsiRemoteTrack.prototype = Object.create(JitsiTrack.prototype);
@@ -844,8 +975,26 @@ delete JitsiRemoteTrack.prototype.start;
 
 module.exports = JitsiRemoteTrack;
 
-},{"./JitsiTrack":11}],11:[function(require,module,exports){
+},{"../../service/RTC/StreamEventTypes":73,"./JitsiTrack":12}],12:[function(require,module,exports){
 var RTC = require("./RTCUtils");
+var RTCBrowserType = require("./RTCBrowserType");
+
+/**
+ * This implements 'onended' callback normally fired by WebRTC after the stream
+ * is stopped. There is no such behaviour yet in FF, so we have to add it.
+ * @param stream original WebRTC stream object to which 'onended' handling
+ *               will be added.
+ */
+function implementOnEndedHandling(stream) {
+    var originalStop = stream.stop;
+    stream.stop = function () {
+        originalStop.apply(stream);
+        if (!stream.ended) {
+            stream.ended = true;
+            stream.onended();
+        }
+    };
+}
 
 /**
  * Represents a single media track (either audio or video).
@@ -865,6 +1014,9 @@ function JitsiTrack(RTC, stream)
         this._getTracks = function () {
             return this.stream.getVideoTracks();
         }.bind(this);
+    }
+    if (RTCBrowserType.isFirefox() && this.stream) {
+        implementOnEndedHandling(this.stream);
     }
 }
 
@@ -963,7 +1115,7 @@ JitsiTrack.prototype.getId = function () {
 
 module.exports = JitsiTrack;
 
-},{"./RTCUtils":14}],12:[function(require,module,exports){
+},{"./RTCBrowserType":14,"./RTCUtils":15}],13:[function(require,module,exports){
 /* global APP */
 var EventEmitter = require("events");
 var RTCBrowserType = require("./RTCBrowserType");
@@ -1291,7 +1443,7 @@ RTC.prototype.setDeviceAvailability = function (devices) {
 
 module.exports = RTC;
 
-},{"../../service/RTC/MediaStreamTypes":69,"../../service/RTC/RTCEvents.js":70,"../../service/RTC/StreamEventTypes.js":72,"../../service/desktopsharing/DesktopSharingEventTypes":74,"../../service/xmpp/XMPPEvents":75,"../desktopsharing/desktopsharing":16,"./DataChannels":8,"./JitsiLocalTrack.js":9,"./JitsiRemoteTrack.js":10,"./RTCBrowserType":13,"./RTCUtils.js":14,"events":76}],13:[function(require,module,exports){
+},{"../../service/RTC/MediaStreamTypes":70,"../../service/RTC/RTCEvents.js":71,"../../service/RTC/StreamEventTypes.js":73,"../../service/desktopsharing/DesktopSharingEventTypes":75,"../../service/xmpp/XMPPEvents":76,"../desktopsharing/desktopsharing":17,"./DataChannels":9,"./JitsiLocalTrack.js":10,"./JitsiRemoteTrack.js":11,"./RTCBrowserType":14,"./RTCUtils.js":15,"events":77}],14:[function(require,module,exports){
 
 var currentBrowser;
 
@@ -1453,7 +1605,7 @@ function detectBrowser() {
 browserVersion = detectBrowser();
 
 module.exports = RTCBrowserType;
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 /* global config, require, attachMediaStream, getUserMedia */
 var RTCBrowserType = require("./RTCBrowserType");
 var Resolutions = require("../../service/RTC/Resolutions");
@@ -2010,7 +2162,7 @@ var RTCUtils = {
 
 module.exports = RTCUtils;
 
-},{"../../service/RTC/Resolutions":71,"../xmpp/SDPUtil":24,"./RTCBrowserType":13,"./adapter.screenshare":15,"events":76}],15:[function(require,module,exports){
+},{"../../service/RTC/Resolutions":72,"../xmpp/SDPUtil":25,"./RTCBrowserType":14,"./adapter.screenshare":16,"events":77}],16:[function(require,module,exports){
 /*! adapterjs - custom version from - 2015-08-12 */
 
 // Adapter's interface.
@@ -3341,7 +3493,7 @@ if (navigator.mozGetUserMedia) {
     };
   }
 })();
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 /* global $, alert, APP, changeLocalVideo, chrome, config, getConferenceHandler,
  getUserMediaWithConstraints */
 /**
@@ -3730,7 +3882,7 @@ module.exports = {
 };
 
 
-},{"../../service/RTC/RTCEvents":70,"../../service/desktopsharing/DesktopSharingEventTypes":74,"../RTC/RTCBrowserType":13,"../RTC/adapter.screenshare":15,"events":76}],17:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":71,"../../service/desktopsharing/DesktopSharingEventTypes":75,"../RTC/RTCBrowserType":14,"../RTC/adapter.screenshare":16,"events":77}],18:[function(require,module,exports){
 function supportsLocalStorage() {
     try {
         return 'localStorage' in window && window.localStorage !== null;
@@ -3812,7 +3964,7 @@ Settings.prototype.setLanguage = function (lang) {
 
 module.exports = Settings;
 
-},{}],18:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 var Moderator = require("./moderator");
 var EventEmitter = require("events");
@@ -4392,7 +4544,7 @@ ChatRoom.prototype.addLocalStreams = function (localStreams) {
 }
 
 module.exports = ChatRoom;
-},{"../../service/xmpp/XMPPEvents":75,"./moderator":26,"events":76}],19:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":76,"./moderator":27,"events":77}],20:[function(require,module,exports){
 /*
  * JingleSession provides an API to manage a single Jingle session. We will
  * have different implementations depending on the underlying interface used
@@ -4524,7 +4676,7 @@ JingleSession.prototype.setAnswer = function(jingle) {};
 
 module.exports = JingleSession;
 
-},{}],20:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 /* jshint -W117 */
 var JingleSession = require("./JingleSession");
 var TraceablePeerConnection = require("./TraceablePeerConnection");
@@ -4632,10 +4784,7 @@ JingleSessionPC.prototype.doInitialize = function () {
         }
     };
     this.peerconnection.onremovestream = function (event) {
-        // Remove the stream from remoteStreams
-        // FIXME: remotestreamremoved.jingle not defined anywhere(unused)
 
-        $(document).trigger('remotestreamremoved.jingle', [event, self.sid]);
     };
     this.peerconnection.onsignalingstatechange = function (event) {
         if (!(self && self.peerconnection)) return;
@@ -5634,6 +5783,8 @@ JingleSessionPC.prototype.switchStreams = function (new_stream, oldStream, succe
  */
 JingleSessionPC.prototype.addStream = function (stream, callback) {
 
+    var self = this;
+
     // Remember SDP to figure out added/removed SSRCs
     var oldSdp = null;
     if(this.peerconnection) {
@@ -5650,14 +5801,14 @@ JingleSessionPC.prototype.addStream = function (stream, callback) {
         return;
     }
 
-    self.modifySourcesQueue.push(function() {
+    this.modifySourcesQueue.push(function() {
         console.log('modify sources done');
 
         callback();
 
-        var newSdp = new SDP(this.peerconnection.localDescription.sdp);
+        var newSdp = new SDP(self.peerconnection.localDescription.sdp);
         console.log("SDPs", oldSdp, newSdp);
-        this.notifyMySSRCUpdate(oldSdp, newSdp);
+        self.notifyMySSRCUpdate(oldSdp, newSdp);
     });
 }
 
@@ -6008,7 +6159,7 @@ JingleSessionPC.prototype.remoteStreamAdded = function (data, times) {
 
 module.exports = JingleSessionPC;
 
-},{"../../service/xmpp/XMPPEvents":75,"../RTC/RTC":12,"../RTC/RTCBrowserType":13,"./JingleSession":19,"./LocalSSRCReplacement":21,"./SDP":22,"./SDPDiffer":23,"./SDPUtil":24,"./TraceablePeerConnection":25,"async":33,"sdp-transform":66}],21:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":76,"../RTC/RTC":13,"../RTC/RTCBrowserType":14,"./JingleSession":20,"./LocalSSRCReplacement":22,"./SDP":23,"./SDPDiffer":24,"./SDPUtil":25,"./TraceablePeerConnection":26,"async":34,"sdp-transform":67}],22:[function(require,module,exports){
 /* global $ */
 
 /*
@@ -6278,7 +6429,7 @@ var LocalSSRCReplacement = {
 
 module.exports = LocalSSRCReplacement;
 
-},{"../RTC/RTCBrowserType":13,"./SDP":22}],22:[function(require,module,exports){
+},{"../RTC/RTCBrowserType":14,"./SDP":23}],23:[function(require,module,exports){
 /* jshint -W117 */
 var SDPUtil = require("./SDPUtil");
 
@@ -6904,7 +7055,7 @@ SDP.prototype.jingle2media = function (content) {
 module.exports = SDP;
 
 
-},{"./SDPUtil":24}],23:[function(require,module,exports){
+},{"./SDPUtil":25}],24:[function(require,module,exports){
 
 var SDPUtil = require("./SDPUtil");
 
@@ -7076,7 +7227,7 @@ SDPDiffer.prototype.toJingle = function(modify) {
 };
 
 module.exports = SDPDiffer;
-},{"./SDPUtil":24}],24:[function(require,module,exports){
+},{"./SDPUtil":25}],25:[function(require,module,exports){
 SDPUtil = {
     filter_special_chars: function (text) {
         return text.replace(/[\\\/\{,\}\+]/g, "");
@@ -7429,7 +7580,7 @@ SDPUtil = {
     }
 };
 module.exports = SDPUtil;
-},{}],25:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 var RTC = require('../RTC/RTC');
 var RTCBrowserType = require("../RTC/RTCBrowserType.js");
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
@@ -7885,7 +8036,7 @@ TraceablePeerConnection.prototype.getStats = function(callback, errback) {
 module.exports = TraceablePeerConnection;
 
 
-},{"../../service/xmpp/XMPPEvents":75,"../RTC/RTC":12,"../RTC/RTCBrowserType.js":13,"./LocalSSRCReplacement":21,"sdp-interop":52,"sdp-simulcast":59,"sdp-transform":66}],26:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":76,"../RTC/RTC":13,"../RTC/RTCBrowserType.js":14,"./LocalSSRCReplacement":22,"sdp-interop":53,"sdp-simulcast":60,"sdp-transform":67}],27:[function(require,module,exports){
 /* global $, $iq, APP, config, messageHandler,
  roomName, sessionTerminated, Strophe, Util */
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
@@ -8306,7 +8457,7 @@ module.exports = Moderator;
 
 
 
-},{"../../service/authentication/AuthenticationEvents":73,"../../service/xmpp/XMPPEvents":75,"../settings/Settings":17}],27:[function(require,module,exports){
+},{"../../service/authentication/AuthenticationEvents":74,"../../service/xmpp/XMPPEvents":76,"../settings/Settings":18}],28:[function(require,module,exports){
 /* jshint -W117 */
 /* a simple MUC connection plugin
  * can only handle a single MUC room
@@ -8399,7 +8550,7 @@ module.exports = function(XMPP) {
 };
 
 
-},{"./ChatRoom":18}],28:[function(require,module,exports){
+},{"./ChatRoom":19}],29:[function(require,module,exports){
 /* jshint -W117 */
 
 var JingleSession = require("./JingleSessionPC");
@@ -8690,7 +8841,7 @@ module.exports = function(XMPP, eventEmitter) {
 };
 
 
-},{"../../service/xmpp/XMPPEvents":75,"../RTC/RTCBrowserType":13,"./JingleSessionPC":20}],29:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":76,"../RTC/RTCBrowserType":14,"./JingleSessionPC":21}],30:[function(require,module,exports){
 /* global Strophe */
 module.exports = function () {
 
@@ -8711,7 +8862,7 @@ module.exports = function () {
         }
     });
 };
-},{}],30:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 /* jshint -W117 */
 module.exports = function() {
     Strophe.addConnectionPlugin('rayo',
@@ -8808,7 +8959,7 @@ module.exports = function() {
     );
 };
 
-},{}],31:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 /**
  * Strophe logger implementation. Logs from level WARN and above.
  */
@@ -8852,7 +9003,7 @@ module.exports = function () {
     };
 };
 
-},{}],32:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 /* global $, APP, config, Strophe*/
 var EventEmitter = require("events");
 var Pako = require("pako");
@@ -9148,7 +9299,7 @@ XMPP.prototype.disconnect = function () {
 
 module.exports = XMPP;
 
-},{"../../JitsiConnectionErrors":5,"../../JitsiConnectionEvents":6,"../../service/RTC/RTCEvents":70,"../../service/RTC/StreamEventTypes":72,"../../service/xmpp/XMPPEvents":75,"../RTC/RTC":12,"./strophe.emuc":27,"./strophe.jingle":28,"./strophe.logger":29,"./strophe.rayo":30,"./strophe.util":31,"events":76,"pako":35}],33:[function(require,module,exports){
+},{"../../JitsiConnectionErrors":5,"../../JitsiConnectionEvents":6,"../../service/RTC/RTCEvents":71,"../../service/RTC/StreamEventTypes":73,"../../service/xmpp/XMPPEvents":76,"../RTC/RTC":13,"./strophe.emuc":28,"./strophe.jingle":29,"./strophe.logger":30,"./strophe.rayo":31,"./strophe.util":32,"events":77,"pako":36}],34:[function(require,module,exports){
 (function (process){
 /*!
  * async
@@ -10275,7 +10426,7 @@ module.exports = XMPP;
 }());
 
 }).call(this,require('_process'))
-},{"_process":77}],34:[function(require,module,exports){
+},{"_process":78}],35:[function(require,module,exports){
 (function (process,global){
 /*!
  * @overview es6-promise - a tiny implementation of Promises/A+.
@@ -11246,7 +11397,7 @@ module.exports = XMPP;
 
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":77}],35:[function(require,module,exports){
+},{"_process":78}],36:[function(require,module,exports){
 // Top level file is just a mixin of submodules & constants
 'use strict';
 
@@ -11262,7 +11413,7 @@ assign(pako, deflate, inflate, constants);
 
 module.exports = pako;
 
-},{"./lib/deflate":36,"./lib/inflate":37,"./lib/utils/common":38,"./lib/zlib/constants":41}],36:[function(require,module,exports){
+},{"./lib/deflate":37,"./lib/inflate":38,"./lib/utils/common":39,"./lib/zlib/constants":42}],37:[function(require,module,exports){
 'use strict';
 
 
@@ -11640,7 +11791,7 @@ exports.deflate = deflate;
 exports.deflateRaw = deflateRaw;
 exports.gzip = gzip;
 
-},{"./utils/common":38,"./utils/strings":39,"./zlib/deflate.js":43,"./zlib/messages":48,"./zlib/zstream":50}],37:[function(require,module,exports){
+},{"./utils/common":39,"./utils/strings":40,"./zlib/deflate.js":44,"./zlib/messages":49,"./zlib/zstream":51}],38:[function(require,module,exports){
 'use strict';
 
 
@@ -12021,7 +12172,7 @@ exports.inflate = inflate;
 exports.inflateRaw = inflateRaw;
 exports.ungzip  = inflate;
 
-},{"./utils/common":38,"./utils/strings":39,"./zlib/constants":41,"./zlib/gzheader":44,"./zlib/inflate.js":46,"./zlib/messages":48,"./zlib/zstream":50}],38:[function(require,module,exports){
+},{"./utils/common":39,"./utils/strings":40,"./zlib/constants":42,"./zlib/gzheader":45,"./zlib/inflate.js":47,"./zlib/messages":49,"./zlib/zstream":51}],39:[function(require,module,exports){
 'use strict';
 
 
@@ -12125,7 +12276,7 @@ exports.setTyped = function (on) {
 
 exports.setTyped(TYPED_OK);
 
-},{}],39:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 // String encode/decode helpers
 'use strict';
 
@@ -12312,7 +12463,7 @@ exports.utf8border = function(buf, max) {
   return (pos + _utf8len[buf[pos]] > max) ? pos : max;
 };
 
-},{"./common":38}],40:[function(require,module,exports){
+},{"./common":39}],41:[function(require,module,exports){
 'use strict';
 
 // Note: adler32 takes 12% for level 0 and 2% for level 6.
@@ -12346,7 +12497,7 @@ function adler32(adler, buf, len, pos) {
 
 module.exports = adler32;
 
-},{}],41:[function(require,module,exports){
+},{}],42:[function(require,module,exports){
 module.exports = {
 
   /* Allowed flush values; see deflate() and inflate() below for details */
@@ -12395,7 +12546,7 @@ module.exports = {
   //Z_NULL:                 null // Use -1 or null inline, depending on var type
 };
 
-},{}],42:[function(require,module,exports){
+},{}],43:[function(require,module,exports){
 'use strict';
 
 // Note: we can't get significant speed boost here.
@@ -12438,7 +12589,7 @@ function crc32(crc, buf, len, pos) {
 
 module.exports = crc32;
 
-},{}],43:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 'use strict';
 
 var utils   = require('../utils/common');
@@ -14205,7 +14356,7 @@ exports.deflatePrime = deflatePrime;
 exports.deflateTune = deflateTune;
 */
 
-},{"../utils/common":38,"./adler32":40,"./crc32":42,"./messages":48,"./trees":49}],44:[function(require,module,exports){
+},{"../utils/common":39,"./adler32":41,"./crc32":43,"./messages":49,"./trees":50}],45:[function(require,module,exports){
 'use strict';
 
 
@@ -14247,7 +14398,7 @@ function GZheader() {
 
 module.exports = GZheader;
 
-},{}],45:[function(require,module,exports){
+},{}],46:[function(require,module,exports){
 'use strict';
 
 // See state defs from inflate.js
@@ -14574,7 +14725,7 @@ module.exports = function inflate_fast(strm, start) {
   return;
 };
 
-},{}],46:[function(require,module,exports){
+},{}],47:[function(require,module,exports){
 'use strict';
 
 
@@ -16079,7 +16230,7 @@ exports.inflateSyncPoint = inflateSyncPoint;
 exports.inflateUndermine = inflateUndermine;
 */
 
-},{"../utils/common":38,"./adler32":40,"./crc32":42,"./inffast":45,"./inftrees":47}],47:[function(require,module,exports){
+},{"../utils/common":39,"./adler32":41,"./crc32":43,"./inffast":46,"./inftrees":48}],48:[function(require,module,exports){
 'use strict';
 
 
@@ -16408,7 +16559,7 @@ module.exports = function inflate_table(type, lens, lens_index, codes, table, ta
   return 0;
 };
 
-},{"../utils/common":38}],48:[function(require,module,exports){
+},{"../utils/common":39}],49:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -16423,7 +16574,7 @@ module.exports = {
   '-6':   'incompatible version' /* Z_VERSION_ERROR (-6) */
 };
 
-},{}],49:[function(require,module,exports){
+},{}],50:[function(require,module,exports){
 'use strict';
 
 
@@ -17624,7 +17775,7 @@ exports._tr_flush_block  = _tr_flush_block;
 exports._tr_tally = _tr_tally;
 exports._tr_align = _tr_align;
 
-},{"../utils/common":38}],50:[function(require,module,exports){
+},{"../utils/common":39}],51:[function(require,module,exports){
 'use strict';
 
 
@@ -17655,7 +17806,7 @@ function ZStream() {
 
 module.exports = ZStream;
 
-},{}],51:[function(require,module,exports){
+},{}],52:[function(require,module,exports){
 module.exports = function arrayEquals(array) {
     // if the other array is a falsy value, return
     if (!array)
@@ -17681,10 +17832,10 @@ module.exports = function arrayEquals(array) {
 }
 
 
-},{}],52:[function(require,module,exports){
+},{}],53:[function(require,module,exports){
 exports.Interop = require('./interop');
 
-},{"./interop":53}],53:[function(require,module,exports){
+},{"./interop":54}],54:[function(require,module,exports){
 "use strict";
 
 var transform = require('./transform');
@@ -18266,7 +18417,7 @@ Interop.prototype.toUnifiedPlan = function(desc) {
     //#endregion
 };
 
-},{"./array-equals":51,"./transform":54}],54:[function(require,module,exports){
+},{"./array-equals":52,"./transform":55}],55:[function(require,module,exports){
 var transform = require('sdp-transform');
 
 exports.write = function(session, opts) {
@@ -18365,7 +18516,7 @@ exports.parse = function(sdp) {
 };
 
 
-},{"sdp-transform":56}],55:[function(require,module,exports){
+},{"sdp-transform":57}],56:[function(require,module,exports){
 var grammar = module.exports = {
   v: [{
       name: 'version',
@@ -18614,7 +18765,7 @@ Object.keys(grammar).forEach(function (key) {
   });
 });
 
-},{}],56:[function(require,module,exports){
+},{}],57:[function(require,module,exports){
 var parser = require('./parser');
 var writer = require('./writer');
 
@@ -18624,7 +18775,7 @@ exports.parseFmtpConfig = parser.parseFmtpConfig;
 exports.parsePayloads = parser.parsePayloads;
 exports.parseRemoteCandidates = parser.parseRemoteCandidates;
 
-},{"./parser":57,"./writer":58}],57:[function(require,module,exports){
+},{"./parser":58,"./writer":59}],58:[function(require,module,exports){
 var toIntIfInt = function (v) {
   return String(Number(v)) === v ? Number(v) : v;
 };
@@ -18719,7 +18870,7 @@ exports.parseRemoteCandidates = function (str) {
   return candidates;
 };
 
-},{"./grammar":55}],58:[function(require,module,exports){
+},{"./grammar":56}],59:[function(require,module,exports){
 var grammar = require('./grammar');
 
 // customized util.format - discards excess arguments and can void middle ones
@@ -18835,7 +18986,7 @@ module.exports = function (session, opts) {
   return sdp.join('\r\n') + '\r\n';
 };
 
-},{"./grammar":55}],59:[function(require,module,exports){
+},{"./grammar":56}],60:[function(require,module,exports){
 var transform = require('sdp-transform');
 var transformUtils = require('./transform-utils');
 var parseSsrcs = transformUtils.parseSsrcs;
@@ -19237,7 +19388,7 @@ Simulcast.prototype.mungeLocalDescription = function (desc) {
 
 module.exports = Simulcast;
 
-},{"./transform-utils":60,"sdp-transform":62}],60:[function(require,module,exports){
+},{"./transform-utils":61,"sdp-transform":63}],61:[function(require,module,exports){
 exports.writeSsrcs = function(sources, order) {
   var ssrcs = [];
 
@@ -19288,15 +19439,15 @@ exports.parseSsrcs = function (mLine) {
 };
 
 
-},{}],61:[function(require,module,exports){
-arguments[4][55][0].apply(exports,arguments)
-},{"dup":55}],62:[function(require,module,exports){
+},{}],62:[function(require,module,exports){
 arguments[4][56][0].apply(exports,arguments)
-},{"./parser":63,"./writer":64,"dup":56}],63:[function(require,module,exports){
+},{"dup":56}],63:[function(require,module,exports){
 arguments[4][57][0].apply(exports,arguments)
-},{"./grammar":61,"dup":57}],64:[function(require,module,exports){
+},{"./parser":64,"./writer":65,"dup":57}],64:[function(require,module,exports){
 arguments[4][58][0].apply(exports,arguments)
-},{"./grammar":61,"dup":58}],65:[function(require,module,exports){
+},{"./grammar":62,"dup":58}],65:[function(require,module,exports){
+arguments[4][59][0].apply(exports,arguments)
+},{"./grammar":62,"dup":59}],66:[function(require,module,exports){
 var grammar = module.exports = {
   v: [{
       name: 'version',
@@ -19547,9 +19698,9 @@ Object.keys(grammar).forEach(function (key) {
   });
 });
 
-},{}],66:[function(require,module,exports){
-arguments[4][56][0].apply(exports,arguments)
-},{"./parser":67,"./writer":68,"dup":56}],67:[function(require,module,exports){
+},{}],67:[function(require,module,exports){
+arguments[4][57][0].apply(exports,arguments)
+},{"./parser":68,"./writer":69,"dup":57}],68:[function(require,module,exports){
 var toIntIfInt = function (v) {
   return String(Number(v)) === v ? Number(v) : v;
 };
@@ -19644,16 +19795,16 @@ exports.parseRemoteCandidates = function (str) {
   return candidates;
 };
 
-},{"./grammar":65}],68:[function(require,module,exports){
-arguments[4][58][0].apply(exports,arguments)
-},{"./grammar":65,"dup":58}],69:[function(require,module,exports){
+},{"./grammar":66}],69:[function(require,module,exports){
+arguments[4][59][0].apply(exports,arguments)
+},{"./grammar":66,"dup":59}],70:[function(require,module,exports){
 var MediaStreamType = {
     VIDEO_TYPE: "Video",
 
     AUDIO_TYPE: "Audio"
 };
 module.exports = MediaStreamType;
-},{}],70:[function(require,module,exports){
+},{}],71:[function(require,module,exports){
 var RTCEvents = {
     RTC_READY: "rtc.ready",
     DATA_CHANNEL_OPEN: "rtc.data_channel_open",
@@ -19666,7 +19817,7 @@ var RTCEvents = {
 };
 
 module.exports = RTCEvents;
-},{}],71:[function(require,module,exports){
+},{}],72:[function(require,module,exports){
 var Resolutions = {
     "1080": {
         width: 1920,
@@ -19720,7 +19871,7 @@ var Resolutions = {
     }
 };
 module.exports = Resolutions;
-},{}],72:[function(require,module,exports){
+},{}],73:[function(require,module,exports){
 var StreamEventTypes = {
     EVENT_TYPE_LOCAL_CREATED: "stream.local_created",
 
@@ -19734,7 +19885,7 @@ var StreamEventTypes = {
 };
 
 module.exports = StreamEventTypes;
-},{}],73:[function(require,module,exports){
+},{}],74:[function(require,module,exports){
 var AuthenticationEvents = {
     /**
      * Event callback arguments:
@@ -19748,7 +19899,7 @@ var AuthenticationEvents = {
 };
 module.exports = AuthenticationEvents;
 
-},{}],74:[function(require,module,exports){
+},{}],75:[function(require,module,exports){
 var DesktopSharingEventTypes = {
     INIT: "ds.init",
 
@@ -19758,7 +19909,7 @@ var DesktopSharingEventTypes = {
 };
 
 module.exports = DesktopSharingEventTypes;
-},{}],75:[function(require,module,exports){
+},{}],76:[function(require,module,exports){
 var XMPPEvents = {
     CONNECTION_FAILED: "xmpp.connection.failed",
     // Indicates an interrupted connection event.
@@ -19815,7 +19966,7 @@ var XMPPEvents = {
     REMOTE_STREAM_RECEIVED: "xmpp.remote_stream_received"
 };
 module.exports = XMPPEvents;
-},{}],76:[function(require,module,exports){
+},{}],77:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -20118,7 +20269,7 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],77:[function(require,module,exports){
+},{}],78:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};

@@ -1,4 +1,22 @@
 var RTC = require("./RTCUtils");
+var RTCBrowserType = require("./RTCBrowserType");
+
+/**
+ * This implements 'onended' callback normally fired by WebRTC after the stream
+ * is stopped. There is no such behaviour yet in FF, so we have to add it.
+ * @param stream original WebRTC stream object to which 'onended' handling
+ *               will be added.
+ */
+function implementOnEndedHandling(stream) {
+    var originalStop = stream.stop;
+    stream.stop = function () {
+        originalStop.apply(stream);
+        if (!stream.ended) {
+            stream.ended = true;
+            stream.onended();
+        }
+    };
+}
 
 /**
  * Represents a single media track (either audio or video).
@@ -18,6 +36,9 @@ function JitsiTrack(RTC, stream)
         this._getTracks = function () {
             return this.stream.getVideoTracks();
         }.bind(this);
+    }
+    if (RTCBrowserType.isFirefox() && this.stream) {
+        implementOnEndedHandling(this.stream);
     }
 }
 

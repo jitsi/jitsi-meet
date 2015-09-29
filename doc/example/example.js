@@ -67,6 +67,9 @@ function onConnectionSuccess(){
     room = connection.initJitsiConference("conference1", confOptions);
     room.createLocalTracks().then(onLocalTracks);
     room.on(JitsiMeetJS.events.conference.TRACK_ADDED, onRemoteTrack);
+    room.on(JitsiMeetJS.events.conference.TRACK_REMOVED, function () {
+        console.debug("track removed!!!");
+    });
     room.on(JitsiMeetJS.events.conference.CONFERENCE_JOINED, onConferenceJoined);
     room.on(JitsiMeetJS.events.conference.USER_JOINED, function(id){ remoteTracks[id] = [];});
     room.on(JitsiMeetJS.events.conference.USER_LEFT, onUserLeft);

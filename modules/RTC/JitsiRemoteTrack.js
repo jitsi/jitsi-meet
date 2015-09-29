@@ -1,4 +1,5 @@
 var JitsiTrack = require("./JitsiTrack");
+var StreamEventTypes = require("../../service/RTC/StreamEventTypes");
 
 /**
  * Represents a single media track (either audio or video).
@@ -14,6 +15,11 @@ function JitsiRemoteTrack(RTC, data, sid, ssrc, browser, eventEmitter) {
     this.ssrc = ssrc;
     this.muted = false;
     this.eventEmitter = eventEmitter;
+    var self = this;
+    if(this.stream)
+        this.stream.onended = function () {
+            eventEmitter.emit(StreamEventTypes.EVENT_TYPE_REMOTE_ENDED, self);
+        }
 }
 
 JitsiRemoteTrack.prototype = Object.create(JitsiTrack.prototype);
