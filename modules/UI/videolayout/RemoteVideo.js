@@ -204,7 +204,7 @@ RemoteVideo.prototype.waitForPlayback = function (sel, stream) {
     sel[0].onplaying = onPlayingHandler;
 };
 
-RemoteVideo.prototype.addRemoteStreamElement = function (sid, stream, thessrc) {
+RemoteVideo.prototype.addRemoteStreamElement = function (sid, stream) {
     if (!this.container)
         return;
 
