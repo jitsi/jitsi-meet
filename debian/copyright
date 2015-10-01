@@ -4,10 +4,17 @@ Upstream-Contact: Emil Ivov <emcho@jitsi.org>
 Source: https://github.com/jitsi/jitsi-meet
 
 Files: *
-Copyright: 2013-2014 Jitsi
-License: MIT
+Copyright: 2015 Atlassian Pty Ltd
+License: Apache-2.0
 
-License: MIT
+License: Apache-2.0
+On Debian systems, the full text of the Apache
+ License version 2 can be found in the file
+ '/usr/share/common-licenses/Apache-2.0'.
+ Note:
+ This project was originally contributed to the community under the MIT license
+ and with the following notice:
+ .
  The MIT License (MIT)
  .
  Copyright (c) 2013 ESTOS GmbH
