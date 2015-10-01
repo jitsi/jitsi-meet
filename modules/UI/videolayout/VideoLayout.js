@@ -175,9 +175,7 @@ var VideoLayout = (function (my) {
 
             var resourceJid = Strophe.getResourceFromJid(stream.peerjid);
             remoteVideos[resourceJid].addRemoteStreamElement(
-                stream.sid,
-                stream.getOriginalStream(),
-                stream.ssrc);
+                stream.getOriginalStream());
         }
     };
 

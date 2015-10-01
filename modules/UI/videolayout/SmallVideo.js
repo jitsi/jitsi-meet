@@ -102,20 +102,21 @@ SmallVideo.prototype.setPresenceStatus = function (statusMsg) {
 };
 
 /**
- * Creates an audio or video stream element.
+ * Creates an audio or video element for a particular MediaStream.
  */
-SmallVideo.createStreamElement = function (sid, stream) {
+SmallVideo.createStreamElement = function (stream) {
     var isVideo = stream.getVideoTracks().length > 0;
 
     var element = isVideo ? document.createElement('video')
         : document.createElement('audio');
-    var id = (isVideo ? 'remoteVideo_' : 'remoteAudio_') + sid + '_' +
-        APP.RTC.getStreamID(stream);
 
-    element.id = id;
     if (!RTCBrowserType.isIExplorer()) {
         element.autoplay = true;
     }
+
+    element.id = (isVideo ? 'remoteVideo_' : 'remoteAudio_') +
+        APP.RTC.getStreamID(stream);
+
     element.oncontextmenu = function () { return false; };
 
     return element;

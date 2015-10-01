@@ -204,13 +204,13 @@ RemoteVideo.prototype.waitForPlayback = function (sel, stream) {
     sel[0].onplaying = onPlayingHandler;
 };
 
-RemoteVideo.prototype.addRemoteStreamElement = function (sid, stream) {
+RemoteVideo.prototype.addRemoteStreamElement = function (stream) {
     if (!this.container)
         return;
 
     var self = this;
     var isVideo = stream.getVideoTracks().length > 0;
-    var streamElement = SmallVideo.createStreamElement(sid, stream);
+    var streamElement = SmallVideo.createStreamElement(stream);
     var newElementId = streamElement.id;
 
     // Put new stream element always in front

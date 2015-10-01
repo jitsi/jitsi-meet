@@ -122,9 +122,8 @@ JingleSessionPC.prototype.doInitialize = function () {
         self.remoteStreamAdded(event);
     };
     this.peerconnection.onremovestream = function (event) {
-        // Remove the stream from remoteStreams
-        // FIXME: remotestreamremoved.jingle not defined anywhere(unused)
-        $(document).trigger('remotestreamremoved.jingle', [event, self.sid]);
+        // Remove the stream from remoteStreams?
+        console.log("We are ignoring a removestream event: " + event);
     };
     this.peerconnection.onsignalingstatechange = function (event) {
         if (!(self && self.peerconnection)) return;
@@ -1487,7 +1486,7 @@ JingleSessionPC.prototype.remoteStreamAdded = function (event) {
         }
     }
 
-    APP.RTC.createRemoteStream(event, this.sid, ssrc);
+    APP.RTC.createRemoteStream(event, ssrc);
 };
 
 module.exports = JingleSessionPC;
