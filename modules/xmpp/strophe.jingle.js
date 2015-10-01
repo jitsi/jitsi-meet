@@ -172,11 +172,11 @@ module.exports = function(XMPP, eventEmitter) {
                     break;
                 case 'addsource': // FIXME: proprietary, un-jingleish
                 case 'source-add': // FIXME: proprietary
-                    sess.addSource($(iq).find('>jingle>content'), fromJid);
+                    sess.addSource($(iq).find('>jingle>content'));
                     break;
                 case 'removesource': // FIXME: proprietary, un-jingleish
                 case 'source-remove': // FIXME: proprietary
-                    sess.removeSource($(iq).find('>jingle>content'), fromJid);
+                    sess.removeSource($(iq).find('>jingle>content'));
                     break;
                 default:
                     logger.warn('jingle action not implemented', action);

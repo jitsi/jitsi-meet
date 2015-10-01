@@ -860,7 +860,11 @@ JingleSessionPC.prototype.sendTerminate = function (reason, text) {
     }
 };
 
-JingleSessionPC.prototype.addSource = function (elem, fromJid) {
+/**
+ * Handles a Jingle source-add message for this Jingle session.
+ * @param elem An array of Jingle "content" elements.
+ */
+JingleSessionPC.prototype.addSource = function (elem) {
 
     var self = this;
     // FIXME: dirty waiting
@@ -869,7 +873,7 @@ JingleSessionPC.prototype.addSource = function (elem, fromJid) {
         logger.warn("addSource - localDescription not ready yet")
         setTimeout(function()
             {
-                self.addSource(elem, fromJid);
+                self.addSource(elem);
             },
             200
         );
@@ -942,16 +946,18 @@ JingleSessionPC.prototype.addSource = function (elem, fromJid) {
     });
 };
 
-JingleSessionPC.prototype.removeSource = function (elem, fromJid) {
+/**
+ * Handles a Jingle source-remove message for this Jingle session.
+ * @param elem An array of Jingle "content" elements.
+ */
+JingleSessionPC.prototype.removeSource = function (elem) {
 
     var self = this;
     // FIXME: dirty waiting
-    if (!this.peerconnection.localDescription)
-    {
-        logger.warn("removeSource - localDescription not ready yet")
-        setTimeout(function()
-            {
-                self.removeSource(elem, fromJid);
+    if (!this.peerconnection.localDescription) {
+        logger.warn("removeSource - localDescription not ready yet");
+        setTimeout(function() {
+                self.removeSource(elem);
             },
             200
         );
