@@ -168,6 +168,9 @@ RemoteVideo.prototype.removeRemoteStreamElement =
 RemoteVideo.prototype.remove = function () {
     console.log("Remove thumbnail", this.peerJid);
     this.removeConnectionIndicator();
+    // Make sure that the large video is updated if are removing its
+    // corresponding small video.
+    this.VideoLayout.updateRemovedVideo(this.getResourceJid());
     // Remove whole container
     if (this.container.parentNode)
         this.container.parentNode.removeChild(this.container);
@@ -232,19 +235,6 @@ RemoteVideo.prototype.addRemoteStreamElement = function (stream) {
         self.removeRemoteStreamElement(stream, isVideo, newElementId);
 
     };
-
-    /**
-     * FF is missing onended event for remote streams. The problem we are fixing
-     * here is when the last participant leaves the room the video element is
-     * not updated. So the avatar or last video frame will stay, the fix updates
-     * the video elem and switches to local video the same as behavior in other
-     * browsers.
-     */
-    if (RTCBrowserType.isFirefox()) {
-        APP.xmpp.addListener(XMPPEvents.MUC_MEMBER_LEFT, function (jid) {
-            self.removeRemoteStreamElement(stream, isVideo, newElementId);
-        });
-    }
 
     // Add click handler.
     var onClickHandler = function (event) {
