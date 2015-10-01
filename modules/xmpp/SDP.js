@@ -58,6 +58,7 @@ SDP.prototype.getMediaSsrcMap = function() {
         });
         tmp = SDPUtil.find_lines(self.media[mediaindex], 'a=ssrc-group:');
         tmp.forEach(function(line){
+            var idx = line.indexOf(' ');
             var semantics = line.substr(0, idx).substr(13);
             var ssrcs = line.substr(14 + semantics.length).split(' ');
             if (ssrcs.length) {
