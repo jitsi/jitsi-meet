@@ -87,7 +87,12 @@ LocalStatsCollector.prototype.start = function () {
         RTCBrowserType.isTemasysPluginUsed())
         return;
 
-    this.context = new AudioContext();
+    try {
+        this.context = new AudioContext();
+    }
+    catch(ex) {
+        console.warn("WARNING: Could not create AudioContext " + ex);
+    }
     var analyser = this.context.createAnalyser();
     analyser.smoothingTimeConstant = WEBAUDIO_ANALYZER_SMOOTING_TIME;
     analyser.fftSize = WEBAUDIO_ANALYZER_FFT_SIZE;
@@ -125,7 +130,8 @@ LocalStatsCollector.prototype.stop = function () {
         this.intervalId = null;
     }
     // Clean up context
-    if (this.context && this.context.close && typeof this.context.close === 'function') {
+    if (this.context && this.context.close &&
+      typeof this.context.close === 'function') {
         this.context.close();
     }
     this.context = undefined;

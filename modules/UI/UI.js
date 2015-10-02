@@ -877,6 +877,10 @@ UI.addListener = function (type, listener) {
     eventEmitter.on(type, listener);
 };
 
+UI.removeListener = function (type, listener) {
+    eventEmitter.removeListener(type,listener);
+};
+
 UI.clickOnVideo = function (videoNumber) {
     var remoteVideos = $(".videocontainer:not(#mixedstream)");
     if (remoteVideos.length > videoNumber) {

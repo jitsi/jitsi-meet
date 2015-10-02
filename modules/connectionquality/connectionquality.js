@@ -127,9 +127,13 @@ var ConnectionQuality = {
     getStats: function () {
         return stats;
     },
-    
+
     addListener: function (type, listener) {
         eventEmitter.on(type, listener);
+    },
+
+    removeListener: function (type, listener) {
+        eventEmitter.removeListener(type, listener);
     }
 
 };
