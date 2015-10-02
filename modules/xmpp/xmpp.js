@@ -310,6 +310,9 @@ var XMPP = {
         var jid = configDomain || window.location.hostname;
         connect(jid);
     },
+    stop: function () {
+        eventEmitter.removeAllListeners();
+    },
     createConnection: function () {
         var bosh = config.bosh || '/http-bind';
         // adds the room name used to the bosh connection

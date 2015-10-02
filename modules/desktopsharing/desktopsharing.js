@@ -60,6 +60,11 @@ function onEndedHandler(stream) {
     APP.RTC.removeMediaStreamInactiveHandler(stream, onEndedHandler);
 }
 
+function initScreenObtainer() {
+    screenObtainer.init(eventEmitter);
+    eventEmitter.emit(DesktopSharingEventTypes.INIT);
+}
+
 module.exports = {
     isUsingScreenStream: function () {
         return isUsingScreenStream;
@@ -72,17 +77,18 @@ module.exports = {
     isDesktopSharingEnabled: function () {
         return screenObtainer.isSupported();
     },
-    
+
     init: function () {
         // Called when RTC finishes initialization
-        APP.RTC.addListener(RTCEvents.RTC_READY,
-            function() {
-                screenObtainer.init(eventEmitter);
-                eventEmitter.emit(DesktopSharingEventTypes.INIT);
-            });
+        APP.RTC.addListener(RTCEvents.RTC_READY, initScreenObtainer);
     },
 
-    addListener: function (type, listener) {
+    destroy: function() {
+        APP.RTC.removeListener(RTCEvents.RTC_READY, initScreenObtainer);
+        eventEmitter.removeAllListeners();
+    },
+    addListener: function (type, listener)
+    {
         eventEmitter.on(type, listener);
     },
 
