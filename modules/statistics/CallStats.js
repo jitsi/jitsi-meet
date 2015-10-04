@@ -1,4 +1,6 @@
 /* global config, $, APP, Strophe, callstats */
+
+var Settings = require('../settings/Settings');
 var jsSHA = require('jssha');
 var io = require('socket.io-client');
 var callStats = null;
@@ -19,6 +21,10 @@ var CallStats = {
         this.peerconnection = jingleSession.peerconnection.peerconnection;
 
         this.userID =  APP.xmpp.myResource();
+
+        //use whatever the user said to facilitate debugging
+        if(Settings.getDisplayName())
+            this.userID = Settings.getDisplayName();
 
         var location = window.location;
         this.confID = location.hostname + location.pathname;

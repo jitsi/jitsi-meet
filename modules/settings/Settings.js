@@ -36,16 +36,33 @@ if (supportsLocalStorage()) {
 }
 
 var Settings = {
+
+    /**
+     * Sets the local user display name and saves it to local storage
+     *
+     * @param newDisplayName the new display name for the local user
+     * @returns {string} the display name we just set
+     */
     setDisplayName: function (newDisplayName) {
         displayName = newDisplayName;
         window.localStorage.displayname = displayName;
         return displayName;
     },
+
+    /**
+     * Returns the currently used by the user
+     * @returns {string} currently valid user display name.
+     */
+    getDisplayName: function () {
+        return displayName;
+    },
+
     setEmail: function (newEmail) {
         email = newEmail;
         window.localStorage.email = newEmail;
         return email;
     },
+
     getSettings: function () {
         return {
             email: email,
