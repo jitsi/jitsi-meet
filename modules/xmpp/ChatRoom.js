@@ -526,10 +526,11 @@ ChatRoom.prototype.setAudioMute = function (mute, callback) {
 //    }
 
 
-    return this.sendAudioInfoPresence(mute, callback);;
+    return this.sendAudioInfoPresence(mute, callback);
 };
 
 ChatRoom.prototype.addAudioInfoToPresence = function (mute) {
+    this.removeFromPresence("audiomuted");
     this.addToPresence("audiomuted",
         {attributes:
         {"audions": "http://jitsi.org/jitmeet/audio"},
@@ -546,6 +547,7 @@ ChatRoom.prototype.sendAudioInfoPresence = function(mute, callback) {
 };
 
 ChatRoom.prototype.addVideoInfoToPresence = function (mute) {
+    this.removeFromPresence("videomuted");
     this.addToPresence("videomuted",
         {attributes:
         {"videons": "http://jitsi.org/jitmeet/video"},

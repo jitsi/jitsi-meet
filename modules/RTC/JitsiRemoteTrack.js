@@ -3,9 +3,14 @@ var StreamEventTypes = require("../../service/RTC/StreamEventTypes");
 
 /**
  * Represents a single media track (either audio or video).
+ * @param RTC the rtc instance.
+ * @param data object with the stream and some details about it(participant id, video type, etc.)
+ * @param sid sid for the Media Stream
+ * @param ssrc ssrc for the Media Stream
+ * @param eventEmitter the event emitter
  * @constructor
  */
-function JitsiRemoteTrack(RTC, data, sid, ssrc, browser, eventEmitter) {
+function JitsiRemoteTrack(RTC, data, sid, ssrc, eventEmitter) {
     JitsiTrack.call(this, RTC, data.stream);
     this.rtc = RTC;
     this.sid = sid;
@@ -25,13 +30,27 @@ function JitsiRemoteTrack(RTC, data, sid, ssrc, browser, eventEmitter) {
 JitsiRemoteTrack.prototype = Object.create(JitsiTrack.prototype);
 JitsiRemoteTrack.prototype.constructor = JitsiRemoteTrack;
 
-JitsiRemoteTrack.prototype._setMute = function (value) {
+/**
+ * Sets current muted status and fires an events for the change.
+ * @param value the muted status.
+ */
+JitsiRemoteTrack.prototype.setMute = function (value) {
     this.stream.muted = value;
     this.muted = value;
+    this.eventEmitter.emit(StreamEventTypes.TRACK_MUTE_CHANGED, this);
 };
 
 /**
- * @returns {JitsiParticipant} to which this track belongs, or null if it is a local track.
+ * Returns the current muted status of the track.
+ * @returns {boolean|*|JitsiRemoteTrack.muted} <tt>true</tt> if the track is muted and <tt>false</tt> otherwise.
+ */
+JitsiRemoteTrack.prototype.isMuted = function () {
+    return this.muted;
+}
+
+/**
+ * Returns the participant id which owns the track.
+ * @returns {string} the id of the participants.
  */
 JitsiRemoteTrack.prototype.getParitcipantId = function() {
     return Strophe.getResourceFromJid(this.peerjid);

@@ -24,6 +24,11 @@ function implementOnEndedHandling(stream) {
  */
 function JitsiTrack(RTC, stream)
 {
+    /**
+     * Array with the HTML elements that are displaying the streams.
+     * @type {Array}
+     */
+    this.containers = [];
     this.rtc = RTC;
     this.stream = stream;
     this.type = (this.stream.getVideoTracks().length > 0)?
@@ -84,18 +89,33 @@ JitsiTrack.prototype.unmute = function () {
 
 /**
  * Attaches the MediaStream of this track to an HTML container (?).
+ * Adds the container to the list of containers that are displaying the track.
  * @param container the HTML container
  */
 JitsiTrack.prototype.attach = function (container) {
     RTC.attachMediaStream(container, this.stream);
+    this.containers.push(container);
 }
 
 /**
  * Removes the track from the passed HTML container.
- * @param container the HTML container
+ * @param container the HTML container. If <tt>null</tt> all containers are removed.
  */
 JitsiTrack.prototype.detach = function (container) {
-    $(container).find(">video").remove();
+    for(var i = 0; i < this.containers.length; i++)
+    {
+        if(this.containers[i].is(container))
+        {
+            this.containers.splice(i,1);
+        }
+        if(!container)
+        {
+            this.containers[i].find(">video").remove();
+        }
+    }
+    if(container)
+        $(container).find(">video").remove();
+
 }
 
 /**
@@ -103,8 +123,6 @@ JitsiTrack.prototype.detach = function (container) {
  * NOTE: Works for local tracks only.
  */
 JitsiTrack.prototype.stop = function () {
-
-    this.detach();
 }
 
 

@@ -123,15 +123,17 @@ var statistics = {
         APP.xmpp.addListener(XMPPEvents.PEERCONNECTION_READY, function (session) {
             CallStats.init(session);
         });
-        APP.RTC.addListener(RTCEvents.AUDIO_MUTE, function (mute) {
-            CallStats.sendMuteEvent(mute, "audio");
-        });
+        //FIXME: that event is changed to TRACK_MUTE_CHANGED
+//        APP.RTC.addListener(RTCEvents.AUDIO_MUTE, function (mute) {
+//            CallStats.sendMuteEvent(mute, "audio");
+//        });
         APP.xmpp.addListener(XMPPEvents.CONFERENCE_SETUP_FAILED, function () {
             CallStats.sendSetupFailedEvent();
         });
-        APP.RTC.addListener(RTCEvents.VIDEO_MUTE, function (mute) {
-            CallStats.sendMuteEvent(mute, "video");
-        });
+        //FIXME: that event is changed to TRACK_MUTE_CHANGED
+//        APP.RTC.addListener(RTCEvents.VIDEO_MUTE, function (mute) {
+//            CallStats.sendMuteEvent(mute, "video");
+//        });
     }
 };
 

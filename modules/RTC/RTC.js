@@ -2,6 +2,7 @@
 var EventEmitter = require("events");
 var RTCBrowserType = require("./RTCBrowserType");
 var RTCUtils = require("./RTCUtils.js");
+var JitsiTrack = require("./JitsiTrack");
 var JitsiLocalTrack = require("./JitsiLocalTrack.js");
 var DataChannels = require("./DataChannels");
 var JitsiRemoteTrack = require("./JitsiRemoteTrack.js");
@@ -61,12 +62,28 @@ function RTC(room, options) {
         function (stream, isUsingScreenStream, callback) {
             self.changeLocalVideo(stream, isUsingScreenStream, callback);
         }, DesktopSharingEventTypes.NEW_STREAM_CREATED);
+    room.addPresenceListener("videomuted", function (values, from) {
+        if(self.remoteStreams[from])
+            self.remoteStreams[from][JitsiTrack.VIDEO].setMute(values.value == "true");
+    });
+    room.addPresenceListener("audiomuted", function (values, from) {
+        if(self.remoteStreams[from])
+            self.remoteStreams[from][JitsiTrack.AUDIO].setMute(values.value == "true");
+    });
 
 }
 
-RTC.prototype.obtainAudioAndVideoPermissions = function (options) {
+/**
+ * Creates the local MediaStreams.
+ * @param options object for options (NOTE: currently only list of devices and resolution are supported)
+ * @param dontCreateJitsiTrack if <tt>true</tt> objects with the following structure {stream: the Media Stream,
+  * type: "audio" or "video", isMuted: true/false, videoType: "camera" or "desktop"}
+ * will be returned trough the Promise, otherwise JitsiTrack objects will be returned.
+ * @returns {*} Promise object that will receive the new JitsiTracks
+ */
+RTC.prototype.obtainAudioAndVideoPermissions = function (options, dontCreateJitsiTrack) {
     return RTCUtils.obtainAudioAndVideoPermissions(this,
-        options.devices, getMediaStreamUsage(), options.resolution);
+        options.devices, getMediaStreamUsage(), options.resolution, dontCreateJitsiTrack);
 }
 
 RTC.prototype.onIncommingCall = function(event) {
@@ -243,6 +260,13 @@ RTC.prototype.switchVideoStreams = function (new_stream) {
     this.localStreams.push(this.localVideo);
 };
 
+/**
+ * Creates <tt>JitsiTrack</tt> instance and replaces it with the local video.
+ * The method also handles the sdp changes.
+ * @param stream the new MediaStream received by the browser.
+ * @param isUsingScreenStream <tt>true</tt> if the stream is for desktop stream.
+ * @param callback - function that will be called after the operation is completed.
+ */
 RTC.prototype.changeLocalVideo = function (stream, isUsingScreenStream, callback) {
     var oldStream = this.localVideo.getOriginalStream();
     var type = (isUsingScreenStream ? "screen" : "camera");
@@ -271,6 +295,13 @@ RTC.prototype.changeLocalVideo = function (stream, isUsingScreenStream, callback
     this.room.switchStreams(videoStream, oldStream,localCallback);
 };
 
+
+/**
+ * Creates <tt>JitsiTrack</tt> instance and replaces it with the local audio.
+ * The method also handles the sdp changes.
+ * @param stream the new MediaStream received by the browser.
+ * @param callback - function that will be called after the operation is completed.
+ */
 RTC.prototype.changeLocalAudio = function (stream, callback) {
     var oldStream = this.localAudio.getOriginalStream();
     var newStream = RTCUtils.createStream(stream);

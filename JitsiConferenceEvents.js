@@ -48,13 +48,9 @@ var JitsiConferenceEvents = {
      */
     IN_LAST_N_CHANGED: "conference.lastNEndpointsChanged",
     /**
-     * A media track was muted.
+     * A media track mute status was changed.
      */
-    TRACK_MUTED: "conference.trackMuted",
-    /**
-     * A media track was unmuted.
-     */
-    TRACK_UNMUTED: "conference.trackUnmuted",
+    TRACK_MUTE_CHANGED: "conference.trackMuteChanged",
     /**
      * Audio levels of a media track was changed.
      */
