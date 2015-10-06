@@ -39,8 +39,21 @@ var parser = {
     }
 };
 
-function ChatRoom(connection, jid, password, XMPP, options)
-{
+/**
+ * Returns array of JS objects from the presence JSON associated with the passed nodeName
+ * @param pres the presence JSON
+ * @param nodeName the name of the node (videomuted, audiomuted, etc)
+ */
+function filterNodeFromPresenceJSON(pres, nodeName){
+    var res = [];
+    for(var i = 0; i < pres.length; i++)
+        if(pres[i].tagName === nodeName)
+            res.push(pres[i]);
+
+    return res;
+}
+
+function ChatRoom(connection, jid, password, XMPP, options) {
     this.eventEmitter = new EventEmitter();
     this.xmpp = XMPP;
     this.connection = connection;
@@ -60,6 +73,7 @@ function ChatRoom(connection, jid, password, XMPP, options)
     this.initPresenceMap();
     this.session = null;
     var self = this;
+    this.lastPresences = {};
 }
 
 ChatRoom.prototype.initPresenceMap = function () {
@@ -174,6 +188,7 @@ ChatRoom.prototype.onPresence = function (pres) {
     $(pres).find(">x").remove();
     var nodes = [];
     parser.packet2JSON(pres, nodes);
+    this.lastPresences[from] = nodes;
     for(var i = 0; i < nodes.length; i++)
     {
         var node = nodes[i];
@@ -280,6 +295,7 @@ ChatRoom.prototype.setSubject = function (subject) {
 
 ChatRoom.prototype.onParticipantLeft = function (jid) {
 
+    delete this.lastPresences[jid];
     this.eventEmitter.emit(XMPPEvents.MUC_MEMBER_LEFT, jid);
 
     this.moderator.onMucMemberLeft(jid);
@@ -571,6 +587,19 @@ ChatRoom.prototype.removeListener = function (type, listener) {
 };
 
 ChatRoom.prototype.remoteStreamAdded = function(data, sid, thessrc) {
+    if(this.lastPresences[data.peerjid])
+    {
+        var pres = this.lastPresences[data.peerjid];
+        var audiomuted = filterNodeFromPresenceJSON(pres, "audiomuted");
+        var videomuted = filterNodeFromPresenceJSON(pres, "videomuted");
+        data.videomuted = ((videomuted.length > 0
+            && videomuted[0]
+            && videomuted[0]["value"] === "true")? true : false);
+        data.audiomuted = ((audiomuted.length > 0
+            && audiomuted[0]
+            && audiomuted[0]["value"] === "true")? true : false);
+    }
+
     this.eventEmitter.emit(XMPPEvents.REMOTE_STREAM_RECEIVED, data, sid, thessrc);
 }
 

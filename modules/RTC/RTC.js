@@ -184,7 +184,7 @@ RTC.prototype.removeLocalStream = function (stream) {
 
 RTC.prototype.createRemoteStream = function (data, sid, thessrc) {
     var remoteStream = new JitsiRemoteTrack(this, data, sid, thessrc,
-        RTCBrowserType.getBrowserType(), this.eventEmitter);
+        this.eventEmitter);
     if(!data.peerjid)
         return;
     var jid = data.peerjid;
