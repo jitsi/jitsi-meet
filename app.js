@@ -1,6 +1,17 @@
 /* jshint -W117 */
 /* application specific logic */
 
+require("jquery");
+require("jquery-ui");
+require("strophe");
+require("strophe-disco");
+require("strophe-caps");
+require("tooltip");
+require("popover");
+window.toastr = require("toastr");
+require("jQuery-Impromptu");
+require("autosize");
+
 var APP =
 {
     init: function () {
