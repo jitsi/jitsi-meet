@@ -2,6 +2,8 @@ NPM = npm
 BROWSERIFY = ./node_modules/.bin/browserify
 UGLIFYJS = ./node_modules/.bin/uglifyjs
 EXORCIST = ./node_modules/.bin/exorcist
+CLEANCSS = ./node_modules/.bin/cleancss
+CSS_FILES = font.css toastr.css main.css videolayout_default.css font-awesome.css jquery-impromptu.css modaldialog.css notice.css popup_menu.css login_menu.css popover.css jitsi_popover.css contact_list.css chat.css welcome_page.css settingsmenu.css
 DEPLOY_DIR = libs
 BROWSERIFY_FLAGS = -d
 OUTPUT_DIR = .
@@ -17,6 +19,7 @@ clean:
 deploy:
 	mkdir -p $(DEPLOY_DIR) && \
 	cp $(OUTPUT_DIR)/app.bundle.min.js $(OUTPUT_DIR)/app.bundle.min.map $(DEPLOY_DIR) && \
+	(cd css; cat $(CSS_FILES)) | $(CLEANCSS) > css/all.css && \
 	([ ! -x deploy-local.sh ] || ./deploy-local.sh)
 
 uglify:
@@ -24,7 +27,7 @@ uglify:
 
 
 source-package:
-	mkdir -p source_package/jitsi-meet && \
-	cp -r analytics.js css external_api.js favicon.ico fonts images index.html interface_config.js libs plugin.*html sounds title.html unsupported_browser.html LICENSE config.js lang source_package/jitsi-meet && \
+	mkdir -p source_package/jitsi-meet/css && \
+	cp -r analytics.js css/all.css external_api.js favicon.ico fonts images index.html interface_config.js libs plugin.*html sounds title.html unsupported_browser.html LICENSE config.js lang source_package/jitsi-meet && \
 	(cd source_package ; tar cjf ../jitsi-meet.tar.bz2 jitsi-meet) && \
 	rm -rf source_package

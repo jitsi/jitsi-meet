@@ -5,3 +5,4 @@ node_modules
 .*.tmp
 deploy-local.sh
 libs/app.bundle.*
+all.css

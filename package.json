@@ -41,7 +41,8 @@
     "exorcist": "*",
     "jshint": "2.8.0",
     "precommit-hook": "3.0.0",
-    "uglify-js": "2.4.24"
+    "uglify-js": "2.4.24",
+    "clean-css": "*"
   },
   "license": "Apache-2.0",
   "scripts": {
