@@ -17,11 +17,11 @@ clean:
 deploy:
 	mkdir -p $(DEPLOY_DIR) && \
 	cp $(OUTPUT_DIR)/app.bundle.min.js $(OUTPUT_DIR)/app.bundle.min.map $(DEPLOY_DIR) && \
-	./bump-js-versions.sh && \
 	([ ! -x deploy-local.sh ] || ./deploy-local.sh)
 
 uglify:
 	$(UGLIFYJS) -p relative $(OUTPUT_DIR)/app.bundle.js -o $(OUTPUT_DIR)/app.bundle.min.js --source-map $(OUTPUT_DIR)/app.bundle.min.map --in-source-map $(OUTPUT_DIR)/app.bundle.js.map
+
 
 source-package:
 	mkdir -p source_package/jitsi-meet && \
