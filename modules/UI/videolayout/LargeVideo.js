@@ -180,9 +180,14 @@ function getDesktopVideoPosition(videoWidth,
 
 
 /**
- * Returns an array of the video dimensions, so that it covers the screen.
- * It leaves no empty areas, but some parts of the video might not be visible.
+ * Returns an array of the video dimensions. It respects the
+ * VIDEO_LAYOUT_FIT config, to fit the video to the screen, by hiding some parts
+ * of it, or to fit it to the height or width.
  *
+ * @param videoWidth the original video width
+ * @param videoHeight the original video height
+ * @param videoSpaceWidth the width of the video space
+ * @param videoSpaceHeight the height of the video space
  * @return an array with 2 elements, the video width and the video height
  */
 function getCameraVideoSize(videoWidth,

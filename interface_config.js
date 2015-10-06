@@ -20,7 +20,11 @@ var interfaceConfig = {
         'recording', 'security', 'invite', 'chat', 'prezi', 'etherpad',
         'fullscreen', 'sip', 'dialpad', 'settings', 'hangup', 'filmstrip',
         'contacts'],
-    VIDEO_LAYOUT_FIT: 'both', // height, width, both
+    // Determines how the video would fit the screen. 'both' would fit the whole
+    // screen, 'height' would fit the original video height to the height of the
+    // screen, 'width' would fit the original video width to the width of the
+    // screen respecting ratio.
+    VIDEO_LAYOUT_FIT: 'both',
     /**
      * Whether to only show the filmstrip (and hide the toolbar).
      */
