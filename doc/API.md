@@ -48,6 +48,7 @@ The ```options``` parameter is JS object with the following properties:
     1. conference
         - TRACK_ADDED - remote stream received. (parameters - JitsiTrack)
         - TRACK_REMOVED - remote stream removed. (parameters - JitsiTrack)
+        - TRACK_MUTE_CHANGED - JitsiTrack was muted or unmuted. (parameters - JitsiTrack) 
         - ACTIVE_SPEAKER_CHANGED - the active speaker is changed. (parameters - id(string))
         - USER_JOINED - new user joined a conference. (parameters - id(string))
         - USER_LEFT - a participant left conference. (parameters - id(string))
