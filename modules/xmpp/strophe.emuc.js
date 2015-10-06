@@ -234,6 +234,8 @@ module.exports = function(XMPP, eventEmitter) {
                 }
                 if (!this.joined) {
                     this.joined = true;
+                    console.log("(TIME) MUC joined:\t",
+                                window.performance.now());
                     eventEmitter.emit(XMPPEvents.MUC_JOINED, from, member);
                     this.list_members.push(from);
                 }

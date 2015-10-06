@@ -60,6 +60,8 @@ function obtainConfigAndInit() {
             // Get config result callback
             function(success, error) {
                 if (success) {
+                    console.log("(TIME) configuration fetched:\t",
+                                window.performance.now());
                     init();
                 } else {
                     // Show obtain config error,
@@ -75,6 +77,7 @@ function obtainConfigAndInit() {
 
 
 $(document).ready(function () {
+    console.log("(TIME) document ready:\t", window.performance.now());
 
     var URLProcessor = require("./modules/config/URLProcessor");
     URLProcessor.setConfigParametersFromUrl();

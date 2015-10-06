@@ -117,6 +117,11 @@ SmallVideo.createStreamElement = function (stream) {
     element.id = (isVideo ? 'remoteVideo_' : 'remoteAudio_') +
         APP.RTC.getStreamID(stream);
 
+    element.onplay = function() {
+        console.log("(TIME) Render " + (isVideo ? 'video' : 'audio') + ":\t",
+                    window.performance.now());
+    };
+
     element.oncontextmenu = function () { return false; };
 
     return element;
