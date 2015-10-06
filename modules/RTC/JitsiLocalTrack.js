@@ -13,11 +13,15 @@ function JitsiLocalTrack(RTC, stream, eventEmitter, videoType, isGUMStream)
     this.eventEmitter = eventEmitter;
     this.videoType = videoType;
     this.isGUMStream = true;
+    this.dontFireRemoveEvent = false;
+    var self = this;
     if(isGUMStream === false)
         this.isGUMStream = isGUMStream;
     this.stream.onended = function () {
-        this.eventEmitter.emit(StreamEventTypes.EVENT_TYPE_LOCAL_ENDED, this);
-    }.bind(this);
+        if(!self.dontFireRemoveEvent)
+            self.eventEmitter.emit(StreamEventTypes.EVENT_TYPE_LOCAL_ENDED, self);
+        self.dontFireRemoveEvent = false;
+    };
 }
 
 JitsiLocalTrack.prototype = Object.create(JitsiTrack.prototype);
@@ -29,6 +33,7 @@ JitsiLocalTrack.prototype.constructor = JitsiLocalTrack;
  */
 JitsiLocalTrack.prototype._setMute = function (mute) {
     var isAudio = this.type === JitsiTrack.AUDIO;
+    this.dontFireRemoveEvent = false;
 
     if ((window.location.protocol != "https:" && this.isGUMStream) ||
         (isAudio && this.isGUMStream) || this.videoType === "screen" ||
@@ -46,6 +51,7 @@ JitsiLocalTrack.prototype._setMute = function (mute) {
         this.eventEmitter.emit(StreamEventTypes.TRACK_MUTE_CHANGED, this);
     } else {
         if (mute) {
+            this.dontFireRemoveEvent = true;
             this.rtc.room.removeStream(this.stream);
             this.stream.stop();
             if(isAudio)

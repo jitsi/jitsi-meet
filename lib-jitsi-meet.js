@@ -844,11 +844,15 @@ function JitsiLocalTrack(RTC, stream, eventEmitter, videoType, isGUMStream)
     this.eventEmitter = eventEmitter;
     this.videoType = videoType;
     this.isGUMStream = true;
+    this.dontFireRemoveEvent = false;
+    var self = this;
     if(isGUMStream === false)
         this.isGUMStream = isGUMStream;
     this.stream.onended = function () {
-        this.eventEmitter.emit(StreamEventTypes.EVENT_TYPE_LOCAL_ENDED, this);
-    }.bind(this);
+        if(!self.dontFireRemoveEvent)
+            self.eventEmitter.emit(StreamEventTypes.EVENT_TYPE_LOCAL_ENDED, self);
+        self.dontFireRemoveEvent = false;
+    };
 }
 
 JitsiLocalTrack.prototype = Object.create(JitsiTrack.prototype);
@@ -860,7 +864,7 @@ JitsiLocalTrack.prototype.constructor = JitsiLocalTrack;
  */
 JitsiLocalTrack.prototype._setMute = function (mute) {
     var isAudio = this.type === JitsiTrack.AUDIO;
-    //FIXME: ADD some container logic (attach detach the streams)
+    this.dontFireRemoveEvent = false;
 
     if ((window.location.protocol != "https:" && this.isGUMStream) ||
         (isAudio && this.isGUMStream) || this.videoType === "screen" ||
@@ -878,6 +882,7 @@ JitsiLocalTrack.prototype._setMute = function (mute) {
         this.eventEmitter.emit(StreamEventTypes.TRACK_MUTE_CHANGED, this);
     } else {
         if (mute) {
+            this.dontFireRemoveEvent = true;
             this.rtc.room.removeStream(this.stream);
             this.stream.stop();
             if(isAudio)
@@ -979,9 +984,14 @@ var StreamEventTypes = require("../../service/RTC/StreamEventTypes");
 
 /**
  * Represents a single media track (either audio or video).
+ * @param RTC the rtc instance.
+ * @param data object with the stream and some details about it(participant id, video type, etc.)
+ * @param sid sid for the Media Stream
+ * @param ssrc ssrc for the Media Stream
+ * @param eventEmitter the event emitter
  * @constructor
  */
-function JitsiRemoteTrack(RTC, data, sid, ssrc, browser, eventEmitter) {
+function JitsiRemoteTrack(RTC, data, sid, ssrc, eventEmitter) {
     JitsiTrack.call(this, RTC, data.stream);
     this.rtc = RTC;
     this.sid = sid;
@@ -1001,18 +1011,27 @@ function JitsiRemoteTrack(RTC, data, sid, ssrc, browser, eventEmitter) {
 JitsiRemoteTrack.prototype = Object.create(JitsiTrack.prototype);
 JitsiRemoteTrack.prototype.constructor = JitsiRemoteTrack;
 
+/**
+ * Sets current muted status and fires an events for the change.
+ * @param value the muted status.
+ */
 JitsiRemoteTrack.prototype.setMute = function (value) {
     this.stream.muted = value;
     this.muted = value;
     this.eventEmitter.emit(StreamEventTypes.TRACK_MUTE_CHANGED, this);
 };
 
+/**
+ * Returns the current muted status of the track.
+ * @returns {boolean|*|JitsiRemoteTrack.muted} <tt>true</tt> if the track is muted and <tt>false</tt> otherwise.
+ */
 JitsiRemoteTrack.prototype.isMuted = function () {
     return this.muted;
 }
 
 /**
- * @returns {JitsiParticipant} to which this track belongs, or null if it is a local track.
+ * Returns the participant id which owns the track.
+ * @returns {string} the id of the participants.
  */
 JitsiRemoteTrack.prototype.getParitcipantId = function() {
     return Strophe.getResourceFromJid(this.peerjid);
@@ -1051,6 +1070,10 @@ function implementOnEndedHandling(stream) {
  */
 function JitsiTrack(RTC, stream)
 {
+    /**
+     * Array with the HTML elements that are displaying the streams.
+     * @type {Array}
+     */
     this.containers = [];
     this.rtc = RTC;
     this.stream = stream;
@@ -1112,16 +1135,18 @@ JitsiTrack.prototype.unmute = function () {
 
 /**
  * Attaches the MediaStream of this track to an HTML container (?).
+ * Adds the container to the list of containers that are displaying the track.
  * @param container the HTML container
  */
 JitsiTrack.prototype.attach = function (container) {
-    RTC.attachMediaStream(container, this.stream);
+    if(this.stream)
+        RTC.attachMediaStream(container, this.stream);
     this.containers.push(container);
 }
 
 /**
  * Removes the track from the passed HTML container.
- * @param container the HTML container
+ * @param container the HTML container. If <tt>null</tt> all containers are removed.
  */
 JitsiTrack.prototype.detach = function (container) {
     for(var i = 0; i < this.containers.length; i++)
@@ -1145,8 +1170,6 @@ JitsiTrack.prototype.detach = function (container) {
  * NOTE: Works for local tracks only.
  */
 JitsiTrack.prototype.stop = function () {
-
-    this.detach();
 }
 
 
@@ -1255,6 +1278,14 @@ function RTC(room, options) {
 
 }
 
+/**
+ * Creates the local MediaStreams.
+ * @param options object for options (NOTE: currently only list of devices and resolution are supported)
+ * @param dontCreateJitsiTrack if <tt>true</tt> objects with the following structure {stream: the Media Stream,
+  * type: "audio" or "video", isMuted: true/false, videoType: "camera" or "desktop"}
+ * will be returned trough the Promise, otherwise JitsiTrack objects will be returned.
+ * @returns {*} Promise object that will receive the new JitsiTracks
+ */
 RTC.prototype.obtainAudioAndVideoPermissions = function (options, dontCreateJitsiTrack) {
     return RTCUtils.obtainAudioAndVideoPermissions(this,
         options.devices, getMediaStreamUsage(), options.resolution, dontCreateJitsiTrack);
@@ -2038,8 +2069,15 @@ var RTCUtils = {
     },
 
     /**
-     * We ask for audio and video combined stream in order to get permissions and
-     * not to ask twice.
+     * Creates the local MediaStreams.
+     * @param RTC the rtc service.
+     * @param devices the devices that will be requested
+     * @param usageOptions object with devices that should be requested.
+     * @param resolution resolution constraints
+     * @param dontCreateJitsiTrack if <tt>true</tt> objects with the following structure {stream: the Media Stream,
+     * type: "audio" or "video", isMuted: true/false, videoType: "camera" or "desktop"}
+     * will be returned trough the Promise, otherwise JitsiTrack objects will be returned.
+     * @returns {*} Promise object that will receive the new JitsiTracks
      */
     obtainAudioAndVideoPermissions: function (RTC, devices, usageOptions, resolution, dontCreateJitsiTracks) {
         var self = this;
@@ -2133,6 +2171,13 @@ var RTCUtils = {
         }.bind(this));
     },
 
+    /**
+     * Successful callback called from GUM.
+     * @param RTC the rtc service
+     * @param stream the new MediaStream
+     * @param usageOptions the list of the devices that should be queried.
+     * @returns {*}
+     */
     successCallback: function (RTC, stream, usageOptions) {
         // If this is FF or IE, the stream parameter is *not* a MediaStream object,
         // it's an object with two properties: audioStream, videoStream.
@@ -2142,6 +2187,16 @@ var RTCUtils = {
         return this.handleLocalStream(RTC, stream, usageOptions);
     },
 
+    /**
+     * Error callback called from GUM. Retries the GUM call with different resolutions.
+     * @param error the error
+     * @param resolve the resolve funtion that will be called on success.
+     * @param RTC the rtc service
+     * @param currentResolution the last resolution used for GUM.
+     * @param dontCreateJitsiTracks if <tt>true</tt> objects with the following structure {stream: the Media Stream,
+     * type: "audio" or "video", isMuted: true/false, videoType: "camera" or "desktop"}
+     * will be returned trough the Promise, otherwise JitsiTrack objects will be returned.
+     */
     errorCallback: function (error, resolve, RTC, currentResolution, dontCreateJitsiTracks) {
         var self = this;
         console.error('failed to obtain audio/video stream - trying audio only', error);
@@ -2178,6 +2233,13 @@ var RTCUtils = {
         }
     },
 
+    /**
+     * Handles the newly created Media Streams.
+     * @param service the rtc service
+     * @param stream the new Media Streams
+     * @param usageOptions the list of the devices that should be queried.
+     * @returns {*[]} Promise object with the new Media Streams.
+     */
     handleLocalStream: function (service, stream, usageOptions) {
         var audioStream, videoStream;
         // If this is FF, the stream parameter is *not* a MediaStream object, it's

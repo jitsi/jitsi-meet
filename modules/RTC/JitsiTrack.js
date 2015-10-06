@@ -93,7 +93,8 @@ JitsiTrack.prototype.unmute = function () {
  * @param container the HTML container
  */
 JitsiTrack.prototype.attach = function (container) {
-    RTC.attachMediaStream(container, this.stream);
+    if(this.stream)
+        RTC.attachMediaStream(container, this.stream);
     this.containers.push(container);
 }
 
