@@ -126,12 +126,11 @@ var VideoLayout = (function (my) {
     /**
      * Checks if removed video is currently displayed and tries to display
      * another one instead.
-     * @param removedVideoSrc src stream identifier of the video.
      */
     my.updateRemovedVideo = function(resourceJid) {
+        var newResourceJid;
 
         if (resourceJid === LargeVideo.getResourceJid()) {
-            var newResourceJid;
             // We'll show user's avatar if he is the dominant speaker or if
             // his video thumbnail is pinned
             if (remoteVideos[resourceJid] &&
@@ -153,18 +152,32 @@ var VideoLayout = (function (my) {
         var pick = $('#remoteVideos>span[id!="mixedstream"]:visible:last');
         if (pick.length) {
             jid = VideoLayout.getPeerContainerResourceJid(pick[0]);
-        } else {
+            if (!remoteVideos[jid]) {
+                // The RemoteVideo was removed (but the DOM elements may still
+                // exist).
+                jid = null;
+            }
+        }
+
+        if (!jid) {
             console.info("Last visible video no longer exists");
             pick = $('#remoteVideos>span[id!="mixedstream"]');
             if (pick.length) {
                 jid = VideoLayout.getPeerContainerResourceJid(pick[0]);
-            }
-            if (!jid) {
-                // Go with local video
-                console.info("Fallback to local video...");
-                jid = APP.xmpp.myResource();
+                if (!remoteVideos[jid]) {
+                    // The RemoteVideo was removed (but the DOM elements may
+                    // still exist).
+                    jid = null;
+                }
             }
         }
+
+        if (!jid) {
+            // Go with local video
+            console.info("Fallback to local video...");
+            jid = APP.xmpp.myResource();
+        }
+
         console.info("electLastVisibleVideo: " + jid);
         return jid;
     };
@@ -175,9 +188,7 @@ var VideoLayout = (function (my) {
 
             var resourceJid = Strophe.getResourceFromJid(stream.peerjid);
             remoteVideos[resourceJid].addRemoteStreamElement(
-                stream.sid,
-                stream.getOriginalStream(),
-                stream.ssrc);
+                stream.getOriginalStream());
         }
     };
 
@@ -832,8 +843,7 @@ var VideoLayout = (function (my) {
             focusedVideoResourceJid = null;
         }
 
-        if (currentDominantSpeaker === resourceJid)
-        {
+        if (currentDominantSpeaker === resourceJid) {
             console.info("Dominant speaker has left the conference");
             currentDominantSpeaker = null;
         }
@@ -842,8 +852,8 @@ var VideoLayout = (function (my) {
         if (remoteVideo) {
             // Remove remote video
             console.info("Removing remote video: " + resourceJid);
-            remoteVideo.remove();
             delete remoteVideos[resourceJid];
+            remoteVideo.remove();
         } else {
             console.warn("No remote video for " + resourceJid);
         }

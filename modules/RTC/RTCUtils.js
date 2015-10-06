@@ -259,8 +259,7 @@ function RTCUtils(RTCService, onTemasysPluginReady)
                 attachMediaStream(elSel[0], stream);
             };
             self.getStreamID = function (stream) {
-                var id = APP.xmpp.filter_special_chars(stream.label);
-                return id;
+                return APP.xmpp.filter_special_chars(stream.label);
             };
             self.getVideoSrc = function (element) {
                 if (!element) {

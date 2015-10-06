@@ -3,7 +3,7 @@ BROWSERIFY = ./node_modules/.bin/browserify
 UGLIFYJS = ./node_modules/.bin/uglifyjs
 EXORCIST = ./node_modules/.bin/exorcist
 DEPLOY_DIR = libs
-BROWSERIFY_FLAGS = -d -x jquery 
+BROWSERIFY_FLAGS = -d
 OUTPUT_DIR = .
 
 all: compile uglify deploy clean 

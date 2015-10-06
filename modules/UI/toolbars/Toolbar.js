@@ -129,7 +129,7 @@ var defaultToolbarButtons = {
     'invite': '#toolbar_button_link',
     'chat': '#toolbar_button_chat',
     'prezi': '#toolbar_button_prezi',
-    'ethherpad': '#toolbar_button_etherpad',
+    'etherpad': '#toolbar_button_etherpad',
     'fullscreen': '#toolbar_button_fullScreen',
     'settings': '#toolbar_button_settings',
     'hangup': '#toolbar_button_hangup'

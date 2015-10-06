@@ -108,21 +108,22 @@ JingleSessionPC.prototype.doInitialize = function () {
         self.sendIceCandidate(event.candidate);
     };
     this.peerconnection.onaddstream = function (event) {
-        if (event.stream.id !== 'default') {
-        console.log("REMOTE STREAM ADDED: ", event.stream , event.stream.id);
-        self.remoteStreamAdded(event);
-        } else {
+        if (event.stream.id === 'default') {
             // This is a recvonly stream. Clients that implement Unified Plan,
             // such as Firefox use recvonly "streams/channels/tracks" for
             // receiving remote stream/tracks, as opposed to Plan B where there
             // are only 3 channels: audio, video and data.
-            console.log("RECVONLY REMOTE STREAM IGNORED: " + event.stream + " - " + event.stream.id);
+            console.log("RECVONLY REMOTE STREAM IGNORED: " + event.stream +
+            " - " + event.stream.id);
+            return;
         }
+
+        console.log("REMOTE STREAM ADDED: ", event.stream, event.stream.id);
+        self.remoteStreamAdded(event);
     };
     this.peerconnection.onremovestream = function (event) {
-        // Remove the stream from remoteStreams
-        // FIXME: remotestreamremoved.jingle not defined anywhere(unused)
-        $(document).trigger('remotestreamremoved.jingle', [event, self.sid]);
+        // Remove the stream from remoteStreams?
+        console.log("We are ignoring a removestream event: " + event);
     };
     this.peerconnection.onsignalingstatechange = function (event) {
         if (!(self && self.peerconnection)) return;
@@ -857,7 +858,11 @@ JingleSessionPC.prototype.sendTerminate = function (reason, text) {
     }
 };
 
-JingleSessionPC.prototype.addSource = function (elem, fromJid) {
+/**
+ * Handles a Jingle source-add message for this Jingle session.
+ * @param elem An array of Jingle "content" elements.
+ */
+JingleSessionPC.prototype.addSource = function (elem) {
 
     var self = this;
     // FIXME: dirty waiting
@@ -865,7 +870,7 @@ JingleSessionPC.prototype.addSource = function (elem, fromJid) {
         console.warn("addSource - localDescription not ready yet");
         setTimeout(function()
             {
-                self.addSource(elem, fromJid);
+                self.addSource(elem);
             },
             200
         );
@@ -938,14 +943,18 @@ JingleSessionPC.prototype.addSource = function (elem, fromJid) {
     });
 };
 
-JingleSessionPC.prototype.removeSource = function (elem, fromJid) {
+/**
+ * Handles a Jingle source-remove message for this Jingle session.
+ * @param elem An array of Jingle "content" elements.
+ */
+JingleSessionPC.prototype.removeSource = function (elem) {
 
     var self = this;
     // FIXME: dirty waiting
     if (!this.peerconnection.localDescription) {
         console.warn("removeSource - localDescription not ready yet");
         setTimeout(function() {
-                self.removeSource(elem, fromJid);
+                self.removeSource(elem);
             },
             200
         );
@@ -1440,24 +1449,29 @@ function sendKeyframe(pc) {
     );
 }
 
-
-JingleSessionPC.prototype.remoteStreamAdded = function (data, times) {
+/**
+ * Handles 'onaddstream' events from the RTCPeerConnection.
+ * @param event the 'onaddstream' event.
+ */
+JingleSessionPC.prototype.remoteStreamAdded = function (event) {
     var self = this;
-    var thessrc;
-    var streamId = APP.RTC.getStreamID(data.stream);
+    var ssrc;
+    var ssrclines;
+    var streamId = APP.RTC.getStreamID(event.stream);
 
     // look up an associated JID for a stream id
     if (!streamId) {
-        console.error("No stream ID for", data.stream);
-    } else if (streamId && streamId.indexOf('mixedmslabel') === -1) {
+        console.error("No stream ID for", event.stream);
+    } else if (streamId.indexOf('mixedmslabel') === -1) {
         // look only at a=ssrc: and _not_ at a=ssrc-group: lines
 
-        var ssrclines
-            = SDPUtil.find_lines(this.peerconnection.remoteDescription.sdp, 'a=ssrc:');
+        ssrclines = SDPUtil.find_lines(
+            this.peerconnection.remoteDescription.sdp,
+            'a=ssrc:');
         ssrclines = ssrclines.filter(function (line) {
             // NOTE(gp) previously we filtered on the mslabel, but that property
             // is not always present.
-            // return line.indexOf('mslabel:' + data.stream.label) !== -1;
+            // return line.indexOf('mslabel:' + event.stream.label) !== -1;
 
             if (RTCBrowserType.isTemasysPluginUsed()) {
                 return ((line.indexOf('mslabel:' + streamId) !== -1));
@@ -1466,33 +1480,21 @@ JingleSessionPC.prototype.remoteStreamAdded = function (data, times) {
             }
         });
         if (ssrclines.length) {
-            thessrc = ssrclines[0].substring(7).split(' ')[0];
+            ssrc = ssrclines[0].substring(7).split(' ')[0];
 
-            if (!self.ssrcOwners[thessrc]) {
-                console.error("No SSRC owner known for: " + thessrc);
+            if (!self.ssrcOwners[ssrc]) {
+                console.error("No SSRC owner known for: " + ssrc);
                 return;
             }
-            data.peerjid = self.ssrcOwners[thessrc];
-            console.log('associated jid', self.ssrcOwners[thessrc]);
+            event.peerjid = self.ssrcOwners[ssrc];
+            console.log('Adding remote stream, SSRC ' + ssrc +
+                ', associated jid ' + event.peerjid);
         } else {
             console.error("No SSRC lines for ", streamId);
         }
     }
 
-    APP.RTC.createRemoteStream(data, this.sid, thessrc);
-
-    var isVideo = data.stream.getVideoTracks().length > 0;
-    // an attempt to work around https://github.com/jitsi/jitmeet/issues/32
-    // TODO: is this hack still needed now that we announce an SSRC for
-    // receive-only streams?
-    if (isVideo &&
-        data.peerjid && this.peerjid === data.peerjid &&
-        data.stream.getVideoTracks().length === 0 &&
-        APP.RTC.localVideo.getTracks().length > 0) {
-        window.setTimeout(function () {
-            sendKeyframe(self.peerconnection);
-        }, 3000);
-    }
+    APP.RTC.createRemoteStream(event, ssrc);
 };
 
 module.exports = JingleSessionPC;

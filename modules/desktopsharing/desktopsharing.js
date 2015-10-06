@@ -135,7 +135,8 @@ module.exports = {
                     isUsingScreenStream = false;
                     newStreamCreated(stream);
                 },
-                getVideoStreamFailed, config.resolution || '360'
+                getVideoStreamFailed,
+                config.resolution || '360'
             );
         }
     },
