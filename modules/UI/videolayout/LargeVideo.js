@@ -189,6 +189,7 @@ function getCameraVideoSize(videoWidth,
                             videoHeight,
                             videoSpaceWidth,
                             videoSpaceHeight) {
+
     if (!videoWidth)
         videoWidth = currentVideoWidth;
     if (!videoHeight)
@@ -196,18 +197,32 @@ function getCameraVideoSize(videoWidth,
 
     var aspectRatio = videoWidth / videoHeight;
 
-    var availableWidth = Math.max(videoWidth, videoSpaceWidth);
-    var availableHeight = Math.max(videoHeight, videoSpaceHeight);
+    var availableWidth = videoWidth;
+    var availableHeight = videoHeight;
 
-    if (availableWidth / aspectRatio < videoSpaceHeight) {
+    if (interfaceConfig.VIDEO_LAYOUT_FIT == 'height') {
         availableHeight = videoSpaceHeight;
-        availableWidth = availableHeight * aspectRatio;
+        availableWidth = availableHeight*aspectRatio;
+    }
+    else if (interfaceConfig.VIDEO_LAYOUT_FIT == 'width') {
+        availableWidth = videoSpaceWidth;
+        availableHeight = availableWidth/aspectRatio;
+    }
+    else if (interfaceConfig.VIDEO_LAYOUT_FIT == 'both') {
+        availableWidth = Math.max(videoWidth, videoSpaceWidth);
+        availableHeight = Math.max(videoHeight, videoSpaceHeight);
+
+        if (availableWidth / aspectRatio < videoSpaceHeight) {
+            availableHeight = videoSpaceHeight;
+            availableWidth = availableHeight * aspectRatio;
+        }
+
+        if (availableHeight * aspectRatio < videoSpaceWidth) {
+            availableWidth = videoSpaceWidth;
+            availableHeight = availableWidth / aspectRatio;
+        }
     }
 
-    if (availableHeight * aspectRatio < videoSpaceWidth) {
-        availableWidth = videoSpaceWidth;
-        availableHeight = availableWidth / aspectRatio;
-    }
 
     return [availableWidth, availableHeight];
 }

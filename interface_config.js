@@ -20,6 +20,7 @@ var interfaceConfig = {
         'recording', 'security', 'invite', 'chat', 'prezi', 'etherpad',
         'fullscreen', 'sip', 'dialpad', 'settings', 'hangup', 'filmstrip',
         'contacts'],
+    VIDEO_LAYOUT_FIT: 'both', // height, width, both
     /**
      * Whether to only show the filmstrip (and hide the toolbar).
      */
