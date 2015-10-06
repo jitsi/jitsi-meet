@@ -260,6 +260,7 @@ ChatRoom.prototype.onPresence = function (pres) {
             }
         if (!this.joined) {
             this.joined = true;
+            console.log("(TIME) MUC joined:\t", window.performance.now());
             this.eventEmitter.emit(XMPPEvents.MUC_JOINED, from, member);
         }
     } else if (this.members[from] === undefined) {

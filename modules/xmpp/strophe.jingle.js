@@ -94,6 +94,8 @@ module.exports = function(XMPP, eventEmitter) {
             // see http://xmpp.org/extensions/xep-0166.html#concepts-session
             switch (action) {
                 case 'session-initiate':
+                    console.log("(TIME) received session-initiate:\t",
+                                window.performance.now());
                     var startMuted = $(iq).find('jingle>startmuted');
                     if (startMuted && startMuted.length > 0) {
                         var audioMuted = startMuted.attr("audio");

@@ -103,8 +103,8 @@ XMPP.prototype._connect = function (jid, password) {
     var connectionFailed = false;
     var lastErrorMsg;
     this.connection.connect(jid, password, function (status, msg) {
-        logger.log('Strophe status changed to',
-            Strophe.getStatusString(status), msg);
+        logger.log("(TIME) Strophe " + Strophe.getStatusString(status) +
+            (msg ? "[" + msg + "]" : "") + "\t:" + window.performance.now());
         if (status === Strophe.Status.CONNECTED) {
             if (self.options.useStunTurn) {
                 self.connection.jingle.getStunAndTurnCredentials();

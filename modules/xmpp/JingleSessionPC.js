@@ -146,6 +146,8 @@ JingleSessionPC.prototype.doInitialize = function () {
      */
     this.peerconnection.oniceconnectionstatechange = function (event) {
         if (!(self && self.peerconnection)) return;
+        logger.log("(TIME) ICE " + self.peerconnection.iceConnectionState +
+                    ":\t", window.performance.now());
         self.updateModifySourcesQueue();
         switch (self.peerconnection.iceConnectionState) {
             case 'connected':
