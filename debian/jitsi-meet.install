@@ -3,7 +3,6 @@
 *.html					/usr/share/jitsi-meet/
 *.ico					/usr/share/jitsi-meet/
 libs					/usr/share/jitsi-meet/
-service					/usr/share/jitsi-meet/
 css/all.css 			/usr/share/jitsi-meet/css/
 sounds					/usr/share/jitsi-meet/
 fonts					/usr/share/jitsi-meet/
