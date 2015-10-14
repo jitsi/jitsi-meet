@@ -78,7 +78,7 @@ LocalStream.prototype.setMute = function (mute)
     } else {
         if (mute) {
             APP.xmpp.removeStream(this.stream);
-            this.stream.stop();
+            this.stopTracks();
             this.eventEmitter.emit(eventType, true);
         } else {
             var self = this;
@@ -119,6 +119,13 @@ LocalStream.prototype.isMuted = function () {
 
 LocalStream.prototype.getId = function () {
     return this.stream.getTracks()[0].id;
+};
+
+LocalStream.prototype.stopTracks = function() {
+  var originalStream = this.getOriginalStream();
+  originalStream && originalStream.getTracks().forEach(function(track) {
+    track.stop();
+  })
 };
 
 module.exports = LocalStream;

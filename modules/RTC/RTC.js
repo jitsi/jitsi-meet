@@ -214,7 +214,7 @@ var RTC = {
         this.localStreams.push(this.localVideo);
     },
     changeLocalVideo: function (stream, isUsingScreenStream, callback) {
-        var oldStream = this.localVideo.getOriginalStream();
+        var oldStream = this.localVideo;
         var type = (isUsingScreenStream ? "screen" : "camera");
         var localCallback = callback;
         if(this.localVideo.isMuted() && this.localVideo.videoType !== type) {
@@ -230,23 +230,23 @@ var RTC = {
         if (stream && stream.videoStream) {
             stream = stream.videoStream;
         }
-        var videoStream = this.rtcUtils.createStream(stream, true);
+        var newOriginalVideoStream = this.rtcUtils.createStream(stream, true);
         this.localVideo =
-            this.createLocalStream(videoStream, "video", true, type);
+            this.createLocalStream(newOriginalVideoStream, "video", true, type);
         // Stop the stream to trigger onended event for old stream
-        oldStream.stop();
+        oldStream.stopTracks();
 
-        this.switchVideoStreams(videoStream);
+        this.switchVideoStreams(newOriginalVideoStream);
 
-        APP.xmpp.switchStreams(videoStream, oldStream,localCallback);
+        APP.xmpp.switchStreams(newOriginalVideoStream, oldStream.getOriginalStream(), localCallback);
     },
     changeLocalAudio: function (stream, callback) {
-        var oldStream = this.localAudio.getOriginalStream();
-        var newStream = this.rtcUtils.createStream(stream);
-        this.localAudio = this.createLocalStream(newStream, "audio", true);
+        var oldStream = this.localAudio;
+        var newOriginalStream = this.rtcUtils.createStream(stream);
+        this.localAudio = this.createLocalStream(newOriginalStream, "audio", true);
         // Stop the stream to trigger onended event for old stream
-        oldStream.stop();
-        APP.xmpp.switchStreams(newStream, oldStream, callback, true);
+        oldStream.stopTracks();
+        APP.xmpp.switchStreams(newOriginalStream, oldStream.getOriginalStream(), callback, true);
     },
     isVideoMuted: function (jid) {
         if (jid === APP.xmpp.myJid()) {
