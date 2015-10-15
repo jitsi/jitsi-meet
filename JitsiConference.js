@@ -25,6 +25,7 @@ function JitsiConference(options) {
     this.rtc = new RTC(this.room, options);
     setupListeners(this);
     this.participants = {};
+    this.lastActiveSpeaker = null;
 }
 
 /**
@@ -219,7 +220,11 @@ function setupListeners(conference) {
 //        conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_LEFT);
 //    });
     conference.rtc.addListener(RTCEvents.DOMINANTSPEAKER_CHANGED, function (id) {
-        conference.eventEmitter.emit(JitsiConferenceEvents.ACTIVE_SPEAKER_CHANGED, id);
+        if(conference.lastActiveSpeaker !== id && conference.room
+            && conference.room.myroomjid !== id) {
+            conference.lastActiveSpeaker = id;
+            conference.eventEmitter.emit(JitsiConferenceEvents.ACTIVE_SPEAKER_CHANGED, id);
+        }
     });
 
     conference.rtc.addListener(RTCEvents.LASTN_CHANGED, function (oldValue, newValue) {

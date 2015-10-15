@@ -6416,7 +6416,7 @@ var isEnabled = !RTCBrowserType.isFirefox();
 var localVideoSSRC;
 
 /**
- * SSRC used for recvonly video stream when we have no local camera.
+ * SSRC, msid, mslabel, label used for recvonly video stream when we have no local camera.
  * This is in order to tell Chrome what SSRC should be used in RTCP requests
  * instead of 1.
  */
@@ -6492,28 +6492,45 @@ var storeLocalVideoSSRC = function (jingleIq) {
     });
 };
 
+/**
+ * Generates random hex number within the range [min, max]
+ * @param max the maximum value for the generated number
+ * @param min the minimum value for the generated number
+ * @returns random hex number
+ */
 function rangeRandomHex(min, max)
 {
     return Math.floor(Math.random() * (max - min) + min).toString(16);
 }
 
+/**
+ * Generates hex number with length 4
+ */
 var random4digitsHex = rangeRandomHex.bind(null, 4096, 65535);
+
+/**
+ * Generates hex number with length 8
+ */
 var random8digitsHex = rangeRandomHex.bind(null, 268435456, 4294967295);
+
+/**
+ * Generates hex number with length 12
+ */
 var random12digitsHex = rangeRandomHex.bind(null, 17592186044416, 281474976710655);
 
+/**
+ * Generates new label/mslabel attribute
+ * @returns {string} label/mslabel attribute
+ */
 function generateLabel() {
-    //4294967295 - ffffffff
-    //65535 - ffff
-    //281474976710655 - ffffffffffff
     return random8digitsHex() + "-" + random4digitsHex() + "-" + random4digitsHex() + "-" + random4digitsHex() + "-" + random12digitsHex();
 }
 
 /**
- * Generates new SSRC for local video recvonly stream.
+ * Generates new SSRC, CNAME, mslabel, label and msid for local video recvonly stream.
  * FIXME what about eventual SSRC collision ?
  */
 function generateRecvonlySSRC() {
-    //
     localRecvOnlySSRC =
         Math.random().toString(10).substring(2, 11);
     localRecvOnlyCName =
@@ -7844,7 +7861,6 @@ function TraceablePeerConnection(ice_config, constraints, session) {
 
     // override as desired
     this.trace = function (what, info) {
-        console.debug(what + " - " + info);
         /*console.warn('WTRACE', what, info);
         if (info && RTCBrowserType.isIExplorer()) {
             if (info.length > 1024) {
