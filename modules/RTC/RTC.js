@@ -11,7 +11,6 @@ var DesktopSharingEventTypes
 var MediaStreamType = require("../../service/RTC/MediaStreamTypes");
 var StreamEventTypes = require("../../service/RTC/StreamEventTypes.js");
 var RTCEvents = require("../../service/RTC/RTCEvents.js");
-var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 var desktopsharing = require("../desktopsharing/desktopsharing");
 
 function getMediaStreamUsage()
@@ -70,7 +69,6 @@ function RTC(room, options) {
         if(self.remoteStreams[from])
             self.remoteStreams[from][JitsiTrack.AUDIO].setMute(values.value == "true");
     });
-
 }
 
 /**
@@ -89,7 +87,11 @@ RTC.prototype.obtainAudioAndVideoPermissions = function (options, dontCreateJits
 RTC.prototype.onIncommingCall = function(event) {
     if(this.options.config.openSctp)
         this.dataChannels = new DataChannels(event.peerconnection, this.eventEmitter);
-    this.room.addLocalStreams(this.localStreams);
+    for(var i = 0; i < this.localStreams.length; i++)
+        if(this.localStreams[i].isStarted)
+        {
+            this.localStreams[i].start();
+        }
 }
 
 RTC.prototype.selectedEndpoint = function (id) {

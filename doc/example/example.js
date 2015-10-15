@@ -1,3 +1,13 @@
+//var options = {
+//    hosts: {
+//        domain: "prod-us-east-1-app-xmpp1.internal.meet.hipchat.ninja",
+//        focus: "focus.prod-us-east-1-app-xmpp1.internal.meet.hipchat.ninja",
+//        muc: "conference.prod-us-east-1-app-xmpp1.internal.meet.hipchat.ninja", // FIXME: use XEP-0030
+//    },
+//    bosh: "https://xmpp1-meet.hipchat.me/http-bind", // FIXME: use xep-0156 for that
+//    clientNode: "http://prod-us-east-1-app-xmpp1.internal.meet.hipchat.ninja/jitsimeet" // The name of client node advertised in XEP-0115 'c' stanza
+//};
+
 var options = {
     hosts: {
         domain: 'hristo.jitsi.net',
@@ -5,8 +15,8 @@ var options = {
         bridge: 'jitsi-videobridge.hristo.jitsi.net', // FIXME: use XEP-0030
     },
     bosh: '//hristo.jitsi.net/http-bind', // FIXME: use xep-0156 for that
-    clientNode: 'http://jitsi.org/jitsimeet' // The name of client node advertised in XEP-0115 'c' stanza
-};
+    clientNode: 'http://jitsi.org/jitsimeet', // The name of client node advertised in XEP-0115 'c' stanza
+}
 
 var confOptions = {
     openSctp: true
@@ -22,6 +32,10 @@ function onLocalTracks(tracks)
     console.log(tracks);
     tracks[0].attach($("#localAudio"));
     tracks[1].attach($("#localVideo"));
+    for(var i = 0; i < localTracks.length; i++)
+    {
+        localTracks[i].start();
+    }
 }
 
 /**
@@ -46,10 +60,8 @@ function onRemoteTrack(track) {
  * That function is executed when the conference is joined
  */
 function onConferenceJoined () {
-    for(var i = 0; i < localTracks.length; i++)
-    {
-        localTracks[i].start();
-    }
+    console.log("conference joined!");
+    room.createLocalTracks().then(onLocalTracks);
 }
 
 function onUserLeft(id) {
@@ -64,8 +76,7 @@ function onUserLeft(id) {
  * That function is called when connection is established successfully
  */
 function onConnectionSuccess(){
-    room = connection.initJitsiConference("conference1", confOptions);
-    room.createLocalTracks().then(onLocalTracks);
+    room = connection.initJitsiConference("conference2", confOptions);
     room.on(JitsiMeetJS.events.conference.TRACK_ADDED, onRemoteTrack);
     room.on(JitsiMeetJS.events.conference.TRACK_REMOVED, function () {
         console.debug("track removed!!!");

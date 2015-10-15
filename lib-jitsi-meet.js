@@ -26,6 +26,7 @@ function JitsiConference(options) {
     this.rtc = new RTC(this.room, options);
     setupListeners(this);
     this.participants = {};
+    this.lastActiveSpeaker = null;
 }
 
 /**
@@ -220,7 +221,11 @@ function setupListeners(conference) {
 //        conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_LEFT);
 //    });
     conference.rtc.addListener(RTCEvents.DOMINANTSPEAKER_CHANGED, function (id) {
-        conference.eventEmitter.emit(JitsiConferenceEvents.ACTIVE_SPEAKER_CHANGED, id);
+        if(conference.lastActiveSpeaker !== id && conference.room
+            && conference.room.myroomjid !== id) {
+            conference.lastActiveSpeaker = id;
+            conference.eventEmitter.emit(JitsiConferenceEvents.ACTIVE_SPEAKER_CHANGED, id);
+        }
     });
 
     conference.rtc.addListener(RTCEvents.LASTN_CHANGED, function (oldValue, newValue) {
@@ -845,6 +850,7 @@ function JitsiLocalTrack(RTC, stream, eventEmitter, videoType, isGUMStream)
     this.videoType = videoType;
     this.isGUMStream = true;
     this.dontFireRemoveEvent = false;
+    this.isStarted = false;
     var self = this;
     if(isGUMStream === false)
         this.isGUMStream = isGUMStream;
@@ -947,6 +953,7 @@ JitsiLocalTrack.prototype.stop = function () {
  * NOTE: Works for local tracks only.
  */
 JitsiLocalTrack.prototype.start = function() {
+    this.isStarted = true;
     this.rtc.room.addStream(this.stream, function () {});
 }
 
@@ -1220,7 +1227,6 @@ var DesktopSharingEventTypes
 var MediaStreamType = require("../../service/RTC/MediaStreamTypes");
 var StreamEventTypes = require("../../service/RTC/StreamEventTypes.js");
 var RTCEvents = require("../../service/RTC/RTCEvents.js");
-var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 var desktopsharing = require("../desktopsharing/desktopsharing");
 
 function getMediaStreamUsage()
@@ -1279,7 +1285,6 @@ function RTC(room, options) {
         if(self.remoteStreams[from])
             self.remoteStreams[from][JitsiTrack.AUDIO].setMute(values.value == "true");
     });
-
 }
 
 /**
@@ -1298,7 +1303,11 @@ RTC.prototype.obtainAudioAndVideoPermissions = function (options, dontCreateJits
 RTC.prototype.onIncommingCall = function(event) {
     if(this.options.config.openSctp)
         this.dataChannels = new DataChannels(event.peerconnection, this.eventEmitter);
-    this.room.addLocalStreams(this.localStreams);
+    for(var i = 0; i < this.localStreams.length; i++)
+        if(this.localStreams[i].isStarted)
+        {
+            this.localStreams[i].start();
+        }
 }
 
 RTC.prototype.selectedEndpoint = function (id) {
@@ -1565,7 +1574,7 @@ RTC.prototype.setDeviceAvailability = function (devices) {
 
 module.exports = RTC;
 
-},{"../../service/RTC/MediaStreamTypes":70,"../../service/RTC/RTCEvents.js":71,"../../service/RTC/StreamEventTypes.js":73,"../../service/desktopsharing/DesktopSharingEventTypes":75,"../../service/xmpp/XMPPEvents":76,"../desktopsharing/desktopsharing":17,"./DataChannels":9,"./JitsiLocalTrack.js":10,"./JitsiRemoteTrack.js":11,"./JitsiTrack":12,"./RTCBrowserType":14,"./RTCUtils.js":15,"events":77}],14:[function(require,module,exports){
+},{"../../service/RTC/MediaStreamTypes":70,"../../service/RTC/RTCEvents.js":71,"../../service/RTC/StreamEventTypes.js":73,"../../service/desktopsharing/DesktopSharingEventTypes":75,"../desktopsharing/desktopsharing":17,"./DataChannels":9,"./JitsiLocalTrack.js":10,"./JitsiRemoteTrack.js":11,"./JitsiTrack":12,"./RTCBrowserType":14,"./RTCUtils.js":15,"events":77}],14:[function(require,module,exports){
 
 var currentBrowser;
 
@@ -4903,6 +4912,7 @@ function JingleSessionPC(me, sid, connection, service) {
     this.removessrc = [];
     this.pendingop = null;
     this.switchstreams = false;
+    this.addingStreams = false;
 
     this.wait = true;
     this.localStreamsSSRC = null;
@@ -4915,6 +4925,7 @@ function JingleSessionPC(me, sid, connection, service) {
      * by the application logic.
      */
     this.videoMuteByUser = false;
+
     this.modifySourcesQueue = async.queue(this._modifySources.bind(this), 1);
     // We start with the queue paused. We resume it when the signaling state is
     // stable and the ice connection state is connected.
@@ -5024,6 +5035,8 @@ JingleSessionPC.prototype.addLocalStreams = function (localStreams) {
     var self = this;
 // add any local and relayed stream
     localStreams.forEach(function(stream) {
+        if(!stream.isStarted())
+            return;
         self.peerconnection.addStream(stream.getOriginalStream());
     });
 }
@@ -5831,7 +5844,8 @@ JingleSessionPC.prototype._modifySources = function (successCallback, queueCallb
     var self = this;
 
     if (this.peerconnection.signalingState == 'closed') return;
-    if (!(this.addssrc.length || this.removessrc.length || this.pendingop !== null || this.switchstreams)){
+    if (!(this.addssrc.length || this.removessrc.length || this.pendingop !== null
+        || this.switchstreams || this.addingStreams)){
         // There is nothing to do since scheduled job might have been executed by another succeeding call
         this.setLocalDescription();
         if(successCallback){
@@ -5841,8 +5855,9 @@ JingleSessionPC.prototype._modifySources = function (successCallback, queueCallb
         return;
     }
 
-    // Reset switch streams flag
+    // Reset switch streams flags
     this.switchstreams = false;
+    this.addingStreams = false;
 
     var sdp = new SDP(this.peerconnection.remoteDescription.sdp);
 
@@ -5991,6 +6006,7 @@ JingleSessionPC.prototype.addStream = function (stream, callback) {
         return;
     }
 
+    this.addingStreams = true;
     this.modifySourcesQueue.push(function() {
         console.log('modify sources done');
 
@@ -6393,6 +6409,7 @@ var RTCBrowserType = require('../RTC/RTCBrowserType');
  */
 var isEnabled = !RTCBrowserType.isFirefox();
 
+
 /**
  * Stored SSRC of local video stream.
  */
@@ -6403,7 +6420,7 @@ var localVideoSSRC;
  * This is in order to tell Chrome what SSRC should be used in RTCP requests
  * instead of 1.
  */
-var localRecvOnlySSRC;
+var localRecvOnlySSRC, localRecvOnlyMSID, localRecvOnlyMSLabel, localRecvOnlyLabel;
 
 /**
  * cname for <tt>localRecvOnlySSRC</tt>
@@ -6475,6 +6492,22 @@ var storeLocalVideoSSRC = function (jingleIq) {
     });
 };
 
+function rangeRandomHex(min, max)
+{
+    return Math.floor(Math.random() * (max - min) + min).toString(16);
+}
+
+var random4digitsHex = rangeRandomHex.bind(null, 4096, 65535);
+var random8digitsHex = rangeRandomHex.bind(null, 268435456, 4294967295);
+var random12digitsHex = rangeRandomHex.bind(null, 17592186044416, 281474976710655);
+
+function generateLabel() {
+    //4294967295 - ffffffff
+    //65535 - ffff
+    //281474976710655 - ffffffffffff
+    return random8digitsHex() + "-" + random4digitsHex() + "-" + random4digitsHex() + "-" + random4digitsHex() + "-" + random12digitsHex();
+}
+
 /**
  * Generates new SSRC for local video recvonly stream.
  * FIXME what about eventual SSRC collision ?
@@ -6485,7 +6518,12 @@ function generateRecvonlySSRC() {
         Math.random().toString(10).substring(2, 11);
     localRecvOnlyCName =
         Math.random().toString(36).substring(2);
-    console.info(
+    localRecvOnlyMSLabel = generateLabel();
+    localRecvOnlyLabel = generateLabel();
+    localRecvOnlyMSID = localRecvOnlyMSLabel + " " + localRecvOnlyLabel;
+
+
+        console.info(
         "Generated local recvonly SSRC: " + localRecvOnlySSRC +
         ", cname: " + localRecvOnlyCName);
 }
@@ -6556,12 +6594,19 @@ var LocalSSRCReplacement = {
                 if (!localRecvOnlySSRC) {
                     generateRecvonlySSRC();
                 }
+                localVideoSSRC = localRecvOnlySSRC;
 
                 console.info('No SSRC in video recvonly stream' +
                              ' - adding SSRC: ' + localRecvOnlySSRC);
 
                 sdp.media[1] += 'a=ssrc:' + localRecvOnlySSRC +
-                                ' cname:' + localRecvOnlyCName + '\r\n';
+                                ' cname:' + localRecvOnlyCName + '\r\n' +
+                                'a=ssrc:' + localRecvOnlySSRC +
+                                ' msid:' + localRecvOnlyMSID + '\r\n' +
+                                'a=ssrc:' + localRecvOnlySSRC +
+                                ' mslabel:' + localRecvOnlyMSLabel + '\r\n' +
+                                'a=ssrc:' + localRecvOnlySSRC +
+                                ' label:' + localRecvOnlyLabel + '\r\n';
 
                 localDescription.sdp = sdp.session + sdp.media.join('');
             }
@@ -7799,6 +7844,7 @@ function TraceablePeerConnection(ice_config, constraints, session) {
 
     // override as desired
     this.trace = function (what, info) {
+        console.debug(what + " - " + info);
         /*console.warn('WTRACE', what, info);
         if (info && RTCBrowserType.isIExplorer()) {
             if (info.length > 1024) {

@@ -14,6 +14,7 @@ function JitsiLocalTrack(RTC, stream, eventEmitter, videoType, isGUMStream)
     this.videoType = videoType;
     this.isGUMStream = true;
     this.dontFireRemoveEvent = false;
+    this.isStarted = false;
     var self = this;
     if(isGUMStream === false)
         this.isGUMStream = isGUMStream;
@@ -116,6 +117,7 @@ JitsiLocalTrack.prototype.stop = function () {
  * NOTE: Works for local tracks only.
  */
 JitsiLocalTrack.prototype.start = function() {
+    this.isStarted = true;
     this.rtc.room.addStream(this.stream, function () {});
 }
 

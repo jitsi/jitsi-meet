@@ -41,17 +41,18 @@ var RTCBrowserType = require('../RTC/RTCBrowserType');
  */
 var isEnabled = !RTCBrowserType.isFirefox();
 
+
 /**
  * Stored SSRC of local video stream.
  */
 var localVideoSSRC;
 
 /**
- * SSRC used for recvonly video stream when we have no local camera.
+ * SSRC, msid, mslabel, label used for recvonly video stream when we have no local camera.
  * This is in order to tell Chrome what SSRC should be used in RTCP requests
  * instead of 1.
  */
-var localRecvOnlySSRC;
+var localRecvOnlySSRC, localRecvOnlyMSID, localRecvOnlyMSLabel, localRecvOnlyLabel;
 
 /**
  * cname for <tt>localRecvOnlySSRC</tt>
@@ -124,16 +125,54 @@ var storeLocalVideoSSRC = function (jingleIq) {
 };
 
 /**
- * Generates new SSRC for local video recvonly stream.
+ * Generates random hex number within the range [min, max]
+ * @param max the maximum value for the generated number
+ * @param min the minimum value for the generated number
+ * @returns random hex number
+ */
+function rangeRandomHex(min, max)
+{
+    return Math.floor(Math.random() * (max - min) + min).toString(16);
+}
+
+/**
+ * Generates hex number with length 4
+ */
+var random4digitsHex = rangeRandomHex.bind(null, 4096, 65535);
+
+/**
+ * Generates hex number with length 8
+ */
+var random8digitsHex = rangeRandomHex.bind(null, 268435456, 4294967295);
+
+/**
+ * Generates hex number with length 12
+ */
+var random12digitsHex = rangeRandomHex.bind(null, 17592186044416, 281474976710655);
+
+/**
+ * Generates new label/mslabel attribute
+ * @returns {string} label/mslabel attribute
+ */
+function generateLabel() {
+    return random8digitsHex() + "-" + random4digitsHex() + "-" + random4digitsHex() + "-" + random4digitsHex() + "-" + random12digitsHex();
+}
+
+/**
+ * Generates new SSRC, CNAME, mslabel, label and msid for local video recvonly stream.
  * FIXME what about eventual SSRC collision ?
  */
 function generateRecvonlySSRC() {
-    //
     localRecvOnlySSRC =
         Math.random().toString(10).substring(2, 11);
     localRecvOnlyCName =
         Math.random().toString(36).substring(2);
-    console.info(
+    localRecvOnlyMSLabel = generateLabel();
+    localRecvOnlyLabel = generateLabel();
+    localRecvOnlyMSID = localRecvOnlyMSLabel + " " + localRecvOnlyLabel;
+
+
+        console.info(
         "Generated local recvonly SSRC: " + localRecvOnlySSRC +
         ", cname: " + localRecvOnlyCName);
 }
@@ -204,12 +243,19 @@ var LocalSSRCReplacement = {
                 if (!localRecvOnlySSRC) {
                     generateRecvonlySSRC();
                 }
+                localVideoSSRC = localRecvOnlySSRC;
 
                 console.info('No SSRC in video recvonly stream' +
                              ' - adding SSRC: ' + localRecvOnlySSRC);
 
                 sdp.media[1] += 'a=ssrc:' + localRecvOnlySSRC +
-                                ' cname:' + localRecvOnlyCName + '\r\n';
+                                ' cname:' + localRecvOnlyCName + '\r\n' +
+                                'a=ssrc:' + localRecvOnlySSRC +
+                                ' msid:' + localRecvOnlyMSID + '\r\n' +
+                                'a=ssrc:' + localRecvOnlySSRC +
+                                ' mslabel:' + localRecvOnlyMSLabel + '\r\n' +
+                                'a=ssrc:' + localRecvOnlySSRC +
+                                ' label:' + localRecvOnlyLabel + '\r\n';
 
                 localDescription.sdp = sdp.session + sdp.media.join('');
             }

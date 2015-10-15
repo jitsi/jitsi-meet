@@ -37,6 +37,7 @@ function JingleSessionPC(me, sid, connection, service) {
     this.removessrc = [];
     this.pendingop = null;
     this.switchstreams = false;
+    this.addingStreams = false;
 
     this.wait = true;
     this.localStreamsSSRC = null;
@@ -49,6 +50,7 @@ function JingleSessionPC(me, sid, connection, service) {
      * by the application logic.
      */
     this.videoMuteByUser = false;
+
     this.modifySourcesQueue = async.queue(this._modifySources.bind(this), 1);
     // We start with the queue paused. We resume it when the signaling state is
     // stable and the ice connection state is connected.
@@ -158,6 +160,8 @@ JingleSessionPC.prototype.addLocalStreams = function (localStreams) {
     var self = this;
 // add any local and relayed stream
     localStreams.forEach(function(stream) {
+        if(!stream.isStarted())
+            return;
         self.peerconnection.addStream(stream.getOriginalStream());
     });
 }
@@ -965,7 +969,8 @@ JingleSessionPC.prototype._modifySources = function (successCallback, queueCallb
     var self = this;
 
     if (this.peerconnection.signalingState == 'closed') return;
-    if (!(this.addssrc.length || this.removessrc.length || this.pendingop !== null || this.switchstreams)){
+    if (!(this.addssrc.length || this.removessrc.length || this.pendingop !== null
+        || this.switchstreams || this.addingStreams)){
         // There is nothing to do since scheduled job might have been executed by another succeeding call
         this.setLocalDescription();
         if(successCallback){
@@ -975,8 +980,9 @@ JingleSessionPC.prototype._modifySources = function (successCallback, queueCallb
         return;
     }
 
-    // Reset switch streams flag
+    // Reset switch streams flags
     this.switchstreams = false;
+    this.addingStreams = false;
 
     var sdp = new SDP(this.peerconnection.remoteDescription.sdp);
 
@@ -1125,6 +1131,7 @@ JingleSessionPC.prototype.addStream = function (stream, callback) {
         return;
     }
 
+    this.addingStreams = true;
     this.modifySourcesQueue.push(function() {
         console.log('modify sources done');
 
