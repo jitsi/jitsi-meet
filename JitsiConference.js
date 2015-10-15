@@ -151,6 +151,7 @@ JitsiConference.prototype.removeCommand = function (name) {
  */
 JitsiConference.prototype.setDisplayName = function(name) {
     this.room.addToPresence("nick", {attributes: {xmlns: 'http://jabber.org/protocol/nick'}, value: name});
+    this.room.sendPresence();
 }
 
 /**
@@ -248,6 +249,11 @@ function setupListeners(conference) {
     conference.room.addListener(XMPPEvents.MUC_MEMBER_JOINED, conference.onMemberJoined.bind(conference));
     conference.room.addListener(XMPPEvents.MUC_MEMBER_LEFT,function (jid) {
         conference.eventEmitter.emit(JitsiConferenceEvents.USER_LEFT, Strophe.getResourceFromJid(jid));
+    });
+
+    conference.room.addListener(XMPPEvents.DISPLAY_NAME_CHANGED, function (from, displayName) {
+        conference.eventEmitter.emit(JitsiConferenceEvents.DISPLAY_NAME_CHANGED,
+            Strophe.getResourceFromJid(from), displayName);
     });
 }
 

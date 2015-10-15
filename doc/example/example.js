@@ -87,6 +87,9 @@ function onConnectionSuccess(){
     room.on(JitsiMeetJS.events.conference.TRACK_MUTE_CHANGED, function (track) {
         console.debug(track.getType() + " - " + track.isMuted());
     });
+    room.on(JitsiMeetJS.events.conference.DISPLAY_NAME_CHANGED, function (userID, displayName) {
+        console.debug(userID + " - " + displayName);
+    });
     room.join();
 };
 
