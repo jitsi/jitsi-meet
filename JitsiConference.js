@@ -192,6 +192,14 @@ JitsiConference.prototype.onMemberJoined = function (jid, email, nick) {
 }
 
 /**
+ * Returns the local user's ID
+ * @return {string} local user's ID
+ */
+JitsiConference.prototype.myUserId = function () {
+    return (this.room && this.room.myroomjid)? Strophe.getResourceFromJid(this.room.myroomjid) : null;
+}
+
+/**
  * Setups the listeners needed for the conference.
  * @param conference the conference
  */
@@ -221,7 +229,7 @@ function setupListeners(conference) {
 //    });
     conference.rtc.addListener(RTCEvents.DOMINANTSPEAKER_CHANGED, function (id) {
         if(conference.lastActiveSpeaker !== id && conference.room
-            && conference.room.myroomjid !== id) {
+            && conference.myUserId() !== id) {
             conference.lastActiveSpeaker = id;
             conference.eventEmitter.emit(JitsiConferenceEvents.ACTIVE_SPEAKER_CHANGED, id);
         }
