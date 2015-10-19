@@ -895,7 +895,7 @@ JingleSessionPC.prototype.addSource = function (elem) {
                 return this.getAttribute('ssrc');
             }).get();
 
-            if (!ssrcs.length) {
+            if (ssrcs.length) {
                 lines += 'a=ssrc-group:' + semantics + ' ' + ssrcs.join(' ') + '\r\n';
             }
         });
