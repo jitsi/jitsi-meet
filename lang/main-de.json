@@ -126,6 +126,8 @@
         "mutedTitle": "Stummschaltung aktiv."
     },
     "dialog": {
+        "illCharInRoomNameMessage": "Ungültiges Zeichen im Raumnamen",
+        "roomNameHint": "Ein gültiger Raumname besteht aus Buchstaben, Ziffern, + und = Zeichen.",
         "kickMessage": "Oh! Sie wurden aus der Konferenz ausgeschlossen.",
         "popupError": "Ihr Browser blockiert Popup-Fenster von dieser Webseite. Bitte erlauben Sie dieser Seite Popups in den Sicherheitseinstellungen Ihres Browsers und versuchen Sie es erneut.",
         "passwordError": "Diese Konferenz ist mit einem Paswort geschützt. Nur der Besitzer der Konferenz kann ein Passwort vergeben.",

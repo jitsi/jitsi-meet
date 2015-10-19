@@ -130,7 +130,9 @@
         "mutedTitle": "You're muted!"
     },
     "dialog": {
-        "kickMessage": "Ouch! You have been kicked out of the meet!",
+        "illCharInRoomNameMessage": "Illegal Character in Room Name",
+        "roomNameHint": "A valid room name may contain only letters, digits, + signs and = -characters.",
+        "kickMessage": "Ouch ! You have been kicked out of the meet!",
         "popupError": "Your browser is blocking popup windows from this site. Please enable popups in your browser's security settings and try again.",
         "passwordError": "This conversation is currently protected by a password. Only the owner of the conference can set a password.",
         "passwordError2": "This conversation isn't currently protected by a password. Only the owner of the conference can set a password.",
