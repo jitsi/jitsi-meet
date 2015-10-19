@@ -18,9 +18,9 @@ var ConfigUtil = {
      *        }
      */
     overrideConfigJSON: function (config, interfaceConfig, newConfig) {
-        for (var configRoot in newConfig) {
-
-            var confObj = null;
+        var configRoot, key, value, confObj;
+        for (configRoot in newConfig) {
+            confObj = null;
             if (configRoot == "config") {
                 confObj = config;
             } else if (configRoot == "interfaceConfig") {
@@ -29,15 +29,11 @@ var ConfigUtil = {
                 continue;
             }
 
-            for (var key in newConfig[configRoot]) {
-                var value = newConfig[configRoot][key];
-                if (confObj[key] && typeof confObj[key] !== typeof value)
-                {
-                    console.warn(
-                        "The type of " + key +
-                        " is wrong. That parameter won't be updated in: ",
-                        confObj);
-                    continue;
+            for (key in newConfig[configRoot]) {
+                value = newConfig[configRoot][key];
+                if (confObj[key] && typeof confObj[key] !== typeof value) {
+                    console.log("Overriding a " + configRoot +
+                        " property with a property of different type.");
                 }
                 console.info("Overriding " + key + " with: " + value);
                 confObj[key] = value;
