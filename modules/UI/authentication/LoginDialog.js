@@ -24,12 +24,18 @@ function Dialog(callback, obtainSession) {
 
     var message = '<h2 data-i18n="dialog.passwordRequired">';
     message += APP.translation.translateString("dialog.passwordRequired");
+    // ++__authdomain__
     message += '</h2>' +
-        '<input name="username" type="text" ' +
-        'placeholder="user@domain.net" autofocus>' +
-        '<input name="password" ' +
+        '<input name="username" type="text" ';
+    if (config.hosts.authdomain) {
+      message += 'placeholder="user identity" autofocus>';
+    } else {
+      message += 'placeholder="user@domain.net" autofocus>';
+    }
+    message += '<input name="password" ' +
         'type="password" data-i18n="[placeholder]dialog.userPassword"' +
         ' placeholder="user password">';
+    // --__authdomain__
 
     var okButton = APP.translation.generateTranslationHTML("dialog.Ok");
 
@@ -50,6 +56,16 @@ function Dialog(callback, obtainSession) {
                     var password = f.password;
                     if (jid && password) {
                         stop = false;
+                        //++__authdomain__ complete jid by appending @<domain> if no @ was found in jid
+                        if (jid.indexOf("@") < 0) {
+                          jid = jid.concat('@');
+                          if (config.hosts.authdomain) {
+                            jid += config.hosts.authdomain;
+                          } else {
+                            jid += config.hosts.domain;
+                          }
+                        }
+                        // --__authdomain__
                         connection.reset();
                         connDialog.goToState('connecting');
                         connection.connect(jid, password, stateHandler);
