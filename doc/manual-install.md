@@ -183,7 +183,9 @@ invoke-rc.d nginx restart
 ```
 
 ## Running behind NAT
-In case of videobridge being installed on a machine behind NAT, add the following extra lines to the file `~/.sip-communicator/sip-communicator.properties` (in the home of user running the videobridge):
+Jitsi-Videobridge can run behind a NAT, provided that all required ports are routed (forwarded) to the machine that it runs on. By default these ports are (TCP/443 or TCP/4443 and UDP 10000-20000).
+
+The following extra lines need to be added the file `~/.sip-communicator/sip-communicator.properties` (in the home directory of the user running the videobridge):
 ```
 org.jitsi.videobridge.NAT_HARVESTER_LOCAL_ADDRESS=<Local.IP.Address>
 org.jitsi.videobridge.NAT_HARVESTER_PUBLIC_ADDRESS=<Public.IP.Address>
