@@ -56,7 +56,8 @@ function Dialog(callback, obtainSession) {
                     var password = f.password;
                     if (jid && password) {
                         stop = false;
-                        //++__authdomain__ complete jid by appending @<domain> if no @ was found in jid
+                        //++__authdomain__ complete jid by appending @<domain> 
+                        //if no @ was found in jid
                         if (jid.indexOf("@") < 0) {
                           jid = jid.concat('@');
                           if (config.hosts.authdomain) {

@@ -2,14 +2,25 @@
 var animateTimeout, updateTimeout;
 
 var RoomNameGenerator = require("./RoomnameGenerator");
+var messageHandler = require("../util/MessageHandler");
 
 function enter_room() {
     var val = $("#enter_room_field").val();
     if(!val) {
-        val = $("#enter_room_field").attr("room_name");
+      val = $("#enter_room_field").attr("room_name");
     }
     if (val) {
+      // also ÄÖÜäöüß - requiers further changes 
+      // (nginx - sites-enabled (location .. rewrite), other js-modules
+      // var validRoomNamePattern = 
+      // /^[a-zA-Z0-9=\?\+\u00c4\u00e4\u00d6\u00f6\u00dc\u00fc\u00df\ ]+$/;
+      var validRoomNamePattern = /^[a-zA-Z0-9=\?\+]+$/;
+      if (val.match(validRoomNamePattern) !== null) {
         window.location.pathname = "/" + val;
+      } else {
+        messageHandler.openMessageDialog  (
+          "dialog.illCharInRoomNameMessage", "dialog.roomNameHint");
+      }
     }
 }
 
