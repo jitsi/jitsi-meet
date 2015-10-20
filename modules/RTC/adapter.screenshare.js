@@ -1,4 +1,4 @@
-/*! adapterjs - custom version from - 2015-08-12 */
+/*! adapterjs - v0.12.0 - 2015-09-04 */
 
 // Adapter's interface.
 var AdapterJS = AdapterJS || {};
@@ -17,7 +17,7 @@ AdapterJS.options = AdapterJS.options || {};
 // AdapterJS.options.hidePluginInstallPrompt = true;
 
 // AdapterJS version
-AdapterJS.VERSION = '0.11.1';
+AdapterJS.VERSION = '0.12.0';
 
 // This function will be called when the WebRTC API is ready to be used
 // Whether it is the native implementation (Chrome, Firefox, Opera) or
@@ -71,6 +71,12 @@ if(!!navigator.platform.match(/^Mac/i)) {
 else if(!!navigator.platform.match(/^Win/i)) {
   AdapterJS.WebRTCPlugin.pluginInfo.downloadLink = 'http://bit.ly/1kkS4FN';
 }
+
+AdapterJS.WebRTCPlugin.TAGS = {
+  NONE  : 'none',
+  AUDIO : 'audio',
+  VIDEO : 'video'
+};
 
 // Unique identifier of each opened page
 AdapterJS.WebRTCPlugin.pageId = Math.random().toString(36).slice(2);
@@ -325,9 +331,10 @@ AdapterJS.renderNotificationBar = function (text, buttonText, buttonLink, openNe
     'sans-serif; font-size: .9rem; padding: 4px; vertical-align: ' +
     'middle; cursor: default;">' + text + '</span>');
   if(buttonText && buttonLink) {
-    c.document.write('<button id="okay">' + buttonText + '</button><button>Cancel</button>');
+    c.document.write('<button id="okay">' + buttonText + '</button><button id="cancel">Cancel</button>');
     c.document.close();
 
+    // On click on okay
     AdapterJS.addEvent(c.document.getElementById('okay'), 'click', function(e) {
       if (!!displayRefreshBar) {
         AdapterJS.renderNotificationBar(AdapterJS.TEXT.EXTENSION ?
@@ -341,28 +348,30 @@ AdapterJS.renderNotificationBar = function (text, buttonText, buttonLink, openNe
         event.cancelBubble = true;
       } catch(error) { }
 
-        var pluginInstallInterval = setInterval(function(){
-            if(! isIE) {
-              navigator.plugins.refresh(false);
-            }
-            AdapterJS.WebRTCPlugin.isPluginInstalled(
-              AdapterJS.WebRTCPlugin.pluginInfo.prefix,
-              AdapterJS.WebRTCPlugin.pluginInfo.plugName,
-              function() {
-                clearInterval(pluginInstallInterval);
-                AdapterJS.WebRTCPlugin.defineWebRTCInterface();
-              },
-              function() { //Does nothing because not used here
-              });
-          } , 500);
+      var pluginInstallInterval = setInterval(function(){
+        if(! isIE) {
+          navigator.plugins.refresh(false);
+        }
+        AdapterJS.WebRTCPlugin.isPluginInstalled(
+          AdapterJS.WebRTCPlugin.pluginInfo.prefix,
+          AdapterJS.WebRTCPlugin.pluginInfo.plugName,
+          function() { // plugin now installed
+            clearInterval(pluginInstallInterval);
+            AdapterJS.WebRTCPlugin.defineWebRTCInterface();
+          },
+          function() { 
+            // still no plugin detected, nothing to do
+          });
+      } , 500);
     });   
 
-  }else {
+    // On click on Cancel
+    AdapterJS.addEvent(c.document.getElementById('cancel'), 'click', function(e) {
+      w.document.body.removeChild(i);
+    });
+  } else {
     c.document.close();
   }
-  AdapterJS.addEvent(c.document, 'click', function() {
-    w.document.body.removeChild(i);
-  });
   setTimeout(function() {
     if(typeof i.style.webkitTransform === 'string') {
       i.style.webkitTransform = 'translateY(40px)';
@@ -727,6 +736,28 @@ if (navigator.mozGetUserMedia) {
   };
 
   AdapterJS.maybeThroughWebRTCReady();
+} else if (navigator.mediaDevices && navigator.userAgent.match(
+    /Edge\/(\d+).(\d+)$/)) {
+  webrtcDetectedBrowser = 'edge';
+
+  webrtcDetectedVersion =
+    parseInt(navigator.userAgent.match(/Edge\/(\d+).(\d+)$/)[2], 10);
+
+  // the minimum version still supported by adapter.
+  webrtcMinimumVersion = 12;
+
+  window.getUserMedia = navigator.getUserMedia.bind(navigator);
+
+  attachMediaStream = function(element, stream) {
+    element.srcObject = stream;
+    return element;
+  };
+  reattachMediaStream = function(to, from) {
+    to.srcObject = from.srcObject;
+    return to;
+  };
+
+  AdapterJS.maybeThroughWebRTCReady();
 } else { // TRY TO USE PLUGIN
   // IE 9 is not offering an implementation of console.log until you open a console
   if (typeof console !== 'object' || typeof console.log !== 'function') {
@@ -809,8 +840,8 @@ if (navigator.mozGetUserMedia) {
         AdapterJS.WebRTCPlugin.pluginInfo.pluginId + '" /> ' +
         '<param name="windowless" value="false" /> ' +
         '<param name="pageId" value="' + AdapterJS.WebRTCPlugin.pageId + '" /> ' +
-        '<param name="onload" value="' + AdapterJS.WebRTCPlugin.pluginInfo.onload +
-        '" />' +
+        '<param name="onload" value="' + AdapterJS.WebRTCPlugin.pluginInfo.onload + '" />' +
+        '<param name="tag" value="' + AdapterJS.WebRTCPlugin.TAGS.NONE + '" />' +
         // uncomment to be able to use virtual cams
         (AdapterJS.options.getAllCams ? '<param name="forceGetAllCams" value="True" />':'') +
 
@@ -844,7 +875,8 @@ if (navigator.mozGetUserMedia) {
         AdapterJS.WebRTCPlugin.pluginInfo.pluginId + '">' +
         '<param name="windowless" value="false" /> ' +
         (AdapterJS.options.getAllCams ? '<param name="forceGetAllCams" value="True" />':'') +
-        '<param name="pageId" value="' + AdapterJS.WebRTCPlugin.pageId + '">';
+        '<param name="pageId" value="' + AdapterJS.WebRTCPlugin.pageId + '">' +
+        '<param name="tag" value="' + AdapterJS.WebRTCPlugin.TAGS.NONE + '" />';
       document.body.appendChild(AdapterJS.WebRTCPlugin.plugin);
     }
 
@@ -877,9 +909,10 @@ if (navigator.mozGetUserMedia) {
   AdapterJS.WebRTCPlugin.defineWebRTCInterface = function () {
     if (AdapterJS.WebRTCPlugin.pluginState ===
         AdapterJS.WebRTCPlugin.PLUGIN_STATES.READY) {
-      console.error("WebRTC interface has been defined already");
+      console.error("AdapterJS - WebRTC interface has already been defined");
       return;
     }
+
     AdapterJS.WebRTCPlugin.pluginState = AdapterJS.WebRTCPlugin.PLUGIN_STATES.INITIALIZING;
 
     AdapterJS.isDefined = function (variable) {
@@ -971,78 +1004,91 @@ if (navigator.mozGetUserMedia) {
         streamId = '';
       }
       else {
-        stream.enableSoundTracks(true);
+        stream.enableSoundTracks(true); // TODO: remove on 0.12.0
         streamId = stream.id;
       }
 
-      if (element.nodeName.toLowerCase() !== 'audio') {
-        var elementId = element.id.length === 0 ? Math.random().toString(36).slice(2) : element.id;
-        if (!element.isWebRTCPlugin || !element.isWebRTCPlugin()) {
-          var frag = document.createDocumentFragment();
-          var temp = document.createElement('div');
-          var classHTML = '';
-          if (element.className) {
-            classHTML = 'class="' + element.className + '" ';
-          } else if (element.attributes && element.attributes['class']) {
-            classHTML = 'class="' + element.attributes['class'].value + '" ';
+      var elementId = element.id.length === 0 ? Math.random().toString(36).slice(2) : element.id;
+      var nodeName = element.nodeName.toLowerCase();
+      if (nodeName !== 'object') { // not a plugin <object> tag yet
+        var tag;
+        switch(nodeName) {
+          case 'audio':
+            tag = AdapterJS.WebRTCPlugin.TAGS.AUDIO;
+            break;
+          case 'video':
+            tag = AdapterJS.WebRTCPlugin.TAGS.VIDEO;
+            break;
+          default:
+            tag = AdapterJS.WebRTCPlugin.TAGS.NONE;
           }
 
-          temp.innerHTML = '<object id="' + elementId + '" ' + classHTML +
-            'type="' + AdapterJS.WebRTCPlugin.pluginInfo.type + '">' +
-            '<param name="pluginId" value="' + elementId + '" /> ' +
-            '<param name="pageId" value="' + AdapterJS.WebRTCPlugin.pageId + '" /> ' +
-            '<param name="windowless" value="true" /> ' +
-            '<param name="streamId" value="' + streamId + '" /> ' +
-            '</object>';
-          while (temp.firstChild) {
-            frag.appendChild(temp.firstChild);
-          }
+        var frag = document.createDocumentFragment();
+        var temp = document.createElement('div');
+        var classHTML = '';
+        if (element.className) {
+          classHTML = 'class="' + element.className + '" ';
+        } else if (element.attributes && element.attributes['class']) {
+          classHTML = 'class="' + element.attributes['class'].value + '" ';
+        }
 
-          var height = '';
-          var width = '';
-          if (element.getBoundingClientRect) {
-            var rectObject = element.getBoundingClientRect();
-            width = rectObject.width + 'px';
-            height = rectObject.height + 'px';
-          }
-          else if (element.width) {
-            width = element.width;
-            height = element.height;
-          } else {
-            // TODO: What scenario could bring us here?
-          }
+        temp.innerHTML = '<object id="' + elementId + '" ' + classHTML +
+          'type="' + AdapterJS.WebRTCPlugin.pluginInfo.type + '">' +
+          '<param name="pluginId" value="' + elementId + '" /> ' +
+          '<param name="pageId" value="' + AdapterJS.WebRTCPlugin.pageId + '" /> ' +
+          '<param name="windowless" value="true" /> ' +
+          '<param name="streamId" value="' + streamId + '" /> ' +
+          '<param name="tag" value="' + tag + '" /> ' +
+          '</object>';
+        while (temp.firstChild) {
+          frag.appendChild(temp.firstChild);
+        }
 
-          element.parentNode.insertBefore(frag, element);
-          frag = document.getElementById(elementId);
-          frag.width = width;
-          frag.height = height;
-          element.parentNode.removeChild(element);
+        var height = '';
+        var width = '';
+        if (element.getBoundingClientRect) {
+          var rectObject = element.getBoundingClientRect();
+          width = rectObject.width + 'px';
+          height = rectObject.height + 'px';
+        }
+        else if (element.width) {
+          width = element.width;
+          height = element.height;
         } else {
-          var children = element.children;
-          for (var i = 0; i !== children.length; ++i) {
-            if (children[i].name === 'streamId') {
-              children[i].value = streamId;
-              break;
-            }
+          // TODO: What scenario could bring us here?
+        }
+
+        element.parentNode.insertBefore(frag, element);
+        frag = document.getElementById(elementId);
+        frag.width = width;
+        frag.height = height;
+        element.parentNode.removeChild(element);
+      } else { // already an <object> tag, just change the stream id
+        var children = element.children;
+        for (var i = 0; i !== children.length; ++i) {
+          if (children[i].name === 'streamId') {
+            children[i].value = streamId;
+            break;
           }
-          element.setStreamId(streamId);
         }
-        var newElement = document.getElementById(elementId);
-        newElement.onplaying = (element.onplaying) ? element.onplaying : function (arg) {};
-        if (isIE) { // on IE the event needs to be plugged manually
-          newElement.attachEvent('onplaying', newElement.onplaying);
-          newElement.onclick = (element.onclick) ? element.onclick : function (arg) {};
-          newElement._TemOnClick = function (id) {
-            var arg = {
-              srcElement : document.getElementById(id)
-            };
-            newElement.onclick(arg);
-          };
-        }
-        return newElement;
-      } else {
-        return element;
+        element.setStreamId(streamId);
       }
+      var newElement = document.getElementById(elementId);
+      newElement.onplaying = (element.onplaying) ? element.onplaying : function (arg) {};
+      newElement.onplay    = (element.onplay)    ? element.onplay    : function (arg) {};
+      newElement.onclick   = (element.onclick)   ? element.onclick   : function (arg) {};
+      if (isIE) { // on IE the event needs to be plugged manually
+        newElement.attachEvent('onplaying', newElement.onplaying);
+        newElement.attachEvent('onplay', newElement.onplay);
+        newElement._TemOnClick = function (id) {
+          var arg = {
+            srcElement : document.getElementById(id)
+          };
+          newElement.onclick(arg);
+        };
+      }
+      
+      return newElement;
     };
 
     reattachMediaStream = function (to, from) {
@@ -1120,211 +1166,3 @@ if (navigator.mozGetUserMedia) {
     AdapterJS.WebRTCPlugin.defineWebRTCInterface,
     AdapterJS.WebRTCPlugin.pluginNeededButNotInstalledCb);
 }
-
-
-
-(function () {
-
-  'use strict';
-
-  var baseGetUserMedia = null;
-
-  AdapterJS.TEXT.EXTENSION = {
-    REQUIRE_INSTALLATION_FF: 'To enable screensharing you need to install the Skylink WebRTC tools Firefox Add-on.',
-    REQUIRE_INSTALLATION_CHROME: 'To enable screensharing you need to install the Skylink WebRTC tools Chrome Extension.',
-    REQUIRE_REFRESH: 'Please refresh this page after the Skylink WebRTC tools extension has been installed.',
-    BUTTON_FF: 'Install Now',
-    BUTTON_CHROME: 'Go to Chrome Web Store'
-  };
-
-  var clone = function(obj) {
-    if (null == obj || "object" != typeof obj) return obj;
-    var copy = obj.constructor();
-    for (var attr in obj) {
-        if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
-    }
-    return copy;
-  };
-
-  if (window.navigator.mozGetUserMedia) {
-    baseGetUserMedia = window.navigator.getUserMedia;
-
-    navigator.getUserMedia = function (constraints, successCb, failureCb) {
-
-      if (constraints && constraints.video && !!constraints.video.mediaSource) {
-        // intercepting screensharing requests
-
-        if (constraints.video.mediaSource !== 'screen' && constraints.video.mediaSource !== 'window') {
-          throw new Error('Only "screen" and "window" option is available as mediaSource');
-        }
-
-        var updatedConstraints = clone(constraints);
-
-        //constraints.video.mediaSource = constraints.video.mediaSource;
-        updatedConstraints.video.mozMediaSource = updatedConstraints.video.mediaSource;
-
-        // so generally, it requires for document.readyState to be completed before the getUserMedia could be invoked.
-        // strange but this works anyway
-        var checkIfReady = setInterval(function () {
-          if (document.readyState === 'complete') {
-            clearInterval(checkIfReady);
-
-            baseGetUserMedia(updatedConstraints, successCb, function (error) {
-              if (error.name === 'PermissionDeniedError' && window.parent.location.protocol === 'https:') {
-                AdapterJS.renderNotificationBar(AdapterJS.TEXT.EXTENSION.REQUIRE_INSTALLATION_FF,
-                  AdapterJS.TEXT.EXTENSION.BUTTON_FF,
-                  'http://skylink.io/screensharing/ff_addon.php?domain=' + window.location.hostname, false, true);
-                //window.location.href = 'http://skylink.io/screensharing/ff_addon.php?domain=' + window.location.hostname;
-              } else {
-                failureCb(error);
-              }
-            });
-          }
-        }, 1);
-
-      } else { // regular GetUserMediaRequest
-        baseGetUserMedia(constraints, successCb, failureCb);
-      }
-    };
-
-    getUserMedia = navigator.getUserMedia;
-
-  } else if (window.navigator.webkitGetUserMedia) {
-    baseGetUserMedia = window.navigator.getUserMedia;
-
-    navigator.getUserMedia = function (constraints, successCb, failureCb) {
-
-      if (constraints && constraints.video && !!constraints.video.mediaSource) {
-        if (window.webrtcDetectedBrowser !== 'chrome') {
-          throw new Error('Current browser does not support screensharing');
-        }
-
-        // would be fine since no methods
-        var updatedConstraints = clone(constraints);
-
-        var chromeCallback = function(error, sourceId) {
-          if(!error) {
-            updatedConstraints.video.mandatory = updatedConstraints.video.mandatory || {};
-            updatedConstraints.video.mandatory.chromeMediaSource = 'desktop';
-            updatedConstraints.video.mandatory.maxWidth = window.screen.width > 1920 ? window.screen.width : 1920;
-            updatedConstraints.video.mandatory.maxHeight = window.screen.height > 1080 ? window.screen.height : 1080;
-
-            if (sourceId) {
-              updatedConstraints.video.mandatory.chromeMediaSourceId = sourceId;
-            }
-
-            delete updatedConstraints.video.mediaSource;
-
-            baseGetUserMedia(updatedConstraints, successCb, failureCb);
-
-          } else {
-            if (error === 'permission-denied') {
-              throw new Error('Permission denied for screen retrieval');
-            } else {
-              throw new Error('Failed retrieving selected screen');
-            }
-          }
-        };
-
-        var onIFrameCallback = function (event) {
-          if (!event.data) {
-            return;
-          }
-
-          if (event.data.chromeMediaSourceId) {
-            if (event.data.chromeMediaSourceId === 'PermissionDeniedError') {
-                chromeCallback('permission-denied');
-            } else {
-              chromeCallback(null, event.data.chromeMediaSourceId);
-            }
-          }
-
-          if (event.data.chromeExtensionStatus) {
-            if (event.data.chromeExtensionStatus === 'not-installed') {
-              AdapterJS.renderNotificationBar(AdapterJS.TEXT.EXTENSION.REQUIRE_INSTALLATION_CHROME,
-                AdapterJS.TEXT.EXTENSION.BUTTON_CHROME,
-                event.data.data, true, true);
-            } else {
-              chromeCallback(event.data.chromeExtensionStatus, null);
-            }
-          }
-
-          // this event listener is no more needed
-          window.removeEventListener('message', onIFrameCallback);
-        };
-
-        window.addEventListener('message', onIFrameCallback);
-
-        postFrameMessage({
-          captureSourceId: true
-        });
-
-      } else {
-        baseGetUserMedia(constraints, successCb, failureCb);
-      }
-    };
-
-    getUserMedia = navigator.getUserMedia;
-
-  } else {
-    baseGetUserMedia = window.navigator.getUserMedia;
-
-    navigator.getUserMedia = function (constraints, successCb, failureCb) {
-      if (constraints && constraints.video && !!constraints.video.mediaSource) {
-        // would be fine since no methods
-        var updatedConstraints = clone(constraints);
-
-        // wait for plugin to be ready
-        AdapterJS.WebRTCPlugin.callWhenPluginReady(function() {
-          // check if screensharing feature is available
-          if (!!AdapterJS.WebRTCPlugin.plugin.HasScreensharingFeature &&
-            !!AdapterJS.WebRTCPlugin.plugin.isScreensharingAvailable) {
-
-
-            // set the constraints
-            updatedConstraints.video.optional = updatedConstraints.video.optional || [];
-            updatedConstraints.video.optional.push({
-              sourceId: AdapterJS.WebRTCPlugin.plugin.screensharingKey || 'Screensharing'
-            });
-
-            delete updatedConstraints.video.mediaSource;
-          } else {
-            throw new Error('Your WebRTC plugin does not support screensharing');
-          }
-          baseGetUserMedia(updatedConstraints, successCb, failureCb);
-        });
-      } else {
-        baseGetUserMedia(constraints, successCb, failureCb);
-      }
-    };
-
-    getUserMedia = window.navigator.getUserMedia;
-  }
-
-  if (window.webrtcDetectedBrowser === 'chrome') {
-    var iframe = document.createElement('iframe');
-
-    iframe.onload = function() {
-      iframe.isLoaded = true;
-    };
-
-    iframe.src = 'https://cdn.temasys.com.sg/skylink/extensions/detectRTC.html';
-      //'https://temasys-cdn.s3.amazonaws.com/skylink/extensions/detection-script-dev/detectRTC.html';
-    iframe.style.display = 'none';
-
-    (document.body || document.documentElement).appendChild(iframe);
-
-    var postFrameMessage = function (object) {
-      object = object || {};
-
-      if (!iframe.isLoaded) {
-        setTimeout(function () {
-          iframe.contentWindow.postMessage(object, '*');
-        }, 100);
-        return;
-      }
-
-      iframe.contentWindow.postMessage(object, '*');
-    };
-  }
-})();

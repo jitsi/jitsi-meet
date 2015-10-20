@@ -1,4 +1,4 @@
-!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.JitsiMeetJS=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.JitsiMeetJS = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 var RTC = require("./modules/RTC/RTC");
 var XMPPEvents = require("./service/xmpp/XMPPEvents");
 var StreamEventTypes = require("./service/RTC/StreamEventTypes");
@@ -2161,7 +2161,7 @@ var RTCUtils = {
                                 'failed to obtain video stream - stop', error);
                             self.errorCallback(error, resolve, RTC, resolution, dontCreateJitsiTracks);
                         },
-                            config.resolution || '360');
+                            resolution || '360');
                 };
                 var obtainAudio = function () {
                     self.getUserMediaWithConstraints(
@@ -2342,7 +2342,7 @@ var RTCUtils = {
 module.exports = RTCUtils;
 
 },{"../../service/RTC/Resolutions":72,"../xmpp/SDPUtil":25,"./RTCBrowserType":14,"./adapter.screenshare":16,"events":77}],16:[function(require,module,exports){
-/*! adapterjs - custom version from - 2015-08-12 */
+/*! adapterjs - v0.12.0 - 2015-09-04 */
 
 // Adapter's interface.
 var AdapterJS = AdapterJS || {};
@@ -2361,7 +2361,7 @@ AdapterJS.options = AdapterJS.options || {};
 // AdapterJS.options.hidePluginInstallPrompt = true;
 
 // AdapterJS version
-AdapterJS.VERSION = '0.11.1';
+AdapterJS.VERSION = '0.12.0';
 
 // This function will be called when the WebRTC API is ready to be used
 // Whether it is the native implementation (Chrome, Firefox, Opera) or
@@ -2415,6 +2415,12 @@ if(!!navigator.platform.match(/^Mac/i)) {
 else if(!!navigator.platform.match(/^Win/i)) {
   AdapterJS.WebRTCPlugin.pluginInfo.downloadLink = 'http://bit.ly/1kkS4FN';
 }
+
+AdapterJS.WebRTCPlugin.TAGS = {
+  NONE  : 'none',
+  AUDIO : 'audio',
+  VIDEO : 'video'
+};
 
 // Unique identifier of each opened page
 AdapterJS.WebRTCPlugin.pageId = Math.random().toString(36).slice(2);
@@ -2669,9 +2675,10 @@ AdapterJS.renderNotificationBar = function (text, buttonText, buttonLink, openNe
     'sans-serif; font-size: .9rem; padding: 4px; vertical-align: ' +
     'middle; cursor: default;">' + text + '</span>');
   if(buttonText && buttonLink) {
-    c.document.write('<button id="okay">' + buttonText + '</button><button>Cancel</button>');
+    c.document.write('<button id="okay">' + buttonText + '</button><button id="cancel">Cancel</button>');
     c.document.close();
 
+    // On click on okay
     AdapterJS.addEvent(c.document.getElementById('okay'), 'click', function(e) {
       if (!!displayRefreshBar) {
         AdapterJS.renderNotificationBar(AdapterJS.TEXT.EXTENSION ?
@@ -2685,28 +2692,30 @@ AdapterJS.renderNotificationBar = function (text, buttonText, buttonLink, openNe
         event.cancelBubble = true;
       } catch(error) { }
 
-        var pluginInstallInterval = setInterval(function(){
-            if(! isIE) {
-              navigator.plugins.refresh(false);
-            }
-            AdapterJS.WebRTCPlugin.isPluginInstalled(
-              AdapterJS.WebRTCPlugin.pluginInfo.prefix,
-              AdapterJS.WebRTCPlugin.pluginInfo.plugName,
-              function() {
-                clearInterval(pluginInstallInterval);
-                AdapterJS.WebRTCPlugin.defineWebRTCInterface();
-              },
-              function() { //Does nothing because not used here
-              });
-          } , 500);
+      var pluginInstallInterval = setInterval(function(){
+        if(! isIE) {
+          navigator.plugins.refresh(false);
+        }
+        AdapterJS.WebRTCPlugin.isPluginInstalled(
+          AdapterJS.WebRTCPlugin.pluginInfo.prefix,
+          AdapterJS.WebRTCPlugin.pluginInfo.plugName,
+          function() { // plugin now installed
+            clearInterval(pluginInstallInterval);
+            AdapterJS.WebRTCPlugin.defineWebRTCInterface();
+          },
+          function() { 
+            // still no plugin detected, nothing to do
+          });
+      } , 500);
     });   
 
-  }else {
+    // On click on Cancel
+    AdapterJS.addEvent(c.document.getElementById('cancel'), 'click', function(e) {
+      w.document.body.removeChild(i);
+    });
+  } else {
     c.document.close();
   }
-  AdapterJS.addEvent(c.document, 'click', function() {
-    w.document.body.removeChild(i);
-  });
   setTimeout(function() {
     if(typeof i.style.webkitTransform === 'string') {
       i.style.webkitTransform = 'translateY(40px)';
@@ -3071,6 +3080,28 @@ if (navigator.mozGetUserMedia) {
   };
 
   AdapterJS.maybeThroughWebRTCReady();
+} else if (navigator.mediaDevices && navigator.userAgent.match(
+    /Edge\/(\d+).(\d+)$/)) {
+  webrtcDetectedBrowser = 'edge';
+
+  webrtcDetectedVersion =
+    parseInt(navigator.userAgent.match(/Edge\/(\d+).(\d+)$/)[2], 10);
+
+  // the minimum version still supported by adapter.
+  webrtcMinimumVersion = 12;
+
+  window.getUserMedia = navigator.getUserMedia.bind(navigator);
+
+  attachMediaStream = function(element, stream) {
+    element.srcObject = stream;
+    return element;
+  };
+  reattachMediaStream = function(to, from) {
+    to.srcObject = from.srcObject;
+    return to;
+  };
+
+  AdapterJS.maybeThroughWebRTCReady();
 } else { // TRY TO USE PLUGIN
   // IE 9 is not offering an implementation of console.log until you open a console
   if (typeof console !== 'object' || typeof console.log !== 'function') {
@@ -3153,8 +3184,8 @@ if (navigator.mozGetUserMedia) {
         AdapterJS.WebRTCPlugin.pluginInfo.pluginId + '" /> ' +
         '<param name="windowless" value="false" /> ' +
         '<param name="pageId" value="' + AdapterJS.WebRTCPlugin.pageId + '" /> ' +
-        '<param name="onload" value="' + AdapterJS.WebRTCPlugin.pluginInfo.onload +
-        '" />' +
+        '<param name="onload" value="' + AdapterJS.WebRTCPlugin.pluginInfo.onload + '" />' +
+        '<param name="tag" value="' + AdapterJS.WebRTCPlugin.TAGS.NONE + '" />' +
         // uncomment to be able to use virtual cams
         (AdapterJS.options.getAllCams ? '<param name="forceGetAllCams" value="True" />':'') +
 
@@ -3188,7 +3219,8 @@ if (navigator.mozGetUserMedia) {
         AdapterJS.WebRTCPlugin.pluginInfo.pluginId + '">' +
         '<param name="windowless" value="false" /> ' +
         (AdapterJS.options.getAllCams ? '<param name="forceGetAllCams" value="True" />':'') +
-        '<param name="pageId" value="' + AdapterJS.WebRTCPlugin.pageId + '">';
+        '<param name="pageId" value="' + AdapterJS.WebRTCPlugin.pageId + '">' +
+        '<param name="tag" value="' + AdapterJS.WebRTCPlugin.TAGS.NONE + '" />';
       document.body.appendChild(AdapterJS.WebRTCPlugin.plugin);
     }
 
@@ -3221,9 +3253,10 @@ if (navigator.mozGetUserMedia) {
   AdapterJS.WebRTCPlugin.defineWebRTCInterface = function () {
     if (AdapterJS.WebRTCPlugin.pluginState ===
         AdapterJS.WebRTCPlugin.PLUGIN_STATES.READY) {
-      console.error("WebRTC interface has been defined already");
+      console.error("AdapterJS - WebRTC interface has already been defined");
       return;
     }
+
     AdapterJS.WebRTCPlugin.pluginState = AdapterJS.WebRTCPlugin.PLUGIN_STATES.INITIALIZING;
 
     AdapterJS.isDefined = function (variable) {
@@ -3315,78 +3348,91 @@ if (navigator.mozGetUserMedia) {
         streamId = '';
       }
       else {
-        stream.enableSoundTracks(true);
+        stream.enableSoundTracks(true); // TODO: remove on 0.12.0
         streamId = stream.id;
       }
 
-      if (element.nodeName.toLowerCase() !== 'audio') {
-        var elementId = element.id.length === 0 ? Math.random().toString(36).slice(2) : element.id;
-        if (!element.isWebRTCPlugin || !element.isWebRTCPlugin()) {
-          var frag = document.createDocumentFragment();
-          var temp = document.createElement('div');
-          var classHTML = '';
-          if (element.className) {
-            classHTML = 'class="' + element.className + '" ';
-          } else if (element.attributes && element.attributes['class']) {
-            classHTML = 'class="' + element.attributes['class'].value + '" ';
+      var elementId = element.id.length === 0 ? Math.random().toString(36).slice(2) : element.id;
+      var nodeName = element.nodeName.toLowerCase();
+      if (nodeName !== 'object') { // not a plugin <object> tag yet
+        var tag;
+        switch(nodeName) {
+          case 'audio':
+            tag = AdapterJS.WebRTCPlugin.TAGS.AUDIO;
+            break;
+          case 'video':
+            tag = AdapterJS.WebRTCPlugin.TAGS.VIDEO;
+            break;
+          default:
+            tag = AdapterJS.WebRTCPlugin.TAGS.NONE;
           }
 
-          temp.innerHTML = '<object id="' + elementId + '" ' + classHTML +
-            'type="' + AdapterJS.WebRTCPlugin.pluginInfo.type + '">' +
-            '<param name="pluginId" value="' + elementId + '" /> ' +
-            '<param name="pageId" value="' + AdapterJS.WebRTCPlugin.pageId + '" /> ' +
-            '<param name="windowless" value="true" /> ' +
-            '<param name="streamId" value="' + streamId + '" /> ' +
-            '</object>';
-          while (temp.firstChild) {
-            frag.appendChild(temp.firstChild);
-          }
+        var frag = document.createDocumentFragment();
+        var temp = document.createElement('div');
+        var classHTML = '';
+        if (element.className) {
+          classHTML = 'class="' + element.className + '" ';
+        } else if (element.attributes && element.attributes['class']) {
+          classHTML = 'class="' + element.attributes['class'].value + '" ';
+        }
 
-          var height = '';
-          var width = '';
-          if (element.getBoundingClientRect) {
-            var rectObject = element.getBoundingClientRect();
-            width = rectObject.width + 'px';
-            height = rectObject.height + 'px';
-          }
-          else if (element.width) {
-            width = element.width;
-            height = element.height;
-          } else {
-            // TODO: What scenario could bring us here?
-          }
+        temp.innerHTML = '<object id="' + elementId + '" ' + classHTML +
+          'type="' + AdapterJS.WebRTCPlugin.pluginInfo.type + '">' +
+          '<param name="pluginId" value="' + elementId + '" /> ' +
+          '<param name="pageId" value="' + AdapterJS.WebRTCPlugin.pageId + '" /> ' +
+          '<param name="windowless" value="true" /> ' +
+          '<param name="streamId" value="' + streamId + '" /> ' +
+          '<param name="tag" value="' + tag + '" /> ' +
+          '</object>';
+        while (temp.firstChild) {
+          frag.appendChild(temp.firstChild);
+        }
 
-          element.parentNode.insertBefore(frag, element);
-          frag = document.getElementById(elementId);
-          frag.width = width;
-          frag.height = height;
-          element.parentNode.removeChild(element);
+        var height = '';
+        var width = '';
+        if (element.getBoundingClientRect) {
+          var rectObject = element.getBoundingClientRect();
+          width = rectObject.width + 'px';
+          height = rectObject.height + 'px';
+        }
+        else if (element.width) {
+          width = element.width;
+          height = element.height;
         } else {
-          var children = element.children;
-          for (var i = 0; i !== children.length; ++i) {
-            if (children[i].name === 'streamId') {
-              children[i].value = streamId;
-              break;
-            }
+          // TODO: What scenario could bring us here?
+        }
+
+        element.parentNode.insertBefore(frag, element);
+        frag = document.getElementById(elementId);
+        frag.width = width;
+        frag.height = height;
+        element.parentNode.removeChild(element);
+      } else { // already an <object> tag, just change the stream id
+        var children = element.children;
+        for (var i = 0; i !== children.length; ++i) {
+          if (children[i].name === 'streamId') {
+            children[i].value = streamId;
+            break;
           }
-          element.setStreamId(streamId);
         }
-        var newElement = document.getElementById(elementId);
-        newElement.onplaying = (element.onplaying) ? element.onplaying : function (arg) {};
-        if (isIE) { // on IE the event needs to be plugged manually
-          newElement.attachEvent('onplaying', newElement.onplaying);
-          newElement.onclick = (element.onclick) ? element.onclick : function (arg) {};
-          newElement._TemOnClick = function (id) {
-            var arg = {
-              srcElement : document.getElementById(id)
-            };
-            newElement.onclick(arg);
-          };
-        }
-        return newElement;
-      } else {
-        return element;
+        element.setStreamId(streamId);
       }
+      var newElement = document.getElementById(elementId);
+      newElement.onplaying = (element.onplaying) ? element.onplaying : function (arg) {};
+      newElement.onplay    = (element.onplay)    ? element.onplay    : function (arg) {};
+      newElement.onclick   = (element.onclick)   ? element.onclick   : function (arg) {};
+      if (isIE) { // on IE the event needs to be plugged manually
+        newElement.attachEvent('onplaying', newElement.onplaying);
+        newElement.attachEvent('onplay', newElement.onplay);
+        newElement._TemOnClick = function (id) {
+          var arg = {
+            srcElement : document.getElementById(id)
+          };
+          newElement.onclick(arg);
+        };
+      }
+      
+      return newElement;
     };
 
     reattachMediaStream = function (to, from) {
@@ -3465,213 +3511,6 @@ if (navigator.mozGetUserMedia) {
     AdapterJS.WebRTCPlugin.pluginNeededButNotInstalledCb);
 }
 
-
-
-(function () {
-
-  'use strict';
-
-  var baseGetUserMedia = null;
-
-  AdapterJS.TEXT.EXTENSION = {
-    REQUIRE_INSTALLATION_FF: 'To enable screensharing you need to install the Skylink WebRTC tools Firefox Add-on.',
-    REQUIRE_INSTALLATION_CHROME: 'To enable screensharing you need to install the Skylink WebRTC tools Chrome Extension.',
-    REQUIRE_REFRESH: 'Please refresh this page after the Skylink WebRTC tools extension has been installed.',
-    BUTTON_FF: 'Install Now',
-    BUTTON_CHROME: 'Go to Chrome Web Store'
-  };
-
-  var clone = function(obj) {
-    if (null == obj || "object" != typeof obj) return obj;
-    var copy = obj.constructor();
-    for (var attr in obj) {
-        if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
-    }
-    return copy;
-  };
-
-  if (window.navigator.mozGetUserMedia) {
-    baseGetUserMedia = window.navigator.getUserMedia;
-
-    navigator.getUserMedia = function (constraints, successCb, failureCb) {
-
-      if (constraints && constraints.video && !!constraints.video.mediaSource) {
-        // intercepting screensharing requests
-
-        if (constraints.video.mediaSource !== 'screen' && constraints.video.mediaSource !== 'window') {
-          throw new Error('Only "screen" and "window" option is available as mediaSource');
-        }
-
-        var updatedConstraints = clone(constraints);
-
-        //constraints.video.mediaSource = constraints.video.mediaSource;
-        updatedConstraints.video.mozMediaSource = updatedConstraints.video.mediaSource;
-
-        // so generally, it requires for document.readyState to be completed before the getUserMedia could be invoked.
-        // strange but this works anyway
-        var checkIfReady = setInterval(function () {
-          if (document.readyState === 'complete') {
-            clearInterval(checkIfReady);
-
-            baseGetUserMedia(updatedConstraints, successCb, function (error) {
-              if (error.name === 'PermissionDeniedError' && window.parent.location.protocol === 'https:') {
-                AdapterJS.renderNotificationBar(AdapterJS.TEXT.EXTENSION.REQUIRE_INSTALLATION_FF,
-                  AdapterJS.TEXT.EXTENSION.BUTTON_FF,
-                  'http://skylink.io/screensharing/ff_addon.php?domain=' + window.location.hostname, false, true);
-                //window.location.href = 'http://skylink.io/screensharing/ff_addon.php?domain=' + window.location.hostname;
-              } else {
-                failureCb(error);
-              }
-            });
-          }
-        }, 1);
-
-      } else { // regular GetUserMediaRequest
-        baseGetUserMedia(constraints, successCb, failureCb);
-      }
-    };
-
-    getUserMedia = navigator.getUserMedia;
-
-  } else if (window.navigator.webkitGetUserMedia) {
-    baseGetUserMedia = window.navigator.getUserMedia;
-
-    navigator.getUserMedia = function (constraints, successCb, failureCb) {
-
-      if (constraints && constraints.video && !!constraints.video.mediaSource) {
-        if (window.webrtcDetectedBrowser !== 'chrome') {
-          throw new Error('Current browser does not support screensharing');
-        }
-
-        // would be fine since no methods
-        var updatedConstraints = clone(constraints);
-
-        var chromeCallback = function(error, sourceId) {
-          if(!error) {
-            updatedConstraints.video.mandatory = updatedConstraints.video.mandatory || {};
-            updatedConstraints.video.mandatory.chromeMediaSource = 'desktop';
-            updatedConstraints.video.mandatory.maxWidth = window.screen.width > 1920 ? window.screen.width : 1920;
-            updatedConstraints.video.mandatory.maxHeight = window.screen.height > 1080 ? window.screen.height : 1080;
-
-            if (sourceId) {
-              updatedConstraints.video.mandatory.chromeMediaSourceId = sourceId;
-            }
-
-            delete updatedConstraints.video.mediaSource;
-
-            baseGetUserMedia(updatedConstraints, successCb, failureCb);
-
-          } else {
-            if (error === 'permission-denied') {
-              throw new Error('Permission denied for screen retrieval');
-            } else {
-              throw new Error('Failed retrieving selected screen');
-            }
-          }
-        };
-
-        var onIFrameCallback = function (event) {
-          if (!event.data) {
-            return;
-          }
-
-          if (event.data.chromeMediaSourceId) {
-            if (event.data.chromeMediaSourceId === 'PermissionDeniedError') {
-                chromeCallback('permission-denied');
-            } else {
-              chromeCallback(null, event.data.chromeMediaSourceId);
-            }
-          }
-
-          if (event.data.chromeExtensionStatus) {
-            if (event.data.chromeExtensionStatus === 'not-installed') {
-              AdapterJS.renderNotificationBar(AdapterJS.TEXT.EXTENSION.REQUIRE_INSTALLATION_CHROME,
-                AdapterJS.TEXT.EXTENSION.BUTTON_CHROME,
-                event.data.data, true, true);
-            } else {
-              chromeCallback(event.data.chromeExtensionStatus, null);
-            }
-          }
-
-          // this event listener is no more needed
-          window.removeEventListener('message', onIFrameCallback);
-        };
-
-        window.addEventListener('message', onIFrameCallback);
-
-        postFrameMessage({
-          captureSourceId: true
-        });
-
-      } else {
-        baseGetUserMedia(constraints, successCb, failureCb);
-      }
-    };
-
-    getUserMedia = navigator.getUserMedia;
-
-  } else {
-    baseGetUserMedia = window.navigator.getUserMedia;
-
-    navigator.getUserMedia = function (constraints, successCb, failureCb) {
-      if (constraints && constraints.video && !!constraints.video.mediaSource) {
-        // would be fine since no methods
-        var updatedConstraints = clone(constraints);
-
-        // wait for plugin to be ready
-        AdapterJS.WebRTCPlugin.callWhenPluginReady(function() {
-          // check if screensharing feature is available
-          if (!!AdapterJS.WebRTCPlugin.plugin.HasScreensharingFeature &&
-            !!AdapterJS.WebRTCPlugin.plugin.isScreensharingAvailable) {
-
-
-            // set the constraints
-            updatedConstraints.video.optional = updatedConstraints.video.optional || [];
-            updatedConstraints.video.optional.push({
-              sourceId: AdapterJS.WebRTCPlugin.plugin.screensharingKey || 'Screensharing'
-            });
-
-            delete updatedConstraints.video.mediaSource;
-          } else {
-            throw new Error('Your WebRTC plugin does not support screensharing');
-          }
-          baseGetUserMedia(updatedConstraints, successCb, failureCb);
-        });
-      } else {
-        baseGetUserMedia(constraints, successCb, failureCb);
-      }
-    };
-
-    getUserMedia = window.navigator.getUserMedia;
-  }
-
-  if (window.webrtcDetectedBrowser === 'chrome') {
-    var iframe = document.createElement('iframe');
-
-    iframe.onload = function() {
-      iframe.isLoaded = true;
-    };
-
-    iframe.src = 'https://cdn.temasys.com.sg/skylink/extensions/detectRTC.html';
-      //'https://temasys-cdn.s3.amazonaws.com/skylink/extensions/detection-script-dev/detectRTC.html';
-    iframe.style.display = 'none';
-
-    (document.body || document.documentElement).appendChild(iframe);
-
-    var postFrameMessage = function (object) {
-      object = object || {};
-
-      if (!iframe.isLoaded) {
-        setTimeout(function () {
-          iframe.contentWindow.postMessage(object, '*');
-        }, 100);
-        return;
-      }
-
-      iframe.contentWindow.postMessage(object, '*');
-    };
-  }
-})();
 },{}],17:[function(require,module,exports){
 /* global $, alert, APP, changeLocalVideo, chrome, config, getConferenceHandler,
  getUserMediaWithConstraints */
@@ -12238,6 +12077,10 @@ Inflate.prototype.push = function(data, mode) {
   var status, _mode;
   var next_out_utf8, tail, utf8str;
 
+  // Flag to properly process Z_BUF_ERROR on testing inflate call
+  // when we check that all output data was flushed.
+  var allowBufError = false;
+
   if (this.ended) { return false; }
   _mode = (mode === ~~mode) ? mode : ((mode === true) ? c.Z_FINISH : c.Z_NO_FLUSH);
 
@@ -12262,6 +12105,11 @@ Inflate.prototype.push = function(data, mode) {
     }
 
     status = zlib_inflate.inflate(strm, c.Z_NO_FLUSH);    /* no bad return value */
+
+    if (status === c.Z_BUF_ERROR && allowBufError === true) {
+      status = c.Z_OK;
+      allowBufError = false;
+    }
 
     if (status !== c.Z_STREAM_END && status !== c.Z_OK) {
       this.onEnd(status);
@@ -12291,7 +12139,19 @@ Inflate.prototype.push = function(data, mode) {
         }
       }
     }
-  } while ((strm.avail_in > 0) && status !== c.Z_STREAM_END);
+
+    // When no more input data, we should check that internal inflate buffers
+    // are flushed. The only way to do it when avail_out = 0 - run one more
+    // inflate pass. But if output data not exists, inflate return Z_BUF_ERROR.
+    // Here we set flag to process this error properly.
+    //
+    // NOTE. Deflate does not return error in this case and does not needs such
+    // logic.
+    if (strm.avail_in === 0 && strm.avail_out === 0) {
+      allowBufError = true;
+    }
+
+  } while ((strm.avail_in > 0 || strm.avail_out === 0) && status !== c.Z_STREAM_END);
 
   if (status === c.Z_STREAM_END) {
     _mode = c.Z_FINISH;
@@ -14719,7 +14579,8 @@ module.exports = function inflate_fast(strm, start) {
   var wsize;                  /* window size or zero if not using window */
   var whave;                  /* valid bytes in the window */
   var wnext;                  /* window write index */
-  var window;                 /* allocated sliding window, if wsize != 0 */
+  // Use `s_window` instead `window`, avoid conflict with instrumentation tools
+  var s_window;               /* allocated sliding window, if wsize != 0 */
   var hold;                   /* local strm.hold */
   var bits;                   /* local strm.bits */
   var lcode;                  /* local strm.lencode */
@@ -14753,7 +14614,7 @@ module.exports = function inflate_fast(strm, start) {
   wsize = state.wsize;
   whave = state.whave;
   wnext = state.wnext;
-  window = state.window;
+  s_window = state.window;
   hold = state.hold;
   bits = state.bits;
   lcode = state.lencode;
@@ -14871,13 +14732,13 @@ module.exports = function inflate_fast(strm, start) {
 //#endif
               }
               from = 0; // window index
-              from_source = window;
+              from_source = s_window;
               if (wnext === 0) {           /* very common case */
                 from += wsize - op;
                 if (op < len) {         /* some from window */
                   len -= op;
                   do {
-                    output[_out++] = window[from++];
+                    output[_out++] = s_window[from++];
                   } while (--op);
                   from = _out - dist;  /* rest from output */
                   from_source = output;
@@ -14889,14 +14750,14 @@ module.exports = function inflate_fast(strm, start) {
                 if (op < len) {         /* some from end of window */
                   len -= op;
                   do {
-                    output[_out++] = window[from++];
+                    output[_out++] = s_window[from++];
                   } while (--op);
                   from = 0;
                   if (wnext < len) {  /* some from start of window */
                     op = wnext;
                     len -= op;
                     do {
-                      output[_out++] = window[from++];
+                      output[_out++] = s_window[from++];
                     } while (--op);
                     from = _out - dist;      /* rest from output */
                     from_source = output;
@@ -14908,7 +14769,7 @@ module.exports = function inflate_fast(strm, start) {
                 if (op < len) {         /* some from window */
                   len -= op;
                   do {
-                    output[_out++] = window[from++];
+                    output[_out++] = s_window[from++];
                   } while (--op);
                   from = _out - dist;  /* rest from output */
                   from_source = output;
@@ -20540,37 +20401,70 @@ function isUndefined(arg) {
 var process = module.exports = {};
 var queue = [];
 var draining = false;
+var currentQueue;
+var queueIndex = -1;
+
+function cleanUpNextTick() {
+    draining = false;
+    if (currentQueue.length) {
+        queue = currentQueue.concat(queue);
+    } else {
+        queueIndex = -1;
+    }
+    if (queue.length) {
+        drainQueue();
+    }
+}
 
 function drainQueue() {
     if (draining) {
         return;
     }
+    var timeout = setTimeout(cleanUpNextTick);
     draining = true;
-    var currentQueue;
+
     var len = queue.length;
     while(len) {
         currentQueue = queue;
         queue = [];
-        var i = -1;
-        while (++i < len) {
-            currentQueue[i]();
+        while (++queueIndex < len) {
+            currentQueue[queueIndex].run();
         }
+        queueIndex = -1;
         len = queue.length;
     }
+    currentQueue = null;
     draining = false;
+    clearTimeout(timeout);
 }
+
 process.nextTick = function (fun) {
-    queue.push(fun);
-    if (!draining) {
+    var args = new Array(arguments.length - 1);
+    if (arguments.length > 1) {
+        for (var i = 1; i < arguments.length; i++) {
+            args[i - 1] = arguments[i];
+        }
+    }
+    queue.push(new Item(fun, args));
+    if (queue.length === 1 && !draining) {
         setTimeout(drainQueue, 0);
     }
 };
 
+// v8 likes predictible objects
+function Item(fun, array) {
+    this.fun = fun;
+    this.array = array;
+}
+Item.prototype.run = function () {
+    this.fun.apply(null, this.array);
+};
 process.title = 'browser';
 process.browser = true;
 process.env = {};
 process.argv = [];
 process.version = ''; // empty string to avoid regexp issues
+process.versions = {};
 
 function noop() {}
 

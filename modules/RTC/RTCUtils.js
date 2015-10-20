@@ -408,7 +408,7 @@ var RTCUtils = {
                                 'failed to obtain video stream - stop', error);
                             self.errorCallback(error, resolve, RTC, resolution, dontCreateJitsiTracks);
                         },
-                            config.resolution || '360');
+                            resolution || '360');
                 };
                 var obtainAudio = function () {
                     self.getUserMediaWithConstraints(
