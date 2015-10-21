@@ -2,7 +2,7 @@
 
 This document describes the required steps for a quick Jitsi Meet installation on a Debian based GNU/Linux system.
 
-Note: Some of the components of Jitsi-Meet will not run out-of-the-box on Debian jessie systems because of its libc version being too old. [See here](http://lists.jitsi.org/pipermail/users/2015-September/010064.html) for a possible solution.
+Note: Some of the components of Jitsi-Meet will not run out-of-the-box on Debian Wheezy systems because of its libc version being too old. [See here](http://lists.jitsi.org/pipermail/users/2015-September/010064.html) for a possible solution.
 
 N.B.: All commands are supposed to be run by root. If you are logged in as a regular user with sudo rights, please prepend ___sudo___ to each of the commands.
 
