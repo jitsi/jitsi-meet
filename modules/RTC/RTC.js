@@ -156,6 +156,11 @@ var RTC = {
         if (this.rtcUtils) {
             this.rtcUtils = null;
         }
+        // Remove all local streams on cleanup
+				while (this.localStreams.length > 0) {
+					var stream = this.localStreams[0];
+					this.removeLocalStream(stream.getOriginalStream());
+				}
         if (eventEmitter) {
             eventEmitter.removeAllListeners();
         }
