@@ -1,6 +1,6 @@
 # Jitsi Meet quick install
 
-This document describes the required steps for a quick Jitsi Meet installation on a Debian based GNU/Linux system.
+This document describes the required steps for a quick Jitsi Meet installation on a Debian 8 (Jessie) based GNU/Linux system.
 
 Note: Some of the components of Jitsi-Meet will not run out-of-the-box on Debian Wheezy systems because of its libc version being too old. [See here](http://lists.jitsi.org/pipermail/users/2015-September/010064.html) for a possible solution.
 
