@@ -25,7 +25,7 @@ function TraceablePeerConnection(ice_config, constraints, session) {
     var Interop = require('sdp-interop').Interop;
     this.interop = new Interop();
     var Simulcast = require('sdp-simulcast');
-    this.simulcast = new Simulcast({numOfLayers: 3, explodeRemoteSimulcast: false});
+    this.simulcast = new Simulcast({numOfLayers: 2, explodeRemoteSimulcast: false});
 
     // override as desired
     this.trace = function (what, info) {
@@ -218,6 +218,8 @@ if (TraceablePeerConnection.prototype.__defineGetter__ !== undefined) {
         function() {
             var desc = this.peerconnection.localDescription;
 
+            // TODO this should be after the Unified Plan -> Plan B
+            // transformation.
             desc = SSRCReplacement.mungeLocalVideoSSRC(desc);
             
             this.trace('getLocalDescription::preTransform', dumpSDP(desc));
