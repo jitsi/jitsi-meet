@@ -1,5 +1,16 @@
 var JitsiConference = require("./JitsiConference");
 var XMPP = require("./modules/xmpp/xmpp");
+var RandomUtil = require("./modules/util/RandomUtil");
+
+/**
+ * Utility method that generates user name based on random hex values.
+ * Eg. 12345678-1234-1234-12345678
+ * @returns {string}
+ */
+function generateUserName() {
+    return RandomUtil.random8digitsHex() + "-" + RandomUtil.random4digitsHex() + "-" +
+        RandomUtil.random4digitsHex() + "-" + RandomUtil.random8digitsHex();
+}
 
 /**
  * Creates new connection object for the Jitsi Meet server side video conferencing service. Provides access to the
@@ -25,6 +36,15 @@ function JitsiConnection(appID, token, options) {
 JitsiConnection.prototype.connect = function (options) {
     if(!options)
         options = {};
+
+    // If we have token provided use it as a password and generate random username
+    if (this.token) {
+        options.password = this.token;
+        if (!options.id) {
+            options.id = generateUserName() + "@" + this.options.hosts.domain;
+        }
+    }
+
     this.xmpp.connect(options.id, options.password);
 }
 

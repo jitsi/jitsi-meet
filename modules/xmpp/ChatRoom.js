@@ -87,16 +87,17 @@ ChatRoom.prototype.initPresenceMap = function () {
     });
 };
 
-ChatRoom.prototype.join = function (password) {
+ChatRoom.prototype.join = function (password, token) {
     if(password)
         this.password = password;
+    var self = this;
     this.moderator.allocateConferenceFocus(function()
     {
-        this.sendPresence();
+        self.sendPresence(token);
     }.bind(this));
-}
+};
 
-ChatRoom.prototype.sendPresence = function () {
+ChatRoom.prototype.sendPresence = function (auth_token) {
     if (!this.presMap['to']) {
         // Too early to send presence - not initialized
         return;
@@ -114,6 +115,11 @@ ChatRoom.prototype.sendPresence = function () {
     if (this.connection.caps) {
         this.connection.caps.node = this.xmpp.options.clientNode;
         pres.c('c', this.connection.caps.generateCapsAttrs()).up();
+    }
+
+    if (auth_token) {
+        pres.c('token', { xmlns: 'http://jitsi.org/jitmeet/auth-token'})
+            .t(auth_token).up();
     }
 
     parser.JSON2packet(this.presMap.nodes, pres);
