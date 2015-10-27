@@ -1,4 +1,4 @@
-BROWSERIFY = browserify
+BROWSERIFY = ./node_modules/.bin/browserify
 GLOBAL_FLAGS =
 OUTPUT_DIR = .
 DEPLOY_DIR = ../../jitsi-meet

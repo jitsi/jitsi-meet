@@ -29,6 +29,8 @@
       "es6-promise": "*"
   },
   "devDependencies": {
+    "browserify": "11.1.x",
+    "browserify-shim": "^3.8.10"
   },
   "license": "Apache"
 }
