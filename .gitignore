@@ -4,3 +4,4 @@ node_modules
 *.iml
 .*.tmp
 deploy-local.sh
+.remote-sync.json

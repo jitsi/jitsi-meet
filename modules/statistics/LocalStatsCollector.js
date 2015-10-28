@@ -5,6 +5,8 @@
 
 var RTCBrowserType = require('../RTC/RTCBrowserType');
 
+var LOCAL_JID = require("../../service/statistics/constants").LOCAL_JID;
+
 /**
  * Size of the webaudio analyzer buffer.
  * @type {number}
@@ -80,7 +82,7 @@ function LocalStatsCollector(stream, interval, statisticsService, eventEmitter) 
  * Starts the collecting the statistics.
  */
 LocalStatsCollector.prototype.start = function () {
-    if (config.disableAudioLevels || !window.AudioContext ||
+    if (!window.AudioContext ||
         RTCBrowserType.isTemasysPluginUsed())
         return;
 
@@ -105,7 +107,7 @@ LocalStatsCollector.prototype.start = function () {
                 self.audioLevel = animateLevel(audioLevel, self.audioLevel);
                 self.eventEmitter.emit(
                     "statistics.audioLevel",
-                    self.statisticsService.LOCAL_JID,
+                    LOCAL_JID,
                     self.audioLevel);
             }
         },

@@ -19,7 +19,8 @@ var options = {
 }
 
 var confOptions = {
-    openSctp: true
+    openSctp: true,
+    disableAudioLevels: true
 }
 
 /**
@@ -29,7 +30,6 @@ var confOptions = {
 function onLocalTracks(tracks)
 {
     localTracks = tracks;
-    console.log(tracks);
     tracks[0].attach($("#localAudio"));
     tracks[1].attach($("#localVideo"));
     for(var i = 0; i < localTracks.length; i++)
@@ -90,6 +90,10 @@ function onConnectionSuccess(){
     room.on(JitsiMeetJS.events.conference.DISPLAY_NAME_CHANGED, function (userID, displayName) {
         console.debug(userID + " - " + displayName);
     });
+    room.on(JitsiMeetJS.events.conference.TRACK_AUDIO_LEVEL_CHANGED,
+      function(userID, audioLevel){
+          // console.log(userID + " - " + audioLevel);
+      });
     room.join();
 };
 
@@ -128,7 +132,3 @@ connection.addEventListener(JitsiMeetJS.events.connection.CONNECTION_FAILED, onC
 connection.addEventListener(JitsiMeetJS.events.connection.CONNECTION_DISCONNECTED, disconnect);
 
 connection.connect();
-
-
-
-

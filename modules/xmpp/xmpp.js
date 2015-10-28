@@ -267,16 +267,9 @@ XMPP.prototype.eject = function (jid) {
     this.connection.moderate.eject(jid);
 };
 
-XMPP.prototype.getJidFromSSRC = function (ssrc) {
-    if (!this.isConferenceInProgress())
-        return null;
-    return this.connection.jingle.activecall.getSsrcOwner(ssrc);
-};
-
 XMPP.prototype.getSessions = function () {
     return this.connection.jingle.sessions;
 };
-
 
 XMPP.prototype.disconnect = function () {
     if (this.disconnectInProgress || !this.connection || !this.connection.connected)

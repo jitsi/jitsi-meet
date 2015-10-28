@@ -607,4 +607,10 @@ ChatRoom.prototype.addLocalStreams = function (localStreams) {
     this.session.addLocalStreams(localStreams);
 }
 
+ChatRoom.prototype.getJidBySSRC = function (ssrc) {
+    if (!this.session)
+        return null;
+    return this.session.getSsrcOwner(ssrc);
+};
+
 module.exports = ChatRoom;

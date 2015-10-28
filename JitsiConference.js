@@ -5,6 +5,7 @@ var RTCEvents = require("./service/RTC/RTCEvents");
 var EventEmitter = require("events");
 var JitsiConferenceEvents = require("./JitsiConferenceEvents");
 var JitsiParticipant = require("./JitsiParticipant");
+var Statistics = require("./modules/statistics/statistics");
 
 /**
  * Creates a JitsiConference object with the given name and properties.
@@ -23,6 +24,8 @@ function JitsiConference(options) {
     this.eventEmitter = new EventEmitter();
     this.room = this.xmpp.createRoom(this.options.name, null, null, this.options.config);
     this.rtc = new RTC(this.room, options);
+    if(!options.config.disableAudioLevels)
+        this.statistics = new Statistics();
     setupListeners(this);
     this.participants = {};
     this.lastActiveSpeaker = null;
@@ -205,8 +208,11 @@ JitsiConference.prototype.myUserId = function () {
  * @param conference the conference
  */
 function setupListeners(conference) {
-    conference.xmpp.addListener(XMPPEvents.CALL_INCOMING,
-        conference.rtc.onIncommingCall.bind(conference.rtc));
+    conference.xmpp.addListener(XMPPEvents.CALL_INCOMING, function (event) {
+        conference.rtc.onIncommingCall(event);
+        if(conference.statistics)
+            conference.statistics.startRemoteStats(event.peerconnection);
+    });
     conference.room.addListener(XMPPEvents.REMOTE_STREAM_RECEIVED,
         conference.rtc.createRemoteStream.bind(conference.rtc));
     conference.rtc.addListener(StreamEventTypes.EVENT_TYPE_REMOTE_CREATED, function (stream) {
@@ -255,6 +261,30 @@ function setupListeners(conference) {
         conference.eventEmitter.emit(JitsiConferenceEvents.DISPLAY_NAME_CHANGED,
             Strophe.getResourceFromJid(from), displayName);
     });
+
+    if(conference.statistics) {
+        conference.statistics.addAudioLevelListener(function (ssrc, level) {
+            var userId = null;
+            if (ssrc === Statistics.LOCAL_JID) {
+                userId = conference.myUserId();
+            } else {
+                var jid = conference.room.getJidBySSRC(ssrc);
+                if (!jid)
+                    return;
+
+                userId = Strophe.getResourceFromJid(jid);
+            }
+            conference.eventEmitter.emit(JitsiConferenceEvents.TRACK_AUDIO_LEVEL_CHANGED,
+                userId, level);
+        });
+        conference.rtc.addListener(StreamEventTypes.EVENT_TYPE_LOCAL_CREATED, function (stream) {
+            conference.statistics.startLocalStats(stream);
+        });
+        conference.xmpp.addListener(XMPPEvents.DISPOSE_CONFERENCE,
+            function () {
+                conference.statistics.dispose();
+            });
+    }
 }
 
 

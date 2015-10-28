@@ -104,22 +104,11 @@ RTC.prototype.pinEndpoint = function (id) {
         this.dataChannels.handlePinnedEndpointEvent(id);
 }
 
-RTC.prototype.addStreamListener = function (listener, eventType) {
-    this.eventEmitter.on(eventType, listener);
-};
-
 RTC.prototype.addListener = function (type, listener) {
     this.eventEmitter.on(type, listener);
 };
 
-RTC.prototype.removeListener = function (listener, eventType) {
-    this.eventEmitter.removeListener(eventType, listener);
-};
-
-RTC.prototype.removeStreamListener = function (listener, eventType) {
-    if(!(eventType instanceof StreamEventTypes))
-        throw "Illegal argument";
-
+RTC.prototype.removeListener = function (eventType, listener) {
     this.eventEmitter.removeListener(eventType, listener);
 };
 

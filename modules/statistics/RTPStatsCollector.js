@@ -5,6 +5,39 @@ var RTCBrowserType = require("../RTC/RTCBrowserType");
 /* Whether we support the browser we are running into for logging statistics */
 var browserSupported = RTCBrowserType.isChrome() ||
     RTCBrowserType.isOpera();
+
+var keyMap = {};
+keyMap[RTCBrowserType.RTC_BROWSER_FIREFOX] = {
+    "ssrc": "ssrc",
+    "packetsReceived": "packetsReceived",
+    "packetsLost": "packetsLost",
+    "packetsSent": "packetsSent",
+    "bytesReceived": "bytesReceived",
+    "bytesSent": "bytesSent"
+};
+keyMap[RTCBrowserType.RTC_BROWSER_CHROME] = {
+    "receiveBandwidth": "googAvailableReceiveBandwidth",
+    "sendBandwidth": "googAvailableSendBandwidth",
+    "remoteAddress": "googRemoteAddress",
+    "transportType": "googTransportType",
+    "localAddress": "googLocalAddress",
+    "activeConnection": "googActiveConnection",
+    "ssrc": "ssrc",
+    "packetsReceived": "packetsReceived",
+    "packetsSent": "packetsSent",
+    "packetsLost": "packetsLost",
+    "bytesReceived": "bytesReceived",
+    "bytesSent": "bytesSent",
+    "googFrameHeightReceived": "googFrameHeightReceived",
+    "googFrameWidthReceived": "googFrameWidthReceived",
+    "googFrameHeightSent": "googFrameHeightSent",
+    "googFrameWidthSent": "googFrameWidthSent",
+    "audioInputLevel": "audioInputLevel",
+    "audioOutputLevel": "audioOutputLevel"
+};
+keyMap[RTCBrowserType.RTC_BROWSER_OPERA] =
+    keyMap[RTCBrowserType.RTC_BROWSER_CHROME];
+
 /**
  * Calculates packet lost percent using the number of lost packets and the
  * number of all packet.
@@ -27,6 +60,42 @@ function getStatValue(item, name) {
         item.stat(key) : item[key];
 }
 
+function formatAudioLevel(audioLevel) {
+    return Math.min(Math.max(audioLevel, 0), 1);
+}
+
+/**
+ * Checks whether a certain record should be included in the logged statistics.
+ */
+function acceptStat(reportId, reportType, statName) {
+    if (reportType == "googCandidatePair" && statName == "googChannelId")
+        return false;
+
+    if (reportType == "ssrc") {
+        if (statName == "googTrackId" ||
+            statName == "transportId" ||
+            statName == "ssrc")
+            return false;
+    }
+
+    return true;
+}
+
+/**
+ * Checks whether a certain record should be included in the logged statistics.
+ */
+function acceptReport(id, type) {
+    if (id.substring(0, 15) == "googCertificate" ||
+        id.substring(0, 9) == "googTrack" ||
+        id.substring(0, 20) == "googLibjingleSession")
+        return false;
+
+    if (type == "googComponent")
+        return false;
+
+    return true;
+}
+
 /**
  * Peer statistics data holder.
  * @constructor
@@ -40,41 +109,21 @@ function PeerStats()
 }
 
 /**
- * The bandwidth
- * @type {{}}
- */
-PeerStats.bandwidth = {};
-
-/**
- * The bit rate
- * @type {{}}
- */
-PeerStats.bitrate = {};
-
-/**
- * The packet loss rate
- * @type {{}}
- */
-PeerStats.packetLoss = null;
-
-/**
  * Sets packets loss rate for given <tt>ssrc</tt> that blong to the peer
  * represented by this instance.
- * @param ssrc audio or video RTP stream SSRC.
  * @param lossRate new packet loss rate value to be set.
  */
-PeerStats.prototype.setSsrcLoss = function (ssrc, lossRate)
+PeerStats.prototype.setSsrcLoss = function (lossRate)
 {
-    this.ssrc2Loss[ssrc] = lossRate;
+    this.ssrc2Loss = lossRate;
 };
 
 /**
- * Sets resolution for given <tt>ssrc</tt> that belong to the peer
+ * Sets resolution that belong to the ssrc
  * represented by this instance.
- * @param ssrc audio or video RTP stream SSRC.
  * @param resolution new resolution value to be set.
  */
-PeerStats.prototype.setSsrcResolution = function (ssrc, resolution)
+PeerStats.prototype.setSsrcResolution = function (resolution)
 {
     if(resolution === null && this.ssrc2resolution[ssrc])
     {
@@ -116,16 +165,34 @@ PeerStats.prototype.setSsrcAudioLevel = function (ssrc, audioLevel)
     this.ssrc2AudioLevel[ssrc] = formatAudioLevel(audioLevel);
 };
 
-function formatAudioLevel(audioLevel) {
-    return Math.min(Math.max(audioLevel, 0), 1);
+function ConferenceStats() {
+
+
+    /**
+     * The bandwidth
+     * @type {{}}
+     */
+    this.bandwidth = {};
+
+    /**
+     * The bit rate
+     * @type {{}}
+     */
+    this.bitrate = {};
+
+    /**
+     * The packet loss rate
+     * @type {{}}
+     */
+    this.packetLoss = null;
+
+
+    /**
+     * Array with the transport information.
+     * @type {Array}
+     */
+    this.transport = [];
 }
-
-/**
- * Array with the transport information.
- * @type {Array}
- */
-PeerStats.transport = [];
-
 
 /**
  * <tt>StatsCollector</tt> registers for stats updates of given
@@ -138,9 +205,10 @@ PeerStats.transport = [];
  * @param interval stats refresh interval given in ms.
  * @param {function(StatsCollector)} audioLevelsUpdateCallback the callback
  * called on stats update.
+ * @param config {object} supports the following properties - disableAudioLevels, disableStats, logStats
  * @constructor
  */
-function StatsCollector(peerconnection, audioLevelsInterval, statsInterval, eventEmitter)
+function StatsCollector(peerconnection, audioLevelsInterval, statsInterval, eventEmitter, config)
 {
     this.peerconnection = peerconnection;
     this.baselineAudioLevelsReport = null;
@@ -149,6 +217,8 @@ function StatsCollector(peerconnection, audioLevelsInterval, statsInterval, even
     this.baselineStatsReport = null;
     this.audioLevelsIntervalId = null;
     this.eventEmitter = eventEmitter;
+    this.config = config || {};
+    this.conferenceStats = new ConferenceStats();
 
     /**
      * Gather PeerConnection stats once every this many milliseconds.
@@ -185,8 +255,8 @@ function StatsCollector(peerconnection, audioLevelsInterval, statsInterval, even
 
     this.statsIntervalId = null;
     this.statsIntervalMilis = statsInterval;
-    // Map of jids to PeerStats
-    this.jid2stats = {};
+    // Map of ssrcs to PeerStats
+    this.ssrc2stats = {};
 }
 
 module.exports = StatsCollector;
@@ -235,118 +305,84 @@ StatsCollector.prototype.errorCallback = function (error)
 StatsCollector.prototype.start = function ()
 {
     var self = this;
-    if (!config.disableAudioLevels) {
-        this.audioLevelsIntervalId = setInterval(
-            function () {
-                // Interval updates
-                self.peerconnection.getStats(
-                    function (report) {
-                        var results = null;
-                        if (!report || !report.result ||
-                            typeof report.result != 'function') {
-                            results = report;
-                        }
-                        else {
-                            results = report.result();
-                        }
-                        //console.error("Got interval report", results);
-                        self.currentAudioLevelsReport = results;
-                        self.processAudioLevelReport();
-                        self.baselineAudioLevelsReport =
-                            self.currentAudioLevelsReport;
-                    },
-                    self.errorCallback
-                );
-            },
-            self.audioLevelsIntervalMilis
-        );
-    }
-
-    if (!config.disableStats && browserSupported) {
-        this.statsIntervalId = setInterval(
-            function () {
-                // Interval updates
-                self.peerconnection.getStats(
-                    function (report) {
-                        var results = null;
-                        if (!report || !report.result ||
-                            typeof report.result != 'function') {
-                            //firefox
-                            results = report;
-                        }
-                        else {
-                            //chrome
-                            results = report.result();
-                        }
-                        //console.error("Got interval report", results);
-                        self.currentStatsReport = results;
-                        try {
-                            self.processStatsReport();
-                        }
-                        catch (e) {
-                            console.error("Unsupported key:" + e, e);
-                        }
-
-                        self.baselineStatsReport = self.currentStatsReport;
-                    },
-                    self.errorCallback
-                );
-            },
-            self.statsIntervalMilis
-        );
-    }
-
-    if (config.logStats && browserSupported) {
-        this.gatherStatsIntervalId = setInterval(
-            function () {
-                self.peerconnection.getStats(
-                    function (report) {
-                        self.addStatsToBeLogged(report.result());
-                    },
-                    function () {
+    this.audioLevelsIntervalId = setInterval(
+        function () {
+            // Interval updates
+            self.peerconnection.getStats(
+                function (report) {
+                    var results = null;
+                    if (!report || !report.result ||
+                        typeof report.result != 'function') {
+                        results = report;
                     }
-                );
-            },
-            this.GATHER_INTERVAL
-        );
+                    else {
+                        results = report.result();
+                    }
+                    //console.error("Got interval report", results);
+                    self.currentAudioLevelsReport = results;
+                    self.processAudioLevelReport();
+                    self.baselineAudioLevelsReport =
+                        self.currentAudioLevelsReport;
+                },
+                self.errorCallback
+            );
+        },
+        self.audioLevelsIntervalMilis
+    );
 
-        this.logStatsIntervalId = setInterval(
-            function() { self.logStats(); },
-            this.LOG_INTERVAL);
-    }
+//    if (!this.config.disableStats && browserSupported) {
+//        this.statsIntervalId = setInterval(
+//            function () {
+//                // Interval updates
+//                self.peerconnection.getStats(
+//                    function (report) {
+//                        var results = null;
+//                        if (!report || !report.result ||
+//                            typeof report.result != 'function') {
+//                            //firefox
+//                            results = report;
+//                        }
+//                        else {
+//                            //chrome
+//                            results = report.result();
+//                        }
+//                        //console.error("Got interval report", results);
+//                        self.currentStatsReport = results;
+//                        try {
+//                            self.processStatsReport();
+//                        }
+//                        catch (e) {
+//                            console.error("Unsupported key:" + e, e);
+//                        }
+//
+//                        self.baselineStatsReport = self.currentStatsReport;
+//                    },
+//                    self.errorCallback
+//                );
+//            },
+//            self.statsIntervalMilis
+//        );
+//    }
+//
+//    if (this.config.logStats && browserSupported) {
+//        this.gatherStatsIntervalId = setInterval(
+//            function () {
+//                self.peerconnection.getStats(
+//                    function (report) {
+//                        self.addStatsToBeLogged(report.result());
+//                    },
+//                    function () {
+//                    }
+//                );
+//            },
+//            this.GATHER_INTERVAL
+//        );
+//
+//        this.logStatsIntervalId = setInterval(
+//            function() { self.logStats(); },
+//            this.LOG_INTERVAL);
+//    }
 };
-
-/**
- * Checks whether a certain record should be included in the logged statistics.
- */
-function acceptStat(reportId, reportType, statName) {
-    if (reportType == "googCandidatePair" && statName == "googChannelId")
-        return false;
-
-    if (reportType == "ssrc") {
-        if (statName == "googTrackId" ||
-            statName == "transportId" ||
-            statName == "ssrc")
-            return false;
-    }
-
-    return true;
-}
-
-/**
- * Checks whether a certain record should be included in the logged statistics.
- */
-function acceptReport(id, type) {
-    if (id.substring(0, 15) == "googCertificate" ||
-        id.substring(0, 9) == "googTrack" ||
-        id.substring(0, 20) == "googLibjingleSession")
-        return false;
-
-    if (type == "googComponent")
-        return false;
-
-    return true;
-}
 
 /**
  * Converts the stats to the format used for logging, and saves the data in
@@ -380,45 +416,16 @@ StatsCollector.prototype.addStatsToBeLogged = function (reports) {
     });
 };
 
-StatsCollector.prototype.logStats = function () {
 
-    if(!APP.xmpp.sendLogs(this.statsToBeLogged))
-        return;
-    // Reset the stats
-    this.statsToBeLogged.stats = {};
-    this.statsToBeLogged.timestamps = [];
-};
-var keyMap = {};
-keyMap[RTCBrowserType.RTC_BROWSER_FIREFOX] = {
-    "ssrc": "ssrc",
-    "packetsReceived": "packetsReceived",
-    "packetsLost": "packetsLost",
-    "packetsSent": "packetsSent",
-    "bytesReceived": "bytesReceived",
-    "bytesSent": "bytesSent"
-};
-keyMap[RTCBrowserType.RTC_BROWSER_CHROME] = {
-    "receiveBandwidth": "googAvailableReceiveBandwidth",
-    "sendBandwidth": "googAvailableSendBandwidth",
-    "remoteAddress": "googRemoteAddress",
-    "transportType": "googTransportType",
-    "localAddress": "googLocalAddress",
-    "activeConnection": "googActiveConnection",
-    "ssrc": "ssrc",
-    "packetsReceived": "packetsReceived",
-    "packetsSent": "packetsSent",
-    "packetsLost": "packetsLost",
-    "bytesReceived": "bytesReceived",
-    "bytesSent": "bytesSent",
-    "googFrameHeightReceived": "googFrameHeightReceived",
-    "googFrameWidthReceived": "googFrameWidthReceived",
-    "googFrameHeightSent": "googFrameHeightSent",
-    "googFrameWidthSent": "googFrameWidthSent",
-    "audioInputLevel": "audioInputLevel",
-    "audioOutputLevel": "audioOutputLevel"
-};
-keyMap[RTCBrowserType.RTC_BROWSER_OPERA] =
-    keyMap[RTCBrowserType.RTC_BROWSER_CHROME];
+//FIXME:
+//StatsCollector.prototype.logStats = function () {
+//
+//    if(!APP.xmpp.sendLogs(this.statsToBeLogged))
+//        return;
+//    // Reset the stats
+//    this.statsToBeLogged.stats = {};
+//    this.statsToBeLogged.timestamps = [];
+//};
 
 
 /**
@@ -434,7 +441,7 @@ StatsCollector.prototype.processStatsReport = function () {
         try {
             if (getStatValue(now, 'receiveBandwidth') ||
                 getStatValue(now, 'sendBandwidth')) {
-                PeerStats.bandwidth = {
+                this.conferenceStats.bandwidth = {
                     "download": Math.round(
                             (getStatValue(now, 'receiveBandwidth')) / 1000),
                     "upload": Math.round(
@@ -457,18 +464,18 @@ StatsCollector.prototype.processStatsReport = function () {
             if(!ip || !type || !localIP || active != "true")
                 continue;
             var addressSaved = false;
-            for(var i = 0; i < PeerStats.transport.length; i++)
+            for(var i = 0; i < this.conferenceStats.transport.length; i++)
             {
-                if(PeerStats.transport[i].ip == ip &&
-                    PeerStats.transport[i].type == type &&
-                    PeerStats.transport[i].localip == localIP)
+                if(this.conferenceStats.transport[i].ip == ip &&
+                    this.conferenceStats.transport[i].type == type &&
+                    this.conferenceStats.transport[i].localip == localIP)
                 {
                     addressSaved = true;
                 }
             }
             if(addressSaved)
                 continue;
-            PeerStats.transport.push({localip: localIP, ip: ip, type: type});
+            this.conferenceStats.transport.push({localip: localIP, ip: ip, type: type});
             continue;
         }
 
@@ -479,7 +486,7 @@ StatsCollector.prototype.processStatsReport = function () {
 
             var local = this.currentStatsReport[now.localCandidateId];
             var remote = this.currentStatsReport[now.remoteCandidateId];
-            PeerStats.transport.push({localip: local.ipAddress + ":" + local.portNumber,
+            this.conferenceStats.transport.push({localip: local.ipAddress + ":" + local.portNumber,
                 ip: remote.ipAddress + ":" + remote.portNumber, type: local.transport});
 
         }
@@ -498,16 +505,11 @@ StatsCollector.prototype.processStatsReport = function () {
         var ssrc = getStatValue(now, 'ssrc');
         if(!ssrc)
             continue;
-        var jid = APP.xmpp.getJidFromSSRC(ssrc);
-        if (!jid && (Date.now() - now.timestamp) < 3000) {
-            console.warn("No jid for ssrc: " + ssrc);
-            continue;
-        }
 
-        var jidStats = this.jid2stats[jid];
-        if (!jidStats) {
-            jidStats = new PeerStats();
-            this.jid2stats[jid] = jidStats;
+        var ssrcStats = this.ssrc2stats[ssrc];
+        if (!ssrcStats) {
+            ssrcStats = new PeerStats();
+            this.ssrc2stats[ssrc] = ssrcStats;
         }
 
 
@@ -544,7 +546,7 @@ StatsCollector.prototype.processStatsReport = function () {
             lossRate = 0;
         var packetsTotal = (packetRate + lossRate);
 
-        jidStats.setSsrcLoss(ssrc,
+        ssrcStats.setSsrcLoss(ssrc,
             {"packetsTotal": packetsTotal,
                 "packetsLost": lossRate,
                 "isDownloadStream": isDownloadStream});
@@ -582,7 +584,7 @@ StatsCollector.prototype.processStatsReport = function () {
             bytesSent = Math.round(((bytesSent * 8) / time) / 1000);
         }
 
-        jidStats.setSsrcBitrate(ssrc, {
+        ssrcStats.setSsrcBitrate(ssrc, {
             "download": bytesReceived,
             "upload": bytesSent});
 
@@ -603,11 +605,11 @@ StatsCollector.prototype.processStatsReport = function () {
 
         if(resolution.height && resolution.width)
         {
-            jidStats.setSsrcResolution(ssrc, resolution);
+            ssrcStats.setSsrcResolution(ssrc, resolution);
         }
         else
         {
-            jidStats.setSsrcResolution(ssrc, null);
+            ssrcStats.setSsrcResolution(ssrc, null);
         }
 
 
@@ -620,38 +622,38 @@ StatsCollector.prototype.processStatsReport = function () {
     var bitrateDownload = 0;
     var bitrateUpload = 0;
     var resolutions = {};
-    Object.keys(this.jid2stats).forEach(
+    Object.keys(this.ssrc2stats).forEach(
         function (jid)
         {
-            Object.keys(self.jid2stats[jid].ssrc2Loss).forEach(
+            Object.keys(self.ssrc2stats[jid].ssrc2Loss).forEach(
                 function (ssrc)
                 {
                     var type = "upload";
-                    if(self.jid2stats[jid].ssrc2Loss[ssrc].isDownloadStream)
+                    if(self.ssrc2stats[jid].ssrc2Loss[ssrc].isDownloadStream)
                         type = "download";
                     totalPackets[type] +=
-                        self.jid2stats[jid].ssrc2Loss[ssrc].packetsTotal;
+                        self.ssrc2stats[jid].ssrc2Loss[ssrc].packetsTotal;
                     lostPackets[type] +=
-                        self.jid2stats[jid].ssrc2Loss[ssrc].packetsLost;
+                        self.ssrc2stats[jid].ssrc2Loss[ssrc].packetsLost;
                 }
             );
-            Object.keys(self.jid2stats[jid].ssrc2bitrate).forEach(
+            Object.keys(self.ssrc2stats[jid].ssrc2bitrate).forEach(
                 function (ssrc) {
                     bitrateDownload +=
-                        self.jid2stats[jid].ssrc2bitrate[ssrc].download;
+                        self.ssrc2stats[jid].ssrc2bitrate[ssrc].download;
                     bitrateUpload +=
-                        self.jid2stats[jid].ssrc2bitrate[ssrc].upload;
+                        self.ssrc2stats[jid].ssrc2bitrate[ssrc].upload;
 
-                    delete self.jid2stats[jid].ssrc2bitrate[ssrc];
+                    delete self.ssrc2stats[jid].ssrc2bitrate[ssrc];
                 }
             );
-            resolutions[jid] = self.jid2stats[jid].ssrc2resolution;
+            resolutions[jid] = self.ssrc2stats[jid].ssrc2resolution;
         }
     );
 
-    PeerStats.bitrate = {"upload": bitrateUpload, "download": bitrateDownload};
+    this.conferenceStats.bitrate = {"upload": bitrateUpload, "download": bitrateDownload};
 
-    PeerStats.packetLoss = {
+    this.conferenceStats.packetLoss = {
         total:
             calculatePacketLoss(lostPackets.download + lostPackets.upload,
                     totalPackets.download + totalPackets.upload),
@@ -662,13 +664,13 @@ StatsCollector.prototype.processStatsReport = function () {
     };
     this.eventEmitter.emit("statistics.connectionstats",
         {
-            "bitrate": PeerStats.bitrate,
-            "packetLoss": PeerStats.packetLoss,
-            "bandwidth": PeerStats.bandwidth,
+            "bitrate": this.conferenceStats.bitrate,
+            "packetLoss": this.conferenceStats.packetLoss,
+            "bandwidth": this.conferenceStats.bandwidth,
             "resolution": resolutions,
-            "transport": PeerStats.transport
+            "transport": this.conferenceStats.transport
         });
-    PeerStats.transport = [];
+    this.conferenceStats.transport = [];
 
 };
 
@@ -683,7 +685,8 @@ StatsCollector.prototype.processAudioLevelReport = function () {
     for (var idx in this.currentAudioLevelsReport) {
         var now = this.currentAudioLevelsReport[idx];
 
-        if (now.type != 'ssrc') {
+        //if we don't have "packetsReceived" this is local stream
+        if (now.type != 'ssrc' || !getStatValue(now, 'packetsReceived')) {
             continue;
         }
 
@@ -694,17 +697,16 @@ StatsCollector.prototype.processAudioLevelReport = function () {
         }
 
         var ssrc = getStatValue(now, 'ssrc');
-        var jid = APP.xmpp.getJidFromSSRC(ssrc);
-        if (!jid) {
+        if (!ssrc) {
             if((Date.now() - now.timestamp) < 3000)
-                console.warn("No jid for ssrc: " + ssrc);
+                console.warn("No ssrc: ");
             continue;
         }
 
-        var jidStats = this.jid2stats[jid];
-        if (!jidStats) {
-            jidStats = new PeerStats();
-            this.jid2stats[jid] = jidStats;
+        var ssrcStats = this.ssrc2stats[ssrc];
+        if (!ssrcStats) {
+            ssrcStats = new PeerStats();
+            this.ssrc2stats[ssrc] = ssrcStats;
         }
 
         // Audio level
@@ -725,9 +727,8 @@ StatsCollector.prototype.processAudioLevelReport = function () {
             // TODO: can't find specs about what this value really is,
             // but it seems to vary between 0 and around 32k.
             audioLevel = audioLevel / 32767;
-            jidStats.setSsrcAudioLevel(ssrc, audioLevel);
-            if(jid != APP.xmpp.myJid())
-                this.eventEmitter.emit("statistics.audioLevel", jid, audioLevel);
+            ssrcStats.setSsrcAudioLevel(ssrc, audioLevel);
+            this.eventEmitter.emit("statistics.audioLevel", ssrc, audioLevel);
         }
     }
 };
