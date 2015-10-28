@@ -109,6 +109,9 @@ SmallVideo.createStreamElement = function (stream) {
 
     var element = isVideo ? document.createElement('video')
         : document.createElement('audio');
+    if (isVideo) {
+        element.setAttribute("muted", "true");
+    }
 
     if (!RTCBrowserType.isIExplorer()) {
         element.autoplay = true;
