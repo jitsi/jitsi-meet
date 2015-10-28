@@ -111,16 +111,27 @@ var RTC = {
             muted = pres.videoMuted;
         }
 
-        var remoteStream = new MediaStream(data, ssrc,
-            RTCBrowserType.getBrowserType(), eventEmitter, muted);
+        var self = this;
+        [MediaStreamType.AUDIO_TYPE, MediaStreamType.VIDEO_TYPE].forEach(
+            function(type) {
+            var tracks =
+                type == MediaStreamType.AUDIO_TYPE
+                ? data.stream.getAudioTracks : data.stream.getVideoTracks();
+            if (!tracks || !Array.isArray(tracks) || !tracks.length) {
+                console.log("Not creating a(n) "+type+" stream: no tracks");
+                return;
+            }
 
-        if(!this.remoteStreams[jid]) {
-            this.remoteStreams[jid] = {};
-        }
-        this.remoteStreams[jid][remoteStream.type]= remoteStream;
-        eventEmitter.emit(StreamEventTypes.EVENT_TYPE_REMOTE_CREATED,
-                          remoteStream);
-        return remoteStream;
+            var remoteStream = new MediaStream(data, ssrc,
+                RTCBrowserType.getBrowserType(), eventEmitter, muted, type);
+
+            if (!self.remoteStreams[jid]) {
+                self.remoteStreams[jid] = {};
+            }
+            self.remoteStreams[jid][type] = remoteStream;
+            eventEmitter.emit(StreamEventTypes.EVENT_TYPE_REMOTE_CREATED,
+                remoteStream);
+        });
     },
     getPCConstraints: function () {
         return this.rtcUtils.pc_constraints;
