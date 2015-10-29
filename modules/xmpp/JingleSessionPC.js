@@ -1423,6 +1423,7 @@ JingleSessionPC.prototype.setLocalDescription = function () {
     if(!this.peerconnection.localDescription)
         return;
     var session = transform.parse(this.peerconnection.localDescription.sdp);
+    var i;
     session.media.forEach(function (media) {
 
         if (media.ssrcs && media.ssrcs.length > 0) {
@@ -1451,8 +1452,8 @@ JingleSessionPC.prototype.setLocalDescription = function () {
 
     // Bind us as local SSRCs owner
     if (newssrcs.length > 0) {
-        for (var i = 1; i <= newssrcs.length; i ++) {
-            var ssrc = newssrcs[i-1].ssrc;
+        for (i = 0; i < newssrcs.length; i++) {
+            var ssrc = newssrcs[i].ssrc;
             var myJid = self.connection.emuc.myroomjid;
             self.ssrcOwners[ssrc] = myJid;
         }
