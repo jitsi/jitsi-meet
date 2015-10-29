@@ -1406,10 +1406,28 @@ JingleSessionPC.prototype.setLocalDescription = function () {
 
     // Bind us as local SSRCs owner
     if (newssrcs.length > 0) {
+
+        if (config.advertiseSSRCsInPresence) {
+            // This is only for backward compatibility with clients which
+            // don't support getting sources from Jingle (i.e. jirecon).
+            this.connection.emuc.clearPresenceMedia();
+        }
+
         for (i = 0; i < newssrcs.length; i++) {
             var ssrc = newssrcs[i].ssrc;
             var myJid = self.connection.emuc.myroomjid;
             self.ssrcOwners[ssrc] = myJid;
+
+            if (config.advertiseSSRCsInPresence) {
+                // This is only for backward compatibility with clients which
+                // don't support getting sources from Jingle (i.e. jirecon).
+                this.connection.emuc.addMediaToPresence(
+                    i+1, newssrcs[i].type, ssrc, newssrcs[i].direction);
+            }
+        }
+
+        if (config.advertiseSSRCsInPresence) {
+            this.connection.emuc.sendPresence();
         }
     }
 };
