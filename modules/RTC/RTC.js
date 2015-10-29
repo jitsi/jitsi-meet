@@ -53,7 +53,6 @@ var RTC = {
         audio: true,
         video: true
     },
-    localStreams: [],
     remoteStreams: {},
     localAudio: null,
     localVideo: null,
@@ -74,10 +73,6 @@ var RTC = {
 
         var localStream =
             new LocalStream(stream, type, eventEmitter, videoType, isGUMStream);
-        //in firefox we have only one stream object
-        if(this.localStreams.length === 0 ||
-            this.localStreams[0].getOriginalStream() != stream)
-            this.localStreams.push(localStream);
         if(isMuted === true)
             localStream.setMute(true);
 
@@ -92,14 +87,6 @@ var RTC = {
 
         eventEmitter.emit(eventType, localStream, isMuted);
         return localStream;
-    },
-    removeLocalStream: function (stream) {
-        for(var i = 0; i < this.localStreams.length; i++) {
-            if(this.localStreams[i].getOriginalStream() === stream) {
-                delete this.localStreams[i];
-                return;
-            }
-        }
     },
     createRemoteStream: function (data, ssrc) {
         var jid = data.peerjid || APP.xmpp.myJid();
@@ -203,16 +190,6 @@ var RTC = {
         }
         return false;
     },
-    switchVideoStreams: function (newStream) {
-        this.localVideo.stream = newStream;
-
-        this.localStreams = [];
-
-        //in firefox we have only one stream object
-        if (this.localAudio.getOriginalStream() != newStream)
-            this.localStreams.push(this.localAudio);
-        this.localStreams.push(this.localVideo);
-    },
     changeLocalVideo: function (stream, isUsingScreenStream, callback) {
         var oldStream = this.localVideo.getOriginalStream();
         var type = (isUsingScreenStream ? "screen" : "camera");
@@ -235,8 +212,6 @@ var RTC = {
             this.createLocalStream(videoStream, "video", true, type);
         // Stop the stream to trigger onended event for old stream
         oldStream.stop();
-
-        this.switchVideoStreams(videoStream);
 
         APP.xmpp.switchStreams(videoStream, oldStream,localCallback);
     },

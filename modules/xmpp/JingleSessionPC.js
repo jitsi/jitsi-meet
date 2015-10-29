@@ -20,7 +20,6 @@ function JingleSessionPC(me, sid, connection, service, eventEmitter) {
     this.state = null;
     this.localSDP = null;
     this.remoteSDP = null;
-    this.relayedStreams = [];
     this.pc_constraints = null;
 
     this.usetrickle = true;
@@ -169,13 +168,12 @@ JingleSessionPC.prototype.doInitialize = function () {
     this.peerconnection.onnegotiationneeded = function (event) {
         self.eventEmitter.emit(XMPPEvents.PEERCONNECTION_READY, self);
     };
-    // add any local and relayed stream
-    APP.RTC.localStreams.forEach(function(stream) {
-        self.peerconnection.addStream(stream.getOriginalStream());
-    });
-    this.relayedStreams.forEach(function(stream) {
-        self.peerconnection.addStream(stream);
-    });
+    if (APP.RTC.localAudio) {
+        self.peerconnection.addStream(APP.RTC.localAudio.getOriginalStream());
+    }
+    if (APP.RTC.localVideo) {
+        self.peerconnection.addStream(APP.RTC.localVideo.getOriginalStream());
+    }
 };
 
 function onIceConnectionStateChange(sid, session) {
