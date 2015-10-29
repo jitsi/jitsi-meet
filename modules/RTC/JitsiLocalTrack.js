@@ -7,7 +7,8 @@ var RTCBrowserType = require("./RTCBrowserType");
  * Represents a single media track (either audio or video).
  * @constructor
  */
-function JitsiLocalTrack(RTC, stream, eventEmitter, videoType, isGUMStream)
+function JitsiLocalTrack(RTC, stream, eventEmitter, videoType, isGUMStream,
+  resolution)
 {
     JitsiTrack.call(this, RTC, stream);
     this.eventEmitter = eventEmitter;
@@ -15,6 +16,7 @@ function JitsiLocalTrack(RTC, stream, eventEmitter, videoType, isGUMStream)
     this.isGUMStream = true;
     this.dontFireRemoveEvent = false;
     this.isStarted = false;
+    this.resolution = resolution;
     var self = this;
     if(isGUMStream === false)
         this.isGUMStream = isGUMStream;
@@ -65,7 +67,8 @@ JitsiLocalTrack.prototype._setMute = function (mute) {
         } else {
             var self = this;
             this.rtc.obtainAudioAndVideoPermissions(
-                {devices: (isAudio ? ["audio"] : ["video"])}, true)
+                {devices: (isAudio ? ["audio"] : ["video"]),
+                  resolution: self.resolution}, true)
                 .then(function (streams) {
                     var stream = null;
                     for(var i = 0; i < streams.length; i++) {

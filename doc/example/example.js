@@ -61,7 +61,7 @@ function onRemoteTrack(track) {
  */
 function onConferenceJoined () {
     console.log("conference joined!");
-    room.createLocalTracks().then(onLocalTracks);
+    room.createLocalTracks({resolution: "720"}).then(onLocalTracks);
 }
 
 function onUserLeft(id) {

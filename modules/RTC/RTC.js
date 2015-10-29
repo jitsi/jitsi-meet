@@ -145,7 +145,7 @@ RTC.prototype.createLocalStreams = function (streams, change) {
     for (var i = 0; i < streams.length; i++) {
         var localStream = new JitsiLocalTrack(this, streams[i].stream,
             this.eventEmitter, streams[i].videoType,
-            streams[i].isGUMStream);
+            streams[i].isGUMStream, streams[i].resolution);
         this.localStreams.push(localStream);
         if (streams[i].isMuted === true)
             localStream.setMute(true);
@@ -268,7 +268,7 @@ RTC.prototype.changeLocalVideo = function (stream, isUsingScreenStream, callback
             this.room.setVideoMute(false, function(mute) {
                 this.eventEmitter.emit(RTCEvents.VIDEO_MUTE, mute);
             }.bind(this));
-            
+
             callback();
         };
     }

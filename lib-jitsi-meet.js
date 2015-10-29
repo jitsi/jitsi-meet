@@ -887,7 +887,8 @@ var RTCBrowserType = require("./RTCBrowserType");
  * Represents a single media track (either audio or video).
  * @constructor
  */
-function JitsiLocalTrack(RTC, stream, eventEmitter, videoType, isGUMStream)
+function JitsiLocalTrack(RTC, stream, eventEmitter, videoType, isGUMStream,
+  resolution)
 {
     JitsiTrack.call(this, RTC, stream);
     this.eventEmitter = eventEmitter;
@@ -895,6 +896,7 @@ function JitsiLocalTrack(RTC, stream, eventEmitter, videoType, isGUMStream)
     this.isGUMStream = true;
     this.dontFireRemoveEvent = false;
     this.isStarted = false;
+    this.resolution = resolution;
     var self = this;
     if(isGUMStream === false)
         this.isGUMStream = isGUMStream;
@@ -945,7 +947,8 @@ JitsiLocalTrack.prototype._setMute = function (mute) {
         } else {
             var self = this;
             this.rtc.obtainAudioAndVideoPermissions(
-                {devices: (isAudio ? ["audio"] : ["video"])}, true)
+                {devices: (isAudio ? ["audio"] : ["video"]),
+                  resolution: self.resolution}, true)
                 .then(function (streams) {
                     var stream = null;
                     for(var i = 0; i < streams.length; i++) {
@@ -1405,7 +1408,7 @@ RTC.prototype.createLocalStreams = function (streams, change) {
     for (var i = 0; i < streams.length; i++) {
         var localStream = new JitsiLocalTrack(this, streams[i].stream,
             this.eventEmitter, streams[i].videoType,
-            streams[i].isGUMStream);
+            streams[i].isGUMStream, streams[i].resolution);
         this.localStreams.push(localStream);
         if (streams[i].isMuted === true)
             localStream.setMute(true);
@@ -1528,7 +1531,7 @@ RTC.prototype.changeLocalVideo = function (stream, isUsingScreenStream, callback
             this.room.setVideoMute(false, function(mute) {
                 this.eventEmitter.emit(RTCEvents.VIDEO_MUTE, mute);
             }.bind(this));
-            
+
             callback();
         };
     }
@@ -2131,7 +2134,7 @@ var RTCUtils = {
 
         return new Promise(function (resolve, reject) {
             var successCallback = function (stream) {
-                var streams = self.successCallback(RTC , stream, usageOptions);
+                var streams = self.successCallback(RTC , stream, usageOptions, resolution);
                 resolve(dontCreateJitsiTracks? streams: RTC.createLocalStreams(streams));
             };
 
@@ -2222,15 +2225,16 @@ var RTCUtils = {
      * @param RTC the rtc service
      * @param stream the new MediaStream
      * @param usageOptions the list of the devices that should be queried.
+     * @param resolution the resolution of the video stream.
      * @returns {*}
      */
-    successCallback: function (RTC, stream, usageOptions) {
+    successCallback: function (RTC, stream, usageOptions, resolution) {
         // If this is FF or IE, the stream parameter is *not* a MediaStream object,
         // it's an object with two properties: audioStream, videoStream.
         if (stream && stream.getAudioTracks && stream.getVideoTracks)
             console.log('got', stream, stream.getAudioTracks().length,
                 stream.getVideoTracks().length);
-        return this.handleLocalStream(RTC, stream, usageOptions);
+        return this.handleLocalStream(RTC, stream, usageOptions, resolution);
     },
 
     /**
@@ -2255,7 +2259,7 @@ var RTCUtils = {
             && resolution != null) {
             self.getUserMediaWithConstraints(RTC, ['audio', 'video'],
                 function (stream) {
-                    var streams = self.successCallback(RTC, stream);
+                    var streams = self.successCallback(RTC, stream, resolution);
                     resolve(dontCreateJitsiTracks? streams: RTC.createLocalStreams(streams));
                 }, function (error, resolution) {
                     return self.errorCallback(error, resolve, RTC, resolution, dontCreateJitsiTracks);
@@ -2266,7 +2270,7 @@ var RTCUtils = {
                 RTC,
                 ['audio'],
                 function (stream) {
-                    var streams = self.successCallback(RTC, stream);
+                    var streams = self.successCallback(RTC, stream, resolution);
                     resolve(dontCreateJitsiTracks? streams: RTC.createLocalStreams(streams));
                 },
                 function (error) {
@@ -2284,9 +2288,10 @@ var RTCUtils = {
      * @param service the rtc service
      * @param stream the new Media Streams
      * @param usageOptions the list of the devices that should be queried.
+     * @param resolution the resolution of the video stream.
      * @returns {*[]} Promise object with the new Media Streams.
      */
-    handleLocalStream: function (service, stream, usageOptions) {
+    handleLocalStream: function (service, stream, usageOptions, resolution) {
         var audioStream, videoStream;
         // If this is FF, the stream parameter is *not* a MediaStream object, it's
         // an object with two properties: audioStream, videoStream.
@@ -2327,8 +2332,11 @@ var RTCUtils = {
             videoGUM = (!usageOptions || usageOptions.video !== false);
 
         return [
-                {stream: audioStream, type: "audio", isMuted: audioMuted, isGUMStream: audioGUM, videoType: null},
-                {stream: videoStream, type: "video", isMuted: videoMuted, isGUMStream: videoGUM, videoType: "camera"}
+                {stream: audioStream, type: "audio", isMuted: audioMuted,
+                  isGUMStream: audioGUM, videoType: null},
+                {stream: videoStream, type: "video", isMuted: videoMuted,
+                  isGUMStream: videoGUM, videoType: "camera",
+                  resolution: resolution}
             ];
     },
 
