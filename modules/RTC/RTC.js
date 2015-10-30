@@ -210,8 +210,8 @@ var RTC = {
         var videoStream = this.rtcUtils.createStream(stream, true);
         this.localVideo =
             this.createLocalStream(videoStream, "video", true, type);
-        // Stop the stream to trigger onended event for old stream
-        oldStream.stop();
+        // Stop the stream
+        this.stopMediaStream(oldStream);
 
         APP.xmpp.switchStreams(videoStream, oldStream,localCallback);
     },
@@ -219,8 +219,8 @@ var RTC = {
         var oldStream = this.localAudio.getOriginalStream();
         var newStream = this.rtcUtils.createStream(stream);
         this.localAudio = this.createLocalStream(newStream, "audio", true);
-        // Stop the stream to trigger onended event for old stream
-        oldStream.stop();
+        // Stop the stream
+        this.stopMediaStream(oldStream);
         APP.xmpp.switchStreams(newStream, oldStream, callback, true);
     },
     isVideoMuted: function (jid) {
@@ -262,6 +262,29 @@ var RTC = {
         if(devices.video === true || devices.video === false)
             this.devices.video = devices.video;
         eventEmitter.emit(RTCEvents.AVAILABLE_DEVICES_CHANGED, this.devices);
+    },
+    /**
+     * A method to handle stopping of the stream.
+     * One point to handle the differences in various implementations.
+     */
+    stopMediaStream: function (mediaStream) {
+        mediaStream.getAudioTracks().forEach(function (track) {
+            // stop() not supported with IE
+            if (track.stop) {
+                track.stop();
+            }
+        });
+        mediaStream.getVideoTracks().forEach(function (track) {
+            // stop() not supported with IE
+            if (track.stop) {
+                track.stop();
+            }
+        });
+
+        //
+        if (mediaStream.stop) {
+            mediaStream.stop();
+        }
     }
 };
 
