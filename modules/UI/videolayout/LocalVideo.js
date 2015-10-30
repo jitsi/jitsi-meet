@@ -208,13 +208,14 @@ LocalVideo.prototype.changeVideo = function (stream, isMuted) {
     APP.RTC.attachMediaStream(localVideoSelector, stream.getOriginalStream());
 
     // Add stream ended handler
-    stream.getOriginalStream().onended = function () {
+    APP.RTC.addMediaStreamInactiveHandler(
+        stream.getOriginalStream(), function () {
         // We have to re-select after attach when Temasys plugin is used,
         // because <video> element is replaced with <object>
         localVideo = $('#' + localVideo.id)[0];
         localVideoContainer.removeChild(localVideo);
         self.VideoLayout.updateRemovedVideo(APP.xmpp.myResource());
-    };
+    });
 };
 
 LocalVideo.prototype.joined = function (jid) {

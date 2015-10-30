@@ -266,6 +266,7 @@ var RTC = {
     /**
      * A method to handle stopping of the stream.
      * One point to handle the differences in various implementations.
+     * @param mediaStream MediaStream object to stop.
      */
     stopMediaStream: function (mediaStream) {
         mediaStream.getAudioTracks().forEach(function (track) {
@@ -284,6 +285,36 @@ var RTC = {
         //
         if (mediaStream.stop) {
             mediaStream.stop();
+        }
+    },
+    /**
+     * Adds onended handler to a MediaStream.
+     * @param mediaStream a MediaStream to attach onended handler
+     * @param handler the handler
+     */
+    addMediaStreamInactiveHandler: function (mediaStream, handler) {
+        if (mediaStream.addEventListener) {
+            // chrome
+            mediaStream.onended = handler;
+        } else {
+            // themasys
+            mediaStream.attachEvent('ended', function () {
+                handler(mediaStream);
+            });
+        }
+    },
+    /**
+     * Removes onended handler.
+     * @param mediaStream the MediaStream to remove the handler from.
+     * @param handler the handler to remove.
+     */
+    removeMediaStreamInactiveHandler: function (mediaStream, handler) {
+        if (mediaStream.removeEventListener) {
+            // chrome
+            mediaStream.onended = null;
+        } else {
+            // themasys
+            mediaStream.detachEvent('ended', handler);
         }
     }
 };

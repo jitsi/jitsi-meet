@@ -39,9 +39,12 @@ function LocalStream(stream, type, eventEmitter, videoType, isGUMStream) {
         };
     }
 
-    this.stream.onended = function () {
-        self.streamEnded();
-    };
+    APP.RTC.addMediaStreamInactiveHandler(
+        this.stream,
+        function () {
+            self.streamEnded();
+        });
+
     if (RTCBrowserType.isFirefox()) {
         implementOnEndedHandling(this.stream);
     }
