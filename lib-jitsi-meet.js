@@ -19,6 +19,11 @@ var Statistics = require("./modules/statistics/statistics");
  */
 
 function JitsiConference(options) {
+    if(!options.name || options.name.toLowerCase() === options.name) {
+        console.error("Invalid conference name (no conference name passed or it"
+            + "contains invalid characters like capital letters)!");
+         return;
+    }
     this.options = options;
     this.connection = this.options.connection;
     this.xmpp = this.connection.xmpp;
@@ -37,14 +42,16 @@ function JitsiConference(options) {
  * @param password {string} the password
  */
 JitsiConference.prototype.join = function (password) {
-    this.room.join(password);
+    if(this.room)
+        this.room.join(password);
 }
 
 /**
  * Leaves the conference.
  */
 JitsiConference.prototype.leave = function () {
-    this.xmpp.leaveRoom(this.room.roomjid);
+    if(this.xmpp)
+        this.xmpp.leaveRoom(this.room.roomjid);
     this.room = null;
 }
 
@@ -56,14 +63,16 @@ JitsiConference.prototype.leave = function () {
  *     or a JitsiConferenceError if rejected.
  */
 JitsiConference.prototype.createLocalTracks = function (options) {
-    return this.rtc.obtainAudioAndVideoPermissions(options || {});
+    if(this.rtc)
+        return this.rtc.obtainAudioAndVideoPermissions(options || {});
 }
 
 /**
  * Returns the local tracks.
  */
 JitsiConference.prototype.getLocalTracks = function () {
-    return this.rtc.localStreams;
+    if(this.rtc)
+        return this.rtc.localStreams;
 };
 
 
@@ -76,7 +85,8 @@ JitsiConference.prototype.getLocalTracks = function () {
  * Note: consider adding eventing functionality by extending an EventEmitter impl, instead of rolling ourselves
  */
 JitsiConference.prototype.on = function (eventId, handler) {
-    this.eventEmitter.on(eventId, handler);
+    if(this.eventEmitter)
+        this.eventEmitter.on(eventId, handler);
 }
 
 /**
@@ -87,7 +97,8 @@ JitsiConference.prototype.on = function (eventId, handler) {
  * Note: consider adding eventing functionality by extending an EventEmitter impl, instead of rolling ourselves
  */
 JitsiConference.prototype.off = function (eventId, handler) {
-    this.eventEmitter.removeListener(eventId, listener);
+    if(this.eventEmitter)
+        this.eventEmitter.removeListener(eventId, listener);
 }
 
 // Common aliases for event emitter
@@ -100,7 +111,8 @@ JitsiConference.prototype.removeEventListener = JitsiConference.prototype.off
  * @param handler {Function} handler for the command
  */
  JitsiConference.prototype.addCommandListener = function (command, handler) {
-     this.room.addPresenceListener(command, handler);
+    if(this.room)
+        this.room.addPresenceListener(command, handler);
  }
 
 /**
@@ -108,7 +120,8 @@ JitsiConference.prototype.removeEventListener = JitsiConference.prototype.off
   * @param command {String}  the name of the command
   */
  JitsiConference.prototype.removeCommandListener = function (command) {
-    this.room.removePresenceListener(command);
+    if(this.room)
+        this.room.removePresenceListener(command);
  }
 
 /**
@@ -116,7 +129,8 @@ JitsiConference.prototype.removeEventListener = JitsiConference.prototype.off
  * @param message the text message.
  */
 JitsiConference.prototype.sendTextMessage = function (message) {
-    this.room.sendMessage(message);
+    if(this.room)
+        this.room.sendMessage(message);
 }
 
 /**
@@ -125,8 +139,10 @@ JitsiConference.prototype.sendTextMessage = function (message) {
  * @param values Object with keys and values that will be send.
  **/
 JitsiConference.prototype.sendCommand = function (name, values) {
-    this.room.addToPresence(name, values);
-    this.room.sendPresence();
+    if(this.room) {
+        this.room.addToPresence(name, values);
+        this.room.sendPresence();
+    }
 }
 
 /**
@@ -146,7 +162,8 @@ JitsiConference.prototype.sendCommandOnce = function (name, values) {
  * @param persistent if false the command will be sent only one time
  **/
 JitsiConference.prototype.removeCommand = function (name) {
-    this.room.removeFromPresence(name);
+    if(this.room)
+        this.room.removeFromPresence(name);
 }
 
 /**
@@ -154,8 +171,10 @@ JitsiConference.prototype.removeCommand = function (name) {
  * @param name the display name to set
  */
 JitsiConference.prototype.setDisplayName = function(name) {
-    this.room.addToPresence("nick", {attributes: {xmlns: 'http://jabber.org/protocol/nick'}, value: name});
-    this.room.sendPresence();
+    if(this.room){
+        this.room.addToPresence("nick", {attributes: {xmlns: 'http://jabber.org/protocol/nick'}, value: name});
+        this.room.sendPresence();
+    }
 }
 
 /**
@@ -163,7 +182,9 @@ JitsiConference.prototype.setDisplayName = function(name) {
  * @param id the identifier of the participant
  */
 JitsiConference.prototype.selectParticipant = function(participantId) {
-    this.rtc.selectedEndpoint(participantId);
+    if (this.rtc) {
+        this.rtc.selectedEndpoint(participantId);
+    }
 }
 
 /**
@@ -171,7 +192,8 @@ JitsiConference.prototype.selectParticipant = function(participantId) {
  * @param id the identifier of the participant
  */
 JitsiConference.prototype.pinParticipant = function(participantId) {
-    this.rtc.pinEndpoint(participantId);
+    if(this.rtc)
+        this.rtc.pinEndpoint(participantId);
 }
 
 /**
@@ -188,11 +210,14 @@ JitsiConference.prototype.getParticipants = function() {
  * @param id the id of the participant.
  */
 JitsiConference.prototype.getParticipantById = function(id) {
-    return this.participants[id];
+    if(this.participants)
+        return this.participants[id];
+    return null;
 }
 
 JitsiConference.prototype.onMemberJoined = function (jid, email, nick) {
-    this.eventEmitter.emit(JitsiConferenceEvents.USER_JOINED, Strophe.getResourceFromJid(jid));
+    if(this.eventEmitter)
+        this.eventEmitter.emit(JitsiConferenceEvents.USER_JOINED, Strophe.getResourceFromJid(jid));
 //    this.participants[jid] = new JitsiParticipant();
 }
 
@@ -2063,10 +2088,10 @@ var RTCUtils = {
             });
         } else {
             try {
-                console.log('Browser does not appear to be WebRTC-capable');
+                console.error('Browser does not appear to be WebRTC-capable');
             } catch (e) {
             }
-            window.location.href = 'unsupported_browser.html';
+            return;
         }
 
     },

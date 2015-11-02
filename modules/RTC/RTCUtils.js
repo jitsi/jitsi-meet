@@ -288,10 +288,10 @@ var RTCUtils = {
             });
         } else {
             try {
-                console.log('Browser does not appear to be WebRTC-capable');
+                console.error('Browser does not appear to be WebRTC-capable');
             } catch (e) {
             }
-            window.location.href = 'unsupported_browser.html';
+            return;
         }
 
     },
