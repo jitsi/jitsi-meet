@@ -110,7 +110,7 @@ LocalStream.prototype.isMuted = function () {
     if (this.isAudioStream()) {
         tracks = this.stream.getAudioTracks();
     } else {
-        if (this.isActive())
+        if (!this.isActive())
             return true;
         tracks = this.stream.getVideoTracks();
     }
