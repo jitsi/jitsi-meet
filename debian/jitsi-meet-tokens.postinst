@@ -57,7 +57,7 @@ case "$1" in
         db_stop
 
         if [ -f "$PROSODY_HOST_CONFIG" ] ; then
-            if grep -q "--plugin_paths" "$PROSODY_HOST_CONFIG"; then
+            if grep -q "plugin_paths" "$PROSODY_HOST_CONFIG"; then
                 # enable tokens in prosody host config
                 sed -i "s/--plugin_paths/plugin_paths/g" $PROSODY_HOST_CONFIG
                 sed -i 's/authentication = "anonymous"/authentication = "token"/g' $PROSODY_HOST_CONFIG
