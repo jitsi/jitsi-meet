@@ -15,7 +15,6 @@ function implementOnEndedHandling(localStream) {
     stream.stop = function () {
         originalStop.apply(stream);
         if (localStream.isActive()) {
-            stream.ended = true;
             stream.onended();
         }
     };
@@ -127,10 +126,15 @@ LocalStream.prototype.getId = function () {
 
 /**
  * Checks whether the MediaStream is avtive/not ended.
+ * When there is no check for active we don't have information and so
+ * will return that stream is active (in case of FF).
  * @returns {boolean} whether MediaStream is active.
  */
 LocalStream.prototype.isActive = function () {
-    return !this.stream.ended;
+    if((typeof this.stream.active !== "undefined"))
+        return this.stream.active;
+    else
+        return true;
 };
 
 module.exports = LocalStream;
