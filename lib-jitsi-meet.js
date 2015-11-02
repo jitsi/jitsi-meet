@@ -19,7 +19,7 @@ var Statistics = require("./modules/statistics/statistics");
  */
 
 function JitsiConference(options) {
-    if(!options.name || options.name.toLowerCase() === options.name) {
+    if(!options.name || options.name.toLowerCase() !== options.name) {
         console.error("Invalid conference name (no conference name passed or it"
             + "contains invalid characters like capital letters)!");
          return;
