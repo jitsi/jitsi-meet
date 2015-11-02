@@ -282,14 +282,17 @@ var RTC = {
         }
     },
     /**
-     * Adds onended handler to a MediaStream.
-     * @param mediaStream a MediaStream to attach onended handler
+     * Adds onended/inactive handler to a MediaStream.
+     * @param mediaStream a MediaStream to attach onended/inactive handler
      * @param handler the handler
      */
     addMediaStreamInactiveHandler: function (mediaStream, handler) {
         if (mediaStream.addEventListener) {
             // chrome
-            mediaStream.onended = handler;
+            if(typeof mediaStream.active !== "undefined")
+                mediaStream.inactive = handler;
+            else
+                mediaStream.onended = handler;
         } else {
             // themasys
             mediaStream.attachEvent('ended', function () {
@@ -298,14 +301,17 @@ var RTC = {
         }
     },
     /**
-     * Removes onended handler.
+     * Removes onended/inactive handler.
      * @param mediaStream the MediaStream to remove the handler from.
      * @param handler the handler to remove.
      */
     removeMediaStreamInactiveHandler: function (mediaStream, handler) {
         if (mediaStream.removeEventListener) {
             // chrome
-            mediaStream.onended = null;
+            if(typeof mediaStream.active !== "undefined")
+                mediaStream.inactive = null;
+            else
+                mediaStream.onended = null;
         } else {
             // themasys
             mediaStream.detachEvent('ended', handler);
