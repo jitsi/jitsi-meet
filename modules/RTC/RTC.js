@@ -269,20 +269,14 @@ var RTC = {
      * @param mediaStream MediaStream object to stop.
      */
     stopMediaStream: function (mediaStream) {
-        mediaStream.getAudioTracks().forEach(function (track) {
-            // stop() not supported with IE
-            if (track.stop) {
-                track.stop();
-            }
-        });
-        mediaStream.getVideoTracks().forEach(function (track) {
+        mediaStream.getTracks().forEach(function (track) {
             // stop() not supported with IE
             if (track.stop) {
                 track.stop();
             }
         });
 
-        //
+        // leave stop for implementation still using it
         if (mediaStream.stop) {
             mediaStream.stop();
         }
