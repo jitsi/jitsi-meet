@@ -66,6 +66,9 @@ case "$1" in
                 sed -i "s/ --app_secret=example_app_secret/ app_secret=$APP_SECRET/g" $PROSODY_HOST_CONFIG
                 sed -i 's/ --modules_enabled = { "token_verification" }/ modules_enabled = { "token_verification" }/g' $PROSODY_HOST_CONFIG
 
+                if [ -x "/etc/init.d/prosody" ]; then
+                    invoke-rc.d prosody reload
+                fi
             else
                 echo "Failed apply auto-config to $PROSODY_HOST_CONFIG which most likely comes from not supported version of jitsi-meet"
             fi
