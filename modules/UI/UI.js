@@ -315,7 +315,11 @@ function registerListeners() {
     });
     APP.xmpp.addListener(XMPPEvents.PROMPT_FOR_LOGIN, function (callback) {
         // FIXME: re-use LoginDialog which supports retries
-        UI.showLoginPopup(callback);
+        if (config.token) {
+            messageHandler.showError("dialog.error", "dialog.tokenAuthFailed");
+        } else {
+            UI.showLoginPopup(callback);
+        }
     });
 
     APP.xmpp.addListener(XMPPEvents.FOCUS_DISCONNECTED, function (focusComponent, retrySec) {

@@ -11,10 +11,21 @@ var StreamEventTypes = require("../../service/RTC/StreamEventTypes");
 var RTCEvents = require("../../service/RTC/RTCEvents");
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 var retry = require('retry');
+var RandomUtil = require("../util/RandomUtil");
 
 var eventEmitter = new EventEmitter();
 var connection = null;
 var authenticatedUser = false;
+
+/**
+ * Utility method that generates user name based on random hex values.
+ * Eg. 12345678-1234-1234-12345678
+ * @returns {string}
+ */
+function generateUserName() {
+    return RandomUtil.random8digitsHex() + "-" + RandomUtil.random4digitsHex() + "-" +
+        RandomUtil.random4digitsHex() + "-" + RandomUtil.random8digitsHex();
+}
 
 function connect(jid, password) {
 
@@ -296,7 +307,16 @@ var XMPP = {
             configDomain = config.hosts.domain;
         }
         var jid = configDomain || window.location.hostname;
-        connect(jid, null);
+        var password = null;
+        if (config.token) {
+            password = config.token;
+            if (config.id) {
+                jid = config.id + "@" + jid;
+            } else {
+                jid = generateUserName() + "@" + jid;
+            }
+        }
+        connect(jid, password);
     },
     createConnection: function () {
         var bosh = config.bosh || '/http-bind';
