@@ -320,8 +320,8 @@ var XMPP = {
     },
     createConnection: function () {
         var bosh = config.bosh || '/http-bind';
-
-        return new Strophe.Connection(bosh);
+        // adds the room name used to the bosh connection
+        return new Strophe.Connection(bosh + '?ROOM=' + APP.UI.getRoomNode());
     },
     getStatusString: function (status) {
         return Strophe.getStatusString(status);
