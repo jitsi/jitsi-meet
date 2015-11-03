@@ -1128,21 +1128,56 @@ JingleSessionPC.prototype._modifySources = function (successCallback, queueCallb
  * @param newStream new stream that will be used as video of this session.
  * @param oldStream old video stream of this session.
  * @param successCallback callback executed after successful stream switch.
+ * @param isAudio whether the streams are audio (if true) or video (if false).
  */
 JingleSessionPC.prototype.switchStreams =
-    function (newStream, oldStream, successCallback) {
-
+    function (newStream, oldStream, successCallback, isAudio) {
     var self = this;
-
+    var sender, newTrack;
+    var senderKind = isAudio ? 'audio' : 'video';
     // Remember SDP to figure out added/removed SSRCs
     var oldSdp = null;
+
     if (self.peerconnection) {
         if (self.peerconnection.localDescription) {
             oldSdp = new SDP(self.peerconnection.localDescription.sdp);
         }
-        self.peerconnection.removeStream(oldStream, true);
-        if (newStream)
-            self.peerconnection.addStream(newStream);
+        if (RTCBrowserType.getBrowserType() ===
+                RTCBrowserType.RTC_BROWSER_FIREFOX) {
+            // On Firefox we don't replace MediaStreams as this messes up the
+            // m-lines (which can't be removed in Plan Unified) and brings a lot
+            // of complications. Instead, we use the RTPSender and replace just
+            // the track.
+
+            // Find the right sender (for audio or video)
+            self.peerconnection.peerconnection.getSenders().some(function (s) {
+                if (s.track && s.track.kind === senderKind) {
+                    sender = s;
+                    return true;
+                }
+            });
+
+            if (sender) {
+                // We assume that our streams have a single track, either audio
+                // or video.
+                newTrack = isAudio ? newStream.getAudioTracks()[0] :
+                    newStream.getVideoTracks()[0];
+                sender.replaceTrack(newTrack)
+                    .then(function() {
+                        console.log("Replaced a track, isAudio=" + isAudio);
+                    })
+                    .catch(function(err) {
+                        console.log("Failed to replace a track: " + err);
+                    });
+            } else {
+                console.log("Cannot switch tracks: no RTPSender.");
+            }
+        } else {
+            self.peerconnection.removeStream(oldStream, true);
+            if (newStream) {
+                self.peerconnection.addStream(newStream);
+            }
+        }
     }
 
     // Conference is not active
