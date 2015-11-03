@@ -4,8 +4,9 @@
 VirtualHost "jitmeet.example.com"
         -- enabled = false -- Remove this line to enable this host
         authentication = "anonymous"
-        -- Two properties below get uncommented by jitsi-meet-tokens package config
+        -- Three properties below get uncommented by jitsi-meet-tokens package config
         -- and authentication above is switched to "token"
+        --allow_unencrypted_plain_auth = true;
         --app_id=example_app_id
         --app_secret=example_app_secret
         -- Assign this host a certificate for TLS, otherwise it would use the one
