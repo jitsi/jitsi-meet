@@ -1,8 +1,10 @@
 <html itemscope itemtype="http://schema.org/Product" prefix="og: http://ogp.me/ns#" xmlns="http://www.w3.org/1999/html">
   <head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <!--#include virtual="title.html" -->
     <link rel="icon" type="image/png" href="/images/favicon.ico?v=1"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta property="og:title" content="Jitsi Meet"/>
     <meta property="og:image" content="/images/jitsilogo.png?v=1"/>
     <meta property="og:description" content="Join a WebRTC video conference powered by the Jitsi Videobridge"/>
@@ -10,7 +12,8 @@
     <meta itemprop="name" content="Jitsi Meet"/>
     <meta itemprop="description" content="Join a WebRTC video conference powered by the Jitsi Videobridge"/>
     <meta itemprop="image" content="/images/jitsilogo.png?v=1"/>
-      <link rel="stylesheet" href="css/all.css"/>
+    <link rel="stylesheet" href="css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="css/all.css"/>
     <script>console.log("(TIME) index.html loaded:\t", window.performance.now());</script>
     <script src="https://api.callstats.io/static/callstats.min.js"></script>
     <script src="config.js?v=15"></script><!-- adapt to your needs, i.e. set hosts and bosh path -->
@@ -26,15 +29,16 @@
   <body>
     <div id="welcome_page">
         <div id="welcome_page_header">
-            <a target="_new">
-                <div class="watermark leftwatermark"></div>
-            </a>
-            <a target="_new">
-                <div class="watermark rightwatermark"></div>
-            </a>
-            <a class="poweredby" href="http://jitsi.org" target="_new" ><span data-i18n="poweredby"></span> jitsi.org</a>
+            <div class="row">
+                <a target="_new">
+                    <div class="watermark leftwatermark"></div>
+                </a>
+                <a target="_new">
+                    <div class="watermark rightwatermark"></div>
+                </a>
+                <a class="poweredby" href="http://jitsi.org" target="_new" ><span data-i18n="poweredby"></span> jitsi.org</a>
 
-            <div id="enter_room_container">
+                <div id="enter_room_container">
                     <div id="enter_room_form" >
                         <div id="domain_name"></div>
                         <div id="enter_room">
@@ -44,54 +48,55 @@
 
                         </div>
                     </div>
-            </div>
-            <div id="brand_header"></div>
-            <input type='checkbox' name='checkbox' id="disable_welcome"/>
-            <label for="disable_welcome" class="disable_welcome_position" data-i18n="welcomepage.disable"></label>
-            <div id="header_text">
-                <!--#include virtual="plugin.header.text.html" -->
+                </div>
+                <div id="brand_header"></div>
+                <input type='checkbox' name='checkbox' id="disable_welcome"/>
+                <label for="disable_welcome" class="disable_welcome_position" data-i18n="welcomepage.disable"></label>
+                <div id="header_text">
+                    <!--#include virtual="plugin.header.text.html" -->
+                </div>
             </div>
         </div>
         <div id="welcome_page_main">
             <div id="features">
-                <div class="feature_row">
-                    <div class="feature_holder">
+                <div class="feature_row row">
+                    <div class="col-md-3">
                         <div class="feature_icon" data-i18n="welcomepage.feature1.title" ></div>
                         <div class="feature_description" data-i18n="welcomepage.feature1.content" data-i18n-options='{ "postProcess": "resolveAppName" }'>
                         </div>
                     </div>
-                    <div class="feature_holder">
+                    <div class="col-md-3 feature holder">
                         <div class="feature_icon" data-i18n="welcomepage.feature2.title" ></div>
                         <div class="feature_description" data-i18n="welcomepage.feature2.content">
                         </div>
                     </div>
-                    <div class="feature_holder">
+                    <div class="col-md-3 feature holder">
                         <div class="feature_icon" data-i18n="welcomepage.feature3.title" ></div>
                         <div class="feature_description" data-i18n="welcomepage.feature3.content" data-i18n-options='{ "postProcess": "resolveAppName" }'>
                         </div>
                     </div>
-                    <div class="feature_holder">
+                    <div class="col-md-3 feature holder">
                         <div class="feature_icon" data-i18n="welcomepage.feature4.title" ></div>
                         <div class="feature_description" data-i18n="welcomepage.feature4.content">
                         </div>
                     </div>
                 </div>
-                <div class="feature_row">
-                    <div class="feature_holder">
+                <div class="feature_row row">
+                    <div class="col-md-3 feature holder">
                             <div class="feature_icon" data-i18n="welcomepage.feature5.title" ></div>
                             <div class="feature_description" data-i18n="welcomepage.feature5.content" data-i18n-options='{ "postProcess": "resolveAppName" }'>
                             </div>
                     </div>
-                    <div class="feature_holder">
+                    <div class="col-md-3 feature holder">
                             <div class="feature_icon" data-i18n="welcomepage.feature6.title" ></div>
                             <div class="feature_description" data-i18n="welcomepage.feature6.content" data-i18n-options='{ "postProcess": "resolveAppName" }'>
                             </div>
                     </div>
-                    <div class="feature_holder">
+                    <div class="col-md-3 feature holder">
                             <div class="feature_icon" data-i18n="welcomepage.feature7.title" ></div>
                             <div class="feature_description" data-i18n="welcomepage.feature7.content" data-i18n-options='{ "postProcess": "resolveAppName" }'></div>
                     </div>
-                    <div class="feature_holder">
+                    <div class="col-md-3 feature holder">
                             <div class="feature_icon" data-i18n="welcomepage.feature8.title" ></div>
                             <div class="feature_description" data-i18n="welcomepage.feature8.content"></div>
                     </div>

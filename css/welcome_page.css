@@ -153,8 +153,6 @@
     position: relative;
     width: 976px;
     margin: 0px auto 30px auto;
-    padding-right: 75px;
-
 }
 
 .feature_holder
@@ -169,6 +167,7 @@
 {
     background-image:url(../images/welcome_page/bubble.png);
     background-repeat: no-repeat;
+    background-position: center;
     width: 169px;
     height: 169px;
     font-family: Helvetica;
