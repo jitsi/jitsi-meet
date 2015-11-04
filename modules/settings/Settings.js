@@ -1,4 +1,4 @@
-var UsernameGenerator = require('../statistics/UsernameGenerator');
+var UsernameGenerator = require('../util/UsernameGenerator');
 
 var email = '';
 var displayName = '';
