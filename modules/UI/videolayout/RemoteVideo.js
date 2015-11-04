@@ -320,7 +320,7 @@ RemoteVideo.prototype.updateRemoteVideoMenu = function (isMuted) {
     if (muteMenuItem.length) {
         var muteLink = muteMenuItem.get(0);
 
-        if (isMuted === 'true') {
+        if (isMuted) {
             muteLink.innerHTML = mutedIndicator + ' Muted';
             muteLink.className = 'mutelink disabled';
         }
