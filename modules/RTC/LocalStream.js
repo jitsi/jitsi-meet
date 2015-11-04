@@ -9,12 +9,12 @@ var RTCBrowserType = require("./RTCBrowserType");
  * @param stream original WebRTC stream object to which 'onended' handling
  *               will be added.
  */
-function implementOnEndedHandling(stream) {
+function implementOnEndedHandling(localStream) {
+    var stream = localStream.getOriginalStream();
     var originalStop = stream.stop;
     stream.stop = function () {
         originalStop.apply(stream);
-        if (!stream.ended) {
-            stream.ended = true;
+        if (localStream.isActive()) {
             stream.onended();
         }
     };
@@ -39,11 +39,14 @@ function LocalStream(stream, type, eventEmitter, videoType, isGUMStream) {
         };
     }
 
-    this.stream.onended = function () {
-        self.streamEnded();
-    };
+    APP.RTC.addMediaStreamInactiveHandler(
+        this.stream,
+        function () {
+            self.streamEnded();
+        });
+
     if (RTCBrowserType.isFirefox()) {
-        implementOnEndedHandling(this.stream);
+        implementOnEndedHandling(this);
     }
 }
 
@@ -78,7 +81,7 @@ LocalStream.prototype.setMute = function (mute)
     } else {
         if (mute) {
             APP.xmpp.removeStream(this.stream);
-            this.stream.stop();
+            APP.RTC.stopMediaStream(this.stream);
             this.eventEmitter.emit(eventType, true);
         } else {
             var self = this;
@@ -106,7 +109,7 @@ LocalStream.prototype.isMuted = function () {
     if (this.isAudioStream()) {
         tracks = this.stream.getAudioTracks();
     } else {
-        if (this.stream.ended)
+        if (!this.isActive())
             return true;
         tracks = this.stream.getVideoTracks();
     }
@@ -119,6 +122,19 @@ LocalStream.prototype.isMuted = function () {
 
 LocalStream.prototype.getId = function () {
     return this.stream.getTracks()[0].id;
+};
+
+/**
+ * Checks whether the MediaStream is avtive/not ended.
+ * When there is no check for active we don't have information and so
+ * will return that stream is active (in case of FF).
+ * @returns {boolean} whether MediaStream is active.
+ */
+LocalStream.prototype.isActive = function () {
+    if((typeof this.stream.active !== "undefined"))
+        return this.stream.active;
+    else
+        return true;
 };
 
 module.exports = LocalStream;

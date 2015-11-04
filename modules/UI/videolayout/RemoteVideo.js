@@ -229,12 +229,12 @@ RemoteVideo.prototype.addRemoteStreamElement = function (stream) {
         APP.RTC.attachMediaStream(sel, stream);
     }
 
-    stream.onended = function () {
-        console.log('stream ended', this);
+    APP.RTC.addMediaStreamInactiveHandler(
+        stream, function () {
+            console.log('stream ended', this);
 
-        self.removeRemoteStreamElement(stream, isVideo, newElementId);
-
-    };
+            self.removeRemoteStreamElement(stream, isVideo, newElementId);
+    });
 
     // Add click handler.
     var onClickHandler = function (event) {

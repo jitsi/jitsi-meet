@@ -32,3 +32,9 @@ Description: Prosody configuration for Jitsi Meet
  .
  This package contains configuration for Prosody to be used with
  Jitsi Meet.
+
+Package: jitsi-meet-tokens
+Architecture: all
+Depends: ${misc:Depends}, prosody | prosody-trunk, jitsi-meet-prosody
+Description: Prosody token authentication plugin for Jitsi Meet
+

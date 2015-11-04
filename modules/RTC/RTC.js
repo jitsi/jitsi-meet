@@ -53,7 +53,6 @@ var RTC = {
         audio: true,
         video: true
     },
-    localStreams: [],
     remoteStreams: {},
     localAudio: null,
     localVideo: null,
@@ -74,10 +73,6 @@ var RTC = {
 
         var localStream =
             new LocalStream(stream, type, eventEmitter, videoType, isGUMStream);
-        //in firefox we have only one stream object
-        if(this.localStreams.length === 0 ||
-            this.localStreams[0].getOriginalStream() != stream)
-            this.localStreams.push(localStream);
         if(isMuted === true)
             localStream.setMute(true);
 
@@ -92,14 +87,6 @@ var RTC = {
 
         eventEmitter.emit(eventType, localStream, isMuted);
         return localStream;
-    },
-    removeLocalStream: function (stream) {
-        for(var i = 0; i < this.localStreams.length; i++) {
-            if(this.localStreams[i].getOriginalStream() === stream) {
-                delete this.localStreams[i];
-                return;
-            }
-        }
     },
     createRemoteStream: function (data, ssrc) {
         var jid = data.peerjid || APP.xmpp.myJid();
@@ -214,16 +201,6 @@ var RTC = {
         }
         return false;
     },
-    switchVideoStreams: function (newStream) {
-        this.localVideo.stream = newStream;
-
-        this.localStreams = [];
-
-        //in firefox we have only one stream object
-        if (this.localAudio.getOriginalStream() != newStream)
-            this.localStreams.push(this.localAudio);
-        this.localStreams.push(this.localVideo);
-    },
     changeLocalVideo: function (stream, isUsingScreenStream, callback) {
         var oldStream = this.localVideo.getOriginalStream();
         var type = (isUsingScreenStream ? "screen" : "camera");
@@ -244,10 +221,8 @@ var RTC = {
         var videoStream = this.rtcUtils.createStream(stream, true);
         this.localVideo =
             this.createLocalStream(videoStream, "video", true, type);
-        // Stop the stream to trigger onended event for old stream
-        oldStream.stop();
-
-        this.switchVideoStreams(videoStream);
+        // Stop the stream
+        this.stopMediaStream(oldStream);
 
         APP.xmpp.switchStreams(videoStream, oldStream,localCallback);
     },
@@ -255,8 +230,8 @@ var RTC = {
         var oldStream = this.localAudio.getOriginalStream();
         var newStream = this.rtcUtils.createStream(stream);
         this.localAudio = this.createLocalStream(newStream, "audio", true);
-        // Stop the stream to trigger onended event for old stream
-        oldStream.stop();
+        // Stop the stream
+        this.stopMediaStream(oldStream);
         APP.xmpp.switchStreams(newStream, oldStream, callback, true);
     },
     isVideoMuted: function (jid) {
@@ -298,6 +273,60 @@ var RTC = {
         if(devices.video === true || devices.video === false)
             this.devices.video = devices.video;
         eventEmitter.emit(RTCEvents.AVAILABLE_DEVICES_CHANGED, this.devices);
+    },
+    /**
+     * A method to handle stopping of the stream.
+     * One point to handle the differences in various implementations.
+     * @param mediaStream MediaStream object to stop.
+     */
+    stopMediaStream: function (mediaStream) {
+        mediaStream.getTracks().forEach(function (track) {
+            // stop() not supported with IE
+            if (track.stop) {
+                track.stop();
+            }
+        });
+
+        // leave stop for implementation still using it
+        if (mediaStream.stop) {
+            mediaStream.stop();
+        }
+    },
+    /**
+     * Adds onended/inactive handler to a MediaStream.
+     * @param mediaStream a MediaStream to attach onended/inactive handler
+     * @param handler the handler
+     */
+    addMediaStreamInactiveHandler: function (mediaStream, handler) {
+        if (mediaStream.addEventListener) {
+            // chrome
+            if(typeof mediaStream.active !== "undefined")
+                mediaStream.inactive = handler;
+            else
+                mediaStream.onended = handler;
+        } else {
+            // themasys
+            mediaStream.attachEvent('ended', function () {
+                handler(mediaStream);
+            });
+        }
+    },
+    /**
+     * Removes onended/inactive handler.
+     * @param mediaStream the MediaStream to remove the handler from.
+     * @param handler the handler to remove.
+     */
+    removeMediaStreamInactiveHandler: function (mediaStream, handler) {
+        if (mediaStream.removeEventListener) {
+            // chrome
+            if(typeof mediaStream.active !== "undefined")
+                mediaStream.inactive = null;
+            else
+                mediaStream.onended = null;
+        } else {
+            // themasys
+            mediaStream.detachEvent('ended', handler);
+        }
     }
 };
 

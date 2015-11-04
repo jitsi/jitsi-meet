@@ -20,7 +20,6 @@ function JingleSessionPC(me, sid, connection, service, eventEmitter) {
     this.state = null;
     this.localSDP = null;
     this.remoteSDP = null;
-    this.relayedStreams = [];
     this.pc_constraints = null;
 
     this.usetrickle = true;
@@ -169,13 +168,12 @@ JingleSessionPC.prototype.doInitialize = function () {
     this.peerconnection.onnegotiationneeded = function (event) {
         self.eventEmitter.emit(XMPPEvents.PEERCONNECTION_READY, self);
     };
-    // add any local and relayed stream
-    APP.RTC.localStreams.forEach(function(stream) {
-        self.peerconnection.addStream(stream.getOriginalStream());
-    });
-    this.relayedStreams.forEach(function(stream) {
-        self.peerconnection.addStream(stream);
-    });
+    if (APP.RTC.localAudio) {
+        self.peerconnection.addStream(APP.RTC.localAudio.getOriginalStream());
+    }
+    if (APP.RTC.localVideo) {
+        self.peerconnection.addStream(APP.RTC.localVideo.getOriginalStream());
+    }
 };
 
 function onIceConnectionStateChange(sid, session) {
@@ -1173,20 +1171,56 @@ JingleSessionPC.prototype._modifySources = function (successCallback, queueCallb
  * @param newStream new stream that will be used as video of this session.
  * @param oldStream old video stream of this session.
  * @param successCallback callback executed after successful stream switch.
+ * @param isAudio whether the streams are audio (if true) or video (if false).
  */
-JingleSessionPC.prototype.switchStreams = function (newStream, oldStream, successCallback) {
-
+JingleSessionPC.prototype.switchStreams =
+    function (newStream, oldStream, successCallback, isAudio) {
     var self = this;
-
+    var sender, newTrack;
+    var senderKind = isAudio ? 'audio' : 'video';
     // Remember SDP to figure out added/removed SSRCs
     var oldSdp = null;
+
     if (self.peerconnection) {
         if (self.peerconnection.localDescription) {
             oldSdp = new SDP(self.peerconnection.localDescription.sdp);
         }
-        self.peerconnection.removeStream(oldStream, true);
-        if (newStream)
-            self.peerconnection.addStream(newStream);
+        if (RTCBrowserType.getBrowserType() ===
+                RTCBrowserType.RTC_BROWSER_FIREFOX) {
+            // On Firefox we don't replace MediaStreams as this messes up the
+            // m-lines (which can't be removed in Plan Unified) and brings a lot
+            // of complications. Instead, we use the RTPSender and replace just
+            // the track.
+
+            // Find the right sender (for audio or video)
+            self.peerconnection.peerconnection.getSenders().some(function (s) {
+                if (s.track && s.track.kind === senderKind) {
+                    sender = s;
+                    return true;
+                }
+            });
+
+            if (sender) {
+                // We assume that our streams have a single track, either audio
+                // or video.
+                newTrack = isAudio ? newStream.getAudioTracks()[0] :
+                    newStream.getVideoTracks()[0];
+                sender.replaceTrack(newTrack)
+                    .then(function() {
+                        console.log("Replaced a track, isAudio=" + isAudio);
+                    })
+                    .catch(function(err) {
+                        console.log("Failed to replace a track: " + err);
+                    });
+            } else {
+                console.log("Cannot switch tracks: no RTPSender.");
+            }
+        } else {
+            self.peerconnection.removeStream(oldStream, true);
+            if (newStream) {
+                self.peerconnection.addStream(newStream);
+            }
+        }
     }
 
     // Conference is not active
@@ -1430,6 +1464,7 @@ JingleSessionPC.prototype.setLocalDescription = function () {
     var self = this;
     var newssrcs = [];
     var session = transform.parse(this.peerconnection.localDescription.sdp);
+    var i;
     session.media.forEach(function (media) {
 
         if (media.ssrcs && media.ssrcs.length > 0) {
@@ -1458,10 +1493,28 @@ JingleSessionPC.prototype.setLocalDescription = function () {
 
     // Bind us as local SSRCs owner
     if (newssrcs.length > 0) {
-        for (var i = 1; i <= newssrcs.length; i ++) {
-            var ssrc = newssrcs[i-1].ssrc;
+
+        if (config.advertiseSSRCsInPresence) {
+            // This is only for backward compatibility with clients which
+            // don't support getting sources from Jingle (i.e. jirecon).
+            this.connection.emuc.clearPresenceMedia();
+        }
+
+        for (i = 0; i < newssrcs.length; i++) {
+            var ssrc = newssrcs[i].ssrc;
             var myJid = self.connection.emuc.myroomjid;
             self.ssrcOwners[ssrc] = myJid;
+
+            if (config.advertiseSSRCsInPresence) {
+                // This is only for backward compatibility with clients which
+                // don't support getting sources from Jingle (i.e. jirecon).
+                this.connection.emuc.addMediaToPresence(
+                    i+1, newssrcs[i].type, ssrc, newssrcs[i].direction);
+            }
+        }
+
+        if (config.advertiseSSRCsInPresence) {
+            this.connection.emuc.sendPresence();
         }
     }
 };

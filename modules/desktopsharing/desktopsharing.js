@@ -54,12 +54,8 @@ function onEndedHandler(stream) {
     if (!switchInProgress && isUsingScreenStream) {
         APP.desktopsharing.toggleScreenSharing();
     }
-    //FIXME: to be verified
-    if (stream.removeEventListener) {
-        stream.removeEventListener('ended', onEndedHandler);
-    } else {
-        stream.detachEvent('ended', onEndedHandler);
-    }
+
+    APP.RTC.removeMediaStreamInactiveHandler(stream, onEndedHandler);
 }
 
 module.exports = {
@@ -113,16 +109,8 @@ module.exports = {
                     isUsingScreenStream = true;
                     // Hook 'ended' event to restore camera
                     // when screen stream stops
-                    //FIXME: to be verified
-                    if (stream.addEventListener) {
-                        stream.addEventListener('ended', function () {
-                            onEndedHandler(stream);
-                        });
-                    } else {
-                        stream.attachEvent('ended', function () {
-                            onEndedHandler(stream);
-                        });
-                    }
+                    APP.RTC.addMediaStreamInactiveHandler(
+                        stream, onEndedHandler);
                     newStreamCreated(stream);
                 },
                 getDesktopStreamFailed);

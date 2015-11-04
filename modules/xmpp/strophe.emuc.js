@@ -529,6 +529,31 @@ module.exports = function(XMPP, eventEmitter) {
                     .c('current').t(this.presMap['prezicurrent']).up().up();
             }
 
+            // This is only for backward compatibility with clients which
+            // don't support getting sources from Jingle (i.e. jirecon).
+            if (this.presMap['medians']) {
+                pres.c('media', {xmlns: this.presMap['medians']});
+                var sourceNumber = 0;
+                Object.keys(this.presMap).forEach(function (key) {
+                    if (key.indexOf('source') >= 0) {
+                        sourceNumber++;
+                    }
+                });
+                if (sourceNumber > 0) {
+                    for (var i = 1; i <= sourceNumber / 3; i++) {
+                        pres.c('source',
+                            {
+                                type: this.presMap['source' + i + '_type'],
+                                ssrc: this.presMap['source' + i + '_ssrc'],
+                                direction: this.presMap['source' + i + '_direction']
+                                || 'sendrecv'
+                            }
+                        ).up();
+                    }
+                }
+                pres.up();
+            }
+
             if(this.presMap["startMuted"] !== undefined)
             {
                 pres.c("startmuted", {audio: this.presMap["startMuted"].audio,
@@ -537,11 +562,35 @@ module.exports = function(XMPP, eventEmitter) {
                 delete this.presMap["startMuted"];
             }
 
+            if (config.token) {
+                pres.c('token', { xmlns: 'http://jitsi.org/jitmeet/auth-token'}).t(config.token).up();
+            }
+
             pres.up();
             this.connection.send(pres);
         },
         addDisplayNameToPresence: function (displayName) {
             this.presMap['displayName'] = displayName;
+        },
+        // This is only for backward compatibility with clients which
+        // don't support getting sources from Jingle (i.e. jirecon).
+        addMediaToPresence: function (sourceNumber, mtype, ssrcs, direction) {
+            if (!this.presMap['medians'])
+                this.presMap['medians'] = 'http://estos.de/ns/mjs';
+
+            this.presMap['source' + sourceNumber + '_type'] = mtype;
+            this.presMap['source' + sourceNumber + '_ssrc'] = ssrcs;
+            this.presMap['source' + sourceNumber + '_direction'] = direction;
+        },
+        // This is only for backward compatibility with clients which
+        // don't support getting sources from Jingle (i.e. jirecon).
+        clearPresenceMedia: function () {
+            var self = this;
+            Object.keys(this.presMap).forEach(function (key) {
+                if (key.indexOf('source') != -1) {
+                    delete self.presMap[key];
+                }
+            });
         },
         addDevicesToPresence: function (devices) {
             this.presMap['devices'] = devices;
