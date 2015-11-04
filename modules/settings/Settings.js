@@ -1,4 +1,4 @@
-var UsernameGenerator = require('../statistics/UsernameGenerator');
+var UsernameGenerator = require('../util/UsernameGenerator');
 
 var email = '';
 var displayName = '';
@@ -31,7 +31,8 @@ if (supportsLocalStorage()) {
     }
     if (!window.localStorage.callStatsUID) {
         window.localStorage.callStatsUID = UsernameGenerator.generateUsername();
-        console.log('generated callstats uid', window.localStorage.callStatsUID);
+        console.log('generated callstats uid',
+            window.localStorage.callStatsUID);
     }
     userId = window.localStorage.jitsiMeetId || '';
     callStatsUID = window.localStorage.callStatsUID;

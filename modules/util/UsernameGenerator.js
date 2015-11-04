@@ -1,5 +1,8 @@
+var RandomUtil = require('./RandomUtil');
+
 /**
- * from faker.js - Copyright (c) 2014-2015 Matthew Bergman & Marak Squires, MIT License
+ * from faker.js - Copyright (c) 2014-2015 Matthew Bergman & Marak Squires
+ * MIT License
  * http://github.com/marak/faker.js/
  *
  * @const
@@ -411,54 +414,12 @@ var names = [
 ];
 
 /**
- * @const
- */
-var suffixChars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-
-
-/**
- * Returns a random integer between min (inclusive) and max (inclusive).
- */
-function getRandomInt(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-
-/**
- * Get random element from array or string.
- *
- * @param {Array|string} arr source
- *
- * @returns array element or string character
- */
-function getRandomElement(arr) {
-  return arr[getRandomInt(0, arr.length -1)];
-}
-
-/**
- * Generate random alphanumeric string.
- *
- * @param {number} length expected string length
- *
- * @returns {string} random string of specified length
- */
-function generateAlphanumStr(length) {
-  var result = '';
-
-  for (var i = 0; i < length; i += 1) {
-    result += getRandomElement(suffixChars);
-  }
-
-  return result;
-}
-
-/**
  * Generate random username.
  * @returns {string} random username
  */
 function generateUsername () {
-  var name = getRandomElement(names);
-  var suffix = generateAlphanumStr(3);
+  var name = RandomUtil.randomElement(names);
+  var suffix = RandomUtil.randomAlphanumStr(3);
 
   return name + '-' +  suffix;
 }
