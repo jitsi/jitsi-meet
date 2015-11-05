@@ -33,6 +33,7 @@ var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 var StatisticsEvents = require("../../service/statistics/Events");
 var UIEvents = require("../../service/UI/UIEvents");
 var MemberEvents = require("../../service/members/Events");
+var Feedback = require("./Feedback");
 
 var eventEmitter = new EventEmitter();
 var roomNode = null;
@@ -423,11 +424,15 @@ UI.start = function (init) {
         $("#downloadlog").click(function (event) {
             dump(event.target);
         });
+        $("#feedbackButton").click(function (event) {
+            Feedback.openFeedbackWindow();
+        });
     }
     else
     {
         $("#header").css("display", "none");
         $("#bottomToolbar").css("display", "none");
+        $("#feedbackButton").css("display", "none");
         $("#downloadlog").css("display", "none");
         $("#remoteVideos").css("padding", "0px 0px 18px 0px");
         $("#remoteVideos").css("right", "0px");

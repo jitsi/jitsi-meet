@@ -14,7 +14,7 @@
     <script src="https://api.callstats.io/static/callstats.min.js"></script>
     <script src="config.js?v=15"></script><!-- adapt to your needs, i.e. set hosts and bosh path -->
     <script src="interface_config.js?v=6"></script>
-    <script src="libs/app.bundle.min.js?v=138"></script>
+    <script src="libs/app.bundle.min.js?v=139"></script>
     <script src="analytics.js?v=1"></script><!-- google analytics plugin -->
     <!--
         Link used for inline installation of chrome desktop streaming extension,
@@ -218,8 +218,11 @@
                 </label>
             </div>
             <button id="updateSettings" data-i18n="settings.update"></button>
+            <a id="downloadlog" data-container="body" data-toggle="popover" data-placement="right" data-i18n="[data-content]downloadlogs" ><i class="fa fa-cloud-download"></i></a>
         </div>
-        <a id="downloadlog" data-container="body" data-toggle="popover" data-placement="right" data-i18n="[data-content]downloadlogs" ><i class="fa fa-cloud-download"></i></a>
+        <div class="feedbackButton">
+            <a id="feedbackButton" data-container="body" data-toggle="popover" data-placement="right" data-i18n="[data-content]feedback"><i class="fa fa-heart"></i></a>
+        </div>
     </div>
   </body>
 </html>

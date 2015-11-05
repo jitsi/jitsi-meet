@@ -11,6 +11,7 @@ var UIUtil = require("../util/UIUtil");
 var AuthenticationEvents
     = require("../../../service/authentication/AuthenticationEvents");
 var AnalyticsAdapter = require("../../statistics/AnalyticsAdapter");
+var Feedback = require("../Feedback");
 
 var roomUrl = null;
 var sharedKey = '';
@@ -135,41 +136,32 @@ var defaultToolbarButtons = {
     'hangup': '#toolbar_button_hangup'
 };
 
+/**
+ * Hangs up this call.
+ */
 function hangup() {
-    APP.xmpp.disposeConference();
-    if(config.enableWelcomePage) {
-        setTimeout(function() {
-            window.localStorage.welcomePageDisabled = false;
-            window.location.pathname = "/";
-        }, 10000);
+    var conferenceDispose = function () {
+        APP.xmpp.disposeConference();
 
+        if (config.enableWelcomePage) {
+            setTimeout(function() {
+                window.localStorage.welcomePageDisabled = false;
+                window.location.pathname = "/";
+            }, 3000);
+        }
     }
 
-    var title = APP.translation.generateTranslationHTML(
-        "dialog.sessTerminated");
-    var msg = APP.translation.generateTranslationHTML(
-        "dialog.hungUp");
-    var button = APP.translation.generateTranslationHTML(
-        "dialog.joinAgain");
-    var buttons = [];
-    buttons.push({title: button, value: true});
-
-    UI.messageHandler.openDialog(
-        title,
-        msg,
-        true,
-        buttons,
-        function(event, value, message, formVals) {
-            window.location.reload();
-            return false;
-        }
-    );
+    if (Feedback.feedbackScore > 0) {
+        Feedback.openFeedbackWindow();
+        conferenceDispose();
+    }
+    else
+        Feedback.openFeedbackWindow(conferenceDispose);
 }
 
 /**
  * Starts or stops the recording for the conference.
  */
-
 function toggleRecording(predefinedToken) {
     APP.xmpp.toggleRecording(function (callback) {
         if (predefinedToken) {
