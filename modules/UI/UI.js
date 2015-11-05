@@ -302,17 +302,6 @@ function registerListeners() {
             "dialog.internalError");
     });
 
-    APP.xmpp.addListener(XMPPEvents.SET_LOCAL_DESCRIPTION_ERROR, function () {
-        messageHandler.showError("dialog.error",
-            "dialog.SLDFailure");
-    });
-    APP.xmpp.addListener(XMPPEvents.SET_REMOTE_DESCRIPTION_ERROR, function () {
-        messageHandler.showError("dialog.error",
-            "dialog.SRDFailure");
-    });
-    APP.xmpp.addListener(XMPPEvents.CREATE_ANSWER_ERROR, function () {
-        messageHandler.showError();
-    });
     APP.xmpp.addListener(XMPPEvents.PROMPT_FOR_LOGIN, function (callback) {
         // FIXME: re-use LoginDialog which supports retries
         if (config.token) {
@@ -899,4 +888,3 @@ UI.userAvatarChanged = function (resourceJid, thumbUrl, contactListUrl) {
 UI.setVideoMute = setVideoMute;
 
 module.exports = UI;
-

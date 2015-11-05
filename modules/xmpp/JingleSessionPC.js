@@ -1468,41 +1468,6 @@ JingleSessionPC.prototype.setLocalDescription = function () {
     }
 };
 
-// an attempt to work around https://github.com/jitsi/jitmeet/issues/32
-// TODO: is this hack (along with the XMPPEvent-s used only for it) still needed
-// now that we announce an SSRC for receive-only streams?
-function sendKeyframe(pc) {
-    console.log('sendkeyframe', pc.iceConnectionState);
-    if (pc.iceConnectionState !== 'connected') return; // safe...
-    pc.setRemoteDescription(
-        pc.remoteDescription,
-        function () {
-            pc.createAnswer(
-                function (modifiedAnswer) {
-                    pc.setLocalDescription(
-                        modifiedAnswer,
-                        function () {
-                            // noop
-                        },
-                        function (error) {
-                            console.log('triggerKeyframe setLocalDescription failed', error);
-                            eventEmitter.emit(XMPPEvents.SET_LOCAL_DESCRIPTION_ERROR);
-                        }
-                    );
-                },
-                function (error) {
-                    console.log('triggerKeyframe createAnswer failed', error);
-                    eventEmitter.emit(XMPPEvents.CREATE_ANSWER_ERROR);
-                }
-            );
-        },
-        function (error) {
-            console.log('triggerKeyframe setRemoteDescription failed', error);
-            eventEmitter.emit(XMPPEvents.SET_REMOTE_DESCRIPTION_ERROR);
-        }
-    );
-}
-
 /**
  * Handles 'onaddstream' events from the RTCPeerConnection.
  * @param event the 'onaddstream' event.
