@@ -108,11 +108,16 @@ var CallStats = {
                                 ', "comment": "' + detailedFeedback + '"}';
 
         var feedbackJSON = JSON.parse(feedbackString);
-        
+
         callStats.sendUserFeedback(
             this.confID, feedbackJSON);
     },
 
+    /**
+     * Notifies CallStats that getUserMedia failed.
+     *
+     * @param {Error} e error to send
+     */
     sendGetUserMediaFailed: function (e) {
         if(!callStats) {
             pendingUserMediaErrors.push(e);
@@ -122,6 +127,11 @@ var CallStats = {
                               callStats.webRTCFunctions.getUserMedia, e);
     },
 
+    /**
+     * Notifies CallStats that peer connection failed to create offer.
+     *
+     * @param {Error} e error to send
+     */
     sendCreateOfferFailed: function (e) {
         if(!callStats) {
             return;
@@ -130,6 +140,11 @@ var CallStats = {
                               callStats.webRTCFunctions.createOffer, e);
     },
 
+    /**
+     * Notifies CallStats that peer connection failed to create answer.
+     *
+     * @param {Error} e error to send
+     */
     sendCreateAnswerFailed: function (e) {
         if(!callStats) {
             return;
@@ -138,6 +153,11 @@ var CallStats = {
                               callStats.webRTCFunctions.createAnswer, e);
     },
 
+    /**
+     * Notifies CallStats that peer connection failed to set local description.
+     *
+     * @param {Error} e error to send
+     */
     sendSetLocalDescFailed: function (e) {
         if(!callStats) {
             return;
@@ -146,21 +166,31 @@ var CallStats = {
                               callStats.webRTCFunctions.setLocalDescription, e);
     },
 
+    /**
+     * Notifies CallStats that peer connection failed to set remote description.
+     *
+     * @param {Error} e error to send
+     */
     sendSetRemoteDescFailed: function (e) {
         if(!callStats) {
             return;
         }
-        callStats.reportError(this.peerconnection, this.confID,
-                              callStats.webRTCFunctions.setRemoteDescription, e);
+        callStats.reportError(
+            this.peerconnection, this.confID,
+            callStats.webRTCFunctions.setRemoteDescription, e);
     },
 
+    /**
+     * Notifies CallStats that peer connection failed to add ICE candidate.
+     *
+     * @param {Error} e error to send
+     */
     sendAddIceCandidateFailed: function (e) {
         if(!callStats) {
             return;
         }
         callStats.reportError(this.peerconnection, this.confID,
                               callStats.webRTCFunctions.addIceCandidate, e);
-    },
-
+    }
 };
 module.exports = CallStats;
