@@ -130,6 +130,8 @@ LocalVideo.prototype.setDisplayName = function(displayName, key) {
 };
 
 LocalVideo.prototype.inputDisplayNameHandler = function (name) {
+    name = UIUtil.escapeHtml(name);
+
     NicknameHandler.setNickname(name);
 
     var localDisplayName = $('#localDisplayName');
