@@ -5,6 +5,11 @@ var jsSHA = require('jssha');
 var io = require('socket.io-client');
 var callStats = null;
 
+// getUserMedia calls happen before CallStats init
+// so if there are any getUserMedia errors, we store them in this array
+// and send them to callstats on init
+var pendingUserMediaErrors = [];
+
 function initCallback (err, msg) {
     console.log("Initializing Status: err="+err+" msg="+msg);
 }
@@ -42,17 +47,25 @@ var CallStats = {
             usage,
             this.confID,
             this.pcCallback.bind(this));
+
+        // notify callstats about getUserMedia failures if there were any
+        if (pendingUserMediaErrors.length) {
+            pendingUserMediaErrors.forEach(this.sendGetUserMediaFailed, this);
+            pendingUserMediaErrors.length = 0;
+        }
     },
     pcCallback: function (err, msg) {
-        if (!callStats)
+        if (!callStats) {
             return;
+        }
         console.log("Monitoring status: "+ err + " msg: " + msg);
         callStats.sendFabricEvent(this.peerconnection,
             callStats.fabricEvent.fabricSetup, this.confID);
     },
     sendMuteEvent: function (mute, type) {
-        if (!callStats)
+        if (!callStats) {
             return;
+        }
         var event = null;
         if (type === "video") {
             event = (mute? callStats.fabricEvent.videoPause :
@@ -78,7 +91,8 @@ var CallStats = {
         callStats.sendFabricEvent(this.peerconnection,
             callStats.fabricEvent.fabricSetupFailed, this.confID);
     },
-    /**
+
+   /**
      * Sends the given feedback through CallStats.
      *
      * @param overallFeedback an integer between 1 and 5 indicating the
@@ -97,6 +111,56 @@ var CallStats = {
         
         callStats.sendUserFeedback(
             this.confID, feedbackJSON);
-    }
+    },
+
+    sendGetUserMediaFailed: function (e) {
+        if(!callStats) {
+            pendingUserMediaErrors.push(e);
+            return;
+        }
+        callStats.reportError(this.peerconnection, this.confID,
+                              callStats.webRTCFunctions.getUserMedia, e);
+    },
+
+    sendCreateOfferFailed: function (e) {
+        if(!callStats) {
+            return;
+        }
+        callStats.reportError(this.peerconnection, this.confID,
+                              callStats.webRTCFunctions.createOffer, e);
+    },
+
+    sendCreateAnswerFailed: function (e) {
+        if(!callStats) {
+            return;
+        }
+        callStats.reportError(this.peerconnection, this.confID,
+                              callStats.webRTCFunctions.createAnswer, e);
+    },
+
+    sendSetLocalDescFailed: function (e) {
+        if(!callStats) {
+            return;
+        }
+        callStats.reportError(this.peerconnection, this.confID,
+                              callStats.webRTCFunctions.setLocalDescription, e);
+    },
+
+    sendSetRemoteDescFailed: function (e) {
+        if(!callStats) {
+            return;
+        }
+        callStats.reportError(this.peerconnection, this.confID,
+                              callStats.webRTCFunctions.setRemoteDescription, e);
+    },
+
+    sendAddIceCandidateFailed: function (e) {
+        if(!callStats) {
+            return;
+        }
+        callStats.reportError(this.peerconnection, this.confID,
+                              callStats.webRTCFunctions.addIceCandidate, e);
+    },
+
 };
 module.exports = CallStats;

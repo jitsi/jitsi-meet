@@ -2,8 +2,8 @@
     webkitRTCPeerConnection, RTCSessionDescription */
 /* jshint -W101 */
 var RTC = require('../RTC/RTC');
-var RTCBrowserType = require("../RTC/RTCBrowserType.js");
-var XMPPEvents = require("../../service/xmpp/XMPPEvents");
+var RTCBrowserType = require("../RTC/RTCBrowserType");
+var RTCEvents = require("../../service/RTC/RTCEvents");
 var SSRCReplacement = require("./LocalSSRCReplacement");
 
 function TraceablePeerConnection(ice_config, constraints, session) {
@@ -16,6 +16,7 @@ function TraceablePeerConnection(ice_config, constraints, session) {
     } else {
         RTCPeerConnectionType = webkitRTCPeerConnection;
     }
+    self.eventEmitter = session.eventEmitter;
     this.peerconnection = new RTCPeerConnectionType(ice_config, constraints);
     this.updateLog = [];
     this.stats = {};
@@ -218,7 +219,7 @@ if (TraceablePeerConnection.prototype.__defineGetter__ !== undefined) {
             var desc = this.peerconnection.localDescription;
 
             desc = SSRCReplacement.mungeLocalVideoSSRC(desc);
-            
+
             this.trace('getLocalDescription::preTransform', dumpSDP(desc));
 
             // if we're running on FF, transform to Plan B first.
@@ -292,6 +293,7 @@ TraceablePeerConnection.prototype.setLocalDescription
         },
         function (err) {
             self.trace('setLocalDescriptionOnFailure', err);
+            self.eventEmitter.emit(RTCEvents.SET_LOCAL_DESCRIPTION_FAILED, err);
             failureCallback(err);
         }
     );
@@ -327,6 +329,7 @@ TraceablePeerConnection.prototype.setRemoteDescription
         },
         function (err) {
             self.trace('setRemoteDescriptionOnFailure', err);
+            self.eventEmitter.emit(RTCEvents.SET_REMOTE_DESCRIPTION_FAILED, err);
             failureCallback(err);
         }
     );
@@ -372,6 +375,7 @@ TraceablePeerConnection.prototype.createOffer
         },
         function(err) {
             self.trace('createOfferOnFailure', err);
+            self.eventEmitter.emit(RTCEvents.CREATE_OFFER_FAILED, err);
             failureCallback(err);
         },
         constraints
@@ -402,6 +406,7 @@ TraceablePeerConnection.prototype.createAnswer
         },
         function(err) {
             self.trace('createAnswerOnFailure', err);
+            self.eventEmitter.emit(RTCEvents.CREATE_ANSWER_FAILED, err);
             failureCallback(err);
         },
         constraints
@@ -440,4 +445,3 @@ TraceablePeerConnection.prototype.getStats = function(callback, errback) {
 };
 
 module.exports = TraceablePeerConnection;
-
