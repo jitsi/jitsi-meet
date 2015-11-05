@@ -49,7 +49,8 @@ function setResolutionConstraints(constraints, resolution) {
             constraints.video.mandatory.minHeight;
 }
 
-function getConstraints(um, resolution, bandwidth, fps, desktopStream) {
+function getConstraints(um, resolution, bandwidth, minFps, maxFps, desktopStream, isAndroid)
+{
     var constraints = {audio: false, video: false};
 
     if (um.indexOf('video') >= 0) {
@@ -131,14 +132,21 @@ function getConstraints(um, resolution, bandwidth, fps, desktopStream) {
         }
         constraints.video.optional.push({bandwidth: bandwidth});
     }
-    if (fps) {
-        // for some cameras it might be necessary to request 30fps
-        // so they choose 30fps mjpg over 10fps yuy2
+
+    if (minFps || maxFps) {
         if (!constraints.video) {
-            // same behaviour as true;
-            constraints.video = {mandatory: {}, optional: []};
+          constraints.video = {
+            mandatory: {},
+            optional: []
+          };
         }
-        constraints.video.mandatory.minFrameRate = fps;
+        if (minFps) {
+            constraints.video.mandatory.minFrameRate = minFps;
+        }
+
+        if (maxFps) {
+            constraints.video.mandatory.maxFrameRate = maxFps;
+        }
     }
 
     // we turn audio for both audio and video tracks, the fake audio & video seems to work
@@ -304,12 +312,26 @@ function RTCUtils(RTCService, eventEmitter, onTemasysPluginReady)
 
 
 RTCUtils.prototype.getUserMediaWithConstraints = function(
-    um, success_callback, failure_callback, resolution,bandwidth, fps,
-    desktopStream) {
+    um, success_callback, failure_callback, resolution, bandwidth,
+    minFps, maxFps, desktopStream) {
     currentResolution = resolution;
 
+    var self = this,
+        minimumFps = minFps || config.video.minFps,
+        maximumFps = maxFps || config.video.maxFps,
+        bndwidth = bandwidth || config.video.bandwidth,
+
+        // Check if we are running on Android device
+        isAndroid = navigator.userAgent.indexOf('Android') != -1;
+
+    if (resolution) {
+			currentResolution = resolution;
+	  } else if (config.video.resolution) {
+			currentResolution = config.video.resolution;
+		}
     var constraints = getConstraints(
-        um, resolution, bandwidth, fps, desktopStream);
+        um, resolution, bandwidth, minimumFps, maximumFps, desktopStream,
+        isAndroid);
 
     console.info("Get media constraints", constraints);
 
@@ -411,8 +433,7 @@ RTCUtils.prototype.obtainAudioAndVideoPermissions =
                     console.error(
                         'failed to obtain video stream - stop', error);
                     self.errorCallback(error);
-                },
-                config.resolution || '360');
+                });
         };
         var obtainAudio = function () {
             self.getUserMediaWithConstraints(
@@ -441,8 +462,7 @@ RTCUtils.prototype.obtainAudioAndVideoPermissions =
         },
         function (error) {
             self.errorCallback(error);
-        },
-        config.resolution || '360');
+        });
     }
 };
 
