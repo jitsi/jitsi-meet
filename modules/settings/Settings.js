@@ -4,7 +4,7 @@ var email = '';
 var displayName = '';
 var userId;
 var language = null;
-var callStatsUID;
+var callStatsUserName;
 
 
 function supportsLocalStorage() {
@@ -29,20 +29,23 @@ if (supportsLocalStorage()) {
         window.localStorage.jitsiMeetId = generateUniqueId();
         console.log("generated id", window.localStorage.jitsiMeetId);
     }
-    if (!window.localStorage.callStatsUID) {
-        window.localStorage.callStatsUID = UsernameGenerator.generateUsername();
+
+    if (!window.localStorage.callStatsUserName) {
+        window.localStorage.callStatsUserName
+            = UsernameGenerator.generateUsername();
         console.log('generated callstats uid',
-            window.localStorage.callStatsUID);
+            window.localStorage.callStatsUserName);
+
     }
     userId = window.localStorage.jitsiMeetId || '';
-    callStatsUID = window.localStorage.callStatsUID;
+    callStatsUserName = window.localStorage.callStatsUserName;
     email = window.localStorage.email || '';
     displayName = window.localStorage.displayname || '';
     language = window.localStorage.language;
 } else {
     console.log("local storage is not supported");
     userId = generateUniqueId();
-    callStatsUID = UsernameGenerator.generateUsername();
+    callStatsUserName = UsernameGenerator.generateUsername();
 }
 
 var Settings = {
@@ -68,11 +71,11 @@ var Settings = {
     },
 
     /**
-     * Returns user id for callstats
-     * @returns {string} user id for callstats
+     * Returns fake username for callstats
+     * @returns {string} fake username for callstats
      */
-    getCallStatsUID: function () {
-        return callStatsUID;
+    getCallStatsUserName: function () {
+        return callStatsUserName;
     },
 
     setEmail: function (newEmail) {
