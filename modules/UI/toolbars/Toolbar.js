@@ -149,7 +149,7 @@ function hangup() {
                 window.location.pathname = "/";
             }, 3000);
         }
-    }
+    };
 
     if (Feedback.feedbackScore > 0) {
         Feedback.openFeedbackWindow();

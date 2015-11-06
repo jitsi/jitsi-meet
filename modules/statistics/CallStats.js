@@ -94,7 +94,7 @@ var CallStats = {
                                 ', "comment": "' + detailedFeedback + '"}';
 
         var feedbackJSON = JSON.parse(feedbackString);
-        
+
         callStats.sendUserFeedback(
             this.confID, feedbackJSON);
     }

@@ -1,7 +1,8 @@
-/**
- * Created by ystamcheva on 2/10/15.
+/* global interfaceConfig */
+
+/*
+ * Created by Yana Stamcheva on 2/10/15.
  */
-/* jshint -W101 */
 var messageHandler = require("./util/MessageHandler");
 var callStats = require("../statistics/CallStats");
 var APP = require("../../app");
@@ -106,7 +107,7 @@ var Feedback = {
                         feedbackDialog.goToState('detailed_feedback');
                     }
                 };
-                // Initialise stars to correspond to previously entered feedback.
+                // Init stars to correspond to previously entered feedback.
                 if (Feedback.feedbackScore > 0
                     && index < Feedback.feedbackScore) {
                     Feedback.hoverStars(index);
