@@ -143,7 +143,7 @@ LocalVideo.prototype.inputDisplayNameHandler = function (name) {
         } else {
             var defaultHTML = APP.translation.generateTranslationHTML(
                 interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME);
-            localDisplayName .html(defaultHTML);
+            localDisplayName.html(defaultHTML);
         }
         localDisplayName.show();
     }

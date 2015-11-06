@@ -1,4 +1,5 @@
 var UsernameGenerator = require('../util/UsernameGenerator');
+var UIUtil = require('../UI/util/UIUtil')
 
 var email = '';
 var displayName = '';
@@ -40,7 +41,7 @@ if (supportsLocalStorage()) {
     userId = window.localStorage.jitsiMeetId || '';
     callStatsUserName = window.localStorage.callStatsUserName;
     email = window.localStorage.email || '';
-    displayName = window.localStorage.displayname || '';
+    displayName = UIUtil.escapeHtml(window.localStorage.displayname || '');
     language = window.localStorage.language;
 } else {
     console.log("local storage is not supported");
@@ -58,7 +59,7 @@ var Settings = {
      */
     setDisplayName: function (newDisplayName) {
         displayName = newDisplayName;
-        window.localStorage.displayname = displayName;
+        window.localStorage.displayname = UIUtil.unescapeHtml(displayName);
         return displayName;
     },
 
