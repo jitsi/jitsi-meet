@@ -65,7 +65,9 @@ var RandomUtil = {
             ret += this.randomHexDigit();
         }
         return ret;
-    }
+    },
+    randomElement: randomElement,
+    randomAlphanumStr: randomAlphanumStr
 };
 
 module.exports = RandomUtil;
