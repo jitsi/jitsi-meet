@@ -4,6 +4,12 @@
 var ALPHANUM = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
 /**
+ * Hexadecimal digits.
+ * @const
+ */
+var HEX_DIGITS = '0123456789abcdef';
+
+/**
  * Generates random int within the range [min, max]
  * @param min the minimum value for the generated number
  * @param max the maximum value for the generated number
@@ -38,37 +44,26 @@ function randomAlphanumStr(length) {
 }
 
 /**
- * Generates random hex number within the range [min, max]
- * @param min the minimum value for the generated number
- * @param max the maximum value for the generated number
- * @returns random hex number
- */
-function rangeRandomHex(min, max)
-{
-    return randomInt(min, max).toString(16);
-}
-
-/**
  * Exported interface.
  */
 var RandomUtil = {
     /**
-     * Generates hex number with length 4
+     * Returns a random hex digit.
+     * @returns {*}
      */
-    random4digitsHex: function () {
-        return rangeRandomHex(0x1000, 0xFFFF);
+    randomHexDigit: function() {
+        return randomElement(HEX_DIGITS);
     },
     /**
-     * Generates hex number with length 8
+     * Returns a random string of hex digits with length 'len'.
+     * @param len the length.
      */
-    random8digitsHex: function () {
-        return rangeRandomHex(0x10000000, 0xFFFFFFFF);
-    },
-    /**
-     * Generates hex number with length 12
-     */
-    random12digitsHex: function () {
-        return rangeRandomHex(0x100000000000, 0xFFFFFFFFFFFF);
+    randomHexString: function (len) {
+        var ret = '';
+        while (len--) {
+            ret += this.randomHexDigit();
+        }
+        return ret;
     }
 };
 
