@@ -143,7 +143,7 @@ var PanelToggler = (function(my) {
             null,
             function() {
                 var settings = Settings.getSettings();
-                $('#setDisplayName').get(0).value = settings.displayName;
+                $('#setDisplayName').get(0).value = UIUtil.unescapeHtml(settings.displayName);
                 $('#setEmail').get(0).value = settings.email;
             },
             null);
