@@ -1,7 +1,7 @@
 /* global $, interfaceConfig */
 var animateTimeout, updateTimeout;
 
-var RoomNameGenerator = require("./RoomnameGenerator");
+var RoomnameGenerator = require("../../util/RoomnameGenerator");
 
 function enter_room() {
     var val = $("#enter_room_field").val();
@@ -22,7 +22,7 @@ function animate(word) {
 }
 
 function update_roomname() {
-    var word = RoomNameGenerator.generateRoomWithoutSeparator();
+    var word = RoomnameGenerator.generateRoomWithoutSeparator();
     $("#enter_room_field").attr("room_name", word);
     $("#enter_room_field").attr("placeholder", "");
     clearTimeout(animateTimeout);

@@ -1,3 +1,4 @@
+var RandomUtil = require('./RandomUtil');
 //var nouns = [
 //];
 var pluralNouns = [
@@ -160,14 +161,6 @@ var PATTERNS = [
     //"_ADJECTIVE__PLURALNOUN_AtThe_PLACE_",
 ];
 
-
-/*
- * Returns a random element from the array 'arr'
- */
-function randomElement(arr) {
-    return arr[Math.floor(Math.random() * arr.length)];
-}
-
 /*
  * Returns true if the string 's' contains one of the
  * template strings.
@@ -183,17 +176,17 @@ function hasTemplate(s) {
 /**
  * Generates new room name.
  */
-var RoomNameGenerator = {
+var RoomnameGenerator = {
     generateRoomWithoutSeparator: function() {
         // Note that if more than one pattern is available, the choice of
         // 'name' won't have a uniform distribution amongst all patterns (names
         // from patterns with fewer options will have higher probability of
         // being chosen that names from patterns with more options).
-        var name = randomElement(PATTERNS);
+        var name = RandomUtil.randomElement(PATTERNS);
         var word;
         while (hasTemplate(name)) {
             for (var template in CATEGORIES) {
-                word = randomElement(CATEGORIES[template]);
+                word = RandomUtil.randomElement(CATEGORIES[template]);
                 name = name.replace(template, word);
             }
         }
@@ -202,4 +195,4 @@ var RoomNameGenerator = {
     }
 };
 
-module.exports = RoomNameGenerator;
+module.exports = RoomnameGenerator;

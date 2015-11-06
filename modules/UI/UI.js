@@ -16,7 +16,7 @@ var EventEmitter = require("events");
 var SettingsMenu = require("./side_pannels/settings/SettingsMenu");
 var Settings = require("./../settings/Settings");
 var PanelToggler = require("./side_pannels/SidePanelToggler");
-var RoomNameGenerator = require("./welcome_page/RoomnameGenerator");
+var RoomnameGenerator = require("../util/RoomnameGenerator");
 UI.messageHandler = require("./util/MessageHandler");
 var messageHandler = UI.messageHandler;
 var Authentication  = require("./authentication/Authentication");
@@ -718,7 +718,7 @@ UI.getRoomNode = function () {
         if (path.length > 1) {
             roomNode = path.substr(1).toLowerCase();
         } else {
-            var word = RoomNameGenerator.generateRoomWithoutSeparator();
+            var word = RoomnameGenerator.generateRoomWithoutSeparator();
             roomNode = word.toLowerCase();
             window.history.pushState('VideoChat',
                 'Room: ' + word, window.location.pathname + word);
