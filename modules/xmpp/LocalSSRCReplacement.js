@@ -132,8 +132,9 @@ var storeLocalVideoSSRC = function (jingleIq) {
  * @returns {string} label/mslabel attribute
  */
 function generateLabel() {
-    return RandomUtil.random8digitsHex() + "-" + RandomUtil.random4digitsHex() + "-" +
-           RandomUtil.random4digitsHex() + "-" + RandomUtil.random4digitsHex() + "-" + RandomUtil.random12digitsHex();
+    return RandomUtil.randomHexString(8) + "-" + RandomUtil.randomHexString(4) +
+        "-" + RandomUtil.randomHexString(4) + "-" +
+        RandomUtil.randomHexString(4) + "-" + RandomUtil.randomHexString(12);
 }
 
 /**

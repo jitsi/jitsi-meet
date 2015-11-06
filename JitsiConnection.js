@@ -8,8 +8,9 @@ var RandomUtil = require("./modules/util/RandomUtil");
  * @returns {string}
  */
 function generateUserName() {
-    return RandomUtil.random8digitsHex() + "-" + RandomUtil.random4digitsHex() + "-" +
-        RandomUtil.random4digitsHex() + "-" + RandomUtil.random8digitsHex();
+    return RandomUtil.randomHexString(8) + "-" + RandomUtil.randomHexString(4) +
+        "-" + RandomUtil.randomHexString(4) + "-" +
+        RandomUtil.randomHexDigit(8);
 }
 
 /**
