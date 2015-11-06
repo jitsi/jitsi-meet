@@ -83,12 +83,6 @@ var XMPPEvents = {
     RESERVATION_ERROR: "xmpp.room_reservation_error",
     DISPOSE_CONFERENCE: "xmpp.dispose_conference",
     GRACEFUL_SHUTDOWN: "xmpp.graceful_shutdown",
-    // TODO: only used in a hack, should probably be removed.
-    SET_LOCAL_DESCRIPTION_ERROR: 'xmpp.set_local_description_error',
-    // TODO: only used in a hack, should probably be removed.
-    SET_REMOTE_DESCRIPTION_ERROR: 'xmpp.set_remote_description_error',
-    // TODO: only used in a hack, should probably be removed.
-    CREATE_ANSWER_ERROR: 'xmpp.create_answer_error',
     JINGLE_FATAL_ERROR: 'xmpp.jingle_fatal_error',
     PROMPT_FOR_LOGIN: 'xmpp.prompt_for_login',
     FOCUS_DISCONNECTED: 'xmpp.focus_disconnected',

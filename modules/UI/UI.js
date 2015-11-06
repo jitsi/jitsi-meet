@@ -33,6 +33,7 @@ var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 var StatisticsEvents = require("../../service/statistics/Events");
 var UIEvents = require("../../service/UI/UIEvents");
 var MemberEvents = require("../../service/members/Events");
+var Feedback = require("./Feedback");
 
 var eventEmitter = new EventEmitter();
 var roomNode = null;
@@ -302,17 +303,6 @@ function registerListeners() {
             "dialog.internalError");
     });
 
-    APP.xmpp.addListener(XMPPEvents.SET_LOCAL_DESCRIPTION_ERROR, function () {
-        messageHandler.showError("dialog.error",
-            "dialog.SLDFailure");
-    });
-    APP.xmpp.addListener(XMPPEvents.SET_REMOTE_DESCRIPTION_ERROR, function () {
-        messageHandler.showError("dialog.error",
-            "dialog.SRDFailure");
-    });
-    APP.xmpp.addListener(XMPPEvents.CREATE_ANSWER_ERROR, function () {
-        messageHandler.showError();
-    });
     APP.xmpp.addListener(XMPPEvents.PROMPT_FOR_LOGIN, function (callback) {
         // FIXME: re-use LoginDialog which supports retries
         if (config.token) {
@@ -434,11 +424,15 @@ UI.start = function (init) {
         $("#downloadlog").click(function (event) {
             dump(event.target);
         });
+        $("#feedbackButton").click(function (event) {
+            Feedback.openFeedbackWindow();
+        });
     }
     else
     {
         $("#header").css("display", "none");
         $("#bottomToolbar").css("display", "none");
+        $("#feedbackButton").css("display", "none");
         $("#downloadlog").css("display", "none");
         $("#remoteVideos").css("padding", "0px 0px 18px 0px");
         $("#remoteVideos").css("right", "0px");
@@ -899,4 +893,3 @@ UI.userAvatarChanged = function (resourceJid, thumbUrl, contactListUrl) {
 UI.setVideoMute = setVideoMute;
 
 module.exports = UI;
-

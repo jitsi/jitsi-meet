@@ -3,6 +3,7 @@
     "connectionsettings": "Connection Settings",
     "poweredby": "powered by",
     "downloadlogs": "Download logs",
+    "feedback": "Give us your feedback",
     "roomUrlDefaultMsg": "Your conference is currently being created...",
     "participant": "Participant",
     "me": "me",
@@ -197,7 +198,10 @@
         "tokenAuthFailed": "Failed to authenticate with XMPP server: invalid token",
         "displayNameRequired": "Please enter your display name:",
         "extensionRequired": "Extension required:",
-        "firefoxExtensionPrompt": "You need to install a Firefox extension in order to use screen sharing. Please try again after you <a href='__url__'>get it from here</a>!"
+        "firefoxExtensionPrompt": "You need to install a Firefox extension in order to use screen sharing. Please try again after you <a href='__url__'>get it from here</a>!",
+        "feedbackQuestion": "How was your call?",
+        "thankYou": "Thank you for using __appName__!",
+        "sorryFeedback": "We're sorry to hear that. Would you like to tell us more?"
     },
     "email":
     {

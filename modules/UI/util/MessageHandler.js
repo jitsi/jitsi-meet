@@ -84,7 +84,8 @@ var messageHandler = (function(my) {
     };
 
     /**
-     * Shows a message to the user with two buttons: first is given as a parameter and the second is Cancel.
+     * Shows a message to the user with two buttons: first is given as a
+     * parameter and the second is Cancel.
      *
      * @param titleString the title of the message
      * @param msgString the text of the message

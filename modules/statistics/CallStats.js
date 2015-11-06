@@ -77,7 +77,26 @@ var CallStats = {
         }
         callStats.sendFabricEvent(this.peerconnection,
             callStats.fabricEvent.fabricSetupFailed, this.confID);
-    }
+    },
+    /**
+     * Sends the given feedback through CallStats.
+     *
+     * @param overallFeedback an integer between 1 and 5 indicating the
+     * user feedback
+     * @param detailedFeedback detailed feedback from the user. Not yet used
+     */
+    sendFeedback: function(overallFeedback, detailedFeedback) {
+        if(!callStats) {
+            return;
+        }
+        var feedbackString =    '{"userID":"' + this.userID + '"' +
+                                ', "overall":' + overallFeedback +
+                                ', "comment": "' + detailedFeedback + '"}';
 
+        var feedbackJSON = JSON.parse(feedbackString);
+        
+        callStats.sendUserFeedback(
+            this.confID, feedbackJSON);
+    }
 };
 module.exports = CallStats;

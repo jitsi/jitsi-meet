@@ -10,7 +10,7 @@ html, body{
     font-family:'Helvetica Neue', Helvetica, sans-serif;
     font-weight: 400;
     background: #000000;
-    overflow-x: hidden;
+    overflow: hidden;
 }
 
 .right-panel {
@@ -236,8 +236,32 @@ form {
     bottom: 5;
     left: 5;
     overflow: visible;
-    z-index: 100;
     color: rgba(255,255,255,.50);
+}
+
+#feedbackButton {
+    position: absolute;
+    bottom: 60;
+    left: 60;
+    overflow: visible;
+    color: rgba(255,255,255,.50);
+}
+
+div.feedbackButton {
+    position: absolute;
+    background-color: rgba(0,0,0,.50);
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    bottom: -50px;
+    left: -50px;
+    z-index: 100;
+    overflow: hidden;
+    transition: all .2s ease-in-out;
+}
+
+div.feedbackButton:hover {
+    transform: scale(1.3);
 }
 
 #bottomToolbar {
