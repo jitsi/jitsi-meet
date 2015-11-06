@@ -177,7 +177,7 @@ module.exports = function(XMPP, eventEmitter) {
                 case 'addsource': // FIXME: proprietary, un-jingleish
                 case 'source-add': // FIXME: proprietary
                     console.info("source-add", iq);
-                    sess.addSource($(iq).find('>jingle'));
+                    sess.addSource($(iq).find('>jingle>content'));
                     break;
                 case 'removesource': // FIXME: proprietary, un-jingleish
                 case 'source-remove': // FIXME: proprietary

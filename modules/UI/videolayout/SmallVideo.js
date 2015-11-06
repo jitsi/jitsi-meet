@@ -4,6 +4,7 @@ var Avatar = require("../avatar/Avatar");
 var UIUtil = require("../util/UIUtil");
 var LargeVideo = require("./LargeVideo");
 var RTCBrowserType = require("../../RTC/RTCBrowserType");
+var MediaStreamType = require("../../../service/RTC/MediaStreamTypes");
 
 function SmallVideo() {
     this.isMuted = false;
@@ -105,7 +106,7 @@ SmallVideo.prototype.setPresenceStatus = function (statusMsg) {
  * Creates an audio or video element for a particular MediaStream.
  */
 SmallVideo.createStreamElement = function (stream) {
-    var isVideo = stream.getVideoTracks().length > 0;
+    var isVideo = stream.isVideoStream();
 
     var element = isVideo ? document.createElement('video')
         : document.createElement('audio');
@@ -118,9 +119,9 @@ SmallVideo.createStreamElement = function (stream) {
     }
 
     element.id = (isVideo ? 'remoteVideo_' : 'remoteAudio_') +
-        APP.RTC.getStreamID(stream);
+        APP.RTC.getStreamID(stream.getOriginalStream());
 
-    element.onplay = function() {
+    element.onplay = function () {
         console.log("(TIME) Render " + (isVideo ? 'video' : 'audio') + ":\t",
                     window.performance.now());
     };

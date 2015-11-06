@@ -554,50 +554,6 @@ JingleSessionPC.prototype.getSsrcOwner = function (ssrc) {
     return this.ssrcOwners[ssrc];
 };
 
-function copyParamAttr(dstElem, srcElem, name) {
-    var srcSelector = $(srcElem).find('parameter[name="' + name + '"]');
-    var dstSelector = $(dstElem).find('parameter[name="' + name + '"]');
-    if (srcSelector.length && dstSelector.length) {
-        dstSelector[0].setAttribute('value', srcSelector[0].getAttribute('value'));
-    } else {
-        console.error("did not copy " + name + " from|to ", srcElem, dstElem);
-    }
-}
-
-JingleSessionPC.prototype.mungeRemoteMsid = function (jingle) {
-
-    var videoContent = $(jingle).find(">content[name='video']");
-    console.info("Video contents", videoContent);
-    var audioContent = $(jingle).find(">content[name='audio']");
-    console.info("Audio contents", audioContent);
-
-    var videoSSRCInfos = videoContent.find('description>source>ssrc-info');
-    console.info("Video SSRC infos: ", videoSSRCInfos);
-    var videoSSRCs = {};
-    videoSSRCInfos.each(function (idx, ssrcInfo) {
-        var owner = ssrcInfo.getAttribute('owner');
-        if (owner !== 'jvb') {
-            console.info("Got video SSRC owner: " + owner + " of: ", ssrcInfo.parentNode);
-            videoSSRCs[owner] = ssrcInfo.parentNode;
-        }
-    });
-    Object.keys(videoSSRCs).forEach(function (owner) {
-        console.info("Looking for audio SSRC owned by: " + owner);
-        var audioSSRCInfo = audioContent.find('description>source>ssrc-info[owner="' + owner + '"]');
-        if (audioSSRCInfo.length) {
-            var audioSSRC = audioSSRCInfo[0].parentNode;
-            console.info("Found corresponding audio SSRC: ", audioSSRC);
-            var videoSSRC = videoSSRCs[owner];
-            console.info("Will copy fields from: ", videoSSRC);
-            copyParamAttr(audioSSRC, videoSSRC, 'msid');
-            copyParamAttr(audioSSRC, videoSSRC, 'mslabel');
-            copyParamAttr(audioSSRC, videoSSRC, 'label');
-        }
-    });
-
-    return jingle;
-};
-
 JingleSessionPC.prototype.setRemoteDescription = function (elem, desctype) {
     this.remoteSDP = new SDP('');
     if (config.webrtcIceTcpDisable) {
@@ -606,8 +562,6 @@ JingleSessionPC.prototype.setRemoteDescription = function (elem, desctype) {
     if (config.webrtcIceUdpDisable) {
         this.remoteSDP.removeUdpCandidates = true;
     }
-    elem = this.mungeRemoteMsid(elem);
-    console.info("Jingle after munge: ", elem[0]);
     this.remoteSDP.fromJingle(elem);
     this.readSsrcInfo($(elem).find(">content"));
     if (this.peerconnection.remoteDescription !== null) {
@@ -923,12 +877,6 @@ JingleSessionPC.prototype.addSource = function (elem) {
 
     console.log('addssrc', new Date().getTime());
     console.log('ice', this.peerconnection.iceConnectionState);
-
-    elem = this.mungeRemoteMsid(elem);
-    console.info("SSRC-ADD Jingle after munge: ", elem[0]);
-
-    elem = $(elem).find('>content');
-    console.info("ELEM: ", elem);
 
     this.readSsrcInfo(elem);
 

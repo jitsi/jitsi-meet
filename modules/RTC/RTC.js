@@ -76,7 +76,7 @@ var RTC = {
         if(isMuted === true)
             localStream.setMute(true);
 
-        if(type == "audio") {
+        if (MediaStreamType.AUDIO_TYPE === type) {
             this.localAudio = localStream;
         } else {
             this.localVideo = localStream;
@@ -100,12 +100,12 @@ var RTC = {
 
         var self = this;
         [MediaStreamType.AUDIO_TYPE, MediaStreamType.VIDEO_TYPE].forEach(
-            function(type) {
+            function (type) {
             var tracks =
                 type == MediaStreamType.AUDIO_TYPE
-                ? data.stream.getAudioTracks : data.stream.getVideoTracks();
+                ? data.stream.getAudioTracks() : data.stream.getVideoTracks();
             if (!tracks || !Array.isArray(tracks) || !tracks.length) {
-                console.log("Not creating a(n) "+type+" stream: no tracks");
+                console.log("Not creating a(n) " + type + " stream: no tracks");
                 return;
             }
 
@@ -229,7 +229,9 @@ var RTC = {
     changeLocalAudio: function (stream, callback) {
         var oldStream = this.localAudio.getOriginalStream();
         var newStream = this.rtcUtils.createStream(stream);
-        this.localAudio = this.createLocalStream(newStream, "audio", true);
+        this.localAudio
+            = this.createLocalStream(
+                    newStream, MediaStreamType.AUDIO_TYPE, true);
         // Stop the stream
         this.stopMediaStream(oldStream);
         APP.xmpp.switchStreams(newStream, oldStream, callback, true);

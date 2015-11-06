@@ -36,8 +36,16 @@ function MediaStream(data, ssrc, browser, eventEmitter, muted, type) {
     this.eventEmitter = eventEmitter;
 }
 
+// FIXME duplicated with LocalStream methods - extract base class
+MediaStream.prototype.isAudioStream = function () {
+    return MediaStreamType.AUDIO_TYPE === this.type;
+};
 
-MediaStream.prototype.getOriginalStream = function() {
+MediaStream.prototype.isVideoStream = function () {
+    return MediaStreamType.VIDEO_TYPE === this.type;
+};
+
+MediaStream.prototype.getOriginalStream = function () {
     return this.stream;
 };
 
