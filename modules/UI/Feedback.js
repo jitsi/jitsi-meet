@@ -1,4 +1,4 @@
-/* global interfaceConfig */
+/* global $, interfaceConfig */
 
 /*
  * Created by Yana Stamcheva on 2/10/15.
