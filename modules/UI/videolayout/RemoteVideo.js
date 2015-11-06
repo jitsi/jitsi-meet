@@ -2,6 +2,7 @@
 var ConnectionIndicator = require("./ConnectionIndicator");
 var SmallVideo = require("./SmallVideo");
 var AudioLevels = require("../audio_levels/AudioLevels");
+var MediaStreamType = require("../../../service/RTC/MediaStreamTypes");
 var RTCBrowserType = require("../../RTC/RTCBrowserType");
 var UIUtils = require("../util/UIUtil");
 var XMPPEvents = require("../../../service/xmpp/XMPPEvents");
@@ -178,8 +179,9 @@ RemoteVideo.prototype.remove = function () {
 
 RemoteVideo.prototype.waitForPlayback = function (sel, stream) {
 
-    var isVideo = stream.getVideoTracks().length > 0;
-    if (!isVideo || stream.id === 'mixedmslabel') {
+    var webRtcStream = stream.getOriginalStream();
+    var isVideo = stream.isVideoStream();
+    if (!isVideo || webRtcStream.id === 'mixedmslabel') {
         return;
     }
 
@@ -191,7 +193,7 @@ RemoteVideo.prototype.waitForPlayback = function (sel, stream) {
     var onPlayingHandler = function () {
         // FIXME: why do i have to do this for FF?
         if (RTCBrowserType.isFirefox()) {
-            APP.RTC.attachMediaStream(sel, stream);
+            APP.RTC.attachMediaStream(sel, webRtcStream);
         }
         if (RTCBrowserType.isTemasysPluginUsed()) {
             sel = self.selectVideoElement();
@@ -212,7 +214,8 @@ RemoteVideo.prototype.addRemoteStreamElement = function (stream) {
         return;
 
     var self = this;
-    var isVideo = stream.getVideoTracks().length > 0;
+    var webRtcStream = stream.getOriginalStream();
+    var isVideo = stream.isVideoStream();
     var streamElement = SmallVideo.createStreamElement(stream);
     var newElementId = streamElement.id;
 
@@ -226,14 +229,14 @@ RemoteVideo.prototype.addRemoteStreamElement = function (stream) {
     if (!isVideo || (this.container.offsetParent !== null && isVideo)) {
         this.waitForPlayback(sel, stream);
 
-        APP.RTC.attachMediaStream(sel, stream);
+        APP.RTC.attachMediaStream(sel, webRtcStream);
     }
 
     APP.RTC.addMediaStreamInactiveHandler(
-        stream, function () {
+        webRtcStream, function () {
             console.log('stream ended', this);
 
-            self.removeRemoteStreamElement(stream, isVideo, newElementId);
+            self.removeRemoteStreamElement(webRtcStream, isVideo, newElementId);
     });
 
     // Add click handler.

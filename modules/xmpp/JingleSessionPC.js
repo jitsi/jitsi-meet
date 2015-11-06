@@ -562,7 +562,6 @@ JingleSessionPC.prototype.setRemoteDescription = function (elem, desctype) {
     if (config.webrtcIceUdpDisable) {
         this.remoteSDP.removeUdpCandidates = true;
     }
-
     this.remoteSDP.fromJingle(elem);
     this.readSsrcInfo($(elem).find(">content"));
     if (this.peerconnection.remoteDescription !== null) {

@@ -26,6 +26,7 @@ var JitsiPopover = require("./util/JitsiPopover");
 var CQEvents = require("../../service/connectionquality/CQEvents");
 var DesktopSharingEventTypes
     = require("../../service/desktopsharing/DesktopSharingEventTypes");
+var MediaStreamType = require("../../service/RTC/MediaStreamTypes");
 var RTCEvents = require("../../service/RTC/RTCEvents");
 var RTCBrowserType = require("../RTC/RTCBrowserType");
 var StreamEventTypes = require("../../service/RTC/StreamEventTypes");
@@ -111,14 +112,14 @@ function setupToolbars() {
 
 function streamHandler(stream, isMuted) {
     switch (stream.type) {
-        case "audio":
+        case MediaStreamType.AUDIO_TYPE:
             VideoLayout.changeLocalAudio(stream, isMuted);
             break;
-        case "video":
+        case MediaStreamType.VIDEO_TYPE:
             VideoLayout.changeLocalVideo(stream, isMuted);
             break;
-        case "stream":
-            VideoLayout.changeLocalStream(stream, isMuted);
+        default:
+            console.error("Unknown stream type: " + stream.type);
             break;
     }
 }
