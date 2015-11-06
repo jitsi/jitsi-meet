@@ -20,7 +20,7 @@ var CallStats = {
         this.session = jingleSession;
         this.peerconnection = jingleSession.peerconnection.peerconnection;
 
-        this.userID = Settings.getCallStatsUID();
+        this.userID = Settings.getCallStatsUserName();
 
         var location = window.location;
         this.confID = location.hostname + location.pathname;
