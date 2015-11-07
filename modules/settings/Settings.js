@@ -1,7 +1,10 @@
+var UsernameGenerator = require('../util/UsernameGenerator');
+
 var email = '';
 var displayName = '';
 var userId;
 var language = null;
+var callStatsUserName;
 
 
 function supportsLocalStorage() {
@@ -26,13 +29,23 @@ if (supportsLocalStorage()) {
         window.localStorage.jitsiMeetId = generateUniqueId();
         console.log("generated id", window.localStorage.jitsiMeetId);
     }
+
+    if (!window.localStorage.callStatsUserName) {
+        window.localStorage.callStatsUserName
+            = UsernameGenerator.generateUsername();
+        console.log('generated callstats uid',
+            window.localStorage.callStatsUserName);
+
+    }
     userId = window.localStorage.jitsiMeetId || '';
+    callStatsUserName = window.localStorage.callStatsUserName;
     email = window.localStorage.email || '';
     displayName = window.localStorage.displayname || '';
     language = window.localStorage.language;
 } else {
     console.log("local storage is not supported");
     userId = generateUniqueId();
+    callStatsUserName = UsernameGenerator.generateUsername();
 }
 
 var Settings = {
@@ -55,6 +68,14 @@ var Settings = {
      */
     getDisplayName: function () {
         return displayName;
+    },
+
+    /**
+     * Returns fake username for callstats
+     * @returns {string} fake username for callstats
+     */
+    getCallStatsUserName: function () {
+        return callStatsUserName;
     },
 
     setEmail: function (newEmail) {

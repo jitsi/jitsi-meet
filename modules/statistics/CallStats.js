@@ -20,11 +20,7 @@ var CallStats = {
         this.session = jingleSession;
         this.peerconnection = jingleSession.peerconnection.peerconnection;
 
-        this.userID =  APP.xmpp.myResource();
-
-        //use whatever the user said to facilitate debugging
-        if(Settings.getDisplayName())
-            this.userID = Settings.getDisplayName();
+        this.userID = Settings.getCallStatsUserName();
 
         var location = window.location;
         this.confID = location.hostname + location.pathname;
@@ -94,7 +90,7 @@ var CallStats = {
                                 ', "comment": "' + detailedFeedback + '"}';
 
         var feedbackJSON = JSON.parse(feedbackString);
-        
+
         callStats.sendUserFeedback(
             this.confID, feedbackJSON);
     }

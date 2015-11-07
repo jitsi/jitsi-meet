@@ -55,10 +55,6 @@ var VideoLayout = (function (my) {
                 lastNEndpointsCache.indexOf(resource) !== -1);
     };
 
-    my.changeLocalStream = function (stream, isMuted) {
-        VideoLayout.changeLocalVideo(stream, isMuted);
-    };
-
     my.changeLocalAudio = function(stream, isMuted) {
         if (isMuted)
             APP.UI.setAudioMuted(true, true);
@@ -187,8 +183,7 @@ var VideoLayout = (function (my) {
             VideoLayout.ensurePeerContainerExists(stream.peerjid);
 
             var resourceJid = Strophe.getResourceFromJid(stream.peerjid);
-            remoteVideos[resourceJid].addRemoteStreamElement(
-                stream.getOriginalStream());
+            remoteVideos[resourceJid].addRemoteStreamElement(stream);
         }
     };
 

@@ -302,7 +302,8 @@ function createLargeVideoHTML()
                 '<canvas id="activeSpeakerAudioLevel"></canvas>' +
             '</div>' +
             '<div id="largeVideoWrapper">' +
-                '<video id="largeVideo" autoplay oncontextmenu="return false;"></video>' +
+                '<video id="largeVideo" muted="true"' +
+                        'autoplay oncontextmenu="return false;"></video>' +
             '</div id="largeVideoWrapper">' +
             '<span id="videoConnectionMessage"></span>';
     html += '</div>';

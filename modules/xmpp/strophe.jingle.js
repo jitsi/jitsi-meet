@@ -96,7 +96,7 @@ module.exports = function(XMPP, eventEmitter) {
             switch (action) {
                 case 'session-initiate':
                     console.log("(TIME) received session-initiate:\t",
-                                window.performance.now());
+                                window.performance.now(), iq);
                     var startMuted = $(iq).find('jingle>startmuted');
                     if (startMuted && startMuted.length > 0) {
                         var audioMuted = startMuted.attr("audio");
@@ -176,10 +176,12 @@ module.exports = function(XMPP, eventEmitter) {
                     break;
                 case 'addsource': // FIXME: proprietary, un-jingleish
                 case 'source-add': // FIXME: proprietary
+                    console.info("source-add", iq);
                     sess.addSource($(iq).find('>jingle>content'));
                     break;
                 case 'removesource': // FIXME: proprietary, un-jingleish
                 case 'source-remove': // FIXME: proprietary
+                    console.info("source-remove", iq);
                     sess.removeSource($(iq).find('>jingle>content'));
                     break;
                 default:

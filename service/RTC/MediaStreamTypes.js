@@ -1,6 +1,6 @@
 var MediaStreamType = {
-    VIDEO_TYPE: "Video",
+    VIDEO_TYPE: "video",
 
-    AUDIO_TYPE: "Audio"
+    AUDIO_TYPE: "audio"
 };
 module.exports = MediaStreamType;

@@ -2,6 +2,7 @@
     RTCPeerConnection, webkitMediaStream, webkitURL, webkitRTCPeerConnection,
     mozRTCIceCandidate, mozRTCSessionDescription, mozRTCPeerConnection */
 /* jshint -W101 */
+var MediaStreamType = require("../../service/RTC/MediaStreamTypes");
 var RTCBrowserType = require("./RTCBrowserType");
 var Resolutions = require("../../service/RTC/Resolutions");
 var AdapterJS = require("./adapter.screenshare");
@@ -523,10 +524,12 @@ RTCUtils.prototype.handleLocalStream = function(stream, usageOptions) {
         videoGUM = (!usageOptions || usageOptions.video !== false);
 
 
-    this.service.createLocalStream(audioStream, "audio", null, null,
+    this.service.createLocalStream(
+        audioStream, MediaStreamType.AUDIO_TYPE, null, null,
         audioMuted, audioGUM);
 
-    this.service.createLocalStream(videoStream, "video", null, 'camera',
+    this.service.createLocalStream(
+        videoStream, MediaStreamType.VIDEO_TYPE, null, 'camera',
         videoMuted, videoGUM);
 };
 

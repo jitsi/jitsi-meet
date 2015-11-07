@@ -1,7 +1,8 @@
 /* global APP */
-var StreamEventTypes = require("../../service/RTC/StreamEventTypes.js");
+var MediaStreamType = require("../../service/RTC/MediaStreamTypes");
 var RTCEvents = require("../../service/RTC/RTCEvents");
 var RTCBrowserType = require("./RTCBrowserType");
+var StreamEventTypes = require("../../service/RTC/StreamEventTypes.js");
 
 /**
  * This implements 'onended' callback normally fired by WebRTC after the stream
@@ -29,7 +30,7 @@ function LocalStream(stream, type, eventEmitter, videoType, isGUMStream) {
     if(isGUMStream === false)
         this.isGUMStream = isGUMStream;
     var self = this;
-    if(type == "audio") {
+    if (MediaStreamType.AUDIO_TYPE === type) {
         this.getTracks = function () {
             return self.stream.getAudioTracks();
         };
@@ -60,7 +61,11 @@ LocalStream.prototype.getOriginalStream = function()
 };
 
 LocalStream.prototype.isAudioStream = function () {
-    return this.type === "audio";
+    return MediaStreamType.AUDIO_TYPE === this.type;
+};
+
+LocalStream.prototype.isVideoStream = function () {
+    return MediaStreamType.VIDEO_TYPE === this.type;
 };
 
 LocalStream.prototype.setMute = function (mute)

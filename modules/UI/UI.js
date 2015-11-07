@@ -16,7 +16,7 @@ var EventEmitter = require("events");
 var SettingsMenu = require("./side_pannels/settings/SettingsMenu");
 var Settings = require("./../settings/Settings");
 var PanelToggler = require("./side_pannels/SidePanelToggler");
-var RoomNameGenerator = require("./welcome_page/RoomnameGenerator");
+var RoomnameGenerator = require("../util/RoomnameGenerator");
 UI.messageHandler = require("./util/MessageHandler");
 var messageHandler = UI.messageHandler;
 var Authentication  = require("./authentication/Authentication");
@@ -26,6 +26,7 @@ var JitsiPopover = require("./util/JitsiPopover");
 var CQEvents = require("../../service/connectionquality/CQEvents");
 var DesktopSharingEventTypes
     = require("../../service/desktopsharing/DesktopSharingEventTypes");
+var MediaStreamType = require("../../service/RTC/MediaStreamTypes");
 var RTCEvents = require("../../service/RTC/RTCEvents");
 var RTCBrowserType = require("../RTC/RTCBrowserType");
 var StreamEventTypes = require("../../service/RTC/StreamEventTypes");
@@ -111,14 +112,14 @@ function setupToolbars() {
 
 function streamHandler(stream, isMuted) {
     switch (stream.type) {
-        case "audio":
+        case MediaStreamType.AUDIO_TYPE:
             VideoLayout.changeLocalAudio(stream, isMuted);
             break;
-        case "video":
+        case MediaStreamType.VIDEO_TYPE:
             VideoLayout.changeLocalVideo(stream, isMuted);
             break;
-        case "stream":
-            VideoLayout.changeLocalStream(stream, isMuted);
+        default:
+            console.error("Unknown stream type: " + stream.type);
             break;
     }
 }
@@ -718,7 +719,7 @@ UI.getRoomNode = function () {
         if (path.length > 1) {
             roomNode = path.substr(1).toLowerCase();
         } else {
-            var word = RoomNameGenerator.generateRoomWithoutSeparator();
+            var word = RoomnameGenerator.generateRoomWithoutSeparator();
             roomNode = word.toLowerCase();
             window.history.pushState('VideoChat',
                 'Room: ' + word, window.location.pathname + word);
