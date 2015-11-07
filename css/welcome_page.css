@@ -115,6 +115,11 @@
     position: absolute;
 }
 
+#welcome_page_main *
+{
+    max-width: 100%;
+}
+
 #welcome_page_main
 {
     background-image:url(../images/welcome_page/pattern-body.png);
@@ -175,7 +180,8 @@
     font-size: 22px;
     /*font-weight: bold;*/
     text-align: center;
-    display: table-cell;
+    display: block;
+    margin: auto;
     padding: 50px 26px 0px 20px;
 }
 
