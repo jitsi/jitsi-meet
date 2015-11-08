@@ -152,15 +152,12 @@
 {
     position: relative;
     width: 976px;
-    margin: 0px auto 30px auto;
+    margin: auto;
 }
 
-.feature_holder
+.feature.holder
 {
-    float:left;
-    width: 169px;
-    padding-left: 75px;
-    padding-bottom: 30px;
+    margin-bottom: 30px;
 }
 
 .feature_icon
