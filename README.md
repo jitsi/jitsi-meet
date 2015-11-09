@@ -18,8 +18,7 @@ Jitsi Meet uses [Browserify](http://browserify.org). If you want to make changes
 
 On Debian/Ubuntu systems, the required packages can be installed with:
 ```
-sudo apt-get install npm
-sudo npm install -g browserify
+sudo apt-get install npm nodejs-legacy
 cd jitsi-meet
 npm install
 ```

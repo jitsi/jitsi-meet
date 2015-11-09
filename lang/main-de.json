@@ -3,6 +3,7 @@
     "connectionsettings": "Verbindungseinstellungen",
     "poweredby": "Betrieben von",
     "downloadlogs": "Log herunterladen",
+    "feedback": "Wir freuen uns auf Ihr Feedback!",
     "roomUrlDefaultMsg": "Die Konferenz wird erstellt...",
     "participant": "Teilnehmer",
     "me": "ich",
@@ -189,9 +190,13 @@
         "password": "Passwort",
         "userPassword": "Benutzerpasswort",
         "token": "Token",
+        "tokenAuthFailed": "Anmeldung am XMPP-Server fehlgeschlagen: ungültiges Token",
         "displayNameRequired": "Geben Sie Ihren Anzeigenamen ein:",
         "extensionRequired": "Erweiterung erforderlich:",
-        "firefoxExtensionPrompt": "Um die Bildschirmfreigabe nutzen zu können, muss eine Firefox-Erweiterung installiert werden. Bitte versuchen Sie es erneut nachdem die <a href='__url__'>Erweiterung installiert</a> wurde."
+        "firefoxExtensionPrompt": "Um die Bildschirmfreigabe nutzen zu können, muss eine Firefox-Erweiterung installiert werden. Bitte versuchen Sie es erneut nachdem die <a href='__url__'>Erweiterung installiert</a> wurde.",
+        "feedbackQuestion": "Wie war der Anruf?",
+        "thankYou": "Danke für die Verwendung von __appName__!",
+        "sorryFeedback": "Tut uns leid. Möchten Sie uns mehr mitteilen?"
     },
     "email": {
         "sharedKey": [
