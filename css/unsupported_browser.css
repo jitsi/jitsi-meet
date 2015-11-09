@@ -101,11 +101,11 @@ a {
     height: 79px;
     background-image: url('/images/chromium.png');
 }
-#firefox-nightly_logo
+#firefox_logo
 {
     width: 73px;
     height: 79px;
-    background-image: url('/images/firefox-nightly.png');
+    background-image: url('/images/firefox.png');
 }
 
 #opera_logo
