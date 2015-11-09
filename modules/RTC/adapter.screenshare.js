@@ -1,4 +1,5 @@
 /*! adapterjs - v0.12.0 - 2015-09-04 */
+var console = require("jitsi-meet-logger").getLogger(__filename);
 
 // Adapter's interface.
 var AdapterJS = AdapterJS || {};
@@ -359,11 +360,11 @@ AdapterJS.renderNotificationBar = function (text, buttonText, buttonLink, openNe
             clearInterval(pluginInstallInterval);
             AdapterJS.WebRTCPlugin.defineWebRTCInterface();
           },
-          function() { 
+          function() {
             // still no plugin detected, nothing to do
           });
       } , 500);
-    });   
+    });
 
     // On click on Cancel
     AdapterJS.addEvent(c.document.getElementById('cancel'), 'click', function(e) {
@@ -1087,7 +1088,7 @@ if (navigator.mozGetUserMedia) {
           newElement.onclick(arg);
         };
       }
-      
+
       return newElement;
     };
 

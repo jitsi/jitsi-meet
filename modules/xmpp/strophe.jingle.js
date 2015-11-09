@@ -1,5 +1,7 @@
 /* jshint -W117 */
 
+
+var logger = require("jitsi-meet-logger").getLogger(__filename);
 var JingleSession = require("./JingleSessionPC");
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 var RTCBrowserType = require("../RTC/RTCBrowserType");
@@ -56,7 +58,7 @@ module.exports = function(XMPP, eventEmitter) {
                 to: fromJid,
                 id: iq.getAttribute('id')
             });
-            console.log('on jingle ' + action + ' from ' + fromJid, iq);
+            logger.log('on jingle ' + action + ' from ' + fromJid, iq);
             var sess = this.sessions[sid];
             if ('session-initiate' != action) {
                 if (sess === null) {
@@ -69,7 +71,7 @@ module.exports = function(XMPP, eventEmitter) {
                 }
                 // local jid is not checked
                 if (fromJid != sess.peerjid) {
-                    console.warn('jid mismatch for session id', sid, fromJid, sess.peerjid);
+                    logger.warn('jid mismatch for session id', sid, fromJid, sess.peerjid);
                     ack.type = 'error';
                     ack.c('error', {type: 'cancel'})
                         .c('item-not-found', {xmlns: 'urn:ietf:params:xml:ns:xmpp-stanzas'}).up()
@@ -83,7 +85,7 @@ module.exports = function(XMPP, eventEmitter) {
                 ack.type = 'error';
                 ack.c('error', {type: 'cancel'})
                     .c('service-unavailable', {xmlns: 'urn:ietf:params:xml:ns:xmpp-stanzas'}).up();
-                console.warn('duplicate session id', sid);
+                logger.warn('duplicate session id', sid);
                 this.connection.send(ack);
                 return true;
             }
@@ -138,7 +140,7 @@ module.exports = function(XMPP, eventEmitter) {
                     {
                         break;
                     }
-                    console.log('terminating...', sess.sid);
+                    logger.log('terminating...', sess.sid);
                     sess.terminate();
                     this.terminate(sess.sid);
                     if ($(iq).find('>jingle>reason').length) {
@@ -177,7 +179,7 @@ module.exports = function(XMPP, eventEmitter) {
                     sess.removeSource($(iq).find('>jingle>content'), fromJid);
                     break;
                 default:
-                    console.warn('jingle action not implemented', action);
+                    logger.warn('jingle action not implemented', action);
                     break;
             }
             return true;
@@ -258,8 +260,8 @@ module.exports = function(XMPP, eventEmitter) {
                     self.ice_config.iceServers = iceservers;
                 },
                 function (err) {
-                    console.warn('getting turn credentials failed', err);
-                    console.warn('is mod_turncredentials or similar installed?');
+                    logger.warn('getting turn credentials failed', err);
+                    logger.warn('is mod_turncredentials or similar installed?');
                 }
             );
             // implement push?

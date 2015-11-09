@@ -1,16 +1,18 @@
 /**
  * Strophe logger implementation. Logs from level WARN and above.
  */
+var logger = require("jitsi-meet-logger").getLogger(__filename);
+
 module.exports = function () {
 
     Strophe.log = function (level, msg) {
         switch (level) {
             case Strophe.LogLevel.WARN:
-                console.warn("Strophe: " + msg);
+                logger.warn("Strophe: " + msg);
                 break;
             case Strophe.LogLevel.ERROR:
             case Strophe.LogLevel.FATAL:
-                console.error("Strophe: " + msg);
+                logger.error("Strophe: " + msg);
                 break;
         }
     };

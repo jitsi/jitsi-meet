@@ -1,4 +1,6 @@
 /* jshint -W117 */
+
+var logger = require("jitsi-meet-logger").getLogger(__filename);
 var SDPUtil = require("./SDPUtil");
 
 // SDP STUFF
@@ -65,7 +67,7 @@ SDP.prototype.containsSSRC = function(ssrc) {
     var contains = false;
     Object.keys(medias).forEach(function(mediaindex){
         var media = medias[mediaindex];
-        //console.log("Check", channel, ssrc);
+        //logger.log("Check", channel, ssrc);
         if(Object.keys(media.ssrcs).indexOf(ssrc) != -1){
             contains = true;
         }
@@ -126,7 +128,7 @@ SDP.prototype.removeMediaLines = function(mediaindex, prefix) {
 
 // add content's to a jingle element
 SDP.prototype.toJingle = function (elem, thecreator, ssrcs) {
-//    console.log("SSRC" + ssrcs["audio"] + " - " + ssrcs["video"]);
+//    logger.log("SSRC" + ssrcs["audio"] + " - " + ssrcs["video"]);
     var i, j, k, mline, ssrc, rtpmap, tmp, line, lines;
     var self = this;
     // new bundle plan

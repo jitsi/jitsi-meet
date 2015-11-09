@@ -1,5 +1,7 @@
 /* global require, ssrc2jid */
 /* jshint -W117 */
+
+var logger = require("jitsi-meet-logger").getLogger(__filename);
 var RTCBrowserType = require("../RTC/RTCBrowserType");
 
 /* Whether we support the browser we are running into for logging statistics */
@@ -295,7 +297,7 @@ StatsCollector.prototype.stop = function () {
  */
 StatsCollector.prototype.errorCallback = function (error)
 {
-    console.error("Get stats error", error);
+    logger.error("Get stats error", error);
     this.stop();
 };
 
@@ -318,7 +320,7 @@ StatsCollector.prototype.start = function ()
                     else {
                         results = report.result();
                     }
-                    //console.error("Got interval report", results);
+                    //logger.error("Got interval report", results);
                     self.currentAudioLevelsReport = results;
                     self.processAudioLevelReport();
                     self.baselineAudioLevelsReport =
@@ -346,13 +348,13 @@ StatsCollector.prototype.start = function ()
 //                            //chrome
 //                            results = report.result();
 //                        }
-//                        //console.error("Got interval report", results);
+//                        //logger.error("Got interval report", results);
 //                        self.currentStatsReport = results;
 //                        try {
 //                            self.processStatsReport();
 //                        }
 //                        catch (e) {
-//                            console.error("Unsupported key:" + e, e);
+//                            logger.error("Unsupported key:" + e, e);
 //                        }
 //
 //                        self.baselineStatsReport = self.currentStatsReport;
@@ -498,7 +500,7 @@ StatsCollector.prototype.processStatsReport = function () {
 
         var before = this.baselineStatsReport[idx];
         if (!before) {
-            console.warn(getStatValue(now, 'ssrc') + ' not enough data');
+            logger.warn(getStatValue(now, 'ssrc') + ' not enough data');
             continue;
         }
 
@@ -521,7 +523,7 @@ StatsCollector.prototype.processStatsReport = function () {
             key = 'packetsSent';
             if (!getStatValue(now, key))
             {
-                console.warn("No packetsReceived nor packetSent stat found");
+                logger.warn("No packetsReceived nor packetSent stat found");
                 continue;
             }
         }
@@ -692,14 +694,14 @@ StatsCollector.prototype.processAudioLevelReport = function () {
 
         var before = this.baselineAudioLevelsReport[idx];
         if (!before) {
-            console.warn(getStatValue(now, 'ssrc') + ' not enough data');
+            logger.warn(getStatValue(now, 'ssrc') + ' not enough data');
             continue;
         }
 
         var ssrc = getStatValue(now, 'ssrc');
         if (!ssrc) {
             if((Date.now() - now.timestamp) < 3000)
-                console.warn("No ssrc: ");
+                logger.warn("No ssrc: ");
             continue;
         }
 
@@ -718,7 +720,7 @@ StatsCollector.prototype.processAudioLevelReport = function () {
                 audioLevel = getStatValue(now, 'audioOutputLevel');
         }
         catch(e) {/*not supported*/
-            console.warn("Audio Levels are not available in the statistics.");
+            logger.warn("Audio Levels are not available in the statistics.");
             clearInterval(this.audioLevelsIntervalId);
             return;
         }

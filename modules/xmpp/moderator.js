@@ -1,5 +1,7 @@
 /* global $, $iq, APP, config, messageHandler,
  roomName, sessionTerminated, Strophe, Util */
+
+var logger = require("jitsi-meet-logger").getLogger(__filename);
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 var Settings = require("../settings/Settings");
 
@@ -47,7 +49,7 @@ function Moderator(roomName, xmpp, emitter) {
     function listener(event) {
         if (event.data && event.data.sessionId) {
             if (event.origin !== window.location.origin) {
-                console.warn("Ignoring sessionId from different origin: " +
+                logger.warn("Ignoring sessionId from different origin: " +
                     event.origin);
                 return;
             }
@@ -73,10 +75,10 @@ Moderator.prototype.isSipGatewayEnabled =  function () {
 
 
 Moderator.prototype.onMucMemberLeft =  function (jid) {
-    console.info("Someone left is it focus ? " + jid);
+    logger.info("Someone left is it focus ? " + jid);
     var resource = Strophe.getResourceFromJid(jid);
     if (resource === 'focus' && !this.xmppService.sessionTerminated) {
-        console.info(
+        logger.info(
             "Focus has left the room - leaving conference");
         //hangUp();
         // We'd rather reload to have everything re-initialized
@@ -89,7 +91,7 @@ Moderator.prototype.onMucMemberLeft =  function (jid) {
 Moderator.prototype.setFocusUserJid =  function (focusJid) {
     if (!this.focusUserJid) {
         this.focusUserJid = focusJid;
-        console.info("Focus jid set to:  " + this.focusUserJid);
+        logger.info("Focus jid set to:  " + this.focusUserJid);
     }
 };
 
@@ -116,7 +118,7 @@ Moderator.prototype.createConferenceIq =  function () {
     var sessionId = localStorage.getItem('sessionId');
     var machineUID = this.settings.getSettings().uid;
 
-    console.info(
+    logger.info(
             "Session ID: " + sessionId + " machine UID: " + machineUID);
 
     elem.c('conference', {
@@ -191,7 +193,7 @@ Moderator.prototype.createConferenceIq =  function () {
 Moderator.prototype.parseSessionId =  function (resultIq) {
     var sessionId = $(resultIq).find('conference').attr('session-id');
     if (sessionId) {
-        console.info('Received sessionId:  ' + sessionId);
+        logger.info('Received sessionId:  ' + sessionId);
         localStorage.setItem('sessionId', sessionId);
     }
 };
@@ -206,13 +208,13 @@ Moderator.prototype.parseConfigOptions =  function (resultIq) {
             '>conference>property' +
             '[name=\'authentication\'][value=\'true\']').length > 0;
 
-    console.info("Authentication enabled: " + authenticationEnabled);
+    logger.info("Authentication enabled: " + authenticationEnabled);
 
     this.externalAuthEnabled = $(resultIq).find(
             '>conference>property' +
             '[name=\'externalAuth\'][value=\'true\']').length > 0;
 
-    console.info('External authentication enabled: ' + this.externalAuthEnabled);
+    logger.info('External authentication enabled: ' + this.externalAuthEnabled);
 
     if (!this.externalAuthEnabled) {
         // We expect to receive sessionId in 'internal' authentication mode
@@ -232,7 +234,7 @@ Moderator.prototype.parseConfigOptions =  function (resultIq) {
         this.sipGatewayEnabled = true;
     }
 
-    console.info("Sip gateway enabled:  " + this.sipGatewayEnabled);
+    logger.info("Sip gateway enabled:  " + this.sipGatewayEnabled);
 };
 
 // FIXME =  we need to show the fact that we're waiting for the focus
@@ -258,7 +260,7 @@ Moderator.prototype.allocateConferenceFocus =  function ( callback) {
                 callback();
             } else {
                 var waitMs = self.getNextTimeout();
-                console.info("Waiting for the focus... " + waitMs);
+                logger.info("Waiting for the focus... " + waitMs);
                 // Reset error timeout
                 self.getNextErrorTimeout(true);
                 window.setTimeout(
@@ -273,7 +275,7 @@ Moderator.prototype.allocateConferenceFocus =  function ( callback) {
             var invalidSession
                 = $(error).find('>error>session-invalid').length;
             if (invalidSession) {
-                console.info("Session expired! - removing");
+                logger.info("Session expired! - removing");
                 localStorage.removeItem("sessionId");
             }
             if ($(error).find('>error>graceful-shutdown').length) {
@@ -295,7 +297,7 @@ Moderator.prototype.allocateConferenceFocus =  function ( callback) {
             }
             // Not authorized to create new room
             if ($(error).find('>error>not-authorized').length) {
-                console.warn("Unauthorized to start the conference", error);
+                logger.warn("Unauthorized to start the conference", error);
                 var toDomain
                     = Strophe.getDomainFromJid(error.getAttribute('to'));
                 if (toDomain !== this.xmppService.options.hosts.anonymousdomain) {
@@ -312,7 +314,7 @@ Moderator.prototype.allocateConferenceFocus =  function ( callback) {
                 return;
             }
             var waitMs = self.getNextErrorTimeout();
-            console.error("Focus error, retry after " + waitMs, error);
+            logger.error("Focus error, retry after " + waitMs, error);
             // Show message
             var focusComponent = self.getFocusComponent();
             var retrySec = waitMs / 1000;
@@ -346,15 +348,15 @@ Moderator.prototype.getLoginUrl =  function (urlCallback) {
             var url = $(result).find('login-url').attr('url');
             url = url = decodeURIComponent(url);
             if (url) {
-                console.info("Got auth url: " + url);
+                logger.info("Got auth url: " + url);
                 urlCallback(url);
             } else {
-                console.error(
+                logger.error(
                     "Failed to get auth url from the focus", result);
             }
         },
         function (error) {
-            console.error("Get auth url error", error);
+            logger.error("Get auth url error", error);
         }
     );
 };
@@ -372,15 +374,15 @@ Moderator.prototype.getPopupLoginUrl =  function (urlCallback) {
             var url = $(result).find('login-url').attr('url');
             url = url = decodeURIComponent(url);
             if (url) {
-                console.info("Got POPUP auth url:  " + url);
+                logger.info("Got POPUP auth url:  " + url);
                 urlCallback(url);
             } else {
-                console.error(
+                logger.error(
                     "Failed to get POPUP auth url from the focus", result);
             }
         },
         function (error) {
-            console.error('Get POPUP auth url error', error);
+            logger.error('Get POPUP auth url error', error);
         }
     );
 };
@@ -403,12 +405,12 @@ Moderator.prototype.logout =  function (callback) {
             if (logoutUrl) {
                 logoutUrl = decodeURIComponent(logoutUrl);
             }
-            console.info("Log out OK, url: " + logoutUrl, result);
+            logger.info("Log out OK, url: " + logoutUrl, result);
             localStorage.removeItem('sessionId');
             callback(logoutUrl);
         },
         function (error) {
-            console.error("Logout error", error);
+            logger.error("Logout error", error);
         }
     );
 };

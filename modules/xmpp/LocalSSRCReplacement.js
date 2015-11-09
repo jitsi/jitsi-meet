@@ -1,4 +1,6 @@
 /* global $ */
+var logger = require("jitsi-meet-logger").getLogger(__filename);
+
 
 /*
  Here we do modifications of local video SSRCs. There are 2 situations we have
@@ -84,7 +86,7 @@ var filterOutSource = function (modifyIq, actionName) {
         return modifyIqTree[0];
     }
 
-    console.info(
+    logger.info(
         'Blocking ' + actionName + ' for local video SSRC: ' + localVideoSSRC);
 
     videoSSRC.remove();
@@ -118,7 +120,7 @@ var storeLocalVideoSSRC = function (jingleIq) {
             var ssrcVal = ssrSel.attr('ssrc');
             if (ssrcVal) {
                 localVideoSSRC = ssrcVal;
-                console.info('Stored local video SSRC' +
+                logger.info('Stored local video SSRC' +
                              ' for future re-use: ' + localVideoSSRC);
             }
         }
@@ -148,7 +150,7 @@ function generateRecvonlySSRC() {
     localRecvOnlyMSID = localRecvOnlyMSLabel + " " + localRecvOnlyLabel;
 
 
-        console.info(
+        logger.info(
         "Generated local recvonly SSRC: " + localRecvOnlySSRC +
         ", cname: " + localRecvOnlyCName);
 }
@@ -166,7 +168,7 @@ var LocalSSRCReplacement = {
             return;
 
         if (localVideoSSRC) {
-            console.error("Local SSRC stored already: " + localVideoSSRC);
+            logger.error("Local SSRC stored already: " + localVideoSSRC);
             return;
         }
         storeLocalVideoSSRC(sessionInit);
@@ -184,7 +186,7 @@ var LocalSSRCReplacement = {
             return localDescription;
 
         if (!localDescription) {
-            console.warn("localDescription is null or undefined");
+            logger.warn("localDescription is null or undefined");
             return localDescription;
         }
 
@@ -200,7 +202,7 @@ var LocalSSRCReplacement = {
                 var videoSSRCs = videoPart.ssrcs;
                 var newSSRC = Object.keys(videoSSRCs)[0];
 
-                console.info(
+                logger.info(
                     "Replacing new video SSRC: " + newSSRC +
                     " with " + localVideoSSRC);
 
@@ -221,7 +223,7 @@ var LocalSSRCReplacement = {
                 }
                 localVideoSSRC = localRecvOnlySSRC;
 
-                console.info('No SSRC in video recvonly stream' +
+                logger.info('No SSRC in video recvonly stream' +
                              ' - adding SSRC: ' + localRecvOnlySSRC);
 
                 sdp.media[1] += 'a=ssrc:' + localRecvOnlySSRC +

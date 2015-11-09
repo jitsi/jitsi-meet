@@ -1,4 +1,6 @@
 /* global $, APP, config, Strophe*/
+
+var logger = require("jitsi-meet-logger").getLogger(__filename);
 var EventEmitter = require("events");
 var Pako = require("pako");
 var StreamEventTypes = require("../../service/RTC/StreamEventTypes");
@@ -100,7 +102,7 @@ XMPP.prototype._connect = function (jid, password) {
     var connectionFailed = false;
     var lastErrorMsg;
     this.connection.connect(jid, password, function (status, msg) {
-        console.log('Strophe status changed to',
+        logger.log('Strophe status changed to',
             Strophe.getStatusString(status), msg);
         if (status === Strophe.Status.CONNECTED) {
             if (self.options.useStunTurn) {
@@ -108,7 +110,7 @@ XMPP.prototype._connect = function (jid, password) {
             }
 
 
-            console.info("My Jabber ID: " + self.connection.jid);
+            logger.info("My Jabber ID: " + self.connection.jid);
 
             if (password)
                 authenticatedUser = true;

@@ -120,7 +120,10 @@ function unload() {
 $(window).bind('beforeunload', unload);
 $(window).bind('unload', unload);
 
+JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.ERROR);
+
 JitsiMeetJS.init();
+
 var connection = new JitsiMeetJS.JitsiConnection(null, null, options);
 
 var room = null;

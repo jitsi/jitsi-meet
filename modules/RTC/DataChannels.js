@@ -2,6 +2,8 @@
 
 // cache datachannels to avoid garbage collection
 // https://code.google.com/p/chromium/issues/detail?id=405545
+
+var logger = require("jitsi-meet-logger").getLogger(__filename);
 var RTCEvents = require("../../service/RTC/RTCEvents");
 
 
@@ -35,7 +37,7 @@ function DataChannels(peerConnection, emitter) {
      dataChannel.onmessage = function (event)
      {
      var msgData = event.data;
-     console.info("Got My Data Channel Message:", msgData, dataChannel);
+     logger.info("Got My Data Channel Message:", msgData, dataChannel);
      };*/
 };
 
@@ -50,7 +52,7 @@ DataChannels.prototype.onDataChannel = function (event) {
     var self = this;
 
     dataChannel.onopen = function () {
-        console.info("Data channel opened by the Videobridge!", dataChannel);
+        logger.info("Data channel opened by the Videobridge!", dataChannel);
 
         // Code sample for sending string and/or binary data
         // Sends String message to the bridge
@@ -62,7 +64,7 @@ DataChannels.prototype.onDataChannel = function (event) {
     };
 
     dataChannel.onerror = function (error) {
-        console.error("Data Channel Error:", error, dataChannel);
+        logger.error("Data Channel Error:", error, dataChannel);
     };
 
     dataChannel.onmessage = function (event) {
@@ -74,7 +76,7 @@ DataChannels.prototype.onDataChannel = function (event) {
             obj = JSON.parse(data);
         }
         catch (e) {
-            console.error(
+            logger.error(
                 "Failed to parse data channel message as JSON: ",
                 data,
                 dataChannel);
@@ -86,7 +88,7 @@ DataChannels.prototype.onDataChannel = function (event) {
                 // Endpoint ID from the Videobridge.
                 var dominantSpeakerEndpoint = obj.dominantSpeakerEndpoint;
 
-                console.info(
+                logger.info(
                     "Data channel new dominant speaker event: ",
                     dominantSpeakerEndpoint);
                 self.eventEmitter.emit(RTCEvents.DOMINANTSPEAKER_CHANGED, dominantSpeakerEndpoint);
@@ -122,20 +124,20 @@ DataChannels.prototype.onDataChannel = function (event) {
                 // endpoint IDs.
                 var endpointsEnteringLastN = obj.endpointsEnteringLastN;
 
-                console.log(
+                logger.log(
                     "Data channel new last-n event: ",
                     lastNEndpoints, endpointsEnteringLastN, obj);
                 this.eventEmitter.emit(RTCEvents.LASTN_ENDPOINT_CHANGED,
                     lastNEndpoints, endpointsEnteringLastN, obj);
             }
             else {
-                console.debug("Data channel JSON-formatted message: ", obj);
+                logger.debug("Data channel JSON-formatted message: ", obj);
             }
         }
     };
 
     dataChannel.onclose = function () {
-        console.info("The Data Channel closed", dataChannel);
+        logger.info("The Data Channel closed", dataChannel);
         var idx = self._dataChannels.indexOf(dataChannel);
         if (idx > -1)
             self._dataChannels = self._dataChannels.splice(idx, 1);
@@ -144,11 +146,11 @@ DataChannels.prototype.onDataChannel = function (event) {
 };
 
 DataChannels.prototype.handleSelectedEndpointEvent = function (userResource) {
-    console.log('selected endpoint changed: ', userResource);
+    logger.log('selected endpoint changed: ', userResource);
     if (this._dataChannels && this._dataChannels.length != 0) {
         this._dataChannels.some(function (dataChannel) {
             if (dataChannel.readyState == 'open') {
-                console.log('sending selected endpoint changed ' +
+                logger.log('sending selected endpoint changed ' +
                     'notification to the bridge: ', userResource);
                 dataChannel.send(JSON.stringify({
                     'colibriClass': 'SelectedEndpointChangedEvent',
@@ -164,7 +166,7 @@ DataChannels.prototype.handleSelectedEndpointEvent = function (userResource) {
 }
 
 DataChannels.prototype.handlePinnedEndpointEvent = function (userResource) {
-    console.log('pinned endpoint changed: ', userResource);
+    logger.log('pinned endpoint changed: ', userResource);
     if (this._dataChannels && this._dataChannels.length != 0) {
         this._dataChannels.some(function (dataChannel) {
             if (dataChannel.readyState == 'open') {

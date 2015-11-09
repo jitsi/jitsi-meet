@@ -1,3 +1,5 @@
+
+var logger = require("jitsi-meet-logger").getLogger(__filename);
 SDPUtil = {
     filter_special_chars: function (text) {
         return text.replace(/[\\\/\{,\}\+]/g, "");
@@ -141,7 +143,7 @@ SDPUtil = {
                     candidate.tcptype = elems[i + 1];
                     break;
                 default: // TODO
-                    console.log('parse_icecandidate not translating "' + elems[i] + '" = "' + elems[i + 1] + '"');
+                    logger.log('parse_icecandidate not translating "' + elems[i] + '" = "' + elems[i + 1] + '"');
             }
         }
         candidate.network = '1';
@@ -258,8 +260,8 @@ SDPUtil = {
         if (line.indexOf('candidate:') === 0) {
             line = 'a=' + line;
         } else if (line.substring(0, 12) != 'a=candidate:') {
-            console.log('parseCandidate called with a line that is not a candidate line');
-            console.log(line);
+            logger.log('parseCandidate called with a line that is not a candidate line');
+            logger.log(line);
             return null;
         }
         if (line.substring(line.length - 2) == '\r\n') // chomp it
@@ -268,8 +270,8 @@ SDPUtil = {
             elems = line.split(' '),
             i;
         if (elems[6] != 'typ') {
-            console.log('did not find typ in the right place');
-            console.log(line);
+            logger.log('did not find typ in the right place');
+            logger.log(line);
             return null;
         }
         candidate.foundation = elems[0].substring(12);
@@ -297,7 +299,7 @@ SDPUtil = {
                     candidate.tcptype = elems[i + 1];
                     break;
                 default: // TODO
-                    console.log('not translating "' + elems[i] + '" = "' + elems[i + 1] + '"');
+                    logger.log('not translating "' + elems[i] + '" = "' + elems[i + 1] + '"');
             }
         }
         candidate.network = '1';

@@ -31,6 +31,8 @@ var extInstalled = false;
  */
 var extUpdateRequired = false;
 
+
+var logger = require("jitsi-meet-logger").getLogger(__filename);
 var AdapterJS = require("../RTC/adapter.screenshare");
 
 var EventEmitter = require("events");
@@ -107,7 +109,7 @@ function isUpdateRequired(minVersion, extVersion)
     }
     catch (e)
     {
-        console.error("Failed to parse extension version", e);
+        logger.error("Failed to parse extension version", e);
         APP.UI.messageHandler.showError("dialog.error",
             "dialog.detectext");
         return true;
@@ -126,14 +128,14 @@ function checkChromeExtInstalled(callback) {
         function (response) {
             if (!response || !response.version) {
                 // Communication failure - assume that no endpoint exists
-                console.warn(
+                logger.warn(
                     "Extension not installed?: ", chrome.runtime.lastError);
                 callback(false, false);
                 return;
             }
             // Check installed extension version
             var extVersion = response.version;
-            console.log('Extension version is: ' + extVersion);
+            logger.log('Extension version is: ' + extVersion);
             var updateRequired
                 = isUpdateRequired(config.minChromeExtVersion, extVersion);
             callback(!updateRequired, updateRequired);
@@ -152,7 +154,7 @@ function doGetStreamFromExtension(streamCallback, failCallback) {
                 failCallback(chrome.runtime.lastError);
                 return;
             }
-            console.log("Response from extension: " + response);
+            logger.log("Response from extension: " + response);
             if (response.streamId) {
                 APP.RTC.getUserMediaWithConstraints(
                     ['desktop'],
@@ -185,7 +187,7 @@ function obtainScreenFromExtension(streamCallback, failCallback) {
         chrome.webstore.install(
             getWebStoreInstallUrl(),
             function (arg) {
-                console.log("Extension installed successfully", arg);
+                logger.log("Extension installed successfully", arg);
                 extInstalled = true;
                 // We need to give a moment for the endpoint to become available
                 window.setTimeout(function () {
@@ -193,7 +195,7 @@ function obtainScreenFromExtension(streamCallback, failCallback) {
                 }, 500);
             },
             function (arg) {
-                console.log("Failed to install the extension", arg);
+                logger.log("Failed to install the extension", arg);
                 failCallback(arg);
                 APP.UI.messageHandler.showError("dialog.error",
                     "dialog.failtoinstall");
@@ -218,31 +220,31 @@ function setDesktopSharing(method) {
     // care about 'method' parameter
     if (RTCBrowserType.isTemasysPluginUsed()) {
         if (!AdapterJS.WebRTCPlugin.plugin.HasScreensharingFeature) {
-            console.info("Screensharing not supported by this plugin version");
+            logger.info("Screensharing not supported by this plugin version");
         } else if (!AdapterJS.WebRTCPlugin.plugin.isScreensharingAvailable) {
-            console.info(
+            logger.info(
             "Screensharing not available with Temasys plugin on this site");
         } else {
             obtainDesktopStream = obtainWebRTCScreen;
-            console.info("Using Temasys plugin for desktop sharing");
+            logger.info("Using Temasys plugin for desktop sharing");
         }
     } else if (RTCBrowserType.isChrome()) {
         if (method == "ext") {
             if (RTCBrowserType.getChromeVersion() >= 34) {
                 obtainDesktopStream = obtainScreenFromExtension;
-                console.info("Using Chrome extension for desktop sharing");
+                logger.info("Using Chrome extension for desktop sharing");
                 initChromeExtension();
             } else {
-                console.info("Chrome extension not supported until ver 34");
+                logger.info("Chrome extension not supported until ver 34");
             }
         } else if (method == "webrtc") {
             obtainDesktopStream = obtainWebRTCScreen;
-            console.info("Using Chrome WebRTC for desktop sharing");
+            logger.info("Using Chrome WebRTC for desktop sharing");
         }
     }
 
     if (!obtainDesktopStream) {
-        console.info("Desktop sharing disabled");
+        logger.info("Desktop sharing disabled");
     }
 }
 
@@ -263,21 +265,21 @@ function initChromeExtension() {
     checkChromeExtInstalled(function (installed, updateRequired) {
         extInstalled = installed;
         extUpdateRequired = updateRequired;
-        console.info(
+        logger.info(
             "Chrome extension installed: " + extInstalled +
             " updateRequired: " + extUpdateRequired);
     });
 }
 
 function getVideoStreamFailed(error) {
-    console.error("Failed to obtain the stream to switch to", error);
+    logger.error("Failed to obtain the stream to switch to", error);
     switchInProgress = false;
     isUsingScreenStream = false;
     newStreamCreated(null);
 }
 
 function getDesktopStreamFailed(error) {
-    console.error("Failed to obtain the stream to switch to", error);
+    logger.error("Failed to obtain the stream to switch to", error);
     switchInProgress = false;
 }
 
@@ -343,7 +345,7 @@ module.exports = {
      */
     toggleScreenSharing: function () {
         if (switchInProgress || !obtainDesktopStream) {
-            console.warn("Switch in progress or no method defined");
+            logger.warn("Switch in progress or no method defined");
             return;
         }
         switchInProgress = true;

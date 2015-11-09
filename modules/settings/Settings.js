@@ -1,8 +1,10 @@
+
+var logger = require("jitsi-meet-logger").getLogger(__filename);
 function supportsLocalStorage() {
     try {
         return 'localStorage' in window && window.localStorage !== null;
     } catch (e) {
-        console.log("localstorage is not supported");
+        logger.log("localstorage is not supported");
         return false;
     }
 }
@@ -29,7 +31,7 @@ function Settings(conferenceID) {
             this.confSettings = JSON.parse(window.localStorage.getItem(conferenceID));
         if(!this.confSettings.jitsiMeetId) {
             this.confSettings.jitsiMeetId = generateUniqueId();
-            console.log("generated id",
+            logger.log("generated id",
                 this.confSettings.jitsiMeetId);
             this.save();
         }
@@ -38,7 +40,7 @@ function Settings(conferenceID) {
         this.displayName = this.confSettings.displayname || '';
         this.language = this.confSettings.language;
     } else {
-        console.log("local storage is not supported");
+        logger.log("local storage is not supported");
         this.userId = generateUniqueId();
     }
 }

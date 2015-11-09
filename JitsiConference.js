@@ -1,3 +1,5 @@
+
+var logger = require("jitsi-meet-logger").getLogger(__filename);
 var RTC = require("./modules/RTC/RTC");
 var XMPPEvents = require("./service/xmpp/XMPPEvents");
 var StreamEventTypes = require("./service/RTC/StreamEventTypes");
@@ -19,7 +21,7 @@ var Statistics = require("./modules/statistics/statistics");
 
 function JitsiConference(options) {
     if(!options.name || options.name.toLowerCase() !== options.name) {
-        console.error("Invalid conference name (no conference name passed or it"
+        logger.error("Invalid conference name (no conference name passed or it"
             + "contains invalid characters like capital letters)!");
          return;
     }

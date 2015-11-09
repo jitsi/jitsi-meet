@@ -1,3 +1,5 @@
+
+var logger = require("jitsi-meet-logger").getLogger(__filename);
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 var Moderator = require("./moderator");
 var EventEmitter = require("events");
@@ -60,7 +62,7 @@ function ChatRoom(connection, jid, password, XMPP, options) {
     this.roomjid = Strophe.getBareJidFromJid(jid);
     this.myroomjid = jid;
     this.password = password;
-    console.info("Joined MUC as " + this.myroomjid);
+    logger.info("Joined MUC as " + this.myroomjid);
     this.members = {};
     this.presMap = {};
     this.presHandlers = {};
@@ -128,7 +130,7 @@ ChatRoom.prototype.sendPresence = function (tokenPassword) {
 
 
 ChatRoom.prototype.doLeave = function () {
-    console.log("do leave", this.myroomjid);
+    logger.log("do leave", this.myroomjid);
     var pres = $pres({to: this.myroomjid, type: 'unavailable' });
     this.presMap.length = 0;
     this.connection.send(pres);
@@ -150,7 +152,7 @@ ChatRoom.prototype.createNonAnonymousRoom = function () {
                 '>query>x[xmlns="jabber:x:data"]' +
                 '>field[var="muc#roomconfig_whois"]').length) {
 
-            console.error('non-anonymous rooms not supported');
+            logger.error('non-anonymous rooms not supported');
             return;
         }
 
@@ -169,7 +171,7 @@ ChatRoom.prototype.createNonAnonymousRoom = function () {
         self.connection.sendIQ(formSubmit);
 
     }, function (error) {
-        console.error("Error getting room configuration form");
+        logger.error("Error getting room configuration form");
     });
 };
 
@@ -209,7 +211,7 @@ ChatRoom.prototype.onPresence = function (pres) {
                     if (displayName && displayName.length > 0) {
                         this.eventEmitter.emit(XMPPEvents.DISPLAY_NAME_CHANGED, from, displayName);
                     }
-                    console.info("Display name: " + displayName, pres);
+                    logger.info("Display name: " + displayName, pres);
                 }
                 break;
             case "userId":
@@ -246,10 +248,10 @@ ChatRoom.prototype.onPresence = function (pres) {
     } else if (this.members[from] === undefined) {
         // new participant
         this.members[from] = member;
-        console.log('entered', from, member);
+        logger.log('entered', from, member);
         if (member.isFocus) {
             this.focusMucJid = from;
-            console.info("Ignore focus: " + from + ", real JID: " + member.jid);
+            logger.info("Ignore focus: " + from + ", real JID: " + member.jid);
         }
         else {
             this.eventEmitter.emit(XMPPEvents.MUC_MEMBER_JOINED, from, member.id || member.email, member.nick);
@@ -295,7 +297,7 @@ ChatRoom.prototype.setSubject = function (subject) {
     var msg = $msg({to: this.roomjid, type: 'groupchat'});
     msg.c('subject', subject);
     this.connection.send(msg);
-    console.log("topic changed to " + subject);
+    logger.log("topic changed to " + subject);
 };
 
 
@@ -366,7 +368,7 @@ ChatRoom.prototype.onMessage = function (msg, from) {
         var subjectText = subject.text();
         if (subjectText || subjectText == "") {
             this.eventEmitter.emit(XMPPEvents.SUBJECT_CHANGED, subjectText);
-            console.log("Subject is changed to " + subjectText);
+            logger.log("Subject is changed to " + subjectText);
         }
     }
 
@@ -385,7 +387,7 @@ ChatRoom.prototype.onMessage = function (msg, from) {
     }
 
     if (txt) {
-        console.log('chat', nick, txt);
+        logger.log('chat', nick, txt);
         this.eventEmitter.emit(XMPPEvents.MESSAGE_RECEIVED,
             from, nick, txt, this.myroomjid, stamp);
     }
@@ -393,7 +395,7 @@ ChatRoom.prototype.onMessage = function (msg, from) {
 
 ChatRoom.prototype.onPresenceError = function (pres, from) {
     if ($(pres).find('>error[type="auth"]>not-authorized[xmlns="urn:ietf:params:xml:ns:xmpp-stanzas"]').length) {
-        console.log('on password required', from);
+        logger.log('on password required', from);
         this.eventEmitter.emit(XMPPEvents.PASSWORD_REQUIRED);
     } else if ($(pres).find(
         '>error[type="cancel"]>not-allowed[xmlns="urn:ietf:params:xml:ns:xmpp-stanzas"]').length) {
@@ -406,11 +408,11 @@ ChatRoom.prototype.onPresenceError = function (pres, from) {
             this.eventEmitter.emit(XMPPEvents.ROOM_JOIN_ERROR, pres);
 
         } else {
-            console.warn('onPresError ', pres);
+            logger.warn('onPresError ', pres);
             this.eventEmitter.emit(XMPPEvents.ROOM_CONNECT_ERROR, pres);
         }
     } else {
-        console.warn('onPresError ', pres);
+        logger.warn('onPresError ', pres);
         this.eventEmitter.emit(XMPPEvents.ROOM_CONNECT_ERROR, pres);
     }
 };
@@ -424,10 +426,10 @@ ChatRoom.prototype.kick = function (jid) {
     this.connection.sendIQ(
         kickIQ,
         function (result) {
-            console.log('Kick participant with jid: ', jid, result);
+            logger.log('Kick participant with jid: ', jid, result);
         },
         function (error) {
-            console.log('Kick participant error: ', error);
+            logger.log('Kick participant error: ', error);
         });
 };
 
@@ -503,7 +505,7 @@ ChatRoom.prototype.switchStreams = function (stream, oldStream, callback, isAudi
         this.session.switchStreams(stream, oldStream, callback, isAudio);
     } else {
         // We are done immediately
-        console.warn("No conference handler or conference not started yet");
+        logger.warn("No conference handler or conference not started yet");
         callback();
     }
 };
@@ -514,7 +516,7 @@ ChatRoom.prototype.addStream = function (stream, callback) {
         this.session.addStream(stream, callback);
     } else {
         // We are done immediately
-        console.warn("No conference handler or conference not started yet");
+        logger.warn("No conference handler or conference not started yet");
         callback();
     }
 }
@@ -541,7 +543,7 @@ ChatRoom.prototype.setVideoMute = function (mute, callback, options) {
 ChatRoom.prototype.setAudioMute = function (mute, callback) {
     //This will be for remote streams only
 //    if (this.forceMuted && !mute) {
-//        console.info("Asking focus for unmute");
+//        logger.info("Asking focus for unmute");
 //        this.connection.moderate.setMute(this.connection.emuc.myroomjid, mute);
 //        // FIXME: wait for result before resetting muted status
 //        this.forceMuted = false;

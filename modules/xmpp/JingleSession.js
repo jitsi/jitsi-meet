@@ -3,6 +3,8 @@
  * have different implementations depending on the underlying interface used
  * (i.e. WebRTC and ORTC) and here we hold the code common to all of them.
  */
+var logger = require("jitsi-meet-logger").getLogger(__filename);
+
 function JingleSession(me, sid, connection, service, eventEmitter) {
     /**
      * Our JID.
@@ -64,7 +66,7 @@ JingleSession.prototype.initialize = function(peerjid, isInitiator,
     this.ice_config = ice_config;
 
     if (this.state !== null) {
-        console.error('attempt to initiate on session ' + this.sid +
+        logger.error('attempt to initiate on session ' + this.sid +
         'in state ' + this.state);
         return;
     }

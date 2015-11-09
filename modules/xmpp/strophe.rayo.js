@@ -1,4 +1,6 @@
 /* jshint -W117 */
+var logger = require("jitsi-meet-logger").getLogger(__filename);
+
 module.exports = function() {
     Strophe.addConnectionPlugin('rayo',
         {
@@ -14,7 +16,7 @@ module.exports = function() {
                     this.onRayo.bind(this), this.RAYO_XMLNS, 'iq', 'set', null, null);
             },
             onRayo: function (iq) {
-                console.info("Rayo IQ", iq);
+                logger.info("Rayo IQ", iq);
             },
             dial: function (to, from, roomName, roomPass) {
                 var self = this;
@@ -48,21 +50,21 @@ module.exports = function() {
                 this.connection.sendIQ(
                     req,
                     function (result) {
-                        console.info('Dial result ', result);
+                        logger.info('Dial result ', result);
 
                         var resource = $(result).find('ref').attr('uri');
                         this.call_resource = resource.substr('xmpp:'.length);
-                        console.info(
+                        logger.info(
                                 "Received call resource: " + this.call_resource);
                     },
                     function (error) {
-                        console.info('Dial error ', error);
+                        logger.info('Dial error ', error);
                     }
                 );
             },
             hang_up: function () {
                 if (!this.call_resource) {
-                    console.warn("No call in progress");
+                    logger.warn("No call in progress");
                     return;
                 }
 
@@ -81,11 +83,11 @@ module.exports = function() {
                 this.connection.sendIQ(
                     req,
                     function (result) {
-                        console.info('Hangup result ', result);
+                        logger.info('Hangup result ', result);
                         self.call_resource = null;
                     },
                     function (error) {
-                        console.info('Hangup error ', error);
+                        logger.info('Hangup error ', error);
                         self.call_resource = null;
                     }
                 );

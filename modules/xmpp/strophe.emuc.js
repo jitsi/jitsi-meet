@@ -2,6 +2,8 @@
 /* a simple MUC connection plugin
  * can only handle a single MUC room
  */
+
+var logger = require("jitsi-meet-logger").getLogger(__filename);
 var ChatRoom = require("./ChatRoom");
 
 module.exports = function(XMPP) {
@@ -19,7 +21,7 @@ module.exports = function(XMPP) {
         createRoom: function (jid, password, options) {
             var roomJid = Strophe.getBareJidFromJid(jid);
             if (this.rooms[roomJid]) {
-                console.error("You are already in the room!");
+                logger.error("You are already in the room!");
                 return;
             }
             this.rooms[roomJid] = new ChatRoom(this.connection, jid, password, XMPP, options);

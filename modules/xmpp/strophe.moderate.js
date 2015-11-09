@@ -3,6 +3,8 @@
 /**
  * Moderate connection plugin.
  */
+
+var logger = require("jitsi-meet-logger").getLogger(__filename);
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 
 module.exports = function (XMPP, eventEmitter) {
@@ -19,7 +21,7 @@ module.exports = function (XMPP, eventEmitter) {
                 null);
         },
         setMute: function (jid, mute) {
-            console.info("set mute", mute);
+            logger.info("set mute", mute);
             var iqToFocus = $iq({to: this.connection.emuc.focusMucJid, type: 'set'})
                 .c('mute', {
                     xmlns: 'http://jitsi.org/jitmeet/audio',
@@ -31,16 +33,16 @@ module.exports = function (XMPP, eventEmitter) {
             this.connection.sendIQ(
                 iqToFocus,
                 function (result) {
-                    console.log('set mute', result);
+                    logger.log('set mute', result);
                 },
                 function (error) {
-                    console.log('set mute error', error);
+                    logger.log('set mute error', error);
                 });
         },
         onMute: function (iq) {
             var from = iq.getAttribute('from');
             if (from !== this.connection.emuc.focusMucJid) {
-                console.warn("Ignored mute from non focus peer");
+                logger.warn("Ignored mute from non focus peer");
                 return false;
             }
             var mute = $(iq).find('mute');

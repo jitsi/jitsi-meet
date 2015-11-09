@@ -1,10 +1,12 @@
 /* global config, $, APP, Strophe, callstats */
+var logger = require("jitsi-meet-logger").getLogger(__filename);
+
 var jsSHA = require('jssha');
 var io = require('socket.io-client');
 var callStats = null;
 
 function initCallback (err, msg) {
-    console.log("Initializing Status: err="+err+" msg="+msg);
+    logger.log("Initializing Status: err="+err+" msg="+msg);
 }
 
 var CallStats = {
@@ -41,7 +43,7 @@ var CallStats = {
     pcCallback: function (err, msg) {
         if (!callStats)
             return;
-        console.log("Monitoring status: "+ err + " msg: " + msg);
+        logger.log("Monitoring status: "+ err + " msg: " + msg);
         callStats.sendFabricEvent(this.peerconnection,
             callStats.fabricEvent.fabricSetup, this.confID);
     },

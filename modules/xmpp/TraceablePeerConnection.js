@@ -1,4 +1,6 @@
 var RTC = require('../RTC/RTC');
+
+var logger = require("jitsi-meet-logger").getLogger(__filename);
 var RTCBrowserType = require("../RTC/RTCBrowserType.js");
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 var SSRCReplacement = require("./LocalSSRCReplacement");
@@ -26,13 +28,13 @@ function TraceablePeerConnection(ice_config, constraints, session) {
 
     // override as desired
     this.trace = function (what, info) {
-        /*console.warn('WTRACE', what, info);
+        /*logger.warn('WTRACE', what, info);
         if (info && RTCBrowserType.isIExplorer()) {
             if (info.length > 1024) {
-                console.warn('WTRACE', what, info.substr(1024));
+                logger.warn('WTRACE', what, info.substr(1024));
             }
             if (info.length > 2048) {
-                console.warn('WTRACE', what, info.substr(2048));
+                logger.warn('WTRACE', what, info.substr(2048));
             }
         }*/
         self.updateLog.push({
@@ -142,7 +144,7 @@ var dumpSDP = function(description) {
 var normalizePlanB = function(desc) {
     if (typeof desc !== 'object' || desc === null ||
         typeof desc.sdp !== 'string') {
-        console.warn('An empty description was passed as an argument.');
+        logger.warn('An empty description was passed as an argument.');
         return desc;
     }
 
@@ -248,7 +250,7 @@ TraceablePeerConnection.prototype.addStream = function (stream) {
     }
     catch (e)
     {
-        console.error(e);
+        logger.error(e);
     }
 };
 
@@ -277,7 +279,7 @@ TraceablePeerConnection.prototype.removeStream = function (stream, stopStreams) 
         if (this.peerconnection.removeStream)
             this.peerconnection.removeStream(stream);
     } catch (e) {
-        console.error(e);
+        logger.error(e);
     }
 };
 

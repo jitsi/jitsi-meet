@@ -1,4 +1,6 @@
 /* global config, require, attachMediaStream, getUserMedia */
+
+var logger = require("jitsi-meet-logger").getLogger(__filename);
 var RTCBrowserType = require("./RTCBrowserType");
 var Resolutions = require("../../service/RTC/Resolutions");
 var AdapterJS = require("./adapter.screenshare");
@@ -102,7 +104,7 @@ function getConstraints(um, resolution, bandwidth, fps, desktopStream) {
                 ]
             };
         } else {
-            console.error(
+            logger.error(
                 "'screen' WebRTC media source is supported only in Chrome" +
                 " and with Temasys plugin");
         }
@@ -188,7 +190,7 @@ var RTCUtils = {
                 RTCSessionDescription = mozRTCSessionDescription;
                 RTCIceCandidate = mozRTCIceCandidate;
             } else {
-                console.error(
+                logger.error(
                         "Firefox version too old: " + FFversion + ". Required >= 40.");
                 window.location.href = 'unsupported_browser.html';
                 return;
@@ -260,7 +262,7 @@ var RTCUtils = {
                 };
                 self.getVideoSrc = function (element) {
                     if (!element) {
-                        console.warn("Attempt to get video SRC of null element");
+                        logger.warn("Attempt to get video SRC of null element");
                         return null;
                     }
                     var children = element.children;
@@ -269,13 +271,13 @@ var RTCUtils = {
                             return children[i].value;
                         }
                     }
-                    //console.info(element.id + " SRC: " + src);
+                    //logger.info(element.id + " SRC: " + src);
                     return null;
                 };
                 self.setVideoSrc = function (element, src) {
-                    //console.info("Set video src: ", element, src);
+                    //logger.info("Set video src: ", element, src);
                     if (!src) {
-                        console.warn("Not attaching video stream, 'src' is null");
+                        logger.warn("Not attaching video stream, 'src' is null");
                         return;
                     }
                     AdapterJS.WebRTCPlugin.WaitForPluginReady();
@@ -288,7 +290,7 @@ var RTCUtils = {
             });
         } else {
             try {
-                console.error('Browser does not appear to be WebRTC-capable');
+                logger.error('Browser does not appear to be WebRTC-capable');
             } catch (e) {
             }
             return;
@@ -301,27 +303,27 @@ var RTCUtils = {
         var constraints = getConstraints(
             um, resolution, bandwidth, fps, desktopStream);
 
-        console.info("Get media constraints", constraints);
+        logger.info("Get media constraints", constraints);
 
         var self = this;
 
         try {
             this.getUserMedia(constraints,
                 function (stream) {
-                    console.log('onUserMediaSuccess');
+                    logger.log('onUserMediaSuccess');
                     self.setAvailableDevices(RTC, um, true);
                     success_callback(stream);
                 },
                 function (error) {
                     self.setAvailableDevices(RTC, um, false);
-                    console.warn('Failed to get access to local media. Error ',
+                    logger.warn('Failed to get access to local media. Error ',
                         error, constraints);
                     if (failure_callback) {
                         failure_callback(error, resolution);
                     }
                 });
         } catch (e) {
-            console.error('GUM failed: ', e);
+            logger.error('GUM failed: ', e);
             if (failure_callback) {
                 failure_callback(e);
             }
@@ -401,7 +403,7 @@ var RTCUtils = {
                             });
                         },
                         function (error, resolution) {
-                            console.error(
+                            logger.error(
                                 'failed to obtain video stream - stop', error);
                             self.errorCallback(error, resolve, RTC, resolution, dontCreateJitsiTracks);
                         },
@@ -416,7 +418,7 @@ var RTCUtils = {
                                 obtainVideo(audioStream);
                         },
                         function (error) {
-                            console.error(
+                            logger.error(
                                 'failed to obtain audio stream - stop', error);
                             self.errorCallback(error, resolve, RTC, null, dontCreateJitsiTracks);
                         }
@@ -454,7 +456,7 @@ var RTCUtils = {
         // If this is FF or IE, the stream parameter is *not* a MediaStream object,
         // it's an object with two properties: audioStream, videoStream.
         if (stream && stream.getAudioTracks && stream.getVideoTracks)
-            console.log('got', stream, stream.getAudioTracks().length,
+            logger.log('got', stream, stream.getAudioTracks().length,
                 stream.getVideoTracks().length);
         return this.handleLocalStream(RTC, stream, usageOptions, resolution);
     },
@@ -471,7 +473,7 @@ var RTCUtils = {
      */
     errorCallback: function (error, resolve, RTC, currentResolution, dontCreateJitsiTracks) {
         var self = this;
-        console.error('failed to obtain audio/video stream - trying audio only', error);
+        logger.error('failed to obtain audio/video stream - trying audio only', error);
         var resolution = getPreviousResolution(currentResolution);
         if (typeof error == "object" && error.constraintName && error.name
             && (error.name == "ConstraintNotSatisfiedError" ||
@@ -496,7 +498,7 @@ var RTCUtils = {
                     resolve(dontCreateJitsiTracks? streams: RTC.createLocalStreams(streams));
                 },
                 function (error) {
-                    console.error('failed to obtain audio/video stream - stop',
+                    logger.error('failed to obtain audio/video stream - stop',
                         error);
                     var streams = self.successCallback(RTC, null);
                     resolve(dontCreateJitsiTracks? streams: RTC.createLocalStreams(streams));

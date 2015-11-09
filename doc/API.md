@@ -41,6 +41,11 @@ The ```options``` parameter is JS object with the following properties:
 
 * ```JitsiMeetJS.JitsiConnection``` - the ```JitsiConnection``` constructor. You can use that to create new server connection.
 
+* ```JitsiMeetJS.setLogLevel``` - changes the log level for the library. For example to have only error messages you should do:
+```
+JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.ERROR);
+```
+
 * ```JitsiMeetJS.events``` - JS object that contains all events used by the API. You will need that JS object when you try to subscribe for connection or conference events.
     We have two event types - connection and conference. You can access the events with the following code ```JitsiMeetJS.events.<event_type>.<event_name>```.
     For example if you want to use the conference event that is fired when somebody leave conference you can use the following code - ```JitsiMeetJS.events.conference.USER_LEFT```.
@@ -77,7 +82,13 @@ The ```options``` parameter is JS object with the following properties:
         - PASSWORD_REQUIRED - passed when the connection to the server failed. You should try to authenticate with password.
         - CONNECTION_ERROR - indicates connection failures.
         - OTHER_ERROR - all other errors
-
+* ```JitsiMeetJS.logLevels``` - object with the log levels:
+    1. TRACE
+    2. DEBUG
+    3. INFO
+    4. LOG
+    5. WARN
+    6. ERROR
 
 JitsiConnection
 ------------
@@ -108,7 +119,7 @@ This objects represents the server connection. You can create new ```JitsiConnec
         1. devices - array with the devices - "video" and "audio" that will be passed to GUM. If that property is not set GUM will try to get all available devices.
         2. resolution - the prefered resolution for the local video.
         3. openSctp - boolean property. Enables/disables datachannel support. **NOTE: we recommend to set that option to true**
-        4. disableAudioLevels - boolean property. Enables/disables audio levels. 
+        4. disableAudioLevels - boolean property. Enables/disables audio levels.
 
 5. addEventListener(event, listener) - Subscribes the passed listener to the event.
     - event - one of the events from ```JitsiMeetJS.events.connection``` object.
