@@ -119,11 +119,15 @@ var statistics = {
         APP.xmpp.addListener(RTCEvents.CREATE_ANSWER_FAILED, function (e) {
             CallStats.sendCreateAnswerFailed(e);
         });
-        APP.xmpp.addListener(RTCEvents.SET_LOCAL_DESCRIPTION_FAILED, function (e) {
-            CallStats.sendSetLocalDescFailed(e);
+        APP.xmpp.addListener(
+            RTCEvents.SET_LOCAL_DESCRIPTION_FAILED,
+            function (e) {
+                CallStats.sendSetLocalDescFailed(e);
         });
-        APP.xmpp.addListener(RTCEvents.SET_REMOTE_DESCRIPTION_FAILED, function (e) {
-            CallStats.sendSetRemoteDescFailed(e);
+        APP.xmpp.addListener(
+            RTCEvents.SET_REMOTE_DESCRIPTION_FAILED,
+            function (e) {
+                CallStats.sendSetRemoteDescFailed(e);
         });
         APP.xmpp.addListener(RTCEvents.ADD_ICE_CANDIDATE_FAILED, function (e) {
             CallStats.sendAddIceCandidateFailed(e);
