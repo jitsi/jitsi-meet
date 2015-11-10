@@ -35,6 +35,8 @@ case "$1" in
             rm -f /etc/jitsi/meet/$JVB_HOSTNAME-config.js
             rm -f /etc/nginx/sites-available/$JVB_HOSTNAME.conf
             rm -f /etc/nginx/sites-enabled/$JVB_HOSTNAME.conf
+            rm -f /etc/jitsi/videobridge/$JVB_HOSTNAME.jks
+            rm -f /etc/jitsi/videobridge/$JVB_HOSTNAME.p12
         fi
     ;;
     upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)
