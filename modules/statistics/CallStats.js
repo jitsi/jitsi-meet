@@ -5,6 +5,11 @@ var jsSHA = require('jssha');
 var io = require('socket.io-client');
 var callStats = null;
 
+// getUserMedia calls happen before CallStats init
+// so if there are any getUserMedia errors, we store them in this array
+// and send them to callstats on init
+var pendingUserMediaErrors = [];
+
 function initCallback (err, msg) {
     console.log("Initializing Status: err="+err+" msg="+msg);
 }
@@ -38,17 +43,25 @@ var CallStats = {
             usage,
             this.confID,
             this.pcCallback.bind(this));
+
+        // notify callstats about getUserMedia failures if there were any
+        if (pendingUserMediaErrors.length) {
+            pendingUserMediaErrors.forEach(this.sendGetUserMediaFailed, this);
+            pendingUserMediaErrors.length = 0;
+        }
     },
     pcCallback: function (err, msg) {
-        if (!callStats)
+        if (!callStats) {
             return;
+        }
         console.log("Monitoring status: "+ err + " msg: " + msg);
         callStats.sendFabricEvent(this.peerconnection,
             callStats.fabricEvent.fabricSetup, this.confID);
     },
     sendMuteEvent: function (mute, type) {
-        if (!callStats)
+        if (!callStats) {
             return;
+        }
         var event = null;
         if (type === "video") {
             event = (mute? callStats.fabricEvent.videoPause :
@@ -74,7 +87,8 @@ var CallStats = {
         callStats.sendFabricEvent(this.peerconnection,
             callStats.fabricEvent.fabricSetupFailed, this.confID);
     },
-    /**
+
+   /**
      * Sends the given feedback through CallStats.
      *
      * @param overallFeedback an integer between 1 and 5 indicating the
@@ -93,6 +107,86 @@ var CallStats = {
 
         callStats.sendUserFeedback(
             this.confID, feedbackJSON);
+    },
+
+    /**
+     * Notifies CallStats that getUserMedia failed.
+     *
+     * @param {Error} e error to send
+     */
+    sendGetUserMediaFailed: function (e) {
+        if(!callStats) {
+            pendingUserMediaErrors.push(e);
+            return;
+        }
+        callStats.reportError(this.peerconnection, this.confID,
+                              callStats.webRTCFunctions.getUserMedia, e);
+    },
+
+    /**
+     * Notifies CallStats that peer connection failed to create offer.
+     *
+     * @param {Error} e error to send
+     */
+    sendCreateOfferFailed: function (e) {
+        if(!callStats) {
+            return;
+        }
+        callStats.reportError(this.peerconnection, this.confID,
+                              callStats.webRTCFunctions.createOffer, e);
+    },
+
+    /**
+     * Notifies CallStats that peer connection failed to create answer.
+     *
+     * @param {Error} e error to send
+     */
+    sendCreateAnswerFailed: function (e) {
+        if(!callStats) {
+            return;
+        }
+        callStats.reportError(this.peerconnection, this.confID,
+                              callStats.webRTCFunctions.createAnswer, e);
+    },
+
+    /**
+     * Notifies CallStats that peer connection failed to set local description.
+     *
+     * @param {Error} e error to send
+     */
+    sendSetLocalDescFailed: function (e) {
+        if(!callStats) {
+            return;
+        }
+        callStats.reportError(this.peerconnection, this.confID,
+                              callStats.webRTCFunctions.setLocalDescription, e);
+    },
+
+    /**
+     * Notifies CallStats that peer connection failed to set remote description.
+     *
+     * @param {Error} e error to send
+     */
+    sendSetRemoteDescFailed: function (e) {
+        if(!callStats) {
+            return;
+        }
+        callStats.reportError(
+            this.peerconnection, this.confID,
+            callStats.webRTCFunctions.setRemoteDescription, e);
+    },
+
+    /**
+     * Notifies CallStats that peer connection failed to add ICE candidate.
+     *
+     * @param {Error} e error to send
+     */
+    sendAddIceCandidateFailed: function (e) {
+        if(!callStats) {
+            return;
+        }
+        callStats.reportError(this.peerconnection, this.confID,
+                              callStats.webRTCFunctions.addIceCandidate, e);
     }
 };
 module.exports = CallStats;

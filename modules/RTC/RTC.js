@@ -177,7 +177,7 @@ var RTC = {
                 null, null, getMediaStreamUsage());
         };
 
-        this.rtcUtils = new RTCUtils(this, onReady);
+        this.rtcUtils = new RTCUtils(this, eventEmitter, onReady);
 
         // Call onReady() if Temasys plugin is not used
         if (!RTCBrowserType.isTemasysPluginUsed()) {
@@ -210,7 +210,7 @@ var RTC = {
                 APP.xmpp.setVideoMute(false, function(mute) {
                     eventEmitter.emit(RTCEvents.VIDEO_MUTE, mute);
                 });
-                
+
                 callback();
             };
         }
