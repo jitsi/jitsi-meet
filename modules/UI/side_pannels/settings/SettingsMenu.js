@@ -3,6 +3,7 @@ var Avatar = require("../../avatar/Avatar");
 var Settings = require("./../../../settings/Settings");
 var UIUtil = require("../../util/UIUtil");
 var languages = require("../../../../service/translation/languages");
+var RTC = require('../../../RTC/RTC');
 
 function generateLanguagesSelectBox() {
     var currentLang = APP.translation.getCurrentLanguage();
@@ -25,7 +26,9 @@ function generateDevicesOptions(items) {
   var html = '';
 
   items.forEach(function (item) {
-    html += '<option>' + item + '</option>' + '\n';
+    html += '<option value="' + item.deviceId + '">'
+      + item.label
+      + '</option>\n';
   });
 
   return html;
@@ -43,9 +46,17 @@ var SettingsMenu = {
             }
         });
 
-      console.error('HERE');
-        $('#selectCamera').html(generateDevicesOptions(["mega cam", "default"]));
-        $('#selectMic').html(generateDevicesOptions(["mega mic", "default"]));
+        RTC.enumerateDevices(function (devices) {
+          var audio = devices.filter(function (device) {
+            return device.kind === 'audioinput';
+          });
+          var video = devices.filter(function (device) {
+            return device.kind === 'videoinput';
+          });
+
+          $('#selectCamera').html(generateDevicesOptions(video));
+          $('#selectMic').html(generateDevicesOptions(audio));
+        });
 
         if (APP.xmpp.isModerator()) {
             startMutedSelector.css("display", "block");
