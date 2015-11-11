@@ -183,7 +183,7 @@ function wrapGetUserMedia(getUserMedia) {
 
 function promiseToCallbacks(promiser) {
   return function (successCallback, errorCallback) {
-    promiser.then(successCallback, errorCallback);
+      promiser().then(successCallback, errorCallback);
   };
 }
 
@@ -299,16 +299,18 @@ function RTCUtils(RTCService, onTemasysPluginReady)
 
     } else if (RTCBrowserType.isChrome() || RTCBrowserType.isOpera()) {
         this.peerconnection = webkitRTCPeerConnection;
-        this.getUserMedia = wrapGetUserMedia(navigator.webkitGetUserMedia.bind(navigator));
 
+        var getUserMedia = navigator.webkitGetUserMedia.bind(navigator);
         if (navigator.mediaDevices) {
-            enumerateDevices = promiseToCallbacks(
+            this.getUserMedia = wrapGetUserMedia(getUserMedia);
+            enumerateDevices = wrapEnumerateDevices(promiseToCallbacks(
                 navigator.mediaDevices.enumerateDevices.bind(navigator.mediaDevices)
-            );
+            ));
         } else {
+            this.getUserMedia = getUserMedia;
             enumerateDevices = enumerateDevicesThroughMediaStreamTrack;
         }
-        this.enumerateDevices = wrapEnumerateDevices(enumerateDevices);
+        this.enumerateDevices = enumerateDevices;
 
         this.attachMediaStream = function (element, stream) {
             element.attr('src', webkitURL.createObjectURL(stream));
@@ -352,10 +354,8 @@ function RTCUtils(RTCService, onTemasysPluginReady)
         AdapterJS.webRTCReady(function (isPlugin) {
 
             self.peerconnection = RTCPeerConnection;
-            self.getUserMedia = wrapGetUserMedia(getUserMedia);
-
-            var enumerateDevices = enumerateDevicesThroughMediaStreamTrack;
-            self.enumerateDevices = wrapEnumerateDevices(enumerateDevices);
+            self.getUserMedia = getUserMedia;
+            self.enumerateDevices = enumerateDevicesThroughMediaStreamTrack;
 
             self.attachMediaStream = function (elSel, stream) {
 
