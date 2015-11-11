@@ -195,9 +195,31 @@ function afterUserMediaInitialized(callback) {
     }
 }
 
+function createAutoDeviceInfo(kind) {
+    return {
+        facing: null,
+        label: 'Auto',
+        kind: kind,
+        deviceId: '',
+        groupId: null
+    };
+}
+
 function wrapEnumerateDevices(enumerateDevices) {
     return function (callback) {
-        afterUserMediaInitialized(enumerateDevices.bind(null, callback));
+        // enumerate devices only after initial getUserMedia
+        afterUserMediaInitialized(function () {
+
+            enumerateDevices(function (devices) {
+                //add auto devices
+                devices.unshift(
+                    createAutoDeviceInfo('audioinput'),
+                    createAutoDeviceInfo('videoinput')
+                );
+
+                callback(devices);
+            });
+        });
     };
 }
 

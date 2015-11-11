@@ -22,16 +22,22 @@ function generateLanguagesSelectBox() {
     return html + "</select>";
 }
 
-function generateDevicesOptions(items) {
-  var html = '';
+function generateDevicesOptions(items, selectedId) {
+    var html = '';
 
-  items.forEach(function (item) {
-    html += '<option value="' + item.deviceId + '">'
-      + item.label
-      + '</option>\n';
-  });
+    items.forEach(function (item) {
+        var attrs = {
+            value: item.deviceId
+        };
+        if (item.deviceId === selectedId) {
+            attrs.selected = 'selected';
+        }
+        html += '<option ' + UIUtil.attrsToString(attrs) + '>'
+            + item.label
+            + '</option>\n';
+    });
 
-  return html;
+    return html;
 }
 
 var SettingsMenu = {
@@ -54,8 +60,12 @@ var SettingsMenu = {
             return device.kind === 'videoinput';
           });
 
-          $('#selectCamera').html(generateDevicesOptions(video));
-          $('#selectMic').html(generateDevicesOptions(audio));
+          $('#selectCamera').html(
+            generateDevicesOptions(video, Settings.getCameraDeviceId())
+          );
+          $('#selectMic').html(
+            generateDevicesOptions(audio, Settings.getMicDeviceId())
+          );
         });
 
         if (APP.xmpp.isModerator()) {
@@ -105,6 +115,25 @@ var SettingsMenu = {
         var startVideoMuted = ($("#startVideoMuted").is(":checked"));
         APP.xmpp.addToPresence("startMuted",
             [startAudioMuted, startVideoMuted]);
+
+
+        var cameraDeviceId = $('#selectCamera').val();
+        var micDeviceId = $('#selectMic').val();
+
+        var deviceChanged = false;
+
+        if (cameraDeviceId !== Settings.getCameraDeviceId()) {
+            deviceChanged = true;
+            Settings.setCameraDeviceId(cameraDeviceId);
+        }
+        if (micDeviceId !== Settings.getMicDeviceId()) {
+            deviceChanged = true;
+            Settings.setMicDeviceId(micDeviceId);
+        }
+
+        if (deviceChanged) {
+            //FIXME do something
+        }
 
         Avatar.setUserAvatar(APP.xmpp.myJid(), email);
     },
