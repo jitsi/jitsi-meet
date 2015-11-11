@@ -70,7 +70,7 @@ module.exports = {
     isDesktopSharingEnabled: function () {
         return screenObtainer.isSupported();
     },
-    
+
     init: function () {
         // Called when RTC finishes initialization
         APP.RTC.addListener(RTCEvents.RTC_READY,
@@ -123,9 +123,9 @@ module.exports = {
                     isUsingScreenStream = false;
                     newStreamCreated(stream);
                 },
-                getVideoStreamFailed,
-                config.resolution || '360'
-            );
+                getVideoStreamFailed, {
+                    resolution: config.resolution || '360'
+                });
         }
     },
     /*
@@ -134,4 +134,3 @@ module.exports = {
      */
     eventEmitter: eventEmitter
 };
-

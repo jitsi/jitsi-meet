@@ -49,7 +49,7 @@ function setResolutionConstraints(constraints, resolution) {
             constraints.video.mandatory.minHeight;
 }
 
-function getConstraints(um, resolution, bandwidth, fps, desktopStream) {
+function getConstraints(um, options) {
     var constraints = {audio: false, video: false};
 
     if (um.indexOf('video') >= 0) {
@@ -58,7 +58,7 @@ function getConstraints(um, resolution, bandwidth, fps, desktopStream) {
 
         constraints.video.optional.push({ googLeakyBucket: true });
 
-        setResolutionConstraints(constraints, resolution);
+        setResolutionConstraints(constraints, options.resolution);
     }
     if (um.indexOf('audio') >= 0) {
         if (!RTCBrowserType.isFirefox()) {
@@ -114,7 +114,7 @@ function getConstraints(um, resolution, bandwidth, fps, desktopStream) {
         constraints.video = {
             mandatory: {
                 chromeMediaSource: "desktop",
-                chromeMediaSourceId: desktopStream,
+                chromeMediaSourceId: options.desktopStream,
                 googLeakyBucket: true,
                 maxWidth: window.screen.width,
                 maxHeight: window.screen.height,
@@ -124,21 +124,21 @@ function getConstraints(um, resolution, bandwidth, fps, desktopStream) {
         };
     }
 
-    if (bandwidth) {
+    if (options.bandwidth) {
         if (!constraints.video) {
             //same behaviour as true
             constraints.video = {mandatory: {}, optional: []};
         }
-        constraints.video.optional.push({bandwidth: bandwidth});
+        constraints.video.optional.push({bandwidth: options.bandwidth});
     }
-    if (fps) {
+    if (options.fps) {
         // for some cameras it might be necessary to request 30fps
         // so they choose 30fps mjpg over 10fps yuy2
         if (!constraints.video) {
             // same behaviour as true;
             constraints.video = {mandatory: {}, optional: []};
         }
-        constraints.video.mandatory.minFrameRate = fps;
+        constraints.video.mandatory.minFrameRate = options.fps;
     }
 
     // we turn audio for both audio and video tracks, the fake audio & video seems to work
@@ -405,13 +405,22 @@ function RTCUtils(RTCService, onTemasysPluginReady)
 }
 
 
+/**
+ * @param {string[]} um required user media types
+ * @param {function} success_callback
+ * @param {Function} failure_callback
+ *
+ * @param {Object} [options] optional parameters
+ * @param {string} options.resolution
+ * @param {number} options.bandwidth
+ * @param {number} options.fps
+ * @param {string} options.desktopStream
+ */
 RTCUtils.prototype.getUserMediaWithConstraints = function(
-    um, success_callback, failure_callback, resolution,bandwidth, fps,
-    desktopStream) {
-    currentResolution = resolution;
+    um, success_callback, failure_callback, options) {
+    currentResolution = options.resolution;
 
-    var constraints = getConstraints(
-        um, resolution, bandwidth, fps, desktopStream);
+    var constraints = getConstraints(um, options);
 
     console.info("Get media constraints", constraints);
 
@@ -511,8 +520,9 @@ RTCUtils.prototype.obtainAudioAndVideoPermissions =
                     console.error(
                         'failed to obtain video stream - stop', error);
                     self.errorCallback(error);
-                },
-                config.resolution || '360');
+                }, {
+                    resolution: config.resolution || '360'
+                });
         };
         var obtainAudio = function () {
             self.getUserMediaWithConstraints(
@@ -541,8 +551,9 @@ RTCUtils.prototype.obtainAudioAndVideoPermissions =
         },
         function (error) {
             self.errorCallback(error);
-        },
-        config.resolution || '360');
+        }, {
+            resolution: config.resolution || '360'
+        });
     }
 };
 
@@ -571,7 +582,9 @@ RTCUtils.prototype.errorCallback = function (error) {
                 return self.successCallback(stream);
             }, function (error) {
                 return self.errorCallback(error);
-            }, resolution);
+            }, {
+                resolution: resolution
+            });
     }
     else {
         self.getUserMediaWithConstraints(

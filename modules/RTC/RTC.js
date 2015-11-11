@@ -123,12 +123,23 @@ var RTC = {
     getPCConstraints: function () {
         return this.rtcUtils.pc_constraints;
     },
+
+    /**
+     * @param {string[]} um required user media types
+     * @param {function} success_callback
+     * @param {Function} failure_callback
+     *
+     * @param {Object} [options] optional parameters
+     * @param {string} options.resolution
+     * @param {number} options.bandwidth
+     * @param {number} options.fps
+     * @param {string} options.desktopStream
+     */
     getUserMediaWithConstraints:function(um, success_callback,
-                                         failure_callback, resolution,
-                                         bandwidth, fps, desktopStream)
-    {
-        return this.rtcUtils.getUserMediaWithConstraints(um, success_callback,
-            failure_callback, resolution, bandwidth, fps, desktopStream);
+                                         failure_callback, options) {
+        return this.rtcUtils.getUserMediaWithConstraints(
+            um, success_callback, failure_callback, options
+        );
     },
     enumerateDevices: function (callback) {
         this.rtcUtils.enumerateDevices(callback);
