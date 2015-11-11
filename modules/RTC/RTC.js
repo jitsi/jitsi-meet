@@ -12,6 +12,7 @@ var StreamEventTypes = require("../../service/RTC/StreamEventTypes.js");
 var RTCEvents = require("../../service/RTC/RTCEvents.js");
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 var UIEvents = require("../../service/UI/UIEvents");
+var Settings = require('../../modules/settings/Settings');
 
 var eventEmitter = new EventEmitter();
 
@@ -123,12 +124,28 @@ var RTC = {
     getPCConstraints: function () {
         return this.rtcUtils.pc_constraints;
     },
+
+    /**
+     * @param {string[]} um required user media types
+     * @param {function} success_callback
+     * @param {Function} failure_callback
+     *
+     * @param {Object} [options] optional parameters
+     * @param {string} options.resolution
+     * @param {number} options.bandwidth
+     * @param {number} options.fps
+     * @param {string} options.desktopStream
+     * @param {string} options.cameraDeviceId
+     * @param {string} options.micDeviceId
+     */
     getUserMediaWithConstraints:function(um, success_callback,
-                                         failure_callback, resolution,
-                                         bandwidth, fps, desktopStream)
-    {
-        return this.rtcUtils.getUserMediaWithConstraints(um, success_callback,
-            failure_callback, resolution, bandwidth, fps, desktopStream);
+                                         failure_callback, options) {
+        return this.rtcUtils.getUserMediaWithConstraints(
+            um, success_callback, failure_callback, options
+        );
+    },
+    enumerateDevices: function (callback) {
+        this.rtcUtils.enumerateDevices(callback);
     },
     attachMediaStream:  function (elSelector, stream) {
         this.rtcUtils.attachMediaStream(elSelector, stream);
@@ -173,8 +190,17 @@ var RTC = {
         // once it is initialized.
         var onReady = function () {
             eventEmitter.emit(RTCEvents.RTC_READY, true);
+            var options = {};
+            var cameraDeviceId = Settings.getCameraDeviceId();
+            if (cameraDeviceId) {
+                options.cameraDeviceId = cameraDeviceId;
+            }
+            var micDeviceId = Settings.getMicDeviceId();
+            if (micDeviceId) {
+                options.micDeviceId = micDeviceId;
+            }
             self.rtcUtils.obtainAudioAndVideoPermissions(
-                null, null, getMediaStreamUsage());
+                null, null, getMediaStreamUsage(), options);
         };
 
         this.rtcUtils = new RTCUtils(this, onReady);
@@ -210,7 +236,7 @@ var RTC = {
                 APP.xmpp.setVideoMute(false, function(mute) {
                     eventEmitter.emit(RTCEvents.VIDEO_MUTE, mute);
                 });
-                
+
                 callback();
             };
         }

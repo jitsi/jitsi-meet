@@ -1,6 +1,7 @@
 /* global APP, config, require, attachMediaStream, getUserMedia,
     RTCPeerConnection, webkitMediaStream, webkitURL, webkitRTCPeerConnection,
-    mozRTCIceCandidate, mozRTCSessionDescription, mozRTCPeerConnection */
+    mozRTCIceCandidate, mozRTCSessionDescription, mozRTCPeerConnection,
+    MediaStreamTrack */
 /* jshint -W101 */
 var MediaStreamType = require("../../service/RTC/MediaStreamTypes");
 var RTCBrowserType = require("./RTCBrowserType");
@@ -48,21 +49,45 @@ function setResolutionConstraints(constraints, resolution) {
             constraints.video.mandatory.minHeight;
 }
 
-function getConstraints(um, resolution, bandwidth, fps, desktopStream) {
+/**
+ * @param {string[]} um required user media types
+ *
+ * @param {Object} [options={}] optional parameters
+ * @param {string} options.resolution
+ * @param {number} options.bandwidth
+ * @param {number} options.fps
+ * @param {string} options.desktopStream
+ * @param {string} options.cameraDeviceId
+ * @param {string} options.micDeviceId
+ */
+function getConstraints(um, options) {
+    options = options || {};
     var constraints = {audio: false, video: false};
 
     if (um.indexOf('video') >= 0) {
         // same behaviour as true
         constraints.video = { mandatory: {}, optional: [] };
 
+        if (options.cameraDeviceId) {
+            constraints.video.optional.push({
+                sourceId: options.cameraDeviceId
+            });
+        }
+
         constraints.video.optional.push({ googLeakyBucket: true });
 
-        setResolutionConstraints(constraints, resolution);
+        setResolutionConstraints(constraints, options.resolution);
     }
     if (um.indexOf('audio') >= 0) {
         if (!RTCBrowserType.isFirefox()) {
             // same behaviour as true
             constraints.audio = { mandatory: {}, optional: []};
+            if (options.micDeviceId) {
+                constraints.audio.optional.push({
+                    sourceId: options.micDeviceId
+                });
+            }
+
             // if it is good enough for hangouts...
             constraints.audio.optional.push(
                 {googEchoCancellation: true},
@@ -74,7 +99,15 @@ function getConstraints(um, resolution, bandwidth, fps, desktopStream) {
                 {googAutoGainControl2: true}
             );
         } else {
-            constraints.audio = true;
+            if (options.micDeviceId) {
+                constraints.audio = {
+                    mandatory: {},
+                    optional: [{
+                        sourceId: options.micDeviceId
+                    }]};
+            } else {
+                constraints.audio = true;
+            }
         }
     }
     if (um.indexOf('screen') >= 0) {
@@ -113,7 +146,7 @@ function getConstraints(um, resolution, bandwidth, fps, desktopStream) {
         constraints.video = {
             mandatory: {
                 chromeMediaSource: "desktop",
-                chromeMediaSourceId: desktopStream,
+                chromeMediaSourceId: options.desktopStream,
                 googLeakyBucket: true,
                 maxWidth: window.screen.width,
                 maxHeight: window.screen.height,
@@ -123,21 +156,21 @@ function getConstraints(um, resolution, bandwidth, fps, desktopStream) {
         };
     }
 
-    if (bandwidth) {
+    if (options.bandwidth) {
         if (!constraints.video) {
             //same behaviour as true
             constraints.video = {mandatory: {}, optional: []};
         }
-        constraints.video.optional.push({bandwidth: bandwidth});
+        constraints.video.optional.push({bandwidth: options.bandwidth});
     }
-    if (fps) {
+    if (options.fps) {
         // for some cameras it might be necessary to request 30fps
         // so they choose 30fps mjpg over 10fps yuy2
         if (!constraints.video) {
             // same behaviour as true;
             constraints.video = {mandatory: {}, optional: []};
         }
-        constraints.video.mandatory.minFrameRate = fps;
+        constraints.video.mandatory.minFrameRate = options.fps;
     }
 
     // we turn audio for both audio and video tracks, the fake audio & video seems to work
@@ -152,6 +185,130 @@ function getConstraints(um, resolution, bandwidth, fps, desktopStream) {
     return constraints;
 }
 
+/**
+ * Apply function with arguments if function exists.
+ * Do nothing if function not provided.
+ * @param {function} [fn] function to apply
+ * @param {Array} [args=[]] arguments for function
+ */
+function maybeApply(fn, args) {
+  if (fn) {
+    fn.apply(null, args || []);
+  }
+}
+
+var getUserMediaStatus = {
+  initialized: false,
+  callbacks: []
+};
+
+/**
+ * Wrap `getUserMedia` to allow others to know if it was executed at least once or not.
+ * Wrapper function uses `getUserMediaStatus` object.
+ * @param {Function} getUserMedia native function
+ * @returns {Function} wrapped function
+ */
+function wrapGetUserMedia(getUserMedia) {
+  return function (constraints, successCallback, errorCallback) {
+    getUserMedia(constraints, function (stream) {
+      maybeApply(successCallback, [stream]);
+      if (!getUserMediaStatus.initialized) {
+        getUserMediaStatus.initialized = true;
+        getUserMediaStatus.callbacks.forEach(function (callback) {
+          callback();
+        });
+        getUserMediaStatus.callbacks.length = 0;
+      }
+    }, function (error) {
+      maybeApply(errorCallback, [error]);
+    });
+  };
+}
+
+/**
+ * Create stub device which equals to auto selected device.
+ * @param {string} kind if that should be `audio` or `video` device
+ * @returns {Object} stub device description in `enumerateDevices` format
+ */
+function createAutoDeviceInfo(kind) {
+    return {
+        facing: null,
+        label: 'Auto',
+        kind: kind,
+        deviceId: '',
+        groupId: null
+    };
+}
+
+
+/**
+ * Execute function after getUserMedia was executed at least once.
+ * @param {Function} callback function to execute after getUserMedia
+ */
+function afterUserMediaInitialized(callback) {
+    if (getUserMediaStatus.initialized) {
+        callback();
+    } else {
+        getUserMediaStatus.callbacks.push(callback);
+    }
+}
+
+/**
+ * Wrapper function which makes enumerateDevices to wait
+ * until someone executes getUserMedia first time.
+ * @param {Function} enumerateDevices native function
+ * @returns {Funtion} wrapped function
+ */
+function wrapEnumerateDevices(enumerateDevices) {
+    return function (callback) {
+        // enumerate devices only after initial getUserMedia
+        afterUserMediaInitialized(function () {
+
+            enumerateDevices().then(function (devices) {
+                //add auto devices
+                devices.unshift(
+                    createAutoDeviceInfo('audioinput'),
+                    createAutoDeviceInfo('videoinput')
+                );
+
+                callback(devices);
+            }, function (err) {
+                console.error('cannot enumerate devices: ', err);
+
+                // return only auto devices
+                callback([createAutoDeviceInfo('audioInput'),
+                          createAutoDeviceInfo('videoinput')]);
+            });
+        });
+    };
+}
+
+/**
+ * Use old MediaStreamTrack to get devices list and
+ * convert it to enumerateDevices format.
+ * @param {Function} callback function to call when received devices list.
+ */
+function enumerateDevicesThroughMediaStreamTrack (callback) {
+    MediaStreamTrack.getSources(function (sources) {
+        var devices = sources.map(function (source) {
+            var kind = (source.kind || '').toLowerCase();
+            return {
+                facing: source.facing || null,
+                label: source.label,
+                kind: kind ? kind + 'input': null,
+                deviceId: source.id,
+                groupId: source.groupId || null
+            };
+        });
+
+        //add auto devices
+        devices.unshift(
+            createAutoDeviceInfo('audioinput'),
+            createAutoDeviceInfo('videoinput')
+        );
+        callback(devices);
+    });
+}
 
 function RTCUtils(RTCService, onTemasysPluginReady)
 {
@@ -161,7 +318,12 @@ function RTCUtils(RTCService, onTemasysPluginReady)
         var FFversion = RTCBrowserType.getFirefoxVersion();
         if (FFversion >= 40) {
             this.peerconnection = mozRTCPeerConnection;
-            this.getUserMedia = navigator.mozGetUserMedia.bind(navigator);
+            this.getUserMedia = wrapGetUserMedia(navigator.mozGetUserMedia.bind(navigator));
+
+            this.enumerateDevices = wrapEnumerateDevices(
+                navigator.mediaDevices.enumerateDevices.bind(navigator.mediaDevices)
+            );
+
             this.pc_constraints = {};
             this.attachMediaStream =  function (element, stream) {
                 //  srcObject is being standardized and FF will eventually
@@ -207,7 +369,18 @@ function RTCUtils(RTCService, onTemasysPluginReady)
 
     } else if (RTCBrowserType.isChrome() || RTCBrowserType.isOpera()) {
         this.peerconnection = webkitRTCPeerConnection;
-        this.getUserMedia = navigator.webkitGetUserMedia.bind(navigator);
+
+        var getUserMedia = navigator.webkitGetUserMedia.bind(navigator);
+        if (navigator.mediaDevices) {
+            this.getUserMedia = wrapGetUserMedia(getUserMedia);
+            this.enumerateDevices = wrapEnumerateDevices(
+                navigator.mediaDevices.enumerateDevices.bind(navigator.mediaDevices)
+            );
+        } else {
+            this.getUserMedia = getUserMedia;
+            this.enumerateDevices = enumerateDevicesThroughMediaStreamTrack;
+        }
+
         this.attachMediaStream = function (element, stream) {
             element.attr('src', webkitURL.createObjectURL(stream));
         };
@@ -251,6 +424,8 @@ function RTCUtils(RTCService, onTemasysPluginReady)
 
             self.peerconnection = RTCPeerConnection;
             self.getUserMedia = getUserMedia;
+            self.enumerateDevices = enumerateDevicesThroughMediaStreamTrack;
+
             self.attachMediaStream = function (elSel, stream) {
 
                 if (stream.id === "dummyAudio" || stream.id === "dummyVideo") {
@@ -299,13 +474,24 @@ function RTCUtils(RTCService, onTemasysPluginReady)
 }
 
 
+/**
+ * @param {string[]} um required user media types
+ * @param {function} success_callback
+ * @param {Function} failure_callback
+ *
+ * @param {Object} [options] optional parameters
+ * @param {string} options.resolution
+ * @param {number} options.bandwidth
+ * @param {number} options.fps
+ * @param {string} options.desktopStream
+ * @param {string} options.cameraDeviceId
+ * @param {string} options.micDeviceId
+ */
 RTCUtils.prototype.getUserMediaWithConstraints = function(
-    um, success_callback, failure_callback, resolution,bandwidth, fps,
-    desktopStream) {
-    currentResolution = resolution;
+    um, success_callback, failure_callback, options) {
+    currentResolution = options ? options.resolution : undefined;
 
-    var constraints = getConstraints(
-        um, resolution, bandwidth, fps, desktopStream);
+    var constraints = getConstraints(um, options);
 
     console.info("Get media constraints", constraints);
 
@@ -348,9 +534,12 @@ RTCUtils.prototype.setAvailableDevices = function (um, available) {
 /**
  * We ask for audio and video combined stream in order to get permissions and
  * not to ask twice.
+ * @param {Object} [options] optional parameters
+ * @param {string} options.cameraDeviceId
+ * @param {string} options.micDeviceId
  */
 RTCUtils.prototype.obtainAudioAndVideoPermissions =
-    function(devices, callback, usageOptions)
+    function(devices, callback, usageOptions, options)
 {
     var self = this;
     // Get AV
@@ -405,8 +594,10 @@ RTCUtils.prototype.obtainAudioAndVideoPermissions =
                     console.error(
                         'failed to obtain video stream - stop', error);
                     self.errorCallback(error);
-                },
-                config.resolution || '360');
+                }, {
+                    resolution: config.resolution || '360',
+                    cameraDeviceId: options.cameraDeviceId
+                });
         };
         var obtainAudio = function () {
             self.getUserMediaWithConstraints(
@@ -419,6 +610,8 @@ RTCUtils.prototype.obtainAudioAndVideoPermissions =
                     console.error(
                         'failed to obtain audio stream - stop', error);
                     self.errorCallback(error);
+                }, {
+                    micDeviceId: options.micDeviceId
                 }
             );
         };
@@ -435,8 +628,11 @@ RTCUtils.prototype.obtainAudioAndVideoPermissions =
         },
         function (error) {
             self.errorCallback(error);
-        },
-        config.resolution || '360');
+        }, {
+            resolution: config.resolution || '360',
+            cameraDeviceId: options.cameraDeviceId,
+            micDeviceId: options.micDeviceId
+        });
     }
 };
 
@@ -465,7 +661,9 @@ RTCUtils.prototype.errorCallback = function (error) {
                 return self.successCallback(stream);
             }, function (error) {
                 return self.errorCallback(error);
-            }, resolution);
+            }, {
+                resolution: resolution
+            });
     }
     else {
         self.getUserMediaWithConstraints(

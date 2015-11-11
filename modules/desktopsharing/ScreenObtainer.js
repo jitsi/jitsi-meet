@@ -245,9 +245,9 @@ function doGetStreamFromExtension(streamCallback, failCallback) {
                     function (stream) {
                         streamCallback(stream);
                     },
-                    failCallback,
-                    null, null, null,
-                    response.streamId);
+                    failCallback, {
+                        desktopStream: response.streamId
+                    });
             } else {
                 failCallback("Extension failed to get the stream");
             }
