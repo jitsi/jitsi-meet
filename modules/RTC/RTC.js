@@ -130,8 +130,8 @@ var RTC = {
         return this.rtcUtils.getUserMediaWithConstraints(um, success_callback,
             failure_callback, resolution, bandwidth, fps, desktopStream);
     },
-    enumerateDevices: function () {
-        return this.rtcUtils.enumerateDevices();
+    enumerateDevices: function (callback) {
+        this.rtcUtils.enumerateDevices(callback);
     },
     attachMediaStream:  function (elSelector, stream) {
         this.rtcUtils.attachMediaStream(elSelector, stream);
