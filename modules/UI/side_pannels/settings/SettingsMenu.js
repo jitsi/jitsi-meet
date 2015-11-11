@@ -132,7 +132,8 @@ var SettingsMenu = {
         }
 
         if (deviceChanged) {
-            //FIXME do something
+            // FIXME maybe handle this in more user-friendly way
+            window.location.reload();
         }
 
         Avatar.setUserAvatar(APP.xmpp.myJid(), email);
