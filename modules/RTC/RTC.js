@@ -130,6 +130,9 @@ var RTC = {
         return this.rtcUtils.getUserMediaWithConstraints(um, success_callback,
             failure_callback, resolution, bandwidth, fps, desktopStream);
     },
+    enumerateDevices: function () {
+        return this.rtcUtils.enumerateDevices();
+    },
     attachMediaStream:  function (elSelector, stream) {
         this.rtcUtils.attachMediaStream(elSelector, stream);
     },
@@ -210,7 +213,7 @@ var RTC = {
                 APP.xmpp.setVideoMute(false, function(mute) {
                     eventEmitter.emit(RTCEvents.VIDEO_MUTE, mute);
                 });
-                
+
                 callback();
             };
         }

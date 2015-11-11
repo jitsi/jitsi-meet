@@ -21,6 +21,15 @@ function generateLanguagesSelectBox() {
     return html + "</select>";
 }
 
+function generateDevicesOptions(items) {
+  var html = '';
+
+  items.forEach(function (item) {
+    html += '<option>' + item + '</option>' + '\n';
+  });
+
+  return html;
+}
 
 var SettingsMenu = {
 
@@ -33,6 +42,10 @@ var SettingsMenu = {
                 SettingsMenu.update();
             }
         });
+
+      console.error('HERE');
+        $('#selectCamera').html(generateDevicesOptions(["mega cam", "default"]));
+        $('#selectMic').html(generateDevicesOptions(["mega mic", "default"]));
 
         if (APP.xmpp.isModerator()) {
             startMutedSelector.css("display", "block");

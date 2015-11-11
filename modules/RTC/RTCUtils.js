@@ -1,6 +1,7 @@
 /* global APP, config, require, attachMediaStream, getUserMedia,
     RTCPeerConnection, webkitMediaStream, webkitURL, webkitRTCPeerConnection,
-    mozRTCIceCandidate, mozRTCSessionDescription, mozRTCPeerConnection */
+    mozRTCIceCandidate, mozRTCSessionDescription, mozRTCPeerConnection,
+    Promise, MediaStreamTrack */
 /* jshint -W101 */
 var MediaStreamType = require("../../service/RTC/MediaStreamTypes");
 var RTCBrowserType = require("./RTCBrowserType");
@@ -162,6 +163,7 @@ function RTCUtils(RTCService, onTemasysPluginReady)
         if (FFversion >= 40) {
             this.peerconnection = mozRTCPeerConnection;
             this.getUserMedia = navigator.mozGetUserMedia.bind(navigator);
+            this.enumerateDevices = navigator.mediaDevices.enumerateDevices.bind(navigator.mediaDevices);
             this.pc_constraints = {};
             this.attachMediaStream =  function (element, stream) {
                 //  srcObject is being standardized and FF will eventually
@@ -208,6 +210,27 @@ function RTCUtils(RTCService, onTemasysPluginReady)
     } else if (RTCBrowserType.isChrome() || RTCBrowserType.isOpera()) {
         this.peerconnection = webkitRTCPeerConnection;
         this.getUserMedia = navigator.webkitGetUserMedia.bind(navigator);
+        if (navigator.mediaDevices) {
+          this.enumerateDevices = navigator.mediaDevices.enumerateDevices.bind(navigator.mediaDevices);
+        } else {
+          this.enumerateDevices = function () {
+            return new Promise(function (resolve) {
+              MediaStreamTrack.getSources(function (sources) {
+                var devices = sources.map(function (source) {
+                  var kind = (source.kind || '').toLowerCase();
+                  return {
+                    facing: source.facing || null,
+                    label: source.label,
+                    kind: kind ? kind + 'input': null,
+                    deviceId: source.id,
+                    groupId: source.groupId || null
+                  };
+                });
+                resolve(devices);
+              });
+            });
+          };
+        }
         this.attachMediaStream = function (element, stream) {
             element.attr('src', webkitURL.createObjectURL(stream));
         };
