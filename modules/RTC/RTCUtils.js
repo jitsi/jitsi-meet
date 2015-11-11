@@ -201,6 +201,22 @@ function wrapEnumerateDevices(enumerateDevices) {
     };
 }
 
+function enumerateDevicesThroughMediaStreamTrack (callback) {
+  MediaStreamTrack.getSources(function (sources) {
+    var devices = sources.map(function (source) {
+      var kind = (source.kind || '').toLowerCase();
+      return {
+        facing: source.facing || null,
+        label: source.label,
+        kind: kind ? kind + 'input': null,
+        deviceId: source.id,
+        groupId: source.groupId || null
+      };
+    });
+    callback(devices);
+  });
+}
+
 function RTCUtils(RTCService, onTemasysPluginReady)
 {
     var self = this;
@@ -268,21 +284,7 @@ function RTCUtils(RTCService, onTemasysPluginReady)
                 navigator.mediaDevices.enumerateDevices.bind(navigator.mediaDevices)
             );
         } else {
-            enumerateDevices = function (callback) {
-                MediaStreamTrack.getSources(function (sources) {
-                    var devices = sources.map(function (source) {
-                        var kind = (source.kind || '').toLowerCase();
-                        return {
-                            facing: source.facing || null,
-                            label: source.label,
-                            kind: kind ? kind + 'input': null,
-                            deviceId: source.id,
-                            groupId: source.groupId || null
-                        };
-                    });
-                    callback(devices);
-                });
-            };
+            enumerateDevices = enumerateDevicesThroughMediaStreamTrack;
         }
         this.enumerateDevices = wrapEnumerateDevices(enumerateDevices);
 
@@ -329,6 +331,10 @@ function RTCUtils(RTCService, onTemasysPluginReady)
 
             self.peerconnection = RTCPeerConnection;
             self.getUserMedia = wrapGetUserMedia(getUserMedia);
+
+            var enumerateDevices = enumerateDevicesThroughMediaStreamTrack;
+            self.enumerateDevices = wrapEnumerateDevices(enumerateDevices);
+
             self.attachMediaStream = function (elSel, stream) {
 
                 if (stream.id === "dummyAudio" || stream.id === "dummyVideo") {
