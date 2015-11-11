@@ -49,12 +49,30 @@ function setResolutionConstraints(constraints, resolution) {
             constraints.video.mandatory.minHeight;
 }
 
+/**
+ * @param {string[]} um required user media types
+ *
+ * @param {Object} [options] optional parameters
+ * @param {string} options.resolution
+ * @param {number} options.bandwidth
+ * @param {number} options.fps
+ * @param {string} options.desktopStream
+ * @param {string} options.cameraDeviceId
+ * @param {string} options.micDeviceId
+ */
 function getConstraints(um, options) {
+    options = options || {};
     var constraints = {audio: false, video: false};
 
     if (um.indexOf('video') >= 0) {
         // same behaviour as true
         constraints.video = { mandatory: {}, optional: [] };
+
+        if (options.cameraDeviceId) {
+            constraints.video.optional.push({
+                sourceId: options.cameraDeviceId
+            });
+        }
 
         constraints.video.optional.push({ googLeakyBucket: true });
 
@@ -64,6 +82,12 @@ function getConstraints(um, options) {
         if (!RTCBrowserType.isFirefox()) {
             // same behaviour as true
             constraints.audio = { mandatory: {}, optional: []};
+            if (options.micDeviceId) {
+                constraints.audio.optional.push({
+                    sourceId: options.micDeviceId
+                });
+            }
+
             // if it is good enough for hangouts...
             constraints.audio.optional.push(
                 {googEchoCancellation: true},
@@ -75,7 +99,15 @@ function getConstraints(um, options) {
                 {googAutoGainControl2: true}
             );
         } else {
-            constraints.audio = true;
+            if (options.micDeviceId) {
+                constraints.audio = {
+                    mandatory: {},
+                    optional: [{
+                        sourceId: options.micDeviceId
+                    }]};
+            } else {
+                constraints.audio = true;
+            }
         }
     }
     if (um.indexOf('screen') >= 0) {
@@ -415,10 +447,12 @@ function RTCUtils(RTCService, onTemasysPluginReady)
  * @param {number} options.bandwidth
  * @param {number} options.fps
  * @param {string} options.desktopStream
+ * @param {string} options.cameraDeviceId
+ * @param {string} options.micDeviceId
  */
 RTCUtils.prototype.getUserMediaWithConstraints = function(
     um, success_callback, failure_callback, options) {
-    currentResolution = options.resolution;
+    currentResolution = options ? options.resolution : undefined;
 
     var constraints = getConstraints(um, options);
 
@@ -463,9 +497,12 @@ RTCUtils.prototype.setAvailableDevices = function (um, available) {
 /**
  * We ask for audio and video combined stream in order to get permissions and
  * not to ask twice.
+ * @param {Object} [options] optional parameters
+ * @param {string} options.cameraDeviceId
+ * @param {string} options.micDeviceId
  */
 RTCUtils.prototype.obtainAudioAndVideoPermissions =
-    function(devices, callback, usageOptions)
+    function(devices, callback, usageOptions, options)
 {
     var self = this;
     // Get AV
@@ -521,7 +558,8 @@ RTCUtils.prototype.obtainAudioAndVideoPermissions =
                         'failed to obtain video stream - stop', error);
                     self.errorCallback(error);
                 }, {
-                    resolution: config.resolution || '360'
+                    resolution: config.resolution || '360',
+                    cameraDeviceId: options.cameraDeviceId
                 });
         };
         var obtainAudio = function () {
@@ -535,6 +573,8 @@ RTCUtils.prototype.obtainAudioAndVideoPermissions =
                     console.error(
                         'failed to obtain audio stream - stop', error);
                     self.errorCallback(error);
+                }, {
+                    micDeviceId: options.micDeviceId
                 }
             );
         };
@@ -552,7 +592,9 @@ RTCUtils.prototype.obtainAudioAndVideoPermissions =
         function (error) {
             self.errorCallback(error);
         }, {
-            resolution: config.resolution || '360'
+            resolution: config.resolution || '360',
+            cameraDeviceId: options.cameraDeviceId,
+            micDeviceId: options.micDeviceId
         });
     }
 };
