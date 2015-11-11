@@ -113,7 +113,8 @@ XMPP.prototype._connect = function (jid, password) {
 
             logger.info("My Jabber ID: " + self.connection.jid);
 
-            self.connection.ping.startInterval(config.hosts.domain);
+            self.connection.ping.startInterval(
+                Strophe.getDomainFromJid(self.connection.jid));
             
             if (password)
                 authenticatedUser = true;
