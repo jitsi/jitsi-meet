@@ -3,6 +3,7 @@ var JitsiConferenceEvents = require("./JitsiConferenceEvents");
 var JitsiConnectionEvents = require("./JitsiConnectionEvents");
 var JitsiConnectionErrors = require("./JitsiConnectionErrors");
 var JitsiConferenceErrors = require("./JitsiConferenceErrors");
+var RTC = require("./modules/RTC/RTC");
 
 /**
  * Namespace for the interface of Jitsi Meet Library.
@@ -19,10 +20,15 @@ var LibJitsiMeet = {
         connection: JitsiConnectionErrors
     },
     init: function (options) {
-        require("./modules/RTC/RTC").init(options || {});
+        RTC.init(options || {});
+    },
+    isDeviceListAvailable: function () {
+        return RTC.isDeviceListAvailable();
+    },
+    enumerateDevices: function (callback) {
+        RTC.enumerateDevices(callback);
     }
-
-}
+};
 
 //Setups the promise object.
 window.Promise = window.Promise || require("es6-promise").polyfill();
