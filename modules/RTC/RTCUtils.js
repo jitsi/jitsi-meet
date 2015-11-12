@@ -52,7 +52,7 @@ function setResolutionConstraints(constraints, resolution) {
 /**
  * @param {string[]} um required user media types
  *
- * @param {Object} [options] optional parameters
+ * @param {Object} [options={}] optional parameters
  * @param {string} options.resolution
  * @param {number} options.bandwidth
  * @param {number} options.fps
@@ -185,9 +185,15 @@ function getConstraints(um, options) {
     return constraints;
 }
 
+/**
+ * Apply function with arguments if function exists.
+ * Do nothing if function not provided.
+ * @param {function} [fn] function to apply
+ * @param {Array} [args=[]] arguments for function
+ */
 function maybeApply(fn, args) {
   if (fn) {
-    fn.apply(null, args);
+    fn.apply(null, args || []);
   }
 }
 
@@ -196,6 +202,12 @@ var getUserMediaStatus = {
   callbacks: []
 };
 
+/**
+ * Wrap `getUserMedia` to allow others to know if it was executed at least once or not.
+ * Wrapper function uses `getUserMediaStatus` object.
+ * @param {Function} getUserMedia native function
+ * @returns {Function} wrapped function
+ */
 function wrapGetUserMedia(getUserMedia) {
   return function (constraints, successCallback, errorCallback) {
     getUserMedia(constraints, function (stream) {
@@ -213,20 +225,11 @@ function wrapGetUserMedia(getUserMedia) {
   };
 }
 
-function promiseToCallbacks(promiser) {
-  return function (successCallback, errorCallback) {
-      promiser().then(successCallback, errorCallback);
-  };
-}
-
-function afterUserMediaInitialized(callback) {
-    if (getUserMediaStatus.initialized) {
-        callback();
-    } else {
-        getUserMediaStatus.callbacks.push(callback);
-    }
-}
-
+/**
+ * Create stub device which equals to auto selected device.
+ * @param {string} kind if that should be `audio` or `video` device
+ * @returns {Object} stub device description in `enumerateDevices` format
+ */
 function createAutoDeviceInfo(kind) {
     return {
         facing: null,
@@ -237,12 +240,31 @@ function createAutoDeviceInfo(kind) {
     };
 }
 
+
+/**
+ * Execute function after getUserMedia was executed at least once.
+ * @param {Function} callback function to execute after getUserMedia
+ */
+function afterUserMediaInitialized(callback) {
+    if (getUserMediaStatus.initialized) {
+        callback();
+    } else {
+        getUserMediaStatus.callbacks.push(callback);
+    }
+}
+
+/**
+ * Wrapper function which makes enumerateDevices to wait
+ * until someone executes getUserMedia first time.
+ * @param {Function} enumerateDevices native function
+ * @returns {Funtion} wrapped function
+ */
 function wrapEnumerateDevices(enumerateDevices) {
     return function (callback) {
         // enumerate devices only after initial getUserMedia
         afterUserMediaInitialized(function () {
 
-            enumerateDevices(function (devices) {
+            enumerateDevices().then(function (devices) {
                 //add auto devices
                 devices.unshift(
                     createAutoDeviceInfo('audioinput'),
@@ -250,42 +272,58 @@ function wrapEnumerateDevices(enumerateDevices) {
                 );
 
                 callback(devices);
+            }, function (err) {
+                console.error('cannot enumerate devices: ', err);
+
+                // return only auto devices
+                callback([createAutoDeviceInfo('audioInput'),
+                          createAutoDeviceInfo('videoinput')]);
             });
         });
     };
 }
 
+/**
+ * Use old MediaStreamTrack to get devices list and
+ * convert it to enumerateDevices format.
+ * @param {Function} callback function to call when received devices list.
+ */
 function enumerateDevicesThroughMediaStreamTrack (callback) {
-  MediaStreamTrack.getSources(function (sources) {
-    var devices = sources.map(function (source) {
-      var kind = (source.kind || '').toLowerCase();
-      return {
-        facing: source.facing || null,
-        label: source.label,
-        kind: kind ? kind + 'input': null,
-        deviceId: source.id,
-        groupId: source.groupId || null
-      };
+    MediaStreamTrack.getSources(function (sources) {
+        var devices = sources.map(function (source) {
+            var kind = (source.kind || '').toLowerCase();
+            return {
+                facing: source.facing || null,
+                label: source.label,
+                kind: kind ? kind + 'input': null,
+                deviceId: source.id,
+                groupId: source.groupId || null
+            };
+        });
+
+        //add auto devices
+        devices.unshift(
+            createAutoDeviceInfo('audioinput'),
+            createAutoDeviceInfo('videoinput')
+        );
+        callback(devices);
     });
-    callback(devices);
-  });
 }
 
 function RTCUtils(RTCService, onTemasysPluginReady)
 {
     var self = this;
     this.service = RTCService;
-    var enumerateDevices;
     if (RTCBrowserType.isFirefox()) {
         var FFversion = RTCBrowserType.getFirefoxVersion();
         if (FFversion >= 40) {
             this.peerconnection = mozRTCPeerConnection;
             this.getUserMedia = wrapGetUserMedia(navigator.mozGetUserMedia.bind(navigator));
 
-            enumerateDevices = promiseToCallbacks(
+            this.enumerateDevices = wrapEnumerateDevices(
                 navigator.mediaDevices.enumerateDevices.bind(navigator.mediaDevices)
             );
-            this.enumerateDevices = wrapEnumerateDevices(enumerateDevices);
+
             this.pc_constraints = {};
             this.attachMediaStream =  function (element, stream) {
                 //  srcObject is being standardized and FF will eventually
@@ -335,14 +373,13 @@ function RTCUtils(RTCService, onTemasysPluginReady)
         var getUserMedia = navigator.webkitGetUserMedia.bind(navigator);
         if (navigator.mediaDevices) {
             this.getUserMedia = wrapGetUserMedia(getUserMedia);
-            enumerateDevices = wrapEnumerateDevices(promiseToCallbacks(
+            this.enumerateDevices = wrapEnumerateDevices(
                 navigator.mediaDevices.enumerateDevices.bind(navigator.mediaDevices)
-            ));
+            );
         } else {
             this.getUserMedia = getUserMedia;
-            enumerateDevices = enumerateDevicesThroughMediaStreamTrack;
+            this.enumerateDevices = enumerateDevicesThroughMediaStreamTrack;
         }
-        this.enumerateDevices = enumerateDevices;
 
         this.attachMediaStream = function (element, stream) {
             element.attr('src', webkitURL.createObjectURL(stream));
