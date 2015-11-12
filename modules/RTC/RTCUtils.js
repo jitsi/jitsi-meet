@@ -1,7 +1,7 @@
 /* global APP, config, require, attachMediaStream, getUserMedia,
     RTCPeerConnection, webkitMediaStream, webkitURL, webkitRTCPeerConnection,
     mozRTCIceCandidate, mozRTCSessionDescription, mozRTCPeerConnection,
-    Promise, MediaStreamTrack */
+    MediaStreamTrack */
 /* jshint -W101 */
 var MediaStreamType = require("../../service/RTC/MediaStreamTypes");
 var RTCBrowserType = require("./RTCBrowserType");
