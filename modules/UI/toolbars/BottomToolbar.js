@@ -2,6 +2,9 @@
 var PanelToggler = require("../side_pannels/SidePanelToggler");
 var UIUtil = require("../util/UIUtil");
 var AnalyticsAdapter = require("../../statistics/AnalyticsAdapter");
+var UIEvents = require("../../../service/UI/UIEvents");
+
+var eventEmitter = null;
 
 var buttonHandlers = {
     "bottom_toolbar_contact_list": function () {
@@ -27,7 +30,8 @@ var defaultBottomToolbarButtons = {
 
 
 var BottomToolbar = (function (my) {
-    my.init = function () {
+    my.init = function (emitter) {
+        eventEmitter = emitter;
         UIUtil.hideDisabledButtons(defaultBottomToolbarButtons);
 
         for(var k in buttonHandlers)
@@ -45,6 +49,9 @@ var BottomToolbar = (function (my) {
     my.toggleFilmStrip = function() {
         var filmstrip = $("#remoteVideos");
         filmstrip.toggleClass("hidden");
+
+        eventEmitter.emit(  UIEvents.FILM_STRIP_TOGGLED,
+                            filmstrip.hasClass("hidden"));
     };
 
     $(document).bind("remotevideo.resized", function (event, width, height) {

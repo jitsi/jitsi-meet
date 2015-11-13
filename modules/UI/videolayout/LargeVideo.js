@@ -115,7 +115,10 @@ function getDesktopVideoSize(videoWidth,
     var availableWidth = Math.max(videoWidth, videoSpaceWidth);
     var availableHeight = Math.max(videoHeight, videoSpaceHeight);
 
-    videoSpaceHeight -= $('#remoteVideos').outerHeight();
+    var filmstrip = $("#remoteVideos");
+
+    if (!filmstrip.hasClass("hidden"))
+        videoSpaceHeight -= filmstrip.outerHeight();
 
     if (availableWidth / aspectRatio >= videoSpaceHeight)
     {
@@ -268,13 +271,7 @@ function changeVideo(isVisible) {
 
     largeVideoElement.style.transform = flipX ? "scaleX(-1)" : "none";
 
-    var isDesktop = currentSmallVideo.getVideoType() === 'screen';
-    // Change the way we'll be measuring and positioning large video
-
-    getVideoSize = isDesktop ? getDesktopVideoSize : getCameraVideoSize;
-    getVideoPosition = isDesktop ? getDesktopVideoPosition :
-        getCameraVideoPosition;
-
+    LargeVideo.updateVideoSizeAndPosition(currentSmallVideo.getVideoType());
 
     // Only if the large video is currently visible.
     if (isVisible) {
@@ -451,10 +448,8 @@ var LargeVideo = {
             return;
         if (LargeVideo.isCurrentlyOnLarge(resourceJid))
         {
-            var isDesktop = newVideoType === 'screen';
-            getVideoSize = isDesktop ? getDesktopVideoSize : getCameraVideoSize;
-            getVideoPosition = isDesktop ? getDesktopVideoPosition
-                : getCameraVideoPosition;
+            LargeVideo.updateVideoSizeAndPosition(newVideoType);
+
             this.position(null, null, null, null, true);
         }
     },
@@ -496,17 +491,23 @@ var LargeVideo = {
     },
     /**
      * Resizes the large html elements.
-     * @param animate boolean property that indicates whether the resize should be animated or not.
-     * @param isChatVisible boolean property that indicates whether the chat area is displayed or not.
-     * If that parameter is null the method will check the chat pannel visibility.
-     * @param completeFunction a function to be called when the video space is resized
-     * @returns {*[]} array with the current width and height values of the largeVideo html element.
+     *
+     * @param animate boolean property that indicates whether the resize should
+     * be animated or not.
+     * @param isSideBarVisible boolean property that indicates whether the chat
+     * area is displayed or not.
+     * If that parameter is null the method will check the chat panel
+     * visibility.
+     * @param completeFunction a function to be called when the video space is
+     * resized
+     * @returns {*[]} array with the current width and height values of the
+     * largeVideo html element.
      */
-    resize: function (animate, isVisible, completeFunction) {
+    resize: function (animate, isSideBarVisible, completeFunction) {
         if(!isEnabled)
             return;
         var availableHeight = window.innerHeight;
-        var availableWidth = UIUtil.getAvailableVideoWidth(isVisible);
+        var availableWidth = UIUtil.getAvailableVideoWidth(isSideBarVisible);
 
         if (availableWidth < 0 || availableHeight < 0) return;
 
@@ -514,7 +515,8 @@ var LargeVideo = {
         var top = availableHeight / 2 - avatarSize / 4 * 3;
         $('#activeSpeaker').css('top', top);
 
-        this.VideoLayout.resizeVideoSpace(animate, isVisible, completeFunction);
+        this.VideoLayout
+            .resizeVideoSpace(animate, isSideBarVisible, completeFunction);
         if(animate) {
             $('#largeVideoContainer').animate({
                     width: availableWidth,
@@ -530,11 +532,35 @@ var LargeVideo = {
         }
         return [availableWidth, availableHeight];
     },
-    resizeVideoAreaAnimated: function (isVisible, completeFunction) {
+    /**
+     * Resizes the large video.
+     *
+     * @param isSideBarVisible indicating if the side bar is visible
+     * @param completeFunction the callback function to be executed after the
+     * resize
+     */
+    resizeVideoAreaAnimated: function (isSideBarVisible, completeFunction) {
         if(!isEnabled)
             return;
-        var size = this.resize(true, isVisible, completeFunction);
+        var size = this.resize(true, isSideBarVisible, completeFunction);
         this.position(null, null, size[0], size[1], true);
+    },
+    /**
+     * Updates the video size and position.
+     *
+     * @param videoType the video type indicating if the stream is of type
+     * desktop or web cam
+     */
+    updateVideoSizeAndPosition: function (videoType) {
+        if (!videoType)
+            videoType = currentSmallVideo.getVideoType();
+
+        var isDesktop = videoType === 'screen';
+
+        // Change the way we'll be measuring and positioning large video
+        getVideoSize = isDesktop ? getDesktopVideoSize : getCameraVideoSize;
+        getVideoPosition = isDesktop ? getDesktopVideoPosition :
+            getCameraVideoPosition;
     },
     getResourceJid: function () {
         return currentSmallVideo ? currentSmallVideo.getResourceJid() : null;

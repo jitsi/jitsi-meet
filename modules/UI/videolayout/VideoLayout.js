@@ -214,7 +214,8 @@ var VideoLayout = (function (my) {
     my.handleVideoThumbClicked = function(noPinnedEndpointChangedEvent,
                                           resourceJid) {
         if(focusedVideoResourceJid) {
-            var oldSmallVideo = VideoLayout.getSmallVideo(focusedVideoResourceJid);
+            var oldSmallVideo
+                    = VideoLayout.getSmallVideo(focusedVideoResourceJid);
             if (oldSmallVideo && !interfaceConfig.filmStripOnly)
                 oldSmallVideo.focus(false);
         }
@@ -400,7 +401,8 @@ var VideoLayout = (function (my) {
 
         if(animate) {
             $('#remoteVideos').animate({
-                    height: height + 2 // adds 2 px because of small video 1px border
+                    // adds 2 px because of small video 1px border
+                    height: height + 2
                 },
                 {
                     queue: false,
@@ -425,7 +427,8 @@ var VideoLayout = (function (my) {
         } else {
             // size videos so that while keeping AR and max height, we have a
             // nice fit
-            $('#remoteVideos').height(height + 2);// adds 2 px because of small video 1px border
+            // adds 2 px because of small video 1px border
+            $('#remoteVideos').height(height + 2);
             $('#remoteVideos>span').width(width);
             $('#remoteVideos>span').height(height);
 
@@ -439,10 +442,10 @@ var VideoLayout = (function (my) {
      * @param videoSpaceWidth the width of the video space
      */
     my.calculateThumbnailSize = function (videoSpaceWidth) {
-        // Calculate the available height, which is the inner window height minus
-       // 39px for the header minus 2px for the delimiter lines on the top and
-       // bottom of the large video, minus the 36px space inside the remoteVideos
-       // container used for highlighting shadow.
+        // Calculate the available height, which is the inner window height
+        // minus 39px for the header minus 2px for the delimiter lines on the
+        // top and bottom of the large video, minus the 36px space inside the
+        // remoteVideos container used for highlighting shadow.
        var availableHeight = 100;
 
         var numvids = $('#remoteVideos>span:visible').length;
@@ -458,7 +461,11 @@ var VideoLayout = (function (my) {
        var availableWidth = availableWinWidth / numvids;
        var aspectRatio = 16.0 / 9.0;
        var maxHeight = Math.min(160, availableHeight);
-       availableHeight = Math.min(maxHeight, availableWidth / aspectRatio, window.innerHeight - 18);
+       availableHeight
+           = Math.min(  maxHeight,
+                        availableWidth / aspectRatio,
+                        window.innerHeight - 18);
+
        if (availableHeight < availableWidth / aspectRatio) {
            availableWidth = Math.floor(availableHeight * aspectRatio);
        }
@@ -882,6 +889,17 @@ var VideoLayout = (function (my) {
 
     };
 
+    /**
+     * Updates the video size and position when the film strip is toggled.
+     *
+     * @param isToggled indicates if the film strip is toggled or not. True
+     * would mean that the film strip is hidden, false would mean it's shown
+     */
+    my.onFilmStripToggled = function(isToggled) {
+        LargeVideo.updateVideoSizeAndPosition();
+        LargeVideo.position(null, null, null, null, true);
+    };
+
     my.showMore = function (jid) {
         if (jid === 'local') {
             localVideoThumbnail.connectionIndicator.showMore();
@@ -914,21 +932,27 @@ var VideoLayout = (function (my) {
     };
 
     /**
-     * Resizes the video area
+     * Resizes the video area.
+     *
+     * @param isSideBarVisible indicates if the side bar is currently visible
      * @param callback a function to be called when the video space is
      * resized.
      */
-    my.resizeVideoArea = function(isVisible, callback) {
-        LargeVideo.resizeVideoAreaAnimated(isVisible, callback);
+    my.resizeVideoArea = function(isSideBarVisible, callback) {
+        LargeVideo.resizeVideoAreaAnimated(isSideBarVisible, callback);
         VideoLayout.resizeThumbnails(true);
     };
 
     /**
      * Resizes the #videospace html element
-     * @param animate boolean property that indicates whether the resize should be animated or not.
-     * @param isChatVisible boolean property that indicates whether the chat area is displayed or not.
-     * If that parameter is null the method will check the chat pannel visibility.
-     * @param completeFunction a function to be called when the video space is resized
+     * @param animate boolean property that indicates whether the resize should
+     * be animated or not.
+     * @param isChatVisible boolean property that indicates whether the chat
+     * area is displayed or not.
+     * If that parameter is null the method will check the chat panel
+     * visibility.
+     * @param completeFunction a function to be called when the video space
+     * is resized.
      */
     my.resizeVideoSpace = function (animate, isChatVisible, completeFunction) {
         var availableHeight = window.innerHeight;
@@ -998,7 +1022,8 @@ var VideoLayout = (function (my) {
         LargeVideo.enableVideoProblemFilter(true);
         var reconnectingKey = "connection.RECONNECTING";
         $('#videoConnectionMessage').attr("data-i18n", reconnectingKey);
-        $('#videoConnectionMessage').text(APP.translation.translateString(reconnectingKey));
+        $('#videoConnectionMessage')
+            .text(APP.translation.translateString(reconnectingKey));
         $('#videoConnectionMessage').css({display: "block"});
     };
 

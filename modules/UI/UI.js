@@ -107,7 +107,7 @@ function setupChat() {
 function setupToolbars() {
     Toolbar.init(UI);
     Toolbar.setupButtonsFromConfig();
-    BottomToolbar.init();
+    BottomToolbar.init(eventEmitter);
 }
 
 function streamHandler(stream, isMuted) {
@@ -341,6 +341,10 @@ function registerListeners() {
 
     UI.addListener(UIEvents.LARGEVIDEO_INIT, function () {
         AudioLevels.init();
+    });
+
+    UI.addListener(UIEvents.FILM_STRIP_TOGGLED, function (isToggled) {
+        VideoLayout.onFilmStripToggled(isToggled);
     });
 
     if (!interfaceConfig.filmStripOnly) {
