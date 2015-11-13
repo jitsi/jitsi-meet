@@ -175,6 +175,131 @@ function onReady () {
     eventEmitter.emit(RTCEvents.RTC_READY, true);
 };
 
+/**
+ * Apply function with arguments if function exists.
+ * Do nothing if function not provided.
+ * @param {function} [fn] function to apply
+ * @param {Array} [args=[]] arguments for function
+ */
+function maybeApply(fn, args) {
+  if (fn) {
+    fn.apply(null, args || []);
+  }
+}
+
+var getUserMediaStatus = {
+  initialized: false,
+  callbacks: []
+};
+
+/**
+ * Wrap `getUserMedia` to allow others to know if it was executed at least
+ * once or not. Wrapper function uses `getUserMediaStatus` object.
+ * @param {Function} getUserMedia native function
+ * @returns {Function} wrapped function
+ */
+function wrapGetUserMedia(getUserMedia) {
+  return function (constraints, successCallback, errorCallback) {
+    getUserMedia(constraints, function (stream) {
+      maybeApply(successCallback, [stream]);
+      if (!getUserMediaStatus.initialized) {
+        getUserMediaStatus.initialized = true;
+        getUserMediaStatus.callbacks.forEach(function (callback) {
+          callback();
+        });
+        getUserMediaStatus.callbacks.length = 0;
+      }
+    }, function (error) {
+      maybeApply(errorCallback, [error]);
+    });
+  };
+}
+
+/**
+ * Create stub device which equals to auto selected device.
+ * @param {string} kind if that should be `audio` or `video` device
+ * @returns {Object} stub device description in `enumerateDevices` format
+ */
+function createAutoDeviceInfo(kind) {
+    return {
+        facing: null,
+        label: 'Auto',
+        kind: kind,
+        deviceId: '',
+        groupId: null
+    };
+}
+
+
+/**
+ * Execute function after getUserMedia was executed at least once.
+ * @param {Function} callback function to execute after getUserMedia
+ */
+function afterUserMediaInitialized(callback) {
+    if (getUserMediaStatus.initialized) {
+        callback();
+    } else {
+        getUserMediaStatus.callbacks.push(callback);
+    }
+}
+
+/**
+ * Wrapper function which makes enumerateDevices to wait
+ * until someone executes getUserMedia first time.
+ * @param {Function} enumerateDevices native function
+ * @returns {Funtion} wrapped function
+ */
+function wrapEnumerateDevices(enumerateDevices) {
+    return function (callback) {
+        // enumerate devices only after initial getUserMedia
+        afterUserMediaInitialized(function () {
+
+            enumerateDevices().then(function (devices) {
+                //add auto devices
+                devices.unshift(
+                    createAutoDeviceInfo('audioinput'),
+                    createAutoDeviceInfo('videoinput')
+                );
+
+                callback(devices);
+            }, function (err) {
+                console.error('cannot enumerate devices: ', err);
+
+                // return only auto devices
+                callback([createAutoDeviceInfo('audioInput'),
+                          createAutoDeviceInfo('videoinput')]);
+            });
+        });
+    };
+}
+
+/**
+ * Use old MediaStreamTrack to get devices list and
+ * convert it to enumerateDevices format.
+ * @param {Function} callback function to call when received devices list.
+ */
+function enumerateDevicesThroughMediaStreamTrack (callback) {
+    MediaStreamTrack.getSources(function (sources) {
+        var devices = sources.map(function (source) {
+            var kind = (source.kind || '').toLowerCase();
+            return {
+                facing: source.facing || null,
+                label: source.label,
+                kind: kind ? kind + 'input': null,
+                deviceId: source.id,
+                groupId: source.groupId || null
+            };
+        });
+
+        //add auto devices
+        devices.unshift(
+            createAutoDeviceInfo('audioinput'),
+            createAutoDeviceInfo('videoinput')
+        );
+        callback(devices);
+    });
+}
+
 //Options parameter is to pass config options. Currently uses only "useIPv6".
 var RTCUtils = {
     init: function (options) {
@@ -183,7 +308,10 @@ var RTCUtils = {
             var FFversion = RTCBrowserType.getFirefoxVersion();
             if (FFversion >= 40) {
                 this.peerconnection = mozRTCPeerConnection;
-                this.getUserMedia = navigator.mozGetUserMedia.bind(navigator);
+                this.getUserMedia = wrapGetUserMedia(navigator.mozGetUserMedia.bind(navigator));
+                this.enumerateDevices = wrapEnumerateDevices(
+                    navigator.mediaDevices.enumerateDevices.bind(navigator.mediaDevices)
+                );
                 this.pc_constraints = {};
                 this.attachMediaStream = function (element, stream) {
                     //  srcObject is being standardized and FF will eventually
@@ -229,7 +357,16 @@ var RTCUtils = {
 
         } else if (RTCBrowserType.isChrome() || RTCBrowserType.isOpera()) {
             this.peerconnection = webkitRTCPeerConnection;
-            this.getUserMedia = navigator.webkitGetUserMedia.bind(navigator);
+            var getUserMedia = navigator.webkitGetUserMedia.bind(navigator);
+            if (navigator.mediaDevices) {
+                this.getUserMedia = wrapGetUserMedia(getUserMedia);
+                this.enumerateDevices = wrapEnumerateDevices(
+                    navigator.mediaDevices.enumerateDevices.bind(navigator.mediaDevices)
+                );
+            } else {
+                this.getUserMedia = getUserMedia;
+                this.enumerateDevices = enumerateDevicesThroughMediaStreamTrack;
+            }
             this.attachMediaStream = function (element, stream) {
                 element.attr('src', webkitURL.createObjectURL(stream));
             };
@@ -279,6 +416,7 @@ var RTCUtils = {
 
                 self.peerconnection = RTCPeerConnection;
                 self.getUserMedia = getUserMedia;
+                self.enumerateDevices = enumerateDevicesThroughMediaStreamTrack;
                 self.attachMediaStream = function (elSel, stream) {
 
                     if (stream.id === "dummyAudio" || stream.id === "dummyVideo") {
@@ -604,7 +742,19 @@ var RTCUtils = {
             eventEmitter.emit(eventType, localStream);
         }
         return newStreams;
+    },
+
+    /**
+     * Checks if its possible to enumerate available cameras/micropones.
+     * @returns {boolean} true if available, false otherwise.
+     */
+    isDeviceListAvailable: function () {
+        var isEnumerateDevicesAvailable = navigator.mediaDevices && navigator.mediaDevices.enumerateDevices;
+        if (isEnumerateDevicesAvailable) {
+            return true;
+        }
+        return (MediaStreamTrack && MediaStreamTrack.getSources)? true : false;
     }
-}
+};
 
 module.exports = RTCUtils;
