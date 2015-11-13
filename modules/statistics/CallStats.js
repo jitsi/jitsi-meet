@@ -5,20 +5,35 @@ var jsSHA = require('jssha');
 var io = require('socket.io-client');
 var callStats = null;
 
-// getUserMedia calls happen before CallStats init
-// so if there are any getUserMedia errors, we store them in this array
+/**
+ * @const
+ * @see http://www.callstats.io/api/#enumeration-of-wrtcfuncnames
+ */
+var wrtcFuncNames = {
+    createOffer:          "createOffer",
+    createAnswer:         "createAnswer",
+    setLocalDescription:  "setLocalDescription",
+    setRemoteDescription: "setRemoteDescription",
+    addIceCandidate:      "addIceCandidate",
+    getUserMedia:         "getUserMedia"
+};
+
+// some errors may happen before CallStats init
+// in this case we accumulate them in this array
 // and send them to callstats on init
-var pendingUserMediaErrors = [];
+var pendingErrors = [];
 
 function initCallback (err, msg) {
-    console.log("Initializing Status: err="+err+" msg="+msg);
+    console.log("CallStats Status: err=" + err + " msg=" + msg);
 }
+
+var callStatsIntegrationEnabled = config.callStatsID && config.callStatsSecret;
 
 var CallStats = {
     init: function (jingleSession) {
-
-        if(!config.callStatsID || !config.callStatsSecret || callStats !== null)
+        if(!callStatsIntegrationEnabled || callStats !== null) {
             return;
+        }
 
         callStats = new callstats($, io, jsSHA);
 
@@ -44,10 +59,12 @@ var CallStats = {
             this.confID,
             this.pcCallback.bind(this));
 
-        // notify callstats about getUserMedia failures if there were any
-        if (pendingUserMediaErrors.length) {
-            pendingUserMediaErrors.forEach(this.sendGetUserMediaFailed, this);
-            pendingUserMediaErrors.length = 0;
+        // notify callstats about failures if there were any
+        if (pendingErrors.length) {
+            pendingErrors.forEach(function (error) {
+                this._reportError(error.type, error.error, error.pc);
+            }, this);
+            pendingErrors.length = 0;
         }
     },
     pcCallback: function (err, msg) {
@@ -109,84 +126,76 @@ var CallStats = {
             this.confID, feedbackJSON);
     },
 
+    _reportError: function (type, e, pc) {
+        if (callStats) {
+            callStats.reportError(pc, this.confID, type, e);
+        } else if (callStatsIntegrationEnabled) {
+            pendingErrors.push({
+                type: type,
+                error: e,
+                pc: pc
+            });
+        }
+        // else just ignore it
+    },
+
     /**
      * Notifies CallStats that getUserMedia failed.
      *
      * @param {Error} e error to send
      */
     sendGetUserMediaFailed: function (e) {
-        if(!callStats) {
-            pendingUserMediaErrors.push(e);
-            return;
-        }
-        callStats.reportError(this.peerconnection, this.confID,
-                              callStats.webRTCFunctions.getUserMedia, e);
+        this._reportError(wrtcFuncNames.getUserMedia, e, null);
     },
 
     /**
      * Notifies CallStats that peer connection failed to create offer.
      *
      * @param {Error} e error to send
+     * @param {RTCPeerConnection} pc connection on which failure occured.
      */
-    sendCreateOfferFailed: function (e) {
-        if(!callStats) {
-            return;
-        }
-        callStats.reportError(this.peerconnection, this.confID,
-                              callStats.webRTCFunctions.createOffer, e);
+    sendCreateOfferFailed: function (e, pc) {
+        this._reportError(wrtcFuncNames.createOffer, e, pc);
     },
 
     /**
      * Notifies CallStats that peer connection failed to create answer.
      *
      * @param {Error} e error to send
+     * @param {RTCPeerConnection} pc connection on which failure occured.
      */
-    sendCreateAnswerFailed: function (e) {
-        if(!callStats) {
-            return;
-        }
-        callStats.reportError(this.peerconnection, this.confID,
-                              callStats.webRTCFunctions.createAnswer, e);
+    sendCreateAnswerFailed: function (e, pc) {
+        this._reportError(wrtcFuncNames.createAnswer, e, pc);
     },
 
     /**
      * Notifies CallStats that peer connection failed to set local description.
      *
      * @param {Error} e error to send
+     * @param {RTCPeerConnection} pc connection on which failure occured.
      */
-    sendSetLocalDescFailed: function (e) {
-        if(!callStats) {
-            return;
-        }
-        callStats.reportError(this.peerconnection, this.confID,
-                              callStats.webRTCFunctions.setLocalDescription, e);
+    sendSetLocalDescFailed: function (e, pc) {
+        this._reportError(wrtcFuncNames.setLocalDescription, e, pc);
     },
 
     /**
      * Notifies CallStats that peer connection failed to set remote description.
      *
      * @param {Error} e error to send
+     * @param {RTCPeerConnection} pc connection on which failure occured.
      */
-    sendSetRemoteDescFailed: function (e) {
-        if(!callStats) {
-            return;
-        }
-        callStats.reportError(
-            this.peerconnection, this.confID,
-            callStats.webRTCFunctions.setRemoteDescription, e);
+    sendSetRemoteDescFailed: function (e, pc) {
+        this._reportError(wrtcFuncNames.setRemoteDescription, e, pc);
     },
 
     /**
      * Notifies CallStats that peer connection failed to add ICE candidate.
      *
      * @param {Error} e error to send
+     * @param {RTCPeerConnection} pc connection on which failure occured.
      */
-    sendAddIceCandidateFailed: function (e) {
-        if(!callStats) {
-            return;
-        }
-        callStats.reportError(this.peerconnection, this.confID,
-                              callStats.webRTCFunctions.addIceCandidate, e);
+    sendAddIceCandidateFailed: function (e, pc) {
+        this._reportError(wrtcFuncNames.addIceCandidate, e, pc);
     }
 };
 module.exports = CallStats;

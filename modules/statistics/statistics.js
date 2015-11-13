@@ -113,25 +113,30 @@ var statistics = {
         APP.RTC.addListener(RTCEvents.GET_USER_MEDIA_FAILED, function (e) {
             CallStats.sendGetUserMediaFailed(e);
         });
-        APP.xmpp.addListener(RTCEvents.CREATE_OFFER_FAILED, function (e) {
-            CallStats.sendCreateOfferFailed(e);
+        APP.xmpp.addListener(RTCEvents.CREATE_OFFER_FAILED, function (e, pc) {
+            CallStats.sendCreateOfferFailed(e, pc);
         });
-        APP.xmpp.addListener(RTCEvents.CREATE_ANSWER_FAILED, function (e) {
-            CallStats.sendCreateAnswerFailed(e);
+        APP.xmpp.addListener(RTCEvents.CREATE_ANSWER_FAILED, function (e, pc) {
+            CallStats.sendCreateAnswerFailed(e, pc);
         });
         APP.xmpp.addListener(
             RTCEvents.SET_LOCAL_DESCRIPTION_FAILED,
-            function (e) {
-                CallStats.sendSetLocalDescFailed(e);
-        });
+            function (e, pc) {
+                CallStats.sendSetLocalDescFailed(e, pc);
+            }
+        );
         APP.xmpp.addListener(
             RTCEvents.SET_REMOTE_DESCRIPTION_FAILED,
-            function (e) {
-                CallStats.sendSetRemoteDescFailed(e);
-        });
-        APP.xmpp.addListener(RTCEvents.ADD_ICE_CANDIDATE_FAILED, function (e) {
-            CallStats.sendAddIceCandidateFailed(e);
-        });
+            function (e, pc) {
+                CallStats.sendSetRemoteDescFailed(e, pc);
+            }
+        );
+        APP.xmpp.addListener(
+            RTCEvents.ADD_ICE_CANDIDATE_FAILED,
+            function (e, pc) {
+                CallStats.sendAddIceCandidateFailed(e, pc);
+            }
+        );
     }
 };
 

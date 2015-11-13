@@ -720,7 +720,7 @@ JingleSessionPC.prototype.addIceCandidate = function (elem) {
                 self.peerconnection.addIceCandidate(candidate);
             } catch (e) {
                 console.error('addIceCandidate failed', e.toString(), line);
-                self.eventEmitter.emit(RTCEvents.ADD_ICE_CANDIDATE_FAILED, err);
+                self.eventEmitter.emit(RTCEvents.ADD_ICE_CANDIDATE_FAILED, err, self.peerconnection);
             }
         });
     });
