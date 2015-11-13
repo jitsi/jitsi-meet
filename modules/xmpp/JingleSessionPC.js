@@ -8,6 +8,7 @@ var SDP = require("./SDP");
 var async = require("async");
 var transform = require("sdp-transform");
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
+var RTCEvents = require("../../service/RTC/RTCEvents");
 var RTCBrowserType = require("../RTC/RTCBrowserType");
 var SSRCReplacement = require("./LocalSSRCReplacement");
 
@@ -719,6 +720,7 @@ JingleSessionPC.prototype.addIceCandidate = function (elem) {
                 self.peerconnection.addIceCandidate(candidate);
             } catch (e) {
                 console.error('addIceCandidate failed', e.toString(), line);
+                self.eventEmitter.emit(RTCEvents.ADD_ICE_CANDIDATE_FAILED, err);
             }
         });
     });

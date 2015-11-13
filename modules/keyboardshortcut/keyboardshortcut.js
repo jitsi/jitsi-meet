@@ -8,6 +8,11 @@ function initShortcutHandlers() {
             id: "toggleChatPopover",
             function: APP.UI.toggleChat
         },
+        68: {
+            character: "D",
+            id: "toggleDesktopSharingPopover",
+            function: APP.desktopsharing.toggleScreenSharing
+        },
         70: {
             character: "F",
             id: "filmstripPopover",

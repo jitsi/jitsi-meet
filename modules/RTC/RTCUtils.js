@@ -5,6 +5,7 @@
 var MediaStreamType = require("../../service/RTC/MediaStreamTypes");
 var RTCBrowserType = require("./RTCBrowserType");
 var Resolutions = require("../../service/RTC/Resolutions");
+var RTCEvents = require("../../service/RTC/RTCEvents");
 var AdapterJS = require("./adapter.screenshare");
 
 var currentResolution = null;
@@ -153,10 +154,11 @@ function getConstraints(um, resolution, bandwidth, fps, desktopStream) {
 }
 
 
-function RTCUtils(RTCService, onTemasysPluginReady)
+function RTCUtils(RTCService, eventEmitter, onTemasysPluginReady)
 {
     var self = this;
     this.service = RTCService;
+    this.eventEmitter = eventEmitter;
     if (RTCBrowserType.isFirefox()) {
         var FFversion = RTCBrowserType.getFirefoxVersion();
         if (FFversion >= 40) {
@@ -322,12 +324,14 @@ RTCUtils.prototype.getUserMediaWithConstraints = function(
                 self.setAvailableDevices(um, false);
                 console.warn('Failed to get access to local media. Error ',
                     error, constraints);
+                self.eventEmitter.emit(RTCEvents.GET_USER_MEDIA_FAILED, error);
                 if (failure_callback) {
                     failure_callback(error);
                 }
             });
     } catch (e) {
         console.error('GUM failed: ', e);
+        self.eventEmitter.emit(RTCEvents.GET_USER_MEDIA_FAILED, e);
         if(failure_callback) {
             failure_callback(e);
         }
