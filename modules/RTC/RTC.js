@@ -156,6 +156,18 @@ RTC.getVideoSrc = function (element) {
     return RTCUtils.getVideoSrc(element);
 };
 
+RTC.isDeviceListAvailable = function () {
+    return RTCUtils.isDeviceListAvailable();
+};
+
+/**
+ * Allows to receive list of available cameras/microphones.
+ * @param {function} callback would receive array of devices as an argument
+ */
+RTC.enumerateDevices = function (callback) {
+    RTCUtils.enumerateDevices(callback);
+};
+
 RTC.setVideoSrc = function (element, src) {
     RTCUtils.setVideoSrc(element, src);
 };

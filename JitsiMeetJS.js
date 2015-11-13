@@ -36,9 +36,14 @@ var LibJitsiMeet = {
      */
     createLocalTracks: function (options) {
         return RTC.obtainAudioAndVideoPermissions(options || {});
+    },
+    isDeviceListAvailable: function () {
+        return RTC.isDeviceListAvailable();
+    },
+    enumerateDevices: function (callback) {
+        RTC.enumerateDevices(callback);
     }
 };
-
 
 //Setups the promise object.
 window.Promise = window.Promise || require("es6-promise").polyfill();
