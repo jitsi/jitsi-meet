@@ -37,7 +37,7 @@ var parser = {
                 this.JSON2packet(node.children, packet);
             packet.up();
         }
-        packet.up();
+        // packet.up();
     }
 };
 
@@ -87,7 +87,24 @@ ChatRoom.prototype.initPresenceMap = function () {
         "value": navigator.userAgent,
         "attributes": {xmlns: 'http://jitsi.org/jitmeet/user-agent'}
     });
+
 };
+
+ChatRoom.prototype.updateDeviceAvailability = function (devices) {
+    this.presMap["nodes"].push( {
+        "tagName": "devices",
+        "children": [
+            {
+                "tagName": "audio",
+                "value": devices.audio,
+            },
+            {
+                "tagName": "video",
+                "value": devices.video,
+            }
+        ]
+    });
+}
 
 ChatRoom.prototype.join = function (password, tokenPassword) {
     if(password)
@@ -609,10 +626,6 @@ ChatRoom.prototype.remoteStreamAdded = function(data, sid, thessrc) {
     }
 
     this.eventEmitter.emit(XMPPEvents.REMOTE_STREAM_RECEIVED, data, sid, thessrc);
-}
-
-ChatRoom.prototype.addLocalStreams = function (localStreams) {
-    this.session.addLocalStreams(localStreams);
 }
 
 ChatRoom.prototype.getJidBySSRC = function (ssrc) {

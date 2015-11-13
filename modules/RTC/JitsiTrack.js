@@ -1,4 +1,3 @@
-var RTC = require("./RTCUtils");
 var RTCBrowserType = require("./RTCBrowserType");
 
 /**
@@ -22,14 +21,14 @@ function implementOnEndedHandling(stream) {
  * Represents a single media track (either audio or video).
  * @constructor
  */
-function JitsiTrack(RTC, stream)
+function JitsiTrack(rtc, stream)
 {
     /**
      * Array with the HTML elements that are displaying the streams.
      * @type {Array}
      */
     this.containers = [];
-    this.rtc = RTC;
+    this.rtc = rtc;
     this.stream = stream;
     this.type = (this.stream.getVideoTracks().length > 0)?
         JitsiTrack.VIDEO : JitsiTrack.AUDIO;
@@ -94,7 +93,7 @@ JitsiTrack.prototype.unmute = function () {
  */
 JitsiTrack.prototype.attach = function (container) {
     if(this.stream)
-        RTC.attachMediaStream(container, this.stream);
+        require("./RTCUtils").attachMediaStream(container, this.stream);
     this.containers.push(container);
 }
 
@@ -124,15 +123,6 @@ JitsiTrack.prototype.detach = function (container) {
  * NOTE: Works for local tracks only.
  */
 JitsiTrack.prototype.stop = function () {
-}
-
-
-/**
- * Starts sending the track.
- * NOTE: Works for local tracks only.
- */
-JitsiTrack.prototype.start = function() {
-
 }
 
 /**

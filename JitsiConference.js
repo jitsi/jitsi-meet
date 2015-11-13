@@ -30,6 +30,7 @@ function JitsiConference(options) {
     this.xmpp = this.connection.xmpp;
     this.eventEmitter = new EventEmitter();
     this.room = this.xmpp.createRoom(this.options.name, null, null, this.options.config);
+    this.room.updateDeviceAvailability(RTC.getDeviceAvailability());
     this.rtc = new RTC(this.room, options);
     if(!options.config.disableAudioLevels)
         this.statistics = new Statistics();
@@ -54,18 +55,6 @@ JitsiConference.prototype.leave = function () {
     if(this.xmpp)
         this.xmpp.leaveRoom(this.room.roomjid);
     this.room = null;
-}
-
-/**
- * Creates the media tracks and returns them trough the callback.
- * @param options Object with properties / settings specifying the tracks which should be created.
- * should be created or some additional configurations about resolution for example.
- * @returns {Promise.<{Array.<JitsiTrack>}, JitsiConferenceError>} A promise that returns an array of created JitsiTracks if resolved,
- *     or a JitsiConferenceError if rejected.
- */
-JitsiConference.prototype.createLocalTracks = function (options) {
-    if(this.rtc)
-        return this.rtc.obtainAudioAndVideoPermissions(options || {});
 }
 
 /**
@@ -176,6 +165,24 @@ JitsiConference.prototype.setDisplayName = function(name) {
         this.room.addToPresence("nick", {attributes: {xmlns: 'http://jabber.org/protocol/nick'}, value: name});
         this.room.sendPresence();
     }
+}
+
+/**
+ * Adds JitsiLocalTrack object to the conference.
+ * @param track the JitsiLocalTrack object.
+ */
+JitsiConference.prototype.addTrack = function (track) {
+    this.rtc.addLocalStream(track);
+    this.room.addStream(track.getOriginalStream, function () {});
+}
+
+/**
+ * Removes JitsiLocalTrack object to the conference.
+ * @param track the JitsiLocalTrack object.
+ */
+JitsiConference.prototype.removeTrack = function (track) {
+    this.room.removeStream(track.getOriginalStream());
+    this.rtc.removeLocalStream(track);
 }
 
 /**
@@ -311,6 +318,12 @@ function setupListeners(conference) {
             function () {
                 conference.statistics.dispose();
             });
+        RTC.addListener(RTCEvents.AVAILABLE_DEVICES_CHANGED, function (devices) {
+            conference.room.updateDeviceAvailability(devices);
+        });
+        RTC.addListener(StreamEventTypes.TRACK_MUTE_CHANGED, function (track) {
+            conference.eventEmitter.emit(JitsiConferenceEvents.TRACK_MUTE_CHANGED, track);
+        });
     }
 }
 

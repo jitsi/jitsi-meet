@@ -13,42 +13,7 @@ var StreamEventTypes = require("../../service/RTC/StreamEventTypes.js");
 var RTCEvents = require("../../service/RTC/RTCEvents.js");
 var desktopsharing = require("../desktopsharing/desktopsharing");
 
-function getMediaStreamUsage()
-{
-    var result = {
-        audio: true,
-        video: true
-    };
-
-    /** There are some issues with the desktop sharing
-     * when this property is enabled.
-     * WARNING: We must change the implementation to start video/audio if we
-     * receive from the focus that the peer is not muted.
-
-     var isSecureConnection = window.location.protocol == "https:";
-
-    if(config.disableEarlyMediaPermissionRequests || !isSecureConnection)
-    {
-        result = {
-            audio: false,
-            video: false
-        };
-
-    }
-    **/
-
-    return result;
-}
-
-var rtcReady = false;
-
-
-
 function RTC(room, options) {
-    this.devices = {
-        audio: true,
-        video: true
-    };
     this.room = room;
     this.localStreams = [];
     this.remoteStreams = {};
@@ -75,22 +40,22 @@ function RTC(room, options) {
  * Creates the local MediaStreams.
  * @param options object for options (NOTE: currently only list of devices and resolution are supported)
  * @param dontCreateJitsiTrack if <tt>true</tt> objects with the following structure {stream: the Media Stream,
-  * type: "audio" or "video", isMuted: true/false, videoType: "camera" or "desktop"}
+  * type: "audio" or "video", videoType: "camera" or "desktop"}
  * will be returned trough the Promise, otherwise JitsiTrack objects will be returned.
  * @returns {*} Promise object that will receive the new JitsiTracks
  */
-RTC.prototype.obtainAudioAndVideoPermissions = function (options, dontCreateJitsiTrack) {
-    return RTCUtils.obtainAudioAndVideoPermissions(this,
-        options.devices, getMediaStreamUsage(), options.resolution, dontCreateJitsiTrack);
+RTC.obtainAudioAndVideoPermissions = function (options, dontCreateJitsiTrack) {
+    return RTCUtils.obtainAudioAndVideoPermissions(
+        options.devices, options.resolution, dontCreateJitsiTrack);
 }
 
 RTC.prototype.onIncommingCall = function(event) {
     if(this.options.config.openSctp)
         this.dataChannels = new DataChannels(event.peerconnection, this.eventEmitter);
     for(var i = 0; i < this.localStreams.length; i++)
-        if(this.localStreams[i].isStarted)
+        if(this.localStreams[i])
         {
-            this.localStreams[i].start();
+            this.room.addStream(this.localStreams[i].getOriginalStream(), function () {});
         }
 }
 
@@ -112,56 +77,36 @@ RTC.prototype.removeListener = function (eventType, listener) {
     this.eventEmitter.removeListener(eventType, listener);
 };
 
-RTC.addRTCReadyListener = function (listener) {
-    RTCUtils.eventEmitter.on(RTCEvents.RTC_READY, listener);
+RTC.addListener = function (eventType, listener) {
+    RTCUtils.addListener(eventType, listener);
 }
 
-RTC.removeRTCReadyListener = function (listener) {
+RTC.removeListener = function (eventType, listener) {
     RTCUtils.eventEmitter.removeListener(RTCEvents.RTC_READY, listener);
+    RTCUtils.removeListener(eventType, listener)
 }
 
 RTC.isRTCReady = function () {
-    return rtcReady;
+    return RTCUtils.isRTCReady();
 }
 
 RTC.init = function (options) {
-    // In case of IE we continue from 'onReady' callback
-// passed to RTCUtils constructor. It will be invoked by Temasys plugin
-// once it is initialized.
-    var onReady = function () {
-        rtcReady = true;
-        RTCUtils.eventEmitter.emit(RTCEvents.RTC_READY, true);
-    };
-
-    RTCUtils.init(onReady, options || {});
-
-// Call onReady() if Temasys plugin is not used
-    if (!RTCBrowserType.isTemasysPluginUsed()) {
-        onReady();
-    }
+    RTCUtils.init(options || {});
 }
 
-RTC.prototype.createLocalStreams = function (streams, change) {
-    for (var i = 0; i < streams.length; i++) {
-        var localStream = new JitsiLocalTrack(this, streams[i].stream,
-            this.eventEmitter, streams[i].videoType,
-            streams[i].isGUMStream, streams[i].resolution);
-        this.localStreams.push(localStream);
-        if (streams[i].isMuted === true)
-            localStream.setMute(true);
+RTC.getDeviceAvailability = function () {
+    return RTCUtils.getDeviceAvailability();
+}
 
-        if (streams[i].type == "audio") {
-            this.localAudio = localStream;
-        } else {
-            this.localVideo = localStream;
-        }
-        var eventType = StreamEventTypes.EVENT_TYPE_LOCAL_CREATED;
-        if (change)
-            eventType = StreamEventTypes.EVENT_TYPE_LOCAL_CHANGED;
+RTC.prototype.addLocalStream = function (stream) {
+    this.localStreams.push(stream);
+    stream._setRTC(this);
 
-        this.eventEmitter.emit(eventType, localStream, streams[i].isMuted);
+    if (stream.type == "audio") {
+        this.localAudio = stream;
+    } else {
+        this.localVideo = stream;
     }
-    return this.localStreams;
 };
 
 RTC.prototype.removeLocalStream = function (stream) {
@@ -191,7 +136,7 @@ RTC.getPCConstraints = function () {
     return RTCUtils.pc_constraints;
 };
 
-RTC.prototype.getUserMediaWithConstraints = function(um, success_callback,
+RTC.getUserMediaWithConstraints = function(um, success_callback,
                                      failure_callback, resolution,
                                      bandwidth, fps, desktopStream)
 {
@@ -333,16 +278,6 @@ RTC.prototype.setVideoMute = function (mute, callback, options) {
             callback,
             options);
     }
-};
-
-RTC.prototype.setDeviceAvailability = function (devices) {
-    if(!devices)
-        return;
-    if(devices.audio === true || devices.audio === false)
-        this.devices.audio = devices.audio;
-    if(devices.video === true || devices.video === false)
-        this.devices.video = devices.video;
-    this.eventEmitter.emit(RTCEvents.AVAILABLE_DEVICES_CHANGED, this.devices);
 };
 
 module.exports = RTC;

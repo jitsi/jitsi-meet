@@ -164,16 +164,6 @@ JingleSessionPC.prototype.doInitialize = function () {
     });
 };
 
-JingleSessionPC.prototype.addLocalStreams = function (localStreams) {
-    var self = this;
-// add any local and relayed stream
-    localStreams.forEach(function(stream) {
-        if(!stream.isStarted())
-            return;
-        self.peerconnection.addStream(stream.getOriginalStream());
-    });
-}
-
 function onIceConnectionStateChange(sid, session) {
     switch (session.peerconnection.iceConnectionState) {
         case 'checking':

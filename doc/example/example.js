@@ -18,6 +18,19 @@ var options = {
     clientNode: 'http://jitsi.org/jitsimeet', // The name of client node advertised in XEP-0115 'c' stanza
 }
 
+
+
+// var options = {
+//     hosts: {
+//         domain: 'whatever.jitsi.net',
+//         muc: 'conference.whatever.jitsi.net', // FIXME: use XEP-0030
+//         bridge: 'jitsi-videobridge.whatever.jitsi.net', // FIXME: use XEP-0030
+//     },
+//     bosh: '//whatever.jitsi.net/http-bind?ROOM_NAME=conference2', // FIXME: use xep-0156 for that
+//     clientNode: 'http://jitsi.org/jitsimeet', // The name of client node advertised in XEP-0115 'c' stanza
+// }
+
+
 var confOptions = {
     openSctp: true,
     disableAudioLevels: true
@@ -34,7 +47,7 @@ function onLocalTracks(tracks)
     tracks[1].attach($("#localVideo"));
     for(var i = 0; i < localTracks.length; i++)
     {
-        localTracks[i].start();
+        console.log(localTracks[i]);
     }
 }
 
@@ -61,7 +74,10 @@ function onRemoteTrack(track) {
  */
 function onConferenceJoined () {
     console.log("conference joined!");
-    room.createLocalTracks({resolution: "720"}).then(onLocalTracks);
+    for(var i = 0; i < localTracks.length; i++)
+    {
+        room.addTrack(localTracks[i]);
+    }
 }
 
 function onUserLeft(id) {
@@ -120,10 +136,12 @@ function unload() {
 $(window).bind('beforeunload', unload);
 $(window).bind('unload', unload);
 
-JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.ERROR);
+
+
+// JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.ERROR);
 
 JitsiMeetJS.init();
-
+JitsiMeetJS.createLocalTracks({resolution: "720"}).then(onLocalTracks);
 var connection = new JitsiMeetJS.JitsiConnection(null, null, options);
 
 var room = null;

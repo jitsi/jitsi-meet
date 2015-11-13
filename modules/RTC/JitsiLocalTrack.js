@@ -1,25 +1,20 @@
 var JitsiTrack = require("./JitsiTrack");
 var StreamEventTypes = require("../../service/RTC/StreamEventTypes");
-var RTC = require("./RTCUtils");
 var RTCBrowserType = require("./RTCBrowserType");
 
 /**
  * Represents a single media track (either audio or video).
  * @constructor
  */
-function JitsiLocalTrack(RTC, stream, eventEmitter, videoType, isGUMStream,
+function JitsiLocalTrack(RTC, stream, eventEmitter, videoType,
   resolution)
 {
     JitsiTrack.call(this, RTC, stream);
     this.eventEmitter = eventEmitter;
     this.videoType = videoType;
-    this.isGUMStream = true;
     this.dontFireRemoveEvent = false;
-    this.isStarted = false;
     this.resolution = resolution;
     var self = this;
-    if(isGUMStream === false)
-        this.isGUMStream = isGUMStream;
     this.stream.onended = function () {
         if(!self.dontFireRemoveEvent)
             self.eventEmitter.emit(StreamEventTypes.EVENT_TYPE_LOCAL_ENDED, self);
@@ -35,11 +30,15 @@ JitsiLocalTrack.prototype.constructor = JitsiLocalTrack;
  * @param mute {boolean} if true the track will be muted. Otherwise the track will be unmuted.
  */
 JitsiLocalTrack.prototype._setMute = function (mute) {
+    if(!this.rtc) {
+        console.error("Mute is not supported for streams not attached to conference!");
+        return;
+    }
     var isAudio = this.type === JitsiTrack.AUDIO;
     this.dontFireRemoveEvent = false;
 
-    if ((window.location.protocol != "https:" && this.isGUMStream) ||
-        (isAudio && this.isGUMStream) || this.videoType === "screen" ||
+    if ((window.location.protocol != "https:") ||
+        (isAudio) || this.videoType === "screen" ||
         // FIXME FF does not support 'removeStream' method used to mute
         RTCBrowserType.isFirefox()) {
 
@@ -66,9 +65,10 @@ JitsiLocalTrack.prototype._setMute = function (mute) {
             //FIXME: Maybe here we should set the SRC for the containers to something
         } else {
             var self = this;
-            this.rtc.obtainAudioAndVideoPermissions(
-                {devices: (isAudio ? ["audio"] : ["video"]),
-                  resolution: self.resolution}, true)
+            var RTC = require("./RTCUtils");
+            RTC.obtainAudioAndVideoPermissions(
+                (isAudio ? ["audio"] : ["video"]),
+                  self.resolution, true)
                 .then(function (streams) {
                     var stream = null;
                     for(var i = 0; i < streams.length; i++) {
@@ -76,7 +76,6 @@ JitsiLocalTrack.prototype._setMute = function (mute) {
                         if(stream.type === self.type) {
                             self.stream = stream.stream;
                             self.videoType = stream.videoType;
-                            self.isGUMStream = stream.isGUMStream;
                             break;
                         }
                     }
@@ -109,21 +108,11 @@ JitsiLocalTrack.prototype._setMute = function (mute) {
 JitsiLocalTrack.prototype.stop = function () {
     if(!this.stream)
         return;
-    this.rtc.room.removeStream(this.stream);
+    if(this.rtc)
+        this.rtc.room.removeStream(this.stream);
     this.stream.stop();
     this.detach();
 }
-
-
-/**
- * Starts sending the track.
- * NOTE: Works for local tracks only.
- */
-JitsiLocalTrack.prototype.start = function() {
-    this.isStarted = true;
-    this.rtc.room.addStream(this.stream, function () {});
-}
-
 
 /**
  * Returns <tt>true</tt> - if the stream is muted
@@ -148,6 +137,14 @@ JitsiLocalTrack.prototype.isMuted = function () {
             return false;
     }
     return true;
+};
+
+/**
+ * Private method. Updates rtc property of the track.
+ * @param rtc the rtc instance.
+ */
+JitsiLocalTrack.prototype._setRTC = function (rtc) {
+    this.rtc = rtc;
 };
 
 module.exports = JitsiLocalTrack;

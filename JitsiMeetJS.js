@@ -4,6 +4,7 @@ var JitsiConnectionEvents = require("./JitsiConnectionEvents");
 var JitsiConnectionErrors = require("./JitsiConnectionErrors");
 var JitsiConferenceErrors = require("./JitsiConferenceErrors");
 var Logger = require("jitsi-meet-logger");
+var RTC = require("./modules/RTC/RTC");
 
 /**
  * Namespace for the interface of Jitsi Meet Library.
@@ -21,10 +22,20 @@ var LibJitsiMeet = {
     },
     logLevels: Logger.levels,
     init: function (options) {
-        require("./modules/RTC/RTC").init(options || {});
+        RTC.init(options || {});
     },
     setLogLevel: function (level) {
         Logger.setLogLevel(level);
+    },
+    /**
+     * Creates the media tracks and returns them trough the callback.
+     * @param options Object with properties / settings specifying the tracks which should be created.
+     * should be created or some additional configurations about resolution for example.
+     * @returns {Promise.<{Array.<JitsiTrack>}, JitsiConferenceError>} A promise that returns an array of created JitsiTracks if resolved,
+     *     or a JitsiConferenceError if rejected.
+     */
+    createLocalTracks: function (options) {
+        return RTC.obtainAudioAndVideoPermissions(options || {});
     }
 };
 
