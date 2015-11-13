@@ -632,10 +632,20 @@ var Toolbar = (function (my) {
         }
     };
 
-    // checks whether recording is enabled and whether we have params to start automatically recording
+    // checks whether recording is enabled and whether we have params
+    // to start automatically recording
     my.checkAutoRecord = function () {
         if (UIUtil.isButtonEnabled('recording') && config.autoRecord) {
             toggleRecording(config.autoRecordToken);
+        }
+    };
+
+    // checks whether desktop sharing is enabled and whether
+    // we have params to start automatically sharing
+    my.checkAutoEnableDesktopSharing = function () {
+        if (UIUtil.isButtonEnabled('desktop')
+                && config.autoEnableDesktopSharing) {
+            APP.desktopsharing.toggleScreenSharing();
         }
     };
 

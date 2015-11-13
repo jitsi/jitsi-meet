@@ -528,6 +528,8 @@ function onMucJoined(jid, info) {
 
 
     VideoLayout.mucJoined();
+
+    Toolbar.checkAutoEnableDesktopSharing();
 }
 
 function initEtherpad(name) {
