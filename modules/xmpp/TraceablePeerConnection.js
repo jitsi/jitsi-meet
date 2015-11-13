@@ -293,7 +293,7 @@ TraceablePeerConnection.prototype.setLocalDescription
         },
         function (err) {
             self.trace('setLocalDescriptionOnFailure', err);
-            self.eventEmitter.emit(RTCEvents.SET_LOCAL_DESCRIPTION_FAILED, err);
+            self.eventEmitter.emit(RTCEvents.SET_LOCAL_DESCRIPTION_FAILED, err, self.peerconnection);
             failureCallback(err);
         }
     );
@@ -329,7 +329,7 @@ TraceablePeerConnection.prototype.setRemoteDescription
         },
         function (err) {
             self.trace('setRemoteDescriptionOnFailure', err);
-            self.eventEmitter.emit(RTCEvents.SET_REMOTE_DESCRIPTION_FAILED, err);
+            self.eventEmitter.emit(RTCEvents.SET_REMOTE_DESCRIPTION_FAILED, err, self.peerconnection);
             failureCallback(err);
         }
     );
@@ -375,7 +375,7 @@ TraceablePeerConnection.prototype.createOffer
         },
         function(err) {
             self.trace('createOfferOnFailure', err);
-            self.eventEmitter.emit(RTCEvents.CREATE_OFFER_FAILED, err);
+            self.eventEmitter.emit(RTCEvents.CREATE_OFFER_FAILED, err, self.peerconnection);
             failureCallback(err);
         },
         constraints
@@ -406,7 +406,7 @@ TraceablePeerConnection.prototype.createAnswer
         },
         function(err) {
             self.trace('createAnswerOnFailure', err);
-            self.eventEmitter.emit(RTCEvents.CREATE_ANSWER_FAILED, err);
+            self.eventEmitter.emit(RTCEvents.CREATE_ANSWER_FAILED, err, self.peerconnection);
             failureCallback(err);
         },
         constraints
