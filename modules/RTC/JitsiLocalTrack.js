@@ -66,9 +66,10 @@ JitsiLocalTrack.prototype._setMute = function (mute) {
         } else {
             var self = this;
             var RTC = require("./RTCUtils");
-            RTC.obtainAudioAndVideoPermissions(
-                (isAudio ? ["audio"] : ["video"]),
-                  self.resolution, true)
+            RTC.obtainAudioAndVideoPermissions({
+                devices: (isAudio ? ["audio"] : ["video"]),
+                resolution: self.resolution,
+                dontCreateJitsiTrack: true})
                 .then(function (streams) {
                     var stream = null;
                     for(var i = 0; i < streams.length; i++) {

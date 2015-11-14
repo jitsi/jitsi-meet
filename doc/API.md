@@ -46,6 +46,20 @@ The ```options``` parameter is JS object with the following properties:
 JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.ERROR);
 ```
 
+* ```JitsiMeetJS.createLocalTracks(options)``` - Creates the media tracks and returns them trough ```Promise``` object.
+    - options - JS object with configuration options for the local media tracks. You can change the following properties there:
+        1. devices - array with the devices - "video" and "audio" that will be passed to GUM. If that property is not set GUM will try to get all available devices.
+        2. resolution - the prefered resolution for the local video.
+        3. cameraDeviceId - the deviceID for the video device that is going to be used
+        4. micDeviceId - the deviceID for the audio device that is going to be used
+
+* ```JitsiMeetJS.enumerateDevices(callback)``` - returns list of the available devices as a parameter to the callback function. Every device is a object with the following format:
+    - label - the name of the device
+    - kind - "audioinput" or "videoinput"
+    - deviceId - the id of the device.
+
+* ```JitsiMeetJS.isDeviceListAvailable()```- returns true if retrieving the device list is support and false - otherwise.
+
 * ```JitsiMeetJS.events``` - JS object that contains all events used by the API. You will need that JS object when you try to subscribe for connection or conference events.
     We have two event types - connection and conference. You can access the events with the following code ```JitsiMeetJS.events.<event_type>.<event_name>```.
     For example if you want to use the conference event that is fired when somebody leave conference you can use the following code - ```JitsiMeetJS.events.conference.USER_LEFT```.
@@ -139,11 +153,6 @@ The object represents a conference. We have the following methods to control the
 
 2. leave() - leaves the conference
 
-3. createLocalTracks(options) - Creates the media tracks and returns them trough ```Promise``` object.
-    - options - JS object with configuration options for the local media tracks. You can change the following properties there:
-        1. devices - array with the devices - "video" and "audio" that will be passed to GUM. If that property is not set GUM will try to get all available devices.
-        2. resolution - the prefered resolution for the local video.
-
 4. getLocalTracks() - Returns array with JitsiTrack objects for the local streams.
 
 5. addEventListener(event, listener) - Subscribes the passed listener to the event.
@@ -202,7 +211,10 @@ The object represents a conference. We have the following methods to control the
 16. removeCommandListener(command) - removes the listeners for the specified command
     - command - the name of the command
 
-
+17. addTrack(track) - Adds JitsiLocalTrack object to the conference.
+    - track - the JitsiLocalTrack
+17. removeTrack(track) - Removes JitsiLocalTrack object to the conference.
+    - track - the JitsiLocalTrack
 JitsiTrack
 ======
 The object represents single track - video or audio. They can be remote tracks ( from the other participants in the call) or local tracks (from the devices of the local participant).
@@ -229,12 +241,7 @@ Note: This method is implemented only for the local tracks.
 
 Note: This method is implemented only for the local tracks.
 
-7. start() - start sending the track to the other participants in the conference.
-
-Note: This method is implemented only for the local tracks.
-
-8. getId() - returns unique string for the track.
-
+7. getId() - returns unique string for the track.
 
 
 Getting Started

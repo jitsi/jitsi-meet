@@ -31,6 +31,13 @@ var LibJitsiMeet = {
      * Creates the media tracks and returns them trough the callback.
      * @param options Object with properties / settings specifying the tracks which should be created.
      * should be created or some additional configurations about resolution for example.
+     * @param {Array} options.devices the devices that will be requested
+     * @param {string} options.resolution resolution constraints
+     * @param {bool} options.dontCreateJitsiTrack if <tt>true</tt> objects with the following structure {stream: the Media Stream,
+     * type: "audio" or "video", videoType: "camera" or "desktop"}
+     * will be returned trough the Promise, otherwise JitsiTrack objects will be returned.
+     * @param {string} options.cameraDeviceId
+     * @param {string} options.micDeviceId
      * @returns {Promise.<{Array.<JitsiTrack>}, JitsiConferenceError>} A promise that returns an array of created JitsiTracks if resolved,
      *     or a JitsiConferenceError if rejected.
      */

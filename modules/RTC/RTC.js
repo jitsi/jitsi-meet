@@ -38,15 +38,18 @@ function RTC(room, options) {
 
 /**
  * Creates the local MediaStreams.
- * @param options object for options (NOTE: currently only list of devices and resolution are supported)
- * @param dontCreateJitsiTrack if <tt>true</tt> objects with the following structure {stream: the Media Stream,
-  * type: "audio" or "video", videoType: "camera" or "desktop"}
+ * @param {Object} [options] optional parameters
+ * @param {Array} options.devices the devices that will be requested
+ * @param {string} options.resolution resolution constraints
+ * @param {bool} options.dontCreateJitsiTrack if <tt>true</tt> objects with the following structure {stream: the Media Stream,
+ * type: "audio" or "video", videoType: "camera" or "desktop"}
  * will be returned trough the Promise, otherwise JitsiTrack objects will be returned.
+ * @param {string} options.cameraDeviceId
+ * @param {string} options.micDeviceId
  * @returns {*} Promise object that will receive the new JitsiTracks
  */
-RTC.obtainAudioAndVideoPermissions = function (options, dontCreateJitsiTrack) {
-    return RTCUtils.obtainAudioAndVideoPermissions(
-        options.devices, options.resolution, dontCreateJitsiTrack);
+RTC.obtainAudioAndVideoPermissions = function (options) {
+    return RTCUtils.obtainAudioAndVideoPermissions(options);
 }
 
 RTC.prototype.onIncommingCall = function(event) {
@@ -137,11 +140,10 @@ RTC.getPCConstraints = function () {
 };
 
 RTC.getUserMediaWithConstraints = function(um, success_callback,
-                                     failure_callback, resolution,
-                                     bandwidth, fps, desktopStream)
+                                     failure_callback, options)
 {
     return RTCUtils.getUserMediaWithConstraints(this, um, success_callback,
-        failure_callback, resolution, bandwidth, fps, desktopStream);
+        failure_callback, options);
 };
 
 RTC.attachMediaStream =  function (elSelector, stream) {

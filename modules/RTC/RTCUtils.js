@@ -15,7 +15,7 @@ var eventEmitter = new EventEmitter();
 var devices = {
     audio: true,
     video: true
-};
+}
 
 var rtcReady = false;
 
@@ -65,22 +65,44 @@ function setResolutionConstraints(constraints, resolution) {
         constraints.video.mandatory.maxHeight =
             constraints.video.mandatory.minHeight;
 }
-
-function getConstraints(um, resolution, bandwidth, fps, desktopStream) {
+/**
+ * @param {string[]} um required user media types
+ *
+ * @param {Object} [options={}] optional parameters
+ * @param {string} options.resolution
+ * @param {number} options.bandwidth
+ * @param {number} options.fps
+ * @param {string} options.desktopStream
+ * @param {string} options.cameraDeviceId
+ * @param {string} options.micDeviceId
+ * @param {bool} firefox_fake_device
+ */
+function getConstraints(um, options) {
     var constraints = {audio: false, video: false};
 
     if (um.indexOf('video') >= 0) {
         // same behaviour as true
         constraints.video = { mandatory: {}, optional: [] };
 
+        if (options.cameraDeviceId) {
+            constraints.video.optional.push({
+                sourceId: options.cameraDeviceId
+            });
+        }
+
         constraints.video.optional.push({ googLeakyBucket: true });
 
-        setResolutionConstraints(constraints, resolution);
+        setResolutionConstraints(constraints, options.resolution);
     }
     if (um.indexOf('audio') >= 0) {
         if (!RTCBrowserType.isFirefox()) {
             // same behaviour as true
             constraints.audio = { mandatory: {}, optional: []};
+            if (options.micDeviceId) {
+                constraints.audio.optional.push({
+                    sourceId: options.micDeviceId
+                });
+            }
             // if it is good enough for hangouts...
             constraints.audio.optional.push(
                 {googEchoCancellation: true},
@@ -92,7 +114,15 @@ function getConstraints(um, resolution, bandwidth, fps, desktopStream) {
                 {googAutoGainControl2: true}
             );
         } else {
-            constraints.audio = true;
+            if (options.micDeviceId) {
+                constraints.audio = {
+                    mandatory: {},
+                    optional: [{
+                        sourceId: options.micDeviceId
+                    }]};
+            } else {
+                constraints.audio = true;
+            }
         }
     }
     if (um.indexOf('screen') >= 0) {
@@ -125,7 +155,7 @@ function getConstraints(um, resolution, bandwidth, fps, desktopStream) {
         constraints.video = {
             mandatory: {
                 chromeMediaSource: "desktop",
-                chromeMediaSourceId: desktopStream,
+                chromeMediaSourceId: options.desktopStream,
                 googLeakyBucket: true,
                 maxWidth: window.screen.width,
                 maxHeight: window.screen.height,
@@ -135,28 +165,36 @@ function getConstraints(um, resolution, bandwidth, fps, desktopStream) {
         };
     }
 
-    if (bandwidth) {
+    if (options.bandwidth) {
         if (!constraints.video) {
             //same behaviour as true
             constraints.video = {mandatory: {}, optional: []};
         }
-        constraints.video.optional.push({bandwidth: bandwidth});
+        constraints.video.optional.push({bandwidth: options.bandwidth});
     }
-    if (fps) {
+    if (options.fps) {
         // for some cameras it might be necessary to request 30fps
         // so they choose 30fps mjpg over 10fps yuy2
         if (!constraints.video) {
             // same behaviour as true;
             constraints.video = {mandatory: {}, optional: []};
         }
-        constraints.video.mandatory.minFrameRate = fps;
+        constraints.video.mandatory.minFrameRate = options.fps;
+    }
+
+    // we turn audio for both audio and video tracks, the fake audio & video seems to work
+    // only when enabled in one getUserMedia call, we cannot get fake audio separate by fake video
+    // this later can be a problem with some of the tests
+    if(RTCBrowserType.isFirefox() && options.firefox_fake_device)
+    {
+        constraints.audio = true;
+        constraints.fake = true;
     }
 
     return constraints;
 }
 
 function setAvailableDevices(um, available) {
-    var devices = {};
     if (um.indexOf("video") != -1) {
         devices.video = available;
     }
@@ -471,9 +509,23 @@ var RTCUtils = {
         }
 
     },
-    getUserMediaWithConstraints: function ( um, success_callback, failure_callback, resolution, bandwidth, fps, desktopStream) {
+    /**
+    * @param {string[]} um required user media types
+    * @param {function} success_callback
+    * @param {Function} failure_callback
+    * @param {Object} [options] optional parameters
+    * @param {string} options.resolution
+    * @param {number} options.bandwidth
+    * @param {number} options.fps
+    * @param {string} options.desktopStream
+    * @param {string} options.cameraDeviceId
+    * @param {string} options.micDeviceId
+    **/
+    getUserMediaWithConstraints: function ( um, success_callback, failure_callback, options) {
+        options = options || {};
+        resolution = options.resolution;
         var constraints = getConstraints(
-            um, resolution, bandwidth, fps, desktopStream);
+            um, options);
 
         logger.info("Get media constraints", constraints);
 
@@ -502,30 +554,28 @@ var RTCUtils = {
 
     /**
      * Creates the local MediaStreams.
-     * @param devices the devices that will be requested
-     * @param resolution resolution constraints
-     * @param dontCreateJitsiTrack if <tt>true</tt> objects with the following structure {stream: the Media Stream,
+     * @param {Object} [options] optional parameters
+     * @param {Array} options.devices the devices that will be requested
+     * @param {string} options.resolution resolution constraints
+     * @param {bool} options.dontCreateJitsiTrack if <tt>true</tt> objects with the following structure {stream: the Media Stream,
      * type: "audio" or "video", videoType: "camera" or "desktop"}
      * will be returned trough the Promise, otherwise JitsiTrack objects will be returned.
+     * @param {string} options.cameraDeviceId
+     * @param {string} options.micDeviceId
      * @returns {*} Promise object that will receive the new JitsiTracks
      */
-    obtainAudioAndVideoPermissions: function (devices, resolution, dontCreateJitsiTracks) {
+    obtainAudioAndVideoPermissions: function (options) {
         var self = this;
-        // Get AV
 
+        options = options || {};
         return new Promise(function (resolve, reject) {
             var successCallback = function (stream) {
-                var streams = self.successCallback(stream, resolution);
-                resolve(dontCreateJitsiTracks? streams: self.createLocalTracks(streams));
+                var streams = self.successCallback(stream, options.resolution);
+                resolve(options.dontCreateJitsiTracks?
+                    streams: self.createLocalTracks(streams));
             };
 
-            if (!devices)
-                devices = ['audio', 'video'];
-
-            if (devices.length === 0) {
-                successCallback();
-                return;
-            }
+            options.devices = options.devices || ['audio', 'video'];
 
             if (RTCBrowserType.isFirefox() || RTCBrowserType.isTemasysPluginUsed()) {
 
@@ -549,39 +599,40 @@ var RTCUtils = {
                         function (error, resolution) {
                             logger.error(
                                 'failed to obtain video stream - stop', error);
-                            self.errorCallback(error, resolve, resolution, dontCreateJitsiTracks);
+                            self.errorCallback(error, resolve, options);
                         },
-                            resolution || '360');
+                        {resolution: options.resolution || '360',
+                        cameraDeviceId: options.cameraDeviceId});
                 };
                 var obtainAudio = function () {
                     self.getUserMediaWithConstraints(
                         ['audio'],
                         function (audioStream) {
-                            if (devices.indexOf('video') !== -1)
+                            (options.devices.indexOf('video') === -1) ||
                                 obtainVideo(audioStream);
                         },
                         function (error) {
                             logger.error(
                                 'failed to obtain audio stream - stop', error);
-                            self.errorCallback(error, resolve, null, dontCreateJitsiTracks);
-                        }
-                    );
+                            self.errorCallback(error, resolve, options);
+                        },{micDeviceId: options.micDeviceId});
                 };
-                if (devices.indexOf('audio') !== -1) {
+                if((devices.indexOf('audio') === -1))
+                    obtainVideo(null)
+                else
                     obtainAudio();
-                } else {
-                    obtainVideo(null);
-                }
             } else {
                 this.getUserMediaWithConstraints(
-                    devices,
+                    options.devices,
                     function (stream) {
                         successCallback(stream);
                     },
                     function (error, resolution) {
-                        self.errorCallback(error, resolve, resolution, dontCreateJitsiTracks);
+                        self.errorCallback(error, resolve, options);
                     },
-                    resolution || '360');
+                    {resolution: options.resolution || '360',
+                    cameraDeviceId: options.cameraDeviceId,
+                    micDeviceId: options.micDeviceId});
             }
         }.bind(this));
     },
@@ -605,15 +656,17 @@ var RTCUtils = {
      * Error callback called from GUM. Retries the GUM call with different resolutions.
      * @param error the error
      * @param resolve the resolve funtion that will be called on success.
-     * @param currentResolution the last resolution used for GUM.
+     * @param {Object} options with the following properties:
+     * @param resolution the last resolution used for GUM.
      * @param dontCreateJitsiTracks if <tt>true</tt> objects with the following structure {stream: the Media Stream,
      * type: "audio" or "video", videoType: "camera" or "desktop"}
      * will be returned trough the Promise, otherwise JitsiTrack objects will be returned.
      */
-    errorCallback: function (error, resolve, currentResolution, dontCreateJitsiTracks) {
+    errorCallback: function (error, resolve, options) {
         var self = this;
+        options = options || {};
         logger.error('failed to obtain audio/video stream - trying audio only', error);
-        var resolution = getPreviousResolution(currentResolution);
+        var resolution = getPreviousResolution(options.resolution);
         if (typeof error == "object" && error.constraintName && error.name
             && (error.name == "ConstraintNotSatisfiedError" ||
                 error.name == "OverconstrainedError") &&
@@ -623,23 +676,26 @@ var RTCUtils = {
             self.getUserMediaWithConstraints(['audio', 'video'],
                 function (stream) {
                     var streams = self.successCallback(stream, resolution);
-                    resolve(dontCreateJitsiTracks? streams: self.createLocalTracks(streams));
+                    resolve(options.dontCreateJitsiTracks? streams: self.createLocalTracks(streams));
                 }, function (error, resolution) {
-                    return self.errorCallback(error, resolve, resolution, dontCreateJitsiTracks);
-                }, resolution);
+                    return self.errorCallback(error, resolve,
+                        {resolution: resolution,
+                        dontCreateJitsiTracks: options.dontCreateJitsiTracks});
+                },
+                {resolution: options.resolution});
         }
         else {
             self.getUserMediaWithConstraints(
                 ['audio'],
                 function (stream) {
                     var streams = self.successCallback(stream, resolution);
-                    resolve(dontCreateJitsiTracks? streams: self.createLocalTracks(streams));
+                    resolve(options.dontCreateJitsiTracks? streams: self.createLocalTracks(streams));
                 },
                 function (error) {
                     logger.error('failed to obtain audio/video stream - stop',
                         error);
                     var streams = self.successCallback(null);
-                    resolve(dontCreateJitsiTracks? streams: self.createLocalTracks(streams));
+                    resolve(options.dontCreateJitsiTracks? streams: self.createLocalTracks(streams));
                 }
             );
         }

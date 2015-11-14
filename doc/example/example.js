@@ -141,15 +141,34 @@ $(window).bind('unload', unload);
 // JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.ERROR);
 
 JitsiMeetJS.init();
-JitsiMeetJS.createLocalTracks({resolution: "720"}).then(onLocalTracks);
-var connection = new JitsiMeetJS.JitsiConnection(null, null, options);
 
+JitsiMeetJS.enumerateDevices(function (devices) {
+    for(var i = 0; i < devices.length; i++)
+    {
+        var device = devices[i];
+        if(device.kind === "videoinput")
+            $("#videoDevices").append("<option value=\"" + device.deviceId +
+                "\">" + device.label + "</option>");
+    }
+})
+
+var connection = null;
 var room = null;
 var localTracks = [];
 var remoteTracks = {};
 
-connection.addEventListener(JitsiMeetJS.events.connection.CONNECTION_ESTABLISHED, onConnectionSuccess);
-connection.addEventListener(JitsiMeetJS.events.connection.CONNECTION_FAILED, onConnectionFailed);
-connection.addEventListener(JitsiMeetJS.events.connection.CONNECTION_DISCONNECTED, disconnect);
 
-connection.connect();
+/**
+ * Starts the conference with the selected device
+ */
+function selectDevice() {
+    var videoID = $("#videoDevices").val();
+    JitsiMeetJS.createLocalTracks({resolution: "720", cameraDeviceId: videoID}).then(onLocalTracks);
+    connection = new JitsiMeetJS.JitsiConnection(null, null, options);
+
+    connection.addEventListener(JitsiMeetJS.events.connection.CONNECTION_ESTABLISHED, onConnectionSuccess);
+    connection.addEventListener(JitsiMeetJS.events.connection.CONNECTION_FAILED, onConnectionFailed);
+    connection.addEventListener(JitsiMeetJS.events.connection.CONNECTION_DISCONNECTED, disconnect);
+
+    connection.connect();
+}
