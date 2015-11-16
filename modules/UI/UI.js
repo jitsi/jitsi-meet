@@ -700,6 +700,15 @@ UI.getLargeVideoResource = function () {
     return VideoLayout.getLargeVideoResource();
 };
 
+/**
+ * Return the type of the remote video.
+ * @param jid the jid for the remote video
+ * @returns the video type video or screen.
+ */
+UI.getRemoteVideoType = function (jid) {
+    return VideoLayout.getRemoteVideoType(jid);
+};
+
 UI.getRoomNode = function () {
     if (roomNode)
         return roomNode;

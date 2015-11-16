@@ -192,6 +192,15 @@ var VideoLayout = (function (my) {
     };
 
     /**
+     * Return the type of the remote video.
+     * @param jid the jid for the remote video
+     * @returns the video type video or screen.
+     */
+    my.getRemoteVideoType = function (jid) {
+        return remoteVideoTypes[jid];
+    };
+
+    /**
      * Called when large video update is finished
      * @param currentSmallVideo small video currently displayed on large video
      */
