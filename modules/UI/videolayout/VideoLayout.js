@@ -690,6 +690,16 @@ var VideoLayout = (function (my) {
         $('#remoteVideos>span').each(function( index, element ) {
             var resourceJid = VideoLayout.getPeerContainerResourceJid(element);
 
+            // We do not want to process any logic for our own(local) video
+            // because the local participant is never in the lastN set.
+            // The code of this function might detect that the local participant
+            // has been dropped out of the lastN set and will update the large
+            // video
+            // Detected from avatar tests, where lastN event override
+            // local video pinning
+            if(resourceJid == APP.xmpp.myResource())
+                return;
+
             var isReceived = true;
             if (resourceJid &&
                 lastNEndpoints.indexOf(resourceJid) < 0 &&
