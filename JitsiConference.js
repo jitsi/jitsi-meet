@@ -173,7 +173,7 @@ JitsiConference.prototype.setDisplayName = function(name) {
  */
 JitsiConference.prototype.addTrack = function (track) {
     this.rtc.addLocalStream(track);
-    this.room.addStream(track.getOriginalStream, function () {});
+    this.room.addStream(track.getOriginalStream(), function () {});
 }
 
 /**

@@ -453,7 +453,7 @@ var RTCUtils = {
             AdapterJS.webRTCReady(function (isPlugin) {
 
                 self.peerconnection = RTCPeerConnection;
-                self.getUserMedia = getUserMedia;
+                self.getUserMedia = window.getUserMedia;
                 self.enumerateDevices = enumerateDevicesThroughMediaStreamTrack;
                 self.attachMediaStream = function (elSel, stream) {
 
@@ -617,7 +617,7 @@ var RTCUtils = {
                             self.errorCallback(error, resolve, options);
                         },{micDeviceId: options.micDeviceId});
                 };
-                if((devices.indexOf('audio') === -1))
+                if((options.devices.indexOf('audio') === -1))
                     obtainVideo(null)
                 else
                     obtainAudio();

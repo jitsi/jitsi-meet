@@ -535,7 +535,7 @@ JingleSessionPC.prototype.setRemoteDescription = function (elem, desctype) {
     this.remoteSDP = new SDP('');
     this.remoteSDP.fromJingle(elem);
     this.readSsrcInfo($(elem).find(">content"));
-    if (this.peerconnection.remoteDescription !== null) {
+    if (this.peerconnection.remoteDescription) {
         logger.log('setRemoteDescription when remote description is not null, should be pranswer', this.peerconnection.remoteDescription);
         if (this.peerconnection.remoteDescription.type == 'pranswer') {
             var pranswer = new SDP(this.peerconnection.remoteDescription.sdp);
@@ -1361,6 +1361,8 @@ JingleSessionPC.onJingleFatalError = function (session, error)
 JingleSessionPC.prototype.setLocalDescription = function () {
     var self = this;
     var newssrcs = [];
+    if(!this.peerconnection.localDescription)
+        return;
     var session = transform.parse(this.peerconnection.localDescription.sdp);
     session.media.forEach(function (media) {
 
@@ -1445,8 +1447,8 @@ JingleSessionPC.prototype.remoteStreamAdded = function (data, times) {
     } else if (streamId && streamId.indexOf('mixedmslabel') === -1) {
         // look only at a=ssrc: and _not_ at a=ssrc-group: lines
 
-        var ssrclines
-            = SDPUtil.find_lines(this.peerconnection.remoteDescription.sdp, 'a=ssrc:');
+        var ssrclines = this.peerconnection.remoteDescription?
+            SDPUtil.find_lines(this.peerconnection.remoteDescription.sdp, 'a=ssrc:') : [];
         ssrclines = ssrclines.filter(function (line) {
             // NOTE(gp) previously we filtered on the mslabel, but that property
             // is not always present.

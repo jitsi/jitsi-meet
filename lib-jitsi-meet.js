@@ -175,7 +175,7 @@ JitsiConference.prototype.setDisplayName = function(name) {
  */
 JitsiConference.prototype.addTrack = function (track) {
     this.rtc.addLocalStream(track);
-    this.room.addStream(track.getOriginalStream, function () {});
+    this.room.addStream(track.getOriginalStream(), function () {});
 }
 
 /**
@@ -259,6 +259,7 @@ function setupListeners(conference) {
     });
     conference.rtc.addListener(StreamEventTypes.EVENT_TYPE_LOCAL_ENDED, function (stream) {
         conference.eventEmitter.emit(JitsiConferenceEvents.TRACK_REMOVED, stream);
+        conference.removeTrack(stream);
     });
     conference.rtc.addListener(StreamEventTypes.TRACK_MUTE_CHANGED, function (track) {
         conference.eventEmitter.emit(JitsiConferenceEvents.TRACK_MUTE_CHANGED, track);
@@ -640,8 +641,9 @@ var LibJitsiMeet = {
     }
 };
 
+require("es6-promise").polyfill()
 //Setups the promise object.
-window.Promise = window.Promise || require("es6-promise").polyfill();
+window.Promise = window.Promise || require("es6-promise").Promise;
 
 module.exports = LibJitsiMeet;
 
@@ -2273,7 +2275,7 @@ var RTCUtils = {
             AdapterJS.webRTCReady(function (isPlugin) {
 
                 self.peerconnection = RTCPeerConnection;
-                self.getUserMedia = getUserMedia;
+                self.getUserMedia = window.getUserMedia;
                 self.enumerateDevices = enumerateDevicesThroughMediaStreamTrack;
                 self.attachMediaStream = function (elSel, stream) {
 
@@ -2437,7 +2439,7 @@ var RTCUtils = {
                             self.errorCallback(error, resolve, options);
                         },{micDeviceId: options.micDeviceId});
                 };
-                if((devices.indexOf('audio') === -1))
+                if((options.devices.indexOf('audio') === -1))
                     obtainVideo(null)
                 else
                     obtainAudio();
@@ -6659,7 +6661,7 @@ JingleSessionPC.prototype.setRemoteDescription = function (elem, desctype) {
     this.remoteSDP = new SDP('');
     this.remoteSDP.fromJingle(elem);
     this.readSsrcInfo($(elem).find(">content"));
-    if (this.peerconnection.remoteDescription !== null) {
+    if (this.peerconnection.remoteDescription) {
         logger.log('setRemoteDescription when remote description is not null, should be pranswer', this.peerconnection.remoteDescription);
         if (this.peerconnection.remoteDescription.type == 'pranswer') {
             var pranswer = new SDP(this.peerconnection.remoteDescription.sdp);
@@ -7485,6 +7487,8 @@ JingleSessionPC.onJingleFatalError = function (session, error)
 JingleSessionPC.prototype.setLocalDescription = function () {
     var self = this;
     var newssrcs = [];
+    if(!this.peerconnection.localDescription)
+        return;
     var session = transform.parse(this.peerconnection.localDescription.sdp);
     session.media.forEach(function (media) {
 
@@ -7569,8 +7573,8 @@ JingleSessionPC.prototype.remoteStreamAdded = function (data, times) {
     } else if (streamId && streamId.indexOf('mixedmslabel') === -1) {
         // look only at a=ssrc: and _not_ at a=ssrc-group: lines
 
-        var ssrclines
-            = SDPUtil.find_lines(this.peerconnection.remoteDescription.sdp, 'a=ssrc:');
+        var ssrclines = this.peerconnection.remoteDescription?
+            SDPUtil.find_lines(this.peerconnection.remoteDescription.sdp, 'a=ssrc:') : [];
         ssrclines = ssrclines.filter(function (line) {
             // NOTE(gp) previously we filtered on the mslabel, but that property
             // is not always present.
@@ -13466,7 +13470,7 @@ function getCallerInfo() {
     };
     //gets the part of the stack without the logger wrappers
     var error = new Error();
-    var stack = error.stack.split("\n");
+    var stack = error.stack? error.stack.split("\n") : [];
     if(!stack || stack.length < 1) {
         return callerInfo;
     }
