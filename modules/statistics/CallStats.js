@@ -156,6 +156,19 @@ var CallStats = {
         // else just ignore it
     },
 
+    _reportError: function (type, e, pc) {
+        if (callStats) {
+            callStats.reportError(pc, this.confID, type, e);
+        } else if (callStatsIntegrationEnabled) {
+            pendingErrors.push({
+                type: type,
+                error: e,
+                pc: pc
+            });
+        }
+        // else just ignore it
+    },
+
     /**
      * Notifies CallStats that getUserMedia failed.
      *
