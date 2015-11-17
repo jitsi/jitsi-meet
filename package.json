@@ -28,7 +28,7 @@
     "pako": "*",
     "retry": "0.6.1",
     "sdp-interop": "0.1.10",
-    "sdp-simulcast": "0.1.0",
+    "sdp-simulcast": "0.1.2",
     "sdp-transform": "1.4.1",
     "socket.io-client": "1.3.6",
     "strophe": "^1.2.2",
