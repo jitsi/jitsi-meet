@@ -151,12 +151,28 @@ function hangup() {
         }
     };
 
-    if (Feedback.feedbackScore > 0) {
-        Feedback.openFeedbackWindow();
-        conferenceDispose();
+    if (Feedback.isEnabled())
+    {
+        // If the user has already entered feedback, we'll show the window and
+        // immidiately start the conference dispose timeout.
+        if (Feedback.feedbackScore > 0) {
+            Feedback.openFeedbackWindow();
+            conferenceDispose();
+
+        }
+        // Otherwise we'll wait for user's feedback.
+        else
+            Feedback.openFeedbackWindow(conferenceDispose);
     }
-    else
-        Feedback.openFeedbackWindow(conferenceDispose);
+    else {
+        conferenceDispose();
+
+        // If the feedback functionality isn't enabled we show a thank you
+        // dialog.
+        APP.UI.messageHandler.openMessageDialog(null, null, null,
+            APP.translation.translateString("dialog.thankYou",
+                {appName:interfaceConfig.APP_NAME}));
+    }
 }
 
 /**

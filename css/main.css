@@ -248,6 +248,7 @@ form {
 }
 
 div.feedbackButton {
+    display: none;
     position: absolute;
     background-color: rgba(0,0,0,.50);
     border-radius: 50%;
