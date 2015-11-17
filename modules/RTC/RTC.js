@@ -303,7 +303,7 @@ var RTC = {
         if (mediaStream.addEventListener) {
             // chrome
             if(typeof mediaStream.active !== "undefined")
-                mediaStream.inactive = handler;
+                mediaStream.oninactive = handler;
             else
                 mediaStream.onended = handler;
         } else {
@@ -322,7 +322,7 @@ var RTC = {
         if (mediaStream.removeEventListener) {
             // chrome
             if(typeof mediaStream.active !== "undefined")
-                mediaStream.inactive = null;
+                mediaStream.oninactive = null;
             else
                 mediaStream.onended = null;
         } else {
