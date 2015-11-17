@@ -67,6 +67,16 @@ var CallStats = {
             pendingErrors.length = 0;
         }
     },
+    /**
+     * Returns true if the callstats integration is enabled, otherwise returns
+     * false.
+     *
+     * @returns true if the callstats integration is enabled, otherwise returns
+     * false.
+     */
+    isEnabled: function() {
+        return callStatsIntegrationEnabled;
+    },
     pcCallback: function (err, msg) {
         if (!callStats) {
             return;
@@ -125,7 +135,14 @@ var CallStats = {
         callStats.sendUserFeedback(
             this.confID, feedbackJSON);
     },
-
+    /**
+     * Reports an error to callstats.
+     *
+     * @param type the type of the error, which will be one of the wrtcFuncNames
+     * @param e the error
+     * @param pc the peerconnection
+     * @private
+     */
     _reportError: function (type, e, pc) {
         if (callStats) {
             callStats.reportError(pc, this.confID, type, e);

@@ -79,7 +79,7 @@ var Feedback = {
     init: function () {
         // CallStats is the way we send feedback, so we don't have to initialise
         // if callstats isn't enabled.
-        if (!config.callStatsID || !config.callStatsSecret)
+        if (!callStats.isEnabled())
             return;
 
         $("div.feedbackButton").css("display", "block");
@@ -93,9 +93,7 @@ var Feedback = {
      * @return true if the feedback functionality is enabled, false otherwise.
      */
     isEnabled: function() {
-        var isCallStatsEnabled = (config.callStatsID && config.callStatsSecret);
-
-        return isCallStatsEnabled;
+        return callStats.isEnabled();
     },
     /**
      * Opens the feedback window.
