@@ -810,7 +810,26 @@ var RTCUtils = {
             return true;
         }
         return (MediaStreamTrack && MediaStreamTrack.getSources)? true : false;
+    },
+    /**
+     * A method to handle stopping of the stream.
+     * One point to handle the differences in various implementations.
+     * @param mediaStream MediaStream object to stop.
+     */
+    stopMediaStream: function (mediaStream) {
+        mediaStream.getTracks().forEach(function (track) {
+            // stop() not supported with IE
+            if (track.stop) {
+                track.stop();
+            }
+        });
+
+        // leave stop for implementation still using it
+        if (mediaStream.stop) {
+            mediaStream.stop();
+        }
     }
+
 };
 
 module.exports = RTCUtils;

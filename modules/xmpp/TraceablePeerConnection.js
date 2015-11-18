@@ -257,21 +257,7 @@ TraceablePeerConnection.prototype.addStream = function (stream) {
 TraceablePeerConnection.prototype.removeStream = function (stream, stopStreams) {
     this.trace('removeStream', stream.id);
     if(stopStreams) {
-        stream.getAudioTracks().forEach(function (track) {
-            // stop() not supported with IE
-            if (track.stop) {
-                track.stop();
-            }
-        });
-        stream.getVideoTracks().forEach(function (track) {
-            // stop() not supported with IE
-            if (track.stop) {
-                track.stop();
-            }
-        });
-        if (stream.stop) {
-            stream.stop();
-        }
+        RTC.stopMediaStream(stream);
     }
 
     try {

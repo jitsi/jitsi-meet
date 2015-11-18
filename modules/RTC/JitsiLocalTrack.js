@@ -55,7 +55,7 @@ JitsiLocalTrack.prototype._setMute = function (mute) {
         if (mute) {
             this.dontFireRemoveEvent = true;
             this.rtc.room.removeStream(this.stream);
-            this.stream.stop();
+            this.rtc.stopMediaStream(this.stream);
             if(isAudio)
                 this.rtc.room.setAudioMute(mute);
             else
@@ -111,7 +111,7 @@ JitsiLocalTrack.prototype.stop = function () {
         return;
     if(this.rtc)
         this.rtc.room.removeStream(this.stream);
-    this.stream.stop();
+    this.rtc.stopMediaStream(this.stream);
     this.detach();
 }
 

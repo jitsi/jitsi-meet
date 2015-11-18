@@ -174,6 +174,15 @@ RTC.setVideoSrc = function (element, src) {
     RTCUtils.setVideoSrc(element, src);
 };
 
+/**
+ * A method to handle stopping of the stream.
+ * One point to handle the differences in various implementations.
+ * @param mediaStream MediaStream object to stop.
+ */
+RTC.stopMediaStream = function (mediaStream) {
+    RTCUtils.stopMediaStream(mediaStream);
+};
+
 RTC.prototype.getVideoElementName = function () {
     return RTCBrowserType.isTemasysPluginUsed() ? 'object' : 'video';
 };
@@ -208,57 +217,6 @@ RTC.prototype.switchVideoStreams = function (new_stream) {
     if (this.localAudio.getOriginalStream() != new_stream)
         this.localStreams.push(this.localAudio);
     this.localStreams.push(this.localVideo);
-};
-
-/**
- * Creates <tt>JitsiTrack</tt> instance and replaces it with the local video.
- * The method also handles the sdp changes.
- * @param stream the new MediaStream received by the browser.
- * @param isUsingScreenStream <tt>true</tt> if the stream is for desktop stream.
- * @param callback - function that will be called after the operation is completed.
- */
-RTC.prototype.changeLocalVideo = function (stream, isUsingScreenStream, callback) {
-    var oldStream = this.localVideo.getOriginalStream();
-    var type = (isUsingScreenStream ? "screen" : "camera");
-    var localCallback = callback;
-
-    if(this.localVideo.isMuted() && this.localVideo.videoType !== type) {
-        localCallback = function() {
-            this.room.setVideoMute(false, function(mute) {
-                this.eventEmitter.emit(RTCEvents.VIDEO_MUTE, mute);
-            }.bind(this));
-
-            callback();
-        };
-    }
-    // FIXME: Workaround for FF/IE/Safari
-    if (stream && stream.videoStream) {
-        stream = stream.videoStream;
-    }
-    var videoStream = RTCUtils.createStream(stream, true);
-    this.localVideo = this.createLocalStream(videoStream, "video", true, type);
-    // Stop the stream to trigger onended event for old stream
-    oldStream.stop();
-
-    this.switchVideoStreams(videoStream, oldStream);
-
-    this.room.switchStreams(videoStream, oldStream,localCallback);
-};
-
-
-/**
- * Creates <tt>JitsiTrack</tt> instance and replaces it with the local audio.
- * The method also handles the sdp changes.
- * @param stream the new MediaStream received by the browser.
- * @param callback - function that will be called after the operation is completed.
- */
-RTC.prototype.changeLocalAudio = function (stream, callback) {
-    var oldStream = this.localAudio.getOriginalStream();
-    var newStream = RTCUtils.createStream(stream);
-    this.localAudio = this.createLocalStream(newStream, "audio", true);
-    // Stop the stream to trigger onended event for old stream
-    oldStream.stop();
-    this.room.switchStreams(newStream, oldStream, callback, true);
 };
 
 RTC.prototype.isVideoMuted = function (jid) {
