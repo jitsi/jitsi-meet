@@ -22,25 +22,34 @@ end
 
 local appId = parentCtx:get_option_string("app_id");
 local appSecret = parentCtx:get_option_string("app_secret");
-local tokenLifetime = parentCtx:get_option_string("token_lifetime");
 
-log("debug", "%s - starting MUC token verifier app_id: %s app_secret: %s token-lifetime: %s",
-	tostring(host), tostring(appId), tostring(appSecret), tostring(tokenLifetime));
+log("debug", "%s - starting MUC token verifier app_id: %s app_secret: %s",
+	tostring(host), tostring(appId), tostring(appSecret));
 
 local function handle_pre_create(event)
+
 	local origin, stanza = event.origin, event.stanza;	
 	local token = stanza:get_child("token", "http://jitsi.org/jitmeet/auth-token");
+
 	-- token not required for admin users
 	local user_jid = stanza.attr.from;	
 	if is_admin(user_jid) then
 		log("debug", "Token not required from admin user: %s", user_jid);
 		return nil;
 	end
-	log("debug", "Will verify token for user: %s ", user_jid);
+
+	local room = string.match(stanza.attr.to, "^(%w+)@");
+	log("debug", "Will verify token for user: %s, room: %s ", user_jid, room);
+	if room == nil then
+		log("error", "Unable to get name of the MUC room ? to: %s", stanza.attr.to);
+		return nil;
+	end
+
 	if token ~= nil then
 		token = token[1];
 	end
-	local result, msg = token_util.verify_password(token, appId, appSecret, tokenLifetime);
+
+	local result, msg = token_util.verify_password(token, appId, appSecret, room);
 	if result ~= true then
 		log("debug", "Token verification failed: %s", msg);
 		origin.send(st.error_reply(stanza, "cancel", "not-allowed", msg));
