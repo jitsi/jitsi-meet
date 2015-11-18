@@ -27,10 +27,9 @@ local provider = {};
 
 local appId = module:get_option_string("app_id");
 local appSecret = module:get_option_string("app_secret");
-local tokenLifetime = module:get_option_number("token_lifetime");
 
 function provider.test_password(username, password)
-	local result, msg = token_util.verify_password(password, appId, appSecret, tokenLifetime);
+	local result, msg = token_util.verify_password(password, appId, appSecret, nil);
 	if result == true then
 		return true;
 	else
