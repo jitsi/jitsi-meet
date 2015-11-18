@@ -281,6 +281,10 @@ ChatRoom.prototype.onPresence = function (pres) {
             this.eventEmitter.emit(XMPPEvents.MUC_ROLE_CHANGED,
                 member.role, member.nick);
         }
+
+        // store the new display name
+        if(member.displayName)
+            this.members[from].displayName = member.displayName;
     }
 
 
