@@ -124,7 +124,7 @@ DataChannels.prototype.onDataChannel = function (event) {
                 // endpoint IDs.
                 var endpointsEnteringLastN = obj.endpointsEnteringLastN;
 
-                logger.log(
+                logger.info(
                     "Data channel new last-n event: ",
                     lastNEndpoints, endpointsEnteringLastN, obj);
                 this.eventEmitter.emit(RTCEvents.LASTN_ENDPOINT_CHANGED,
