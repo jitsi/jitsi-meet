@@ -322,7 +322,7 @@ SmallVideo.prototype.selectVideoElement = function () {
     } else {
         return $('#' + this.videoSpanId +
                (this.isLocal ? '>>' : '>') +
-               videoElem + '>param[value="video"]').parent();
+                 videoElem + '>param[value="video"]').first().parent();
     }
 };
 
