@@ -9,17 +9,18 @@ var RTCBrowserType = require("./RTCBrowserType");
 function JitsiLocalTrack(RTC, stream, eventEmitter, videoType,
   resolution)
 {
-    JitsiTrack.call(this, RTC, stream);
+    JitsiTrack.call(this, RTC, stream,
+        function () {
+            if(!self.dontFireRemoveEvent)
+                self.eventEmitter.emit(
+                    StreamEventTypes.EVENT_TYPE_LOCAL_ENDED, self);
+            self.dontFireRemoveEvent = false;
+        });
     this.eventEmitter = eventEmitter;
     this.videoType = videoType;
     this.dontFireRemoveEvent = false;
     this.resolution = resolution;
     var self = this;
-    this.stream.onended = function () {
-        if(!self.dontFireRemoveEvent)
-            self.eventEmitter.emit(StreamEventTypes.EVENT_TYPE_LOCAL_ENDED, self);
-        self.dontFireRemoveEvent = false;
-    };
 }
 
 JitsiLocalTrack.prototype = Object.create(JitsiTrack.prototype);

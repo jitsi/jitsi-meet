@@ -18,10 +18,34 @@ function implementOnEndedHandling(stream) {
 }
 
 /**
+ * Adds onended/oninactive handler to a MediaStream.
+ * @param mediaStream a MediaStream to attach onended/oninactive handler
+ * @param handler the handler
+ */
+function addMediaStreamInactiveHandler(mediaStream, handler) {
+    if (mediaStream.addEventListener) {
+        // chrome
+        if(typeof mediaStream.active !== "undefined")
+            mediaStream.oninactive = handler;
+        else
+            mediaStream.onended = handler;
+    } else {
+        // themasys
+        mediaStream.attachEvent('ended', function () {
+            handler(mediaStream);
+        });
+    }
+}
+
+/**
  * Represents a single media track (either audio or video).
  * @constructor
+ * @param rtc the rtc instance
+ * @param stream the stream
+ * @param streamInactiveHandler the function that will handle
+ *        onended/oninactive events of the stream.
  */
-function JitsiTrack(rtc, stream)
+function JitsiTrack(rtc, stream, streamInactiveHandler)
 {
     /**
      * Array with the HTML elements that are displaying the streams.
@@ -44,6 +68,9 @@ function JitsiTrack(rtc, stream)
     if (RTCBrowserType.isFirefox() && this.stream) {
         implementOnEndedHandling(this.stream);
     }
+
+    if(stream)
+        addMediaStreamInactiveHandler(stream, streamInactiveHandler);
 }
 
 /**

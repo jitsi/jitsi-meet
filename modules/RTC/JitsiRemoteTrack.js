@@ -11,7 +11,10 @@ var StreamEventTypes = require("../../service/RTC/StreamEventTypes");
  * @constructor
  */
 function JitsiRemoteTrack(RTC, data, sid, ssrc, eventEmitter) {
-    JitsiTrack.call(this, RTC, data.stream);
+    JitsiTrack.call(this, RTC, data.stream,
+        function () {
+            eventEmitter.emit(StreamEventTypes.EVENT_TYPE_REMOTE_ENDED, self);
+        });
     this.rtc = RTC;
     this.sid = sid;
     this.stream = data.stream;
@@ -25,10 +28,6 @@ function JitsiRemoteTrack(RTC, data, sid, ssrc, eventEmitter) {
     }
     this.eventEmitter = eventEmitter;
     var self = this;
-    if(this.stream)
-        this.stream.onended = function () {
-            eventEmitter.emit(StreamEventTypes.EVENT_TYPE_REMOTE_ENDED, self);
-        }
 }
 
 JitsiRemoteTrack.prototype = Object.create(JitsiTrack.prototype);
