@@ -270,8 +270,7 @@ function setupListeners(conference) {
 //        conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_LEFT);
 //    });
     conference.rtc.addListener(RTCEvents.DOMINANTSPEAKER_CHANGED, function (id) {
-        if(conference.lastActiveSpeaker !== id && conference.room
-            && conference.myUserId() !== id) {
+        if(conference.lastActiveSpeaker !== id && conference.room) {
             conference.lastActiveSpeaker = id;
             conference.eventEmitter.emit(JitsiConferenceEvents.ACTIVE_SPEAKER_CHANGED, id);
         }
