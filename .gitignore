@@ -6,3 +6,4 @@ node_modules
 deploy-local.sh
 libs/app.bundle.*
 all.css
+.remote-sync.json
