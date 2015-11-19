@@ -987,17 +987,18 @@ var RTCBrowserType = require("./RTCBrowserType");
 function JitsiLocalTrack(RTC, stream, eventEmitter, videoType,
   resolution)
 {
-    JitsiTrack.call(this, RTC, stream);
+    JitsiTrack.call(this, RTC, stream,
+        function () {
+            if(!self.dontFireRemoveEvent)
+                self.eventEmitter.emit(
+                    StreamEventTypes.EVENT_TYPE_LOCAL_ENDED, self);
+            self.dontFireRemoveEvent = false;
+        });
     this.eventEmitter = eventEmitter;
     this.videoType = videoType;
     this.dontFireRemoveEvent = false;
     this.resolution = resolution;
     var self = this;
-    this.stream.onended = function () {
-        if(!self.dontFireRemoveEvent)
-            self.eventEmitter.emit(StreamEventTypes.EVENT_TYPE_LOCAL_ENDED, self);
-        self.dontFireRemoveEvent = false;
-    };
 }
 
 JitsiLocalTrack.prototype = Object.create(JitsiTrack.prototype);
@@ -1107,7 +1108,7 @@ JitsiLocalTrack.prototype.isMuted = function () {
     if (isAudio) {
         tracks = this.stream.getAudioTracks();
     } else {
-        if (this.stream.ended)
+        if (!this.isActive())
             return true;
         tracks = this.stream.getVideoTracks();
     }
@@ -1142,7 +1143,10 @@ var StreamEventTypes = require("../../service/RTC/StreamEventTypes");
  * @constructor
  */
 function JitsiRemoteTrack(RTC, data, sid, ssrc, eventEmitter) {
-    JitsiTrack.call(this, RTC, data.stream);
+    JitsiTrack.call(this, RTC, data.stream,
+        function () {
+            eventEmitter.emit(StreamEventTypes.EVENT_TYPE_REMOTE_ENDED, self);
+        });
     this.rtc = RTC;
     this.sid = sid;
     this.stream = data.stream;
@@ -1156,10 +1160,6 @@ function JitsiRemoteTrack(RTC, data, sid, ssrc, eventEmitter) {
     }
     this.eventEmitter = eventEmitter;
     var self = this;
-    if(this.stream)
-        this.stream.onended = function () {
-            eventEmitter.emit(StreamEventTypes.EVENT_TYPE_REMOTE_ENDED, self);
-        }
 }
 
 JitsiRemoteTrack.prototype = Object.create(JitsiTrack.prototype);
@@ -1203,25 +1203,49 @@ var RTCBrowserType = require("./RTCBrowserType");
 /**
  * This implements 'onended' callback normally fired by WebRTC after the stream
  * is stopped. There is no such behaviour yet in FF, so we have to add it.
- * @param stream original WebRTC stream object to which 'onended' handling
- *               will be added.
+ * @param jitsiTrack our track object holding the original WebRTC stream object
+ * to which 'onended' handling will be added.
  */
-function implementOnEndedHandling(stream) {
+function implementOnEndedHandling(jitsiTrack) {
+    var stream = jitsiTrack.getOriginalStream();
     var originalStop = stream.stop;
     stream.stop = function () {
         originalStop.apply(stream);
-        if (!stream.ended) {
-            stream.ended = true;
+        if (jitsiTrack.isActive()) {
             stream.onended();
         }
     };
 }
 
 /**
+ * Adds onended/oninactive handler to a MediaStream.
+ * @param mediaStream a MediaStream to attach onended/oninactive handler
+ * @param handler the handler
+ */
+function addMediaStreamInactiveHandler(mediaStream, handler) {
+    if (mediaStream.addEventListener) {
+        // chrome
+        if(typeof mediaStream.active !== "undefined")
+            mediaStream.oninactive = handler;
+        else
+            mediaStream.onended = handler;
+    } else {
+        // themasys
+        mediaStream.attachEvent('ended', function () {
+            handler(mediaStream);
+        });
+    }
+}
+
+/**
  * Represents a single media track (either audio or video).
  * @constructor
+ * @param rtc the rtc instance
+ * @param stream the stream
+ * @param streamInactiveHandler the function that will handle
+ *        onended/oninactive events of the stream.
  */
-function JitsiTrack(rtc, stream)
+function JitsiTrack(rtc, stream, streamInactiveHandler)
 {
     /**
      * Array with the HTML elements that are displaying the streams.
@@ -1242,8 +1266,11 @@ function JitsiTrack(rtc, stream)
         }.bind(this);
     }
     if (RTCBrowserType.isFirefox() && this.stream) {
-        implementOnEndedHandling(this.stream);
+        implementOnEndedHandling(this);
     }
+
+    if(stream)
+        addMediaStreamInactiveHandler(stream, streamInactiveHandler);
 }
 
 /**
@@ -1343,6 +1370,20 @@ JitsiTrack.prototype.getId = function () {
         return null;
     return tracks[0].id;
 };
+
+/**
+ * Checks whether the MediaStream is avtive/not ended.
+ * When there is no check for active we don't have information and so
+ * will return that stream is active (in case of FF).
+ * @returns {boolean} whether MediaStream is active.
+ */
+JitsiTrack.prototype.isActive = function () {
+    if((typeof this.stream.active !== "undefined"))
+        return this.stream.active;
+    else
+        return true;
+};
+
 
 module.exports = JitsiTrack;
 
