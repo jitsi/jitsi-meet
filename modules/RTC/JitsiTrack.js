@@ -3,15 +3,15 @@ var RTCBrowserType = require("./RTCBrowserType");
 /**
  * This implements 'onended' callback normally fired by WebRTC after the stream
  * is stopped. There is no such behaviour yet in FF, so we have to add it.
- * @param stream original WebRTC stream object to which 'onended' handling
- *               will be added.
+ * @param jitsiTrack our track object holding the original WebRTC stream object
+ * to which 'onended' handling will be added.
  */
-function implementOnEndedHandling(stream) {
+function implementOnEndedHandling(jitsiTrack) {
+    var stream = jitsiTrack.getOriginalStream();
     var originalStop = stream.stop;
     stream.stop = function () {
         originalStop.apply(stream);
-        if (!stream.ended) {
-            stream.ended = true;
+        if (jitsiTrack.isActive()) {
             stream.onended();
         }
     };
@@ -66,7 +66,7 @@ function JitsiTrack(rtc, stream, streamInactiveHandler)
         }.bind(this);
     }
     if (RTCBrowserType.isFirefox() && this.stream) {
-        implementOnEndedHandling(this.stream);
+        implementOnEndedHandling(this);
     }
 
     if(stream)
@@ -170,5 +170,19 @@ JitsiTrack.prototype.getId = function () {
         return null;
     return tracks[0].id;
 };
+
+/**
+ * Checks whether the MediaStream is avtive/not ended.
+ * When there is no check for active we don't have information and so
+ * will return that stream is active (in case of FF).
+ * @returns {boolean} whether MediaStream is active.
+ */
+JitsiTrack.prototype.isActive = function () {
+    if((typeof this.stream.active !== "undefined"))
+        return this.stream.active;
+    else
+        return true;
+};
+
 
 module.exports = JitsiTrack;

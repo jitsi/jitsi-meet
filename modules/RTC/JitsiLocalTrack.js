@@ -130,7 +130,7 @@ JitsiLocalTrack.prototype.isMuted = function () {
     if (isAudio) {
         tracks = this.stream.getAudioTracks();
     } else {
-        if (this.stream.ended)
+        if (!this.isActive())
             return true;
         tracks = this.stream.getVideoTracks();
     }
