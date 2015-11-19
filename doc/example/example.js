@@ -1,13 +1,3 @@
-//var options = {
-//    hosts: {
-//        domain: "prod-us-east-1-app-xmpp1.internal.meet.hipchat.ninja",
-//        focus: "focus.prod-us-east-1-app-xmpp1.internal.meet.hipchat.ninja",
-//        muc: "conference.prod-us-east-1-app-xmpp1.internal.meet.hipchat.ninja", // FIXME: use XEP-0030
-//    },
-//    bosh: "https://xmpp1-meet.hipchat.me/http-bind", // FIXME: use xep-0156 for that
-//    clientNode: "http://prod-us-east-1-app-xmpp1.internal.meet.hipchat.ninja/jitsimeet" // The name of client node advertised in XEP-0115 'c' stanza
-//};
-
 var options = {
     hosts: {
         domain: 'hristo.jitsi.net',
@@ -17,19 +7,6 @@ var options = {
     bosh: '//hristo.jitsi.net/http-bind', // FIXME: use xep-0156 for that
     clientNode: 'http://jitsi.org/jitsimeet', // The name of client node advertised in XEP-0115 'c' stanza
 }
-
-
-
-// var options = {
-//     hosts: {
-//         domain: 'whatever.jitsi.net',
-//         muc: 'conference.whatever.jitsi.net', // FIXME: use XEP-0030
-//         bridge: 'jitsi-videobridge.whatever.jitsi.net', // FIXME: use XEP-0030
-//     },
-//     bosh: '//whatever.jitsi.net/http-bind?ROOM_NAME=conference2', // FIXME: use xep-0156 for that
-//     clientNode: 'http://jitsi.org/jitsimeet', // The name of client node advertised in XEP-0115 'c' stanza
-// }
-
 
 var confOptions = {
     openSctp: true,
@@ -47,6 +24,7 @@ function onLocalTracks(tracks)
     tracks[1].attach($("#localVideo"));
     for(var i = 0; i < localTracks.length; i++)
     {
+            room.addTrack(localTracks[i]);
         console.log(localTracks[i]);
     }
 }
@@ -74,10 +52,7 @@ function onRemoteTrack(track) {
  */
 function onConferenceJoined () {
     console.log("conference joined!");
-    for(var i = 0; i < localTracks.length; i++)
-    {
-        room.addTrack(localTracks[i]);
-    }
+    JitsiMeetJS.createLocalTracks({}).then(onLocalTracks);
 }
 
 function onUserLeft(id) {
@@ -142,33 +117,16 @@ $(window).bind('unload', unload);
 
 JitsiMeetJS.init();
 
-JitsiMeetJS.enumerateDevices(function (devices) {
-    for(var i = 0; i < devices.length; i++)
-    {
-        var device = devices[i];
-        if(device.kind === "videoinput")
-            $("#videoDevices").append("<option value=\"" + device.deviceId +
-                "\">" + device.label + "</option>");
-    }
-})
-
 var connection = null;
 var room = null;
 var localTracks = [];
 var remoteTracks = {};
 
 
-/**
- * Starts the conference with the selected device
- */
-function selectDevice() {
-    var videoID = $("#videoDevices").val();
-    JitsiMeetJS.createLocalTracks({resolution: "720", cameraDeviceId: videoID}).then(onLocalTracks);
-    connection = new JitsiMeetJS.JitsiConnection(null, null, options);
+connection = new JitsiMeetJS.JitsiConnection(null, null, options);
 
-    connection.addEventListener(JitsiMeetJS.events.connection.CONNECTION_ESTABLISHED, onConnectionSuccess);
-    connection.addEventListener(JitsiMeetJS.events.connection.CONNECTION_FAILED, onConnectionFailed);
-    connection.addEventListener(JitsiMeetJS.events.connection.CONNECTION_DISCONNECTED, disconnect);
+connection.addEventListener(JitsiMeetJS.events.connection.CONNECTION_ESTABLISHED, onConnectionSuccess);
+connection.addEventListener(JitsiMeetJS.events.connection.CONNECTION_FAILED, onConnectionFailed);
+connection.addEventListener(JitsiMeetJS.events.connection.CONNECTION_DISCONNECTED, disconnect);
 
-    connection.connect();
-}
+connection.connect();
