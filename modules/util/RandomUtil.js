@@ -17,20 +17,20 @@ var RandomUtil = {
     /**
      * Generates hex number with length 4
      */
-    random4digitsHex: function() {
-        return rangeRandomHex(4096, 65535);
+    random4digitsHex: function () {
+        return rangeRandomHex(0x1000, 0xFFFF);
     },
     /**
      * Generates hex number with length 8
      */
-    random8digitsHex: function() {
-        return rangeRandomHex(268435456, 4294967295);
+    random8digitsHex: function () {
+        return rangeRandomHex(0x10000000, 0xFFFFFFFF);
     },
     /**
      * Generates hex number with length 12
      */
-    random12digitsHex: function() {
-        return rangeRandomHex(17592186044416, 281474976710655);
+    random12digitsHex: function () {
+        return rangeRandomHex(0x100000000000, 0xFFFFFFFFFFFF);
     }
 };
 
