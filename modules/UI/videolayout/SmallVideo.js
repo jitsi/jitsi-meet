@@ -320,9 +320,26 @@ SmallVideo.prototype.selectVideoElement = function () {
     if (!RTCBrowserType.isTemasysPluginUsed()) {
         return $('#' + this.videoSpanId).find(videoElem);
     } else {
-        return $('#' + this.videoSpanId +
-               (this.isLocal ? '>>' : '>') +
-               videoElem + '>param[value="video"]').parent();
+        var matching = $('#' + this.videoSpanId +
+                         (this.isLocal ? '>>' : '>') +
+                         videoElem + '>param[value="video"]');
+        if (matching.length < 2) {
+            return matching.parent();
+        }
+
+        // there are 2 video objects from FF
+        // object with id which ends with '_default' (like 'remoteVideo_default')
+        // doesn't contain video, so we ignore it
+        for (var i = 0; i < matching.length; i += 1) {
+            var el = matching[i].parentNode;
+
+            // check id suffix
+            if (el.id.substr(-8) !== '_default') {
+                return $(el);
+            }
+        }
+
+        return $([]);
     }
 };
 
