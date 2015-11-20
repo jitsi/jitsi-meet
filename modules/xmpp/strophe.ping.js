@@ -1,5 +1,7 @@
 /* global $, $iq, Strophe */
 
+var logger = require("jitsi-meet-logger").getLogger(__filename);
+
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 
 /**
@@ -67,7 +69,7 @@ module.exports = function (XMPP, eventEmitter) {
                     callback(ping.length > 0);
                 },
                 function (error) {
-                    console.error("Ping feature discovery error", error);
+                    logger.error("Ping feature discovery error", error);
                     callback(false);
                 }
             );
@@ -82,7 +84,7 @@ module.exports = function (XMPP, eventEmitter) {
          */
         startInterval: function (remoteJid, interval) {
             if (this.intervalId) {
-                console.error("Ping task scheduled already");
+                logger.error("Ping task scheduled already");
                 return;
             }
             if (!interval)
@@ -96,14 +98,14 @@ module.exports = function (XMPP, eventEmitter) {
                 },
                 function (error) {
                     self.failedPings += 1;
-                    console.error(
+                    logger.error(
                         "Ping " + (error ? "error" : "timeout"), error);
                     if (self.failedPings >= PING_THRESHOLD) {
                         self.connection.disconnect();
                     }
                 }, PING_TIMEOUT);
             }, interval);
-            console.info("XMPP pings will be sent every " + interval + " ms");
+            logger.info("XMPP pings will be sent every " + interval + " ms");
         },
 
         /**
@@ -114,7 +116,7 @@ module.exports = function (XMPP, eventEmitter) {
                 window.clearInterval(this.intervalId);
                 this.intervalId = null;
                 this.failedPings = 0;
-                console.info("Ping interval cleared");
+                logger.info("Ping interval cleared");
             }
         }
     });
