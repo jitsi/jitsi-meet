@@ -114,7 +114,7 @@ XMPP.prototype._connect = function (jid, password) {
             logger.info("My Jabber ID: " + self.connection.jid);
 
             // Schedule ping ?
-            var pingJid = config.hosts.domain;
+            var pingJid = connection.domain;
             connection.ping.hasPingSupport(
                 pingJid,
                 function (hasPing) {
