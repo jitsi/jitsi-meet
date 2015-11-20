@@ -143,7 +143,7 @@ SDPDiffer.prototype.toJingle = function(modify) {
 
         // generate source groups from lines
         media.ssrcGroups.forEach(function(ssrcGroup) {
-            if (ssrcGroup.ssrcs.length != 0) {
+            if (ssrcGroup.ssrcs.length) {
 
                 modify.c('ssrc-group', {
                     semantics: ssrcGroup.semantics,

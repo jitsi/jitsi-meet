@@ -182,7 +182,7 @@ var normalizePlanB = function(desc) {
                 for (i = 0; i<mLine.ssrcs.length; i++){
                     if (typeof mLine.ssrcs[i] === 'object'
                         && typeof mLine.ssrcs[i].id !== 'undefined'
-                        && $.inArray(mLine.ssrcs[i].id, firstSsrcs) == 0) {
+                        && !$.inArray(mLine.ssrcs[i].id, firstSsrcs)) {
                         newSsrcLines.push(mLine.ssrcs[i]);
                         delete mLine.ssrcs[i];
                     }

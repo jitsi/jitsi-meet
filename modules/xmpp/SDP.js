@@ -47,7 +47,7 @@ SDP.prototype.getMediaSsrcMap = function() {
         tmp.forEach(function(line){
             var semantics = line.substr(0, idx).substr(13);
             var ssrcs = line.substr(14 + semantics.length).split(' ');
-            if (ssrcs.length != 0) {
+            if (ssrcs.length) {
                 media.ssrcGroups.push({
                     semantics: semantics,
                     ssrcs: ssrcs
@@ -268,7 +268,7 @@ SDP.prototype.toJingle = function (elem, thecreator, ssrcs) {
                     idx = line.indexOf(' ');
                     var semantics = line.substr(0, idx).substr(13);
                     var ssrcs = line.substr(14 + semantics.length).split(' ');
-                    if (ssrcs.length != 0) {
+                    if (ssrcs.length) {
                         elem.c('ssrc-group', { semantics: semantics, xmlns: 'urn:xmpp:jingle:apps:rtp:ssma:0' });
                         ssrcs.forEach(function(ssrc) {
                             elem.c('source', { ssrc: ssrc })
@@ -599,7 +599,7 @@ SDP.prototype.jingle2media = function (content) {
             return this.getAttribute('ssrc');
         }).get();
 
-        if (ssrcs.length != 0) {
+        if (ssrcs.length) {
             media += 'a=ssrc-group:' + semantics + ' ' + ssrcs.join(' ') + '\r\n';
         }
     });
