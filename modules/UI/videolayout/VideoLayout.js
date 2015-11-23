@@ -614,16 +614,14 @@ var VideoLayout = (function (my) {
         var members = APP.xmpp.getMembers();
         // Update the current dominant speaker.
         if (resourceJid !== currentDominantSpeaker) {
-            var currentJID = APP.xmpp.findJidFromResource(currentDominantSpeaker);
-            var newJID = APP.xmpp.findJidFromResource(resourceJid);
-            if (currentDominantSpeaker && (!members || !members[currentJID] ||
-                !members[currentJID].displayName) && remoteVideo) {
-                remoteVideo.setDisplayName(null);
-            }
-            if (resourceJid && (!members || !members[newJID] ||
-                !members[newJID].displayName) && remoteVideo) {
-                remoteVideo.setDisplayName(null,
-                    interfaceConfig.DEFAULT_DOMINANT_SPEAKER_DISPLAY_NAME);
+            if (remoteVideo) {
+                remoteVideo.updateDominantSpeakerIndicator(true);
+                // let's remove the indications from the remote video if any
+                var oldSpeakerRemoteVideo
+                    = remoteVideos[currentDominantSpeaker];
+                if (oldSpeakerRemoteVideo) {
+                    oldSpeakerRemoteVideo.updateDominantSpeakerIndicator(false);
+                }
             }
             currentDominantSpeaker = resourceJid;
         } else {
