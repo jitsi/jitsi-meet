@@ -1,7 +1,7 @@
 {
-  "name": "jitsi-meet",
+  "name": "lib-jitsi-meet",
   "version": "0.0.0",
-  "description": "A sample app for the Jitsi Videobridge",
+  "description": "JS library for accessing Jitsi server side deployments",
   "repository": {
     "type": "git",
     "url": "git://github.com/jitsi/jitsi-meet"
@@ -14,24 +14,20 @@
   ],
   "author": "",
   "readmeFilename": "README.md",
-  "//": "Callstats.io does not work with recent versions of jsSHA (2.0.1 in particular)",
   "dependencies": {
       "events": "*",
       "pako": "*",
-      "i18next-client": "1.7.7",
       "sdp-interop": "0.1.10",
       "sdp-transform": "1.4.1",
       "sdp-simulcast": "0.1.2",
       "async": "0.9.0",
       "retry": "0.6.1",
       "jssha": "1.5.0",
-      "socket.io-client": "1.3.6",
       "es6-promise": "*",
       "jitsi-meet-logger": "jitsi/jitsi-meet-logger"
   },
   "devDependencies": {
-    "browserify": "11.1.x",
-    "browserify-shim": "^3.8.10"
+    "browserify": "11.1.x"
   },
   "license": "Apache-2.0"
 }

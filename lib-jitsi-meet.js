@@ -333,7 +333,7 @@ function setupListeners(conference) {
 module.exports = JitsiConference;
 
 }).call(this,"/JitsiConference.js")
-},{"./JitsiConferenceEvents":3,"./JitsiParticipant":8,"./modules/RTC/RTC":13,"./modules/statistics/statistics":21,"./service/RTC/RTCEvents":76,"./service/RTC/StreamEventTypes":78,"./service/xmpp/XMPPEvents":82,"events":40,"jitsi-meet-logger":44}],2:[function(require,module,exports){
+},{"./JitsiConferenceEvents":3,"./JitsiParticipant":8,"./modules/RTC/RTC":13,"./modules/statistics/statistics":22,"./service/RTC/RTCEvents":77,"./service/RTC/StreamEventTypes":79,"./service/xmpp/XMPPEvents":84,"events":41,"jitsi-meet-logger":45}],2:[function(require,module,exports){
 /**
  * Enumeration with the errors for the conference.
  * @type {{string: string}}
@@ -447,8 +447,9 @@ var RandomUtil = require("./modules/util/RandomUtil");
  * @returns {string}
  */
 function generateUserName() {
-    return RandomUtil.random8digitsHex() + "-" + RandomUtil.random4digitsHex() + "-" +
-        RandomUtil.random4digitsHex() + "-" + RandomUtil.random8digitsHex();
+    return RandomUtil.randomHexString(8) + "-" + RandomUtil.randomHexString(4) +
+        "-" + RandomUtil.randomHexString(4) + "-" +
+        RandomUtil.randomHexDigit(8);
 }
 
 /**
@@ -536,7 +537,7 @@ JitsiConnection.prototype.removeEventListener = function (event, listener) {
 
 module.exports = JitsiConnection;
 
-},{"./JitsiConference":1,"./modules/util/RandomUtil":22,"./modules/xmpp/xmpp":38}],5:[function(require,module,exports){
+},{"./JitsiConference":1,"./modules/util/RandomUtil":23,"./modules/xmpp/xmpp":39}],5:[function(require,module,exports){
 /**
  * Enumeration with the errors for the connection.
  * @type {{string: string}}
@@ -646,7 +647,7 @@ window.Promise = window.Promise || require("es6-promise").Promise;
 
 module.exports = LibJitsiMeet;
 
-},{"./JitsiConferenceErrors":2,"./JitsiConferenceEvents":3,"./JitsiConnection":4,"./JitsiConnectionErrors":5,"./JitsiConnectionEvents":6,"./modules/RTC/RTC":13,"es6-promise":42,"jitsi-meet-logger":44}],8:[function(require,module,exports){
+},{"./JitsiConferenceErrors":2,"./JitsiConferenceEvents":3,"./JitsiConnection":4,"./JitsiConnectionErrors":5,"./JitsiConnectionEvents":6,"./modules/RTC/RTC":13,"es6-promise":43,"jitsi-meet-logger":45}],8:[function(require,module,exports){
 /**
  * Represents a participant in (a member of) a conference.
  */
@@ -955,14 +956,13 @@ DataChannels.prototype.handleSelectedEndpointEvent = function (userResource) {
 
 DataChannels.prototype.handlePinnedEndpointEvent = function (userResource) {
     logger.log('pinned endpoint changed: ', userResource);
-    if (this._dataChannels && this._dataChannels.length != 0) {
+    if (this._dataChannels && this._dataChannels.length !== 0) {
         this._dataChannels.some(function (dataChannel) {
             if (dataChannel.readyState == 'open') {
                 dataChannel.send(JSON.stringify({
                     'colibriClass': 'PinnedEndpointChangedEvent',
                     'pinnedEndpoint':
-                        (!userResource || userResource == null)?
-                            null : userResource
+                        userResource ? userResource : null
                 }));
 
                 return true;
@@ -975,7 +975,7 @@ module.exports = DataChannels;
 
 
 }).call(this,"/modules/RTC/DataChannels.js")
-},{"../../service/RTC/RTCEvents":76,"jitsi-meet-logger":44}],10:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":77,"jitsi-meet-logger":45}],10:[function(require,module,exports){
 var JitsiTrack = require("./JitsiTrack");
 var StreamEventTypes = require("../../service/RTC/StreamEventTypes");
 var RTCBrowserType = require("./RTCBrowserType");
@@ -1129,7 +1129,7 @@ JitsiLocalTrack.prototype._setRTC = function (rtc) {
 
 module.exports = JitsiLocalTrack;
 
-},{"../../service/RTC/StreamEventTypes":78,"./JitsiTrack":12,"./RTCBrowserType":14,"./RTCUtils":15}],11:[function(require,module,exports){
+},{"../../service/RTC/StreamEventTypes":79,"./JitsiTrack":12,"./RTCBrowserType":14,"./RTCUtils":15}],11:[function(require,module,exports){
 var JitsiTrack = require("./JitsiTrack");
 var StreamEventTypes = require("../../service/RTC/StreamEventTypes");
 
@@ -1197,7 +1197,7 @@ delete JitsiRemoteTrack.prototype.start;
 
 module.exports = JitsiRemoteTrack;
 
-},{"../../service/RTC/StreamEventTypes":78,"./JitsiTrack":12}],12:[function(require,module,exports){
+},{"../../service/RTC/StreamEventTypes":79,"./JitsiTrack":12}],12:[function(require,module,exports){
 var RTCBrowserType = require("./RTCBrowserType");
 
 /**
@@ -1412,10 +1412,10 @@ function RTC(room, options) {
     this.eventEmitter = new EventEmitter();
     var self = this;
     this.options = options || {};
-    desktopsharing.addListener(
+    desktopsharing.addListener(DesktopSharingEventTypes.NEW_STREAM_CREATED,
         function (stream, isUsingScreenStream, callback) {
             self.changeLocalVideo(stream, isUsingScreenStream, callback);
-        }, DesktopSharingEventTypes.NEW_STREAM_CREATED);
+        });
     room.addPresenceListener("videomuted", function (values, from) {
         if(self.remoteStreams[from])
             self.remoteStreams[from][JitsiTrack.VIDEO].setMute(values.value == "true");
@@ -1598,13 +1598,13 @@ RTC.prototype.muteRemoteVideoStream = function (jid, value) {
     return false;
 };
 
-RTC.prototype.switchVideoStreams = function (new_stream) {
-    this.localVideo.stream = new_stream;
+RTC.prototype.switchVideoStreams = function (newStream) {
+    this.localVideo.stream = newStream;
 
     this.localStreams = [];
 
     //in firefox we have only one stream object
-    if (this.localAudio.getOriginalStream() != new_stream)
+    if (this.localAudio.getOriginalStream() != newStream)
         this.localStreams.push(this.localAudio);
     this.localStreams.push(this.localVideo);
 };
@@ -1644,7 +1644,7 @@ RTC.prototype.setVideoMute = function (mute, callback, options) {
 
 module.exports = RTC;
 
-},{"../../service/RTC/MediaStreamTypes":75,"../../service/RTC/RTCEvents.js":76,"../../service/RTC/StreamEventTypes.js":78,"../../service/desktopsharing/DesktopSharingEventTypes":80,"../desktopsharing/desktopsharing":17,"./DataChannels":9,"./JitsiLocalTrack.js":10,"./JitsiRemoteTrack.js":11,"./JitsiTrack":12,"./RTCBrowserType":14,"./RTCUtils.js":15,"events":40}],14:[function(require,module,exports){
+},{"../../service/RTC/MediaStreamTypes":76,"../../service/RTC/RTCEvents.js":77,"../../service/RTC/StreamEventTypes.js":79,"../../service/desktopsharing/DesktopSharingEventTypes":81,"../desktopsharing/desktopsharing":18,"./DataChannels":9,"./JitsiLocalTrack.js":10,"./JitsiRemoteTrack.js":11,"./JitsiTrack":12,"./RTCBrowserType":14,"./RTCUtils.js":15,"events":41}],14:[function(require,module,exports){
 
 var currentBrowser;
 
@@ -1853,9 +1853,10 @@ function getPreviousResolution(resolution) {
     var order = Resolutions[resolution].order;
     var res = null;
     var resName = null;
-    for(var i in Resolutions) {
-        var tmp = Resolutions[i];
-        if(res == null || (res.order < tmp.order && tmp.order < order)) {
+    var tmp, i;
+    for(i in Resolutions) {
+        tmp = Resolutions[i];
+        if (!res || (res.order < tmp.order && tmp.order < order)) {
             resName = i;
             res = tmp;
         }
@@ -1965,6 +1966,12 @@ function getConstraints(um, options) {
                     }
                 ]
             };
+        } else if (RTCBrowserType.isFirefox()) {
+            constraints.video = {
+                mozMediaSource: "window",
+                mediaSource: "window"
+            };
+
         } else {
             logger.error(
                 "'screen' WebRTC media source is supported only in Chrome" +
@@ -2492,7 +2499,7 @@ var RTCUtils = {
                 error.name == "OverconstrainedError") &&
             (error.constraintName == "minWidth" || error.constraintName == "maxWidth" ||
                 error.constraintName == "minHeight" || error.constraintName == "maxHeight")
-            && resolution != null) {
+            && resolution) {
             self.getUserMediaWithConstraints(['audio', 'video'],
                 function (stream) {
                     var streams = self.successCallback(stream, resolution);
@@ -2655,7 +2662,7 @@ var RTCUtils = {
 module.exports = RTCUtils;
 
 }).call(this,"/modules/RTC/RTCUtils.js")
-},{"../../service/RTC/RTCEvents":76,"../../service/RTC/Resolutions":77,"../../service/RTC/StreamEventTypes.js":78,"../xmpp/SDPUtil":29,"./JitsiLocalTrack":10,"./RTCBrowserType":14,"./adapter.screenshare":16,"events":40,"jitsi-meet-logger":44}],16:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":77,"../../service/RTC/Resolutions":78,"../../service/RTC/StreamEventTypes.js":79,"../xmpp/SDPUtil":30,"./JitsiLocalTrack":10,"./RTCBrowserType":14,"./adapter.screenshare":16,"events":41,"jitsi-meet-logger":45}],16:[function(require,module,exports){
 (function (__filename){
 /*! adapterjs - v0.12.0 - 2015-09-04 */
 var console = require("jitsi-meet-logger").getLogger(__filename);
@@ -3828,59 +3835,137 @@ if (navigator.mozGetUserMedia) {
 }
 
 }).call(this,"/modules/RTC/adapter.screenshare.js")
-},{"jitsi-meet-logger":44}],17:[function(require,module,exports){
-(function (__filename){
-/* global $, alert, APP, changeLocalVideo, chrome, config, getConferenceHandler,
- getUserMediaWithConstraints */
-/**
- * Indicates that desktop stream is currently in use(for toggle purpose).
- * @type {boolean}
- */
-var isUsingScreenStream = false;
-/**
- * Indicates that switch stream operation is in progress and prevent from
- * triggering new events.
- * @type {boolean}
- */
-var switchInProgress = false;
-
-/**
- * Method used to get screen sharing stream.
- *
- * @type {function (stream_callback, failure_callback}
- */
-var obtainDesktopStream = null;
-
-/**
- * Indicates whether desktop sharing extension is installed.
- * @type {boolean}
- */
-var extInstalled = false;
-
-/**
- * Indicates whether update of desktop sharing extension is required.
- * @type {boolean}
- */
-var extUpdateRequired = false;
-
-
-var logger = require("jitsi-meet-logger").getLogger(__filename);
+},{"jitsi-meet-logger":45}],17:[function(require,module,exports){
+/* global config, APP, chrome, $, alert */
+/* jshint -W003 */
+var RTCBrowserType = require("../RTC/RTCBrowserType");
 var AdapterJS = require("../RTC/adapter.screenshare");
-
-var EventEmitter = require("events");
-
-var eventEmitter = new EventEmitter();
-
 var DesktopSharingEventTypes
     = require("../../service/desktopsharing/DesktopSharingEventTypes");
 
-var RTCBrowserType = require("../RTC/RTCBrowserType");
-
-var RTCEvents = require("../../service/RTC/RTCEvents");
+/**
+ * Indicates whether the Chrome desktop sharing extension is installed.
+ * @type {boolean}
+ */
+var chromeExtInstalled = false;
 
 /**
- * Method obtains desktop stream from WebRTC 'screen' source.
- * Flag 'chrome://flags/#enable-usermedia-screen-capture' must be enabled.
+ * Indicates whether an update of the Chrome desktop sharing extension is
+ * required.
+ * @type {boolean}
+ */
+var chromeExtUpdateRequired = false;
+
+/**
+ * Whether the jidesha extension for firefox is installed for the domain on
+ * which we are running. Null designates an unknown value.
+ * @type {null}
+ */
+var firefoxExtInstalled = null;
+
+/**
+ * If set to true, detection of an installed firefox extension will be started
+ * again the next time obtainScreenOnFirefox is called (e.g. next time the
+ * user tries to enable screen sharing).
+ */
+var reDetectFirefoxExtension = false;
+
+/**
+ * Handles obtaining a stream from a screen capture on different browsers.
+ */
+function ScreenObtainer(){
+}
+
+/**
+ * The EventEmitter to use to emit events.
+ * @type {null}
+ */
+ScreenObtainer.prototype.eventEmitter = null;
+
+/**
+ * Initializes the function used to obtain a screen capture (this.obtainStream).
+ *
+ * If the browser is Chrome, it uses the value of
+ * 'config.desktopSharingChromeMethod' (or 'config.desktopSharing') to * decide
+ * whether to use the a Chrome extension (if the value is 'ext'), use the
+ * "screen" media source (if the value is 'webrtc'), or disable screen capture
+ * (if the value is other).
+ * Note that for the "screen" media source to work the
+ * 'chrome://flags/#enable-usermedia-screen-capture' flag must be set.
+ */
+ScreenObtainer.prototype.init = function(eventEmitter) {
+    this.eventEmitter = eventEmitter;
+    var obtainDesktopStream = null;
+
+    if (RTCBrowserType.isFirefox())
+        initFirefoxExtensionDetection();
+
+    // TODO remove this, config.desktopSharing is deprecated.
+    var chromeMethod =
+        (config.desktopSharingChromeMethod || config.desktopSharing);
+
+    if (RTCBrowserType.isTemasysPluginUsed()) {
+        if (!AdapterJS.WebRTCPlugin.plugin.HasScreensharingFeature) {
+            console.info("Screensharing not supported by this plugin version");
+        } else if (!AdapterJS.WebRTCPlugin.plugin.isScreensharingAvailable) {
+            console.info(
+                "Screensharing not available with Temasys plugin on this site");
+        } else {
+            obtainDesktopStream = obtainWebRTCScreen;
+            console.info("Using Temasys plugin for desktop sharing");
+        }
+    } else if (RTCBrowserType.isChrome()) {
+        if (chromeMethod == "ext") {
+            if (RTCBrowserType.getChromeVersion() >= 34) {
+                obtainDesktopStream = obtainScreenFromExtension;
+                console.info("Using Chrome extension for desktop sharing");
+                initChromeExtension();
+            } else {
+                console.info("Chrome extension not supported until ver 34");
+            }
+        } else if (chromeMethod == "webrtc") {
+            obtainDesktopStream = obtainWebRTCScreen;
+            console.info("Using Chrome WebRTC for desktop sharing");
+        }
+    } else if (RTCBrowserType.isFirefox()) {
+        if (config.desktopSharingFirefoxDisabled) {
+            obtainDesktopStream = null;
+        } else if (window.location.protocol === "http:"){
+            console.log("Screen sharing is not supported over HTTP. Use of " +
+                "HTTPS is required.");
+            obtainDesktopStream = null;
+        } else {
+            obtainDesktopStream = this.obtainScreenOnFirefox;
+        }
+
+    }
+
+    if (!obtainDesktopStream) {
+        console.info("Desktop sharing disabled");
+    }
+
+    ScreenObtainer.prototype.obtainStream = obtainDesktopStream;
+};
+
+ScreenObtainer.prototype.obtainStream = null;
+
+/**
+ * Checks whether obtaining a screen capture is supported in the current
+ * environment.
+ * @returns {boolean}
+ */
+ScreenObtainer.prototype.isSupported = function() {
+    return !!this.obtainStream;
+};
+
+/**
+ * Obtains a desktop stream using getUserMedia.
+ * For this to work on Chrome, the
+ * 'chrome://flags/#enable-usermedia-screen-capture' flag must be enabled.
+ *
+ * On firefox, the document's domain must be white-listed in the
+ * 'media.getusermedia.screensharing.allowed_domains' preference in
+ * 'about:config'.
  */
 function obtainWebRTCScreen(streamCallback, failCallback) {
     APP.RTC.getUserMediaWithConstraints(
@@ -3897,26 +3982,24 @@ function obtainWebRTCScreen(streamCallback, failCallback) {
  */
 function getWebStoreInstallUrl()
 {
+    //TODO remove chromeExtensionId (deprecated)
     return "https://chrome.google.com/webstore/detail/" +
-        config.chromeExtensionId;
+        (config.desktopSharingChromeExtId || config.chromeExtensionId);
 }
 
 /**
- * Checks whether extension update is required.
+ * Checks whether an update of the Chrome extension is required.
  * @param minVersion minimal required version
  * @param extVersion current extension version
  * @returns {boolean}
  */
-function isUpdateRequired(minVersion, extVersion)
-{
-    try
-    {
+function isUpdateRequired(minVersion, extVersion) {
+    try {
         var s1 = minVersion.split('.');
         var s2 = extVersion.split('.');
 
         var len = Math.max(s1.length, s2.length);
-        for (var i = 0; i < len; i++)
-        {
+        for (var i = 0; i < len; i++) {
             var n1 = 0,
                 n2 = 0;
 
@@ -3925,23 +4008,19 @@ function isUpdateRequired(minVersion, extVersion)
             if (i < s2.length)
                 n2 = parseInt(s2[i]);
 
-            if (isNaN(n1) || isNaN(n2))
-            {
+            if (isNaN(n1) || isNaN(n2)) {
                 return true;
-            }
-            else if (n1 !== n2)
-            {
+            } else if (n1 !== n2) {
                 return n1 > n2;
             }
         }
 
-        // will happen if boths version has identical numbers in
+        // will happen if both versions have identical numbers in
         // their components (even if one of them is longer, has more components)
         return false;
     }
-    catch (e)
-    {
-        logger.error("Failed to parse extension version", e);
+    catch (e) {
+        console.error("Failed to parse extension version", e);
         APP.UI.messageHandler.showError("dialog.error",
             "dialog.detectext");
         return true;
@@ -3949,27 +4028,32 @@ function isUpdateRequired(minVersion, extVersion)
 }
 
 function checkChromeExtInstalled(callback) {
-    if (!chrome.runtime) {
+    if (!chrome || !chrome.runtime) {
         // No API, so no extension for sure
         callback(false, false);
         return;
     }
     chrome.runtime.sendMessage(
-        config.chromeExtensionId,
+        //TODO: remove chromeExtensionId (deprecated)
+        (config.desktopSharingChromeExtId || config.chromeExtensionId),
         { getVersion: true },
         function (response) {
             if (!response || !response.version) {
                 // Communication failure - assume that no endpoint exists
-                logger.warn(
+                console.warn(
                     "Extension not installed?: ", chrome.runtime.lastError);
                 callback(false, false);
                 return;
             }
             // Check installed extension version
             var extVersion = response.version;
-            logger.log('Extension version is: ' + extVersion);
+            console.log('Extension version is: ' + extVersion);
+            //TODO: remove minChromeExtVersion (deprecated)
             var updateRequired
-                = isUpdateRequired(config.minChromeExtVersion, extVersion);
+                = isUpdateRequired(
+                    (config.desktopSharingChromeMinExtVersion ||
+                        config.minChromeExtVersion),
+                    extVersion);
             callback(!updateRequired, updateRequired);
         }
     );
@@ -3979,14 +4063,20 @@ function doGetStreamFromExtension(streamCallback, failCallback) {
     // Sends 'getStream' msg to the extension.
     // Extension id must be defined in the config.
     chrome.runtime.sendMessage(
-        config.chromeExtensionId,
-        { getStream: true, sources: config.desktopSharingSources },
+        //TODO: remove chromeExtensionId (deprecated)
+        (config.desktopSharingChromeExtId || config.chromeExtensionId),
+        {
+            getStream: true,
+            //TODO: remove desktopSharingSources (deprecated).
+            sources: (config.desktopSharingChromeSources ||
+                config.desktopSharingSources)
+        },
         function (response) {
             if (!response) {
                 failCallback(chrome.runtime.lastError);
                 return;
             }
-            logger.log("Response from extension: " + response);
+            console.log("Response from extension: " + response);
             if (response.streamId) {
                 APP.RTC.getUserMediaWithConstraints(
                     ['desktop'],
@@ -4002,15 +4092,16 @@ function doGetStreamFromExtension(streamCallback, failCallback) {
         }
     );
 }
+
 /**
  * Asks Chrome extension to call chooseDesktopMedia and gets chrome 'desktop'
  * stream for returned stream token.
  */
 function obtainScreenFromExtension(streamCallback, failCallback) {
-    if (extInstalled) {
+    if (chromeExtInstalled) {
         doGetStreamFromExtension(streamCallback, failCallback);
     } else {
-        if (extUpdateRequired) {
+        if (chromeExtUpdateRequired) {
             alert(
                 'Jitsi Desktop Streamer requires update. ' +
                 'Changes will take effect after next Chrome restart.');
@@ -4019,64 +4110,20 @@ function obtainScreenFromExtension(streamCallback, failCallback) {
         chrome.webstore.install(
             getWebStoreInstallUrl(),
             function (arg) {
-                logger.log("Extension installed successfully", arg);
-                extInstalled = true;
+                console.log("Extension installed successfully", arg);
+                chromeExtInstalled = true;
                 // We need to give a moment for the endpoint to become available
                 window.setTimeout(function () {
                     doGetStreamFromExtension(streamCallback, failCallback);
                 }, 500);
             },
             function (arg) {
-                logger.log("Failed to install the extension", arg);
+                console.log("Failed to install the extension", arg);
                 failCallback(arg);
                 APP.UI.messageHandler.showError("dialog.error",
                     "dialog.failtoinstall");
             }
         );
-    }
-}
-
-/**
- * Call this method to toggle desktop sharing feature.
- * @param method pass "ext" to use chrome extension for desktop capture(chrome
- *        extension required), pass "webrtc" to use WebRTC "screen" desktop
- *        source('chrome://flags/#enable-usermedia-screen-capture' must be
- *        enabled), pass any other string or nothing in order to disable this
- *        feature completely.
- */
-function setDesktopSharing(method) {
-
-    obtainDesktopStream = null;
-
-    // When TemasysWebRTC plugin is used we always use getUserMedia, so we don't
-    // care about 'method' parameter
-    if (RTCBrowserType.isTemasysPluginUsed()) {
-        if (!AdapterJS.WebRTCPlugin.plugin.HasScreensharingFeature) {
-            logger.info("Screensharing not supported by this plugin version");
-        } else if (!AdapterJS.WebRTCPlugin.plugin.isScreensharingAvailable) {
-            logger.info(
-            "Screensharing not available with Temasys plugin on this site");
-        } else {
-            obtainDesktopStream = obtainWebRTCScreen;
-            logger.info("Using Temasys plugin for desktop sharing");
-        }
-    } else if (RTCBrowserType.isChrome()) {
-        if (method == "ext") {
-            if (RTCBrowserType.getChromeVersion() >= 34) {
-                obtainDesktopStream = obtainScreenFromExtension;
-                logger.info("Using Chrome extension for desktop sharing");
-                initChromeExtension();
-            } else {
-                logger.info("Chrome extension not supported until ver 34");
-            }
-        } else if (method == "webrtc") {
-            obtainDesktopStream = obtainWebRTCScreen;
-            logger.info("Using Chrome WebRTC for desktop sharing");
-        }
-    }
-
-    if (!obtainDesktopStream) {
-        logger.info("Desktop sharing disabled");
     }
 }
 
@@ -4095,25 +4142,136 @@ function initChromeExtension() {
     initInlineInstalls();
     // Check if extension is installed
     checkChromeExtInstalled(function (installed, updateRequired) {
-        extInstalled = installed;
-        extUpdateRequired = updateRequired;
-        logger.info(
-            "Chrome extension installed: " + extInstalled +
-            " updateRequired: " + extUpdateRequired);
+        chromeExtInstalled = installed;
+        chromeExtUpdateRequired = updateRequired;
+        console.info(
+            "Chrome extension installed: " + chromeExtInstalled +
+            " updateRequired: " + chromeExtUpdateRequired);
     });
 }
 
-function getVideoStreamFailed(error) {
-    logger.error("Failed to obtain the stream to switch to", error);
-    switchInProgress = false;
-    isUsingScreenStream = false;
-    newStreamCreated(null);
+/**
+ * Obtains a screen capture stream on Firefox.
+ * @param callback
+ * @param errorCallback
+ */
+ScreenObtainer.prototype.obtainScreenOnFirefox =
+       function (callback, errorCallback) {
+    var self = this;
+    var extensionRequired = false;
+    if (config.desktopSharingFirefoxMaxVersionExtRequired === -1 ||
+        (config.desktopSharingFirefoxMaxVersionExtRequired >= 0 &&
+            RTCBrowserType.getFirefoxVersion() <=
+                config.desktopSharingFirefoxMaxVersionExtRequired)) {
+        extensionRequired = true;
+        console.log("Jidesha extension required on firefox version " +
+            RTCBrowserType.getFirefoxVersion());
+    }
+
+    if (!extensionRequired || firefoxExtInstalled === true) {
+        obtainWebRTCScreen(callback, errorCallback);
+        return;
+    }
+
+    if (reDetectFirefoxExtension) {
+        reDetectFirefoxExtension = false;
+        initFirefoxExtensionDetection();
+    }
+
+    // Give it some (more) time to initialize, and assume lack of extension if
+    // it hasn't.
+    if (firefoxExtInstalled === null) {
+        window.setTimeout(
+            function() {
+                if (firefoxExtInstalled === null)
+                    firefoxExtInstalled = false;
+                self.obtainScreenOnFirefox(callback, errorCallback);
+            },
+            300
+        );
+        console.log("Waiting for detection of jidesha on firefox to finish.");
+        return;
+    }
+
+    // We need an extension and it isn't installed.
+
+    // Make sure we check for the extension when the user clicks again.
+    firefoxExtInstalled = null;
+    reDetectFirefoxExtension = true;
+
+    // Prompt the user to install the extension
+    this.eventEmitter.emit(DesktopSharingEventTypes.FIREFOX_EXTENSION_NEEDED,
+                           config.desktopSharingFirefoxExtensionURL);
+
+    // Make sure desktopsharing knows that we failed, so that it doesn't get
+    // stuck in 'switching' mode.
+    errorCallback('Firefox extension required.');
+};
+
+/**
+ * Starts the detection of an installed jidesha extension for firefox.
+ */
+function initFirefoxExtensionDetection() {
+    if (config.desktopSharingFirefoxDisabled) {
+        return;
+    }
+    if (firefoxExtInstalled === false || firefoxExtInstalled === true)
+        return;
+    if (!config.desktopSharingFirefoxExtId) {
+        firefoxExtInstalled = false;
+        return;
+    }
+
+    var img = document.createElement('img');
+    img.onload = function(){
+        console.log("Detected firefox screen sharing extension.");
+        firefoxExtInstalled = true;
+    };
+    img.onerror = function(){
+        console.log("Detected lack of firefox screen sharing extension.");
+        firefoxExtInstalled = false;
+    };
+
+    // The jidesha extension exposes an empty image file under the url:
+    // "chrome://EXT_ID/content/DOMAIN.png"
+    // Where EXT_ID is the ID of the extension with "@" replaced by ".", and
+    // DOMAIN is a domain whitelisted by the extension.
+    var src = "chrome://" +
+        (config.desktopSharingFirefoxExtId.replace('@', '.')) +
+        "/content/" + document.location.hostname + ".png";
+    img.setAttribute('src', src);
 }
 
-function getDesktopStreamFailed(error) {
-    logger.error("Failed to obtain the stream to switch to", error);
-    switchInProgress = false;
-}
+module.exports = ScreenObtainer;
+
+},{"../../service/desktopsharing/DesktopSharingEventTypes":81,"../RTC/RTCBrowserType":14,"../RTC/adapter.screenshare":16}],18:[function(require,module,exports){
+/* global APP, config */
+var EventEmitter = require("events");
+var DesktopSharingEventTypes
+    = require("../../service/desktopsharing/DesktopSharingEventTypes");
+var RTCBrowserType = require("../RTC/RTCBrowserType");
+var RTCEvents = require("../../service/RTC/RTCEvents");
+var ScreenObtainer = require("./ScreenObtainer");
+
+/**
+ * Indicates that desktop stream is currently in use (for toggle purpose).
+ * @type {boolean}
+ */
+var isUsingScreenStream = false;
+
+/**
+ * Indicates that switch stream operation is in progress and prevent from
+ * triggering new events.
+ * @type {boolean}
+ */
+var switchInProgress = false;
+
+/**
+ * Used to obtain the screen sharing stream from the browser.
+ */
+var screenObtainer = new ScreenObtainer();
+
+var eventEmitter = new EventEmitter();
 
 function streamSwitchDone() {
     switchInProgress = false;
@@ -4122,30 +4280,29 @@ function streamSwitchDone() {
         isUsingScreenStream);
 }
 
-function newStreamCreated(stream)
-{
+function newStreamCreated(stream) {
     eventEmitter.emit(DesktopSharingEventTypes.NEW_STREAM_CREATED,
         stream, isUsingScreenStream, streamSwitchDone);
+}
+
+function getVideoStreamFailed(error) {
+    console.error("Failed to obtain the stream to switch to", error);
+    switchInProgress = false;
+    isUsingScreenStream = false;
+    newStreamCreated(null);
+}
+
+function getDesktopStreamFailed(error) {
+    console.error("Failed to obtain the stream to switch to", error);
+    switchInProgress = false;
 }
 
 function onEndedHandler(stream) {
     if (!switchInProgress && isUsingScreenStream) {
         APP.desktopsharing.toggleScreenSharing();
     }
-    //FIXME: to be verified
-    if (stream.removeEventListener) {
-        stream.removeEventListener('ended', onEndedHandler);
-    } else {
-        stream.detachEvent('ended', onEndedHandler);
-    }
-}
 
-// Called when RTC finishes initialization
-function onWebRtcReady() {
-
-    setDesktopSharing(config.desktopSharing);
-
-    eventEmitter.emit(DesktopSharingEventTypes.INIT);
+    APP.RTC.removeMediaStreamInactiveHandler(stream, onEndedHandler);
 }
 
 module.exports = {
@@ -4157,18 +4314,24 @@ module.exports = {
      * @returns {boolean} <tt>true</tt> if desktop sharing feature is available
      *          and enabled.
      */
-    isDesktopSharingEnabled: function () { return !!obtainDesktopStream; },
+    isDesktopSharingEnabled: function () {
+        return screenObtainer.isSupported();
+    },
     
     init: function () {
-        APP.RTC.addListener(RTCEvents.RTC_READY, onWebRtcReady);
+        // Called when RTC finishes initialization
+        APP.RTC.addListener(RTCEvents.RTC_READY,
+            function() {
+                screenObtainer.init(eventEmitter);
+                eventEmitter.emit(DesktopSharingEventTypes.INIT);
+            });
     },
 
-    addListener: function (listener, type)
-    {
+    addListener: function (type, listener) {
         eventEmitter.on(type, listener);
     },
 
-    removeListener: function (listener, type) {
+    removeListener: function (type, listener) {
         eventEmitter.removeListener(type, listener);
     },
 
@@ -4176,31 +4339,25 @@ module.exports = {
      * Toggles screen sharing.
      */
     toggleScreenSharing: function () {
-        if (switchInProgress || !obtainDesktopStream) {
-            logger.warn("Switch in progress or no method defined");
+        if (switchInProgress) {
+            console.warn("Switch in progress.");
+            return;
+        } else if (!screenObtainer.isSupported()) {
+            console.warn("Cannot toggle screen sharing: not supported.");
             return;
         }
         switchInProgress = true;
 
-        if (!isUsingScreenStream)
-        {
+        if (!isUsingScreenStream) {
             // Switch to desktop stream
-            obtainDesktopStream(
+            screenObtainer.obtainStream(
                 function (stream) {
                     // We now use screen stream
                     isUsingScreenStream = true;
                     // Hook 'ended' event to restore camera
                     // when screen stream stops
-                    //FIXME: to be verified
-                    if (stream.addEventListener) {
-                        stream.addEventListener('ended', function () {
-                            onEndedHandler(stream);
-                        });
-                    } else {
-                        stream.attachEvent('ended', function () {
-                            onEndedHandler(stream);
-                        });
-                    }
+                    APP.RTC.addMediaStreamInactiveHandler(
+                        stream, onEndedHandler);
                     newStreamCreated(stream);
                 },
                 getDesktopStreamFailed);
@@ -4213,15 +4370,20 @@ module.exports = {
                     isUsingScreenStream = false;
                     newStreamCreated(stream);
                 },
-                getVideoStreamFailed, config.resolution || '360'
+                getVideoStreamFailed,
+                config.resolution || '360'
             );
         }
-    }
+    },
+    /*
+     * Exports the event emitter to allow use by ScreenObtainer. Not for outside
+     * use.
+     */
+    eventEmitter: eventEmitter
 };
 
 
-}).call(this,"/modules/desktopsharing/desktopsharing.js")
-},{"../../service/RTC/RTCEvents":76,"../../service/desktopsharing/DesktopSharingEventTypes":80,"../RTC/RTCBrowserType":14,"../RTC/adapter.screenshare":16,"events":40,"jitsi-meet-logger":44}],18:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":77,"../../service/desktopsharing/DesktopSharingEventTypes":81,"../RTC/RTCBrowserType":14,"./ScreenObtainer":17,"events":41}],19:[function(require,module,exports){
 (function (__filename){
 
 var logger = require("jitsi-meet-logger").getLogger(__filename);
@@ -4307,13 +4469,14 @@ Settings.prototype.setLanguage = function (lang) {
 module.exports = Settings;
 
 }).call(this,"/modules/settings/Settings.js")
-},{"jitsi-meet-logger":44}],19:[function(require,module,exports){
+},{"jitsi-meet-logger":45}],20:[function(require,module,exports){
 /* global config */
 /**
  * Provides statistics for the local stream.
  */
 
 var RTCBrowserType = require('../RTC/RTCBrowserType');
+var StatisticsEvents = require('../../service/statistics/Events');
 
 var LOCAL_JID = require("../../service/statistics/constants").LOCAL_JID;
 
@@ -4416,8 +4579,8 @@ LocalStatsCollector.prototype.start = function () {
             if (audioLevel != self.audioLevel) {
                 self.audioLevel = animateLevel(audioLevel, self.audioLevel);
                 self.eventEmitter.emit(
-                    "statistics.audioLevel",
-                    LOCAL_JID,
+                    StatisticsEvents.AUDIO_LEVEL,
+                    self.statisticsService.LOCAL_JID,
                     self.audioLevel);
             }
         },
@@ -4436,13 +4599,14 @@ LocalStatsCollector.prototype.stop = function () {
 };
 
 module.exports = LocalStatsCollector;
-},{"../../service/statistics/constants":81,"../RTC/RTCBrowserType":14}],20:[function(require,module,exports){
+},{"../../service/statistics/Events":82,"../../service/statistics/constants":83,"../RTC/RTCBrowserType":14}],21:[function(require,module,exports){
 (function (__filename){
 /* global require, ssrc2jid */
 /* jshint -W117 */
 
 var logger = require("jitsi-meet-logger").getLogger(__filename);
 var RTCBrowserType = require("../RTC/RTCBrowserType");
+var StatisticsEvents = require("../../service/statistics/Events");
 
 /* Whether we support the browser we are running into for logging statistics */
 var browserSupported = RTCBrowserType.isChrome() ||
@@ -4957,34 +5121,33 @@ StatsCollector.prototype.processStatsReport = function () {
 
         var isDownloadStream = true;
         var key = 'packetsReceived';
-        if (!getStatValue(now, key))
-        {
+        var packetsNow = getStatValue(now, key);
+        if (typeof packetsNow === 'undefined' || packetsNow === null) {
             isDownloadStream = false;
             key = 'packetsSent';
-            if (!getStatValue(now, key))
-            {
-                logger.warn("No packetsReceived nor packetSent stat found");
+            packetsNow = getStatValue(now, key);
+            if (typeof packetsNow === 'undefined' || packetsNow === null) {
+                console.warn("No packetsReceived nor packetsSent stat found");
                 continue;
             }
         }
-        var packetsNow = getStatValue(now, key);
-        if(!packetsNow || packetsNow < 0)
+        if (!packetsNow || packetsNow < 0)
             packetsNow = 0;
 
         var packetsBefore = getStatValue(before, key);
-        if(!packetsBefore || packetsBefore < 0)
+        if (!packetsBefore || packetsBefore < 0)
             packetsBefore = 0;
         var packetRate = packetsNow - packetsBefore;
-        if(!packetRate || packetRate < 0)
+        if (!packetRate || packetRate < 0)
             packetRate = 0;
         var currentLoss = getStatValue(now, 'packetsLost');
-        if(!currentLoss || currentLoss < 0)
+        if (!currentLoss || currentLoss < 0)
             currentLoss = 0;
         var previousLoss = getStatValue(before, 'packetsLost');
-        if(!previousLoss || previousLoss < 0)
+        if (!previousLoss || previousLoss < 0)
             previousLoss = 0;
         var lossRate = currentLoss - previousLoss;
-        if(!lossRate || lossRate < 0)
+        if (!lossRate || lossRate < 0)
             lossRate = 0;
         var packetsTotal = (packetRate + lossRate);
 
@@ -4995,34 +5158,26 @@ StatsCollector.prototype.processStatsReport = function () {
 
 
         var bytesReceived = 0, bytesSent = 0;
-        if(getStatValue(now, "bytesReceived"))
-        {
+        if(getStatValue(now, "bytesReceived")) {
             bytesReceived = getStatValue(now, "bytesReceived") -
                 getStatValue(before, "bytesReceived");
         }
 
-        if(getStatValue(now, "bytesSent"))
-        {
+        if (getStatValue(now, "bytesSent")) {
             bytesSent = getStatValue(now, "bytesSent") -
                 getStatValue(before, "bytesSent");
         }
 
         var time = Math.round((now.timestamp - before.timestamp) / 1000);
-        if(bytesReceived <= 0 || time <= 0)
-        {
+        if (bytesReceived <= 0 || time <= 0) {
             bytesReceived = 0;
-        }
-        else
-        {
+        } else {
             bytesReceived = Math.round(((bytesReceived * 8) / time) / 1000);
         }
 
-        if(bytesSent <= 0 || time <= 0)
-        {
+        if (bytesSent <= 0 || time <= 0) {
             bytesSent = 0;
-        }
-        else
-        {
+        } else {
             bytesSent = Math.round(((bytesSent * 8) / time) / 1000);
         }
 
@@ -5034,7 +5189,8 @@ StatsCollector.prototype.processStatsReport = function () {
         try {
             if (getStatValue(now, "googFrameHeightReceived") &&
                 getStatValue(now, "googFrameWidthReceived")) {
-                resolution.height = getStatValue(now, "googFrameHeightReceived");
+                resolution.height =
+                    getStatValue(now, "googFrameHeightReceived");
                 resolution.width = getStatValue(now, "googFrameWidthReceived");
             }
             else if (getStatValue(now, "googFrameHeightSent") &&
@@ -5045,16 +5201,11 @@ StatsCollector.prototype.processStatsReport = function () {
         }
         catch(e){/*not supported*/}
 
-        if(resolution.height && resolution.width)
-        {
+        if (resolution.height && resolution.width) {
             ssrcStats.setSsrcResolution(ssrc, resolution);
-        }
-        else
-        {
+        } else {
             ssrcStats.setSsrcResolution(ssrc, null);
         }
-
-
     }
 
     var self = this;
@@ -5065,11 +5216,9 @@ StatsCollector.prototype.processStatsReport = function () {
     var bitrateUpload = 0;
     var resolutions = {};
     Object.keys(this.ssrc2stats).forEach(
-        function (jid)
-        {
+        function (jid) {
             Object.keys(self.ssrc2stats[jid].ssrc2Loss).forEach(
-                function (ssrc)
-                {
+                function (ssrc) {
                     var type = "upload";
                     if(self.ssrc2stats[jid].ssrc2Loss[ssrc].isDownloadStream)
                         type = "download";
@@ -5104,7 +5253,7 @@ StatsCollector.prototype.processStatsReport = function () {
         upload:
             calculatePacketLoss(lostPackets.upload, totalPackets.upload)
     };
-    this.eventEmitter.emit("statistics.connectionstats",
+    this.eventEmitter.emit(StatisticsEvents.CONNECTION_STATS,
         {
             "bitrate": this.conferenceStats.bitrate,
             "packetLoss": this.conferenceStats.packetLoss,
@@ -5170,17 +5319,19 @@ StatsCollector.prototype.processAudioLevelReport = function () {
             // but it seems to vary between 0 and around 32k.
             audioLevel = audioLevel / 32767;
             ssrcStats.setSsrcAudioLevel(ssrc, audioLevel);
-            this.eventEmitter.emit("statistics.audioLevel", ssrc, audioLevel);
+            this.eventEmitter.emit(
+                StatisticsEvents.AUDIO_LEVEL, ssrc, audioLevel);
         }
     }
 };
 
 }).call(this,"/modules/statistics/RTPStatsCollector.js")
-},{"../RTC/RTCBrowserType":14,"jitsi-meet-logger":44}],21:[function(require,module,exports){
+},{"../../service/statistics/Events":82,"../RTC/RTCBrowserType":14,"jitsi-meet-logger":45}],22:[function(require,module,exports){
 /* global require, APP */
 var LocalStats = require("./LocalStatsCollector.js");
 var RTPStats = require("./RTPStatsCollector.js");
 var EventEmitter = require("events");
+var StatisticsEvents = require("../../service/statistics/Events");
 //var StreamEventTypes = require("../../service/RTC/StreamEventTypes.js");
 //var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 //var CallStats = require("./CallStats");
@@ -5222,12 +5373,12 @@ Statistics.prototype.startLocalStats = function (stream) {
 
 Statistics.prototype.addAudioLevelListener = function(listener)
 {
-    this.eventEmitter.on("statistics.audioLevel", listener);
+    this.eventEmitter.on(StatisticsEvents.AUDIO_LEVEL, listener);
 }
 
 Statistics.prototype.removeAudioLevelListener = function(listener)
 {
-    this.eventEmitter.removeListener("statistics.audioLevel", listener);
+    this.eventEmitter.removeListener(StatisticsEvents.AUDIO_LEVEL, listener);
 }
 
 Statistics.prototype.dispose = function () {
@@ -5250,7 +5401,7 @@ Statistics.prototype.stopLocal = function () {
 Statistics.prototype.stopRemote = function () {
     if (this.rtpStats) {
         this.rtpStats.stop();
-        this.eventEmitter.emit("statistics.stop");
+        this.eventEmitter.emit(StatisticsEvents.STOP);
         this.rtpStats = null;
     }
 }
@@ -5323,17 +5474,51 @@ Statistics.LOCAL_JID = require("../../service/statistics/constants").LOCAL_JID;
 
 
 module.exports = Statistics;
-},{"../../service/statistics/constants":81,"./LocalStatsCollector.js":19,"./RTPStatsCollector.js":20,"events":40}],22:[function(require,module,exports){
+},{"../../service/statistics/Events":82,"../../service/statistics/constants":83,"./LocalStatsCollector.js":20,"./RTPStatsCollector.js":21,"events":41}],23:[function(require,module,exports){
+/**
+/**
+ * @const
+ */
+var ALPHANUM = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
 /**
- * Generates random hex number within the range [min, max]
- * @param max the maximum value for the generated number
- * @param min the minimum value for the generated number
- * @returns random hex number
+ * Hexadecimal digits.
+ * @const
  */
-function rangeRandomHex(min, max)
-{
-    return Math.floor(Math.random() * (max - min) + min).toString(16);
+var HEX_DIGITS = '0123456789abcdef';
+
+/**
+ * Generates random int within the range [min, max]
+ * @param min the minimum value for the generated number
+ * @param max the maximum value for the generated number
+ * @returns random int number
+ */
+function randomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+/**
+ * Get random element from array or string.
+ * @param {Array|string} arr source
+ * @returns array element or string character
+ */
+function randomElement(arr) {
+    return arr[randomInt(0, arr.length - 1)];
+}
+
+/**
+ * Generate random alphanumeric string.
+ * @param {number} length expected string length
+ * @returns {string} random string of specified length
+ */
+function randomAlphanumStr(length) {
+    var result = '';
+
+    for (var i = 0; i < length; i += 1) {
+        result += randomElement(ALPHANUM);
+    }
+
+    return result;
 }
 
 /**
@@ -5341,28 +5526,30 @@ function rangeRandomHex(min, max)
  */
 var RandomUtil = {
     /**
-     * Generates hex number with length 4
+     * Returns a random hex digit.
+     * @returns {*}
      */
-    random4digitsHex: function() {
-        return rangeRandomHex(4096, 65535);
+    randomHexDigit: function() {
+        return randomElement(HEX_DIGITS);
     },
     /**
-     * Generates hex number with length 8
+     * Returns a random string of hex digits with length 'len'.
+     * @param len the length.
      */
-    random8digitsHex: function() {
-        return rangeRandomHex(268435456, 4294967295);
+    randomHexString: function (len) {
+        var ret = '';
+        while (len--) {
+            ret += this.randomHexDigit();
+        }
+        return ret;
     },
-    /**
-     * Generates hex number with length 12
-     */
-    random12digitsHex: function() {
-        return rangeRandomHex(17592186044416, 281474976710655);
-    }
+    randomElement: randomElement,
+    randomAlphanumStr: randomAlphanumStr
 };
 
 module.exports = RandomUtil;
 
-},{}],23:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 (function (__filename){
 
 var logger = require("jitsi-meet-logger").getLogger(__filename);
@@ -5626,6 +5813,7 @@ ChatRoom.prototype.onPresence = function (pres) {
             }
         if (!this.joined) {
             this.joined = true;
+            console.log("(TIME) MUC joined:\t", window.performance.now());
             this.eventEmitter.emit(XMPPEvents.MUC_JOINED, from, member);
         }
     } else if (this.members[from] === undefined) {
@@ -6007,7 +6195,7 @@ ChatRoom.prototype.getJidBySSRC = function (ssrc) {
 module.exports = ChatRoom;
 
 }).call(this,"/modules/xmpp/ChatRoom.js")
-},{"../../service/xmpp/XMPPEvents":82,"./moderator":31,"events":40,"jitsi-meet-logger":44}],24:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":84,"./moderator":32,"events":41,"jitsi-meet-logger":45}],25:[function(require,module,exports){
 (function (__filename){
 /*
  * JingleSession provides an API to manage a single Jingle session. We will
@@ -6143,7 +6331,7 @@ JingleSession.prototype.setAnswer = function(jingle) {};
 module.exports = JingleSession;
 
 }).call(this,"/modules/xmpp/JingleSession.js")
-},{"jitsi-meet-logger":44}],25:[function(require,module,exports){
+},{"jitsi-meet-logger":45}],26:[function(require,module,exports){
 (function (__filename){
 /* jshint -W117 */
 
@@ -6193,6 +6381,9 @@ function JingleSessionPC(me, sid, connection, service) {
     this.ssrcOwners = {};
     this.ssrcVideoTypes = {};
 
+    this.webrtcIceUdpDisable = !!this.service.options.webrtcIceUdpDisable;
+    this.webrtcIceTcpDisable = !!this.service.options.webrtcIceTcpDisable;
+
     /**
      * The indicator which determines whether the (local) video has been muted
      * in response to a user command in contrast to an automatic decision made
@@ -6205,6 +6396,7 @@ function JingleSessionPC(me, sid, connection, service) {
     // stable and the ice connection state is connected.
     this.modifySourcesQueue.pause();
 }
+//XXX this is badly broken...
 JingleSessionPC.prototype = JingleSession.prototype;
 JingleSessionPC.prototype.constructor = JingleSessionPC;
 
@@ -6244,6 +6436,15 @@ JingleSessionPC.prototype.doInitialize = function () {
             this);
 
     this.peerconnection.onicecandidate = function (event) {
+        var protocol;
+        if (event && event.candidate) {
+            protocol = (typeof event.candidate.protocol === 'string')
+                ? event.candidate.protocol.toLowerCase() : '';
+            if ((self.webrtcIceTcpDisable && protocol == 'tcp') ||
+                (self.webrtcIceUdpDisable && protocol == 'udp')) {
+                return;
+            }
+        }
         self.sendIceCandidate(event.candidate);
     };
     this.peerconnection.onaddstream = function (event) {
@@ -6280,6 +6481,8 @@ JingleSessionPC.prototype.doInitialize = function () {
      */
     this.peerconnection.oniceconnectionstatechange = function (event) {
         if (!(self && self.peerconnection)) return;
+        logger.log("(TIME) ICE " + self.peerconnection.iceConnectionState +
+                    ":\t", window.performance.now());
         self.updateModifySourcesQueue();
         switch (self.peerconnection.iceConnectionState) {
             case 'connected':
@@ -6374,6 +6577,12 @@ JingleSessionPC.prototype.accept = function () {
         pranswer.sdp = pranswer.sdp.replace('a=inactive', 'a=sendrecv');
     }
     var prsdp = new SDP(pranswer.sdp);
+    if (self.webrtcIceTcpDisable) {
+        prsdp.removeTcpCandidates = true;
+    }
+    if (self.webrtcIceUdpDisable) {
+        prsdp.removeUdpCandidates = true;
+    }
     var accept = $iq({to: this.peerjid,
         type: 'set'})
         .c('jingle', {xmlns: 'urn:xmpp:jingle:1',
@@ -6482,6 +6691,12 @@ JingleSessionPC.prototype.sendIceCandidate = function (candidate) {
                     initiator: this.initiator,
                     sid: this.sid});
             this.localSDP = new SDP(this.peerconnection.localDescription.sdp);
+            if (self.webrtcIceTcpDisable) {
+                this.localSDP.removeTcpCandidates = true;
+            }
+            if (self.webrtcIceUdpDisable) {
+                this.localSDP.removeUdpCandidates = true;
+            }
             var sendJingle = function (ssrc) {
                 if(!ssrc)
                     ssrc = {};
@@ -6680,6 +6895,13 @@ JingleSessionPC.prototype.getSsrcOwner = function (ssrc) {
 JingleSessionPC.prototype.setRemoteDescription = function (elem, desctype) {
     //logger.log('setting remote description... ', desctype);
     this.remoteSDP = new SDP('');
+    if (self.webrtcIceTcpDisable) {
+        this.remoteSDP.removeTcpCandidates = true;
+    }
+    if (self.webrtcIceUdpDisable) {
+        this.remoteSDP.removeUdpCandidates = true;
+    }
+
     this.remoteSDP.fromJingle(elem);
     this.readSsrcInfo($(elem).find(">content"));
     if (this.peerconnection.remoteDescription) {
@@ -6722,6 +6944,10 @@ JingleSessionPC.prototype.setRemoteDescription = function (elem, desctype) {
     );
 };
 
+/**
+ * Adds remote ICE candidates to this Jingle session.
+ * @param elem An array of Jingle "content" elements?
+ */
 JingleSessionPC.prototype.addIceCandidate = function (elem) {
     var self = this;
     if (this.peerconnection.signalingState == 'closed') {
@@ -6732,7 +6958,7 @@ JingleSessionPC.prototype.addIceCandidate = function (elem) {
         // create a PRANSWER for setRemoteDescription
         if (!this.remoteSDP) {
             var cobbled = 'v=0\r\n' +
-                'o=- ' + '1923518516' + ' 2 IN IP4 0.0.0.0\r\n' +// FIXME
+                'o=- 1923518516 2 IN IP4 0.0.0.0\r\n' +// FIXME
                 's=-\r\n' +
                 't=0 0\r\n';
             // first, take some things from the local description
@@ -6817,6 +7043,14 @@ JingleSessionPC.prototype.addIceCandidate = function (elem) {
         // TODO: check ice-pwd and ice-ufrag?
         $(this).find('transport>candidate').each(function () {
             var line, candidate;
+            var protocol = this.getAttribute('protocol');
+            protocol =
+                (typeof protocol === 'string') ? protocol.toLowerCase() : '';
+            if ((self.webrtcIceTcpDisable && protocol == 'tcp') ||
+                (self.webrtcIceUdpDisable && protocol == 'udp')) {
+                return;
+            }
+
             line = SDPUtil.candidateFromJingle(this);
             candidate = new RTCIceCandidate({sdpMLineIndex: idx,
                 sdpMid: name,
@@ -6870,6 +7104,12 @@ JingleSessionPC.prototype.createdAnswer = function (sdp, provisional) {
                         initiator: self.initiator,
                         responder: self.responder,
                         sid: self.sid });
+                if (self.webrtcIceTcpDisable) {
+                    self.localSDP.removeTcpCandidates = true;
+                }
+                if (self.webrtcIceUdpDisable) {
+                    self.localSDP.removeUdpCandidates = true;
+                }
                 self.localSDP.toJingle(
                     accept,
                     self.initiator == self.me ? 'initiator' : 'responder',
@@ -6957,7 +7197,11 @@ JingleSessionPC.prototype.sendTerminate = function (reason, text) {
     }
 };
 
-JingleSessionPC.prototype.addSource = function (elem, fromJid) {
+/**
+ * Handles a Jingle source-add message for this Jingle session.
+ * @param elem An array of Jingle "content" elements.
+ */
+JingleSessionPC.prototype.addSource = function (elem) {
 
     var self = this;
     // FIXME: dirty waiting
@@ -6966,7 +7210,7 @@ JingleSessionPC.prototype.addSource = function (elem, fromJid) {
         logger.warn("addSource - localDescription not ready yet")
         setTimeout(function()
             {
-                self.addSource(elem, fromJid);
+                self.addSource(elem);
             },
             200
         );
@@ -6990,7 +7234,7 @@ JingleSessionPC.prototype.addSource = function (elem, fromJid) {
                 return this.getAttribute('ssrc');
             }).get();
 
-            if (ssrcs.length != 0) {
+            if (ssrcs.length) {
                 lines += 'a=ssrc-group:' + semantics + ' ' + ssrcs.join(' ') + '\r\n';
             }
         });
@@ -7039,16 +7283,18 @@ JingleSessionPC.prototype.addSource = function (elem, fromJid) {
     });
 };
 
-JingleSessionPC.prototype.removeSource = function (elem, fromJid) {
+/**
+ * Handles a Jingle source-remove message for this Jingle session.
+ * @param elem An array of Jingle "content" elements.
+ */
+JingleSessionPC.prototype.removeSource = function (elem) {
 
     var self = this;
     // FIXME: dirty waiting
-    if (!this.peerconnection.localDescription)
-    {
-        logger.warn("removeSource - localDescription not ready yet")
-        setTimeout(function()
-            {
-                self.removeSource(elem, fromJid);
+    if (!this.peerconnection.localDescription) {
+        logger.warn("removeSource - localDescription not ready yet");
+        setTimeout(function() {
+                self.removeSource(elem);
             },
             200
         );
@@ -7069,7 +7315,7 @@ JingleSessionPC.prototype.removeSource = function (elem, fromJid) {
                 return this.getAttribute('ssrc');
             }).get();
 
-            if (ssrcs.length != 0) {
+            if (ssrcs.length) {
                 lines += 'a=ssrc-group:' + semantics + ' ' + ssrcs.join(' ') + '\r\n';
             }
         });
@@ -7214,28 +7460,64 @@ JingleSessionPC.prototype._modifySources = function (successCallback, queueCallb
 
 /**
  * Switches video streams.
- * @param new_stream new stream that will be used as video of this session.
+ * @param newStream new stream that will be used as video of this session.
  * @param oldStream old video stream of this session.
- * @param success_callback callback executed after successful stream switch.
+ * @param successCallback callback executed after successful stream switch.
+ * @param isAudio whether the streams are audio (if true) or video (if false).
  */
-JingleSessionPC.prototype.switchStreams = function (new_stream, oldStream, success_callback, isAudio) {
-
+JingleSessionPC.prototype.switchStreams =
+    function (newStream, oldStream, successCallback, isAudio) {
     var self = this;
-
+    var sender, newTrack;
+    var senderKind = isAudio ? 'audio' : 'video';
     // Remember SDP to figure out added/removed SSRCs
     var oldSdp = null;
-    if(self.peerconnection) {
-        if(self.peerconnection.localDescription) {
+
+    if (self.peerconnection) {
+        if (self.peerconnection.localDescription) {
             oldSdp = new SDP(self.peerconnection.localDescription.sdp);
         }
-        self.peerconnection.removeStream(oldStream, true);
-        if(new_stream)
-            self.peerconnection.addStream(new_stream);
+        if (RTCBrowserType.getBrowserType() ===
+                RTCBrowserType.RTC_BROWSER_FIREFOX) {
+            // On Firefox we don't replace MediaStreams as this messes up the
+            // m-lines (which can't be removed in Plan Unified) and brings a lot
+            // of complications. Instead, we use the RTPSender and replace just
+            // the track.
+
+            // Find the right sender (for audio or video)
+            self.peerconnection.peerconnection.getSenders().some(function (s) {
+                if (s.track && s.track.kind === senderKind) {
+                    sender = s;
+                    return true;
+                }
+            });
+
+            if (sender) {
+                // We assume that our streams have a single track, either audio
+                // or video.
+                newTrack = isAudio ? newStream.getAudioTracks()[0] :
+                    newStream.getVideoTracks()[0];
+                sender.replaceTrack(newTrack)
+                    .then(function() {
+                        console.log("Replaced a track, isAudio=" + isAudio);
+                    })
+                    .catch(function(err) {
+                        console.log("Failed to replace a track: " + err);
+                    });
+            } else {
+                console.log("Cannot switch tracks: no RTPSender.");
+            }
+        } else {
+            self.peerconnection.removeStream(oldStream, true);
+            if (newStream) {
+                self.peerconnection.addStream(newStream);
+            }
+        }
     }
 
     // Conference is not active
-    if(!oldSdp || !self.peerconnection) {
-        success_callback();
+    if (!oldSdp) {
+        successCallback();
         return;
     }
 
@@ -7243,7 +7525,7 @@ JingleSessionPC.prototype.switchStreams = function (new_stream, oldStream, succe
     self.modifySourcesQueue.push(function() {
         logger.log('modify sources done');
 
-        success_callback();
+        successCallback();
 
         var newSdp = new SDP(self.peerconnection.localDescription.sdp);
         logger.log("SDPs", oldSdp, newSdp);
@@ -7511,9 +7793,10 @@ JingleSessionPC.prototype.setLocalDescription = function () {
     if(!this.peerconnection.localDescription)
         return;
     var session = transform.parse(this.peerconnection.localDescription.sdp);
+    var i;
     session.media.forEach(function (media) {
 
-        if (media.ssrcs != null && media.ssrcs.length > 0) {
+        if (media.ssrcs && media.ssrcs.length > 0) {
             // TODO(gp) maybe exclude FID streams?
             media.ssrcs.forEach(function (ssrc) {
                 if (ssrc.attribute !== 'cname') {
@@ -7539,8 +7822,8 @@ JingleSessionPC.prototype.setLocalDescription = function () {
 
     // Bind us as local SSRCs owner
     if (newssrcs.length > 0) {
-        for (var i = 1; i <= newssrcs.length; i ++) {
-            var ssrc = newssrcs[i-1].ssrc;
+        for (i = 0; i < newssrcs.length; i++) {
+            var ssrc = newssrcs[i].ssrc;
             var myJid = self.connection.emuc.myroomjid;
             self.ssrcOwners[ssrc] = myJid;
         }
@@ -7638,7 +7921,7 @@ JingleSessionPC.prototype.remoteStreamAdded = function (data, times) {
 module.exports = JingleSessionPC;
 
 }).call(this,"/modules/xmpp/JingleSessionPC.js")
-},{"../../service/xmpp/XMPPEvents":82,"../RTC/RTC":13,"../RTC/RTCBrowserType":14,"./JingleSession":24,"./LocalSSRCReplacement":26,"./SDP":27,"./SDPDiffer":28,"./SDPUtil":29,"./TraceablePeerConnection":30,"async":39,"jitsi-meet-logger":44,"sdp-transform":72}],26:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":84,"../RTC/RTC":13,"../RTC/RTCBrowserType":14,"./JingleSession":25,"./LocalSSRCReplacement":27,"./SDP":28,"./SDPDiffer":29,"./SDPUtil":30,"./TraceablePeerConnection":31,"async":40,"jitsi-meet-logger":45,"sdp-transform":73}],27:[function(require,module,exports){
 (function (__filename){
 /* global $ */
 var logger = require("jitsi-meet-logger").getLogger(__filename);
@@ -7774,8 +8057,9 @@ var storeLocalVideoSSRC = function (jingleIq) {
  * @returns {string} label/mslabel attribute
  */
 function generateLabel() {
-    return RandomUtil.random8digitsHex() + "-" + RandomUtil.random4digitsHex() + "-" +
-           RandomUtil.random4digitsHex() + "-" + RandomUtil.random4digitsHex() + "-" + RandomUtil.random12digitsHex();
+    return RandomUtil.randomHexString(8) + "-" + RandomUtil.randomHexString(4) +
+        "-" + RandomUtil.randomHexString(4) + "-" +
+        RandomUtil.randomHexString(4) + "-" + RandomUtil.randomHexString(12);
 }
 
 /**
@@ -7934,7 +8218,7 @@ var LocalSSRCReplacement = {
 module.exports = LocalSSRCReplacement;
 
 }).call(this,"/modules/xmpp/LocalSSRCReplacement.js")
-},{"../RTC/RTCBrowserType":14,"../util/RandomUtil":22,"./SDP":27,"jitsi-meet-logger":44}],27:[function(require,module,exports){
+},{"../RTC/RTCBrowserType":14,"../util/RandomUtil":23,"./SDP":28,"jitsi-meet-logger":45}],28:[function(require,module,exports){
 (function (__filename){
 /* jshint -W117 */
 
@@ -7943,6 +8227,18 @@ var SDPUtil = require("./SDPUtil");
 
 // SDP STUFF
 function SDP(sdp) {
+    /**
+     * Whether or not to remove TCP ice candidates when translating from/to jingle.
+     * @type {boolean}
+     */
+    this.removeTcpCandidates = false;
+
+    /**
+     * Whether or not to remove UDP ice candidates when translating from/to jingle.
+     * @type {boolean}
+     */
+    this.removeUdpCandidates = false;
+
     this.media = sdp.split('\r\nm=');
     for (var i = 1; i < this.media.length; i++) {
         this.media[i] = 'm=' + this.media[i];
@@ -7953,6 +8249,7 @@ function SDP(sdp) {
     this.session = this.media.shift() + '\r\n';
     this.raw = this.session + this.media.join('');
 }
+
 /**
  * Returns map of MediaChannel mapped per channel idx.
  */
@@ -7983,9 +8280,10 @@ SDP.prototype.getMediaSsrcMap = function() {
         });
         tmp = SDPUtil.find_lines(self.media[mediaindex], 'a=ssrc-group:');
         tmp.forEach(function(line){
+            var idx = line.indexOf(' ');
             var semantics = line.substr(0, idx).substr(13);
             var ssrcs = line.substr(14 + semantics.length).split(' ');
-            if (ssrcs.length != 0) {
+            if (ssrcs.length) {
                 media.ssrcGroups.push({
                     semantics: semantics,
                     ssrcs: ssrcs
@@ -8002,17 +8300,15 @@ SDP.prototype.getMediaSsrcMap = function() {
  */
 SDP.prototype.containsSSRC = function(ssrc) {
     var medias = this.getMediaSsrcMap();
-    var contains = false;
     Object.keys(medias).forEach(function(mediaindex){
         var media = medias[mediaindex];
         //logger.log("Check", channel, ssrc);
         if(Object.keys(media.ssrcs).indexOf(ssrc) != -1){
-            contains = true;
+            return true;
         }
     });
-    return contains;
+    return false;
 };
-
 
 // remove iSAC and CN from SDP
 SDP.prototype.mangle = function () {
@@ -8067,8 +8363,8 @@ SDP.prototype.removeMediaLines = function(mediaindex, prefix) {
 // add content's to a jingle element
 SDP.prototype.toJingle = function (elem, thecreator, ssrcs) {
 //    logger.log("SSRC" + ssrcs["audio"] + " - " + ssrcs["video"]);
-    var i, j, k, mline, ssrc, rtpmap, tmp, line, lines;
     var self = this;
+    var i, j, k, mline, ssrc, rtpmap, tmp, lines;
     // new bundle plan
     if (SDPUtil.find_line(this.session, 'a=group:')) {
         lines = SDPUtil.find_lines(this.session, 'a=group:');
@@ -8093,12 +8389,11 @@ SDP.prototype.toJingle = function (elem, thecreator, ssrcs) {
         if (SDPUtil.find_line(this.media[i], 'a=ssrc:')) {
             ssrc = SDPUtil.find_line(this.media[i], 'a=ssrc:').substring(7).split(' ')[0]; // take the first
         } else {
-            if(ssrcs && ssrcs[mline.media])
-            {
+            if(ssrcs && ssrcs[mline.media]) {
                 ssrc = ssrcs[mline.media];
-            }
-            else
+            } else {
                 ssrc = false;
+            }
         }
 
         elem.c('content', {creator: thecreator, name: mline.media});
@@ -8108,8 +8403,7 @@ SDP.prototype.toJingle = function (elem, thecreator, ssrcs) {
             elem.attrs({ name: mid });
         }
 
-        if (SDPUtil.find_line(this.media[i], 'a=rtpmap:').length)
-        {
+        if (SDPUtil.find_line(this.media[i], 'a=rtpmap:').length) {
             elem.c('description',
                 {xmlns: 'urn:xmpp:jingle:apps:rtp:1',
                     media: mline.media });
@@ -8126,7 +8420,7 @@ SDP.prototype.toJingle = function (elem, thecreator, ssrcs) {
                         elem.c('parameter', tmp[k]).up();
                     }
                 }
-                this.RtcpFbToJingle(i, elem, mline.fmt[j]); // XEP-0293 -- map a=rtcp-fb
+                this.rtcpFbToJingle(i, elem, mline.fmt[j]); // XEP-0293 -- map a=rtcp-fb
 
                 elem.up();
             }
@@ -8146,7 +8440,7 @@ SDP.prototype.toJingle = function (elem, thecreator, ssrcs) {
                 var ssrclines = SDPUtil.find_lines(this.media[i], 'a=ssrc:');
                 if(ssrclines.length > 0) {
                     ssrclines.forEach(function (line) {
-                        idx = line.indexOf(' ');
+                        var idx = line.indexOf(' ');
                         var linessrc = line.substr(0, idx).substr(7);
                         if (linessrc != ssrc) {
                             elem.up();
@@ -8167,9 +8461,7 @@ SDP.prototype.toJingle = function (elem, thecreator, ssrcs) {
                         }
                         elem.up();
                     });
-                }
-                else
-                {
+                } else {
                     elem.up();
                     elem.c('source', { ssrc: ssrc, xmlns: 'urn:xmpp:jingle:apps:rtp:ssma:0' });
                     elem.c('parameter');
@@ -8203,10 +8495,10 @@ SDP.prototype.toJingle = function (elem, thecreator, ssrcs) {
                 // XEP-0339 handle ssrc-group attributes
                 var ssrc_group_lines = SDPUtil.find_lines(this.media[i], 'a=ssrc-group:');
                 ssrc_group_lines.forEach(function(line) {
-                    idx = line.indexOf(' ');
+                    var idx = line.indexOf(' ');
                     var semantics = line.substr(0, idx).substr(13);
                     var ssrcs = line.substr(14 + semantics.length).split(' ');
-                    if (ssrcs.length != 0) {
+                    if (ssrcs.length) {
                         elem.c('ssrc-group', { semantics: semantics, xmlns: 'urn:xmpp:jingle:apps:rtp:ssma:0' });
                         ssrcs.forEach(function(ssrc) {
                             elem.c('source', { ssrc: ssrc })
@@ -8222,7 +8514,7 @@ SDP.prototype.toJingle = function (elem, thecreator, ssrcs) {
             }
 
             // XEP-0293 -- map a=rtcp-fb:*
-            this.RtcpFbToJingle(i, elem, '*');
+            this.rtcpFbToJingle(i, elem, '*');
 
             // XEP-0294
             if (SDPUtil.find_line(this.media[i], 'a=extmap:')) {
@@ -8256,7 +8548,7 @@ SDP.prototype.toJingle = function (elem, thecreator, ssrcs) {
         }
 
         // map ice-ufrag/pwd, dtls fingerprint, candidates
-        this.TransportToJingle(i, elem);
+        this.transportToJingle(i, elem);
 
         if (SDPUtil.find_line(this.media[i], 'a=sendrecv', this.session)) {
             elem.attrs({senders: 'both'});
@@ -8277,25 +8569,24 @@ SDP.prototype.toJingle = function (elem, thecreator, ssrcs) {
     return elem;
 };
 
-SDP.prototype.TransportToJingle = function (mediaindex, elem) {
-    var i = mediaindex;
-    var tmp;
+SDP.prototype.transportToJingle = function (mediaindex, elem) {
+    var tmp, sctpmap, sctpAttrs, fingerprints;
     var self = this;
     elem.c('transport');
 
     // XEP-0343 DTLS/SCTP
     if (SDPUtil.find_line(this.media[mediaindex], 'a=sctpmap:').length)
     {
-        var sctpmap = SDPUtil.find_line(
-            this.media[i], 'a=sctpmap:', self.session);
+        sctpmap = SDPUtil.find_line(
+            this.media[mediaindex], 'a=sctpmap:', self.session);
         if (sctpmap)
         {
-            var sctpAttrs = SDPUtil.parse_sctpmap(sctpmap);
+            sctpAttrs = SDPUtil.parse_sctpmap(sctpmap);
             elem.c('sctpmap',
                 {
                     xmlns: 'urn:xmpp:jingle:transports:dtls-sctp:1',
                     number: sctpAttrs[0], /* SCTP port */
-                    protocol: sctpAttrs[1], /* protocol */
+                    protocol: sctpAttrs[1] /* protocol */
                 });
             // Optional stream count attribute
             if (sctpAttrs.length > 2)
@@ -8304,7 +8595,7 @@ SDP.prototype.TransportToJingle = function (mediaindex, elem) {
         }
     }
     // XEP-0320
-    var fingerprints = SDPUtil.find_lines(this.media[mediaindex], 'a=fingerprint:', this.session);
+    fingerprints = SDPUtil.find_lines(this.media[mediaindex], 'a=fingerprint:', this.session);
     fingerprints.forEach(function(line) {
         tmp = SDPUtil.parse_fingerprint(line);
         tmp.xmlns = 'urn:xmpp:jingle:apps:dtls:0';
@@ -8325,14 +8616,22 @@ SDP.prototype.TransportToJingle = function (mediaindex, elem) {
         if (SDPUtil.find_line(this.media[mediaindex], 'a=candidate:', this.session)) { // add any a=candidate lines
             var lines = SDPUtil.find_lines(this.media[mediaindex], 'a=candidate:', this.session);
             lines.forEach(function (line) {
-                elem.c('candidate', SDPUtil.candidateToJingle(line)).up();
+                var candidate = SDPUtil.candidateToJingle(line);
+                var protocol = (candidate &&
+                        typeof candidate.protocol === 'string')
+                    ? candidate.protocol.toLowerCase() : '';
+                if ((self.removeTcpCandidates && protocol === 'tcp') ||
+                    (self.removeUdpCandidates && protocol === 'udp')) {
+                    return;
+                }
+                elem.c('candidate', candidate).up();
             });
         }
     }
     elem.up(); // end of transport
 }
 
-SDP.prototype.RtcpFbToJingle = function (mediaindex, elem, payloadtype) { // XEP-0293
+SDP.prototype.rtcpFbToJingle = function (mediaindex, elem, payloadtype) { // XEP-0293
     var lines = SDPUtil.find_lines(this.media[mediaindex], 'a=rtcp-fb:' + payloadtype);
     lines.forEach(function (line) {
         var tmp = SDPUtil.parse_rtcpfb(line);
@@ -8349,7 +8648,7 @@ SDP.prototype.RtcpFbToJingle = function (mediaindex, elem, payloadtype) { // XEP
     });
 };
 
-SDP.prototype.RtcpFbFromJingle = function (elem, payloadtype) { // XEP-0293
+SDP.prototype.rtcpFbFromJingle = function (elem, payloadtype) { // XEP-0293
     var media = '';
     var tmp = elem.find('>rtcp-fb-trr-int[xmlns="urn:xmpp:jingle:apps:rtp:rtcp-fb:0"]');
     if (tmp.length) {
@@ -8376,7 +8675,7 @@ SDP.prototype.RtcpFbFromJingle = function (elem, payloadtype) { // XEP-0293
 SDP.prototype.fromJingle = function (jingle) {
     var self = this;
     this.raw = 'v=0\r\n' +
-        'o=- ' + '1923518516' + ' 2 IN IP4 0.0.0.0\r\n' +// FIXME
+        'o=- 1923518516 2 IN IP4 0.0.0.0\r\n' +// FIXME
         's=-\r\n' +
         't=0 0\r\n';
     // http://tools.ietf.org/html/draft-ietf-mmusic-sdp-bundle-negotiation-04#section-8
@@ -8432,14 +8731,11 @@ SDP.prototype.jingle2media = function (content) {
     } else {
         tmp.proto = 'RTP/AVPF';
     }
-    if (!sctp.length)
-    {
+    if (!sctp.length) {
         tmp.fmt = desc.find('payload-type').map(
             function () { return this.getAttribute('id'); }).get();
         media += SDPUtil.build_mline(tmp) + '\r\n';
-    }
-    else
-    {
+    } else {
         media += 'm=application 1 DTLS/SCTP ' + sctp.attr('number') + '\r\n';
         media += 'a=sctpmap:' + sctp.attr('number') +
             ' ' + sctp.attr('protocol');
@@ -8510,15 +8806,19 @@ SDP.prototype.jingle2media = function (content) {
         media += SDPUtil.build_rtpmap(this) + '\r\n';
         if ($(this).find('>parameter').length) {
             media += 'a=fmtp:' + this.getAttribute('id') + ' ';
-            media += $(this).find('parameter').map(function () { return (this.getAttribute('name') ? (this.getAttribute('name') + '=') : '') + this.getAttribute('value'); }).get().join('; ');
+            media += $(this).find('parameter').map(function () {
+                return (this.getAttribute('name')
+                        ? (this.getAttribute('name') + '=') : '') +
+                    this.getAttribute('value');
+            }).get().join('; ');
             media += '\r\n';
         }
         // xep-0293
-        media += self.RtcpFbFromJingle($(this), this.getAttribute('id'));
+        media += self.rtcpFbFromJingle($(this), this.getAttribute('id'));
     });
 
     // xep-0293
-    media += self.RtcpFbFromJingle(desc, '*');
+    media += self.rtcpFbFromJingle(desc, '*');
 
     // xep-0294
     tmp = desc.find('>rtp-hdrext[xmlns="urn:xmpp:jingle:apps:rtp:rtp-hdrext:0"]');
@@ -8527,17 +8827,25 @@ SDP.prototype.jingle2media = function (content) {
     });
 
     content.find('>transport[xmlns="urn:xmpp:jingle:transports:ice-udp:1"]>candidate').each(function () {
+        var protocol = this.getAttribute('protocol');
+        protocol = (typeof protocol === 'string') ? protocol.toLowerCase(): '';
+
+        if ((self.removeTcpCandidates && protocol === 'tcp') ||
+            (self.removeUdpCandidates && protocol === 'udp')) {
+            return;
+        }
+
         media += SDPUtil.candidateFromJingle(this);
     });
 
     // XEP-0339 handle ssrc-group attributes
-    tmp = content.find('description>ssrc-group[xmlns="urn:xmpp:jingle:apps:rtp:ssma:0"]').each(function() {
+    content.find('description>ssrc-group[xmlns="urn:xmpp:jingle:apps:rtp:ssma:0"]').each(function() {
         var semantics = this.getAttribute('semantics');
         var ssrcs = $(this).find('>source').map(function() {
             return this.getAttribute('ssrc');
         }).get();
 
-        if (ssrcs.length != 0) {
+        if (ssrcs.length) {
             media += 'a=ssrc-group:' + semantics + ' ' + ssrcs.join(' ') + '\r\n';
         }
     });
@@ -8564,18 +8872,18 @@ module.exports = SDP;
 
 
 }).call(this,"/modules/xmpp/SDP.js")
-},{"./SDPUtil":29,"jitsi-meet-logger":44}],28:[function(require,module,exports){
-
+},{"./SDPUtil":30,"jitsi-meet-logger":45}],29:[function(require,module,exports){
 var SDPUtil = require("./SDPUtil");
 
-function SDPDiffer(mySDP, otherSDP) {
+function SDPDiffer(mySDP, otherSDP)
+{
     this.mySDP = mySDP;
     this.otherSDP = otherSDP;
 }
 
 /**
- * Returns map of MediaChannel that contains only media not contained in <tt>otherSdp</tt>. Mapped by channel idx.
- * @param otherSdp the other SDP to check ssrc with.
+ * Returns map of MediaChannel that contains media contained in
+ * 'mySDP', but not contained in 'otherSdp'. Mapped by channel idx.
  */
 SDPDiffer.prototype.getNewMedia = function() {
 
@@ -8597,7 +8905,8 @@ SDPDiffer.prototype.getNewMedia = function() {
                     return false;
             }
             else if (this[i] != array[i]) {
-                // Warning - two different object instances will never be equal: {x:20} != {x:20}
+                // Warning - two different object instances will never be
+                // equal: {x:20} != {x:20}
                 return false;
             }
         }
@@ -8615,10 +8924,11 @@ SDPDiffer.prototype.getNewMedia = function() {
             newMedia[othersMediaIdx] = othersMedia;
             return;
         }
-        // Look for new ssrcs accross the channel
+        // Look for new ssrcs across the channel
         Object.keys(othersMedia.ssrcs).forEach(function(ssrc) {
             if(Object.keys(myMedia.ssrcs).indexOf(ssrc) === -1) {
-                // Allocate channel if we've found ssrc that doesn't exist in our channel
+                // Allocate channel if we've found ssrc that doesn't exist in
+                // our channel
                 if(!newMedia[othersMediaIdx]){
                     newMedia[othersMediaIdx] = {
                         mediaindex: othersMedia.mediaindex,
@@ -8638,8 +8948,9 @@ SDPDiffer.prototype.getNewMedia = function() {
             var matched = false;
             for (var i = 0; i < myMedia.ssrcGroups.length; i++) {
                 var mySsrcGroup = myMedia.ssrcGroups[i];
-                if (otherSsrcGroup.semantics == mySsrcGroup.semantics
-                    && arrayEquals.apply(otherSsrcGroup.ssrcs, [mySsrcGroup.ssrcs])) {
+                if (otherSsrcGroup.semantics == mySsrcGroup.semantics &&
+                    arrayEquals.apply(otherSsrcGroup.ssrcs,
+                                      [mySsrcGroup.ssrcs])) {
 
                     matched = true;
                     break;
@@ -8666,27 +8977,21 @@ SDPDiffer.prototype.getNewMedia = function() {
 };
 
 /**
- * Sends SSRC update IQ.
- * @param sdpMediaSsrcs SSRCs map obtained from SDP.getNewMedia. Cntains SSRCs to add/remove.
- * @param sid session identifier that will be put into the IQ.
- * @param initiator initiator identifier.
- * @param toJid destination Jid
- * @param isAdd indicates if this is remove or add operation.
+ * TODO: document!
  */
 SDPDiffer.prototype.toJingle = function(modify) {
     var sdpMediaSsrcs = this.getNewMedia();
-    var self = this;
 
-    // FIXME: only announce video ssrcs since we mix audio and dont need
-    //      the audio ssrcs therefore
     var modified = false;
     Object.keys(sdpMediaSsrcs).forEach(function(mediaindex){
         modified = true;
         var media = sdpMediaSsrcs[mediaindex];
         modify.c('content', {name: media.mid});
 
-        modify.c('description', {xmlns:'urn:xmpp:jingle:apps:rtp:1', media: media.mid});
-        // FIXME: not completly sure this operates on blocks and / or handles different ssrcs correctly
+        modify.c('description',
+                 {xmlns:'urn:xmpp:jingle:apps:rtp:1', media: media.mid});
+        // FIXME: not completely sure this operates on blocks and / or handles
+        // different ssrcs correctly
         // generate sources from lines
         Object.keys(media.ssrcs).forEach(function(ssrcNum) {
             var mediaSsrc = media.ssrcs[ssrcNum];
@@ -8713,7 +9018,7 @@ SDPDiffer.prototype.toJingle = function(modify) {
 
         // generate source groups from lines
         media.ssrcGroups.forEach(function(ssrcGroup) {
-            if (ssrcGroup.ssrcs.length != 0) {
+            if (ssrcGroup.ssrcs.length) {
 
                 modify.c('ssrc-group', {
                     semantics: ssrcGroup.semantics,
@@ -8736,7 +9041,7 @@ SDPDiffer.prototype.toJingle = function(modify) {
 };
 
 module.exports = SDPDiffer;
-},{"./SDPUtil":29}],29:[function(require,module,exports){
+},{"./SDPUtil":30}],30:[function(require,module,exports){
 (function (__filename){
 
 var logger = require("jitsi-meet-logger").getLogger(__filename);
@@ -9093,8 +9398,9 @@ SDPUtil = {
 };
 module.exports = SDPUtil;
 }).call(this,"/modules/xmpp/SDPUtil.js")
-},{"jitsi-meet-logger":44}],30:[function(require,module,exports){
+},{"jitsi-meet-logger":45}],31:[function(require,module,exports){
 (function (__filename){
+/* global $ */
 var RTC = require('../RTC/RTC');
 
 var logger = require("jitsi-meet-logger").getLogger(__filename);
@@ -9121,7 +9427,7 @@ function TraceablePeerConnection(ice_config, constraints, session) {
     var Interop = require('sdp-interop').Interop;
     this.interop = new Interop();
     var Simulcast = require('sdp-simulcast');
-    this.simulcast = new Simulcast({numOfLayers: 3, explodeRemoteSimulcast: false});
+    this.simulcast = new Simulcast({numOfLayers: 2, explodeRemoteSimulcast: false});
 
     // override as desired
     this.trace = function (what, info) {
@@ -9274,16 +9580,17 @@ var normalizePlanB = function(desc) {
             }
 
             if (typeof mLine.ssrcs !== 'undefined' && Array.isArray(mLine.ssrcs)) {
-                for (var i = 0; i<mLine.ssrcs.length; i++){
+                var i;
+                for (i = 0; i<mLine.ssrcs.length; i++){
                     if (typeof mLine.ssrcs[i] === 'object'
                         && typeof mLine.ssrcs[i].id !== 'undefined'
-                        && $.inArray(mLine.ssrcs[i].id, firstSsrcs) == 0) {
+                        && !$.inArray(mLine.ssrcs[i].id, firstSsrcs)) {
                         newSsrcLines.push(mLine.ssrcs[i]);
                         delete mLine.ssrcs[i];
                     }
                 }
 
-                for (var i = 0; i<mLine.ssrcs.length; i++){
+                for (i = 0; i<mLine.ssrcs.length; i++){
                     if (typeof mLine.ssrcs[i] !== 'undefined') {
                         newSsrcLines.push(mLine.ssrcs[i]);
                     }
@@ -9313,6 +9620,8 @@ if (TraceablePeerConnection.prototype.__defineGetter__ !== undefined) {
         function() {
             var desc = this.peerconnection.localDescription;
 
+            // TODO this should be after the Unified Plan -> Plan B
+            // transformation.
             desc = SSRCReplacement.mungeLocalVideoSSRC(desc);
             
             this.trace('getLocalDescription::preTransform', dumpSDP(desc));
@@ -9539,7 +9848,7 @@ module.exports = TraceablePeerConnection;
 
 
 }).call(this,"/modules/xmpp/TraceablePeerConnection.js")
-},{"../../service/xmpp/XMPPEvents":82,"../RTC/RTC":13,"../RTC/RTCBrowserType.js":14,"./LocalSSRCReplacement":26,"jitsi-meet-logger":44,"sdp-interop":62,"sdp-simulcast":65,"sdp-transform":72}],31:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":84,"../RTC/RTC":13,"../RTC/RTCBrowserType.js":14,"./LocalSSRCReplacement":27,"jitsi-meet-logger":45,"sdp-interop":63,"sdp-simulcast":66,"sdp-transform":73}],32:[function(require,module,exports){
 (function (__filename){
 /* global $, $iq, APP, config, messageHandler,
  roomName, sessionTerminated, Strophe, Util */
@@ -9976,7 +10285,7 @@ module.exports = Moderator;
 
 
 }).call(this,"/modules/xmpp/moderator.js")
-},{"../../service/authentication/AuthenticationEvents":79,"../../service/xmpp/XMPPEvents":82,"../settings/Settings":18,"jitsi-meet-logger":44}],32:[function(require,module,exports){
+},{"../../service/authentication/AuthenticationEvents":80,"../../service/xmpp/XMPPEvents":84,"../settings/Settings":19,"jitsi-meet-logger":45}],33:[function(require,module,exports){
 (function (__filename){
 /* jshint -W117 */
 /* a simple MUC connection plugin
@@ -10073,7 +10382,7 @@ module.exports = function(XMPP) {
 
 
 }).call(this,"/modules/xmpp/strophe.emuc.js")
-},{"./ChatRoom":23,"jitsi-meet-logger":44}],33:[function(require,module,exports){
+},{"./ChatRoom":24,"jitsi-meet-logger":45}],34:[function(require,module,exports){
 (function (__filename){
 /* jshint -W117 */
 
@@ -10171,6 +10480,8 @@ module.exports = function(XMPP, eventEmitter) {
             // see http://xmpp.org/extensions/xep-0166.html#concepts-session
             switch (action) {
                 case 'session-initiate':
+                    console.log("(TIME) received session-initiate:\t",
+                                window.performance.now());
                     var startMuted = $(iq).find('jingle>startmuted');
                     if (startMuted && startMuted.length > 0) {
                         var audioMuted = startMuted.attr("audio");
@@ -10249,11 +10560,11 @@ module.exports = function(XMPP, eventEmitter) {
                     break;
                 case 'addsource': // FIXME: proprietary, un-jingleish
                 case 'source-add': // FIXME: proprietary
-                    sess.addSource($(iq).find('>jingle>content'), fromJid);
+                    sess.addSource($(iq).find('>jingle>content'));
                     break;
                 case 'removesource': // FIXME: proprietary, un-jingleish
                 case 'source-remove': // FIXME: proprietary
-                    sess.removeSource($(iq).find('>jingle>content'), fromJid);
+                    sess.removeSource($(iq).find('>jingle>content'));
                     break;
                 default:
                     logger.warn('jingle action not implemented', action);
@@ -10368,7 +10679,7 @@ module.exports = function(XMPP, eventEmitter) {
 
 
 }).call(this,"/modules/xmpp/strophe.jingle.js")
-},{"../../service/xmpp/XMPPEvents":82,"../RTC/RTCBrowserType":14,"./JingleSessionPC":25,"jitsi-meet-logger":44}],34:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":84,"../RTC/RTCBrowserType":14,"./JingleSessionPC":26,"jitsi-meet-logger":45}],35:[function(require,module,exports){
 /* global Strophe */
 module.exports = function () {
 
@@ -10389,8 +10700,11 @@ module.exports = function () {
         }
     });
 };
-},{}],35:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
+(function (__filename){
 /* global $, $iq, Strophe */
+
+var logger = require("jitsi-meet-logger").getLogger(__filename);
 
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 
@@ -10446,6 +10760,26 @@ module.exports = function (XMPP, eventEmitter) {
         },
 
         /**
+         * Checks if given <tt>jid</tt> has XEP-0199 ping support.
+         * @param jid the JID to be checked for ping support.
+         * @param callback function with boolean argument which will be
+         * <tt>true</tt> if XEP-0199 ping is supported by given <tt>jid</tt>
+         */
+        hasPingSupport: function (jid, callback) {
+            this.connection.disco.info(
+                jid, null,
+                function (result) {
+                    var ping = $(result).find('>>feature[var="urn:xmpp:ping"]');
+                    callback(ping.length > 0);
+                },
+                function (error) {
+                    logger.error("Ping feature discovery error", error);
+                    callback(false);
+                }
+            );
+        },
+
+        /**
          * Starts to send ping in given interval to specified remote JID.
          * This plugin supports only one such task and <tt>stopInterval</tt>
          * must be called before starting a new one.
@@ -10454,7 +10788,7 @@ module.exports = function (XMPP, eventEmitter) {
          */
         startInterval: function (remoteJid, interval) {
             if (this.intervalId) {
-                console.error("Ping task scheduled already");
+                logger.error("Ping task scheduled already");
                 return;
             }
             if (!interval)
@@ -10468,14 +10802,14 @@ module.exports = function (XMPP, eventEmitter) {
                 },
                 function (error) {
                     self.failedPings += 1;
-                    console.error(
+                    logger.error(
                         "Ping " + (error ? "error" : "timeout"), error);
                     if (self.failedPings >= PING_THRESHOLD) {
                         self.connection.disconnect();
                     }
                 }, PING_TIMEOUT);
             }, interval);
-            console.info("XMPP pings will be sent every " + interval + " ms");
+            logger.info("XMPP pings will be sent every " + interval + " ms");
         },
 
         /**
@@ -10486,13 +10820,14 @@ module.exports = function (XMPP, eventEmitter) {
                 window.clearInterval(this.intervalId);
                 this.intervalId = null;
                 this.failedPings = 0;
-                console.info("Ping interval cleared");
+                logger.info("Ping interval cleared");
             }
         }
     });
 };
 
-},{"../../service/xmpp/XMPPEvents":82}],36:[function(require,module,exports){
+}).call(this,"/modules/xmpp/strophe.ping.js")
+},{"../../service/xmpp/XMPPEvents":84,"jitsi-meet-logger":45}],37:[function(require,module,exports){
 (function (__filename){
 /* jshint -W117 */
 var logger = require("jitsi-meet-logger").getLogger(__filename);
@@ -10593,7 +10928,7 @@ module.exports = function() {
 };
 
 }).call(this,"/modules/xmpp/strophe.rayo.js")
-},{"jitsi-meet-logger":44}],37:[function(require,module,exports){
+},{"jitsi-meet-logger":45}],38:[function(require,module,exports){
 (function (__filename){
 /**
  * Strophe logger implementation. Logs from level WARN and above.
@@ -10641,7 +10976,7 @@ module.exports = function () {
 };
 
 }).call(this,"/modules/xmpp/strophe.util.js")
-},{"jitsi-meet-logger":44}],38:[function(require,module,exports){
+},{"jitsi-meet-logger":45}],39:[function(require,module,exports){
 (function (__filename){
 /* global $, APP, config, Strophe*/
 
@@ -10748,8 +11083,8 @@ XMPP.prototype._connect = function (jid, password) {
     var connectionFailed = false;
     var lastErrorMsg;
     this.connection.connect(jid, password, function (status, msg) {
-        logger.log('Strophe status changed to',
-            Strophe.getStatusString(status), msg);
+        logger.log("(TIME) Strophe " + Strophe.getStatusString(status) +
+            (msg ? "[" + msg + "]" : "") + "\t:" + window.performance.now());
         if (status === Strophe.Status.CONNECTED) {
             if (self.options.useStunTurn) {
                 self.connection.jingle.getStunAndTurnCredentials();
@@ -10758,8 +11093,17 @@ XMPP.prototype._connect = function (jid, password) {
 
             logger.info("My Jabber ID: " + self.connection.jid);
 
-            self.connection.ping.startInterval(
-                Strophe.getDomainFromJid(self.connection.jid));
+            // Schedule ping ?
+            var pingJid = self.connection.domain;
+            self.connection.ping.hasPingSupport(
+                pingJid,
+                function (hasPing) {
+                    if (hasPing)
+                        self.connection.ping.startInterval(pingJid);
+                    else
+                        logger.warn("Ping NOT supported by " + pingJid);
+                }
+            );
             
             if (password)
                 authenticatedUser = true;
@@ -10940,7 +11284,7 @@ XMPP.prototype.disconnect = function () {
 module.exports = XMPP;
 
 }).call(this,"/modules/xmpp/xmpp.js")
-},{"../../JitsiConnectionErrors":5,"../../JitsiConnectionEvents":6,"../../service/RTC/RTCEvents":76,"../../service/RTC/StreamEventTypes":78,"../../service/xmpp/XMPPEvents":82,"../RTC/RTC":13,"./strophe.emuc":32,"./strophe.jingle":33,"./strophe.logger":34,"./strophe.ping":35,"./strophe.rayo":36,"./strophe.util":37,"events":40,"jitsi-meet-logger":44,"pako":45}],39:[function(require,module,exports){
+},{"../../JitsiConnectionErrors":5,"../../JitsiConnectionEvents":6,"../../service/RTC/RTCEvents":77,"../../service/RTC/StreamEventTypes":79,"../../service/xmpp/XMPPEvents":84,"../RTC/RTC":13,"./strophe.emuc":33,"./strophe.jingle":34,"./strophe.logger":35,"./strophe.ping":36,"./strophe.rayo":37,"./strophe.util":38,"events":41,"jitsi-meet-logger":45,"pako":46}],40:[function(require,module,exports){
 (function (process){
 /*!
  * async
@@ -12067,7 +12411,7 @@ module.exports = XMPP;
 }());
 
 }).call(this,require('_process'))
-},{"_process":41}],40:[function(require,module,exports){
+},{"_process":42}],41:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -12370,7 +12714,7 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],41:[function(require,module,exports){
+},{}],42:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -12463,7 +12807,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],42:[function(require,module,exports){
+},{}],43:[function(require,module,exports){
 (function (process,global){
 /*!
  * @overview es6-promise - a tiny implementation of Promises/A+.
@@ -13434,7 +13778,7 @@ process.umask = function() { return 0; };
 
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":41}],43:[function(require,module,exports){
+},{"_process":42}],44:[function(require,module,exports){
 /* Copyright @ 2015 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13578,7 +13922,7 @@ Logger.levels = {
     ERROR: "error"
 };
 
-},{}],44:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 /* Copyright @ 2015 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13663,7 +14007,7 @@ module.exports = {
     levels: Logger.levels
 };
 
-},{"./Logger":43}],45:[function(require,module,exports){
+},{"./Logger":44}],46:[function(require,module,exports){
 // Top level file is just a mixin of submodules & constants
 'use strict';
 
@@ -13679,7 +14023,7 @@ assign(pako, deflate, inflate, constants);
 
 module.exports = pako;
 
-},{"./lib/deflate":46,"./lib/inflate":47,"./lib/utils/common":48,"./lib/zlib/constants":51}],46:[function(require,module,exports){
+},{"./lib/deflate":47,"./lib/inflate":48,"./lib/utils/common":49,"./lib/zlib/constants":52}],47:[function(require,module,exports){
 'use strict';
 
 
@@ -14057,7 +14401,7 @@ exports.deflate = deflate;
 exports.deflateRaw = deflateRaw;
 exports.gzip = gzip;
 
-},{"./utils/common":48,"./utils/strings":49,"./zlib/deflate.js":53,"./zlib/messages":58,"./zlib/zstream":60}],47:[function(require,module,exports){
+},{"./utils/common":49,"./utils/strings":50,"./zlib/deflate.js":54,"./zlib/messages":59,"./zlib/zstream":61}],48:[function(require,module,exports){
 'use strict';
 
 
@@ -14459,7 +14803,7 @@ exports.inflate = inflate;
 exports.inflateRaw = inflateRaw;
 exports.ungzip  = inflate;
 
-},{"./utils/common":48,"./utils/strings":49,"./zlib/constants":51,"./zlib/gzheader":54,"./zlib/inflate.js":56,"./zlib/messages":58,"./zlib/zstream":60}],48:[function(require,module,exports){
+},{"./utils/common":49,"./utils/strings":50,"./zlib/constants":52,"./zlib/gzheader":55,"./zlib/inflate.js":57,"./zlib/messages":59,"./zlib/zstream":61}],49:[function(require,module,exports){
 'use strict';
 
 
@@ -14563,7 +14907,7 @@ exports.setTyped = function (on) {
 
 exports.setTyped(TYPED_OK);
 
-},{}],49:[function(require,module,exports){
+},{}],50:[function(require,module,exports){
 // String encode/decode helpers
 'use strict';
 
@@ -14750,7 +15094,7 @@ exports.utf8border = function(buf, max) {
   return (pos + _utf8len[buf[pos]] > max) ? pos : max;
 };
 
-},{"./common":48}],50:[function(require,module,exports){
+},{"./common":49}],51:[function(require,module,exports){
 'use strict';
 
 // Note: adler32 takes 12% for level 0 and 2% for level 6.
@@ -14784,7 +15128,7 @@ function adler32(adler, buf, len, pos) {
 
 module.exports = adler32;
 
-},{}],51:[function(require,module,exports){
+},{}],52:[function(require,module,exports){
 module.exports = {
 
   /* Allowed flush values; see deflate() and inflate() below for details */
@@ -14833,7 +15177,7 @@ module.exports = {
   //Z_NULL:                 null // Use -1 or null inline, depending on var type
 };
 
-},{}],52:[function(require,module,exports){
+},{}],53:[function(require,module,exports){
 'use strict';
 
 // Note: we can't get significant speed boost here.
@@ -14876,7 +15220,7 @@ function crc32(crc, buf, len, pos) {
 
 module.exports = crc32;
 
-},{}],53:[function(require,module,exports){
+},{}],54:[function(require,module,exports){
 'use strict';
 
 var utils   = require('../utils/common');
@@ -16643,7 +16987,7 @@ exports.deflatePrime = deflatePrime;
 exports.deflateTune = deflateTune;
 */
 
-},{"../utils/common":48,"./adler32":50,"./crc32":52,"./messages":58,"./trees":59}],54:[function(require,module,exports){
+},{"../utils/common":49,"./adler32":51,"./crc32":53,"./messages":59,"./trees":60}],55:[function(require,module,exports){
 'use strict';
 
 
@@ -16685,7 +17029,7 @@ function GZheader() {
 
 module.exports = GZheader;
 
-},{}],55:[function(require,module,exports){
+},{}],56:[function(require,module,exports){
 'use strict';
 
 // See state defs from inflate.js
@@ -17013,7 +17357,7 @@ module.exports = function inflate_fast(strm, start) {
   return;
 };
 
-},{}],56:[function(require,module,exports){
+},{}],57:[function(require,module,exports){
 'use strict';
 
 
@@ -18518,7 +18862,7 @@ exports.inflateSyncPoint = inflateSyncPoint;
 exports.inflateUndermine = inflateUndermine;
 */
 
-},{"../utils/common":48,"./adler32":50,"./crc32":52,"./inffast":55,"./inftrees":57}],57:[function(require,module,exports){
+},{"../utils/common":49,"./adler32":51,"./crc32":53,"./inffast":56,"./inftrees":58}],58:[function(require,module,exports){
 'use strict';
 
 
@@ -18847,7 +19191,7 @@ module.exports = function inflate_table(type, lens, lens_index, codes, table, ta
   return 0;
 };
 
-},{"../utils/common":48}],58:[function(require,module,exports){
+},{"../utils/common":49}],59:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -18862,7 +19206,7 @@ module.exports = {
   '-6':   'incompatible version' /* Z_VERSION_ERROR (-6) */
 };
 
-},{}],59:[function(require,module,exports){
+},{}],60:[function(require,module,exports){
 'use strict';
 
 
@@ -20063,7 +20407,7 @@ exports._tr_flush_block  = _tr_flush_block;
 exports._tr_tally = _tr_tally;
 exports._tr_align = _tr_align;
 
-},{"../utils/common":48}],60:[function(require,module,exports){
+},{"../utils/common":49}],61:[function(require,module,exports){
 'use strict';
 
 
@@ -20094,7 +20438,7 @@ function ZStream() {
 
 module.exports = ZStream;
 
-},{}],61:[function(require,module,exports){
+},{}],62:[function(require,module,exports){
 /* Copyright @ 2015 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20135,7 +20479,7 @@ module.exports = function arrayEquals(array) {
 };
 
 
-},{}],62:[function(require,module,exports){
+},{}],63:[function(require,module,exports){
 /* Copyright @ 2015 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20153,7 +20497,7 @@ module.exports = function arrayEquals(array) {
 
 exports.Interop = require('./interop');
 
-},{"./interop":63}],63:[function(require,module,exports){
+},{"./interop":64}],64:[function(require,module,exports){
 /* Copyright @ 2015 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20876,7 +21220,7 @@ Interop.prototype.toUnifiedPlan = function(desc) {
     //#endregion
 };
 
-},{"./array-equals":61,"./transform":64}],64:[function(require,module,exports){
+},{"./array-equals":62,"./transform":65}],65:[function(require,module,exports){
 /* Copyright @ 2015 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20990,7 +21334,22 @@ exports.parse = function(sdp) {
 };
 
 
-},{"sdp-transform":72}],65:[function(require,module,exports){
+},{"sdp-transform":73}],66:[function(require,module,exports){
+/* Copyright @ 2015 Atlassian Pty Ltd
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 var transform = require('sdp-transform');
 var transformUtils = require('./transform-utils');
 var parseSsrcs = transformUtils.parseSsrcs;
@@ -21105,20 +21464,23 @@ function explodeRemoteSimulcast(mLine) {
     };
 }
 
-function squeezeRemoteSimulcast(mLine) {
+function implodeRemoteSimulcast(mLine) {
 
     if (!mLine || !Array.isArray(mLine.ssrcGroups)) {
+        console.debug('Halt: There are no SSRC groups in the remote ' +
+                'description.');
         return;
     }
 
     var sources = parseSsrcs(mLine);
 
     // Find the SIM group and nuke it.
-    mLine.ssrcGroups.some(function (simulcastGroup) {
+    mLine.ssrcGroups.forEach(function (simulcastGroup) {
         if (simulcastGroup.semantics !== 'SIM') {
-            return false;
+            return;
         }
 
+        console.debug("Imploding SIM group: " + simulcastGroup.ssrcs);
         // Schedule the SIM group for nuking.
         simulcastGroup.nuke = true;
 
@@ -21151,7 +21513,7 @@ function squeezeRemoteSimulcast(mLine) {
             })
         }
 
-        return true;
+        return;
     });
 
     mLine.ssrcs = writeSsrcs(sources);
@@ -21342,7 +21704,7 @@ Simulcast.prototype.mungeRemoteDescription = function (desc) {
         if (self.options.explodeRemoteSimulcast) {
             explodeRemoteSimulcast(mLine);
         } else {
-            squeezeRemoteSimulcast(mLine);
+            implodeRemoteSimulcast(mLine);
         }
 
         // If native simulcast is enabled, we must append the x-goog-conference
@@ -21392,7 +21754,22 @@ Simulcast.prototype.mungeLocalDescription = function (desc) {
 
 module.exports = Simulcast;
 
-},{"./transform-utils":66,"sdp-transform":68}],66:[function(require,module,exports){
+},{"./transform-utils":67,"sdp-transform":69}],67:[function(require,module,exports){
+/* Copyright @ 2015 Atlassian Pty Ltd
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 exports.writeSsrcs = function(sources, order) {
   var ssrcs = [];
 
@@ -21443,7 +21820,7 @@ exports.parseSsrcs = function (mLine) {
 };
 
 
-},{}],67:[function(require,module,exports){
+},{}],68:[function(require,module,exports){
 var grammar = module.exports = {
   v: [{
       name: 'version',
@@ -21692,7 +22069,7 @@ Object.keys(grammar).forEach(function (key) {
   });
 });
 
-},{}],68:[function(require,module,exports){
+},{}],69:[function(require,module,exports){
 var parser = require('./parser');
 var writer = require('./writer');
 
@@ -21702,7 +22079,7 @@ exports.parseFmtpConfig = parser.parseFmtpConfig;
 exports.parsePayloads = parser.parsePayloads;
 exports.parseRemoteCandidates = parser.parseRemoteCandidates;
 
-},{"./parser":69,"./writer":70}],69:[function(require,module,exports){
+},{"./parser":70,"./writer":71}],70:[function(require,module,exports){
 var toIntIfInt = function (v) {
   return String(Number(v)) === v ? Number(v) : v;
 };
@@ -21797,7 +22174,7 @@ exports.parseRemoteCandidates = function (str) {
   return candidates;
 };
 
-},{"./grammar":67}],70:[function(require,module,exports){
+},{"./grammar":68}],71:[function(require,module,exports){
 var grammar = require('./grammar');
 
 // customized util.format - discards excess arguments and can void middle ones
@@ -21913,7 +22290,7 @@ module.exports = function (session, opts) {
   return sdp.join('\r\n') + '\r\n';
 };
 
-},{"./grammar":67}],71:[function(require,module,exports){
+},{"./grammar":68}],72:[function(require,module,exports){
 var grammar = module.exports = {
   v: [{
       name: 'version',
@@ -22164,9 +22541,9 @@ Object.keys(grammar).forEach(function (key) {
   });
 });
 
-},{}],72:[function(require,module,exports){
-arguments[4][68][0].apply(exports,arguments)
-},{"./parser":73,"./writer":74,"dup":68}],73:[function(require,module,exports){
+},{}],73:[function(require,module,exports){
+arguments[4][69][0].apply(exports,arguments)
+},{"./parser":74,"./writer":75,"dup":69}],74:[function(require,module,exports){
 var toIntIfInt = function (v) {
   return String(Number(v)) === v ? Number(v) : v;
 };
@@ -22261,16 +22638,16 @@ exports.parseRemoteCandidates = function (str) {
   return candidates;
 };
 
-},{"./grammar":71}],74:[function(require,module,exports){
-arguments[4][70][0].apply(exports,arguments)
-},{"./grammar":71,"dup":70}],75:[function(require,module,exports){
+},{"./grammar":72}],75:[function(require,module,exports){
+arguments[4][71][0].apply(exports,arguments)
+},{"./grammar":72,"dup":71}],76:[function(require,module,exports){
 var MediaStreamType = {
     VIDEO_TYPE: "Video",
 
     AUDIO_TYPE: "Audio"
 };
 module.exports = MediaStreamType;
-},{}],76:[function(require,module,exports){
+},{}],77:[function(require,module,exports){
 var RTCEvents = {
     RTC_READY: "rtc.ready",
     DATA_CHANNEL_OPEN: "rtc.data_channel_open",
@@ -22281,7 +22658,7 @@ var RTCEvents = {
 };
 
 module.exports = RTCEvents;
-},{}],77:[function(require,module,exports){
+},{}],78:[function(require,module,exports){
 var Resolutions = {
     "1080": {
         width: 1920,
@@ -22335,7 +22712,7 @@ var Resolutions = {
     }
 };
 module.exports = Resolutions;
-},{}],78:[function(require,module,exports){
+},{}],79:[function(require,module,exports){
 var StreamEventTypes = {
     EVENT_TYPE_LOCAL_CREATED: "stream.local_created",
 
@@ -22350,7 +22727,7 @@ var StreamEventTypes = {
 };
 
 module.exports = StreamEventTypes;
-},{}],79:[function(require,module,exports){
+},{}],80:[function(require,module,exports){
 var AuthenticationEvents = {
     /**
      * Event callback arguments:
@@ -22364,7 +22741,7 @@ var AuthenticationEvents = {
 };
 module.exports = AuthenticationEvents;
 
-},{}],80:[function(require,module,exports){
+},{}],81:[function(require,module,exports){
 var DesktopSharingEventTypes = {
     INIT: "ds.init",
 
@@ -22374,12 +22751,28 @@ var DesktopSharingEventTypes = {
 };
 
 module.exports = DesktopSharingEventTypes;
-},{}],81:[function(require,module,exports){
+},{}],82:[function(require,module,exports){
+module.exports = {
+    /**
+     * An event carrying connection statistics.
+     */
+    CONNECTION_STATS: "statistics.connectionstats",
+    /**
+     * FIXME: needs documentation.
+     */
+    AUDIO_LEVEL: "statistics.audioLevel",
+    /**
+     * FIXME: needs documentation.
+     */
+    STOP: "statistics.stop"
+};
+
+},{}],83:[function(require,module,exports){
 var Constants = {
     LOCAL_JID: 'local'
 };
 module.exports = Constants;
-},{}],82:[function(require,module,exports){
+},{}],84:[function(require,module,exports){
 var XMPPEvents = {
     // Designates an event indicating that the connection to the XMPP server
     // failed.
@@ -22397,6 +22790,8 @@ var XMPPEvents = {
     KICKED: "xmpp.kicked",
     // Designates an event indicating that the userID for a specific JID has
     // changed.
+    // Note: currently this event fires every time we receive presence from
+    // someone (regardless of whether or not the "userID" changed).
     USER_ID_CHANGED: "xmpp.user_id_changed",
     // Designates an event indicating that we have joined the XMPP MUC.
     MUC_JOINED: "xmpp.muc_joined",
@@ -22427,6 +22822,8 @@ var XMPPEvents = {
     SENDING_CHAT_MESSAGE: "xmpp.sending_chat_message",
     // Designates an event indicating that the video type (e.g. 'camera' or
     // 'screen') for a participant has changed.
+    // Note: currently this event fires every time we receive presence from
+    // someone (regardless of whether or not the "video type" changed).
     PARTICIPANT_VIDEO_TYPE_CHANGED: "xmpp.video_type",
     // Designates an event indicating that a participant in the XMPP MUC has
     // advertised that they have audio muted (or unmuted).
@@ -22443,6 +22840,11 @@ var XMPPEvents = {
     // Designates an event indicating that we should join the conference with
     // audio and/or video muted.
     START_MUTED_FROM_FOCUS: "xmpp.start_muted_from_focus",
+    // Designates an event indicating that a remote participant's available
+    // devices (whether he supports a audio and/or video) changed.
+    // Note: currently this event fires every time we receive presence from
+    // someone (regardless of whether or not the devices changed).
+    DEVICE_AVAILABLE: "xmpp.device_available",
 
 
     PEERCONNECTION_READY: "xmpp.peerconnection_ready",
@@ -22451,7 +22853,6 @@ var XMPPEvents = {
     AUTHENTICATION_REQUIRED: "xmpp.authentication_required",
     CHAT_ERROR_RECEIVED: "xmpp.chat_error_received",
     ETHERPAD: "xmpp.etherpad",
-    DEVICE_AVAILABLE: "xmpp.device_available",
     BRIDGE_DOWN: "xmpp.bridge_down",
     PRESENCE_STATUS: "xmpp.presence_status",
     RESERVATION_ERROR: "xmpp.room_reservation_error",
