@@ -560,6 +560,9 @@ var XMPP = {
     getPrezi: function () {
         return connection.emuc.getPrezi(this.myJid());
     },
+    getRoomJid: function () {
+      return connection.emuc.roomjid;
+    },
     removePreziFromPresence: function () {
         connection.emuc.removePreziFromPresence();
         connection.emuc.sendPresence();
