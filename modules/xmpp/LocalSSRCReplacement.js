@@ -142,6 +142,15 @@ function generateRecvonlySSRC() {
 
 var LocalSSRCReplacement = {
     /**
+     * Initialize the module
+     */
+    init: function() {
+        localVideoSSRC = null;
+        localRecvOnlySSRC = null;
+        localRecvOnlyCName = null;
+    },
+
+    /**
      * Method must be called before 'session-initiate' or 'session-invite' is
      * sent. Scans the IQ for local video SSRC and stores it if detected.
      *
