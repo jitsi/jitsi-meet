@@ -90,8 +90,8 @@ var CallStats = {
             this.userID = Settings.getCallStatsUserName();
 
             var location = window.location;
+            this.confID = APP.xmpp.getRoomJid();
 
-            this.confID = location.hostname + location.pathname;
 
             callStats.initialize(
                     config.callStatsID, config.callStatsSecret,
