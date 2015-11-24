@@ -8,7 +8,8 @@ var JitsiConnectionErrors = {
      */
     PASSWORD_REQUIRED: "connection.passwordRequired",
     /**
-     * Indicates that a connection error occurred when trying to join a conference.
+     * Indicates that a connection error occurred when trying to join a
+     * conference.
      */
     CONNECTION_ERROR: "connection.connectionError",
     /**

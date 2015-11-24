@@ -56,7 +56,8 @@ var JitsiConferenceEvents = {
      */
     TRACK_AUDIO_LEVEL_CHANGED: "conference.audioLevelsChanged",
     /**
-     * Indicates that the connection to the conference has been interrupted for some reason.
+     * Indicates that the connection to the conference has been interrupted
+     * for some reason.
      */
     CONNECTION_INTERRUPTED: "conference.connecionInterrupted",
     /**

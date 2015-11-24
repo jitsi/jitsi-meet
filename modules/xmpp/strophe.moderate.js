@@ -22,7 +22,8 @@ module.exports = function (XMPP, eventEmitter) {
         },
         setMute: function (jid, mute) {
             logger.info("set mute", mute);
-            var iqToFocus = $iq({to: this.connection.emuc.focusMucJid, type: 'set'})
+            var iqToFocus = $iq(
+                {to: this.connection.emuc.focusMucJid, type: 'set'})
                 .c('mute', {
                     xmlns: 'http://jitsi.org/jitmeet/audio',
                     jid: jid
@@ -59,4 +60,4 @@ module.exports = function (XMPP, eventEmitter) {
             this.connection.emuc.kick(jid);
         }
     });
-}
+};

@@ -1,3 +1,4 @@
+/* global Strophe */
 /**
  * Strophe logger implementation. Logs from level WARN and above.
  */
