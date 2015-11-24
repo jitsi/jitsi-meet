@@ -43,7 +43,7 @@ var CallStats = {
         this.userID = Settings.getCallStatsUserName();
 
         var location = window.location;
-        this.confID = location.hostname + location.pathname;
+        this.confID = APP.xmpp.getRoomJid();
 
         //userID is generated or given by the origin server
         callStats.initialize(config.callStatsID,
