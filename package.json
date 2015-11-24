@@ -27,7 +27,15 @@
       "jitsi-meet-logger": "jitsi/jitsi-meet-logger"
   },
   "devDependencies": {
-    "browserify": "11.1.x"
+    "browserify": "11.1.x",
+    "jshint": "^2.8.0",
+    "precommit-hook": "^3.0.0"
   },
+  "scripts": {
+    "lint": "./node_modules/.bin/jshint ."
+  },
+  "pre-commit": [
+    "lint"
+  ],
   "license": "Apache-2.0"
 }
