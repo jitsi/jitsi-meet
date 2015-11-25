@@ -16,7 +16,7 @@ var pluralNouns = [
     "Priests", "Rats", "Reptiles", "Reptilians", "Rhinos", "Seagulls", "Sheep",
     "Siblings", "Snakes", "Spaghetti", "Spiders", "Squid", "Squirrels",
     "Stars", "Students", "Teachers", "Tigers", "Tomatoes", "Trees", "Vampires",
-    "Vegetables", "Viruses", "Vulcans", "Warewolves", "Weasels", "Whales",
+    "Vegetables", "Viruses", "Vulcans", "Weasels", "Werewolves", "Whales",
     "Witches", "Wizards", "Wolves", "Workers", "Worms", "Zebras"
 ];
 //var places = [
