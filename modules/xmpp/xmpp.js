@@ -596,6 +596,19 @@ var XMPP = {
             return null;
         return connection.jingle.activecall.getSsrcOwner(ssrc);
     },
+    /**
+     * Gets the SSRC of local media stream.
+     * @param mediaType the media type that tells whether we want to get
+     *        the SSRC of local audio or video stream.
+     * @returns {*} the SSRC number for local media stream or <tt>null</tt> if
+     *              not available.
+     */
+    getLocalSSRC: function (mediaType) {
+        if (!this.isConferenceInProgress()) {
+            return null;
+        }
+        return connection.jingle.activecall.getLocalSSRC(mediaType);
+    },
     // Returns true iff we have joined the MUC.
     isMUCJoined: function () {
         return connection === null ? false : connection.emuc.joined;
