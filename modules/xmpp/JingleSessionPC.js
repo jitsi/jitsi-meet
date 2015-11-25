@@ -40,7 +40,6 @@ function JingleSessionPC(me, sid, connection, service, eventEmitter) {
     this.switchstreams = false;
 
     this.wait = true;
-    this.localStreamsSSRC = null;
     this.ssrcOwners = {};
     this.ssrcVideoTypes = {};
     this.eventEmitter = eventEmitter;
@@ -256,8 +255,7 @@ JingleSessionPC.prototype.accept = function () {
     // FIXME why do we generate session-accept in 3 different places ?
     prsdp.toJingle(
         accept,
-        this.initiator == this.me ? 'initiator' : 'responder',
-        this.localStreamsSSRC);
+        this.initiator == this.me ? 'initiator' : 'responder');
     var sdp = this.peerconnection.localDescription.sdp;
     while (SDPUtil.find_line(sdp, 'a=inactive')) {
         // FIXME: change any inactive to sendrecv or whatever they were originally
@@ -484,8 +482,7 @@ JingleSessionPC.prototype.createdOffer = function (sdp) {
                 sid: this.sid});
         self.localSDP.toJingle(
             init,
-            this.initiator == this.me ? 'initiator' : 'responder',
-            this.localStreamsSSRC);
+            this.initiator == this.me ? 'initiator' : 'responder');
 
         SSRCReplacement.processSessionInit(init);
 
@@ -1427,13 +1424,6 @@ JingleSessionPC.prototype.setLocalDescription = function () {
                     'ssrc': ssrc.id,
                     'type': media.type
                 });
-            });
-        }
-        else if(self.localStreamsSSRC && self.localStreamsSSRC[media.type])
-        {
-            newssrcs.push({
-                'ssrc': self.localStreamsSSRC[media.type],
-                'type': media.type
             });
         }
 
