@@ -298,6 +298,17 @@ function setupListeners(conference) {
             Strophe.getResourceFromJid(from), displayName);
     });
 
+    conference.room.addListener(XMPPEvents.CONNECTION_INTERRUPTED, function () {
+        conference.eventEmitter.emit(JitsiConferenceEvents.CONNECTION_INTERRUPTED);
+    });
+
+    conference.room.addListener(XMPPEvents.CONNECTION_RESTORED, function () {
+        conference.eventEmitter.emit(JitsiConferenceEvents.CONNECTION_RESTORED);
+    });
+    conference.room.addListener(XMPPEvents.CONFERENCE_SETUP_FAILED, function () {
+        conference.eventEmitter.emit(JitsiConferenceEvents.SETUP_FAILED);
+    });
+
     if(conference.statistics) {
         conference.statistics.addAudioLevelListener(function (ssrc, level) {
             var userId = null;
@@ -344,7 +355,8 @@ var JitsiConferenceErrors = {
      */
     PASSWORD_REQUIRED: "conference.passwordRequired",
     /**
-     * Indicates that a connection error occurred when trying to join a conference.
+     * Indicates that a connection error occurred when trying to join a
+     * conference.
      */
     CONNECTION_ERROR: "conference.connectionError",
     /**
@@ -417,13 +429,18 @@ var JitsiConferenceEvents = {
      */
     TRACK_AUDIO_LEVEL_CHANGED: "conference.audioLevelsChanged",
     /**
-     * Indicates that the connection to the conference has been interrupted for some reason.
+     * Indicates that the connection to the conference has been interrupted
+     * for some reason.
      */
     CONNECTION_INTERRUPTED: "conference.connecionInterrupted",
     /**
      * Indicates that the connection to the conference has been restored.
      */
     CONNECTION_RESTORED: "conference.connecionRestored",
+    /**
+     * Indicates that the conference setup failed.
+     */
+    SETUP_FAILED: "conference.setup_failed",
     /**
      * Indicates that conference has been joined.
      */
@@ -548,7 +565,8 @@ var JitsiConnectionErrors = {
      */
     PASSWORD_REQUIRED: "connection.passwordRequired",
     /**
-     * Indicates that a connection error occurred when trying to join a conference.
+     * Indicates that a connection error occurred when trying to join a
+     * conference.
      */
     CONNECTION_ERROR: "connection.connectionError",
     /**
@@ -10844,7 +10862,8 @@ module.exports = function() {
                 }
 
                 this.connection.addHandler(
-                    this.onRayo.bind(this), this.RAYO_XMLNS, 'iq', 'set', null, null);
+                    this.onRayo.bind(this),
+                    this.RAYO_XMLNS, 'iq', 'set', null, null);
             },
             onRayo: function (iq) {
                 logger.info("Rayo IQ", iq);
@@ -10886,7 +10905,7 @@ module.exports = function() {
                         var resource = $(result).find('ref').attr('uri');
                         this.call_resource = resource.substr('xmpp:'.length);
                         logger.info(
-                                "Received call resource: " + this.call_resource);
+                            "Received call resource: " + this.call_resource);
                     },
                     function (error) {
                         logger.info('Dial error ', error);
@@ -10930,6 +10949,7 @@ module.exports = function() {
 }).call(this,"/modules/xmpp/strophe.rayo.js")
 },{"jitsi-meet-logger":45}],38:[function(require,module,exports){
 (function (__filename){
+/* global Strophe */
 /**
  * Strophe logger implementation. Logs from level WARN and above.
  */

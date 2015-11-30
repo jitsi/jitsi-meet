@@ -85,6 +85,15 @@ function onConnectionSuccess(){
       function(userID, audioLevel){
           // console.log(userID + " - " + audioLevel);
       });
+    room.on(JitsiMeetJS.events.conference.CONNECTION_INTERRUPTED, function () {
+        console.log("interrupted");
+    });
+    room.on(JitsiMeetJS.events.conference.CONNECTION_RESTORED, function () {
+        console.log("restored");
+    });
+    room.on(JitsiMeetJS.events.conference.SETUP_FAILED, function () {
+        console.log("failed");
+    });
     room.join();
 };
 

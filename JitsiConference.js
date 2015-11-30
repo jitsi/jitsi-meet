@@ -296,6 +296,17 @@ function setupListeners(conference) {
             Strophe.getResourceFromJid(from), displayName);
     });
 
+    conference.room.addListener(XMPPEvents.CONNECTION_INTERRUPTED, function () {
+        conference.eventEmitter.emit(JitsiConferenceEvents.CONNECTION_INTERRUPTED);
+    });
+
+    conference.room.addListener(XMPPEvents.CONNECTION_RESTORED, function () {
+        conference.eventEmitter.emit(JitsiConferenceEvents.CONNECTION_RESTORED);
+    });
+    conference.room.addListener(XMPPEvents.CONFERENCE_SETUP_FAILED, function () {
+        conference.eventEmitter.emit(JitsiConferenceEvents.SETUP_FAILED);
+    });
+
     if(conference.statistics) {
         conference.statistics.addAudioLevelListener(function (ssrc, level) {
             var userId = null;
