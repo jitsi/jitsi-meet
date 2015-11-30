@@ -432,11 +432,11 @@ var JitsiConferenceEvents = {
      * Indicates that the connection to the conference has been interrupted
      * for some reason.
      */
-    CONNECTION_INTERRUPTED: "conference.connecionInterrupted",
+    CONNECTION_INTERRUPTED: "conference.connectionInterrupted",
     /**
      * Indicates that the connection to the conference has been restored.
      */
-    CONNECTION_RESTORED: "conference.connecionRestored",
+    CONNECTION_RESTORED: "conference.connectionRestored",
     /**
      * Indicates that the conference setup failed.
      */
@@ -586,15 +586,15 @@ var JitsiConnnectionEvents = {
     /**
      * Indicates that the connection has been failed for some reason.
      */
-    CONNECTION_FAILED: "connection.connecionFailed",
+    CONNECTION_FAILED: "connection.connectionFailed",
     /**
      * Indicates that the connection has been established.
      */
-    CONNECTION_ESTABLISHED: "connection.connecionEstablished",
+    CONNECTION_ESTABLISHED: "connection.connectionEstablished",
     /**
      * Indicates that the connection has been disconnected.
      */
-    CONNECTION_DISCONNECTED: "connection.connecionDisconnected",
+    CONNECTION_DISCONNECTED: "connection.connectionDisconnected",
     /**
      * Indicates that the perfomed action cannot be executed because the
      * connection is not in the correct state(connected, disconnected, etc.)

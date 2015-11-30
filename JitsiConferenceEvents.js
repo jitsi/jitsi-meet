@@ -59,11 +59,11 @@ var JitsiConferenceEvents = {
      * Indicates that the connection to the conference has been interrupted
      * for some reason.
      */
-    CONNECTION_INTERRUPTED: "conference.connecionInterrupted",
+    CONNECTION_INTERRUPTED: "conference.connectionInterrupted",
     /**
      * Indicates that the connection to the conference has been restored.
      */
-    CONNECTION_RESTORED: "conference.connecionRestored",
+    CONNECTION_RESTORED: "conference.connectionRestored",
     /**
      * Indicates that the conference setup failed.
      */
