@@ -25,7 +25,7 @@ var buttonHandlers = {
         } else {
             AnalyticsAdapter.sendEvent('toolbar.audio.muted');
         }
-        return APP.UI.toggleAudio();
+        return APP.conference.toggleAudioMuted();
     },
     "toolbar_button_camera": function () {
         if (APP.RTC.localVideo.isMuted()) {
@@ -33,7 +33,7 @@ var buttonHandlers = {
         } else {
             AnalyticsAdapter.sendEvent('toolbar.video.disabled');
         }
-        return APP.UI.toggleVideo();
+        return APP.conference.toggleVideoMuted();
     },
     /*"toolbar_button_authentication": function () {
         return Toolbar.authenticateClicked();

@@ -23,8 +23,8 @@ var commands = {};
 function initCommands() {
     commands = {
         displayName: APP.UI.inputDisplayNameHandler,
-        toggleAudio: APP.UI.toggleAudio,
-        toggleVideo: APP.UI.toggleVideo,
+        toggleAudio: APP.conference.toggleAudioMuted,
+        toggleVideo: APP.conference.toggleVideoMuted,
         toggleFilmStrip: APP.UI.toggleFilmStrip,
         toggleChat: APP.UI.toggleChat,
         toggleContactList: APP.UI.toggleContactList

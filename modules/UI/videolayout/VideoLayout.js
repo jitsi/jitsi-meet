@@ -56,8 +56,9 @@ var VideoLayout = (function (my) {
     };
 
     my.changeLocalAudio = function(stream, isMuted) {
-        if (isMuted)
-            APP.UI.setAudioMuted(true, true);
+        if (isMuted) { // FIXME remove this?
+            APP.conference.muteAudio(true);
+        }
         APP.RTC.attachMediaStream($('#localAudio'), stream.getOriginalStream());
         var localAudio = document.getElementById('localAudio');
         // Writing volume not allowed in IE
@@ -177,7 +178,7 @@ var VideoLayout = (function (my) {
         console.info("electLastVisibleVideo: " + jid);
         return jid;
     };
-    
+
     my.onRemoteStreamAdded = function (stream) {
         if (stream.peerjid) {
             VideoLayout.ensurePeerContainerExists(stream.peerjid);
@@ -277,9 +278,9 @@ var VideoLayout = (function (my) {
     /**
      * Checks if container for participant identified by given peerJid exists
      * in the document and creates it eventually.
-     * 
+     *
      * @param peerJid peer Jid to check.
-     * 
+     *
      * @return Returns <tt>true</tt> if the peer container exists,
      * <tt>false</tt> - otherwise
      */
@@ -652,9 +653,7 @@ var VideoLayout = (function (my) {
      * @param endpointsEnteringLastN the list currently entering last N
      * endpoints
      */
-    my.onLastNEndpointsChanged = function (lastNEndpoints,
-                                           endpointsEnteringLastN,
-                                           stream) {
+    my.onLastNEndpointsChanged = function (lastNEndpoints, endpointsEnteringLastN) {
         if (lastNCount !== lastNEndpoints.length)
             lastNCount = lastNEndpoints.length;
 
@@ -847,7 +846,7 @@ var VideoLayout = (function (my) {
     /**
      * Hides all the indicators
      */
-    my.onStatsStop = function () {
+    my.hideStats = function () {
         for(var video in remoteVideos) {
             remoteVideos[video].hideIndicator();
         }
@@ -879,7 +878,7 @@ var VideoLayout = (function (my) {
 
         VideoLayout.resizeThumbnails();
     };
-    
+
     my.onVideoTypeChanged = function (resourceJid, newVideoType) {
         if (remoteVideoTypes[resourceJid] === newVideoType) {
             return;

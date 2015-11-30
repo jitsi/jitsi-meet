@@ -1,4 +1,5 @@
 /* jshint -W117 */
+/* global JitsiMeetJS */
 /* application specific logic */
 
 require("jquery");
@@ -12,18 +13,42 @@ window.toastr = require("toastr");
 require("jQuery-Impromptu");
 require("autosize");
 
-var APP =
-{
+function createConference(connection, room) {
+    var localTracks = [];
+    var remoteTracks = {};
+
+    return {
+        muteAudio: function (mute) {
+
+        },
+
+        muteVideo: function (mute) {
+
+        },
+
+        toggleAudioMuted: function () {
+            APP.UI.setAudioMuted(muted);
+        },
+
+        toggleVideoMuted: function () {
+            APP.UI.setVideoMuted(muted);
+        }
+    };
+}
+
+var APP = {
     init: function () {
+        this.JitsiMeetJS = JitsiMeetJS;
+        this.JitsiMeetJS.init();
+        this.conference = null;
+
         this.UI = require("./modules/UI/UI");
         this.API = require("./modules/API/API");
         this.connectionquality =
             require("./modules/connectionquality/connectionquality");
         this.statistics = require("./modules/statistics/statistics");
-        this.RTC = require("./modules/RTC/RTC");
         this.desktopsharing =
             require("./modules/desktopsharing/desktopsharing");
-        this.xmpp = require("./modules/xmpp/xmpp");
         this.keyboardshortcut =
             require("./modules/keyboardshortcut/keyboardshortcut");
         this.translation = require("./modules/translation/translation");
@@ -34,15 +59,101 @@ var APP =
     }
 };
 
-function init() {
+function connect() {
+    var connection = new APP.JitsiMeetJS.JitsiConnection(null, null, {
+        hosts: config.hosts,
+        bosh: config.bosh,
+        clientNode: config.clientNode
+    });
 
-    APP.desktopsharing.init();
-    APP.RTC.start();
-    APP.xmpp.start();
-    APP.statistics.start();
-    APP.connectionquality.init();
-    APP.keyboardshortcut.init();
-    APP.members.start();
+    var events = APP.JitsiMeetJS.events.connection;
+
+    return new Promise(function (resolve, reject) {
+        var onConnectionSuccess = function () {
+            console.log('CONNECTED');
+            resolve(connection);
+        };
+
+        var onConnectionFailed = function () {
+            console.error('CONNECTION FAILED');
+            reject();
+        };
+
+        var onDisconnect = function () {
+            console.log('DISCONNECT');
+            connection.removeEventListener(
+                events.CONNECTION_ESTABLISHED, onConnectionSuccess
+            );
+            connection.removeEventListener(
+                events.CONNECTION_FAILED, onConnectionFailed
+            );
+            connection.removeEventListener(
+                events.CONNECTION_DISCONNECTED, onDisconnect
+            );
+        };
+
+        connection.addEventListener(
+            events.CONNECTION_ESTABLISHED, onConnectionSuccess
+        );
+        connection.addEventListener(
+            events.CONNECTION_FAILED, onConnectionFailed
+        );
+        connection.addEventListener(
+            events.CONNECTION_DISCONNECTED, onDisconnect
+        );
+
+        connection.connect();
+    }).catch(function (errType, msg) {
+        // TODO handle OTHER_ERROR only
+        UI.notifyConnectionFailed(msg);
+
+        // rethrow
+        throw new Error(errType);
+    });
+}
+
+var ConferenceEvents = APP.JitsiMeetJS.events.conference;
+function initConference(connection, roomName) {
+    var room = connection.initJitsiConference(roomName, {
+        openSctp: config.openSctp,
+        disableAudioLevels: config.disableAudioLevels
+    });
+
+    room.on(ConferenceEvents.IN_LAST_N_CHANGED, function (inLastN) {
+        if (config.muteLocalVideoIfNotInLastN) {
+            // TODO mute or unmute if required
+            // mark video on UI
+            // UI.markVideoMuted(true/false);
+        }
+    });
+
+    room.on(
+        ConferenceEvents.ACTIVE_SPEAKER_CHANGED,
+        function (id) {
+            APP.UI.markDominantSpiker(id);
+        }
+    );
+    room.on(
+        ConferenceEvents.LAST_N_ENDPOINTS_CHANGED,
+        function (ids) {
+            APP.UI.handleLastNEndpoints(ids);
+        }
+    );
+
+    return initConference(connection, room);
+}
+
+function init() {
+    connect().then(function (connection) {
+        return initConference(connection, UI.generateRoomName());
+    }).then(function (conference) {
+        APP.conference = conference;
+        APP.desktopsharing.init();
+        APP.statistics.start();
+        APP.connectionquality.init();
+        APP.keyboardshortcut.init();
+        APP.members.start();
+    });
 }
 
 /**
@@ -90,11 +201,12 @@ $(document).ready(function () {
 
     APP.translation.init();
 
-    if(APP.API.isEnabled())
+    if(APP.API.isEnabled()) {
         APP.API.init();
+    }
 
-    APP.UI.start(obtainConfigAndInit);
-
+    APP.UI.start();
+    obtainConfigAndInit();
 });
 
 $(window).bind('beforeunload', function () {
@@ -103,4 +215,3 @@ $(window).bind('beforeunload', function () {
 });
 
 module.exports = APP;
-

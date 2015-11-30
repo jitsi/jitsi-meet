@@ -26,10 +26,6 @@ var JitsiPopover = require("./util/JitsiPopover");
 var CQEvents = require("../../service/connectionquality/CQEvents");
 var DesktopSharingEventTypes
     = require("../../service/desktopsharing/DesktopSharingEventTypes");
-var MediaStreamType = require("../../service/RTC/MediaStreamTypes");
-var RTCEvents = require("../../service/RTC/RTCEvents");
-var RTCBrowserType = require("../RTC/RTCBrowserType");
-var StreamEventTypes = require("../../service/RTC/StreamEventTypes");
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 var StatisticsEvents = require("../../service/statistics/Events");
 var UIEvents = require("../../service/UI/UIEvents");
@@ -86,11 +82,6 @@ function promptDisplayName() {
     );
 }
 
-function notifyForInitialMute() {
-    messageHandler.notify(null, "notify.mutedTitle", "connected",
-        "notify.muted", null, {timeOut: 120000});
-}
-
 function setupPrezi() {
     $("#reloadPresentationLink").click(function() {
         Prezi.reloadPresentation();
@@ -110,38 +101,6 @@ function setupToolbars() {
     BottomToolbar.init(eventEmitter);
 }
 
-function streamHandler(stream, isMuted) {
-    switch (stream.type) {
-        case MediaStreamType.AUDIO_TYPE:
-            VideoLayout.changeLocalAudio(stream, isMuted);
-            break;
-        case MediaStreamType.VIDEO_TYPE:
-            VideoLayout.changeLocalVideo(stream, isMuted);
-            break;
-        default:
-            console.error("Unknown stream type: " + stream.type);
-            break;
-    }
-}
-
-function onXmppConnectionFailed(stropheErrorMsg) {
-
-    var title = APP.translation.generateTranslationHTML(
-        "dialog.error");
-
-    var message;
-    if (stropheErrorMsg) {
-        message = APP.translation.generateTranslationHTML(
-            "dialog.connectErrorWithMsg", {msg: stropheErrorMsg});
-    } else {
-        message = APP.translation.generateTranslationHTML(
-            "dialog.connectError");
-    }
-
-    messageHandler.openDialog(
-        title, message, true, {}, function (e, v, m, f) { return false; });
-}
-
 function onDisposeConference(unload) {
     Toolbar.showAuthenticateButton(false);
 }
@@ -153,74 +112,6 @@ function onDisplayNameChanged(jid, displayName) {
 }
 
 function registerListeners() {
-    APP.RTC.addStreamListener(streamHandler,
-        StreamEventTypes.EVENT_TYPE_LOCAL_CREATED);
-    APP.RTC.addStreamListener(streamHandler,
-        StreamEventTypes.EVENT_TYPE_LOCAL_CHANGED);
-    APP.RTC.addStreamListener(function (stream) {
-        VideoLayout.onRemoteStreamAdded(stream);
-    }, StreamEventTypes.EVENT_TYPE_REMOTE_CREATED);
-    APP.RTC.addListener(RTCEvents.LASTN_CHANGED, onLastNChanged);
-    APP.RTC.addListener(RTCEvents.DOMINANTSPEAKER_CHANGED,
-        function (resourceJid) {
-        VideoLayout.onDominantSpeakerChanged(resourceJid);
-    });
-    APP.RTC.addListener(RTCEvents.LASTN_ENDPOINT_CHANGED,
-        function (lastNEndpoints, endpointsEnteringLastN, stream) {
-            VideoLayout.onLastNEndpointsChanged(lastNEndpoints,
-                endpointsEnteringLastN, stream);
-        });
-    APP.RTC.addListener(RTCEvents.AVAILABLE_DEVICES_CHANGED,
-        function (devices) {
-            VideoLayout.setDeviceAvailabilityIcons(null, devices);
-        });
-    APP.RTC.addListener(RTCEvents.VIDEO_MUTE, UI.setVideoMuteButtonsState);
-    APP.RTC.addListener(RTCEvents.DATA_CHANNEL_OPEN, function () {
-        // when the data channel becomes available, tell the bridge about video
-        // selections so that it can do adaptive simulcast,
-        // we want the notification to trigger even if userJid is undefined,
-        // or null.
-        var userResource = APP.UI.getLargeVideoResource();
-        eventEmitter.emit(UIEvents.SELECTED_ENDPOINT, userResource);
-    });
-    APP.statistics.addListener(StatisticsEvents.AUDIO_LEVEL,
-        function(jid, audioLevel) {
-        var resourceJid;
-        if(jid === APP.statistics.LOCAL_JID) {
-            resourceJid = AudioLevels.LOCAL_LEVEL;
-            if(APP.RTC.localAudio.isMuted()) {
-                audioLevel = 0;
-            }
-        } else {
-            resourceJid = Strophe.getResourceFromJid(jid);
-        }
-
-        AudioLevels.updateAudioLevel(resourceJid, audioLevel,
-            UI.getLargeVideoResource());
-    });
-    APP.desktopsharing.addListener(
-        DesktopSharingEventTypes.INIT,
-        ToolbarToggler.showToolbar);
-    APP.desktopsharing.addListener(
-        DesktopSharingEventTypes.SWITCHING_DONE,
-        Toolbar.changeDesktopSharingButtonState);
-    APP.desktopsharing.addListener(
-        DesktopSharingEventTypes.FIREFOX_EXTENSION_NEEDED,
-        function (url) {
-            APP.UI.messageHandler.openMessageDialog(
-                "dialog.extensionRequired",
-                null,
-                null,
-                APP.translation.generateTranslationHTML(
-                    "dialog.firefoxExtensionPrompt", {url: url}));
-        });
-    APP.connectionquality.addListener(CQEvents.LOCALSTATS_UPDATED,
-        VideoLayout.updateLocalConnectionStats);
-    APP.connectionquality.addListener(CQEvents.REMOTESTATS_UPDATED,
-        VideoLayout.updateConnectionStats);
-    APP.connectionquality.addListener(CQEvents.STOP,
-        VideoLayout.onStatsStop);
-    APP.xmpp.addListener(XMPPEvents.CONNECTION_FAILED, onXmppConnectionFailed);
     APP.xmpp.addListener(XMPPEvents.DISPOSE_CONFERENCE, onDisposeConference);
     APP.xmpp.addListener(XMPPEvents.GRACEFUL_SHUTDOWN, function () {
         messageHandler.openMessageDialog(
@@ -287,16 +178,10 @@ function registerListeners() {
         VideoLayout.onAudioMute);
     APP.xmpp.addListener(XMPPEvents.PARTICIPANT_VIDEO_MUTED,
         VideoLayout.onVideoMute);
-    APP.xmpp.addListener(XMPPEvents.AUDIO_MUTED_BY_FOCUS, function (doMuteAudio) {
-        UI.setAudioMuted(doMuteAudio);
-    });
     APP.members.addListener(MemberEvents.DTMF_SUPPORT_CHANGED,
         onDtmfSupportChanged);
     APP.xmpp.addListener(XMPPEvents.START_MUTED_SETTING_CHANGED, function (audio, video) {
         SettingsMenu.setStartMuted(audio, video);
-    });
-    APP.xmpp.addListener(XMPPEvents.START_MUTED_FROM_FOCUS, function (audio, video) {
-        UI.setInitialMuteFromFocus(audio, video);
     });
 
     APP.xmpp.addListener(XMPPEvents.JINGLE_FATAL_ERROR, function (session, error) {
@@ -357,22 +242,6 @@ function registerListeners() {
     }
 }
 
-
-/**
- * Mutes/unmutes the local video.
- *
- * @param mute <tt>true</tt> to mute the local video; otherwise, <tt>false</tt>
- * @param options an object which specifies optional arguments such as the
- * <tt>boolean</tt> key <tt>byUser</tt> with default value <tt>true</tt> which
- * specifies whether the method was initiated in response to a user command (in
- * contrast to an automatic decision taken by the application logic)
- */
-function setVideoMute(mute, options) {
-    APP.RTC.setVideoMute(mute,
-        UI.setVideoMuteButtonsState,
-        options);
-}
-
 function onResize() {
     Chat.resizeChat();
     VideoLayout.resizeLargeVideoContainer();
@@ -388,7 +257,7 @@ function bindEvents() {
     $(window).resize(onResize);
 }
 
-UI.start = function (init) {
+UI.start = function () {
     document.title = interfaceConfig.APP_NAME;
     var setupWelcomePage = null;
     if(config.enableWelcomePage && window.location.pathname == "/" &&
@@ -457,8 +326,6 @@ UI.start = function (init) {
         }
     }
 
-    init();
-
     if (!interfaceConfig.filmStripOnly) {
         toastr.options = {
             "closeButton": true,
@@ -487,6 +354,26 @@ UI.start = function (init) {
         SettingsMenu.init();
     }
 
+};
+
+
+UI.addLocalStream = function (stream, isMuted) {
+    switch (stream.type) {
+    case 'audio':
+        VideoLayout.changeLocalAudio(stream, isMuted);
+        break;
+    case 'video':
+        VideoLayout.changeLocalVideo(stream, isMuted);
+        break;
+    default:
+        console.error("Unknown stream type: " + stream.type);
+        break;
+    }
+};
+
+
+UI.addRemoteStream = function (stream) {
+    VideoLayout.onRemoteStreamAdded(stream);
 };
 
 function chatAddError(errorMessage, originalText) {
@@ -665,13 +552,6 @@ function onAuthenticationRequired(intervalCallback) {
 }
 
 
-function onLastNChanged(oldValue, newValue) {
-    if (config.muteLocalVideoIfNotInLastN) {
-        setVideoMute(!newValue, { 'byUser': false });
-    }
-}
-
-
 UI.toggleSmileys = function () {
     Chat.toggleSmileys();
 };
@@ -694,10 +574,6 @@ UI.toggleContactList = function () {
 
 UI.inputDisplayNameHandler = function (value) {
     VideoLayout.inputDisplayNameHandler(value);
-};
-
-UI.getLargeVideoResource = function () {
-    return VideoLayout.getLargeVideoResource();
 };
 
 /**
@@ -814,51 +690,16 @@ UI.getRoomName = function () {
     return roomName;
 };
 
-UI.setInitialMuteFromFocus = function (muteAudio, muteVideo) {
-    if (muteAudio || muteVideo)
-        notifyForInitialMute();
-    if (muteAudio)
-        UI.setAudioMuted(true);
-    if (muteVideo)
-        UI.setVideoMute(true);
-};
-
-/**
- * Mutes/unmutes the local video.
- */
-UI.toggleVideo = function () {
-    setVideoMute(!APP.RTC.localVideo.isMuted());
-};
-
-/**
- * Mutes / unmutes audio for the local participant.
- */
-UI.toggleAudio = function() {
-    UI.setAudioMuted(!APP.RTC.localAudio.isMuted());
-};
-
 /**
  * Sets muted audio state for the local participant.
  */
-UI.setAudioMuted = function (mute, earlyMute) {
-    var audioMute = null;
-    if (earlyMute)
-        audioMute = function (mute, cb) {
-            return APP.xmpp.sendAudioInfoPresence(mute, cb);
-        };
-    else
-        audioMute = function (mute, cb) {
-            return APP.xmpp.setAudioMute(mute, cb);
-        };
-    if (!audioMute(mute, function () {
-            VideoLayout.showLocalAudioIndicator(mute);
+UI.setAudioMuted = function (mute) {
+    VideoLayout.showLocalAudioIndicator(mute);
+    UIUtil.buttonClick("#toolbar_button_mute", "icon-microphone icon-mic-disabled");
+};
 
-            UIUtil.buttonClick("#toolbar_button_mute", "icon-microphone icon-mic-disabled");
-        })) {
-        // We still click the button.
-        UIUtil.buttonClick("#toolbar_button_mute", "icon-microphone icon-mic-disabled");
-        return;
-    }
+UI.setVideoMuted = function (muted) {
+    $('#toolbar_button_camera').toggleClass("icon-camera-disabled", muted);
 };
 
 UI.addListener = function (type, listener) {
@@ -882,27 +723,79 @@ UI.dockToolbar = function (isDock) {
     return ToolbarToggler.dockToolbar(isDock);
 };
 
-UI.setVideoMuteButtonsState = function (mute) {
-    var video = $('#toolbar_button_camera');
-    var communicativeClass = "icon-camera";
-    var muteClass = "icon-camera icon-camera-disabled";
-
-    if (mute) {
-        video.removeClass(communicativeClass);
-        video.addClass(muteClass);
-    } else {
-        video.removeClass(muteClass);
-        video.addClass(communicativeClass);
-    }
-};
-
 UI.userAvatarChanged = function (resourceJid, thumbUrl, contactListUrl) {
     VideoLayout.userAvatarChanged(resourceJid, thumbUrl);
     ContactList.userAvatarChanged(resourceJid, contactListUrl);
-    if(resourceJid === APP.xmpp.myResource())
+    if(resourceJid === APP.xmpp.myResource()) {
         SettingsMenu.changeAvatar(thumbUrl);
+    }
 };
 
-UI.setVideoMute = setVideoMute;
+UI.notifyConnectionFailed = function (stropheErrorMsg) {
+    var title = APP.translation.generateTranslationHTML(
+        "dialog.error");
+
+    var message;
+    if (stropheErrorMsg) {
+        message = APP.translation.generateTranslationHTML(
+            "dialog.connectErrorWithMsg", {msg: stropheErrorMsg});
+    } else {
+        message = APP.translation.generateTranslationHTML(
+            "dialog.connectError");
+    }
+
+    messageHandler.openDialog(
+        title, message, true, {}, function (e, v, m, f) { return false; }
+    );
+};
+
+UI.notifyFirefoxExtensionRequired = function (url) {
+    messageHandler.openMessageDialog(
+        "dialog.extensionRequired",
+        null,
+        null,
+        APP.translation.generateTranslationHTML(
+            "dialog.firefoxExtensionPrompt", {url: url}
+        )
+    );
+};
+
+UI.notifyInitiallyMuted = function () {
+    messageHandler.notify(
+        null, "notify.mutedTitle", "connected", "notify.muted", null, {timeOut: 120000}
+    );
+};
+
+UI.markDominantSpiker = function (id) {
+    VideoLayout.onDominantSpeakerChanged(id);
+};
+
+UI.handleLastNEndpoints = function (ids) {
+    VideoLayout.onLastNEndpointsChanged(ids, []);
+};
+
+UI.setAudioLevel = function (targetJid, lvl) {
+    AudioLevels.updateAudioLevel(
+        targetJid, lvl, VideoLayout.getLargeVideoResource()
+    );
+};
+
+UI.showToolbar = ToolbarToggler.showToolbar;
+
+UI.updateDesktopSharingButtons = function () {
+    Toolbar.changeDesktopSharingButtonState();
+};
+
+UI.hideStats = function () {
+    VideoLayout.hideStats();
+};
+
+UI.updateLocalStats = function (percent, stats) {
+    VideoLayout.updateLocalConnectionStats(percent, stats);
+};
+
+UI.updateRemoteStats = function (jid, percent, stats) {
+    VideoLayout.updateConnectionStats(jid, percent, stats);
+};
 
 module.exports = UI;
