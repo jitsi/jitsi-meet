@@ -32,13 +32,19 @@ function createConference(connection, room) {
 
         toggleVideoMuted: function () {
             APP.UI.setVideoMuted(muted);
+        },
+
+        setNickname: function (nickname) {
+            // FIXME check if room is available etc.
+            room.setDisplayName(nickname);
         }
     };
 }
 
 var APP = {
+    JitsiMeetJS: JitsiMeetJS,
+
     init: function () {
-        this.JitsiMeetJS = JitsiMeetJS;
         this.JitsiMeetJS.init();
         this.conference = null;
 
@@ -113,11 +119,14 @@ function connect() {
 }
 
 var ConferenceEvents = APP.JitsiMeetJS.events.conference;
+var ConferenceErrors = APP.JitsiMeetJS.errors.conference;
 function initConference(connection, roomName) {
     var room = connection.initJitsiConference(roomName, {
         openSctp: config.openSctp,
         disableAudioLevels: config.disableAudioLevels
     });
+
+    var conf =  createConference(connection, room);
 
     room.on(ConferenceEvents.IN_LAST_N_CHANGED, function (inLastN) {
         if (config.muteLocalVideoIfNotInLastN) {
@@ -140,7 +149,64 @@ function initConference(connection, roomName) {
         }
     );
 
-    return initConference(connection, room);
+    room.on(
+        ConferenceEvents.DISPLAY_NAME_CHANGED,
+        function (id, displayName) {
+            UI.changeDisplayName(id, displayName);
+        }
+    );
+
+    room.on(
+        ConferenceEvents.USER_JOINED,
+        function (id) {
+            // FIXME ????
+            UI.addUser();
+        }
+    );
+
+    room.on(
+        ConferenceEvents.USER_LEFT,
+        function (id) {
+            UI.removeUser(id);
+        }
+    );
+
+    room.on(
+        ConferenceEvents.TRACK_MUTE_CHANGED,
+        function (track) {
+            // FIXME handle mute
+        }
+    );
+
+    room.on(
+        ConferenceEvents.TRACK_AUDIO_LEVEL_CHANGED,
+        function (id, lvl) {
+            UI.setAudioLevel(id, lvl);
+        }
+    );
+
+
+    return new Promise(function (resolve, reject) {
+        room.on(
+            ConferenceEvents.CONFERENCE_JOINED,
+            function () {
+                resolve(conf);
+            }
+        );
+        room.on(
+            ConferenceErrors.PASSWORD_REQUIRED,
+            function () {
+                // FIXME handle
+                reject();
+            }
+        );
+        APP.UI.closeAuthenticationDialog();
+        if (config.useNicks) {
+            // FIXME check this
+            var nick = APP.UI.askForNickname();
+        }
+        room.join();
+    });
 }
 
 function init() {
@@ -148,6 +214,14 @@ function init() {
         return initConference(connection, UI.generateRoomName());
     }).then(function (conference) {
         APP.conference = conference;
+
+        APP.UI.initConference();
+
+        //NicknameHandler emits this event
+        APP.UI.addListener(UIEvents.NICKNAME_CHANGED, function (nickname) {
+            APP.conference.setNickname(nickname);
+        });
+
         APP.desktopsharing.init();
         APP.statistics.start();
         APP.connectionquality.init();

@@ -26,7 +26,6 @@ var JitsiPopover = require("./util/JitsiPopover");
 var CQEvents = require("../../service/connectionquality/CQEvents");
 var DesktopSharingEventTypes
     = require("../../service/desktopsharing/DesktopSharingEventTypes");
-var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 var StatisticsEvents = require("../../service/statistics/Events");
 var UIEvents = require("../../service/UI/UIEvents");
 var MemberEvents = require("../../service/members/Events");
@@ -101,129 +100,74 @@ function setupToolbars() {
     BottomToolbar.init(eventEmitter);
 }
 
-function onDisposeConference(unload) {
-    Toolbar.showAuthenticateButton(false);
-}
+UI.notifyGracefulShudown = function () {
+    messageHandler.openMessageDialog(
+        'dialog.serviceUnavailable',
+        'dialog.gracefulShutdown'
+    );
+};
 
-function onDisplayNameChanged(jid, displayName) {
+UI.notifyReservationError = function (code, msg) {
+    var title = APP.translation.generateTranslationHTML(
+        "dialog.reservationError");
+    var message = APP.translation.generateTranslationHTML(
+        "dialog.reservationErrorMsg", {code: code, msg: msg});
+    messageHandler.openDialog(
+        title,
+        message,
+        true, {},
+        function (event, value, message, formVals) {
+            return false;
+        }
+    );
+};
+
+UI.notifyKicked = function () {
+    messageHandler.openMessageDialog("dialog.sessTerminated", "dialog.kickMessage");
+};
+
+UI.notifyBridgeDown = function () {
+    messageHandler.showError("dialog.error", "dialog.bridgeUnavailable");
+};
+
+UI.changeDisplayName = function (jid, displayName) {
     ContactList.onDisplayNameChange(jid, displayName);
     SettingsMenu.onDisplayNameChange(jid, displayName);
     VideoLayout.onDisplayNameChanged(jid, displayName);
-}
+};
+
+UI.initConference = function () {
+    // FIXME find own jid
+    var jid = "asdfasdf";
+
+    Toolbar.updateRoomUrl(window.location.href);
+    var meHTML = APP.translation.generateTranslationHTML("me");
+    $("#localNick").html(Strophe.getResourceFromJid(jid) + " (" + meHTML + ")");
+
+    var settings = Settings.getSettings();
+
+    // Make sure we configure our avatar id, before creating avatar for us
+    Avatar.setUserAvatar(jid, settings.email || settings.uid);
+
+    // Add myself to the contact list.
+    ContactList.addContact(jid);
+
+    // Once we've joined the muc show the toolbar
+    ToolbarToggler.showToolbar();
+
+    var displayName =
+        config.displayJids ? Strophe.getResourceFromJid(jid) : settings.displayName;
+
+    if (displayName) {
+        UI.changeDisplayName('localVideoContainer', displayName);
+    }
+
+    VideoLayout.mucJoined();
+
+    Toolbar.checkAutoEnableDesktopSharing();
+};
 
 function registerListeners() {
-    APP.xmpp.addListener(XMPPEvents.DISPOSE_CONFERENCE, onDisposeConference);
-    APP.xmpp.addListener(XMPPEvents.GRACEFUL_SHUTDOWN, function () {
-        messageHandler.openMessageDialog(
-            'dialog.serviceUnavailable',
-            'dialog.gracefulShutdown'
-        );
-    });
-    APP.xmpp.addListener(XMPPEvents.RESERVATION_ERROR, function (code, msg) {
-        var title = APP.translation.generateTranslationHTML(
-            "dialog.reservationError");
-        var message = APP.translation.generateTranslationHTML(
-            "dialog.reservationErrorMsg", {code: code, msg: msg});
-        messageHandler.openDialog(
-            title,
-            message,
-            true, {},
-            function (event, value, message, formVals) {
-                return false;
-            }
-        );
-    });
-    APP.xmpp.addListener(XMPPEvents.KICKED, function () {
-        messageHandler.openMessageDialog("dialog.sessTerminated",
-            "dialog.kickMessage");
-    });
-    APP.xmpp.addListener(XMPPEvents.MUC_DESTROYED, function (reason) {
-        //FIXME: use Session Terminated from translation, but
-        // 'reason' text comes from XMPP packet and is not translated
-        var title = APP.translation.generateTranslationHTML("dialog.sessTerminated");
-        messageHandler.openDialog(
-            title, reason, true, {},
-            function (event, value, message, formVals) {
-                return false;
-            }
-        );
-    });
-    APP.xmpp.addListener(XMPPEvents.BRIDGE_DOWN, function () {
-        messageHandler.showError("dialog.error",
-            "dialog.bridgeUnavailable");
-    });
-    APP.xmpp.addListener(XMPPEvents.USER_ID_CHANGED, function (from, id) {
-        Avatar.setUserAvatar(from, id);
-    });
-    APP.xmpp.addListener(XMPPEvents.DISPLAY_NAME_CHANGED, onDisplayNameChanged);
-    APP.xmpp.addListener(XMPPEvents.MUC_JOINED, onMucJoined);
-    APP.xmpp.addListener(XMPPEvents.LOCAL_ROLE_CHANGED, onLocalRoleChanged);
-    APP.xmpp.addListener(XMPPEvents.MUC_MEMBER_JOINED, onMucMemberJoined);
-    APP.xmpp.addListener(XMPPEvents.MUC_ROLE_CHANGED, onMucRoleChanged);
-    APP.xmpp.addListener(XMPPEvents.PRESENCE_STATUS, onMucPresenceStatus);
-    APP.xmpp.addListener(XMPPEvents.SUBJECT_CHANGED, chatSetSubject);
-    APP.xmpp.addListener(XMPPEvents.MUC_MEMBER_LEFT, onMucMemberLeft);
-    APP.xmpp.addListener(XMPPEvents.PASSWORD_REQUIRED, onPasswordRequired);
-    APP.xmpp.addListener(XMPPEvents.ETHERPAD, initEtherpad);
-    APP.xmpp.addListener(XMPPEvents.AUTHENTICATION_REQUIRED,
-        onAuthenticationRequired);
-    APP.xmpp.addListener(XMPPEvents.PARTICIPANT_VIDEO_TYPE_CHANGED,
-        onPeerVideoTypeChanged);
-    APP.xmpp.addListener(XMPPEvents.DEVICE_AVAILABLE,
-        function (resource, devices) {
-            VideoLayout.setDeviceAvailabilityIcons(resource, devices);
-        });
-
-    APP.xmpp.addListener(XMPPEvents.PARTICIPANT_AUDIO_MUTED,
-        VideoLayout.onAudioMute);
-    APP.xmpp.addListener(XMPPEvents.PARTICIPANT_VIDEO_MUTED,
-        VideoLayout.onVideoMute);
-    APP.members.addListener(MemberEvents.DTMF_SUPPORT_CHANGED,
-        onDtmfSupportChanged);
-    APP.xmpp.addListener(XMPPEvents.START_MUTED_SETTING_CHANGED, function (audio, video) {
-        SettingsMenu.setStartMuted(audio, video);
-    });
-
-    APP.xmpp.addListener(XMPPEvents.JINGLE_FATAL_ERROR, function (session, error) {
-        UI.messageHandler.showError("dialog.sorry",
-            "dialog.internalError");
-    });
-
-    APP.xmpp.addListener(XMPPEvents.PROMPT_FOR_LOGIN, function (callback) {
-        // FIXME: re-use LoginDialog which supports retries
-        if (config.token) {
-            messageHandler.showError("dialog.error", "dialog.tokenAuthFailed");
-        } else {
-            UI.showLoginPopup(callback);
-        }
-    });
-
-    APP.xmpp.addListener(XMPPEvents.FOCUS_DISCONNECTED, function (focusComponent, retrySec) {
-        UI.messageHandler.notify(
-            null, "notify.focus",
-            'disconnected', "notify.focusFail",
-            {component: focusComponent, ms: retrySec});
-    });
-
-    APP.xmpp.addListener(XMPPEvents.ROOM_JOIN_ERROR, function (pres) {
-        UI.messageHandler.openReportDialog(null,
-            "dialog.connectError", pres);
-    });
-    APP.xmpp.addListener(XMPPEvents.ROOM_CONNECT_ERROR, function (pres) {
-        UI.messageHandler.openReportDialog(null,
-            "dialog.connectError", pres);
-    });
-
-    APP.xmpp.addListener(XMPPEvents.READY_TO_JOIN, function () {
-        var roomName = UI.generateRoomName();
-        APP.xmpp.allocateConferenceFocus(roomName, UI.checkForNicknameAndJoin);
-    });
-
-    //NicknameHandler emits this event
-    UI.addListener(UIEvents.NICKNAME_CHANGED, function (nickname) {
-        APP.xmpp.addToPresence("displayName", nickname);
-    });
-
     UI.addListener(UIEvents.LARGEVIDEO_INIT, function () {
         AudioLevels.init();
     });
@@ -231,15 +175,6 @@ function registerListeners() {
     UI.addListener(UIEvents.FILM_STRIP_TOGGLED, function (isToggled) {
         VideoLayout.onFilmStripToggled(isToggled);
     });
-
-    if (!interfaceConfig.filmStripOnly) {
-        APP.xmpp.addListener(XMPPEvents.MESSAGE_RECEIVED, updateChatConversation);
-        APP.xmpp.addListener(XMPPEvents.CHAT_ERROR_RECEIVED, chatAddError);
-        // Listens for video interruption events.
-        APP.xmpp.addListener(XMPPEvents.CONNECTION_INTERRUPTED, VideoLayout.onVideoInterrupted);
-        // Listens for video restores events.
-        APP.xmpp.addListener(XMPPEvents.CONNECTION_RESTORED, VideoLayout.onVideoRestored);
-    }
 }
 
 function onResize() {
@@ -296,7 +231,8 @@ UI.start = function () {
             $('#notice').css({display: 'block'});
         }
         $("#downloadlog").click(function (event) {
-            dump(event.target);
+            // dump(event.target);
+            // FIXME integrate logs
         });
         Feedback.init();
     }
@@ -388,53 +324,8 @@ function updateChatConversation(from, displayName, message, myjid, stamp) {
     return Chat.updateChatConversation(from, displayName, message, myjid, stamp);
 }
 
-function onMucJoined(jid, info) {
-    Toolbar.updateRoomUrl(window.location.href);
-    var meHTML = APP.translation.generateTranslationHTML("me");
-    $("#localNick").html(Strophe.getResourceFromJid(jid) + " (" + meHTML + ")");
-
-    var settings = Settings.getSettings();
-
-    // Make sure we configure our avatar id, before creating avatar for us
-    Avatar.setUserAvatar(jid, settings.email || settings.uid);
-
-    // Add myself to the contact list.
-    ContactList.addContact(jid);
-
-    // Once we've joined the muc show the toolbar
-    ToolbarToggler.showToolbar();
-
-    var displayName =
-        config.displayJids ? Strophe.getResourceFromJid(jid) : info.displayName;
-
-    if (displayName)
-        onDisplayNameChanged('localVideoContainer', displayName);
-
-
-    VideoLayout.mucJoined();
-
-    Toolbar.checkAutoEnableDesktopSharing();
-}
-
 function initEtherpad(name) {
     Etherpad.init(name);
-}
-
-function onMucMemberLeft(jid) {
-    console.log('left.muc', jid);
-    var displayName = $('#participant_' + Strophe.getResourceFromJid(jid) +
-        '>.displayname').html();
-    messageHandler.notify(displayName,'notify.somebody',
-        'disconnected',
-        'notify.disconnected');
-    if (!config.startAudioMuted ||
-        config.startAudioMuted > APP.members.size()) {
-        UIUtil.playSoundNotification('userLeft');
-    }
-
-    ContactList.removeContact(jid);
-
-    VideoLayout.participantLeft(jid);
 }
 
 function onLocalRoleChanged(jid, info, pres, isModerator) {
@@ -462,7 +353,7 @@ function onModeratorStatusChanged(isModerator) {
     //Object.keys(connection.emuc.members).length >= 3);
 }
 
-function onPasswordRequired(callback) {
+UI.notifyPasswordRequired = function (callback) {
     // password is required
     Toolbar.lockLockButton();
     var message = '<h2 data-i18n="dialog.passwordRequired">';
@@ -490,7 +381,7 @@ function onPasswordRequired(callback) {
         },
         ':input:first'
     );
-}
+};
 
 /**
  * The dialpad button is shown iff there is at least one member that supports
@@ -501,7 +392,7 @@ function onDtmfSupportChanged(dtmfSupport) {
     //Toolbar.showDialPadButton(dtmfSupport);
 }
 
-function onMucMemberJoined(jid, id, displayName) {
+UI.addUser = function (jid, id, displayName) {
     messageHandler.notify(displayName,'notify.somebody',
         'connected',
         'notify.connected');
@@ -515,7 +406,24 @@ function onMucMemberJoined(jid, id, displayName) {
 
     // Add Peer's container
     VideoLayout.ensurePeerContainerExists(jid);
-}
+};
+
+UI.removeUser = function (jid) {
+    console.log('left.muc', jid);
+    var displayName = $('#participant_' + Strophe.getResourceFromJid(jid) +
+        '>.displayname').html();
+    messageHandler.notify(displayName,'notify.somebody',
+        'disconnected',
+        'notify.disconnected');
+    if (!config.startAudioMuted ||
+        config.startAudioMuted > APP.members.size()) {
+        UIUtil.playSoundNotification('userLeft');
+    }
+
+    ContactList.removeContact(jid);
+
+    VideoLayout.participantLeft(jid);
+};
 
 function onMucPresenceStatus(jid, info) {
     VideoLayout.setPresenceStatus(Strophe.getResourceFromJid(jid), info.status);
@@ -544,12 +452,13 @@ function onMucRoleChanged(role, displayName) {
     }
 }
 
-function onAuthenticationRequired(intervalCallback) {
+UI.notifyAuthRequired = function (intervalCallback) {
     Authentication.openAuthenticationDialog(
         roomName, intervalCallback, function () {
             Toolbar.authenticateClicked();
-        });
-}
+        }
+    );
+};
 
 
 UI.toggleSmileys = function () {
@@ -655,36 +564,14 @@ UI.showLoginPopup = function(callback) {
     );
 };
 
-UI.checkForNicknameAndJoin = function () {
-
+UI.closeAuthenticationDialog = function () {
     Authentication.closeAuthenticationDialog();
     Authentication.stopInterval();
-
-    var nick = null;
-    if (config.useNicks) {
-        nick = window.prompt('Your nickname (optional)');
-    }
-    APP.xmpp.joinRoom(roomName, config.useNicks, nick);
 };
 
-
-function dump(elem, filename) {
-    elem = elem.parentNode;
-    elem.download = filename || 'meetlog.json';
-    elem.href = 'data:application/json;charset=utf-8,\n';
-    var data = APP.xmpp.getJingleLog();
-    var metadata = {};
-    metadata.time = new Date();
-    metadata.url = window.location.href;
-    metadata.ua = navigator.userAgent;
-    var log = APP.xmpp.getXmppLog();
-    if (log) {
-        metadata.xmpp = log;
-    }
-    data.metadata = metadata;
-    elem.href += encodeURIComponent(JSON.stringify(data, null, '  '));
-    return false;
-}
+UI.askForNickname = function () {
+    return window.prompt('Your nickname (optional)');
+};
 
 UI.getRoomName = function () {
     return roomName;
@@ -796,6 +683,10 @@ UI.updateLocalStats = function (percent, stats) {
 
 UI.updateRemoteStats = function (jid, percent, stats) {
     VideoLayout.updateConnectionStats(jid, percent, stats);
+};
+
+UI.showAuthenticateButton = function (show) {
+    Toolbar.showAuthenticateButton(show);
 };
 
 module.exports = UI;
