@@ -109,10 +109,10 @@ var AudioLevels = (function(my) {
         drawContext.drawImage(canvasCache, 0, 0);
 
         if(resourceJid === AudioLevels.LOCAL_LEVEL) {
-            if(!APP.xmpp.myJid()) {
+            resourceJid = APP.conference.localId();
+            if (!resourceJid) {
                 return;
             }
-            resourceJid = APP.xmpp.myResource();
         }
 
         if(resourceJid === largeVideoResourceJid) {
@@ -224,10 +224,12 @@ var AudioLevels = (function(my) {
     function getVideoSpanId(resourceJid) {
         var videoSpanId = null;
         if (resourceJid === AudioLevels.LOCAL_LEVEL ||
-            (APP.xmpp.myResource() && resourceJid === APP.xmpp.myResource()))
+            (APP.conference.localId() && resourceJid === APP.conference.localId())) {
             videoSpanId = 'localVideoContainer';
-        else
+        }
+        else {
             videoSpanId = 'participant_' + resourceJid;
+        }
 
         return videoSpanId;
     }

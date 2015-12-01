@@ -37,6 +37,14 @@ function createConference(connection, room) {
         setNickname: function (nickname) {
             // FIXME check if room is available etc.
             room.setDisplayName(nickname);
+        },
+
+        isModerator: function () {
+            return false;
+        },
+
+        myJid: function () {
+            return room.myUserId();
         }
     };
 }
