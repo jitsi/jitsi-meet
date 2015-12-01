@@ -21,7 +21,6 @@ UI.messageHandler = require("./util/MessageHandler");
 var messageHandler = UI.messageHandler;
 var Authentication  = require("./authentication/Authentication");
 var UIUtil = require("./util/UIUtil");
-var NicknameHandler = require("./util/NicknameHandler");
 var JitsiPopover = require("./util/JitsiPopover");
 var CQEvents = require("../../service/connectionquality/CQEvents");
 var DesktopSharingEventTypes
@@ -59,7 +58,7 @@ function promptDisplayName() {
             if (v == "ok") {
                 var displayName = f.displayName;
                 if (displayName) {
-                    VideoLayout.inputDisplayNameHandler(displayName);
+                    UI.inputDisplayNameHandler(displayName);
                     return true;
                 }
             }
@@ -88,7 +87,7 @@ function setupPrezi() {
 }
 
 function setupChat() {
-    Chat.init();
+    Chat.init(eventEmitter);
     $("#toggle_smileys").click(function() {
         Chat.toggleSmileys();
     });
@@ -136,13 +135,11 @@ UI.changeDisplayName = function (jid, displayName) {
     VideoLayout.onDisplayNameChanged(jid, displayName);
 };
 
-UI.initConference = function () {
-    // FIXME find own jid
-    var jid = "asdfasdf";
-
+UI.initConference = function (jid) {
     Toolbar.updateRoomUrl(window.location.href);
     var meHTML = APP.translation.generateTranslationHTML("me");
-    $("#localNick").html(Strophe.getResourceFromJid(jid) + " (" + meHTML + ")");
+    var localId = APP.conference.localId();
+    $("#localNick").html(localId + " (" + meHTML + ")");
 
     var settings = Settings.getSettings();
 
@@ -155,8 +152,7 @@ UI.initConference = function () {
     // Once we've joined the muc show the toolbar
     ToolbarToggler.showToolbar();
 
-    var displayName =
-        config.displayJids ? Strophe.getResourceFromJid(jid) : settings.displayName;
+    var displayName = config.displayJids ? localId : settings.displayName;
 
     if (displayName) {
         UI.changeDisplayName('localVideoContainer', displayName);
@@ -211,11 +207,9 @@ UI.start = function () {
     // Set the defaults for prompt dialogs.
     $.prompt.setDefaults({persistent: false});
 
-
     registerListeners();
 
     VideoLayout.init(eventEmitter);
-    NicknameHandler.init(eventEmitter);
 
     bindEvents();
     setupPrezi();
@@ -251,13 +245,8 @@ UI.start = function () {
 
     document.title = interfaceConfig.APP_NAME;
 
-
-
-
-
     if(config.requireDisplayName) {
-        var currentSettings = Settings.getSettings();
-        if (!currentSettings.displayName) {
+        if (APP.settings.getDisplayName()) {
             promptDisplayName();
         }
     }
@@ -666,8 +655,6 @@ UI.setAudioLevel = function (targetJid, lvl) {
         targetJid, lvl, VideoLayout.getLargeVideoResource()
     );
 };
-
-UI.showToolbar = ToolbarToggler.showToolbar;
 
 UI.updateDesktopSharingButtons = function () {
     Toolbar.changeDesktopSharingButtonState();

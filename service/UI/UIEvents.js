@@ -4,6 +4,10 @@ var UIEvents = {
     PINNED_ENDPOINT: "UI.pinned_endpoint",
     LARGEVIDEO_INIT: "UI.largevideo_init",
     /**
+     * Notifies that local user created text message.
+     */
+    MESSAGE_CREATED: "UI.message_created",
+    /**
      * Notifies interested parties when the film strip (remote video's panel)
      * is hidden (toggled) or shown (un-toggled).
      */

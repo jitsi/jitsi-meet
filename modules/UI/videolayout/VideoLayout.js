@@ -36,7 +36,7 @@ var focusedVideoResourceJid = null;
 var VideoLayout = (function (my) {
     my.init = function (emitter) {
         eventEmitter = emitter;
-        localVideoThumbnail = new LocalVideo(VideoLayout);
+        localVideoThumbnail = new LocalVideo(VideoLayout, emitter);
         if (interfaceConfig.filmStripOnly) {
             LargeVideo.disable();
         } else {

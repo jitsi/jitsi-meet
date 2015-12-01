@@ -36,14 +36,19 @@ function createConference(connection, room) {
 
         setNickname: function (nickname) {
             // FIXME check if room is available etc.
+            APP.settings.setDisplayName(nickname);
             room.setDisplayName(nickname);
+        },
+
+        sendMessage: function (message) {
+            room.sendTextMessage(message);
         },
 
         isModerator: function () {
             return false;
         },
 
-        myJid: function () {
+        localId: function () {
             return room.myUserId();
         }
     };
@@ -54,6 +59,7 @@ var APP = {
 
     init: function () {
         this.JitsiMeetJS.init();
+        this.JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.TRACE);
         this.conference = null;
 
         this.UI = require("./modules/UI/UI");
@@ -222,6 +228,13 @@ function initConference(connection, roomName) {
                 reject();
             }
         );
+        room.on(
+            ConferenceErrors.CONNECTION_ERROR,
+            function () {
+                // FIXME handle
+                reject();
+            }
+        );
         APP.UI.closeAuthenticationDialog();
         if (config.useNicks) {
             // FIXME check this
@@ -237,11 +250,17 @@ function init() {
     }).then(function (conference) {
         APP.conference = conference;
 
-        APP.UI.initConference();
+        APP.UI.start();
 
-        //NicknameHandler emits this event
+        // FIXME find own jid
+        APP.UI.initConference("asdfasdf");
+
         APP.UI.addListener(UIEvents.NICKNAME_CHANGED, function (nickname) {
             APP.conference.setNickname(nickname);
+        });
+
+        APP.UI.addListener(UIEvents.MESSAGE_CREATED, function (message) {
+            APP.conference.sendMessage(message);
         });
 
         APP.desktopsharing.init();
@@ -301,7 +320,6 @@ $(document).ready(function () {
         APP.API.init();
     }
 
-    APP.UI.start();
     obtainConfigAndInit();
 });
 

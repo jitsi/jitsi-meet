@@ -34,7 +34,7 @@ var SettingsMenu = {
             }
         });
 
-        if (APP.xmpp.isModerator()) {
+        if (APP.conference.isModerator()) {
             startMutedSelector.css("display", "block");
         }
         else {
@@ -47,7 +47,7 @@ var SettingsMenu = {
     },
 
     onRoleChanged: function () {
-        if(APP.xmpp.isModerator()) {
+        if(APP.conference.isModerator()) {
             $("#startMutedOptions").css("display", "block");
         }
         else {

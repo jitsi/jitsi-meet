@@ -57,6 +57,9 @@ var Settings = {
      * @returns {string} the display name we just set
      */
     setDisplayName: function (newDisplayName) {
+        if (displayName === newDisplayName) {
+            return displayName;
+        }
         displayName = newDisplayName;
         window.localStorage.displayname = displayName;
         return displayName;

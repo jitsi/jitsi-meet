@@ -1,12 +1,12 @@
 /* global $, interfaceConfig, APP */
 var SmallVideo = require("./SmallVideo");
 var ConnectionIndicator = require("./ConnectionIndicator");
-var NicknameHandler = require("../util/NicknameHandler");
 var UIUtil = require("../util/UIUtil");
+var UIEvents = require("../../../service/UI/UIEvents");
 var LargeVideo = require("./LargeVideo");
 var RTCBrowserType = require("../../RTC/RTCBrowserType");
 
-function LocalVideo(VideoLayout) {
+function LocalVideo(VideoLayout, emitter) {
     this.videoSpanId = "localVideoContainer";
     this.container = $("#localVideoContainer").get(0);
     this.bindHoverHandler();
@@ -14,6 +14,7 @@ function LocalVideo(VideoLayout) {
     this.flipX = true;
     this.isLocal = true;
     this.peerJid = null;
+    this.emitter = emitter;
 }
 
 LocalVideo.prototype = Object.create(SmallVideo.prototype);
@@ -117,11 +118,13 @@ LocalVideo.prototype.setDisplayName = function(displayName, key) {
 
                 editDisplayName.one("focusout", function (e) {
                     self.VideoLayout.inputDisplayNameHandler(this.value);
+                    $('#editDisplayName').hide();
                 });
 
                 editDisplayName.on('keydown', function (e) {
                     if (e.keyCode === 13) {
                         e.preventDefault();
+                        $('#editDisplayName').hide();
                         self.VideoLayout.inputDisplayNameHandler(this.value);
                     }
                 });
@@ -130,25 +133,7 @@ LocalVideo.prototype.setDisplayName = function(displayName, key) {
 };
 
 LocalVideo.prototype.inputDisplayNameHandler = function (name) {
-    name = UIUtil.escapeHtml(name);
-
-    NicknameHandler.setNickname(name);
-
-    var localDisplayName = $('#localDisplayName');
-    if (!localDisplayName.is(":visible")) {
-        if (NicknameHandler.getNickname()) {
-            var meHTML = APP.translation.generateTranslationHTML("me");
-            localDisplayName.html(NicknameHandler.getNickname() + " (" +
-            meHTML + ")");
-        } else {
-            var defaultHTML = APP.translation.generateTranslationHTML(
-                interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME);
-            localDisplayName .html(defaultHTML);
-        }
-        localDisplayName.show();
-    }
-
-    $('#editDisplayName').hide();
+    this.emitter.emit(UIEvents.NICKNAME_CHANGED, UIUtil.escapeHtml(name));
 };
 
 LocalVideo.prototype.createConnectionIndicator = function() {
