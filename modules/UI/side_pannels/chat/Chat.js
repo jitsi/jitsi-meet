@@ -228,7 +228,7 @@ var Chat = (function (my) {
      * Appends the given message to the chat conversation.
      */
     my.updateChatConversation =
-        function (from, displayName, message, myjid, stamp) {
+        function (from, displayName, message, stamp) {
         var divClassName = '';
 
         if (APP.xmpp.myJid() === from) {

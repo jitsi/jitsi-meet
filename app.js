@@ -119,7 +119,7 @@ function connect() {
         connection.connect();
     }).catch(function (errType, msg) {
         // TODO handle OTHER_ERROR only
-        UI.notifyConnectionFailed(msg);
+        APP.UI.notifyConnectionFailed(msg);
 
         // rethrow
         throw new Error(errType);
@@ -140,7 +140,7 @@ function initConference(connection, roomName) {
         if (config.muteLocalVideoIfNotInLastN) {
             // TODO mute or unmute if required
             // mark video on UI
-            // UI.markVideoMuted(true/false);
+            // APP.UI.markVideoMuted(true/false);
         }
     });
 
@@ -160,7 +160,7 @@ function initConference(connection, roomName) {
     room.on(
         ConferenceEvents.DISPLAY_NAME_CHANGED,
         function (id, displayName) {
-            UI.changeDisplayName(id, displayName);
+            APP.UI.changeDisplayName(id, displayName);
         }
     );
 
@@ -168,14 +168,14 @@ function initConference(connection, roomName) {
         ConferenceEvents.USER_JOINED,
         function (id) {
             // FIXME ????
-            UI.addUser();
+            APP.UI.addUser();
         }
     );
 
     room.on(
         ConferenceEvents.USER_LEFT,
         function (id) {
-            UI.removeUser(id);
+            APP.UI.removeUser(id);
         }
     );
 
@@ -189,7 +189,21 @@ function initConference(connection, roomName) {
     room.on(
         ConferenceEvents.TRACK_AUDIO_LEVEL_CHANGED,
         function (id, lvl) {
-            UI.setAudioLevel(id, lvl);
+            APP.UI.setAudioLevel(id, lvl);
+        }
+    );
+
+    room.on(
+        ConferenceEvents.CONNECTION_INTERRUPTED,
+        function () {
+            APP.UI.markVideoInterrupted(true);
+        }
+    );
+
+    room.on(
+        ConferenceEvents.CONNECTION_RESTORED,
+        function () {
+            APP.UI.markVideoInterrupted(false);
         }
     );
 
@@ -219,7 +233,7 @@ function initConference(connection, roomName) {
 
 function init() {
     connect().then(function (connection) {
-        return initConference(connection, UI.generateRoomName());
+        return initConference(connection, APP.UI.generateRoomName());
     }).then(function (conference) {
         APP.conference = conference;
 

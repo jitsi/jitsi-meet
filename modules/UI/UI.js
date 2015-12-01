@@ -320,8 +320,8 @@ function chatSetSubject(text) {
     return Chat.chatSetSubject(text);
 }
 
-function updateChatConversation(from, displayName, message, myjid, stamp) {
-    return Chat.updateChatConversation(from, displayName, message, myjid, stamp);
+function updateChatConversation(from, displayName, message, stamp) {
+    return Chat.updateChatConversation(from, displayName, message, stamp);
 }
 
 function initEtherpad(name) {
@@ -687,6 +687,14 @@ UI.updateRemoteStats = function (jid, percent, stats) {
 
 UI.showAuthenticateButton = function (show) {
     Toolbar.showAuthenticateButton(show);
+};
+
+UI.markVideoInterrupted = function (interrupted) {
+    if (interrupted) {
+        VideoLayout.onVideoInterrupted();
+    } else {
+        VideoLayout.onVideoRestored();
+    }
 };
 
 module.exports = UI;
