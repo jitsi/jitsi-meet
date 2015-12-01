@@ -1,8 +1,8 @@
 /* global APP, $ */
-var Avatar = require("../../avatar/Avatar");
 var Settings = require("./../../../settings/Settings");
 var UIUtil = require("../../util/UIUtil");
 var languages = require("../../../../service/translation/languages");
+var UIEvents = require("../../../../service/UI/UIEvents");
 
 function generateLanguagesSelectBox() {
     var currentLang = APP.translation.getCurrentLanguage();
@@ -24,7 +24,9 @@ function generateLanguagesSelectBox() {
 
 var SettingsMenu = {
 
-    init: function () {
+    init: function (emitter) {
+        this.emitter = emitter;
+
         var startMutedSelector = $("#startMutedOptions");
         startMutedSelector.before(generateLanguagesSelectBox());
         APP.translation.translateElement($("#languages_selectbox"));
@@ -36,8 +38,7 @@ var SettingsMenu = {
 
         if (APP.conference.isModerator()) {
             startMutedSelector.css("display", "block");
-        }
-        else {
+        } else {
             startMutedSelector.css("display", "none");
         }
 
@@ -61,43 +62,35 @@ var SettingsMenu = {
     },
 
     update: function() {
+        // FIXME check if this values really changed:
+        // compare them with Settings etc.
         var newDisplayName =
-            UIUtil.escapeHtml($('#setDisplayName').get(0).value);
-        var newEmail = UIUtil.escapeHtml($('#setEmail').get(0).value);
+                UIUtil.escapeHtml($('#setDisplayName').get(0).value);
 
-        if(newDisplayName) {
-            var displayName = Settings.setDisplayName(newDisplayName);
-            APP.xmpp.addToPresence("displayName", displayName, true);
+        if (newDisplayName) {
+            this.emitter.emit(UIEvents.NICKNAME_CHANGED, newDisplayName);
         }
 
         var language = $("#languages_selectbox").val();
-        APP.translation.setLanguage(language);
-        Settings.setLanguage(language);
+        this.emitter.emit(UIEvents.LANG_CHANGED, language);
 
-        APP.xmpp.addToPresence("email", newEmail);
-        var email = Settings.setEmail(newEmail);
+        var newEmail = UIUtil.escapeHtml($('#setEmail').get(0).value);
+        this.emitter.emit(UIEvents.EMAIL_CHANGED, newEmail);
 
         var startAudioMuted = ($("#startAudioMuted").is(":checked"));
         var startVideoMuted = ($("#startVideoMuted").is(":checked"));
-        APP.xmpp.addToPresence("startMuted",
-            [startAudioMuted, startVideoMuted]);
-
-        Avatar.setUserAvatar(APP.xmpp.myJid(), email);
+        this.emitter.emit(
+            UIEvents.START_MUTED_CHANGED, startAudioMuted, startVideoMuted
+        );
     },
 
     isVisible: function() {
         return $('#settingsmenu').is(':visible');
     },
 
-    setDisplayName: function(newDisplayName) {
-        var displayName = Settings.setDisplayName(newDisplayName);
-        $('#setDisplayName').get(0).value = displayName;
-    },
-
-    onDisplayNameChange: function(peerJid, newDisplayName) {
-        if(peerJid === 'localVideoContainer' ||
-            peerJid === APP.xmpp.myJid()) {
-            this.setDisplayName(newDisplayName);
+    onDisplayNameChange: function(id, newDisplayName) {
+        if(id === 'localVideoContainer' || APP.conference.isLocalId(id)) {
+            $('#setDisplayName').get(0).value = newDisplayName;
         }
     },
     changeAvatar: function (thumbUrl) {

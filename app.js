@@ -40,6 +40,14 @@ function createConference(connection, room) {
             room.setDisplayName(nickname);
         },
 
+        setEmail: function (email) {
+            // FIXME room.setEmail
+        },
+
+        setStartMuted: function (audio, video) {
+            // FIXME room.setStartMuted
+        },
+
         sendMessage: function (message) {
             room.sendTextMessage(message);
         },
@@ -50,6 +58,10 @@ function createConference(connection, room) {
 
         localId: function () {
             return room.myUserId();
+        },
+
+        isLocalId: function (id) {
+            return id === this.localId();
         }
     };
 }
@@ -173,8 +185,8 @@ function initConference(connection, roomName) {
     room.on(
         ConferenceEvents.USER_JOINED,
         function (id) {
-            // FIXME ????
-            APP.UI.addUser();
+            // FIXME email???
+            APP.UI.addUser(id);
         }
     );
 
@@ -262,6 +274,23 @@ function init() {
         APP.UI.addListener(UIEvents.MESSAGE_CREATED, function (message) {
             APP.conference.sendMessage(message);
         });
+
+        APP.UI.addListener(UIEvents.LANG_CHANGED, function (language) {
+            APP.translation.setLanguage(language);
+            APP.settings.setLanguage(language);
+        });
+
+        APP.UI.addListener(UIEvents.EMAIL_CHANGED, function (email) {
+            APP.conference.setEmail(email);
+            APP.settings.setEmail(email);
+        });
+
+        APP.UI.addListener(
+            UIEvents.START_MUTED_CHANGED,
+            function (startAudioMuted, startVideoMuted) {
+                APP.conference.setStartMuted(startAudioMuted, startVideoMuted);
+            }
+        );
 
         APP.desktopsharing.init();
         APP.statistics.start();

@@ -129,10 +129,10 @@ UI.notifyBridgeDown = function () {
     messageHandler.showError("dialog.error", "dialog.bridgeUnavailable");
 };
 
-UI.changeDisplayName = function (jid, displayName) {
-    ContactList.onDisplayNameChange(jid, displayName);
-    SettingsMenu.onDisplayNameChange(jid, displayName);
-    VideoLayout.onDisplayNameChanged(jid, displayName);
+UI.changeDisplayName = function (id, displayName) {
+    ContactList.onDisplayNameChange(id, displayName);
+    SettingsMenu.onDisplayNameChange(id, displayName);
+    VideoLayout.onDisplayNameChanged(id, displayName);
 };
 
 UI.initConference = function (jid) {
@@ -170,6 +170,10 @@ function registerListeners() {
 
     UI.addListener(UIEvents.FILM_STRIP_TOGGLED, function (isToggled) {
         VideoLayout.onFilmStripToggled(isToggled);
+    });
+
+    UI.addListener(UIEvents.EMAIL_CHANGED, function (email) {
+        Avatar.setUserAvatar(APP.xmpp.myJid(), email);
     });
 }
 

@@ -590,16 +590,13 @@ var VideoLayout = (function (my) {
     /**
      * Display name changed.
      */
-    my.onDisplayNameChanged =
-                    function (jid, displayName, status) {
-        if (jid === 'localVideoContainer' ||
-            jid === APP.xmpp.myJid()) {
+    my.onDisplayNameChanged = function (id, displayName, status) {
+        if (id === 'localVideoContainer' ||
+            APP.conference.isLocalId(id)) {
             localVideoThumbnail.setDisplayName(displayName);
         } else {
-            VideoLayout.ensurePeerContainerExists(jid);
-            remoteVideos[Strophe.getResourceFromJid(jid)].setDisplayName(
-                displayName,
-                status);
+            VideoLayout.ensurePeerContainerExists(id);
+            remoteVideos[id].setDisplayName(displayName, status);
         }
     };
 

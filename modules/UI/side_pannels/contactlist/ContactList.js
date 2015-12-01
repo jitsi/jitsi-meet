@@ -169,16 +169,15 @@ var ContactList = {
         }
     },
 
-    onDisplayNameChange: function (peerJid, displayName) {
-        if (peerJid === 'localVideoContainer')
-            peerJid = APP.xmpp.myJid();
+    onDisplayNameChange: function (id, displayName) {
+        if (id === 'localVideoContainer') {
+            id = APP.conference.localId();
+        }
+        var contactName = $('#contacts #' + id + '>p');
 
-        var resourceJid = Strophe.getResourceFromJid(peerJid);
-
-        var contactName = $('#contacts #' + resourceJid + '>p');
-
-        if (contactName && displayName && displayName.length > 0)
+        if (contactName && displayName && displayName.length > 0) {
             contactName.html(displayName);
+        }
     },
 
     userAvatarChanged: function (resourceJid, contactListUrl) {
