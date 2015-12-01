@@ -218,6 +218,8 @@ if (TraceablePeerConnection.prototype.__defineGetter__ !== undefined) {
         function() {
             var desc = this.peerconnection.localDescription;
 
+            // FIXME this should probably be after the Unified Plan -> Plan B
+            // transformation.
             desc = SSRCReplacement.mungeLocalVideoSSRC(desc);
             
             this.trace('getLocalDescription::preTransform', dumpSDP(desc));
