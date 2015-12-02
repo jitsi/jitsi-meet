@@ -344,7 +344,7 @@ function setupListeners(conference) {
 module.exports = JitsiConference;
 
 }).call(this,"/JitsiConference.js")
-},{"./JitsiConferenceEvents":3,"./JitsiParticipant":8,"./modules/RTC/RTC":13,"./modules/statistics/statistics":22,"./service/RTC/RTCEvents":77,"./service/RTC/StreamEventTypes":79,"./service/xmpp/XMPPEvents":84,"events":41,"jitsi-meet-logger":45}],2:[function(require,module,exports){
+},{"./JitsiConferenceEvents":3,"./JitsiParticipant":8,"./modules/RTC/RTC":13,"./modules/statistics/statistics":22,"./service/RTC/RTCEvents":77,"./service/RTC/StreamEventTypes":79,"./service/xmpp/XMPPEvents":84,"events":41,"jitsi-meet-logger":44}],2:[function(require,module,exports){
 /**
  * Enumeration with the errors for the conference.
  * @type {{string: string}}
@@ -665,7 +665,7 @@ window.Promise = window.Promise || require("es6-promise").Promise;
 
 module.exports = LibJitsiMeet;
 
-},{"./JitsiConferenceErrors":2,"./JitsiConferenceEvents":3,"./JitsiConnection":4,"./JitsiConnectionErrors":5,"./JitsiConnectionEvents":6,"./modules/RTC/RTC":13,"es6-promise":43,"jitsi-meet-logger":45}],8:[function(require,module,exports){
+},{"./JitsiConferenceErrors":2,"./JitsiConferenceEvents":3,"./JitsiConnection":4,"./JitsiConnectionErrors":5,"./JitsiConnectionEvents":6,"./modules/RTC/RTC":13,"es6-promise":42,"jitsi-meet-logger":44}],8:[function(require,module,exports){
 /**
  * Represents a participant in (a member of) a conference.
  */
@@ -934,11 +934,16 @@ DataChannels.prototype.onDataChannel = function (event) {
                 logger.info(
                     "Data channel new last-n event: ",
                     lastNEndpoints, endpointsEnteringLastN, obj);
-                this.eventEmitter.emit(RTCEvents.LASTN_ENDPOINT_CHANGED,
+                self.eventEmitter.emit(RTCEvents.LASTN_ENDPOINT_CHANGED,
                     lastNEndpoints, endpointsEnteringLastN, obj);
             }
             else {
                 logger.debug("Data channel JSON-formatted message: ", obj);
+                // The received message appears to be appropriately formatted
+                // (i.e. is a JSON object which assigns a value to the mandatory
+                // property colibriClass) so don't just swallow it, expose it to
+                // public consumption.
+                self.eventEmitter.emit("rtc.datachannel." + colibriClass, obj);
             }
         }
     };
@@ -953,39 +958,60 @@ DataChannels.prototype.onDataChannel = function (event) {
 };
 
 DataChannels.prototype.handleSelectedEndpointEvent = function (userResource) {
-    logger.log('selected endpoint changed: ', userResource);
-    if (this._dataChannels && this._dataChannels.length != 0) {
-        this._dataChannels.some(function (dataChannel) {
-            if (dataChannel.readyState == 'open') {
-                logger.log('sending selected endpoint changed ' +
-                    'notification to the bridge: ', userResource);
-                dataChannel.send(JSON.stringify({
-                    'colibriClass': 'SelectedEndpointChangedEvent',
-                    'selectedEndpoint':
-                        (!userResource || userResource === null)?
-                            null : userResource
-                }));
-
-                return true;
-            }
-        });
-    }
+    this._onXXXEndpointChanged("selected", userResource);
 }
 
 DataChannels.prototype.handlePinnedEndpointEvent = function (userResource) {
-    logger.log('pinned endpoint changed: ', userResource);
-    if (this._dataChannels && this._dataChannels.length !== 0) {
-        this._dataChannels.some(function (dataChannel) {
-            if (dataChannel.readyState == 'open') {
-                dataChannel.send(JSON.stringify({
-                    'colibriClass': 'PinnedEndpointChangedEvent',
-                    'pinnedEndpoint':
-                        userResource ? userResource : null
-                }));
+    this._onXXXEndpointChanged("pinnned", userResource);
+}
 
-                return true;
-            }
-        });
+/**
+ * Notifies Videobridge about a change in the value of a specific
+ * endpoint-related property such as selected endpoint and pinnned endpoint.
+ *
+ * @param xxx the name of the endpoint-related property whose value changed
+ * @param userResource the new value of the endpoint-related property after the
+ * change
+ */
+DataChannels.prototype._onXXXEndpointChanged = function (xxx, userResource) {
+    // Derive the correct words from xxx such as selected and Selected, pinned
+    // and Pinned.
+    var head = xxx.charAt(0);
+    var tail = xxx.substring(1);
+    var lower = head.toLowerCase() + tail;
+    var upper = head.toUpperCase() + tail;
+
+    // Notify Videobridge about the specified endpoint change.
+    console.log(lower + ' endpoint changed: ', userResource);
+    this._some(function (dataChannel) {
+        if (dataChannel.readyState == 'open') {
+            console.log(
+                    'sending ' + lower
+                        + ' endpoint changed notification to the bridge: ',
+                    userResource);
+
+            var jsonObject = {};
+
+            jsonObject.colibriClass = (upper + 'EndpointChangedEvent');
+            jsonObject[lower + "Endpoint"]
+                = (userResource ? userResource : null);
+            dataChannel.send(JSON.stringify(jsonObject));
+
+            return true;
+        }
+    });
+}
+
+DataChannels.prototype._some = function (callback, thisArg) {
+    var dataChannels = this._dataChannels;
+
+    if (dataChannels && dataChannels.length !== 0) {
+        if (thisArg)
+            return dataChannels.some(callback, thisArg);
+        else
+            return dataChannels.some(callback);
+    } else {
+        return false;
     }
 }
 
@@ -993,7 +1019,7 @@ module.exports = DataChannels;
 
 
 }).call(this,"/modules/RTC/DataChannels.js")
-},{"../../service/RTC/RTCEvents":77,"jitsi-meet-logger":45}],10:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":77,"jitsi-meet-logger":44}],10:[function(require,module,exports){
 var JitsiTrack = require("./JitsiTrack");
 var StreamEventTypes = require("../../service/RTC/StreamEventTypes");
 var RTCBrowserType = require("./RTCBrowserType");
@@ -2680,7 +2706,7 @@ var RTCUtils = {
 module.exports = RTCUtils;
 
 }).call(this,"/modules/RTC/RTCUtils.js")
-},{"../../service/RTC/RTCEvents":77,"../../service/RTC/Resolutions":78,"../../service/RTC/StreamEventTypes.js":79,"../xmpp/SDPUtil":30,"./JitsiLocalTrack":10,"./RTCBrowserType":14,"./adapter.screenshare":16,"events":41,"jitsi-meet-logger":45}],16:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":77,"../../service/RTC/Resolutions":78,"../../service/RTC/StreamEventTypes.js":79,"../xmpp/SDPUtil":30,"./JitsiLocalTrack":10,"./RTCBrowserType":14,"./adapter.screenshare":16,"events":41,"jitsi-meet-logger":44}],16:[function(require,module,exports){
 (function (__filename){
 /*! adapterjs - v0.12.0 - 2015-09-04 */
 var console = require("jitsi-meet-logger").getLogger(__filename);
@@ -3853,7 +3879,7 @@ if (navigator.mozGetUserMedia) {
 }
 
 }).call(this,"/modules/RTC/adapter.screenshare.js")
-},{"jitsi-meet-logger":45}],17:[function(require,module,exports){
+},{"jitsi-meet-logger":44}],17:[function(require,module,exports){
 /* global config, APP, chrome, $, alert */
 /* jshint -W003 */
 var RTCBrowserType = require("../RTC/RTCBrowserType");
@@ -4487,7 +4513,7 @@ Settings.prototype.setLanguage = function (lang) {
 module.exports = Settings;
 
 }).call(this,"/modules/settings/Settings.js")
-},{"jitsi-meet-logger":45}],20:[function(require,module,exports){
+},{"jitsi-meet-logger":44}],20:[function(require,module,exports){
 /* global config */
 /**
  * Provides statistics for the local stream.
@@ -5344,7 +5370,7 @@ StatsCollector.prototype.processAudioLevelReport = function () {
 };
 
 }).call(this,"/modules/statistics/RTPStatsCollector.js")
-},{"../../service/statistics/Events":82,"../RTC/RTCBrowserType":14,"jitsi-meet-logger":45}],22:[function(require,module,exports){
+},{"../../service/statistics/Events":82,"../RTC/RTCBrowserType":14,"jitsi-meet-logger":44}],22:[function(require,module,exports){
 /* global require, APP */
 var LocalStats = require("./LocalStatsCollector.js");
 var RTPStats = require("./RTPStatsCollector.js");
@@ -6213,7 +6239,7 @@ ChatRoom.prototype.getJidBySSRC = function (ssrc) {
 module.exports = ChatRoom;
 
 }).call(this,"/modules/xmpp/ChatRoom.js")
-},{"../../service/xmpp/XMPPEvents":84,"./moderator":32,"events":41,"jitsi-meet-logger":45}],25:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":84,"./moderator":32,"events":41,"jitsi-meet-logger":44}],25:[function(require,module,exports){
 (function (__filename){
 /*
  * JingleSession provides an API to manage a single Jingle session. We will
@@ -6349,7 +6375,7 @@ JingleSession.prototype.setAnswer = function(jingle) {};
 module.exports = JingleSession;
 
 }).call(this,"/modules/xmpp/JingleSession.js")
-},{"jitsi-meet-logger":45}],26:[function(require,module,exports){
+},{"jitsi-meet-logger":44}],26:[function(require,module,exports){
 (function (__filename){
 /* jshint -W117 */
 
@@ -7939,7 +7965,7 @@ JingleSessionPC.prototype.remoteStreamAdded = function (data, times) {
 module.exports = JingleSessionPC;
 
 }).call(this,"/modules/xmpp/JingleSessionPC.js")
-},{"../../service/xmpp/XMPPEvents":84,"../RTC/RTC":13,"../RTC/RTCBrowserType":14,"./JingleSession":25,"./LocalSSRCReplacement":27,"./SDP":28,"./SDPDiffer":29,"./SDPUtil":30,"./TraceablePeerConnection":31,"async":40,"jitsi-meet-logger":45,"sdp-transform":73}],27:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":84,"../RTC/RTC":13,"../RTC/RTCBrowserType":14,"./JingleSession":25,"./LocalSSRCReplacement":27,"./SDP":28,"./SDPDiffer":29,"./SDPUtil":30,"./TraceablePeerConnection":31,"async":40,"jitsi-meet-logger":44,"sdp-transform":73}],27:[function(require,module,exports){
 (function (__filename){
 /* global $ */
 var logger = require("jitsi-meet-logger").getLogger(__filename);
@@ -8236,7 +8262,7 @@ var LocalSSRCReplacement = {
 module.exports = LocalSSRCReplacement;
 
 }).call(this,"/modules/xmpp/LocalSSRCReplacement.js")
-},{"../RTC/RTCBrowserType":14,"../util/RandomUtil":23,"./SDP":28,"jitsi-meet-logger":45}],28:[function(require,module,exports){
+},{"../RTC/RTCBrowserType":14,"../util/RandomUtil":23,"./SDP":28,"jitsi-meet-logger":44}],28:[function(require,module,exports){
 (function (__filename){
 /* jshint -W117 */
 
@@ -8890,7 +8916,7 @@ module.exports = SDP;
 
 
 }).call(this,"/modules/xmpp/SDP.js")
-},{"./SDPUtil":30,"jitsi-meet-logger":45}],29:[function(require,module,exports){
+},{"./SDPUtil":30,"jitsi-meet-logger":44}],29:[function(require,module,exports){
 var SDPUtil = require("./SDPUtil");
 
 function SDPDiffer(mySDP, otherSDP)
@@ -9416,7 +9442,7 @@ SDPUtil = {
 };
 module.exports = SDPUtil;
 }).call(this,"/modules/xmpp/SDPUtil.js")
-},{"jitsi-meet-logger":45}],31:[function(require,module,exports){
+},{"jitsi-meet-logger":44}],31:[function(require,module,exports){
 (function (__filename){
 /* global $ */
 var RTC = require('../RTC/RTC');
@@ -9445,7 +9471,7 @@ function TraceablePeerConnection(ice_config, constraints, session) {
     var Interop = require('sdp-interop').Interop;
     this.interop = new Interop();
     var Simulcast = require('sdp-simulcast');
-    this.simulcast = new Simulcast({numOfLayers: 2, explodeRemoteSimulcast: false});
+    this.simulcast = new Simulcast({numOfLayers: 3, explodeRemoteSimulcast: false});
 
     // override as desired
     this.trace = function (what, info) {
@@ -9638,7 +9664,7 @@ if (TraceablePeerConnection.prototype.__defineGetter__ !== undefined) {
         function() {
             var desc = this.peerconnection.localDescription;
 
-            // TODO this should be after the Unified Plan -> Plan B
+            // FIXME this should probably be after the Unified Plan -> Plan B
             // transformation.
             desc = SSRCReplacement.mungeLocalVideoSSRC(desc);
             
@@ -9866,7 +9892,7 @@ module.exports = TraceablePeerConnection;
 
 
 }).call(this,"/modules/xmpp/TraceablePeerConnection.js")
-},{"../../service/xmpp/XMPPEvents":84,"../RTC/RTC":13,"../RTC/RTCBrowserType.js":14,"./LocalSSRCReplacement":27,"jitsi-meet-logger":45,"sdp-interop":63,"sdp-simulcast":66,"sdp-transform":73}],32:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":84,"../RTC/RTC":13,"../RTC/RTCBrowserType.js":14,"./LocalSSRCReplacement":27,"jitsi-meet-logger":44,"sdp-interop":63,"sdp-simulcast":66,"sdp-transform":73}],32:[function(require,module,exports){
 (function (__filename){
 /* global $, $iq, APP, config, messageHandler,
  roomName, sessionTerminated, Strophe, Util */
@@ -10303,7 +10329,7 @@ module.exports = Moderator;
 
 
 }).call(this,"/modules/xmpp/moderator.js")
-},{"../../service/authentication/AuthenticationEvents":80,"../../service/xmpp/XMPPEvents":84,"../settings/Settings":19,"jitsi-meet-logger":45}],33:[function(require,module,exports){
+},{"../../service/authentication/AuthenticationEvents":80,"../../service/xmpp/XMPPEvents":84,"../settings/Settings":19,"jitsi-meet-logger":44}],33:[function(require,module,exports){
 (function (__filename){
 /* jshint -W117 */
 /* a simple MUC connection plugin
@@ -10400,7 +10426,7 @@ module.exports = function(XMPP) {
 
 
 }).call(this,"/modules/xmpp/strophe.emuc.js")
-},{"./ChatRoom":24,"jitsi-meet-logger":45}],34:[function(require,module,exports){
+},{"./ChatRoom":24,"jitsi-meet-logger":44}],34:[function(require,module,exports){
 (function (__filename){
 /* jshint -W117 */
 
@@ -10697,7 +10723,7 @@ module.exports = function(XMPP, eventEmitter) {
 
 
 }).call(this,"/modules/xmpp/strophe.jingle.js")
-},{"../../service/xmpp/XMPPEvents":84,"../RTC/RTCBrowserType":14,"./JingleSessionPC":26,"jitsi-meet-logger":45}],35:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":84,"../RTC/RTCBrowserType":14,"./JingleSessionPC":26,"jitsi-meet-logger":44}],35:[function(require,module,exports){
 /* global Strophe */
 module.exports = function () {
 
@@ -10845,7 +10871,7 @@ module.exports = function (XMPP, eventEmitter) {
 };
 
 }).call(this,"/modules/xmpp/strophe.ping.js")
-},{"../../service/xmpp/XMPPEvents":84,"jitsi-meet-logger":45}],37:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":84,"jitsi-meet-logger":44}],37:[function(require,module,exports){
 (function (__filename){
 /* jshint -W117 */
 var logger = require("jitsi-meet-logger").getLogger(__filename);
@@ -10947,7 +10973,7 @@ module.exports = function() {
 };
 
 }).call(this,"/modules/xmpp/strophe.rayo.js")
-},{"jitsi-meet-logger":45}],38:[function(require,module,exports){
+},{"jitsi-meet-logger":44}],38:[function(require,module,exports){
 (function (__filename){
 /* global Strophe */
 /**
@@ -10996,7 +11022,7 @@ module.exports = function () {
 };
 
 }).call(this,"/modules/xmpp/strophe.util.js")
-},{"jitsi-meet-logger":45}],39:[function(require,module,exports){
+},{"jitsi-meet-logger":44}],39:[function(require,module,exports){
 (function (__filename){
 /* global $, APP, config, Strophe*/
 
@@ -11304,7 +11330,7 @@ XMPP.prototype.disconnect = function () {
 module.exports = XMPP;
 
 }).call(this,"/modules/xmpp/xmpp.js")
-},{"../../JitsiConnectionErrors":5,"../../JitsiConnectionEvents":6,"../../service/RTC/RTCEvents":77,"../../service/RTC/StreamEventTypes":79,"../../service/xmpp/XMPPEvents":84,"../RTC/RTC":13,"./strophe.emuc":33,"./strophe.jingle":34,"./strophe.logger":35,"./strophe.ping":36,"./strophe.rayo":37,"./strophe.util":38,"events":41,"jitsi-meet-logger":45,"pako":46}],40:[function(require,module,exports){
+},{"../../JitsiConnectionErrors":5,"../../JitsiConnectionEvents":6,"../../service/RTC/RTCEvents":77,"../../service/RTC/StreamEventTypes":79,"../../service/xmpp/XMPPEvents":84,"../RTC/RTC":13,"./strophe.emuc":33,"./strophe.jingle":34,"./strophe.logger":35,"./strophe.ping":36,"./strophe.rayo":37,"./strophe.util":38,"events":41,"jitsi-meet-logger":44,"pako":45}],40:[function(require,module,exports){
 (function (process){
 /*!
  * async
@@ -12431,7 +12457,7 @@ module.exports = XMPP;
 }());
 
 }).call(this,require('_process'))
-},{"_process":42}],41:[function(require,module,exports){
+},{"_process":61}],41:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -12735,99 +12761,6 @@ function isUndefined(arg) {
 }
 
 },{}],42:[function(require,module,exports){
-// shim for using process in browser
-
-var process = module.exports = {};
-var queue = [];
-var draining = false;
-var currentQueue;
-var queueIndex = -1;
-
-function cleanUpNextTick() {
-    draining = false;
-    if (currentQueue.length) {
-        queue = currentQueue.concat(queue);
-    } else {
-        queueIndex = -1;
-    }
-    if (queue.length) {
-        drainQueue();
-    }
-}
-
-function drainQueue() {
-    if (draining) {
-        return;
-    }
-    var timeout = setTimeout(cleanUpNextTick);
-    draining = true;
-
-    var len = queue.length;
-    while(len) {
-        currentQueue = queue;
-        queue = [];
-        while (++queueIndex < len) {
-            if (currentQueue) {
-                currentQueue[queueIndex].run();
-            }
-        }
-        queueIndex = -1;
-        len = queue.length;
-    }
-    currentQueue = null;
-    draining = false;
-    clearTimeout(timeout);
-}
-
-process.nextTick = function (fun) {
-    var args = new Array(arguments.length - 1);
-    if (arguments.length > 1) {
-        for (var i = 1; i < arguments.length; i++) {
-            args[i - 1] = arguments[i];
-        }
-    }
-    queue.push(new Item(fun, args));
-    if (queue.length === 1 && !draining) {
-        setTimeout(drainQueue, 0);
-    }
-};
-
-// v8 likes predictible objects
-function Item(fun, array) {
-    this.fun = fun;
-    this.array = array;
-}
-Item.prototype.run = function () {
-    this.fun.apply(null, this.array);
-};
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-process.version = ''; // empty string to avoid regexp issues
-process.versions = {};
-
-function noop() {}
-
-process.on = noop;
-process.addListener = noop;
-process.once = noop;
-process.off = noop;
-process.removeListener = noop;
-process.removeAllListeners = noop;
-process.emit = noop;
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-};
-
-process.cwd = function () { return '/' };
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-};
-process.umask = function() { return 0; };
-
-},{}],43:[function(require,module,exports){
 (function (process,global){
 /*!
  * @overview es6-promise - a tiny implementation of Promises/A+.
@@ -13798,7 +13731,7 @@ process.umask = function() { return 0; };
 
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":42}],44:[function(require,module,exports){
+},{"_process":61}],43:[function(require,module,exports){
 /* Copyright @ 2015 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13942,7 +13875,7 @@ Logger.levels = {
     ERROR: "error"
 };
 
-},{}],45:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 /* Copyright @ 2015 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14027,7 +13960,7 @@ module.exports = {
     levels: Logger.levels
 };
 
-},{"./Logger":44}],46:[function(require,module,exports){
+},{"./Logger":43}],45:[function(require,module,exports){
 // Top level file is just a mixin of submodules & constants
 'use strict';
 
@@ -14043,7 +13976,7 @@ assign(pako, deflate, inflate, constants);
 
 module.exports = pako;
 
-},{"./lib/deflate":47,"./lib/inflate":48,"./lib/utils/common":49,"./lib/zlib/constants":52}],47:[function(require,module,exports){
+},{"./lib/deflate":46,"./lib/inflate":47,"./lib/utils/common":48,"./lib/zlib/constants":51}],46:[function(require,module,exports){
 'use strict';
 
 
@@ -14421,7 +14354,7 @@ exports.deflate = deflate;
 exports.deflateRaw = deflateRaw;
 exports.gzip = gzip;
 
-},{"./utils/common":49,"./utils/strings":50,"./zlib/deflate.js":54,"./zlib/messages":59,"./zlib/zstream":61}],48:[function(require,module,exports){
+},{"./utils/common":48,"./utils/strings":49,"./zlib/deflate.js":53,"./zlib/messages":58,"./zlib/zstream":60}],47:[function(require,module,exports){
 'use strict';
 
 
@@ -14823,7 +14756,7 @@ exports.inflate = inflate;
 exports.inflateRaw = inflateRaw;
 exports.ungzip  = inflate;
 
-},{"./utils/common":49,"./utils/strings":50,"./zlib/constants":52,"./zlib/gzheader":55,"./zlib/inflate.js":57,"./zlib/messages":59,"./zlib/zstream":61}],49:[function(require,module,exports){
+},{"./utils/common":48,"./utils/strings":49,"./zlib/constants":51,"./zlib/gzheader":54,"./zlib/inflate.js":56,"./zlib/messages":58,"./zlib/zstream":60}],48:[function(require,module,exports){
 'use strict';
 
 
@@ -14927,7 +14860,7 @@ exports.setTyped = function (on) {
 
 exports.setTyped(TYPED_OK);
 
-},{}],50:[function(require,module,exports){
+},{}],49:[function(require,module,exports){
 // String encode/decode helpers
 'use strict';
 
@@ -15114,7 +15047,7 @@ exports.utf8border = function(buf, max) {
   return (pos + _utf8len[buf[pos]] > max) ? pos : max;
 };
 
-},{"./common":49}],51:[function(require,module,exports){
+},{"./common":48}],50:[function(require,module,exports){
 'use strict';
 
 // Note: adler32 takes 12% for level 0 and 2% for level 6.
@@ -15148,7 +15081,7 @@ function adler32(adler, buf, len, pos) {
 
 module.exports = adler32;
 
-},{}],52:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 module.exports = {
 
   /* Allowed flush values; see deflate() and inflate() below for details */
@@ -15197,7 +15130,7 @@ module.exports = {
   //Z_NULL:                 null // Use -1 or null inline, depending on var type
 };
 
-},{}],53:[function(require,module,exports){
+},{}],52:[function(require,module,exports){
 'use strict';
 
 // Note: we can't get significant speed boost here.
@@ -15240,7 +15173,7 @@ function crc32(crc, buf, len, pos) {
 
 module.exports = crc32;
 
-},{}],54:[function(require,module,exports){
+},{}],53:[function(require,module,exports){
 'use strict';
 
 var utils   = require('../utils/common');
@@ -17007,7 +16940,7 @@ exports.deflatePrime = deflatePrime;
 exports.deflateTune = deflateTune;
 */
 
-},{"../utils/common":49,"./adler32":51,"./crc32":53,"./messages":59,"./trees":60}],55:[function(require,module,exports){
+},{"../utils/common":48,"./adler32":50,"./crc32":52,"./messages":58,"./trees":59}],54:[function(require,module,exports){
 'use strict';
 
 
@@ -17049,7 +16982,7 @@ function GZheader() {
 
 module.exports = GZheader;
 
-},{}],56:[function(require,module,exports){
+},{}],55:[function(require,module,exports){
 'use strict';
 
 // See state defs from inflate.js
@@ -17377,7 +17310,7 @@ module.exports = function inflate_fast(strm, start) {
   return;
 };
 
-},{}],57:[function(require,module,exports){
+},{}],56:[function(require,module,exports){
 'use strict';
 
 
@@ -18882,7 +18815,7 @@ exports.inflateSyncPoint = inflateSyncPoint;
 exports.inflateUndermine = inflateUndermine;
 */
 
-},{"../utils/common":49,"./adler32":51,"./crc32":53,"./inffast":56,"./inftrees":58}],58:[function(require,module,exports){
+},{"../utils/common":48,"./adler32":50,"./crc32":52,"./inffast":55,"./inftrees":57}],57:[function(require,module,exports){
 'use strict';
 
 
@@ -19211,7 +19144,7 @@ module.exports = function inflate_table(type, lens, lens_index, codes, table, ta
   return 0;
 };
 
-},{"../utils/common":49}],59:[function(require,module,exports){
+},{"../utils/common":48}],58:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -19226,7 +19159,7 @@ module.exports = {
   '-6':   'incompatible version' /* Z_VERSION_ERROR (-6) */
 };
 
-},{}],60:[function(require,module,exports){
+},{}],59:[function(require,module,exports){
 'use strict';
 
 
@@ -20427,7 +20360,7 @@ exports._tr_flush_block  = _tr_flush_block;
 exports._tr_tally = _tr_tally;
 exports._tr_align = _tr_align;
 
-},{"../utils/common":49}],61:[function(require,module,exports){
+},{"../utils/common":48}],60:[function(require,module,exports){
 'use strict';
 
 
@@ -20457,6 +20390,99 @@ function ZStream() {
 }
 
 module.exports = ZStream;
+
+},{}],61:[function(require,module,exports){
+// shim for using process in browser
+
+var process = module.exports = {};
+var queue = [];
+var draining = false;
+var currentQueue;
+var queueIndex = -1;
+
+function cleanUpNextTick() {
+    draining = false;
+    if (currentQueue.length) {
+        queue = currentQueue.concat(queue);
+    } else {
+        queueIndex = -1;
+    }
+    if (queue.length) {
+        drainQueue();
+    }
+}
+
+function drainQueue() {
+    if (draining) {
+        return;
+    }
+    var timeout = setTimeout(cleanUpNextTick);
+    draining = true;
+
+    var len = queue.length;
+    while(len) {
+        currentQueue = queue;
+        queue = [];
+        while (++queueIndex < len) {
+            if (currentQueue) {
+                currentQueue[queueIndex].run();
+            }
+        }
+        queueIndex = -1;
+        len = queue.length;
+    }
+    currentQueue = null;
+    draining = false;
+    clearTimeout(timeout);
+}
+
+process.nextTick = function (fun) {
+    var args = new Array(arguments.length - 1);
+    if (arguments.length > 1) {
+        for (var i = 1; i < arguments.length; i++) {
+            args[i - 1] = arguments[i];
+        }
+    }
+    queue.push(new Item(fun, args));
+    if (queue.length === 1 && !draining) {
+        setTimeout(drainQueue, 0);
+    }
+};
+
+// v8 likes predictible objects
+function Item(fun, array) {
+    this.fun = fun;
+    this.array = array;
+}
+Item.prototype.run = function () {
+    this.fun.apply(null, this.array);
+};
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+process.version = ''; // empty string to avoid regexp issues
+process.versions = {};
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+};
+
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+process.umask = function() { return 0; };
 
 },{}],62:[function(require,module,exports){
 /* Copyright @ 2015 Atlassian Pty Ltd

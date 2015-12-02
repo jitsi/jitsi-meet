@@ -127,11 +127,16 @@ DataChannels.prototype.onDataChannel = function (event) {
                 logger.info(
                     "Data channel new last-n event: ",
                     lastNEndpoints, endpointsEnteringLastN, obj);
-                this.eventEmitter.emit(RTCEvents.LASTN_ENDPOINT_CHANGED,
+                self.eventEmitter.emit(RTCEvents.LASTN_ENDPOINT_CHANGED,
                     lastNEndpoints, endpointsEnteringLastN, obj);
             }
             else {
                 logger.debug("Data channel JSON-formatted message: ", obj);
+                // The received message appears to be appropriately formatted
+                // (i.e. is a JSON object which assigns a value to the mandatory
+                // property colibriClass) so don't just swallow it, expose it to
+                // public consumption.
+                self.eventEmitter.emit("rtc.datachannel." + colibriClass, obj);
             }
         }
     };
@@ -146,39 +151,60 @@ DataChannels.prototype.onDataChannel = function (event) {
 };
 
 DataChannels.prototype.handleSelectedEndpointEvent = function (userResource) {
-    logger.log('selected endpoint changed: ', userResource);
-    if (this._dataChannels && this._dataChannels.length != 0) {
-        this._dataChannels.some(function (dataChannel) {
-            if (dataChannel.readyState == 'open') {
-                logger.log('sending selected endpoint changed ' +
-                    'notification to the bridge: ', userResource);
-                dataChannel.send(JSON.stringify({
-                    'colibriClass': 'SelectedEndpointChangedEvent',
-                    'selectedEndpoint':
-                        (!userResource || userResource === null)?
-                            null : userResource
-                }));
-
-                return true;
-            }
-        });
-    }
+    this._onXXXEndpointChanged("selected", userResource);
 }
 
 DataChannels.prototype.handlePinnedEndpointEvent = function (userResource) {
-    logger.log('pinned endpoint changed: ', userResource);
-    if (this._dataChannels && this._dataChannels.length !== 0) {
-        this._dataChannels.some(function (dataChannel) {
-            if (dataChannel.readyState == 'open') {
-                dataChannel.send(JSON.stringify({
-                    'colibriClass': 'PinnedEndpointChangedEvent',
-                    'pinnedEndpoint':
-                        userResource ? userResource : null
-                }));
+    this._onXXXEndpointChanged("pinnned", userResource);
+}
 
-                return true;
-            }
-        });
+/**
+ * Notifies Videobridge about a change in the value of a specific
+ * endpoint-related property such as selected endpoint and pinnned endpoint.
+ *
+ * @param xxx the name of the endpoint-related property whose value changed
+ * @param userResource the new value of the endpoint-related property after the
+ * change
+ */
+DataChannels.prototype._onXXXEndpointChanged = function (xxx, userResource) {
+    // Derive the correct words from xxx such as selected and Selected, pinned
+    // and Pinned.
+    var head = xxx.charAt(0);
+    var tail = xxx.substring(1);
+    var lower = head.toLowerCase() + tail;
+    var upper = head.toUpperCase() + tail;
+
+    // Notify Videobridge about the specified endpoint change.
+    console.log(lower + ' endpoint changed: ', userResource);
+    this._some(function (dataChannel) {
+        if (dataChannel.readyState == 'open') {
+            console.log(
+                    'sending ' + lower
+                        + ' endpoint changed notification to the bridge: ',
+                    userResource);
+
+            var jsonObject = {};
+
+            jsonObject.colibriClass = (upper + 'EndpointChangedEvent');
+            jsonObject[lower + "Endpoint"]
+                = (userResource ? userResource : null);
+            dataChannel.send(JSON.stringify(jsonObject));
+
+            return true;
+        }
+    });
+}
+
+DataChannels.prototype._some = function (callback, thisArg) {
+    var dataChannels = this._dataChannels;
+
+    if (dataChannels && dataChannels.length !== 0) {
+        if (thisArg)
+            return dataChannels.some(callback, thisArg);
+        else
+            return dataChannels.some(callback);
+    } else {
+        return false;
     }
 }
 
