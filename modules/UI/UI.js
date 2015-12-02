@@ -135,24 +135,23 @@ UI.changeDisplayName = function (id, displayName) {
     VideoLayout.onDisplayNameChanged(id, displayName);
 };
 
-UI.initConference = function (jid) {
+UI.initConference = function (id) {
     Toolbar.updateRoomUrl(window.location.href);
     var meHTML = APP.translation.generateTranslationHTML("me");
-    var localId = APP.conference.localId();
-    $("#localNick").html(localId + " (" + meHTML + ")");
-
     var settings = Settings.getSettings();
 
+    $("#localNick").html(settings.email || settings.uid + " (" + meHTML + ")");
+
     // Make sure we configure our avatar id, before creating avatar for us
-    Avatar.setUserAvatar(jid, settings.email || settings.uid);
+    UI.setUserAvatar(id, settings.email || settings.uid);
 
     // Add myself to the contact list.
-    ContactList.addContact(jid);
+    ContactList.addContact(id);
 
     // Once we've joined the muc show the toolbar
     ToolbarToggler.showToolbar();
 
-    var displayName = config.displayJids ? localId : settings.displayName;
+    var displayName = config.displayJids ? id : settings.displayName;
 
     if (displayName) {
         UI.changeDisplayName('localVideoContainer', displayName);
@@ -173,7 +172,7 @@ function registerListeners() {
     });
 
     UI.addListener(UIEvents.EMAIL_CHANGED, function (email) {
-        Avatar.setUserAvatar(APP.xmpp.myJid(), email);
+        UI.setUserAvatar(APP.conference.localId(), email);
     });
 }
 
@@ -382,16 +381,16 @@ function onDtmfSupportChanged(dtmfSupport) {
 }
 
 UI.addUser = function (jid, id, displayName) {
-    messageHandler.notify(displayName,'notify.somebody',
-        'connected',
-        'notify.connected');
+    messageHandler.notify(
+        displayName,'notify.somebody', 'connected', 'notify.connected'
+    );
 
     if (!config.startAudioMuted ||
         config.startAudioMuted > APP.members.size())
         UIUtil.playSoundNotification('userJoined');
 
     // Configure avatar
-    Avatar.setUserAvatar(jid, id);
+    UI.setUserAvatar(jid, id);
 
     // Add Peer's container
     VideoLayout.ensurePeerContainerExists(jid);
@@ -599,10 +598,16 @@ UI.dockToolbar = function (isDock) {
     return ToolbarToggler.dockToolbar(isDock);
 };
 
-UI.userAvatarChanged = function (resourceJid, thumbUrl, contactListUrl) {
-    VideoLayout.userAvatarChanged(resourceJid, thumbUrl);
-    ContactList.userAvatarChanged(resourceJid, contactListUrl);
-    if(resourceJid === APP.xmpp.myResource()) {
+UI.setUserAvatar = function (id, email) {
+    // update avatar
+    Avatar.setUserAvatar(id, email);
+
+    var thumbUrl = Avatar.getThumbUrl(id);
+    var contactListUrl = Avatar.getContactListUrl(id);
+
+    VideoLayout.changeUserAvatar(id, thumbUrl);
+    ContactList.changeUserAvatar(id, contactListUrl);
+    if (APP.conference.isLocalId(id)) {
         SettingsMenu.changeAvatar(thumbUrl);
     }
 };

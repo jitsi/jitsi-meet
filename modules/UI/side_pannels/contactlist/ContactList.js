@@ -180,9 +180,9 @@ var ContactList = {
         }
     },
 
-    userAvatarChanged: function (resourceJid, contactListUrl) {
+    changeUserAvatar: function (id, contactListUrl) {
         // set the avatar in the contact list
-        var contact = $('#' + resourceJid + '>img');
+        var contact = $('#' + id + '>img');
         if (contact && contact.length > 0) {
             contact.get(0).src = contactListUrl;
         }

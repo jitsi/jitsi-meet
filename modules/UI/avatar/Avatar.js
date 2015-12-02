@@ -1,6 +1,4 @@
-/* global Strophe, APP, MD5 */
-var Settings = require("../../settings/Settings");
-
+/* global MD5 */
 var users = {};
 
 var Avatar = {
@@ -8,57 +6,55 @@ var Avatar = {
     /**
      * Sets the user's avatar in the settings menu(if local user), contact list
      * and thumbnail
-     * @param jid jid of the user
-     * @param id email or userID to be used as a hash
+     * @param id id of the user
+     * @param email email or nickname to be used as a hash
      */
-    setUserAvatar: function (jid, id) {
-        if (id) {
-            if (users[jid] === id) {
+  setUserAvatar: function (id, email) {
+        if (email) {
+            if (users[id] === email) {
                 return;
             }
-            users[jid] = id;
+            users[id] = email;
         }
-        var thumbUrl = this.getThumbUrl(jid);
-        var contactListUrl = this.getContactListUrl(jid);
-        var resourceJid = Strophe.getResourceFromJid(jid);
-
-        APP.UI.userAvatarChanged(resourceJid, thumbUrl, contactListUrl);
+        var thumbUrl = this.getThumbUrl(id);
+        var contactListUrl = this.getContactListUrl(id);
     },
     /**
      * Returns image URL for the avatar to be displayed on large video area
      * where current active speaker is presented.
-     * @param jid full MUC jid of the user for whom we want to obtain avatar URL
+     * @param id id of the user for whom we want to obtain avatar URL
      */
-    getActiveSpeakerUrl: function (jid) {
-        return this.getGravatarUrl(jid, 100);
+    getActiveSpeakerUrl: function (id) {
+        return this.getGravatarUrl(id, 100);
     },
     /**
      * Returns image URL for the avatar to be displayed on small video thumbnail
-     * @param jid full MUC jid of the user for whom we want to obtain avatar URL
+     * @param id id of the user for whom we want to obtain avatar URL
      */
-    getThumbUrl: function (jid) {
-        return this.getGravatarUrl(jid, 100);
+    getThumbUrl: function (id) {
+        return this.getGravatarUrl(id, 100);
     },
     /**
      * Returns the URL for the avatar to be displayed as contactlist item
-     * @param jid full MUC jid of the user for whom we want to obtain avatar URL
+     * @param id id of the user for whom we want to obtain avatar URL
      */
-    getContactListUrl: function (jid) {
-        return this.getGravatarUrl(jid, 30);
+    getContactListUrl: function (id) {
+        return this.getGravatarUrl(id, 30);
     },
-    getGravatarUrl: function (jid, size) {
-        if (!jid) {
-            console.error("Get gravatar - jid is undefined");
+    getGravatarUrl: function (id, size) {
+        if (!id) {
+            console.error("Get gravatar - id is undefined");
             return null;
         }
-        var id = users[jid];
-        if (!id) {
+        var email = users[id];
+        if (!email) {
             console.warn(
-                "No avatar stored yet for " + jid + " - using JID as ID");
-            id = jid;
+                "No avatar stored yet for " + id + " - using user id as ID"
+            );
+            email = id;
         }
         return 'https://www.gravatar.com/avatar/' +
-            MD5.hexdigest(id.trim().toLowerCase()) +
+            MD5.hexdigest(email.trim().toLowerCase()) +
             "?d=wavatar&size=" + (size || "30");
     }
 

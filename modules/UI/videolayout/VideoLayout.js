@@ -1001,14 +1001,16 @@ var VideoLayout = (function (my) {
         }
     };
 
-    my.userAvatarChanged = function(resourceJid, thumbUrl) {
-        var smallVideo = VideoLayout.getSmallVideo(resourceJid);
-        if(smallVideo)
+    my.changeUserAvatar = function(id, thumbUrl) {
+        var smallVideo = VideoLayout.getSmallVideo(id);
+        if (smallVideo) {
             smallVideo.avatarChanged(thumbUrl);
-        else
+        } else {
             console.warn(
-                "Missed avatar update - no small video yet for " + resourceJid);
-        LargeVideo.updateAvatar(resourceJid, thumbUrl);
+                "Missed avatar update - no small video yet for " + id
+            );
+        }
+        LargeVideo.updateAvatar(id, thumbUrl);
     };
 
     my.createEtherpadIframe = function(src, onloadHandler)

@@ -14,7 +14,8 @@ require("jQuery-Impromptu");
 require("autosize");
 
 var Commands = {
-    CONNECTION_QUALITY: "connectionQuality"
+    CONNECTION_QUALITY: "connectionQuality",
+    EMAIL: "email"
 };
 
 function createConference(connection, room) {
@@ -39,13 +40,8 @@ function createConference(connection, room) {
         },
 
         setNickname: function (nickname) {
-            // FIXME check if room is available etc.
             APP.settings.setDisplayName(nickname);
             room.setDisplayName(nickname);
-        },
-
-        setEmail: function (email) {
-            // FIXME room.setEmail
         },
 
         setStartMuted: function (audio, video) {
@@ -264,6 +260,29 @@ function initConference(connection, roomName) {
         }
     );
 
+     // share email with other users
+    function sendEmail(email) {
+        room.sendCommand(Commands.EMAIL, {
+            value: email,
+            attributes: {
+                id: room.myUserId()
+            }
+        });
+    }
+
+    APP.UI.addListener(UIEvents.EMAIL_CHANGED, function (email) {
+        APP.settings.setEmail(email);
+        APP.UI.setUserAvatar(room.myUserId(), data.value);
+        sendEmail(email);
+    });
+    var email = APP.settings.getEmail();
+    if (email) {
+        sendEmail(APP.settings.getEmail());
+    }
+    room.addCommandListener(Commands.EMAIL, function (data) {
+        APP.UI.setUserAvatar(data.attributes.id, data.value);
+    });
+
     return new Promise(function (resolve, reject) {
         room.on(
             ConferenceEvents.CONFERENCE_JOINED,
@@ -316,11 +335,6 @@ function init() {
         APP.UI.addListener(UIEvents.LANG_CHANGED, function (language) {
             APP.translation.setLanguage(language);
             APP.settings.setLanguage(language);
-        });
-
-        APP.UI.addListener(UIEvents.EMAIL_CHANGED, function (email) {
-            APP.conference.setEmail(email);
-            APP.settings.setEmail(email);
         });
 
         APP.UI.addListener(

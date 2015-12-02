@@ -87,6 +87,10 @@ var Settings = {
         return email;
     },
 
+    getEmail: function () {
+        return email;
+    },
+
     getSettings: function () {
         return {
             email: email,
