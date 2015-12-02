@@ -312,7 +312,13 @@ SDPUtil = {
         line += ' ';
         line += cand.getAttribute('component');
         line += ' ';
-        line += cand.getAttribute('protocol'); //.toUpperCase(); // chrome M23 doesn't like this
+
+        var protocol = cand.getAttribute('protocol');
+        // use tcp candidates for FF
+        if (RTCBrowserType.isFirefox() && protocol.toLowerCase() == 'ssltcp') {
+            protocol = 'tcp';
+        }
+
         line += ' ';
         line += cand.getAttribute('priority');
         line += ' ';
@@ -339,7 +345,7 @@ SDPUtil = {
                 }
                 break;
         }
-        if (cand.getAttribute('protocol').toLowerCase() == 'tcp') {
+        if (protocol.toLowerCase() == 'tcp') {
             line += 'tcptype';
             line += ' ';
             line += cand.getAttribute('tcptype');
