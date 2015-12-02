@@ -13,6 +13,10 @@ window.toastr = require("toastr");
 require("jQuery-Impromptu");
 require("autosize");
 
+var Commands = {
+    CONNECTION_QUALITY: "connectionQuality"
+};
+
 function createConference(connection, room) {
     var localTracks = [];
     var remoteTracks = {};
@@ -225,6 +229,40 @@ function initConference(connection, roomName) {
         }
     );
 
+    APP.connectionquality.addListener(
+        CQEvents.LOCALSTATS_UPDATED,
+        function (percent, stats) {
+            APP.UI.updateLocalStats(percent, stats);
+
+            // send local stats to other users
+            room.sendCommand(Commands.CONNECTION_QUALITY, {
+                value: APP.connectionquality.convertToMUCStats(stats),
+                attributes: {
+                    id: room.myUserId()
+                }
+            });
+        }
+    );
+
+    APP.connectionquality.addListener(
+        CQEvents.STOP,
+        function () {
+            APP.UI.hideStats();
+            room.removeCommand(Commands.CONNECTION_QUALITY);
+        }
+    );
+
+    // listen to remote stats
+    room.addCommandListener(Commands.CONNECTION_QUALITY, function (data) {
+        APP.connectionquality.updateRemoteStats(data.attributes.id, data.value);
+    });
+
+    APP.connectionquality.addListener(
+        CQEvents.REMOTESTATS_UPDATED,
+        function (id, percent, stats) {
+            APP.UI.updateRemoteStats(id, percent, stats);
+        }
+    );
 
     return new Promise(function (resolve, reject) {
         room.on(

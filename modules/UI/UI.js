@@ -233,9 +233,7 @@ UI.start = function () {
             // FIXME integrate logs
         });
         Feedback.init();
-    }
-    else
-    {
+    } else {
         $("#header").css("display", "none");
         $("#bottomToolbar").css("display", "none");
         $("#downloadlog").css("display", "none");
@@ -243,7 +241,6 @@ UI.start = function () {
         $("#remoteVideos").css("right", "0px");
         messageHandler.disableNotifications();
         $('body').popover("disable");
-//        $("[data-toggle=popover]").popover("disable");
         JitsiPopover.enabled = false;
     }
 
@@ -278,7 +275,6 @@ UI.start = function () {
             },
             "newestOnTop": false
         };
-
 
         SettingsMenu.init();
     }
