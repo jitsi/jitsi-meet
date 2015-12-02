@@ -676,9 +676,11 @@ module.exports = {
         options = options || {};
         if (typeof error == "object" && error.constraintName && error.name
             && (error.name == "ConstraintNotSatisfiedError" ||
-                error.name == "OverconstrainedError") &&
-            (error.constraintName == "minWidth" || error.constraintName == "maxWidth" ||
-                error.constraintName == "minHeight" || error.constraintName == "maxHeight") &&
+            error.name == "OverconstrainedError") &&
+            (error.constraintName == "minWidth" ||
+            error.constraintName == "maxWidth" ||
+            error.constraintName == "minHeight" ||
+            error.constraintName == "maxHeight") &&
             options.devices.indexOf("video") !== -1) {
                 return this.GET_TRACKS_RESOLUTION;
         } else {
@@ -687,7 +689,7 @@ module.exports = {
     },
     GET_TRACKS_RESOLUTION: "gum.get_tracks_resolution",
     GET_TRACKS_GENERAL: "gum.get_tracks_general"
-}
+};
 
 },{}],9:[function(require,module,exports){
 /**
@@ -2639,8 +2641,10 @@ module.exports = RTCUtils;
 
 }).call(this,"/modules/RTC/RTCUtils.js")
 },{"../../JitsiMeetJSErrors":8,"../../service/RTC/RTCEvents":77,"../../service/RTC/Resolutions":78,"../../service/RTC/StreamEventTypes.js":79,"../xmpp/SDPUtil":30,"./JitsiLocalTrack":11,"./RTCBrowserType":15,"./ScreenObtainer":17,"./adapter.screenshare":18,"events":41,"jitsi-meet-logger":45}],17:[function(require,module,exports){
+(function (__filename){
 /* global chrome, $, alert */
 /* jshint -W003 */
+var logger = require("jitsi-meet-logger").getLogger(__filename);
 var RTCBrowserType = require("./RTCBrowserType");
 var AdapterJS = require("./adapter.screenshare");
 var DesktopSharingEventTypes
@@ -2686,8 +2690,9 @@ var ScreenObtainer = {
     eventEmitter: null,
     obtainStream: null,
     /**
-     * Initializes the function used to obtain a screen capture (this.obtainStream).
-     *
+     * Initializes the function used to obtain a screen capture
+     * (this.obtainStream).
+     * 
      * If the browser is Chrome, it uses the value of
      * 'options.desktopSharingChromeMethod' (or 'options.desktopSharing') to
      * decide whether to use the a Chrome extension (if the value is 'ext'),
@@ -2711,34 +2716,36 @@ var ScreenObtainer = {
 
         if (RTCBrowserType.isTemasysPluginUsed()) {
             if (!AdapterJS.WebRTCPlugin.plugin.HasScreensharingFeature) {
-                console.info("Screensharing not supported by this plugin version");
-            } else if (!AdapterJS.WebRTCPlugin.plugin.isScreensharingAvailable) {
-                console.info(
-                    "Screensharing not available with Temasys plugin on this site");
+                logger.info("Screensharing not supported by this plugin " +
+                    "version");
+            } else if(!AdapterJS.WebRTCPlugin.plugin.isScreensharingAvailable) {
+                logger.info(
+                    "Screensharing not available with Temasys plugin on" +
+                    " this site");
             } else {
                 obtainDesktopStream = obtainWebRTCScreen;
-                console.info("Using Temasys plugin for desktop sharing");
+                logger.info("Using Temasys plugin for desktop sharing");
             }
         } else if (RTCBrowserType.isChrome()) {
             if (chromeMethod == "ext") {
                 if (RTCBrowserType.getChromeVersion() >= 34) {
                     obtainDesktopStream =
                         this.obtainScreenFromExtension;
-                    console.info("Using Chrome extension for desktop sharing");
+                    logger.info("Using Chrome extension for desktop sharing");
                     initChromeExtension(options);
                 } else {
-                    console.info("Chrome extension not supported until ver 34");
+                    logger.info("Chrome extension not supported until ver 34");
                 }
             } else if (chromeMethod == "webrtc") {
                 obtainDesktopStream = obtainWebRTCScreen;
-                console.info("Using Chrome WebRTC for desktop sharing");
+                logger.info("Using Chrome WebRTC for desktop sharing");
             }
         } else if (RTCBrowserType.isFirefox()) {
             if (options.desktopSharingFirefoxDisabled) {
                 obtainDesktopStream = null;
             } else if (window.location.protocol === "http:"){
-                console.log("Screen sharing is not supported over HTTP. Use of " +
-                    "HTTPS is required.");
+                logger.log("Screen sharing is not supported over HTTP. " +
+                    "Use of HTTPS is required.");
                 obtainDesktopStream = null;
             } else {
                 obtainDesktopStream = this.obtainScreenOnFirefox;
@@ -2747,7 +2754,7 @@ var ScreenObtainer = {
         }
 
         if (!obtainDesktopStream) {
-            console.info("Desktop sharing disabled");
+            logger.info("Desktop sharing disabled");
         }
 
         this.obtainStream = obtainDesktopStream;
@@ -2775,7 +2782,7 @@ var ScreenObtainer = {
                 RTCBrowserType.getFirefoxVersion() <=
                     this.options.desktopSharingFirefoxMaxVersionExtRequired)) {
             extensionRequired = true;
-            console.log("Jidesha extension required on firefox version " +
+            logger.log("Jidesha extension required on firefox version " +
                 RTCBrowserType.getFirefoxVersion());
         }
 
@@ -2789,8 +2796,8 @@ var ScreenObtainer = {
             initFirefoxExtensionDetection(this.options);
         }
 
-        // Give it some (more) time to initialize, and assume lack of extension if
-        // it hasn't.
+        // Give it some (more) time to initialize, and assume lack of
+        // extension if it hasn't.
         if (firefoxExtInstalled === null) {
             window.setTimeout(
                 function() {
@@ -2800,7 +2807,8 @@ var ScreenObtainer = {
                 },
                 300
             );
-            console.log("Waiting for detection of jidesha on firefox to finish.");
+            logger.log("Waiting for detection of jidesha on firefox to " +
+                "finish.");
             return;
         }
 
@@ -2811,20 +2819,22 @@ var ScreenObtainer = {
         reDetectFirefoxExtension = true;
 
         // Prompt the user to install the extension
-        this.eventEmitter.emit(DesktopSharingEventTypes.FIREFOX_EXTENSION_NEEDED,
-                               this.options.desktopSharingFirefoxExtensionURL);
+        this.eventEmitter.emit(
+            DesktopSharingEventTypes.FIREFOX_EXTENSION_NEEDED,
+            this.options.desktopSharingFirefoxExtensionURL);
 
         // Make sure desktopsharing knows that we failed, so that it doesn't get
         // stuck in 'switching' mode.
         errorCallback('Firefox extension required.');
     },
     /**
-     * Asks Chrome extension to call chooseDesktopMedia and gets chrome 'desktop'
-     * stream for returned stream token.
+     * Asks Chrome extension to call chooseDesktopMedia and gets chrome
+     * 'desktop' stream for returned stream token.
      */
     obtainScreenFromExtension: function (streamCallback, failCallback) {
         if (chromeExtInstalled) {
-            doGetStreamFromExtension(this.options, streamCallback, failCallback);
+            doGetStreamFromExtension(this.options, streamCallback,
+                failCallback);
         } else {
             if (chromeExtUpdateRequired) {
                 alert(
@@ -2835,21 +2845,23 @@ var ScreenObtainer = {
             chrome.webstore.install(
                 getWebStoreInstallUrl(this.options),
                 function (arg) {
-                    console.log("Extension installed successfully", arg);
+                    logger.log("Extension installed successfully", arg);
                     chromeExtInstalled = true;
-                    // We need to give a moment for the endpoint to become available
+                    // We need to give a moment for the endpoint to become
+                    // available
                     window.setTimeout(function () {
-                        doGetStreamFromExtension(this.options, streamCallback, failCallback);
+                        doGetStreamFromExtension(this.options, streamCallback,
+                            failCallback);
                     }, 500);
                 },
                 function (arg) {
-                    console.log("Failed to install the extension", arg);
+                    logger.log("Failed to install the extension", arg);
                     failCallback(arg);
                 }
             );
         }
     }
-}
+};
 
 
 
@@ -2916,7 +2928,7 @@ function isUpdateRequired(minVersion, extVersion) {
         return false;
     }
     catch (e) {
-        console.error("Failed to parse extension version", e);
+        logger.error("Failed to parse extension version", e);
         return true;
     }
 }
@@ -2934,14 +2946,14 @@ function checkChromeExtInstalled(callback, options) {
         function (response) {
             if (!response || !response.version) {
                 // Communication failure - assume that no endpoint exists
-                console.warn(
+                logger.warn(
                     "Extension not installed?: ", chrome.runtime.lastError);
                 callback(false, false);
                 return;
             }
             // Check installed extension version
             var extVersion = response.version;
-            console.log('Extension version is: ' + extVersion);
+            logger.log('Extension version is: ' + extVersion);
             //TODO: remove minChromeExtVersion (deprecated)
             var updateRequired
                 = isUpdateRequired(
@@ -2970,7 +2982,7 @@ function doGetStreamFromExtension(options, streamCallback, failCallback) {
                 failCallback(chrome.runtime.lastError);
                 return;
             }
-            console.log("Response from extension: " + response);
+            logger.log("Response from extension: " + response);
             if (response.streamId) {
                 GUM(
                     ['desktop'],
@@ -2994,7 +3006,8 @@ function doGetStreamFromExtension(options, streamCallback, failCallback) {
  */
 function initInlineInstalls(options)
 {
-    $("link[rel=chrome-webstore-item]").attr("href", getWebStoreInstallUrl(options));
+    $("link[rel=chrome-webstore-item]").attr("href",
+        getWebStoreInstallUrl(options));
 }
 
 function initChromeExtension(options) {
@@ -3004,7 +3017,7 @@ function initChromeExtension(options) {
     checkChromeExtInstalled(function (installed, updateRequired) {
         chromeExtInstalled = installed;
         chromeExtUpdateRequired = updateRequired;
-        console.info(
+        logger.info(
             "Chrome extension installed: " + chromeExtInstalled +
             " updateRequired: " + chromeExtUpdateRequired);
     }, options);
@@ -3028,11 +3041,11 @@ function initFirefoxExtensionDetection(options) {
 
     var img = document.createElement('img');
     img.onload = function(){
-        console.log("Detected firefox screen sharing extension.");
+        logger.log("Detected firefox screen sharing extension.");
         firefoxExtInstalled = true;
     };
     img.onerror = function(){
-        console.log("Detected lack of firefox screen sharing extension.");
+        logger.log("Detected lack of firefox screen sharing extension.");
         firefoxExtInstalled = false;
     };
 
@@ -3048,7 +3061,8 @@ function initFirefoxExtensionDetection(options) {
 
 module.exports = ScreenObtainer;
 
-},{"../../service/desktopsharing/DesktopSharingEventTypes":81,"./RTCBrowserType":15,"./adapter.screenshare":18}],18:[function(require,module,exports){
+}).call(this,"/modules/RTC/ScreenObtainer.js")
+},{"../../service/desktopsharing/DesktopSharingEventTypes":81,"./RTCBrowserType":15,"./adapter.screenshare":18,"jitsi-meet-logger":45}],18:[function(require,module,exports){
 (function (__filename){
 /*! adapterjs - v0.12.0 - 2015-09-04 */
 var console = require("jitsi-meet-logger").getLogger(__filename);
@@ -22588,11 +22602,6 @@ var DesktopSharingEventTypes = {
     SWITCHING_DONE: "ds.switching_done",
 
     NEW_STREAM_CREATED: "ds.new_stream_created",
-    /**
-     * An event which indicates that the jidesha extension for Firefox is
-     * needed to proceed with screen sharing, and that it is not installed.
-     */
-    FIREFOX_EXTENSION_NEEDED: "ds.firefox_extension_needed",
     /**
      * An event which indicates that the jidesha extension for Firefox is
      * needed to proceed with screen sharing, and that it is not installed.
