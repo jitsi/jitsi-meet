@@ -11,7 +11,6 @@ var DesktopSharingEventTypes
 var MediaStreamType = require("../../service/RTC/MediaStreamTypes");
 var StreamEventTypes = require("../../service/RTC/StreamEventTypes.js");
 var RTCEvents = require("../../service/RTC/RTCEvents.js");
-var desktopsharing = require("../desktopsharing/desktopsharing");
 
 function RTC(room, options) {
     this.room = room;
@@ -22,10 +21,6 @@ function RTC(room, options) {
     this.eventEmitter = new EventEmitter();
     var self = this;
     this.options = options || {};
-    desktopsharing.addListener(DesktopSharingEventTypes.NEW_STREAM_CREATED,
-        function (stream, isUsingScreenStream, callback) {
-            self.changeLocalVideo(stream, isUsingScreenStream, callback);
-        });
     room.addPresenceListener("videomuted", function (values, from) {
         if(self.remoteStreams[from])
             self.remoteStreams[from][JitsiTrack.VIDEO].setMute(values.value == "true");
@@ -85,7 +80,6 @@ RTC.addListener = function (eventType, listener) {
 }
 
 RTC.removeListener = function (eventType, listener) {
-    RTCUtils.eventEmitter.removeListener(RTCEvents.RTC_READY, listener);
     RTCUtils.removeListener(eventType, listener)
 }
 
@@ -94,7 +88,7 @@ RTC.isRTCReady = function () {
 }
 
 RTC.init = function (options) {
-    RTCUtils.init(options || {});
+    return RTCUtils.init(options || {});
 }
 
 RTC.getDeviceAvailability = function () {
@@ -137,13 +131,6 @@ RTC.prototype.createRemoteStream = function (data, sid, thessrc) {
 
 RTC.getPCConstraints = function () {
     return RTCUtils.pc_constraints;
-};
-
-RTC.getUserMediaWithConstraints = function(um, success_callback,
-                                     failure_callback, options)
-{
-    return RTCUtils.getUserMediaWithConstraints(this, um, success_callback,
-        failure_callback, options);
 };
 
 RTC.attachMediaStream =  function (elSelector, stream) {

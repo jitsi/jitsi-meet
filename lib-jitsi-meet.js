@@ -344,7 +344,7 @@ function setupListeners(conference) {
 module.exports = JitsiConference;
 
 }).call(this,"/JitsiConference.js")
-},{"./JitsiConferenceEvents":3,"./JitsiParticipant":8,"./modules/RTC/RTC":13,"./modules/statistics/statistics":22,"./service/RTC/RTCEvents":77,"./service/RTC/StreamEventTypes":79,"./service/xmpp/XMPPEvents":84,"events":41,"jitsi-meet-logger":44}],2:[function(require,module,exports){
+},{"./JitsiConferenceEvents":3,"./JitsiParticipant":9,"./modules/RTC/RTC":14,"./modules/statistics/statistics":22,"./service/RTC/RTCEvents":77,"./service/RTC/StreamEventTypes":79,"./service/xmpp/XMPPEvents":84,"events":41,"jitsi-meet-logger":45}],2:[function(require,module,exports){
 /**
  * Enumeration with the errors for the conference.
  * @type {{string: string}}
@@ -665,7 +665,31 @@ window.Promise = window.Promise || require("es6-promise").Promise;
 
 module.exports = LibJitsiMeet;
 
-},{"./JitsiConferenceErrors":2,"./JitsiConferenceEvents":3,"./JitsiConnection":4,"./JitsiConnectionErrors":5,"./JitsiConnectionEvents":6,"./modules/RTC/RTC":13,"es6-promise":42,"jitsi-meet-logger":44}],8:[function(require,module,exports){
+},{"./JitsiConferenceErrors":2,"./JitsiConferenceEvents":3,"./JitsiConnection":4,"./JitsiConnectionErrors":5,"./JitsiConnectionEvents":6,"./modules/RTC/RTC":14,"es6-promise":43,"jitsi-meet-logger":45}],8:[function(require,module,exports){
+module.exports = {
+    /**
+     * Returns JitsiMeetJSError based on the error object passed by GUM
+     * @param error the error
+     * @param {Object} options the options object given to GUM.
+     */
+    parseError: function (error, options) {
+        options = options || {};
+        if (typeof error == "object" && error.constraintName && error.name
+            && (error.name == "ConstraintNotSatisfiedError" ||
+                error.name == "OverconstrainedError") &&
+            (error.constraintName == "minWidth" || error.constraintName == "maxWidth" ||
+                error.constraintName == "minHeight" || error.constraintName == "maxHeight") &&
+            options.devices.indexOf("video") !== -1) {
+                return this.GET_TRACKS_RESOLUTION;
+        } else {
+            return this.GET_TRACKS_GENERAL;
+        }
+    },
+    GET_TRACKS_RESOLUTION: "gum.get_tracks_resolution",
+    GET_TRACKS_GENERAL: "gum.get_tracks_general"
+}
+
+},{}],9:[function(require,module,exports){
 /**
  * Represents a participant in (a member of) a conference.
  */
@@ -803,7 +827,7 @@ JitsiParticipant.prototype.askToMute = function() {
 
 module.exports = JitsiParticipant();
 
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 (function (__filename){
 /* global config, APP, Strophe */
 
@@ -1019,7 +1043,7 @@ module.exports = DataChannels;
 
 
 }).call(this,"/modules/RTC/DataChannels.js")
-},{"../../service/RTC/RTCEvents":77,"jitsi-meet-logger":44}],10:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":77,"jitsi-meet-logger":45}],11:[function(require,module,exports){
 var JitsiTrack = require("./JitsiTrack");
 var StreamEventTypes = require("../../service/RTC/StreamEventTypes");
 var RTCBrowserType = require("./RTCBrowserType");
@@ -1173,7 +1197,7 @@ JitsiLocalTrack.prototype._setRTC = function (rtc) {
 
 module.exports = JitsiLocalTrack;
 
-},{"../../service/RTC/StreamEventTypes":79,"./JitsiTrack":12,"./RTCBrowserType":14,"./RTCUtils":15}],11:[function(require,module,exports){
+},{"../../service/RTC/StreamEventTypes":79,"./JitsiTrack":13,"./RTCBrowserType":15,"./RTCUtils":16}],12:[function(require,module,exports){
 var JitsiTrack = require("./JitsiTrack");
 var StreamEventTypes = require("../../service/RTC/StreamEventTypes");
 
@@ -1241,7 +1265,7 @@ delete JitsiRemoteTrack.prototype.start;
 
 module.exports = JitsiRemoteTrack;
 
-},{"../../service/RTC/StreamEventTypes":79,"./JitsiTrack":12}],12:[function(require,module,exports){
+},{"../../service/RTC/StreamEventTypes":79,"./JitsiTrack":13}],13:[function(require,module,exports){
 var RTCBrowserType = require("./RTCBrowserType");
 
 /**
@@ -1431,7 +1455,7 @@ JitsiTrack.prototype.isActive = function () {
 
 module.exports = JitsiTrack;
 
-},{"./RTCBrowserType":14,"./RTCUtils":15}],13:[function(require,module,exports){
+},{"./RTCBrowserType":15,"./RTCUtils":16}],14:[function(require,module,exports){
 /* global APP */
 var EventEmitter = require("events");
 var RTCBrowserType = require("./RTCBrowserType");
@@ -1445,7 +1469,6 @@ var DesktopSharingEventTypes
 var MediaStreamType = require("../../service/RTC/MediaStreamTypes");
 var StreamEventTypes = require("../../service/RTC/StreamEventTypes.js");
 var RTCEvents = require("../../service/RTC/RTCEvents.js");
-var desktopsharing = require("../desktopsharing/desktopsharing");
 
 function RTC(room, options) {
     this.room = room;
@@ -1456,10 +1479,6 @@ function RTC(room, options) {
     this.eventEmitter = new EventEmitter();
     var self = this;
     this.options = options || {};
-    desktopsharing.addListener(DesktopSharingEventTypes.NEW_STREAM_CREATED,
-        function (stream, isUsingScreenStream, callback) {
-            self.changeLocalVideo(stream, isUsingScreenStream, callback);
-        });
     room.addPresenceListener("videomuted", function (values, from) {
         if(self.remoteStreams[from])
             self.remoteStreams[from][JitsiTrack.VIDEO].setMute(values.value == "true");
@@ -1519,7 +1538,6 @@ RTC.addListener = function (eventType, listener) {
 }
 
 RTC.removeListener = function (eventType, listener) {
-    RTCUtils.eventEmitter.removeListener(RTCEvents.RTC_READY, listener);
     RTCUtils.removeListener(eventType, listener)
 }
 
@@ -1528,7 +1546,7 @@ RTC.isRTCReady = function () {
 }
 
 RTC.init = function (options) {
-    RTCUtils.init(options || {});
+    return RTCUtils.init(options || {});
 }
 
 RTC.getDeviceAvailability = function () {
@@ -1571,13 +1589,6 @@ RTC.prototype.createRemoteStream = function (data, sid, thessrc) {
 
 RTC.getPCConstraints = function () {
     return RTCUtils.pc_constraints;
-};
-
-RTC.getUserMediaWithConstraints = function(um, success_callback,
-                                     failure_callback, options)
-{
-    return RTCUtils.getUserMediaWithConstraints(this, um, success_callback,
-        failure_callback, options);
 };
 
 RTC.attachMediaStream =  function (elSelector, stream) {
@@ -1688,7 +1699,7 @@ RTC.prototype.setVideoMute = function (mute, callback, options) {
 
 module.exports = RTC;
 
-},{"../../service/RTC/MediaStreamTypes":76,"../../service/RTC/RTCEvents.js":77,"../../service/RTC/StreamEventTypes.js":79,"../../service/desktopsharing/DesktopSharingEventTypes":81,"../desktopsharing/desktopsharing":18,"./DataChannels":9,"./JitsiLocalTrack.js":10,"./JitsiRemoteTrack.js":11,"./JitsiTrack":12,"./RTCBrowserType":14,"./RTCUtils.js":15,"events":41}],14:[function(require,module,exports){
+},{"../../service/RTC/MediaStreamTypes":76,"../../service/RTC/RTCEvents.js":77,"../../service/RTC/StreamEventTypes.js":79,"../../service/desktopsharing/DesktopSharingEventTypes":81,"./DataChannels":10,"./JitsiLocalTrack.js":11,"./JitsiRemoteTrack.js":12,"./JitsiTrack":13,"./RTCBrowserType":15,"./RTCUtils.js":16,"events":41}],15:[function(require,module,exports){
 
 var currentBrowser;
 
@@ -1860,7 +1871,7 @@ browserVersion = detectBrowser();
 isAndroid = navigator.userAgent.indexOf('Android') != -1;
 
 module.exports = RTCBrowserType;
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 (function (__filename){
 /* global config, require, attachMediaStream, getUserMedia */
 
@@ -1873,6 +1884,8 @@ var SDPUtil = require("../xmpp/SDPUtil");
 var EventEmitter = require("events");
 var JitsiLocalTrack = require("./JitsiLocalTrack");
 var StreamEventTypes = require("../../service/RTC/StreamEventTypes.js");
+var screenObtainer = require("./ScreenObtainer");
+var JitsiMeetJSError = require("../../JitsiMeetJSErrors");
 
 var eventEmitter = new EventEmitter();
 
@@ -1882,31 +1895,6 @@ var devices = {
 }
 
 var rtcReady = false;
-
-function DummyMediaStream(id) {
-    this.id = id;
-    this.label = id;
-    this.stop = function() { };
-    this.getAudioTracks = function() { return []; };
-    this.getVideoTracks = function() { return []; };
-}
-
-function getPreviousResolution(resolution) {
-    if(!Resolutions[resolution])
-        return null;
-    var order = Resolutions[resolution].order;
-    var res = null;
-    var resName = null;
-    var tmp, i;
-    for(i in Resolutions) {
-        tmp = Resolutions[i];
-        if (!res || (res.order < tmp.order && tmp.order < order)) {
-            resName = i;
-            res = tmp;
-        }
-    }
-    return resName;
-}
 
 function setResolutionConstraints(constraints, resolution) {
     var isAndroid = RTCBrowserType.isAndroid();
@@ -1930,6 +1918,7 @@ function setResolutionConstraints(constraints, resolution) {
         constraints.video.mandatory.maxHeight =
             constraints.video.mandatory.minHeight;
 }
+
 /**
  * @param {string[]} um required user media types
  *
@@ -2079,9 +2068,10 @@ function setAvailableDevices(um, available) {
 // In case of IE we continue from 'onReady' callback
 // passed to RTCUtils constructor. It will be invoked by Temasys plugin
 // once it is initialized.
-function onReady () {
+function onReady (options, GUM) {
     rtcReady = true;
     eventEmitter.emit(RTCEvents.RTC_READY, true);
+    screenObtainer.init(eventEmitter, options, GUM);
 };
 
 /**
@@ -2207,6 +2197,93 @@ function enumerateDevicesThroughMediaStreamTrack (callback) {
         );
         callback(devices);
     });
+}
+
+function obtainDevices(options) {
+    if(!options.devices || options.devices.length === 0) {
+        return options.successCallback(streams);
+    }
+
+    var device = options.devices.splice(0, 1);
+    options.deviceGUM[device](function (stream) {
+            options.streams[device] = stream;
+            obtainDevices(options);
+        },
+        function (error) {
+            logger.error(
+                "failed to obtain " + device + " stream - stop", error);
+            options.errorCallback(JitsiMeetJSError.parseError(error));
+        });
+}
+
+
+function createLocalTracks(streams) {
+    var newStreams = []
+    for (var i = 0; i < streams.length; i++) {
+        var localStream = new JitsiLocalTrack(null, streams[i].stream,
+            eventEmitter, streams[i].videoType, streams[i].resolution);
+        newStreams.push(localStream);
+        if (streams[i].isMuted === true)
+            localStream.setMute(true);
+
+        var eventType = StreamEventTypes.EVENT_TYPE_LOCAL_CREATED;
+
+        eventEmitter.emit(eventType, localStream);
+    }
+    return newStreams;
+}
+
+/**
+ * Handles the newly created Media Streams.
+ * @param streams the new Media Streams
+ * @param resolution the resolution of the video streams
+ * @returns {*[]} object that describes the new streams
+ */
+function handleLocalStream(streams, resolution) {
+    var audioStream, videoStream, desktopStream, res = [];
+    // If this is FF, the stream parameter is *not* a MediaStream object, it's
+    // an object with two properties: audioStream, videoStream.
+    if (window.webkitMediaStream) {
+        var audioVideo = streams.audioVideo;
+        if (audioVideo) {
+            var audioTracks = audioVideo.getAudioTracks();
+            if(audioTracks.length) {
+                audioStream = new webkitMediaStream();
+                for (var i = 0; i < audioTracks.length; i++) {
+                    audioStream.addTrack(audioTracks[i]);
+                }
+            }
+
+            var videoTracks = audioVideo.getVideoTracks();
+            if(audioTracks.length) {
+                videoStream = new webkitMediaStream();
+                for (i = 0; i < videoTracks.length; i++) {
+                    videoStream.addTrack(videoTracks[i]);
+                }
+            }
+        }
+
+    }
+    else if (RTCBrowserType.isFirefox() || RTCBrowserType.isTemasysPluginUsed()) {   // Firefox and Temasys plugin
+        if (streams && streams.audioStream)
+            audioStream = streams.audioStream;
+
+        if (streams && streams.videoStream)
+            videoStream = streams.videoStream;
+    }
+
+    if (streams && streams.desktopStream)
+        res.push({stream: streams.desktopStream,
+            type: "video", videoType: "desktop"});
+
+    if(audioStream)
+        res.push({stream: audioStream, type: "audio", videoType: null});
+
+    if(videoStream)
+        res.push({stream: videoStream, type: "video", videoType: "camera",
+            resolution: resolution});
+
+    return res;
 }
 
 //Options parameter is to pass config options. Currently uses only "useIPv6".
@@ -2364,7 +2441,7 @@ var RTCUtils = {
                     attachMediaStream(element, stream);
                 };
 
-                onReady(isPlugin);
+                onReady(options, self.getUserMediaWithConstraints);
             });
         } else {
             try {
@@ -2376,7 +2453,7 @@ var RTCUtils = {
 
         // Call onReady() if Temasys plugin is not used
         if (!RTCBrowserType.isTemasysPluginUsed()) {
-            onReady();
+            onReady(options, self.getUserMediaWithConstraints);
         }
 
     },
@@ -2441,15 +2518,26 @@ var RTCUtils = {
         options = options || {};
         return new Promise(function (resolve, reject) {
             var successCallback = function (stream) {
-                var streams = self.successCallback(stream, options.resolution);
+                var streams = handleLocalStream(stream, options.resolution);
                 resolve(options.dontCreateJitsiTracks?
-                    streams: self.createLocalTracks(streams));
+                    streams: createLocalTracks(streams));
             };
 
             options.devices = options.devices || ['audio', 'video'];
-
-            if (RTCBrowserType.isFirefox() || RTCBrowserType.isTemasysPluginUsed()) {
-
+            if(!screenObtainer.isSupported()
+                && options.devices.indexOf("desktop") !== -1){
+                options.devices.splice(options.devices.indexOf("desktop"), 1);
+            }
+            if (RTCBrowserType.isFirefox() ||
+                RTCBrowserType.isTemasysPluginUsed()) {
+                var GUM = function (device, s, e) {
+                    this.getUserMediaWithConstraints(device, s, e, options);
+                }
+                var deviceGUM = {
+                    "audio": GUM.bind(self, ["audio"]),
+                    "video": GUM.bind(self, ["video"]),
+                    "desktop": screenObtainer.obtainStream
+                }
                 // With FF/IE we can't split the stream into audio and video because FF
                 // doesn't support media stream constructors. So, we need to get the
                 // audio stream separately from the video stream using two distinct GUM
@@ -2458,190 +2546,50 @@ var RTCUtils = {
                 //
                 // Note that we pack those 2 streams in a single object and pass it to
                 // the successCallback method.
-                var obtainVideo = function (audioStream) {
-                    self.getUserMediaWithConstraints(
-                        ['video'],
-                        function (videoStream) {
-                            return successCallback({
-                                audioStream: audioStream,
-                                videoStream: videoStream
-                            });
-                        },
-                        function (error, resolution) {
-                            logger.error(
-                                'failed to obtain video stream - stop', error);
-                            self.errorCallback(error, resolve, options);
-                        },
-                        {resolution: options.resolution || '360',
-                        cameraDeviceId: options.cameraDeviceId});
-                };
-                var obtainAudio = function () {
-                    self.getUserMediaWithConstraints(
-                        ['audio'],
-                        function (audioStream) {
-                            (options.devices.indexOf('video') === -1) ||
-                                obtainVideo(audioStream);
+                obtainDevices({
+                    devices: options.devices,
+                    successCallback: successCallback,
+                    errorCallback: reject,
+                    deviceGUM: deviceGUM
+                });
+            } else {
+                var hasDesktop = false;
+                if(hasDesktop = options.devices.indexOf("desktop") !== -1) {
+                    options.devices.splice(options.devices.indexOf("desktop"), 1);
+                }
+                options.resolution = options.resolution || '360';
+                if(options.devices.length) {
+                    this.getUserMediaWithConstraints(
+                        options.devices,
+                        function (stream) {
+                            if(hasDesktop) {
+                                screenObtainer.obtainStream(
+                                    function (desktopStream) {
+                                        successCallback({audioVideo: stream,
+                                            desktopStream: desktopStream});
+                                    }, function (error) {
+                                        reject(
+                                            JitsiMeetJSError.parseError(error));
+                                    });
+                            } else {
+                                successCallback({audioVideo: stream});
+                            }
                         },
                         function (error) {
-                            logger.error(
-                                'failed to obtain audio stream - stop', error);
-                            self.errorCallback(error, resolve, options);
-                        },{micDeviceId: options.micDeviceId});
-                };
-                if((options.devices.indexOf('audio') === -1))
-                    obtainVideo(null)
-                else
-                    obtainAudio();
-            } else {
-                this.getUserMediaWithConstraints(
-                    options.devices,
-                    function (stream) {
-                        successCallback(stream);
-                    },
-                    function (error, resolution) {
-                        self.errorCallback(error, resolve, options);
-                    },
-                    {resolution: options.resolution || '360',
-                    cameraDeviceId: options.cameraDeviceId,
-                    micDeviceId: options.micDeviceId});
+                            reject(JitsiMeetJSError.parseError(error));
+                        },
+                        options);
+                } else if (hasDesktop) {
+                    screenObtainer.obtainStream(
+                        function (stream) {
+                            successCallback({desktopStream: stream});
+                        }, function (error) {
+                            reject(
+                                JitsiMeetJSError.parseError(error));
+                        });
+                }
             }
         }.bind(this));
-    },
-
-    /**
-     * Successful callback called from GUM.
-     * @param stream the new MediaStream
-     * @param resolution the resolution of the video stream.
-     * @returns {*}
-     */
-    successCallback: function (stream, resolution) {
-        // If this is FF or IE, the stream parameter is *not* a MediaStream object,
-        // it's an object with two properties: audioStream, videoStream.
-        if (stream && stream.getAudioTracks && stream.getVideoTracks)
-            logger.log('got', stream, stream.getAudioTracks().length,
-                stream.getVideoTracks().length);
-        return this.handleLocalStream(stream, resolution);
-    },
-
-    /**
-     * Error callback called from GUM. Retries the GUM call with different resolutions.
-     * @param error the error
-     * @param resolve the resolve funtion that will be called on success.
-     * @param {Object} options with the following properties:
-     * @param resolution the last resolution used for GUM.
-     * @param dontCreateJitsiTracks if <tt>true</tt> objects with the following structure {stream: the Media Stream,
-     * type: "audio" or "video", videoType: "camera" or "desktop"}
-     * will be returned trough the Promise, otherwise JitsiTrack objects will be returned.
-     */
-    errorCallback: function (error, resolve, options) {
-        var self = this;
-        options = options || {};
-        logger.error('failed to obtain audio/video stream - trying audio only', error);
-        var resolution = getPreviousResolution(options.resolution);
-        if (typeof error == "object" && error.constraintName && error.name
-            && (error.name == "ConstraintNotSatisfiedError" ||
-                error.name == "OverconstrainedError") &&
-            (error.constraintName == "minWidth" || error.constraintName == "maxWidth" ||
-                error.constraintName == "minHeight" || error.constraintName == "maxHeight")
-            && resolution) {
-            self.getUserMediaWithConstraints(['audio', 'video'],
-                function (stream) {
-                    var streams = self.successCallback(stream, resolution);
-                    resolve(options.dontCreateJitsiTracks? streams: self.createLocalTracks(streams));
-                }, function (error, resolution) {
-                    return self.errorCallback(error, resolve,
-                        {resolution: resolution,
-                        dontCreateJitsiTracks: options.dontCreateJitsiTracks});
-                },
-                {resolution: options.resolution});
-        }
-        else {
-            self.getUserMediaWithConstraints(
-                ['audio'],
-                function (stream) {
-                    var streams = self.successCallback(stream, resolution);
-                    resolve(options.dontCreateJitsiTracks? streams: self.createLocalTracks(streams));
-                },
-                function (error) {
-                    logger.error('failed to obtain audio/video stream - stop',
-                        error);
-                    var streams = self.successCallback(null);
-                    resolve(options.dontCreateJitsiTracks? streams: self.createLocalTracks(streams));
-                }
-            );
-        }
-    },
-
-    /**
-     * Handles the newly created Media Streams.
-     * @param stream the new Media Streams
-     * @param resolution the resolution of the video stream.
-     * @returns {*[]} Promise object with the new Media Streams.
-     */
-    handleLocalStream: function (stream, resolution) {
-        var audioStream, videoStream;
-        // If this is FF, the stream parameter is *not* a MediaStream object, it's
-        // an object with two properties: audioStream, videoStream.
-        if (window.webkitMediaStream) {
-            audioStream = new webkitMediaStream();
-            videoStream = new webkitMediaStream();
-            if (stream) {
-                var audioTracks = stream.getAudioTracks();
-
-                for (var i = 0; i < audioTracks.length; i++) {
-                    audioStream.addTrack(audioTracks[i]);
-                }
-
-                var videoTracks = stream.getVideoTracks();
-
-                for (i = 0; i < videoTracks.length; i++) {
-                    videoStream.addTrack(videoTracks[i]);
-                }
-            }
-
-        }
-        else if (RTCBrowserType.isFirefox() || RTCBrowserType.isTemasysPluginUsed()) {   // Firefox and Temasys plugin
-            if (stream && stream.audioStream)
-                audioStream = stream.audioStream;
-            else
-                audioStream = new DummyMediaStream("dummyAudio");
-
-            if (stream && stream.videoStream)
-                videoStream = stream.videoStream;
-            else
-                videoStream = new DummyMediaStream("dummyVideo");
-        }
-
-        return [
-                {stream: audioStream, type: "audio", videoType: null},
-                {stream: videoStream, type: "video", videoType: "camera",
-                  resolution: resolution}
-            ];
-    },
-
-    createStream: function (stream, isVideo) {
-        var newStream = null;
-        if (window.webkitMediaStream) {
-            newStream = new webkitMediaStream();
-            if (newStream) {
-                var tracks = (isVideo ? stream.getVideoTracks() : stream.getAudioTracks());
-
-                for (var i = 0; i < tracks.length; i++) {
-                    newStream.addTrack(tracks[i]);
-                }
-            }
-
-        } else {
-            // FIXME: this is duplicated with 'handleLocalStream' !!!
-            if (stream) {
-                newStream = stream;
-            } else {
-                newStream =
-                    new DummyMediaStream(isVideo ? "dummyVideo" : "dummyAudio");
-            }
-        }
-
-        return newStream;
     },
     addListener: function (eventType, listener) {
         eventEmitter.on(eventType, listener);
@@ -2655,22 +2603,6 @@ var RTCUtils = {
     isRTCReady: function () {
         return rtcReady;
     },
-    createLocalTracks: function (streams) {
-        var newStreams = []
-        for (var i = 0; i < streams.length; i++) {
-            var localStream = new JitsiLocalTrack(null, streams[i].stream,
-                eventEmitter, streams[i].videoType, streams[i].resolution);
-            newStreams.push(localStream);
-            if (streams[i].isMuted === true)
-                localStream.setMute(true);
-
-            var eventType = StreamEventTypes.EVENT_TYPE_LOCAL_CREATED;
-
-            eventEmitter.emit(eventType, localStream);
-        }
-        return newStreams;
-    },
-
     /**
      * Checks if its possible to enumerate available cameras/micropones.
      * @returns {boolean} true if available, false otherwise.
@@ -2706,7 +2638,417 @@ var RTCUtils = {
 module.exports = RTCUtils;
 
 }).call(this,"/modules/RTC/RTCUtils.js")
-},{"../../service/RTC/RTCEvents":77,"../../service/RTC/Resolutions":78,"../../service/RTC/StreamEventTypes.js":79,"../xmpp/SDPUtil":30,"./JitsiLocalTrack":10,"./RTCBrowserType":14,"./adapter.screenshare":16,"events":41,"jitsi-meet-logger":44}],16:[function(require,module,exports){
+},{"../../JitsiMeetJSErrors":8,"../../service/RTC/RTCEvents":77,"../../service/RTC/Resolutions":78,"../../service/RTC/StreamEventTypes.js":79,"../xmpp/SDPUtil":30,"./JitsiLocalTrack":11,"./RTCBrowserType":15,"./ScreenObtainer":17,"./adapter.screenshare":18,"events":41,"jitsi-meet-logger":45}],17:[function(require,module,exports){
+/* global chrome, $, alert */
+/* jshint -W003 */
+var RTCBrowserType = require("./RTCBrowserType");
+var AdapterJS = require("./adapter.screenshare");
+var DesktopSharingEventTypes
+    = require("../../service/desktopsharing/DesktopSharingEventTypes");
+
+/**
+ * Indicates whether the Chrome desktop sharing extension is installed.
+ * @type {boolean}
+ */
+var chromeExtInstalled = false;
+
+/**
+ * Indicates whether an update of the Chrome desktop sharing extension is
+ * required.
+ * @type {boolean}
+ */
+var chromeExtUpdateRequired = false;
+
+/**
+ * Whether the jidesha extension for firefox is installed for the domain on
+ * which we are running. Null designates an unknown value.
+ * @type {null}
+ */
+var firefoxExtInstalled = null;
+
+/**
+ * If set to true, detection of an installed firefox extension will be started
+ * again the next time obtainScreenOnFirefox is called (e.g. next time the
+ * user tries to enable screen sharing).
+ */
+var reDetectFirefoxExtension = false;
+
+var GUM = null;
+
+/**
+ * Handles obtaining a stream from a screen capture on different browsers.
+ */
+var ScreenObtainer = {
+    /**
+     * The EventEmitter to use to emit events.
+     * @type {null}
+     */
+    eventEmitter: null,
+    obtainStream: null,
+    /**
+     * Initializes the function used to obtain a screen capture (this.obtainStream).
+     *
+     * If the browser is Chrome, it uses the value of
+     * 'options.desktopSharingChromeMethod' (or 'options.desktopSharing') to
+     * decide whether to use the a Chrome extension (if the value is 'ext'),
+     * use the "screen" media source (if the value is 'webrtc'),
+     * or disable screen capture (if the value is other).
+     * Note that for the "screen" media source to work the
+     * 'chrome://flags/#enable-usermedia-screen-capture' flag must be set.
+     */
+    init: function(eventEmitter, options, gum) {
+        this.eventEmitter = eventEmitter;
+        var obtainDesktopStream = null;
+        this.options = options = options || {};
+        GUM = gum;
+
+        if (RTCBrowserType.isFirefox())
+            initFirefoxExtensionDetection(options);
+
+        // TODO remove this, options.desktopSharing is deprecated.
+        var chromeMethod =
+            (options.desktopSharingChromeMethod || options.desktopSharing);
+
+        if (RTCBrowserType.isTemasysPluginUsed()) {
+            if (!AdapterJS.WebRTCPlugin.plugin.HasScreensharingFeature) {
+                console.info("Screensharing not supported by this plugin version");
+            } else if (!AdapterJS.WebRTCPlugin.plugin.isScreensharingAvailable) {
+                console.info(
+                    "Screensharing not available with Temasys plugin on this site");
+            } else {
+                obtainDesktopStream = obtainWebRTCScreen;
+                console.info("Using Temasys plugin for desktop sharing");
+            }
+        } else if (RTCBrowserType.isChrome()) {
+            if (chromeMethod == "ext") {
+                if (RTCBrowserType.getChromeVersion() >= 34) {
+                    obtainDesktopStream =
+                        this.obtainScreenFromExtension;
+                    console.info("Using Chrome extension for desktop sharing");
+                    initChromeExtension(options);
+                } else {
+                    console.info("Chrome extension not supported until ver 34");
+                }
+            } else if (chromeMethod == "webrtc") {
+                obtainDesktopStream = obtainWebRTCScreen;
+                console.info("Using Chrome WebRTC for desktop sharing");
+            }
+        } else if (RTCBrowserType.isFirefox()) {
+            if (options.desktopSharingFirefoxDisabled) {
+                obtainDesktopStream = null;
+            } else if (window.location.protocol === "http:"){
+                console.log("Screen sharing is not supported over HTTP. Use of " +
+                    "HTTPS is required.");
+                obtainDesktopStream = null;
+            } else {
+                obtainDesktopStream = this.obtainScreenOnFirefox;
+            }
+
+        }
+
+        if (!obtainDesktopStream) {
+            console.info("Desktop sharing disabled");
+        }
+
+        this.obtainStream = obtainDesktopStream;
+    },
+
+    /**
+     * Checks whether obtaining a screen capture is supported in the current
+     * environment.
+     * @returns {boolean}
+     */
+    isSupported: function() {
+        return !!this.obtainStream;
+    },
+    /**
+     * Obtains a screen capture stream on Firefox.
+     * @param callback
+     * @param errorCallback
+     */
+    obtainScreenOnFirefox:
+           function (callback, errorCallback) {
+        var self = this;
+        var extensionRequired = false;
+        if (this.options.desktopSharingFirefoxMaxVersionExtRequired === -1 ||
+            (this.options.desktopSharingFirefoxMaxVersionExtRequired >= 0 &&
+                RTCBrowserType.getFirefoxVersion() <=
+                    this.options.desktopSharingFirefoxMaxVersionExtRequired)) {
+            extensionRequired = true;
+            console.log("Jidesha extension required on firefox version " +
+                RTCBrowserType.getFirefoxVersion());
+        }
+
+        if (!extensionRequired || firefoxExtInstalled === true) {
+            obtainWebRTCScreen(callback, errorCallback);
+            return;
+        }
+
+        if (reDetectFirefoxExtension) {
+            reDetectFirefoxExtension = false;
+            initFirefoxExtensionDetection(this.options);
+        }
+
+        // Give it some (more) time to initialize, and assume lack of extension if
+        // it hasn't.
+        if (firefoxExtInstalled === null) {
+            window.setTimeout(
+                function() {
+                    if (firefoxExtInstalled === null)
+                        firefoxExtInstalled = false;
+                    self.obtainScreenOnFirefox(callback, errorCallback);
+                },
+                300
+            );
+            console.log("Waiting for detection of jidesha on firefox to finish.");
+            return;
+        }
+
+        // We need an extension and it isn't installed.
+
+        // Make sure we check for the extension when the user clicks again.
+        firefoxExtInstalled = null;
+        reDetectFirefoxExtension = true;
+
+        // Prompt the user to install the extension
+        this.eventEmitter.emit(DesktopSharingEventTypes.FIREFOX_EXTENSION_NEEDED,
+                               this.options.desktopSharingFirefoxExtensionURL);
+
+        // Make sure desktopsharing knows that we failed, so that it doesn't get
+        // stuck in 'switching' mode.
+        errorCallback('Firefox extension required.');
+    },
+    /**
+     * Asks Chrome extension to call chooseDesktopMedia and gets chrome 'desktop'
+     * stream for returned stream token.
+     */
+    obtainScreenFromExtension: function (streamCallback, failCallback) {
+        if (chromeExtInstalled) {
+            doGetStreamFromExtension(this.options, streamCallback, failCallback);
+        } else {
+            if (chromeExtUpdateRequired) {
+                alert(
+                    'Jitsi Desktop Streamer requires update. ' +
+                    'Changes will take effect after next Chrome restart.');
+            }
+
+            chrome.webstore.install(
+                getWebStoreInstallUrl(this.options),
+                function (arg) {
+                    console.log("Extension installed successfully", arg);
+                    chromeExtInstalled = true;
+                    // We need to give a moment for the endpoint to become available
+                    window.setTimeout(function () {
+                        doGetStreamFromExtension(this.options, streamCallback, failCallback);
+                    }, 500);
+                },
+                function (arg) {
+                    console.log("Failed to install the extension", arg);
+                    failCallback(arg);
+                }
+            );
+        }
+    }
+}
+
+
+
+/**
+ * Obtains a desktop stream using getUserMedia.
+ * For this to work on Chrome, the
+ * 'chrome://flags/#enable-usermedia-screen-capture' flag must be enabled.
+ *
+ * On firefox, the document's domain must be white-listed in the
+ * 'media.getusermedia.screensharing.allowed_domains' preference in
+ * 'about:config'.
+ */
+function obtainWebRTCScreen(streamCallback, failCallback) {
+    GUM(
+        ['screen'],
+        streamCallback,
+        failCallback
+    );
+}
+
+/**
+ * Constructs inline install URL for Chrome desktop streaming extension.
+ * The 'chromeExtensionId' must be defined in options parameter.
+ * @param options supports "desktopSharingChromeExtId" and "chromeExtensionId"
+ * @returns {string}
+ */
+function getWebStoreInstallUrl(options)
+{
+    //TODO remove chromeExtensionId (deprecated)
+    return "https://chrome.google.com/webstore/detail/" +
+        (options.desktopSharingChromeExtId || options.chromeExtensionId);
+}
+
+/**
+ * Checks whether an update of the Chrome extension is required.
+ * @param minVersion minimal required version
+ * @param extVersion current extension version
+ * @returns {boolean}
+ */
+function isUpdateRequired(minVersion, extVersion) {
+    try {
+        var s1 = minVersion.split('.');
+        var s2 = extVersion.split('.');
+
+        var len = Math.max(s1.length, s2.length);
+        for (var i = 0; i < len; i++) {
+            var n1 = 0,
+                n2 = 0;
+
+            if (i < s1.length)
+                n1 = parseInt(s1[i]);
+            if (i < s2.length)
+                n2 = parseInt(s2[i]);
+
+            if (isNaN(n1) || isNaN(n2)) {
+                return true;
+            } else if (n1 !== n2) {
+                return n1 > n2;
+            }
+        }
+
+        // will happen if both versions have identical numbers in
+        // their components (even if one of them is longer, has more components)
+        return false;
+    }
+    catch (e) {
+        console.error("Failed to parse extension version", e);
+        return true;
+    }
+}
+
+function checkChromeExtInstalled(callback, options) {
+    if (!chrome || !chrome.runtime) {
+        // No API, so no extension for sure
+        callback(false, false);
+        return;
+    }
+    chrome.runtime.sendMessage(
+        //TODO: remove chromeExtensionId (deprecated)
+        (options.desktopSharingChromeExtId || options.chromeExtensionId),
+        { getVersion: true },
+        function (response) {
+            if (!response || !response.version) {
+                // Communication failure - assume that no endpoint exists
+                console.warn(
+                    "Extension not installed?: ", chrome.runtime.lastError);
+                callback(false, false);
+                return;
+            }
+            // Check installed extension version
+            var extVersion = response.version;
+            console.log('Extension version is: ' + extVersion);
+            //TODO: remove minChromeExtVersion (deprecated)
+            var updateRequired
+                = isUpdateRequired(
+                    (options.desktopSharingChromeMinExtVersion ||
+                        options.minChromeExtVersion),
+                    extVersion);
+            callback(!updateRequired, updateRequired);
+        }
+    );
+}
+
+function doGetStreamFromExtension(options, streamCallback, failCallback) {
+    // Sends 'getStream' msg to the extension.
+    // Extension id must be defined in the config.
+    chrome.runtime.sendMessage(
+        //TODO: remove chromeExtensionId (deprecated)
+        (options.desktopSharingChromeExtId || options.chromeExtensionId),
+        {
+            getStream: true,
+            //TODO: remove desktopSharingSources (deprecated).
+            sources: (options.desktopSharingChromeSources ||
+                options.desktopSharingSources)
+        },
+        function (response) {
+            if (!response) {
+                failCallback(chrome.runtime.lastError);
+                return;
+            }
+            console.log("Response from extension: " + response);
+            if (response.streamId) {
+                GUM(
+                    ['desktop'],
+                    function (stream) {
+                        streamCallback(stream);
+                    },
+                    failCallback,
+                    {desktopStream: response.streamId});
+            } else {
+                failCallback("Extension failed to get the stream");
+            }
+        }
+    );
+}
+
+/**
+ * Initializes <link rel=chrome-webstore-item /> with extension id set in
+ * config.js to support inline installs. Host site must be selected as main
+ * website of published extension.
+ * @param options supports "desktopSharingChromeExtId" and "chromeExtensionId"
+ */
+function initInlineInstalls(options)
+{
+    $("link[rel=chrome-webstore-item]").attr("href", getWebStoreInstallUrl(options));
+}
+
+function initChromeExtension(options) {
+    // Initialize Chrome extension inline installs
+    initInlineInstalls(options);
+    // Check if extension is installed
+    checkChromeExtInstalled(function (installed, updateRequired) {
+        chromeExtInstalled = installed;
+        chromeExtUpdateRequired = updateRequired;
+        console.info(
+            "Chrome extension installed: " + chromeExtInstalled +
+            " updateRequired: " + chromeExtUpdateRequired);
+    }, options);
+}
+
+/**
+ * Starts the detection of an installed jidesha extension for firefox.
+ * @param options supports "desktopSharingFirefoxDisabled",
+ * "desktopSharingFirefoxExtId" and "chromeExtensionId"
+ */
+function initFirefoxExtensionDetection(options) {
+    if (options.desktopSharingFirefoxDisabled) {
+        return;
+    }
+    if (firefoxExtInstalled === false || firefoxExtInstalled === true)
+        return;
+    if (!options.desktopSharingFirefoxExtId) {
+        firefoxExtInstalled = false;
+        return;
+    }
+
+    var img = document.createElement('img');
+    img.onload = function(){
+        console.log("Detected firefox screen sharing extension.");
+        firefoxExtInstalled = true;
+    };
+    img.onerror = function(){
+        console.log("Detected lack of firefox screen sharing extension.");
+        firefoxExtInstalled = false;
+    };
+
+    // The jidesha extension exposes an empty image file under the url:
+    // "chrome://EXT_ID/content/DOMAIN.png"
+    // Where EXT_ID is the ID of the extension with "@" replaced by ".", and
+    // DOMAIN is a domain whitelisted by the extension.
+    var src = "chrome://" +
+        (options.desktopSharingFirefoxExtId.replace('@', '.')) +
+        "/content/" + document.location.hostname + ".png";
+    img.setAttribute('src', src);
+}
+
+module.exports = ScreenObtainer;
+
+},{"../../service/desktopsharing/DesktopSharingEventTypes":81,"./RTCBrowserType":15,"./adapter.screenshare":18}],18:[function(require,module,exports){
 (function (__filename){
 /*! adapterjs - v0.12.0 - 2015-09-04 */
 var console = require("jitsi-meet-logger").getLogger(__filename);
@@ -3879,555 +4221,7 @@ if (navigator.mozGetUserMedia) {
 }
 
 }).call(this,"/modules/RTC/adapter.screenshare.js")
-},{"jitsi-meet-logger":44}],17:[function(require,module,exports){
-/* global config, APP, chrome, $, alert */
-/* jshint -W003 */
-var RTCBrowserType = require("../RTC/RTCBrowserType");
-var AdapterJS = require("../RTC/adapter.screenshare");
-var DesktopSharingEventTypes
-    = require("../../service/desktopsharing/DesktopSharingEventTypes");
-
-/**
- * Indicates whether the Chrome desktop sharing extension is installed.
- * @type {boolean}
- */
-var chromeExtInstalled = false;
-
-/**
- * Indicates whether an update of the Chrome desktop sharing extension is
- * required.
- * @type {boolean}
- */
-var chromeExtUpdateRequired = false;
-
-/**
- * Whether the jidesha extension for firefox is installed for the domain on
- * which we are running. Null designates an unknown value.
- * @type {null}
- */
-var firefoxExtInstalled = null;
-
-/**
- * If set to true, detection of an installed firefox extension will be started
- * again the next time obtainScreenOnFirefox is called (e.g. next time the
- * user tries to enable screen sharing).
- */
-var reDetectFirefoxExtension = false;
-
-/**
- * Handles obtaining a stream from a screen capture on different browsers.
- */
-function ScreenObtainer(){
-}
-
-/**
- * The EventEmitter to use to emit events.
- * @type {null}
- */
-ScreenObtainer.prototype.eventEmitter = null;
-
-/**
- * Initializes the function used to obtain a screen capture (this.obtainStream).
- *
- * If the browser is Chrome, it uses the value of
- * 'config.desktopSharingChromeMethod' (or 'config.desktopSharing') to * decide
- * whether to use the a Chrome extension (if the value is 'ext'), use the
- * "screen" media source (if the value is 'webrtc'), or disable screen capture
- * (if the value is other).
- * Note that for the "screen" media source to work the
- * 'chrome://flags/#enable-usermedia-screen-capture' flag must be set.
- */
-ScreenObtainer.prototype.init = function(eventEmitter) {
-    this.eventEmitter = eventEmitter;
-    var obtainDesktopStream = null;
-
-    if (RTCBrowserType.isFirefox())
-        initFirefoxExtensionDetection();
-
-    // TODO remove this, config.desktopSharing is deprecated.
-    var chromeMethod =
-        (config.desktopSharingChromeMethod || config.desktopSharing);
-
-    if (RTCBrowserType.isTemasysPluginUsed()) {
-        if (!AdapterJS.WebRTCPlugin.plugin.HasScreensharingFeature) {
-            console.info("Screensharing not supported by this plugin version");
-        } else if (!AdapterJS.WebRTCPlugin.plugin.isScreensharingAvailable) {
-            console.info(
-                "Screensharing not available with Temasys plugin on this site");
-        } else {
-            obtainDesktopStream = obtainWebRTCScreen;
-            console.info("Using Temasys plugin for desktop sharing");
-        }
-    } else if (RTCBrowserType.isChrome()) {
-        if (chromeMethod == "ext") {
-            if (RTCBrowserType.getChromeVersion() >= 34) {
-                obtainDesktopStream = obtainScreenFromExtension;
-                console.info("Using Chrome extension for desktop sharing");
-                initChromeExtension();
-            } else {
-                console.info("Chrome extension not supported until ver 34");
-            }
-        } else if (chromeMethod == "webrtc") {
-            obtainDesktopStream = obtainWebRTCScreen;
-            console.info("Using Chrome WebRTC for desktop sharing");
-        }
-    } else if (RTCBrowserType.isFirefox()) {
-        if (config.desktopSharingFirefoxDisabled) {
-            obtainDesktopStream = null;
-        } else if (window.location.protocol === "http:"){
-            console.log("Screen sharing is not supported over HTTP. Use of " +
-                "HTTPS is required.");
-            obtainDesktopStream = null;
-        } else {
-            obtainDesktopStream = this.obtainScreenOnFirefox;
-        }
-
-    }
-
-    if (!obtainDesktopStream) {
-        console.info("Desktop sharing disabled");
-    }
-
-    ScreenObtainer.prototype.obtainStream = obtainDesktopStream;
-};
-
-ScreenObtainer.prototype.obtainStream = null;
-
-/**
- * Checks whether obtaining a screen capture is supported in the current
- * environment.
- * @returns {boolean}
- */
-ScreenObtainer.prototype.isSupported = function() {
-    return !!this.obtainStream;
-};
-
-/**
- * Obtains a desktop stream using getUserMedia.
- * For this to work on Chrome, the
- * 'chrome://flags/#enable-usermedia-screen-capture' flag must be enabled.
- *
- * On firefox, the document's domain must be white-listed in the
- * 'media.getusermedia.screensharing.allowed_domains' preference in
- * 'about:config'.
- */
-function obtainWebRTCScreen(streamCallback, failCallback) {
-    APP.RTC.getUserMediaWithConstraints(
-        ['screen'],
-        streamCallback,
-        failCallback
-    );
-}
-
-/**
- * Constructs inline install URL for Chrome desktop streaming extension.
- * The 'chromeExtensionId' must be defined in config.js.
- * @returns {string}
- */
-function getWebStoreInstallUrl()
-{
-    //TODO remove chromeExtensionId (deprecated)
-    return "https://chrome.google.com/webstore/detail/" +
-        (config.desktopSharingChromeExtId || config.chromeExtensionId);
-}
-
-/**
- * Checks whether an update of the Chrome extension is required.
- * @param minVersion minimal required version
- * @param extVersion current extension version
- * @returns {boolean}
- */
-function isUpdateRequired(minVersion, extVersion) {
-    try {
-        var s1 = minVersion.split('.');
-        var s2 = extVersion.split('.');
-
-        var len = Math.max(s1.length, s2.length);
-        for (var i = 0; i < len; i++) {
-            var n1 = 0,
-                n2 = 0;
-
-            if (i < s1.length)
-                n1 = parseInt(s1[i]);
-            if (i < s2.length)
-                n2 = parseInt(s2[i]);
-
-            if (isNaN(n1) || isNaN(n2)) {
-                return true;
-            } else if (n1 !== n2) {
-                return n1 > n2;
-            }
-        }
-
-        // will happen if both versions have identical numbers in
-        // their components (even if one of them is longer, has more components)
-        return false;
-    }
-    catch (e) {
-        console.error("Failed to parse extension version", e);
-        APP.UI.messageHandler.showError("dialog.error",
-            "dialog.detectext");
-        return true;
-    }
-}
-
-function checkChromeExtInstalled(callback) {
-    if (!chrome || !chrome.runtime) {
-        // No API, so no extension for sure
-        callback(false, false);
-        return;
-    }
-    chrome.runtime.sendMessage(
-        //TODO: remove chromeExtensionId (deprecated)
-        (config.desktopSharingChromeExtId || config.chromeExtensionId),
-        { getVersion: true },
-        function (response) {
-            if (!response || !response.version) {
-                // Communication failure - assume that no endpoint exists
-                console.warn(
-                    "Extension not installed?: ", chrome.runtime.lastError);
-                callback(false, false);
-                return;
-            }
-            // Check installed extension version
-            var extVersion = response.version;
-            console.log('Extension version is: ' + extVersion);
-            //TODO: remove minChromeExtVersion (deprecated)
-            var updateRequired
-                = isUpdateRequired(
-                    (config.desktopSharingChromeMinExtVersion ||
-                        config.minChromeExtVersion),
-                    extVersion);
-            callback(!updateRequired, updateRequired);
-        }
-    );
-}
-
-function doGetStreamFromExtension(streamCallback, failCallback) {
-    // Sends 'getStream' msg to the extension.
-    // Extension id must be defined in the config.
-    chrome.runtime.sendMessage(
-        //TODO: remove chromeExtensionId (deprecated)
-        (config.desktopSharingChromeExtId || config.chromeExtensionId),
-        {
-            getStream: true,
-            //TODO: remove desktopSharingSources (deprecated).
-            sources: (config.desktopSharingChromeSources ||
-                config.desktopSharingSources)
-        },
-        function (response) {
-            if (!response) {
-                failCallback(chrome.runtime.lastError);
-                return;
-            }
-            console.log("Response from extension: " + response);
-            if (response.streamId) {
-                APP.RTC.getUserMediaWithConstraints(
-                    ['desktop'],
-                    function (stream) {
-                        streamCallback(stream);
-                    },
-                    failCallback,
-                    null, null, null,
-                    response.streamId);
-            } else {
-                failCallback("Extension failed to get the stream");
-            }
-        }
-    );
-}
-
-/**
- * Asks Chrome extension to call chooseDesktopMedia and gets chrome 'desktop'
- * stream for returned stream token.
- */
-function obtainScreenFromExtension(streamCallback, failCallback) {
-    if (chromeExtInstalled) {
-        doGetStreamFromExtension(streamCallback, failCallback);
-    } else {
-        if (chromeExtUpdateRequired) {
-            alert(
-                'Jitsi Desktop Streamer requires update. ' +
-                'Changes will take effect after next Chrome restart.');
-        }
-
-        chrome.webstore.install(
-            getWebStoreInstallUrl(),
-            function (arg) {
-                console.log("Extension installed successfully", arg);
-                chromeExtInstalled = true;
-                // We need to give a moment for the endpoint to become available
-                window.setTimeout(function () {
-                    doGetStreamFromExtension(streamCallback, failCallback);
-                }, 500);
-            },
-            function (arg) {
-                console.log("Failed to install the extension", arg);
-                failCallback(arg);
-                APP.UI.messageHandler.showError("dialog.error",
-                    "dialog.failtoinstall");
-            }
-        );
-    }
-}
-
-/**
- * Initializes <link rel=chrome-webstore-item /> with extension id set in
- * config.js to support inline installs. Host site must be selected as main
- * website of published extension.
- */
-function initInlineInstalls()
-{
-    $("link[rel=chrome-webstore-item]").attr("href", getWebStoreInstallUrl());
-}
-
-function initChromeExtension() {
-    // Initialize Chrome extension inline installs
-    initInlineInstalls();
-    // Check if extension is installed
-    checkChromeExtInstalled(function (installed, updateRequired) {
-        chromeExtInstalled = installed;
-        chromeExtUpdateRequired = updateRequired;
-        console.info(
-            "Chrome extension installed: " + chromeExtInstalled +
-            " updateRequired: " + chromeExtUpdateRequired);
-    });
-}
-
-/**
- * Obtains a screen capture stream on Firefox.
- * @param callback
- * @param errorCallback
- */
-ScreenObtainer.prototype.obtainScreenOnFirefox =
-       function (callback, errorCallback) {
-    var self = this;
-    var extensionRequired = false;
-    if (config.desktopSharingFirefoxMaxVersionExtRequired === -1 ||
-        (config.desktopSharingFirefoxMaxVersionExtRequired >= 0 &&
-            RTCBrowserType.getFirefoxVersion() <=
-                config.desktopSharingFirefoxMaxVersionExtRequired)) {
-        extensionRequired = true;
-        console.log("Jidesha extension required on firefox version " +
-            RTCBrowserType.getFirefoxVersion());
-    }
-
-    if (!extensionRequired || firefoxExtInstalled === true) {
-        obtainWebRTCScreen(callback, errorCallback);
-        return;
-    }
-
-    if (reDetectFirefoxExtension) {
-        reDetectFirefoxExtension = false;
-        initFirefoxExtensionDetection();
-    }
-
-    // Give it some (more) time to initialize, and assume lack of extension if
-    // it hasn't.
-    if (firefoxExtInstalled === null) {
-        window.setTimeout(
-            function() {
-                if (firefoxExtInstalled === null)
-                    firefoxExtInstalled = false;
-                self.obtainScreenOnFirefox(callback, errorCallback);
-            },
-            300
-        );
-        console.log("Waiting for detection of jidesha on firefox to finish.");
-        return;
-    }
-
-    // We need an extension and it isn't installed.
-
-    // Make sure we check for the extension when the user clicks again.
-    firefoxExtInstalled = null;
-    reDetectFirefoxExtension = true;
-
-    // Prompt the user to install the extension
-    this.eventEmitter.emit(DesktopSharingEventTypes.FIREFOX_EXTENSION_NEEDED,
-                           config.desktopSharingFirefoxExtensionURL);
-
-    // Make sure desktopsharing knows that we failed, so that it doesn't get
-    // stuck in 'switching' mode.
-    errorCallback('Firefox extension required.');
-};
-
-/**
- * Starts the detection of an installed jidesha extension for firefox.
- */
-function initFirefoxExtensionDetection() {
-    if (config.desktopSharingFirefoxDisabled) {
-        return;
-    }
-    if (firefoxExtInstalled === false || firefoxExtInstalled === true)
-        return;
-    if (!config.desktopSharingFirefoxExtId) {
-        firefoxExtInstalled = false;
-        return;
-    }
-
-    var img = document.createElement('img');
-    img.onload = function(){
-        console.log("Detected firefox screen sharing extension.");
-        firefoxExtInstalled = true;
-    };
-    img.onerror = function(){
-        console.log("Detected lack of firefox screen sharing extension.");
-        firefoxExtInstalled = false;
-    };
-
-    // The jidesha extension exposes an empty image file under the url:
-    // "chrome://EXT_ID/content/DOMAIN.png"
-    // Where EXT_ID is the ID of the extension with "@" replaced by ".", and
-    // DOMAIN is a domain whitelisted by the extension.
-    var src = "chrome://" +
-        (config.desktopSharingFirefoxExtId.replace('@', '.')) +
-        "/content/" + document.location.hostname + ".png";
-    img.setAttribute('src', src);
-}
-
-module.exports = ScreenObtainer;
-
-},{"../../service/desktopsharing/DesktopSharingEventTypes":81,"../RTC/RTCBrowserType":14,"../RTC/adapter.screenshare":16}],18:[function(require,module,exports){
-/* global APP, config */
-var EventEmitter = require("events");
-var DesktopSharingEventTypes
-    = require("../../service/desktopsharing/DesktopSharingEventTypes");
-var RTCBrowserType = require("../RTC/RTCBrowserType");
-var RTCEvents = require("../../service/RTC/RTCEvents");
-var ScreenObtainer = require("./ScreenObtainer");
-
-/**
- * Indicates that desktop stream is currently in use (for toggle purpose).
- * @type {boolean}
- */
-var isUsingScreenStream = false;
-
-/**
- * Indicates that switch stream operation is in progress and prevent from
- * triggering new events.
- * @type {boolean}
- */
-var switchInProgress = false;
-
-/**
- * Used to obtain the screen sharing stream from the browser.
- */
-var screenObtainer = new ScreenObtainer();
-
-var eventEmitter = new EventEmitter();
-
-function streamSwitchDone() {
-    switchInProgress = false;
-    eventEmitter.emit(
-        DesktopSharingEventTypes.SWITCHING_DONE,
-        isUsingScreenStream);
-}
-
-function newStreamCreated(stream) {
-    eventEmitter.emit(DesktopSharingEventTypes.NEW_STREAM_CREATED,
-        stream, isUsingScreenStream, streamSwitchDone);
-}
-
-function getVideoStreamFailed(error) {
-    console.error("Failed to obtain the stream to switch to", error);
-    switchInProgress = false;
-    isUsingScreenStream = false;
-    newStreamCreated(null);
-}
-
-function getDesktopStreamFailed(error) {
-    console.error("Failed to obtain the stream to switch to", error);
-    switchInProgress = false;
-}
-
-function onEndedHandler(stream) {
-    if (!switchInProgress && isUsingScreenStream) {
-        APP.desktopsharing.toggleScreenSharing();
-    }
-
-    APP.RTC.removeMediaStreamInactiveHandler(stream, onEndedHandler);
-}
-
-module.exports = {
-    isUsingScreenStream: function () {
-        return isUsingScreenStream;
-    },
-
-    /**
-     * @returns {boolean} <tt>true</tt> if desktop sharing feature is available
-     *          and enabled.
-     */
-    isDesktopSharingEnabled: function () {
-        return screenObtainer.isSupported();
-    },
-    
-    init: function () {
-        // Called when RTC finishes initialization
-        APP.RTC.addListener(RTCEvents.RTC_READY,
-            function() {
-                screenObtainer.init(eventEmitter);
-                eventEmitter.emit(DesktopSharingEventTypes.INIT);
-            });
-    },
-
-    addListener: function (type, listener) {
-        eventEmitter.on(type, listener);
-    },
-
-    removeListener: function (type, listener) {
-        eventEmitter.removeListener(type, listener);
-    },
-
-    /*
-     * Toggles screen sharing.
-     */
-    toggleScreenSharing: function () {
-        if (switchInProgress) {
-            console.warn("Switch in progress.");
-            return;
-        } else if (!screenObtainer.isSupported()) {
-            console.warn("Cannot toggle screen sharing: not supported.");
-            return;
-        }
-        switchInProgress = true;
-
-        if (!isUsingScreenStream) {
-            // Switch to desktop stream
-            screenObtainer.obtainStream(
-                function (stream) {
-                    // We now use screen stream
-                    isUsingScreenStream = true;
-                    // Hook 'ended' event to restore camera
-                    // when screen stream stops
-                    APP.RTC.addMediaStreamInactiveHandler(
-                        stream, onEndedHandler);
-                    newStreamCreated(stream);
-                },
-                getDesktopStreamFailed);
-        } else {
-            // Disable screen stream
-            APP.RTC.getUserMediaWithConstraints(
-                ['video'],
-                function (stream) {
-                    // We are now using camera stream
-                    isUsingScreenStream = false;
-                    newStreamCreated(stream);
-                },
-                getVideoStreamFailed,
-                config.resolution || '360'
-            );
-        }
-    },
-    /*
-     * Exports the event emitter to allow use by ScreenObtainer. Not for outside
-     * use.
-     */
-    eventEmitter: eventEmitter
-};
-
-
-},{"../../service/RTC/RTCEvents":77,"../../service/desktopsharing/DesktopSharingEventTypes":81,"../RTC/RTCBrowserType":14,"./ScreenObtainer":17,"events":41}],19:[function(require,module,exports){
+},{"jitsi-meet-logger":45}],19:[function(require,module,exports){
 (function (__filename){
 
 var logger = require("jitsi-meet-logger").getLogger(__filename);
@@ -4513,7 +4307,7 @@ Settings.prototype.setLanguage = function (lang) {
 module.exports = Settings;
 
 }).call(this,"/modules/settings/Settings.js")
-},{"jitsi-meet-logger":44}],20:[function(require,module,exports){
+},{"jitsi-meet-logger":45}],20:[function(require,module,exports){
 /* global config */
 /**
  * Provides statistics for the local stream.
@@ -4643,7 +4437,7 @@ LocalStatsCollector.prototype.stop = function () {
 };
 
 module.exports = LocalStatsCollector;
-},{"../../service/statistics/Events":82,"../../service/statistics/constants":83,"../RTC/RTCBrowserType":14}],21:[function(require,module,exports){
+},{"../../service/statistics/Events":82,"../../service/statistics/constants":83,"../RTC/RTCBrowserType":15}],21:[function(require,module,exports){
 (function (__filename){
 /* global require, ssrc2jid */
 /* jshint -W117 */
@@ -5370,7 +5164,7 @@ StatsCollector.prototype.processAudioLevelReport = function () {
 };
 
 }).call(this,"/modules/statistics/RTPStatsCollector.js")
-},{"../../service/statistics/Events":82,"../RTC/RTCBrowserType":14,"jitsi-meet-logger":44}],22:[function(require,module,exports){
+},{"../../service/statistics/Events":82,"../RTC/RTCBrowserType":15,"jitsi-meet-logger":45}],22:[function(require,module,exports){
 /* global require, APP */
 var LocalStats = require("./LocalStatsCollector.js");
 var RTPStats = require("./RTPStatsCollector.js");
@@ -6239,7 +6033,7 @@ ChatRoom.prototype.getJidBySSRC = function (ssrc) {
 module.exports = ChatRoom;
 
 }).call(this,"/modules/xmpp/ChatRoom.js")
-},{"../../service/xmpp/XMPPEvents":84,"./moderator":32,"events":41,"jitsi-meet-logger":44}],25:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":84,"./moderator":32,"events":41,"jitsi-meet-logger":45}],25:[function(require,module,exports){
 (function (__filename){
 /*
  * JingleSession provides an API to manage a single Jingle session. We will
@@ -6375,7 +6169,7 @@ JingleSession.prototype.setAnswer = function(jingle) {};
 module.exports = JingleSession;
 
 }).call(this,"/modules/xmpp/JingleSession.js")
-},{"jitsi-meet-logger":44}],26:[function(require,module,exports){
+},{"jitsi-meet-logger":45}],26:[function(require,module,exports){
 (function (__filename){
 /* jshint -W117 */
 
@@ -7965,7 +7759,7 @@ JingleSessionPC.prototype.remoteStreamAdded = function (data, times) {
 module.exports = JingleSessionPC;
 
 }).call(this,"/modules/xmpp/JingleSessionPC.js")
-},{"../../service/xmpp/XMPPEvents":84,"../RTC/RTC":13,"../RTC/RTCBrowserType":14,"./JingleSession":25,"./LocalSSRCReplacement":27,"./SDP":28,"./SDPDiffer":29,"./SDPUtil":30,"./TraceablePeerConnection":31,"async":40,"jitsi-meet-logger":44,"sdp-transform":73}],27:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":84,"../RTC/RTC":14,"../RTC/RTCBrowserType":15,"./JingleSession":25,"./LocalSSRCReplacement":27,"./SDP":28,"./SDPDiffer":29,"./SDPUtil":30,"./TraceablePeerConnection":31,"async":40,"jitsi-meet-logger":45,"sdp-transform":73}],27:[function(require,module,exports){
 (function (__filename){
 /* global $ */
 var logger = require("jitsi-meet-logger").getLogger(__filename);
@@ -8262,7 +8056,7 @@ var LocalSSRCReplacement = {
 module.exports = LocalSSRCReplacement;
 
 }).call(this,"/modules/xmpp/LocalSSRCReplacement.js")
-},{"../RTC/RTCBrowserType":14,"../util/RandomUtil":23,"./SDP":28,"jitsi-meet-logger":44}],28:[function(require,module,exports){
+},{"../RTC/RTCBrowserType":15,"../util/RandomUtil":23,"./SDP":28,"jitsi-meet-logger":45}],28:[function(require,module,exports){
 (function (__filename){
 /* jshint -W117 */
 
@@ -8916,7 +8710,7 @@ module.exports = SDP;
 
 
 }).call(this,"/modules/xmpp/SDP.js")
-},{"./SDPUtil":30,"jitsi-meet-logger":44}],29:[function(require,module,exports){
+},{"./SDPUtil":30,"jitsi-meet-logger":45}],29:[function(require,module,exports){
 var SDPUtil = require("./SDPUtil");
 
 function SDPDiffer(mySDP, otherSDP)
@@ -9442,7 +9236,7 @@ SDPUtil = {
 };
 module.exports = SDPUtil;
 }).call(this,"/modules/xmpp/SDPUtil.js")
-},{"jitsi-meet-logger":44}],31:[function(require,module,exports){
+},{"jitsi-meet-logger":45}],31:[function(require,module,exports){
 (function (__filename){
 /* global $ */
 var RTC = require('../RTC/RTC');
@@ -9892,7 +9686,7 @@ module.exports = TraceablePeerConnection;
 
 
 }).call(this,"/modules/xmpp/TraceablePeerConnection.js")
-},{"../../service/xmpp/XMPPEvents":84,"../RTC/RTC":13,"../RTC/RTCBrowserType.js":14,"./LocalSSRCReplacement":27,"jitsi-meet-logger":44,"sdp-interop":63,"sdp-simulcast":66,"sdp-transform":73}],32:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":84,"../RTC/RTC":14,"../RTC/RTCBrowserType.js":15,"./LocalSSRCReplacement":27,"jitsi-meet-logger":45,"sdp-interop":63,"sdp-simulcast":66,"sdp-transform":73}],32:[function(require,module,exports){
 (function (__filename){
 /* global $, $iq, APP, config, messageHandler,
  roomName, sessionTerminated, Strophe, Util */
@@ -10329,7 +10123,7 @@ module.exports = Moderator;
 
 
 }).call(this,"/modules/xmpp/moderator.js")
-},{"../../service/authentication/AuthenticationEvents":80,"../../service/xmpp/XMPPEvents":84,"../settings/Settings":19,"jitsi-meet-logger":44}],33:[function(require,module,exports){
+},{"../../service/authentication/AuthenticationEvents":80,"../../service/xmpp/XMPPEvents":84,"../settings/Settings":19,"jitsi-meet-logger":45}],33:[function(require,module,exports){
 (function (__filename){
 /* jshint -W117 */
 /* a simple MUC connection plugin
@@ -10426,7 +10220,7 @@ module.exports = function(XMPP) {
 
 
 }).call(this,"/modules/xmpp/strophe.emuc.js")
-},{"./ChatRoom":24,"jitsi-meet-logger":44}],34:[function(require,module,exports){
+},{"./ChatRoom":24,"jitsi-meet-logger":45}],34:[function(require,module,exports){
 (function (__filename){
 /* jshint -W117 */
 
@@ -10723,7 +10517,7 @@ module.exports = function(XMPP, eventEmitter) {
 
 
 }).call(this,"/modules/xmpp/strophe.jingle.js")
-},{"../../service/xmpp/XMPPEvents":84,"../RTC/RTCBrowserType":14,"./JingleSessionPC":26,"jitsi-meet-logger":44}],35:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":84,"../RTC/RTCBrowserType":15,"./JingleSessionPC":26,"jitsi-meet-logger":45}],35:[function(require,module,exports){
 /* global Strophe */
 module.exports = function () {
 
@@ -10871,7 +10665,7 @@ module.exports = function (XMPP, eventEmitter) {
 };
 
 }).call(this,"/modules/xmpp/strophe.ping.js")
-},{"../../service/xmpp/XMPPEvents":84,"jitsi-meet-logger":44}],37:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":84,"jitsi-meet-logger":45}],37:[function(require,module,exports){
 (function (__filename){
 /* jshint -W117 */
 var logger = require("jitsi-meet-logger").getLogger(__filename);
@@ -10973,7 +10767,7 @@ module.exports = function() {
 };
 
 }).call(this,"/modules/xmpp/strophe.rayo.js")
-},{"jitsi-meet-logger":44}],38:[function(require,module,exports){
+},{"jitsi-meet-logger":45}],38:[function(require,module,exports){
 (function (__filename){
 /* global Strophe */
 /**
@@ -11022,7 +10816,7 @@ module.exports = function () {
 };
 
 }).call(this,"/modules/xmpp/strophe.util.js")
-},{"jitsi-meet-logger":44}],39:[function(require,module,exports){
+},{"jitsi-meet-logger":45}],39:[function(require,module,exports){
 (function (__filename){
 /* global $, APP, config, Strophe*/
 
@@ -11330,7 +11124,7 @@ XMPP.prototype.disconnect = function () {
 module.exports = XMPP;
 
 }).call(this,"/modules/xmpp/xmpp.js")
-},{"../../JitsiConnectionErrors":5,"../../JitsiConnectionEvents":6,"../../service/RTC/RTCEvents":77,"../../service/RTC/StreamEventTypes":79,"../../service/xmpp/XMPPEvents":84,"../RTC/RTC":13,"./strophe.emuc":33,"./strophe.jingle":34,"./strophe.logger":35,"./strophe.ping":36,"./strophe.rayo":37,"./strophe.util":38,"events":41,"jitsi-meet-logger":44,"pako":45}],40:[function(require,module,exports){
+},{"../../JitsiConnectionErrors":5,"../../JitsiConnectionEvents":6,"../../service/RTC/RTCEvents":77,"../../service/RTC/StreamEventTypes":79,"../../service/xmpp/XMPPEvents":84,"../RTC/RTC":14,"./strophe.emuc":33,"./strophe.jingle":34,"./strophe.logger":35,"./strophe.ping":36,"./strophe.rayo":37,"./strophe.util":38,"events":41,"jitsi-meet-logger":45,"pako":46}],40:[function(require,module,exports){
 (function (process){
 /*!
  * async
@@ -12457,7 +12251,7 @@ module.exports = XMPP;
 }());
 
 }).call(this,require('_process'))
-},{"_process":61}],41:[function(require,module,exports){
+},{"_process":42}],41:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -12761,6 +12555,99 @@ function isUndefined(arg) {
 }
 
 },{}],42:[function(require,module,exports){
+// shim for using process in browser
+
+var process = module.exports = {};
+var queue = [];
+var draining = false;
+var currentQueue;
+var queueIndex = -1;
+
+function cleanUpNextTick() {
+    draining = false;
+    if (currentQueue.length) {
+        queue = currentQueue.concat(queue);
+    } else {
+        queueIndex = -1;
+    }
+    if (queue.length) {
+        drainQueue();
+    }
+}
+
+function drainQueue() {
+    if (draining) {
+        return;
+    }
+    var timeout = setTimeout(cleanUpNextTick);
+    draining = true;
+
+    var len = queue.length;
+    while(len) {
+        currentQueue = queue;
+        queue = [];
+        while (++queueIndex < len) {
+            if (currentQueue) {
+                currentQueue[queueIndex].run();
+            }
+        }
+        queueIndex = -1;
+        len = queue.length;
+    }
+    currentQueue = null;
+    draining = false;
+    clearTimeout(timeout);
+}
+
+process.nextTick = function (fun) {
+    var args = new Array(arguments.length - 1);
+    if (arguments.length > 1) {
+        for (var i = 1; i < arguments.length; i++) {
+            args[i - 1] = arguments[i];
+        }
+    }
+    queue.push(new Item(fun, args));
+    if (queue.length === 1 && !draining) {
+        setTimeout(drainQueue, 0);
+    }
+};
+
+// v8 likes predictible objects
+function Item(fun, array) {
+    this.fun = fun;
+    this.array = array;
+}
+Item.prototype.run = function () {
+    this.fun.apply(null, this.array);
+};
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+process.version = ''; // empty string to avoid regexp issues
+process.versions = {};
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+};
+
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+process.umask = function() { return 0; };
+
+},{}],43:[function(require,module,exports){
 (function (process,global){
 /*!
  * @overview es6-promise - a tiny implementation of Promises/A+.
@@ -13731,7 +13618,7 @@ function isUndefined(arg) {
 
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":61}],43:[function(require,module,exports){
+},{"_process":42}],44:[function(require,module,exports){
 /* Copyright @ 2015 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13875,7 +13762,7 @@ Logger.levels = {
     ERROR: "error"
 };
 
-},{}],44:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 /* Copyright @ 2015 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13960,7 +13847,7 @@ module.exports = {
     levels: Logger.levels
 };
 
-},{"./Logger":43}],45:[function(require,module,exports){
+},{"./Logger":44}],46:[function(require,module,exports){
 // Top level file is just a mixin of submodules & constants
 'use strict';
 
@@ -13976,7 +13863,7 @@ assign(pako, deflate, inflate, constants);
 
 module.exports = pako;
 
-},{"./lib/deflate":46,"./lib/inflate":47,"./lib/utils/common":48,"./lib/zlib/constants":51}],46:[function(require,module,exports){
+},{"./lib/deflate":47,"./lib/inflate":48,"./lib/utils/common":49,"./lib/zlib/constants":52}],47:[function(require,module,exports){
 'use strict';
 
 
@@ -14354,7 +14241,7 @@ exports.deflate = deflate;
 exports.deflateRaw = deflateRaw;
 exports.gzip = gzip;
 
-},{"./utils/common":48,"./utils/strings":49,"./zlib/deflate.js":53,"./zlib/messages":58,"./zlib/zstream":60}],47:[function(require,module,exports){
+},{"./utils/common":49,"./utils/strings":50,"./zlib/deflate.js":54,"./zlib/messages":59,"./zlib/zstream":61}],48:[function(require,module,exports){
 'use strict';
 
 
@@ -14756,7 +14643,7 @@ exports.inflate = inflate;
 exports.inflateRaw = inflateRaw;
 exports.ungzip  = inflate;
 
-},{"./utils/common":48,"./utils/strings":49,"./zlib/constants":51,"./zlib/gzheader":54,"./zlib/inflate.js":56,"./zlib/messages":58,"./zlib/zstream":60}],48:[function(require,module,exports){
+},{"./utils/common":49,"./utils/strings":50,"./zlib/constants":52,"./zlib/gzheader":55,"./zlib/inflate.js":57,"./zlib/messages":59,"./zlib/zstream":61}],49:[function(require,module,exports){
 'use strict';
 
 
@@ -14860,7 +14747,7 @@ exports.setTyped = function (on) {
 
 exports.setTyped(TYPED_OK);
 
-},{}],49:[function(require,module,exports){
+},{}],50:[function(require,module,exports){
 // String encode/decode helpers
 'use strict';
 
@@ -15047,7 +14934,7 @@ exports.utf8border = function(buf, max) {
   return (pos + _utf8len[buf[pos]] > max) ? pos : max;
 };
 
-},{"./common":48}],50:[function(require,module,exports){
+},{"./common":49}],51:[function(require,module,exports){
 'use strict';
 
 // Note: adler32 takes 12% for level 0 and 2% for level 6.
@@ -15081,7 +14968,7 @@ function adler32(adler, buf, len, pos) {
 
 module.exports = adler32;
 
-},{}],51:[function(require,module,exports){
+},{}],52:[function(require,module,exports){
 module.exports = {
 
   /* Allowed flush values; see deflate() and inflate() below for details */
@@ -15130,7 +15017,7 @@ module.exports = {
   //Z_NULL:                 null // Use -1 or null inline, depending on var type
 };
 
-},{}],52:[function(require,module,exports){
+},{}],53:[function(require,module,exports){
 'use strict';
 
 // Note: we can't get significant speed boost here.
@@ -15173,7 +15060,7 @@ function crc32(crc, buf, len, pos) {
 
 module.exports = crc32;
 
-},{}],53:[function(require,module,exports){
+},{}],54:[function(require,module,exports){
 'use strict';
 
 var utils   = require('../utils/common');
@@ -16940,7 +16827,7 @@ exports.deflatePrime = deflatePrime;
 exports.deflateTune = deflateTune;
 */
 
-},{"../utils/common":48,"./adler32":50,"./crc32":52,"./messages":58,"./trees":59}],54:[function(require,module,exports){
+},{"../utils/common":49,"./adler32":51,"./crc32":53,"./messages":59,"./trees":60}],55:[function(require,module,exports){
 'use strict';
 
 
@@ -16982,7 +16869,7 @@ function GZheader() {
 
 module.exports = GZheader;
 
-},{}],55:[function(require,module,exports){
+},{}],56:[function(require,module,exports){
 'use strict';
 
 // See state defs from inflate.js
@@ -17310,7 +17197,7 @@ module.exports = function inflate_fast(strm, start) {
   return;
 };
 
-},{}],56:[function(require,module,exports){
+},{}],57:[function(require,module,exports){
 'use strict';
 
 
@@ -18815,7 +18702,7 @@ exports.inflateSyncPoint = inflateSyncPoint;
 exports.inflateUndermine = inflateUndermine;
 */
 
-},{"../utils/common":48,"./adler32":50,"./crc32":52,"./inffast":55,"./inftrees":57}],57:[function(require,module,exports){
+},{"../utils/common":49,"./adler32":51,"./crc32":53,"./inffast":56,"./inftrees":58}],58:[function(require,module,exports){
 'use strict';
 
 
@@ -19144,7 +19031,7 @@ module.exports = function inflate_table(type, lens, lens_index, codes, table, ta
   return 0;
 };
 
-},{"../utils/common":48}],58:[function(require,module,exports){
+},{"../utils/common":49}],59:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -19159,7 +19046,7 @@ module.exports = {
   '-6':   'incompatible version' /* Z_VERSION_ERROR (-6) */
 };
 
-},{}],59:[function(require,module,exports){
+},{}],60:[function(require,module,exports){
 'use strict';
 
 
@@ -20360,7 +20247,7 @@ exports._tr_flush_block  = _tr_flush_block;
 exports._tr_tally = _tr_tally;
 exports._tr_align = _tr_align;
 
-},{"../utils/common":48}],60:[function(require,module,exports){
+},{"../utils/common":49}],61:[function(require,module,exports){
 'use strict';
 
 
@@ -20390,99 +20277,6 @@ function ZStream() {
 }
 
 module.exports = ZStream;
-
-},{}],61:[function(require,module,exports){
-// shim for using process in browser
-
-var process = module.exports = {};
-var queue = [];
-var draining = false;
-var currentQueue;
-var queueIndex = -1;
-
-function cleanUpNextTick() {
-    draining = false;
-    if (currentQueue.length) {
-        queue = currentQueue.concat(queue);
-    } else {
-        queueIndex = -1;
-    }
-    if (queue.length) {
-        drainQueue();
-    }
-}
-
-function drainQueue() {
-    if (draining) {
-        return;
-    }
-    var timeout = setTimeout(cleanUpNextTick);
-    draining = true;
-
-    var len = queue.length;
-    while(len) {
-        currentQueue = queue;
-        queue = [];
-        while (++queueIndex < len) {
-            if (currentQueue) {
-                currentQueue[queueIndex].run();
-            }
-        }
-        queueIndex = -1;
-        len = queue.length;
-    }
-    currentQueue = null;
-    draining = false;
-    clearTimeout(timeout);
-}
-
-process.nextTick = function (fun) {
-    var args = new Array(arguments.length - 1);
-    if (arguments.length > 1) {
-        for (var i = 1; i < arguments.length; i++) {
-            args[i - 1] = arguments[i];
-        }
-    }
-    queue.push(new Item(fun, args));
-    if (queue.length === 1 && !draining) {
-        setTimeout(drainQueue, 0);
-    }
-};
-
-// v8 likes predictible objects
-function Item(fun, array) {
-    this.fun = fun;
-    this.array = array;
-}
-Item.prototype.run = function () {
-    this.fun.apply(null, this.array);
-};
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-process.version = ''; // empty string to avoid regexp issues
-process.versions = {};
-
-function noop() {}
-
-process.on = noop;
-process.addListener = noop;
-process.once = noop;
-process.off = noop;
-process.removeListener = noop;
-process.removeAllListeners = noop;
-process.emit = noop;
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-};
-
-process.cwd = function () { return '/' };
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-};
-process.umask = function() { return 0; };
 
 },{}],62:[function(require,module,exports){
 /* Copyright @ 2015 Atlassian Pty Ltd
@@ -22793,10 +22587,21 @@ var DesktopSharingEventTypes = {
 
     SWITCHING_DONE: "ds.switching_done",
 
-    NEW_STREAM_CREATED: "ds.new_stream_created"
+    NEW_STREAM_CREATED: "ds.new_stream_created",
+    /**
+     * An event which indicates that the jidesha extension for Firefox is
+     * needed to proceed with screen sharing, and that it is not installed.
+     */
+    FIREFOX_EXTENSION_NEEDED: "ds.firefox_extension_needed",
+    /**
+     * An event which indicates that the jidesha extension for Firefox is
+     * needed to proceed with screen sharing, and that it is not installed.
+     */
+    FIREFOX_EXTENSION_NEEDED: "ds.firefox_extension_needed"
 };
 
 module.exports = DesktopSharingEventTypes;
+
 },{}],82:[function(require,module,exports){
 module.exports = {
     /**

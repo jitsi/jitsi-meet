@@ -9,6 +9,8 @@ var SDPUtil = require("../xmpp/SDPUtil");
 var EventEmitter = require("events");
 var JitsiLocalTrack = require("./JitsiLocalTrack");
 var StreamEventTypes = require("../../service/RTC/StreamEventTypes.js");
+var screenObtainer = require("./ScreenObtainer");
+var JitsiMeetJSError = require("../../JitsiMeetJSErrors");
 
 var eventEmitter = new EventEmitter();
 
@@ -18,31 +20,6 @@ var devices = {
 }
 
 var rtcReady = false;
-
-function DummyMediaStream(id) {
-    this.id = id;
-    this.label = id;
-    this.stop = function() { };
-    this.getAudioTracks = function() { return []; };
-    this.getVideoTracks = function() { return []; };
-}
-
-function getPreviousResolution(resolution) {
-    if(!Resolutions[resolution])
-        return null;
-    var order = Resolutions[resolution].order;
-    var res = null;
-    var resName = null;
-    var tmp, i;
-    for(i in Resolutions) {
-        tmp = Resolutions[i];
-        if (!res || (res.order < tmp.order && tmp.order < order)) {
-            resName = i;
-            res = tmp;
-        }
-    }
-    return resName;
-}
 
 function setResolutionConstraints(constraints, resolution) {
     var isAndroid = RTCBrowserType.isAndroid();
@@ -66,6 +43,7 @@ function setResolutionConstraints(constraints, resolution) {
         constraints.video.mandatory.maxHeight =
             constraints.video.mandatory.minHeight;
 }
+
 /**
  * @param {string[]} um required user media types
  *
@@ -215,9 +193,10 @@ function setAvailableDevices(um, available) {
 // In case of IE we continue from 'onReady' callback
 // passed to RTCUtils constructor. It will be invoked by Temasys plugin
 // once it is initialized.
-function onReady () {
+function onReady (options, GUM) {
     rtcReady = true;
     eventEmitter.emit(RTCEvents.RTC_READY, true);
+    screenObtainer.init(eventEmitter, options, GUM);
 };
 
 /**
@@ -343,6 +322,93 @@ function enumerateDevicesThroughMediaStreamTrack (callback) {
         );
         callback(devices);
     });
+}
+
+function obtainDevices(options) {
+    if(!options.devices || options.devices.length === 0) {
+        return options.successCallback(streams);
+    }
+
+    var device = options.devices.splice(0, 1);
+    options.deviceGUM[device](function (stream) {
+            options.streams[device] = stream;
+            obtainDevices(options);
+        },
+        function (error) {
+            logger.error(
+                "failed to obtain " + device + " stream - stop", error);
+            options.errorCallback(JitsiMeetJSError.parseError(error));
+        });
+}
+
+
+function createLocalTracks(streams) {
+    var newStreams = []
+    for (var i = 0; i < streams.length; i++) {
+        var localStream = new JitsiLocalTrack(null, streams[i].stream,
+            eventEmitter, streams[i].videoType, streams[i].resolution);
+        newStreams.push(localStream);
+        if (streams[i].isMuted === true)
+            localStream.setMute(true);
+
+        var eventType = StreamEventTypes.EVENT_TYPE_LOCAL_CREATED;
+
+        eventEmitter.emit(eventType, localStream);
+    }
+    return newStreams;
+}
+
+/**
+ * Handles the newly created Media Streams.
+ * @param streams the new Media Streams
+ * @param resolution the resolution of the video streams
+ * @returns {*[]} object that describes the new streams
+ */
+function handleLocalStream(streams, resolution) {
+    var audioStream, videoStream, desktopStream, res = [];
+    // If this is FF, the stream parameter is *not* a MediaStream object, it's
+    // an object with two properties: audioStream, videoStream.
+    if (window.webkitMediaStream) {
+        var audioVideo = streams.audioVideo;
+        if (audioVideo) {
+            var audioTracks = audioVideo.getAudioTracks();
+            if(audioTracks.length) {
+                audioStream = new webkitMediaStream();
+                for (var i = 0; i < audioTracks.length; i++) {
+                    audioStream.addTrack(audioTracks[i]);
+                }
+            }
+
+            var videoTracks = audioVideo.getVideoTracks();
+            if(audioTracks.length) {
+                videoStream = new webkitMediaStream();
+                for (i = 0; i < videoTracks.length; i++) {
+                    videoStream.addTrack(videoTracks[i]);
+                }
+            }
+        }
+
+    }
+    else if (RTCBrowserType.isFirefox() || RTCBrowserType.isTemasysPluginUsed()) {   // Firefox and Temasys plugin
+        if (streams && streams.audioStream)
+            audioStream = streams.audioStream;
+
+        if (streams && streams.videoStream)
+            videoStream = streams.videoStream;
+    }
+
+    if (streams && streams.desktopStream)
+        res.push({stream: streams.desktopStream,
+            type: "video", videoType: "desktop"});
+
+    if(audioStream)
+        res.push({stream: audioStream, type: "audio", videoType: null});
+
+    if(videoStream)
+        res.push({stream: videoStream, type: "video", videoType: "camera",
+            resolution: resolution});
+
+    return res;
 }
 
 //Options parameter is to pass config options. Currently uses only "useIPv6".
@@ -500,7 +566,7 @@ var RTCUtils = {
                     attachMediaStream(element, stream);
                 };
 
-                onReady(isPlugin);
+                onReady(options, self.getUserMediaWithConstraints);
             });
         } else {
             try {
@@ -512,7 +578,7 @@ var RTCUtils = {
 
         // Call onReady() if Temasys plugin is not used
         if (!RTCBrowserType.isTemasysPluginUsed()) {
-            onReady();
+            onReady(options, self.getUserMediaWithConstraints);
         }
 
     },
@@ -577,15 +643,26 @@ var RTCUtils = {
         options = options || {};
         return new Promise(function (resolve, reject) {
             var successCallback = function (stream) {
-                var streams = self.successCallback(stream, options.resolution);
+                var streams = handleLocalStream(stream, options.resolution);
                 resolve(options.dontCreateJitsiTracks?
-                    streams: self.createLocalTracks(streams));
+                    streams: createLocalTracks(streams));
             };
 
             options.devices = options.devices || ['audio', 'video'];
-
-            if (RTCBrowserType.isFirefox() || RTCBrowserType.isTemasysPluginUsed()) {
-
+            if(!screenObtainer.isSupported()
+                && options.devices.indexOf("desktop") !== -1){
+                options.devices.splice(options.devices.indexOf("desktop"), 1);
+            }
+            if (RTCBrowserType.isFirefox() ||
+                RTCBrowserType.isTemasysPluginUsed()) {
+                var GUM = function (device, s, e) {
+                    this.getUserMediaWithConstraints(device, s, e, options);
+                }
+                var deviceGUM = {
+                    "audio": GUM.bind(self, ["audio"]),
+                    "video": GUM.bind(self, ["video"]),
+                    "desktop": screenObtainer.obtainStream
+                }
                 // With FF/IE we can't split the stream into audio and video because FF
                 // doesn't support media stream constructors. So, we need to get the
                 // audio stream separately from the video stream using two distinct GUM
@@ -594,190 +671,50 @@ var RTCUtils = {
                 //
                 // Note that we pack those 2 streams in a single object and pass it to
                 // the successCallback method.
-                var obtainVideo = function (audioStream) {
-                    self.getUserMediaWithConstraints(
-                        ['video'],
-                        function (videoStream) {
-                            return successCallback({
-                                audioStream: audioStream,
-                                videoStream: videoStream
-                            });
-                        },
-                        function (error, resolution) {
-                            logger.error(
-                                'failed to obtain video stream - stop', error);
-                            self.errorCallback(error, resolve, options);
-                        },
-                        {resolution: options.resolution || '360',
-                        cameraDeviceId: options.cameraDeviceId});
-                };
-                var obtainAudio = function () {
-                    self.getUserMediaWithConstraints(
-                        ['audio'],
-                        function (audioStream) {
-                            (options.devices.indexOf('video') === -1) ||
-                                obtainVideo(audioStream);
+                obtainDevices({
+                    devices: options.devices,
+                    successCallback: successCallback,
+                    errorCallback: reject,
+                    deviceGUM: deviceGUM
+                });
+            } else {
+                var hasDesktop = false;
+                if(hasDesktop = options.devices.indexOf("desktop") !== -1) {
+                    options.devices.splice(options.devices.indexOf("desktop"), 1);
+                }
+                options.resolution = options.resolution || '360';
+                if(options.devices.length) {
+                    this.getUserMediaWithConstraints(
+                        options.devices,
+                        function (stream) {
+                            if(hasDesktop) {
+                                screenObtainer.obtainStream(
+                                    function (desktopStream) {
+                                        successCallback({audioVideo: stream,
+                                            desktopStream: desktopStream});
+                                    }, function (error) {
+                                        reject(
+                                            JitsiMeetJSError.parseError(error));
+                                    });
+                            } else {
+                                successCallback({audioVideo: stream});
+                            }
                         },
                         function (error) {
-                            logger.error(
-                                'failed to obtain audio stream - stop', error);
-                            self.errorCallback(error, resolve, options);
-                        },{micDeviceId: options.micDeviceId});
-                };
-                if((options.devices.indexOf('audio') === -1))
-                    obtainVideo(null)
-                else
-                    obtainAudio();
-            } else {
-                this.getUserMediaWithConstraints(
-                    options.devices,
-                    function (stream) {
-                        successCallback(stream);
-                    },
-                    function (error, resolution) {
-                        self.errorCallback(error, resolve, options);
-                    },
-                    {resolution: options.resolution || '360',
-                    cameraDeviceId: options.cameraDeviceId,
-                    micDeviceId: options.micDeviceId});
+                            reject(JitsiMeetJSError.parseError(error));
+                        },
+                        options);
+                } else if (hasDesktop) {
+                    screenObtainer.obtainStream(
+                        function (stream) {
+                            successCallback({desktopStream: stream});
+                        }, function (error) {
+                            reject(
+                                JitsiMeetJSError.parseError(error));
+                        });
+                }
             }
         }.bind(this));
-    },
-
-    /**
-     * Successful callback called from GUM.
-     * @param stream the new MediaStream
-     * @param resolution the resolution of the video stream.
-     * @returns {*}
-     */
-    successCallback: function (stream, resolution) {
-        // If this is FF or IE, the stream parameter is *not* a MediaStream object,
-        // it's an object with two properties: audioStream, videoStream.
-        if (stream && stream.getAudioTracks && stream.getVideoTracks)
-            logger.log('got', stream, stream.getAudioTracks().length,
-                stream.getVideoTracks().length);
-        return this.handleLocalStream(stream, resolution);
-    },
-
-    /**
-     * Error callback called from GUM. Retries the GUM call with different resolutions.
-     * @param error the error
-     * @param resolve the resolve funtion that will be called on success.
-     * @param {Object} options with the following properties:
-     * @param resolution the last resolution used for GUM.
-     * @param dontCreateJitsiTracks if <tt>true</tt> objects with the following structure {stream: the Media Stream,
-     * type: "audio" or "video", videoType: "camera" or "desktop"}
-     * will be returned trough the Promise, otherwise JitsiTrack objects will be returned.
-     */
-    errorCallback: function (error, resolve, options) {
-        var self = this;
-        options = options || {};
-        logger.error('failed to obtain audio/video stream - trying audio only', error);
-        var resolution = getPreviousResolution(options.resolution);
-        if (typeof error == "object" && error.constraintName && error.name
-            && (error.name == "ConstraintNotSatisfiedError" ||
-                error.name == "OverconstrainedError") &&
-            (error.constraintName == "minWidth" || error.constraintName == "maxWidth" ||
-                error.constraintName == "minHeight" || error.constraintName == "maxHeight")
-            && resolution) {
-            self.getUserMediaWithConstraints(['audio', 'video'],
-                function (stream) {
-                    var streams = self.successCallback(stream, resolution);
-                    resolve(options.dontCreateJitsiTracks? streams: self.createLocalTracks(streams));
-                }, function (error, resolution) {
-                    return self.errorCallback(error, resolve,
-                        {resolution: resolution,
-                        dontCreateJitsiTracks: options.dontCreateJitsiTracks});
-                },
-                {resolution: options.resolution});
-        }
-        else {
-            self.getUserMediaWithConstraints(
-                ['audio'],
-                function (stream) {
-                    var streams = self.successCallback(stream, resolution);
-                    resolve(options.dontCreateJitsiTracks? streams: self.createLocalTracks(streams));
-                },
-                function (error) {
-                    logger.error('failed to obtain audio/video stream - stop',
-                        error);
-                    var streams = self.successCallback(null);
-                    resolve(options.dontCreateJitsiTracks? streams: self.createLocalTracks(streams));
-                }
-            );
-        }
-    },
-
-    /**
-     * Handles the newly created Media Streams.
-     * @param stream the new Media Streams
-     * @param resolution the resolution of the video stream.
-     * @returns {*[]} Promise object with the new Media Streams.
-     */
-    handleLocalStream: function (stream, resolution) {
-        var audioStream, videoStream;
-        // If this is FF, the stream parameter is *not* a MediaStream object, it's
-        // an object with two properties: audioStream, videoStream.
-        if (window.webkitMediaStream) {
-            audioStream = new webkitMediaStream();
-            videoStream = new webkitMediaStream();
-            if (stream) {
-                var audioTracks = stream.getAudioTracks();
-
-                for (var i = 0; i < audioTracks.length; i++) {
-                    audioStream.addTrack(audioTracks[i]);
-                }
-
-                var videoTracks = stream.getVideoTracks();
-
-                for (i = 0; i < videoTracks.length; i++) {
-                    videoStream.addTrack(videoTracks[i]);
-                }
-            }
-
-        }
-        else if (RTCBrowserType.isFirefox() || RTCBrowserType.isTemasysPluginUsed()) {   // Firefox and Temasys plugin
-            if (stream && stream.audioStream)
-                audioStream = stream.audioStream;
-            else
-                audioStream = new DummyMediaStream("dummyAudio");
-
-            if (stream && stream.videoStream)
-                videoStream = stream.videoStream;
-            else
-                videoStream = new DummyMediaStream("dummyVideo");
-        }
-
-        return [
-                {stream: audioStream, type: "audio", videoType: null},
-                {stream: videoStream, type: "video", videoType: "camera",
-                  resolution: resolution}
-            ];
-    },
-
-    createStream: function (stream, isVideo) {
-        var newStream = null;
-        if (window.webkitMediaStream) {
-            newStream = new webkitMediaStream();
-            if (newStream) {
-                var tracks = (isVideo ? stream.getVideoTracks() : stream.getAudioTracks());
-
-                for (var i = 0; i < tracks.length; i++) {
-                    newStream.addTrack(tracks[i]);
-                }
-            }
-
-        } else {
-            // FIXME: this is duplicated with 'handleLocalStream' !!!
-            if (stream) {
-                newStream = stream;
-            } else {
-                newStream =
-                    new DummyMediaStream(isVideo ? "dummyVideo" : "dummyAudio");
-            }
-        }
-
-        return newStream;
     },
     addListener: function (eventType, listener) {
         eventEmitter.on(eventType, listener);
@@ -791,22 +728,6 @@ var RTCUtils = {
     isRTCReady: function () {
         return rtcReady;
     },
-    createLocalTracks: function (streams) {
-        var newStreams = []
-        for (var i = 0; i < streams.length; i++) {
-            var localStream = new JitsiLocalTrack(null, streams[i].stream,
-                eventEmitter, streams[i].videoType, streams[i].resolution);
-            newStreams.push(localStream);
-            if (streams[i].isMuted === true)
-                localStream.setMute(true);
-
-            var eventType = StreamEventTypes.EVENT_TYPE_LOCAL_CREATED;
-
-            eventEmitter.emit(eventType, localStream);
-        }
-        return newStreams;
-    },
-
     /**
      * Checks if its possible to enumerate available cameras/micropones.
      * @returns {boolean} true if available, false otherwise.

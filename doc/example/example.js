@@ -20,10 +20,16 @@ var confOptions = {
 function onLocalTracks(tracks)
 {
     localTracks = tracks;
-    tracks[0].attach($("#localAudio"));
-    tracks[1].attach($("#localVideo"));
     for(var i = 0; i < localTracks.length; i++)
     {
+        if(localTracks[i].getType() == "video") {
+            $("body").append("<video autoplay='1' id='localVideo" + i + "' />");
+            localTracks[i].attach($("#localVideo" + i ));
+        } else {
+            $("body").append("<audio autoplay='1' id='localAudio" + i + "' />");
+            localTracks[i].attach($("#localAudio" + i ));
+        }
+
             room.addTrack(localTracks[i]);
         console.log(localTracks[i]);
     }
@@ -37,10 +43,10 @@ function onRemoteTrack(track) {
     var participant = track.getParitcipantId();
     if(!remoteTracks[participant])
         remoteTracks[participant] = [];
-    remoteTracks[participant].push(track);
-    var id = participant + track.getType();
+    var idx = remoteTracks[participant].push(track);
+    var id = participant + track.getType() + idx;
     if(track.getType() == "video") {
-        $("body").append("<video autoplay='1' id='" + participant + "video' />");
+        $("body").append("<video autoplay='1' id='" + participant + "video" + idx + "' />");
     } else {
         $("body").append("<audio autoplay='1' id='" + participant + "audio' />");
     }
@@ -52,7 +58,9 @@ function onRemoteTrack(track) {
  */
 function onConferenceJoined () {
     console.log("conference joined!");
-    JitsiMeetJS.createLocalTracks({}).then(onLocalTracks);
+    JitsiMeetJS.createLocalTracks({devices: ["audio", "video", "desktop"]}).then(onLocalTracks).catch(function (error) {
+        console.log(error);
+    });
 }
 
 function onUserLeft(id) {
@@ -85,15 +93,6 @@ function onConnectionSuccess(){
       function(userID, audioLevel){
           // console.log(userID + " - " + audioLevel);
       });
-    room.on(JitsiMeetJS.events.conference.CONNECTION_INTERRUPTED, function () {
-        console.log("interrupted");
-    });
-    room.on(JitsiMeetJS.events.conference.CONNECTION_RESTORED, function () {
-        console.log("restored");
-    });
-    room.on(JitsiMeetJS.events.conference.SETUP_FAILED, function () {
-        console.log("failed");
-    });
     room.join();
 };
 
@@ -123,8 +122,32 @@ $(window).bind('unload', unload);
 
 
 // JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.ERROR);
+var initOptions = {
+    // Desktop sharing method. Can be set to 'ext', 'webrtc' or false to disable.
+    desktopSharingChromeMethod: 'ext',
+    // The ID of the jidesha extension for Chrome.
+    desktopSharingChromeExtId: 'mbocklcggfhnbahlnepmldehdhpjfcjp',
+    // The media sources to use when using screen sharing with the Chrome
+    // extension.
+    desktopSharingChromeSources: ['screen', 'window'],
+    // Required version of Chrome extension
+    desktopSharingChromeMinExtVersion: '0.1',
 
-JitsiMeetJS.init();
+    // The ID of the jidesha extension for Firefox. If null, we assume that no
+    // extension is required.
+    desktopSharingFirefoxExtId: null,
+    // Whether desktop sharing should be disabled on Firefox.
+    desktopSharingFirefoxDisabled: true,
+    // The maximum version of Firefox which requires a jidesha extension.
+    // Example: if set to 41, we will require the extension for Firefox versions
+    // up to and including 41. On Firefox 42 and higher, we will run without the
+    // extension.
+    // If set to -1, an extension will be required for all versions of Firefox.
+    desktopSharingFirefoxMaxVersionExtRequired: -1,
+    // The URL to the Firefox extension for desktop sharing.
+    desktopSharingFirefoxExtensionURL: null
+}
+JitsiMeetJS.init(initOptions);
 
 var connection = null;
 var room = null;

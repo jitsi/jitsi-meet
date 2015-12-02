@@ -15,16 +15,16 @@
   "author": "",
   "readmeFilename": "README.md",
   "dependencies": {
-      "events": "*",
-      "pako": "*",
-      "sdp-interop": "0.1.10",
-      "sdp-transform": "1.4.1",
-      "sdp-simulcast": "0.1.2",
-      "async": "0.9.0",
-      "retry": "0.6.1",
-      "jssha": "1.5.0",
-      "es6-promise": "*",
-      "jitsi-meet-logger": "jitsi/jitsi-meet-logger"
+    "events": "*",
+    "pako": "*",
+    "sdp-interop": "0.1.10",
+    "sdp-transform": "1.4.1",
+    "sdp-simulcast": "0.1.2",
+    "async": "0.9.0",
+    "retry": "0.6.1",
+    "jssha": "1.5.0",
+    "es6-promise": "*",
+    "jitsi-meet-logger": "jitsi/jitsi-meet-logger"
   },
   "devDependencies": {
     "browserify": "11.1.x",
@@ -32,7 +32,8 @@
     "precommit-hook": "^3.0.0"
   },
   "scripts": {
-    "lint": "./node_modules/.bin/jshint ."
+    "lint": "./node_modules/.bin/jshint .",
+    "validate": "npm ls"
   },
   "pre-commit": [
     "lint"
