@@ -1,9 +1,8 @@
-/* global APP, $, Util, nickname:true */
+/* global APP, $ */
 var Replacement = require("./Replacement");
 var CommandsProcessor = require("./Commands");
 var ToolbarToggler = require("../../toolbars/ToolbarToggler");
 var smileys = require("./smileys.json").smileys;
-var NicknameHandler = require("../../util/NicknameHandler");
 var UIUtil = require("../../util/UIUtil");
 var UIEvents = require("../../../../service/UI/UIEvents");
 
@@ -169,22 +168,18 @@ var Chat = (function (my) {
     /**
      * Initializes chat related interface.
      */
-    my.init = function () {
-        if(NicknameHandler.getNickname())
+    my.init = function (eventEmitter) {
+        if (APP.settings.getDisplayName()) {
             Chat.setChatConversationMode(true);
-        NicknameHandler.addListener(UIEvents.NICKNAME_CHANGED,
-            function (nickname) {
-                Chat.setChatConversationMode(true);
-            });
+        }
 
         $('#nickinput').keydown(function (event) {
             if (event.keyCode === 13) {
                 event.preventDefault();
                 var val = UIUtil.escapeHtml(this.value);
                 this.value = '';
-                if (!NicknameHandler.getNickname()) {
-                    NicknameHandler.setNickname(val);
-
+                if (APP.settings.getDisplayName()) {
+                    eventEmitter.emit(UIEvents.NICKNAME_CHANGED, val);
                     return;
                 }
             }
@@ -203,8 +198,7 @@ var Chat = (function (my) {
                 }
                 else {
                     var message = UIUtil.escapeHtml(value);
-                    APP.xmpp.sendChatMessage(message,
-                                             NicknameHandler.getNickname());
+                    eventEmitter.emit(UIEvents.MESSAGE_CREATED, message);
                 }
             }
         });
@@ -228,7 +222,7 @@ var Chat = (function (my) {
      * Appends the given message to the chat conversation.
      */
     my.updateChatConversation =
-        function (from, displayName, message, myjid, stamp) {
+        function (from, displayName, message, stamp) {
         var divClassName = '';
 
         if (APP.xmpp.myJid() === from) {

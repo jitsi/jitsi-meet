@@ -1,5 +1,4 @@
-/* global $, $iq, config, connection, focusMucJid, forceMuted,
-   setAudioMuted, Strophe */
+/* global $, $iq, config, connection, focusMucJid, forceMuted, Strophe */
 /**
  * Moderate connection plugin.
  */

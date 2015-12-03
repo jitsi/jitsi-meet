@@ -21,20 +21,18 @@ function initShortcutHandlers() {
         77: {
             character: "M",
             id: "mutePopover",
-            function: APP.UI.toggleAudio
+            function: APP.conference.toggleAudioMuted
         },
         84: {
             character: "T",
             function: function() {
-                if(!APP.RTC.localAudio.isMuted()) {
-                    APP.UI.toggleAudio();
-                }
+                APP.conference.muteAudio(true);
             }
         },
         86: {
             character: "V",
             id: "toggleVideoPopover",
-            function: APP.UI.toggleVideo
+            function: APP.conference.toggleVideoMuted
         }
     };
 }
@@ -67,9 +65,7 @@ var KeyboardShortcut = {
                 $(":focus").is("input[type=password]") ||
                 $(":focus").is("textarea"))) {
                 if(e.which === "T".charCodeAt(0)) {
-                    if(APP.RTC.localAudio.isMuted()) {
-                        APP.UI.toggleAudio();
-                    }
+                    APP.conference.muteAudio(true);
                 }
             }
         };

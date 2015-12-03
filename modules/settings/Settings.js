@@ -57,6 +57,9 @@ var Settings = {
      * @returns {string} the display name we just set
      */
     setDisplayName: function (newDisplayName) {
+        if (displayName === newDisplayName) {
+            return displayName;
+        }
         displayName = newDisplayName;
         window.localStorage.displayname = displayName;
         return displayName;
@@ -81,6 +84,10 @@ var Settings = {
     setEmail: function (newEmail) {
         email = newEmail;
         window.localStorage.email = newEmail;
+        return email;
+    },
+
+    getEmail: function () {
         return email;
     },
 

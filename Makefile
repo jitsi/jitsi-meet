@@ -8,10 +8,13 @@ DEPLOY_DIR = libs
 BROWSERIFY_FLAGS = -d
 OUTPUT_DIR = .
 
-all: compile uglify deploy clean
+all: update-deps compile uglify deploy clean
+
+update-deps:
+	$(NPM) update
 
 compile:
-	$(NPM) update && $(BROWSERIFY) $(BROWSERIFY_FLAGS) -e app.js -s APP | $(EXORCIST) $(OUTPUT_DIR)/app.bundle.js.map > $(OUTPUT_DIR)/app.bundle.js
+	$(BROWSERIFY) $(BROWSERIFY_FLAGS) -e app.js -s APP | $(EXORCIST) $(OUTPUT_DIR)/app.bundle.js.map > $(OUTPUT_DIR)/app.bundle.js
 
 clean:
 	rm -f $(OUTPUT_DIR)/app.bundle.*

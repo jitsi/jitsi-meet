@@ -1,5 +1,4 @@
-/* global APP, $, buttonClick, config, lockRoom, interfaceConfig, setSharedKey,
- Util */
+/* global APP, $, config, interfaceConfig */
 /* jshint -W101 */
 var messageHandler = require("../util/MessageHandler");
 var BottomToolbar = require("./BottomToolbar");
@@ -12,28 +11,31 @@ var AuthenticationEvents
     = require("../../../service/authentication/AuthenticationEvents");
 var AnalyticsAdapter = require("../../statistics/AnalyticsAdapter");
 var Feedback = require("../Feedback");
+var UIEvents = require("../../../service/UI/UIEvents");
 
 var roomUrl = null;
 var sharedKey = '';
-var UI = null;
 var recordingToaster = null;
+var emitter = null;
 
 var buttonHandlers = {
     "toolbar_button_mute": function () {
         if (APP.RTC.localAudio.isMuted()) {
             AnalyticsAdapter.sendEvent('toolbar.audio.unmuted');
+            emitter.emit(UIEvents.AUDIO_MUTED, false);
         } else {
             AnalyticsAdapter.sendEvent('toolbar.audio.muted');
+            emitter.emit(UIEvents.AUDIO_MUTED, true);
         }
-        return APP.UI.toggleAudio();
     },
     "toolbar_button_camera": function () {
         if (APP.RTC.localVideo.isMuted()) {
             AnalyticsAdapter.sendEvent('toolbar.video.enabled');
+            emitter.emit(UIEvents.VIDEO_MUTED, false);
         } else {
             AnalyticsAdapter.sendEvent('toolbar.video.disabled');
+            emitter.emit(UIEvents.VIDEO_MUTED, true);
         }
-        return APP.UI.toggleVideo();
     },
     /*"toolbar_button_authentication": function () {
         return Toolbar.authenticateClicked();
@@ -299,7 +301,7 @@ function callSipButtonClicked() {
                 var numberInput = f.sipNumber;
                 if (numberInput) {
                     APP.xmpp.dial(
-                        numberInput, 'fromnumber', UI.getRoomName(), sharedKey);
+                        numberInput, 'fromnumber', APP.UI.getRoomName(), sharedKey);
                 }
             }
         },
@@ -309,12 +311,12 @@ function callSipButtonClicked() {
 
 var Toolbar = (function (my) {
 
-    my.init = function (ui) {
+    my.init = function (eventEmitter) {
+        emitter = eventEmitter;
         UIUtil.hideDisabledButtons(defaultToolbarButtons);
 
         for(var k in buttonHandlers)
             $("#" + k).click(buttonHandlers[k]);
-        UI = ui;
         // Update login info
         APP.xmpp.addListener(
             AuthenticationEvents.IDENTITY_UPDATED,
@@ -353,12 +355,12 @@ var Toolbar = (function (my) {
         }
         // Get authentication URL
         if (!APP.xmpp.isMUCJoined()) {
-            APP.xmpp.getLoginUrl(UI.getRoomName(), function (url) {
+            APP.xmpp.getLoginUrl(APP.UI.getRoomName(), function (url) {
                 // If conference has not been started yet - redirect to login page
                 window.location.href = url;
             });
         } else {
-            APP.xmpp.getPopupLoginUrl(UI.getRoomName(), function (url) {
+            APP.xmpp.getPopupLoginUrl(APP.UI.getRoomName(), function (url) {
                 // Otherwise - open popup with authentication URL
                 var authenticationWindow = Authentication.createAuthenticationWindow(
                     function () {

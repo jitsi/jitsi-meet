@@ -36,7 +36,7 @@ var focusedVideoResourceJid = null;
 var VideoLayout = (function (my) {
     my.init = function (emitter) {
         eventEmitter = emitter;
-        localVideoThumbnail = new LocalVideo(VideoLayout);
+        localVideoThumbnail = new LocalVideo(VideoLayout, emitter);
         if (interfaceConfig.filmStripOnly) {
             LargeVideo.disable();
         } else {
@@ -56,8 +56,6 @@ var VideoLayout = (function (my) {
     };
 
     my.changeLocalAudio = function(stream, isMuted) {
-        if (isMuted)
-            APP.UI.setAudioMuted(true, true);
         APP.RTC.attachMediaStream($('#localAudio'), stream.getOriginalStream());
         var localAudio = document.getElementById('localAudio');
         // Writing volume not allowed in IE
@@ -177,7 +175,7 @@ var VideoLayout = (function (my) {
         console.info("electLastVisibleVideo: " + jid);
         return jid;
     };
-    
+
     my.onRemoteStreamAdded = function (stream) {
         if (stream.peerjid) {
             VideoLayout.ensurePeerContainerExists(stream.peerjid);
@@ -277,9 +275,9 @@ var VideoLayout = (function (my) {
     /**
      * Checks if container for participant identified by given peerJid exists
      * in the document and creates it eventually.
-     * 
+     *
      * @param peerJid peer Jid to check.
-     * 
+     *
      * @return Returns <tt>true</tt> if the peer container exists,
      * <tt>false</tt> - otherwise
      */
@@ -589,16 +587,13 @@ var VideoLayout = (function (my) {
     /**
      * Display name changed.
      */
-    my.onDisplayNameChanged =
-                    function (jid, displayName, status) {
-        if (jid === 'localVideoContainer' ||
-            jid === APP.xmpp.myJid()) {
+    my.onDisplayNameChanged = function (id, displayName, status) {
+        if (id === 'localVideoContainer' ||
+            APP.conference.isLocalId(id)) {
             localVideoThumbnail.setDisplayName(displayName);
         } else {
-            VideoLayout.ensurePeerContainerExists(jid);
-            remoteVideos[Strophe.getResourceFromJid(jid)].setDisplayName(
-                displayName,
-                status);
+            VideoLayout.ensurePeerContainerExists(id);
+            remoteVideos[id].setDisplayName(displayName, status);
         }
     };
 
@@ -652,9 +647,7 @@ var VideoLayout = (function (my) {
      * @param endpointsEnteringLastN the list currently entering last N
      * endpoints
      */
-    my.onLastNEndpointsChanged = function (lastNEndpoints,
-                                           endpointsEnteringLastN,
-                                           stream) {
+    my.onLastNEndpointsChanged = function (lastNEndpoints, endpointsEnteringLastN) {
         if (lastNCount !== lastNEndpoints.length)
             lastNCount = lastNEndpoints.length;
 
@@ -847,7 +840,7 @@ var VideoLayout = (function (my) {
     /**
      * Hides all the indicators
      */
-    my.onStatsStop = function () {
+    my.hideStats = function () {
         for(var video in remoteVideos) {
             remoteVideos[video].hideIndicator();
         }
@@ -879,7 +872,7 @@ var VideoLayout = (function (my) {
 
         VideoLayout.resizeThumbnails();
     };
-    
+
     my.onVideoTypeChanged = function (resourceJid, newVideoType) {
         if (remoteVideoTypes[resourceJid] === newVideoType) {
             return;
@@ -1005,14 +998,16 @@ var VideoLayout = (function (my) {
         }
     };
 
-    my.userAvatarChanged = function(resourceJid, thumbUrl) {
-        var smallVideo = VideoLayout.getSmallVideo(resourceJid);
-        if(smallVideo)
+    my.changeUserAvatar = function(id, thumbUrl) {
+        var smallVideo = VideoLayout.getSmallVideo(id);
+        if (smallVideo) {
             smallVideo.avatarChanged(thumbUrl);
-        else
+        } else {
             console.warn(
-                "Missed avatar update - no small video yet for " + resourceJid);
-        LargeVideo.updateAvatar(resourceJid, thumbUrl);
+                "Missed avatar update - no small video yet for " + id
+            );
+        }
+        LargeVideo.updateAvatar(id, thumbUrl);
     };
 
     my.createEtherpadIframe = function(src, onloadHandler)
