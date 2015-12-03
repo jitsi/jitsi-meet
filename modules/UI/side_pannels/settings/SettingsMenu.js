@@ -36,7 +36,7 @@ var SettingsMenu = {
             }
         });
 
-        if (APP.conference.isModerator()) {
+        if (APP.conference.isModerator) {
             startMutedSelector.css("display", "block");
         } else {
             startMutedSelector.css("display", "none");
@@ -48,7 +48,7 @@ var SettingsMenu = {
     },
 
     onRoleChanged: function () {
-        if(APP.conference.isModerator()) {
+        if(APP.conference.isModerator) {
             $("#startMutedOptions").css("display", "block");
         }
         else {

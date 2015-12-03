@@ -171,7 +171,7 @@ var ContactList = {
 
     onDisplayNameChange: function (id, displayName) {
         if (id === 'localVideoContainer') {
-            id = APP.conference.localId();
+            id = APP.conference.localId;
         }
         var contactName = $('#contacts #' + id + '>p');
 

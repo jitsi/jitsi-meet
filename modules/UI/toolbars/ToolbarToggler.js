@@ -1,5 +1,4 @@
-/* global APP, config, $, interfaceConfig, Moderator,
- DesktopStreaming.showDesktopSharingButton */
+/* global APP, config, $, interfaceConfig */
 
 var toolbarTimeoutObject,
     toolbarTimeout = interfaceConfig.INITIAL_TOOLBAR_TIMEOUT,
@@ -73,12 +72,6 @@ var ToolbarToggler = {
             }
             toolbarTimeoutObject = setTimeout(hideToolbar, toolbarTimeout);
             toolbarTimeout = interfaceConfig.TOOLBAR_TIMEOUT;
-        }
-
-        if (APP.conference.isModerator()) {
-//            TODO: Enable settings functionality.
-//                  Need to uncomment the settings button in index.html.
-//            $('#settingsButton').css({visibility:"visible"});
         }
 
         // Show/hide desktop sharing button

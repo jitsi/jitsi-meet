@@ -1,5 +1,4 @@
-/* jshint -W117 */
-/* global JitsiMeetJS */
+/* global $, JitsiMeetJS, config, Promise */
 /* application specific logic */
 
 require("jquery");
@@ -13,66 +12,41 @@ window.toastr = require("toastr");
 require("jQuery-Impromptu");
 require("autosize");
 
+var CQEvents = require('./service/connectionquality/CQEvents');
+var UIEvents = require('./service/UI/UIEvents');
+
 var Commands = {
     CONNECTION_QUALITY: "connectionQuality",
     EMAIL: "email"
 };
 
-function createConference(connection, room) {
-    var localTracks = [];
-    var remoteTracks = {};
-
-    return {
-        muteAudio: function (mute) {
-
-        },
-
-        muteVideo: function (mute) {
-
-        },
-
-        toggleAudioMuted: function () {
-            APP.UI.setAudioMuted(muted);
-        },
-
-        toggleVideoMuted: function () {
-            APP.UI.setVideoMuted(muted);
-        },
-
-        setNickname: function (nickname) {
-            APP.settings.setDisplayName(nickname);
-            room.setDisplayName(nickname);
-        },
-
-        setStartMuted: function (audio, video) {
-            // FIXME room.setStartMuted
-        },
-
-        sendMessage: function (message) {
-            room.sendTextMessage(message);
-        },
-
-        isModerator: function () {
-            return false;
-        },
-
-        localId: function () {
-            return room.myUserId();
-        },
-
-        isLocalId: function (id) {
-            return id === this.localId();
-        }
-    };
-}
-
 var APP = {
-    JitsiMeetJS: JitsiMeetJS,
-
     init: function () {
-        this.JitsiMeetJS.init();
-        this.JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.TRACE);
-        this.conference = null;
+        JitsiMeetJS.init();
+        JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.TRACE);
+
+        this.conference = {
+            localId: undefined,
+            isModerator: false,
+            membersCount: 0,
+            audioMuted: false,
+            videoMuted: false,
+            isLocalId: function (id) {
+                return this.localId === id;
+            },
+            muteAudio: function (mute) {
+                APP.UI.eventEmitter.emit(UIEvents.AUDIO_MUTED, mute);
+            },
+            toggleAudioMuted: function () {
+                this.muteAudio(!this.audioMuted);
+            },
+            muteVideo: function (mute) {
+                APP.UI.eventEmitter.emit(UIEvents.VIDEO_MUTED, mute);
+            },
+            toggleVideoMuted: function () {
+                this.muteVideo(!this.videoMuted);
+            }
+        };
 
         this.UI = require("./modules/UI/UI");
         this.API = require("./modules/API/API");
@@ -85,74 +59,120 @@ var APP = {
             require("./modules/keyboardshortcut/keyboardshortcut");
         this.translation = require("./modules/translation/translation");
         this.settings = require("./modules/settings/Settings");
-        //this.DTMF = require("./modules/DTMF/DTMF");
-        this.members = require("./modules/members/MemberList");
         this.configFetch = require("./modules/config/HttpConfigFetch");
     }
 };
 
+
+var ConnectionEvents = JitsiMeetJS.events.connection;
+var ConnectionErrors = JitsiMeetJS.errors.connection;
 function connect() {
-    var connection = new APP.JitsiMeetJS.JitsiConnection(null, null, {
+    var connection = new JitsiMeetJS.JitsiConnection(null, null, {
         hosts: config.hosts,
         bosh: config.bosh,
         clientNode: config.clientNode
     });
 
-    var events = APP.JitsiMeetJS.events.connection;
-
     return new Promise(function (resolve, reject) {
-        var onConnectionSuccess = function () {
+        var handlers = {};
+
+        var unsubscribe = function () {
+            Object.keys(handlers).forEach(function (event) {
+                connection.removeEventListener(event, handlers[event]);
+            });
+        };
+
+        handlers[ConnectionEvents.CONNECTION_ESTABLISHED] = function () {
             console.log('CONNECTED');
+            unsubscribe();
             resolve(connection);
         };
 
-        var onConnectionFailed = function () {
-            console.error('CONNECTION FAILED');
-            reject();
+        var listenForFailure = function (event) {
+            handlers[event] = function () {
+                // convert arguments to array
+                var args = Array.prototype.slice.call(arguments);
+                args.unshift(event);
+                // [event, ...params]
+                console.error('CONNECTION FAILED:', args);
+
+                unsubscribe();
+                reject(args);
+            };
         };
 
-        var onDisconnect = function () {
-            console.log('DISCONNECT');
-            connection.removeEventListener(
-                events.CONNECTION_ESTABLISHED, onConnectionSuccess
-            );
-            connection.removeEventListener(
-                events.CONNECTION_FAILED, onConnectionFailed
-            );
-            connection.removeEventListener(
-                events.CONNECTION_DISCONNECTED, onDisconnect
-            );
-        };
+        listenForFailure(ConnectionEvents.CONNECTION_FAILED);
+        listenForFailure(ConnectionErrors.PASSWORD_REQUIRED);
+        listenForFailure(ConnectionErrors.CONNECTION_ERROR);
+        listenForFailure(ConnectionErrors.OTHER_ERRORS);
 
-        connection.addEventListener(
-            events.CONNECTION_ESTABLISHED, onConnectionSuccess
-        );
-        connection.addEventListener(
-            events.CONNECTION_FAILED, onConnectionFailed
-        );
-        connection.addEventListener(
-            events.CONNECTION_DISCONNECTED, onDisconnect
-        );
+        // install event listeners
+        Object.keys(handlers).forEach(function (event) {
+            connection.addEventListener(event, handlers[event]);
+        });
 
         connection.connect();
-    }).catch(function (errType, msg) {
-        // TODO handle OTHER_ERROR only
-        APP.UI.notifyConnectionFailed(msg);
+    }).catch(function (err) {
+        if (err[0] === ConnectionErrors.PASSWORD_REQUIRED) {
+            // FIXME ask for password and try again
+            return connect();
+        }
+        console.error('FAILED TO CONNECT', err);
+        APP.UI.notifyConnectionFailed(err[1]);
 
-        // rethrow
-        throw new Error(errType);
+        throw new Error(err[0]);
     });
 }
 
-var ConferenceEvents = APP.JitsiMeetJS.events.conference;
-var ConferenceErrors = APP.JitsiMeetJS.errors.conference;
+var ConferenceEvents = JitsiMeetJS.events.conference;
+var ConferenceErrors = JitsiMeetJS.errors.conference;
 function initConference(connection, roomName) {
     var room = connection.initJitsiConference(roomName, {
         openSctp: config.openSctp,
         disableAudioLevels: config.disableAudioLevels
     });
 
-    var conf =  createConference(connection, room);
+    var users = {};
+    var localTracks = [];
+
+    APP.conference.localId = room.myUserId();
+    Object.defineProperty(APP.conference, "membersCount", {
+        get: function () {
+            return Object.keys(users).length; // FIXME maybe +1?
+        }
+    });
+
+    room.on(ConferenceEvents.USER_JOINED, function (id) {
+        users[id] = {
+            displayName: undefined,
+            tracks: []
+        };
+        // FIXME email???
+        APP.UI.addUser(id);
+    });
+    room.on(ConferenceEvents.USER_LEFT, function (id) {
+        delete users[id];
+        APP.UI.removeUser(id);
+    });
+
+
+    room.on(ConferenceEvents.TRACK_MUTE_CHANGED, function (track) {
+        // FIXME handle mute
+    });
+    room.on(ConferenceEvents.TRACK_AUDIO_LEVEL_CHANGED, function (id, lvl) {
+        APP.UI.setAudioLevel(id, lvl);
+    });
+    APP.UI.addListener(UIEvents.AUDIO_MUTED, function (muted) {
+        // FIXME mute or unmute
+        APP.UI.setAudioMuted(muted);
+        APP.conference.audioMuted = muted;
+    });
+    APP.UI.addListener(UIEvents.VIDEO_MUTED, function (muted) {
+        // FIXME mute or unmute
+        APP.UI.setVideoMuted(muted);
+        APP.conference.videoMuted = muted;
+    });
+
 
     room.on(ConferenceEvents.IN_LAST_N_CHANGED, function (inLastN) {
         if (config.muteLocalVideoIfNotInLastN) {
@@ -161,69 +181,21 @@ function initConference(connection, roomName) {
             // APP.UI.markVideoMuted(true/false);
         }
     });
+    room.on(ConferenceEvents.LAST_N_ENDPOINTS_CHANGED, function (ids) {
+        APP.UI.handleLastNEndpoints(ids);
+    });
+    room.on(ConferenceEvents.ACTIVE_SPEAKER_CHANGED, function (id) {
+        APP.UI.markDominantSpiker(id);
+    });
 
-    room.on(
-        ConferenceEvents.ACTIVE_SPEAKER_CHANGED,
-        function (id) {
-            APP.UI.markDominantSpiker(id);
-        }
-    );
-    room.on(
-        ConferenceEvents.LAST_N_ENDPOINTS_CHANGED,
-        function (ids) {
-            APP.UI.handleLastNEndpoints(ids);
-        }
-    );
 
-    room.on(
-        ConferenceEvents.DISPLAY_NAME_CHANGED,
-        function (id, displayName) {
-            APP.UI.changeDisplayName(id, displayName);
-        }
-    );
+    room.on(ConferenceEvents.CONNECTION_INTERRUPTED, function () {
+        APP.UI.markVideoInterrupted(true);
+    });
+    room.on(ConferenceEvents.CONNECTION_RESTORED, function () {
+        APP.UI.markVideoInterrupted(false);
+    });
 
-    room.on(
-        ConferenceEvents.USER_JOINED,
-        function (id) {
-            // FIXME email???
-            APP.UI.addUser(id);
-        }
-    );
-
-    room.on(
-        ConferenceEvents.USER_LEFT,
-        function (id) {
-            APP.UI.removeUser(id);
-        }
-    );
-
-    room.on(
-        ConferenceEvents.TRACK_MUTE_CHANGED,
-        function (track) {
-            // FIXME handle mute
-        }
-    );
-
-    room.on(
-        ConferenceEvents.TRACK_AUDIO_LEVEL_CHANGED,
-        function (id, lvl) {
-            APP.UI.setAudioLevel(id, lvl);
-        }
-    );
-
-    room.on(
-        ConferenceEvents.CONNECTION_INTERRUPTED,
-        function () {
-            APP.UI.markVideoInterrupted(true);
-        }
-    );
-
-    room.on(
-        ConferenceEvents.CONNECTION_RESTORED,
-        function () {
-            APP.UI.markVideoInterrupted(false);
-        }
-    );
 
     APP.connectionquality.addListener(
         CQEvents.LOCALSTATS_UPDATED,
@@ -239,20 +211,14 @@ function initConference(connection, roomName) {
             });
         }
     );
-
-    APP.connectionquality.addListener(
-        CQEvents.STOP,
-        function () {
-            APP.UI.hideStats();
-            room.removeCommand(Commands.CONNECTION_QUALITY);
-        }
-    );
-
+    APP.connectionquality.addListener(CQEvents.STOP, function () {
+        APP.UI.hideStats();
+        room.removeCommand(Commands.CONNECTION_QUALITY);
+    });
     // listen to remote stats
     room.addCommandListener(Commands.CONNECTION_QUALITY, function (data) {
         APP.connectionquality.updateRemoteStats(data.attributes.id, data.value);
     });
-
     APP.connectionquality.addListener(
         CQEvents.REMOTESTATS_UPDATED,
         function (id, percent, stats) {
@@ -260,7 +226,8 @@ function initConference(connection, roomName) {
         }
     );
 
-     // share email with other users
+
+    // share email with other users
     function sendEmail(email) {
         room.sendCommand(Commands.EMAIL, {
             value: email,
@@ -270,38 +237,51 @@ function initConference(connection, roomName) {
         });
     }
 
+    var email = APP.settings.getEmail();
+    email && sendEmail(email);
     APP.UI.addListener(UIEvents.EMAIL_CHANGED, function (email) {
         APP.settings.setEmail(email);
-        APP.UI.setUserAvatar(room.myUserId(), data.value);
+        APP.UI.setUserAvatar(room.myUserId(), email);
         sendEmail(email);
     });
-    var email = APP.settings.getEmail();
-    if (email) {
-        sendEmail(APP.settings.getEmail());
-    }
     room.addCommandListener(Commands.EMAIL, function (data) {
         APP.UI.setUserAvatar(data.attributes.id, data.value);
     });
+
+
+    room.on(ConferenceEvents.DISPLAY_NAME_CHANGED, function (id, displayName) {
+        APP.UI.changeDisplayName(id, displayName);
+    });
+    APP.UI.addListener(UIEvents.NICKNAME_CHANGED, function (nickname) {
+        APP.settings.setDisplayName(nickname);
+        room.setDisplayName(nickname);
+    });
+
+
+    APP.UI.addListener(UIEvents.MESSAGE_CREATED, function (message) {
+        room.sendTextMessage(message);
+    });
+
+
+    room.on(ConferenceErrors.PASSWORD_REQUIRED, function () {
+        // FIXME handle
+    });
+    room.on(ConferenceErrors.CONNECTION_ERROR, function () {
+        // FIXME handle
+    });
+
+    APP.UI.addListener(
+        UIEvents.START_MUTED_CHANGED,
+        function (startAudioMuted, startVideoMuted) {
+            // FIXME start muted
+        }
+    );
 
     return new Promise(function (resolve, reject) {
         room.on(
             ConferenceEvents.CONFERENCE_JOINED,
             function () {
-                resolve(conf);
-            }
-        );
-        room.on(
-            ConferenceErrors.PASSWORD_REQUIRED,
-            function () {
-                // FIXME handle
-                reject();
-            }
-        );
-        room.on(
-            ConferenceErrors.CONNECTION_ERROR,
-            function () {
-                // FIXME handle
-                reject();
+                resolve();
             }
         );
         APP.UI.closeAuthenticationDialog();
@@ -310,45 +290,35 @@ function initConference(connection, roomName) {
             var nick = APP.UI.askForNickname();
         }
         room.join();
+    }).catch(function (err) {
+        if (err[0] === ConferenceErrors.PASSWORD_REQUIRED) {
+            // FIXME ask for password and try again
+            return initConference(connection, roomName);
+        }
+
+        // FIXME else notify that we cannot conenct to the room
+
+        throw new Error(err[0]);
     });
 }
 
 function init() {
     connect().then(function (connection) {
         return initConference(connection, APP.UI.generateRoomName());
-    }).then(function (conference) {
-        APP.conference = conference;
-
+    }).then(function () {
         APP.UI.start();
 
-        // FIXME find own jid
-        APP.UI.initConference("asdfasdf");
-
-        APP.UI.addListener(UIEvents.NICKNAME_CHANGED, function (nickname) {
-            APP.conference.setNickname(nickname);
-        });
-
-        APP.UI.addListener(UIEvents.MESSAGE_CREATED, function (message) {
-            APP.conference.sendMessage(message);
-        });
+        APP.UI.initConference();
 
         APP.UI.addListener(UIEvents.LANG_CHANGED, function (language) {
             APP.translation.setLanguage(language);
             APP.settings.setLanguage(language);
         });
 
-        APP.UI.addListener(
-            UIEvents.START_MUTED_CHANGED,
-            function (startAudioMuted, startVideoMuted) {
-                APP.conference.setStartMuted(startAudioMuted, startVideoMuted);
-            }
-        );
-
         APP.desktopsharing.init();
         APP.statistics.start();
         APP.connectionquality.init();
         APP.keyboardshortcut.init();
-        APP.members.start();
     });
 }
 
@@ -397,7 +367,7 @@ $(document).ready(function () {
 
     APP.translation.init();
 
-    if(APP.API.isEnabled()) {
+    if (APP.API.isEnabled()) {
         APP.API.init();
     }
 
@@ -405,8 +375,9 @@ $(document).ready(function () {
 });
 
 $(window).bind('beforeunload', function () {
-    if(APP.API.isEnabled())
+    if (APP.API.isEnabled()) {
         APP.API.dispose();
+    }
 });
 
 module.exports = APP;

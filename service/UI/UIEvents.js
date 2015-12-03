@@ -19,6 +19,8 @@ var UIEvents = {
      * Notifies that "start muted" settings changed.
      */
     START_MUTED_CHANGED: "UI.start_muted_changed",
+    AUDIO_MUTED: "UI.audio_muted",
+    VIDEO_MUTED: "UI.video_muted",
     /**
      * Notifies interested parties when the film strip (remote video's panel)
      * is hidden (toggled) or shown (un-toggled).

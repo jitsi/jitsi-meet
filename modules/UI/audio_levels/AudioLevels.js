@@ -109,7 +109,7 @@ var AudioLevels = (function(my) {
         drawContext.drawImage(canvasCache, 0, 0);
 
         if(resourceJid === AudioLevels.LOCAL_LEVEL) {
-            resourceJid = APP.conference.localId();
+            resourceJid = APP.conference.localId;
             if (!resourceJid) {
                 return;
             }
@@ -223,11 +223,9 @@ var AudioLevels = (function(my) {
      */
     function getVideoSpanId(resourceJid) {
         var videoSpanId = null;
-        if (resourceJid === AudioLevels.LOCAL_LEVEL ||
-            (APP.conference.localId() && resourceJid === APP.conference.localId())) {
+        if (resourceJid === AudioLevels.LOCAL_LEVEL || APP.conference.isLocalId(resourceJid)) {
             videoSpanId = 'localVideoContainer';
-        }
-        else {
+        } else {
             videoSpanId = 'participant_' + resourceJid;
         }
 

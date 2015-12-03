@@ -27,10 +27,10 @@ var DesktopSharingEventTypes
     = require("../../service/desktopsharing/DesktopSharingEventTypes");
 var StatisticsEvents = require("../../service/statistics/Events");
 var UIEvents = require("../../service/UI/UIEvents");
-var MemberEvents = require("../../service/members/Events");
 var Feedback = require("./Feedback");
 
 var eventEmitter = new EventEmitter();
+UI.eventEmitter = eventEmitter;
 var roomNode = null;
 var roomName = null;
 
@@ -94,7 +94,7 @@ function setupChat() {
 }
 
 function setupToolbars() {
-    Toolbar.init(UI);
+    Toolbar.init(eventEmitter);
     Toolbar.setupButtonsFromConfig();
     BottomToolbar.init(eventEmitter);
 }
@@ -135,7 +135,8 @@ UI.changeDisplayName = function (id, displayName) {
     VideoLayout.onDisplayNameChanged(id, displayName);
 };
 
-UI.initConference = function (id) {
+UI.initConference = function () {
+    var id = APP.conference.localId;
     Toolbar.updateRoomUrl(window.location.href);
     var meHTML = APP.translation.generateTranslationHTML("me");
     var settings = Settings.getSettings();
@@ -172,21 +173,20 @@ function registerListeners() {
     });
 
     UI.addListener(UIEvents.EMAIL_CHANGED, function (email) {
-        UI.setUserAvatar(APP.conference.localId(), email);
+        UI.setUserAvatar(APP.conference.localId, email);
     });
 }
 
-function onResize() {
-    Chat.resizeChat();
-    VideoLayout.resizeLargeVideoContainer();
-}
-
 function bindEvents() {
-    /**
-     * Resizes and repositions videos in full screen mode.
-     */
-    $(document).on('webkitfullscreenchange mozfullscreenchange fullscreenchange',
-        onResize);
+    function onResize() {
+        Chat.resizeChat();
+        VideoLayout.resizeLargeVideoContainer();
+    }
+
+    // Resize and reposition videos in full screen mode.
+    $(document).on(
+        'webkitfullscreenchange mozfullscreenchange fullscreenchange', onResize
+    );
 
     $(window).resize(onResize);
 }
@@ -386,7 +386,7 @@ UI.addUser = function (jid, id, displayName) {
     );
 
     if (!config.startAudioMuted ||
-        config.startAudioMuted > APP.members.size())
+        config.startAudioMuted > APP.conference.membersCount)
         UIUtil.playSoundNotification('userJoined');
 
     // Configure avatar
@@ -404,7 +404,7 @@ UI.removeUser = function (jid) {
         'disconnected',
         'notify.disconnected');
     if (!config.startAudioMuted ||
-        config.startAudioMuted > APP.members.size()) {
+        config.startAudioMuted > APP.conference.membersCount) {
         UIUtil.playSoundNotification('userLeft');
     }
 

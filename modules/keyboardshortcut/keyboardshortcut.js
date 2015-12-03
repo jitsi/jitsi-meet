@@ -26,9 +26,7 @@ function initShortcutHandlers() {
         84: {
             character: "T",
             function: function() {
-                if(!APP.RTC.localAudio.isMuted()) {
-                    APP.conference.toggleAudioMuted();
-                }
+                APP.conference.muteAudio(true);
             }
         },
         86: {
@@ -67,9 +65,7 @@ var KeyboardShortcut = {
                 $(":focus").is("input[type=password]") ||
                 $(":focus").is("textarea"))) {
                 if(e.which === "T".charCodeAt(0)) {
-                    if(APP.RTC.localAudio.isMuted()) {
-                        APP.conference.toggleAudioMuted();
-                    }
+                    APP.conference.muteAudio(true);
                 }
             }
         };

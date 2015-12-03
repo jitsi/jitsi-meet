@@ -56,9 +56,6 @@ var VideoLayout = (function (my) {
     };
 
     my.changeLocalAudio = function(stream, isMuted) {
-        if (isMuted) { // FIXME remove this?
-            APP.conference.muteAudio(true);
-        }
         APP.RTC.attachMediaStream($('#localAudio'), stream.getOriginalStream());
         var localAudio = document.getElementById('localAudio');
         // Writing volume not allowed in IE
