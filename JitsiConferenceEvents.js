@@ -75,7 +75,8 @@ var JitsiConferenceEvents = {
     /**
      * Indicates that conference has been left.
      */
-    CONFERENCE_LEFT: "conference.left"
+    CONFERENCE_LEFT: "conference.left",
+    DTMF_SUPPORT_CHANGED: "conference.dtmf_support_changed"
 };
 
 module.exports = JitsiConferenceEvents;
