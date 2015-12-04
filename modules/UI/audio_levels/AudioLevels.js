@@ -1,6 +1,6 @@
-/* global APP, interfaceConfig, $, Strophe */
+/* global APP, interfaceConfig, $ */
 /* jshint -W101 */
-var CanvasUtil = require("./CanvasUtils");
+import CanvasUtil from './CanvasUtils';
 
 var ASDrawContext = null;
 
@@ -31,91 +31,83 @@ var AudioLevels = (function(my) {
     };
 
     /**
-     * Updates the audio level canvas for the given peerJid. If the canvas
+     * Updates the audio level canvas for the given id. If the canvas
      * didn't exist we create it.
      */
-    my.updateAudioLevelCanvas = function (peerJid, VideoLayout) {
-        var resourceJid = null;
-        var videoSpanId = null;
-        if (!peerJid)
-            videoSpanId = 'localVideoContainer';
-        else {
-            resourceJid = Strophe.getResourceFromJid(peerJid);
-
-            videoSpanId = 'participant_' + resourceJid;
+    my.updateAudioLevelCanvas = function (id, VideoLayout) {
+        let videoSpanId = 'localVideoContainer';
+        if (id) {
+            videoSpanId = `participant_${id}`;
         }
 
-        var videoSpan = document.getElementById(videoSpanId);
+        let videoSpan = document.getElementById(videoSpanId);
 
         if (!videoSpan) {
-            if (resourceJid)
-                console.error("No video element for jid", resourceJid);
-            else
+            if (id) {
+                console.error("No video element for id", id);
+            } else {
                 console.error("No video element for local video.");
-
+            }
             return;
         }
 
-        var audioLevelCanvas = $('#' + videoSpanId + '>canvas');
+        let audioLevelCanvas = $(`#${videoSpanId}>canvas`);
 
-        var videoSpaceWidth = $('#remoteVideos').width();
-        var thumbnailSize = VideoLayout.calculateThumbnailSize(videoSpaceWidth);
-        var thumbnailWidth = thumbnailSize[0];
-        var thumbnailHeight = thumbnailSize[1];
+        let videoSpaceWidth = $('#remoteVideos').width();
+        let thumbnailSize = VideoLayout.calculateThumbnailSize(videoSpaceWidth);
+        let thumbnailWidth = thumbnailSize[0];
+        let thumbnailHeight = thumbnailSize[1];
 
         if (!audioLevelCanvas || audioLevelCanvas.length === 0) {
 
             audioLevelCanvas = document.createElement('canvas');
             audioLevelCanvas.className = "audiolevel";
-            audioLevelCanvas.style.bottom = "-" + interfaceConfig.CANVAS_EXTRA/2 + "px";
-            audioLevelCanvas.style.left = "-" + interfaceConfig.CANVAS_EXTRA/2 + "px";
-            resizeAudioLevelCanvas( audioLevelCanvas,
-                    thumbnailWidth,
-                    thumbnailHeight);
+            audioLevelCanvas.style.bottom = `-${interfaceConfig.CANVAS_EXTRA/2}px`;
+            audioLevelCanvas.style.left = `-${interfaceConfig.CANVAS_EXTRA/2}px`;
+            resizeAudioLevelCanvas(audioLevelCanvas, thumbnailWidth, thumbnailHeight);
 
             videoSpan.appendChild(audioLevelCanvas);
         } else {
             audioLevelCanvas = audioLevelCanvas.get(0);
 
-            resizeAudioLevelCanvas( audioLevelCanvas,
-                    thumbnailWidth,
-                    thumbnailHeight);
+            resizeAudioLevelCanvas(audioLevelCanvas, thumbnailWidth, thumbnailHeight);
         }
     };
 
     /**
-     * Updates the audio level UI for the given resourceJid.
+     * Updates the audio level UI for the given id.
      *
-     * @param resourceJid the resource jid indicating the video element for
-     * which we draw the audio level
+     * @param id id of the user for whom we draw the audio level
      * @param audioLevel the newAudio level to render
      */
-    my.updateAudioLevel = function (resourceJid, audioLevel, largeVideoResourceJid) {
-        drawAudioLevelCanvas(resourceJid, audioLevel);
+    my.updateAudioLevel = function (id, audioLevel, largeVideoId) {
+        drawAudioLevelCanvas(id, audioLevel);
 
-        var videoSpanId = getVideoSpanId(resourceJid);
+        let videoSpanId = getVideoSpanId(id);
 
-        var audioLevelCanvas = $('#' + videoSpanId + '>canvas').get(0);
+        let audioLevelCanvas = $(`#${videoSpanId}>canvas`).get(0);
 
-        if (!audioLevelCanvas)
+        if (!audioLevelCanvas) {
             return;
+        }
 
-        var drawContext = audioLevelCanvas.getContext('2d');
+        let drawContext = audioLevelCanvas.getContext('2d');
 
-        var canvasCache = audioLevelCanvasCache[resourceJid];
+        let canvasCache = audioLevelCanvasCache[id];
 
-        drawContext.clearRect (0, 0,
-                audioLevelCanvas.width, audioLevelCanvas.height);
+        drawContext.clearRect(
+            0, 0, audioLevelCanvas.width, audioLevelCanvas.height
+        );
         drawContext.drawImage(canvasCache, 0, 0);
 
-        if(resourceJid === AudioLevels.LOCAL_LEVEL) {
-            resourceJid = APP.conference.localId;
-            if (!resourceJid) {
+        if (id === AudioLevels.LOCAL_LEVEL) {
+            id = APP.conference.localId;
+            if (!id) {
                 return;
             }
         }
 
-        if(resourceJid === largeVideoResourceJid) {
+        if(id === largeVideoId) {
             window.requestAnimationFrame(function () {
                 AudioLevels.updateActiveSpeakerAudioLevel(audioLevel);
             });
@@ -123,12 +115,14 @@ var AudioLevels = (function(my) {
     };
 
     my.updateActiveSpeakerAudioLevel = function(audioLevel) {
-        if($("#activeSpeaker").css("visibility") == "hidden" || ASDrawContext === null)
+        if($("#activeSpeaker").css("visibility") == "hidden" || ASDrawContext === null) {
             return;
+        }
 
         ASDrawContext.clearRect(0, 0, 300, 300);
-        if (!audioLevel)
+        if (!audioLevel) {
             return;
+        }
 
         ASDrawContext.shadowBlur = getShadowLevel(audioLevel);
 
@@ -150,16 +144,15 @@ var AudioLevels = (function(my) {
     /**
      * Draws the audio level canvas into the cached canvas object.
      *
-     * @param resourceJid the resource jid indicating the video element for
-     * which we draw the audio level
+     * @param id of the user for whom we draw the audio level
      * @param audioLevel the newAudio level to render
      */
-    function drawAudioLevelCanvas(resourceJid, audioLevel) {
-        if (!audioLevelCanvasCache[resourceJid]) {
+    function drawAudioLevelCanvas(id, audioLevel) {
+        if (!audioLevelCanvasCache[id]) {
 
-            var videoSpanId = getVideoSpanId(resourceJid);
+            let videoSpanId = getVideoSpanId(id);
 
-            var audioLevelCanvasOrig = $('#' + videoSpanId + '>canvas').get(0);
+            let audioLevelCanvasOrig = $(`#${videoSpanId}>canvas`).get(0);
 
             /*
              * FIXME Testing has shown that audioLevelCanvasOrig may not exist.
@@ -168,21 +161,21 @@ var AudioLevels = (function(my) {
              * been observed to pile into the console, strain the CPU.
              */
             if (audioLevelCanvasOrig) {
-                audioLevelCanvasCache[resourceJid] =
-                    CanvasUtil.cloneCanvas(audioLevelCanvasOrig);
+                audioLevelCanvasCache[id] = CanvasUtil.cloneCanvas(audioLevelCanvasOrig);
             }
         }
 
-        var canvas = audioLevelCanvasCache[resourceJid];
+        let canvas = audioLevelCanvasCache[id];
 
-        if (!canvas)
+        if (!canvas) {
             return;
+        }
 
-        var drawContext = canvas.getContext('2d');
+        let drawContext = canvas.getContext('2d');
 
         drawContext.clearRect(0, 0, canvas.width, canvas.height);
 
-        var shadowLevel = getShadowLevel(audioLevel);
+        let shadowLevel = getShadowLevel(audioLevel);
 
         if (shadowLevel > 0) {
             // drawContext, x, y, w, h, r, shadowColor, shadowLevel
@@ -218,15 +211,14 @@ var AudioLevels = (function(my) {
     }
 
     /**
-     * Returns the video span id corresponding to the given resourceJid or local
-     * user.
+     * Returns the video span id corresponding to the given user id
      */
-    function getVideoSpanId(resourceJid) {
+    function getVideoSpanId(id) {
         var videoSpanId = null;
-        if (resourceJid === AudioLevels.LOCAL_LEVEL || APP.conference.isLocalId(resourceJid)) {
+        if (id === AudioLevels.LOCAL_LEVEL || APP.conference.isLocalId(id)) {
             videoSpanId = 'localVideoContainer';
         } else {
-            videoSpanId = 'participant_' + resourceJid;
+            videoSpanId = `participant_${id}`;
         }
 
         return videoSpanId;
@@ -250,13 +242,14 @@ var AudioLevels = (function(my) {
             }
         });
 
-        if (resized)
-            Object.keys(audioLevelCanvasCache).forEach(function (resourceJid) {
-                audioLevelCanvasCache[resourceJid].width =
+        if (resized) {
+            Object.keys(audioLevelCanvasCache).forEach(function (id) {
+                audioLevelCanvasCache[id].width =
                     width + interfaceConfig.CANVAS_EXTRA;
-                audioLevelCanvasCache[resourceJid].height =
+                audioLevelCanvasCache[id].height =
                     height + interfaceConfig.CANVAS_EXTRA;
             });
+        }
     });
 
     return my;

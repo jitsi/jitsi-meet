@@ -603,9 +603,9 @@ UI.handleLastNEndpoints = function (ids) {
     VideoLayout.onLastNEndpointsChanged(ids, []);
 };
 
-UI.setAudioLevel = function (targetJid, lvl) {
+UI.setAudioLevel = function (id, lvl) {
     AudioLevels.updateAudioLevel(
-        targetJid, lvl, VideoLayout.getLargeVideoResource()
+        id, lvl, VideoLayout.getLargeVideoResource()
     );
 };
 
