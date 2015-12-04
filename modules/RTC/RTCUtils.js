@@ -7,8 +7,6 @@ var RTCEvents = require("../../service/RTC/RTCEvents");
 var AdapterJS = require("./adapter.screenshare");
 var SDPUtil = require("../xmpp/SDPUtil");
 var EventEmitter = require("events");
-var JitsiLocalTrack = require("./JitsiLocalTrack");
-var StreamEventTypes = require("../../service/RTC/StreamEventTypes.js");
 var screenObtainer = require("./ScreenObtainer");
 var JitsiMeetJSError = require("../../JitsiMeetJSErrors");
 
@@ -342,22 +340,6 @@ function obtainDevices(options) {
 }
 
 
-function createLocalTracks(streams) {
-    var newStreams = []
-    for (var i = 0; i < streams.length; i++) {
-        var localStream = new JitsiLocalTrack(null, streams[i].stream,
-            eventEmitter, streams[i].videoType, streams[i].resolution);
-        newStreams.push(localStream);
-        if (streams[i].isMuted === true)
-            localStream.setMute(true);
-
-        var eventType = StreamEventTypes.EVENT_TYPE_LOCAL_CREATED;
-
-        eventEmitter.emit(eventType, localStream);
-    }
-    return newStreams;
-}
-
 /**
  * Handles the newly created Media Streams.
  * @param streams the new Media Streams
@@ -380,7 +362,7 @@ function handleLocalStream(streams, resolution) {
             }
 
             var videoTracks = audioVideo.getVideoTracks();
-            if(audioTracks.length) {
+            if(videoTracks.length) {
                 videoStream = new webkitMediaStream();
                 for (i = 0; i < videoTracks.length; i++) {
                     videoStream.addTrack(videoTracks[i]);
@@ -643,15 +625,13 @@ var RTCUtils = {
         options = options || {};
         return new Promise(function (resolve, reject) {
             var successCallback = function (stream) {
-                var streams = handleLocalStream(stream, options.resolution);
-                resolve(options.dontCreateJitsiTracks?
-                    streams: createLocalTracks(streams));
+                resolve(handleLocalStream(stream, options.resolution));
             };
 
             options.devices = options.devices || ['audio', 'video'];
             if(!screenObtainer.isSupported()
                 && options.devices.indexOf("desktop") !== -1){
-                options.devices.splice(options.devices.indexOf("desktop"), 1);
+                reject(new Error("Desktop sharing is not supported!"));
             }
             if (RTCBrowserType.isFirefox() ||
                 RTCBrowserType.isTemasysPluginUsed()) {

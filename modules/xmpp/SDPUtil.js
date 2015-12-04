@@ -1,5 +1,8 @@
 
 var logger = require("jitsi-meet-logger").getLogger(__filename);
+var RTCBrowserType = require("../RTC/RTCBrowserType");
+
+
 SDPUtil = {
     filter_special_chars: function (text) {
         return text.replace(/[\\\/\{,\}\+]/g, "");

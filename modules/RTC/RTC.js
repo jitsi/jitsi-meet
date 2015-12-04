@@ -12,6 +12,22 @@ var MediaStreamType = require("../../service/RTC/MediaStreamTypes");
 var StreamEventTypes = require("../../service/RTC/StreamEventTypes.js");
 var RTCEvents = require("../../service/RTC/RTCEvents.js");
 
+function createLocalTracks(streams) {
+    var newStreams = []
+    for (var i = 0; i < streams.length; i++) {
+        var localStream = new JitsiLocalTrack(streams[i].stream,
+            streams[i].videoType, streams[i].resolution);
+        newStreams.push(localStream);
+        if (streams[i].isMuted === true)
+            localStream.setMute(true);
+        //FIXME:
+        // var eventType = StreamEventTypes.EVENT_TYPE_LOCAL_CREATED;
+        //
+        // eventEmitter.emit(eventType, localStream);
+    }
+    return newStreams;
+}
+
 function RTC(room, options) {
     this.room = room;
     this.localStreams = [];
@@ -44,7 +60,7 @@ function RTC(room, options) {
  * @returns {*} Promise object that will receive the new JitsiTracks
  */
 RTC.obtainAudioAndVideoPermissions = function (options) {
-    return RTCUtils.obtainAudioAndVideoPermissions(options);
+    return RTCUtils.obtainAudioAndVideoPermissions(options).then(createLocalTracks);
 }
 
 RTC.prototype.onIncommingCall = function(event) {

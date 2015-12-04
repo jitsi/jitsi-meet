@@ -1,26 +1,27 @@
 var JitsiTrack = require("./JitsiTrack");
 var StreamEventTypes = require("../../service/RTC/StreamEventTypes");
 var RTCBrowserType = require("./RTCBrowserType");
+var RTC = require("./RTCUtils");
 
 /**
  * Represents a single media track (either audio or video).
  * @constructor
  */
-function JitsiLocalTrack(RTC, stream, eventEmitter, videoType,
+function JitsiLocalTrack(stream, videoType,
   resolution)
 {
-    JitsiTrack.call(this, RTC, stream,
-        function () {
-            if(!self.dontFireRemoveEvent)
-                self.eventEmitter.emit(
-                    StreamEventTypes.EVENT_TYPE_LOCAL_ENDED, self);
-            self.dontFireRemoveEvent = false;
-        });
-    this.eventEmitter = eventEmitter;
     this.videoType = videoType;
     this.dontFireRemoveEvent = false;
     this.resolution = resolution;
     var self = this;
+    JitsiTrack.call(this, null, stream,
+        function () {
+            if(!self.dontFireRemoveEvent && self.rtc)
+                self.rtc.eventEmitter.emit(
+                    StreamEventTypes.EVENT_TYPE_LOCAL_ENDED, self);
+            self.dontFireRemoveEvent = false;
+        });
+
 }
 
 JitsiLocalTrack.prototype = Object.create(JitsiTrack.prototype);
@@ -51,26 +52,24 @@ JitsiLocalTrack.prototype._setMute = function (mute) {
             this.rtc.room.setAudioMute(mute);
         else
             this.rtc.room.setVideoMute(mute);
-        this.eventEmitter.emit(StreamEventTypes.TRACK_MUTE_CHANGED, this);
+        this.rtc.eventEmitter.emit(StreamEventTypes.TRACK_MUTE_CHANGED, this);
     } else {
         if (mute) {
             this.dontFireRemoveEvent = true;
             this.rtc.room.removeStream(this.stream);
-            this.rtc.stopMediaStream(this.stream);
+            RTC.stopMediaStream(this.stream);
             if(isAudio)
                 this.rtc.room.setAudioMute(mute);
             else
                 this.rtc.room.setVideoMute(mute);
             this.stream = null;
-            this.eventEmitter.emit(StreamEventTypes.TRACK_MUTE_CHANGED, this);
+            this.rtc.eventEmitter.emit(StreamEventTypes.TRACK_MUTE_CHANGED, this);
             //FIXME: Maybe here we should set the SRC for the containers to something
         } else {
             var self = this;
-            var RTC = require("./RTCUtils");
             RTC.obtainAudioAndVideoPermissions({
                 devices: (isAudio ? ["audio"] : ["video"]),
-                resolution: self.resolution,
-                dontCreateJitsiTrack: true})
+                resolution: self.resolution})
                 .then(function (streams) {
                     var stream = null;
                     for(var i = 0; i < streams.length; i++) {
@@ -96,7 +95,7 @@ JitsiLocalTrack.prototype._setMute = function (mute) {
                                 self.rtc.room.setAudioMute(mute);
                             else
                                 self.rtc.room.setVideoMute(mute);
-                            self.eventEmitter.emit(StreamEventTypes.TRACK_MUTE_CHANGED, self);
+                            self.rtc.eventEmitter.emit(StreamEventTypes.TRACK_MUTE_CHANGED, self);
                         });
                 });
         }
