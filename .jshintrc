@@ -15,5 +15,6 @@
     "newcap": true, // true: Require capitalization of all constructor functions e.g. `new F()`
     "maxlen": 80, // {int} Max number of characters per line
     "latedef": false, //This option prohibits the use of a variable before it was defined
-    "laxbreak": true //Ignore line breaks around "=", "==", "&&", etc.
+    "laxbreak": true, //Ignore line breaks around "=", "==", "&&", etc.
+    "esnext": true //support ES2015
 }

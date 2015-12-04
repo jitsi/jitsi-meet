@@ -1,6 +1,7 @@
 /* global $, JitsiMeetJS, config, Promise */
 /* application specific logic */
 
+import "babel-polyfill";
 require("jquery");
 require("jquery-ui");
 require("strophe");
