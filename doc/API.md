@@ -213,35 +213,42 @@ The object represents a conference. We have the following methods to control the
 
 17. addTrack(track) - Adds JitsiLocalTrack object to the conference.
     - track - the JitsiLocalTrack
-17. removeTrack(track) - Removes JitsiLocalTrack object to the conference.
+18. removeTrack(track) - Removes JitsiLocalTrack object to the conference.
     - track - the JitsiLocalTrack
+
+
 JitsiTrack
 ======
 The object represents single track - video or audio. They can be remote tracks ( from the other participants in the call) or local tracks (from the devices of the local participant).
 We have the following methods for controling the tracks:
 
-1.getType() - returns string with the type of the track( "video" for the video tracks and "audio" for the audio tracks)
+1. getType() - returns string with the type of the track( "video" for the video tracks and "audio" for the audio tracks)
 
 
-2.mute() - mutes the track.
+2. mute() - mutes the track.
 
-Note: This method is implemented only for the local tracks.
-
-
-3.unmute() - unmutes the track.
-
-Note: This method is implemented only for the local tracks.
+   Note: This method is implemented only for the local tracks.
 
 
-4. attach(container) - attaches the track to the given container.
+3. unmute() - unmutes the track.
 
-5. detach(container) - removes the track from the container.
+   Note: This method is implemented only for the local tracks.
 
-6. stop() - stop sending the track to the other participants in the conference.
+4. isMuted() - check if track is muted
 
-Note: This method is implemented only for the local tracks.
+5. attach(container) - attaches the track to the given container.
 
-7. getId() - returns unique string for the track.
+6. detach(container) - removes the track from the container.
+
+7. stop() - stop sending the track to the other participants in the conference.
+
+   Note: This method is implemented only for the local tracks.
+
+8. getId() - returns unique string for the track.
+
+9. getParticipantId() - returns id(string) of the track owner
+
+   Note: This method is implemented only for the remote tracks.
 
 
 Getting Started
