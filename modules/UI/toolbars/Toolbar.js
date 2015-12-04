@@ -396,7 +396,7 @@ var Toolbar = (function (my) {
      * Disables and enables some of the buttons.
      */
     my.setupButtonsFromConfig = function () {
-        if (UIUtil.isButtonEnabled('prezi')) {
+        if (!UIUtil.isButtonEnabled('prezi')) {
             $("#toolbar_button_prezi").css({display: "none"});
         }
     };
