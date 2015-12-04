@@ -1,4 +1,3 @@
-
 var logger = require("jitsi-meet-logger").getLogger(__filename);
 var RTCBrowserType = require("../RTC/RTCBrowserType");
 
@@ -361,4 +360,5 @@ SDPUtil = {
         return line + '\r\n';
     }
 };
+
 module.exports = SDPUtil;

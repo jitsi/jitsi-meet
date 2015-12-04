@@ -1,4 +1,4 @@
-/* global Strophe */
+/* global Strophe, $ */
 /* jshint -W101 */
 var logger = require("jitsi-meet-logger").getLogger(__filename);
 var RTC = require("./modules/RTC/RTC");
@@ -238,19 +238,44 @@ JitsiConference.prototype.onMemberJoined = function (jid, email, nick) {
     var id = Strophe.getResourceFromJid(jid);
     var participant = new JitsiParticipant(id, this, nick);
     this.eventEmitter.emit(JitsiConferenceEvents.USER_JOINED, id);
-    this.participants[jid] = participant;
-    this.xmpp.getConnection().disco.info(
+    this.participants[id] = participant;
+    this.connection.xmpp.connection.disco.info(
         jid, "" /* node */, function(iq) {
             participant._supportsDTMF = $(iq).find('>query>feature[var="urn:xmpp:jingle:dtmf:0"]').length > 0;
             this.updateDTMFSupport();
         }.bind(this)
     );
+};
 
+JitsiConference.prototype.onMemberLeft = function (jid) {
+    var id = Strophe.getResourceFromJid(jid);
+    delete this.participants[id];
+    this.eventEmitter.emit(JitsiConferenceEvents.USER_LEFT, id);
+};
+
+
+JitsiConference.prototype.onTrackAdded = function (track) {
+    var id = track.getParticipantId();
+    var participant = this.getParticipantById(id);
+    participant._tracks.push(track);
+    this.eventEmitter.emit(JitsiConferenceEvents.TRACK_ADDED, track);
+};
+
+JitsiConference.prototype.onTrackRemoved = function (track) {
+    var id = track.getParticipantId();
+    var participant = this.getParticipantById(id);
+    var pos = participant._tracks.indexOf(track);
+    if (pos > -1) {
+        participant._tracks.splice(pos, 1);
+    }
+    this.eventEmitter.emit(JitsiConferenceEvents.TRACK_REMOVED, track);
 };
 
 JitsiConference.prototype.updateDTMFSupport = function () {
     var somebodySupportsDTMF = false;
     var participants = this.getParticipants();
+
+    // check if at least 1 participant supports DTMF
     for (var i = 0; i < participants.length; i += 1) {
         if (participants[i].supportsDTMF()) {
             somebodySupportsDTMF = true;
@@ -273,7 +298,7 @@ JitsiConference.prototype.myUserId = function () {
 
 JitsiConference.prototype.sendTones = function (tones, duration, pause) {
     if (!this.dtmfManager) {
-        var connection = this.xmpp.getConnection().jingle.activecall.peerconnection;
+        var connection = this.connection.xmpp.connection.jingle.activecall.peerconnection;
         if (!connection) {
             logger.warn("cannot sendTones: no conneciton");
             return;
@@ -304,7 +329,21 @@ function setupListeners(conference) {
     });
     conference.room.addListener(XMPPEvents.REMOTE_STREAM_RECEIVED,
         conference.rtc.createRemoteStream.bind(conference.rtc));
-
+    //FIXME: Maybe remove event should not be associated with the conference.
+    conference.rtc.addListener(
+        StreamEventTypes.EVENT_TYPE_REMOTE_CREATED, conference.onTrackAdded.bind(conference)
+    );
+    //FIXME: Maybe remove event should not be associated with the conference.
+    conference.rtc.addListener(
+        StreamEventTypes.EVENT_TYPE_REMOTE_ENDED, conference.onTrackRemoved.bind(conference)
+    );
+    conference.rtc.addListener(StreamEventTypes.EVENT_TYPE_LOCAL_ENDED, function (stream) {
+        conference.removeTrack(stream);
+        conference.eventEmitter.emit(JitsiConferenceEvents.TRACK_REMOVED, stream);
+    });
+    conference.rtc.addListener(StreamEventTypes.TRACK_MUTE_CHANGED, function (track) {
+        conference.eventEmitter.emit(JitsiConferenceEvents.TRACK_MUTE_CHANGED, track);
+    });
     conference.room.addListener(XMPPEvents.MUC_JOINED, function () {
         conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_JOINED);
     });
@@ -312,53 +351,6 @@ function setupListeners(conference) {
 //    conference.room.addListener(XMPPEvents.MUC_JOINED, function () {
 //        conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_LEFT);
 //    });
-
-    conference.room.addListener(XMPPEvents.MUC_MEMBER_JOINED,
-        conference.onMemberJoined.bind(conference));
-    conference.room.addListener(XMPPEvents.MUC_MEMBER_LEFT,function (jid) {
-        conference.eventEmitter.emit(JitsiConferenceEvents.USER_LEFT,
-            Strophe.getResourceFromJid(jid));
-    });
-
-    conference.room.addListener(XMPPEvents.DISPLAY_NAME_CHANGED,
-        function (from, displayName) {
-            conference.eventEmitter.emit(
-                JitsiConferenceEvents.DISPLAY_NAME_CHANGED,
-                Strophe.getResourceFromJid(from), displayName);
-        });
-
-    conference.room.addListener(XMPPEvents.CONNECTION_INTERRUPTED,
-        function () {
-            conference.eventEmitter.emit(
-                JitsiConferenceEvents.CONNECTION_INTERRUPTED);
-        });
-
-    conference.room.addListener(XMPPEvents.CONNECTION_RESTORED, function () {
-        conference.eventEmitter.emit(JitsiConferenceEvents.CONNECTION_RESTORED);
-    });
-    conference.room.addListener(XMPPEvents.CONFERENCE_SETUP_FAILED, function() {
-        conference.eventEmitter.emit(JitsiConferenceEvents.SETUP_FAILED);
-    });
-
-    conference.rtc.addListener(StreamEventTypes.EVENT_TYPE_REMOTE_CREATED,
-        function (stream) {
-            conference.eventEmitter.emit(JitsiConferenceEvents.TRACK_ADDED, stream);
-        });
-
-//FIXME: Maybe remove event should not be associated with the conference.
-    conference.rtc.addListener(StreamEventTypes.EVENT_TYPE_REMOTE_ENDED, function (stream) {
-        conference.eventEmitter.emit(JitsiConferenceEvents.TRACK_REMOVED, stream);
-    });
-//FIXME: Maybe remove event should not be associated with the conference.
-    conference.rtc.addListener(StreamEventTypes.EVENT_TYPE_LOCAL_ENDED, function (stream) {
-        conference.eventEmitter.emit(JitsiConferenceEvents.TRACK_REMOVED, stream);
-        conference.removeTrack(stream);
-    });
-
-    conference.rtc.addListener(StreamEventTypes.TRACK_MUTE_CHANGED, function (track) {
-        conference.eventEmitter.emit(JitsiConferenceEvents.TRACK_MUTE_CHANGED, track);
-    });
-
     conference.rtc.addListener(RTCEvents.DOMINANTSPEAKER_CHANGED, function (id) {
         if(conference.lastActiveSpeaker !== id && conference.room) {
             conference.lastActiveSpeaker = id;
@@ -375,6 +367,25 @@ function setupListeners(conference) {
             conference.eventEmitter.emit(JitsiConferenceEvents.LAST_N_ENDPOINTS_CHANGED,
                 lastNEndpoints, endpointsEnteringLastN);
         });
+
+    conference.room.addListener(XMPPEvents.MUC_MEMBER_JOINED, conference.onMemberJoined.bind(conference));
+    conference.room.addListener(XMPPEvents.MUC_MEMBER_LEFT, conference.onMemberLeft.bind(conference));
+
+    conference.room.addListener(XMPPEvents.DISPLAY_NAME_CHANGED, function (from, displayName) {
+        conference.eventEmitter.emit(JitsiConferenceEvents.DISPLAY_NAME_CHANGED,
+            Strophe.getResourceFromJid(from), displayName);
+    });
+
+    conference.room.addListener(XMPPEvents.CONNECTION_INTERRUPTED, function () {
+        conference.eventEmitter.emit(JitsiConferenceEvents.CONNECTION_INTERRUPTED);
+    });
+
+    conference.room.addListener(XMPPEvents.CONNECTION_RESTORED, function () {
+        conference.eventEmitter.emit(JitsiConferenceEvents.CONNECTION_RESTORED);
+    });
+    conference.room.addListener(XMPPEvents.CONFERENCE_SETUP_FAILED, function () {
+        conference.eventEmitter.emit(JitsiConferenceEvents.SETUP_FAILED);
+    });
 
     if(conference.statistics) {
         //FIXME: Maybe remove event should not be associated with the conference.

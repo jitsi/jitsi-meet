@@ -1,6 +1,7 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.JitsiMeetJS = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 (function (__filename){
-
+/* global Strophe, $ */
+/* jshint -W101 */
 var logger = require("jitsi-meet-logger").getLogger(__filename);
 var RTC = require("./modules/RTC/RTC");
 var XMPPEvents = require("./service/xmpp/XMPPEvents");
@@ -10,6 +11,7 @@ var EventEmitter = require("events");
 var JitsiConferenceEvents = require("./JitsiConferenceEvents");
 var JitsiParticipant = require("./JitsiParticipant");
 var Statistics = require("./modules/statistics/statistics");
+var JitsiDTMFManager = require('./modules/DTMF/JitsiDTMFManager');
 
 /**
  * Creates a JitsiConference object with the given name and properties.
@@ -20,7 +22,6 @@ var Statistics = require("./modules/statistics/statistics");
  * @param options.connection the JitsiConnection object for this JitsiConference.
  * @constructor
  */
-
 function JitsiConference(options) {
     if(!options.name || options.name.toLowerCase() !== options.name) {
         logger.error("Invalid conference name (no conference name passed or it"
@@ -39,6 +40,8 @@ function JitsiConference(options) {
     setupListeners(this);
     this.participants = {};
     this.lastActiveSpeaker = null;
+    this.dtmfManager = null;
+    this.somebodySupportsDTMF = false;
 }
 
 /**
@@ -48,7 +51,7 @@ function JitsiConference(options) {
 JitsiConference.prototype.join = function (password) {
     if(this.room)
         this.room.join(password, this.connection.tokenPassword);
-}
+};
 
 /**
  * Leaves the conference.
@@ -57,14 +60,17 @@ JitsiConference.prototype.leave = function () {
     if(this.xmpp)
         this.xmpp.leaveRoom(this.room.roomjid);
     this.room = null;
-}
+};
 
 /**
  * Returns the local tracks.
  */
 JitsiConference.prototype.getLocalTracks = function () {
-    if(this.rtc)
+    if (this.rtc) {
         return this.rtc.localStreams;
+    } else {
+        return [];
+    }
 };
 
 
@@ -79,7 +85,7 @@ JitsiConference.prototype.getLocalTracks = function () {
 JitsiConference.prototype.on = function (eventId, handler) {
     if(this.eventEmitter)
         this.eventEmitter.on(eventId, handler);
-}
+};
 
 /**
  * Removes event listener
@@ -90,12 +96,12 @@ JitsiConference.prototype.on = function (eventId, handler) {
  */
 JitsiConference.prototype.off = function (eventId, handler) {
     if(this.eventEmitter)
-        this.eventEmitter.removeListener(eventId, listener);
-}
+        this.eventEmitter.removeListener(eventId, handler);
+};
 
 // Common aliases for event emitter
-JitsiConference.prototype.addEventListener = JitsiConference.prototype.on
-JitsiConference.prototype.removeEventListener = JitsiConference.prototype.off
+JitsiConference.prototype.addEventListener = JitsiConference.prototype.on;
+JitsiConference.prototype.removeEventListener = JitsiConference.prototype.off;
 
 /**
  * Receives notifications from another participants for commands / custom events(send by sendPresenceCommand method).
@@ -105,7 +111,7 @@ JitsiConference.prototype.removeEventListener = JitsiConference.prototype.off
  JitsiConference.prototype.addCommandListener = function (command, handler) {
     if(this.room)
         this.room.addPresenceListener(command, handler);
- }
+ };
 
 /**
   * Removes command  listener
@@ -114,7 +120,7 @@ JitsiConference.prototype.removeEventListener = JitsiConference.prototype.off
  JitsiConference.prototype.removeCommandListener = function (command) {
     if(this.room)
         this.room.removePresenceListener(command);
- }
+ };
 
 /**
  * Sends text message to the other participants in the conference
@@ -123,7 +129,7 @@ JitsiConference.prototype.removeEventListener = JitsiConference.prototype.off
 JitsiConference.prototype.sendTextMessage = function (message) {
     if(this.room)
         this.room.sendMessage(message);
-}
+};
 
 /**
  * Send presence command.
@@ -135,7 +141,7 @@ JitsiConference.prototype.sendCommand = function (name, values) {
         this.room.addToPresence(name, values);
         this.room.sendPresence();
     }
-}
+};
 
 /**
  * Send presence command one time.
@@ -145,7 +151,7 @@ JitsiConference.prototype.sendCommand = function (name, values) {
 JitsiConference.prototype.sendCommandOnce = function (name, values) {
     this.sendCommand(name, values);
     this.removeCommand(name);
-}
+};
 
 /**
  * Send presence command.
@@ -156,7 +162,7 @@ JitsiConference.prototype.sendCommandOnce = function (name, values) {
 JitsiConference.prototype.removeCommand = function (name) {
     if(this.room)
         this.room.removeFromPresence(name);
-}
+};
 
 /**
  * Sets the display name for this conference.
@@ -164,10 +170,14 @@ JitsiConference.prototype.removeCommand = function (name) {
  */
 JitsiConference.prototype.setDisplayName = function(name) {
     if(this.room){
-        this.room.addToPresence("nick", {attributes: {xmlns: 'http://jabber.org/protocol/nick'}, value: name});
+        this.room.addToPresence("nick", {
+            attributes: {
+                xmlns: 'http://jabber.org/protocol/nick'
+            }, value: name
+        });
         this.room.sendPresence();
     }
-}
+};
 
 /**
  * Adds JitsiLocalTrack object to the conference.
@@ -176,7 +186,7 @@ JitsiConference.prototype.setDisplayName = function(name) {
 JitsiConference.prototype.addTrack = function (track) {
     this.rtc.addLocalStream(track);
     this.room.addStream(track.getOriginalStream(), function () {});
-}
+};
 
 /**
  * Removes JitsiLocalTrack object to the conference.
@@ -185,7 +195,7 @@ JitsiConference.prototype.addTrack = function (track) {
 JitsiConference.prototype.removeTrack = function (track) {
     this.room.removeStream(track.getOriginalStream());
     this.rtc.removeLocalStream(track);
-}
+};
 
 /**
  * Elects the participant with the given id to be the selected participant or the speaker.
@@ -195,41 +205,90 @@ JitsiConference.prototype.selectParticipant = function(participantId) {
     if (this.rtc) {
         this.rtc.selectedEndpoint(participantId);
     }
-}
+};
 
 /**
  *
  * @param id the identifier of the participant
  */
 JitsiConference.prototype.pinParticipant = function(participantId) {
-    if(this.rtc)
+    if (this.rtc) {
         this.rtc.pinEndpoint(participantId);
-}
+    }
+};
 
 /**
  * Returns the list of participants for this conference.
- * @return Object a list of participant identifiers containing all conference participants.
+ * @return Array<JitsiParticipant> a list of participant identifiers containing all conference participants.
  */
 JitsiConference.prototype.getParticipants = function() {
-    return this.participants;
-}
+    return Object.keys(this.participants).map(function (key) {
+        return this.participants[key];
+    }, this);
+};
 
 /**
  * @returns {JitsiParticipant} the participant in this conference with the specified id (or
- * null if there isn't one).
+ * undefined if there isn't one).
  * @param id the id of the participant.
  */
 JitsiConference.prototype.getParticipantById = function(id) {
-    if(this.participants)
-        return this.participants[id];
-    return null;
-}
+    return this.participants[id];
+};
 
 JitsiConference.prototype.onMemberJoined = function (jid, email, nick) {
-    if(this.eventEmitter)
-        this.eventEmitter.emit(JitsiConferenceEvents.USER_JOINED, Strophe.getResourceFromJid(jid));
-//    this.participants[jid] = new JitsiParticipant();
-}
+    var id = Strophe.getResourceFromJid(jid);
+    var participant = new JitsiParticipant(id, this, nick);
+    this.eventEmitter.emit(JitsiConferenceEvents.USER_JOINED, id);
+    this.participants[id] = participant;
+    this.xmpp.getConnection().disco.info(
+        jid, "" /* node */, function(iq) {
+            participant._supportsDTMF = $(iq).find('>query>feature[var="urn:xmpp:jingle:dtmf:0"]').length > 0;
+            this.updateDTMFSupport();
+        }.bind(this)
+    );
+};
+
+JitsiConference.prototype.onMemberLeft = function (jid) {
+    var id = Strophe.getResourceFromJid(jid);
+    delete this.participants[id];
+    this.eventEmitter.emit(JitsiConferenceEvents.USER_LEFT, id);
+};
+
+
+JitsiConference.prototype.onTrackAdded = function (track) {
+    var id = track.getParticipantId();
+    var participant = this.getParticipantById(id);
+    participant._tracks.push(track);
+    this.eventEmitter.emit(JitsiConferenceEvents.TRACK_ADDED, track);
+};
+
+JitsiConference.prototype.onTrackRemoved = function (track) {
+    var id = track.getParticipantId();
+    var participant = this.getParticipantById(id);
+    var pos = participant._tracks.indexOf(track);
+    if (pos > -1) {
+        participant._tracks.splice(pos, 1);
+    }
+    this.eventEmitter.emit(JitsiConferenceEvents.TRACK_REMOVED, track);
+};
+
+JitsiConference.prototype.updateDTMFSupport = function () {
+    var somebodySupportsDTMF = false;
+    var participants = this.getParticipants();
+
+    // check if at least 1 participant supports DTMF
+    for (var i = 0; i < participants.length; i += 1) {
+        if (participants[i].supportsDTMF()) {
+            somebodySupportsDTMF = true;
+            break;
+        }
+    }
+    if (somebodySupportsDTMF !== this.somebodySupportsDTMF) {
+        this.somebodySupportsDTMF = somebodySupportsDTMF;
+        this.eventEmitter.emit(JitsiConferenceEvents.DTMF_SUPPORT_CHANGED, somebodySupportsDTMF);
+    }
+};
 
 /**
  * Returns the local user's ID
@@ -237,7 +296,28 @@ JitsiConference.prototype.onMemberJoined = function (jid, email, nick) {
  */
 JitsiConference.prototype.myUserId = function () {
     return (this.room && this.room.myroomjid)? Strophe.getResourceFromJid(this.room.myroomjid) : null;
-}
+};
+
+JitsiConference.prototype.sendTones = function (tones, duration, pause) {
+    if (!this.dtmfManager) {
+        var connection = this.xmpp.getConnection().jingle.activecall.peerconnection;
+        if (!connection) {
+            logger.warn("cannot sendTones: no conneciton");
+            return;
+        }
+
+        var tracks = this.getLocalTracks().filter(function (track) {
+            return track.isAudioTrack();
+        });
+        if (!tracks.length) {
+            logger.warn("cannot sendTones: no local audio stream");
+            return;
+        }
+        this.dtmfManager = new JitsiDTMFManager(tracks[0], connection);
+    }
+
+    this.dtmfManager.sendTones(tones, duration, pause);
+};
 
 /**
  * Setups the listeners needed for the conference.
@@ -251,7 +331,19 @@ function setupListeners(conference) {
     });
     conference.room.addListener(XMPPEvents.REMOTE_STREAM_RECEIVED,
         conference.rtc.createRemoteStream.bind(conference.rtc));
-
+    conference.rtc.addListener(
+        StreamEventTypes.EVENT_TYPE_REMOTE_CREATED, conference.onTrackAdded.bind(conference)
+    );
+    conference.rtc.addListener(
+        StreamEventTypes.EVENT_TYPE_REMOTE_ENDED, conference.onTrackRemoved.bind(conference)
+    );
+    conference.rtc.addListener(StreamEventTypes.EVENT_TYPE_LOCAL_ENDED, function (stream) {
+        conference.removeTrack(stream);
+        conference.eventEmitter.emit(JitsiConferenceEvents.TRACK_REMOVED, stream);
+    });
+    conference.rtc.addListener(StreamEventTypes.TRACK_MUTE_CHANGED, function (track) {
+        conference.eventEmitter.emit(JitsiConferenceEvents.TRACK_MUTE_CHANGED, track);
+    });
     conference.room.addListener(XMPPEvents.MUC_JOINED, function () {
         conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_JOINED);
     });
@@ -259,53 +351,6 @@ function setupListeners(conference) {
 //    conference.room.addListener(XMPPEvents.MUC_JOINED, function () {
 //        conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_LEFT);
 //    });
-
-    conference.room.addListener(XMPPEvents.MUC_MEMBER_JOINED,
-        conference.onMemberJoined.bind(conference));
-    conference.room.addListener(XMPPEvents.MUC_MEMBER_LEFT,function (jid) {
-        conference.eventEmitter.emit(JitsiConferenceEvents.USER_LEFT,
-            Strophe.getResourceFromJid(jid));
-    });
-
-    conference.room.addListener(XMPPEvents.DISPLAY_NAME_CHANGED,
-        function (from, displayName) {
-            conference.eventEmitter.emit(
-                JitsiConferenceEvents.DISPLAY_NAME_CHANGED,
-                Strophe.getResourceFromJid(from), displayName);
-        });
-
-    conference.room.addListener(XMPPEvents.CONNECTION_INTERRUPTED,
-        function () {
-            conference.eventEmitter.emit(
-                JitsiConferenceEvents.CONNECTION_INTERRUPTED);
-        });
-
-    conference.room.addListener(XMPPEvents.CONNECTION_RESTORED, function () {
-        conference.eventEmitter.emit(JitsiConferenceEvents.CONNECTION_RESTORED);
-    });
-    conference.room.addListener(XMPPEvents.CONFERENCE_SETUP_FAILED, function() {
-        conference.eventEmitter.emit(JitsiConferenceEvents.SETUP_FAILED);
-    });
-
-    conference.rtc.addListener(StreamEventTypes.EVENT_TYPE_REMOTE_CREATED,
-        function (stream) {
-            conference.eventEmitter.emit(JitsiConferenceEvents.TRACK_ADDED, stream);
-        });
-
-//FIXME: Maybe remove event should not be associated with the conference.
-    conference.rtc.addListener(StreamEventTypes.EVENT_TYPE_REMOTE_ENDED, function (stream) {
-        conference.eventEmitter.emit(JitsiConferenceEvents.TRACK_REMOVED, stream);
-    });
-//FIXME: Maybe remove event should not be associated with the conference.
-    conference.rtc.addListener(StreamEventTypes.EVENT_TYPE_LOCAL_ENDED, function (stream) {
-        conference.eventEmitter.emit(JitsiConferenceEvents.TRACK_REMOVED, stream);
-        conference.removeTrack(stream);
-    });
-
-    conference.rtc.addListener(StreamEventTypes.TRACK_MUTE_CHANGED, function (track) {
-        conference.eventEmitter.emit(JitsiConferenceEvents.TRACK_MUTE_CHANGED, track);
-    });
-
     conference.rtc.addListener(RTCEvents.DOMINANTSPEAKER_CHANGED, function (id) {
         if(conference.lastActiveSpeaker !== id && conference.room) {
             conference.lastActiveSpeaker = id;
@@ -323,8 +368,26 @@ function setupListeners(conference) {
                 lastNEndpoints, endpointsEnteringLastN);
         });
 
+    conference.room.addListener(XMPPEvents.MUC_MEMBER_JOINED, conference.onMemberJoined.bind(conference));
+    conference.room.addListener(XMPPEvents.MUC_MEMBER_LEFT, conference.onMemberLeft.bind(conference));
+
+    conference.room.addListener(XMPPEvents.DISPLAY_NAME_CHANGED, function (from, displayName) {
+        conference.eventEmitter.emit(JitsiConferenceEvents.DISPLAY_NAME_CHANGED,
+            Strophe.getResourceFromJid(from), displayName);
+    });
+
+    conference.room.addListener(XMPPEvents.CONNECTION_INTERRUPTED, function () {
+        conference.eventEmitter.emit(JitsiConferenceEvents.CONNECTION_INTERRUPTED);
+    });
+
+    conference.room.addListener(XMPPEvents.CONNECTION_RESTORED, function () {
+        conference.eventEmitter.emit(JitsiConferenceEvents.CONNECTION_RESTORED);
+    });
+    conference.room.addListener(XMPPEvents.CONFERENCE_SETUP_FAILED, function () {
+        conference.eventEmitter.emit(JitsiConferenceEvents.SETUP_FAILED);
+    });
+
     if(conference.statistics) {
-        //FIXME: Maybe remove event should not be associated with the conference.
         conference.statistics.addAudioLevelListener(function (ssrc, level) {
             var userId = null;
             if (ssrc === Statistics.LOCAL_JID) {
@@ -346,10 +409,12 @@ function setupListeners(conference) {
             function () {
                 conference.statistics.dispose();
             });
-        // FIXME: Maybe we should move this.
-        // RTC.addListener(RTCEvents.AVAILABLE_DEVICES_CHANGED, function (devices) {
-        //     conference.room.updateDeviceAvailability(devices);
-        // });
+        RTC.addListener(RTCEvents.AVAILABLE_DEVICES_CHANGED, function (devices) {
+            conference.room.updateDeviceAvailability(devices);
+        });
+        RTC.addListener(StreamEventTypes.TRACK_MUTE_CHANGED, function (track) {
+            conference.eventEmitter.emit(JitsiConferenceEvents.TRACK_MUTE_CHANGED, track);
+        });
     }
 }
 
@@ -357,7 +422,7 @@ function setupListeners(conference) {
 module.exports = JitsiConference;
 
 }).call(this,"/JitsiConference.js")
-},{"./JitsiConferenceEvents":3,"./JitsiParticipant":8,"./modules/RTC/RTC":15,"./modules/statistics/statistics":23,"./service/RTC/RTCEvents":82,"./service/RTC/StreamEventTypes":84,"./service/xmpp/XMPPEvents":89,"events":42,"jitsi-meet-logger":46}],2:[function(require,module,exports){
+},{"./JitsiConferenceEvents":3,"./JitsiParticipant":9,"./modules/DTMF/JitsiDTMFManager":10,"./modules/RTC/RTC":15,"./modules/statistics/statistics":23,"./service/RTC/RTCEvents":78,"./service/RTC/StreamEventTypes":80,"./service/xmpp/XMPPEvents":85,"events":42,"jitsi-meet-logger":46}],2:[function(require,module,exports){
 /**
  * Enumeration with the errors for the conference.
  * @type {{string: string}}
@@ -394,7 +459,7 @@ var JitsiConferenceEvents = {
      */
     TRACK_ADDED: "conference.trackAdded",
     /**
-     * The media track was removed from the conference.
+     * The media track was removed to the conference.
      */
     TRACK_REMOVED: "conference.trackRemoved",
     /**
@@ -434,11 +499,11 @@ var JitsiConferenceEvents = {
      */
     IN_LAST_N_CHANGED: "conference.lastNEndpointsChanged",
     /**
-     * A media track ( attached to the conference) mute status was changed.
+     * A media track mute status was changed.
      */
     TRACK_MUTE_CHANGED: "conference.trackMuteChanged",
     /**
-     * Audio levels of a media track ( attached to the conference) was changed.
+     * Audio levels of a media track was changed.
      */
     TRACK_AUDIO_LEVEL_CHANGED: "conference.audioLevelsChanged",
     /**
@@ -461,7 +526,8 @@ var JitsiConferenceEvents = {
     /**
      * Indicates that conference has been left.
      */
-    CONFERENCE_LEFT: "conference.left"
+    CONFERENCE_LEFT: "conference.left",
+    DTMF_SUPPORT_CHANGED: "conference.dtmf_support_changed"
 };
 
 module.exports = JitsiConferenceEvents;
@@ -623,8 +689,6 @@ var JitsiConferenceEvents = require("./JitsiConferenceEvents");
 var JitsiConnectionEvents = require("./JitsiConnectionEvents");
 var JitsiConnectionErrors = require("./JitsiConnectionErrors");
 var JitsiConferenceErrors = require("./JitsiConferenceErrors");
-var JitsiTrackEvents = require("./JitsiTrackEvents");
-var JitsiTrackErrors = require("./JitsiTrackErrors");
 var Logger = require("jitsi-meet-logger");
 var RTC = require("./modules/RTC/RTC");
 
@@ -636,17 +700,15 @@ var LibJitsiMeet = {
     JitsiConnection: JitsiConnection,
     events: {
         conference: JitsiConferenceEvents,
-        connection: JitsiConnectionEvents,
-        track: JitsiTrackEvents
+        connection: JitsiConnectionEvents
     },
     errors: {
         conference: JitsiConferenceErrors,
-        connection: JitsiConnectionErrors,
-        track: JitsiTrackErrors
+        connection: JitsiConnectionErrors
     },
     logLevels: Logger.levels,
     init: function (options) {
-        return RTC.init(options || {});
+        RTC.init(options || {});
     },
     setLogLevel: function (level) {
         Logger.setLogLevel(level);
@@ -682,148 +744,11 @@ window.Promise = window.Promise || require("es6-promise").Promise;
 
 module.exports = LibJitsiMeet;
 
-},{"./JitsiConferenceErrors":2,"./JitsiConferenceEvents":3,"./JitsiConnection":4,"./JitsiConnectionErrors":5,"./JitsiConnectionEvents":6,"./JitsiTrackErrors":9,"./JitsiTrackEvents":10,"./modules/RTC/RTC":15,"es6-promise":44,"jitsi-meet-logger":46}],8:[function(require,module,exports){
-/**
- * Represents a participant in (a member of) a conference.
- */
-function JitsiParticipant(id, conference, displayName){
-    this._id = id;
-    this._conference = conference;
-    this._displayName = displayName;
-}
-
-/**
- * @returns {JitsiConference} The conference that this participant belongs to.
- */
-JitsiParticipant.prototype.getConference = function() {
-    return this._conference;
-}
-
-/**
- * @returns {Array.<JitsiTrack>} The list of media tracks for this participant.
- */
-JitsiParticipant.prototype.getTracks = function() {
-
-}
-
-/**
- * @returns {String} The ID (i.e. JID) of this participant.
- */
-JitsiParticipant.prototype.getId = function() {
-    return this._id;
-}
-
-/**
- * @returns {String} The human-readable display name of this participant.
- */
-JitsiParticipant.prototype.getDisplayName = function() {
-    return this._displayName;
-}
-
-/**
- * @returns {Boolean} Whether this participant is a moderator or not.
- */
-JitsiParticipant.prototype.isModerator = function() {
-}
-
-// Gets a link to an etherpad instance advertised by the participant?
-//JitsiParticipant.prototype.getEtherpad = function() {
-//
-//}
-
-
-/*
- * @returns {Boolean} Whether this participant has muted their audio.
- */
-JitsiParticipant.prototype.isAudioMuted = function() {
-
-}
-
-/*
- * @returns {Boolean} Whether this participant has muted their video.
- */
-JitsiParticipant.prototype.isVideoMuted = function() {
-
-}
-
-/*
- * @returns {???} The latest statistics reported by this participant (i.e. info used to populate the GSM bars)
- * TODO: do we expose this or handle it internally?
- */
-JitsiParticipant.prototype.getLatestStats = function() {
-
-}
-
-/**
- * @returns {String} The role of this participant.
- */
-JitsiParticipant.prototype.getRole = function() {
-
-}
-
-/*
- * @returns {Boolean} Whether this participant is the conference focus (i.e. jicofo).
- */
-JitsiParticipant.prototype.isFocus = function() {
-
-}
-
-/*
- * @returns {Boolean} Whether this participant is a conference recorder (i.e. jirecon).
- */
-JitsiParticipant.prototype.isRecorder = function() {
-
-}
-
-/*
- * @returns {Boolean} Whether this participant is a SIP gateway (i.e. jigasi).
- */
-JitsiParticipant.prototype.isSipGateway = function() {
-
-}
-
-/**
- * @returns {String} The ID for this participant's avatar.
- */
-JitsiParticipant.prototype.getAvatarId = function() {
-
-}
-
-/**
- * @returns {Boolean} Whether this participant is currently sharing their screen.
- */
-JitsiParticipant.prototype.isScreenSharing = function() {
-
-}
-
-/**
- * @returns {String} The user agent of this participant (i.e. browser userAgent string).
- */
-JitsiParticipant.prototype.getUserAgent = function() {
-
-}
-
-/**
- * Kicks the participant from the conference (requires certain privileges).
- */
-JitsiParticipant.prototype.kick = function() {
-
-}
-
-/**
- * Asks this participant to mute themselves.
- */
-JitsiParticipant.prototype.askToMute = function() {
-
-}
-
-
-module.exports = JitsiParticipant();
-
-},{}],9:[function(require,module,exports){
+},{"./JitsiConferenceErrors":2,"./JitsiConferenceEvents":3,"./JitsiConnection":4,"./JitsiConnectionErrors":5,"./JitsiConnectionEvents":6,"./modules/RTC/RTC":15,"es6-promise":44,"jitsi-meet-logger":46}],8:[function(require,module,exports){
 module.exports = {
     /**
-     * Returns JitsiTrackErrors based on the error object passed by GUM * @param error the error
+     * Returns JitsiMeetJSError based on the error object passed by GUM
+     * @param error the error
      * @param {Object} options the options object given to GUM.
      */
     parseError: function (error, options) {
@@ -836,34 +761,178 @@ module.exports = {
             error.constraintName == "minHeight" ||
             error.constraintName == "maxHeight") &&
             options.devices.indexOf("video") !== -1) {
-                return this.UNSUPPORTED_RESOLUTION;
+                return this.GET_TRACKS_RESOLUTION;
         } else {
-            return this.GENERAL;
+            return this.GET_TRACKS_GENERAL;
         }
     },
-    UNSUPPORTED_RESOLUTION: "gum.unsupported_resolution",
-    GENERAL: "gum.general"
+    GET_TRACKS_RESOLUTION: "gum.get_tracks_resolution",
+    GET_TRACKS_GENERAL: "gum.get_tracks_general"
 };
+
+},{}],9:[function(require,module,exports){
+/**
+ * Represents a participant in (a member of) a conference.
+ */
+function JitsiParticipant(id, conference, displayName){
+    this._id = id;
+    this._conference = conference;
+    this._displayName = displayName;
+    this._supportsDTMF = false;
+    this._tracks = [];
+    this._isModerator = false;
+}
+
+/**
+ * @returns {JitsiConference} The conference that this participant belongs to.
+ */
+JitsiParticipant.prototype.getConference = function() {
+    return this._conference;
+};
+
+/**
+ * @returns {Array.<JitsiTrack>} The list of media tracks for this participant.
+ */
+JitsiParticipant.prototype.getTracks = function() {
+    return this._tracks;
+};
+
+/**
+ * @returns {String} The ID (i.e. JID) of this participant.
+ */
+JitsiParticipant.prototype.getId = function() {
+    return this._id;
+};
+
+/**
+ * @returns {String} The human-readable display name of this participant.
+ */
+JitsiParticipant.prototype.getDisplayName = function() {
+    return this._displayName;
+};
+
+/**
+ * @returns {Boolean} Whether this participant is a moderator or not.
+ */
+JitsiParticipant.prototype.isModerator = function() {
+    return this._isModerator;
+};
+
+// Gets a link to an etherpad instance advertised by the participant?
+//JitsiParticipant.prototype.getEtherpad = function() {
+//
+//}
+
+
+/*
+ * @returns {Boolean} Whether this participant has muted their audio.
+ */
+JitsiParticipant.prototype.isAudioMuted = function() {
+    return this.getTracks().reduce(function (track, isAudioMuted) {
+        return isAudioMuted && (track.isVideoTrack() || track.isMuted());
+    }, true);
+};
+
+/*
+ * @returns {Boolean} Whether this participant has muted their video.
+ */
+JitsiParticipant.prototype.isVideoMuted = function() {
+    return this.getTracks().reduce(function (track, isVideoMuted) {
+        return isVideoMuted && (track.isAudioTrack() || track.isMuted());
+    }, true);
+};
+
+/*
+ * @returns {???} The latest statistics reported by this participant (i.e. info used to populate the GSM bars)
+ * TODO: do we expose this or handle it internally?
+ */
+JitsiParticipant.prototype.getLatestStats = function() {
+
+};
+
+/**
+ * @returns {String} The role of this participant.
+ */
+JitsiParticipant.prototype.getRole = function() {
+
+};
+
+/*
+ * @returns {Boolean} Whether this participant is the conference focus (i.e. jicofo).
+ */
+JitsiParticipant.prototype.isFocus = function() {
+
+};
+
+/*
+ * @returns {Boolean} Whether this participant is a conference recorder (i.e. jirecon).
+ */
+JitsiParticipant.prototype.isRecorder = function() {
+
+};
+
+/*
+ * @returns {Boolean} Whether this participant is a SIP gateway (i.e. jigasi).
+ */
+JitsiParticipant.prototype.isSipGateway = function() {
+
+};
+
+/**
+ * @returns {Boolean} Whether this participant is currently sharing their screen.
+ */
+JitsiParticipant.prototype.isScreenSharing = function() {
+
+};
+
+/**
+ * @returns {String} The user agent of this participant (i.e. browser userAgent string).
+ */
+JitsiParticipant.prototype.getUserAgent = function() {
+
+};
+
+/**
+ * Kicks the participant from the conference (requires certain privileges).
+ */
+JitsiParticipant.prototype.kick = function() {
+
+};
+
+/**
+ * Asks this participant to mute themselves.
+ */
+JitsiParticipant.prototype.askToMute = function() {
+
+};
+
+JitsiParticipant.prototype.supportsDTMF = function () {
+    return this._supportsDTMF;
+};
+
+
+module.exports = JitsiParticipant;
 
 },{}],10:[function(require,module,exports){
-var JitsiTrackEvents = {
-    /**
-     * A media track mute status was changed.
-     */
-    TRACK_MUTE_CHANGED: "track.trackMuteChanged",
-    /**
-     * Audio levels of a this track was changed.
-     */
-    TRACK_AUDIO_LEVEL_CHANGED: "track.audioLevelsChanged",
-    /**
-     * The media track was removed to the conference.
-     */
-    TRACK_STOPPED: "track.TRACK_STOPPED",
+(function (__filename){
+var logger = require("jitsi-meet-logger").getLogger(__filename);
+
+function JitsiDTMFManager (localAudio, peerConnection) {
+    var tracks = localAudio._getTracks();
+    if (!tracks.length) {
+        throw new Error("Failed to initialize DTMFSender: no audio track.");
+    }
+    this.dtmfSender = peerConnection.peerconnection.createDTMFSender(tracks[0]);
+    logger.debug("Initialized DTMFSender");
+}
+
+
+JitsiDTMFManager.prototype.sendTones = function (tones, duration, pause) {
+    this.dtmfSender.insertDTMF(tones, (duration || 200), (pause || 200));
 };
 
-module.exports = JitsiTrackEvents;
-
-},{}],11:[function(require,module,exports){
+}).call(this,"/modules/DTMF/JitsiDTMFManager.js")
+},{"jitsi-meet-logger":46}],11:[function(require,module,exports){
 (function (__filename){
 /* global config, APP, Strophe */
 
@@ -1079,31 +1148,30 @@ module.exports = DataChannels;
 
 
 }).call(this,"/modules/RTC/DataChannels.js")
-},{"../../service/RTC/RTCEvents":82,"jitsi-meet-logger":46}],12:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":78,"jitsi-meet-logger":46}],12:[function(require,module,exports){
 var JitsiTrack = require("./JitsiTrack");
 var StreamEventTypes = require("../../service/RTC/StreamEventTypes");
 var RTCBrowserType = require("./RTCBrowserType");
-var RTC = require("./RTCUtils");
 
 /**
  * Represents a single media track (either audio or video).
  * @constructor
  */
-function JitsiLocalTrack(stream, videoType,
+function JitsiLocalTrack(RTC, stream, eventEmitter, videoType,
   resolution)
 {
+    JitsiTrack.call(this, RTC, stream,
+        function () {
+            if(!self.dontFireRemoveEvent)
+                self.eventEmitter.emit(
+                    StreamEventTypes.EVENT_TYPE_LOCAL_ENDED, self);
+            self.dontFireRemoveEvent = false;
+        });
+    this.eventEmitter = eventEmitter;
     this.videoType = videoType;
     this.dontFireRemoveEvent = false;
     this.resolution = resolution;
     var self = this;
-    JitsiTrack.call(this, null, stream,
-        function () {
-            if(!self.dontFireRemoveEvent && self.rtc)
-                self.rtc.eventEmitter.emit(
-                    StreamEventTypes.EVENT_TYPE_LOCAL_ENDED, self);
-            self.dontFireRemoveEvent = false;
-        });
-
 }
 
 JitsiLocalTrack.prototype = Object.create(JitsiTrack.prototype);
@@ -1134,24 +1202,26 @@ JitsiLocalTrack.prototype._setMute = function (mute) {
             this.rtc.room.setAudioMute(mute);
         else
             this.rtc.room.setVideoMute(mute);
-        this.rtc.eventEmitter.emit(StreamEventTypes.TRACK_MUTE_CHANGED, this);
+        this.eventEmitter.emit(StreamEventTypes.TRACK_MUTE_CHANGED, this);
     } else {
         if (mute) {
             this.dontFireRemoveEvent = true;
             this.rtc.room.removeStream(this.stream);
-            RTC.stopMediaStream(this.stream);
+            this.rtc.stopMediaStream(this.stream);
             if(isAudio)
                 this.rtc.room.setAudioMute(mute);
             else
                 this.rtc.room.setVideoMute(mute);
             this.stream = null;
-            this.rtc.eventEmitter.emit(StreamEventTypes.TRACK_MUTE_CHANGED, this);
+            this.eventEmitter.emit(StreamEventTypes.TRACK_MUTE_CHANGED, this);
             //FIXME: Maybe here we should set the SRC for the containers to something
         } else {
             var self = this;
+            var RTC = require("./RTCUtils");
             RTC.obtainAudioAndVideoPermissions({
                 devices: (isAudio ? ["audio"] : ["video"]),
-                resolution: self.resolution})
+                resolution: self.resolution,
+                dontCreateJitsiTrack: true})
                 .then(function (streams) {
                     var stream = null;
                     for(var i = 0; i < streams.length; i++) {
@@ -1177,7 +1247,7 @@ JitsiLocalTrack.prototype._setMute = function (mute) {
                                 self.rtc.room.setAudioMute(mute);
                             else
                                 self.rtc.room.setVideoMute(mute);
-                            self.rtc.eventEmitter.emit(StreamEventTypes.TRACK_MUTE_CHANGED, self);
+                            self.eventEmitter.emit(StreamEventTypes.TRACK_MUTE_CHANGED, self);
                         });
                 });
         }
@@ -1232,7 +1302,7 @@ JitsiLocalTrack.prototype._setRTC = function (rtc) {
 
 module.exports = JitsiLocalTrack;
 
-},{"../../service/RTC/StreamEventTypes":84,"./JitsiTrack":14,"./RTCBrowserType":16,"./RTCUtils":17}],13:[function(require,module,exports){
+},{"../../service/RTC/StreamEventTypes":80,"./JitsiTrack":14,"./RTCBrowserType":16,"./RTCUtils":17}],13:[function(require,module,exports){
 var JitsiTrack = require("./JitsiTrack");
 var StreamEventTypes = require("../../service/RTC/StreamEventTypes");
 
@@ -1290,7 +1360,7 @@ JitsiRemoteTrack.prototype.isMuted = function () {
  * Returns the participant id which owns the track.
  * @returns {string} the id of the participants.
  */
-JitsiRemoteTrack.prototype.getParitcipantId = function() {
+JitsiRemoteTrack.prototype.getParticipantId = function() {
     return Strophe.getResourceFromJid(this.peerjid);
 };
 
@@ -1300,7 +1370,7 @@ delete JitsiRemoteTrack.prototype.start;
 
 module.exports = JitsiRemoteTrack;
 
-},{"../../service/RTC/StreamEventTypes":84,"./JitsiTrack":14}],14:[function(require,module,exports){
+},{"../../service/RTC/StreamEventTypes":80,"./JitsiTrack":14}],14:[function(require,module,exports){
 var RTCBrowserType = require("./RTCBrowserType");
 
 /**
@@ -1326,17 +1396,17 @@ function implementOnEndedHandling(jitsiTrack) {
  * @param handler the handler
  */
 function addMediaStreamInactiveHandler(mediaStream, handler) {
-    if(RTCBrowserType.isTemasysPluginUsed()) {
-        // themasys
-        mediaStream.attachEvent('ended', function () {
-            handler(mediaStream);
-        });
-    }
-    else {
+    if (mediaStream.addEventListener) {
+        // chrome
         if(typeof mediaStream.active !== "undefined")
             mediaStream.oninactive = handler;
         else
             mediaStream.onended = handler;
+    } else {
+        // themasys
+        mediaStream.attachEvent('ended', function () {
+            handler(mediaStream);
+        });
     }
 }
 
@@ -1393,6 +1463,20 @@ JitsiTrack.AUDIO = "audio";
  */
 JitsiTrack.prototype.getType = function() {
     return this.type;
+};
+
+/**
+ * Check if this is audiotrack.
+ */
+JitsiTrack.prototype.isAudioTrack = function () {
+    return this.getType() === JitsiTrack.AUDIO;
+};
+
+/**
+ * Check if this is videotrack.
+ */
+JitsiTrack.prototype.isVideoTrack = function () {
+    return this.getType() === JitsiTrack.VIDEO;
 };
 
 /**
@@ -1505,22 +1589,6 @@ var MediaStreamType = require("../../service/RTC/MediaStreamTypes");
 var StreamEventTypes = require("../../service/RTC/StreamEventTypes.js");
 var RTCEvents = require("../../service/RTC/RTCEvents.js");
 
-function createLocalTracks(streams) {
-    var newStreams = []
-    for (var i = 0; i < streams.length; i++) {
-        var localStream = new JitsiLocalTrack(streams[i].stream,
-            streams[i].videoType, streams[i].resolution);
-        newStreams.push(localStream);
-        if (streams[i].isMuted === true)
-            localStream.setMute(true);
-        //FIXME:
-        // var eventType = StreamEventTypes.EVENT_TYPE_LOCAL_CREATED;
-        //
-        // eventEmitter.emit(eventType, localStream);
-    }
-    return newStreams;
-}
-
 function RTC(room, options) {
     this.room = room;
     this.localStreams = [];
@@ -1553,7 +1621,7 @@ function RTC(room, options) {
  * @returns {*} Promise object that will receive the new JitsiTracks
  */
 RTC.obtainAudioAndVideoPermissions = function (options) {
-    return RTCUtils.obtainAudioAndVideoPermissions(options).then(createLocalTracks);
+    return RTCUtils.obtainAudioAndVideoPermissions(options);
 }
 
 RTC.prototype.onIncommingCall = function(event) {
@@ -1750,7 +1818,7 @@ RTC.prototype.setVideoMute = function (mute, callback, options) {
 
 module.exports = RTC;
 
-},{"../../service/RTC/MediaStreamTypes":81,"../../service/RTC/RTCEvents.js":82,"../../service/RTC/StreamEventTypes.js":84,"../../service/desktopsharing/DesktopSharingEventTypes":86,"./DataChannels":11,"./JitsiLocalTrack.js":12,"./JitsiRemoteTrack.js":13,"./JitsiTrack":14,"./RTCBrowserType":16,"./RTCUtils.js":17,"events":42}],16:[function(require,module,exports){
+},{"../../service/RTC/MediaStreamTypes":77,"../../service/RTC/RTCEvents.js":78,"../../service/RTC/StreamEventTypes.js":80,"../../service/desktopsharing/DesktopSharingEventTypes":82,"./DataChannels":11,"./JitsiLocalTrack.js":12,"./JitsiRemoteTrack.js":13,"./JitsiTrack":14,"./RTCBrowserType":16,"./RTCUtils.js":17,"events":42}],16:[function(require,module,exports){
 
 var currentBrowser;
 
@@ -1933,8 +2001,10 @@ var RTCEvents = require("../../service/RTC/RTCEvents");
 var AdapterJS = require("./adapter.screenshare");
 var SDPUtil = require("../xmpp/SDPUtil");
 var EventEmitter = require("events");
+var JitsiLocalTrack = require("./JitsiLocalTrack");
+var StreamEventTypes = require("../../service/RTC/StreamEventTypes.js");
 var screenObtainer = require("./ScreenObtainer");
-var JitsiTrackErrors = require("../../JitsiTrackErrors");
+var JitsiMeetJSError = require("../../JitsiMeetJSErrors");
 
 var eventEmitter = new EventEmitter();
 
@@ -2261,10 +2331,26 @@ function obtainDevices(options) {
         function (error) {
             logger.error(
                 "failed to obtain " + device + " stream - stop", error);
-            options.errorCallback(JitsiTrackErrors.parseError(error));
+            options.errorCallback(JitsiMeetJSError.parseError(error));
         });
 }
 
+
+function createLocalTracks(streams) {
+    var newStreams = []
+    for (var i = 0; i < streams.length; i++) {
+        var localStream = new JitsiLocalTrack(null, streams[i].stream,
+            eventEmitter, streams[i].videoType, streams[i].resolution);
+        newStreams.push(localStream);
+        if (streams[i].isMuted === true)
+            localStream.setMute(true);
+
+        var eventType = StreamEventTypes.EVENT_TYPE_LOCAL_CREATED;
+
+        eventEmitter.emit(eventType, localStream);
+    }
+    return newStreams;
+}
 
 /**
  * Handles the newly created Media Streams.
@@ -2288,7 +2374,7 @@ function handleLocalStream(streams, resolution) {
             }
 
             var videoTracks = audioVideo.getVideoTracks();
-            if(videoTracks.length) {
+            if(audioTracks.length) {
                 videoStream = new webkitMediaStream();
                 for (i = 0; i < videoTracks.length; i++) {
                     videoStream.addTrack(videoTracks[i]);
@@ -2322,17 +2408,10 @@ function handleLocalStream(streams, resolution) {
 //Options parameter is to pass config options. Currently uses only "useIPv6".
 var RTCUtils = {
     init: function (options) {
-        return new Promise(function(resolve, reject) {
-            if (RTCBrowserType.isFirefox()) {
-                var FFversion = RTCBrowserType.getFirefoxVersion();
-                if (FFversion < 40) {
-                    logger.error(
-                            "Firefox version too old: " + FFversion +
-                            ". Required >= 40.");
-                    reject(new Error("Firefox version too old: " + FFversion +
-                    ". Required >= 40."));
-                    return;
-                }
+        var self = this;
+        if (RTCBrowserType.isFirefox()) {
+            var FFversion = RTCBrowserType.getFirefoxVersion();
+            if (FFversion >= 40) {
                 this.peerconnection = mozRTCPeerConnection;
                 this.getUserMedia = wrapGetUserMedia(navigator.mozGetUserMedia.bind(navigator));
                 this.enumerateDevices = wrapEnumerateDevices(
@@ -2374,124 +2453,128 @@ var RTCUtils = {
                 };
                 RTCSessionDescription = mozRTCSessionDescription;
                 RTCIceCandidate = mozRTCIceCandidate;
-            } else if (RTCBrowserType.isChrome() || RTCBrowserType.isOpera()) {
-                this.peerconnection = webkitRTCPeerConnection;
-                var getUserMedia = navigator.webkitGetUserMedia.bind(navigator);
-                if (navigator.mediaDevices) {
-                    this.getUserMedia = wrapGetUserMedia(getUserMedia);
-                    this.enumerateDevices = wrapEnumerateDevices(
-                        navigator.mediaDevices.enumerateDevices.bind(navigator.mediaDevices)
-                    );
-                } else {
-                    this.getUserMedia = getUserMedia;
-                    this.enumerateDevices = enumerateDevicesThroughMediaStreamTrack;
-                }
-                this.attachMediaStream = function (element, stream) {
-                    element.attr('src', webkitURL.createObjectURL(stream));
-                };
-                this.getStreamID = function (stream) {
-                    // streams from FF endpoints have the characters '{' and '}'
-                    // that make jQuery choke.
-                    return SDPUtil.filter_special_chars(stream.id);
-                };
-                this.getVideoSrc = function (element) {
-                    if (!element)
-                        return null;
-                    return element.getAttribute("src");
-                };
-                this.setVideoSrc = function (element, src) {
-                    if (element)
-                        element.setAttribute("src", src);
-                };
-                // DTLS should now be enabled by default but..
-                this.pc_constraints = {'optional': [
-                    {'DtlsSrtpKeyAgreement': 'true'}
-                ]};
-                if (options.useIPv6) {
-                    // https://code.google.com/p/webrtc/issues/detail?id=2828
-                    this.pc_constraints.optional.push({googIPv6: true});
-                }
-                if (RTCBrowserType.isAndroid()) {
-                    this.pc_constraints = {}; // disable DTLS on Android
-                }
-                if (!webkitMediaStream.prototype.getVideoTracks) {
-                    webkitMediaStream.prototype.getVideoTracks = function () {
-                        return this.videoTracks;
-                    };
-                }
-                if (!webkitMediaStream.prototype.getAudioTracks) {
-                    webkitMediaStream.prototype.getAudioTracks = function () {
-                        return this.audioTracks;
-                    };
-                }
-            }
-            // Detect IE/Safari
-            else if (RTCBrowserType.isTemasysPluginUsed()) {
-
-                //AdapterJS.WebRTCPlugin.setLogLevel(
-                //    AdapterJS.WebRTCPlugin.PLUGIN_LOG_LEVELS.VERBOSE);
-
-                AdapterJS.webRTCReady(function (isPlugin) {
-
-                    self.peerconnection = RTCPeerConnection;
-                    self.getUserMedia = window.getUserMedia;
-                    self.enumerateDevices = enumerateDevicesThroughMediaStreamTrack;
-                    self.attachMediaStream = function (elSel, stream) {
-
-                        if (stream.id === "dummyAudio" || stream.id === "dummyVideo") {
-                            return;
-                        }
-
-                        attachMediaStream(elSel[0], stream);
-                    };
-                    self.getStreamID = function (stream) {
-                        var id = SDPUtil.filter_special_chars(stream.label);
-                        return id;
-                    };
-                    self.getVideoSrc = function (element) {
-                        if (!element) {
-                            logger.warn("Attempt to get video SRC of null element");
-                            return null;
-                        }
-                        var children = element.children;
-                        for (var i = 0; i !== children.length; ++i) {
-                            if (children[i].name === 'streamId') {
-                                return children[i].value;
-                            }
-                        }
-                        //logger.info(element.id + " SRC: " + src);
-                        return null;
-                    };
-                    self.setVideoSrc = function (element, src) {
-                        //logger.info("Set video src: ", element, src);
-                        if (!src) {
-                            logger.warn("Not attaching video stream, 'src' is null");
-                            return;
-                        }
-                        AdapterJS.WebRTCPlugin.WaitForPluginReady();
-                        var stream = AdapterJS.WebRTCPlugin.plugin
-                            .getStreamWithId(AdapterJS.WebRTCPlugin.pageId, src);
-                        attachMediaStream(element, stream);
-                    };
-
-                    onReady(options, self.getUserMediaWithConstraints);
-                    resolve();
-                });
             } else {
-                try {
-                    logger.error('Browser does not appear to be WebRTC-capable');
-                } catch (e) {
-                }
-                reject('Browser does not appear to be WebRTC-capable');
+                logger.error(
+                        "Firefox version too old: " + FFversion + ". Required >= 40.");
+                window.location.href = 'unsupported_browser.html';
                 return;
             }
 
-            // Call onReady() if Temasys plugin is not used
-            if (!RTCBrowserType.isTemasysPluginUsed()) {
-                onReady(options, self.getUserMediaWithConstraints);
-                resolve();
+        } else if (RTCBrowserType.isChrome() || RTCBrowserType.isOpera()) {
+            this.peerconnection = webkitRTCPeerConnection;
+            var getUserMedia = navigator.webkitGetUserMedia.bind(navigator);
+            if (navigator.mediaDevices) {
+                this.getUserMedia = wrapGetUserMedia(getUserMedia);
+                this.enumerateDevices = wrapEnumerateDevices(
+                    navigator.mediaDevices.enumerateDevices.bind(navigator.mediaDevices)
+                );
+            } else {
+                this.getUserMedia = getUserMedia;
+                this.enumerateDevices = enumerateDevicesThroughMediaStreamTrack;
             }
-        }.bind(this));
+            this.attachMediaStream = function (element, stream) {
+                element.attr('src', webkitURL.createObjectURL(stream));
+            };
+            this.getStreamID = function (stream) {
+                // streams from FF endpoints have the characters '{' and '}'
+                // that make jQuery choke.
+                return SDPUtil.filter_special_chars(stream.id);
+            };
+            this.getVideoSrc = function (element) {
+                if (!element)
+                    return null;
+                return element.getAttribute("src");
+            };
+            this.setVideoSrc = function (element, src) {
+                if (element)
+                    element.setAttribute("src", src);
+            };
+            // DTLS should now be enabled by default but..
+            this.pc_constraints = {'optional': [
+                {'DtlsSrtpKeyAgreement': 'true'}
+            ]};
+            if (options.useIPv6) {
+                // https://code.google.com/p/webrtc/issues/detail?id=2828
+                this.pc_constraints.optional.push({googIPv6: true});
+            }
+            if (RTCBrowserType.isAndroid()) {
+                this.pc_constraints = {}; // disable DTLS on Android
+            }
+            if (!webkitMediaStream.prototype.getVideoTracks) {
+                webkitMediaStream.prototype.getVideoTracks = function () {
+                    return this.videoTracks;
+                };
+            }
+            if (!webkitMediaStream.prototype.getAudioTracks) {
+                webkitMediaStream.prototype.getAudioTracks = function () {
+                    return this.audioTracks;
+                };
+            }
+        }
+        // Detect IE/Safari
+        else if (RTCBrowserType.isTemasysPluginUsed()) {
+
+            //AdapterJS.WebRTCPlugin.setLogLevel(
+            //    AdapterJS.WebRTCPlugin.PLUGIN_LOG_LEVELS.VERBOSE);
+
+            AdapterJS.webRTCReady(function (isPlugin) {
+
+                self.peerconnection = RTCPeerConnection;
+                self.getUserMedia = window.getUserMedia;
+                self.enumerateDevices = enumerateDevicesThroughMediaStreamTrack;
+                self.attachMediaStream = function (elSel, stream) {
+
+                    if (stream.id === "dummyAudio" || stream.id === "dummyVideo") {
+                        return;
+                    }
+
+                    attachMediaStream(elSel[0], stream);
+                };
+                self.getStreamID = function (stream) {
+                    var id = SDPUtil.filter_special_chars(stream.label);
+                    return id;
+                };
+                self.getVideoSrc = function (element) {
+                    if (!element) {
+                        logger.warn("Attempt to get video SRC of null element");
+                        return null;
+                    }
+                    var children = element.children;
+                    for (var i = 0; i !== children.length; ++i) {
+                        if (children[i].name === 'streamId') {
+                            return children[i].value;
+                        }
+                    }
+                    //logger.info(element.id + " SRC: " + src);
+                    return null;
+                };
+                self.setVideoSrc = function (element, src) {
+                    //logger.info("Set video src: ", element, src);
+                    if (!src) {
+                        logger.warn("Not attaching video stream, 'src' is null");
+                        return;
+                    }
+                    AdapterJS.WebRTCPlugin.WaitForPluginReady();
+                    var stream = AdapterJS.WebRTCPlugin.plugin
+                        .getStreamWithId(AdapterJS.WebRTCPlugin.pageId, src);
+                    attachMediaStream(element, stream);
+                };
+
+                onReady(options, self.getUserMediaWithConstraints);
+            });
+        } else {
+            try {
+                logger.error('Browser does not appear to be WebRTC-capable');
+            } catch (e) {
+            }
+            return;
+        }
+
+        // Call onReady() if Temasys plugin is not used
+        if (!RTCBrowserType.isTemasysPluginUsed()) {
+            onReady(options, self.getUserMediaWithConstraints);
+        }
+
     },
     /**
     * @param {string[]} um required user media types
@@ -2554,13 +2637,15 @@ var RTCUtils = {
         options = options || {};
         return new Promise(function (resolve, reject) {
             var successCallback = function (stream) {
-                resolve(handleLocalStream(stream, options.resolution));
+                var streams = handleLocalStream(stream, options.resolution);
+                resolve(options.dontCreateJitsiTracks?
+                    streams: createLocalTracks(streams));
             };
 
             options.devices = options.devices || ['audio', 'video'];
             if(!screenObtainer.isSupported()
                 && options.devices.indexOf("desktop") !== -1){
-                reject(new Error("Desktop sharing is not supported!"));
+                options.devices.splice(options.devices.indexOf("desktop"), 1);
             }
             if (RTCBrowserType.isFirefox() ||
                 RTCBrowserType.isTemasysPluginUsed()) {
@@ -2603,14 +2688,14 @@ var RTCUtils = {
                                             desktopStream: desktopStream});
                                     }, function (error) {
                                         reject(
-                                            JitsiTrackErrors.parseError(error));
+                                            JitsiMeetJSError.parseError(error));
                                     });
                             } else {
                                 successCallback({audioVideo: stream});
                             }
                         },
                         function (error) {
-                            reject(JitsiTrackErrors.parseError(error));
+                            reject(JitsiMeetJSError.parseError(error));
                         },
                         options);
                 } else if (hasDesktop) {
@@ -2619,7 +2704,7 @@ var RTCUtils = {
                             successCallback({desktopStream: stream});
                         }, function (error) {
                             reject(
-                                JitsiTrackErrors.parseError(error));
+                                JitsiMeetJSError.parseError(error));
                         });
                 }
             }
@@ -2672,7 +2757,7 @@ var RTCUtils = {
 module.exports = RTCUtils;
 
 }).call(this,"/modules/RTC/RTCUtils.js")
-},{"../../JitsiTrackErrors":9,"../../service/RTC/RTCEvents":82,"../../service/RTC/Resolutions":83,"../xmpp/SDPUtil":31,"./RTCBrowserType":16,"./ScreenObtainer":18,"./adapter.screenshare":19,"events":42,"jitsi-meet-logger":46}],18:[function(require,module,exports){
+},{"../../JitsiMeetJSErrors":8,"../../service/RTC/RTCEvents":78,"../../service/RTC/Resolutions":79,"../../service/RTC/StreamEventTypes.js":80,"../xmpp/SDPUtil":31,"./JitsiLocalTrack":12,"./RTCBrowserType":16,"./ScreenObtainer":18,"./adapter.screenshare":19,"events":42,"jitsi-meet-logger":46}],18:[function(require,module,exports){
 (function (__filename){
 /* global chrome, $, alert */
 /* jshint -W003 */
@@ -3094,7 +3179,7 @@ function initFirefoxExtensionDetection(options) {
 module.exports = ScreenObtainer;
 
 }).call(this,"/modules/RTC/ScreenObtainer.js")
-},{"../../service/desktopsharing/DesktopSharingEventTypes":86,"./RTCBrowserType":16,"./adapter.screenshare":19,"jitsi-meet-logger":46}],19:[function(require,module,exports){
+},{"../../service/desktopsharing/DesktopSharingEventTypes":82,"./RTCBrowserType":16,"./adapter.screenshare":19,"jitsi-meet-logger":46}],19:[function(require,module,exports){
 (function (__filename){
 /*! adapterjs - v0.12.0 - 2015-09-04 */
 var console = require("jitsi-meet-logger").getLogger(__filename);
@@ -4483,7 +4568,7 @@ LocalStatsCollector.prototype.stop = function () {
 };
 
 module.exports = LocalStatsCollector;
-},{"../../service/statistics/Events":87,"../../service/statistics/constants":88,"../RTC/RTCBrowserType":16}],22:[function(require,module,exports){
+},{"../../service/statistics/Events":83,"../../service/statistics/constants":84,"../RTC/RTCBrowserType":16}],22:[function(require,module,exports){
 (function (__filename){
 /* global require, ssrc2jid */
 /* jshint -W117 */
@@ -5210,7 +5295,7 @@ StatsCollector.prototype.processAudioLevelReport = function () {
 };
 
 }).call(this,"/modules/statistics/RTPStatsCollector.js")
-},{"../../service/statistics/Events":87,"../RTC/RTCBrowserType":16,"jitsi-meet-logger":46}],23:[function(require,module,exports){
+},{"../../service/statistics/Events":83,"../RTC/RTCBrowserType":16,"jitsi-meet-logger":46}],23:[function(require,module,exports){
 /* global require, APP */
 var LocalStats = require("./LocalStatsCollector.js");
 var RTPStats = require("./RTPStatsCollector.js");
@@ -5358,7 +5443,7 @@ Statistics.LOCAL_JID = require("../../service/statistics/constants").LOCAL_JID;
 
 
 module.exports = Statistics;
-},{"../../service/statistics/Events":87,"../../service/statistics/constants":88,"./LocalStatsCollector.js":21,"./RTPStatsCollector.js":22,"events":42}],24:[function(require,module,exports){
+},{"../../service/statistics/Events":83,"../../service/statistics/constants":84,"./LocalStatsCollector.js":21,"./RTPStatsCollector.js":22,"events":42}],24:[function(require,module,exports){
 /**
 /**
  * @const
@@ -6079,7 +6164,7 @@ ChatRoom.prototype.getJidBySSRC = function (ssrc) {
 module.exports = ChatRoom;
 
 }).call(this,"/modules/xmpp/ChatRoom.js")
-},{"../../service/xmpp/XMPPEvents":89,"./moderator":33,"events":42,"jitsi-meet-logger":46}],26:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":85,"./moderator":33,"events":42,"jitsi-meet-logger":46}],26:[function(require,module,exports){
 (function (__filename){
 /*
  * JingleSession provides an API to manage a single Jingle session. We will
@@ -7805,7 +7890,7 @@ JingleSessionPC.prototype.remoteStreamAdded = function (data, times) {
 module.exports = JingleSessionPC;
 
 }).call(this,"/modules/xmpp/JingleSessionPC.js")
-},{"../../service/xmpp/XMPPEvents":89,"../RTC/RTC":15,"../RTC/RTCBrowserType":16,"./JingleSession":26,"./LocalSSRCReplacement":28,"./SDP":29,"./SDPDiffer":30,"./SDPUtil":31,"./TraceablePeerConnection":32,"async":41,"jitsi-meet-logger":46,"sdp-transform":78}],28:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":85,"../RTC/RTC":15,"../RTC/RTCBrowserType":16,"./JingleSession":26,"./LocalSSRCReplacement":28,"./SDP":29,"./SDPDiffer":30,"./SDPUtil":31,"./TraceablePeerConnection":32,"async":41,"jitsi-meet-logger":46,"sdp-transform":74}],28:[function(require,module,exports){
 (function (__filename){
 /* global $ */
 var logger = require("jitsi-meet-logger").getLogger(__filename);
@@ -8929,9 +9014,6 @@ module.exports = SDPDiffer;
 (function (__filename){
 
 var logger = require("jitsi-meet-logger").getLogger(__filename);
-var RTCBrowserType = require("../RTC/RTCBrowserType");
-
-
 SDPUtil = {
     filter_special_chars: function (text) {
         return text.replace(/[\\\/\{,\}\+]/g, "");
@@ -9251,7 +9333,6 @@ SDPUtil = {
             protocol = 'tcp';
         }
 
-        line += protocol; //.toUpperCase(); // chrome M23 doesn't like this
         line += ' ';
         line += cand.getAttribute('priority');
         line += ' ';
@@ -9291,9 +9372,8 @@ SDPUtil = {
     }
 };
 module.exports = SDPUtil;
-
 }).call(this,"/modules/xmpp/SDPUtil.js")
-},{"../RTC/RTCBrowserType":16,"jitsi-meet-logger":46}],32:[function(require,module,exports){
+},{"jitsi-meet-logger":46}],32:[function(require,module,exports){
 (function (__filename){
 /* global $ */
 var RTC = require('../RTC/RTC');
@@ -9322,7 +9402,7 @@ function TraceablePeerConnection(ice_config, constraints, session) {
     var Interop = require('sdp-interop').Interop;
     this.interop = new Interop();
     var Simulcast = require('sdp-simulcast');
-    this.simulcast = new Simulcast({numOfLayers: 2, explodeRemoteSimulcast: false});
+    this.simulcast = new Simulcast({numOfLayers: 3, explodeRemoteSimulcast: false});
 
     // override as desired
     this.trace = function (what, info) {
@@ -9518,7 +9598,7 @@ if (TraceablePeerConnection.prototype.__defineGetter__ !== undefined) {
             // FIXME this should probably be after the Unified Plan -> Plan B
             // transformation.
             desc = SSRCReplacement.mungeLocalVideoSSRC(desc);
-
+            
             this.trace('getLocalDescription::preTransform', dumpSDP(desc));
 
             // if we're running on FF, transform to Plan B first.
@@ -9741,8 +9821,9 @@ TraceablePeerConnection.prototype.getStats = function(callback, errback) {
 
 module.exports = TraceablePeerConnection;
 
+
 }).call(this,"/modules/xmpp/TraceablePeerConnection.js")
-},{"../../service/xmpp/XMPPEvents":89,"../RTC/RTC":15,"../RTC/RTCBrowserType.js":16,"./LocalSSRCReplacement":28,"jitsi-meet-logger":46,"sdp-interop":64,"sdp-simulcast":71,"sdp-transform":78}],33:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":85,"../RTC/RTC":15,"../RTC/RTCBrowserType.js":16,"./LocalSSRCReplacement":28,"jitsi-meet-logger":46,"sdp-interop":64,"sdp-simulcast":67,"sdp-transform":74}],33:[function(require,module,exports){
 (function (__filename){
 /* global $, $iq, APP, config, messageHandler,
  roomName, sessionTerminated, Strophe, Util */
@@ -10179,7 +10260,7 @@ module.exports = Moderator;
 
 
 }).call(this,"/modules/xmpp/moderator.js")
-},{"../../service/authentication/AuthenticationEvents":85,"../../service/xmpp/XMPPEvents":89,"../settings/Settings":20,"jitsi-meet-logger":46}],34:[function(require,module,exports){
+},{"../../service/authentication/AuthenticationEvents":81,"../../service/xmpp/XMPPEvents":85,"../settings/Settings":20,"jitsi-meet-logger":46}],34:[function(require,module,exports){
 (function (__filename){
 /* jshint -W117 */
 /* a simple MUC connection plugin
@@ -10573,7 +10654,7 @@ module.exports = function(XMPP, eventEmitter) {
 
 
 }).call(this,"/modules/xmpp/strophe.jingle.js")
-},{"../../service/xmpp/XMPPEvents":89,"../RTC/RTCBrowserType":16,"./JingleSessionPC":27,"jitsi-meet-logger":46}],36:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":85,"../RTC/RTCBrowserType":16,"./JingleSessionPC":27,"jitsi-meet-logger":46}],36:[function(require,module,exports){
 /* global Strophe */
 module.exports = function () {
 
@@ -10721,7 +10802,7 @@ module.exports = function (XMPP, eventEmitter) {
 };
 
 }).call(this,"/modules/xmpp/strophe.ping.js")
-},{"../../service/xmpp/XMPPEvents":89,"jitsi-meet-logger":46}],38:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":85,"jitsi-meet-logger":46}],38:[function(require,module,exports){
 (function (__filename){
 /* jshint -W117 */
 var logger = require("jitsi-meet-logger").getLogger(__filename);
@@ -11180,7 +11261,7 @@ XMPP.prototype.disconnect = function () {
 module.exports = XMPP;
 
 }).call(this,"/modules/xmpp/xmpp.js")
-},{"../../JitsiConnectionErrors":5,"../../JitsiConnectionEvents":6,"../../service/RTC/RTCEvents":82,"../../service/RTC/StreamEventTypes":84,"../../service/xmpp/XMPPEvents":89,"../RTC/RTC":15,"./strophe.emuc":34,"./strophe.jingle":35,"./strophe.logger":36,"./strophe.ping":37,"./strophe.rayo":38,"./strophe.util":39,"events":42,"jitsi-meet-logger":46,"pako":47}],41:[function(require,module,exports){
+},{"../../JitsiConnectionErrors":5,"../../JitsiConnectionEvents":6,"../../service/RTC/RTCEvents":78,"../../service/RTC/StreamEventTypes":80,"../../service/xmpp/XMPPEvents":85,"../RTC/RTC":15,"./strophe.emuc":34,"./strophe.jingle":35,"./strophe.logger":36,"./strophe.ping":37,"./strophe.rayo":38,"./strophe.util":39,"events":42,"jitsi-meet-logger":46,"pako":47}],41:[function(require,module,exports){
 (function (process){
 /*!
  * async
@@ -21230,487 +21311,7 @@ exports.parse = function(sdp) {
 };
 
 
-},{"sdp-transform":68}],67:[function(require,module,exports){
-var grammar = module.exports = {
-  v: [{
-      name: 'version',
-      reg: /^(\d*)$/
-  }],
-  o: [{ //o=- 20518 0 IN IP4 203.0.113.1
-    // NB: sessionId will be a String in most cases because it is huge
-    name: 'origin',
-    reg: /^(\S*) (\d*) (\d*) (\S*) IP(\d) (\S*)/,
-    names: ['username', 'sessionId', 'sessionVersion', 'netType', 'ipVer', 'address'],
-    format: "%s %s %d %s IP%d %s"
-  }],
-  // default parsing of these only (though some of these feel outdated)
-  s: [{ name: 'name' }],
-  i: [{ name: 'description' }],
-  u: [{ name: 'uri' }],
-  e: [{ name: 'email' }],
-  p: [{ name: 'phone' }],
-  z: [{ name: 'timezones' }], // TODO: this one can actually be parsed properly..
-  r: [{ name: 'repeats' }],   // TODO: this one can also be parsed properly
-  //k: [{}], // outdated thing ignored
-  t: [{ //t=0 0
-    name: 'timing',
-    reg: /^(\d*) (\d*)/,
-    names: ['start', 'stop'],
-    format: "%d %d"
-  }],
-  c: [{ //c=IN IP4 10.47.197.26
-      name: 'connection',
-      reg: /^IN IP(\d) (\S*)/,
-      names: ['version', 'ip'],
-      format: "IN IP%d %s"
-  }],
-  b: [{ //b=AS:4000
-      push: 'bandwidth',
-      reg: /^(TIAS|AS|CT|RR|RS):(\d*)/,
-      names: ['type', 'limit'],
-      format: "%s:%s"
-  }],
-  m: [{ //m=video 51744 RTP/AVP 126 97 98 34 31
-      // NB: special - pushes to session
-      // TODO: rtp/fmtp should be filtered by the payloads found here?
-      reg: /^(\w*) (\d*) ([\w\/]*)(?: (.*))?/,
-      names: ['type', 'port', 'protocol', 'payloads'],
-      format: "%s %d %s %s"
-  }],
-  a: [
-    { //a=rtpmap:110 opus/48000/2
-      push: 'rtp',
-      reg: /^rtpmap:(\d*) ([\w\-]*)(?:\s*\/(\d*)(?:\s*\/(\S*))?)?/,
-      names: ['payload', 'codec', 'rate', 'encoding'],
-      format: function (o) {
-        return (o.encoding) ?
-          "rtpmap:%d %s/%s/%s":
-          o.rate ?
-          "rtpmap:%d %s/%s":
-          "rtpmap:%d %s";
-      }
-    },
-    {
-      //a=fmtp:108 profile-level-id=24;object=23;bitrate=64000
-      //a=fmtp:111 minptime=10; useinbandfec=1
-      push: 'fmtp',
-      reg: /^fmtp:(\d*) ([\S| ]*)/,
-      names: ['payload', 'config'],
-      format: "fmtp:%d %s"
-    },
-    { //a=control:streamid=0
-        name: 'control',
-        reg: /^control:(.*)/,
-        format: "control:%s"
-    },
-    { //a=rtcp:65179 IN IP4 193.84.77.194
-      name: 'rtcp',
-      reg: /^rtcp:(\d*)(?: (\S*) IP(\d) (\S*))?/,
-      names: ['port', 'netType', 'ipVer', 'address'],
-      format: function (o) {
-        return (o.address != null) ?
-          "rtcp:%d %s IP%d %s":
-          "rtcp:%d";
-      }
-    },
-    { //a=rtcp-fb:98 trr-int 100
-      push: 'rtcpFbTrrInt',
-      reg: /^rtcp-fb:(\*|\d*) trr-int (\d*)/,
-      names: ['payload', 'value'],
-      format: "rtcp-fb:%d trr-int %d"
-    },
-    { //a=rtcp-fb:98 nack rpsi
-      push: 'rtcpFb',
-      reg: /^rtcp-fb:(\*|\d*) ([\w-_]*)(?: ([\w-_]*))?/,
-      names: ['payload', 'type', 'subtype'],
-      format: function (o) {
-        return (o.subtype != null) ?
-          "rtcp-fb:%s %s %s":
-          "rtcp-fb:%s %s";
-      }
-    },
-    { //a=extmap:2 urn:ietf:params:rtp-hdrext:toffset
-      //a=extmap:1/recvonly URI-gps-string
-      push: 'ext',
-      reg: /^extmap:([\w_\/]*) (\S*)(?: (\S*))?/,
-      names: ['value', 'uri', 'config'], // value may include "/direction" suffix
-      format: function (o) {
-        return (o.config != null) ?
-          "extmap:%s %s %s":
-          "extmap:%s %s";
-      }
-    },
-    {
-      //a=crypto:1 AES_CM_128_HMAC_SHA1_80 inline:PS1uQCVeeCFCanVmcjkpPywjNWhcYD0mXXtxaVBR|2^20|1:32
-      push: 'crypto',
-      reg: /^crypto:(\d*) ([\w_]*) (\S*)(?: (\S*))?/,
-      names: ['id', 'suite', 'config', 'sessionConfig'],
-      format: function (o) {
-        return (o.sessionConfig != null) ?
-          "crypto:%d %s %s %s":
-          "crypto:%d %s %s";
-      }
-    },
-    { //a=setup:actpass
-      name: 'setup',
-      reg: /^setup:(\w*)/,
-      format: "setup:%s"
-    },
-    { //a=mid:1
-      name: 'mid',
-      reg: /^mid:([^\s]*)/,
-      format: "mid:%s"
-    },
-    { //a=msid:0c8b064d-d807-43b4-b434-f92a889d8587 98178685-d409-46e0-8e16-7ef0db0db64a
-      name: 'msid',
-      reg: /^msid:(.*)/,
-      format: "msid:%s"
-    },
-    { //a=ptime:20
-      name: 'ptime',
-      reg: /^ptime:(\d*)/,
-      format: "ptime:%d"
-    },
-    { //a=maxptime:60
-      name: 'maxptime',
-      reg: /^maxptime:(\d*)/,
-      format: "maxptime:%d"
-    },
-    { //a=sendrecv
-      name: 'direction',
-      reg: /^(sendrecv|recvonly|sendonly|inactive)/
-    },
-    { //a=ice-lite
-      name: 'icelite',
-      reg: /^(ice-lite)/
-    },
-    { //a=ice-ufrag:F7gI
-      name: 'iceUfrag',
-      reg: /^ice-ufrag:(\S*)/,
-      format: "ice-ufrag:%s"
-    },
-    { //a=ice-pwd:x9cml/YzichV2+XlhiMu8g
-      name: 'icePwd',
-      reg: /^ice-pwd:(\S*)/,
-      format: "ice-pwd:%s"
-    },
-    { //a=fingerprint:SHA-1 00:11:22:33:44:55:66:77:88:99:AA:BB:CC:DD:EE:FF:00:11:22:33
-      name: 'fingerprint',
-      reg: /^fingerprint:(\S*) (\S*)/,
-      names: ['type', 'hash'],
-      format: "fingerprint:%s %s"
-    },
-    {
-      //a=candidate:0 1 UDP 2113667327 203.0.113.1 54400 typ host
-      //a=candidate:1162875081 1 udp 2113937151 192.168.34.75 60017 typ host generation 0
-      //a=candidate:3289912957 2 udp 1845501695 193.84.77.194 60017 typ srflx raddr 192.168.34.75 rport 60017 generation 0
-      //a=candidate:229815620 1 tcp 1518280447 192.168.150.19 60017 typ host tcptype active generation 0
-      //a=candidate:3289912957 2 tcp 1845501695 193.84.77.194 60017 typ srflx raddr 192.168.34.75 rport 60017 tcptype passive generation 0
-      push:'candidates',
-      reg: /^candidate:(\S*) (\d*) (\S*) (\d*) (\S*) (\d*) typ (\S*)(?: raddr (\S*) rport (\d*))?(?: tcptype (\S*))?(?: generation (\d*))?/,
-      names: ['foundation', 'component', 'transport', 'priority', 'ip', 'port', 'type', 'raddr', 'rport', 'tcptype', 'generation'],
-      format: function (o) {
-        var str = "candidate:%s %d %s %d %s %d typ %s";
-
-        str += (o.raddr != null) ? " raddr %s rport %d" : "%v%v";
-
-        // NB: candidate has three optional chunks, so %void middles one if it's missing
-        str += (o.tcptype != null) ? " tcptype %s" : "%v";
-
-        if (o.generation != null) {
-          str += " generation %d";
-        }
-        return str;
-      }
-    },
-    { //a=end-of-candidates (keep after the candidates line for readability)
-      name: 'endOfCandidates',
-      reg: /^(end-of-candidates)/
-    },
-    { //a=remote-candidates:1 203.0.113.1 54400 2 203.0.113.1 54401 ...
-      name: 'remoteCandidates',
-      reg: /^remote-candidates:(.*)/,
-      format: "remote-candidates:%s"
-    },
-    { //a=ice-options:google-ice
-      name: 'iceOptions',
-      reg: /^ice-options:(\S*)/,
-      format: "ice-options:%s"
-    },
-    { //a=ssrc:2566107569 cname:t9YU8M1UxTF8Y1A1
-      push: "ssrcs",
-      reg: /^ssrc:(\d*) ([\w_]*):(.*)/,
-      names: ['id', 'attribute', 'value'],
-      format: "ssrc:%d %s:%s"
-    },
-    { //a=ssrc-group:FEC 1 2
-      push: "ssrcGroups",
-      reg: /^ssrc-group:(\w*) (.*)/,
-      names: ['semantics', 'ssrcs'],
-      format: "ssrc-group:%s %s"
-    },
-    { //a=msid-semantic: WMS Jvlam5X3SX1OP6pn20zWogvaKJz5Hjf9OnlV
-      name: "msidSemantic",
-      reg: /^msid-semantic:\s?(\w*) (\S*)/,
-      names: ['semantic', 'token'],
-      format: "msid-semantic: %s %s" // space after ":" is not accidental
-    },
-    { //a=group:BUNDLE audio video
-      push: 'groups',
-      reg: /^group:(\w*) (.*)/,
-      names: ['type', 'mids'],
-      format: "group:%s %s"
-    },
-    { //a=rtcp-mux
-      name: 'rtcpMux',
-      reg: /^(rtcp-mux)/
-    },
-    { //a=rtcp-rsize
-      name: 'rtcpRsize',
-      reg: /^(rtcp-rsize)/
-    },
-    { // any a= that we don't understand is kepts verbatim on media.invalid
-      push: 'invalid',
-      names: ["value"]
-    }
-  ]
-};
-
-// set sensible defaults to avoid polluting the grammar with boring details
-Object.keys(grammar).forEach(function (key) {
-  var objs = grammar[key];
-  objs.forEach(function (obj) {
-    if (!obj.reg) {
-      obj.reg = /(.*)/;
-    }
-    if (!obj.format) {
-      obj.format = "%s";
-    }
-  });
-});
-
-},{}],68:[function(require,module,exports){
-var parser = require('./parser');
-var writer = require('./writer');
-
-exports.write = writer;
-exports.parse = parser.parse;
-exports.parseFmtpConfig = parser.parseFmtpConfig;
-exports.parsePayloads = parser.parsePayloads;
-exports.parseRemoteCandidates = parser.parseRemoteCandidates;
-
-},{"./parser":69,"./writer":70}],69:[function(require,module,exports){
-var toIntIfInt = function (v) {
-  return String(Number(v)) === v ? Number(v) : v;
-};
-
-var attachProperties = function (match, location, names, rawName) {
-  if (rawName && !names) {
-    location[rawName] = toIntIfInt(match[1]);
-  }
-  else {
-    for (var i = 0; i < names.length; i += 1) {
-      if (match[i+1] != null) {
-        location[names[i]] = toIntIfInt(match[i+1]);
-      }
-    }
-  }
-};
-
-var parseReg = function (obj, location, content) {
-  var needsBlank = obj.name && obj.names;
-  if (obj.push && !location[obj.push]) {
-    location[obj.push] = [];
-  }
-  else if (needsBlank && !location[obj.name]) {
-    location[obj.name] = {};
-  }
-  var keyLocation = obj.push ?
-    {} :  // blank object that will be pushed
-    needsBlank ? location[obj.name] : location; // otherwise, named location or root
-
-  attachProperties(content.match(obj.reg), keyLocation, obj.names, obj.name);
-
-  if (obj.push) {
-    location[obj.push].push(keyLocation);
-  }
-};
-
-var grammar = require('./grammar');
-var validLine = RegExp.prototype.test.bind(/^([a-z])=(.*)/);
-
-exports.parse = function (sdp) {
-  var session = {}
-    , media = []
-    , location = session; // points at where properties go under (one of the above)
-
-  // parse lines we understand
-  sdp.split(/(\r\n|\r|\n)/).filter(validLine).forEach(function (l) {
-    var type = l[0];
-    var content = l.slice(2);
-    if (type === 'm') {
-      media.push({rtp: [], fmtp: []});
-      location = media[media.length-1]; // point at latest media line
-    }
-
-    for (var j = 0; j < (grammar[type] || []).length; j += 1) {
-      var obj = grammar[type][j];
-      if (obj.reg.test(content)) {
-        return parseReg(obj, location, content);
-      }
-    }
-  });
-
-  session.media = media; // link it up
-  return session;
-};
-
-var fmtpReducer = function (acc, expr) {
-  var s = expr.split('=');
-  if (s.length === 2) {
-    acc[s[0]] = toIntIfInt(s[1]);
-  }
-  return acc;
-};
-
-exports.parseFmtpConfig = function (str) {
-  return str.split(/\;\s?/).reduce(fmtpReducer, {});
-};
-
-exports.parsePayloads = function (str) {
-  return str.split(' ').map(Number);
-};
-
-exports.parseRemoteCandidates = function (str) {
-  var candidates = [];
-  var parts = str.split(' ').map(toIntIfInt);
-  for (var i = 0; i < parts.length; i += 3) {
-    candidates.push({
-      component: parts[i],
-      ip: parts[i + 1],
-      port: parts[i + 2]
-    });
-  }
-  return candidates;
-};
-
-},{"./grammar":67}],70:[function(require,module,exports){
-var grammar = require('./grammar');
-
-// customized util.format - discards excess arguments and can void middle ones
-var formatRegExp = /%[sdv%]/g;
-var format = function (formatStr) {
-  var i = 1;
-  var args = arguments;
-  var len = args.length;
-  return formatStr.replace(formatRegExp, function (x) {
-    if (i >= len) {
-      return x; // missing argument
-    }
-    var arg = args[i];
-    i += 1;
-    switch (x) {
-      case '%%':
-        return '%';
-      case '%s':
-        return String(arg);
-      case '%d':
-        return Number(arg);
-      case '%v':
-        return '';
-    }
-  });
-  // NB: we discard excess arguments - they are typically undefined from makeLine
-};
-
-var makeLine = function (type, obj, location) {
-  var str = obj.format instanceof Function ?
-    (obj.format(obj.push ? location : location[obj.name])) :
-    obj.format;
-
-  var args = [type + '=' + str];
-  if (obj.names) {
-    for (var i = 0; i < obj.names.length; i += 1) {
-      var n = obj.names[i];
-      if (obj.name) {
-        args.push(location[obj.name][n]);
-      }
-      else { // for mLine and push attributes
-        args.push(location[obj.names[i]]);
-      }
-    }
-  }
-  else {
-    args.push(location[obj.name]);
-  }
-  return format.apply(null, args);
-};
-
-// RFC specified order
-// TODO: extend this with all the rest
-var defaultOuterOrder = [
-  'v', 'o', 's', 'i',
-  'u', 'e', 'p', 'c',
-  'b', 't', 'r', 'z', 'a'
-];
-var defaultInnerOrder = ['i', 'c', 'b', 'a'];
-
-
-module.exports = function (session, opts) {
-  opts = opts || {};
-  // ensure certain properties exist
-  if (session.version == null) {
-    session.version = 0; // "v=0" must be there (only defined version atm)
-  }
-  if (session.name == null) {
-    session.name = " "; // "s= " must be there if no meaningful name set
-  }
-  session.media.forEach(function (mLine) {
-    if (mLine.payloads == null) {
-      mLine.payloads = "";
-    }
-  });
-
-  var outerOrder = opts.outerOrder || defaultOuterOrder;
-  var innerOrder = opts.innerOrder || defaultInnerOrder;
-  var sdp = [];
-
-  // loop through outerOrder for matching properties on session
-  outerOrder.forEach(function (type) {
-    grammar[type].forEach(function (obj) {
-      if (obj.name in session && session[obj.name] != null) {
-        sdp.push(makeLine(type, obj, session));
-      }
-      else if (obj.push in session && session[obj.push] != null) {
-        session[obj.push].forEach(function (el) {
-          sdp.push(makeLine(type, obj, el));
-        });
-      }
-    });
-  });
-
-  // then for each media line, follow the innerOrder
-  session.media.forEach(function (mLine) {
-    sdp.push(makeLine('m', grammar.m[0], mLine));
-
-    innerOrder.forEach(function (type) {
-      grammar[type].forEach(function (obj) {
-        if (obj.name in mLine && mLine[obj.name] != null) {
-          sdp.push(makeLine(type, obj, mLine));
-        }
-        else if (obj.push in mLine && mLine[obj.push] != null) {
-          mLine[obj.push].forEach(function (el) {
-            sdp.push(makeLine(type, obj, el));
-          });
-        }
-      });
-    });
-  });
-
-  return sdp.join('\r\n') + '\r\n';
-};
-
-},{"./grammar":67}],71:[function(require,module,exports){
+},{"sdp-transform":74}],67:[function(require,module,exports){
 /* Copyright @ 2015 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -22130,7 +21731,7 @@ Simulcast.prototype.mungeLocalDescription = function (desc) {
 
 module.exports = Simulcast;
 
-},{"./transform-utils":72,"sdp-transform":74}],72:[function(require,module,exports){
+},{"./transform-utils":68,"sdp-transform":70}],68:[function(require,module,exports){
 /* Copyright @ 2015 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -22196,30 +21797,834 @@ exports.parseSsrcs = function (mLine) {
 };
 
 
-},{}],73:[function(require,module,exports){
-arguments[4][67][0].apply(exports,arguments)
-},{"dup":67}],74:[function(require,module,exports){
-arguments[4][68][0].apply(exports,arguments)
-},{"./parser":75,"./writer":76,"dup":68}],75:[function(require,module,exports){
-arguments[4][69][0].apply(exports,arguments)
-},{"./grammar":73,"dup":69}],76:[function(require,module,exports){
+},{}],69:[function(require,module,exports){
+var grammar = module.exports = {
+  v: [{
+      name: 'version',
+      reg: /^(\d*)$/
+  }],
+  o: [{ //o=- 20518 0 IN IP4 203.0.113.1
+    // NB: sessionId will be a String in most cases because it is huge
+    name: 'origin',
+    reg: /^(\S*) (\d*) (\d*) (\S*) IP(\d) (\S*)/,
+    names: ['username', 'sessionId', 'sessionVersion', 'netType', 'ipVer', 'address'],
+    format: "%s %s %d %s IP%d %s"
+  }],
+  // default parsing of these only (though some of these feel outdated)
+  s: [{ name: 'name' }],
+  i: [{ name: 'description' }],
+  u: [{ name: 'uri' }],
+  e: [{ name: 'email' }],
+  p: [{ name: 'phone' }],
+  z: [{ name: 'timezones' }], // TODO: this one can actually be parsed properly..
+  r: [{ name: 'repeats' }],   // TODO: this one can also be parsed properly
+  //k: [{}], // outdated thing ignored
+  t: [{ //t=0 0
+    name: 'timing',
+    reg: /^(\d*) (\d*)/,
+    names: ['start', 'stop'],
+    format: "%d %d"
+  }],
+  c: [{ //c=IN IP4 10.47.197.26
+      name: 'connection',
+      reg: /^IN IP(\d) (\S*)/,
+      names: ['version', 'ip'],
+      format: "IN IP%d %s"
+  }],
+  b: [{ //b=AS:4000
+      push: 'bandwidth',
+      reg: /^(TIAS|AS|CT|RR|RS):(\d*)/,
+      names: ['type', 'limit'],
+      format: "%s:%s"
+  }],
+  m: [{ //m=video 51744 RTP/AVP 126 97 98 34 31
+      // NB: special - pushes to session
+      // TODO: rtp/fmtp should be filtered by the payloads found here?
+      reg: /^(\w*) (\d*) ([\w\/]*)(?: (.*))?/,
+      names: ['type', 'port', 'protocol', 'payloads'],
+      format: "%s %d %s %s"
+  }],
+  a: [
+    { //a=rtpmap:110 opus/48000/2
+      push: 'rtp',
+      reg: /^rtpmap:(\d*) ([\w\-]*)\/(\d*)(?:\s*\/(\S*))?/,
+      names: ['payload', 'codec', 'rate', 'encoding'],
+      format: function (o) {
+        return (o.encoding) ?
+          "rtpmap:%d %s/%s/%s":
+          "rtpmap:%d %s/%s";
+      }
+    },
+    { //a=fmtp:108 profile-level-id=24;object=23;bitrate=64000
+      push: 'fmtp',
+      reg: /^fmtp:(\d*) (\S*)/,
+      names: ['payload', 'config'],
+      format: "fmtp:%d %s"
+    },
+    { //a=control:streamid=0
+        name: 'control',
+        reg: /^control:(.*)/,
+        format: "control:%s"
+    },
+    { //a=rtcp:65179 IN IP4 193.84.77.194
+      name: 'rtcp',
+      reg: /^rtcp:(\d*)(?: (\S*) IP(\d) (\S*))?/,
+      names: ['port', 'netType', 'ipVer', 'address'],
+      format: function (o) {
+        return (o.address != null) ?
+          "rtcp:%d %s IP%d %s":
+          "rtcp:%d";
+      }
+    },
+    { //a=rtcp-fb:98 trr-int 100
+      push: 'rtcpFbTrrInt',
+      reg: /^rtcp-fb:(\*|\d*) trr-int (\d*)/,
+      names: ['payload', 'value'],
+      format: "rtcp-fb:%d trr-int %d"
+    },
+    { //a=rtcp-fb:98 nack rpsi
+      push: 'rtcpFb',
+      reg: /^rtcp-fb:(\*|\d*) ([\w-_]*)(?: ([\w-_]*))?/,
+      names: ['payload', 'type', 'subtype'],
+      format: function (o) {
+        return (o.subtype != null) ?
+          "rtcp-fb:%s %s %s":
+          "rtcp-fb:%s %s";
+      }
+    },
+    { //a=extmap:2 urn:ietf:params:rtp-hdrext:toffset
+      //a=extmap:1/recvonly URI-gps-string
+      push: 'ext',
+      reg: /^extmap:([\w_\/]*) (\S*)(?: (\S*))?/,
+      names: ['value', 'uri', 'config'], // value may include "/direction" suffix
+      format: function (o) {
+        return (o.config != null) ?
+          "extmap:%s %s %s":
+          "extmap:%s %s";
+      }
+    },
+    {
+      //a=crypto:1 AES_CM_128_HMAC_SHA1_80 inline:PS1uQCVeeCFCanVmcjkpPywjNWhcYD0mXXtxaVBR|2^20|1:32
+      push: 'crypto',
+      reg: /^crypto:(\d*) ([\w_]*) (\S*)(?: (\S*))?/,
+      names: ['id', 'suite', 'config', 'sessionConfig'],
+      format: function (o) {
+        return (o.sessionConfig != null) ?
+          "crypto:%d %s %s %s":
+          "crypto:%d %s %s";
+      }
+    },
+    { //a=setup:actpass
+      name: 'setup',
+      reg: /^setup:(\w*)/,
+      format: "setup:%s"
+    },
+    { //a=mid:1
+      name: 'mid',
+      reg: /^mid:([^\s]*)/,
+      format: "mid:%s"
+    },
+    { //a=msid:0c8b064d-d807-43b4-b434-f92a889d8587 98178685-d409-46e0-8e16-7ef0db0db64a
+      name: 'msid',
+      reg: /^msid:(.*)/,
+      format: "msid:%s"
+    },
+    { //a=ptime:20
+      name: 'ptime',
+      reg: /^ptime:(\d*)/,
+      format: "ptime:%d"
+    },
+    { //a=maxptime:60
+      name: 'maxptime',
+      reg: /^maxptime:(\d*)/,
+      format: "maxptime:%d"
+    },
+    { //a=sendrecv
+      name: 'direction',
+      reg: /^(sendrecv|recvonly|sendonly|inactive)/
+    },
+    { //a=ice-lite
+      name: 'icelite',
+      reg: /^(ice-lite)/
+    },
+    { //a=ice-ufrag:F7gI
+      name: 'iceUfrag',
+      reg: /^ice-ufrag:(\S*)/,
+      format: "ice-ufrag:%s"
+    },
+    { //a=ice-pwd:x9cml/YzichV2+XlhiMu8g
+      name: 'icePwd',
+      reg: /^ice-pwd:(\S*)/,
+      format: "ice-pwd:%s"
+    },
+    { //a=fingerprint:SHA-1 00:11:22:33:44:55:66:77:88:99:AA:BB:CC:DD:EE:FF:00:11:22:33
+      name: 'fingerprint',
+      reg: /^fingerprint:(\S*) (\S*)/,
+      names: ['type', 'hash'],
+      format: "fingerprint:%s %s"
+    },
+    {
+      //a=candidate:0 1 UDP 2113667327 203.0.113.1 54400 typ host
+      //a=candidate:1162875081 1 udp 2113937151 192.168.34.75 60017 typ host generation 0
+      //a=candidate:3289912957 2 udp 1845501695 193.84.77.194 60017 typ srflx raddr 192.168.34.75 rport 60017 generation 0
+      push:'candidates',
+      reg: /^candidate:(\S*) (\d*) (\S*) (\d*) (\S*) (\d*) typ (\S*)(?: raddr (\S*) rport (\d*))?(?: generation (\d*))?/,
+      names: ['foundation', 'component', 'transport', 'priority', 'ip', 'port', 'type', 'raddr', 'rport', 'generation'],
+      format: function (o) {
+        var str = "candidate:%s %d %s %d %s %d typ %s";
+        // NB: candidate has two optional chunks, so %void middle one if it's missing
+        str += (o.raddr != null) ? " raddr %s rport %d" : "%v%v";
+        if (o.generation != null) {
+          str += " generation %d";
+        }
+        return str;
+      }
+    },
+    { //a=end-of-candidates (keep after the candidates line for readability)
+      name: 'endOfCandidates',
+      reg: /^(end-of-candidates)/
+    },
+    { //a=remote-candidates:1 203.0.113.1 54400 2 203.0.113.1 54401 ...
+      name: 'remoteCandidates',
+      reg: /^remote-candidates:(.*)/,
+      format: "remote-candidates:%s"
+    },
+    { //a=ice-options:google-ice
+      name: 'iceOptions',
+      reg: /^ice-options:(\S*)/,
+      format: "ice-options:%s"
+    },
+    { //a=ssrc:2566107569 cname:t9YU8M1UxTF8Y1A1
+      push: "ssrcs",
+      reg: /^ssrc:(\d*) ([\w_]*):(.*)/,
+      names: ['id', 'attribute', 'value'],
+      format: "ssrc:%d %s:%s"
+    },
+    { //a=ssrc-group:FEC 1 2
+      push: "ssrcGroups",
+      reg: /^ssrc-group:(\w*) (.*)/,
+      names: ['semantics', 'ssrcs'],
+      format: "ssrc-group:%s %s"
+    },
+    { //a=msid-semantic: WMS Jvlam5X3SX1OP6pn20zWogvaKJz5Hjf9OnlV
+      name: "msidSemantic",
+      reg: /^msid-semantic:\s?(\w*) (\S*)/,
+      names: ['semantic', 'token'],
+      format: "msid-semantic: %s %s" // space after ":" is not accidental
+    },
+    { //a=group:BUNDLE audio video
+      push: 'groups',
+      reg: /^group:(\w*) (.*)/,
+      names: ['type', 'mids'],
+      format: "group:%s %s"
+    },
+    { //a=rtcp-mux
+      name: 'rtcpMux',
+      reg: /^(rtcp-mux)/
+    },
+    { //a=rtcp-rsize
+      name: 'rtcpRsize',
+      reg: /^(rtcp-rsize)/
+    },
+    { // any a= that we don't understand is kepts verbatim on media.invalid
+      push: 'invalid',
+      names: ["value"]
+    }
+  ]
+};
+
+// set sensible defaults to avoid polluting the grammar with boring details
+Object.keys(grammar).forEach(function (key) {
+  var objs = grammar[key];
+  objs.forEach(function (obj) {
+    if (!obj.reg) {
+      obj.reg = /(.*)/;
+    }
+    if (!obj.format) {
+      obj.format = "%s";
+    }
+  });
+});
+
+},{}],70:[function(require,module,exports){
+var parser = require('./parser');
+var writer = require('./writer');
+
+exports.write = writer;
+exports.parse = parser.parse;
+exports.parseFmtpConfig = parser.parseFmtpConfig;
+exports.parsePayloads = parser.parsePayloads;
+exports.parseRemoteCandidates = parser.parseRemoteCandidates;
+
+},{"./parser":71,"./writer":72}],71:[function(require,module,exports){
+var toIntIfInt = function (v) {
+  return String(Number(v)) === v ? Number(v) : v;
+};
+
+var attachProperties = function (match, location, names, rawName) {
+  if (rawName && !names) {
+    location[rawName] = toIntIfInt(match[1]);
+  }
+  else {
+    for (var i = 0; i < names.length; i += 1) {
+      if (match[i+1] != null) {
+        location[names[i]] = toIntIfInt(match[i+1]);
+      }
+    }
+  }
+};
+
+var parseReg = function (obj, location, content) {
+  var needsBlank = obj.name && obj.names;
+  if (obj.push && !location[obj.push]) {
+    location[obj.push] = [];
+  }
+  else if (needsBlank && !location[obj.name]) {
+    location[obj.name] = {};
+  }
+  var keyLocation = obj.push ?
+    {} :  // blank object that will be pushed
+    needsBlank ? location[obj.name] : location; // otherwise, named location or root
+
+  attachProperties(content.match(obj.reg), keyLocation, obj.names, obj.name);
+
+  if (obj.push) {
+    location[obj.push].push(keyLocation);
+  }
+};
+
+var grammar = require('./grammar');
+var validLine = RegExp.prototype.test.bind(/^([a-z])=(.*)/);
+
+exports.parse = function (sdp) {
+  var session = {}
+    , media = []
+    , location = session; // points at where properties go under (one of the above)
+
+  // parse lines we understand
+  sdp.split(/(\r\n|\r|\n)/).filter(validLine).forEach(function (l) {
+    var type = l[0];
+    var content = l.slice(2);
+    if (type === 'm') {
+      media.push({rtp: [], fmtp: []});
+      location = media[media.length-1]; // point at latest media line
+    }
+
+    for (var j = 0; j < (grammar[type] || []).length; j += 1) {
+      var obj = grammar[type][j];
+      if (obj.reg.test(content)) {
+        return parseReg(obj, location, content);
+      }
+    }
+  });
+
+  session.media = media; // link it up
+  return session;
+};
+
+var fmtpReducer = function (acc, expr) {
+  var s = expr.split('=');
+  if (s.length === 2) {
+    acc[s[0]] = toIntIfInt(s[1]);
+  }
+  return acc;
+};
+
+exports.parseFmtpConfig = function (str) {
+  return str.split(';').reduce(fmtpReducer, {});
+};
+
+exports.parsePayloads = function (str) {
+  return str.split(' ').map(Number);
+};
+
+exports.parseRemoteCandidates = function (str) {
+  var candidates = [];
+  var parts = str.split(' ').map(toIntIfInt);
+  for (var i = 0; i < parts.length; i += 3) {
+    candidates.push({
+      component: parts[i],
+      ip: parts[i + 1],
+      port: parts[i + 2]
+    });
+  }
+  return candidates;
+};
+
+},{"./grammar":69}],72:[function(require,module,exports){
+var grammar = require('./grammar');
+
+// customized util.format - discards excess arguments and can void middle ones
+var formatRegExp = /%[sdv%]/g;
+var format = function (formatStr) {
+  var i = 1;
+  var args = arguments;
+  var len = args.length;
+  return formatStr.replace(formatRegExp, function (x) {
+    if (i >= len) {
+      return x; // missing argument
+    }
+    var arg = args[i];
+    i += 1;
+    switch (x) {
+      case '%%':
+        return '%';
+      case '%s':
+        return String(arg);
+      case '%d':
+        return Number(arg);
+      case '%v':
+        return '';
+    }
+  });
+  // NB: we discard excess arguments - they are typically undefined from makeLine
+};
+
+var makeLine = function (type, obj, location) {
+  var str = obj.format instanceof Function ?
+    (obj.format(obj.push ? location : location[obj.name])) :
+    obj.format;
+
+  var args = [type + '=' + str];
+  if (obj.names) {
+    for (var i = 0; i < obj.names.length; i += 1) {
+      var n = obj.names[i];
+      if (obj.name) {
+        args.push(location[obj.name][n]);
+      }
+      else { // for mLine and push attributes
+        args.push(location[obj.names[i]]);
+      }
+    }
+  }
+  else {
+    args.push(location[obj.name]);
+  }
+  return format.apply(null, args);
+};
+
+// RFC specified order
+// TODO: extend this with all the rest
+var defaultOuterOrder = [
+  'v', 'o', 's', 'i',
+  'u', 'e', 'p', 'c',
+  'b', 't', 'r', 'z', 'a'
+];
+var defaultInnerOrder = ['i', 'c', 'b', 'a'];
+
+
+module.exports = function (session, opts) {
+  opts = opts || {};
+  // ensure certain properties exist
+  if (session.version == null) {
+    session.version = 0; // "v=0" must be there (only defined version atm)
+  }
+  if (session.name == null) {
+    session.name = " "; // "s= " must be there if no meaningful name set
+  }
+  session.media.forEach(function (mLine) {
+    if (mLine.payloads == null) {
+      mLine.payloads = "";
+    }
+  });
+
+  var outerOrder = opts.outerOrder || defaultOuterOrder;
+  var innerOrder = opts.innerOrder || defaultInnerOrder;
+  var sdp = [];
+
+  // loop through outerOrder for matching properties on session
+  outerOrder.forEach(function (type) {
+    grammar[type].forEach(function (obj) {
+      if (obj.name in session && session[obj.name] != null) {
+        sdp.push(makeLine(type, obj, session));
+      }
+      else if (obj.push in session && session[obj.push] != null) {
+        session[obj.push].forEach(function (el) {
+          sdp.push(makeLine(type, obj, el));
+        });
+      }
+    });
+  });
+
+  // then for each media line, follow the innerOrder
+  session.media.forEach(function (mLine) {
+    sdp.push(makeLine('m', grammar.m[0], mLine));
+
+    innerOrder.forEach(function (type) {
+      grammar[type].forEach(function (obj) {
+        if (obj.name in mLine && mLine[obj.name] != null) {
+          sdp.push(makeLine(type, obj, mLine));
+        }
+        else if (obj.push in mLine && mLine[obj.push] != null) {
+          mLine[obj.push].forEach(function (el) {
+            sdp.push(makeLine(type, obj, el));
+          });
+        }
+      });
+    });
+  });
+
+  return sdp.join('\r\n') + '\r\n';
+};
+
+},{"./grammar":69}],73:[function(require,module,exports){
+var grammar = module.exports = {
+  v: [{
+      name: 'version',
+      reg: /^(\d*)$/
+  }],
+  o: [{ //o=- 20518 0 IN IP4 203.0.113.1
+    // NB: sessionId will be a String in most cases because it is huge
+    name: 'origin',
+    reg: /^(\S*) (\d*) (\d*) (\S*) IP(\d) (\S*)/,
+    names: ['username', 'sessionId', 'sessionVersion', 'netType', 'ipVer', 'address'],
+    format: "%s %s %d %s IP%d %s"
+  }],
+  // default parsing of these only (though some of these feel outdated)
+  s: [{ name: 'name' }],
+  i: [{ name: 'description' }],
+  u: [{ name: 'uri' }],
+  e: [{ name: 'email' }],
+  p: [{ name: 'phone' }],
+  z: [{ name: 'timezones' }], // TODO: this one can actually be parsed properly..
+  r: [{ name: 'repeats' }],   // TODO: this one can also be parsed properly
+  //k: [{}], // outdated thing ignored
+  t: [{ //t=0 0
+    name: 'timing',
+    reg: /^(\d*) (\d*)/,
+    names: ['start', 'stop'],
+    format: "%d %d"
+  }],
+  c: [{ //c=IN IP4 10.47.197.26
+      name: 'connection',
+      reg: /^IN IP(\d) (\S*)/,
+      names: ['version', 'ip'],
+      format: "IN IP%d %s"
+  }],
+  b: [{ //b=AS:4000
+      push: 'bandwidth',
+      reg: /^(TIAS|AS|CT|RR|RS):(\d*)/,
+      names: ['type', 'limit'],
+      format: "%s:%s"
+  }],
+  m: [{ //m=video 51744 RTP/AVP 126 97 98 34 31
+      // NB: special - pushes to session
+      // TODO: rtp/fmtp should be filtered by the payloads found here?
+      reg: /^(\w*) (\d*) ([\w\/]*)(?: (.*))?/,
+      names: ['type', 'port', 'protocol', 'payloads'],
+      format: "%s %d %s %s"
+  }],
+  a: [
+    { //a=rtpmap:110 opus/48000/2
+      push: 'rtp',
+      reg: /^rtpmap:(\d*) ([\w\-]*)\/(\d*)(?:\s*\/(\S*))?/,
+      names: ['payload', 'codec', 'rate', 'encoding'],
+      format: function (o) {
+        return (o.encoding) ?
+          "rtpmap:%d %s/%s/%s":
+          "rtpmap:%d %s/%s";
+      }
+    },
+    {
+      //a=fmtp:108 profile-level-id=24;object=23;bitrate=64000
+      //a=fmtp:111 minptime=10; useinbandfec=1
+      push: 'fmtp',
+      reg: /^fmtp:(\d*) ([\S| ]*)/,
+      names: ['payload', 'config'],
+      format: "fmtp:%d %s"
+    },
+    { //a=control:streamid=0
+        name: 'control',
+        reg: /^control:(.*)/,
+        format: "control:%s"
+    },
+    { //a=rtcp:65179 IN IP4 193.84.77.194
+      name: 'rtcp',
+      reg: /^rtcp:(\d*)(?: (\S*) IP(\d) (\S*))?/,
+      names: ['port', 'netType', 'ipVer', 'address'],
+      format: function (o) {
+        return (o.address != null) ?
+          "rtcp:%d %s IP%d %s":
+          "rtcp:%d";
+      }
+    },
+    { //a=rtcp-fb:98 trr-int 100
+      push: 'rtcpFbTrrInt',
+      reg: /^rtcp-fb:(\*|\d*) trr-int (\d*)/,
+      names: ['payload', 'value'],
+      format: "rtcp-fb:%d trr-int %d"
+    },
+    { //a=rtcp-fb:98 nack rpsi
+      push: 'rtcpFb',
+      reg: /^rtcp-fb:(\*|\d*) ([\w-_]*)(?: ([\w-_]*))?/,
+      names: ['payload', 'type', 'subtype'],
+      format: function (o) {
+        return (o.subtype != null) ?
+          "rtcp-fb:%s %s %s":
+          "rtcp-fb:%s %s";
+      }
+    },
+    { //a=extmap:2 urn:ietf:params:rtp-hdrext:toffset
+      //a=extmap:1/recvonly URI-gps-string
+      push: 'ext',
+      reg: /^extmap:([\w_\/]*) (\S*)(?: (\S*))?/,
+      names: ['value', 'uri', 'config'], // value may include "/direction" suffix
+      format: function (o) {
+        return (o.config != null) ?
+          "extmap:%s %s %s":
+          "extmap:%s %s";
+      }
+    },
+    {
+      //a=crypto:1 AES_CM_128_HMAC_SHA1_80 inline:PS1uQCVeeCFCanVmcjkpPywjNWhcYD0mXXtxaVBR|2^20|1:32
+      push: 'crypto',
+      reg: /^crypto:(\d*) ([\w_]*) (\S*)(?: (\S*))?/,
+      names: ['id', 'suite', 'config', 'sessionConfig'],
+      format: function (o) {
+        return (o.sessionConfig != null) ?
+          "crypto:%d %s %s %s":
+          "crypto:%d %s %s";
+      }
+    },
+    { //a=setup:actpass
+      name: 'setup',
+      reg: /^setup:(\w*)/,
+      format: "setup:%s"
+    },
+    { //a=mid:1
+      name: 'mid',
+      reg: /^mid:([^\s]*)/,
+      format: "mid:%s"
+    },
+    { //a=msid:0c8b064d-d807-43b4-b434-f92a889d8587 98178685-d409-46e0-8e16-7ef0db0db64a
+      name: 'msid',
+      reg: /^msid:(.*)/,
+      format: "msid:%s"
+    },
+    { //a=ptime:20
+      name: 'ptime',
+      reg: /^ptime:(\d*)/,
+      format: "ptime:%d"
+    },
+    { //a=maxptime:60
+      name: 'maxptime',
+      reg: /^maxptime:(\d*)/,
+      format: "maxptime:%d"
+    },
+    { //a=sendrecv
+      name: 'direction',
+      reg: /^(sendrecv|recvonly|sendonly|inactive)/
+    },
+    { //a=ice-lite
+      name: 'icelite',
+      reg: /^(ice-lite)/
+    },
+    { //a=ice-ufrag:F7gI
+      name: 'iceUfrag',
+      reg: /^ice-ufrag:(\S*)/,
+      format: "ice-ufrag:%s"
+    },
+    { //a=ice-pwd:x9cml/YzichV2+XlhiMu8g
+      name: 'icePwd',
+      reg: /^ice-pwd:(\S*)/,
+      format: "ice-pwd:%s"
+    },
+    { //a=fingerprint:SHA-1 00:11:22:33:44:55:66:77:88:99:AA:BB:CC:DD:EE:FF:00:11:22:33
+      name: 'fingerprint',
+      reg: /^fingerprint:(\S*) (\S*)/,
+      names: ['type', 'hash'],
+      format: "fingerprint:%s %s"
+    },
+    {
+      //a=candidate:0 1 UDP 2113667327 203.0.113.1 54400 typ host
+      //a=candidate:1162875081 1 udp 2113937151 192.168.34.75 60017 typ host generation 0
+      //a=candidate:3289912957 2 udp 1845501695 193.84.77.194 60017 typ srflx raddr 192.168.34.75 rport 60017 generation 0
+      push:'candidates',
+      reg: /^candidate:(\S*) (\d*) (\S*) (\d*) (\S*) (\d*) typ (\S*)(?: raddr (\S*) rport (\d*))?(?: generation (\d*))?/,
+      names: ['foundation', 'component', 'transport', 'priority', 'ip', 'port', 'type', 'raddr', 'rport', 'generation'],
+      format: function (o) {
+        var str = "candidate:%s %d %s %d %s %d typ %s";
+        // NB: candidate has two optional chunks, so %void middle one if it's missing
+        str += (o.raddr != null) ? " raddr %s rport %d" : "%v%v";
+        if (o.generation != null) {
+          str += " generation %d";
+        }
+        return str;
+      }
+    },
+    { //a=end-of-candidates (keep after the candidates line for readability)
+      name: 'endOfCandidates',
+      reg: /^(end-of-candidates)/
+    },
+    { //a=remote-candidates:1 203.0.113.1 54400 2 203.0.113.1 54401 ...
+      name: 'remoteCandidates',
+      reg: /^remote-candidates:(.*)/,
+      format: "remote-candidates:%s"
+    },
+    { //a=ice-options:google-ice
+      name: 'iceOptions',
+      reg: /^ice-options:(\S*)/,
+      format: "ice-options:%s"
+    },
+    { //a=ssrc:2566107569 cname:t9YU8M1UxTF8Y1A1
+      push: "ssrcs",
+      reg: /^ssrc:(\d*) ([\w_]*):(.*)/,
+      names: ['id', 'attribute', 'value'],
+      format: "ssrc:%d %s:%s"
+    },
+    { //a=ssrc-group:FEC 1 2
+      push: "ssrcGroups",
+      reg: /^ssrc-group:(\w*) (.*)/,
+      names: ['semantics', 'ssrcs'],
+      format: "ssrc-group:%s %s"
+    },
+    { //a=msid-semantic: WMS Jvlam5X3SX1OP6pn20zWogvaKJz5Hjf9OnlV
+      name: "msidSemantic",
+      reg: /^msid-semantic:\s?(\w*) (\S*)/,
+      names: ['semantic', 'token'],
+      format: "msid-semantic: %s %s" // space after ":" is not accidental
+    },
+    { //a=group:BUNDLE audio video
+      push: 'groups',
+      reg: /^group:(\w*) (.*)/,
+      names: ['type', 'mids'],
+      format: "group:%s %s"
+    },
+    { //a=rtcp-mux
+      name: 'rtcpMux',
+      reg: /^(rtcp-mux)/
+    },
+    { //a=rtcp-rsize
+      name: 'rtcpRsize',
+      reg: /^(rtcp-rsize)/
+    },
+    { // any a= that we don't understand is kepts verbatim on media.invalid
+      push: 'invalid',
+      names: ["value"]
+    }
+  ]
+};
+
+// set sensible defaults to avoid polluting the grammar with boring details
+Object.keys(grammar).forEach(function (key) {
+  var objs = grammar[key];
+  objs.forEach(function (obj) {
+    if (!obj.reg) {
+      obj.reg = /(.*)/;
+    }
+    if (!obj.format) {
+      obj.format = "%s";
+    }
+  });
+});
+
+},{}],74:[function(require,module,exports){
 arguments[4][70][0].apply(exports,arguments)
-},{"./grammar":73,"dup":70}],77:[function(require,module,exports){
-arguments[4][67][0].apply(exports,arguments)
-},{"dup":67}],78:[function(require,module,exports){
-arguments[4][68][0].apply(exports,arguments)
-},{"./parser":79,"./writer":80,"dup":68}],79:[function(require,module,exports){
-arguments[4][69][0].apply(exports,arguments)
-},{"./grammar":77,"dup":69}],80:[function(require,module,exports){
-arguments[4][70][0].apply(exports,arguments)
-},{"./grammar":77,"dup":70}],81:[function(require,module,exports){
+},{"./parser":75,"./writer":76,"dup":70}],75:[function(require,module,exports){
+var toIntIfInt = function (v) {
+  return String(Number(v)) === v ? Number(v) : v;
+};
+
+var attachProperties = function (match, location, names, rawName) {
+  if (rawName && !names) {
+    location[rawName] = toIntIfInt(match[1]);
+  }
+  else {
+    for (var i = 0; i < names.length; i += 1) {
+      if (match[i+1] != null) {
+        location[names[i]] = toIntIfInt(match[i+1]);
+      }
+    }
+  }
+};
+
+var parseReg = function (obj, location, content) {
+  var needsBlank = obj.name && obj.names;
+  if (obj.push && !location[obj.push]) {
+    location[obj.push] = [];
+  }
+  else if (needsBlank && !location[obj.name]) {
+    location[obj.name] = {};
+  }
+  var keyLocation = obj.push ?
+    {} :  // blank object that will be pushed
+    needsBlank ? location[obj.name] : location; // otherwise, named location or root
+
+  attachProperties(content.match(obj.reg), keyLocation, obj.names, obj.name);
+
+  if (obj.push) {
+    location[obj.push].push(keyLocation);
+  }
+};
+
+var grammar = require('./grammar');
+var validLine = RegExp.prototype.test.bind(/^([a-z])=(.*)/);
+
+exports.parse = function (sdp) {
+  var session = {}
+    , media = []
+    , location = session; // points at where properties go under (one of the above)
+
+  // parse lines we understand
+  sdp.split(/(\r\n|\r|\n)/).filter(validLine).forEach(function (l) {
+    var type = l[0];
+    var content = l.slice(2);
+    if (type === 'm') {
+      media.push({rtp: [], fmtp: []});
+      location = media[media.length-1]; // point at latest media line
+    }
+
+    for (var j = 0; j < (grammar[type] || []).length; j += 1) {
+      var obj = grammar[type][j];
+      if (obj.reg.test(content)) {
+        return parseReg(obj, location, content);
+      }
+    }
+  });
+
+  session.media = media; // link it up
+  return session;
+};
+
+var fmtpReducer = function (acc, expr) {
+  var s = expr.split('=');
+  if (s.length === 2) {
+    acc[s[0]] = toIntIfInt(s[1]);
+  }
+  return acc;
+};
+
+exports.parseFmtpConfig = function (str) {
+  return str.split(/\;\s?/).reduce(fmtpReducer, {});
+};
+
+exports.parsePayloads = function (str) {
+  return str.split(' ').map(Number);
+};
+
+exports.parseRemoteCandidates = function (str) {
+  var candidates = [];
+  var parts = str.split(' ').map(toIntIfInt);
+  for (var i = 0; i < parts.length; i += 3) {
+    candidates.push({
+      component: parts[i],
+      ip: parts[i + 1],
+      port: parts[i + 2]
+    });
+  }
+  return candidates;
+};
+
+},{"./grammar":73}],76:[function(require,module,exports){
+arguments[4][72][0].apply(exports,arguments)
+},{"./grammar":73,"dup":72}],77:[function(require,module,exports){
 var MediaStreamType = {
     VIDEO_TYPE: "Video",
 
     AUDIO_TYPE: "Audio"
 };
 module.exports = MediaStreamType;
-},{}],82:[function(require,module,exports){
+},{}],78:[function(require,module,exports){
 var RTCEvents = {
     RTC_READY: "rtc.ready",
     DATA_CHANNEL_OPEN: "rtc.data_channel_open",
@@ -22230,7 +22635,7 @@ var RTCEvents = {
 };
 
 module.exports = RTCEvents;
-},{}],83:[function(require,module,exports){
+},{}],79:[function(require,module,exports){
 var Resolutions = {
     "1080": {
         width: 1920,
@@ -22284,7 +22689,7 @@ var Resolutions = {
     }
 };
 module.exports = Resolutions;
-},{}],84:[function(require,module,exports){
+},{}],80:[function(require,module,exports){
 var StreamEventTypes = {
     EVENT_TYPE_LOCAL_CREATED: "stream.local_created",
 
@@ -22299,7 +22704,7 @@ var StreamEventTypes = {
 };
 
 module.exports = StreamEventTypes;
-},{}],85:[function(require,module,exports){
+},{}],81:[function(require,module,exports){
 var AuthenticationEvents = {
     /**
      * Event callback arguments:
@@ -22313,7 +22718,7 @@ var AuthenticationEvents = {
 };
 module.exports = AuthenticationEvents;
 
-},{}],86:[function(require,module,exports){
+},{}],82:[function(require,module,exports){
 var DesktopSharingEventTypes = {
     INIT: "ds.init",
 
@@ -22329,7 +22734,7 @@ var DesktopSharingEventTypes = {
 
 module.exports = DesktopSharingEventTypes;
 
-},{}],87:[function(require,module,exports){
+},{}],83:[function(require,module,exports){
 module.exports = {
     /**
      * An event carrying connection statistics.
@@ -22345,12 +22750,12 @@ module.exports = {
     STOP: "statistics.stop"
 };
 
-},{}],88:[function(require,module,exports){
+},{}],84:[function(require,module,exports){
 var Constants = {
     LOCAL_JID: 'local'
 };
 module.exports = Constants;
-},{}],89:[function(require,module,exports){
+},{}],85:[function(require,module,exports){
 var XMPPEvents = {
     // Designates an event indicating that the connection to the XMPP server
     // failed.

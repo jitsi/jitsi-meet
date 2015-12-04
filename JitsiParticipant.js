@@ -6,6 +6,8 @@ function JitsiParticipant(id, conference, displayName){
     this._conference = conference;
     this._displayName = displayName;
     this._supportsDTMF = false;
+    this._tracks = [];
+    this._isModerator = false;
 }
 
 /**
@@ -19,7 +21,7 @@ JitsiParticipant.prototype.getConference = function() {
  * @returns {Array.<JitsiTrack>} The list of media tracks for this participant.
  */
 JitsiParticipant.prototype.getTracks = function() {
-
+    return this._tracks;
 };
 
 /**
@@ -40,6 +42,7 @@ JitsiParticipant.prototype.getDisplayName = function() {
  * @returns {Boolean} Whether this participant is a moderator or not.
  */
 JitsiParticipant.prototype.isModerator = function() {
+    return this._isModerator;
 };
 
 // Gets a link to an etherpad instance advertised by the participant?
@@ -52,14 +55,18 @@ JitsiParticipant.prototype.isModerator = function() {
  * @returns {Boolean} Whether this participant has muted their audio.
  */
 JitsiParticipant.prototype.isAudioMuted = function() {
-
+    return this.getTracks().reduce(function (track, isAudioMuted) {
+        return isAudioMuted && (track.isVideoTrack() || track.isMuted());
+    }, true);
 };
 
 /*
  * @returns {Boolean} Whether this participant has muted their video.
  */
 JitsiParticipant.prototype.isVideoMuted = function() {
-
+    return this.getTracks().reduce(function (track, isVideoMuted) {
+        return isVideoMuted && (track.isAudioTrack() || track.isMuted());
+    }, true);
 };
 
 /*
@@ -95,13 +102,6 @@ JitsiParticipant.prototype.isRecorder = function() {
  * @returns {Boolean} Whether this participant is a SIP gateway (i.e. jigasi).
  */
 JitsiParticipant.prototype.isSipGateway = function() {
-
-};
-
-/**
- * @returns {String} The ID for this participant's avatar.
- */
-JitsiParticipant.prototype.getAvatarId = function() {
 
 };
 

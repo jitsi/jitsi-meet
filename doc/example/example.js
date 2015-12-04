@@ -38,7 +38,7 @@ function onLocalTracks(tracks)
  * @param track JitsiTrack object
  */
 function onRemoteTrack(track) {
-    var participant = track.getParitcipantId();
+    var participant = track.getParticipantId();
     if(!remoteTracks[participant])
         remoteTracks[participant] = [];
     var idx = remoteTracks[participant].push(track);
