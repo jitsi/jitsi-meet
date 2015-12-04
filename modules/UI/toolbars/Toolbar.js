@@ -301,7 +301,7 @@ function callSipButtonClicked() {
                 var numberInput = f.sipNumber;
                 if (numberInput) {
                     APP.xmpp.dial(
-                        numberInput, 'fromnumber', APP.UI.getRoomName(), sharedKey);
+                        numberInput, 'fromnumber', APP.conference.roomName, sharedKey);
                 }
             }
         },
@@ -355,18 +355,18 @@ var Toolbar = (function (my) {
         }
         // Get authentication URL
         if (!APP.xmpp.isMUCJoined()) {
-            APP.xmpp.getLoginUrl(APP.UI.getRoomName(), function (url) {
+            APP.xmpp.getLoginUrl(APP.conference.roomName, function (url) {
                 // If conference has not been started yet - redirect to login page
                 window.location.href = url;
             });
         } else {
-            APP.xmpp.getPopupLoginUrl(APP.UI.getRoomName(), function (url) {
+            APP.xmpp.getPopupLoginUrl(APP.conference.roomName, function (url) {
                 // Otherwise - open popup with authentication URL
                 var authenticationWindow = Authentication.createAuthenticationWindow(
                     function () {
                         // On popup closed - retry room allocation
                         APP.xmpp.allocateConferenceFocus(
-                            APP.UI.getRoomName(),
+                            APP.conference.roomName,
                             function () { console.info("AUTH DONE"); }
                         );
                     }, url);

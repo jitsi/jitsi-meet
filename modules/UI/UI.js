@@ -16,7 +16,6 @@ var EventEmitter = require("events");
 var SettingsMenu = require("./side_pannels/settings/SettingsMenu");
 var Settings = require("./../settings/Settings");
 var PanelToggler = require("./side_pannels/SidePanelToggler");
-var RoomnameGenerator = require("../util/RoomnameGenerator");
 UI.messageHandler = require("./util/MessageHandler");
 var messageHandler = UI.messageHandler;
 var Authentication  = require("./authentication/Authentication");
@@ -31,9 +30,6 @@ var Feedback = require("./Feedback");
 
 var eventEmitter = new EventEmitter();
 UI.eventEmitter = eventEmitter;
-var roomNode = null;
-var roomName = null;
-
 
 function promptDisplayName() {
     var message = '<h2 data-i18n="dialog.displayNameRequired">';
@@ -438,7 +434,7 @@ function onMucRoleChanged(role, displayName) {
 
 UI.notifyAuthRequired = function (intervalCallback) {
     Authentication.openAuthenticationDialog(
-        roomName, intervalCallback, function () {
+        APP.conference.roomName, intervalCallback, function () {
             Toolbar.authenticateClicked();
         }
     );
@@ -478,46 +474,6 @@ UI.getRemoteVideoType = function (jid) {
     return VideoLayout.getRemoteVideoType(jid);
 };
 
-UI.getRoomNode = function () {
-    if (roomNode)
-        return roomNode;
-    var path = window.location.pathname;
-
-    // determinde the room node from the url
-    // TODO: just the roomnode or the whole bare jid?
-    if (config.getroomnode && typeof config.getroomnode === 'function') {
-        // custom function might be responsible for doing the pushstate
-        roomNode = config.getroomnode(path);
-    } else {
-        /* fall back to default strategy
-         * this is making assumptions about how the URL->room mapping happens.
-         * It currently assumes deployment at root, with a rewrite like the
-         * following one (for nginx):
-         location ~ ^/([a-zA-Z0-9]+)$ {
-         rewrite ^/(.*)$ / break;
-         }
-         */
-        if (path.length > 1) {
-            roomNode = path.substr(1).toLowerCase();
-        } else {
-            var word = RoomnameGenerator.generateRoomWithoutSeparator();
-            roomNode = word.toLowerCase();
-            window.history.pushState('VideoChat',
-                'Room: ' + word, window.location.pathname + word);
-        }
-    }
-    return roomNode;
-};
-
-UI.generateRoomName = function () {
-    if (roomName)
-        return roomName;
-    var roomNode = UI.getRoomNode();
-    roomName = roomNode + '@' + config.hosts.muc;
-    return roomName;
-};
-
-
 UI.connectionIndicatorShowMore = function(jid) {
     return VideoLayout.showMore(jid);
 };
@@ -555,10 +511,6 @@ UI.closeAuthenticationDialog = function () {
 
 UI.askForNickname = function () {
     return window.prompt('Your nickname (optional)');
-};
-
-UI.getRoomName = function () {
-    return roomName;
 };
 
 /**

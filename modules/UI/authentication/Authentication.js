@@ -75,7 +75,7 @@ var Authentication = {
                     // the request.
                     connection.disconnect();
 
-                    var roomName = APP.UI.generateRoomName();
+                    var roomName = APP.conference.roomName;
                     Moderator.allocateConferenceFocus(roomName, function () {
                         // If it's not "on the fly" authentication now join
                         // the conference room

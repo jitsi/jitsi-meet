@@ -135,7 +135,7 @@ function Dialog(callback, obtainSession) {
                         'connection.FETCH_SESSION_ID'));
 
                 // Authenticate with Jicofo and obtain session-id
-                var roomName = APP.UI.generateRoomName();
+                var roomName = APP.conference.roomName;
 
                 // Jicofo will return new session-id when connected
                 // from authenticated domain

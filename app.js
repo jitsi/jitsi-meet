@@ -2,49 +2,84 @@
 /* application specific logic */
 
 import "babel-polyfill";
-require("jquery");
-require("jquery-ui");
-require("strophe");
-require("strophe-disco");
-require("strophe-caps");
-require("tooltip");
-require("popover");
+import "jquery";
+import "jquery-ui";
+import "strophe";
+import "strophe-disco";
+import "strophe-caps";
+import "tooltip";
+import "popover";
+import "jQuery-Impromptu";
+import "autosize";
 window.toastr = require("toastr");
-require("jQuery-Impromptu");
-require("autosize");
 
-var CQEvents = require('./service/connectionquality/CQEvents');
-var UIEvents = require('./service/UI/UIEvents');
+import RoomnameGenerator from './modules/util/RoomnameGenerator';
+import CQEvents from './service/connectionquality/CQEvents';
+import UIEvents from './service/UI/UIEvents';
 
-var Commands = {
+const Commands = {
     CONNECTION_QUALITY: "connectionQuality",
     EMAIL: "email"
 };
 
-var APP = {
-    init: function () {
+function buildRoomName () {
+    let path = window.location.pathname;
+    let roomName;
+
+    // determinde the room node from the url
+    // TODO: just the roomnode or the whole bare jid?
+    if (config.getroomnode && typeof config.getroomnode === 'function') {
+        // custom function might be responsible for doing the pushstate
+        roomName = config.getroomnode(path);
+    } else {
+        /* fall back to default strategy
+         * this is making assumptions about how the URL->room mapping happens.
+         * It currently assumes deployment at root, with a rewrite like the
+         * following one (for nginx):
+         location ~ ^/([a-zA-Z0-9]+)$ {
+         rewrite ^/(.*)$ / break;
+         }
+         */
+        if (path.length > 1) {
+            roomName = path.substr(1).toLowerCase();
+        } else {
+            let word = RoomnameGenerator.generateRoomWithoutSeparator();
+            roomName = word.toLowerCase();
+            window.history.pushState(
+                'VideoChat', 'Room: ' + word, window.location.pathname + word
+            );
+        }
+    }
+
+    return roomName;
+}
+
+const APP = {
+    init () {
         JitsiMeetJS.init();
         JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.TRACE);
 
+        let roomName = buildRoomName();
         this.conference = {
+            roomName,
             localId: undefined,
             isModerator: false,
             membersCount: 0,
             audioMuted: false,
             videoMuted: false,
-            isLocalId: function (id) {
+            isLocalId (id) {
                 return this.localId === id;
             },
-            muteAudio: function (mute) {
+            muteAudio (mute) {
                 APP.UI.eventEmitter.emit(UIEvents.AUDIO_MUTED, mute);
             },
-            toggleAudioMuted: function () {
+            toggleAudioMuted () {
                 this.muteAudio(!this.audioMuted);
             },
-            muteVideo: function (mute) {
+            muteVideo (mute) {
                 APP.UI.eventEmitter.emit(UIEvents.VIDEO_MUTED, mute);
             },
-            toggleVideoMuted: function () {
+            toggleVideoMuted () {
                 this.muteVideo(!this.videoMuted);
             }
         };
@@ -315,7 +350,7 @@ function initConference(connection, roomName) {
 
 function init() {
     connect().then(function (connection) {
-        return initConference(connection, APP.UI.generateRoomName());
+        return initConference(connection, APP.conference.roomName);
     }).then(function () {
         APP.UI.start();
 
@@ -342,7 +377,7 @@ function init() {
  * will be displayed to the user.
  */
 function obtainConfigAndInit() {
-    var roomName = APP.UI.getRoomNode();
+    let roomName = APP.conference.roomName;
 
     if (config.configLocation) {
         APP.configFetch.obtainConfig(
