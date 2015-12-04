@@ -241,7 +241,7 @@ JitsiConference.prototype.onMemberJoined = function (jid, email, nick) {
     var participant = new JitsiParticipant(id, this, nick);
     this.eventEmitter.emit(JitsiConferenceEvents.USER_JOINED, id);
     this.participants[id] = participant;
-    this.xmpp.getConnection().disco.info(
+    this.connection.xmpp.connection.disco.info(
         jid, "" /* node */, function(iq) {
             participant._supportsDTMF = $(iq).find('>query>feature[var="urn:xmpp:jingle:dtmf:0"]').length > 0;
             this.updateDTMFSupport();
@@ -291,6 +291,15 @@ JitsiConference.prototype.updateDTMFSupport = function () {
 };
 
 /**
+ * Allows to check if there is at least one user in the conference
+ * that supports DTMF.
+ * @returns {boolean} true if somebody supports DTMF, false otherwise
+ */
+JitsiConference.prototype.isDTMFSupported = function () {
+    return this.somebodySupportsDTMF;
+};
+
+/**
  * Returns the local user's ID
  * @return {string} local user's ID
  */
@@ -300,7 +309,7 @@ JitsiConference.prototype.myUserId = function () {
 
 JitsiConference.prototype.sendTones = function (tones, duration, pause) {
     if (!this.dtmfManager) {
-        var connection = this.xmpp.getConnection().jingle.activecall.peerconnection;
+        var connection = this.connection.xmpp.connection.jingle.activecall.peerconnection;
         if (!connection) {
             logger.warn("cannot sendTones: no conneciton");
             return;
@@ -527,6 +536,9 @@ var JitsiConferenceEvents = {
      * Indicates that conference has been left.
      */
     CONFERENCE_LEFT: "conference.left",
+    /**
+     * Indicates that DTMF support changed.
+     */
     DTMF_SUPPORT_CHANGED: "conference.dtmf_support_changed"
 };
 
@@ -9012,9 +9024,10 @@ SDPDiffer.prototype.toJingle = function(modify) {
 module.exports = SDPDiffer;
 },{"./SDPUtil":31}],31:[function(require,module,exports){
 (function (__filename){
-
 var logger = require("jitsi-meet-logger").getLogger(__filename);
-SDPUtil = {
+var RTCBrowserType = require('../RTC/RTCBrowserType');
+
+var SDPUtil = {
     filter_special_chars: function (text) {
         return text.replace(/[\\\/\{,\}\+]/g, "");
     },
@@ -9371,9 +9384,11 @@ SDPUtil = {
         return line + '\r\n';
     }
 };
+
 module.exports = SDPUtil;
+
 }).call(this,"/modules/xmpp/SDPUtil.js")
-},{"jitsi-meet-logger":46}],32:[function(require,module,exports){
+},{"../RTC/RTCBrowserType":16,"jitsi-meet-logger":46}],32:[function(require,module,exports){
 (function (__filename){
 /* global $ */
 var RTC = require('../RTC/RTC');

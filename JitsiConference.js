@@ -289,6 +289,15 @@ JitsiConference.prototype.updateDTMFSupport = function () {
 };
 
 /**
+ * Allows to check if there is at least one user in the conference
+ * that supports DTMF.
+ * @returns {boolean} true if somebody supports DTMF, false otherwise
+ */
+JitsiConference.prototype.isDTMFSupported = function () {
+    return this.somebodySupportsDTMF;
+};
+
+/**
  * Returns the local user's ID
  * @return {string} local user's ID
  */

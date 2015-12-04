@@ -77,6 +77,7 @@ JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.ERROR);
         - IN_LAST_N_CHANGED - passes boolean property that shows whether the local user is included in last n set of any other user or not. (parameters - boolean)
         - CONFERENCE_JOINED - notifies the local user that he joined the conference successfully. (no parameters)
         - CONFERENCE_LEFT - notifies the local user that he left the conference successfully. (no parameters)
+        - DTMF_SUPPORT_CHANGED - notifies if at least one user supports DTMF. (parameters - supports(boolean))
 
     2. connection
         - CONNECTION_FAILED - indicates that the server connection failed.
@@ -213,9 +214,11 @@ The object represents a conference. We have the following methods to control the
 
 17. addTrack(track) - Adds JitsiLocalTrack object to the conference.
     - track - the JitsiLocalTrack
+
 18. removeTrack(track) - Removes JitsiLocalTrack object to the conference.
     - track - the JitsiLocalTrack
 
+19. isDTMFSupported() - Check if at least one user supports DTMF.
 
 JitsiTrack
 ======
