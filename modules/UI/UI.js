@@ -308,10 +308,6 @@ function chatSetSubject(text) {
     return Chat.chatSetSubject(text);
 }
 
-function updateChatConversation(from, displayName, message, stamp) {
-    return Chat.updateChatConversation(from, displayName, message, stamp);
-}
-
 function initEtherpad(name) {
     Etherpad.init(name);
 }
@@ -687,6 +683,10 @@ UI.markVideoInterrupted = function (interrupted) {
     } else {
         VideoLayout.onVideoRestored();
     }
+};
+
+UI.addMessage = function (from, displayName, message, stamp) {
+    Chat.updateChatConversation(from, displayName, message, stamp);
 };
 
 module.exports = UI;

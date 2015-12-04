@@ -1,4 +1,4 @@
-/* global $, JitsiMeetJS, config, Promise */
+/* global $, JitsiMeetJS, config, interfaceConfig */
 /* application specific logic */
 
 import "babel-polyfill";
@@ -90,15 +90,11 @@ function connect() {
         };
 
         var listenForFailure = function (event) {
-            handlers[event] = function () {
-                // convert arguments to array
-                var args = Array.prototype.slice.call(arguments);
-                args.unshift(event);
-                // [event, ...params]
-                console.error('CONNECTION FAILED:', args);
+            handlers[event] = function (...args) {
+                console.error(`CONNECTION FAILED: ${event}`, ...args);
 
                 unsubscribe();
-                reject(args);
+                reject([event, ...args]);
             };
         };
 
@@ -142,6 +138,17 @@ function initConference(connection, roomName) {
             return Object.keys(users).length; // FIXME maybe +1?
         }
     });
+
+    function getDisplayName(id) {
+        if (APP.conference.isLocalId(id)) {
+            return APP.settings.getDisplayName();
+        }
+
+        var user = users[id];
+        if (user && user.displayName) {
+            return user.displayName;
+        }
+    }
 
     room.on(ConferenceEvents.USER_JOINED, function (id) {
         users[id] = {
@@ -190,13 +197,21 @@ function initConference(connection, roomName) {
     });
 
 
-    room.on(ConferenceEvents.CONNECTION_INTERRUPTED, function () {
-        APP.UI.markVideoInterrupted(true);
-    });
-    room.on(ConferenceEvents.CONNECTION_RESTORED, function () {
-        APP.UI.markVideoInterrupted(false);
-    });
+    if (!interfaceConfig.filmStripOnly) {
+        room.on(ConferenceEvents.CONNECTION_INTERRUPTED, function () {
+            APP.UI.markVideoInterrupted(true);
+        });
+        room.on(ConferenceEvents.CONNECTION_RESTORED, function () {
+            APP.UI.markVideoInterrupted(false);
+        });
 
+        APP.UI.addListener(UIEvents.MESSAGE_CREATED, function (message) {
+            room.sendTextMessage(message);
+        });
+        room.on(ConferenceEvents.MESSAGE_RECEIVED, function (userId, text) {
+            APP.UI.addMessage(userId, getDisplayName(userId), text, Date.now());
+        });
+    }
 
     APP.connectionquality.addListener(
         CQEvents.LOCALSTATS_UPDATED,
@@ -256,11 +271,6 @@ function initConference(connection, roomName) {
     APP.UI.addListener(UIEvents.NICKNAME_CHANGED, function (nickname) {
         APP.settings.setDisplayName(nickname);
         room.setDisplayName(nickname);
-    });
-
-
-    APP.UI.addListener(UIEvents.MESSAGE_CREATED, function (message) {
-        room.sendTextMessage(message);
     });
 
 
