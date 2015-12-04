@@ -300,17 +300,17 @@ var RTC = {
      * @param handler the handler
      */
     addMediaStreamInactiveHandler: function (mediaStream, handler) {
-        if (mediaStream.addEventListener) {
-            // chrome
-            if(typeof mediaStream.active !== "undefined")
-                mediaStream.oninactive = handler;
-            else
-                mediaStream.onended = handler;
-        } else {
+        if(RTCBrowserType.isTemasysPluginUsed()) {
             // themasys
             mediaStream.attachEvent('ended', function () {
                 handler(mediaStream);
             });
+        }
+        else {
+            if(typeof mediaStream.active !== "undefined")
+                mediaStream.oninactive = handler;
+            else
+                mediaStream.onended = handler;
         }
     },
     /**
@@ -319,15 +319,15 @@ var RTC = {
      * @param handler the handler to remove.
      */
     removeMediaStreamInactiveHandler: function (mediaStream, handler) {
-        if (mediaStream.removeEventListener) {
-            // chrome
+        if(RTCBrowserType.isTemasysPluginUsed()) {
+            // themasys
+            mediaStream.detachEvent('ended', handler);
+        }
+        else {
             if(typeof mediaStream.active !== "undefined")
                 mediaStream.oninactive = null;
             else
                 mediaStream.onended = null;
-        } else {
-            // themasys
-            mediaStream.detachEvent('ended', handler);
         }
     }
 };
