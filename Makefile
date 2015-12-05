@@ -18,7 +18,7 @@ clean:
 
 deploy:
 	mkdir -p $(DEPLOY_DIR) && \
-	cp $(OUTPUT_DIR)/app.bundle.min.js $(OUTPUT_DIR)/app.bundle.min.map $(DEPLOY_DIR) && \
+	cp $(OUTPUT_DIR)/app.bundle.min.js $(OUTPUT_DIR)/app.bundle.min.map $(OUTPUT_DIR)/app.bundle.js $(OUTPUT_DIR)/app.bundle.js.map $(DEPLOY_DIR) && \
 	(cd css; cat $(CSS_FILES)) | $(CLEANCSS) > css/all.css && \
 	([ ! -x deploy-local.sh ] || ./deploy-local.sh)
 
