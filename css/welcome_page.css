@@ -45,66 +45,42 @@
     border-radius: 10px;
     background-color: #FFFFFF;
     border: none;
-    -moz-border-radius: 10px;
-    -webkit-border-radius: 10px;
-    -webkit-appearance: none;
     height: 55px;
     box-shadow: none;
-    float: left;
+    padding: 0 5px 0 20px;
 }
 
 #domain_name
 {
-    float: left;
-    padding: 20px 0px 10px 20px;
     font-size: 18px;
-    font-weight: 500;
-    font-family: Helvetica;
 }
 
 #enter_room_field {
     font-size: 15px;
-    padding: 15px 0px 10px 10px;
     border: none;
-    -webkit-appearance: none;
     width: 228px;
-    height: 55px;
-    font-weight: 500;
-    font-family: Helvetica;
-    box-shadow: none;
-    float: left;
+    height: inherit;
     background-color: #FFFFFF;
-    position: relative;
-    z-index: 2;
+    display: inline;
+    box-shadow: none;
 }
 
 #enter_room_button {
     width: 73px;
     height: 45px;
     background-color: #16a8fe;
-    moz-border-radius: 10px;
-    -webkit-border-radius: 10px;
+    border-radius: 10px;
     color: #ffffff;
-    font-weight: 600;
-    border: none;
+    border: 0;
     margin-top: 5px;
     font-size: 19px;
-    font-family: Helvetica;
     padding-top: 6px;
     outline: none;
-    float:left;
-    position: relative;
-    z-index: 2;
 }
 
 #enter_room_container {
     margin: 70px auto 0px auto;
     display: table;
-}
-
-#enter_room{
-    float:left;
-    padding-right: 5px;
 }
 
 #welcome_page_header
@@ -197,9 +173,6 @@
     height: 19px;
     color: #acacac;
     margin-top: 22px;
-    z-index: 3;
-    float:  left;
     cursor: pointer;
     text-align: center;
-    display: none;
 }
