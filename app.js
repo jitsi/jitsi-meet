@@ -46,7 +46,7 @@ function buildRoomName () {
             let word = RoomnameGenerator.generateRoomWithoutSeparator();
             roomName = word.toLowerCase();
             window.history.pushState(
-                'VideoChat', 'Room: ' + word, window.location.pathname + word
+                'VideoChat', `Room: ${word}`, window.location.pathname + word
             );
         }
     }
@@ -56,9 +56,6 @@ function buildRoomName () {
 
 const APP = {
     init () {
-        JitsiMeetJS.init();
-        JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.TRACE);
-
         let roomName = buildRoomName();
         this.conference = {
             roomName,
@@ -158,14 +155,13 @@ function connect() {
 
 var ConferenceEvents = JitsiMeetJS.events.conference;
 var ConferenceErrors = JitsiMeetJS.errors.conference;
-function initConference(connection, roomName) {
-    var room = connection.initJitsiConference(roomName, {
+function initConference(localTracks, connection) {
+    var room = connection.initJitsiConference(APP.conference.roomName, {
         openSctp: config.openSctp,
         disableAudioLevels: config.disableAudioLevels
     });
 
     var users = {};
-    var localTracks = [];
 
     APP.conference.localId = room.myUserId();
     Object.defineProperty(APP.conference, "membersCount", {
@@ -184,6 +180,15 @@ function initConference(connection, roomName) {
             return user.displayName;
         }
     }
+
+    // add local streams when joined to the conference
+    room.on(ConferenceEvents.CONFERENCE_JOINED, function () {
+        localTracks.forEach(function (track) {
+            room.addTrack(track);
+            APP.UI.addLocalStream(track);
+        });
+    });
+
 
     room.on(ConferenceEvents.USER_JOINED, function (id) {
         users[id] = {
@@ -308,7 +313,6 @@ function initConference(connection, roomName) {
         room.setDisplayName(nickname);
     });
 
-
     room.on(ConferenceErrors.PASSWORD_REQUIRED, function () {
         // FIXME handle
     });
@@ -339,7 +343,7 @@ function initConference(connection, roomName) {
     }).catch(function (err) {
         if (err[0] === ConferenceErrors.PASSWORD_REQUIRED) {
             // FIXME ask for password and try again
-            return initConference(connection, roomName);
+            return initConference(localTracks, connection);
         }
 
         // FIXME else notify that we cannot conenct to the room
@@ -348,9 +352,22 @@ function initConference(connection, roomName) {
     });
 }
 
+function createLocalTracks () {
+    return JitsiMeetJS.createLocalTracks({
+        devices: ['audio', 'video']
+    }).catch(function (err) {
+        console.error('failed to create local tracks', err);
+        return [];
+    });
+}
+
 function init() {
-    connect().then(function (connection) {
-        return initConference(connection, APP.conference.roomName);
+    JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.TRACE);
+    JitsiMeetJS.init().then(function () {
+        return Promise.all([createLocalTracks(), connect()]);
+    }).then(function ([tracks, connection]) {
+        console.log('initialized with %s local tracks', tracks.length);
+        return initConference(tracks, connection);
     }).then(function () {
         APP.UI.start();
 

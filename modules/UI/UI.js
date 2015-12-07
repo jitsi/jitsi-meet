@@ -277,16 +277,16 @@ UI.start = function () {
 };
 
 
-UI.addLocalStream = function (stream, isMuted) {
-    switch (stream.type) {
+UI.addLocalStream = function (track) {
+    switch (track.getType()) {
     case 'audio':
-        VideoLayout.changeLocalAudio(stream, isMuted);
+        VideoLayout.changeLocalAudio(track);
         break;
     case 'video':
-        VideoLayout.changeLocalVideo(stream, isMuted);
+        VideoLayout.changeLocalVideo(track);
         break;
     default:
-        console.error("Unknown stream type: " + stream.type);
+        console.error("Unknown stream type: " + track.getType());
         break;
     }
 };
