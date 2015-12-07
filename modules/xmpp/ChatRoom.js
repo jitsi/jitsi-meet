@@ -69,7 +69,7 @@ function ChatRoom(connection, jid, password, XMPP, options) {
     this.presMap = {};
     this.presHandlers = {};
     this.joined = false;
-    this.role = null;
+    this.role = 'none';
     this.focusMucJid = null;
     this.bridgeIsDown = false;
     this.options = options || {};
@@ -257,8 +257,7 @@ ChatRoom.prototype.onPresence = function (pres) {
             if (this.role !== member.role) {
                 this.role = member.role;
 
-                this.eventEmitter.emit(XMPPEvents.LOCAL_ROLE_CHANGED,
-                    member, this.isModerator());
+                this.eventEmitter.emit(XMPPEvents.LOCAL_ROLE_CHANGED, this.role);
             }
         if (!this.joined) {
             this.joined = true;
@@ -281,8 +280,7 @@ ChatRoom.prototype.onPresence = function (pres) {
         // Watch role change:
         if (this.members[from].role != member.role) {
             this.members[from].role = member.role;
-            this.eventEmitter.emit(XMPPEvents.MUC_ROLE_CHANGED,
-                member.role, member.nick);
+            this.eventEmitter.emit(XMPPEvents.MUC_ROLE_CHANGED, from, member.role);
         }
 
         // store the new display name
@@ -500,7 +498,7 @@ ChatRoom.prototype.removePresenceListener = function (name) {
     delete this.presHandlers[name];
 };
 
-ChatRoom.prototype.isModerator = function (jid) {
+ChatRoom.prototype.isModerator = function () {
     return this.role === 'moderator';
 };
 

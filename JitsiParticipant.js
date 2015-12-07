@@ -7,7 +7,7 @@ function JitsiParticipant(id, conference, displayName){
     this._displayName = displayName;
     this._supportsDTMF = false;
     this._tracks = [];
-    this._isModerator = false;
+    this._role = 'none';
 }
 
 /**
@@ -42,7 +42,7 @@ JitsiParticipant.prototype.getDisplayName = function() {
  * @returns {Boolean} Whether this participant is a moderator or not.
  */
 JitsiParticipant.prototype.isModerator = function() {
-    return this._isModerator;
+    return this._role === 'moderator';
 };
 
 // Gets a link to an etherpad instance advertised by the participant?
@@ -81,7 +81,7 @@ JitsiParticipant.prototype.getLatestStats = function() {
  * @returns {String} The role of this participant.
  */
 JitsiParticipant.prototype.getRole = function() {
-
+    return this._role;
 };
 
 /*

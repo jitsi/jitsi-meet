@@ -78,6 +78,7 @@ JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.ERROR);
         - CONFERENCE_JOINED - notifies the local user that he joined the conference successfully. (no parameters)
         - CONFERENCE_LEFT - notifies the local user that he left the conference successfully. (no parameters)
         - DTMF_SUPPORT_CHANGED - notifies if at least one user supports DTMF. (parameters - supports(boolean))
+        - USER_ROLE_CHANGED - notifies that role of some user changed. (parameters - id(string), role(string))
 
     2. connection
         - CONNECTION_FAILED - indicates that the server connection failed.
@@ -219,6 +220,11 @@ The object represents a conference. We have the following methods to control the
     - track - the JitsiLocalTrack
 
 19. isDTMFSupported() - Check if at least one user supports DTMF.
+
+20. getRole() - returns string with the local user role ("moderator" or "none")
+
+21. isModerator() - checks if local user has "moderator" role
+
 
 JitsiTrack
 ======

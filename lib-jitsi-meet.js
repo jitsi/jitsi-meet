@@ -198,6 +198,22 @@ JitsiConference.prototype.removeTrack = function (track) {
 };
 
 /**
+ * Get role of the local user.
+ * @returns {string} user role: 'moderator' or 'none'
+ */
+JitsiConference.prototype.getRole = function () {
+    return this.room.role;
+};
+
+/**
+ * Check if local user is moderator.
+ * @returns {boolean} true if local user is moderator, false otherwise.
+ */
+JitsiConference.prototype.isModerator = function () {
+    return this.room.isModerator();
+};
+
+/**
  * Elects the participant with the given id to be the selected participant or the speaker.
  * @param id the identifier of the participant
  */
@@ -253,6 +269,16 @@ JitsiConference.prototype.onMemberLeft = function (jid) {
     var id = Strophe.getResourceFromJid(jid);
     delete this.participants[id];
     this.eventEmitter.emit(JitsiConferenceEvents.USER_LEFT, id);
+};
+
+JitsiConference.prototype.onUserRoleChanged = function (jid, role) {
+    var id = Strophe.getResourceFromJid(jid);
+    var participant = this.getParticipantById(id);
+    if (!participant) {
+        return;
+    }
+    participant._role = role;
+    this.eventEmitter.emit(JitsiConferenceEvents.USER_ROLE_CHANGED, id, role);
 };
 
 JitsiConference.prototype.onDisplayNameChanged = function (jid, displayName) {
@@ -363,6 +389,11 @@ function setupListeners(conference) {
     conference.room.addListener(XMPPEvents.MUC_MEMBER_LEFT, conference.onMemberLeft.bind(conference));
 
     conference.room.addListener(XMPPEvents.DISPLAY_NAME_CHANGED, conference.onDisplayNameChanged.bind(conference));
+
+    conference.room.addListener(XMPPEvents.LOCAL_ROLE_CHANGED, function (role) {
+        conference.eventEmitter.emit(JitsiConferenceEvents.USER_ROLE_CHANGED, conference.myUserId(), role);
+    });
+    conference.room.addListener(XMPPEvents.MUC_ROLE_CHANGED, conference.onUserRoleChanged.bind(conference));
 
     conference.room.addListener(XMPPEvents.CONNECTION_INTERRUPTED, function () {
         conference.eventEmitter.emit(JitsiConferenceEvents.CONNECTION_INTERRUPTED);
@@ -497,6 +528,10 @@ var JitsiConferenceEvents = {
      */
     USER_LEFT: "conference.userLeft",
     /**
+     * User role changed.
+     */
+    USER_ROLE_CHANGED: "conference.roleChanged",
+    /**
      * New text message was received.
      */
     MESSAGE_RECEIVED: "conference.messageReceived",
@@ -552,7 +587,7 @@ var JitsiConferenceEvents = {
     /**
      * Indicates that DTMF support changed.
      */
-    DTMF_SUPPORT_CHANGED: "conference.dtmf_support_changed"
+    DTMF_SUPPORT_CHANGED: "conference.dtmfSupportChanged"
 };
 
 module.exports = JitsiConferenceEvents;
@@ -783,7 +818,7 @@ function JitsiParticipant(id, conference, displayName){
     this._displayName = displayName;
     this._supportsDTMF = false;
     this._tracks = [];
-    this._isModerator = false;
+    this._role = 'none';
 }
 
 /**
@@ -818,7 +853,7 @@ JitsiParticipant.prototype.getDisplayName = function() {
  * @returns {Boolean} Whether this participant is a moderator or not.
  */
 JitsiParticipant.prototype.isModerator = function() {
-    return this._isModerator;
+    return this._role === 'moderator';
 };
 
 // Gets a link to an etherpad instance advertised by the participant?
@@ -857,7 +892,7 @@ JitsiParticipant.prototype.getLatestStats = function() {
  * @returns {String} The role of this participant.
  */
 JitsiParticipant.prototype.getRole = function() {
-
+    return this._role;
 };
 
 /*
@@ -5565,7 +5600,8 @@ module.exports = RandomUtil;
 
 },{}],26:[function(require,module,exports){
 (function (__filename){
-
+/* global Strophe, $, $pres, $iq, $msg */
+/* jshint -W101,-W069 */
 var logger = require("jitsi-meet-logger").getLogger(__filename);
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 var Moderator = require("./moderator");
@@ -5576,23 +5612,24 @@ var parser = {
         var self = this;
         $(packet).children().each(function (index) {
             var tagName = $(this).prop("tagName");
-            var node = {}
-            node["tagName"] = tagName;
+            var node = {
+                tagName: tagName
+            };
             node.attributes = {};
             $($(this)[0].attributes).each(function( index, attr ) {
                 node.attributes[ attr.name ] = attr.value;
-            } );
+            });
             var text = Strophe.getText($(this)[0]);
-            if(text)
+            if (text) {
                 node.value = text;
+            }
             node.children = [];
             nodes.push(node);
             self.packet2JSON($(this), node.children);
-        })
+        });
     },
     JSON2packet: function (nodes, packet) {
-        for(var i = 0; i < nodes.length; i++)
-        {
+        for(var i = 0; i < nodes.length; i++) {
             var node = nodes[i];
             if(!node || node === null){
                 continue;
@@ -5634,7 +5671,7 @@ function ChatRoom(connection, jid, password, XMPP, options) {
     this.presMap = {};
     this.presHandlers = {};
     this.joined = false;
-    this.role = null;
+    this.role = 'none';
     this.focusMucJid = null;
     this.bridgeIsDown = false;
     this.options = options || {};
@@ -5671,7 +5708,7 @@ ChatRoom.prototype.updateDeviceAvailability = function (devices) {
             }
         ]
     });
-}
+};
 
 ChatRoom.prototype.join = function (password, tokenPassword) {
     if(password)
@@ -5773,7 +5810,7 @@ ChatRoom.prototype.onPresence = function (pres) {
     member.jid = tmp.attr('jid');
     member.isFocus = false;
     if (member.jid
-        && member.jid.indexOf(this.moderator.getFocusUserJid() + "/") == 0) {
+        && member.jid.indexOf(this.moderator.getFocusUserJid() + "/") === 0) {
         member.isFocus = true;
     }
 
@@ -5822,8 +5859,7 @@ ChatRoom.prototype.onPresence = function (pres) {
             if (this.role !== member.role) {
                 this.role = member.role;
 
-                this.eventEmitter.emit(XMPPEvents.LOCAL_ROLE_CHANGED,
-                    member, this.isModerator());
+                this.eventEmitter.emit(XMPPEvents.LOCAL_ROLE_CHANGED, this.role);
             }
         if (!this.joined) {
             this.joined = true;
@@ -5846,8 +5882,7 @@ ChatRoom.prototype.onPresence = function (pres) {
         // Watch role change:
         if (this.members[from].role != member.role) {
             this.members[from].role = member.role;
-            this.eventEmitter.emit(XMPPEvents.MUC_ROLE_CHANGED,
-                member.role, member.nick);
+            this.eventEmitter.emit(XMPPEvents.MUC_ROLE_CHANGED, from, member.role);
         }
 
         // store the new display name
@@ -5912,7 +5947,7 @@ ChatRoom.prototype.onPresenceUnavailable = function (pres, from) {
 
         this.xmpp.disposeConference(false);
         this.eventEmitter.emit(XMPPEvents.MUC_DESTROYED, reason);
-        delete this.connection.emuc.rooms[Strophe.getBareJidFromJid(jid)];
+        delete this.connection.emuc.rooms[Strophe.getBareJidFromJid(from)];
         return true;
     }
 
@@ -5955,7 +5990,7 @@ ChatRoom.prototype.onMessage = function (msg, from) {
     var subject = $(msg).find('>subject');
     if (subject.length) {
         var subjectText = subject.text();
-        if (subjectText || subjectText == "") {
+        if (subjectText || subjectText === "") {
             this.eventEmitter.emit(XMPPEvents.SUBJECT_CHANGED, subjectText);
             logger.log("Subject is changed to " + subjectText);
         }
@@ -5980,7 +6015,7 @@ ChatRoom.prototype.onMessage = function (msg, from) {
         this.eventEmitter.emit(XMPPEvents.MESSAGE_RECEIVED,
             from, nick, txt, this.myroomjid, stamp);
     }
-}
+};
 
 ChatRoom.prototype.onPresenceError = function (pres, from) {
     if ($(pres).find('>error[type="auth"]>not-authorized[xmlns="urn:ietf:params:xml:ns:xmpp-stanzas"]').length) {
@@ -6059,13 +6094,13 @@ ChatRoom.prototype.removeFromPresence = function (key) {
 
 ChatRoom.prototype.addPresenceListener = function (name, handler) {
     this.presHandlers[name] = handler;
-}
+};
 
 ChatRoom.prototype.removePresenceListener = function (name) {
     delete this.presHandlers[name];
-}
+};
 
-ChatRoom.prototype.isModerator = function (jid) {
+ChatRoom.prototype.isModerator = function () {
     return this.role === 'moderator';
 };
 
@@ -6085,8 +6120,8 @@ ChatRoom.prototype.setJingleSession = function(session){
 ChatRoom.prototype.removeStream = function (stream) {
     if(!this.session)
         return;
-    this.session.peerconnection.removeStream(stream)
-}
+    this.session.peerconnection.removeStream(stream);
+};
 
 ChatRoom.prototype.switchStreams = function (stream, oldStream, callback, isAudio) {
     if(this.session) {
@@ -6108,14 +6143,14 @@ ChatRoom.prototype.addStream = function (stream, callback) {
         logger.warn("No conference handler or conference not started yet");
         callback();
     }
-}
+};
 
 ChatRoom.prototype.setVideoMute = function (mute, callback, options) {
     var self = this;
     var localCallback = function (mute) {
         self.sendVideoInfoPresence(mute);
         if(callback)
-            callback(mute)
+            callback(mute);
     };
 
     if(this.session)
@@ -6148,7 +6183,7 @@ ChatRoom.prototype.addAudioInfoToPresence = function (mute) {
         {attributes:
         {"audions": "http://jitsi.org/jitmeet/audio"},
             value: mute.toString()});
-}
+};
 
 ChatRoom.prototype.sendAudioInfoPresence = function(mute, callback) {
     this.addAudioInfoToPresence(mute);
@@ -6165,7 +6200,7 @@ ChatRoom.prototype.addVideoInfoToPresence = function (mute) {
         {attributes:
         {"videons": "http://jitsi.org/jitmeet/video"},
             value: mute.toString()});
-}
+};
 
 
 ChatRoom.prototype.sendVideoInfoPresence = function (mute) {
@@ -6198,7 +6233,7 @@ ChatRoom.prototype.remoteStreamAdded = function(data, sid, thessrc) {
     }
 
     this.eventEmitter.emit(XMPPEvents.REMOTE_STREAM_RECEIVED, data, sid, thessrc);
-}
+};
 
 ChatRoom.prototype.getJidBySSRC = function (ssrc) {
     if (!this.session)

@@ -196,6 +196,22 @@ JitsiConference.prototype.removeTrack = function (track) {
 };
 
 /**
+ * Get role of the local user.
+ * @returns {string} user role: 'moderator' or 'none'
+ */
+JitsiConference.prototype.getRole = function () {
+    return this.room.role;
+};
+
+/**
+ * Check if local user is moderator.
+ * @returns {boolean} true if local user is moderator, false otherwise.
+ */
+JitsiConference.prototype.isModerator = function () {
+    return this.room.isModerator();
+};
+
+/**
  * Elects the participant with the given id to be the selected participant or the speaker.
  * @param id the identifier of the participant
  */
@@ -251,6 +267,16 @@ JitsiConference.prototype.onMemberLeft = function (jid) {
     var id = Strophe.getResourceFromJid(jid);
     delete this.participants[id];
     this.eventEmitter.emit(JitsiConferenceEvents.USER_LEFT, id);
+};
+
+JitsiConference.prototype.onUserRoleChanged = function (jid, role) {
+    var id = Strophe.getResourceFromJid(jid);
+    var participant = this.getParticipantById(id);
+    if (!participant) {
+        return;
+    }
+    participant._role = role;
+    this.eventEmitter.emit(JitsiConferenceEvents.USER_ROLE_CHANGED, id, role);
 };
 
 JitsiConference.prototype.onDisplayNameChanged = function (jid, displayName) {
@@ -361,6 +387,11 @@ function setupListeners(conference) {
     conference.room.addListener(XMPPEvents.MUC_MEMBER_LEFT, conference.onMemberLeft.bind(conference));
 
     conference.room.addListener(XMPPEvents.DISPLAY_NAME_CHANGED, conference.onDisplayNameChanged.bind(conference));
+
+    conference.room.addListener(XMPPEvents.LOCAL_ROLE_CHANGED, function (role) {
+        conference.eventEmitter.emit(JitsiConferenceEvents.USER_ROLE_CHANGED, conference.myUserId(), role);
+    });
+    conference.room.addListener(XMPPEvents.MUC_ROLE_CHANGED, conference.onUserRoleChanged.bind(conference));
 
     conference.room.addListener(XMPPEvents.CONNECTION_INTERRUPTED, function () {
         conference.eventEmitter.emit(JitsiConferenceEvents.CONNECTION_INTERRUPTED);
