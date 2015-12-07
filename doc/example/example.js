@@ -29,8 +29,6 @@ function onLocalTracks(tracks)
             $("body").append("<audio autoplay='1' id='localAudio" + i + "' />");
             localTracks[i].attach($("#localAudio" + i ));
         }
-
-            room.addTrack(localTracks[i]);
         console.log(localTracks[i]);
     }
 }
@@ -58,9 +56,8 @@ function onRemoteTrack(track) {
  */
 function onConferenceJoined () {
     console.log("conference joined!");
-    JitsiMeetJS.createLocalTracks({devices: ["audio", "video", "desktop"]}).then(onLocalTracks).catch(function (error) {
-        console.log(error);
-    });
+    for(var i = 0; i < localTracks.length; i++)
+        room.addTrack(localTracks[i]);
 }
 
 function onUserLeft(id) {
@@ -147,7 +144,14 @@ var initOptions = {
     // The URL to the Firefox extension for desktop sharing.
     desktopSharingFirefoxExtensionURL: null
 }
-JitsiMeetJS.init(initOptions);
+JitsiMeetJS.init(initOptions).then(function(){
+    JitsiMeetJS.createLocalTracks({devices: ["audio", "video"]}).
+        then(onLocalTracks).catch(function (error) {
+            console.log(error);
+        });
+    }).catch(function (error) {
+        console.log(error);
+    });
 
 var connection = null;
 var room = null;

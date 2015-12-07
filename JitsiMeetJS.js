@@ -3,6 +3,8 @@ var JitsiConferenceEvents = require("./JitsiConferenceEvents");
 var JitsiConnectionEvents = require("./JitsiConnectionEvents");
 var JitsiConnectionErrors = require("./JitsiConnectionErrors");
 var JitsiConferenceErrors = require("./JitsiConferenceErrors");
+var JitsiTrackEvents = require("./JitsiTrackEvents");
+var JitsiTrackErrors = require("./JitsiTrackErrors");
 var Logger = require("jitsi-meet-logger");
 var RTC = require("./modules/RTC/RTC");
 
@@ -14,15 +16,17 @@ var LibJitsiMeet = {
     JitsiConnection: JitsiConnection,
     events: {
         conference: JitsiConferenceEvents,
-        connection: JitsiConnectionEvents
+        connection: JitsiConnectionEvents,
+        track: JitsiTrackEvents
     },
     errors: {
         conference: JitsiConferenceErrors,
-        connection: JitsiConnectionErrors
+        connection: JitsiConnectionErrors,
+        track: JitsiTrackErrors
     },
     logLevels: Logger.levels,
     init: function (options) {
-        RTC.init(options || {});
+        return RTC.init(options || {});
     },
     setLogLevel: function (level) {
         Logger.setLogLevel(level);

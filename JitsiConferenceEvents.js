@@ -8,7 +8,7 @@ var JitsiConferenceEvents = {
      */
     TRACK_ADDED: "conference.trackAdded",
     /**
-     * The media track was removed to the conference.
+     * The media track was removed from the conference.
      */
     TRACK_REMOVED: "conference.trackRemoved",
     /**
@@ -48,11 +48,11 @@ var JitsiConferenceEvents = {
      */
     IN_LAST_N_CHANGED: "conference.lastNEndpointsChanged",
     /**
-     * A media track mute status was changed.
+     * A media track ( attached to the conference) mute status was changed.
      */
     TRACK_MUTE_CHANGED: "conference.trackMuteChanged",
     /**
-     * Audio levels of a media track was changed.
+     * Audio levels of a media track ( attached to the conference) was changed.
      */
     TRACK_AUDIO_LEVEL_CHANGED: "conference.audioLevelsChanged",
     /**

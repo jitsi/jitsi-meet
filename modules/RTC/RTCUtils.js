@@ -8,7 +8,7 @@ var AdapterJS = require("./adapter.screenshare");
 var SDPUtil = require("../xmpp/SDPUtil");
 var EventEmitter = require("events");
 var screenObtainer = require("./ScreenObtainer");
-var JitsiMeetJSError = require("../../JitsiMeetJSErrors");
+var JitsiTrackErrors = require("../../JitsiTrackErrors");
 
 var eventEmitter = new EventEmitter();
 
@@ -335,7 +335,7 @@ function obtainDevices(options) {
         function (error) {
             logger.error(
                 "failed to obtain " + device + " stream - stop", error);
-            options.errorCallback(JitsiMeetJSError.parseError(error));
+            options.errorCallback(JitsiTrackErrors.parseError(error));
         });
 }
 
@@ -396,10 +396,17 @@ function handleLocalStream(streams, resolution) {
 //Options parameter is to pass config options. Currently uses only "useIPv6".
 var RTCUtils = {
     init: function (options) {
-        var self = this;
-        if (RTCBrowserType.isFirefox()) {
-            var FFversion = RTCBrowserType.getFirefoxVersion();
-            if (FFversion >= 40) {
+        return new Promise(function(resolve, reject) {
+            if (RTCBrowserType.isFirefox()) {
+                var FFversion = RTCBrowserType.getFirefoxVersion();
+                if (FFversion < 40) {
+                    logger.error(
+                            "Firefox version too old: " + FFversion +
+                            ". Required >= 40.");
+                    reject(new Error("Firefox version too old: " + FFversion +
+                    ". Required >= 40."));
+                    return;
+                }
                 this.peerconnection = mozRTCPeerConnection;
                 this.getUserMedia = wrapGetUserMedia(navigator.mozGetUserMedia.bind(navigator));
                 this.enumerateDevices = wrapEnumerateDevices(
@@ -441,128 +448,124 @@ var RTCUtils = {
                 };
                 RTCSessionDescription = mozRTCSessionDescription;
                 RTCIceCandidate = mozRTCIceCandidate;
+            } else if (RTCBrowserType.isChrome() || RTCBrowserType.isOpera()) {
+                this.peerconnection = webkitRTCPeerConnection;
+                var getUserMedia = navigator.webkitGetUserMedia.bind(navigator);
+                if (navigator.mediaDevices) {
+                    this.getUserMedia = wrapGetUserMedia(getUserMedia);
+                    this.enumerateDevices = wrapEnumerateDevices(
+                        navigator.mediaDevices.enumerateDevices.bind(navigator.mediaDevices)
+                    );
+                } else {
+                    this.getUserMedia = getUserMedia;
+                    this.enumerateDevices = enumerateDevicesThroughMediaStreamTrack;
+                }
+                this.attachMediaStream = function (element, stream) {
+                    element.attr('src', webkitURL.createObjectURL(stream));
+                };
+                this.getStreamID = function (stream) {
+                    // streams from FF endpoints have the characters '{' and '}'
+                    // that make jQuery choke.
+                    return SDPUtil.filter_special_chars(stream.id);
+                };
+                this.getVideoSrc = function (element) {
+                    if (!element)
+                        return null;
+                    return element.getAttribute("src");
+                };
+                this.setVideoSrc = function (element, src) {
+                    if (element)
+                        element.setAttribute("src", src);
+                };
+                // DTLS should now be enabled by default but..
+                this.pc_constraints = {'optional': [
+                    {'DtlsSrtpKeyAgreement': 'true'}
+                ]};
+                if (options.useIPv6) {
+                    // https://code.google.com/p/webrtc/issues/detail?id=2828
+                    this.pc_constraints.optional.push({googIPv6: true});
+                }
+                if (RTCBrowserType.isAndroid()) {
+                    this.pc_constraints = {}; // disable DTLS on Android
+                }
+                if (!webkitMediaStream.prototype.getVideoTracks) {
+                    webkitMediaStream.prototype.getVideoTracks = function () {
+                        return this.videoTracks;
+                    };
+                }
+                if (!webkitMediaStream.prototype.getAudioTracks) {
+                    webkitMediaStream.prototype.getAudioTracks = function () {
+                        return this.audioTracks;
+                    };
+                }
+            }
+            // Detect IE/Safari
+            else if (RTCBrowserType.isTemasysPluginUsed()) {
+
+                //AdapterJS.WebRTCPlugin.setLogLevel(
+                //    AdapterJS.WebRTCPlugin.PLUGIN_LOG_LEVELS.VERBOSE);
+
+                AdapterJS.webRTCReady(function (isPlugin) {
+
+                    self.peerconnection = RTCPeerConnection;
+                    self.getUserMedia = window.getUserMedia;
+                    self.enumerateDevices = enumerateDevicesThroughMediaStreamTrack;
+                    self.attachMediaStream = function (elSel, stream) {
+
+                        if (stream.id === "dummyAudio" || stream.id === "dummyVideo") {
+                            return;
+                        }
+
+                        attachMediaStream(elSel[0], stream);
+                    };
+                    self.getStreamID = function (stream) {
+                        var id = SDPUtil.filter_special_chars(stream.label);
+                        return id;
+                    };
+                    self.getVideoSrc = function (element) {
+                        if (!element) {
+                            logger.warn("Attempt to get video SRC of null element");
+                            return null;
+                        }
+                        var children = element.children;
+                        for (var i = 0; i !== children.length; ++i) {
+                            if (children[i].name === 'streamId') {
+                                return children[i].value;
+                            }
+                        }
+                        //logger.info(element.id + " SRC: " + src);
+                        return null;
+                    };
+                    self.setVideoSrc = function (element, src) {
+                        //logger.info("Set video src: ", element, src);
+                        if (!src) {
+                            logger.warn("Not attaching video stream, 'src' is null");
+                            return;
+                        }
+                        AdapterJS.WebRTCPlugin.WaitForPluginReady();
+                        var stream = AdapterJS.WebRTCPlugin.plugin
+                            .getStreamWithId(AdapterJS.WebRTCPlugin.pageId, src);
+                        attachMediaStream(element, stream);
+                    };
+
+                    onReady(options, self.getUserMediaWithConstraints);
+                    resolve();
+                });
             } else {
-                logger.error(
-                        "Firefox version too old: " + FFversion + ". Required >= 40.");
-                window.location.href = 'unsupported_browser.html';
+                try {
+                    logger.error('Browser does not appear to be WebRTC-capable');
+                } catch (e) {
+                }
+                reject('Browser does not appear to be WebRTC-capable');
                 return;
             }
 
-        } else if (RTCBrowserType.isChrome() || RTCBrowserType.isOpera()) {
-            this.peerconnection = webkitRTCPeerConnection;
-            var getUserMedia = navigator.webkitGetUserMedia.bind(navigator);
-            if (navigator.mediaDevices) {
-                this.getUserMedia = wrapGetUserMedia(getUserMedia);
-                this.enumerateDevices = wrapEnumerateDevices(
-                    navigator.mediaDevices.enumerateDevices.bind(navigator.mediaDevices)
-                );
-            } else {
-                this.getUserMedia = getUserMedia;
-                this.enumerateDevices = enumerateDevicesThroughMediaStreamTrack;
-            }
-            this.attachMediaStream = function (element, stream) {
-                element.attr('src', webkitURL.createObjectURL(stream));
-            };
-            this.getStreamID = function (stream) {
-                // streams from FF endpoints have the characters '{' and '}'
-                // that make jQuery choke.
-                return SDPUtil.filter_special_chars(stream.id);
-            };
-            this.getVideoSrc = function (element) {
-                if (!element)
-                    return null;
-                return element.getAttribute("src");
-            };
-            this.setVideoSrc = function (element, src) {
-                if (element)
-                    element.setAttribute("src", src);
-            };
-            // DTLS should now be enabled by default but..
-            this.pc_constraints = {'optional': [
-                {'DtlsSrtpKeyAgreement': 'true'}
-            ]};
-            if (options.useIPv6) {
-                // https://code.google.com/p/webrtc/issues/detail?id=2828
-                this.pc_constraints.optional.push({googIPv6: true});
-            }
-            if (RTCBrowserType.isAndroid()) {
-                this.pc_constraints = {}; // disable DTLS on Android
-            }
-            if (!webkitMediaStream.prototype.getVideoTracks) {
-                webkitMediaStream.prototype.getVideoTracks = function () {
-                    return this.videoTracks;
-                };
-            }
-            if (!webkitMediaStream.prototype.getAudioTracks) {
-                webkitMediaStream.prototype.getAudioTracks = function () {
-                    return this.audioTracks;
-                };
-            }
-        }
-        // Detect IE/Safari
-        else if (RTCBrowserType.isTemasysPluginUsed()) {
-
-            //AdapterJS.WebRTCPlugin.setLogLevel(
-            //    AdapterJS.WebRTCPlugin.PLUGIN_LOG_LEVELS.VERBOSE);
-
-            AdapterJS.webRTCReady(function (isPlugin) {
-
-                self.peerconnection = RTCPeerConnection;
-                self.getUserMedia = window.getUserMedia;
-                self.enumerateDevices = enumerateDevicesThroughMediaStreamTrack;
-                self.attachMediaStream = function (elSel, stream) {
-
-                    if (stream.id === "dummyAudio" || stream.id === "dummyVideo") {
-                        return;
-                    }
-
-                    attachMediaStream(elSel[0], stream);
-                };
-                self.getStreamID = function (stream) {
-                    var id = SDPUtil.filter_special_chars(stream.label);
-                    return id;
-                };
-                self.getVideoSrc = function (element) {
-                    if (!element) {
-                        logger.warn("Attempt to get video SRC of null element");
-                        return null;
-                    }
-                    var children = element.children;
-                    for (var i = 0; i !== children.length; ++i) {
-                        if (children[i].name === 'streamId') {
-                            return children[i].value;
-                        }
-                    }
-                    //logger.info(element.id + " SRC: " + src);
-                    return null;
-                };
-                self.setVideoSrc = function (element, src) {
-                    //logger.info("Set video src: ", element, src);
-                    if (!src) {
-                        logger.warn("Not attaching video stream, 'src' is null");
-                        return;
-                    }
-                    AdapterJS.WebRTCPlugin.WaitForPluginReady();
-                    var stream = AdapterJS.WebRTCPlugin.plugin
-                        .getStreamWithId(AdapterJS.WebRTCPlugin.pageId, src);
-                    attachMediaStream(element, stream);
-                };
-
+            // Call onReady() if Temasys plugin is not used
+            if (!RTCBrowserType.isTemasysPluginUsed()) {
                 onReady(options, self.getUserMediaWithConstraints);
-            });
-        } else {
-            try {
-                logger.error('Browser does not appear to be WebRTC-capable');
-            } catch (e) {
+                resolve();
             }
-            return;
-        }
-
-        // Call onReady() if Temasys plugin is not used
-        if (!RTCBrowserType.isTemasysPluginUsed()) {
-            onReady(options, self.getUserMediaWithConstraints);
-        }
-
+        }.bind(this));
     },
     /**
     * @param {string[]} um required user media types
@@ -674,14 +677,14 @@ var RTCUtils = {
                                             desktopStream: desktopStream});
                                     }, function (error) {
                                         reject(
-                                            JitsiMeetJSError.parseError(error));
+                                            JitsiTrackErrors.parseError(error));
                                     });
                             } else {
                                 successCallback({audioVideo: stream});
                             }
                         },
                         function (error) {
-                            reject(JitsiMeetJSError.parseError(error));
+                            reject(JitsiTrackErrors.parseError(error));
                         },
                         options);
                 } else if (hasDesktop) {
@@ -690,7 +693,7 @@ var RTCUtils = {
                             successCallback({desktopStream: stream});
                         }, function (error) {
                             reject(
-                                JitsiMeetJSError.parseError(error));
+                                JitsiTrackErrors.parseError(error));
                         });
                 }
             }
