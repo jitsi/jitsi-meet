@@ -1,4 +1,6 @@
-/* global MD5 */
+/* global Strophe, APP, MD5, config */
+var Settings = require("../../settings/Settings");
+
 var users = {};
 
 var Avatar = {
@@ -53,9 +55,13 @@ var Avatar = {
             );
             email = id;
         }
-        return 'https://www.gravatar.com/avatar/' +
-            MD5.hexdigest(email.trim().toLowerCase()) +
-            "?d=wavatar&size=" + (size || "30");
+        if (config.enableThirdPartyRequests === true) {
+            return 'https://www.gravatar.com/avatar/' +
+                MD5.hexdigest(id.trim().toLowerCase()) +
+                "?d=wavatar&size=" + (size || "30");
+        } else {
+            return 'images/avatar2.png';
+        }
     }
 
 };
