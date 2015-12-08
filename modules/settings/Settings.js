@@ -96,16 +96,6 @@ var Settings = {
         language = lang;
         window.localStorage.language = lang;
     },
-    getJid: function() {
-      var configDomain = config.hosts.anonymousdomain || config.hosts.domain;
-      // Force authenticated domain if room is appended with '?login=true'
-      if (config.hosts.anonymousdomain &&
-          window.location.search.indexOf("login=true") !== -1) {
-          configDomain = config.hosts.domain;
-      }
-      var jid = configDomain || window.location.hostname;
-    }
-
 };
 
 module.exports = Settings;
