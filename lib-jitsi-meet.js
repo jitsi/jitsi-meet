@@ -5,13 +5,13 @@
 var logger = require("jitsi-meet-logger").getLogger(__filename);
 var RTC = require("./modules/RTC/RTC");
 var XMPPEvents = require("./service/xmpp/XMPPEvents");
-var StreamEventTypes = require("./service/RTC/StreamEventTypes");
 var RTCEvents = require("./service/RTC/RTCEvents");
 var EventEmitter = require("events");
 var JitsiConferenceEvents = require("./JitsiConferenceEvents");
 var JitsiParticipant = require("./JitsiParticipant");
 var Statistics = require("./modules/statistics/statistics");
 var JitsiDTMFManager = require('./modules/DTMF/JitsiDTMFManager');
+var JitsiTrackEvents = require("./JitsiTrackEvents");
 
 /**
  * Creates a JitsiConference object with the given name and properties.
@@ -35,7 +35,7 @@ function JitsiConference(options) {
     this.room = this.xmpp.createRoom(this.options.name, null, null, this.options.config);
     this.room.updateDeviceAvailability(RTC.getDeviceAvailability());
     this.rtc = new RTC(this.room, options);
-    if(!options.config.disableAudioLevels)
+    if(!RTC.options.disableAudioLevels)
         this.statistics = new Statistics();
     setupListeners(this);
     this.participants = {};
@@ -104,7 +104,8 @@ JitsiConference.prototype.addEventListener = JitsiConference.prototype.on;
 JitsiConference.prototype.removeEventListener = JitsiConference.prototype.off;
 
 /**
- * Receives notifications from another participants for commands / custom events(send by sendPresenceCommand method).
+ * Receives notifications from another participants for commands / custom events
+ * (send by sendPresenceCommand method).
  * @param command {String} the name of the command
  * @param handler {Function} handler for the command
  */
@@ -170,11 +171,7 @@ JitsiConference.prototype.removeCommand = function (name) {
  */
 JitsiConference.prototype.setDisplayName = function(name) {
     if(this.room){
-        this.room.addToPresence("nick", {
-            attributes: {
-                xmlns: 'http://jabber.org/protocol/nick'
-            }, value: name
-        });
+        this.room.addToPresence("nick", {attributes: {xmlns: 'http://jabber.org/protocol/nick'}, value: name});
         this.room.sendPresence();
     }
 };
@@ -184,8 +181,42 @@ JitsiConference.prototype.setDisplayName = function(name) {
  * @param track the JitsiLocalTrack object.
  */
 JitsiConference.prototype.addTrack = function (track) {
-    this.rtc.addLocalStream(track);
-    this.room.addStream(track.getOriginalStream(), function () {});
+    this.room.addStream(track.getOriginalStream(), function () {
+        this.rtc.addLocalStream(track);
+        var muteHandler = this._fireMuteChangeEvent.bind(this, track);
+        var stopHandler = this.removeTrack.bind(this, track);
+        var audioLevelHandler = this._fireAudioLevelChangeEvent.bind(this);
+        track.addEventListener(JitsiTrackEvents.TRACK_MUTE_CHANGED, muteHandler);
+        track.addEventListener(JitsiTrackEvents.TRACK_STOPPED, stopHandler);
+        track.addEventListener(JitsiTrackEvents.TRACK_AUDIO_LEVEL_CHANGED, audioLevelHandler);
+        this.addEventListener(JitsiConferenceEvents.TRACK_REMOVED, function (someTrack) {
+            if (someTrack !== track) {
+                return;
+            }
+            track.removeEventListener(JitsiTrackEvents.TRACK_MUTE_CHANGED, muteHandler);
+            track.removeEventListener(JitsiTrackEvents.TRACK_STOPPED, stopHandler);
+            track.removeEventListener(JitsiTrackEvents.TRACK_AUDIO_LEVEL_CHANGED, audioLevelHandler);
+        });
+        this.eventEmitter.emit(JitsiConferenceEvents.TRACK_ADDED, track);
+    }.bind(this));
+};
+
+/**
+ * Fires TRACK_AUDIO_LEVEL_CHANGED change conference event.
+ * @param audioLevel the audio level
+ */
+JitsiConference.prototype._fireAudioLevelChangeEvent = function (audioLevel) {
+    this.eventEmitter.emit(
+        JitsiConferenceEvents.TRACK_AUDIO_LEVEL_CHANGED,
+        this.myUserId(), audioLevel);
+};
+
+/**
+ * Fires TRACK_MUTE_CHANGED change conference event.
+ * @param track the JitsiTrack object related to the event.
+ */
+JitsiConference.prototype._fireMuteChangeEvent = function (track) {
+    this.eventEmitter.emit(JitsiConferenceEvents.TRACK_MUTE_CHANGED, track);
 };
 
 /**
@@ -193,8 +224,10 @@ JitsiConference.prototype.addTrack = function (track) {
  * @param track the JitsiLocalTrack object.
  */
 JitsiConference.prototype.removeTrack = function (track) {
-    this.room.removeStream(track.getOriginalStream());
-    this.rtc.removeLocalStream(track);
+    this.room.removeStream(track.getOriginalStream(), function(){
+        this.rtc.removeLocalStream(track);
+        this.eventEmitter.emit(JitsiConferenceEvents.TRACK_REMOVED, track);
+    }.bind(this));
 };
 
 /**
@@ -291,22 +324,41 @@ JitsiConference.prototype.onDisplayNameChanged = function (jid, displayName) {
     this.eventEmitter.emit(JitsiConferenceEvents.DISPLAY_NAME_CHANGED, id, displayName);
 };
 
-
 JitsiConference.prototype.onTrackAdded = function (track) {
     var id = track.getParticipantId();
     var participant = this.getParticipantById(id);
-    participant._tracks.push(track);
-    this.eventEmitter.emit(JitsiConferenceEvents.TRACK_ADDED, track);
-};
-
-JitsiConference.prototype.onTrackRemoved = function (track) {
-    var id = track.getParticipantId();
-    var participant = this.getParticipantById(id);
-    var pos = participant._tracks.indexOf(track);
-    if (pos > -1) {
-        participant._tracks.splice(pos, 1);
+    if (!participant) {
+        return;
     }
-    this.eventEmitter.emit(JitsiConferenceEvents.TRACK_REMOVED, track);
+    // add track to JitsiParticipant
+    participant._tracks.push(track);
+
+    var emitter = this.eventEmitter;
+    track.addEventListener(
+        JitsiTrackEvents.TRACK_STOPPED,
+        function () {
+            // remove track from JitsiParticipant
+            var pos = participant._tracks.indexOf(track);
+            if (pos > -1) {
+                participant._tracks.splice(pos, 1);
+            }
+            emitter.emit(JitsiConferenceEvents.TRACK_REMOVED, track);
+        }
+    );
+    track.addEventListener(
+        JitsiTrackEvents.TRACK_MUTE_CHANGED,
+        function () {
+            emitter.emit(JitsiConferenceEvents.TRACK_MUTE_CHANGED, track);
+        }
+    );
+    track.addEventListener(
+        JitsiTrackEvents.TRACK_AUDIO_LEVEL_CHANGED,
+        function (audioLevel) {
+            emitter.emit(JitsiConferenceEvents.TRACK_AUDIO_LEVEL_CHANGED, id, audioLevel);
+        }
+    );
+
+    this.eventEmitter.emit(JitsiConferenceEvents.TRACK_ADDED, track);
 };
 
 JitsiConference.prototype.updateDTMFSupport = function () {
@@ -374,8 +426,15 @@ function setupListeners(conference) {
         if(conference.statistics)
             conference.statistics.startRemoteStats(event.peerconnection);
     });
+
     conference.room.addListener(XMPPEvents.REMOTE_STREAM_RECEIVED,
-        conference.rtc.createRemoteStream.bind(conference.rtc));
+        function (data, sid, thessrc) {
+            var track = conference.rtc.createRemoteStream(data, sid, thessrc);
+            if (track) {
+                conference.onTrackAdded(track);
+            }
+        }
+    );
 
     conference.room.addListener(XMPPEvents.MUC_JOINED, function () {
         conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_JOINED);
@@ -406,24 +465,6 @@ function setupListeners(conference) {
         conference.eventEmitter.emit(JitsiConferenceEvents.SETUP_FAILED);
     });
 
-    conference.rtc.addListener(
-        StreamEventTypes.EVENT_TYPE_REMOTE_CREATED, conference.onTrackAdded.bind(conference)
-    );
-
-//FIXME: Maybe remove event should not be associated with the conference.
-    conference.rtc.addListener(
-        StreamEventTypes.EVENT_TYPE_REMOTE_ENDED, conference.onTrackRemoved.bind(conference)
-    );
-//FIXME: Maybe remove event should not be associated with the conference.
-    conference.rtc.addListener(StreamEventTypes.EVENT_TYPE_LOCAL_ENDED, function (stream) {
-        conference.removeTrack(stream);
-        conference.eventEmitter.emit(JitsiConferenceEvents.TRACK_REMOVED, stream);
-    });
-
-    conference.rtc.addListener(StreamEventTypes.TRACK_MUTE_CHANGED, function (track) {
-        conference.eventEmitter.emit(JitsiConferenceEvents.TRACK_MUTE_CHANGED, track);
-    });
-
     conference.rtc.addListener(RTCEvents.DOMINANTSPEAKER_CHANGED, function (id) {
         if(conference.lastActiveSpeaker !== id && conference.room) {
             conference.lastActiveSpeaker = id;
@@ -445,20 +486,11 @@ function setupListeners(conference) {
         //FIXME: Maybe remove event should not be associated with the conference.
         conference.statistics.addAudioLevelListener(function (ssrc, level) {
             var userId = null;
-            if (ssrc === Statistics.LOCAL_JID) {
-                userId = conference.myUserId();
-            } else {
-                var jid = conference.room.getJidBySSRC(ssrc);
-                if (!jid)
-                    return;
+            var jid = conference.room.getJidBySSRC(ssrc);
+            if (!jid)
+                return;
 
-                userId = Strophe.getResourceFromJid(jid);
-            }
-            conference.eventEmitter.emit(JitsiConferenceEvents.TRACK_AUDIO_LEVEL_CHANGED,
-                userId, level);
-        });
-        conference.rtc.addListener(StreamEventTypes.EVENT_TYPE_LOCAL_CREATED, function (stream) {
-            conference.statistics.startLocalStats(stream);
+            conference.rtc.setAudioLevel(jid, level);
         });
         conference.xmpp.addListener(XMPPEvents.DISPOSE_CONFERENCE,
             function () {
@@ -475,7 +507,7 @@ function setupListeners(conference) {
 module.exports = JitsiConference;
 
 }).call(this,"/JitsiConference.js")
-},{"./JitsiConferenceEvents":3,"./JitsiParticipant":8,"./modules/DTMF/JitsiDTMFManager":11,"./modules/RTC/RTC":16,"./modules/statistics/statistics":24,"./service/RTC/RTCEvents":79,"./service/RTC/StreamEventTypes":81,"./service/xmpp/XMPPEvents":86,"events":43,"jitsi-meet-logger":47}],2:[function(require,module,exports){
+},{"./JitsiConferenceEvents":3,"./JitsiParticipant":8,"./JitsiTrackEvents":10,"./modules/DTMF/JitsiDTMFManager":11,"./modules/RTC/RTC":16,"./modules/statistics/statistics":24,"./service/RTC/RTCEvents":79,"./service/xmpp/XMPPEvents":85,"events":43,"jitsi-meet-logger":47}],2:[function(require,module,exports){
 /**
  * Enumeration with the errors for the conference.
  * @type {{string: string}}
@@ -753,6 +785,7 @@ var JitsiTrackEvents = require("./JitsiTrackEvents");
 var JitsiTrackErrors = require("./JitsiTrackErrors");
 var Logger = require("jitsi-meet-logger");
 var RTC = require("./modules/RTC/RTC");
+var Statistics = require("./modules/statistics/statistics");
 
 /**
  * Namespace for the interface of Jitsi Meet Library.
@@ -788,11 +821,29 @@ var LibJitsiMeet = {
      * will be returned trough the Promise, otherwise JitsiTrack objects will be returned.
      * @param {string} options.cameraDeviceId
      * @param {string} options.micDeviceId
-     * @returns {Promise.<{Array.<JitsiTrack>}, JitsiConferenceError>} A promise that returns an array of created JitsiTracks if resolved,
+     * @returns {Promise.<{Array.<JitsiTrack>}, JitsiConferenceError>}
+     *     A promise that returns an array of created JitsiTracks if resolved,
      *     or a JitsiConferenceError if rejected.
      */
     createLocalTracks: function (options) {
-        return RTC.obtainAudioAndVideoPermissions(options || {});
+        return RTC.obtainAudioAndVideoPermissions(options || {}).then(
+            function(tracks) {
+                if(!RTC.options.disableAudioLevels)
+                    for(var i = 0; i < tracks.length; i++) {
+                        var track = tracks[i];
+                        var mStream = track.getOriginalStream();
+                        if(track.getType() === "audio"){
+                            Statistics.startLocalStats(mStream,
+                                track.setAudioLevel.bind(track));
+                            track.addEventListener(
+                                JitsiTrackEvents.TRACK_STOPPED,
+                                function(){
+                                    Statistics.stopLocalStats(mStream);
+                                });
+                        }
+                    }
+                return tracks;
+            });
     },
     isDeviceListAvailable: function () {
         return RTC.isDeviceListAvailable();
@@ -808,7 +859,7 @@ window.Promise = window.Promise || require("es6-promise").Promise;
 
 module.exports = LibJitsiMeet;
 
-},{"./JitsiConferenceErrors":2,"./JitsiConferenceEvents":3,"./JitsiConnection":4,"./JitsiConnectionErrors":5,"./JitsiConnectionEvents":6,"./JitsiTrackErrors":9,"./JitsiTrackEvents":10,"./modules/RTC/RTC":16,"es6-promise":45,"jitsi-meet-logger":47}],8:[function(require,module,exports){
+},{"./JitsiConferenceErrors":2,"./JitsiConferenceEvents":3,"./JitsiConnection":4,"./JitsiConnectionErrors":5,"./JitsiConnectionEvents":6,"./JitsiTrackErrors":9,"./JitsiTrackEvents":10,"./modules/RTC/RTC":16,"./modules/statistics/statistics":24,"es6-promise":45,"jitsi-meet-logger":47}],8:[function(require,module,exports){
 /**
  * Represents a participant in (a member of) a conference.
  */
@@ -990,7 +1041,7 @@ var JitsiTrackEvents = {
     /**
      * The media track was removed to the conference.
      */
-    TRACK_STOPPED: "track.TRACK_STOPPED",
+    TRACK_STOPPED: "track.stopped"
 };
 
 module.exports = JitsiTrackEvents;
@@ -1232,8 +1283,8 @@ module.exports = DataChannels;
 }).call(this,"/modules/RTC/DataChannels.js")
 },{"../../service/RTC/RTCEvents":79,"jitsi-meet-logger":47}],13:[function(require,module,exports){
 var JitsiTrack = require("./JitsiTrack");
-var StreamEventTypes = require("../../service/RTC/StreamEventTypes");
 var RTCBrowserType = require("./RTCBrowserType");
+var JitsiTrackEvents = require('../../JitsiTrackEvents');
 var RTC = require("./RTCUtils");
 
 /**
@@ -1246,14 +1297,15 @@ function JitsiLocalTrack(stream, videoType,
     this.videoType = videoType;
     this.dontFireRemoveEvent = false;
     this.resolution = resolution;
+    this.startMuted = false;
     var self = this;
     JitsiTrack.call(this, null, stream,
         function () {
-            if(!self.dontFireRemoveEvent && self.rtc)
-                self.rtc.eventEmitter.emit(
-                    StreamEventTypes.EVENT_TYPE_LOCAL_ENDED, self);
-            self.dontFireRemoveEvent = false;
-        });
+            if(!this.dontFireRemoveEvent)
+                this.eventEmitter.emit(
+                    JitsiTrackEvents.TRACK_STOPPED);
+            this.dontFireRemoveEvent = false;
+        }.bind(this));
 
 }
 
@@ -1266,14 +1318,14 @@ JitsiLocalTrack.prototype.constructor = JitsiLocalTrack;
  */
 JitsiLocalTrack.prototype._setMute = function (mute) {
     if(!this.rtc) {
-        console.error("Mute is not supported for streams not attached to conference!");
+        this.startMuted = mute;
         return;
     }
     var isAudio = this.type === JitsiTrack.AUDIO;
     this.dontFireRemoveEvent = false;
 
     if ((window.location.protocol != "https:") ||
-        (isAudio) || this.videoType === "screen" ||
+        (isAudio) || this.videoType === "desktop" ||
         // FIXME FF does not support 'removeStream' method used to mute
         RTCBrowserType.isFirefox()) {
 
@@ -1285,7 +1337,7 @@ JitsiLocalTrack.prototype._setMute = function (mute) {
             this.rtc.room.setAudioMute(mute);
         else
             this.rtc.room.setVideoMute(mute);
-        this.rtc.eventEmitter.emit(StreamEventTypes.TRACK_MUTE_CHANGED, this);
+        this.eventEmitter.emit(JitsiTrackEvents.TRACK_MUTE_CHANGED);
     } else {
         if (mute) {
             this.dontFireRemoveEvent = true;
@@ -1296,7 +1348,7 @@ JitsiLocalTrack.prototype._setMute = function (mute) {
             else
                 this.rtc.room.setVideoMute(mute);
             this.stream = null;
-            this.rtc.eventEmitter.emit(StreamEventTypes.TRACK_MUTE_CHANGED, this);
+            this.eventEmitter.emit(JitsiTrackEvents.TRACK_MUTE_CHANGED);
             //FIXME: Maybe here we should set the SRC for the containers to something
         } else {
             var self = this;
@@ -1328,7 +1380,8 @@ JitsiLocalTrack.prototype._setMute = function (mute) {
                                 self.rtc.room.setAudioMute(mute);
                             else
                                 self.rtc.room.setVideoMute(mute);
-                            self.rtc.eventEmitter.emit(StreamEventTypes.TRACK_MUTE_CHANGED, self);
+                            self.eventEmitter.emit(
+                                JitsiTrackEvents.TRACK_MUTE_CHANGED);
                         });
                 });
         }
@@ -1344,7 +1397,7 @@ JitsiLocalTrack.prototype.stop = function () {
         return;
     if(this.rtc)
         this.rtc.room.removeStream(this.stream);
-    this.rtc.stopMediaStream(this.stream);
+    RTC.stopMediaStream(this.stream);
     this.detach();
 }
 
@@ -1381,11 +1434,18 @@ JitsiLocalTrack.prototype._setRTC = function (rtc) {
     this.rtc = rtc;
 };
 
+/**
+ * Return true;
+ */
+JitsiLocalTrack.prototype.isLocal = function () {
+    return true;
+}
+
 module.exports = JitsiLocalTrack;
 
-},{"../../service/RTC/StreamEventTypes":81,"./JitsiTrack":15,"./RTCBrowserType":17,"./RTCUtils":18}],14:[function(require,module,exports){
+},{"../../JitsiTrackEvents":10,"./JitsiTrack":15,"./RTCBrowserType":17,"./RTCUtils":18}],14:[function(require,module,exports){
 var JitsiTrack = require("./JitsiTrack");
-var StreamEventTypes = require("../../service/RTC/StreamEventTypes");
+var JitsiTrackEvents = require("../../JitsiTrackEvents");
 
 /**
  * Represents a single media track (either audio or video).
@@ -1396,11 +1456,11 @@ var StreamEventTypes = require("../../service/RTC/StreamEventTypes");
  * @param eventEmitter the event emitter
  * @constructor
  */
-function JitsiRemoteTrack(RTC, data, sid, ssrc, eventEmitter) {
+function JitsiRemoteTrack(RTC, data, sid, ssrc) {
     JitsiTrack.call(this, RTC, data.stream,
         function () {
-            eventEmitter.emit(StreamEventTypes.EVENT_TYPE_REMOTE_ENDED, self);
-        });
+            this.eventEmitter.emit(JitsiTrackEvents.TRACK_STOPPED);
+        }.bind(this));
     this.rtc = RTC;
     this.sid = sid;
     this.stream = data.stream;
@@ -1410,10 +1470,8 @@ function JitsiRemoteTrack(RTC, data, sid, ssrc, eventEmitter) {
     this.muted = false;
     if((this.type === JitsiTrack.AUDIO && data.audiomuted)
       || (this.type === JitsiTrack.VIDEO && data.videomuted)) {
-        this.muted = true
+        this.muted = true;
     }
-    this.eventEmitter = eventEmitter;
-    var self = this;
 }
 
 JitsiRemoteTrack.prototype = Object.create(JitsiTrack.prototype);
@@ -1426,7 +1484,7 @@ JitsiRemoteTrack.prototype.constructor = JitsiRemoteTrack;
 JitsiRemoteTrack.prototype.setMute = function (value) {
     this.stream.muted = value;
     this.muted = value;
-    this.eventEmitter.emit(StreamEventTypes.TRACK_MUTE_CHANGED, this);
+    this.eventEmitter.emit(JitsiTrackEvents.TRACK_MUTE_CHANGED);
 };
 
 /**
@@ -1445,14 +1503,23 @@ JitsiRemoteTrack.prototype.getParticipantId = function() {
     return Strophe.getResourceFromJid(this.peerjid);
 };
 
+/**
+ * Return false;
+ */
+JitsiRemoteTrack.prototype.isLocal = function () {
+    return false;
+}
+
 delete JitsiRemoteTrack.prototype.stop;
 
 delete JitsiRemoteTrack.prototype.start;
 
 module.exports = JitsiRemoteTrack;
 
-},{"../../service/RTC/StreamEventTypes":81,"./JitsiTrack":15}],15:[function(require,module,exports){
+},{"../../JitsiTrackEvents":10,"./JitsiTrack":15}],15:[function(require,module,exports){
 var RTCBrowserType = require("./RTCBrowserType");
+var JitsiTrackEvents = require("../../JitsiTrackEvents");
+var EventEmitter = require("events");
 
 /**
  * This implements 'onended' callback normally fired by WebRTC after the stream
@@ -1508,6 +1575,8 @@ function JitsiTrack(rtc, stream, streamInactiveHandler)
     this.containers = [];
     this.rtc = rtc;
     this.stream = stream;
+    this.eventEmitter = new EventEmitter();
+    this.audioLevel = -1;
     this.type = (this.stream.getVideoTracks().length > 0)?
         JitsiTrack.VIDEO : JitsiTrack.AUDIO;
     if(this.type == "audio") {
@@ -1652,10 +1721,47 @@ JitsiTrack.prototype.isActive = function () {
         return true;
 };
 
+/**
+ * Attaches a handler for events(For example - "audio level changed".).
+ * All possible event are defined in JitsiTrackEvents.
+ * @param eventId the event ID.
+ * @param handler handler for the event.
+ */
+JitsiTrack.prototype.on = function (eventId, handler) {
+    if(this.eventEmitter)
+        this.eventEmitter.on(eventId, handler);
+}
+
+/**
+ * Removes event listener
+ * @param eventId the event ID.
+ * @param [handler] optional, the specific handler to unbind
+ */
+JitsiTrack.prototype.off = function (eventId, handler) {
+    if(this.eventEmitter)
+        this.eventEmitter.removeListener(eventId, handler);
+}
+
+// Common aliases for event emitter
+JitsiTrack.prototype.addEventListener = JitsiTrack.prototype.on;
+JitsiTrack.prototype.removeEventListener = JitsiTrack.prototype.off;
+
+
+/**
+ * Sets the audio level for the stream
+ * @param audioLevel the new audio level
+ */
+JitsiTrack.prototype.setAudioLevel = function (audioLevel) {
+    if(this.audioLevel !== audioLevel) {
+        this.eventEmitter.emit(JitsiTrackEvents.TRACK_AUDIO_LEVEL_CHANGED,
+            audioLevel);
+        this.audioLevel = audioLevel;
+    }
+ }
 
 module.exports = JitsiTrack;
 
-},{"./RTCBrowserType":17,"./RTCUtils":18}],16:[function(require,module,exports){
+},{"../../JitsiTrackEvents":10,"./RTCBrowserType":17,"./RTCUtils":18,"events":43}],16:[function(require,module,exports){
 /* global APP */
 var EventEmitter = require("events");
 var RTCBrowserType = require("./RTCBrowserType");
@@ -1667,7 +1773,6 @@ var JitsiRemoteTrack = require("./JitsiRemoteTrack.js");
 var DesktopSharingEventTypes
     = require("../../service/desktopsharing/DesktopSharingEventTypes");
 var MediaStreamType = require("../../service/RTC/MediaStreamTypes");
-var StreamEventTypes = require("../../service/RTC/StreamEventTypes.js");
 var RTCEvents = require("../../service/RTC/RTCEvents.js");
 
 function createLocalTracks(streams) {
@@ -1678,10 +1783,6 @@ function createLocalTracks(streams) {
         newStreams.push(localStream);
         if (streams[i].isMuted === true)
             localStream.setMute(true);
-        //FIXME:
-        // var eventType = StreamEventTypes.EVENT_TYPE_LOCAL_CREATED;
-        //
-        // eventEmitter.emit(eventType, localStream);
     }
     return newStreams;
 }
@@ -1689,6 +1790,8 @@ function createLocalTracks(streams) {
 function RTC(room, options) {
     this.room = room;
     this.localStreams = [];
+    //FIXME: we should start removing those streams.
+    //FIXME: We should support multiple streams per jid.
     this.remoteStreams = {};
     this.localAudio = null;
     this.localVideo = null;
@@ -1696,12 +1799,14 @@ function RTC(room, options) {
     var self = this;
     this.options = options || {};
     room.addPresenceListener("videomuted", function (values, from) {
-        if(self.remoteStreams[from])
+        if(self.remoteStreams[from]) {
             self.remoteStreams[from][JitsiTrack.VIDEO].setMute(values.value == "true");
+        }
     });
     room.addPresenceListener("audiomuted", function (values, from) {
-        if(self.remoteStreams[from])
+        if(self.remoteStreams[from]) {
             self.remoteStreams[from][JitsiTrack.AUDIO].setMute(values.value == "true");
+        }
     });
 }
 
@@ -1762,7 +1867,8 @@ RTC.isRTCReady = function () {
 }
 
 RTC.init = function (options) {
-    return RTCUtils.init(options || {});
+    this.options = options || {};
+    return RTCUtils.init(this.options);
 }
 
 RTC.getDeviceAvailability = function () {
@@ -1790,8 +1896,7 @@ RTC.prototype.removeLocalStream = function (stream) {
 };
 
 RTC.prototype.createRemoteStream = function (data, sid, thessrc) {
-    var remoteStream = new JitsiRemoteTrack(this, data, sid, thessrc,
-        this.eventEmitter);
+    var remoteStream = new JitsiRemoteTrack(this, data, sid, thessrc);
     if(!data.peerjid)
         return;
     var jid = data.peerjid;
@@ -1799,7 +1904,6 @@ RTC.prototype.createRemoteStream = function (data, sid, thessrc) {
         this.remoteStreams[jid] = {};
     }
     this.remoteStreams[jid][remoteStream.type]= remoteStream;
-    this.eventEmitter.emit(StreamEventTypes.EVENT_TYPE_REMOTE_CREATED, remoteStream);
     return remoteStream;
 };
 
@@ -1851,24 +1955,6 @@ RTC.prototype.getVideoElementName = function () {
 RTC.prototype.dispose = function() {
 };
 
-RTC.prototype.muteRemoteVideoStream = function (jid, value) {
-    var stream;
-
-    if(this.remoteStreams[jid] &&
-        this.remoteStreams[jid][MediaStreamType.VIDEO_TYPE]) {
-        stream = this.remoteStreams[jid][MediaStreamType.VIDEO_TYPE];
-    }
-
-    if(!stream)
-        return true;
-
-    if (value != stream.muted) {
-        stream.setMute(value);
-        return true;
-    }
-    return false;
-};
-
 RTC.prototype.switchVideoStreams = function (newStream) {
     this.localVideo.stream = newStream;
 
@@ -1880,42 +1966,13 @@ RTC.prototype.switchVideoStreams = function (newStream) {
     this.localStreams.push(this.localVideo);
 };
 
-RTC.prototype.isVideoMuted = function (jid) {
-    if (jid === APP.xmpp.myJid()) {
-        var localVideo = APP.RTC.localVideo;
-        return (!localVideo || localVideo.isMuted());
-    } else {
-        if (!this.remoteStreams[jid] ||
-            !this.remoteStreams[jid][MediaStreamType.VIDEO_TYPE]) {
-            return null;
-        }
-        return this.remoteStreams[jid][MediaStreamType.VIDEO_TYPE].muted;
-    }
-};
-
-RTC.prototype.setVideoMute = function (mute, callback, options) {
-    if (!this.localVideo)
-        return;
-
-    if (mute == this.localVideo.isMuted())
-    {
-        APP.xmpp.sendVideoInfoPresence(mute);
-        if (callback)
-            callback(mute);
-    }
-    else
-    {
-        this.localVideo.setMute(mute);
-        this.room.setVideoMute(
-            mute,
-            callback,
-            options);
-    }
-};
-
+RTC.prototype.setAudioLevel = function (jid, audioLevel) {
+    if(this.remoteStreams[jid] && this.remoteStreams[jid][JitsiTrack.AUDIO])
+        this.remoteStreams[jid][JitsiTrack.AUDIO].setAudioLevel(audioLevel);
+}
 module.exports = RTC;
 
-},{"../../service/RTC/MediaStreamTypes":78,"../../service/RTC/RTCEvents.js":79,"../../service/RTC/StreamEventTypes.js":81,"../../service/desktopsharing/DesktopSharingEventTypes":83,"./DataChannels":12,"./JitsiLocalTrack.js":13,"./JitsiRemoteTrack.js":14,"./JitsiTrack":15,"./RTCBrowserType":17,"./RTCUtils.js":18,"events":43}],17:[function(require,module,exports){
+},{"../../service/RTC/MediaStreamTypes":78,"../../service/RTC/RTCEvents.js":79,"../../service/desktopsharing/DesktopSharingEventTypes":82,"./DataChannels":12,"./JitsiLocalTrack.js":13,"./JitsiRemoteTrack.js":14,"./JitsiTrack":15,"./RTCBrowserType":17,"./RTCUtils.js":18,"events":43}],17:[function(require,module,exports){
 
 var currentBrowser;
 
@@ -3259,7 +3316,7 @@ function initFirefoxExtensionDetection(options) {
 module.exports = ScreenObtainer;
 
 }).call(this,"/modules/RTC/ScreenObtainer.js")
-},{"../../service/desktopsharing/DesktopSharingEventTypes":83,"./RTCBrowserType":17,"./adapter.screenshare":20,"jitsi-meet-logger":47}],20:[function(require,module,exports){
+},{"../../service/desktopsharing/DesktopSharingEventTypes":82,"./RTCBrowserType":17,"./adapter.screenshare":20,"jitsi-meet-logger":47}],20:[function(require,module,exports){
 (function (__filename){
 /*! adapterjs - v0.12.0 - 2015-09-04 */
 var console = require("jitsi-meet-logger").getLogger(__filename);
@@ -4525,9 +4582,6 @@ module.exports = Settings;
  */
 
 var RTCBrowserType = require('../RTC/RTCBrowserType');
-var StatisticsEvents = require('../../service/statistics/Events');
-
-var LOCAL_JID = require("../../service/statistics/constants").LOCAL_JID;
 
 /**
  * Size of the webaudio analyzer buffer.
@@ -4588,16 +4642,16 @@ function animateLevel(newLevel, lastLevel) {
  *
  * @param stream the local stream
  * @param interval stats refresh interval given in ms.
+ * @param callback function that receives the audio levels.
  * @constructor
  */
-function LocalStatsCollector(stream, interval, statisticsService, eventEmitter) {
+function LocalStatsCollector(stream, interval, callback) {
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
     this.stream = stream;
     this.intervalId = null;
     this.intervalMilis = interval;
-    this.eventEmitter = eventEmitter;
     this.audioLevel = 0;
-    this.statisticsService = statisticsService;
+    this.callback = callback;
 }
 
 /**
@@ -4627,10 +4681,7 @@ LocalStatsCollector.prototype.start = function () {
             var audioLevel = timeDomainDataToAudioLevel(array);
             if (audioLevel != self.audioLevel) {
                 self.audioLevel = animateLevel(audioLevel, self.audioLevel);
-                self.eventEmitter.emit(
-                    StatisticsEvents.AUDIO_LEVEL,
-                    self.statisticsService.LOCAL_JID,
-                    self.audioLevel);
+                self.callback(self.audioLevel);
             }
         },
         this.intervalMilis
@@ -4648,7 +4699,8 @@ LocalStatsCollector.prototype.stop = function () {
 };
 
 module.exports = LocalStatsCollector;
-},{"../../service/statistics/Events":84,"../../service/statistics/constants":85,"../RTC/RTCBrowserType":17}],23:[function(require,module,exports){
+
+},{"../RTC/RTCBrowserType":17}],23:[function(require,module,exports){
 (function (__filename){
 /* global require, ssrc2jid */
 /* jshint -W117 */
@@ -5375,7 +5427,7 @@ StatsCollector.prototype.processAudioLevelReport = function () {
 };
 
 }).call(this,"/modules/statistics/RTPStatsCollector.js")
-},{"../../service/statistics/Events":84,"../RTC/RTCBrowserType":17,"jitsi-meet-logger":47}],24:[function(require,module,exports){
+},{"../../service/statistics/Events":83,"../RTC/RTCBrowserType":17,"jitsi-meet-logger":47}],24:[function(require,module,exports){
 /* global require, APP */
 var LocalStats = require("./LocalStatsCollector.js");
 var RTPStats = require("./RTPStatsCollector.js");
@@ -5396,8 +5448,9 @@ var StatisticsEvents = require("../../service/statistics/Events");
 //    }
 //}
 
+var eventEmitter = new EventEmitter();
+
 function Statistics() {
-    this.localStats = null;
     this.rtpStats = null;
     this.eventEmitter = new EventEmitter();
 }
@@ -5411,14 +5464,13 @@ Statistics.prototype.startRemoteStats = function (peerconnection) {
     this.rtpStats.start();
 }
 
-Statistics.prototype.startLocalStats = function (stream) {
-    if(stream.getType() !== "audio")
-        return;
-    this.localStats = new LocalStats(stream.getOriginalStream(), 200, this,
-        this.eventEmitter);
-    this.localStats.start();
-}
+Statistics.localStats = [];
 
+Statistics.startLocalStats = function (stream, callback) {
+    var localStats = new LocalStats(stream, 200, callback);
+    this.localStats.push(localStats);
+    localStats.start();
+}
 
 Statistics.prototype.addAudioLevelListener = function(listener)
 {
@@ -5431,20 +5483,29 @@ Statistics.prototype.removeAudioLevelListener = function(listener)
 }
 
 Statistics.prototype.dispose = function () {
-    this.stopLocal();
+    Statistics.stopAllLocalStats();
     this.stopRemote();
     if(this.eventEmitter)
-    {
         this.eventEmitter.removeAllListeners();
-    }
+
+    if(eventEmitter)
+        eventEmitter.removeAllListeners();
 }
 
 
-Statistics.prototype.stopLocal = function () {
-    if (this.localStats) {
-        this.localStats.stop();
-        this.localStats = null;
-    }
+Statistics.stopAllLocalStats = function () {
+    for(var i = 0; i < this.localStats.length; i++)
+        this.localStats[i].stop();
+    this.localStats = [];
+}
+
+Statistics.stopLocalStats = function (stream) {
+    for(var i = 0; i < Statistics.localStats.length; i++)
+        if(Statistics.localStats[i].stream === stream){
+            var localStats = Statistics.localStats.splice(i, 1);
+            localStats.stop();
+            break;
+        }
 }
 
 Statistics.prototype.stopRemote = function () {
@@ -5523,7 +5584,8 @@ Statistics.LOCAL_JID = require("../../service/statistics/constants").LOCAL_JID;
 
 
 module.exports = Statistics;
-},{"../../service/statistics/Events":84,"../../service/statistics/constants":85,"./LocalStatsCollector.js":22,"./RTPStatsCollector.js":23,"events":43}],25:[function(require,module,exports){
+
+},{"../../service/statistics/Events":83,"../../service/statistics/constants":84,"./LocalStatsCollector.js":22,"./RTPStatsCollector.js":23,"events":43}],25:[function(require,module,exports){
 /**
 /**
  * @const
@@ -6117,10 +6179,10 @@ ChatRoom.prototype.setJingleSession = function(session){
 };
 
 
-ChatRoom.prototype.removeStream = function (stream) {
+ChatRoom.prototype.removeStream = function (stream, callback) {
     if(!this.session)
         return;
-    this.session.peerconnection.removeStream(stream);
+    this.session.removeStream(stream, callback);
 };
 
 ChatRoom.prototype.switchStreams = function (stream, oldStream, callback, isAudio) {
@@ -6244,7 +6306,7 @@ ChatRoom.prototype.getJidBySSRC = function (ssrc) {
 module.exports = ChatRoom;
 
 }).call(this,"/modules/xmpp/ChatRoom.js")
-},{"../../service/xmpp/XMPPEvents":86,"./moderator":34,"events":43,"jitsi-meet-logger":47}],27:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":85,"./moderator":34,"events":43,"jitsi-meet-logger":47}],27:[function(require,module,exports){
 (function (__filename){
 /*
  * JingleSession provides an API to manage a single Jingle session. We will
@@ -7620,6 +7682,43 @@ JingleSessionPC.prototype.addStream = function (stream, callback) {
 }
 
 /**
+ * Remove streams.
+ * @param stream stream that will be removed.
+ * @param success_callback callback executed after successful stream addition.
+ */
+JingleSessionPC.prototype.removeStream = function (stream, callback) {
+
+    var self = this;
+
+    // Remember SDP to figure out added/removed SSRCs
+    var oldSdp = null;
+    if(this.peerconnection) {
+        if(this.peerconnection.localDescription) {
+            oldSdp = new SDP(this.peerconnection.localDescription.sdp);
+        }
+        if(stream)
+            this.peerconnection.removeStream(stream);
+    }
+
+    // Conference is not active
+    if(!oldSdp || !this.peerconnection) {
+        callback();
+        return;
+    }
+
+    this.addingStreams = true;
+    this.modifySourcesQueue.push(function() {
+        logger.log('modify sources done');
+
+        callback();
+
+        var newSdp = new SDP(self.peerconnection.localDescription.sdp);
+        logger.log("SDPs", oldSdp, newSdp);
+        self.notifyMySSRCUpdate(oldSdp, newSdp);
+    });
+}
+
+/**
  * Figures out added/removed ssrcs and send update IQs.
  * @param old_sdp SDP object for old description.
  * @param new_sdp SDP object for new description.
@@ -7970,7 +8069,7 @@ JingleSessionPC.prototype.remoteStreamAdded = function (data, times) {
 module.exports = JingleSessionPC;
 
 }).call(this,"/modules/xmpp/JingleSessionPC.js")
-},{"../../service/xmpp/XMPPEvents":86,"../RTC/RTC":16,"../RTC/RTCBrowserType":17,"./JingleSession":27,"./LocalSSRCReplacement":29,"./SDP":30,"./SDPDiffer":31,"./SDPUtil":32,"./TraceablePeerConnection":33,"async":42,"jitsi-meet-logger":47,"sdp-transform":75}],29:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":85,"../RTC/RTC":16,"../RTC/RTCBrowserType":17,"./JingleSession":27,"./LocalSSRCReplacement":29,"./SDP":30,"./SDPDiffer":31,"./SDPUtil":32,"./TraceablePeerConnection":33,"async":42,"jitsi-meet-logger":47,"sdp-transform":75}],29:[function(require,module,exports){
 (function (__filename){
 /* global $ */
 var logger = require("jitsi-meet-logger").getLogger(__filename);
@@ -9668,45 +9767,49 @@ var normalizePlanB = function(desc) {
     });
 };
 
-if (TraceablePeerConnection.prototype.__defineGetter__ !== undefined) {
-    TraceablePeerConnection.prototype.__defineGetter__(
-        'signalingState',
-        function() { return this.peerconnection.signalingState; });
-    TraceablePeerConnection.prototype.__defineGetter__(
-        'iceConnectionState',
-        function() { return this.peerconnection.iceConnectionState; });
-    TraceablePeerConnection.prototype.__defineGetter__(
-        'localDescription',
-        function() {
-            var desc = this.peerconnection.localDescription;
+var getters = {
+    signalingState: function () {
+        return this.peerconnection.signalingState;
+    },
+    iceConnectionState: function () {
+        return this.peerconnection.iceConnectionState;
+    },
+    localDescription:  function() {
+        var desc = this.peerconnection.localDescription;
 
             // FIXME this should probably be after the Unified Plan -> Plan B
             // transformation.
-            desc = SSRCReplacement.mungeLocalVideoSSRC(desc);
+        desc = SSRCReplacement.mungeLocalVideoSSRC(desc);
 
-            this.trace('getLocalDescription::preTransform', dumpSDP(desc));
+        this.trace('getLocalDescription::preTransform', dumpSDP(desc));
 
-            // if we're running on FF, transform to Plan B first.
-            if (RTCBrowserType.usesUnifiedPlan()) {
-                desc = this.interop.toPlanB(desc);
-                this.trace('getLocalDescription::postTransform (Plan B)', dumpSDP(desc));
-            }
-            return desc;
-        });
-    TraceablePeerConnection.prototype.__defineGetter__(
-        'remoteDescription',
-        function() {
-            var desc = this.peerconnection.remoteDescription;
-            this.trace('getRemoteDescription::preTransform', dumpSDP(desc));
+        // if we're running on FF, transform to Plan B first.
+        if (RTCBrowserType.usesUnifiedPlan()) {
+            desc = this.interop.toPlanB(desc);
+            this.trace('getLocalDescription::postTransform (Plan B)', dumpSDP(desc));
+        }
+        return desc;
+    },
+    remoteDescription:  function() {
+        var desc = this.peerconnection.remoteDescription;
+        this.trace('getRemoteDescription::preTransform', dumpSDP(desc));
 
-            // if we're running on FF, transform to Plan B first.
-            if (RTCBrowserType.usesUnifiedPlan()) {
-                desc = this.interop.toPlanB(desc);
-                this.trace('getRemoteDescription::postTransform (Plan B)', dumpSDP(desc));
-            }
-            return desc;
-        });
-}
+        // if we're running on FF, transform to Plan B first.
+        if (RTCBrowserType.usesUnifiedPlan()) {
+            desc = this.interop.toPlanB(desc);
+            this.trace('getRemoteDescription::postTransform (Plan B)', dumpSDP(desc));
+        }
+        return desc;
+    }
+};
+Object.keys(getters).forEach(function (prop) {
+    Object.defineProperty(
+        TraceablePeerConnection.prototype,
+        prop, {
+            get: getters[prop]
+        }
+    );
+});
 
 TraceablePeerConnection.prototype.addStream = function (stream) {
     this.trace('addStream', stream.id);
@@ -9907,7 +10010,7 @@ TraceablePeerConnection.prototype.getStats = function(callback, errback) {
 module.exports = TraceablePeerConnection;
 
 }).call(this,"/modules/xmpp/TraceablePeerConnection.js")
-},{"../../service/xmpp/XMPPEvents":86,"../RTC/RTC":16,"../RTC/RTCBrowserType.js":17,"./LocalSSRCReplacement":29,"jitsi-meet-logger":47,"sdp-interop":65,"sdp-simulcast":68,"sdp-transform":75}],34:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":85,"../RTC/RTC":16,"../RTC/RTCBrowserType.js":17,"./LocalSSRCReplacement":29,"jitsi-meet-logger":47,"sdp-interop":65,"sdp-simulcast":68,"sdp-transform":75}],34:[function(require,module,exports){
 (function (__filename){
 /* global $, $iq, APP, config, messageHandler,
  roomName, sessionTerminated, Strophe, Util */
@@ -10344,7 +10447,7 @@ module.exports = Moderator;
 
 
 }).call(this,"/modules/xmpp/moderator.js")
-},{"../../service/authentication/AuthenticationEvents":82,"../../service/xmpp/XMPPEvents":86,"../settings/Settings":21,"jitsi-meet-logger":47}],35:[function(require,module,exports){
+},{"../../service/authentication/AuthenticationEvents":81,"../../service/xmpp/XMPPEvents":85,"../settings/Settings":21,"jitsi-meet-logger":47}],35:[function(require,module,exports){
 (function (__filename){
 /* jshint -W117 */
 /* a simple MUC connection plugin
@@ -10738,7 +10841,7 @@ module.exports = function(XMPP, eventEmitter) {
 
 
 }).call(this,"/modules/xmpp/strophe.jingle.js")
-},{"../../service/xmpp/XMPPEvents":86,"../RTC/RTCBrowserType":17,"./JingleSessionPC":28,"jitsi-meet-logger":47}],37:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":85,"../RTC/RTCBrowserType":17,"./JingleSessionPC":28,"jitsi-meet-logger":47}],37:[function(require,module,exports){
 /* global Strophe */
 module.exports = function () {
 
@@ -10886,7 +10989,7 @@ module.exports = function (XMPP, eventEmitter) {
 };
 
 }).call(this,"/modules/xmpp/strophe.ping.js")
-},{"../../service/xmpp/XMPPEvents":86,"jitsi-meet-logger":47}],39:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":85,"jitsi-meet-logger":47}],39:[function(require,module,exports){
 (function (__filename){
 /* jshint -W117 */
 var logger = require("jitsi-meet-logger").getLogger(__filename);
@@ -11044,7 +11147,6 @@ module.exports = function () {
 var logger = require("jitsi-meet-logger").getLogger(__filename);
 var EventEmitter = require("events");
 var Pako = require("pako");
-var StreamEventTypes = require("../../service/RTC/StreamEventTypes");
 var RTCEvents = require("../../service/RTC/RTCEvents");
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 var JitsiConnectionErrors = require("../../JitsiConnectionErrors");
@@ -11165,7 +11267,7 @@ XMPP.prototype._connect = function (jid, password) {
                         logger.warn("Ping NOT supported by " + pingJid);
                 }
             );
-            
+
             if (password)
                 authenticatedUser = true;
             if (self.connection && self.connection.connected &&
@@ -11345,7 +11447,7 @@ XMPP.prototype.disconnect = function () {
 module.exports = XMPP;
 
 }).call(this,"/modules/xmpp/xmpp.js")
-},{"../../JitsiConnectionErrors":5,"../../JitsiConnectionEvents":6,"../../service/RTC/RTCEvents":79,"../../service/RTC/StreamEventTypes":81,"../../service/xmpp/XMPPEvents":86,"../RTC/RTC":16,"./strophe.emuc":35,"./strophe.jingle":36,"./strophe.logger":37,"./strophe.ping":38,"./strophe.rayo":39,"./strophe.util":40,"events":43,"jitsi-meet-logger":47,"pako":48}],42:[function(require,module,exports){
+},{"../../JitsiConnectionErrors":5,"../../JitsiConnectionEvents":6,"../../service/RTC/RTCEvents":79,"../../service/xmpp/XMPPEvents":85,"../RTC/RTC":16,"./strophe.emuc":35,"./strophe.jingle":36,"./strophe.logger":37,"./strophe.ping":38,"./strophe.rayo":39,"./strophe.util":40,"events":43,"jitsi-meet-logger":47,"pako":48}],42:[function(require,module,exports){
 (function (process){
 /*!
  * async
@@ -22774,21 +22876,6 @@ var Resolutions = {
 };
 module.exports = Resolutions;
 },{}],81:[function(require,module,exports){
-var StreamEventTypes = {
-    EVENT_TYPE_LOCAL_CREATED: "stream.local_created",
-
-    EVENT_TYPE_LOCAL_CHANGED: "stream.local_changed",
-
-    EVENT_TYPE_LOCAL_ENDED: "stream.local_ended",
-
-    EVENT_TYPE_REMOTE_CREATED: "stream.remote_created",
-
-    EVENT_TYPE_REMOTE_ENDED: "stream.remote_ended",
-    TRACK_MUTE_CHANGED: "rtc.track_mute_changed"
-};
-
-module.exports = StreamEventTypes;
-},{}],82:[function(require,module,exports){
 var AuthenticationEvents = {
     /**
      * Event callback arguments:
@@ -22802,7 +22889,7 @@ var AuthenticationEvents = {
 };
 module.exports = AuthenticationEvents;
 
-},{}],83:[function(require,module,exports){
+},{}],82:[function(require,module,exports){
 var DesktopSharingEventTypes = {
     INIT: "ds.init",
 
@@ -22818,7 +22905,7 @@ var DesktopSharingEventTypes = {
 
 module.exports = DesktopSharingEventTypes;
 
-},{}],84:[function(require,module,exports){
+},{}],83:[function(require,module,exports){
 module.exports = {
     /**
      * An event carrying connection statistics.
@@ -22834,12 +22921,12 @@ module.exports = {
     STOP: "statistics.stop"
 };
 
-},{}],85:[function(require,module,exports){
+},{}],84:[function(require,module,exports){
 var Constants = {
     LOCAL_JID: 'local'
 };
 module.exports = Constants;
-},{}],86:[function(require,module,exports){
+},{}],85:[function(require,module,exports){
 var XMPPEvents = {
     // Designates an event indicating that the connection to the XMPP server
     // failed.

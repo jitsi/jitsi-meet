@@ -9,7 +9,6 @@ var JitsiRemoteTrack = require("./JitsiRemoteTrack.js");
 var DesktopSharingEventTypes
     = require("../../service/desktopsharing/DesktopSharingEventTypes");
 var MediaStreamType = require("../../service/RTC/MediaStreamTypes");
-var StreamEventTypes = require("../../service/RTC/StreamEventTypes.js");
 var RTCEvents = require("../../service/RTC/RTCEvents.js");
 
 function createLocalTracks(streams) {
@@ -20,10 +19,6 @@ function createLocalTracks(streams) {
         newStreams.push(localStream);
         if (streams[i].isMuted === true)
             localStream.setMute(true);
-        //FIXME:
-        // var eventType = StreamEventTypes.EVENT_TYPE_LOCAL_CREATED;
-        //
-        // eventEmitter.emit(eventType, localStream);
     }
     return newStreams;
 }
@@ -31,6 +26,8 @@ function createLocalTracks(streams) {
 function RTC(room, options) {
     this.room = room;
     this.localStreams = [];
+    //FIXME: we should start removing those streams.
+    //FIXME: We should support multiple streams per jid.
     this.remoteStreams = {};
     this.localAudio = null;
     this.localVideo = null;
@@ -38,12 +35,14 @@ function RTC(room, options) {
     var self = this;
     this.options = options || {};
     room.addPresenceListener("videomuted", function (values, from) {
-        if(self.remoteStreams[from])
+        if(self.remoteStreams[from]) {
             self.remoteStreams[from][JitsiTrack.VIDEO].setMute(values.value == "true");
+        }
     });
     room.addPresenceListener("audiomuted", function (values, from) {
-        if(self.remoteStreams[from])
+        if(self.remoteStreams[from]) {
             self.remoteStreams[from][JitsiTrack.AUDIO].setMute(values.value == "true");
+        }
     });
 }
 
@@ -104,7 +103,8 @@ RTC.isRTCReady = function () {
 }
 
 RTC.init = function (options) {
-    return RTCUtils.init(options || {});
+    this.options = options || {};
+    return RTCUtils.init(this.options);
 }
 
 RTC.getDeviceAvailability = function () {
@@ -132,8 +132,7 @@ RTC.prototype.removeLocalStream = function (stream) {
 };
 
 RTC.prototype.createRemoteStream = function (data, sid, thessrc) {
-    var remoteStream = new JitsiRemoteTrack(this, data, sid, thessrc,
-        this.eventEmitter);
+    var remoteStream = new JitsiRemoteTrack(this, data, sid, thessrc);
     if(!data.peerjid)
         return;
     var jid = data.peerjid;
@@ -141,7 +140,6 @@ RTC.prototype.createRemoteStream = function (data, sid, thessrc) {
         this.remoteStreams[jid] = {};
     }
     this.remoteStreams[jid][remoteStream.type]= remoteStream;
-    this.eventEmitter.emit(StreamEventTypes.EVENT_TYPE_REMOTE_CREATED, remoteStream);
     return remoteStream;
 };
 
@@ -193,24 +191,6 @@ RTC.prototype.getVideoElementName = function () {
 RTC.prototype.dispose = function() {
 };
 
-RTC.prototype.muteRemoteVideoStream = function (jid, value) {
-    var stream;
-
-    if(this.remoteStreams[jid] &&
-        this.remoteStreams[jid][MediaStreamType.VIDEO_TYPE]) {
-        stream = this.remoteStreams[jid][MediaStreamType.VIDEO_TYPE];
-    }
-
-    if(!stream)
-        return true;
-
-    if (value != stream.muted) {
-        stream.setMute(value);
-        return true;
-    }
-    return false;
-};
-
 RTC.prototype.switchVideoStreams = function (newStream) {
     this.localVideo.stream = newStream;
 
@@ -222,37 +202,8 @@ RTC.prototype.switchVideoStreams = function (newStream) {
     this.localStreams.push(this.localVideo);
 };
 
-RTC.prototype.isVideoMuted = function (jid) {
-    if (jid === APP.xmpp.myJid()) {
-        var localVideo = APP.RTC.localVideo;
-        return (!localVideo || localVideo.isMuted());
-    } else {
-        if (!this.remoteStreams[jid] ||
-            !this.remoteStreams[jid][MediaStreamType.VIDEO_TYPE]) {
-            return null;
-        }
-        return this.remoteStreams[jid][MediaStreamType.VIDEO_TYPE].muted;
-    }
-};
-
-RTC.prototype.setVideoMute = function (mute, callback, options) {
-    if (!this.localVideo)
-        return;
-
-    if (mute == this.localVideo.isMuted())
-    {
-        APP.xmpp.sendVideoInfoPresence(mute);
-        if (callback)
-            callback(mute);
-    }
-    else
-    {
-        this.localVideo.setMute(mute);
-        this.room.setVideoMute(
-            mute,
-            callback,
-            options);
-    }
-};
-
+RTC.prototype.setAudioLevel = function (jid, audioLevel) {
+    if(this.remoteStreams[jid] && this.remoteStreams[jid][JitsiTrack.AUDIO])
+        this.remoteStreams[jid][JitsiTrack.AUDIO].setAudioLevel(audioLevel);
+}
 module.exports = RTC;

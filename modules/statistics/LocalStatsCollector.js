@@ -4,9 +4,6 @@
  */
 
 var RTCBrowserType = require('../RTC/RTCBrowserType');
-var StatisticsEvents = require('../../service/statistics/Events');
-
-var LOCAL_JID = require("../../service/statistics/constants").LOCAL_JID;
 
 /**
  * Size of the webaudio analyzer buffer.
@@ -67,16 +64,16 @@ function animateLevel(newLevel, lastLevel) {
  *
  * @param stream the local stream
  * @param interval stats refresh interval given in ms.
+ * @param callback function that receives the audio levels.
  * @constructor
  */
-function LocalStatsCollector(stream, interval, statisticsService, eventEmitter) {
+function LocalStatsCollector(stream, interval, callback) {
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
     this.stream = stream;
     this.intervalId = null;
     this.intervalMilis = interval;
-    this.eventEmitter = eventEmitter;
     this.audioLevel = 0;
-    this.statisticsService = statisticsService;
+    this.callback = callback;
 }
 
 /**
@@ -106,10 +103,7 @@ LocalStatsCollector.prototype.start = function () {
             var audioLevel = timeDomainDataToAudioLevel(array);
             if (audioLevel != self.audioLevel) {
                 self.audioLevel = animateLevel(audioLevel, self.audioLevel);
-                self.eventEmitter.emit(
-                    StatisticsEvents.AUDIO_LEVEL,
-                    self.statisticsService.LOCAL_JID,
-                    self.audioLevel);
+                self.callback(self.audioLevel);
             }
         },
         this.intervalMilis

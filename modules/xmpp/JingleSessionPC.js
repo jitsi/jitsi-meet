@@ -1236,6 +1236,43 @@ JingleSessionPC.prototype.addStream = function (stream, callback) {
 }
 
 /**
+ * Remove streams.
+ * @param stream stream that will be removed.
+ * @param success_callback callback executed after successful stream addition.
+ */
+JingleSessionPC.prototype.removeStream = function (stream, callback) {
+
+    var self = this;
+
+    // Remember SDP to figure out added/removed SSRCs
+    var oldSdp = null;
+    if(this.peerconnection) {
+        if(this.peerconnection.localDescription) {
+            oldSdp = new SDP(this.peerconnection.localDescription.sdp);
+        }
+        if(stream)
+            this.peerconnection.removeStream(stream);
+    }
+
+    // Conference is not active
+    if(!oldSdp || !this.peerconnection) {
+        callback();
+        return;
+    }
+
+    this.addingStreams = true;
+    this.modifySourcesQueue.push(function() {
+        logger.log('modify sources done');
+
+        callback();
+
+        var newSdp = new SDP(self.peerconnection.localDescription.sdp);
+        logger.log("SDPs", oldSdp, newSdp);
+        self.notifyMySSRCUpdate(oldSdp, newSdp);
+    });
+}
+
+/**
  * Figures out added/removed ssrcs and send update IQs.
  * @param old_sdp SDP object for old description.
  * @param new_sdp SDP object for new description.

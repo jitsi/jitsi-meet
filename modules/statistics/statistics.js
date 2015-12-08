@@ -18,8 +18,9 @@ var StatisticsEvents = require("../../service/statistics/Events");
 //    }
 //}
 
+var eventEmitter = new EventEmitter();
+
 function Statistics() {
-    this.localStats = null;
     this.rtpStats = null;
     this.eventEmitter = new EventEmitter();
 }
@@ -33,14 +34,13 @@ Statistics.prototype.startRemoteStats = function (peerconnection) {
     this.rtpStats.start();
 }
 
-Statistics.prototype.startLocalStats = function (stream) {
-    if(stream.getType() !== "audio")
-        return;
-    this.localStats = new LocalStats(stream.getOriginalStream(), 200, this,
-        this.eventEmitter);
-    this.localStats.start();
-}
+Statistics.localStats = [];
 
+Statistics.startLocalStats = function (stream, callback) {
+    var localStats = new LocalStats(stream, 200, callback);
+    this.localStats.push(localStats);
+    localStats.start();
+}
 
 Statistics.prototype.addAudioLevelListener = function(listener)
 {
@@ -53,20 +53,29 @@ Statistics.prototype.removeAudioLevelListener = function(listener)
 }
 
 Statistics.prototype.dispose = function () {
-    this.stopLocal();
+    Statistics.stopAllLocalStats();
     this.stopRemote();
     if(this.eventEmitter)
-    {
         this.eventEmitter.removeAllListeners();
-    }
+
+    if(eventEmitter)
+        eventEmitter.removeAllListeners();
 }
 
 
-Statistics.prototype.stopLocal = function () {
-    if (this.localStats) {
-        this.localStats.stop();
-        this.localStats = null;
-    }
+Statistics.stopAllLocalStats = function () {
+    for(var i = 0; i < this.localStats.length; i++)
+        this.localStats[i].stop();
+    this.localStats = [];
+}
+
+Statistics.stopLocalStats = function (stream) {
+    for(var i = 0; i < Statistics.localStats.length; i++)
+        if(Statistics.localStats[i].stream === stream){
+            var localStats = Statistics.localStats.splice(i, 1);
+            localStats.stop();
+            break;
+        }
 }
 
 Statistics.prototype.stopRemote = function () {
