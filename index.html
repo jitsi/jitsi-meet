@@ -11,11 +11,9 @@
     <meta itemprop="image" content="/images/jitsilogo.png?v=1"/>
       <link rel="stylesheet" href="css/all.css"/>
     <script>console.log("(TIME) index.html loaded:\t", window.performance.now());</script>
-    <script src="https://api.callstats.io/static/callstats.min.js"></script>
     <script src="config.js?v=15"></script><!-- adapt to your needs, i.e. set hosts and bosh path -->
     <script src="interface_config.js?v=6"></script>
     <script src="libs/app.bundle.min.js?v=139"></script>
-    <script src="analytics.js?v=1"></script><!-- google analytics plugin -->
     <!--
         Link used for inline installation of chrome desktop streaming extension,
         is updated automatically from the code with the value defined in config.js -->
@@ -203,7 +201,7 @@
         </div>
         <div id="settingsmenu" class="right-panel">
             <div class="icon-settings" data-i18n="settings.title"></div>
-            <img id="avatar" src="https://www.gravatar.com/avatar/87291c37c25be69a072a4514931b1749?d=wavatar&size=30"/>
+            <img id="avatar" src="images/avatar2.png"/>
             <div class="arrow-up"></div>
             <input type="text" id="setDisplayName" data-i18n="[placeholder]settings.name" placeholder="Name">
             <input type="text" id="setEmail" placeholder="E-Mail">
@@ -224,5 +222,18 @@
             <a id="feedbackButton" data-container="body" data-toggle="popover" data-placement="right" data-i18n="[data-content]feedback"><i class="fa fa-heart"></i></a>
         </div>
     </div>
+    <script type="text/javascript">
+      if (!config.disableThirdPartyRequests) {
+        [
+          'https://api.callstats.io/static/callstats.min.js',
+          'analytics.js?v=1'
+        ].forEach(function(extSrc) {
+          var extScript = document.createElement('script');
+          extScript.src = extSrc;
+          extScript.async = false;
+          document.head.appendChild(extScript);
+        });
+      }
+    </script>
   </body>
 </html>

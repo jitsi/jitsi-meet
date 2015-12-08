@@ -44,6 +44,8 @@
     vertical-align: middle;
     font-size: 22pt;
     border-radius: 20px;
+    max-height: 30px;
+    max-width: 30px;
 }
 
 #contactlist .clickable {

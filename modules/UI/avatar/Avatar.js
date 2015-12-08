@@ -1,4 +1,4 @@
-/* global Strophe, APP, MD5 */
+/* global Strophe, APP, MD5, config */
 var Settings = require("../../settings/Settings");
 
 var users = {};
@@ -57,9 +57,13 @@ var Avatar = {
                 "No avatar stored yet for " + jid + " - using JID as ID");
             id = jid;
         }
-        return 'https://www.gravatar.com/avatar/' +
-            MD5.hexdigest(id.trim().toLowerCase()) +
-            "?d=wavatar&size=" + (size || "30");
+        if (!config.disableThirdPartyRequests) {
+            return 'https://www.gravatar.com/avatar/' +
+                MD5.hexdigest(id.trim().toLowerCase()) +
+                "?d=wavatar&size=" + (size || "30");
+        } else {
+            return 'images/avatar2.png';
+        }
     }
 
 };
