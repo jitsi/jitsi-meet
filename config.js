@@ -69,5 +69,5 @@ var config = {
     /*noticeMessage: 'Service update is scheduled for 16th March 2015. ' +
     'During that time service will not be available. ' +
     'Apologise for inconvenience.'*/
-    enableThirdPartyRequests: true
+    disableThirdPartyRequests: false
 };

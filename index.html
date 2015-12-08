@@ -223,13 +223,11 @@
         </div>
     </div>
     <script type="text/javascript">
-      if (config.enableThirdPartyRequests === true)
-      { 
+      if (!config.disableThirdPartyRequests) {
         [
           'https://api.callstats.io/static/callstats.min.js',
           'analytics.js?v=1'
-        ].forEach(function(extSrc) 
-        {
+        ].forEach(function(extSrc) {
           var extScript = document.createElement('script');
           extScript.src = extSrc;
           extScript.async = false;

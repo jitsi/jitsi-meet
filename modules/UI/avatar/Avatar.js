@@ -57,7 +57,7 @@ var Avatar = {
                 "No avatar stored yet for " + jid + " - using JID as ID");
             id = jid;
         }
-        if (config.enableThirdPartyRequests === true) {
+        if (!config.disableThirdPartyRequests) {
             return 'https://www.gravatar.com/avatar/' +
                 MD5.hexdigest(id.trim().toLowerCase()) +
                 "?d=wavatar&size=" + (size || "30");
