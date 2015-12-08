@@ -308,31 +308,6 @@ function initEtherpad(name) {
     Etherpad.init(name);
 }
 
-function onLocalRoleChanged(jid, info, pres, isModerator) {
-    console.info("My role changed, new role: " + info.role);
-    onModeratorStatusChanged(isModerator);
-    VideoLayout.showModeratorIndicator();
-    SettingsMenu.onRoleChanged();
-
-    if (isModerator) {
-        Authentication.closeAuthenticationWindow();
-        messageHandler.notify(null, "notify.me",
-            'connected', "notify.moderator");
-
-        Toolbar.checkAutoRecord();
-    }
-}
-
-function onModeratorStatusChanged(isModerator) {
-    Toolbar.showSipCallButton(isModerator);
-    Toolbar.showRecordingButton(
-        isModerator); //&&
-    // FIXME:
-    // Recording visible if
-    // there are at least 2(+ 1 focus) participants
-    //Object.keys(connection.emuc.members).length >= 3);
-}
-
 UI.notifyPasswordRequired = function (callback) {
     // password is required
     Toolbar.lockLockButton();
@@ -413,24 +388,43 @@ function onPeerVideoTypeChanged(resourceJid, newVideoType) {
     VideoLayout.onVideoTypeChanged(resourceJid, newVideoType);
 }
 
-function onMucRoleChanged(role, displayName) {
+UI.updateLocalRole = function (isModerator) {
     VideoLayout.showModeratorIndicator();
 
-    if (role === 'moderator') {
-        var messageKey, messageOptions = {};
-        if (!displayName) {
-            messageKey = "notify.grantedToUnknown";
-        }
-        else {
-            messageKey = "notify.grantedTo";
-            messageOptions = {to: displayName};
-        }
-        messageHandler.notify(
-            displayName,'notify.somebody',
-            'connected', messageKey,
-            messageOptions);
+    Toolbar.showSipCallButton(isModerator);
+    Toolbar.showRecordingButton(isModerator);
+    SettingsMenu.onRoleChanged();
+
+    if (isModerator) {
+        Authentication.closeAuthenticationWindow();
+        messageHandler.notify(null, "notify.me", 'connected', "notify.moderator");
+
+        Toolbar.checkAutoRecord();
     }
-}
+};
+
+UI.updateUserRole = function (user) {
+    VideoLayout.showModeratorIndicator();
+
+    if (!user.isModerator()) {
+        return;
+    }
+
+    var displayName = user.getDisplayName();
+    if (displayName) {
+        messageHandler.notify(
+            displayName, 'notify.somebody',
+            'connected', 'notify.grantedTo', {
+                to: displayName
+            }
+        );
+    } else {
+        messageHandler.notify(
+            '', 'notify.somebody',
+            'connected', 'notify.grantedToUnknown', {}
+        );
+    }
+};
 
 UI.notifyAuthRequired = function (intervalCallback) {
     Authentication.openAuthenticationDialog(

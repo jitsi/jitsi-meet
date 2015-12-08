@@ -1,15 +1,17 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.JitsiMeetJS = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 (function (__filename){
-
+/* global Strophe, $ */
+/* jshint -W101 */
 var logger = require("jitsi-meet-logger").getLogger(__filename);
 var RTC = require("./modules/RTC/RTC");
 var XMPPEvents = require("./service/xmpp/XMPPEvents");
-var StreamEventTypes = require("./service/RTC/StreamEventTypes");
 var RTCEvents = require("./service/RTC/RTCEvents");
 var EventEmitter = require("events");
 var JitsiConferenceEvents = require("./JitsiConferenceEvents");
 var JitsiParticipant = require("./JitsiParticipant");
 var Statistics = require("./modules/statistics/statistics");
+var JitsiDTMFManager = require('./modules/DTMF/JitsiDTMFManager');
+var JitsiTrackEvents = require("./JitsiTrackEvents");
 
 /**
  * Creates a JitsiConference object with the given name and properties.
@@ -20,7 +22,6 @@ var Statistics = require("./modules/statistics/statistics");
  * @param options.connection the JitsiConnection object for this JitsiConference.
  * @constructor
  */
-
 function JitsiConference(options) {
     if(!options.name || options.name.toLowerCase() !== options.name) {
         logger.error("Invalid conference name (no conference name passed or it"
@@ -34,11 +35,13 @@ function JitsiConference(options) {
     this.room = this.xmpp.createRoom(this.options.name, null, null, this.options.config);
     this.room.updateDeviceAvailability(RTC.getDeviceAvailability());
     this.rtc = new RTC(this.room, options);
-    if(!options.config.disableAudioLevels)
+    if(!RTC.options.disableAudioLevels)
         this.statistics = new Statistics();
     setupListeners(this);
     this.participants = {};
     this.lastActiveSpeaker = null;
+    this.dtmfManager = null;
+    this.somebodySupportsDTMF = false;
 }
 
 /**
@@ -48,7 +51,7 @@ function JitsiConference(options) {
 JitsiConference.prototype.join = function (password) {
     if(this.room)
         this.room.join(password, this.connection.tokenPassword);
-}
+};
 
 /**
  * Leaves the conference.
@@ -57,14 +60,17 @@ JitsiConference.prototype.leave = function () {
     if(this.xmpp)
         this.xmpp.leaveRoom(this.room.roomjid);
     this.room = null;
-}
+};
 
 /**
  * Returns the local tracks.
  */
 JitsiConference.prototype.getLocalTracks = function () {
-    if(this.rtc)
+    if (this.rtc) {
         return this.rtc.localStreams;
+    } else {
+        return [];
+    }
 };
 
 
@@ -79,7 +85,7 @@ JitsiConference.prototype.getLocalTracks = function () {
 JitsiConference.prototype.on = function (eventId, handler) {
     if(this.eventEmitter)
         this.eventEmitter.on(eventId, handler);
-}
+};
 
 /**
  * Removes event listener
@@ -90,22 +96,23 @@ JitsiConference.prototype.on = function (eventId, handler) {
  */
 JitsiConference.prototype.off = function (eventId, handler) {
     if(this.eventEmitter)
-        this.eventEmitter.removeListener(eventId, listener);
-}
+        this.eventEmitter.removeListener(eventId, handler);
+};
 
 // Common aliases for event emitter
-JitsiConference.prototype.addEventListener = JitsiConference.prototype.on
-JitsiConference.prototype.removeEventListener = JitsiConference.prototype.off
+JitsiConference.prototype.addEventListener = JitsiConference.prototype.on;
+JitsiConference.prototype.removeEventListener = JitsiConference.prototype.off;
 
 /**
- * Receives notifications from another participants for commands / custom events(send by sendPresenceCommand method).
+ * Receives notifications from another participants for commands / custom events
+ * (send by sendPresenceCommand method).
  * @param command {String} the name of the command
  * @param handler {Function} handler for the command
  */
  JitsiConference.prototype.addCommandListener = function (command, handler) {
     if(this.room)
         this.room.addPresenceListener(command, handler);
- }
+ };
 
 /**
   * Removes command  listener
@@ -114,7 +121,7 @@ JitsiConference.prototype.removeEventListener = JitsiConference.prototype.off
  JitsiConference.prototype.removeCommandListener = function (command) {
     if(this.room)
         this.room.removePresenceListener(command);
- }
+ };
 
 /**
  * Sends text message to the other participants in the conference
@@ -123,7 +130,7 @@ JitsiConference.prototype.removeEventListener = JitsiConference.prototype.off
 JitsiConference.prototype.sendTextMessage = function (message) {
     if(this.room)
         this.room.sendMessage(message);
-}
+};
 
 /**
  * Send presence command.
@@ -135,7 +142,7 @@ JitsiConference.prototype.sendCommand = function (name, values) {
         this.room.addToPresence(name, values);
         this.room.sendPresence();
     }
-}
+};
 
 /**
  * Send presence command one time.
@@ -145,7 +152,7 @@ JitsiConference.prototype.sendCommand = function (name, values) {
 JitsiConference.prototype.sendCommandOnce = function (name, values) {
     this.sendCommand(name, values);
     this.removeCommand(name);
-}
+};
 
 /**
  * Send presence command.
@@ -156,7 +163,7 @@ JitsiConference.prototype.sendCommandOnce = function (name, values) {
 JitsiConference.prototype.removeCommand = function (name) {
     if(this.room)
         this.room.removeFromPresence(name);
-}
+};
 
 /**
  * Sets the display name for this conference.
@@ -167,25 +174,77 @@ JitsiConference.prototype.setDisplayName = function(name) {
         this.room.addToPresence("nick", {attributes: {xmlns: 'http://jabber.org/protocol/nick'}, value: name});
         this.room.sendPresence();
     }
-}
+};
 
 /**
  * Adds JitsiLocalTrack object to the conference.
  * @param track the JitsiLocalTrack object.
  */
 JitsiConference.prototype.addTrack = function (track) {
-    this.rtc.addLocalStream(track);
-    this.room.addStream(track.getOriginalStream(), function () {});
-}
+    this.room.addStream(track.getOriginalStream(), function () {
+        this.rtc.addLocalStream(track);
+        var muteHandler = this._fireMuteChangeEvent.bind(this, track);
+        var stopHandler = this.removeTrack.bind(this, track);
+        var audioLevelHandler = this._fireAudioLevelChangeEvent.bind(this);
+        track.addEventListener(JitsiTrackEvents.TRACK_MUTE_CHANGED, muteHandler);
+        track.addEventListener(JitsiTrackEvents.TRACK_STOPPED, stopHandler);
+        track.addEventListener(JitsiTrackEvents.TRACK_AUDIO_LEVEL_CHANGED, audioLevelHandler);
+        this.addEventListener(JitsiConferenceEvents.TRACK_REMOVED, function (someTrack) {
+            if (someTrack !== track) {
+                return;
+            }
+            track.removeEventListener(JitsiTrackEvents.TRACK_MUTE_CHANGED, muteHandler);
+            track.removeEventListener(JitsiTrackEvents.TRACK_STOPPED, stopHandler);
+            track.removeEventListener(JitsiTrackEvents.TRACK_AUDIO_LEVEL_CHANGED, audioLevelHandler);
+        });
+        this.eventEmitter.emit(JitsiConferenceEvents.TRACK_ADDED, track);
+    }.bind(this));
+};
+
+/**
+ * Fires TRACK_AUDIO_LEVEL_CHANGED change conference event.
+ * @param audioLevel the audio level
+ */
+JitsiConference.prototype._fireAudioLevelChangeEvent = function (audioLevel) {
+    this.eventEmitter.emit(
+        JitsiConferenceEvents.TRACK_AUDIO_LEVEL_CHANGED,
+        this.myUserId(), audioLevel);
+};
+
+/**
+ * Fires TRACK_MUTE_CHANGED change conference event.
+ * @param track the JitsiTrack object related to the event.
+ */
+JitsiConference.prototype._fireMuteChangeEvent = function (track) {
+    this.eventEmitter.emit(JitsiConferenceEvents.TRACK_MUTE_CHANGED, track);
+};
 
 /**
  * Removes JitsiLocalTrack object to the conference.
  * @param track the JitsiLocalTrack object.
  */
 JitsiConference.prototype.removeTrack = function (track) {
-    this.room.removeStream(track.getOriginalStream());
-    this.rtc.removeLocalStream(track);
-}
+    this.room.removeStream(track.getOriginalStream(), function(){
+        this.rtc.removeLocalStream(track);
+        this.eventEmitter.emit(JitsiConferenceEvents.TRACK_REMOVED, track);
+    }.bind(this));
+};
+
+/**
+ * Get role of the local user.
+ * @returns {string} user role: 'moderator' or 'none'
+ */
+JitsiConference.prototype.getRole = function () {
+    return this.room.role;
+};
+
+/**
+ * Check if local user is moderator.
+ * @returns {boolean} true if local user is moderator, false otherwise.
+ */
+JitsiConference.prototype.isModerator = function () {
+    return this.room.isModerator();
+};
 
 /**
  * Elects the participant with the given id to be the selected participant or the speaker.
@@ -195,41 +254,138 @@ JitsiConference.prototype.selectParticipant = function(participantId) {
     if (this.rtc) {
         this.rtc.selectedEndpoint(participantId);
     }
-}
+};
 
 /**
  *
  * @param id the identifier of the participant
  */
 JitsiConference.prototype.pinParticipant = function(participantId) {
-    if(this.rtc)
+    if (this.rtc) {
         this.rtc.pinEndpoint(participantId);
-}
+    }
+};
 
 /**
  * Returns the list of participants for this conference.
- * @return Object a list of participant identifiers containing all conference participants.
+ * @return Array<JitsiParticipant> a list of participant identifiers containing all conference participants.
  */
 JitsiConference.prototype.getParticipants = function() {
-    return this.participants;
-}
+    return Object.keys(this.participants).map(function (key) {
+        return this.participants[key];
+    }, this);
+};
 
 /**
  * @returns {JitsiParticipant} the participant in this conference with the specified id (or
- * null if there isn't one).
+ * undefined if there isn't one).
  * @param id the id of the participant.
  */
 JitsiConference.prototype.getParticipantById = function(id) {
-    if(this.participants)
-        return this.participants[id];
-    return null;
-}
+    return this.participants[id];
+};
 
 JitsiConference.prototype.onMemberJoined = function (jid, email, nick) {
-    if(this.eventEmitter)
-        this.eventEmitter.emit(JitsiConferenceEvents.USER_JOINED, Strophe.getResourceFromJid(jid));
-//    this.participants[jid] = new JitsiParticipant();
-}
+    var id = Strophe.getResourceFromJid(jid);
+    var participant = new JitsiParticipant(id, this, nick);
+    this.eventEmitter.emit(JitsiConferenceEvents.USER_JOINED, id);
+    this.participants[id] = participant;
+    this.connection.xmpp.connection.disco.info(
+        jid, "" /* node */, function(iq) {
+            participant._supportsDTMF = $(iq).find('>query>feature[var="urn:xmpp:jingle:dtmf:0"]').length > 0;
+            this.updateDTMFSupport();
+        }.bind(this)
+    );
+};
+
+JitsiConference.prototype.onMemberLeft = function (jid) {
+    var id = Strophe.getResourceFromJid(jid);
+    delete this.participants[id];
+    this.eventEmitter.emit(JitsiConferenceEvents.USER_LEFT, id);
+};
+
+JitsiConference.prototype.onUserRoleChanged = function (jid, role) {
+    var id = Strophe.getResourceFromJid(jid);
+    var participant = this.getParticipantById(id);
+    if (!participant) {
+        return;
+    }
+    participant._role = role;
+    this.eventEmitter.emit(JitsiConferenceEvents.USER_ROLE_CHANGED, id, role);
+};
+
+JitsiConference.prototype.onDisplayNameChanged = function (jid, displayName) {
+    var id = Strophe.getResourceFromJid(jid);
+    var participant = this.getParticipantById(id);
+    if (!participant) {
+        return;
+    }
+    participant._displayName = displayName;
+    this.eventEmitter.emit(JitsiConferenceEvents.DISPLAY_NAME_CHANGED, id, displayName);
+};
+
+JitsiConference.prototype.onTrackAdded = function (track) {
+    var id = track.getParticipantId();
+    var participant = this.getParticipantById(id);
+    if (!participant) {
+        return;
+    }
+    // add track to JitsiParticipant
+    participant._tracks.push(track);
+
+    var emitter = this.eventEmitter;
+    track.addEventListener(
+        JitsiTrackEvents.TRACK_STOPPED,
+        function () {
+            // remove track from JitsiParticipant
+            var pos = participant._tracks.indexOf(track);
+            if (pos > -1) {
+                participant._tracks.splice(pos, 1);
+            }
+            emitter.emit(JitsiConferenceEvents.TRACK_REMOVED, track);
+        }
+    );
+    track.addEventListener(
+        JitsiTrackEvents.TRACK_MUTE_CHANGED,
+        function () {
+            emitter.emit(JitsiConferenceEvents.TRACK_MUTE_CHANGED, track);
+        }
+    );
+    track.addEventListener(
+        JitsiTrackEvents.TRACK_AUDIO_LEVEL_CHANGED,
+        function (audioLevel) {
+            emitter.emit(JitsiConferenceEvents.TRACK_AUDIO_LEVEL_CHANGED, id, audioLevel);
+        }
+    );
+
+    this.eventEmitter.emit(JitsiConferenceEvents.TRACK_ADDED, track);
+};
+
+JitsiConference.prototype.updateDTMFSupport = function () {
+    var somebodySupportsDTMF = false;
+    var participants = this.getParticipants();
+
+    // check if at least 1 participant supports DTMF
+    for (var i = 0; i < participants.length; i += 1) {
+        if (participants[i].supportsDTMF()) {
+            somebodySupportsDTMF = true;
+            break;
+        }
+    }
+    if (somebodySupportsDTMF !== this.somebodySupportsDTMF) {
+        this.somebodySupportsDTMF = somebodySupportsDTMF;
+        this.eventEmitter.emit(JitsiConferenceEvents.DTMF_SUPPORT_CHANGED, somebodySupportsDTMF);
+    }
+};
+
+/**
+ * Allows to check if there is at least one user in the conference
+ * that supports DTMF.
+ * @returns {boolean} true if somebody supports DTMF, false otherwise
+ */
+JitsiConference.prototype.isDTMFSupported = function () {
+    return this.somebodySupportsDTMF;
+};
 
 /**
  * Returns the local user's ID
@@ -237,7 +393,28 @@ JitsiConference.prototype.onMemberJoined = function (jid, email, nick) {
  */
 JitsiConference.prototype.myUserId = function () {
     return (this.room && this.room.myroomjid)? Strophe.getResourceFromJid(this.room.myroomjid) : null;
-}
+};
+
+JitsiConference.prototype.sendTones = function (tones, duration, pause) {
+    if (!this.dtmfManager) {
+        var connection = this.connection.xmpp.connection.jingle.activecall.peerconnection;
+        if (!connection) {
+            logger.warn("cannot sendTones: no conneciton");
+            return;
+        }
+
+        var tracks = this.getLocalTracks().filter(function (track) {
+            return track.isAudioTrack();
+        });
+        if (!tracks.length) {
+            logger.warn("cannot sendTones: no local audio stream");
+            return;
+        }
+        this.dtmfManager = new JitsiDTMFManager(tracks[0], connection);
+    }
+
+    this.dtmfManager.sendTones(tones, duration, pause);
+};
 
 /**
  * Setups the listeners needed for the conference.
@@ -249,8 +426,15 @@ function setupListeners(conference) {
         if(conference.statistics)
             conference.statistics.startRemoteStats(event.peerconnection);
     });
+
     conference.room.addListener(XMPPEvents.REMOTE_STREAM_RECEIVED,
-        conference.rtc.createRemoteStream.bind(conference.rtc));
+        function (data, sid, thessrc) {
+            var track = conference.rtc.createRemoteStream(data, sid, thessrc);
+            if (track) {
+                conference.onTrackAdded(track);
+            }
+        }
+    );
 
     conference.room.addListener(XMPPEvents.MUC_JOINED, function () {
         conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_JOINED);
@@ -260,50 +444,25 @@ function setupListeners(conference) {
 //        conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_LEFT);
 //    });
 
-    conference.room.addListener(XMPPEvents.MUC_MEMBER_JOINED,
-        conference.onMemberJoined.bind(conference));
-    conference.room.addListener(XMPPEvents.MUC_MEMBER_LEFT,function (jid) {
-        conference.eventEmitter.emit(JitsiConferenceEvents.USER_LEFT,
-            Strophe.getResourceFromJid(jid));
+    conference.room.addListener(XMPPEvents.MUC_MEMBER_JOINED, conference.onMemberJoined.bind(conference));
+    conference.room.addListener(XMPPEvents.MUC_MEMBER_LEFT, conference.onMemberLeft.bind(conference));
+
+    conference.room.addListener(XMPPEvents.DISPLAY_NAME_CHANGED, conference.onDisplayNameChanged.bind(conference));
+
+    conference.room.addListener(XMPPEvents.LOCAL_ROLE_CHANGED, function (role) {
+        conference.eventEmitter.emit(JitsiConferenceEvents.USER_ROLE_CHANGED, conference.myUserId(), role);
     });
+    conference.room.addListener(XMPPEvents.MUC_ROLE_CHANGED, conference.onUserRoleChanged.bind(conference));
 
-    conference.room.addListener(XMPPEvents.DISPLAY_NAME_CHANGED,
-        function (from, displayName) {
-            conference.eventEmitter.emit(
-                JitsiConferenceEvents.DISPLAY_NAME_CHANGED,
-                Strophe.getResourceFromJid(from), displayName);
-        });
-
-    conference.room.addListener(XMPPEvents.CONNECTION_INTERRUPTED,
-        function () {
-            conference.eventEmitter.emit(
-                JitsiConferenceEvents.CONNECTION_INTERRUPTED);
-        });
+    conference.room.addListener(XMPPEvents.CONNECTION_INTERRUPTED, function () {
+        conference.eventEmitter.emit(JitsiConferenceEvents.CONNECTION_INTERRUPTED);
+    });
 
     conference.room.addListener(XMPPEvents.CONNECTION_RESTORED, function () {
         conference.eventEmitter.emit(JitsiConferenceEvents.CONNECTION_RESTORED);
     });
-    conference.room.addListener(XMPPEvents.CONFERENCE_SETUP_FAILED, function() {
+    conference.room.addListener(XMPPEvents.CONFERENCE_SETUP_FAILED, function () {
         conference.eventEmitter.emit(JitsiConferenceEvents.SETUP_FAILED);
-    });
-
-    conference.rtc.addListener(StreamEventTypes.EVENT_TYPE_REMOTE_CREATED,
-        function (stream) {
-            conference.eventEmitter.emit(JitsiConferenceEvents.TRACK_ADDED, stream);
-        });
-
-//FIXME: Maybe remove event should not be associated with the conference.
-    conference.rtc.addListener(StreamEventTypes.EVENT_TYPE_REMOTE_ENDED, function (stream) {
-        conference.eventEmitter.emit(JitsiConferenceEvents.TRACK_REMOVED, stream);
-    });
-//FIXME: Maybe remove event should not be associated with the conference.
-    conference.rtc.addListener(StreamEventTypes.EVENT_TYPE_LOCAL_ENDED, function (stream) {
-        conference.eventEmitter.emit(JitsiConferenceEvents.TRACK_REMOVED, stream);
-        conference.removeTrack(stream);
-    });
-
-    conference.rtc.addListener(StreamEventTypes.TRACK_MUTE_CHANGED, function (track) {
-        conference.eventEmitter.emit(JitsiConferenceEvents.TRACK_MUTE_CHANGED, track);
     });
 
     conference.rtc.addListener(RTCEvents.DOMINANTSPEAKER_CHANGED, function (id) {
@@ -327,20 +486,11 @@ function setupListeners(conference) {
         //FIXME: Maybe remove event should not be associated with the conference.
         conference.statistics.addAudioLevelListener(function (ssrc, level) {
             var userId = null;
-            if (ssrc === Statistics.LOCAL_JID) {
-                userId = conference.myUserId();
-            } else {
-                var jid = conference.room.getJidBySSRC(ssrc);
-                if (!jid)
-                    return;
+            var jid = conference.room.getJidBySSRC(ssrc);
+            if (!jid)
+                return;
 
-                userId = Strophe.getResourceFromJid(jid);
-            }
-            conference.eventEmitter.emit(JitsiConferenceEvents.TRACK_AUDIO_LEVEL_CHANGED,
-                userId, level);
-        });
-        conference.rtc.addListener(StreamEventTypes.EVENT_TYPE_LOCAL_CREATED, function (stream) {
-            conference.statistics.startLocalStats(stream);
+            conference.rtc.setAudioLevel(jid, level);
         });
         conference.xmpp.addListener(XMPPEvents.DISPOSE_CONFERENCE,
             function () {
@@ -357,7 +507,7 @@ function setupListeners(conference) {
 module.exports = JitsiConference;
 
 }).call(this,"/JitsiConference.js")
-},{"./JitsiConferenceEvents":3,"./JitsiParticipant":8,"./modules/RTC/RTC":15,"./modules/statistics/statistics":23,"./service/RTC/RTCEvents":82,"./service/RTC/StreamEventTypes":84,"./service/xmpp/XMPPEvents":89,"events":42,"jitsi-meet-logger":46}],2:[function(require,module,exports){
+},{"./JitsiConferenceEvents":3,"./JitsiParticipant":8,"./JitsiTrackEvents":10,"./modules/DTMF/JitsiDTMFManager":11,"./modules/RTC/RTC":16,"./modules/statistics/statistics":24,"./service/RTC/RTCEvents":79,"./service/xmpp/XMPPEvents":85,"events":43,"jitsi-meet-logger":47}],2:[function(require,module,exports){
 /**
  * Enumeration with the errors for the conference.
  * @type {{string: string}}
@@ -410,6 +560,10 @@ var JitsiConferenceEvents = {
      */
     USER_LEFT: "conference.userLeft",
     /**
+     * User role changed.
+     */
+    USER_ROLE_CHANGED: "conference.roleChanged",
+    /**
      * New text message was received.
      */
     MESSAGE_RECEIVED: "conference.messageReceived",
@@ -461,7 +615,11 @@ var JitsiConferenceEvents = {
     /**
      * Indicates that conference has been left.
      */
-    CONFERENCE_LEFT: "conference.left"
+    CONFERENCE_LEFT: "conference.left",
+    /**
+     * Indicates that DTMF support changed.
+     */
+    DTMF_SUPPORT_CHANGED: "conference.dtmfSupportChanged"
 };
 
 module.exports = JitsiConferenceEvents;
@@ -567,7 +725,7 @@ JitsiConnection.prototype.removeEventListener = function (event, listener) {
 
 module.exports = JitsiConnection;
 
-},{"./JitsiConference":1,"./modules/util/RandomUtil":24,"./modules/xmpp/xmpp":40}],5:[function(require,module,exports){
+},{"./JitsiConference":1,"./modules/util/RandomUtil":25,"./modules/xmpp/xmpp":41}],5:[function(require,module,exports){
 /**
  * Enumeration with the errors for the connection.
  * @type {{string: string}}
@@ -627,6 +785,7 @@ var JitsiTrackEvents = require("./JitsiTrackEvents");
 var JitsiTrackErrors = require("./JitsiTrackErrors");
 var Logger = require("jitsi-meet-logger");
 var RTC = require("./modules/RTC/RTC");
+var Statistics = require("./modules/statistics/statistics");
 
 /**
  * Namespace for the interface of Jitsi Meet Library.
@@ -662,11 +821,29 @@ var LibJitsiMeet = {
      * will be returned trough the Promise, otherwise JitsiTrack objects will be returned.
      * @param {string} options.cameraDeviceId
      * @param {string} options.micDeviceId
-     * @returns {Promise.<{Array.<JitsiTrack>}, JitsiConferenceError>} A promise that returns an array of created JitsiTracks if resolved,
+     * @returns {Promise.<{Array.<JitsiTrack>}, JitsiConferenceError>}
+     *     A promise that returns an array of created JitsiTracks if resolved,
      *     or a JitsiConferenceError if rejected.
      */
     createLocalTracks: function (options) {
-        return RTC.obtainAudioAndVideoPermissions(options || {});
+        return RTC.obtainAudioAndVideoPermissions(options || {}).then(
+            function(tracks) {
+                if(!RTC.options.disableAudioLevels)
+                    for(var i = 0; i < tracks.length; i++) {
+                        var track = tracks[i];
+                        var mStream = track.getOriginalStream();
+                        if(track.getType() === "audio"){
+                            Statistics.startLocalStats(mStream,
+                                track.setAudioLevel.bind(track));
+                            track.addEventListener(
+                                JitsiTrackEvents.TRACK_STOPPED,
+                                function(){
+                                    Statistics.stopLocalStats(mStream);
+                                });
+                        }
+                    }
+                return tracks;
+            });
     },
     isDeviceListAvailable: function () {
         return RTC.isDeviceListAvailable();
@@ -682,7 +859,7 @@ window.Promise = window.Promise || require("es6-promise").Promise;
 
 module.exports = LibJitsiMeet;
 
-},{"./JitsiConferenceErrors":2,"./JitsiConferenceEvents":3,"./JitsiConnection":4,"./JitsiConnectionErrors":5,"./JitsiConnectionEvents":6,"./JitsiTrackErrors":9,"./JitsiTrackEvents":10,"./modules/RTC/RTC":15,"es6-promise":44,"jitsi-meet-logger":46}],8:[function(require,module,exports){
+},{"./JitsiConferenceErrors":2,"./JitsiConferenceEvents":3,"./JitsiConnection":4,"./JitsiConnectionErrors":5,"./JitsiConnectionEvents":6,"./JitsiTrackErrors":9,"./JitsiTrackEvents":10,"./modules/RTC/RTC":16,"./modules/statistics/statistics":24,"es6-promise":45,"jitsi-meet-logger":47}],8:[function(require,module,exports){
 /**
  * Represents a participant in (a member of) a conference.
  */
@@ -690,6 +867,9 @@ function JitsiParticipant(id, conference, displayName){
     this._id = id;
     this._conference = conference;
     this._displayName = displayName;
+    this._supportsDTMF = false;
+    this._tracks = [];
+    this._role = 'none';
 }
 
 /**
@@ -697,34 +877,35 @@ function JitsiParticipant(id, conference, displayName){
  */
 JitsiParticipant.prototype.getConference = function() {
     return this._conference;
-}
+};
 
 /**
  * @returns {Array.<JitsiTrack>} The list of media tracks for this participant.
  */
 JitsiParticipant.prototype.getTracks = function() {
-
-}
+    return this._tracks;
+};
 
 /**
  * @returns {String} The ID (i.e. JID) of this participant.
  */
 JitsiParticipant.prototype.getId = function() {
     return this._id;
-}
+};
 
 /**
  * @returns {String} The human-readable display name of this participant.
  */
 JitsiParticipant.prototype.getDisplayName = function() {
     return this._displayName;
-}
+};
 
 /**
  * @returns {Boolean} Whether this participant is a moderator or not.
  */
 JitsiParticipant.prototype.isModerator = function() {
-}
+    return this._role === 'moderator';
+};
 
 // Gets a link to an etherpad instance advertised by the participant?
 //JitsiParticipant.prototype.getEtherpad = function() {
@@ -736,15 +917,19 @@ JitsiParticipant.prototype.isModerator = function() {
  * @returns {Boolean} Whether this participant has muted their audio.
  */
 JitsiParticipant.prototype.isAudioMuted = function() {
-
-}
+    return this.getTracks().reduce(function (track, isAudioMuted) {
+        return isAudioMuted && (track.isVideoTrack() || track.isMuted());
+    }, true);
+};
 
 /*
  * @returns {Boolean} Whether this participant has muted their video.
  */
 JitsiParticipant.prototype.isVideoMuted = function() {
-
-}
+    return this.getTracks().reduce(function (track, isVideoMuted) {
+        return isVideoMuted && (track.isAudioTrack() || track.isMuted());
+    }, true);
+};
 
 /*
  * @returns {???} The latest statistics reported by this participant (i.e. info used to populate the GSM bars)
@@ -752,78 +937,76 @@ JitsiParticipant.prototype.isVideoMuted = function() {
  */
 JitsiParticipant.prototype.getLatestStats = function() {
 
-}
+};
 
 /**
  * @returns {String} The role of this participant.
  */
 JitsiParticipant.prototype.getRole = function() {
-
-}
+    return this._role;
+};
 
 /*
  * @returns {Boolean} Whether this participant is the conference focus (i.e. jicofo).
  */
 JitsiParticipant.prototype.isFocus = function() {
 
-}
+};
 
 /*
  * @returns {Boolean} Whether this participant is a conference recorder (i.e. jirecon).
  */
 JitsiParticipant.prototype.isRecorder = function() {
 
-}
+};
 
 /*
  * @returns {Boolean} Whether this participant is a SIP gateway (i.e. jigasi).
  */
 JitsiParticipant.prototype.isSipGateway = function() {
 
-}
-
-/**
- * @returns {String} The ID for this participant's avatar.
- */
-JitsiParticipant.prototype.getAvatarId = function() {
-
-}
+};
 
 /**
  * @returns {Boolean} Whether this participant is currently sharing their screen.
  */
 JitsiParticipant.prototype.isScreenSharing = function() {
 
-}
+};
 
 /**
  * @returns {String} The user agent of this participant (i.e. browser userAgent string).
  */
 JitsiParticipant.prototype.getUserAgent = function() {
 
-}
+};
 
 /**
  * Kicks the participant from the conference (requires certain privileges).
  */
 JitsiParticipant.prototype.kick = function() {
 
-}
+};
 
 /**
  * Asks this participant to mute themselves.
  */
 JitsiParticipant.prototype.askToMute = function() {
 
-}
+};
+
+JitsiParticipant.prototype.supportsDTMF = function () {
+    return this._supportsDTMF;
+};
 
 
-module.exports = JitsiParticipant();
+module.exports = JitsiParticipant;
 
 },{}],9:[function(require,module,exports){
 module.exports = {
     /**
-     * Returns JitsiTrackErrors based on the error object passed by GUM * @param error the error
+     * Returns JitsiTrackErrors based on the error object passed by GUM
+     * @param error the error
      * @param {Object} options the options object given to GUM.
      */
     parseError: function (error, options) {
@@ -858,12 +1041,31 @@ var JitsiTrackEvents = {
     /**
      * The media track was removed to the conference.
      */
-    TRACK_STOPPED: "track.TRACK_STOPPED",
+    TRACK_STOPPED: "track.stopped"
 };
 
 module.exports = JitsiTrackEvents;
 
 },{}],11:[function(require,module,exports){
+(function (__filename){
+var logger = require("jitsi-meet-logger").getLogger(__filename);
+
+function JitsiDTMFManager (localAudio, peerConnection) {
+    var tracks = localAudio._getTracks();
+    if (!tracks.length) {
+        throw new Error("Failed to initialize DTMFSender: no audio track.");
+    }
+    this.dtmfSender = peerConnection.peerconnection.createDTMFSender(tracks[0]);
+    logger.debug("Initialized DTMFSender");
+}
+
+
+JitsiDTMFManager.prototype.sendTones = function (tones, duration, pause) {
+    this.dtmfSender.insertDTMF(tones, (duration || 200), (pause || 200));
+};
+
+}).call(this,"/modules/DTMF/JitsiDTMFManager.js")
+},{"jitsi-meet-logger":47}],12:[function(require,module,exports){
 (function (__filename){
 /* global config, APP, Strophe */
 
@@ -1079,10 +1281,10 @@ module.exports = DataChannels;
 
 
 }).call(this,"/modules/RTC/DataChannels.js")
-},{"../../service/RTC/RTCEvents":82,"jitsi-meet-logger":46}],12:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":79,"jitsi-meet-logger":47}],13:[function(require,module,exports){
 var JitsiTrack = require("./JitsiTrack");
-var StreamEventTypes = require("../../service/RTC/StreamEventTypes");
 var RTCBrowserType = require("./RTCBrowserType");
+var JitsiTrackEvents = require('../../JitsiTrackEvents');
 var RTC = require("./RTCUtils");
 
 /**
@@ -1095,14 +1297,15 @@ function JitsiLocalTrack(stream, videoType,
     this.videoType = videoType;
     this.dontFireRemoveEvent = false;
     this.resolution = resolution;
+    this.startMuted = false;
     var self = this;
     JitsiTrack.call(this, null, stream,
         function () {
-            if(!self.dontFireRemoveEvent && self.rtc)
-                self.rtc.eventEmitter.emit(
-                    StreamEventTypes.EVENT_TYPE_LOCAL_ENDED, self);
-            self.dontFireRemoveEvent = false;
-        });
+            if(!this.dontFireRemoveEvent)
+                this.eventEmitter.emit(
+                    JitsiTrackEvents.TRACK_STOPPED);
+            this.dontFireRemoveEvent = false;
+        }.bind(this));
 
 }
 
@@ -1115,14 +1318,14 @@ JitsiLocalTrack.prototype.constructor = JitsiLocalTrack;
  */
 JitsiLocalTrack.prototype._setMute = function (mute) {
     if(!this.rtc) {
-        console.error("Mute is not supported for streams not attached to conference!");
+        this.startMuted = mute;
         return;
     }
     var isAudio = this.type === JitsiTrack.AUDIO;
     this.dontFireRemoveEvent = false;
 
     if ((window.location.protocol != "https:") ||
-        (isAudio) || this.videoType === "screen" ||
+        (isAudio) || this.videoType === "desktop" ||
         // FIXME FF does not support 'removeStream' method used to mute
         RTCBrowserType.isFirefox()) {
 
@@ -1134,7 +1337,7 @@ JitsiLocalTrack.prototype._setMute = function (mute) {
             this.rtc.room.setAudioMute(mute);
         else
             this.rtc.room.setVideoMute(mute);
-        this.rtc.eventEmitter.emit(StreamEventTypes.TRACK_MUTE_CHANGED, this);
+        this.eventEmitter.emit(JitsiTrackEvents.TRACK_MUTE_CHANGED);
     } else {
         if (mute) {
             this.dontFireRemoveEvent = true;
@@ -1145,7 +1348,7 @@ JitsiLocalTrack.prototype._setMute = function (mute) {
             else
                 this.rtc.room.setVideoMute(mute);
             this.stream = null;
-            this.rtc.eventEmitter.emit(StreamEventTypes.TRACK_MUTE_CHANGED, this);
+            this.eventEmitter.emit(JitsiTrackEvents.TRACK_MUTE_CHANGED);
             //FIXME: Maybe here we should set the SRC for the containers to something
         } else {
             var self = this;
@@ -1177,7 +1380,8 @@ JitsiLocalTrack.prototype._setMute = function (mute) {
                                 self.rtc.room.setAudioMute(mute);
                             else
                                 self.rtc.room.setVideoMute(mute);
-                            self.rtc.eventEmitter.emit(StreamEventTypes.TRACK_MUTE_CHANGED, self);
+                            self.eventEmitter.emit(
+                                JitsiTrackEvents.TRACK_MUTE_CHANGED);
                         });
                 });
         }
@@ -1193,7 +1397,7 @@ JitsiLocalTrack.prototype.stop = function () {
         return;
     if(this.rtc)
         this.rtc.room.removeStream(this.stream);
-    this.rtc.stopMediaStream(this.stream);
+    RTC.stopMediaStream(this.stream);
     this.detach();
 }
 
@@ -1230,11 +1434,18 @@ JitsiLocalTrack.prototype._setRTC = function (rtc) {
     this.rtc = rtc;
 };
 
+/**
+ * Return true;
+ */
+JitsiLocalTrack.prototype.isLocal = function () {
+    return true;
+}
+
 module.exports = JitsiLocalTrack;
 
-},{"../../service/RTC/StreamEventTypes":84,"./JitsiTrack":14,"./RTCBrowserType":16,"./RTCUtils":17}],13:[function(require,module,exports){
+},{"../../JitsiTrackEvents":10,"./JitsiTrack":15,"./RTCBrowserType":17,"./RTCUtils":18}],14:[function(require,module,exports){
 var JitsiTrack = require("./JitsiTrack");
-var StreamEventTypes = require("../../service/RTC/StreamEventTypes");
+var JitsiTrackEvents = require("../../JitsiTrackEvents");
 
 /**
  * Represents a single media track (either audio or video).
@@ -1245,11 +1456,11 @@ var StreamEventTypes = require("../../service/RTC/StreamEventTypes");
  * @param eventEmitter the event emitter
  * @constructor
  */
-function JitsiRemoteTrack(RTC, data, sid, ssrc, eventEmitter) {
+function JitsiRemoteTrack(RTC, data, sid, ssrc) {
     JitsiTrack.call(this, RTC, data.stream,
         function () {
-            eventEmitter.emit(StreamEventTypes.EVENT_TYPE_REMOTE_ENDED, self);
-        });
+            this.eventEmitter.emit(JitsiTrackEvents.TRACK_STOPPED);
+        }.bind(this));
     this.rtc = RTC;
     this.sid = sid;
     this.stream = data.stream;
@@ -1259,10 +1470,8 @@ function JitsiRemoteTrack(RTC, data, sid, ssrc, eventEmitter) {
     this.muted = false;
     if((this.type === JitsiTrack.AUDIO && data.audiomuted)
       || (this.type === JitsiTrack.VIDEO && data.videomuted)) {
-        this.muted = true
+        this.muted = true;
     }
-    this.eventEmitter = eventEmitter;
-    var self = this;
 }
 
 JitsiRemoteTrack.prototype = Object.create(JitsiTrack.prototype);
@@ -1275,7 +1484,7 @@ JitsiRemoteTrack.prototype.constructor = JitsiRemoteTrack;
 JitsiRemoteTrack.prototype.setMute = function (value) {
     this.stream.muted = value;
     this.muted = value;
-    this.eventEmitter.emit(StreamEventTypes.TRACK_MUTE_CHANGED, this);
+    this.eventEmitter.emit(JitsiTrackEvents.TRACK_MUTE_CHANGED);
 };
 
 /**
@@ -1290,9 +1499,16 @@ JitsiRemoteTrack.prototype.isMuted = function () {
  * Returns the participant id which owns the track.
  * @returns {string} the id of the participants.
  */
-JitsiRemoteTrack.prototype.getParitcipantId = function() {
+JitsiRemoteTrack.prototype.getParticipantId = function() {
     return Strophe.getResourceFromJid(this.peerjid);
 };
+
+/**
+ * Return false;
+ */
+JitsiRemoteTrack.prototype.isLocal = function () {
+    return false;
+}
 
 delete JitsiRemoteTrack.prototype.stop;
 
@@ -1300,8 +1516,10 @@ delete JitsiRemoteTrack.prototype.start;
 
 module.exports = JitsiRemoteTrack;
 
-},{"../../service/RTC/StreamEventTypes":84,"./JitsiTrack":14}],14:[function(require,module,exports){
+},{"../../JitsiTrackEvents":10,"./JitsiTrack":15}],15:[function(require,module,exports){
 var RTCBrowserType = require("./RTCBrowserType");
+var JitsiTrackEvents = require("../../JitsiTrackEvents");
+var EventEmitter = require("events");
 
 /**
  * This implements 'onended' callback normally fired by WebRTC after the stream
@@ -1357,6 +1575,8 @@ function JitsiTrack(rtc, stream, streamInactiveHandler)
     this.containers = [];
     this.rtc = rtc;
     this.stream = stream;
+    this.eventEmitter = new EventEmitter();
+    this.audioLevel = -1;
     this.type = (this.stream.getVideoTracks().length > 0)?
         JitsiTrack.VIDEO : JitsiTrack.AUDIO;
     if(this.type == "audio") {
@@ -1393,6 +1613,20 @@ JitsiTrack.AUDIO = "audio";
  */
 JitsiTrack.prototype.getType = function() {
     return this.type;
+};
+
+/**
+ * Check if this is audiotrack.
+ */
+JitsiTrack.prototype.isAudioTrack = function () {
+    return this.getType() === JitsiTrack.AUDIO;
+};
+
+/**
+ * Check if this is videotrack.
+ */
+JitsiTrack.prototype.isVideoTrack = function () {
+    return this.getType() === JitsiTrack.VIDEO;
 };
 
 /**
@@ -1487,10 +1721,47 @@ JitsiTrack.prototype.isActive = function () {
         return true;
 };
 
+/**
+ * Attaches a handler for events(For example - "audio level changed".).
+ * All possible event are defined in JitsiTrackEvents.
+ * @param eventId the event ID.
+ * @param handler handler for the event.
+ */
+JitsiTrack.prototype.on = function (eventId, handler) {
+    if(this.eventEmitter)
+        this.eventEmitter.on(eventId, handler);
+}
+
+/**
+ * Removes event listener
+ * @param eventId the event ID.
+ * @param [handler] optional, the specific handler to unbind
+ */
+JitsiTrack.prototype.off = function (eventId, handler) {
+    if(this.eventEmitter)
+        this.eventEmitter.removeListener(eventId, handler);
+}
+
+// Common aliases for event emitter
+JitsiTrack.prototype.addEventListener = JitsiTrack.prototype.on;
+JitsiTrack.prototype.removeEventListener = JitsiTrack.prototype.off;
+
+
+/**
+ * Sets the audio level for the stream
+ * @param audioLevel the new audio level
+ */
+JitsiTrack.prototype.setAudioLevel = function (audioLevel) {
+    if(this.audioLevel !== audioLevel) {
+        this.eventEmitter.emit(JitsiTrackEvents.TRACK_AUDIO_LEVEL_CHANGED,
+            audioLevel);
+        this.audioLevel = audioLevel;
+    }
+ }
 
 module.exports = JitsiTrack;
 
-},{"./RTCBrowserType":16,"./RTCUtils":17}],15:[function(require,module,exports){
+},{"../../JitsiTrackEvents":10,"./RTCBrowserType":17,"./RTCUtils":18,"events":43}],16:[function(require,module,exports){
 /* global APP */
 var EventEmitter = require("events");
 var RTCBrowserType = require("./RTCBrowserType");
@@ -1502,7 +1773,6 @@ var JitsiRemoteTrack = require("./JitsiRemoteTrack.js");
 var DesktopSharingEventTypes
     = require("../../service/desktopsharing/DesktopSharingEventTypes");
 var MediaStreamType = require("../../service/RTC/MediaStreamTypes");
-var StreamEventTypes = require("../../service/RTC/StreamEventTypes.js");
 var RTCEvents = require("../../service/RTC/RTCEvents.js");
 
 function createLocalTracks(streams) {
@@ -1513,10 +1783,6 @@ function createLocalTracks(streams) {
         newStreams.push(localStream);
         if (streams[i].isMuted === true)
             localStream.setMute(true);
-        //FIXME:
-        // var eventType = StreamEventTypes.EVENT_TYPE_LOCAL_CREATED;
-        //
-        // eventEmitter.emit(eventType, localStream);
     }
     return newStreams;
 }
@@ -1524,6 +1790,8 @@ function createLocalTracks(streams) {
 function RTC(room, options) {
     this.room = room;
     this.localStreams = [];
+    //FIXME: we should start removing those streams.
+    //FIXME: We should support multiple streams per jid.
     this.remoteStreams = {};
     this.localAudio = null;
     this.localVideo = null;
@@ -1531,12 +1799,14 @@ function RTC(room, options) {
     var self = this;
     this.options = options || {};
     room.addPresenceListener("videomuted", function (values, from) {
-        if(self.remoteStreams[from])
+        if(self.remoteStreams[from]) {
             self.remoteStreams[from][JitsiTrack.VIDEO].setMute(values.value == "true");
+        }
     });
     room.addPresenceListener("audiomuted", function (values, from) {
-        if(self.remoteStreams[from])
+        if(self.remoteStreams[from]) {
             self.remoteStreams[from][JitsiTrack.AUDIO].setMute(values.value == "true");
+        }
     });
 }
 
@@ -1597,7 +1867,8 @@ RTC.isRTCReady = function () {
 }
 
 RTC.init = function (options) {
-    return RTCUtils.init(options || {});
+    this.options = options || {};
+    return RTCUtils.init(this.options);
 }
 
 RTC.getDeviceAvailability = function () {
@@ -1625,8 +1896,7 @@ RTC.prototype.removeLocalStream = function (stream) {
 };
 
 RTC.prototype.createRemoteStream = function (data, sid, thessrc) {
-    var remoteStream = new JitsiRemoteTrack(this, data, sid, thessrc,
-        this.eventEmitter);
+    var remoteStream = new JitsiRemoteTrack(this, data, sid, thessrc);
     if(!data.peerjid)
         return;
     var jid = data.peerjid;
@@ -1634,7 +1904,6 @@ RTC.prototype.createRemoteStream = function (data, sid, thessrc) {
         this.remoteStreams[jid] = {};
     }
     this.remoteStreams[jid][remoteStream.type]= remoteStream;
-    this.eventEmitter.emit(StreamEventTypes.EVENT_TYPE_REMOTE_CREATED, remoteStream);
     return remoteStream;
 };
 
@@ -1686,24 +1955,6 @@ RTC.prototype.getVideoElementName = function () {
 RTC.prototype.dispose = function() {
 };
 
-RTC.prototype.muteRemoteVideoStream = function (jid, value) {
-    var stream;
-
-    if(this.remoteStreams[jid] &&
-        this.remoteStreams[jid][MediaStreamType.VIDEO_TYPE]) {
-        stream = this.remoteStreams[jid][MediaStreamType.VIDEO_TYPE];
-    }
-
-    if(!stream)
-        return true;
-
-    if (value != stream.muted) {
-        stream.setMute(value);
-        return true;
-    }
-    return false;
-};
-
 RTC.prototype.switchVideoStreams = function (newStream) {
     this.localVideo.stream = newStream;
 
@@ -1715,42 +1966,13 @@ RTC.prototype.switchVideoStreams = function (newStream) {
     this.localStreams.push(this.localVideo);
 };
 
-RTC.prototype.isVideoMuted = function (jid) {
-    if (jid === APP.xmpp.myJid()) {
-        var localVideo = APP.RTC.localVideo;
-        return (!localVideo || localVideo.isMuted());
-    } else {
-        if (!this.remoteStreams[jid] ||
-            !this.remoteStreams[jid][MediaStreamType.VIDEO_TYPE]) {
-            return null;
-        }
-        return this.remoteStreams[jid][MediaStreamType.VIDEO_TYPE].muted;
-    }
-};
-
-RTC.prototype.setVideoMute = function (mute, callback, options) {
-    if (!this.localVideo)
-        return;
-
-    if (mute == this.localVideo.isMuted())
-    {
-        APP.xmpp.sendVideoInfoPresence(mute);
-        if (callback)
-            callback(mute);
-    }
-    else
-    {
-        this.localVideo.setMute(mute);
-        this.room.setVideoMute(
-            mute,
-            callback,
-            options);
-    }
-};
-
+RTC.prototype.setAudioLevel = function (jid, audioLevel) {
+    if(this.remoteStreams[jid] && this.remoteStreams[jid][JitsiTrack.AUDIO])
+        this.remoteStreams[jid][JitsiTrack.AUDIO].setAudioLevel(audioLevel);
+}
 module.exports = RTC;
 
-},{"../../service/RTC/MediaStreamTypes":81,"../../service/RTC/RTCEvents.js":82,"../../service/RTC/StreamEventTypes.js":84,"../../service/desktopsharing/DesktopSharingEventTypes":86,"./DataChannels":11,"./JitsiLocalTrack.js":12,"./JitsiRemoteTrack.js":13,"./JitsiTrack":14,"./RTCBrowserType":16,"./RTCUtils.js":17,"events":42}],16:[function(require,module,exports){
+},{"../../service/RTC/MediaStreamTypes":78,"../../service/RTC/RTCEvents.js":79,"../../service/desktopsharing/DesktopSharingEventTypes":82,"./DataChannels":12,"./JitsiLocalTrack.js":13,"./JitsiRemoteTrack.js":14,"./JitsiTrack":15,"./RTCBrowserType":17,"./RTCUtils.js":18,"events":43}],17:[function(require,module,exports){
 
 var currentBrowser;
 
@@ -1922,9 +2144,14 @@ browserVersion = detectBrowser();
 isAndroid = navigator.userAgent.indexOf('Android') != -1;
 
 module.exports = RTCBrowserType;
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 (function (__filename){
-/* global config, require, attachMediaStream, getUserMedia */
+/* global config, require, attachMediaStream, getUserMedia,
+   RTCPeerConnection, RTCSessionDescription, RTCIceCandidate, MediaStreamTrack,
+   mozRTCPeerConnection, mozRTCSessionDescription, mozRTCIceCandidate,
+   webkitRTCPeerConnection, webkitMediaStream, webkitURL
+*/
+/* jshint -W101 */
 
 var logger = require("jitsi-meet-logger").getLogger(__filename);
 var RTCBrowserType = require("./RTCBrowserType");
@@ -1941,7 +2168,7 @@ var eventEmitter = new EventEmitter();
 var devices = {
     audio: true,
     video: true
-}
+};
 
 var rtcReady = false;
 
@@ -2121,7 +2348,7 @@ function onReady (options, GUM) {
     rtcReady = true;
     eventEmitter.emit(RTCEvents.RTC_READY, true);
     screenObtainer.init(eventEmitter, options, GUM);
-};
+}
 
 /**
  * Apply function with arguments if function exists.
@@ -2249,8 +2476,8 @@ function enumerateDevicesThroughMediaStreamTrack (callback) {
 }
 
 function obtainDevices(options) {
-    if(!options.devices || options.devices.length === 0) {
-        return options.successCallback(streams);
+    if (!options.devices || options.devices.length === 0) {
+        return options.successCallback(options.streams);
     }
 
     var device = options.devices.splice(0, 1);
@@ -2290,8 +2517,8 @@ function handleLocalStream(streams, resolution) {
             var videoTracks = audioVideo.getVideoTracks();
             if(videoTracks.length) {
                 videoStream = new webkitMediaStream();
-                for (i = 0; i < videoTracks.length; i++) {
-                    videoStream.addTrack(videoTracks[i]);
+                for (var j = 0; j < videoTracks.length; j++) {
+                    videoStream.addTrack(videoTracks[j]);
                 }
             }
         }
@@ -2430,7 +2657,7 @@ var RTCUtils = {
 
                 //AdapterJS.WebRTCPlugin.setLogLevel(
                 //    AdapterJS.WebRTCPlugin.PLUGIN_LOG_LEVELS.VERBOSE);
-
+                var self = this;
                 AdapterJS.webRTCReady(function (isPlugin) {
 
                     self.peerconnection = RTCPeerConnection;
@@ -2488,7 +2715,7 @@ var RTCUtils = {
 
             // Call onReady() if Temasys plugin is not used
             if (!RTCBrowserType.isTemasysPluginUsed()) {
-                onReady(options, self.getUserMediaWithConstraints);
+                onReady(options, this.getUserMediaWithConstraints);
                 resolve();
             }
         }.bind(this));
@@ -2507,9 +2734,8 @@ var RTCUtils = {
     **/
     getUserMediaWithConstraints: function ( um, success_callback, failure_callback, options) {
         options = options || {};
-        resolution = options.resolution;
-        var constraints = getConstraints(
-            um, options);
+        var resolution = options.resolution;
+        var constraints = getConstraints(um, options);
 
         logger.info("Get media constraints", constraints);
 
@@ -2566,12 +2792,12 @@ var RTCUtils = {
                 RTCBrowserType.isTemasysPluginUsed()) {
                 var GUM = function (device, s, e) {
                     this.getUserMediaWithConstraints(device, s, e, options);
-                }
+                };
                 var deviceGUM = {
                     "audio": GUM.bind(self, ["audio"]),
                     "video": GUM.bind(self, ["video"]),
                     "desktop": screenObtainer.obtainStream
-                }
+                };
                 // With FF/IE we can't split the stream into audio and video because FF
                 // doesn't support media stream constructors. So, we need to get the
                 // audio stream separately from the video stream using two distinct GUM
@@ -2582,13 +2808,14 @@ var RTCUtils = {
                 // the successCallback method.
                 obtainDevices({
                     devices: options.devices,
+                    streams: [],
                     successCallback: successCallback,
                     errorCallback: reject,
                     deviceGUM: deviceGUM
                 });
             } else {
-                var hasDesktop = false;
-                if(hasDesktop = options.devices.indexOf("desktop") !== -1) {
+                var hasDesktop = options.devices.indexOf('desktop') > -1;
+                if (hasDesktop) {
                     options.devices.splice(options.devices.indexOf("desktop"), 1);
                 }
                 options.resolution = options.resolution || '360';
@@ -2672,7 +2899,7 @@ var RTCUtils = {
 module.exports = RTCUtils;
 
 }).call(this,"/modules/RTC/RTCUtils.js")
-},{"../../JitsiTrackErrors":9,"../../service/RTC/RTCEvents":82,"../../service/RTC/Resolutions":83,"../xmpp/SDPUtil":31,"./RTCBrowserType":16,"./ScreenObtainer":18,"./adapter.screenshare":19,"events":42,"jitsi-meet-logger":46}],18:[function(require,module,exports){
+},{"../../JitsiTrackErrors":9,"../../service/RTC/RTCEvents":79,"../../service/RTC/Resolutions":80,"../xmpp/SDPUtil":32,"./RTCBrowserType":17,"./ScreenObtainer":19,"./adapter.screenshare":20,"events":43,"jitsi-meet-logger":47}],19:[function(require,module,exports){
 (function (__filename){
 /* global chrome, $, alert */
 /* jshint -W003 */
@@ -3094,7 +3321,7 @@ function initFirefoxExtensionDetection(options) {
 module.exports = ScreenObtainer;
 
 }).call(this,"/modules/RTC/ScreenObtainer.js")
-},{"../../service/desktopsharing/DesktopSharingEventTypes":86,"./RTCBrowserType":16,"./adapter.screenshare":19,"jitsi-meet-logger":46}],19:[function(require,module,exports){
+},{"../../service/desktopsharing/DesktopSharingEventTypes":82,"./RTCBrowserType":17,"./adapter.screenshare":20,"jitsi-meet-logger":47}],20:[function(require,module,exports){
 (function (__filename){
 /*! adapterjs - v0.12.0 - 2015-09-04 */
 var console = require("jitsi-meet-logger").getLogger(__filename);
@@ -4267,7 +4494,7 @@ if (navigator.mozGetUserMedia) {
 }
 
 }).call(this,"/modules/RTC/adapter.screenshare.js")
-},{"jitsi-meet-logger":46}],20:[function(require,module,exports){
+},{"jitsi-meet-logger":47}],21:[function(require,module,exports){
 (function (__filename){
 
 var logger = require("jitsi-meet-logger").getLogger(__filename);
@@ -4353,16 +4580,13 @@ Settings.prototype.setLanguage = function (lang) {
 module.exports = Settings;
 
 }).call(this,"/modules/settings/Settings.js")
-},{"jitsi-meet-logger":46}],21:[function(require,module,exports){
+},{"jitsi-meet-logger":47}],22:[function(require,module,exports){
 /* global config */
 /**
  * Provides statistics for the local stream.
  */
 
 var RTCBrowserType = require('../RTC/RTCBrowserType');
-var StatisticsEvents = require('../../service/statistics/Events');
-
-var LOCAL_JID = require("../../service/statistics/constants").LOCAL_JID;
 
 /**
  * Size of the webaudio analyzer buffer.
@@ -4423,16 +4647,16 @@ function animateLevel(newLevel, lastLevel) {
  *
  * @param stream the local stream
  * @param interval stats refresh interval given in ms.
+ * @param callback function that receives the audio levels.
  * @constructor
  */
-function LocalStatsCollector(stream, interval, statisticsService, eventEmitter) {
+function LocalStatsCollector(stream, interval, callback) {
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
     this.stream = stream;
     this.intervalId = null;
     this.intervalMilis = interval;
-    this.eventEmitter = eventEmitter;
     this.audioLevel = 0;
-    this.statisticsService = statisticsService;
+    this.callback = callback;
 }
 
 /**
@@ -4462,10 +4686,7 @@ LocalStatsCollector.prototype.start = function () {
             var audioLevel = timeDomainDataToAudioLevel(array);
             if (audioLevel != self.audioLevel) {
                 self.audioLevel = animateLevel(audioLevel, self.audioLevel);
-                self.eventEmitter.emit(
-                    StatisticsEvents.AUDIO_LEVEL,
-                    self.statisticsService.LOCAL_JID,
-                    self.audioLevel);
+                self.callback(self.audioLevel);
             }
         },
         this.intervalMilis
@@ -4483,7 +4704,8 @@ LocalStatsCollector.prototype.stop = function () {
 };
 
 module.exports = LocalStatsCollector;
-},{"../../service/statistics/Events":87,"../../service/statistics/constants":88,"../RTC/RTCBrowserType":16}],22:[function(require,module,exports){
+
+},{"../RTC/RTCBrowserType":17}],23:[function(require,module,exports){
 (function (__filename){
 /* global require, ssrc2jid */
 /* jshint -W117 */
@@ -5210,7 +5432,7 @@ StatsCollector.prototype.processAudioLevelReport = function () {
 };
 
 }).call(this,"/modules/statistics/RTPStatsCollector.js")
-},{"../../service/statistics/Events":87,"../RTC/RTCBrowserType":16,"jitsi-meet-logger":46}],23:[function(require,module,exports){
+},{"../../service/statistics/Events":83,"../RTC/RTCBrowserType":17,"jitsi-meet-logger":47}],24:[function(require,module,exports){
 /* global require, APP */
 var LocalStats = require("./LocalStatsCollector.js");
 var RTPStats = require("./RTPStatsCollector.js");
@@ -5231,8 +5453,9 @@ var StatisticsEvents = require("../../service/statistics/Events");
 //    }
 //}
 
+var eventEmitter = new EventEmitter();
+
 function Statistics() {
-    this.localStats = null;
     this.rtpStats = null;
     this.eventEmitter = new EventEmitter();
 }
@@ -5246,14 +5469,13 @@ Statistics.prototype.startRemoteStats = function (peerconnection) {
     this.rtpStats.start();
 }
 
-Statistics.prototype.startLocalStats = function (stream) {
-    if(stream.getType() !== "audio")
-        return;
-    this.localStats = new LocalStats(stream.getOriginalStream(), 200, this,
-        this.eventEmitter);
-    this.localStats.start();
-}
+Statistics.localStats = [];
 
+Statistics.startLocalStats = function (stream, callback) {
+    var localStats = new LocalStats(stream, 200, callback);
+    this.localStats.push(localStats);
+    localStats.start();
+}
 
 Statistics.prototype.addAudioLevelListener = function(listener)
 {
@@ -5266,20 +5488,29 @@ Statistics.prototype.removeAudioLevelListener = function(listener)
 }
 
 Statistics.prototype.dispose = function () {
-    this.stopLocal();
+    Statistics.stopAllLocalStats();
     this.stopRemote();
     if(this.eventEmitter)
-    {
         this.eventEmitter.removeAllListeners();
-    }
+
+    if(eventEmitter)
+        eventEmitter.removeAllListeners();
 }
 
 
-Statistics.prototype.stopLocal = function () {
-    if (this.localStats) {
-        this.localStats.stop();
-        this.localStats = null;
-    }
+Statistics.stopAllLocalStats = function () {
+    for(var i = 0; i < this.localStats.length; i++)
+        this.localStats[i].stop();
+    this.localStats = [];
+}
+
+Statistics.stopLocalStats = function (stream) {
+    for(var i = 0; i < Statistics.localStats.length; i++)
+        if(Statistics.localStats[i].stream === stream){
+            var localStats = Statistics.localStats.splice(i, 1);
+            localStats.stop();
+            break;
+        }
 }
 
 Statistics.prototype.stopRemote = function () {
@@ -5358,7 +5589,8 @@ Statistics.LOCAL_JID = require("../../service/statistics/constants").LOCAL_JID;
 
 
 module.exports = Statistics;
-},{"../../service/statistics/Events":87,"../../service/statistics/constants":88,"./LocalStatsCollector.js":21,"./RTPStatsCollector.js":22,"events":42}],24:[function(require,module,exports){
+
+},{"../../service/statistics/Events":83,"../../service/statistics/constants":84,"./LocalStatsCollector.js":22,"./RTPStatsCollector.js":23,"events":43}],25:[function(require,module,exports){
 /**
 /**
  * @const
@@ -5433,9 +5665,10 @@ var RandomUtil = {
 
 module.exports = RandomUtil;
 
-},{}],25:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 (function (__filename){
-
+/* global Strophe, $, $pres, $iq, $msg */
+/* jshint -W101,-W069 */
 var logger = require("jitsi-meet-logger").getLogger(__filename);
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 var Moderator = require("./moderator");
@@ -5446,23 +5679,24 @@ var parser = {
         var self = this;
         $(packet).children().each(function (index) {
             var tagName = $(this).prop("tagName");
-            var node = {}
-            node["tagName"] = tagName;
+            var node = {
+                tagName: tagName
+            };
             node.attributes = {};
             $($(this)[0].attributes).each(function( index, attr ) {
                 node.attributes[ attr.name ] = attr.value;
-            } );
+            });
             var text = Strophe.getText($(this)[0]);
-            if(text)
+            if (text) {
                 node.value = text;
+            }
             node.children = [];
             nodes.push(node);
             self.packet2JSON($(this), node.children);
-        })
+        });
     },
     JSON2packet: function (nodes, packet) {
-        for(var i = 0; i < nodes.length; i++)
-        {
+        for(var i = 0; i < nodes.length; i++) {
             var node = nodes[i];
             if(!node || node === null){
                 continue;
@@ -5504,7 +5738,7 @@ function ChatRoom(connection, jid, password, XMPP, options) {
     this.presMap = {};
     this.presHandlers = {};
     this.joined = false;
-    this.role = null;
+    this.role = 'none';
     this.focusMucJid = null;
     this.bridgeIsDown = false;
     this.options = options || {};
@@ -5541,7 +5775,7 @@ ChatRoom.prototype.updateDeviceAvailability = function (devices) {
             }
         ]
     });
-}
+};
 
 ChatRoom.prototype.join = function (password, tokenPassword) {
     if(password)
@@ -5643,7 +5877,7 @@ ChatRoom.prototype.onPresence = function (pres) {
     member.jid = tmp.attr('jid');
     member.isFocus = false;
     if (member.jid
-        && member.jid.indexOf(this.moderator.getFocusUserJid() + "/") == 0) {
+        && member.jid.indexOf(this.moderator.getFocusUserJid() + "/") === 0) {
         member.isFocus = true;
     }
 
@@ -5692,8 +5926,7 @@ ChatRoom.prototype.onPresence = function (pres) {
             if (this.role !== member.role) {
                 this.role = member.role;
 
-                this.eventEmitter.emit(XMPPEvents.LOCAL_ROLE_CHANGED,
-                    member, this.isModerator());
+                this.eventEmitter.emit(XMPPEvents.LOCAL_ROLE_CHANGED, this.role);
             }
         if (!this.joined) {
             this.joined = true;
@@ -5716,8 +5949,7 @@ ChatRoom.prototype.onPresence = function (pres) {
         // Watch role change:
         if (this.members[from].role != member.role) {
             this.members[from].role = member.role;
-            this.eventEmitter.emit(XMPPEvents.MUC_ROLE_CHANGED,
-                member.role, member.nick);
+            this.eventEmitter.emit(XMPPEvents.MUC_ROLE_CHANGED, from, member.role);
         }
 
         // store the new display name
@@ -5782,7 +6014,7 @@ ChatRoom.prototype.onPresenceUnavailable = function (pres, from) {
 
         this.xmpp.disposeConference(false);
         this.eventEmitter.emit(XMPPEvents.MUC_DESTROYED, reason);
-        delete this.connection.emuc.rooms[Strophe.getBareJidFromJid(jid)];
+        delete this.connection.emuc.rooms[Strophe.getBareJidFromJid(from)];
         return true;
     }
 
@@ -5825,7 +6057,7 @@ ChatRoom.prototype.onMessage = function (msg, from) {
     var subject = $(msg).find('>subject');
     if (subject.length) {
         var subjectText = subject.text();
-        if (subjectText || subjectText == "") {
+        if (subjectText || subjectText === "") {
             this.eventEmitter.emit(XMPPEvents.SUBJECT_CHANGED, subjectText);
             logger.log("Subject is changed to " + subjectText);
         }
@@ -5850,7 +6082,7 @@ ChatRoom.prototype.onMessage = function (msg, from) {
         this.eventEmitter.emit(XMPPEvents.MESSAGE_RECEIVED,
             from, nick, txt, this.myroomjid, stamp);
     }
-}
+};
 
 ChatRoom.prototype.onPresenceError = function (pres, from) {
     if ($(pres).find('>error[type="auth"]>not-authorized[xmlns="urn:ietf:params:xml:ns:xmpp-stanzas"]').length) {
@@ -5929,13 +6161,13 @@ ChatRoom.prototype.removeFromPresence = function (key) {
 
 ChatRoom.prototype.addPresenceListener = function (name, handler) {
     this.presHandlers[name] = handler;
-}
+};
 
 ChatRoom.prototype.removePresenceListener = function (name) {
     delete this.presHandlers[name];
-}
+};
 
-ChatRoom.prototype.isModerator = function (jid) {
+ChatRoom.prototype.isModerator = function () {
     return this.role === 'moderator';
 };
 
@@ -5952,11 +6184,11 @@ ChatRoom.prototype.setJingleSession = function(session){
 };
 
 
-ChatRoom.prototype.removeStream = function (stream) {
+ChatRoom.prototype.removeStream = function (stream, callback) {
     if(!this.session)
         return;
-    this.session.peerconnection.removeStream(stream)
-}
+    this.session.removeStream(stream, callback);
+};
 
 ChatRoom.prototype.switchStreams = function (stream, oldStream, callback, isAudio) {
     if(this.session) {
@@ -5978,14 +6210,14 @@ ChatRoom.prototype.addStream = function (stream, callback) {
         logger.warn("No conference handler or conference not started yet");
         callback();
     }
-}
+};
 
 ChatRoom.prototype.setVideoMute = function (mute, callback, options) {
     var self = this;
     var localCallback = function (mute) {
         self.sendVideoInfoPresence(mute);
         if(callback)
-            callback(mute)
+            callback(mute);
     };
 
     if(this.session)
@@ -6018,7 +6250,7 @@ ChatRoom.prototype.addAudioInfoToPresence = function (mute) {
         {attributes:
         {"audions": "http://jitsi.org/jitmeet/audio"},
             value: mute.toString()});
-}
+};
 
 ChatRoom.prototype.sendAudioInfoPresence = function(mute, callback) {
     this.addAudioInfoToPresence(mute);
@@ -6035,7 +6267,7 @@ ChatRoom.prototype.addVideoInfoToPresence = function (mute) {
         {attributes:
         {"videons": "http://jitsi.org/jitmeet/video"},
             value: mute.toString()});
-}
+};
 
 
 ChatRoom.prototype.sendVideoInfoPresence = function (mute) {
@@ -6068,7 +6300,7 @@ ChatRoom.prototype.remoteStreamAdded = function(data, sid, thessrc) {
     }
 
     this.eventEmitter.emit(XMPPEvents.REMOTE_STREAM_RECEIVED, data, sid, thessrc);
-}
+};
 
 ChatRoom.prototype.getJidBySSRC = function (ssrc) {
     if (!this.session)
@@ -6079,7 +6311,7 @@ ChatRoom.prototype.getJidBySSRC = function (ssrc) {
 module.exports = ChatRoom;
 
 }).call(this,"/modules/xmpp/ChatRoom.js")
-},{"../../service/xmpp/XMPPEvents":89,"./moderator":33,"events":42,"jitsi-meet-logger":46}],26:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":85,"./moderator":34,"events":43,"jitsi-meet-logger":47}],27:[function(require,module,exports){
 (function (__filename){
 /*
  * JingleSession provides an API to manage a single Jingle session. We will
@@ -6215,7 +6447,7 @@ JingleSession.prototype.setAnswer = function(jingle) {};
 module.exports = JingleSession;
 
 }).call(this,"/modules/xmpp/JingleSession.js")
-},{"jitsi-meet-logger":46}],27:[function(require,module,exports){
+},{"jitsi-meet-logger":47}],28:[function(require,module,exports){
 (function (__filename){
 /* jshint -W117 */
 
@@ -7455,6 +7687,43 @@ JingleSessionPC.prototype.addStream = function (stream, callback) {
 }
 
 /**
+ * Remove streams.
+ * @param stream stream that will be removed.
+ * @param success_callback callback executed after successful stream addition.
+ */
+JingleSessionPC.prototype.removeStream = function (stream, callback) {
+
+    var self = this;
+
+    // Remember SDP to figure out added/removed SSRCs
+    var oldSdp = null;
+    if(this.peerconnection) {
+        if(this.peerconnection.localDescription) {
+            oldSdp = new SDP(this.peerconnection.localDescription.sdp);
+        }
+        if(stream)
+            this.peerconnection.removeStream(stream);
+    }
+
+    // Conference is not active
+    if(!oldSdp || !this.peerconnection) {
+        callback();
+        return;
+    }
+
+    this.addingStreams = true;
+    this.modifySourcesQueue.push(function() {
+        logger.log('modify sources done');
+
+        callback();
+
+        var newSdp = new SDP(self.peerconnection.localDescription.sdp);
+        logger.log("SDPs", oldSdp, newSdp);
+        self.notifyMySSRCUpdate(oldSdp, newSdp);
+    });
+}
+
+/**
  * Figures out added/removed ssrcs and send update IQs.
  * @param old_sdp SDP object for old description.
  * @param new_sdp SDP object for new description.
@@ -7805,7 +8074,7 @@ JingleSessionPC.prototype.remoteStreamAdded = function (data, times) {
 module.exports = JingleSessionPC;
 
 }).call(this,"/modules/xmpp/JingleSessionPC.js")
-},{"../../service/xmpp/XMPPEvents":89,"../RTC/RTC":15,"../RTC/RTCBrowserType":16,"./JingleSession":26,"./LocalSSRCReplacement":28,"./SDP":29,"./SDPDiffer":30,"./SDPUtil":31,"./TraceablePeerConnection":32,"async":41,"jitsi-meet-logger":46,"sdp-transform":78}],28:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":85,"../RTC/RTC":16,"../RTC/RTCBrowserType":17,"./JingleSession":27,"./LocalSSRCReplacement":29,"./SDP":30,"./SDPDiffer":31,"./SDPUtil":32,"./TraceablePeerConnection":33,"async":42,"jitsi-meet-logger":47,"sdp-transform":75}],29:[function(require,module,exports){
 (function (__filename){
 /* global $ */
 var logger = require("jitsi-meet-logger").getLogger(__filename);
@@ -8102,7 +8371,7 @@ var LocalSSRCReplacement = {
 module.exports = LocalSSRCReplacement;
 
 }).call(this,"/modules/xmpp/LocalSSRCReplacement.js")
-},{"../RTC/RTCBrowserType":16,"../util/RandomUtil":24,"./SDP":29,"jitsi-meet-logger":46}],29:[function(require,module,exports){
+},{"../RTC/RTCBrowserType":17,"../util/RandomUtil":25,"./SDP":30,"jitsi-meet-logger":47}],30:[function(require,module,exports){
 (function (__filename){
 /* jshint -W117 */
 
@@ -8756,7 +9025,7 @@ module.exports = SDP;
 
 
 }).call(this,"/modules/xmpp/SDP.js")
-},{"./SDPUtil":31,"jitsi-meet-logger":46}],30:[function(require,module,exports){
+},{"./SDPUtil":32,"jitsi-meet-logger":47}],31:[function(require,module,exports){
 var SDPUtil = require("./SDPUtil");
 
 function SDPDiffer(mySDP, otherSDP)
@@ -8925,9 +9194,8 @@ SDPDiffer.prototype.toJingle = function(modify) {
 };
 
 module.exports = SDPDiffer;
-},{"./SDPUtil":31}],31:[function(require,module,exports){
+},{"./SDPUtil":32}],32:[function(require,module,exports){
 (function (__filename){
-
 var logger = require("jitsi-meet-logger").getLogger(__filename);
 var RTCBrowserType = require("../RTC/RTCBrowserType");
 
@@ -9290,10 +9558,11 @@ SDPUtil = {
         return line + '\r\n';
     }
 };
+
 module.exports = SDPUtil;
 
 }).call(this,"/modules/xmpp/SDPUtil.js")
-},{"../RTC/RTCBrowserType":16,"jitsi-meet-logger":46}],32:[function(require,module,exports){
+},{"../RTC/RTCBrowserType":17,"jitsi-meet-logger":47}],33:[function(require,module,exports){
 (function (__filename){
 /* global $ */
 var RTC = require('../RTC/RTC');
@@ -9503,45 +9772,49 @@ var normalizePlanB = function(desc) {
     });
 };
 
-if (TraceablePeerConnection.prototype.__defineGetter__ !== undefined) {
-    TraceablePeerConnection.prototype.__defineGetter__(
-        'signalingState',
-        function() { return this.peerconnection.signalingState; });
-    TraceablePeerConnection.prototype.__defineGetter__(
-        'iceConnectionState',
-        function() { return this.peerconnection.iceConnectionState; });
-    TraceablePeerConnection.prototype.__defineGetter__(
-        'localDescription',
-        function() {
-            var desc = this.peerconnection.localDescription;
+var getters = {
+    signalingState: function () {
+        return this.peerconnection.signalingState;
+    },
+    iceConnectionState: function () {
+        return this.peerconnection.iceConnectionState;
+    },
+    localDescription:  function() {
+        var desc = this.peerconnection.localDescription;
 
             // FIXME this should probably be after the Unified Plan -> Plan B
             // transformation.
-            desc = SSRCReplacement.mungeLocalVideoSSRC(desc);
+        desc = SSRCReplacement.mungeLocalVideoSSRC(desc);
 
-            this.trace('getLocalDescription::preTransform', dumpSDP(desc));
+        this.trace('getLocalDescription::preTransform', dumpSDP(desc));
 
-            // if we're running on FF, transform to Plan B first.
-            if (RTCBrowserType.usesUnifiedPlan()) {
-                desc = this.interop.toPlanB(desc);
-                this.trace('getLocalDescription::postTransform (Plan B)', dumpSDP(desc));
-            }
-            return desc;
-        });
-    TraceablePeerConnection.prototype.__defineGetter__(
-        'remoteDescription',
-        function() {
-            var desc = this.peerconnection.remoteDescription;
-            this.trace('getRemoteDescription::preTransform', dumpSDP(desc));
+        // if we're running on FF, transform to Plan B first.
+        if (RTCBrowserType.usesUnifiedPlan()) {
+            desc = this.interop.toPlanB(desc);
+            this.trace('getLocalDescription::postTransform (Plan B)', dumpSDP(desc));
+        }
+        return desc;
+    },
+    remoteDescription:  function() {
+        var desc = this.peerconnection.remoteDescription;
+        this.trace('getRemoteDescription::preTransform', dumpSDP(desc));
 
-            // if we're running on FF, transform to Plan B first.
-            if (RTCBrowserType.usesUnifiedPlan()) {
-                desc = this.interop.toPlanB(desc);
-                this.trace('getRemoteDescription::postTransform (Plan B)', dumpSDP(desc));
-            }
-            return desc;
-        });
-}
+        // if we're running on FF, transform to Plan B first.
+        if (RTCBrowserType.usesUnifiedPlan()) {
+            desc = this.interop.toPlanB(desc);
+            this.trace('getRemoteDescription::postTransform (Plan B)', dumpSDP(desc));
+        }
+        return desc;
+    }
+};
+Object.keys(getters).forEach(function (prop) {
+    Object.defineProperty(
+        TraceablePeerConnection.prototype,
+        prop, {
+            get: getters[prop]
+        }
+    );
+});
 
 TraceablePeerConnection.prototype.addStream = function (stream) {
     this.trace('addStream', stream.id);
@@ -9742,7 +10015,7 @@ TraceablePeerConnection.prototype.getStats = function(callback, errback) {
 module.exports = TraceablePeerConnection;
 
 }).call(this,"/modules/xmpp/TraceablePeerConnection.js")
-},{"../../service/xmpp/XMPPEvents":89,"../RTC/RTC":15,"../RTC/RTCBrowserType.js":16,"./LocalSSRCReplacement":28,"jitsi-meet-logger":46,"sdp-interop":64,"sdp-simulcast":71,"sdp-transform":78}],33:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":85,"../RTC/RTC":16,"../RTC/RTCBrowserType.js":17,"./LocalSSRCReplacement":29,"jitsi-meet-logger":47,"sdp-interop":65,"sdp-simulcast":68,"sdp-transform":75}],34:[function(require,module,exports){
 (function (__filename){
 /* global $, $iq, APP, config, messageHandler,
  roomName, sessionTerminated, Strophe, Util */
@@ -10179,7 +10452,7 @@ module.exports = Moderator;
 
 
 }).call(this,"/modules/xmpp/moderator.js")
-},{"../../service/authentication/AuthenticationEvents":85,"../../service/xmpp/XMPPEvents":89,"../settings/Settings":20,"jitsi-meet-logger":46}],34:[function(require,module,exports){
+},{"../../service/authentication/AuthenticationEvents":81,"../../service/xmpp/XMPPEvents":85,"../settings/Settings":21,"jitsi-meet-logger":47}],35:[function(require,module,exports){
 (function (__filename){
 /* jshint -W117 */
 /* a simple MUC connection plugin
@@ -10276,7 +10549,7 @@ module.exports = function(XMPP) {
 
 
 }).call(this,"/modules/xmpp/strophe.emuc.js")
-},{"./ChatRoom":25,"jitsi-meet-logger":46}],35:[function(require,module,exports){
+},{"./ChatRoom":26,"jitsi-meet-logger":47}],36:[function(require,module,exports){
 (function (__filename){
 /* jshint -W117 */
 
@@ -10573,7 +10846,7 @@ module.exports = function(XMPP, eventEmitter) {
 
 
 }).call(this,"/modules/xmpp/strophe.jingle.js")
-},{"../../service/xmpp/XMPPEvents":89,"../RTC/RTCBrowserType":16,"./JingleSessionPC":27,"jitsi-meet-logger":46}],36:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":85,"../RTC/RTCBrowserType":17,"./JingleSessionPC":28,"jitsi-meet-logger":47}],37:[function(require,module,exports){
 /* global Strophe */
 module.exports = function () {
 
@@ -10594,7 +10867,7 @@ module.exports = function () {
         }
     });
 };
-},{}],37:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 (function (__filename){
 /* global $, $iq, Strophe */
 
@@ -10721,7 +10994,7 @@ module.exports = function (XMPP, eventEmitter) {
 };
 
 }).call(this,"/modules/xmpp/strophe.ping.js")
-},{"../../service/xmpp/XMPPEvents":89,"jitsi-meet-logger":46}],38:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":85,"jitsi-meet-logger":47}],39:[function(require,module,exports){
 (function (__filename){
 /* jshint -W117 */
 var logger = require("jitsi-meet-logger").getLogger(__filename);
@@ -10823,7 +11096,7 @@ module.exports = function() {
 };
 
 }).call(this,"/modules/xmpp/strophe.rayo.js")
-},{"jitsi-meet-logger":46}],39:[function(require,module,exports){
+},{"jitsi-meet-logger":47}],40:[function(require,module,exports){
 (function (__filename){
 /* global Strophe */
 /**
@@ -10872,14 +11145,13 @@ module.exports = function () {
 };
 
 }).call(this,"/modules/xmpp/strophe.util.js")
-},{"jitsi-meet-logger":46}],40:[function(require,module,exports){
+},{"jitsi-meet-logger":47}],41:[function(require,module,exports){
 (function (__filename){
 /* global $, APP, config, Strophe*/
 
 var logger = require("jitsi-meet-logger").getLogger(__filename);
 var EventEmitter = require("events");
 var Pako = require("pako");
-var StreamEventTypes = require("../../service/RTC/StreamEventTypes");
 var RTCEvents = require("../../service/RTC/RTCEvents");
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 var JitsiConnectionErrors = require("../../JitsiConnectionErrors");
@@ -11000,7 +11272,7 @@ XMPP.prototype._connect = function (jid, password) {
                         logger.warn("Ping NOT supported by " + pingJid);
                 }
             );
-            
+
             if (password)
                 authenticatedUser = true;
             if (self.connection && self.connection.connected &&
@@ -11180,7 +11452,7 @@ XMPP.prototype.disconnect = function () {
 module.exports = XMPP;
 
 }).call(this,"/modules/xmpp/xmpp.js")
-},{"../../JitsiConnectionErrors":5,"../../JitsiConnectionEvents":6,"../../service/RTC/RTCEvents":82,"../../service/RTC/StreamEventTypes":84,"../../service/xmpp/XMPPEvents":89,"../RTC/RTC":15,"./strophe.emuc":34,"./strophe.jingle":35,"./strophe.logger":36,"./strophe.ping":37,"./strophe.rayo":38,"./strophe.util":39,"events":42,"jitsi-meet-logger":46,"pako":47}],41:[function(require,module,exports){
+},{"../../JitsiConnectionErrors":5,"../../JitsiConnectionEvents":6,"../../service/RTC/RTCEvents":79,"../../service/xmpp/XMPPEvents":85,"../RTC/RTC":16,"./strophe.emuc":35,"./strophe.jingle":36,"./strophe.logger":37,"./strophe.ping":38,"./strophe.rayo":39,"./strophe.util":40,"events":43,"jitsi-meet-logger":47,"pako":48}],42:[function(require,module,exports){
 (function (process){
 /*!
  * async
@@ -12307,7 +12579,7 @@ module.exports = XMPP;
 }());
 
 }).call(this,require('_process'))
-},{"_process":43}],42:[function(require,module,exports){
+},{"_process":44}],43:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -12610,7 +12882,7 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],43:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -12703,7 +12975,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],44:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 (function (process,global){
 /*!
  * @overview es6-promise - a tiny implementation of Promises/A+.
@@ -13674,7 +13946,7 @@ process.umask = function() { return 0; };
 
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":43}],45:[function(require,module,exports){
+},{"_process":44}],46:[function(require,module,exports){
 /* Copyright @ 2015 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13818,7 +14090,7 @@ Logger.levels = {
     ERROR: "error"
 };
 
-},{}],46:[function(require,module,exports){
+},{}],47:[function(require,module,exports){
 /* Copyright @ 2015 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13903,7 +14175,7 @@ module.exports = {
     levels: Logger.levels
 };
 
-},{"./Logger":45}],47:[function(require,module,exports){
+},{"./Logger":46}],48:[function(require,module,exports){
 // Top level file is just a mixin of submodules & constants
 'use strict';
 
@@ -13919,7 +14191,7 @@ assign(pako, deflate, inflate, constants);
 
 module.exports = pako;
 
-},{"./lib/deflate":48,"./lib/inflate":49,"./lib/utils/common":50,"./lib/zlib/constants":53}],48:[function(require,module,exports){
+},{"./lib/deflate":49,"./lib/inflate":50,"./lib/utils/common":51,"./lib/zlib/constants":54}],49:[function(require,module,exports){
 'use strict';
 
 
@@ -14297,7 +14569,7 @@ exports.deflate = deflate;
 exports.deflateRaw = deflateRaw;
 exports.gzip = gzip;
 
-},{"./utils/common":50,"./utils/strings":51,"./zlib/deflate.js":55,"./zlib/messages":60,"./zlib/zstream":62}],49:[function(require,module,exports){
+},{"./utils/common":51,"./utils/strings":52,"./zlib/deflate.js":56,"./zlib/messages":61,"./zlib/zstream":63}],50:[function(require,module,exports){
 'use strict';
 
 
@@ -14699,7 +14971,7 @@ exports.inflate = inflate;
 exports.inflateRaw = inflateRaw;
 exports.ungzip  = inflate;
 
-},{"./utils/common":50,"./utils/strings":51,"./zlib/constants":53,"./zlib/gzheader":56,"./zlib/inflate.js":58,"./zlib/messages":60,"./zlib/zstream":62}],50:[function(require,module,exports){
+},{"./utils/common":51,"./utils/strings":52,"./zlib/constants":54,"./zlib/gzheader":57,"./zlib/inflate.js":59,"./zlib/messages":61,"./zlib/zstream":63}],51:[function(require,module,exports){
 'use strict';
 
 
@@ -14803,7 +15075,7 @@ exports.setTyped = function (on) {
 
 exports.setTyped(TYPED_OK);
 
-},{}],51:[function(require,module,exports){
+},{}],52:[function(require,module,exports){
 // String encode/decode helpers
 'use strict';
 
@@ -14990,7 +15262,7 @@ exports.utf8border = function(buf, max) {
   return (pos + _utf8len[buf[pos]] > max) ? pos : max;
 };
 
-},{"./common":50}],52:[function(require,module,exports){
+},{"./common":51}],53:[function(require,module,exports){
 'use strict';
 
 // Note: adler32 takes 12% for level 0 and 2% for level 6.
@@ -15024,7 +15296,7 @@ function adler32(adler, buf, len, pos) {
 
 module.exports = adler32;
 
-},{}],53:[function(require,module,exports){
+},{}],54:[function(require,module,exports){
 module.exports = {
 
   /* Allowed flush values; see deflate() and inflate() below for details */
@@ -15073,7 +15345,7 @@ module.exports = {
   //Z_NULL:                 null // Use -1 or null inline, depending on var type
 };
 
-},{}],54:[function(require,module,exports){
+},{}],55:[function(require,module,exports){
 'use strict';
 
 // Note: we can't get significant speed boost here.
@@ -15116,7 +15388,7 @@ function crc32(crc, buf, len, pos) {
 
 module.exports = crc32;
 
-},{}],55:[function(require,module,exports){
+},{}],56:[function(require,module,exports){
 'use strict';
 
 var utils   = require('../utils/common');
@@ -16883,7 +17155,7 @@ exports.deflatePrime = deflatePrime;
 exports.deflateTune = deflateTune;
 */
 
-},{"../utils/common":50,"./adler32":52,"./crc32":54,"./messages":60,"./trees":61}],56:[function(require,module,exports){
+},{"../utils/common":51,"./adler32":53,"./crc32":55,"./messages":61,"./trees":62}],57:[function(require,module,exports){
 'use strict';
 
 
@@ -16925,7 +17197,7 @@ function GZheader() {
 
 module.exports = GZheader;
 
-},{}],57:[function(require,module,exports){
+},{}],58:[function(require,module,exports){
 'use strict';
 
 // See state defs from inflate.js
@@ -17253,7 +17525,7 @@ module.exports = function inflate_fast(strm, start) {
   return;
 };
 
-},{}],58:[function(require,module,exports){
+},{}],59:[function(require,module,exports){
 'use strict';
 
 
@@ -18758,7 +19030,7 @@ exports.inflateSyncPoint = inflateSyncPoint;
 exports.inflateUndermine = inflateUndermine;
 */
 
-},{"../utils/common":50,"./adler32":52,"./crc32":54,"./inffast":57,"./inftrees":59}],59:[function(require,module,exports){
+},{"../utils/common":51,"./adler32":53,"./crc32":55,"./inffast":58,"./inftrees":60}],60:[function(require,module,exports){
 'use strict';
 
 
@@ -19087,7 +19359,7 @@ module.exports = function inflate_table(type, lens, lens_index, codes, table, ta
   return 0;
 };
 
-},{"../utils/common":50}],60:[function(require,module,exports){
+},{"../utils/common":51}],61:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -19102,7 +19374,7 @@ module.exports = {
   '-6':   'incompatible version' /* Z_VERSION_ERROR (-6) */
 };
 
-},{}],61:[function(require,module,exports){
+},{}],62:[function(require,module,exports){
 'use strict';
 
 
@@ -20303,7 +20575,7 @@ exports._tr_flush_block  = _tr_flush_block;
 exports._tr_tally = _tr_tally;
 exports._tr_align = _tr_align;
 
-},{"../utils/common":50}],62:[function(require,module,exports){
+},{"../utils/common":51}],63:[function(require,module,exports){
 'use strict';
 
 
@@ -20334,7 +20606,7 @@ function ZStream() {
 
 module.exports = ZStream;
 
-},{}],63:[function(require,module,exports){
+},{}],64:[function(require,module,exports){
 /* Copyright @ 2015 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20375,7 +20647,7 @@ module.exports = function arrayEquals(array) {
 };
 
 
-},{}],64:[function(require,module,exports){
+},{}],65:[function(require,module,exports){
 /* Copyright @ 2015 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20393,7 +20665,7 @@ module.exports = function arrayEquals(array) {
 
 exports.Interop = require('./interop');
 
-},{"./interop":65}],65:[function(require,module,exports){
+},{"./interop":66}],66:[function(require,module,exports){
 /* Copyright @ 2015 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21116,7 +21388,7 @@ Interop.prototype.toUnifiedPlan = function(desc) {
     //#endregion
 };
 
-},{"./array-equals":63,"./transform":66}],66:[function(require,module,exports){
+},{"./array-equals":64,"./transform":67}],67:[function(require,module,exports){
 /* Copyright @ 2015 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21230,487 +21502,7 @@ exports.parse = function(sdp) {
 };
 
 
-},{"sdp-transform":68}],67:[function(require,module,exports){
-var grammar = module.exports = {
-  v: [{
-      name: 'version',
-      reg: /^(\d*)$/
-  }],
-  o: [{ //o=- 20518 0 IN IP4 203.0.113.1
-    // NB: sessionId will be a String in most cases because it is huge
-    name: 'origin',
-    reg: /^(\S*) (\d*) (\d*) (\S*) IP(\d) (\S*)/,
-    names: ['username', 'sessionId', 'sessionVersion', 'netType', 'ipVer', 'address'],
-    format: "%s %s %d %s IP%d %s"
-  }],
-  // default parsing of these only (though some of these feel outdated)
-  s: [{ name: 'name' }],
-  i: [{ name: 'description' }],
-  u: [{ name: 'uri' }],
-  e: [{ name: 'email' }],
-  p: [{ name: 'phone' }],
-  z: [{ name: 'timezones' }], // TODO: this one can actually be parsed properly..
-  r: [{ name: 'repeats' }],   // TODO: this one can also be parsed properly
-  //k: [{}], // outdated thing ignored
-  t: [{ //t=0 0
-    name: 'timing',
-    reg: /^(\d*) (\d*)/,
-    names: ['start', 'stop'],
-    format: "%d %d"
-  }],
-  c: [{ //c=IN IP4 10.47.197.26
-      name: 'connection',
-      reg: /^IN IP(\d) (\S*)/,
-      names: ['version', 'ip'],
-      format: "IN IP%d %s"
-  }],
-  b: [{ //b=AS:4000
-      push: 'bandwidth',
-      reg: /^(TIAS|AS|CT|RR|RS):(\d*)/,
-      names: ['type', 'limit'],
-      format: "%s:%s"
-  }],
-  m: [{ //m=video 51744 RTP/AVP 126 97 98 34 31
-      // NB: special - pushes to session
-      // TODO: rtp/fmtp should be filtered by the payloads found here?
-      reg: /^(\w*) (\d*) ([\w\/]*)(?: (.*))?/,
-      names: ['type', 'port', 'protocol', 'payloads'],
-      format: "%s %d %s %s"
-  }],
-  a: [
-    { //a=rtpmap:110 opus/48000/2
-      push: 'rtp',
-      reg: /^rtpmap:(\d*) ([\w\-]*)(?:\s*\/(\d*)(?:\s*\/(\S*))?)?/,
-      names: ['payload', 'codec', 'rate', 'encoding'],
-      format: function (o) {
-        return (o.encoding) ?
-          "rtpmap:%d %s/%s/%s":
-          o.rate ?
-          "rtpmap:%d %s/%s":
-          "rtpmap:%d %s";
-      }
-    },
-    {
-      //a=fmtp:108 profile-level-id=24;object=23;bitrate=64000
-      //a=fmtp:111 minptime=10; useinbandfec=1
-      push: 'fmtp',
-      reg: /^fmtp:(\d*) ([\S| ]*)/,
-      names: ['payload', 'config'],
-      format: "fmtp:%d %s"
-    },
-    { //a=control:streamid=0
-        name: 'control',
-        reg: /^control:(.*)/,
-        format: "control:%s"
-    },
-    { //a=rtcp:65179 IN IP4 193.84.77.194
-      name: 'rtcp',
-      reg: /^rtcp:(\d*)(?: (\S*) IP(\d) (\S*))?/,
-      names: ['port', 'netType', 'ipVer', 'address'],
-      format: function (o) {
-        return (o.address != null) ?
-          "rtcp:%d %s IP%d %s":
-          "rtcp:%d";
-      }
-    },
-    { //a=rtcp-fb:98 trr-int 100
-      push: 'rtcpFbTrrInt',
-      reg: /^rtcp-fb:(\*|\d*) trr-int (\d*)/,
-      names: ['payload', 'value'],
-      format: "rtcp-fb:%d trr-int %d"
-    },
-    { //a=rtcp-fb:98 nack rpsi
-      push: 'rtcpFb',
-      reg: /^rtcp-fb:(\*|\d*) ([\w-_]*)(?: ([\w-_]*))?/,
-      names: ['payload', 'type', 'subtype'],
-      format: function (o) {
-        return (o.subtype != null) ?
-          "rtcp-fb:%s %s %s":
-          "rtcp-fb:%s %s";
-      }
-    },
-    { //a=extmap:2 urn:ietf:params:rtp-hdrext:toffset
-      //a=extmap:1/recvonly URI-gps-string
-      push: 'ext',
-      reg: /^extmap:([\w_\/]*) (\S*)(?: (\S*))?/,
-      names: ['value', 'uri', 'config'], // value may include "/direction" suffix
-      format: function (o) {
-        return (o.config != null) ?
-          "extmap:%s %s %s":
-          "extmap:%s %s";
-      }
-    },
-    {
-      //a=crypto:1 AES_CM_128_HMAC_SHA1_80 inline:PS1uQCVeeCFCanVmcjkpPywjNWhcYD0mXXtxaVBR|2^20|1:32
-      push: 'crypto',
-      reg: /^crypto:(\d*) ([\w_]*) (\S*)(?: (\S*))?/,
-      names: ['id', 'suite', 'config', 'sessionConfig'],
-      format: function (o) {
-        return (o.sessionConfig != null) ?
-          "crypto:%d %s %s %s":
-          "crypto:%d %s %s";
-      }
-    },
-    { //a=setup:actpass
-      name: 'setup',
-      reg: /^setup:(\w*)/,
-      format: "setup:%s"
-    },
-    { //a=mid:1
-      name: 'mid',
-      reg: /^mid:([^\s]*)/,
-      format: "mid:%s"
-    },
-    { //a=msid:0c8b064d-d807-43b4-b434-f92a889d8587 98178685-d409-46e0-8e16-7ef0db0db64a
-      name: 'msid',
-      reg: /^msid:(.*)/,
-      format: "msid:%s"
-    },
-    { //a=ptime:20
-      name: 'ptime',
-      reg: /^ptime:(\d*)/,
-      format: "ptime:%d"
-    },
-    { //a=maxptime:60
-      name: 'maxptime',
-      reg: /^maxptime:(\d*)/,
-      format: "maxptime:%d"
-    },
-    { //a=sendrecv
-      name: 'direction',
-      reg: /^(sendrecv|recvonly|sendonly|inactive)/
-    },
-    { //a=ice-lite
-      name: 'icelite',
-      reg: /^(ice-lite)/
-    },
-    { //a=ice-ufrag:F7gI
-      name: 'iceUfrag',
-      reg: /^ice-ufrag:(\S*)/,
-      format: "ice-ufrag:%s"
-    },
-    { //a=ice-pwd:x9cml/YzichV2+XlhiMu8g
-      name: 'icePwd',
-      reg: /^ice-pwd:(\S*)/,
-      format: "ice-pwd:%s"
-    },
-    { //a=fingerprint:SHA-1 00:11:22:33:44:55:66:77:88:99:AA:BB:CC:DD:EE:FF:00:11:22:33
-      name: 'fingerprint',
-      reg: /^fingerprint:(\S*) (\S*)/,
-      names: ['type', 'hash'],
-      format: "fingerprint:%s %s"
-    },
-    {
-      //a=candidate:0 1 UDP 2113667327 203.0.113.1 54400 typ host
-      //a=candidate:1162875081 1 udp 2113937151 192.168.34.75 60017 typ host generation 0
-      //a=candidate:3289912957 2 udp 1845501695 193.84.77.194 60017 typ srflx raddr 192.168.34.75 rport 60017 generation 0
-      //a=candidate:229815620 1 tcp 1518280447 192.168.150.19 60017 typ host tcptype active generation 0
-      //a=candidate:3289912957 2 tcp 1845501695 193.84.77.194 60017 typ srflx raddr 192.168.34.75 rport 60017 tcptype passive generation 0
-      push:'candidates',
-      reg: /^candidate:(\S*) (\d*) (\S*) (\d*) (\S*) (\d*) typ (\S*)(?: raddr (\S*) rport (\d*))?(?: tcptype (\S*))?(?: generation (\d*))?/,
-      names: ['foundation', 'component', 'transport', 'priority', 'ip', 'port', 'type', 'raddr', 'rport', 'tcptype', 'generation'],
-      format: function (o) {
-        var str = "candidate:%s %d %s %d %s %d typ %s";
-
-        str += (o.raddr != null) ? " raddr %s rport %d" : "%v%v";
-
-        // NB: candidate has three optional chunks, so %void middles one if it's missing
-        str += (o.tcptype != null) ? " tcptype %s" : "%v";
-
-        if (o.generation != null) {
-          str += " generation %d";
-        }
-        return str;
-      }
-    },
-    { //a=end-of-candidates (keep after the candidates line for readability)
-      name: 'endOfCandidates',
-      reg: /^(end-of-candidates)/
-    },
-    { //a=remote-candidates:1 203.0.113.1 54400 2 203.0.113.1 54401 ...
-      name: 'remoteCandidates',
-      reg: /^remote-candidates:(.*)/,
-      format: "remote-candidates:%s"
-    },
-    { //a=ice-options:google-ice
-      name: 'iceOptions',
-      reg: /^ice-options:(\S*)/,
-      format: "ice-options:%s"
-    },
-    { //a=ssrc:2566107569 cname:t9YU8M1UxTF8Y1A1
-      push: "ssrcs",
-      reg: /^ssrc:(\d*) ([\w_]*):(.*)/,
-      names: ['id', 'attribute', 'value'],
-      format: "ssrc:%d %s:%s"
-    },
-    { //a=ssrc-group:FEC 1 2
-      push: "ssrcGroups",
-      reg: /^ssrc-group:(\w*) (.*)/,
-      names: ['semantics', 'ssrcs'],
-      format: "ssrc-group:%s %s"
-    },
-    { //a=msid-semantic: WMS Jvlam5X3SX1OP6pn20zWogvaKJz5Hjf9OnlV
-      name: "msidSemantic",
-      reg: /^msid-semantic:\s?(\w*) (\S*)/,
-      names: ['semantic', 'token'],
-      format: "msid-semantic: %s %s" // space after ":" is not accidental
-    },
-    { //a=group:BUNDLE audio video
-      push: 'groups',
-      reg: /^group:(\w*) (.*)/,
-      names: ['type', 'mids'],
-      format: "group:%s %s"
-    },
-    { //a=rtcp-mux
-      name: 'rtcpMux',
-      reg: /^(rtcp-mux)/
-    },
-    { //a=rtcp-rsize
-      name: 'rtcpRsize',
-      reg: /^(rtcp-rsize)/
-    },
-    { // any a= that we don't understand is kepts verbatim on media.invalid
-      push: 'invalid',
-      names: ["value"]
-    }
-  ]
-};
-
-// set sensible defaults to avoid polluting the grammar with boring details
-Object.keys(grammar).forEach(function (key) {
-  var objs = grammar[key];
-  objs.forEach(function (obj) {
-    if (!obj.reg) {
-      obj.reg = /(.*)/;
-    }
-    if (!obj.format) {
-      obj.format = "%s";
-    }
-  });
-});
-
-},{}],68:[function(require,module,exports){
-var parser = require('./parser');
-var writer = require('./writer');
-
-exports.write = writer;
-exports.parse = parser.parse;
-exports.parseFmtpConfig = parser.parseFmtpConfig;
-exports.parsePayloads = parser.parsePayloads;
-exports.parseRemoteCandidates = parser.parseRemoteCandidates;
-
-},{"./parser":69,"./writer":70}],69:[function(require,module,exports){
-var toIntIfInt = function (v) {
-  return String(Number(v)) === v ? Number(v) : v;
-};
-
-var attachProperties = function (match, location, names, rawName) {
-  if (rawName && !names) {
-    location[rawName] = toIntIfInt(match[1]);
-  }
-  else {
-    for (var i = 0; i < names.length; i += 1) {
-      if (match[i+1] != null) {
-        location[names[i]] = toIntIfInt(match[i+1]);
-      }
-    }
-  }
-};
-
-var parseReg = function (obj, location, content) {
-  var needsBlank = obj.name && obj.names;
-  if (obj.push && !location[obj.push]) {
-    location[obj.push] = [];
-  }
-  else if (needsBlank && !location[obj.name]) {
-    location[obj.name] = {};
-  }
-  var keyLocation = obj.push ?
-    {} :  // blank object that will be pushed
-    needsBlank ? location[obj.name] : location; // otherwise, named location or root
-
-  attachProperties(content.match(obj.reg), keyLocation, obj.names, obj.name);
-
-  if (obj.push) {
-    location[obj.push].push(keyLocation);
-  }
-};
-
-var grammar = require('./grammar');
-var validLine = RegExp.prototype.test.bind(/^([a-z])=(.*)/);
-
-exports.parse = function (sdp) {
-  var session = {}
-    , media = []
-    , location = session; // points at where properties go under (one of the above)
-
-  // parse lines we understand
-  sdp.split(/(\r\n|\r|\n)/).filter(validLine).forEach(function (l) {
-    var type = l[0];
-    var content = l.slice(2);
-    if (type === 'm') {
-      media.push({rtp: [], fmtp: []});
-      location = media[media.length-1]; // point at latest media line
-    }
-
-    for (var j = 0; j < (grammar[type] || []).length; j += 1) {
-      var obj = grammar[type][j];
-      if (obj.reg.test(content)) {
-        return parseReg(obj, location, content);
-      }
-    }
-  });
-
-  session.media = media; // link it up
-  return session;
-};
-
-var fmtpReducer = function (acc, expr) {
-  var s = expr.split('=');
-  if (s.length === 2) {
-    acc[s[0]] = toIntIfInt(s[1]);
-  }
-  return acc;
-};
-
-exports.parseFmtpConfig = function (str) {
-  return str.split(/\;\s?/).reduce(fmtpReducer, {});
-};
-
-exports.parsePayloads = function (str) {
-  return str.split(' ').map(Number);
-};
-
-exports.parseRemoteCandidates = function (str) {
-  var candidates = [];
-  var parts = str.split(' ').map(toIntIfInt);
-  for (var i = 0; i < parts.length; i += 3) {
-    candidates.push({
-      component: parts[i],
-      ip: parts[i + 1],
-      port: parts[i + 2]
-    });
-  }
-  return candidates;
-};
-
-},{"./grammar":67}],70:[function(require,module,exports){
-var grammar = require('./grammar');
-
-// customized util.format - discards excess arguments and can void middle ones
-var formatRegExp = /%[sdv%]/g;
-var format = function (formatStr) {
-  var i = 1;
-  var args = arguments;
-  var len = args.length;
-  return formatStr.replace(formatRegExp, function (x) {
-    if (i >= len) {
-      return x; // missing argument
-    }
-    var arg = args[i];
-    i += 1;
-    switch (x) {
-      case '%%':
-        return '%';
-      case '%s':
-        return String(arg);
-      case '%d':
-        return Number(arg);
-      case '%v':
-        return '';
-    }
-  });
-  // NB: we discard excess arguments - they are typically undefined from makeLine
-};
-
-var makeLine = function (type, obj, location) {
-  var str = obj.format instanceof Function ?
-    (obj.format(obj.push ? location : location[obj.name])) :
-    obj.format;
-
-  var args = [type + '=' + str];
-  if (obj.names) {
-    for (var i = 0; i < obj.names.length; i += 1) {
-      var n = obj.names[i];
-      if (obj.name) {
-        args.push(location[obj.name][n]);
-      }
-      else { // for mLine and push attributes
-        args.push(location[obj.names[i]]);
-      }
-    }
-  }
-  else {
-    args.push(location[obj.name]);
-  }
-  return format.apply(null, args);
-};
-
-// RFC specified order
-// TODO: extend this with all the rest
-var defaultOuterOrder = [
-  'v', 'o', 's', 'i',
-  'u', 'e', 'p', 'c',
-  'b', 't', 'r', 'z', 'a'
-];
-var defaultInnerOrder = ['i', 'c', 'b', 'a'];
-
-
-module.exports = function (session, opts) {
-  opts = opts || {};
-  // ensure certain properties exist
-  if (session.version == null) {
-    session.version = 0; // "v=0" must be there (only defined version atm)
-  }
-  if (session.name == null) {
-    session.name = " "; // "s= " must be there if no meaningful name set
-  }
-  session.media.forEach(function (mLine) {
-    if (mLine.payloads == null) {
-      mLine.payloads = "";
-    }
-  });
-
-  var outerOrder = opts.outerOrder || defaultOuterOrder;
-  var innerOrder = opts.innerOrder || defaultInnerOrder;
-  var sdp = [];
-
-  // loop through outerOrder for matching properties on session
-  outerOrder.forEach(function (type) {
-    grammar[type].forEach(function (obj) {
-      if (obj.name in session && session[obj.name] != null) {
-        sdp.push(makeLine(type, obj, session));
-      }
-      else if (obj.push in session && session[obj.push] != null) {
-        session[obj.push].forEach(function (el) {
-          sdp.push(makeLine(type, obj, el));
-        });
-      }
-    });
-  });
-
-  // then for each media line, follow the innerOrder
-  session.media.forEach(function (mLine) {
-    sdp.push(makeLine('m', grammar.m[0], mLine));
-
-    innerOrder.forEach(function (type) {
-      grammar[type].forEach(function (obj) {
-        if (obj.name in mLine && mLine[obj.name] != null) {
-          sdp.push(makeLine(type, obj, mLine));
-        }
-        else if (obj.push in mLine && mLine[obj.push] != null) {
-          mLine[obj.push].forEach(function (el) {
-            sdp.push(makeLine(type, obj, el));
-          });
-        }
-      });
-    });
-  });
-
-  return sdp.join('\r\n') + '\r\n';
-};
-
-},{"./grammar":67}],71:[function(require,module,exports){
+},{"sdp-transform":75}],68:[function(require,module,exports){
 /* Copyright @ 2015 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -22130,7 +21922,7 @@ Simulcast.prototype.mungeLocalDescription = function (desc) {
 
 module.exports = Simulcast;
 
-},{"./transform-utils":72,"sdp-transform":74}],72:[function(require,module,exports){
+},{"./transform-utils":69,"sdp-transform":71}],69:[function(require,module,exports){
 /* Copyright @ 2015 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -22196,30 +21988,834 @@ exports.parseSsrcs = function (mLine) {
 };
 
 
-},{}],73:[function(require,module,exports){
-arguments[4][67][0].apply(exports,arguments)
-},{"dup":67}],74:[function(require,module,exports){
-arguments[4][68][0].apply(exports,arguments)
-},{"./parser":75,"./writer":76,"dup":68}],75:[function(require,module,exports){
-arguments[4][69][0].apply(exports,arguments)
-},{"./grammar":73,"dup":69}],76:[function(require,module,exports){
-arguments[4][70][0].apply(exports,arguments)
-},{"./grammar":73,"dup":70}],77:[function(require,module,exports){
-arguments[4][67][0].apply(exports,arguments)
-},{"dup":67}],78:[function(require,module,exports){
-arguments[4][68][0].apply(exports,arguments)
-},{"./parser":79,"./writer":80,"dup":68}],79:[function(require,module,exports){
-arguments[4][69][0].apply(exports,arguments)
-},{"./grammar":77,"dup":69}],80:[function(require,module,exports){
-arguments[4][70][0].apply(exports,arguments)
-},{"./grammar":77,"dup":70}],81:[function(require,module,exports){
+},{}],70:[function(require,module,exports){
+var grammar = module.exports = {
+  v: [{
+      name: 'version',
+      reg: /^(\d*)$/
+  }],
+  o: [{ //o=- 20518 0 IN IP4 203.0.113.1
+    // NB: sessionId will be a String in most cases because it is huge
+    name: 'origin',
+    reg: /^(\S*) (\d*) (\d*) (\S*) IP(\d) (\S*)/,
+    names: ['username', 'sessionId', 'sessionVersion', 'netType', 'ipVer', 'address'],
+    format: "%s %s %d %s IP%d %s"
+  }],
+  // default parsing of these only (though some of these feel outdated)
+  s: [{ name: 'name' }],
+  i: [{ name: 'description' }],
+  u: [{ name: 'uri' }],
+  e: [{ name: 'email' }],
+  p: [{ name: 'phone' }],
+  z: [{ name: 'timezones' }], // TODO: this one can actually be parsed properly..
+  r: [{ name: 'repeats' }],   // TODO: this one can also be parsed properly
+  //k: [{}], // outdated thing ignored
+  t: [{ //t=0 0
+    name: 'timing',
+    reg: /^(\d*) (\d*)/,
+    names: ['start', 'stop'],
+    format: "%d %d"
+  }],
+  c: [{ //c=IN IP4 10.47.197.26
+      name: 'connection',
+      reg: /^IN IP(\d) (\S*)/,
+      names: ['version', 'ip'],
+      format: "IN IP%d %s"
+  }],
+  b: [{ //b=AS:4000
+      push: 'bandwidth',
+      reg: /^(TIAS|AS|CT|RR|RS):(\d*)/,
+      names: ['type', 'limit'],
+      format: "%s:%s"
+  }],
+  m: [{ //m=video 51744 RTP/AVP 126 97 98 34 31
+      // NB: special - pushes to session
+      // TODO: rtp/fmtp should be filtered by the payloads found here?
+      reg: /^(\w*) (\d*) ([\w\/]*)(?: (.*))?/,
+      names: ['type', 'port', 'protocol', 'payloads'],
+      format: "%s %d %s %s"
+  }],
+  a: [
+    { //a=rtpmap:110 opus/48000/2
+      push: 'rtp',
+      reg: /^rtpmap:(\d*) ([\w\-]*)\/(\d*)(?:\s*\/(\S*))?/,
+      names: ['payload', 'codec', 'rate', 'encoding'],
+      format: function (o) {
+        return (o.encoding) ?
+          "rtpmap:%d %s/%s/%s":
+          "rtpmap:%d %s/%s";
+      }
+    },
+    { //a=fmtp:108 profile-level-id=24;object=23;bitrate=64000
+      push: 'fmtp',
+      reg: /^fmtp:(\d*) (\S*)/,
+      names: ['payload', 'config'],
+      format: "fmtp:%d %s"
+    },
+    { //a=control:streamid=0
+        name: 'control',
+        reg: /^control:(.*)/,
+        format: "control:%s"
+    },
+    { //a=rtcp:65179 IN IP4 193.84.77.194
+      name: 'rtcp',
+      reg: /^rtcp:(\d*)(?: (\S*) IP(\d) (\S*))?/,
+      names: ['port', 'netType', 'ipVer', 'address'],
+      format: function (o) {
+        return (o.address != null) ?
+          "rtcp:%d %s IP%d %s":
+          "rtcp:%d";
+      }
+    },
+    { //a=rtcp-fb:98 trr-int 100
+      push: 'rtcpFbTrrInt',
+      reg: /^rtcp-fb:(\*|\d*) trr-int (\d*)/,
+      names: ['payload', 'value'],
+      format: "rtcp-fb:%d trr-int %d"
+    },
+    { //a=rtcp-fb:98 nack rpsi
+      push: 'rtcpFb',
+      reg: /^rtcp-fb:(\*|\d*) ([\w-_]*)(?: ([\w-_]*))?/,
+      names: ['payload', 'type', 'subtype'],
+      format: function (o) {
+        return (o.subtype != null) ?
+          "rtcp-fb:%s %s %s":
+          "rtcp-fb:%s %s";
+      }
+    },
+    { //a=extmap:2 urn:ietf:params:rtp-hdrext:toffset
+      //a=extmap:1/recvonly URI-gps-string
+      push: 'ext',
+      reg: /^extmap:([\w_\/]*) (\S*)(?: (\S*))?/,
+      names: ['value', 'uri', 'config'], // value may include "/direction" suffix
+      format: function (o) {
+        return (o.config != null) ?
+          "extmap:%s %s %s":
+          "extmap:%s %s";
+      }
+    },
+    {
+      //a=crypto:1 AES_CM_128_HMAC_SHA1_80 inline:PS1uQCVeeCFCanVmcjkpPywjNWhcYD0mXXtxaVBR|2^20|1:32
+      push: 'crypto',
+      reg: /^crypto:(\d*) ([\w_]*) (\S*)(?: (\S*))?/,
+      names: ['id', 'suite', 'config', 'sessionConfig'],
+      format: function (o) {
+        return (o.sessionConfig != null) ?
+          "crypto:%d %s %s %s":
+          "crypto:%d %s %s";
+      }
+    },
+    { //a=setup:actpass
+      name: 'setup',
+      reg: /^setup:(\w*)/,
+      format: "setup:%s"
+    },
+    { //a=mid:1
+      name: 'mid',
+      reg: /^mid:([^\s]*)/,
+      format: "mid:%s"
+    },
+    { //a=msid:0c8b064d-d807-43b4-b434-f92a889d8587 98178685-d409-46e0-8e16-7ef0db0db64a
+      name: 'msid',
+      reg: /^msid:(.*)/,
+      format: "msid:%s"
+    },
+    { //a=ptime:20
+      name: 'ptime',
+      reg: /^ptime:(\d*)/,
+      format: "ptime:%d"
+    },
+    { //a=maxptime:60
+      name: 'maxptime',
+      reg: /^maxptime:(\d*)/,
+      format: "maxptime:%d"
+    },
+    { //a=sendrecv
+      name: 'direction',
+      reg: /^(sendrecv|recvonly|sendonly|inactive)/
+    },
+    { //a=ice-lite
+      name: 'icelite',
+      reg: /^(ice-lite)/
+    },
+    { //a=ice-ufrag:F7gI
+      name: 'iceUfrag',
+      reg: /^ice-ufrag:(\S*)/,
+      format: "ice-ufrag:%s"
+    },
+    { //a=ice-pwd:x9cml/YzichV2+XlhiMu8g
+      name: 'icePwd',
+      reg: /^ice-pwd:(\S*)/,
+      format: "ice-pwd:%s"
+    },
+    { //a=fingerprint:SHA-1 00:11:22:33:44:55:66:77:88:99:AA:BB:CC:DD:EE:FF:00:11:22:33
+      name: 'fingerprint',
+      reg: /^fingerprint:(\S*) (\S*)/,
+      names: ['type', 'hash'],
+      format: "fingerprint:%s %s"
+    },
+    {
+      //a=candidate:0 1 UDP 2113667327 203.0.113.1 54400 typ host
+      //a=candidate:1162875081 1 udp 2113937151 192.168.34.75 60017 typ host generation 0
+      //a=candidate:3289912957 2 udp 1845501695 193.84.77.194 60017 typ srflx raddr 192.168.34.75 rport 60017 generation 0
+      push:'candidates',
+      reg: /^candidate:(\S*) (\d*) (\S*) (\d*) (\S*) (\d*) typ (\S*)(?: raddr (\S*) rport (\d*))?(?: generation (\d*))?/,
+      names: ['foundation', 'component', 'transport', 'priority', 'ip', 'port', 'type', 'raddr', 'rport', 'generation'],
+      format: function (o) {
+        var str = "candidate:%s %d %s %d %s %d typ %s";
+        // NB: candidate has two optional chunks, so %void middle one if it's missing
+        str += (o.raddr != null) ? " raddr %s rport %d" : "%v%v";
+        if (o.generation != null) {
+          str += " generation %d";
+        }
+        return str;
+      }
+    },
+    { //a=end-of-candidates (keep after the candidates line for readability)
+      name: 'endOfCandidates',
+      reg: /^(end-of-candidates)/
+    },
+    { //a=remote-candidates:1 203.0.113.1 54400 2 203.0.113.1 54401 ...
+      name: 'remoteCandidates',
+      reg: /^remote-candidates:(.*)/,
+      format: "remote-candidates:%s"
+    },
+    { //a=ice-options:google-ice
+      name: 'iceOptions',
+      reg: /^ice-options:(\S*)/,
+      format: "ice-options:%s"
+    },
+    { //a=ssrc:2566107569 cname:t9YU8M1UxTF8Y1A1
+      push: "ssrcs",
+      reg: /^ssrc:(\d*) ([\w_]*):(.*)/,
+      names: ['id', 'attribute', 'value'],
+      format: "ssrc:%d %s:%s"
+    },
+    { //a=ssrc-group:FEC 1 2
+      push: "ssrcGroups",
+      reg: /^ssrc-group:(\w*) (.*)/,
+      names: ['semantics', 'ssrcs'],
+      format: "ssrc-group:%s %s"
+    },
+    { //a=msid-semantic: WMS Jvlam5X3SX1OP6pn20zWogvaKJz5Hjf9OnlV
+      name: "msidSemantic",
+      reg: /^msid-semantic:\s?(\w*) (\S*)/,
+      names: ['semantic', 'token'],
+      format: "msid-semantic: %s %s" // space after ":" is not accidental
+    },
+    { //a=group:BUNDLE audio video
+      push: 'groups',
+      reg: /^group:(\w*) (.*)/,
+      names: ['type', 'mids'],
+      format: "group:%s %s"
+    },
+    { //a=rtcp-mux
+      name: 'rtcpMux',
+      reg: /^(rtcp-mux)/
+    },
+    { //a=rtcp-rsize
+      name: 'rtcpRsize',
+      reg: /^(rtcp-rsize)/
+    },
+    { // any a= that we don't understand is kepts verbatim on media.invalid
+      push: 'invalid',
+      names: ["value"]
+    }
+  ]
+};
+
+// set sensible defaults to avoid polluting the grammar with boring details
+Object.keys(grammar).forEach(function (key) {
+  var objs = grammar[key];
+  objs.forEach(function (obj) {
+    if (!obj.reg) {
+      obj.reg = /(.*)/;
+    }
+    if (!obj.format) {
+      obj.format = "%s";
+    }
+  });
+});
+
+},{}],71:[function(require,module,exports){
+var parser = require('./parser');
+var writer = require('./writer');
+
+exports.write = writer;
+exports.parse = parser.parse;
+exports.parseFmtpConfig = parser.parseFmtpConfig;
+exports.parsePayloads = parser.parsePayloads;
+exports.parseRemoteCandidates = parser.parseRemoteCandidates;
+
+},{"./parser":72,"./writer":73}],72:[function(require,module,exports){
+var toIntIfInt = function (v) {
+  return String(Number(v)) === v ? Number(v) : v;
+};
+
+var attachProperties = function (match, location, names, rawName) {
+  if (rawName && !names) {
+    location[rawName] = toIntIfInt(match[1]);
+  }
+  else {
+    for (var i = 0; i < names.length; i += 1) {
+      if (match[i+1] != null) {
+        location[names[i]] = toIntIfInt(match[i+1]);
+      }
+    }
+  }
+};
+
+var parseReg = function (obj, location, content) {
+  var needsBlank = obj.name && obj.names;
+  if (obj.push && !location[obj.push]) {
+    location[obj.push] = [];
+  }
+  else if (needsBlank && !location[obj.name]) {
+    location[obj.name] = {};
+  }
+  var keyLocation = obj.push ?
+    {} :  // blank object that will be pushed
+    needsBlank ? location[obj.name] : location; // otherwise, named location or root
+
+  attachProperties(content.match(obj.reg), keyLocation, obj.names, obj.name);
+
+  if (obj.push) {
+    location[obj.push].push(keyLocation);
+  }
+};
+
+var grammar = require('./grammar');
+var validLine = RegExp.prototype.test.bind(/^([a-z])=(.*)/);
+
+exports.parse = function (sdp) {
+  var session = {}
+    , media = []
+    , location = session; // points at where properties go under (one of the above)
+
+  // parse lines we understand
+  sdp.split(/(\r\n|\r|\n)/).filter(validLine).forEach(function (l) {
+    var type = l[0];
+    var content = l.slice(2);
+    if (type === 'm') {
+      media.push({rtp: [], fmtp: []});
+      location = media[media.length-1]; // point at latest media line
+    }
+
+    for (var j = 0; j < (grammar[type] || []).length; j += 1) {
+      var obj = grammar[type][j];
+      if (obj.reg.test(content)) {
+        return parseReg(obj, location, content);
+      }
+    }
+  });
+
+  session.media = media; // link it up
+  return session;
+};
+
+var fmtpReducer = function (acc, expr) {
+  var s = expr.split('=');
+  if (s.length === 2) {
+    acc[s[0]] = toIntIfInt(s[1]);
+  }
+  return acc;
+};
+
+exports.parseFmtpConfig = function (str) {
+  return str.split(';').reduce(fmtpReducer, {});
+};
+
+exports.parsePayloads = function (str) {
+  return str.split(' ').map(Number);
+};
+
+exports.parseRemoteCandidates = function (str) {
+  var candidates = [];
+  var parts = str.split(' ').map(toIntIfInt);
+  for (var i = 0; i < parts.length; i += 3) {
+    candidates.push({
+      component: parts[i],
+      ip: parts[i + 1],
+      port: parts[i + 2]
+    });
+  }
+  return candidates;
+};
+
+},{"./grammar":70}],73:[function(require,module,exports){
+var grammar = require('./grammar');
+
+// customized util.format - discards excess arguments and can void middle ones
+var formatRegExp = /%[sdv%]/g;
+var format = function (formatStr) {
+  var i = 1;
+  var args = arguments;
+  var len = args.length;
+  return formatStr.replace(formatRegExp, function (x) {
+    if (i >= len) {
+      return x; // missing argument
+    }
+    var arg = args[i];
+    i += 1;
+    switch (x) {
+      case '%%':
+        return '%';
+      case '%s':
+        return String(arg);
+      case '%d':
+        return Number(arg);
+      case '%v':
+        return '';
+    }
+  });
+  // NB: we discard excess arguments - they are typically undefined from makeLine
+};
+
+var makeLine = function (type, obj, location) {
+  var str = obj.format instanceof Function ?
+    (obj.format(obj.push ? location : location[obj.name])) :
+    obj.format;
+
+  var args = [type + '=' + str];
+  if (obj.names) {
+    for (var i = 0; i < obj.names.length; i += 1) {
+      var n = obj.names[i];
+      if (obj.name) {
+        args.push(location[obj.name][n]);
+      }
+      else { // for mLine and push attributes
+        args.push(location[obj.names[i]]);
+      }
+    }
+  }
+  else {
+    args.push(location[obj.name]);
+  }
+  return format.apply(null, args);
+};
+
+// RFC specified order
+// TODO: extend this with all the rest
+var defaultOuterOrder = [
+  'v', 'o', 's', 'i',
+  'u', 'e', 'p', 'c',
+  'b', 't', 'r', 'z', 'a'
+];
+var defaultInnerOrder = ['i', 'c', 'b', 'a'];
+
+
+module.exports = function (session, opts) {
+  opts = opts || {};
+  // ensure certain properties exist
+  if (session.version == null) {
+    session.version = 0; // "v=0" must be there (only defined version atm)
+  }
+  if (session.name == null) {
+    session.name = " "; // "s= " must be there if no meaningful name set
+  }
+  session.media.forEach(function (mLine) {
+    if (mLine.payloads == null) {
+      mLine.payloads = "";
+    }
+  });
+
+  var outerOrder = opts.outerOrder || defaultOuterOrder;
+  var innerOrder = opts.innerOrder || defaultInnerOrder;
+  var sdp = [];
+
+  // loop through outerOrder for matching properties on session
+  outerOrder.forEach(function (type) {
+    grammar[type].forEach(function (obj) {
+      if (obj.name in session && session[obj.name] != null) {
+        sdp.push(makeLine(type, obj, session));
+      }
+      else if (obj.push in session && session[obj.push] != null) {
+        session[obj.push].forEach(function (el) {
+          sdp.push(makeLine(type, obj, el));
+        });
+      }
+    });
+  });
+
+  // then for each media line, follow the innerOrder
+  session.media.forEach(function (mLine) {
+    sdp.push(makeLine('m', grammar.m[0], mLine));
+
+    innerOrder.forEach(function (type) {
+      grammar[type].forEach(function (obj) {
+        if (obj.name in mLine && mLine[obj.name] != null) {
+          sdp.push(makeLine(type, obj, mLine));
+        }
+        else if (obj.push in mLine && mLine[obj.push] != null) {
+          mLine[obj.push].forEach(function (el) {
+            sdp.push(makeLine(type, obj, el));
+          });
+        }
+      });
+    });
+  });
+
+  return sdp.join('\r\n') + '\r\n';
+};
+
+},{"./grammar":70}],74:[function(require,module,exports){
+var grammar = module.exports = {
+  v: [{
+      name: 'version',
+      reg: /^(\d*)$/
+  }],
+  o: [{ //o=- 20518 0 IN IP4 203.0.113.1
+    // NB: sessionId will be a String in most cases because it is huge
+    name: 'origin',
+    reg: /^(\S*) (\d*) (\d*) (\S*) IP(\d) (\S*)/,
+    names: ['username', 'sessionId', 'sessionVersion', 'netType', 'ipVer', 'address'],
+    format: "%s %s %d %s IP%d %s"
+  }],
+  // default parsing of these only (though some of these feel outdated)
+  s: [{ name: 'name' }],
+  i: [{ name: 'description' }],
+  u: [{ name: 'uri' }],
+  e: [{ name: 'email' }],
+  p: [{ name: 'phone' }],
+  z: [{ name: 'timezones' }], // TODO: this one can actually be parsed properly..
+  r: [{ name: 'repeats' }],   // TODO: this one can also be parsed properly
+  //k: [{}], // outdated thing ignored
+  t: [{ //t=0 0
+    name: 'timing',
+    reg: /^(\d*) (\d*)/,
+    names: ['start', 'stop'],
+    format: "%d %d"
+  }],
+  c: [{ //c=IN IP4 10.47.197.26
+      name: 'connection',
+      reg: /^IN IP(\d) (\S*)/,
+      names: ['version', 'ip'],
+      format: "IN IP%d %s"
+  }],
+  b: [{ //b=AS:4000
+      push: 'bandwidth',
+      reg: /^(TIAS|AS|CT|RR|RS):(\d*)/,
+      names: ['type', 'limit'],
+      format: "%s:%s"
+  }],
+  m: [{ //m=video 51744 RTP/AVP 126 97 98 34 31
+      // NB: special - pushes to session
+      // TODO: rtp/fmtp should be filtered by the payloads found here?
+      reg: /^(\w*) (\d*) ([\w\/]*)(?: (.*))?/,
+      names: ['type', 'port', 'protocol', 'payloads'],
+      format: "%s %d %s %s"
+  }],
+  a: [
+    { //a=rtpmap:110 opus/48000/2
+      push: 'rtp',
+      reg: /^rtpmap:(\d*) ([\w\-]*)\/(\d*)(?:\s*\/(\S*))?/,
+      names: ['payload', 'codec', 'rate', 'encoding'],
+      format: function (o) {
+        return (o.encoding) ?
+          "rtpmap:%d %s/%s/%s":
+          "rtpmap:%d %s/%s";
+      }
+    },
+    {
+      //a=fmtp:108 profile-level-id=24;object=23;bitrate=64000
+      //a=fmtp:111 minptime=10; useinbandfec=1
+      push: 'fmtp',
+      reg: /^fmtp:(\d*) ([\S| ]*)/,
+      names: ['payload', 'config'],
+      format: "fmtp:%d %s"
+    },
+    { //a=control:streamid=0
+        name: 'control',
+        reg: /^control:(.*)/,
+        format: "control:%s"
+    },
+    { //a=rtcp:65179 IN IP4 193.84.77.194
+      name: 'rtcp',
+      reg: /^rtcp:(\d*)(?: (\S*) IP(\d) (\S*))?/,
+      names: ['port', 'netType', 'ipVer', 'address'],
+      format: function (o) {
+        return (o.address != null) ?
+          "rtcp:%d %s IP%d %s":
+          "rtcp:%d";
+      }
+    },
+    { //a=rtcp-fb:98 trr-int 100
+      push: 'rtcpFbTrrInt',
+      reg: /^rtcp-fb:(\*|\d*) trr-int (\d*)/,
+      names: ['payload', 'value'],
+      format: "rtcp-fb:%d trr-int %d"
+    },
+    { //a=rtcp-fb:98 nack rpsi
+      push: 'rtcpFb',
+      reg: /^rtcp-fb:(\*|\d*) ([\w-_]*)(?: ([\w-_]*))?/,
+      names: ['payload', 'type', 'subtype'],
+      format: function (o) {
+        return (o.subtype != null) ?
+          "rtcp-fb:%s %s %s":
+          "rtcp-fb:%s %s";
+      }
+    },
+    { //a=extmap:2 urn:ietf:params:rtp-hdrext:toffset
+      //a=extmap:1/recvonly URI-gps-string
+      push: 'ext',
+      reg: /^extmap:([\w_\/]*) (\S*)(?: (\S*))?/,
+      names: ['value', 'uri', 'config'], // value may include "/direction" suffix
+      format: function (o) {
+        return (o.config != null) ?
+          "extmap:%s %s %s":
+          "extmap:%s %s";
+      }
+    },
+    {
+      //a=crypto:1 AES_CM_128_HMAC_SHA1_80 inline:PS1uQCVeeCFCanVmcjkpPywjNWhcYD0mXXtxaVBR|2^20|1:32
+      push: 'crypto',
+      reg: /^crypto:(\d*) ([\w_]*) (\S*)(?: (\S*))?/,
+      names: ['id', 'suite', 'config', 'sessionConfig'],
+      format: function (o) {
+        return (o.sessionConfig != null) ?
+          "crypto:%d %s %s %s":
+          "crypto:%d %s %s";
+      }
+    },
+    { //a=setup:actpass
+      name: 'setup',
+      reg: /^setup:(\w*)/,
+      format: "setup:%s"
+    },
+    { //a=mid:1
+      name: 'mid',
+      reg: /^mid:([^\s]*)/,
+      format: "mid:%s"
+    },
+    { //a=msid:0c8b064d-d807-43b4-b434-f92a889d8587 98178685-d409-46e0-8e16-7ef0db0db64a
+      name: 'msid',
+      reg: /^msid:(.*)/,
+      format: "msid:%s"
+    },
+    { //a=ptime:20
+      name: 'ptime',
+      reg: /^ptime:(\d*)/,
+      format: "ptime:%d"
+    },
+    { //a=maxptime:60
+      name: 'maxptime',
+      reg: /^maxptime:(\d*)/,
+      format: "maxptime:%d"
+    },
+    { //a=sendrecv
+      name: 'direction',
+      reg: /^(sendrecv|recvonly|sendonly|inactive)/
+    },
+    { //a=ice-lite
+      name: 'icelite',
+      reg: /^(ice-lite)/
+    },
+    { //a=ice-ufrag:F7gI
+      name: 'iceUfrag',
+      reg: /^ice-ufrag:(\S*)/,
+      format: "ice-ufrag:%s"
+    },
+    { //a=ice-pwd:x9cml/YzichV2+XlhiMu8g
+      name: 'icePwd',
+      reg: /^ice-pwd:(\S*)/,
+      format: "ice-pwd:%s"
+    },
+    { //a=fingerprint:SHA-1 00:11:22:33:44:55:66:77:88:99:AA:BB:CC:DD:EE:FF:00:11:22:33
+      name: 'fingerprint',
+      reg: /^fingerprint:(\S*) (\S*)/,
+      names: ['type', 'hash'],
+      format: "fingerprint:%s %s"
+    },
+    {
+      //a=candidate:0 1 UDP 2113667327 203.0.113.1 54400 typ host
+      //a=candidate:1162875081 1 udp 2113937151 192.168.34.75 60017 typ host generation 0
+      //a=candidate:3289912957 2 udp 1845501695 193.84.77.194 60017 typ srflx raddr 192.168.34.75 rport 60017 generation 0
+      push:'candidates',
+      reg: /^candidate:(\S*) (\d*) (\S*) (\d*) (\S*) (\d*) typ (\S*)(?: raddr (\S*) rport (\d*))?(?: generation (\d*))?/,
+      names: ['foundation', 'component', 'transport', 'priority', 'ip', 'port', 'type', 'raddr', 'rport', 'generation'],
+      format: function (o) {
+        var str = "candidate:%s %d %s %d %s %d typ %s";
+        // NB: candidate has two optional chunks, so %void middle one if it's missing
+        str += (o.raddr != null) ? " raddr %s rport %d" : "%v%v";
+        if (o.generation != null) {
+          str += " generation %d";
+        }
+        return str;
+      }
+    },
+    { //a=end-of-candidates (keep after the candidates line for readability)
+      name: 'endOfCandidates',
+      reg: /^(end-of-candidates)/
+    },
+    { //a=remote-candidates:1 203.0.113.1 54400 2 203.0.113.1 54401 ...
+      name: 'remoteCandidates',
+      reg: /^remote-candidates:(.*)/,
+      format: "remote-candidates:%s"
+    },
+    { //a=ice-options:google-ice
+      name: 'iceOptions',
+      reg: /^ice-options:(\S*)/,
+      format: "ice-options:%s"
+    },
+    { //a=ssrc:2566107569 cname:t9YU8M1UxTF8Y1A1
+      push: "ssrcs",
+      reg: /^ssrc:(\d*) ([\w_]*):(.*)/,
+      names: ['id', 'attribute', 'value'],
+      format: "ssrc:%d %s:%s"
+    },
+    { //a=ssrc-group:FEC 1 2
+      push: "ssrcGroups",
+      reg: /^ssrc-group:(\w*) (.*)/,
+      names: ['semantics', 'ssrcs'],
+      format: "ssrc-group:%s %s"
+    },
+    { //a=msid-semantic: WMS Jvlam5X3SX1OP6pn20zWogvaKJz5Hjf9OnlV
+      name: "msidSemantic",
+      reg: /^msid-semantic:\s?(\w*) (\S*)/,
+      names: ['semantic', 'token'],
+      format: "msid-semantic: %s %s" // space after ":" is not accidental
+    },
+    { //a=group:BUNDLE audio video
+      push: 'groups',
+      reg: /^group:(\w*) (.*)/,
+      names: ['type', 'mids'],
+      format: "group:%s %s"
+    },
+    { //a=rtcp-mux
+      name: 'rtcpMux',
+      reg: /^(rtcp-mux)/
+    },
+    { //a=rtcp-rsize
+      name: 'rtcpRsize',
+      reg: /^(rtcp-rsize)/
+    },
+    { // any a= that we don't understand is kepts verbatim on media.invalid
+      push: 'invalid',
+      names: ["value"]
+    }
+  ]
+};
+
+// set sensible defaults to avoid polluting the grammar with boring details
+Object.keys(grammar).forEach(function (key) {
+  var objs = grammar[key];
+  objs.forEach(function (obj) {
+    if (!obj.reg) {
+      obj.reg = /(.*)/;
+    }
+    if (!obj.format) {
+      obj.format = "%s";
+    }
+  });
+});
+
+},{}],75:[function(require,module,exports){
+arguments[4][71][0].apply(exports,arguments)
+},{"./parser":76,"./writer":77,"dup":71}],76:[function(require,module,exports){
+var toIntIfInt = function (v) {
+  return String(Number(v)) === v ? Number(v) : v;
+};
+
+var attachProperties = function (match, location, names, rawName) {
+  if (rawName && !names) {
+    location[rawName] = toIntIfInt(match[1]);
+  }
+  else {
+    for (var i = 0; i < names.length; i += 1) {
+      if (match[i+1] != null) {
+        location[names[i]] = toIntIfInt(match[i+1]);
+      }
+    }
+  }
+};
+
+var parseReg = function (obj, location, content) {
+  var needsBlank = obj.name && obj.names;
+  if (obj.push && !location[obj.push]) {
+    location[obj.push] = [];
+  }
+  else if (needsBlank && !location[obj.name]) {
+    location[obj.name] = {};
+  }
+  var keyLocation = obj.push ?
+    {} :  // blank object that will be pushed
+    needsBlank ? location[obj.name] : location; // otherwise, named location or root
+
+  attachProperties(content.match(obj.reg), keyLocation, obj.names, obj.name);
+
+  if (obj.push) {
+    location[obj.push].push(keyLocation);
+  }
+};
+
+var grammar = require('./grammar');
+var validLine = RegExp.prototype.test.bind(/^([a-z])=(.*)/);
+
+exports.parse = function (sdp) {
+  var session = {}
+    , media = []
+    , location = session; // points at where properties go under (one of the above)
+
+  // parse lines we understand
+  sdp.split(/(\r\n|\r|\n)/).filter(validLine).forEach(function (l) {
+    var type = l[0];
+    var content = l.slice(2);
+    if (type === 'm') {
+      media.push({rtp: [], fmtp: []});
+      location = media[media.length-1]; // point at latest media line
+    }
+
+    for (var j = 0; j < (grammar[type] || []).length; j += 1) {
+      var obj = grammar[type][j];
+      if (obj.reg.test(content)) {
+        return parseReg(obj, location, content);
+      }
+    }
+  });
+
+  session.media = media; // link it up
+  return session;
+};
+
+var fmtpReducer = function (acc, expr) {
+  var s = expr.split('=');
+  if (s.length === 2) {
+    acc[s[0]] = toIntIfInt(s[1]);
+  }
+  return acc;
+};
+
+exports.parseFmtpConfig = function (str) {
+  return str.split(/\;\s?/).reduce(fmtpReducer, {});
+};
+
+exports.parsePayloads = function (str) {
+  return str.split(' ').map(Number);
+};
+
+exports.parseRemoteCandidates = function (str) {
+  var candidates = [];
+  var parts = str.split(' ').map(toIntIfInt);
+  for (var i = 0; i < parts.length; i += 3) {
+    candidates.push({
+      component: parts[i],
+      ip: parts[i + 1],
+      port: parts[i + 2]
+    });
+  }
+  return candidates;
+};
+
+},{"./grammar":74}],77:[function(require,module,exports){
+arguments[4][73][0].apply(exports,arguments)
+},{"./grammar":74,"dup":73}],78:[function(require,module,exports){
 var MediaStreamType = {
     VIDEO_TYPE: "Video",
 
     AUDIO_TYPE: "Audio"
 };
 module.exports = MediaStreamType;
-},{}],82:[function(require,module,exports){
+},{}],79:[function(require,module,exports){
 var RTCEvents = {
     RTC_READY: "rtc.ready",
     DATA_CHANNEL_OPEN: "rtc.data_channel_open",
@@ -22230,7 +22826,7 @@ var RTCEvents = {
 };
 
 module.exports = RTCEvents;
-},{}],83:[function(require,module,exports){
+},{}],80:[function(require,module,exports){
 var Resolutions = {
     "1080": {
         width: 1920,
@@ -22284,22 +22880,7 @@ var Resolutions = {
     }
 };
 module.exports = Resolutions;
-},{}],84:[function(require,module,exports){
-var StreamEventTypes = {
-    EVENT_TYPE_LOCAL_CREATED: "stream.local_created",
-
-    EVENT_TYPE_LOCAL_CHANGED: "stream.local_changed",
-
-    EVENT_TYPE_LOCAL_ENDED: "stream.local_ended",
-
-    EVENT_TYPE_REMOTE_CREATED: "stream.remote_created",
-
-    EVENT_TYPE_REMOTE_ENDED: "stream.remote_ended",
-    TRACK_MUTE_CHANGED: "rtc.track_mute_changed"
-};
-
-module.exports = StreamEventTypes;
-},{}],85:[function(require,module,exports){
+},{}],81:[function(require,module,exports){
 var AuthenticationEvents = {
     /**
      * Event callback arguments:
@@ -22313,7 +22894,7 @@ var AuthenticationEvents = {
 };
 module.exports = AuthenticationEvents;
 
-},{}],86:[function(require,module,exports){
+},{}],82:[function(require,module,exports){
 var DesktopSharingEventTypes = {
     INIT: "ds.init",
 
@@ -22329,7 +22910,7 @@ var DesktopSharingEventTypes = {
 
 module.exports = DesktopSharingEventTypes;
 
-},{}],87:[function(require,module,exports){
+},{}],83:[function(require,module,exports){
 module.exports = {
     /**
      * An event carrying connection statistics.
@@ -22345,12 +22926,12 @@ module.exports = {
     STOP: "statistics.stop"
 };
 
-},{}],88:[function(require,module,exports){
+},{}],84:[function(require,module,exports){
 var Constants = {
     LOCAL_JID: 'local'
 };
 module.exports = Constants;
-},{}],89:[function(require,module,exports){
+},{}],85:[function(require,module,exports){
 var XMPPEvents = {
     // Designates an event indicating that the connection to the XMPP server
     // failed.

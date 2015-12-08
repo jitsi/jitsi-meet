@@ -161,12 +161,10 @@ function initConference(localTracks, connection) {
         disableAudioLevels: config.disableAudioLevels
     });
 
-    var users = {};
-
     APP.conference.localId = room.myUserId();
     Object.defineProperty(APP.conference, "membersCount", {
         get: function () {
-            return Object.keys(users).length; // FIXME maybe +1?
+            return room.getParticipants().length; // FIXME maybe +1?
         }
     });
 
@@ -175,9 +173,9 @@ function initConference(localTracks, connection) {
             return APP.settings.getDisplayName();
         }
 
-        var user = users[id];
-        if (user && user.displayName) {
-            return user.displayName;
+        var participant = room.getParticipantById(id);
+        if (participant && participant.getDisplayName()) {
+            return participant.getDisplayName();
         }
     }
 
@@ -191,16 +189,25 @@ function initConference(localTracks, connection) {
 
 
     room.on(ConferenceEvents.USER_JOINED, function (id) {
-        users[id] = {
-            displayName: undefined,
-            tracks: []
-        };
         // FIXME email???
         APP.UI.addUser(id);
     });
     room.on(ConferenceEvents.USER_LEFT, function (id) {
-        delete users[id];
         APP.UI.removeUser(id);
+    });
+
+
+    room.on(ConferenceEvents.USER_ROLE_CHANGED, function (id, role) {
+        if (APP.conference.isLocalId(id)) {
+            console.info(`My role changed, new role: ${role}`);
+            APP.conference.isModerator = room.isModerator();
+            APP.UI.updateLocalRole(room.isModerator());
+        } else {
+            var user = room.getParticipantById(id);
+            if (user) {
+                APP.UI.updateUserRole(user);
+            }
+        }
     });
 
 
