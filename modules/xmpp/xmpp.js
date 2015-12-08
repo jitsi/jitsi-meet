@@ -3,7 +3,6 @@
 var logger = require("jitsi-meet-logger").getLogger(__filename);
 var EventEmitter = require("events");
 var Pako = require("pako");
-var StreamEventTypes = require("../../service/RTC/StreamEventTypes");
 var RTCEvents = require("../../service/RTC/RTCEvents");
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 var JitsiConnectionErrors = require("../../JitsiConnectionErrors");
@@ -124,7 +123,7 @@ XMPP.prototype._connect = function (jid, password) {
                         logger.warn("Ping NOT supported by " + pingJid);
                 }
             );
-            
+
             if (password)
                 authenticatedUser = true;
             if (self.connection && self.connection.connected &&

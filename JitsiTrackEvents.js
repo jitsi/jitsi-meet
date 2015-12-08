@@ -10,7 +10,7 @@ var JitsiTrackEvents = {
     /**
      * The media track was removed to the conference.
      */
-    TRACK_STOPPED: "track.TRACK_STOPPED",
+    TRACK_STOPPED: "track.stopped"
 };
 
 module.exports = JitsiTrackEvents;

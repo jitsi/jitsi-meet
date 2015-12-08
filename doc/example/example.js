@@ -9,8 +9,7 @@ var options = {
 }
 
 var confOptions = {
-    openSctp: true,
-    disableAudioLevels: true
+    openSctp: true
 }
 
 /**
@@ -22,6 +21,18 @@ function onLocalTracks(tracks)
     localTracks = tracks;
     for(var i = 0; i < localTracks.length; i++)
     {
+        localTracks[i].addEventListener(JitsiMeetJS.events.track.TRACK_AUDIO_LEVEL_CHANGED,
+            function (audioLevel) {
+                console.debug("Audio Level local: " + audioLevel);
+            });
+        localTracks[i].addEventListener(JitsiMeetJS.events.track.TRACK_MUTE_CHANGED,
+            function () {
+                console.debug("local track muted");
+            });
+        localTracks[i].addEventListener(JitsiMeetJS.events.track.TRACK_STOPPED,
+            function () {
+                console.debug("local track stoped");
+            });
         if(localTracks[i].getType() == "video") {
             $("body").append("<video autoplay='1' id='localVideo" + i + "' />");
             localTracks[i].attach($("#localVideo" + i ));
@@ -29,7 +40,6 @@ function onLocalTracks(tracks)
             $("body").append("<audio autoplay='1' id='localAudio" + i + "' />");
             localTracks[i].attach($("#localAudio" + i ));
         }
-        console.log(localTracks[i]);
     }
 }
 
@@ -38,10 +48,24 @@ function onLocalTracks(tracks)
  * @param track JitsiTrack object
  */
 function onRemoteTrack(track) {
+    if(track.isLocal())
+        return;
     var participant = track.getParitcipantId();
     if(!remoteTracks[participant])
         remoteTracks[participant] = [];
     var idx = remoteTracks[participant].push(track);
+    track.addEventListener(JitsiMeetJS.events.track.TRACK_AUDIO_LEVEL_CHANGED,
+        function (audioLevel) {
+            console.debug("Audio Level remote: " + audioLevel);
+        });
+    track.addEventListener(JitsiMeetJS.events.track.TRACK_MUTE_CHANGED,
+        function () {
+            console.debug("remote track muted");
+        });
+    track.addEventListener(JitsiMeetJS.events.track.TRACK_STOPPED,
+        function () {
+            console.debug("remote track stoped");
+        });
     var id = participant + track.getType() + idx;
     if(track.getType() == "video") {
         $("body").append("<video autoplay='1' id='" + participant + "video" + idx + "' />");
@@ -74,8 +98,8 @@ function onUserLeft(id) {
 function onConnectionSuccess(){
     room = connection.initJitsiConference("conference2", confOptions);
     room.on(JitsiMeetJS.events.conference.TRACK_ADDED, onRemoteTrack);
-    room.on(JitsiMeetJS.events.conference.TRACK_REMOVED, function () {
-        console.debug("track removed!!!");
+    room.on(JitsiMeetJS.events.conference.TRACK_REMOVED, function (track) {
+        console.debug("track removed!!!" + track);
     });
     room.on(JitsiMeetJS.events.conference.CONFERENCE_JOINED, onConferenceJoined);
     room.on(JitsiMeetJS.events.conference.USER_JOINED, function(id){ remoteTracks[id] = [];});
@@ -88,7 +112,7 @@ function onConnectionSuccess(){
     });
     room.on(JitsiMeetJS.events.conference.TRACK_AUDIO_LEVEL_CHANGED,
       function(userID, audioLevel){
-          // console.log(userID + " - " + audioLevel);
+          console.log(userID + " - " + audioLevel);
       });
     room.join();
 };
@@ -120,6 +144,7 @@ $(window).bind('unload', unload);
 
 // JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.ERROR);
 var initOptions = {
+    // disableAudioLevels: true,
     // Desktop sharing method. Can be set to 'ext', 'webrtc' or false to disable.
     desktopSharingChromeMethod: 'ext',
     // The ID of the jidesha extension for Chrome.

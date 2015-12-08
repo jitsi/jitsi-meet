@@ -1,4 +1,6 @@
 var RTCBrowserType = require("./RTCBrowserType");
+var JitsiTrackEvents = require("../../JitsiTrackEvents");
+var EventEmitter = require("events");
 
 /**
  * This implements 'onended' callback normally fired by WebRTC after the stream
@@ -54,6 +56,8 @@ function JitsiTrack(rtc, stream, streamInactiveHandler)
     this.containers = [];
     this.rtc = rtc;
     this.stream = stream;
+    this.eventEmitter = new EventEmitter();
+    this.audioLevel = -1;
     this.type = (this.stream.getVideoTracks().length > 0)?
         JitsiTrack.VIDEO : JitsiTrack.AUDIO;
     if(this.type == "audio") {
@@ -184,5 +188,42 @@ JitsiTrack.prototype.isActive = function () {
         return true;
 };
 
+/**
+ * Attaches a handler for events(For example - "audio level changed".).
+ * All possible event are defined in JitsiTrackEvents.
+ * @param eventId the event ID.
+ * @param handler handler for the event.
+ */
+JitsiTrack.prototype.on = function (eventId, handler) {
+    if(this.eventEmitter)
+        this.eventEmitter.on(eventId, handler);
+}
+
+/**
+ * Removes event listener
+ * @param eventId the event ID.
+ * @param [handler] optional, the specific handler to unbind
+ */
+JitsiTrack.prototype.off = function (eventId, handler) {
+    if(this.eventEmitter)
+        this.eventEmitter.removeListener(eventId, handler);
+}
+
+// Common aliases for event emitter
+JitsiTrack.prototype.addEventListener = JitsiTrack.prototype.on;
+JitsiTrack.prototype.removeEventListener = JitsiTrack.prototype.off;
+
+
+/**
+ * Sets the audio level for the stream
+ * @param audioLevel the new audio level
+ */
+JitsiTrack.prototype.setAudioLevel = function (audioLevel) {
+    if(this.audioLevel !== audioLevel) {
+        this.eventEmitter.emit(JitsiTrackEvents.TRACK_AUDIO_LEVEL_CHANGED,
+            audioLevel);
+        this.audioLevel = audioLevel;
+    }
+ }
 
 module.exports = JitsiTrack;

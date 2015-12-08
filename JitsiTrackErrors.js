@@ -1,6 +1,7 @@
 module.exports = {
     /**
-     * Returns JitsiTrackErrors based on the error object passed by GUM * @param error the error
+     * Returns JitsiTrackErrors based on the error object passed by GUM
+     * @param error the error
      * @param {Object} options the options object given to GUM.
      */
     parseError: function (error, options) {

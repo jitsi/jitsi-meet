@@ -1,5 +1,5 @@
 var JitsiTrack = require("./JitsiTrack");
-var StreamEventTypes = require("../../service/RTC/StreamEventTypes");
+var JitsiTrackEvents = require("../../JitsiTrackEvents");
 
 /**
  * Represents a single media track (either audio or video).
@@ -10,11 +10,11 @@ var StreamEventTypes = require("../../service/RTC/StreamEventTypes");
  * @param eventEmitter the event emitter
  * @constructor
  */
-function JitsiRemoteTrack(RTC, data, sid, ssrc, eventEmitter) {
+function JitsiRemoteTrack(RTC, data, sid, ssrc) {
     JitsiTrack.call(this, RTC, data.stream,
         function () {
-            eventEmitter.emit(StreamEventTypes.EVENT_TYPE_REMOTE_ENDED, self);
-        });
+            this.eventEmitter.emit(JitsiTrackEvents.TRACK_STOPPED);
+        }.bind(this));
     this.rtc = RTC;
     this.sid = sid;
     this.stream = data.stream;
@@ -24,10 +24,8 @@ function JitsiRemoteTrack(RTC, data, sid, ssrc, eventEmitter) {
     this.muted = false;
     if((this.type === JitsiTrack.AUDIO && data.audiomuted)
       || (this.type === JitsiTrack.VIDEO && data.videomuted)) {
-        this.muted = true
+        this.muted = true;
     }
-    this.eventEmitter = eventEmitter;
-    var self = this;
 }
 
 JitsiRemoteTrack.prototype = Object.create(JitsiTrack.prototype);
@@ -40,7 +38,7 @@ JitsiRemoteTrack.prototype.constructor = JitsiRemoteTrack;
 JitsiRemoteTrack.prototype.setMute = function (value) {
     this.stream.muted = value;
     this.muted = value;
-    this.eventEmitter.emit(StreamEventTypes.TRACK_MUTE_CHANGED, this);
+    this.eventEmitter.emit(JitsiTrackEvents.TRACK_MUTE_CHANGED);
 };
 
 /**
@@ -58,6 +56,13 @@ JitsiRemoteTrack.prototype.isMuted = function () {
 JitsiRemoteTrack.prototype.getParitcipantId = function() {
     return Strophe.getResourceFromJid(this.peerjid);
 };
+
+/**
+ * Return false;
+ */
+JitsiRemoteTrack.prototype.isLocal = function () {
+    return false;
+}
 
 delete JitsiRemoteTrack.prototype.stop;
 

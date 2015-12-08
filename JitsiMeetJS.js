@@ -7,6 +7,7 @@ var JitsiTrackEvents = require("./JitsiTrackEvents");
 var JitsiTrackErrors = require("./JitsiTrackErrors");
 var Logger = require("jitsi-meet-logger");
 var RTC = require("./modules/RTC/RTC");
+var Statistics = require("./modules/statistics/statistics");
 
 /**
  * Namespace for the interface of Jitsi Meet Library.
@@ -42,11 +43,29 @@ var LibJitsiMeet = {
      * will be returned trough the Promise, otherwise JitsiTrack objects will be returned.
      * @param {string} options.cameraDeviceId
      * @param {string} options.micDeviceId
-     * @returns {Promise.<{Array.<JitsiTrack>}, JitsiConferenceError>} A promise that returns an array of created JitsiTracks if resolved,
+     * @returns {Promise.<{Array.<JitsiTrack>}, JitsiConferenceError>}
+     *     A promise that returns an array of created JitsiTracks if resolved,
      *     or a JitsiConferenceError if rejected.
      */
     createLocalTracks: function (options) {
-        return RTC.obtainAudioAndVideoPermissions(options || {});
+        return RTC.obtainAudioAndVideoPermissions(options || {}).then(
+            function(tracks) {
+                if(!RTC.options.disableAudioLevels)
+                    for(var i = 0; i < tracks.length; i++) {
+                        var track = tracks[i];
+                        var mStream = track.getOriginalStream();
+                        if(track.getType() === "audio"){
+                            Statistics.startLocalStats(mStream,
+                                track.setAudioLevel.bind(track));
+                            track.addEventListener(
+                                JitsiTrackEvents.TRACK_STOPPED,
+                                function(){
+                                    Statistics.stopLocalStats(mStream);
+                                });
+                        }
+                    }
+                return tracks;
+            });
     },
     isDeviceListAvailable: function () {
         return RTC.isDeviceListAvailable();

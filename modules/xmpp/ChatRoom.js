@@ -515,10 +515,10 @@ ChatRoom.prototype.setJingleSession = function(session){
 };
 
 
-ChatRoom.prototype.removeStream = function (stream) {
+ChatRoom.prototype.removeStream = function (stream, callback) {
     if(!this.session)
         return;
-    this.session.peerconnection.removeStream(stream)
+    this.session.removeStream(stream, callback);
 }
 
 ChatRoom.prototype.switchStreams = function (stream, oldStream, callback, isAudio) {
