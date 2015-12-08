@@ -1005,14 +1005,14 @@ var VideoLayout = (function (my) {
         }
     };
 
-    my.userAvatarChanged = function(resourceJid, thumbUrl) {
+    my.userAvatarChanged = function(resourceJid, avatarUrl) {
         var smallVideo = VideoLayout.getSmallVideo(resourceJid);
         if(smallVideo)
-            smallVideo.avatarChanged(thumbUrl);
+            smallVideo.avatarChanged(avatarUrl);
         else
             console.warn(
                 "Missed avatar update - no small video yet for " + resourceJid);
-        LargeVideo.updateAvatar(resourceJid, thumbUrl);
+        LargeVideo.updateAvatar(resourceJid, avatarUrl);
     };
 
     my.createEtherpadIframe = function(src, onloadHandler)

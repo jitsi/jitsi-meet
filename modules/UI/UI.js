@@ -896,11 +896,11 @@ UI.setVideoMuteButtonsState = function (mute) {
     }
 };
 
-UI.userAvatarChanged = function (resourceJid, thumbUrl, contactListUrl) {
-    VideoLayout.userAvatarChanged(resourceJid, thumbUrl);
-    ContactList.userAvatarChanged(resourceJid, contactListUrl);
+UI.userAvatarChanged = function (resourceJid, avatarUrl) {
+    VideoLayout.userAvatarChanged(resourceJid, avatarUrl);
+    ContactList.userAvatarChanged(resourceJid, avatarUrl);
     if(resourceJid === APP.xmpp.myResource())
-        SettingsMenu.changeAvatar(thumbUrl);
+        SettingsMenu.changeAvatar(avatarUrl);
 };
 
 UI.setVideoMute = setVideoMute;

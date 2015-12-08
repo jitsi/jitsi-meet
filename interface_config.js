@@ -27,5 +27,7 @@ var interfaceConfig = {
     /**
      * Whether to only show the filmstrip (and hide the toolbar).
      */
-    filmStripOnly: false
+    filmStripOnly: false,
+    RANDOM_AVATAR_URL_PREFIX: false,
+    RANDOM_AVATAR_URL_SUFFIX: false
 };

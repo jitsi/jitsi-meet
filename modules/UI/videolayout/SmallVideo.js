@@ -369,7 +369,7 @@ SmallVideo.prototype.showAvatar = function (show) {
     if (!this.hasAvatar) {
         if (this.peerJid) {
             // Init avatar
-            this.avatarChanged(Avatar.getThumbUrl(this.peerJid));
+            this.avatarChanged(Avatar.getAvatarUrl(this.peerJid));
         } else {
             console.error("Unable to init avatar - no peerjid", this);
             return;

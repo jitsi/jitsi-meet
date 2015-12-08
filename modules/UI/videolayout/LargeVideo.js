@@ -242,7 +242,7 @@ function getCameraVideoSize(videoWidth,
 function updateActiveSpeakerAvatarSrc() {
     var avatar = $("#activeSpeakerAvatar")[0];
     var jid = currentSmallVideo.peerJid;
-    var url = Avatar.getActiveSpeakerUrl(jid);
+    var url = Avatar.getAvatarUrl(jid);
     if (avatar.src === url)
         return;
     if (jid) {

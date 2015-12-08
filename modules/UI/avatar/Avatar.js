@@ -1,4 +1,4 @@
-/* global Strophe, APP, MD5, config */
+/* global Strophe, APP, MD5, config, interfaceConfig */
 var Settings = require("../../settings/Settings");
 
 var users = {};
@@ -18,55 +18,51 @@ var Avatar = {
             }
             users[jid] = id;
         }
-        var thumbUrl = this.getThumbUrl(jid);
-        var contactListUrl = this.getContactListUrl(jid);
+        var avatarUrl = this.getAvatarUrl(jid);
         var resourceJid = Strophe.getResourceFromJid(jid);
 
-        APP.UI.userAvatarChanged(resourceJid, thumbUrl, contactListUrl);
+        APP.UI.userAvatarChanged(resourceJid, avatarUrl);
     },
     /**
-     * Returns image URL for the avatar to be displayed on large video area
-     * where current active speaker is presented.
+     * Returns the URL of the image for the avatar of a particular user,
+     * identified by its jid
+     * @param jid
      * @param jid full MUC jid of the user for whom we want to obtain avatar URL
      */
-    getActiveSpeakerUrl: function (jid) {
-        return this.getGravatarUrl(jid, 100);
-    },
-    /**
-     * Returns image URL for the avatar to be displayed on small video thumbnail
-     * @param jid full MUC jid of the user for whom we want to obtain avatar URL
-     */
-    getThumbUrl: function (jid) {
-        return this.getGravatarUrl(jid, 100);
-    },
-    /**
-     * Returns the URL for the avatar to be displayed as contactlist item
-     * @param jid full MUC jid of the user for whom we want to obtain avatar URL
-     */
-    getContactListUrl: function (jid) {
-        return this.getGravatarUrl(jid, 30);
-    },
-    getGravatarUrl: function (jid, size) {
-        if (!jid) {
-            console.error("Get gravatar - jid is undefined");
-            return null;
-        }
-        var id = users[jid];
-        if (!id) {
-            console.warn(
-                "No avatar stored yet for " + jid + " - using JID as ID");
-            id = jid;
-        }
-        if (!config.disableThirdPartyRequests) {
-            return 'https://www.gravatar.com/avatar/' +
-                MD5.hexdigest(id.trim().toLowerCase()) +
-                "?d=wavatar&size=" + (size || "30");
-        } else {
+    getAvatarUrl: function (jid) {
+        if (config.disableThirdPartyRequests) {
             return 'images/avatar2.png';
+        } else {
+            if (!jid) {
+                console.error("Get avatar - jid is undefined");
+                return null;
+            }
+            var id = users[jid];
+
+            // If the ID looks like an email, we'll use gravatar.
+            // Otherwise, it's a random avatar, and we'll use the configured
+            // URL.
+            var random = !id || id.indexOf('@') < 0;
+
+            if (!id) {
+                console.warn(
+                    "No avatar stored yet for " + jid + " - using JID as ID");
+                id = jid;
+            }
+            id = MD5.hexdigest(id.trim().toLowerCase());
+
+            // Default to using gravatar.
+            var urlPref = 'https://www.gravatar.com/avatar/';
+            var urlSuf = "?d=wavatar&size=100";
+
+            if (random && interfaceConfig.RANDOM_AVATAR_URL_PREFIX) {
+                urlPref = interfaceConfig.RANDOM_AVATAR_URL_PREFIX;
+                urlSuf = interfaceConfig.RANDOM_AVATAR_URL_SUFFIX;
+            }
+
+            return urlPref + id + urlSuf;
         }
     }
-
 };
-
 
 module.exports = Avatar;
