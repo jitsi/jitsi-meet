@@ -299,5 +299,20 @@ XMPP.prototype.disconnect = function () {
     this.connection.disconnect();
 };
 
+/**
+ * Gets the SSRC of local media stream.
+ * @param mediaType the media type that tells whether we want to get
+ *        the SSRC of local audio or video stream.
+ * @returns {*} the SSRC number for local media stream or <tt>null</tt> if
+ *              not available.
+ */
+XMPP.prototype.getLocalSSRC = function (mediaType) {
+    if (this.connection.jingle.activecall &&
+        this.connection.jingle.activecall.peerconnection) {
+        return this.connection.jingle.activecall.getLocalSSRC(mediaType);
+    } else {
+        return null;
+    }
+};
 
 module.exports = XMPP;

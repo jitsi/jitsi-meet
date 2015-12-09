@@ -42,6 +42,11 @@ function JingleSessionPC(me, sid, connection, service) {
     this.addingStreams = false;
 
     this.wait = true;
+    /**
+     * A map that stores SSRCs of local streams
+     * @type {{}} maps media type('audio' or 'video') to SSRC number
+     */
+    this.localStreamsSSRC = {};
     this.ssrcOwners = {};
     this.ssrcVideoTypes = {};
 
@@ -548,6 +553,15 @@ JingleSessionPC.prototype.readSsrcInfo = function (contents) {
             );
         });
     });
+};
+
+/**
+ * Returns the SSRC of local audio stream.
+ * @param mediaType 'audio' or 'video' media type
+ * @returns {*} the SSRC number of local audio or video stream.
+ */
+JingleSessionPC.prototype.getLocalSSRC = function (mediaType) {
+    return this.localStreamsSSRC[mediaType];
 };
 
 JingleSessionPC.prototype.getSsrcOwner = function (ssrc) {
@@ -1505,6 +1519,8 @@ JingleSessionPC.prototype.setLocalDescription = function () {
                     'ssrc': ssrc.id,
                     'type': media.type
                 });
+                // FIXME allows for only one SSRC per media type
+                self.localStreamsSSRC[media.type] = ssrc.id;
             });
         }
 
