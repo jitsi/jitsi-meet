@@ -291,8 +291,9 @@ JitsiConference.prototype.onMemberJoined = function (jid, email, nick) {
     this.eventEmitter.emit(JitsiConferenceEvents.USER_JOINED, id);
     this.participants[id] = participant;
     this.connection.xmpp.connection.disco.info(
-        jid, "" /* node */, function(iq) {
-            participant._supportsDTMF = $(iq).find('>query>feature[var="urn:xmpp:jingle:dtmf:0"]').length > 0;
+        jid, "node", function(iq) {
+            participant._supportsDTMF = $(iq).find(
+                '>query>feature[var="urn:xmpp:jingle:dtmf:0"]').length > 0;
             this.updateDTMFSupport();
         }.bind(this)
     );
@@ -2526,17 +2527,23 @@ function handleLocalStream(streams, resolution) {
             }
         }
 
+        if (streams && streams.desktopStream)
+            desktopStream = streams.desktopStream;
+
     }
     else if (RTCBrowserType.isFirefox() || RTCBrowserType.isTemasysPluginUsed()) {   // Firefox and Temasys plugin
-        if (streams && streams.audioStream)
-            audioStream = streams.audioStream;
+        if (streams && streams.audio)
+            audioStream = streams.audio;
 
-        if (streams && streams.videoStream)
-            videoStream = streams.videoStream;
+        if (streams && streams.video)
+            videoStream = streams.video;
+
+        if(streams && streams.desktop)
+            desktopStream = streams.desktop;
     }
 
-    if (streams && streams.desktopStream)
-        res.push({stream: streams.desktopStream,
+    if (desktopStream)
+        res.push({stream: desktopStream,
             type: "video", videoType: "desktop"});
 
     if(audioStream)

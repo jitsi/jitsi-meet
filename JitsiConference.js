@@ -289,8 +289,9 @@ JitsiConference.prototype.onMemberJoined = function (jid, email, nick) {
     this.eventEmitter.emit(JitsiConferenceEvents.USER_JOINED, id);
     this.participants[id] = participant;
     this.connection.xmpp.connection.disco.info(
-        jid, "" /* node */, function(iq) {
-            participant._supportsDTMF = $(iq).find('>query>feature[var="urn:xmpp:jingle:dtmf:0"]').length > 0;
+        jid, "node", function(iq) {
+            participant._supportsDTMF = $(iq).find(
+                '>query>feature[var="urn:xmpp:jingle:dtmf:0"]').length > 0;
             this.updateDTMFSupport();
         }.bind(this)
     );

@@ -144,7 +144,7 @@ $(window).bind('unload', unload);
 
 // JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.ERROR);
 var initOptions = {
-    // disableAudioLevels: true,
+    disableAudioLevels: true,
     // Desktop sharing method. Can be set to 'ext', 'webrtc' or false to disable.
     desktopSharingChromeMethod: 'ext',
     // The ID of the jidesha extension for Chrome.
@@ -170,6 +170,13 @@ var initOptions = {
     desktopSharingFirefoxExtensionURL: null
 }
 JitsiMeetJS.init(initOptions).then(function(){
+    connection = new JitsiMeetJS.JitsiConnection(null, null, options);
+
+    connection.addEventListener(JitsiMeetJS.events.connection.CONNECTION_ESTABLISHED, onConnectionSuccess);
+    connection.addEventListener(JitsiMeetJS.events.connection.CONNECTION_FAILED, onConnectionFailed);
+    connection.addEventListener(JitsiMeetJS.events.connection.CONNECTION_DISCONNECTED, disconnect);
+
+    connection.connect();
     JitsiMeetJS.createLocalTracks({devices: ["audio", "video"]}).
         then(onLocalTracks).catch(function (error) {
             console.log(error);
@@ -182,12 +189,3 @@ var connection = null;
 var room = null;
 var localTracks = [];
 var remoteTracks = {};
-
-
-connection = new JitsiMeetJS.JitsiConnection(null, null, options);
-
-connection.addEventListener(JitsiMeetJS.events.connection.CONNECTION_ESTABLISHED, onConnectionSuccess);
-connection.addEventListener(JitsiMeetJS.events.connection.CONNECTION_FAILED, onConnectionFailed);
-connection.addEventListener(JitsiMeetJS.events.connection.CONNECTION_DISCONNECTED, disconnect);
-
-connection.connect();
