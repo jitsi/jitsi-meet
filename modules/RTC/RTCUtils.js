@@ -330,12 +330,13 @@ function enumerateDevicesThroughMediaStreamTrack (callback) {
 }
 
 function obtainDevices(options) {
-    if (!options.devices || options.devices.length === 0) {
-        return options.successCallback(options.streams);
+    if(!options.devices || options.devices.length === 0) {
+        return options.successCallback(options.streams || {});
     }
 
     var device = options.devices.splice(0, 1);
     options.deviceGUM[device](function (stream) {
+            options.streams = options.streams || {};
             options.streams[device] = stream;
             obtainDevices(options);
         },
