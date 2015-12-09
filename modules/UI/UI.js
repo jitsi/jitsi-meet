@@ -218,13 +218,13 @@ function registerListeners() {
         DesktopSharingEventTypes.EXTENSTION_VERSION_ERROR,
         function () {
           APP.UI.messageHandler.showError("dialog.error",
-            "dialog.detectext")
+            "dialog.detectext");
         });
     APP.desktopsharing.addListener(
         DesktopSharingEventTypes.EXTENSION_INSTALLATION_ERROR,
         function () {
           APP.UI.messageHandler.showError("dialog.error",
-                    "dialog.failtoinstall")
+            "dialog.failtoinstall");
         });
     APP.connectionquality.addListener(CQEvents.LOCALSTATS_UPDATED,
         VideoLayout.updateLocalConnectionStats);
