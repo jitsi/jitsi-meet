@@ -83,7 +83,11 @@ var JitsiConferenceEvents = {
     /**
      * Indicates that DTMF support changed.
      */
-    DTMF_SUPPORT_CHANGED: "conference.dtmfSupportChanged"
+    DTMF_SUPPORT_CHANGED: "conference.dtmfSupportChanged",
+    /**
+     * Indicates that recording state changed.
+     */
+    RECORDING_STATE_CHANGED: "conference.recordingStateChanged"
 };
 
 module.exports = JitsiConferenceEvents;

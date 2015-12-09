@@ -4,7 +4,7 @@ var jibriHandler;
 module.exports = function() {
     Strophe.addConnectionPlugin('jibri',
         {
-            JIBRI_XMLNS: 'http://jitsi.org/protocol/jibri',
+            
             connection: null,
             init: function (conn) {
                 this.connection = conn;

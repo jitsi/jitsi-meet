@@ -4,6 +4,7 @@ var logger = require("jitsi-meet-logger").getLogger(__filename);
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 var Moderator = require("./moderator");
 var EventEmitter = require("events");
+var JIBRI_XMLNS = 'http://jitsi.org/protocol/jibri';
 
 var parser = {
     packet2JSON: function (packet, nodes) {
@@ -216,6 +217,7 @@ ChatRoom.prototype.onPresence = function (pres) {
     var nodes = [];
     parser.packet2JSON(pres, nodes);
     this.lastPresences[from] = nodes;
+    var jibri = null;
     for(var i = 0; i < nodes.length; i++)
     {
         var node = nodes[i];
@@ -245,6 +247,8 @@ ChatRoom.prototype.onPresence = function (pres) {
                     this.eventEmitter.emit(XMPPEvents.BRIDGE_DOWN);
                 }
                 break;
+            case "jibri-recording-status":
+                var jibri = node;
             default :
                 this.processNode(node, from);
         }
@@ -261,6 +265,8 @@ ChatRoom.prototype.onPresence = function (pres) {
             }
         if (!this.joined) {
             this.joined = true;
+            this.recording = new Recording(this.eventEmitter, this.connection,
+                this.focusMucJid);
             console.log("(TIME) MUC joined:\t", window.performance.now());
             this.eventEmitter.emit(XMPPEvents.MUC_JOINED, from, member);
         }
@@ -296,6 +302,11 @@ ChatRoom.prototype.onPresence = function (pres) {
     // Trigger status message update
     if (member.status) {
         this.eventEmitter.emit(XMPPEvents.PRESENCE_STATUS, from, member);
+    }
+
+    if(this.recording)
+    {
+        this.recording.handleJibriPresence(jibri);
     }
 
 };
@@ -638,5 +649,42 @@ ChatRoom.prototype.getJidBySSRC = function (ssrc) {
         return null;
     return this.session.getSsrcOwner(ssrc);
 };
+
+/**
+ * Returns true if the recording is supproted and false if not.
+ */
+ChatRoom.prototype.isRecordingSupported = function () {
+    if(this.recording)
+        return this.recording.isSupported();
+    return false;
+};
+
+/**
+ * Returns null if the recording is not supported, "on" if the recording started
+ * and "off" if the recording is not started.
+ */
+ChatRoom.prototype.getRecordingState = function () {
+    if(this.recording)
+        return this.recording.getState();
+    return "off";
+}
+
+/**
+ * Returns the url of the recorded video.
+ */
+ChatRoom.prototype.getRecordingURL = function () {
+    if(this.recording)
+        return this.recording.getURL();
+    return null;
+}
+
+/**
+ * Starts/stops the recording
+ * @param token token for authentication
+ */
+ChatRoom.prototype.toggleRecording = function (token) {
+    if(this.recording && this.moderator.isModerator())
+        this.recording.toggleRecording(token);
+}
 
 module.exports = ChatRoom;

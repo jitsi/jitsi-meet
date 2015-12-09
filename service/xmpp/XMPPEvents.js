@@ -97,6 +97,10 @@ var XMPPEvents = {
     // xmpp is connected and obtained user media
     READY_TO_JOIN: 'xmpp.ready_to_join',
     FOCUS_LEFT: "xmpp.focus_left",
-    REMOTE_STREAM_RECEIVED: "xmpp.remote_stream_received"
+    REMOTE_STREAM_RECEIVED: "xmpp.remote_stream_received",
+    /**
+     * Indicates that recording state changed.
+     */
+    RECORDING_STATE_CHANGED: "xmpp.recordingStateChanged"
 };
 module.exports = XMPPEvents;

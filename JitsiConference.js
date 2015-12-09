@@ -416,6 +416,43 @@ JitsiConference.prototype.sendTones = function (tones, duration, pause) {
 };
 
 /**
+ * Returns true if the recording is supproted and false if not.
+ */
+JitsiConference.prototype.isRecordingSupported = function () {
+    // if(this.room)
+    //     return this.room.isRecordingSupported();
+    // return false;
+};
+
+/**
+ * Returns null if the recording is not supported, "on" if the recording started
+ * and "off" if the recording is not started.
+ */
+JitsiConference.prototype.getRecordingState = function () {
+    // if(this.room)
+    //     return this.room.getRecordingState();
+    // return "off";
+}
+
+/**
+ * Returns the url of the recorded video.
+ */
+JitsiConference.prototype.getRecordingURL = function () {
+    // if(this.room)
+    //     return this.room.getRecordingURL();
+    // return null;
+}
+
+/**
+ * Starts/stops the recording
+ * @param token a token for authentication.
+ */
+JitsiConference.prototype.toggleRecording = function (token) {
+    // if(this.room)
+    //     this.room.toggleRecording(token);
+}
+
+/**
  * Setups the listeners needed for the conference.
  * @param conference the conference
  */
