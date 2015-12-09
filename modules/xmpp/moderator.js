@@ -138,6 +138,13 @@ Moderator.prototype.createConferenceIq =  function () {
                 value: this.xmppService.options.hosts.bridge
             }).up();
     }
+    if (this.xmppService.options.enforcedBridge !== undefined) {
+        elem.c(
+            'property', {
+                name: 'enforcedBridge',
+                value: this.xmppService.options.enforcedBridge
+            }).up();
+    }
     // Tell the focus we have Jigasi configured
     if (this.xmppService.options.hosts.call_control !== undefined) {
         elem.c(
