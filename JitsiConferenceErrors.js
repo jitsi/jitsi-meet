@@ -8,6 +8,10 @@ var JitsiConferenceErrors = {
      */
     PASSWORD_REQUIRED: "conference.passwordRequired",
     /**
+     * Indicates that password cannot be set for this conference.
+     */
+    PASSWORD_NOT_SUPPORTED: "conference.passwordNotSupported",
+    /**
      * Indicates that a connection error occurred when trying to join a
      * conference.
      */
