@@ -2,13 +2,9 @@
 /* jshint -W101 */
 var messageHandler = require("../util/MessageHandler");
 var BottomToolbar = require("./BottomToolbar");
-var Prezi = require("../prezi/Prezi");
-var Etherpad = require("../etherpad/Etherpad");
 var PanelToggler = require("../side_pannels/SidePanelToggler");
 var Authentication = require("../authentication/Authentication");
 var UIUtil = require("../util/UIUtil");
-var AuthenticationEvents
-    = require("../../../service/authentication/AuthenticationEvents");
 var AnalyticsAdapter = require("../../statistics/AnalyticsAdapter");
 var Feedback = require("../Feedback");
 var UIEvents = require("../../../service/UI/UIEvents");
@@ -20,7 +16,7 @@ var emitter = null;
 
 var buttonHandlers = {
     "toolbar_button_mute": function () {
-        if (APP.RTC.localAudio.isMuted()) {
+        if (APP.conference.audioMuted) {
             AnalyticsAdapter.sendEvent('toolbar.audio.unmuted');
             emitter.emit(UIEvents.AUDIO_MUTED, false);
         } else {
@@ -29,7 +25,7 @@ var buttonHandlers = {
         }
     },
     "toolbar_button_camera": function () {
-        if (APP.RTC.localVideo.isMuted()) {
+        if (APP.conference.videoMuted) {
             AnalyticsAdapter.sendEvent('toolbar.video.enabled');
             emitter.emit(UIEvents.VIDEO_MUTED, false);
         } else {
@@ -62,11 +58,11 @@ var buttonHandlers = {
     },
     "toolbar_button_prezi": function () {
         AnalyticsAdapter.sendEvent('toolbar.prezi.clicked');
-        return Prezi.openPreziDialog();
+        emitter.emit(UIEvents.PREZI_CLICKED);
     },
     "toolbar_button_etherpad": function () {
         AnalyticsAdapter.sendEvent('toolbar.etherpad.clicked');
-        return Etherpad.toggleEtherpad(0);
+        emitter.emit(UIEvents.ETHERPAD_CLICKED);
     },
     "toolbar_button_desktopsharing": function () {
         if (APP.desktopsharing.isUsingScreenStream) {
@@ -317,26 +313,6 @@ var Toolbar = (function (my) {
 
         for(var k in buttonHandlers)
             $("#" + k).click(buttonHandlers[k]);
-        // Update login info
-        APP.xmpp.addListener(
-            AuthenticationEvents.IDENTITY_UPDATED,
-            function (authenticationEnabled, userIdentity) {
-
-                var loggedIn = false;
-                if (userIdentity) {
-                    loggedIn = true;
-                }
-
-                Toolbar.showAuthenticateButton(authenticationEnabled);
-
-                if (authenticationEnabled) {
-                    Toolbar.setAuthenticatedIdentity(userIdentity);
-
-                    Toolbar.showLoginButton(!loggedIn);
-                    Toolbar.showLogoutButton(loggedIn);
-                }
-            }
-        );
     };
 
     /**

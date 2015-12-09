@@ -171,6 +171,14 @@ function registerListeners() {
     UI.addListener(UIEvents.EMAIL_CHANGED, function (email) {
         UI.setUserAvatar(APP.conference.localId, email);
     });
+
+    UI.addListener(UIEvents.PREZI_CLICKED, function () {
+        Prezi.openPreziDialog();
+    });
+
+    UI.addListener(UIEvents.ETHERPAD_CLICKED, function () {
+        Etherpad.toggleEtherpad(0);
+    });
 }
 
 function bindEvents() {
