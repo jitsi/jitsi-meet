@@ -112,7 +112,7 @@ JitsiLocalTrack.prototype.stop = function () {
     if(!this.stream)
         return;
     if(this.rtc)
-        this.rtc.room.removeStream(this.stream);
+        this.rtc.room.removeStream(this.stream, function () {});
     RTC.stopMediaStream(this.stream);
     this.detach();
 }

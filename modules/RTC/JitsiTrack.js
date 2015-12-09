@@ -27,9 +27,18 @@ function implementOnEndedHandling(jitsiTrack) {
 function addMediaStreamInactiveHandler(mediaStream, handler) {
     if(RTCBrowserType.isTemasysPluginUsed()) {
         // themasys
-        mediaStream.attachEvent('ended', function () {
-            handler(mediaStream);
-        });
+        //FIXME: Seems that not working properly.
+        if(mediaStream.onended) {
+            mediaStream.onended = handler;
+        } else if(mediaStream.addEventListener) {
+            mediaStream.addEventListener('ended', function () {
+                handler(mediaStream);
+            });
+        } else if(mediaStream.attachEvent) {
+            mediaStream.attachEvent('ended', function () {
+                handler(mediaStream);
+            });
+        }
     }
     else {
         if(typeof mediaStream.active !== "undefined")
