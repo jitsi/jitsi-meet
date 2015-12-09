@@ -139,7 +139,7 @@ SDP.prototype.removeMediaLines = function(mediaindex, prefix) {
 }
 
 // add content's to a jingle element
-SDP.prototype.toJingle = function (elem, thecreator, ssrcs) {
+SDP.prototype.toJingle = function (elem, thecreator) {
 //    logger.log("SSRC" + ssrcs["audio"] + " - " + ssrcs["video"]);
     var self = this;
     var i, j, k, mline, ssrc, rtpmap, tmp, lines;
@@ -167,11 +167,7 @@ SDP.prototype.toJingle = function (elem, thecreator, ssrcs) {
         if (SDPUtil.find_line(this.media[i], 'a=ssrc:')) {
             ssrc = SDPUtil.find_line(this.media[i], 'a=ssrc:').substring(7).split(' ')[0]; // take the first
         } else {
-            if(ssrcs && ssrcs[mline.media]) {
-                ssrc = ssrcs[mline.media];
-            } else {
-                ssrc = false;
-            }
+            ssrc = false;
         }
 
         elem.c('content', {creator: thecreator, name: mline.media});
