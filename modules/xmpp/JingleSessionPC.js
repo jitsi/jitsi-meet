@@ -1438,6 +1438,20 @@ JingleSessionPC.prototype.setLocalDescription = function () {
                     'ssrc': ssrc.id,
                     'type': media.type
                 });
+
+                // In FF we have multiple local SSRC per media type, 1 that is
+                // sending and some that are receive only. The
+                // localStramsSSRC['audio'] needs to be set to the one that is
+                // sending! We find it by checking for an msid. Note that
+                // self.localStreamsSSRC is primarily used by the tests atm.
+                var isSending = media.ssrcs.some(function (ssrc$1) {
+                    return ssrc$1.id == ssrc.id && ssrc$1.attribute == 'msid';
+                });
+
+                if (!isSending) {
+                    return;
+                }
+
                 // FIXME allows for only one SSRC per media type
                 self.localStreamsSSRC[media.type] = ssrc.id;
             });
