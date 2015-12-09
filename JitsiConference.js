@@ -55,7 +55,7 @@ JitsiConference.prototype.join = function (password) {
  * Leaves the conference.
  */
 JitsiConference.prototype.leave = function () {
-    if(this.xmpp)
+    if(this.xmpp && this.room)
         this.xmpp.leaveRoom(this.room.roomjid);
     this.room = null;
 };

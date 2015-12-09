@@ -133,7 +133,7 @@ function disconnect(){
 }
 
 function unload() {
-//    room.leave();
+   room.leave();
     connection.disconnect();
 }
 
