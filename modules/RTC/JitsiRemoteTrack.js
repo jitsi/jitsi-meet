@@ -53,7 +53,7 @@ JitsiRemoteTrack.prototype.isMuted = function () {
  * Returns the participant id which owns the track.
  * @returns {string} the id of the participants.
  */
-JitsiRemoteTrack.prototype.getParitcipantId = function() {
+JitsiRemoteTrack.prototype.getParticipantId = function() {
     return Strophe.getResourceFromJid(this.peerjid);
 };
 

@@ -50,7 +50,7 @@ function onLocalTracks(tracks)
 function onRemoteTrack(track) {
     if(track.isLocal())
         return;
-    var participant = track.getParitcipantId();
+    var participant = track.getParticipantId();
     if(!remoteTracks[participant])
         remoteTracks[participant] = [];
     var idx = remoteTracks[participant].push(track);

@@ -24,6 +24,10 @@ var JitsiConferenceEvents = {
      */
     USER_LEFT: "conference.userLeft",
     /**
+     * User role changed.
+     */
+    USER_ROLE_CHANGED: "conference.roleChanged",
+    /**
      * New text message was received.
      */
     MESSAGE_RECEIVED: "conference.messageReceived",
@@ -75,7 +79,11 @@ var JitsiConferenceEvents = {
     /**
      * Indicates that conference has been left.
      */
-    CONFERENCE_LEFT: "conference.left"
+    CONFERENCE_LEFT: "conference.left",
+    /**
+     * Indicates that DTMF support changed.
+     */
+    DTMF_SUPPORT_CHANGED: "conference.dtmfSupportChanged"
 };
 
 module.exports = JitsiConferenceEvents;

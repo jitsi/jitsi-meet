@@ -1,4 +1,5 @@
-
+/* global Strophe, $, $pres, $iq, $msg */
+/* jshint -W101,-W069 */
 var logger = require("jitsi-meet-logger").getLogger(__filename);
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 var Moderator = require("./moderator");
@@ -9,23 +10,24 @@ var parser = {
         var self = this;
         $(packet).children().each(function (index) {
             var tagName = $(this).prop("tagName");
-            var node = {}
-            node["tagName"] = tagName;
+            var node = {
+                tagName: tagName
+            };
             node.attributes = {};
             $($(this)[0].attributes).each(function( index, attr ) {
                 node.attributes[ attr.name ] = attr.value;
-            } );
+            });
             var text = Strophe.getText($(this)[0]);
-            if(text)
+            if (text) {
                 node.value = text;
+            }
             node.children = [];
             nodes.push(node);
             self.packet2JSON($(this), node.children);
-        })
+        });
     },
     JSON2packet: function (nodes, packet) {
-        for(var i = 0; i < nodes.length; i++)
-        {
+        for(var i = 0; i < nodes.length; i++) {
             var node = nodes[i];
             if(!node || node === null){
                 continue;
@@ -67,7 +69,7 @@ function ChatRoom(connection, jid, password, XMPP, options) {
     this.presMap = {};
     this.presHandlers = {};
     this.joined = false;
-    this.role = null;
+    this.role = 'none';
     this.focusMucJid = null;
     this.bridgeIsDown = false;
     this.options = options || {};
@@ -104,7 +106,7 @@ ChatRoom.prototype.updateDeviceAvailability = function (devices) {
             }
         ]
     });
-}
+};
 
 ChatRoom.prototype.join = function (password, tokenPassword) {
     if(password)
@@ -206,7 +208,7 @@ ChatRoom.prototype.onPresence = function (pres) {
     member.jid = tmp.attr('jid');
     member.isFocus = false;
     if (member.jid
-        && member.jid.indexOf(this.moderator.getFocusUserJid() + "/") == 0) {
+        && member.jid.indexOf(this.moderator.getFocusUserJid() + "/") === 0) {
         member.isFocus = true;
     }
 
@@ -255,8 +257,7 @@ ChatRoom.prototype.onPresence = function (pres) {
             if (this.role !== member.role) {
                 this.role = member.role;
 
-                this.eventEmitter.emit(XMPPEvents.LOCAL_ROLE_CHANGED,
-                    member, this.isModerator());
+                this.eventEmitter.emit(XMPPEvents.LOCAL_ROLE_CHANGED, this.role);
             }
         if (!this.joined) {
             this.joined = true;
@@ -279,8 +280,7 @@ ChatRoom.prototype.onPresence = function (pres) {
         // Watch role change:
         if (this.members[from].role != member.role) {
             this.members[from].role = member.role;
-            this.eventEmitter.emit(XMPPEvents.MUC_ROLE_CHANGED,
-                member.role, member.nick);
+            this.eventEmitter.emit(XMPPEvents.MUC_ROLE_CHANGED, from, member.role);
         }
 
         // store the new display name
@@ -345,7 +345,7 @@ ChatRoom.prototype.onPresenceUnavailable = function (pres, from) {
 
         this.xmpp.disposeConference(false);
         this.eventEmitter.emit(XMPPEvents.MUC_DESTROYED, reason);
-        delete this.connection.emuc.rooms[Strophe.getBareJidFromJid(jid)];
+        delete this.connection.emuc.rooms[Strophe.getBareJidFromJid(from)];
         return true;
     }
 
@@ -388,7 +388,7 @@ ChatRoom.prototype.onMessage = function (msg, from) {
     var subject = $(msg).find('>subject');
     if (subject.length) {
         var subjectText = subject.text();
-        if (subjectText || subjectText == "") {
+        if (subjectText || subjectText === "") {
             this.eventEmitter.emit(XMPPEvents.SUBJECT_CHANGED, subjectText);
             logger.log("Subject is changed to " + subjectText);
         }
@@ -413,7 +413,7 @@ ChatRoom.prototype.onMessage = function (msg, from) {
         this.eventEmitter.emit(XMPPEvents.MESSAGE_RECEIVED,
             from, nick, txt, this.myroomjid, stamp);
     }
-}
+};
 
 ChatRoom.prototype.onPresenceError = function (pres, from) {
     if ($(pres).find('>error[type="auth"]>not-authorized[xmlns="urn:ietf:params:xml:ns:xmpp-stanzas"]').length) {
@@ -492,13 +492,13 @@ ChatRoom.prototype.removeFromPresence = function (key) {
 
 ChatRoom.prototype.addPresenceListener = function (name, handler) {
     this.presHandlers[name] = handler;
-}
+};
 
 ChatRoom.prototype.removePresenceListener = function (name) {
     delete this.presHandlers[name];
-}
+};
 
-ChatRoom.prototype.isModerator = function (jid) {
+ChatRoom.prototype.isModerator = function () {
     return this.role === 'moderator';
 };
 
@@ -519,7 +519,7 @@ ChatRoom.prototype.removeStream = function (stream, callback) {
     if(!this.session)
         return;
     this.session.removeStream(stream, callback);
-}
+};
 
 ChatRoom.prototype.switchStreams = function (stream, oldStream, callback, isAudio) {
     if(this.session) {
@@ -541,14 +541,14 @@ ChatRoom.prototype.addStream = function (stream, callback) {
         logger.warn("No conference handler or conference not started yet");
         callback();
     }
-}
+};
 
 ChatRoom.prototype.setVideoMute = function (mute, callback, options) {
     var self = this;
     var localCallback = function (mute) {
         self.sendVideoInfoPresence(mute);
         if(callback)
-            callback(mute)
+            callback(mute);
     };
 
     if(this.session)
@@ -581,7 +581,7 @@ ChatRoom.prototype.addAudioInfoToPresence = function (mute) {
         {attributes:
         {"audions": "http://jitsi.org/jitmeet/audio"},
             value: mute.toString()});
-}
+};
 
 ChatRoom.prototype.sendAudioInfoPresence = function(mute, callback) {
     this.addAudioInfoToPresence(mute);
@@ -598,7 +598,7 @@ ChatRoom.prototype.addVideoInfoToPresence = function (mute) {
         {attributes:
         {"videons": "http://jitsi.org/jitmeet/video"},
             value: mute.toString()});
-}
+};
 
 
 ChatRoom.prototype.sendVideoInfoPresence = function (mute) {
@@ -631,7 +631,7 @@ ChatRoom.prototype.remoteStreamAdded = function(data, sid, thessrc) {
     }
 
     this.eventEmitter.emit(XMPPEvents.REMOTE_STREAM_RECEIVED, data, sid, thessrc);
-}
+};
 
 ChatRoom.prototype.getJidBySSRC = function (ssrc) {
     if (!this.session)

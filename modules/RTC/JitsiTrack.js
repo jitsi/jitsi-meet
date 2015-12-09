@@ -97,6 +97,20 @@ JitsiTrack.prototype.getType = function() {
 };
 
 /**
+ * Check if this is audiotrack.
+ */
+JitsiTrack.prototype.isAudioTrack = function () {
+    return this.getType() === JitsiTrack.AUDIO;
+};
+
+/**
+ * Check if this is videotrack.
+ */
+JitsiTrack.prototype.isVideoTrack = function () {
+    return this.getType() === JitsiTrack.VIDEO;
+};
+
+/**
  * Returns the RTCMediaStream from the browser (?).
  */
 JitsiTrack.prototype.getOriginalStream = function() {
