@@ -316,36 +316,6 @@ function initEtherpad(name) {
     Etherpad.init(name);
 }
 
-UI.notifyPasswordRequired = function (callback) {
-    // password is required
-    Toolbar.lockLockButton();
-    var message = '<h2 data-i18n="dialog.passwordRequired">';
-    message += APP.translation.translateString(
-        "dialog.passwordRequired");
-    message += '</h2>' +
-        '<input name="lockKey" type="text" data-i18n=' +
-        '"[placeholder]dialog.password" placeholder="' +
-        APP.translation.translateString("dialog.password") +
-        '" autofocus>';
-
-    messageHandler.openTwoButtonDialog(null, null, null, message,
-        true,
-        "dialog.Ok",
-        function (e, v, m, f) {},
-        null,
-        function (e, v, m, f) {
-            if (v) {
-                var lockKey = f.lockKey;
-                if (lockKey) {
-                    Toolbar.setSharedKey(lockKey);
-                    callback(lockKey);
-                }
-            }
-        },
-        ':input:first'
-    );
-};
-
 /**
  * The dialpad button is shown iff there is at least one member that supports
  * DTMF (e.g. jigasi).
@@ -636,6 +606,14 @@ UI.markVideoInterrupted = function (interrupted) {
         VideoLayout.onVideoInterrupted();
     } else {
         VideoLayout.onVideoRestored();
+    }
+};
+
+UI.markRoomLocked = function (locked) {
+    if (locked) {
+        Toolbar.lockLockButton();
+    } else {
+        Toolbar.unlockLockButton();
     }
 };
 

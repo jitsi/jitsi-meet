@@ -17,6 +17,8 @@ import RoomnameGenerator from './modules/util/RoomnameGenerator';
 import CQEvents from './service/connectionquality/CQEvents';
 import UIEvents from './service/UI/UIEvents';
 
+import createRoomLocker from './modules/RoomLocker';
+
 const Commands = {
     CONNECTION_QUALITY: "connectionQuality",
     EMAIL: "email"
@@ -53,6 +55,7 @@ function buildRoomName () {
 
     return roomName;
 }
+
 
 const APP = {
     init () {
@@ -156,7 +159,7 @@ function connect() {
 var ConferenceEvents = JitsiMeetJS.events.conference;
 var ConferenceErrors = JitsiMeetJS.errors.conference;
 function initConference(localTracks, connection) {
-    var room = connection.initJitsiConference(APP.conference.roomName, {
+    let room = connection.initJitsiConference(APP.conference.roomName, {
         openSctp: config.openSctp,
         disableAudioLevels: config.disableAudioLevels
     });
@@ -183,14 +186,14 @@ function initConference(localTracks, connection) {
     room.on(ConferenceEvents.CONFERENCE_JOINED, function () {
         localTracks.forEach(function (track) {
             room.addTrack(track);
-            APP.UI.addLocalStream(track);
+            //APP.UI.addLocalStream(track);
         });
     });
 
 
     room.on(ConferenceEvents.USER_JOINED, function (id) {
         // FIXME email???
-        APP.UI.addUser(id);
+        //APP.UI.addUser(id);
     });
     room.on(ConferenceEvents.USER_LEFT, function (id) {
         APP.UI.removeUser(id);
@@ -207,6 +210,21 @@ function initConference(localTracks, connection) {
             if (user) {
                 APP.UI.updateUserRole(user);
             }
+        }
+    });
+
+
+    let roomLocker = createRoomLocker(room);
+    APP.UI.addListener(UIEvents.ROOM_LOCK_CLICKED, function () {
+        if (room.isModerator()) {
+            let promise = roomLocker.isLocked
+                ? roomLocker.askToUnlock()
+                : roomLocker.askToLock();
+            promise.then(function () {
+                APP.UI.markRoomLocked(roomLocker.isLocked);
+            });
+        } else {
+            roomLocker.notifyModeratorRequired();
         }
     });
 
@@ -311,7 +329,12 @@ function initConference(localTracks, connection) {
         APP.UI.setUserAvatar(data.attributes.id, data.value);
     });
 
-
+    let nick = APP.settings.getDisplayName();
+    if (config.useNicks && !nick) {
+        nick = APP.UI.askForNickname();
+        APP.settings.setDisplayName(nick);
+    }
+    room.setDisplayName(nick);
     room.on(ConferenceEvents.DISPLAY_NAME_CHANGED, function (id, displayName) {
         APP.UI.changeDisplayName(id, displayName);
     });
@@ -334,18 +357,26 @@ function initConference(localTracks, connection) {
         }
     );
 
-    return new Promise(function (resolve, reject) {
-        room.on(
-            ConferenceEvents.CONFERENCE_JOINED,
-            function () {
-                resolve();
-            }
+    APP.UI.addListener(UIEvents.USER_INVITED, function (roomUrl) {
+        inviteParticipants(
+            roomUrl,
+            APP.conference.roomName,
+            roomLocker.password,
+            APP.settings.getDisplayName()
         );
+    });
+
+    return new Promise(function (resolve, reject) {
+        room.on(ConferenceEvents.CONFERENCE_JOINED, resolve);
+
+        room.on(ConferenceErrors.ROOM_PASSWORD_REQUIRED, function () {
+            APP.UI.markRoomLocked(true);
+            roomLocker.requirePassword().then(function () {
+                room.join(roomLocker.password);
+            });
+        });
+
         APP.UI.closeAuthenticationDialog();
-        if (config.useNicks) {
-            // FIXME check this
-            var nick = APP.UI.askForNickname();
-        }
         room.join();
     }).catch(function (err) {
         if (err[0] === ConferenceErrors.PASSWORD_REQUIRED) {
@@ -450,4 +481,44 @@ $(window).bind('beforeunload', function () {
     }
 });
 
-module.exports = APP;
+/**
+ * Invite participants to conference.
+ */
+function inviteParticipants(roomUrl, conferenceName, key, nick) {
+    let keyText = "";
+    if (key) {
+        keyText = APP.translation.translateString(
+            "email.sharedKey", {sharedKey: key}
+        );
+    }
+
+    let and = APP.translation.translateString("email.and");
+    let supportedBrowsers = `Chromium, Google Chrome ${and} Opera`;
+
+    let subject = APP.translation.translateString(
+        "email.subject", {appName:interfaceConfig.APP_NAME, conferenceName}
+    );
+
+    let body = APP.translation.translateString(
+        "email.body", {
+            appName:interfaceConfig.APP_NAME,
+            sharedKeyText: keyText,
+            roomUrl,
+            supportedBrowsers
+        }
+    );
+
+    body = body.replace(/\n/g, "%0D%0A");
+
+    if (nick) {
+        body += "%0D%0A%0D%0A" + nick;
+    }
+
+    if (interfaceConfig.INVITATION_POWERED_BY) {
+        body += "%0D%0A%0D%0A--%0D%0Apowered by jitsi.org";
+    }
+
+    window.open(`mailto:?subject=${subject}&body=${body}`, '_blank');
+}
+
+export default APP;

@@ -23,6 +23,8 @@ var UIEvents = {
     VIDEO_MUTED: "UI.video_muted",
     PREZI_CLICKED: "UI.prezi_clicked",
     ETHERPAD_CLICKED: "UI.etherpad_clicked",
+    ROOM_LOCK_CLICKED: "UI.room_lock_clicked",
+    USER_INVITED: "UI.user_invited",
     /**
      * Notifies interested parties when the film strip (remote video's panel)
      * is hidden (toggled) or shown (un-toggled).
