@@ -146,7 +146,9 @@ function getConstraints(um, resolution, bandwidth, fps, desktopStream) {
     // this later can be a problem with some of the tests
     if(RTCBrowserType.isFirefox() && config.firefox_fake_device)
     {
-        constraints.audio = true;
+        // seems to be fixed now, removing this experimental fix, as having
+        // multiple audio tracks brake the tests
+        //constraints.audio = true;
         constraints.fake = true;
     }
 
