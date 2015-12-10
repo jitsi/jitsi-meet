@@ -4,6 +4,7 @@ var logger = require("jitsi-meet-logger").getLogger(__filename);
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 var Moderator = require("./moderator");
 var EventEmitter = require("events");
+var Recorder = require("./recording");
 var JIBRI_XMLNS = 'http://jitsi.org/protocol/jibri';
 
 var parser = {
@@ -265,8 +266,6 @@ ChatRoom.prototype.onPresence = function (pres) {
             }
         if (!this.joined) {
             this.joined = true;
-            this.recording = new Recording(this.eventEmitter, this.connection,
-                this.focusMucJid);
             console.log("(TIME) MUC joined:\t", window.performance.now());
             this.eventEmitter.emit(XMPPEvents.MUC_JOINED, from, member);
         }
@@ -276,6 +275,12 @@ ChatRoom.prototype.onPresence = function (pres) {
         logger.log('entered', from, member);
         if (member.isFocus) {
             this.focusMucJid = from;
+            if(!this.recording) {
+                this.recording = new Recorder(this.eventEmitter, this.connection,
+                    this.focusMucJid);
+                if(this.lastJibri)
+                    this.recording.handleJibriPresence(this.lastJibri);
+            }
             logger.info("Ignore focus: " + from + ", real JID: " + member.jid);
         }
         else {
@@ -304,9 +309,11 @@ ChatRoom.prototype.onPresence = function (pres) {
         this.eventEmitter.emit(XMPPEvents.PRESENCE_STATUS, from, member);
     }
 
-    if(this.recording)
+    if(jibri)
     {
-        this.recording.handleJibriPresence(jibri);
+        this.lastJibri = jibri;
+        if(this.recording)
+            this.recording.handleJibriPresence(jibri);
     }
 
 };
@@ -683,7 +690,7 @@ ChatRoom.prototype.getRecordingURL = function () {
  * @param token token for authentication
  */
 ChatRoom.prototype.toggleRecording = function (token) {
-    if(this.recording && this.moderator.isModerator())
+    if(this.recording/** && this.isModerator()**/)
         this.recording.toggleRecording(token);
 }
 

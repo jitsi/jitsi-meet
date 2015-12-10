@@ -548,7 +548,7 @@ function setupListeners(conference) {
 module.exports = JitsiConference;
 
 }).call(this,"/JitsiConference.js")
-},{"./JitsiConferenceEvents":3,"./JitsiParticipant":8,"./JitsiTrackEvents":10,"./modules/DTMF/JitsiDTMFManager":11,"./modules/RTC/RTC":16,"./modules/statistics/statistics":24,"./service/RTC/RTCEvents":84,"./service/xmpp/XMPPEvents":90,"events":44,"jitsi-meet-logger":48}],2:[function(require,module,exports){
+},{"./JitsiConferenceEvents":3,"./JitsiParticipant":8,"./JitsiTrackEvents":10,"./modules/DTMF/JitsiDTMFManager":11,"./modules/RTC/RTC":16,"./modules/statistics/statistics":24,"./service/RTC/RTCEvents":84,"./service/xmpp/XMPPEvents":91,"events":44,"jitsi-meet-logger":48}],2:[function(require,module,exports){
 /**
  * Enumeration with the errors for the conference.
  * @type {{string: string}}
@@ -2025,7 +2025,7 @@ RTC.prototype.setAudioLevel = function (jid, audioLevel) {
 }
 module.exports = RTC;
 
-},{"../../service/RTC/MediaStreamTypes":83,"../../service/RTC/RTCEvents.js":84,"../../service/desktopsharing/DesktopSharingEventTypes":87,"./DataChannels":12,"./JitsiLocalTrack.js":13,"./JitsiRemoteTrack.js":14,"./JitsiTrack":15,"./RTCBrowserType":17,"./RTCUtils.js":18,"events":44}],17:[function(require,module,exports){
+},{"../../service/RTC/MediaStreamTypes":83,"../../service/RTC/RTCEvents.js":84,"../../service/desktopsharing/DesktopSharingEventTypes":88,"./DataChannels":12,"./JitsiLocalTrack.js":13,"./JitsiRemoteTrack.js":14,"./JitsiTrack":15,"./RTCBrowserType":17,"./RTCUtils.js":18,"events":44}],17:[function(require,module,exports){
 
 var currentBrowser;
 
@@ -3383,7 +3383,7 @@ function initFirefoxExtensionDetection(options) {
 module.exports = ScreenObtainer;
 
 }).call(this,"/modules/RTC/ScreenObtainer.js")
-},{"../../service/desktopsharing/DesktopSharingEventTypes":87,"./RTCBrowserType":17,"./adapter.screenshare":20,"jitsi-meet-logger":48}],20:[function(require,module,exports){
+},{"../../service/desktopsharing/DesktopSharingEventTypes":88,"./RTCBrowserType":17,"./adapter.screenshare":20,"jitsi-meet-logger":48}],20:[function(require,module,exports){
 (function (__filename){
 /*! adapterjs - v0.12.0 - 2015-09-04 */
 var console = require("jitsi-meet-logger").getLogger(__filename);
@@ -5494,7 +5494,7 @@ StatsCollector.prototype.processAudioLevelReport = function () {
 };
 
 }).call(this,"/modules/statistics/RTPStatsCollector.js")
-},{"../../service/statistics/Events":88,"../RTC/RTCBrowserType":17,"jitsi-meet-logger":48}],24:[function(require,module,exports){
+},{"../../service/statistics/Events":89,"../RTC/RTCBrowserType":17,"jitsi-meet-logger":48}],24:[function(require,module,exports){
 /* global require, APP */
 var LocalStats = require("./LocalStatsCollector.js");
 var RTPStats = require("./RTPStatsCollector.js");
@@ -5669,7 +5669,7 @@ Statistics.LOCAL_JID = require("../../service/statistics/constants").LOCAL_JID;
 
 module.exports = Statistics;
 
-},{"../../service/statistics/Events":88,"../../service/statistics/constants":89,"./LocalStatsCollector.js":22,"./RTPStatsCollector.js":23,"events":44}],25:[function(require,module,exports){
+},{"../../service/statistics/Events":89,"../../service/statistics/constants":90,"./LocalStatsCollector.js":22,"./RTPStatsCollector.js":23,"events":44}],25:[function(require,module,exports){
 /**
 /**
  * @const
@@ -5752,6 +5752,7 @@ var logger = require("jitsi-meet-logger").getLogger(__filename);
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 var Moderator = require("./moderator");
 var EventEmitter = require("events");
+var Recorder = require("./recording");
 var JIBRI_XMLNS = 'http://jitsi.org/protocol/jibri';
 
 var parser = {
@@ -6013,8 +6014,6 @@ ChatRoom.prototype.onPresence = function (pres) {
             }
         if (!this.joined) {
             this.joined = true;
-            this.recording = new Recording(this.eventEmitter, this.connection,
-                this.focusMucJid);
             console.log("(TIME) MUC joined:\t", window.performance.now());
             this.eventEmitter.emit(XMPPEvents.MUC_JOINED, from, member);
         }
@@ -6024,6 +6023,12 @@ ChatRoom.prototype.onPresence = function (pres) {
         logger.log('entered', from, member);
         if (member.isFocus) {
             this.focusMucJid = from;
+            if(!this.recording) {
+                this.recording = new Recorder(this.eventEmitter, this.connection,
+                    this.focusMucJid);
+                if(this.lastJibri)
+                    this.recording.handleJibriPresence(this.lastJibri);
+            }
             logger.info("Ignore focus: " + from + ", real JID: " + member.jid);
         }
         else {
@@ -6052,9 +6057,11 @@ ChatRoom.prototype.onPresence = function (pres) {
         this.eventEmitter.emit(XMPPEvents.PRESENCE_STATUS, from, member);
     }
 
-    if(this.recording)
+    if(jibri)
     {
-        this.recording.handleJibriPresence(jibri);
+        this.lastJibri = jibri;
+        if(this.recording)
+            this.recording.handleJibriPresence(jibri);
     }
 
 };
@@ -6431,14 +6438,14 @@ ChatRoom.prototype.getRecordingURL = function () {
  * @param token token for authentication
  */
 ChatRoom.prototype.toggleRecording = function (token) {
-    if(this.recording && this.moderator.isModerator())
+    if(this.recording/** && this.isModerator()**/)
         this.recording.toggleRecording(token);
 }
 
 module.exports = ChatRoom;
 
 }).call(this,"/modules/xmpp/ChatRoom.js")
-},{"../../service/xmpp/XMPPEvents":90,"./moderator":34,"events":44,"jitsi-meet-logger":48}],27:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":91,"./moderator":34,"./recording":35,"events":44,"jitsi-meet-logger":48}],27:[function(require,module,exports){
 (function (__filename){
 /*
  * JingleSession provides an API to manage a single Jingle session. We will
@@ -8207,7 +8214,7 @@ JingleSessionPC.prototype.remoteStreamAdded = function (data, times) {
 module.exports = JingleSessionPC;
 
 }).call(this,"/modules/xmpp/JingleSessionPC.js")
-},{"../../service/xmpp/XMPPEvents":90,"../RTC/RTC":16,"../RTC/RTCBrowserType":17,"./JingleSession":27,"./LocalSSRCReplacement":29,"./SDP":30,"./SDPDiffer":31,"./SDPUtil":32,"./TraceablePeerConnection":33,"async":43,"jitsi-meet-logger":48,"sdp-transform":80}],29:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":91,"../RTC/RTC":16,"../RTC/RTCBrowserType":17,"./JingleSession":27,"./LocalSSRCReplacement":29,"./SDP":30,"./SDPDiffer":31,"./SDPUtil":32,"./TraceablePeerConnection":33,"async":43,"jitsi-meet-logger":48,"sdp-transform":80}],29:[function(require,module,exports){
 (function (__filename){
 /* global $ */
 var logger = require("jitsi-meet-logger").getLogger(__filename);
@@ -10125,7 +10132,7 @@ TraceablePeerConnection.prototype.getStats = function(callback, errback) {
 module.exports = TraceablePeerConnection;
 
 }).call(this,"/modules/xmpp/TraceablePeerConnection.js")
-},{"../../service/xmpp/XMPPEvents":90,"../RTC/RTC":16,"../RTC/RTCBrowserType.js":17,"./LocalSSRCReplacement":29,"jitsi-meet-logger":48,"sdp-interop":66,"sdp-simulcast":73,"sdp-transform":80}],34:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":91,"../RTC/RTC":16,"../RTC/RTCBrowserType.js":17,"./LocalSSRCReplacement":29,"jitsi-meet-logger":48,"sdp-interop":66,"sdp-simulcast":73,"sdp-transform":80}],34:[function(require,module,exports){
 (function (__filename){
 /* global $, $iq, APP, config, messageHandler,
  roomName, sessionTerminated, Strophe, Util */
@@ -10569,7 +10576,108 @@ module.exports = Moderator;
 
 
 }).call(this,"/modules/xmpp/moderator.js")
-},{"../../service/authentication/AuthenticationEvents":86,"../../service/xmpp/XMPPEvents":90,"../settings/Settings":21,"jitsi-meet-logger":48}],35:[function(require,module,exports){
+},{"../../service/authentication/AuthenticationEvents":87,"../../service/xmpp/XMPPEvents":91,"../settings/Settings":21,"jitsi-meet-logger":48}],35:[function(require,module,exports){
+/* global $, $iq, config, connection, focusMucJid, messageHandler,
+   Toolbar, Util */
+var XMPPEvents = require("../../service/XMPP/XMPPEvents");
+
+function Recording(ee, connection, focusMucJid) {
+    this.eventEmitter = ee;
+    this.connection = connection;
+    this.state = "off";
+    this.focusMucJid = focusMucJid;
+    this.url = null;
+    this._isSupported = false;
+}
+
+Recording.prototype.handleJibriPresence = function (jibri) {
+    var attributes = jibri.attributes;
+    if(!attributes)
+        return;
+
+    this._isSupported = (attributes.status && attributes.status !== "undefined");
+    if(this._isSupported) {
+        this.url = attributes.url || null;
+        this.state = attributes.status || "off";
+    }
+    this.eventEmitter.emit(XMPPEvents.RECORDING_STATE_CHANGED);
+};
+
+Recording.prototype.setRecording = function (state, streamId, callback){
+    if (state == this.state){
+        return;
+    }
+
+    var iq = $iq({to: this.focusMucJid, type: 'set'})
+        .c('jibri', {
+            xmlns: 'http://jitsi.org/protocol/jibri',
+            action: (state === 'on') ? 'start' : 'stop',
+            streamId: streamId
+        }).up();
+
+    console.log('Set jibri recording: '+state, iq);
+
+    this.connection.sendIQ(
+        iq,
+        function (result) {
+            var recordingEnabled = $(result).find('jibri').attr('state');
+            console.log('Jibri recording is now: ' + recordingEnabled);
+            //TODO hook us up to further jibri IQs so we can update the status
+            callback(recordingEnabled);
+        },
+        function (error) {
+            console.log('Failed to start recording, error: ', error);
+            callback(this.state);
+        });
+};
+
+Recording.prototype.toggleRecording = function (token) {
+        // Jirecon does not (currently) support a token.
+    if (!token) {
+        console.error("No token passed!");
+        return;
+    }
+
+    var oldState = this.state;
+    var newState = (oldState === 'off' || !oldState) ? 'on' : 'off';
+    var self = this;
+    this.setRecording(newState,
+        token,
+        function (state) {
+            console.log("New recording state: ", state);
+            if (state && state !== oldState) {
+                self.state = state;
+                self.eventEmitter.emit(XMPPEvents.RECORDING_STATE_CHANGED);
+            }
+        }
+    );
+};
+
+/**
+ * Returns true if the recording is supproted and false if not.
+ */
+Recording.prototype.isSupported = function () {
+    return this._isSupported;
+};
+
+/**
+ * Returns null if the recording is not supported, "on" if the recording started
+ * and "off" if the recording is not started.
+ */
+Recording.prototype.getState = function () {
+    return this.state;
+};
+
+/**
+ * Returns the url of the recorded video.
+ */
+Recording.prototype.getURL = function () {
+    return this.url;
+};
+
+module.exports = Recording;
+
+},{"../../service/XMPP/XMPPEvents":86}],36:[function(require,module,exports){
 (function (__filename){
 /* jshint -W117 */
 /* a simple MUC connection plugin
@@ -10666,36 +10774,7 @@ module.exports = function(XMPP) {
 
 
 }).call(this,"/modules/xmpp/strophe.emuc.js")
-},{"./ChatRoom":26,"jitsi-meet-logger":48}],36:[function(require,module,exports){
-/* jshint -W117 */
-
-var jibriHandler;
-module.exports = function() {
-    Strophe.addConnectionPlugin('jibri',
-        {
-            
-            connection: null,
-            init: function (conn) {
-                this.connection = conn;
-
-                this.connection.addHandler(
-                    this.onJibri.bind(this), this.JIBRI_XMLNS, 'iq', 'set',
-                    null, null);
-            },
-            onJibri: function (iq) {
-                console.info("Received a Jibri IQ", iq);
-                if (jibriHandler) {
-                    jibriHandler.onJibri(iq);
-                }
-            },
-            setHandler: function (handler) {
-                jibriHandler = handler;
-            }
-        }
-    );
-};
-
-},{}],37:[function(require,module,exports){
+},{"./ChatRoom":26,"jitsi-meet-logger":48}],37:[function(require,module,exports){
 (function (__filename){
 /* jshint -W117 */
 
@@ -10992,7 +11071,7 @@ module.exports = function(XMPP, eventEmitter) {
 
 
 }).call(this,"/modules/xmpp/strophe.jingle.js")
-},{"../../service/xmpp/XMPPEvents":90,"../RTC/RTCBrowserType":17,"./JingleSessionPC":28,"jitsi-meet-logger":48}],38:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":91,"../RTC/RTCBrowserType":17,"./JingleSessionPC":28,"jitsi-meet-logger":48}],38:[function(require,module,exports){
 /* global Strophe */
 module.exports = function () {
 
@@ -11140,7 +11219,7 @@ module.exports = function (XMPP, eventEmitter) {
 };
 
 }).call(this,"/modules/xmpp/strophe.ping.js")
-},{"../../service/xmpp/XMPPEvents":90,"jitsi-meet-logger":48}],40:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":91,"jitsi-meet-logger":48}],40:[function(require,module,exports){
 (function (__filename){
 /* jshint -W117 */
 var logger = require("jitsi-meet-logger").getLogger(__filename);
@@ -11322,7 +11401,6 @@ function initStrophePlugins(XMPP)
 //    require("./strophe.moderate")(XMPP, eventEmitter);
     require("./strophe.util")();
     require("./strophe.ping")(XMPP, XMPP.eventEmitter);
-    require("./strophe.jibri")();
     require("./strophe.rayo")();
     require("./strophe.logger")();
 }
@@ -11614,7 +11692,7 @@ XMPP.prototype.getLocalSSRC = function (mediaType) {
 module.exports = XMPP;
 
 }).call(this,"/modules/xmpp/xmpp.js")
-},{"../../JitsiConnectionErrors":5,"../../JitsiConnectionEvents":6,"../../service/RTC/RTCEvents":84,"../../service/xmpp/XMPPEvents":90,"../RTC/RTC":16,"./strophe.emuc":35,"./strophe.jibri":36,"./strophe.jingle":37,"./strophe.logger":38,"./strophe.ping":39,"./strophe.rayo":40,"./strophe.util":41,"events":44,"jitsi-meet-logger":48,"pako":49}],43:[function(require,module,exports){
+},{"../../JitsiConnectionErrors":5,"../../JitsiConnectionEvents":6,"../../service/RTC/RTCEvents":84,"../../service/xmpp/XMPPEvents":91,"../RTC/RTC":16,"./strophe.emuc":36,"./strophe.jingle":37,"./strophe.logger":38,"./strophe.ping":39,"./strophe.rayo":40,"./strophe.util":41,"events":44,"jitsi-meet-logger":48,"pako":49}],43:[function(require,module,exports){
 (function (process){
 /*!
  * async
@@ -22719,57 +22797,6 @@ var Resolutions = {
 };
 module.exports = Resolutions;
 },{}],86:[function(require,module,exports){
-var AuthenticationEvents = {
-    /**
-     * Event callback arguments:
-     * function(authenticationEnabled, userIdentity)
-     * authenticationEnabled - indicates whether authentication has been enabled
-     *                         in this session
-     * userIdentity - if user has been logged in then it contains user name. If
-     *                contains 'null' or 'undefined' then user is not logged in.
-     */
-    IDENTITY_UPDATED: "authentication.identity_updated"
-};
-module.exports = AuthenticationEvents;
-
-},{}],87:[function(require,module,exports){
-var DesktopSharingEventTypes = {
-    INIT: "ds.init",
-
-    SWITCHING_DONE: "ds.switching_done",
-
-    NEW_STREAM_CREATED: "ds.new_stream_created",
-    /**
-     * An event which indicates that the jidesha extension for Firefox is
-     * needed to proceed with screen sharing, and that it is not installed.
-     */
-    FIREFOX_EXTENSION_NEEDED: "ds.firefox_extension_needed"
-};
-
-module.exports = DesktopSharingEventTypes;
-
-},{}],88:[function(require,module,exports){
-module.exports = {
-    /**
-     * An event carrying connection statistics.
-     */
-    CONNECTION_STATS: "statistics.connectionstats",
-    /**
-     * FIXME: needs documentation.
-     */
-    AUDIO_LEVEL: "statistics.audioLevel",
-    /**
-     * FIXME: needs documentation.
-     */
-    STOP: "statistics.stop"
-};
-
-},{}],89:[function(require,module,exports){
-var Constants = {
-    LOCAL_JID: 'local'
-};
-module.exports = Constants;
-},{}],90:[function(require,module,exports){
 var XMPPEvents = {
     // Designates an event indicating that the connection to the XMPP server
     // failed.
@@ -22877,5 +22904,58 @@ var XMPPEvents = {
 };
 module.exports = XMPPEvents;
 
-},{}]},{},[7])(7)
+},{}],87:[function(require,module,exports){
+var AuthenticationEvents = {
+    /**
+     * Event callback arguments:
+     * function(authenticationEnabled, userIdentity)
+     * authenticationEnabled - indicates whether authentication has been enabled
+     *                         in this session
+     * userIdentity - if user has been logged in then it contains user name. If
+     *                contains 'null' or 'undefined' then user is not logged in.
+     */
+    IDENTITY_UPDATED: "authentication.identity_updated"
+};
+module.exports = AuthenticationEvents;
+
+},{}],88:[function(require,module,exports){
+var DesktopSharingEventTypes = {
+    INIT: "ds.init",
+
+    SWITCHING_DONE: "ds.switching_done",
+
+    NEW_STREAM_CREATED: "ds.new_stream_created",
+    /**
+     * An event which indicates that the jidesha extension for Firefox is
+     * needed to proceed with screen sharing, and that it is not installed.
+     */
+    FIREFOX_EXTENSION_NEEDED: "ds.firefox_extension_needed"
+};
+
+module.exports = DesktopSharingEventTypes;
+
+},{}],89:[function(require,module,exports){
+module.exports = {
+    /**
+     * An event carrying connection statistics.
+     */
+    CONNECTION_STATS: "statistics.connectionstats",
+    /**
+     * FIXME: needs documentation.
+     */
+    AUDIO_LEVEL: "statistics.audioLevel",
+    /**
+     * FIXME: needs documentation.
+     */
+    STOP: "statistics.stop"
+};
+
+},{}],90:[function(require,module,exports){
+var Constants = {
+    LOCAL_JID: 'local'
+};
+module.exports = Constants;
+},{}],91:[function(require,module,exports){
+arguments[4][86][0].apply(exports,arguments)
+},{"dup":86}]},{},[7])(7)
 });

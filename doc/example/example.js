@@ -1,10 +1,10 @@
 var options = {
     hosts: {
-        domain: 'hristo.jitsi.net',
-        muc: 'conference.hristo.jitsi.net', // FIXME: use XEP-0030
-        bridge: 'jitsi-videobridge.hristo.jitsi.net', // FIXME: use XEP-0030
+        domain: 'chaos.hipchat.me',
+        muc: 'conference.chaos.hipchat.me', // FIXME: use XEP-0030
+        bridge: 'jitsi-videobridge.chaos.hipchat.me', // FIXME: use XEP-0030
     },
-    bosh: '//hristo.jitsi.net/http-bind', // FIXME: use xep-0156 for that
+    bosh: '//chaos.hipchat.me/http-bind', // FIXME: use xep-0156 for that
     clientNode: 'http://jitsi.org/jitsimeet', // The name of client node advertised in XEP-0115 'c' stanza
 }
 
@@ -114,6 +114,11 @@ function onConnectionSuccess(){
       function(userID, audioLevel){
           console.log(userID + " - " + audioLevel);
       });
+    room.on(JitsiMeetJS.events.conference.RECORDING_STATE_CHANGED, function () {
+        console.log(room.isRecordingSupported() + " - " +
+            room.getRecordingState() + " - " +
+            room.getRecordingURL());
+    })
     room.join();
 };
 

@@ -5,11 +5,10 @@ var XMPPEvents = require("../../service/XMPP/XMPPEvents");
 function Recording(ee, connection, focusMucJid) {
     this.eventEmitter = ee;
     this.connection = connection;
-    this.connection.jibri.setHandler(this.handleJibriIq);
     this.state = "off";
     this.focusMucJid = focusMucJid;
     this.url = null;
-    this.isSupported = false;
+    this._isSupported = false;
 }
 
 Recording.prototype.handleJibriPresence = function (jibri) {
@@ -17,8 +16,9 @@ Recording.prototype.handleJibriPresence = function (jibri) {
     if(!attributes)
         return;
 
-    this.isSupported = (attributes.status && attributes.status !== "undefined");
-    if(this.isSupported) {
+    this._isSupported =
+        (attributes.status && attributes.status !== "undefined");
+    if(this._isSupported) {
         this.url = attributes.url || null;
         this.state = attributes.status || "off";
     }
@@ -62,15 +62,14 @@ Recording.prototype.toggleRecording = function (token) {
 
     var oldState = this.state;
     var newState = (oldState === 'off' || !oldState) ? 'on' : 'off';
-
+    var self = this;
     this.setRecording(newState,
         token,
         function (state) {
             console.log("New recording state: ", state);
-            if (state !== oldState) {
-                this.state = state;
-                this.eventEmitter.emit(XMPPEvents.RECORDING_STATE_CHANGED,
-                     state);
+            if (state && state !== oldState) {
+                self.state = state;
+                self.eventEmitter.emit(XMPPEvents.RECORDING_STATE_CHANGED);
             }
         }
     );
@@ -80,7 +79,7 @@ Recording.prototype.toggleRecording = function (token) {
  * Returns true if the recording is supproted and false if not.
  */
 Recording.prototype.isSupported = function () {
-    return this.isSupported;
+    return this._isSupported;
 };
 
 /**
