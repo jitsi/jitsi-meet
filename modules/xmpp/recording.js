@@ -10,12 +10,11 @@ function Recording(ee, connection, focusMucJid) {
     this.focusMucJid = focusMucJid;
     this.url = null;
     this.isRecordingSupported = false;
-};
+}
 
 Recording.prototype.handleJibriPresence = function (jibri) {
-
     this.eventEmitter.emit(XMPPEvents.RECORDING_STATE_CHANGED);
-}
+};
 
 Recording.prototype.setRecording = function (state, streamId, callback){
     if (state == this.state){
@@ -41,33 +40,31 @@ Recording.prototype.setRecording = function (state, streamId, callback){
         },
         function (error) {
             console.log('Failed to start recording, error: ', error);
-            callback(recordingEnabled);
+            callback(this.state);
         });
-}
-
+};
 
 Recording.prototype.toggleRecording = function (token) {
         // Jirecon does not (currently) support a token.
-        if (!token) {
-            console.error("No token passed!");
-            return;
-        }
-
-        var oldState = this.state;
-        var newState = (oldState === 'off' || !oldState) ? 'on' : 'off';
-
-        this.setRecording(newState,
-            token,
-            function (state) {
-                console.log("New recording state: ", state);
-                if (state !== oldState) {
-                    this.state = state;
-                    this.eventEmitter.emit(XMPPEvents.RECORDING_STATE_CHANGED, state);
-                }
-            }
-        );
+    if (!token) {
+        console.error("No token passed!");
+        return;
     }
 
+    var oldState = this.state;
+    var newState = (oldState === 'off' || !oldState) ? 'on' : 'off';
+
+    this.setRecording(newState,
+        token,
+        function (state) {
+            console.log("New recording state: ", state);
+            if (state !== oldState) {
+                this.state = state;
+                this.eventEmitter.emit(XMPPEvents.RECORDING_STATE_CHANGED,
+                     state);
+            }
+        }
+    );
 };
 
 module.exports = Recording;
