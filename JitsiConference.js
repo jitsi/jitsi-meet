@@ -419,9 +419,9 @@ JitsiConference.prototype.sendTones = function (tones, duration, pause) {
  * Returns true if the recording is supproted and false if not.
  */
 JitsiConference.prototype.isRecordingSupported = function () {
-    // if(this.room)
-    //     return this.room.isRecordingSupported();
-    // return false;
+    if(this.room)
+        return this.room.isRecordingSupported();
+    return false;
 };
 
 /**
@@ -429,18 +429,18 @@ JitsiConference.prototype.isRecordingSupported = function () {
  * and "off" if the recording is not started.
  */
 JitsiConference.prototype.getRecordingState = function () {
-    // if(this.room)
-    //     return this.room.getRecordingState();
-    // return "off";
+    if(this.room)
+        return this.room.getRecordingState();
+    return "off";
 }
 
 /**
  * Returns the url of the recorded video.
  */
 JitsiConference.prototype.getRecordingURL = function () {
-    // if(this.room)
-    //     return this.room.getRecordingURL();
-    // return null;
+    if(this.room)
+        return this.room.getRecordingURL();
+    return null;
 }
 
 /**
@@ -448,8 +448,8 @@ JitsiConference.prototype.getRecordingURL = function () {
  * @param token a token for authentication.
  */
 JitsiConference.prototype.toggleRecording = function (token) {
-    // if(this.room)
-    //     this.room.toggleRecording(token);
+    if(this.room)
+        this.room.toggleRecording(token);
 }
 
 /**
@@ -492,6 +492,9 @@ function setupListeners(conference) {
 
     conference.room.addListener(XMPPEvents.CONNECTION_INTERRUPTED, function () {
         conference.eventEmitter.emit(JitsiConferenceEvents.CONNECTION_INTERRUPTED);
+    });
+    conference.room.addListener(XMPPEvents.RECORDING_STATE_CHANGED, function () {
+        conference.eventEmitter.emit(JitsiConferenceEvents.RECORDING_STATE_CHANGED);
     });
 
     conference.room.addListener(XMPPEvents.CONNECTION_RESTORED, function () {

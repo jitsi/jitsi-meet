@@ -9,10 +9,19 @@ function Recording(ee, connection, focusMucJid) {
     this.state = "off";
     this.focusMucJid = focusMucJid;
     this.url = null;
-    this.isRecordingSupported = false;
+    this.isSupported = false;
 }
 
 Recording.prototype.handleJibriPresence = function (jibri) {
+    var attributes = jibri.attributes;
+    if(!attributes)
+        return;
+
+    this.isSupported = (attributes.status && attributes.status !== "undefined");
+    if(this.isSupported) {
+        this.url = attributes.url || null;
+        this.state = attributes.status || "off";
+    }
     this.eventEmitter.emit(XMPPEvents.RECORDING_STATE_CHANGED);
 };
 
@@ -66,5 +75,27 @@ Recording.prototype.toggleRecording = function (token) {
         }
     );
 };
+
+/**
+ * Returns true if the recording is supproted and false if not.
+ */
+Recording.prototype.isSupported = function () {
+    return this.isSupported;
+};
+
+/**
+ * Returns null if the recording is not supported, "on" if the recording started
+ * and "off" if the recording is not started.
+ */
+Recording.prototype.getState = function () {
+    return this.state;
+}
+
+/**
+ * Returns the url of the recorded video.
+ */
+Recording.prototype.getURL = function () {
+    return this.url;
+}
 
 module.exports = Recording;
