@@ -31,11 +31,13 @@ Recording.prototype.setRecording = function (state, streamId, callback,
         return;
     }
 
+    // FIXME jibri does not accept IQ without 'url' attribute set ?
+
     var iq = $iq({to: this.focusMucJid, type: 'set'})
         .c('jibri', {
             xmlns: 'http://jitsi.org/protocol/jibri',
             action: (state === 'on') ? 'start' : 'stop',
-            streamId: streamId
+            streamid: streamId
         }).up();
 
     console.log('Set jibri recording: '+state, iq);
