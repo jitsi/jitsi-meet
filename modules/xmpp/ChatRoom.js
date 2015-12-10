@@ -691,7 +691,10 @@ ChatRoom.prototype.getRecordingURL = function () {
  */
 ChatRoom.prototype.toggleRecording = function (token) {
     if(this.recording/** && this.isModerator()**/)
-        this.recording.toggleRecording(token);
+        return this.recording.toggleRecording(token);
+
+    return new Promise(function(resolve, reject){
+        reject(new Error("The conference is not created yet!"))});
 }
 
 module.exports = ChatRoom;

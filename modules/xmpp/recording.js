@@ -1,5 +1,5 @@
 /* global $, $iq, config, connection, focusMucJid, messageHandler,
-   Toolbar, Util */
+   Toolbar, Util, Promise */
 var XMPPEvents = require("../../service/XMPP/XMPPEvents");
 
 function Recording(ee, connection, focusMucJid) {
@@ -25,7 +25,8 @@ Recording.prototype.handleJibriPresence = function (jibri) {
     this.eventEmitter.emit(XMPPEvents.RECORDING_STATE_CHANGED);
 };
 
-Recording.prototype.setRecording = function (state, streamId, callback){
+Recording.prototype.setRecording = function (state, streamId, callback,
+    errCallback){
     if (state == this.state){
         return;
     }
@@ -42,37 +43,43 @@ Recording.prototype.setRecording = function (state, streamId, callback){
     this.connection.sendIQ(
         iq,
         function (result) {
-            var recordingEnabled = $(result).find('jibri').attr('state');
-            console.log('Jibri recording is now: ' + recordingEnabled);
-            //TODO hook us up to further jibri IQs so we can update the status
-            callback(recordingEnabled);
+            callback($(result).find('jibri').attr('state'),
+            $(result).find('jibri').attr('url'));
         },
         function (error) {
             console.log('Failed to start recording, error: ', error);
-            callback(this.state);
+            errCallback(error);
         });
 };
 
 Recording.prototype.toggleRecording = function (token) {
-        // Jirecon does not (currently) support a token.
-    if (!token) {
-        console.error("No token passed!");
-        return;
-    }
-
-    var oldState = this.state;
-    var newState = (oldState === 'off' || !oldState) ? 'on' : 'off';
     var self = this;
-    this.setRecording(newState,
-        token,
-        function (state) {
-            console.log("New recording state: ", state);
-            if (state && state !== oldState) {
-                self.state = state;
-                self.eventEmitter.emit(XMPPEvents.RECORDING_STATE_CHANGED);
-            }
+    return new Promise(function(resolve, reject) {
+        if (!token) {
+            console.error("No token passed!");
+            reject(new Error("No token passed!"));
         }
-    );
+
+        var oldState = self.state;
+        var newState = (oldState === 'off' || !oldState) ? 'on' : 'off';
+
+        self.setRecording(newState,
+            token,
+            function (state, url) {
+                console.log("New recording state: ", state);
+                if (state && state !== oldState) {
+                    self.state = state;
+                    self.url = url;
+                    resolve();
+                } else {
+                    reject(new Error("State not changed!"));
+                }
+            },
+            function (error) {
+                reject(error);
+            }
+        );
+    });
 };
 
 /**
