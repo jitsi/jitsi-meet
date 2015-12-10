@@ -67,6 +67,7 @@ const APP = {
             membersCount: 0,
             audioMuted: false,
             videoMuted: false,
+            sipGatewayEnabled: false, //FIXME handle
             isLocalId (id) {
                 return this.localId === id;
             },
@@ -361,6 +362,57 @@ function initConference(localTracks, connection) {
             roomLocker.password,
             APP.settings.getDisplayName()
         );
+    });
+
+    // call hangup
+    APP.UI.addListener(UIEvents.HANGUP, function () {
+        APP.UI.requestFeedback().then(function () {
+            connection.disconnect();
+
+            if (config.enableWelcomePage) {
+                setTimeout(function() {
+                    window.localStorage.welcomePageDisabled = false;
+                    window.location.pathname = "/";
+                }, 3000);
+            }
+        });
+    });
+
+    // logout
+    APP.UI.addListener(UIEvents.LOGOUT, function () {
+        // FIXME handle logout
+        // APP.xmpp.logout(function (url) {
+        //     if (url) {
+        //         window.location.href = url;
+        //     } else {
+        //         hangup();
+        //     }
+        // });
+    });
+
+    APP.UI.addListener(UIEvents.SIP_DIAL, function (sipNumber) {
+        // FIXME add dial
+        // APP.xmpp.dial(
+        //     sipNumber,
+        //     'fromnumber',
+        //     APP.conference.roomName,
+        //     roomLocker.password
+        // );
+    });
+
+
+    // Starts or stops the recording for the conference.
+    APP.UI.addListener(UIEvents.RECORDING_TOGGLE, function (predefinedToken) {
+        // FIXME recording
+        // APP.xmpp.toggleRecording(function (callback) {
+        //     if (predefinedToken) {
+        //         callback(predefinedToken);
+        //         return;
+        //     }
+
+        //     APP.UI.requestRecordingToken().then(callback);
+
+        // }, APP.UI.updateRecordingState);
     });
 
     room.on(ConferenceEvents.DTMF_SUPPORT_CHANGED, function (isDTMFSupported) {

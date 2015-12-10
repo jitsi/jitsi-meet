@@ -3,7 +3,6 @@
 var messageHandler = require("../util/MessageHandler");
 var UIUtil = require("../util/UIUtil");
 var AnalyticsAdapter = require("../../statistics/AnalyticsAdapter");
-var Feedback = require("../Feedback");
 var UIEvents = require("../../../service/UI/UIEvents");
 
 var roomUrl = null;
@@ -110,7 +109,7 @@ const buttonHandlers = {
     },
     "toolbar_button_record": function () {
         AnalyticsAdapter.sendEvent('toolbar.recording.toggled');
-        toggleRecording();
+        emitter.emit(UIEvents.RECORDING_TOGGLE);
     },
     "toolbar_button_security": function () {
         emitter.emit(UIEvents.ROOM_LOCK_CLICKED);
@@ -146,7 +145,7 @@ const buttonHandlers = {
     },
     "toolbar_button_sip": function () {
         AnalyticsAdapter.sendEvent('toolbar.sip.clicked');
-        callSipButtonClicked();
+        showSipNumberInput();
     },
     "toolbar_button_dialpad": function () {
         AnalyticsAdapter.sendEvent('toolbar.sip.dialpad.clicked');
@@ -158,7 +157,7 @@ const buttonHandlers = {
     },
     "toolbar_button_hangup": function () {
         AnalyticsAdapter.sendEvent('toolbar.hangup');
-        hangup();
+        emitter.emit(UIEvents.HANGUP);
     },
     "toolbar_button_login": function () {
         AnalyticsAdapter.sendEvent('toolbar.authenticate.login.clicked');
@@ -176,15 +175,10 @@ const buttonHandlers = {
             "dialog.Yes",
             function (evt, yes) {
                 if (yes) {
-                    APP.xmpp.logout(function (url) {
-                        if (url) {
-                            window.location.href = url;
-                        } else {
-                            hangup();
-                        }
-                    });
+                    emitter.emit(UIEvents.LOGOUT);
                 }
-            });
+            }
+        );
     }
 };
 var defaultToolbarButtons = {
@@ -201,85 +195,11 @@ var defaultToolbarButtons = {
     'hangup': '#toolbar_button_hangup'
 };
 
-/**
- * Hangs up this call.
- */
-function hangup() {
-    var conferenceDispose = function () {
-        APP.xmpp.disposeConference();
-
-        if (config.enableWelcomePage) {
-            setTimeout(function() {
-                window.localStorage.welcomePageDisabled = false;
-                window.location.pathname = "/";
-            }, 3000);
-        }
-    };
-
-    if (Feedback.isEnabled()) {
-        // If the user has already entered feedback, we'll show the window and
-        // immidiately start the conference dispose timeout.
-        if (Feedback.feedbackScore > 0) {
-            Feedback.openFeedbackWindow();
-            conferenceDispose();
-
-        }
-        // Otherwise we'll wait for user's feedback.
-        else
-            Feedback.openFeedbackWindow(conferenceDispose);
-    }
-    else {
-        conferenceDispose();
-
-        // If the feedback functionality isn't enabled we show a thank you
-        // dialog.
-        messageHandler.openMessageDialog(null, null, null,
-            APP.translation.translateString("dialog.thankYou",
-                {appName:interfaceConfig.APP_NAME}));
-    }
-}
-
-/**
- * Starts or stops the recording for the conference.
- */
-function toggleRecording(predefinedToken) {
-    APP.xmpp.toggleRecording(function (callback) {
-        if (predefinedToken) {
-            callback(UIUtil.escapeHtml(predefinedToken));
-            return;
-        }
-
-        var msg = APP.translation.generateTranslationHTML(
-            "dialog.recordingToken");
-        var token = APP.translation.translateString("dialog.token");
-        messageHandler.openTwoButtonDialog(null, null, null,
-                '<h2>' + msg + '</h2>' +
-                '<input name="recordingToken" type="text" ' +
-                ' data-i18n="[placeholder]dialog.token" ' +
-                'placeholder="' + token + '" autofocus>',
-            false,
-            "dialog.Save",
-            function (e, v, m, f) {
-                if (v) {
-                    var token = f.recordingToken;
-
-                    if (token) {
-                        callback(UIUtil.escapeHtml(token));
-                    }
-                }
-            },
-            null,
-            function () { },
-            ':input:first'
-        );
-    }, setRecordingButtonState);
-}
-
 function dialpadButtonClicked() {
     //TODO show the dialpad box
 }
 
-function callSipButtonClicked() {
+function showSipNumberInput () {
     let defaultNumber = config.defaultSipNumber
         ? config.defaultSipNumber
         : '';
@@ -291,11 +211,8 @@ function callSipButtonClicked() {
          <input name="sipNumber" type="text" value="${defaultNumber}" autofocus>`,
         false, "dialog.Dial",
         function (e, v, m, f) {
-            if (v) {
-                var numberInput = f.sipNumber;
-                if (numberInput) {
-                    APP.xmpp.dial(numberInput, 'fromnumber', APP.conference.roomName, APP.conference.sharedKey);
-                }
+            if (v && f.sipNumber) {
+                emitter.emit(UIEvents.SIP_DIAL, f.sipNumber);
             }
         },
         null, null, ':input:first'
@@ -379,7 +296,7 @@ const Toolbar = {
     // to start automatically recording
     checkAutoRecord () {
         if (UIUtil.isButtonEnabled('recording') && config.autoRecord) {
-            toggleRecording(config.autoRecordToken);
+            emitter.emit(UIEvents.RECORDING_TOGGLE, UIUtil.escapeHtml(config.autoRecordToken));
         }
     },
 
@@ -394,7 +311,7 @@ const Toolbar = {
 
     // Shows or hides SIP calls button
     showSipCallButton (show) {
-        if (APP.xmpp.isSipGatewayEnabled() && UIUtil.isButtonEnabled('sip') && show) {
+        if (APP.conference.sipGatewayEnabled && UIUtil.isButtonEnabled('sip') && show) {
             $('#toolbar_button_sip').css({display: "inline-block"});
         } else {
             $('#toolbar_button_sip').css({display: "none"});
@@ -460,6 +377,10 @@ const Toolbar = {
         } else {
             button.removeClass("glow");
         }
+    },
+
+    updateRecordingState (state) {
+        setRecordingButtonState(state);
     }
 };
 

@@ -32,27 +32,26 @@ var eventEmitter = new EventEmitter();
 UI.eventEmitter = eventEmitter;
 
 function promptDisplayName() {
-    var message = '<h2 data-i18n="dialog.displayNameRequired">';
-    message += APP.translation.translateString(
-        "dialog.displayNameRequired");
-    message += '</h2>' +
-        '<input name="displayName" type="text" data-i18n=' +
-        '"[placeholder]defaultNickname" placeholder="' +
-        APP.translation.translateString(
-            "defaultNickname", {name: "Jane Pink"}) +
-        '" autofocus>';
+    let nickRequiredMsg = APP.translation.translateString("dialog.displayNameRequired");
+    let defaultNickMsg = APP.translation.translateString(
+        "defaultNickname", {name: "Jane Pink"}
+    );
+    let message = `
+        <h2 data-i18n="dialog.displayNameRequired">${nickRequiredMsg}</h2>
+        <input name="displayName" type="text"
+               data-i18n="[placeholder]defaultNickname"
+               placeholder="${defaultNickMsg}" autofocus>`;
 
-    var buttonTxt
-        = APP.translation.generateTranslationHTML("dialog.Ok");
-    var buttons = [];
-    buttons.push({title: buttonTxt, value: "ok"});
+    let buttonTxt = APP.translation.generateTranslationHTML("dialog.Ok");
+    let buttons = [{title: buttonTxt, value: "ok"}];
 
-    messageHandler.openDialog(null, message,
+    messageHandler.openDialog(
+        null, message,
         true,
         buttons,
         function (e, v, m, f) {
             if (v == "ok") {
-                var displayName = f.displayName;
+                let displayName = f.displayName;
                 if (displayName) {
                     UI.inputDisplayNameHandler(displayName);
                     return true;
@@ -61,16 +60,17 @@ function promptDisplayName() {
             e.preventDefault();
         },
         function () {
-            var form  = $.prompt.getPrompt();
-            var input = form.find("input[name='displayName']");
+            let form  = $.prompt.getPrompt();
+            let input = form.find("input[name='displayName']");
             input.focus();
-            var button = form.find("button");
+            let button = form.find("button");
             button.attr("disabled", "disabled");
             input.keyup(function () {
-                if(!input.val())
-                    button.attr("disabled", "disabled");
-                else
+                if (input.val()) {
                     button.removeAttr("disabled");
+                } else {
+                    button.attr("disabled", "disabled");
+                }
             });
         }
     );
@@ -689,5 +689,59 @@ UI.inviteParticipants = function (roomUrl, conferenceName, key, nick) {
     window.open(`mailto:?subject=${subject}&body=${body}`, '_blank');
 };
 
+UI.requestFeedback = function () {
+    return new Promise(function (resolve, reject) {
+        if (Feedback.isEnabled()) {
+            // If the user has already entered feedback, we'll show the window and
+            // immidiately start the conference dispose timeout.
+            if (Feedback.feedbackScore > 0) {
+                Feedback.openFeedbackWindow();
+                resolve();
+
+            } else { // Otherwise we'll wait for user's feedback.
+                Feedback.openFeedbackWindow(resolve);
+            }
+        } else {
+            // If the feedback functionality isn't enabled we show a thank you
+            // dialog.
+            messageHandler.openMessageDialog(
+                null, null, null,
+                APP.translation.translateString(
+                    "dialog.thankYou", {appName:interfaceConfig.APP_NAME}
+                )
+            );
+            resolve();
+        }
+    });
+};
+
+UI.requestRecordingToken = function () {
+    let msg = APP.translation.generateTranslationHTML("dialog.recordingToken");
+    let token = APP.translation.translateString("dialog.token");
+    return new Promise(function (resolve, reject) {
+        messageHandler.openTwoButtonDialog(
+            null, null, null,
+            `<h2>${msg}</h2>
+             <input name="recordingToken" type="text"
+                    data-i18n="[placeholder]dialog.token"
+                    placeholder="${token}" autofocus>`,
+            false, "dialog.Save",
+            function (e, v, m, f) {
+                if (v && f.recordingToken) {
+                    resolve(UIUtil.escapeHtml(f.recordingToken));
+                } else {
+                    reject();
+                }
+            },
+            null,
+            function () { },
+            ':input:first'
+        );
+    });
+};
+
+UI.updateRecordingState = function (state) {
+    Toolbar.updateRecordingState(state);
+};
 
 module.exports = UI;
