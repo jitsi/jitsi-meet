@@ -76,16 +76,18 @@ SDP.prototype.getMediaSsrcMap = function() {
  * @param ssrc the ssrc to check.
  * @returns {boolean} <tt>true</tt> if this SDP contains given SSRC.
  */
-SDP.prototype.containsSSRC = function(ssrc) {
+SDP.prototype.containsSSRC = function (ssrc) {
+    // FIXME this code is really strange - improve it if you can
     var medias = this.getMediaSsrcMap();
-    Object.keys(medias).forEach(function(mediaindex){
-        var media = medias[mediaindex];
-        //logger.log("Check", channel, ssrc);
-        if(Object.keys(media.ssrcs).indexOf(ssrc) != -1){
-            return true;
+    var result = false;
+    Object.keys(medias).forEach(function (mediaindex) {
+        if (result)
+            return;
+        if (medias[mediaindex].ssrcs[ssrc]) {
+            result = true;
         }
     });
-    return false;
+    return result;
 };
 
 // remove iSAC and CN from SDP

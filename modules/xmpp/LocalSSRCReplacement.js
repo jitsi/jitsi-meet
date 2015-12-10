@@ -51,11 +51,11 @@ var isEnabled = !RTCBrowserType.isFirefox();
 var localVideoSSRC;
 
 /**
- * SSRC, msid, mslabel, label used for recvonly video stream when we have no local camera.
+ * SSRC used for recvonly video stream when we have no local camera.
  * This is in order to tell Chrome what SSRC should be used in RTCP requests
  * instead of 1.
  */
-var localRecvOnlySSRC, localRecvOnlyMSID, localRecvOnlyMSLabel, localRecvOnlyLabel;
+var localRecvOnlySSRC;
 
 /**
  * cname for <tt>localRecvOnlySSRC</tt>
@@ -128,30 +128,19 @@ var storeLocalVideoSSRC = function (jingleIq) {
 };
 
 /**
- * Generates new label/mslabel attribute
- * @returns {string} label/mslabel attribute
- */
-function generateLabel() {
-    return RandomUtil.randomHexString(8) + "-" + RandomUtil.randomHexString(4) +
-        "-" + RandomUtil.randomHexString(4) + "-" +
-        RandomUtil.randomHexString(4) + "-" + RandomUtil.randomHexString(12);
-}
-
-/**
- * Generates new SSRC, CNAME, mslabel, label and msid for local video recvonly stream.
+ * Generates new SSRC for local video recvonly stream.
  * FIXME what about eventual SSRC collision ?
  */
 function generateRecvonlySSRC() {
+
     localRecvOnlySSRC =
-        Math.random().toString(10).substring(2, 11);
+        localVideoSSRC ?
+            localVideoSSRC : Math.random().toString(10).substring(2, 11);
+
     localRecvOnlyCName =
         Math.random().toString(36).substring(2);
-    localRecvOnlyMSLabel = generateLabel();
-    localRecvOnlyLabel = generateLabel();
-    localRecvOnlyMSID = localRecvOnlyMSLabel + " " + localRecvOnlyLabel;
 
-
-        logger.info(
+    logger.info(
         "Generated local recvonly SSRC: " + localRecvOnlySSRC +
         ", cname: " + localRecvOnlyCName);
 }
@@ -193,51 +182,41 @@ var LocalSSRCReplacement = {
 
         // IF we have local video SSRC stored make sure it is replaced
         // with old SSRC
-        if (localVideoSSRC) {
-            var newSdp = new SDP(localDescription.sdp);
-            if (newSdp.media[1].indexOf("a=ssrc:") !== -1 &&
-                !newSdp.containsSSRC(localVideoSSRC)) {
-                // Get new video SSRC
-                var map = newSdp.getMediaSsrcMap();
-                var videoPart = map[1];
-                var videoSSRCs = videoPart.ssrcs;
-                var newSSRC = Object.keys(videoSSRCs)[0];
+        var sdp = new SDP(localDescription.sdp);
+        if (sdp.media.length < 2)
+            return;
 
-                logger.info(
-                    "Replacing new video SSRC: " + newSSRC +
-                    " with " + localVideoSSRC);
+        if (localVideoSSRC && sdp.media[1].indexOf("a=ssrc:") !== -1 &&
+            !sdp.containsSSRC(localVideoSSRC)) {
+            // Get new video SSRC
+            var map = sdp.getMediaSsrcMap();
+            var videoPart = map[1];
+            var videoSSRCs = videoPart.ssrcs;
+            var newSSRC = Object.keys(videoSSRCs)[0];
 
-                localDescription.sdp =
-                    newSdp.raw.replace(
-                        new RegExp('a=ssrc:' + newSSRC, 'g'),
-                        'a=ssrc:' + localVideoSSRC);
-            }
-        } else {
+            logger.info(
+                "Replacing new video SSRC: " + newSSRC +
+                " with " + localVideoSSRC);
+
+            localDescription.sdp =
+                sdp.raw.replace(
+                    new RegExp('a=ssrc:' + newSSRC, 'g'),
+                    'a=ssrc:' + localVideoSSRC);
+        }
+        else if (sdp.media[1].indexOf('a=ssrc:') === -1 &&
+                 sdp.media[1].indexOf('a=recvonly') !== -1) {
             // Make sure we have any SSRC for recvonly video stream
-            var sdp = new SDP(localDescription.sdp);
-
-            if (sdp.media[1] && sdp.media[1].indexOf('a=ssrc:') === -1 &&
-                sdp.media[1].indexOf('a=recvonly') !== -1) {
-
-                if (!localRecvOnlySSRC) {
-                    generateRecvonlySSRC();
-                }
-                localVideoSSRC = localRecvOnlySSRC;
-
-                logger.info('No SSRC in video recvonly stream' +
-                             ' - adding SSRC: ' + localRecvOnlySSRC);
-
-                sdp.media[1] += 'a=ssrc:' + localRecvOnlySSRC +
-                                ' cname:' + localRecvOnlyCName + '\r\n' +
-                                'a=ssrc:' + localRecvOnlySSRC +
-                                ' msid:' + localRecvOnlyMSID + '\r\n' +
-                                'a=ssrc:' + localRecvOnlySSRC +
-                                ' mslabel:' + localRecvOnlyMSLabel + '\r\n' +
-                                'a=ssrc:' + localRecvOnlySSRC +
-                                ' label:' + localRecvOnlyLabel + '\r\n';
-
-                localDescription.sdp = sdp.session + sdp.media.join('');
+            if (!localRecvOnlySSRC) {
+                generateRecvonlySSRC();
             }
+
+            logger.info('No SSRC in video recvonly stream' +
+                         ' - adding SSRC: ' + localRecvOnlySSRC);
+
+            sdp.media[1] += 'a=ssrc:' + localRecvOnlySSRC +
+                            ' cname:' + localRecvOnlyCName + '\r\n';
+
+            localDescription.sdp = sdp.session + sdp.media.join('');
         }
         return localDescription;
     },
