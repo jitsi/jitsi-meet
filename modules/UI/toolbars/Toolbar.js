@@ -1,20 +1,20 @@
 /* global APP, $, config, interfaceConfig */
 /* jshint -W101 */
-var messageHandler = require("../util/MessageHandler");
-var UIUtil = require("../util/UIUtil");
-var AnalyticsAdapter = require("../../statistics/AnalyticsAdapter");
-var UIEvents = require("../../../service/UI/UIEvents");
+import messageHandler from '../util/MessageHandler';
+import UIUtil from '../util/UIUtil';
+import AnalyticsAdapter from '../../statistics/AnalyticsAdapter';
+import UIEvents from '../../../service/UI/UIEvents';
 
-var roomUrl = null;
-var recordingToaster = null;
-var emitter = null;
+let roomUrl = null;
+let recordingToaster = null;
+let emitter = null;
 
 
 /**
  * Opens the invite link dialog.
  */
 function openLinkDialog () {
-    var inviteAttributes;
+    let inviteAttributes;
 
     if (roomUrl === null) {
         inviteAttributes = 'data-i18n="[value]roomUrlDefaultMsg" value="' +
@@ -181,18 +181,18 @@ const buttonHandlers = {
         );
     }
 };
-var defaultToolbarButtons = {
-    'microphone': '#toolbar_button_mute',
-    'camera': '#toolbar_button_camera',
-    'desktop': '#toolbar_button_desktopsharing',
-    'security': '#toolbar_button_security',
-    'invite': '#toolbar_button_link',
-    'chat': '#toolbar_button_chat',
-    'prezi': '#toolbar_button_prezi',
-    'etherpad': '#toolbar_button_etherpad',
-    'fullscreen': '#toolbar_button_fullScreen',
-    'settings': '#toolbar_button_settings',
-    'hangup': '#toolbar_button_hangup'
+const defaultToolbarButtons = {
+  'microphone': '#toolbar_button_mute',
+  'camera':     '#toolbar_button_camera',
+  'desktop':    '#toolbar_button_desktopsharing',
+  'security':   '#toolbar_button_security',
+  'invite':     '#toolbar_button_link',
+  'chat':       '#toolbar_button_chat',
+  'prezi':      '#toolbar_button_prezi',
+  'etherpad':   '#toolbar_button_etherpad',
+  'fullscreen': '#toolbar_button_fullScreen',
+  'settings':   '#toolbar_button_settings',
+  'hangup':     '#toolbar_button_hangup'
 };
 
 function dialpadButtonClicked() {
@@ -222,10 +222,12 @@ function showSipNumberInput () {
 const Toolbar = {
     init (eventEmitter) {
         emitter = eventEmitter;
+
         UIUtil.hideDisabledButtons(defaultToolbarButtons);
 
-        for(var k in buttonHandlers)
-            $("#" + k).click(buttonHandlers[k]);
+        Object.keys(buttonHandlers).forEach(
+            buttonId => $(`#${buttonId}`).click(buttonHandlers[buttonId])
+        );
     },
 
     /**
@@ -235,7 +237,7 @@ const Toolbar = {
         roomUrl = newRoomUrl;
 
         // If the invite dialog has been already opened we update the information.
-        var inviteLink = document.getElementById('inviteLinkRef');
+        let inviteLink = document.getElementById('inviteLinkRef');
         if (inviteLink) {
             inviteLink.value = roomUrl;
             inviteLink.select();
@@ -333,7 +335,7 @@ const Toolbar = {
      */
     setAuthenticatedIdentity (authIdentity) {
         if (authIdentity) {
-            var selector = $('#toolbar_auth_identity');
+            let selector = $('#toolbar_auth_identity');
             selector.css({display: "list-item"});
             selector.text(authIdentity);
         } else {
@@ -371,7 +373,7 @@ const Toolbar = {
      * @param active the state of the desktop streaming.
      */
     changeDesktopSharingButtonState (active) {
-        var button = $("#toolbar_button_desktopsharing");
+        let button = $("#toolbar_button_desktopsharing");
         if (active) {
             button.addClass("glow");
         } else {

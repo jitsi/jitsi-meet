@@ -900,12 +900,9 @@ var VideoLayout = (function (my) {
     };
 
     /**
-     * Updates the video size and position when the film strip is toggled.
-     *
-     * @param isToggled indicates if the film strip is toggled or not. True
-     * would mean that the film strip is hidden, false would mean it's shown
+     * Updates the video size and position.
      */
-    my.onFilmStripToggled = function(isToggled) {
+    my.updateLargeVideoSize = function () {
         LargeVideo.updateVideoSizeAndPosition();
         LargeVideo.position(null, null, null, null, true);
     };

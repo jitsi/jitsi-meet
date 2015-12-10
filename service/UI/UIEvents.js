@@ -29,12 +29,9 @@ export default {
     AUTH_CLICKED: "UI.auth_clicked",
     TOGGLE_CHAT: "UI.toggle_chat",
     TOGGLE_SETTINGS: "UI.toggle_settings",
+    TOGGLE_CONTACT_LIST: "UI.toggle_contact_list",
+    TOGGLE_FILM_STRIP: "UI.toggle_film_strip",
     HANGUP: "UI.hangup",
     LOGOUT: "UI.logout",
-    RECORDING_TOGGLE: "UI.recording_toggle",
-    /**
-     * Notifies interested parties when the film strip (remote video's panel)
-     * is hidden (toggled) or shown (un-toggled).
-     */
-    FILM_STRIP_TOGGLED: "UI.filmstrip_toggled"
+    RECORDING_TOGGLE: "UI.recording_toggle"
 };

@@ -188,10 +188,6 @@ function registerListeners() {
         AudioLevels.init();
     });
 
-    UI.addListener(UIEvents.FILM_STRIP_TOGGLED, function (isToggled) {
-        VideoLayout.onFilmStripToggled(isToggled);
-    });
-
     UI.addListener(UIEvents.EMAIL_CHANGED, function (email) {
         UI.setUserAvatar(APP.conference.localId, email);
     });
@@ -215,6 +211,10 @@ function registerListeners() {
     UI.addListener(UIEvents.TOGGLE_SETTINGS, function () {
         PanelToggler.toggleSettingsMenu();
     });
+
+    UI.addListener(UIEvents.TOGGLE_CONTACT_LIST, UI.toggleContactList);
+
+    UI.addListener(UIEvents.TOGGLE_FILM_STRIP, UI.toggleFilmStrip);
 }
 
 function bindEvents() {
@@ -446,14 +446,15 @@ UI.getSettings = function () {
 
 UI.toggleFilmStrip = function () {
     BottomToolbar.toggleFilmStrip();
+    VideoLayout.updateLargeVideoSize();
 };
 
 UI.toggleChat = function () {
-    BottomToolbar.toggleChat();
+    PanelToggler.toggleChat();
 };
 
 UI.toggleContactList = function () {
-    BottomToolbar.toggleContactList();
+    PanelToggler.toggleContactList();
 };
 
 UI.inputDisplayNameHandler = function (value) {
