@@ -1,9 +1,6 @@
 /* global APP, $, config, interfaceConfig */
 /* jshint -W101 */
 var messageHandler = require("../util/MessageHandler");
-var BottomToolbar = require("./BottomToolbar");
-var PanelToggler = require("../side_pannels/SidePanelToggler");
-var Authentication = require("../authentication/Authentication");
 var UIUtil = require("../util/UIUtil");
 var AnalyticsAdapter = require("../../statistics/AnalyticsAdapter");
 var Feedback = require("../Feedback");
@@ -13,7 +10,86 @@ var roomUrl = null;
 var recordingToaster = null;
 var emitter = null;
 
-var buttonHandlers = {
+
+/**
+ * Opens the invite link dialog.
+ */
+function openLinkDialog () {
+    var inviteAttributes;
+
+    if (roomUrl === null) {
+        inviteAttributes = 'data-i18n="[value]roomUrlDefaultMsg" value="' +
+            APP.translation.translateString("roomUrlDefaultMsg") + '"';
+    } else {
+        inviteAttributes = "value=\"" + encodeURI(roomUrl) + "\"";
+    }
+    messageHandler.openTwoButtonDialog(
+        "dialog.shareLink", null, null,
+        `<input id="inviteLinkRef" type="text" ${inviteAttributes} onclick="this.select();" readonly>`,
+        false, "dialog.Invite",
+        function (e, v) {
+            if (v && roomUrl) {
+                emitter.emit(UIEvents.USER_INVITED, roomUrl);
+            }
+        },
+        function (event) {
+            if (roomUrl) {
+                document.getElementById('inviteLinkRef').select();
+            } else {
+                if (event && event.target) {
+                    $(event.target).find('button[value=true]').prop('disabled', true);
+                }
+            }
+        }
+    );
+}
+
+// Sets the state of the recording button
+function setRecordingButtonState (recordingState) {
+    let selector = $('#toolbar_button_record');
+
+    if (recordingState === 'on') {
+        selector.removeClass("icon-recEnable");
+        selector.addClass("icon-recEnable active");
+
+        $("#largeVideo").toggleClass("videoMessageFilter", true);
+        let recordOnKey = "recording.on";
+        $('#videoConnectionMessage').attr("data-i18n", recordOnKey);
+        $('#videoConnectionMessage').text(APP.translation.translateString(recordOnKey));
+
+        setTimeout(function(){
+            $("#largeVideo").toggleClass("videoMessageFilter", false);
+            $('#videoConnectionMessage').css({display: "none"});
+        }, 1500);
+
+        recordingToaster = messageHandler.notify(
+            null, "recording.toaster", null,
+            null, null,
+            {timeOut: 0, closeButton: null, tapToDismiss: false}
+        );
+    } else if (recordingState === 'off') {
+        selector.removeClass("icon-recEnable active");
+        selector.addClass("icon-recEnable");
+
+        $("#largeVideo").toggleClass("videoMessageFilter", false);
+        $('#videoConnectionMessage').css({display: "none"});
+
+        if (recordingToaster) {
+            messageHandler.remove(recordingToaster);
+        }
+    } else if (recordingState === 'pending') {
+        selector.removeClass("icon-recEnable active");
+        selector.addClass("icon-recEnable");
+
+        $("#largeVideo").toggleClass("videoMessageFilter", true);
+        let recordPendingKey = "recording.pending";
+        $('#videoConnectionMessage').attr("data-i18n", recordPendingKey);
+        $('#videoConnectionMessage').text(APP.translation.translateString(recordPendingKey));
+        $('#videoConnectionMessage').css({display: "block"});
+    }
+}
+
+const buttonHandlers = {
     "toolbar_button_mute": function () {
         if (APP.conference.audioMuted) {
             AnalyticsAdapter.sendEvent('toolbar.audio.unmuted');
@@ -34,18 +110,18 @@ var buttonHandlers = {
     },
     "toolbar_button_record": function () {
         AnalyticsAdapter.sendEvent('toolbar.recording.toggled');
-        return toggleRecording();
+        toggleRecording();
     },
     "toolbar_button_security": function () {
         emitter.emit(UIEvents.ROOM_LOCK_CLICKED);
     },
     "toolbar_button_link": function () {
         AnalyticsAdapter.sendEvent('toolbar.invite.clicked');
-        return Toolbar.openLinkDialog();
+        openLinkDialog();
     },
     "toolbar_button_chat": function () {
         AnalyticsAdapter.sendEvent('toolbar.chat.toggled');
-        return BottomToolbar.toggleChat();
+        emitter.emit(UIEvents.TOGGLE_CHAT);
     },
     "toolbar_button_prezi": function () {
         AnalyticsAdapter.sendEvent('toolbar.prezi.clicked');
@@ -61,32 +137,32 @@ var buttonHandlers = {
         } else {
             AnalyticsAdapter.sendEvent('toolbar.screen.enabled');
         }
-        return APP.desktopsharing.toggleScreenSharing();
+        APP.desktopsharing.toggleScreenSharing();
     },
     "toolbar_button_fullScreen": function() {
         AnalyticsAdapter.sendEvent('toolbar.fullscreen.enabled');
         UIUtil.buttonClick("#toolbar_button_fullScreen", "icon-full-screen icon-exit-full-screen");
-        return Toolbar.toggleFullScreen();
+        emitter.emit(UIEvents.FULLSCREEN_TOGGLE);
     },
     "toolbar_button_sip": function () {
         AnalyticsAdapter.sendEvent('toolbar.sip.clicked');
-        return callSipButtonClicked();
+        callSipButtonClicked();
     },
     "toolbar_button_dialpad": function () {
         AnalyticsAdapter.sendEvent('toolbar.sip.dialpad.clicked');
-        return dialpadButtonClicked();
+        dialpadButtonClicked();
     },
     "toolbar_button_settings": function () {
         AnalyticsAdapter.sendEvent('toolbar.settings.toggled');
-        PanelToggler.toggleSettingsMenu();
+        emitter.emit(UIEvents.TOGGLE_SETTINGS);
     },
     "toolbar_button_hangup": function () {
         AnalyticsAdapter.sendEvent('toolbar.hangup');
-        return hangup();
+        hangup();
     },
     "toolbar_button_login": function () {
         AnalyticsAdapter.sendEvent('toolbar.authenticate.login.clicked');
-        Toolbar.authenticateClicked();
+        emitter.emit(UIEvents.AUTH_CLICKED);
     },
     "toolbar_button_logout": function () {
         AnalyticsAdapter.sendEvent('toolbar.authenticate.logout.clicked');
@@ -140,8 +216,7 @@ function hangup() {
         }
     };
 
-    if (Feedback.isEnabled())
-    {
+    if (Feedback.isEnabled()) {
         // If the user has already entered feedback, we'll show the window and
         // immidiately start the conference dispose timeout.
         if (Feedback.feedbackScore > 0) {
@@ -158,7 +233,7 @@ function hangup() {
 
         // If the feedback functionality isn't enabled we show a thank you
         // dialog.
-        APP.UI.messageHandler.openMessageDialog(null, null, null,
+        messageHandler.openMessageDialog(null, null, null,
             APP.translation.translateString("dialog.thankYou",
                 {appName:interfaceConfig.APP_NAME}));
     }
@@ -177,7 +252,7 @@ function toggleRecording(predefinedToken) {
         var msg = APP.translation.generateTranslationHTML(
             "dialog.recordingToken");
         var token = APP.translation.translateString("dialog.token");
-        APP.UI.messageHandler.openTwoButtonDialog(null, null, null,
+        messageHandler.openTwoButtonDialog(null, null, null,
                 '<h2>' + msg + '</h2>' +
                 '<input name="recordingToken" type="text" ' +
                 ' data-i18n="[placeholder]dialog.token" ' +
@@ -197,7 +272,7 @@ function toggleRecording(predefinedToken) {
             function () { },
             ':input:first'
         );
-    }, Toolbar.setRecordingButtonState);
+    }, setRecordingButtonState);
 }
 
 function dialpadButtonClicked() {
@@ -205,17 +280,16 @@ function dialpadButtonClicked() {
 }
 
 function callSipButtonClicked() {
-    var defaultNumber
-        = config.defaultSipNumber ? config.defaultSipNumber : '';
+    let defaultNumber = config.defaultSipNumber
+        ? config.defaultSipNumber
+        : '';
 
-    var sipMsg = APP.translation.generateTranslationHTML(
-        "dialog.sipMsg");
-    messageHandler.openTwoButtonDialog(null, null, null,
-        '<h2>' + sipMsg + '</h2>' +
-        '<input name="sipNumber" type="text"' +
-        ' value="' + defaultNumber + '" autofocus>',
-        false,
-        "dialog.Dial",
+    let sipMsg = APP.translation.generateTranslationHTML("dialog.sipMsg");
+    messageHandler.openTwoButtonDialog(
+        null, null, null,
+        `<h2>${sipMsg}</h2>
+         <input name="sipNumber" type="text" value="${defaultNumber}" autofocus>`,
+        false, "dialog.Dial",
         function (e, v, m, f) {
             if (v) {
                 var numberInput = f.sipNumber;
@@ -228,44 +302,13 @@ function callSipButtonClicked() {
     );
 }
 
-var Toolbar = {
+const Toolbar = {
     init (eventEmitter) {
         emitter = eventEmitter;
         UIUtil.hideDisabledButtons(defaultToolbarButtons);
 
         for(var k in buttonHandlers)
             $("#" + k).click(buttonHandlers[k]);
-    },
-
-    authenticateClicked () {
-        Authentication.focusAuthenticationWindow();
-        if (!APP.xmpp.isExternalAuthEnabled()) {
-            Authentication.xmppAuthenticate();
-            return;
-        }
-        // Get authentication URL
-        if (!APP.xmpp.isMUCJoined()) {
-            APP.xmpp.getLoginUrl(APP.conference.roomName, function (url) {
-                // If conference has not been started yet - redirect to login page
-                window.location.href = url;
-            });
-        } else {
-            APP.xmpp.getPopupLoginUrl(APP.conference.roomName, function (url) {
-                // Otherwise - open popup with authentication URL
-                var authenticationWindow = Authentication.createAuthenticationWindow(
-                    function () {
-                        // On popup closed - retry room allocation
-                        APP.xmpp.allocateConferenceFocus(
-                            APP.conference.roomName,
-                            function () { console.info("AUTH DONE"); }
-                        );
-                    }, url);
-                if (!authenticationWindow) {
-                    messageHandler.openMessageDialog(
-                        null, "dialog.popupError");
-                }
-            });
-        }
     },
 
     /**
@@ -290,66 +333,6 @@ var Toolbar = {
     setupButtonsFromConfig () {
         if (UIUtil.isButtonEnabled('prezi')) {
             $("#toolbar_button_prezi").css({display: "none"});
-        }
-    },
-
-    /**
-     * Opens the invite link dialog.
-     */
-    openLinkDialog () {
-        var inviteAttributes;
-
-        if (roomUrl === null) {
-            inviteAttributes = 'data-i18n="[value]roomUrlDefaultMsg" value="' +
-            APP.translation.translateString("roomUrlDefaultMsg") + '"';
-        } else {
-            inviteAttributes = "value=\"" + encodeURI(roomUrl) + "\"";
-        }
-        messageHandler.openTwoButtonDialog("dialog.shareLink",
-            null, null,
-            '<input id="inviteLinkRef" type="text" ' +
-                inviteAttributes + ' onclick="this.select();" readonly>',
-            false,
-            "dialog.Invite",
-            function (e, v) {
-                if (v && roomUrl) {
-                    emitter.emit(UIEvents.USER_INVITED, roomUrl);
-                }
-            },
-            function (event) {
-                if (roomUrl) {
-                    document.getElementById('inviteLinkRef').select();
-                } else {
-                    if (event && event.target)
-                        $(event.target)
-                            .find('button[value=true]').prop('disabled', true);
-                }
-            }
-        );
-    },
-
-    /**
-     * Toggles the application in and out of full screen mode
-     * (a.k.a. presentation mode in Chrome).
-     */
-    toggleFullScreen () {
-        var fsElement = document.documentElement;
-
-        if (!document.mozFullScreen && !document.webkitIsFullScreen) {
-            //Enter Full Screen
-            if (fsElement.mozRequestFullScreen) {
-                fsElement.mozRequestFullScreen();
-            }
-            else {
-                fsElement.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
-            }
-        } else {
-            //Exit Full Screen
-            if (document.mozCancelFullScreen) {
-                document.mozCancelFullScreen();
-            } else {
-                document.webkitCancelFullScreen();
-            }
         }
     },
 
@@ -389,48 +372,6 @@ var Toolbar = {
         }
         else {
             $('#toolbar_button_record').css({display: "none"});
-        }
-    },
-
-    // Sets the state of the recording button
-    setRecordingButtonState (recordingState) {
-        var selector = $('#toolbar_button_record');
-
-        if (recordingState === 'on') {
-            selector.removeClass("icon-recEnable");
-            selector.addClass("icon-recEnable active");
-
-            $("#largeVideo").toggleClass("videoMessageFilter", true);
-            var recordOnKey = "recording.on";
-            $('#videoConnectionMessage').attr("data-i18n", recordOnKey);
-            $('#videoConnectionMessage').text(APP.translation.translateString(recordOnKey));
-
-            setTimeout(function(){
-                $("#largeVideo").toggleClass("videoMessageFilter", false);
-                $('#videoConnectionMessage').css({display: "none"});
-            }, 1500);
-
-            recordingToaster = messageHandler.notify(null, "recording.toaster", null,
-                null, null, {timeOut: 0, closeButton: null, tapToDismiss: false});
-        } else if (recordingState === 'off') {
-            selector.removeClass("icon-recEnable active");
-            selector.addClass("icon-recEnable");
-
-            $("#largeVideo").toggleClass("videoMessageFilter", false);
-            $('#videoConnectionMessage').css({display: "none"});
-
-            if (recordingToaster)
-                messageHandler.remove(recordingToaster);
-
-        } else if (recordingState === 'pending') {
-            selector.removeClass("icon-recEnable active");
-            selector.addClass("icon-recEnable");
-
-            $("#largeVideo").toggleClass("videoMessageFilter", true);
-            var recordPendingKey = "recording.pending";
-            $('#videoConnectionMessage').attr("data-i18n", recordPendingKey);
-            $('#videoConnectionMessage').text(APP.translation.translateString(recordPendingKey));
-            $('#videoConnectionMessage').css({display: "block"});
         }
     },
 

@@ -355,7 +355,7 @@ function initConference(localTracks, connection) {
     );
 
     APP.UI.addListener(UIEvents.USER_INVITED, function (roomUrl) {
-        inviteParticipants(
+        APP.UI.inviteParticipants(
             roomUrl,
             APP.conference.roomName,
             roomLocker.password,
@@ -478,45 +478,5 @@ $(window).bind('beforeunload', function () {
         APP.API.dispose();
     }
 });
-
-/**
- * Invite participants to conference.
- */
-function inviteParticipants(roomUrl, conferenceName, key, nick) {
-    let keyText = "";
-    if (key) {
-        keyText = APP.translation.translateString(
-            "email.sharedKey", {sharedKey: key}
-        );
-    }
-
-    let and = APP.translation.translateString("email.and");
-    let supportedBrowsers = `Chromium, Google Chrome ${and} Opera`;
-
-    let subject = APP.translation.translateString(
-        "email.subject", {appName:interfaceConfig.APP_NAME, conferenceName}
-    );
-
-    let body = APP.translation.translateString(
-        "email.body", {
-            appName:interfaceConfig.APP_NAME,
-            sharedKeyText: keyText,
-            roomUrl,
-            supportedBrowsers
-        }
-    );
-
-    body = body.replace(/\n/g, "%0D%0A");
-
-    if (nick) {
-        body += "%0D%0A%0D%0A" + nick;
-    }
-
-    if (interfaceConfig.INVITATION_POWERED_BY) {
-        body += "%0D%0A%0D%0A--%0D%0Apowered by jitsi.org";
-    }
-
-    window.open(`mailto:?subject=${subject}&body=${body}`, '_blank');
-}
 
 export default APP;

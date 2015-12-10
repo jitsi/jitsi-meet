@@ -1,4 +1,7 @@
 /* global $, APP*/
+/* jshint -W101 */
+
+import messageHandler from '../util/MessageHandler';
 
 var LoginDialog = require('./LoginDialog');
 var Moderator = require('../../xmpp/moderator');
@@ -10,7 +13,37 @@ var authRetryId = null;
 var authenticationWindow = null;
 
 var Authentication = {
-    openAuthenticationDialog: function (roomName, intervalCallback, callback) {
+    authenticate () {
+        Authentication.focusAuthenticationWindow();
+        if (!APP.xmpp.isExternalAuthEnabled()) {
+            Authentication.xmppAuthenticate();
+            return;
+        }
+        // Get authentication URL
+        if (!APP.xmpp.isMUCJoined()) {
+            APP.xmpp.getLoginUrl(APP.conference.roomName, function (url) {
+                // If conference has not been started yet - redirect to login page
+                window.location.href = url;
+            });
+        } else {
+            APP.xmpp.getPopupLoginUrl(APP.conference.roomName, function (url) {
+                // Otherwise - open popup with authentication URL
+                var authenticationWindow = Authentication.createAuthenticationWindow(
+                    function () {
+                        // On popup closed - retry room allocation
+                        APP.xmpp.allocateConferenceFocus(
+                            APP.conference.roomName,
+                            function () { console.info("AUTH DONE"); }
+                        );
+                    }, url);
+                if (!authenticationWindow) {
+                    messageHandler.openMessageDialog(null, "dialog.popupError");
+                }
+            });
+        }
+    },
+
+    openAuthenticationDialog (roomName, intervalCallback) {
         // This is the loop that will wait for the room to be created by
         // someone else. 'auth_required.moderator' will bring us back here.
         authRetryId = window.setTimeout(intervalCallback, 5000);
@@ -32,7 +65,7 @@ var Authentication = {
         var buttons = [];
         buttons.push({title: buttonTxt, value: "authNow"});
 
-        authDialog = APP.UI.messageHandler.openDialog(
+        authDialog = messageHandler.openDialog(
             title,
             msg,
             true,
@@ -44,19 +77,18 @@ var Authentication = {
 
                 // Open login popup
                 if (submitValue === 'authNow') {
-                    callback();
+                    Authentication.authenticate();
                 }
             }
         );
     },
-    closeAuthenticationWindow: function () {
+    closeAuthenticationWindow () {
         if (authenticationWindow) {
             authenticationWindow.close();
             authenticationWindow = null;
         }
     },
-    xmppAuthenticate: function () {
-
+    xmppAuthenticate () {
         var loginDialog = LoginDialog.show(
             function (connection, state) {
                 if (!state) {
@@ -86,22 +118,22 @@ var Authentication = {
                 }
             }, true);
     },
-    focusAuthenticationWindow: function () {
+    focusAuthenticationWindow () {
         // If auth window exists just bring it to the front
         if (authenticationWindow) {
             authenticationWindow.focus();
             return;
         }
     },
-    closeAuthenticationDialog: function () {
+    closeAuthenticationDialog () {
         // Close authentication dialog if opened
         if (authDialog) {
             authDialog.close();
             authDialog = null;
         }
     },
-    createAuthenticationWindow: function (callback, url) {
-        authenticationWindow = APP.UI.messageHandler.openCenteredPopup(
+    createAuthenticationWindow (callback, url) {
+        authenticationWindow = messageHandler.openCenteredPopup(
             url, 910, 660,
             // On closed
             function () {
@@ -112,7 +144,7 @@ var Authentication = {
             });
         return authenticationWindow;
     },
-    stopInterval: function () {
+    stopInterval () {
         // Clear retry interval, so that we don't call 'doJoinAfterFocus' twice
         if (authRetryId) {
             window.clearTimeout(authRetryId);

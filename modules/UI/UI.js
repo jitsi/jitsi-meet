@@ -95,6 +95,30 @@ function setupToolbars() {
     BottomToolbar.init(eventEmitter);
 }
 
+/**
+ * Toggles the application in and out of full screen mode
+ * (a.k.a. presentation mode in Chrome).
+ */
+function toggleFullScreen () {
+    let fsElement = document.documentElement;
+
+    if (!document.mozFullScreen && !document.webkitIsFullScreen) {
+        //Enter Full Screen
+        if (fsElement.mozRequestFullScreen) {
+            fsElement.mozRequestFullScreen();
+        } else {
+            fsElement.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
+        }
+    } else {
+        //Exit Full Screen
+        if (document.mozCancelFullScreen) {
+            document.mozCancelFullScreen();
+        } else {
+            document.webkitCancelFullScreen();
+        }
+    }
+}
+
 UI.notifyGracefulShudown = function () {
     messageHandler.openMessageDialog(
         'dialog.serviceUnavailable',
@@ -178,6 +202,18 @@ function registerListeners() {
 
     UI.addListener(UIEvents.ETHERPAD_CLICKED, function () {
         Etherpad.toggleEtherpad(0);
+    });
+
+    UI.addListener(UIEvents.FULLSCREEN_TOGGLE, toggleFullScreen);
+
+    UI.addListener(UIEvents.AUTH_CLICKED, function () {
+        Authentication.authenticate();
+    });
+
+    UI.addListener(UIEvents.TOGGLE_CHAT, UI.toggleChat);
+
+    UI.addListener(UIEvents.TOGGLE_SETTINGS, function () {
+        PanelToggler.toggleSettingsMenu();
     });
 }
 
@@ -396,11 +432,7 @@ UI.updateUserRole = function (user) {
 };
 
 UI.notifyAuthRequired = function (intervalCallback) {
-    Authentication.openAuthenticationDialog(
-        APP.conference.roomName, intervalCallback, function () {
-            Toolbar.authenticateClicked();
-        }
-    );
+    Authentication.openAuthenticationDialog(APP.conference.roomName, intervalCallback);
 };
 
 
@@ -413,15 +445,15 @@ UI.getSettings = function () {
 };
 
 UI.toggleFilmStrip = function () {
-    return BottomToolbar.toggleFilmStrip();
+    BottomToolbar.toggleFilmStrip();
 };
 
 UI.toggleChat = function () {
-    return BottomToolbar.toggleChat();
+    BottomToolbar.toggleChat();
 };
 
 UI.toggleContactList = function () {
-    return BottomToolbar.toggleContactList();
+    BottomToolbar.toggleContactList();
 };
 
 UI.inputDisplayNameHandler = function (value) {
@@ -616,5 +648,46 @@ UI.updateDTMFSupport = function (isDTMFSupported) {
     //TODO: enable when the UI is ready
     //Toolbar.showDialPadButton(dtmfSupport);
 };
+
+/**
+ * Invite participants to conference.
+ */
+UI.inviteParticipants = function (roomUrl, conferenceName, key, nick) {
+    let keyText = "";
+    if (key) {
+        keyText = APP.translation.translateString(
+            "email.sharedKey", {sharedKey: key}
+        );
+    }
+
+    let and = APP.translation.translateString("email.and");
+    let supportedBrowsers = `Chromium, Google Chrome ${and} Opera`;
+
+    let subject = APP.translation.translateString(
+        "email.subject", {appName:interfaceConfig.APP_NAME, conferenceName}
+    );
+
+    let body = APP.translation.translateString(
+        "email.body", {
+            appName:interfaceConfig.APP_NAME,
+            sharedKeyText: keyText,
+            roomUrl,
+            supportedBrowsers
+        }
+    );
+
+    body = body.replace(/\n/g, "%0D%0A");
+
+    if (nick) {
+        body += "%0D%0A%0D%0A" + nick;
+    }
+
+    if (interfaceConfig.INVITATION_POWERED_BY) {
+        body += "%0D%0A%0D%0A--%0D%0Apowered by jitsi.org";
+    }
+
+    window.open(`mailto:?subject=${subject}&body=${body}`, '_blank');
+};
+
 
 module.exports = UI;

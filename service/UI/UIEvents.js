@@ -1,4 +1,4 @@
-var UIEvents = {
+export default {
     NICKNAME_CHANGED: "UI.nickname_changed",
     SELECTED_ENDPOINT: "UI.selected_endpoint",
     PINNED_ENDPOINT: "UI.pinned_endpoint",
@@ -25,10 +25,13 @@ var UIEvents = {
     ETHERPAD_CLICKED: "UI.etherpad_clicked",
     ROOM_LOCK_CLICKED: "UI.room_lock_clicked",
     USER_INVITED: "UI.user_invited",
+    FULLSCREEN_TOGGLE: "UI.fullscreen_toggle",
+    AUTH_CLICKED: "UI.auth_clicked",
+    TOGGLE_CHAT: "UI.toggle_chat",
+    TOGGLE_SETTINGS: "UI.toggle_settings",
     /**
      * Notifies interested parties when the film strip (remote video's panel)
      * is hidden (toggled) or shown (un-toggled).
      */
     FILM_STRIP_TOGGLED: "UI.filmstrip_toggled"
 };
-module.exports = UIEvents;
