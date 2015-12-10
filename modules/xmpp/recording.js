@@ -89,13 +89,13 @@ Recording.prototype.isSupported = function () {
  */
 Recording.prototype.getState = function () {
     return this.state;
-}
+};
 
 /**
  * Returns the url of the recorded video.
  */
 Recording.prototype.getURL = function () {
     return this.url;
-}
+};
 
 module.exports = Recording;
