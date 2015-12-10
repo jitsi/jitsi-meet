@@ -316,15 +316,6 @@ function initEtherpad(name) {
     Etherpad.init(name);
 }
 
-/**
- * The dialpad button is shown iff there is at least one member that supports
- * DTMF (e.g. jigasi).
- */
-function onDtmfSupportChanged(dtmfSupport) {
-    //TODO: enable when the UI is ready
-    //Toolbar.showDialPadButton(dtmfSupport);
-}
-
 UI.addUser = function (jid, id, displayName) {
     messageHandler.notify(
         displayName,'notify.somebody', 'connected', 'notify.connected'
@@ -619,6 +610,11 @@ UI.markRoomLocked = function (locked) {
 
 UI.addMessage = function (from, displayName, message, stamp) {
     Chat.updateChatConversation(from, displayName, message, stamp);
+};
+
+UI.updateDTMFSupport = function (isDTMFSupported) {
+    //TODO: enable when the UI is ready
+    //Toolbar.showDialPadButton(dtmfSupport);
 };
 
 module.exports = UI;

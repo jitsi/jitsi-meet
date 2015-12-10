@@ -83,7 +83,7 @@ function notifyPasswordFailed() {
     messageHandler.showError("dialog.lockTitle", "dialog.lockMessage");
 }
 
-const JitsiConferenceErrors = JitsiMeetJS.errors.conference;
+const ConferenceErrors = JitsiMeetJS.errors.conference;
 
 export default function createRoomLocker (room) {
     let password;
@@ -92,7 +92,7 @@ export default function createRoomLocker (room) {
         return room.lock(newPass).then(function () {
             password = newPass;
         }).catch(function (err) {
-            if (err === JitsiConferenceErrors.PASSWORD_NOT_SUPPORTED) {
+            if (err === ConferenceErrors.PASSWORD_NOT_SUPPORTED) {
                 notifyPasswordNotSupported();
             } else {
                 notifyPasswordFailed(err);

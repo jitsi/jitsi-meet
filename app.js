@@ -343,9 +343,6 @@ function initConference(localTracks, connection) {
         room.setDisplayName(nickname);
     });
 
-    room.on(ConferenceErrors.PASSWORD_REQUIRED, function () {
-        // FIXME handle
-    });
     room.on(ConferenceErrors.CONNECTION_ERROR, function () {
         // FIXME handle
     });
@@ -366,25 +363,26 @@ function initConference(localTracks, connection) {
         );
     });
 
+    room.on(ConferenceEvents.DTMF_SUPPORT_CHANGED, function (isDTMFSupported) {
+        APP.UI.updateDTMFSupport(isDTMFSupported);
+    });
+
     return new Promise(function (resolve, reject) {
         room.on(ConferenceEvents.CONFERENCE_JOINED, resolve);
 
-        room.on(ConferenceErrors.ROOM_PASSWORD_REQUIRED, function () {
+        room.on(ConferenceErrors.PASSWORD_REQUIRED, function () {
             APP.UI.markRoomLocked(true);
             roomLocker.requirePassword().then(function () {
                 room.join(roomLocker.password);
             });
         });
 
+        // FIXME handle errors here
+
         APP.UI.closeAuthenticationDialog();
         room.join();
     }).catch(function (err) {
-        if (err[0] === ConferenceErrors.PASSWORD_REQUIRED) {
-            // FIXME ask for password and try again
-            return initConference(localTracks, connection);
-        }
-
-        // FIXME else notify that we cannot conenct to the room
+        // FIXME notify that we cannot conenct to the room
 
         throw new Error(err[0]);
     });
