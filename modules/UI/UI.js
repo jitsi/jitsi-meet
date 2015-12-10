@@ -539,7 +539,7 @@ UI.showToolbar = function () {
 
 //Used by torture
 UI.dockToolbar = function (isDock) {
-    return ToolbarToggler.dockToolbar(isDock);
+    ToolbarToggler.dockToolbar(isDock);
 };
 
 UI.setUserAvatar = function (id, email) {

@@ -1,4 +1,3 @@
-var ToolbarToggler = require("../toolbars/ToolbarToggler");
 var UIUtil = require("../util/UIUtil");
 var VideoLayout = require("../videolayout/VideoLayout");
 var messageHandler = require("../util/MessageHandler");
