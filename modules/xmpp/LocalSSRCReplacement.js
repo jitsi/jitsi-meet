@@ -130,7 +130,9 @@ var storeLocalVideoSSRC = function (jingleIq) {
 function generateRecvonlySSRC() {
     //
     localRecvOnlySSRC =
-        Math.random().toString(10).substring(2, 11);
+        localVideoSSRC ?
+            localVideoSSRC : Math.random().toString(10).substring(2, 11);
+
     localRecvOnlyCName =
         Math.random().toString(36).substring(2);
     console.info(
@@ -175,44 +177,44 @@ var LocalSSRCReplacement = {
 
         // IF we have local video SSRC stored make sure it is replaced
         // with old SSRC
-        if (localVideoSSRC) {
-            var newSdp = new SDP(localDescription.sdp);
-            if (newSdp.media[1].indexOf("a=ssrc:") !== -1 &&
-                !newSdp.containsSSRC(localVideoSSRC)) {
-                // Get new video SSRC
-                var map = newSdp.getMediaSsrcMap();
-                var videoPart = map[1];
-                var videoSSRCs = videoPart.ssrcs;
-                var newSSRC = Object.keys(videoSSRCs)[0];
+        var sdp = new SDP(localDescription.sdp);
+        if (sdp.media.length < 2)
+            return;
 
-                console.info(
-                    "Replacing new video SSRC: " + newSSRC +
-                    " with " + localVideoSSRC);
+        if (localVideoSSRC && sdp.media[1].indexOf("a=ssrc:") !== -1 &&
+            !sdp.containsSSRC(localVideoSSRC)) {
 
-                localDescription.sdp =
-                    newSdp.raw.replace(
-                        new RegExp('a=ssrc:' + newSSRC, 'g'),
-                        'a=ssrc:' + localVideoSSRC);
-            }
-        } else {
+            console.info("Does not contain: " + localVideoSSRC + "---" + sdp.media[1]);
+
+            // Get new video SSRC
+            var map = sdp.getMediaSsrcMap();
+            var videoPart = map[1];
+            var videoSSRCs = videoPart.ssrcs;
+            var newSSRC = Object.keys(videoSSRCs)[0];
+
+            console.info(
+                "Replacing new video SSRC: " + newSSRC +
+                " with " + localVideoSSRC);
+
+            localDescription.sdp =
+                sdp.raw.replace(
+                    new RegExp('a=ssrc:' + newSSRC, 'g'),
+                    'a=ssrc:' + localVideoSSRC);
+        }
+        else if (sdp.media[1].indexOf('a=ssrc:') === -1 &&
+                 sdp.media[1].indexOf('a=recvonly') !== -1) {
             // Make sure we have any SSRC for recvonly video stream
-            var sdp = new SDP(localDescription.sdp);
-
-            if (sdp.media[1] && sdp.media[1].indexOf('a=ssrc:') === -1 &&
-                sdp.media[1].indexOf('a=recvonly') !== -1) {
-
-                if (!localRecvOnlySSRC) {
-                    generateRecvonlySSRC();
-                }
-
-                console.info('No SSRC in video recvonly stream' +
-                             ' - adding SSRC: ' + localRecvOnlySSRC);
-
-                sdp.media[1] += 'a=ssrc:' + localRecvOnlySSRC +
-                                ' cname:' + localRecvOnlyCName + '\r\n';
-
-                localDescription.sdp = sdp.session + sdp.media.join('');
+            if (!localRecvOnlySSRC) {
+                generateRecvonlySSRC();
             }
+
+            console.info('No SSRC in video recvonly stream' +
+                         ' - adding SSRC: ' + localRecvOnlySSRC);
+
+            sdp.media[1] += 'a=ssrc:' + localRecvOnlySSRC +
+                            ' cname:' + localRecvOnlyCName + '\r\n';
+
+            localDescription.sdp = sdp.session + sdp.media.join('');
         }
         return localDescription;
     },
