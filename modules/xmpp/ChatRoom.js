@@ -702,9 +702,9 @@ ChatRoom.prototype.getRecordingURL = function () {
  * Starts/stops the recording
  * @param token token for authentication
  */
-ChatRoom.prototype.toggleRecording = function (token) {
+ChatRoom.prototype.toggleRecording = function (token, followEntity) {
     if(this.recording)
-        return this.recording.toggleRecording(token);
+        return this.recording.toggleRecording(token, followEntity);
 
     return new Promise(function(resolve, reject){
         reject(new Error("The conference is not created yet!"))});

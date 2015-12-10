@@ -26,8 +26,8 @@ Recording.prototype.handleJibriPresence = function (jibri) {
     this.eventEmitter.emit(XMPPEvents.RECORDING_STATE_CHANGED);
 };
 
-Recording.prototype.setRecording = function (state, streamId, callback,
-    errCallback){
+Recording.prototype.setRecording = function (state, streamId, followEntity,
+    callback, errCallback){
     if (state == this.state){
         return;
     }
@@ -36,13 +36,14 @@ Recording.prototype.setRecording = function (state, streamId, callback,
 
     var iq = $iq({to: this.focusMucJid, type: 'set'})
         .c('jibri', {
-            xmlns: 'http://jitsi.org/protocol/jibri',
-            action: (state === 'on') ? 'start' : 'stop',
-            streamid: streamId
+            "xmlns": 'http://jitsi.org/protocol/jibri',
+            "action": (state === 'on') ? 'start' : 'stop',
+            "streamid": streamId,
+            "follow-entity": followEntity
         }).up();
 
-    logger.log('Set jibri recording: '+state, iq);
-
+    logger.log('Set jibri recording: '+state, iq.nodeTree);
+    console.log(iq.nodeTree);
     this.connection.sendIQ(
         iq,
         function (result) {
@@ -55,7 +56,7 @@ Recording.prototype.setRecording = function (state, streamId, callback,
         });
 };
 
-Recording.prototype.toggleRecording = function (token) {
+Recording.prototype.toggleRecording = function (token, followEntity) {
     var self = this;
     return new Promise(function(resolve, reject) {
         if (!token) {
@@ -73,7 +74,7 @@ Recording.prototype.toggleRecording = function (token) {
         var newState = (oldState === 'off' || !oldState) ? 'on' : 'off';
 
         self.setRecording(newState,
-            token,
+            token, followEntity,
             function (state, url) {
                 logger.log("New recording state: ", state);
                 if (state && state !== oldState) {

@@ -449,9 +449,9 @@ JitsiConference.prototype.getRecordingURL = function () {
  * Starts/stops the recording
  * @param token a token for authentication.
  */
-JitsiConference.prototype.toggleRecording = function (token) {
+JitsiConference.prototype.toggleRecording = function (token, followEntity) {
     if(this.room)
-        return this.room.toggleRecording(token);
+        return this.room.toggleRecording(token, followEntity);
     return new Promise(function(resolve, reject){
         reject(new Error("The conference is not created yet!"))});
 }
@@ -6503,9 +6503,9 @@ ChatRoom.prototype.getRecordingURL = function () {
  * Starts/stops the recording
  * @param token token for authentication
  */
-ChatRoom.prototype.toggleRecording = function (token) {
+ChatRoom.prototype.toggleRecording = function (token, followEntity) {
     if(this.recording)
-        return this.recording.toggleRecording(token);
+        return this.recording.toggleRecording(token, followEntity);
 
     return new Promise(function(resolve, reject){
         reject(new Error("The conference is not created yet!"))});
@@ -10706,8 +10706,8 @@ Recording.prototype.handleJibriPresence = function (jibri) {
     this.eventEmitter.emit(XMPPEvents.RECORDING_STATE_CHANGED);
 };
 
-Recording.prototype.setRecording = function (state, streamId, callback,
-    errCallback){
+Recording.prototype.setRecording = function (state, streamId, followEntity,
+    callback, errCallback){
     if (state == this.state){
         return;
     }
@@ -10716,13 +10716,14 @@ Recording.prototype.setRecording = function (state, streamId, callback,
 
     var iq = $iq({to: this.focusMucJid, type: 'set'})
         .c('jibri', {
-            xmlns: 'http://jitsi.org/protocol/jibri',
-            action: (state === 'on') ? 'start' : 'stop',
-            streamid: streamId
+            "xmlns": 'http://jitsi.org/protocol/jibri',
+            "action": (state === 'on') ? 'start' : 'stop',
+            "streamid": streamId,
+            "follow-entity": followEntity
         }).up();
 
-    logger.log('Set jibri recording: '+state, iq);
-
+    logger.log('Set jibri recording: '+state, iq.nodeTree);
+    console.log(iq.nodeTree);
     this.connection.sendIQ(
         iq,
         function (result) {
@@ -10735,7 +10736,7 @@ Recording.prototype.setRecording = function (state, streamId, callback,
         });
 };
 
-Recording.prototype.toggleRecording = function (token) {
+Recording.prototype.toggleRecording = function (token, followEntity) {
     var self = this;
     return new Promise(function(resolve, reject) {
         if (!token) {
@@ -10753,7 +10754,7 @@ Recording.prototype.toggleRecording = function (token) {
         var newState = (oldState === 'off' || !oldState) ? 'on' : 'off';
 
         self.setRecording(newState,
-            token,
+            token, followEntity,
             function (state, url) {
                 logger.log("New recording state: ", state);
                 if (state && state !== oldState) {
@@ -11405,9 +11406,11 @@ module.exports = function() {
                             logger.info('Dial result ', result);
 
                             var resource = $(result).find('ref').attr('uri');
-                            self.call_resource = resource.substr('xmpp:'.length);
+                            self.call_resource =
+                                resource.substr('xmpp:'.length);
                             logger.info(
-                                "Received call resource: " + self.call_resource);
+                                "Received call resource: " +
+                                self.call_resource);
                             resolve();
                         },
                         function (error) {
