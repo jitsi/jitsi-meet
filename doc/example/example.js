@@ -1,5 +1,7 @@
 var options = {
     hosts: {
+        call_control: "callcontrol.chaos.hipchat.me",
+        focus: "focus.chaos.hipchat.me",
         domain: 'chaos.hipchat.me',
         muc: 'conference.chaos.hipchat.me', // FIXME: use XEP-0030
         bridge: 'jitsi-videobridge.chaos.hipchat.me', // FIXME: use XEP-0030
@@ -37,8 +39,8 @@ function onLocalTracks(tracks)
             $("body").append("<video autoplay='1' id='localVideo" + i + "' />");
             localTracks[i].attach($("#localVideo" + i ));
         } else {
-            $("body").append("<audio autoplay='1' id='localAudio" + i + "' />");
-            localTracks[i].attach($("#localAudio" + i ));
+            // $("body").append("<audio autoplay='1' id='localAudio" + i + "' />");
+            // localTracks[i].attach($("#localAudio" + i ));
         }
     }
 }
@@ -85,6 +87,7 @@ function onConferenceJoined () {
 }
 
 function onUserLeft(id) {
+    console.log("user left");
     if(!remoteTracks[id])
         return;
     var tracks = remoteTracks[id];
@@ -96,13 +99,13 @@ function onUserLeft(id) {
  * That function is called when connection is established successfully
  */
 function onConnectionSuccess(){
-    room = connection.initJitsiConference("conference2", confOptions);
+    room = connection.initJitsiConference("conference6", confOptions);
     room.on(JitsiMeetJS.events.conference.TRACK_ADDED, onRemoteTrack);
     room.on(JitsiMeetJS.events.conference.TRACK_REMOVED, function (track) {
         console.debug("track removed!!!" + track);
     });
     room.on(JitsiMeetJS.events.conference.CONFERENCE_JOINED, onConferenceJoined);
-    room.on(JitsiMeetJS.events.conference.USER_JOINED, function(id){ remoteTracks[id] = [];});
+    room.on(JitsiMeetJS.events.conference.USER_JOINED, function(id){ console.log("user join");remoteTracks[id] = [];});
     room.on(JitsiMeetJS.events.conference.USER_LEFT, onUserLeft);
     room.on(JitsiMeetJS.events.conference.TRACK_MUTE_CHANGED, function (track) {
         console.debug(track.getType() + " - " + track.isMuted());
@@ -118,7 +121,12 @@ function onConnectionSuccess(){
         console.log(room.isRecordingSupported() + " - " +
             room.getRecordingState() + " - " +
             room.getRecordingURL());
-    })
+    });
+    room.on(JitsiMeetJS.events.conference.PHONE_NUMBER_CHANGED, function () {
+        console.log(
+            room.getPhoneNumber() + " - " +
+            room.getPhonePin());
+    });
     room.join();
 };
 

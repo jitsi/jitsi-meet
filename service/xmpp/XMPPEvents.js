@@ -101,6 +101,10 @@ var XMPPEvents = {
     /**
      * Indicates that recording state changed.
      */
-    RECORDING_STATE_CHANGED: "xmpp.recordingStateChanged"
+    RECORDING_STATE_CHANGED: "xmpp.recordingStateChanged",
+    /**
+     * Indicates that phone number changed.
+     */
+    PHONE_NUMBER_CHANGED: "conference.phoneNumberChanged"
 };
 module.exports = XMPPEvents;

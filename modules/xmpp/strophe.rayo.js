@@ -13,85 +13,104 @@ module.exports = function() {
                 }
 
                 this.connection.addHandler(
-                    this.onRayo.bind(this),
-                    this.RAYO_XMLNS, 'iq', 'set', null, null);
+                    this.onRayo.bind(this), this.RAYO_XMLNS, 'iq', 'set',
+                    null, null);
             },
             onRayo: function (iq) {
                 logger.info("Rayo IQ", iq);
             },
-            dial: function (to, from, roomName, roomPass) {
+            dial: function (to, from, roomName, roomPass, focusMucJid) {
                 var self = this;
-                var req = $iq(
-                    {
-                        type: 'set',
-                        to: this.connection.emuc.focusMucJid
+                return new Promise(function (resolve, reject) {
+                    if(self.call_resource) {
+                        reject(new Error("There is already started call!"));
+                        return;
                     }
-                );
-                req.c('dial',
-                    {
-                        xmlns: this.RAYO_XMLNS,
-                        to: to,
-                        from: from
-                    });
-                req.c('header',
-                    {
-                        name: 'JvbRoomName',
-                        value: roomName
-                    }).up();
-
-                if (roomPass !== null && roomPass.length) {
-
+                    if(!focusMucJid) {
+                        reject(new Error("Internal error!"));
+                        return;
+                    }
+                    var req = $iq(
+                        {
+                            type: 'set',
+                            to: focusMucJid
+                        }
+                    );
+                    req.c('dial',
+                        {
+                            xmlns: self.RAYO_XMLNS,
+                            to: to,
+                            from: from
+                        });
                     req.c('header',
                         {
-                            name: 'JvbRoomPassword',
-                            value: roomPass
+                            name: 'JvbRoomName',
+                            value: roomName
                         }).up();
-                }
 
-                this.connection.sendIQ(
-                    req,
-                    function (result) {
-                        logger.info('Dial result ', result);
+                    if (roomPass !== null && roomPass.length) {
 
-                        var resource = $(result).find('ref').attr('uri');
-                        this.call_resource = resource.substr('xmpp:'.length);
-                        logger.info(
-                            "Received call resource: " + this.call_resource);
-                    },
-                    function (error) {
-                        logger.info('Dial error ', error);
+                        req.c('header',
+                            {
+                                name: 'JvbRoomPassword',
+                                value: roomPass
+                            }).up();
                     }
-                );
+
+                    self.connection.sendIQ(
+                        req,
+                        function (result) {
+                            logger.info('Dial result ', result);
+
+                            var resource = $(result).find('ref').attr('uri');
+                            self.call_resource =
+                                resource.substr('xmpp:'.length);
+                            logger.info(
+                                "Received call resource: " +
+                                self.call_resource);
+                            resolve();
+                        },
+                        function (error) {
+                            logger.info('Dial error ', error);
+                            reject(error);
+                        }
+                    );
+                });
             },
-            hang_up: function () {
-                if (!this.call_resource) {
-                    logger.warn("No call in progress");
-                    return;
-                }
-
+            hangup: function () {
                 var self = this;
-                var req = $iq(
-                    {
-                        type: 'set',
-                        to: this.call_resource
+                return new Promise(function (resolve, reject) {
+                    if (!self.call_resource) {
+                        reject(new Error("No call in progress"));
+                        logger.warn("No call in progress");
+                        return;
                     }
-                );
-                req.c('hangup',
-                    {
-                        xmlns: this.RAYO_XMLNS
-                    });
 
-                this.connection.sendIQ(
-                    req,
-                    function (result) {
-                        logger.info('Hangup result ', result);
-                        self.call_resource = null;
-                    },
-                    function (error) {
-                        logger.info('Hangup error ', error);
-                        self.call_resource = null;
-                    }
-                );
+                    var req = $iq(
+                        {
+                            type: 'set',
+                            to: self.call_resource
+                        }
+                    );
+                    req.c('hangup',
+                        {
+                            xmlns: self.RAYO_XMLNS
+                        });
+
+                    self.connection.sendIQ(
+                        req,
+                        function (result) {
+                            logger.info('Hangup result ', result);
+                            self.call_resource = null;
+                            resolve();
+                        },
+                        function (error) {
+                            logger.info('Hangup error ', error);
+                            self.call_resource = null;
+                            reject(new Error('Hangup error '));
+                        }
+                    );
+                });
             }
         }
     );

@@ -1,6 +1,7 @@
 /* global $, $iq, config, connection, focusMucJid, messageHandler,
    Toolbar, Util, Promise */
 var XMPPEvents = require("../../service/XMPP/XMPPEvents");
+var logger = require("jitsi-meet-logger").getLogger(__filename);
 
 function Recording(ee, connection, focusMucJid) {
     this.eventEmitter = ee;
@@ -40,7 +41,7 @@ Recording.prototype.setRecording = function (state, streamId, callback,
             streamid: streamId
         }).up();
 
-    console.log('Set jibri recording: '+state, iq);
+    logger.log('Set jibri recording: '+state, iq);
 
     this.connection.sendIQ(
         iq,
@@ -49,7 +50,7 @@ Recording.prototype.setRecording = function (state, streamId, callback,
             $(result).find('jibri').attr('url'));
         },
         function (error) {
-            console.log('Failed to start recording, error: ', error);
+            logger.log('Failed to start recording, error: ', error);
             errCallback(error);
         });
 };
@@ -58,8 +59,14 @@ Recording.prototype.toggleRecording = function (token) {
     var self = this;
     return new Promise(function(resolve, reject) {
         if (!token) {
-            console.error("No token passed!");
             reject(new Error("No token passed!"));
+            logger.error("No token passed!");
+            return;
+        }
+        if(self.state === "on") {
+            reject(new Error("Recording is already started!"));
+            logger.error("Recording is already started!");
+            return;
         }
 
         var oldState = self.state;
@@ -68,7 +75,7 @@ Recording.prototype.toggleRecording = function (token) {
         self.setRecording(newState,
             token,
             function (state, url) {
-                console.log("New recording state: ", state);
+                logger.log("New recording state: ", state);
                 if (state && state !== oldState) {
                     self.state = state;
                     self.url = url;

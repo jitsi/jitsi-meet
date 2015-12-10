@@ -80,6 +80,8 @@ function ChatRoom(connection, jid, password, XMPP, options) {
     this.session = null;
     var self = this;
     this.lastPresences = {};
+    this.phoneNumber = null;
+    this.phonePin = null;
 }
 
 ChatRoom.prototype.initPresenceMap = function () {
@@ -197,6 +199,7 @@ ChatRoom.prototype.createNonAnonymousRoom = function () {
 };
 
 ChatRoom.prototype.onPresence = function (pres) {
+    console.log(pres);
     var from = pres.getAttribute('from');
     // Parse roles.
     var member = {};
@@ -250,6 +253,16 @@ ChatRoom.prototype.onPresence = function (pres) {
                 break;
             case "jibri-recording-status":
                 var jibri = node;
+                break;
+            case "call-control":
+                console.log(pres);
+                var att = node.attributes;
+                if(!att)
+                    break;
+                this.phoneNumber = att.phone || null;
+                this.phonePin = att.pin || null;
+                this.eventEmitter.emit(XMPPEvents.PHONE_NUMBER_CHANGED);
+                break;
             default :
                 this.processNode(node, from);
         }
@@ -690,11 +703,42 @@ ChatRoom.prototype.getRecordingURL = function () {
  * @param token token for authentication
  */
 ChatRoom.prototype.toggleRecording = function (token) {
-    if(this.recording/** && this.isModerator()**/)
+    if(this.recording)
         return this.recording.toggleRecording(token);
 
     return new Promise(function(resolve, reject){
         reject(new Error("The conference is not created yet!"))});
+}
+
+/**
+ * Dials a number.
+ * @param number the number
+ */
+ChatRoom.prototype.dial = function (number) {
+    return this.connection.rayo.dial(number, "fromnumber",
+        Strophe.getNodeFromJid(this.myroomjid), this.password,
+        this.focusMucJid);
+}
+
+/**
+ * Hangup an existing call
+ */
+ChatRoom.prototype.hangup = function () {
+    return this.connection.rayo.hangup();
+}
+
+/**
+ * Returns the phone number for joining the conference.
+ */
+ChatRoom.prototype.getPhoneNumber = function () {
+    return this.phoneNumber;
+}
+
+/**
+ * Returns the pin for joining the conference with phone.
+ */
+ChatRoom.prototype.getPhonePin = function () {
+    return this.phonePin;
 }
 
 module.exports = ChatRoom;

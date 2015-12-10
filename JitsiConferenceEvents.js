@@ -87,7 +87,11 @@ var JitsiConferenceEvents = {
     /**
      * Indicates that recording state changed.
      */
-    RECORDING_STATE_CHANGED: "conference.recordingStateChanged"
+    RECORDING_STATE_CHANGED: "conference.recordingStateChanged",
+    /**
+     * Indicates that phone number changed.
+     */
+    PHONE_NUMBER_CHANGED: "conference.phoneNumberChanged"
 };
 
 module.exports = JitsiConferenceEvents;

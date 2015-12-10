@@ -455,6 +455,45 @@ JitsiConference.prototype.toggleRecording = function (token) {
 }
 
 /**
+ * Dials a number.
+ * @param number the number
+ */
+JitsiConference.prototype.dial = function (number) {
+    if(this.room)
+        return this.room.dial(number);
+    return new Promise(function(resolve, reject){
+        reject(new Error("The conference is not created yet!"))});
+}
+
+/**
+ * Hangup an existing call
+ */
+JitsiConference.prototype.hangup = function () {
+    if(this.room)
+        return this.room.hangup();
+    return new Promise(function(resolve, reject){
+        reject(new Error("The conference is not created yet!"))});
+}
+
+/**
+ * Returns the phone number for joining the conference.
+ */
+JitsiConference.prototype.getPhoneNumber = function () {
+    if(this.room)
+        return this.room.getPhoneNumber();
+    return null;
+}
+
+/**
+ * Returns the pin for joining the conference with phone.
+ */
+JitsiConference.prototype.getPhonePin = function () {
+    if(this.room)
+        return this.room.getPhonePin();
+    return null;
+}
+
+/**
  * Setups the listeners needed for the conference.
  * @param conference the conference
  */
@@ -495,8 +534,16 @@ function setupListeners(conference) {
     conference.room.addListener(XMPPEvents.CONNECTION_INTERRUPTED, function () {
         conference.eventEmitter.emit(JitsiConferenceEvents.CONNECTION_INTERRUPTED);
     });
-    conference.room.addListener(XMPPEvents.RECORDING_STATE_CHANGED, function () {
-        conference.eventEmitter.emit(JitsiConferenceEvents.RECORDING_STATE_CHANGED);
+
+    conference.room.addListener(XMPPEvents.RECORDING_STATE_CHANGED,
+        function () {
+            conference.eventEmitter.emit(
+                JitsiConferenceEvents.RECORDING_STATE_CHANGED);
+        });
+
+    conference.room.addListener(XMPPEvents.PHONE_NUMBER_CHANGED, function () {
+        conference.eventEmitter.emit(
+            JitsiConferenceEvents.PHONE_NUMBER_CHANGED);
     });
 
     conference.room.addListener(XMPPEvents.CONNECTION_RESTORED, function () {

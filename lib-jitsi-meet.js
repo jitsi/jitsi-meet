@@ -457,6 +457,45 @@ JitsiConference.prototype.toggleRecording = function (token) {
 }
 
 /**
+ * Dials a number.
+ * @param number the number
+ */
+JitsiConference.prototype.dial = function (number) {
+    if(this.room)
+        return this.room.dial(number);
+    return new Promise(function(resolve, reject){
+        reject(new Error("The conference is not created yet!"))});
+}
+
+/**
+ * Hangup an existing call
+ */
+JitsiConference.prototype.hangup = function () {
+    if(this.room)
+        return this.room.hangup();
+    return new Promise(function(resolve, reject){
+        reject(new Error("The conference is not created yet!"))});
+}
+
+/**
+ * Returns the phone number for joining the conference.
+ */
+JitsiConference.prototype.getPhoneNumber = function () {
+    if(this.room)
+        return this.room.getPhoneNumber();
+    return null;
+}
+
+/**
+ * Returns the pin for joining the conference with phone.
+ */
+JitsiConference.prototype.getPhonePin = function () {
+    if(this.room)
+        return this.room.getPhonePin();
+    return null;
+}
+
+/**
  * Setups the listeners needed for the conference.
  * @param conference the conference
  */
@@ -497,8 +536,16 @@ function setupListeners(conference) {
     conference.room.addListener(XMPPEvents.CONNECTION_INTERRUPTED, function () {
         conference.eventEmitter.emit(JitsiConferenceEvents.CONNECTION_INTERRUPTED);
     });
-    conference.room.addListener(XMPPEvents.RECORDING_STATE_CHANGED, function () {
-        conference.eventEmitter.emit(JitsiConferenceEvents.RECORDING_STATE_CHANGED);
+
+    conference.room.addListener(XMPPEvents.RECORDING_STATE_CHANGED,
+        function () {
+            conference.eventEmitter.emit(
+                JitsiConferenceEvents.RECORDING_STATE_CHANGED);
+        });
+
+    conference.room.addListener(XMPPEvents.PHONE_NUMBER_CHANGED, function () {
+        conference.eventEmitter.emit(
+            JitsiConferenceEvents.PHONE_NUMBER_CHANGED);
     });
 
     conference.room.addListener(XMPPEvents.CONNECTION_RESTORED, function () {
@@ -666,7 +713,11 @@ var JitsiConferenceEvents = {
     /**
      * Indicates that recording state changed.
      */
-    RECORDING_STATE_CHANGED: "conference.recordingStateChanged"
+    RECORDING_STATE_CHANGED: "conference.recordingStateChanged",
+    /**
+     * Indicates that phone number changed.
+     */
+    PHONE_NUMBER_CHANGED: "conference.phoneNumberChanged"
 };
 
 module.exports = JitsiConferenceEvents;
@@ -5830,6 +5881,8 @@ function ChatRoom(connection, jid, password, XMPP, options) {
     this.session = null;
     var self = this;
     this.lastPresences = {};
+    this.phoneNumber = null;
+    this.phonePin = null;
 }
 
 ChatRoom.prototype.initPresenceMap = function () {
@@ -5947,6 +6000,7 @@ ChatRoom.prototype.createNonAnonymousRoom = function () {
 };
 
 ChatRoom.prototype.onPresence = function (pres) {
+    console.log(pres);
     var from = pres.getAttribute('from');
     // Parse roles.
     var member = {};
@@ -6000,6 +6054,16 @@ ChatRoom.prototype.onPresence = function (pres) {
                 break;
             case "jibri-recording-status":
                 var jibri = node;
+                break;
+            case "call-control":
+                console.log(pres);
+                var att = node.attributes;
+                if(!att)
+                    break;
+                this.phoneNumber = att.phone || null;
+                this.phonePin = att.pin || null;
+                this.eventEmitter.emit(XMPPEvents.PHONE_NUMBER_CHANGED);
+                break;
             default :
                 this.processNode(node, from);
         }
@@ -6440,11 +6504,42 @@ ChatRoom.prototype.getRecordingURL = function () {
  * @param token token for authentication
  */
 ChatRoom.prototype.toggleRecording = function (token) {
-    if(this.recording/** && this.isModerator()**/)
+    if(this.recording)
         return this.recording.toggleRecording(token);
 
     return new Promise(function(resolve, reject){
         reject(new Error("The conference is not created yet!"))});
+}
+
+/**
+ * Dials a number.
+ * @param number the number
+ */
+ChatRoom.prototype.dial = function (number) {
+    return this.connection.rayo.dial(number, "fromnumber",
+        Strophe.getNodeFromJid(this.myroomjid), this.password,
+        this.focusMucJid);
+}
+
+/**
+ * Hangup an existing call
+ */
+ChatRoom.prototype.hangup = function () {
+    return this.connection.rayo.hangup();
+}
+
+/**
+ * Returns the phone number for joining the conference.
+ */
+ChatRoom.prototype.getPhoneNumber = function () {
+    return this.phoneNumber;
+}
+
+/**
+ * Returns the pin for joining the conference with phone.
+ */
+ChatRoom.prototype.getPhonePin = function () {
+    return this.phonePin;
 }
 
 module.exports = ChatRoom;
@@ -10582,9 +10677,11 @@ module.exports = Moderator;
 
 }).call(this,"/modules/xmpp/moderator.js")
 },{"../../service/authentication/AuthenticationEvents":87,"../../service/xmpp/XMPPEvents":91,"../settings/Settings":21,"jitsi-meet-logger":48}],35:[function(require,module,exports){
+(function (__filename){
 /* global $, $iq, config, connection, focusMucJid, messageHandler,
    Toolbar, Util, Promise */
 var XMPPEvents = require("../../service/XMPP/XMPPEvents");
+var logger = require("jitsi-meet-logger").getLogger(__filename);
 
 function Recording(ee, connection, focusMucJid) {
     this.eventEmitter = ee;
@@ -10624,7 +10721,7 @@ Recording.prototype.setRecording = function (state, streamId, callback,
             streamid: streamId
         }).up();
 
-    console.log('Set jibri recording: '+state, iq);
+    logger.log('Set jibri recording: '+state, iq);
 
     this.connection.sendIQ(
         iq,
@@ -10633,7 +10730,7 @@ Recording.prototype.setRecording = function (state, streamId, callback,
             $(result).find('jibri').attr('url'));
         },
         function (error) {
-            console.log('Failed to start recording, error: ', error);
+            logger.log('Failed to start recording, error: ', error);
             errCallback(error);
         });
 };
@@ -10642,8 +10739,14 @@ Recording.prototype.toggleRecording = function (token) {
     var self = this;
     return new Promise(function(resolve, reject) {
         if (!token) {
-            console.error("No token passed!");
             reject(new Error("No token passed!"));
+            logger.error("No token passed!");
+            return;
+        }
+        if(self.state === "on") {
+            reject(new Error("Recording is already started!"));
+            logger.error("Recording is already started!");
+            return;
         }
 
         var oldState = self.state;
@@ -10652,7 +10755,7 @@ Recording.prototype.toggleRecording = function (token) {
         self.setRecording(newState,
             token,
             function (state, url) {
-                console.log("New recording state: ", state);
+                logger.log("New recording state: ", state);
                 if (state && state !== oldState) {
                     self.state = state;
                     self.url = url;
@@ -10692,7 +10795,8 @@ Recording.prototype.getURL = function () {
 
 module.exports = Recording;
 
-},{"../../service/XMPP/XMPPEvents":86}],36:[function(require,module,exports){
+}).call(this,"/modules/xmpp/recording.js")
+},{"../../service/XMPP/XMPPEvents":86,"jitsi-meet-logger":48}],36:[function(require,module,exports){
 (function (__filename){
 /* jshint -W117 */
 /* a simple MUC connection plugin
@@ -11251,85 +11355,102 @@ module.exports = function() {
                 }
 
                 this.connection.addHandler(
-                    this.onRayo.bind(this),
-                    this.RAYO_XMLNS, 'iq', 'set', null, null);
+                    this.onRayo.bind(this), this.RAYO_XMLNS, 'iq', 'set',
+                    null, null);
             },
             onRayo: function (iq) {
                 logger.info("Rayo IQ", iq);
             },
-            dial: function (to, from, roomName, roomPass) {
+            dial: function (to, from, roomName, roomPass, focusMucJid) {
                 var self = this;
-                var req = $iq(
-                    {
-                        type: 'set',
-                        to: this.connection.emuc.focusMucJid
+                return new Promise(function (resolve, reject) {
+                    if(self.call_resource) {
+                        reject(new Error("There is already started call!"));
+                        return;
                     }
-                );
-                req.c('dial',
-                    {
-                        xmlns: this.RAYO_XMLNS,
-                        to: to,
-                        from: from
-                    });
-                req.c('header',
-                    {
-                        name: 'JvbRoomName',
-                        value: roomName
-                    }).up();
-
-                if (roomPass !== null && roomPass.length) {
-
+                    if(!focusMucJid) {
+                        reject(new Error("Internal error!"));
+                        return;
+                    }
+                    var req = $iq(
+                        {
+                            type: 'set',
+                            to: focusMucJid
+                        }
+                    );
+                    req.c('dial',
+                        {
+                            xmlns: self.RAYO_XMLNS,
+                            to: to,
+                            from: from
+                        });
                     req.c('header',
                         {
-                            name: 'JvbRoomPassword',
-                            value: roomPass
+                            name: 'JvbRoomName',
+                            value: roomName
                         }).up();
-                }
 
-                this.connection.sendIQ(
-                    req,
-                    function (result) {
-                        logger.info('Dial result ', result);
+                    if (roomPass !== null && roomPass.length) {
 
-                        var resource = $(result).find('ref').attr('uri');
-                        this.call_resource = resource.substr('xmpp:'.length);
-                        logger.info(
-                            "Received call resource: " + this.call_resource);
-                    },
-                    function (error) {
-                        logger.info('Dial error ', error);
+                        req.c('header',
+                            {
+                                name: 'JvbRoomPassword',
+                                value: roomPass
+                            }).up();
                     }
-                );
+
+                    self.connection.sendIQ(
+                        req,
+                        function (result) {
+                            logger.info('Dial result ', result);
+
+                            var resource = $(result).find('ref').attr('uri');
+                            self.call_resource = resource.substr('xmpp:'.length);
+                            logger.info(
+                                "Received call resource: " + self.call_resource);
+                            resolve();
+                        },
+                        function (error) {
+                            logger.info('Dial error ', error);
+                            reject(error);
+                        }
+                    );
+                });
             },
-            hang_up: function () {
-                if (!this.call_resource) {
-                    logger.warn("No call in progress");
-                    return;
-                }
-
+            hangup: function () {
                 var self = this;
-                var req = $iq(
-                    {
-                        type: 'set',
-                        to: this.call_resource
+                return new Promise(function (resolve, reject) {
+                    if (!self.call_resource) {
+                        reject(new Error("No call in progress"));
+                        logger.warn("No call in progress");
+                        return;
                     }
-                );
-                req.c('hangup',
-                    {
-                        xmlns: this.RAYO_XMLNS
-                    });
 
-                this.connection.sendIQ(
-                    req,
-                    function (result) {
-                        logger.info('Hangup result ', result);
-                        self.call_resource = null;
-                    },
-                    function (error) {
-                        logger.info('Hangup error ', error);
-                        self.call_resource = null;
-                    }
-                );
+                    var req = $iq(
+                        {
+                            type: 'set',
+                            to: self.call_resource
+                        }
+                    );
+                    req.c('hangup',
+                        {
+                            xmlns: self.RAYO_XMLNS
+                        });
+
+                    self.connection.sendIQ(
+                        req,
+                        function (result) {
+                            logger.info('Hangup result ', result);
+                            self.call_resource = null;
+                            resolve();
+                        },
+                        function (error) {
+                            logger.info('Hangup error ', error);
+                            self.call_resource = null;
+                            reject(new Error('Hangup error '));
+                        }
+                    );
+                });
             }
         }
     );
@@ -22915,7 +23036,11 @@ var XMPPEvents = {
     /**
      * Indicates that recording state changed.
      */
-    RECORDING_STATE_CHANGED: "xmpp.recordingStateChanged"
+    RECORDING_STATE_CHANGED: "xmpp.recordingStateChanged",
+    /**
+     * Indicates that phone number changed.
+     */
+    PHONE_NUMBER_CHANGED: "conference.phoneNumberChanged"
 };
 module.exports = XMPPEvents;
 
