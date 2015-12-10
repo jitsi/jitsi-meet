@@ -128,10 +128,12 @@ var RTC = {
     },
     getUserMediaWithConstraints:function(um, success_callback,
                                          failure_callback, resolution,
-                                         bandwidth, minFps, maxFps, desktopStream)
+                                         bandwidth, minFps, maxFps,
+                                         desktopStream)
     {
         return this.rtcUtils.getUserMediaWithConstraints(um, success_callback,
-            failure_callback, resolution, bandwidth, minFps, maxFps, desktopStream);
+            failure_callback, resolution, bandwidth, minFps, maxFps,
+            desktopStream);
     },
     attachMediaStream:  function (elSelector, stream) {
         this.rtcUtils.attachMediaStream(elSelector, stream);

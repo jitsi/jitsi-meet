@@ -335,8 +335,6 @@ RTCUtils.prototype.getUserMediaWithConstraints = function(
 
     console.info("Get media constraints", constraints);
 
-    var self = this;
-
     try {
         this.getUserMedia(constraints,
             function (stream) {
