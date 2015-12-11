@@ -112,6 +112,13 @@ SmallVideo.createStreamElement = function (stream) {
         : document.createElement('audio');
     if (isVideo) {
         element.setAttribute("muted", "true");
+
+        // the presence for muted (start muted) can be received before creating
+        // the element, so we need to check here and if that is the case
+        // hide the element
+        if (stream.getMute()) {
+            $(element).hide();
+        }
     }
 
     if (!RTCBrowserType.isIExplorer()) {
