@@ -415,6 +415,12 @@ function initConference(localTracks, connection) {
         // }, APP.UI.updateRecordingState);
     });
 
+    APP.UI.addListener(UIEvents.TOPIC_CHANGED, function (topic) {
+        // FIXME handle topic change
+        // APP.xmpp.setSubject(topic);
+        // on SUBJECT_CHANGED UI.setSubject(topic);
+    });
+
     room.on(ConferenceEvents.DTMF_SUPPORT_CHANGED, function (isDTMFSupported) {
         APP.UI.updateDTMFSupport(isDTMFSupported);
     });

@@ -33,5 +33,6 @@ export default {
     TOGGLE_FILM_STRIP: "UI.toggle_film_strip",
     HANGUP: "UI.hangup",
     LOGOUT: "UI.logout",
-    RECORDING_TOGGLE: "UI.recording_toggle"
+    RECORDING_TOGGLE: "UI.recording_toggle",
+    TOPIC_CHANGED: "UI.topic_changed"
 };

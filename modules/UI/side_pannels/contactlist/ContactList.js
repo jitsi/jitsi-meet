@@ -1,5 +1,5 @@
-/* global $, APP, Strophe */
-var Avatar = require('../../avatar/Avatar');
+/* global $, APP */
+import Avatar from '../../avatar/Avatar';
 
 var numberOfContacts = 0;
 var notificationInterval;
@@ -44,9 +44,9 @@ function createAvatar(jid) {
  */
 function createDisplayNameParagraph(key, displayName) {
     var p = document.createElement('p');
-    if(displayName)
+    if (displayName) {
         p.innerText = displayName;
-    else if(key) {
+    } else if(key) {
         p.setAttribute("data-i18n",key);
         p.innerText = APP.translation.translateString(key);
     }
@@ -64,6 +64,14 @@ function stopGlowing(glower) {
     }
 }
 
+function getContactEl (id) {
+    return $(`#contacts>li[id="${id}"]`);
+}
+
+function contactElExists (id) {
+    return getContactEl(id).length > 0;
+}
+
 /**
  * Contact list.
  */
@@ -79,65 +87,51 @@ var ContactList = {
     },
 
     /**
-     * Adds a contact for the given peerJid if such doesn't yet exist.
+     * Adds a contact for the given id if such doesn't yet exist.
      *
-     * @param peerJid the peerJid corresponding to the contact
      */
-    ensureAddContact: function (peerJid) {
-        var resourceJid = Strophe.getResourceFromJid(peerJid);
-
-        var contact = $('#contacts>li[id="' + resourceJid + '"]');
-
-        if (!contact || contact.length <= 0)
-            ContactList.addContact(peerJid);
+    ensureAddContact: function (id) {
+        if (!contactElExists(id)) {
+            ContactList.addContact(id);
+        }
     },
 
     /**
-     * Adds a contact for the given peer jid.
+     * Adds a contact for the given id.
      *
-     * @param peerJid the jid of the contact to add
      */
-    addContact: function (peerJid) {
-        var resourceJid = Strophe.getResourceFromJid(peerJid);
-
+    addContact: function (id) {
         var contactlist = $('#contacts');
 
         var newContact = document.createElement('li');
-        newContact.id = resourceJid;
+        newContact.id = id;
         newContact.className = "clickable";
         newContact.onclick = function (event) {
             if (event.currentTarget.className === "clickable") {
-                $(ContactList).trigger('contactclicked', [peerJid]);
+                $(ContactList).trigger('contactclicked', [id]);
             }
         };
 
-        newContact.appendChild(createAvatar(peerJid));
+        newContact.appendChild(createAvatar(id));
         newContact.appendChild(createDisplayNameParagraph("participant"));
 
-        if (resourceJid === APP.xmpp.myResource()) {
+        if (APP.conference.isLocalId(id)) {
             contactlist.prepend(newContact);
-        }
-        else {
+        } else {
             contactlist.append(newContact);
         }
         updateNumberOfParticipants(1);
     },
 
     /**
-     * Removes a contact for the given peer jid.
+     * Removes a contact for the given id.
      *
-     * @param peerJid the peerJid corresponding to the contact to remove
      */
-    removeContact: function (peerJid) {
-        var resourceJid = Strophe.getResourceFromJid(peerJid);
+    removeContact: function (id) {
+        let contact = getContactEl(id);
 
-        var contact = $('#contacts>li[id="' + resourceJid + '"]');
-
-        if (contact && contact.length > 0) {
-            var contactlist = $('#contactlist>ul');
-
-            contactlist.get(0).removeChild(contact.get(0));
-
+        if (contact.length > 0) {
+            contact.remove();
             updateNumberOfParticipants(-1);
         }
     },
@@ -160,33 +154,27 @@ var ContactList = {
         }
     },
 
-    setClickable: function (resourceJid, isClickable) {
-        var contact = $('#contacts>li[id="' + resourceJid + '"]');
-        if (isClickable) {
-            contact.addClass('clickable');
-        } else {
-            contact.removeClass('clickable');
-        }
+    setClickable: function (id, isClickable) {
+        getContactEl(id).toggleClass('clickable', isClickable);
     },
 
     onDisplayNameChange: function (id, displayName) {
         if (id === 'localVideoContainer') {
             id = APP.conference.localId;
         }
-        var contactName = $('#contacts #' + id + '>p');
+        var contactName = $(`#contacts #${id}>p`);
 
-        if (contactName && displayName && displayName.length > 0) {
+        if (displayName) {
             contactName.html(displayName);
         }
     },
 
     changeUserAvatar: function (id, contactListUrl) {
         // set the avatar in the contact list
-        var contact = $('#' + id + '>img');
-        if (contact && contact.length > 0) {
-            contact.get(0).src = contactListUrl;
+        var contact = $(`#${id}>img`);
+        if (contact.length > 0) {
+            contact.attr('src', contactListUrl);
         }
-
     }
 };
 

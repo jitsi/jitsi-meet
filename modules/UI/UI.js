@@ -2,11 +2,11 @@
 /* jshint -W101 */
 var UI = {};
 
-var VideoLayout = require("./videolayout/VideoLayout.js");
-var AudioLevels = require("./audio_levels/AudioLevels.js");
-var Prezi = require("./prezi/Prezi.js");
-var Etherpad = require("./etherpad/Etherpad.js");
-var Chat = require("./side_pannels/chat/Chat.js");
+var VideoLayout = require("./videolayout/VideoLayout");
+var AudioLevels = require("./audio_levels/AudioLevels");
+var Prezi = require("./prezi/Prezi");
+var Etherpad = require("./etherpad/Etherpad");
+var Chat = require("./side_pannels/chat/Chat");
 var Toolbar = require("./toolbars/Toolbar");
 var ToolbarToggler = require("./toolbars/ToolbarToggler");
 var BottomToolbar = require("./toolbars/BottomToolbar");
@@ -219,7 +219,7 @@ function registerListeners() {
 
 function bindEvents() {
     function onResize() {
-        Chat.resizeChat();
+        PanelToggler.resizeChat();
         VideoLayout.resizeLargeVideoContainer();
     }
 
@@ -344,9 +344,9 @@ function chatAddError(errorMessage, originalText) {
     return Chat.chatAddError(errorMessage, originalText);
 }
 
-function chatSetSubject(text) {
-    return Chat.chatSetSubject(text);
-}
+UI.setSubject = function (subject) {
+    Chat.setSubject(subject);
+};
 
 function initEtherpad(name) {
     Etherpad.init(name);
