@@ -22,10 +22,6 @@ module.exports = function() {
             dial: function (to, from, roomName, roomPass, focusMucJid) {
                 var self = this;
                 return new Promise(function (resolve, reject) {
-                    if(self.call_resource) {
-                        reject(new Error("There is already started call!"));
-                        return;
-                    }
                     if(!focusMucJid) {
                         reject(new Error("Internal error!"));
                         return;

@@ -72,7 +72,7 @@ function onRemoteTrack(track) {
     if(track.getType() == "video") {
         $("body").append("<video autoplay='1' id='" + participant + "video" + idx + "' />");
     } else {
-        $("body").append("<audio autoplay='1' id='" + participant + "audio' />");
+        $("body").append("<audio autoplay='1' id='" + participant + "audio" + idx + "' />");
     }
     track.attach($("#" + id));
 }
@@ -99,7 +99,7 @@ function onUserLeft(id) {
  * That function is called when connection is established successfully
  */
 function onConnectionSuccess(){
-    room = connection.initJitsiConference("conference10", confOptions);
+    room = connection.initJitsiConference("conference11", confOptions);
     room.on(JitsiMeetJS.events.conference.TRACK_ADDED, onRemoteTrack);
     room.on(JitsiMeetJS.events.conference.TRACK_REMOVED, function (track) {
         console.debug("track removed!!!" + track);
