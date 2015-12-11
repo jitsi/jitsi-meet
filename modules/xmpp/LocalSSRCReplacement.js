@@ -184,7 +184,8 @@ var LocalSSRCReplacement = {
         if (localVideoSSRC && sdp.media[1].indexOf("a=ssrc:") !== -1 &&
             !sdp.containsSSRC(localVideoSSRC)) {
 
-            console.info("Does not contain: " + localVideoSSRC + "---" + sdp.media[1]);
+            console.info("Does not contain: "
+                + localVideoSSRC + "---" + sdp.media[1]);
 
             // Get new video SSRC
             var map = sdp.getMediaSsrcMap();
