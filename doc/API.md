@@ -93,6 +93,7 @@ JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.ERROR);
     1. conference
         - CONNECTION_ERROR - the connection with the conference is lost.
         - PASSWORD_REQUIRED - that error can be passed when the connection to the conference failed. You should try to join the conference with password.
+        - PASSWORD_NOT_SUPPORTED - indicates that password cannot be set for this conference
         - VIDEOBRIDGE_NOT_AVAILABLE - video bridge issues.
     2. connection
         - PASSWORD_REQUIRED - passed when the connection to the server failed. You should try to authenticate with password.
@@ -225,6 +226,14 @@ The object represents a conference. We have the following methods to control the
 
 21. isModerator() - checks if local user has "moderator" role
 
+22. lock(password) - set password for the conference; returns Promise
+    - password - string password
+
+    Note: available only for moderator
+
+23. unlock() - unset conference password; returns Promise
+
+    Note: available only for moderator
 
 JitsiTrack
 ======

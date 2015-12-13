@@ -6,6 +6,7 @@ var XMPPEvents = require("./service/xmpp/XMPPEvents");
 var RTCEvents = require("./service/RTC/RTCEvents");
 var EventEmitter = require("events");
 var JitsiConferenceEvents = require("./JitsiConferenceEvents");
+var JitsiConferenceErrors = require("./JitsiConferenceErrors");
 var JitsiParticipant = require("./JitsiParticipant");
 var Statistics = require("./modules/statistics/statistics");
 var JitsiDTMFManager = require('./modules/DTMF/JitsiDTMFManager');
@@ -245,6 +246,36 @@ JitsiConference.prototype.isModerator = function () {
 };
 
 /**
+ * Set password for the room.
+ * @param {string} password new password for the room.
+ * @returns {Promise}
+ */
+JitsiConference.prototype.lock = function (password) {
+  if (!this.isModerator()) {
+    return Promise.reject();
+  }
+
+  var conference = this;
+  return new Promise(function (resolve, reject) {
+    conference.xmpp.lockRoom(password, function () {
+      resolve();
+    }, function (err) {
+      reject(err);
+    }, function () {
+      reject(JitsiConferenceErrors.PASSWORD_REQUIRED);
+    });
+  });
+};
+
+/**
+ * Remove password from the room.
+ * @returns {Promise}
+ */
+JitsiConference.prototype.unlock = function () {
+  return this.lock(undefined);
+};
+
+/**
  * Elects the participant with the given id to be the selected participant or the speaker.
  * @param id the identifier of the participant
  */
@@ -288,7 +319,7 @@ JitsiConference.prototype.onMemberJoined = function (jid, email, nick) {
     var participant = new JitsiParticipant(id, this, nick);
     this.eventEmitter.emit(JitsiConferenceEvents.USER_JOINED, id);
     this.participants[id] = participant;
-    this.connection.xmpp.connection.disco.info(
+    this.xmpp.connection.disco.info(
         jid, "node", function(iq) {
             participant._supportsDTMF = $(iq).find(
                 '>query>feature[var="urn:xmpp:jingle:dtmf:0"]').length > 0;
@@ -396,7 +427,7 @@ JitsiConference.prototype.myUserId = function () {
 
 JitsiConference.prototype.sendTones = function (tones, duration, pause) {
     if (!this.dtmfManager) {
-        var connection = this.connection.xmpp.connection.jingle.activecall.peerconnection;
+        var connection = this.xmpp.connection.jingle.activecall.peerconnection;
         if (!connection) {
             logger.warn("cannot sendTones: no conneciton");
             return;
@@ -480,6 +511,9 @@ function setupListeners(conference) {
             conference.eventEmitter.emit(JitsiConferenceEvents.LAST_N_ENDPOINTS_CHANGED,
                 lastNEndpoints, endpointsEnteringLastN);
         });
+    conference.xmpp.addListener(XMPPEvents.PASSWORD_REQUIRED, function () {
+        conference.eventEmitter.emit(JitsiConferenceErrors.PASSWORD_REQUIRED);
+    });
 
     if(conference.statistics) {
         //FIXME: Maybe remove event should not be associated with the conference.
