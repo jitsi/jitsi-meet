@@ -65,12 +65,12 @@ JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.ERROR);
     For example if you want to use the conference event that is fired when somebody leave conference you can use the following code - ```JitsiMeetJS.events.conference.USER_LEFT```.
     We support the following events:
     1. conference
-        - TRACK_ADDED - remote stream received. (parameters - JitsiTrack)
-        - TRACK_REMOVED - remote stream removed. (parameters - JitsiTrack)
+        - TRACK_ADDED - stream received. (parameters - JitsiTrack)
+        - TRACK_REMOVED - stream removed. (parameters - JitsiTrack)
         - TRACK_MUTE_CHANGED - JitsiTrack was muted or unmuted. (parameters - JitsiTrack)
         - ACTIVE_SPEAKER_CHANGED - the active speaker is changed. (parameters - id(string))
-        - USER_JOINED - new user joined a conference. (parameters - id(string))
-        - USER_LEFT - a participant left conference. (parameters - id(string))
+        - USER_JOINED - new user joined a conference. (parameters - id(string), user(JitsiParticipant))
+        - USER_LEFT - a participant left conference. (parameters - id(string), user(JitsiParticipant))
         - MESSAGE_RECEIVED - new text message received. (parameters - id(string), text(string))
         - DISPLAY_NAME_CHANGED - user has changed his display name. (parameters - id(string), displayName(string))
         - LAST_N_ENDPOINTS_CHANGED - last n set was changed (parameters - array of ids of users)
