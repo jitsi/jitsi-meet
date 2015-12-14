@@ -22,6 +22,7 @@ function JitsiRemoteTrack(RTC, data, sid, ssrc) {
     this.videoType = data.videoType;
     this.ssrc = ssrc;
     this.muted = false;
+    this.isLocal = false;
     if((this.type === JitsiTrack.AUDIO && data.audiomuted)
       || (this.type === JitsiTrack.VIDEO && data.videomuted)) {
         this.muted = true;
@@ -47,7 +48,7 @@ JitsiRemoteTrack.prototype.setMute = function (value) {
  */
 JitsiRemoteTrack.prototype.isMuted = function () {
     return this.muted;
-}
+};
 
 /**
  * Returns the participant id which owns the track.
@@ -62,7 +63,7 @@ JitsiRemoteTrack.prototype.getParticipantId = function() {
  */
 JitsiRemoteTrack.prototype.isLocal = function () {
     return false;
-}
+};
 
 delete JitsiRemoteTrack.prototype.stop;
 
