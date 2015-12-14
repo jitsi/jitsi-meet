@@ -32,6 +32,7 @@ export default {
     TOGGLE_SETTINGS: "UI.toggle_settings",
     TOGGLE_CONTACT_LIST: "UI.toggle_contact_list",
     TOGGLE_FILM_STRIP: "UI.toggle_film_strip",
+    CONTACT_CLICKED: "UI.contact_clicked",
     HANGUP: "UI.hangup",
     LOGOUT: "UI.logout",
     RECORDING_TOGGLE: "UI.recording_toggle",

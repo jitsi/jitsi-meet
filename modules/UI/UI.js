@@ -14,11 +14,11 @@ import UIUtil from "./util/UIUtil";
 import UIEvents from "../../service/UI/UIEvents";
 
 import VideoLayout from "./videolayout/VideoLayout";
+import SettingsMenu from "./side_pannels/settings/SettingsMenu";
 
 var Prezi = require("./prezi/Prezi");
 var Etherpad = require("./etherpad/Etherpad");
 var EventEmitter = require("events");
-var SettingsMenu = require("./side_pannels/settings/SettingsMenu");
 var Settings = require("./../settings/Settings");
 UI.messageHandler = require("./util/MessageHandler");
 var messageHandler = UI.messageHandler;
@@ -255,6 +255,7 @@ UI.start = function () {
     registerListeners();
 
     VideoLayout.init(eventEmitter);
+    ContactList.init(eventEmitter);
 
     bindEvents();
     setupPrezi();
@@ -355,6 +356,8 @@ function initEtherpad(name) {
 }
 
 UI.addUser = function (id, displayName) {
+    ContactList.addContact(id);
+
     messageHandler.notify(
         displayName,'notify.somebody', 'connected', 'notify.connected'
     );
@@ -367,22 +370,21 @@ UI.addUser = function (id, displayName) {
     UI.setUserAvatar(id, displayName);
 
     // Add Peer's container
-    VideoLayout.ensurePeerContainerExists(id);
+    VideoLayout.addParticipantContainer(id);
 };
 
 UI.removeUser = function (id, displayName) {
-    console.log('left.muc', id);
-    messageHandler.notify(displayName,'notify.somebody',
-        'disconnected',
-        'notify.disconnected');
-    if (!config.startAudioMuted ||
-        config.startAudioMuted > APP.conference.membersCount) {
+    ContactList.removeContact(id);
+
+    messageHandler.notify(
+        displayName,'notify.somebody', 'disconnected', 'notify.disconnected'
+    );
+
+    if (!config.startAudioMuted || config.startAudioMuted > APP.conference.membersCount) {
         UIUtil.playSoundNotification('userLeft');
     }
 
-    ContactList.removeContact(id);
-
-    VideoLayout.participantLeft(id);
+    VideoLayout.removeParticipantContainer(id);
 };
 
 function onMucPresenceStatus(jid, info) {

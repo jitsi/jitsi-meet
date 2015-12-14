@@ -1,8 +1,9 @@
 /* global $, APP */
 import Avatar from '../../avatar/Avatar';
+import UIEvents from '../../../../service/UI/UIEvents';
 
-var numberOfContacts = 0;
-var notificationInterval;
+let numberOfContacts = 0;
+let notificationInterval;
 
 /**
  * Updates the number of participants in the contact list button and sets
@@ -30,7 +31,7 @@ function updateNumberOfParticipants(delta) {
  * @return {object} the newly created avatar element
  */
 function createAvatar(jid) {
-    var avatar = document.createElement('img');
+    let avatar = document.createElement('img');
     avatar.className = "icon-avatar avatar";
     avatar.src = Avatar.getContactListUrl(jid);
 
@@ -43,7 +44,7 @@ function createAvatar(jid) {
  * @param displayName the display name to set
  */
 function createDisplayNameParagraph(key, displayName) {
-    var p = document.createElement('p');
+    let p = document.createElement('p');
     if (displayName) {
         p.innerText = displayName;
     } else if(key) {
@@ -76,39 +77,32 @@ function contactElExists (id) {
  * Contact list.
  */
 var ContactList = {
+    init (emitter) {
+        this.emitter = emitter;
+    },
     /**
      * Indicates if the chat is currently visible.
      *
      * @return <tt>true</tt> if the chat is currently visible, <tt>false</tt> -
      * otherwise
      */
-    isVisible: function () {
+    isVisible () {
         return $('#contactlist').is(":visible");
-    },
-
-    /**
-     * Adds a contact for the given id if such doesn't yet exist.
-     *
-     */
-    ensureAddContact: function (id) {
-        if (!contactElExists(id)) {
-            ContactList.addContact(id);
-        }
     },
 
     /**
      * Adds a contact for the given id.
      *
      */
-    addContact: function (id) {
-        var contactlist = $('#contacts');
+    addContact (id) {
+        let contactlist = $('#contacts');
 
-        var newContact = document.createElement('li');
+        let newContact = document.createElement('li');
         newContact.id = id;
         newContact.className = "clickable";
-        newContact.onclick = function (event) {
+        newContact.onclick = (event) => {
             if (event.currentTarget.className === "clickable") {
-                $(ContactList).trigger('contactclicked', [id]);
+                this.emitter.emit(UIEvents.CONTACT_CLICKED, id);
             }
         };
 
@@ -127,7 +121,7 @@ var ContactList = {
      * Removes a contact for the given id.
      *
      */
-    removeContact: function (id) {
+    removeContact (id) {
         let contact = getContactEl(id);
 
         if (contact.length > 0) {
@@ -136,15 +130,14 @@ var ContactList = {
         }
     },
 
-    setVisualNotification: function (show, stopGlowingIn) {
-        var glower = $('#contactListButton');
+    setVisualNotification (show, stopGlowingIn) {
+        let glower = $('#contactListButton');
 
         if (show && !notificationInterval) {
             notificationInterval = window.setInterval(function () {
                 glower.toggleClass('active glowing');
             }, 800);
-        }
-        else if (!show && notificationInterval) {
+        } else if (!show && notificationInterval) {
             stopGlowing(glower);
         }
         if (stopGlowingIn) {
@@ -154,28 +147,28 @@ var ContactList = {
         }
     },
 
-    setClickable: function (id, isClickable) {
+    setClickable (id, isClickable) {
         getContactEl(id).toggleClass('clickable', isClickable);
     },
 
-    onDisplayNameChange: function (id, displayName) {
+    onDisplayNameChange (id, displayName) {
         if (id === 'localVideoContainer') {
             id = APP.conference.localId;
         }
-        var contactName = $(`#contacts #${id}>p`);
+        let contactName = $(`#contacts #${id}>p`);
 
         if (displayName) {
             contactName.html(displayName);
         }
     },
 
-    changeUserAvatar: function (id, contactListUrl) {
+    changeUserAvatar (id, contactListUrl) {
         // set the avatar in the contact list
-        var contact = $(`#${id}>img`);
+        let contact = $(`#${id}>img`);
         if (contact.length > 0) {
             contact.attr('src', contactListUrl);
         }
     }
 };
 
-module.exports = ContactList;
+export default ContactList;

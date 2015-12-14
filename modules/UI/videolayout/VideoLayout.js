@@ -2,7 +2,6 @@
 /* jshint -W101 */
 
 import AudioLevels from "../audio_levels/AudioLevels";
-import ContactList from "../side_pannels/contactlist/ContactList";
 
 import UIEvents from "../../../service/UI/UIEvents";
 import UIUtil from "../util/UIUtil";
@@ -36,19 +35,15 @@ var focusedVideoResourceJid = null;
 /**
  * On contact list item clicked.
  */
-$(ContactList).bind('contactclicked', function(event, id) {
-    if (!id) {
-        return;
-    }
-
+function onContactClicked (id) {
     if (APP.conference.isLocalId(id)) {
         $("#localVideoContainer").click();
         return;
     }
 
-    var remoteVideo = remoteVideos[id];
+    let remoteVideo = remoteVideos[id];
     if (remoteVideo && remoteVideo.selectVideoElement().length) {
-        var videoThumb = remoteVideo.selectVideoElement()[0];
+        let videoThumb = remoteVideo.selectVideoElement()[0];
         // It is not always the case that a videoThumb exists (if there is
         // no actual video).
         if (RTC.getVideoSrc(videoThumb)) {
@@ -72,7 +67,7 @@ $(ContactList).bind('contactclicked', function(event, id) {
             eventEmitter.emit(UIEvents.PINNED_ENDPOINT, id);
         }
     }
-});
+}
 
 /**
  * Returns the corresponding resource id to the given peer container
@@ -106,6 +101,7 @@ var VideoLayout = {
 
         VideoLayout.resizeLargeVideoContainer();
 
+        emitter.addListener(UIEvents.CONTACT_CLICKED, onContactClicked);
     },
 
     isInLastN (resource) {
@@ -242,7 +238,6 @@ var VideoLayout = {
 
     onRemoteStreamAdded (stream) {
         let id = stream.getParticipantId();
-        VideoLayout.ensurePeerContainerExists(id);
 
         remoteVideos[id].addRemoteStreamElement(stream);
     },
@@ -340,13 +335,7 @@ var VideoLayout = {
      * @return Returns <tt>true</tt> if the peer container exists,
      * <tt>false</tt> - otherwise
      */
-    ensurePeerContainerExists (id) {
-        ContactList.ensureAddContact(id);
-
-        if (remoteVideos[id]) {
-            return;
-        }
-
+    addParticipantContainer (id) {
         let remoteVideo = new RemoteVideo(id, VideoLayout, eventEmitter);
         remoteVideos[id] = remoteVideo;
 
@@ -534,7 +523,6 @@ var VideoLayout = {
         if (resourceJid === APP.xmpp.myResource()) {
             localVideoThumbnail.showAudioIndicator(isMuted);
         } else {
-            VideoLayout.ensurePeerContainerExists(jid);
             remoteVideos[resourceJid].showAudioIndicator(isMuted);
             if (APP.xmpp.isModerator()) {
                 remoteVideos[resourceJid].updateRemoteVideoMenu(isMuted);
@@ -555,7 +543,6 @@ var VideoLayout = {
         } else {
             var resource = Strophe.getResourceFromJid(jid);
 
-            VideoLayout.ensurePeerContainerExists(jid);
             var remoteVideo = remoteVideos[resource];
             remoteVideo.showVideoIndicator(value);
 
@@ -575,7 +562,6 @@ var VideoLayout = {
             APP.conference.isLocalId(id)) {
             localVideoThumbnail.setDisplayName(displayName);
         } else {
-            VideoLayout.ensurePeerContainerExists(id);
             remoteVideos[id].setDisplayName(displayName, status);
         }
     },
@@ -801,23 +787,22 @@ var VideoLayout = {
 
     /**
      * Updates remote stats.
-     * @param jid the jid associated with the stats
+     * @param id the id associated with the stats
      * @param percent the connection quality percent
      * @param object the stats data
      */
-    updateConnectionStats (jid, percent, object) {
-        var resourceJid = Strophe.getResourceFromJid(jid);
-
-        if (remoteVideos[resourceJid])
-            remoteVideos[resourceJid].updateStatsIndicator(percent, object);
+    updateConnectionStats (id, percent, object) {
+        if (remoteVideos[id]) {
+            remoteVideos[id].updateStatsIndicator(percent, object);
+        }
     },
 
     /**
      * Hides the connection indicator
-     * @param jid
+     * @param id
      */
-    hideConnectionIndicator (jid) {
-        remoteVideos[Strophe.getResourceFromJid(jid)].hideConnectionIndicator();
+    hideConnectionIndicator (id) {
+        remoteVideos[id].hideConnectionIndicator();
     },
 
     /**
@@ -830,7 +815,7 @@ var VideoLayout = {
         localVideoThumbnail.hideIndicator();
     },
 
-    participantLeft (id) {
+    removeParticipantContainer (id) {
         // Unlock large video
         if (focusedVideoResourceJid === id) {
             console.info("Focused video owner has left the conference");

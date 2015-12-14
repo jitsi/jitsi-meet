@@ -365,7 +365,8 @@ ConnectionIndicator.prototype.updateResolution = function (resolution) {
  */
 ConnectionIndicator.prototype.updatePopoverData = function () {
     this.popover.updateContent(
-        "<div class=\"connection_info\">" + this.generateText() + "</div>");
+        `<div class="connection_info">${this.generateText()}</div>`
+    );
     APP.translation.translateElement($(".connection_info"));
 };
 

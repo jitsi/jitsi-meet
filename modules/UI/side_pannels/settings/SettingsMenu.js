@@ -21,7 +21,7 @@ function generateLanguagesSelectBox() {
 }
 
 
-var SettingsMenu = {
+const SettingsMenu = {
 
     init: function (emitter) {
         this.emitter = emitter;
@@ -97,5 +97,4 @@ var SettingsMenu = {
     }
 };
 
-
-module.exports = SettingsMenu;
+export default SettingsMenu;
