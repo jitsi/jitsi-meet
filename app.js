@@ -307,8 +307,8 @@ function initConference(localTracks, connection) {
         APP.UI.addListener(UIEvents.MESSAGE_CREATED, function (message) {
             room.sendTextMessage(message);
         });
-        room.on(ConferenceEvents.MESSAGE_RECEIVED, function (userId, text) {
-            APP.UI.addMessage(userId, getDisplayName(userId), text, Date.now());
+        room.on(ConferenceEvents.MESSAGE_RECEIVED, function (id, text, ts) {
+            APP.UI.addMessage(id, getDisplayName(id), text, ts);
         });
     }
 
