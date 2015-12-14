@@ -33,8 +33,6 @@ var firefoxExtInstalled = null;
  */
 var reDetectFirefoxExtension = false;
 
-var eventEmitter = new EventEmitter();
-
 /**
  * Handles obtaining a stream from a screen capture on different browsers.
  */
@@ -185,7 +183,8 @@ function isUpdateRequired(minVersion, extVersion) {
         return false;
     }
     catch (e) {
-        eventEmitter.emit(DesktopSharingEventTypes.EXTENSION_VERSION_ERROR);
+        this.eventEmitter
+          .emit(DesktopSharingEventTypes.EXTENSION_VERSION_ERROR);
         console.error("Failed to parse extension version", e);
         return true;
     }
@@ -282,7 +281,7 @@ function obtainScreenFromExtension(streamCallback, failCallback) {
                 }, 500);
             },
             function (arg) {
-                eventEmitter
+                this.eventEmitter
                   .emit(DesktopSharingEventTypes.EXTENSION_INSTALLATION_ERROR);
                 console.log("Failed to install the extension", arg);
                 failCallback(arg);
