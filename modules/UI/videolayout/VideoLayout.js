@@ -74,6 +74,25 @@ $(ContactList).bind('contactclicked', function(event, id) {
     }
 });
 
+/**
+ * Returns the corresponding resource id to the given peer container
+ * DOM element.
+ *
+ * @return the corresponding resource id to the given peer container
+ * DOM element
+ */
+function getPeerContainerResourceId (containerElement) {
+    if (localVideoThumbnail.container === containerElement) {
+        return localVideoThumbnail.id;
+    }
+
+    let i = containerElement.id.indexOf('participant_');
+
+    if (i >= 0) {
+        return containerElement.id.substring(i + 12);
+    }
+}
+
 
 var VideoLayout = {
     init (emitter) {
@@ -168,58 +187,57 @@ var VideoLayout = {
      * another one instead.
      */
     updateRemovedVideo (id) {
+        if (id !== LargeVideo.getId()) {
+            return;
+        }
+
         let newId;
 
-        if (id === LargeVideo.getId()) {
-            // We'll show user's avatar if he is the dominant speaker or if
-            // his video thumbnail is pinned
-            if (remoteVideos[id] &&
-                id === focusedVideoResourceJid ||
-                id === currentDominantSpeaker) {
-                newId = id;
-            } else {
-                // Otherwise select last visible video
-                newId = this.electLastVisibleVideo();
-            }
-            LargeVideo.updateLargeVideo(id);
+        // We'll show user's avatar if he is the dominant speaker or if
+        // his video thumbnail is pinned
+        if (remoteVideos[id] && (id === focusedVideoResourceJid || id === currentDominantSpeaker)) {
+            newId = id;
+        } else {
+            // Otherwise select last visible video
+            newId = this.electLastVisibleVideo();
         }
+
+        LargeVideo.updateLargeVideo(newId);
     },
 
     electLastVisibleVideo () {
         // pick the last visible video in the row
         // if nobody else is left, this picks the local video
-        var jid;
-        var pick = $('#remoteVideos>span[id!="mixedstream"]:visible:last');
+        let pick = $('#remoteVideos>span[id!="mixedstream"]:visible:last');
         if (pick.length) {
-            jid = VideoLayout.getPeerContainerResourceJid(pick[0]);
-            if (!remoteVideos[jid]) {
-                // The RemoteVideo was removed (but the DOM elements may still
-                // exist).
-                jid = null;
+            let id = getPeerContainerResourceId(pick[0]);
+            if (remoteVideos[id]) {
+                console.info("electLastVisibleVideo: " + id);
+                return id;
             }
+            // The RemoteVideo was removed (but the DOM elements may still
+            // exist).
         }
 
-        if (!jid) {
-            console.info("Last visible video no longer exists");
-            pick = $('#remoteVideos>span[id!="mixedstream"]');
-            if (pick.length) {
-                jid = VideoLayout.getPeerContainerResourceJid(pick[0]);
-                if (!remoteVideos[jid]) {
-                    // The RemoteVideo was removed (but the DOM elements may
-                    // still exist).
-                    jid = null;
-                }
+        console.info("Last visible video no longer exists");
+        pick = $('#remoteVideos>span[id!="mixedstream"]');
+        if (pick.length) {
+            let id = getPeerContainerResourceId(pick[0]);
+            if (remoteVideos[id]) {
+                console.info("electLastVisibleVideo: " + id);
+                return id;
             }
+            // The RemoteVideo was removed (but the DOM elements may
+            // still exist).
         }
 
-        if (!jid) {
-            // Go with local video
-            console.info("Fallback to local video...");
-            jid = APP.xmpp.myResource();
-        }
+        // Go with local video
+        console.info("Fallback to local video...");
 
-        console.info("electLastVisibleVideo: " + jid);
-        return jid;
+        let id = APP.conference.localId;
+        console.info("electLastVisibleVideo: " + id);
+
+        return id;
     },
 
     onRemoteStreamAdded (stream) {
@@ -509,24 +527,6 @@ var VideoLayout = {
    },
 
     /**
-     * Returns the corresponding resource jid to the given peer container
-     * DOM element.
-     *
-     * @return the corresponding resource jid to the given peer container
-     * DOM element
-     */
-    getPeerContainerResourceJid (containerElement) {
-        if (localVideoThumbnail.container === containerElement) {
-            return localVideoThumbnail.getId();
-        }
-
-        var i = containerElement.id.indexOf('participant_');
-
-        if (i >= 0)
-            return containerElement.id.substring(i + 12);
-    },
-
-    /**
      * On audio muted event.
      */
     onAudioMute (jid, isMuted) {
@@ -671,7 +671,7 @@ var VideoLayout = {
 
         // Handle LastN/local LastN changes.
         $('#remoteVideos>span').each(function( index, element ) {
-            var resourceJid = VideoLayout.getPeerContainerResourceJid(element);
+            var resourceJid = getPeerContainerResourceId(element);
 
             // We do not want to process any logic for our own(local) video
             // because the local participant is never in the lastN set.
