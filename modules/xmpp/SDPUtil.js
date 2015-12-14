@@ -1,4 +1,6 @@
 /* jshint -W101 */
+var RTCBrowserType = require("../RTC/RTCBrowserType");
+
 var SDPUtil = {
     filter_special_chars: function (text) {
         return text.replace(/[\\\/\{,\}\+]/g, "");
