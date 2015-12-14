@@ -53,7 +53,7 @@
         "record": "Aufnehmen",
         "lock": "Raum schützen / Schutz aufheben",
         "invite": "Andere einladen",
-        "chat": "Chat öffnen / schliessen",
+        "chat": "Chat öffnen / schließen",
         "prezi": "Prezi freigeben",
         "etherpad": "Geteiltes Dokument",
         "sharescreen": "Bildschirm freigeben",
@@ -66,9 +66,9 @@
         "dialpad": "Tastenblock anzeigen"
     },
     "bottomtoolbar": {
-        "chat": "Chat öffnen / schliessen",
+        "chat": "Chat öffnen / schließen",
         "filmstrip": "Videovorschauen anzeigen / verstecken",
-        "contactlist": "Kontaktliste öffnen / schliessen"
+        "contactlist": "Kontaktliste öffnen / schließen"
     },
     "chat": {
         "nickname": {
