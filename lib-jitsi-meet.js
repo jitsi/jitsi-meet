@@ -501,6 +501,11 @@ function setupListeners(conference) {
         conference.eventEmitter.emit(JitsiConferenceEvents.SETUP_FAILED);
     });
 
+    conference.room.addListener(XMPPEvents.MESSAGE_RECEIVED, function (jid, displayName, txt, myJid, ts) {
+        var id = Strophe.getResourceFromJid(jid);
+        conference.eventEmitter.emit(JitsiConferenceEvents.MESSAGE_RECEIVED, id, txt, ts);
+    });
+
     conference.rtc.addListener(RTCEvents.DOMINANTSPEAKER_CHANGED, function (id) {
         if(conference.lastActiveSpeaker !== id && conference.room) {
             conference.lastActiveSpeaker = id;

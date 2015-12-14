@@ -71,7 +71,7 @@ JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.ERROR);
         - ACTIVE_SPEAKER_CHANGED - the active speaker is changed. (parameters - id(string))
         - USER_JOINED - new user joined a conference. (parameters - id(string), user(JitsiParticipant))
         - USER_LEFT - a participant left conference. (parameters - id(string), user(JitsiParticipant))
-        - MESSAGE_RECEIVED - new text message received. (parameters - id(string), text(string))
+        - MESSAGE_RECEIVED - new text message received. (parameters - id(string), text(string), ts(number))
         - DISPLAY_NAME_CHANGED - user has changed his display name. (parameters - id(string), displayName(string))
         - LAST_N_ENDPOINTS_CHANGED - last n set was changed (parameters - array of ids of users)
         - IN_LAST_N_CHANGED - passes boolean property that shows whether the local user is included in last n set of any other user or not. (parameters - boolean)
