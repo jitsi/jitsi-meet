@@ -95,7 +95,7 @@ var Settings = {
     setLanguage: function (lang) {
         language = lang;
         window.localStorage.language = lang;
-    },
+    }
 };
 
 module.exports = Settings;
