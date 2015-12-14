@@ -244,7 +244,7 @@ function initConference(localTracks, connection) {
 
 
     room.on(ConferenceEvents.TRACK_ADDED, function (track) {
-        if (!track.getParticipantId) { // skip local tracks
+        if (track.isLocal) { // skip local tracks
             return;
         }
         console.error(
@@ -253,7 +253,7 @@ function initConference(localTracks, connection) {
         APP.UI.addRemoteStream(track);
     });
     room.on(ConferenceEvents.TRACK_REMOVED, function (track) {
-        if (!track.getParticipantId) { // skip local tracks
+        if (track.isLocal) { // skip local tracks
             return;
         }
 
