@@ -181,10 +181,7 @@ var Chat = {
                 event.preventDefault();
                 var val = UIUtil.escapeHtml(this.value);
                 this.value = '';
-                if (APP.settings.getDisplayName()) {
-                    eventEmitter.emit(UIEvents.NICKNAME_CHANGED, val);
-                    return;
-                }
+                eventEmitter.emit(UIEvents.NICKNAME_CHANGED, val);
             }
         });
 

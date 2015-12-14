@@ -155,6 +155,10 @@ UI.changeDisplayName = function (id, displayName) {
     ContactList.onDisplayNameChange(id, displayName);
     SettingsMenu.onDisplayNameChange(id, displayName);
     VideoLayout.onDisplayNameChanged(id, displayName);
+
+    if (APP.conference.isLocalId(id)) {
+        Chat.setChatConversationMode(!!displayName);
+    }
 };
 
 UI.initConference = function () {

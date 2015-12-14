@@ -375,6 +375,7 @@ function initConference(localTracks, connection) {
     APP.UI.addListener(UIEvents.NICKNAME_CHANGED, function (nickname) {
         APP.settings.setDisplayName(nickname);
         room.setDisplayName(nickname);
+        APP.UI.changeDisplayName(APP.conference.localId, nickname);
     });
 
     room.on(ConferenceErrors.CONNECTION_ERROR, function () {
