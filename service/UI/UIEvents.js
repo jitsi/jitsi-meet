@@ -25,6 +25,7 @@ export default {
     ETHERPAD_CLICKED: "UI.etherpad_clicked",
     ROOM_LOCK_CLICKED: "UI.room_lock_clicked",
     USER_INVITED: "UI.user_invited",
+    USER_KICKED: "UI.user_kicked",
     FULLSCREEN_TOGGLE: "UI.fullscreen_toggle",
     AUTH_CLICKED: "UI.auth_clicked",
     TOGGLE_CHAT: "UI.toggle_chat",

@@ -1,13 +1,15 @@
 /* global $, config, interfaceConfig */
+
+import PanelToggler from "../side_pannels/SidePanelToggler";
+
 /**
  * Created by hristo on 12/22/14.
  */
-var UIUtil = module.exports = {
+ var UIUtil = {
     /**
      * Returns the available video width.
      */
     getAvailableVideoWidth: function (isVisible) {
-        var PanelToggler = require("../side_pannels/SidePanelToggler");
         if(typeof isVisible === "undefined" || isVisible === null)
             isVisible = PanelToggler.isVisible();
         var rightPanelWidth
@@ -114,3 +116,5 @@ var UIUtil = module.exports = {
         $(selector).hide();
     }
 };
+
+export default UIUtil;

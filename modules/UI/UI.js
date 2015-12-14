@@ -1,31 +1,33 @@
-/* global Strophe, APP, $, config, interfaceConfig, toastr */
+/* global APP, $, config, interfaceConfig, toastr */
 /* jshint -W101 */
 var UI = {};
 
-var VideoLayout = require("./videolayout/VideoLayout");
-var AudioLevels = require("./audio_levels/AudioLevels");
+import AudioLevels from './audio_levels/AudioLevels';
+import Chat from "./side_pannels/chat/Chat";
+import Toolbar from "./toolbars/Toolbar";
+import ToolbarToggler from "./toolbars/ToolbarToggler";
+import BottomToolbar from "./toolbars/BottomToolbar";
+import ContactList from "./side_pannels/contactlist/ContactList";
+import Avatar from "./avatar/Avatar";
+import PanelToggler from "./side_pannels/SidePanelToggler";
+import UIUtil from "./util/UIUtil";
+import UIEvents from "../../service/UI/UIEvents";
+
+import VideoLayout from "./videolayout/VideoLayout";
+
 var Prezi = require("./prezi/Prezi");
 var Etherpad = require("./etherpad/Etherpad");
-var Chat = require("./side_pannels/chat/Chat");
-var Toolbar = require("./toolbars/Toolbar");
-var ToolbarToggler = require("./toolbars/ToolbarToggler");
-var BottomToolbar = require("./toolbars/BottomToolbar");
-var ContactList = require("./side_pannels/contactlist/ContactList");
-var Avatar = require("./avatar/Avatar");
 var EventEmitter = require("events");
 var SettingsMenu = require("./side_pannels/settings/SettingsMenu");
 var Settings = require("./../settings/Settings");
-var PanelToggler = require("./side_pannels/SidePanelToggler");
 UI.messageHandler = require("./util/MessageHandler");
 var messageHandler = UI.messageHandler;
 var Authentication  = require("./authentication/Authentication");
-var UIUtil = require("./util/UIUtil");
 var JitsiPopover = require("./util/JitsiPopover");
 var CQEvents = require("../../service/connectionquality/CQEvents");
 var DesktopSharingEventTypes
     = require("../../service/desktopsharing/DesktopSharingEventTypes");
 var StatisticsEvents = require("../../service/statistics/Events");
-var UIEvents = require("../../service/UI/UIEvents");
 var Feedback = require("./Feedback");
 
 var eventEmitter = new EventEmitter();
@@ -352,7 +354,7 @@ function initEtherpad(name) {
     Etherpad.init(name);
 }
 
-UI.addUser = function (jid, id, displayName) {
+UI.addUser = function (id, displayName) {
     messageHandler.notify(
         displayName,'notify.somebody', 'connected', 'notify.connected'
     );
@@ -362,16 +364,14 @@ UI.addUser = function (jid, id, displayName) {
         UIUtil.playSoundNotification('userJoined');
 
     // Configure avatar
-    UI.setUserAvatar(jid, id);
+    UI.setUserAvatar(id, displayName);
 
     // Add Peer's container
-    VideoLayout.ensurePeerContainerExists(jid);
+    VideoLayout.ensurePeerContainerExists(id);
 };
 
-UI.removeUser = function (jid) {
-    console.log('left.muc', jid);
-    var displayName = $('#participant_' + Strophe.getResourceFromJid(jid) +
-        '>.displayname').html();
+UI.removeUser = function (id, displayName) {
+    console.log('left.muc', id);
     messageHandler.notify(displayName,'notify.somebody',
         'disconnected',
         'notify.disconnected');
@@ -380,9 +380,9 @@ UI.removeUser = function (jid) {
         UIUtil.playSoundNotification('userLeft');
     }
 
-    ContactList.removeContact(jid);
+    ContactList.removeContact(id);
 
-    VideoLayout.participantLeft(jid);
+    VideoLayout.participantLeft(id);
 };
 
 function onMucPresenceStatus(jid, info) {
@@ -601,7 +601,7 @@ UI.handleLastNEndpoints = function (ids) {
 
 UI.setAudioLevel = function (id, lvl) {
     AudioLevels.updateAudioLevel(
-        id, lvl, VideoLayout.getLargeVideoResource()
+        id, lvl, VideoLayout.getLargeVideoId()
     );
 };
 

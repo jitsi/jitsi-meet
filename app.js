@@ -13,6 +13,7 @@ import "jQuery-Impromptu";
 import "autosize";
 window.toastr = require("toastr");
 
+import URLProcessor from "./modules/config/URLProcessor";
 import RoomnameGenerator from './modules/util/RoomnameGenerator';
 import CQEvents from './service/connectionquality/CQEvents';
 import UIEvents from './service/UI/UIEvents';
@@ -101,23 +102,23 @@ const APP = {
 };
 
 
-var ConnectionEvents = JitsiMeetJS.events.connection;
-var ConnectionErrors = JitsiMeetJS.errors.connection;
+const ConnectionEvents = JitsiMeetJS.events.connection;
+const ConnectionErrors = JitsiMeetJS.errors.connection;
 function connect() {
-    var connection = new JitsiMeetJS.JitsiConnection(null, null, {
+    let connection = new JitsiMeetJS.JitsiConnection(null, null, {
         hosts: config.hosts,
         bosh: config.bosh,
         clientNode: config.clientNode
     });
 
     return new Promise(function (resolve, reject) {
-        var handlers = {};
+        let handlers = {};
 
-        var unsubscribe = function () {
+        function unsubscribe () {
             Object.keys(handlers).forEach(function (event) {
                 connection.removeEventListener(event, handlers[event]);
             });
-        };
+        }
 
         handlers[ConnectionEvents.CONNECTION_ESTABLISHED] = function () {
             console.log('CONNECTED');
@@ -125,14 +126,14 @@ function connect() {
             resolve(connection);
         };
 
-        var listenForFailure = function (event) {
+        function listenForFailure (event) {
             handlers[event] = function (...args) {
                 console.error(`CONNECTION FAILED: ${event}`, ...args);
 
                 unsubscribe();
                 reject([event, ...args]);
             };
-        };
+        }
 
         listenForFailure(ConnectionEvents.CONNECTION_FAILED);
         listenForFailure(ConnectionErrors.PASSWORD_REQUIRED);
@@ -172,6 +173,13 @@ function initConference(localTracks, connection) {
         }
     });
 
+    APP.conference.listMembers = function () {
+        return room.getParticipants();
+    };
+    APP.conference.listMembersIds = function () {
+        return room.getParticipants().map(p => p.getId());
+    };
+
     function getDisplayName(id) {
         if (APP.conference.isLocalId(id)) {
             return APP.settings.getDisplayName();
@@ -187,17 +195,22 @@ function initConference(localTracks, connection) {
     room.on(ConferenceEvents.CONFERENCE_JOINED, function () {
         localTracks.forEach(function (track) {
             room.addTrack(track);
-            //APP.UI.addLocalStream(track);
+            APP.UI.addLocalStream(track);
         });
     });
 
 
-    room.on(ConferenceEvents.USER_JOINED, function (id) {
+    room.on(ConferenceEvents.USER_JOINED, function (id, user) {
+        if (APP.conference.isLocalId(id)) {
+            return;
+        }
+        console.error('USER %s connnected', id);
         // FIXME email???
-        //APP.UI.addUser(id);
+        APP.UI.addUser(id, user.getDisplayName());
     });
-    room.on(ConferenceEvents.USER_LEFT, function (id) {
-        APP.UI.removeUser(id);
+    room.on(ConferenceEvents.USER_LEFT, function (id, user) {
+        console.error('USER LEFT', id);
+        APP.UI.removeUser(id, user.getDisplayName());
     });
 
 
@@ -230,6 +243,26 @@ function initConference(localTracks, connection) {
     });
 
 
+    room.on(ConferenceEvents.TRACK_ADDED, function (track) {
+        if (!track.getParticipantId) { // skip local tracks
+            return;
+        }
+        console.error(
+            'REMOTE %s TRACK', track.getType(), track.getParticipantId()
+        );
+        APP.UI.addRemoteStream(track);
+    });
+    room.on(ConferenceEvents.TRACK_REMOVED, function (track) {
+        if (!track.getParticipantId) { // skip local tracks
+            return;
+        }
+
+        console.error(
+            'REMOTE %s TRACK REMOVED', track.getType(), track.getParticipantId()
+        );
+
+        // FIXME handle
+    });
     room.on(ConferenceEvents.TRACK_MUTE_CHANGED, function (track) {
         // FIXME handle mute
     });
@@ -421,8 +454,21 @@ function initConference(localTracks, connection) {
         // on SUBJECT_CHANGED UI.setSubject(topic);
     });
 
+    APP.UI.addListener(UIEvents.USER_KICKED, function (id) {
+        // FIXME handle
+        // APP.xmpp.eject(self.id);
+    });
+
+    APP.UI.addListener(UIEvents.SELECTED_ENDPOINT, function (id) {
+        room.selectParticipant(id);
+    });
+
     room.on(ConferenceEvents.DTMF_SUPPORT_CHANGED, function (isDTMFSupported) {
         APP.UI.updateDTMFSupport(isDTMFSupported);
+    });
+
+    $(window).bind('beforeunload', function () {
+        room.leave();
     });
 
     return new Promise(function (resolve, reject) {
@@ -456,6 +502,7 @@ function createLocalTracks () {
 }
 
 function init() {
+    APP.UI.start();
     JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.TRACE);
     JitsiMeetJS.init().then(function () {
         return Promise.all([createLocalTracks(), connect()]);
@@ -463,8 +510,6 @@ function init() {
         console.log('initialized with %s local tracks', tracks.length);
         return initConference(tracks, connection);
     }).then(function () {
-        APP.UI.start();
-
         APP.UI.initConference();
 
         APP.UI.addListener(UIEvents.LANG_CHANGED, function (language) {
@@ -518,7 +563,6 @@ function obtainConfigAndInit() {
 $(document).ready(function () {
     console.log("(TIME) document ready:\t", window.performance.now());
 
-    var URLProcessor = require("./modules/config/URLProcessor");
     URLProcessor.setConfigParametersFromUrl();
     APP.init();
 
@@ -537,4 +581,4 @@ $(window).bind('beforeunload', function () {
     }
 });
 
-export default APP;
+module.exports = APP;

@@ -1,13 +1,13 @@
 /* global APP, $ */
 /* jshint -W101 */
-var JitsiPopover = require("../util/JitsiPopover");
+import JitsiPopover from "../util/JitsiPopover";
 
 /**
  * Constructs new connection indicator.
  * @param videoContainer the video container associated with the indicator.
  * @constructor
  */
-function ConnectionIndicator(videoContainer, jid) {
+function ConnectionIndicator(videoContainer, id) {
     this.videoContainer = videoContainer;
     this.bandwidth = null;
     this.packetLoss = null;
@@ -16,7 +16,7 @@ function ConnectionIndicator(videoContainer, jid) {
     this.resolution = null;
     this.transport = [];
     this.popover = null;
-    this.jid = jid;
+    this.id = id;
     this.create();
 }
 
@@ -87,7 +87,7 @@ ConnectionIndicator.prototype.generateText = function () {
     }
 
     var resolutionValue = null;
-    if(this.resolution && this.jid) {
+    if(this.resolution && this.id) {
         var keys = Object.keys(this.resolution);
         for(var ssrc in this.resolution) {
             // skip resolutions for ssrc that don't have this info
@@ -99,7 +99,7 @@ ConnectionIndicator.prototype.generateText = function () {
         }
     }
 
-    if(this.jid === null) {
+    if(this.id === null) {
         resolution = "";
         if(this.resolution === null || !Object.keys(this.resolution) ||
             Object.keys(this.resolution).length === 0) {
@@ -144,8 +144,8 @@ ConnectionIndicator.prototype.generateText = function () {
     if(this.videoContainer.videoSpanId == "localVideoContainer") {
         result += "<div class=\"jitsipopover_showmore\" " +
             "onclick = \"APP.UI.connectionIndicatorShowMore('" +
-            // FIXME: we do not know local jid when this text is generated
-            //this.jid + "')\"  data-i18n='connectionindicator." +
+            // FIXME: we do not know local id when this text is generated
+            //this.id + "')\"  data-i18n='connectionindicator." +
             "local')\"  data-i18n='connectionindicator." +
                 (this.showMoreValue ? "less" : "more") + "'>" +
             translate("connectionindicator." + (this.showMoreValue ? "less" : "more")) +
@@ -385,4 +385,4 @@ ConnectionIndicator.prototype.hideIndicator = function () {
         this.popover.forceHide();
 };
 
-module.exports = ConnectionIndicator;
+export default ConnectionIndicator;

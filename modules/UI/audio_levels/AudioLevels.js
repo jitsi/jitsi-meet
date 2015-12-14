@@ -248,8 +248,7 @@ const AudioLevels = {
 
         // Fill the shape.
         ASDrawContext.fill();
-    },
-
+    }
 };
 
 export default AudioLevels;

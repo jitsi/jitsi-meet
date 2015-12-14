@@ -1,11 +1,11 @@
-/* global $, APP, Strophe, interfaceConfig */
+/* global $, APP, interfaceConfig */
 /* jshint -W101 */
-var Avatar = require("../avatar/Avatar");
+import Avatar from "../avatar/Avatar";
+import ToolbarToggler from "../toolbars/ToolbarToggler";
+import UIUtil from "../util/UIUtil";
+import UIEvents from "../../../service/UI/UIEvents";
+
 var RTCBrowserType = require("../../RTC/RTCBrowserType");
-var UIUtil = require("../util/UIUtil");
-var UIEvents = require("../../../service/UI/UIEvents");
-var xmpp = require("../../xmpp/xmpp");
-var ToolbarToggler = require("../toolbars/ToolbarToggler");
 
 // FIXME: With Temasys we have to re-select everytime
 //var video = $('#largeVideo');
@@ -37,22 +37,22 @@ var state = "video";
  * @param state the state.
  * @returns {JQuery|*|jQuery|HTMLElement} the container.
  */
-function getContainerByState(state)
-{
+function getContainerByState(state) {
     var selector = null;
-    switch (state)
-    {
-        case "video":
-            selector = "#largeVideoWrapper";
-            break;
-        case "etherpad":
-            selector = "#etherpad>iframe";
-            break;
-        case "prezi":
-            selector = "#presentation>iframe";
-            break;
+    switch (state) {
+    case "video":
+        selector = "#largeVideoWrapper";
+        break;
+    case "etherpad":
+        selector = "#etherpad>iframe";
+        break;
+    case "prezi":
+        selector = "#presentation>iframe";
+        break;
+    default:
+        return null;
     }
-    return (selector !== null)? $(selector) : null;
+    return $(selector);
 }
 
 /**
@@ -72,24 +72,25 @@ function positionVideo(video,
                        animate) {
     if (animate) {
         video.animate({
-                width: width,
-                height: height,
-                top: verticalIndent,
-                bottom: verticalIndent,
-                left: horizontalIndent,
-                right: horizontalIndent
-            },
-            {
-                queue: false,
-                duration: 500
-            });
+            width: width,
+            height: height,
+            top: verticalIndent,
+            bottom: verticalIndent,
+            left: horizontalIndent,
+            right: horizontalIndent
+        }, {
+            queue: false,
+            duration: 500
+        });
     } else {
         video.width(width);
         video.height(height);
-        video.css({  top: verticalIndent + 'px',
-            bottom: verticalIndent + 'px',
-            left: horizontalIndent + 'px',
-            right: horizontalIndent + 'px'});
+        video.css({
+            top:     verticalIndent,
+            bottom:  verticalIndent,
+            left:    horizontalIndent,
+            right:   horizontalIndent
+        });
     }
 
 }
@@ -237,16 +238,13 @@ function getCameraVideoSize(videoWidth,
 
 /**
  * Updates the src of the active speaker avatar
- * @param jid of the current active speaker
  */
 function updateActiveSpeakerAvatarSrc() {
-    var avatar = $("#activeSpeakerAvatar")[0];
-    var jid = currentSmallVideo.peerJid;
-    var url = Avatar.getActiveSpeakerUrl(jid);
-    if (avatar.src === url)
-        return;
-    if (jid) {
-        avatar.src = url;
+    let avatar = $("#activeSpeakerAvatar");
+    let id = currentSmallVideo.id;
+    let url = Avatar.getActiveSpeakerUrl(id);
+    if (id && avatar.attr('src') !== url) {
+        avatar.attr('src', url);
         currentSmallVideo.showAvatar();
     }
 }
@@ -263,13 +261,15 @@ function changeVideo(isVisible) {
     }
 
     updateActiveSpeakerAvatarSrc();
-    var largeVideoElement = $('#largeVideo')[0];
+    let largeVideoElement = $('#largeVideo');
 
-    APP.RTC.setVideoSrc(largeVideoElement, currentSmallVideo.getSrc());
+    currentSmallVideo.stream.attach(largeVideoElement);
 
-    var flipX = currentSmallVideo.flipX;
+    let flipX = currentSmallVideo.flipX;
 
-    largeVideoElement.style.transform = flipX ? "scaleX(-1)" : "none";
+    largeVideoElement.css({
+        transform: flipX ? "scaleX(-1)" : "none"
+    });
 
     LargeVideo.updateVideoSizeAndPosition(currentSmallVideo.getVideoType());
 
@@ -369,40 +369,35 @@ var LargeVideo = {
     /**
      * Returns <tt>true</tt> if the user is currently displayed on large video.
      */
-    isCurrentlyOnLarge: function (resourceJid) {
-        return currentSmallVideo && resourceJid &&
-            currentSmallVideo.getResourceJid() === resourceJid;
+    isCurrentlyOnLarge: function (id) {
+        return id && id === this.getId();
     },
     /**
      * Updates the large video with the given new video source.
      */
-    updateLargeVideo: function (resourceJid, forceUpdate) {
-        if(!isEnabled)
+    updateLargeVideo: function (id, forceUpdate) {
+        if(!isEnabled) {
             return;
-        var newSmallVideo = this.VideoLayout.getSmallVideo(resourceJid);
-        console.info('hover in ' + resourceJid + ', video: ', newSmallVideo);
+        }
+        let newSmallVideo = this.VideoLayout.getSmallVideo(id);
+        console.info(`hover in ${id} , video: `, newSmallVideo);
 
         if (!newSmallVideo) {
-            console.error("Small video not found for: " + resourceJid);
+            console.error("Small video not found for: " + id);
             return;
         }
 
-        if (!LargeVideo.isCurrentlyOnLarge(resourceJid) || forceUpdate) {
+        if (!LargeVideo.isCurrentlyOnLarge(id) || forceUpdate) {
             $('#activeSpeaker').css('visibility', 'hidden');
 
-            var oldSmallVideo = null;
-            if (currentSmallVideo) {
-                oldSmallVideo = currentSmallVideo;
-            }
+            let oldId = this.getId();
+
             currentSmallVideo = newSmallVideo;
 
-            var oldJid = null;
-            if (oldSmallVideo)
-                oldJid = oldSmallVideo.peerJid;
-            if (oldJid !== resourceJid) {
-                // we want the notification to trigger even if userJid is undefined,
+            if (oldId !== id) {
+                // we want the notification to trigger even if id is undefined,
                 // or null.
-                this.eventEmitter.emit(UIEvents.SELECTED_ENDPOINT, resourceJid);
+                this.eventEmitter.emit(UIEvents.SELECTED_ENDPOINT, id);
             }
             // We are doing fadeOut/fadeIn animations on parent div which wraps
             // largeVideo, because when Temasys plugin is in use it replaces
@@ -443,11 +438,10 @@ var LargeVideo = {
                 currentSmallVideo.enableDominantSpeaker(false);
         }
     },
-    onVideoTypeChanged: function (resourceJid, newVideoType) {
+    onVideoTypeChanged: function (id, newVideoType) {
         if (!isEnabled)
             return;
-        if (LargeVideo.isCurrentlyOnLarge(resourceJid))
-        {
+        if (LargeVideo.isCurrentlyOnLarge(id)) {
             LargeVideo.updateVideoSizeAndPosition(newVideoType);
 
             this.position(null, null, null, null, true);
@@ -562,22 +556,23 @@ var LargeVideo = {
         getVideoPosition = isDesktop ? getDesktopVideoPosition :
             getCameraVideoPosition;
     },
-    getResourceJid: function () {
-        return currentSmallVideo ? currentSmallVideo.getResourceJid() : null;
+    getId: function () {
+        return currentSmallVideo ? currentSmallVideo.id : null;
     },
-    updateAvatar: function (resourceJid) {
-        if(!isEnabled)
+    updateAvatar: function (id) {
+        if (!isEnabled) {
             return;
-        if (resourceJid === this.getResourceJid()) {
+        }
+        if (id === this.getId()) {
             updateActiveSpeakerAvatarSrc();
         }
     },
-    showAvatar: function (resourceJid, show) {
-        if (!isEnabled)
+    showAvatar: function (id, show) {
+        if (!isEnabled) {
             return;
-        if (this.getResourceJid() === resourceJid && state === "video") {
-            $("#largeVideoWrapper")
-                .css("visibility", show ? "hidden" : "visible");
+        }
+        if (this.getId() === id && state === "video") {
+            $("#largeVideoWrapper").css("visibility", show ? "hidden" : "visible");
             $('#activeSpeaker').css("visibility", show ? "visible" : "hidden");
             return true;
         }
@@ -721,4 +716,4 @@ var LargeVideo = {
     }
 };
 
-module.exports = LargeVideo;
+export default LargeVideo;

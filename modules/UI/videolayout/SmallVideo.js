@@ -1,14 +1,16 @@
 /* global $, APP, require */
 /* jshint -W101 */
-var Avatar = require("../avatar/Avatar");
-var UIUtil = require("../util/UIUtil");
-var LargeVideo = require("./LargeVideo");
+import Avatar from "../avatar/Avatar";
+import UIUtil from "../util/UIUtil";
+import LargeVideo from "./LargeVideo";
+
 var RTCBrowserType = require("../../RTC/RTCBrowserType");
 var MediaStreamType = require("../../../service/RTC/MediaStreamTypes");
 
 function SmallVideo() {
     this.isMuted = false;
     this.hasAvatar = false;
+    this.stream = null;
 }
 
 function setVisibility(selector, show) {
@@ -106,9 +108,10 @@ SmallVideo.prototype.setPresenceStatus = function (statusMsg) {
  * Creates an audio or video element for a particular MediaStream.
  */
 SmallVideo.createStreamElement = function (stream) {
-    var isVideo = stream.isVideoStream();
+    let isVideo = stream.isVideoTrack();
 
-    var element = isVideo ? document.createElement('video')
+    let element = isVideo
+        ? document.createElement('video')
         : document.createElement('audio');
     if (isVideo) {
         element.setAttribute("muted", "true");
@@ -118,8 +121,7 @@ SmallVideo.createStreamElement = function (stream) {
         element.autoplay = true;
     }
 
-    element.id = (isVideo ? 'remoteVideo_' : 'remoteAudio_') +
-        APP.RTC.getStreamID(stream.getOriginalStream());
+    element.id = (isVideo ? 'remoteVideo_' : 'remoteAudio_') + stream.getId();
 
     element.onplay = function () {
         console.log("(TIME) Render " + (isVideo ? 'video' : 'audio') + ":\t",
@@ -145,7 +147,7 @@ SmallVideo.prototype.bindHoverHandler = function () {
             // If the video has been "pinned" by the user we want to
             // keep the display name on place.
             if (!LargeVideo.isLargeVideoVisible() ||
-                !LargeVideo.isCurrentlyOnLarge(self.getResourceJid()))
+                !LargeVideo.isCurrentlyOnLarge(self.id))
                 self.showDisplayName(false);
         }
     );
@@ -237,15 +239,14 @@ SmallVideo.prototype.showVideoIndicator = function(isMuted) {
 };
 
 SmallVideo.prototype.enableDominantSpeaker = function (isEnable) {
-    var resourceJid = this.getResourceJid();
-    var displayName = resourceJid;
+    var displayName = this.id;
     var nameSpan = $('#' + this.videoSpanId + '>span.displayname');
     if (nameSpan.length > 0)
         displayName = nameSpan.html();
 
     console.log("UI enable dominant speaker",
         displayName,
-        resourceJid,
+        this.id,
         isEnable);
 
 
@@ -316,6 +317,8 @@ SmallVideo.prototype.createModeratorIndicatorElement = function () {
 };
 
 SmallVideo.prototype.selectVideoElement = function () {
+    return $('#' + this.videoSpanId).find(videoElem);
+    // FIXME maybe move this to the library?
     var videoElem = APP.RTC.getVideoElementName();
     if (!RTCBrowserType.isTemasysPluginUsed()) {
         return $('#' + this.videoSpanId).find(videoElem);
@@ -367,32 +370,31 @@ SmallVideo.prototype.hasVideo = function () {
  */
 SmallVideo.prototype.showAvatar = function (show) {
     if (!this.hasAvatar) {
-        if (this.peerJid) {
+        if (this.id) {
             // Init avatar
-            this.avatarChanged(Avatar.getThumbUrl(this.peerJid));
+            this.avatarChanged(Avatar.getThumbUrl(this.id));
         } else {
-            console.error("Unable to init avatar - no peerjid", this);
+            console.error("Unable to init avatar - no id", this);
             return;
         }
     }
 
-    var resourceJid = this.getResourceJid();
-    var video = this.selectVideoElement();
+    let video = this.selectVideoElement();
 
-    var avatar = $('#avatar_' + resourceJid);
+    let avatar = $(`#avatar_${this.id}`);
 
     if (show === undefined || show === null) {
         if (!this.isLocal &&
-            !this.VideoLayout.isInLastN(resourceJid)) {
+            !this.VideoLayout.isInLastN(this.id)) {
             show = true;
         } else {
             // We want to show the avatar when the video is muted or not exists
             // that is when 'true' or 'null' is returned
-            show = APP.RTC.isVideoMuted(this.peerJid) !== false;
+            show = !this.stream || this.stream.isMuted();
         }
     }
 
-    if (LargeVideo.showAvatar(resourceJid, show)) {
+    if (LargeVideo.showAvatar(this.id, show)) {
         setVisibility(avatar, false);
         setVisibility(video, false);
     } else {
@@ -405,8 +407,7 @@ SmallVideo.prototype.showAvatar = function (show) {
 
 SmallVideo.prototype.avatarChanged = function (thumbUrl) {
     var thumbnail = $('#' + this.videoSpanId);
-    var resourceJid = this.getResourceJid();
-    var avatar = $('#avatar_' + resourceJid);
+    var avatar = $('#avatar_' + this.id);
     this.hasAvatar = true;
 
     // set the avatar in the thumbnail
@@ -415,7 +416,7 @@ SmallVideo.prototype.avatarChanged = function (thumbUrl) {
     } else {
         if (thumbnail && thumbnail.length > 0) {
             avatar = document.createElement('img');
-            avatar.id = 'avatar_' + resourceJid;
+            avatar.id = 'avatar_' + this.id;
             avatar.className = 'userAvatar';
             avatar.src = thumbUrl;
             thumbnail.append(avatar);
@@ -423,4 +424,4 @@ SmallVideo.prototype.avatarChanged = function (thumbUrl) {
     }
 };
 
-module.exports = SmallVideo;
+export default SmallVideo;
