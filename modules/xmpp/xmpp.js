@@ -631,10 +631,10 @@ var XMPP = {
         return SDPUtil.filter_special_chars(text);
     },
     createConferenceIQ: function (roomName) {
-        Moderator.createConferenceIq(roomName);
+        return Moderator.createConferenceIq(roomName);
     },
     parseSessionId: function (resultIq) {
-        Moderator.parseSessionId(resultIq);
+        return Moderator.parseSessionId(resultIq);
     }
 };
 
