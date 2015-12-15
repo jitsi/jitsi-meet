@@ -54,8 +54,4 @@ MediaStream.prototype.setMute = function (value) {
     this.muted = value;
 };
 
-MediaStream.prototype.getMute = function () {
-    return this.muted;
-};
-
 module.exports = MediaStream;

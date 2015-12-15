@@ -579,9 +579,6 @@ var VideoLayout = (function (my) {
             remoteVideo.showVideoIndicator(value);
 
             var el = remoteVideo.selectVideoElement();
-            // the presence and trigger of onVideoMute can be earlier than
-            // creating the stream element. So show and hide can be ignored
-            // we need to take care for them also on creating the stream elem
             if (!value)
                 el.show();
             else
