@@ -629,6 +629,12 @@ var XMPP = {
     },
     filter_special_chars: function (text) {
         return SDPUtil.filter_special_chars(text);
+    },
+    createConferenceIQ: function (roomName) {
+        Moderator.createConferenceIq(roomName);
+    },
+    parseSessionId: function (resultIq) {
+        Moderator.parseSessionId(resultIq);
     }
 };
 
