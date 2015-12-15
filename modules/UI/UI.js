@@ -22,7 +22,6 @@ var EventEmitter = require("events");
 var Settings = require("./../settings/Settings");
 UI.messageHandler = require("./util/MessageHandler");
 var messageHandler = UI.messageHandler;
-var Authentication  = require("./authentication/Authentication");
 var JitsiPopover = require("./util/JitsiPopover");
 var CQEvents = require("../../service/connectionquality/CQEvents");
 var DesktopSharingEventTypes
@@ -207,10 +206,6 @@ function registerListeners() {
     });
 
     UI.addListener(UIEvents.FULLSCREEN_TOGGLE, toggleFullScreen);
-
-    UI.addListener(UIEvents.AUTH_CLICKED, function () {
-        Authentication.authenticate();
-    });
 
     UI.addListener(UIEvents.TOGGLE_CHAT, UI.toggleChat);
 
@@ -407,7 +402,6 @@ UI.updateLocalRole = function (isModerator) {
     SettingsMenu.onRoleChanged();
 
     if (isModerator) {
-        Authentication.closeAuthenticationWindow();
         messageHandler.notify(null, "notify.me", 'connected', "notify.moderator");
 
         Toolbar.checkAutoRecord();
@@ -435,10 +429,6 @@ UI.updateUserRole = function (user) {
             'connected', 'notify.grantedToUnknown', {}
         );
     }
-};
-
-UI.notifyAuthRequired = function (intervalCallback) {
-    Authentication.openAuthenticationDialog(APP.conference.roomName, intervalCallback);
 };
 
 
@@ -504,11 +494,6 @@ UI.showLoginPopup = function(callback) {
         null, null, ':input:first'
 
     );
-};
-
-UI.closeAuthenticationDialog = function () {
-    Authentication.closeAuthenticationDialog();
-    Authentication.stopInterval();
 };
 
 UI.askForNickname = function () {

@@ -5,7 +5,6 @@ import UIUtil from "../util/UIUtil";
 import LargeVideo from "./LargeVideo";
 
 var RTCBrowserType = require("../../RTC/RTCBrowserType");
-var MediaStreamType = require("../../../service/RTC/MediaStreamTypes");
 
 function SmallVideo() {
     this.isMuted = false;

@@ -1,35 +1,19 @@
 /* global $, APP, config*/
 
-var XMPP = require('../../xmpp/xmpp');
-var Moderator = require('../../xmpp/moderator');
+var messageHandler = require('../util/MessageHandler');
 
 //FIXME: use LoginDialog to add retries to XMPP.connect method used when
 // anonymous domain is not enabled
 
-/**
- * Creates new <tt>Dialog</tt> instance.
- * @param callback <tt>function(Strophe.Connection, Strophe.Status)</tt> called
- *        when we either fail to connect or succeed(check Strophe.Status).
- * @param obtainSession <tt>true</tt> if we want to send ConferenceIQ to Jicofo
- *        in order to create session-id after the connection is established.
- * @constructor
- */
-function Dialog(callback, obtainSession) {
-
-    var self = this;
-
-    var stop = false;
-
-    var connection = APP.xmpp.createConnection();
-
+function Dialog(successCallback, cancelCallback) {
     var message = '<h2 data-i18n="dialog.passwordRequired">';
     message += APP.translation.translateString("dialog.passwordRequired");
     message += '</h2>' +
         '<input name="username" type="text" ';
     if (config.hosts.authdomain) {
-      message += 'placeholder="user identity" autofocus>';
+        message += 'placeholder="user identity" autofocus>';
     } else {
-      message += 'placeholder="user@domain.net" autofocus>';
+        message += 'placeholder="user@domain.net" autofocus>';
     }
     message += '<input name="password" ' +
         'type="password" data-i18n="[placeholder]dialog.userPassword"' +
@@ -53,23 +37,12 @@ function Dialog(callback, obtainSession) {
                     var jid = f.username;
                     var password = f.password;
                     if (jid && password) {
-                        stop = false;
-                        if (jid.indexOf("@") < 0) {
-                          jid = jid.concat('@');
-                          if (config.hosts.authdomain) {
-                            jid += config.hosts.authdomain;
-                          } else {
-                            jid += config.hosts.domain;
-                          }
-                        }
-                        connection.reset();
                         connDialog.goToState('connecting');
-                        connection.connect(jid, password, stateHandler);
+                        successCallback(jid, password);
                     }
                 } else {
                     // User cancelled
-                    stop = true;
-                    callback();
+                    cancelCallback();
                 }
             }
         },
@@ -95,102 +68,18 @@ function Dialog(callback, obtainSession) {
             defaultButton: 0,
             submit: function (e, v, m, f) {
                 e.preventDefault();
-                if (v === 'retry')
+                if (v === 'retry') {
                     connDialog.goToState('login');
-                else
-                    callback();
+                } else {
+                    cancelCallback();
+                }
             }
         }
     };
 
-    var connDialog
-        = APP.UI.messageHandler.openDialogWithStates(states,
-                { persistent: true, closeText: '' }, null);
-
-    var stateHandler = function (status, message) {
-        if (stop) {
-            return;
-        }
-
-        var translateKey = "connection." + XMPP.getStatusString(status);
-        var statusStr = APP.translation.translateString(translateKey);
-
-        // Display current state
-        var connectionStatus =
-            connDialog.getState('connecting').find('#connectionStatus');
-
-        connectionStatus.text(statusStr);
-
-        switch (status) {
-            case XMPP.Status.CONNECTED:
-
-                stop = true;
-                if (!obtainSession) {
-                    callback(connection, status);
-                    return;
-                }
-                // Obtaining session-id status
-                connectionStatus.text(
-                    APP.translation.translateString(
-                        'connection.FETCH_SESSION_ID'));
-
-                // Authenticate with Jicofo and obtain session-id
-                var roomName = APP.conference.roomName;
-
-                // Jicofo will return new session-id when connected
-                // from authenticated domain
-                connection.sendIQ(
-                    Moderator.createConferenceIq(roomName),
-                    function (result) {
-
-                        connectionStatus.text(
-                            APP.translation.translateString(
-                                'connection.GOT_SESSION_ID'));
-
-                        stop = true;
-
-                        // Parse session-id
-                        Moderator.parseSessionId(result);
-
-                        callback(connection, status);
-                    },
-                    function (error) {
-                        console.error("Auth on the fly failed", error);
-
-                        stop = true;
-
-                        var errorMsg =
-                            APP.translation.translateString(
-                                'connection.GET_SESSION_ID_ERROR') +
-                                $(error).find('>error').attr('code');
-
-                        self.displayError(errorMsg);
-
-                        connection.disconnect();
-                    });
-
-                break;
-            case XMPP.Status.AUTHFAIL:
-            case XMPP.Status.CONNFAIL:
-            case XMPP.Status.DISCONNECTED:
-
-                stop = true;
-
-                callback(connection, status);
-
-                var errorMessage = statusStr;
-
-                if (message)
-                {
-                    errorMessage += ': ' + message;
-                }
-                self.displayError(errorMessage);
-
-                break;
-            default:
-                break;
-        }
-    };
+    var connDialog = messageHandler.openDialogWithStates(
+        states, { persistent: true, closeText: '' }, null
+    );
 
     /**
      * Displays error message in 'finished' state which allows either to cancel
@@ -211,7 +100,6 @@ function Dialog(callback, obtainSession) {
      * Closes LoginDialog.
      */
     this.close = function () {
-        stop = true;
         connDialog.close();
     };
 }
@@ -232,8 +120,22 @@ var LoginDialog = {
      *        established.
      * @returns {Dialog}
      */
-    show: function (callback, obtainSession) {
-        return new Dialog(callback, obtainSession);
+    show: function (successCallback, cancelCallback) {
+        return new Dialog(successCallback, cancelCallback);
+    },
+
+    showExternalAuthDialog: function (url, callback) {
+        var dialog = messageHandler.openCenteredPopup(
+            url, 910, 660,
+            // On closed
+            callback
+        );
+
+        if (!dialog) {
+            messageHandler.openMessageDialog(null, "dialog.popupError");
+        }
+
+        return dialog;
     }
 };
 

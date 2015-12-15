@@ -460,6 +460,10 @@ function initConference(localTracks, connection) {
         // APP.xmpp.eject(self.id);
     });
 
+    APP.UI.addListener(UIEvents.AUTH_CLICKED, function () {
+        // FIXME handle
+    });
+
     APP.UI.addListener(UIEvents.SELECTED_ENDPOINT, function (id) {
         room.selectParticipant(id);
     });
@@ -484,7 +488,6 @@ function initConference(localTracks, connection) {
 
         // FIXME handle errors here
 
-        APP.UI.closeAuthenticationDialog();
         room.join();
     }).catch(function (err) {
         // FIXME notify that we cannot conenct to the room
