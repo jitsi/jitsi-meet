@@ -136,6 +136,37 @@ var LoginDialog = {
         }
 
         return dialog;
+    },
+
+    showAuthRequiredDialog: function (roomName, onAuthNow) {
+        var title = APP.translation.generateTranslationHTML(
+            "dialog.WaitingForHost"
+        );
+        var msg = APP.translation.generateTranslationHTML(
+            "dialog.WaitForHostMsg", {room: roomName}
+        );
+
+        var buttonTxt = APP.translation.generateTranslationHTML(
+            "dialog.IamHost"
+        );
+        var buttons = [{title: buttonTxt, value: "authNow"}];
+
+        return APP.UI.messageHandler.openDialog(
+            title,
+            msg,
+            true,
+            buttons,
+            function (onSubmitEvent, submitValue) {
+
+                // Do not close the dialog yet
+                onSubmitEvent.preventDefault();
+
+                // Open login popup
+                if (submitValue === 'authNow') {
+                    onAuthNow();
+                }
+            }
+        );
     }
 };
 
