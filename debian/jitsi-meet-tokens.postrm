@@ -44,6 +44,20 @@ case "$1" in
             sed -i "s/ app_secret=$APP_SECRET/ --app_secret=example_app_secret/g" $PROSODY_HOST_CONFIG
             sed -i 's/ modules_enabled = { "token_verification" }/ --modules_enabled = { "token_verification" }/g' $PROSODY_HOST_CONFIG
 
+            JICOFO_CONFIG="/etc/jitsi/jicofo/sip-communicator.properties"
+            if [ -f "$JICOFO_CONFIG" ] ; then
+                if grep -q "org.jitsi.jicofo.auth.jwt.APP_ID" $JICOFO_CONFIG || \
+                   grep -q "org.jitsi.jicofo.auth.jwt.APP_SECRET" $JICOFO_CONFIG; then
+                   sed -i.old "/org.jitsi.jicofo.auth.jwt.APP_ID=$APP_ID/d" $JICOFO_CONFIG
+                   sed -i.old "/org.jitsi.jicofo.auth.jwt.APP_SECRET=$APP_SECRET/d" $JICOFO_CONFIG
+                   rm "$JICOFO_CONFIG.old"
+                   # Restart Jicofo
+                   if [ -x "/etc/init.d/jicofo" ]; then
+                       invoke-rc.d jicofo restart
+                   fi
+                fi
+            fi
+
             if [ -x "/etc/init.d/prosody" ]; then
                 invoke-rc.d prosody reload
             fi
