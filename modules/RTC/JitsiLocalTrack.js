@@ -14,6 +14,7 @@ function JitsiLocalTrack(stream, videoType,
     this.dontFireRemoveEvent = false;
     this.resolution = resolution;
     this.startMuted = false;
+    this.isLocal = true;
     var self = this;
     JitsiTrack.call(this, null, stream,
         function () {

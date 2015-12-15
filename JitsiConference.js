@@ -316,9 +316,12 @@ JitsiConference.prototype.getParticipantById = function(id) {
 
 JitsiConference.prototype.onMemberJoined = function (jid, email, nick) {
     var id = Strophe.getResourceFromJid(jid);
+    if (id === 'focus') {
+       return;
+    }
     var participant = new JitsiParticipant(id, this, nick);
-    this.eventEmitter.emit(JitsiConferenceEvents.USER_JOINED, id);
     this.participants[id] = participant;
+    this.eventEmitter.emit(JitsiConferenceEvents.USER_JOINED, id, participant);
     this.xmpp.connection.disco.info(
         jid, "node", function(iq) {
             participant._supportsDTMF = $(iq).find(
@@ -330,8 +333,9 @@ JitsiConference.prototype.onMemberJoined = function (jid, email, nick) {
 
 JitsiConference.prototype.onMemberLeft = function (jid) {
     var id = Strophe.getResourceFromJid(jid);
+    var participant = this.participants[id];
     delete this.participants[id];
-    this.eventEmitter.emit(JitsiConferenceEvents.USER_LEFT, id);
+    this.eventEmitter.emit(JitsiConferenceEvents.USER_LEFT, id, participant);
 };
 
 JitsiConference.prototype.onUserRoleChanged = function (jid, role) {
@@ -493,6 +497,11 @@ function setupListeners(conference) {
     });
     conference.room.addListener(XMPPEvents.CONFERENCE_SETUP_FAILED, function () {
         conference.eventEmitter.emit(JitsiConferenceEvents.SETUP_FAILED);
+    });
+
+    conference.room.addListener(XMPPEvents.MESSAGE_RECEIVED, function (jid, displayName, txt, myJid, ts) {
+        var id = Strophe.getResourceFromJid(jid);
+        conference.eventEmitter.emit(JitsiConferenceEvents.MESSAGE_RECEIVED, id, txt, ts);
     });
 
     conference.rtc.addListener(RTCEvents.DOMINANTSPEAKER_CHANGED, function (id) {
