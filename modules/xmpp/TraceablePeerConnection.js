@@ -25,7 +25,7 @@ function TraceablePeerConnection(ice_config, constraints, session) {
     var Interop = require('sdp-interop').Interop;
     this.interop = new Interop();
     var Simulcast = require('sdp-simulcast');
-    this.simulcast = new Simulcast({numOfLayers: 2, explodeRemoteSimulcast: false});
+    this.simulcast = new Simulcast({numOfLayers: 3, explodeRemoteSimulcast: false});
 
     // override as desired
     this.trace = function (what, info) {

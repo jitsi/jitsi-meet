@@ -12,6 +12,9 @@ var confOptions = {
     openSctp: true
 }
 
+
+var isJoined = false;
+
 /**
  * Handles local tracks.
  * @param tracks Array with JitsiTrack objects
@@ -23,15 +26,15 @@ function onLocalTracks(tracks)
     {
         localTracks[i].addEventListener(JitsiMeetJS.events.track.TRACK_AUDIO_LEVEL_CHANGED,
             function (audioLevel) {
-                console.debug("Audio Level local: " + audioLevel);
+                console.log("Audio Level local: " + audioLevel);
             });
         localTracks[i].addEventListener(JitsiMeetJS.events.track.TRACK_MUTE_CHANGED,
             function () {
-                console.debug("local track muted");
+                console.log("local track muted");
             });
         localTracks[i].addEventListener(JitsiMeetJS.events.track.TRACK_STOPPED,
             function () {
-                console.debug("local track stoped");
+                console.log("local track stoped");
             });
         if(localTracks[i].getType() == "video") {
             $("body").append("<video autoplay='1' id='localVideo" + i + "' />");
@@ -40,6 +43,8 @@ function onLocalTracks(tracks)
             $("body").append("<audio autoplay='1' id='localAudio" + i + "' />");
             localTracks[i].attach($("#localAudio" + i ));
         }
+        if(isJoined)
+            room.addTrack(localTracks[i]);
     }
 }
 
@@ -56,21 +61,21 @@ function onRemoteTrack(track) {
     var idx = remoteTracks[participant].push(track);
     track.addEventListener(JitsiMeetJS.events.track.TRACK_AUDIO_LEVEL_CHANGED,
         function (audioLevel) {
-            console.debug("Audio Level remote: " + audioLevel);
+            console.log("Audio Level remote: " + audioLevel);
         });
     track.addEventListener(JitsiMeetJS.events.track.TRACK_MUTE_CHANGED,
         function () {
-            console.debug("remote track muted");
+            console.log("remote track muted");
         });
     track.addEventListener(JitsiMeetJS.events.track.TRACK_STOPPED,
         function () {
-            console.debug("remote track stoped");
+            console.log("remote track stoped");
         });
     var id = participant + track.getType() + idx;
     if(track.getType() == "video") {
         $("body").append("<video autoplay='1' id='" + participant + "video" + idx + "' />");
     } else {
-        $("body").append("<audio autoplay='1' id='" + participant + "audio' />");
+        $("body").append("<audio autoplay='1' id='" + participant + "audio" + idx + "' />");
     }
     track.attach($("#" + id));
 }
@@ -80,6 +85,7 @@ function onRemoteTrack(track) {
  */
 function onConferenceJoined () {
     console.log("conference joined!");
+    isJoined = true;
     for(var i = 0; i < localTracks.length; i++)
         room.addTrack(localTracks[i]);
 }
@@ -99,16 +105,16 @@ function onConnectionSuccess(){
     room = connection.initJitsiConference("conference2", confOptions);
     room.on(JitsiMeetJS.events.conference.TRACK_ADDED, onRemoteTrack);
     room.on(JitsiMeetJS.events.conference.TRACK_REMOVED, function (track) {
-        console.debug("track removed!!!" + track);
+        console.log("track removed!!!" + track);
     });
     room.on(JitsiMeetJS.events.conference.CONFERENCE_JOINED, onConferenceJoined);
     room.on(JitsiMeetJS.events.conference.USER_JOINED, function(id){ remoteTracks[id] = [];});
     room.on(JitsiMeetJS.events.conference.USER_LEFT, onUserLeft);
     room.on(JitsiMeetJS.events.conference.TRACK_MUTE_CHANGED, function (track) {
-        console.debug(track.getType() + " - " + track.isMuted());
+        console.log(track.getType() + " - " + track.isMuted());
     });
     room.on(JitsiMeetJS.events.conference.DISPLAY_NAME_CHANGED, function (userID, displayName) {
-        console.debug(userID + " - " + displayName);
+        console.log(userID + " - " + displayName);
     });
     room.on(JitsiMeetJS.events.conference.TRACK_AUDIO_LEVEL_CHANGED,
       function(userID, audioLevel){
@@ -181,9 +187,9 @@ JitsiMeetJS.init(initOptions).then(function(){
         then(onLocalTracks).catch(function (error) {
             console.log(error);
         });
-    }).catch(function (error) {
-        console.log(error);
-    });
+}).catch(function (error) {
+    console.log(error);
+});
 
 var connection = null;
 var room = null;
