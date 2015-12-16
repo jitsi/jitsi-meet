@@ -77,8 +77,15 @@ function _try_catch (f) {
 }
 
 var CallStats = {
+<<<<<<< HEAD
     init: _try_catch(function (jingleSession) {
         if(!this.isEnabled() || callStats !== null) {
+=======
+    init: function (jingleSession) {
+        callStatsIntegrationEnabled = config.callStatsID
+          && config.callStatsSecret;
+        if(!callStatsIntegrationEnabled || callStats !== null) {
+>>>>>>> Repairing callstats, fix scoping on this for screen obtainer callback,
             return;
         }
 
