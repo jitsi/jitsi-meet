@@ -159,10 +159,14 @@ var RTC = {
             this.rtcUtils = null;
         }
         // Remove all local streams on cleanup
-				while (this.localStreams.length > 0) {
-					var stream = this.localStreams[0];
-					this.stopMediaStream(stream.getOriginalStream());
+				while (this.localAudio.length > 0) {
+					this.stopMediaStream(this.localAudio[0]
+            .getOriginalStream());
 				}
+        while (this.localVideo.length > 0) {
+          this.stopMediaStream(this.localVideo[0]
+            .getOriginalStream());
+        }
         if (eventEmitter) {
             eventEmitter.removeAllListeners();
         }

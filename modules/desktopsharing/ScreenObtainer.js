@@ -270,6 +270,7 @@ function obtainScreenFromExtension(streamCallback, failCallback) {
                 'Changes will take effect after next Chrome restart.');
         }
 
+        var _this = this;
         chrome.webstore.install(
             getWebStoreInstallUrl(),
             function (arg) {
@@ -281,7 +282,7 @@ function obtainScreenFromExtension(streamCallback, failCallback) {
                 }, 500);
             },
             function (arg) {
-                this.eventEmitter
+                _this.eventEmitter
                   .emit(DesktopSharingEventTypes.EXTENSION_INSTALLATION_ERROR);
                 console.log("Failed to install the extension", arg);
                 failCallback(arg);

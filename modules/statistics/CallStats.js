@@ -31,6 +31,8 @@ var callStatsIntegrationEnabled = config.callStatsID && config.callStatsSecret;
 
 var CallStats = {
     init: function (jingleSession) {
+        callStatsIntegrationEnabled = config.callStatsID
+          && config.callStatsSecret;
         if(!callStatsIntegrationEnabled || callStats !== null) {
             return;
         }
