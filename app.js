@@ -17,6 +17,11 @@ import URLProcessor from "./modules/config/URLProcessor";
 import RoomnameGenerator from './modules/util/RoomnameGenerator';
 import CQEvents from './service/connectionquality/CQEvents';
 import UIEvents from './service/UI/UIEvents';
+import LoginDialog from './modules/UI/authentication/LoginDialog';
+import UIUtil from './modules/UI/util/UIUtil';
+
+import {openConnection} from './modules/connection';
+import AuthHandler from './modules/AuthHandler';
 
 import createRoomLocker from './modules/RoomLocker';
 
@@ -42,7 +47,7 @@ function buildRoomName () {
          location ~ ^/([a-zA-Z0-9]+)$ {
          rewrite ^/(.*)$ / break;
          }
-         */
+        */
         if (path.length > 1) {
             roomName = path.substr(1).toLowerCase();
         } else {
@@ -104,62 +109,9 @@ const APP = {
 
 const ConnectionEvents = JitsiMeetJS.events.connection;
 const ConnectionErrors = JitsiMeetJS.errors.connection;
-function connect() {
-    let connection = new JitsiMeetJS.JitsiConnection(null, null, {
-        hosts: config.hosts,
-        bosh: config.bosh,
-        clientNode: config.clientNode
-    });
 
-    return new Promise(function (resolve, reject) {
-        let handlers = {};
-
-        function unsubscribe () {
-            Object.keys(handlers).forEach(function (event) {
-                connection.removeEventListener(event, handlers[event]);
-            });
-        }
-
-        handlers[ConnectionEvents.CONNECTION_ESTABLISHED] = function () {
-            console.log('CONNECTED');
-            unsubscribe();
-            resolve(connection);
-        };
-
-        function listenForFailure (event) {
-            handlers[event] = function (...args) {
-                console.error(`CONNECTION FAILED: ${event}`, ...args);
-
-                unsubscribe();
-                reject([event, ...args]);
-            };
-        }
-
-        listenForFailure(ConnectionEvents.CONNECTION_FAILED);
-        listenForFailure(ConnectionErrors.PASSWORD_REQUIRED);
-        listenForFailure(ConnectionErrors.CONNECTION_ERROR);
-        listenForFailure(ConnectionErrors.OTHER_ERRORS);
-
-        // install event listeners
-        Object.keys(handlers).forEach(function (event) {
-            connection.addEventListener(event, handlers[event]);
-        });
-
-        connection.connect();
-    }).catch(function (err) {
-        if (err[0] === ConnectionErrors.PASSWORD_REQUIRED) {
-            // FIXME ask for password and try again
-            return connect();
-        }
-        console.error('FAILED TO CONNECT', err);
-        APP.UI.notifyConnectionFailed(err[1]);
-
-        throw new Error(err[0]);
-    });
-}
-
-var ConferenceEvents = JitsiMeetJS.events.conference;
-var ConferenceErrors = JitsiMeetJS.errors.conference;
+const ConferenceEvents = JitsiMeetJS.events.conference;
+const ConferenceErrors = JitsiMeetJS.errors.conference;
 function initConference(localTracks, connection) {
     let room = connection.initJitsiConference(APP.conference.roomName, {
         openSctp: config.openSctp,
@@ -378,10 +330,6 @@ function initConference(localTracks, connection) {
         APP.UI.changeDisplayName(APP.conference.localId, nickname);
     });
 
-    room.on(ConferenceErrors.CONNECTION_ERROR, function () {
-        // FIXME handle
-    });
-
     APP.UI.addListener(
         UIEvents.START_MUTED_CHANGED,
         function (startAudioMuted, startVideoMuted) {
@@ -461,7 +409,7 @@ function initConference(localTracks, connection) {
     });
 
     APP.UI.addListener(UIEvents.AUTH_CLICKED, function () {
-        // FIXME handle
+        AuthHandler.authenticate(room);
     });
 
     APP.UI.addListener(UIEvents.SELECTED_ENDPOINT, function (id) {
@@ -477,22 +425,67 @@ function initConference(localTracks, connection) {
     });
 
     return new Promise(function (resolve, reject) {
-        room.on(ConferenceEvents.CONFERENCE_JOINED, resolve);
+        room.on(ConferenceEvents.CONFERENCE_JOINED, handleConferenceJoined);
+        room.on(ConferenceEvents.CONFERENCE_FAILED, onConferenceFailed);
 
-        room.on(ConferenceErrors.PASSWORD_REQUIRED, function () {
-            APP.UI.markRoomLocked(true);
-            roomLocker.requirePassword().then(function () {
-                room.join(roomLocker.password);
-            });
-        });
+        let password;
+        let reconnectTimeout;
 
-        // FIXME handle errors here
+        function unsubscribe() {
+            room.off(
+                ConferenceEvents.CONFERENCE_JOINED, handleConferenceJoined
+            );
+            room.off(
+                ConferenceEvents.CONFERENCE_FAILED, onConferenceFailed
+            );
+            if (reconnectTimeout) {
+                clearTimeout(reconnectTimeout);
+            }
+            AuthHandler.closeAuth();
+        }
 
-        room.join();
-    }).catch(function (err) {
-        // FIXME notify that we cannot conenct to the room
+        function handleConferenceJoined() {
+            unsubscribe();
+            resolve();
+        }
 
-        throw new Error(err[0]);
+        function handleConferenceFailed(err) {
+            unsubscribe();
+            reject(err);
+        }
+
+        function onConferenceFailed(err, msg = '') {
+            console.error('CONFERENCE FAILED:', err, msg);
+            switch (err) {
+                // room is locked by the password
+            case ConferenceErrors.PASSWORD_REQUIRED:
+                APP.UI.markRoomLocked(true);
+                roomLocker.requirePassword().then(function () {
+                    room.join(roomLocker.password);
+                });
+                break;
+
+            case ConferenceErrors.CONNECTION_ERROR:
+                APP.UI.notifyConnectionFailed(msg);
+                break;
+
+                // not enough rights to create conference
+            case ConferenceErrors.AUTHENTICATION_REQUIRED:
+                // schedule reconnect to check if someone else created the room
+                reconnectTimeout = setTimeout(function () {
+                    room.join(password);
+                }, 5000);
+
+                // notify user that auth is required
+                AuthHandler.requireAuth(APP.conference.roomName);
+                break;
+
+            default:
+                handleConferenceFailed(err);
+            }
+        }
+
+        room.join(password);
     });
 }
 
@@ -505,9 +498,22 @@ function createLocalTracks () {
     });
 }
 
+function connect() {
+    return openConnection({retry: true}).catch(function (err) {
+        if (err === ConnectionErrors.PASSWORD_REQUIRED) {
+            APP.UI.notifyTokenAuthFailed();
+        } else {
+            APP.UI.notifyConnectionFailed(err);
+        }
+        throw err;
+    });
+}
+
 function init() {
     APP.UI.start();
+
     JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.TRACE);
+
     JitsiMeetJS.init().then(function () {
         return Promise.all([createLocalTracks(), connect()]);
     }).then(function ([tracks, connection]) {

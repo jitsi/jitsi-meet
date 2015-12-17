@@ -1,6 +1,6 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.JitsiMeetJS = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 (function (__filename){
-/* global Strophe, $ */
+/* global Strophe, $, Promise */
 /* jshint -W101 */
 var logger = require("jitsi-meet-logger").getLogger(__filename);
 var RTC = require("./modules/RTC/RTC");
@@ -55,12 +55,53 @@ JitsiConference.prototype.join = function (password) {
 };
 
 /**
+ * Check if joined to the conference.
+ */
+JitsiConference.prototype.isJoined = function () {
+    return this.room && this.room.joined;
+};
+
+/**
  * Leaves the conference.
  */
 JitsiConference.prototype.leave = function () {
     if(this.xmpp && this.room)
         this.xmpp.leaveRoom(this.room.roomjid);
     this.room = null;
+};
+
+/**
+ * Returns name of this conference.
+ */
+JitsiConference.prototype.getName = function () {
+    return this.options.name;
+};
+
+/**
+ * Check if external authentication is enabled for this conference.
+ */
+JitsiConference.prototype.isExternalAuthEnabled = function () {
+    return this.room && this.room.moderator.isExternalAuthEnabled();
+};
+
+/**
+ * Get url for external authentication.
+ * @param {boolean} [urlForPopup] if true then return url for login popup,
+ *                                else url of login page.
+ * @returns {Promise}
+ */
+JitsiConference.prototype.getExternalAuthUrl = function (urlForPopup) {
+    return new Promise(function (resolve, reject) {
+        if (!this.isExternalAuthEnabled()) {
+            reject();
+            return;
+        }
+        if (urlForPopup) {
+            this.room.moderator.getPopupLoginUrl(resolve, reject);
+        } else {
+            this.room.moderator.getLoginUrl(resolve, reject);
+        }
+    }.bind(this));
 };
 
 /**
@@ -225,6 +266,11 @@ JitsiConference.prototype._fireMuteChangeEvent = function (track) {
  * @param track the JitsiLocalTrack object.
  */
 JitsiConference.prototype.removeTrack = function (track) {
+    if(!this.room){
+        if(this.rtc)
+            this.rtc.removeLocalStream(track);
+        return;
+    }
     this.room.removeStream(track.getOriginalStream(), function(){
         this.rtc.removeLocalStream(track);
         this.eventEmitter.emit(JitsiConferenceEvents.TRACK_REMOVED, track);
@@ -264,7 +310,7 @@ JitsiConference.prototype.lock = function (password) {
     }, function (err) {
       reject(err);
     }, function () {
-      reject(JitsiConferenceErrors.PASSWORD_REQUIRED);
+      reject(JitsiConferenceErrors.PASSWORD_NOT_SUPPORTED);
     });
   });
 };
@@ -475,6 +521,18 @@ function setupListeners(conference) {
     conference.room.addListener(XMPPEvents.MUC_JOINED, function () {
         conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_JOINED);
     });
+    conference.room.addListener(XMPPEvents.ROOM_JOIN_ERROR, function (pres) {
+        conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_FAILED, JitsiConferenceErrors.CONNECTION_ERROR, pres);
+    });
+    conference.room.addListener(XMPPEvents.ROOM_CONNECT_ERROR, function (pres) {
+        conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_FAILED, JitsiConferenceErrors.CONNECTION_ERROR, pres);
+    });
+    conference.room.addListener(XMPPEvents.PASSWORD_REQUIRED, function (pres) {
+        conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_FAILED, JitsiConferenceErrors.PASSWORD_REQUIRED, pres);
+    });
+    conference.room.addListener(XMPPEvents.AUTHENTICATION_REQUIRED, function () {
+        conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_FAILED, JitsiConferenceErrors.AUTHENTICATION_REQUIRED);
+    });
 //    FIXME
 //    conference.room.addListener(XMPPEvents.MUC_JOINED, function () {
 //        conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_LEFT);
@@ -498,7 +556,7 @@ function setupListeners(conference) {
         conference.eventEmitter.emit(JitsiConferenceEvents.CONNECTION_RESTORED);
     });
     conference.room.addListener(XMPPEvents.CONFERENCE_SETUP_FAILED, function () {
-        conference.eventEmitter.emit(JitsiConferenceEvents.SETUP_FAILED);
+        conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_FAILED, JitsiConferenceErrors.SETUP_FAILED);
     });
 
     conference.room.addListener(XMPPEvents.MESSAGE_RECEIVED, function (jid, displayName, txt, myJid, ts) {
@@ -562,6 +620,10 @@ var JitsiConferenceErrors = {
      */
     PASSWORD_REQUIRED: "conference.passwordRequired",
     /**
+     * Indicates that client must be authenticated to create the conference.
+     */
+    AUTHENTICATION_REQUIRED: "conference.authenticationRequired",
+    /**
      * Indicates that password cannot be set for this conference.
      */
     PASSWORD_NOT_SUPPORTED: "conference.passwordNotSupported",
@@ -570,6 +632,10 @@ var JitsiConferenceErrors = {
      * conference.
      */
     CONNECTION_ERROR: "conference.connectionError",
+    /**
+     * Indicates that the conference setup failed.
+     */
+    SETUP_FAILED: "conference.setup_failed",
     /**
      * Indicates that there is no available videobridge.
      */
@@ -653,9 +719,9 @@ var JitsiConferenceEvents = {
      */
     CONNECTION_RESTORED: "conference.connectionRestored",
     /**
-     * Indicates that the conference setup failed.
+     * Indicates that conference failed.
      */
-    SETUP_FAILED: "conference.setup_failed",
+    CONFERENCE_FAILED: "conference.failed",
     /**
      * Indicates that conference has been joined.
      */
@@ -1346,7 +1412,6 @@ function JitsiLocalTrack(stream, videoType,
     this.dontFireRemoveEvent = false;
     this.resolution = resolution;
     this.startMuted = false;
-    this.isLocal = true;
     var self = this;
     JitsiTrack.call(this, null, stream,
         function () {
@@ -1517,7 +1582,6 @@ function JitsiRemoteTrack(RTC, data, sid, ssrc) {
     this.videoType = data.videoType;
     this.ssrc = ssrc;
     this.muted = false;
-    this.isLocal = false;
     if((this.type === JitsiTrack.AUDIO && data.audiomuted)
       || (this.type === JitsiTrack.VIDEO && data.videomuted)) {
         this.muted = true;
@@ -3391,9 +3455,8 @@ module.exports = ScreenObtainer;
 }).call(this,"/modules/RTC/ScreenObtainer.js")
 },{"../../service/desktopsharing/DesktopSharingEventTypes":82,"./RTCBrowserType":17,"./adapter.screenshare":20,"jitsi-meet-logger":47}],20:[function(require,module,exports){
 (function (__filename){
-/*! adapterjs - v0.12.0 - 2015-09-04 */
+/*! adapterjs - v0.12.3 - 2015-11-16 */
 var console = require("jitsi-meet-logger").getLogger(__filename);
-
 // Adapter's interface.
 var AdapterJS = AdapterJS || {};
 
@@ -3411,7 +3474,7 @@ AdapterJS.options = AdapterJS.options || {};
 // AdapterJS.options.hidePluginInstallPrompt = true;
 
 // AdapterJS version
-AdapterJS.VERSION = '0.12.0';
+AdapterJS.VERSION = '0.12.3';
 
 // This function will be called when the WebRTC API is ready to be used
 // Whether it is the native implementation (Chrome, Firefox, Opera) or
@@ -4001,7 +4064,7 @@ if (navigator.mozGetUserMedia) {
 
   createIceServers = function (urls, username, password) {
     var iceServers = [];
-    for (i = 0; i < urls.length; i++) {
+    for (var i = 0; i < urls.length; i++) {
       var iceServer = createIceServer(urls[i], username, password);
       if (iceServer !== null) {
         iceServers.push(iceServer);
@@ -4091,7 +4154,7 @@ if (navigator.mozGetUserMedia) {
         'username' : username
       };
     } else {
-      for (i = 0; i < urls.length; i++) {
+      for (var i = 0; i < urls.length; i++) {
         var iceServer = createIceServer(urls[i], username, password);
         if (iceServer !== null) {
           iceServers.push(iceServer);
@@ -4393,12 +4456,13 @@ if (navigator.mozGetUserMedia) {
         return;
       }
 
-      var streamId
+      var streamId;
       if (stream === null) {
         streamId = '';
-      }
-      else {
-        stream.enableSoundTracks(true); // TODO: remove on 0.12.0
+      } else {
+        if (typeof stream.enableSoundTracks !== 'undefined') {
+          stream.enableSoundTracks(true);
+        }
         streamId = stream.id;
       }
 
@@ -4440,16 +4504,13 @@ if (navigator.mozGetUserMedia) {
 
         var height = '';
         var width = '';
-        if (element.getBoundingClientRect) {
-          var rectObject = element.getBoundingClientRect();
-          width = rectObject.width + 'px';
-          height = rectObject.height + 'px';
+        if (element.clientWidth || element.clientHeight) {
+          width = element.clientWidth;
+          height = element.clientHeight;
         }
-        else if (element.width) {
+        else if (element.width || element.height) {
           width = element.width;
           height = element.height;
-        } else {
-          // TODO: What scenario could bring us here?
         }
 
         element.parentNode.insertBefore(frag, element);
@@ -4468,19 +4529,7 @@ if (navigator.mozGetUserMedia) {
         element.setStreamId(streamId);
       }
       var newElement = document.getElementById(elementId);
-      newElement.onplaying = (element.onplaying) ? element.onplaying : function (arg) {};
-      newElement.onplay    = (element.onplay)    ? element.onplay    : function (arg) {};
-      newElement.onclick   = (element.onclick)   ? element.onclick   : function (arg) {};
-      if (isIE) { // on IE the event needs to be plugged manually
-        newElement.attachEvent('onplaying', newElement.onplaying);
-        newElement.attachEvent('onplay', newElement.onplay);
-        newElement._TemOnClick = function (id) {
-          var arg = {
-            srcElement : document.getElementById(id)
-          };
-          newElement.onclick(arg);
-        };
-      }
+      AdapterJS.forwardEventHandlers(newElement, element, Object.getPrototypeOf(element));
 
       return newElement;
     };
@@ -4502,6 +4551,32 @@ if (navigator.mozGetUserMedia) {
         console.log('Could not find the stream associated with this element');
       }
     };
+
+    AdapterJS.forwardEventHandlers = function (destElem, srcElem, prototype) {
+
+      properties = Object.getOwnPropertyNames( prototype );
+
+      for(prop in properties) {
+        propName = properties[prop];
+
+        if (typeof(propName.slice) === 'function') {
+          if (propName.slice(0,2) == 'on' && srcElem[propName] != null) {
+            if (isIE) {
+              destElem.attachEvent(propName,srcElem[propName]);
+            } else {
+              destElem.addEventListener(propName.slice(2), srcElem[propName], false)
+            }
+          } else {
+            //TODO (http://jira.temasys.com.sg/browse/TWP-328) Forward non-event properties ?
+          }
+        }
+      }
+
+      var subPrototype = Object.getPrototypeOf(prototype)
+      if(subPrototype != null) {
+        AdapterJS.forwardEventHandlers(destElem, srcElem, subPrototype);
+      }
+    }
 
     RTCIceCandidate = function (candidate) {
       if (!candidate.sdpMid) {
@@ -9659,7 +9734,7 @@ function TraceablePeerConnection(ice_config, constraints, session) {
     var Interop = require('sdp-interop').Interop;
     this.interop = new Interop();
     var Simulcast = require('sdp-simulcast');
-    this.simulcast = new Simulcast({numOfLayers: 2, explodeRemoteSimulcast: false});
+    this.simulcast = new Simulcast({numOfLayers: 3, explodeRemoteSimulcast: false});
 
     // override as desired
     this.trace = function (what, info) {
@@ -10441,7 +10516,7 @@ Moderator.prototype.allocateConferenceFocus =  function (callback) {
     );
 };
 
-Moderator.prototype.getLoginUrl =  function (urlCallback) {
+Moderator.prototype.getLoginUrl =  function (urlCallback, failureCallback) {
     var iq = $iq({to: this.getFocusComponent(), type: 'get'});
     iq.c('login-url', {
         xmlns: 'http://jitsi.org/protocol/focus',
@@ -10459,14 +10534,17 @@ Moderator.prototype.getLoginUrl =  function (urlCallback) {
             } else {
                 logger.error(
                     "Failed to get auth url from the focus", result);
+                failureCallback(result);
             }
         },
         function (error) {
             logger.error("Get auth url error", error);
+            failureCallback(error);
         }
     );
 };
-Moderator.prototype.getPopupLoginUrl =  function (urlCallback) {
+
+Moderator.prototype.getPopupLoginUrl = function (urlCallback, failureCallback) {
     var iq = $iq({to: this.getFocusComponent(), type: 'get'});
     iq.c('login-url', {
         xmlns: 'http://jitsi.org/protocol/focus',
@@ -10485,10 +10563,12 @@ Moderator.prototype.getPopupLoginUrl =  function (urlCallback) {
             } else {
                 logger.error(
                     "Failed to get POPUP auth url from the focus", result);
+               failureCallback(result);
             }
         },
         function (error) {
             logger.error('Get POPUP auth url error', error);
+            failureCallback(error);
         }
     );
 };
@@ -10522,9 +10602,6 @@ Moderator.prototype.logout =  function (callback) {
 };
 
 module.exports = Moderator;
-
-
-
 
 }).call(this,"/modules/xmpp/moderator.js")
 },{"../../service/authentication/AuthenticationEvents":81,"../../service/xmpp/XMPPEvents":85,"../settings/Settings":21,"jitsi-meet-logger":47}],35:[function(require,module,exports){

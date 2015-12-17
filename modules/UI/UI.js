@@ -736,4 +736,8 @@ UI.updateRecordingState = function (state) {
     Toolbar.updateRecordingState(state);
 };
 
+UI.notifyTokenAuthFailed = function () {
+    messageHandler.showError("dialog.error", "dialog.tokenAuthFailed");
+};
+
 module.exports = UI;

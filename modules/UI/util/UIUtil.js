@@ -114,7 +114,11 @@ import PanelToggler from "../side_pannels/SidePanelToggler";
           .filter(function (item) { return item; })
           .join(',');
         $(selector).hide();
-    }
+    },
+
+     redirect (url) {
+         window.location.href = url;
+     }
 };
 
 export default UIUtil;
