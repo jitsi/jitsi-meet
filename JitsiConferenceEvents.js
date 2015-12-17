@@ -69,9 +69,9 @@ var JitsiConferenceEvents = {
      */
     CONNECTION_RESTORED: "conference.connectionRestored",
     /**
-     * Indicates that the conference setup failed.
+     * Indicates that conference failed.
      */
-    SETUP_FAILED: "conference.setup_failed",
+    CONFERENCE_FAILED: "conference.failed",
     /**
      * Indicates that conference has been joined.
      */

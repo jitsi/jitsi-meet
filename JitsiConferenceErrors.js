@@ -8,6 +8,10 @@ var JitsiConferenceErrors = {
      */
     PASSWORD_REQUIRED: "conference.passwordRequired",
     /**
+     * Indicates that client must be authenticated to create the conference.
+     */
+    AUTHENTICATION_REQUIRED: "conference.authenticationRequired",
+    /**
      * Indicates that password cannot be set for this conference.
      */
     PASSWORD_NOT_SUPPORTED: "conference.passwordNotSupported",
@@ -16,6 +20,10 @@ var JitsiConferenceErrors = {
      * conference.
      */
     CONNECTION_ERROR: "conference.connectionError",
+    /**
+     * Indicates that the conference setup failed.
+     */
+    SETUP_FAILED: "conference.setup_failed",
     /**
      * Indicates that there is no available videobridge.
      */

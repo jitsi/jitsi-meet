@@ -354,7 +354,7 @@ Moderator.prototype.allocateConferenceFocus =  function (callback) {
     );
 };
 
-Moderator.prototype.getLoginUrl =  function (urlCallback) {
+Moderator.prototype.getLoginUrl =  function (urlCallback, failureCallback) {
     var iq = $iq({to: this.getFocusComponent(), type: 'get'});
     iq.c('login-url', {
         xmlns: 'http://jitsi.org/protocol/focus',
@@ -372,14 +372,17 @@ Moderator.prototype.getLoginUrl =  function (urlCallback) {
             } else {
                 logger.error(
                     "Failed to get auth url from the focus", result);
+                failureCallback(result);
             }
         },
         function (error) {
             logger.error("Get auth url error", error);
+            failureCallback(error);
         }
     );
 };
-Moderator.prototype.getPopupLoginUrl =  function (urlCallback) {
+
+Moderator.prototype.getPopupLoginUrl = function (urlCallback, failureCallback) {
     var iq = $iq({to: this.getFocusComponent(), type: 'get'});
     iq.c('login-url', {
         xmlns: 'http://jitsi.org/protocol/focus',
@@ -398,10 +401,12 @@ Moderator.prototype.getPopupLoginUrl =  function (urlCallback) {
             } else {
                 logger.error(
                     "Failed to get POPUP auth url from the focus", result);
+               failureCallback(result);
             }
         },
         function (error) {
             logger.error('Get POPUP auth url error', error);
+            failureCallback(error);
         }
     );
 };
@@ -435,6 +440,3 @@ Moderator.prototype.logout =  function (callback) {
 };
 
 module.exports = Moderator;
-
-
-
