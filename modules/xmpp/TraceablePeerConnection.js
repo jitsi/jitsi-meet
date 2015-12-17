@@ -368,6 +368,7 @@ TraceablePeerConnection.prototype.createOffer
             }
 
             offer = SSRCReplacement.mungeLocalVideoSSRC(offer);
+            self.trace('createOfferOnSuccess::mungeLocalVideoSSRC', dumpSDP(offer));
 
             if (config.enableSimulcast && self.simulcast.isSupported()) {
                 offer = self.simulcast.mungeLocalDescription(offer);
@@ -399,6 +400,7 @@ TraceablePeerConnection.prototype.createAnswer
 
             // munge local video SSRC
             answer = SSRCReplacement.mungeLocalVideoSSRC(answer);
+            self.trace('createAnswerOnSuccess::mungeLocalVideoSSRC', dumpSDP(answer));
 
             if (config.enableSimulcast && self.simulcast.isSupported()) {
                 answer = self.simulcast.mungeLocalDescription(answer);
