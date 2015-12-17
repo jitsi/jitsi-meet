@@ -139,7 +139,9 @@ function disconnect(){
 }
 
 function unload() {
-   room.leave();
+    for(var i = 0; i < localTracks.length; i++)
+        localTracks[i].stop();
+    room.leave();
     connection.disconnect();
 }
 
