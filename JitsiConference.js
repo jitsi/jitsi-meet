@@ -223,6 +223,11 @@ JitsiConference.prototype._fireMuteChangeEvent = function (track) {
  * @param track the JitsiLocalTrack object.
  */
 JitsiConference.prototype.removeTrack = function (track) {
+    if(!this.room){
+        if(this.rtc)
+            this.rtc.removeLocalStream(track);
+        return;
+    }
     this.room.removeStream(track.getOriginalStream(), function(){
         this.rtc.removeLocalStream(track);
         this.eventEmitter.emit(JitsiConferenceEvents.TRACK_REMOVED, track);
