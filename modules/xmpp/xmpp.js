@@ -180,12 +180,12 @@ XMPP.prototype.connect = function (jid, password) {
     return this._connect(jid, password);
 };
 
-XMPP.prototype.createRoom = function (roomName, options, useNicks, nick) {
+XMPP.prototype.createRoom = function (roomName, options) {
     var roomjid = roomName  + '@' + this.options.hosts.muc;
 
-    if (useNicks) {
-        if (nick) {
-            roomjid += '/' + nick;
+    if (options.useNicks) {
+        if (options.nick) {
+            roomjid += '/' + options.nick;
         } else {
             roomjid += '/' + Strophe.getNodeFromJid(this.connection.jid);
         }
