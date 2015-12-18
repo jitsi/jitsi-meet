@@ -5,7 +5,7 @@ import LoginDialog from './UI/authentication/LoginDialog';
 const ConnectionEvents = JitsiMeetJS.events.connection;
 const ConnectionErrors = JitsiMeetJS.errors.connection;
 
-export function openConnection({retry, id, password}) {
+function connect(id, password) {
     let connection = new JitsiMeetJS.JitsiConnection(null, null, {
         hosts: config.hosts,
         bosh: config.bosh,
@@ -17,9 +17,8 @@ export function openConnection({retry, id, password}) {
             ConnectionEvents.CONNECTION_ESTABLISHED, handleConnectionEstablished
         );
         connection.addEventListener(
-            ConnectionEvents.CONNECTION_FAILED, onConnectionFailed
+            ConnectionEvents.CONNECTION_FAILED, handleConnectionFailed
         );
-        let authDialog;
 
         function unsubscribe() {
             connection.removeEventListener(
@@ -27,11 +26,9 @@ export function openConnection({retry, id, password}) {
                 handleConnectionEstablished
             );
             connection.removeEventListener(
-                ConnectionEvents.CONNECTION_FAILED, onConnectionFailed
+                ConnectionEvents.CONNECTION_FAILED,
+                handleConnectionFailed
             );
-            if (authDialog) {
-                authDialog.close();
-            }
         }
 
         function handleConnectionEstablished() {
@@ -41,43 +38,49 @@ export function openConnection({retry, id, password}) {
 
         function handleConnectionFailed(err) {
             unsubscribe();
+            console.error("CONNECTION FAILED:", err);
             reject(err);
         }
 
-        function onConnectionFailed (err) {
-            console.error("CONNECTION FAILED:", err);
+        connection.connect({id, password});
+    });
+}
 
-            if (!retry) {
-                handleConnectionFailed(err);
-                return;
+function requestAuth() {
+    return new Promise(function (resolve, reject) {
+        let authDialog = LoginDialog.showAuthDialog(
+            function (id, password) {
+                connect(id, password).then(function (connection) {
+                    authDialog.close();
+                    resolve(connection);
+                }, function (err) {
+                    if (err === ConnectionErrors.PASSWORD_REQUIRED) {
+                        authDialog.displayError(err);
+                    } else {
+                        authDialog.close();
+                        reject(err);
+                    }
+                });
             }
+        );
+    });
+}
 
-            // retry only if auth failed
-            if (err !== ConnectionErrors.PASSWORD_REQUIRED) {
-                handleConnectionFailed(err);
-                return;
-            }
-
-            // do not retry if token is not valid
-            if (config.token) {
-                handleConnectionFailed(err);
-                return;
-            }
-
-            // ask for password and try again
-
-            if (authDialog) {
-                authDialog.displayError(err);
-                return;
-            }
-
-            authDialog = LoginDialog.showAuthDialog(
-                function (id, password) {
-                    connection.connect({id, password});
-                }
-            );
+export function openConnection({id, password, retry}) {
+    return connect(id, password).catch(function (err) {
+        if (!retry) {
+            throw err;
         }
 
-        connection.connect(id, password);
+        if (err === ConnectionErrors.PASSWORD_REQUIRED) {
+            // do not retry if token is not valid
+            if (config.token) {
+                throw err;
+            } else {
+                return requestAuth();
+            }
+        } else {
+            throw err;
+        }
     });
 }

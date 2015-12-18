@@ -13,22 +13,53 @@ function getPasswordInputHtml() {
         <h2 data-i18n="dialog.passwordRequired">${passRequiredMsg}</h2>
         <input name="username" type="text" placeholder=${placeholder} autofocus>
         <input name="password" type="password"
-               data-i18n="[placeholder]dialog.userPassword"
-               placeholder="user password">
-    `;
+    data-i18n="[placeholder]dialog.userPassword"
+    placeholder="user password">
+        `;
+}
+
+function toJid(id) {
+    if (id.indexOf("@") >= 0) {
+        return id;
+    }
+
+    let jid = id.concat('@');
+    if (config.hosts.authdomain) {
+        jid += config.hosts.authdomain;
+    } else {
+        jid += config.hosts.domain;
+    }
+
+    return jid;
+}
+
+function cancelButton() {
+    return {
+        title: APP.translation.generateTranslationHTML("dialog.Cancel"),
+        value: false
+    };
 }
 
 function Dialog(successCallback, cancelCallback) {
+    let loginButtons = [{
+        title: APP.translation.generateTranslationHTML("dialog.Ok"),
+        value: true
+    }];
+    let finishedButtons = [{
+        title: APP.translation.translateString('dialog.retry'),
+        value: 'retry'
+    }];
+
+    // show "cancel" button only if cancelCallback provided
+    if (cancelCallback) {
+        loginButtons.push(cancelButton());
+        finishedButtons.push(cancelButton());
+    }
+
     const states = {
         login: {
             html: getPasswordInputHtml(),
-            buttons: [{
-                title: APP.translation.generateTranslationHTML("dialog.Ok"),
-                value: true
-            }, {
-                title: APP.translation.generateTranslationHTML("dialog.Cancel"),
-                value: false
-            }],
+            buttons: loginButtons,
             focus: ':input:first',
             submit: function (e, v, m, f) {
                 e.preventDefault();
@@ -37,7 +68,7 @@ function Dialog(successCallback, cancelCallback) {
                     let password = f.password;
                     if (jid && password) {
                         connDialog.goToState('connecting');
-                        successCallback(jid, password);
+                        successCallback(toJid(jid), password);
                     }
                 } else {
                     // User cancelled
@@ -54,13 +85,7 @@ function Dialog(successCallback, cancelCallback) {
         finished: {
             title: APP.translation.translateString('dialog.error'),
             html:   '<div id="errorMessage"></div>',
-            buttons: [{
-                title: APP.translation.translateString('dialog.retry'),
-                value: 'retry'
-            }, {
-                title: APP.translation.generateTranslationHTML("dialog.Cancel"),
-                value: false
-            }],
+            buttons: finishedButtons,
             defaultButton: 0,
             submit: function (e, v, m, f) {
                 e.preventDefault();

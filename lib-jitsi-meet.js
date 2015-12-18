@@ -34,7 +34,7 @@ function JitsiConference(options) {
     this.connection = this.options.connection;
     this.xmpp = this.connection.xmpp;
     this.eventEmitter = new EventEmitter();
-    this.room = this.xmpp.createRoom(this.options.name, null, null, this.options.config);
+    this.room = this.xmpp.createRoom(this.options.name, this.options.config);
     this.room.updateDeviceAvailability(RTC.getDeviceAvailability());
     this.rtc = new RTC(this.room, options);
     if(!RTC.options.disableAudioLevels)
@@ -44,6 +44,8 @@ function JitsiConference(options) {
     this.lastActiveSpeaker = null;
     this.dtmfManager = null;
     this.somebodySupportsDTMF = false;
+    this.authEnabled = false;
+    this.authIdentity;
 }
 
 /**
@@ -76,6 +78,27 @@ JitsiConference.prototype.leave = function () {
  */
 JitsiConference.prototype.getName = function () {
     return this.options.name;
+};
+
+/**
+ * Check if authentication is enabled for this conference.
+ */
+JitsiConference.prototype.isAuthEnabled = function () {
+    return this.authEnabled;
+};
+
+/**
+ * Check if user is logged in.
+ */
+JitsiConference.prototype.isLoggedIn = function () {
+    return !!this.authIdentity;
+};
+
+/**
+ * Get authorized login.
+ */
+JitsiConference.prototype.getAuthLogin = function () {
+    return this.authIdentity;
 };
 
 /**
@@ -385,6 +408,9 @@ JitsiConference.prototype.onMemberJoined = function (jid, email, nick) {
 
 JitsiConference.prototype.onMemberLeft = function (jid) {
     var id = Strophe.getResourceFromJid(jid);
+    if (id === 'focus') {
+       return;
+    }
     var participant = this.participants[id];
     delete this.participants[id];
     this.eventEmitter.emit(JitsiConferenceEvents.USER_LEFT, id, participant);
@@ -564,7 +590,8 @@ function setupListeners(conference) {
     });
 
     conference.room.addListener(AuthenticationEvents.IDENTITY_UPDATED, function (authEnabled, authIdentity) {
-        console.error(authEnabled, authIdentity);
+        conference.authEnabled = authEnabled;
+        conference.authIdentity = authIdentity;
     });
 
     conference.room.addListener(XMPPEvents.MESSAGE_RECEIVED, function (jid, displayName, txt, myJid, ts) {
@@ -11522,12 +11549,12 @@ XMPP.prototype.connect = function (jid, password) {
     return this._connect(jid, password);
 };
 
-XMPP.prototype.createRoom = function (roomName, options, useNicks, nick) {
+XMPP.prototype.createRoom = function (roomName, options) {
     var roomjid = roomName  + '@' + this.options.hosts.muc;
 
-    if (useNicks) {
-        if (nick) {
-            roomjid += '/' + nick;
+    if (options.useNicks) {
+        if (options.nick) {
+            roomjid += '/' + options.nick;
         } else {
             roomjid += '/' + Strophe.getNodeFromJid(this.connection.jid);
         }

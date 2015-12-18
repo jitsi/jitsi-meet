@@ -612,10 +612,6 @@ UI.updateRemoteStats = function (jid, percent, stats) {
     VideoLayout.updateConnectionStats(jid, percent, stats);
 };
 
-UI.showAuthenticateButton = function (show) {
-    Toolbar.showAuthenticateButton(show);
-};
-
 UI.markVideoInterrupted = function (interrupted) {
     if (interrupted) {
         VideoLayout.onVideoInterrupted();
@@ -738,6 +734,17 @@ UI.updateRecordingState = function (state) {
 
 UI.notifyTokenAuthFailed = function () {
     messageHandler.showError("dialog.error", "dialog.tokenAuthFailed");
+};
+
+UI.updateAuthInfo = function (isAuthEnabled, login) {
+    let loggedIn = !!login;
+
+    if (isAuthEnabled) {
+        Toolbar.setAuthenticatedIdentity(login);
+
+        Toolbar.showLoginButton(!loggedIn);
+        Toolbar.showLogoutButton(loggedIn);
+    }
 };
 
 module.exports = UI;

@@ -17,8 +17,6 @@ import URLProcessor from "./modules/config/URLProcessor";
 import RoomnameGenerator from './modules/util/RoomnameGenerator';
 import CQEvents from './service/connectionquality/CQEvents';
 import UIEvents from './service/UI/UIEvents';
-import LoginDialog from './modules/UI/authentication/LoginDialog';
-import UIUtil from './modules/UI/util/UIUtil';
 
 import {openConnection} from './modules/connection';
 import AuthHandler from './modules/AuthHandler';
@@ -149,6 +147,8 @@ function initConference(localTracks, connection) {
             room.addTrack(track);
             APP.UI.addLocalStream(track);
         });
+
+        APP.UI.updateAuthInfo(room.isAuthEnabled(), room.getAuthLogin());
     });
 
 
@@ -534,6 +534,8 @@ function init() {
         APP.statistics.start();
         APP.connectionquality.init();
         APP.keyboardshortcut.init();
+    }).catch(function (err) {
+        console.error(err);
     });
 }
 
