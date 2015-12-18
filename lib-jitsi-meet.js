@@ -5,6 +5,7 @@
 var logger = require("jitsi-meet-logger").getLogger(__filename);
 var RTC = require("./modules/RTC/RTC");
 var XMPPEvents = require("./service/xmpp/XMPPEvents");
+var AuthenticationEvents = require("./service/authentication/AuthenticationEvents");
 var RTCEvents = require("./service/RTC/RTCEvents");
 var EventEmitter = require("events");
 var JitsiConferenceEvents = require("./JitsiConferenceEvents");
@@ -213,6 +214,9 @@ JitsiConference.prototype.removeCommand = function (name) {
  */
 JitsiConference.prototype.setDisplayName = function(name) {
     if(this.room){
+        // remove previously set nickname
+        this.room.removeFromPresence("nick");
+
         this.room.addToPresence("nick", {attributes: {xmlns: 'http://jabber.org/protocol/nick'}, value: name});
         this.room.sendPresence();
     }
@@ -559,6 +563,10 @@ function setupListeners(conference) {
         conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_FAILED, JitsiConferenceErrors.SETUP_FAILED);
     });
 
+    conference.room.addListener(AuthenticationEvents.IDENTITY_UPDATED, function (authEnabled, authIdentity) {
+        console.error(authEnabled, authIdentity);
+    });
+
     conference.room.addListener(XMPPEvents.MESSAGE_RECEIVED, function (jid, displayName, txt, myJid, ts) {
         var id = Strophe.getResourceFromJid(jid);
         conference.eventEmitter.emit(JitsiConferenceEvents.MESSAGE_RECEIVED, id, txt, ts);
@@ -609,7 +617,7 @@ function setupListeners(conference) {
 module.exports = JitsiConference;
 
 }).call(this,"/JitsiConference.js")
-},{"./JitsiConferenceErrors":2,"./JitsiConferenceEvents":3,"./JitsiParticipant":8,"./JitsiTrackEvents":10,"./modules/DTMF/JitsiDTMFManager":11,"./modules/RTC/RTC":16,"./modules/statistics/statistics":24,"./service/RTC/RTCEvents":79,"./service/xmpp/XMPPEvents":85,"events":43,"jitsi-meet-logger":47}],2:[function(require,module,exports){
+},{"./JitsiConferenceErrors":2,"./JitsiConferenceEvents":3,"./JitsiParticipant":8,"./JitsiTrackEvents":10,"./modules/DTMF/JitsiDTMFManager":11,"./modules/RTC/RTC":16,"./modules/statistics/statistics":24,"./service/RTC/RTCEvents":79,"./service/authentication/AuthenticationEvents":81,"./service/xmpp/XMPPEvents":85,"events":43,"jitsi-meet-logger":47}],2:[function(require,module,exports){
 /**
  * Enumeration with the errors for the conference.
  * @type {{string: string}}
@@ -959,8 +967,20 @@ var LibJitsiMeet = {
                 return tracks;
             });
     },
+    /**
+     * Checks if its possible to enumerate available cameras/micropones.
+     * @returns {boolean} true if available, false otherwise.
+     */
     isDeviceListAvailable: function () {
         return RTC.isDeviceListAvailable();
+    },
+    /**
+     * Returns true if changing the camera / microphone device is supported and
+     * false if not.
+     * @returns {boolean} true if available, false otherwise.
+     */
+    isDeviceChangeAvailable: function () {
+        return RTC.isDeviceChangeAvailable();
     },
     enumerateDevices: function (callback) {
         RTC.enumerateDevices(callback);
@@ -2046,10 +2066,21 @@ RTC.getVideoSrc = function (element) {
     return RTCUtils.getVideoSrc(element);
 };
 
+/**
+ * Returns true if retrieving the the list of input devices is supported and
+ * false if not.
+ */
 RTC.isDeviceListAvailable = function () {
     return RTCUtils.isDeviceListAvailable();
 };
 
+/**
+ * Returns true if changing the camera / microphone device is supported and
+ * false if not.
+ */
+RTC.isDeviceChangeAvailable = function () {
+    return RTCUtils.isDeviceChangeAvailable();
+}
 /**
  * Allows to receive list of available cameras/microphones.
  * @param {function} callback would receive array of devices as an argument
@@ -3006,6 +3037,16 @@ var RTCUtils = {
             return true;
         }
         return (MediaStreamTrack && MediaStreamTrack.getSources)? true : false;
+    },
+    /**
+     * Returns true if changing the camera / microphone device is supported and
+     * false if not.
+     */
+    isDeviceChangeAvailable: function () {
+        if(RTCBrowserType.isChrome() || RTCBrowserType.isOpera() ||
+            RTCBrowserType.isTemasysPluginUsed())
+            return true;
+        return false;
     },
     /**
      * A method to handle stopping of the stream.

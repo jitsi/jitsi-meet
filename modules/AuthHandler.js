@@ -52,6 +52,7 @@ function doXmppAuth (room, lockPassword) {
             room.room.moderator.allocateConferenceFocus(function () {
                 connection.disconnect();
                 loginDialog.close();
+                room.join(lockPassword);
             });
 
         }, function (err) {

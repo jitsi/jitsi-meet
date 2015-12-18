@@ -125,7 +125,7 @@ LocalVideo.prototype.setDisplayName = function(displayName, key) {
                     if (e.keyCode === 13) {
                         e.preventDefault();
                         $('#editDisplayName').hide();
-                        self.VideoLayout.inputDisplayNameHandler(this.value);
+                        // focusout handler will save display name
                     }
                 });
             });
