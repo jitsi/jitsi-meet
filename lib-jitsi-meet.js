@@ -901,6 +901,9 @@ var LibJitsiMeet = {
     isDeviceListAvailable: function () {
         return RTC.isDeviceListAvailable();
     },
+    isDeviceChangeAvailable: function () {
+        return RTC.isDeviceChangeAvailable();
+    },
     enumerateDevices: function (callback) {
         RTC.enumerateDevices(callback);
     }
@@ -1985,10 +1988,21 @@ RTC.getVideoSrc = function (element) {
     return RTCUtils.getVideoSrc(element);
 };
 
+/**
+ * Returns true if retrieving the the list of input devices is supported and
+ * false if not.
+ */
 RTC.isDeviceListAvailable = function () {
     return RTCUtils.isDeviceListAvailable();
 };
 
+/**
+ * Returns true if changing the camera / microphone device is supported and
+ * false if not.
+ */
+RTC.isDeviceChangeAvailable = function () {
+    return RTCUtils.isDeviceChangeAvailable();
+}
 /**
  * Allows to receive list of available cameras/microphones.
  * @param {function} callback would receive array of devices as an argument
@@ -2945,6 +2959,16 @@ var RTCUtils = {
             return true;
         }
         return (MediaStreamTrack && MediaStreamTrack.getSources)? true : false;
+    },
+    /**
+     * Returns true if changing the camera / microphone device is supported and
+     * false if not.
+     */
+    isDeviceChangeAvailable: function () {
+        if(RTCBrowserType.isChrome() || RTCBrowserType.isOpera() ||
+            RTCBrowserType.isTemasysPluginUsed())
+            return true;
+        return false;
     },
     /**
      * A method to handle stopping of the stream.

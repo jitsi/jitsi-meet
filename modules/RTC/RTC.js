@@ -159,10 +159,21 @@ RTC.getVideoSrc = function (element) {
     return RTCUtils.getVideoSrc(element);
 };
 
+/**
+ * Returns true if retrieving the the list of input devices is supported and
+ * false if not.
+ */
 RTC.isDeviceListAvailable = function () {
     return RTCUtils.isDeviceListAvailable();
 };
 
+/**
+ * Returns true if changing the camera / microphone device is supported and
+ * false if not.
+ */
+RTC.isDeviceChangeAvailable = function () {
+    return RTCUtils.isDeviceChangeAvailable();
+}
 /**
  * Allows to receive list of available cameras/microphones.
  * @param {function} callback would receive array of devices as an argument

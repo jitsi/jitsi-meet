@@ -67,8 +67,20 @@ var LibJitsiMeet = {
                 return tracks;
             });
     },
+    /**
+     * Checks if its possible to enumerate available cameras/micropones.
+     * @returns {boolean} true if available, false otherwise.
+     */
     isDeviceListAvailable: function () {
         return RTC.isDeviceListAvailable();
+    },
+    /**
+     * Returns true if changing the camera / microphone device is supported and
+     * false if not.
+     * @returns {boolean} true if available, false otherwise.
+     */
+    isDeviceChangeAvailable: function () {
+        return RTC.isDeviceChangeAvailable();
     },
     enumerateDevices: function (callback) {
         RTC.enumerateDevices(callback);

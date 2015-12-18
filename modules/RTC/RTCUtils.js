@@ -737,6 +737,16 @@ var RTCUtils = {
         return (MediaStreamTrack && MediaStreamTrack.getSources)? true : false;
     },
     /**
+     * Returns true if changing the camera / microphone device is supported and
+     * false if not.
+     */
+    isDeviceChangeAvailable: function () {
+        if(RTCBrowserType.isChrome() || RTCBrowserType.isOpera() ||
+            RTCBrowserType.isTemasysPluginUsed())
+            return true;
+        return false;
+    },
+    /**
      * A method to handle stopping of the stream.
      * One point to handle the differences in various implementations.
      * @param mediaStream MediaStream object to stop.
