@@ -213,6 +213,9 @@ JitsiConference.prototype.removeCommand = function (name) {
  */
 JitsiConference.prototype.setDisplayName = function(name) {
     if(this.room){
+        // remove previously set nickname
+        this.room.removeFromPresence("nick");
+
         this.room.addToPresence("nick", {attributes: {xmlns: 'http://jabber.org/protocol/nick'}, value: name});
         this.room.sendPresence();
     }
@@ -959,9 +962,18 @@ var LibJitsiMeet = {
                 return tracks;
             });
     },
+    /**
+     * Checks if its possible to enumerate available cameras/micropones.
+     * @returns {boolean} true if available, false otherwise.
+     */
     isDeviceListAvailable: function () {
         return RTC.isDeviceListAvailable();
     },
+    /**
+     * Returns true if changing the camera / microphone device is supported and
+     * false if not.
+     * @returns {boolean} true if available, false otherwise.
+     */
     isDeviceChangeAvailable: function () {
         return RTC.isDeviceChangeAvailable();
     },
