@@ -1,4 +1,4 @@
-/* global Strophe, $ */
+/* global Strophe, $, Promise */
 /* jshint -W101 */
 var logger = require("jitsi-meet-logger").getLogger(__filename);
 var RTC = require("./modules/RTC/RTC");
@@ -53,12 +53,53 @@ JitsiConference.prototype.join = function (password) {
 };
 
 /**
+ * Check if joined to the conference.
+ */
+JitsiConference.prototype.isJoined = function () {
+    return this.room && this.room.joined;
+};
+
+/**
  * Leaves the conference.
  */
 JitsiConference.prototype.leave = function () {
     if(this.xmpp && this.room)
         this.xmpp.leaveRoom(this.room.roomjid);
     this.room = null;
+};
+
+/**
+ * Returns name of this conference.
+ */
+JitsiConference.prototype.getName = function () {
+    return this.options.name;
+};
+
+/**
+ * Check if external authentication is enabled for this conference.
+ */
+JitsiConference.prototype.isExternalAuthEnabled = function () {
+    return this.room && this.room.moderator.isExternalAuthEnabled();
+};
+
+/**
+ * Get url for external authentication.
+ * @param {boolean} [urlForPopup] if true then return url for login popup,
+ *                                else url of login page.
+ * @returns {Promise}
+ */
+JitsiConference.prototype.getExternalAuthUrl = function (urlForPopup) {
+    return new Promise(function (resolve, reject) {
+        if (!this.isExternalAuthEnabled()) {
+            reject();
+            return;
+        }
+        if (urlForPopup) {
+            this.room.moderator.getPopupLoginUrl(resolve, reject);
+        } else {
+            this.room.moderator.getLoginUrl(resolve, reject);
+        }
+    }.bind(this));
 };
 
 /**
@@ -267,7 +308,7 @@ JitsiConference.prototype.lock = function (password) {
     }, function (err) {
       reject(err);
     }, function () {
-      reject(JitsiConferenceErrors.PASSWORD_REQUIRED);
+      reject(JitsiConferenceErrors.PASSWORD_NOT_SUPPORTED);
     });
   });
 };
@@ -478,6 +519,18 @@ function setupListeners(conference) {
     conference.room.addListener(XMPPEvents.MUC_JOINED, function () {
         conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_JOINED);
     });
+    conference.room.addListener(XMPPEvents.ROOM_JOIN_ERROR, function (pres) {
+        conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_FAILED, JitsiConferenceErrors.CONNECTION_ERROR, pres);
+    });
+    conference.room.addListener(XMPPEvents.ROOM_CONNECT_ERROR, function (pres) {
+        conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_FAILED, JitsiConferenceErrors.CONNECTION_ERROR, pres);
+    });
+    conference.room.addListener(XMPPEvents.PASSWORD_REQUIRED, function (pres) {
+        conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_FAILED, JitsiConferenceErrors.PASSWORD_REQUIRED, pres);
+    });
+    conference.room.addListener(XMPPEvents.AUTHENTICATION_REQUIRED, function () {
+        conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_FAILED, JitsiConferenceErrors.AUTHENTICATION_REQUIRED);
+    });
 //    FIXME
 //    conference.room.addListener(XMPPEvents.MUC_JOINED, function () {
 //        conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_LEFT);
@@ -501,7 +554,7 @@ function setupListeners(conference) {
         conference.eventEmitter.emit(JitsiConferenceEvents.CONNECTION_RESTORED);
     });
     conference.room.addListener(XMPPEvents.CONFERENCE_SETUP_FAILED, function () {
-        conference.eventEmitter.emit(JitsiConferenceEvents.SETUP_FAILED);
+        conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_FAILED, JitsiConferenceErrors.SETUP_FAILED);
     });
 
     conference.room.addListener(XMPPEvents.MESSAGE_RECEIVED, function (jid, displayName, txt, myJid, ts) {

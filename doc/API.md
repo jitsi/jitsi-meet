@@ -79,6 +79,7 @@ JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.ERROR);
         - CONFERENCE_LEFT - notifies the local user that he left the conference successfully. (no parameters)
         - DTMF_SUPPORT_CHANGED - notifies if at least one user supports DTMF. (parameters - supports(boolean))
         - USER_ROLE_CHANGED - notifies that role of some user changed. (parameters - id(string), role(string))
+        - CONFERENCE_FAILED - notifies that user failed to join the conference. (parameters - errorCode(JitsiMeetJS.errors.conference))
 
     2. connection
         - CONNECTION_FAILED - indicates that the server connection failed.
@@ -92,8 +93,10 @@ JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.ERROR);
     We support the following events:
     1. conference
         - CONNECTION_ERROR - the connection with the conference is lost.
+        - SETUP_FAILED - conference setup failed
+        - AUTHENTICATION_REQUIRED - user must be authenticated to create this conference
         - PASSWORD_REQUIRED - that error can be passed when the connection to the conference failed. You should try to join the conference with password.
-        - PASSWORD_NOT_SUPPORTED - indicates that password cannot be set for this conference
+        - PASSWORD_NOT_SUPPORTED - indicates that conference cannot be locked
         - VIDEOBRIDGE_NOT_AVAILABLE - video bridge issues.
     2. connection
         - PASSWORD_REQUIRED - passed when the connection to the server failed. You should try to authenticate with password.
