@@ -55,7 +55,7 @@ var localVideoSSRC;
  * This is in order to tell Chrome what SSRC should be used in RTCP requests
  * instead of 1.
  */
-var localRecvOnlySSRC;
+var localRecvOnlySSRC, localRecvOnlyMSID, localRecvOnlyMSLabel, localRecvOnlyLabel;
 
 /**
  * cname for <tt>localRecvOnlySSRC</tt>
@@ -128,17 +128,31 @@ var storeLocalVideoSSRC = function (jingleIq) {
 };
 
 /**
+ * Generates new label/mslabel attribute
+ * @returns {string} label/mslabel attribute
+ */
+function generateLabel() {
+    return RandomUtil.randomHexString(8) + "-" + RandomUtil.randomHexString(4) +
+        "-" + RandomUtil.randomHexString(4) + "-" +
+        RandomUtil.randomHexString(4) + "-" + RandomUtil.randomHexString(12);
+}
+
+/**
  * Generates new SSRC for local video recvonly stream.
  * FIXME what about eventual SSRC collision ?
  */
 function generateRecvonlySSRC() {
 
-    localRecvOnlySSRC =
+    localVideoSSRC = localRecvOnlySSRC =
         localVideoSSRC ?
             localVideoSSRC : Math.random().toString(10).substring(2, 11);
 
     localRecvOnlyCName =
         Math.random().toString(36).substring(2);
+
+    localRecvOnlyMSLabel = generateLabel();
+    localRecvOnlyLabel = generateLabel();
+    localRecvOnlyMSID = localRecvOnlyMSLabel + " " + localRecvOnlyLabel;
 
     logger.info(
         "Generated local recvonly SSRC: " + localRecvOnlySSRC +
@@ -214,7 +228,13 @@ var LocalSSRCReplacement = {
                          ' - adding SSRC: ' + localRecvOnlySSRC);
 
             sdp.media[1] += 'a=ssrc:' + localRecvOnlySSRC +
-                            ' cname:' + localRecvOnlyCName + '\r\n';
+                            ' cname:' + localRecvOnlyCName + '\r\n' +
+                            'a=ssrc:' + localRecvOnlySSRC +
+                            ' msid:' + localRecvOnlyMSID + '\r\n' +
+                            'a=ssrc:' + localRecvOnlySSRC +
+                            ' mslabel:' + localRecvOnlyMSLabel + '\r\n' +
+                            'a=ssrc:' + localRecvOnlySSRC +
+                            ' label:' + localRecvOnlyLabel + '\r\n';
 
             localDescription.sdp = sdp.session + sdp.media.join('');
         }
