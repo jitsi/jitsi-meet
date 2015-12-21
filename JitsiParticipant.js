@@ -1,8 +1,11 @@
+/* global Strophe */
+
 /**
  * Represents a participant in (a member of) a conference.
  */
-function JitsiParticipant(id, conference, displayName){
-    this._id = id;
+function JitsiParticipant(jid, conference, displayName){
+    this._jid = jid;
+    this._id = Strophe.getResourceFromJid(jid);
     this._conference = conference;
     this._displayName = displayName;
     this._supportsDTMF = false;
@@ -25,10 +28,17 @@ JitsiParticipant.prototype.getTracks = function() {
 };
 
 /**
- * @returns {String} The ID (i.e. JID) of this participant.
+ * @returns {String} The ID of this participant.
  */
 JitsiParticipant.prototype.getId = function() {
     return this._id;
+};
+
+/**
+ * @returns {String} The JID of this participant.
+ */
+JitsiParticipant.prototype.getJid = function() {
+    return this._jid;
 };
 
 /**
@@ -70,7 +80,8 @@ JitsiParticipant.prototype.isVideoMuted = function() {
 };
 
 /*
- * @returns {???} The latest statistics reported by this participant (i.e. info used to populate the GSM bars)
+ * @returns {???} The latest statistics reported by this participant
+ * (i.e. info used to populate the GSM bars)
  * TODO: do we expose this or handle it internally?
  */
 JitsiParticipant.prototype.getLatestStats = function() {
@@ -85,14 +96,16 @@ JitsiParticipant.prototype.getRole = function() {
 };
 
 /*
- * @returns {Boolean} Whether this participant is the conference focus (i.e. jicofo).
+ * @returns {Boolean} Whether this participant is
+ * the conference focus (i.e. jicofo).
  */
 JitsiParticipant.prototype.isFocus = function() {
 
 };
 
 /*
- * @returns {Boolean} Whether this participant is a conference recorder (i.e. jirecon).
+ * @returns {Boolean} Whether this participant is
+ * a conference recorder (i.e. jirecon).
  */
 JitsiParticipant.prototype.isRecorder = function() {
 
@@ -106,14 +119,16 @@ JitsiParticipant.prototype.isSipGateway = function() {
 };
 
 /**
- * @returns {Boolean} Whether this participant is currently sharing their screen.
+ * @returns {Boolean} Whether this participant
+ * is currently sharing their screen.
  */
 JitsiParticipant.prototype.isScreenSharing = function() {
 
 };
 
 /**
- * @returns {String} The user agent of this participant (i.e. browser userAgent string).
+ * @returns {String} The user agent of this participant
+ * (i.e. browser userAgent string).
  */
 JitsiParticipant.prototype.getUserAgent = function() {
 

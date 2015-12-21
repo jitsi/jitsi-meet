@@ -387,12 +387,24 @@ JitsiConference.prototype.getParticipantById = function(id) {
     return this.participants[id];
 };
 
+/**
+ * Kick participant from this conference.
+ * @param {string} id id of the participant to kick
+ */
+JitsiConference.prototype.kickParticipant = function (id) {
+    var participant = this.getParticipantById(id);
+    if (!participant) {
+        return;
+    }
+    this.room.kick(participant.getJid());
+};
+
 JitsiConference.prototype.onMemberJoined = function (jid, email, nick) {
     var id = Strophe.getResourceFromJid(jid);
     if (id === 'focus') {
        return;
     }
-    var participant = new JitsiParticipant(id, this, nick);
+    var participant = new JitsiParticipant(jid, this, nick);
     this.participants[id] = participant;
     this.eventEmitter.emit(JitsiConferenceEvents.USER_JOINED, id, participant);
     this.xmpp.connection.disco.info(
@@ -406,7 +418,7 @@ JitsiConference.prototype.onMemberJoined = function (jid, email, nick) {
 
 JitsiConference.prototype.onMemberLeft = function (jid) {
     var id = Strophe.getResourceFromJid(jid);
-    if (id === 'focus') {
+    if (id === 'focus' || this.myUserId() === id) {
        return;
     }
     var participant = this.participants[id];
@@ -565,6 +577,10 @@ function setupListeners(conference) {
 //    conference.room.addListener(XMPPEvents.MUC_JOINED, function () {
 //        conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_LEFT);
 //    });
+
+    conference.room.addListener(XMPPEvents.KICKED, function () {
+        conference.eventEmitter.emit(JitsiConferenceEvents.KICKED);
+    });
 
     conference.room.addListener(XMPPEvents.MUC_MEMBER_JOINED, conference.onMemberJoined.bind(conference));
     conference.room.addListener(XMPPEvents.MUC_MEMBER_LEFT, conference.onMemberLeft.bind(conference));

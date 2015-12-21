@@ -389,12 +389,24 @@ JitsiConference.prototype.getParticipantById = function(id) {
     return this.participants[id];
 };
 
+/**
+ * Kick participant from this conference.
+ * @param {string} id id of the participant to kick
+ */
+JitsiConference.prototype.kickParticipant = function (id) {
+    var participant = this.getParticipantById(id);
+    if (!participant) {
+        return;
+    }
+    this.room.kick(participant.getJid());
+};
+
 JitsiConference.prototype.onMemberJoined = function (jid, email, nick) {
     var id = Strophe.getResourceFromJid(jid);
     if (id === 'focus') {
        return;
     }
-    var participant = new JitsiParticipant(id, this, nick);
+    var participant = new JitsiParticipant(jid, this, nick);
     this.participants[id] = participant;
     this.eventEmitter.emit(JitsiConferenceEvents.USER_JOINED, id, participant);
     this.xmpp.connection.disco.info(
@@ -408,7 +420,7 @@ JitsiConference.prototype.onMemberJoined = function (jid, email, nick) {
 
 JitsiConference.prototype.onMemberLeft = function (jid) {
     var id = Strophe.getResourceFromJid(jid);
-    if (id === 'focus') {
+    if (id === 'focus' || this.myUserId() === id) {
        return;
     }
     var participant = this.participants[id];
@@ -567,6 +579,10 @@ function setupListeners(conference) {
 //    conference.room.addListener(XMPPEvents.MUC_JOINED, function () {
 //        conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_LEFT);
 //    });
+
+    conference.room.addListener(XMPPEvents.KICKED, function () {
+        conference.eventEmitter.emit(JitsiConferenceEvents.KICKED);
+    });
 
     conference.room.addListener(XMPPEvents.MUC_MEMBER_JOINED, conference.onMemberJoined.bind(conference));
     conference.room.addListener(XMPPEvents.MUC_MEMBER_LEFT, conference.onMemberLeft.bind(conference));
@@ -765,6 +781,10 @@ var JitsiConferenceEvents = {
      * Indicates that conference has been left.
      */
     CONFERENCE_LEFT: "conference.left",
+    /**
+     * You are kicked from the conference.
+     */
+    KICKED: "conferenece.kicked",
     /**
      * Indicates that DTMF support changed.
      */
@@ -1021,11 +1041,14 @@ window.Promise = window.Promise || require("es6-promise").Promise;
 module.exports = LibJitsiMeet;
 
 },{"./JitsiConferenceErrors":2,"./JitsiConferenceEvents":3,"./JitsiConnection":4,"./JitsiConnectionErrors":5,"./JitsiConnectionEvents":6,"./JitsiTrackErrors":9,"./JitsiTrackEvents":10,"./modules/RTC/RTC":16,"./modules/statistics/statistics":24,"es6-promise":45,"jitsi-meet-logger":47}],8:[function(require,module,exports){
+/* global Strophe */
+
 /**
  * Represents a participant in (a member of) a conference.
  */
-function JitsiParticipant(id, conference, displayName){
-    this._id = id;
+function JitsiParticipant(jid, conference, displayName){
+    this._jid = jid;
+    this._id = Strophe.getResourceFromJid(jid);
     this._conference = conference;
     this._displayName = displayName;
     this._supportsDTMF = false;
@@ -1048,10 +1071,17 @@ JitsiParticipant.prototype.getTracks = function() {
 };
 
 /**
- * @returns {String} The ID (i.e. JID) of this participant.
+ * @returns {String} The ID of this participant.
  */
 JitsiParticipant.prototype.getId = function() {
     return this._id;
+};
+
+/**
+ * @returns {String} The JID of this participant.
+ */
+JitsiParticipant.prototype.getJid = function() {
+    return this._jid;
 };
 
 /**
@@ -1093,7 +1123,8 @@ JitsiParticipant.prototype.isVideoMuted = function() {
 };
 
 /*
- * @returns {???} The latest statistics reported by this participant (i.e. info used to populate the GSM bars)
+ * @returns {???} The latest statistics reported by this participant
+ * (i.e. info used to populate the GSM bars)
  * TODO: do we expose this or handle it internally?
  */
 JitsiParticipant.prototype.getLatestStats = function() {
@@ -1108,14 +1139,16 @@ JitsiParticipant.prototype.getRole = function() {
 };
 
 /*
- * @returns {Boolean} Whether this participant is the conference focus (i.e. jicofo).
+ * @returns {Boolean} Whether this participant is
+ * the conference focus (i.e. jicofo).
  */
 JitsiParticipant.prototype.isFocus = function() {
 
 };
 
 /*
- * @returns {Boolean} Whether this participant is a conference recorder (i.e. jirecon).
+ * @returns {Boolean} Whether this participant is
+ * a conference recorder (i.e. jirecon).
  */
 JitsiParticipant.prototype.isRecorder = function() {
 
@@ -1129,14 +1162,16 @@ JitsiParticipant.prototype.isSipGateway = function() {
 };
 
 /**
- * @returns {Boolean} Whether this participant is currently sharing their screen.
+ * @returns {Boolean} Whether this participant
+ * is currently sharing their screen.
  */
 JitsiParticipant.prototype.isScreenSharing = function() {
 
 };
 
 /**
- * @returns {String} The user agent of this participant (i.e. browser userAgent string).
+ * @returns {String} The user agent of this participant
+ * (i.e. browser userAgent string).
  */
 JitsiParticipant.prototype.getUserAgent = function() {
 
@@ -6240,7 +6275,8 @@ ChatRoom.prototype.onPresenceUnavailable = function (pres, from) {
             reason = reasonSelect.text();
         }
 
-        this.xmpp.disposeConference(false);
+        this.xmpp.leaveRoom(this.roomjid);
+
         this.eventEmitter.emit(XMPPEvents.MUC_DESTROYED, reason);
         delete this.connection.emuc.rooms[Strophe.getBareJidFromJid(from)];
         return true;
@@ -6262,7 +6298,7 @@ ChatRoom.prototype.onPresenceUnavailable = function (pres, from) {
     }
     if ($(pres).find('>x[xmlns="http://jabber.org/protocol/muc#user"]>status[code="307"]').length) {
         if (this.myroomjid === from) {
-            this.xmpp.disposeConference(false);
+            this.xmpp.leaveRoom(this.roomjid);
             this.eventEmitter.emit(XMPPEvents.KICKED);
         }
     }

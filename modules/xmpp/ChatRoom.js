@@ -343,7 +343,8 @@ ChatRoom.prototype.onPresenceUnavailable = function (pres, from) {
             reason = reasonSelect.text();
         }
 
-        this.xmpp.disposeConference(false);
+        this.xmpp.leaveRoom(this.roomjid);
+
         this.eventEmitter.emit(XMPPEvents.MUC_DESTROYED, reason);
         delete this.connection.emuc.rooms[Strophe.getBareJidFromJid(from)];
         return true;
@@ -365,7 +366,7 @@ ChatRoom.prototype.onPresenceUnavailable = function (pres, from) {
     }
     if ($(pres).find('>x[xmlns="http://jabber.org/protocol/muc#user"]>status[code="307"]').length) {
         if (this.myroomjid === from) {
-            this.xmpp.disposeConference(false);
+            this.xmpp.leaveRoom(this.roomjid);
             this.eventEmitter.emit(XMPPEvents.KICKED);
         }
     }

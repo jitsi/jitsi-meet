@@ -80,6 +80,7 @@ JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.ERROR);
         - DTMF_SUPPORT_CHANGED - notifies if at least one user supports DTMF. (parameters - supports(boolean))
         - USER_ROLE_CHANGED - notifies that role of some user changed. (parameters - id(string), role(string))
         - CONFERENCE_FAILED - notifies that user failed to join the conference. (parameters - errorCode(JitsiMeetJS.errors.conference))
+        - KICKED - notifies that user has been kicked from the conference.
 
     2. connection
         - CONNECTION_FAILED - indicates that the server connection failed.
@@ -237,6 +238,9 @@ The object represents a conference. We have the following methods to control the
 23. unlock() - unset conference password; returns Promise
 
     Note: available only for moderator
+
+24. kick(id) - Kick participant from the conference
+    - id - string participant id
 
 JitsiTrack
 ======
