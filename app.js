@@ -407,8 +407,11 @@ function initConference(localTracks, connection) {
     });
 
     APP.UI.addListener(UIEvents.USER_KICKED, function (id) {
-        // FIXME handle
-        // APP.xmpp.eject(self.id);
+        room.kickParticipant(id);
+    });
+    room.on(ConferenceEvents.KICKED, function () {
+        APP.UI.notifyKicked();
+        // FIXME close
     });
 
     APP.UI.addListener(UIEvents.AUTH_CLICKED, function () {
