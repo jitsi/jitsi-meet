@@ -48,11 +48,18 @@ function doXmppAuth (room, lockPassword) {
                 connection.disconnect();
                 loginDialog.displayError(err);
             });
-            // FIXME finish "on the fly" auth
-            room.room.moderator.allocateConferenceFocus(function () {
+
+            newRoom.room.moderator.allocateConferenceFocus(function () {
                 connection.disconnect();
                 loginDialog.close();
-                room.join(lockPassword);
+
+                if (room.isJoined()) {
+                    // just reallocate focus if already joined
+                    room.room.moderator.allocateConferenceFocus();
+                } else {
+                    // or join
+                    room.join(lockPassword);
+                }
             });
 
         }, function (err) {
