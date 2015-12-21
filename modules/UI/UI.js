@@ -739,6 +739,8 @@ UI.notifyTokenAuthFailed = function () {
 UI.updateAuthInfo = function (isAuthEnabled, login) {
     let loggedIn = !!login;
 
+    Toolbar.showAuthenticateButton(isAuthEnabled);
+
     if (isAuthEnabled) {
         Toolbar.setAuthenticatedIdentity(login);
 

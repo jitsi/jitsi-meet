@@ -278,8 +278,7 @@ const Toolbar = {
     showAuthenticateButton (show) {
         if (UIUtil.isButtonEnabled('authentication') && show) {
             $('#authentication').css({display: "inline"});
-        }
-        else {
+        } else {
             $('#authentication').css({display: "none"});
         }
     },
@@ -288,8 +287,7 @@ const Toolbar = {
     showRecordingButton (show) {
         if (UIUtil.isButtonEnabled('recording') && show) {
             $('#toolbar_button_record').css({display: "inline-block"});
-        }
-        else {
+        } else {
             $('#toolbar_button_record').css({display: "none"});
         }
     },
