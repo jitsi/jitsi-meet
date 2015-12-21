@@ -497,6 +497,16 @@ JitsiConference.prototype.sendTones = function (tones, duration, pause) {
 };
 
 /**
+ * Returns the connection state for the current room. Its ice connection state
+ * for its session.
+ */
+JitsiConference.prototype.getConnectionState = function () {
+    if(this.room)
+        return this.room.getConnectionState();
+    return null;
+}
+
+/**
  * Setups the listeners needed for the conference.
  * @param conference the conference
  */

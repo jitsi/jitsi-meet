@@ -1626,4 +1626,12 @@ JingleSessionPC.prototype.remoteStreamAdded = function (data, times) {
     }
 }
 
+/**
+ * Returns the ice connection state for the peer connection.
+ * @returns the ice connection state for the peer connection.
+ */
+JingleSessionPC.prototype.getIceConnectionState = function () {
+    return this.peerconnection.iceConnectionState;
+}
+
 module.exports = JingleSessionPC;
