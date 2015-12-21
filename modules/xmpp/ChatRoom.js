@@ -639,4 +639,13 @@ ChatRoom.prototype.getJidBySSRC = function (ssrc) {
     return this.session.getSsrcOwner(ssrc);
 };
 
+/**
+ * Returns the connection state for the current session.
+ */
+ChatRoom.prototype.getConnectionState = function () {
+    if(!this.session)
+        return null;
+    return this.session.getIceConnectionState();
+}
+
 module.exports = ChatRoom;
