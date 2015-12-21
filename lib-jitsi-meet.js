@@ -496,6 +496,16 @@ JitsiConference.prototype.getPhonePin = function () {
 }
 
 /**
+ * Returns the connection state for the current room. Its ice connection state
+ * for its session.
+ */
+JitsiConference.prototype.getConnectionState = function () {
+    if(this.room)
+        return this.room.getConnectionState();
+    return null;
+}
+
+/**
  * Setups the listeners needed for the conference.
  * @param conference the conference
  */
@@ -6543,6 +6553,15 @@ ChatRoom.prototype.getPhonePin = function () {
     return this.phonePin;
 }
 
+/**
+ * Returns the connection state for the current session.
+ */
+ChatRoom.prototype.getConnectionState = function () {
+    if(!this.session)
+        return null;
+    return this.session.getIceConnectionState();
+}
+
 module.exports = ChatRoom;
 
 }).call(this,"/modules/xmpp/ChatRoom.js")
@@ -8310,6 +8329,14 @@ JingleSessionPC.prototype.remoteStreamAdded = function (data, times) {
             self.sendKeyframe();
         }, 3000);
     }
+}
+
+/**
+ * Returns the ice connection state for the peer connection.
+ * @returns the ice connection state for the peer connection.
+ */
+JingleSessionPC.prototype.getIceConnectionState = function () {
+    return this.peerconnection.iceConnectionState;
 }
 
 module.exports = JingleSessionPC;
