@@ -1,8 +1,9 @@
 /* global $, interfaceConfig, APP */
-var SmallVideo = require("./SmallVideo");
-var ConnectionIndicator = require("./ConnectionIndicator");
-var UIUtil = require("../util/UIUtil");
-var UIEvents = require("../../../service/UI/UIEvents");
+import ConnectionIndicator from "./ConnectionIndicator";
+import UIUtil from "../util/UIUtil";
+import UIEvents from "../../../service/UI/UIEvents";
+import SmallVideo from "./SmallVideo";
+
 var LargeVideo = require("./LargeVideo");
 var RTCBrowserType = require("../../RTC/RTCBrowserType");
 
@@ -13,7 +14,6 @@ function LocalVideo(VideoLayout, emitter) {
     this.VideoLayout = VideoLayout;
     this.flipX = true;
     this.isLocal = true;
-    this.peerJid = null;
     this.emitter = emitter;
 }
 
@@ -125,7 +125,7 @@ LocalVideo.prototype.setDisplayName = function(displayName, key) {
                     if (e.keyCode === 13) {
                         e.preventDefault();
                         $('#editDisplayName').hide();
-                        self.VideoLayout.inputDisplayNameHandler(this.value);
+                        // focusout handler will save display name
                     }
                 });
             });
@@ -143,32 +143,25 @@ LocalVideo.prototype.createConnectionIndicator = function() {
     this.connectionIndicator = new ConnectionIndicator(this, null);
 };
 
-LocalVideo.prototype.changeVideo = function (stream, isMuted) {
-    var self = this;
+LocalVideo.prototype.changeVideo = function (stream) {
+    this.stream = stream;
 
-    function localVideoClick(event) {
+    let localVideoClick = (event) => {
         // FIXME: with Temasys plugin event arg is not an event, but
         // the clicked object itself, so we have to skip this call
         if (event.stopPropagation) {
             event.stopPropagation();
         }
-        self.VideoLayout.handleVideoThumbClicked(
-            true,
-            APP.xmpp.myResource());
-    }
+        this.VideoLayout.handleVideoThumbClicked(true, this.id);
+    };
 
-    var localVideoContainerSelector = $('#localVideoContainer');
+    let localVideoContainerSelector = $('#localVideoContainer');
     localVideoContainerSelector.off('click');
     localVideoContainerSelector.on('click', localVideoClick);
 
-    if(isMuted) {
-        APP.UI.setVideoMute(true);
-        return;
-    }
     this.flipX = stream.videoType != "screen";
-    var localVideo = document.createElement('video');
-    localVideo.id = 'localVideo_' +
-        APP.RTC.getStreamID(stream.getOriginalStream());
+    let localVideo = document.createElement('video');
+    localVideo.id = 'localVideo_' + stream.getId();
     if (!RTCBrowserType.isIExplorer()) {
         localVideo.autoplay = true;
         localVideo.volume = 0; // is it required if audio is separated ?
@@ -192,7 +185,10 @@ LocalVideo.prototype.changeVideo = function (stream, isMuted) {
     }
 
     // Attach WebRTC stream
-    APP.RTC.attachMediaStream(localVideoSelector, stream.getOriginalStream());
+    stream.attach(localVideoSelector);
+
+    // FIXME handle
+    return;
 
     // Add stream ended handler
     APP.RTC.addMediaStreamInactiveHandler(
@@ -201,20 +197,12 @@ LocalVideo.prototype.changeVideo = function (stream, isMuted) {
         // because <video> element is replaced with <object>
         localVideo = $('#' + localVideo.id)[0];
         localVideoContainer.removeChild(localVideo);
-        self.VideoLayout.updateRemovedVideo(APP.xmpp.myResource());
+        self.VideoLayout.updateRemovedVideo(self.id);
     });
 };
 
-LocalVideo.prototype.joined = function (jid) {
-    this.peerJid = jid;
+LocalVideo.prototype.joined = function (id) {
+    this.id = id;
 };
 
-LocalVideo.prototype.getResourceJid = function () {
-    var myResource = APP.xmpp.myResource();
-    if (!myResource) {
-        console.error("Requested local resource before we're in the MUC");
-    }
-    return myResource;
-};
-
-module.exports = LocalVideo;
+export default LocalVideo;

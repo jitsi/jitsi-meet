@@ -1,49 +1,90 @@
-/* global $, JitsiMeetJS, config, Promise */
+/* global $, JitsiMeetJS, config, interfaceConfig */
 /* application specific logic */
 
-require("jquery");
-require("jquery-ui");
-require("strophe");
-require("strophe-disco");
-require("strophe-caps");
-require("tooltip");
-require("popover");
+import "babel-polyfill";
+import "jquery";
+import "jquery-ui";
+import "strophe";
+import "strophe-disco";
+import "strophe-caps";
+import "tooltip";
+import "popover";
+import "jQuery-Impromptu";
+import "autosize";
 window.toastr = require("toastr");
-require("jQuery-Impromptu");
-require("autosize");
 
-var CQEvents = require('./service/connectionquality/CQEvents');
-var UIEvents = require('./service/UI/UIEvents');
+import URLProcessor from "./modules/config/URLProcessor";
+import RoomnameGenerator from './modules/util/RoomnameGenerator';
+import CQEvents from './service/connectionquality/CQEvents';
+import UIEvents from './service/UI/UIEvents';
 
-var Commands = {
+import {openConnection} from './modules/connection';
+import AuthHandler from './modules/AuthHandler';
+
+import createRoomLocker from './modules/RoomLocker';
+
+const Commands = {
     CONNECTION_QUALITY: "connectionQuality",
     EMAIL: "email"
 };
 
-var APP = {
-    init: function () {
-        JitsiMeetJS.init();
-        JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.TRACE);
+function buildRoomName () {
+    let path = window.location.pathname;
+    let roomName;
 
+    // determinde the room node from the url
+    // TODO: just the roomnode or the whole bare jid?
+    if (config.getroomnode && typeof config.getroomnode === 'function') {
+        // custom function might be responsible for doing the pushstate
+        roomName = config.getroomnode(path);
+    } else {
+        /* fall back to default strategy
+         * this is making assumptions about how the URL->room mapping happens.
+         * It currently assumes deployment at root, with a rewrite like the
+         * following one (for nginx):
+         location ~ ^/([a-zA-Z0-9]+)$ {
+         rewrite ^/(.*)$ / break;
+         }
+        */
+        if (path.length > 1) {
+            roomName = path.substr(1).toLowerCase();
+        } else {
+            let word = RoomnameGenerator.generateRoomWithoutSeparator();
+            roomName = word.toLowerCase();
+            window.history.pushState(
+                'VideoChat', `Room: ${word}`, window.location.pathname + word
+            );
+        }
+    }
+
+    return roomName;
+}
+
+
+const APP = {
+    init () {
+        let roomName = buildRoomName();
         this.conference = {
+            roomName,
             localId: undefined,
             isModerator: false,
             membersCount: 0,
             audioMuted: false,
             videoMuted: false,
-            isLocalId: function (id) {
+            sipGatewayEnabled: false, //FIXME handle
+            isLocalId (id) {
                 return this.localId === id;
             },
-            muteAudio: function (mute) {
+            muteAudio (mute) {
                 APP.UI.eventEmitter.emit(UIEvents.AUDIO_MUTED, mute);
             },
-            toggleAudioMuted: function () {
+            toggleAudioMuted () {
                 this.muteAudio(!this.audioMuted);
             },
-            muteVideo: function (mute) {
+            muteVideo (mute) {
                 APP.UI.eventEmitter.emit(UIEvents.VIDEO_MUTED, mute);
             },
-            toggleVideoMuted: function () {
+            toggleVideoMuted () {
                 this.muteVideo(!this.videoMuted);
             }
         };
@@ -64,98 +105,116 @@ var APP = {
 };
 
 
-var ConnectionEvents = JitsiMeetJS.events.connection;
-var ConnectionErrors = JitsiMeetJS.errors.connection;
-function connect() {
-    var connection = new JitsiMeetJS.JitsiConnection(null, null, {
-        hosts: config.hosts,
-        bosh: config.bosh,
-        clientNode: config.clientNode
-    });
+const ConnectionEvents = JitsiMeetJS.events.connection;
+const ConnectionErrors = JitsiMeetJS.errors.connection;
 
-    return new Promise(function (resolve, reject) {
-        var handlers = {};
-
-        var unsubscribe = function () {
-            Object.keys(handlers).forEach(function (event) {
-                connection.removeEventListener(event, handlers[event]);
-            });
-        };
-
-        handlers[ConnectionEvents.CONNECTION_ESTABLISHED] = function () {
-            console.log('CONNECTED');
-            unsubscribe();
-            resolve(connection);
-        };
-
-        var listenForFailure = function (event) {
-            handlers[event] = function () {
-                // convert arguments to array
-                var args = Array.prototype.slice.call(arguments);
-                args.unshift(event);
-                // [event, ...params]
-                console.error('CONNECTION FAILED:', args);
-
-                unsubscribe();
-                reject(args);
-            };
-        };
-
-        listenForFailure(ConnectionEvents.CONNECTION_FAILED);
-        listenForFailure(ConnectionErrors.PASSWORD_REQUIRED);
-        listenForFailure(ConnectionErrors.CONNECTION_ERROR);
-        listenForFailure(ConnectionErrors.OTHER_ERRORS);
-
-        // install event listeners
-        Object.keys(handlers).forEach(function (event) {
-            connection.addEventListener(event, handlers[event]);
-        });
-
-        connection.connect();
-    }).catch(function (err) {
-        if (err[0] === ConnectionErrors.PASSWORD_REQUIRED) {
-            // FIXME ask for password and try again
-            return connect();
-        }
-        console.error('FAILED TO CONNECT', err);
-        APP.UI.notifyConnectionFailed(err[1]);
-
-        throw new Error(err[0]);
-    });
-}
-
-var ConferenceEvents = JitsiMeetJS.events.conference;
-var ConferenceErrors = JitsiMeetJS.errors.conference;
-function initConference(connection, roomName) {
-    var room = connection.initJitsiConference(roomName, {
+const ConferenceEvents = JitsiMeetJS.events.conference;
+const ConferenceErrors = JitsiMeetJS.errors.conference;
+function initConference(localTracks, connection) {
+    let room = connection.initJitsiConference(APP.conference.roomName, {
         openSctp: config.openSctp,
         disableAudioLevels: config.disableAudioLevels
     });
 
-    var users = {};
-    var localTracks = [];
-
     APP.conference.localId = room.myUserId();
     Object.defineProperty(APP.conference, "membersCount", {
         get: function () {
-            return Object.keys(users).length; // FIXME maybe +1?
+            return room.getParticipants().length; // FIXME maybe +1?
         }
     });
 
-    room.on(ConferenceEvents.USER_JOINED, function (id) {
-        users[id] = {
-            displayName: undefined,
-            tracks: []
-        };
+    APP.conference.listMembers = function () {
+        return room.getParticipants();
+    };
+    APP.conference.listMembersIds = function () {
+        return room.getParticipants().map(p => p.getId());
+    };
+
+    function getDisplayName(id) {
+        if (APP.conference.isLocalId(id)) {
+            return APP.settings.getDisplayName();
+        }
+
+        var participant = room.getParticipantById(id);
+        if (participant && participant.getDisplayName()) {
+            return participant.getDisplayName();
+        }
+    }
+
+    // add local streams when joined to the conference
+    room.on(ConferenceEvents.CONFERENCE_JOINED, function () {
+        localTracks.forEach(function (track) {
+            room.addTrack(track);
+            APP.UI.addLocalStream(track);
+        });
+
+        APP.UI.updateAuthInfo(room.isAuthEnabled(), room.getAuthLogin());
+    });
+
+
+    room.on(ConferenceEvents.USER_JOINED, function (id, user) {
+        if (APP.conference.isLocalId(id)) {
+            return;
+        }
+        console.error('USER %s connnected', id);
         // FIXME email???
-        APP.UI.addUser(id);
+        APP.UI.addUser(id, user.getDisplayName());
     });
-    room.on(ConferenceEvents.USER_LEFT, function (id) {
-        delete users[id];
-        APP.UI.removeUser(id);
+    room.on(ConferenceEvents.USER_LEFT, function (id, user) {
+        console.error('USER LEFT', id);
+        APP.UI.removeUser(id, user.getDisplayName());
     });
 
 
+    room.on(ConferenceEvents.USER_ROLE_CHANGED, function (id, role) {
+        if (APP.conference.isLocalId(id)) {
+            console.info(`My role changed, new role: ${role}`);
+            APP.conference.isModerator = room.isModerator();
+            APP.UI.updateLocalRole(room.isModerator());
+        } else {
+            var user = room.getParticipantById(id);
+            if (user) {
+                APP.UI.updateUserRole(user);
+            }
+        }
+    });
+
+
+    let roomLocker = createRoomLocker(room);
+    APP.UI.addListener(UIEvents.ROOM_LOCK_CLICKED, function () {
+        if (room.isModerator()) {
+            let promise = roomLocker.isLocked
+                ? roomLocker.askToUnlock()
+                : roomLocker.askToLock();
+            promise.then(function () {
+                APP.UI.markRoomLocked(roomLocker.isLocked);
+            });
+        } else {
+            roomLocker.notifyModeratorRequired();
+        }
+    });
+
+
+    room.on(ConferenceEvents.TRACK_ADDED, function (track) {
+        if (track.isLocal()) { // skip local tracks
+            return;
+        }
+        console.error(
+            'REMOTE %s TRACK', track.getType(), track.getParticipantId()
+        );
+        APP.UI.addRemoteStream(track);
+    });
+    room.on(ConferenceEvents.TRACK_REMOVED, function (track) {
+        if (track.isLocal()) { // skip local tracks
+            return;
+        }
+
+        console.error(
+            'REMOTE %s TRACK REMOVED', track.getType(), track.getParticipantId()
+        );
+
+        // FIXME handle
+    });
     room.on(ConferenceEvents.TRACK_MUTE_CHANGED, function (track) {
         // FIXME handle mute
     });
@@ -189,13 +248,21 @@ function initConference(connection, roomName) {
     });
 
 
-    room.on(ConferenceEvents.CONNECTION_INTERRUPTED, function () {
-        APP.UI.markVideoInterrupted(true);
-    });
-    room.on(ConferenceEvents.CONNECTION_RESTORED, function () {
-        APP.UI.markVideoInterrupted(false);
-    });
+    if (!interfaceConfig.filmStripOnly) {
+        room.on(ConferenceEvents.CONNECTION_INTERRUPTED, function () {
+            APP.UI.markVideoInterrupted(true);
+        });
+        room.on(ConferenceEvents.CONNECTION_RESTORED, function () {
+            APP.UI.markVideoInterrupted(false);
+        });
 
+        APP.UI.addListener(UIEvents.MESSAGE_CREATED, function (message) {
+            room.sendTextMessage(message);
+        });
+        room.on(ConferenceEvents.MESSAGE_RECEIVED, function (id, text, ts) {
+            APP.UI.addMessage(id, getDisplayName(id), text, ts);
+        });
+    }
 
     APP.connectionquality.addListener(
         CQEvents.LOCALSTATS_UPDATED,
@@ -248,26 +315,22 @@ function initConference(connection, roomName) {
         APP.UI.setUserAvatar(data.attributes.id, data.value);
     });
 
+    let nick = APP.settings.getDisplayName();
+    if (config.useNicks && !nick) {
+        nick = APP.UI.askForNickname();
+        APP.settings.setDisplayName(nick);
+    }
 
+    if (nick) {
+        room.setDisplayName(nick);
+    }
     room.on(ConferenceEvents.DISPLAY_NAME_CHANGED, function (id, displayName) {
         APP.UI.changeDisplayName(id, displayName);
     });
     APP.UI.addListener(UIEvents.NICKNAME_CHANGED, function (nickname) {
         APP.settings.setDisplayName(nickname);
         room.setDisplayName(nickname);
-    });
-
-
-    APP.UI.addListener(UIEvents.MESSAGE_CREATED, function (message) {
-        room.sendTextMessage(message);
-    });
-
-
-    room.on(ConferenceErrors.PASSWORD_REQUIRED, function () {
-        // FIXME handle
-    });
-    room.on(ConferenceErrors.CONNECTION_ERROR, function () {
-        // FIXME handle
+        APP.UI.changeDisplayName(APP.conference.localId, nickname);
     });
 
     APP.UI.addListener(
@@ -277,37 +340,192 @@ function initConference(connection, roomName) {
         }
     );
 
-    return new Promise(function (resolve, reject) {
-        room.on(
-            ConferenceEvents.CONFERENCE_JOINED,
-            function () {
-                resolve();
-            }
+    APP.UI.addListener(UIEvents.USER_INVITED, function (roomUrl) {
+        APP.UI.inviteParticipants(
+            roomUrl,
+            APP.conference.roomName,
+            roomLocker.password,
+            APP.settings.getDisplayName()
         );
-        APP.UI.closeAuthenticationDialog();
-        if (config.useNicks) {
-            // FIXME check this
-            var nick = APP.UI.askForNickname();
+    });
+
+    // call hangup
+    APP.UI.addListener(UIEvents.HANGUP, function () {
+        APP.UI.requestFeedback().then(function () {
+            connection.disconnect();
+
+            if (config.enableWelcomePage) {
+                setTimeout(function() {
+                    window.localStorage.welcomePageDisabled = false;
+                    window.location.pathname = "/";
+                }, 3000);
+            }
+        });
+    });
+
+    // logout
+    APP.UI.addListener(UIEvents.LOGOUT, function () {
+        // FIXME handle logout
+        // APP.xmpp.logout(function (url) {
+        //     if (url) {
+        //         window.location.href = url;
+        //     } else {
+        //         hangup();
+        //     }
+        // });
+    });
+
+    APP.UI.addListener(UIEvents.SIP_DIAL, function (sipNumber) {
+        // FIXME add dial
+        // APP.xmpp.dial(
+        //     sipNumber,
+        //     'fromnumber',
+        //     APP.conference.roomName,
+        //     roomLocker.password
+        // );
+    });
+
+
+    // Starts or stops the recording for the conference.
+    APP.UI.addListener(UIEvents.RECORDING_TOGGLE, function (predefinedToken) {
+        // FIXME recording
+        // APP.xmpp.toggleRecording(function (callback) {
+        //     if (predefinedToken) {
+        //         callback(predefinedToken);
+        //         return;
+        //     }
+
+        //     APP.UI.requestRecordingToken().then(callback);
+
+        // }, APP.UI.updateRecordingState);
+    });
+
+    APP.UI.addListener(UIEvents.TOPIC_CHANGED, function (topic) {
+        // FIXME handle topic change
+        // APP.xmpp.setSubject(topic);
+        // on SUBJECT_CHANGED UI.setSubject(topic);
+    });
+
+    APP.UI.addListener(UIEvents.USER_KICKED, function (id) {
+        room.kickParticipant(id);
+    });
+    room.on(ConferenceEvents.KICKED, function () {
+        APP.UI.notifyKicked();
+        // FIXME close
+    });
+
+    APP.UI.addListener(UIEvents.AUTH_CLICKED, function () {
+        AuthHandler.authenticate(room);
+    });
+
+    APP.UI.addListener(UIEvents.SELECTED_ENDPOINT, function (id) {
+        room.selectParticipant(id);
+    });
+
+    room.on(ConferenceEvents.DTMF_SUPPORT_CHANGED, function (isDTMFSupported) {
+        APP.UI.updateDTMFSupport(isDTMFSupported);
+    });
+
+    $(window).bind('beforeunload', function () {
+        room.leave();
+    });
+
+    return new Promise(function (resolve, reject) {
+        room.on(ConferenceEvents.CONFERENCE_JOINED, handleConferenceJoined);
+        room.on(ConferenceEvents.CONFERENCE_FAILED, onConferenceFailed);
+
+        let password;
+        let reconnectTimeout;
+
+        function unsubscribe() {
+            room.off(
+                ConferenceEvents.CONFERENCE_JOINED, handleConferenceJoined
+            );
+            room.off(
+                ConferenceEvents.CONFERENCE_FAILED, onConferenceFailed
+            );
+            if (reconnectTimeout) {
+                clearTimeout(reconnectTimeout);
+            }
+            AuthHandler.closeAuth();
         }
-        room.join();
+
+        function handleConferenceJoined() {
+            unsubscribe();
+            resolve();
+        }
+
+        function handleConferenceFailed(err) {
+            unsubscribe();
+            reject(err);
+        }
+
+        function onConferenceFailed(err, msg = '') {
+            console.error('CONFERENCE FAILED:', err, msg);
+            switch (err) {
+                // room is locked by the password
+            case ConferenceErrors.PASSWORD_REQUIRED:
+                APP.UI.markRoomLocked(true);
+                roomLocker.requirePassword().then(function () {
+                    room.join(roomLocker.password);
+                });
+                break;
+
+            case ConferenceErrors.CONNECTION_ERROR:
+                APP.UI.notifyConnectionFailed(msg);
+                break;
+
+                // not enough rights to create conference
+            case ConferenceErrors.AUTHENTICATION_REQUIRED:
+                // schedule reconnect to check if someone else created the room
+                reconnectTimeout = setTimeout(function () {
+                    room.join(password);
+                }, 5000);
+
+                // notify user that auth is required
+                AuthHandler.requireAuth(APP.conference.roomName);
+                break;
+
+            default:
+                handleConferenceFailed(err);
+            }
+        }
+
+        room.join(password);
+    });
+}
+
+function createLocalTracks () {
+    return JitsiMeetJS.createLocalTracks({
+        devices: ['audio', 'video']
     }).catch(function (err) {
-        if (err[0] === ConferenceErrors.PASSWORD_REQUIRED) {
-            // FIXME ask for password and try again
-            return initConference(connection, roomName);
+        console.error('failed to create local tracks', err);
+        return [];
+    });
+}
+
+function connect() {
+    return openConnection({retry: true}).catch(function (err) {
+        if (err === ConnectionErrors.PASSWORD_REQUIRED) {
+            APP.UI.notifyTokenAuthFailed();
+        } else {
+            APP.UI.notifyConnectionFailed(err);
         }
-
-        // FIXME else notify that we cannot conenct to the room
-
-        throw new Error(err[0]);
+        throw err;
     });
 }
 
 function init() {
-    connect().then(function (connection) {
-        return initConference(connection, APP.UI.generateRoomName());
-    }).then(function () {
-        APP.UI.start();
+    APP.UI.start();
 
+    JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.TRACE);
+
+    JitsiMeetJS.init().then(function () {
+        return Promise.all([createLocalTracks(), connect()]);
+    }).then(function ([tracks, connection]) {
+        console.log('initialized with %s local tracks', tracks.length);
+        return initConference(tracks, connection);
+    }).then(function () {
         APP.UI.initConference();
 
         APP.UI.addListener(UIEvents.LANG_CHANGED, function (language) {
@@ -319,6 +537,8 @@ function init() {
         APP.statistics.start();
         APP.connectionquality.init();
         APP.keyboardshortcut.init();
+    }).catch(function (err) {
+        console.error(err);
     });
 }
 
@@ -331,7 +551,7 @@ function init() {
  * will be displayed to the user.
  */
 function obtainConfigAndInit() {
-    var roomName = APP.UI.getRoomNode();
+    let roomName = APP.conference.roomName;
 
     if (config.configLocation) {
         APP.configFetch.obtainConfig(
@@ -361,7 +581,6 @@ function obtainConfigAndInit() {
 $(document).ready(function () {
     console.log("(TIME) document ready:\t", window.performance.now());
 
-    var URLProcessor = require("./modules/config/URLProcessor");
     URLProcessor.setConfigParametersFromUrl();
     APP.init();
 

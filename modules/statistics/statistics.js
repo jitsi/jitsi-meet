@@ -86,6 +86,7 @@ var statistics = {
         stopRemote();
     },
     start: function () {
+        return;
         APP.RTC.addStreamListener(onStreamCreated,
             StreamEventTypes.EVENT_TYPE_LOCAL_CREATED);
         APP.xmpp.addListener(XMPPEvents.DISPOSE_CONFERENCE,

@@ -1,62 +1,58 @@
-/* global Strophe, APP, $, config, interfaceConfig, toastr */
+/* global APP, $, config, interfaceConfig, toastr */
 /* jshint -W101 */
 var UI = {};
 
-var VideoLayout = require("./videolayout/VideoLayout.js");
-var AudioLevels = require("./audio_levels/AudioLevels.js");
-var Prezi = require("./prezi/Prezi.js");
-var Etherpad = require("./etherpad/Etherpad.js");
-var Chat = require("./side_pannels/chat/Chat.js");
-var Toolbar = require("./toolbars/Toolbar");
-var ToolbarToggler = require("./toolbars/ToolbarToggler");
-var BottomToolbar = require("./toolbars/BottomToolbar");
-var ContactList = require("./side_pannels/contactlist/ContactList");
-var Avatar = require("./avatar/Avatar");
+import AudioLevels from './audio_levels/AudioLevels';
+import Chat from "./side_pannels/chat/Chat";
+import Toolbar from "./toolbars/Toolbar";
+import ToolbarToggler from "./toolbars/ToolbarToggler";
+import BottomToolbar from "./toolbars/BottomToolbar";
+import ContactList from "./side_pannels/contactlist/ContactList";
+import Avatar from "./avatar/Avatar";
+import PanelToggler from "./side_pannels/SidePanelToggler";
+import UIUtil from "./util/UIUtil";
+import UIEvents from "../../service/UI/UIEvents";
+
+import VideoLayout from "./videolayout/VideoLayout";
+import SettingsMenu from "./side_pannels/settings/SettingsMenu";
+
+var Prezi = require("./prezi/Prezi");
+var Etherpad = require("./etherpad/Etherpad");
 var EventEmitter = require("events");
-var SettingsMenu = require("./side_pannels/settings/SettingsMenu");
 var Settings = require("./../settings/Settings");
-var PanelToggler = require("./side_pannels/SidePanelToggler");
-var RoomnameGenerator = require("../util/RoomnameGenerator");
 UI.messageHandler = require("./util/MessageHandler");
 var messageHandler = UI.messageHandler;
-var Authentication  = require("./authentication/Authentication");
-var UIUtil = require("./util/UIUtil");
 var JitsiPopover = require("./util/JitsiPopover");
 var CQEvents = require("../../service/connectionquality/CQEvents");
 var DesktopSharingEventTypes
     = require("../../service/desktopsharing/DesktopSharingEventTypes");
 var StatisticsEvents = require("../../service/statistics/Events");
-var UIEvents = require("../../service/UI/UIEvents");
 var Feedback = require("./Feedback");
 
 var eventEmitter = new EventEmitter();
 UI.eventEmitter = eventEmitter;
-var roomNode = null;
-var roomName = null;
-
 
 function promptDisplayName() {
-    var message = '<h2 data-i18n="dialog.displayNameRequired">';
-    message += APP.translation.translateString(
-        "dialog.displayNameRequired");
-    message += '</h2>' +
-        '<input name="displayName" type="text" data-i18n=' +
-        '"[placeholder]defaultNickname" placeholder="' +
-        APP.translation.translateString(
-            "defaultNickname", {name: "Jane Pink"}) +
-        '" autofocus>';
+    let nickRequiredMsg = APP.translation.translateString("dialog.displayNameRequired");
+    let defaultNickMsg = APP.translation.translateString(
+        "defaultNickname", {name: "Jane Pink"}
+    );
+    let message = `
+        <h2 data-i18n="dialog.displayNameRequired">${nickRequiredMsg}</h2>
+        <input name="displayName" type="text"
+               data-i18n="[placeholder]defaultNickname"
+               placeholder="${defaultNickMsg}" autofocus>`;
 
-    var buttonTxt
-        = APP.translation.generateTranslationHTML("dialog.Ok");
-    var buttons = [];
-    buttons.push({title: buttonTxt, value: "ok"});
+    let buttonTxt = APP.translation.generateTranslationHTML("dialog.Ok");
+    let buttons = [{title: buttonTxt, value: "ok"}];
 
-    messageHandler.openDialog(null, message,
+    messageHandler.openDialog(
+        null, message,
         true,
         buttons,
         function (e, v, m, f) {
             if (v == "ok") {
-                var displayName = f.displayName;
+                let displayName = f.displayName;
                 if (displayName) {
                     UI.inputDisplayNameHandler(displayName);
                     return true;
@@ -65,16 +61,17 @@ function promptDisplayName() {
             e.preventDefault();
         },
         function () {
-            var form  = $.prompt.getPrompt();
-            var input = form.find("input[name='displayName']");
+            let form  = $.prompt.getPrompt();
+            let input = form.find("input[name='displayName']");
             input.focus();
-            var button = form.find("button");
+            let button = form.find("button");
             button.attr("disabled", "disabled");
             input.keyup(function () {
-                if(!input.val())
-                    button.attr("disabled", "disabled");
-                else
+                if (input.val()) {
                     button.removeAttr("disabled");
+                } else {
+                    button.attr("disabled", "disabled");
+                }
             });
         }
     );
@@ -97,6 +94,30 @@ function setupToolbars() {
     Toolbar.init(eventEmitter);
     Toolbar.setupButtonsFromConfig();
     BottomToolbar.init(eventEmitter);
+}
+
+/**
+ * Toggles the application in and out of full screen mode
+ * (a.k.a. presentation mode in Chrome).
+ */
+function toggleFullScreen () {
+    let fsElement = document.documentElement;
+
+    if (!document.mozFullScreen && !document.webkitIsFullScreen) {
+        //Enter Full Screen
+        if (fsElement.mozRequestFullScreen) {
+            fsElement.mozRequestFullScreen();
+        } else {
+            fsElement.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
+        }
+    } else {
+        //Exit Full Screen
+        if (document.mozCancelFullScreen) {
+            document.mozCancelFullScreen();
+        } else {
+            document.webkitCancelFullScreen();
+        }
+    }
 }
 
 UI.notifyGracefulShudown = function () {
@@ -133,6 +154,10 @@ UI.changeDisplayName = function (id, displayName) {
     ContactList.onDisplayNameChange(id, displayName);
     SettingsMenu.onDisplayNameChange(id, displayName);
     VideoLayout.onDisplayNameChanged(id, displayName);
+
+    if (APP.conference.isLocalId(id)) {
+        Chat.setChatConversationMode(!!displayName);
+    }
 };
 
 UI.initConference = function () {
@@ -168,18 +193,34 @@ function registerListeners() {
         AudioLevels.init();
     });
 
-    UI.addListener(UIEvents.FILM_STRIP_TOGGLED, function (isToggled) {
-        VideoLayout.onFilmStripToggled(isToggled);
-    });
-
     UI.addListener(UIEvents.EMAIL_CHANGED, function (email) {
         UI.setUserAvatar(APP.conference.localId, email);
     });
+
+    UI.addListener(UIEvents.PREZI_CLICKED, function () {
+        Prezi.openPreziDialog();
+    });
+
+    UI.addListener(UIEvents.ETHERPAD_CLICKED, function () {
+        Etherpad.toggleEtherpad(0);
+    });
+
+    UI.addListener(UIEvents.FULLSCREEN_TOGGLE, toggleFullScreen);
+
+    UI.addListener(UIEvents.TOGGLE_CHAT, UI.toggleChat);
+
+    UI.addListener(UIEvents.TOGGLE_SETTINGS, function () {
+        PanelToggler.toggleSettingsMenu();
+    });
+
+    UI.addListener(UIEvents.TOGGLE_CONTACT_LIST, UI.toggleContactList);
+
+    UI.addListener(UIEvents.TOGGLE_FILM_STRIP, UI.toggleFilmStrip);
 }
 
 function bindEvents() {
     function onResize() {
-        Chat.resizeChat();
+        PanelToggler.resizeChat();
         VideoLayout.resizeLargeVideoContainer();
     }
 
@@ -213,6 +254,7 @@ UI.start = function () {
     registerListeners();
 
     VideoLayout.init(eventEmitter);
+    ContactList.init(eventEmitter);
 
     bindEvents();
     setupPrezi();
@@ -281,16 +323,16 @@ UI.start = function () {
 };
 
 
-UI.addLocalStream = function (stream, isMuted) {
-    switch (stream.type) {
+UI.addLocalStream = function (track) {
+    switch (track.getType()) {
     case 'audio':
-        VideoLayout.changeLocalAudio(stream, isMuted);
+        VideoLayout.changeLocalAudio(track);
         break;
     case 'video':
-        VideoLayout.changeLocalVideo(stream, isMuted);
+        VideoLayout.changeLocalVideo(track);
         break;
     default:
-        console.error("Unknown stream type: " + stream.type);
+        console.error("Unknown stream type: " + track.getType());
         break;
     }
 };
@@ -304,83 +346,17 @@ function chatAddError(errorMessage, originalText) {
     return Chat.chatAddError(errorMessage, originalText);
 }
 
-function chatSetSubject(text) {
-    return Chat.chatSetSubject(text);
-}
-
-function updateChatConversation(from, displayName, message, stamp) {
-    return Chat.updateChatConversation(from, displayName, message, stamp);
-}
+UI.setSubject = function (subject) {
+    Chat.setSubject(subject);
+};
 
 function initEtherpad(name) {
     Etherpad.init(name);
 }
 
-function onLocalRoleChanged(jid, info, pres, isModerator) {
-    console.info("My role changed, new role: " + info.role);
-    onModeratorStatusChanged(isModerator);
-    VideoLayout.showModeratorIndicator();
-    SettingsMenu.onRoleChanged();
+UI.addUser = function (id, displayName) {
+    ContactList.addContact(id);
 
-    if (isModerator) {
-        Authentication.closeAuthenticationWindow();
-        messageHandler.notify(null, "notify.me",
-            'connected', "notify.moderator");
-
-        Toolbar.checkAutoRecord();
-    }
-}
-
-function onModeratorStatusChanged(isModerator) {
-    Toolbar.showSipCallButton(isModerator);
-    Toolbar.showRecordingButton(
-        isModerator); //&&
-    // FIXME:
-    // Recording visible if
-    // there are at least 2(+ 1 focus) participants
-    //Object.keys(connection.emuc.members).length >= 3);
-}
-
-UI.notifyPasswordRequired = function (callback) {
-    // password is required
-    Toolbar.lockLockButton();
-    var message = '<h2 data-i18n="dialog.passwordRequired">';
-    message += APP.translation.translateString(
-        "dialog.passwordRequired");
-    message += '</h2>' +
-        '<input name="lockKey" type="text" data-i18n=' +
-        '"[placeholder]dialog.password" placeholder="' +
-        APP.translation.translateString("dialog.password") +
-        '" autofocus>';
-
-    messageHandler.openTwoButtonDialog(null, null, null, message,
-        true,
-        "dialog.Ok",
-        function (e, v, m, f) {},
-        null,
-        function (e, v, m, f) {
-            if (v) {
-                var lockKey = f.lockKey;
-                if (lockKey) {
-                    Toolbar.setSharedKey(lockKey);
-                    callback(lockKey);
-                }
-            }
-        },
-        ':input:first'
-    );
-};
-
-/**
- * The dialpad button is shown iff there is at least one member that supports
- * DTMF (e.g. jigasi).
- */
-function onDtmfSupportChanged(dtmfSupport) {
-    //TODO: enable when the UI is ready
-    //Toolbar.showDialPadButton(dtmfSupport);
-}
-
-UI.addUser = function (jid, id, displayName) {
     messageHandler.notify(
         displayName,'notify.somebody', 'connected', 'notify.connected'
     );
@@ -390,27 +366,24 @@ UI.addUser = function (jid, id, displayName) {
         UIUtil.playSoundNotification('userJoined');
 
     // Configure avatar
-    UI.setUserAvatar(jid, id);
+    UI.setUserAvatar(id, displayName);
 
     // Add Peer's container
-    VideoLayout.ensurePeerContainerExists(jid);
+    VideoLayout.addParticipantContainer(id);
 };
 
-UI.removeUser = function (jid) {
-    console.log('left.muc', jid);
-    var displayName = $('#participant_' + Strophe.getResourceFromJid(jid) +
-        '>.displayname').html();
-    messageHandler.notify(displayName,'notify.somebody',
-        'disconnected',
-        'notify.disconnected');
-    if (!config.startAudioMuted ||
-        config.startAudioMuted > APP.conference.membersCount) {
+UI.removeUser = function (id, displayName) {
+    ContactList.removeContact(id);
+
+    messageHandler.notify(
+        displayName,'notify.somebody', 'disconnected', 'notify.disconnected'
+    );
+
+    if (!config.startAudioMuted || config.startAudioMuted > APP.conference.membersCount) {
         UIUtil.playSoundNotification('userLeft');
     }
 
-    ContactList.removeContact(jid);
-
-    VideoLayout.participantLeft(jid);
+    VideoLayout.removeParticipantContainer(id);
 };
 
 function onMucPresenceStatus(jid, info) {
@@ -421,31 +394,41 @@ function onPeerVideoTypeChanged(resourceJid, newVideoType) {
     VideoLayout.onVideoTypeChanged(resourceJid, newVideoType);
 }
 
-function onMucRoleChanged(role, displayName) {
+UI.updateLocalRole = function (isModerator) {
     VideoLayout.showModeratorIndicator();
 
-    if (role === 'moderator') {
-        var messageKey, messageOptions = {};
-        if (!displayName) {
-            messageKey = "notify.grantedToUnknown";
-        }
-        else {
-            messageKey = "notify.grantedTo";
-            messageOptions = {to: displayName};
-        }
-        messageHandler.notify(
-            displayName,'notify.somebody',
-            'connected', messageKey,
-            messageOptions);
-    }
-}
+    Toolbar.showSipCallButton(isModerator);
+    Toolbar.showRecordingButton(isModerator);
+    SettingsMenu.onRoleChanged();
 
-UI.notifyAuthRequired = function (intervalCallback) {
-    Authentication.openAuthenticationDialog(
-        roomName, intervalCallback, function () {
-            Toolbar.authenticateClicked();
-        }
-    );
+    if (isModerator) {
+        messageHandler.notify(null, "notify.me", 'connected', "notify.moderator");
+
+        Toolbar.checkAutoRecord();
+    }
+};
+
+UI.updateUserRole = function (user) {
+    VideoLayout.showModeratorIndicator();
+
+    if (!user.isModerator()) {
+        return;
+    }
+
+    var displayName = user.getDisplayName();
+    if (displayName) {
+        messageHandler.notify(
+            displayName, 'notify.somebody',
+            'connected', 'notify.grantedTo', {
+                to: displayName
+            }
+        );
+    } else {
+        messageHandler.notify(
+            '', 'notify.somebody',
+            'connected', 'notify.grantedToUnknown', {}
+        );
+    }
 };
 
 
@@ -458,15 +441,16 @@ UI.getSettings = function () {
 };
 
 UI.toggleFilmStrip = function () {
-    return BottomToolbar.toggleFilmStrip();
+    BottomToolbar.toggleFilmStrip();
+    VideoLayout.updateLargeVideoSize();
 };
 
 UI.toggleChat = function () {
-    return BottomToolbar.toggleChat();
+    PanelToggler.toggleChat();
 };
 
 UI.toggleContactList = function () {
-    return BottomToolbar.toggleContactList();
+    PanelToggler.toggleContactList();
 };
 
 UI.inputDisplayNameHandler = function (value) {
@@ -481,46 +465,6 @@ UI.inputDisplayNameHandler = function (value) {
 UI.getRemoteVideoType = function (jid) {
     return VideoLayout.getRemoteVideoType(jid);
 };
-
-UI.getRoomNode = function () {
-    if (roomNode)
-        return roomNode;
-    var path = window.location.pathname;
-
-    // determinde the room node from the url
-    // TODO: just the roomnode or the whole bare jid?
-    if (config.getroomnode && typeof config.getroomnode === 'function') {
-        // custom function might be responsible for doing the pushstate
-        roomNode = config.getroomnode(path);
-    } else {
-        /* fall back to default strategy
-         * this is making assumptions about how the URL->room mapping happens.
-         * It currently assumes deployment at root, with a rewrite like the
-         * following one (for nginx):
-         location ~ ^/([a-zA-Z0-9]+)$ {
-         rewrite ^/(.*)$ / break;
-         }
-         */
-        if (path.length > 1) {
-            roomNode = path.substr(1).toLowerCase();
-        } else {
-            var word = RoomnameGenerator.generateRoomWithoutSeparator();
-            roomNode = word.toLowerCase();
-            window.history.pushState('VideoChat',
-                'Room: ' + word, window.location.pathname + word);
-        }
-    }
-    return roomNode;
-};
-
-UI.generateRoomName = function () {
-    if (roomName)
-        return roomName;
-    var roomNode = UI.getRoomNode();
-    roomName = roomNode + '@' + config.hosts.muc;
-    return roomName;
-};
-
 
 UI.connectionIndicatorShowMore = function(jid) {
     return VideoLayout.showMore(jid);
@@ -552,17 +496,8 @@ UI.showLoginPopup = function(callback) {
     );
 };
 
-UI.closeAuthenticationDialog = function () {
-    Authentication.closeAuthenticationDialog();
-    Authentication.stopInterval();
-};
-
 UI.askForNickname = function () {
     return window.prompt('Your nickname (optional)');
-};
-
-UI.getRoomName = function () {
-    return roomName;
 };
 
 /**
@@ -595,7 +530,7 @@ UI.showToolbar = function () {
 
 //Used by torture
 UI.dockToolbar = function (isDock) {
-    return ToolbarToggler.dockToolbar(isDock);
+    ToolbarToggler.dockToolbar(isDock);
 };
 
 UI.setUserAvatar = function (id, email) {
@@ -655,9 +590,9 @@ UI.handleLastNEndpoints = function (ids) {
     VideoLayout.onLastNEndpointsChanged(ids, []);
 };
 
-UI.setAudioLevel = function (targetJid, lvl) {
+UI.setAudioLevel = function (id, lvl) {
     AudioLevels.updateAudioLevel(
-        targetJid, lvl, VideoLayout.getLargeVideoResource()
+        id, lvl, VideoLayout.getLargeVideoId()
     );
 };
 
@@ -677,15 +612,140 @@ UI.updateRemoteStats = function (jid, percent, stats) {
     VideoLayout.updateConnectionStats(jid, percent, stats);
 };
 
-UI.showAuthenticateButton = function (show) {
-    Toolbar.showAuthenticateButton(show);
-};
-
 UI.markVideoInterrupted = function (interrupted) {
     if (interrupted) {
         VideoLayout.onVideoInterrupted();
     } else {
         VideoLayout.onVideoRestored();
+    }
+};
+
+UI.markRoomLocked = function (locked) {
+    if (locked) {
+        Toolbar.lockLockButton();
+    } else {
+        Toolbar.unlockLockButton();
+    }
+};
+
+UI.addMessage = function (from, displayName, message, stamp) {
+    Chat.updateChatConversation(from, displayName, message, stamp);
+};
+
+UI.updateDTMFSupport = function (isDTMFSupported) {
+    //TODO: enable when the UI is ready
+    //Toolbar.showDialPadButton(dtmfSupport);
+};
+
+/**
+ * Invite participants to conference.
+ */
+UI.inviteParticipants = function (roomUrl, conferenceName, key, nick) {
+    let keyText = "";
+    if (key) {
+        keyText = APP.translation.translateString(
+            "email.sharedKey", {sharedKey: key}
+        );
+    }
+
+    let and = APP.translation.translateString("email.and");
+    let supportedBrowsers = `Chromium, Google Chrome ${and} Opera`;
+
+    let subject = APP.translation.translateString(
+        "email.subject", {appName:interfaceConfig.APP_NAME, conferenceName}
+    );
+
+    let body = APP.translation.translateString(
+        "email.body", {
+            appName:interfaceConfig.APP_NAME,
+            sharedKeyText: keyText,
+            roomUrl,
+            supportedBrowsers
+        }
+    );
+
+    body = body.replace(/\n/g, "%0D%0A");
+
+    if (nick) {
+        body += "%0D%0A%0D%0A" + nick;
+    }
+
+    if (interfaceConfig.INVITATION_POWERED_BY) {
+        body += "%0D%0A%0D%0A--%0D%0Apowered by jitsi.org";
+    }
+
+    window.open(`mailto:?subject=${subject}&body=${body}`, '_blank');
+};
+
+UI.requestFeedback = function () {
+    return new Promise(function (resolve, reject) {
+        if (Feedback.isEnabled()) {
+            // If the user has already entered feedback, we'll show the window and
+            // immidiately start the conference dispose timeout.
+            if (Feedback.feedbackScore > 0) {
+                Feedback.openFeedbackWindow();
+                resolve();
+
+            } else { // Otherwise we'll wait for user's feedback.
+                Feedback.openFeedbackWindow(resolve);
+            }
+        } else {
+            // If the feedback functionality isn't enabled we show a thank you
+            // dialog.
+            messageHandler.openMessageDialog(
+                null, null, null,
+                APP.translation.translateString(
+                    "dialog.thankYou", {appName:interfaceConfig.APP_NAME}
+                )
+            );
+            resolve();
+        }
+    });
+};
+
+UI.requestRecordingToken = function () {
+    let msg = APP.translation.generateTranslationHTML("dialog.recordingToken");
+    let token = APP.translation.translateString("dialog.token");
+    return new Promise(function (resolve, reject) {
+        messageHandler.openTwoButtonDialog(
+            null, null, null,
+            `<h2>${msg}</h2>
+             <input name="recordingToken" type="text"
+                    data-i18n="[placeholder]dialog.token"
+                    placeholder="${token}" autofocus>`,
+            false, "dialog.Save",
+            function (e, v, m, f) {
+                if (v && f.recordingToken) {
+                    resolve(UIUtil.escapeHtml(f.recordingToken));
+                } else {
+                    reject();
+                }
+            },
+            null,
+            function () { },
+            ':input:first'
+        );
+    });
+};
+
+UI.updateRecordingState = function (state) {
+    Toolbar.updateRecordingState(state);
+};
+
+UI.notifyTokenAuthFailed = function () {
+    messageHandler.showError("dialog.error", "dialog.tokenAuthFailed");
+};
+
+UI.updateAuthInfo = function (isAuthEnabled, login) {
+    let loggedIn = !!login;
+
+    Toolbar.showAuthenticateButton(isAuthEnabled);
+
+    if (isAuthEnabled) {
+        Toolbar.setAuthenticatedIdentity(login);
+
+        Toolbar.showLoginButton(!loggedIn);
+        Toolbar.showLogoutButton(loggedIn);
     }
 };
 

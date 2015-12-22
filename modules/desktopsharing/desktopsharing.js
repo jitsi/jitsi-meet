@@ -73,6 +73,7 @@ module.exports = {
     
     init: function () {
         // Called when RTC finishes initialization
+        return;
         APP.RTC.addListener(RTCEvents.RTC_READY,
             function() {
                 screenObtainer.init(eventEmitter);

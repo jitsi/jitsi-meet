@@ -1,6 +1,8 @@
-var ToolbarToggler = require("../toolbars/ToolbarToggler");
-var UIUtil = require("../util/UIUtil");
-var VideoLayout = require("../videolayout/VideoLayout");
+/* global $, APP */
+/* jshint -W101 */
+import UIUtil from "../util/UIUtil";
+import VideoLayout from "../videolayout/VideoLayout";
+
 var messageHandler = require("../util/MessageHandler");
 var PreziPlayer = require("./PreziPlayer");
 

@@ -1,12 +1,11 @@
 /* global APP, $ */
-var Settings = require("./../../../settings/Settings");
-var UIUtil = require("../../util/UIUtil");
-var languages = require("../../../../service/translation/languages");
-var UIEvents = require("../../../../service/UI/UIEvents");
+import UIUtil from "../../util/UIUtil";
+import UIEvents from "../../../../service/UI/UIEvents";
+import languages from "../../../../service/translation/languages";
 
 function generateLanguagesSelectBox() {
     var currentLang = APP.translation.getCurrentLanguage();
-    var html = "<select id=\"languages_selectbox\">";
+    var html = '<select id="languages_selectbox">';
     var langArray = languages.getLanguages();
     for(var i = 0; i < langArray.length; i++) {
         var lang = langArray[i];
@@ -22,7 +21,7 @@ function generateLanguagesSelectBox() {
 }
 
 
-var SettingsMenu = {
+const SettingsMenu = {
 
     init: function (emitter) {
         this.emitter = emitter;
@@ -98,5 +97,4 @@ var SettingsMenu = {
     }
 };
 
-
-module.exports = SettingsMenu;
+export default SettingsMenu;

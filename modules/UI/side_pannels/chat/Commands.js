@@ -1,12 +1,13 @@
-/* global APP, require */
-var UIUtil = require("../../util/UIUtil");
+/* global APP */
+import UIUtil from '../../util/UIUtil';
+import UIEvents from '../../../../service/UI/UIEvents';
 
 /**
  * List with supported commands. The keys are the names of the commands and
  * the value is the function that processes the message.
  * @type {{String: function}}
  */
-var commands = {
+const commands = {
     "topic" : processTopic
 };
 
@@ -29,9 +30,9 @@ function getCommand(message) {
  * Processes the data for topic command.
  * @param commandArguments the arguments of the topic command.
  */
-function processTopic(commandArguments) {
+function processTopic(commandArguments, emitter) {
     var topic = UIUtil.escapeHtml(commandArguments);
-    APP.xmpp.setSubject(topic);
+    emitter.emit(UIEvents.TOPIC_CHANGED, topic);
 }
 
 /**
@@ -40,8 +41,10 @@ function processTopic(commandArguments) {
  * @param message the message
  * @constructor
  */
-function CommandsProcessor(message) {
+function CommandsProcessor(message, emitter) {
     var command = getCommand(message);
+
+    this.emitter = emitter;
 
     /**
      * Returns the name of the command.
@@ -80,7 +83,7 @@ CommandsProcessor.prototype.processCommand = function() {
     if(!this.isCommand())
         return;
 
-    commands[this.getCommand()](this.getArgument());
+    commands[this.getCommand()](this.getArgument(), this.emitter);
 };
 
-module.exports = CommandsProcessor;
+export default CommandsProcessor;

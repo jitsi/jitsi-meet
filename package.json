@@ -42,7 +42,10 @@
     "jshint": "2.8.0",
     "precommit-hook": "3.0.0",
     "uglify-js": "2.4.24",
-    "clean-css": "*"
+    "clean-css": "*",
+    "babelify": "*",
+    "babel-preset-es2015": "*",
+    "babel-polyfill": "*"
   },
   "license": "Apache-2.0",
   "scripts": {
@@ -54,8 +57,14 @@
   ],
   "browserify": {
     "transform": [
-      "browserify-shim"
+      "browserify-shim",
+      ["babelify", {
+        "ignore": "node_modules"
+      }]
     ]
+  },
+  "babel": {
+    "presets": ["es2015"]
   },
   "browser": {
     "jquery": "./node_modules/jquery/dist/jquery.js",

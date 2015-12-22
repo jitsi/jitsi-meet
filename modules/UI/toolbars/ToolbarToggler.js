@@ -1,8 +1,9 @@
 /* global APP, config, $, interfaceConfig */
 
-var toolbarTimeoutObject,
-    toolbarTimeout = interfaceConfig.INITIAL_TOOLBAR_TIMEOUT,
-    UIUtil = require("../util/UIUtil");
+import UIUtil from '../util/UIUtil';
+
+let toolbarTimeoutObject;
+let toolbarTimeout = interfaceConfig.INITIAL_TOOLBAR_TIMEOUT;
 
 function showDesktopSharingButton() {
     if (APP.desktopsharing.isDesktopSharingEnabled() &&
@@ -13,19 +14,24 @@ function showDesktopSharingButton() {
     }
 }
 
+function isToolbarVisible () {
+    return $('#header').is(':visible');
+}
+
 /**
  * Hides the toolbar.
  */
 function hideToolbar() {
-    if(config.alwaysVisibleToolbar)
+    if (config.alwaysVisibleToolbar) {
         return;
+    }
 
-    var header = $("#header"),
-        bottomToolbar = $("#bottomToolbar");
-    var isToolbarHover = false;
+    let header = $("#header");
+    let bottomToolbar = $("#bottomToolbar");
+    let isToolbarHover = false;
     header.find('*').each(function () {
-        var id = $(this).attr('id');
-        if ($("#" + id + ":hover").length > 0) {
+        let id = $(this).attr('id');
+        if ($(`#${id}:hover`).length > 0) {
             isToolbarHover = true;
         }
     });
@@ -36,34 +42,36 @@ function hideToolbar() {
     clearTimeout(toolbarTimeoutObject);
     toolbarTimeoutObject = null;
 
-    if (!isToolbarHover) {
+    if (isToolbarHover) {
+        toolbarTimeoutObject = setTimeout(hideToolbar, toolbarTimeout);
+    } else {
         header.hide("slide", { direction: "up", duration: 300});
         $('#subject').animate({top: "-=40"}, 300);
         if ($("#remoteVideos").hasClass("hidden")) {
             bottomToolbar.hide(
-                "slide", {direction: "right", duration: 300});
+                "slide", {direction: "right", duration: 300}
+            );
         }
-    }
-    else {
-        toolbarTimeoutObject = setTimeout(hideToolbar, toolbarTimeout);
     }
 }
 
-var ToolbarToggler = {
+const ToolbarToggler = {
     /**
      * Shows the main toolbar.
      */
-    showToolbar: function () {
-        if (interfaceConfig.filmStripOnly)
+    showToolbar () {
+        if (interfaceConfig.filmStripOnly) {
             return;
-        var header = $("#header"),
-            bottomToolbar = $("#bottomToolbar");
+        }
+        let header = $("#header");
+        let bottomToolbar = $("#bottomToolbar");
         if (!header.is(':visible') || !bottomToolbar.is(":visible")) {
             header.show("slide", { direction: "up", duration: 300});
             $('#subject').animate({top: "+=40"}, 300);
             if (!bottomToolbar.is(":visible")) {
                 bottomToolbar.show(
-                    "slide", {direction: "right", duration: 300});
+                    "slide", {direction: "right", duration: 300}
+                );
             }
 
             if (toolbarTimeoutObject) {
@@ -83,33 +91,28 @@ var ToolbarToggler = {
      *
      * @param isDock indicates what operation to perform
      */
-    dockToolbar: function (isDock) {
-        if (interfaceConfig.filmStripOnly)
+    dockToolbar (isDock) {
+        if (interfaceConfig.filmStripOnly) {
             return;
+        }
 
         if (isDock) {
             // First make sure the toolbar is shown.
-            if (!$('#header').is(':visible')) {
+            if (!isToolbarVisible()) {
                 this.showToolbar();
             }
 
             // Then clear the time out, to dock the toolbar.
-            if (toolbarTimeoutObject) {
-                clearTimeout(toolbarTimeoutObject);
-                toolbarTimeoutObject = null;
-            }
-        }
-        else {
-            if (!$('#header').is(':visible')) {
+            clearTimeout(toolbarTimeoutObject);
+            toolbarTimeoutObject = null;
+        } else {
+            if (isToolbarVisible()) {
+                toolbarTimeoutObject = setTimeout(hideToolbar, toolbarTimeout);
+            } else {
                 this.showToolbar();
             }
-            else {
-                toolbarTimeoutObject = setTimeout(hideToolbar, toolbarTimeout);
-            }
         }
-    },
-
-    showDesktopSharingButton: showDesktopSharingButton
+    }
 };
 
 module.exports = ToolbarToggler;

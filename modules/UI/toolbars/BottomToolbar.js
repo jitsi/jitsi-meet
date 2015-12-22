@@ -1,66 +1,48 @@
 /* global $ */
-var PanelToggler = require("../side_pannels/SidePanelToggler");
-var UIUtil = require("../util/UIUtil");
-var AnalyticsAdapter = require("../../statistics/AnalyticsAdapter");
-var UIEvents = require("../../../service/UI/UIEvents");
+import UIUtil from '../util/UIUtil';
+import UIEvents from '../../../service/UI/UIEvents';
+import AnalyticsAdapter from '../../statistics/AnalyticsAdapter';
 
-var eventEmitter = null;
-
-var buttonHandlers = {
-    "bottom_toolbar_contact_list": function () {
-        AnalyticsAdapter.sendEvent('bottomtoolbar.contacts.toggled');
-        BottomToolbar.toggleContactList();
-    },
-    "bottom_toolbar_film_strip": function () {
-        AnalyticsAdapter.sendEvent('bottomtoolbar.filmstrip.toggled');
-        BottomToolbar.toggleFilmStrip();
-    },
-    "bottom_toolbar_chat": function () {
-        AnalyticsAdapter.sendEvent('bottomtoolbar.chat.toggled');
-        BottomToolbar.toggleChat();
-    }
-};
-
-
-var defaultBottomToolbarButtons = {
-    'chat': '#bottom_toolbar_chat',
-    'contacts': '#bottom_toolbar_contact_list',
+const defaultBottomToolbarButtons = {
+    'chat':      '#bottom_toolbar_chat',
+    'contacts':  '#bottom_toolbar_contact_list',
     'filmstrip': '#bottom_toolbar_film_strip'
 };
 
+$(document).bind("remotevideo.resized", function (event, width, height) {
+    let toolbar = $('#bottomToolbar');
+    let bottom = (height - toolbar.outerHeight())/2 + 18;
 
-var BottomToolbar = (function (my) {
-    my.init = function (emitter) {
-        eventEmitter = emitter;
+    toolbar.css({bottom});
+});
+
+const BottomToolbar = {
+    init (emitter) {
         UIUtil.hideDisabledButtons(defaultBottomToolbarButtons);
 
-        for(var k in buttonHandlers)
-            $("#" + k).click(buttonHandlers[k]);
-    };
+        const buttonHandlers = {
+            "bottom_toolbar_contact_list": function () {
+                AnalyticsAdapter.sendEvent('bottomtoolbar.contacts.toggled');
+                emitter.emit(UIEvents.TOGGLE_CONTACT_LIST);
+            },
+            "bottom_toolbar_film_strip": function () {
+                AnalyticsAdapter.sendEvent('bottomtoolbar.filmstrip.toggled');
+                emitter.emit(UIEvents.TOGGLE_FILM_STRIP);
+            },
+            "bottom_toolbar_chat": function () {
+                AnalyticsAdapter.sendEvent('bottomtoolbar.chat.toggled');
+                emitter.emit(UIEvents.TOGGLE_CHAT);
+            }
+        };
 
-    my.toggleChat = function() {
-        PanelToggler.toggleChat();
-    };
+        Object.keys(buttonHandlers).forEach(
+            buttonId => $(`#${buttonId}`).click(buttonHandlers[buttonId])
+        );
+    },
 
-    my.toggleContactList = function() {
-        PanelToggler.toggleContactList();
-    };
+    toggleFilmStrip () {
+        $("#remoteVideos").toggleClass("hidden");
+    }
+};
 
-    my.toggleFilmStrip = function() {
-        var filmstrip = $("#remoteVideos");
-        filmstrip.toggleClass("hidden");
-
-        eventEmitter.emit(  UIEvents.FILM_STRIP_TOGGLED,
-                            filmstrip.hasClass("hidden"));
-    };
-
-    $(document).bind("remotevideo.resized", function (event, width, height) {
-        var bottom = (height - $('#bottomToolbar').outerHeight())/2 + 18;
-
-        $('#bottomToolbar').css({bottom: bottom + 'px'});
-    });
-
-    return my;
-}(BottomToolbar || {}));
-
-module.exports = BottomToolbar;
+export default BottomToolbar;
