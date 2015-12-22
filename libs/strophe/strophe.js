@@ -2640,10 +2640,12 @@ Strophe.Connection.prototype = {
             }
 
             if (!acceptable) {
+                console.error("req: ", elem, "Resp:", stanza);
                 throw {
                     name: "StropheError",
                     message: "Got answer to IQ from wrong jid:" + from +
-                             "\nExpected jid: " + expectedFrom
+                             "\nExpected jid: " + expectedFrom +"" +
+                             "\n stanza to String: " + stanza.toString()
                 };
             }
 

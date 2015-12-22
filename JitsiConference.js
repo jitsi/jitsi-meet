@@ -52,7 +52,7 @@ function JitsiConference(options) {
  */
 JitsiConference.prototype.join = function (password) {
     if(this.room)
-        this.room.join(password, this.connection.tokenPassword);
+        this.room.join(password);
 };
 
 /**

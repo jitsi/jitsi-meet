@@ -14,6 +14,12 @@ var authenticatedUser = false;
 function createConnection(bosh) {
     bosh = bosh || '/http-bind';
 
+    // Append token as URL param
+    if (this.token) {
+        bosh += bosh.indexOf('?') == -1 ?
+                '?token=' + this.token : '&token=' + this.token;
+    }
+
     return new Strophe.Connection(bosh);
 };
 
