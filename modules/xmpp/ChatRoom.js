@@ -4,6 +4,8 @@ var logger = require("jitsi-meet-logger").getLogger(__filename);
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 var Moderator = require("./moderator");
 var EventEmitter = require("events");
+var Recorder = require("./recording");
+var JIBRI_XMLNS = 'http://jitsi.org/protocol/jibri';
 
 var parser = {
     packet2JSON: function (packet, nodes) {
@@ -78,6 +80,8 @@ function ChatRoom(connection, jid, password, XMPP, options) {
     this.session = null;
     var self = this;
     this.lastPresences = {};
+    this.phoneNumber = null;
+    this.phonePin = null;
 }
 
 ChatRoom.prototype.initPresenceMap = function () {
@@ -195,6 +199,7 @@ ChatRoom.prototype.createNonAnonymousRoom = function () {
 };
 
 ChatRoom.prototype.onPresence = function (pres) {
+    console.log(pres);
     var from = pres.getAttribute('from');
     // Parse roles.
     var member = {};
@@ -216,6 +221,7 @@ ChatRoom.prototype.onPresence = function (pres) {
     var nodes = [];
     parser.packet2JSON(pres, nodes);
     this.lastPresences[from] = nodes;
+    var jibri = null;
     for(var i = 0; i < nodes.length; i++)
     {
         var node = nodes[i];
@@ -245,6 +251,18 @@ ChatRoom.prototype.onPresence = function (pres) {
                     this.eventEmitter.emit(XMPPEvents.BRIDGE_DOWN);
                 }
                 break;
+            case "jibri-recording-status":
+                var jibri = node;
+                break;
+            case "call-control":
+                console.log(pres);
+                var att = node.attributes;
+                if(!att)
+                    break;
+                this.phoneNumber = att.phone || null;
+                this.phonePin = att.pin || null;
+                this.eventEmitter.emit(XMPPEvents.PHONE_NUMBER_CHANGED);
+                break;
             default :
                 this.processNode(node, from);
         }
@@ -270,6 +288,12 @@ ChatRoom.prototype.onPresence = function (pres) {
         logger.log('entered', from, member);
         if (member.isFocus) {
             this.focusMucJid = from;
+            if(!this.recording) {
+                this.recording = new Recorder(this.eventEmitter, this.connection,
+                    this.focusMucJid);
+                if(this.lastJibri)
+                    this.recording.handleJibriPresence(this.lastJibri);
+            }
             logger.info("Ignore focus: " + from + ", real JID: " + member.jid);
         }
         else {
@@ -296,6 +320,13 @@ ChatRoom.prototype.onPresence = function (pres) {
     // Trigger status message update
     if (member.status) {
         this.eventEmitter.emit(XMPPEvents.PRESENCE_STATUS, from, member);
+    }
+
+    if(jibri)
+    {
+        this.lastJibri = jibri;
+        if(this.recording)
+            this.recording.handleJibriPresence(jibri);
     }
 
 };
@@ -638,6 +669,77 @@ ChatRoom.prototype.getJidBySSRC = function (ssrc) {
         return null;
     return this.session.getSsrcOwner(ssrc);
 };
+
+/**
+ * Returns true if the recording is supproted and false if not.
+ */
+ChatRoom.prototype.isRecordingSupported = function () {
+    if(this.recording)
+        return this.recording.isSupported();
+    return false;
+};
+
+/**
+ * Returns null if the recording is not supported, "on" if the recording started
+ * and "off" if the recording is not started.
+ */
+ChatRoom.prototype.getRecordingState = function () {
+    if(this.recording)
+        return this.recording.getState();
+    return "off";
+}
+
+/**
+ * Returns the url of the recorded video.
+ */
+ChatRoom.prototype.getRecordingURL = function () {
+    if(this.recording)
+        return this.recording.getURL();
+    return null;
+}
+
+/**
+ * Starts/stops the recording
+ * @param token token for authentication
+ */
+ChatRoom.prototype.toggleRecording = function (token, followEntity) {
+    if(this.recording)
+        return this.recording.toggleRecording(token, followEntity);
+
+    return new Promise(function(resolve, reject){
+        reject(new Error("The conference is not created yet!"))});
+}
+
+/**
+ * Dials a number.
+ * @param number the number
+ */
+ChatRoom.prototype.dial = function (number) {
+    return this.connection.rayo.dial(number, "fromnumber",
+        Strophe.getNodeFromJid(this.myroomjid), this.password,
+        this.focusMucJid);
+}
+
+/**
+ * Hangup an existing call
+ */
+ChatRoom.prototype.hangup = function () {
+    return this.connection.rayo.hangup();
+}
+
+/**
+ * Returns the phone number for joining the conference.
+ */
+ChatRoom.prototype.getPhoneNumber = function () {
+    return this.phoneNumber;
+}
+
+/**
+ * Returns the pin for joining the conference with phone.
+ */
+ChatRoom.prototype.getPhonePin = function () {
+    return this.phonePin;
+}
 
 /**
  * Returns the connection state for the current session.

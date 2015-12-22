@@ -497,6 +497,84 @@ JitsiConference.prototype.sendTones = function (tones, duration, pause) {
 };
 
 /**
+ * Returns true if the recording is supproted and false if not.
+ */
+JitsiConference.prototype.isRecordingSupported = function () {
+    if(this.room)
+        return this.room.isRecordingSupported();
+    return false;
+};
+
+/**
+ * Returns null if the recording is not supported, "on" if the recording started
+ * and "off" if the recording is not started.
+ */
+JitsiConference.prototype.getRecordingState = function () {
+    if(this.room)
+        return this.room.getRecordingState();
+    return "off";
+}
+
+/**
+ * Returns the url of the recorded video.
+ */
+JitsiConference.prototype.getRecordingURL = function () {
+    if(this.room)
+        return this.room.getRecordingURL();
+    return null;
+}
+
+/**
+ * Starts/stops the recording
+ * @param token a token for authentication.
+ */
+JitsiConference.prototype.toggleRecording = function (token, followEntity) {
+    if(this.room)
+        return this.room.toggleRecording(token, followEntity);
+    return new Promise(function(resolve, reject){
+        reject(new Error("The conference is not created yet!"))});
+}
+
+/**
+ * Dials a number.
+ * @param number the number
+ */
+JitsiConference.prototype.dial = function (number) {
+    if(this.room)
+        return this.room.dial(number);
+    return new Promise(function(resolve, reject){
+        reject(new Error("The conference is not created yet!"))});
+}
+
+/**
+ * Hangup an existing call
+ */
+JitsiConference.prototype.hangup = function () {
+    if(this.room)
+        return this.room.hangup();
+    return new Promise(function(resolve, reject){
+        reject(new Error("The conference is not created yet!"))});
+}
+
+/**
+ * Returns the phone number for joining the conference.
+ */
+JitsiConference.prototype.getPhoneNumber = function () {
+    if(this.room)
+        return this.room.getPhoneNumber();
+    return null;
+}
+
+/**
+ * Returns the pin for joining the conference with phone.
+ */
+JitsiConference.prototype.getPhonePin = function () {
+    if(this.room)
+        return this.room.getPhonePin();
+    return null;
+}
+
+/**
  * Returns the connection state for the current room. Its ice connection state
  * for its session.
  */
@@ -558,6 +636,17 @@ function setupListeners(conference) {
 
     conference.room.addListener(XMPPEvents.CONNECTION_INTERRUPTED, function () {
         conference.eventEmitter.emit(JitsiConferenceEvents.CONNECTION_INTERRUPTED);
+    });
+
+    conference.room.addListener(XMPPEvents.RECORDING_STATE_CHANGED,
+        function () {
+            conference.eventEmitter.emit(
+                JitsiConferenceEvents.RECORDING_STATE_CHANGED);
+        });
+
+    conference.room.addListener(XMPPEvents.PHONE_NUMBER_CHANGED, function () {
+        conference.eventEmitter.emit(
+            JitsiConferenceEvents.PHONE_NUMBER_CHANGED);
     });
 
     conference.room.addListener(XMPPEvents.CONNECTION_RESTORED, function () {

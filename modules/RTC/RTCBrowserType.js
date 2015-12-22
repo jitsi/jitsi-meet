@@ -161,8 +161,9 @@ function detectBrowser() {
         if (version)
             return version;
     }
-    console.error("Failed to detect browser type");
-    return undefined;
+    console.warn("Browser type defaults to Safari ver 1");
+    currentBrowser = RTCBrowserType.RTC_BROWSER_SAFARI;
+    return 1;
 }
 
 browserVersion = detectBrowser();
