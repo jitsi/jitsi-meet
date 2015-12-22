@@ -4,11 +4,10 @@
 VirtualHost "jitmeet.example.com"
         -- enabled = false -- Remove this line to enable this host
         authentication = "anonymous"
-        -- Three properties below get uncommented by jitsi-meet-tokens package config
+        -- Properties below are modified by jitsi-meet-tokens package config
         -- and authentication above is switched to "token"
-        --allow_unencrypted_plain_auth = true;
-        --app_id=example_app_id
-        --app_secret=example_app_secret
+        --app_id="example_app_id"
+        --app_secret="example_app_secret"
         -- Assign this host a certificate for TLS, otherwise it would use the one
         -- set in the global section (if any).
         -- Note that old-style SSL on port 5223 only supports one certificate, and will always
