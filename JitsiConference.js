@@ -3,6 +3,7 @@
 var logger = require("jitsi-meet-logger").getLogger(__filename);
 var RTC = require("./modules/RTC/RTC");
 var XMPPEvents = require("./service/xmpp/XMPPEvents");
+var AuthenticationEvents = require("./service/authentication/AuthenticationEvents");
 var RTCEvents = require("./service/RTC/RTCEvents");
 var EventEmitter = require("events");
 var JitsiConferenceEvents = require("./JitsiConferenceEvents");
@@ -31,7 +32,7 @@ function JitsiConference(options) {
     this.connection = this.options.connection;
     this.xmpp = this.connection.xmpp;
     this.eventEmitter = new EventEmitter();
-    this.room = this.xmpp.createRoom(this.options.name, null, null, this.options.config);
+    this.room = this.xmpp.createRoom(this.options.name, this.options.config);
     this.room.updateDeviceAvailability(RTC.getDeviceAvailability());
     this.rtc = new RTC(this.room, options);
     if(!RTC.options.disableAudioLevels)
@@ -41,6 +42,8 @@ function JitsiConference(options) {
     this.lastActiveSpeaker = null;
     this.dtmfManager = null;
     this.somebodySupportsDTMF = false;
+    this.authEnabled = false;
+    this.authIdentity;
 }
 
 /**
@@ -73,6 +76,27 @@ JitsiConference.prototype.leave = function () {
  */
 JitsiConference.prototype.getName = function () {
     return this.options.name;
+};
+
+/**
+ * Check if authentication is enabled for this conference.
+ */
+JitsiConference.prototype.isAuthEnabled = function () {
+    return this.authEnabled;
+};
+
+/**
+ * Check if user is logged in.
+ */
+JitsiConference.prototype.isLoggedIn = function () {
+    return !!this.authIdentity;
+};
+
+/**
+ * Get authorized login.
+ */
+JitsiConference.prototype.getAuthLogin = function () {
+    return this.authIdentity;
 };
 
 /**
@@ -211,6 +235,9 @@ JitsiConference.prototype.removeCommand = function (name) {
  */
 JitsiConference.prototype.setDisplayName = function(name) {
     if(this.room){
+        // remove previously set nickname
+        this.room.removeFromPresence("nick");
+
         this.room.addToPresence("nick", {attributes: {xmlns: 'http://jabber.org/protocol/nick'}, value: name});
         this.room.sendPresence();
     }
@@ -360,12 +387,24 @@ JitsiConference.prototype.getParticipantById = function(id) {
     return this.participants[id];
 };
 
+/**
+ * Kick participant from this conference.
+ * @param {string} id id of the participant to kick
+ */
+JitsiConference.prototype.kickParticipant = function (id) {
+    var participant = this.getParticipantById(id);
+    if (!participant) {
+        return;
+    }
+    this.room.kick(participant.getJid());
+};
+
 JitsiConference.prototype.onMemberJoined = function (jid, email, nick) {
     var id = Strophe.getResourceFromJid(jid);
     if (id === 'focus') {
        return;
     }
-    var participant = new JitsiParticipant(id, this, nick);
+    var participant = new JitsiParticipant(jid, this, nick);
     this.participants[id] = participant;
     this.eventEmitter.emit(JitsiConferenceEvents.USER_JOINED, id, participant);
     this.xmpp.connection.disco.info(
@@ -379,6 +418,9 @@ JitsiConference.prototype.onMemberJoined = function (jid, email, nick) {
 
 JitsiConference.prototype.onMemberLeft = function (jid) {
     var id = Strophe.getResourceFromJid(jid);
+    if (id === 'focus' || this.myUserId() === id) {
+       return;
+    }
     var participant = this.participants[id];
     delete this.participants[id];
     this.eventEmitter.emit(JitsiConferenceEvents.USER_LEFT, id, participant);
@@ -624,6 +666,10 @@ function setupListeners(conference) {
 //        conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_LEFT);
 //    });
 
+    conference.room.addListener(XMPPEvents.KICKED, function () {
+        conference.eventEmitter.emit(JitsiConferenceEvents.KICKED);
+    });
+
     conference.room.addListener(XMPPEvents.MUC_MEMBER_JOINED, conference.onMemberJoined.bind(conference));
     conference.room.addListener(XMPPEvents.MUC_MEMBER_LEFT, conference.onMemberLeft.bind(conference));
 
@@ -654,6 +700,11 @@ function setupListeners(conference) {
     });
     conference.room.addListener(XMPPEvents.CONFERENCE_SETUP_FAILED, function () {
         conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_FAILED, JitsiConferenceErrors.SETUP_FAILED);
+    });
+
+    conference.room.addListener(AuthenticationEvents.IDENTITY_UPDATED, function (authEnabled, authIdentity) {
+        conference.authEnabled = authEnabled;
+        conference.authIdentity = authIdentity;
     });
 
     conference.room.addListener(XMPPEvents.MESSAGE_RECEIVED, function (jid, displayName, txt, myJid, ts) {

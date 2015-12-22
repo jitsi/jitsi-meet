@@ -5,6 +5,7 @@
 var logger = require("jitsi-meet-logger").getLogger(__filename);
 var RTC = require("./modules/RTC/RTC");
 var XMPPEvents = require("./service/xmpp/XMPPEvents");
+var AuthenticationEvents = require("./service/authentication/AuthenticationEvents");
 var RTCEvents = require("./service/RTC/RTCEvents");
 var EventEmitter = require("events");
 var JitsiConferenceEvents = require("./JitsiConferenceEvents");
@@ -33,7 +34,7 @@ function JitsiConference(options) {
     this.connection = this.options.connection;
     this.xmpp = this.connection.xmpp;
     this.eventEmitter = new EventEmitter();
-    this.room = this.xmpp.createRoom(this.options.name, null, null, this.options.config);
+    this.room = this.xmpp.createRoom(this.options.name, this.options.config);
     this.room.updateDeviceAvailability(RTC.getDeviceAvailability());
     this.rtc = new RTC(this.room, options);
     if(!RTC.options.disableAudioLevels)
@@ -43,6 +44,8 @@ function JitsiConference(options) {
     this.lastActiveSpeaker = null;
     this.dtmfManager = null;
     this.somebodySupportsDTMF = false;
+    this.authEnabled = false;
+    this.authIdentity;
 }
 
 /**
@@ -75,6 +78,27 @@ JitsiConference.prototype.leave = function () {
  */
 JitsiConference.prototype.getName = function () {
     return this.options.name;
+};
+
+/**
+ * Check if authentication is enabled for this conference.
+ */
+JitsiConference.prototype.isAuthEnabled = function () {
+    return this.authEnabled;
+};
+
+/**
+ * Check if user is logged in.
+ */
+JitsiConference.prototype.isLoggedIn = function () {
+    return !!this.authIdentity;
+};
+
+/**
+ * Get authorized login.
+ */
+JitsiConference.prototype.getAuthLogin = function () {
+    return this.authIdentity;
 };
 
 /**
@@ -213,6 +237,9 @@ JitsiConference.prototype.removeCommand = function (name) {
  */
 JitsiConference.prototype.setDisplayName = function(name) {
     if(this.room){
+        // remove previously set nickname
+        this.room.removeFromPresence("nick");
+
         this.room.addToPresence("nick", {attributes: {xmlns: 'http://jabber.org/protocol/nick'}, value: name});
         this.room.sendPresence();
     }
@@ -362,12 +389,24 @@ JitsiConference.prototype.getParticipantById = function(id) {
     return this.participants[id];
 };
 
+/**
+ * Kick participant from this conference.
+ * @param {string} id id of the participant to kick
+ */
+JitsiConference.prototype.kickParticipant = function (id) {
+    var participant = this.getParticipantById(id);
+    if (!participant) {
+        return;
+    }
+    this.room.kick(participant.getJid());
+};
+
 JitsiConference.prototype.onMemberJoined = function (jid, email, nick) {
     var id = Strophe.getResourceFromJid(jid);
     if (id === 'focus') {
        return;
     }
-    var participant = new JitsiParticipant(id, this, nick);
+    var participant = new JitsiParticipant(jid, this, nick);
     this.participants[id] = participant;
     this.eventEmitter.emit(JitsiConferenceEvents.USER_JOINED, id, participant);
     this.xmpp.connection.disco.info(
@@ -381,6 +420,9 @@ JitsiConference.prototype.onMemberJoined = function (jid, email, nick) {
 
 JitsiConference.prototype.onMemberLeft = function (jid) {
     var id = Strophe.getResourceFromJid(jid);
+    if (id === 'focus' || this.myUserId() === id) {
+       return;
+    }
     var participant = this.participants[id];
     delete this.participants[id];
     this.eventEmitter.emit(JitsiConferenceEvents.USER_LEFT, id, participant);
@@ -626,6 +668,10 @@ function setupListeners(conference) {
 //        conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_LEFT);
 //    });
 
+    conference.room.addListener(XMPPEvents.KICKED, function () {
+        conference.eventEmitter.emit(JitsiConferenceEvents.KICKED);
+    });
+
     conference.room.addListener(XMPPEvents.MUC_MEMBER_JOINED, conference.onMemberJoined.bind(conference));
     conference.room.addListener(XMPPEvents.MUC_MEMBER_LEFT, conference.onMemberLeft.bind(conference));
 
@@ -656,6 +702,11 @@ function setupListeners(conference) {
     });
     conference.room.addListener(XMPPEvents.CONFERENCE_SETUP_FAILED, function () {
         conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_FAILED, JitsiConferenceErrors.SETUP_FAILED);
+    });
+
+    conference.room.addListener(AuthenticationEvents.IDENTITY_UPDATED, function (authEnabled, authIdentity) {
+        conference.authEnabled = authEnabled;
+        conference.authIdentity = authIdentity;
     });
 
     conference.room.addListener(XMPPEvents.MESSAGE_RECEIVED, function (jid, displayName, txt, myJid, ts) {
@@ -708,7 +759,7 @@ function setupListeners(conference) {
 module.exports = JitsiConference;
 
 }).call(this,"/JitsiConference.js")
-},{"./JitsiConferenceErrors":2,"./JitsiConferenceEvents":3,"./JitsiParticipant":8,"./JitsiTrackEvents":10,"./modules/DTMF/JitsiDTMFManager":11,"./modules/RTC/RTC":16,"./modules/statistics/statistics":24,"./service/RTC/RTCEvents":80,"./service/xmpp/XMPPEvents":87,"events":44,"jitsi-meet-logger":48}],2:[function(require,module,exports){
+},{"./JitsiConferenceErrors":2,"./JitsiConferenceEvents":3,"./JitsiParticipant":8,"./JitsiTrackEvents":10,"./modules/DTMF/JitsiDTMFManager":11,"./modules/RTC/RTC":16,"./modules/statistics/statistics":24,"./service/RTC/RTCEvents":80,"./service/authentication/AuthenticationEvents":83,"./service/xmpp/XMPPEvents":87,"events":44,"jitsi-meet-logger":48}],2:[function(require,module,exports){
 /**
  * Enumeration with the errors for the conference.
  * @type {{string: string}}
@@ -829,6 +880,10 @@ var JitsiConferenceEvents = {
      * Indicates that conference has been left.
      */
     CONFERENCE_LEFT: "conference.left",
+    /**
+     * You are kicked from the conference.
+     */
+    KICKED: "conferenece.kicked",
     /**
      * Indicates that DTMF support changed.
      */
@@ -1092,11 +1147,14 @@ window.Promise = window.Promise || require("es6-promise").Promise;
 module.exports = LibJitsiMeet;
 
 },{"./JitsiConferenceErrors":2,"./JitsiConferenceEvents":3,"./JitsiConnection":4,"./JitsiConnectionErrors":5,"./JitsiConnectionEvents":6,"./JitsiTrackErrors":9,"./JitsiTrackEvents":10,"./modules/RTC/RTC":16,"./modules/statistics/statistics":24,"es6-promise":46,"jitsi-meet-logger":48}],8:[function(require,module,exports){
+/* global Strophe */
+
 /**
  * Represents a participant in (a member of) a conference.
  */
-function JitsiParticipant(id, conference, displayName){
-    this._id = id;
+function JitsiParticipant(jid, conference, displayName){
+    this._jid = jid;
+    this._id = Strophe.getResourceFromJid(jid);
     this._conference = conference;
     this._displayName = displayName;
     this._supportsDTMF = false;
@@ -1119,10 +1177,17 @@ JitsiParticipant.prototype.getTracks = function() {
 };
 
 /**
- * @returns {String} The ID (i.e. JID) of this participant.
+ * @returns {String} The ID of this participant.
  */
 JitsiParticipant.prototype.getId = function() {
     return this._id;
+};
+
+/**
+ * @returns {String} The JID of this participant.
+ */
+JitsiParticipant.prototype.getJid = function() {
+    return this._jid;
 };
 
 /**
@@ -1164,7 +1229,8 @@ JitsiParticipant.prototype.isVideoMuted = function() {
 };
 
 /*
- * @returns {???} The latest statistics reported by this participant (i.e. info used to populate the GSM bars)
+ * @returns {???} The latest statistics reported by this participant
+ * (i.e. info used to populate the GSM bars)
  * TODO: do we expose this or handle it internally?
  */
 JitsiParticipant.prototype.getLatestStats = function() {
@@ -1179,14 +1245,16 @@ JitsiParticipant.prototype.getRole = function() {
 };
 
 /*
- * @returns {Boolean} Whether this participant is the conference focus (i.e. jicofo).
+ * @returns {Boolean} Whether this participant is
+ * the conference focus (i.e. jicofo).
  */
 JitsiParticipant.prototype.isFocus = function() {
 
 };
 
 /*
- * @returns {Boolean} Whether this participant is a conference recorder (i.e. jirecon).
+ * @returns {Boolean} Whether this participant is
+ * a conference recorder (i.e. jirecon).
  */
 JitsiParticipant.prototype.isRecorder = function() {
 
@@ -1200,14 +1268,16 @@ JitsiParticipant.prototype.isSipGateway = function() {
 };
 
 /**
- * @returns {Boolean} Whether this participant is currently sharing their screen.
+ * @returns {Boolean} Whether this participant
+ * is currently sharing their screen.
  */
 JitsiParticipant.prototype.isScreenSharing = function() {
 
 };
 
 /**
- * @returns {String} The user agent of this participant (i.e. browser userAgent string).
+ * @returns {String} The user agent of this participant
+ * (i.e. browser userAgent string).
  */
 JitsiParticipant.prototype.getUserAgent = function() {
 
@@ -6343,7 +6413,8 @@ ChatRoom.prototype.onPresenceUnavailable = function (pres, from) {
             reason = reasonSelect.text();
         }
 
-        this.xmpp.disposeConference(false);
+        this.xmpp.leaveRoom(this.roomjid);
+
         this.eventEmitter.emit(XMPPEvents.MUC_DESTROYED, reason);
         delete this.connection.emuc.rooms[Strophe.getBareJidFromJid(from)];
         return true;
@@ -6365,7 +6436,7 @@ ChatRoom.prototype.onPresenceUnavailable = function (pres, from) {
     }
     if ($(pres).find('>x[xmlns="http://jabber.org/protocol/muc#user"]>status[code="307"]').length) {
         if (this.myroomjid === from) {
-            this.xmpp.disposeConference(false);
+            this.xmpp.leaveRoom(this.roomjid);
             this.eventEmitter.emit(XMPPEvents.KICKED);
         }
     }
@@ -11896,12 +11967,12 @@ XMPP.prototype.connect = function (jid, password) {
     return this._connect(jid, password);
 };
 
-XMPP.prototype.createRoom = function (roomName, options, useNicks, nick) {
+XMPP.prototype.createRoom = function (roomName, options) {
     var roomjid = roomName  + '@' + this.options.hosts.muc;
 
-    if (useNicks) {
-        if (nick) {
-            roomjid += '/' + nick;
+    if (options.useNicks) {
+        if (options.nick) {
+            roomjid += '/' + options.nick;
         } else {
             roomjid += '/' + Strophe.getNodeFromJid(this.connection.jid);
         }

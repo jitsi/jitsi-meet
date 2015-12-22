@@ -81,6 +81,10 @@ var JitsiConferenceEvents = {
      */
     CONFERENCE_LEFT: "conference.left",
     /**
+     * You are kicked from the conference.
+     */
+    KICKED: "conferenece.kicked",
+    /**
      * Indicates that DTMF support changed.
      */
     DTMF_SUPPORT_CHANGED: "conference.dtmfSupportChanged",
