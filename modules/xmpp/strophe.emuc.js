@@ -562,10 +562,6 @@ module.exports = function(XMPP, eventEmitter) {
                 delete this.presMap["startMuted"];
             }
 
-            if (config.token) {
-                pres.c('token', { xmlns: 'http://jitsi.org/jitmeet/auth-token'}).t(config.token).up();
-            }
-
             pres.up();
             this.connection.send(pres);
         },

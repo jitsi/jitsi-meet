@@ -325,8 +325,16 @@ function registerListeners() {
             "dialog.connectError", pres);
     });
     APP.xmpp.addListener(XMPPEvents.ROOM_CONNECT_ERROR, function (pres) {
-        UI.messageHandler.openReportDialog(null,
-            "dialog.connectError", pres);
+        if (config.token &&
+            $(pres).find(
+                '>error[type="cancel"]' +
+                '>not-allowed[xmlns="urn:ietf:params:xml:ns:xmpp-stanzas"]'
+            ).length) {
+            messageHandler.showError("dialog.error", "dialog.tokenAuthFailed");
+        } else {
+            UI.messageHandler.openReportDialog(null,
+                "dialog.connectError", pres);
+        }
     });
 
     APP.xmpp.addListener(XMPPEvents.READY_TO_JOIN, function () {
