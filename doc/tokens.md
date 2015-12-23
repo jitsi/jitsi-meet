@@ -7,6 +7,8 @@ generate the JWT token as described in the RFC and pass it to your client app. O
 
 During configuration you will need to provide the *application ID* that identifies the client and a *secret* shared by both server and JWT token generator. Like described in the RFC, secret is used to compute HMAC hash value which allows to authenticate generated token. There are many existing libraries which can be used to implement token generator. More info can be found here: [http://jwt.io/#libraries-io]
 
+JWT token authentication currently works only with BOSH connections.
+
 [RFC7519]: https://tools.ietf.org/html/rfc7519
 [http://jwt.io/#libraries-io]: http://jwt.io/#libraries-io
 
@@ -21,10 +23,9 @@ Secret is used to compute HMAC hash value and verify the token.
 
 ### Token verification
 
-JWT token is currently checked in 3 places:
-- when user connects to Prosody. SASL PLAIN authentication is being used for token authentication purpose. Username is supplied by the application and in case of jitsi-meet it is randomly generated string(can be also overridden with *config.id* property). JWT token is apssed as user's password.
-- by Jicofo in *conference IQ* which is used to invite the focus and create the room. JWT token is sent in 'session-id' attribute.
-- when MUC room is being created. This prevents from abusing stolen token by unathorized users. Unless the user is an admin it must include it as part of the presence stanza that creates the room. *FIXME this is redundant as we can config Prosody to allow only admins to create the rooms and let Jicofo verify the token*.
+JWT token is currently checked in 2 places:
+- when user connects to Prosody through BOSH. Token value is passed as 'token' query paramater of BOSH URL. User uses XMPP anonymous authentication method.
+- when MUC room is being created/joined Prosody compares 'room' claim with the actual name of the room. This prevents from abusing stolen token by unathorized users to allocate new conference rooms in the system. Admin users are not required to provide valid token which is used by Jicofo for example.
 
 ### Lib-jitsi-meet options
 
@@ -51,50 +52,71 @@ At current level of integration every user that joins the conference has to prov
 creates the room. It should be possible to change that by using second anonymous domain, but that hasn't been tested
 yet.
 
+
+
 ### Installing token plugin
 
-FIXME: JWT token install using Debian packages is not implemented yet
-
-~~Token authentication can be integrated automatically using Debian package install. Once you have jitsi-meet installed
-just install 'jitsi-meet-tokens' on top of it. In order to have it configured automatically at least version 721 of
-jitsi-meet is required which comes with special Prosody config template.~~
+Token authentication can be integrated automatically using Debian package install. Once you have jitsi-meet installed
+just install 'jitsi-meet-tokens' on top of it. In order to have it configured automatically at least version 779 of
+jitsi-meet is required which comes with special Prosody config template.
 
 ```
 apt-get install jitsi-meet-token
 ```
 
+Proceed to "Patching Prosody" section to finish configuration.
+
+### Patching Prosody
+
+JWT token authentication requires prosody-trunk version at least 603. It also requires special patch that allows the plugin to retrieve the token from BOSH URL.
+
+You can download latest prosody-trunk packages from [here]. Then install it with the following command:
+
+```
+sudo dpkg -i prosody-trunk_1nightly603-1~trusty_amd64.deb
+```
+
+Next step is to patch Prosody. If you have *jitsi-meet-tokens* package installed just use the following command:
+```
+sudo patch -N /usr/lib/prosody/modules/mod_bosh.lua /usr/share/jitsi-meet/prosody-plugins/mod_bosh.lua.patch
+```
+
+Also make sure that */etc/prosody/prosody.cfg.lua* contains the line below at the end to include meet host config. That's because Prosody nightly may come with slightly different default config:
+
+```
+Include "conf.d/*.cfg.lua"
+```
+
+Also check if client to server encryption is not enforced. Otherwise token authentication won't work:
+```
+c2s_require_encryption=false
+```
+
+[here]: http://packages.prosody.im/debian/pool/main/p/prosody-trunk/
+
 ### Manual plugin configuration
 
 Modify your Prosody config with these three steps:
 
-1. Adjust *plugin_paths* to contain the path pointing to jitsi meet Prosody plugins location. That's where plugins are copied on *jitsi-meet-token* package install. This should be included in global config section(possibly at the beginning of your host config file).
+\1. Adjust *plugin_paths* to contain the path pointing to jitsi meet Prosody plugins location. That's where plugins are copied on *jitsi-meet-token* package install. This should be included in global config section(possibly at the beginning of your host config file).
 
 ```lua
 plugin_paths = { "/usr/share/jitsi-meet/prosody-plugins/" }
 ```
 
-2. Under you domain config change authentication to "token" and provide application ID, secret and optionally token lifetime:
+\2. Under you domain config change authentication to "token" and provide application ID, secret and optionally token lifetime:
 
 ```lua
 VirtualHost "jitmeet.example.com"
     authentication = "token";
-    allow_unencrypted_plain_auth = true; -- required for token authentication to work
-    app_id = example_app_id;             -- application identifier
-    app_secret = example_app_secret;     -- application secret known only to your token
-    									 -- generator and the plugin
-    token_lifetime=86400000;             -- (optional) token lifetime in milliseconds
-``` 
+    app_id = "example_app_id";             -- application identifier
+    app_secret = "example_app_secret";     -- application secret known only to your token
+    									   -- generator and the plugin
+```
 
-3. Enable token verification plugin in your MUC component config section:
+\3. Enable token verification plugin in your MUC component config section:
 
 ```lua
 Component "conference.jitmeet.example.com" "muc"
     modules_enabled = { "token_verification" }
-```
-
-4. Configure JWT properties in jicofo config file located usually at /etc/jitsi/jicofo/sip-cumminicator.properties.
-
-```
-org.jitsi.jicofo.auth.jwt.APP_ID=example_app_id
-org.jitsi.jicofo.auth.jwt.SECRET=example_app_secret
 ```
