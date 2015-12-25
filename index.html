@@ -140,6 +140,25 @@
         </div>
         <div id="reloadPresentation"><a id="reloadPresentationLink"><i title="Reload Prezi" class="fa fa-repeat fa-lg"></i></a></div>
         <div id="videospace">
+
+            <div id="largeVideoContainer" class="videocontainer">
+                <div id="presentation"></div>
+                <div id="etherpad"></div>
+                <a target="_new"><div class="watermark leftwatermark"></div></a>
+                <a target="_new"><div class="watermark rightwatermark"></div></a>
+                <a class="poweredby" href="http://jitsi.org" target="_new">
+                    <span data-i18n="poweredby"></span> jitsi.org
+                </a>
+                <div id="activeSpeaker">
+                    <img id="activeSpeakerAvatar" src=""/>
+                    <canvas id="activeSpeakerAudioLevel"></canvas>
+                </div>
+                <div id="largeVideoWrapper">
+                    <video id="largeVideo" muted="true" autoplay oncontextmenu="return false;"></video>
+                </div>
+                <span id="videoConnectionMessage"></span>
+            </div>
+
             <div id="remoteVideos">
                 <span id="localVideoContainer" class="videocontainer">
                     <span id="localNick" class="nick"></span>

@@ -113,33 +113,6 @@ function getVideoSpanId(id) {
 }
 
 /**
- * Indicates that the remote video has been resized.
- */
-$(document).bind('remotevideo.resized', function (event, width, height) {
-    let resized = false;
-
-    $('#remoteVideos>span>canvas').each(function() {
-        let canvas = $(this).get(0);
-        if (canvas.width !== width + interfaceConfig.CANVAS_EXTRA) {
-            canvas.width = width + interfaceConfig.CANVAS_EXTRA;
-            resized = true;
-        }
-
-        if (canvas.height !== height + interfaceConfig.CANVAS_EXTRA) {
-            canvas.height = height + interfaceConfig.CANVAS_EXTRA;
-            resized = true;
-        }
-    });
-
-    if (resized) {
-        Object.keys(audioLevelCanvasCache).forEach(function (id) {
-            audioLevelCanvasCache[id].width = width + interfaceConfig.CANVAS_EXTRA;
-            audioLevelCanvasCache[id].height = height + interfaceConfig.CANVAS_EXTRA;
-        });
-    }
-});
-
-/**
  * The audio Levels plugin.
  */
 const AudioLevels = {
@@ -248,6 +221,33 @@ const AudioLevels = {
 
         // Fill the shape.
         ASDrawContext.fill();
+    },
+
+    /**
+     * Indicates that the remote video has been resized.
+     */
+    onRemoteVideoResized (width, height) {
+        let resized = false;
+
+        $('#remoteVideos>span>canvas').each(function() {
+            let canvas = $(this).get(0);
+            if (canvas.width !== width + interfaceConfig.CANVAS_EXTRA) {
+                canvas.width = width + interfaceConfig.CANVAS_EXTRA;
+                resized = true;
+            }
+
+            if (canvas.height !== height + interfaceConfig.CANVAS_EXTRA) {
+                canvas.height = height + interfaceConfig.CANVAS_EXTRA;
+                resized = true;
+            }
+        });
+
+        if (resized) {
+            Object.keys(audioLevelCanvasCache).forEach(function (id) {
+                audioLevelCanvasCache[id].width = width + interfaceConfig.CANVAS_EXTRA;
+                audioLevelCanvasCache[id].height = height + interfaceConfig.CANVAS_EXTRA;
+            });
+        }
     }
 };
 

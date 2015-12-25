@@ -9,13 +9,6 @@ const defaultBottomToolbarButtons = {
     'filmstrip': '#bottom_toolbar_film_strip'
 };
 
-$(document).bind("remotevideo.resized", function (event, width, height) {
-    let toolbar = $('#bottomToolbar');
-    let bottom = (height - toolbar.outerHeight())/2 + 18;
-
-    toolbar.css({bottom});
-});
-
 const BottomToolbar = {
     init (emitter) {
         UIUtil.hideDisabledButtons(defaultBottomToolbarButtons);
@@ -42,6 +35,13 @@ const BottomToolbar = {
 
     toggleFilmStrip () {
         $("#remoteVideos").toggleClass("hidden");
+    },
+
+    onRemoteVideoResized (width, height) {
+        let toolbar = $('#bottomToolbar');
+        let bottom = (height - toolbar.outerHeight())/2 + 18;
+
+        toolbar.css({bottom});
     }
 };
 

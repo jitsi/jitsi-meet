@@ -41,6 +41,9 @@ const Commands = {
     CONNECTION_QUALITY: "connectionQuality",
     EMAIL: "email",
     VIDEO_TYPE: "videoType"
+    ETHERPAD: "etherpad",
+    PREZI: "prezi",
+    STOP_PREZI: "stop-prezi"
 };
 
 function buildRoomName () {
@@ -218,16 +221,14 @@ function initConference(localTracks, connection) {
 
 
     room.on(ConferenceEvents.USER_JOINED, function (id, user) {
-        if (APP.conference.isLocalId(id)) {
-            return;
-        }
-        console.error('USER %s connnected', id);
+        console.error('USER %s connnected', id, user);
         // FIXME email???
         APP.UI.addUser(id, user.getDisplayName());
     });
     room.on(ConferenceEvents.USER_LEFT, function (id, user) {
-        console.error('USER LEFT', id);
+        console.error('USER %s LEFT', id, user);
         APP.UI.removeUser(id, user.getDisplayName());
+        APP.UI.stopPrezi(id);
     });
 
 
@@ -348,15 +349,49 @@ function initConference(localTracks, connection) {
         room.removeCommand(Commands.CONNECTION_QUALITY);
     });
     // listen to remote stats
-    room.addCommandListener(Commands.CONNECTION_QUALITY, function (data) {
-        APP.connectionquality.updateRemoteStats(data.attributes.id, data.value);
-    });
+    room.addCommandListener(
+        Commands.CONNECTION_QUALITY,
+        function ({value, attributes}) {
+            APP.connectionquality.updateRemoteStats(attributes.id, value);
+        }
+    );
     APP.connectionquality.addListener(
         CQEvents.REMOTESTATS_UPDATED,
         function (id, percent, stats) {
             APP.UI.updateRemoteStats(id, percent, stats);
         }
     );
+
+    room.addCommandListener(Commands.ETHERPAD, function ({value}) {
+        APP.UI.initEtherpad(value);
+    });
+
+
+    room.addCommandListener(Commands.PREZI, function ({value, attributes}) {
+        APP.UI.showPrezi(attributes.id, value, attributes.slide);
+    });
+    room.addCommandListener(Commands.STOP_PREZI, function ({attributes}) {
+        APP.UI.stopPrezi(attributes.id);
+    });
+    APP.UI.addListener(UIEvents.SHARE_PREZI, function (url, slide) {
+        console.log('Sharing Prezi %s slide %s', url, slide);
+        room.removeCommand(Commands.PREZI);
+        room.sendCommand(Commands.PREZI, {
+            value: url,
+            attributes: {
+                id: room.myUserId(),
+                slide
+            }
+        });
+    });
+    APP.UI.addListener(UIEvents.STOP_SHARING_PREZI, function () {
+        room.removeCommand(Commands.PREZI);
+        room.sendCommandOnce(Commands.STOP_PREZI, {
+            attributes: {
+                id: room.myUserId()
+            }
+        });
+    });
 
     room.addCommandListener(Commands.VIDEO_TYPE, (data, from) => {
         APP.UI.onPeerVideoTypeChanged(from, data.value);

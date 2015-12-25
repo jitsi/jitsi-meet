@@ -145,8 +145,8 @@ SmallVideo.prototype.bindHoverHandler = function () {
         function () {
             // If the video has been "pinned" by the user we want to
             // keep the display name on place.
-            if (!LargeVideo.isLargeVideoVisible() ||
-                !LargeVideo.isCurrentlyOnLarge(self.id))
+            if (!self.VideoLayout.isLargeVideoVisible() ||
+                !self.VideoLayout.isCurrentlyOnLarge(self.id))
                 self.showDisplayName(false);
         }
     );
@@ -254,7 +254,7 @@ SmallVideo.prototype.enableDominantSpeaker = function (isEnable) {
     }
 
     if (isEnable) {
-        this.showDisplayName(LargeVideo.getState() === "video");
+        this.showDisplayName(this.VideoLayout.isLargeVideoVisible());
 
         if (!this.container.classList.contains("dominantspeaker"))
             this.container.classList.add("dominantspeaker");
@@ -388,7 +388,10 @@ SmallVideo.prototype.showAvatar = function (show) {
         }
     }
 
-    if (LargeVideo.showAvatar(this.id, show)) {
+    if (this.VideoLayout.isCurrentlyOnLarge(this.id)
+        && this.VideoLayout.isLargeVideoVisible()) {
+
+        this.VideoLayout.showLargeVideoAvatar(show);
         setVisibility(avatar, false);
         setVisibility(video, false);
     } else {
