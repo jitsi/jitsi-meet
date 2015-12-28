@@ -401,7 +401,7 @@ JitsiConference.prototype.kickParticipant = function (id) {
 
 JitsiConference.prototype.onMemberJoined = function (jid, email, nick) {
     var id = Strophe.getResourceFromJid(jid);
-    if (id === 'focus') {
+    if (id === 'focus' || this.myUserId() === id) {
        return;
     }
     var participant = new JitsiParticipant(jid, this, nick);
