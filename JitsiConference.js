@@ -578,6 +578,15 @@ JitsiConference.prototype.toggleRecording = function (token, followEntity) {
 }
 
 /**
+ * Returns true if the SIP calls are supported and false otherwise
+ */
+JitsiConference.prototype.isSIPCallingSupported = function () {
+    if(this.room)
+        return this.room.isSIPCallingSupported();
+    return false;
+}
+
+/**
  * Dials a number.
  * @param number the number
  */

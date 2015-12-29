@@ -38,7 +38,7 @@ function Moderator(roomName, xmpp, emitter) {
     // Sip gateway can be enabled by configuring Jigasi host in config.js or
     // it will be enabled automatically if focus detects the component through
     // service discovery.
-    this.sipGatewayEnabled =
+    this.sipGatewayEnabled = this.xmppService.options.hosts &&
         this.xmppService.options.hosts.call_control !== undefined;
 
     this.eventEmitter = emitter;

@@ -707,6 +707,15 @@ ChatRoom.prototype.toggleRecording = function (token, followEntity) {
 }
 
 /**
+ * Returns true if the SIP calls are supported and false otherwise
+ */
+ChatRoom.prototype.isSIPCallingSupported = function () {
+    if(this.moderator)
+        return this.moderator.isSipGatewayEnabled();
+    return false;
+}
+
+/**
  * Dials a number.
  * @param number the number
  */
