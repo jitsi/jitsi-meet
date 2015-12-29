@@ -311,7 +311,7 @@ const Toolbar = {
 
     // Shows or hides SIP calls button
     showSipCallButton (show) {
-        if (APP.conference.sipGatewayEnabled && UIUtil.isButtonEnabled('sip') && show) {
+        if (APP.conference.sipGatewayEnabled() && UIUtil.isButtonEnabled('sip') && show) {
             $('#toolbar_button_sip').css({display: "inline-block"});
         } else {
             $('#toolbar_button_sip').css({display: "none"});

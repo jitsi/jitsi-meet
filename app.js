@@ -86,7 +86,6 @@ const APP = {
             membersCount: 0,
             audioMuted: false,
             videoMuted: false,
-            sipGatewayEnabled: false, //FIXME handle
             isLocalId (id) {
                 return this.localId === id;
             },
@@ -184,6 +183,10 @@ function initConference(localTracks, connection) {
         localVideo = track;
         addTrack(track);
         APP.UI.addLocalStream(track);
+    };
+
+    APP.conference.sipGatewayEnabled = () => {
+        return room.isSIPCallingSupported();
     };
 
     function getDisplayName(id) {
@@ -442,13 +445,7 @@ function initConference(localTracks, connection) {
     });
 
     APP.UI.addListener(UIEvents.SIP_DIAL, function (sipNumber) {
-        // FIXME add dial
-        // APP.xmpp.dial(
-        //     sipNumber,
-        //     'fromnumber',
-        //     APP.conference.roomName,
-        //     roomLocker.password
-        // );
+        room.dial(sipNumber);
     });
 
 
