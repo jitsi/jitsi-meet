@@ -92,6 +92,7 @@ export default function createRoomLocker (room) {
         return room.lock(newPass).then(function () {
             password = newPass;
         }).catch(function (err) {
+            console.error(err);
             if (err === ConferenceErrors.PASSWORD_NOT_SUPPORTED) {
                 notifyPasswordNotSupported();
             } else {
@@ -111,7 +112,7 @@ export default function createRoomLocker (room) {
         },
 
         askToUnlock () {
-            askToUnlock().then(function () {
+            return askToUnlock().then(function () {
                 return lock();
             }).then(function () {
                 AnalyticsAdapter.sendEvent('toolbar.lock.disabled');

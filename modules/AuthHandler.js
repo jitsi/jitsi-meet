@@ -1,4 +1,4 @@
-/* global JitsiMeetJS */
+/* global JitsiMeetJS, APP */
 
 import LoginDialog from './UI/authentication/LoginDialog';
 import UIEvents from '../service/UI/UIEvents';
@@ -44,14 +44,16 @@ function doXmppAuth (room, lockPassword) {
             // open room
             let newRoom = connection.initJitsiConference(room.getName());
 
-            newRoom.on(ConferenceEvents.CONFERENCE_FAILED, function (err) {
-                connection.disconnect();
-                loginDialog.displayError(err);
-            });
+            loginDialog.displayConnectionStatus(
+                APP.translation.translateString('connection.FETCH_SESSION_ID')
+            );
 
-            newRoom.room.moderator.allocateConferenceFocus(function () {
+            newRoom.room.moderator.authenticate().then(function () {
                 connection.disconnect();
-                loginDialog.close();
+
+                loginDialog.displayConnectionStatus(
+                    APP.translation.translateString('connection.GOT_SESSION_ID')
+                );
 
                 if (room.isJoined()) {
                     // just reallocate focus if already joined
@@ -60,8 +62,19 @@ function doXmppAuth (room, lockPassword) {
                     // or join
                     room.join(lockPassword);
                 }
-            });
 
+                loginDialog.close();
+            }).catch(function (error, code) {
+                connection.disconnect();
+
+                console.error('Auth on the fly failed', error);
+
+                let errorMsg = APP.translation.translateString(
+                    'connection.GET_SESSION_ID_ERROR'
+                );
+
+                loginDialog.displayError(errorMsg + code);
+            });
         }, function (err) {
             loginDialog.displayError(err);
         });
