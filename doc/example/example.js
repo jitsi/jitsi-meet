@@ -157,6 +157,30 @@ function unload() {
     room.leave();
     connection.disconnect();
 }
+var isVideo = true;
+function switchVideo() {
+    isVideo = !isVideo;
+    if(localTracks[1]) {
+        localTracks[1].stop();
+        localTracks.pop();
+    }
+    JitsiMeetJS.createLocalTracks({devices: isVideo? ["video"] : ["desktop"]}).
+        then(function (tracks) {
+            localTracks.push(tracks[0]);
+            localTracks[1].addEventListener(JitsiMeetJS.events.track.TRACK_MUTE_CHANGED,
+                function () {
+                    console.log("local track muted");
+                });
+            localTracks[1].addEventListener(JitsiMeetJS.events.track.TRACK_STOPPED,
+                function () {
+                    console.log("local track stoped");
+                });
+            localTracks[1].attach($("#localVideo1"));
+            room.addTrack(localTracks[1]);
+        }).catch(function (error) {
+            console.log(error);
+        });
+}
 
 $(window).bind('beforeunload', unload);
 $(window).bind('unload', unload);

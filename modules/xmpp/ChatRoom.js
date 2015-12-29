@@ -328,7 +328,7 @@ ChatRoom.prototype.onPresence = function (pres) {
 
 ChatRoom.prototype.processNode = function (node, from) {
     if(this.presHandlers[node.tagName])
-        this.presHandlers[node.tagName](node, from);
+        this.presHandlers[node.tagName](node, Strophe.getResourceFromJid(from));
 };
 
 ChatRoom.prototype.sendMessage = function (body, nickname) {

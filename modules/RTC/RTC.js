@@ -195,6 +195,14 @@ RTC.stopMediaStream = function (mediaStream) {
     RTCUtils.stopMediaStream(mediaStream);
 };
 
+/**
+ * Returns whether the desktop sharing is enabled or not.
+ * @returns {boolean}
+ */
+RTC.isDesktopSharingEnabled = function () {
+    return RTCUtils.isDesktopSharingEnabled();
+}
+
 RTC.prototype.getVideoElementName = function () {
     return RTCBrowserType.isTemasysPluginUsed() ? 'object' : 'video';
 };

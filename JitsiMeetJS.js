@@ -29,6 +29,13 @@ var LibJitsiMeet = {
     init: function (options) {
         return RTC.init(options || {});
     },
+    /**
+     * Returns whether the desktop sharing is enabled or not.
+     * @returns {boolean}
+     */
+    isDesktopSharingEnabled: function () {
+        return RTC.isDesktopSharingEnabled();
+    },
     setLogLevel: function (level) {
         Logger.setLogLevel(level);
     },

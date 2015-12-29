@@ -246,11 +246,11 @@ SDP.prototype.toJingle = function (elem, thecreator) {
                     var msid = null;
                     if(mline.media == "audio")
                     {
-                        msid = APP.RTC.localAudio.getId();
+                        msid = APP.RTC.localAudio._getId();
                     }
                     else
                     {
-                        msid = APP.RTC.localVideo.getId();
+                        msid = APP.RTC.localVideo._getId();
                     }
                     if(msid != null)
                     {
@@ -645,4 +645,3 @@ SDP.prototype.jingle2media = function (content) {
 
 
 module.exports = SDP;
-

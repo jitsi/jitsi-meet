@@ -1,6 +1,7 @@
 var RTCBrowserType = require("./RTCBrowserType");
 var JitsiTrackEvents = require("../../JitsiTrackEvents");
 var EventEmitter = require("events");
+var RTC = require("./RTCUtils");
 
 /**
  * This implements 'onended' callback normally fired by WebRTC after the stream
@@ -191,11 +192,19 @@ JitsiTrack.prototype.isScreenSharing = function(){
  * Returns id of the track.
  * @returns {string} id of the track or null if this is fake track.
  */
-JitsiTrack.prototype.getId = function () {
+JitsiTrack.prototype._getId = function () {
     var tracks = this.stream.getTracks();
     if(!tracks || tracks.length === 0)
         return null;
     return tracks[0].id;
+};
+
+/**
+ * Returns id of the track.
+ * @returns {string} id of the track or null if this is fake track.
+ */
+JitsiTrack.prototype.getId = function () {
+    return RTC.getStreamID(this.stream);
 };
 
 /**

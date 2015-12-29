@@ -37,7 +37,14 @@ You can access the following methods and objects trough ```JitsiMeetJS``` object
 *  ```JitsiMeetJS.init(options)``` - this method initialized Jitsi Meet API.
 The ```options``` parameter is JS object with the following properties:
     1. useIPv6 - boolean property
-
+    2. desktopSharingChromeMethod - Desktop sharing method. Can be set to 'ext', 'webrtc' or false to disable.
+    3. desktopSharingChromeExtId - The ID of the jidesha extension for Chrome or Firefox. Example: 'mbocklcggfhnbahlnepmldehdhpjfcjp'
+    desktopSharingChromeSources - Array of strings with the media sources to use when using screen sharing with the Chrome extension. Example: ['screen', 'window']
+    4. desktopSharingChromeMinExtVersion - Required version of Chrome extension. Example: '0.1'
+    5. desktopSharingFirefoxExtId - The ID of the jidesha extension for Firefox. If null, we assume that no extension is required.
+    6. desktopSharingFirefoxDisabled - Boolean. Whether desktop sharing should be disabled on Firefox. Example: false.
+    7. desktopSharingFirefoxMaxVersionExtRequired - The maximum version of Firefox which requires a jidesha extension. Example: if set to 41, we will require the extension for Firefox versions up to and including 41. On Firefox 42 and higher, we will run without the extension. If set to -1, an extension will be required for all versions of Firefox.
+    8. desktopSharingFirefoxExtensionURL - The URL to the Firefox extension for desktop sharing. "null" if no extension is required.
 
 * ```JitsiMeetJS.JitsiConnection``` - the ```JitsiConnection``` constructor. You can use that to create new server connection.
 
@@ -48,7 +55,7 @@ JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.ERROR);
 
 * ```JitsiMeetJS.createLocalTracks(options)``` - Creates the media tracks and returns them trough ```Promise``` object.
     - options - JS object with configuration options for the local media tracks. You can change the following properties there:
-        1. devices - array with the devices - "video" and "audio" that will be passed to GUM. If that property is not set GUM will try to get all available devices.
+        1. devices - array with the devices - "desktop", "video" and "audio" that will be passed to GUM. If that property is not set GUM will try to get all available devices.
         2. resolution - the prefered resolution for the local video.
         3. cameraDeviceId - the deviceID for the video device that is going to be used
         4. micDeviceId - the deviceID for the audio device that is going to be used
@@ -59,6 +66,8 @@ JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.ERROR);
     - deviceId - the id of the device.
 
 * ```JitsiMeetJS.isDeviceListAvailable()```- returns true if retrieving the device list is support and false - otherwise.
+
+* ```JitsiMeetJS.isDesktopSharingEnabled()``` - returns true if desktop sharing is supported and false otherwise. NOTE: that method can be used after ```JitsiMeetJS.init(options)``` is completed otherwise the result will be always null.
 
 * ```JitsiMeetJS.events``` - JS object that contains all events used by the API. You will need that JS object when you try to subscribe for connection or conference events.
     We have two event types - connection and conference. You can access the events with the following code ```JitsiMeetJS.events.<event_type>.<event_name>```.
@@ -316,7 +325,7 @@ room.on(JitsiMeetJS.events.conference.CONFERENCE_JOINED, onConferenceJoined);
 
 5. You also may want to get your local tracks from the camera and microphone:
 ```javascript
-room.createLocalTracks().then(onLocalTracks);
+JitsiMeetJS.createLocalTracks().then(onLocalTracks);
 ```
 
 NOTE: Adding listeners and creating local streams are not mandatory steps.
