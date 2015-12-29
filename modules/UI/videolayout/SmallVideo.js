@@ -58,7 +58,7 @@ SmallVideo.prototype.setDeviceAvailabilityIcons = function (devices) {
 
 /**
  * Sets the type of the video displayed by this instance.
- * @param videoType 'camera' or 'screen'
+ * @param videoType 'camera' or 'desktop'
  */
 SmallVideo.prototype.setVideoType = function (videoType) {
     this.videoType = videoType;
@@ -343,11 +343,6 @@ SmallVideo.prototype.selectVideoElement = function () {
 
         return $([]);
     }
-};
-
-SmallVideo.prototype.getSrc = function () {
-    var videoElement = this.selectVideoElement().get(0);
-    return APP.RTC.getVideoSrc(videoElement);
 };
 
 SmallVideo.prototype.focus = function(isFocused) {

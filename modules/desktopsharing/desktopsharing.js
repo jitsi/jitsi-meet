@@ -2,9 +2,6 @@
 var EventEmitter = require("events");
 var DesktopSharingEventTypes
     = require("../../service/desktopsharing/DesktopSharingEventTypes");
-var RTCBrowserType = require("../RTC/RTCBrowserType");
-var RTCEvents = require("../../service/RTC/RTCEvents");
-var ScreenObtainer = require("./ScreenObtainer");
 
 /**
  * Indicates that desktop stream is currently in use (for toggle purpose).
@@ -20,9 +17,9 @@ var isUsingScreenStream = false;
 var switchInProgress = false;
 
 /**
- * Used to obtain the screen sharing stream from the browser.
+ * true if desktop sharing is enabled and false otherwise.
  */
-var screenObtainer = new ScreenObtainer();
+var isEnabled = false;
 
 var eventEmitter = new EventEmitter();
 
@@ -33,9 +30,9 @@ function streamSwitchDone() {
         isUsingScreenStream);
 }
 
-function newStreamCreated(stream) {
+function newStreamCreated(track) {
     eventEmitter.emit(DesktopSharingEventTypes.NEW_STREAM_CREATED,
-        stream, isUsingScreenStream, streamSwitchDone);
+        track, streamSwitchDone);
 }
 
 function getVideoStreamFailed(error) {
@@ -50,37 +47,31 @@ function getDesktopStreamFailed(error) {
     switchInProgress = false;
 }
 
-function onEndedHandler(stream) {
+function onEndedHandler() {
     if (!switchInProgress && isUsingScreenStream) {
         APP.desktopsharing.toggleScreenSharing();
     }
-
-    APP.RTC.removeMediaStreamInactiveHandler(stream, onEndedHandler);
 }
 
 module.exports = {
     isUsingScreenStream: function () {
         return isUsingScreenStream;
     },
-
+    /**
+     * Initializes the desktop sharing module.
+     * @param {boolean} <tt>true</tt> if desktop sharing feature is available
+     * and enabled.
+     */
+    init: function (enabled) {
+        isEnabled = enabled;
+    },
     /**
      * @returns {boolean} <tt>true</tt> if desktop sharing feature is available
      *          and enabled.
      */
     isDesktopSharingEnabled: function () {
-        return screenObtainer.isSupported();
+        return isEnabled;
     },
-    
-    init: function () {
-        // Called when RTC finishes initialization
-        return;
-        APP.RTC.addListener(RTCEvents.RTC_READY,
-            function() {
-                screenObtainer.init(eventEmitter);
-                eventEmitter.emit(DesktopSharingEventTypes.INIT);
-            });
-    },
-
     addListener: function (type, listener) {
         eventEmitter.on(type, listener);
     },
@@ -96,38 +87,26 @@ module.exports = {
         if (switchInProgress) {
             console.warn("Switch in progress.");
             return;
-        } else if (!screenObtainer.isSupported()) {
+        } else if (!this.isDesktopSharingEnabled()) {
             console.warn("Cannot toggle screen sharing: not supported.");
             return;
         }
         switchInProgress = true;
-
+        let type, handler;
         if (!isUsingScreenStream) {
             // Switch to desktop stream
-            screenObtainer.obtainStream(
-                function (stream) {
-                    // We now use screen stream
-                    isUsingScreenStream = true;
-                    // Hook 'ended' event to restore camera
-                    // when screen stream stops
-                    APP.RTC.addMediaStreamInactiveHandler(
-                        stream, onEndedHandler);
-                    newStreamCreated(stream);
-                },
-                getDesktopStreamFailed);
+            handler = onEndedHandler;
+            type = "desktop";
         } else {
-            // Disable screen stream
-            APP.RTC.getUserMediaWithConstraints(
-                ['video'],
-                function (stream) {
-                    // We are now using camera stream
-                    isUsingScreenStream = false;
-                    newStreamCreated(stream);
-                },
-                getVideoStreamFailed,
-                config.resolution || '360'
-            );
+            handler = () => {};
+            type = "video";
         }
+        APP.conference.createVideoTrack(type, handler).then(
+            (tracks) => {
+                // We now use screen stream
+                isUsingScreenStream = type === "desktop";
+                newStreamCreated(tracks[0]);
+            }).catch(getDesktopStreamFailed);
     },
     /*
      * Exports the event emitter to allow use by ScreenObtainer. Not for outside
@@ -135,4 +114,3 @@ module.exports = {
      */
     eventEmitter: eventEmitter
 };
-

@@ -549,7 +549,7 @@ var LargeVideo = {
         if (!videoType)
             videoType = currentSmallVideo.getVideoType();
 
-        var isDesktop = videoType === 'screen';
+        var isDesktop = videoType === 'desktop';
 
         // Change the way we'll be measuring and positioning large video
         getVideoSize = isDesktop ? getDesktopVideoSize : getCameraVideoSize;

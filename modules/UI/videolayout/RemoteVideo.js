@@ -195,7 +195,8 @@ RemoteVideo.prototype.waitForPlayback = function (sel, stream) {
     var onPlayingHandler = function () {
         // FIXME: why do i have to do this for FF?
         if (RTCBrowserType.isFirefox()) {
-            APP.RTC.attachMediaStream(sel, webRtcStream);
+            //FIXME: weshould use the lib here
+            //APP.RTC.attachMediaStream(sel, webRtcStream);
         }
         if (RTCBrowserType.isTemasysPluginUsed()) {
             sel = self.selectVideoElement();

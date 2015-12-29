@@ -159,7 +159,7 @@ LocalVideo.prototype.changeVideo = function (stream) {
     localVideoContainerSelector.off('click');
     localVideoContainerSelector.on('click', localVideoClick);
 
-    this.flipX = stream.videoType != "screen";
+    this.flipX = stream.videoType != "desktop";
     let localVideo = document.createElement('video');
     localVideo.id = 'localVideo_' + stream.getId();
     if (!RTCBrowserType.isIExplorer()) {
@@ -191,14 +191,14 @@ LocalVideo.prototype.changeVideo = function (stream) {
     return;
 
     // Add stream ended handler
-    APP.RTC.addMediaStreamInactiveHandler(
+    /**APP.RTC.addMediaStreamInactiveHandler(
         stream.getOriginalStream(), function () {
         // We have to re-select after attach when Temasys plugin is used,
         // because <video> element is replaced with <object>
         localVideo = $('#' + localVideo.id)[0];
         localVideoContainer.removeChild(localVideo);
         self.VideoLayout.updateRemovedVideo(self.id);
-    });
+    });*/
 };
 
 LocalVideo.prototype.joined = function (id) {

@@ -386,13 +386,14 @@ UI.removeUser = function (id, displayName) {
     VideoLayout.removeParticipantContainer(id);
 };
 
-function onMucPresenceStatus(jid, info) {
-    VideoLayout.setPresenceStatus(Strophe.getResourceFromJid(jid), info.status);
-}
+//FIXME: NOT USED. Should start using the lib
+// function onMucPresenceStatus(jid, info) {
+//     VideoLayout.setPresenceStatus(Strophe.getResourceFromJid(jid), info.status);
+// }
 
-function onPeerVideoTypeChanged(resourceJid, newVideoType) {
+UI.onPeerVideoTypeChanged = (resourceJid, newVideoType) => {
     VideoLayout.onVideoTypeChanged(resourceJid, newVideoType);
-}
+};
 
 UI.updateLocalRole = function (isModerator) {
     VideoLayout.showModeratorIndicator();

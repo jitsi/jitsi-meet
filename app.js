@@ -23,9 +23,24 @@ import AuthHandler from './modules/AuthHandler';
 
 import createRoomLocker from './modules/RoomLocker';
 
+const DesktopSharingEventTypes =
+    require("./service/desktopsharing/DesktopSharingEventTypes");
+
+const ConnectionEvents = JitsiMeetJS.events.connection;
+const ConnectionErrors = JitsiMeetJS.errors.connection;
+
+const ConferenceEvents = JitsiMeetJS.events.conference;
+const ConferenceErrors = JitsiMeetJS.errors.conference;
+
+const TrackEvents = JitsiMeetJS.events.track;
+const TrackErrors = JitsiMeetJS.errors.track;
+
+let localVideo, localAudio;
+
 const Commands = {
     CONNECTION_QUALITY: "connectionQuality",
-    EMAIL: "email"
+    EMAIL: "email",
+    VIDEO_TYPE: "videoType"
 };
 
 function buildRoomName () {
@@ -104,17 +119,24 @@ const APP = {
     }
 };
 
-
-const ConnectionEvents = JitsiMeetJS.events.connection;
-const ConnectionErrors = JitsiMeetJS.errors.connection;
-
-const ConferenceEvents = JitsiMeetJS.events.conference;
-const ConferenceErrors = JitsiMeetJS.errors.conference;
 function initConference(localTracks, connection) {
     let room = connection.initJitsiConference(APP.conference.roomName, {
         openSctp: config.openSctp,
         disableAudioLevels: config.disableAudioLevels
     });
+
+    const addTrack = (track) => {
+        room.addTrack(track);
+        if(track.getType() === "audio")
+            return;
+        room.removeCommand(Commands.VIDEO_TYPE);
+        room.sendCommand(Commands.VIDEO_TYPE, {
+            value: track.videoType,
+            attributes: {
+                xmlns: 'http://jitsi.org/jitmeet/video'
+            }
+        });
+    };
 
     APP.conference.localId = room.myUserId();
     Object.defineProperty(APP.conference, "membersCount", {
@@ -128,6 +150,40 @@ function initConference(localTracks, connection) {
     };
     APP.conference.listMembersIds = function () {
         return room.getParticipants().map(p => p.getId());
+    };
+    /**
+     * Creates video track (desktop or camera).
+     * @param type "camera" or "video"
+     * @param endedHandler onended function
+     * @returns Promise
+     */
+    APP.conference.createVideoTrack = (type, endedHandler) => {
+        return JitsiMeetJS.createLocalTracks({
+            devices: [type], resolution: config.resolution
+        }).then((tracks) => {
+            tracks[0].on(TrackEvents.TRACK_STOPPED, endedHandler);
+            return tracks;
+        });
+    };
+
+    APP.conference.changeLocalVideo = (track, callback) => {
+        const localCallback = (newTrack) => {
+            if (newTrack.isLocal() && newTrack === localVideo) {
+                if(localVideo.isMuted() &&
+                    localVideo.videoType !== track.videoType) {
+                        localVideo.mute();
+                }
+                callback();
+                room.off(ConferenceEvents.TRACK_ADDED, localCallback);
+            }
+        };
+
+        room.on(ConferenceEvents.TRACK_ADDED, localCallback);
+
+        localVideo.stop();
+        localVideo = track;
+        addTrack(track);
+        APP.UI.addLocalStream(track);
     };
 
     function getDisplayName(id) {
@@ -144,7 +200,13 @@ function initConference(localTracks, connection) {
     // add local streams when joined to the conference
     room.on(ConferenceEvents.CONFERENCE_JOINED, function () {
         localTracks.forEach(function (track) {
-            room.addTrack(track);
+            if(track.getType() === "audio") {
+                localAudio = track;
+            }
+            else if (track.getType() === "video") {
+                localVideo = track;
+            }
+            addTrack(track);
             APP.UI.addLocalStream(track);
         });
 
@@ -292,6 +354,10 @@ function initConference(localTracks, connection) {
             APP.UI.updateRemoteStats(id, percent, stats);
         }
     );
+
+    room.addCommandListener(Commands.VIDEO_TYPE, (data, from) => {
+        APP.UI.onPeerVideoTypeChanged(from, data.value);
+    });
 
 
     // share email with other users
@@ -520,7 +586,7 @@ function init() {
 
     JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.TRACE);
 
-    JitsiMeetJS.init().then(function () {
+    JitsiMeetJS.init(config).then(function () {
         return Promise.all([createLocalTracks(), connect()]);
     }).then(function ([tracks, connection]) {
         console.log('initialized with %s local tracks', tracks.length);
@@ -533,7 +599,13 @@ function init() {
             APP.settings.setLanguage(language);
         });
 
-        APP.desktopsharing.init();
+        APP.desktopsharing.addListener(
+            DesktopSharingEventTypes.NEW_STREAM_CREATED,
+            (stream, callback) => {
+                APP.conference.changeLocalVideo(stream,
+                    callback);
+            });
+        APP.desktopsharing.init(JitsiMeetJS.isDesktopSharingEnabled());
         APP.statistics.start();
         APP.connectionquality.init();
         APP.keyboardshortcut.init();

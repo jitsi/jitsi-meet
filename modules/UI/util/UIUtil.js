@@ -116,7 +116,7 @@ import PanelToggler from "../side_pannels/SidePanelToggler";
         $(selector).hide();
     },
 
-     redirect (url) {
+    redirect (url) {
          window.location.href = url;
      }
 };
