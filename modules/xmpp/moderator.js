@@ -1,5 +1,4 @@
-/* global $, $iq, APP, config, messageHandler,
- roomName, sessionTerminated, Strophe, Util */
+/* global $, $iq, Promise, Strophe */
 
 var logger = require("jitsi-meet-logger").getLogger(__filename);
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
@@ -352,6 +351,22 @@ Moderator.prototype.allocateConferenceFocus =  function (callback) {
                 }, waitMs);
         }
     );
+};
+
+Moderator.prototype.authenticate = function () {
+    var self = this;
+    return new Promise(function (resolve, reject) {
+        self.connection.sendIQ(
+            self.createConferenceIq(),
+            function (result) {
+                self.parseSessionId(result);
+                resolve();
+            }, function (error) {
+                var code = $(error).find('>error').attr('code');
+                reject(error, code);
+            }
+        );
+    });
 };
 
 Moderator.prototype.getLoginUrl =  function (urlCallback, failureCallback) {

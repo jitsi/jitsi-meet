@@ -332,7 +332,7 @@ JitsiConference.prototype.lock = function (password) {
 
   var conference = this;
   return new Promise(function (resolve, reject) {
-    conference.xmpp.lockRoom(password, function () {
+    conference.room.lockRoom(password || "", function () {
       resolve();
     }, function (err) {
       reject(err);
@@ -347,7 +347,7 @@ JitsiConference.prototype.lock = function (password) {
  * @returns {Promise}
  */
 JitsiConference.prototype.unlock = function () {
-  return this.lock(undefined);
+  return this.lock();
 };
 
 /**
@@ -10482,8 +10482,7 @@ module.exports = TraceablePeerConnection;
 }).call(this,"/modules/xmpp/TraceablePeerConnection.js")
 },{"../../service/xmpp/XMPPEvents":87,"../RTC/RTC":16,"../RTC/RTCBrowserType.js":17,"./LocalSSRCReplacement":29,"jitsi-meet-logger":48,"sdp-interop":66,"sdp-simulcast":69,"sdp-transform":76}],34:[function(require,module,exports){
 (function (__filename){
-/* global $, $iq, APP, config, messageHandler,
- roomName, sessionTerminated, Strophe, Util */
+/* global $, $iq, Promise, Strophe */
 
 var logger = require("jitsi-meet-logger").getLogger(__filename);
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
@@ -10836,6 +10835,22 @@ Moderator.prototype.allocateConferenceFocus =  function (callback) {
                 }, waitMs);
         }
     );
+};
+
+Moderator.prototype.authenticate = function () {
+    var self = this;
+    return new Promise(function (resolve, reject) {
+        self.connection.sendIQ(
+            self.createConferenceIq(),
+            function (result) {
+                self.parseSessionId(result);
+                resolve();
+            }, function (error) {
+                var code = $(error).find('>error').attr('code');
+                reject(error, code);
+            }
+        );
+    });
 };
 
 Moderator.prototype.getLoginUrl =  function (urlCallback, failureCallback) {
