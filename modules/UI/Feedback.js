@@ -1,11 +1,10 @@
-/* global $, config, interfaceConfig */
+/* global $, APP, config, interfaceConfig */
 
 /*
  * Created by Yana Stamcheva on 2/10/15.
  */
 var messageHandler = require("./util/MessageHandler");
 var callStats = require("../statistics/CallStats");
-var APP = require("../../app");
 
 /**
  * Constructs the html for the overall feedback window.

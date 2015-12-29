@@ -1,7 +1,6 @@
 /* global $, require, config, interfaceConfig */
 var i18n = require("i18next-client");
 var languages = require("../../service/translation/languages");
-var Settings = require("../settings/Settings");
 var DEFAULT_LANG = languages.EN;
 
 i18n.addPostProcessor("resolveAppName", function(value, key, options) {
@@ -68,7 +67,7 @@ function initCompleted(t) {
     $("[data-i18n]").i18n();
 }
 
-function checkForParameter() {
+function getLangFromQuery() {
     var query = window.location.search.substring(1);
     var vars = query.split("&");
     for (var i=0;i<vars.length;i++) {
@@ -82,27 +81,11 @@ function checkForParameter() {
 }
 
 module.exports = {
-    init: function (lang) {
-        var options = defaultOptions;
+    init: function (settingsLang) {
+        let options = defaultOptions;
 
-
-        if(!lang)
-        {
-            lang = checkForParameter();
-            if(!lang)
-            {
-                var settings = Settings.getSettings();
-                if(settings)
-                    lang = settings.language;
-
-                if(!lang && config.defaultLanguage)
-                {
-                    lang = config.defaultLanguage;
-                }
-            }
-        }
-
-        if(lang) {
+        let lang = getLangFromQuery() || settingsLang || config.defaultLanguage;
+        if (lang) {
             options.lng = lang;
         }
 
@@ -124,8 +107,7 @@ module.exports = {
     },
     generateTranslationHTML: function (key, options) {
         var str = "<span data-i18n=\"" + key + "\"";
-        if(options)
-        {
+        if (options) {
             str += " data-i18n-options=\"" + JSON.stringify(options) + "\"";
         }
         str += ">";

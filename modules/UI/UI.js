@@ -16,16 +16,15 @@ import EtherpadManager from './etherpad/Etherpad';
 
 import VideoLayout from "./videolayout/VideoLayout";
 import SettingsMenu from "./side_pannels/settings/SettingsMenu";
+import Settings from "./../settings/Settings";
 
 var EventEmitter = require("events");
-var Settings = require("./../settings/Settings");
 UI.messageHandler = require("./util/MessageHandler");
 var messageHandler = UI.messageHandler;
 var JitsiPopover = require("./util/JitsiPopover");
 var CQEvents = require("../../service/connectionquality/CQEvents");
 var DesktopSharingEventTypes
     = require("../../service/desktopsharing/DesktopSharingEventTypes");
-var StatisticsEvents = require("../../service/statistics/Events");
 var Feedback = require("./Feedback");
 
 var eventEmitter = new EventEmitter();
@@ -611,8 +610,8 @@ UI.updateLocalStats = function (percent, stats) {
     VideoLayout.updateLocalConnectionStats(percent, stats);
 };
 
-UI.updateRemoteStats = function (jid, percent, stats) {
-    VideoLayout.updateConnectionStats(jid, percent, stats);
+UI.updateRemoteStats = function (id, percent, stats) {
+    VideoLayout.updateConnectionStats(id, percent, stats);
 };
 
 UI.markVideoInterrupted = function (interrupted) {

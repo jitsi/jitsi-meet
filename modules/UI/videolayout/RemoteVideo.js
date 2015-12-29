@@ -296,6 +296,12 @@ RemoteVideo.prototype.showPeerContainer = function (state) {
 
 };
 
+RemoteVideo.prototype.updateResolution = function (resolution) {
+    if (this.connectionIndicator) {
+        this.connectionIndicator.updateResolution(resolution);
+    }
+};
+
 RemoteVideo.prototype.removeConnectionIndicator = function () {
     if (this.connectionIndicator)
         this.connectionIndicator.remove();

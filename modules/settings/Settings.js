@@ -1,4 +1,4 @@
-var UsernameGenerator = require('../util/UsernameGenerator');
+import {generateUsername} from '../util/UsernameGenerator';
 
 var email = '';
 var displayName = '';
@@ -32,7 +32,7 @@ if (supportsLocalStorage()) {
 
     if (!window.localStorage.callStatsUserName) {
         window.localStorage.callStatsUserName
-            = UsernameGenerator.generateUsername();
+            = generateUsername();
         console.log('generated callstats uid',
             window.localStorage.callStatsUserName);
 
@@ -45,10 +45,10 @@ if (supportsLocalStorage()) {
 } else {
     console.log("local storage is not supported");
     userId = generateUniqueId();
-    callStatsUserName = UsernameGenerator.generateUsername();
+    callStatsUserName = generateUsername();
 }
 
-var Settings = {
+export default {
 
     /**
      * Sets the local user display name and saves it to local storage
@@ -99,10 +99,11 @@ var Settings = {
             language: language
         };
     },
+    getLanguage () {
+        return language;
+    },
     setLanguage: function (lang) {
         language = lang;
         window.localStorage.language = lang;
     }
 };
-
-module.exports = Settings;

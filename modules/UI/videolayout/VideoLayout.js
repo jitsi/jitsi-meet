@@ -733,23 +733,25 @@ var VideoLayout = {
      * @param object
      */
     updateLocalConnectionStats (percent, object) {
-        var resolution = null;
+        let resolutions = {};
         if (object.resolution !== null) {
-            resolution = object.resolution;
-            object.resolution = resolution[APP.xmpp.myJid()];
-            delete resolution[APP.xmpp.myJid()];
+            resolutions = object.resolution;
+            object.resolution = resolutions[APP.conference.localId];
         }
         localVideoThumbnail.updateStatsIndicator(percent, object);
-        for (var jid in resolution) {
-            if (resolution[jid] === null)
-                continue;
-            var resourceJid = Strophe.getResourceFromJid(jid);
-            if (remoteVideos[resourceJid] &&
-                remoteVideos[resourceJid].connectionIndicator) {
-                remoteVideos[resourceJid].connectionIndicator.
-                    updateResolution(resolution[jid]);
+
+        Object.keys(resolutions).forEach(function (id) {
+            if (APP.conference.isLocalId(id)) {
+                return;
             }
-        }
+
+            let resolution = resolutions[id];
+            let remoteVideo = remoteVideos[id];
+
+            if (resolution && remoteVideo) {
+                remoteVideo.updateResolution(resolution);
+            }
+        });
     },
 
     /**

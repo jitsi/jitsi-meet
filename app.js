@@ -18,6 +18,10 @@ import RoomnameGenerator from './modules/util/RoomnameGenerator';
 import CQEvents from './service/connectionquality/CQEvents';
 import UIEvents from './service/UI/UIEvents';
 
+import UI from "./modules/UI/UI";
+import statistics from "./modules/statistics/statistics";
+import settings from "./modules/settings/Settings";
+
 import {openConnection} from './modules/connection';
 import AuthHandler from './modules/AuthHandler';
 
@@ -80,6 +84,10 @@ function buildRoomName () {
 
 
 const APP = {
+    UI,
+    statistics,
+    settings,
+
     init () {
         let roomName = buildRoomName();
         this.conference = {
@@ -94,29 +102,28 @@ const APP = {
             },
             muteAudio (mute) {
                 APP.UI.eventEmitter.emit(UIEvents.AUDIO_MUTED, mute);
+                APP.statistics.onAudioMute(mute);
             },
             toggleAudioMuted () {
                 this.muteAudio(!this.audioMuted);
             },
             muteVideo (mute) {
                 APP.UI.eventEmitter.emit(UIEvents.VIDEO_MUTED, mute);
+                APP.statistics.onVideoMute(mute);
             },
             toggleVideoMuted () {
                 this.muteVideo(!this.videoMuted);
             }
         };
 
-        this.UI = require("./modules/UI/UI");
         this.API = require("./modules/API/API");
         this.connectionquality =
             require("./modules/connectionquality/connectionquality");
-        this.statistics = require("./modules/statistics/statistics");
         this.desktopsharing =
             require("./modules/desktopsharing/desktopsharing");
         this.keyboardshortcut =
             require("./modules/keyboardshortcut/keyboardshortcut");
         this.translation = require("./modules/translation/translation");
-        this.settings = require("./modules/settings/Settings");
         this.configFetch = require("./modules/config/HttpConfigFetch");
     }
 };
@@ -126,6 +133,7 @@ function initConference(localTracks, connection) {
         openSctp: config.openSctp,
         disableAudioLevels: config.disableAudioLevels
     });
+    APP.conference._room = room; // FIXME do not use this
 
     const addTrack = (track) => {
         room.addTrack(track);
@@ -464,6 +472,8 @@ function initConference(localTracks, connection) {
                     window.location.pathname = "/";
                 }, 3000);
             }
+        }, function (err) {
+            console.error(err);
         });
     });
 
@@ -598,6 +608,7 @@ function createLocalTracks () {
         devices: ['audio', 'video']
     }).catch(function (err) {
         console.error('failed to create local tracks', err);
+        APP.statistics.onGetUserMediaFailed(err);
         return [];
     });
 }
@@ -688,7 +699,7 @@ $(document).ready(function () {
     URLProcessor.setConfigParametersFromUrl();
     APP.init();
 
-    APP.translation.init();
+    APP.translation.init(settings.getLanguage());
 
     if (APP.API.isEnabled()) {
         APP.API.init();
