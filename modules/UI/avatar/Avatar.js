@@ -1,6 +1,4 @@
 /* global Strophe, APP, MD5, config */
-var Settings = require("../../settings/Settings");
-
 var users = {};
 
 var Avatar = {
