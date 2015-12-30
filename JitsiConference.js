@@ -330,7 +330,7 @@ JitsiConference.prototype.lock = function (password) {
 
   var conference = this;
   return new Promise(function (resolve, reject) {
-    conference.xmpp.lockRoom(password, function () {
+    conference.room.lockRoom(password || "", function () {
       resolve();
     }, function (err) {
       reject(err);
@@ -345,7 +345,7 @@ JitsiConference.prototype.lock = function (password) {
  * @returns {Promise}
  */
 JitsiConference.prototype.unlock = function () {
-  return this.lock(undefined);
+  return this.lock();
 };
 
 /**
@@ -401,7 +401,7 @@ JitsiConference.prototype.kickParticipant = function (id) {
 
 JitsiConference.prototype.onMemberJoined = function (jid, email, nick) {
     var id = Strophe.getResourceFromJid(jid);
-    if (id === 'focus') {
+    if (id === 'focus' || this.myUserId() === id) {
        return;
     }
     var participant = new JitsiParticipant(jid, this, nick);
