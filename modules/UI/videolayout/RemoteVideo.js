@@ -34,7 +34,8 @@ RemoteVideo.prototype.addRemoteVideoContainer = function() {
     if (APP.conference.isModerator) {
         this.addRemoteVideoMenu();
     }
-    AudioLevels.updateAudioLevelCanvas(this.id, this.VideoLayout);
+    let {thumbWidth, thumbHeight} = this.VideoLayout.calculateThumbnailSize();
+    AudioLevels.updateAudioLevelCanvas(this.id, thumbWidth, thumbHeight);
 
     return this.container;
 };

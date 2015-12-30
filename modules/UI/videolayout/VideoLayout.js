@@ -34,6 +34,8 @@ var eventEmitter = null;
  */
 var focusedVideoResourceJid = null;
 
+const thumbAspectRatio = 16.0 / 9.0;
+
 /**
  * On contact list item clicked.
  */
@@ -153,7 +155,8 @@ var VideoLayout = {
         let localId = APP.conference.localId;
         this.onVideoTypeChanged(localId, stream.getType());
 
-        AudioLevels.updateAudioLevelCanvas(null, VideoLayout);
+        let {thumbWidth, thumbHeight} = this.calculateThumbnailSize();
+        AudioLevels.updateAudioLevelCanvas(null, thumbWidth, thumbHeight);
 
         localVideoThumbnail.changeVideo(stream);
 
@@ -215,9 +218,11 @@ var VideoLayout = {
     electLastVisibleVideo () {
         // pick the last visible video in the row
         // if nobody else is left, this picks the local video
-        let pick = $('#remoteVideos>span[id!="mixedstream"]:visible:last');
-        if (pick.length) {
-            let id = getPeerContainerResourceId(pick[0]);
+        let thumbs = BottomToolbar.getThumbs(true).filter('id!="mixedstream"');
+
+        let lastVisible = thumbs.filter(':visible:last');
+        if (lastVisible.length) {
+            let id = getPeerContainerResourceId(lastVisible[0]);
             if (remoteVideos[id]) {
                 console.info("electLastVisibleVideo: " + id);
                 return id;
@@ -227,9 +232,9 @@ var VideoLayout = {
         }
 
         console.info("Last visible video no longer exists");
-        pick = $('#remoteVideos>span[id!="mixedstream"]');
-        if (pick.length) {
-            let id = getPeerContainerResourceId(pick[0]);
+        thumbs = BottomToolbar.getThumbs();
+        if (thumbs.length) {
+            let id = getPeerContainerResourceId(thumbs[0]);
             if (remoteVideos[id]) {
                 console.info("electLastVisibleVideo: " + id);
                 return id;
@@ -332,7 +337,7 @@ var VideoLayout = {
 
         // In case this is not currently in the last n we don't show it.
         if (localLastNCount && localLastNCount > 0 &&
-            $('#remoteVideos>span').length >= localLastNCount + 2) {
+            BottomToolbar.getThumbs().length >= localLastNCount + 2) {
             remoteVideo.showPeerContainer('hide');
         } else {
             VideoLayout.resizeThumbnails();
@@ -419,67 +424,53 @@ var VideoLayout = {
      * Resizes thumbnails.
      */
     resizeThumbnails (animate = false) {
-        let videoSpaceWidth = $('#remoteVideos').width();
+        let {thumbWidth, thumbHeight} = this.calculateThumbnailSize();
 
-        let [width, height] = this.calculateThumbnailSize(videoSpaceWidth);
+        $('.userAvatar').css('left', (thumbWidth - thumbHeight) / 2);
 
-        $('.userAvatar').css('left', (width - height) / 2);
-
-        $('#remoteVideos').animate({
-            // adds 2 px because of small video 1px border
-            height: height + 2
-        }, {
-            queue: false,
-            duration: animate ? 500 : 0
-        });
-
-        $('#remoteVideos>span').animate({
-            height, width
-        }, {
-            queue: false,
-            duration: animate ? 500 : 0,
-            complete: function () {
-                BottomToolbar.onRemoteVideoResized(width, height);
-                AudioLevels.onRemoteVideoResized(width, height);
-            }
+        BottomToolbar.resizeThumbnails(thumbWidth, thumbHeight, animate).then(function () {
+            BottomToolbar.resizeToolbar(thumbWidth, thumbHeight);
+            AudioLevels.updateCanvasSize(thumbWidth, thumbHeight);
         });
     },
 
     /**
      * Calculates the thumbnail size.
      *
-     * @param videoSpaceWidth the width of the video space
      */
-    calculateThumbnailSize (videoSpaceWidth) {
+    calculateThumbnailSize () {
+        let videoSpaceWidth = BottomToolbar.getFilmStripWidth();
         // Calculate the available height, which is the inner window height
         // minus 39px for the header minus 2px for the delimiter lines on the
         // top and bottom of the large video, minus the 36px space inside the
         // remoteVideos container used for highlighting shadow.
-       var availableHeight = 100;
+        let availableHeight = 100;
 
-        var numvids = $('#remoteVideos>span:visible').length;
+        let numvids = BottomToolbar.getThumbs().length;
         if (localLastNCount && localLastNCount > 0) {
             numvids = Math.min(localLastNCount + 1, numvids);
         }
 
-       // Remove the 3px borders arround videos and border around the remote
-       // videos area and the 4 pixels between the local video and the others
-       //TODO: Find out where the 4 pixels come from and remove them
-       var availableWinWidth = videoSpaceWidth - 2 * 3 * numvids - 70 - 4;
+        // Remove the 3px borders arround videos and border around the remote
+        // videos area and the 4 pixels between the local video and the others
+        //TODO: Find out where the 4 pixels come from and remove them
+        let availableWinWidth = videoSpaceWidth - 2 * 3 * numvids - 70 - 4;
 
-       var availableWidth = availableWinWidth / numvids;
-       var aspectRatio = 16.0 / 9.0;
-       var maxHeight = Math.min(160, availableHeight);
-       availableHeight
-           = Math.min(  maxHeight,
-                        availableWidth / aspectRatio,
-                        window.innerHeight - 18);
+        let availableWidth = availableWinWidth / numvids;
+        let maxHeight = Math.min(160, availableHeight);
+        availableHeight
+            = Math.min(  maxHeight,
+                         availableWidth / thumbAspectRatio,
+                         window.innerHeight - 18);
 
-       if (availableHeight < availableWidth / aspectRatio) {
-           availableWidth = Math.floor(availableHeight * aspectRatio);
-       }
+        if (availableHeight < availableWidth / thumbAspectRatio) {
+            availableWidth = Math.floor(availableHeight * thumbAspectRatio);
+        }
 
-       return [availableWidth, availableHeight];
+        return {
+            thumbWidth: availableWidth,
+            thumbHeight: availableHeight
+        };
    },
 
     /**
@@ -623,7 +614,7 @@ var VideoLayout = {
         var updateLargeVideo = false;
 
         // Handle LastN/local LastN changes.
-        $('#remoteVideos>span').each(function( index, element ) {
+        BottomToolbar.getThumbs().each(function( index, element ) {
             var resourceJid = getPeerContainerResourceId(element);
 
             // We do not want to process any logic for our own(local) video

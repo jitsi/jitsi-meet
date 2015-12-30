@@ -10,7 +10,12 @@ const defaultBottomToolbarButtons = {
 };
 
 const BottomToolbar = {
-    init (emitter) {
+    init () {
+        this.filmStrip = $('#remoteVideos');
+        this.toolbar = $('#bottomToolbar');
+    },
+
+    setupListeners (emitter) {
         UIUtil.hideDisabledButtons(defaultBottomToolbarButtons);
 
         const buttonHandlers = {
@@ -34,14 +39,69 @@ const BottomToolbar = {
     },
 
     toggleFilmStrip () {
-        $("#remoteVideos").toggleClass("hidden");
+        this.filmStrip.toggleClass("hidden");
     },
 
-    onRemoteVideoResized (width, height) {
-        let toolbar = $('#bottomToolbar');
-        let bottom = (height - toolbar.outerHeight())/2 + 18;
+    isFilmStripVisible () {
+        return !this.filmStrip.hasClass('hidden');
+    },
 
-        toolbar.css({bottom});
+    setupFilmStripOnly () {
+        this.filmStrip.css({
+            padding: "0px 0px 18px 0px",
+            right: 0
+        });
+    },
+
+    getFilmStripHeight () {
+        if (this.isFilmStripVisible()) {
+            return this.filmStrip.outerHeight();
+        } else {
+            return 0;
+        }
+    },
+
+    getFilmStripWidth () {
+        return this.filmStrip.width();
+    },
+
+    resizeThumbnails (thumbWidth, thumbHeight, animate = false) {
+        return new Promise(resolve => {
+            this.filmStrip.animate({
+                // adds 2 px because of small video 1px border
+                height: thumbHeight + 2
+            }, {
+                queue: false,
+                duration: animate ? 500 : 0
+            });
+
+            this.getThumbs().animate({
+                height: thumbHeight,
+                width: thumbWidth
+            }, {
+                queue: false,
+                duration: animate ? 500 : 0,
+                complete:  resolve
+            });
+
+            if (!animate) {
+                resolve();
+            }
+        });
+    },
+
+    resizeToolbar (thumbWidth, thumbHeight) {
+        let bottom = (thumbHeight - this.toolbar.outerHeight())/2 + 18;
+        this.toolbar.css({bottom});
+    },
+
+    getThumbs (visible = false) {
+        let selector = 'span';
+        if (visible) {
+            selector += ':visible';
+        }
+
+        return this.filmStrip.children(selector);
     }
 };
 

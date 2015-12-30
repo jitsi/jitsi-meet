@@ -88,7 +88,7 @@ function setupChat() {
 function setupToolbars() {
     Toolbar.init(eventEmitter);
     Toolbar.setupButtonsFromConfig();
-    BottomToolbar.init(eventEmitter);
+    BottomToolbar.setupListeners(eventEmitter);
 }
 
 /**
@@ -246,6 +246,8 @@ UI.start = function () {
 
     registerListeners();
 
+    BottomToolbar.init();
+
     VideoLayout.init(eventEmitter);
     if (!interfaceConfig.filmStripOnly) {
         VideoLayout.initLargeVideo(PanelToggler.isVisible());
@@ -277,8 +279,7 @@ UI.start = function () {
         $("#header").css("display", "none");
         $("#bottomToolbar").css("display", "none");
         $("#downloadlog").css("display", "none");
-        $("#remoteVideos").css("padding", "0px 0px 18px 0px");
-        $("#remoteVideos").css("right", "0px");
+        BottomToolbar.setupFilmStripOnly();
         messageHandler.disableNotifications();
         $('body').popover("disable");
         JitsiPopover.enabled = false;

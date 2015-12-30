@@ -4,6 +4,7 @@ import VideoLayout from "../videolayout/VideoLayout";
 import LargeContainer from '../videolayout/LargeContainer';
 import UIUtil from "../util/UIUtil";
 import SidePanelToggler from "../side_pannels/SidePanelToggler";
+import BottomToolbar from '../toolbars/BottomToolbar';
 
 const options = $.param({
     showControns: true,
@@ -88,9 +89,7 @@ class Etherpad extends LargeContainer {
     }
 
     resize (containerWidth, containerHeight, animate) {
-        let remoteVideos = $('#remoteVideos');
-
-        let height = containerHeight - remoteVideos.outerHeight();
+        let height = containerHeight - BottomToolbar.getFilmStripHeight();
         let width = containerWidth;
 
         $(this.iframe).width(width).height(height);

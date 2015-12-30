@@ -4,6 +4,7 @@
 import UIUtil from "../util/UIUtil";
 import UIEvents from "../../../service/UI/UIEvents";
 import LargeContainer from './LargeContainer';
+import BottomToolbar from '../toolbars/BottomToolbar';
 
 const RTCBrowserType = require("../../RTC/RTCBrowserType");
 
@@ -34,10 +35,7 @@ function getDesktopVideoSize(videoWidth,
     let availableWidth = Math.max(videoWidth, videoSpaceWidth);
     let availableHeight = Math.max(videoHeight, videoSpaceHeight);
 
-    let filmstrip = $("#remoteVideos");
-
-    if (!filmstrip.hasClass("hidden"))
-        videoSpaceHeight -= filmstrip.outerHeight();
+    videoSpaceHeight -= BottomToolbar.getFilmStripHeight();
 
     if (availableWidth / aspectRatio >= videoSpaceHeight) {
         availableHeight = videoSpaceHeight;

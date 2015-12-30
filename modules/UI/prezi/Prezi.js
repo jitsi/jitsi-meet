@@ -9,6 +9,7 @@ import UIEvents from '../../../service/UI/UIEvents';
 import messageHandler from '../util/MessageHandler';
 import ToolbarToggler from "../toolbars/ToolbarToggler";
 import SidePanelToggler from "../side_pannels/SidePanelToggler";
+import BottomToolbar from '../toolbars/BottomToolbar';
 
 const defaultPreziLink = "http://prezi.com/wz7vhjycl7e6/my-prezi";
 const alphanumRegex = /^[a-z0-9-_\/&\?=;]+$/i;
@@ -244,8 +245,7 @@ class PreziContainer extends LargeContainer {
     }
 
     resize (containerWidth, containerHeight) {
-        let remoteVideos = $('#remoteVideos');
-        let height = containerHeight - remoteVideos.outerHeight();
+        let height = containerHeight - BottomToolbar.getFilmStripHeight();
 
         let width = containerWidth;
 
