@@ -315,7 +315,7 @@ UI.start = function () {
             "newestOnTop": false
         };
 
-        SettingsMenu.init();
+        SettingsMenu.init(eventEmitter);
     }
 
 };
@@ -349,7 +349,7 @@ UI.setSubject = function (subject) {
 };
 
 UI.initEtherpad = function (name) {
-    if (etherpadManager) {
+    if (etherpadManager || !config.etherpad_base || !name) {
         return;
     }
     console.log('Etherpad is enabled');
