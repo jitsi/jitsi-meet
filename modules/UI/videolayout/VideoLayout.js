@@ -12,7 +12,6 @@ import LargeVideoManager, {VideoContainerType} from "./LargeVideo";
 import {PreziContainerType} from '../prezi/Prezi';
 import LocalVideo from "./LocalVideo";
 
-var MediaStreamType = require("../../../service/RTC/MediaStreamTypes");
 var RTCBrowserType = require('../../RTC/RTCBrowserType');
 
 var remoteVideos = {};
@@ -674,7 +673,7 @@ var VideoLayout = {
 
                     var jid = APP.xmpp.findJidFromResource(resourceJid);
                     var mediaStream =
-                        APP.RTC.remoteStreams[jid][MediaStreamType.VIDEO_TYPE];
+                        APP.RTC.remoteStreams[jid]['video'];
                     var sel = remoteVideo.selectVideoElement();
 
                     APP.RTC.attachMediaStream(sel, mediaStream.stream);
