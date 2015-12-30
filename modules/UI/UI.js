@@ -11,6 +11,7 @@ import Avatar from "./avatar/Avatar";
 import PanelToggler from "./side_pannels/SidePanelToggler";
 import UIUtil from "./util/UIUtil";
 import UIEvents from "../../service/UI/UIEvents";
+import CQEvents from '../../service/connectionquality/CQEvents';
 import PreziManager from './prezi/Prezi';
 import EtherpadManager from './etherpad/Etherpad';
 
@@ -22,9 +23,6 @@ var EventEmitter = require("events");
 UI.messageHandler = require("./util/MessageHandler");
 var messageHandler = UI.messageHandler;
 var JitsiPopover = require("./util/JitsiPopover");
-var CQEvents = require("../../service/connectionquality/CQEvents");
-var DesktopSharingEventTypes
-    = require("../../service/desktopsharing/DesktopSharingEventTypes");
 var Feedback = require("./Feedback");
 
 var eventEmitter = new EventEmitter();
@@ -599,8 +597,8 @@ UI.setAudioLevel = function (id, lvl) {
     VideoLayout.setAudioLevel(id, lvl);
 };
 
-UI.updateDesktopSharingButtons = function () {
-    Toolbar.changeDesktopSharingButtonState();
+UI.updateDesktopSharingButtons = function (isSharingScreen) {
+    Toolbar.changeDesktopSharingButtonState(isSharingScreen);
 };
 
 UI.hideStats = function () {

@@ -17,6 +17,7 @@ import URLProcessor from "./modules/config/URLProcessor";
 import RoomnameGenerator from './modules/util/RoomnameGenerator';
 import CQEvents from './service/connectionquality/CQEvents';
 import UIEvents from './service/UI/UIEvents';
+import DSEvents from './service/desktopsharing/DesktopSharingEventTypes';
 
 import UI from "./modules/UI/UI";
 import statistics from "./modules/statistics/statistics";
@@ -26,9 +27,6 @@ import {openConnection} from './modules/connection';
 import AuthHandler from './modules/AuthHandler';
 
 import createRoomLocker from './modules/RoomLocker';
-
-const DesktopSharingEventTypes =
-    require("./service/desktopsharing/DesktopSharingEventTypes");
 
 const ConnectionEvents = JitsiMeetJS.events.connection;
 const ConnectionErrors = JitsiMeetJS.errors.connection;
@@ -511,8 +509,14 @@ function initConference(localTracks, connection) {
         APP.UI.updateDTMFSupport(isDTMFSupported);
     });
 
+    APP.UI.addListener(UIEvents.TOGGLE_SCREENSHARING, function () {
+        APP.desktopsharing.toggleScreenSharing();
+    });
+    APP.UI.addListener(DSEvents.SWITCHING_DONE, function (isSharingScreen) {
+        APP.UI.updateDesktopSharingButtons(isSharingScreen);
+    });
     APP.desktopsharing.addListener(
-        DesktopSharingEventTypes.NEW_STREAM_CREATED,
+        DSEvents.NEW_STREAM_CREATED,
         (track, callback) => {
             const localCallback = (newTrack) => {
                 if (newTrack.isLocal() && newTrack === localVideo) {

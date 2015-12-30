@@ -1,7 +1,6 @@
 /* global APP, JitsiMeetJS, config */
 var EventEmitter = require("events");
-var DesktopSharingEventTypes
-    = require("../../service/desktopsharing/DesktopSharingEventTypes");
+import DSEvents from '../../service/desktopsharing/DesktopSharingEventTypes';
 
 const TrackEvents = JitsiMeetJS.events.track;
 
@@ -27,14 +26,11 @@ var eventEmitter = new EventEmitter();
 
 function streamSwitchDone() {
     switchInProgress = false;
-    eventEmitter.emit(
-        DesktopSharingEventTypes.SWITCHING_DONE,
-        isUsingScreenStream);
+    eventEmitter.emit(DSEvents.SWITCHING_DONE, isUsingScreenStream);
 }
 
 function newStreamCreated(track) {
-    eventEmitter.emit(DesktopSharingEventTypes.NEW_STREAM_CREATED,
-        track, streamSwitchDone);
+    eventEmitter.emit(DSEvents.NEW_STREAM_CREATED, track, streamSwitchDone);
 }
 
 function getVideoStreamFailed() {

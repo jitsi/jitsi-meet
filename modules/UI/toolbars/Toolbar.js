@@ -136,7 +136,7 @@ const buttonHandlers = {
         } else {
             AnalyticsAdapter.sendEvent('toolbar.screen.enabled');
         }
-        APP.desktopsharing.toggleScreenSharing();
+        emitter.emit(UIEvents.TOGGLE_SCREENSHARING);
     },
     "toolbar_button_fullScreen": function() {
         AnalyticsAdapter.sendEvent('toolbar.fullscreen.enabled');
@@ -309,9 +309,8 @@ const Toolbar = {
     // checks whether desktop sharing is enabled and whether
     // we have params to start automatically sharing
     checkAutoEnableDesktopSharing () {
-        if (UIUtil.isButtonEnabled('desktop')
-            && config.autoEnableDesktopSharing) {
-            APP.desktopsharing.toggleScreenSharing();
+        if (UIUtil.isButtonEnabled('desktop') && config.autoEnableDesktopSharing) {
+            emitter.emit(UIEvents.TOGGLE_SCREENSHARING);
         }
     },
 
