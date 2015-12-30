@@ -1,6 +1,8 @@
 node_modules
 libs
 lib-jitsi-meet.js
+lib-jitsi-meet.min.js
+lib-jitsi-meet.js.map
 doc
 
 

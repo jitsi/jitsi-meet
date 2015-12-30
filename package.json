@@ -29,7 +29,9 @@
   "devDependencies": {
     "browserify": "11.1.x",
     "jshint": "^2.8.0",
-    "precommit-hook": "^3.0.0"
+    "precommit-hook": "^3.0.0",
+    "exorcist": "*",
+    "uglify-js": "2.4.24"
   },
   "scripts": {
     "lint": "./node_modules/.bin/jshint .",
