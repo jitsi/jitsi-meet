@@ -150,6 +150,8 @@ This objects represents the server connection. You can create new ```JitsiConnec
         2. resolution - the prefered resolution for the local video.
         3. openSctp - boolean property. Enables/disables datachannel support. **NOTE: we recommend to set that option to true**
         4. disableAudioLevels - boolean property. Enables/disables audio levels.
+        5. recordingType - the type of recording to be used
+        6. jirecon
 
 5. addEventListener(event, listener) - Subscribes the passed listener to the event.
     - event - one of the events from ```JitsiMeetJS.events.connection``` object.

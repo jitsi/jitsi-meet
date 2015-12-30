@@ -284,8 +284,9 @@ ChatRoom.prototype.onPresence = function (pres) {
         if (member.isFocus) {
             this.focusMucJid = from;
             if(!this.recording) {
-                this.recording = new Recorder(this.eventEmitter, this.connection,
-                    this.focusMucJid);
+                this.recording = new Recorder(this.options.recordingType,
+                    this.eventEmitter, this.connection, this.focusMucJid,
+                    this.options.jirecon, this.roomjid);
                 if(this.lastJibri)
                     this.recording.handleJibriPresence(this.lastJibri);
             }
@@ -698,9 +699,9 @@ ChatRoom.prototype.getRecordingURL = function () {
  * Starts/stops the recording
  * @param token token for authentication
  */
-ChatRoom.prototype.toggleRecording = function (token, followEntity) {
+ChatRoom.prototype.toggleRecording = function (options) {
     if(this.recording)
-        return this.recording.toggleRecording(token, followEntity);
+        return this.recording.toggleRecording(options);
 
     return new Promise(function(resolve, reject){
         reject(new Error("The conference is not created yet!"))});

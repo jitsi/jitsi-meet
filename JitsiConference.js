@@ -568,11 +568,10 @@ JitsiConference.prototype.getRecordingURL = function () {
 
 /**
  * Starts/stops the recording
- * @param token a token for authentication.
  */
-JitsiConference.prototype.toggleRecording = function (token, followEntity) {
+JitsiConference.prototype.toggleRecording = function (options) {
     if(this.room)
-        return this.room.toggleRecording(token, followEntity);
+        return this.room.toggleRecording(options);
     return new Promise(function(resolve, reject){
         reject(new Error("The conference is not created yet!"))});
 }
