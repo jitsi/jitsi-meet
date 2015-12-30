@@ -36,15 +36,12 @@ const ConnectionErrors = JitsiMeetJS.errors.connection;
 const ConferenceEvents = JitsiMeetJS.events.conference;
 const ConferenceErrors = JitsiMeetJS.errors.conference;
 
-const TrackEvents = JitsiMeetJS.events.track;
-const TrackErrors = JitsiMeetJS.errors.track;
-
 let localVideo, localAudio;
 
 const Commands = {
     CONNECTION_QUALITY: "connectionQuality",
     EMAIL: "email",
-    VIDEO_TYPE: "videoType"
+    VIDEO_TYPE: "videoType",
     ETHERPAD: "etherpad",
     PREZI: "prezi",
     STOP_PREZI: "stop-prezi"
@@ -87,6 +84,18 @@ const APP = {
     UI,
     statistics,
     settings,
+
+    createLocalTracks (...devices) {
+        return JitsiMeetJS.createLocalTracks({
+            // copy array to avoid mutations inside library
+            devices: devices.slice(0),
+            resolution: config.resolution
+        }).catch(function (err) {
+            console.error('failed to create local tracks', ...devices, err);
+            APP.statistics.onGetUserMediaFailed(err);
+            return [];
+        });
+    },
 
     init () {
         let roomName = buildRoomName();
@@ -137,8 +146,10 @@ function initConference(localTracks, connection) {
 
     const addTrack = (track) => {
         room.addTrack(track);
-        if(track.getType() === "audio")
+        if (track.isAudioTrack()) {
             return;
+        }
+
         room.removeCommand(Commands.VIDEO_TYPE);
         room.sendCommand(Commands.VIDEO_TYPE, {
             value: track.videoType,
@@ -161,40 +172,6 @@ function initConference(localTracks, connection) {
     APP.conference.listMembersIds = function () {
         return room.getParticipants().map(p => p.getId());
     };
-    /**
-     * Creates video track (desktop or camera).
-     * @param type "camera" or "video"
-     * @param endedHandler onended function
-     * @returns Promise
-     */
-    APP.conference.createVideoTrack = (type, endedHandler) => {
-        return JitsiMeetJS.createLocalTracks({
-            devices: [type], resolution: config.resolution
-        }).then((tracks) => {
-            tracks[0].on(TrackEvents.TRACK_STOPPED, endedHandler);
-            return tracks;
-        });
-    };
-
-    APP.conference.changeLocalVideo = (track, callback) => {
-        const localCallback = (newTrack) => {
-            if (newTrack.isLocal() && newTrack === localVideo) {
-                if(localVideo.isMuted() &&
-                    localVideo.videoType !== track.videoType) {
-                        localVideo.mute();
-                }
-                callback();
-                room.off(ConferenceEvents.TRACK_ADDED, localCallback);
-            }
-        };
-
-        room.on(ConferenceEvents.TRACK_ADDED, localCallback);
-
-        localVideo.stop();
-        localVideo = track;
-        addTrack(track);
-        APP.UI.addLocalStream(track);
-    };
 
     APP.conference.sipGatewayEnabled = () => {
         return room.isSIPCallingSupported();
@@ -205,7 +182,7 @@ function initConference(localTracks, connection) {
             return APP.settings.getDisplayName();
         }
 
-        var participant = room.getParticipantById(id);
+        let participant = room.getParticipantById(id);
         if (participant && participant.getDisplayName()) {
             return participant.getDisplayName();
         }
@@ -214,10 +191,10 @@ function initConference(localTracks, connection) {
     // add local streams when joined to the conference
     room.on(ConferenceEvents.CONFERENCE_JOINED, function () {
         localTracks.forEach(function (track) {
-            if(track.getType() === "audio") {
+            if(track.isAudioTrack()) {
                 localAudio = track;
             }
-            else if (track.getType() === "video") {
+            else if (track.isVideoTrack()) {
                 localVideo = track;
             }
             addTrack(track);
@@ -246,7 +223,7 @@ function initConference(localTracks, connection) {
             APP.conference.isModerator = room.isModerator();
             APP.UI.updateLocalRole(room.isModerator());
         } else {
-            var user = room.getParticipantById(id);
+            let user = room.getParticipantById(id);
             if (user) {
                 APP.UI.updateUserRole(user);
             }
@@ -401,8 +378,8 @@ function initConference(localTracks, connection) {
         });
     });
 
-    room.addCommandListener(Commands.VIDEO_TYPE, (data, from) => {
-        APP.UI.onPeerVideoTypeChanged(from, data.value);
+    room.addCommandListener(Commands.VIDEO_TYPE, ({value}, from) => {
+        APP.UI.onPeerVideoTypeChanged(from, value);
     });
 
 
@@ -416,7 +393,7 @@ function initConference(localTracks, connection) {
         });
     }
 
-    var email = APP.settings.getEmail();
+    let email = APP.settings.getEmail();
     email && sendEmail(email);
     APP.UI.addListener(UIEvents.EMAIL_CHANGED, function (email) {
         APP.settings.setEmail(email);
@@ -534,6 +511,29 @@ function initConference(localTracks, connection) {
         APP.UI.updateDTMFSupport(isDTMFSupported);
     });
 
+    APP.desktopsharing.addListener(
+        DesktopSharingEventTypes.NEW_STREAM_CREATED,
+        (track, callback) => {
+            const localCallback = (newTrack) => {
+                if (newTrack.isLocal() && newTrack === localVideo) {
+                    if(localVideo.isMuted() &&
+                       localVideo.videoType !== track.videoType) {
+                        localVideo.mute();
+                    }
+                    callback();
+                    room.off(ConferenceEvents.TRACK_ADDED, localCallback);
+                }
+            };
+
+            room.on(ConferenceEvents.TRACK_ADDED, localCallback);
+
+            localVideo.stop();
+            localVideo = track;
+            addTrack(track);
+            APP.UI.addLocalStream(track);
+        }
+    );
+
     $(window).bind('beforeunload', function () {
         room.leave();
     });
@@ -603,16 +603,6 @@ function initConference(localTracks, connection) {
     });
 }
 
-function createLocalTracks () {
-    return JitsiMeetJS.createLocalTracks({
-        devices: ['audio', 'video']
-    }).catch(function (err) {
-        console.error('failed to create local tracks', err);
-        APP.statistics.onGetUserMediaFailed(err);
-        return [];
-    });
-}
-
 function connect() {
     return openConnection({retry: true}).catch(function (err) {
         if (err === ConnectionErrors.PASSWORD_REQUIRED) {
@@ -630,7 +620,10 @@ function init() {
     JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.TRACE);
 
     JitsiMeetJS.init(config).then(function () {
-        return Promise.all([createLocalTracks(), connect()]);
+        return Promise.all([
+            APP.createLocalTracks('audio', 'video'),
+            connect()
+        ]);
     }).then(function ([tracks, connection]) {
         console.log('initialized with %s local tracks', tracks.length);
         return initConference(tracks, connection);
@@ -642,12 +635,6 @@ function init() {
             APP.settings.setLanguage(language);
         });
 
-        APP.desktopsharing.addListener(
-            DesktopSharingEventTypes.NEW_STREAM_CREATED,
-            (stream, callback) => {
-                APP.conference.changeLocalVideo(stream,
-                    callback);
-            });
         APP.desktopsharing.init(JitsiMeetJS.isDesktopSharingEnabled());
         APP.statistics.start();
         APP.connectionquality.init();

@@ -396,8 +396,8 @@ UI.removeUser = function (id, displayName) {
 //     VideoLayout.setPresenceStatus(Strophe.getResourceFromJid(jid), info.status);
 // }
 
-UI.onPeerVideoTypeChanged = (resourceJid, newVideoType) => {
-    VideoLayout.onVideoTypeChanged(resourceJid, newVideoType);
+UI.onPeerVideoTypeChanged = (id, newVideoType) => {
+    VideoLayout.onVideoTypeChanged(id, newVideoType);
 };
 
 UI.updateLocalRole = function (isModerator) {

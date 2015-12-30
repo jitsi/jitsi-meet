@@ -153,7 +153,7 @@ var VideoLayout = {
         localVideoThumbnail.createConnectionIndicator();
 
         let localId = APP.conference.localId;
-        this.onVideoTypeChanged(localId, stream.getType());
+        this.onVideoTypeChanged(localId, stream.videoType);
 
         let {thumbWidth, thumbHeight} = this.calculateThumbnailSize();
         AudioLevels.updateAudioLevelCanvas(null, thumbWidth, thumbHeight);
@@ -218,7 +218,7 @@ var VideoLayout = {
     electLastVisibleVideo () {
         // pick the last visible video in the row
         // if nobody else is left, this picks the local video
-        let thumbs = BottomToolbar.getThumbs(true).filter('id!="mixedstream"');
+        let thumbs = BottomToolbar.getThumbs(true).filter('[id!="mixedstream"]');
 
         let lastVisible = thumbs.filter(':visible:last');
         if (lastVisible.length) {
@@ -973,7 +973,8 @@ var VideoLayout = {
 
             let smallVideo = this.getSmallVideo(id);
 
-            largeVideo.updateLargeVideo(smallVideo.stream);
+            let videoType = this.getRemoteVideoType(id);
+            largeVideo.updateLargeVideo(smallVideo.stream, videoType);
 
             smallVideo.enableDominantSpeaker(true);
         } else if (currentId) {

@@ -580,6 +580,15 @@ JitsiConference.prototype.toggleRecording = function (token, followEntity) {
 }
 
 /**
+ * Returns true if the SIP calls are supported and false otherwise
+ */
+JitsiConference.prototype.isSIPCallingSupported = function () {
+    if(this.room)
+        return this.room.isSIPCallingSupported();
+    return false;
+}
+
+/**
  * Dials a number.
  * @param number the number
  */
@@ -1058,6 +1067,13 @@ var LibJitsiMeet = {
     logLevels: Logger.levels,
     init: function (options) {
         return RTC.init(options || {});
+    },
+    /**
+     * Returns whether the desktop sharing is enabled or not.
+     * @returns {boolean}
+     */
+    isDesktopSharingEnabled: function () {
+        return RTC.isDesktopSharingEnabled();
     },
     setLogLevel: function (level) {
         Logger.setLogLevel(level);
@@ -1799,6 +1815,7 @@ module.exports = JitsiRemoteTrack;
 var RTCBrowserType = require("./RTCBrowserType");
 var JitsiTrackEvents = require("../../JitsiTrackEvents");
 var EventEmitter = require("events");
+var RTC = require("./RTCUtils");
 
 /**
  * This implements 'onended' callback normally fired by WebRTC after the stream
@@ -1989,11 +2006,19 @@ JitsiTrack.prototype.isScreenSharing = function(){
  * Returns id of the track.
  * @returns {string} id of the track or null if this is fake track.
  */
-JitsiTrack.prototype.getId = function () {
+JitsiTrack.prototype._getId = function () {
     var tracks = this.stream.getTracks();
     if(!tracks || tracks.length === 0)
         return null;
     return tracks[0].id;
+};
+
+/**
+ * Returns id of the track.
+ * @returns {string} id of the track or null if this is fake track.
+ */
+JitsiTrack.prototype.getId = function () {
+    return RTC.getStreamID(this.stream);
 };
 
 /**
@@ -2246,6 +2271,14 @@ RTC.setVideoSrc = function (element, src) {
 RTC.stopMediaStream = function (mediaStream) {
     RTCUtils.stopMediaStream(mediaStream);
 };
+
+/**
+ * Returns whether the desktop sharing is enabled or not.
+ * @returns {boolean}
+ */
+RTC.isDesktopSharingEnabled = function () {
+    return RTCUtils.isDesktopSharingEnabled();
+}
 
 RTC.prototype.getVideoElementName = function () {
     return RTCBrowserType.isTemasysPluginUsed() ? 'object' : 'video';
@@ -3105,7 +3138,7 @@ var RTCUtils = {
                 var deviceGUM = {
                     "audio": GUM.bind(self, ["audio"]),
                     "video": GUM.bind(self, ["video"]),
-                    "desktop": screenObtainer.obtainStream
+                    "desktop": screenObtainer.obtainStream.bind(screenObtainer)
                 };
                 // With FF/IE we can't split the stream into audio and video because FF
                 // doesn't support media stream constructors. So, we need to get the
@@ -3211,6 +3244,13 @@ var RTCUtils = {
         if (mediaStream.stop) {
             mediaStream.stop();
         }
+    },
+    /**
+     * Returns whether the desktop sharing is enabled or not.
+     * @returns {boolean}
+     */
+    isDesktopSharingEnabled: function () {
+        return screenObtainer.isSupported();
     }
 
 };
@@ -6344,7 +6384,7 @@ ChatRoom.prototype.onPresence = function (pres) {
 
 ChatRoom.prototype.processNode = function (node, from) {
     if(this.presHandlers[node.tagName])
-        this.presHandlers[node.tagName](node, from);
+        this.presHandlers[node.tagName](node, Strophe.getResourceFromJid(from));
 };
 
 ChatRoom.prototype.sendMessage = function (body, nickname) {
@@ -6720,6 +6760,15 @@ ChatRoom.prototype.toggleRecording = function (token, followEntity) {
 
     return new Promise(function(resolve, reject){
         reject(new Error("The conference is not created yet!"))});
+}
+
+/**
+ * Returns true if the SIP calls are supported and false otherwise
+ */
+ChatRoom.prototype.isSIPCallingSupported = function () {
+    if(this.moderator)
+        return this.moderator.isSipGatewayEnabled();
+    return false;
 }
 
 /**
@@ -9088,11 +9137,11 @@ SDP.prototype.toJingle = function (elem, thecreator) {
                     var msid = null;
                     if(mline.media == "audio")
                     {
-                        msid = APP.RTC.localAudio.getId();
+                        msid = APP.RTC.localAudio._getId();
                     }
                     else
                     {
-                        msid = APP.RTC.localVideo.getId();
+                        msid = APP.RTC.localVideo._getId();
                     }
                     if(msid != null)
                     {
@@ -9487,7 +9536,6 @@ SDP.prototype.jingle2media = function (content) {
 
 
 module.exports = SDP;
-
 
 }).call(this,"/modules/xmpp/SDP.js")
 },{"./SDPUtil":32,"jitsi-meet-logger":48}],31:[function(require,module,exports){
@@ -10521,7 +10569,7 @@ function Moderator(roomName, xmpp, emitter) {
     // Sip gateway can be enabled by configuring Jigasi host in config.js or
     // it will be enabled automatically if focus detects the component through
     // service discovery.
-    this.sipGatewayEnabled =
+    this.sipGatewayEnabled = this.xmppService.options.hosts &&
         this.xmppService.options.hosts.call_control !== undefined;
 
     this.eventEmitter = emitter;

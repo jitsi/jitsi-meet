@@ -159,6 +159,7 @@ class VideoContainer extends LargeContainer {
     constructor (onPlay) {
         super();
         this.stream = null;
+        this.videoType = null;
 
         this.$avatar = $('#activeSpeaker');
         this.$wrapper = $('#largeVideoWrapper');
@@ -180,7 +181,7 @@ class VideoContainer extends LargeContainer {
 
     getVideoSize (containerWidth, containerHeight) {
         let { width, height } = this.getStreamSize();
-        if (this.stream && this.stream.isScreenSharing()) {
+        if (this.stream && this.isScreenSharing()) {
             return getDesktopVideoSize(width, height, containerWidth, containerHeight);
         } else {
             return getCameraVideoSize(width, height, containerWidth, containerHeight);
@@ -188,7 +189,7 @@ class VideoContainer extends LargeContainer {
     }
 
     getVideoPosition (width, height, containerWidth, containerHeight) {
-        if (this.stream && this.stream.isScreenSharing()) {
+        if (this.stream && this.isScreenSharing()) {
             return getDesktopVideoPosition(width, height, containerWidth, containerHeight);
         } else {
             return getCameraVideoPosition(width, height, containerWidth, containerHeight);
@@ -218,15 +219,20 @@ class VideoContainer extends LargeContainer {
         });
     }
 
-    setStream (stream) {
+    setStream (stream, videoType) {
         this.stream = stream;
+        this.videoType = videoType;
 
         stream.attach(this.$video);
 
-        let flipX = stream.isLocal() && !stream.isScreenSharing();
+        let flipX = stream.isLocal() && !this.isScreenSharing();
         this.$video.css({
             transform: flipX ? 'scaleX(-1)' : 'none'
         });
+    }
+
+    isScreenSharing () {
+        return this.videoType === 'desktop';
     }
 
     showAvatar (show) {
@@ -332,7 +338,7 @@ export default class LargeVideoManager {
         return this.videoContainer.id;
     }
 
-    updateLargeVideo (stream) {
+    updateLargeVideo (stream, videoType) {
         let id = getStreamId(stream);
 
         let container = this.getContainer(this.state);
@@ -340,7 +346,7 @@ export default class LargeVideoManager {
         container.hide().then(() => {
             console.info("hover in %s", id);
             this.state = VideoContainerType;
-            this.videoContainer.setStream(stream);
+            this.videoContainer.setStream(stream, videoType);
             this.videoContainer.show();
         });
     }
