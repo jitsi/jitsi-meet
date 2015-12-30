@@ -1,15 +1,19 @@
-function NoopAnalytics() {}
-NoopAnalytics.prototype.sendEvent = function () {};
-
-function AnalyticsAdapter() {
-  var AnalyticsImpl = window.Analytics || NoopAnalytics;
-  this.analytics = new AnalyticsImpl();
+class NoopAnalytics {
+  sendEvent () {}
 }
 
-AnalyticsAdapter.prototype.sendEvent = function (action, data) {
-  try {
-    this.analytics.sendEvent.apply(this.analytics, arguments);
-  } catch (ignored) {}
-};
+const AnalyticsImpl = window.Analytics || NoopAnalytics;
 
-module.exports = new AnalyticsAdapter();
+class AnalyticsAdapter {
+  constructor () {
+    this.analytics = new AnalyticsImpl();
+  }
+
+  sendEvent (...args) {
+    try {
+      this.analytics.sendEvent(...args);
+    } catch (ignored) {}
+  }
+}
+
+export default new AnalyticsAdapter();

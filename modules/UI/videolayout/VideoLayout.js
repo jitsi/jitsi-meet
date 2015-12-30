@@ -2,15 +2,16 @@
 /* jshint -W101 */
 
 import AudioLevels from "../audio_levels/AudioLevels";
+import BottomToolbar from "../toolbars/BottomToolbar";
 
 import UIEvents from "../../../service/UI/UIEvents";
 import UIUtil from "../util/UIUtil";
 
 import RemoteVideo from "./RemoteVideo";
-import LargeVideo from "./LargeVideo";
+import LargeVideoManager, {VideoContainerType} from "./LargeVideo";
+import {PreziContainerType} from '../prezi/Prezi';
 import LocalVideo from "./LocalVideo";
 
-var MediaStreamType = require("../../../service/RTC/MediaStreamTypes");
 var RTCBrowserType = require('../../RTC/RTCBrowserType');
 
 var remoteVideos = {};
@@ -31,6 +32,8 @@ var eventEmitter = null;
  * @type {String}
  */
 var focusedVideoResourceJid = null;
+
+const thumbAspectRatio = 16.0 / 9.0;
 
 /**
  * On contact list item clicked.
@@ -88,20 +91,29 @@ function getPeerContainerResourceId (containerElement) {
     }
 }
 
+let largeVideo;
 
 var VideoLayout = {
     init (emitter) {
         eventEmitter = emitter;
         localVideoThumbnail = new LocalVideo(VideoLayout, emitter);
-        if (interfaceConfig.filmStripOnly) {
-            LargeVideo.disable();
-        } else {
-            LargeVideo.init(VideoLayout, emitter);
-        }
-
-        VideoLayout.resizeLargeVideoContainer();
 
         emitter.addListener(UIEvents.CONTACT_CLICKED, onContactClicked);
+    },
+
+    initLargeVideo (isSideBarVisible) {
+        largeVideo = new LargeVideoManager();
+        largeVideo.updateContainerSize(isSideBarVisible);
+        AudioLevels.init();
+    },
+
+    setAudioLevel(id, lvl) {
+        if (!largeVideo) {
+            return;
+        }
+        AudioLevels.updateAudioLevel(
+            id, lvl, largeVideo.id
+        );
     },
 
     isInLastN (resource) {
@@ -140,15 +152,16 @@ var VideoLayout = {
         localVideoThumbnail.createConnectionIndicator();
 
         let localId = APP.conference.localId;
-        this.onVideoTypeChanged(localId, stream.getType());
+        this.onVideoTypeChanged(localId, stream.videoType);
 
-        AudioLevels.updateAudioLevelCanvas(null, VideoLayout);
+        let {thumbWidth, thumbHeight} = this.calculateThumbnailSize();
+        AudioLevels.updateAudioLevelCanvas(null, thumbWidth, thumbHeight);
 
         localVideoThumbnail.changeVideo(stream);
 
         /* force update if we're currently being displayed */
-        if (LargeVideo.isCurrentlyOnLarge(localId)) {
-            LargeVideo.updateLargeVideo(localId, true);
+        if (this.isCurrentlyOnLarge(localId)) {
+            this.updateLargeVideo(localId, true);
         }
     },
 
@@ -156,8 +169,8 @@ var VideoLayout = {
         let id = APP.conference.localId;
         localVideoThumbnail.joined(id);
 
-        if (!LargeVideo.id) {
-            LargeVideo.updateLargeVideo(id, true);
+        if (largeVideo && !largeVideo.id) {
+            this.updateLargeVideo(id, true);
         }
     },
 
@@ -183,7 +196,7 @@ var VideoLayout = {
      * another one instead.
      */
     updateRemovedVideo (id) {
-        if (id !== LargeVideo.getId()) {
+        if (!this.isCurrentlyOnLarge(id)) {
             return;
         }
 
@@ -198,15 +211,17 @@ var VideoLayout = {
             newId = this.electLastVisibleVideo();
         }
 
-        LargeVideo.updateLargeVideo(newId);
+        this.updateLargeVideo(newId);
     },
 
     electLastVisibleVideo () {
         // pick the last visible video in the row
         // if nobody else is left, this picks the local video
-        let pick = $('#remoteVideos>span[id!="mixedstream"]:visible:last');
-        if (pick.length) {
-            let id = getPeerContainerResourceId(pick[0]);
+        let thumbs = BottomToolbar.getThumbs(true).filter('[id!="mixedstream"]');
+
+        let lastVisible = thumbs.filter(':visible:last');
+        if (lastVisible.length) {
+            let id = getPeerContainerResourceId(lastVisible[0]);
             if (remoteVideos[id]) {
                 console.info("electLastVisibleVideo: " + id);
                 return id;
@@ -216,9 +231,9 @@ var VideoLayout = {
         }
 
         console.info("Last visible video no longer exists");
-        pick = $('#remoteVideos>span[id!="mixedstream"]');
-        if (pick.length) {
-            let id = getPeerContainerResourceId(pick[0]);
+        thumbs = BottomToolbar.getThumbs();
+        if (thumbs.length) {
+            let id = getPeerContainerResourceId(thumbs[0]);
             if (remoteVideos[id]) {
                 console.info("electLastVisibleVideo: " + id);
                 return id;
@@ -242,10 +257,6 @@ var VideoLayout = {
         remoteVideos[id].addRemoteStreamElement(stream);
     },
 
-    getLargeVideoId () {
-        return LargeVideo.getId();
-    },
-
     /**
      * Return the type of the remote video.
      * @param id the id for the remote video
@@ -253,25 +264,6 @@ var VideoLayout = {
      */
     getRemoteVideoType (id) {
         return remoteVideoTypes[id];
-    },
-
-    /**
-     * Called when large video update is finished
-     * @param currentSmallVideo small video currently displayed on large video
-     */
-    largeVideoUpdated (currentSmallVideo) {
-        // Makes sure that dominant speaker UI
-        // is enabled only on current small video
-        localVideoThumbnail.enableDominantSpeaker(localVideoThumbnail === currentSmallVideo);
-        Object.keys(remoteVideos).forEach(
-            function (resourceJid) {
-                var remoteVideo = remoteVideos[resourceJid];
-                if (remoteVideo) {
-                    remoteVideo.enableDominantSpeaker(
-                        remoteVideo === currentSmallVideo);
-                }
-            }
-        );
     },
 
     handleVideoThumbClicked (noPinnedEndpointChangedEvent,
@@ -291,7 +283,7 @@ var VideoLayout = {
             // Enable the currently set dominant speaker.
             if (currentDominantSpeaker) {
                 if(smallVideo && smallVideo.hasVideo()) {
-                    LargeVideo.updateLargeVideo(currentDominantSpeaker);
+                    this.updateLargeVideo(currentDominantSpeaker);
                 }
             }
 
@@ -314,9 +306,7 @@ var VideoLayout = {
             }
         }
 
-        LargeVideo.setState("video");
-
-        LargeVideo.updateLargeVideo(resourceJid);
+        this.updateLargeVideo(resourceJid);
 
         // Writing volume not allowed in IE
         if (!RTCBrowserType.isIExplorer()) {
@@ -346,7 +336,7 @@ var VideoLayout = {
 
         // In case this is not currently in the last n we don't show it.
         if (localLastNCount && localLastNCount > 0 &&
-            $('#remoteVideos>span').length >= localLastNCount + 2) {
+            BottomToolbar.getThumbs().length >= localLastNCount + 2) {
             remoteVideo.showPeerContainer('hide');
         } else {
             VideoLayout.resizeThumbnails();
@@ -370,11 +360,11 @@ var VideoLayout = {
         // the current dominant speaker.
         if ((!focusedVideoResourceJid &&
             !currentDominantSpeaker &&
-            !require("../prezi/Prezi").isPresentationVisible()) ||
+             !this.isLargeContainerTypeVisible(PreziContainerType)) ||
             focusedVideoResourceJid === resourceJid ||
             (resourceJid &&
                 currentDominantSpeaker === resourceJid)) {
-            LargeVideo.updateLargeVideo(resourceJid, true);
+            this.updateLargeVideo(resourceJid, true);
         }
     },
 
@@ -419,100 +409,67 @@ var VideoLayout = {
     /**
      * Resizes the large video container.
      */
-    resizeLargeVideoContainer () {
-        if(LargeVideo.isEnabled()) {
-            LargeVideo.resize();
+    resizeLargeVideoContainer (isSideBarVisible) {
+        if (largeVideo) {
+            largeVideo.updateContainerSize(isSideBarVisible);
+            largeVideo.resize(false);
         } else {
-            VideoLayout.resizeVideoSpace();
+            this.resizeVideoSpace(false, isSideBarVisible);
         }
-        VideoLayout.resizeThumbnails();
-        LargeVideo.position();
+        this.resizeThumbnails(false);
     },
 
     /**
      * Resizes thumbnails.
      */
-    resizeThumbnails (animate) {
-        var videoSpaceWidth = $('#remoteVideos').width();
+    resizeThumbnails (animate = false) {
+        let {thumbWidth, thumbHeight} = this.calculateThumbnailSize();
 
-        var thumbnailSize = VideoLayout.calculateThumbnailSize(videoSpaceWidth);
-        var width = thumbnailSize[0];
-        var height = thumbnailSize[1];
+        $('.userAvatar').css('left', (thumbWidth - thumbHeight) / 2);
 
-        $('.userAvatar').css('left', (width - height) / 2);
-
-        if(animate) {
-            $('#remoteVideos').animate({
-                    // adds 2 px because of small video 1px border
-                    height: height + 2
-                },
-                {
-                    queue: false,
-                    duration: 500
-                });
-
-            $('#remoteVideos>span').animate({
-                    height: height,
-                    width: width
-                },
-                {
-                    queue: false,
-                    duration: 500,
-                    complete: function () {
-                        $(document).trigger(
-                            "remotevideo.resized",
-                            [width,
-                                height]);
-                    }
-                });
-
-        } else {
-            // size videos so that while keeping AR and max height, we have a
-            // nice fit
-            // adds 2 px because of small video 1px border
-            $('#remoteVideos').height(height + 2);
-            $('#remoteVideos>span').width(width);
-            $('#remoteVideos>span').height(height);
-
-            $(document).trigger("remotevideo.resized", [width, height]);
-        }
+        BottomToolbar.resizeThumbnails(thumbWidth, thumbHeight, animate).then(function () {
+            BottomToolbar.resizeToolbar(thumbWidth, thumbHeight);
+            AudioLevels.updateCanvasSize(thumbWidth, thumbHeight);
+        });
     },
 
     /**
      * Calculates the thumbnail size.
      *
-     * @param videoSpaceWidth the width of the video space
      */
-    calculateThumbnailSize (videoSpaceWidth) {
+    calculateThumbnailSize () {
+        let videoSpaceWidth = BottomToolbar.getFilmStripWidth();
         // Calculate the available height, which is the inner window height
         // minus 39px for the header minus 2px for the delimiter lines on the
         // top and bottom of the large video, minus the 36px space inside the
         // remoteVideos container used for highlighting shadow.
-       var availableHeight = 100;
+        let availableHeight = 100;
 
-        var numvids = $('#remoteVideos>span:visible').length;
+        let numvids = BottomToolbar.getThumbs().length;
         if (localLastNCount && localLastNCount > 0) {
             numvids = Math.min(localLastNCount + 1, numvids);
         }
 
-       // Remove the 3px borders arround videos and border around the remote
-       // videos area and the 4 pixels between the local video and the others
-       //TODO: Find out where the 4 pixels come from and remove them
-       var availableWinWidth = videoSpaceWidth - 2 * 3 * numvids - 70 - 4;
+        // Remove the 3px borders arround videos and border around the remote
+        // videos area and the 4 pixels between the local video and the others
+        //TODO: Find out where the 4 pixels come from and remove them
+        let availableWinWidth = videoSpaceWidth - 2 * 3 * numvids - 70 - 4;
 
-       var availableWidth = availableWinWidth / numvids;
-       var aspectRatio = 16.0 / 9.0;
-       var maxHeight = Math.min(160, availableHeight);
-       availableHeight
-           = Math.min(  maxHeight,
-                        availableWidth / aspectRatio,
-                        window.innerHeight - 18);
+        let availableWidth = availableWinWidth / numvids;
+        let maxHeight = Math.min(160, availableHeight);
+        availableHeight
+            = Math.min(  maxHeight,
+                         availableWidth / thumbAspectRatio,
+                         window.innerHeight - 18);
 
-       if (availableHeight < availableWidth / aspectRatio) {
-           availableWidth = Math.floor(availableHeight * aspectRatio);
-       }
+        if (availableHeight < availableWidth / thumbAspectRatio) {
+            availableWidth = Math.floor(availableHeight * thumbAspectRatio);
+        }
 
-       return [availableWidth, availableHeight];
+        return {
+            thumbWidth: availableWidth,
+            thumbHeight: availableHeight
+        };
    },
 
     /**
@@ -604,7 +561,7 @@ var VideoLayout = {
             // Update the large video if the video source is already available,
             // otherwise wait for the "videoactive.jingle" event.
             if (videoSel[0].currentTime > 0) {
-                LargeVideo.updateLargeVideo(id);
+                this.updateLargeVideo(id);
             }
         }
     },
@@ -656,7 +613,7 @@ var VideoLayout = {
         var updateLargeVideo = false;
 
         // Handle LastN/local LastN changes.
-        $('#remoteVideos>span').each(function( index, element ) {
+        BottomToolbar.getThumbs().each(function( index, element ) {
             var resourceJid = getPeerContainerResourceId(element);
 
             // We do not want to process any logic for our own(local) video
@@ -696,7 +653,7 @@ var VideoLayout = {
                 // displayed in the large video we have to switch to another
                 // user.
                 if (!updateLargeVideo &&
-                    resourceJid === LargeVideo.getId()) {
+                    this.isCurrentlyOnLarge(resourceJid)) {
                     updateLargeVideo = true;
                 }
             }
@@ -716,7 +673,7 @@ var VideoLayout = {
 
                     var jid = APP.xmpp.findJidFromResource(resourceJid);
                     var mediaStream =
-                        APP.RTC.remoteStreams[jid][MediaStreamType.VIDEO_TYPE];
+                        APP.RTC.remoteStreams[jid]['video'];
                     var sel = remoteVideo.selectVideoElement();
 
                     APP.RTC.attachMediaStream(sel, mediaStream.stream);
@@ -754,7 +711,7 @@ var VideoLayout = {
                     continue;
 
                 // videoSrcToSsrc needs to be update for this call to succeed.
-                LargeVideo.updateLargeVideo(resource);
+                this.updateLargeVideo(resource);
                 break;
             }
         }
@@ -766,23 +723,25 @@ var VideoLayout = {
      * @param object
      */
     updateLocalConnectionStats (percent, object) {
-        var resolution = null;
+        let resolutions = {};
         if (object.resolution !== null) {
-            resolution = object.resolution;
-            object.resolution = resolution[APP.xmpp.myJid()];
-            delete resolution[APP.xmpp.myJid()];
+            resolutions = object.resolution;
+            object.resolution = resolutions[APP.conference.localId];
         }
         localVideoThumbnail.updateStatsIndicator(percent, object);
-        for (var jid in resolution) {
-            if (resolution[jid] === null)
-                continue;
-            var resourceJid = Strophe.getResourceFromJid(jid);
-            if (remoteVideos[resourceJid] &&
-                remoteVideos[resourceJid].connectionIndicator) {
-                remoteVideos[resourceJid].connectionIndicator.
-                    updateResolution(resolution[jid]);
+
+        Object.keys(resolutions).forEach(function (id) {
+            if (APP.conference.isLocalId(id)) {
+                return;
             }
-        }
+
+            let resolution = resolutions[id];
+            let remoteVideo = remoteVideos[id];
+
+            if (resolution && remoteVideo) {
+                remoteVideo.updateResolution(resolution);
+            }
+        });
     },
 
     /**
@@ -862,15 +821,9 @@ var VideoLayout = {
         }
 
         smallVideo.setVideoType(newVideoType);
-        LargeVideo.onVideoTypeChanged(id, newVideoType);
-    },
-
-    /**
-     * Updates the video size and position.
-     */
-    updateLargeVideoSize () {
-        LargeVideo.updateVideoSizeAndPosition();
-        LargeVideo.position(null, null, null, null, true);
+        if (this.isCurrentlyOnLarge(id)) {
+            this.updateLargeVideo(id, true);
+        }
     },
 
     showMore (jid) {
@@ -886,22 +839,8 @@ var VideoLayout = {
         }
     },
 
-    addPreziContainer (id) {
-        var container = RemoteVideo.createContainer(id);
-        VideoLayout.resizeThumbnails();
-        return container;
-    },
-
-    setLargeVideoVisible (isVisible) {
-        LargeVideo.setLargeVideoVisible(isVisible);
-        if(!isVisible && focusedVideoResourceJid) {
-            var smallVideo = VideoLayout.getSmallVideo(focusedVideoResourceJid);
-            if(smallVideo) {
-                smallVideo.focus(false);
-                smallVideo.showAvatar();
-            }
-            focusedVideoResourceJid = null;
-        }
+    addRemoteVideoContainer (id) {
+        return RemoteVideo.createContainer(id);
     },
 
     /**
@@ -912,8 +851,15 @@ var VideoLayout = {
      * resized.
      */
     resizeVideoArea (isSideBarVisible, callback) {
-        LargeVideo.resizeVideoAreaAnimated(isSideBarVisible, callback);
-        VideoLayout.resizeThumbnails(true);
+        let animate = true;
+
+        if (largeVideo) {
+            largeVideo.updateContainerSize(isSideBarVisible);
+            largeVideo.resize(animate);
+            this.resizeVideoSpace(animate, isSideBarVisible, callback);
+        }
+
+        VideoLayout.resizeThumbnails(animate);
     },
 
     /**
@@ -945,8 +891,7 @@ var VideoLayout = {
                     complete: completeFunction
                 });
         } else {
-            $('#videospace').width(availableWidth);
-            $('#videospace').height(availableHeight);
+            $('#videospace').width(availableWidth).height(availableHeight);
         }
 
     },
@@ -968,43 +913,106 @@ var VideoLayout = {
                 "Missed avatar update - no small video yet for " + id
             );
         }
-        LargeVideo.updateAvatar(id, thumbUrl);
-    },
-
-    createEtherpadIframe (src, onloadHandler) {
-        return LargeVideo.createEtherpadIframe(src, onloadHandler);
-    },
-
-    setLargeVideoState (state) {
-        LargeVideo.setState(state);
-    },
-
-    getLargeVideoState () {
-        return LargeVideo.getState();
-    },
-
-    setLargeVideoHover (inHandler, outHandler) {
-        LargeVideo.setHover(inHandler, outHandler);
+        if (this.isCurrentlyOnLarge(id)) {
+            largeVideo.updateAvatar(thumbUrl);
+        }
     },
 
     /**
      * Indicates that the video has been interrupted.
      */
     onVideoInterrupted () {
-        LargeVideo.enableVideoProblemFilter(true);
-        var reconnectingKey = "connection.RECONNECTING";
-        $('#videoConnectionMessage').attr("data-i18n", reconnectingKey);
+        this.enableVideoProblemFilter(true);
+        let reconnectingKey = "connection.RECONNECTING";
         $('#videoConnectionMessage')
-            .text(APP.translation.translateString(reconnectingKey));
-        $('#videoConnectionMessage').css({display: "block"});
+            .attr("data-i18n", reconnectingKey)
+            .text(APP.translation.translateString(reconnectingKey))
+            .css({display: "block"});
     },
 
     /**
      * Indicates that the video has been restored.
      */
     onVideoRestored () {
-        LargeVideo.enableVideoProblemFilter(false);
+        this.enableVideoProblemFilter(false);
         $('#videoConnectionMessage').css({display: "none"});
+    },
+
+    enableVideoProblemFilter (enable) {
+        if (!largeVideo) {
+            return;
+        }
+
+        largeVideo.enableVideoProblemFilter(enable);
+    },
+
+    isLargeVideoVisible () {
+        return this.isLargeContainerTypeVisible(VideoContainerType);
+    },
+
+    isCurrentlyOnLarge (id) {
+        return largeVideo && largeVideo.id === id;
+    },
+
+    updateLargeVideo (id, forceUpdate) {
+        if (!largeVideo) {
+            return;
+        }
+        let isOnLarge = this.isCurrentlyOnLarge(id);
+        let currentId = largeVideo.id;
+
+        if (!isOnLarge || forceUpdate) {
+            if (id !== currentId) {
+                eventEmitter.emit(UIEvents.SELECTED_ENDPOINT, id);
+            }
+            if (currentId) {
+                let currentSmallVideo = this.getSmallVideo(currentId);
+                currentSmallVideo && currentSmallVideo.enableDominantSpeaker(false);
+            }
+
+            let smallVideo = this.getSmallVideo(id);
+
+            let videoType = this.getRemoteVideoType(id);
+            largeVideo.updateLargeVideo(smallVideo.stream, videoType);
+
+            smallVideo.enableDominantSpeaker(true);
+        } else if (currentId) {
+            let currentSmallVideo = this.getSmallVideo(currentId);
+            currentSmallVideo.showAvatar();
+        }
+    },
+
+    showLargeVideoAvatar (show) {
+        largeVideo && largeVideo.showAvatar(show);
+    },
+
+    addLargeVideoContainer (type, container) {
+        largeVideo && largeVideo.addContainer(type, container);
+    },
+
+    removeLargeVideoContainer (type) {
+        largeVideo && largeVideo.removeContainer(type);
+    },
+
+    /**
+     * @returns Promise
+     */
+    showLargeVideoContainer (type, show) {
+        if (!largeVideo) {
+            return Promise.reject();
+        }
+
+        let isVisible = this.isLargeContainerTypeVisible(type);
+        if (isVisible === show) {
+            return Promise.resolve();
+        }
+
+        // if !show then use default type - large video
+        return largeVideo.showContainer(show ? type : VideoContainerType);
+    },
+
+    isLargeContainerTypeVisible (type) {
+        return largeVideo && largeVideo.state === type;
     }
 };
 

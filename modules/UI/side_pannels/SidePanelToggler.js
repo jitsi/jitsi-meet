@@ -6,7 +6,6 @@ import SettingsMenu from "./settings/SettingsMenu";
 import VideoLayout from "../videolayout/VideoLayout";
 import ToolbarToggler from "../toolbars/ToolbarToggler";
 import UIUtil from "../util/UIUtil";
-import LargeVideo from "../videolayout/LargeVideo";
 
 const buttons = {
     '#chatspace': '#chatBottomButton',
@@ -47,7 +46,7 @@ function toggle (object, selector, onOpenComplete, onOpen, onClose) {
     } else {
         // Undock the toolbar when the chat is shown and if we're in a
         // video mode.
-        if (LargeVideo.isLargeVideoVisible()) {
+        if (VideoLayout.isLargeVideoVisible()) {
             ToolbarToggler.dockToolbar(false);
         }
 
@@ -62,7 +61,7 @@ function toggle (object, selector, onOpenComplete, onOpen, onClose) {
         }
 
         $("#toast-container").animate({
-            right: (PanelToggler.getPanelSize()[0] + 5)
+            right: (UIUtil.getSidePanelSize()[0] + 5)
         }, {
             queue: false,
             duration: 500
@@ -116,7 +115,7 @@ var PanelToggler = {
     },
 
     resizeChat () {
-        let [width, height] = this.getPanelSize();
+        let [width, height] = UIUtil.getSidePanelSize();
         Chat.resizeChat(width, height);
     },
 
@@ -154,21 +153,6 @@ var PanelToggler = {
                 $('#setEmail').get(0).value = settings.email;
             },
             null);
-    },
-
-    /**
-     * Returns the size of the side panel.
-     */
-    getPanelSize () {
-        var availableHeight = window.innerHeight;
-        var availableWidth = window.innerWidth;
-
-        var panelWidth = 200;
-        if (availableWidth * 0.2 < 200) {
-            panelWidth = availableWidth * 0.2;
-        }
-
-        return [panelWidth, availableHeight];
     },
 
     isVisible () {

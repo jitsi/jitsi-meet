@@ -136,7 +136,7 @@ const buttonHandlers = {
         } else {
             AnalyticsAdapter.sendEvent('toolbar.screen.enabled');
         }
-        APP.desktopsharing.toggleScreenSharing();
+        emitter.emit(UIEvents.TOGGLE_SCREENSHARING);
     },
     "toolbar_button_fullScreen": function() {
         AnalyticsAdapter.sendEvent('toolbar.fullscreen.enabled');
@@ -182,17 +182,17 @@ const buttonHandlers = {
     }
 };
 const defaultToolbarButtons = {
-  'microphone': '#toolbar_button_mute',
-  'camera':     '#toolbar_button_camera',
-  'desktop':    '#toolbar_button_desktopsharing',
-  'security':   '#toolbar_button_security',
-  'invite':     '#toolbar_button_link',
-  'chat':       '#toolbar_button_chat',
-  'prezi':      '#toolbar_button_prezi',
-  'etherpad':   '#toolbar_button_etherpad',
-  'fullscreen': '#toolbar_button_fullScreen',
-  'settings':   '#toolbar_button_settings',
-  'hangup':     '#toolbar_button_hangup'
+    'microphone': '#toolbar_button_mute',
+    'camera':     '#toolbar_button_camera',
+    'desktop':    '#toolbar_button_desktopsharing',
+    'security':   '#toolbar_button_security',
+    'invite':     '#toolbar_button_link',
+    'chat':       '#toolbar_button_chat',
+    'prezi':      '#toolbar_button_prezi',
+    'etherpad':   '#toolbar_button_etherpad',
+    'fullscreen': '#toolbar_button_fullScreen',
+    'settings':   '#toolbar_button_settings',
+    'hangup':     '#toolbar_button_hangup'
 };
 
 function dialpadButtonClicked() {
@@ -208,7 +208,7 @@ function showSipNumberInput () {
     messageHandler.openTwoButtonDialog(
         null, null, null,
         `<h2>${sipMsg}</h2>
-         <input name="sipNumber" type="text" value="${defaultNumber}" autofocus>`,
+            <input name="sipNumber" type="text" value="${defaultNumber}" autofocus>`,
         false, "dialog.Dial",
         function (e, v, m, f) {
             if (v && f.sipNumber) {
@@ -250,7 +250,7 @@ const Toolbar = {
      * Disables and enables some of the buttons.
      */
     setupButtonsFromConfig () {
-        if (UIUtil.isButtonEnabled('prezi')) {
+        if (!UIUtil.isButtonEnabled('prezi')) {
             $("#toolbar_button_prezi").css({display: "none"});
         }
     },
@@ -283,6 +283,12 @@ const Toolbar = {
         }
     },
 
+    showEtherpadButton () {
+        if (!$('#toolbar_button_etherpad').is(":visible")) {
+            $('#toolbar_button_etherpad').css({display: 'inline-block'});
+        }
+    },
+
     // Shows or hides the 'recording' button.
     showRecordingButton (show) {
         if (UIUtil.isButtonEnabled('recording') && show) {
@@ -303,9 +309,8 @@ const Toolbar = {
     // checks whether desktop sharing is enabled and whether
     // we have params to start automatically sharing
     checkAutoEnableDesktopSharing () {
-        if (UIUtil.isButtonEnabled('desktop')
-                && config.autoEnableDesktopSharing) {
-            APP.desktopsharing.toggleScreenSharing();
+        if (UIUtil.isButtonEnabled('desktop') && config.autoEnableDesktopSharing) {
+            emitter.emit(UIEvents.TOGGLE_SCREENSHARING);
         }
     },
 

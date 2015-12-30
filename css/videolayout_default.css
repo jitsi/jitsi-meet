@@ -34,7 +34,7 @@
 }
 
 #remoteVideos .videocontainer {
-    display: inline-block;
+    display: none;
     background-color: black;
     background-size: contain;
     border-radius:8px;
@@ -378,7 +378,7 @@
     padding-right:2px;
     height:38px;
     width:auto;
-    background-color: rgba(0,0,0,0.8); 
+    background-color: rgba(0,0,0,0.8);
     border: 1px solid rgba(256, 256, 256, 0.2);
     border-radius: 6px;
     pointer-events: auto;

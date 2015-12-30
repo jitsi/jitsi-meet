@@ -385,7 +385,7 @@ StatsCollector.prototype.addStatsToBeLogged = function (reports) {
 
 StatsCollector.prototype.logStats = function () {
 
-    if(!APP.xmpp.sendLogs(this.statsToBeLogged))
+    if(!APP.conference._room.xmpp.sendLogs(this.statsToBeLogged))
         return;
     // Reset the stats
     this.statsToBeLogged.stats = {};
@@ -501,7 +501,7 @@ StatsCollector.prototype.processStatsReport = function () {
         var ssrc = getStatValue(now, 'ssrc');
         if(!ssrc)
             continue;
-        var jid = APP.xmpp.getJidFromSSRC(ssrc);
+        var jid = APP.conference._room.room.getJidBySSRC(ssrc);
         if (!jid && (Date.now() - now.timestamp) < 3000) {
             console.warn("No jid for ssrc: " + ssrc);
             continue;
@@ -647,12 +647,20 @@ StatsCollector.prototype.processStatsReport = function () {
         upload:
             calculatePacketLoss(lostPackets.upload, totalPackets.upload)
     };
+
+    let idResolution = {};
+    if (resolutions) { // use id instead of jid
+        Object.keys(resolutions).forEach(function (jid) {
+            let id = Strophe.getResourceFromJid(jid);
+            resolution[id] = resolutions[id];
+        });
+    }
     this.eventEmitter.emit(StatisticsEvents.CONNECTION_STATS,
         {
             "bitrate": PeerStats.bitrate,
             "packetLoss": PeerStats.packetLoss,
             "bandwidth": PeerStats.bandwidth,
-            "resolution": resolutions,
+            "resolution": idResolution,
             "transport": PeerStats.transport
         });
     PeerStats.transport = [];
@@ -681,7 +689,7 @@ StatsCollector.prototype.processAudioLevelReport = function () {
         }
 
         var ssrc = getStatValue(now, 'ssrc');
-        var jid = APP.xmpp.getJidFromSSRC(ssrc);
+        var jid = APP.conference._room.room.getJidBySSRC(ssrc);
         if (!jid) {
             if((Date.now() - now.timestamp) < 3000)
                 console.warn("No jid for ssrc: " + ssrc);
@@ -713,7 +721,7 @@ StatsCollector.prototype.processAudioLevelReport = function () {
             // but it seems to vary between 0 and around 32k.
             audioLevel = audioLevel / 32767;
             jidStats.setSsrcAudioLevel(ssrc, audioLevel);
-            if (jid != APP.xmpp.myJid()) {
+            if (jid != APP.conference._room.room.myroomjid) {
                 this.eventEmitter.emit(
                     StatisticsEvents.AUDIO_LEVEL, jid, audioLevel);
             }

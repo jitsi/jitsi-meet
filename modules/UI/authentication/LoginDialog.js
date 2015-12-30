@@ -110,12 +110,19 @@ function Dialog(successCallback, cancelCallback) {
      */
     this.displayError = function (message) {
 
-        var finishedState = connDialog.getState('finished');
+        let finishedState = connDialog.getState('finished');
 
-        var errorMessageElem = finishedState.find('#errorMessage');
+        let errorMessageElem = finishedState.find('#errorMessage');
         errorMessageElem.text(message);
 
         connDialog.goToState('finished');
+    };
+
+    this.displayConnectionStatus = function (message) {
+        let connectingState = connDialog.getState('connecting');
+
+        let connectionStatus = connectingState.find('#connectionStatus');
+        connectionStatus.text(message);
     };
 
     /**

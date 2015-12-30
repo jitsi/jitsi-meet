@@ -1,6 +1,7 @@
 /* global APP, config, $, interfaceConfig */
 
 import UIUtil from '../util/UIUtil';
+import BottomToolbar from './BottomToolbar';
 
 let toolbarTimeoutObject;
 let toolbarTimeout = interfaceConfig.INITIAL_TOOLBAR_TIMEOUT;
@@ -47,7 +48,7 @@ function hideToolbar() {
     } else {
         header.hide("slide", { direction: "up", duration: 300});
         $('#subject').animate({top: "-=40"}, 300);
-        if ($("#remoteVideos").hasClass("hidden")) {
+        if (!BottomToolbar.isFilmStripVisible()) {
             bottomToolbar.hide(
                 "slide", {direction: "right", duration: 300}
             );

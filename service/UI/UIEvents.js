@@ -2,7 +2,6 @@ export default {
     NICKNAME_CHANGED: "UI.nickname_changed",
     SELECTED_ENDPOINT: "UI.selected_endpoint",
     PINNED_ENDPOINT: "UI.pinned_endpoint",
-    LARGEVIDEO_INIT: "UI.largevideo_init",
     /**
      * Notifies that local user created text message.
      */
@@ -22,6 +21,9 @@ export default {
     AUDIO_MUTED: "UI.audio_muted",
     VIDEO_MUTED: "UI.video_muted",
     PREZI_CLICKED: "UI.prezi_clicked",
+    SHARE_PREZI: "UI.share_prezi",
+    PREZI_SLIDE_CHANGED: "UI.prezi_slide_changed",
+    STOP_SHARING_PREZI: "UI.stop_sharing_prezi",
     ETHERPAD_CLICKED: "UI.etherpad_clicked",
     ROOM_LOCK_CLICKED: "UI.room_lock_clicked",
     USER_INVITED: "UI.user_invited",
@@ -32,6 +34,7 @@ export default {
     TOGGLE_SETTINGS: "UI.toggle_settings",
     TOGGLE_CONTACT_LIST: "UI.toggle_contact_list",
     TOGGLE_FILM_STRIP: "UI.toggle_film_strip",
+    TOGGLE_SCREENSHARING: "UI.toggle_screensharing",
     CONTACT_CLICKED: "UI.contact_clicked",
     HANGUP: "UI.hangup",
     LOGOUT: "UI.logout",

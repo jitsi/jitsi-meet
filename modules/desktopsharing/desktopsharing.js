@@ -1,7 +1,8 @@
-/* global APP, config */
+/* global APP, JitsiMeetJS, config */
 var EventEmitter = require("events");
-var DesktopSharingEventTypes
-    = require("../../service/desktopsharing/DesktopSharingEventTypes");
+import DSEvents from '../../service/desktopsharing/DesktopSharingEventTypes';
+
+const TrackEvents = JitsiMeetJS.events.track;
 
 /**
  * Indicates that desktop stream is currently in use (for toggle purpose).
@@ -25,25 +26,22 @@ var eventEmitter = new EventEmitter();
 
 function streamSwitchDone() {
     switchInProgress = false;
-    eventEmitter.emit(
-        DesktopSharingEventTypes.SWITCHING_DONE,
-        isUsingScreenStream);
+    eventEmitter.emit(DSEvents.SWITCHING_DONE, isUsingScreenStream);
 }
 
 function newStreamCreated(track) {
-    eventEmitter.emit(DesktopSharingEventTypes.NEW_STREAM_CREATED,
-        track, streamSwitchDone);
+    eventEmitter.emit(DSEvents.NEW_STREAM_CREATED, track, streamSwitchDone);
 }
 
-function getVideoStreamFailed(error) {
-    console.error("Failed to obtain the stream to switch to", error);
+function getVideoStreamFailed() {
+    console.error("Failed to obtain the stream to switch to");
     switchInProgress = false;
     isUsingScreenStream = false;
     newStreamCreated(null);
 }
 
-function getDesktopStreamFailed(error) {
-    console.error("Failed to obtain the stream to switch to", error);
+function getDesktopStreamFailed() {
+    console.error("Failed to obtain the stream to switch to");
     switchInProgress = false;
 }
 
@@ -92,21 +90,34 @@ module.exports = {
             return;
         }
         switchInProgress = true;
-        let type, handler;
+        let type;
         if (!isUsingScreenStream) {
             // Switch to desktop stream
-            handler = onEndedHandler;
             type = "desktop";
         } else {
-            handler = () => {};
             type = "video";
         }
-        APP.conference.createVideoTrack(type, handler).then(
-            (tracks) => {
-                // We now use screen stream
-                isUsingScreenStream = type === "desktop";
-                newStreamCreated(tracks[0]);
-            }).catch(getDesktopStreamFailed);
+        APP.createLocalTracks(type).then(function (tracks) {
+            if (!tracks.length) {
+                if (type === 'desktop') {
+                    getDesktopStreamFailed();
+                } else {
+                    getVideoStreamFailed();
+                }
+
+                return;
+            }
+
+            let stream = tracks[0];
+
+            // We now use screen stream
+            isUsingScreenStream = type === "desktop";
+            if (isUsingScreenStream) {
+                stream.on(TrackEvents.TRACK_STOPPED, onEndedHandler);
+            }
+
+            newStreamCreated(stream);
+        });
     },
     /*
      * Exports the event emitter to allow use by ScreenObtainer. Not for outside

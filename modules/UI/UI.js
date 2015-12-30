@@ -2,7 +2,6 @@
 /* jshint -W101 */
 var UI = {};
 
-import AudioLevels from './audio_levels/AudioLevels';
 import Chat from "./side_pannels/chat/Chat";
 import Toolbar from "./toolbars/Toolbar";
 import ToolbarToggler from "./toolbars/ToolbarToggler";
@@ -12,25 +11,25 @@ import Avatar from "./avatar/Avatar";
 import PanelToggler from "./side_pannels/SidePanelToggler";
 import UIUtil from "./util/UIUtil";
 import UIEvents from "../../service/UI/UIEvents";
+import CQEvents from '../../service/connectionquality/CQEvents';
+import PreziManager from './prezi/Prezi';
+import EtherpadManager from './etherpad/Etherpad';
 
 import VideoLayout from "./videolayout/VideoLayout";
 import SettingsMenu from "./side_pannels/settings/SettingsMenu";
+import Settings from "./../settings/Settings";
 
-var Prezi = require("./prezi/Prezi");
-var Etherpad = require("./etherpad/Etherpad");
 var EventEmitter = require("events");
-var Settings = require("./../settings/Settings");
 UI.messageHandler = require("./util/MessageHandler");
 var messageHandler = UI.messageHandler;
 var JitsiPopover = require("./util/JitsiPopover");
-var CQEvents = require("../../service/connectionquality/CQEvents");
-var DesktopSharingEventTypes
-    = require("../../service/desktopsharing/DesktopSharingEventTypes");
-var StatisticsEvents = require("../../service/statistics/Events");
 var Feedback = require("./Feedback");
 
 var eventEmitter = new EventEmitter();
 UI.eventEmitter = eventEmitter;
+
+let preziManager;
+let etherpadManager;
 
 function promptDisplayName() {
     let nickRequiredMsg = APP.translation.translateString("dialog.displayNameRequired");
@@ -77,12 +76,6 @@ function promptDisplayName() {
     );
 }
 
-function setupPrezi() {
-    $("#reloadPresentationLink").click(function() {
-        Prezi.reloadPresentation();
-    });
-}
-
 function setupChat() {
     Chat.init(eventEmitter);
     $("#toggle_smileys").click(function() {
@@ -93,7 +86,7 @@ function setupChat() {
 function setupToolbars() {
     Toolbar.init(eventEmitter);
     Toolbar.setupButtonsFromConfig();
-    BottomToolbar.init(eventEmitter);
+    BottomToolbar.setupListeners(eventEmitter);
 }
 
 /**
@@ -189,20 +182,18 @@ UI.initConference = function () {
 };
 
 function registerListeners() {
-    UI.addListener(UIEvents.LARGEVIDEO_INIT, function () {
-        AudioLevels.init();
-    });
-
     UI.addListener(UIEvents.EMAIL_CHANGED, function (email) {
         UI.setUserAvatar(APP.conference.localId, email);
     });
 
     UI.addListener(UIEvents.PREZI_CLICKED, function () {
-        Prezi.openPreziDialog();
+        preziManager.handlePreziButtonClicked();
     });
 
     UI.addListener(UIEvents.ETHERPAD_CLICKED, function () {
-        Etherpad.toggleEtherpad(0);
+        if (etherpadManager) {
+            etherpadManager.toggleEtherpad();
+        }
     });
 
     UI.addListener(UIEvents.FULLSCREEN_TOGGLE, toggleFullScreen);
@@ -221,7 +212,7 @@ function registerListeners() {
 function bindEvents() {
     function onResize() {
         PanelToggler.resizeChat();
-        VideoLayout.resizeLargeVideoContainer();
+        VideoLayout.resizeLargeVideoContainer(PanelToggler.isVisible());
     }
 
     // Resize and reposition videos in full screen mode.
@@ -253,12 +244,20 @@ UI.start = function () {
 
     registerListeners();
 
+    BottomToolbar.init();
+
     VideoLayout.init(eventEmitter);
+    if (!interfaceConfig.filmStripOnly) {
+        VideoLayout.initLargeVideo(PanelToggler.isVisible());
+    }
+    VideoLayout.resizeLargeVideoContainer(PanelToggler.isVisible());
+
     ContactList.init(eventEmitter);
 
     bindEvents();
-    setupPrezi();
+    preziManager = new PreziManager(eventEmitter);
     if (!interfaceConfig.filmStripOnly) {
+
         $("#videospace").mousemove(function () {
             return ToolbarToggler.showToolbar();
         });
@@ -278,8 +277,7 @@ UI.start = function () {
         $("#header").css("display", "none");
         $("#bottomToolbar").css("display", "none");
         $("#downloadlog").css("display", "none");
-        $("#remoteVideos").css("padding", "0px 0px 18px 0px");
-        $("#remoteVideos").css("right", "0px");
+        BottomToolbar.setupFilmStripOnly();
         messageHandler.disableNotifications();
         $('body').popover("disable");
         JitsiPopover.enabled = false;
@@ -350,9 +348,14 @@ UI.setSubject = function (subject) {
     Chat.setSubject(subject);
 };
 
-function initEtherpad(name) {
-    Etherpad.init(name);
-}
+UI.initEtherpad = function (name) {
+    if (etherpadManager) {
+        return;
+    }
+    console.log('Etherpad is enabled');
+    etherpadManager = new EtherpadManager(config.etherpad_base, name);
+    Toolbar.showEtherpadButton();
+};
 
 UI.addUser = function (id, displayName) {
     ContactList.addContact(id);
@@ -391,8 +394,8 @@ UI.removeUser = function (id, displayName) {
 //     VideoLayout.setPresenceStatus(Strophe.getResourceFromJid(jid), info.status);
 // }
 
-UI.onPeerVideoTypeChanged = (resourceJid, newVideoType) => {
-    VideoLayout.onVideoTypeChanged(resourceJid, newVideoType);
+UI.onPeerVideoTypeChanged = (id, newVideoType) => {
+    VideoLayout.onVideoTypeChanged(id, newVideoType);
 };
 
 UI.updateLocalRole = function (isModerator) {
@@ -443,7 +446,6 @@ UI.getSettings = function () {
 
 UI.toggleFilmStrip = function () {
     BottomToolbar.toggleFilmStrip();
-    VideoLayout.updateLargeVideoSize();
 };
 
 UI.toggleChat = function () {
@@ -592,13 +594,11 @@ UI.handleLastNEndpoints = function (ids) {
 };
 
 UI.setAudioLevel = function (id, lvl) {
-    AudioLevels.updateAudioLevel(
-        id, lvl, VideoLayout.getLargeVideoId()
-    );
+    VideoLayout.setAudioLevel(id, lvl);
 };
 
-UI.updateDesktopSharingButtons = function () {
-    Toolbar.changeDesktopSharingButtonState();
+UI.updateDesktopSharingButtons = function (isSharingScreen) {
+    Toolbar.changeDesktopSharingButtonState(isSharingScreen);
 };
 
 UI.hideStats = function () {
@@ -609,8 +609,8 @@ UI.updateLocalStats = function (percent, stats) {
     VideoLayout.updateLocalConnectionStats(percent, stats);
 };
 
-UI.updateRemoteStats = function (jid, percent, stats) {
-    VideoLayout.updateConnectionStats(jid, percent, stats);
+UI.updateRemoteStats = function (id, percent, stats) {
+    VideoLayout.updateConnectionStats(id, percent, stats);
 };
 
 UI.markVideoInterrupted = function (interrupted) {
@@ -748,6 +748,16 @@ UI.updateAuthInfo = function (isAuthEnabled, login) {
         Toolbar.showLoginButton(!loggedIn);
         Toolbar.showLogoutButton(loggedIn);
     }
+};
+
+UI.showPrezi = function (userId, url, slide) {
+    preziManager.showPrezi(userId, url, slide);
+};
+
+UI.stopPrezi = function (userId) {
+  if (preziManager.isSharing(userId)) {
+      preziManager.removePrezi(userId);
+  }
 };
 
 module.exports = UI;

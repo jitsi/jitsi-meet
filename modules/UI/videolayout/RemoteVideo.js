@@ -34,7 +34,8 @@ RemoteVideo.prototype.addRemoteVideoContainer = function() {
     if (APP.conference.isModerator) {
         this.addRemoteVideoMenu();
     }
-    AudioLevels.updateAudioLevelCanvas(this.id, this.VideoLayout);
+    let {thumbWidth, thumbHeight} = this.VideoLayout.calculateThumbnailSize();
+    AudioLevels.updateAudioLevelCanvas(this.id, thumbWidth, thumbHeight);
 
     return this.container;
 };
@@ -294,6 +295,12 @@ RemoteVideo.prototype.showPeerContainer = function (state) {
     // if he's not in the lastN set!
     // ContactList.setClickable(id, !isHide);
 
+};
+
+RemoteVideo.prototype.updateResolution = function (resolution) {
+    if (this.connectionIndicator) {
+        this.connectionIndicator.updateResolution(resolution);
+    }
 };
 
 RemoteVideo.prototype.removeConnectionIndicator = function () {

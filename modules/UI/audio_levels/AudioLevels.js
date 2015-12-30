@@ -2,6 +2,7 @@
 /* jshint -W101 */
 
 import CanvasUtil from './CanvasUtils';
+import BottomToolbar from '../toolbars/BottomToolbar';
 
 const LOCAL_LEVEL = 'local';
 
@@ -113,33 +114,6 @@ function getVideoSpanId(id) {
 }
 
 /**
- * Indicates that the remote video has been resized.
- */
-$(document).bind('remotevideo.resized', function (event, width, height) {
-    let resized = false;
-
-    $('#remoteVideos>span>canvas').each(function() {
-        let canvas = $(this).get(0);
-        if (canvas.width !== width + interfaceConfig.CANVAS_EXTRA) {
-            canvas.width = width + interfaceConfig.CANVAS_EXTRA;
-            resized = true;
-        }
-
-        if (canvas.height !== height + interfaceConfig.CANVAS_EXTRA) {
-            canvas.height = height + interfaceConfig.CANVAS_EXTRA;
-            resized = true;
-        }
-    });
-
-    if (resized) {
-        Object.keys(audioLevelCanvasCache).forEach(function (id) {
-            audioLevelCanvasCache[id].width = width + interfaceConfig.CANVAS_EXTRA;
-            audioLevelCanvasCache[id].height = height + interfaceConfig.CANVAS_EXTRA;
-        });
-    }
-});
-
-/**
  * The audio Levels plugin.
  */
 const AudioLevels = {
@@ -153,7 +127,7 @@ const AudioLevels = {
      * Updates the audio level canvas for the given id. If the canvas
      * didn't exist we create it.
      */
-    updateAudioLevelCanvas (id, VideoLayout) {
+    updateAudioLevelCanvas (id, thumbWidth, thumbHeight) {
         let videoSpanId = 'localVideoContainer';
         if (id) {
             videoSpanId = `participant_${id}`;
@@ -172,24 +146,19 @@ const AudioLevels = {
 
         let audioLevelCanvas = $(`#${videoSpanId}>canvas`);
 
-        let videoSpaceWidth = $('#remoteVideos').width();
-        let thumbnailSize = VideoLayout.calculateThumbnailSize(videoSpaceWidth);
-        let thumbnailWidth = thumbnailSize[0];
-        let thumbnailHeight = thumbnailSize[1];
-
         if (!audioLevelCanvas || audioLevelCanvas.length === 0) {
 
             audioLevelCanvas = document.createElement('canvas');
             audioLevelCanvas.className = "audiolevel";
             audioLevelCanvas.style.bottom = `-${interfaceConfig.CANVAS_EXTRA/2}px`;
             audioLevelCanvas.style.left = `-${interfaceConfig.CANVAS_EXTRA/2}px`;
-            resizeAudioLevelCanvas(audioLevelCanvas, thumbnailWidth, thumbnailHeight);
+            resizeAudioLevelCanvas(audioLevelCanvas, thumbWidth, thumbHeight);
 
             videoSpan.appendChild(audioLevelCanvas);
         } else {
             audioLevelCanvas = audioLevelCanvas.get(0);
 
-            resizeAudioLevelCanvas(audioLevelCanvas, thumbnailWidth, thumbnailHeight);
+            resizeAudioLevelCanvas(audioLevelCanvas, thumbWidth, thumbHeight);
         }
     },
 
@@ -248,6 +217,18 @@ const AudioLevels = {
 
         // Fill the shape.
         ASDrawContext.fill();
+    },
+
+    updateCanvasSize (thumbWidth, thumbHeight) {
+        let canvasWidth = thumbWidth + interfaceConfig.CANVAS_EXTRA;
+        let canvasHeight = thumbHeight + interfaceConfig.CANVAS_EXTRA;
+
+        BottomToolbar.getThumbs().children('canvas').width(canvasWidth).height(canvasHeight);
+
+        Object.keys(audioLevelCanvasCache).forEach(function (id) {
+            audioLevelCanvasCache[id].width = canvasWidth;
+            audioLevelCanvasCache[id].height = canvasHeight;
+        });
     }
 };
 
