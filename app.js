@@ -136,10 +136,16 @@ const APP = {
 };
 
 function initConference(localTracks, connection) {
-    let room = connection.initJitsiConference(APP.conference.roomName, {
+    let options = {
         openSctp: config.openSctp,
         disableAudioLevels: config.disableAudioLevels
-    });
+    };
+    if(config.enableRecording) {
+        options.recordingType = (config.hosts &&
+            (typeof config.hosts.jirecon != "undefined"))?
+            "jirecon" : "colibri";
+    }
+    let room = connection.initJitsiConference(APP.conference.roomName, options);
     APP.conference._room = room; // FIXME do not use this
 
     const addTrack = (track) => {
@@ -414,6 +420,15 @@ function initConference(localTracks, connection) {
     room.on(ConferenceEvents.DISPLAY_NAME_CHANGED, function (id, displayName) {
         APP.UI.changeDisplayName(id, displayName);
     });
+
+    room.on(ConferenceEvents.RECORDING_STATE_CHANGED, (status, error) => {
+        if(status == "error") {
+            console.error(error);
+            return;
+        }
+        APP.UI.updateRecordingState(status);
+    });
+
     APP.UI.addListener(UIEvents.NICKNAME_CHANGED, function (nickname) {
         APP.settings.setDisplayName(nickname);
         room.setDisplayName(nickname);
@@ -471,16 +486,14 @@ function initConference(localTracks, connection) {
 
     // Starts or stops the recording for the conference.
     APP.UI.addListener(UIEvents.RECORDING_TOGGLE, function (predefinedToken) {
-        // FIXME recording
-        // APP.xmpp.toggleRecording(function (callback) {
-        //     if (predefinedToken) {
-        //         callback(predefinedToken);
-        //         return;
-        //     }
+        if (predefinedToken) {
+            room.toggleRecording({token: predefinedToken});
+            return;
+        }
+        APP.UI.requestRecordingToken().then((token) => {
+            room.toggleRecording({token: token});
+        });
 
-        //     APP.UI.requestRecordingToken().then(callback);
-
-        // }, APP.UI.updateRecordingState);
     });
 
     APP.UI.addListener(UIEvents.TOPIC_CHANGED, function (topic) {
