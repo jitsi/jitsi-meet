@@ -2,6 +2,7 @@
 import UIUtil from "../../util/UIUtil";
 import UIEvents from "../../../../service/UI/UIEvents";
 import languages from "../../../../service/translation/languages";
+import Settings from '../../../settings/Settings';
 
 function generateLanguagesSelectBox() {
     var currentLang = APP.translation.getCurrentLanguage();
@@ -21,32 +22,53 @@ function generateLanguagesSelectBox() {
 }
 
 
-const SettingsMenu = {
+export default {
+    init (emitter) {
+        function update() {
+            let displayName = UIUtil.escapeHtml($('#setDisplayName').val());
 
-    init: function (emitter) {
-        this.emitter = emitter;
-
-        var startMutedSelector = $("#startMutedOptions");
-        startMutedSelector.before(generateLanguagesSelectBox());
-        APP.translation.translateElement($("#languages_selectbox"));
-        $('#settingsmenu>input').keyup(function(event){
-            if(event.keyCode === 13) {//enter
-                SettingsMenu.update();
+            if (displayName && Settings.getDisplayName() !== displayName) {
+                emitter.emit(UIEvents.NICKNAME_CHANGED, displayName);
             }
-        });
 
-        if (APP.conference.isModerator) {
-            startMutedSelector.css("display", "block");
-        } else {
-            startMutedSelector.css("display", "none");
+            let language = $("#languages_selectbox").val();
+            if (language !== Settings.getLanguage()) {
+                emitter.emit(UIEvents.LANG_CHANGED, language);
+            }
+
+            let email = UIUtil.escapeHtml($('#setEmail').val());
+            if (email !== Settings.getEmail()) {
+                emitter.emit(UIEvents.EMAIL_CHANGED, email);
+            }
+
+            let startAudioMuted = $("#startAudioMuted").is(":checked");
+            let startVideoMuted = $("#startVideoMuted").is(":checked");
+            if (startAudioMuted !== APP.conference.startAudioMuted
+                || startVideoMuted !== APP.conference.startVideoMuted) {
+                emitter.emit(
+                    UIEvents.START_MUTED_CHANGED,
+                    startAudioMuted,
+                    startVideoMuted
+                );
+            }
         }
 
-        $("#updateSettings").click(function () {
-            SettingsMenu.update();
+        let startMutedBlock = $("#startMutedOptions");
+        startMutedBlock.before(generateLanguagesSelectBox());
+        APP.translation.translateElement($("#languages_selectbox"));
+
+        this.onRoleChanged();
+        this.onStartMutedChanged();
+
+        $("#updateSettings").click(update);
+        $('#settingsmenu>input').keyup(function(event){
+            if (event.keyCode === 13) {//enter
+                update();
+            }
         });
     },
 
-    onRoleChanged: function () {
+    onRoleChanged () {
         if(APP.conference.isModerator) {
             $("#startMutedOptions").css("display", "block");
         }
@@ -55,46 +77,22 @@ const SettingsMenu = {
         }
     },
 
-    setStartMuted: function (audio, video) {
-        $("#startAudioMuted").attr("checked", audio);
-        $("#startVideoMuted").attr("checked", video);
+    onStartMutedChanged () {
+        $("#startAudioMuted").attr("checked", APP.conference.startAudioMuted);
+        $("#startVideoMuted").attr("checked", APP.conference.startVideoMuted);
     },
 
-    update: function() {
-        // FIXME check if this values really changed:
-        // compare them with Settings etc.
-        var newDisplayName =
-                UIUtil.escapeHtml($('#setDisplayName').get(0).value);
-
-        if (newDisplayName) {
-            this.emitter.emit(UIEvents.NICKNAME_CHANGED, newDisplayName);
-        }
-
-        var language = $("#languages_selectbox").val();
-        this.emitter.emit(UIEvents.LANG_CHANGED, language);
-
-        var newEmail = UIUtil.escapeHtml($('#setEmail').get(0).value);
-        this.emitter.emit(UIEvents.EMAIL_CHANGED, newEmail);
-
-        var startAudioMuted = ($("#startAudioMuted").is(":checked"));
-        var startVideoMuted = ($("#startVideoMuted").is(":checked"));
-        this.emitter.emit(
-            UIEvents.START_MUTED_CHANGED, startAudioMuted, startVideoMuted
-        );
-    },
-
-    isVisible: function() {
+    isVisible () {
         return $('#settingsmenu').is(':visible');
     },
 
-    onDisplayNameChange: function(id, newDisplayName) {
+    onDisplayNameChange (id, newDisplayName) {
         if(id === 'localVideoContainer' || APP.conference.isLocalId(id)) {
-            $('#setDisplayName').get(0).value = newDisplayName;
+            $('#setDisplayName').val(newDisplayName);
         }
     },
-    changeAvatar: function (thumbUrl) {
-        $('#avatar').get(0).src = thumbUrl;
+
+    changeAvatar (thumbUrl) {
+        $('#avatar').attr('src', thumbUrl);
     }
 };
-
-export default SettingsMenu;

@@ -781,4 +781,8 @@ UI.stopPrezi = function (userId) {
   }
 };
 
+UI.onStartMutedChanged = function () {
+    SettingsMenu.onStartMutedChanged();
+};
+
 module.exports = UI;

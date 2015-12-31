@@ -157,7 +157,9 @@ var VideoLayout = {
         let {thumbWidth, thumbHeight} = this.calculateThumbnailSize();
         AudioLevels.updateAudioLevelCanvas(null, thumbWidth, thumbHeight);
 
-        localVideoThumbnail.changeVideo(stream);
+        if (!stream.isMuted()) {
+            localVideoThumbnail.changeVideo(stream);
+        }
 
         /* force update if we're currently being displayed */
         if (this.isCurrentlyOnLarge(localId)) {
