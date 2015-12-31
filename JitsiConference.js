@@ -44,6 +44,9 @@ function JitsiConference(options) {
     this.somebodySupportsDTMF = false;
     this.authEnabled = false;
     this.authIdentity;
+    this.startAudioMuted = false;
+    this.startVideoMuted = false;
+    this.tracks = [];
 }
 
 /**
@@ -250,6 +253,16 @@ JitsiConference.prototype.setDisplayName = function(name) {
 JitsiConference.prototype.addTrack = function (track) {
     this.room.addStream(track.getOriginalStream(), function () {
         this.rtc.addLocalStream(track);
+        if (this.startAudioMuted && track.isAudioTrack()) {
+            track.mute();
+        }
+        if (this.startVideoMuted && track.isVideoTrack()) {
+            track.mute();
+        }
+        if (track.startMuted) {
+            track.mute();
+        }
+        this.tracks.push(track);
         var muteHandler = this._fireMuteChangeEvent.bind(this, track);
         var stopHandler = this.removeTrack.bind(this, track);
         var audioLevelHandler = this._fireAudioLevelChangeEvent.bind(this);
@@ -291,6 +304,10 @@ JitsiConference.prototype._fireMuteChangeEvent = function (track) {
  * @param track the JitsiLocalTrack object.
  */
 JitsiConference.prototype.removeTrack = function (track) {
+    var pos = this.tracks.indexOf(track);
+    if (pos > -1) {
+        this.tracks.splice(pos, 1);
+    }
     if(!this.room){
         if(this.rtc)
             this.rtc.removeLocalStream(track);
@@ -411,12 +428,13 @@ JitsiConference.prototype.muteParticipant = function (id) {
     this.room.muteParticipant(participant.getJid(), true);
 };
 
-JitsiConference.prototype.onMemberJoined = function (jid, nick) {
+JitsiConference.prototype.onMemberJoined = function (jid, nick, role) {
     var id = Strophe.getResourceFromJid(jid);
     if (id === 'focus' || this.myUserId() === id) {
        return;
     }
     var participant = new JitsiParticipant(jid, this, nick);
+    participant._role = role;
     this.participants[id] = participant;
     this.eventEmitter.emit(JitsiConferenceEvents.USER_JOINED, id, participant);
     this.xmpp.connection.disco.info(
@@ -651,6 +669,41 @@ JitsiConference.prototype.getConnectionState = function () {
 }
 
 /**
+ * Make all new participants mute their audio/video on join.
+ * @param {boolean} audioMuted if audio should be muted.
+ * @param {boolean} videoMuted if video should be muted.
+ */
+JitsiConference.prototype.setStartMuted = function (audioMuted, videoMuted) {
+    if (!this.isModerator()) {
+        return;
+    }
+
+    this.room.removeFromPresence("startmuted");
+    this.room.addToPresence("startmuted", {
+        attributes: {
+            audio: audioMuted,
+            video: videoMuted,
+            xmlns: 'http://jitsi.org/jitmeet/start-muted'
+        }
+    });
+    this.room.sendPresence();
+};
+
+/**
+ * Check if audio is muted on join.
+ */
+JitsiConference.prototype.isStartAudioMuted = function () {
+    return this.startAudioMuted;
+};
+
+/**
+ * Check if video is muted on join.
+ */
+JitsiConference.prototype.isStartVideoMuted = function () {
+    return this.startVideoMuted;
+};
+
+/**
  * Setups the listeners needed for the conference.
  * @param conference the conference
  */
@@ -690,6 +743,9 @@ function setupListeners(conference) {
     });
     conference.room.addListener(XMPPEvents.AUTHENTICATION_REQUIRED, function () {
         conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_FAILED, JitsiConferenceErrors.AUTHENTICATION_REQUIRED);
+    });
+    conference.room.addListener(XMPPEvents.BRIDGE_DOWN, function () {
+        conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_FAILED, JitsiConferenceErrors.VIDEOBRIDGE_NOT_AVAILABLE);
     });
 //    FIXME
 //    conference.room.addListener(XMPPEvents.MUC_JOINED, function () {
@@ -760,6 +816,70 @@ function setupListeners(conference) {
         });
     conference.xmpp.addListener(XMPPEvents.PASSWORD_REQUIRED, function () {
         conference.eventEmitter.emit(JitsiConferenceErrors.PASSWORD_REQUIRED);
+    });
+
+    conference.xmpp.addListener(XMPPEvents.START_MUTED_FROM_FOCUS, function (audioMuted, videoMuted) {
+        conference.startAudioMuted = audioMuted;
+        conference.startVideoMuted = videoMuted;
+
+        // mute existing local tracks because this is initial mute from Jicofo
+        conference.tracks.forEach(function (track) {
+            if (conference.startAudioMuted && track.isAudioTrack()) {
+                track.mute();
+            }
+            if (conference.startVideoMuted && track.isVideoTrack()) {
+                track.mute();
+            }
+        });
+
+        var initiallyMuted = audioMuted || videoMuted;
+
+        conference.eventEmitter.emit(
+            JitsiConferenceEvents.START_MUTED,
+            conference.startAudioMuted,
+            conference.startVideoMuted,
+            initiallyMuted
+        );
+    });
+
+    conference.room.addPresenceListener("startmuted", function (data, from) {
+        var isModerator = false;
+        if (conference.myUserId() === from && conference.isModerator()) {
+            isModerator = true;
+        } else {
+            var participant = conference.getParticipantById(from);
+            if (participant && participant.isModerator()) {
+                isModerator = true;
+            }
+        }
+
+        if (!isModerator) {
+            return;
+        }
+
+        var startAudioMuted = data.attributes.audio === 'true';
+        var startVideoMuted = data.attributes.video === 'true';
+
+        var updated = false;
+
+        if (startAudioMuted !== conference.startAudioMuted) {
+            conference.startAudioMuted = startAudioMuted;
+            updated = true;
+        }
+
+        if (startVideoMuted !== conference.startVideoMuted) {
+            conference.startVideoMuted = startVideoMuted;
+            updated = true;
+        }
+
+        if (updated) {
+            conference.eventEmitter.emit(
+                JitsiConferenceEvents.START_MUTED,
+                conference.startAudioMuted,
+                conference.startVideoMuted,
+                false
+            );
+        }
     });
 
     if(conference.statistics) {

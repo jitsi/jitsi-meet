@@ -262,7 +262,7 @@ ChatRoom.prototype.onPresence = function (pres) {
         }
         else {
             this.eventEmitter.emit(
-                XMPPEvents.MUC_MEMBER_JOINED, from, member.nick);
+                XMPPEvents.MUC_MEMBER_JOINED, from, member.nick, member.role);
         }
     } else {
         // Presence update for existing participant

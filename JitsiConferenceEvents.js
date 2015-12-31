@@ -85,6 +85,10 @@ var JitsiConferenceEvents = {
      */
     KICKED: "conferenece.kicked",
     /**
+     * Indicates that start muted settings changed.
+     */
+    START_MUTED: "conference.start_muted",
+    /**
      * Indicates that DTMF support changed.
      */
     DTMF_SUPPORT_CHANGED: "conference.dtmfSupportChanged",
