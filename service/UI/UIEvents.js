@@ -28,6 +28,7 @@ export default {
     ROOM_LOCK_CLICKED: "UI.room_lock_clicked",
     USER_INVITED: "UI.user_invited",
     USER_KICKED: "UI.user_kicked",
+    REMOTE_AUDIO_MUTED: "UI.remote_audio_muted",
     FULLSCREEN_TOGGLE: "UI.fullscreen_toggle",
     AUTH_CLICKED: "UI.auth_clicked",
     TOGGLE_CHAT: "UI.toggle_chat",

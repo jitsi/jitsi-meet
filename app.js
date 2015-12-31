@@ -505,6 +505,11 @@ function initConference(localTracks, connection) {
     APP.UI.addListener(UIEvents.USER_KICKED, function (id) {
         room.kickParticipant(id);
     });
+
+    APP.UI.addListener(UIEvents.REMOTE_AUDIO_MUTED, function (id) {
+        room.muteParticipant(id);
+    });
+
     room.on(ConferenceEvents.KICKED, function () {
         APP.UI.notifyKicked();
         // FIXME close

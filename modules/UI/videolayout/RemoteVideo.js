@@ -91,7 +91,7 @@ if (!interfaceConfig.filmStripOnly) {
                 event.preventDefault();
             }
             var isMute = !!self.isMuted;
-            self.emitter.emit(UIEvents.AUDIO_MUTED, !isMute);
+            self.emitter.emit(UIEvents.REMOTE_AUDIO_MUTED, self.id);
 
             popupmenuElement.setAttribute('style', 'display:none;');
 
