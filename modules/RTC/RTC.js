@@ -122,6 +122,20 @@ RTC.prototype.addLocalStream = function (stream) {
     }
 };
 
+/**
+ * Set mute for all local audio streams attached to the conference.
+ * @param value the mute value
+ */
+RTC.prototype.setAudioMute = function (value) {
+    for(var i = 0; i < this.localStreams.length; i++) {
+        var stream = this.localStreams[i];
+        if(stream.getType() !== "audio") {
+            continue;
+        }
+        stream._setMute(value);
+    }
+}
+
 RTC.prototype.removeLocalStream = function (stream) {
     for(var i = 0; i < this.localStreams.length; i++) {
         if(this.localStreams[i].getOriginalStream() === stream) {

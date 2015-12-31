@@ -401,6 +401,18 @@ JitsiConference.prototype.kickParticipant = function (id) {
     this.room.kick(participant.getJid());
 };
 
+/**
+ * Kick participant from this conference.
+ * @param {string} id id of the participant to kick
+ */
+JitsiConference.prototype.muteParticipant = function (id) {
+    var participant = this.getParticipantById(id);
+    if (!participant) {
+        return;
+    }
+    this.room.muteParticipant(participant.getJid(), true);
+};
+
 JitsiConference.prototype.onMemberJoined = function (jid, email, nick) {
     var id = Strophe.getResourceFromJid(jid);
     if (id === 'focus' || this.myUserId() === id) {
@@ -660,6 +672,12 @@ function setupListeners(conference) {
         }
     );
 
+    conference.room.addListener(XMPPEvents.AUDIO_MUTED_BY_FOCUS,
+        function (value) {
+            conference.rtc.setAudioMute(value);
+        }
+    );
+
     conference.room.addListener(XMPPEvents.MUC_JOINED, function () {
         conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_JOINED);
     });
@@ -907,11 +925,7 @@ var JitsiConferenceEvents = {
     /**
      * Indicates that phone number changed.
      */
-    PHONE_NUMBER_CHANGED: "conference.phoneNumberChanged",
-    /**
-     * Indicates that recording status changed.
-     */
-    RECORDING_STATE_CHANGED: "conferenece.recordingStateChanged"
+    PHONE_NUMBER_CHANGED: "conference.phoneNumberChanged"
 };
 
 module.exports = JitsiConferenceEvents;
@@ -2208,6 +2222,20 @@ RTC.prototype.addLocalStream = function (stream) {
         this.localVideo = stream;
     }
 };
+
+/**
+ * Set mute for all local audio streams attached to the conference.
+ * @param value the mute value
+ */
+RTC.prototype.setAudioMute = function (value) {
+    for(var i = 0; i < this.localStreams.length; i++) {
+        var stream = this.localStreams[i];
+        if(stream.getType() !== "audio") {
+            continue;
+        }
+        stream._setMute(value);
+    }
+}
 
 RTC.prototype.removeLocalStream = function (stream) {
     for(var i = 0; i < this.localStreams.length; i++) {
@@ -6824,6 +6852,46 @@ ChatRoom.prototype.getConnectionState = function () {
     return this.session.getIceConnectionState();
 }
 
+/**
+ * Mutes remote participant.
+ * @param jid of the participant
+ * @param mute
+ */
+ChatRoom.prototype.muteParticipant = function (jid, mute) {
+    logger.info("set mute", mute);
+    var iqToFocus = $iq(
+        {to: this.focusMucJid, type: 'set'})
+        .c('mute', {
+            xmlns: 'http://jitsi.org/jitmeet/audio',
+            jid: jid
+        })
+        .t(mute.toString())
+        .up();
+
+    this.connection.sendIQ(
+        iqToFocus,
+        function (result) {
+            logger.log('set mute', result);
+        },
+        function (error) {
+            logger.log('set mute error', error);
+        });
+}
+
+ChatRoom.prototype.onMute = function (iq) {
+    var from = iq.getAttribute('from');
+    if (from !== this.focusMucJid) {
+        logger.warn("Ignored mute from non focus peer");
+        return false;
+    }
+    var mute = $(iq).find('mute');
+    if (mute.length) {
+        var doMuteAudio = mute.text() === "true";
+        this.eventEmitter.emit(XMPPEvents.AUDIO_MUTED_BY_FOCUS, doMuteAudio);
+    }
+    return true;
+}
+
 module.exports = ChatRoom;
 
 }).call(this,"/modules/xmpp/ChatRoom.js")
@@ -11246,10 +11314,16 @@ module.exports = function(XMPP) {
         init: function (conn) {
             this.connection = conn;
             // add handlers (just once)
-            this.connection.addHandler(this.onPresence.bind(this), null, 'presence', null, null, null, null);
-            this.connection.addHandler(this.onPresenceUnavailable.bind(this), null, 'presence', 'unavailable', null);
-            this.connection.addHandler(this.onPresenceError.bind(this), null, 'presence', 'error', null);
-            this.connection.addHandler(this.onMessage.bind(this), null, 'message', null, null);
+            this.connection.addHandler(this.onPresence.bind(this), null,
+                'presence', null, null, null, null);
+            this.connection.addHandler(this.onPresenceUnavailable.bind(this),
+                null, 'presence', 'unavailable', null);
+            this.connection.addHandler(this.onPresenceError.bind(this), null,
+                'presence', 'error', null);
+            this.connection.addHandler(this.onMessage.bind(this), null,
+                'message', null, null);
+            this.connection.addHandler(this.onMute.bind(this),
+                'http://jitsi.org/jitmeet/audio', 'iq', 'set',null,null);
         },
         createRoom: function (jid, password, options) {
             var roomJid = Strophe.getBareJidFromJid(jid);
@@ -11320,10 +11394,19 @@ module.exports = function(XMPP) {
                 return;
 
             room.setJingleSession(session);
+        },
+
+        onMute: function(iq) {
+            var from = iq.getAttribute('from');
+            var room = this.rooms[Strophe.getBareJidFromJid(from)];
+            if(!room)
+                return;
+
+            room.onMute(iq);
+            return true;
         }
     });
 };
-
 
 }).call(this,"/modules/xmpp/strophe.emuc.js")
 },{"./ChatRoom":26,"jitsi-meet-logger":48}],37:[function(require,module,exports){

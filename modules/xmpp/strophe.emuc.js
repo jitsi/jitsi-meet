@@ -13,10 +13,16 @@ module.exports = function(XMPP) {
         init: function (conn) {
             this.connection = conn;
             // add handlers (just once)
-            this.connection.addHandler(this.onPresence.bind(this), null, 'presence', null, null, null, null);
-            this.connection.addHandler(this.onPresenceUnavailable.bind(this), null, 'presence', 'unavailable', null);
-            this.connection.addHandler(this.onPresenceError.bind(this), null, 'presence', 'error', null);
-            this.connection.addHandler(this.onMessage.bind(this), null, 'message', null, null);
+            this.connection.addHandler(this.onPresence.bind(this), null,
+                'presence', null, null, null, null);
+            this.connection.addHandler(this.onPresenceUnavailable.bind(this),
+                null, 'presence', 'unavailable', null);
+            this.connection.addHandler(this.onPresenceError.bind(this), null,
+                'presence', 'error', null);
+            this.connection.addHandler(this.onMessage.bind(this), null,
+                'message', null, null);
+            this.connection.addHandler(this.onMute.bind(this),
+                'http://jitsi.org/jitmeet/audio', 'iq', 'set',null,null);
         },
         createRoom: function (jid, password, options) {
             var roomJid = Strophe.getBareJidFromJid(jid);
@@ -87,7 +93,16 @@ module.exports = function(XMPP) {
                 return;
 
             room.setJingleSession(session);
+        },
+
+        onMute: function(iq) {
+            var from = iq.getAttribute('from');
+            var room = this.rooms[Strophe.getBareJidFromJid(from)];
+            if(!room)
+                return;
+
+            room.onMute(iq);
+            return true;
         }
     });
 };
-

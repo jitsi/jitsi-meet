@@ -399,6 +399,18 @@ JitsiConference.prototype.kickParticipant = function (id) {
     this.room.kick(participant.getJid());
 };
 
+/**
+ * Kick participant from this conference.
+ * @param {string} id id of the participant to kick
+ */
+JitsiConference.prototype.muteParticipant = function (id) {
+    var participant = this.getParticipantById(id);
+    if (!participant) {
+        return;
+    }
+    this.room.muteParticipant(participant.getJid(), true);
+};
+
 JitsiConference.prototype.onMemberJoined = function (jid, email, nick) {
     var id = Strophe.getResourceFromJid(jid);
     if (id === 'focus' || this.myUserId() === id) {
@@ -655,6 +667,12 @@ function setupListeners(conference) {
             if (track) {
                 conference.onTrackAdded(track);
             }
+        }
+    );
+
+    conference.room.addListener(XMPPEvents.AUDIO_MUTED_BY_FOCUS,
+        function (value) {
+            conference.rtc.setAudioMute(value);
         }
     );
 

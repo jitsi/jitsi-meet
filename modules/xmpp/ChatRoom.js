@@ -758,4 +758,44 @@ ChatRoom.prototype.getConnectionState = function () {
     return this.session.getIceConnectionState();
 }
 
+/**
+ * Mutes remote participant.
+ * @param jid of the participant
+ * @param mute
+ */
+ChatRoom.prototype.muteParticipant = function (jid, mute) {
+    logger.info("set mute", mute);
+    var iqToFocus = $iq(
+        {to: this.focusMucJid, type: 'set'})
+        .c('mute', {
+            xmlns: 'http://jitsi.org/jitmeet/audio',
+            jid: jid
+        })
+        .t(mute.toString())
+        .up();
+
+    this.connection.sendIQ(
+        iqToFocus,
+        function (result) {
+            logger.log('set mute', result);
+        },
+        function (error) {
+            logger.log('set mute error', error);
+        });
+}
+
+ChatRoom.prototype.onMute = function (iq) {
+    var from = iq.getAttribute('from');
+    if (from !== this.focusMucJid) {
+        logger.warn("Ignored mute from non focus peer");
+        return false;
+    }
+    var mute = $(iq).find('mute');
+    if (mute.length) {
+        var doMuteAudio = mute.text() === "true";
+        this.eventEmitter.emit(XMPPEvents.AUDIO_MUTED_BY_FOCUS, doMuteAudio);
+    }
+    return true;
+}
+
 module.exports = ChatRoom;
