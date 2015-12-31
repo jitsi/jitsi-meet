@@ -45,12 +45,15 @@ JitsiConnection.prototype.setToken = function (token) {
 
 /**
  * Creates and joins new conference.
- * @param name the name of the conference; if null - a generated name will be provided from the api
- * @param options Object with properties / settings related to the conference that will be created.
+ * @param name the name of the conference; if null - a generated name will be
+ * provided from the api
+ * @param options Object with properties / settings related to the conference
+ * that will be created.
  * @returns {JitsiConference} returns the new conference object.
  */
 JitsiConnection.prototype.initJitsiConference = function (name, options) {
-    this.conferences[name] = new JitsiConference({name: name, config: options, connection: this});
+    this.conferences[name] = new JitsiConference({name: name, config: options,
+        connection: this});
     return this.conferences[name];
 }
 

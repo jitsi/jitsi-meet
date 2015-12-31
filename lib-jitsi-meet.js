@@ -573,9 +573,13 @@ JitsiConference.prototype.getRecordingURL = function () {
  */
 JitsiConference.prototype.toggleRecording = function (options) {
     if(this.room)
-        return this.room.toggleRecording(options);
-    return new Promise(function(resolve, reject){
-        reject(new Error("The conference is not created yet!"))});
+        return this.room.toggleRecording(options, function (status, error) {
+            this.eventEmitter.emit(
+                JitsiConferenceEvents.RECORDING_STATE_CHANGED, status, error);
+        }.bind(this));
+    this.eventEmitter.emit(
+        JitsiConferenceEvents.RECORDING_STATE_CHANGED, "error",
+        new Error("The conference is not created yet!"));
 }
 
 /**
@@ -903,7 +907,11 @@ var JitsiConferenceEvents = {
     /**
      * Indicates that phone number changed.
      */
-    PHONE_NUMBER_CHANGED: "conference.phoneNumberChanged"
+    PHONE_NUMBER_CHANGED: "conference.phoneNumberChanged",
+    /**
+     * Indicates that recording status changed.
+     */
+    RECORDING_STATE_CHANGED: "conferenece.recordingStateChanged"
 };
 
 module.exports = JitsiConferenceEvents;
@@ -956,12 +964,15 @@ JitsiConnection.prototype.setToken = function (token) {
 
 /**
  * Creates and joins new conference.
- * @param name the name of the conference; if null - a generated name will be provided from the api
- * @param options Object with properties / settings related to the conference that will be created.
+ * @param name the name of the conference; if null - a generated name will be
+ * provided from the api
+ * @param options Object with properties / settings related to the conference
+ * that will be created.
  * @returns {JitsiConference} returns the new conference object.
  */
 JitsiConnection.prototype.initJitsiConference = function (name, options) {
-    this.conferences[name] = new JitsiConference({name: name, config: options, connection: this});
+    this.conferences[name] = new JitsiConference({name: name, config: options,
+        connection: this});
     return this.conferences[name];
 }
 
@@ -6173,15 +6184,16 @@ ChatRoom.prototype.join = function (password) {
     var self = this;
     this.moderator.allocateConferenceFocus(function()
     {
-        self.sendPresence();
+        self.sendPresence(true);
     }.bind(this));
 };
 
-ChatRoom.prototype.sendPresence = function () {
-    if (!this.presMap['to']) {
+ChatRoom.prototype.sendPresence = function (fromJoin) {
+    if (!this.presMap['to'] || (!this.joined && !fromJoin)) {
         // Too early to send presence - not initialized
         return;
     }
+
     var pres = $pres({to: this.presMap['to'] });
     pres.c('x', {xmlns: this.presMap['xns']});
 
@@ -6753,13 +6765,14 @@ ChatRoom.prototype.getRecordingURL = function () {
 /**
  * Starts/stops the recording
  * @param token token for authentication
+ * @param statusChangeHandler {function} receives the new status as argument.
  */
-ChatRoom.prototype.toggleRecording = function (options) {
+ChatRoom.prototype.toggleRecording = function (options, statusChangeHandler) {
     if(this.recording)
-        return this.recording.toggleRecording(options);
+        return this.recording.toggleRecording(options, statusChangeHandler);
 
-    return new Promise(function(resolve, reject){
-        reject(new Error("The conference is not created yet!"))});
+    return statusChangeHandler("error",
+        new Error("The conference is not created yet!"));
 }
 
 /**
@@ -11005,7 +11018,8 @@ function Recording(type, eventEmitter, connection, focusMucJid, jirecon,
     this.jirecon = jirecon;
     this.url = null;
     this.type = type;
-    this._isSupported = false;
+    this._isSupported = ((type === Recording.types.JIBRI)
+        || (type === Recording.types.JIRECON && !this.jirecon))? false : true;
     /**
      * The ID of the jirecon recording session. Jirecon generates it when we
      * initially start recording, and it needs to be used in subsequent requests
@@ -11019,7 +11033,7 @@ Recording.types = {
     COLIBRI: "colibri",
     JIRECON: "jirecon",
     JIBRI: "jibri"
-}
+};
 
 Recording.prototype.handleJibriPresence = function (jibri) {
     var attributes = jibri.attributes;
@@ -11101,7 +11115,7 @@ function (state, callback, errCallback, options) {
             console.log('Failed to start recording, error: ', error);
             errCallback(error);
         });
-}
+};
 
 // Sends a COLIBRI message which enables or disables (according to 'state')
 // the recording on the bridge. Waits for the result IQ and calls 'callback'
@@ -11125,7 +11139,7 @@ function (state, callback, errCallback, options) {
             callback(newState);
 
             if (newState === 'pending') {
-                connection.addHandler(function(iq){
+                self.connection.addHandler(function(iq){
                     var state = $(iq).find('recording').attr('state');
                     if (state) {
                         self.state = newState;
@@ -11139,7 +11153,7 @@ function (state, callback, errCallback, options) {
             errCallback(error);
         }
     );
-}
+};
 
 Recording.prototype.setRecording =
 function (state, callback, errCallback, options) {
@@ -11157,36 +11171,37 @@ function (state, callback, errCallback, options) {
             console.error("Unknown recording type!");
             return;
     }
-}
+};
 
-Recording.prototype.toggleRecording = function (options) {
+/**
+ *Starts/stops the recording
+ * @param token token for authentication
+ * @param statusChangeHandler {function} receives the new status as argument.
+ */
+Recording.prototype.toggleRecording = function (options, statusChangeHandler) {
+    if ((!options.token && this.type === Recording.types.COLIBRI) ||
+        (!options.streamId && this.type === Recording.types.JIBRI)){
+        statusChangeHandler("error", new Error("No token passed!"));
+        logger.error("No token passed!");
+        return;
+    }
+
+    var oldState = this.state;
+    var newState = (oldState === 'off' || !oldState) ? 'on' : 'off';
     var self = this;
-    return new Promise(function(resolve, reject) {
-        if (!token && self.type === Recording.types.COLIBRI) {
-            reject(new Error("No token passed!"));
-            logger.error("No token passed!");
-            return;
-        }
-
-        var oldState = self.state;
-        var newState = (oldState === 'off' || !oldState) ? 'on' : 'off';
-
-        self.setRecording(newState,
-            function (state, url) {
-                logger.log("New recording state: ", state);
-                if (state && state !== oldState) {
-                    if(state !== "on" && state !== "off") //state === "pending" we are waiting for the real state
-                        return;
-                    self.state = state;
-                    self.url = url;
-                    resolve();
-                } else {
-                    reject(new Error("State not changed!"));
-                }
-            }, function (error) {
-                reject(error);
-            }, options);
-    });
+    this.setRecording(newState,
+        function (state, url) {
+            logger.log("New recording state: ", state);
+            if (state && state !== oldState) {
+                self.state = state;
+                self.url = url;
+                statusChangeHandler(state);
+            } else {
+                statusChangeHandler("error", new Error("Status not changed!"));
+            }
+        }, function (error) {
+            statusChangeHandler("error", error);
+        }, options);
 };
 
 /**

@@ -118,15 +118,16 @@ ChatRoom.prototype.join = function (password) {
     var self = this;
     this.moderator.allocateConferenceFocus(function()
     {
-        self.sendPresence();
+        self.sendPresence(true);
     }.bind(this));
 };
 
-ChatRoom.prototype.sendPresence = function () {
-    if (!this.presMap['to']) {
+ChatRoom.prototype.sendPresence = function (fromJoin) {
+    if (!this.presMap['to'] || (!this.joined && !fromJoin)) {
         // Too early to send presence - not initialized
         return;
     }
+
     var pres = $pres({to: this.presMap['to'] });
     pres.c('x', {xmlns: this.presMap['xns']});
 
@@ -698,13 +699,14 @@ ChatRoom.prototype.getRecordingURL = function () {
 /**
  * Starts/stops the recording
  * @param token token for authentication
+ * @param statusChangeHandler {function} receives the new status as argument.
  */
-ChatRoom.prototype.toggleRecording = function (options) {
+ChatRoom.prototype.toggleRecording = function (options, statusChangeHandler) {
     if(this.recording)
-        return this.recording.toggleRecording(options);
+        return this.recording.toggleRecording(options, statusChangeHandler);
 
-    return new Promise(function(resolve, reject){
-        reject(new Error("The conference is not created yet!"))});
+    return statusChangeHandler("error",
+        new Error("The conference is not created yet!"));
 }
 
 /**

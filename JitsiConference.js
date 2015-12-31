@@ -571,9 +571,13 @@ JitsiConference.prototype.getRecordingURL = function () {
  */
 JitsiConference.prototype.toggleRecording = function (options) {
     if(this.room)
-        return this.room.toggleRecording(options);
-    return new Promise(function(resolve, reject){
-        reject(new Error("The conference is not created yet!"))});
+        return this.room.toggleRecording(options, function (status, error) {
+            this.eventEmitter.emit(
+                JitsiConferenceEvents.RECORDING_STATE_CHANGED, status, error);
+        }.bind(this));
+    this.eventEmitter.emit(
+        JitsiConferenceEvents.RECORDING_STATE_CHANGED, "error",
+        new Error("The conference is not created yet!"));
 }
 
 /**

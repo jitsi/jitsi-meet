@@ -12,7 +12,8 @@ function Recording(type, eventEmitter, connection, focusMucJid, jirecon,
     this.jirecon = jirecon;
     this.url = null;
     this.type = type;
-    this._isSupported = false;
+    this._isSupported = ((type === Recording.types.JIBRI)
+        || (type === Recording.types.JIRECON && !this.jirecon))? false : true;
     /**
      * The ID of the jirecon recording session. Jirecon generates it when we
      * initially start recording, and it needs to be used in subsequent requests
@@ -132,7 +133,7 @@ function (state, callback, errCallback, options) {
             callback(newState);
 
             if (newState === 'pending') {
-                connection.addHandler(function(iq){
+                self.connection.addHandler(function(iq){
                     var state = $(iq).find('recording').attr('state');
                     if (state) {
                         self.state = newState;
@@ -166,37 +167,35 @@ function (state, callback, errCallback, options) {
     }
 };
 
-Recording.prototype.toggleRecording = function (options) {
+/**
+ *Starts/stops the recording
+ * @param token token for authentication
+ * @param statusChangeHandler {function} receives the new status as argument.
+ */
+Recording.prototype.toggleRecording = function (options, statusChangeHandler) {
+    if ((!options.token && this.type === Recording.types.COLIBRI) ||
+        (!options.streamId && this.type === Recording.types.JIBRI)){
+        statusChangeHandler("error", new Error("No token passed!"));
+        logger.error("No token passed!");
+        return;
+    }
+
+    var oldState = this.state;
+    var newState = (oldState === 'off' || !oldState) ? 'on' : 'off';
     var self = this;
-    return new Promise(function(resolve, reject) {
-        if ((!options.token && self.type === Recording.types.COLIBRI) ||
-            (!options.streamId && self.type === Recording.types.JIBRI)){
-            reject(new Error("No token passed!"));
-            logger.error("No token passed!");
-            return;
-        }
-
-        var oldState = self.state;
-        var newState = (oldState === 'off' || !oldState) ? 'on' : 'off';
-
-        self.setRecording(newState,
-            function (state, url) {
-                logger.log("New recording state: ", state);
-                if (state && state !== oldState) {
-                    if(state !== "on" && state !== "off") {
-                     //state === "pending" we are waiting for the real state
-                        return;
-                    }
-                    self.state = state;
-                    self.url = url;
-                    resolve();
-                } else {
-                    reject(new Error("State not changed!"));
-                }
-            }, function (error) {
-                reject(error);
-            }, options);
-    });
+    this.setRecording(newState,
+        function (state, url) {
+            logger.log("New recording state: ", state);
+            if (state && state !== oldState) {
+                self.state = state;
+                self.url = url;
+                statusChangeHandler(state);
+            } else {
+                statusChangeHandler("error", new Error("Status not changed!"));
+            }
+        }, function (error) {
+            statusChangeHandler("error", error);
+        }, options);
 };
 
 /**
