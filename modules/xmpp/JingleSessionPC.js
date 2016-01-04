@@ -1532,7 +1532,7 @@ JingleSessionPC.prototype.setLocalDescription = function () {
     if (newssrcs.length > 0) {
         for (i = 0; i < newssrcs.length; i++) {
             var ssrc = newssrcs[i].ssrc;
-            var myJid = self.connection.emuc.myroomjid;
+            var myJid = self.me;
             self.ssrcOwners[ssrc] = myJid;
         }
     }
