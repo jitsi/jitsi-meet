@@ -23,15 +23,29 @@ var remoteStats = {};
  * @returns {{bitrate: {download: *, upload: *}, packetLoss: {total: *, download: *, upload: *}}}
  */
 function parseMUCStats(stats) {
+    if(!stats || !stats.children || !stats.children.length)
+        return null;
+    var children = stats.children;
+    var extractedStats = {};
+    children.forEach((child) => {
+        if(child.tagName !== "stat" || !child.attributes)
+            return;
+        var attrKeys = Object.keys(child.attributes);
+        if(!attrKeys || !attrKeys.length)
+            return;
+        attrKeys.forEach((attr) => {
+            extractedStats[attr] = child.attributes[attr];
+        });
+    });
     return {
         bitrate: {
-            download: stats.bitrate_download,
-            upload: stats.bitrate_upload
+            download: extractedStats.bitrate_download,
+            upload: extractedStats.bitrate_upload
         },
         packetLoss: {
-            total: stats.packetLoss_total,
-            download: stats.packetLoss_download,
-            upload: stats.packetLoss_upload
+            total: extractedStats.packetLoss_total,
+            download: extractedStats.packetLoss_download,
+            upload: extractedStats.packetLoss_upload
         }
     };
 }
@@ -61,11 +75,12 @@ var ConnectionQuality = {
      * @param data the statistics
      */
     updateRemoteStats: function (id, data) {
-        if (!data || !data.packetLoss_total) {
+        data = parseMUCStats(data);
+        if (!data || !data.packetLoss || !data.packetLoss.total) {
             eventEmitter.emit(CQEvents.REMOTESTATS_UPDATED, id, null, null);
             return;
         }
-        remoteStats[id] = parseMUCStats(data);
+        remoteStats[id] = data;
 
         eventEmitter.emit(
             CQEvents.REMOTESTATS_UPDATED, id, 100 - data.packetLoss_total, remoteStats[id]
@@ -94,16 +109,20 @@ var ConnectionQuality = {
     /**
      * Converts statistics to format for sending through XMPP
      * @param stats the statistics
-     * @returns {{bitrate_donwload: *, bitrate_uplpoad: *, packetLoss_total: *, packetLoss_download: *, packetLoss_upload: *}}
+     * @returns [{tagName: "stat", attributes: {{bitrate_donwload: *}},
+     * {tagName: "stat", attributes: {{ bitrate_uplpoad: *}},
+     * {tagName: "stat", attributes: {{ packetLoss_total: *}},
+     * {tagName: "stat", attributes: {{ packetLoss_download: *}},
+     * {tagName: "stat", attributes: {{ packetLoss_upload: *}}]
      */
     convertToMUCStats: function (stats) {
-        return {
-            "bitrate_download": stats.bitrate.download,
-            "bitrate_upload": stats.bitrate.upload,
-            "packetLoss_total": stats.packetLoss.total,
-            "packetLoss_download": stats.packetLoss.download,
-            "packetLoss_upload": stats.packetLoss.upload
-        };
+        return [
+            {tagName: "stat", attributes: {"bitrate_download": stats.bitrate.download}},
+            {tagName: "stat", attributes: {"bitrate_upload": stats.bitrate.upload}},
+            {tagName: "stat", attributes: {"packetLoss_total": stats.packetLoss.total}},
+            {tagName: "stat", attributes: {"packetLoss_download": stats.packetLoss.download}},
+            {tagName: "stat", attributes: {"packetLoss_upload": stats.packetLoss.upload}}
+        ];
     }
 };
 

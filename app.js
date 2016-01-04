@@ -37,7 +37,7 @@ const ConferenceErrors = JitsiMeetJS.errors.conference;
 let localVideo, localAudio;
 
 const Commands = {
-    CONNECTION_QUALITY: "connectionQuality",
+    CONNECTION_QUALITY: "stats",
     EMAIL: "email",
     VIDEO_TYPE: "videoType",
     ETHERPAD: "etherpad",
@@ -325,10 +325,10 @@ function initConference(localTracks, connection) {
             APP.UI.updateLocalStats(percent, stats);
 
             // send local stats to other users
-            room.sendCommand(Commands.CONNECTION_QUALITY, {
-                value: APP.connectionquality.convertToMUCStats(stats),
+            room.sendCommandOnce(Commands.CONNECTION_QUALITY, {
+                children: APP.connectionquality.convertToMUCStats(stats),
                 attributes: {
-                    id: room.myUserId()
+                    xmlns: 'http://jitsi.org/jitmeet/stats'
                 }
             });
         }
@@ -340,8 +340,8 @@ function initConference(localTracks, connection) {
     // listen to remote stats
     room.addCommandListener(
         Commands.CONNECTION_QUALITY,
-        function ({value, attributes}) {
-            APP.connectionquality.updateRemoteStats(attributes.id, value);
+        function (values, from) {
+            APP.connectionquality.updateRemoteStats(from, values);
         }
     );
     APP.connectionquality.addListener(
