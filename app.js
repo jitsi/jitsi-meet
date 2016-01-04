@@ -210,12 +210,12 @@ function initConference(localTracks, connection) {
 
 
     room.on(ConferenceEvents.USER_JOINED, function (id, user) {
-        console.error('USER %s connnected', id, user);
+        console.log('USER %s connnected', id, user);
         // FIXME email???
         APP.UI.addUser(id, user.getDisplayName());
     });
     room.on(ConferenceEvents.USER_LEFT, function (id, user) {
-        console.error('USER %s LEFT', id, user);
+        console.log('USER %s LEFT', id, user);
         APP.UI.removeUser(id, user.getDisplayName());
         APP.UI.stopPrezi(id);
     });
@@ -254,7 +254,7 @@ function initConference(localTracks, connection) {
         if (track.isLocal()) { // skip local tracks
             return;
         }
-        console.error(
+        console.log(
             'REMOTE %s TRACK', track.getType(), track.getParticipantId()
         );
         APP.UI.addRemoteStream(track);
@@ -264,7 +264,7 @@ function initConference(localTracks, connection) {
             return;
         }
 
-        console.error(
+        console.log(
             'REMOTE %s TRACK REMOVED', track.getType(), track.getParticipantId()
         );
 
@@ -556,9 +556,12 @@ function initConference(localTracks, connection) {
         }
     );
 
-    $(window).bind('beforeunload', function () {
+    const unload = () => {
         room.leave();
-    });
+        connection.disconnect();
+    };
+    $(window).bind('beforeunload', unload );
+    $(window).bind('unload', unload );
 
     return new Promise(function (resolve, reject) {
         room.on(ConferenceEvents.CONFERENCE_JOINED, handleConferenceJoined);

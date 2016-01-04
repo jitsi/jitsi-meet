@@ -6289,7 +6289,6 @@ ChatRoom.prototype.createNonAnonymousRoom = function () {
 };
 
 ChatRoom.prototype.onPresence = function (pres) {
-    console.log(pres);
     var from = pres.getAttribute('from');
     // Parse roles.
     var member = {};
@@ -6326,7 +6325,6 @@ ChatRoom.prototype.onPresence = function (pres) {
                     if (displayName && displayName.length > 0) {
                         this.eventEmitter.emit(XMPPEvents.DISPLAY_NAME_CHANGED, from, displayName);
                     }
-                    logger.info("Display name: " + displayName, pres);
                 }
                 break;
             case "userId":
@@ -6345,7 +6343,6 @@ ChatRoom.prototype.onPresence = function (pres) {
                 var jibri = node;
                 break;
             case "call-control":
-                console.log(pres);
                 var att = node.attributes;
                 if(!att)
                     break;
