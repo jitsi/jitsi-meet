@@ -120,6 +120,20 @@ const APP = {
             },
             toggleVideoMuted () {
                 this.muteVideo(!this.videoMuted);
+            },
+
+            // used by torture currently
+            isJoined () {
+                return APP.conference._room
+                    && APP.conference._room.isJoined();
+            },
+            getConnectionState () {
+                return APP.conference._room
+                    && APP.conference._room.getConnectionState();
+            },
+            getMyUserId () {
+                return APP.conference._room
+                    && APP.conference._room.myUserId();
             }
         };
 
