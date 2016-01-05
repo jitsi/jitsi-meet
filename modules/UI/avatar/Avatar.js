@@ -1,4 +1,4 @@
-/* global Strophe, APP, MD5, config */
+/* global Strophe, APP, MD5, config, interfaceConfig */
 var users = {};
 
 var Avatar = {
@@ -46,17 +46,27 @@ var Avatar = {
             console.error("Get gravatar - id is undefined");
             return null;
         }
+
+        // Default to using gravatar.
+        var urlPref = 'https://www.gravatar.com/avatar/';
+        var urlSuf = "?d=wavatar&size=" + (size || "30");
+
+        // If we have a real email we will use it for the gravatar and we'll
+        // use the pre-configured URL if any. Otherwise, it's a random avatar.
         var email = users[id];
-        if (!email) {
-            console.warn(
-                "No avatar stored yet for " + id + " - using user id as ID"
-            );
-            email = id;
+        if (email && email.indexOf('@')) {
+            id = email;
+
+            if (interfaceConfig.RANDOM_AVATAR_URL_PREFIX) {
+                urlPref = interfaceConfig.RANDOM_AVATAR_URL_PREFIX;
+                urlSuf = interfaceConfig.RANDOM_AVATAR_URL_SUFFIX;
+            }
         }
+
         if (!config.disableThirdPartyRequests) {
-            return 'https://www.gravatar.com/avatar/' +
+            return urlPref +
                 MD5.hexdigest(id.trim().toLowerCase()) +
-                "?d=wavatar&size=" + (size || "30");
+                urlSuf;
         } else {
             return 'images/avatar2.png';
         }
