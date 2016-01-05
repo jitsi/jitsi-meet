@@ -308,21 +308,16 @@ var XMPP = {
             configDomain = config.hosts.domain;
         }
         var jid = configDomain || window.location.hostname;
-        var password = null;
-        if (config.token) {
-            password = config.token;
-            if (config.id) {
-                jid = config.id + "@" + jid;
-            } else {
-                jid = generateUserName() + "@" + jid;
-            }
-        }
-        connect(jid, password);
+        connect(jid);
     },
     createConnection: function () {
         var bosh = config.bosh || '/http-bind';
         // adds the room name used to the bosh connection
-        return new Strophe.Connection(bosh + '?ROOM=' + APP.UI.getRoomNode());
+        bosh +=  '?room=' + APP.UI.getRoomNode();
+        if (config.token) {
+            bosh += "&token=" + config.token;
+        }
+        return new Strophe.Connection(bosh);
     },
     getStatusString: function (status) {
         return Strophe.getStatusString(status);
@@ -595,6 +590,19 @@ var XMPP = {
         if (!this.isConferenceInProgress())
             return null;
         return connection.jingle.activecall.getSsrcOwner(ssrc);
+    },
+    /**
+     * Gets the SSRC of local media stream.
+     * @param mediaType the media type that tells whether we want to get
+     *        the SSRC of local audio or video stream.
+     * @returns {*} the SSRC number for local media stream or <tt>null</tt> if
+     *              not available.
+     */
+    getLocalSSRC: function (mediaType) {
+        if (!this.isConferenceInProgress()) {
+            return null;
+        }
+        return connection.jingle.activecall.getLocalSSRC(mediaType);
     },
     // Returns true iff we have joined the MUC.
     isMUCJoined: function () {

@@ -107,7 +107,7 @@ function setupChat() {
 function setupToolbars() {
     Toolbar.init(UI);
     Toolbar.setupButtonsFromConfig();
-    BottomToolbar.init();
+    BottomToolbar.init(eventEmitter);
 }
 
 function streamHandler(stream, isMuted) {
@@ -325,8 +325,16 @@ function registerListeners() {
             "dialog.connectError", pres);
     });
     APP.xmpp.addListener(XMPPEvents.ROOM_CONNECT_ERROR, function (pres) {
-        UI.messageHandler.openReportDialog(null,
-            "dialog.connectError", pres);
+        if (config.token &&
+            $(pres).find(
+                '>error[type="cancel"]' +
+                '>not-allowed[xmlns="urn:ietf:params:xml:ns:xmpp-stanzas"]'
+            ).length) {
+            messageHandler.showError("dialog.error", "dialog.tokenAuthFailed");
+        } else {
+            UI.messageHandler.openReportDialog(null,
+                "dialog.connectError", pres);
+        }
     });
 
     APP.xmpp.addListener(XMPPEvents.READY_TO_JOIN, function () {
@@ -341,6 +349,10 @@ function registerListeners() {
 
     UI.addListener(UIEvents.LARGEVIDEO_INIT, function () {
         AudioLevels.init();
+    });
+
+    UI.addListener(UIEvents.FILM_STRIP_TOGGLED, function (isToggled) {
+        VideoLayout.onFilmStripToggled(isToggled);
     });
 
     if (!interfaceConfig.filmStripOnly) {
@@ -425,15 +437,12 @@ UI.start = function (init) {
         $("#downloadlog").click(function (event) {
             dump(event.target);
         });
-        $("#feedbackButton").click(function (event) {
-            Feedback.openFeedbackWindow();
-        });
+        Feedback.init();
     }
     else
     {
         $("#header").css("display", "none");
         $("#bottomToolbar").css("display", "none");
-        $("#feedbackButton").css("display", "none");
         $("#downloadlog").css("display", "none");
         $("#remoteVideos").css("padding", "0px 0px 18px 0px");
         $("#remoteVideos").css("right", "0px");
@@ -524,6 +533,8 @@ function onMucJoined(jid, info) {
 
 
     VideoLayout.mucJoined();
+
+    Toolbar.checkAutoEnableDesktopSharing();
 }
 
 function initEtherpad(name) {
@@ -695,6 +706,15 @@ UI.inputDisplayNameHandler = function (value) {
 
 UI.getLargeVideoResource = function () {
     return VideoLayout.getLargeVideoResource();
+};
+
+/**
+ * Return the type of the remote video.
+ * @param jid the jid for the remote video
+ * @returns the video type video or screen.
+ */
+UI.getRemoteVideoType = function (jid) {
+    return VideoLayout.getRemoteVideoType(jid);
 };
 
 UI.getRoomNode = function () {
@@ -884,11 +904,11 @@ UI.setVideoMuteButtonsState = function (mute) {
     }
 };
 
-UI.userAvatarChanged = function (resourceJid, thumbUrl, contactListUrl) {
-    VideoLayout.userAvatarChanged(resourceJid, thumbUrl);
-    ContactList.userAvatarChanged(resourceJid, contactListUrl);
+UI.userAvatarChanged = function (resourceJid, avatarUrl) {
+    VideoLayout.userAvatarChanged(resourceJid, avatarUrl);
+    ContactList.userAvatarChanged(resourceJid, avatarUrl);
     if(resourceJid === APP.xmpp.myResource())
-        SettingsMenu.changeAvatar(thumbUrl);
+        SettingsMenu.changeAvatar(avatarUrl);
 };
 
 UI.setVideoMute = setVideoMute;

@@ -57,6 +57,7 @@ SDP.prototype.getMediaSsrcMap = function() {
         });
         tmp = SDPUtil.find_lines(self.media[mediaindex], 'a=ssrc-group:');
         tmp.forEach(function(line){
+            var idx = line.indexOf(' ');
             var semantics = line.substr(0, idx).substr(13);
             var ssrcs = line.substr(14 + semantics.length).split(' ');
             if (ssrcs.length) {
@@ -74,16 +75,18 @@ SDP.prototype.getMediaSsrcMap = function() {
  * @param ssrc the ssrc to check.
  * @returns {boolean} <tt>true</tt> if this SDP contains given SSRC.
  */
-SDP.prototype.containsSSRC = function(ssrc) {
+SDP.prototype.containsSSRC = function (ssrc) {
+    // FIXME this code is really strange - improve it if you can
     var medias = this.getMediaSsrcMap();
-    Object.keys(medias).forEach(function(mediaindex){
-        var media = medias[mediaindex];
-        //console.log("Check", channel, ssrc);
-        if(Object.keys(media.ssrcs).indexOf(ssrc) != -1){
-            return true;
+    var result = false;
+    Object.keys(medias).forEach(function (mediaindex) {
+        if (result)
+            return;
+        if (medias[mediaindex].ssrcs[ssrc]) {
+            result = true;
         }
     });
-    return false;
+    return result;
 };
 
 // remove iSAC and CN from SDP
@@ -138,7 +141,7 @@ SDP.prototype.removeMediaLines = function(mediaindex, prefix) {
 };
 
 // add content's to a jingle element
-SDP.prototype.toJingle = function (elem, thecreator, ssrcs) {
+SDP.prototype.toJingle = function (elem, thecreator) {
 //    console.log("SSRC" + ssrcs["audio"] + " - " + ssrcs["video"]);
     var i, j, k, mline, ssrc, rtpmap, tmp, lines;
     // new bundle plan
@@ -165,11 +168,7 @@ SDP.prototype.toJingle = function (elem, thecreator, ssrcs) {
         if (SDPUtil.find_line(this.media[i], 'a=ssrc:')) {
             ssrc = SDPUtil.find_line(this.media[i], 'a=ssrc:').substring(7).split(' ')[0]; // take the first
         } else {
-            if(ssrcs && ssrcs[mline.media]) {
-                ssrc = ssrcs[mline.media];
-            } else {
-                ssrc = false;
-            }
+            ssrc = false;
         }
 
         elem.c('content', {creator: thecreator, name: mline.media});

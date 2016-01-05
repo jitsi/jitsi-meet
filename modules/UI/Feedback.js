@@ -1,4 +1,4 @@
-/* global $, interfaceConfig */
+/* global $, config, interfaceConfig */
 
 /*
  * Created by Yana Stamcheva on 2/10/15.
@@ -74,6 +74,28 @@ var Feedback = {
      */
     feedbackScore: -1,
     /**
+     * Initialise the Feedback functionality.
+     */
+    init: function () {
+        // CallStats is the way we send feedback, so we don't have to initialise
+        // if callstats isn't enabled.
+        if (!callStats.isEnabled())
+            return;
+
+        $("div.feedbackButton").css("display", "block");
+        $("#feedbackButton").click(function (event) {
+            Feedback.openFeedbackWindow();
+        });
+    },
+    /**
+     * Indicates if the feedback functionality is enabled.
+     *
+     * @return true if the feedback functionality is enabled, false otherwise.
+     */
+    isEnabled: function() {
+        return callStats.isEnabled();
+    },
+    /**
      * Opens the feedback window.
      */
     openFeedbackWindow: function (callback) {
@@ -120,7 +142,7 @@ var Feedback = {
         var states = {
             overall_feedback: {
                 html: constructOverallFeedbackHtml(),
-                persistent: true,
+                persistent: false,
                 buttons: {},
                 closeText: '',
                 focus: "div[id='stars']",
@@ -161,7 +183,7 @@ var Feedback = {
         var feedbackDialog
             = APP.UI.messageHandler.openDialogWithStates(
                 states,
-                {   persistent: true,
+                {   persistent: false,
                     buttons: {},
                     closeText: '',
                     loaded: onLoadFunction,

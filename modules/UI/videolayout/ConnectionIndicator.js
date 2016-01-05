@@ -90,6 +90,11 @@ ConnectionIndicator.prototype.generateText = function () {
     if(this.resolution && this.jid) {
         var keys = Object.keys(this.resolution);
         for(var ssrc in this.resolution) {
+            // skip resolutions for ssrc that don't have this info
+            // like receive-only ssrc for FF
+            if(this.resolution[ssrc]
+                && this.resolution[ssrc].height != -1
+                && this.resolution[ssrc].width != -1)
             resolutionValue = this.resolution[ssrc];
         }
     }

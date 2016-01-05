@@ -11,8 +11,8 @@ body {
 #wrap{
     display: block;
     position: absolute;
-    width:900px;
-    height: 365px;
+    width:500px;
+    height: 565px;
     overflow:hidden;
     text-align: center;
     margin: auto;
@@ -29,7 +29,7 @@ body {
 #text{
     display:inline-block;
     font-size: 28px;
-    width: 568px;
+    /* width: 568px; */
     vertical-align:middle;
     padding-top: 25px;
 }
@@ -51,18 +51,23 @@ a {
 .browser_wrapper
 {
     width: 138px;
-    height: 188px;
+    /* height: 188px; */
     vertical-align: middle;
     color: #929391;
     font-size: 20px;
     float: left;
     margin-left: 15px;
+    margin-top: 5px;
 }
 
+.browser_text
+{
+    height: 2em;
+}
 .supported_browsers
 {
     margin: 0px auto 0px auto;
-    width: 660px;
+    /* width: 660px; */
 }
 
 .clear
@@ -97,14 +102,14 @@ a {
 }
 #chromium_logo
 {
-    width: 85px;
-    height: 79px;
+    width: 77px;
+    height: 78px;
     background-image: url('/images/chromium.png');
 }
 #firefox_logo
 {
-    width: 73px;
-    height: 79px;
+    width: 86px;
+    height: 80px;
     background-image: url('/images/firefox.png');
 }
 
@@ -114,5 +119,18 @@ a {
     height: 78px;
     background-image: url('/images/opera.png');
 }
-   
-   
+
+#safari_logo
+{
+    width: 78px;
+    height: 79px;
+    background-image: url('/images/safari.png');
+}
+
+#ie_logo
+{
+    width: 80px;
+    height: 78px;
+    background-image: url('/images/ie.png');
+}
+

@@ -40,7 +40,11 @@ function JingleSessionPC(me, sid, connection, service, eventEmitter) {
     this.switchstreams = false;
 
     this.wait = true;
-    this.localStreamsSSRC = null;
+    /**
+     * A map that stores SSRCs of local streams
+     * @type {{}} maps media type('audio' or 'video') to SSRC number
+     */
+    this.localStreamsSSRC = {};
     this.ssrcOwners = {};
     this.ssrcVideoTypes = {};
     this.eventEmitter = eventEmitter;
@@ -256,8 +260,7 @@ JingleSessionPC.prototype.accept = function () {
     // FIXME why do we generate session-accept in 3 different places ?
     prsdp.toJingle(
         accept,
-        this.initiator == this.me ? 'initiator' : 'responder',
-        this.localStreamsSSRC);
+        this.initiator == this.me ? 'initiator' : 'responder');
     var sdp = this.peerconnection.localDescription.sdp;
     while (SDPUtil.find_line(sdp, 'a=inactive')) {
         // FIXME: change any inactive to sendrecv or whatever they were originally
@@ -484,8 +487,7 @@ JingleSessionPC.prototype.createdOffer = function (sdp) {
                 sid: this.sid});
         self.localSDP.toJingle(
             init,
-            this.initiator == this.me ? 'initiator' : 'responder',
-            this.localStreamsSSRC);
+            this.initiator == this.me ? 'initiator' : 'responder');
 
         SSRCReplacement.processSessionInit(init);
 
@@ -553,6 +555,15 @@ JingleSessionPC.prototype.readSsrcInfo = function (contents) {
 
 JingleSessionPC.prototype.getSsrcOwner = function (ssrc) {
     return this.ssrcOwners[ssrc];
+};
+
+/**
+ * Returns the SSRC of local audio stream.
+ * @param mediaType 'audio' or 'video' media type
+ * @returns {*} the SSRC number of local audio or video stream.
+ */
+JingleSessionPC.prototype.getLocalSSRC = function (mediaType) {
+    return this.localStreamsSSRC[mediaType];
 };
 
 JingleSessionPC.prototype.setRemoteDescription = function (elem, desctype) {
@@ -720,7 +731,7 @@ JingleSessionPC.prototype.addIceCandidate = function (elem) {
                 self.peerconnection.addIceCandidate(candidate);
             } catch (e) {
                 console.error('addIceCandidate failed', e.toString(), line);
-                self.eventEmitter.emit(RTCEvents.ADD_ICE_CANDIDATE_FAILED, err);
+                self.eventEmitter.emit(RTCEvents.ADD_ICE_CANDIDATE_FAILED, err, self.peerconnection);
             }
         });
     });
@@ -1427,13 +1438,22 @@ JingleSessionPC.prototype.setLocalDescription = function () {
                     'ssrc': ssrc.id,
                     'type': media.type
                 });
-            });
-        }
-        else if(self.localStreamsSSRC && self.localStreamsSSRC[media.type])
-        {
-            newssrcs.push({
-                'ssrc': self.localStreamsSSRC[media.type],
-                'type': media.type
+
+                // In FF we have multiple local SSRC per media type, 1 that is
+                // sending and some that are receive only. The
+                // localStramsSSRC['audio'] needs to be set to the one that is
+                // sending! We find it by checking for an msid. Note that
+                // self.localStreamsSSRC is primarily used by the tests atm.
+                var isSending = media.ssrcs.some(function (ssrc$1) {
+                    return ssrc$1.id == ssrc.id && ssrc$1.attribute == 'msid';
+                });
+
+                if (!isSending) {
+                    return;
+                }
+
+                // FIXME allows for only one SSRC per media type
+                self.localStreamsSSRC[media.type] = ssrc.id;
             });
         }
 

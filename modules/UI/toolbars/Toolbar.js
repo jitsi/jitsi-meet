@@ -151,12 +151,28 @@ function hangup() {
         }
     };
 
-    if (Feedback.feedbackScore > 0) {
-        Feedback.openFeedbackWindow();
-        conferenceDispose();
+    if (Feedback.isEnabled())
+    {
+        // If the user has already entered feedback, we'll show the window and
+        // immidiately start the conference dispose timeout.
+        if (Feedback.feedbackScore > 0) {
+            Feedback.openFeedbackWindow();
+            conferenceDispose();
+
+        }
+        // Otherwise we'll wait for user's feedback.
+        else
+            Feedback.openFeedbackWindow(conferenceDispose);
     }
-    else
-        Feedback.openFeedbackWindow(conferenceDispose);
+    else {
+        conferenceDispose();
+
+        // If the feedback functionality isn't enabled we show a thank you
+        // dialog.
+        APP.UI.messageHandler.openMessageDialog(null, null, null,
+            APP.translation.translateString("dialog.thankYou",
+                {appName:interfaceConfig.APP_NAME}));
+    }
 }
 
 /**
@@ -380,7 +396,7 @@ var Toolbar = (function (my) {
      * Disables and enables some of the buttons.
      */
     my.setupButtonsFromConfig = function () {
-        if (UIUtil.isButtonEnabled('prezi')) {
+        if (!UIUtil.isButtonEnabled('prezi')) {
             $("#toolbar_button_prezi").css({display: "none"});
         }
     };
@@ -632,10 +648,20 @@ var Toolbar = (function (my) {
         }
     };
 
-    // checks whether recording is enabled and whether we have params to start automatically recording
+    // checks whether recording is enabled and whether we have params
+    // to start automatically recording
     my.checkAutoRecord = function () {
         if (UIUtil.isButtonEnabled('recording') && config.autoRecord) {
             toggleRecording(config.autoRecordToken);
+        }
+    };
+
+    // checks whether desktop sharing is enabled and whether
+    // we have params to start automatically sharing
+    my.checkAutoEnableDesktopSharing = function () {
+        if (UIUtil.isButtonEnabled('desktop')
+                && config.autoEnableDesktopSharing) {
+            APP.desktopsharing.toggleScreenSharing();
         }
     };
 

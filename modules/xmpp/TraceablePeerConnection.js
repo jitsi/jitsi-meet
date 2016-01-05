@@ -218,6 +218,8 @@ if (TraceablePeerConnection.prototype.__defineGetter__ !== undefined) {
         function() {
             var desc = this.peerconnection.localDescription;
 
+            // FIXME this should probably be after the Unified Plan -> Plan B
+            // transformation.
             desc = SSRCReplacement.mungeLocalVideoSSRC(desc);
 
             this.trace('getLocalDescription::preTransform', dumpSDP(desc));
@@ -293,7 +295,7 @@ TraceablePeerConnection.prototype.setLocalDescription
         },
         function (err) {
             self.trace('setLocalDescriptionOnFailure', err);
-            self.eventEmitter.emit(RTCEvents.SET_LOCAL_DESCRIPTION_FAILED, err);
+            self.eventEmitter.emit(RTCEvents.SET_LOCAL_DESCRIPTION_FAILED, err, self.peerconnection);
             failureCallback(err);
         }
     );
@@ -329,7 +331,7 @@ TraceablePeerConnection.prototype.setRemoteDescription
         },
         function (err) {
             self.trace('setRemoteDescriptionOnFailure', err);
-            self.eventEmitter.emit(RTCEvents.SET_REMOTE_DESCRIPTION_FAILED, err);
+            self.eventEmitter.emit(RTCEvents.SET_REMOTE_DESCRIPTION_FAILED, err, self.peerconnection);
             failureCallback(err);
         }
     );
@@ -366,6 +368,7 @@ TraceablePeerConnection.prototype.createOffer
             }
 
             offer = SSRCReplacement.mungeLocalVideoSSRC(offer);
+            self.trace('createOfferOnSuccess::mungeLocalVideoSSRC', dumpSDP(offer));
 
             if (config.enableSimulcast && self.simulcast.isSupported()) {
                 offer = self.simulcast.mungeLocalDescription(offer);
@@ -375,7 +378,7 @@ TraceablePeerConnection.prototype.createOffer
         },
         function(err) {
             self.trace('createOfferOnFailure', err);
-            self.eventEmitter.emit(RTCEvents.CREATE_OFFER_FAILED, err);
+            self.eventEmitter.emit(RTCEvents.CREATE_OFFER_FAILED, err, self.peerconnection);
             failureCallback(err);
         },
         constraints
@@ -397,6 +400,7 @@ TraceablePeerConnection.prototype.createAnswer
 
             // munge local video SSRC
             answer = SSRCReplacement.mungeLocalVideoSSRC(answer);
+            self.trace('createAnswerOnSuccess::mungeLocalVideoSSRC', dumpSDP(answer));
 
             if (config.enableSimulcast && self.simulcast.isSupported()) {
                 answer = self.simulcast.mungeLocalDescription(answer);
@@ -406,7 +410,7 @@ TraceablePeerConnection.prototype.createAnswer
         },
         function(err) {
             self.trace('createAnswerOnFailure', err);
-            self.eventEmitter.emit(RTCEvents.CREATE_ANSWER_FAILED, err);
+            self.eventEmitter.emit(RTCEvents.CREATE_ANSWER_FAILED, err, self.peerconnection);
             failureCallback(err);
         },
         constraints

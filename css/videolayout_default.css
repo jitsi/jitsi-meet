@@ -319,6 +319,27 @@
     z-index: 3;
 }
 
+.videocontainer>span.dominantspeakerindicator {
+    bottom: 0px;
+    left: 0px;
+    width: 25px;
+    height: 25px;
+    z-index: 3;
+    text-align: center;
+    border-radius: 50%;
+    background: #0cf;
+    margin: 5px;
+    display: inline-block;
+    position: absolute;
+    color: #FFFFFF;
+    font-size: 11pt;
+    border: 0px;
+}
+
+#speakerindicatoricon {
+    padding-top: 5px;
+}
+
 #reloadPresentation {
     display: none;
     position: absolute;

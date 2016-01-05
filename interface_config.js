@@ -5,7 +5,6 @@ var interfaceConfig = {
     INITIAL_TOOLBAR_TIMEOUT: 20000,
     TOOLBAR_TIMEOUT: 4000,
     DEFAULT_REMOTE_DISPLAY_NAME: "Fellow Jitster",
-    DEFAULT_DOMINANT_SPEAKER_DISPLAY_NAME: "speaker",
     DEFAULT_LOCAL_DISPLAY_NAME: "me",
     SHOW_JITSI_WATERMARK: true,
     JITSI_WATERMARK_LINK: "https://jitsi.org",
@@ -28,5 +27,7 @@ var interfaceConfig = {
     /**
      * Whether to only show the filmstrip (and hide the toolbar).
      */
-    filmStripOnly: false
+    filmStripOnly: false,
+    RANDOM_AVATAR_URL_PREFIX: false,
+    RANDOM_AVATAR_URL_SUFFIX: false
 };

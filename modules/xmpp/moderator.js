@@ -149,6 +149,14 @@ var Moderator = {
                 { name: 'bridge', value: config.hosts.bridge})
                 .up();
         }
+
+        if (config.enforcedBridge) {
+            elem.c(
+                'property',
+                { name: 'enforcedBridge', value: config.enforcedBridge})
+                .up();
+        }
+
         // Tell the focus we have Jigasi configured
         if (config.hosts.call_control !== undefined) {
             elem.c(

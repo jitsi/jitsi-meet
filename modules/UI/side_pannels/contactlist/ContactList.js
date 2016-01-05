@@ -32,7 +32,7 @@ function updateNumberOfParticipants(delta) {
 function createAvatar(jid) {
     var avatar = document.createElement('img');
     avatar.className = "icon-avatar avatar";
-    avatar.src = Avatar.getContactListUrl(jid);
+    avatar.src = Avatar.getAvatarUrl(jid);
 
     return avatar;
 }
@@ -181,11 +181,11 @@ var ContactList = {
             contactName.html(displayName);
     },
 
-    userAvatarChanged: function (resourceJid, contactListUrl) {
+    userAvatarChanged: function (resourceJid, avatarUrl) {
         // set the avatar in the contact list
         var contact = $('#' + resourceJid + '>img');
         if (contact && contact.length > 0) {
-            contact.get(0).src = contactListUrl;
+            contact.get(0).src = avatarUrl;
         }
 
     }

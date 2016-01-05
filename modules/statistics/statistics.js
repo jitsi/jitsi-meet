@@ -113,25 +113,46 @@ var statistics = {
         APP.RTC.addListener(RTCEvents.GET_USER_MEDIA_FAILED, function (e) {
             CallStats.sendGetUserMediaFailed(e);
         });
-        APP.xmpp.addListener(RTCEvents.CREATE_OFFER_FAILED, function (e) {
-            CallStats.sendCreateOfferFailed(e);
+        APP.xmpp.addListener(RTCEvents.CREATE_OFFER_FAILED, function (e, pc) {
+            CallStats.sendCreateOfferFailed(e, pc);
         });
-        APP.xmpp.addListener(RTCEvents.CREATE_ANSWER_FAILED, function (e) {
-            CallStats.sendCreateAnswerFailed(e);
+        APP.xmpp.addListener(RTCEvents.CREATE_ANSWER_FAILED, function (e, pc) {
+            CallStats.sendCreateAnswerFailed(e, pc);
         });
         APP.xmpp.addListener(
             RTCEvents.SET_LOCAL_DESCRIPTION_FAILED,
-            function (e) {
-                CallStats.sendSetLocalDescFailed(e);
-        });
+            function (e, pc) {
+                CallStats.sendSetLocalDescFailed(e, pc);
+            }
+        );
         APP.xmpp.addListener(
             RTCEvents.SET_REMOTE_DESCRIPTION_FAILED,
-            function (e) {
-                CallStats.sendSetRemoteDescFailed(e);
-        });
-        APP.xmpp.addListener(RTCEvents.ADD_ICE_CANDIDATE_FAILED, function (e) {
-            CallStats.sendAddIceCandidateFailed(e);
-        });
+            function (e, pc) {
+                CallStats.sendSetRemoteDescFailed(e, pc);
+            }
+        );
+        APP.xmpp.addListener(
+            RTCEvents.ADD_ICE_CANDIDATE_FAILED,
+            function (e, pc) {
+                CallStats.sendAddIceCandidateFailed(e, pc);
+            }
+        );
+    },
+    /**
+     * Obtains audio level reported in the stats for specified peer.
+     * @param peerJid full MUC jid of the user for whom we want to obtain last
+     *        audio level.
+     * @param ssrc the SSRC of audio stream for which we want to obtain audio
+     *        level.
+     * @returns {*} a float form 0 to 1 that represents current audio level or
+     *              <tt>null</tt> if for any reason the value is not available
+     *              at this time.
+     */
+    getPeerSSRCAudioLevel: function (peerJid, ssrc) {
+
+        var peerStats = rtpStats.jid2stats[peerJid];
+
+        return peerStats ? peerStats.ssrc2AudioLevel[ssrc] : null;
     }
 };
 
