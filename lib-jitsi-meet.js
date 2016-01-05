@@ -2250,7 +2250,7 @@ RTC.prototype.createRemoteStream = function (data, sid, thessrc) {
     var remoteStream = new JitsiRemoteTrack(this, data, sid, thessrc);
     if(!data.peerjid)
         return;
-    var jid = data.peerjid;
+    var jid = Strophe.getResourceFromJid(data.peerjid);
     if(!this.remoteStreams[jid]) {
         this.remoteStreams[jid] = {};
     }
@@ -2337,8 +2337,11 @@ RTC.prototype.switchVideoStreams = function (newStream) {
 };
 
 RTC.prototype.setAudioLevel = function (jid, audioLevel) {
-    if(this.remoteStreams[jid] && this.remoteStreams[jid][JitsiTrack.AUDIO])
-        this.remoteStreams[jid][JitsiTrack.AUDIO].setAudioLevel(audioLevel);
+    if(!jid)
+        return;
+    var resource = Strophe.getResourceFromJid(jid);
+    if(this.remoteStreams[resource] && this.remoteStreams[resource][JitsiTrack.AUDIO])
+        this.remoteStreams[resource][JitsiTrack.AUDIO].setAudioLevel(audioLevel);
 }
 module.exports = RTC;
 
