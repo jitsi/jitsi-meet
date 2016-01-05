@@ -161,9 +161,6 @@ UI.initConference = function () {
 
     $("#localNick").html(settings.email || settings.uid + " (" + meHTML + ")");
 
-    // Make sure we configure our avatar id, before creating avatar for us
-    UI.setUserAvatar(id, settings.email || settings.uid);
-
     // Add myself to the contact list.
     ContactList.addContact(id);
 
@@ -177,6 +174,9 @@ UI.initConference = function () {
     }
 
     VideoLayout.mucJoined();
+
+    // Make sure we configure our avatar id, before creating avatar for us
+    UI.setUserAvatar(id, settings.email || settings.uid);
 
     Toolbar.checkAutoEnableDesktopSharing();
 };
