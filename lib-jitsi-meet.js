@@ -4927,10 +4927,8 @@ function generateUniqueId() {
 }
 
 function Settings(conferenceID) {
-    this.email = '';
     this.displayName = '';
     this.userId;
-    this.language = null;
     this.confSettings = null;
     this.conferenceID = conferenceID;
     if (supportsLocalStorage()) {
@@ -4945,9 +4943,7 @@ function Settings(conferenceID) {
             this.save();
         }
         this.userId = this.confSettings.jitsiMeetId || '';
-        this.email = this.confSettings.email || '';
         this.displayName = this.confSettings.displayname || '';
-        this.language = this.confSettings.language;
     } else {
         logger.log("local storage is not supported");
         this.userId = generateUniqueId();
@@ -4966,27 +4962,12 @@ Settings.prototype.setDisplayName = function (newDisplayName) {
     this.save();
     return this.displayName;
 },
-Settings.prototype.setEmail = function (newEmail) {
-    this.email = newEmail;
-    if(this.confSettings != null)
-        this.confSettings.email = newEmail;
-    this.save();
-    return this.email;
-},
 Settings.prototype.getSettings = function () {
     return {
-        email: this.email,
         displayName: this.displayName,
-        uid: this.userId,
-        language: this.language
+        uid: this.userId
     };
 },
-Settings.prototype.setLanguage = function (lang) {
-    this.language = lang;
-    if(this.confSettings != null)
-        this.confSettings.language = lang;
-    this.save();
-}
 
 module.exports = Settings;
 
@@ -6333,9 +6314,6 @@ ChatRoom.prototype.onPresence = function (pres) {
             case "userId":
                 member.id = node.value;
                 break;
-            case "email":
-                member.email = node.value;
-                break;
             case "bridgeIsDown":
                 if(!this.bridgeIsDown) {
                     this.bridgeIsDown = true;
@@ -6388,7 +6366,7 @@ ChatRoom.prototype.onPresence = function (pres) {
             logger.info("Ignore focus: " + from + ", real JID: " + member.jid);
         }
         else {
-            this.eventEmitter.emit(XMPPEvents.MUC_MEMBER_JOINED, from, member.id || member.email, member.nick);
+            this.eventEmitter.emit(XMPPEvents.MUC_MEMBER_JOINED, from, member.id, member.nick);
         }
     } else {
         // Presence update for existing participant
@@ -6406,7 +6384,7 @@ ChatRoom.prototype.onPresence = function (pres) {
 
 
     if(!member.isFocus)
-        this.eventEmitter.emit(XMPPEvents.USER_ID_CHANGED, from, member.id || member.email);
+        this.eventEmitter.emit(XMPPEvents.USER_ID_CHANGED, from, member.id);
 
     // Trigger status message update
     if (member.status) {

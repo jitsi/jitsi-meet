@@ -236,9 +236,6 @@ ChatRoom.prototype.onPresence = function (pres) {
             case "userId":
                 member.id = node.value;
                 break;
-            case "email":
-                member.email = node.value;
-                break;
             case "bridgeIsDown":
                 if(!this.bridgeIsDown) {
                     this.bridgeIsDown = true;
@@ -291,7 +288,7 @@ ChatRoom.prototype.onPresence = function (pres) {
             logger.info("Ignore focus: " + from + ", real JID: " + member.jid);
         }
         else {
-            this.eventEmitter.emit(XMPPEvents.MUC_MEMBER_JOINED, from, member.id || member.email, member.nick);
+            this.eventEmitter.emit(XMPPEvents.MUC_MEMBER_JOINED, from, member.id, member.nick);
         }
     } else {
         // Presence update for existing participant
@@ -309,7 +306,7 @@ ChatRoom.prototype.onPresence = function (pres) {
 
 
     if(!member.isFocus)
-        this.eventEmitter.emit(XMPPEvents.USER_ID_CHANGED, from, member.id || member.email);
+        this.eventEmitter.emit(XMPPEvents.USER_ID_CHANGED, from, member.id);
 
     // Trigger status message update
     if (member.status) {
