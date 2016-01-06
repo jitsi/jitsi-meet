@@ -330,9 +330,13 @@ export default {
             const mute = track.isMuted();
             if(track.isLocal()){
                 id = this.localId;
-                (track.getType() === "audio")?
-                    APP.statistics.onAudioMute(mute) :
+                if(track.getType() === "audio") {
+                    APP.statistics.onAudioMute(mute);
+                    this.audioMuted = mute;
+                } else {
                     APP.statistics.onVideoMute(mute);
+                    this.videoMuted = mute;
+                }
             } else {
                 id = track.getParticipantId();
             }
@@ -408,11 +412,9 @@ export default {
 
         APP.UI.addListener(UIEvents.AUDIO_MUTED, (muted) => {
             (muted)? localAudio.mute() : localAudio.unmute();
-            this.audioMuted = muted;
         });
         APP.UI.addListener(UIEvents.VIDEO_MUTED, (muted) => {
             (muted)? localVideo.mute() : localVideo.unmute();
-            this.videoMuted = muted;
         });
 
         if (!interfaceConfig.filmStripOnly) {
