@@ -1,6 +1,6 @@
 /* global APP, JitsiMeetJS, config */
-
-import LoginDialog from './UI/authentication/LoginDialog';
+//FIXME:
+import LoginDialog from './modules/UI/authentication/LoginDialog';
 
 const ConnectionEvents = JitsiMeetJS.events.connection;
 const ConnectionErrors = JitsiMeetJS.errors.connection;

@@ -11,6 +11,8 @@ const RTCBrowserType = require("../../RTC/RTCBrowserType");
 const avatarSize = interfaceConfig.ACTIVE_SPEAKER_AVATAR_SIZE;
 
 function getStreamId(stream) {
+    if(!stream)
+        return;
     if (stream.isLocal()) {
         return APP.conference.localId;
     } else {

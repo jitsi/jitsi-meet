@@ -1,7 +1,8 @@
 /* global APP, JitsiMeetJS */
-import messageHandler from './UI/util/MessageHandler';
-import UIUtil from './UI/util/UIUtil';
-import AnalyticsAdapter from './statistics/AnalyticsAdapter';
+import messageHandler from '../util/MessageHandler';
+import UIUtil from '../util/UIUtil';
+//FIXME:
+import AnalyticsAdapter from '../../statistics/AnalyticsAdapter';
 
 function askForNewPassword () {
     let passMsg = APP.translation.generateTranslationHTML("dialog.passwordMsg");

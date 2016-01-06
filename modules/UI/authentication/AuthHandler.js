@@ -1,9 +1,9 @@
 /* global JitsiMeetJS, APP */
 
-import LoginDialog from './UI/authentication/LoginDialog';
-import UIEvents from '../service/UI/UIEvents';
-import UIUtil from './UI/util/UIUtil';
-import {openConnection} from './connection';
+import LoginDialog from './LoginDialog';
+import UIEvents from '../../../service/UI/UIEvents';
+import UIUtil from '../util/UIUtil';
+import {openConnection} from '../../../connection';
 
 const ConferenceEvents = JitsiMeetJS.events.conference;
 

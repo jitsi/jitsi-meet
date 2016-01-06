@@ -7,6 +7,8 @@ import SmallVideo from "./SmallVideo";
 var LargeVideo = require("./LargeVideo");
 var RTCBrowserType = require("../../RTC/RTCBrowserType");
 
+const TrackEvents = JitsiMeetJS.events.track;
+
 function LocalVideo(VideoLayout, emitter) {
     this.videoSpanId = "localVideoContainer";
     this.container = $("#localVideoContainer").get(0);
@@ -187,18 +189,13 @@ LocalVideo.prototype.changeVideo = function (stream) {
     // Attach WebRTC stream
     stream.attach(localVideoSelector);
 
-    // FIXME handle
-    return;
-
-    // Add stream ended handler
-    /**APP.RTC.addMediaStreamInactiveHandler(
-        stream.getOriginalStream(), function () {
-        // We have to re-select after attach when Temasys plugin is used,
-        // because <video> element is replaced with <object>
+    let endedHandler = () => {
         localVideo = $('#' + localVideo.id)[0];
         localVideoContainer.removeChild(localVideo);
         self.VideoLayout.updateRemovedVideo(self.id);
-    });*/
+        stream.off(TrackEvents.TRACK_STOPPED, endedHandler);
+    };
+    stream.on(TrackEvents.TRACK_STOPPED, endedHandler);
 };
 
 LocalVideo.prototype.joined = function (id) {

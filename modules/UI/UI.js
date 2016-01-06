@@ -382,7 +382,8 @@ UI.removeUser = function (id, displayName) {
         displayName,'notify.somebody', 'disconnected', 'notify.disconnected'
     );
 
-    if (!config.startAudioMuted || config.startAudioMuted > APP.conference.membersCount) {
+    if (!config.startAudioMuted
+        || config.startAudioMuted > APP.conference.membersCount) {
         UIUtil.playSoundNotification('userLeft');
     }
 
@@ -504,15 +505,22 @@ UI.askForNickname = function () {
 };
 
 /**
- * Sets muted audio state for the local participant.
+ * Sets muted audio state for participant
  */
-UI.setAudioMuted = function (mute) {
-    VideoLayout.showLocalAudioIndicator(mute);
-    UIUtil.buttonClick("#toolbar_button_mute", "icon-microphone icon-mic-disabled");
+UI.setAudioMuted = function (id, muted) {
+    VideoLayout.onAudioMute(id, muted);
+    if(APP.conference.isLocalId(id))
+        UIUtil.buttonClick("#toolbar_button_mute",
+            "icon-microphone icon-mic-disabled");
 };
 
-UI.setVideoMuted = function (muted) {
-    $('#toolbar_button_camera').toggleClass("icon-camera-disabled", muted);
+/**
+ * Sets muted video state for participant
+ */
+UI.setVideoMuted = function (id, muted) {
+    VideoLayout.onVideoMute(id, muted);
+    if(APP.conference.isLocalId(id))
+        $('#toolbar_button_camera').toggleClass("icon-camera-disabled", muted);
 };
 
 UI.addListener = function (type, listener) {

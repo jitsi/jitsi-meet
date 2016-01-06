@@ -128,7 +128,7 @@ var VideoLayout = {
         let localAudio = document.getElementById('localAudio');
         stream.attach($(localAudio));
 
-        return; // FIXME maybe move this into the library?
+        //return; // FIXME maybe move this into the library?
         // Writing volume not allowed in IE
         if (!RTCBrowserType.isIExplorer()) {
             localAudio.autoplay = true;
@@ -253,7 +253,6 @@ var VideoLayout = {
 
     onRemoteStreamAdded (stream) {
         let id = stream.getParticipantId();
-
         remoteVideos[id].addRemoteStreamElement(stream);
     },
 
@@ -475,14 +474,13 @@ var VideoLayout = {
     /**
      * On audio muted event.
      */
-    onAudioMute (jid, isMuted) {
-        var resourceJid = Strophe.getResourceFromJid(jid);
-        if (resourceJid === APP.xmpp.myResource()) {
+    onAudioMute (id, isMuted) {
+        if (APP.conference.isLocalId(id)) {
             localVideoThumbnail.showAudioIndicator(isMuted);
         } else {
-            remoteVideos[resourceJid].showAudioIndicator(isMuted);
-            if (APP.xmpp.isModerator()) {
-                remoteVideos[resourceJid].updateRemoteVideoMenu(isMuted);
+            remoteVideos[id].showAudioIndicator(isMuted);
+            if (APP.conference.isModerator) {
+                remoteVideos[id].updateRemoteVideoMenu(isMuted);
             }
         }
     },
@@ -490,17 +488,11 @@ var VideoLayout = {
     /**
      * On video muted event.
      */
-    onVideoMute (jid, value) {
-        if (jid !== APP.xmpp.myJid() &&
-            !APP.RTC.muteRemoteVideoStream(jid, value))
-            return;
-
-        if (jid === APP.xmpp.myJid()) {
+    onVideoMute (id, value) {
+        if (APP.conference.isLocalId(id)) {
             localVideoThumbnail.showVideoIndicator(value);
         } else {
-            var resource = Strophe.getResourceFromJid(jid);
-
-            var remoteVideo = remoteVideos[resource];
+            var remoteVideo = remoteVideos[id];
             remoteVideo.showVideoIndicator(value);
 
             var el = remoteVideo.selectVideoElement();
@@ -528,11 +520,7 @@ var VideoLayout = {
      */
     onDominantSpeakerChanged (id) {
         // We ignore local user events.
-        if (APP.conference.isLocalId(id)) {
-            return;
-        }
-
-        if (id === currentDominantSpeaker) {
+        if (APP.conference.isLocalId(id) || (id === currentDominantSpeaker)) {
             return;
         }
 
@@ -623,7 +611,7 @@ var VideoLayout = {
             // video
             // Detected from avatar tests, where lastN event override
             // local video pinning
-            if(resourceJid == APP.xmpp.myResource())
+            if(APP.conference.isLocalId(resourceJid))
                 return;
 
             var isReceived = true;
@@ -633,7 +621,7 @@ var VideoLayout = {
                 console.log("Remove from last N", resourceJid);
                 if (remoteVideos[resourceJid])
                     remoteVideos[resourceJid].showPeerContainer('hide');
-                else if (APP.xmpp.myResource() !== resourceJid)
+                else if (!APP.conference.isLocalId(resourceJid))
                     console.error("No remote video for: " + resourceJid);
                 isReceived = false;
             } else if (resourceJid &&
@@ -642,7 +630,7 @@ var VideoLayout = {
                 localLastNSet.indexOf(resourceJid) >= 0) {
                 if (remoteVideos[resourceJid])
                     remoteVideos[resourceJid].showPeerContainer('avatar');
-                else if (APP.xmpp.myResource() !== resourceJid)
+                else if (!APP.conference.isLocalId(resourceJid))
                     console.error("No remote video for: " + resourceJid);
                 isReceived = false;
             }
@@ -701,13 +689,10 @@ var VideoLayout = {
 
         if (updateLargeVideo) {
             var resource;
-            var myResource
-                = APP.xmpp.myResource();
-
             // Find out which endpoint to show in the large video.
             for (i = 0; i < lastNEndpoints.length; i++) {
                 resource = lastNEndpoints[i];
-                if (!resource || resource === myResource)
+                if (!resource || APP.conference.isLocalId(resource))
                     continue;
 
                 // videoSrcToSsrc needs to be update for this call to succeed.
