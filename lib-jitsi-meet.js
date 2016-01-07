@@ -1326,10 +1326,10 @@ module.exports = {
     /**
      * Returns JitsiTrackErrors based on the error object passed by GUM
      * @param error the error
-     * @param {Object} options the options object given to GUM.
+     * @param {Array} devices Array with the requested devices
      */
-    parseError: function (error, options) {
-        options = options || {};
+    parseError: function (error, devices) {
+        devices = devices || [];
         if (typeof error == "object" && error.constraintName && error.name
             && (error.name == "ConstraintNotSatisfiedError" ||
             error.name == "OverconstrainedError") &&
@@ -1337,7 +1337,7 @@ module.exports = {
             error.constraintName == "maxWidth" ||
             error.constraintName == "minHeight" ||
             error.constraintName == "maxHeight") &&
-            options.devices.indexOf("video") !== -1) {
+            devices.indexOf("video") !== -1) {
                 return this.UNSUPPORTED_RESOLUTION;
         } else {
             return this.GENERAL;
@@ -2857,6 +2857,8 @@ function obtainDevices(options) {
     }
 
     var device = options.devices.splice(0, 1);
+    var devices = [];
+    devices.push(device);
     options.deviceGUM[device](function (stream) {
             options.streams = options.streams || {};
             options.streams[device] = stream;
@@ -2865,7 +2867,7 @@ function obtainDevices(options) {
         function (error) {
             logger.error(
                 "failed to obtain " + device + " stream - stop", error);
-            options.errorCallback(JitsiTrackErrors.parseError(error));
+            options.errorCallback(JitsiTrackErrors.parseError(error, devices));
         });
 }
 
@@ -3213,14 +3215,16 @@ var RTCUtils = {
                                             desktopStream: desktopStream});
                                     }, function (error) {
                                         reject(
-                                            JitsiTrackErrors.parseError(error));
+                                            JitsiTrackErrors.parseError(error,
+                                                options.devices));
                                     });
                             } else {
                                 successCallback({audioVideo: stream});
                             }
                         },
                         function (error) {
-                            reject(JitsiTrackErrors.parseError(error));
+                            reject(JitsiTrackErrors.parseError(error,
+                                options.devices));
                         },
                         options);
                 } else if (hasDesktop) {
@@ -3229,7 +3233,8 @@ var RTCUtils = {
                             successCallback({desktopStream: stream});
                         }, function (error) {
                             reject(
-                                JitsiTrackErrors.parseError(error));
+                                JitsiTrackErrors.parseError(error,
+                                    ["desktop"]));
                         });
                 }
             }
