@@ -1071,6 +1071,23 @@ var JitsiTrackErrors = require("./JitsiTrackErrors");
 var Logger = require("jitsi-meet-logger");
 var RTC = require("./modules/RTC/RTC");
 var Statistics = require("./modules/statistics/statistics");
+var Resolutions = require("./service/RTC/Resolutions");
+
+function getLowerResolution(resolution) {
+    if(!Resolutions[resolution])
+        return null;
+    var order = Resolutions[resolution].order;
+    var res = null;
+    var resName = null;
+    for(var i in Resolutions) {
+        var tmp = Resolutions[i];
+        if (!res || (res.order < tmp.order && tmp.order < order)) {
+            resName = i;
+            res = tmp;
+        }
+    }
+    return resName;
+}
 
 /**
  * Namespace for the interface of Jitsi Meet Library.
@@ -1135,6 +1152,16 @@ var LibJitsiMeet = {
                         }
                     }
                 return tracks;
+            }).catch(function (error) {
+                if(error === JitsiTrackErrors.UNSUPPORTED_RESOLUTION) {
+                    var oldResolution = options.resolution || '360';
+                    var newResolution = getLowerResolution(oldResolution);
+                    if(newResolution === null)
+                        return Promise.reject(error);
+                    options.resolution = newResolution;
+                    return LibJitsiMeet.createLocalTracks(options);
+                }
+                return Promise.reject(error);
             });
     },
     /**
@@ -1163,7 +1190,7 @@ window.Promise = window.Promise || require("es6-promise").Promise;
 
 module.exports = LibJitsiMeet;
 
-},{"./JitsiConferenceErrors":2,"./JitsiConferenceEvents":3,"./JitsiConnection":4,"./JitsiConnectionErrors":5,"./JitsiConnectionEvents":6,"./JitsiTrackErrors":9,"./JitsiTrackEvents":10,"./modules/RTC/RTC":16,"./modules/statistics/statistics":24,"es6-promise":46,"jitsi-meet-logger":48}],8:[function(require,module,exports){
+},{"./JitsiConferenceErrors":2,"./JitsiConferenceEvents":3,"./JitsiConnection":4,"./JitsiConnectionErrors":5,"./JitsiConnectionEvents":6,"./JitsiTrackErrors":9,"./JitsiTrackEvents":10,"./modules/RTC/RTC":16,"./modules/statistics/statistics":24,"./service/RTC/Resolutions":81,"es6-promise":46,"jitsi-meet-logger":48}],8:[function(require,module,exports){
 /* global Strophe */
 
 /**
