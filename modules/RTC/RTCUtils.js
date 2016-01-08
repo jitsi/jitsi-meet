@@ -656,11 +656,16 @@ var RTCUtils = {
                 var GUM = function (device, s, e) {
                     this.getUserMediaWithConstraints(device, s, e, options);
                 };
+
                 var deviceGUM = {
                     "audio": GUM.bind(self, ["audio"]),
-                    "video": GUM.bind(self, ["video"]),
-                    "desktop": screenObtainer.obtainStream.bind(screenObtainer)
+                    "video": GUM.bind(self, ["video"])
                 };
+
+                if(screenObtainer.isSupported()){
+                    deviceGUM["desktop"] = screenObtainer.obtainStream.bind(
+                        screenObtainer);
+                }
                 // With FF/IE we can't split the stream into audio and video because FF
                 // doesn't support media stream constructors. So, we need to get the
                 // audio stream separately from the video stream using two distinct GUM
