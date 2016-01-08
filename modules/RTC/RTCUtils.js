@@ -477,7 +477,15 @@ var RTCUtils = {
                     this.enumerateDevices = enumerateDevicesThroughMediaStreamTrack;
                 }
                 this.attachMediaStream = function (element, stream) {
-                    element.attr('src', webkitURL.createObjectURL(stream));
+
+                    // saves the created url for the stream, so we can reuse it
+                    // and not keep creating urls
+                    if (!stream.jitsiObjectURL) {
+                        stream.jitsiObjectURL
+                            = webkitURL.createObjectURL(stream);
+                    }
+
+                    element.attr('src', stream.jitsiObjectURL);
                 };
                 this.getStreamID = function (stream) {
                     // streams from FF endpoints have the characters '{' and '}'
@@ -772,6 +780,11 @@ var RTCUtils = {
         // leave stop for implementation still using it
         if (mediaStream.stop) {
             mediaStream.stop();
+        }
+
+        // if we have done createObjectURL, lets clean it
+        if (mediaStream.jitsiObjectURL) {
+            webkitURL.revokeObjectURL(mediaStream.jitsiObjectURL);
         }
     },
     /**

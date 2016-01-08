@@ -1631,7 +1631,7 @@ module.exports = DataChannels;
 var JitsiTrack = require("./JitsiTrack");
 var RTCBrowserType = require("./RTCBrowserType");
 var JitsiTrackEvents = require('../../JitsiTrackEvents');
-var RTC = require("./RTCUtils");
+var RTCUtils = require("./RTCUtils");
 
 /**
  * Represents a single media track (either audio or video).
@@ -1688,7 +1688,7 @@ JitsiLocalTrack.prototype._setMute = function (mute) {
         if (mute) {
             this.dontFireRemoveEvent = true;
             this.rtc.room.removeStream(this.stream, function () {});
-            RTC.stopMediaStream(this.stream);
+            RTCUtils.stopMediaStream(this.stream);
             if(isAudio)
                 this.rtc.room.setAudioMute(mute);
             else
@@ -1698,7 +1698,7 @@ JitsiLocalTrack.prototype._setMute = function (mute) {
             //FIXME: Maybe here we should set the SRC for the containers to something
         } else {
             var self = this;
-            RTC.obtainAudioAndVideoPermissions({
+            RTCUtils.obtainAudioAndVideoPermissions({
                 devices: (isAudio ? ["audio"] : ["video"]),
                 resolution: self.resolution})
                 .then(function (streams) {
@@ -1717,7 +1717,8 @@ JitsiLocalTrack.prototype._setMute = function (mute) {
 
                     for(var i = 0; i < self.containers.length; i++)
                     {
-                        RTC.attachMediaStream(self.containers[i], self.stream);
+                        RTCUtils.attachMediaStream(
+                            self.containers[i], self.stream);
                     }
 
                     self.rtc.room.addStream(stream.stream,
@@ -1743,7 +1744,7 @@ JitsiLocalTrack.prototype.stop = function () {
         return;
     if(this.rtc)
         this.rtc.room.removeStream(this.stream, function () {});
-    RTC.stopMediaStream(this.stream);
+    RTCUtils.stopMediaStream(this.stream);
     this.detach();
 }
 
@@ -3026,7 +3027,15 @@ var RTCUtils = {
                     this.enumerateDevices = enumerateDevicesThroughMediaStreamTrack;
                 }
                 this.attachMediaStream = function (element, stream) {
-                    element.attr('src', webkitURL.createObjectURL(stream));
+
+                    // saves the created url for the stream, so we can reuse it
+                    // and not keep creating urls
+                    if (!stream.jitsiObjectURL) {
+                        stream.jitsiObjectURL
+                            = webkitURL.createObjectURL(stream);
+                    }
+
+                    element.attr('src', stream.jitsiObjectURL);
                 };
                 this.getStreamID = function (stream) {
                     // streams from FF endpoints have the characters '{' and '}'
@@ -3321,6 +3330,11 @@ var RTCUtils = {
         // leave stop for implementation still using it
         if (mediaStream.stop) {
             mediaStream.stop();
+        }
+
+        // if we have done createObjectURL, lets clean it
+        if (mediaStream.jitsiObjectURL) {
+            webkitURL.revokeObjectURL(mediaStream.jitsiObjectURL);
         }
     },
     /**
