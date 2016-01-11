@@ -76,22 +76,24 @@ const APP = {
 };
 
 function init() {
-    APP.UI.start();
-    APP.conference.init({roomName: buildRoomName()}).then(function () {
-        APP.UI.initConference();
+    var isUIReady = APP.UI.start();
+    if (isUIReady) {
+        APP.conference.init({roomName: buildRoomName()}).then(function () {
+            APP.UI.initConference();
 
-        APP.UI.addListener(UIEvents.LANG_CHANGED, function (language) {
-            APP.translation.setLanguage(language);
-            APP.settings.setLanguage(language);
+            APP.UI.addListener(UIEvents.LANG_CHANGED, function (language) {
+                APP.translation.setLanguage(language);
+                APP.settings.setLanguage(language);
+            });
+
+            APP.desktopsharing.init(JitsiMeetJS.isDesktopSharingEnabled());
+            APP.statistics.start();
+            APP.connectionquality.init();
+            APP.keyboardshortcut.init();
+        }).catch(function (err) {
+            console.error(err);
         });
-
-        APP.desktopsharing.init(JitsiMeetJS.isDesktopSharingEnabled());
-        APP.statistics.start();
-        APP.connectionquality.init();
-        APP.keyboardshortcut.init();
-    }).catch(function (err) {
-        console.error(err);
-    });
+    }
 }
 
 /**

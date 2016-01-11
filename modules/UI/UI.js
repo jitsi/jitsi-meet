@@ -223,6 +223,12 @@ function bindEvents() {
     $(window).resize(onResize);
 }
 
+/**
+ * Starts the UI module and initializes all related components.
+ *
+ * @returns {boolean} true if the UI is ready and the conference should be
+ * esablished, false - otherwise (for example in the case of welcome page)
+ */
 UI.start = function () {
     document.title = interfaceConfig.APP_NAME;
     var setupWelcomePage = null;
@@ -234,7 +240,9 @@ UI.start = function () {
             setupWelcomePage = require("./welcome_page/WelcomePage");
         setupWelcomePage();
 
-        return;
+        // Return false to indicate that the UI hasn't been fully started and
+        // conference ready. We're still waiting for input from the user.
+        return false;
     }
 
     $("#welcome_page").hide();
@@ -318,6 +326,9 @@ UI.start = function () {
         SettingsMenu.init(eventEmitter);
     }
 
+    // Return true to indicate that the UI has been fully started and
+    // conference ready.
+    return true;
 };
 
 
