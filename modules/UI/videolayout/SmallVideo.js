@@ -255,15 +255,9 @@ SmallVideo.prototype.enableDominantSpeaker = function (isEnable) {
 
     if (isEnable) {
         this.showDisplayName(this.VideoLayout.isLargeVideoVisible());
-
-        if (!this.container.classList.contains("dominantspeaker"))
-            this.container.classList.add("dominantspeaker");
     }
     else {
         this.showDisplayName(false);
-
-        if (this.container.classList.contains("dominantspeaker"))
-            this.container.classList.remove("dominantspeaker");
     }
 
     this.showAvatar();
