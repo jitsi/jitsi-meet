@@ -203,7 +203,8 @@ class VideoContainer extends LargeContainer {
         let { horizontalIndent, verticalIndent } = this.getVideoPosition(width, height, containerWidth, containerHeight);
 
         // update avatar position
-        let top = this.containerHeight / 2 - avatarSize / 4 * 3;
+        let top = containerHeight / 2 - avatarSize / 4 * 3;
+
         this.$avatar.css('top', top);
 
         this.$wrapper.animate({
