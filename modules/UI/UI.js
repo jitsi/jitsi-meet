@@ -173,12 +173,14 @@ UI.initConference = function () {
         UI.changeDisplayName('localVideoContainer', displayName);
     }
 
-    VideoLayout.mucJoined();
-
     // Make sure we configure our avatar id, before creating avatar for us
     UI.setUserAvatar(id, settings.email || settings.uid);
 
     Toolbar.checkAutoEnableDesktopSharing();
+};
+
+UI.mucJoined = function () {
+    VideoLayout.mucJoined();
 };
 
 function registerListeners() {

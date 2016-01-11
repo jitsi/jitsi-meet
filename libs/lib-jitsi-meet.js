@@ -413,7 +413,7 @@ JitsiConference.prototype.muteParticipant = function (id) {
     this.room.muteParticipant(participant.getJid(), true);
 };
 
-JitsiConference.prototype.onMemberJoined = function (jid, email, nick) {
+JitsiConference.prototype.onMemberJoined = function (jid, nick) {
     var id = Strophe.getResourceFromJid(jid);
     if (id === 'focus' || this.myUserId() === id) {
        return;
@@ -1071,6 +1071,23 @@ var JitsiTrackErrors = require("./JitsiTrackErrors");
 var Logger = require("jitsi-meet-logger");
 var RTC = require("./modules/RTC/RTC");
 var Statistics = require("./modules/statistics/statistics");
+var Resolutions = require("./service/RTC/Resolutions");
+
+function getLowerResolution(resolution) {
+    if(!Resolutions[resolution])
+        return null;
+    var order = Resolutions[resolution].order;
+    var res = null;
+    var resName = null;
+    for(var i in Resolutions) {
+        var tmp = Resolutions[i];
+        if (!res || (res.order < tmp.order && tmp.order < order)) {
+            resName = i;
+            res = tmp;
+        }
+    }
+    return resName;
+}
 
 /**
  * Namespace for the interface of Jitsi Meet Library.
@@ -1135,6 +1152,16 @@ var LibJitsiMeet = {
                         }
                     }
                 return tracks;
+            }).catch(function (error) {
+                if(error === JitsiTrackErrors.UNSUPPORTED_RESOLUTION) {
+                    var oldResolution = options.resolution || '360';
+                    var newResolution = getLowerResolution(oldResolution);
+                    if(newResolution === null)
+                        return Promise.reject(error);
+                    options.resolution = newResolution;
+                    return LibJitsiMeet.createLocalTracks(options);
+                }
+                return Promise.reject(error);
             });
     },
     /**
@@ -1163,7 +1190,7 @@ window.Promise = window.Promise || require("es6-promise").Promise;
 
 module.exports = LibJitsiMeet;
 
-},{"./JitsiConferenceErrors":2,"./JitsiConferenceEvents":3,"./JitsiConnection":4,"./JitsiConnectionErrors":5,"./JitsiConnectionEvents":6,"./JitsiTrackErrors":9,"./JitsiTrackEvents":10,"./modules/RTC/RTC":16,"./modules/statistics/statistics":24,"es6-promise":46,"jitsi-meet-logger":48}],8:[function(require,module,exports){
+},{"./JitsiConferenceErrors":2,"./JitsiConferenceEvents":3,"./JitsiConnection":4,"./JitsiConnectionErrors":5,"./JitsiConnectionEvents":6,"./JitsiTrackErrors":9,"./JitsiTrackEvents":10,"./modules/RTC/RTC":16,"./modules/statistics/statistics":24,"./service/RTC/Resolutions":81,"es6-promise":46,"jitsi-meet-logger":48}],8:[function(require,module,exports){
 /* global Strophe */
 
 /**
@@ -1326,10 +1353,10 @@ module.exports = {
     /**
      * Returns JitsiTrackErrors based on the error object passed by GUM
      * @param error the error
-     * @param {Object} options the options object given to GUM.
+     * @param {Array} devices Array with the requested devices
      */
-    parseError: function (error, options) {
-        options = options || {};
+    parseError: function (error, devices) {
+        devices = devices || [];
         if (typeof error == "object" && error.constraintName && error.name
             && (error.name == "ConstraintNotSatisfiedError" ||
             error.name == "OverconstrainedError") &&
@@ -1337,7 +1364,7 @@ module.exports = {
             error.constraintName == "maxWidth" ||
             error.constraintName == "minHeight" ||
             error.constraintName == "maxHeight") &&
-            options.devices.indexOf("video") !== -1) {
+            devices.indexOf("video") !== -1) {
                 return this.UNSUPPORTED_RESOLUTION;
         } else {
             return this.GENERAL;
@@ -1604,7 +1631,7 @@ module.exports = DataChannels;
 var JitsiTrack = require("./JitsiTrack");
 var RTCBrowserType = require("./RTCBrowserType");
 var JitsiTrackEvents = require('../../JitsiTrackEvents');
-var RTC = require("./RTCUtils");
+var RTCUtils = require("./RTCUtils");
 
 /**
  * Represents a single media track (either audio or video).
@@ -1661,7 +1688,7 @@ JitsiLocalTrack.prototype._setMute = function (mute) {
         if (mute) {
             this.dontFireRemoveEvent = true;
             this.rtc.room.removeStream(this.stream, function () {});
-            RTC.stopMediaStream(this.stream);
+            RTCUtils.stopMediaStream(this.stream);
             if(isAudio)
                 this.rtc.room.setAudioMute(mute);
             else
@@ -1671,7 +1698,7 @@ JitsiLocalTrack.prototype._setMute = function (mute) {
             //FIXME: Maybe here we should set the SRC for the containers to something
         } else {
             var self = this;
-            RTC.obtainAudioAndVideoPermissions({
+            RTCUtils.obtainAudioAndVideoPermissions({
                 devices: (isAudio ? ["audio"] : ["video"]),
                 resolution: self.resolution})
                 .then(function (streams) {
@@ -1690,7 +1717,8 @@ JitsiLocalTrack.prototype._setMute = function (mute) {
 
                     for(var i = 0; i < self.containers.length; i++)
                     {
-                        RTC.attachMediaStream(self.containers[i], self.stream);
+                        RTCUtils.attachMediaStream(
+                            self.containers[i], self.stream);
                     }
 
                     self.rtc.room.addStream(stream.stream,
@@ -1716,7 +1744,7 @@ JitsiLocalTrack.prototype.stop = function () {
         return;
     if(this.rtc)
         this.rtc.room.removeStream(this.stream, function () {});
-    RTC.stopMediaStream(this.stream);
+    RTCUtils.stopMediaStream(this.stream);
     this.detach();
 }
 
@@ -2857,6 +2885,8 @@ function obtainDevices(options) {
     }
 
     var device = options.devices.splice(0, 1);
+    var devices = [];
+    devices.push(device);
     options.deviceGUM[device](function (stream) {
             options.streams = options.streams || {};
             options.streams[device] = stream;
@@ -2865,7 +2895,7 @@ function obtainDevices(options) {
         function (error) {
             logger.error(
                 "failed to obtain " + device + " stream - stop", error);
-            options.errorCallback(JitsiTrackErrors.parseError(error));
+            options.errorCallback(JitsiTrackErrors.parseError(error, devices));
         });
 }
 
@@ -2997,7 +3027,15 @@ var RTCUtils = {
                     this.enumerateDevices = enumerateDevicesThroughMediaStreamTrack;
                 }
                 this.attachMediaStream = function (element, stream) {
-                    element.attr('src', webkitURL.createObjectURL(stream));
+
+                    // saves the created url for the stream, so we can reuse it
+                    // and not keep creating urls
+                    if (!stream.jitsiObjectURL) {
+                        stream.jitsiObjectURL
+                            = webkitURL.createObjectURL(stream);
+                    }
+
+                    element.attr('src', stream.jitsiObjectURL);
                 };
                 this.getStreamID = function (stream) {
                     // streams from FF endpoints have the characters '{' and '}'
@@ -3176,11 +3214,16 @@ var RTCUtils = {
                 var GUM = function (device, s, e) {
                     this.getUserMediaWithConstraints(device, s, e, options);
                 };
+
                 var deviceGUM = {
                     "audio": GUM.bind(self, ["audio"]),
-                    "video": GUM.bind(self, ["video"]),
-                    "desktop": screenObtainer.obtainStream.bind(screenObtainer)
+                    "video": GUM.bind(self, ["video"])
                 };
+
+                if(screenObtainer.isSupported()){
+                    deviceGUM["desktop"] = screenObtainer.obtainStream.bind(
+                        screenObtainer);
+                }
                 // With FF/IE we can't split the stream into audio and video because FF
                 // doesn't support media stream constructors. So, we need to get the
                 // audio stream separately from the video stream using two distinct GUM
@@ -3213,14 +3256,16 @@ var RTCUtils = {
                                             desktopStream: desktopStream});
                                     }, function (error) {
                                         reject(
-                                            JitsiTrackErrors.parseError(error));
+                                            JitsiTrackErrors.parseError(error,
+                                                options.devices));
                                     });
                             } else {
                                 successCallback({audioVideo: stream});
                             }
                         },
                         function (error) {
-                            reject(JitsiTrackErrors.parseError(error));
+                            reject(JitsiTrackErrors.parseError(error,
+                                options.devices));
                         },
                         options);
                 } else if (hasDesktop) {
@@ -3229,7 +3274,8 @@ var RTCUtils = {
                             successCallback({desktopStream: stream});
                         }, function (error) {
                             reject(
-                                JitsiTrackErrors.parseError(error));
+                                JitsiTrackErrors.parseError(error,
+                                    ["desktop"]));
                         });
                 }
             }
@@ -3284,6 +3330,11 @@ var RTCUtils = {
         // leave stop for implementation still using it
         if (mediaStream.stop) {
             mediaStream.stop();
+        }
+
+        // if we have done createObjectURL, lets clean it
+        if (mediaStream.jitsiObjectURL) {
+            webkitURL.revokeObjectURL(mediaStream.jitsiObjectURL);
         }
     },
     /**
@@ -6295,6 +6346,8 @@ ChatRoom.prototype.onPresence = function (pres) {
     parser.packet2JSON(pres, nodes);
     this.lastPresences[from] = nodes;
     var jibri = null;
+    // process nodes to extract data needed for MUC_JOINED and MUC_MEMBER_JOINED
+    // events
     for(var i = 0; i < nodes.length; i++)
     {
         var node = nodes[i];
@@ -6302,17 +6355,75 @@ ChatRoom.prototype.onPresence = function (pres) {
         {
             case "nick":
                 member.nick = node.value;
+                break;
+            case "userId":
+                member.id = node.value;
+                break;
+        }
+    }
+
+    if (from == this.myroomjid) {
+        if (member.affiliation == 'owner'
+            &&  this.role !== member.role) {
+                this.role = member.role;
+                this.eventEmitter.emit(
+                    XMPPEvents.LOCAL_ROLE_CHANGED, this.role);
+        }
+        if (!this.joined) {
+            this.joined = true;
+            console.log("(TIME) MUC joined:\t", window.performance.now());
+            this.eventEmitter.emit(XMPPEvents.MUC_JOINED);
+        }
+    } else if (this.members[from] === undefined) {
+        // new participant
+        this.members[from] = member;
+        logger.log('entered', from, member);
+        if (member.isFocus) {
+            this.focusMucJid = from;
+            if(!this.recording) {
+                this.recording = new Recorder(this.options.recordingType,
+                    this.eventEmitter, this.connection, this.focusMucJid,
+                    this.options.jirecon, this.roomjid);
+                if(this.lastJibri)
+                    this.recording.handleJibriPresence(this.lastJibri);
+            }
+            logger.info("Ignore focus: " + from + ", real JID: " + member.jid);
+        }
+        else {
+            this.eventEmitter.emit(
+                XMPPEvents.MUC_MEMBER_JOINED, from, member.nick);
+        }
+    } else {
+        // Presence update for existing participant
+        // Watch role change:
+        if (this.members[from].role != member.role) {
+            this.members[from].role = member.role;
+            this.eventEmitter.emit(
+                XMPPEvents.MUC_ROLE_CHANGED, from, member.role);
+        }
+
+        // store the new display name
+        if(member.displayName)
+            this.members[from].displayName = member.displayName;
+    }
+
+    // after we had fired member or room joined events, lets fire events
+    // for the rest info we got in presence
+    for(var i = 0; i < nodes.length; i++)
+    {
+        var node = nodes[i];
+        switch(node.tagName)
+        {
+            case "nick":
                 if(!member.isFocus) {
                     var displayName = !this.xmpp.options.displayJids
                         ? member.nick : Strophe.getResourceFromJid(from);
 
                     if (displayName && displayName.length > 0) {
-                        this.eventEmitter.emit(XMPPEvents.DISPLAY_NAME_CHANGED, from, displayName);
+                        this.eventEmitter.emit(
+                            XMPPEvents.DISPLAY_NAME_CHANGED, from, displayName);
                     }
                 }
-                break;
-            case "userId":
-                member.id = node.value;
                 break;
             case "bridgeIsDown":
                 if(!this.bridgeIsDown) {
@@ -6334,54 +6445,7 @@ ChatRoom.prototype.onPresence = function (pres) {
             default :
                 this.processNode(node, from);
         }
-
     }
-
-    if (from == this.myroomjid) {
-        if (member.affiliation == 'owner')
-
-            if (this.role !== member.role) {
-                this.role = member.role;
-
-                this.eventEmitter.emit(XMPPEvents.LOCAL_ROLE_CHANGED, this.role);
-            }
-        if (!this.joined) {
-            this.joined = true;
-            console.log("(TIME) MUC joined:\t", window.performance.now());
-            this.eventEmitter.emit(XMPPEvents.MUC_JOINED, from, member);
-        }
-    } else if (this.members[from] === undefined) {
-        // new participant
-        this.members[from] = member;
-        logger.log('entered', from, member);
-        if (member.isFocus) {
-            this.focusMucJid = from;
-            if(!this.recording) {
-                this.recording = new Recorder(this.options.recordingType,
-                    this.eventEmitter, this.connection, this.focusMucJid,
-                    this.options.jirecon, this.roomjid);
-                if(this.lastJibri)
-                    this.recording.handleJibriPresence(this.lastJibri);
-            }
-            logger.info("Ignore focus: " + from + ", real JID: " + member.jid);
-        }
-        else {
-            this.eventEmitter.emit(XMPPEvents.MUC_MEMBER_JOINED, from, member.id, member.nick);
-        }
-    } else {
-        // Presence update for existing participant
-        // Watch role change:
-        if (this.members[from].role != member.role) {
-            this.members[from].role = member.role;
-            this.eventEmitter.emit(XMPPEvents.MUC_ROLE_CHANGED, from, member.role);
-        }
-
-        // store the new display name
-        if(member.displayName)
-            this.members[from].displayName = member.displayName;
-    }
-
-
 
     if(!member.isFocus)
         this.eventEmitter.emit(XMPPEvents.USER_ID_CHANGED, from, member.id);

@@ -283,6 +283,7 @@ export default {
             });
 
             APP.UI.updateAuthInfo(room.isAuthEnabled(), room.getAuthLogin());
+            APP.UI.mucJoined();
         });
 
 

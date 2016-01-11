@@ -165,6 +165,12 @@ var VideoLayout = {
         }
     },
 
+    /**
+     * Get's the localID of the conference and set it to the local video
+     * (small one). This needs to be called as early as possible, when muc is
+     * actually joined. Otherwise events can come with information like email
+     * and setting them assume the id is already set.
+     */
     mucJoined () {
         let id = APP.conference.localId;
         localVideoThumbnail.joined(id);
