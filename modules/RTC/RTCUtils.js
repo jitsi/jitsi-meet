@@ -343,6 +343,9 @@ function obtainDevices(options) {
             obtainDevices(options);
         },
         function (error) {
+            Object.keys(options.streams).forEach(function(device) {
+                RTCUtils.stopMediaStream(options.streams[device]);
+            });
             logger.error(
                 "failed to obtain " + device + " stream - stop", error);
             options.errorCallback(JitsiTrackErrors.parseError(error, devices));
@@ -699,12 +702,25 @@ var RTCUtils = {
                     this.getUserMediaWithConstraints(
                         options.devices,
                         function (stream) {
+                            if((options.devices.indexOf("audio") !== -1 &&
+                                !stream.getAudioTracks().length) ||
+                                (options.devices.indexOf("video") !== -1 &&
+                                !stream.getVideoTracks().length))
+                            {
+                                self.stopMediaStream(stream);
+                                reject(JitsiTrackErrors.parseError(
+                                    new Error("Unable to get the audio and " +
+                                        "video tracks."),
+                                    options.devices));
+                                    return;
+                            }
                             if(hasDesktop) {
                                 screenObtainer.obtainStream(
                                     function (desktopStream) {
                                         successCallback({audioVideo: stream,
                                             desktopStream: desktopStream});
                                     }, function (error) {
+                                        self.stopMediaStream(stream);
                                         reject(
                                             JitsiTrackErrors.parseError(error,
                                                 options.devices));
