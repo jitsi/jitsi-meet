@@ -411,7 +411,7 @@ JitsiConference.prototype.muteParticipant = function (id) {
     this.room.muteParticipant(participant.getJid(), true);
 };
 
-JitsiConference.prototype.onMemberJoined = function (jid, email, nick) {
+JitsiConference.prototype.onMemberJoined = function (jid, nick) {
     var id = Strophe.getResourceFromJid(jid);
     if (id === 'focus' || this.myUserId() === id) {
        return;

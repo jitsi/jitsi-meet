@@ -217,6 +217,8 @@ ChatRoom.prototype.onPresence = function (pres) {
     parser.packet2JSON(pres, nodes);
     this.lastPresences[from] = nodes;
     var jibri = null;
+    // process nodes to extract data needed for MUC_JOINED and MUC_MEMBER_JOINED
+    // events
     for(var i = 0; i < nodes.length; i++)
     {
         var node = nodes[i];
@@ -224,17 +226,75 @@ ChatRoom.prototype.onPresence = function (pres) {
         {
             case "nick":
                 member.nick = node.value;
+                break;
+            case "userId":
+                member.id = node.value;
+                break;
+        }
+    }
+
+    if (from == this.myroomjid) {
+        if (member.affiliation == 'owner'
+            &&  this.role !== member.role) {
+                this.role = member.role;
+                this.eventEmitter.emit(
+                    XMPPEvents.LOCAL_ROLE_CHANGED, this.role);
+        }
+        if (!this.joined) {
+            this.joined = true;
+            console.log("(TIME) MUC joined:\t", window.performance.now());
+            this.eventEmitter.emit(XMPPEvents.MUC_JOINED);
+        }
+    } else if (this.members[from] === undefined) {
+        // new participant
+        this.members[from] = member;
+        logger.log('entered', from, member);
+        if (member.isFocus) {
+            this.focusMucJid = from;
+            if(!this.recording) {
+                this.recording = new Recorder(this.options.recordingType,
+                    this.eventEmitter, this.connection, this.focusMucJid,
+                    this.options.jirecon, this.roomjid);
+                if(this.lastJibri)
+                    this.recording.handleJibriPresence(this.lastJibri);
+            }
+            logger.info("Ignore focus: " + from + ", real JID: " + member.jid);
+        }
+        else {
+            this.eventEmitter.emit(
+                XMPPEvents.MUC_MEMBER_JOINED, from, member.nick);
+        }
+    } else {
+        // Presence update for existing participant
+        // Watch role change:
+        if (this.members[from].role != member.role) {
+            this.members[from].role = member.role;
+            this.eventEmitter.emit(
+                XMPPEvents.MUC_ROLE_CHANGED, from, member.role);
+        }
+
+        // store the new display name
+        if(member.displayName)
+            this.members[from].displayName = member.displayName;
+    }
+
+    // after we had fired member or room joined events, lets fire events
+    // for the rest info we got in presence
+    for(var i = 0; i < nodes.length; i++)
+    {
+        var node = nodes[i];
+        switch(node.tagName)
+        {
+            case "nick":
                 if(!member.isFocus) {
                     var displayName = !this.xmpp.options.displayJids
                         ? member.nick : Strophe.getResourceFromJid(from);
 
                     if (displayName && displayName.length > 0) {
-                        this.eventEmitter.emit(XMPPEvents.DISPLAY_NAME_CHANGED, from, displayName);
+                        this.eventEmitter.emit(
+                            XMPPEvents.DISPLAY_NAME_CHANGED, from, displayName);
                     }
                 }
-                break;
-            case "userId":
-                member.id = node.value;
                 break;
             case "bridgeIsDown":
                 if(!this.bridgeIsDown) {
@@ -256,54 +316,7 @@ ChatRoom.prototype.onPresence = function (pres) {
             default :
                 this.processNode(node, from);
         }
-
     }
-
-    if (from == this.myroomjid) {
-        if (member.affiliation == 'owner')
-
-            if (this.role !== member.role) {
-                this.role = member.role;
-
-                this.eventEmitter.emit(XMPPEvents.LOCAL_ROLE_CHANGED, this.role);
-            }
-        if (!this.joined) {
-            this.joined = true;
-            console.log("(TIME) MUC joined:\t", window.performance.now());
-            this.eventEmitter.emit(XMPPEvents.MUC_JOINED, from, member);
-        }
-    } else if (this.members[from] === undefined) {
-        // new participant
-        this.members[from] = member;
-        logger.log('entered', from, member);
-        if (member.isFocus) {
-            this.focusMucJid = from;
-            if(!this.recording) {
-                this.recording = new Recorder(this.options.recordingType,
-                    this.eventEmitter, this.connection, this.focusMucJid,
-                    this.options.jirecon, this.roomjid);
-                if(this.lastJibri)
-                    this.recording.handleJibriPresence(this.lastJibri);
-            }
-            logger.info("Ignore focus: " + from + ", real JID: " + member.jid);
-        }
-        else {
-            this.eventEmitter.emit(XMPPEvents.MUC_MEMBER_JOINED, from, member.id, member.nick);
-        }
-    } else {
-        // Presence update for existing participant
-        // Watch role change:
-        if (this.members[from].role != member.role) {
-            this.members[from].role = member.role;
-            this.eventEmitter.emit(XMPPEvents.MUC_ROLE_CHANGED, from, member.role);
-        }
-
-        // store the new display name
-        if(member.displayName)
-            this.members[from].displayName = member.displayName;
-    }
-
-
 
     if(!member.isFocus)
         this.eventEmitter.emit(XMPPEvents.USER_ID_CHANGED, from, member.id);
