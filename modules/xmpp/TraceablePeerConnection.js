@@ -1,10 +1,8 @@
 /* global $ */
 var RTC = require('../RTC/RTC');
-
 var logger = require("jitsi-meet-logger").getLogger(__filename);
 var RTCBrowserType = require("../RTC/RTCBrowserType.js");
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
-var SSRCReplacement = require("./LocalSSRCReplacement");
 
 function TraceablePeerConnection(ice_config, constraints, session) {
     var self = this;
@@ -138,6 +136,47 @@ var dumpSDP = function(description) {
     return 'type: ' + description.type + '\r\n' + description.sdp;
 };
 
+var insertRecvOnlySSRC = function (desc) {
+    if (typeof desc !== 'object' || desc === null ||
+        typeof desc.sdp !== 'string') {
+        console.warn('An empty description was passed as an argument.');
+        return desc;
+    }
+
+    var transform = require('sdp-transform');
+    var RandomUtil = require('../util/RandomUtil');
+
+    var session = transform.parse(desc.sdp);
+    if (!Array.isArray(session.media))
+    {
+        return;
+    }
+
+    var modded = false;
+    session.media.forEach(function (bLine) {
+        if (bLine.direction != 'recvonly')
+        {
+            return;
+        }
+
+        modded = true;
+        if (!Array.isArray(bLine.ssrcs) || bLine.ssrcs.length === 0)
+        {
+            var ssrc = RandomUtil.randomInt(1, 0xffffffff);
+            bLine.ssrcs = [{
+                id: ssrc,
+                attribute: 'cname',
+                value: ['recvonly-', ssrc].join(' ')
+            }];
+        }
+    });
+
+    return (!modded) ? desc : new RTCSessionDescription({
+        type: desc.type,
+        sdp: transform.write(session),
+    });
+};
+
 /**
  * Takes a SessionDescription object and returns a "normalized" version.
  * Currently it only takes care of ordering the a=ssrc lines.
@@ -215,10 +254,6 @@ var getters = {
     },
     localDescription:  function() {
         var desc = this.peerconnection.localDescription;
-
-            // FIXME this should probably be after the Unified Plan -> Plan B
-            // transformation.
-        desc = SSRCReplacement.mungeLocalVideoSSRC(desc);
 
         this.trace('getLocalDescription::preTransform', dumpSDP(desc));
 
@@ -370,7 +405,11 @@ TraceablePeerConnection.prototype.createOffer
                 self.trace('createOfferOnSuccess::postTransform (Plan B)', dumpSDP(offer));
             }
 
-            offer = SSRCReplacement.mungeLocalVideoSSRC(offer);
+            if (RTCBrowserType.isChrome())
+            {
+                offer = insertRecvOnlySSRC(offer);
+                self.trace('createOfferOnSuccess::mungeLocalVideoSSRC', dumpSDP(offer));
+            }
 
             if (self.session.room.options.enableSimulcast && self.simulcast.isSupported()) {
                 offer = self.simulcast.mungeLocalDescription(offer);
@@ -399,8 +438,11 @@ TraceablePeerConnection.prototype.createAnswer
                 self.trace('createAnswerOnSuccess::postTransform (Plan B)', dumpSDP(answer));
             }
 
-            // munge local video SSRC
-            answer = SSRCReplacement.mungeLocalVideoSSRC(answer);
+            if (RTCBrowserType.isChrome())
+            {
+                answer = insertRecvOnlySSRC(answer);
+                self.trace('createAnswerOnSuccess::mungeLocalVideoSSRC', dumpSDP(answer));
+            }
 
             if (self.session.room.options.enableSimulcast && self.simulcast.isSupported()) {
                 answer = self.simulcast.mungeLocalDescription(answer);
