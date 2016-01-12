@@ -582,6 +582,9 @@ export default {
         APP.UI.addListener(UIEvents.SELECTED_ENDPOINT, (id) => {
             room.selectParticipant(id);
         });
+        APP.UI.addListener(UIEvents.PINNED_ENDPOINT, (id) => {
+            room.pinParticipant(id);
+        });
 
         APP.UI.addListener(UIEvents.TOGGLE_SCREENSHARING, () => {
             APP.desktopsharing.toggleScreenSharing();
