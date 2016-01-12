@@ -50,6 +50,7 @@ function DataChannels(peerConnection, emitter) {
 DataChannels.prototype.onDataChannel = function (event) {
     var dataChannel = event.channel;
     var self = this;
+    var lastSelectedEndpoint = null;
 
     dataChannel.onopen = function () {
         logger.info("Data channel opened by the Videobridge!", dataChannel);
@@ -61,6 +62,12 @@ DataChannels.prototype.onDataChannel = function (event) {
         //dataChannel.send(new ArrayBuffer(12));
 
         self.eventEmitter.emit(RTCEvents.DATA_CHANNEL_OPEN);
+
+        // when the data channel becomes available, tell the bridge about video
+        // selections so that it can do adaptive simulcast,
+        // we want the notification to trigger even if userJid is undefined,
+        // or null.
+        this.handleSelectedEndpointEvent(this.lastSelectedEndpoint);
     };
 
     dataChannel.onerror = function (error) {
@@ -151,6 +158,7 @@ DataChannels.prototype.onDataChannel = function (event) {
 };
 
 DataChannels.prototype.handleSelectedEndpointEvent = function (userResource) {
+    this.lastSelectedEndpoint = userResource;
     this._onXXXEndpointChanged("selected", userResource);
 }
 
