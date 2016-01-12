@@ -1026,7 +1026,7 @@ var JitsiConferenceEvents = {
     /**
      * Indicates that start muted settings changed.
      */
-    START_MUTED: "conference.start_muted",
+    START_MUTED_POLICY_CHANGED: "conference.start_muted_policy_changed",
     /**
      * Indicates that DTMF support changed.
      */
