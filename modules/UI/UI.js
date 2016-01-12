@@ -139,8 +139,27 @@ UI.notifyKicked = function () {
     messageHandler.openMessageDialog("dialog.sessTerminated", "dialog.kickMessage");
 };
 
+UI.notifyConferenceDestroyed = function (reason) {
+    //FIXME: use Session Terminated from translation, but
+    // 'reason' text comes from XMPP packet and is not translated
+    var title = APP.translation.generateTranslationHTML("dialog.sessTerminated");
+    messageHandler.openDialog(
+        title, reason, true, {},
+        function (event, value, message, formVals) {
+            return false;
+        }
+    );
+};
+
 UI.notifyBridgeDown = function () {
     messageHandler.showError("dialog.error", "dialog.bridgeUnavailable");
+};
+
+UI.showChatError = function (err, msg) {
+    if (interfaceConfig.filmStripOnly) {
+        return;
+    }
+    Chat.chatAddError(err, msg);
 };
 
 UI.changeDisplayName = function (id, displayName) {
@@ -359,10 +378,6 @@ UI.addLocalStream = function (track) {
 UI.addRemoteStream = function (stream) {
     VideoLayout.onRemoteStreamAdded(stream);
 };
-
-function chatAddError(errorMessage, originalText) {
-    return Chat.chatAddError(errorMessage, originalText);
-}
 
 UI.setSubject = function (subject) {
     Chat.setSubject(subject);
@@ -767,6 +782,10 @@ UI.updateRecordingState = function (state) {
 
 UI.notifyTokenAuthFailed = function () {
     messageHandler.showError("dialog.error", "dialog.tokenAuthFailed");
+};
+
+UI.notifyInternalError = function () {
+    UI.messageHandler.showError("dialog.sorry", "dialog.internalError");
 };
 
 UI.updateAuthInfo = function (isAuthEnabled, login) {

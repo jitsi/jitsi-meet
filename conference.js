@@ -93,8 +93,8 @@ class ConferenceConnector {
         this._unsubscribe();
         this._reject(err);
     }
-    _onConferenceFailed(err, msg = '') {
-        console.error('CONFERENCE FAILED:', err, msg);
+    _onConferenceFailed(err, ...params) {
+        console.error('CONFERENCE FAILED:', err, params);
         switch (err) {
             // room is locked by the password
         case ConferenceErrors.PASSWORD_REQUIRED:
@@ -105,7 +105,10 @@ class ConferenceConnector {
             break;
 
         case ConferenceErrors.CONNECTION_ERROR:
-            APP.UI.notifyConnectionFailed(msg);
+            {
+                let [msg] = params;
+                APP.UI.notifyConnectionFailed(msg);
+            }
             break;
 
         case ConferenceErrors.VIDEOBRIDGE_NOT_AVAILABLE:
@@ -121,6 +124,39 @@ class ConferenceConnector {
 
             // notify user that auth is required
             AuthHandler.requireAuth(APP.conference.roomName);
+            break;
+
+        case ConferenceErrors.VIDEOBRIDGE_NOT_AVAILABLE:
+            APP.UI.notifyBridgeDown();
+            break;
+
+        case ConferenceErrors.RESERVATION_ERROR:
+            {
+                let [code, msg] = params;
+                APP.UI.notifyReservationError(code, msg);
+            }
+            break;
+
+        case ConferenceErrors.GRACEFUL_SHUTDOWN:
+            APP.UI.notifyGracefulShudown();
+            break;
+
+        case ConferenceErrors.JINGLE_FATAL_ERROR:
+            APP.UI.notifyInternalError();
+            break;
+
+        case ConferenceErrors.CONFERENCE_DESTROYED:
+            {
+                let [reason] = params;
+                APP.UI.notifyConferenceDestroyed(reason);
+            }
+            break;
+
+        case ConferenceErrors.CHAT_ERROR:
+            {
+                let [code, msg] = params;
+                APP.UI.showChatError(code, msg);
+            }
             break;
 
         default:
