@@ -15,8 +15,7 @@ const ConnectionErrors = JitsiMeetJS.errors.connection;
 const ConferenceEvents = JitsiMeetJS.events.conference;
 const ConferenceErrors = JitsiMeetJS.errors.conference;
 
-let room, connection, localTracks, localAudio, localVideo;
-let roomLocker = createRoomLocker(room);
+let room, connection, localTracks, localAudio, localVideo, roomLocker;
 
 const Commands = {
     CONNECTION_QUALITY: "stats",
@@ -223,7 +222,13 @@ export default {
         return room.isSIPCallingSupported();
     },
     get membersCount () {
-        return room.getParticipants().length; // FIXME maybe +1?
+        return room.getParticipants().length + 1;
+    },
+    get startAudioMuted () {
+        return room && room.isStartAudioMuted();
+    },
+    get startVideoMuted () {
+        return room && room.isStartVideoMuted();
     },
     // used by torture currently
     isJoined () {
@@ -241,6 +246,7 @@ export default {
     _createRoom () {
         room = connection.initJitsiConference(APP.conference.roomName,
             this._getConferenceOptions());
+        roomLocker = createRoomLocker(room);
         this._room = room; // FIXME do not use this
         this.localId = room.myUserId();
 
@@ -508,7 +514,16 @@ export default {
 
         APP.UI.addListener(UIEvents.START_MUTED_CHANGED,
             (startAudioMuted, startVideoMuted) => {
-                // FIXME start muted
+                room.setStartMuted(startAudioMuted, startVideoMuted);
+            }
+        );
+        room.on(
+            ConferenceEvents.START_MUTED,
+            function (startAudioMuted, startVideoMuted, initiallyMuted) {
+                APP.UI.onStartMutedChanged();
+                if (initiallyMuted) {
+                    APP.UI.notifyInitiallyMuted();
+                }
             }
         );
 

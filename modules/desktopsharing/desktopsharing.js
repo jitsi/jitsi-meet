@@ -97,7 +97,7 @@ module.exports = {
         } else {
             type = "video";
         }
-        APP.createLocalTracks(type).then(function (tracks) {
+        APP.conference.createLocalTracks(type).then(function (tracks) {
             if (!tracks.length) {
                 if (type === 'desktop') {
                     getDesktopStreamFailed();

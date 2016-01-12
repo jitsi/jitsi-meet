@@ -1,4 +1,4 @@
-/* global $, JitsiMeetJS, config, interfaceConfig */
+/* global $, JitsiMeetJS, config */
 /* application specific logic */
 
 import "babel-polyfill";
