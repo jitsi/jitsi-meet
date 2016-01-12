@@ -59,9 +59,6 @@ var XMPPEvents = {
     // Designates an event indicating that the focus has asked us to mute our
     // audio.
     AUDIO_MUTED_BY_FOCUS: "xmpp.audio_muted_by_focus",
-    // Designates an event indicating that a moderator in the room changed the
-    // "start muted" settings for the conference.
-    START_MUTED_SETTING_CHANGED: "xmpp.start_muted_setting_changed",
     // Designates an event indicating that we should join the conference with
     // audio and/or video muted.
     START_MUTED_FROM_FOCUS: "xmpp.start_muted_from_focus",

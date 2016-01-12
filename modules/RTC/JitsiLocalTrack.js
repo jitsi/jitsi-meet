@@ -33,6 +33,9 @@ JitsiLocalTrack.prototype.constructor = JitsiLocalTrack;
  * @param mute {boolean} if true the track will be muted. Otherwise the track will be unmuted.
  */
 JitsiLocalTrack.prototype._setMute = function (mute) {
+    if (this.isMuted() === mute) {
+        return;
+    }
     if(!this.rtc) {
         this.startMuted = mute;
         return;

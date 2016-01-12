@@ -90,6 +90,7 @@ JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.ERROR);
         - USER_ROLE_CHANGED - notifies that role of some user changed. (parameters - id(string), role(string))
         - CONFERENCE_FAILED - notifies that user failed to join the conference. (parameters - errorCode(JitsiMeetJS.errors.conference))
         - KICKED - notifies that user has been kicked from the conference.
+        - START_MUTED - notifies that all new participants will join with muted audio/video stream (parameters - audioMuted(boolean), videoMuted(boolean))
 
     2. connection
         - CONNECTION_FAILED - indicates that the server connection failed.
@@ -252,6 +253,16 @@ The object represents a conference. We have the following methods to control the
 
 24. kick(id) - Kick participant from the conference
     - id - string participant id
+
+25. setStartMuted(audioMuted, videoMuted) - make all new participants join with muted audio/video
+    - audioMuted - boolean if audio stream should be muted
+    - videoMuted - boolean if video stream should be muted
+
+    Note: available only for moderator
+
+26. isStartAudioMuted() - check if audio is muted on join
+
+27. isStartVideoMuted() - check if video is muted on join
 
 JitsiTrack
 ======
