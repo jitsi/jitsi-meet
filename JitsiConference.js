@@ -46,7 +46,7 @@ function JitsiConference(options) {
     this.authIdentity;
     this.startAudioMuted = false;
     this.startVideoMuted = false;
-    this.tracks = [];
+    this.startMutedPolicy = {audio: false, video: false};
 }
 
 /**
@@ -253,16 +253,9 @@ JitsiConference.prototype.setDisplayName = function(name) {
 JitsiConference.prototype.addTrack = function (track) {
     this.room.addStream(track.getOriginalStream(), function () {
         this.rtc.addLocalStream(track);
-        if (this.startAudioMuted && track.isAudioTrack()) {
-            track.mute();
-        }
-        if (this.startVideoMuted && track.isVideoTrack()) {
-            track.mute();
-        }
         if (track.startMuted) {
             track.mute();
         }
-        this.tracks.push(track);
         var muteHandler = this._fireMuteChangeEvent.bind(this, track);
         var stopHandler = this.removeTrack.bind(this, track);
         var audioLevelHandler = this._fireAudioLevelChangeEvent.bind(this);
@@ -304,10 +297,6 @@ JitsiConference.prototype._fireMuteChangeEvent = function (track) {
  * @param track the JitsiLocalTrack object.
  */
 JitsiConference.prototype.removeTrack = function (track) {
-    var pos = this.tracks.indexOf(track);
-    if (pos > -1) {
-        this.tracks.splice(pos, 1);
-    }
     if(!this.room){
         if(this.rtc)
             this.rtc.removeLocalStream(track);
@@ -670,23 +659,32 @@ JitsiConference.prototype.getConnectionState = function () {
 
 /**
  * Make all new participants mute their audio/video on join.
- * @param {boolean} audioMuted if audio should be muted.
- * @param {boolean} videoMuted if video should be muted.
+ * @param policy {Object} object with 2 boolean properties for video and audio:
+ * @param {boolean} audio if audio should be muted.
+ * @param {boolean} video if video should be muted.
  */
-JitsiConference.prototype.setStartMuted = function (audioMuted, videoMuted) {
+JitsiConference.prototype.setStartMutedPolicy = function (policy) {
     if (!this.isModerator()) {
         return;
     }
-
+    this.startMutedPolicy = policy;
     this.room.removeFromPresence("startmuted");
     this.room.addToPresence("startmuted", {
         attributes: {
-            audio: audioMuted,
-            video: videoMuted,
+            audio: policy.audio,
+            video: policy.video,
             xmlns: 'http://jitsi.org/jitmeet/start-muted'
         }
     });
     this.room.sendPresence();
+};
+
+/**
+ * Returns current start muted policy
+ * @returns {Object} with 2 proprties - audio and video.
+ */
+JitsiConference.prototype.getStartMutedPolicy = function () {
+    return this.startMutedPolicy;
 };
 
 /**
@@ -818,29 +816,22 @@ function setupListeners(conference) {
         conference.eventEmitter.emit(JitsiConferenceErrors.PASSWORD_REQUIRED);
     });
 
-    conference.xmpp.addListener(XMPPEvents.START_MUTED_FROM_FOCUS, function (audioMuted, videoMuted) {
-        conference.startAudioMuted = audioMuted;
-        conference.startVideoMuted = videoMuted;
+    conference.xmpp.addListener(XMPPEvents.START_MUTED_FROM_FOCUS,
+        function (audioMuted, videoMuted) {
+            conference.startAudioMuted = audioMuted;
+            conference.startVideoMuted = videoMuted;
 
-        // mute existing local tracks because this is initial mute from Jicofo
-        conference.tracks.forEach(function (track) {
-            if (conference.startAudioMuted && track.isAudioTrack()) {
-                track.mute();
-            }
-            if (conference.startVideoMuted && track.isVideoTrack()) {
-                track.mute();
-            }
+            // mute existing local tracks because this is initial mute from
+            // Jicofo
+            conference.getLocalTracks().forEach(function (track) {
+                if (conference.startAudioMuted && track.isAudioTrack()) {
+                    track.mute();
+                }
+                if (conference.startVideoMuted && track.isVideoTrack()) {
+                    track.mute();
+                }
+            });
         });
-
-        var initiallyMuted = audioMuted || videoMuted;
-
-        conference.eventEmitter.emit(
-            JitsiConferenceEvents.START_MUTED,
-            conference.startAudioMuted,
-            conference.startVideoMuted,
-            initiallyMuted
-        );
-    });
 
     conference.room.addPresenceListener("startmuted", function (data, from) {
         var isModerator = false;
@@ -862,22 +853,20 @@ function setupListeners(conference) {
 
         var updated = false;
 
-        if (startAudioMuted !== conference.startAudioMuted) {
-            conference.startAudioMuted = startAudioMuted;
+        if (startAudioMuted !== conference.startMutedPolicy.audio) {
+            conference.startMutedPolicy.audio = startAudioMuted;
             updated = true;
         }
 
-        if (startVideoMuted !== conference.startVideoMuted) {
-            conference.startVideoMuted = startVideoMuted;
+        if (startVideoMuted !== conference.startMutedPolicy.video) {
+            conference.startMutedPolicy.video = startVideoMuted;
             updated = true;
         }
 
         if (updated) {
             conference.eventEmitter.emit(
-                JitsiConferenceEvents.START_MUTED,
-                conference.startAudioMuted,
-                conference.startVideoMuted,
-                false
+                JitsiConferenceEvents.START_MUTED_POLICY_CHANGED,
+                conference.startMutedPolicy
             );
         }
     });

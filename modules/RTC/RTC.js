@@ -136,12 +136,10 @@ RTC.prototype.setAudioMute = function (value) {
     }
 }
 
-RTC.prototype.removeLocalStream = function (stream) {
-    for(var i = 0; i < this.localStreams.length; i++) {
-        if(this.localStreams[i].getOriginalStream() === stream) {
-            delete this.localStreams[i];
-            return;
-        }
+RTC.prototype.removeLocalStream = function (track) {
+    var pos = this.localStreams.indexOf(track);
+    if (pos > -1) {
+        this.localStreams.splice(pos, 1);
     }
 };
 

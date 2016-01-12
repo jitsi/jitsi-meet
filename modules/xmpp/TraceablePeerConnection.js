@@ -225,7 +225,8 @@ var getters = {
         // if we're running on FF, transform to Plan B first.
         if (RTCBrowserType.usesUnifiedPlan()) {
             desc = this.interop.toPlanB(desc);
-            this.trace('getLocalDescription::postTransform (Plan B)', dumpSDP(desc));
+            this.trace('getLocalDescription::postTransform (Plan B)',
+                dumpSDP(desc));
         }
         return desc;
     },
