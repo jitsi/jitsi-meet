@@ -21,10 +21,10 @@ var Avatar = {
     },
     /**
      * Returns image URL for the avatar to be displayed on large video area
-     * where current active speaker is presented.
+     * where current dominant speaker is presented.
      * @param id id of the user for whom we want to obtain avatar URL
      */
-    getActiveSpeakerUrl: function (id) {
+    getDominantSpeakerUrl: function (id) {
         return this.getGravatarUrl(id, 100);
     },
     /**

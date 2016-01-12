@@ -361,8 +361,8 @@ export default {
         room.on(ConferenceEvents.LAST_N_ENDPOINTS_CHANGED, (ids) => {
             APP.UI.handleLastNEndpoints(ids);
         });
-        room.on(ConferenceEvents.ACTIVE_SPEAKER_CHANGED, (id) => {
-            APP.UI.markDominantSpiker(id);
+        room.on(ConferenceEvents.DOMINANT_SPEAKER_CHANGED, (id) => {
+            APP.UI.markDominantSpeaker(id);
         });
 
         if (!interfaceConfig.filmStripOnly) {

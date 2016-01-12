@@ -606,7 +606,7 @@ UI.notifyInitiallyMuted = function () {
     );
 };
 
-UI.markDominantSpiker = function (id) {
+UI.markDominantSpeaker = function (id) {
     VideoLayout.onDominantSpeakerChanged(id);
 };
 

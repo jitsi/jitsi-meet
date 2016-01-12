@@ -8,7 +8,7 @@ import BottomToolbar from '../toolbars/BottomToolbar';
 
 const RTCBrowserType = require("../../RTC/RTCBrowserType");
 
-const avatarSize = interfaceConfig.ACTIVE_SPEAKER_AVATAR_SIZE;
+const avatarSize = interfaceConfig.DOMINANT_SPEAKER_AVATAR_SIZE;
 
 function getStreamId(stream) {
     if(!stream)
@@ -163,7 +163,7 @@ class VideoContainer extends LargeContainer {
         this.stream = null;
         this.videoType = null;
 
-        this.$avatar = $('#activeSpeaker');
+        this.$avatar = $('#domiantSpeaker');
         this.$wrapper = $('#largeVideoWrapper');
 
         if (!RTCBrowserType.isIExplorer()) {
@@ -387,10 +387,10 @@ export default class LargeVideoManager {
     }
 
     /**
-     * Updates the src of the active speaker avatar
+     * Updates the src of the dominant speaker avatar
      */
     updateAvatar (thumbUrl) {
-        $("#activeSpeakerAvatar").attr('src', thumbUrl);
+        $("#dominantSpeakerAvatar").attr('src', thumbUrl);
     }
 
     showAvatar (show) {

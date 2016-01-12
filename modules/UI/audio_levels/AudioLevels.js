@@ -9,9 +9,9 @@ const LOCAL_LEVEL = 'local';
 let ASDrawContext = null;
 let audioLevelCanvasCache = {};
 
-function initActiveSpeakerAudioLevels() {
-    let ASRadius = interfaceConfig.ACTIVE_SPEAKER_AVATAR_SIZE / 2;
-    let ASCenter = (interfaceConfig.ACTIVE_SPEAKER_AVATAR_SIZE + ASRadius) / 2;
+function initDominantSpeakerAudioLevels() {
+    let ASRadius = interfaceConfig.DOMINANT_SPEAKER_AVATAR_SIZE / 2;
+    let ASCenter = (interfaceConfig.DOMINANT_SPEAKER_AVATAR_SIZE + ASRadius) / 2;
 
     // Draw a circle.
     ASDrawContext.arc(ASCenter, ASCenter, ASRadius, 0, 2 * Math.PI);
@@ -119,8 +119,8 @@ function getVideoSpanId(id) {
 const AudioLevels = {
 
     init () {
-        ASDrawContext = $('#activeSpeakerAudioLevel')[0].getContext('2d');
-        initActiveSpeakerAudioLevels();
+        ASDrawContext = $('#dominantSpeakerAudioLevel')[0].getContext('2d');
+        initDominantSpeakerAudioLevels();
     },
 
     /**
@@ -197,13 +197,13 @@ const AudioLevels = {
 
         if(id === largeVideoId) {
             window.requestAnimationFrame(function () {
-                AudioLevels.updateActiveSpeakerAudioLevel(audioLevel);
+                AudioLevels.updateDominantSpeakerAudioLevel(audioLevel);
             });
         }
     },
 
-    updateActiveSpeakerAudioLevel (audioLevel) {
-        if($("#activeSpeaker").css("visibility") == "hidden" || ASDrawContext === null) {
+    updateDominantSpeakerAudioLevel (audioLevel) {
+        if($("#domiantSpeaker").css("visibility") == "hidden" || ASDrawContext === null) {
             return;
         }
 

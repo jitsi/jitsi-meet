@@ -14,7 +14,7 @@ var interfaceConfig = {
     GENERATE_ROOMNAMES_ON_WELCOME_PAGE: true,
     APP_NAME: "Jitsi Meet",
     INVITATION_POWERED_BY: true,
-    ACTIVE_SPEAKER_AVATAR_SIZE: 100,
+    DOMINANT_SPEAKER_AVATAR_SIZE: 100,
     TOOLBAR_BUTTONS: ['authentication', 'microphone', 'camera', 'desktop',
         'recording', 'security', 'invite', 'chat', 'prezi', 'etherpad',
         'fullscreen', 'sip', 'dialpad', 'settings', 'hangup', 'filmstrip',

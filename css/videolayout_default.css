@@ -407,7 +407,7 @@
     pointer-events: none;
 }
 
-#activeSpeaker {
+#dominantSpeaker {
     visibility: hidden;
     width: 150px;
     height: 150px;
@@ -416,7 +416,7 @@
     position: relative;
 }
 
-#activeSpeakerAudioLevel {
+#dominantSpeakerAudioLevel {
     position: absolute;
     top: 0px;
     left: 0px;
@@ -428,7 +428,7 @@
     display:none !important;
 }
 
-#activeSpeakerAvatar {
+#dominantSpeakerAvatar {
     width: 100px;
     height: 100px;
     top: 25px;

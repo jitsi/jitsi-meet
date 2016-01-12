@@ -41,7 +41,7 @@ function JitsiConference(options) {
         this.statistics = new Statistics();
     setupListeners(this);
     this.participants = {};
-    this.lastActiveSpeaker = null;
+    this.lastDominantSpeaker = null;
     this.dtmfManager = null;
     this.somebodySupportsDTMF = false;
     this.authEnabled = false;
@@ -745,9 +745,9 @@ function setupListeners(conference) {
     });
 
     conference.rtc.addListener(RTCEvents.DOMINANTSPEAKER_CHANGED, function (id) {
-        if(conference.lastActiveSpeaker !== id && conference.room) {
-            conference.lastActiveSpeaker = id;
-            conference.eventEmitter.emit(JitsiConferenceEvents.ACTIVE_SPEAKER_CHANGED, id);
+        if(conference.lastDominantSpeaker !== id && conference.room) {
+            conference.lastDominantSpeaker = id;
+            conference.eventEmitter.emit(JitsiConferenceEvents.DOMINANT_SPEAKER_CHANGED, id);
         }
     });
 
@@ -842,9 +842,9 @@ var JitsiConferenceEvents = {
      */
     TRACK_REMOVED: "conference.trackRemoved",
     /**
-     * The active speaker was changed.
+     * The dominant speaker was changed.
      */
-    ACTIVE_SPEAKER_CHANGED: "conference.activeSpeaker",
+    DOMINANT_SPEAKER_CHANGED: "conference.dominantSpeaker",
     /**
      * A new user joinned the conference.
      */
@@ -2893,6 +2893,9 @@ function obtainDevices(options) {
             obtainDevices(options);
         },
         function (error) {
+            Object.keys(options.streams).forEach(function(device) {
+                RTCUtils.stopMediaStream(options.streams[device]);
+            });
             logger.error(
                 "failed to obtain " + device + " stream - stop", error);
             options.errorCallback(JitsiTrackErrors.parseError(error, devices));
@@ -3249,12 +3252,25 @@ var RTCUtils = {
                     this.getUserMediaWithConstraints(
                         options.devices,
                         function (stream) {
+                            if((options.devices.indexOf("audio") !== -1 &&
+                                !stream.getAudioTracks().length) ||
+                                (options.devices.indexOf("video") !== -1 &&
+                                !stream.getVideoTracks().length))
+                            {
+                                self.stopMediaStream(stream);
+                                reject(JitsiTrackErrors.parseError(
+                                    new Error("Unable to get the audio and " +
+                                        "video tracks."),
+                                    options.devices));
+                                    return;
+                            }
                             if(hasDesktop) {
                                 screenObtainer.obtainStream(
                                     function (desktopStream) {
                                         successCallback({audioVideo: stream,
                                             desktopStream: desktopStream});
                                     }, function (error) {
+                                        self.stopMediaStream(stream);
                                         reject(
                                             JitsiTrackErrors.parseError(error,
                                                 options.devices));
