@@ -41,7 +41,7 @@ function JitsiConference(options) {
         this.statistics = new Statistics();
     setupListeners(this);
     this.participants = {};
-    this.lastActiveSpeaker = null;
+    this.lastDominantSpeaker = null;
     this.dtmfManager = null;
     this.somebodySupportsDTMF = false;
     this.authEnabled = false;
@@ -745,9 +745,9 @@ function setupListeners(conference) {
     });
 
     conference.rtc.addListener(RTCEvents.DOMINANTSPEAKER_CHANGED, function (id) {
-        if(conference.lastActiveSpeaker !== id && conference.room) {
-            conference.lastActiveSpeaker = id;
-            conference.eventEmitter.emit(JitsiConferenceEvents.ACTIVE_SPEAKER_CHANGED, id);
+        if(conference.lastDominantSpeaker !== id && conference.room) {
+            conference.lastDominantSpeaker = id;
+            conference.eventEmitter.emit(JitsiConferenceEvents.DOMINANT_SPEAKER_CHANGED, id);
         }
     });
 
@@ -842,9 +842,9 @@ var JitsiConferenceEvents = {
      */
     TRACK_REMOVED: "conference.trackRemoved",
     /**
-     * The active speaker was changed.
+     * The dominant speaker was changed.
      */
-    ACTIVE_SPEAKER_CHANGED: "conference.activeSpeaker",
+    DOMINANT_SPEAKER_CHANGED: "conference.dominantSpeaker",
     /**
      * A new user joinned the conference.
      */

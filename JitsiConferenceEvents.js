@@ -12,9 +12,9 @@ var JitsiConferenceEvents = {
      */
     TRACK_REMOVED: "conference.trackRemoved",
     /**
-     * The active speaker was changed.
+     * The dominant speaker was changed.
      */
-    ACTIVE_SPEAKER_CHANGED: "conference.activeSpeaker",
+    DOMINANT_SPEAKER_CHANGED: "conference.dominantSpeaker",
     /**
      * A new user joinned the conference.
      */
