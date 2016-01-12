@@ -801,6 +801,21 @@ function setupListeners(conference) {
     conference.room.addListener(XMPPEvents.BRIDGE_DOWN, function () {
         conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_FAILED, JitsiConferenceErrors.VIDEOBRIDGE_NOT_AVAILABLE);
     });
+    conference.room.addListener(XMPPEvents.RESERVATION_ERROR, function (code, msg) {
+        conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_FAILED, JitsiConferenceErrors.RESERVATION_ERROR, code, msg);
+    });
+    conference.room.addListener(XMPPEvents.GRACEFUL_SHUTDOWN, function () {
+        conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_FAILED, JitsiConferenceErrors.GRACEFUL_SHUTDOWN);
+    });
+    conference.room.addListener(XMPPEvents.JINGLE_FATAL_ERROR, function () {
+        conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_FAILED, JitsiConferenceErrors.JINGLE_FATAL_ERROR);
+    });
+    conference.room.addListener(XMPPEvents.MUC_DESTROYED, function (reason) {
+        conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_FAILED, JitsiConferenceErrors.CONFERENCE_DESTROYED, reason);
+    });
+    conference.room.addListener(XMPPEvents.CHAT_ERROR_RECEIVED, function (err, msg) {
+        conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_FAILED, JitsiConferenceErrors.CHAT_ERROR, err, msg);
+    });
 //    FIXME
 //    conference.room.addListener(XMPPEvents.MUC_JOINED, function () {
 //        conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_LEFT);

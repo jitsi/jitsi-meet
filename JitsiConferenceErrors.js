@@ -27,7 +27,27 @@ var JitsiConferenceErrors = {
     /**
      * Indicates that there is no available videobridge.
      */
-    VIDEOBRIDGE_NOT_AVAILABLE: "conference.videobridgeNotAvailable"
+    VIDEOBRIDGE_NOT_AVAILABLE: "conference.videobridgeNotAvailable",
+    /**
+     * Indicates that reservation system returned error.
+     */
+    RESERVATION_ERROR: "conference.reservationError",
+    /**
+     * Indicates that graceful shutdown happened.
+     */
+    GRACEFUL_SHUTDOWN: "conference.gracefulShutdown",
+    /**
+     * Indicates that jingle fatal error happened.
+     */
+    JINGLE_FATAL_ERROR: "conference.jingleFatalError",
+    /**
+     * Indicates that conference has been destroyed.
+     */
+    CONFERENCE_DESTROYED: "conference.destroyed",
+    /**
+     * Indicates that chat error occured.
+     */
+    CHAT_ERROR: "conference.chatError"
     /**
      * Many more errors TBD here.
      */

@@ -110,6 +110,11 @@ JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.ERROR);
         - PASSWORD_REQUIRED - that error can be passed when the connection to the conference failed. You should try to join the conference with password.
         - PASSWORD_NOT_SUPPORTED - indicates that conference cannot be locked
         - VIDEOBRIDGE_NOT_AVAILABLE - video bridge issues.
+        - RESERVATION_ERROR - error in reservation system
+        - GRACEFUL_SHUTDOWN - graceful shutdown
+        - JINGLE_FATAL_ERROR - error in jingle
+        - CONFERENCE_DESTROYED - conference has been destroyed
+        - CHAT_ERROR - chat error happened
     2. connection
         - PASSWORD_REQUIRED - passed when the connection to the server failed. You should try to authenticate with password.
         - CONNECTION_ERROR - indicates connection failures.
