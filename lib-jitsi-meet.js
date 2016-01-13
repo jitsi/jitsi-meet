@@ -1601,7 +1601,7 @@ DataChannels.prototype.onDataChannel = function (event) {
         // selections so that it can do adaptive simulcast,
         // we want the notification to trigger even if userJid is undefined,
         // or null.
-        this.handleSelectedEndpointEvent(this.lastSelectedEndpoint);
+        self.handleSelectedEndpointEvent(self.lastSelectedEndpoint);
     };
 
     dataChannel.onerror = function (error) {
