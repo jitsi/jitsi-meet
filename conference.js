@@ -159,6 +159,13 @@ class ConferenceConnector {
             }
             break;
 
+        case ConferenceErrors.FOCUS_DISCONNECTED:
+            {
+                let [focus, retrySec] = params;
+                APP.UI.notifyFocusDisconnected(focus, retrySec);
+            }
+            break;
+
         default:
             this._handleConferenceFailed(err, msg);
         }

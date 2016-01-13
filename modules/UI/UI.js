@@ -788,6 +788,14 @@ UI.notifyInternalError = function () {
     UI.messageHandler.showError("dialog.sorry", "dialog.internalError");
 };
 
+UI.notifyFocusDisconnected = function (focus, retrySec) {
+    UI.messageHandler.notify(
+        null, "notify.focus",
+        'disconnected', "notify.focusFail",
+        {component: focus, ms: retrySec}
+    );
+};
+
 UI.updateAuthInfo = function (isAuthEnabled, login) {
     let loggedIn = !!login;
 
