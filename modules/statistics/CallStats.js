@@ -18,16 +18,49 @@ var wrtcFuncNames = {
     getUserMedia:         "getUserMedia"
 };
 
-// some errors may happen before CallStats init
-// in this case we accumulate them in this array
-// and send them to callstats on init
+/**
+ * Some errors may occur before CallStats.init in which case we will accumulate 
+ * them and submit them to callstats.io on CallStats.init.
+ */
 var pendingErrors = [];
 
 function initCallback (err, msg) {
     console.log("CallStats Status: err=" + err + " msg=" + msg);
 }
 
-var callStatsIntegrationEnabled = config.callStatsID && config.callStatsSecret;
+/**
+ * The indicator which determines whether the integration of callstats.io is
+ * enabled/allowed. Its value does not indicate whether the integration will
+ * succeed at runtime but rather whether it is to be attempted at runtime at
+ * all.
+ */
+var _enabled
+    = config.callStatsID && config.callStatsSecret
+        // Even though AppID and AppSecret may be specified, the integration of
+        // callstats.io may be disabled because of globally-disallowed requests
+        // to any third parties.
+        && (config.disableThirdPartyRequests !== true);
+
+if (_enabled) {
+    // Since callstats.io is a third party, we cannot guarantee the quality of
+    // their service. More specifically, their server may take noticeably long
+    // time to respond. Consequently, it is in our best interest (in the sense
+    // that the intergration of callstats.io is pretty important to us but not
+    // enough to allow it to prevent people from joining a conference) to (1)
+    // start downloading their API as soon as possible and (2) do the
+    // downloading asynchronously.
+    (function (d, src) {
+        var elementName = 'script';
+        var newScript = d.createElement(elementName);
+        var referenceNode = d.getElementsByTagName(elementName)[0];
+
+        newScript.async = true;
+        newScript.src = src;
+        referenceNode.parentNode.insertBefore(newScript, referenceNode);
+    })(document, 'https://api.callstats.io/static/callstats.min.js');
+    // FIXME At the time of this writing, we hope that the callstats.io API will
+    // have loaded by the time we needed it (i.e. CallStats.init is invoked).
+}
 
 /**
  * Returns a function which invokes f in a try/catch block, logs any exception
@@ -101,7 +134,7 @@ var CallStats = {
      * false.
      */
     isEnabled: function() {
-        return callStatsIntegrationEnabled;
+        return _enabled;
     },
 
     pcCallback: _try_catch(function (err, msg) {
