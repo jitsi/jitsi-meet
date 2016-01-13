@@ -65,7 +65,7 @@ var config = {
 //    defaultLanguage: "en",
 // To enable sending statistics to callstats.io you should provide Applicaiton ID and Secret.
 //    callStatsID: "",//AppID for callstats.io API
-//    callStatsSecret: ""//AppSecret for callstats.io API
+//    callStatsSecret: "",//AppSecret for callstats.io API
     /*noticeMessage: 'Service update is scheduled for 16th March 2015. ' +
     'During that time service will not be available. ' +
     'Apologise for inconvenience.'*/
