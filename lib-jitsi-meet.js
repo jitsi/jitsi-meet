@@ -833,6 +833,8 @@ function setupListeners(conference) {
                     track.mute();
                 }
             });
+
+            conference.eventEmitter.emit(JitsiConferenceEvents.STARTED_MUTED);
         });
 
     conference.room.addPresenceListener("startmuted", function (data, from) {
@@ -1027,6 +1029,10 @@ var JitsiConferenceEvents = {
      * Indicates that start muted settings changed.
      */
     START_MUTED_POLICY_CHANGED: "conference.start_muted_policy_changed",
+    /**
+     * Indicates that the local user has started muted.
+     */
+    STARTED_MUTED: "conference.started_muted",
     /**
      * Indicates that DTMF support changed.
      */

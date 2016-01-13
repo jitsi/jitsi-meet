@@ -831,6 +831,8 @@ function setupListeners(conference) {
                     track.mute();
                 }
             });
+
+            conference.eventEmitter.emit(JitsiConferenceEvents.STARTED_MUTED);
         });
 
     conference.room.addPresenceListener("startmuted", function (data, from) {

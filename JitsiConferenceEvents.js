@@ -89,6 +89,10 @@ var JitsiConferenceEvents = {
      */
     START_MUTED_POLICY_CHANGED: "conference.start_muted_policy_changed",
     /**
+     * Indicates that the local user has started muted.
+     */
+    STARTED_MUTED: "conference.started_muted",
+    /**
      * Indicates that DTMF support changed.
      */
     DTMF_SUPPORT_CHANGED: "conference.dtmfSupportChanged",
