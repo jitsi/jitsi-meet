@@ -79,7 +79,7 @@ var Feedback = {
     init: function () {
         // CallStats is the way we send feedback, so we don't have to initialise
         // if callstats isn't enabled.
-        if (!callStats.isEnabled())
+        if (!this.isEnabled())
             return;
 
         $("div.feedbackButton").css("display", "block");
@@ -93,6 +93,9 @@ var Feedback = {
      * @return true if the feedback functionality is enabled, false otherwise.
      */
     isEnabled: function() {
+        // XXX callStats.isEnabled() indicates whether we are allowed to attempt
+        // to integrate callstats.io. Whether our attempt was/is/will be
+        // successful is a different question.
         return callStats.isEnabled();
     },
     /**
