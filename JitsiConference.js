@@ -256,20 +256,12 @@ JitsiConference.prototype.addTrack = function (track) {
         if (track.startMuted) {
             track.mute();
         }
-        var muteHandler = this._fireMuteChangeEvent.bind(this, track);
-        var stopHandler = this.removeTrack.bind(this, track);
-        var audioLevelHandler = this._fireAudioLevelChangeEvent.bind(this);
-        track.addEventListener(JitsiTrackEvents.TRACK_MUTE_CHANGED, muteHandler);
-        track.addEventListener(JitsiTrackEvents.TRACK_STOPPED, stopHandler);
-        track.addEventListener(JitsiTrackEvents.TRACK_AUDIO_LEVEL_CHANGED, audioLevelHandler);
-        this.addEventListener(JitsiConferenceEvents.TRACK_REMOVED, function (someTrack) {
-            if (someTrack !== track) {
-                return;
-            }
-            track.removeEventListener(JitsiTrackEvents.TRACK_MUTE_CHANGED, muteHandler);
-            track.removeEventListener(JitsiTrackEvents.TRACK_STOPPED, stopHandler);
-            track.removeEventListener(JitsiTrackEvents.TRACK_AUDIO_LEVEL_CHANGED, audioLevelHandler);
-        });
+        track.muteHandler = this._fireMuteChangeEvent.bind(this, track);
+        track.stopHandler = this.removeTrack.bind(this, track);
+        track.audioLevelHandler = this._fireAudioLevelChangeEvent.bind(this);
+        track.addEventListener(JitsiTrackEvents.TRACK_MUTE_CHANGED, track.muteHandler);
+        track.addEventListener(JitsiTrackEvents.TRACK_STOPPED, track.stopHandler);
+        track.addEventListener(JitsiTrackEvents.TRACK_AUDIO_LEVEL_CHANGED, track.audioLevelHandler);
         this.eventEmitter.emit(JitsiConferenceEvents.TRACK_ADDED, track);
     }.bind(this));
 };
@@ -304,6 +296,9 @@ JitsiConference.prototype.removeTrack = function (track) {
     }
     this.room.removeStream(track.getOriginalStream(), function(){
         this.rtc.removeLocalStream(track);
+        track.removeEventListener(JitsiTrackEvents.TRACK_MUTE_CHANGED, track.muteHandler);
+        track.removeEventListener(JitsiTrackEvents.TRACK_STOPPED, track.stopHandler);
+        track.removeEventListener(JitsiTrackEvents.TRACK_AUDIO_LEVEL_CHANGED, track.audioLevelHandler);
         this.eventEmitter.emit(JitsiConferenceEvents.TRACK_REMOVED, track);
     }.bind(this));
 };
