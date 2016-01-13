@@ -5187,6 +5187,14 @@ var WEBAUDIO_ANALYZER_FFT_SIZE = 2048;
  */
 var WEBAUDIO_ANALYZER_SMOOTING_TIME = 0.8;
 
+window.AudioContext = window.AudioContext || window.webkitAudioContext;
+
+var context = null;
+
+if(window.AudioContext) {
+    context = new AudioContext();
+}
+
 /**
  * Converts time domain data array to audio level.
  * @param samples the time domain data array.
@@ -5238,7 +5246,6 @@ function animateLevel(newLevel, lastLevel) {
  * @constructor
  */
 function LocalStatsCollector(stream, interval, callback) {
-    window.AudioContext = window.AudioContext || window.webkitAudioContext;
     this.stream = stream;
     this.intervalId = null;
     this.intervalMilis = interval;
@@ -5250,15 +5257,13 @@ function LocalStatsCollector(stream, interval, callback) {
  * Starts the collecting the statistics.
  */
 LocalStatsCollector.prototype.start = function () {
-    if (!window.AudioContext ||
+    if (!context ||
         RTCBrowserType.isTemasysPluginUsed())
         return;
 
-    var context = new AudioContext();
     var analyser = context.createAnalyser();
     analyser.smoothingTimeConstant = WEBAUDIO_ANALYZER_SMOOTING_TIME;
     analyser.fftSize = WEBAUDIO_ANALYZER_FFT_SIZE;
-
 
     var source = context.createMediaStreamSource(this.stream);
     source.connect(analyser);
