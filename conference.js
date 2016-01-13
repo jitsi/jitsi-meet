@@ -225,10 +225,10 @@ export default {
         return room.getParticipants().length + 1;
     },
     get startAudioMuted () {
-        return room && room.isStartAudioMuted();
+        return room && room.getStartMutedPolicy().audio;
     },
     get startVideoMuted () {
-        return room && room.isStartVideoMuted();
+        return room && room.getStartMutedPolicy().video;
     },
     // used by torture currently
     isJoined () {
@@ -246,6 +246,16 @@ export default {
     _createRoom () {
         room = connection.initJitsiConference(APP.conference.roomName,
             this._getConferenceOptions());
+        localTracks.forEach((track) => {
+            if(track.isAudioTrack()) {
+                localAudio = track;
+            }
+            else if (track.isVideoTrack()) {
+                localVideo = track;
+            }
+            addTrack(track);
+            APP.UI.addLocalStream(track);
+        });
         roomLocker = createRoomLocker(room);
         this._room = room; // FIXME do not use this
         this.localId = room.myUserId();
@@ -277,17 +287,6 @@ export default {
     _setupListeners () {
         // add local streams when joined to the conference
         room.on(ConferenceEvents.CONFERENCE_JOINED, () => {
-            localTracks.forEach((track) => {
-                if(track.isAudioTrack()) {
-                    localAudio = track;
-                }
-                else if (track.isVideoTrack()) {
-                    localVideo = track;
-                }
-                addTrack(track);
-                APP.UI.addLocalStream(track);
-            });
-
             APP.UI.updateAuthInfo(room.isAuthEnabled(), room.getAuthLogin());
             APP.UI.mucJoined();
         });
@@ -514,18 +513,20 @@ export default {
 
         APP.UI.addListener(UIEvents.START_MUTED_CHANGED,
             (startAudioMuted, startVideoMuted) => {
-                room.setStartMuted(startAudioMuted, startVideoMuted);
+                room.setStartMutedPolicy({audio: startAudioMuted,
+                    video: startVideoMuted});
             }
         );
         room.on(
-            ConferenceEvents.START_MUTED,
-            function (startAudioMuted, startVideoMuted, initiallyMuted) {
+            ConferenceEvents.START_MUTED_POLICY_CHANGED,
+            (policy) => {
                 APP.UI.onStartMutedChanged();
-                if (initiallyMuted) {
-                    APP.UI.notifyInitiallyMuted();
-                }
             }
         );
+        room.on(ConferenceEvents.STARTED_MUTED, () => {
+            (room.isStartAudioMuted() || room.isStartVideoMuted())
+                && APP.UI.notifyInitiallyMuted();
+        });
 
         APP.UI.addListener(UIEvents.USER_INVITED, (roomUrl) => {
             APP.UI.inviteParticipants(
