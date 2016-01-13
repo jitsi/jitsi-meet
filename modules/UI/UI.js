@@ -621,7 +621,7 @@ UI.notifyFirefoxExtensionRequired = function (url) {
         null,
         null,
         APP.translation.generateTranslationHTML(
-            "dialog.firefoxExtensionPrompt", {url: url}
+            "dialog.firefoxExtensionPrompt", {url}
         )
     );
 };
