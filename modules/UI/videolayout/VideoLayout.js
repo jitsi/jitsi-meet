@@ -387,8 +387,8 @@ var VideoLayout = {
     /**
      * Shows the presence status message for the given video.
      */
-    setPresenceStatus (resourceJid, statusMsg) {
-        remoteVideos[resourceJid].setPresenceStatus(statusMsg);
+    setPresenceStatus (id, statusMsg) {
+        remoteVideos[id].setPresenceStatus(statusMsg);
     },
 
     /**

@@ -425,10 +425,9 @@ UI.removeUser = function (id, displayName) {
     VideoLayout.removeParticipantContainer(id);
 };
 
-//FIXME: NOT USED. Should start using the lib
-// function onMucPresenceStatus(jid, info) {
-//     VideoLayout.setPresenceStatus(Strophe.getResourceFromJid(jid), info.status);
-// }
+UI.updateUserStatus = function (id, status) {
+    VideoLayout.setPresenceStatus(id, status);
+};
 
 UI.onPeerVideoTypeChanged = (id, newVideoType) => {
     VideoLayout.onVideoTypeChanged(id, newVideoType);
