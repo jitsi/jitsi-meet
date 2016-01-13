@@ -626,6 +626,7 @@ ChatRoom.prototype.sendAudioInfoPresence = function(mute, callback) {
     }
     if(callback)
         callback();
+    this.removeFromPresence("audiomuted");
 };
 
 ChatRoom.prototype.addVideoInfoToPresence = function (mute) {
@@ -642,6 +643,7 @@ ChatRoom.prototype.sendVideoInfoPresence = function (mute) {
     if(!this.connection)
         return;
     this.sendPresence();
+    this.removeFromPresence("videomuted");
 };
 
 ChatRoom.prototype.addListener = function(type, listener) {
