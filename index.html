@@ -226,6 +226,13 @@
       if (!config.disableThirdPartyRequests) {
         [
           'https://api.callstats.io/static/callstats.min.js',
+          // FIXME The implementation provided by analytics.js starts an
+          // asynchronous download of the Google Analytics integration.
+          // Unfortunately, modules/statistics/AnalyticsAdapter.js has already
+          // made the decision to not use it at the current point of the
+          // execution and has initialized itself with the NoopAnalytics
+          // implementation i.e. the implementation of the method
+          // AnalyticsAdapter.sendEvent will amount to nothing.
           'analytics.js?v=1'
         ].forEach(function(extSrc) {
           var extScript = document.createElement('script');
