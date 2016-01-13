@@ -163,7 +163,7 @@ class VideoContainer extends LargeContainer {
         this.stream = null;
         this.videoType = null;
 
-        this.$avatar = $('#domiantSpeaker');
+        this.$avatar = $('#dominantSpeaker');
         this.$wrapper = $('#largeVideoWrapper');
 
         if (!RTCBrowserType.isIExplorer()) {
