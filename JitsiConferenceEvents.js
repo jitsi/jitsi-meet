@@ -103,7 +103,12 @@ var JitsiConferenceEvents = {
     /**
      * Indicates that phone number changed.
      */
-    PHONE_NUMBER_CHANGED: "conference.phoneNumberChanged"
+    PHONE_NUMBER_CHANGED: "conference.phoneNumberChanged",
+    /**
+     * Indicates that to proceed with screen sharing
+     * browser extension must be installed first.
+     */
+    FIREFOX_EXTENSION_NEEDED: "conference.firefoxExtensionRequired"
 };
 
 module.exports = JitsiConferenceEvents;

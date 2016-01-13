@@ -92,6 +92,7 @@ JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.ERROR);
         - KICKED - notifies that user has been kicked from the conference.
         - START_MUTED_POLICY_CHANGED - notifies that all new participants will join with muted audio/video stream (parameters - JS object with 2 properties - audio(boolean), video(boolean))
         - STARTED_MUTED - notifies that the local user has started muted
+        - FIREFOX_EXTENSION_NEEDED - notifies that browser extension must be installed to proceed with screen sharing (parameters - extension url(string))
 
     2. connection
         - CONNECTION_FAILED - indicates that the server connection failed.

@@ -5,6 +5,7 @@ var RTC = require("./modules/RTC/RTC");
 var XMPPEvents = require("./service/xmpp/XMPPEvents");
 var AuthenticationEvents = require("./service/authentication/AuthenticationEvents");
 var RTCEvents = require("./service/RTC/RTCEvents");
+var DSEvents = require("../../service/desktopsharing/DesktopSharingEventTypes");
 var EventEmitter = require("events");
 var JitsiConferenceEvents = require("./JitsiConferenceEvents");
 var JitsiConferenceErrors = require("./JitsiConferenceErrors");
@@ -865,6 +866,10 @@ function setupListeners(conference) {
     conference.room.addListener(XMPPEvents.MESSAGE_RECEIVED, function (jid, displayName, txt, myJid, ts) {
         var id = Strophe.getResourceFromJid(jid);
         conference.eventEmitter.emit(JitsiConferenceEvents.MESSAGE_RECEIVED, id, txt, ts);
+    });
+
+    conference.rtc.addListener(DSEvents.FIREFOX_EXTENSION_NEEDED, function (url) {
+        conference.eventEmitter.emit(JitsiConferenceEvents.FIREFOX_EXTENSION_NEEDED, url);
     });
 
     conference.rtc.addListener(RTCEvents.DOMINANTSPEAKER_CHANGED, function (id) {
