@@ -116,6 +116,7 @@ JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.ERROR);
         - JINGLE_FATAL_ERROR - error in jingle
         - CONFERENCE_DESTROYED - conference has been destroyed
         - CHAT_ERROR - chat error happened
+        - FOCUS_DISCONNECTED - focus error happened
     2. connection
         - PASSWORD_REQUIRED - passed when the connection to the server failed. You should try to authenticate with password.
         - CONNECTION_ERROR - indicates connection failures.

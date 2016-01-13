@@ -5,7 +5,7 @@ var RTC = require("./modules/RTC/RTC");
 var XMPPEvents = require("./service/xmpp/XMPPEvents");
 var AuthenticationEvents = require("./service/authentication/AuthenticationEvents");
 var RTCEvents = require("./service/RTC/RTCEvents");
-var DSEvents = require("../../service/desktopsharing/DesktopSharingEventTypes");
+var DSEvents = require("./service/desktopsharing/DesktopSharingEventTypes");
 var EventEmitter = require("events");
 var JitsiConferenceEvents = require("./JitsiConferenceEvents");
 var JitsiConferenceErrors = require("./JitsiConferenceErrors");
@@ -816,6 +816,9 @@ function setupListeners(conference) {
     });
     conference.room.addListener(XMPPEvents.CHAT_ERROR_RECEIVED, function (err, msg) {
         conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_FAILED, JitsiConferenceErrors.CHAT_ERROR, err, msg);
+    });
+    conference.room.addListener(XMPPEvents.FOCUS_DISCONNECTED, function (focus, retrySec) {
+        conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_FAILED, JitsiConferenceErrors.FOCUS_DISCONNECTED, focus, retrySec);
     });
 //    FIXME
 //    conference.room.addListener(XMPPEvents.MUC_JOINED, function () {

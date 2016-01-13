@@ -47,7 +47,11 @@ var JitsiConferenceErrors = {
     /**
      * Indicates that chat error occured.
      */
-    CHAT_ERROR: "conference.chatError"
+    CHAT_ERROR: "conference.chatError",
+    /**
+     * Indicates that focus error happened.
+     */
+    FOCUS_DISCONNECTED: "conference.focusDisconnected"
     /**
      * Many more errors TBD here.
      */
