@@ -324,7 +324,7 @@ ChatRoom.prototype.onPresence = function (pres) {
 
     // Trigger status message update
     if (member.status) {
-        this.eventEmitter.emit(XMPPEvents.PRESENCE_STATUS, from, member);
+        this.eventEmitter.emit(XMPPEvents.PRESENCE_STATUS, from, member.status);
     }
 
     if(jibri)

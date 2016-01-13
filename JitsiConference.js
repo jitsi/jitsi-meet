@@ -871,6 +871,16 @@ function setupListeners(conference) {
         conference.eventEmitter.emit(JitsiConferenceEvents.MESSAGE_RECEIVED, id, txt, ts);
     });
 
+    conference.room.addListener(XMPPEvents.PRESENCE_STATUS, function (jid, status) {
+        var id = Strophe.getResourceFromJid(jid);
+        var participant = conference.getParticipantById(id);
+        if (!participant || participant._status === status) {
+            return;
+        }
+        participant._status = status;
+        conference.eventEmitter.emit(JitsiConferenceEvents.USER_STATUS_CHANGED, id, status);
+    });
+
     conference.rtc.addListener(DSEvents.FIREFOX_EXTENSION_NEEDED, function (url) {
         conference.eventEmitter.emit(JitsiConferenceEvents.FIREFOX_EXTENSION_NEEDED, url);
     });

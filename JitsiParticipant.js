@@ -11,6 +11,7 @@ function JitsiParticipant(jid, conference, displayName){
     this._supportsDTMF = false;
     this._tracks = [];
     this._role = 'none';
+    this._status = null;
 }
 
 /**
@@ -46,6 +47,13 @@ JitsiParticipant.prototype.getJid = function() {
  */
 JitsiParticipant.prototype.getDisplayName = function() {
     return this._displayName;
+};
+
+/**
+ * @returns {String} The status of the participant.
+ */
+JitsiParticipant.prototype.getStatus = function () {
+    return this._status;
 };
 
 /**

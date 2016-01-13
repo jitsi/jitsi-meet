@@ -28,6 +28,10 @@ var JitsiConferenceEvents = {
      */
     USER_ROLE_CHANGED: "conference.roleChanged",
     /**
+     * User status changed.
+     */
+    USER_STATUS_CHANGED: "conference.statusChanged",
+    /**
      * New text message was received.
      */
     MESSAGE_RECEIVED: "conference.messageReceived",

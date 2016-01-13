@@ -88,6 +88,7 @@ JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.ERROR);
         - CONFERENCE_LEFT - notifies the local user that he left the conference successfully. (no parameters)
         - DTMF_SUPPORT_CHANGED - notifies if at least one user supports DTMF. (parameters - supports(boolean))
         - USER_ROLE_CHANGED - notifies that role of some user changed. (parameters - id(string), role(string))
+        - USER_STATUS_CHANGED - notifies that status of some user changed. (parameters - id(string), status(string))
         - CONFERENCE_FAILED - notifies that user failed to join the conference. (parameters - errorCode(JitsiMeetJS.errors.conference))
         - KICKED - notifies that user has been kicked from the conference.
         - START_MUTED_POLICY_CHANGED - notifies that all new participants will join with muted audio/video stream (parameters - JS object with 2 properties - audio(boolean), video(boolean))
