@@ -426,6 +426,11 @@ UI.updateLocalRole = function (isModerator) {
     }
 };
 
+/**
+ * Check the role for the user and reflect it in the UI, moderator ui indication
+ * and notifies user who is the moderator
+ * @param user to check for moderator
+ */
 UI.updateUserRole = function (user) {
     VideoLayout.showModeratorIndicator();
 

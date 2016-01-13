@@ -384,6 +384,7 @@ var VideoLayout = {
 
     /**
      * Shows a visual indicator for the moderator of the conference.
+     * On local or remote participants.
      */
     showModeratorIndicator () {
         let isModerator = APP.conference.isModerator;

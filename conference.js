@@ -296,6 +296,9 @@ export default {
             console.log('USER %s connnected', id, user);
             // FIXME email???
             APP.UI.addUser(id, user.getDisplayName());
+
+            // chek the roles for the new user and reflect them
+            APP.UI.updateUserRole(user);
         });
         room.on(ConferenceEvents.USER_LEFT, (id, user) => {
             console.log('USER %s LEFT', id, user);
