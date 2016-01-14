@@ -790,4 +790,12 @@ UI.onStartMutedChanged = function () {
     SettingsMenu.onStartMutedChanged();
 };
 
+/**
+ * Returns the id of the current video shown on large.
+ * Currently used by tests (troture).
+ */
+UI.getLargeVideoID = function () {
+    return VideoLayout.getLargeVideoID();
+};
+
 module.exports = UI;

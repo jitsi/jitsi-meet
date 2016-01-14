@@ -1027,6 +1027,14 @@ var VideoLayout = {
 
     isLargeContainerTypeVisible (type) {
         return largeVideo && largeVideo.state === type;
+    },
+
+    /**
+     * Returns the id of the current video shown on large.
+     * Currently used by tests (troture).
+     */
+    getLargeVideoID () {
+        return largeVideo.id;
     }
 };
 
