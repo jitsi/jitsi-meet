@@ -991,7 +991,7 @@ var VideoLayout = {
                     // change the avatar url on large
                     largeVideo.updateAvatar(Avatar.getThumbUrl(smallVideo.id));
                     // show the avatar on large if needed
-                    largeVideo.showAvatar(show);
+                    largeVideo.showAvatar(smallVideo.stream.isMuted());
                 });
 
         } else if (currentId) {
