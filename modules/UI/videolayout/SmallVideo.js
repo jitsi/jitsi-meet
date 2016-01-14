@@ -328,6 +328,8 @@ SmallVideo.prototype.hasVideo = function () {
 
 /**
  * Hides or shows the user's avatar.
+ * This update assumes that large video had been updated and we will
+ * reflect it on this small video.
  *
  * @param show whether we should show the avatar or not
  * video because there is no dominant speaker and no focused speaker
@@ -347,18 +349,21 @@ SmallVideo.prototype.updateView = function () {
 
     let avatar = $(`#avatar_${this.id}`);
 
-    var showVideo = !this.isVideoMuted
-                        && !this.VideoLayout.isCurrentlyOnLarge(this.id);
+    var isCurrentlyOnLarge = this.VideoLayout.isCurrentlyOnLarge(this.id);
+
+    var showVideo = !this.isVideoMuted && !isCurrentlyOnLarge;
     var showAvatar;
-    if ((!this.isLocal &&
-        !this.VideoLayout.isInLastN(this.id)) ||
-        this.isVideoMuted) {
+    if ((!this.isLocal
+            && !this.VideoLayout.isInLastN(this.id))
+        || this.isVideoMuted) {
         showAvatar = true;
     } else {
         // We want to show the avatar when the video is muted or not exists
         // that is when 'true' or 'null' is returned
         showAvatar = !this.stream || this.stream.isMuted();
     }
+
+    showAvatar = showAvatar && !isCurrentlyOnLarge;
 
     if (video && video.length > 0) {
         setVisibility(video, showVideo);
