@@ -174,7 +174,7 @@ UI.initConference = function () {
     }
 
     // Make sure we configure our avatar id, before creating avatar for us
-    UI.setUserAvatar(id, settings.email || settings.uid);
+    UI.setUserAvatar(id, settings.email);
 
     Toolbar.checkAutoEnableDesktopSharing();
 };
@@ -382,7 +382,7 @@ UI.addUser = function (id, displayName) {
         UIUtil.playSoundNotification('userJoined');
 
     // Configure avatar
-    UI.setUserAvatar(id, displayName);
+    UI.setUserAvatar(id);
 
     // Add Peer's container
     VideoLayout.addParticipantContainer(id);
