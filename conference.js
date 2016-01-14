@@ -246,6 +246,7 @@ export default {
     _createRoom () {
         room = connection.initJitsiConference(APP.conference.roomName,
             this._getConferenceOptions());
+        this.localId = room.myUserId();
         localTracks.forEach((track) => {
             if(track.isAudioTrack()) {
                 localAudio = track;
@@ -258,7 +259,6 @@ export default {
         });
         roomLocker = createRoomLocker(room);
         this._room = room; // FIXME do not use this
-        this.localId = room.myUserId();
 
         let email = APP.settings.getEmail();
         email && sendEmail(email);

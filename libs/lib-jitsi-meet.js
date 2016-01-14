@@ -258,20 +258,12 @@ JitsiConference.prototype.addTrack = function (track) {
         if (track.startMuted) {
             track.mute();
         }
-        var muteHandler = this._fireMuteChangeEvent.bind(this, track);
-        var stopHandler = this.removeTrack.bind(this, track);
-        var audioLevelHandler = this._fireAudioLevelChangeEvent.bind(this);
-        track.addEventListener(JitsiTrackEvents.TRACK_MUTE_CHANGED, muteHandler);
-        track.addEventListener(JitsiTrackEvents.TRACK_STOPPED, stopHandler);
-        track.addEventListener(JitsiTrackEvents.TRACK_AUDIO_LEVEL_CHANGED, audioLevelHandler);
-        this.addEventListener(JitsiConferenceEvents.TRACK_REMOVED, function (someTrack) {
-            if (someTrack !== track) {
-                return;
-            }
-            track.removeEventListener(JitsiTrackEvents.TRACK_MUTE_CHANGED, muteHandler);
-            track.removeEventListener(JitsiTrackEvents.TRACK_STOPPED, stopHandler);
-            track.removeEventListener(JitsiTrackEvents.TRACK_AUDIO_LEVEL_CHANGED, audioLevelHandler);
-        });
+        track.muteHandler = this._fireMuteChangeEvent.bind(this, track);
+        track.stopHandler = this.removeTrack.bind(this, track);
+        track.audioLevelHandler = this._fireAudioLevelChangeEvent.bind(this);
+        track.addEventListener(JitsiTrackEvents.TRACK_MUTE_CHANGED, track.muteHandler);
+        track.addEventListener(JitsiTrackEvents.TRACK_STOPPED, track.stopHandler);
+        track.addEventListener(JitsiTrackEvents.TRACK_AUDIO_LEVEL_CHANGED, track.audioLevelHandler);
         this.eventEmitter.emit(JitsiConferenceEvents.TRACK_ADDED, track);
     }.bind(this));
 };
@@ -306,6 +298,9 @@ JitsiConference.prototype.removeTrack = function (track) {
     }
     this.room.removeStream(track.getOriginalStream(), function(){
         this.rtc.removeLocalStream(track);
+        track.removeEventListener(JitsiTrackEvents.TRACK_MUTE_CHANGED, track.muteHandler);
+        track.removeEventListener(JitsiTrackEvents.TRACK_STOPPED, track.stopHandler);
+        track.removeEventListener(JitsiTrackEvents.TRACK_AUDIO_LEVEL_CHANGED, track.audioLevelHandler);
         this.eventEmitter.emit(JitsiConferenceEvents.TRACK_REMOVED, track);
     }.bind(this));
 };
@@ -1303,7 +1298,6 @@ var LibJitsiMeet = {
     }
 };
 
-require("es6-promise").polyfill()
 //Setups the promise object.
 window.Promise = window.Promise || require("es6-promise").Promise;
 
@@ -1601,7 +1595,7 @@ DataChannels.prototype.onDataChannel = function (event) {
         // selections so that it can do adaptive simulcast,
         // we want the notification to trigger even if userJid is undefined,
         // or null.
-        this.handleSelectedEndpointEvent(this.lastSelectedEndpoint);
+        self.handleSelectedEndpointEvent(self.lastSelectedEndpoint);
     };
 
     dataChannel.onerror = function (error) {
@@ -1959,6 +1953,10 @@ JitsiRemoteTrack.prototype.constructor = JitsiRemoteTrack;
  * @param value the muted status.
  */
 JitsiRemoteTrack.prototype.setMute = function (value) {
+
+    if(this.muted === value)
+        return;
+
     this.stream.muted = value;
     this.muted = value;
     this.eventEmitter.emit(JitsiTrackEvents.TRACK_MUTE_CHANGED);
@@ -5187,6 +5185,14 @@ var WEBAUDIO_ANALYZER_FFT_SIZE = 2048;
  */
 var WEBAUDIO_ANALYZER_SMOOTING_TIME = 0.8;
 
+window.AudioContext = window.AudioContext || window.webkitAudioContext;
+
+var context = null;
+
+if(window.AudioContext) {
+    context = new AudioContext();
+}
+
 /**
  * Converts time domain data array to audio level.
  * @param samples the time domain data array.
@@ -5238,7 +5244,6 @@ function animateLevel(newLevel, lastLevel) {
  * @constructor
  */
 function LocalStatsCollector(stream, interval, callback) {
-    window.AudioContext = window.AudioContext || window.webkitAudioContext;
     this.stream = stream;
     this.intervalId = null;
     this.intervalMilis = interval;
@@ -5250,15 +5255,13 @@ function LocalStatsCollector(stream, interval, callback) {
  * Starts the collecting the statistics.
  */
 LocalStatsCollector.prototype.start = function () {
-    if (!window.AudioContext ||
+    if (!context ||
         RTCBrowserType.isTemasysPluginUsed())
         return;
 
-    var context = new AudioContext();
     var analyser = context.createAnalyser();
     analyser.smoothingTimeConstant = WEBAUDIO_ANALYZER_SMOOTING_TIME;
     analyser.fftSize = WEBAUDIO_ANALYZER_FFT_SIZE;
-
 
     var source = context.createMediaStreamSource(this.stream);
     source.connect(analyser);

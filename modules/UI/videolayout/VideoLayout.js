@@ -2,6 +2,7 @@
 /* jshint -W101 */
 
 import AudioLevels from "../audio_levels/AudioLevels";
+import Avatar from "../avatar/Avatar";
 import BottomToolbar from "../toolbars/BottomToolbar";
 
 import UIEvents from "../../../service/UI/UIEvents";
@@ -262,6 +263,15 @@ var VideoLayout = {
     onRemoteStreamAdded (stream) {
         let id = stream.getParticipantId();
         remoteVideos[id].addRemoteStreamElement(stream);
+
+        // if track is muted make sure we reflect that
+        if(stream.isMuted())
+        {
+            if(stream.getType() === "audio")
+                this.onAudioMute(stream.getParticipantId(), true);
+            else
+                this.onVideoMute(stream.getParticipantId(), true);
+        }
     },
 
     /**
@@ -499,10 +509,10 @@ var VideoLayout = {
      */
     onVideoMute (id, value) {
         if (APP.conference.isLocalId(id)) {
-            localVideoThumbnail.showVideoIndicator(value);
+            localVideoThumbnail.setMutedView(value);
         } else {
             var remoteVideo = remoteVideos[id];
-            remoteVideo.showVideoIndicator(value);
+            remoteVideo.setMutedView(value);
 
             var el = remoteVideo.selectVideoElement();
             if (!value)
@@ -510,6 +520,9 @@ var VideoLayout = {
             else
                 el.hide();
         }
+
+        if(this.isCurrentlyOnLarge(id))
+            largeVideo.showAvatar(value);
     },
 
     /**
@@ -960,24 +973,31 @@ var VideoLayout = {
                 eventEmitter.emit(UIEvents.SELECTED_ENDPOINT, id);
             }
             if (currentId) {
-                let currentSmallVideo = this.getSmallVideo(currentId);
-                currentSmallVideo && currentSmallVideo.enableDominantSpeaker(false);
+                var oldSmallVideo = this.getSmallVideo(currentId);
             }
 
             let smallVideo = this.getSmallVideo(id);
 
             let videoType = this.getRemoteVideoType(id);
-            largeVideo.updateLargeVideo(smallVideo.stream, videoType);
+            largeVideo.updateLargeVideo(
+                smallVideo.stream,
+                videoType,
+                // LargeVideoUpdatedCallBack
+                function() {
+                    // update current small video and the old one
+                    smallVideo.updateView();
+                    oldSmallVideo && oldSmallVideo.updateView();
 
-            smallVideo.enableDominantSpeaker(true);
+                    // change the avatar url on large
+                    largeVideo.updateAvatar(Avatar.getThumbUrl(smallVideo.id));
+                    // show the avatar on large if needed
+                    largeVideo.showAvatar(show);
+                });
+
         } else if (currentId) {
             let currentSmallVideo = this.getSmallVideo(currentId);
-            currentSmallVideo.showAvatar();
+            currentSmallVideo.updateView();
         }
-    },
-
-    showLargeVideoAvatar (show) {
-        largeVideo && largeVideo.showAvatar(show);
     },
 
     addLargeVideoContainer (type, container) {

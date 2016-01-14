@@ -24,6 +24,7 @@ function RemoteVideo(id, VideoLayout, emitter) {
     this.bindHoverHandler();
     this.flipX = false;
     this.isLocal = false;
+    SmallVideo.call(this);
 }
 
 RemoteVideo.prototype = Object.create(SmallVideo.prototype);
@@ -274,10 +275,10 @@ RemoteVideo.prototype.showPeerContainer = function (state) {
             resizeThumbnails = true;
             $(this.container).show();
         }
-        // Call showAvatar with undefined, so that we'll figure out if avatar
+        // Call updateView, so that we'll figure out if avatar
         // should be displayed based on video muted status and whether or not
         // it's in the lastN set
-        this.showAvatar(undefined);
+        this.updateView();
     }
     else if ($(this.container).is(':visible') && isHide)
     {

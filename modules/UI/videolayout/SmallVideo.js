@@ -2,13 +2,13 @@
 /* jshint -W101 */
 import Avatar from "../avatar/Avatar";
 import UIUtil from "../util/UIUtil";
-import LargeVideo from "./LargeVideo";
 
 var RTCBrowserType = require("../../RTC/RTCBrowserType");
 
 function SmallVideo() {
     this.isMuted = false;
     this.hasAvatar = false;
+    this.isVideoMuted = false;
     this.stream = null;
 }
 
@@ -203,10 +203,12 @@ SmallVideo.prototype.showAudioIndicator = function(isMuted) {
 };
 
 /**
- * Shows video muted indicator over small videos.
+ * Shows video muted indicator over small videos and disables/enables avatar
+ * if video muted.
  */
-SmallVideo.prototype.showVideoIndicator = function(isMuted) {
-    this.showAvatar(isMuted);
+SmallVideo.prototype.setMutedView = function(isMuted) {
+    this.isVideoMuted = isMuted;
+    this.updateView();
 
     var videoMutedSpan = $('#' + this.videoSpanId + '>span.videoMuted');
 
@@ -233,34 +235,7 @@ SmallVideo.prototype.showVideoIndicator = function(isMuted) {
         }
 
         this.updateIconPositions();
-
     }
-};
-
-SmallVideo.prototype.enableDominantSpeaker = function (isEnable) {
-    var displayName = this.id;
-    var nameSpan = $('#' + this.videoSpanId + '>span.displayname');
-    if (nameSpan.length > 0)
-        displayName = nameSpan.html();
-
-    console.log("UI enable dominant speaker",
-        displayName,
-        this.id,
-        isEnable);
-
-
-    if (!this.container) {
-        return;
-    }
-
-    if (isEnable) {
-        this.showDisplayName(this.VideoLayout.isLargeVideoVisible());
-    }
-    else {
-        this.showDisplayName(false);
-    }
-
-    this.showAvatar();
 };
 
 SmallVideo.prototype.updateIconPositions = function () {
@@ -310,15 +285,15 @@ SmallVideo.prototype.createModeratorIndicatorElement = function () {
 };
 
 SmallVideo.prototype.selectVideoElement = function () {
-    return $('#' + this.videoSpanId).find(videoElem);
-    // FIXME maybe move this to the library?
-    var videoElem = APP.RTC.getVideoElementName();
+    var videoElemName;
     if (!RTCBrowserType.isTemasysPluginUsed()) {
-        return $('#' + this.videoSpanId).find(videoElem);
+        videoElemName = 'video';
+        return $('#' + this.videoSpanId).find(videoElemName);
     } else {
+        videoElemName = 'object';
         var matching = $('#' + this.videoSpanId +
                          (this.isLocal ? '>>' : '>') +
-                         videoElem + '>param[value="video"]');
+                         videoElemName + '>param[value="video"]');
         if (matching.length < 2) {
             return matching.parent();
         }
@@ -352,11 +327,12 @@ SmallVideo.prototype.hasVideo = function () {
 };
 
 /**
- * Hides or shows the user's avatar
+ * Hides or shows the user's avatar.
+ *
  * @param show whether we should show the avatar or not
  * video because there is no dominant speaker and no focused speaker
  */
-SmallVideo.prototype.showAvatar = function (show) {
+SmallVideo.prototype.updateView = function () {
     if (!this.hasAvatar) {
         if (this.id) {
             // Init avatar
@@ -371,28 +347,31 @@ SmallVideo.prototype.showAvatar = function (show) {
 
     let avatar = $(`#avatar_${this.id}`);
 
-    if (show === undefined || show === null) {
-        if (!this.isLocal &&
-            !this.VideoLayout.isInLastN(this.id)) {
-            show = true;
-        } else {
-            // We want to show the avatar when the video is muted or not exists
-            // that is when 'true' or 'null' is returned
-            show = !this.stream || this.stream.isMuted();
-        }
+    var showVideo = !this.isVideoMuted
+                        && !this.VideoLayout.isCurrentlyOnLarge(this.id);
+    var showAvatar;
+    if ((!this.isLocal &&
+        !this.VideoLayout.isInLastN(this.id)) ||
+        this.isVideoMuted) {
+        showAvatar = true;
+    } else {
+        // We want to show the avatar when the video is muted or not exists
+        // that is when 'true' or 'null' is returned
+        showAvatar = !this.stream || this.stream.isMuted();
     }
 
-    if (this.VideoLayout.isCurrentlyOnLarge(this.id)
-        && this.VideoLayout.isLargeVideoVisible()) {
+    if (video && video.length > 0) {
+        setVisibility(video, showVideo);
+    }
+    setVisibility(avatar, showAvatar);
 
-        this.VideoLayout.showLargeVideoAvatar(show);
-        setVisibility(avatar, false);
-        setVisibility(video, false);
-    } else {
-        if (video && video.length > 0) {
-            setVisibility(video, !show);
-        }
-        setVisibility(avatar, show);
+    var showDisplayName = !showVideo && !showAvatar;
+
+    if (showDisplayName) {
+        this.showDisplayName(this.VideoLayout.isLargeVideoVisible());
+    }
+    else {
+        this.showDisplayName(false);
     }
 };
 

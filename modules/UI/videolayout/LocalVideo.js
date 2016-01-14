@@ -17,6 +17,7 @@ function LocalVideo(VideoLayout, emitter) {
     this.flipX = true;
     this.isLocal = true;
     this.emitter = emitter;
+    SmallVideo.call(this);
 }
 
 LocalVideo.prototype = Object.create(SmallVideo.prototype);

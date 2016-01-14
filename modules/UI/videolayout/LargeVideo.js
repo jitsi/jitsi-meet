@@ -341,7 +341,7 @@ export default class LargeVideoManager {
         return this.videoContainer.id;
     }
 
-    updateLargeVideo (stream, videoType) {
+    updateLargeVideo (stream, videoType, largeVideoUpdatedCallBack) {
         let id = getStreamId(stream);
 
         let container = this.getContainer(this.state);
@@ -351,6 +351,7 @@ export default class LargeVideoManager {
             this.state = VideoContainerType;
             this.videoContainer.setStream(stream, videoType);
             this.videoContainer.show();
+            largeVideoUpdatedCallBack();
         });
     }
 
