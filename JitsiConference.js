@@ -58,6 +58,10 @@ function JitsiConference(options) {
     this.startAudioMuted = false;
     this.startVideoMuted = false;
     this.startMutedPolicy = {audio: false, video: false};
+    this.availableDevices = {
+        audio: undefined,
+        video: undefined
+    };
 }
 
 /**
@@ -962,6 +966,50 @@ function setupListeners(conference) {
         }
     });
 
+    conference.rtc.addListener(RTCEvents.AVAILABLE_DEVICES_CHANGED, function (devices) {
+        conference.room.updateDeviceAvailability(devices);
+    });
+    conference.room.addPresenceListener("devices", function (data, from) {
+        var isAudioAvailable = false;
+        var isVideoAvailable = false;
+        data.children.forEach(function (config) {
+            if (config.tagName === 'audio') {
+                isAudioAvailable = config.value === 'true';
+            }
+            if (config.tagName === 'video') {
+                isVideoAvailable = config.value === 'true';
+            }
+        });
+
+        var availableDevices;
+        if (conference.myUserId() === from) {
+            availableDevices = conference.availableDevices;
+        } else {
+            var participant = conference.getParticipantById(from);
+            if (!participant) {
+                return;
+            }
+
+            availableDevices = participant._availableDevices;
+        }
+
+        var updated = false;
+
+        if (availableDevices.audio !== isAudioAvailable) {
+            updated = true;
+            availableDevices.audio = isAudioAvailable;
+        }
+
+        if (availableDevices.video !== isVideoAvailable) {
+            updated = true;
+            availableDevices.video = isVideoAvailable;
+        }
+
+        if (updated) {
+            conference.eventEmitter.emit(JitsiConferenceEvents.AVAILABLE_DEVICES_CHANGED, from, availableDevices);
+        }
+    });
+
     if(conference.statistics) {
         //FIXME: Maybe remove event should not be associated with the conference.
         conference.statistics.addAudioLevelListener(function (ssrc, level) {
@@ -976,10 +1024,6 @@ function setupListeners(conference) {
             function () {
                 conference.statistics.dispose();
             });
-        // FIXME: Maybe we should move this.
-        // RTC.addListener(RTCEvents.AVAILABLE_DEVICES_CHANGED, function (devices) {
-        //     conference.room.updateDeviceAvailability(devices);
-        // });
 
         conference.room.addListener(XMPPEvents.PEERCONNECTION_READY,
             function (session) {

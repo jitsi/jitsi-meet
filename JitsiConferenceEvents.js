@@ -112,7 +112,11 @@ var JitsiConferenceEvents = {
      * Indicates that to proceed with screen sharing
      * browser extension must be installed first.
      */
-    FIREFOX_EXTENSION_NEEDED: "conference.firefoxExtensionRequired"
+    FIREFOX_EXTENSION_NEEDED: "conference.firefoxExtensionRequired",
+    /**
+     * Indicates that available devices changed.
+     */
+    AVAILABLE_DEVICES_CHANGED: "conference.availableDevicesChanged"
 };
 
 module.exports = JitsiConferenceEvents;

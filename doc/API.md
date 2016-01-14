@@ -94,6 +94,7 @@ JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.ERROR);
         - START_MUTED_POLICY_CHANGED - notifies that all new participants will join with muted audio/video stream (parameters - JS object with 2 properties - audio(boolean), video(boolean))
         - STARTED_MUTED - notifies that the local user has started muted
         - FIREFOX_EXTENSION_NEEDED - notifies that browser extension must be installed to proceed with screen sharing (parameters - extension url(string))
+        - AVAILABLE_DEVICES_CHANGED - notifies that available participant devices changed (camera or microphone was added or removed) (parameters - id(string), devices(JS object with 2 properties - audio(boolean), video(boolean)))
 
     2. connection
         - CONNECTION_FAILED - indicates that the server connection failed.

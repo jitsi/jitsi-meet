@@ -12,6 +12,10 @@ function JitsiParticipant(jid, conference, displayName){
     this._tracks = [];
     this._role = 'none';
     this._status = null;
+    this._availableDevices = {
+        audio: undefined,
+        video: undefined
+    };
 }
 
 /**

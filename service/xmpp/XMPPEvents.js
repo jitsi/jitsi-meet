@@ -57,11 +57,6 @@ var XMPPEvents = {
     // Designates an event indicating that we should join the conference with
     // audio and/or video muted.
     START_MUTED_FROM_FOCUS: "xmpp.start_muted_from_focus",
-    // Designates an event indicating that a remote participant's available
-    // devices (whether he supports a audio and/or video) changed.
-    // Note: currently this event fires every time we receive presence from
-    // someone (regardless of whether or not the devices changed).
-    DEVICE_AVAILABLE: "xmpp.device_available",
 
 
     PEERCONNECTION_READY: "xmpp.peerconnection_ready",

@@ -53,9 +53,6 @@ function initStrophePlugins(XMPP)
 //        broadcastLocalVideoType,
 //        StreamEventTypes.EVENT_TYPE_LOCAL_CHANGED
 //    );
-//    RTC.addListener(RTCEvents.AVAILABLE_DEVICES_CHANGED, function (devices) {
-//        XMPP.addToPresence("devices", devices);
-//    });
 //}
 
 function XMPP(options) {
