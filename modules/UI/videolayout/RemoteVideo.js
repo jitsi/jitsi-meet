@@ -404,13 +404,11 @@ RemoteVideo.prototype.setDisplayName = function(displayName, key) {
         nameSpan.className = 'displayname';
         $('#' + this.videoSpanId)[0].appendChild(nameSpan);
 
-
         if (displayName && displayName.length > 0) {
-            nameSpan.innerText = displayName;
+            nameSpan.innerHTML = displayName;
         }
         else
-            nameSpan.innerText = interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME;
-
+            nameSpan.innerHTML = interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME;
         nameSpan.id = this.videoSpanId + '_name';
     }
 };

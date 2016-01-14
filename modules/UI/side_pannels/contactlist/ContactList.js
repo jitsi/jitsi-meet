@@ -46,10 +46,10 @@ function createAvatar(jid) {
 function createDisplayNameParagraph(key, displayName) {
     let p = document.createElement('p');
     if (displayName) {
-        p.innerText = displayName;
+        p.innerHTML = displayName;
     } else if(key) {
         p.setAttribute("data-i18n",key);
-        p.innerText = APP.translation.translateString(key);
+        p.innerHTML = APP.translation.translateString(key);
     }
 
     return p;
