@@ -243,6 +243,9 @@ export default {
         return this._room
             && this._room.myUserId();
     },
+    getLogs () {
+        return room.getLogs();
+    },
     _createRoom () {
         room = connection.initJitsiConference(APP.conference.roomName,
             this._getConferenceOptions());
