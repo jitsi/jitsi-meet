@@ -239,6 +239,9 @@ class VideoContainer extends LargeContainer {
     }
 
     showAvatar (show) {
+        // if we are showing the avatar, this means there is no video on large
+        // so let's hide its video wrapper
+        show ? this.hide() : this.show();
         this.$avatar.css("visibility", show ? "visible" : "hidden");
     }
 
