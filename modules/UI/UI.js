@@ -842,4 +842,8 @@ UI.showExtensionRequiredDialog = function (url) {
             "dialog.firefoxExtensionPrompt", {url: url}));
 };
 
+UI.updateDevicesAvailability = function (id, devices) {
+    VideoLayout.setDeviceAvailabilityIcons(id, devices);
+};
+
 module.exports = UI;

@@ -126,10 +126,6 @@ class ConferenceConnector {
             AuthHandler.requireAuth(APP.conference.roomName);
             break;
 
-        case ConferenceErrors.VIDEOBRIDGE_NOT_AVAILABLE:
-            APP.UI.notifyBridgeDown();
-            break;
-
         case ConferenceErrors.RESERVATION_ERROR:
             {
                 let [code, msg] = params;
@@ -167,7 +163,7 @@ class ConferenceConnector {
             break;
 
         default:
-            this._handleConferenceFailed(err, msg);
+            this._handleConferenceFailed(err, ...params);
         }
     }
     _unsubscribe() {
@@ -644,6 +640,12 @@ export default {
                 APP.settings.getDisplayName()
             );
         });
+
+        room.on(
+            ConferenceEvents.AVAILABLE_DEVICES_CHANGED, function (id, devices) {
+                APP.UI.updateDevicesAvailability(id, devices);
+            }
+        );
 
         // call hangup
         APP.UI.addListener(UIEvents.HANGUP, () => {
