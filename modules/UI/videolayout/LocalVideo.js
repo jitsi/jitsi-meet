@@ -65,6 +65,7 @@ LocalVideo.prototype.setDisplayName = function(displayName, key) {
                 $('#localDisplayName').html(defaultLocalDisplayName);
             }
         }
+        this.updateView();
     } else {
         var editButton = createEditDisplayNameButton();
 
