@@ -230,6 +230,7 @@ export default {
     get startVideoMuted () {
         return room && room.getStartMutedPolicy().video;
     },
+
     // used by torture currently
     isJoined () {
         return this._room
@@ -243,6 +244,24 @@ export default {
         return this._room
             && this._room.myUserId();
     },
+    /**
+     * Will check for number of remote particiapnts that have at least one
+     * remote track.
+     * @return boolean whether we have enough participants with remote streams
+     */
+    checkEnoughParticipants (number) {
+        var participants = this._room.getParticipants();
+
+        var foundParticipants = 0;
+        for (var i = 0; i < participants.length; i += 1) {
+            if (participants[i].getTracks().length > 0) {
+                foundParticipants++;
+            }
+        }
+        return foundParticipants >= number;
+    },
+    // end used by torture
+
     _createRoom () {
         room = connection.initJitsiConference(APP.conference.roomName,
             this._getConferenceOptions());
