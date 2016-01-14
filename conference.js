@@ -634,10 +634,11 @@ export default {
 
         });
 
-        APP.UI.addListener(UIEvents.TOPIC_CHANGED, (topic) => {
-            // FIXME handle topic change
-            // APP.xmpp.setSubject(topic);
-            // on SUBJECT_CHANGED UI.setSubject(topic);
+        APP.UI.addListener(UIEvents.SUBJECT_CHANGED, (topic) => {
+            room.setSubject(topic);
+        });
+        room.on(ConferenceEvents.SUBJECT_CHANGED, function (subject) {
+            APP.UI.setSubject(subject);
         });
 
         APP.UI.addListener(UIEvents.USER_KICKED, (id) => {
