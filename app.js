@@ -19,10 +19,10 @@ import RoomnameGenerator from './modules/util/RoomnameGenerator';
 import UI from "./modules/UI/UI";
 import statistics from "./modules/statistics/statistics";
 import settings from "./modules/settings/Settings";
-import UIEvents from './service/UI/UIEvents';
-
 import conference from './conference';
+import API from './modules/API/API';
 
+import UIEvents from './service/UI/UIEvents';
 
 
 function buildRoomName () {
@@ -61,9 +61,9 @@ const APP = {
     UI,
     statistics,
     settings,
+    conference,
+    API,
     init () {
-        this.conference = conference;
-        this.API = require("./modules/API/API");
         this.connectionquality =
             require("./modules/connectionquality/connectionquality");
         this.desktopsharing =
@@ -140,17 +140,13 @@ $(document).ready(function () {
 
     APP.translation.init(settings.getLanguage());
 
-    if (APP.API.isEnabled()) {
-        APP.API.init();
-    }
+    APP.API.init();
 
     obtainConfigAndInit();
 });
 
 $(window).bind('beforeunload', function () {
-    if (APP.API.isEnabled()) {
-        APP.API.dispose();
-    }
+    APP.API.dispose();
 });
 
 module.exports = APP;
