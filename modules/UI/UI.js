@@ -296,7 +296,7 @@ UI.start = function () {
     document.title = interfaceConfig.APP_NAME;
 
     if(config.requireDisplayName) {
-        if (APP.settings.getDisplayName()) {
+        if (!APP.settings.getDisplayName()) {
             promptDisplayName();
         }
     }
