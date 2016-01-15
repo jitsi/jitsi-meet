@@ -18,55 +18,114 @@ var wrtcFuncNames = {
     getUserMedia:         "getUserMedia"
 };
 
-// some errors may happen before CallStats init
-// in this case we accumulate them in this array
-// and send them to callstats on init
+/**
+ * Some errors may occur before CallStats.init in which case we will accumulate 
+ * them and submit them to callstats.io on CallStats.init.
+ */
 var pendingErrors = [];
 
 function initCallback (err, msg) {
     console.log("CallStats Status: err=" + err + " msg=" + msg);
 }
 
-var callStatsIntegrationEnabled = config.callStatsID && config.callStatsSecret;
+/**
+ * The indicator which determines whether the integration of callstats.io is
+ * enabled/allowed. Its value does not indicate whether the integration will
+ * succeed at runtime but rather whether it is to be attempted at runtime at
+ * all.
+ */
+var _enabled
+    = config.callStatsID && config.callStatsSecret
+        // Even though AppID and AppSecret may be specified, the integration of
+        // callstats.io may be disabled because of globally-disallowed requests
+        // to any third parties.
+        && (config.disableThirdPartyRequests !== true);
+
+if (_enabled) {
+    // Since callstats.io is a third party, we cannot guarantee the quality of
+    // their service. More specifically, their server may take noticeably long
+    // time to respond. Consequently, it is in our best interest (in the sense
+    // that the intergration of callstats.io is pretty important to us but not
+    // enough to allow it to prevent people from joining a conference) to (1)
+    // start downloading their API as soon as possible and (2) do the
+    // downloading asynchronously.
+    (function (d, src) {
+        var elementName = 'script';
+        var newScript = d.createElement(elementName);
+        var referenceNode = d.getElementsByTagName(elementName)[0];
+
+        newScript.async = true;
+        newScript.src = src;
+        referenceNode.parentNode.insertBefore(newScript, referenceNode);
+    })(document, 'https://api.callstats.io/static/callstats.min.js');
+    // FIXME At the time of this writing, we hope that the callstats.io API will
+    // have loaded by the time we needed it (i.e. CallStats.init is invoked).
+}
+
+/**
+ * Returns a function which invokes f in a try/catch block, logs any exception
+ * to the console, and then swallows it.
+ *
+ * @param f the function to invoke in a try/catch block
+ * @return a function which invokes f in a try/catch block, logs any exception
+ * to the console, and then swallows it
+ */
+function _try_catch (f) {
+    return function () {
+        try {
+            f.apply(this, arguments);
+        } catch (e) {
+            console.error(e);
+        }
+    };
+}
 
 var CallStats = {
-    init: function (jingleSession) {
-        if(!callStatsIntegrationEnabled || callStats !== null) {
+    init: _try_catch(function (jingleSession) {
+        if(!this.isEnabled() || callStats !== null) {
             return;
         }
 
-        callStats = new callstats($, io, jsSHA);
+        try {
+            callStats = new callstats($, io, jsSHA);
 
-        this.session = jingleSession;
-        this.peerconnection = jingleSession.peerconnection.peerconnection;
+            this.session = jingleSession;
+            this.peerconnection = jingleSession.peerconnection.peerconnection;
+            this.userID = Settings.getCallStatsUserName();
 
-        this.userID = Settings.getCallStatsUserName();
+            var location = window.location;
 
-        var location = window.location;
-        this.confID = location.hostname + location.pathname;
+            this.confID = location.hostname + location.pathname;
 
-        //userID is generated or given by the origin server
-        callStats.initialize(config.callStatsID,
-            config.callStatsSecret,
-            this.userID,
-            initCallback);
+            callStats.initialize(
+                    config.callStatsID, config.callStatsSecret,
+                    this.userID /* generated or given by the origin server */,
+                    initCallback);
 
-        var usage = callStats.fabricUsage.multiplex;
+            var usage = callStats.fabricUsage.multiplex;
 
-        callStats.addNewFabric(this.peerconnection,
-            Strophe.getResourceFromJid(jingleSession.peerjid),
-            usage,
-            this.confID,
-            this.pcCallback.bind(this));
-
-        // notify callstats about failures if there were any
-        if (pendingErrors.length) {
+            callStats.addNewFabric(
+                    this.peerconnection,
+                    Strophe.getResourceFromJid(jingleSession.peerjid),
+                    usage,
+                    this.confID,
+                    this.pcCallback.bind(this));
+        } catch (e) {
+            // The callstats.io API failed to initialize (e.g. because its
+            // download failed to succeed in general or on time). Further
+            // attempts to utilize it cannot possibly succeed.
+            callStats = null;
+            console.error(e);
+        }
+        // Notify callstats about pre-init failures if there were any.
+        if (callStats && pendingErrors.length) {
             pendingErrors.forEach(function (error) {
                 this._reportError(error.type, error.error, error.pc);
             }, this);
             pendingErrors.length = 0;
         }
-    },
+    }),
+
     /**
      * Returns true if the callstats integration is enabled, otherwise returns
      * false.
@@ -75,17 +134,19 @@ var CallStats = {
      * false.
      */
     isEnabled: function() {
-        return callStatsIntegrationEnabled;
+        return _enabled;
     },
-    pcCallback: function (err, msg) {
+
+    pcCallback: _try_catch(function (err, msg) {
         if (!callStats) {
             return;
         }
         console.log("Monitoring status: "+ err + " msg: " + msg);
         callStats.sendFabricEvent(this.peerconnection,
             callStats.fabricEvent.fabricSetup, this.confID);
-    },
-    sendMuteEvent: function (mute, type) {
+    }),
+
+    sendMuteEvent: _try_catch(function (mute, type) {
         if (!callStats) {
             return;
         }
@@ -99,30 +160,32 @@ var CallStats = {
                 callStats.fabricEvent.audioUnmute);
         }
         callStats.sendFabricEvent(this.peerconnection, event, this.confID);
-    },
-    sendTerminateEvent: function () {
+    }),
+
+    sendTerminateEvent: _try_catch(function () {
         if(!callStats) {
             return;
         }
         callStats.sendFabricEvent(this.peerconnection,
             callStats.fabricEvent.fabricTerminated, this.confID);
-    },
-    sendSetupFailedEvent: function () {
+    }),
+
+    sendSetupFailedEvent: _try_catch(function () {
         if(!callStats) {
             return;
         }
         callStats.sendFabricEvent(this.peerconnection,
             callStats.fabricEvent.fabricSetupFailed, this.confID);
-    },
+    }),
 
-   /**
+    /**
      * Sends the given feedback through CallStats.
      *
      * @param overallFeedback an integer between 1 and 5 indicating the
      * user feedback
      * @param detailedFeedback detailed feedback from the user. Not yet used
      */
-    sendFeedback: function(overallFeedback, detailedFeedback) {
+    sendFeedback: _try_catch(function(overallFeedback, detailedFeedback) {
         if(!callStats) {
             return;
         }
@@ -132,9 +195,9 @@ var CallStats = {
 
         var feedbackJSON = JSON.parse(feedbackString);
 
-        callStats.sendUserFeedback(
-            this.confID, feedbackJSON);
-    },
+        callStats.sendUserFeedback(this.confID, feedbackJSON);
+    }),
+
     /**
      * Reports an error to callstats.
      *
@@ -146,12 +209,8 @@ var CallStats = {
     _reportError: function (type, e, pc) {
         if (callStats) {
             callStats.reportError(pc, this.confID, type, e);
-        } else if (callStatsIntegrationEnabled) {
-            pendingErrors.push({
-                type: type,
-                error: e,
-                pc: pc
-            });
+        } else if (this.isEnabled()) {
+            pendingErrors.push({ type: type, error: e, pc: pc });
         }
         // else just ignore it
     },
@@ -161,9 +220,9 @@ var CallStats = {
      *
      * @param {Error} e error to send
      */
-    sendGetUserMediaFailed: function (e) {
+    sendGetUserMediaFailed: _try_catch(function (e) {
         this._reportError(wrtcFuncNames.getUserMedia, e, null);
-    },
+    }),
 
     /**
      * Notifies CallStats that peer connection failed to create offer.
@@ -171,9 +230,9 @@ var CallStats = {
      * @param {Error} e error to send
      * @param {RTCPeerConnection} pc connection on which failure occured.
      */
-    sendCreateOfferFailed: function (e, pc) {
+    sendCreateOfferFailed: _try_catch(function (e, pc) {
         this._reportError(wrtcFuncNames.createOffer, e, pc);
-    },
+    }),
 
     /**
      * Notifies CallStats that peer connection failed to create answer.
@@ -181,9 +240,9 @@ var CallStats = {
      * @param {Error} e error to send
      * @param {RTCPeerConnection} pc connection on which failure occured.
      */
-    sendCreateAnswerFailed: function (e, pc) {
+    sendCreateAnswerFailed: _try_catch(function (e, pc) {
         this._reportError(wrtcFuncNames.createAnswer, e, pc);
-    },
+    }),
 
     /**
      * Notifies CallStats that peer connection failed to set local description.
@@ -191,9 +250,9 @@ var CallStats = {
      * @param {Error} e error to send
      * @param {RTCPeerConnection} pc connection on which failure occured.
      */
-    sendSetLocalDescFailed: function (e, pc) {
+    sendSetLocalDescFailed: _try_catch(function (e, pc) {
         this._reportError(wrtcFuncNames.setLocalDescription, e, pc);
-    },
+    }),
 
     /**
      * Notifies CallStats that peer connection failed to set remote description.
@@ -201,9 +260,9 @@ var CallStats = {
      * @param {Error} e error to send
      * @param {RTCPeerConnection} pc connection on which failure occured.
      */
-    sendSetRemoteDescFailed: function (e, pc) {
+    sendSetRemoteDescFailed: _try_catch(function (e, pc) {
         this._reportError(wrtcFuncNames.setRemoteDescription, e, pc);
-    },
+    }),
 
     /**
      * Notifies CallStats that peer connection failed to add ICE candidate.
@@ -211,8 +270,8 @@ var CallStats = {
      * @param {Error} e error to send
      * @param {RTCPeerConnection} pc connection on which failure occured.
      */
-    sendAddIceCandidateFailed: function (e, pc) {
+    sendAddIceCandidateFailed: _try_catch(function (e, pc) {
         this._reportError(wrtcFuncNames.addIceCandidate, e, pc);
-    }
+    })
 };
 module.exports = CallStats;
