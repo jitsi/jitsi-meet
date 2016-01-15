@@ -167,7 +167,7 @@ var insertRecvOnlySSRC = function (desc) {
             bLine.ssrcs = [{
                 id: ssrc,
                 attribute: 'cname',
-                value: ['recvonly-', ssrc].join(' ')
+                value: ['recvonly-', ssrc].join('')
             }];
         }
     });
