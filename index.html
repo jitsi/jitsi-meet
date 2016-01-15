@@ -222,24 +222,5 @@
             <a id="feedbackButton" data-container="body" data-toggle="popover" data-placement="right" data-i18n="[data-content]feedback"><i class="fa fa-heart"></i></a>
         </div>
     </div>
-    <script type="text/javascript">
-      if (!config.disableThirdPartyRequests) {
-        [
-          // FIXME The implementation provided by analytics.js starts an
-          // asynchronous download of the Google Analytics integration.
-          // Unfortunately, modules/statistics/AnalyticsAdapter.js has already
-          // made the decision to not use it at the current point of the
-          // execution and has initialized itself with the NoopAnalytics
-          // implementation i.e. the implementation of the method
-          // AnalyticsAdapter.sendEvent will amount to nothing.
-          'analytics.js?v=1'
-        ].forEach(function(extSrc) {
-          var extScript = document.createElement('script');
-          extScript.src = extSrc;
-          extScript.async = false;
-          document.head.appendChild(extScript);
-        });
-      }
-    </script>
   </body>
 </html>
