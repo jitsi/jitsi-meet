@@ -1,3 +1,5 @@
+/* global config */
+
 var ScriptUtil = require('../util/ScriptUtil');
 
 // Load the integration of a third-party analytics API such as Google Analytics.
@@ -33,7 +35,9 @@ AnalyticsAdapter.prototype.sendEvent = function (action, data) {
   var a = this.analytics;
 
   if (a === null || typeof a === 'undefined') {
-      this.analytics = a = new (window.Analytics || NoopAnalytics)();
+      var AnalyticsImpl = window.Analytics || NoopAnalytics;
+
+      this.analytics = a = new AnalyticsImpl();
   }
   try {
       a.sendEvent.apply(a, arguments);
