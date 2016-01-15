@@ -6,11 +6,7 @@ const ConnectionEvents = JitsiMeetJS.events.connection;
 const ConnectionErrors = JitsiMeetJS.errors.connection;
 
 function connect(id, password) {
-    let connection = new JitsiMeetJS.JitsiConnection(null, null, {
-        hosts: config.hosts,
-        bosh: config.bosh,
-        clientNode: config.clientNode
-    });
+    let connection = new JitsiMeetJS.JitsiConnection(null, null, config);
 
     return new Promise(function (resolve, reject) {
         connection.addEventListener(
