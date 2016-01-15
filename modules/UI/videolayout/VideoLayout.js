@@ -997,7 +997,7 @@ var VideoLayout = {
                     // update current small video and the old one
                     smallVideo.updateView();
                     oldSmallVideo && oldSmallVideo.updateView();
-                });
+            });
 
         } else if (currentId) {
             let currentSmallVideo = this.getSmallVideo(currentId);

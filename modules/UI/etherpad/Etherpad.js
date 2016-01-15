@@ -6,6 +6,9 @@ import UIUtil from "../util/UIUtil";
 import SidePanelToggler from "../side_pannels/SidePanelToggler";
 import BottomToolbar from '../toolbars/BottomToolbar';
 
+/**
+ * Etherpad options.
+ */
 const options = $.param({
     showControns: true,
     showChat: false,
@@ -40,11 +43,20 @@ function bubbleIframeMouseMove(iframe){
     };
 }
 
+/**
+ * Default Etherpad frame width.
+ */
 const DEFAULT_WIDTH = 640;
+/**
+ * Default Etherpad frame height.
+ */
 const DEFAULT_HEIGHT = 480;
 
 const EtherpadContainerType = "etherpad";
 
+/**
+ * Container for Etherpad iframe.
+ */
 class Etherpad extends LargeContainer {
     constructor (domain, name) {
         super();
@@ -123,6 +135,9 @@ class Etherpad extends LargeContainer {
     }
 }
 
+/**
+ * Manager of the Etherpad frame.
+ */
 export default class EtherpadManager {
     constructor (domain, name) {
         if (!domain || !name) {
@@ -138,6 +153,9 @@ export default class EtherpadManager {
         return !!this.etherpad;
     }
 
+    /**
+     * Create new Etherpad frame.
+     */
     openEtherpad () {
         this.etherpad = new Etherpad(this.domain, this.name);
         VideoLayout.addLargeVideoContainer(
@@ -146,6 +164,10 @@ export default class EtherpadManager {
         );
     }
 
+    /**
+     * Toggle Etherpad frame visibility.
+     * Open new Etherpad frame if there is no Etherpad frame yet.
+     */
     toggleEtherpad () {
         if (!this.isOpen) {
             this.openEtherpad();

@@ -5,6 +5,13 @@ import LoginDialog from './modules/UI/authentication/LoginDialog';
 const ConnectionEvents = JitsiMeetJS.events.connection;
 const ConnectionErrors = JitsiMeetJS.errors.connection;
 
+/**
+ * Try to open connection using provided credentials.
+ * @param {string} [id]
+ * @param {string} [password]
+ * @returns {Promise<JitsiConnection>} connection if
+ * everything is ok, else error.
+ */
 function connect(id, password) {
     let connection = new JitsiMeetJS.JitsiConnection(null, null, config);
 
@@ -42,6 +49,12 @@ function connect(id, password) {
     });
 }
 
+/**
+ * Show Authentication Dialog and try to connect with new credentials.
+ * If failed to connect because of PASSWORD_REQUIRED error
+ * then ask for password again.
+ * @returns {Promise<JitsiConnection>}
+ */
 function requestAuth() {
     return new Promise(function (resolve, reject) {
         let authDialog = LoginDialog.showAuthDialog(
@@ -62,6 +75,18 @@ function requestAuth() {
     });
 }
 
+/**
+ * Open JitsiConnection using provided credentials.
+ * If retry option is true it will show auth dialog on PASSWORD_REQUIRED error.
+ *
+ * @param {object} options
+ * @param {string} [options.id]
+ * @param {string} [options.password]
+ * @param {boolean} [retry] if we should show auth dialog
+ * on PASSWORD_REQUIRED error.
+ *
+ * @returns {Promise<JitsiConnection>}
+ */
 export function openConnection({id, password, retry}) {
     return connect(id, password).catch(function (err) {
         if (!retry) {

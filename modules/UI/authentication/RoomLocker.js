@@ -4,6 +4,10 @@ import UIUtil from '../util/UIUtil';
 //FIXME:
 import AnalyticsAdapter from '../../statistics/AnalyticsAdapter';
 
+/**
+ * Show dialog which asks user for new password for the conference.
+ * @returns {Promise<string>} password or nothing if user canceled
+ */
 function askForNewPassword () {
     let passMsg = APP.translation.generateTranslationHTML("dialog.passwordMsg");
     let yourPassMsg = APP.translation.translateString("dialog.yourPassword");
@@ -30,6 +34,10 @@ function askForNewPassword () {
     });
 }
 
+/**
+ * Show dialog which asks for required conference password.
+ * @returns {Promise<string>} password or nothing if user canceled
+ */
 function askForPassword () {
     let passRequiredMsg = APP.translation.translateString(
         "dialog.passwordRequired"
@@ -58,6 +66,10 @@ function askForPassword () {
     });
 }
 
+/**
+ * Show dialog which asks if user want remove password from the conference.
+ * @returns {Promise}
+ */
 function askToUnlock () {
     return new Promise(function (resolve, reject) {
         messageHandler.openTwoButtonDialog(
@@ -74,18 +86,32 @@ function askToUnlock () {
     });
 }
 
-function notifyPasswordNotSupported (err) {
-    console.warn('setting password failed', err);
+/**
+ * Show notification that user cannot set password for the conference
+ * because server doesn't support that.
+ */
+function notifyPasswordNotSupported () {
+    console.warn('room passwords not supported');
     messageHandler.showError("dialog.warning", "dialog.passwordNotSupported");
 }
 
-function notifyPasswordFailed() {
-    console.warn('room passwords not supported');
+/**
+ * Show notification that setting password for the conference failed.
+ * @param {Error} err error
+ */
+function notifyPasswordFailed(err) {
+    console.warn('setting password failed', err);
     messageHandler.showError("dialog.lockTitle", "dialog.lockMessage");
 }
 
 const ConferenceErrors = JitsiMeetJS.errors.conference;
 
+/**
+ * Create new RoomLocker for the conference.
+ * It allows to set or remove password for the conference,
+ * or ask for required password.
+ * @returns {RoomLocker}
+ */
 export default function createRoomLocker (room) {
     let password;
 
@@ -103,6 +129,9 @@ export default function createRoomLocker (room) {
         });
     }
 
+    /**
+     * @class RoomLocker
+     */
     return {
         get isLocked () {
             return !!password;
@@ -112,6 +141,10 @@ export default function createRoomLocker (room) {
             return password;
         },
 
+        /**
+         * Allows to remove password from the conference (asks user first).
+         * @returns {Promise}
+         */
         askToUnlock () {
             return askToUnlock().then(function () {
                 return lock();
@@ -120,6 +153,11 @@ export default function createRoomLocker (room) {
             });
         },
 
+        /**
+         * Allows to set password for the conference.
+         * It asks user for new password and locks the room.
+         * @returns {Promise}
+         */
         askToLock () {
             return askForNewPassword().then(function (newPass) {
                 return lock(newPass);
@@ -128,12 +166,18 @@ export default function createRoomLocker (room) {
             });
         },
 
+        /**
+         * Asks user for required conference password.
+         */
         requirePassword () {
             return askForPassword().then(function (newPass) {
                 password = newPass;
             });
         },
 
+        /**
+         * Show notification that to set/remove password user must be moderator.
+         */
         notifyModeratorRequired () {
             if (password) {
                 messageHandler.openMessageDialog(null, "dialog.passwordError");
