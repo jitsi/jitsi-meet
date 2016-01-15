@@ -188,6 +188,7 @@ var ScreenObtainer = {
      * 'desktop' stream for returned stream token.
      */
     obtainScreenFromExtension: function (streamCallback, failCallback) {
+        var self = this;
         if (chromeExtInstalled) {
             doGetStreamFromExtension(this.options, streamCallback,
                 failCallback);
@@ -206,7 +207,7 @@ var ScreenObtainer = {
                     // We need to give a moment for the endpoint to become
                     // available
                     window.setTimeout(function () {
-                        doGetStreamFromExtension(this.options, streamCallback,
+                        doGetStreamFromExtension(self.options, streamCallback,
                             failCallback);
                     }, 500);
                 },
