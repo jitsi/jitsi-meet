@@ -279,8 +279,12 @@ UI.start = function () {
             $('#notice').css({display: 'block'});
         }
         $("#downloadlog").click(function (event) {
-            // dump(event.target);
-            // FIXME integrate logs
+            let logs = APP.conference.getLogs();
+            let data = encodeURIComponent(JSON.stringify(logs, null, '  '));
+
+            let elem = event.target.parentNode;
+            elem.download = 'meetlog.json';
+            elem.href = 'data:application/json;charset=utf-8,\n' + data;
         });
         Feedback.init();
     } else {

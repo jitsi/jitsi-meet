@@ -270,6 +270,9 @@ export default {
     },
     // end used by torture
 
+    getLogs () {
+        return room.getLogs();
+    },
     _createRoom () {
         room = connection.initJitsiConference(APP.conference.roomName,
             this._getConferenceOptions());
@@ -286,6 +289,7 @@ export default {
         });
         roomLocker = createRoomLocker(room);
         this._room = room; // FIXME do not use this
+        this.localId = room.myUserId();
 
         let email = APP.settings.getEmail();
         email && sendEmail(email);

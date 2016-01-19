@@ -699,6 +699,27 @@ JitsiConference.prototype.isStartVideoMuted = function () {
 };
 
 /**
+ * Get object with internal logs.
+ */
+JitsiConference.prototype.getLogs = function () {
+    var data = this.xmpp.getJingleLog();
+
+    var metadata = {};
+    metadata.time = new Date();
+    metadata.url = window.location.href;
+    metadata.ua = navigator.userAgent;
+
+    var log = this.xmpp.getXmppLog();
+    if (log) {
+        metadata.xmpp = log;
+    }
+
+    data.metadata = metadata;
+
+    return data;
+};
+
+/**
  * Setups the listeners needed for the conference.
  * @param conference the conference
  */
@@ -3684,6 +3705,7 @@ var ScreenObtainer = {
      * 'desktop' stream for returned stream token.
      */
     obtainScreenFromExtension: function (streamCallback, failCallback) {
+        var self = this;
         if (chromeExtInstalled) {
             doGetStreamFromExtension(this.options, streamCallback,
                 failCallback);
@@ -3702,7 +3724,7 @@ var ScreenObtainer = {
                     // We need to give a moment for the endpoint to become
                     // available
                     window.setTimeout(function () {
-                        doGetStreamFromExtension(this.options, streamCallback,
+                        doGetStreamFromExtension(self.options, streamCallback,
                             failCallback);
                     }, 500);
                 },
@@ -12517,22 +12539,6 @@ XMPP.prototype.disconnect = function () {
     this.disconnectInProgress = true;
 
     this.connection.disconnect();
-};
-
-/**
- * Gets the SSRC of local media stream.
- * @param mediaType the media type that tells whether we want to get
- *        the SSRC of local audio or video stream.
- * @returns {*} the SSRC number for local media stream or <tt>null</tt> if
- *              not available.
- */
-XMPP.prototype.getLocalSSRC = function (mediaType) {
-    if (this.connection.jingle.activecall &&
-        this.connection.jingle.activecall.peerconnection) {
-        return this.connection.jingle.activecall.getLocalSSRC(mediaType);
-    } else {
-        return null;
-    }
 };
 
 module.exports = XMPP;
