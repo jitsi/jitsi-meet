@@ -338,7 +338,7 @@ SmallVideo.prototype.updateView = function () {
     if (!this.hasAvatar) {
         if (this.id) {
             // Init avatar
-            this.avatarChanged(Avatar.getThumbUrl(this.id));
+            this.avatarChanged(Avatar.getAvatarUrl(this.id));
         } else {
             console.error("Unable to init avatar - no id", this);
             return;
@@ -380,20 +380,20 @@ SmallVideo.prototype.updateView = function () {
     }
 };
 
-SmallVideo.prototype.avatarChanged = function (thumbUrl) {
+SmallVideo.prototype.avatarChanged = function (avatarUrl) {
     var thumbnail = $('#' + this.videoSpanId);
     var avatar = $('#avatar_' + this.id);
     this.hasAvatar = true;
 
     // set the avatar in the thumbnail
     if (avatar && avatar.length > 0) {
-        avatar[0].src = thumbUrl;
+        avatar[0].src = avatarUrl;
     } else {
         if (thumbnail && thumbnail.length > 0) {
             avatar = document.createElement('img');
             avatar.id = 'avatar_' + this.id;
             avatar.className = 'userAvatar';
-            avatar.src = thumbUrl;
+            avatar.src = avatarUrl;
             thumbnail.append(avatar);
         }
     }

@@ -16,62 +16,47 @@ var Avatar = {
             }
             users[id] = email;
         }
-        var thumbUrl = this.getThumbUrl(id);
-        var contactListUrl = this.getContactListUrl(id);
+        var avatarUrl = this.getAvatarUrl(id);
     },
     /**
-     * Returns image URL for the avatar to be displayed on large video area
-     * where current dominant speaker is presented.
-     * @param id id of the user for whom we want to obtain avatar URL
+     * Returns the URL of the image for the avatar of a particular user,
+     + identified by its jid
+     * @param jid
      */
-    getDominantSpeakerUrl: function (id) {
-        return this.getGravatarUrl(id, 100);
-    },
-    /**
-     * Returns image URL for the avatar to be displayed on small video thumbnail
-     * @param id id of the user for whom we want to obtain avatar URL
-     */
-    getThumbUrl: function (id) {
-        return this.getGravatarUrl(id, 100);
-    },
-    /**
-     * Returns the URL for the avatar to be displayed as contactlist item
-     * @param id id of the user for whom we want to obtain avatar URL
-     */
-    getContactListUrl: function (id) {
-        return this.getGravatarUrl(id, 30);
-    },
-    getGravatarUrl: function (id, size) {
-        if (!id) {
-            console.error("Get gravatar - id is undefined");
-            return null;
-        }
+    getAvatarUrl: function (jid) {
+        if (config.disableThirdPartyRequests) {
+            return 'images/avatar2.png';
+        } else {
+            if (!jid) {
+                console.error("Get avatar - jid is undefined");
+                    return null;
+            }
+            var id = users[jid];
 
-        // Default to using gravatar.
-        var urlPref = 'https://www.gravatar.com/avatar/';
-        var urlSuf = "?d=wavatar&size=" + (size || "30");
+            // If the ID looks like an email, we'll use gravatar.
+            // Otherwise, it's a random avatar, and we'll use the configured
+            // URL.
+            var random = !id || id.indexOf('@') < 0;
 
-        // If we have a real email we will use it for the gravatar and we'll
-        // use the pre-configured URL if any. Otherwise, it's a random avatar.
-        var email = users[id];
-        if (email && email.indexOf('@')) {
-            id = email;
+            if (!id) {
+                console.warn(
+                "No avatar stored yet for " + jid + " - using JID as ID");
+                id = jid;
+            }
+            id = MD5.hexdigest(id.trim().toLowerCase());
 
-            if (interfaceConfig.RANDOM_AVATAR_URL_PREFIX) {
+            // Default to using gravatar.
+            var urlPref = 'https://www.gravatar.com/avatar/';
+            var urlSuf = "?d=wavatar&size=100";
+
+            if (random && interfaceConfig.RANDOM_AVATAR_URL_PREFIX) {
                 urlPref = interfaceConfig.RANDOM_AVATAR_URL_PREFIX;
                 urlSuf = interfaceConfig.RANDOM_AVATAR_URL_SUFFIX;
             }
-        }
 
-        if (!config.disableThirdPartyRequests) {
-            return urlPref +
-                MD5.hexdigest(id.trim().toLowerCase()) +
-                urlSuf;
-        } else {
-            return 'images/avatar2.png';
+            return urlPref + id + urlSuf;
         }
     }
-
 };
 
 

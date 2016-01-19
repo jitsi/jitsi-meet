@@ -92,7 +92,7 @@ export default {
         }
     },
 
-    changeAvatar (thumbUrl) {
-        $('#avatar').attr('src', thumbUrl);
+    changeAvatar (avatarUrl) {
+        $('#avatar').attr('src', avatarUrl);
     }
 };

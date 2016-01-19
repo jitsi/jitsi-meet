@@ -219,7 +219,8 @@ function bindEvents() {
 
     // Resize and reposition videos in full screen mode.
     $(document).on(
-        'webkitfullscreenchange mozfullscreenchange fullscreenchange', onResize
+        'webkitfullscreenchange mozfullscreenchange fullscreenchange',
+        onResize
     );
 
     $(window).resize(onResize);
@@ -570,13 +571,12 @@ UI.setUserAvatar = function (id, email) {
     // update avatar
     Avatar.setUserAvatar(id, email);
 
-    var thumbUrl = Avatar.getThumbUrl(id);
-    var contactListUrl = Avatar.getContactListUrl(id);
+    var avatarUrl = Avatar.getAvatarUrl(id);
 
-    VideoLayout.changeUserAvatar(id, thumbUrl);
-    ContactList.changeUserAvatar(id, contactListUrl);
+    VideoLayout.changeUserAvatar(id, avatarUrl);
+    ContactList.changeUserAvatar(id, avatarUrl);
     if (APP.conference.isLocalId(id)) {
-        SettingsMenu.changeAvatar(thumbUrl);
+        SettingsMenu.changeAvatar(avatarUrl);
     }
 };
 

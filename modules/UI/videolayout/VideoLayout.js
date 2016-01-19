@@ -910,17 +910,17 @@ var VideoLayout = {
         }
     },
 
-    changeUserAvatar (id, thumbUrl) {
+    changeUserAvatar (id, avatarUrl) {
         var smallVideo = VideoLayout.getSmallVideo(id);
         if (smallVideo) {
-            smallVideo.avatarChanged(thumbUrl);
+            smallVideo.avatarChanged(avatarUrl);
         } else {
             console.warn(
                 "Missed avatar update - no small video yet for " + id
             );
         }
         if (this.isCurrentlyOnLarge(id)) {
-            largeVideo.updateAvatar(thumbUrl);
+            largeVideo.updateAvatar(avatarUrl);
         }
     },
 
@@ -988,7 +988,7 @@ var VideoLayout = {
                     oldSmallVideo && oldSmallVideo.updateView();
 
                     // change the avatar url on large
-                    largeVideo.updateAvatar(Avatar.getThumbUrl(smallVideo.id));
+                    largeVideo.updateAvatar(Avatar.getAvatarUrl(smallVideo.id));
                     // show the avatar on large if needed
                     largeVideo.showAvatar(smallVideo.stream.isMuted());
                 });

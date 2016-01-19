@@ -370,7 +370,8 @@ export default class LargeVideoManager {
 
     resize (animate) {
         // resize all containers
-        Object.keys(this.containers).forEach(type => this.resizeContainer(type, animate));
+        Object.keys(this.containers)
+            .forEach(type => this.resizeContainer(type, animate));
 
         this.$container.animate({
             width: this.width,
@@ -393,8 +394,8 @@ export default class LargeVideoManager {
     /**
      * Updates the src of the dominant speaker avatar
      */
-    updateAvatar (thumbUrl) {
-        $("#dominantSpeakerAvatar").attr('src', thumbUrl);
+    updateAvatar (avatarUrl) {
+        $("#dominantSpeakerAvatar").attr('src', avatarUrl);
     }
 
     showAvatar (show) {
