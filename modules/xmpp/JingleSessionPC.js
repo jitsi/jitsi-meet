@@ -246,10 +246,10 @@ JingleSessionPC.prototype.accept = function () {
         pranswer.sdp = pranswer.sdp.replace('a=inactive', 'a=sendrecv');
     }
     var prsdp = new SDP(pranswer.sdp);
-    if (self.webrtcIceTcpDisable) {
+    if (this.webrtcIceTcpDisable) {
         prsdp.removeTcpCandidates = true;
     }
-    if (self.webrtcIceUdpDisable) {
+    if (this.webrtcIceUdpDisable) {
         prsdp.removeUdpCandidates = true;
     }
     var accept = $iq({to: this.peerjid,
@@ -569,13 +569,12 @@ JingleSessionPC.prototype.getSsrcOwner = function (ssrc) {
 };
 
 JingleSessionPC.prototype.setRemoteDescription = function (elem, desctype) {
-    var self = this;
     //logger.log('setting remote description... ', desctype);
     this.remoteSDP = new SDP('');
-    if (self.webrtcIceTcpDisable) {
+    if (this.webrtcIceTcpDisable) {
         this.remoteSDP.removeTcpCandidates = true;
     }
-    if (self.webrtcIceUdpDisable) {
+    if (this.webrtcIceUdpDisable) {
         this.remoteSDP.removeUdpCandidates = true;
     }
 
