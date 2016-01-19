@@ -47,10 +47,9 @@ function onContactClicked (id) {
 
     let remoteVideo = remoteVideos[id];
     if (remoteVideo && remoteVideo.selectVideoElement().length) {
-        let videoThumb = remoteVideo.selectVideoElement()[0];
         // It is not always the case that a videoThumb exists (if there is
         // no actual video).
-        if (RTC.getVideoSrc(videoThumb)) {
+        if (remoteVideo.stream) {
 
             // We have a video src, great! Let's update the large video
             // now.
