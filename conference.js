@@ -245,6 +245,14 @@ export default {
             && this._room.myUserId();
     },
     /**
+     * Will be filled with values only when config.debug is enabled.
+     * Its used by torture to check audio levels.
+     */
+    audioLevelsMap: {},
+    getPeerSSRCAudioLevel (id) {
+        return this.audioLevelsMap[id];
+    },
+    /**
      * Will check for number of remote particiapnts that have at least one
      * remote track.
      * @return boolean whether we have enough participants with remote streams
@@ -292,10 +300,7 @@ export default {
         this._setupListeners();
     },
     _getConferenceOptions() {
-        let options = {
-            openSctp: config.openSctp,
-            disableAudioLevels: config.disableAudioLevels
-        };
+        let options = config;
         if(config.enableRecording) {
             options.recordingType = (config.hosts &&
                 (typeof config.hosts.jirecon != "undefined"))?
@@ -374,6 +379,10 @@ export default {
             if(this.isLocalId(id) && localAudio.isMuted()) {
                 lvl = 0;
             }
+
+            if(config.debug)
+                this.audioLevelsMap[id] = lvl;
+
             APP.UI.setAudioLevel(id, lvl);
         });
 
