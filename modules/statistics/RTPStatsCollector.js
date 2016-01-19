@@ -146,7 +146,6 @@ function StatsCollector(peerconnection, audioLevelsInterval, statsInterval, even
 {
     this.peerconnection = peerconnection;
     this.baselineAudioLevelsReport = null;
-    this.currentAudioLevelsReport = null;
     this.currentStatsReport = null;
     this.baselineStatsReport = null;
     this.audioLevelsIntervalId = null;
@@ -252,10 +251,7 @@ StatsCollector.prototype.start = function ()
                             results = report.result();
                         }
                         //console.error("Got interval report", results);
-                        self.currentAudioLevelsReport = results;
-                        self.processAudioLevelReport();
-                        self.baselineAudioLevelsReport =
-                            self.currentAudioLevelsReport;
+                        self.baselineAudioLevelsReport = results;
                     },
                     self.errorCallback
                 );
@@ -665,66 +661,4 @@ StatsCollector.prototype.processStatsReport = function () {
         });
     PeerStats.transport = [];
 
-};
-
-/**
- * Stats processing logic.
- */
-StatsCollector.prototype.processAudioLevelReport = function () {
-    if (!this.baselineAudioLevelsReport) {
-        return;
-    }
-
-    for (var idx in this.currentAudioLevelsReport) {
-        var now = this.currentAudioLevelsReport[idx];
-
-        if (now.type != 'ssrc') {
-            continue;
-        }
-
-        var before = this.baselineAudioLevelsReport[idx];
-        if (!before) {
-            console.warn(getStatValue(now, 'ssrc') + ' not enough data');
-            continue;
-        }
-
-        var ssrc = getStatValue(now, 'ssrc');
-        var jid = APP.conference._room.room.getJidBySSRC(ssrc);
-        if (!jid) {
-            if((Date.now() - now.timestamp) < 3000)
-                console.warn("No jid for ssrc: " + ssrc);
-            continue;
-        }
-
-        var jidStats = this.jid2stats[jid];
-        if (!jidStats) {
-            jidStats = new PeerStats();
-            this.jid2stats[jid] = jidStats;
-        }
-
-        // Audio level
-        var audioLevel = null;
-
-        try {
-            audioLevel = getStatValue(now, 'audioInputLevel');
-            if (!audioLevel)
-                audioLevel = getStatValue(now, 'audioOutputLevel');
-        }
-        catch(e) {/*not supported*/
-            console.warn("Audio Levels are not available in the statistics.");
-            clearInterval(this.audioLevelsIntervalId);
-            return;
-        }
-
-        if (audioLevel) {
-            // TODO: can't find specs about what this value really is,
-            // but it seems to vary between 0 and around 32k.
-            audioLevel = audioLevel / 32767;
-            jidStats.setSsrcAudioLevel(ssrc, audioLevel);
-            if (jid != APP.conference._room.room.myroomjid) {
-                this.eventEmitter.emit(
-                    StatisticsEvents.AUDIO_LEVEL, jid, audioLevel);
-            }
-        }
-    }
 };
