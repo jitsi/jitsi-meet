@@ -93,7 +93,6 @@ JingleSessionPC.prototype.doInitialize = function () {
     // Set to true if the connection was ever stable
     this.wasstable = false;
     //Make sure we clear out stored ssrcs from previous peer connections
-    SSRCReplacement.init();
 
     this.peerconnection = new TraceablePeerConnection(
             this.connection.jingle.ice_config,
