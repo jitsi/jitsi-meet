@@ -8,11 +8,12 @@ var RTCUtils = require("./RTCUtils");
  * @constructor
  */
 function JitsiLocalTrack(stream, videoType,
-  resolution)
+  resolution, deviceId)
 {
     this.videoType = videoType;
     this.dontFireRemoveEvent = false;
     this.resolution = resolution;
+    this.deviceId = deviceId;
     this.startMuted = false;
     var self = this;
     JitsiTrack.call(this, null, stream,
@@ -71,9 +72,16 @@ JitsiLocalTrack.prototype._setMute = function (mute) {
             //FIXME: Maybe here we should set the SRC for the containers to something
         } else {
             var self = this;
-            RTCUtils.obtainAudioAndVideoPermissions({
+            var streamOptions = {
                 devices: (isAudio ? ["audio"] : ["video"]),
-                resolution: self.resolution})
+                resolution: self.resolution
+            };
+            if (isAudio) {
+              streamOptions['micDeviceId'] = self.deviceId;
+            } else {self.videoType === 'camera'} {
+              streamOptions['cameraDeviceId'] = self.deviceId;
+            }
+            RTCUtils.obtainAudioAndVideoPermissions(streamOptions)
                 .then(function (streams) {
                     var stream = null;
                     for(var i = 0; i < streams.length; i++) {
