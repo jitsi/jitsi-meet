@@ -91,7 +91,7 @@ var SettingsMenu = {
 
     setDisplayName: function(newDisplayName) {
         var displayName = Settings.setDisplayName(newDisplayName);
-        $('#setDisplayName').get(0).value = displayName;
+        $('#setDisplayName').get(0).value = UIUtil.unescapeHtml(displayName);
     },
 
     onDisplayNameChange: function(peerJid, newDisplayName) {

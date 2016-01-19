@@ -55,6 +55,16 @@ var UIUtil = module.exports = {
         return $('<div/>').text(unsafeText).html();
     },
 
+    /**
+     * Unescapes the given text.
+     *
+     * @param {string} safe string which contains escaped html
+     * @returns string unescaped html string.
+     */
+    unescapeHtml: function (safe) {
+        return $('<div />').html(safe).text();
+    },
+
     imageToGrayScale: function (canvas) {
         var context = canvas.getContext('2d');
         var imgData = context.getImageData(0, 0, canvas.width, canvas.height);

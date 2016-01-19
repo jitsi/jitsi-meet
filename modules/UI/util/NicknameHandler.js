@@ -1,4 +1,5 @@
 var UIEvents = require("../../../service/UI/UIEvents");
+var UIUtil = require('./UIUtil');
 
 var nickname = null;
 var eventEmitter = null;
@@ -8,7 +9,7 @@ var NicknameHandler = {
         eventEmitter = emitter;
         var storedDisplayName = window.localStorage.displayname;
         if (storedDisplayName) {
-            nickname = storedDisplayName;
+           nickname = UIUtil.escapeHtml(storedDisplayName);
         }
     },
     setNickname: function (newNickname) {
@@ -16,7 +17,7 @@ var NicknameHandler = {
             return;
 
         nickname = newNickname;
-        window.localStorage.displayname = nickname;
+        window.localStorage.displayname = UIUtil.unescapeHtml(nickname);
         eventEmitter.emit(UIEvents.NICKNAME_CHANGED, newNickname);
     },
     getNickname: function () {
