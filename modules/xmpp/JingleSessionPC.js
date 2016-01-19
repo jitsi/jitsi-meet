@@ -569,6 +569,7 @@ JingleSessionPC.prototype.getSsrcOwner = function (ssrc) {
 };
 
 JingleSessionPC.prototype.setRemoteDescription = function (elem, desctype) {
+    var self = this;
     //logger.log('setting remote description... ', desctype);
     this.remoteSDP = new SDP('');
     if (self.webrtcIceTcpDisable) {
