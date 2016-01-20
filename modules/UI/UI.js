@@ -177,6 +177,9 @@ UI.initConference = function () {
     UI.setUserAvatar(id, settings.email);
 
     Toolbar.checkAutoEnableDesktopSharing();
+    if(!interfaceConfig.filmStripOnly) {
+        Feedback.init();
+    }
 };
 
 UI.mucJoined = function () {
@@ -282,7 +285,6 @@ UI.start = function () {
             // dump(event.target);
             // FIXME integrate logs
         });
-        Feedback.init();
     } else {
         $("#header").css("display", "none");
         $("#bottomToolbar").css("display", "none");
