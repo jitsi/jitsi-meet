@@ -411,7 +411,7 @@ TraceablePeerConnection.prototype.createOffer
                 self.trace('createOfferOnSuccess::mungeLocalVideoSSRC', dumpSDP(offer));
             }
 
-            if (self.session.room.options.enableSimulcast && self.simulcast.isSupported()) {
+            if (!self.session.room.options.disableSimulcast && self.simulcast.isSupported()) {
                 offer = self.simulcast.mungeLocalDescription(offer);
                 self.trace('createOfferOnSuccess::postTransform (simulcast)', dumpSDP(offer));
             }
@@ -444,7 +444,7 @@ TraceablePeerConnection.prototype.createAnswer
                 self.trace('createAnswerOnSuccess::mungeLocalVideoSSRC', dumpSDP(answer));
             }
 
-            if (self.session.room.options.enableSimulcast && self.simulcast.isSupported()) {
+            if (!self.session.room.options.disableSimulcast && self.simulcast.isSupported()) {
                 answer = self.simulcast.mungeLocalDescription(answer);
                 self.trace('createAnswerOnSuccess::postTransform (simulcast)', dumpSDP(answer));
             }
