@@ -427,12 +427,12 @@ var VideoLayout = {
      * Resizes the large video container.
      */
     resizeLargeVideoContainer (isSideBarVisible) {
+        let animate = false;
         if (largeVideo) {
             largeVideo.updateContainerSize(isSideBarVisible);
-            largeVideo.resize(false);
-        } else {
-            this.resizeVideoSpace(false, isSideBarVisible);
+            largeVideo.resize(animate);
         }
+        this.resizeVideoSpace(animate, isSideBarVisible);
         this.resizeThumbnails(false);
     },
 
@@ -880,26 +880,22 @@ var VideoLayout = {
      * is resized.
      */
     resizeVideoSpace (animate, isChatVisible, completeFunction) {
-        var availableHeight = window.innerHeight;
-        var availableWidth = UIUtil.getAvailableVideoWidth(isChatVisible);
+        let availableHeight = window.innerHeight;
+        let availableWidth = UIUtil.getAvailableVideoWidth(isChatVisible);
 
-        if (availableWidth < 0 || availableHeight < 0) return;
-
-        if(animate) {
-            $('#videospace').animate({
-                    right: window.innerWidth - availableWidth,
-                    width: availableWidth,
-                    height: availableHeight
-                },
-                {
-                    queue: false,
-                    duration: 500,
-                    complete: completeFunction
-                });
-        } else {
-            $('#videospace').width(availableWidth).height(availableHeight);
+        if (availableWidth < 0 || availableHeight < 0) {
+            return;
         }
 
+        $('#videospace').animate({
+            right: window.innerWidth - availableWidth,
+            width: availableWidth,
+            height: availableHeight
+        }, {
+            queue: false,
+            duration: animate ? 500 : 1,
+            complete: completeFunction
+        });
     },
 
     getSmallVideo (id) {
