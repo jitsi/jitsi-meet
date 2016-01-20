@@ -697,6 +697,27 @@ JitsiConference.prototype.isStartVideoMuted = function () {
 };
 
 /**
+ * Get object with internal logs.
+ */
+JitsiConference.prototype.getLogs = function () {
+    var data = this.xmpp.getJingleLog();
+
+    var metadata = {};
+    metadata.time = new Date();
+    metadata.url = window.location.href;
+    metadata.ua = navigator.userAgent;
+
+    var log = this.xmpp.getXmppLog();
+    if (log) {
+        metadata.xmpp = log;
+    }
+
+    data.metadata = metadata;
+
+    return data;
+};
+
+/**
  * Setups the listeners needed for the conference.
  * @param conference the conference
  */

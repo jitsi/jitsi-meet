@@ -699,6 +699,27 @@ JitsiConference.prototype.isStartVideoMuted = function () {
 };
 
 /**
+ * Get object with internal logs.
+ */
+JitsiConference.prototype.getLogs = function () {
+    var data = this.xmpp.getJingleLog();
+
+    var metadata = {};
+    metadata.time = new Date();
+    metadata.url = window.location.href;
+    metadata.ua = navigator.userAgent;
+
+    var log = this.xmpp.getXmppLog();
+    if (log) {
+        metadata.xmpp = log;
+    }
+
+    data.metadata = metadata;
+
+    return data;
+};
+
+/**
  * Setups the listeners needed for the conference.
  * @param conference the conference
  */
@@ -895,7 +916,7 @@ function setupListeners(conference) {
 module.exports = JitsiConference;
 
 }).call(this,"/JitsiConference.js")
-},{"./JitsiConferenceErrors":2,"./JitsiConferenceEvents":3,"./JitsiParticipant":8,"./JitsiTrackEvents":10,"./modules/DTMF/JitsiDTMFManager":11,"./modules/RTC/RTC":16,"./modules/statistics/statistics":24,"./service/RTC/RTCEvents":84,"./service/authentication/AuthenticationEvents":87,"./service/xmpp/XMPPEvents":91,"events":44,"jitsi-meet-logger":48}],2:[function(require,module,exports){
+},{"./JitsiConferenceErrors":2,"./JitsiConferenceEvents":3,"./JitsiParticipant":8,"./JitsiTrackEvents":10,"./modules/DTMF/JitsiDTMFManager":11,"./modules/RTC/RTC":16,"./modules/statistics/statistics":24,"./service/RTC/RTCEvents":80,"./service/authentication/AuthenticationEvents":83,"./service/xmpp/XMPPEvents":87,"events":44,"jitsi-meet-logger":48}],2:[function(require,module,exports){
 /**
  * Enumeration with the errors for the conference.
  * @type {{string: string}}
@@ -1303,7 +1324,7 @@ window.Promise = window.Promise || require("es6-promise").Promise;
 
 module.exports = LibJitsiMeet;
 
-},{"./JitsiConferenceErrors":2,"./JitsiConferenceEvents":3,"./JitsiConnection":4,"./JitsiConnectionErrors":5,"./JitsiConnectionEvents":6,"./JitsiTrackErrors":9,"./JitsiTrackEvents":10,"./modules/RTC/RTC":16,"./modules/statistics/statistics":24,"./service/RTC/Resolutions":85,"es6-promise":46,"jitsi-meet-logger":48}],8:[function(require,module,exports){
+},{"./JitsiConferenceErrors":2,"./JitsiConferenceEvents":3,"./JitsiConnection":4,"./JitsiConnectionErrors":5,"./JitsiConnectionEvents":6,"./JitsiTrackErrors":9,"./JitsiTrackEvents":10,"./modules/RTC/RTC":16,"./modules/statistics/statistics":24,"./service/RTC/Resolutions":81,"es6-promise":46,"jitsi-meet-logger":48}],8:[function(require,module,exports){
 /* global Strophe */
 
 /**
@@ -1748,7 +1769,7 @@ module.exports = DataChannels;
 
 
 }).call(this,"/modules/RTC/DataChannels.js")
-},{"../../service/RTC/RTCEvents":84,"jitsi-meet-logger":48}],13:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":80,"jitsi-meet-logger":48}],13:[function(require,module,exports){
 var JitsiTrack = require("./JitsiTrack");
 var RTCBrowserType = require("./RTCBrowserType");
 var JitsiTrackEvents = require('../../JitsiTrackEvents');
@@ -2499,7 +2520,7 @@ RTC.prototype.setAudioLevel = function (jid, audioLevel) {
 }
 module.exports = RTC;
 
-},{"../../service/RTC/MediaStreamTypes":83,"../../service/RTC/RTCEvents.js":84,"../../service/desktopsharing/DesktopSharingEventTypes":88,"./DataChannels":12,"./JitsiLocalTrack.js":13,"./JitsiRemoteTrack.js":14,"./JitsiTrack":15,"./RTCBrowserType":17,"./RTCUtils.js":18,"events":44}],17:[function(require,module,exports){
+},{"../../service/RTC/MediaStreamTypes":79,"../../service/RTC/RTCEvents.js":80,"../../service/desktopsharing/DesktopSharingEventTypes":84,"./DataChannels":12,"./JitsiLocalTrack.js":13,"./JitsiRemoteTrack.js":14,"./JitsiTrack":15,"./RTCBrowserType":17,"./RTCUtils.js":18,"events":44}],17:[function(require,module,exports){
 
 var currentBrowser;
 
@@ -3492,7 +3513,7 @@ var RTCUtils = {
 module.exports = RTCUtils;
 
 }).call(this,"/modules/RTC/RTCUtils.js")
-},{"../../JitsiTrackErrors":9,"../../service/RTC/RTCEvents":84,"../../service/RTC/Resolutions":85,"../xmpp/SDPUtil":32,"./RTCBrowserType":17,"./ScreenObtainer":19,"./adapter.screenshare":20,"events":44,"jitsi-meet-logger":48}],19:[function(require,module,exports){
+},{"../../JitsiTrackErrors":9,"../../service/RTC/RTCEvents":80,"../../service/RTC/Resolutions":81,"../xmpp/SDPUtil":32,"./RTCBrowserType":17,"./ScreenObtainer":19,"./adapter.screenshare":20,"events":44,"jitsi-meet-logger":48}],19:[function(require,module,exports){
 (function (__filename){
 /* global chrome, $, alert */
 /* jshint -W003 */
@@ -3915,7 +3936,7 @@ function initFirefoxExtensionDetection(options) {
 module.exports = ScreenObtainer;
 
 }).call(this,"/modules/RTC/ScreenObtainer.js")
-},{"../../service/desktopsharing/DesktopSharingEventTypes":88,"./RTCBrowserType":17,"./adapter.screenshare":20,"jitsi-meet-logger":48}],20:[function(require,module,exports){
+},{"../../service/desktopsharing/DesktopSharingEventTypes":84,"./RTCBrowserType":17,"./adapter.screenshare":20,"jitsi-meet-logger":48}],20:[function(require,module,exports){
 (function (__filename){
 /*! adapterjs - v0.12.3 - 2015-11-16 */
 var console = require("jitsi-meet-logger").getLogger(__filename);
@@ -6023,7 +6044,7 @@ StatsCollector.prototype.processAudioLevelReport = function () {
 };
 
 }).call(this,"/modules/statistics/RTPStatsCollector.js")
-},{"../../service/statistics/Events":89,"../RTC/RTCBrowserType":17,"jitsi-meet-logger":48}],24:[function(require,module,exports){
+},{"../../service/statistics/Events":85,"../RTC/RTCBrowserType":17,"jitsi-meet-logger":48}],24:[function(require,module,exports){
 /* global require, APP */
 var LocalStats = require("./LocalStatsCollector.js");
 var RTPStats = require("./RTPStatsCollector.js");
@@ -6198,7 +6219,7 @@ Statistics.LOCAL_JID = require("../../service/statistics/constants").LOCAL_JID;
 
 module.exports = Statistics;
 
-},{"../../service/statistics/Events":89,"../../service/statistics/constants":90,"./LocalStatsCollector.js":22,"./RTPStatsCollector.js":23,"events":44}],25:[function(require,module,exports){
+},{"../../service/statistics/Events":85,"../../service/statistics/constants":86,"./LocalStatsCollector.js":22,"./RTPStatsCollector.js":23,"events":44}],25:[function(require,module,exports){
 /**
 /**
  * @const
@@ -7085,7 +7106,7 @@ ChatRoom.prototype.onMute = function (iq) {
 module.exports = ChatRoom;
 
 }).call(this,"/modules/xmpp/ChatRoom.js")
-},{"../../service/xmpp/XMPPEvents":91,"./moderator":34,"./recording":35,"events":44,"jitsi-meet-logger":48}],27:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":87,"./moderator":34,"./recording":35,"events":44,"jitsi-meet-logger":48}],27:[function(require,module,exports){
 (function (__filename){
 /*
  * JingleSession provides an API to manage a single Jingle session. We will
@@ -7794,6 +7815,7 @@ JingleSessionPC.prototype.getSsrcOwner = function (ssrc) {
 };
 
 JingleSessionPC.prototype.setRemoteDescription = function (elem, desctype) {
+    var self = this;
     //logger.log('setting remote description... ', desctype);
     this.remoteSDP = new SDP('');
     if (self.webrtcIceTcpDisable) {
@@ -8862,7 +8884,7 @@ JingleSessionPC.prototype.getIceConnectionState = function () {
 module.exports = JingleSessionPC;
 
 }).call(this,"/modules/xmpp/JingleSessionPC.js")
-},{"../../service/xmpp/XMPPEvents":91,"../RTC/RTC":16,"../RTC/RTCBrowserType":17,"./JingleSession":27,"./LocalSSRCReplacement":29,"./SDP":30,"./SDPDiffer":31,"./SDPUtil":32,"./TraceablePeerConnection":33,"async":43,"jitsi-meet-logger":48,"sdp-transform":80}],29:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":87,"../RTC/RTC":16,"../RTC/RTCBrowserType":17,"./JingleSession":27,"./LocalSSRCReplacement":29,"./SDP":30,"./SDPDiffer":31,"./SDPUtil":32,"./TraceablePeerConnection":33,"async":43,"jitsi-meet-logger":48,"sdp-transform":76}],29:[function(require,module,exports){
 (function (__filename){
 /* global $ */
 var logger = require("jitsi-meet-logger").getLogger(__filename);
@@ -10800,7 +10822,7 @@ TraceablePeerConnection.prototype.getStats = function(callback, errback) {
 module.exports = TraceablePeerConnection;
 
 }).call(this,"/modules/xmpp/TraceablePeerConnection.js")
-},{"../../service/xmpp/XMPPEvents":91,"../RTC/RTC":16,"../RTC/RTCBrowserType.js":17,"./LocalSSRCReplacement":29,"jitsi-meet-logger":48,"sdp-interop":66,"sdp-simulcast":73,"sdp-transform":80}],34:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":87,"../RTC/RTC":16,"../RTC/RTCBrowserType.js":17,"./LocalSSRCReplacement":29,"jitsi-meet-logger":48,"sdp-interop":66,"sdp-simulcast":73,"sdp-transform":76}],34:[function(require,module,exports){
 (function (__filename){
 /* global $, $iq, Promise, Strophe */
 
@@ -11261,7 +11283,7 @@ Moderator.prototype.logout =  function (callback) {
 module.exports = Moderator;
 
 }).call(this,"/modules/xmpp/moderator.js")
-},{"../../service/authentication/AuthenticationEvents":87,"../../service/xmpp/XMPPEvents":91,"../settings/Settings":21,"jitsi-meet-logger":48}],35:[function(require,module,exports){
+},{"../../service/authentication/AuthenticationEvents":83,"../../service/xmpp/XMPPEvents":87,"../settings/Settings":21,"jitsi-meet-logger":48}],35:[function(require,module,exports){
 (function (__filename){
 /* global $, $iq, config, connection, focusMucJid, messageHandler,
    Toolbar, Util, Promise */
@@ -11488,7 +11510,7 @@ Recording.prototype.getURL = function () {
 module.exports = Recording;
 
 }).call(this,"/modules/xmpp/recording.js")
-},{"../../service/XMPP/XMPPEvents":86,"jitsi-meet-logger":48}],36:[function(require,module,exports){
+},{"../../service/XMPP/XMPPEvents":82,"jitsi-meet-logger":48}],36:[function(require,module,exports){
 (function (__filename){
 /* jshint -W117 */
 /* a simple MUC connection plugin
@@ -11897,7 +11919,7 @@ module.exports = function(XMPP, eventEmitter) {
 
 
 }).call(this,"/modules/xmpp/strophe.jingle.js")
-},{"../../service/xmpp/XMPPEvents":91,"../RTC/RTCBrowserType":17,"./JingleSessionPC":28,"jitsi-meet-logger":48}],38:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":87,"../RTC/RTCBrowserType":17,"./JingleSessionPC":28,"jitsi-meet-logger":48}],38:[function(require,module,exports){
 /* global Strophe */
 module.exports = function () {
 
@@ -12045,7 +12067,7 @@ module.exports = function (XMPP, eventEmitter) {
 };
 
 }).call(this,"/modules/xmpp/strophe.ping.js")
-},{"../../service/xmpp/XMPPEvents":91,"jitsi-meet-logger":48}],40:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":87,"jitsi-meet-logger":48}],40:[function(require,module,exports){
 (function (__filename){
 /* jshint -W117 */
 var logger = require("jitsi-meet-logger").getLogger(__filename);
@@ -12523,7 +12545,7 @@ XMPP.prototype.disconnect = function () {
 module.exports = XMPP;
 
 }).call(this,"/modules/xmpp/xmpp.js")
-},{"../../JitsiConnectionErrors":5,"../../JitsiConnectionEvents":6,"../../service/RTC/RTCEvents":84,"../../service/xmpp/XMPPEvents":91,"../RTC/RTC":16,"./strophe.emuc":36,"./strophe.jingle":37,"./strophe.logger":38,"./strophe.ping":39,"./strophe.rayo":40,"./strophe.util":41,"events":44,"jitsi-meet-logger":48,"pako":49}],43:[function(require,module,exports){
+},{"../../JitsiConnectionErrors":5,"../../JitsiConnectionEvents":6,"../../service/RTC/RTCEvents":80,"../../service/xmpp/XMPPEvents":87,"../RTC/RTC":16,"./strophe.emuc":36,"./strophe.jingle":37,"./strophe.logger":38,"./strophe.ping":39,"./strophe.rayo":40,"./strophe.util":41,"events":44,"jitsi-meet-logger":48,"pako":49}],43:[function(require,module,exports){
 (function (process){
 /*!
  * async
@@ -23456,10 +23478,6 @@ Simulcast.prototype.mungeLocalDescription = function (desc) {
 
     var self = this;
     processVideo(session, function (mLine) {
-        if (mLine.direction == 'recvonly' || mLine.direction == 'inactive')
-        {
-            return;
-        }
         // Initialize native simulcast layers, if not already done.
         self._maybeInitializeLayers(mLine);
 
@@ -23552,21 +23570,13 @@ arguments[4][71][0].apply(exports,arguments)
 },{"./grammar":75,"dup":71}],78:[function(require,module,exports){
 arguments[4][72][0].apply(exports,arguments)
 },{"./grammar":75,"dup":72}],79:[function(require,module,exports){
-arguments[4][69][0].apply(exports,arguments)
-},{"dup":69}],80:[function(require,module,exports){
-arguments[4][70][0].apply(exports,arguments)
-},{"./parser":81,"./writer":82,"dup":70}],81:[function(require,module,exports){
-arguments[4][71][0].apply(exports,arguments)
-},{"./grammar":79,"dup":71}],82:[function(require,module,exports){
-arguments[4][72][0].apply(exports,arguments)
-},{"./grammar":79,"dup":72}],83:[function(require,module,exports){
 var MediaStreamType = {
     VIDEO_TYPE: "Video",
 
     AUDIO_TYPE: "Audio"
 };
 module.exports = MediaStreamType;
-},{}],84:[function(require,module,exports){
+},{}],80:[function(require,module,exports){
 var RTCEvents = {
     RTC_READY: "rtc.ready",
     DATA_CHANNEL_OPEN: "rtc.data_channel_open",
@@ -23577,7 +23587,7 @@ var RTCEvents = {
 };
 
 module.exports = RTCEvents;
-},{}],85:[function(require,module,exports){
+},{}],81:[function(require,module,exports){
 var Resolutions = {
     "1080": {
         width: 1920,
@@ -23631,7 +23641,7 @@ var Resolutions = {
     }
 };
 module.exports = Resolutions;
-},{}],86:[function(require,module,exports){
+},{}],82:[function(require,module,exports){
 var XMPPEvents = {
     // Designates an event indicating that the connection to the XMPP server
     // failed.
@@ -23740,7 +23750,7 @@ var XMPPEvents = {
 };
 module.exports = XMPPEvents;
 
-},{}],87:[function(require,module,exports){
+},{}],83:[function(require,module,exports){
 var AuthenticationEvents = {
     /**
      * Event callback arguments:
@@ -23754,7 +23764,7 @@ var AuthenticationEvents = {
 };
 module.exports = AuthenticationEvents;
 
-},{}],88:[function(require,module,exports){
+},{}],84:[function(require,module,exports){
 var DesktopSharingEventTypes = {
     /**
      * An event which indicates that the jidesha extension for Firefox is
@@ -23765,7 +23775,7 @@ var DesktopSharingEventTypes = {
 
 module.exports = DesktopSharingEventTypes;
 
-},{}],89:[function(require,module,exports){
+},{}],85:[function(require,module,exports){
 module.exports = {
     /**
      * An event carrying connection statistics.
@@ -23781,12 +23791,12 @@ module.exports = {
     STOP: "statistics.stop"
 };
 
-},{}],90:[function(require,module,exports){
+},{}],86:[function(require,module,exports){
 var Constants = {
     LOCAL_JID: 'local'
 };
 module.exports = Constants;
-},{}],91:[function(require,module,exports){
-arguments[4][86][0].apply(exports,arguments)
-},{"dup":86}]},{},[7])(7)
+},{}],87:[function(require,module,exports){
+arguments[4][82][0].apply(exports,arguments)
+},{"dup":82}]},{},[7])(7)
 });
