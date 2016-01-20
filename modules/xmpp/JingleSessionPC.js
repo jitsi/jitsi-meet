@@ -735,6 +735,8 @@ JingleSessionPC.prototype.addIceCandidate = function (elem) {
                 self.peerconnection.addIceCandidate(candidate);
             } catch (e) {
                 logger.error('addIceCandidate failed', e.toString(), line);
+                self.room.eventEmitter.emit(XMPPEvents.ADD_ICE_CANDIDATE_FAILED,
+                    err, self.peerconnection);
             }
         });
     });
@@ -1261,7 +1263,46 @@ JingleSessionPC.prototype.removeStream = function (stream, callback) {
         if(this.peerconnection.localDescription) {
             oldSdp = new SDP(this.peerconnection.localDescription.sdp);
         }
-        if(stream)
+        if (RTCBrowserType.getBrowserType() ===
+                RTCBrowserType.RTC_BROWSER_FIREFOX) {
+            var sender = null;
+            // On Firefox we don't replace MediaStreams as this messes up the
+            // m-lines (which can't be removed in Plan Unified) and brings a lot
+            // of complications. Instead, we use the RTPSender and replace just
+            // the track.
+            var track = null;
+            if(stream.getAudioTracks() && stream.getAudioTracks().length) {
+                track = stream.getAudioTracks()[0];
+            } else if(stream.getVideoTracks() && stream.getVideoTracks().length)
+            {
+                track = stream.getVideoTracks()[0];
+            }
+
+            if(!track) {
+                console.log("Cannot switch tracks: no tracks.");
+                return;
+            }
+
+            // Find the right sender (for audio or video)
+            self.peerconnection.peerconnection.getSenders().some(function (s) {
+                if (s.track === track) {
+                    sender = s;
+                    return true;
+                }
+            });
+
+            if (sender) {
+                self.peerconnection.peerconnection.removeTrack(sender);
+                    // .then(function() {
+                    //     console.log("Replaced a track, isAudio=" + isAudio);
+                    // })
+                    // .catch(function(err) {
+                    //     console.log("Failed to replace a track: " + err);
+                    // });
+            } else {
+                console.log("Cannot switch tracks: no RTPSender.");
+            }
+        } else if(stream)
             this.peerconnection.removeStream(stream);
     }
 
