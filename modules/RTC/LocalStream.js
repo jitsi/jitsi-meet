@@ -73,9 +73,7 @@ LocalStream.prototype.setMute = function (mute)
     var isAudio = this.isAudioStream();
     var eventType = isAudio ? RTCEvents.AUDIO_MUTE : RTCEvents.VIDEO_MUTE;
 
-    // Temporarily disable completely turning off the camera because of
-    // simulcast.
-    if (true || (window.location.protocol != "https:" && this.isGUMStream) ||
+    if ((window.location.protocol != "https:" && this.isGUMStream) ||
         (isAudio && this.isGUMStream) || this.videoType === "screen" ||
         // FIXME FF does not support 'removeStream' method used to mute
         RTCBrowserType.isFirefox()) {

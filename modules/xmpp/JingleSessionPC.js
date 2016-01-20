@@ -1274,14 +1274,6 @@ JingleSessionPC.prototype.notifyMySSRCUpdate = function (old_sdp, new_sdp) {
  * contrast to an automatic decision made by the application logic)
  */
 JingleSessionPC.prototype.setVideoMute = function (mute, callback, options) {
-
-    // Temporarily disable completely turning off the camera because of
-    // simulcast.
-    APP.RTC.localVideo.setMute(mute);
-    callback(mute);
-    return;
-
-    /*
     var byUser;
 
     if (options) {
@@ -1319,7 +1311,6 @@ JingleSessionPC.prototype.setVideoMute = function (mute, callback, options) {
         console.log("SDPs", oldSdp, newSdp);
         self.notifyMySSRCUpdate(oldSdp, newSdp);
     });
-    */
 };
 
 JingleSessionPC.prototype.hardMuteVideo = function (muted) {
