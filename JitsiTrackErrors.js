@@ -15,10 +15,13 @@ module.exports = {
             error.constraintName == "maxHeight") &&
             devices.indexOf("video") !== -1) {
                 return this.UNSUPPORTED_RESOLUTION;
+        } else if(typeof error === "object" && error.type === "jitsiError") {
+            return error.object;
         } else {
             return this.GENERAL;
         }
     },
     UNSUPPORTED_RESOLUTION: "gum.unsupported_resolution",
+    FIREFOX_EXTENSION_NEEDED: "gum.firefox_extension_needed",
     GENERAL: "gum.general"
 };

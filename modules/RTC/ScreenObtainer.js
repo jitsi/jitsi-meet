@@ -5,6 +5,7 @@ var RTCBrowserType = require("./RTCBrowserType");
 var AdapterJS = require("./adapter.screenshare");
 var DesktopSharingEventTypes
     = require("../../service/desktopsharing/DesktopSharingEventTypes");
+var JitsiTrackErrors = require("../../JitsiTrackErrors");
 
 /**
  * Indicates whether the Chrome desktop sharing extension is installed.
@@ -39,16 +40,11 @@ var GUM = null;
  * Handles obtaining a stream from a screen capture on different browsers.
  */
 var ScreenObtainer = {
-    /**
-     * The EventEmitter to use to emit events.
-     * @type {null}
-     */
-    eventEmitter: null,
     obtainStream: null,
     /**
      * Initializes the function used to obtain a screen capture
      * (this.obtainStream).
-     * 
+     *
      * If the browser is Chrome, it uses the value of
      * 'options.desktopSharingChromeMethod' (or 'options.desktopSharing') to
      * decide whether to use the a Chrome extension (if the value is 'ext'),
@@ -57,8 +53,7 @@ var ScreenObtainer = {
      * Note that for the "screen" media source to work the
      * 'chrome://flags/#enable-usermedia-screen-capture' flag must be set.
      */
-    init: function(eventEmitter, options, gum) {
-        this.eventEmitter = eventEmitter;
+    init: function(options, gum) {
         var obtainDesktopStream = null;
         this.options = options = options || {};
         GUM = gum;
@@ -174,14 +169,9 @@ var ScreenObtainer = {
         firefoxExtInstalled = null;
         reDetectFirefoxExtension = true;
 
-        // Prompt the user to install the extension
-        this.eventEmitter.emit(
-            DesktopSharingEventTypes.FIREFOX_EXTENSION_NEEDED,
-            this.options.desktopSharingFirefoxExtensionURL);
-
         // Make sure desktopsharing knows that we failed, so that it doesn't get
         // stuck in 'switching' mode.
-        errorCallback('Firefox extension required.');
+        errorCallback(JitsiTrackErrors.FIREFOX_EXTENSION_NEEDED);
     },
     /**
      * Asks Chrome extension to call chooseDesktopMedia and gets chrome

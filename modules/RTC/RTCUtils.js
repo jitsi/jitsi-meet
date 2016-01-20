@@ -201,7 +201,7 @@ function setAvailableDevices(um, available) {
 function onReady (options, GUM) {
     rtcReady = true;
     eventEmitter.emit(RTCEvents.RTC_READY, true);
-    screenObtainer.init(eventEmitter, options, GUM);
+    screenObtainer.init(options, GUM);
 }
 
 /**
