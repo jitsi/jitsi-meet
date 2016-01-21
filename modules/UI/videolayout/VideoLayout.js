@@ -732,7 +732,9 @@ var VideoLayout = {
         let resolutions = {};
         if (object.resolution !== null) {
             resolutions = object.resolution;
-            object.resolution = resolutions[APP.conference.localId];
+            var id = Strophe.getResourceFromJid(
+                APP.conference._room.room.session.me);
+            object.resolution = resolutions[id];
         }
         localVideoThumbnail.updateStatsIndicator(percent, object);
 
