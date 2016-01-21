@@ -20,7 +20,7 @@ html, body{
     top: 0px;
     bottom: 0px;
     right: 0px;
-    width: 200px;
+    width: 200px !important;
     max-width: 200px;
     overflow-x: hidden;
     /* background-color:#dfebf1;*/
