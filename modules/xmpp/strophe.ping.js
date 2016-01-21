@@ -3,9 +3,9 @@
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 
 /**
- * Ping every 20 sec
+ * Ping every 10 sec
  */
-var PING_INTERVAL = 20000;
+var PING_INTERVAL = 10000;
 
 /**
  * Ping timeout error after 15 sec of waiting.
