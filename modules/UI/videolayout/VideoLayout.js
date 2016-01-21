@@ -540,13 +540,23 @@ var VideoLayout = {
      * On dominant speaker changed event.
      */
     onDominantSpeakerChanged (id) {
-        // We ignore local user events.
-        if (APP.conference.isLocalId(id) || (id === currentDominantSpeaker)) {
+        if (id === currentDominantSpeaker) {
+            return;
+        }
+
+        let oldSpeakerRemoteVideo = remoteVideos[currentDominantSpeaker];
+        // We ignore local user events, but just unmark remote user as dominant
+        // while we are talking
+        if (APP.conference.isLocalId(id)) {
+            if(oldSpeakerRemoteVideo)
+            {
+                oldSpeakerRemoteVideo.updateDominantSpeakerIndicator(false);
+                currentDominantSpeaker = null;
+            }
             return;
         }
 
         let remoteVideo = remoteVideos[id];
-
         if (!remoteVideo) {
             return;
         }
@@ -555,7 +565,6 @@ var VideoLayout = {
         remoteVideo.updateDominantSpeakerIndicator(true);
 
         // let's remove the indications from the remote video if any
-        let oldSpeakerRemoteVideo = remoteVideos[currentDominantSpeaker];
         if (oldSpeakerRemoteVideo) {
             oldSpeakerRemoteVideo.updateDominantSpeakerIndicator(false);
         }
