@@ -802,6 +802,9 @@ UI.getLargeVideoID = function () {
     return VideoLayout.getLargeVideoID();
 };
 
+/**
+ * Shows dialog with a link to FF extension.
+ */
 UI.showExtensionRequiredDialog = function (url) {
     APP.UI.messageHandler.openMessageDialog(
         "dialog.extensionRequired",
@@ -809,6 +812,6 @@ UI.showExtensionRequiredDialog = function (url) {
         null,
         APP.translation.generateTranslationHTML(
             "dialog.firefoxExtensionPrompt", {url: url}));
-}
+};
 
 module.exports = UI;

@@ -122,7 +122,7 @@ module.exports = {
             {
                 eventEmitter.emit(
                     DSEvents.FIREFOX_EXTENSION_NEEDED,
-                    config.desktopSharingFirefoxExtensionURL)
+                    config.desktopSharingFirefoxExtensionURL);
                 return;
             }
             fail();
