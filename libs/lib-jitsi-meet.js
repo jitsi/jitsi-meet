@@ -916,7 +916,7 @@ function setupListeners(conference) {
 module.exports = JitsiConference;
 
 }).call(this,"/JitsiConference.js")
-},{"./JitsiConferenceErrors":2,"./JitsiConferenceEvents":3,"./JitsiParticipant":8,"./JitsiTrackEvents":10,"./modules/DTMF/JitsiDTMFManager":11,"./modules/RTC/RTC":16,"./modules/statistics/statistics":24,"./service/RTC/RTCEvents":80,"./service/authentication/AuthenticationEvents":83,"./service/xmpp/XMPPEvents":87,"events":44,"jitsi-meet-logger":48}],2:[function(require,module,exports){
+},{"./JitsiConferenceErrors":2,"./JitsiConferenceEvents":3,"./JitsiParticipant":8,"./JitsiTrackEvents":10,"./modules/DTMF/JitsiDTMFManager":11,"./modules/RTC/RTC":16,"./modules/statistics/statistics":24,"./service/RTC/RTCEvents":79,"./service/authentication/AuthenticationEvents":81,"./service/xmpp/XMPPEvents":85,"events":43,"jitsi-meet-logger":47}],2:[function(require,module,exports){
 /**
  * Enumeration with the errors for the conference.
  * @type {{string: string}}
@@ -1145,7 +1145,7 @@ JitsiConnection.prototype.removeEventListener = function (event, listener) {
 
 module.exports = JitsiConnection;
 
-},{"./JitsiConference":1,"./modules/xmpp/xmpp":42}],5:[function(require,module,exports){
+},{"./JitsiConference":1,"./modules/xmpp/xmpp":41}],5:[function(require,module,exports){
 /**
  * Enumeration with the errors for the connection.
  * @type {{string: string}}
@@ -1324,7 +1324,7 @@ window.Promise = window.Promise || require("es6-promise").Promise;
 
 module.exports = LibJitsiMeet;
 
-},{"./JitsiConferenceErrors":2,"./JitsiConferenceEvents":3,"./JitsiConnection":4,"./JitsiConnectionErrors":5,"./JitsiConnectionEvents":6,"./JitsiTrackErrors":9,"./JitsiTrackEvents":10,"./modules/RTC/RTC":16,"./modules/statistics/statistics":24,"./service/RTC/Resolutions":81,"es6-promise":46,"jitsi-meet-logger":48}],8:[function(require,module,exports){
+},{"./JitsiConferenceErrors":2,"./JitsiConferenceEvents":3,"./JitsiConnection":4,"./JitsiConnectionErrors":5,"./JitsiConnectionEvents":6,"./JitsiTrackErrors":9,"./JitsiTrackEvents":10,"./modules/RTC/RTC":16,"./modules/statistics/statistics":24,"./service/RTC/Resolutions":80,"es6-promise":45,"jitsi-meet-logger":47}],8:[function(require,module,exports){
 /* global Strophe */
 
 /**
@@ -1500,11 +1500,14 @@ module.exports = {
             error.constraintName == "maxHeight") &&
             devices.indexOf("video") !== -1) {
                 return this.UNSUPPORTED_RESOLUTION;
+        } else if(typeof error === "object" && error.type === "jitsiError") {
+            return error.errorObject;
         } else {
             return this.GENERAL;
         }
     },
     UNSUPPORTED_RESOLUTION: "gum.unsupported_resolution",
+    FIREFOX_EXTENSION_NEEDED: "gum.firefox_extension_needed",
     GENERAL: "gum.general"
 };
 
@@ -1545,7 +1548,7 @@ JitsiDTMFManager.prototype.sendTones = function (tones, duration, pause) {
 };
 
 }).call(this,"/modules/DTMF/JitsiDTMFManager.js")
-},{"jitsi-meet-logger":48}],12:[function(require,module,exports){
+},{"jitsi-meet-logger":47}],12:[function(require,module,exports){
 (function (__filename){
 /* global config, APP, Strophe */
 
@@ -1769,7 +1772,7 @@ module.exports = DataChannels;
 
 
 }).call(this,"/modules/RTC/DataChannels.js")
-},{"../../service/RTC/RTCEvents":80,"jitsi-meet-logger":48}],13:[function(require,module,exports){
+},{"../../service/RTC/RTCEvents":79,"jitsi-meet-logger":47}],13:[function(require,module,exports){
 var JitsiTrack = require("./JitsiTrack");
 var RTCBrowserType = require("./RTCBrowserType");
 var JitsiTrackEvents = require('../../JitsiTrackEvents');
@@ -2275,7 +2278,7 @@ JitsiTrack.prototype.setAudioLevel = function (audioLevel) {
 
 module.exports = JitsiTrack;
 
-},{"../../JitsiTrackEvents":10,"./RTCBrowserType":17,"./RTCUtils":18,"events":44}],16:[function(require,module,exports){
+},{"../../JitsiTrackEvents":10,"./RTCBrowserType":17,"./RTCUtils":18,"events":43}],16:[function(require,module,exports){
 /* global APP */
 var EventEmitter = require("events");
 var RTCBrowserType = require("./RTCBrowserType");
@@ -2520,7 +2523,7 @@ RTC.prototype.setAudioLevel = function (jid, audioLevel) {
 }
 module.exports = RTC;
 
-},{"../../service/RTC/MediaStreamTypes":79,"../../service/RTC/RTCEvents.js":80,"../../service/desktopsharing/DesktopSharingEventTypes":84,"./DataChannels":12,"./JitsiLocalTrack.js":13,"./JitsiRemoteTrack.js":14,"./JitsiTrack":15,"./RTCBrowserType":17,"./RTCUtils.js":18,"events":44}],17:[function(require,module,exports){
+},{"../../service/RTC/MediaStreamTypes":78,"../../service/RTC/RTCEvents.js":79,"../../service/desktopsharing/DesktopSharingEventTypes":82,"./DataChannels":12,"./JitsiLocalTrack.js":13,"./JitsiRemoteTrack.js":14,"./JitsiTrack":15,"./RTCBrowserType":17,"./RTCUtils.js":18,"events":43}],17:[function(require,module,exports){
 
 var currentBrowser;
 
@@ -2898,7 +2901,7 @@ function setAvailableDevices(um, available) {
 function onReady (options, GUM) {
     rtcReady = true;
     eventEmitter.emit(RTCEvents.RTC_READY, true);
-    screenObtainer.init(eventEmitter, options, GUM);
+    screenObtainer.init(options, GUM);
 }
 
 /**
@@ -3513,7 +3516,7 @@ var RTCUtils = {
 module.exports = RTCUtils;
 
 }).call(this,"/modules/RTC/RTCUtils.js")
-},{"../../JitsiTrackErrors":9,"../../service/RTC/RTCEvents":80,"../../service/RTC/Resolutions":81,"../xmpp/SDPUtil":32,"./RTCBrowserType":17,"./ScreenObtainer":19,"./adapter.screenshare":20,"events":44,"jitsi-meet-logger":48}],19:[function(require,module,exports){
+},{"../../JitsiTrackErrors":9,"../../service/RTC/RTCEvents":79,"../../service/RTC/Resolutions":80,"../xmpp/SDPUtil":31,"./RTCBrowserType":17,"./ScreenObtainer":19,"./adapter.screenshare":20,"events":43,"jitsi-meet-logger":47}],19:[function(require,module,exports){
 (function (__filename){
 /* global chrome, $, alert */
 /* jshint -W003 */
@@ -3522,6 +3525,7 @@ var RTCBrowserType = require("./RTCBrowserType");
 var AdapterJS = require("./adapter.screenshare");
 var DesktopSharingEventTypes
     = require("../../service/desktopsharing/DesktopSharingEventTypes");
+var JitsiTrackErrors = require("../../JitsiTrackErrors");
 
 /**
  * Indicates whether the Chrome desktop sharing extension is installed.
@@ -3556,16 +3560,11 @@ var GUM = null;
  * Handles obtaining a stream from a screen capture on different browsers.
  */
 var ScreenObtainer = {
-    /**
-     * The EventEmitter to use to emit events.
-     * @type {null}
-     */
-    eventEmitter: null,
     obtainStream: null,
     /**
      * Initializes the function used to obtain a screen capture
      * (this.obtainStream).
-     * 
+     *
      * If the browser is Chrome, it uses the value of
      * 'options.desktopSharingChromeMethod' (or 'options.desktopSharing') to
      * decide whether to use the a Chrome extension (if the value is 'ext'),
@@ -3574,8 +3573,7 @@ var ScreenObtainer = {
      * Note that for the "screen" media source to work the
      * 'chrome://flags/#enable-usermedia-screen-capture' flag must be set.
      */
-    init: function(eventEmitter, options, gum) {
-        this.eventEmitter = eventEmitter;
+    init: function(options, gum) {
         var obtainDesktopStream = null;
         this.options = options = options || {};
         GUM = gum;
@@ -3691,14 +3689,12 @@ var ScreenObtainer = {
         firefoxExtInstalled = null;
         reDetectFirefoxExtension = true;
 
-        // Prompt the user to install the extension
-        this.eventEmitter.emit(
-            DesktopSharingEventTypes.FIREFOX_EXTENSION_NEEDED,
-            this.options.desktopSharingFirefoxExtensionURL);
-
         // Make sure desktopsharing knows that we failed, so that it doesn't get
         // stuck in 'switching' mode.
-        errorCallback('Firefox extension required.');
+        errorCallback({
+            type: "jitsiError",
+            errorObject: JitsiTrackErrors.FIREFOX_EXTENSION_NEEDED
+        });
     },
     /**
      * Asks Chrome extension to call chooseDesktopMedia and gets chrome
@@ -3936,7 +3932,7 @@ function initFirefoxExtensionDetection(options) {
 module.exports = ScreenObtainer;
 
 }).call(this,"/modules/RTC/ScreenObtainer.js")
-},{"../../service/desktopsharing/DesktopSharingEventTypes":84,"./RTCBrowserType":17,"./adapter.screenshare":20,"jitsi-meet-logger":48}],20:[function(require,module,exports){
+},{"../../JitsiTrackErrors":9,"../../service/desktopsharing/DesktopSharingEventTypes":82,"./RTCBrowserType":17,"./adapter.screenshare":20,"jitsi-meet-logger":47}],20:[function(require,module,exports){
 (function (__filename){
 /*! adapterjs - v0.12.3 - 2015-11-16 */
 var console = require("jitsi-meet-logger").getLogger(__filename);
@@ -5120,7 +5116,7 @@ if (navigator.mozGetUserMedia) {
 }
 
 }).call(this,"/modules/RTC/adapter.screenshare.js")
-},{"jitsi-meet-logger":48}],21:[function(require,module,exports){
+},{"jitsi-meet-logger":47}],21:[function(require,module,exports){
 (function (__filename){
 
 var logger = require("jitsi-meet-logger").getLogger(__filename);
@@ -5187,7 +5183,7 @@ Settings.prototype.getSettings = function () {
 module.exports = Settings;
 
 }).call(this,"/modules/settings/Settings.js")
-},{"jitsi-meet-logger":48}],22:[function(require,module,exports){
+},{"jitsi-meet-logger":47}],22:[function(require,module,exports){
 /* global config */
 /**
  * Provides statistics for the local stream.
@@ -6044,7 +6040,7 @@ StatsCollector.prototype.processAudioLevelReport = function () {
 };
 
 }).call(this,"/modules/statistics/RTPStatsCollector.js")
-},{"../../service/statistics/Events":85,"../RTC/RTCBrowserType":17,"jitsi-meet-logger":48}],24:[function(require,module,exports){
+},{"../../service/statistics/Events":83,"../RTC/RTCBrowserType":17,"jitsi-meet-logger":47}],24:[function(require,module,exports){
 /* global require, APP */
 var LocalStats = require("./LocalStatsCollector.js");
 var RTPStats = require("./RTPStatsCollector.js");
@@ -6219,7 +6215,7 @@ Statistics.LOCAL_JID = require("../../service/statistics/constants").LOCAL_JID;
 
 module.exports = Statistics;
 
-},{"../../service/statistics/Events":85,"../../service/statistics/constants":86,"./LocalStatsCollector.js":22,"./RTPStatsCollector.js":23,"events":44}],25:[function(require,module,exports){
+},{"../../service/statistics/Events":83,"../../service/statistics/constants":84,"./LocalStatsCollector.js":22,"./RTPStatsCollector.js":23,"events":43}],25:[function(require,module,exports){
 /**
 /**
  * @const
@@ -6289,7 +6285,8 @@ var RandomUtil = {
         return ret;
     },
     randomElement: randomElement,
-    randomAlphanumStr: randomAlphanumStr
+    randomAlphanumStr: randomAlphanumStr,
+    randomInt: randomInt
 };
 
 module.exports = RandomUtil;
@@ -7106,7 +7103,7 @@ ChatRoom.prototype.onMute = function (iq) {
 module.exports = ChatRoom;
 
 }).call(this,"/modules/xmpp/ChatRoom.js")
-},{"../../service/xmpp/XMPPEvents":87,"./moderator":34,"./recording":35,"events":44,"jitsi-meet-logger":48}],27:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":85,"./moderator":33,"./recording":34,"events":43,"jitsi-meet-logger":47}],27:[function(require,module,exports){
 (function (__filename){
 /*
  * JingleSession provides an API to manage a single Jingle session. We will
@@ -7242,7 +7239,7 @@ JingleSession.prototype.setAnswer = function(jingle) {};
 module.exports = JingleSession;
 
 }).call(this,"/modules/xmpp/JingleSession.js")
-},{"jitsi-meet-logger":48}],28:[function(require,module,exports){
+},{"jitsi-meet-logger":47}],28:[function(require,module,exports){
 (function (__filename){
 /* jshint -W117 */
 
@@ -7256,7 +7253,6 @@ var async = require("async");
 var transform = require("sdp-transform");
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 var RTCBrowserType = require("../RTC/RTCBrowserType");
-var SSRCReplacement = require("./LocalSSRCReplacement");
 var RTC = require("../RTC/RTC");
 
 // Jingle stuff
@@ -7520,8 +7516,6 @@ JingleSessionPC.prototype.accept = function () {
             //logger.log('setLocalDescription success');
             self.setLocalDescription();
 
-            SSRCReplacement.processSessionInit(accept);
-
             self.connection.sendIQ(accept,
                 function () {
                     var ack = {};
@@ -7618,8 +7612,6 @@ JingleSessionPC.prototype.sendIceCandidate = function (candidate) {
                     init,
                     self.initiator == self.me ? 'initiator' : 'responder',
                     ssrc);
-
-                SSRCReplacement.processSessionInit(init);
 
                 self.connection.sendIQ(init,
                     function () {
@@ -7736,8 +7728,6 @@ JingleSessionPC.prototype.createdOffer = function (sdp) {
         self.localSDP.toJingle(
             init,
             this.initiator == this.me ? 'initiator' : 'responder');
-
-        SSRCReplacement.processSessionInit(init);
 
         self.connection.sendIQ(init,
             function () {
@@ -7981,6 +7971,8 @@ JingleSessionPC.prototype.addIceCandidate = function (elem) {
                 self.peerconnection.addIceCandidate(candidate);
             } catch (e) {
                 logger.error('addIceCandidate failed', e.toString(), line);
+                self.room.eventEmitter.emit(XMPPEvents.ADD_ICE_CANDIDATE_FAILED,
+                    err, self.peerconnection);
             }
         });
     });
@@ -8036,8 +8028,6 @@ JingleSessionPC.prototype.createdAnswer = function (sdp, provisional) {
                     accept,
                     self.initiator == self.me ? 'initiator' : 'responder',
                     ssrcs);
-
-                SSRCReplacement.processSessionInit(accept);
 
                 self.connection.sendIQ(accept,
                     function () {
@@ -8507,7 +8497,46 @@ JingleSessionPC.prototype.removeStream = function (stream, callback) {
         if(this.peerconnection.localDescription) {
             oldSdp = new SDP(this.peerconnection.localDescription.sdp);
         }
-        if(stream)
+        if (RTCBrowserType.getBrowserType() ===
+                RTCBrowserType.RTC_BROWSER_FIREFOX) {
+            var sender = null;
+            // On Firefox we don't replace MediaStreams as this messes up the
+            // m-lines (which can't be removed in Plan Unified) and brings a lot
+            // of complications. Instead, we use the RTPSender and replace just
+            // the track.
+            var track = null;
+            if(stream.getAudioTracks() && stream.getAudioTracks().length) {
+                track = stream.getAudioTracks()[0];
+            } else if(stream.getVideoTracks() && stream.getVideoTracks().length)
+            {
+                track = stream.getVideoTracks()[0];
+            }
+
+            if(!track) {
+                console.log("Cannot switch tracks: no tracks.");
+                return;
+            }
+
+            // Find the right sender (for audio or video)
+            self.peerconnection.peerconnection.getSenders().some(function (s) {
+                if (s.track === track) {
+                    sender = s;
+                    return true;
+                }
+            });
+
+            if (sender) {
+                self.peerconnection.peerconnection.removeTrack(sender);
+                    // .then(function() {
+                    //     console.log("Replaced a track, isAudio=" + isAudio);
+                    // })
+                    // .catch(function(err) {
+                    //     console.log("Failed to replace a track: " + err);
+                    // });
+            } else {
+                console.log("Cannot switch tracks: no RTPSender.");
+            }
+        } else if(stream)
             this.peerconnection.removeStream(stream);
     }
 
@@ -8554,11 +8583,6 @@ JingleSessionPC.prototype.notifyMySSRCUpdate = function (old_sdp, new_sdp) {
     );
     var removed = sdpDiffer.toJingle(remove);
 
-    // Let 'source-remove' IQ through the hack and see if we're allowed to send
-    // it in the current form
-    if (removed)
-        remove = SSRCReplacement.processSourceRemove(remove);
-
     if (removed && remove) {
         logger.info("Sending source-remove", remove);
         this.connection.sendIQ(remove,
@@ -8584,11 +8608,6 @@ JingleSessionPC.prototype.notifyMySSRCUpdate = function (old_sdp, new_sdp) {
         }
     );
     var added = sdpDiffer.toJingle(add);
-
-    // Let 'source-add' IQ through the hack and see if we're allowed to send
-    // it in the current form
-    if (added)
-        add = SSRCReplacement.processSourceAdd(add);
 
     if (added && add) {
         logger.info("Sending source-add", add);
@@ -8883,303 +8902,7 @@ JingleSessionPC.prototype.getIceConnectionState = function () {
 module.exports = JingleSessionPC;
 
 }).call(this,"/modules/xmpp/JingleSessionPC.js")
-},{"../../service/xmpp/XMPPEvents":87,"../RTC/RTC":16,"../RTC/RTCBrowserType":17,"./JingleSession":27,"./LocalSSRCReplacement":29,"./SDP":30,"./SDPDiffer":31,"./SDPUtil":32,"./TraceablePeerConnection":33,"async":43,"jitsi-meet-logger":48,"sdp-transform":76}],29:[function(require,module,exports){
-(function (__filename){
-/* global $ */
-var logger = require("jitsi-meet-logger").getLogger(__filename);
-
-
-/*
- Here we do modifications of local video SSRCs. There are 2 situations we have
- to handle:
-
- 1. We generate SSRC for local recvonly video stream. This is the case when we
-    have no local camera and it is not generated automatically, but SSRC=1 is
-    used implicitly. If that happens RTCP packets will be dropped by the JVB
-    and we won't be able to request video key frames correctly.
-
- 2. A hack to re-use SSRC of the first video stream for any new stream created
-    in future. It turned out that Chrome may keep on using the SSRC of removed
-    video stream in RTCP even though a new one has been created. So we just
-    want to avoid that by re-using it. Jingle 'source-remove'/'source-add'
-    notifications are blocked once first video SSRC is advertised to the focus.
-
- What this hack does:
-
- 1. Stores the SSRC of the first video stream created by
-   a) scanning Jingle session-accept/session-invite for existing video SSRC
-   b) watching for 'source-add' for new video stream if it has not been
-      created in step a)
- 2. Exposes method 'mungeLocalVideoSSRC' which replaces any new video SSRC with
-    the stored one. It is called by 'TracablePeerConnection' before local SDP is
-    returned to the other parts of the application.
- 3. Scans 'source-remove'/'source-add' notifications for stored video SSRC and
-    blocks those notifications. This makes Jicofo and all participants think
-    that it exists all the time even if the video stream has been removed or
-    replaced locally. Thanks to that there is no additional signaling activity
-    on video mute or when switching to the desktop stream.
- */
-
-var SDP = require('./SDP');
-var RandomUtil = require('../util/RandomUtil');
-var RTCBrowserType = require('../RTC/RTCBrowserType');
-
-/**
- * The hack is enabled on all browsers except FF by default
- * FIXME finish the hack once removeStream method is implemented in FF
- * @type {boolean}
- */
-var isEnabled = !RTCBrowserType.isFirefox();
-
-
-/**
- * Stored SSRC of local video stream.
- */
-var localVideoSSRC;
-
-/**
- * SSRC used for recvonly video stream when we have no local camera.
- * This is in order to tell Chrome what SSRC should be used in RTCP requests
- * instead of 1.
- */
-var localRecvOnlySSRC, localRecvOnlyMSID, localRecvOnlyMSLabel, localRecvOnlyLabel;
-
-/**
- * cname for <tt>localRecvOnlySSRC</tt>
- */
-var localRecvOnlyCName;
-
-/**
- * Method removes <source> element which describes <tt>localVideoSSRC</tt>
- * from given Jingle IQ.
- * @param modifyIq 'source-add' or 'source-remove' Jingle IQ.
- * @param actionName display name of the action which will be printed in log
- *        messages.
- * @returns {*} modified Jingle IQ, so that it does not contain <source> element
- *          corresponding to <tt>localVideoSSRC</tt> or <tt>null</tt> if no
- *          other SSRCs left to be signaled after removing it.
- */
-var filterOutSource = function (modifyIq, actionName) {
-    var modifyIqTree = $(modifyIq.tree());
-
-    if (!localVideoSSRC)
-        return modifyIqTree[0];
-
-    var videoSSRC = modifyIqTree.find(
-        '>jingle>content[name="video"]' +
-        '>description>source[ssrc="' + localVideoSSRC + '"]');
-
-    if (!videoSSRC.length) {
-        return modifyIqTree[0];
-    }
-
-    logger.info(
-        'Blocking ' + actionName + ' for local video SSRC: ' + localVideoSSRC);
-
-    videoSSRC.remove();
-
-    // Check if any sources still left to be added/removed
-    if (modifyIqTree.find('>jingle>content>description>source').length) {
-        return modifyIqTree[0];
-    } else {
-        return null;
-    }
-};
-
-/**
- * Scans given Jingle IQ for video SSRC and stores it.
- * @param jingleIq the Jingle IQ to be scanned for video SSRC.
- */
-var storeLocalVideoSSRC = function (jingleIq) {
-    var videoSSRCs =
-        $(jingleIq.tree())
-            .find('>jingle>content[name="video"]>description>source');
-
-    videoSSRCs.each(function (idx, ssrcElem) {
-        if (localVideoSSRC)
-            return;
-        // We consider SSRC real only if it has msid attribute
-        // recvonly streams in FF do not have it as well as local SSRCs
-        // we generate for recvonly streams in Chrome
-        var ssrSel = $(ssrcElem);
-        var msid = ssrSel.find('>parameter[name="msid"]');
-        if (msid.length) {
-            var ssrcVal = ssrSel.attr('ssrc');
-            if (ssrcVal) {
-                localVideoSSRC = ssrcVal;
-                logger.info('Stored local video SSRC' +
-                             ' for future re-use: ' + localVideoSSRC);
-            }
-        }
-    });
-};
-
-/**
- * Generates new label/mslabel attribute
- * @returns {string} label/mslabel attribute
- */
-function generateLabel() {
-    return RandomUtil.randomHexString(8) + "-" + RandomUtil.randomHexString(4) +
-        "-" + RandomUtil.randomHexString(4) + "-" +
-        RandomUtil.randomHexString(4) + "-" + RandomUtil.randomHexString(12);
-}
-
-/**
- * Generates new SSRC for local video recvonly stream.
- * FIXME what about eventual SSRC collision ?
- */
-function generateRecvonlySSRC() {
-
-    localVideoSSRC = localRecvOnlySSRC =
-        localVideoSSRC ?
-            localVideoSSRC : Math.random().toString(10).substring(2, 11);
-
-    localRecvOnlyCName =
-        Math.random().toString(36).substring(2);
-
-    localRecvOnlyMSLabel = generateLabel();
-    localRecvOnlyLabel = generateLabel();
-    localRecvOnlyMSID = localRecvOnlyMSLabel + " " + localRecvOnlyLabel;
-
-    logger.info(
-        "Generated local recvonly SSRC: " + localRecvOnlySSRC +
-        ", cname: " + localRecvOnlyCName);
-}
-
-var LocalSSRCReplacement = {
-    /**
-     * Method must be called before 'session-initiate' or 'session-invite' is
-     * sent. Scans the IQ for local video SSRC and stores it if detected.
-     *
-     * @param sessionInit our 'session-initiate' or 'session-accept' Jingle IQ
-     *        which will be scanned for local video SSRC.
-     */
-    processSessionInit: function (sessionInit) {
-        if (!isEnabled)
-            return;
-
-        if (localVideoSSRC) {
-            logger.error("Local SSRC stored already: " + localVideoSSRC);
-            return;
-        }
-        storeLocalVideoSSRC(sessionInit);
-    },
-    /**
-     * If we have local video SSRC stored searched given
-     * <tt>localDescription</tt> for video SSRC and makes sure it is replaced
-     * with the stored one.
-     * @param localDescription local description object that will have local
-     *        video SSRC replaced with the stored one
-     * @returns modified <tt>localDescription</tt> object.
-     */
-    mungeLocalVideoSSRC: function (localDescription) {
-        if (!isEnabled)
-            return localDescription;
-
-        if (!localDescription) {
-            logger.warn("localDescription is null or undefined");
-            return localDescription;
-        }
-
-        // IF we have local video SSRC stored make sure it is replaced
-        // with old SSRC
-        var sdp = new SDP(localDescription.sdp);
-        if (sdp.media.length < 2)
-            return;
-
-        if (localVideoSSRC && sdp.media[1].indexOf("a=ssrc:") !== -1 &&
-            !sdp.containsSSRC(localVideoSSRC)) {
-            // Get new video SSRC
-            var map = sdp.getMediaSsrcMap();
-            var videoPart = map[1];
-            var videoSSRCs = videoPart.ssrcs;
-            var newSSRC = Object.keys(videoSSRCs)[0];
-
-            logger.info(
-                "Replacing new video SSRC: " + newSSRC +
-                " with " + localVideoSSRC);
-
-            localDescription.sdp =
-                sdp.raw.replace(
-                    new RegExp('a=ssrc:' + newSSRC, 'g'),
-                    'a=ssrc:' + localVideoSSRC);
-        }
-        else if (sdp.media[1].indexOf('a=ssrc:') === -1 &&
-                 sdp.media[1].indexOf('a=recvonly') !== -1) {
-            // Make sure we have any SSRC for recvonly video stream
-            if (!localRecvOnlySSRC) {
-                generateRecvonlySSRC();
-            }
-
-            logger.info('No SSRC in video recvonly stream' +
-                         ' - adding SSRC: ' + localRecvOnlySSRC);
-
-            sdp.media[1] += 'a=ssrc:' + localRecvOnlySSRC +
-                            ' cname:' + localRecvOnlyCName + '\r\n' +
-                            'a=ssrc:' + localRecvOnlySSRC +
-                            ' msid:' + localRecvOnlyMSID + '\r\n' +
-                            'a=ssrc:' + localRecvOnlySSRC +
-                            ' mslabel:' + localRecvOnlyMSLabel + '\r\n' +
-                            'a=ssrc:' + localRecvOnlySSRC +
-                            ' label:' + localRecvOnlyLabel + '\r\n';
-
-            localDescription.sdp = sdp.session + sdp.media.join('');
-        }
-        return localDescription;
-    },
-    /**
-     * Method must be called before 'source-add' notification is sent. In case
-     * we have local video SSRC advertised already it will be removed from the
-     * notification. If no other SSRCs are described by given IQ null will be
-     * returned which means that there is no point in sending the notification.
-     * @param sourceAdd 'source-add' Jingle IQ to be processed
-     * @returns modified 'source-add' IQ which can be sent to the focus or
-     *          <tt>null</tt> if no notification shall be sent. It is no longer
-     *          a Strophe IQ Builder instance, but DOM element tree.
-     */
-    processSourceAdd: function (sourceAdd) {
-        if (!isEnabled)
-            return sourceAdd;
-
-        if (!localVideoSSRC) {
-            // Store local SSRC if available
-            storeLocalVideoSSRC(sourceAdd);
-            return sourceAdd;
-        } else {
-            return filterOutSource(sourceAdd, 'source-add');
-        }
-    },
-    /**
-     * Method must be called before 'source-remove' notification is sent.
-     * Removes local video SSRC from the notification. If there are no other
-     * SSRCs described in the given IQ <tt>null</tt> will be returned which
-     * means that there is no point in sending the notification.
-     * @param sourceRemove 'source-remove' Jingle IQ to be processed
-     * @returns modified 'source-remove' IQ which can be sent to the focus or
-     *          <tt>null</tt> if no notification shall be sent. It is no longer
-     *          a Strophe IQ Builder instance, but DOM element tree.
-     */
-    processSourceRemove: function (sourceRemove) {
-        if (!isEnabled)
-            return sourceRemove;
-
-        return filterOutSource(sourceRemove, 'source-remove');
-    },
-
-    /**
-     * Turns the hack on or off
-     * @param enabled <tt>true</tt> to enable the hack or <tt>false</tt>
-     *                to disable it
-     */
-    setEnabled: function (enabled) {
-        isEnabled = enabled;
-    }
-};
-
-module.exports = LocalSSRCReplacement;
-
-}).call(this,"/modules/xmpp/LocalSSRCReplacement.js")
-},{"../RTC/RTCBrowserType":17,"../util/RandomUtil":25,"./SDP":30,"jitsi-meet-logger":48}],30:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":85,"../RTC/RTC":16,"../RTC/RTCBrowserType":17,"./JingleSession":27,"./SDP":29,"./SDPDiffer":30,"./SDPUtil":31,"./TraceablePeerConnection":32,"async":42,"jitsi-meet-logger":47,"sdp-transform":75}],29:[function(require,module,exports){
 (function (__filename){
 /* jshint -W117 */
 
@@ -9830,7 +9553,7 @@ SDP.prototype.jingle2media = function (content) {
 module.exports = SDP;
 
 }).call(this,"/modules/xmpp/SDP.js")
-},{"./SDPUtil":32,"jitsi-meet-logger":48}],31:[function(require,module,exports){
+},{"./SDPUtil":31,"jitsi-meet-logger":47}],30:[function(require,module,exports){
 var SDPUtil = require("./SDPUtil");
 
 function SDPDiffer(mySDP, otherSDP)
@@ -9999,7 +9722,7 @@ SDPDiffer.prototype.toJingle = function(modify) {
 };
 
 module.exports = SDPDiffer;
-},{"./SDPUtil":32}],32:[function(require,module,exports){
+},{"./SDPUtil":31}],31:[function(require,module,exports){
 (function (__filename){
 var logger = require("jitsi-meet-logger").getLogger(__filename);
 var RTCBrowserType = require("../RTC/RTCBrowserType");
@@ -10367,15 +10090,13 @@ SDPUtil = {
 module.exports = SDPUtil;
 
 }).call(this,"/modules/xmpp/SDPUtil.js")
-},{"../RTC/RTCBrowserType":17,"jitsi-meet-logger":48}],33:[function(require,module,exports){
+},{"../RTC/RTCBrowserType":17,"jitsi-meet-logger":47}],32:[function(require,module,exports){
 (function (__filename){
 /* global $ */
 var RTC = require('../RTC/RTC');
-
 var logger = require("jitsi-meet-logger").getLogger(__filename);
 var RTCBrowserType = require("../RTC/RTCBrowserType.js");
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
-var SSRCReplacement = require("./LocalSSRCReplacement");
 
 function TraceablePeerConnection(ice_config, constraints, session) {
     var self = this;
@@ -10509,6 +10230,47 @@ var dumpSDP = function(description) {
     return 'type: ' + description.type + '\r\n' + description.sdp;
 };
 
+var insertRecvOnlySSRC = function (desc) {
+    if (typeof desc !== 'object' || desc === null ||
+        typeof desc.sdp !== 'string') {
+        console.warn('An empty description was passed as an argument.');
+        return desc;
+    }
+
+    var transform = require('sdp-transform');
+    var RandomUtil = require('../util/RandomUtil');
+
+    var session = transform.parse(desc.sdp);
+    if (!Array.isArray(session.media))
+    {
+        return;
+    }
+
+    var modded = false;
+    session.media.forEach(function (bLine) {
+        if (bLine.direction != 'recvonly')
+        {
+            return;
+        }
+
+        modded = true;
+        if (!Array.isArray(bLine.ssrcs) || bLine.ssrcs.length === 0)
+        {
+            var ssrc = RandomUtil.randomInt(1, 0xffffffff);
+            bLine.ssrcs = [{
+                id: ssrc,
+                attribute: 'cname',
+                value: ['recvonly-', ssrc].join('')
+            }];
+        }
+    });
+
+    return (!modded) ? desc : new RTCSessionDescription({
+        type: desc.type,
+        sdp: transform.write(session),
+    });
+};
+
 /**
  * Takes a SessionDescription object and returns a "normalized" version.
  * Currently it only takes care of ordering the a=ssrc lines.
@@ -10586,10 +10348,6 @@ var getters = {
     },
     localDescription:  function() {
         var desc = this.peerconnection.localDescription;
-
-            // FIXME this should probably be after the Unified Plan -> Plan B
-            // transformation.
-        desc = SSRCReplacement.mungeLocalVideoSSRC(desc);
 
         this.trace('getLocalDescription::preTransform', dumpSDP(desc));
 
@@ -10741,9 +10499,13 @@ TraceablePeerConnection.prototype.createOffer
                 self.trace('createOfferOnSuccess::postTransform (Plan B)', dumpSDP(offer));
             }
 
-            offer = SSRCReplacement.mungeLocalVideoSSRC(offer);
+            if (RTCBrowserType.isChrome())
+            {
+                offer = insertRecvOnlySSRC(offer);
+                self.trace('createOfferOnSuccess::mungeLocalVideoSSRC', dumpSDP(offer));
+            }
 
-            if (self.session.room.options.enableSimulcast && self.simulcast.isSupported()) {
+            if (!self.session.room.options.disableSimulcast && self.simulcast.isSupported()) {
                 offer = self.simulcast.mungeLocalDescription(offer);
                 self.trace('createOfferOnSuccess::postTransform (simulcast)', dumpSDP(offer));
             }
@@ -10770,10 +10532,13 @@ TraceablePeerConnection.prototype.createAnswer
                 self.trace('createAnswerOnSuccess::postTransform (Plan B)', dumpSDP(answer));
             }
 
-            // munge local video SSRC
-            answer = SSRCReplacement.mungeLocalVideoSSRC(answer);
+            if (RTCBrowserType.isChrome())
+            {
+                answer = insertRecvOnlySSRC(answer);
+                self.trace('createAnswerOnSuccess::mungeLocalVideoSSRC', dumpSDP(answer));
+            }
 
-            if (self.session.room.options.enableSimulcast && self.simulcast.isSupported()) {
+            if (!self.session.room.options.disableSimulcast && self.simulcast.isSupported()) {
                 answer = self.simulcast.mungeLocalDescription(answer);
                 self.trace('createAnswerOnSuccess::postTransform (simulcast)', dumpSDP(answer));
             }
@@ -10821,7 +10586,7 @@ TraceablePeerConnection.prototype.getStats = function(callback, errback) {
 module.exports = TraceablePeerConnection;
 
 }).call(this,"/modules/xmpp/TraceablePeerConnection.js")
-},{"../../service/xmpp/XMPPEvents":87,"../RTC/RTC":16,"../RTC/RTCBrowserType.js":17,"./LocalSSRCReplacement":29,"jitsi-meet-logger":48,"sdp-interop":66,"sdp-simulcast":73,"sdp-transform":76}],34:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":85,"../RTC/RTC":16,"../RTC/RTCBrowserType.js":17,"../util/RandomUtil":25,"jitsi-meet-logger":47,"sdp-interop":65,"sdp-simulcast":72,"sdp-transform":75}],33:[function(require,module,exports){
 (function (__filename){
 /* global $, $iq, Promise, Strophe */
 
@@ -11282,11 +11047,11 @@ Moderator.prototype.logout =  function (callback) {
 module.exports = Moderator;
 
 }).call(this,"/modules/xmpp/moderator.js")
-},{"../../service/authentication/AuthenticationEvents":83,"../../service/xmpp/XMPPEvents":87,"../settings/Settings":21,"jitsi-meet-logger":48}],35:[function(require,module,exports){
+},{"../../service/authentication/AuthenticationEvents":81,"../../service/xmpp/XMPPEvents":85,"../settings/Settings":21,"jitsi-meet-logger":47}],34:[function(require,module,exports){
 (function (__filename){
 /* global $, $iq, config, connection, focusMucJid, messageHandler,
    Toolbar, Util, Promise */
-var XMPPEvents = require("../../service/XMPP/XMPPEvents");
+var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 var logger = require("jitsi-meet-logger").getLogger(__filename);
 
 function Recording(type, eventEmitter, connection, focusMucJid, jirecon,
@@ -11509,7 +11274,7 @@ Recording.prototype.getURL = function () {
 module.exports = Recording;
 
 }).call(this,"/modules/xmpp/recording.js")
-},{"../../service/XMPP/XMPPEvents":82,"jitsi-meet-logger":48}],36:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":85,"jitsi-meet-logger":47}],35:[function(require,module,exports){
 (function (__filename){
 /* jshint -W117 */
 /* a simple MUC connection plugin
@@ -11621,7 +11386,7 @@ module.exports = function(XMPP) {
 };
 
 }).call(this,"/modules/xmpp/strophe.emuc.js")
-},{"./ChatRoom":26,"jitsi-meet-logger":48}],37:[function(require,module,exports){
+},{"./ChatRoom":26,"jitsi-meet-logger":47}],36:[function(require,module,exports){
 (function (__filename){
 /* jshint -W117 */
 
@@ -11918,7 +11683,7 @@ module.exports = function(XMPP, eventEmitter) {
 
 
 }).call(this,"/modules/xmpp/strophe.jingle.js")
-},{"../../service/xmpp/XMPPEvents":87,"../RTC/RTCBrowserType":17,"./JingleSessionPC":28,"jitsi-meet-logger":48}],38:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":85,"../RTC/RTCBrowserType":17,"./JingleSessionPC":28,"jitsi-meet-logger":47}],37:[function(require,module,exports){
 /* global Strophe */
 module.exports = function () {
 
@@ -11939,7 +11704,7 @@ module.exports = function () {
         }
     });
 };
-},{}],39:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 (function (__filename){
 /* global $, $iq, Strophe */
 
@@ -11948,9 +11713,9 @@ var logger = require("jitsi-meet-logger").getLogger(__filename);
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 
 /**
- * Ping every 20 sec
+ * Ping every 10 sec
  */
-var PING_INTERVAL = 20000;
+var PING_INTERVAL = 10000;
 
 /**
  * Ping timeout error after 15 sec of waiting.
@@ -12066,7 +11831,7 @@ module.exports = function (XMPP, eventEmitter) {
 };
 
 }).call(this,"/modules/xmpp/strophe.ping.js")
-},{"../../service/xmpp/XMPPEvents":87,"jitsi-meet-logger":48}],40:[function(require,module,exports){
+},{"../../service/xmpp/XMPPEvents":85,"jitsi-meet-logger":47}],39:[function(require,module,exports){
 (function (__filename){
 /* jshint -W117 */
 var logger = require("jitsi-meet-logger").getLogger(__filename);
@@ -12183,7 +11948,7 @@ module.exports = function() {
 };
 
 }).call(this,"/modules/xmpp/strophe.rayo.js")
-},{"jitsi-meet-logger":48}],41:[function(require,module,exports){
+},{"jitsi-meet-logger":47}],40:[function(require,module,exports){
 (function (__filename){
 /* global Strophe */
 /**
@@ -12232,7 +11997,7 @@ module.exports = function () {
 };
 
 }).call(this,"/modules/xmpp/strophe.util.js")
-},{"jitsi-meet-logger":48}],42:[function(require,module,exports){
+},{"jitsi-meet-logger":47}],41:[function(require,module,exports){
 (function (__filename){
 /* global $, APP, config, Strophe*/
 
@@ -12544,7 +12309,7 @@ XMPP.prototype.disconnect = function () {
 module.exports = XMPP;
 
 }).call(this,"/modules/xmpp/xmpp.js")
-},{"../../JitsiConnectionErrors":5,"../../JitsiConnectionEvents":6,"../../service/RTC/RTCEvents":80,"../../service/xmpp/XMPPEvents":87,"../RTC/RTC":16,"./strophe.emuc":36,"./strophe.jingle":37,"./strophe.logger":38,"./strophe.ping":39,"./strophe.rayo":40,"./strophe.util":41,"events":44,"jitsi-meet-logger":48,"pako":49}],43:[function(require,module,exports){
+},{"../../JitsiConnectionErrors":5,"../../JitsiConnectionEvents":6,"../../service/RTC/RTCEvents":79,"../../service/xmpp/XMPPEvents":85,"../RTC/RTC":16,"./strophe.emuc":35,"./strophe.jingle":36,"./strophe.logger":37,"./strophe.ping":38,"./strophe.rayo":39,"./strophe.util":40,"events":43,"jitsi-meet-logger":47,"pako":48}],42:[function(require,module,exports){
 (function (process){
 /*!
  * async
@@ -13671,7 +13436,7 @@ module.exports = XMPP;
 }());
 
 }).call(this,require('_process'))
-},{"_process":45}],44:[function(require,module,exports){
+},{"_process":44}],43:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -13974,7 +13739,7 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],45:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -14067,7 +13832,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],46:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 (function (process,global){
 /*!
  * @overview es6-promise - a tiny implementation of Promises/A+.
@@ -15038,7 +14803,7 @@ process.umask = function() { return 0; };
 
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":45}],47:[function(require,module,exports){
+},{"_process":44}],46:[function(require,module,exports){
 /* Copyright @ 2015 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15182,7 +14947,7 @@ Logger.levels = {
     ERROR: "error"
 };
 
-},{}],48:[function(require,module,exports){
+},{}],47:[function(require,module,exports){
 /* Copyright @ 2015 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15267,7 +15032,7 @@ module.exports = {
     levels: Logger.levels
 };
 
-},{"./Logger":47}],49:[function(require,module,exports){
+},{"./Logger":46}],48:[function(require,module,exports){
 // Top level file is just a mixin of submodules & constants
 'use strict';
 
@@ -15283,7 +15048,7 @@ assign(pako, deflate, inflate, constants);
 
 module.exports = pako;
 
-},{"./lib/deflate":50,"./lib/inflate":51,"./lib/utils/common":52,"./lib/zlib/constants":55}],50:[function(require,module,exports){
+},{"./lib/deflate":49,"./lib/inflate":50,"./lib/utils/common":51,"./lib/zlib/constants":54}],49:[function(require,module,exports){
 'use strict';
 
 
@@ -15661,7 +15426,7 @@ exports.deflate = deflate;
 exports.deflateRaw = deflateRaw;
 exports.gzip = gzip;
 
-},{"./utils/common":52,"./utils/strings":53,"./zlib/deflate.js":57,"./zlib/messages":62,"./zlib/zstream":64}],51:[function(require,module,exports){
+},{"./utils/common":51,"./utils/strings":52,"./zlib/deflate.js":56,"./zlib/messages":61,"./zlib/zstream":63}],50:[function(require,module,exports){
 'use strict';
 
 
@@ -16063,7 +15828,7 @@ exports.inflate = inflate;
 exports.inflateRaw = inflateRaw;
 exports.ungzip  = inflate;
 
-},{"./utils/common":52,"./utils/strings":53,"./zlib/constants":55,"./zlib/gzheader":58,"./zlib/inflate.js":60,"./zlib/messages":62,"./zlib/zstream":64}],52:[function(require,module,exports){
+},{"./utils/common":51,"./utils/strings":52,"./zlib/constants":54,"./zlib/gzheader":57,"./zlib/inflate.js":59,"./zlib/messages":61,"./zlib/zstream":63}],51:[function(require,module,exports){
 'use strict';
 
 
@@ -16167,7 +15932,7 @@ exports.setTyped = function (on) {
 
 exports.setTyped(TYPED_OK);
 
-},{}],53:[function(require,module,exports){
+},{}],52:[function(require,module,exports){
 // String encode/decode helpers
 'use strict';
 
@@ -16354,7 +16119,7 @@ exports.utf8border = function(buf, max) {
   return (pos + _utf8len[buf[pos]] > max) ? pos : max;
 };
 
-},{"./common":52}],54:[function(require,module,exports){
+},{"./common":51}],53:[function(require,module,exports){
 'use strict';
 
 // Note: adler32 takes 12% for level 0 and 2% for level 6.
@@ -16388,7 +16153,7 @@ function adler32(adler, buf, len, pos) {
 
 module.exports = adler32;
 
-},{}],55:[function(require,module,exports){
+},{}],54:[function(require,module,exports){
 module.exports = {
 
   /* Allowed flush values; see deflate() and inflate() below for details */
@@ -16437,7 +16202,7 @@ module.exports = {
   //Z_NULL:                 null // Use -1 or null inline, depending on var type
 };
 
-},{}],56:[function(require,module,exports){
+},{}],55:[function(require,module,exports){
 'use strict';
 
 // Note: we can't get significant speed boost here.
@@ -16480,7 +16245,7 @@ function crc32(crc, buf, len, pos) {
 
 module.exports = crc32;
 
-},{}],57:[function(require,module,exports){
+},{}],56:[function(require,module,exports){
 'use strict';
 
 var utils   = require('../utils/common');
@@ -18247,7 +18012,7 @@ exports.deflatePrime = deflatePrime;
 exports.deflateTune = deflateTune;
 */
 
-},{"../utils/common":52,"./adler32":54,"./crc32":56,"./messages":62,"./trees":63}],58:[function(require,module,exports){
+},{"../utils/common":51,"./adler32":53,"./crc32":55,"./messages":61,"./trees":62}],57:[function(require,module,exports){
 'use strict';
 
 
@@ -18289,7 +18054,7 @@ function GZheader() {
 
 module.exports = GZheader;
 
-},{}],59:[function(require,module,exports){
+},{}],58:[function(require,module,exports){
 'use strict';
 
 // See state defs from inflate.js
@@ -18617,7 +18382,7 @@ module.exports = function inflate_fast(strm, start) {
   return;
 };
 
-},{}],60:[function(require,module,exports){
+},{}],59:[function(require,module,exports){
 'use strict';
 
 
@@ -20122,7 +19887,7 @@ exports.inflateSyncPoint = inflateSyncPoint;
 exports.inflateUndermine = inflateUndermine;
 */
 
-},{"../utils/common":52,"./adler32":54,"./crc32":56,"./inffast":59,"./inftrees":61}],61:[function(require,module,exports){
+},{"../utils/common":51,"./adler32":53,"./crc32":55,"./inffast":58,"./inftrees":60}],60:[function(require,module,exports){
 'use strict';
 
 
@@ -20451,7 +20216,7 @@ module.exports = function inflate_table(type, lens, lens_index, codes, table, ta
   return 0;
 };
 
-},{"../utils/common":52}],62:[function(require,module,exports){
+},{"../utils/common":51}],61:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -20466,7 +20231,7 @@ module.exports = {
   '-6':   'incompatible version' /* Z_VERSION_ERROR (-6) */
 };
 
-},{}],63:[function(require,module,exports){
+},{}],62:[function(require,module,exports){
 'use strict';
 
 
@@ -21667,7 +21432,7 @@ exports._tr_flush_block  = _tr_flush_block;
 exports._tr_tally = _tr_tally;
 exports._tr_align = _tr_align;
 
-},{"../utils/common":52}],64:[function(require,module,exports){
+},{"../utils/common":51}],63:[function(require,module,exports){
 'use strict';
 
 
@@ -21698,7 +21463,7 @@ function ZStream() {
 
 module.exports = ZStream;
 
-},{}],65:[function(require,module,exports){
+},{}],64:[function(require,module,exports){
 /* Copyright @ 2015 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21739,7 +21504,7 @@ module.exports = function arrayEquals(array) {
 };
 
 
-},{}],66:[function(require,module,exports){
+},{}],65:[function(require,module,exports){
 /* Copyright @ 2015 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21757,7 +21522,7 @@ module.exports = function arrayEquals(array) {
 
 exports.Interop = require('./interop');
 
-},{"./interop":67}],67:[function(require,module,exports){
+},{"./interop":66}],66:[function(require,module,exports){
 /* Copyright @ 2015 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -22480,7 +22245,7 @@ Interop.prototype.toUnifiedPlan = function(desc) {
     //#endregion
 };
 
-},{"./array-equals":65,"./transform":68}],68:[function(require,module,exports){
+},{"./array-equals":64,"./transform":67}],67:[function(require,module,exports){
 /* Copyright @ 2015 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -22594,7 +22359,7 @@ exports.parse = function(sdp) {
 };
 
 
-},{"sdp-transform":70}],69:[function(require,module,exports){
+},{"sdp-transform":69}],68:[function(require,module,exports){
 var grammar = module.exports = {
   v: [{
       name: 'version',
@@ -22853,7 +22618,7 @@ Object.keys(grammar).forEach(function (key) {
   });
 });
 
-},{}],70:[function(require,module,exports){
+},{}],69:[function(require,module,exports){
 var parser = require('./parser');
 var writer = require('./writer');
 
@@ -22863,7 +22628,7 @@ exports.parseFmtpConfig = parser.parseFmtpConfig;
 exports.parsePayloads = parser.parsePayloads;
 exports.parseRemoteCandidates = parser.parseRemoteCandidates;
 
-},{"./parser":71,"./writer":72}],71:[function(require,module,exports){
+},{"./parser":70,"./writer":71}],70:[function(require,module,exports){
 var toIntIfInt = function (v) {
   return String(Number(v)) === v ? Number(v) : v;
 };
@@ -22958,7 +22723,7 @@ exports.parseRemoteCandidates = function (str) {
   return candidates;
 };
 
-},{"./grammar":69}],72:[function(require,module,exports){
+},{"./grammar":68}],71:[function(require,module,exports){
 var grammar = require('./grammar');
 
 // customized util.format - discards excess arguments and can void middle ones
@@ -23074,7 +22839,7 @@ module.exports = function (session, opts) {
   return sdp.join('\r\n') + '\r\n';
 };
 
-},{"./grammar":69}],73:[function(require,module,exports){
+},{"./grammar":68}],72:[function(require,module,exports){
 /* Copyright @ 2015 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23494,7 +23259,7 @@ Simulcast.prototype.mungeLocalDescription = function (desc) {
 
 module.exports = Simulcast;
 
-},{"./transform-utils":74,"sdp-transform":76}],74:[function(require,module,exports){
+},{"./transform-utils":73,"sdp-transform":75}],73:[function(require,module,exports){
 /* Copyright @ 2015 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23560,22 +23325,22 @@ exports.parseSsrcs = function (mLine) {
 };
 
 
-},{}],75:[function(require,module,exports){
+},{}],74:[function(require,module,exports){
+arguments[4][68][0].apply(exports,arguments)
+},{"dup":68}],75:[function(require,module,exports){
 arguments[4][69][0].apply(exports,arguments)
-},{"dup":69}],76:[function(require,module,exports){
+},{"./parser":76,"./writer":77,"dup":69}],76:[function(require,module,exports){
 arguments[4][70][0].apply(exports,arguments)
-},{"./parser":77,"./writer":78,"dup":70}],77:[function(require,module,exports){
+},{"./grammar":74,"dup":70}],77:[function(require,module,exports){
 arguments[4][71][0].apply(exports,arguments)
-},{"./grammar":75,"dup":71}],78:[function(require,module,exports){
-arguments[4][72][0].apply(exports,arguments)
-},{"./grammar":75,"dup":72}],79:[function(require,module,exports){
+},{"./grammar":74,"dup":71}],78:[function(require,module,exports){
 var MediaStreamType = {
     VIDEO_TYPE: "Video",
 
     AUDIO_TYPE: "Audio"
 };
 module.exports = MediaStreamType;
-},{}],80:[function(require,module,exports){
+},{}],79:[function(require,module,exports){
 var RTCEvents = {
     RTC_READY: "rtc.ready",
     DATA_CHANNEL_OPEN: "rtc.data_channel_open",
@@ -23586,7 +23351,7 @@ var RTCEvents = {
 };
 
 module.exports = RTCEvents;
-},{}],81:[function(require,module,exports){
+},{}],80:[function(require,module,exports){
 var Resolutions = {
     "1080": {
         width: 1920,
@@ -23640,7 +23405,53 @@ var Resolutions = {
     }
 };
 module.exports = Resolutions;
+},{}],81:[function(require,module,exports){
+var AuthenticationEvents = {
+    /**
+     * Event callback arguments:
+     * function(authenticationEnabled, userIdentity)
+     * authenticationEnabled - indicates whether authentication has been enabled
+     *                         in this session
+     * userIdentity - if user has been logged in then it contains user name. If
+     *                contains 'null' or 'undefined' then user is not logged in.
+     */
+    IDENTITY_UPDATED: "authentication.identity_updated"
+};
+module.exports = AuthenticationEvents;
+
 },{}],82:[function(require,module,exports){
+var DesktopSharingEventTypes = {
+    /**
+     * An event which indicates that the jidesha extension for Firefox is
+     * needed to proceed with screen sharing, and that it is not installed.
+     */
+    FIREFOX_EXTENSION_NEEDED: "ds.firefox_extension_needed"
+};
+
+module.exports = DesktopSharingEventTypes;
+
+},{}],83:[function(require,module,exports){
+module.exports = {
+    /**
+     * An event carrying connection statistics.
+     */
+    CONNECTION_STATS: "statistics.connectionstats",
+    /**
+     * FIXME: needs documentation.
+     */
+    AUDIO_LEVEL: "statistics.audioLevel",
+    /**
+     * FIXME: needs documentation.
+     */
+    STOP: "statistics.stop"
+};
+
+},{}],84:[function(require,module,exports){
+var Constants = {
+    LOCAL_JID: 'local'
+};
+module.exports = Constants;
+},{}],85:[function(require,module,exports){
 var XMPPEvents = {
     // Designates an event indicating that the connection to the XMPP server
     // failed.
@@ -23749,53 +23560,5 @@ var XMPPEvents = {
 };
 module.exports = XMPPEvents;
 
-},{}],83:[function(require,module,exports){
-var AuthenticationEvents = {
-    /**
-     * Event callback arguments:
-     * function(authenticationEnabled, userIdentity)
-     * authenticationEnabled - indicates whether authentication has been enabled
-     *                         in this session
-     * userIdentity - if user has been logged in then it contains user name. If
-     *                contains 'null' or 'undefined' then user is not logged in.
-     */
-    IDENTITY_UPDATED: "authentication.identity_updated"
-};
-module.exports = AuthenticationEvents;
-
-},{}],84:[function(require,module,exports){
-var DesktopSharingEventTypes = {
-    /**
-     * An event which indicates that the jidesha extension for Firefox is
-     * needed to proceed with screen sharing, and that it is not installed.
-     */
-    FIREFOX_EXTENSION_NEEDED: "ds.firefox_extension_needed"
-};
-
-module.exports = DesktopSharingEventTypes;
-
-},{}],85:[function(require,module,exports){
-module.exports = {
-    /**
-     * An event carrying connection statistics.
-     */
-    CONNECTION_STATS: "statistics.connectionstats",
-    /**
-     * FIXME: needs documentation.
-     */
-    AUDIO_LEVEL: "statistics.audioLevel",
-    /**
-     * FIXME: needs documentation.
-     */
-    STOP: "statistics.stop"
-};
-
-},{}],86:[function(require,module,exports){
-var Constants = {
-    LOCAL_JID: 'local'
-};
-module.exports = Constants;
-},{}],87:[function(require,module,exports){
-arguments[4][82][0].apply(exports,arguments)
-},{"dup":82}]},{},[7])(7)
+},{}]},{},[7])(7)
 });

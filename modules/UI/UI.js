@@ -802,4 +802,13 @@ UI.getLargeVideoID = function () {
     return VideoLayout.getLargeVideoID();
 };
 
+UI.showExtensionRequiredDialog = function (url) {
+    APP.UI.messageHandler.openMessageDialog(
+        "dialog.extensionRequired",
+        null,
+        null,
+        APP.translation.generateTranslationHTML(
+            "dialog.firefoxExtensionPrompt", {url: url}));
+}
+
 module.exports = UI;

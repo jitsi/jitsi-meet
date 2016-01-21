@@ -97,17 +97,18 @@ module.exports = {
         } else {
             type = "video";
         }
-        APP.conference.createLocalTracks(type).then(function (tracks) {
+        var fail = () => {
+            if (type === 'desktop') {
+                getDesktopStreamFailed();
+            } else {
+                getVideoStreamFailed();
+            }
+        };
+        APP.conference.createLocalTracks(type).then((tracks) => {
             if (!tracks.length) {
-                if (type === 'desktop') {
-                    getDesktopStreamFailed();
-                } else {
-                    getVideoStreamFailed();
-                }
-
+                fail();
                 return;
             }
-
             let stream = tracks[0];
 
             // We now use screen stream
@@ -115,13 +116,16 @@ module.exports = {
             if (isUsingScreenStream) {
                 stream.on(TrackEvents.TRACK_STOPPED, onEndedHandler);
             }
-
             newStreamCreated(stream);
+        }).catch((error) => {
+            if(error === JitsiMeetJS.errors.track.FIREFOX_EXTENSION_NEEDED)
+            {
+                eventEmitter.emit(
+                    DSEvents.FIREFOX_EXTENSION_NEEDED,
+                    config.desktopSharingFirefoxExtensionURL)
+                return;
+            }
+            fail();
         });
-    },
-    /*
-     * Exports the event emitter to allow use by ScreenObtainer. Not for outside
-     * use.
-     */
-    eventEmitter: eventEmitter
+    }
 };

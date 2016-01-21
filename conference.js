@@ -153,7 +153,8 @@ export default {
 
         return JitsiMeetJS.init(config).then(() => {
             return Promise.all([
-                this.createLocalTracks('audio', 'video'),
+                this.createLocalTracks('audio', 'video').catch(
+                    () => {return [];}),
                 connect()
             ]);
         }).then(([tracks, con]) => {
@@ -176,7 +177,7 @@ export default {
         }).catch(function (err) {
             console.error('failed to create local tracks', ...devices, err);
             APP.statistics.onGetUserMediaFailed(err);
-            return [];
+            return Promise.reject(err);
         });
     },
     isLocalId (id) {
@@ -644,6 +645,11 @@ export default {
         APP.UI.addListener(DSEvents.SWITCHING_DONE, (isSharingScreen) => {
             APP.UI.updateDesktopSharingButtons(isSharingScreen);
         });
+
+        APP.desktopsharing.addListener(DSEvents.FIREFOX_EXTENSION_NEEDED,
+            (url) => {
+                APP.UI.showExtensionRequiredDialog(url);
+            });
 
         APP.desktopsharing.addListener(DSEvents.NEW_STREAM_CREATED,
             (track, callback) => {
