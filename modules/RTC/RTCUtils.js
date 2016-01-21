@@ -788,7 +788,7 @@ var RTCUtils = {
     stopMediaStream: function (mediaStream) {
         mediaStream.getTracks().forEach(function (track) {
             // stop() not supported with IE
-            if (track.stop) {
+            if (!RTCBrowserType.isTemasysPluginUsed() && track.stop) {
                 track.stop();
             }
         });
