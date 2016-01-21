@@ -171,7 +171,10 @@ var ScreenObtainer = {
 
         // Make sure desktopsharing knows that we failed, so that it doesn't get
         // stuck in 'switching' mode.
-        errorCallback(JitsiTrackErrors.FIREFOX_EXTENSION_NEEDED);
+        errorCallback({
+            type: "jitsiError",
+            errorObject: JitsiTrackErrors.FIREFOX_EXTENSION_NEEDED
+        });
     },
     /**
      * Asks Chrome extension to call chooseDesktopMedia and gets chrome

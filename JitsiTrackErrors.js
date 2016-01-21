@@ -16,7 +16,7 @@ module.exports = {
             devices.indexOf("video") !== -1) {
                 return this.UNSUPPORTED_RESOLUTION;
         } else if(typeof error === "object" && error.type === "jitsiError") {
-            return error.object;
+            return error.errorObject;
         } else {
             return this.GENERAL;
         }
