@@ -177,6 +177,9 @@ UI.initConference = function () {
     UI.setUserAvatar(id, settings.email);
 
     Toolbar.checkAutoEnableDesktopSharing();
+    if(!interfaceConfig.filmStripOnly) {
+        Feedback.init();
+    }
 };
 
 UI.mucJoined = function () {
@@ -287,7 +290,6 @@ UI.start = function () {
             elem.download = 'meetlog.json';
             elem.href = 'data:application/json;charset=utf-8,\n' + data;
         });
-        Feedback.init();
     } else {
         $("#header").css("display", "none");
         $("#bottomToolbar").css("display", "none");

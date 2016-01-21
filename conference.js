@@ -231,7 +231,26 @@ export default {
     get startVideoMuted () {
         return room && room.getStartMutedPolicy().video;
     },
-
+    /**
+     * Returns true if the callstats integration is enabled, otherwise returns
+     * false.
+     *
+     * @returns true if the callstats integration is enabled, otherwise returns
+     * false.
+     */
+    isCallstatsEnabled () {
+        return room.isCallstatsEnabled();
+    },
+    /**
+     * Sends the given feedback through CallStats if enabled.
+     *
+     * @param overallFeedback an integer between 1 and 5 indicating the
+     * user feedback
+     * @param detailedFeedback detailed feedback from the user. Not yet used
+     */
+    sendFeedback (overallFeedback, detailedFeedback) {
+        return room.sendFeedback (overallFeedback, detailedFeedback);
+    },
     // used by torture currently
     isJoined () {
         return this._room
@@ -369,10 +388,8 @@ export default {
             if(track.isLocal()){
                 id = this.localId;
                 if(track.getType() === "audio") {
-                    APP.statistics.onAudioMute(mute);
                     this.audioMuted = mute;
                 } else {
-                    APP.statistics.onVideoMute(mute);
                     this.videoMuted = mute;
                 }
             } else {

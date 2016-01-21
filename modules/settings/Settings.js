@@ -4,8 +4,6 @@ var email = '';
 var displayName = '';
 var userId;
 var language = null;
-var callStatsUserName;
-
 
 function supportsLocalStorage() {
     try {
@@ -30,22 +28,13 @@ if (supportsLocalStorage()) {
         console.log("generated id", window.localStorage.jitsiMeetId);
     }
 
-    if (!window.localStorage.callStatsUserName) {
-        window.localStorage.callStatsUserName
-            = generateUsername();
-        console.log('generated callstats uid',
-            window.localStorage.callStatsUserName);
-
-    }
     userId = window.localStorage.jitsiMeetId || '';
-    callStatsUserName = window.localStorage.callStatsUserName;
     email = window.localStorage.email || '';
     displayName = window.localStorage.displayname || '';
     language = window.localStorage.language;
 } else {
     console.log("local storage is not supported");
     userId = generateUniqueId();
-    callStatsUserName = generateUsername();
 }
 
 export default {
@@ -71,14 +60,6 @@ export default {
      */
     getDisplayName: function () {
         return displayName;
-    },
-
-    /**
-     * Returns fake username for callstats
-     * @returns {string} fake username for callstats
-     */
-    getCallStatsUserName: function () {
-        return callStatsUserName;
     },
 
     setEmail: function (newEmail) {

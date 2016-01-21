@@ -6,7 +6,6 @@ var RTPStats = require("./RTPStatsCollector.js");
 var EventEmitter = require("events");
 var StreamEventTypes = require("../../service/RTC/StreamEventTypes.js");
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
-var CallStats = require("./CallStats");
 var RTCEvents = require("../../service/RTC/RTCEvents");
 var StatisticsEvents = require("../../service/statistics/Events");
 
@@ -32,7 +31,6 @@ function startRemoteStats (peerconnection) {
 }
 
 function onDisposeConference(onUnload) {
-    CallStats.sendTerminateEvent();
     stopRemote();
     if (onUnload) {
         eventEmitter.removeAllListeners();
@@ -58,15 +56,6 @@ export default {
             eventEmitter.removeAllListeners();
         }
     },
-    onAudioMute (mute) {
-        CallStats.sendMuteEvent(mute, "audio");
-    },
-    onVideoMute (mute) {
-        CallStats.sendMuteEvent(mute, "video");
-    },
-    onGetUserMediaFailed (e) {
-       CallStats.sendGetUserMediaFailed(e);
-    },
     start: function () {
         const xmpp = APP.conference._room.xmpp;
         xmpp.addListener(
@@ -77,41 +66,6 @@ export default {
         // onnegotiationneeded
         xmpp.addListener(XMPPEvents.CALL_INCOMING, function (event) {
             startRemoteStats(event.peerconnection);
-            // CallStats.init(event);
         });
-        xmpp.addListener(
-            XMPPEvents.PEERCONNECTION_READY,
-            function (session) {
-                CallStats.init(session);
-            }
-        );
-        xmpp.addListener(XMPPEvents.CONFERENCE_SETUP_FAILED, function () {
-            CallStats.sendSetupFailedEvent();
-        });
-
-        xmpp.addListener(RTCEvents.CREATE_OFFER_FAILED, function (e, pc) {
-            CallStats.sendCreateOfferFailed(e, pc);
-        });
-        xmpp.addListener(RTCEvents.CREATE_ANSWER_FAILED, function (e, pc) {
-            CallStats.sendCreateAnswerFailed(e, pc);
-        });
-        xmpp.addListener(
-            RTCEvents.SET_LOCAL_DESCRIPTION_FAILED,
-            function (e, pc) {
-                CallStats.sendSetLocalDescFailed(e, pc);
-            }
-        );
-        xmpp.addListener(
-            RTCEvents.SET_REMOTE_DESCRIPTION_FAILED,
-            function (e, pc) {
-                CallStats.sendSetRemoteDescFailed(e, pc);
-            }
-        );
-        xmpp.addListener(
-            RTCEvents.ADD_ICE_CANDIDATE_FAILED,
-            function (e, pc) {
-                CallStats.sendAddIceCandidateFailed(e, pc);
-            }
-        );
     }
 };

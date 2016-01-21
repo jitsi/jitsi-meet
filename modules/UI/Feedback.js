@@ -4,7 +4,6 @@
  * Created by Yana Stamcheva on 2/10/15.
  */
 var messageHandler = require("./util/MessageHandler");
-var callStats = require("../statistics/CallStats");
 
 /**
  * Constructs the html for the overall feedback window.
@@ -78,7 +77,7 @@ var Feedback = {
     init: function () {
         // CallStats is the way we send feedback, so we don't have to initialise
         // if callstats isn't enabled.
-        if (!callStats.isEnabled())
+        if (!APP.conference.isCallstatsEnabled())
             return;
 
         $("div.feedbackButton").css("display", "block");
@@ -92,7 +91,7 @@ var Feedback = {
      * @return true if the feedback functionality is enabled, false otherwise.
      */
     isEnabled: function() {
-        return callStats.isEnabled();
+        return APP.conference.isCallstatsEnabled();
     },
     /**
      * Opens the feedback window.
@@ -118,7 +117,7 @@ var Feedback = {
                     // If the feedback is less than 3 stars we're going to
                     // ask the user for more information.
                     if (Feedback.feedbackScore > 3) {
-                        callStats.sendFeedback(Feedback.feedbackScore, "");
+                        APP.conference.sendFeedback(Feedback.feedbackScore, "");
                         if (feedbackWindowCallback)
                             feedbackWindowCallback();
                         else
@@ -160,7 +159,7 @@ var Feedback = {
                             = document.getElementById("feedbackTextArea").value;
 
                         if (feedbackDetails && feedbackDetails.length > 0)
-                            callStats.sendFeedback( Feedback.feedbackScore,
+                            APP.conference.sendFeedback( Feedback.feedbackScore,
                                                     feedbackDetails);
 
                         if (feedbackWindowCallback)
