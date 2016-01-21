@@ -10,7 +10,6 @@ var async = require("async");
 var transform = require("sdp-transform");
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 var RTCBrowserType = require("../RTC/RTCBrowserType");
-var SSRCReplacement = require("./LocalSSRCReplacement");
 var RTC = require("../RTC/RTC");
 
 // Jingle stuff
@@ -274,8 +273,6 @@ JingleSessionPC.prototype.accept = function () {
             //logger.log('setLocalDescription success');
             self.setLocalDescription();
 
-            SSRCReplacement.processSessionInit(accept);
-
             self.connection.sendIQ(accept,
                 function () {
                     var ack = {};
@@ -372,8 +369,6 @@ JingleSessionPC.prototype.sendIceCandidate = function (candidate) {
                     init,
                     self.initiator == self.me ? 'initiator' : 'responder',
                     ssrc);
-
-                SSRCReplacement.processSessionInit(init);
 
                 self.connection.sendIQ(init,
                     function () {
@@ -490,8 +485,6 @@ JingleSessionPC.prototype.createdOffer = function (sdp) {
         self.localSDP.toJingle(
             init,
             this.initiator == this.me ? 'initiator' : 'responder');
-
-        SSRCReplacement.processSessionInit(init);
 
         self.connection.sendIQ(init,
             function () {
@@ -792,8 +785,6 @@ JingleSessionPC.prototype.createdAnswer = function (sdp, provisional) {
                     accept,
                     self.initiator == self.me ? 'initiator' : 'responder',
                     ssrcs);
-
-                SSRCReplacement.processSessionInit(accept);
 
                 self.connection.sendIQ(accept,
                     function () {
@@ -1349,11 +1340,6 @@ JingleSessionPC.prototype.notifyMySSRCUpdate = function (old_sdp, new_sdp) {
     );
     var removed = sdpDiffer.toJingle(remove);
 
-    // Let 'source-remove' IQ through the hack and see if we're allowed to send
-    // it in the current form
-    if (removed)
-        remove = SSRCReplacement.processSourceRemove(remove);
-
     if (removed && remove) {
         logger.info("Sending source-remove", remove);
         this.connection.sendIQ(remove,
@@ -1379,11 +1365,6 @@ JingleSessionPC.prototype.notifyMySSRCUpdate = function (old_sdp, new_sdp) {
         }
     );
     var added = sdpDiffer.toJingle(add);
-
-    // Let 'source-add' IQ through the hack and see if we're allowed to send
-    // it in the current form
-    if (added)
-        add = SSRCReplacement.processSourceAdd(add);
 
     if (added && add) {
         logger.info("Sending source-add", add);

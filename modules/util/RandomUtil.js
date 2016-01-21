@@ -67,7 +67,8 @@ var RandomUtil = {
         return ret;
     },
     randomElement: randomElement,
-    randomAlphanumStr: randomAlphanumStr
+    randomAlphanumStr: randomAlphanumStr,
+    randomInt: randomInt
 };
 
 module.exports = RandomUtil;

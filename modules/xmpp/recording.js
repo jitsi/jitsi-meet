@@ -1,6 +1,6 @@
 /* global $, $iq, config, connection, focusMucJid, messageHandler,
    Toolbar, Util, Promise */
-var XMPPEvents = require("../../service/XMPP/XMPPEvents");
+var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 var logger = require("jitsi-meet-logger").getLogger(__filename);
 
 function Recording(type, eventEmitter, connection, focusMucJid, jirecon,

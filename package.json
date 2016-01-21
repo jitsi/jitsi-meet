@@ -19,7 +19,7 @@
     "pako": "*",
     "sdp-interop": "0.1.11",
     "sdp-transform": "1.5.*",
-    "sdp-simulcast": "jitsi/sdp-simulcast",
+    "sdp-simulcast": "0.1.4",
     "async": "0.9.0",
     "retry": "0.6.1",
     "jssha": "1.5.0",
