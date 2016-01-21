@@ -648,7 +648,7 @@ StatsCollector.prototype.processStatsReport = function () {
     if (resolutions) { // use id instead of jid
         Object.keys(resolutions).forEach(function (jid) {
             let id = Strophe.getResourceFromJid(jid);
-            resolution[id] = resolutions[id];
+            idResolution[id] = resolutions[jid];
         });
     }
     this.eventEmitter.emit(StatisticsEvents.CONNECTION_STATS,
