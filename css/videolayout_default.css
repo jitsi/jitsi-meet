@@ -4,27 +4,25 @@
     top: 0px;
     left: 0px;
     right: 0px;
-    overflow: hidden;
+    overflow-x: hidden;
 }
 
 #remoteVideos {
-    display:block;
-    position:absolute;
-    text-align:right;
-    height:196px;
-    padding: 18px;
+    border: 1px solid transparent;
     bottom: 0;
     left: 0;
+    overflow: hidden;
+    padding: 18px;
     right: 20px;
-    width:auto;
-    border:1px solid transparent;
+    text-align: right;
+    transition: padding 2s ease 0s, height 2s ease 0s;
+    width: auto;
     z-index: 5;
-    transition: bottom 2s;
-    overflow: visible !important;
 }
 
-#remotevideos.hidden {
-    bottom: -196px;
+#remoteVideos.hidden {
+    height: 0 !important;
+    padding: 0 18px;
 }
 
 .videocontainer {
