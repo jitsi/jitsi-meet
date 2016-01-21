@@ -18,6 +18,7 @@
     text-align: right;
     transition: padding 2s ease 0s, height 2s ease 0s;
     width: auto;
+    height: auto !important;
     z-index: 5;
 }
 
