@@ -990,18 +990,13 @@ var VideoLayout = {
 
             let videoType = this.getRemoteVideoType(id);
             largeVideo.updateLargeVideo(
-                smallVideo.stream,
+                smallVideo,
                 videoType,
                 // LargeVideoUpdatedCallBack
                 function() {
                     // update current small video and the old one
                     smallVideo.updateView();
                     oldSmallVideo && oldSmallVideo.updateView();
-
-                    // change the avatar url on large
-                    largeVideo.updateAvatar(Avatar.getAvatarUrl(smallVideo.id));
-                    // show the avatar on large if needed
-                    largeVideo.showAvatar(smallVideo.stream.isMuted());
                 });
 
         } else if (currentId) {

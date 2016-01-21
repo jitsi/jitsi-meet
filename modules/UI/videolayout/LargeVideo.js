@@ -5,6 +5,7 @@ import UIUtil from "../util/UIUtil";
 import UIEvents from "../../../service/UI/UIEvents";
 import LargeContainer from './LargeContainer';
 import BottomToolbar from '../toolbars/BottomToolbar';
+import Avatar from "../avatar/Avatar";
 
 const RTCBrowserType = require("../../RTC/RTCBrowserType");
 
@@ -184,23 +185,38 @@ class VideoContainer extends LargeContainer {
     getVideoSize (containerWidth, containerHeight) {
         let { width, height } = this.getStreamSize();
         if (this.stream && this.isScreenSharing()) {
-            return getDesktopVideoSize(width, height, containerWidth, containerHeight);
+            return getDesktopVideoSize( width,
+                                        height,
+                                        containerWidth,
+                                        containerHeight);
         } else {
-            return getCameraVideoSize(width, height, containerWidth, containerHeight);
+            return getCameraVideoSize(  width,
+                                        height,
+                                        containerWidth,
+                                        containerHeight);
         }
     }
 
     getVideoPosition (width, height, containerWidth, containerHeight) {
         if (this.stream && this.isScreenSharing()) {
-            return getDesktopVideoPosition(width, height, containerWidth, containerHeight);
+            return getDesktopVideoPosition( width,
+                                            height,
+                                            containerWidth,
+                                            containerHeight);
         } else {
-            return getCameraVideoPosition(width, height, containerWidth, containerHeight);
+            return getCameraVideoPosition(  width,
+                                            height,
+                                            containerWidth,
+                                            containerHeight);
         }
     }
 
     resize (containerWidth, containerHeight, animate = false) {
-        let { width, height } = this.getVideoSize(containerWidth, containerHeight);
-        let { horizontalIndent, verticalIndent } = this.getVideoPosition(width, height, containerWidth, containerHeight);
+        let { width, height }
+            = this.getVideoSize(containerWidth, containerHeight);
+        let { horizontalIndent, verticalIndent }
+            = this.getVideoPosition(width, height,
+                                    containerWidth, containerHeight);
 
         // update avatar position
         let top = containerHeight / 2 - avatarSize / 4 * 3;
@@ -239,9 +255,6 @@ class VideoContainer extends LargeContainer {
     }
 
     showAvatar (show) {
-        // if we are showing the avatar, this means there is no video on large
-        // so let's hide its video wrapper
-        show ? this.hide() : this.show();
         this.$avatar.css("visibility", show ? "visible" : "hidden");
     }
 
@@ -253,7 +266,7 @@ class VideoContainer extends LargeContainer {
 
     show () {
         let $wrapper = this.$wrapper;
-        return new Promise(resolve => {
+        return new Promise(function(resolve) {
             $wrapper.fadeIn(300, function () {
                 $wrapper.css({visibility: 'visible'});
                 $('.watermark').css({visibility: 'visible'});
@@ -263,11 +276,10 @@ class VideoContainer extends LargeContainer {
     }
 
     hide () {
-        this.showAvatar(false);
 
         let $wrapper = this.$wrapper;
 
-        return new Promise(resolve => {
+        return new Promise(function(resolve) {
             $wrapper.fadeOut(300, function () {
                 $wrapper.css({visibility: 'hidden'});
                 $('.watermark').css({visibility: 'hidden'});
@@ -344,16 +356,26 @@ export default class LargeVideoManager {
         return this.videoContainer.id;
     }
 
-    updateLargeVideo (stream, videoType, largeVideoUpdatedCallBack) {
-        let id = getStreamId(stream);
+    updateLargeVideo (smallVideo, videoType, largeVideoUpdatedCallBack) {
+        let id = getStreamId(smallVideo.stream);
 
         let container = this.getContainer(this.state);
 
         container.hide().then(() => {
             console.info("hover in %s", id);
             this.state = VideoContainerType;
-            this.videoContainer.setStream(stream, videoType);
-            this.videoContainer.show();
+            this.videoContainer.setStream(smallVideo.stream, videoType);
+
+            // change the avatar url on large
+            this.updateAvatar(Avatar.getAvatarUrl(smallVideo.id));
+
+            var isVideoMuted = smallVideo.stream.isMuted()
+            // show the avatar on large if needed
+            this.videoContainer.showAvatar(isVideoMuted);
+
+            if (!isVideoMuted)
+                this.videoContainer.show();
+
             largeVideoUpdatedCallBack();
         });
     }
@@ -399,6 +421,7 @@ export default class LargeVideoManager {
     }
 
     showAvatar (show) {
+        show ? this.videoContainer.hide() : this.videoContainer.show();
         this.videoContainer.showAvatar(show);
     }
 
