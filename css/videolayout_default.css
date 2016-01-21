@@ -13,6 +13,7 @@
     left: 0;
     overflow: hidden;
     padding: 18px;
+    position: absolute;
     right: 20px;
     text-align: right;
     transition: padding 2s ease 0s, height 2s ease 0s;
