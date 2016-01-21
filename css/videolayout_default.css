@@ -3,8 +3,9 @@
     position: absolute;
     top: 0px;
     left: 0px;
-    right: 0px;
+    right: 0 !important;
     overflow-x: hidden;
+    width: 100% !important;
 }
 
 #remoteVideos {
@@ -29,8 +30,6 @@
 
 .videocontainer {
     position: relative;
-    margin-left: auto;
-    margin-right: auto;
 }
 
 #remoteVideos .videocontainer {
