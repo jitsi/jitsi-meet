@@ -156,7 +156,7 @@ Statistics.prototype.getPeerSSRCAudioLevel = function (peerJid, ssrc) {
  * /modules/settings/Settings.js
  */
 Statistics.prototype.startCallStats = function (session, settings) {
-    if(this.callStatsIntegrationEnabled) {
+    if(this.callStatsIntegrationEnabled && !this.callstats) {
         this.callstats = new CallStats(session, settings, this.options);
     }
 }

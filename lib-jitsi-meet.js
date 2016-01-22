@@ -1376,7 +1376,8 @@ var LibJitsiMeet = {
                 this._gumFailedHandler.forEach(function (handler) {
                     handler(error);
                 });
-                Statistics.sendGetUserMediaFailed(error);
+                if(!this._gumFailedHandler.length)
+                    Statistics.sendGetUserMediaFailed(error);
                 if(error === JitsiTrackErrors.UNSUPPORTED_RESOLUTION) {
                     var oldResolution = options.resolution || '360';
                     var newResolution = getLowerResolution(oldResolution);
@@ -6589,7 +6590,7 @@ Statistics.prototype.getPeerSSRCAudioLevel = function (peerJid, ssrc) {
  * /modules/settings/Settings.js
  */
 Statistics.prototype.startCallStats = function (session, settings) {
-    if(this.callStatsIntegrationEnabled) {
+    if(this.callStatsIntegrationEnabled && !this.callstats) {
         this.callstats = new CallStats(session, settings, this.options);
     }
 }
