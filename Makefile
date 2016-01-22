@@ -1,3 +1,4 @@
+NPM = npm
 BROWSERIFY = ./node_modules/.bin/browserify
 UGLIFYJS = ./node_modules/.bin/uglifyjs
 EXORCIST = ./node_modules/.bin/exorcist
@@ -5,7 +6,7 @@ GLOBAL_FLAGS =
 OUTPUT_DIR = .
 DEPLOY_DIR = ../../jitsi-meet
 
-all: compile uglify deploy
+all: update-deps compile uglify deploy
 
 compile:FLAGS = $(GLOBAL_FLAGS)
 compile: app
@@ -14,6 +15,9 @@ debug: compile-debug source-maps uglify-debug deploy
 
 compile-debug:FLAGS = -d $(GLOBAL_FLAGS)
 compile-debug: app
+
+update-deps:
+	$(NPM) update
 
 app:
 	$(BROWSERIFY) $(FLAGS) JitsiMeetJS.js -s JitsiMeetJS -o $(OUTPUT_DIR)/lib-jitsi-meet.js
