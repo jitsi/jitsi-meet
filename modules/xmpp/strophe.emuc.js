@@ -24,13 +24,14 @@ module.exports = function(XMPP) {
             this.connection.addHandler(this.onMute.bind(this),
                 'http://jitsi.org/jitmeet/audio', 'iq', 'set',null,null);
         },
-        createRoom: function (jid, password, options) {
+        createRoom: function (jid, password, options, settings) {
             var roomJid = Strophe.getBareJidFromJid(jid);
             if (this.rooms[roomJid]) {
                 logger.error("You are already in the room!");
                 return;
             }
-            this.rooms[roomJid] = new ChatRoom(this.connection, jid, password, XMPP, options);
+            this.rooms[roomJid] = new ChatRoom(this.connection, jid,
+                password, XMPP, options, settings);
             return this.rooms[roomJid];
         },
         doLeave: function (jid) {

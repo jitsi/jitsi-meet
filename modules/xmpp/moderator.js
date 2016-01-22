@@ -2,7 +2,6 @@
 
 var logger = require("jitsi-meet-logger").getLogger(__filename);
 var XMPPEvents = require("../../service/xmpp/XMPPEvents");
-var Settings = require("../settings/Settings");
 
 var AuthenticationEvents
     = require("../../service/authentication/AuthenticationEvents");
@@ -22,18 +21,14 @@ function createExpBackoffTimer(step) {
     };
 }
 
-
-
-
-
-function Moderator(roomName, xmpp, emitter) {
+function Moderator(roomName, xmpp, emitter, settings) {
     this.roomName = roomName;
     this.xmppService = xmpp;
     this.getNextTimeout = createExpBackoffTimer(1000);
     this.getNextErrorTimeout = createExpBackoffTimer(1000);
     // External authentication stuff
     this.externalAuthEnabled = false;
-    this.settings = new Settings(roomName);
+    this.settings = settings;
     // Sip gateway can be enabled by configuring Jigasi host in config.js or
     // it will be enabled automatically if focus detects the component through
     // service discovery.

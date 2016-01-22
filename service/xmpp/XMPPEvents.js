@@ -102,6 +102,26 @@ var XMPPEvents = {
     /**
      * Indicates that phone number changed.
      */
-    PHONE_NUMBER_CHANGED: "conference.phoneNumberChanged"
+    PHONE_NUMBER_CHANGED: "conference.phoneNumberChanged",
+    /**
+     * Indicates error while create offer call.
+     */
+    CREATE_OFFER_FAILED: "xmpp.create_offer_failed",
+    /**
+     * Indicates error while create answer call.
+     */
+    CREATE_ANSWER_FAILED: "xmpp.create_answer_failed",
+    /**
+     * Indicates error while set local description.
+     */
+    SET_LOCAL_DESCRIPTION_FAILED: "xmpp.set_local_description_failed",
+    /**
+     * Indicates error while set remote description.
+     */
+    SET_REMOTE_DESCRIPTION_FAILED: "xmpp.set_remote_description_failed",
+    /**
+     * Indicates error while adding ice candidate.
+     */
+    ADD_ICE_CANDIDATE_FAILED: "xmpp.add_ice_candidate_failed"
 };
 module.exports = XMPPEvents;

@@ -12,6 +12,7 @@ var JitsiParticipant = require("./JitsiParticipant");
 var Statistics = require("./modules/statistics/statistics");
 var JitsiDTMFManager = require('./modules/DTMF/JitsiDTMFManager');
 var JitsiTrackEvents = require("./JitsiTrackEvents");
+var Settings = require("./modules/settings/Settings");
 
 /**
  * Creates a JitsiConference object with the given name and properties.
@@ -32,12 +33,22 @@ function JitsiConference(options) {
     this.connection = this.options.connection;
     this.xmpp = this.connection.xmpp;
     this.eventEmitter = new EventEmitter();
-    this.room = this.xmpp.createRoom(this.options.name, this.options.config);
+    var confID = this.options.name  + '@' + this.xmpp.options.hosts.muc;
+    this.settings = new Settings(confID);
+    this.room = this.xmpp.createRoom(this.options.name, this.options.config,
+        this.settings);
     this.room.updateDeviceAvailability(RTC.getDeviceAvailability());
     this.rtc = new RTC(this.room, options);
-    if(!RTC.options.disableAudioLevels)
-        this.statistics = new Statistics();
+    this.statistics = new Statistics({
+        disableAudioLevels: RTC.options.disableAudioLevels,
+        callStatsID: this.options.config.callStatsID,
+        callStatsSecret: this.options.config.callStatsSecret,
+        disableThirdPartyRequests: this.options.config.disableThirdPartyRequests
+    });
     setupListeners(this);
+    JitsiMeetJS._gumFailedHandler.push(function(error) {
+        this.statistics.sendGetUserMediaFailed(error);
+    }.bind(this));
     this.participants = {};
     this.lastDominantSpeaker = null;
     this.dtmfManager = null;
@@ -259,9 +270,12 @@ JitsiConference.prototype.addTrack = function (track) {
         track.muteHandler = this._fireMuteChangeEvent.bind(this, track);
         track.stopHandler = this.removeTrack.bind(this, track);
         track.audioLevelHandler = this._fireAudioLevelChangeEvent.bind(this);
-        track.addEventListener(JitsiTrackEvents.TRACK_MUTE_CHANGED, track.muteHandler);
-        track.addEventListener(JitsiTrackEvents.TRACK_STOPPED, track.stopHandler);
-        track.addEventListener(JitsiTrackEvents.TRACK_AUDIO_LEVEL_CHANGED, track.audioLevelHandler);
+        track.addEventListener(JitsiTrackEvents.TRACK_MUTE_CHANGED,
+            track.muteHandler);
+        track.addEventListener(JitsiTrackEvents.TRACK_STOPPED,
+            track.stopHandler);
+        track.addEventListener(JitsiTrackEvents.TRACK_AUDIO_LEVEL_CHANGED,
+            track.audioLevelHandler);
         this.eventEmitter.emit(JitsiConferenceEvents.TRACK_ADDED, track);
     }.bind(this));
 };
@@ -718,14 +732,36 @@ JitsiConference.prototype.getLogs = function () {
 };
 
 /**
+ * Sends the given feedback through CallStats if enabled.
+ *
+ * @param overallFeedback an integer between 1 and 5 indicating the
+ * user feedback
+ * @param detailedFeedback detailed feedback from the user. Not yet used
+ */
+JitsiConference.prototype.sendFeedback =
+function(overallFeedback, detailedFeedback){
+    this.statistics.sendFeedback(overallFeedback, detailedFeedback);
+}
+
+/**
+ * Returns true if the callstats integration is enabled, otherwise returns
+ * false.
+ *
+ * @returns true if the callstats integration is enabled, otherwise returns
+ * false.
+ */
+JitsiConference.prototype.isCallstatsEnabled = function () {
+    return this.statistics.isCallstatsEnabled();
+}
+
+/**
  * Setups the listeners needed for the conference.
  * @param conference the conference
  */
 function setupListeners(conference) {
     conference.xmpp.addListener(XMPPEvents.CALL_INCOMING, function (event) {
         conference.rtc.onIncommingCall(event);
-        if(conference.statistics)
-            conference.statistics.startRemoteStats(event.peerconnection);
+        conference.statistics.startRemoteStats(event.peerconnection);
     });
 
     conference.room.addListener(XMPPEvents.REMOTE_STREAM_RECEIVED,
@@ -907,6 +943,51 @@ function setupListeners(conference) {
         // RTC.addListener(RTCEvents.AVAILABLE_DEVICES_CHANGED, function (devices) {
         //     conference.room.updateDeviceAvailability(devices);
         // });
+
+        conference.room.addListener(XMPPEvents.PEERCONNECTION_READY,
+            function (session) {
+                conference.statistics.startCallStats(
+                    session, conference.settings);
+            });
+
+        conference.room.addListener(XMPPEvents.CONFERENCE_SETUP_FAILED,
+            function () {
+                conference.statistics.sendSetupFailedEvent();
+            });
+
+        conference.on(JitsiConferenceEvents.TRACK_MUTE_CHANGED,
+            function (track) {
+                if(!track.isLocal())
+                    return;
+                var type = (track.getType() === "audio")? "audio" : "video";
+                conference.statistics.sendMuteEvent(track.isMuted(), type);
+            });
+
+        conference.room.addListener(XMPPEvents.CREATE_OFFER_FAILED, function (e, pc) {
+            conference.statistics.sendCreateOfferFailed(e, pc);
+        });
+
+        conference.room.addListener(XMPPEvents.CREATE_ANSWER_FAILED, function (e, pc) {
+            conference.statistics.sendCreateAnswerFailed(e, pc);
+        });
+
+        conference.room.addListener(XMPPEvents.SET_LOCAL_DESCRIPTION_FAILED,
+            function (e, pc) {
+                conference.statistics.sendSetLocalDescFailed(e, pc);
+            }
+        );
+
+        conference.room.addListener(XMPPEvents.SET_REMOTE_DESCRIPTION_FAILED,
+            function (e, pc) {
+                conference.statistics.sendSetRemoteDescFailed(e, pc);
+            }
+        );
+
+        conference.room.addListener(XMPPEvents.ADD_ICE_CANDIDATE_FAILED,
+            function (e, pc) {
+                conference.statistics.sendAddIceCandidateFailed(e, pc);
+            }
+        );
     }
 }
 

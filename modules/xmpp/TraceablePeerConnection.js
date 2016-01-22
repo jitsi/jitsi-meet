@@ -23,7 +23,9 @@ function TraceablePeerConnection(ice_config, constraints, session) {
     var Interop = require('sdp-interop').Interop;
     this.interop = new Interop();
     var Simulcast = require('sdp-simulcast');
-    this.simulcast = new Simulcast({numOfLayers: 3, explodeRemoteSimulcast: false});
+    this.simulcast = new Simulcast({numOfLayers: 3,
+        explodeRemoteSimulcast: false});
+    this.eventEmitter = this.session.room.eventEmitter;
 
     // override as desired
     this.trace = function (what, info) {
@@ -324,7 +326,8 @@ TraceablePeerConnection.prototype.setLocalDescription
     // if we're running on FF, transform to Plan A first.
     if (RTCBrowserType.usesUnifiedPlan()) {
         description = this.interop.toUnifiedPlan(description);
-        this.trace('setLocalDescription::postTransform (Plan A)', dumpSDP(description));
+        this.trace('setLocalDescription::postTransform (Plan A)',
+            dumpSDP(description));
     }
 
     var self = this;
@@ -335,14 +338,11 @@ TraceablePeerConnection.prototype.setLocalDescription
         },
         function (err) {
             self.trace('setLocalDescriptionOnFailure', err);
+            self.eventEmitter.emit(XMPPEvents.SET_LOCAL_DESCRIPTION_FAILED,
+                err, self.peerconnection);
             failureCallback(err);
         }
     );
-    /*
-     if (this.statsinterval === null && this.maxstats > 0) {
-     // start gathering stats
-     }
-     */
 };
 
 TraceablePeerConnection.prototype.setRemoteDescription
@@ -370,6 +370,8 @@ TraceablePeerConnection.prototype.setRemoteDescription
         },
         function (err) {
             self.trace('setRemoteDescriptionOnFailure', err);
+            self.eventEmitter.emit(XMPPEvents.SET_REMOTE_DESCRIPTION_FAILED,
+                err, self.peerconnection);
             failureCallback(err);
         }
     );
@@ -411,14 +413,18 @@ TraceablePeerConnection.prototype.createOffer
                 self.trace('createOfferOnSuccess::mungeLocalVideoSSRC', dumpSDP(offer));
             }
 
-            if (!self.session.room.options.disableSimulcast && self.simulcast.isSupported()) {
+            if (!self.session.room.options.disableSimulcast
+                 && self.simulcast.isSupported()) {
                 offer = self.simulcast.mungeLocalDescription(offer);
-                self.trace('createOfferOnSuccess::postTransform (simulcast)', dumpSDP(offer));
+                self.trace('createOfferOnSuccess::postTransform (simulcast)',
+                    dumpSDP(offer));
             }
             successCallback(offer);
         },
         function(err) {
             self.trace('createOfferOnFailure', err);
+            self.eventEmitter.emit(XMPPEvents.CREATE_OFFER_FAILED, err,
+                self.peerconnection);
             failureCallback(err);
         },
         constraints
@@ -435,7 +441,8 @@ TraceablePeerConnection.prototype.createAnswer
             // if we're running on FF, transform to Plan A first.
             if (RTCBrowserType.usesUnifiedPlan()) {
                 answer = self.interop.toPlanB(answer);
-                self.trace('createAnswerOnSuccess::postTransform (Plan B)', dumpSDP(answer));
+                self.trace('createAnswerOnSuccess::postTransform (Plan B)',
+                    dumpSDP(answer));
             }
 
             if (RTCBrowserType.isChrome())
@@ -444,14 +451,18 @@ TraceablePeerConnection.prototype.createAnswer
                 self.trace('createAnswerOnSuccess::mungeLocalVideoSSRC', dumpSDP(answer));
             }
 
-            if (!self.session.room.options.disableSimulcast && self.simulcast.isSupported()) {
+            if (!self.session.room.options.disableSimulcast
+                && self.simulcast.isSupported()) {
                 answer = self.simulcast.mungeLocalDescription(answer);
-                self.trace('createAnswerOnSuccess::postTransform (simulcast)', dumpSDP(answer));
+                self.trace('createAnswerOnSuccess::postTransform (simulcast)',
+                    dumpSDP(answer));
             }
             successCallback(answer);
         },
         function(err) {
             self.trace('createAnswerOnFailure', err);
+            self.eventEmitter.emit(XMPPEvents.CREATE_ANSWER_FAILED, err,
+                self.peerconnection);
             failureCallback(err);
         },
         constraints

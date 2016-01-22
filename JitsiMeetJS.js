@@ -43,6 +43,10 @@ var LibJitsiMeet = {
         track: JitsiTrackErrors
     },
     logLevels: Logger.levels,
+    /**
+     * Array of functions that will receive the GUM error.
+     */
+    _gumFailedHandler: [],
     init: function (options) {
         return RTC.init(options || {});
     },
@@ -90,6 +94,10 @@ var LibJitsiMeet = {
                     }
                 return tracks;
             }).catch(function (error) {
+                this._gumFailedHandler.forEach(function (handler) {
+                    handler(error);
+                });
+                Statistics.sendGetUserMediaFailed(error);
                 if(error === JitsiTrackErrors.UNSUPPORTED_RESOLUTION) {
                     var oldResolution = options.resolution || '360';
                     var newResolution = getLowerResolution(oldResolution);
@@ -99,7 +107,7 @@ var LibJitsiMeet = {
                     return LibJitsiMeet.createLocalTracks(options);
                 }
                 return Promise.reject(error);
-            });
+            }.bind(this));
     },
     /**
      * Checks if its possible to enumerate available cameras/micropones.

@@ -1,5 +1,7 @@
-
 var logger = require("jitsi-meet-logger").getLogger(__filename);
+
+var UsernameGenerator = require('../util/UsernameGenerator');
+
 function supportsLocalStorage() {
     try {
         return 'localStorage' in window && window.localStorage !== null;
@@ -22,6 +24,7 @@ function Settings(conferenceID) {
     this.userId;
     this.confSettings = null;
     this.conferenceID = conferenceID;
+    this.callStatsUserName;
     if (supportsLocalStorage()) {
         if(!window.localStorage.getItem(conferenceID))
             this.confSettings = {};
@@ -33,11 +36,21 @@ function Settings(conferenceID) {
                 this.confSettings.jitsiMeetId);
             this.save();
         }
+        if (!this.confSettings.callStatsUserName) {
+            this.confSettings.callStatsUserName
+                = UsernameGenerator.generateUsername();
+            logger.log('generated callstats uid',
+                this.confSettings.callStatsUserName);
+            this.save();
+        }
+
         this.userId = this.confSettings.jitsiMeetId || '';
         this.displayName = this.confSettings.displayname || '';
+        this.callStatsUserName = this.confSettings.callStatsUserName || '';
     } else {
         logger.log("local storage is not supported");
         this.userId = generateUniqueId();
+        this.callStatsUserName = UsernameGenerator.generateUsername();
     }
 }
 
@@ -52,12 +65,21 @@ Settings.prototype.setDisplayName = function (newDisplayName) {
         this.confSettings.displayname = displayName;
     this.save();
     return this.displayName;
-},
+}
+
 Settings.prototype.getSettings = function () {
     return {
         displayName: this.displayName,
         uid: this.userId
     };
-},
+}
+
+/**
+ * Returns fake username for callstats
+ * @returns {string} fake username for callstats
+ */
+Settings.prototype.getCallStatsUserName = function () {
+    return this.callStatsUserName;
+}
 
 module.exports = Settings;

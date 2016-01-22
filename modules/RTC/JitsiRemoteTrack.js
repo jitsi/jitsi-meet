@@ -70,6 +70,4 @@ JitsiRemoteTrack.prototype.isLocal = function () {
 
 delete JitsiRemoteTrack.prototype.stop;
 
-delete JitsiRemoteTrack.prototype.start;
-
 module.exports = JitsiRemoteTrack;

@@ -59,7 +59,7 @@ function filterNodeFromPresenceJSON(pres, nodeName){
     return res;
 }
 
-function ChatRoom(connection, jid, password, XMPP, options) {
+function ChatRoom(connection, jid, password, XMPP, options, settings) {
     this.eventEmitter = new EventEmitter();
     this.xmpp = XMPP;
     this.connection = connection;
@@ -75,7 +75,8 @@ function ChatRoom(connection, jid, password, XMPP, options) {
     this.focusMucJid = null;
     this.bridgeIsDown = false;
     this.options = options || {};
-    this.moderator = new Moderator(this.roomjid, this.xmpp, this.eventEmitter);
+    this.moderator = new Moderator(this.roomjid, this.xmpp, this.eventEmitter,
+        settings);
     this.initPresenceMap();
     this.session = null;
     var self = this;

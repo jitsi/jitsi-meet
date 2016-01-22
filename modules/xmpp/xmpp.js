@@ -186,7 +186,7 @@ XMPP.prototype.connect = function (jid, password) {
     return this._connect(jid, password);
 };
 
-XMPP.prototype.createRoom = function (roomName, options) {
+XMPP.prototype.createRoom = function (roomName, options, settings) {
     var roomjid = roomName  + '@' + this.options.hosts.muc;
 
     if (options.useNicks) {
@@ -204,7 +204,7 @@ XMPP.prototype.createRoom = function (roomName, options) {
         roomjid += '/' + tmpJid;
     }
 
-    return this.connection.emuc.createRoom(roomjid, null, options);
+    return this.connection.emuc.createRoom(roomjid, null, options, settings);
 }
 
 XMPP.prototype.addListener = function(type, listener) {
