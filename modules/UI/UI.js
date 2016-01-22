@@ -92,23 +92,34 @@ function setupToolbars() {
 /**
  * Toggles the application in and out of full screen mode
  * (a.k.a. presentation mode in Chrome).
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/Fullscreen_API
  */
 function toggleFullScreen () {
-    let fsElement = document.documentElement;
+    let isNotFullScreen = !document.fullscreenElement &&    // alternative standard method
 
-    if (!document.mozFullScreen && !document.webkitIsFullScreen) {
-        //Enter Full Screen
-        if (fsElement.mozRequestFullScreen) {
-            fsElement.mozRequestFullScreen();
-        } else {
-            fsElement.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
+            !document.mozFullScreenElement && // current working methods
+        !document.webkitFullscreenElement &&
+        !document.msFullscreenElement;
+
+    if (isNotFullScreen) {
+        if (document.documentElement.requestFullscreen) {
+            document.documentElement.requestFullscreen();
+        } else if (document.documentElement.msRequestFullscreen) {
+            document.documentElement.msRequestFullscreen();
+        } else if (document.documentElement.mozRequestFullScreen) {
+            document.documentElement.mozRequestFullScreen();
+        } else if (document.documentElement.webkitRequestFullscreen) {
+            document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
         }
     } else {
-        //Exit Full Screen
-        if (document.mozCancelFullScreen) {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.msExitFullscreen) {
+            document.msExitFullscreen();
+        } else if (document.mozCancelFullScreen) {
             document.mozCancelFullScreen();
-        } else {
-            document.webkitCancelFullScreen();
+        } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
         }
     }
 }
