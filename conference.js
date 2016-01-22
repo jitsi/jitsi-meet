@@ -663,7 +663,8 @@ export default {
             APP.desktopsharing.toggleScreenSharing();
         });
 
-        APP.UI.addListener(DSEvents.SWITCHING_DONE, (isSharingScreen) => {
+        APP.desktopsharing.addListener(DSEvents.SWITCHING_DONE,
+        (isSharingScreen) => {
             APP.UI.updateDesktopSharingButtons(isSharingScreen);
         });
 
@@ -675,22 +676,25 @@ export default {
         APP.desktopsharing.addListener(DSEvents.NEW_STREAM_CREATED,
             (track, callback) => {
                 const localCallback = (newTrack) => {
-                    if(!newTrack)
+                    if(!newTrack || !newTrack.isLocal() ||
+                        newTrack !== localVideo)
                         return;
-                    if (newTrack.isLocal() && newTrack === localVideo) {
-                        if(localVideo.isMuted() &&
-                           localVideo.videoType !== track.videoType) {
-                            localVideo.mute();
-                        }
-                        callback();
-                        room.off(ConferenceEvents.TRACK_ADDED, localCallback);
+                    if(localVideo.isMuted() &&
+                       localVideo.videoType !== track.videoType) {
+                        localVideo.mute();
                     }
+                    callback();
+                    if(room)
+                        room.off(ConferenceEvents.TRACK_ADDED, localCallback);
                 };
-
-                room.on(ConferenceEvents.TRACK_ADDED, localCallback);
+                if(room) {
+                    room.on(ConferenceEvents.TRACK_ADDED, localCallback);
+                }
                 localVideo.stop();
                 localVideo = track;
                 addTrack(track);
+                if(!room)
+                    localCallback();
                 APP.UI.addLocalStream(track);
             }
         );
