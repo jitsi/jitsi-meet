@@ -48,6 +48,7 @@ var LibJitsiMeet = {
      */
     _gumFailedHandler: [],
     init: function (options) {
+        Statistics.audioLevelsEnabled = !options.disableAudioLevels || true;
         return RTC.init(options || {});
     },
     /**

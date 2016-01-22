@@ -40,7 +40,6 @@ function JitsiConference(options) {
     this.room.updateDeviceAvailability(RTC.getDeviceAvailability());
     this.rtc = new RTC(this.room, options);
     this.statistics = new Statistics({
-        disableAudioLevels: RTC.options.disableAudioLevels,
         callStatsID: this.options.config.callStatsID,
         callStatsSecret: this.options.config.callStatsSecret,
         disableThirdPartyRequests: this.options.config.disableThirdPartyRequests
