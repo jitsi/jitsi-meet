@@ -112,5 +112,20 @@ var UIUtil = module.exports = {
           .filter(function (item) { return item; })
           .join(',');
         $(selector).hide();
+    },
+
+    /**
+     * Create html attributes string out of object properties.
+     * @param {Object} attrs object with properties
+     * @returns {String} string of html element attributes
+     */
+    attrsToString: function (attrs) {
+        var result = '';
+
+        Object.keys(attrs).forEach(function (key) {
+            result += ' ' + key + '="' + attrs[key] + '"';
+        });
+
+        return result;
     }
 };

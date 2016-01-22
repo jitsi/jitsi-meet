@@ -5,6 +5,8 @@ var displayName = '';
 var userId;
 var language = null;
 var callStatsUserName;
+var cameraDeviceId = '';
+var micDeviceId = '';
 
 
 function supportsLocalStorage() {
@@ -42,6 +44,8 @@ if (supportsLocalStorage()) {
     email = window.localStorage.email || '';
     displayName = window.localStorage.displayname || '';
     language = window.localStorage.language;
+    cameraDeviceId = window.localStorage.cameraDeviceId || '';
+    micDeviceId = window.localStorage.micDeviceId || '';
 } else {
     console.log("local storage is not supported");
     userId = generateUniqueId();
@@ -95,6 +99,24 @@ var Settings = {
     setLanguage: function (lang) {
         language = lang;
         window.localStorage.language = lang;
+    },
+
+    getCameraDeviceId: function () {
+        return cameraDeviceId;
+    },
+
+    setCameraDeviceId: function (newId) {
+        cameraDeviceId = newId;
+        window.localStorage.cameraDeviceId = newId;
+    },
+
+    getMicDeviceId: function () {
+        return micDeviceId;
+    },
+
+    setMicDeviceId: function (newId) {
+        micDeviceId = newId;
+        window.localStorage.micDeviceId = newId;
     }
 };
 

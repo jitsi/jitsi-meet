@@ -3,6 +3,7 @@ var Avatar = require("../../avatar/Avatar");
 var Settings = require("./../../../settings/Settings");
 var UIUtil = require("../../util/UIUtil");
 var languages = require("../../../../service/translation/languages");
+var RTC = require('../../../RTC/RTC');
 
 function generateLanguagesSelectBox() {
     var currentLang = APP.translation.getCurrentLanguage();
@@ -21,6 +22,23 @@ function generateLanguagesSelectBox() {
     return html + "</select>";
 }
 
+function generateDevicesOptions(items, selectedId) {
+    var html = '';
+
+    items.forEach(function (item) {
+        var attrs = {
+            value: item.deviceId
+        };
+        if (item.deviceId === selectedId) {
+            attrs.selected = 'selected';
+        }
+        html += '<option ' + UIUtil.attrsToString(attrs) + '>'
+            + item.label
+            + '</option>\n';
+    });
+
+    return html;
+}
 
 var SettingsMenu = {
 
@@ -32,6 +50,22 @@ var SettingsMenu = {
             if(event.keyCode === 13) {//enter
                 SettingsMenu.update();
             }
+        });
+
+        RTC.enumerateDevices(function (devices) {
+          var audio = devices.filter(function (device) {
+            return device.kind === 'audioinput';
+          });
+          var video = devices.filter(function (device) {
+            return device.kind === 'videoinput';
+          });
+
+          $('#selectCamera').html(
+            generateDevicesOptions(video, Settings.getCameraDeviceId())
+          );
+          $('#selectMic').html(
+            generateDevicesOptions(audio, Settings.getMicDeviceId())
+          );
         });
 
         if (APP.xmpp.isModerator()) {
@@ -81,6 +115,26 @@ var SettingsMenu = {
         var startVideoMuted = ($("#startVideoMuted").is(":checked"));
         APP.xmpp.addToPresence("startMuted",
             [startAudioMuted, startVideoMuted]);
+
+
+        var cameraDeviceId = $('#selectCamera').val();
+        var micDeviceId = $('#selectMic').val();
+
+        var deviceChanged = false;
+
+        if (cameraDeviceId !== Settings.getCameraDeviceId()) {
+            deviceChanged = true;
+            Settings.setCameraDeviceId(cameraDeviceId);
+        }
+        if (micDeviceId !== Settings.getMicDeviceId()) {
+            deviceChanged = true;
+            Settings.setMicDeviceId(micDeviceId);
+        }
+
+        if (deviceChanged) {
+            // FIXME maybe handle this in more user-friendly way
+            window.location.reload();
+        }
 
         Avatar.setUserAvatar(APP.xmpp.myJid(), email);
     },
