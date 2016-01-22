@@ -97,7 +97,8 @@ var LibJitsiMeet = {
                 this._gumFailedHandler.forEach(function (handler) {
                     handler(error);
                 });
-                Statistics.sendGetUserMediaFailed(error);
+                if(!this._gumFailedHandler.length)
+                    Statistics.sendGetUserMediaFailed(error);
                 if(error === JitsiTrackErrors.UNSUPPORTED_RESOLUTION) {
                     var oldResolution = options.resolution || '360';
                     var newResolution = getLowerResolution(oldResolution);
