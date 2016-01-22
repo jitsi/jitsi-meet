@@ -222,21 +222,6 @@ RemoteVideo.prototype.addRemoteStreamElement = function (stream) {
     this.stream = stream;
 
     let isVideo = stream.isVideoTrack();
-    let streamElement = SmallVideo.createStreamElement(stream);
-    let newElementId = streamElement.id;
-
-    // Put new stream element always in front
-    UIUtils.prependChild(this.container, streamElement);
-
-    let sel = $(`#${newElementId}`);
-    sel.hide();
-
-    // If the container is currently visible we attach the stream.
-    if (!isVideo || (this.container.offsetParent !== null && isVideo)) {
-        this.waitForPlayback(sel, stream);
-
-        stream.attach(sel);
-    }
 
     // Add click handler.
     let onClickHandler = (event) => {
@@ -253,6 +238,26 @@ RemoteVideo.prototype.addRemoteStreamElement = function (stream) {
         return false;
     };
     this.container.onclick = onClickHandler;
+
+    if(!stream.getOriginalStream())
+        return;
+
+    let streamElement = SmallVideo.createStreamElement(stream);
+    let newElementId = streamElement.id;
+
+    // Put new stream element always in front
+    UIUtils.prependChild(this.container, streamElement);
+
+    let sel = $(`#${newElementId}`);
+    sel.hide();
+
+    // If the container is currently visible we attach the stream.
+    if (!isVideo || (this.container.offsetParent !== null && isVideo)) {
+        this.waitForPlayback(sel, stream);
+
+        stream.attach(sel);
+    }
+
     // reselect
     if (RTCBrowserType.isTemasysPluginUsed()) {
         sel = $(`#${newElementId}`);
