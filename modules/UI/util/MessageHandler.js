@@ -77,9 +77,9 @@ var messageHandler = (function(my) {
             buttons: buttons,
             defaultButton: defaultButton,
             focus: focus,
-            loaded: loadedFunction,
-            submit: submitFunction,
-            close: closeFunction
+            loaded: loadedFunction || function(){},
+            submit: submitFunction || function(){},
+            close: closeFunction || function(){}
         });
     };
 
