@@ -89,7 +89,7 @@ class ConferenceConnector {
         room.on(ConferenceEvents.CONFERENCE_FAILED,
             this._onConferenceFailed.bind(this));
     }
-    _handleConferenceFailed(err) {
+    _handleConferenceFailed(err, msg) {
         this._unsubscribe();
         this._reject(err);
     }
@@ -108,6 +108,10 @@ class ConferenceConnector {
             APP.UI.notifyConnectionFailed(msg);
             break;
 
+        case ConferenceErrors.VIDEOBRIDGE_NOT_AVAILABLE:
+            APP.UI.notifyBridgeDown();
+            break;
+
             // not enough rights to create conference
         case ConferenceErrors.AUTHENTICATION_REQUIRED:
             // schedule reconnect to check if someone else created the room
@@ -120,7 +124,7 @@ class ConferenceConnector {
             break;
 
         default:
-            this.handleConferenceFailed(err);
+            this._handleConferenceFailed(err, msg);
         }
     }
     _unsubscribe() {
