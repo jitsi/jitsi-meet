@@ -42,7 +42,6 @@ function JitsiConference(options) {
     this.room.updateDeviceAvailability(RTC.getDeviceAvailability());
     this.rtc = new RTC(this.room, options);
     this.statistics = new Statistics({
-        disableAudioLevels: RTC.options.disableAudioLevels,
         callStatsID: this.options.config.callStatsID,
         callStatsSecret: this.options.config.callStatsSecret,
         disableThirdPartyRequests: this.options.config.disableThirdPartyRequests
@@ -1332,6 +1331,7 @@ var LibJitsiMeet = {
      */
     _gumFailedHandler: [],
     init: function (options) {
+        Statistics.audioLevelsEnabled = !options.disableAudioLevels || true;
         return RTC.init(options || {});
     },
     /**
@@ -6487,12 +6487,12 @@ function Statistics(options) {
         && (this.options.disableThirdPartyRequests !== true);
     if(this.callStatsIntegrationEnabled)
         loadCallStatsAPI();
-    this.audioLevelsEnabled = !this.disableAudioLevels || true;
     this.callStats = null;
 }
+Statistics.audioLevelsEnabled = false;
 
 Statistics.prototype.startRemoteStats = function (peerconnection) {
-    if(!this.audioLevelsEnabled)
+    if(!Statistics.audioLevelsEnabled)
         return;
 
     if (this.rtpStats) {
@@ -6506,7 +6506,7 @@ Statistics.prototype.startRemoteStats = function (peerconnection) {
 Statistics.localStats = [];
 
 Statistics.startLocalStats = function (stream, callback) {
-    if(!this.audioLevelsEnabled)
+    if(!Statistics.audioLevelsEnabled)
         return;
     var localStats = new LocalStats(stream, 200, callback);
     this.localStats.push(localStats);
@@ -6515,20 +6515,20 @@ Statistics.startLocalStats = function (stream, callback) {
 
 Statistics.prototype.addAudioLevelListener = function(listener)
 {
-    if(!this.audioLevelsEnabled)
+    if(!Statistics.audioLevelsEnabled)
         return;
     this.eventEmitter.on(StatisticsEvents.AUDIO_LEVEL, listener);
 }
 
 Statistics.prototype.removeAudioLevelListener = function(listener)
 {
-    if(!this.audioLevelsEnabled)
+    if(!Statistics.audioLevelsEnabled)
         return;
     this.eventEmitter.removeListener(StatisticsEvents.AUDIO_LEVEL, listener);
 }
 
 Statistics.prototype.dispose = function () {
-    if(this.audioLevelsEnabled) {
+    if(Statistics.audioLevelsEnabled) {
         Statistics.stopAllLocalStats();
         this.stopRemote();
         if(this.eventEmitter)
@@ -6547,7 +6547,7 @@ Statistics.prototype.dispose = function () {
 
 
 Statistics.stopAllLocalStats = function () {
-    if(!this.audioLevelsEnabled)
+    if(!Statistics.audioLevelsEnabled)
         return;
 
     for(var i = 0; i < this.localStats.length; i++)
@@ -6556,7 +6556,7 @@ Statistics.stopAllLocalStats = function () {
 }
 
 Statistics.stopLocalStats = function (stream) {
-    if(!this.audioLevelsEnabled)
+    if(!Statistics.audioLevelsEnabled)
         return;
 
     for(var i = 0; i < Statistics.localStats.length; i++)
@@ -6568,7 +6568,7 @@ Statistics.stopLocalStats = function (stream) {
 }
 
 Statistics.prototype.stopRemote = function () {
-    if (this.rtpStats && this.audioLevelsEnabled) {
+    if (this.rtpStats && Statistics.audioLevelsEnabled) {
         this.rtpStats.stop();
         this.eventEmitter.emit(StatisticsEvents.STOP);
         this.rtpStats = null;
@@ -6586,7 +6586,7 @@ Statistics.prototype.stopRemote = function () {
  *              at this time.
  */
 Statistics.prototype.getPeerSSRCAudioLevel = function (peerJid, ssrc) {
-    if(!this.audioLevelsEnabled)
+    if(!Statistics.audioLevelsEnabled)
         return;
     var peerStats = this.rtpStats.jid2stats[peerJid];
 
