@@ -170,7 +170,6 @@ LocalVideo.prototype.changeVideo = function (stream) {
         localVideo.autoplay = true;
         localVideo.volume = 0; // is it required if audio is separated ?
     }
-    localVideo.oncontextmenu = function () { return false; };
 
     var localVideoContainer = document.getElementById('localVideoWrapper');
     // Put the new video always in front

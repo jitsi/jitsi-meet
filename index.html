@@ -154,7 +154,7 @@
                     <canvas id="dominantSpeakerAudioLevel"></canvas>
                 </div>
                 <div id="largeVideoWrapper">
-                    <video id="largeVideo" muted="true" autoplay oncontextmenu="return false;"></video>
+                    <video id="largeVideo" muted="true" autoplay></video>
                 </div>
                 <span id="videoConnectionMessage"></span>
             </div>
@@ -163,9 +163,9 @@
                 <span id="localVideoContainer" class="videocontainer">
                     <span id="localNick" class="nick"></span>
                     <span id="localVideoWrapper">
-                        <!--<video id="localVideo" autoplay oncontextmenu="return false;" muted></video> - is now per stream generated -->
+                        <!--<video id="localVideo" autoplay muted></video> - is now per stream generated -->
                     </span>
-                    <audio id="localAudio" autoplay oncontextmenu="return false;" muted></audio>
+                    <audio id="localAudio" autoplay muted></audio>
                     <span class="focusindicator"></span>
                 </span>
                 <audio id="userJoined" src="sounds/joined.wav" preload="auto"></audio>
