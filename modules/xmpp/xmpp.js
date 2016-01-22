@@ -294,15 +294,29 @@ XMPP.prototype.getSessions = function () {
 };
 
 XMPP.prototype.disconnect = function () {
-    if (this.disconnectInProgress || !this.connection || !this.connection.connected)
-    {
+    if (this.disconnectInProgress
+            || !this.connection
+            || !this.connection.connected) {
         this.eventEmitter.emit(JitsiConnectionEvents.WRONG_STATE);
         return;
     }
 
     this.disconnectInProgress = true;
 
+    // XXX Strophe is asynchronously sending by default. Unfortunately, that
+    // means that there may not be enough time to send an unavailable presence
+    // or disconnect at all. Switching Strophe to synchronous sending is not
+    // much of an option because it may lead to a noticeable delay in navigating
+    // away from the current location. As a compromise, we will try to increase
+    // the chances of sending an unavailable presence and/or disconecting within
+    // the short time span that we have upon unloading by invoking flush() on
+    // the connection. We flush() once before disconnect() in order to attemtp
+    // to have its unavailable presence at the top of the send queue. We flush()
+    // once more after disconnect() in order to attempt to have its unavailable
+    // presence sent as soon as possible.
+    this.connection.flush();
     this.connection.disconnect();
+    this.connection.flush();
 };
 
 module.exports = XMPP;

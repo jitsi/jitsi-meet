@@ -153,7 +153,21 @@ ChatRoom.prototype.doLeave = function () {
     logger.log("do leave", this.myroomjid);
     var pres = $pres({to: this.myroomjid, type: 'unavailable' });
     this.presMap.length = 0;
+
+    // XXX Strophe is asynchronously sending by default. Unfortunately, that
+    // means that there may not be enough time to send the unavailable presence.
+    // Switching Strophe to synchronous sending is not much of an option because
+    // it may lead to a noticeable delay in navigating away from the current
+    // location. As a compromise, we will try to increase the chances of sending
+    // the unavailable presence within the short time span that we have upon
+    // unloading by invoking flush() on the connection. We flush() once before
+    // sending/queuing the unavailable presence in order to attemtp to have the
+    // unavailable presence at the top of the send queue. We flush() once more
+    // after sending/queuing the unavailable presence in order to attempt to
+    // have it sent as soon as possible.
+    this.connection.flush();
     this.connection.send(pres);
+    this.connection.flush();
 };
 
 
