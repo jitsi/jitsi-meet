@@ -772,6 +772,11 @@ function setupListeners(conference) {
             }
         }
     );
+    conference.rtc.addListener(RTCEvents.FAKE_VIDEO_TRACK_CREATED,
+        function (track) {
+            conference.onTrackAdded(track);
+        }
+    );
 
     conference.room.addListener(XMPPEvents.AUDIO_MUTED_BY_FOCUS,
         function (value) {

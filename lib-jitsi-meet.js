@@ -774,6 +774,11 @@ function setupListeners(conference) {
             }
         }
     );
+    conference.rtc.addListener(RTCEvents.FAKE_VIDEO_TRACK_CREATED,
+        function (track) {
+            conference.onTrackAdded(track);
+        }
+    );
 
     conference.room.addListener(XMPPEvents.AUDIO_MUTED_BY_FOCUS,
         function (value) {
@@ -2045,7 +2050,7 @@ function JitsiRemoteTrack(RTC, data, sid, ssrc) {
     JitsiTrack.call(this, RTC, data.stream,
         function () {
             this.eventEmitter.emit(JitsiTrackEvents.TRACK_STOPPED);
-        }.bind(this), data.type);
+        }.bind(this), data.jitsiTrackType);
     this.rtc = RTC;
     this.sid = sid;
     this.stream = data.stream;
@@ -2071,7 +2076,10 @@ JitsiRemoteTrack.prototype.setMute = function (value) {
     if(this.muted === value)
         return;
 
-    this.stream.muted = value;
+    // we can have a fake video stream
+    if(this.stream)
+        this.stream.muted = value;
+
     this.muted = value;
     this.eventEmitter.emit(JitsiTrackEvents.TRACK_MUTE_CHANGED);
 };
@@ -2166,11 +2174,11 @@ function addMediaStreamInactiveHandler(mediaStream, handler) {
  * @param stream the stream
  * @param streamInactiveHandler the function that will handle
  *        onended/oninactive events of the stream.
- * @param type optionally a type can be specified.
+ * @param jitsiTrackType optionally a type can be specified.
  *        This is the case where we are creating a dummy track with no stream
  *        Currently this happens when a remote side is starting with video muted
  */
-function JitsiTrack(rtc, stream, streamInactiveHandler, type)
+function JitsiTrack(rtc, stream, streamInactiveHandler, jitsiTrackType)
 {
     /**
      * Array with the HTML elements that are displaying the streams.
@@ -2181,7 +2189,7 @@ function JitsiTrack(rtc, stream, streamInactiveHandler, type)
     this.stream = stream;
     this.eventEmitter = new EventEmitter();
     this.audioLevel = -1;
-    this.type = type || (this.stream.getVideoTracks().length > 0)?
+    this.type = jitsiTrackType || (this.stream.getVideoTracks().length > 0)?
         JitsiTrack.VIDEO : JitsiTrack.AUDIO;
     if(this.type == JitsiTrack.AUDIO) {
         this._getTracks = function () {
@@ -2317,7 +2325,10 @@ JitsiTrack.prototype._getId = function () {
  * @returns {string} id of the track or null if this is fake track.
  */
 JitsiTrack.prototype.getId = function () {
-    return RTC.getStreamID(this.stream);
+    if(this.stream)
+        return RTC.getStreamID(this.stream);
+    else
+        return null;
 };
 
 /**
@@ -2416,11 +2427,13 @@ function RTC(room, options) {
             // we need to create a dummy track which we will mute, so we can
             // notify interested about the muting
             if(!self.remoteStreams[from][JitsiTrack.VIDEO]) {
-                self.createRemoteStream(
+                var track = self.createRemoteStream(
                     {peerjid:room.roomjid + "/" + from,
                      videoType:"camera",
-                     type:JitsiTrack.VIDEO},
+                     jitsiTrackType:JitsiTrack.VIDEO},
                     null, null);
+                self.eventEmitter
+                    .emit(RTCEvents.FAKE_VIDEO_TRACK_CREATED, track);
             }
 
             self.remoteStreams[from][JitsiTrack.VIDEO]
@@ -31323,7 +31336,8 @@ var RTCEvents = {
     LASTN_CHANGED: "rtc.lastn_changed",
     DOMINANTSPEAKER_CHANGED: "rtc.dominantspeaker_changed",
     LASTN_ENDPOINT_CHANGED: "rtc.lastn_endpoint_changed",
-    AVAILABLE_DEVICES_CHANGED: "rtc.available_devices_changed"
+    AVAILABLE_DEVICES_CHANGED: "rtc.available_devices_changed",
+    FAKE_VIDEO_TRACK_CREATED: "rtc.fake_video_track_created"
 };
 
 module.exports = RTCEvents;

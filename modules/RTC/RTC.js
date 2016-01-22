@@ -40,11 +40,13 @@ function RTC(room, options) {
             // we need to create a dummy track which we will mute, so we can
             // notify interested about the muting
             if(!self.remoteStreams[from][JitsiTrack.VIDEO]) {
-                self.createRemoteStream(
+                var track = self.createRemoteStream(
                     {peerjid:room.roomjid + "/" + from,
                      videoType:"camera",
-                     type:JitsiTrack.VIDEO},
+                     jitsiTrackType:JitsiTrack.VIDEO},
                     null, null);
+                self.eventEmitter
+                    .emit(RTCEvents.FAKE_VIDEO_TRACK_CREATED, track);
             }
 
             self.remoteStreams[from][JitsiTrack.VIDEO]

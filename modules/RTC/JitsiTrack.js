@@ -60,11 +60,11 @@ function addMediaStreamInactiveHandler(mediaStream, handler) {
  * @param stream the stream
  * @param streamInactiveHandler the function that will handle
  *        onended/oninactive events of the stream.
- * @param type optionally a type can be specified.
+ * @param jitsiTrackType optionally a type can be specified.
  *        This is the case where we are creating a dummy track with no stream
  *        Currently this happens when a remote side is starting with video muted
  */
-function JitsiTrack(rtc, stream, streamInactiveHandler, type)
+function JitsiTrack(rtc, stream, streamInactiveHandler, jitsiTrackType)
 {
     /**
      * Array with the HTML elements that are displaying the streams.
@@ -75,7 +75,7 @@ function JitsiTrack(rtc, stream, streamInactiveHandler, type)
     this.stream = stream;
     this.eventEmitter = new EventEmitter();
     this.audioLevel = -1;
-    this.type = type || (this.stream.getVideoTracks().length > 0)?
+    this.type = jitsiTrackType || (this.stream.getVideoTracks().length > 0)?
         JitsiTrack.VIDEO : JitsiTrack.AUDIO;
     if(this.type == JitsiTrack.AUDIO) {
         this._getTracks = function () {
@@ -211,7 +211,10 @@ JitsiTrack.prototype._getId = function () {
  * @returns {string} id of the track or null if this is fake track.
  */
 JitsiTrack.prototype.getId = function () {
-    return RTC.getStreamID(this.stream);
+    if(this.stream)
+        return RTC.getStreamID(this.stream);
+    else
+        return null;
 };
 
 /**

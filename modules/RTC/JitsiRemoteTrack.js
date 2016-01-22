@@ -14,7 +14,7 @@ function JitsiRemoteTrack(RTC, data, sid, ssrc) {
     JitsiTrack.call(this, RTC, data.stream,
         function () {
             this.eventEmitter.emit(JitsiTrackEvents.TRACK_STOPPED);
-        }.bind(this), data.type);
+        }.bind(this), data.jitsiTrackType);
     this.rtc = RTC;
     this.sid = sid;
     this.stream = data.stream;
@@ -40,7 +40,10 @@ JitsiRemoteTrack.prototype.setMute = function (value) {
     if(this.muted === value)
         return;
 
-    this.stream.muted = value;
+    // we can have a fake video stream
+    if(this.stream)
+        this.stream.muted = value;
+
     this.muted = value;
     this.eventEmitter.emit(JitsiTrackEvents.TRACK_MUTE_CHANGED);
 };
