@@ -36,12 +36,25 @@ function RTC(room, options) {
     this.options = options || {};
     room.addPresenceListener("videomuted", function (values, from) {
         if(self.remoteStreams[from]) {
-            self.remoteStreams[from][JitsiTrack.VIDEO].setMute(values.value == "true");
+            // If there is no video track, but we receive it is muted,
+            // we need to create a dummy track which we will mute, so we can
+            // notify interested about the muting
+            if(!self.remoteStreams[from][JitsiTrack.VIDEO]) {
+                self.createRemoteStream(
+                    {peerjid:room.roomjid + "/" + from,
+                     videoType:"camera",
+                     type:JitsiTrack.VIDEO},
+                    null, null);
+            }
+
+            self.remoteStreams[from][JitsiTrack.VIDEO]
+                .setMute(values.value == "true");
         }
     });
     room.addPresenceListener("audiomuted", function (values, from) {
         if(self.remoteStreams[from]) {
-            self.remoteStreams[from][JitsiTrack.AUDIO].setMute(values.value == "true");
+            self.remoteStreams[from][JitsiTrack.AUDIO]
+                .setMute(values.value == "true");
         }
     });
 }

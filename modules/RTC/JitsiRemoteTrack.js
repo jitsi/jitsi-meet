@@ -14,7 +14,7 @@ function JitsiRemoteTrack(RTC, data, sid, ssrc) {
     JitsiTrack.call(this, RTC, data.stream,
         function () {
             this.eventEmitter.emit(JitsiTrackEvents.TRACK_STOPPED);
-        }.bind(this));
+        }.bind(this), data.type);
     this.rtc = RTC;
     this.sid = sid;
     this.stream = data.stream;

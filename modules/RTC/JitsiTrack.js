@@ -11,6 +11,10 @@ var RTC = require("./RTCUtils");
  */
 function implementOnEndedHandling(jitsiTrack) {
     var stream = jitsiTrack.getOriginalStream();
+
+    if(!stream)
+        return;
+
     var originalStop = stream.stop;
     stream.stop = function () {
         originalStop.apply(stream);
@@ -56,8 +60,11 @@ function addMediaStreamInactiveHandler(mediaStream, handler) {
  * @param stream the stream
  * @param streamInactiveHandler the function that will handle
  *        onended/oninactive events of the stream.
+ * @param type optionally a type can be specified.
+ *        This is the case where we are creating a dummy track with no stream
+ *        Currently this happens when a remote side is starting with video muted
  */
-function JitsiTrack(rtc, stream, streamInactiveHandler)
+function JitsiTrack(rtc, stream, streamInactiveHandler, type)
 {
     /**
      * Array with the HTML elements that are displaying the streams.
@@ -68,9 +75,9 @@ function JitsiTrack(rtc, stream, streamInactiveHandler)
     this.stream = stream;
     this.eventEmitter = new EventEmitter();
     this.audioLevel = -1;
-    this.type = (this.stream.getVideoTracks().length > 0)?
+    this.type = type || (this.stream.getVideoTracks().length > 0)?
         JitsiTrack.VIDEO : JitsiTrack.AUDIO;
-    if(this.type == "audio") {
+    if(this.type == JitsiTrack.AUDIO) {
         this._getTracks = function () {
             return this.stream.getAudioTracks();
         }.bind(this);
