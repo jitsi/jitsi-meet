@@ -6,8 +6,6 @@ var JitsiTrack = require("./JitsiTrack");
 var JitsiLocalTrack = require("./JitsiLocalTrack.js");
 var DataChannels = require("./DataChannels");
 var JitsiRemoteTrack = require("./JitsiRemoteTrack.js");
-var DesktopSharingEventTypes
-    = require("../../service/desktopsharing/DesktopSharingEventTypes");
 var MediaStreamType = require("../../service/RTC/MediaStreamTypes");
 var RTCEvents = require("../../service/RTC/RTCEvents.js");
 

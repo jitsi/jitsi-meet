@@ -217,4 +217,3 @@ DataChannels.prototype._some = function (callback, thisArg) {
 }
 
 module.exports = DataChannels;
-

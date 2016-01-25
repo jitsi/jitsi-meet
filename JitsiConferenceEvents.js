@@ -28,6 +28,10 @@ var JitsiConferenceEvents = {
      */
     USER_ROLE_CHANGED: "conference.roleChanged",
     /**
+     * User status changed.
+     */
+    USER_STATUS_CHANGED: "conference.statusChanged",
+    /**
      * New text message was received.
      */
     MESSAGE_RECEIVED: "conference.messageReceived",
@@ -103,7 +107,16 @@ var JitsiConferenceEvents = {
     /**
      * Indicates that phone number changed.
      */
-    PHONE_NUMBER_CHANGED: "conference.phoneNumberChanged"
+    PHONE_NUMBER_CHANGED: "conference.phoneNumberChanged",
+    /**
+     * Indicates that to proceed with screen sharing
+     * browser extension must be installed first.
+     */
+    FIREFOX_EXTENSION_NEEDED: "conference.firefoxExtensionRequired",
+    /**
+     * Indicates that available devices changed.
+     */
+    AVAILABLE_DEVICES_CHANGED: "conference.availableDevicesChanged"
 };
 
 module.exports = JitsiConferenceEvents;
