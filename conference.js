@@ -346,6 +346,7 @@ export default {
 
         room.on(ConferenceEvents.USER_JOINED, (id, user) => {
             console.log('USER %s connnected', id, user);
+            APP.API.notifyUserJoined(id);
             // FIXME email???
             APP.UI.addUser(id, user.getDisplayName());
 
@@ -354,6 +355,7 @@ export default {
         });
         room.on(ConferenceEvents.USER_LEFT, (id, user) => {
             console.log('USER %s LEFT', id, user);
+            APP.API.notifyUserLeft(id);
             APP.UI.removeUser(id, user.getDisplayName());
             APP.UI.stopPrezi(id);
         });
@@ -435,11 +437,14 @@ export default {
                 APP.UI.markVideoInterrupted(false);
             });
             room.on(ConferenceEvents.MESSAGE_RECEIVED, (id, text, ts) => {
-                APP.UI.addMessage(id, getDisplayName(id), text, ts);
+                let nick = getDisplayName(id);
+                APP.API.notifyReceivedChatMessage(id, nick, text, ts);
+                APP.UI.addMessage(id, nick, text, ts);
             });
         }
 
         room.on(ConferenceEvents.DISPLAY_NAME_CHANGED, (id, displayName) => {
+            APP.API.notifyDisplayNameChanged(id, displayName);
             APP.UI.changeDisplayName(id, displayName);
         });
 
@@ -482,6 +487,7 @@ export default {
 
         if (!interfaceConfig.filmStripOnly) {
             APP.UI.addListener(UIEvents.MESSAGE_CREATED, (message) => {
+                APP.API.notifySendingChatMessage(message);
                 room.sendTextMessage(message);
             });
         }
