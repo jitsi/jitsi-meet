@@ -9,6 +9,7 @@ var Logger = require("jitsi-meet-logger");
 var RTC = require("./modules/RTC/RTC");
 var Statistics = require("./modules/statistics/statistics");
 var Resolutions = require("./service/RTC/Resolutions");
+var ScriptUtil = require("./modules/util/ScriptUtil");
 
 function getLowerResolution(resolution) {
     if(!Resolutions[resolution])
@@ -128,7 +129,15 @@ var LibJitsiMeet = {
     },
     enumerateDevices: function (callback) {
         RTC.enumerateDevices(callback);
-    }
+    },
+
+    /**
+     * Represents a hub/namespace for utility functionality which may be of
+     * interest to LibJitsiMeet clients.
+     */
+    util: {
+        ScriptUtil: ScriptUtil,
+    },
 };
 
 //Setups the promise object.

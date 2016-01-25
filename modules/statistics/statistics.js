@@ -4,6 +4,7 @@ var RTPStats = require("./RTPStatsCollector.js");
 var EventEmitter = require("events");
 var StatisticsEvents = require("../../service/statistics/Events");
 var CallStats = require("./CallStats");
+var ScriptUtil = require('../util/ScriptUtil');
 
 // Since callstats.io is a third party, we cannot guarantee the quality of
 // their service. More specifically, their server may take noticeably long
@@ -13,15 +14,10 @@ var CallStats = require("./CallStats");
 // start downloading their API as soon as possible and (2) do the
 // downloading asynchronously.
 function loadCallStatsAPI() {
-    (function (d, src) {
-        var elementName = 'script';
-        var newScript = d.createElement(elementName);
-        var referenceNode = d.getElementsByTagName(elementName)[0];
-
-        newScript.async = true;
-        newScript.src = src;
-        referenceNode.parentNode.insertBefore(newScript, referenceNode);
-    })(document, 'https://api.callstats.io/static/callstats.min.js');
+    ScriptUtil.loadScript(
+            'https://api.callstats.io/static/callstats.min.js',
+            /* async */ true,
+            /* prepend */ true);
     // FIXME At the time of this writing, we hope that the callstats.io API will
     // have loaded by the time we needed it (i.e. CallStats.init is invoked).
 }
