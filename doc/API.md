@@ -45,6 +45,7 @@ The ```options``` parameter is JS object with the following properties:
     6. desktopSharingFirefoxDisabled - Boolean. Whether desktop sharing should be disabled on Firefox. Example: false.
     7. desktopSharingFirefoxMaxVersionExtRequired - The maximum version of Firefox which requires a jidesha extension. Example: if set to 41, we will require the extension for Firefox versions up to and including 41. On Firefox 42 and higher, we will run without the extension. If set to -1, an extension will be required for all versions of Firefox.
     8. desktopSharingFirefoxExtensionURL - The URL to the Firefox extension for desktop sharing. "null" if no extension is required.
+    9. disableAudioLevels - boolean property. Enables/disables audio levels.
 
 * ```JitsiMeetJS.JitsiConnection``` - the ```JitsiConnection``` constructor. You can use that to create new server connection.
 
@@ -148,12 +149,14 @@ This objects represents the server connection. You can create new ```JitsiConnec
 4. initJitsiConference(name, options) - creates new ```JitsiConference``` object.
     - name - the name of the conference
     - options - JS object with configuration options for the conference. You can change the following properties there:
-        1. devices - array with the devices - "video" and "audio" that will be passed to GUM. If that property is not set GUM will try to get all available devices.
-        2. resolution - the prefered resolution for the local video.
-        3. openSctp - boolean property. Enables/disables datachannel support. **NOTE: we recommend to set that option to true**
-        4. disableAudioLevels - boolean property. Enables/disables audio levels.
-        5. recordingType - the type of recording to be used
-        6. jirecon
+        1. openSctp - boolean property. Enables/disables datachannel support. **NOTE: we recommend to set that option to true**
+        2. recordingType - the type of recording to be used
+        3. jirecon
+        4. callStatsID - callstats credentials
+        5. callStatsSecret - callstats credentials
+        6. disableThirdPartyRequests - if true - callstats will be disabled and
+        the callstats API won't be included.
+        **NOTE: if 4 and 5 are set the library is going to send events to callstats. Otherwise the callstats integration will be disabled.**
 
 5. addEventListener(event, listener) - Subscribes the passed listener to the event.
     - event - one of the events from ```JitsiMeetJS.events.connection``` object.
@@ -270,6 +273,10 @@ The object represents a conference. We have the following methods to control the
 27. isStartAudioMuted() - check if audio is muted on join
 
 28. isStartVideoMuted() - check if video is muted on join
+
+29. sendFeedback(overallFeedback, detailedFeedback) - Sends the given feedback through CallStats if enabled.
+    - overallFeedback an integer between 1 and 5 indicating the user feedback
+    - detailedFeedback detailed feedback from the user. Not yet used
 
 JitsiTrack
 ======
