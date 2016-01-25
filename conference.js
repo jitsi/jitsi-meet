@@ -177,7 +177,9 @@ export default {
         return JitsiMeetJS.createLocalTracks({
             // copy array to avoid mutations inside library
             devices: devices.slice(0),
-            resolution: config.resolution
+            resolution: config.resolution,
+            // adds any ff fake device settings if any
+            firefox_fake_device: config.firefox_fake_device
         }).catch(function (err) {
             console.error('failed to create local tracks', ...devices, err);
             APP.statistics.onGetUserMediaFailed(err);
