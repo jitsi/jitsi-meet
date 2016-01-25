@@ -6,19 +6,22 @@ import UIEvents from "../../../service/UI/UIEvents";
 import LargeContainer from './LargeContainer';
 import BottomToolbar from '../toolbars/BottomToolbar';
 import Avatar from "../avatar/Avatar";
+import {createDeferred} from '../../util/helpers';
 
 const RTCBrowserType = require("../../RTC/RTCBrowserType");
 
 const avatarSize = interfaceConfig.DOMINANT_SPEAKER_AVATAR_SIZE;
+const FADE_DURATION_MS = 300;
 
 /**
  * Get stream id.
  * @param {JitsiTrack?} stream
  */
-function getStreamId(stream) {
-    if(!stream)
+function getStreamOwnerId(stream) {
+    if (!stream) {
         return;
-    if (stream.isLocal()) {
+    }
+    if (stream.isLocal()) { // local stream doesn't have method "getParticipantId"
         return APP.conference.localId;
     } else {
         return stream.getParticipantId();
@@ -161,9 +164,7 @@ class VideoContainer extends LargeContainer {
     }
 
     get id () {
-        if (this.stream) {
-            return getStreamId(this.stream);
-        }
+        return getStreamOwnerId(this.stream);
     }
 
     constructor (onPlay) {
@@ -306,20 +307,20 @@ class VideoContainer extends LargeContainer {
     show () {
         let $wrapper = this.$wrapper;
         return new Promise(function(resolve) {
-            $wrapper.fadeIn(300, function () {
-                $wrapper.css({visibility: 'visible'});
+            $wrapper.css({visibility: 'visible'});
+            $wrapper.fadeIn(FADE_DURATION_MS, function () {
                 $('.watermark').css({visibility: 'visible'});
+                resolve();
             });
-            resolve();
         });
     }
 
     hide () {
-
         let $wrapper = this.$wrapper;
 
+        let id = this.id;
         return new Promise(function(resolve) {
-            $wrapper.fadeOut(300, function () {
+            $wrapper.fadeOut(id ? FADE_DURATION_MS : 1, function () {
                 $wrapper.css({visibility: 'hidden'});
                 $('.watermark').css({visibility: 'hidden'});
                 resolve();
@@ -397,35 +398,67 @@ export default class LargeVideoManager {
         return this.videoContainer.id;
     }
 
-     /**
+    scheduleLargeVideoUpdate () {
+        if (this.updateInProcess || !this.newStreamData) {
+            return;
+        }
+
+        this.updateInProcess = true;
+
+        let container = this.getContainer(this.state);
+
+        container.hide().then(() => {
+            let {id, stream, videoType, resolve} = this.newStreamData;
+            this.newStreamData = null;
+
+            console.info("hover in %s", id);
+            this.state = VideoContainerType;
+            this.videoContainer.setStream(stream, videoType);
+
+            // change the avatar url on large
+            this.updateAvatar(Avatar.getAvatarUrl(id));
+
+            let isVideoMuted = stream.isMuted();
+
+            // show the avatar on large if needed
+            this.videoContainer.showAvatar(isVideoMuted);
+
+            // do not show stream if video is muted
+            let promise = isVideoMuted ? Promise.resolve() : this.videoContainer.show();
+
+            // resolve updateLargeVideo promise after everything is done
+            promise.then(resolve);
+
+            return promise;
+        }).then(() => {
+            // after everything is done check again if there are any pending new streams.
+            this.updateInProcess = false;
+            this.scheduleLargeVideoUpdate();
+        });
+    }
+
+    /**
      * Update large video.
      * Switches to large video even if previously other container was visible.
      * @param {JitsiTrack?} stream new stream
      * @param {string?} videoType new video type
      * @returns {Promise}
      */
-    updateLargeVideo (smallVideo, videoType, largeVideoUpdatedCallBack) {
-        let id = getStreamId(smallVideo.stream);
+    updateLargeVideo (stream, videoType) {
+        let id = getStreamOwnerId(stream);
 
-        let container = this.getContainer(this.state);
+        if (this.newStreamData) {
+            this.newStreamData.reject();
+        }
 
-        container.hide().then(() => {
-            console.info("hover in %s", id);
-            this.state = VideoContainerType;
-            this.videoContainer.setStream(smallVideo.stream, videoType);
+        this.newStreamData = createDeferred();
+        this.newStreamData.id = id;
+        this.newStreamData.stream = stream;
+        this.newStreamData.videoType = videoType;
 
-            // change the avatar url on large
-            this.updateAvatar(Avatar.getAvatarUrl(smallVideo.id));
+        this.scheduleLargeVideoUpdate();
 
-            var isVideoMuted = smallVideo.stream.isMuted()
-            // show the avatar on large if needed
-            this.videoContainer.showAvatar(isVideoMuted);
-
-            if (!isVideoMuted)
-                this.videoContainer.show();
-
-            largeVideoUpdatedCallBack();
-        });
+        return this.newStreamData.promise;
     }
 
     /**
@@ -486,7 +519,6 @@ export default class LargeVideoManager {
      * @param {boolean} show
      */
     showAvatar (show) {
-        show ? this.videoContainer.hide() : this.videoContainer.show();
         this.videoContainer.showAvatar(show);
     }
 
@@ -542,16 +574,11 @@ export default class LargeVideoManager {
             return Promise.resolve();
         }
 
-        let container = this.getContainer(type);
-
-        if (this.state) {
-            let oldContainer = this.containers[this.state];
-            if (oldContainer) {
-                oldContainer.hide();
-            }
-        }
+        let oldContainer = this.containers[this.state];
+        oldContainer.hide();
 
         this.state = type;
+        let container = this.getContainer(type);
 
         return container.show();
     }

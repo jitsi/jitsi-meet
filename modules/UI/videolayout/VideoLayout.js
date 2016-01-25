@@ -990,13 +990,14 @@ var VideoLayout = {
 
             let videoType = this.getRemoteVideoType(id);
             largeVideo.updateLargeVideo(
-                smallVideo,
-                videoType,
-                // LargeVideoUpdatedCallBack
-                function() {
-                    // update current small video and the old one
-                    smallVideo.updateView();
-                    oldSmallVideo && oldSmallVideo.updateView();
+                smallVideo.stream,
+                videoType
+            ).then(function() {
+                // update current small video and the old one
+                smallVideo.updateView();
+                oldSmallVideo && oldSmallVideo.updateView();
+            }, function () {
+                // use clicked other video during update, nothing to do.
             });
 
         } else if (currentId) {
