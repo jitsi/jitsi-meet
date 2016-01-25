@@ -369,7 +369,6 @@ ChatRoom.prototype.setSubject = function (subject) {
     var msg = $msg({to: this.roomjid, type: 'groupchat'});
     msg.c('subject', subject);
     this.connection.send(msg);
-    logger.log("topic changed to " + subject);
 };
 
 

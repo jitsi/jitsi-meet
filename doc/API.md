@@ -83,6 +83,7 @@ JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.ERROR);
         - USER_LEFT - a participant left conference. (parameters - id(string), user(JitsiParticipant))
         - MESSAGE_RECEIVED - new text message received. (parameters - id(string), text(string), ts(number))
         - DISPLAY_NAME_CHANGED - user has changed his display name. (parameters - id(string), displayName(string))
+        - SUBJECT_CHANGED - notifies that subject of the conference has changed (parameters - subject(string))
         - LAST_N_ENDPOINTS_CHANGED - last n set was changed (parameters - array of ids of users)
         - IN_LAST_N_CHANGED - passes boolean property that shows whether the local user is included in last n set of any other user or not. (parameters - boolean)
         - CONFERENCE_JOINED - notifies the local user that he joined the conference successfully. (no parameters)
@@ -277,6 +278,11 @@ The object represents a conference. We have the following methods to control the
 29. sendFeedback(overallFeedback, detailedFeedback) - Sends the given feedback through CallStats if enabled.
     - overallFeedback an integer between 1 and 5 indicating the user feedback
     - detailedFeedback detailed feedback from the user. Not yet used
+
+30. setSubject(subject) - change subject of the conference
+    - subject - string new subject
+
+    Note: available only for moderator
 
 JitsiTrack
 ======
