@@ -40,5 +40,6 @@ export default {
     HANGUP: "UI.hangup",
     LOGOUT: "UI.logout",
     RECORDING_TOGGLE: "UI.recording_toggle",
-    TOPIC_CHANGED: "UI.topic_changed"
+    SIP_DIAL: "UI.sip_dial",
+    SUBEJCT_CHANGED: "UI.subject_changed"
 };

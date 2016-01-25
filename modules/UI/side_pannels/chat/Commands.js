@@ -32,7 +32,7 @@ function getCommand(message) {
  */
 function processTopic(commandArguments, emitter) {
     var topic = UIUtil.escapeHtml(commandArguments);
-    emitter.emit(UIEvents.TOPIC_CHANGED, topic);
+    emitter.emit(UIEvents.SUBJECT_CHANGED, topic);
 }
 
 /**
