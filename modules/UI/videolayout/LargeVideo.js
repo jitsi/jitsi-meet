@@ -165,6 +165,7 @@ class VideoContainer extends LargeContainer {
 
     get id () {
         return getStreamOwnerId(this.stream);
+        return getStreamId(this.stream);
     }
 
     constructor (onPlay) {

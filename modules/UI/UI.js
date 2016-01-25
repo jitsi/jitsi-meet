@@ -158,10 +158,38 @@ UI.notifyKicked = function () {
 };
 
 /**
+ * Notify user that conference was destroyed.
+ * @param reason {string} the reason text
+ */
+UI.notifyConferenceDestroyed = function (reason) {
+    //FIXME: use Session Terminated from translation, but
+    // 'reason' text comes from XMPP packet and is not translated
+    var title = APP.translation.generateTranslationHTML("dialog.sessTerminated");
+    messageHandler.openDialog(
+        title, reason, true, {},
+        function (event, value, message, formVals) {
+            return false;
+        }
+    );
+};
+
+/**
  * Notify user that Jitsi Videobridge is not accessible.
  */
-UI.notifyBridgeDown = function () {
+ UI.notifyBridgeDown = function () {
     messageHandler.showError("dialog.error", "dialog.bridgeUnavailable");
+};
+
+/**
+ * Show chat error.
+ * @param err the Error
+ * @param msg 
+ */
+UI.showChatError = function (err, msg) {
+    if (interfaceConfig.filmStripOnly) {
+        return;
+    }
+    Chat.chatAddError(err, msg);
 };
 
 /**
@@ -471,10 +499,9 @@ UI.removeUser = function (id, displayName) {
     VideoLayout.removeParticipantContainer(id);
 };
 
-//FIXME: NOT USED. Should start using the lib
-// function onMucPresenceStatus(jid, info) {
-//     VideoLayout.setPresenceStatus(Strophe.getResourceFromJid(jid), info.status);
-// }
+UI.updateUserStatus = function (id, status) {
+    VideoLayout.setPresenceStatus(id, status);
+};
 
 /**
  * Update videotype for specified user.
@@ -706,7 +733,7 @@ UI.notifyFirefoxExtensionRequired = function (url) {
         null,
         null,
         APP.translation.generateTranslationHTML(
-            "dialog.firefoxExtensionPrompt", {url: url}
+            "dialog.firefoxExtensionPrompt", {url}
         )
     );
 };
@@ -926,6 +953,18 @@ UI.notifyTokenAuthFailed = function () {
     messageHandler.showError("dialog.error", "dialog.tokenAuthFailed");
 };
 
+UI.notifyInternalError = function () {
+    UI.messageHandler.showError("dialog.sorry", "dialog.internalError");
+};
+
+UI.notifyFocusDisconnected = function (focus, retrySec) {
+    UI.messageHandler.notify(
+        null, "notify.focus",
+        'disconnected', "notify.focusFail",
+        {component: focus, ms: retrySec}
+    );
+};
+
 /**
  * Updates auth info on the UI.
  * @param {boolean} isAuthEnabled if authentication is enabled
@@ -986,6 +1025,10 @@ UI.showExtensionRequiredDialog = function (url) {
         null,
         APP.translation.generateTranslationHTML(
             "dialog.firefoxExtensionPrompt", {url: url}));
+};
+
+UI.updateDevicesAvailability = function (id, devices) {
+    VideoLayout.setDeviceAvailabilityIcons(id, devices);
 };
 
 module.exports = UI;
