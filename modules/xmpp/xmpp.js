@@ -290,7 +290,13 @@ XMPP.prototype.getSessions = function () {
     return this.connection.jingle.sessions;
 };
 
-XMPP.prototype.disconnect = function () {
+/**
+ * Disconnects this from the XMPP server (if this is connected).
+ *
+ * @param ev optionally, the event which triggered the necessity to disconnect
+ * from the XMPP server (e.g. beforeunload, unload)
+ */
+XMPP.prototype.disconnect = function (ev) {
     if (this.disconnectInProgress
             || !this.connection
             || !this.connection.connected) {
@@ -312,8 +318,25 @@ XMPP.prototype.disconnect = function () {
     // once more after disconnect() in order to attempt to have its unavailable
     // presence sent as soon as possible.
     this.connection.flush();
+
+    if (ev !== null && typeof ev !== 'undefined') {
+        var evType = ev.type;
+
+        if (evType == 'beforeunload' || evType == 'unload') {
+            // XXX Whatever we said above, synchronous sending is the best
+            // (known) way to properly disconnect from the XMPP server.
+            // Consequently, it may be fine to have the source code and comment
+            // it in or out depending on whether we want to run with it for some
+            // time.
+            this.connection.options.sync = true;
+        }
+    }
+
     this.connection.disconnect();
-    this.connection.flush();
+
+    if (this.connection.options.sync !== true) {
+        this.connection.flush();
+    }
 };
 
 module.exports = XMPP;

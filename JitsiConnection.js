@@ -32,7 +32,13 @@ JitsiConnection.prototype.connect = function (options) {
  * Disconnect the client from the server.
  */
 JitsiConnection.prototype.disconnect = function () {
-    this.xmpp.disconnect();
+    // XXX Forward any arguments passed to JitsiConnection.disconnect to
+    // XMPP.disconnect. For example, the caller of JitsiConnection.disconnect
+    // may optionally pass the event which triggered the disconnect in order to
+    // provide the implementation with finer-grained context.
+    var x = this.xmpp;
+
+    x.disconnect.apply(x, arguments);
 }
 
 /**
