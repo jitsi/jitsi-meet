@@ -81,9 +81,14 @@ function sendEmail (email) {
 /**
  * Leave the conference and close connection.
  */
-function unload () {
-    room.leave();
-    connection.disconnect();
+function unload (ev) {
+    // XXX On beforeunload and unload, there is precious little time to send
+    // requests. Since we are really interested in letting the XMPP server know
+    // that the local peer is going away (so that the XMPP server may notify the
+    // remote peers) and disconnecting should achieve that, do not bother with
+    // leaving the room.
+    //room.leave();
+    connection.disconnect(ev);
 }
 
 /**
