@@ -149,7 +149,7 @@ function isEventEnabled (name) {
  * @param object data associated with the event
  */
 function triggerEvent (name, object) {
-    if (this.isEnabled() && isEventEnabled(name)) {
+    if (isEnabled() && isEventEnabled(name)) {
         sendMessage({
             type: "event",
             action: "result",
