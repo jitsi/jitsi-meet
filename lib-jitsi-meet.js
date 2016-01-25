@@ -7,7 +7,6 @@ var RTC = require("./modules/RTC/RTC");
 var XMPPEvents = require("./service/xmpp/XMPPEvents");
 var AuthenticationEvents = require("./service/authentication/AuthenticationEvents");
 var RTCEvents = require("./service/RTC/RTCEvents");
-var DSEvents = require("./service/desktopsharing/DesktopSharingEventTypes");
 var EventEmitter = require("events");
 var JitsiConferenceEvents = require("./JitsiConferenceEvents");
 var JitsiConferenceErrors = require("./JitsiConferenceErrors");
@@ -821,7 +820,7 @@ function setupListeners(conference) {
         conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_FAILED, JitsiConferenceErrors.CONFERENCE_DESTROYED, reason);
     });
     conference.room.addListener(XMPPEvents.CHAT_ERROR_RECEIVED, function (err, msg) {
-        conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_FAILED, JitsiConferenceErrors.CHAT_ERROR, err, msg);
+        conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_ERROR, JitsiConferenceErrors.CHAT_ERROR, err, msg);
     });
     conference.room.addListener(XMPPEvents.FOCUS_DISCONNECTED, function (focus, retrySec) {
         conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_FAILED, JitsiConferenceErrors.FOCUS_DISCONNECTED, focus, retrySec);
@@ -885,10 +884,6 @@ function setupListeners(conference) {
         }
         participant._status = status;
         conference.eventEmitter.emit(JitsiConferenceEvents.USER_STATUS_CHANGED, id, status);
-    });
-
-    conference.rtc.addListener(DSEvents.FIREFOX_EXTENSION_NEEDED, function (url) {
-        conference.eventEmitter.emit(JitsiConferenceEvents.FIREFOX_EXTENSION_NEEDED, url);
     });
 
     conference.rtc.addListener(RTCEvents.DOMINANTSPEAKER_CHANGED, function (id) {
@@ -1078,7 +1073,7 @@ function setupListeners(conference) {
 module.exports = JitsiConference;
 
 }).call(this,"/JitsiConference.js")
-},{"./JitsiConferenceErrors":2,"./JitsiConferenceEvents":3,"./JitsiParticipant":8,"./JitsiTrackEvents":10,"./modules/DTMF/JitsiDTMFManager":11,"./modules/RTC/RTC":16,"./modules/settings/Settings":21,"./modules/statistics/statistics":25,"./service/RTC/RTCEvents":133,"./service/authentication/AuthenticationEvents":135,"./service/desktopsharing/DesktopSharingEventTypes":136,"./service/xmpp/XMPPEvents":139,"events":46,"jitsi-meet-logger":50}],2:[function(require,module,exports){
+},{"./JitsiConferenceErrors":2,"./JitsiConferenceEvents":3,"./JitsiParticipant":8,"./JitsiTrackEvents":10,"./modules/DTMF/JitsiDTMFManager":11,"./modules/RTC/RTC":16,"./modules/settings/Settings":21,"./modules/statistics/statistics":25,"./service/RTC/RTCEvents":133,"./service/authentication/AuthenticationEvents":135,"./service/xmpp/XMPPEvents":139,"events":46,"jitsi-meet-logger":50}],2:[function(require,module,exports){
 /**
  * Enumeration with the errors for the conference.
  * @type {{string: string}}
@@ -1126,7 +1121,7 @@ var JitsiConferenceErrors = {
      */
     CONFERENCE_DESTROYED: "conference.destroyed",
     /**
-     * Indicates that chat error occured.
+     * Indicates that chat error occurred.
      */
     CHAT_ERROR: "conference.chatError",
     /**
@@ -1220,6 +1215,10 @@ var JitsiConferenceEvents = {
      */
     CONFERENCE_FAILED: "conference.failed",
     /**
+     * Indicates that an error occured.
+     */
+    CONFERENCE_ERROR: "conference.error",
+    /**
      * Indicates that conference has been joined.
      */
     CONFERENCE_JOINED: "conference.joined",
@@ -1251,11 +1250,6 @@ var JitsiConferenceEvents = {
      * Indicates that phone number changed.
      */
     PHONE_NUMBER_CHANGED: "conference.phoneNumberChanged",
-    /**
-     * Indicates that to proceed with screen sharing
-     * browser extension must be installed first.
-     */
-    FIREFOX_EXTENSION_NEEDED: "conference.firefoxExtensionRequired",
     /**
      * Indicates that available devices changed.
      */

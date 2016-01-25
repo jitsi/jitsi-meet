@@ -45,7 +45,7 @@ var JitsiConferenceErrors = {
      */
     CONFERENCE_DESTROYED: "conference.destroyed",
     /**
-     * Indicates that chat error occured.
+     * Indicates that chat error occurred.
      */
     CHAT_ERROR: "conference.chatError",
     /**

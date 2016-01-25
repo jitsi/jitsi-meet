@@ -77,6 +77,10 @@ var JitsiConferenceEvents = {
      */
     CONFERENCE_FAILED: "conference.failed",
     /**
+     * Indicates that an error occured.
+     */
+    CONFERENCE_ERROR: "conference.error",
+    /**
      * Indicates that conference has been joined.
      */
     CONFERENCE_JOINED: "conference.joined",
@@ -108,11 +112,6 @@ var JitsiConferenceEvents = {
      * Indicates that phone number changed.
      */
     PHONE_NUMBER_CHANGED: "conference.phoneNumberChanged",
-    /**
-     * Indicates that to proceed with screen sharing
-     * browser extension must be installed first.
-     */
-    FIREFOX_EXTENSION_NEEDED: "conference.firefoxExtensionRequired",
     /**
      * Indicates that available devices changed.
      */

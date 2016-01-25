@@ -91,10 +91,10 @@ JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.ERROR);
         - USER_ROLE_CHANGED - notifies that role of some user changed. (parameters - id(string), role(string))
         - USER_STATUS_CHANGED - notifies that status of some user changed. (parameters - id(string), status(string))
         - CONFERENCE_FAILED - notifies that user failed to join the conference. (parameters - errorCode(JitsiMeetJS.errors.conference))
+        - CONFERENCE_ERROR - notifies that error occurred. (parameters - errorCode(JitsiMeetJS.errors.conference))
         - KICKED - notifies that user has been kicked from the conference.
         - START_MUTED_POLICY_CHANGED - notifies that all new participants will join with muted audio/video stream (parameters - JS object with 2 properties - audio(boolean), video(boolean))
         - STARTED_MUTED - notifies that the local user has started muted
-        - FIREFOX_EXTENSION_NEEDED - notifies that browser extension must be installed to proceed with screen sharing (parameters - extension url(string))
         - AVAILABLE_DEVICES_CHANGED - notifies that available participant devices changed (camera or microphone was added or removed) (parameters - id(string), devices(JS object with 2 properties - audio(boolean), video(boolean)))
 
     2. connection
@@ -106,7 +106,7 @@ JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.ERROR);
 * ```JitsiMeetJS.errors``` - JS object that contains all errors used by the API. You can use that object to check the reported errors from the API
     We have two error types - connection and conference. You can access the events with the following code ```JitsiMeetJS.errors.<error_type>.<error_name>```.
     For example if you want to use the conference event that is fired when somebody leave conference you can use the following code - ```JitsiMeetJS.errors.conference.PASSWORD_REQUIRED```.
-    We support the following events:
+    We support the following errors:
     1. conference
         - CONNECTION_ERROR - the connection with the conference is lost.
         - SETUP_FAILED - conference setup failed
