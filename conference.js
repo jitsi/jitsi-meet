@@ -93,8 +93,8 @@ class ConferenceConnector {
         this._unsubscribe();
         this._reject(err);
     }
-    _onConferenceFailed(err, msg = '') {
-        console.error('CONFERENCE FAILED:', err, msg);
+    _onConferenceFailed(err, ...params) {
+        console.error('CONFERENCE FAILED:', err, params);
         switch (err) {
             // room is locked by the password
         case ConferenceErrors.PASSWORD_REQUIRED:
@@ -105,7 +105,10 @@ class ConferenceConnector {
             break;
 
         case ConferenceErrors.CONNECTION_ERROR:
-            APP.UI.notifyConnectionFailed(msg);
+            {
+                let [msg] = params;
+                APP.UI.notifyConnectionFailed(msg);
+            }
             break;
 
         case ConferenceErrors.VIDEOBRIDGE_NOT_AVAILABLE:
@@ -123,8 +126,44 @@ class ConferenceConnector {
             AuthHandler.requireAuth(APP.conference.roomName);
             break;
 
+        case ConferenceErrors.RESERVATION_ERROR:
+            {
+                let [code, msg] = params;
+                APP.UI.notifyReservationError(code, msg);
+            }
+            break;
+
+        case ConferenceErrors.GRACEFUL_SHUTDOWN:
+            APP.UI.notifyGracefulShudown();
+            break;
+
+        case ConferenceErrors.JINGLE_FATAL_ERROR:
+            APP.UI.notifyInternalError();
+            break;
+
+        case ConferenceErrors.CONFERENCE_DESTROYED:
+            {
+                let [reason] = params;
+                APP.UI.notifyConferenceDestroyed(reason);
+            }
+            break;
+
+        case ConferenceErrors.CHAT_ERROR:
+            {
+                let [code, msg] = params;
+                APP.UI.showChatError(code, msg);
+            }
+            break;
+
+        case ConferenceErrors.FOCUS_DISCONNECTED:
+            {
+                let [focus, retrySec] = params;
+                APP.UI.notifyFocusDisconnected(focus, retrySec);
+            }
+            break;
+
         default:
-            this._handleConferenceFailed(err, msg);
+            this._handleConferenceFailed(err, ...params);
         }
     }
     _unsubscribe() {
@@ -451,6 +490,10 @@ export default {
             APP.UI.updateRecordingState(status);
         });
 
+        room.on(ConferenceEvents.USER_STATUS_CHANGED, function (id, status) {
+            APP.UI.updateUserStatus(id, status);
+        });
+
         room.on(ConferenceEvents.KICKED, () => {
             APP.UI.notifyKicked();
             // FIXME close
@@ -458,6 +501,10 @@ export default {
 
         room.on(ConferenceEvents.DTMF_SUPPORT_CHANGED, (isDTMFSupported) => {
             APP.UI.updateDTMFSupport(isDTMFSupported);
+        });
+
+        room.on(ConferenceEvents.FIREFOX_EXTENSION_NEEDED, function (url) {
+            APP.UI.notifyFirefoxExtensionRequired(url);
         });
 
         APP.UI.addListener(UIEvents.ROOM_LOCK_CLICKED, () => {
@@ -593,6 +640,12 @@ export default {
                 APP.settings.getDisplayName()
             );
         });
+
+        room.on(
+            ConferenceEvents.AVAILABLE_DEVICES_CHANGED, function (id, devices) {
+                APP.UI.updateDevicesAvailability(id, devices);
+            }
+        );
 
         // call hangup
         APP.UI.addListener(UIEvents.HANGUP, () => {

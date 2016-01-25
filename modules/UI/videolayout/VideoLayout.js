@@ -187,16 +187,18 @@ var VideoLayout = {
      * @param resourceJid the jid of user
      * @param devices available devices
      */
-    setDeviceAvailabilityIcons (resourceJid, devices) {
-        if(!devices)
-            return;
-
-        if(!resourceJid) {
+    setDeviceAvailabilityIcons (id, devices) {
+        if (APP.conference.isLocalId(id)) {
             localVideoThumbnail.setDeviceAvailabilityIcons(devices);
-        } else {
-            if(remoteVideos[resourceJid])
-                remoteVideos[resourceJid].setDeviceAvailabilityIcons(devices);
+            return;
         }
+
+        let video = remoteVideos[id];
+        if (!video) {
+            return;
+        }
+
+        video.setDeviceAvailabilityIcons(devices);
     },
 
     /**
@@ -387,8 +389,8 @@ var VideoLayout = {
     /**
      * Shows the presence status message for the given video.
      */
-    setPresenceStatus (resourceJid, statusMsg) {
-        remoteVideos[resourceJid].setPresenceStatus(statusMsg);
+    setPresenceStatus (id, statusMsg) {
+        remoteVideos[id].setPresenceStatus(statusMsg);
     },
 
     /**
