@@ -261,6 +261,16 @@ JitsiConference.prototype.setDisplayName = function(name) {
 };
 
 /**
+ * Set new subject for this conference. (available only for moderator)
+ * @param {string} subject new subject
+ */
+JitsiConference.prototype.setSubject = function (subject) {
+    if (this.room && this.isModerator()) {
+        this.room.setSubject(subject);
+    }
+};
+
+/**
  * Adds JitsiLocalTrack object to the conference.
  * @param track the JitsiLocalTrack object.
  */
@@ -786,6 +796,10 @@ function setupListeners(conference) {
             conference.rtc.setAudioMute(value);
         }
     );
+
+    conference.room.addListener(XMPPEvents.SUBJECT_CHANGED, function (subject) {
+        conference.eventEmitter.emit(JitsiConferenceEvents.SUBJECT_CHANGED, subject);
+    });
 
     conference.room.addListener(XMPPEvents.MUC_JOINED, function () {
         conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_JOINED);

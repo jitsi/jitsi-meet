@@ -263,6 +263,16 @@ JitsiConference.prototype.setDisplayName = function(name) {
 };
 
 /**
+ * Set new subject for this conference. (available only for moderator)
+ * @param {string} subject new subject
+ */
+JitsiConference.prototype.setSubject = function (subject) {
+    if (this.room && this.isModerator()) {
+        this.room.setSubject(subject);
+    }
+};
+
+/**
  * Adds JitsiLocalTrack object to the conference.
  * @param track the JitsiLocalTrack object.
  */
@@ -789,6 +799,10 @@ function setupListeners(conference) {
         }
     );
 
+    conference.room.addListener(XMPPEvents.SUBJECT_CHANGED, function (subject) {
+        conference.eventEmitter.emit(JitsiConferenceEvents.SUBJECT_CHANGED, subject);
+    });
+
     conference.room.addListener(XMPPEvents.MUC_JOINED, function () {
         conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_JOINED);
     });
@@ -1177,6 +1191,10 @@ var JitsiConferenceEvents = {
      * A user has changed it display name
      */
     DISPLAY_NAME_CHANGED: "conference.displayNameChanged",
+    /**
+     * Indicates that subject of the conference has changed.
+     */
+    SUBJECT_CHANGED: "conference.subjectChanged",
     /**
      * A participant avatar has changed.
      */
@@ -7778,7 +7796,6 @@ ChatRoom.prototype.setSubject = function (subject) {
     var msg = $msg({to: this.roomjid, type: 'groupchat'});
     msg.c('subject', subject);
     this.connection.send(msg);
-    logger.log("topic changed to " + subject);
 };
 
 

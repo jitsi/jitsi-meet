@@ -40,6 +40,10 @@ var JitsiConferenceEvents = {
      */
     DISPLAY_NAME_CHANGED: "conference.displayNameChanged",
     /**
+     * Indicates that subject of the conference has changed.
+     */
+    SUBJECT_CHANGED: "conference.subjectChanged",
+    /**
      * A participant avatar has changed.
      */
     AVATAR_CHANGED: "conference.avatarChanged",
