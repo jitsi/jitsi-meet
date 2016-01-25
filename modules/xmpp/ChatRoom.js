@@ -333,12 +333,9 @@ ChatRoom.prototype.onPresence = function (pres) {
         }
     }
 
-    if(!member.isFocus)
-        this.eventEmitter.emit(XMPPEvents.USER_ID_CHANGED, from, member.id);
-
     // Trigger status message update
     if (member.status) {
-        this.eventEmitter.emit(XMPPEvents.PRESENCE_STATUS, from, member);
+        this.eventEmitter.emit(XMPPEvents.PRESENCE_STATUS, from, member.status);
     }
 
     if(jibri)

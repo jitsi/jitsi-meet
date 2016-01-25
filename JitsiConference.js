@@ -5,6 +5,7 @@ var RTC = require("./modules/RTC/RTC");
 var XMPPEvents = require("./service/xmpp/XMPPEvents");
 var AuthenticationEvents = require("./service/authentication/AuthenticationEvents");
 var RTCEvents = require("./service/RTC/RTCEvents");
+var DSEvents = require("./service/desktopsharing/DesktopSharingEventTypes");
 var EventEmitter = require("events");
 var JitsiConferenceEvents = require("./JitsiConferenceEvents");
 var JitsiConferenceErrors = require("./JitsiConferenceErrors");
@@ -57,6 +58,10 @@ function JitsiConference(options) {
     this.startAudioMuted = false;
     this.startVideoMuted = false;
     this.startMutedPolicy = {audio: false, video: false};
+    this.availableDevices = {
+        audio: undefined,
+        video: undefined
+    };
 }
 
 /**
@@ -801,6 +806,24 @@ function setupListeners(conference) {
     conference.room.addListener(XMPPEvents.BRIDGE_DOWN, function () {
         conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_FAILED, JitsiConferenceErrors.VIDEOBRIDGE_NOT_AVAILABLE);
     });
+    conference.room.addListener(XMPPEvents.RESERVATION_ERROR, function (code, msg) {
+        conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_FAILED, JitsiConferenceErrors.RESERVATION_ERROR, code, msg);
+    });
+    conference.room.addListener(XMPPEvents.GRACEFUL_SHUTDOWN, function () {
+        conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_FAILED, JitsiConferenceErrors.GRACEFUL_SHUTDOWN);
+    });
+    conference.room.addListener(XMPPEvents.JINGLE_FATAL_ERROR, function () {
+        conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_FAILED, JitsiConferenceErrors.JINGLE_FATAL_ERROR);
+    });
+    conference.room.addListener(XMPPEvents.MUC_DESTROYED, function (reason) {
+        conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_FAILED, JitsiConferenceErrors.CONFERENCE_DESTROYED, reason);
+    });
+    conference.room.addListener(XMPPEvents.CHAT_ERROR_RECEIVED, function (err, msg) {
+        conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_FAILED, JitsiConferenceErrors.CHAT_ERROR, err, msg);
+    });
+    conference.room.addListener(XMPPEvents.FOCUS_DISCONNECTED, function (focus, retrySec) {
+        conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_FAILED, JitsiConferenceErrors.FOCUS_DISCONNECTED, focus, retrySec);
+    });
 //    FIXME
 //    conference.room.addListener(XMPPEvents.MUC_JOINED, function () {
 //        conference.eventEmitter.emit(JitsiConferenceEvents.CONFERENCE_LEFT);
@@ -850,6 +873,20 @@ function setupListeners(conference) {
     conference.room.addListener(XMPPEvents.MESSAGE_RECEIVED, function (jid, displayName, txt, myJid, ts) {
         var id = Strophe.getResourceFromJid(jid);
         conference.eventEmitter.emit(JitsiConferenceEvents.MESSAGE_RECEIVED, id, txt, ts);
+    });
+
+    conference.room.addListener(XMPPEvents.PRESENCE_STATUS, function (jid, status) {
+        var id = Strophe.getResourceFromJid(jid);
+        var participant = conference.getParticipantById(id);
+        if (!participant || participant._status === status) {
+            return;
+        }
+        participant._status = status;
+        conference.eventEmitter.emit(JitsiConferenceEvents.USER_STATUS_CHANGED, id, status);
+    });
+
+    conference.rtc.addListener(DSEvents.FIREFOX_EXTENSION_NEEDED, function (url) {
+        conference.eventEmitter.emit(JitsiConferenceEvents.FIREFOX_EXTENSION_NEEDED, url);
     });
 
     conference.rtc.addListener(RTCEvents.DOMINANTSPEAKER_CHANGED, function (id) {
@@ -929,6 +966,50 @@ function setupListeners(conference) {
         }
     });
 
+    conference.rtc.addListener(RTCEvents.AVAILABLE_DEVICES_CHANGED, function (devices) {
+        conference.room.updateDeviceAvailability(devices);
+    });
+    conference.room.addPresenceListener("devices", function (data, from) {
+        var isAudioAvailable = false;
+        var isVideoAvailable = false;
+        data.children.forEach(function (config) {
+            if (config.tagName === 'audio') {
+                isAudioAvailable = config.value === 'true';
+            }
+            if (config.tagName === 'video') {
+                isVideoAvailable = config.value === 'true';
+            }
+        });
+
+        var availableDevices;
+        if (conference.myUserId() === from) {
+            availableDevices = conference.availableDevices;
+        } else {
+            var participant = conference.getParticipantById(from);
+            if (!participant) {
+                return;
+            }
+
+            availableDevices = participant._availableDevices;
+        }
+
+        var updated = false;
+
+        if (availableDevices.audio !== isAudioAvailable) {
+            updated = true;
+            availableDevices.audio = isAudioAvailable;
+        }
+
+        if (availableDevices.video !== isVideoAvailable) {
+            updated = true;
+            availableDevices.video = isVideoAvailable;
+        }
+
+        if (updated) {
+            conference.eventEmitter.emit(JitsiConferenceEvents.AVAILABLE_DEVICES_CHANGED, from, availableDevices);
+        }
+    });
+
     if(conference.statistics) {
         //FIXME: Maybe remove event should not be associated with the conference.
         conference.statistics.addAudioLevelListener(function (ssrc, level) {
@@ -943,10 +1024,6 @@ function setupListeners(conference) {
             function () {
                 conference.statistics.dispose();
             });
-        // FIXME: Maybe we should move this.
-        // RTC.addListener(RTCEvents.AVAILABLE_DEVICES_CHANGED, function (devices) {
-        //     conference.room.updateDeviceAvailability(devices);
-        // });
 
         conference.room.addListener(XMPPEvents.PEERCONNECTION_READY,
             function (session) {

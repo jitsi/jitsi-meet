@@ -89,10 +89,13 @@ JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.ERROR);
         - CONFERENCE_LEFT - notifies the local user that he left the conference successfully. (no parameters)
         - DTMF_SUPPORT_CHANGED - notifies if at least one user supports DTMF. (parameters - supports(boolean))
         - USER_ROLE_CHANGED - notifies that role of some user changed. (parameters - id(string), role(string))
+        - USER_STATUS_CHANGED - notifies that status of some user changed. (parameters - id(string), status(string))
         - CONFERENCE_FAILED - notifies that user failed to join the conference. (parameters - errorCode(JitsiMeetJS.errors.conference))
         - KICKED - notifies that user has been kicked from the conference.
         - START_MUTED_POLICY_CHANGED - notifies that all new participants will join with muted audio/video stream (parameters - JS object with 2 properties - audio(boolean), video(boolean))
         - STARTED_MUTED - notifies that the local user has started muted
+        - FIREFOX_EXTENSION_NEEDED - notifies that browser extension must be installed to proceed with screen sharing (parameters - extension url(string))
+        - AVAILABLE_DEVICES_CHANGED - notifies that available participant devices changed (camera or microphone was added or removed) (parameters - id(string), devices(JS object with 2 properties - audio(boolean), video(boolean)))
 
     2. connection
         - CONNECTION_FAILED - indicates that the server connection failed.
@@ -111,6 +114,12 @@ JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.ERROR);
         - PASSWORD_REQUIRED - that error can be passed when the connection to the conference failed. You should try to join the conference with password.
         - PASSWORD_NOT_SUPPORTED - indicates that conference cannot be locked
         - VIDEOBRIDGE_NOT_AVAILABLE - video bridge issues.
+        - RESERVATION_ERROR - error in reservation system
+        - GRACEFUL_SHUTDOWN - graceful shutdown
+        - JINGLE_FATAL_ERROR - error in jingle
+        - CONFERENCE_DESTROYED - conference has been destroyed
+        - CHAT_ERROR - chat error happened
+        - FOCUS_DISCONNECTED - focus error happened
     2. connection
         - PASSWORD_REQUIRED - passed when the connection to the server failed. You should try to authenticate with password.
         - CONNECTION_ERROR - indicates connection failures.
