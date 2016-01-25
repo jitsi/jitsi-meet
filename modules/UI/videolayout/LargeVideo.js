@@ -11,6 +11,10 @@ const RTCBrowserType = require("../../RTC/RTCBrowserType");
 
 const avatarSize = interfaceConfig.DOMINANT_SPEAKER_AVATAR_SIZE;
 
+/**
+ * Get stream id.
+ * @param {JitsiTrack?} stream
+ */
 function getStreamId(stream) {
     if(!stream)
         return;
@@ -147,6 +151,9 @@ function getDesktopVideoPosition(videoWidth,
 
 export const VideoContainerType = "video";
 
+/**
+ * Container for user video.
+ */
 class VideoContainer extends LargeContainer {
     // FIXME: With Temasys we have to re-select everytime
     get $video () {
@@ -174,6 +181,10 @@ class VideoContainer extends LargeContainer {
         this.$video.on('play', onPlay);
     }
 
+    /**
+     * Get size of video element.
+     * @returns {{width, height}}
+     */
     getStreamSize () {
         let video = this.$video[0];
         return {
@@ -182,6 +193,12 @@ class VideoContainer extends LargeContainer {
         };
     }
 
+    /**
+     * Calculate optimal video size for specified container size.
+     * @param {number} containerWidth container width
+     * @param {number} containerHeight container height
+     * @returns {{availableWidth, availableHeight}}
+     */
     getVideoSize (containerWidth, containerHeight) {
         let { width, height } = this.getStreamSize();
         if (this.stream && this.isScreenSharing()) {
@@ -197,6 +214,15 @@ class VideoContainer extends LargeContainer {
         }
     }
 
+    /**
+     * Calculate optimal video position (offset for top left corner)
+     * for specified video size and container size.
+     * @param {number} width video width
+     * @param {number} height video height
+     * @param {number} containerWidth container width
+     * @param {number} containerHeight container height
+     * @returns {{horizontalIndent, verticalIndent}}
+     */
     getVideoPosition (width, height, containerWidth, containerHeight) {
         if (this.stream && this.isScreenSharing()) {
             return getDesktopVideoPosition( width,
@@ -238,6 +264,11 @@ class VideoContainer extends LargeContainer {
         });
     }
 
+    /**
+     * Update video stream.
+     * @param {JitsiTrack?} stream new stream
+     * @param {string} videoType video type
+     */
     setStream (stream, videoType) {
         this.stream = stream;
         this.videoType = videoType;
@@ -250,10 +281,18 @@ class VideoContainer extends LargeContainer {
         });
     }
 
+    /**
+     * Check if current video stream is screen sharing.
+     * @returns {boolean}
+     */
     isScreenSharing () {
         return this.videoType === 'desktop';
     }
 
+    /**
+     * Show or hide user avatar.
+     * @param {boolean} show
+     */
     showAvatar (show) {
         this.$avatar.css("visibility", show ? "visible" : "hidden");
     }
@@ -289,7 +328,9 @@ class VideoContainer extends LargeContainer {
     }
 }
 
-
+/**
+ * Manager for all Large containers.
+ */
 export default class LargeVideoManager {
     constructor () {
         this.containers = {};
@@ -356,6 +397,13 @@ export default class LargeVideoManager {
         return this.videoContainer.id;
     }
 
+     /**
+     * Update large video.
+     * Switches to large video even if previously other container was visible.
+     * @param {JitsiTrack?} stream new stream
+     * @param {string?} videoType new video type
+     * @returns {Promise}
+     */
     updateLargeVideo (smallVideo, videoType, largeVideoUpdatedCallBack) {
         let id = getStreamId(smallVideo.stream);
 
@@ -380,16 +428,29 @@ export default class LargeVideoManager {
         });
     }
 
+    /**
+     * Update container size optionally taking side bar size into account.
+     * @param {boolean} isSideBarVisible if side bar is visible.
+     */
     updateContainerSize (isSideBarVisible) {
         this.width = UIUtil.getAvailableVideoWidth(isSideBarVisible);
         this.height = window.innerHeight;
     }
 
+    /**
+     * Resize Large container of specified type.
+     * @param {string} type type of container which should be resized.
+     * @param {boolean} [animate=false] if resize process should be animated.
+     */
     resizeContainer (type, animate = false) {
         let container = this.getContainer(type);
         container.resize(this.width, this.height, animate);
     }
 
+    /**
+     * Resize all Large containers.
+     * @param {boolean} animate if resize process should be animated.
+     */
     resize (animate) {
         // resize all containers
         Object.keys(this.containers)
@@ -420,11 +481,20 @@ export default class LargeVideoManager {
         $("#dominantSpeakerAvatar").attr('src', avatarUrl);
     }
 
+    /**
+     * Show avatar on Large video container or not.
+     * @param {boolean} show
+     */
     showAvatar (show) {
         show ? this.videoContainer.hide() : this.videoContainer.show();
         this.videoContainer.showAvatar(show);
     }
 
+    /**
+     * Add container of specified type.
+     * @param {string} type container type
+     * @param {LargeContainer} container container to add.
+     */
     addContainer (type, container) {
         if (this.containers[type]) {
             throw new Error(`container of type ${type} already exist`);
@@ -434,6 +504,11 @@ export default class LargeVideoManager {
         this.resizeContainer(type);
     }
 
+    /**
+     * Get Large container of specified type.
+     * @param {string} type container type.
+     * @returns {LargeContainer}
+     */
     getContainer (type) {
         let container = this.containers[type];
 
@@ -444,6 +519,10 @@ export default class LargeVideoManager {
         return container;
     }
 
+    /**
+     * Remove Large container of specified type.
+     * @param {string} type container type.
+     */
     removeContainer (type) {
         if (!this.containers[type]) {
             throw new Error(`container of type ${type} doesn't exist`);
@@ -452,6 +531,12 @@ export default class LargeVideoManager {
         delete this.containers[type];
     }
 
+    /**
+     * Show Large container of specified type.
+     * Does nothing if such container is already visible.
+     * @param {string} type container type.
+     * @returns {Promise}
+     */
     showContainer (type) {
         if (this.state === type) {
             return Promise.resolve();

@@ -11,17 +11,31 @@ import ToolbarToggler from "../toolbars/ToolbarToggler";
 import SidePanelToggler from "../side_pannels/SidePanelToggler";
 import BottomToolbar from '../toolbars/BottomToolbar';
 
+/**
+ * Example of Prezi link.
+ */
 const defaultPreziLink = "http://prezi.com/wz7vhjycl7e6/my-prezi";
 const alphanumRegex = /^[a-z0-9-_\/&\?=;]+$/i;
+/**
+ * Default aspect ratio for Prezi frame.
+ */
 const aspectRatio = 16.0 / 9.0;
 
+/**
+ * Default Prezi frame width.
+ */
 const DEFAULT_WIDTH = 640;
+/**
+ * Default Prezi frame height.
+ */
 const DEFAULT_HEIGHT = 480;
 
 /**
  * Indicates if the given string is an alphanumeric string.
  * Note that some special characters are also allowed (-, _ , /, &, ?, =, ;) for the
  * purpose of checking URIs.
+ * @param {string} unsafeText string to check
+ * @returns {boolean}
  */
 function isAlphanumeric(unsafeText) {
     return alphanumRegex.test(unsafeText);
@@ -29,12 +43,19 @@ function isAlphanumeric(unsafeText) {
 
 /**
  * Returns the presentation id from the given url.
+ * @param {string} url Prezi link
+ * @returns {string} presentation id
  */
 function getPresentationId (url) {
     let presId = url.substring(url.indexOf("prezi.com/") + 10);
     return presId.substring(0, presId.indexOf('/'));
 }
 
+/**
+ * Checks if given string is Prezi url.
+ * @param {string} url string to check.
+ * @returns {boolean}
+ */
 function isPreziLink(url) {
     if (url.indexOf('http://prezi.com/') !== 0 && url.indexOf('https://prezi.com/') !== 0) {
         return false;
@@ -48,6 +69,9 @@ function isPreziLink(url) {
     return true;
 }
 
+/**
+ * Notify user that other user if already sharing Prezi.
+ */
 function notifyOtherIsSharingPrezi() {
     messageHandler.openMessageDialog(
         "dialog.sharePreziTitle",
@@ -55,6 +79,9 @@ function notifyOtherIsSharingPrezi() {
     );
 }
 
+/**
+ * Ask user if he want to close Prezi he's sharing.
+ */
 function proposeToClosePrezi() {
     return new Promise(function (resolve, reject) {
         messageHandler.openTwoButtonDialog(
@@ -76,6 +103,10 @@ function proposeToClosePrezi() {
     });
 }
 
+/**
+ * Ask user for Prezi url to share with others.
+ * Dialog validates client input to allow only Prezi urls.
+ */
 function requestPreziLink() {
     const title = APP.translation.generateTranslationHTML("dialog.sharePreziTitle");
     const cancelButton = APP.translation.generateTranslationHTML("dialog.Cancel");
@@ -154,6 +185,9 @@ function requestPreziLink() {
 
 export const PreziContainerType = "prezi";
 
+/**
+ * Container for Prezi iframe.
+ */
 class PreziContainer extends LargeContainer {
 
     constructor ({preziId, isMy, slide, onSlideChanged}) {
@@ -187,6 +221,10 @@ class PreziContainer extends LargeContainer {
         });
     }
 
+    /**
+     * Change Prezi slide.
+     * @param {number} slide slide to show
+     */
     goToSlide (slide) {
         if (this.preziPlayer.getCurrentStep() === slide) {
             return;
@@ -204,6 +242,10 @@ class PreziContainer extends LargeContainer {
         }
     }
 
+    /**
+     * Show or hide "reload presentation" button.
+     * @param {boolean} show
+     */
     showReloadBtn (show) {
         this.reloadBtn.css('display', show ? 'inline-block' : 'none');
     }
@@ -256,6 +298,9 @@ class PreziContainer extends LargeContainer {
         this.$iframe.width(width).height(height);
     }
 
+    /**
+     * Close Prezi frame.
+     */
     close () {
         this.showReloadBtn(false);
         this.preziPlayer.destroy();
@@ -263,6 +308,9 @@ class PreziContainer extends LargeContainer {
     }
 }
 
+/**
+ * Manager of Prezi frames.
+ */
 export default class PreziManager {
     constructor (emitter) {
         this.emitter = emitter;
@@ -282,6 +330,10 @@ export default class PreziManager {
         return this.userId === APP.conference.localId;
     }
 
+    /**
+     * Check if user is currently sharing.
+     * @param {string} id user id to check for
+     */
     isSharing (id) {
         return this.userId === id;
     }
@@ -302,6 +354,9 @@ export default class PreziManager {
         }
     }
 
+    /**
+     * Reload current Prezi frame.
+     */
     reloadPresentation () {
         if (!this.prezi) {
             return;
@@ -310,6 +365,12 @@ export default class PreziManager {
         iframe.src = iframe.src;
     }
 
+    /**
+     * Show Prezi. Create new Prezi if there is no Prezi yet.
+     * @param {string} id owner id
+     * @param {string} url Prezi url
+     * @param {number} slide slide to show
+     */
     showPrezi (id, url, slide) {
         if (!this.isPresenting) {
             this.createPrezi(id, url, slide);
@@ -324,6 +385,12 @@ export default class PreziManager {
         }
     }
 
+    /**
+     * Create new Prezi frame..
+     * @param {string} id owner id
+     * @param {string} url Prezi url
+     * @param {number} slide slide to show
+     */
     createPrezi (id, url, slide) {
         console.log("presentation added", url);
 
@@ -354,6 +421,10 @@ export default class PreziManager {
         VideoLayout.showLargeVideoContainer(PreziContainerType, true);
     }
 
+    /**
+     * Close Prezi.
+     * @param {string} id owner id
+     */
     removePrezi (id) {
         if (this.userId !== id) {
             throw new Error(`cannot close presentation from ${this.userId} instead of ${id}`);

@@ -31,6 +31,9 @@ UI.eventEmitter = eventEmitter;
 let preziManager;
 let etherpadManager;
 
+/**
+ * Prompt user for nickname.
+ */
 function promptDisplayName() {
     let nickRequiredMsg = APP.translation.translateString("dialog.displayNameRequired");
     let defaultNickMsg = APP.translation.translateString(
@@ -76,6 +79,9 @@ function promptDisplayName() {
     );
 }
 
+/**
+ * Initialize chat.
+ */
 function setupChat() {
     Chat.init(eventEmitter);
     $("#toggle_smileys").click(function() {
@@ -83,6 +89,9 @@ function setupChat() {
     });
 }
 
+/**
+ * Initialize toolbars.
+ */
 function setupToolbars() {
     Toolbar.init(eventEmitter);
     Toolbar.setupButtonsFromConfig();
@@ -113,6 +122,9 @@ function toggleFullScreen () {
     }
 }
 
+/**
+ * Notify user that server has shut down.
+ */
 UI.notifyGracefulShudown = function () {
     messageHandler.openMessageDialog(
         'dialog.serviceUnavailable',
@@ -120,6 +132,9 @@ UI.notifyGracefulShudown = function () {
     );
 };
 
+/**
+ * Notify user that reservation error happened.
+ */
 UI.notifyReservationError = function (code, msg) {
     var title = APP.translation.generateTranslationHTML(
         "dialog.reservationError");
@@ -135,14 +150,25 @@ UI.notifyReservationError = function (code, msg) {
     );
 };
 
+/**
+ * Notify user that he has been kicked from the server.
+ */
 UI.notifyKicked = function () {
     messageHandler.openMessageDialog("dialog.sessTerminated", "dialog.kickMessage");
 };
 
+/**
+ * Notify user that Jitsi Videobridge is not accessible.
+ */
 UI.notifyBridgeDown = function () {
     messageHandler.showError("dialog.error", "dialog.bridgeUnavailable");
 };
 
+/**
+ * Change nickname for the user.
+ * @param {string} id user id
+ * @param {string} displayName new nickname
+ */
 UI.changeDisplayName = function (id, displayName) {
     ContactList.onDisplayNameChange(id, displayName);
     SettingsMenu.onDisplayNameChange(id, displayName);
@@ -153,6 +179,9 @@ UI.changeDisplayName = function (id, displayName) {
     }
 };
 
+/**
+ * Intitialize conference UI.
+ */
 UI.initConference = function () {
     var id = APP.conference.localId;
     Toolbar.updateRoomUrl(window.location.href);
@@ -186,6 +215,9 @@ UI.mucJoined = function () {
     VideoLayout.mucJoined();
 };
 
+/**
+ * Setup some UI event listeners.
+ */
 function registerListeners() {
     UI.addListener(UIEvents.EMAIL_CHANGED, function (email) {
         UI.setUserAvatar(APP.conference.localId, email);
@@ -214,6 +246,9 @@ function registerListeners() {
     UI.addListener(UIEvents.TOGGLE_FILM_STRIP, UI.toggleFilmStrip);
 }
 
+/**
+ * Setup some DOM event listeners.
+ */
 function bindEvents() {
     function onResize() {
         PanelToggler.resizeChat();
@@ -341,6 +376,10 @@ UI.start = function () {
 };
 
 
+/**
+ * Show local stream on UI.
+ * @param {JitsiTrack} track stream to show
+ */
 UI.addLocalStream = function (track) {
     switch (track.getType()) {
     case 'audio':
@@ -356,18 +395,30 @@ UI.addLocalStream = function (track) {
 };
 
 
-UI.addRemoteStream = function (stream) {
-    VideoLayout.onRemoteStreamAdded(stream);
+/**
+ * Show remote stream on UI.
+ * @param {JitsiTrack} track stream to show
+ */
+UI.addRemoteStream = function (track) {
+    VideoLayout.onRemoteStreamAdded(track);
 };
 
 function chatAddError(errorMessage, originalText) {
     return Chat.chatAddError(errorMessage, originalText);
 }
 
+/**
+ * Update chat subject.
+ * @param {string} subject new chat subject
+ */
 UI.setSubject = function (subject) {
     Chat.setSubject(subject);
 };
 
+/**
+ * Setup and show Etherpad.
+ * @param {string} name etherpad id
+ */
 UI.initEtherpad = function (name) {
     if (etherpadManager || !config.etherpad_base || !name) {
         return;
@@ -377,6 +428,11 @@ UI.initEtherpad = function (name) {
     Toolbar.showEtherpadButton();
 };
 
+/**
+ * Show user on UI.
+ * @param {string} id user id
+ * @param {string} displayName user nickname
+ */
 UI.addUser = function (id, displayName) {
     ContactList.addContact(id);
 
@@ -395,6 +451,11 @@ UI.addUser = function (id, displayName) {
     VideoLayout.addParticipantContainer(id);
 };
 
+/**
+ * Remove user from UI.
+ * @param {string} id   user id
+ * @param {string} displayName user nickname
+ */
 UI.removeUser = function (id, displayName) {
     ContactList.removeContact(id);
 
@@ -415,10 +476,19 @@ UI.removeUser = function (id, displayName) {
 //     VideoLayout.setPresenceStatus(Strophe.getResourceFromJid(jid), info.status);
 // }
 
+/**
+ * Update videotype for specified user.
+ * @param {string} id user id
+ * @param {string} newVideoType new videotype
+ */
 UI.onPeerVideoTypeChanged = (id, newVideoType) => {
     VideoLayout.onVideoTypeChanged(id, newVideoType);
 };
 
+/**
+ * Update local user role and show notification if user is moderator.
+ * @param {boolean} isModerator if local user is moderator or not
+ */
 UI.updateLocalRole = function (isModerator) {
     VideoLayout.showModeratorIndicator();
 
@@ -462,22 +532,38 @@ UI.updateUserRole = function (user) {
 };
 
 
+/**
+ * Toggles smileys in the chat.
+ */
 UI.toggleSmileys = function () {
     Chat.toggleSmileys();
 };
 
+/**
+ * Get current settings.
+ * @returns {object} settings
+ */
 UI.getSettings = function () {
     return Settings.getSettings();
 };
 
+/**
+ * Toggles film strip.
+ */
 UI.toggleFilmStrip = function () {
     BottomToolbar.toggleFilmStrip();
 };
 
+/**
+ * Toggles chat panel.
+ */
 UI.toggleChat = function () {
     PanelToggler.toggleChat();
 };
 
+/**
+ * Toggles contact list panel.
+ */
 UI.toggleContactList = function () {
     PanelToggler.toggleContactList();
 };
@@ -499,6 +585,7 @@ UI.connectionIndicatorShowMore = function(jid) {
     return VideoLayout.showMore(jid);
 };
 
+// FIXME check if someone user this
 UI.showLoginPopup = function(callback) {
     console.log('password is required');
     var message = '<h2 data-i18n="dialog.passwordRequired">';
@@ -569,6 +656,11 @@ UI.dockToolbar = function (isDock) {
     ToolbarToggler.dockToolbar(isDock);
 };
 
+/**
+ * Update user avatar.
+ * @param {string} id user id
+ * @param {stirng} email user email
+ */
 UI.setUserAvatar = function (id, email) {
     // update avatar
     Avatar.setUserAvatar(id, email);
@@ -582,6 +674,10 @@ UI.setUserAvatar = function (id, email) {
     }
 };
 
+/**
+ * Notify user that connection failed.
+ * @param {string} stropheErrorMsg raw Strophe error message
+ */
 UI.notifyConnectionFailed = function (stropheErrorMsg) {
     var title = APP.translation.generateTranslationHTML(
         "dialog.error");
@@ -600,6 +696,10 @@ UI.notifyConnectionFailed = function (stropheErrorMsg) {
     );
 };
 
+/**
+ * Notify user that he need to install Firefox extension to share screen.
+ * @param {stirng} url extension url
+ */
 UI.notifyFirefoxExtensionRequired = function (url) {
     messageHandler.openMessageDialog(
         "dialog.extensionRequired",
@@ -611,12 +711,19 @@ UI.notifyFirefoxExtensionRequired = function (url) {
     );
 };
 
+/**
+ * Notify user that he was automatically muted when joned the conference.
+ */
 UI.notifyInitiallyMuted = function () {
     messageHandler.notify(
         null, "notify.mutedTitle", "connected", "notify.muted", null, {timeOut: 120000}
     );
 };
 
+/**
+ * Mark user as dominant speaker.
+ * @param {string} id user id
+ */
 UI.markDominantSpeaker = function (id) {
     VideoLayout.onDominantSpeakerChanged(id);
 };
@@ -625,26 +732,53 @@ UI.handleLastNEndpoints = function (ids) {
     VideoLayout.onLastNEndpointsChanged(ids, []);
 };
 
+/**
+ * Update audio level visualization for specified user.
+ * @param {string} id user id
+ * @param {number} lvl audio level
+ */
 UI.setAudioLevel = function (id, lvl) {
     VideoLayout.setAudioLevel(id, lvl);
 };
 
+/**
+ * Update state of desktop sharing buttons.
+ * @param {boolean} isSharingScreen if user is currently sharing his screen
+ */
 UI.updateDesktopSharingButtons = function (isSharingScreen) {
     Toolbar.changeDesktopSharingButtonState(isSharingScreen);
 };
 
+/**
+ * Hide connection quality statistics from UI.
+ */
 UI.hideStats = function () {
     VideoLayout.hideStats();
 };
 
+/**
+ * Update local connection quality statistics.
+ * @param {number} percent
+ * @param {object} stats
+ */
 UI.updateLocalStats = function (percent, stats) {
     VideoLayout.updateLocalConnectionStats(percent, stats);
 };
 
+/**
+ * Update connection quality statistics for remote user.
+ * @param {string} id user id
+ * @param {number} percent
+ * @param {object} stats
+ */
 UI.updateRemoteStats = function (id, percent, stats) {
     VideoLayout.updateConnectionStats(id, percent, stats);
 };
 
+/**
+ * Mark video as interrupted or not.
+ * @param {boolean} interrupted if video is interrupted
+ */
 UI.markVideoInterrupted = function (interrupted) {
     if (interrupted) {
         VideoLayout.onVideoInterrupted();
@@ -653,6 +787,10 @@ UI.markVideoInterrupted = function (interrupted) {
     }
 };
 
+/**
+ * Mark room as locked or not.
+ * @param {boolean} locked if room is locked.
+ */
 UI.markRoomLocked = function (locked) {
     if (locked) {
         Toolbar.lockLockButton();
@@ -661,6 +799,13 @@ UI.markRoomLocked = function (locked) {
     }
 };
 
+/**
+ * Add chat message.
+ * @param {string} from user id
+ * @param {string} displayName user nickname
+ * @param {string} message message text
+ * @param {number} stamp timestamp when message was created
+ */
 UI.addMessage = function (from, displayName, message, stamp) {
     Chat.updateChatConversation(from, displayName, message, stamp);
 };
@@ -672,6 +817,10 @@ UI.updateDTMFSupport = function (isDTMFSupported) {
 
 /**
  * Invite participants to conference.
+ * @param {string} roomUrl
+ * @param {string} conferenceName
+ * @param {string} key
+ * @param {string} nick
  */
 UI.inviteParticipants = function (roomUrl, conferenceName, key, nick) {
     let keyText = "";
@@ -710,6 +859,10 @@ UI.inviteParticipants = function (roomUrl, conferenceName, key, nick) {
     window.open(`mailto:?subject=${subject}&body=${body}`, '_blank');
 };
 
+/**
+ * Show user feedback dialog if its required or just show "thank you" dialog.
+ * @returns {Promise} when dialog is closed.
+ */
 UI.requestFeedback = function () {
     return new Promise(function (resolve, reject) {
         if (Feedback.isEnabled()) {
@@ -736,6 +889,10 @@ UI.requestFeedback = function () {
     });
 };
 
+/**
+ * Request recording token from the user.
+ * @returns {Promise}
+ */
 UI.requestRecordingToken = function () {
     let msg = APP.translation.generateTranslationHTML("dialog.recordingToken");
     let token = APP.translation.translateString("dialog.token");
@@ -769,6 +926,11 @@ UI.notifyTokenAuthFailed = function () {
     messageHandler.showError("dialog.error", "dialog.tokenAuthFailed");
 };
 
+/**
+ * Updates auth info on the UI.
+ * @param {boolean} isAuthEnabled if authentication is enabled
+ * @param {string} [login] current login
+ */
 UI.updateAuthInfo = function (isAuthEnabled, login) {
     let loggedIn = !!login;
 
@@ -782,10 +944,20 @@ UI.updateAuthInfo = function (isAuthEnabled, login) {
     }
 };
 
+/**
+ * Show Prezi from the user.
+ * @param {string} userId user id
+ * @param {string} url Prezi url
+ * @param {number} slide slide to show
+ */
 UI.showPrezi = function (userId, url, slide) {
     preziManager.showPrezi(userId, url, slide);
 };
 
+/**
+ * Stop showing Prezi from the user.
+ * @param {string} userId user id
+ */
 UI.stopPrezi = function (userId) {
   if (preziManager.isSharing(userId)) {
       preziManager.removePrezi(userId);
@@ -798,7 +970,7 @@ UI.onStartMutedChanged = function () {
 
 /**
  * Returns the id of the current video shown on large.
- * Currently used by tests (troture).
+ * Currently used by tests (torture).
  */
 UI.getLargeVideoID = function () {
     return VideoLayout.getLargeVideoID();

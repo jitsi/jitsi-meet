@@ -2,6 +2,10 @@
 
 var messageHandler = require('../util/MessageHandler');
 
+/**
+ * Build html for "password required" dialog.
+ * @returns {string} html string
+ */
 function getPasswordInputHtml() {
     let placeholder = config.hosts.authdomain
         ? "user identity"
@@ -13,11 +17,16 @@ function getPasswordInputHtml() {
         <h2 data-i18n="dialog.passwordRequired">${passRequiredMsg}</h2>
         <input name="username" type="text" placeholder=${placeholder} autofocus>
         <input name="password" type="password"
-    data-i18n="[placeholder]dialog.userPassword"
-    placeholder="user password">
+               data-i18n="[placeholder]dialog.userPassword"
+               placeholder="user password">
         `;
 }
 
+/**
+ * Convert provided id to jid if it's not jid yet.
+ * @param {string} id user id or jid
+ * @returns {string} jid
+ */
 function toJid(id) {
     if (id.indexOf("@") >= 0) {
         return id;
@@ -33,6 +42,10 @@ function toJid(id) {
     return jid;
 }
 
+/**
+ * Generate cancel button config for the dialog.
+ * @returns {Object}
+ */
 function cancelButton() {
     return {
         title: APP.translation.generateTranslationHTML("dialog.Cancel"),
@@ -40,7 +53,18 @@ function cancelButton() {
     };
 }
 
-function Dialog(successCallback, cancelCallback) {
+/**
+ * Auth dialog for JitsiConnection which supports retries.
+ * If no cancelCallback provided then there will be
+ * no cancel button on the dialog.
+ *
+ * @class LoginDialog
+ * @constructor
+ *
+ * @param {function(jid, password)} successCallback
+ * @param {function} [cancelCallback] callback to invoke if user canceled.
+ */
+function LoginDialog(successCallback, cancelCallback) {
     let loginButtons = [{
         title: APP.translation.generateTranslationHTML("dialog.Ok"),
         value: true
@@ -118,6 +142,10 @@ function Dialog(successCallback, cancelCallback) {
         connDialog.goToState('finished');
     };
 
+    /**
+     *  Show message as connection status.
+     * @param {string} message
+     */
     this.displayConnectionStatus = function (message) {
         let connectingState = connDialog.getState('connecting');
 
@@ -133,12 +161,26 @@ function Dialog(successCallback, cancelCallback) {
     };
 }
 
-const LoginDialog = {
+export default {
 
+    /**
+     * Show new auth dialog for JitsiConnection.
+     *
+     * @param {function(jid, password)} successCallback
+     * @param {function} [cancelCallback] callback to invoke if user canceled.
+     *
+     * @returns {LoginDialog}
+     */
     showAuthDialog: function (successCallback, cancelCallback) {
-        return new Dialog(successCallback, cancelCallback);
+        return new LoginDialog(successCallback, cancelCallback);
     },
 
+    /**
+     * Show notification that external auth is required (using provided url).
+     * @param {string} url URL to use for external auth.
+     * @param {function} callback callback to invoke when auth popup is closed.
+     * @returns auth dialog
+     */
     showExternalAuthDialog: function (url, callback) {
         var dialog = messageHandler.openCenteredPopup(
             url, 910, 660,
@@ -153,6 +195,14 @@ const LoginDialog = {
         return dialog;
     },
 
+    /**
+     * Show notification that authentication is required
+     * to create the conference, so he should authenticate or wait for a host.
+     * @param {string} roomName name of the conference
+     * @param {function} onAuthNow callback to invoke if
+     * user want to authenticate.
+     * @returns dialog
+     */
     showAuthRequiredDialog: function (roomName, onAuthNow) {
         var title = APP.translation.generateTranslationHTML(
             "dialog.WaitingForHost"
@@ -184,5 +234,3 @@ const LoginDialog = {
         );
     }
 };
-
-export default LoginDialog;

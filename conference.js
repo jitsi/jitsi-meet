@@ -17,6 +17,9 @@ const ConferenceErrors = JitsiMeetJS.errors.conference;
 
 let room, connection, localTracks, localAudio, localVideo, roomLocker;
 
+/**
+ * Known custom conference commands.
+ */
 const Commands = {
     CONNECTION_QUALITY: "stats",
     EMAIL: "email",
@@ -26,6 +29,10 @@ const Commands = {
     STOP_PREZI: "stop-prezi"
 };
 
+/**
+ * Open Connection. When authentication failed it shows auth dialog.
+ * @returns Promise<JitsiConnection>
+ */
 function connect() {
     return openConnection({retry: true}).catch(function (err) {
         if (err === ConnectionErrors.PASSWORD_REQUIRED) {
@@ -37,8 +44,14 @@ function connect() {
     });
 }
 
-const addTrack = (track) => {
+/**
+ * Add local track to the conference and shares
+ * video type with other users if its video track.
+ * @param {JitsiLocalTrack} track local track
+ */
+function addTrack (track) {
     room.addTrack(track);
+
     if (track.isAudioTrack()) {
         return;
     }
@@ -50,25 +63,35 @@ const addTrack = (track) => {
             xmlns: 'http://jitsi.org/jitmeet/video'
         }
     });
-};
+}
 
-// share email with other users
-const sendEmail = (email) => {
+/**
+ * Share email with other users.
+ * @param {string} email new email
+ */
+function sendEmail (email) {
     room.sendCommand(Commands.EMAIL, {
         value: email,
         attributes: {
             id: room.myUserId()
         }
     });
-};
+}
 
-
-const unload = () => {
+/**
+ * Leave the conference and close connection.
+ */
+function unload () {
     room.leave();
     connection.disconnect();
-};
+}
 
-const getDisplayName = (id) => {
+/**
+ * Get user nickname by user id.
+ * @param {string} id user id
+ * @returns {string?} user nickname or undefined if user is unknown.
+ */
+function getDisplayName (id) {
     if (APP.conference.isLocalId(id)) {
         return APP.settings.getDisplayName();
     }
@@ -77,7 +100,7 @@ const getDisplayName = (id) => {
     if (participant && participant.getDisplayName()) {
         return participant.getDisplayName();
     }
-};
+}
 
 class ConferenceConnector {
     constructor(resolve, reject) {
@@ -151,6 +174,12 @@ export default {
     isModerator: false,
     audioMuted: false,
     videoMuted: false,
+    /**
+     * Open new connection and join to the conference.
+     * @param {object} options
+     * @param {string} roomName name of the conference
+     * @returns {Promise}
+     */
     init(options) {
         this.roomName = options.roomName;
         JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.TRACE);
@@ -173,6 +202,12 @@ export default {
             });
         });
     },
+    /**
+     * Create local tracks of specified types.
+     * If we cannot obtain required tracks it will return empty array.
+     * @param {string[]} devices required track types ('audio', 'video' etc.)
+     * @returns {Promise<JitsiLocalTrack[]>}
+     */
     createLocalTracks (...devices) {
         return JitsiMeetJS.createLocalTracks({
             // copy array to avoid mutations inside library
@@ -186,6 +221,11 @@ export default {
             return Promise.reject(err);
         });
     },
+    /**
+     * Check if id is id of the local user.
+     * @param {string} id id to check
+     * @returns {boolean}
+     */
     isLocalId (id) {
         return this.localId === id;
     },
@@ -219,12 +259,24 @@ export default {
     toggleVideoMuted () {
         this.muteVideo(!this.videoMuted);
     },
+    /**
+     * Retrieve list of conference participants (without local user).
+     * @returns {JitsiParticipant[]}
+     */
     listMembers () {
         return room.getParticipants();
     },
+    /**
+     * Retrieve list of ids of conference participants (without local user).
+     * @returns {string[]}
+     */
     listMembersIds () {
         return room.getParticipants().map(p => p.getId());
     },
+    /**
+     * Check if SIP is supported.
+     * @returns {boolean}
+     */
     sipGatewayEnabled () {
         return room.isSIPCallingSupported();
     },
@@ -281,7 +333,7 @@ export default {
     /**
      * Will check for number of remote particiapnts that have at least one
      * remote track.
-     * @return boolean whether we have enough participants with remote streams
+     * @return {boolean} whether we have enough participants with remote streams
      */
     checkEnoughParticipants (number) {
         var participants = this._room.getParticipants();
@@ -338,6 +390,9 @@ export default {
         }
         return options;
     },
+    /**
+     * Setup interaction between conference and UI.
+     */
     _setupListeners () {
         // add local streams when joined to the conference
         room.on(ConferenceEvents.CONFERENCE_JOINED, () => {

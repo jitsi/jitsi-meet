@@ -10,6 +10,13 @@ const ConferenceEvents = JitsiMeetJS.events.conference;
 let externalAuthWindow;
 let authRequiredDialog;
 
+/**
+ * Authenticate using external service or just focus
+ * external auth window if there is one already.
+ *
+ * @param {JitsiConference} room
+ * @param {string} [lockPassword] password to use if the conference is locked
+ */
 function doExternalAuth (room, lockPassword) {
     if (externalAuthWindow) {
         externalAuthWindow.focus();
@@ -32,6 +39,11 @@ function doExternalAuth (room, lockPassword) {
     }
 }
 
+/**
+ * Authenticate on the server.
+ * @param {JitsiConference} room
+ * @param {string} [lockPassword] password to use if the conference is locked
+ */
 function doXmppAuth (room, lockPassword) {
     let loginDialog = LoginDialog.showAuthDialog(function (id, password) {
         // auth "on the fly":
@@ -83,6 +95,12 @@ function doXmppAuth (room, lockPassword) {
     });
 }
 
+/**
+ * Authenticate for the conference.
+ * Uses external service for auth if conference supports that.
+ * @param {JitsiConference} room
+ * @param {string} [lockPassword] password to use if the conference is locked
+ */
 function authenticate (room, lockPassword) {
     if (room.isExternalAuthEnabled()) {
         doExternalAuth(room, lockPassword);
@@ -91,6 +109,9 @@ function authenticate (room, lockPassword) {
     }
 }
 
+/**
+ * Notify user that authentication is required to create the conference.
+ */
 function requireAuth(roomName) {
     if (authRequiredDialog) {
         return;
@@ -101,6 +122,9 @@ function requireAuth(roomName) {
     );
 }
 
+/**
+ * Close auth-related dialogs if there are any.
+ */
 function closeAuth() {
     if (externalAuthWindow) {
         externalAuthWindow.close();
