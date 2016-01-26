@@ -103,6 +103,7 @@ DataChannels.prototype.onDataChannel = function (event) {
             else if ("InLastNChangeEvent" === colibriClass) {
                 var oldValue = obj.oldValue;
                 var newValue = obj.newValue;
+
                 // Make sure that oldValue and newValue are of type boolean.
                 var type;
 

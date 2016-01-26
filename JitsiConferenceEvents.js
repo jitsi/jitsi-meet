@@ -58,7 +58,7 @@ var JitsiConferenceEvents = {
     /**
      * You are included / excluded in somebody's last N set
      */
-    IN_LAST_N_CHANGED: "conference.lastNEndpointsChanged",
+    IN_LAST_N_CHANGED: "conference.inLastNChanged",
     /**
      * A media track ( attached to the conference) mute status was changed.
      */
