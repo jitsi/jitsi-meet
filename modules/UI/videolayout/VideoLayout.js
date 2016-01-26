@@ -633,7 +633,7 @@ var VideoLayout = {
         var updateLargeVideo = false;
 
         // Handle LastN/local LastN changes.
-        BottomToolbar.getThumbs().each(function( index, element ) {
+        BottomToolbar.getThumbs().each(( index, element ) => {
             var resourceJid = getPeerContainerResourceId(element);
 
             // We do not want to process any logic for our own(local) video
