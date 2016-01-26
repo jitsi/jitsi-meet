@@ -57,7 +57,7 @@ function getDesktopVideoSize(videoWidth,
         availableHeight = availableWidth / aspectRatio;
     }
 
-    return { availableWidth, availableHeight };
+    return [ availableWidth, availableHeight ];
 }
 
 
@@ -106,7 +106,7 @@ function getCameraVideoSize(videoWidth,
     }
 
 
-    return { availableWidth, availableHeight };
+    return [ availableWidth, availableHeight ];
 }
 
 /**
@@ -179,7 +179,10 @@ class VideoContainer extends LargeContainer {
             this.$video.volume = 0;
         }
 
-        this.$video.on('play', onPlay);
+        // This does not work with Temasys plugin - has to be a property to be
+        // copied between new <object> elements
+        //this.$video.on('play', onPlay);
+        this.$video[0].onplay = onPlay;
     }
 
     /**
@@ -239,7 +242,7 @@ class VideoContainer extends LargeContainer {
     }
 
     resize (containerWidth, containerHeight, animate = false) {
-        let { width, height }
+        let [width, height]
             = this.getVideoSize(containerWidth, containerHeight);
         let { horizontalIndent, verticalIndent }
             = this.getVideoPosition(width, height,
@@ -251,8 +254,8 @@ class VideoContainer extends LargeContainer {
         this.$avatar.css('top', top);
 
         this.$wrapper.animate({
-            width,
-            height,
+            width: width,
+            height: height,
 
             top: verticalIndent,
             bottom: verticalIndent,
