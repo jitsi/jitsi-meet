@@ -179,7 +179,10 @@ class VideoContainer extends LargeContainer {
             this.$video.volume = 0;
         }
 
-        this.$video.on('play', onPlay);
+        // This does not work with Temasys plugin - has to be a property to be
+        // copied between new <object> elements
+        //this.$video.on('play', onPlay);
+        this.$video[0].onplay = onPlay;
     }
 
     /**
