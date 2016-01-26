@@ -62,6 +62,13 @@ function XMPP(options) {
 //    registerListeners();
 
     this.connection = createConnection(options.bosh);
+
+    // Setup a disconnect on unload as a way to facilitate API consumers. It
+    // sounds like they would want that. A problem for them though may be if
+    // they wanted to utilize the connected connection in an unload handler of
+    // their own. However, it should be fairly easy for them to do that by
+    // registering their unload handler before us.
+    $(window).on('beforeunload unload', this.disconnect.bind(this));
 }
 
 XMPP.prototype.getConnection = function () { return this.connection; };
