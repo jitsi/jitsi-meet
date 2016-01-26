@@ -64,7 +64,7 @@ function XMPP(options) {
     this.connection = createConnection(options.bosh);
 }
 
-XMPP.prototype.getConnection = function () { return connection; };
+XMPP.prototype.getConnection = function () { return this.connection; };
 
 XMPP.prototype._connect = function (jid, password) {
     var self = this;
