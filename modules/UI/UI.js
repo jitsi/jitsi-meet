@@ -338,7 +338,7 @@ UI.start = function () {
     if (!interfaceConfig.filmStripOnly) {
         VideoLayout.initLargeVideo(PanelToggler.isVisible());
     }
-    VideoLayout.resizeLargeVideoContainer(PanelToggler.isVisible());
+    VideoLayout.resizeLargeVideoContainer(PanelToggler.isVisible(), true);
 
     ContactList.init(eventEmitter);
 

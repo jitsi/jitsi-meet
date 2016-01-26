@@ -429,25 +429,26 @@ var VideoLayout = {
     /**
      * Resizes the large video container.
      */
-    resizeLargeVideoContainer (isSideBarVisible) {
+    resizeLargeVideoContainer (isSideBarVisible, forceUpdate) {
         let animate = false;
         if (largeVideo) {
             largeVideo.updateContainerSize(isSideBarVisible);
             largeVideo.resize(animate);
         }
         this.resizeVideoSpace(animate, isSideBarVisible);
-        this.resizeThumbnails(false);
+        this.resizeThumbnails(false, forceUpdate);
     },
 
     /**
      * Resizes thumbnails.
      */
-    resizeThumbnails (animate = false, show = false) {
+    resizeThumbnails (animate = false, forceUpdate = false) {
         let {thumbWidth, thumbHeight} = this.calculateThumbnailSize();
 
         $('.userAvatar').css('left', (thumbWidth - thumbHeight) / 2);
 
-        BottomToolbar.resizeThumbnails(thumbWidth, thumbHeight, animate, show)
+        BottomToolbar.resizeThumbnails(thumbWidth, thumbHeight,
+            animate, forceUpdate)
             .then(function () {
                 BottomToolbar.resizeToolbar(thumbWidth, thumbHeight);
                 AudioLevels.updateCanvasSize(thumbWidth, thumbHeight);

@@ -65,7 +65,8 @@ const BottomToolbar = {
         return this.filmStrip.width();
     },
 
-    resizeThumbnails (thumbWidth, thumbHeight, animate = false, show = false) {
+    resizeThumbnails (thumbWidth, thumbHeight,
+                      animate = false, forceUpdate = false) {
         return new Promise(resolve => {
             this.filmStrip.animate({
                 // adds 2 px because of small video 1px border
@@ -75,7 +76,7 @@ const BottomToolbar = {
                 duration: animate ? 500 : 0
             });
 
-            this.getThumbs(!show).animate({
+            this.getThumbs(!forceUpdate).animate({
                 height: thumbHeight,
                 width: thumbWidth
             }, {
