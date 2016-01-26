@@ -79,19 +79,6 @@ function sendEmail (email) {
 }
 
 /**
- * Leave the conference and close connection.
- */
-function unload (ev) {
-    // XXX On beforeunload and unload, there is precious little time to send
-    // requests. Since we are really interested in letting the XMPP server know
-    // that the local peer is going away (so that the XMPP server may notify the
-    // remote peers) and disconnecting should achieve that, do not bother with
-    // leaving the room.
-    //room.leave();
-    connection.disconnect(ev);
-}
-
-/**
  * Get user nickname by user id.
  * @param {string} id user id
  * @returns {string?} user nickname or undefined if user is unknown.
@@ -247,8 +234,8 @@ export default {
             localTracks = tracks;
             connection = con;
             this._createRoom();
-            $(window).bind('beforeunload', unload );
-            $(window).bind('unload', unload );
+            // XXX The API will take care of disconnecting from the XMPP server
+            // (and, thus, leaving the room) on unload.
             return new Promise((resolve, reject) => {
                 (new ConferenceConnector(resolve, reject)).connect();
             });
