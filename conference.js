@@ -518,8 +518,9 @@ export default {
                 // APP.UI.markVideoMuted(true/false);
             }
         });
-        room.on(ConferenceEvents.LAST_N_ENDPOINTS_CHANGED, (ids) => {
-            APP.UI.handleLastNEndpoints(ids);
+        room.on(
+            ConferenceEvents.LAST_N_ENDPOINTS_CHANGED, (ids, enteringIds) => {
+            APP.UI.handleLastNEndpoints(ids, enteringIds);
         });
         room.on(ConferenceEvents.DOMINANT_SPEAKER_CHANGED, (id) => {
             APP.UI.markDominantSpeaker(id);

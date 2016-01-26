@@ -65,7 +65,7 @@ const BottomToolbar = {
         return this.filmStrip.width();
     },
 
-    resizeThumbnails (thumbWidth, thumbHeight, animate = false) {
+    resizeThumbnails (thumbWidth, thumbHeight, animate = false, show = false) {
         return new Promise(resolve => {
             this.filmStrip.animate({
                 // adds 2 px because of small video 1px border
@@ -75,7 +75,7 @@ const BottomToolbar = {
                 duration: animate ? 500 : 0
             });
 
-            this.getThumbs().animate({
+            this.getThumbs(!show).animate({
                 height: thumbHeight,
                 width: thumbWidth
             }, {
@@ -95,9 +95,9 @@ const BottomToolbar = {
         this.toolbar.css({bottom});
     },
 
-    getThumbs (visible = false) {
+    getThumbs (only_visible = false) {
         let selector = 'span';
-        if (visible) {
+        if (only_visible) {
             selector += ':visible';
         }
 

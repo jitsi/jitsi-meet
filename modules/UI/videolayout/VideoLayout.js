@@ -214,7 +214,8 @@ var VideoLayout = {
 
         // We'll show user's avatar if he is the dominant speaker or if
         // his video thumbnail is pinned
-        if (remoteVideos[id] && (id === focusedVideoResourceJid || id === currentDominantSpeaker)) {
+        if (remoteVideos[id] && (id === focusedVideoResourceJid
+                                || id === currentDominantSpeaker)) {
             newId = id;
         } else {
             // Otherwise select last visible video
@@ -357,7 +358,7 @@ var VideoLayout = {
             BottomToolbar.getThumbs().length >= localLastNCount + 2) {
             remoteVideo.showPeerContainer('hide');
         } else {
-            VideoLayout.resizeThumbnails();
+            VideoLayout.resizeThumbnails(false, true);
         }
     },
 
@@ -441,14 +442,15 @@ var VideoLayout = {
     /**
      * Resizes thumbnails.
      */
-    resizeThumbnails (animate = false) {
+    resizeThumbnails (animate = false, show = false) {
         let {thumbWidth, thumbHeight} = this.calculateThumbnailSize();
 
         $('.userAvatar').css('left', (thumbWidth - thumbHeight) / 2);
 
-        BottomToolbar.resizeThumbnails(thumbWidth, thumbHeight, animate).then(function () {
-            BottomToolbar.resizeToolbar(thumbWidth, thumbHeight);
-            AudioLevels.updateCanvasSize(thumbWidth, thumbHeight);
+        BottomToolbar.resizeThumbnails(thumbWidth, thumbHeight, animate, show)
+            .then(function () {
+                BottomToolbar.resizeToolbar(thumbWidth, thumbHeight);
+                AudioLevels.updateCanvasSize(thumbWidth, thumbHeight);
         });
     },
 
@@ -616,7 +618,6 @@ var VideoLayout = {
 
         // Update the local LastN set preserving the order in which the
         // endpoints appeared in the LastN/local LastN set.
-
         var nextLocalLastNSet = lastNEndpoints.slice(0);
         for (var i = 0; i < localLastNSet.length; i++) {
             if (nextLocalLastNSet.length >= localLastNCount) {
@@ -635,6 +636,7 @@ var VideoLayout = {
         // Handle LastN/local LastN changes.
         BottomToolbar.getThumbs().each(( index, element ) => {
             var resourceJid = getPeerContainerResourceId(element);
+            var smallVideo = remoteVideos[resourceJid];
 
             // We do not want to process any logic for our own(local) video
             // because the local participant is never in the lastN set.
@@ -651,17 +653,17 @@ var VideoLayout = {
                 lastNEndpoints.indexOf(resourceJid) < 0 &&
                 localLastNSet.indexOf(resourceJid) < 0) {
                 console.log("Remove from last N", resourceJid);
-                if (remoteVideos[resourceJid])
-                    remoteVideos[resourceJid].showPeerContainer('hide');
+                if (smallVideo)
+                    smallVideo.showPeerContainer('hide');
                 else if (!APP.conference.isLocalId(resourceJid))
                     console.error("No remote video for: " + resourceJid);
                 isReceived = false;
             } else if (resourceJid &&
-                $('#participant_' + resourceJid).is(':visible') &&
+                smallVideo.isVisible() &&
                 lastNEndpoints.indexOf(resourceJid) < 0 &&
                 localLastNSet.indexOf(resourceJid) >= 0) {
-                if (remoteVideos[resourceJid])
-                    remoteVideos[resourceJid].showPeerContainer('avatar');
+                if (smallVideo)
+                    smallVideo.showPeerContainer('avatar');
                 else if (!APP.conference.isLocalId(resourceJid))
                     console.error("No remote video for: " + resourceJid);
                 isReceived = false;
@@ -685,19 +687,15 @@ var VideoLayout = {
         if (endpointsEnteringLastN && endpointsEnteringLastN.length > 0) {
             endpointsEnteringLastN.forEach(function (resourceJid) {
 
-                var isVisible = $('#participant_' + resourceJid).is(':visible');
                 var remoteVideo = remoteVideos[resourceJid];
                 remoteVideo.showPeerContainer('show');
-                if (!isVisible) {
+
+                if (!remoteVideo.isVisible()) {
                     console.log("Add to last N", resourceJid);
 
-                    var jid = APP.xmpp.findJidFromResource(resourceJid);
-                    var mediaStream =
-                        APP.RTC.remoteStreams[jid]['video'];
-                    var sel = remoteVideo.selectVideoElement();
+                    remoteVideo.addRemoteStreamElement(remoteVideo.stream);
 
-                    APP.RTC.attachMediaStream(sel, mediaStream.stream);
-                    if (lastNPickupId == mediaStream.peerjid) {
+                    if (lastNPickupId == resourceJid) {
                         // Clean up the lastN pickup id.
                         lastNPickupId = null;
 
@@ -705,12 +703,12 @@ var VideoLayout = {
                         // been fired in the contact list click handler.
                         VideoLayout.handleVideoThumbClicked(
                             false,
-                            Strophe.getResourceFromJid(mediaStream.peerjid));
+                            resourceJid);
 
                         updateLargeVideo = false;
                     }
-                    remoteVideos[resourceJid].
-                        waitForPlayback(sel, mediaStream);
+                    remoteVideo.waitForPlayback(
+                        remoteVideo.selectVideoElement(), remoteVideo.stream);
                 }
             });
         }

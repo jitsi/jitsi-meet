@@ -194,7 +194,7 @@ UI.notifyConferenceDestroyed = function (reason) {
 /**
  * Show chat error.
  * @param err the Error
- * @param msg 
+ * @param msg
  */
 UI.showChatError = function (err, msg) {
     if (interfaceConfig.filmStripOnly) {
@@ -766,8 +766,8 @@ UI.markDominantSpeaker = function (id) {
     VideoLayout.onDominantSpeakerChanged(id);
 };
 
-UI.handleLastNEndpoints = function (ids) {
-    VideoLayout.onLastNEndpointsChanged(ids, []);
+UI.handleLastNEndpoints = function (ids, enteringIds) {
+    VideoLayout.onLastNEndpointsChanged(ids, enteringIds);
 };
 
 /**

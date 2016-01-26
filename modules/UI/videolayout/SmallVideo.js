@@ -18,6 +18,16 @@ function setVisibility(selector, show) {
     }
 }
 
+/**
+ * Indicates if this small video is currently visible.
+ *
+ * @return <tt>true</tt> if this small video isn't currently visible and
+ * <tt>false</tt> - otherwise.
+ */
+SmallVideo.prototype.isVisible = function () {
+    return $('#' + this.videoSpanId).is(':visible');
+};
+
 SmallVideo.prototype.showDisplayName = function(isShow) {
     var nameSpan = $('#' + this.videoSpanId + '>span.displayname').get(0);
     if (isShow) {
