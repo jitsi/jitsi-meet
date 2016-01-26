@@ -1,4 +1,4 @@
-/* global $, APP, config, Strophe*/
+/* global $, APP, config, Strophe */
 
 var logger = require("jitsi-meet-logger").getLogger(__filename);
 var EventEmitter = require("events");
@@ -16,18 +16,14 @@ function createConnection(bosh) {
 
     // Append token as URL param
     if (this.token) {
-        bosh += bosh.indexOf('?') == -1 ?
-                '?token=' + this.token : '&token=' + this.token;
+        bosh += (bosh.indexOf('?') == -1 ? '?' : '&') + 'token=' + this.token;
     }
 
     return new Strophe.Connection(bosh);
 };
 
-
-
 //!!!!!!!!!! FIXME: ...
-function initStrophePlugins(XMPP)
-{
+function initStrophePlugins(XMPP) {
     require("./strophe.emuc")(XMPP);
     require("./strophe.jingle")(XMPP, XMPP.eventEmitter);
 //    require("./strophe.moderate")(XMPP, eventEmitter);
@@ -68,11 +64,9 @@ function XMPP(options) {
     this.connection = createConnection(options.bosh);
 }
 
-
-XMPP.prototype.getConnection = function(){ return connection; };
+XMPP.prototype.getConnection = function () { return connection; };
 
 XMPP.prototype._connect = function (jid, password) {
-
     var self = this;
     // connection.connect() starts the connection process.
     //
@@ -112,7 +106,6 @@ XMPP.prototype._connect = function (jid, password) {
                 self.connection.jingle.getStunAndTurnCredentials();
             }
 
-
             logger.info("My Jabber ID: " + self.connection.jid);
 
             // Schedule ping ?
@@ -133,15 +126,14 @@ XMPP.prototype._connect = function (jid, password) {
                 Strophe.getResourceFromJid(self.connection.jid)) {
                 // .connected is true while connecting?
 //                self.connection.send($pres());
-                self.eventEmitter.emit(JitsiConnectionEvents.CONNECTION_ESTABLISHED,
-                    Strophe.getResourceFromJid(self.connection.jid));
+                self.eventEmitter.emit(
+                        JitsiConnectionEvents.CONNECTION_ESTABLISHED,
+                        Strophe.getResourceFromJid(self.connection.jid));
             }
         } else if (status === Strophe.Status.CONNFAIL) {
             if (msg === 'x-strophe-bad-non-anon-jid') {
                 anonymousConnectionFailed = true;
-            }
-            else
-            {
+            } else {
                 connectionFailed = true;
             }
             lastErrorMsg = msg;
@@ -158,8 +150,9 @@ XMPP.prototype._connect = function (jid, password) {
                     JitsiConnectionErrors.OTHER_ERROR,
                     msg ? msg : lastErrorMsg);
             } else {
-                self.eventEmitter.emit(JitsiConnectionEvents.CONNECTION_DISCONNECTED,
-                    msg ? msg : lastErrorMsg);
+                self.eventEmitter.emit(
+                        JitsiConnectionEvents.CONNECTION_DISCONNECTED,
+                        msg ? msg : lastErrorMsg);
             }
         } else if (status === Strophe.Status.AUTHFAIL) {
             // wrong password or username, prompt user
@@ -171,11 +164,12 @@ XMPP.prototype._connect = function (jid, password) {
 }
 
 XMPP.prototype.connect = function (jid, password) {
-    if(!jid) {
-        var configDomain = this.options.hosts.anonymousdomain || this.options.hosts.domain;
+    if (!jid) {
+        var configDomain
+            = this.options.hosts.anonymousdomain || this.options.hosts.domain;
         // Force authenticated domain if room is appended with '?login=true'
-        if (this.options.hosts.anonymousdomain &&
-            window.location.search.indexOf("login=true") !== -1) {
+        if (this.options.hosts.anonymousdomain
+                && window.location.search.indexOf("login=true") !== -1) {
             configDomain = this.options.hosts.domain;
         }
         jid = configDomain || window.location.hostname;
@@ -195,9 +189,8 @@ XMPP.prototype.createRoom = function (roomName, options, settings) {
     } else {
         var tmpJid = Strophe.getNodeFromJid(this.connection.jid);
 
-        if(!authenticatedUser)
+        if (!authenticatedUser)
             tmpJid = tmpJid.substr(0, 8);
-
         roomjid += '/' + tmpJid;
     }
 
@@ -239,7 +232,7 @@ XMPP.prototype.leaveRoom = function (jid) {
  * @returns {boolean} true iff a message was sent.
  */
 XMPP.prototype.sendLogs = function (data) {
-    if(!this.connection.emuc.focusMucJid)
+    if (!this.connection.emuc.focusMucJid)
         return false;
 
     var deflate = true;
@@ -251,8 +244,7 @@ XMPP.prototype.sendLogs = function (data) {
     content = Base64.encode(content);
     // XEP-0337-ish
     var message = $msg({to: this.connection.emuc.focusMucJid, type: 'normal'});
-    message.c('log', { xmlns: 'urn:xmpp:eventlog',
-        id: 'PeerConnectionStats'});
+    message.c('log', {xmlns: 'urn:xmpp:eventlog', id: 'PeerConnectionStats'});
     message.c('message').t(content).up();
     if (deflate) {
         message.c('tag', {name: "deflated", value: "true"}).up();
@@ -272,7 +264,6 @@ XMPP.prototype.getJingleLog = function () {
 XMPP.prototype.getXmppLog = function () {
     return this.connection.logger ? this.connection.logger.log : null;
 };
-
 
 XMPP.prototype.dial = function (to, from, roomName,roomPass) {
     this.connection.rayo.dial(to, from, roomName,roomPass);
