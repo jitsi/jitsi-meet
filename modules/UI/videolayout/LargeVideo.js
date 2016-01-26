@@ -308,7 +308,7 @@ class VideoContainer extends LargeContainer {
         let $wrapper = this.$wrapper;
         return new Promise(function(resolve) {
             $wrapper.css({visibility: 'visible'});
-            $wrapper.fadeIn(FADE_DURATION_MS, function () {
+            $wrapper.fadeTo(FADE_DURATION_MS, 1, function () {
                 $('.watermark').css({visibility: 'visible'});
                 resolve();
             });
@@ -320,7 +320,7 @@ class VideoContainer extends LargeContainer {
 
         let id = this.id;
         return new Promise(function(resolve) {
-            $wrapper.fadeOut(id ? FADE_DURATION_MS : 1, function () {
+            $wrapper.fadeTo(id ? FADE_DURATION_MS : 1, 0, function () {
                 $wrapper.css({visibility: 'hidden'});
                 $('.watermark').css({visibility: 'hidden'});
                 resolve();
