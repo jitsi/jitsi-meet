@@ -78,7 +78,7 @@ JitsiLocalTrack.prototype._setMute = function (mute) {
             };
             if (isAudio) {
               streamOptions['micDeviceId'] = self.deviceId;
-            } else {self.videoType === 'camera'} {
+          } else if(self.videoType === 'camera') {
               streamOptions['cameraDeviceId'] = self.deviceId;
             }
             RTCUtils.obtainAudioAndVideoPermissions(streamOptions)
