@@ -7,6 +7,7 @@ var XMPPEvents = require("../../service/xmpp/XMPPEvents");
 function TraceablePeerConnection(ice_config, constraints, session) {
     var self = this;
     this.session = session;
+    this.recvOnlySSRCs = {};
     var RTCPeerConnectionType = null;
     if (RTCBrowserType.isFirefox()) {
         RTCPeerConnectionType = mozRTCPeerConnection;
@@ -138,7 +139,12 @@ var dumpSDP = function(description) {
     return 'type: ' + description.type + '\r\n' + description.sdp;
 };
 
-var insertRecvOnlySSRC = function (desc) {
+/**
+ * Injects receive only SSRC in the sdp if there are not other SSRCs.
+ * @param desc the SDP that will be modified.
+ * @returns the modified SDP.
+ */
+TraceablePeerConnection.prototype.insertRecvOnlySSRC = function (desc) {
     if (typeof desc !== 'object' || desc === null ||
         typeof desc.sdp !== 'string') {
         console.warn('An empty description was passed as an argument.');
@@ -164,14 +170,16 @@ var insertRecvOnlySSRC = function (desc) {
         modded = true;
         if (!Array.isArray(bLine.ssrcs) || bLine.ssrcs.length === 0)
         {
-            var ssrc = RandomUtil.randomInt(1, 0xffffffff);
+            var ssrc = this.recvOnlySSRCs[bLine.type]
+                = this.recvOnlySSRCs[bLine.type] ||
+                    RandomUtil.randomInt(1, 0xffffffff);
             bLine.ssrcs = [{
                 id: ssrc,
                 attribute: 'cname',
                 value: ['recvonly-', ssrc].join('')
             }];
         }
-    });
+    }.bind(this));
 
     return (!modded) ? desc : new RTCSessionDescription({
         type: desc.type,
@@ -409,8 +417,9 @@ TraceablePeerConnection.prototype.createOffer
 
             if (RTCBrowserType.isChrome())
             {
-                offer = insertRecvOnlySSRC(offer);
-                self.trace('createOfferOnSuccess::mungeLocalVideoSSRC', dumpSDP(offer));
+                offer = self.insertRecvOnlySSRC(offer);
+                self.trace('createAnswerOnSuccess::mungeLocalVideoSSRC',
+                    dumpSDP(offer));
             }
 
             if (!self.session.room.options.disableSimulcast
@@ -447,8 +456,9 @@ TraceablePeerConnection.prototype.createAnswer
 
             if (RTCBrowserType.isChrome())
             {
-                answer = insertRecvOnlySSRC(answer);
-                self.trace('createAnswerOnSuccess::mungeLocalVideoSSRC', dumpSDP(answer));
+                answer = self.insertRecvOnlySSRC(answer);
+                self.trace('createAnswerOnSuccess::mungeLocalVideoSSRC',
+                    dumpSDP(answer));
             }
 
             if (!self.session.room.options.disableSimulcast

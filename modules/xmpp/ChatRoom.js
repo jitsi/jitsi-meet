@@ -592,33 +592,12 @@ ChatRoom.prototype.addStream = function (stream, callback) {
 
 ChatRoom.prototype.setVideoMute = function (mute, callback, options) {
     var self = this;
-    var localCallback = function (mute) {
-        self.sendVideoInfoPresence(mute);
-        if(callback)
-            callback(mute);
-    };
-
-    if(this.session)
-    {
-        this.session.setVideoMute(
-            mute, localCallback, options);
-    }
-    else {
-        localCallback(mute);
-    }
-
+    this.sendVideoInfoPresence(mute);
+    if(callback)
+        callback(mute);
 };
 
 ChatRoom.prototype.setAudioMute = function (mute, callback) {
-    //This will be for remote streams only
-//    if (this.forceMuted && !mute) {
-//        logger.info("Asking focus for unmute");
-//        this.connection.moderate.setMute(this.connection.emuc.myroomjid, mute);
-//        // FIXME: wait for result before resetting muted status
-//        this.forceMuted = false;
-//    }
-
-
     return this.sendAudioInfoPresence(mute, callback);
 };
 
