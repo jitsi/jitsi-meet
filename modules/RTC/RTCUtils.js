@@ -543,6 +543,10 @@ var RTCUtils = {
                             return;
                         }
 
+                        if (!elSel.is(':visible')) {
+                            throw new Error('video element must be visible to attach the stream');
+                        }
+
                         attachMediaStream(elSel[0], stream);
                     };
                     self.getStreamID = function (stream) {
