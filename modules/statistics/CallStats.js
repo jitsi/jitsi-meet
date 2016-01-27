@@ -17,10 +17,50 @@ var wrtcFuncNames = {
     getUserMedia:         "getUserMedia"
 };
 
+/**
+ * @const
+ * @see http://www.callstats.io/api/#enumeration-of-fabricevent
+ */
+var fabricEvent = {
+    fabricSetupFailed:"fabricSetupFailed",
+    fabricHold:"fabricHold",
+    fabricResume:"fabricResume",
+    audioMute:"audioMute",
+    audioUnmute:"audioUnmute",
+    videoPause:"videoPause",
+    videoResume:"videoResume",
+    fabricUsageEvent:"fabricUsageEvent",
+    fabricStats:"fabricStats",
+    fabricTerminated:"fabricTerminated"
+};
+
 var callStats = null;
 
 function initCallback (err, msg) {
     logger.log("CallStats Status: err=" + err + " msg=" + msg);
+
+    // there is no lib, nothing to report to
+    if (err !== 'success')
+        return;
+
+    // notify callstats about failures if there were any
+    if (CallStats.reportsQueue.length) {
+        CallStats.reportsQueue.forEach(function (report) {
+            if (report.type === reportType.ERROR)
+            {
+                var error = report.data;
+                CallStats._reportError.call(this, error.type, error.error,
+                    error.pc);
+            }
+            else if (report.type === reportType.EVENT)
+            {
+                var data = report.data;
+                callStats.sendFabricEvent(
+                    this.peerconnection, data.event, this.confID);
+            }
+        }, this);
+        CallStats.reportsQueue.length = 0;
+    }
 }
 
 /**
@@ -70,7 +110,7 @@ var CallStats = _try_catch(function(jingleSession, Settings, options) {
         callStats.initialize(options.callStatsID,
             options.callStatsSecret,
             this.userID,
-            initCallback);
+            initCallback.bind(this));
 
         callStats.addNewFabric(this.peerconnection,
             Strophe.getResourceFromJid(jingleSession.peerjid),
@@ -84,28 +124,27 @@ var CallStats = _try_catch(function(jingleSession, Settings, options) {
         callStats = null;
         logger.error(e);
     }
-    // notify callstats about failures if there were any
-    if (CallStats.pendingErrors.length) {
-        CallStats.pendingErrors.forEach(function (error) {
-            CallStats._reportError.call(this, error.type, error.error,
-                error.pc);
-        }, this);
-        CallStats.pendingErrors.length = 0;
-    }
 });
 
-// some errors may happen before CallStats init
+// some errors/events may happen before CallStats init
 // in this case we accumulate them in this array
 // and send them to callstats on init
-CallStats.pendingErrors = [];
+CallStats.reportsQueue = [];
+
+/**
+ * Type of pending reports, can be event or an error.
+ * @type {{ERROR: string, EVENT: string}}
+ */
+var reportType = {
+    ERROR: "error",
+    EVENT: "event"
+};
 
 CallStats.prototype.pcCallback = _try_catch(function (err, msg) {
     if (!callStats) {
         return;
     }
     logger.log("Monitoring status: "+ err + " msg: " + msg);
-    callStats.sendFabricEvent(this.peerconnection,
-        callStats.fabricEvent.fabricSetup, this.confID);
 });
 
 /**
@@ -113,21 +152,37 @@ CallStats.prototype.pcCallback = _try_catch(function (err, msg) {
  * @param mute {boolean} true for muted and false for not muted
  * @param type {String} "audio"/"video"
  */
-CallStats.prototype.sendMuteEvent = _try_catch(function (mute, type) {
-    if (!callStats) {
-        return;
-    }
+CallStats.sendMuteEvent = _try_catch(function (mute, type, cs) {
+
     var event = null;
     if (type === "video") {
-        event = (mute? callStats.fabricEvent.videoPause :
-            callStats.fabricEvent.videoResume);
+        event = (mute? fabricEvent.videoPause : fabricEvent.videoResume);
     }
     else {
-        event = (mute? callStats.fabricEvent.audioMute :
-            callStats.fabricEvent.audioUnmute);
+        event = (mute? fabricEvent.audioMute : fabricEvent.audioUnmute);
     }
-    callStats.sendFabricEvent(this.peerconnection, event, this.confID);
+
+    CallStats._reportEvent.call(cs, event);
 });
+
+/**
+ * Reports an error to callstats.
+ *
+ * @param type the type of the error, which will be one of the wrtcFuncNames
+ * @param e the error
+ * @param pc the peerconnection
+ * @private
+ */
+CallStats._reportEvent = function (event) {
+    if (callStats) {
+        callStats.sendFabricEvent(this.peerconnection, event, this.confID);
+    } else {
+        CallStats.reportsQueue.push({
+                type: reportType.EVENT,
+                data: {event: event}
+            });
+    }
+};
 
 /**
  * Notifies CallStats for connection setup errors
@@ -184,7 +239,10 @@ CallStats._reportError = function (type, e, pc) {
     if (callStats) {
         callStats.reportError(pc, this.confID, type, e);
     } else {
-        CallStats.pendingErrors.push({ type: type, error: e, pc: pc});
+        CallStats.reportsQueue.push({
+            type: reportType.ERROR,
+            data: { type: type, error: e, pc: pc}
+        });
     }
     // else just ignore it
 };

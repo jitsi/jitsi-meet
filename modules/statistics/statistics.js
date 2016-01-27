@@ -182,8 +182,8 @@ Statistics.prototype.sendSetupFailedEvent = function () {
  * @param type {String} "audio"/"video"
  */
 Statistics.prototype.sendMuteEvent = function (muted, type) {
-    if(this.callStatsIntegrationEnabled && this.callstats)
-        this.callstats.sendMuteEvent(muted, type);
+    if(this.callStatsIntegrationEnabled)
+        CallStats.sendMuteEvent(muted, type, this.callstats);
 }
 
 /**
