@@ -543,8 +543,9 @@ var RTCUtils = {
                             return;
                         }
 
-                        if (!elSel.is(':visible')) {
-                            throw new Error('video element must be visible to attach the stream');
+                        var isVideoStream = !!stream.getVideoTracks().length;
+                        if (isVideoStream && !elSel.is(':visible')) {
+                            throw new Error('video element must be visible to attach video stream');
                         }
 
                         attachMediaStream(elSel[0], stream);
