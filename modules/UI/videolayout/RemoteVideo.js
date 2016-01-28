@@ -249,7 +249,6 @@ RemoteVideo.prototype.addRemoteStreamElement = function (stream) {
     UIUtils.prependChild(this.container, streamElement);
 
     let sel = $(`#${newElementId}`);
-    sel.hide();
 
     // If the container is currently visible we attach the stream.
     if (!isVideo || (this.container.offsetParent !== null && isVideo)) {
@@ -257,6 +256,11 @@ RemoteVideo.prototype.addRemoteStreamElement = function (stream) {
 
         stream.attach(sel);
     }
+
+    // hide element only after stream was (maybe) attached
+    // because Temasys plugin requires video element
+    // to be visible to attach the stream
+    sel.hide();
 
     // reselect
     if (RTCBrowserType.isTemasysPluginUsed()) {
