@@ -61,6 +61,7 @@ function JitsiConference(options) {
         audio: undefined,
         video: undefined
     };
+    this.isMutedByFocus = false;
 }
 
 /**
@@ -308,6 +309,12 @@ JitsiConference.prototype._fireAudioLevelChangeEvent = function (audioLevel) {
  * @param track the JitsiTrack object related to the event.
  */
 JitsiConference.prototype._fireMuteChangeEvent = function (track) {
+    // check if track was muted by focus and now is unmuted by user
+    if (this.isMutedByFocus && track.isAudioTrack() && !track.isMuted()) {
+        this.isMutedByFocus = false;
+        // unmute local user on server
+        this.room.muteParticipant(this.room.myroomjid, false);
+    }
     this.eventEmitter.emit(JitsiConferenceEvents.TRACK_MUTE_CHANGED, track);
 };
 
@@ -794,6 +801,7 @@ function setupListeners(conference) {
     conference.room.addListener(XMPPEvents.AUDIO_MUTED_BY_FOCUS,
         function (value) {
             conference.rtc.setAudioMute(value);
+            conference.isMutedByFocus = true;
         }
     );
 
