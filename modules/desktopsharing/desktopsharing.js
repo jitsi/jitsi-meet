@@ -33,15 +33,15 @@ function newStreamCreated(track) {
     eventEmitter.emit(DSEvents.NEW_STREAM_CREATED, track, streamSwitchDone);
 }
 
-function getVideoStreamFailed() {
-    console.error("Failed to obtain the stream to switch to");
+function getVideoStreamFailed(error) {
+    console.error("Failed to obtain the stream to switch to", error);
     switchInProgress = false;
     isUsingScreenStream = false;
     newStreamCreated(null);
 }
 
-function getDesktopStreamFailed() {
-    console.error("Failed to obtain the stream to switch to");
+function getDesktopStreamFailed(error) {
+    console.error("Failed to obtain the stream to switch to", error);
     switchInProgress = false;
 }
 
@@ -97,14 +97,17 @@ module.exports = {
         } else {
             type = "video";
         }
-        var fail = () => {
+        var fail = (error) => {
             if (type === 'desktop') {
-                getDesktopStreamFailed();
+                getDesktopStreamFailed(error);
             } else {
-                getVideoStreamFailed();
+                getVideoStreamFailed(error);
             }
         };
         APP.conference.createLocalTracks(type).then((tracks) => {
+            // FIXME does it mean that 'not track.length' == GUM failed ?
+            // And will this ever happen if promise is supposed to fail in GUM
+            // failed case ?
             if (!tracks.length) {
                 fail();
                 return;
@@ -125,7 +128,7 @@ module.exports = {
                     config.desktopSharingFirefoxExtensionURL);
                 return;
             }
-            fail();
+            fail(error);
         });
     }
 };
