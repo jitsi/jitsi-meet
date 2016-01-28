@@ -20,12 +20,23 @@ compile:
 clean:
 	rm -f $(OUTPUT_DIR)/app.bundle.*
 
-deploy:
-	mkdir -p $(DEPLOY_DIR) && \
+deploy: deploy-init deploy-appbundle deploy-lib-jitsi-meet deploy-css deploy-local
+
+deploy-init:
+	mkdir -p $(DEPLOY_DIR)
+
+deploy-appbundle:
 	cp $(OUTPUT_DIR)/app.bundle.min.js $(OUTPUT_DIR)/app.bundle.min.map \
-	$(LIBJITSIMEET_DIR)/lib-jitsi-meet.min.js \
-	$(LIBJITSIMEET_DIR)/lib-jitsi-meet.min.map $(DEPLOY_DIR) && \
-	(cd css; cat $(CSS_FILES)) | $(CLEANCSS) > css/all.css && \
+	$(DEPLOY_DIR)
+
+deploy-lib-jitsi-meet:
+	cp $(LIBJITSIMEET_DIR)/lib-jitsi-meet.min.js \
+	$(LIBJITSIMEET_DIR)/lib-jitsi-meet.min.map $(DEPLOY_DIR)
+
+deploy-css:
+	(cd css; cat $(CSS_FILES)) | $(CLEANCSS) > css/all.css
+
+deploy-local:
 	([ ! -x deploy-local.sh ] || ./deploy-local.sh)
 
 uglify:
