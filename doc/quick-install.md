@@ -32,7 +32,7 @@ This hostname (or IP address) will be used for virtualhost configuration inside 
 
 ### Open a conference
 
-Launch a web browser (Chrome, Chromium or latest Opera) and enter in the URL bar the hostname (or IP address) you used in the previous step.
+Launch a recent standards compliant web browser and enter in the URL bar the hostname (or IP address) you used in the previous step. Jitsi Meet has been tested with recent versions of Chrome, Chromium, Firefox, Iceweasel and Opera. For Internet Explorer or Safari, you need the Temasys WebRTC plugins.
 
 Confirm that you trust the self-signed certificate of the newly installed Jitsi Meet.
 
