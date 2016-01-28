@@ -86,8 +86,6 @@ var XMPPEvents = {
     JINGLE_FATAL_ERROR: 'xmpp.jingle_fatal_error',
     PROMPT_FOR_LOGIN: 'xmpp.prompt_for_login',
     FOCUS_DISCONNECTED: 'xmpp.focus_disconnected',
-    ROOM_JOIN_ERROR: 'xmpp.room_join_error',
-    ROOM_CONNECT_ERROR: 'xmpp.room_connect_error',
     // xmpp is connected and obtained user media
     READY_TO_JOIN: 'xmpp.ready_to_join'
 };

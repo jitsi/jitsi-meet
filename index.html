@@ -13,6 +13,7 @@
     <script>console.log("(TIME) index.html loaded:\t", window.performance.now());</script>
     <script src="config.js?v=15"></script><!-- adapt to your needs, i.e. set hosts and bosh path -->
     <script src="interface_config.js?v=6"></script>
+    <script src="libs/lib-jitsi-meet.js?v=139"></script>
     <script src="libs/app.bundle.min.js?v=139"></script>
     <!--
         Link used for inline installation of chrome desktop streaming extension,
@@ -139,13 +140,32 @@
         </div>
         <div id="reloadPresentation"><a id="reloadPresentationLink"><i title="Reload Prezi" class="fa fa-repeat fa-lg"></i></a></div>
         <div id="videospace">
+
+            <div id="largeVideoContainer" class="videocontainer">
+                <div id="presentation"></div>
+                <div id="etherpad"></div>
+                <a target="_new"><div class="watermark leftwatermark"></div></a>
+                <a target="_new"><div class="watermark rightwatermark"></div></a>
+                <a class="poweredby" href="http://jitsi.org" target="_new">
+                    <span data-i18n="poweredby"></span> jitsi.org
+                </a>
+                <div id="dominantSpeaker">
+                    <img id="dominantSpeakerAvatar" src=""/>
+                    <canvas id="dominantSpeakerAudioLevel"></canvas>
+                </div>
+                <div id="largeVideoWrapper">
+                    <video id="largeVideo" muted="true" autoplay></video>
+                </div>
+                <span id="videoConnectionMessage"></span>
+            </div>
+
             <div id="remoteVideos">
                 <span id="localVideoContainer" class="videocontainer">
                     <span id="localNick" class="nick"></span>
                     <span id="localVideoWrapper">
-                        <!--<video id="localVideo" autoplay oncontextmenu="return false;" muted></video> - is now per stream generated -->
+                        <!--<video id="localVideo" autoplay muted></video> - is now per stream generated -->
                     </span>
-                    <audio id="localAudio" autoplay oncontextmenu="return false;" muted></audio>
+                    <audio id="localAudio" autoplay muted></audio>
                     <span class="focusindicator"></span>
                 </span>
                 <audio id="userJoined" src="sounds/joined.wav" preload="auto"></audio>

@@ -1,48 +1,99 @@
-/* jshint -W117 */
+/* global $, JitsiMeetJS, config */
 /* application specific logic */
 
-require("jquery");
-require("jquery-ui");
-require("strophe");
-require("strophe-disco");
-require("strophe-caps");
-require("tooltip");
-require("popover");
+import "babel-polyfill";
+import "jquery";
+import "jquery-ui";
+import "strophe";
+import "strophe-disco";
+import "strophe-caps";
+import "tooltip";
+import "popover";
+import "jQuery-Impromptu";
+import "autosize";
 window.toastr = require("toastr");
-require("jQuery-Impromptu");
-require("autosize");
 
-var APP =
-{
-    init: function () {
-        this.UI = require("./modules/UI/UI");
-        this.API = require("./modules/API/API");
+import URLProcessor from "./modules/config/URLProcessor";
+import RoomnameGenerator from './modules/util/RoomnameGenerator';
+
+import UI from "./modules/UI/UI";
+import statistics from "./modules/statistics/statistics";
+import settings from "./modules/settings/Settings";
+import conference from './conference';
+import API from './modules/API/API';
+
+import UIEvents from './service/UI/UIEvents';
+
+
+function buildRoomName () {
+    let path = window.location.pathname;
+    let roomName;
+
+    // determinde the room node from the url
+    // TODO: just the roomnode or the whole bare jid?
+    if (config.getroomnode && typeof config.getroomnode === 'function') {
+        // custom function might be responsible for doing the pushstate
+        roomName = config.getroomnode(path);
+    } else {
+        /* fall back to default strategy
+         * this is making assumptions about how the URL->room mapping happens.
+         * It currently assumes deployment at root, with a rewrite like the
+         * following one (for nginx):
+         location ~ ^/([a-zA-Z0-9]+)$ {
+         rewrite ^/(.*)$ / break;
+         }
+        */
+        if (path.length > 1) {
+            roomName = path.substr(1).toLowerCase();
+        } else {
+            let word = RoomnameGenerator.generateRoomWithoutSeparator();
+            roomName = word.toLowerCase();
+            window.history.pushState(
+                'VideoChat', `Room: ${word}`, window.location.pathname + word
+            );
+        }
+    }
+
+    return roomName;
+}
+
+const APP = {
+    UI,
+    statistics,
+    settings,
+    conference,
+    API,
+    init () {
         this.connectionquality =
             require("./modules/connectionquality/connectionquality");
-        this.statistics = require("./modules/statistics/statistics");
-        this.RTC = require("./modules/RTC/RTC");
         this.desktopsharing =
             require("./modules/desktopsharing/desktopsharing");
-        this.xmpp = require("./modules/xmpp/xmpp");
         this.keyboardshortcut =
             require("./modules/keyboardshortcut/keyboardshortcut");
         this.translation = require("./modules/translation/translation");
-        this.settings = require("./modules/settings/Settings");
-        //this.DTMF = require("./modules/DTMF/DTMF");
-        this.members = require("./modules/members/MemberList");
         this.configFetch = require("./modules/config/HttpConfigFetch");
     }
 };
 
 function init() {
+    var isUIReady = APP.UI.start();
+    if (isUIReady) {
+        APP.conference.init({roomName: buildRoomName()}).then(function () {
+            APP.UI.initConference();
 
-    APP.desktopsharing.init();
-    APP.RTC.start();
-    APP.xmpp.start();
-    APP.statistics.start();
-    APP.connectionquality.init();
-    APP.keyboardshortcut.init();
-    APP.members.start();
+            APP.UI.addListener(UIEvents.LANG_CHANGED, function (language) {
+                APP.translation.setLanguage(language);
+                APP.settings.setLanguage(language);
+            });
+
+            APP.desktopsharing.init(JitsiMeetJS.isDesktopSharingEnabled());
+            APP.statistics.start();
+            APP.connectionquality.init();
+            APP.keyboardshortcut.init();
+        }).catch(function (err) {
+            console.error(err);
+        });
+    }
 }
 
 /**
@@ -54,7 +105,7 @@ function init() {
  * will be displayed to the user.
  */
 function obtainConfigAndInit() {
-    var roomName = APP.UI.getRoomNode();
+    let roomName = APP.conference.roomName;
 
     if (config.configLocation) {
         APP.configFetch.obtainConfig(
@@ -84,23 +135,18 @@ function obtainConfigAndInit() {
 $(document).ready(function () {
     console.log("(TIME) document ready:\t", window.performance.now());
 
-    var URLProcessor = require("./modules/config/URLProcessor");
     URLProcessor.setConfigParametersFromUrl();
     APP.init();
 
-    APP.translation.init();
+    APP.translation.init(settings.getLanguage());
 
-    if(APP.API.isEnabled())
-        APP.API.init();
+    APP.API.init();
 
-    APP.UI.start(obtainConfigAndInit);
-
+    obtainConfigAndInit();
 });
 
 $(window).bind('beforeunload', function () {
-    if(APP.API.isEnabled())
-        APP.API.dispose();
+    APP.API.dispose();
 });
 
 module.exports = APP;
-

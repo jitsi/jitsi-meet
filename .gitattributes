@@ -1,1 +1,2 @@
 *.bundle.js -text -diff
+lib-jitsi-meet.js -text -diff

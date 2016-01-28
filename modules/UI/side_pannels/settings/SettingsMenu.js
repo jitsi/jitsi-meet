@@ -1,12 +1,12 @@
 /* global APP, $ */
-var Avatar = require("../../avatar/Avatar");
-var Settings = require("./../../../settings/Settings");
-var UIUtil = require("../../util/UIUtil");
-var languages = require("../../../../service/translation/languages");
+import UIUtil from "../../util/UIUtil";
+import UIEvents from "../../../../service/UI/UIEvents";
+import languages from "../../../../service/translation/languages";
+import Settings from '../../../settings/Settings';
 
 function generateLanguagesSelectBox() {
     var currentLang = APP.translation.getCurrentLanguage();
-    var html = "<select id=\"languages_selectbox\">";
+    var html = '<select id="languages_selectbox">';
     var langArray = languages.getLanguages();
     for(var i = 0; i < langArray.length; i++) {
         var lang = langArray[i];
@@ -22,32 +22,54 @@ function generateLanguagesSelectBox() {
 }
 
 
-var SettingsMenu = {
+export default {
+    init (emitter) {
+        function update() {
+            let displayName = UIUtil.escapeHtml($('#setDisplayName').val());
 
-    init: function () {
-        var startMutedSelector = $("#startMutedOptions");
-        startMutedSelector.before(generateLanguagesSelectBox());
-        APP.translation.translateElement($("#languages_selectbox"));
-        $('#settingsmenu>input').keyup(function(event){
-            if(event.keyCode === 13) {//enter
-                SettingsMenu.update();
+            if (displayName && Settings.getDisplayName() !== displayName) {
+                emitter.emit(UIEvents.NICKNAME_CHANGED, displayName);
             }
-        });
 
-        if (APP.xmpp.isModerator()) {
-            startMutedSelector.css("display", "block");
-        }
-        else {
-            startMutedSelector.css("display", "none");
+            let language = $("#languages_selectbox").val();
+            if (language !== Settings.getLanguage()) {
+                emitter.emit(UIEvents.LANG_CHANGED, language);
+            }
+
+            let email = UIUtil.escapeHtml($('#setEmail').val());
+            if (email !== Settings.getEmail()) {
+                emitter.emit(UIEvents.EMAIL_CHANGED, email);
+            }
+
+            let startAudioMuted = $("#startAudioMuted").is(":checked");
+            let startVideoMuted = $("#startVideoMuted").is(":checked");
+            if (startAudioMuted !== APP.conference.startAudioMuted
+                || startVideoMuted !== APP.conference.startVideoMuted) {
+                emitter.emit(
+                    UIEvents.START_MUTED_CHANGED,
+                    startAudioMuted,
+                    startVideoMuted
+                );
+            }
         }
 
-        $("#updateSettings").click(function () {
-            SettingsMenu.update();
+        let startMutedBlock = $("#startMutedOptions");
+        startMutedBlock.before(generateLanguagesSelectBox());
+        APP.translation.translateElement($("#languages_selectbox"));
+
+        this.onRoleChanged();
+        this.onStartMutedChanged();
+
+        $("#updateSettings").click(update);
+        $('#settingsmenu>input').keyup(function(event){
+            if (event.keyCode === 13) {//enter
+                update();
+            }
         });
     },
 
-    onRoleChanged: function () {
-        if(APP.xmpp.isModerator()) {
+    onRoleChanged () {
+        if(APP.conference.isModerator) {
             $("#startMutedOptions").css("display", "block");
         }
         else {
@@ -55,55 +77,22 @@ var SettingsMenu = {
         }
     },
 
-    setStartMuted: function (audio, video) {
-        $("#startAudioMuted").attr("checked", audio);
-        $("#startVideoMuted").attr("checked", video);
+    onStartMutedChanged () {
+        $("#startAudioMuted").attr("checked", APP.conference.startAudioMuted);
+        $("#startVideoMuted").attr("checked", APP.conference.startVideoMuted);
     },
 
-    update: function() {
-        var newDisplayName =
-            UIUtil.escapeHtml($('#setDisplayName').get(0).value);
-        var newEmail = UIUtil.escapeHtml($('#setEmail').get(0).value);
-
-        if(newDisplayName) {
-            var displayName = Settings.setDisplayName(newDisplayName);
-            APP.xmpp.addToPresence("displayName", displayName, true);
-        }
-
-        var language = $("#languages_selectbox").val();
-        APP.translation.setLanguage(language);
-        Settings.setLanguage(language);
-
-        APP.xmpp.addToPresence("email", newEmail);
-        var email = Settings.setEmail(newEmail);
-
-        var startAudioMuted = ($("#startAudioMuted").is(":checked"));
-        var startVideoMuted = ($("#startVideoMuted").is(":checked"));
-        APP.xmpp.addToPresence("startMuted",
-            [startAudioMuted, startVideoMuted]);
-
-        Avatar.setUserAvatar(APP.xmpp.myJid(), email);
-    },
-
-    isVisible: function() {
+    isVisible () {
         return $('#settingsmenu').is(':visible');
     },
 
-    setDisplayName: function(newDisplayName) {
-        var displayName = Settings.setDisplayName(newDisplayName);
-        $('#setDisplayName').get(0).value = displayName;
-    },
-
-    onDisplayNameChange: function(peerJid, newDisplayName) {
-        if(peerJid === 'localVideoContainer' ||
-            peerJid === APP.xmpp.myJid()) {
-            this.setDisplayName(newDisplayName);
+    onDisplayNameChange (id, newDisplayName) {
+        if(id === 'localVideoContainer' || APP.conference.isLocalId(id)) {
+            $('#setDisplayName').val(newDisplayName);
         }
     },
-    changeAvatar: function (thumbUrl) {
-        $('#avatar').get(0).src = thumbUrl;
+
+    changeAvatar (avatarUrl) {
+        $('#avatar').attr('src', avatarUrl);
     }
 };
-
-
-module.exports = SettingsMenu;

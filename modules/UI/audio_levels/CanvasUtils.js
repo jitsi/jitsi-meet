@@ -1,7 +1,7 @@
 /**
  * Utility class for drawing canvas shapes.
  */
-var CanvasUtil = (function(my) {
+const CanvasUtil = {
 
     /**
      * Draws a round rectangle with a glow. The glowWidth indicates the depth
@@ -15,8 +15,7 @@ var CanvasUtil = (function(my) {
      * @param glowColor the color of the glow
      * @param glowWidth the width of the glow
      */
-    my.drawRoundRectGlow
-        = function(drawContext, x, y, w, h, r, glowColor, glowWidth) {
+    drawRoundRectGlow (drawContext, x, y, w, h, r, glowColor, glowWidth) {
 
         // Save the previous state of the context.
         drawContext.save();
@@ -73,14 +72,14 @@ var CanvasUtil = (function(my) {
 
         // Restore the previous context state.
         drawContext.restore();
-    };
+    },
 
     /**
      * Clones the given canvas.
      *
      * @return the new cloned canvas.
      */
-    my.cloneCanvas = function (oldCanvas) {
+    cloneCanvas (oldCanvas) {
         /*
          * FIXME Testing has shown that oldCanvas may not exist. In such a case,
          * the method CanvasUtil.cloneCanvas may throw an error. Since audio
@@ -103,9 +102,7 @@ var CanvasUtil = (function(my) {
 
         //return the new canvas
         return newCanvas;
-    };
+    }
+};
 
-    return my;
-})(CanvasUtil || {});
-
-module.exports = CanvasUtil;
+export default CanvasUtil;

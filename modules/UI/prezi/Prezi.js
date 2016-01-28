@@ -1,343 +1,448 @@
-var ToolbarToggler = require("../toolbars/ToolbarToggler");
-var UIUtil = require("../util/UIUtil");
-var VideoLayout = require("../videolayout/VideoLayout");
-var messageHandler = require("../util/MessageHandler");
-var PreziPlayer = require("./PreziPlayer");
+/* global $, APP */
+/* jshint -W101 */
 
-var preziPlayer = null;
-
-
-/**
- * Shows/hides a presentation.
- */
-function setPresentationVisible(visible) {
-
-    if (visible) {
-        VideoLayout.setLargeVideoState("prezi");
-    }
-    else {
-        VideoLayout.setLargeVideoState("video");
-    }
-}
-
-var Prezi = {
-
-
-    /**
-     * Reloads the current presentation.
-     */
-    reloadPresentation: function() {
-        var iframe = document.getElementById(preziPlayer.options.preziId);
-        iframe.src = iframe.src;
-    },
-
-    /**
-     * Returns <tt>true</tt> if the presentation is visible, <tt>false</tt> -
-     * otherwise.
-     */
-    isPresentationVisible: function () {
-        return ($('#presentation>iframe') != null
-                && $('#presentation>iframe').css('opacity') == 1);
-    },
-
-    /**
-     * Opens the Prezi dialog, from which the user could choose a presentation
-     * to load.
-     */
-    openPreziDialog: function() {
-        var myprezi = APP.xmpp.getPrezi();
-        if (myprezi) {
-            messageHandler.openTwoButtonDialog("dialog.removePreziTitle",
-                null,
-                "dialog.removePreziMsg",
-                null,
-                false,
-                "dialog.Remove",
-                function(e,v,m,f) {
-                    if(v) {
-                        APP.xmpp.removePreziFromPresence();
-                    }
-                }
-            );
-        }
-        else if (preziPlayer != null) {
-            messageHandler.openTwoButtonDialog("dialog.sharePreziTitle",
-                null, "dialog.sharePreziMsg",
-                null,
-                false,
-                "dialog.Ok",
-                function(e,v,m,f) {
-                    $.prompt.close();
-                }
-            );
-        }
-        else {
-            var html = APP.translation.generateTranslationHTML(
-                "dialog.sharePreziTitle");
-            var cancelButton = APP.translation.generateTranslationHTML(
-                "dialog.Cancel");
-            var shareButton = APP.translation.generateTranslationHTML(
-                "dialog.Share");
-            var backButton = APP.translation.generateTranslationHTML(
-                "dialog.Back");
-            var buttons = [];
-            var buttons1 = [];
-            // Cancel button to both states
-            buttons.push({title: cancelButton, value: false});
-            buttons1.push({title: cancelButton, value: false});
-            // Share button
-            buttons.push({title: shareButton, value: true});
-            // Back button
-            buttons1.push({title: backButton, value: true});
-            var linkError = APP.translation.generateTranslationHTML(
-                "dialog.preziLinkError");
-            var defaultUrl = APP.translation.translateString("defaultPreziLink",
-                {url: "http://prezi.com/wz7vhjycl7e6/my-prezi"});
-            var openPreziState = {
-                state0: {
-                    html:   '<h2>' + html + '</h2>' +
-                            '<input name="preziUrl" type="text" ' +
-                            'data-i18n="[placeholder]defaultPreziLink" data-i18n-options=\'' +
-                            JSON.stringify({"url": "http://prezi.com/wz7vhjycl7e6/my-prezi"}) +
-                            '\' placeholder="' + defaultUrl + '" autofocus>',
-                    persistent: false,
-                    buttons: buttons,
-                    focus: ':input:first',
-                    defaultButton: 0,
-                    submit: function (e, v, m, f) {
-                        e.preventDefault();
-                        if(v)
-                        {
-                            var preziUrl = f.preziUrl;
-
-                            if (preziUrl)
-                            {
-                                var urlValue
-                                    = encodeURI(UIUtil.escapeHtml(preziUrl));
-
-                                if (urlValue.indexOf('http://prezi.com/') != 0
-                                    && urlValue.indexOf('https://prezi.com/') != 0)
-                                {
-                                    $.prompt.goToState('state1');
-                                    return false;
-                                }
-                                else {
-                                    var presIdTmp = urlValue.substring(
-                                            urlValue.indexOf("prezi.com/") + 10);
-                                    if (!isAlphanumeric(presIdTmp)
-                                            || presIdTmp.indexOf('/') < 2) {
-                                        $.prompt.goToState('state1');
-                                        return false;
-                                    }
-                                    else {
-                                        APP.xmpp.addToPresence("prezi", urlValue);
-                                        $.prompt.close();
-                                    }
-                                }
-                            }
-                        }
-                        else
-                            $.prompt.close();
-                    }
-                },
-                state1: {
-                    html:   '<h2>' + html + '</h2>' +
-                            linkError,
-                    persistent: false,
-                    buttons: buttons1,
-                    focus: ':input:first',
-                    defaultButton: 1,
-                    submit: function (e, v, m, f) {
-                        e.preventDefault();
-                        if (v === 0)
-                            $.prompt.close();
-                        else
-                            $.prompt.goToState('state0');
-                    }
-                }
-            };
-            messageHandler.openDialogWithStates(openPreziState);
-        }
-    }
-
-};
+import VideoLayout from "../videolayout/VideoLayout";
+import LargeContainer from '../videolayout/LargeContainer';
+import PreziPlayer from './PreziPlayer';
+import UIUtil from '../util/UIUtil';
+import UIEvents from '../../../service/UI/UIEvents';
+import messageHandler from '../util/MessageHandler';
+import ToolbarToggler from "../toolbars/ToolbarToggler";
+import SidePanelToggler from "../side_pannels/SidePanelToggler";
+import BottomToolbar from '../toolbars/BottomToolbar';
 
 /**
- * A new presentation has been added.
- *
- * @param event the event indicating the add of a presentation
- * @param jid the jid from which the presentation was added
- * @param presUrl url of the presentation
- * @param currentSlide the current slide to which we should move
+ * Example of Prezi link.
  */
-function presentationAdded(event, jid, presUrl, currentSlide) {
-    console.log("presentation added", presUrl);
-
-    var presId = getPresentationId(presUrl);
-
-    var elementId = 'participant_'
-        + Strophe.getResourceFromJid(jid)
-        + '_' + presId;
-
-    VideoLayout.addPreziContainer(elementId);
-
-    var controlsEnabled = false;
-    if (jid === APP.xmpp.myJid())
-        controlsEnabled = true;
-
-    setPresentationVisible(true);
-    VideoLayout.setLargeVideoHover(
-        function (event) {
-            if (Prezi.isPresentationVisible()) {
-                var reloadButtonRight = window.innerWidth
-                    - $('#presentation>iframe').offset().left
-                    - $('#presentation>iframe').width();
-
-                $('#reloadPresentation').css({  right: reloadButtonRight,
-                    display:'inline-block'});
-            }
-        },
-        function (event) {
-            if (!Prezi.isPresentationVisible())
-                $('#reloadPresentation').css({display:'none'});
-            else {
-                var e = event.toElement || event.relatedTarget;
-
-                if (e && e.id != 'reloadPresentation' && e.id != 'header')
-                    $('#reloadPresentation').css({display:'none'});
-            }
-        });
-
-    preziPlayer = new PreziPlayer(
-        'presentation',
-        {preziId: presId,
-            width: getPresentationWidth(),
-            height: getPresentationHeihgt(),
-            controls: controlsEnabled,
-            debug: true
-        });
-
-    $('#presentation>iframe').attr('id', preziPlayer.options.preziId);
-
-    preziPlayer.on(PreziPlayer.EVENT_STATUS, function(event) {
-        console.log("prezi status", event.value);
-        if (event.value == PreziPlayer.STATUS_CONTENT_READY) {
-            if (jid != APP.xmpp.myJid())
-                preziPlayer.flyToStep(currentSlide);
-        }
-    });
-
-    preziPlayer.on(PreziPlayer.EVENT_CURRENT_STEP, function(event) {
-        console.log("event value", event.value);
-        APP.xmpp.addToPresence("preziSlide", event.value);
-    });
-
-    $("#" + elementId).css( 'background-image',
-        'url(../images/avatarprezi.png)');
-    $("#" + elementId).click(
-        function () {
-            setPresentationVisible(true);
-        }
-    );
-};
+const defaultPreziLink = "http://prezi.com/wz7vhjycl7e6/my-prezi";
+const alphanumRegex = /^[a-z0-9-_\/&\?=;]+$/i;
+/**
+ * Default aspect ratio for Prezi frame.
+ */
+const aspectRatio = 16.0 / 9.0;
 
 /**
- * A presentation has been removed.
- *
- * @param event the event indicating the remove of a presentation
- * @param jid the jid for which the presentation was removed
- * @param the url of the presentation
+ * Default Prezi frame width.
  */
-function presentationRemoved(event, jid, presUrl) {
-    console.log('presentation removed', presUrl);
-    var presId = getPresentationId(presUrl);
-    setPresentationVisible(false);
-    $('#participant_'
-        + Strophe.getResourceFromJid(jid)
-        + '_' + presId).remove();
-    $('#presentation>iframe').remove();
-    if (preziPlayer != null) {
-        preziPlayer.destroy();
-        preziPlayer = null;
-    }
-};
+const DEFAULT_WIDTH = 640;
+/**
+ * Default Prezi frame height.
+ */
+const DEFAULT_HEIGHT = 480;
 
 /**
  * Indicates if the given string is an alphanumeric string.
  * Note that some special characters are also allowed (-, _ , /, &, ?, =, ;) for the
  * purpose of checking URIs.
+ * @param {string} unsafeText string to check
+ * @returns {boolean}
  */
 function isAlphanumeric(unsafeText) {
-    var regex = /^[a-z0-9-_\/&\?=;]+$/i;
-    return regex.test(unsafeText);
+    return alphanumRegex.test(unsafeText);
 }
 
 /**
  * Returns the presentation id from the given url.
+ * @param {string} url Prezi link
+ * @returns {string} presentation id
  */
-function getPresentationId (presUrl) {
-    var presIdTmp = presUrl.substring(presUrl.indexOf("prezi.com/") + 10);
-    return presIdTmp.substring(0, presIdTmp.indexOf('/'));
+function getPresentationId (url) {
+    let presId = url.substring(url.indexOf("prezi.com/") + 10);
+    return presId.substring(0, presId.indexOf('/'));
 }
 
 /**
- * Returns the presentation width.
+ * Checks if given string is Prezi url.
+ * @param {string} url string to check.
+ * @returns {boolean}
  */
-function getPresentationWidth() {
-    var availableWidth = UIUtil.getAvailableVideoWidth();
-    var availableHeight = getPresentationHeihgt();
-
-    var aspectRatio = 16.0 / 9.0;
-    if (availableHeight < availableWidth / aspectRatio) {
-        availableWidth = Math.floor(availableHeight * aspectRatio);
+function isPreziLink(url) {
+    if (url.indexOf('http://prezi.com/') !== 0 && url.indexOf('https://prezi.com/') !== 0) {
+        return false;
     }
-    return availableWidth;
-}
 
-/**
- * Returns the presentation height.
- */
-function getPresentationHeihgt() {
-    var remoteVideos = $('#remoteVideos');
-    return window.innerHeight - remoteVideos.outerHeight();
-}
-
-/**
- * Resizes the presentation iframe.
- */
-function resize() {
-    if ($('#presentation>iframe')) {
-        $('#presentation>iframe').width(getPresentationWidth());
-        $('#presentation>iframe').height(getPresentationHeihgt());
+    let presId = url.substring(url.indexOf("prezi.com/") + 10);
+    if (!isAlphanumeric(presId) || presId.indexOf('/') < 2) {
+        return false;
     }
+
+    return true;
 }
 
 /**
- * Presentation has been removed.
+ * Notify user that other user if already sharing Prezi.
  */
-$(document).bind('presentationremoved.muc', presentationRemoved);
+function notifyOtherIsSharingPrezi() {
+    messageHandler.openMessageDialog(
+        "dialog.sharePreziTitle",
+        "dialog.sharePreziMsg"
+    );
+}
 
 /**
- * Presentation has been added.
+ * Ask user if he want to close Prezi he's sharing.
  */
-$(document).bind('presentationadded.muc', presentationAdded);
+function proposeToClosePrezi() {
+    return new Promise(function (resolve, reject) {
+        messageHandler.openTwoButtonDialog(
+            "dialog.removePreziTitle",
+            null,
+            "dialog.removePreziMsg",
+            null,
+            false,
+            "dialog.Remove",
+            function(e,v,m,f) {
+                if (v) {
+                    resolve();
+                } else {
+                    reject();
+                }
+            }
+        );
 
-/*
- * Indicates presentation slide change.
+    });
+}
+
+/**
+ * Ask user for Prezi url to share with others.
+ * Dialog validates client input to allow only Prezi urls.
  */
-$(document).bind('gotoslide.muc', function (event, jid, presUrl, current) {
-    if (preziPlayer && preziPlayer.getCurrentStep() != current) {
-        preziPlayer.flyToStep(current);
+function requestPreziLink() {
+    const title = APP.translation.generateTranslationHTML("dialog.sharePreziTitle");
+    const cancelButton = APP.translation.generateTranslationHTML("dialog.Cancel");
+    const shareButton = APP.translation.generateTranslationHTML("dialog.Share");
+    const backButton = APP.translation.generateTranslationHTML("dialog.Back");
+    const linkError = APP.translation.generateTranslationHTML("dialog.preziLinkError");
+    const i18nOptions = {url: defaultPreziLink};
+    const defaultUrl = APP.translation.translateString(
+        "defaultPreziLink", i18nOptions
+    );
 
-        var animationStepsArray = preziPlayer.getAnimationCountOnSteps();
-        for (var i = 0; i < parseInt(animationStepsArray[current]); i++) {
-            preziPlayer.flyToStep(current, i);
+    return new Promise(function (resolve, reject) {
+        let dialog = messageHandler.openDialogWithStates({
+            state0: {
+                html:  `
+                    <h2>${title}</h2>
+                    <input name="preziUrl" type="text"
+                           data-i18n="[placeholder]defaultPreziLink"
+                           data-i18n-options="${JSON.stringify(i18nOptions)}"
+                           placeholder="${defaultUrl}" autofocus>`,
+                persistent: false,
+                buttons: [
+                    {title: cancelButton, value: false},
+                    {title: shareButton, value: true}
+                ],
+                focus: ':input:first',
+                defaultButton: 1,
+                submit: function (e, v, m, f) {
+                    e.preventDefault();
+                    if (!v) {
+                        reject('cancelled');
+                        dialog.close();
+                        return;
+                    }
+
+                    let preziUrl = f.preziUrl;
+                    if (!preziUrl) {
+                        return;
+                    }
+
+                    let urlValue = encodeURI(UIUtil.escapeHtml(preziUrl));
+
+                    if (!isPreziLink(urlValue)) {
+                        dialog.goToState('state1');
+                        return false;
+                    }
+
+                    resolve(urlValue);
+                    dialog.close();
+                }
+            },
+
+            state1: {
+                html: `<h2>${title}</h2> ${linkError}`,
+                persistent: false,
+                buttons: [
+                    {title: cancelButton, value: false},
+                    {title: backButton, value: true}
+                ],
+                focus: ':input:first',
+                defaultButton: 1,
+                submit: function (e, v, m, f) {
+                    e.preventDefault();
+                    if (v === 0) {
+                        reject();
+                        dialog.close();
+                    } else {
+                        dialog.goToState('state0');
+                    }
+                }
+            }
+        });
+
+    });
+}
+
+export const PreziContainerType = "prezi";
+
+/**
+ * Container for Prezi iframe.
+ */
+class PreziContainer extends LargeContainer {
+
+    constructor ({preziId, isMy, slide, onSlideChanged}) {
+        super();
+        this.reloadBtn = $('#reloadPresentation');
+
+        let preziPlayer = new PreziPlayer(
+            'presentation', {
+                preziId,
+                width: DEFAULT_WIDTH,
+                height: DEFAULT_HEIGHT,
+                controls: isMy,
+                debug: true
+            }
+        );
+        this.preziPlayer = preziPlayer;
+        this.$iframe = $(preziPlayer.iframe);
+
+        this.$iframe.attr('id', preziId);
+
+        preziPlayer.on(PreziPlayer.EVENT_STATUS, function({value}) {
+            console.log("prezi status", value);
+            if (value == PreziPlayer.STATUS_CONTENT_READY && !isMy) {
+                preziPlayer.flyToStep(slide);
+            }
+        });
+
+        preziPlayer.on(PreziPlayer.EVENT_CURRENT_STEP, function({value}) {
+            console.log("event value", value);
+            onSlideChanged(value);
+        });
+    }
+
+    /**
+     * Change Prezi slide.
+     * @param {number} slide slide to show
+     */
+    goToSlide (slide) {
+        if (this.preziPlayer.getCurrentStep() === slide) {
+            return;
+        }
+
+        this.preziPlayer.flyToStep(slide);
+
+        let animationStepsArray = this.preziPlayer.getAnimationCountOnSteps();
+        if (!animationStepsArray) {
+            return;
+        }
+
+        for (var i = 0; i < parseInt(animationStepsArray[slide]); i += 1) {
+            this.preziPlayer.flyToStep(slide, i);
         }
     }
-});
 
-$(window).resize(function () {
-    resize();
-});
+    /**
+     * Show or hide "reload presentation" button.
+     * @param {boolean} show
+     */
+    showReloadBtn (show) {
+        this.reloadBtn.css('display', show ? 'inline-block' : 'none');
+    }
 
-module.exports = Prezi;
+    show () {
+        return new Promise(resolve => {
+            this.$iframe.fadeIn(300, () => {
+                this.$iframe.css({opacity: 1});
+                ToolbarToggler.dockToolbar(true);
+                resolve();
+            });
+        });
+    }
+
+    hide () {
+        return new Promise(resolve => {
+            this.$iframe.fadeOut(300, () => {
+                this.$iframe.css({opacity: 0});
+                this.showReloadBtn(false);
+                ToolbarToggler.dockToolbar(false);
+                resolve();
+            });
+        });
+    }
+
+    onHoverIn () {
+        let rightOffset = window.innerWidth - this.$iframe.offset().left - this.$iframe.width();
+
+        this.showReloadBtn(true);
+        this.reloadBtn.css('right', rightOffset);
+    }
+
+    onHoverOut (event) {
+        let e = event.toElement || event.relatedTarget;
+
+        if (e && e.id != 'reloadPresentation' && e.id != 'header') {
+            this.showReloadBtn(false);
+        }
+    }
+
+    resize (containerWidth, containerHeight) {
+        let height = containerHeight - BottomToolbar.getFilmStripHeight();
+
+        let width = containerWidth;
+
+        if (height < width / aspectRatio) {
+            width = Math.floor(height * aspectRatio);
+        }
+
+        this.$iframe.width(width).height(height);
+    }
+
+    /**
+     * Close Prezi frame.
+     */
+    close () {
+        this.showReloadBtn(false);
+        this.preziPlayer.destroy();
+        this.$iframe.remove();
+    }
+}
+
+/**
+ * Manager of Prezi frames.
+ */
+export default class PreziManager {
+    constructor (emitter) {
+        this.emitter = emitter;
+
+        this.userId = null;
+        this.url = null;
+        this.prezi = null;
+
+        $("#reloadPresentationLink").click(this.reloadPresentation.bind(this));
+    }
+
+    get isPresenting () {
+        return !!this.userId;
+    }
+
+    get isMyPrezi () {
+        return this.userId === APP.conference.localId;
+    }
+
+    /**
+     * Check if user is currently sharing.
+     * @param {string} id user id to check for
+     */
+    isSharing (id) {
+        return this.userId === id;
+    }
+
+    handlePreziButtonClicked () {
+        if (!this.isPresenting) {
+            requestPreziLink().then(
+                url => this.emitter.emit(UIEvents.SHARE_PREZI, url, 0),
+                err => console.error('PREZI CANCELED', err)
+            );
+            return;
+        }
+
+        if (this.isMyPrezi) {
+            proposeToClosePrezi().then(() => this.emitter.emit(UIEvents.STOP_SHARING_PREZI));
+        } else {
+            notifyOtherIsSharingPrezi();
+        }
+    }
+
+    /**
+     * Reload current Prezi frame.
+     */
+    reloadPresentation () {
+        if (!this.prezi) {
+            return;
+        }
+        let iframe = this.prezi.$iframe[0];
+        iframe.src = iframe.src;
+    }
+
+    /**
+     * Show Prezi. Create new Prezi if there is no Prezi yet.
+     * @param {string} id owner id
+     * @param {string} url Prezi url
+     * @param {number} slide slide to show
+     */
+    showPrezi (id, url, slide) {
+        if (!this.isPresenting) {
+            this.createPrezi(id, url, slide);
+        }
+
+        if (this.userId === id && this.url === url) {
+            this.prezi.goToSlide(slide);
+        } else {
+            console.error(this.userId, id);
+            console.error(this.url, url);
+            throw new Error("unexpected presentation change");
+        }
+    }
+
+    /**
+     * Create new Prezi frame..
+     * @param {string} id owner id
+     * @param {string} url Prezi url
+     * @param {number} slide slide to show
+     */
+    createPrezi (id, url, slide) {
+        console.log("presentation added", url);
+
+        this.userId = id;
+        this.url = url;
+
+        let preziId = getPresentationId(url);
+        let elementId = `participant_${id}_${preziId}`;
+
+        this.$thumb = $(VideoLayout.addRemoteVideoContainer(elementId));
+        VideoLayout.resizeThumbnails();
+        this.$thumb.css({
+            'background-image': 'url(../images/avatarprezi.png)'
+        }).click(() => VideoLayout.showLargeVideoContainer(PreziContainerType, true));
+
+        this.prezi = new PreziContainer({
+            preziId,
+            isMy: this.isMyPrezi,
+            slide,
+            onSlideChanged: newSlide => {
+                if (this.isMyPrezi) {
+                    this.emitter.emit(UIEvents.SHARE_PREZI, url, newSlide);
+                }
+            }
+        });
+
+        VideoLayout.addLargeVideoContainer(PreziContainerType, this.prezi);
+        VideoLayout.showLargeVideoContainer(PreziContainerType, true);
+    }
+
+    /**
+     * Close Prezi.
+     * @param {string} id owner id
+     */
+    removePrezi (id) {
+        if (this.userId !== id) {
+            throw new Error(`cannot close presentation from ${this.userId} instead of ${id}`);
+        }
+
+        this.$thumb.remove();
+        this.$thumb = null;
+
+        // wait until Prezi is hidden, then remove it
+        VideoLayout.showLargeVideoContainer(PreziContainerType, false).then(() => {
+            console.log("presentation removed", this.url);
+
+            VideoLayout.removeLargeVideoContainer(PreziContainerType);
+
+            this.userId = null;
+            this.url = null;
+            this.prezi.close();
+            this.prezi = null;
+        });
+    }
+}

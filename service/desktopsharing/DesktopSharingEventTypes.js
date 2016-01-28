@@ -1,6 +1,4 @@
-var DesktopSharingEventTypes = {
-    INIT: "ds.init",
-
+export default {
     SWITCHING_DONE: "ds.switching_done",
 
     NEW_STREAM_CREATED: "ds.new_stream_created",
@@ -11,5 +9,3 @@ var DesktopSharingEventTypes = {
      */
     FIREFOX_EXTENSION_NEEDED: "ds.firefox_extension_needed"
 };
-
-module.exports = DesktopSharingEventTypes;

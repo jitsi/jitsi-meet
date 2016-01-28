@@ -1,17 +1,34 @@
 /* global $, config, interfaceConfig */
+
 /**
  * Created by hristo on 12/22/14.
  */
-var UIUtil = module.exports = {
+ var UIUtil = {
+
+    /**
+     * Returns the size of the side panel.
+     */
+     getSidePanelSize () {
+        var availableHeight = window.innerHeight;
+        var availableWidth = window.innerWidth;
+
+        var panelWidth = 200;
+        if (availableWidth * 0.2 < 200) {
+            panelWidth = availableWidth * 0.2;
+        }
+
+        return [panelWidth, availableHeight];
+     },
+
     /**
      * Returns the available video width.
      */
-    getAvailableVideoWidth: function (isVisible) {
-        var PanelToggler = require("../side_pannels/SidePanelToggler");
-        if(typeof isVisible === "undefined" || isVisible === null)
-            isVisible = PanelToggler.isVisible();
-        var rightPanelWidth
-            = isVisible ? PanelToggler.getPanelSize()[0] : 0;
+    getAvailableVideoWidth: function (isSidePanelVisible) {
+        let rightPanelWidth = 0;
+
+        if (isSidePanelVisible) {
+            rightPanelWidth = UIUtil.getSidePanelSize()[0];
+        }
 
         return window.innerWidth - rightPanelWidth;
     },
@@ -112,5 +129,17 @@ var UIUtil = module.exports = {
           .filter(function (item) { return item; })
           .join(',');
         $(selector).hide();
-    }
+    },
+
+    redirect (url) {
+         window.location.href = url;
+     },
+
+     isFullScreen () {
+         return document.fullScreen
+             || document.mozFullScreen
+             || document.webkitIsFullScreen;
+     }
 };
+
+export default UIUtil;

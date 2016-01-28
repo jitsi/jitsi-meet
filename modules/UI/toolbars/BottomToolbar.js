@@ -1,66 +1,109 @@
 /* global $ */
-var PanelToggler = require("../side_pannels/SidePanelToggler");
-var UIUtil = require("../util/UIUtil");
-var AnalyticsAdapter = require("../../statistics/AnalyticsAdapter");
-var UIEvents = require("../../../service/UI/UIEvents");
+import UIUtil from '../util/UIUtil';
+import UIEvents from '../../../service/UI/UIEvents';
+import AnalyticsAdapter from '../../statistics/AnalyticsAdapter';
 
-var eventEmitter = null;
-
-var buttonHandlers = {
-    "bottom_toolbar_contact_list": function () {
-        AnalyticsAdapter.sendEvent('bottomtoolbar.contacts.toggled');
-        BottomToolbar.toggleContactList();
-    },
-    "bottom_toolbar_film_strip": function () {
-        AnalyticsAdapter.sendEvent('bottomtoolbar.filmstrip.toggled');
-        BottomToolbar.toggleFilmStrip();
-    },
-    "bottom_toolbar_chat": function () {
-        AnalyticsAdapter.sendEvent('bottomtoolbar.chat.toggled');
-        BottomToolbar.toggleChat();
-    }
-};
-
-
-var defaultBottomToolbarButtons = {
-    'chat': '#bottom_toolbar_chat',
-    'contacts': '#bottom_toolbar_contact_list',
+const defaultBottomToolbarButtons = {
+    'chat':      '#bottom_toolbar_chat',
+    'contacts':  '#bottom_toolbar_contact_list',
     'filmstrip': '#bottom_toolbar_film_strip'
 };
 
+const BottomToolbar = {
+    init () {
+        this.filmStrip = $('#remoteVideos');
+        this.toolbar = $('#bottomToolbar');
+    },
 
-var BottomToolbar = (function (my) {
-    my.init = function (emitter) {
-        eventEmitter = emitter;
+    setupListeners (emitter) {
         UIUtil.hideDisabledButtons(defaultBottomToolbarButtons);
 
-        for(var k in buttonHandlers)
-            $("#" + k).click(buttonHandlers[k]);
-    };
+        const buttonHandlers = {
+            "bottom_toolbar_contact_list": function () {
+                AnalyticsAdapter.sendEvent('bottomtoolbar.contacts.toggled');
+                emitter.emit(UIEvents.TOGGLE_CONTACT_LIST);
+            },
+            "bottom_toolbar_film_strip": function () {
+                AnalyticsAdapter.sendEvent('bottomtoolbar.filmstrip.toggled');
+                emitter.emit(UIEvents.TOGGLE_FILM_STRIP);
+            },
+            "bottom_toolbar_chat": function () {
+                AnalyticsAdapter.sendEvent('bottomtoolbar.chat.toggled');
+                emitter.emit(UIEvents.TOGGLE_CHAT);
+            }
+        };
 
-    my.toggleChat = function() {
-        PanelToggler.toggleChat();
-    };
+        Object.keys(buttonHandlers).forEach(
+            buttonId => $(`#${buttonId}`).click(buttonHandlers[buttonId])
+        );
+    },
 
-    my.toggleContactList = function() {
-        PanelToggler.toggleContactList();
-    };
+    toggleFilmStrip () {
+        this.filmStrip.toggleClass("hidden");
+    },
 
-    my.toggleFilmStrip = function() {
-        var filmstrip = $("#remoteVideos");
-        filmstrip.toggleClass("hidden");
+    isFilmStripVisible () {
+        return !this.filmStrip.hasClass('hidden');
+    },
 
-        eventEmitter.emit(  UIEvents.FILM_STRIP_TOGGLED,
-                            filmstrip.hasClass("hidden"));
-    };
+    setupFilmStripOnly () {
+        this.filmStrip.css({
+            padding: "0px 0px 18px 0px",
+            right: 0
+        });
+    },
 
-    $(document).bind("remotevideo.resized", function (event, width, height) {
-        var bottom = (height - $('#bottomToolbar').outerHeight())/2 + 18;
+    getFilmStripHeight () {
+        if (this.isFilmStripVisible()) {
+            return this.filmStrip.outerHeight();
+        } else {
+            return 0;
+        }
+    },
 
-        $('#bottomToolbar').css({bottom: bottom + 'px'});
-    });
+    getFilmStripWidth () {
+        return this.filmStrip.width();
+    },
 
-    return my;
-}(BottomToolbar || {}));
+    resizeThumbnails (thumbWidth, thumbHeight,
+                      animate = false, forceUpdate = false) {
+        return new Promise(resolve => {
+            this.filmStrip.animate({
+                // adds 2 px because of small video 1px border
+                height: thumbHeight + 2
+            }, {
+                queue: false,
+                duration: animate ? 500 : 0
+            });
 
-module.exports = BottomToolbar;
+            this.getThumbs(!forceUpdate).animate({
+                height: thumbHeight,
+                width: thumbWidth
+            }, {
+                queue: false,
+                duration: animate ? 500 : 0,
+                complete:  resolve
+            });
+
+            if (!animate) {
+                resolve();
+            }
+        });
+    },
+
+    resizeToolbar (thumbWidth, thumbHeight) {
+        let bottom = (thumbHeight - this.toolbar.outerHeight())/2 + 18;
+        this.toolbar.css({bottom});
+    },
+
+    getThumbs (only_visible = false) {
+        let selector = 'span';
+        if (only_visible) {
+            selector += ':visible';
+        }
+
+        return this.filmStrip.children(selector);
+    }
+};
+
+export default BottomToolbar;

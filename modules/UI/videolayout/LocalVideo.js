@@ -1,19 +1,23 @@
 /* global $, interfaceConfig, APP */
-var SmallVideo = require("./SmallVideo");
-var ConnectionIndicator = require("./ConnectionIndicator");
-var NicknameHandler = require("../util/NicknameHandler");
-var UIUtil = require("../util/UIUtil");
+import ConnectionIndicator from "./ConnectionIndicator";
+import UIUtil from "../util/UIUtil";
+import UIEvents from "../../../service/UI/UIEvents";
+import SmallVideo from "./SmallVideo";
+
 var LargeVideo = require("./LargeVideo");
 var RTCBrowserType = require("../../RTC/RTCBrowserType");
 
-function LocalVideo(VideoLayout) {
+const TrackEvents = JitsiMeetJS.events.track;
+
+function LocalVideo(VideoLayout, emitter) {
     this.videoSpanId = "localVideoContainer";
     this.container = $("#localVideoContainer").get(0);
     this.bindHoverHandler();
     this.VideoLayout = VideoLayout;
     this.flipX = true;
     this.isLocal = true;
-    this.peerJid = null;
+    this.emitter = emitter;
+    SmallVideo.call(this);
 }
 
 LocalVideo.prototype = Object.create(SmallVideo.prototype);
@@ -61,6 +65,7 @@ LocalVideo.prototype.setDisplayName = function(displayName, key) {
                 $('#localDisplayName').html(defaultLocalDisplayName);
             }
         }
+        this.updateView();
     } else {
         var editButton = createEditDisplayNameButton();
 
@@ -117,12 +122,14 @@ LocalVideo.prototype.setDisplayName = function(displayName, key) {
 
                 editDisplayName.one("focusout", function (e) {
                     self.VideoLayout.inputDisplayNameHandler(this.value);
+                    $('#editDisplayName').hide();
                 });
 
                 editDisplayName.on('keydown', function (e) {
                     if (e.keyCode === 13) {
                         e.preventDefault();
-                        self.VideoLayout.inputDisplayNameHandler(this.value);
+                        $('#editDisplayName').hide();
+                        // focusout handler will save display name
                     }
                 });
             });
@@ -130,25 +137,7 @@ LocalVideo.prototype.setDisplayName = function(displayName, key) {
 };
 
 LocalVideo.prototype.inputDisplayNameHandler = function (name) {
-    name = UIUtil.escapeHtml(name);
-
-    NicknameHandler.setNickname(name);
-
-    var localDisplayName = $('#localDisplayName');
-    if (!localDisplayName.is(":visible")) {
-        if (NicknameHandler.getNickname()) {
-            var meHTML = APP.translation.generateTranslationHTML("me");
-            localDisplayName.html(NicknameHandler.getNickname() + " (" +
-            meHTML + ")");
-        } else {
-            var defaultHTML = APP.translation.generateTranslationHTML(
-                interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME);
-            localDisplayName .html(defaultHTML);
-        }
-        localDisplayName.show();
-    }
-
-    $('#editDisplayName').hide();
+    this.emitter.emit(UIEvents.NICKNAME_CHANGED, UIUtil.escapeHtml(name));
 };
 
 LocalVideo.prototype.createConnectionIndicator = function() {
@@ -158,37 +147,29 @@ LocalVideo.prototype.createConnectionIndicator = function() {
     this.connectionIndicator = new ConnectionIndicator(this, null);
 };
 
-LocalVideo.prototype.changeVideo = function (stream, isMuted) {
-    var self = this;
+LocalVideo.prototype.changeVideo = function (stream) {
+    this.stream = stream;
 
-    function localVideoClick(event) {
+    let localVideoClick = (event) => {
         // FIXME: with Temasys plugin event arg is not an event, but
         // the clicked object itself, so we have to skip this call
         if (event.stopPropagation) {
             event.stopPropagation();
         }
-        self.VideoLayout.handleVideoThumbClicked(
-            true,
-            APP.xmpp.myResource());
-    }
+        this.VideoLayout.handleVideoThumbClicked(true, this.id);
+    };
 
-    var localVideoContainerSelector = $('#localVideoContainer');
+    let localVideoContainerSelector = $('#localVideoContainer');
     localVideoContainerSelector.off('click');
     localVideoContainerSelector.on('click', localVideoClick);
 
-    if(isMuted) {
-        APP.UI.setVideoMute(true);
-        return;
-    }
-    this.flipX = stream.videoType != "screen";
-    var localVideo = document.createElement('video');
-    localVideo.id = 'localVideo_' +
-        APP.RTC.getStreamID(stream.getOriginalStream());
+    this.flipX = stream.videoType != "desktop";
+    let localVideo = document.createElement('video');
+    localVideo.id = 'localVideo_' + stream.getId();
     if (!RTCBrowserType.isIExplorer()) {
         localVideo.autoplay = true;
         localVideo.volume = 0; // is it required if audio is separated ?
     }
-    localVideo.oncontextmenu = function () { return false; };
 
     var localVideoContainer = document.getElementById('localVideoWrapper');
     // Put the new video always in front
@@ -207,29 +188,19 @@ LocalVideo.prototype.changeVideo = function (stream, isMuted) {
     }
 
     // Attach WebRTC stream
-    APP.RTC.attachMediaStream(localVideoSelector, stream.getOriginalStream());
+    stream.attach(localVideoSelector);
 
-    // Add stream ended handler
-    APP.RTC.addMediaStreamInactiveHandler(
-        stream.getOriginalStream(), function () {
-        // We have to re-select after attach when Temasys plugin is used,
-        // because <video> element is replaced with <object>
+    let endedHandler = () => {
         localVideo = $('#' + localVideo.id)[0];
         localVideoContainer.removeChild(localVideo);
-        self.VideoLayout.updateRemovedVideo(APP.xmpp.myResource());
-    });
+        this.VideoLayout.updateRemovedVideo(this.id);
+        stream.off(TrackEvents.TRACK_STOPPED, endedHandler);
+    };
+    stream.on(TrackEvents.TRACK_STOPPED, endedHandler);
 };
 
-LocalVideo.prototype.joined = function (jid) {
-    this.peerJid = jid;
+LocalVideo.prototype.joined = function (id) {
+    this.id = id;
 };
 
-LocalVideo.prototype.getResourceJid = function () {
-    var myResource = APP.xmpp.myResource();
-    if (!myResource) {
-        console.error("Requested local resource before we're in the MUC");
-    }
-    return myResource;
-};
-
-module.exports = LocalVideo;
+export default LocalVideo;

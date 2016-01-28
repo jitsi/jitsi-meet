@@ -34,7 +34,7 @@
 }
 
 #remoteVideos .videocontainer {
-    display: inline-block;
+    display: none;
     background-color: black;
     background-size: contain;
     border-radius:8px;
@@ -378,7 +378,7 @@
     padding-right:2px;
     height:38px;
     width:auto;
-    background-color: rgba(0,0,0,0.8); 
+    background-color: rgba(0,0,0,0.8);
     border: 1px solid rgba(256, 256, 256, 0.2);
     border-radius: 6px;
     pointer-events: auto;
@@ -407,7 +407,7 @@
     pointer-events: none;
 }
 
-#activeSpeaker {
+#dominantSpeaker {
     visibility: hidden;
     width: 150px;
     height: 150px;
@@ -416,7 +416,7 @@
     position: relative;
 }
 
-#activeSpeakerAudioLevel {
+#dominantSpeakerAudioLevel {
     position: absolute;
     top: 0px;
     left: 0px;
@@ -428,7 +428,7 @@
     display:none !important;
 }
 
-#activeSpeakerAvatar {
+#dominantSpeakerAvatar {
     width: 100px;
     height: 100px;
     top: 25px;

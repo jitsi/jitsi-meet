@@ -1,10 +1,8 @@
-/* global APP, config */
+/* global APP, JitsiMeetJS, config */
 var EventEmitter = require("events");
-var DesktopSharingEventTypes
-    = require("../../service/desktopsharing/DesktopSharingEventTypes");
-var RTCBrowserType = require("../RTC/RTCBrowserType");
-var RTCEvents = require("../../service/RTC/RTCEvents");
-var ScreenObtainer = require("./ScreenObtainer");
+import DSEvents from '../../service/desktopsharing/DesktopSharingEventTypes';
+
+const TrackEvents = JitsiMeetJS.events.track;
 
 /**
  * Indicates that desktop stream is currently in use (for toggle purpose).
@@ -20,22 +18,19 @@ var isUsingScreenStream = false;
 var switchInProgress = false;
 
 /**
- * Used to obtain the screen sharing stream from the browser.
+ * true if desktop sharing is enabled and false otherwise.
  */
-var screenObtainer = new ScreenObtainer();
+var isEnabled = false;
 
 var eventEmitter = new EventEmitter();
 
 function streamSwitchDone() {
     switchInProgress = false;
-    eventEmitter.emit(
-        DesktopSharingEventTypes.SWITCHING_DONE,
-        isUsingScreenStream);
+    eventEmitter.emit(DSEvents.SWITCHING_DONE, isUsingScreenStream);
 }
 
-function newStreamCreated(stream) {
-    eventEmitter.emit(DesktopSharingEventTypes.NEW_STREAM_CREATED,
-        stream, isUsingScreenStream, streamSwitchDone);
+function newStreamCreated(track) {
+    eventEmitter.emit(DSEvents.NEW_STREAM_CREATED, track, streamSwitchDone);
 }
 
 function getVideoStreamFailed(error) {
@@ -50,36 +45,31 @@ function getDesktopStreamFailed(error) {
     switchInProgress = false;
 }
 
-function onEndedHandler(stream) {
+function onEndedHandler() {
     if (!switchInProgress && isUsingScreenStream) {
         APP.desktopsharing.toggleScreenSharing();
     }
-
-    APP.RTC.removeMediaStreamInactiveHandler(stream, onEndedHandler);
 }
 
 module.exports = {
     isUsingScreenStream: function () {
         return isUsingScreenStream;
     },
-
+    /**
+     * Initializes the desktop sharing module.
+     * @param {boolean} <tt>true</tt> if desktop sharing feature is available
+     * and enabled.
+     */
+    init: function (enabled) {
+        isEnabled = enabled;
+    },
     /**
      * @returns {boolean} <tt>true</tt> if desktop sharing feature is available
      *          and enabled.
      */
     isDesktopSharingEnabled: function () {
-        return screenObtainer.isSupported();
+        return isEnabled;
     },
-    
-    init: function () {
-        // Called when RTC finishes initialization
-        APP.RTC.addListener(RTCEvents.RTC_READY,
-            function() {
-                screenObtainer.init(eventEmitter);
-                eventEmitter.emit(DesktopSharingEventTypes.INIT);
-            });
-    },
-
     addListener: function (type, listener) {
         eventEmitter.on(type, listener);
     },
@@ -95,43 +85,50 @@ module.exports = {
         if (switchInProgress) {
             console.warn("Switch in progress.");
             return;
-        } else if (!screenObtainer.isSupported()) {
+        } else if (!this.isDesktopSharingEnabled()) {
             console.warn("Cannot toggle screen sharing: not supported.");
             return;
         }
         switchInProgress = true;
-
+        let type;
         if (!isUsingScreenStream) {
             // Switch to desktop stream
-            screenObtainer.obtainStream(
-                function (stream) {
-                    // We now use screen stream
-                    isUsingScreenStream = true;
-                    // Hook 'ended' event to restore camera
-                    // when screen stream stops
-                    APP.RTC.addMediaStreamInactiveHandler(
-                        stream, onEndedHandler);
-                    newStreamCreated(stream);
-                },
-                getDesktopStreamFailed);
+            type = "desktop";
         } else {
-            // Disable screen stream
-            APP.RTC.getUserMediaWithConstraints(
-                ['video'],
-                function (stream) {
-                    // We are now using camera stream
-                    isUsingScreenStream = false;
-                    newStreamCreated(stream);
-                },
-                getVideoStreamFailed,
-                config.resolution || '360'
-            );
+            type = "video";
         }
-    },
-    /*
-     * Exports the event emitter to allow use by ScreenObtainer. Not for outside
-     * use.
-     */
-    eventEmitter: eventEmitter
-};
+        var fail = (error) => {
+            if (type === 'desktop') {
+                getDesktopStreamFailed(error);
+            } else {
+                getVideoStreamFailed(error);
+            }
+        };
+        APP.conference.createLocalTracks(type).then((tracks) => {
+            // FIXME does it mean that 'not track.length' == GUM failed ?
+            // And will this ever happen if promise is supposed to fail in GUM
+            // failed case ?
+            if (!tracks.length) {
+                fail();
+                return;
+            }
+            let stream = tracks[0];
 
+            // We now use screen stream
+            isUsingScreenStream = type === "desktop";
+            if (isUsingScreenStream) {
+                stream.on(TrackEvents.TRACK_STOPPED, onEndedHandler);
+            }
+            newStreamCreated(stream);
+        }).catch((error) => {
+            if(error === JitsiMeetJS.errors.track.FIREFOX_EXTENSION_NEEDED)
+            {
+                eventEmitter.emit(
+                    DSEvents.FIREFOX_EXTENSION_NEEDED,
+                    config.desktopSharingFirefoxExtensionURL);
+                return;
+            }
+            fail(error);
+        });
+    }
+};
