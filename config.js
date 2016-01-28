@@ -57,7 +57,7 @@ var config = {
     adaptiveSimulcast: false,
     enableRecording: false,
     enableWelcomePage: true,
-    enableSimulcast: false, // blocks FF support
+    disableSimulcast: false,
     logStats: false, // Enable logging of PeerConnection stats via the focus
 //    requireDisplayName: true,//Forces the participants that doesn't have display name to enter it when they enter the room.
 //    startAudioMuted: 10, //every participant after the Nth will start audio muted
