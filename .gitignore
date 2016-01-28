@@ -5,5 +5,6 @@ node_modules
 .*.tmp
 deploy-local.sh
 libs/app.bundle.*
+libs/lib-jitsi-meet*
 all.css
 .remote-sync.json
