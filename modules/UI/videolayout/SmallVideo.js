@@ -9,7 +9,8 @@ function SmallVideo() {
     this.isMuted = false;
     this.hasAvatar = false;
     this.isVideoMuted = false;
-    this.stream = null;
+    this.videoStream = null;
+    this.audioStream = null;
 }
 
 function setVisibility(selector, show) {
@@ -18,8 +19,8 @@ function setVisibility(selector, show) {
     }
 }
 
-/**
- * Indicates if this small video is currently visible.
+
+/* Indicates if this small video is currently visible.
  *
  * @return <tt>true</tt> if this small video isn't currently visible and
  * <tt>false</tt> - otherwise.
@@ -370,7 +371,7 @@ SmallVideo.prototype.updateView = function () {
     } else {
         // We want to show the avatar when the video is muted or not exists
         // that is when 'true' or 'null' is returned
-        showAvatar = !this.stream || this.stream.isMuted();
+        showAvatar = !this.videoStream || this.videoStream.isMuted();
     }
 
     showAvatar = showAvatar && !isCurrentlyOnLarge;

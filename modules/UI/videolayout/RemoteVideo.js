@@ -143,7 +143,7 @@ if (!interfaceConfig.filmStripOnly) {
  * Removes the remote stream element corresponding to the given stream and
  * parent container.
  *
- * @param stream the stream
+ * @param stream the MediaStream
  * @param isVideo <tt>true</tt> if given <tt>stream</tt> is a video one.
  */
 RemoteVideo.prototype.removeRemoteStreamElement =
@@ -219,9 +219,8 @@ RemoteVideo.prototype.addRemoteStreamElement = function (stream) {
         return;
     }
 
-    this.stream = stream;
-
     let isVideo = stream.isVideoTrack();
+    isVideo ? this.videoStream = stream : this.audioStream = stream;
 
     // Add click handler.
     let onClickHandler = (event) => {
@@ -250,7 +249,7 @@ RemoteVideo.prototype.addRemoteStreamElement = function (stream) {
 
     let sel = $(`#${newElementId}`);
 
-    // If the container is currently visible we attach the stream.
+    // If the container is currently visible we attach the stream to the element.
     if (!isVideo || (this.container.offsetParent !== null && isVideo)) {
         this.waitForPlayback(sel, stream);
 

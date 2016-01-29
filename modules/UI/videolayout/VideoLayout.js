@@ -49,7 +49,7 @@ function onContactClicked (id) {
     if (remoteVideo && remoteVideo.selectVideoElement().length) {
         // It is not always the case that a videoThumb exists (if there is
         // no actual video).
-        if (remoteVideo.stream) {
+        if (remoteVideo.videoStream) {
 
             // We have a video src, great! Let's update the large video
             // now.
@@ -694,7 +694,7 @@ var VideoLayout = {
                 if (!remoteVideo.isVisible()) {
                     console.log("Add to last N", resourceJid);
 
-                    remoteVideo.addRemoteStreamElement(remoteVideo.stream);
+                    remoteVideo.addRemoteStreamElement(remoteVideo.videoStream);
 
                     if (lastNPickupId == resourceJid) {
                         // Clean up the lastN pickup id.
@@ -709,7 +709,7 @@ var VideoLayout = {
                         updateLargeVideo = false;
                     }
                     remoteVideo.waitForPlayback(
-                        remoteVideo.selectVideoElement(), remoteVideo.stream);
+                        remoteVideo.selectVideoElement(), remoteVideo.videoStream);
                 }
             });
         }
@@ -987,7 +987,7 @@ var VideoLayout = {
 
             let videoType = this.getRemoteVideoType(id);
             largeVideo.updateLargeVideo(
-                smallVideo.stream,
+                smallVideo.videoStream,
                 videoType
             ).then(function() {
                 // update current small video and the old one

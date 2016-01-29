@@ -148,7 +148,7 @@ LocalVideo.prototype.createConnectionIndicator = function() {
 };
 
 LocalVideo.prototype.changeVideo = function (stream) {
-    this.stream = stream;
+    this.videoStream = stream;
 
     let localVideoClick = (event) => {
         // FIXME: with Temasys plugin event arg is not an event, but
