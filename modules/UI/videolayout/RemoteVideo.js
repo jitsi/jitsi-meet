@@ -86,13 +86,12 @@ if (!interfaceConfig.filmStripOnly) {
             muteLinkItem.className = 'mutelink disabled';
         }
 
-        var self = this;
-        muteLinkItem.onclick = function(){
+        muteLinkItem.onclick = (event) => {
             if ($(this).attr('disabled')) {
                 event.preventDefault();
             }
-            var isMute = !!self.isMuted;
-            self.emitter.emit(UIEvents.REMOTE_AUDIO_MUTED, self.id);
+            var isMute = !!this.isMuted;
+            this.emitter.emit(UIEvents.REMOTE_AUDIO_MUTED, this.id);
 
             popupmenuElement.setAttribute('style', 'display:none;');
 
@@ -120,8 +119,8 @@ if (!interfaceConfig.filmStripOnly) {
         var ejectText = "<div style='width: 90px;margin-left: 20px;' " +
             "data-i18n='videothumbnail.kick'>&nbsp;</div>";
         ejectLinkItem.innerHTML = ejectIndicator + ' ' + ejectText;
-        ejectLinkItem.onclick = function(){
-            self.emitter.emit(UIEvents.USER_KICKED, self.id);
+        ejectLinkItem.onclick = (event) => {
+            this.emitter.emit(UIEvents.USER_KICKED, this.id);
             popupmenuElement.setAttribute('style', 'display:none;');
         };
 
@@ -224,8 +223,12 @@ RemoteVideo.prototype.addRemoteStreamElement = function (stream) {
 
     // Add click handler.
     let onClickHandler = (event) => {
+        let source = event.target || event.srcElement;
 
-        this.VideoLayout.handleVideoThumbClicked(false, this.id);
+        // ignore click if it was done in popup menu
+        if ($(source).parents('.popupmenu').length === 0) {
+            this.VideoLayout.handleVideoThumbClicked(false, this.id);
+        }
 
         // On IE we need to populate this handler on video <object>
         // and it does not give event instance as an argument,
