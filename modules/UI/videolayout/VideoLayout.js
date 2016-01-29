@@ -987,6 +987,7 @@ var VideoLayout = {
 
             let videoType = this.getRemoteVideoType(id);
             largeVideo.updateLargeVideo(
+                id,
                 smallVideo.videoStream,
                 videoType
             ).then(function() {

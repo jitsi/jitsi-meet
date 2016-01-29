@@ -225,7 +225,9 @@ export default {
 
         return JitsiMeetJS.init(config).then(() => {
             return Promise.all([
-                this.createLocalTracks('audio', 'video').catch(
+                this.createLocalTracks('audio', 'video').catch(()=>{
+                    return this.createLocalTracks('audio');
+                }).catch(
                     () => {return [];}),
                 connect()
             ]);
@@ -500,7 +502,7 @@ export default {
             handler(id , mute);
         });
         room.on(ConferenceEvents.TRACK_AUDIO_LEVEL_CHANGED, (id, lvl) => {
-            if(this.isLocalId(id) && localAudio.isMuted()) {
+            if(this.isLocalId(id) && localAudio && localAudio.isMuted()) {
                 lvl = 0;
             }
 
@@ -584,9 +586,13 @@ export default {
         });
 
         APP.UI.addListener(UIEvents.AUDIO_MUTED, (muted) => {
+            if(!localAudio)
+                return;
             (muted)? localAudio.mute() : localAudio.unmute();
         });
         APP.UI.addListener(UIEvents.VIDEO_MUTED, (muted) => {
+            if(!localVideo)
+                return;
             (muted)? localVideo.mute() : localVideo.unmute();
         });
 
@@ -794,7 +800,7 @@ export default {
         APP.desktopsharing.addListener(DSEvents.NEW_STREAM_CREATED,
             (track, callback) => {
                 const localCallback = (newTrack) => {
-                    if(!newTrack || !newTrack.isLocal() ||
+                    if(!newTrack || !localVideo || !newTrack.isLocal() ||
                         newTrack !== localVideo)
                         return;
                     if(localVideo.isMuted() &&
@@ -808,7 +814,8 @@ export default {
                 if(room) {
                     room.on(ConferenceEvents.TRACK_ADDED, localCallback);
                 }
-                localVideo.stop();
+                if(localVideo)
+                    localVideo.stop();
                 localVideo = track;
                 addTrack(track);
                 if(!room)
