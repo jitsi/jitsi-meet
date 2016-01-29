@@ -7,19 +7,36 @@ CSS_FILES = font.css toastr.css main.css videolayout_default.css font-awesome.cs
 DEPLOY_DIR = libs
 BROWSERIFY_FLAGS = -d
 OUTPUT_DIR = .
+LIBJITSIMEET_DIR = node_modules/lib-jitsi-meet/
 
-all: compile uglify deploy clean
+all: update-deps compile uglify deploy clean
+
+update-deps:
+	$(NPM) update
 
 compile:
-	$(NPM) update && $(BROWSERIFY) $(BROWSERIFY_FLAGS) -e app.js -s APP | $(EXORCIST) $(OUTPUT_DIR)/app.bundle.js.map > $(OUTPUT_DIR)/app.bundle.js
+	$(BROWSERIFY) $(BROWSERIFY_FLAGS) -e app.js -s APP | $(EXORCIST) $(OUTPUT_DIR)/app.bundle.js.map > $(OUTPUT_DIR)/app.bundle.js
 
 clean:
 	rm -f $(OUTPUT_DIR)/app.bundle.*
 
-deploy:
-	mkdir -p $(DEPLOY_DIR) && \
-	cp $(OUTPUT_DIR)/app.bundle.min.js $(OUTPUT_DIR)/app.bundle.min.map $(DEPLOY_DIR) && \
-	(cd css; cat $(CSS_FILES)) | $(CLEANCSS) > css/all.css && \
+deploy: deploy-init deploy-appbundle deploy-lib-jitsi-meet deploy-css deploy-local
+
+deploy-init:
+	mkdir -p $(DEPLOY_DIR)
+
+deploy-appbundle:
+	cp $(OUTPUT_DIR)/app.bundle.min.js $(OUTPUT_DIR)/app.bundle.min.map \
+	$(DEPLOY_DIR)
+
+deploy-lib-jitsi-meet:
+	cp $(LIBJITSIMEET_DIR)/lib-jitsi-meet.min.js \
+	$(LIBJITSIMEET_DIR)/lib-jitsi-meet.min.map $(DEPLOY_DIR)
+
+deploy-css:
+	(cd css; cat $(CSS_FILES)) | $(CLEANCSS) > css/all.css
+
+deploy-local:
 	([ ! -x deploy-local.sh ] || ./deploy-local.sh)
 
 uglify:

@@ -35,6 +35,6 @@ Description: Prosody configuration for Jitsi Meet
 
 Package: jitsi-meet-tokens
 Architecture: all
-Depends: ${misc:Depends}, prosody-trunk (>= 1nightly603), libssl-dev, luarocks, jitsi-meet-prosody
+Depends: ${misc:Depends}, prosody-trunk (>= 1nightly607), libssl-dev, luarocks, jitsi-meet-prosody
 Description: Prosody token authentication plugin for Jitsi Meet
 

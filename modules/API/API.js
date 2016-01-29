@@ -5,8 +5,6 @@
  * applications that embed Jitsi Meet
  */
 
-var XMPPEvents = require("../../service/xmpp/XMPPEvents");
-
 /**
  * List of the available commands.
  * @type {{
@@ -23,8 +21,8 @@ var commands = {};
 function initCommands() {
     commands = {
         displayName: APP.UI.inputDisplayNameHandler,
-        toggleAudio: APP.UI.toggleAudio,
-        toggleVideo: APP.UI.toggleVideo,
+        toggleAudio: APP.conference.toggleAudioMuted,
+        toggleVideo: APP.conference.toggleVideoMuted,
         toggleFilmStrip: APP.UI.toggleFilmStrip,
         toggleChat: APP.UI.toggleChat,
         toggleContactList: APP.UI.toggleContactList
@@ -43,15 +41,13 @@ function initCommands() {
  *              participantLeft: boolean
  *      }}
  */
-var events = {
+const events = {
     incomingMessage: false,
     outgoingMessage:false,
     displayNameChange: false,
     participantJoined: false,
     participantLeft: false
 };
-
-var displayName = {};
 
 /**
  * Processes commands from external application.
@@ -128,44 +124,42 @@ function processMessage(event) {
     }
 }
 
-function setupListeners() {
-    APP.xmpp.addListener(XMPPEvents.MUC_MEMBER_JOINED, function (from) {
-        API.triggerEvent("participantJoined", {jid: from});
-    });
-    APP.xmpp.addListener(XMPPEvents.MESSAGE_RECEIVED,
-                         function (from, nick, txt, myjid, stamp) {
-        if (from != myjid)
-            API.triggerEvent("incomingMessage",
-                {"from": from, "nick": nick, "message": txt, "stamp": stamp});
-    });
-    APP.xmpp.addListener(XMPPEvents.MUC_MEMBER_LEFT, function (jid) {
-        API.triggerEvent("participantLeft", {jid: jid});
-    });
-    APP.xmpp.addListener(XMPPEvents.DISPLAY_NAME_CHANGED,
-                         function (jid, newDisplayName) {
-        var name = displayName[jid];
-        if(!name || name != newDisplayName) {
-            API.triggerEvent("displayNameChange",
-                             {jid: jid, displayname: newDisplayName});
-            displayName[jid] = newDisplayName;
-        }
-    });
-    APP.xmpp.addListener(XMPPEvents.SENDING_CHAT_MESSAGE, function (body) {
-        APP.API.triggerEvent("outgoingMessage", {"message": body});
-    });
+/**
+ * Check whether the API should be enabled or not.
+ * @returns {boolean}
+ */
+function isEnabled () {
+    let hash = location.hash;
+    return hash && hash.indexOf("external") > -1 && window.postMessage;
 }
 
-var API = {
-    /**
-     * Check whether the API should be enabled or not.
-     * @returns {boolean}
-     */
-    isEnabled: function () {
-        var hash = location.hash;
-        if (hash && hash.indexOf("external") > -1 && window.postMessage)
-            return true;
-        return false;
-    },
+/**
+ * Checks whether the event is enabled ot not.
+ * @param name the name of the event.
+ * @returns {*}
+ */
+function isEventEnabled (name) {
+    return events[name];
+}
+
+/**
+ * Sends event object to the external application that has been subscribed
+ * for that event.
+ * @param name the name event
+ * @param object data associated with the event
+ */
+function triggerEvent (name, object) {
+    if (isEnabled() && isEventEnabled(name)) {
+        sendMessage({
+            type: "event",
+            action: "result",
+            event: name,
+            result: object
+        });
+    }
+}
+
+export default {
     /**
      * Initializes the APIConnector. Setups message event listeners that will
      * receive information from external applications that embed Jitsi Meet.
@@ -173,50 +167,85 @@ var API = {
      * is initialized.
      */
     init: function () {
+        if (!isEnabled()) {
+            return;
+        }
         initCommands();
         if (window.addEventListener) {
-            window.addEventListener('message',
-                processMessage, false);
-        }
-        else {
+            window.addEventListener('message', processMessage, false);
+        } else {
             window.attachEvent('onmessage', processMessage);
         }
         sendMessage({type: "system", loaded: true});
-        setupListeners();
-    },
-    /**
-     * Checks whether the event is enabled ot not.
-     * @param name the name of the event.
-     * @returns {*}
-     */
-    isEventEnabled: function (name) {
-        return events[name];
     },
 
     /**
-     * Sends event object to the external application that has been subscribed
-     * for that event.
-     * @param name the name event
-     * @param object data associated with the event
+     * Notify external application (if API is enabled) that message was sent.
+     * @param {string} body message body
      */
-    triggerEvent: function (name, object) {
-        if(this.isEnabled() && this.isEventEnabled(name))
-            sendMessage({
-                type: "event", action: "result", event: name, result: object});
+    notifySendingChatMessage (body) {
+        triggerEvent("outgoingMessage", {"message": body});
+    },
+
+    /**
+     * Notify external application (if API is enabled) that
+     * message was received.
+     * @param {string} id user id
+     * @param {string} nick user nickname
+     * @param {string} body message body
+     * @param {number} ts message creation timestamp
+     */
+    notifyReceivedChatMessage (id, nick, body, ts) {
+        if (APP.conference.isLocalId(id)) {
+            return;
+        }
+
+        triggerEvent(
+            "incomingMessage",
+            {"from": id, "nick": nick, "message": body, "stamp": ts}
+        );
+    },
+
+    /**
+     * Notify external application (if API is enabled) that
+     * user joined the conference.
+     * @param {string} id user id
+     */
+    notifyUserJoined (id) {
+        triggerEvent("participantJoined", {id});
+    },
+
+    /**
+     * Notify external application (if API is enabled) that
+     * user left the conference.
+     * @param {string} id user id
+     */
+    notifyUserLeft (id) {
+        triggerEvent("participantLeft", {id});
+    },
+
+    /**
+     * Notify external application (if API is enabled) that
+     * user changed their nickname.
+     * @param {string} id user id
+     * @param {string} displayName user nickname
+     */
+    notifyDisplayNameChanged (id, displayName) {
+        triggerEvent("displayNameChange", {id, displayname: displayName});
     },
 
     /**
      * Removes the listeners.
      */
     dispose: function () {
-        if(window.removeEventListener) {
-            window.removeEventListener("message",
-                processMessage, false);
+        if (!isEnabled()) {
+            return;
         }
-        else {
+
+        if (window.removeEventListener) {
+            window.removeEventListener("message", processMessage, false);
+        } else {
             window.detachEvent('onmessage', processMessage);
         }
     }
 };
-
-module.exports = API;

@@ -1,6 +1,4 @@
-/* global config */
-
-var ScriptUtil = require('../util/ScriptUtil');
+/* global config JitsiMeetJS */
 
 // Load the integration of a third-party analytics API such as Google Analytics.
 // Since we cannot guarantee the quality of the third-party service (e.g. their
@@ -11,37 +9,38 @@ var ScriptUtil = require('../util/ScriptUtil');
 // its implementation asynchronously anyway so it makes sense to append the
 // loading on our side rather than prepend it.
 if (config.disableThirdPartyRequests !== true) {
-    ScriptUtil.loadScript(
+    JitsiMeetJS.util.ScriptUtil.loadScript(
             'analytics.js?v=1',
             /* async */ true,
             /* prepend */ false);
 }
 
-// NoopAnalytics
-function NoopAnalytics() {}
-
-NoopAnalytics.prototype.sendEvent = function () {};
-
-// AnalyticsAdapter
-function AnalyticsAdapter() {
-    // XXX Since we asynchronously load the integration of the analytics API and
-    // the analytics API may asynchronously load its implementation (e.g. Google
-    // Analytics), we cannot make the decision with respect to which analytics
-    // implementation we will use here and we have to postpone it i.e. we will
-    // make a lazy decision.
+class NoopAnalytics {
+    sendEvent () {}
 }
 
-AnalyticsAdapter.prototype.sendEvent = function (action, data) {
-  var a = this.analytics;
+// XXX Since we asynchronously load the integration of the analytics API and the
+// analytics API may asynchronously load its implementation (e.g. Google
+// Analytics), we cannot make the decision with respect to which analytics
+// implementation we will use here and we have to postpone it i.e. we will make
+// a lazy decision.
 
-  if (a === null || typeof a === 'undefined') {
-      var AnalyticsImpl = window.Analytics || NoopAnalytics;
+class AnalyticsAdapter {
+    constructor () {
+    }
 
-      this.analytics = a = new AnalyticsImpl();
-  }
-  try {
-      a.sendEvent.apply(a, arguments);
-  } catch (ignored) {}
-};
+    sendEvent (...args) {
+        var a = this.analytics;
 
-module.exports = new AnalyticsAdapter();
+        if (a === null || typeof a === 'undefined') {
+            var AnalyticsImpl = window.Analytics || NoopAnalytics;
+
+            this.analytics = a = new AnalyticsImpl();
+        }
+        try {
+            a.sendEvent(...args);
+        } catch (ignored) {}
+    }
+}
+
+export default new AnalyticsAdapter();

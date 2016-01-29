@@ -1,11 +1,13 @@
-/* global APP, $, Util, nickname:true */
-var Replacement = require("./Replacement");
-var CommandsProcessor = require("./Commands");
-var ToolbarToggler = require("../../toolbars/ToolbarToggler");
+/* global APP, $ */
+
+import {processReplacements, linkify} from './Replacement';
+import CommandsProcessor from './Commands';
+import ToolbarToggler from '../../toolbars/ToolbarToggler';
+
+import UIUtil from '../../util/UIUtil';
+import UIEvents from '../../../../service/UI/UIEvents';
+
 var smileys = require("./smileys.json").smileys;
-var NicknameHandler = require("../../util/NicknameHandler");
-var UIUtil = require("../../util/UIUtil");
-var UIEvents = require("../../../../service/UI/UIEvents");
 
 var notificationInterval = false;
 var unreadMessages = 0;
@@ -165,28 +167,21 @@ function resizeChatConversation() {
 /**
  * Chat related user interface.
  */
-var Chat = (function (my) {
+var Chat = {
     /**
      * Initializes chat related interface.
      */
-    my.init = function () {
-        if(NicknameHandler.getNickname())
+    init (eventEmitter) {
+        if (APP.settings.getDisplayName()) {
             Chat.setChatConversationMode(true);
-        NicknameHandler.addListener(UIEvents.NICKNAME_CHANGED,
-            function (nickname) {
-                Chat.setChatConversationMode(true);
-            });
+        }
 
         $('#nickinput').keydown(function (event) {
             if (event.keyCode === 13) {
                 event.preventDefault();
                 var val = UIUtil.escapeHtml(this.value);
                 this.value = '';
-                if (!NicknameHandler.getNickname()) {
-                    NicknameHandler.setNickname(val);
-
-                    return;
-                }
+                eventEmitter.emit(UIEvents.NICKNAME_CHANGED, val);
             }
         });
 
@@ -197,14 +192,12 @@ var Chat = (function (my) {
                 var value = this.value;
                 usermsg.val('').trigger('autosize.resize');
                 this.focus();
-                var command = new CommandsProcessor(value);
-                if(command.isCommand()) {
+                var command = new CommandsProcessor(value, eventEmitter);
+                if (command.isCommand()) {
                     command.processCommand();
-                }
-                else {
+                } else {
                     var message = UIUtil.escapeHtml(value);
-                    APP.xmpp.sendChatMessage(message,
-                                             NicknameHandler.getNickname());
+                    eventEmitter.emit(UIEvents.MESSAGE_CREATED, message);
                 }
             }
         });
@@ -222,19 +215,17 @@ var Chat = (function (my) {
             });
 
         addSmileys();
-    };
+    },
 
     /**
      * Appends the given message to the chat conversation.
      */
-    my.updateChatConversation =
-        function (from, displayName, message, myjid, stamp) {
+    updateChatConversation (id, displayName, message, stamp) {
         var divClassName = '';
 
-        if (APP.xmpp.myJid() === from) {
+        if (APP.conference.isLocalId(id)) {
             divClassName = "localuser";
-        }
-        else {
+        } else {
             divClassName = "remoteuser";
 
             if (!Chat.isVisible()) {
@@ -250,7 +241,7 @@ var Chat = (function (my) {
         var escMessage = message.replace(/</g, '&lt;').
             replace(/>/g, '&gt;').replace(/\n/g, '<br/>');
         var escDisplayName = UIUtil.escapeHtml(displayName);
-        message = Replacement.processReplacements(escMessage);
+        message = processReplacements(escMessage);
 
         var messageContainer =
             '<div class="chatmessage">'+
@@ -263,14 +254,14 @@ var Chat = (function (my) {
         $('#chatconversation').append(messageContainer);
         $('#chatconversation').animate(
                 { scrollTop: $('#chatconversation')[0].scrollHeight}, 1000);
-    };
+    },
 
     /**
      * Appends error message to the conversation
      * @param errorMessage the received error message.
      * @param originalText the original message.
      */
-    my.chatAddError = function(errorMessage, originalText) {
+    chatAddError (errorMessage, originalText) {
         errorMessage = UIUtil.escapeHtml(errorMessage);
         originalText = UIUtil.escapeHtml(originalText);
 
@@ -281,28 +272,28 @@ var Chat = (function (my) {
             (errorMessage? (' Reason: ' + errorMessage) : '') +  '</div>');
         $('#chatconversation').animate(
             { scrollTop: $('#chatconversation')[0].scrollHeight}, 1000);
-    };
+    },
 
     /**
      * Sets the subject to the UI
      * @param subject the subject
      */
-    my.chatSetSubject = function(subject) {
-        if (subject)
+    setSubject (subject) {
+        if (subject) {
             subject = subject.trim();
-        $('#subject').html(Replacement.linkify(UIUtil.escapeHtml(subject)));
-        if(subject === "") {
+        }
+        $('#subject').html(linkify(UIUtil.escapeHtml(subject)));
+        if (subject) {
+            $("#subject").css({display: "block"});
+        } else {
             $("#subject").css({display: "none"});
         }
-        else {
-            $("#subject").css({display: "block"});
-        }
-    };
+    },
 
     /**
      * Sets the chat conversation mode.
      */
-    my.setChatConversationMode = function (isConversationMode) {
+    setChatConversationMode (isConversationMode) {
         if (isConversationMode) {
             $('#nickname').css({visibility: 'hidden'});
             $('#chatconversation').css({visibility: 'visible'});
@@ -310,42 +301,37 @@ var Chat = (function (my) {
             $('#smileysarea').css({visibility: 'visible'});
             $('#usermsg').focus();
         }
-    };
+    },
 
     /**
      * Resizes the chat area.
      */
-    my.resizeChat = function () {
-        var chatSize = require("../SidePanelToggler").getPanelSize();
-
-        $('#chatspace').width(chatSize[0]);
-        $('#chatspace').height(chatSize[1]);
+    resizeChat (width, height) {
+        $('#chatspace').width(width).height(height);
 
         resizeChatConversation();
-    };
+    },
 
     /**
      * Indicates if the chat is currently visible.
      */
-    my.isVisible = function () {
+    isVisible () {
         return $('#chatspace').is(":visible");
-    };
+    },
     /**
      * Shows and hides the window with the smileys
      */
-    my.toggleSmileys = toggleSmileys;
+    toggleSmileys,
 
     /**
      * Scrolls chat to the bottom.
      */
-    my.scrollChatToBottom = function() {
+    scrollChatToBottom () {
         setTimeout(function () {
             $('#chatconversation').scrollTop(
                 $('#chatconversation')[0].scrollHeight);
         }, 5);
-    };
+    }
+};
 
-
-    return my;
-}(Chat || {}));
-module.exports = Chat;
+export default Chat;
