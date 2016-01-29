@@ -50,6 +50,30 @@ Or if you are making only changes to the library:
 npm install lib-jitsi-meet --force && make deploy-lib-jitsi-meet
 ```
 
+Alternative way is to use [npm link](https://docs.npmjs.com/cli/link).
+It allows to link `lib-jitsi-meet` dependency to local source in few steps:
+
+```bash
+cd lib-jitsi-meet
+
+# create global symlink for lib-jitsi-meet package
+npm link
+
+cd ../jitsi-meet
+
+# create symlink from the local node_modules folder to the global lib-jitsi-meet symlink
+npm link lib-jitsi-meet
+```
+
+So now after changes in local `lib-jitsi-meet` repository you can rebuild it with `npm run install` and your `jitsi-meet` repository will use that modified library.
+
+If you do not want to use local repository anymore you should run
+```bash
+cd jitsi-meet
+npm unlink lib-jitsi-meet
+npm install
+```
+
 ## Discuss
 Please use the [Jitsi dev mailing list](http://lists.jitsi.org/pipermail/dev/) to discuss feature requests before opening an issue on Github.
 
