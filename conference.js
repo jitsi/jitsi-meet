@@ -104,7 +104,7 @@ class ConferenceConnector {
         this._reject(err);
     }
     _onConferenceFailed(err, ...params) {
-        console.error('CONFERENCE FAILED:', err, params);
+        console.error('CONFERENCE FAILED:', err, ...params);
         switch (err) {
             // room is locked by the password
         case ConferenceErrors.PASSWORD_REQUIRED:
