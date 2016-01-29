@@ -251,7 +251,6 @@ export default {
             firefox_fake_device: config.firefox_fake_device
         }).catch(function (err) {
             console.error('failed to create local tracks', ...devices, err);
-            APP.statistics.onGetUserMediaFailed(err);
             return Promise.reject(err);
         });
     },
