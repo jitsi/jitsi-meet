@@ -15,6 +15,8 @@ const ConnectionErrors = JitsiMeetJS.errors.connection;
 const ConferenceEvents = JitsiMeetJS.events.conference;
 const ConferenceErrors = JitsiMeetJS.errors.conference;
 
+const TrackEvents = JitsiMeetJS.events.track;
+
 let room, connection, localTracks, localAudio, localVideo, roomLocker;
 
 /**
@@ -23,7 +25,6 @@ let room, connection, localTracks, localAudio, localVideo, roomLocker;
 const Commands = {
     CONNECTION_QUALITY: "stats",
     EMAIL: "email",
-    VIDEO_TYPE: "videoType",
     ETHERPAD: "etherpad",
     PREZI: "prezi",
     STOP_PREZI: "stop-prezi"
@@ -55,14 +56,6 @@ function addTrack (track) {
     if (track.isAudioTrack()) {
         return;
     }
-
-    room.removeCommand(Commands.VIDEO_TYPE);
-    room.sendCommand(Commands.VIDEO_TYPE, {
-        value: track.videoType,
-        attributes: {
-            xmlns: 'http://jitsi.org/jitmeet/video'
-        }
-    });
 }
 
 /**
@@ -475,6 +468,10 @@ export default {
         room.on(ConferenceEvents.TRACK_ADDED, (track) => {
             if(!track || track.isLocal())
                 return;
+
+            track.on(TrackEvents.TRACK_VIDEOTYPE_CHANGED, (type) => {
+                APP.UI.onPeerVideoTypeChanged(track.getParticipantId(), type);
+            });
             APP.UI.addRemoteStream(track);
         });
 
@@ -664,10 +661,6 @@ export default {
                     id: room.myUserId()
                 }
             });
-        });
-
-        room.addCommandListener(Commands.VIDEO_TYPE, ({value}, from) => {
-            APP.UI.onPeerVideoTypeChanged(from, value);
         });
 
         APP.UI.addListener(UIEvents.EMAIL_CHANGED, (email) => {
