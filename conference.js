@@ -5,6 +5,8 @@ import createRoomLocker from './modules/UI/authentication/RoomLocker';
 //FIXME:
 import AuthHandler from './modules/UI/authentication/AuthHandler';
 
+import ConnectionQuality from './modules/connectionquality/connectionquality';
+
 import CQEvents from './service/connectionquality/CQEvents';
 import UIEvents from './service/UI/UIEvents';
 import DSEvents from './service/desktopsharing/DesktopSharingEventTypes';
@@ -154,6 +156,7 @@ class ConferenceConnector {
         case ConferenceErrors.CONFERENCE_DESTROYED:
             {
                 let [reason] = params;
+                APP.UI.hideStats();
                 APP.UI.notifyConferenceDestroyed(reason);
             }
             break;
@@ -556,6 +559,7 @@ export default {
         });
 
         room.on(ConferenceEvents.KICKED, () => {
+            APP.UI.hideStats();
             APP.UI.notifyKicked();
             // FIXME close
         });
@@ -599,14 +603,17 @@ export default {
             });
         }
 
-        APP.connectionquality.addListener(
+        room.on(ConferenceEvents.CONNECTION_STATS, function (stats) {
+            ConnectionQuality.updateLocalStats(stats);
+        });
+        ConnectionQuality.addListener(
             CQEvents.LOCALSTATS_UPDATED,
             (percent, stats) => {
                 APP.UI.updateLocalStats(percent, stats);
 
                 // send local stats to other users
                 room.sendCommandOnce(Commands.CONNECTION_QUALITY, {
-                    children: APP.connectionquality.convertToMUCStats(stats),
+                    children: ConnectionQuality.convertToMUCStats(stats),
                     attributes: {
                         xmlns: 'http://jitsi.org/jitmeet/stats'
                     }
@@ -614,17 +621,12 @@ export default {
             }
         );
 
-        APP.connectionquality.addListener(CQEvents.STOP, () => {
-            APP.UI.hideStats();
-            room.removeCommand(Commands.CONNECTION_QUALITY);
-        });
-
         // listen to remote stats
         room.addCommandListener(Commands.CONNECTION_QUALITY,(values, from) => {
-            APP.connectionquality.updateRemoteStats(from, values);
+            ConnectionQuality.updateRemoteStats(from, values);
         });
 
-        APP.connectionquality.addListener(CQEvents.REMOTESTATS_UPDATED,
+        ConnectionQuality.addListener(CQEvents.REMOTESTATS_UPDATED,
             (id, percent, stats) => {
                 APP.UI.updateRemoteStats(id, percent, stats);
             });

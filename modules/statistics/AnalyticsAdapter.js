@@ -1,4 +1,4 @@
-/* global config JitsiMeetJS */
+/* global config, JitsiMeetJS */
 
 // Load the integration of a third-party analytics API such as Google Analytics.
 // Since we cannot guarantee the quality of the third-party service (e.g. their
