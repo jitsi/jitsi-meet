@@ -201,11 +201,6 @@ RemoteVideo.prototype.waitForPlayback = function (streamElement, stream) {
         }
         self.VideoLayout.videoactive(streamElement, self.id);
         streamElement.onplaying = null;
-        if (RTCBrowserType.isTemasysPluginUsed()) {
-            // 'currentTime' is used to check if the video has started
-            // and the value is not set by the plugin, so we do it
-            streamElement.currentTime = 1;
-        }
     };
     streamElement.onplaying = onPlayingHandler;
 };
