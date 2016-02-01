@@ -181,7 +181,7 @@ RemoteVideo.prototype.remove = function () {
     }
 };
 
-RemoteVideo.prototype.waitForPlayback = function (sel, stream) {
+RemoteVideo.prototype.waitForPlayback = function (streamElement, stream) {
 
     var webRtcStream = stream.getOriginalStream();
     var isVideo = stream.isVideoTrack();
@@ -199,18 +199,15 @@ RemoteVideo.prototype.waitForPlayback = function (sel, stream) {
             //FIXME: weshould use the lib here
             //APP.RTC.attachMediaStream(sel, webRtcStream);
         }
-        if (RTCBrowserType.isTemasysPluginUsed()) {
-            sel = self.selectVideoElement();
-        }
-        self.VideoLayout.videoactive(sel, self.id);
-        sel[0].onplaying = null;
+        self.VideoLayout.videoactive(streamElement, self.id);
+        streamElement.onplaying = null;
         if (RTCBrowserType.isTemasysPluginUsed()) {
             // 'currentTime' is used to check if the video has started
             // and the value is not set by the plugin, so we do it
-            sel[0].currentTime = 1;
+            streamElement.currentTime = 1;
         }
     };
-    sel[0].onplaying = onPlayingHandler;
+    streamElement.onplaying = onPlayingHandler;
 };
 
 RemoteVideo.prototype.addRemoteStreamElement = function (stream) {
@@ -250,25 +247,20 @@ RemoteVideo.prototype.addRemoteStreamElement = function (stream) {
     // Put new stream element always in front
     UIUtils.prependChild(this.container, streamElement);
 
-    let sel = $(`#${newElementId}`);
+    // If we hide element when Temasys plugin is used then
+    // we'll never receive 'onplay' event and other logic won't work as expected
+    if (!RTCBrowserType.isTemasysPluginUsed()) {
+        $(streamElement).hide();
+    }
 
     // If the container is currently visible we attach the stream to the element.
     if (!isVideo || (this.container.offsetParent !== null && isVideo)) {
-        this.waitForPlayback(sel, stream);
+        this.waitForPlayback(streamElement, stream);
 
-        stream.attach(sel);
+        streamElement = stream.attach(streamElement);
     }
 
-    // hide element only after stream was (maybe) attached
-    // because Temasys plugin requires video element
-    // to be visible to attach the stream
-    sel.hide();
-
-    // reselect
-    if (RTCBrowserType.isTemasysPluginUsed()) {
-        sel = $(`#${newElementId}`);
-    }
-    sel.click(onClickHandler);
+    $(streamElement).click(onClickHandler);
 },
 
 /**

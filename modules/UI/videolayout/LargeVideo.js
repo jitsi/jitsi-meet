@@ -280,7 +280,7 @@ class VideoContainer extends LargeContainer {
         if(!stream)
             return;
 
-        stream.attach(this.$video);
+        stream.attach(this.$video[0]);
 
         let flipX = stream.isLocal() && !this.isScreenSharing();
         this.$video.css({

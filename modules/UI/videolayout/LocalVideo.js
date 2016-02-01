@@ -175,8 +175,6 @@ LocalVideo.prototype.changeVideo = function (stream) {
     // Put the new video always in front
     UIUtil.prependChild(localVideoContainer, localVideo);
 
-    var localVideoSelector = $('#' + localVideo.id);
-
     // Add click handler to both video and video wrapper elements in case
     // there's no video.
 
@@ -184,14 +182,13 @@ LocalVideo.prototype.changeVideo = function (stream) {
     localVideo.onclick = localVideoClick;
 
     if (this.flipX) {
-        localVideoSelector.addClass("flipVideoX");
+        $(localVideo).addClass("flipVideoX");
     }
 
     // Attach WebRTC stream
-    stream.attach(localVideoSelector);
+    localVideo = stream.attach(localVideo);
 
     let endedHandler = () => {
-        localVideo = $('#' + localVideo.id)[0];
         localVideoContainer.removeChild(localVideo);
         this.VideoLayout.updateRemovedVideo(this.id);
         stream.off(TrackEvents.TRACK_STOPPED, endedHandler);

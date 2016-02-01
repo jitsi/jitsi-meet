@@ -126,7 +126,7 @@ var VideoLayout = {
 
     changeLocalAudio (stream) {
         let localAudio = document.getElementById('localAudio');
-        stream.attach($(localAudio));
+        localAudio = stream.attach(localAudio);
 
         //return; // FIXME maybe move this into the library?
         // Writing volume not allowed in IE
@@ -142,7 +142,7 @@ var VideoLayout = {
             // The issue is not present on Safari. Also if we hide it in Safari
             // then the local audio track will have 'enabled' flag set to false
             // which will result in audio mute issues
-            $('#localAudio').hide();
+            $(localAudio).hide();
         }
     },
 
@@ -369,9 +369,9 @@ var VideoLayout = {
 
     videoactive (videoelem, resourceJid) {
 
-        console.info(resourceJid + " video is now active");
+        console.info(resourceJid + " video is now active", videoelem);
 
-        videoelem.show();
+        $(videoelem).show();
         VideoLayout.resizeThumbnails();
 
         // Update the large video to the last added video only if there's no
