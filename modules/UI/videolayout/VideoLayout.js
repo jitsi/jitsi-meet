@@ -46,11 +46,10 @@ function onContactClicked (id) {
     }
 
     let remoteVideo = remoteVideos[id];
-    if (remoteVideo && remoteVideo.selectVideoElement().length) {
+    if (remoteVideo && remoteVideo.hasVideo()) {
         // It is not always the case that a videoThumb exists (if there is
         // no actual video).
-        if (remoteVideo.videoStream) {
-
+        if (remoteVideo.hasVideoStarted()) {
             // We have a video src, great! Let's update the large video
             // now.
             VideoLayout.handleVideoThumbClicked(false, id);
@@ -517,12 +516,6 @@ var VideoLayout = {
         } else {
             var remoteVideo = remoteVideos[id];
             remoteVideo.setMutedView(value);
-
-            var el = remoteVideo.selectVideoElement();
-            if (!value)
-                el.show();
-            else
-                el.hide();
         }
 
         if(this.isCurrentlyOnLarge(id))
@@ -575,17 +568,12 @@ var VideoLayout = {
         }
         currentDominantSpeaker = id;
 
-        // Obtain container for new dominant speaker.
-        let videoSel = remoteVideo.selectVideoElement();
-
         // Local video will not have container found, but that's ok
         // since we don't want to switch to local video.
-        if (!focusedVideoResourceJid && videoSel.length) {
-            // Update the large video if the video source is already available,
-            // otherwise wait for the "videoactive.jingle" event.
-            if (videoSel[0].currentTime > 0) {
-                this.updateLargeVideo(id);
-            }
+        // Update the large video if the video source is already available,
+        // otherwise wait for the "videoactive.jingle" event.
+        if (!focusedVideoResourceJid && remoteVideo.hasVideoStarted()) {
+            this.updateLargeVideo(id);
         }
     },
 

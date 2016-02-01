@@ -205,6 +205,18 @@ RemoteVideo.prototype.waitForPlayback = function (streamElement, stream) {
     streamElement.onplaying = onPlayingHandler;
 };
 
+/**
+ * Checks whether or not video stream exists and has started for this
+ * RemoteVideo instance. This is checked by trying to select video element in
+ * this container and checking if 'currentTime' field's value is greater than 0.
+ *
+ * @returns {*|boolean} true if this RemoteVideo has active video stream running
+ */
+RemoteVideo.prototype.hasVideoStarted = function () {
+    var videoSelector = this.selectVideoElement();
+    return videoSelector.length && videoSelector[0].currentTime > 0;
+};
+
 RemoteVideo.prototype.addRemoteStreamElement = function (stream) {
     if (!this.container) {
         return;
