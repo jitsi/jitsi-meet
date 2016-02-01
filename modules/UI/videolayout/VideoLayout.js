@@ -709,7 +709,8 @@ var VideoLayout = {
                         updateLargeVideo = false;
                     }
                     remoteVideo.waitForPlayback(
-                        remoteVideo.selectVideoElement(), remoteVideo.videoStream);
+                        remoteVideo.selectVideoElement()[0],
+                        remoteVideo.videoStream);
                 }
             });
         }
