@@ -194,11 +194,6 @@ RemoteVideo.prototype.waitForPlayback = function (streamElement, stream) {
     // Register 'onplaying' listener to trigger 'videoactive' on VideoLayout
     // when video playback starts
     var onPlayingHandler = function () {
-        // FIXME: why do i have to do this for FF?
-        if (RTCBrowserType.isFirefox()) {
-            //FIXME: weshould use the lib here
-            //APP.RTC.attachMediaStream(sel, webRtcStream);
-        }
         self.VideoLayout.videoactive(streamElement, self.id);
         streamElement.onplaying = null;
     };
