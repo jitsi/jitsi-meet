@@ -363,6 +363,11 @@ export default {
      * Its used by torture to check audio levels.
      */
     audioLevelsMap: {},
+    /**
+     * Returns the stored audio level (stored only if config.debug is enabled)
+     * @param id the id for the user audio level to return (the id value is
+     *          returned for the participant using getMyUserId() method)
+     */
     getPeerSSRCAudioLevel (id) {
         return this.audioLevelsMap[id];
     },
