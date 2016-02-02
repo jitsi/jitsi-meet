@@ -13,7 +13,7 @@ import LargeVideoManager, {VideoContainerType} from "./LargeVideo";
 import {PreziContainerType} from '../prezi/Prezi';
 import LocalVideo from "./LocalVideo";
 
-var RTCBrowserType = require('../../RTC/RTCBrowserType');
+const RTCUIUtil = JitsiMeetJS.util.RTCUIHelper;
 
 var remoteVideos = {};
 var remoteVideoTypes = {};
@@ -127,22 +127,18 @@ var VideoLayout = {
         let localAudio = document.getElementById('localAudio');
         localAudio = stream.attach(localAudio);
 
-        //return; // FIXME maybe move this into the library?
-        // Writing volume not allowed in IE
-        if (!RTCBrowserType.isIExplorer()) {
-            localAudio.autoplay = true;
-            localAudio.volume = 0;
-        }
         // Now when Temasys plugin is converting also <audio> elements to
         // plugin's <object>s, in current layout it will capture click events
         // before it reaches the local video object. We hide it here in order
         // to prevent that.
-        if (RTCBrowserType.isIExplorer()) {
+        //if (RTCBrowserType.isIExplorer()) {
             // The issue is not present on Safari. Also if we hide it in Safari
             // then the local audio track will have 'enabled' flag set to false
             // which will result in audio mute issues
-            $(localAudio).hide();
-        }
+            //  $(localAudio).hide();
+            localAudio.width = 1;
+            localAudio.height = 1;
+        //}
     },
 
     changeLocalVideo (stream) {
@@ -325,14 +321,6 @@ var VideoLayout = {
         }
 
         this.updateLargeVideo(resourceJid);
-
-        // Writing volume not allowed in IE
-        if (!RTCBrowserType.isIExplorer()) {
-            $('audio').each(function (idx, el) {
-                el.volume = 0;
-                el.volume = 1;
-            });
-        }
     },
 
 

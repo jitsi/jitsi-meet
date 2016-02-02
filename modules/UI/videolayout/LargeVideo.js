@@ -8,8 +8,6 @@ import BottomToolbar from '../toolbars/BottomToolbar';
 import Avatar from "../avatar/Avatar";
 import {createDeferred} from '../../util/helpers';
 
-const RTCBrowserType = require("../../RTC/RTCBrowserType");
-
 const avatarSize = interfaceConfig.DOMINANT_SPEAKER_AVATAR_SIZE;
 const FADE_DURATION_MS = 300;
 
@@ -174,10 +172,6 @@ class VideoContainer extends LargeContainer {
 
         this.$avatar = $('#dominantSpeaker');
         this.$wrapper = $('#largeVideoWrapper');
-
-        if (!RTCBrowserType.isIExplorer()) {
-            this.$video.volume = 0;
-        }
 
         // This does not work with Temasys plugin - has to be a property to be
         // copied between new <object> elements

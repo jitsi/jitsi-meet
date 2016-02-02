@@ -7,8 +7,6 @@ import AudioLevels from "../audio_levels/AudioLevels";
 import UIUtils from "../util/UIUtil";
 import UIEvents from '../../../service/UI/UIEvents';
 
-var RTCBrowserType = require("../../RTC/RTCBrowserType");
-
 function RemoteVideo(id, VideoLayout, emitter) {
     this.id = id;
     this.emitter = emitter;
@@ -251,9 +249,9 @@ RemoteVideo.prototype.addRemoteStreamElement = function (stream) {
 
     // If we hide element when Temasys plugin is used then
     // we'll never receive 'onplay' event and other logic won't work as expected
-    if (!RTCBrowserType.isTemasysPluginUsed()) {
-        $(streamElement).hide();
-    }
+    // NOTE: hiding will not have effect when Temasys plugin is in use, as
+    // calling attach will show it back
+    $(streamElement).hide();
 
     // If the container is currently visible we attach the stream to the element.
     if (!isVideo || (this.container.offsetParent !== null && isVideo)) {

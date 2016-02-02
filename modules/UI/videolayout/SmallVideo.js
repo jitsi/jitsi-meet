@@ -3,8 +3,6 @@
 import Avatar from "../avatar/Avatar";
 import UIUtil from "../util/UIUtil";
 
-var RTCBrowserType = require("../../RTC/RTCBrowserType");
-
 const RTCUIHelper = JitsiMeetJS.util.RTCUIHelper;
 
 function SmallVideo() {
@@ -129,9 +127,7 @@ SmallVideo.createStreamElement = function (stream) {
         element.setAttribute("muted", "true");
     }
 
-    if (!RTCBrowserType.isIExplorer()) {
-        element.autoplay = true;
-    }
+    RTCUIHelper.setAutoPlay(element, true);
 
     element.id = (isVideo ? 'remoteVideo_' : 'remoteAudio_') + stream.getId();
 

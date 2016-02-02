@@ -5,8 +5,8 @@ import UIEvents from "../../../service/UI/UIEvents";
 import SmallVideo from "./SmallVideo";
 
 var LargeVideo = require("./LargeVideo");
-var RTCBrowserType = require("../../RTC/RTCBrowserType");
 
+const RTCUIUtils = JitsiMeetJS.util.RTCUIHelper;
 const TrackEvents = JitsiMeetJS.events.track;
 
 function LocalVideo(VideoLayout, emitter) {
@@ -166,10 +166,9 @@ LocalVideo.prototype.changeVideo = function (stream) {
     this.flipX = stream.videoType != "desktop";
     let localVideo = document.createElement('video');
     localVideo.id = 'localVideo_' + stream.getId();
-    if (!RTCBrowserType.isIExplorer()) {
-        localVideo.autoplay = true;
-        localVideo.volume = 0; // is it required if audio is separated ?
-    }
+
+    RTCUIUtils.setAutoPlay(localVideo, true);
+    RTCUIUtils.setVolume(localVideo, 0);
 
     var localVideoContainer = document.getElementById('localVideoWrapper');
     // Put the new video always in front
