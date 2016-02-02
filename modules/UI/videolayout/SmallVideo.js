@@ -5,6 +5,8 @@ import UIUtil from "../util/UIUtil";
 
 var RTCBrowserType = require("../../RTC/RTCBrowserType");
 
+const RTCUIHelper = JitsiMeetJS.util.RTCUIHelper;
+
 function SmallVideo() {
     this.isMuted = false;
     this.hasAvatar = false;
@@ -296,33 +298,7 @@ SmallVideo.prototype.createModeratorIndicatorElement = function () {
 };
 
 SmallVideo.prototype.selectVideoElement = function () {
-    var videoElemName;
-    if (!RTCBrowserType.isTemasysPluginUsed()) {
-        videoElemName = 'video';
-        return $('#' + this.videoSpanId).find(videoElemName);
-    } else {
-        videoElemName = 'object';
-        var matching = $('#' + this.videoSpanId +
-                         (this.isLocal ? '>>' : '>') +
-                         videoElemName + '>param[value="video"]');
-        if (matching.length < 2) {
-            return matching.parent();
-        }
-
-        // there are 2 video objects from FF
-        // object with id which ends with '_default' (like 'remoteVideo_default')
-        // doesn't contain video, so we ignore it
-        for (var i = 0; i < matching.length; i += 1) {
-            var el = matching[i].parentNode;
-
-            // check id suffix
-            if (el.id.substr(-8) !== '_default') {
-                return $(el);
-            }
-        }
-
-        return $([]);
-    }
+    return $(RTCUIHelper.findVideoElement($('#' + this.videoSpanId)[0]));
 };
 
 SmallVideo.prototype.focus = function(isFocused) {
