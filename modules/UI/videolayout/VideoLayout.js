@@ -728,13 +728,9 @@ var VideoLayout = {
      * @param object
      */
     updateLocalConnectionStats (percent, object) {
-        let resolutions = {};
-        if (object.resolution !== null) {
-            resolutions = object.resolution;
-            var id = Strophe.getResourceFromJid(
-                APP.conference._room.room.session.me);
-            object.resolution = resolutions[id];
-        }
+        let resolutions = object.resolution;
+
+        object.resolution = resolutions[APP.conference.localId];
         localVideoThumbnail.updateStatsIndicator(percent, object);
 
         Object.keys(resolutions).forEach(function (id) {

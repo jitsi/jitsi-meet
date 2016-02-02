@@ -17,7 +17,6 @@ import URLProcessor from "./modules/config/URLProcessor";
 import RoomnameGenerator from './modules/util/RoomnameGenerator';
 
 import UI from "./modules/UI/UI";
-import statistics from "./modules/statistics/statistics";
 import settings from "./modules/settings/Settings";
 import conference from './conference';
 import API from './modules/API/API';
@@ -59,13 +58,10 @@ function buildRoomName () {
 
 const APP = {
     UI,
-    statistics,
     settings,
     conference,
     API,
     init () {
-        this.connectionquality =
-            require("./modules/connectionquality/connectionquality");
         this.desktopsharing =
             require("./modules/desktopsharing/desktopsharing");
         this.keyboardshortcut =
@@ -87,8 +83,6 @@ function init() {
             });
 
             APP.desktopsharing.init(JitsiMeetJS.isDesktopSharingEnabled());
-            APP.statistics.start();
-            APP.connectionquality.init();
             APP.keyboardshortcut.init();
         }).catch(function (err) {
             console.error(err);
