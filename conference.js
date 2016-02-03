@@ -48,19 +48,6 @@ function connect() {
 }
 
 /**
- * Add local track to the conference and shares
- * video type with other users if its video track.
- * @param {JitsiLocalTrack} track local track
- */
-function addTrack (track) {
-    room.addTrack(track);
-
-    if (track.isAudioTrack()) {
-        return;
-    }
-}
-
-/**
  * Share email with other users.
  * @param {string} email new email
  */
@@ -86,6 +73,38 @@ function getDisplayName (id) {
     let participant = room.getParticipantById(id);
     if (participant && participant.getDisplayName()) {
         return participant.getDisplayName();
+    }
+}
+
+/**
+ * Mute or unmute local audio stream if it exists.
+ * @param {boolean} muted if audio stream should be muted or unmuted.
+ */
+function muteLocalAudio (muted) {
+    if (!localAudio) {
+        return;
+    }
+
+    if (muted) {
+        localAudio.mute();
+    } else {
+        localAudio.unmute();
+    }
+}
+
+/**
+ * Mute or unmute local video stream if it exists.
+ * @param {boolean} muted if video stream should be muted or unmuted.
+ */
+function muteLocalVideo (muted) {
+    if (!localVideo) {
+        return;
+    }
+
+    if (muted) {
+        localVideo.mute();
+    } else {
+        localVideo.unmute();
     }
 }
 
@@ -274,9 +293,7 @@ export default {
      * @param mute true for mute and false for unmute.
      */
     muteAudio (mute) {
-        //FIXME: Maybe we should create method for that in the UI instead of
-        //accessing directly eventEmitter????
-        APP.UI.eventEmitter.emit(UIEvents.AUDIO_MUTED, mute);
+        muteLocalAudio(mute);
     },
     /**
      * Simulates toolbar button click for audio mute. Used by shortcuts and API.
@@ -289,9 +306,7 @@ export default {
      * @param mute true for mute and false for unmute.
      */
     muteVideo (mute) {
-        //FIXME: Maybe we should create method for that in the UI instead of
-        //accessing directly eventEmitter????
-        APP.UI.eventEmitter.emit(UIEvents.VIDEO_MUTED, mute);
+        muteLocalVideo(mute);
     },
     /**
      * Simulates toolbar button click for video mute. Used by shortcuts and API.
@@ -413,7 +428,7 @@ export default {
             else if (track.isVideoTrack()) {
                 localVideo = track;
             }
-            addTrack(track);
+            room.addTrack(track);
             APP.UI.addLocalStream(track);
         });
         roomLocker = createRoomLocker(room);
@@ -600,16 +615,8 @@ export default {
             }
         });
 
-        APP.UI.addListener(UIEvents.AUDIO_MUTED, (muted) => {
-            if(!localAudio)
-                return;
-            (muted)? localAudio.mute() : localAudio.unmute();
-        });
-        APP.UI.addListener(UIEvents.VIDEO_MUTED, (muted) => {
-            if(!localVideo)
-                return;
-            (muted)? localVideo.mute() : localVideo.unmute();
-        });
+        APP.UI.addListener(UIEvents.AUDIO_MUTED, muteLocalAudio);
+        APP.UI.addListener(UIEvents.VIDEO_MUTED, muteLocalVideo);
 
         if (!interfaceConfig.filmStripOnly) {
             APP.UI.addListener(UIEvents.MESSAGE_CREATED, (message) => {
@@ -826,7 +833,7 @@ export default {
                 if(localVideo)
                     localVideo.stop();
                 localVideo = track;
-                addTrack(track);
+                room.addTrack(track);
                 if(!room)
                     localCallback();
                 APP.UI.addLocalStream(track);
