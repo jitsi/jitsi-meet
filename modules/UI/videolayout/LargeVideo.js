@@ -8,8 +8,6 @@ import BottomToolbar from '../toolbars/BottomToolbar';
 import Avatar from "../avatar/Avatar";
 import {createDeferred} from '../../util/helpers';
 
-const RTCBrowserType = require("../../RTC/RTCBrowserType");
-
 const avatarSize = interfaceConfig.DOMINANT_SPEAKER_AVATAR_SIZE;
 const FADE_DURATION_MS = 300;
 
@@ -175,10 +173,6 @@ class VideoContainer extends LargeContainer {
         this.$avatar = $('#dominantSpeaker');
         this.$wrapper = $('#largeVideoWrapper');
 
-        if (!RTCBrowserType.isIExplorer()) {
-            this.$video.volume = 0;
-        }
-
         // This does not work with Temasys plugin - has to be a property to be
         // copied between new <object> elements
         //this.$video.on('play', onPlay);
@@ -277,7 +271,10 @@ class VideoContainer extends LargeContainer {
         this.stream = stream;
         this.videoType = videoType;
 
-        stream.attach(this.$video);
+        if(!stream)
+            return;
+
+        stream.attach(this.$video[0]);
 
         let flipX = stream.isLocal() && !this.isScreenSharing();
         this.$video.css({
@@ -421,7 +418,7 @@ export default class LargeVideoManager {
             // change the avatar url on large
             this.updateAvatar(Avatar.getAvatarUrl(id));
 
-            let isVideoMuted = stream.isMuted();
+            let isVideoMuted = stream? stream.isMuted() : true;
 
             // show the avatar on large if needed
             this.videoContainer.showAvatar(isVideoMuted);
@@ -443,19 +440,18 @@ export default class LargeVideoManager {
     /**
      * Update large video.
      * Switches to large video even if previously other container was visible.
+     * @param userID the userID of the participant associated with the stream
      * @param {JitsiTrack?} stream new stream
      * @param {string?} videoType new video type
      * @returns {Promise}
      */
-    updateLargeVideo (stream, videoType) {
-        let id = getStreamOwnerId(stream);
-
+    updateLargeVideo (userID, stream, videoType) {
         if (this.newStreamData) {
             this.newStreamData.reject();
         }
 
         this.newStreamData = createDeferred();
-        this.newStreamData.id = id;
+        this.newStreamData.id = userID;
         this.newStreamData.stream = stream;
         this.newStreamData.videoType = videoType;
 

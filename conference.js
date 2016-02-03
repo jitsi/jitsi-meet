@@ -5,6 +5,8 @@ import createRoomLocker from './modules/UI/authentication/RoomLocker';
 //FIXME:
 import AuthHandler from './modules/UI/authentication/AuthHandler';
 
+import ConnectionQuality from './modules/connectionquality/connectionquality';
+
 import CQEvents from './service/connectionquality/CQEvents';
 import UIEvents from './service/UI/UIEvents';
 import DSEvents from './service/desktopsharing/DesktopSharingEventTypes';
@@ -15,6 +17,8 @@ const ConnectionErrors = JitsiMeetJS.errors.connection;
 const ConferenceEvents = JitsiMeetJS.events.conference;
 const ConferenceErrors = JitsiMeetJS.errors.conference;
 
+const TrackEvents = JitsiMeetJS.events.track;
+
 let room, connection, localTracks, localAudio, localVideo, roomLocker;
 
 /**
@@ -23,7 +27,6 @@ let room, connection, localTracks, localAudio, localVideo, roomLocker;
 const Commands = {
     CONNECTION_QUALITY: "stats",
     EMAIL: "email",
-    VIDEO_TYPE: "videoType",
     ETHERPAD: "etherpad",
     PREZI: "prezi",
     STOP_PREZI: "stop-prezi"
@@ -55,14 +58,6 @@ function addTrack (track) {
     if (track.isAudioTrack()) {
         return;
     }
-
-    room.removeCommand(Commands.VIDEO_TYPE);
-    room.sendCommand(Commands.VIDEO_TYPE, {
-        value: track.videoType,
-        attributes: {
-            xmlns: 'http://jitsi.org/jitmeet/video'
-        }
-    });
 }
 
 /**
@@ -111,7 +106,7 @@ class ConferenceConnector {
         this._reject(err);
     }
     _onConferenceFailed(err, ...params) {
-        console.error('CONFERENCE FAILED:', err, params);
+        console.error('CONFERENCE FAILED:', err, ...params);
         switch (err) {
             // room is locked by the password
         case ConferenceErrors.PASSWORD_REQUIRED:
@@ -161,6 +156,7 @@ class ConferenceConnector {
         case ConferenceErrors.CONFERENCE_DESTROYED:
             {
                 let [reason] = params;
+                APP.UI.hideStats();
                 APP.UI.notifyConferenceDestroyed(reason);
             }
             break;
@@ -225,7 +221,9 @@ export default {
 
         return JitsiMeetJS.init(config).then(() => {
             return Promise.all([
-                this.createLocalTracks('audio', 'video').catch(
+                this.createLocalTracks('audio', 'video').catch(()=>{
+                    return this.createLocalTracks('audio');
+                }).catch(
                     () => {return [];}),
                 connect()
             ]);
@@ -256,7 +254,6 @@ export default {
             firefox_fake_device: config.firefox_fake_device
         }).catch(function (err) {
             console.error('failed to create local tracks', ...devices, err);
-            APP.statistics.onGetUserMediaFailed(err);
             return Promise.reject(err);
         });
     },
@@ -366,6 +363,11 @@ export default {
      * Its used by torture to check audio levels.
      */
     audioLevelsMap: {},
+    /**
+     * Returns the stored audio level (stored only if config.debug is enabled)
+     * @param id the id for the user audio level to return (the id value is
+     *          returned for the participant using getMyUserId() method)
+     */
     getPeerSSRCAudioLevel (id) {
         return this.audioLevelsMap[id];
     },
@@ -473,6 +475,10 @@ export default {
         room.on(ConferenceEvents.TRACK_ADDED, (track) => {
             if(!track || track.isLocal())
                 return;
+
+            track.on(TrackEvents.TRACK_VIDEOTYPE_CHANGED, (type) => {
+                APP.UI.onPeerVideoTypeChanged(track.getParticipantId(), type);
+            });
             APP.UI.addRemoteStream(track);
         });
 
@@ -500,7 +506,7 @@ export default {
             handler(id , mute);
         });
         room.on(ConferenceEvents.TRACK_AUDIO_LEVEL_CHANGED, (id, lvl) => {
-            if(this.isLocalId(id) && localAudio.isMuted()) {
+            if(this.isLocalId(id) && localAudio && localAudio.isMuted()) {
                 lvl = 0;
             }
 
@@ -558,6 +564,7 @@ export default {
         });
 
         room.on(ConferenceEvents.KICKED, () => {
+            APP.UI.hideStats();
             APP.UI.notifyKicked();
             // FIXME close
         });
@@ -584,9 +591,13 @@ export default {
         });
 
         APP.UI.addListener(UIEvents.AUDIO_MUTED, (muted) => {
+            if(!localAudio)
+                return;
             (muted)? localAudio.mute() : localAudio.unmute();
         });
         APP.UI.addListener(UIEvents.VIDEO_MUTED, (muted) => {
+            if(!localVideo)
+                return;
             (muted)? localVideo.mute() : localVideo.unmute();
         });
 
@@ -597,14 +608,17 @@ export default {
             });
         }
 
-        APP.connectionquality.addListener(
+        room.on(ConferenceEvents.CONNECTION_STATS, function (stats) {
+            ConnectionQuality.updateLocalStats(stats);
+        });
+        ConnectionQuality.addListener(
             CQEvents.LOCALSTATS_UPDATED,
             (percent, stats) => {
                 APP.UI.updateLocalStats(percent, stats);
 
                 // send local stats to other users
                 room.sendCommandOnce(Commands.CONNECTION_QUALITY, {
-                    children: APP.connectionquality.convertToMUCStats(stats),
+                    children: ConnectionQuality.convertToMUCStats(stats),
                     attributes: {
                         xmlns: 'http://jitsi.org/jitmeet/stats'
                     }
@@ -612,17 +626,12 @@ export default {
             }
         );
 
-        APP.connectionquality.addListener(CQEvents.STOP, () => {
-            APP.UI.hideStats();
-            room.removeCommand(Commands.CONNECTION_QUALITY);
-        });
-
         // listen to remote stats
         room.addCommandListener(Commands.CONNECTION_QUALITY,(values, from) => {
-            APP.connectionquality.updateRemoteStats(from, values);
+            ConnectionQuality.updateRemoteStats(from, values);
         });
 
-        APP.connectionquality.addListener(CQEvents.REMOTESTATS_UPDATED,
+        ConnectionQuality.addListener(CQEvents.REMOTESTATS_UPDATED,
             (id, percent, stats) => {
                 APP.UI.updateRemoteStats(id, percent, stats);
             });
@@ -658,10 +667,6 @@ export default {
                     id: room.myUserId()
                 }
             });
-        });
-
-        room.addCommandListener(Commands.VIDEO_TYPE, ({value}, from) => {
-            APP.UI.onPeerVideoTypeChanged(from, value);
         });
 
         APP.UI.addListener(UIEvents.EMAIL_CHANGED, (email) => {
@@ -794,7 +799,7 @@ export default {
         APP.desktopsharing.addListener(DSEvents.NEW_STREAM_CREATED,
             (track, callback) => {
                 const localCallback = (newTrack) => {
-                    if(!newTrack || !newTrack.isLocal() ||
+                    if(!newTrack || !localVideo || !newTrack.isLocal() ||
                         newTrack !== localVideo)
                         return;
                     if(localVideo.isMuted() &&
@@ -808,7 +813,8 @@ export default {
                 if(room) {
                     room.on(ConferenceEvents.TRACK_ADDED, localCallback);
                 }
-                localVideo.stop();
+                if(localVideo)
+                    localVideo.stop();
                 localVideo = track;
                 addTrack(track);
                 if(!room)

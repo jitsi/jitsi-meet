@@ -7,8 +7,6 @@ import AudioLevels from "../audio_levels/AudioLevels";
 import UIUtils from "../util/UIUtil";
 import UIEvents from '../../../service/UI/UIEvents';
 
-var RTCBrowserType = require("../../RTC/RTCBrowserType");
-
 function RemoteVideo(id, VideoLayout, emitter) {
     this.id = id;
     this.emitter = emitter;
@@ -86,13 +84,12 @@ if (!interfaceConfig.filmStripOnly) {
             muteLinkItem.className = 'mutelink disabled';
         }
 
-        var self = this;
-        muteLinkItem.onclick = function(){
+        muteLinkItem.onclick = (event) => {
             if ($(this).attr('disabled')) {
                 event.preventDefault();
             }
-            var isMute = !!self.isMuted;
-            self.emitter.emit(UIEvents.REMOTE_AUDIO_MUTED, self.id);
+            var isMute = !!this.isMuted;
+            this.emitter.emit(UIEvents.REMOTE_AUDIO_MUTED, this.id);
 
             popupmenuElement.setAttribute('style', 'display:none;');
 
@@ -120,8 +117,8 @@ if (!interfaceConfig.filmStripOnly) {
         var ejectText = "<div style='width: 90px;margin-left: 20px;' " +
             "data-i18n='videothumbnail.kick'>&nbsp;</div>";
         ejectLinkItem.innerHTML = ejectIndicator + ' ' + ejectText;
-        ejectLinkItem.onclick = function(){
-            self.emitter.emit(UIEvents.USER_KICKED, self.id);
+        ejectLinkItem.onclick = (event) => {
+            this.emitter.emit(UIEvents.USER_KICKED, this.id);
             popupmenuElement.setAttribute('style', 'display:none;');
         };
 
@@ -182,7 +179,7 @@ RemoteVideo.prototype.remove = function () {
     }
 };
 
-RemoteVideo.prototype.waitForPlayback = function (sel, stream) {
+RemoteVideo.prototype.waitForPlayback = function (streamElement, stream) {
 
     var webRtcStream = stream.getOriginalStream();
     var isVideo = stream.isVideoTrack();
@@ -195,23 +192,22 @@ RemoteVideo.prototype.waitForPlayback = function (sel, stream) {
     // Register 'onplaying' listener to trigger 'videoactive' on VideoLayout
     // when video playback starts
     var onPlayingHandler = function () {
-        // FIXME: why do i have to do this for FF?
-        if (RTCBrowserType.isFirefox()) {
-            //FIXME: weshould use the lib here
-            //APP.RTC.attachMediaStream(sel, webRtcStream);
-        }
-        if (RTCBrowserType.isTemasysPluginUsed()) {
-            sel = self.selectVideoElement();
-        }
-        self.VideoLayout.videoactive(sel, self.id);
-        sel[0].onplaying = null;
-        if (RTCBrowserType.isTemasysPluginUsed()) {
-            // 'currentTime' is used to check if the video has started
-            // and the value is not set by the plugin, so we do it
-            sel[0].currentTime = 1;
-        }
+        self.VideoLayout.videoactive(streamElement, self.id);
+        streamElement.onplaying = null;
     };
-    sel[0].onplaying = onPlayingHandler;
+    streamElement.onplaying = onPlayingHandler;
+};
+
+/**
+ * Checks whether or not video stream exists and has started for this
+ * RemoteVideo instance. This is checked by trying to select video element in
+ * this container and checking if 'currentTime' field's value is greater than 0.
+ *
+ * @returns {*|boolean} true if this RemoteVideo has active video stream running
+ */
+RemoteVideo.prototype.hasVideoStarted = function () {
+    var videoSelector = this.selectVideoElement();
+    return videoSelector.length && videoSelector[0].currentTime > 0;
 };
 
 RemoteVideo.prototype.addRemoteStreamElement = function (stream) {
@@ -224,8 +220,12 @@ RemoteVideo.prototype.addRemoteStreamElement = function (stream) {
 
     // Add click handler.
     let onClickHandler = (event) => {
+        let source = event.target || event.srcElement;
 
-        this.VideoLayout.handleVideoThumbClicked(false, this.id);
+        // ignore click if it was done in popup menu
+        if ($(source).parents('.popupmenu').length === 0) {
+            this.VideoLayout.handleVideoThumbClicked(false, this.id);
+        }
 
         // On IE we need to populate this handler on video <object>
         // and it does not give event instance as an argument,
@@ -247,25 +247,20 @@ RemoteVideo.prototype.addRemoteStreamElement = function (stream) {
     // Put new stream element always in front
     UIUtils.prependChild(this.container, streamElement);
 
-    let sel = $(`#${newElementId}`);
+    // If we hide element when Temasys plugin is used then
+    // we'll never receive 'onplay' event and other logic won't work as expected
+    // NOTE: hiding will not have effect when Temasys plugin is in use, as
+    // calling attach will show it back
+    $(streamElement).hide();
 
     // If the container is currently visible we attach the stream to the element.
     if (!isVideo || (this.container.offsetParent !== null && isVideo)) {
-        this.waitForPlayback(sel, stream);
+        this.waitForPlayback(streamElement, stream);
 
-        stream.attach(sel);
+        streamElement = stream.attach(streamElement);
     }
 
-    // hide element only after stream was (maybe) attached
-    // because Temasys plugin requires video element
-    // to be visible to attach the stream
-    sel.hide();
-
-    // reselect
-    if (RTCBrowserType.isTemasysPluginUsed()) {
-        sel = $(`#${newElementId}`);
-    }
-    sel.click(onClickHandler);
+    $(streamElement).click(onClickHandler);
 },
 
 /**

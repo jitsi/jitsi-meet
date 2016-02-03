@@ -13,7 +13,7 @@ import LargeVideoManager, {VideoContainerType} from "./LargeVideo";
 import {PreziContainerType} from '../prezi/Prezi';
 import LocalVideo from "./LocalVideo";
 
-var RTCBrowserType = require('../../RTC/RTCBrowserType');
+const RTCUIUtil = JitsiMeetJS.util.RTCUIHelper;
 
 var remoteVideos = {};
 var remoteVideoTypes = {};
@@ -46,11 +46,10 @@ function onContactClicked (id) {
     }
 
     let remoteVideo = remoteVideos[id];
-    if (remoteVideo && remoteVideo.selectVideoElement().length) {
+    if (remoteVideo && remoteVideo.hasVideo()) {
         // It is not always the case that a videoThumb exists (if there is
         // no actual video).
-        if (remoteVideo.videoStream) {
-
+        if (remoteVideo.hasVideoStarted()) {
             // We have a video src, great! Let's update the large video
             // now.
             VideoLayout.handleVideoThumbClicked(false, id);
@@ -126,24 +125,20 @@ var VideoLayout = {
 
     changeLocalAudio (stream) {
         let localAudio = document.getElementById('localAudio');
-        stream.attach($(localAudio));
+        localAudio = stream.attach(localAudio);
 
-        //return; // FIXME maybe move this into the library?
-        // Writing volume not allowed in IE
-        if (!RTCBrowserType.isIExplorer()) {
-            localAudio.autoplay = true;
-            localAudio.volume = 0;
-        }
         // Now when Temasys plugin is converting also <audio> elements to
         // plugin's <object>s, in current layout it will capture click events
         // before it reaches the local video object. We hide it here in order
         // to prevent that.
-        if (RTCBrowserType.isIExplorer()) {
+        //if (RTCBrowserType.isIExplorer()) {
             // The issue is not present on Safari. Also if we hide it in Safari
             // then the local audio track will have 'enabled' flag set to false
             // which will result in audio mute issues
-            $('#localAudio').hide();
-        }
+            //  $(localAudio).hide();
+            localAudio.width = 1;
+            localAudio.height = 1;
+        //}
     },
 
     changeLocalVideo (stream) {
@@ -326,14 +321,6 @@ var VideoLayout = {
         }
 
         this.updateLargeVideo(resourceJid);
-
-        // Writing volume not allowed in IE
-        if (!RTCBrowserType.isIExplorer()) {
-            $('audio').each(function (idx, el) {
-                el.volume = 0;
-                el.volume = 1;
-            });
-        }
     },
 
 
@@ -369,9 +356,9 @@ var VideoLayout = {
 
     videoactive (videoelem, resourceJid) {
 
-        console.info(resourceJid + " video is now active");
+        console.info(resourceJid + " video is now active", videoelem);
 
-        videoelem.show();
+        $(videoelem).show();
         VideoLayout.resizeThumbnails();
 
         // Update the large video to the last added video only if there's no
@@ -517,12 +504,6 @@ var VideoLayout = {
         } else {
             var remoteVideo = remoteVideos[id];
             remoteVideo.setMutedView(value);
-
-            var el = remoteVideo.selectVideoElement();
-            if (!value)
-                el.show();
-            else
-                el.hide();
         }
 
         if(this.isCurrentlyOnLarge(id))
@@ -575,17 +556,12 @@ var VideoLayout = {
         }
         currentDominantSpeaker = id;
 
-        // Obtain container for new dominant speaker.
-        let videoSel = remoteVideo.selectVideoElement();
-
         // Local video will not have container found, but that's ok
         // since we don't want to switch to local video.
-        if (!focusedVideoResourceJid && videoSel.length) {
-            // Update the large video if the video source is already available,
-            // otherwise wait for the "videoactive.jingle" event.
-            if (videoSel[0].currentTime > 0) {
-                this.updateLargeVideo(id);
-            }
+        // Update the large video if the video source is already available,
+        // otherwise wait for the "videoactive.jingle" event.
+        if (!focusedVideoResourceJid && remoteVideo.hasVideoStarted()) {
+            this.updateLargeVideo(id);
         }
     },
 
@@ -709,7 +685,8 @@ var VideoLayout = {
                         updateLargeVideo = false;
                     }
                     remoteVideo.waitForPlayback(
-                        remoteVideo.selectVideoElement(), remoteVideo.videoStream);
+                        remoteVideo.selectVideoElement()[0],
+                        remoteVideo.videoStream);
                 }
             });
         }
@@ -739,13 +716,9 @@ var VideoLayout = {
      * @param object
      */
     updateLocalConnectionStats (percent, object) {
-        let resolutions = {};
-        if (object.resolution !== null) {
-            resolutions = object.resolution;
-            var id = Strophe.getResourceFromJid(
-                APP.conference._room.room.session.me);
-            object.resolution = resolutions[id];
-        }
+        let resolutions = object.resolution;
+
+        object.resolution = resolutions[APP.conference.localId];
         localVideoThumbnail.updateStatsIndicator(percent, object);
 
         Object.keys(resolutions).forEach(function (id) {
@@ -987,6 +960,7 @@ var VideoLayout = {
 
             let videoType = this.getRemoteVideoType(id);
             largeVideo.updateLargeVideo(
+                id,
                 smallVideo.videoStream,
                 videoType
             ).then(function() {

@@ -1,9 +1,10 @@
 /* global APP, require */
 /* jshint -W101 */
-var EventEmitter = require("events");
-var eventEmitter = new EventEmitter();
-var CQEvents = require("../../service/connectionquality/CQEvents");
-var StatisticsEvents = require("../../service/statistics/Events");
+import EventEmitter from "events";
+
+import CQEvents from "../../service/connectionquality/CQEvents";
+
+const eventEmitter = new EventEmitter();
 
 /**
  * local stats
@@ -50,16 +51,7 @@ function parseMUCStats(stats) {
     };
 }
 
-var ConnectionQuality = {
-    init: function () {
-        APP.statistics.addListener(
-            StatisticsEvents.CONNECTION_STATS, this.updateLocalStats
-        );
-        APP.statistics.addListener(
-            StatisticsEvents.STOP, this.stopSendingStats
-        );
-    },
-
+export default {
     /**
      * Updates the local statistics
      * @param data new statistics
@@ -85,14 +77,6 @@ var ConnectionQuality = {
         eventEmitter.emit(
             CQEvents.REMOTESTATS_UPDATED, id, 100 - data.packetLoss_total, remoteStats[id]
         );
-    },
-
-    /**
-     * Stops statistics sending.
-     */
-    stopSendingStats: function () {
-        //notify UI about stopping statistics gathering
-        eventEmitter.emit(CQEvents.STOP);
     },
 
     /**
@@ -125,5 +109,3 @@ var ConnectionQuality = {
         ];
     }
 };
-
-module.exports = ConnectionQuality;

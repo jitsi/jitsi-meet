@@ -59,7 +59,7 @@ ConnectionIndicator.getStringFromArray = function (array) {
  * @returns {string} the html content.
  */
 ConnectionIndicator.prototype.generateText = function () {
-    var downloadBitrate, uploadBitrate, packetLoss, resolution, i;
+    var downloadBitrate, uploadBitrate, packetLoss, i;
 
     var translate = APP.translation.translateString;
 
@@ -86,44 +86,12 @@ ConnectionIndicator.prototype.generateText = function () {
             "%";
     }
 
-    var resolutionValue = null;
-    if(this.resolution && this.id) {
-        var keys = Object.keys(this.resolution);
-        for(var ssrc in this.resolution) {
-            // skip resolutions for ssrc that don't have this info
-            // like receive-only ssrc for FF
-            if(this.resolution[ssrc]
-                && this.resolution[ssrc].height != -1
-                && this.resolution[ssrc].width != -1)
-            resolutionValue = this.resolution[ssrc];
-        }
-    }
-
-    if(this.id === null) {
-        resolution = "";
-        if(this.resolution === null || !Object.keys(this.resolution) ||
-            Object.keys(this.resolution).length === 0) {
-            resolution = "N/A";
-        } else {
-            for (i in this.resolution) {
-                resolutionValue = this.resolution[i];
-                if (resolutionValue) {
-                    if (resolutionValue.height &&
-                        resolutionValue.width) {
-                        resolution += (resolution === "" ? "" : ", ") +
-                        resolutionValue.width + "x" +
-                        resolutionValue.height;
-                    }
-                }
-            }
-        }
-    } else if(!resolutionValue ||
-        !resolutionValue.height ||
-        !resolutionValue.width) {
-        resolution = "N/A";
-    } else {
-        resolution = resolutionValue.width + "x" + resolutionValue.height;
-    }
+    // GENERATE RESOLUTIONS STRING
+    let resolutions = this.resolution || {};
+    let resolutionStr = Object.keys(resolutions).map(function (ssrc) {
+        let {width, height} = resolutions[ssrc];
+        return `${width}x${height}`;
+    }).join(', ') || 'N/A';
 
     var result = "<table style='width:100%'>" +
         "<tr>" +
@@ -139,7 +107,7 @@ ConnectionIndicator.prototype.generateText = function () {
         "</tr><tr>" +
         "<td><span class='jitsipopover_blue' data-i18n='connectionindicator.resolution'>" +
         translate("connectionindicator.resolution") + "</span></td>" +
-        "<td>" + resolution + "</td></tr></table>";
+        "<td>" + resolutionStr + "</td></tr></table>";
 
     if(this.videoContainer.videoSpanId == "localVideoContainer") {
         result += "<div class=\"jitsipopover_showmore\" " +

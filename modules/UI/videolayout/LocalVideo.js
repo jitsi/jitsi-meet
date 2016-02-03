@@ -5,8 +5,8 @@ import UIEvents from "../../../service/UI/UIEvents";
 import SmallVideo from "./SmallVideo";
 
 var LargeVideo = require("./LargeVideo");
-var RTCBrowserType = require("../../RTC/RTCBrowserType");
 
+const RTCUIUtils = JitsiMeetJS.util.RTCUIHelper;
 const TrackEvents = JitsiMeetJS.events.track;
 
 function LocalVideo(VideoLayout, emitter) {
@@ -166,16 +166,13 @@ LocalVideo.prototype.changeVideo = function (stream) {
     this.flipX = stream.videoType != "desktop";
     let localVideo = document.createElement('video');
     localVideo.id = 'localVideo_' + stream.getId();
-    if (!RTCBrowserType.isIExplorer()) {
-        localVideo.autoplay = true;
-        localVideo.volume = 0; // is it required if audio is separated ?
-    }
+
+    RTCUIUtils.setAutoPlay(localVideo, true);
+    RTCUIUtils.setVolume(localVideo, 0);
 
     var localVideoContainer = document.getElementById('localVideoWrapper');
     // Put the new video always in front
     UIUtil.prependChild(localVideoContainer, localVideo);
-
-    var localVideoSelector = $('#' + localVideo.id);
 
     // Add click handler to both video and video wrapper elements in case
     // there's no video.
@@ -184,14 +181,13 @@ LocalVideo.prototype.changeVideo = function (stream) {
     localVideo.onclick = localVideoClick;
 
     if (this.flipX) {
-        localVideoSelector.addClass("flipVideoX");
+        $(localVideo).addClass("flipVideoX");
     }
 
     // Attach WebRTC stream
-    stream.attach(localVideoSelector);
+    localVideo = stream.attach(localVideo);
 
     let endedHandler = () => {
-        localVideo = $('#' + localVideo.id)[0];
         localVideoContainer.removeChild(localVideo);
         this.VideoLayout.updateRemovedVideo(this.id);
         stream.off(TrackEvents.TRACK_STOPPED, endedHandler);
