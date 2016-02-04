@@ -387,6 +387,12 @@ export default {
         }
         return foundParticipants >= number;
     },
+    /**
+     * Returns the stats.
+     */
+    getStats() {
+        return ConnectionQuality.getStats();
+    },
     // end used by torture
 
     getLogs () {
