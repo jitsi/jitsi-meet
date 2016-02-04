@@ -131,7 +131,7 @@ const buttonHandlers = {
         emitter.emit(UIEvents.ETHERPAD_CLICKED);
     },
     "toolbar_button_desktopsharing": function () {
-        if (APP.desktopsharing.isUsingScreenStream) {
+        if (APP.conference.isSharingScreen) {
             AnalyticsAdapter.sendEvent('toolbar.screen.disabled');
         } else {
             AnalyticsAdapter.sendEvent('toolbar.screen.enabled');
@@ -371,13 +371,12 @@ const Toolbar = {
     },
 
     /**
-     * Sets the state of the button. The button has blue glow if desktop
+     * Update the state of the button. The button has blue glow if desktop
      * streaming is active.
-     * @param active the state of the desktop streaming.
      */
-    changeDesktopSharingButtonState (active) {
+    updateDesktopSharingButtonState () {
         let button = $("#toolbar_button_desktopsharing");
-        if (active) {
+        if (APP.conference.isSharingScreen) {
             button.addClass("glow");
         } else {
             button.removeClass("glow");

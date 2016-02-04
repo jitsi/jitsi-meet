@@ -13,8 +13,8 @@ function initShortcutHandlers() {
         68: {
             character: "D",
             id: "toggleDesktopSharingPopover",
-            function: function() {
-                APP.desktopsharing.toggleScreenSharing();
+            function: function () {
+                APP.conference.toggleScreenSharing();
             }
         },
         70: {

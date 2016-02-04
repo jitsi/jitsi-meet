@@ -782,10 +782,9 @@ UI.setAudioLevel = function (id, lvl) {
 
 /**
  * Update state of desktop sharing buttons.
- * @param {boolean} isSharingScreen if user is currently sharing his screen
  */
-UI.updateDesktopSharingButtons = function (isSharingScreen) {
-    Toolbar.changeDesktopSharingButtonState(isSharingScreen);
+UI.updateDesktopSharingButtons = function () {
+    Toolbar.updateDesktopSharingButtonState();
 };
 
 /**
