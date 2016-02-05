@@ -418,13 +418,14 @@ export default class LargeVideoManager {
             // change the avatar url on large
             this.updateAvatar(Avatar.getAvatarUrl(id));
 
-            let isVideoMuted = stream? stream.isMuted() : true;
+            let isVideoMuted = stream ? stream.isMuted() : true;
 
             // show the avatar on large if needed
             this.videoContainer.showAvatar(isVideoMuted);
 
             // do not show stream if video is muted
-            let promise = isVideoMuted ? Promise.resolve() : this.videoContainer.show();
+            let promise
+                = isVideoMuted ? Promise.resolve() : this.videoContainer.show();
 
             // resolve updateLargeVideo promise after everything is done
             promise.then(resolve);

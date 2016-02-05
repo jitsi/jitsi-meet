@@ -420,7 +420,7 @@
     position: absolute;
     top: 0px;
     left: 0px;
-    z-index: 1;
+    z-index: 2;
     visibility: inherit;
 }
 
@@ -435,7 +435,7 @@
     margin: auto;
     position: relative;
     border-radius: 50px;
-    z-index: 2;
+    z-index: 3;
     visibility: inherit;
 }
 
