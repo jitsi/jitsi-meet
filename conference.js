@@ -146,7 +146,7 @@ class ConferenceConnector {
             break;
 
         case ConferenceErrors.GRACEFUL_SHUTDOWN:
-            APP.UI.notifyGracefulShudown();
+            APP.UI.notifyGracefulShutdown();
             break;
 
         case ConferenceErrors.JINGLE_FATAL_ERROR:
@@ -166,6 +166,10 @@ class ConferenceConnector {
                 let [focus, retrySec] = params;
                 APP.UI.notifyFocusDisconnected(focus, retrySec);
             }
+            break;
+
+        case ConferenceErrors.FOCUS_LEFT:
+            APP.UI.notifyFocusLeft();
             break;
 
         default:

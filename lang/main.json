@@ -143,6 +143,7 @@
         "failtoinstall": "Failed to install desktop sharing extension",
         "failedpermissions": "Failed to obtain permissions to use the local microphone and/or camera.",
         "bridgeUnavailable": "Jitsi Videobridge is currently unavailable. Please try again later!",
+        "jicofoUnavailable": "Jicofo is currently unavailable. Please try again later!",
         "lockTitle": "Lock failed",
         "lockMessage": "Failed to lock the conference.",
         "warning": "Warning",

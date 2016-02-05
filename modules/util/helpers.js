@@ -12,3 +12,10 @@ export function createDeferred () {
 
     return deferred;
 }
+
+/**
+ * Reload page.
+ */
+export function reload () {
+    window.location.reload();
+}
