@@ -6,22 +6,30 @@ function initShortcutHandlers() {
         67: {
             character: "C",
             id: "toggleChatPopover",
-            function: APP.UI.toggleChat
+            function: function() {
+                APP.UI.toggleChat();
+            }
         },
         68: {
             character: "D",
             id: "toggleDesktopSharingPopover",
-            function: APP.desktopsharing.toggleScreenSharing
+            function: function() {
+                APP.desktopsharing.toggleScreenSharing();
+            }
         },
         70: {
             character: "F",
             id: "filmstripPopover",
-            function: APP.UI.toggleFilmStrip
+            function: function() {
+                APP.UI.toggleFilmStrip();
+            }
         },
         77: {
             character: "M",
             id: "mutePopover",
-            function: APP.conference.toggleAudioMuted
+            function: function() {
+                APP.conference.toggleAudioMuted();
+            }
         },
         84: {
             character: "T",
@@ -32,7 +40,9 @@ function initShortcutHandlers() {
         86: {
             character: "V",
             id: "toggleVideoPopover",
-            function: APP.conference.toggleVideoMuted
+            function: function() {
+                APP.conference.toggleVideoMuted();
+            }
         }
     };
 }
