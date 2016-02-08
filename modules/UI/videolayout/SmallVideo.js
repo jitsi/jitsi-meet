@@ -382,4 +382,38 @@ SmallVideo.prototype.avatarChanged = function (avatarUrl) {
     }
 };
 
+/**
+ * Updates the Indicator for dominant speaker.
+ *
+ * @param isSpeaker indicates the current indicator state
+ */
+SmallVideo.prototype.updateDominantSpeakerIndicator = function (isSpeaker) {
+
+    if (!this.container) {
+        console.warn( "Unable to set dominant speaker indicator - "
+            + this.videoSpanId + " does not exist");
+        return;
+    }
+
+    var indicatorSpan
+        = $('#' + this.videoSpanId + '>span.dominantspeakerindicator');
+
+    // If we do not have an indicator for this video.
+    if (indicatorSpan.length <= 0) {
+        indicatorSpan = document.createElement('span');
+
+        indicatorSpan.innerHTML
+            = "<i id='speakerindicatoricon' class='fa fa-bullhorn'></i>";
+        indicatorSpan.className = 'dominantspeakerindicator';
+
+        $('#' + this.videoSpanId)[0].appendChild(indicatorSpan);
+
+        // adds a tooltip
+        UIUtil.setTooltip(indicatorSpan, "speaker", "left");
+        APP.translation.translateElement($(indicatorSpan));
+    }
+
+    $(indicatorSpan).css("visibility", isSpeaker ? "visible" : "hidden");
+};
+
 export default SmallVideo;

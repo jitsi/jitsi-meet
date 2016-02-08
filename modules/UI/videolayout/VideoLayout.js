@@ -538,6 +538,7 @@ var VideoLayout = {
             if(oldSpeakerRemoteVideo)
             {
                 oldSpeakerRemoteVideo.updateDominantSpeakerIndicator(false);
+                localVideoThumbnail.updateDominantSpeakerIndicator(true);
                 currentDominantSpeaker = null;
             }
             return;
@@ -550,6 +551,7 @@ var VideoLayout = {
 
         // Update the current dominant speaker.
         remoteVideo.updateDominantSpeakerIndicator(true);
+        localVideoThumbnail.updateDominantSpeakerIndicator(false);
 
         // let's remove the indications from the remote video if any
         if (oldSpeakerRemoteVideo) {
