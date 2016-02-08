@@ -18,6 +18,7 @@ import EtherpadManager from './etherpad/Etherpad';
 import VideoLayout from "./videolayout/VideoLayout";
 import SettingsMenu from "./side_pannels/settings/SettingsMenu";
 import Settings from "./../settings/Settings";
+import { reload } from '../util/helpers';
 
 var EventEmitter = require("events");
 UI.messageHandler = require("./util/MessageHandler");
@@ -136,7 +137,7 @@ function toggleFullScreen () {
 /**
  * Notify user that server has shut down.
  */
-UI.notifyGracefulShudown = function () {
+UI.notifyGracefulShutdown = function () {
     messageHandler.openMessageDialog(
         'dialog.serviceUnavailable',
         'dialog.gracefulShutdown'
@@ -635,7 +636,7 @@ UI.showLoginPopup = function(callback) {
         '<input name="password" ' +
         'type="password" data-i18n="[placeholder]dialog.userPassword"' +
         ' placeholder="user password">';
-    UI.messageHandler.openTwoButtonDialog(null, null, null, message,
+    messageHandler.openTwoButtonDialog(null, null, null, message,
         true,
         "dialog.Ok",
         function (e, v, m, f) {
@@ -965,14 +966,36 @@ UI.notifyTokenAuthFailed = function () {
 };
 
 UI.notifyInternalError = function () {
-    UI.messageHandler.showError("dialog.sorry", "dialog.internalError");
+    messageHandler.showError("dialog.sorry", "dialog.internalError");
 };
 
 UI.notifyFocusDisconnected = function (focus, retrySec) {
-    UI.messageHandler.notify(
+    messageHandler.notify(
         null, "notify.focus",
         'disconnected', "notify.focusFail",
         {component: focus, ms: retrySec}
+    );
+};
+
+/**
+ * Notify user that focus left the conference so page should be reloaded.
+ */
+UI.notifyFocusLeft = function () {
+    let title = APP.translation.generateTranslationHTML(
+        'dialog.serviceUnavailable'
+    );
+    let msg = APP.translation.generateTranslationHTML(
+        'dialog.jicofoUnavailable'
+    );
+    messageHandler.openDialog(
+        title,
+        msg,
+        true, // persistent
+        [{title: 'retry'}],
+        function () {
+            reload();
+            return false;
+        }
     );
 };
 
@@ -1030,7 +1053,7 @@ UI.getLargeVideoID = function () {
  * Shows dialog with a link to FF extension.
  */
 UI.showExtensionRequiredDialog = function (url) {
-    APP.UI.messageHandler.openMessageDialog(
+    messageHandler.openMessageDialog(
         "dialog.extensionRequired",
         null,
         null,
