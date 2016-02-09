@@ -9,10 +9,15 @@ const ConnectionErrors = JitsiMeetJS.errors.connection;
  * Try to open connection using provided credentials.
  * @param {string} [id]
  * @param {string} [password]
+ * @param {string} [roomName]
  * @returns {Promise<JitsiConnection>} connection if
  * everything is ok, else error.
  */
-function connect(id, password) {
+function connect(id, password, roomName) {
+
+    let connectionConfig = config;
+
+    connectionConfig.bosh += '?room=' + roomName;
     let connection = new JitsiMeetJS.JitsiConnection(null, null, config);
 
     return new Promise(function (resolve, reject) {
@@ -82,13 +87,14 @@ function requestAuth() {
  * @param {object} options
  * @param {string} [options.id]
  * @param {string} [options.password]
+ * @param {string} [options.roomName]
  * @param {boolean} [retry] if we should show auth dialog
  * on PASSWORD_REQUIRED error.
  *
  * @returns {Promise<JitsiConnection>}
  */
-export function openConnection({id, password, retry}) {
-    return connect(id, password).catch(function (err) {
+export function openConnection({id, password, retry, roomName}) {
+    return connect(id, password, roomName).catch(function (err) {
         if (!retry) {
             throw err;
         }

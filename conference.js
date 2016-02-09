@@ -34,10 +34,12 @@ const Commands = {
 
 /**
  * Open Connection. When authentication failed it shows auth dialog.
+ * @param roomName the room name to use
  * @returns Promise<JitsiConnection>
  */
-function connect() {
-    return openConnection({retry: true}).catch(function (err) {
+function connect(roomName) {
+    return openConnection({retry: true, roomName: roomName})
+            .catch(function (err) {
         if (err === ConnectionErrors.PASSWORD_REQUIRED) {
             APP.UI.notifyTokenAuthFailed();
         } else {
@@ -287,7 +289,7 @@ export default {
                     .catch(() => createLocalTracks('audio'))
                 // if audio also failed then just return empty array
                     .catch(() => []),
-                connect()
+                connect(options.roomName)
             ]);
         }).then(([tracks, con]) => {
             console.log('initialized with %s local tracks', tracks.length);
