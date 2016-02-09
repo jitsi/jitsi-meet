@@ -385,6 +385,22 @@ const Toolbar = {
 
     updateRecordingState (state) {
         setRecordingButtonState(state);
+    },
+
+    /**
+     * Marks video icon as muted or not.
+     * @param {boolean} muted if icon should look like muted or not
+     */
+    markVideoIconAsMuted (muted) {
+        $('#toolbar_button_camera').toggleClass("icon-camera-disabled", muted);
+    },
+
+    /**
+     * Marks audio icon as muted or not.
+     * @param {boolean} muted if icon should look like muted or not
+     */
+    markAudioIconAsMuted (muted) {
+        $('#toolbar_button_mute').toggleClass("icon-microphone", !muted).toggleClass("icon-mic-disabled", muted);
     }
 };
 

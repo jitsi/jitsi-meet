@@ -660,9 +660,9 @@ UI.askForNickname = function () {
  */
 UI.setAudioMuted = function (id, muted) {
     VideoLayout.onAudioMute(id, muted);
-    if(APP.conference.isLocalId(id))
-        UIUtil.buttonClick("#toolbar_button_mute",
-            "icon-microphone icon-mic-disabled");
+    if (APP.conference.isLocalId(id)) {
+        Toolbar.markAudioIconAsMuted(muted);
+    }
 };
 
 /**
@@ -670,8 +670,9 @@ UI.setAudioMuted = function (id, muted) {
  */
 UI.setVideoMuted = function (id, muted) {
     VideoLayout.onVideoMute(id, muted);
-    if(APP.conference.isLocalId(id))
-        $('#toolbar_button_camera').toggleClass("icon-camera-disabled", muted);
+    if (APP.conference.isLocalId(id)) {
+        Toolbar.markVideoIconAsMuted(muted);
+    }
 };
 
 UI.addListener = function (type, listener) {
@@ -1038,6 +1039,14 @@ UI.stopPrezi = function (userId) {
 
 UI.onStartMutedChanged = function () {
     SettingsMenu.onStartMutedChanged();
+};
+
+/**
+ * Update list of available physical devices.
+ * @param {object[]} devices new list of available devices
+ */
+UI.onAvailableDevicesChanged = function (devices) {
+    SettingsMenu.onAvailableDevicesChanged(devices);
 };
 
 /**

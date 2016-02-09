@@ -1,6 +1,7 @@
 #settingsmenu {
     background: black;
     color: #00ccff;
+    overflow-y: auto;
 }
 
 #settingsmenu input, select {
@@ -52,6 +53,10 @@
 #startMutedOptions {
     padding-left: 10%;
     text-indent: -10%;
+
+    /* clearfix */
+    overflow: auto;
+    zoom: 1;
 }
 
 #startAudioMuted {
@@ -65,4 +70,21 @@
 .startMutedLabel {
     width: 94%;
     float: left;
+}
+
+#devicesOptions {
+    display: none;
+}
+
+#devicesOptions label {
+    display: block;
+    margin-top: 15px;
+}
+
+#devicesOptions span {
+    padding-left: 10%;
+}
+
+#devicesOptions select {
+    height: 40px;
 }

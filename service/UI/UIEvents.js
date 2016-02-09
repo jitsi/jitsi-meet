@@ -41,5 +41,7 @@ export default {
     LOGOUT: "UI.logout",
     RECORDING_TOGGLE: "UI.recording_toggle",
     SIP_DIAL: "UI.sip_dial",
-    SUBEJCT_CHANGED: "UI.subject_changed"
+    SUBEJCT_CHANGED: "UI.subject_changed",
+    VIDEO_DEVICE_CHANGED: "UI.video_device_changed",
+    AUDIO_DEVICE_CHANGED: "UI.audio_device_changed"
 };
