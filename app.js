@@ -62,8 +62,6 @@ const APP = {
     conference,
     API,
     init () {
-        this.desktopsharing =
-            require("./modules/desktopsharing/desktopsharing");
         this.keyboardshortcut =
             require("./modules/keyboardshortcut/keyboardshortcut");
         this.translation = require("./modules/translation/translation");
@@ -75,10 +73,6 @@ function init() {
     var isUIReady = APP.UI.start();
     if (isUIReady) {
         APP.conference.init({roomName: buildRoomName()}).then(function () {
-            // init desktop before UI, in order to make sure
-            // autoEnableDesktopSharing works
-            APP.desktopsharing.init(JitsiMeetJS.isDesktopSharingEnabled());
-
             APP.UI.initConference();
 
             APP.UI.addListener(UIEvents.LANG_CHANGED, function (language) {
