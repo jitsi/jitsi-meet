@@ -279,6 +279,13 @@ export default {
         APP.UI.eventEmitter.emit(UIEvents.AUDIO_MUTED, mute);
     },
     /**
+     * Returns whether local audio is muted or not.
+     * @returns {boolean}
+     */
+    isLocalAudioMuted() {
+        return this.audioMuted;
+    },
+    /**
      * Simulates toolbar button click for audio mute. Used by shortcuts and API.
      */
     toggleAudioMuted () {

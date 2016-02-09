@@ -75,7 +75,8 @@ var KeyboardShortcut = {
                 $(":focus").is("input[type=password]") ||
                 $(":focus").is("textarea"))) {
                 if(e.which === "T".charCodeAt(0)) {
-                    APP.conference.muteAudio(true);
+                    if(APP.conference.isLocalAudioMuted())
+                        APP.conference.muteAudio(false);
                 }
             }
         };
