@@ -19,7 +19,7 @@ const ConferenceErrors = JitsiMeetJS.errors.conference;
 const TrackEvents = JitsiMeetJS.events.track;
 const TrackErrors = JitsiMeetJS.errors.track;
 
-let room, connection, localTracks, localAudio, localVideo, roomLocker;
+let room, connection, localAudio, localVideo, roomLocker;
 
 /**
  * Known custom conference commands.
@@ -120,6 +120,8 @@ function createLocalTracks (...devices) {
         // copy array to avoid mutations inside library
         devices: devices.slice(0),
         resolution: config.resolution,
+        cameraDeviceId: APP.settings.getCameraDeviceId(),
+        micDeviceId: APP.settings.getMicDeviceId(),
         // adds any ff fake device settings if any
         firefox_fake_device: config.firefox_fake_device
     }).catch(function (err) {
@@ -293,11 +295,19 @@ export default {
             ]);
         }).then(([tracks, con]) => {
             console.log('initialized with %s local tracks', tracks.length);
-            localTracks = tracks;
             connection = con;
-            this._createRoom();
+            this._createRoom(tracks);
             this.isDesktopSharingEnabled =
                 JitsiMeetJS.isDesktopSharingEnabled();
+
+            // update list of available devices
+            if (JitsiMeetJS.isDeviceListAvailable() &&
+                JitsiMeetJS.isDeviceChangeAvailable()) {
+                JitsiMeetJS.enumerateDevices((devices) => {
+                    this.availableDevices = devices;
+                    APP.UI.onAvailableDevicesChanged();
+                });
+            }
             // XXX The API will take care of disconnecting from the XMPP server
             // (and, thus, leaving the room) on unload.
             return new Promise((resolve, reject) => {
@@ -360,6 +370,10 @@ export default {
     listMembersIds () {
         return room.getParticipants().map(p => p.getId());
     },
+    /**
+     * List of available cameras and microphones.
+     */
+    availableDevices: [],
     /**
      * Check if SIP is supported.
      * @returns {boolean}
@@ -449,32 +463,30 @@ export default {
     getLogs () {
         return room.getLogs();
     },
-    _createRoom () {
+    _createRoom (localTracks) {
         room = connection.initJitsiConference(APP.conference.roomName,
             this._getConferenceOptions());
         this.localId = room.myUserId();
         localTracks.forEach((track) => {
-            if(track.isAudioTrack()) {
-                localAudio = track;
-            }
-            else if (track.isVideoTrack()) {
-                localVideo = track;
-            }
             room.addTrack(track);
-            APP.UI.addLocalStream(track);
+
+            if (track.isAudioTrack()) {
+                this.useAudioStream(track);
+            } else if (track.isVideoTrack()) {
+                this.useVideoStream(track);
+            }
         });
         roomLocker = createRoomLocker(room);
         this._room = room; // FIXME do not use this
-        this.localId = room.myUserId();
 
         let email = APP.settings.getEmail();
         email && sendEmail(email);
 
         let nick = APP.settings.getDisplayName();
-        (config.useNicks && !nick) && (() => {
+        if (config.useNicks && !nick) {
             nick = APP.UI.askForNickname();
             APP.settings.setDisplayName(nick);
-        })();
+        }
         nick && room.setDisplayName(nick);
 
         this._setupListeners();
@@ -487,6 +499,55 @@ export default {
                 "jirecon" : "colibri";
         }
         return options;
+    },
+
+    /**
+     * Start using provided video stream.
+     * Stops previous video stream.
+     * @param {JitsiLocalTrack} [stream] new stream to use or null
+     */
+    useVideoStream (stream) {
+        if (localVideo) {
+            localVideo.stop();
+        }
+        localVideo = stream;
+
+        if (stream) {
+            this.videoMuted = stream.isMuted();
+
+            APP.UI.addLocalStream(stream);
+
+            this.isSharingScreen = stream.videoType === 'desktop';
+        } else {
+            this.videoMuted = false;
+            this.isSharingScreen = false;
+        }
+
+        APP.UI.setVideoMuted(this.localId, this.videoMuted);
+
+        APP.UI.updateDesktopSharingButtons();
+    },
+
+    /**
+     * Start using provided audio stream.
+     * Stops previous audio stream.
+     * @param {JitsiLocalTrack} [stream] new stream to use or null
+     */
+    useAudioStream (stream) {
+        if (localAudio) {
+            localAudio.stop();
+        }
+        localAudio = stream;
+
+        if (stream) {
+            this.audioMuted = stream.isMuted();
+
+            APP.UI.addLocalStream(stream);
+        } else {
+            this.audioMuted = false;
+        }
+
+        APP.UI.setAudioMuted(this.localId, this.audioMuted);
     },
 
     videoSwitchInProgress: false,
@@ -507,22 +568,13 @@ export default {
             createLocalTracks('video').then(function ([stream]) {
                 return room.addTrack(stream);
             }).then((stream) => {
-                if (localVideo) {
-                    localVideo.stop();
-                }
-                localVideo = stream;
-                this.videoMuted = stream.isMuted();
-                APP.UI.setVideoMuted(this.localId, this.videoMuted);
-
-                APP.UI.addLocalStream(stream);
-                console.log('sharing local video');
-            }).catch((err) => {
-                localVideo = null;
-                console.error('failed to share local video', err);
-            }).then(() => {
+                this.useVideoStream(stream);
                 this.videoSwitchInProgress = false;
-                this.isSharingScreen = false;
-                APP.UI.updateDesktopSharingButtons();
+                console.log('sharing local video');
+            }).catch(function (err) {
+                this.useVideoStream(null);
+                this.videoSwitchInProgress = false;
+                console.error('failed to share local video', err);
             });
         } else {
             // stop sharing video and share desktop
@@ -541,19 +593,8 @@ export default {
                 );
                 return room.addTrack(stream);
             }).then((stream) => {
-                if (localVideo) {
-                    localVideo.stop();
-                }
-                localVideo = stream;
-
-                this.videoMuted = stream.isMuted();
-                APP.UI.setVideoMuted(this.localId, this.videoMuted);
-
-                APP.UI.addLocalStream(stream);
-
+                this.useVideoStream(stream);
                 this.videoSwitchInProgress = false;
-                this.isSharingScreen = true;
-                APP.UI.updateDesktopSharingButtons();
                 console.log('sharing local desktop');
             }).catch((err) => {
                 this.videoSwitchInProgress = false;
@@ -906,6 +947,30 @@ export default {
         APP.UI.addListener(UIEvents.PINNED_ENDPOINT, (id) => {
             room.pinParticipant(id);
         });
+
+        APP.UI.addListener(
+            UIEvents.VIDEO_DEVICE_CHANGED,
+            (cameraDeviceId) => {
+                APP.settings.setCameraDeviceId(cameraDeviceId);
+                createLocalTracks('video').then(([stream]) => {
+                    room.addTrack(stream);
+                    this.useVideoStream(stream);
+                    console.log('switched local video device');
+                });
+            }
+        );
+
+        APP.UI.addListener(
+            UIEvents.AUDIO_DEVICE_CHANGED,
+            (micDeviceId) => {
+                APP.settings.setMicDeviceId(micDeviceId);
+                createLocalTracks('audio').then(([stream]) => {
+                    room.addTrack(stream);
+                    this.useAudioStream(stream);
+                    console.log('switched local audio device');
+                });
+            }
+        );
 
         APP.UI.addListener(
             UIEvents.TOGGLE_SCREENSHARING, this.toggleScreenSharing.bind(this)

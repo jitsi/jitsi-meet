@@ -17,6 +17,11 @@ function LocalVideo(VideoLayout, emitter) {
     this.flipX = true;
     this.isLocal = true;
     this.emitter = emitter;
+    Object.defineProperty(this, 'id', {
+        get: function () {
+            return APP.conference.localId;
+        }
+    });
     SmallVideo.call(this);
 }
 
@@ -193,10 +198,6 @@ LocalVideo.prototype.changeVideo = function (stream) {
         stream.off(TrackEvents.TRACK_STOPPED, endedHandler);
     };
     stream.on(TrackEvents.TRACK_STOPPED, endedHandler);
-};
-
-LocalVideo.prototype.joined = function (id) {
-    this.id = id;
 };
 
 export default LocalVideo;

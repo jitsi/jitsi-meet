@@ -139,6 +139,17 @@
          return document.fullScreen
              || document.mozFullScreen
              || document.webkitIsFullScreen;
+     },
+
+     /**
+      * Create html attributes string out of object properties.
+      * @param {Object} attrs object with properties
+      * @returns {String} string of html element attributes
+      */
+     attrsToString: function (attrs) {
+         return Object.keys(attrs).map(
+             key => ` ${key}="${attrs[key]}"`
+         ).join(' ');
      }
 };
 

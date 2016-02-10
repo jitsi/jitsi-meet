@@ -84,7 +84,9 @@
         "update": "Update",
         "name": "Name",
         "startAudioMuted": "start without audio",
-        "startVideoMuted": "start without video"
+        "startVideoMuted": "start without video",
+        "selectCamera": "select camera",
+        "selectMic": "select microphone"
     },
     "videothumbnail":
     {

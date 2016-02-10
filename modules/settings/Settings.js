@@ -1,9 +1,11 @@
 import {generateUsername} from '../util/UsernameGenerator';
 
-var email = '';
-var displayName = '';
-var userId;
-var language = null;
+let email = '';
+let displayName = '';
+let userId;
+let language = null;
+let cameraDeviceId = '';
+let micDeviceId = '';
 
 function supportsLocalStorage() {
     try {
@@ -32,6 +34,8 @@ if (supportsLocalStorage()) {
     email = window.localStorage.email || '';
     displayName = window.localStorage.displayname || '';
     language = window.localStorage.language;
+    cameraDeviceId = window.localStorage.cameraDeviceId || '';
+    micDeviceId = window.localStorage.micDeviceId || '';
 } else {
     console.log("local storage is not supported");
     userId = generateUniqueId();
@@ -86,5 +90,41 @@ export default {
     setLanguage: function (lang) {
         language = lang;
         window.localStorage.language = lang;
+    },
+
+    /**
+     * Get device id of the camera which is currently in use.
+     * Empty string stands for default device.
+     * @returns {String}
+     */
+    getCameraDeviceId: function () {
+        return cameraDeviceId;
+    },
+    /**
+     * Set device id of the camera which is currently in use.
+     * Empty string stands for default device.
+     * @param {string} newId new camera device id
+     */
+    setCameraDeviceId: function (newId = '') {
+        cameraDeviceId = newId;
+        window.localStorage.cameraDeviceId = newId;
+    },
+
+    /**
+     * Get device id of the microphone which is currently in use.
+     * Empty string stands for default device.
+     * @returns {String}
+     */
+    getMicDeviceId: function () {
+        return micDeviceId;
+    },
+    /**
+     * Set device id of the microphone which is currently in use.
+     * Empty string stands for default device.
+     * @param {string} newId new microphone device id
+     */
+    setMicDeviceId: function (newId = '') {
+        micDeviceId = newId;
+        window.localStorage.micDeviceId = newId;
     }
 };

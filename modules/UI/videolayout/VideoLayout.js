@@ -170,11 +170,8 @@ var VideoLayout = {
      * and setting them assume the id is already set.
      */
     mucJoined () {
-        let id = APP.conference.localId;
-        localVideoThumbnail.joined(id);
-
         if (largeVideo && !largeVideo.id) {
-            this.updateLargeVideo(id, true);
+            this.updateLargeVideo(APP.conference.localId, true);
         }
     },
 
