@@ -307,9 +307,9 @@ class VideoContainer extends LargeContainer {
     show () {
         let $wrapper = this.$wrapper;
         return new Promise(function(resolve) {
-            $wrapper.css({visibility: 'visible'});
+            $wrapper.css('visibility', 'visible');
             $wrapper.fadeTo(FADE_DURATION_MS, 1, function () {
-                $('.watermark').css({visibility: 'visible'});
+                $('.watermark').css('visibility', 'visible');
                 resolve();
             });
         });
@@ -317,12 +317,15 @@ class VideoContainer extends LargeContainer {
 
     hide () {
         let $wrapper = this.$wrapper;
-
         let id = this.id;
         return new Promise(function(resolve) {
+            // There is no id on initial render
+            // so first time we hide wrapper immediately
+            // instead of slowly fading it out.
+            // This improves startup time.
             $wrapper.fadeTo(id ? FADE_DURATION_MS : 1, 0, function () {
-                $wrapper.css({visibility: 'hidden'});
-                $('.watermark').css({visibility: 'hidden'});
+                $wrapper.css('visibility', 'hidden');
+                $('.watermark').css('visibility', 'hidden');
                 resolve();
             });
         });
@@ -512,14 +515,6 @@ export default class LargeVideoManager {
      */
     updateAvatar (avatarUrl) {
         $("#dominantSpeakerAvatar").attr('src', avatarUrl);
-    }
-
-    /**
-     * Show avatar on Large video container or not.
-     * @param {boolean} show
-     */
-    showAvatar (show) {
-        this.videoContainer.showAvatar(show);
     }
 
     /**

@@ -1,4 +1,4 @@
-/* global config, APP, $, interfaceConfig */
+/* global config, APP, $, interfaceConfig, JitsiMeetJS */
 /* jshint -W101 */
 
 import AudioLevels from "../audio_levels/AudioLevels";
@@ -504,8 +504,10 @@ var VideoLayout = {
             remoteVideo.setMutedView(value);
         }
 
-        if(this.isCurrentlyOnLarge(id))
-            largeVideo.showAvatar(value);
+        if (this.isCurrentlyOnLarge(id)) {
+            // large video will show avatar instead of muted stream
+            this.updateLargeVideo(id, true);
+        }
     },
 
     /**
