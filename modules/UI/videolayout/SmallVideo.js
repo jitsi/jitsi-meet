@@ -1,4 +1,4 @@
-/* global $, APP, require */
+/* global $, APP, JitsiMeetJS */
 /* jshint -W101 */
 import Avatar from "../avatar/Avatar";
 import UIUtil from "../util/UIUtil";

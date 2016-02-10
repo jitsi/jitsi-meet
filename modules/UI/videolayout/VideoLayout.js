@@ -819,15 +819,15 @@ var VideoLayout = {
         }
     },
 
-    showMore (jid) {
-        if (jid === 'local') {
+    showMore (id) {
+        if (id === 'local') {
             localVideoThumbnail.connectionIndicator.showMore();
         } else {
-            var remoteVideo = remoteVideos[Strophe.getResourceFromJid(jid)];
+            let remoteVideo = remoteVideos[id];
             if (remoteVideo) {
                 remoteVideo.connectionIndicator.showMore();
             } else {
-                console.info("Error - no remote video for jid: " + jid);
+                console.info("Error - no remote video for id: " + id);
             }
         }
     },
