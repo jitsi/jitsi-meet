@@ -560,7 +560,7 @@ UI.updateUserRole = function (user) {
         messageHandler.notify(
             displayName, 'notify.somebody',
             'connected', 'notify.grantedTo', {
-                to: displayName
+                to: UIUtil.escapeHtml(displayName)
             }
         );
     } else {

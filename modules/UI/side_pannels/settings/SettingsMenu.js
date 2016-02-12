@@ -42,9 +42,7 @@ export default {
         function update() {
             let displayName = $('#setDisplayName').val();
 
-            if (displayName && Settings.getDisplayName() !== displayName) {
-                emitter.emit(UIEvents.NICKNAME_CHANGED, displayName);
-            }
+            emitter.emit(UIEvents.NICKNAME_CHANGED, displayName);
 
             let language = $("#languages_selectbox").val();
             if (language !== Settings.getLanguage()) {
