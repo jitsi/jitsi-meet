@@ -1,4 +1,5 @@
 import {generateUsername} from '../util/UsernameGenerator';
+import UIUtil from '../UI/util/UIUtil';
 
 let email = '';
 let displayName = '';
@@ -32,7 +33,7 @@ if (supportsLocalStorage()) {
 
     userId = window.localStorage.jitsiMeetId || '';
     email = window.localStorage.email || '';
-    displayName = window.localStorage.displayname || '';
+    displayName = UIUtil.unescapeHtml(window.localStorage.displayname || '');
     language = window.localStorage.language;
     cameraDeviceId = window.localStorage.cameraDeviceId || '';
     micDeviceId = window.localStorage.micDeviceId || '';
@@ -46,24 +47,27 @@ export default {
     /**
      * Sets the local user display name and saves it to local storage
      *
-     * @param newDisplayName the new display name for the local user
-     * @returns {string} the display name we just set
+     * @param {string} newDisplayName unescaped display name for the local user
      */
-    setDisplayName: function (newDisplayName) {
-        if (displayName === newDisplayName) {
-            return displayName;
-        }
+    setDisplayName (newDisplayName) {
         displayName = newDisplayName;
-        window.localStorage.displayname = displayName;
-        return displayName;
+        window.localStorage.displayname = UIUtil.escapeHtml(displayName);
     },
 
     /**
-     * Returns the currently used by the user
+     * Returns the escaped display name currently used by the user
      * @returns {string} currently valid user display name.
      */
     getDisplayName: function () {
         return displayName;
+    },
+
+    /**
+     * Returns id of the user.
+     * @returns {string} user id
+     */
+    getUserId () {
+        return userId;
     },
 
     setEmail: function (newEmail) {

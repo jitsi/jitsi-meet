@@ -179,7 +179,7 @@ var Chat = {
         $('#nickinput').keydown(function (event) {
             if (event.keyCode === 13) {
                 event.preventDefault();
-                var val = UIUtil.escapeHtml(this.value);
+                let val = this.value;
                 this.value = '';
                 eventEmitter.emit(UIEvents.NICKNAME_CHANGED, val);
             }

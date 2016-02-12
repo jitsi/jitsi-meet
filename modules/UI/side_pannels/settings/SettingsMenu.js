@@ -40,7 +40,7 @@ function generateDevicesOptions(items, selectedId) {
 export default {
     init (emitter) {
         function update() {
-            let displayName = UIUtil.escapeHtml($('#setDisplayName').val());
+            let displayName = $('#setDisplayName').val();
 
             if (displayName && Settings.getDisplayName() !== displayName) {
                 emitter.emit(UIEvents.NICKNAME_CHANGED, displayName);

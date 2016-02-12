@@ -223,12 +223,13 @@ UI.changeDisplayName = function (id, displayName) {
  * Intitialize conference UI.
  */
 UI.initConference = function () {
-    var id = APP.conference.localId;
+    let id = APP.conference.localId;
     Toolbar.updateRoomUrl(window.location.href);
-    var meHTML = APP.translation.generateTranslationHTML("me");
-    var settings = Settings.getSettings();
+    let meHTML = APP.translation.generateTranslationHTML("me");
 
-    $("#localNick").html(settings.email || settings.uid + " (" + meHTML + ")");
+    let email = Settings.getEmail();
+    let uid = Settings.getUserId();
+    $("#localNick").html(email || `${uid} (${meHTML})`);
 
     // Add myself to the contact list.
     ContactList.addContact(id);
@@ -236,14 +237,14 @@ UI.initConference = function () {
     // Once we've joined the muc show the toolbar
     ToolbarToggler.showToolbar();
 
-    var displayName = config.displayJids ? id : settings.displayName;
+    let displayName = config.displayJids ? id : Settings.getDisplayName();
 
     if (displayName) {
         UI.changeDisplayName('localVideoContainer', displayName);
     }
 
     // Make sure we configure our avatar id, before creating avatar for us
-    UI.setUserAvatar(id, settings.email);
+    UI.setUserAvatar(id, email);
 
     Toolbar.checkAutoEnableDesktopSharing();
     if(!interfaceConfig.filmStripOnly) {
@@ -607,8 +608,11 @@ UI.toggleContactList = function () {
     PanelToggler.toggleContactList();
 };
 
-UI.inputDisplayNameHandler = function (value) {
-    VideoLayout.inputDisplayNameHandler(value);
+/**
+ * Handle new user display name.
+ */
+UI.inputDisplayNameHandler = function (newDisplayName) {
+    eventEmitter.emit(UIEvents.NICKNAME_CHANGED, newDisplayName);
 };
 
 /**
@@ -888,7 +892,7 @@ UI.inviteParticipants = function (roomUrl, conferenceName, key, nick) {
     body = body.replace(/\n/g, "%0D%0A");
 
     if (nick) {
-        body += "%0D%0A%0D%0A" + nick;
+        body += "%0D%0A%0D%0A" + UIUtil.escapeHtml(nick);
     }
 
     if (interfaceConfig.INVITATION_POWERED_BY) {

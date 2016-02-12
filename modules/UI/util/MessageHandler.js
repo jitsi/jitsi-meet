@@ -1,6 +1,8 @@
 /* global $, APP, jQuery, toastr, Impromptu */
 /* jshint -W101 */
 
+import UIUtil from './UIUtil';
+
 /**
  * Flag for enable/disable of the notifications.
  * @type {boolean}
@@ -204,7 +206,7 @@ var messageHandler = (function(my) {
             return;
         var displayNameSpan = '<span class="nickname" ';
         if (displayName) {
-            displayNameSpan += ">" + displayName;
+            displayNameSpan += ">" + UIUtil.escapeHtml(displayName);
         } else {
             displayNameSpan += "data-i18n='" + displayNameKey +
                 "'>" + APP.translation.translateString(displayNameKey);
@@ -247,5 +249,3 @@ var messageHandler = (function(my) {
 }(messageHandler || {}));
 
 module.exports = messageHandler;
-
-
