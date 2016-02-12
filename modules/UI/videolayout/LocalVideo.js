@@ -1,4 +1,4 @@
-/* global $, interfaceConfig, APP */
+/* global $, interfaceConfig, APP, JitsiMeetJS */
 import ConnectionIndicator from "./ConnectionIndicator";
 import UIUtil from "../util/UIUtil";
 import UIEvents from "../../../service/UI/UIEvents";

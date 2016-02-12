@@ -253,7 +253,8 @@ RemoteVideo.prototype.addRemoteStreamElement = function (stream) {
     // calling attach will show it back
     $(streamElement).hide();
 
-    // If the container is currently visible we attach the stream to the element.
+    // If the container is currently visible
+    // we attach the stream to the element.
     if (!isVideo || (this.container.offsetParent !== null && isVideo)) {
         this.waitForPlayback(streamElement, stream);
 

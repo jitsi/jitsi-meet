@@ -2,10 +2,3 @@ node_modules
 libs
 debian
 analytics.js
-lib-jitsi-meet.js
-
-modules/xmpp/strophe.emuc.js
-modules/UI/prezi/Prezi.js
-modules/RTC/adapter.screenshare.js
-modules/statistics/*
-modules/UI/videolayout/*

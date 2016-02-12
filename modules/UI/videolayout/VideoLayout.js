@@ -1,4 +1,4 @@
-/* global config, APP, $, interfaceConfig */
+/* global config, APP, $, interfaceConfig, JitsiMeetJS */
 /* jshint -W101 */
 
 import AudioLevels from "../audio_levels/AudioLevels";
@@ -504,8 +504,10 @@ var VideoLayout = {
             remoteVideo.setMutedView(value);
         }
 
-        if(this.isCurrentlyOnLarge(id))
-            largeVideo.showAvatar(value);
+        if (this.isCurrentlyOnLarge(id)) {
+            // large video will show avatar instead of muted stream
+            this.updateLargeVideo(id, true);
+        }
     },
 
     /**
@@ -817,15 +819,15 @@ var VideoLayout = {
         }
     },
 
-    showMore (jid) {
-        if (jid === 'local') {
+    showMore (id) {
+        if (id === 'local') {
             localVideoThumbnail.connectionIndicator.showMore();
         } else {
-            var remoteVideo = remoteVideos[Strophe.getResourceFromJid(jid)];
+            let remoteVideo = remoteVideos[id];
             if (remoteVideo) {
                 remoteVideo.connectionIndicator.showMore();
             } else {
-                console.info("Error - no remote video for jid: " + jid);
+                console.info("Error - no remote video for id: " + id);
             }
         }
     },
