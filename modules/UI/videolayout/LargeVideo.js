@@ -170,6 +170,8 @@ class VideoContainer extends LargeContainer {
         this.stream = null;
         this.videoType = null;
 
+        this.isVisible = false;
+
         this.$avatar = $('#dominantSpeaker');
         this.$wrapper = $('#largeVideoWrapper');
 
@@ -298,6 +300,14 @@ class VideoContainer extends LargeContainer {
         this.$avatar.css("visibility", show ? "visible" : "hidden");
     }
 
+    /**
+     * Show or hide watermark.
+     * @param {boolean} show
+     */
+    showWatermark (show) {
+        $('.watermark').css('visibility', show ? 'visible' : 'hidden');
+    }
+
     // We are doing fadeOut/fadeIn animations on parent div which wraps
     // largeVideo, because when Temasys plugin is in use it replaces
     // <video> elements with plugin <object> tag. In Safari jQuery is
@@ -305,27 +315,36 @@ class VideoContainer extends LargeContainer {
     // animation effects performed on it directly.
 
     show () {
+        // its already visible
+        if (this.isVisible) {
+            return Promise.resolve();
+        }
+
         let $wrapper = this.$wrapper;
-        return new Promise(function(resolve) {
-            $wrapper.css('visibility', 'visible');
-            $wrapper.fadeTo(FADE_DURATION_MS, 1, function () {
-                $('.watermark').css('visibility', 'visible');
-                resolve();
-            });
+        return new Promise((resolve) => {
+            this.$wrapper.css('visibility', 'visible').fadeTo(
+                FADE_DURATION_MS,
+                1,
+                () => {
+                    this.showWatermark(true);
+                    this.isVisible = true;
+                    resolve();
+                }
+            );
         });
     }
 
     hide () {
-        let $wrapper = this.$wrapper;
-        let id = this.id;
-        return new Promise(function(resolve) {
-            // There is no id on initial render
-            // so first time we hide wrapper immediately
-            // instead of slowly fading it out.
-            // This improves startup time.
-            $wrapper.fadeTo(id ? FADE_DURATION_MS : 1, 0, function () {
-                $wrapper.css('visibility', 'hidden');
-                $('.watermark').css('visibility', 'hidden');
+        // its already hidden
+        if (!this.isVisible) {
+            return Promise.resolve();
+        }
+
+        return new Promise((resolve) => {
+            this.$wrapper.fadeTo(FADE_DURATION_MS, 0, () => {
+                this.$wrapper.css('visibility', 'hidden');
+                this.showWatermark(false);
+                this.isVisible = false;
                 resolve();
             });
         });
@@ -426,9 +445,16 @@ export default class LargeVideoManager {
             // show the avatar on large if needed
             this.videoContainer.showAvatar(isVideoMuted);
 
+            let promise;
+
             // do not show stream if video is muted
-            let promise
-                = isVideoMuted ? Promise.resolve() : this.videoContainer.show();
+            // but we still should show watermark
+            if (isVideoMuted) {
+                this.videoContainer.showWatermark(true);
+                promise = Promise.resolve();
+            } else {
+                promise = this.videoContainer.show();
+            }
 
             // resolve updateLargeVideo promise after everything is done
             promise.then(resolve);
