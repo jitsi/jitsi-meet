@@ -468,8 +468,6 @@ export default {
             this._getConferenceOptions());
         this.localId = room.myUserId();
         localTracks.forEach((track) => {
-            room.addTrack(track);
-
             if (track.isAudioTrack()) {
                 this.useAudioStream(track);
             } else if (track.isVideoTrack()) {
@@ -505,53 +503,72 @@ export default {
      * Start using provided video stream.
      * Stops previous video stream.
      * @param {JitsiLocalTrack} [stream] new stream to use or null
+     * @returns {Promise}
      */
     useVideoStream (stream) {
+        let promise = Promise.resolve();
         if (localVideo) {
-            localVideo.stop();
+            // this calls room.removeTrack internally
+            // so we don't need to remove it manually
+            promise = localVideo.stop();
         }
         localVideo = stream;
 
-        if (stream) {
-            this.videoMuted = stream.isMuted();
+        return promise.then(function () {
+            if (stream) {
+                return room.addTrack(stream);
+            }
+        }).then(() => {
+            if (stream) {
+                this.videoMuted = stream.isMuted();
+                this.isSharingScreen = stream.videoType === 'desktop';
 
-            APP.UI.addLocalStream(stream);
+                APP.UI.addLocalStream(stream);
+            } else {
+                this.videoMuted = false;
+                this.isSharingScreen = false;
+            }
 
-            this.isSharingScreen = stream.videoType === 'desktop';
-        } else {
-            this.videoMuted = false;
-            this.isSharingScreen = false;
-        }
+            APP.UI.setVideoMuted(this.localId, this.videoMuted);
 
-        APP.UI.setVideoMuted(this.localId, this.videoMuted);
-
-        APP.UI.updateDesktopSharingButtons();
+            APP.UI.updateDesktopSharingButtons();
+        });
     },
 
     /**
      * Start using provided audio stream.
      * Stops previous audio stream.
      * @param {JitsiLocalTrack} [stream] new stream to use or null
+     * @returns {Promise}
      */
     useAudioStream (stream) {
+        let promise = Promise.resolve();
         if (localAudio) {
-            localAudio.stop();
+            // this calls room.removeTrack internally
+            // so we don't need to remove it manually
+            promise = localAudio.stop();
         }
         localAudio = stream;
 
-        if (stream) {
-            this.audioMuted = stream.isMuted();
+        return promise.then(function () {
+            if (stream) {
+                return room.addTrack(stream);
+            }
+        }).then(() => {
+            if (stream) {
+                this.audioMuted = stream.isMuted();
 
-            APP.UI.addLocalStream(stream);
-        } else {
-            this.audioMuted = false;
-        }
+                APP.UI.addLocalStream(stream);
+            } else {
+                this.audioMuted = false;
+            }
 
-        APP.UI.setAudioMuted(this.localId, this.audioMuted);
+            APP.UI.setAudioMuted(this.localId, this.audioMuted);
+        });
     },
 
     videoSwitchInProgress: false,
-    toggleScreenSharing () {
+    toggleScreenSharing (shareScreen = !this.isSharingScreen) {
         if (this.videoSwitchInProgress) {
             console.warn("Switch in progress.");
             return;
@@ -563,21 +580,7 @@ export default {
 
         this.videoSwitchInProgress = true;
 
-        if (this.isSharingScreen) {
-            // stop sharing desktop and share video
-            createLocalTracks('video').then(function ([stream]) {
-                return room.addTrack(stream);
-            }).then((stream) => {
-                this.useVideoStream(stream);
-                this.videoSwitchInProgress = false;
-                console.log('sharing local video');
-            }).catch(function (err) {
-                this.useVideoStream(null);
-                this.videoSwitchInProgress = false;
-                console.error('failed to share local video', err);
-            });
-        } else {
-            // stop sharing video and share desktop
+        if (shareScreen) {
             createDesktopTrack().then(([stream]) => {
                 stream.on(
                     TrackEvents.TRACK_STOPPED,
@@ -587,18 +590,29 @@ export default {
                         // otherwise we stopped it because we already switched
                         // to video, so nothing to do here
                         if (this.isSharingScreen) {
-                            this.toggleScreenSharing();
+                            this.toggleScreenSharing(false);
                         }
                     }
                 );
-                return room.addTrack(stream);
-            }).then((stream) => {
-                this.useVideoStream(stream);
+                return this.useVideoStream(stream);
+            }).then(() => {
                 this.videoSwitchInProgress = false;
                 console.log('sharing local desktop');
             }).catch((err) => {
                 this.videoSwitchInProgress = false;
+                this.toggleScreenSharing(false);
                 console.error('failed to share local desktop', err);
+            });
+        } else {
+            createLocalTracks('video').then(
+                ([stream]) => this.useVideoStream(stream)
+            ).then(() => {
+                this.videoSwitchInProgress = false;
+                console.log('sharing local video');
+            }).catch((err) => {
+                this.useVideoStream(null);
+                this.videoSwitchInProgress = false;
+                console.error('failed to share local video', err);
             });
         }
     },
@@ -953,7 +967,6 @@ export default {
             (cameraDeviceId) => {
                 APP.settings.setCameraDeviceId(cameraDeviceId);
                 createLocalTracks('video').then(([stream]) => {
-                    room.addTrack(stream);
                     this.useVideoStream(stream);
                     console.log('switched local video device');
                 });
@@ -965,7 +978,6 @@ export default {
             (micDeviceId) => {
                 APP.settings.setMicDeviceId(micDeviceId);
                 createLocalTracks('audio').then(([stream]) => {
-                    room.addTrack(stream);
                     this.useAudioStream(stream);
                     console.log('switched local audio device');
                 });
