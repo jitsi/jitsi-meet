@@ -193,7 +193,8 @@ class ConferenceConnector {
             }, 5000);
 
             // notify user that auth is required
-            AuthHandler.requireAuth(APP.conference.roomName);
+
+            AuthHandler.requireAuth(room, roomLocker.password);
             break;
 
         case ConferenceErrors.RESERVATION_ERROR:
