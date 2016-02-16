@@ -54,7 +54,9 @@ function doXmppAuth (room, lockPassword) {
         // 4. reallocate focus in current room
         openConnection({id, password}).then(function (connection) {
             // open room
-            let newRoom = connection.initJitsiConference(room.getName());
+            let newRoom = connection.initJitsiConference(
+                room.getName(), APP.conference._getConferenceOptions()
+            );
 
             loginDialog.displayConnectionStatus(
                 APP.translation.translateString('connection.FETCH_SESSION_ID')
@@ -105,20 +107,22 @@ function authenticate (room, lockPassword) {
     if (room.isExternalAuthEnabled()) {
         doExternalAuth(room, lockPassword);
     } else {
-        doXmppAuth();
+        doXmppAuth(room, lockPassword);
     }
 }
 
 /**
  * Notify user that authentication is required to create the conference.
+ * @param {JitsiConference} room
+ * @param {string} [lockPassword] password to use if the conference is locked
  */
-function requireAuth(roomName) {
+function requireAuth(room, lockPassword) {
     if (authRequiredDialog) {
         return;
     }
 
     authRequiredDialog = LoginDialog.showAuthRequiredDialog(
-        roomName, authenticate
+        room.getName(), authenticate.bind(null, room, lockPassword)
     );
 }
 
