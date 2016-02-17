@@ -300,14 +300,6 @@ class VideoContainer extends LargeContainer {
         this.$avatar.css("visibility", show ? "visible" : "hidden");
     }
 
-    /**
-     * Show or hide watermark.
-     * @param {boolean} show
-     */
-    showWatermark (show) {
-        $('.watermark').css('visibility', show ? 'visible' : 'hidden');
-    }
-
     // We are doing fadeOut/fadeIn animations on parent div which wraps
     // largeVideo, because when Temasys plugin is in use it replaces
     // <video> elements with plugin <object> tag. In Safari jQuery is
@@ -326,7 +318,6 @@ class VideoContainer extends LargeContainer {
                 FADE_DURATION_MS,
                 1,
                 () => {
-                    this.showWatermark(true);
                     this.isVisible = true;
                     resolve();
                 }
@@ -343,7 +334,6 @@ class VideoContainer extends LargeContainer {
         return new Promise((resolve) => {
             this.$wrapper.fadeTo(FADE_DURATION_MS, 0, () => {
                 this.$wrapper.css('visibility', 'hidden');
-                this.showWatermark(false);
                 this.isVisible = false;
                 resolve();
             });
@@ -450,7 +440,7 @@ export default class LargeVideoManager {
             // do not show stream if video is muted
             // but we still should show watermark
             if (isVideoMuted) {
-                this.videoContainer.showWatermark(true);
+                this.showWatermark(true);
                 promise = Promise.resolve();
             } else {
                 promise = this.videoContainer.show();
@@ -544,6 +534,14 @@ export default class LargeVideoManager {
     }
 
     /**
+     * Show or hide watermark.
+     * @param {boolean} show
+     */
+    showWatermark (show) {
+        $('.watermark').css('visibility', show ? 'visible' : 'hidden');
+    }
+
+    /**
      * Add container of specified type.
      * @param {string} type container type
      * @param {LargeContainer} container container to add.
@@ -596,11 +594,18 @@ export default class LargeVideoManager {
         }
 
         let oldContainer = this.containers[this.state];
+        if (this.state === VideoContainerType) {
+            this.showWatermark(false);
+        }
         oldContainer.hide();
 
         this.state = type;
         let container = this.getContainer(type);
 
-        return container.show();
+        return container.show().then(() => {
+            if (type === VideoContainerType) {
+                this.showWatermark(true);
+            }
+        });
     }
 }
