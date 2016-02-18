@@ -270,11 +270,17 @@ class VideoContainer extends LargeContainer {
      * @param {string} videoType video type
      */
     setStream (stream, videoType) {
+        // detach old stream
+        if (this.stream) {
+            this.stream.detach(this.$video[0]);
+        }
+
         this.stream = stream;
         this.videoType = videoType;
 
-        if(!stream)
+        if (!stream) {
             return;
+        }
 
         stream.attach(this.$video[0]);
 
