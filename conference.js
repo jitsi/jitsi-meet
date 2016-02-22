@@ -228,6 +228,7 @@ class ConferenceConnector {
             break;
 
         case ConferenceErrors.FOCUS_LEFT:
+            room.leave().then(() => connection.disconnect());
             APP.UI.notifyFocusLeft();
             break;
 
