@@ -179,7 +179,7 @@ var Chat = {
         $('#nickinput').keydown(function (event) {
             if (event.keyCode === 13) {
                 event.preventDefault();
-                var val = UIUtil.escapeHtml(this.value);
+                let val = this.value;
                 this.value = '';
                 eventEmitter.emit(UIEvents.NICKNAME_CHANGED, val);
             }
@@ -292,13 +292,12 @@ var Chat = {
 
     /**
      * Sets the chat conversation mode.
+     * @param {boolean} isConversationMode if chat should be in
+     * conversation mode or not.
      */
     setChatConversationMode (isConversationMode) {
+        $('#chatspace').toggleClass('is-conversation-mode', isConversationMode);
         if (isConversationMode) {
-            $('#nickname').css({visibility: 'hidden'});
-            $('#chatconversation').css({visibility: 'visible'});
-            $('#usermsg').css({visibility: 'visible'});
-            $('#smileysarea').css({visibility: 'visible'});
             $('#usermsg').focus();
         }
     },

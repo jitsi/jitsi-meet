@@ -359,7 +359,7 @@ RemoteVideo.prototype.setDisplayName = function(displayName, key) {
     // If we already have a display name for this video.
     if (nameSpan.length > 0) {
         if (displayName && displayName.length > 0) {
-            $('#' + this.videoSpanId + '_name').html(displayName);
+            $('#' + this.videoSpanId + '_name').text(displayName);
         }
         else if (key && key.length > 0) {
             var nameHtml = APP.translation.generateTranslationHTML(key);
@@ -374,10 +374,10 @@ RemoteVideo.prototype.setDisplayName = function(displayName, key) {
         $('#' + this.videoSpanId)[0].appendChild(nameSpan);
 
         if (displayName && displayName.length > 0) {
-            nameSpan.innerHTML = displayName;
-        }
-        else
+            $(nameSpan).text(displayName);
+        } else {
             nameSpan.innerHTML = interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME;
+        }
         nameSpan.id = this.videoSpanId + '_name';
     }
 };

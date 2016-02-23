@@ -158,7 +158,7 @@ var ContactList = {
         let contactName = $(`#contacts #${id}>p`);
 
         if (displayName) {
-            contactName.html(displayName);
+            contactName.text(displayName);
         }
     },
 

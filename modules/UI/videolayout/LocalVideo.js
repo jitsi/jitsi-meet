@@ -65,7 +65,9 @@ LocalVideo.prototype.setDisplayName = function(displayName, key) {
         if (nameSpan.text() !== displayName) {
             if (displayName && displayName.length > 0) {
                 meHTML = APP.translation.generateTranslationHTML("me");
-                $('#localDisplayName').html(displayName + ' (' + meHTML + ')');
+                $('#localDisplayName').html(
+                    UIUtil.escapeHtml(displayName) + ' (' + meHTML + ')'
+                );
             } else {
                 $('#localDisplayName').html(defaultLocalDisplayName);
             }
@@ -81,7 +83,7 @@ LocalVideo.prototype.setDisplayName = function(displayName, key) {
 
         if (displayName && displayName.length > 0) {
             meHTML = APP.translation.generateTranslationHTML("me");
-            nameSpan.innerHTML = displayName + meHTML;
+            nameSpan.innerHTML = UIUtil.escapeHtml(displayName) + meHTML;
         }
         else {
             nameSpan.innerHTML = defaultLocalDisplayName;
@@ -126,7 +128,7 @@ LocalVideo.prototype.setDisplayName = function(displayName, key) {
                 editDisplayName.select();
 
                 editDisplayName.one("focusout", function (e) {
-                    self.VideoLayout.inputDisplayNameHandler(this.value);
+                    self.emitter.emit(UIEvents.NICKNAME_CHANGED, this.value);
                     $('#editDisplayName').hide();
                 });
 
@@ -139,10 +141,6 @@ LocalVideo.prototype.setDisplayName = function(displayName, key) {
                 });
             });
     }
-};
-
-LocalVideo.prototype.inputDisplayNameHandler = function (name) {
-    this.emitter.emit(UIEvents.NICKNAME_CHANGED, UIUtil.escapeHtml(name));
 };
 
 LocalVideo.prototype.createConnectionIndicator = function() {

@@ -347,11 +347,6 @@ var VideoLayout = {
         }
     },
 
-
-    inputDisplayNameHandler (name) {
-        localVideoThumbnail.inputDisplayNameHandler(name);
-    },
-
     videoactive (videoelem, resourceJid) {
 
         console.info(resourceJid + " video is now active", videoelem);

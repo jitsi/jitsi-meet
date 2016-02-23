@@ -860,7 +860,13 @@ export default {
             APP.UI.setUserAvatar(data.attributes.id, data.value);
         });
 
-        APP.UI.addListener(UIEvents.NICKNAME_CHANGED, (nickname) => {
+        APP.UI.addListener(UIEvents.NICKNAME_CHANGED, (nickname = '') => {
+            nickname = nickname.trim();
+
+            if (nickname === APP.settings.getDisplayName()) {
+                return;
+            }
+
             APP.settings.setDisplayName(nickname);
             room.setDisplayName(nickname);
             APP.UI.changeDisplayName(APP.conference.localId, nickname);
