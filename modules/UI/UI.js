@@ -444,6 +444,14 @@ UI.addRemoteStream = function (track) {
     VideoLayout.onRemoteStreamAdded(track);
 };
 
+/**
+ * Removed remote stream from UI.
+ * @param {JitsiTrack} track stream to remove
+ */
+UI.removeRemoteStream = function (track) {
+    VideoLayout.onRemoteStreamRemoved(track);
+};
+
 function chatAddError(errorMessage, originalText) {
     return Chat.chatAddError(errorMessage, originalText);
 }

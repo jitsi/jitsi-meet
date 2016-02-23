@@ -670,7 +670,10 @@ export default {
         });
 
         room.on(ConferenceEvents.TRACK_REMOVED, (track) => {
-            // FIXME handle
+            if(!track || track.isLocal())
+                return;
+
+            APP.UI.removeRemoteStream(track);
         });
 
         room.on(ConferenceEvents.TRACK_MUTE_CHANGED, (track) => {

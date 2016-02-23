@@ -129,7 +129,7 @@ SmallVideo.createStreamElement = function (stream) {
 
     RTCUIHelper.setAutoPlay(element, true);
 
-    element.id = (isVideo ? 'remoteVideo_' : 'remoteAudio_') + stream.getId();
+    element.id = SmallVideo.getStreamElementID(stream);
 
     element.onplay = function () {
         console.log("(TIME) Render " + (isVideo ? 'video' : 'audio') + ":\t",
@@ -139,6 +139,15 @@ SmallVideo.createStreamElement = function (stream) {
     element.oncontextmenu = function () { return false; };
 
     return element;
+};
+
+/**
+ * Returns the element id for a particular MediaStream.
+ */
+SmallVideo.getStreamElementID = function (stream) {
+    let isVideo = stream.isVideoTrack();
+
+    return (isVideo ? 'remoteVideo_' : 'remoteAudio_') + stream.getId();
 };
 
 /**
