@@ -96,11 +96,14 @@ var PanelToggler = {
                 $('#chatspace').trigger('shown');
             };
 
-        VideoLayout.resizeVideoArea(!Chat.isVisible(), chatCompleteFunction);
+        VideoLayout.resizeVideoArea(!Chat.isVisible(),
+                                    false,
+                                    true,
+                                    chatCompleteFunction);
 
-        toggle(Chat,
-            '#chatspace',
-            function () {
+        toggle(Chat, //Object
+            '#chatspace', // Selector
+            function () { //onOpenComplete
                 // Request the focus in the nickname field or the chat input
                 // field.
                 if ($('#nickname').css('visibility') === 'visible') {
@@ -109,9 +112,8 @@ var PanelToggler = {
                     $('#usermsg').focus();
                 }
             },
-            null,
-            () => this.resizeChat(),
-            null);
+            () => this.resizeChat(), //OnOpen
+            null); //OnClose
     },
 
     resizeChat () {
@@ -128,7 +130,11 @@ var PanelToggler = {
             : function () {
                 $('#contactlist').trigger('shown');
             };
-        VideoLayout.resizeVideoArea(!ContactList.isVisible(), completeFunction);
+        VideoLayout.resizeVideoArea(
+            !ContactList.isVisible(),
+            false,
+            true,
+            completeFunction);
 
         toggle(ContactList,
             '#contactlist',
@@ -143,7 +149,8 @@ var PanelToggler = {
      * Opens / closes the settings menu
      */
     toggleSettingsMenu () {
-        VideoLayout.resizeVideoArea(!SettingsMenu.isVisible(), function (){});
+        VideoLayout.resizeVideoArea(
+            !SettingsMenu.isVisible(), false, true, function (){});
         toggle(SettingsMenu,
             '#settingsmenu',
             null,

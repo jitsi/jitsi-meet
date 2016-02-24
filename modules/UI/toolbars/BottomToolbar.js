@@ -1,4 +1,4 @@
-/* global $ */
+/* global $, APP, interfaceConfig*/
 import UIUtil from '../util/UIUtil';
 import UIEvents from '../../../service/UI/UIEvents';
 import AnalyticsAdapter from '../../statistics/AnalyticsAdapter';
@@ -11,7 +11,6 @@ const defaultBottomToolbarButtons = {
 
 const BottomToolbar = {
     init () {
-        this.filmStrip = $('#remoteVideos');
         this.toolbar = $('#bottomToolbar');
     },
 
@@ -38,71 +37,43 @@ const BottomToolbar = {
         );
     },
 
-    toggleFilmStrip () {
-        this.filmStrip.toggleClass("hidden");
-    },
-
-    isFilmStripVisible () {
-        return !this.filmStrip.hasClass('hidden');
-    },
-
-    setupFilmStripOnly () {
-        this.filmStrip.css({
-            padding: "0px 0px 18px 0px",
-            right: 0
-        });
-    },
-
-    getFilmStripHeight () {
-        if (this.isFilmStripVisible()) {
-            return this.filmStrip.outerHeight();
-        } else {
-            return 0;
-        }
-    },
-
-    getFilmStripWidth () {
-        return this.filmStrip.width();
-    },
-
-    resizeThumbnails (thumbWidth, thumbHeight,
-                      animate = false, forceUpdate = false) {
-        return new Promise(resolve => {
-            this.filmStrip.animate({
-                // adds 2 px because of small video 1px border
-                height: thumbHeight + 2
-            }, {
-                queue: false,
-                duration: animate ? 500 : 0
-            });
-
-            this.getThumbs(!forceUpdate).animate({
-                height: thumbHeight,
-                width: thumbWidth
-            }, {
-                queue: false,
-                duration: animate ? 500 : 0,
-                complete:  resolve
-            });
-
-            if (!animate) {
-                resolve();
-            }
-        });
-    },
-
     resizeToolbar (thumbWidth, thumbHeight) {
         let bottom = (thumbHeight - this.toolbar.outerHeight())/2 + 18;
         this.toolbar.css({bottom});
     },
 
-    getThumbs (only_visible = false) {
-        let selector = 'span';
-        if (only_visible) {
-            selector += ':visible';
-        }
+    /**
+     * Returns true if this toolbar is currently visible, or false otherwise.
+     * @return <tt>true</tt> if currently visible, <tt>false</tt> - otherwise
+     */
+    isVisible() {
+        return this.toolbar.is(":visible");
+    },
 
-        return this.filmStrip.children(selector);
+    /**
+     * Hides the bottom toolbar with animation or not depending on the animate
+     * parameter.
+     * @param animate <tt>true</tt> to hide the bottom toolbar with animation,
+     * <tt>false</tt> or nothing to hide it without animation.
+     */
+    hide(animate) {
+        if (animate)
+            this.toolbar.hide("slide", {direction: "right", duration: 300});
+        else
+            this.toolbar.css("display", "none");
+    },
+
+    /**
+     * Shows the bottom toolbar with animation or not depending on the animate
+     * parameter.
+     * @param animate <tt>true</tt> to show the bottom toolbar with animation,
+     * <tt>false</tt> or nothing to show it without animation.
+     */
+    show(animate) {
+        if (animate)
+            this.toolbar.show("slide", {direction: "right", duration: 300});
+        else
+            this.toolbar.css("display", "block");
     }
 };
 

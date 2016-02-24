@@ -4,7 +4,7 @@
 import AudioLevels from "../audio_levels/AudioLevels";
 import Avatar from "../avatar/Avatar";
 import BottomToolbar from "../toolbars/BottomToolbar";
-
+import FilmStrip from "./FilmStrip";
 import UIEvents from "../../../service/UI/UIEvents";
 import UIUtil from "../util/UIUtil";
 
@@ -33,8 +33,6 @@ var eventEmitter = null;
  * @type {String}
  */
 var focusedVideoResourceJid = null;
-
-const thumbAspectRatio = 16.0 / 9.0;
 
 /**
  * On contact list item clicked.
@@ -149,9 +147,8 @@ var VideoLayout = {
         let localId = APP.conference.localId;
         this.onVideoTypeChanged(localId, stream.videoType);
 
-        let {thumbWidth, thumbHeight} = this.calculateThumbnailSize();
-        AudioLevels.updateAudioLevelCanvas(
-            null, thumbWidth, thumbHeight);
+        let {thumbWidth, thumbHeight} = this.resizeThumbnails(false, true);
+        AudioLevels.updateAudioLevelCanvas(null, thumbWidth, thumbHeight);
 
         if (!stream.isMuted()) {
             localVideoThumbnail.changeVideo(stream);
@@ -221,7 +218,7 @@ var VideoLayout = {
     electLastVisibleVideo () {
         // pick the last visible video in the row
         // if nobody else is left, this picks the local video
-        let thumbs = BottomToolbar.getThumbs(true).filter('[id!="mixedstream"]');
+        let thumbs = FilmStrip.getThumbs(true).filter('[id!="mixedstream"]');
 
         let lastVisible = thumbs.filter(':visible:last');
         if (lastVisible.length) {
@@ -235,7 +232,7 @@ var VideoLayout = {
         }
 
         console.info("Last visible video no longer exists");
-        thumbs = BottomToolbar.getThumbs();
+        thumbs = FilmStrip.getThumbs();
         if (thumbs.length) {
             let id = getPeerContainerResourceId(thumbs[0]);
             if (remoteVideos[id]) {
@@ -345,7 +342,7 @@ var VideoLayout = {
 
         // In case this is not currently in the last n we don't show it.
         if (localLastNCount && localLastNCount > 0 &&
-            BottomToolbar.getThumbs().length >= localLastNCount + 2) {
+            FilmStrip.getThumbs().length >= localLastNCount + 2) {
             remoteVideo.showPeerContainer('hide');
         } else {
             VideoLayout.resizeThumbnails(false, true);
@@ -412,72 +409,24 @@ var VideoLayout = {
     },
 
     /**
-     * Resizes the large video container.
-     */
-    resizeLargeVideoContainer (isSideBarVisible, forceUpdate) {
-        let animate = false;
-        if (largeVideo) {
-            largeVideo.updateContainerSize(isSideBarVisible);
-            largeVideo.resize(animate);
-        }
-        this.resizeVideoSpace(animate, isSideBarVisible);
-        this.resizeThumbnails(false, forceUpdate);
-    },
-
-    /**
      * Resizes thumbnails.
      */
-    resizeThumbnails (animate = false, forceUpdate = false) {
-        let {thumbWidth, thumbHeight} = this.calculateThumbnailSize();
+    resizeThumbnails (  animate = false,
+                        forceUpdate = false,
+                        videoAreaAvailableWidth = null) {
+        let {thumbWidth, thumbHeight}
+            = FilmStrip.calculateThumbnailSize(videoAreaAvailableWidth);
 
         $('.userAvatar').css('left', (thumbWidth - thumbHeight) / 2);
 
-        BottomToolbar.resizeThumbnails(thumbWidth, thumbHeight,
+        FilmStrip.resizeThumbnails(thumbWidth, thumbHeight,
             animate, forceUpdate)
             .then(function () {
                 BottomToolbar.resizeToolbar(thumbWidth, thumbHeight);
                 AudioLevels.updateCanvasSize(thumbWidth, thumbHeight);
         });
+        return {thumbWidth, thumbHeight};
     },
-
-    /**
-     * Calculates the thumbnail size.
-     *
-     */
-    calculateThumbnailSize () {
-        let videoSpaceWidth = BottomToolbar.getFilmStripWidth();
-        // Calculate the available height, which is the inner window height
-        // minus 39px for the header minus 2px for the delimiter lines on the
-        // top and bottom of the large video, minus the 36px space inside the
-        // remoteVideos container used for highlighting shadow.
-        let availableHeight = 100;
-
-        let numvids = BottomToolbar.getThumbs().length;
-        if (localLastNCount && localLastNCount > 0) {
-            numvids = Math.min(localLastNCount + 1, numvids);
-        }
-
-        // Remove the 3px borders arround videos and border around the remote
-        // videos area and the 4 pixels between the local video and the others
-        //TODO: Find out where the 4 pixels come from and remove them
-        let availableWinWidth = videoSpaceWidth - 2 * 3 * numvids - 70 - 4;
-
-        let availableWidth = availableWinWidth / numvids;
-        let maxHeight = Math.min(160, availableHeight);
-        availableHeight
-            = Math.min(  maxHeight,
-                         availableWidth / thumbAspectRatio,
-                         window.innerHeight - 18);
-
-        if (availableHeight < availableWidth / thumbAspectRatio) {
-            availableWidth = Math.floor(availableHeight * thumbAspectRatio);
-        }
-
-        return {
-            thumbWidth: availableWidth,
-            thumbHeight: availableHeight
-        };
-   },
 
     /**
      * On audio muted event.
@@ -613,7 +562,7 @@ var VideoLayout = {
         var updateLargeVideo = false;
 
         // Handle LastN/local LastN changes.
-        BottomToolbar.getThumbs().each(( index, element ) => {
+        FilmStrip.getThumbs().each(( index, element ) => {
             var resourceJid = getPeerContainerResourceId(element);
             var smallVideo = remoteVideos[resourceJid];
 
@@ -667,7 +616,8 @@ var VideoLayout = {
             endpointsEnteringLastN.forEach(function (resourceJid) {
 
                 var remoteVideo = remoteVideos[resourceJid];
-                remoteVideo.showPeerContainer('show');
+                if (remoteVideo)
+                    remoteVideo.showPeerContainer('show');
 
                 if (!remoteVideo.isVisible()) {
                     console.log("Add to last N", resourceJid);
@@ -840,40 +790,31 @@ var VideoLayout = {
      * Resizes the video area.
      *
      * @param isSideBarVisible indicates if the side bar is currently visible
-     * @param callback a function to be called when the video space is
+     * @param forceUpdate indicates that hidden thumbnails will be shown
+     * @param completeFunction a function to be called when the video area is
      * resized.
-     */
-    resizeVideoArea (isSideBarVisible, callback) {
-        let animate = true;
+     */resizeVideoArea (isSideBarVisible,
+                        forceUpdate = false,
+                        animate = false,
+                        completeFunction = null) {
 
         if (largeVideo) {
             largeVideo.updateContainerSize(isSideBarVisible);
             largeVideo.resize(animate);
-            this.resizeVideoSpace(animate, isSideBarVisible, callback);
         }
 
-        VideoLayout.resizeThumbnails(animate);
-    },
-
-    /**
-     * Resizes the #videospace html element
-     * @param animate boolean property that indicates whether the resize should
-     * be animated or not.
-     * @param isChatVisible boolean property that indicates whether the chat
-     * area is displayed or not.
-     * If that parameter is null the method will check the chat panel
-     * visibility.
-     * @param completeFunction a function to be called when the video space
-     * is resized.
-     */
-    resizeVideoSpace (animate, isChatVisible, completeFunction) {
+        // Calculate available width and height.
         let availableHeight = window.innerHeight;
-        let availableWidth = UIUtil.getAvailableVideoWidth(isChatVisible);
+        let availableWidth = UIUtil.getAvailableVideoWidth(isSideBarVisible);
 
         if (availableWidth < 0 || availableHeight < 0) {
             return;
         }
 
+        // Resize the thumbnails first.
+        this.resizeThumbnails(false, forceUpdate, availableWidth);
+
+        // Resize the video area element.
         $('#videospace').animate({
             right: window.innerWidth - availableWidth,
             width: availableWidth,
