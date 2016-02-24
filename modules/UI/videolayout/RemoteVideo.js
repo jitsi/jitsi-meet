@@ -143,14 +143,16 @@ if (!interfaceConfig.filmStripOnly) {
  * @param stream the MediaStream
  * @param isVideo <tt>true</tt> if given <tt>stream</tt> is a video one.
  */
-RemoteVideo.prototype.removeRemoteStreamElement =
-    function (stream, isVideo, id) {
+RemoteVideo.prototype.removeRemoteStreamElement = function (stream) {
     if (!this.container)
         return false;
 
+    var isVideo = stream.isVideoTrack();
+
+    var elementID = SmallVideo.getStreamElementID(stream);
     var select = null;
     if (isVideo) {
-        select = $('#' + id);
+        select = $('#' + elementID);
     }
     else
         select = $('#' + this.videoSpanId + '>audio');

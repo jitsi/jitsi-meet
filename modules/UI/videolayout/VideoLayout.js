@@ -269,6 +269,11 @@ var VideoLayout = {
         }
     },
 
+    onRemoteStreamRemoved (stream) {
+        let id = stream.getParticipantId();
+        remoteVideos[id].removeRemoteStreamElement(stream);
+    },
+
     /**
      * Return the type of the remote video.
      * @param id the id for the remote video
