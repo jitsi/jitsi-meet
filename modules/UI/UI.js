@@ -225,10 +225,6 @@ UI.changeDisplayName = function (id, displayName) {
 UI.initConference = function () {
     let id = APP.conference.localId;
     Toolbar.updateRoomUrl(window.location.href);
-    let meHTML = APP.translation.generateTranslationHTML("me");
-
-    let email = Settings.getEmail();
-    $("#localNick").html(email || `${id} (${meHTML})`);
 
     // Add myself to the contact list.
     ContactList.addContact(id);
@@ -243,7 +239,7 @@ UI.initConference = function () {
     }
 
     // Make sure we configure our avatar id, before creating avatar for us
-    UI.setUserAvatar(id, email);
+    UI.setUserAvatar(id, Settings.getEmail());
 
     Toolbar.checkAutoEnableDesktopSharing();
     if(!interfaceConfig.filmStripOnly) {

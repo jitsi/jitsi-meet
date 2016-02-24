@@ -158,16 +158,6 @@
     text-align: center;
 }
 
-#remoteVideos .nick {
-    display: none; /* enable when you want nicks to be shown */
-    position: absolute;
-    left: 0px;
-    bottom: -20px;
-    z-index: 0;
-    width: 100%;
-    font-size: 10pt;
-}
-
 .videocontainer>span.displayname,
 .videocontainer>input.displayname {
     display: none;
