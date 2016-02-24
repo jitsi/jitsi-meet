@@ -228,8 +228,7 @@ UI.initConference = function () {
     let meHTML = APP.translation.generateTranslationHTML("me");
 
     let email = Settings.getEmail();
-    let uid = Settings.getUserId();
-    $("#localNick").html(email || `${uid} (${meHTML})`);
+    $("#localNick").html(email || `${id} (${meHTML})`);
 
     // Add myself to the contact list.
     ContactList.addContact(id);
@@ -585,14 +584,6 @@ UI.updateUserRole = function (user) {
  */
 UI.toggleSmileys = function () {
     Chat.toggleSmileys();
-};
-
-/**
- * Get current settings.
- * @returns {object} settings
- */
-UI.getSettings = function () {
-    return Settings.getSettings();
 };
 
 /**
