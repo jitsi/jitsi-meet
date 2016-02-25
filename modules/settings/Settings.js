@@ -7,6 +7,7 @@ let userId;
 let language = null;
 let cameraDeviceId = '';
 let micDeviceId = '';
+let welcomePageDisabled = false;
 
 function supportsLocalStorage() {
     try {
@@ -37,6 +38,9 @@ if (supportsLocalStorage()) {
     language = window.localStorage.language;
     cameraDeviceId = window.localStorage.cameraDeviceId || '';
     micDeviceId = window.localStorage.micDeviceId || '';
+    welcomePageDisabled = JSON.parse(
+        window.localStorage.welcomePageDisabled || false
+    );
 } else {
     console.log("local storage is not supported");
     userId = generateUniqueId();
@@ -130,5 +134,22 @@ export default {
     setMicDeviceId: function (newId = '') {
         micDeviceId = newId;
         window.localStorage.micDeviceId = newId;
+    },
+
+    /**
+     * Check if welcome page is enabled or not.
+     * @returns {boolean}
+     */
+    isWelcomePageEnabled () {
+        return !welcomePageDisabled;
+    },
+
+    /**
+     * Enable or disable welcome page.
+     * @param {boolean} enabled if welcome page should be enabled or not
+     */
+    setWelcomePageEnabled (enabled) {
+        welcomePageDisabled = !enabled;
+        window.localStorage.welcomePageDisabled = welcomePageDisabled;
     }
 };
