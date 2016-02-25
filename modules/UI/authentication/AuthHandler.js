@@ -69,6 +69,7 @@ function doXmppAuth (room, lockPassword) {
                     APP.translation.translateString('connection.GOT_SESSION_ID')
                 );
 
+                // authenticate conference on the fly
                 room.join(lockPassword);
 
                 loginDialog.close();
@@ -106,6 +107,26 @@ function authenticate (room, lockPassword) {
 }
 
 /**
+ * De-authenticate local user.
+ *
+ * @param {JitsiConference} room
+ * @param {string} [lockPassword] password to use if the conference is locked
+ * @returns {Promise}
+ */
+function logout (room) {
+    return new Promise(function (resolve) {
+        room.room.moderator.logout(resolve);
+    }).then(function (url) {
+        // de-authenticate conference on the fly
+        if (room.isJoined()) {
+            room.join();
+        }
+
+        return url;
+    });
+}
+
+/**
  * Notify user that authentication is required to create the conference.
  * @param {JitsiConference} room
  * @param {string} [lockPassword] password to use if the conference is locked
@@ -139,5 +160,6 @@ function closeAuth() {
 export default {
     authenticate,
     requireAuth,
-    closeAuth
+    closeAuth,
+    logout
 };

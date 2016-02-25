@@ -315,8 +315,7 @@ UI.start = function () {
     document.title = interfaceConfig.APP_NAME;
     var setupWelcomePage = null;
     if(config.enableWelcomePage && window.location.pathname == "/" &&
-        (!window.localStorage.welcomePageDisabled ||
-            window.localStorage.welcomePageDisabled == "false")) {
+       Settings.isWelcomePageEnabled()) {
         $("#videoconference_page").hide();
         if (!setupWelcomePage)
             setupWelcomePage = require("./welcome_page/WelcomePage");

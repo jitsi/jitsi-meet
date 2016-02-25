@@ -111,6 +111,33 @@ function muteLocalVideo (muted) {
 }
 
 /**
+ * Disconnect from the conference and optionally request user feedback.
+ * @param {boolean} [requestFeedback=false] if user feedback should be requested
+ */
+function hangup (requestFeedback = false) {
+    let promise = Promise.resolve();
+
+    if (requestFeedback) {
+        promise = APP.UI.requestFeedback();
+    }
+
+    promise.then(function () {
+        connection.disconnect();
+
+        if (!config.enableWelcomePage) {
+            return;
+        }
+        // redirect to welcome page
+        setTimeout(() => {
+            APP.settings.setWelcomePageEnabled(true);
+            window.location.pathname = "/";
+        }, 3000);
+    }, function (err) {
+        console.error('Failed to hangup the call:', err);
+    });
+}
+
+/**
  * Create local tracks of specified types.
  * @param {string[]} devices required track types ('audio', 'video' etc.)
  * @returns {Promise<JitsiLocalTrack[]>}
@@ -915,25 +942,18 @@ export default {
 
         // call hangup
         APP.UI.addListener(UIEvents.HANGUP, () => {
-            APP.UI.requestFeedback().then(() => {
-                connection.disconnect();
-                config.enableWelcomePage && setTimeout(() => {
-                        window.localStorage.welcomePageDisabled = false;
-                        window.location.pathname = "/";
-                    }, 3000);
-            }, (err) => {console.error(err);});
+            hangup(true);
         });
 
         // logout
         APP.UI.addListener(UIEvents.LOGOUT, () => {
-            // FIXME handle logout
-            // APP.xmpp.logout(function (url) {
-            //     if (url) {
-            //         window.location.href = url;
-            //     } else {
-            //         hangup();
-            //     }
-            // });
+            AuthHandler.logout(room).then(function (url) {
+                if (url) {
+                    window.location.href = url;
+                } else {
+                    hangup(true);
+                }
+            });
         });
 
         APP.UI.addListener(UIEvents.SIP_DIAL, (sipNumber) => {
