@@ -69,13 +69,7 @@ function doXmppAuth (room, lockPassword) {
                     APP.translation.translateString('connection.GOT_SESSION_ID')
                 );
 
-                if (room.isJoined()) {
-                    // just reallocate focus if already joined
-                    room.room.moderator.allocateConferenceFocus();
-                } else {
-                    // or join
-                    room.join(lockPassword);
-                }
+                room.join(lockPassword);
 
                 loginDialog.close();
             }).catch(function (error, code) {
