@@ -624,9 +624,15 @@ export default {
     _setupListeners () {
         // add local streams when joined to the conference
         room.on(ConferenceEvents.CONFERENCE_JOINED, () => {
-            APP.UI.updateAuthInfo(room.isAuthEnabled(), room.getAuthLogin());
             APP.UI.mucJoined();
         });
+
+        room.on(
+            ConferenceEvents.AUTH_STATUS_CHANGED,
+            function (authEnabled, authLogin) {
+                APP.UI.updateAuthInfo(authEnabled, authLogin);
+            }
+        );
 
 
         room.on(ConferenceEvents.USER_JOINED, (id, user) => {
