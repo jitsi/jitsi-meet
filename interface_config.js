@@ -1,6 +1,6 @@
 var interfaceConfig = {
     CANVAS_EXTRA: 104,
-    CANVAS_RADIUS: 7,
+    CANVAS_RADIUS: 1,
     SHADOW_COLOR: '#ffffff',
     INITIAL_TOOLBAR_TIMEOUT: 20000,
     TOOLBAR_TIMEOUT: 4000,
@@ -28,7 +28,7 @@ var interfaceConfig = {
      * Whether to only show the filmstrip (and hide the toolbar).
      */
     filmStripOnly: false,
-    RANDOM_AVATAR_URL_PREFIX: false,
-    RANDOM_AVATAR_URL_SUFFIX: false,
+    RANDOM_AVATAR_URL_PREFIX: "http://abotars.hipch.at/meeple/",
+    RANDOM_AVATAR_URL_SUFFIX: ".png",
     FILM_STRIP_MAX_HEIGHT: 160
 };

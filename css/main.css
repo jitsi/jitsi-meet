@@ -38,16 +38,6 @@ html, body{
     position: relative;
 }
 
-#toolbar a.button::after {
-    content: '';
-    display: inline-block;
-    position: absolute;
-    left: 40px;
-    width: 1px;
-    height: 20px;
-    background: #373737;
-}
-
 #toolbar a.button:last-child::after {
     content: none;
 }
@@ -57,7 +47,7 @@ html, body{
     position: relative;
     color: #FFFFFF;
     top: 0;
-    padding: 10px 0;
+    padding: 9px 0;
     width: 38px;
     cursor: pointer;
     text-align: center;
@@ -110,7 +100,7 @@ html, body{
     height: 13px;
     line-height: 13px;
     font-weight: bold;
-    border-radius: 2px;
+    border-radius: 1px;
     font-size: 11px;
     text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 }
@@ -145,10 +135,8 @@ a.bottomToolbarButton:hover {
     top: 0px;
     cursor: pointer;
     background: rgba(255, 255, 255, 0.1);
-    border-radius: 6px;
-    background-clip: padding-box;
-    -webkit-border-radius: 6px;
-    -webkit-background-clip: padding-box;
+    border-radius: 1px;
+    -webkit-border-radius: 1px;
 }
 
 .no-fa-video-camera, .fa-microphone-slash {
@@ -211,7 +199,7 @@ button {
     height: 35px;
     padding: 0 1em 0 2em;
     position: relative;
-    border-radius: 3px;
+    border-radius: 1px;
     font-weight: bold;
     color: #fff;
     line-height: 35px;
@@ -273,9 +261,8 @@ div.feedbackButton:hover {
     margin-right: 5px;
     bottom: 40px;
     width: 29px;
-    border-radius: 6px;
+    border-radius: 1px;
     color: #FFF;
-    border: 1px solid rgba(256, 256, 256, 0.2);
     background: rgba(0,0,0,0.8);
     z-index: 6; /*+1 from #remoteVideos*/
 }
