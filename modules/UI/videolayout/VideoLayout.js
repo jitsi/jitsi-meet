@@ -271,7 +271,10 @@ var VideoLayout = {
 
     onRemoteStreamRemoved (stream) {
         let id = stream.getParticipantId();
-        remoteVideos[id].removeRemoteStreamElement(stream);
+        let remoteVideo = remoteVideos[id];
+        if (remoteVideo) { // remote stream may be removed after participant left the conference
+            remoteVideo.removeRemoteStreamElement(stream);
+        }
     },
 
     /**
