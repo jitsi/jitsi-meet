@@ -20,7 +20,6 @@ var remoteVideoTypes = {};
 var localVideoThumbnail = null;
 
 var currentDominantSpeaker = null;
-var lastNCount = config.channelLastN;
 var localLastNCount = config.channelLastN;
 var localLastNSet = [];
 var lastNEndpointsCache = [];
@@ -98,6 +97,7 @@ var VideoLayout = {
         localVideoThumbnail = new LocalVideo(VideoLayout, emitter);
 
         emitter.addListener(UIEvents.CONTACT_CLICKED, onContactClicked);
+        this.lastNCount = config.channelLastN;
     },
 
     initLargeVideo (isSideBarVisible) {
@@ -116,9 +116,9 @@ var VideoLayout = {
     },
 
     isInLastN (resource) {
-        return lastNCount < 0 || // lastN is disabled
+        return this.lastNCount < 0 || // lastN is disabled
              // lastNEndpoints cache not built yet
-            (lastNCount > 0 && !lastNEndpointsCache.length) ||
+            (this.lastNCount > 0 && !lastNEndpointsCache.length) ||
             (lastNEndpointsCache &&
                 lastNEndpointsCache.indexOf(resource) !== -1);
     },
@@ -578,8 +578,8 @@ var VideoLayout = {
      * endpoints
      */
     onLastNEndpointsChanged (lastNEndpoints, endpointsEnteringLastN) {
-        if (lastNCount !== lastNEndpoints.length)
-            lastNCount = lastNEndpoints.length;
+        if (this.lastNCount !== lastNEndpoints.length)
+            this.lastNCount = lastNEndpoints.length;
 
         lastNEndpointsCache = lastNEndpoints;
 
@@ -594,8 +594,8 @@ var VideoLayout = {
         // enters E's local LastN ejecting C.
 
         // Increase the local LastN set size, if necessary.
-        if (lastNCount > localLastNCount) {
-            localLastNCount = lastNCount;
+        if (this.lastNCount > localLastNCount) {
+            localLastNCount = this.lastNCount;
         }
 
         // Update the local LastN set preserving the order in which the
