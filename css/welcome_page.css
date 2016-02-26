@@ -42,11 +42,11 @@
 }
 
 #enter_room_form {
-    border-radius: 10px;
+    border-radius: 1px;
     background-color: #FFFFFF;
     border: none;
-    -moz-border-radius: 10px;
-    -webkit-border-radius: 10px;
+    -moz-border-radius: 1px;
+    -webkit-border-radius: 1px;
     -webkit-appearance: none;
     height: 55px;
     box-shadow: none;
@@ -82,8 +82,8 @@
     width: 73px;
     height: 45px;
     background-color: #16a8fe;
-    moz-border-radius: 10px;
-    -webkit-border-radius: 10px;
+    moz-border-radius: 1px;
+    -webkit-border-radius: 1px;
     color: #ffffff;
     font-weight: 600;
     border: none;
