@@ -15,10 +15,6 @@ function RemoteVideo(id, VideoLayout, emitter) {
     this.addRemoteVideoContainer();
     this.connectionIndicator = new ConnectionIndicator(this, id);
     this.setDisplayName();
-    var nickfield = document.createElement('span');
-    nickfield.className = "nick";
-    nickfield.appendChild(document.createTextNode(id));
-    this.container.appendChild(nickfield);
     this.bindHoverHandler();
     this.flipX = false;
     this.isLocal = false;
