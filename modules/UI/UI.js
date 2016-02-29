@@ -16,6 +16,7 @@ import PreziManager from './prezi/Prezi';
 import EtherpadManager from './etherpad/Etherpad';
 
 import VideoLayout from "./videolayout/VideoLayout";
+import FilmStrip from "./videolayout/FilmStrip";
 import SettingsMenu from "./side_pannels/settings/SettingsMenu";
 import Settings from "./../settings/Settings";
 import { reload } from '../util/helpers';
@@ -293,7 +294,7 @@ function registerListeners() {
 function bindEvents() {
     function onResize() {
         PanelToggler.resizeChat();
-        VideoLayout.resizeLargeVideoContainer(PanelToggler.isVisible());
+        VideoLayout.resizeVideoArea(PanelToggler.isVisible());
     }
 
     // Resize and reposition videos in full screen mode.
@@ -334,12 +335,13 @@ UI.start = function () {
     registerListeners();
 
     BottomToolbar.init();
+    FilmStrip.init();
 
     VideoLayout.init(eventEmitter);
     if (!interfaceConfig.filmStripOnly) {
         VideoLayout.initLargeVideo(PanelToggler.isVisible());
     }
-    VideoLayout.resizeLargeVideoContainer(PanelToggler.isVisible(), true);
+    VideoLayout.resizeVideoArea(PanelToggler.isVisible(), true, true);
 
     ContactList.init(eventEmitter);
 
@@ -367,9 +369,9 @@ UI.start = function () {
         });
     } else {
         $("#header").css("display", "none");
-        $("#bottomToolbar").css("display", "none");
         $("#downloadlog").css("display", "none");
-        BottomToolbar.setupFilmStripOnly();
+        BottomToolbar.hide();
+        FilmStrip.setupFilmStripOnly();
         messageHandler.disableNotifications();
         $('body').popover("disable");
         JitsiPopover.enabled = false;
@@ -598,7 +600,7 @@ UI.getSettings = function () {
  * Toggles film strip.
  */
 UI.toggleFilmStrip = function () {
-    BottomToolbar.toggleFilmStrip();
+    FilmStrip.toggleFilmStrip();
 };
 
 /**

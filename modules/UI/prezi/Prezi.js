@@ -9,7 +9,7 @@ import UIEvents from '../../../service/UI/UIEvents';
 import messageHandler from '../util/MessageHandler';
 import ToolbarToggler from "../toolbars/ToolbarToggler";
 import SidePanelToggler from "../side_pannels/SidePanelToggler";
-import BottomToolbar from '../toolbars/BottomToolbar';
+import FilmStrip from '../videolayout/FilmStrip';
 
 /**
  * Example of Prezi link.
@@ -287,7 +287,7 @@ class PreziContainer extends LargeContainer {
     }
 
     resize (containerWidth, containerHeight) {
-        let height = containerHeight - BottomToolbar.getFilmStripHeight();
+        let height = containerHeight - FilmStrip.getFilmStripHeight();
 
         let width = containerWidth;
 

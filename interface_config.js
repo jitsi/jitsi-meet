@@ -29,5 +29,6 @@ var interfaceConfig = {
      */
     filmStripOnly: false,
     RANDOM_AVATAR_URL_PREFIX: false,
-    RANDOM_AVATAR_URL_SUFFIX: false
+    RANDOM_AVATAR_URL_SUFFIX: false,
+    FILM_STRIP_MAX_HEIGHT: 160
 };
