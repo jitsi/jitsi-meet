@@ -62,8 +62,6 @@ const APP = {
     conference,
     API,
     init () {
-        this.desktopsharing =
-            require("./modules/desktopsharing/desktopsharing");
         this.keyboardshortcut =
             require("./modules/keyboardshortcut/keyboardshortcut");
         this.translation = require("./modules/translation/translation");
@@ -82,7 +80,6 @@ function init() {
                 APP.settings.setLanguage(language);
             });
 
-            APP.desktopsharing.init(JitsiMeetJS.isDesktopSharingEnabled());
             APP.keyboardshortcut.init();
         }).catch(function (err) {
             console.error(err);

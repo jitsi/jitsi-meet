@@ -21,15 +21,28 @@ function generateLanguagesSelectBox() {
     return html + "</select>";
 }
 
+function generateDevicesOptions(items, selectedId) {
+    return items.map(function (item) {
+        let attrs = {
+            value: item.deviceId
+        };
+
+        if (item.deviceId === selectedId) {
+            attrs.selected = 'selected';
+        }
+
+        let attrsStr = UIUtil.attrsToString(attrs);
+        return `<option ${attrsStr}>${item.label}</option>`;
+    }).join('\n');
+}
+
 
 export default {
     init (emitter) {
         function update() {
-            let displayName = UIUtil.escapeHtml($('#setDisplayName').val());
+            let displayName = $('#setDisplayName').val();
 
-            if (displayName && Settings.getDisplayName() !== displayName) {
-                emitter.emit(UIEvents.NICKNAME_CHANGED, displayName);
-            }
+            emitter.emit(UIEvents.NICKNAME_CHANGED, displayName);
 
             let language = $("#languages_selectbox").val();
             if (language !== Settings.getLanguage()) {
@@ -51,12 +64,23 @@ export default {
                     startVideoMuted
                 );
             }
+
+            let cameraDeviceId = $('#selectCamera').val();
+            if (cameraDeviceId !== Settings.getCameraDeviceId()) {
+                emitter.emit(UIEvents.VIDEO_DEVICE_CHANGED, cameraDeviceId);
+            }
+
+            let micDeviceId = $('#selectMic').val();
+            if (micDeviceId !== Settings.getMicDeviceId()) {
+                emitter.emit(UIEvents.AUDIO_DEVICE_CHANGED, micDeviceId);
+            }
         }
 
         let startMutedBlock = $("#startMutedOptions");
         startMutedBlock.before(generateLanguagesSelectBox());
         APP.translation.translateElement($("#languages_selectbox"));
 
+        this.onAvailableDevicesChanged();
         this.onRoleChanged();
         this.onStartMutedChanged();
 
@@ -94,5 +118,25 @@ export default {
 
     changeAvatar (avatarUrl) {
         $('#avatar').attr('src', avatarUrl);
+    },
+
+    onAvailableDevicesChanged () {
+        let devices = APP.conference.availableDevices;
+        if (!devices.length) {
+            $('#devicesOptions').hide();
+            return;
+        }
+
+        let audio = devices.filter(device => device.kind === 'audioinput');
+        let video = devices.filter(device => device.kind === 'videoinput');
+
+        $('#selectCamera').html(
+            generateDevicesOptions(video, Settings.getCameraDeviceId())
+        );
+        $('#selectMic').html(
+            generateDevicesOptions(audio, Settings.getMicDeviceId())
+        );
+
+        $('#devicesOptions').show();
     }
 };

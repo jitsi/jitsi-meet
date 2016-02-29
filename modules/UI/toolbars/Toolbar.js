@@ -131,7 +131,7 @@ const buttonHandlers = {
         emitter.emit(UIEvents.ETHERPAD_CLICKED);
     },
     "toolbar_button_desktopsharing": function () {
-        if (APP.desktopsharing.isUsingScreenStream) {
+        if (APP.conference.isSharingScreen) {
             AnalyticsAdapter.sendEvent('toolbar.screen.disabled');
         } else {
             AnalyticsAdapter.sendEvent('toolbar.screen.enabled');
@@ -371,13 +371,12 @@ const Toolbar = {
     },
 
     /**
-     * Sets the state of the button. The button has blue glow if desktop
+     * Update the state of the button. The button has blue glow if desktop
      * streaming is active.
-     * @param active the state of the desktop streaming.
      */
-    changeDesktopSharingButtonState (active) {
+    updateDesktopSharingButtonState () {
         let button = $("#toolbar_button_desktopsharing");
-        if (active) {
+        if (APP.conference.isSharingScreen) {
             button.addClass("glow");
         } else {
             button.removeClass("glow");
@@ -386,6 +385,22 @@ const Toolbar = {
 
     updateRecordingState (state) {
         setRecordingButtonState(state);
+    },
+
+    /**
+     * Marks video icon as muted or not.
+     * @param {boolean} muted if icon should look like muted or not
+     */
+    markVideoIconAsMuted (muted) {
+        $('#toolbar_button_camera').toggleClass("icon-camera-disabled", muted);
+    },
+
+    /**
+     * Marks audio icon as muted or not.
+     * @param {boolean} muted if icon should look like muted or not
+     */
+    markAudioIconAsMuted (muted) {
+        $('#toolbar_button_mute').toggleClass("icon-microphone", !muted).toggleClass("icon-mic-disabled", muted);
     }
 };
 

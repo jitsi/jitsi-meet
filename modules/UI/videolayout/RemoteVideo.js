@@ -143,14 +143,16 @@ if (!interfaceConfig.filmStripOnly) {
  * @param stream the MediaStream
  * @param isVideo <tt>true</tt> if given <tt>stream</tt> is a video one.
  */
-RemoteVideo.prototype.removeRemoteStreamElement =
-    function (stream, isVideo, id) {
+RemoteVideo.prototype.removeRemoteStreamElement = function (stream) {
     if (!this.container)
         return false;
 
+    var isVideo = stream.isVideoTrack();
+
+    var elementID = SmallVideo.getStreamElementID(stream);
     var select = null;
     if (isVideo) {
-        select = $('#' + id);
+        select = $('#' + elementID);
     }
     else
         select = $('#' + this.videoSpanId + '>audio');
@@ -253,7 +255,8 @@ RemoteVideo.prototype.addRemoteStreamElement = function (stream) {
     // calling attach will show it back
     $(streamElement).hide();
 
-    // If the container is currently visible we attach the stream to the element.
+    // If the container is currently visible
+    // we attach the stream to the element.
     if (!isVideo || (this.container.offsetParent !== null && isVideo)) {
         this.waitForPlayback(streamElement, stream);
 
@@ -343,41 +346,6 @@ RemoteVideo.prototype.updateRemoteVideoMenu = function (isMuted) {
 };
 
 /**
- * Updates the Indicator for dominant speaker.
- *
- * @param isSpeaker indicates the current indicator state
- */
-RemoteVideo.prototype.updateDominantSpeakerIndicator = function (isSpeaker) {
-
-    if (!this.container) {
-        console.warn( "Unable to set dominant speaker indicator - "
-            + this.videoSpanId + " does not exist");
-        return;
-    }
-
-    var indicatorSpan
-        = $('#' + this.videoSpanId + '>span.dominantspeakerindicator');
-
-    // If we do not have an indicator for this video.
-    if (indicatorSpan.length <= 0) {
-        indicatorSpan = document.createElement('span');
-
-        indicatorSpan.innerHTML
-            = "<i id='speakerindicatoricon' class='fa fa-bullhorn'></i>";
-        indicatorSpan.className = 'dominantspeakerindicator';
-
-        $('#' + this.videoSpanId)[0].appendChild(indicatorSpan);
-
-        // adds a tooltip
-        UIUtils.setTooltip(indicatorSpan, "speaker", "left");
-        APP.translation.translateElement($(indicatorSpan));
-    }
-
-    $(indicatorSpan).css("visibility", isSpeaker ? "visible" : "hidden");
-};
-
-
-/**
  * Sets the display name for the given video span id.
  */
 RemoteVideo.prototype.setDisplayName = function(displayName, key) {
@@ -393,7 +361,7 @@ RemoteVideo.prototype.setDisplayName = function(displayName, key) {
     // If we already have a display name for this video.
     if (nameSpan.length > 0) {
         if (displayName && displayName.length > 0) {
-            $('#' + this.videoSpanId + '_name').html(displayName);
+            $('#' + this.videoSpanId + '_name').text(displayName);
         }
         else if (key && key.length > 0) {
             var nameHtml = APP.translation.generateTranslationHTML(key);
@@ -408,10 +376,10 @@ RemoteVideo.prototype.setDisplayName = function(displayName, key) {
         $('#' + this.videoSpanId)[0].appendChild(nameSpan);
 
         if (displayName && displayName.length > 0) {
-            nameSpan.innerHTML = displayName;
-        }
-        else
+            $(nameSpan).text(displayName);
+        } else {
             nameSpan.innerHTML = interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME;
+        }
         nameSpan.id = this.videoSpanId + '_name';
     }
 };

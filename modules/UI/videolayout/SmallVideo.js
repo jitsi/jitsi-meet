@@ -1,4 +1,4 @@
-/* global $, APP, require */
+/* global $, APP, JitsiMeetJS */
 /* jshint -W101 */
 import Avatar from "../avatar/Avatar";
 import UIUtil from "../util/UIUtil";
@@ -129,7 +129,7 @@ SmallVideo.createStreamElement = function (stream) {
 
     RTCUIHelper.setAutoPlay(element, true);
 
-    element.id = (isVideo ? 'remoteVideo_' : 'remoteAudio_') + stream.getId();
+    element.id = SmallVideo.getStreamElementID(stream);
 
     element.onplay = function () {
         console.log("(TIME) Render " + (isVideo ? 'video' : 'audio') + ":\t",
@@ -139,6 +139,15 @@ SmallVideo.createStreamElement = function (stream) {
     element.oncontextmenu = function () { return false; };
 
     return element;
+};
+
+/**
+ * Returns the element id for a particular MediaStream.
+ */
+SmallVideo.getStreamElementID = function (stream) {
+    let isVideo = stream.isVideoTrack();
+
+    return (isVideo ? 'remoteVideo_' : 'remoteAudio_') + stream.getId();
 };
 
 /**
@@ -380,6 +389,40 @@ SmallVideo.prototype.avatarChanged = function (avatarUrl) {
             thumbnail.append(avatar);
         }
     }
+};
+
+/**
+ * Updates the Indicator for dominant speaker.
+ *
+ * @param isSpeaker indicates the current indicator state
+ */
+SmallVideo.prototype.updateDominantSpeakerIndicator = function (isSpeaker) {
+
+    if (!this.container) {
+        console.warn( "Unable to set dominant speaker indicator - "
+            + this.videoSpanId + " does not exist");
+        return;
+    }
+
+    var indicatorSpan
+        = $('#' + this.videoSpanId + '>span.dominantspeakerindicator');
+
+    // If we do not have an indicator for this video.
+    if (indicatorSpan.length <= 0) {
+        indicatorSpan = document.createElement('span');
+
+        indicatorSpan.innerHTML
+            = "<i id='speakerindicatoricon' class='fa fa-bullhorn'></i>";
+        indicatorSpan.className = 'dominantspeakerindicator';
+
+        $('#' + this.videoSpanId)[0].appendChild(indicatorSpan);
+
+        // adds a tooltip
+        UIUtil.setTooltip(indicatorSpan, "speaker", "left");
+        APP.translation.translateElement($(indicatorSpan));
+    }
+
+    $(indicatorSpan).css("visibility", isSpeaker ? "visible" : "hidden");
 };
 
 export default SmallVideo;

@@ -18,6 +18,7 @@ import EtherpadManager from './etherpad/Etherpad';
 import VideoLayout from "./videolayout/VideoLayout";
 import SettingsMenu from "./side_pannels/settings/SettingsMenu";
 import Settings from "./../settings/Settings";
+import { reload } from '../util/helpers';
 
 var EventEmitter = require("events");
 UI.messageHandler = require("./util/MessageHandler");
@@ -136,7 +137,7 @@ function toggleFullScreen () {
 /**
  * Notify user that server has shut down.
  */
-UI.notifyGracefulShudown = function () {
+UI.notifyGracefulShutdown = function () {
     messageHandler.openMessageDialog(
         'dialog.serviceUnavailable',
         'dialog.gracefulShutdown'
@@ -222,12 +223,13 @@ UI.changeDisplayName = function (id, displayName) {
  * Intitialize conference UI.
  */
 UI.initConference = function () {
-    var id = APP.conference.localId;
+    let id = APP.conference.localId;
     Toolbar.updateRoomUrl(window.location.href);
-    var meHTML = APP.translation.generateTranslationHTML("me");
-    var settings = Settings.getSettings();
+    let meHTML = APP.translation.generateTranslationHTML("me");
 
-    $("#localNick").html(settings.email || settings.uid + " (" + meHTML + ")");
+    let email = Settings.getEmail();
+    let uid = Settings.getUserId();
+    $("#localNick").html(email || `${uid} (${meHTML})`);
 
     // Add myself to the contact list.
     ContactList.addContact(id);
@@ -235,14 +237,14 @@ UI.initConference = function () {
     // Once we've joined the muc show the toolbar
     ToolbarToggler.showToolbar();
 
-    var displayName = config.displayJids ? id : settings.displayName;
+    let displayName = config.displayJids ? id : Settings.getDisplayName();
 
     if (displayName) {
         UI.changeDisplayName('localVideoContainer', displayName);
     }
 
     // Make sure we configure our avatar id, before creating avatar for us
-    UI.setUserAvatar(id, settings.email);
+    UI.setUserAvatar(id, email);
 
     Toolbar.checkAutoEnableDesktopSharing();
     if(!interfaceConfig.filmStripOnly) {
@@ -313,8 +315,7 @@ UI.start = function () {
     document.title = interfaceConfig.APP_NAME;
     var setupWelcomePage = null;
     if(config.enableWelcomePage && window.location.pathname == "/" &&
-        (!window.localStorage.welcomePageDisabled ||
-            window.localStorage.welcomePageDisabled == "false")) {
+       Settings.isWelcomePageEnabled()) {
         $("#videoconference_page").hide();
         if (!setupWelcomePage)
             setupWelcomePage = require("./welcome_page/WelcomePage");
@@ -442,6 +443,14 @@ UI.addRemoteStream = function (track) {
     VideoLayout.onRemoteStreamAdded(track);
 };
 
+/**
+ * Removed remote stream from UI.
+ * @param {JitsiTrack} track stream to remove
+ */
+UI.removeRemoteStream = function (track) {
+    VideoLayout.onRemoteStreamRemoved(track);
+};
+
 function chatAddError(errorMessage, originalText) {
     return Chat.chatAddError(errorMessage, originalText);
 }
@@ -558,7 +567,7 @@ UI.updateUserRole = function (user) {
         messageHandler.notify(
             displayName, 'notify.somebody',
             'connected', 'notify.grantedTo', {
-                to: displayName
+                to: UIUtil.escapeHtml(displayName)
             }
         );
     } else {
@@ -606,8 +615,11 @@ UI.toggleContactList = function () {
     PanelToggler.toggleContactList();
 };
 
-UI.inputDisplayNameHandler = function (value) {
-    VideoLayout.inputDisplayNameHandler(value);
+/**
+ * Handle new user display name.
+ */
+UI.inputDisplayNameHandler = function (newDisplayName) {
+    eventEmitter.emit(UIEvents.NICKNAME_CHANGED, newDisplayName);
 };
 
 /**
@@ -619,8 +631,8 @@ UI.getRemoteVideoType = function (jid) {
     return VideoLayout.getRemoteVideoType(jid);
 };
 
-UI.connectionIndicatorShowMore = function(jid) {
-    return VideoLayout.showMore(jid);
+UI.connectionIndicatorShowMore = function(id) {
+    VideoLayout.showMore(id);
 };
 
 // FIXME check if someone user this
@@ -635,7 +647,7 @@ UI.showLoginPopup = function(callback) {
         '<input name="password" ' +
         'type="password" data-i18n="[placeholder]dialog.userPassword"' +
         ' placeholder="user password">';
-    UI.messageHandler.openTwoButtonDialog(null, null, null, message,
+    messageHandler.openTwoButtonDialog(null, null, null, message,
         true,
         "dialog.Ok",
         function (e, v, m, f) {
@@ -659,9 +671,9 @@ UI.askForNickname = function () {
  */
 UI.setAudioMuted = function (id, muted) {
     VideoLayout.onAudioMute(id, muted);
-    if(APP.conference.isLocalId(id))
-        UIUtil.buttonClick("#toolbar_button_mute",
-            "icon-microphone icon-mic-disabled");
+    if (APP.conference.isLocalId(id)) {
+        Toolbar.markAudioIconAsMuted(muted);
+    }
 };
 
 /**
@@ -669,8 +681,9 @@ UI.setAudioMuted = function (id, muted) {
  */
 UI.setVideoMuted = function (id, muted) {
     VideoLayout.onVideoMute(id, muted);
-    if(APP.conference.isLocalId(id))
-        $('#toolbar_button_camera').toggleClass("icon-camera-disabled", muted);
+    if (APP.conference.isLocalId(id)) {
+        Toolbar.markVideoIconAsMuted(muted);
+    }
 };
 
 UI.addListener = function (type, listener) {
@@ -781,10 +794,9 @@ UI.setAudioLevel = function (id, lvl) {
 
 /**
  * Update state of desktop sharing buttons.
- * @param {boolean} isSharingScreen if user is currently sharing his screen
  */
-UI.updateDesktopSharingButtons = function (isSharingScreen) {
-    Toolbar.changeDesktopSharingButtonState(isSharingScreen);
+UI.updateDesktopSharingButtons = function () {
+    Toolbar.updateDesktopSharingButtonState();
 };
 
 /**
@@ -887,7 +899,7 @@ UI.inviteParticipants = function (roomUrl, conferenceName, key, nick) {
     body = body.replace(/\n/g, "%0D%0A");
 
     if (nick) {
-        body += "%0D%0A%0D%0A" + nick;
+        body += "%0D%0A%0D%0A" + UIUtil.escapeHtml(nick);
     }
 
     if (interfaceConfig.INVITATION_POWERED_BY) {
@@ -965,14 +977,36 @@ UI.notifyTokenAuthFailed = function () {
 };
 
 UI.notifyInternalError = function () {
-    UI.messageHandler.showError("dialog.sorry", "dialog.internalError");
+    messageHandler.showError("dialog.sorry", "dialog.internalError");
 };
 
 UI.notifyFocusDisconnected = function (focus, retrySec) {
-    UI.messageHandler.notify(
+    messageHandler.notify(
         null, "notify.focus",
         'disconnected', "notify.focusFail",
         {component: focus, ms: retrySec}
+    );
+};
+
+/**
+ * Notify user that focus left the conference so page should be reloaded.
+ */
+UI.notifyFocusLeft = function () {
+    let title = APP.translation.generateTranslationHTML(
+        'dialog.serviceUnavailable'
+    );
+    let msg = APP.translation.generateTranslationHTML(
+        'dialog.jicofoUnavailable'
+    );
+    messageHandler.openDialog(
+        title,
+        msg,
+        true, // persistent
+        [{title: 'retry'}],
+        function () {
+            reload();
+            return false;
+        }
     );
 };
 
@@ -1019,6 +1053,14 @@ UI.onStartMutedChanged = function () {
 };
 
 /**
+ * Update list of available physical devices.
+ * @param {object[]} devices new list of available devices
+ */
+UI.onAvailableDevicesChanged = function (devices) {
+    SettingsMenu.onAvailableDevicesChanged(devices);
+};
+
+/**
  * Returns the id of the current video shown on large.
  * Currently used by tests (torture).
  */
@@ -1030,7 +1072,7 @@ UI.getLargeVideoID = function () {
  * Shows dialog with a link to FF extension.
  */
 UI.showExtensionRequiredDialog = function (url) {
-    APP.UI.messageHandler.openMessageDialog(
+    messageHandler.openMessageDialog(
         "dialog.extensionRequired",
         null,
         null,

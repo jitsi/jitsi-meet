@@ -170,6 +170,8 @@ class VideoContainer extends LargeContainer {
         this.stream = null;
         this.videoType = null;
 
+        this.isVisible = false;
+
         this.$avatar = $('#dominantSpeaker');
         this.$wrapper = $('#largeVideoWrapper');
 
@@ -268,11 +270,17 @@ class VideoContainer extends LargeContainer {
      * @param {string} videoType video type
      */
     setStream (stream, videoType) {
+        // detach old stream
+        if (this.stream) {
+            this.stream.detach(this.$video[0]);
+        }
+
         this.stream = stream;
         this.videoType = videoType;
 
-        if(!stream)
+        if (!stream) {
             return;
+        }
 
         stream.attach(this.$video[0]);
 
@@ -305,24 +313,34 @@ class VideoContainer extends LargeContainer {
     // animation effects performed on it directly.
 
     show () {
+        // its already visible
+        if (this.isVisible) {
+            return Promise.resolve();
+        }
+
         let $wrapper = this.$wrapper;
-        return new Promise(function(resolve) {
-            $wrapper.css({visibility: 'visible'});
-            $wrapper.fadeTo(FADE_DURATION_MS, 1, function () {
-                $('.watermark').css({visibility: 'visible'});
-                resolve();
-            });
+        return new Promise((resolve) => {
+            this.$wrapper.css('visibility', 'visible').fadeTo(
+                FADE_DURATION_MS,
+                1,
+                () => {
+                    this.isVisible = true;
+                    resolve();
+                }
+            );
         });
     }
 
     hide () {
-        let $wrapper = this.$wrapper;
+        // its already hidden
+        if (!this.isVisible) {
+            return Promise.resolve();
+        }
 
-        let id = this.id;
-        return new Promise(function(resolve) {
-            $wrapper.fadeTo(id ? FADE_DURATION_MS : 1, 0, function () {
-                $wrapper.css({visibility: 'hidden'});
-                $('.watermark').css({visibility: 'hidden'});
+        return new Promise((resolve) => {
+            this.$wrapper.fadeTo(FADE_DURATION_MS, 0, () => {
+                this.$wrapper.css('visibility', 'hidden');
+                this.isVisible = false;
                 resolve();
             });
         });
@@ -418,13 +436,21 @@ export default class LargeVideoManager {
             // change the avatar url on large
             this.updateAvatar(Avatar.getAvatarUrl(id));
 
-            let isVideoMuted = stream? stream.isMuted() : true;
+            let isVideoMuted = stream ? stream.isMuted() : true;
 
             // show the avatar on large if needed
             this.videoContainer.showAvatar(isVideoMuted);
 
+            let promise;
+
             // do not show stream if video is muted
-            let promise = isVideoMuted ? Promise.resolve() : this.videoContainer.show();
+            // but we still should show watermark
+            if (isVideoMuted) {
+                this.showWatermark(true);
+                promise = Promise.resolve();
+            } else {
+                promise = this.videoContainer.show();
+            }
 
             // resolve updateLargeVideo promise after everything is done
             promise.then(resolve);
@@ -514,11 +540,11 @@ export default class LargeVideoManager {
     }
 
     /**
-     * Show avatar on Large video container or not.
+     * Show or hide watermark.
      * @param {boolean} show
      */
-    showAvatar (show) {
-        this.videoContainer.showAvatar(show);
+    showWatermark (show) {
+        $('.watermark').css('visibility', show ? 'visible' : 'hidden');
     }
 
     /**
@@ -574,11 +600,18 @@ export default class LargeVideoManager {
         }
 
         let oldContainer = this.containers[this.state];
+        if (this.state === VideoContainerType) {
+            this.showWatermark(false);
+        }
         oldContainer.hide();
 
         this.state = type;
         let container = this.getContainer(type);
 
-        return container.show();
+        return container.show().then(() => {
+            if (type === VideoContainerType) {
+                this.showWatermark(true);
+            }
+        });
     }
 }

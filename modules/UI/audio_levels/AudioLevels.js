@@ -50,7 +50,8 @@ function drawAudioLevelCanvas(id, audioLevel) {
          * been observed to pile into the console, strain the CPU.
          */
         if (audioLevelCanvasOrig) {
-            audioLevelCanvasCache[id] = CanvasUtil.cloneCanvas(audioLevelCanvasOrig);
+            audioLevelCanvasCache[id]
+                = CanvasUtil.cloneCanvas(audioLevelCanvasOrig);
         }
     }
 
@@ -68,13 +69,14 @@ function drawAudioLevelCanvas(id, audioLevel) {
 
     if (shadowLevel > 0) {
         // drawContext, x, y, w, h, r, shadowColor, shadowLevel
-        CanvasUtil.drawRoundRectGlow(drawContext,
-                                     interfaceConfig.CANVAS_EXTRA / 2, interfaceConfig.CANVAS_EXTRA / 2,
-                                     canvas.width - interfaceConfig.CANVAS_EXTRA,
-                                     canvas.height - interfaceConfig.CANVAS_EXTRA,
-                                     interfaceConfig.CANVAS_RADIUS,
-                                     interfaceConfig.SHADOW_COLOR,
-                                     shadowLevel);
+        CanvasUtil.drawRoundRectGlow(
+            drawContext,
+            interfaceConfig.CANVAS_EXTRA / 2, interfaceConfig.CANVAS_EXTRA / 2,
+            canvas.width - interfaceConfig.CANVAS_EXTRA,
+            canvas.height - interfaceConfig.CANVAS_EXTRA,
+            interfaceConfig.CANVAS_RADIUS,
+            interfaceConfig.SHADOW_COLOR,
+            shadowLevel);
     }
 }
 
@@ -88,11 +90,14 @@ function getShadowLevel (audioLevel) {
     let shadowLevel = 0;
 
     if (audioLevel <= 0.3) {
-        shadowLevel = Math.round(interfaceConfig.CANVAS_EXTRA/2*(audioLevel/0.3));
+        shadowLevel
+            = Math.round(interfaceConfig.CANVAS_EXTRA/2*(audioLevel/0.3));
     } else if (audioLevel <= 0.6) {
-        shadowLevel = Math.round(interfaceConfig.CANVAS_EXTRA/2*((audioLevel - 0.3) / 0.3));
+        shadowLevel
+            = Math.round(interfaceConfig.CANVAS_EXTRA/2*((audioLevel - 0.3) / 0.3));
     } else {
-        shadowLevel = Math.round(interfaceConfig.CANVAS_EXTRA/2*((audioLevel - 0.6) / 0.4));
+        shadowLevel
+            = Math.round(interfaceConfig.CANVAS_EXTRA/2*((audioLevel - 0.6) / 0.4));
     }
 
     return shadowLevel;
@@ -203,7 +208,8 @@ const AudioLevels = {
     },
 
     updateDominantSpeakerAudioLevel (audioLevel) {
-        if($("#domiantSpeaker").css("visibility") == "hidden" || ASDrawContext === null) {
+        if($("#dominantSpeaker").css("visibility") == "hidden"
+            || ASDrawContext === null) {
             return;
         }
 
@@ -214,7 +220,6 @@ const AudioLevels = {
 
         ASDrawContext.shadowBlur = getShadowLevel(audioLevel);
 
-
         // Fill the shape.
         ASDrawContext.fill();
     },
@@ -223,7 +228,10 @@ const AudioLevels = {
         let canvasWidth = thumbWidth + interfaceConfig.CANVAS_EXTRA;
         let canvasHeight = thumbHeight + interfaceConfig.CANVAS_EXTRA;
 
-        BottomToolbar.getThumbs().children('canvas').width(canvasWidth).height(canvasHeight);
+        BottomToolbar.getThumbs().children('canvas').each(function () {
+            $(this).attr('width', canvasWidth);
+            $(this).attr('height', canvasHeight);
+        });
 
         Object.keys(audioLevelCanvasCache).forEach(function (id) {
             audioLevelCanvasCache[id].width = canvasWidth;

@@ -148,9 +148,8 @@ var PanelToggler = {
             '#settingsmenu',
             null,
             function() {
-                var settings = Settings.getSettings();
-                $('#setDisplayName').get(0).value = settings.displayName;
-                $('#setEmail').get(0).value = settings.email;
+                $('#setDisplayName').val(Settings.getDisplayName());
+                $('#setEmail').val(Settings.getEmail());
             },
             null);
     },

@@ -72,6 +72,16 @@
         return $('<div/>').text(unsafeText).html();
     },
 
+    /**
+     * Unescapes the given text.
+     *
+     * @param {string} safe string which contains escaped html
+     * @returns {string} unescaped html string.
+     */
+    unescapeHtml: function (safe) {
+        return $('<div />').html(safe).text();
+    },
+
     imageToGrayScale: function (canvas) {
         var context = canvas.getContext('2d');
         var imgData = context.getImageData(0, 0, canvas.width, canvas.height);
@@ -139,6 +149,17 @@
          return document.fullScreen
              || document.mozFullScreen
              || document.webkitIsFullScreen;
+     },
+
+     /**
+      * Create html attributes string out of object properties.
+      * @param {Object} attrs object with properties
+      * @returns {String} string of html element attributes
+      */
+     attrsToString: function (attrs) {
+         return Object.keys(attrs).map(
+             key => ` ${key}="${attrs[key]}"`
+         ).join(' ');
      }
 };
 

@@ -1,4 +1,4 @@
-/* global config, APP, $, interfaceConfig */
+/* global config, APP, $, interfaceConfig, JitsiMeetJS */
 /* jshint -W101 */
 
 import AudioLevels from "../audio_levels/AudioLevels";
@@ -150,7 +150,8 @@ var VideoLayout = {
         this.onVideoTypeChanged(localId, stream.videoType);
 
         let {thumbWidth, thumbHeight} = this.calculateThumbnailSize();
-        AudioLevels.updateAudioLevelCanvas(null, thumbWidth, thumbHeight);
+        AudioLevels.updateAudioLevelCanvas(
+            null, thumbWidth, thumbHeight);
 
         if (!stream.isMuted()) {
             localVideoThumbnail.changeVideo(stream);
@@ -169,11 +170,8 @@ var VideoLayout = {
      * and setting them assume the id is already set.
      */
     mucJoined () {
-        let id = APP.conference.localId;
-        localVideoThumbnail.joined(id);
-
         if (largeVideo && !largeVideo.id) {
-            this.updateLargeVideo(id, true);
+            this.updateLargeVideo(APP.conference.localId, true);
         }
     },
 
@@ -271,6 +269,11 @@ var VideoLayout = {
         }
     },
 
+    onRemoteStreamRemoved (stream) {
+        let id = stream.getParticipantId();
+        remoteVideos[id].removeRemoteStreamElement(stream);
+    },
+
     /**
      * Return the type of the remote video.
      * @param id the id for the remote video
@@ -347,11 +350,6 @@ var VideoLayout = {
         } else {
             VideoLayout.resizeThumbnails(false, true);
         }
-    },
-
-
-    inputDisplayNameHandler (name) {
-        localVideoThumbnail.inputDisplayNameHandler(name);
     },
 
     videoactive (videoelem, resourceJid) {
@@ -506,8 +504,10 @@ var VideoLayout = {
             remoteVideo.setMutedView(value);
         }
 
-        if(this.isCurrentlyOnLarge(id))
-            largeVideo.showAvatar(value);
+        if (this.isCurrentlyOnLarge(id)) {
+            // large video will show avatar instead of muted stream
+            this.updateLargeVideo(id, true);
+        }
     },
 
     /**
@@ -537,6 +537,7 @@ var VideoLayout = {
             if(oldSpeakerRemoteVideo)
             {
                 oldSpeakerRemoteVideo.updateDominantSpeakerIndicator(false);
+                localVideoThumbnail.updateDominantSpeakerIndicator(true);
                 currentDominantSpeaker = null;
             }
             return;
@@ -549,6 +550,7 @@ var VideoLayout = {
 
         // Update the current dominant speaker.
         remoteVideo.updateDominantSpeakerIndicator(true);
+        localVideoThumbnail.updateDominantSpeakerIndicator(false);
 
         // let's remove the indications from the remote video if any
         if (oldSpeakerRemoteVideo) {
@@ -817,15 +819,15 @@ var VideoLayout = {
         }
     },
 
-    showMore (jid) {
-        if (jid === 'local') {
+    showMore (id) {
+        if (id === 'local') {
             localVideoThumbnail.connectionIndicator.showMore();
         } else {
-            var remoteVideo = remoteVideos[Strophe.getResourceFromJid(jid)];
+            let remoteVideo = remoteVideos[id];
             if (remoteVideo) {
                 remoteVideo.connectionIndicator.showMore();
             } else {
-                console.info("Error - no remote video for jid: " + jid);
+                console.info("Error - no remote video for id: " + id);
             }
         }
     },

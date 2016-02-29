@@ -54,7 +54,9 @@ function doXmppAuth (room, lockPassword) {
         // 4. reallocate focus in current room
         openConnection({id, password}).then(function (connection) {
             // open room
-            let newRoom = connection.initJitsiConference(room.getName());
+            let newRoom = connection.initJitsiConference(
+                room.getName(), APP.conference._getConferenceOptions()
+            );
 
             loginDialog.displayConnectionStatus(
                 APP.translation.translateString('connection.FETCH_SESSION_ID')
@@ -67,13 +69,8 @@ function doXmppAuth (room, lockPassword) {
                     APP.translation.translateString('connection.GOT_SESSION_ID')
                 );
 
-                if (room.isJoined()) {
-                    // just reallocate focus if already joined
-                    room.room.moderator.allocateConferenceFocus();
-                } else {
-                    // or join
-                    room.join(lockPassword);
-                }
+                // authenticate conference on the fly
+                room.join(lockPassword);
 
                 loginDialog.close();
             }).catch(function (error, code) {
@@ -105,20 +102,42 @@ function authenticate (room, lockPassword) {
     if (room.isExternalAuthEnabled()) {
         doExternalAuth(room, lockPassword);
     } else {
-        doXmppAuth();
+        doXmppAuth(room, lockPassword);
     }
 }
 
 /**
- * Notify user that authentication is required to create the conference.
+ * De-authenticate local user.
+ *
+ * @param {JitsiConference} room
+ * @param {string} [lockPassword] password to use if the conference is locked
+ * @returns {Promise}
  */
-function requireAuth(roomName) {
+function logout (room) {
+    return new Promise(function (resolve) {
+        room.room.moderator.logout(resolve);
+    }).then(function (url) {
+        // de-authenticate conference on the fly
+        if (room.isJoined()) {
+            room.join();
+        }
+
+        return url;
+    });
+}
+
+/**
+ * Notify user that authentication is required to create the conference.
+ * @param {JitsiConference} room
+ * @param {string} [lockPassword] password to use if the conference is locked
+ */
+function requireAuth(room, lockPassword) {
     if (authRequiredDialog) {
         return;
     }
 
     authRequiredDialog = LoginDialog.showAuthRequiredDialog(
-        roomName, authenticate
+        room.getName(), authenticate.bind(null, room, lockPassword)
     );
 }
 
@@ -141,5 +160,6 @@ function closeAuth() {
 export default {
     authenticate,
     requireAuth,
-    closeAuth
+    closeAuth,
+    logout
 };

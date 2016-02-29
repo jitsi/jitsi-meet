@@ -7,7 +7,7 @@ let toolbarTimeoutObject;
 let toolbarTimeout = interfaceConfig.INITIAL_TOOLBAR_TIMEOUT;
 
 function showDesktopSharingButton() {
-    if (APP.desktopsharing.isDesktopSharingEnabled() &&
+    if (APP.conference.isDesktopSharingEnabled &&
         UIUtil.isButtonEnabled('desktop')) {
         $('#toolbar_button_desktopsharing').css({display: "inline-block"});
     } else {
