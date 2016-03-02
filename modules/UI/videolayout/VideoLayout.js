@@ -12,6 +12,7 @@ import RemoteVideo from "./RemoteVideo";
 import LargeVideoManager, {VideoContainerType} from "./LargeVideo";
 import {PreziContainerType} from '../prezi/Prezi';
 import LocalVideo from "./LocalVideo";
+import PanelToggler from "../side_pannels/SidePanelToggler";
 
 const RTCUIUtil = JitsiMeetJS.util.RTCUIHelper;
 
@@ -356,8 +357,8 @@ var VideoLayout = {
 
         console.info(resourceJid + " video is now active", videoelem);
 
-        $(videoelem).show();
-        VideoLayout.resizeThumbnails();
+        VideoLayout.resizeThumbnails(
+            false, false, false, function() {$(videoelem).show();});
 
         // Update the large video to the last added video only if there's no
         // current dominant, focused speaker or prezi playing or update it to
@@ -416,9 +417,14 @@ var VideoLayout = {
      */
     resizeThumbnails (  animate = false,
                         forceUpdate = false,
-                        videoAreaAvailableWidth = null) {
+                        isSideBarVisible = null,
+                        onComplete = null) {
+        isSideBarVisible
+            = (isSideBarVisible !== null)
+                ? isSideBarVisible : PanelToggler.isVisible();
+
         let {thumbWidth, thumbHeight}
-            = FilmStrip.calculateThumbnailSize(videoAreaAvailableWidth);
+            = FilmStrip.calculateThumbnailSize(isSideBarVisible);
 
         $('.userAvatar').css('left', (thumbWidth - thumbHeight) / 2);
 
@@ -427,6 +433,8 @@ var VideoLayout = {
             .then(function () {
                 BottomToolbar.resizeToolbar(thumbWidth, thumbHeight);
                 AudioLevels.updateCanvasSize(thumbWidth, thumbHeight);
+                if (onComplete && typeof onComplete === "function")
+                    onComplete();
         });
         return {thumbWidth, thumbHeight};
     },
@@ -815,7 +823,7 @@ var VideoLayout = {
         }
 
         // Resize the thumbnails first.
-        this.resizeThumbnails(false, forceUpdate, availableWidth);
+        this.resizeThumbnails(false, forceUpdate, isSideBarVisible);
 
         // Resize the video area element.
         $('#videospace').animate({

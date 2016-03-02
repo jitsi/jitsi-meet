@@ -42,7 +42,6 @@ RemoteVideo.prototype.addRemoteVideoContainer = function() {
  * @param id the id indicating the video for which we're adding a menu.
  * @param parentElement the parent element where this menu will be added
  */
-
 if (!interfaceConfig.filmStripOnly) {
     RemoteVideo.prototype.addRemoteVideoMenu = function () {
         var spanElement = document.createElement('span');
