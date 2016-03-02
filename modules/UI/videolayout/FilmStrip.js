@@ -43,7 +43,7 @@ const FilmStrip = {
      * @param videoAreaAvailableWidth the currently available video area width
      * that we want to take into account when calculating the film strip width.
      */
-     calculateThumbnailSize (videoAreaAvailableWidth) {
+     calculateThumbnailSize (isSideBarVisible) {
         // Calculate the available height, which is the inner window height
         // minus 39px for the header minus 2px for the delimiter lines on the
         // top and bottom of the large video, minus the 36px space inside the
@@ -59,31 +59,29 @@ const FilmStrip = {
          * the filmStrip width, because we're probably in a state where the
          * film strip size hasn't been updated yet, but it will be.
          */
-        let filmStripWidth = videoAreaAvailableWidth
-            ? videoAreaAvailableWidth
+        let videoAreaAvailableWidth
+            = UIUtil.getAvailableVideoWidth(isSideBarVisible)
                 - parseInt(this.filmStrip.css('right'), 10)
                 - parseInt(this.filmStrip.css('paddingLeft'), 10)
                 - parseInt(this.filmStrip.css('paddingRight'), 10)
                 - parseInt(this.filmStrip.css('borderLeftWidth'), 10)
-                - parseInt(this.filmStrip.css('borderRightWidth'), 10)
-            : this.getFilmStripWidth();
-
+                - parseInt(this.filmStrip.css('borderRightWidth'), 10) - 5;
 
         let availableWidth = Math.floor(
-                (filmStripWidth - numvids * (
+                (videoAreaAvailableWidth - numvids * (
                 parseInt(localVideoContainer.css('borderLeftWidth'), 10)
                 + parseInt(localVideoContainer.css('borderRightWidth'), 10)
                 + parseInt(localVideoContainer.css('paddingLeft'), 10)
                 + parseInt(localVideoContainer.css('paddingRight'), 10)
                 + parseInt(localVideoContainer.css('marginLeft'), 10)
                 + parseInt(localVideoContainer.css('marginRight'), 10)))
-                / numvids) - numvids*10;
+                / numvids);
 
         let maxHeight
             // If the MAX_HEIGHT property hasn't been specified
             // we have the static value.
             = Math.min( interfaceConfig.FILM_STRIP_MAX_HEIGHT || 160,
-            availableHeight);
+                        availableHeight);
 
         availableHeight
             = Math.min( maxHeight,
