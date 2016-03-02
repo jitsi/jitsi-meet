@@ -332,10 +332,9 @@ export default {
             // update list of available devices
             if (JitsiMeetJS.isDeviceListAvailable() &&
                 JitsiMeetJS.isDeviceChangeAvailable()) {
-                JitsiMeetJS.enumerateDevices((devices) => {
-                    this.availableDevices = devices;
-                    APP.UI.onAvailableDevicesChanged();
-                });
+                JitsiMeetJS.enumerateDevices(
+                    devices => APP.UI.onAvailableDevicesChanged(devices)
+                );
             }
             // XXX The API will take care of disconnecting from the XMPP server
             // (and, thus, leaving the room) on unload.
@@ -400,10 +399,6 @@ export default {
         return room.getParticipants().map(p => p.getId());
     },
     /**
-     * List of available cameras and microphones.
-     */
-    availableDevices: [],
-    /**
      * Check if SIP is supported.
      * @returns {boolean}
      */
@@ -412,12 +407,6 @@ export default {
     },
     get membersCount () {
         return room.getParticipants().length + 1;
-    },
-    get startAudioMuted () {
-        return room && room.getStartMutedPolicy().audio;
-    },
-    get startVideoMuted () {
-        return room && room.getStartMutedPolicy().video;
     },
     /**
      * Returns true if the callstats integration is enabled, otherwise returns
@@ -665,7 +654,6 @@ export default {
         room.on(ConferenceEvents.USER_JOINED, (id, user) => {
             console.log('USER %s connnected', id, user);
             APP.API.notifyUserJoined(id);
-            // FIXME email???
             APP.UI.addUser(id, user.getDisplayName());
 
             // chek the roles for the new user and reflect them
@@ -887,7 +875,13 @@ export default {
             });
         });
 
-        APP.UI.addListener(UIEvents.EMAIL_CHANGED, (email) => {
+        APP.UI.addListener(UIEvents.EMAIL_CHANGED, (email = '') => {
+            email = email.trim();
+
+            if (email === APP.settings.getEmail()) {
+                return;
+            }
+
             APP.settings.setEmail(email);
             APP.UI.setUserAvatar(room.myUserId(), email);
             sendEmail(email);
@@ -910,14 +904,16 @@ export default {
 
         APP.UI.addListener(UIEvents.START_MUTED_CHANGED,
             (startAudioMuted, startVideoMuted) => {
-                room.setStartMutedPolicy({audio: startAudioMuted,
-                    video: startVideoMuted});
+                room.setStartMutedPolicy({
+                    audio: startAudioMuted,
+                    video: startVideoMuted
+                });
             }
         );
         room.on(
             ConferenceEvents.START_MUTED_POLICY_CHANGED,
-            (policy) => {
-                APP.UI.onStartMutedChanged();
+            ({ audio, video }) => {
+                APP.UI.onStartMutedChanged(audio, video);
             }
         );
         room.on(ConferenceEvents.STARTED_MUTED, () => {

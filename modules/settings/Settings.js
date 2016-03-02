@@ -30,7 +30,7 @@ if (supportsLocalStorage()) {
         console.log("generated id", window.localStorage.jitsiMeetId);
     }
 
-    email = window.localStorage.email || '';
+    email = UIUtil.unescapeHtml(window.localStorage.email || '');
     displayName = UIUtil.unescapeHtml(window.localStorage.displayname || '');
     language = window.localStorage.language;
     cameraDeviceId = window.localStorage.cameraDeviceId || '';
@@ -68,8 +68,7 @@ export default {
      */
     setEmail: function (newEmail) {
         email = newEmail;
-        window.localStorage.email = newEmail;
-        return email;
+        window.localStorage.email = UIUtil.escapeHtml(newEmail);
     },
 
     /**

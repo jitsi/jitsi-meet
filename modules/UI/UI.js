@@ -212,10 +212,10 @@ UI.showChatError = function (err, msg) {
  */
 UI.changeDisplayName = function (id, displayName) {
     ContactList.onDisplayNameChange(id, displayName);
-    SettingsMenu.onDisplayNameChange(id, displayName);
     VideoLayout.onDisplayNameChanged(id, displayName);
 
-    if (APP.conference.isLocalId(id)) {
+    if (APP.conference.isLocalId(id) || id === 'localVideoContainer') {
+        SettingsMenu.changeDisplayName(displayName);
         Chat.setChatConversationMode(!!displayName);
     }
 };
@@ -256,10 +256,6 @@ UI.mucJoined = function () {
  * Setup some UI event listeners.
  */
 function registerListeners() {
-    UI.addListener(UIEvents.EMAIL_CHANGED, function (email) {
-        UI.setUserAvatar(APP.conference.localId, email);
-    });
-
     UI.addListener(UIEvents.PREZI_CLICKED, function () {
         preziManager.handlePreziButtonClicked();
     });
@@ -538,7 +534,7 @@ UI.updateLocalRole = function (isModerator) {
 
     Toolbar.showSipCallButton(isModerator);
     Toolbar.showRecordingButton(isModerator);
-    SettingsMenu.onRoleChanged();
+    SettingsMenu.showStartMutedOptions(isModerator);
 
     if (isModerator) {
         messageHandler.notify(null, "notify.me", 'connected', "notify.moderator");
@@ -1037,8 +1033,8 @@ UI.stopPrezi = function (userId) {
   }
 };
 
-UI.onStartMutedChanged = function () {
-    SettingsMenu.onStartMutedChanged();
+UI.onStartMutedChanged = function (startAudioMuted, startVideoMuted) {
+    SettingsMenu.updateStartMutedBox(startAudioMuted, startVideoMuted);
 };
 
 /**
@@ -1046,7 +1042,7 @@ UI.onStartMutedChanged = function () {
  * @param {object[]} devices new list of available devices
  */
 UI.onAvailableDevicesChanged = function (devices) {
-    SettingsMenu.onAvailableDevicesChanged(devices);
+    SettingsMenu.changeDevicesList(devices);
 };
 
 /**
