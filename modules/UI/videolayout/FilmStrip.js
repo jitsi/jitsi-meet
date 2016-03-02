@@ -65,7 +65,7 @@ const FilmStrip = {
                 - parseInt(this.filmStrip.css('paddingLeft'), 10)
                 - parseInt(this.filmStrip.css('paddingRight'), 10)
                 - parseInt(this.filmStrip.css('borderLeftWidth'), 10)
-                - parseInt(this.filmStrip.css('borderRightWidth'), 10);
+                - parseInt(this.filmStrip.css('borderRightWidth'), 10) - 5;
 
         let availableWidth = Math.floor(
                 (videoAreaAvailableWidth - numvids * (
@@ -75,13 +75,13 @@ const FilmStrip = {
                 + parseInt(localVideoContainer.css('paddingRight'), 10)
                 + parseInt(localVideoContainer.css('marginLeft'), 10)
                 + parseInt(localVideoContainer.css('marginRight'), 10)))
-                / numvids) - 20;
+                / numvids);
 
         let maxHeight
             // If the MAX_HEIGHT property hasn't been specified
             // we have the static value.
             = Math.min( interfaceConfig.FILM_STRIP_MAX_HEIGHT || 160,
-            availableHeight);
+                        availableHeight);
 
         availableHeight
             = Math.min( maxHeight,
