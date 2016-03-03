@@ -9,7 +9,7 @@ html, body{
     color: #424242;
     font-family:'Helvetica Neue', Helvetica, sans-serif;
     font-weight: 400;
-    background: #000000;
+    background: #4E4E4E;
     overflow: hidden;
 }
 
@@ -263,7 +263,7 @@ div.feedbackButton:hover {
     width: 29px;
     border-radius: 1px;
     color: #FFF;
-    background: rgba(0,0,0,0.8);
+    background: rgba(0,0,0,0.5);
     z-index: 6; /*+1 from #remoteVideos*/
 }
 
@@ -337,7 +337,7 @@ div.feedbackButton:hover {
 }
 
 #toast-container.notification-bottom-right {
-    bottom: 120px;
+    bottom: 140px;
     right: 5px;
 }
 

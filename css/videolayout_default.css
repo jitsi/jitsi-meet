@@ -85,6 +85,7 @@
 #remoteVideos .videocontainer>object {
     cursor: hand;
     border-radius:1px;
+    object-fit: cover;
 }
 
 .flipVideoX {
@@ -98,6 +99,7 @@
 #localVideoWrapper>object {
     cursor: hand;
     border-radius:1px !important;
+    object-fit: cover;
 }
 
 #largeVideo,
@@ -371,7 +373,7 @@
     padding-right:2px;
     height:38px;
     width:auto;
-    background-color: rgba(0,0,0,0.8);
+    background-color: rgba(0,0,0,0.5);
     border-radius: 1px;
     pointer-events: auto;
 }
@@ -401,8 +403,8 @@
 
 #dominantSpeaker {
     visibility: hidden;
-    width: 150px;
-    height: 150px;
+    width: 300px;
+    height: 300px;
     margin: auto;
     overflow: hidden;
     position: relative;
@@ -421,12 +423,12 @@
 }
 
 #dominantSpeakerAvatar {
-    width: 100px;
-    height: 100px;
-    top: 25px;
+    width: 200px;
+    height: 200px;
+    top: 50px;
     margin: auto;
     position: relative;
-    border-radius: 50px;
+    border-radius: 100px;
     z-index: 3;
     visibility: inherit;
 }
@@ -434,8 +436,8 @@
 .userAvatar {
     height: 100%;
     position: absolute;
-    left: 35px;
-    border-radius: 200px;
+    left: 0;
+    border-radius: 2px;
 }
 
 .sharedVideoAvatar {
