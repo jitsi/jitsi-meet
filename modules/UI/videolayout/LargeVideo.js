@@ -8,7 +8,6 @@ import FilmStrip from './FilmStrip';
 import Avatar from "../avatar/Avatar";
 import {createDeferred} from '../../util/helpers';
 
-const avatarSize = interfaceConfig.DOMINANT_SPEAKER_AVATAR_SIZE;
 const FADE_DURATION_MS = 300;
 
 /**
@@ -175,6 +174,8 @@ class VideoContainer extends LargeContainer {
         this.$avatar = $('#dominantSpeaker');
         this.$wrapper = $('#largeVideoWrapper');
 
+        this.avatarHeight = $("#dominantSpeakerAvatar").height();
+
         // This does not work with Temasys plugin - has to be a property to be
         // copied between new <object> elements
         //this.$video.on('play', onPlay);
@@ -245,7 +246,7 @@ class VideoContainer extends LargeContainer {
                                     containerWidth, containerHeight);
 
         // update avatar position
-        let top = containerHeight / 2 - avatarSize / 4 * 3;
+        let top = containerHeight / 2 - this.avatarHeight / 4 * 3;
 
         this.$avatar.css('top', top);
 
@@ -355,7 +356,8 @@ export default class LargeVideoManager {
         this.containers = {};
 
         this.state = VideoContainerType;
-        this.videoContainer = new VideoContainer(() => this.resizeContainer(VideoContainerType));
+        this.videoContainer
+            = new VideoContainer(() => this.resizeContainer(VideoContainerType));
         this.addContainer(VideoContainerType, this.videoContainer);
 
         this.width = 0;
@@ -368,22 +370,26 @@ export default class LargeVideoManager {
         });
 
         if (interfaceConfig.SHOW_JITSI_WATERMARK) {
-            let leftWatermarkDiv = this.$container.find("div.watermark.leftwatermark");
+            let leftWatermarkDiv
+                = this.$container.find("div.watermark.leftwatermark");
 
             leftWatermarkDiv.css({display: 'block'});
 
-            leftWatermarkDiv.parent().attr('href', interfaceConfig.JITSI_WATERMARK_LINK);
+            leftWatermarkDiv.parent().attr(
+                'href', interfaceConfig.JITSI_WATERMARK_LINK);
         }
 
         if (interfaceConfig.SHOW_BRAND_WATERMARK) {
-            let rightWatermarkDiv = this.$container.find("div.watermark.rightwatermark");
+            let rightWatermarkDiv
+                = this.$container.find("div.watermark.rightwatermark");
 
             rightWatermarkDiv.css({
                 display: 'block',
                 backgroundImage: 'url(images/rightwatermark.png)'
             });
 
-            rightWatermarkDiv.parent().attr('href', interfaceConfig.BRAND_WATERMARK_LINK);
+            rightWatermarkDiv.parent().attr(
+                'href', interfaceConfig.BRAND_WATERMARK_LINK);
         }
 
         if (interfaceConfig.SHOW_POWERED_BY) {
@@ -457,7 +463,8 @@ export default class LargeVideoManager {
 
             return promise;
         }).then(() => {
-            // after everything is done check again if there are any pending new streams.
+            // after everything is done check again if there are any pending
+            // new streams.
             this.updateInProcess = false;
             this.scheduleLargeVideoUpdate();
         });
