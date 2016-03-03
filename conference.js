@@ -539,7 +539,7 @@ export default {
         if (localVideo) {
             // this calls room.removeTrack internally
             // so we don't need to remove it manually
-            promise = localVideo.stop();
+            promise = localVideo.dispose();
         }
         localVideo = stream;
 
@@ -575,7 +575,7 @@ export default {
         if (localAudio) {
             // this calls room.removeTrack internally
             // so we don't need to remove it manually
-            promise = localAudio.stop();
+            promise = localAudio.dispose();
         }
         localAudio = stream;
 
@@ -612,7 +612,7 @@ export default {
         if (shareScreen) {
             createDesktopTrack().then(([stream]) => {
                 stream.on(
-                    TrackEvents.TRACK_STOPPED,
+                    TrackEvents.LOCAL_TRACK_STOPPED,
                     () => {
                         // if stream was stopped during screensharing session
                         // then we should switch to video
