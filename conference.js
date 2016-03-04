@@ -157,23 +157,6 @@ function createLocalTracks (...devices) {
     });
 }
 
-/**
- * Create local screen sharing track.
- * Shows UI notification if Firefox extension is required.
- * @returns {Promise<JitsiLocalTrack[]>}
- */
-function createDesktopTrack () {
-    return createLocalTracks('desktop').catch(function (err) {
-        if (err === TrackErrors.FIREFOX_EXTENSION_NEEDED) {
-            APP.UI.showExtensionRequiredDialog(
-                config.desktopSharingFirefoxExtensionURL
-            );
-        }
-
-        return Promise.reject(err);
-    });
-}
-
 class ConferenceConnector {
     constructor(resolve, reject) {
         this._resolve = resolve;
@@ -610,7 +593,7 @@ export default {
         this.videoSwitchInProgress = true;
 
         if (shareScreen) {
-            createDesktopTrack().then(([stream]) => {
+            createLocalTracks('desktop').then(([stream]) => {
                 stream.on(
                     TrackEvents.TRACK_STOPPED,
                     () => {
@@ -635,6 +618,13 @@ export default {
                     return;
 
                 console.error('failed to share local desktop', err);
+
+                if (err === TrackErrors.FIREFOX_EXTENSION_NEEDED) {
+                    APP.UI.showExtensionRequiredDialog(
+                        config.desktopSharingFirefoxExtensionURL
+                    );
+                    return;
+                }
 
                 let dialogTxt = APP.translation
                     .generateTranslationHTML("dialog.failtoinstall");
