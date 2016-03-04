@@ -630,6 +630,10 @@ export default {
             }).catch((err) => {
                 this.videoSwitchInProgress = false;
                 this.toggleScreenSharing(false);
+
+                if(err === TrackErrors.CHROME_EXTENSION_USER_CANCELED)
+                    return;
+
                 console.error('failed to share local desktop', err);
 
                 let dialogTxt = APP.translation
