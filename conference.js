@@ -813,10 +813,6 @@ export default {
             APP.UI.updateDTMFSupport(isDTMFSupported);
         });
 
-        room.on(ConferenceEvents.FIREFOX_EXTENSION_NEEDED, function (url) {
-            APP.UI.notifyFirefoxExtensionRequired(url);
-        });
-
         APP.UI.addListener(UIEvents.ROOM_LOCK_CLICKED, () => {
             if (room.isModerator()) {
                 let promise = roomLocker.isLocked
