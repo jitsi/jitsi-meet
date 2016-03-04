@@ -631,6 +631,16 @@ export default {
                 this.videoSwitchInProgress = false;
                 this.toggleScreenSharing(false);
                 console.error('failed to share local desktop', err);
+
+                let dialogTxt = APP.translation
+                    .generateTranslationHTML("dialog.failtoinstall");
+                let dialogTitle = APP.translation
+                    .generateTranslationHTML("dialog.error");
+                APP.UI.messageHandler.openDialog(
+                    dialogTitle,
+                    dialogTxt,
+                    false
+                );
             });
         } else {
             createLocalTracks('video').then(
