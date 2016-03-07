@@ -626,6 +626,10 @@ export default {
                     return;
                 }
 
+                // Handling:
+                // TrackErrors.CHROME_EXTENSION_INSTALLATION_ERROR
+                // TrackErrors.GENERAL
+                // and any other
                 let dialogTxt = APP.translation
                     .generateTranslationHTML("dialog.failtoinstall");
                 let dialogTitle = APP.translation
