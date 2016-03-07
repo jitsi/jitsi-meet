@@ -1,9 +1,7 @@
-import {generateUsername} from '../util/UsernameGenerator';
 import UIUtil from '../UI/util/UIUtil';
 
 let email = '';
 let displayName = '';
-let userId;
 let language = null;
 let cameraDeviceId = '';
 let micDeviceId = '';
@@ -32,7 +30,6 @@ if (supportsLocalStorage()) {
         console.log("generated id", window.localStorage.jitsiMeetId);
     }
 
-    userId = window.localStorage.jitsiMeetId || '';
     email = window.localStorage.email || '';
     displayName = UIUtil.unescapeHtml(window.localStorage.displayname || '');
     language = window.localStorage.language;
@@ -43,7 +40,6 @@ if (supportsLocalStorage()) {
     );
 } else {
     console.log("local storage is not supported");
-    userId = generateUniqueId();
 }
 
 export default {
@@ -67,31 +63,23 @@ export default {
     },
 
     /**
-     * Returns id of the user.
-     * @returns {string} user id
+     * Sets new email for local user and saves it to the local storage.
+     * @param {string} newEmail new email for the local user
      */
-    getUserId () {
-        return userId;
-    },
-
     setEmail: function (newEmail) {
         email = newEmail;
         window.localStorage.email = newEmail;
         return email;
     },
 
+    /**
+     * Returns email address of the local user.
+     * @returns {string} email
+     */
     getEmail: function () {
         return email;
     },
 
-    getSettings: function () {
-        return {
-            email: email,
-            displayName: displayName,
-            uid: userId,
-            language: language
-        };
-    },
     getLanguage () {
         return language;
     },

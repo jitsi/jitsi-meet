@@ -32,6 +32,7 @@
 
         return window.innerWidth - rightPanelWidth;
     },
+
     /**
      * Changes the style class of the element given by id.
      */

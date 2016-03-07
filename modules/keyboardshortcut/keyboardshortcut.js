@@ -47,7 +47,6 @@ function initShortcutHandlers() {
     };
 }
 
-
 var KeyboardShortcut = {
     init: function () {
         initShortcutHandlers();

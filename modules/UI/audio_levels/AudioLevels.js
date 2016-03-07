@@ -2,7 +2,7 @@
 /* jshint -W101 */
 
 import CanvasUtil from './CanvasUtils';
-import BottomToolbar from '../toolbars/BottomToolbar';
+import FilmStrip from '../videolayout/FilmStrip';
 
 const LOCAL_LEVEL = 'local';
 
@@ -228,7 +228,7 @@ const AudioLevels = {
         let canvasWidth = thumbWidth + interfaceConfig.CANVAS_EXTRA;
         let canvasHeight = thumbHeight + interfaceConfig.CANVAS_EXTRA;
 
-        BottomToolbar.getThumbs().children('canvas').each(function () {
+        FilmStrip.getThumbs().children('canvas').each(function () {
             $(this).attr('width', canvasWidth);
             $(this).attr('height', canvasHeight);
         });

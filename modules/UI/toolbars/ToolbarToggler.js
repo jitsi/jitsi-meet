@@ -2,6 +2,7 @@
 
 import UIUtil from '../util/UIUtil';
 import BottomToolbar from './BottomToolbar';
+import FilmStrip from '../videolayout/FilmStrip.js';
 
 let toolbarTimeoutObject;
 let toolbarTimeout = interfaceConfig.INITIAL_TOOLBAR_TIMEOUT;
@@ -28,7 +29,6 @@ function hideToolbar() {
     }
 
     let header = $("#header");
-    let bottomToolbar = $("#bottomToolbar");
     let isToolbarHover = false;
     header.find('*').each(function () {
         let id = $(this).attr('id');
@@ -48,10 +48,8 @@ function hideToolbar() {
     } else {
         header.hide("slide", { direction: "up", duration: 300});
         $('#subject').animate({top: "-=40"}, 300);
-        if (!BottomToolbar.isFilmStripVisible()) {
-            bottomToolbar.hide(
-                "slide", {direction: "right", duration: 300}
-            );
+        if (!FilmStrip.isFilmStripVisible()) {
+            BottomToolbar.hide(true);
         }
     }
 }
@@ -65,14 +63,11 @@ const ToolbarToggler = {
             return;
         }
         let header = $("#header");
-        let bottomToolbar = $("#bottomToolbar");
-        if (!header.is(':visible') || !bottomToolbar.is(":visible")) {
+        if (!header.is(':visible') || !BottomToolbar.isVisible()) {
             header.show("slide", { direction: "up", duration: 300});
             $('#subject').animate({top: "+=40"}, 300);
-            if (!bottomToolbar.is(":visible")) {
-                bottomToolbar.show(
-                    "slide", {direction: "right", duration: 300}
-                );
+            if (!BottomToolbar.isVisible()) {
+                BottomToolbar.show(true);
             }
 
             if (toolbarTimeoutObject) {

@@ -4,7 +4,7 @@ import VideoLayout from "../videolayout/VideoLayout";
 import LargeContainer from '../videolayout/LargeContainer';
 import UIUtil from "../util/UIUtil";
 import SidePanelToggler from "../side_pannels/SidePanelToggler";
-import BottomToolbar from '../toolbars/BottomToolbar';
+import FilmStrip from '../videolayout/FilmStrip';
 
 /**
  * Etherpad options.
@@ -101,7 +101,7 @@ class Etherpad extends LargeContainer {
     }
 
     resize (containerWidth, containerHeight, animate) {
-        let height = containerHeight - BottomToolbar.getFilmStripHeight();
+        let height = containerHeight - FilmStrip.getFilmStripHeight();
         let width = containerWidth;
 
         $(this.iframe).width(width).height(height);

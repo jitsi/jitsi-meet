@@ -15,10 +15,6 @@ function RemoteVideo(id, VideoLayout, emitter) {
     this.addRemoteVideoContainer();
     this.connectionIndicator = new ConnectionIndicator(this, id);
     this.setDisplayName();
-    var nickfield = document.createElement('span');
-    nickfield.className = "nick";
-    nickfield.appendChild(document.createTextNode(id));
-    this.container.appendChild(nickfield);
     this.bindHoverHandler();
     this.flipX = false;
     this.isLocal = false;
@@ -33,7 +29,7 @@ RemoteVideo.prototype.addRemoteVideoContainer = function() {
     if (APP.conference.isModerator) {
         this.addRemoteVideoMenu();
     }
-    let {thumbWidth, thumbHeight} = this.VideoLayout.calculateThumbnailSize();
+    let {thumbWidth, thumbHeight} = this.VideoLayout.resizeThumbnails();
     AudioLevels.updateAudioLevelCanvas(this.id, thumbWidth, thumbHeight);
 
     return this.container;
@@ -46,7 +42,6 @@ RemoteVideo.prototype.addRemoteVideoContainer = function() {
  * @param id the id indicating the video for which we're adding a menu.
  * @param parentElement the parent element where this menu will be added
  */
-
 if (!interfaceConfig.filmStripOnly) {
     RemoteVideo.prototype.addRemoteVideoMenu = function () {
         var spanElement = document.createElement('span');
