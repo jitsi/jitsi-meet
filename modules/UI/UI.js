@@ -737,21 +737,6 @@ UI.notifyConnectionFailed = function (stropheErrorMsg) {
 };
 
 /**
- * Notify user that he need to install Firefox extension to share screen.
- * @param {stirng} url extension url
- */
-UI.notifyFirefoxExtensionRequired = function (url) {
-    messageHandler.openMessageDialog(
-        "dialog.extensionRequired",
-        null,
-        null,
-        APP.translation.generateTranslationHTML(
-            "dialog.firefoxExtensionPrompt", {url}
-        )
-    );
-};
-
-/**
  * Notify user that he was automatically muted when joned the conference.
  */
 UI.notifyInitiallyMuted = function () {

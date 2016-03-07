@@ -157,23 +157,6 @@ function createLocalTracks (...devices) {
     });
 }
 
-/**
- * Create local screen sharing track.
- * Shows UI notification if Firefox extension is required.
- * @returns {Promise<JitsiLocalTrack[]>}
- */
-function createDesktopTrack () {
-    return createLocalTracks('desktop').catch(function (err) {
-        if (err === TrackErrors.FIREFOX_EXTENSION_NEEDED) {
-            APP.UI.showExtensionRequiredDialog(
-                config.desktopSharingFirefoxExtensionURL
-            );
-        }
-
-        return Promise.reject(err);
-    });
-}
-
 class ConferenceConnector {
     constructor(resolve, reject) {
         this._resolve = resolve;
@@ -610,7 +593,7 @@ export default {
         this.videoSwitchInProgress = true;
 
         if (shareScreen) {
-            createDesktopTrack().then(([stream]) => {
+            createLocalTracks('desktop').then(([stream]) => {
                 stream.on(
                     TrackEvents.LOCAL_TRACK_STOPPED,
                     () => {
@@ -630,7 +613,32 @@ export default {
             }).catch((err) => {
                 this.videoSwitchInProgress = false;
                 this.toggleScreenSharing(false);
+
+                if(err === TrackErrors.CHROME_EXTENSION_USER_CANCELED)
+                    return;
+
                 console.error('failed to share local desktop', err);
+
+                if (err === TrackErrors.FIREFOX_EXTENSION_NEEDED) {
+                    APP.UI.showExtensionRequiredDialog(
+                        config.desktopSharingFirefoxExtensionURL
+                    );
+                    return;
+                }
+
+                // Handling:
+                // TrackErrors.CHROME_EXTENSION_INSTALLATION_ERROR
+                // TrackErrors.GENERAL
+                // and any other
+                let dialogTxt = APP.translation
+                    .generateTranslationHTML("dialog.failtoinstall");
+                let dialogTitle = APP.translation
+                    .generateTranslationHTML("dialog.error");
+                APP.UI.messageHandler.openDialog(
+                    dialogTitle,
+                    dialogTxt,
+                    false
+                );
             });
         } else {
             createLocalTracks('video').then(
@@ -797,10 +805,6 @@ export default {
 
         room.on(ConferenceEvents.DTMF_SUPPORT_CHANGED, (isDTMFSupported) => {
             APP.UI.updateDTMFSupport(isDTMFSupported);
-        });
-
-        room.on(ConferenceEvents.FIREFOX_EXTENSION_NEEDED, function (url) {
-            APP.UI.notifyFirefoxExtensionRequired(url);
         });
 
         APP.UI.addListener(UIEvents.ROOM_LOCK_CLICKED, () => {
