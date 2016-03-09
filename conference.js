@@ -88,9 +88,17 @@ function muteLocalAudio (muted) {
     }
 
     if (muted) {
-        localAudio.mute();
+        localAudio.mute().then(function(value) {},
+            function(value) {
+                console.warn('Audio Mute was rejected:', value);
+            }
+        );
     } else {
-        localAudio.unmute();
+        localAudio.unmute().then(function(value) {},
+            function(value) {
+                console.warn('Audio unmute was rejected:', value);
+            }
+        );
     }
 }
 
@@ -104,9 +112,17 @@ function muteLocalVideo (muted) {
     }
 
     if (muted) {
-        localVideo.mute();
+        localVideo.mute().then(function(value) {},
+            function(value) {
+                console.warn('Video mute was rejected:', value);
+            }
+        );
     } else {
-        localVideo.unmute();
+        localVideo.unmute().then(function(value) {},
+            function(value) {
+                console.warn('Video unmute was rejected:', value);
+            }
+        );
     }
 }
 
