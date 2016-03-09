@@ -399,9 +399,7 @@ var VideoLayout = {
                 remoteVideos[id].createModeratorIndicatorElement();
             } else if (isModerator) {
                 // We are moderator, but user is not - add menu
-                if ($(`#remote_popupmenu_${id}`).length <= 0) {
-                    remoteVideos[id].addRemoteVideoMenu();
-                }
+                remoteVideos[id].addRemoteVideoMenu();
             }
         });
     },
