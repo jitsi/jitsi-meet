@@ -161,10 +161,7 @@ var PanelToggler = {
         toggle(SettingsMenu,
             '#settingsmenu',
             null,
-            function() {
-                $('#setDisplayName').val(Settings.getDisplayName());
-                $('#setEmail').val(Settings.getEmail());
-            },
+            function() {},
             null);
     },
 

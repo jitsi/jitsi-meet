@@ -4,23 +4,34 @@ import UIEvents from "../../../../service/UI/UIEvents";
 import languages from "../../../../service/translation/languages";
 import Settings from '../../../settings/Settings';
 
-function generateLanguagesSelectBox() {
-    var currentLang = APP.translation.getCurrentLanguage();
-    var html = '<select id="languages_selectbox">';
-    var langArray = languages.getLanguages();
-    for(var i = 0; i < langArray.length; i++) {
-        var lang = langArray[i];
-        html += "<option ";
-        if(lang === currentLang)
-            html += "selected ";
-        html += "value=\"" + lang + "\" data-i18n='languages:" + lang + "'>";
-        html += "</option>";
+/**
+ * Generate html select options for available languages.
+ * @param {string[]} items available languages
+ * @param {string} [currentLang] current language
+ * @returns {string}
+ */
+function generateLanguagesOptions(items, currentLang) {
+    return items.map(function (lang) {
+        let attrs = {
+            value: lang,
+            'data-i18n': `languages:${lang}`
+        };
 
-    }
+        if (lang === currentLang) {
+            attrs.selected = 'selected';
+        }
 
-    return html + "</select>";
+        let attrsStr = UIUtil.attrsToString(attrs);
+        return `<option ${attrsStr}></option>`;
+    }).join('\n');
 }
 
+/**
+ * Generate html select options for available physical devices.
+ * @param {{ deviceId, label }[]} items available devices
+ * @param {string} [selectedId] id of selected device
+ * @returns {string}
+ */
 function generateDevicesOptions(items, selectedId) {
     return items.map(function (item) {
         let attrs = {
@@ -39,89 +50,121 @@ function generateDevicesOptions(items, selectedId) {
 
 export default {
     init (emitter) {
-        function update() {
-            let displayName = $('#setDisplayName').val();
 
-            emitter.emit(UIEvents.NICKNAME_CHANGED, displayName);
+        // DISPLAY NAME
+        function updateDisplayName () {
+            emitter.emit(UIEvents.NICKNAME_CHANGED, $('#setDisplayName').val());
+        }
+        $('#setDisplayName')
+            .val(Settings.getDisplayName())
+            .keyup(function (event) {
+                if (event.keyCode === 13) { // enter
+                    updateDisplayName();
+                }
+            })
+            .focusout(updateDisplayName);
 
-            let language = $("#languages_selectbox").val();
-            if (language !== Settings.getLanguage()) {
-                emitter.emit(UIEvents.LANG_CHANGED, language);
+
+        // EMAIL
+        function updateEmail () {
+            emitter.emit(UIEvents.EMAIL_CHANGED, $('#setEmail').val());
+        }
+        $('#setEmail')
+            .val(Settings.getEmail())
+            .keyup(function (event) {
+            if (event.keyCode === 13) { // enter
+                updateEmail();
             }
+        }).focusout(updateEmail);
 
-            let email = UIUtil.escapeHtml($('#setEmail').val());
-            if (email !== Settings.getEmail()) {
-                emitter.emit(UIEvents.EMAIL_CHANGED, email);
-            }
 
+        // START MUTED
+        $("#startMutedOptions").change(function () {
             let startAudioMuted = $("#startAudioMuted").is(":checked");
             let startVideoMuted = $("#startVideoMuted").is(":checked");
-            if (startAudioMuted !== APP.conference.startAudioMuted
-                || startVideoMuted !== APP.conference.startVideoMuted) {
-                emitter.emit(
-                    UIEvents.START_MUTED_CHANGED,
-                    startAudioMuted,
-                    startVideoMuted
-                );
-            }
+            emitter.emit(
+                UIEvents.START_MUTED_CHANGED,
+                startAudioMuted,
+                startVideoMuted
+            );
+        });
 
-            let cameraDeviceId = $('#selectCamera').val();
+
+        // LANGUAGES BOX
+        let languagesBox = $("#languages_selectbox");
+        languagesBox.html(generateLanguagesOptions(
+            languages.getLanguages(),
+            APP.translation.getCurrentLanguage()
+        ));
+        APP.translation.translateElement(languagesBox);
+        languagesBox.change(function () {
+            emitter.emit(UIEvents.LANG_CHANGED, languagesBox.val());
+        });
+
+
+        // DEVICES LIST
+        this.changeDevicesList([]);
+        $('#selectCamera').change(function () {
+            let cameraDeviceId = $(this).val();
             if (cameraDeviceId !== Settings.getCameraDeviceId()) {
                 emitter.emit(UIEvents.VIDEO_DEVICE_CHANGED, cameraDeviceId);
             }
-
-            let micDeviceId = $('#selectMic').val();
+        });
+        $('#selectMic').change(function () {
+            let micDeviceId = $(this).val();
             if (micDeviceId !== Settings.getMicDeviceId()) {
                 emitter.emit(UIEvents.AUDIO_DEVICE_CHANGED, micDeviceId);
-            }
-        }
-
-        let startMutedBlock = $("#startMutedOptions");
-        startMutedBlock.before(generateLanguagesSelectBox());
-        APP.translation.translateElement($("#languages_selectbox"));
-
-        this.onAvailableDevicesChanged();
-        this.onRoleChanged();
-        this.onStartMutedChanged();
-
-        $("#updateSettings").click(update);
-        $('#settingsmenu>input').keyup(function(event){
-            if (event.keyCode === 13) {//enter
-                update();
             }
         });
     },
 
-    onRoleChanged () {
-        if(APP.conference.isModerator) {
+    /**
+     * If start audio muted/start video muted options should be visible or not.
+     * @param {boolean} show
+     */
+    showStartMutedOptions (show) {
+        if (show) {
             $("#startMutedOptions").css("display", "block");
-        }
-        else {
+        } else {
             $("#startMutedOptions").css("display", "none");
         }
     },
 
-    onStartMutedChanged () {
-        $("#startAudioMuted").attr("checked", APP.conference.startAudioMuted);
-        $("#startVideoMuted").attr("checked", APP.conference.startVideoMuted);
+    updateStartMutedBox (startAudioMuted, startVideoMuted) {
+        $("#startAudioMuted").attr("checked", startAudioMuted);
+        $("#startVideoMuted").attr("checked", startVideoMuted);
     },
 
+    /**
+     * Check if settings menu is visible or not.
+     * @returns {boolean}
+     */
     isVisible () {
         return $('#settingsmenu').is(':visible');
     },
 
-    onDisplayNameChange (id, newDisplayName) {
-        if(id === 'localVideoContainer' || APP.conference.isLocalId(id)) {
-            $('#setDisplayName').val(newDisplayName);
-        }
+    /**
+     * Change user display name in the settings menu.
+     * @param {string} newDisplayName
+     */
+    changeDisplayName (newDisplayName) {
+        $('#setDisplayName').val(newDisplayName);
     },
 
+    /**
+     * Change user avatar in the settings menu.
+     * @param {string} avatarUrl url of the new avatar
+     */
     changeAvatar (avatarUrl) {
         $('#avatar').attr('src', avatarUrl);
     },
 
-    onAvailableDevicesChanged () {
-        let devices = APP.conference.availableDevices;
+    /**
+     * Change available cameras/microphones or hide selects completely if
+     * no devices available.
+     * @param {{ deviceId, label, kind }[]} devices list of available devices
+     */
+    changeDevicesList (devices) {
         if (!devices.length) {
             $('#devicesOptions').hide();
             return;
