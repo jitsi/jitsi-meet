@@ -122,10 +122,6 @@ const buttonHandlers = {
         AnalyticsAdapter.sendEvent('toolbar.chat.toggled');
         emitter.emit(UIEvents.TOGGLE_CHAT);
     },
-    "toolbar_button_prezi": function () {
-        AnalyticsAdapter.sendEvent('toolbar.prezi.clicked');
-        emitter.emit(UIEvents.PREZI_CLICKED);
-    },
     "toolbar_button_etherpad": function () {
         AnalyticsAdapter.sendEvent('toolbar.etherpad.clicked');
         emitter.emit(UIEvents.ETHERPAD_CLICKED);
@@ -188,7 +184,6 @@ const defaultToolbarButtons = {
     'security':   '#toolbar_button_security',
     'invite':     '#toolbar_button_link',
     'chat':       '#toolbar_button_chat',
-    'prezi':      '#toolbar_button_prezi',
     'etherpad':   '#toolbar_button_etherpad',
     'fullscreen': '#toolbar_button_fullScreen',
     'settings':   '#toolbar_button_settings',
@@ -243,15 +238,6 @@ const Toolbar = {
             inviteLink.select();
             $('#inviteLinkRef').parent()
                 .find('button[value=true]').prop('disabled', false);
-        }
-    },
-
-    /**
-     * Disables and enables some of the buttons.
-     */
-    setupButtonsFromConfig () {
-        if (!UIUtil.isButtonEnabled('prezi')) {
-            $("#toolbar_button_prezi").css({display: "none"});
         }
     },
 

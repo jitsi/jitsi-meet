@@ -10,7 +10,6 @@ import UIUtil from "../util/UIUtil";
 
 import RemoteVideo from "./RemoteVideo";
 import LargeVideoManager, {VideoContainerType} from "./LargeVideo";
-import {PreziContainerType} from '../prezi/Prezi';
 import LocalVideo from "./LocalVideo";
 import PanelToggler from "../side_pannels/SidePanelToggler";
 
@@ -361,11 +360,10 @@ var VideoLayout = {
             false, false, false, function() {$(videoelem).show();});
 
         // Update the large video to the last added video only if there's no
-        // current dominant, focused speaker or prezi playing or update it to
+        // current dominant, focused speaker or update it to
         // the current dominant speaker.
         if ((!focusedVideoResourceJid &&
-            !currentDominantSpeaker &&
-             !this.isLargeContainerTypeVisible(PreziContainerType)) ||
+            !currentDominantSpeaker) ||
             focusedVideoResourceJid === resourceJid ||
             (resourceJid &&
                 currentDominantSpeaker === resourceJid)) {
@@ -791,10 +789,6 @@ var VideoLayout = {
                 console.info("Error - no remote video for id: " + id);
             }
         }
-    },
-
-    addRemoteVideoContainer (id) {
-        return RemoteVideo.createContainer(id);
     },
 
     /**

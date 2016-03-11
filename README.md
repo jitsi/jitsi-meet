@@ -4,7 +4,7 @@ Jitsi Meet is an open-source (Apache) WebRTC JavaScript application that uses [J
 
 You can also try it out yourself at https://meet.jit.si .
 
-Jitsi Meet allows for very efficient collaboration. It allows users to stream their desktop or only some windows. It also supports shared document editing with Etherpad and remote presentations with Prezi.
+Jitsi Meet allows for very efficient collaboration. It allows users to stream their desktop or only some windows. It also supports shared document editing with Etherpad.
 
 ## Installation
 

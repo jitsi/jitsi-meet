@@ -12,7 +12,6 @@ import PanelToggler from "./side_pannels/SidePanelToggler";
 import UIUtil from "./util/UIUtil";
 import UIEvents from "../../service/UI/UIEvents";
 import CQEvents from '../../service/connectionquality/CQEvents';
-import PreziManager from './prezi/Prezi';
 import EtherpadManager from './etherpad/Etherpad';
 
 import VideoLayout from "./videolayout/VideoLayout";
@@ -30,7 +29,6 @@ var Feedback = require("./Feedback");
 var eventEmitter = new EventEmitter();
 UI.eventEmitter = eventEmitter;
 
-let preziManager;
 let etherpadManager;
 
 /**
@@ -96,7 +94,6 @@ function setupChat() {
  */
 function setupToolbars() {
     Toolbar.init(eventEmitter);
-    Toolbar.setupButtonsFromConfig();
     BottomToolbar.setupListeners(eventEmitter);
 }
 
@@ -256,9 +253,6 @@ UI.mucJoined = function () {
  * Setup some UI event listeners.
  */
 function registerListeners() {
-    UI.addListener(UIEvents.PREZI_CLICKED, function () {
-        preziManager.handlePreziButtonClicked();
-    });
 
     UI.addListener(UIEvents.ETHERPAD_CLICKED, function () {
         if (etherpadManager) {
@@ -337,7 +331,6 @@ UI.start = function () {
     ContactList.init(eventEmitter);
 
     bindEvents();
-    preziManager = new PreziManager(eventEmitter);
     if (!interfaceConfig.filmStripOnly) {
 
         $("#videospace").mousemove(function () {
@@ -996,26 +989,6 @@ UI.updateAuthInfo = function (isAuthEnabled, login) {
         Toolbar.showLoginButton(!loggedIn);
         Toolbar.showLogoutButton(loggedIn);
     }
-};
-
-/**
- * Show Prezi from the user.
- * @param {string} userId user id
- * @param {string} url Prezi url
- * @param {number} slide slide to show
- */
-UI.showPrezi = function (userId, url, slide) {
-    preziManager.showPrezi(userId, url, slide);
-};
-
-/**
- * Stop showing Prezi from the user.
- * @param {string} userId user id
- */
-UI.stopPrezi = function (userId) {
-  if (preziManager.isSharing(userId)) {
-      preziManager.removePrezi(userId);
-  }
 };
 
 UI.onStartMutedChanged = function (startAudioMuted, startVideoMuted) {
