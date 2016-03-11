@@ -583,7 +583,8 @@ UI.toggleSmileys = function () {
  * Toggles film strip.
  */
 UI.toggleFilmStrip = function () {
-    FilmStrip.toggleFilmStrip();
+    var self = FilmStrip;
+    self.toggleFilmStrip.apply(self, arguments);
 };
 
 /**

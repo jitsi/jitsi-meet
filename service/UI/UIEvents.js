@@ -34,6 +34,17 @@ export default {
     TOGGLE_CHAT: "UI.toggle_chat",
     TOGGLE_SETTINGS: "UI.toggle_settings",
     TOGGLE_CONTACT_LIST: "UI.toggle_contact_list",
+    /**
+     * Notifies that a command to toggle the film strip has been issued. The
+     * event may optionally specify a {Boolean} (primitive) value to assign to
+     * the visibility of the film strip (i.e. the event may act as a setter).
+     * The very toggling of the film strip may or may not occurred at the time
+     * of the receipt of the event depending on the position of the receiving
+     * event listener in relation to the event listener which carries out the
+     * command to toggle the film strip.
+     *
+     * @see {TOGGLED_FILM_STRIP}
+     */
     TOGGLE_FILM_STRIP: "UI.toggle_film_strip",
     TOGGLE_SCREENSHARING: "UI.toggle_screensharing",
     CONTACT_CLICKED: "UI.contact_clicked",

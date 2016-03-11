@@ -9,7 +9,20 @@ const FilmStrip = {
         this.filmStrip = $('#remoteVideos');
     },
 
-    toggleFilmStrip () {
+    /**
+     * Toggles the visibility of the film strip.
+     *
+     * @param visible optional {Boolean} which specifies the desired visibility
+     * of the film strip. If not specified, the visibility will be flipped
+     * (i.e. toggled); otherwise, the visibility will be set to the specified
+     * value.
+     */
+    toggleFilmStrip (visible) {
+        if (typeof visible === 'boolean'
+                && this.isFilmStripVisible() == visible) {
+            return;
+        }
+
         this.filmStrip.toggleClass("hidden");
     },
 
