@@ -27,6 +27,8 @@ var messageHandler = UI.messageHandler;
 var JitsiPopover = require("./util/JitsiPopover");
 var Feedback = require("./Feedback");
 
+import FollowMe from "../FollowMe";
+
 var eventEmitter = new EventEmitter();
 UI.eventEmitter = eventEmitter;
 
@@ -246,6 +248,12 @@ UI.initConference = function () {
     if(!interfaceConfig.filmStripOnly) {
         Feedback.init();
     }
+
+    // FollowMe attempts to copy certain aspects of the moderator's UI into the
+    // other participants' UI. Consequently, it needs (1) read and write access
+    // to the UI (depending on the moderator role of the local participant) and
+    // (2) APP.conference as means of communication between the participants.
+    new FollowMe(APP.conference, UI);
 };
 
 UI.mucJoined = function () {
@@ -326,7 +334,7 @@ UI.start = function () {
     registerListeners();
 
     BottomToolbar.init();
-    FilmStrip.init();
+    FilmStrip.init(eventEmitter);
 
     VideoLayout.init(eventEmitter);
     if (!interfaceConfig.filmStripOnly) {

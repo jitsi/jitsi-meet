@@ -46,6 +46,14 @@ export default {
      * @see {TOGGLED_FILM_STRIP}
      */
     TOGGLE_FILM_STRIP: "UI.toggle_film_strip",
+    /**
+     * Notifies that the film strip was (actually) toggled. The event supplies
+     * a {Boolean} (primitive) value indicating the visibility of the film
+     * strip after the toggling (at the time of the event emission).
+     *
+     * @see {TOGGLE_FILM_STRIP}
+     */
+    TOGGLED_FILM_STRIP: "UI.toggled_fim_strip",
     TOGGLE_SCREENSHARING: "UI.toggle_screensharing",
     CONTACT_CLICKED: "UI.contact_clicked",
     HANGUP: "UI.hangup",

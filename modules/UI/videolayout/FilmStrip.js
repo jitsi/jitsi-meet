@@ -1,12 +1,19 @@
 /* global $, APP, interfaceConfig, config*/
 
+import UIEvents from "../../../service/UI/UIEvents";
 import UIUtil from "../util/UIUtil";
 
 const thumbAspectRatio = 16.0 / 9.0;
 
 const FilmStrip = {
-    init () {
+    /**
+     *
+     * @param eventEmitter the {EventEmitter} through which {FilmStrip} is to
+     * emit/fire {UIEvents} (such as {UIEvents.TOGGLED_FILM_STRIP}).
+     */
+    init (eventEmitter) {
         this.filmStrip = $('#remoteVideos');
+        this.eventEmitter = eventEmitter;
     },
 
     /**
@@ -24,6 +31,14 @@ const FilmStrip = {
         }
 
         this.filmStrip.toggleClass("hidden");
+
+        // Emit/fire UIEvents.TOGGLED_FILM_STRIP.
+        var eventEmitter = this.eventEmitter;
+        if (eventEmitter) {
+            eventEmitter.emit(
+                    UIEvents.TOGGLED_FILM_STRIP,
+                    this.isFilmStripVisible());
+        }
     },
 
     isFilmStripVisible () {
