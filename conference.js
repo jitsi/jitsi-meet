@@ -506,6 +506,51 @@ export default {
 
         this._setupListeners();
     },
+
+    /**
+     * Exposes a Command(s) API on this instance. It is necessitated by (1) the
+     * desire to keep room private to this instance and (2) the need of other
+     * modules to send and receive commands to and from participants.
+     * Eventually, this instance remains in control with respect to the
+     * decision whether the Command(s) API of room (i.e. lib-jitsi-meet's
+     * JitsiConference) is to be used in the implementation of the Command(s)
+     * API of this instance.
+     */
+    commands: {
+        /**
+         * Receives notifications from other participants about commands aka
+         * custom events (sent by sendCommand or sendCommandOnce methods).
+         * @param command {String} the name of the command
+         * @param handler {Function} handler for the command
+         */
+        addCommandListener () {
+            room.addCommandListener.apply(room, arguments);
+        },
+        /**
+         * Removes command.
+         * @param name {String} the name of the command.
+         */
+        removeCommand () {
+            room.removeCommand.apply(room, arguments);
+        },
+        /**
+         * Sends command.
+         * @param name {String} the name of the command.
+         * @param values {Object} with keys and values that will be sent.
+         */
+        sendCommand () {
+            room.sendCommand.apply(room, arguments);
+        },
+        /**
+         * Sends command one time.
+         * @param name {String} the name of the command.
+         * @param values {Object} with keys and values that will be sent.
+         */
+        sendCommandOnce () {
+            room.sendCommandOnce.apply(room, arguments);
+        },
+    },
+
     _getConferenceOptions() {
         let options = config;
         if(config.enableRecording) {
