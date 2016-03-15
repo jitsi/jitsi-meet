@@ -998,6 +998,19 @@ var VideoLayout = {
      */
     getLargeVideo () {
         return largeVideo;
+    },
+
+    /**
+     * Updates the resolution label, indicating to the user that the large
+     * video stream is currently HD.
+     */
+    updateResolutionLabel(isResolutionHD) {
+        let videoResolutionLabel = $("#videoResolutionLabel");
+
+        if (isResolutionHD && !videoResolutionLabel.is(":visible"))
+            videoResolutionLabel.css({display: "block"});
+        else if (!isResolutionHD && videoResolutionLabel.is(":visible"))
+            videoResolutionLabel.css({display: "none"});
     }
 };
 

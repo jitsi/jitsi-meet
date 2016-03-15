@@ -1,6 +1,7 @@
-/* global APP, $ */
+/* global APP, $, config */
 /* jshint -W101 */
 import JitsiPopover from "../util/JitsiPopover";
+import VideoLayout from "./VideoLayout";
 
 /**
  * Constructs new connection indicator.
@@ -14,6 +15,7 @@ function ConnectionIndicator(videoContainer, id) {
     this.bitrate = null;
     this.showMoreValue = false;
     this.resolution = null;
+    this.isResolutionHD = null;
     this.transport = [];
     this.popover = null;
     this.id = id;
@@ -292,7 +294,6 @@ ConnectionIndicator.prototype.remove = function() {
  */
 ConnectionIndicator.prototype.updateConnectionQuality =
     function (percent, object) {
-
     if (percent === null) {
         this.connectionIndicatorContainer.style.display = "none";
         this.popover.forceHide();
@@ -316,6 +317,10 @@ ConnectionIndicator.prototype.updateConnectionQuality =
                 ConnectionIndicator.connectionQualityValues[quality];
         }
     }
+    if (object.isResolutionHD) {
+        this.isResolutionHD = object.isResolutionHD;
+    }
+    this.updateResolutionIndicator();
     this.updatePopoverData();
 };
 
@@ -325,6 +330,7 @@ ConnectionIndicator.prototype.updateConnectionQuality =
  */
 ConnectionIndicator.prototype.updateResolution = function (resolution) {
     this.resolution = resolution;
+    this.updateResolutionIndicator();
     this.updatePopoverData();
 };
 
@@ -352,6 +358,31 @@ ConnectionIndicator.prototype.hideIndicator = function () {
     this.connectionIndicatorContainer.style.display = "none";
     if(this.popover)
         this.popover.forceHide();
+};
+
+/**
+ * Updates the resolution indicator.
+ */
+ConnectionIndicator.prototype.updateResolutionIndicator = function () {
+
+    if (this.id !== null
+        && VideoLayout.isCurrentlyOnLarge(this.id)) {
+
+        let showResolutionLabel = false;
+
+        if (this.isResolutionHD !== null)
+            showResolutionLabel = this.isResolutionHD;
+        else if (this.resolution !== null) {
+            let resolutions = this.resolution || {};
+            Object.keys(resolutions).map(function (ssrc) {
+                    let {width, height} = resolutions[ssrc];
+                    if (height >= config.minHDResolution)
+                        showResolutionLabel = true;
+                });
+        }
+
+        VideoLayout.updateResolutionLabel(showResolutionLabel);
+    }
 };
 
 export default ConnectionIndicator;

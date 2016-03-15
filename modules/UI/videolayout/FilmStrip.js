@@ -76,7 +76,7 @@ const FilmStrip = {
         let maxHeight
             // If the MAX_HEIGHT property hasn't been specified
             // we have the static value.
-            = Math.min( interfaceConfig.FILM_STRIP_MAX_HEIGHT || 160,
+            = Math.min( interfaceConfig.FILM_STRIP_MAX_HEIGHT || 120,
                         availableHeight);
 
         availableHeight
