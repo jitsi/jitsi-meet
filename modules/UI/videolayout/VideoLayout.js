@@ -326,16 +326,18 @@ var VideoLayout = {
         this.updateLargeVideo(resourceJid);
     },
 
-
     /**
-     * Checks if container for participant identified by given id exists
-     * in the document and creates it eventually.
-     *
-     * @return Returns <tt>true</tt> if the peer container exists,
-     * <tt>false</tt> - otherwise
+     * Creates a remote video for participant for the given id.
+     * @param id the id of the participant to add
+     * @param {SmallVideo} smallVideo optional small video instance to add as a
+     * remote video, if undefined RemoteVideo will be created
      */
-    addParticipantContainer (id) {
-        let remoteVideo = new RemoteVideo(id, VideoLayout, eventEmitter);
+    addParticipantContainer (id, smallVideo) {
+        let remoteVideo;
+        if(smallVideo)
+            remoteVideo = smallVideo;
+        else
+            remoteVideo = new RemoteVideo(id, VideoLayout, eventEmitter);
         remoteVideos[id] = remoteVideo;
 
         let videoType = remoteVideoTypes[id];
