@@ -12,8 +12,9 @@
     <meta itemprop="name" content="Jitsi Meet"/>
     <meta itemprop="description" content="Join a WebRTC video conference powered by the Jitsi Videobridge"/>
     <meta itemprop="image" content="/images/jitsilogo.png?v=1"/>
-    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css"/>
-    <link rel="stylesheet" href="css/all.css"/>
+    <!--link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css"/-->
+    <link rel="stylesheet" href="themes/thomaspark/bootswatch/cyborg/bootstrap.min.css"/>
+    <link rel="stylesheet" href="css/all-jitsi.css"/>
     <script>console.log("(TIME) index.html loaded:\t", window.performance.now());</script>
     <script src="config.js?v=15"></script><!-- adapt to your needs, i.e. set hosts and bosh path -->
     <script src="interface_config.js?v=6"></script>
@@ -49,7 +50,7 @@
          <div class="pull-left" id="enter_room">
           <div class="input-group">
            <input class="form-control" id="enter_room_field" type="text" autofocus data-i18n="[placeholder]welcomepage.roomname" placeholder="Enter room name" />
-           <div class="icon-reload input-group-addon" id="reload_roomname"></div>
+           <div class="icon-reload input-group-addon xs-hidden" id="reload_roomname"></div>
           </div>
          </div>
          <input class="btn btn-primary pull-right" id="enter_room_button" type="button" data-i18n="[value]welcomepage.go" value="GO" />
@@ -57,7 +58,7 @@
        </div>
       </div>
 
-      <div class="row">
+      <div class="row xs-hidden">
        <div class="col-sm-12">
         <input type='checkbox' name='checkbox' id="disable_welcome"/>
         <label for="disable_welcome" class="disable_welcome_position" data-i18n="welcomepage.disable"></label>
@@ -124,15 +125,15 @@
    </div>
 
    <div id="videoconference_page">
-    <div style="position: relative;" id="header_container">
+    <div class="container" style="position: relative;" id="header_container">
      <div id="header">
       <div id="notice" class="notice" style="display: none">
        <span id="noticeText" class="noticeText"></span>
       </div>
 
-      <span id="toolbar">
+      <div id="toolbar" class="btn-toolbar" role="toolbar">
 
-       <span id="authentication" class="authentication" style="display: none">
+       <div id="authentication" class="authentication btn-group" style="display: none">
         <a class="button icon-avatar" id="toolbar_button_authentication" data-i18n="[content]toolbar.authenticate"></a>
         <ul class="loginmenu">
          <span class="loginmenuPadding"></span>
@@ -144,37 +145,37 @@
           <a class="authButton" data-i18n="toolbar.logout"></a>
          </li>
         </ul>
-       </span>
+       </div>
 
-       <a class="button icon-microphone" id="toolbar_button_mute" data-container="body" data-toggle="popover" data-placement="bottom" shortcut="mutePopover" data-i18n="[content]toolbar.mute" content="Mute / Unmute"></a>
+       <div class="btn-group" role="group">
+       <a class="btn btn-default button icon-microphone" id="toolbar_button_mute" data-container="body" data-toggle="popover" data-placement="bottom" shortcut="mutePopover" data-i18n="[content]toolbar.mute" content="Mute / Unmute"></a>
 
-       <a class="button icon-camera" id="toolbar_button_camera" data-container="body" data-toggle="popover" data-placement="bottom" shortcut="toggleVideoPopover" data-i18n="[content]toolbar.videomute" content="Start / stop camera"></a>
+       <a class="btn btn-default button icon-camera" id="toolbar_button_camera" data-container="body" data-toggle="popover" data-placement="bottom" shortcut="toggleVideoPopover" data-i18n="[content]toolbar.videomute" content="Start / stop camera"></a>
 
-       <a class="button icon-recEnable" id="toolbar_button_record" data-container="body" data-toggle="popover" data-placement="bottom" data-i18n="[content]toolbar.record" content="Record" style="display: none"></a>
+       <a class="btn btn-default button icon-recEnable" id="toolbar_button_record" data-container="body" data-toggle="popover" data-placement="bottom" data-i18n="[content]toolbar.record" content="Record" style="display: none"></a>
 
-       <a class="button icon-security" id="toolbar_button_security" data-container="body" data-toggle="popover" data-placement="bottom" data-i18n="[content]toolbar.lock" content="Lock / unlock room"></a>
+       <a class="btn btn-default button icon-security" id="toolbar_button_security" data-container="body" data-toggle="popover" data-placement="bottom" data-i18n="[content]toolbar.lock" content="Lock / unlock room"></a>
 
-       <a class="button icon-link" id="toolbar_button_link" data-container="body" data-toggle="popover" data-placement="bottom" data-i18n="[content]toolbar.invite" content="Invite others"></a>
+       <a class="btn btn-default button icon-link" id="toolbar_button_link" data-container="body" data-toggle="popover" data-placement="bottom" data-i18n="[content]toolbar.invite" content="Invite others"></a>
 
-       <a class="button icon-chat" id="toolbar_button_chat" data-container="body" data-toggle="popover" shortcut="toggleChatPopover" data-placement="bottom" data-i18n="[content]toolbar.chat" content="Open / close chat"><span id="unreadMessages"></span></a>
+       <a class="btn btn-default button icon-prezi" id="toolbar_button_prezi" data-container="body" data-toggle="popover" data-placement="bottom" data-i18n="[content]toolbar.prezi" content="Share Prezi"></a>
 
-       <a class="button icon-prezi" id="toolbar_button_prezi" data-container="body" data-toggle="popover" data-placement="bottom" data-i18n="[content]toolbar.prezi" content="Share Prezi"></a>
+       <a class="btn btn-default button icon-share-doc" id="toolbar_button_etherpad" data-container="body" data-toggle="popover" data-placement="bottom" content="Shared document" data-i18n="[content]toolbar.etherpad"></a>
 
-       <a class="button icon-share-doc" id="toolbar_button_etherpad" data-container="body" data-toggle="popover" data-placement="bottom" content="Shared document" data-i18n="[content]toolbar.etherpad"></a>
+       <a class="btn btn-default button icon-share-desktop" id="toolbar_button_desktopsharing" data-container="body" data-toggle="popover" data-placement="bottom" shortcut="toggleDesktopSharingPopover" content="Share screen" data-i18n="[content]toolbar.sharescreen" style="display: none"></a>
 
-       <a class="button icon-share-desktop" id="toolbar_button_desktopsharing" data-container="body" data-toggle="popover" data-placement="bottom" shortcut="toggleDesktopSharingPopover" content="Share screen" data-i18n="[content]toolbar.sharescreen" style="display: none"></a>
+       <a class="btn btn-default button icon-full-screen" id="toolbar_button_fullScreen" data-container="body" data-toggle="popover" data-placement="bottom" content="Enter / Exit Full Screen" data-i18n="[content]toolbar.fullscreen"></a>
 
-       <a class="button icon-full-screen" id="toolbar_button_fullScreen" data-container="body" data-toggle="popover" data-placement="bottom" content="Enter / Exit Full Screen" data-i18n="[content]toolbar.fullscreen"></a>
+       <a class="btn btn-default button icon-telephone" id="toolbar_button_sip" data-container="body" data-toggle="popover" data-placement="bottom" content="Call SIP number" data-i18n="[content]toolbar.sip" style="display: none"></a>
 
-       <a class="button icon-telephone" id="toolbar_button_sip" data-container="body" data-toggle="popover" data-placement="bottom" content="Call SIP number" data-i18n="[content]toolbar.sip" style="display: none"></a>
+       <a class="btn btn-default button icon-dialpad" id="toolbar_button_dialpad" data-container="body" data-toggle="popover" data-placement="bottom" content="Open dialpad" data-i18n="[content]toolbar.dialpad" style="display: none"></a>
 
-       <a class="button icon-dialpad" id="toolbar_button_dialpad" data-container="body" data-toggle="popover" data-placement="bottom" content="Open dialpad" data-i18n="[content]toolbar.dialpad" style="display: none"></a>
+       <a class="btn btn-default button icon-settings" id="toolbar_button_settings" data-container="body" data-toggle="popover" data-placement="bottom" content="Settings" data-i18n="[content]toolbar.Settings"></a>
 
-       <a class="button icon-settings" id="toolbar_button_settings" data-container="body" data-toggle="popover" data-placement="bottom" content="Settings" data-i18n="[content]toolbar.Settings"></a>
+       <a class="btn btn-default button icon-hangup" id="toolbar_button_hangup" data-container="body" data-toggle="popover" data-placement="bottom" content="Hang Up" data-i18n="[content]toolbar.hangup"></a>
 
-       <a class="button icon-hangup" id="toolbar_button_hangup" data-container="body" data-toggle="popover" data-placement="bottom" content="Hang Up" data-i18n="[content]toolbar.hangup"></a>
-
-      </span>
+       </div>
+      </div>
 
      </div><!-- header end -->
 
@@ -219,30 +220,31 @@
       <audio id="userLeft" src="sounds/left.wav" preload="auto"></audio>
      </div>
 
-     <span id="bottomToolbar">
-      <span class="bottomToolbar_span">
-       <a class="bottomToolbarButton" id="bottom_toolbar_chat" data-container="body" data-toggle="popover" shortcut="toggleChatPopover" data-placement="top" data-i18n="[content]bottomtoolbar.chat" content="Open / close chat">
-        <i id="chatBottomButton" class="icon-chat-simple"><span id="bottomUnreadMessages"></span></i>
+     <span class="btn-toolbar-vertical" id="bottomToolbar" role="toolbar">
+     <span class="btn-group-vertical" role="btn-group">
+      <span class="btn btn-default bottomToolbar_span">
+       <a class="" id="bottom_toolbar_chat" data-container="body" data-toggle="popover" shortcut="toggleChatPopover" data-placement="top" data-i18n="[content]bottomtoolbar.chat" content="Open / close chat">
+        <i id="chatBottomButton" class="icon-chat-simple"></i><span class="badge" id="bottomUnreadMessages"></span>
        </a>
       </span>
-      <div class="bottom_button_separator"></div>
-      <span class="bottomToolbar_span">
-       <a class="bottomToolbarButton" id="bottom_toolbar_contact_list" data-container="body" data-toggle="popover" data-placement="top" id="contactlistpopover"  data-i18n="[content]bottomtoolbar.contactlist" content="Open / close contact list">
-        <i id="contactListButton" class="icon-contactList"><span id="numberOfParticipants"></span></i>
+      <span class="btn btn-default bottomToolbar_span">
+       <a class="" id="bottom_toolbar_contact_list" data-container="body" data-toggle="popover" data-placement="top" id="contactlistpopover"  data-i18n="[content]bottomtoolbar.contactlist" content="Open / close contact list">
+        <i id="contactListButton" class="icon-contactList"></i><span class="badge" id="numberOfParticipants"></span>
        </a>
       </span>
-      <div class="bottom_button_separator"></div>
-      <span class="bottomToolbar_span">
-       <a class="bottomToolbarButton" id="bottom_toolbar_film_strip" data-container="body" data-toggle="popover" shortcut="filmstripPopover" data-placement="top" data-i18n="[content]bottomtoolbar.filmstrip" content="Show / hide film strip"><i id="filmStripButton" class="icon-filmstrip"></i></a>
+      <span class="btn btn-default bottomToolbar_span">
+       <a class="" id="bottom_toolbar_film_strip" data-container="body" data-toggle="popover" shortcut="filmstripPopover" data-placement="top" data-i18n="[content]bottomtoolbar.filmstrip" content="Show / hide film strip"><i id="filmStripButton" class="icon-filmstrip"></i></a>
       </span>
      </span>
+     </span>
+
     </div><!-- videospace end -->
 
-    <div id="chatspace" class="right-panel">
-     <div id="nickname">
+    <div id="chatspace" class="panel panel-default right-panel">
+     <div id="nickname" class="col-md-12">
       <span data-i18n="chat.nickname.title"></span>
       <form>
-       <input type='text' id="nickinput" data-i18n="[placeholder]chat.nickname.popover" autofocus>
+       <input class="form-control" type='text' id="nickinput" data-i18n="[placeholder]chat.nickname.popover" autofocus>
       </form>
      </div>
 
@@ -254,48 +256,74 @@
        <img src="images/smile.svg"/>
       </div>
      </div>
-    </div>
+    </div><!-- chatspace end -->
 
-    <div id="contactlist" class="right-panel">
-     <div class="title">
-      <i class="icon-contactList"><span data-i18n="contactlist"></span></i>
+    <div id="contactlist" class="panel panel-default right-panel">
+     <div class="panel-heading">
+      <div class="panel-title title">
+       <i class="icon-contactList"></i><span class="text-uppercase" data-i18n="contactlist"></span>
+      </div>
      </div>
-     <ul id="contacts"></ul>
-    </div>
+     <div class="panel-body">
+      <ul id="contacts"></ul>
+     </div>
+    </div><!-- contactlist end -->
 
-    <div id="settingsmenu" class="right-panel">
-     <div class="icon-settings" data-i18n="settings.title"></div>
-     <img id="avatar" src="images/avatar2.png"/>
-     <div class="arrow-up"></div>
-     <input type="text" id="setDisplayName" data-i18n="[placeholder]settings.name" placeholder="Name">
-     <input type="text" id="setEmail" placeholder="E-Mail">
-     <div id = "startMutedOptions">
-      <label class = "startMutedLabel">
-       <input type="checkbox" id="startAudioMuted">
-       <span data-i18n="settings.startAudioMuted"></span>
-      </label>
-      <label class = "startMutedLabel">
-       <input type="checkbox" id="startVideoMuted">
-       <span data-i18n="settings.startVideoMuted"></span>
-      </label>
+    <div id="settingsmenu" class="panel panel-default right-panel">
+     <div class="panel-heading">
+      <div class="title panel-title">
+       <i class="icon-settings"></i><span class="text-uppercase" data-i18n="settings.title"></span>
+      </div>
      </div>
-     <div id="devicesOptions">
-      <label className="devicesOptionsLabel">
-       <span data-i18n="settings.selectCamera"></span>
-       <select id="selectCamera"></select>
-      </label>
-      <label className="devicesOptionsLabel">
-       <span data-i18n="settings.selectMic"></span>
-       <select id="selectMic"></select>
-      </label>
+     <div class="panel-body">
+      <img id="avatar" src="images/avatar2.png"/>
+      <div class="arrow-up"></div>
+      <div class="form-group">
+       <input class="form-control" type="text" id="setDisplayName" data-i18n="[placeholder]settings.name" placeholder="Name">
+       <input class="form-control" type="text" id="setEmail" placeholder="E-Mail">
+      </div>
+
+      <div id="startMutedOptions" class="form-group">
+       <div class="checkbox">
+        <label class="startMutedLabel">
+         <input type="checkbox" id="startAudioMuted">
+         <span data-i18n="settings.startAudioMuted"></span>
+        </label>
+       </div>
+       <div class="checkbox">
+        <label class="startMutedLabel">
+         <input type="checkbox" id="startVideoMuted">
+         <span data-i18n="settings.startVideoMuted"></span>
+        </label>
+       </div>
+      </div>
+
+      <div id="devicesOptions">
+       <div class="form-group">
+        <label className="devicesOptionsLabel" for="selectCamera">
+         <span data-i18n="settings.selectCamera"></span>
+        </label>
+        <select class="form-control" id="selectCamera"></select>
+       </div>
+       <div class="form-group">
+        <label className="devicesOptionsLabel" for="selectMic">
+         <span data-i18n="settings.selectMic"></span>
+        </label>
+        <select class="form-control" id="selectMic"></select>
+       </div>
+      </div>
+
+      <button class="btn btn-primary" id="updateSettings" data-i18n="settings.update"></button>
+      <a id="downloadlog" data-container="body" data-toggle="popover" data-placement="right" data-i18n="[data-content]downloadlogs" ><i class="fa fa-cloud-download"></i></a>
      </div>
-     <button id="updateSettings" data-i18n="settings.update"></button>
-     <a id="downloadlog" data-container="body" data-toggle="popover" data-placement="right" data-i18n="[data-content]downloadlogs" ><i class="fa fa-cloud-download"></i></a>
-    </div>
+
+    </div><!-- setingsmenu end -->
 
     <div class="feedbackButton">
      <a id="feedbackButton" data-container="body" data-toggle="popover" data-placement="right" data-i18n="[data-content]feedback"><i class="fa fa-heart"></i></a>
     </div>
-   </div>
+
+   </div><!-- videoconference_page end -->
+
   </body>
 </html>
