@@ -1018,7 +1018,7 @@ UI.onStartMutedChanged = function (startAudioMuted, startVideoMuted) {
  * Update list of available physical devices.
  * @param {object[]} devices new list of available devices
  */
-UI.onAvailableDevicesChanged = function (devices) {
+UI.updateDevicesList = function (devices) {
     SettingsMenu.changeDevicesList(devices);
 };
 
