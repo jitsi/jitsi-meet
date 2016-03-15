@@ -44,17 +44,25 @@ export default {
         if (!avatarId) {
             console.warn(
                 `No avatar stored yet for ${userId} - using ID as avatar ID`);
+            console.log("USER ID ", userId);
             avatarId = userId;
         }
         avatarId = MD5.hexdigest(avatarId.trim().toLowerCase());
 
-        // Default to using gravatar.
-        let urlPref = 'https://www.gravatar.com/avatar/';
-        let urlSuf = "?d=wavatar&size=100";
 
-        if (random && interfaceConfig.RANDOM_AVATAR_URL_PREFIX) {
+        let urlPref = null;
+        let urlSuf = null;
+        if (!random) {
+            urlPref = 'https://www.gravatar.com/avatar/';
+            urlSuf = "?d=wavatar&size=200";
+        }
+        else if (random && interfaceConfig.RANDOM_AVATAR_URL_PREFIX) {
             urlPref = interfaceConfig.RANDOM_AVATAR_URL_PREFIX;
             urlSuf = interfaceConfig.RANDOM_AVATAR_URL_SUFFIX;
+        }
+        else {
+            urlPref = 'https://robohash.org/';
+            urlSuf = ".png?size=200x200";
         }
 
         return urlPref + avatarId + urlSuf;

@@ -27,7 +27,7 @@ var interfaceConfig = {
      * Whether to only show the filmstrip (and hide the toolbar).
      */
     filmStripOnly: false,
-    RANDOM_AVATAR_URL_PREFIX: "http://abotars.hipch.at/meeple/",
-    RANDOM_AVATAR_URL_SUFFIX: ".png",
+    RANDOM_AVATAR_URL_PREFIX: false,
+    RANDOM_AVATAR_URL_SUFFIX: false,
     FILM_STRIP_MAX_HEIGHT: 120
 };
