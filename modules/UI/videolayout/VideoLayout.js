@@ -801,10 +801,11 @@ var VideoLayout = {
      * @param forceUpdate indicates that hidden thumbnails will be shown
      * @param completeFunction a function to be called when the video area is
      * resized.
-     */resizeVideoArea (isSideBarVisible,
-                        forceUpdate = false,
-                        animate = false,
-                        completeFunction = null) {
+     */
+    resizeVideoArea (isSideBarVisible,
+                    forceUpdate = false,
+                    animate = false,
+                    completeFunction = null) {
 
         if (largeVideo) {
             largeVideo.updateContainerSize(isSideBarVisible);
