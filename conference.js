@@ -27,9 +27,7 @@ let room, connection, localAudio, localVideo, roomLocker;
 const Commands = {
     CONNECTION_QUALITY: "stats",
     EMAIL: "email",
-    ETHERPAD: "etherpad",
-    PREZI: "prezi",
-    STOP_PREZI: "stop-prezi"
+    ETHERPAD: "etherpad"
 };
 
 /**
@@ -687,7 +685,6 @@ export default {
             console.log('USER %s LEFT', id, user);
             APP.API.notifyUserLeft(id);
             APP.UI.removeUser(id, user.getDisplayName());
-            APP.UI.stopPrezi(id);
         });
 
 
@@ -864,35 +861,6 @@ export default {
 
         room.addCommandListener(Commands.ETHERPAD, ({value}) => {
             APP.UI.initEtherpad(value);
-        });
-
-        room.addCommandListener(Commands.PREZI, ({value, attributes}) => {
-            APP.UI.showPrezi(attributes.id, value, attributes.slide);
-        });
-
-        room.addCommandListener(Commands.STOP_PREZI, ({attributes}) => {
-            APP.UI.stopPrezi(attributes.id);
-        });
-
-        APP.UI.addListener(UIEvents.SHARE_PREZI, (url, slide) => {
-            console.log('Sharing Prezi %s slide %s', url, slide);
-            room.removeCommand(Commands.PREZI);
-            room.sendCommand(Commands.PREZI, {
-                value: url,
-                attributes: {
-                    id: room.myUserId(),
-                    slide
-                }
-            });
-        });
-
-        APP.UI.addListener(UIEvents.STOP_SHARING_PREZI, () => {
-            room.removeCommand(Commands.PREZI);
-            room.sendCommandOnce(Commands.STOP_PREZI, {
-                attributes: {
-                    id: room.myUserId()
-                }
-            });
         });
 
         APP.UI.addListener(UIEvents.EMAIL_CHANGED, (email = '') => {
