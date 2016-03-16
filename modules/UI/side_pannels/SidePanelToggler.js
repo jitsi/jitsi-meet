@@ -93,7 +93,7 @@ function toggle (object, selector, onOpenComplete,
 function resizeVideoArea(isSidePanelVisible, completeFunction) {
     VideoLayout.resizeVideoArea(!isSidePanelVisible,
         false,
-        true,
+        false,
         completeFunction);
 }
 

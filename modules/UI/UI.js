@@ -270,7 +270,10 @@ function registerListeners() {
 
     UI.addListener(UIEvents.TOGGLE_CONTACT_LIST, UI.toggleContactList);
 
-    UI.addListener(UIEvents.TOGGLE_FILM_STRIP, UI.toggleFilmStrip);
+    UI.addListener(UIEvents.TOGGLE_FILM_STRIP, function () {
+        UI.toggleFilmStrip();
+        VideoLayout.resizeVideoArea(PanelToggler.isVisible(), true, false);
+    });
 }
 
 /**
