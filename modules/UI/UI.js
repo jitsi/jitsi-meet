@@ -278,7 +278,7 @@ function registerListeners() {
 
     UI.addListener(UIEvents.TOGGLE_FILM_STRIP, function () {
         UI.toggleFilmStrip();
-        VideoLayout.resizeVideoArea(PanelToggler.isVisible(), true, true);
+        VideoLayout.resizeVideoArea(PanelToggler.isVisible(), true, false);
     });
 }
 
