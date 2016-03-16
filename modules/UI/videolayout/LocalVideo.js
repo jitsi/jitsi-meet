@@ -193,9 +193,9 @@ LocalVideo.prototype.changeVideo = function (stream) {
     let endedHandler = () => {
         localVideoContainer.removeChild(localVideo);
         this.VideoLayout.updateRemovedVideo(this.id);
-        stream.off(TrackEvents.TRACK_STOPPED, endedHandler);
+        stream.off(TrackEvents.LOCAL_TRACK_STOPPED, endedHandler);
     };
-    stream.on(TrackEvents.TRACK_STOPPED, endedHandler);
+    stream.on(TrackEvents.LOCAL_TRACK_STOPPED, endedHandler);
 };
 
 export default LocalVideo;

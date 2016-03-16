@@ -13,7 +13,7 @@
     "welcomepage":{
         "go": "GO",
         "roomname": "Enter room name",
-        "disable": "Don't show this page the next time I enter",
+        "disable": "Don't show this page again",
         "feature1": {
             "title": "Simple to use",
             "content": "No downloads required. __app__ works directly within your browser. Simply share your conference URL with others to get started."

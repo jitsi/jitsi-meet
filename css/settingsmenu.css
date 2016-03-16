@@ -27,13 +27,6 @@
     margin-right: auto;
 }
 
-#settingsmenu button {
-    width: 45%;
-    left: 26%;
-    padding: 0;
-    margin-top: 10px;
-}
-
 #settingsmenu #avatar {
     width: 24%;
     left: 38%;
@@ -45,14 +38,19 @@
     padding: 34px;
 }
 
-#languages_selectbox{
+#languages_selectbox {
     height: 40px;
+    cursor: pointer;
 }
 
 
 #startMutedOptions {
     padding-left: 10%;
     text-indent: -10%;
+
+    margin-top: 10px;
+
+    display: none; /* hide by default */
 
     /* clearfix */
     overflow: auto;
@@ -70,10 +68,12 @@
 .startMutedLabel {
     width: 94%;
     float: left;
+    cursor: pointer;
 }
 
 #devicesOptions {
     display: none;
+    margin-top: 10px;
 }
 
 #devicesOptions label {
@@ -87,4 +87,5 @@
 
 #devicesOptions select {
     height: 40px;
+    cursor: pointer;
 }
