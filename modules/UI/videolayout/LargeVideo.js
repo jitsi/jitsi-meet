@@ -332,6 +332,10 @@ class VideoContainer extends LargeContainer {
     }
 
     hide () {
+        // as the container is hidden/replaced by another container
+        // hide its avatar
+        this.showAvatar(false);
+
         // its already hidden
         if (!this.isVisible) {
             return Promise.resolve();
