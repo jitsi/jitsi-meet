@@ -728,6 +728,22 @@ UI.notifyConnectionFailed = function (stropheErrorMsg) {
     );
 };
 
+
+/**
+ * Notify user that maximum users limit has been reached.
+ */
+UI.notifyMaxUsersLimitReached = function () {
+    var title = APP.translation.generateTranslationHTML(
+        "dialog.error");
+
+    var message = APP.translation.generateTranslationHTML(
+            "dialog.maxUsersLimitReached");
+
+    messageHandler.openDialog(
+        title, message, true, {}, function (e, v, m, f) { return false; }
+    );
+};
+
 /**
  * Notify user that he was automatically muted when joned the conference.
  */

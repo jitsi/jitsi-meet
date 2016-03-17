@@ -256,6 +256,10 @@ class ConferenceConnector {
             APP.UI.notifyFocusLeft();
             break;
 
+        case ConferenceErrors.CONFERENCE_MAX_USERS:
+            connection.disconnect();
+            APP.UI.notifyMaxUsersLimitReached();
+            break;
         default:
             this._handleConferenceFailed(err, ...params);
         }
