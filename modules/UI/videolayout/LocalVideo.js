@@ -13,7 +13,6 @@ function LocalVideo(VideoLayout, emitter) {
     this.videoSpanId = "localVideoContainer";
     this.container = $("#localVideoContainer").get(0);
     this.bindHoverHandler();
-    this.VideoLayout = VideoLayout;
     this.flipX = true;
     this.isLocal = true;
     this.emitter = emitter;
@@ -22,7 +21,7 @@ function LocalVideo(VideoLayout, emitter) {
             return APP.conference.localId;
         }
     });
-    SmallVideo.call(this);
+    SmallVideo.call(this, VideoLayout);
 }
 
 LocalVideo.prototype = Object.create(SmallVideo.prototype);

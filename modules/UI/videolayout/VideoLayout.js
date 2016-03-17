@@ -16,7 +16,6 @@ import PanelToggler from "../side_pannels/SidePanelToggler";
 const RTCUIUtil = JitsiMeetJS.util.RTCUIHelper;
 
 var remoteVideos = {};
-var remoteVideoTypes = {};
 var localVideoThumbnail = null;
 
 var currentDominantSpeaker = null;
@@ -277,10 +276,11 @@ var VideoLayout = {
     /**
      * Return the type of the remote video.
      * @param id the id for the remote video
-     * @returns the video type video or screen.
+     * @returns {String} the video type video or screen.
      */
     getRemoteVideoType (id) {
-        return remoteVideoTypes[id];
+        let smallVideo = VideoLayout.getSmallVideo(id);
+        return smallVideo ? smallVideo.getVideoType() : null;
     },
 
     handleVideoThumbClicked (noPinnedEndpointChangedEvent,
@@ -326,22 +326,26 @@ var VideoLayout = {
         this.updateLargeVideo(resourceJid);
     },
 
-
     /**
-     * Checks if container for participant identified by given id exists
-     * in the document and creates it eventually.
-     *
-     * @return Returns <tt>true</tt> if the peer container exists,
-     * <tt>false</tt> - otherwise
+     * Creates a remote video for participant for the given id.
+     * @param id the id of the participant to add
+     * @param {SmallVideo} smallVideo optional small video instance to add as a
+     * remote video, if undefined RemoteVideo will be created
      */
-    addParticipantContainer (id) {
-        let remoteVideo = new RemoteVideo(id, VideoLayout, eventEmitter);
+    addParticipantContainer (id, smallVideo) {
+        let remoteVideo;
+        if(smallVideo)
+            remoteVideo = smallVideo;
+        else
+            remoteVideo = new RemoteVideo(id, VideoLayout, eventEmitter);
         remoteVideos[id] = remoteVideo;
 
-        let videoType = remoteVideoTypes[id];
-        if (videoType) {
-            remoteVideo.setVideoType(videoType);
+        let videoType = VideoLayout.getRemoteVideoType(id);
+        if (!videoType) {
+            // make video type the default one (camera)
+            videoType = VideoContainerType;
         }
+        remoteVideo.setVideoType(videoType);
 
         // In case this is not currently in the last n we don't show it.
         if (localLastNCount && localLastNCount > 0 &&
@@ -752,12 +756,11 @@ var VideoLayout = {
     },
 
     onVideoTypeChanged (id, newVideoType) {
-        if (remoteVideoTypes[id] === newVideoType) {
+        if (VideoLayout.getRemoteVideoType(id) === newVideoType) {
             return;
         }
 
         console.info("Peer video type changed: ", id, newVideoType);
-        remoteVideoTypes[id] = newVideoType;
 
         var smallVideo;
         if (APP.conference.isLocalId(id)) {
@@ -771,8 +774,8 @@ var VideoLayout = {
         } else {
             return;
         }
-
         smallVideo.setVideoType(newVideoType);
+
         if (this.isCurrentlyOnLarge(id)) {
             this.updateLargeVideo(id, true);
         }

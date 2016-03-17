@@ -150,7 +150,7 @@ function getDesktopVideoPosition(videoWidth,
     return { horizontalIndent, verticalIndent };
 }
 
-export const VideoContainerType = "video";
+export const VideoContainerType = "camera";
 
 /**
  * Container for user video.
@@ -332,6 +332,10 @@ class VideoContainer extends LargeContainer {
     }
 
     hide () {
+        // as the container is hidden/replaced by another container
+        // hide its avatar
+        this.showAvatar(false);
+
         // its already hidden
         if (!this.isVisible) {
             return Promise.resolve();
@@ -357,6 +361,8 @@ export default class LargeVideoManager {
         this.state = VideoContainerType;
         this.videoContainer = new VideoContainer(() => this.resizeContainer(VideoContainerType));
         this.addContainer(VideoContainerType, this.videoContainer);
+        // use the same video container to handle and desktop tracks
+        this.addContainer("desktop", this.videoContainer);
 
         this.width = 0;
         this.height = 0;
@@ -413,7 +419,8 @@ export default class LargeVideoManager {
     }
 
     get id () {
-        return this.videoContainer.id;
+        let container = this.getContainer(this.state);
+        return container.id;
     }
 
     scheduleLargeVideoUpdate () {
@@ -430,8 +437,9 @@ export default class LargeVideoManager {
             this.newStreamData = null;
 
             console.info("hover in %s", id);
-            this.state = VideoContainerType;
-            this.videoContainer.setStream(stream, videoType);
+            this.state = videoType;
+            let container = this.getContainer(this.state);
+            container.setStream(stream, videoType);
 
             // change the avatar url on large
             this.updateAvatar(Avatar.getAvatarUrl(id));
@@ -439,7 +447,7 @@ export default class LargeVideoManager {
             let isVideoMuted = stream ? stream.isMuted() : true;
 
             // show the avatar on large if needed
-            this.videoContainer.showAvatar(isVideoMuted);
+            container.showAvatar(isVideoMuted);
 
             let promise;
 
@@ -449,7 +457,7 @@ export default class LargeVideoManager {
                 this.showWatermark(true);
                 promise = Promise.resolve();
             } else {
-                promise = this.videoContainer.show();
+                promise = container.show();
             }
 
             // resolve updateLargeVideo promise after everything is done
@@ -529,7 +537,8 @@ export default class LargeVideoManager {
      * @param enable <tt>true</tt> to enable, <tt>false</tt> to disable
      */
     enableVideoProblemFilter (enable) {
-        this.videoContainer.$video.toggleClass("videoProblemFilter", enable);
+        let container = this.getContainer(this.state);
+        container.$video.toggleClass("videoProblemFilter", enable);
     }
 
     /**
