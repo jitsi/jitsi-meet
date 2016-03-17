@@ -4933,3 +4933,10 @@ a:active {
 text-decoration: none;
 }
 
+img#dominantSpeakerAvatar {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-top: -50px;
+    margin-left: -50px;
+}
