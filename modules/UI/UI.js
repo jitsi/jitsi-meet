@@ -734,7 +734,7 @@ UI.notifyConnectionFailed = function (stropheErrorMsg) {
 
 
 /**
- * Notify user that max users limit is already reached.
+ * Notify user that maximum users limit has been reached.
  */
 UI.notifyMaxUsersLimitReached = function () {
     var title = APP.translation.generateTranslationHTML(

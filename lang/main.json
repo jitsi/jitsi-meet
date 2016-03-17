@@ -146,7 +146,7 @@
         "failedpermissions": "Failed to obtain permissions to use the local microphone and/or camera.",
         "bridgeUnavailable": "Jitsi Videobridge is currently unavailable. Please try again later!",
         "jicofoUnavailable": "Jicofo is currently unavailable. Please try again later!",
-        "maxUsersLimitReached": "The limit for maximum number of participants in the conference is already reached. The conference is full. Please try again later!",
+        "maxUsersLimitReached": "The limit for maximum number of participants in the conference has been reached. The conference is full. Please try again later!",
         "lockTitle": "Lock failed",
         "lockMessage": "Failed to lock the conference.",
         "warning": "Warning",
