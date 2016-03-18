@@ -133,6 +133,13 @@ class Etherpad extends LargeContainer {
             });
         });
     }
+
+    /**
+     * @return {boolean} do not switch on dominant speaker event if on stage.
+     */
+    stayOnStage () {
+        return true;
+    }
 }
 
 /**
