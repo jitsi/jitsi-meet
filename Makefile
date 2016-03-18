@@ -47,5 +47,6 @@ source-package:
 	mkdir -p source_package/jitsi-meet/css && \
 	cp -r analytics.js external_api.js favicon.ico fonts images index.html interface_config.js libs plugin.*html sounds title.html unsupported_browser.html LICENSE config.js lang source_package/jitsi-meet && \
 	cp css/all.css source_package/jitsi-meet/css && \
+	cp css/unsupported_browser.css source_package/jitsi-meet/css && \
 	(cd source_package ; tar cjf ../jitsi-meet.tar.bz2 jitsi-meet) && \
 	rm -rf source_package
