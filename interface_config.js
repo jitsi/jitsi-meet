@@ -16,7 +16,7 @@ var interfaceConfig = {
     INVITATION_POWERED_BY: true,
     DOMINANT_SPEAKER_AVATAR_SIZE: 100,
     TOOLBAR_BUTTONS: ['authentication', 'microphone', 'camera', 'desktop',
-        'recording', 'security', 'invite', 'chat', 'etherpad',
+        'recording', 'security', 'invite', 'chat', 'etherpad', 'sharedvideo',
         'fullscreen', 'sip', 'dialpad', 'settings', 'hangup', 'filmstrip',
         'contacts'],
     // Determines how the video would fit the screen. 'both' would fit the whole

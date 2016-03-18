@@ -9,7 +9,8 @@ import UIEvents from "../../../service/UI/UIEvents";
 import UIUtil from "../util/UIUtil";
 
 import RemoteVideo from "./RemoteVideo";
-import LargeVideoManager, {VideoContainerType} from "./LargeVideo";
+import LargeVideoManager, {VIDEO_CONTAINER_TYPE} from "./LargeVideo";
+import {SHARED_VIDEO_CONTAINER_TYPE} from '../shared_video/SharedVideo';
 import LocalVideo from "./LocalVideo";
 import PanelToggler from "../side_pannels/SidePanelToggler";
 
@@ -343,7 +344,7 @@ var VideoLayout = {
         let videoType = VideoLayout.getRemoteVideoType(id);
         if (!videoType) {
             // make video type the default one (camera)
-            videoType = VideoContainerType;
+            videoType = VIDEO_CONTAINER_TYPE;
         }
         remoteVideo.setVideoType(videoType);
 
@@ -367,7 +368,8 @@ var VideoLayout = {
         // current dominant, focused speaker or update it to
         // the current dominant speaker.
         if ((!focusedVideoResourceJid &&
-            !currentDominantSpeaker) ||
+            !currentDominantSpeaker &&
+            !this.isLargeContainerTypeVisible(SHARED_VIDEO_CONTAINER_TYPE)) ||
             focusedVideoResourceJid === resourceJid ||
             (resourceJid &&
                 currentDominantSpeaker === resourceJid)) {
@@ -888,7 +890,7 @@ var VideoLayout = {
     },
 
     isLargeVideoVisible () {
-        return this.isLargeContainerTypeVisible(VideoContainerType);
+        return this.isLargeContainerTypeVisible(VIDEO_CONTAINER_TYPE);
     },
 
     /**
@@ -960,8 +962,17 @@ var VideoLayout = {
             return Promise.resolve();
         }
 
+        let currentId = largeVideo.id;
+        if(currentId) {
+            var oldSmallVideo = this.getSmallVideo(currentId);
+        }
+
         // if !show then use default type - large video
-        return largeVideo.showContainer(show ? type : VideoContainerType);
+        return largeVideo.showContainer(show ? type : VIDEO_CONTAINER_TYPE)
+            .then(() => {
+                if(oldSmallVideo)
+                    oldSmallVideo && oldSmallVideo.updateView();
+            });
     },
 
     isLargeContainerTypeVisible (type) {
@@ -970,10 +981,18 @@ var VideoLayout = {
 
     /**
      * Returns the id of the current video shown on large.
-     * Currently used by tests (troture).
+     * Currently used by tests (torture).
      */
     getLargeVideoID () {
         return largeVideo.id;
+    },
+
+    /**
+     * Returns the the current video shown on large.
+     * Currently used by tests (torture).
+     */
+    getLargeVideo () {
+        return largeVideo;
     }
 };
 

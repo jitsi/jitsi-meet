@@ -126,6 +126,10 @@ const buttonHandlers = {
         AnalyticsAdapter.sendEvent('toolbar.etherpad.clicked');
         emitter.emit(UIEvents.ETHERPAD_CLICKED);
     },
+    "toolbar_button_sharedvideo": function () {
+        AnalyticsAdapter.sendEvent('toolbar.sharedvideo.clicked');
+        emitter.emit(UIEvents.SHARED_VIDEO_CLICKED);
+    },
     "toolbar_button_desktopsharing": function () {
         if (APP.conference.isSharingScreen) {
             AnalyticsAdapter.sendEvent('toolbar.screen.disabled');
@@ -281,6 +285,15 @@ const Toolbar = {
             $('#toolbar_button_record').css({display: "inline-block"});
         } else {
             $('#toolbar_button_record').css({display: "none"});
+        }
+    },
+
+    // Shows or hides the 'shared video' button.
+    showSharedVideoButton (show) {
+        if (UIUtil.isButtonEnabled('sharedvideo') && show) {
+            $('#toolbar_button_sharedvideo').css({display: "inline-block"});
+        } else {
+            $('#toolbar_button_sharedvideo').css({display: "none"});
         }
     },
 
