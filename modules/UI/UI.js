@@ -490,11 +490,11 @@ UI.addUser = function (id, displayName) {
         config.startAudioMuted > APP.conference.membersCount)
         UIUtil.playSoundNotification('userJoined');
 
-    // Configure avatar
-    UI.setUserAvatar(id);
-
     // Add Peer's container
     VideoLayout.addParticipantContainer(id);
+
+    // Configure avatar
+    UI.setUserAvatar(id);
 };
 
 /**
