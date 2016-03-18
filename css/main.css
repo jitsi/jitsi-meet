@@ -46,9 +46,10 @@ html, body{
     display: inline-block;
     position: relative;
     color: #FFFFFF;
-    top: 0;
-    padding: 9px 0;
+    top:0px;
+    padding-top: 9px;
     width: 38px;
+    height: 28px;
     cursor: pointer;
     text-align: center;
     text-shadow: 0 1px 0 rgba(255,255,255,.3), 0 -1px 0 rgba(0,0,0,.6);
@@ -94,7 +95,7 @@ html, body{
 #numberOfParticipants {
     position: absolute;
     top: 0px;
-    right: -1;
+    right: -1px;
     color: white;
     width: 13px;
     height: 13px;
@@ -107,6 +108,19 @@ html, body{
 
 #contactListButton.active #numberOfParticipants {
     color: #00ccff;
+}
+
+#toolbar {
+    display:inline-block;
+    position:relative;
+    top:5px;
+    margin-left:auto;
+    margin-right:auto;
+    height:38px;
+    width:auto;
+    background-color: rgba(0,0,0,0.5);
+    border-radius: 1px;
+    pointer-events: auto;
 }
 
 #toolbar_button_record {
@@ -132,7 +146,6 @@ html, body{
 
 a.button:hover,
 a.bottomToolbarButton:hover {
-    top: 0px;
     cursor: pointer;
     background: rgba(255, 255, 255, 0.1);
     border-radius: 1px;
@@ -146,7 +159,7 @@ a.bottomToolbarButton:hover {
 .header_button_separator {
     display: inline-block;
     position:relative;
-    top: 5;
+    top: 5px;
     width: 1px;
     height: 20px;
     background: #373737;
@@ -155,7 +168,7 @@ a.bottomToolbarButton:hover {
 .bottom_button_separator {
     display: inline-block;
     position: relative;
-    left: 5;
+    left: 5px;
     width: 20px;
     height: 1px;
     background: #373737;

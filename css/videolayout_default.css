@@ -359,21 +359,6 @@
     pointer-events: none;
 }
 
-#toolbar {
-    display:inline-block;
-    position:relative;
-    margin-top:5px;
-    margin-left:auto;
-    margin-right:auto;
-    padding-left:2px;
-    padding-right:2px;
-    height:38px;
-    width:auto;
-    background-color: rgba(0,0,0,0.5);
-    border-radius: 1px;
-    pointer-events: auto;
-}
-
 #subject {
     position: relative;
     z-index: 3;
