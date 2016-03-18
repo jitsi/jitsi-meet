@@ -43,7 +43,8 @@ export default class SharedVideoManager {
             return;
         }
 
-        this.emitter.emit(UIEvents.UPDATE_SHARED_VIDEO, null, 'stop');
+        proposeToClose().then(() =>
+            this.emitter.emit(UIEvents.UPDATE_SHARED_VIDEO, null, 'stop'));
     }
 
     /**
@@ -422,6 +423,30 @@ SharedVideoThumb.prototype.setDisplayName = function(displayName) {
 function getYoutubeLink(url) {
     let p = /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;//jshint ignore:line
     return (url.match(p)) ? RegExp.$1 : false;
+}
+
+/**
+ * Ask user if he want to close shared video.
+ */
+function proposeToClose() {
+    return new Promise(function (resolve, reject) {
+        messageHandler.openTwoButtonDialog(
+            "dialog.removeSharedVideoTitle",
+            null,
+            "dialog.removeSharedVideoMsg",
+            null,
+            false,
+            "dialog.Remove",
+            function(e,v,m,f) {
+                if (v) {
+                    resolve();
+                } else {
+                    reject();
+                }
+            }
+        );
+
+    });
 }
 
 /**
