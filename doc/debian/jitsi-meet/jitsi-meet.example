@@ -25,7 +25,7 @@ server {
         alias /etc/jitsi/meet/jitsi-meet.example.com-config.js;
     }
 
-    location ~ ^/([a-zA-Z0-9]+)$ {
+    location ~ ^/([a-zA-Z0-9_-]+)$ {
         rewrite ^/(.*)$ / break;
     }
 
@@ -34,7 +34,7 @@ server {
     }
 
     # BOSH
-    location /http-bind {
+    location = /http-bind {
         proxy_pass      http://localhost:5280/http-bind;
         proxy_set_header X-Forwarded-For $remote_addr;
         proxy_set_header Host $http_host;
