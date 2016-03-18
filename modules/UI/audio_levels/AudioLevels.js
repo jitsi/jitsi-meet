@@ -8,13 +8,16 @@ const LOCAL_LEVEL = 'local';
 
 let ASDrawContext = null;
 let audioLevelCanvasCache = {};
+let dominantSpeakerAudioElement = null;
 
-function initDominantSpeakerAudioLevels() {
-    let ASRadius = interfaceConfig.DOMINANT_SPEAKER_AVATAR_SIZE / 2;
-    let ASCenter = (interfaceConfig.DOMINANT_SPEAKER_AVATAR_SIZE + ASRadius) / 2;
+function initDominantSpeakerAudioLevels(dominantSpeakerAvatarSize) {
+    let ASRadius = dominantSpeakerAvatarSize / 2;
+    let ASCenter = (dominantSpeakerAvatarSize + ASRadius) / 2;
 
     // Draw a circle.
+    ASDrawContext.beginPath();
     ASDrawContext.arc(ASCenter, ASCenter, ASRadius, 0, 2 * Math.PI);
+    ASDrawContext.closePath();
 
     // Add a shadow around the circle
     ASDrawContext.shadowColor = interfaceConfig.SHADOW_COLOR;
@@ -90,14 +93,14 @@ function getShadowLevel (audioLevel) {
     let shadowLevel = 0;
 
     if (audioLevel <= 0.3) {
-        shadowLevel
-            = Math.round(interfaceConfig.CANVAS_EXTRA/2*(audioLevel/0.3));
+        shadowLevel = Math.round(
+            interfaceConfig.CANVAS_EXTRA/2*(audioLevel/0.3));
     } else if (audioLevel <= 0.6) {
-        shadowLevel
-            = Math.round(interfaceConfig.CANVAS_EXTRA/2*((audioLevel - 0.3) / 0.3));
+        shadowLevel = Math.round(
+            interfaceConfig.CANVAS_EXTRA/2*((audioLevel - 0.3) / 0.3));
     } else {
-        shadowLevel
-            = Math.round(interfaceConfig.CANVAS_EXTRA/2*((audioLevel - 0.6) / 0.4));
+        shadowLevel = Math.round(
+            interfaceConfig.CANVAS_EXTRA/2*((audioLevel - 0.6) / 0.4));
     }
 
     return shadowLevel;
@@ -124,8 +127,18 @@ function getVideoSpanId(id) {
 const AudioLevels = {
 
     init () {
-        ASDrawContext = $('#dominantSpeakerAudioLevel')[0].getContext('2d');
-        initDominantSpeakerAudioLevels();
+        dominantSpeakerAudioElement =  $('#dominantSpeakerAudioLevel')[0];
+        ASDrawContext = dominantSpeakerAudioElement.getContext('2d');
+
+        let parentContainer = $("#dominantSpeaker");
+        let dominantSpeakerWidth = parentContainer.width();
+        let dominantSpeakerHeight = parentContainer.height();
+
+        dominantSpeakerAudioElement.width = dominantSpeakerWidth;
+        dominantSpeakerAudioElement.height = dominantSpeakerHeight;
+
+        let dominantSpeakerAvatar = $("#dominantSpeakerAvatar");
+        initDominantSpeakerAudioLevels(dominantSpeakerAvatar.width());
     },
 
     /**
@@ -155,8 +168,10 @@ const AudioLevels = {
 
             audioLevelCanvas = document.createElement('canvas');
             audioLevelCanvas.className = "audiolevel";
-            audioLevelCanvas.style.bottom = `-${interfaceConfig.CANVAS_EXTRA/2}px`;
-            audioLevelCanvas.style.left = `-${interfaceConfig.CANVAS_EXTRA/2}px`;
+            audioLevelCanvas.style.bottom
+                = `-${interfaceConfig.CANVAS_EXTRA/2}px`;
+            audioLevelCanvas.style.left
+                = `-${interfaceConfig.CANVAS_EXTRA/2}px`;
             resizeAudioLevelCanvas(audioLevelCanvas, thumbWidth, thumbHeight);
 
             videoSpan.appendChild(audioLevelCanvas);
@@ -213,7 +228,10 @@ const AudioLevels = {
             return;
         }
 
-        ASDrawContext.clearRect(0, 0, 300, 300);
+        ASDrawContext.clearRect(0, 0,
+            dominantSpeakerAudioElement.width,
+            dominantSpeakerAudioElement.height);
+
         if (!audioLevel) {
             return;
         }
