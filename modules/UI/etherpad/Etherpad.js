@@ -52,7 +52,7 @@ const DEFAULT_WIDTH = 640;
  */
 const DEFAULT_HEIGHT = 480;
 
-const EtherpadContainerType = "etherpad";
+const ETHERPAD_CONTAINER_TYPE = "etherpad";
 
 /**
  * Container for Etherpad iframe.
@@ -159,7 +159,7 @@ export default class EtherpadManager {
     openEtherpad () {
         this.etherpad = new Etherpad(this.domain, this.name);
         VideoLayout.addLargeVideoContainer(
-            EtherpadContainerType,
+            ETHERPAD_CONTAINER_TYPE,
             this.etherpad
         );
     }
@@ -174,9 +174,10 @@ export default class EtherpadManager {
         }
 
         let isVisible = VideoLayout.isLargeContainerTypeVisible(
-            EtherpadContainerType
+            ETHERPAD_CONTAINER_TYPE
         );
 
-        VideoLayout.showLargeVideoContainer(EtherpadContainerType, !isVisible);
+        VideoLayout.showLargeVideoContainer(
+            ETHERPAD_CONTAINER_TYPE, !isVisible);
     }
 }
