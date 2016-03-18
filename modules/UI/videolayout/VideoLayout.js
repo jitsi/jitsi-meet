@@ -524,7 +524,9 @@ var VideoLayout = {
         // since we don't want to switch to local video.
         // Update the large video if the video source is already available,
         // otherwise wait for the "videoactive.jingle" event.
-        if (!focusedVideoResourceJid && remoteVideo.hasVideoStarted()) {
+        if (!focusedVideoResourceJid
+            && remoteVideo.hasVideoStarted()
+            && !this.getCurrentlyOnLargeContainer().stayOnStage()) {
             this.updateLargeVideo(id);
         }
     },
@@ -887,6 +889,14 @@ var VideoLayout = {
 
     isLargeVideoVisible () {
         return this.isLargeContainerTypeVisible(VideoContainerType);
+    },
+
+    /**
+     * @return {LargeContainer} the currently displayed container on large
+     * video.
+     */
+    getCurrentlyOnLargeContainer () {
+        return largeVideo.getContainer(largeVideo.state);
     },
 
     isCurrentlyOnLarge (id) {

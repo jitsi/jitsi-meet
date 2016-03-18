@@ -349,6 +349,13 @@ class VideoContainer extends LargeContainer {
             });
         });
     }
+
+    /**
+     * @return {boolean} switch on dominant speaker event if on stage.
+     */
+    stayOnStage () {
+        return false;
+    }
 }
 
 /**

@@ -54,4 +54,11 @@ export default class LargeContainer {
     showAvatar (show) {
     }
 
+    /**
+     * Whether current container needs to be switched on dominant speaker event
+     * when the container is on stage.
+     * @return {boolean}
+     */
+    stayOnStage () {
+    }
 }
