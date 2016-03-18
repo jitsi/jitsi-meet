@@ -101,7 +101,7 @@ export default class SharedVideoManager {
                 self.updateCheck();
             } else if (event.data == YT.PlayerState.PAUSED) {
                 self.playerPaused = true;
-                self.updateCheck();
+                self.updateCheck(true);
             }
         };
 
@@ -146,7 +146,7 @@ export default class SharedVideoManager {
     /**
      * Checks current state of the player and fire an event with the values.
      */
-    updateCheck()
+    updateCheck(sendPauseEvent)
     {
         // ignore update checks if we are not the owner of the video
         if(!APP.conference.isLocalId(this.from))
@@ -154,7 +154,7 @@ export default class SharedVideoManager {
 
         let state = this.player.getPlayerState();
         // if its paused and haven't been pause - send paused
-        if (state === YT.PlayerState.PAUSED && !this.playerPaused) {
+        if (state === YT.PlayerState.PAUSED && sendPauseEvent) {
             this.emitter.emit(UIEvents.UPDATE_SHARED_VIDEO,
                 this.url, 'pause');
         }
@@ -189,7 +189,12 @@ export default class SharedVideoManager {
 
             // ocasionally we get this.player.getCurrentTime is not a function
             // it seems its that player hasn't really loaded
-            if(!this.player || !this.player.getCurrentTime)
+            if(!this.player || !this.player.getCurrentTime
+                || !this.player.pauseVideo
+                || !this.player.playVideo
+                || !this.player.getVolume
+                || !this.player.seekTo
+                || !this.player.getVolume)
                 return;
 
             // check received time and current time
@@ -210,7 +215,6 @@ export default class SharedVideoManager {
                 this.player.setVolume(attributes.volume);
                 console.log("Player change of volume:" + attributes.volume);
             }
-
 
             if(this.playerPaused)
                 this.player.playVideo();
