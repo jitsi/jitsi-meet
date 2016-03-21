@@ -6,6 +6,7 @@ import SmallVideo from "./SmallVideo";
 import AudioLevels from "../audio_levels/AudioLevels";
 import UIUtils from "../util/UIUtil";
 import UIEvents from '../../../service/UI/UIEvents';
+import JitsiPopover from "../util/JitsiPopover";
 
 function RemoteVideo(id, VideoLayout, emitter) {
     this.id = id;
@@ -18,6 +19,7 @@ function RemoteVideo(id, VideoLayout, emitter) {
     this.bindHoverHandler();
     this.flipX = false;
     this.isLocal = false;
+    this.popover = null;
 }
 
 RemoteVideo.prototype = Object.create(SmallVideo.prototype);
@@ -35,100 +37,89 @@ RemoteVideo.prototype.addRemoteVideoContainer = function() {
 };
 
 /**
- * Adds the remote video menu element for the given <tt>id</tt> in the
- * given <tt>parentElement</tt>.
- *
- * @param id the id indicating the video for which we're adding a menu.
- * @param parentElement the parent element where this menu will be added
+ * Adds menu to the this remote video element.
  */
-if (!interfaceConfig.filmStripOnly) {
-    RemoteVideo.prototype.addRemoteVideoMenu = function () {
-        var spanElement = document.createElement('span');
-        spanElement.className = 'remotevideomenu';
+RemoteVideo.prototype.addRemoteVideoMenu = function() {
+    if (interfaceConfig.filmStripOnly || this.popover) {
+        return;
+    }
 
-        this.container.appendChild(spanElement);
-
-        var menuElement = document.createElement('i');
-        menuElement.className = 'fa fa-angle-down';
-        menuElement.title = 'Remote user controls';
-        spanElement.appendChild(menuElement);
-
-
-        var popupmenuElement = document.createElement('ul');
-        popupmenuElement.className = 'popupmenu';
-        popupmenuElement.id = `remote_popupmenu_${this.id}`;
-        spanElement.appendChild(popupmenuElement);
-
-        var muteMenuItem = document.createElement('li');
-        var muteLinkItem = document.createElement('a');
-
-        var mutedIndicator = "<i style='float:left;' " +
-            "class='icon-mic-disabled'></i>";
-
-        if (!this.isMuted) {
-            muteLinkItem.innerHTML = mutedIndicator +
-                " <div style='width: 90px;margin-left: 20px;' " +
-                "data-i18n='videothumbnail.domute'></div>";
-            muteLinkItem.className = 'mutelink';
+    let $popup = $(
+        `<span class="remotevideomenu">
+            <i class="fa fa-angle-down" title="Remote user controls"></i>
+         </span>`
+    );
+    $(this.container).append($popup);
+    this.popover = new JitsiPopover($popup, {
+        skin: 'black',
+        onClick: this.onRemoteVideoMenuClicked.bind(this),
+        onShow: () => {
+            $(`#${this.getRemoteMenuId()} [data-i18n]`).each(function (i, el) {
+                APP.translation.translateElement($(el));
+            });
         }
-        else {
-            muteLinkItem.innerHTML = mutedIndicator +
-                " <div style='width: 90px;margin-left: 20px;' " +
-                "data-i18n='videothumbnail.muted'></div>";
-            muteLinkItem.className = 'mutelink disabled';
-        }
+    });
+    this.updatePopover();
+};
 
-        muteLinkItem.onclick = (event) => {
-            if ($(this).attr('disabled')) {
-                event.preventDefault();
-            }
-            var isMute = !!this.isMuted;
-            this.emitter.emit(UIEvents.REMOTE_AUDIO_MUTED, this.id);
+/**
+ * Get id of menu element for this remote video element.
+ * @returns {string} remote menu element id
+ */
+RemoteVideo.prototype.getRemoteMenuId = function () {
+    return `remote_popupmenu_${this.id}`;
+};
 
-            popupmenuElement.setAttribute('style', 'display:none;');
+/**
+ * Generate menu html for this remote video.
+ * @returns {string} remote menu html
+ */
+RemoteVideo.prototype.generateRemoteVideoMenu = function () {
+    let muteLabeli18n =
+            this.isMuted
+            ? 'videothumbnail.muted'
+            : 'videothumbnail.domute';
+    return `
+    <ul id="${this.getRemoteMenuId()}" class="popupmenu">
+        <li class="popupmenu-mute">
+            <a href="" class="mutelink ${this.isMuted ? 'disabled' : ''}">
+                <i class="icon-mic-disabled"></i>
+                <span data-i18n="${muteLabeli18n}"></span>
+            </a>
+        </li>
+        <li class="popupmenu-kick">
+            <a href="">
+                <i class="fa fa-eject"></i>
+                <span data-i18n="videothumbnail.kick"></span>
+            </a>
+        </li>
+    </ul>
+    `;
+};
 
-            if (isMute) {
-                this.innerHTML = mutedIndicator +
-                    " <div style='width: 90px;margin-left: 20px;' " +
-                    "data-i18n='videothumbnail.muted'></div>";
-                this.className = 'mutelink disabled';
-            }
-            else {
-                this.innerHTML = mutedIndicator +
-                    " <div style='width: 90px;margin-left: 20px;' " +
-                    "data-i18n='videothumbnail.domute'></div>";
-                this.className = 'mutelink';
-            }
-        };
+/**
+ * Update remote menu.
+ */
+RemoteVideo.prototype.updatePopover = function () {
+    this.popover.updateContent(this.generateRemoteVideoMenu());
+};
 
-        muteMenuItem.appendChild(muteLinkItem);
-        popupmenuElement.appendChild(muteMenuItem);
+/**
+ * Click handler for the remote menu.
+ */
+RemoteVideo.prototype.onRemoteVideoMenuClicked = function (e) {
+    e.preventDefault();
 
-        var ejectIndicator = "<i style='float:left;' class='fa fa-eject'></i>";
+    let $target = $(e.target);
 
-        var ejectMenuItem = document.createElement('li');
-        var ejectLinkItem = document.createElement('a');
-        var ejectText = "<div style='width: 90px;margin-left: 20px;' " +
-            "data-i18n='videothumbnail.kick'>&nbsp;</div>";
-        ejectLinkItem.innerHTML = ejectIndicator + ' ' + ejectText;
-        ejectLinkItem.onclick = (event) => {
-            this.emitter.emit(UIEvents.USER_KICKED, this.id);
-            popupmenuElement.setAttribute('style', 'display:none;');
-        };
+    if ($target.parents('.popupmenu-mute').length) {
+        this.emitter.emit(UIEvents.REMOTE_AUDIO_MUTED, this.id);
+    } else if ($target.parents('.popupmenu-kick').length) {
+        this.emitter.emit(UIEvents.USER_KICKED, this.id);
+    }
 
-        ejectMenuItem.appendChild(ejectLinkItem);
-        popupmenuElement.appendChild(ejectMenuItem);
-
-        var paddingSpan = document.createElement('span');
-        paddingSpan.className = 'popupmenuPadding';
-        popupmenuElement.appendChild(paddingSpan);
-        APP.translation.translateElement(
-            $("#" + popupmenuElement.id + " > li > a > div"));
-    };
-
-} else {
-    RemoteVideo.prototype.addRemoteVideoMenu = function() {};
-}
+    this.popover.forceHide();
+};
 
 /**
  * Removes the remote stream element corresponding to the given stream and
@@ -166,6 +157,11 @@ RemoteVideo.prototype.removeRemoteStreamElement = function (stream) {
 RemoteVideo.prototype.remove = function () {
     console.log("Remove thumbnail", this.id);
     this.removeConnectionIndicator();
+
+    if (this.popover) {
+        this.popover.forceHide();
+    }
+
     // Make sure that the large video is updated if are removing its
     // corresponding small video.
     this.VideoLayout.updateRemovedVideo(this.id);
@@ -218,10 +214,7 @@ RemoteVideo.prototype.addRemoteStreamElement = function (stream) {
     let onClickHandler = (event) => {
         let source = event.target || event.srcElement;
 
-        // ignore click if it was done in popup menu
-        if ($(source).parents('.popupmenu').length === 0) {
-            this.VideoLayout.handleVideoThumbClicked(false, this.id);
-        }
+        this.VideoLayout.handleVideoThumbClicked(false, this.id);
 
         // On IE we need to populate this handler on video <object>
         // and it does not give event instance as an argument,
@@ -317,26 +310,11 @@ RemoteVideo.prototype.hideConnectionIndicator = function () {
 /**
  * Updates the remote video menu.
  *
- * @param id the id indicating the video for which we're adding a menu.
  * @param isMuted indicates the current mute state
  */
 RemoteVideo.prototype.updateRemoteVideoMenu = function (isMuted) {
-    var muteMenuItem = $(`#remote_popupmenu_${this.id}>li>a.mutelink`);
-
-    var mutedIndicator = "<i class='icon-mic-disabled'></i>";
-
-    if (muteMenuItem.length) {
-        var muteLink = muteMenuItem.get(0);
-
-        if (isMuted) {
-            muteLink.innerHTML = mutedIndicator + ' Muted';
-            muteLink.className = 'mutelink disabled';
-        }
-        else {
-            muteLink.innerHTML = mutedIndicator + ' Mute';
-            muteLink.className = 'mutelink';
-        }
-    }
+    this.isMuted = isMuted;
+    this.updatePopover();
 };
 
 /**

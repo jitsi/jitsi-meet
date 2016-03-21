@@ -10,15 +10,26 @@ var JitsiPopover = (function () {
     {
         this.options = {
             skin: "white",
-            content: ""
+            content: "",
+            onClick: function () {},
+            onShow: function () {}
         };
-        if(options)
-        {
-            if(options.skin)
+        if (options) {
+            if (options.skin) {
                 this.options.skin = options.skin;
+            }
 
-            if(options.content)
+            if (options.content) {
                 this.options.content = options.content;
+            }
+
+            if (options.onClick) {
+                this.options.onClick = options.onClick;
+            }
+
+            if (options.onShow) {
+                this.options.onShow = options.onShow;
+            }
         }
 
         this.elementIsHovered = false;
@@ -76,7 +87,10 @@ var JitsiPopover = (function () {
      */
     JitsiPopover.prototype.createPopover = function () {
         $("body").append(this.template);
-        $(".jitsipopover > .jitsipopover-content").html(this.options.content);
+        $(".jitsipopover > .jitsipopover-content")
+            .html(this.options.content)
+            .click(this.options.onClick);
+        this.options.onShow();
         var self = this;
         $(".jitsipopover").on("mouseenter", function () {
             self.popoverIsHovered = true;

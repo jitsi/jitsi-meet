@@ -16,7 +16,6 @@
     border-radius: 6px;
     /*-webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);*/
     /*box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4);*/
-    white-space: normal;
     margin-top: -10px;
     margin-bottom: 35px;
 }
@@ -30,7 +29,6 @@
 .jitsipopover-content {
     padding: 9px 14px;
     font-size: 10pt;
-    white-space:pre-wrap;
     text-align: center;
 }
 
