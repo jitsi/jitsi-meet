@@ -43,7 +43,7 @@ export default class SharedVideoManager {
             return;
         }
 
-        proposeToClose().then(() =>
+        showStopVideoPropmpt().then(() =>
             this.emitter.emit(UIEvents.UPDATE_SHARED_VIDEO, null, 'stop'));
     }
 
@@ -433,7 +433,7 @@ function getYoutubeLink(url) {
 /**
  * Ask user if he want to close shared video.
  */
-function proposeToClose() {
+function showStopVideoPropmpt() {
     return new Promise(function (resolve, reject) {
         messageHandler.openTwoButtonDialog(
             "dialog.removeSharedVideoTitle",
