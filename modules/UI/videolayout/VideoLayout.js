@@ -374,7 +374,7 @@ var VideoLayout = {
         // the current dominant speaker.
         if ((!focusedVideoResourceJid &&
             !currentDominantSpeaker &&
-            !this.isLargeContainerTypeVisible(SHARED_VIDEO_CONTAINER_TYPE)) ||
+            this.isLargeContainerTypeVisible(VIDEO_CONTAINER_TYPE)) ||
             focusedVideoResourceJid === resourceJid ||
             (resourceJid &&
                 currentDominantSpeaker === resourceJid)) {
