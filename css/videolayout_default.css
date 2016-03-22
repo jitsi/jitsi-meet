@@ -31,6 +31,7 @@
     position: relative;
     margin-left: auto;
     margin-right: auto;
+    text-align: center;
 }
 
 #remoteVideos .videocontainer {
@@ -112,6 +113,7 @@
 }
 
 #presentation,
+#sharedVideo,
 #etherpad,
 #localVideoWrapper>video,
 #localVideoWrapper>object,
@@ -434,6 +436,10 @@
     position: absolute;
     left: 35px;
     border-radius: 200px;
+}
+
+.sharedVideoAvatar {
+    height: 100%;
 }
 
 .noMic {

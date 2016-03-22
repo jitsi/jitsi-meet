@@ -27,7 +27,8 @@ let room, connection, localAudio, localVideo, roomLocker;
 const Commands = {
     CONNECTION_QUALITY: "stats",
     EMAIL: "email",
-    ETHERPAD: "etherpad"
+    ETHERPAD: "etherpad",
+    SHARED_VIDEO: "shared-video"
 };
 
 /**
@@ -689,6 +690,7 @@ export default {
             console.log('USER %s LEFT', id, user);
             APP.API.notifyUserLeft(id);
             APP.UI.removeUser(id, user.getDisplayName());
+            APP.UI.stopSharedVideo({from: id});
         });
 
 
@@ -1012,5 +1014,47 @@ export default {
         APP.UI.addListener(
             UIEvents.TOGGLE_SCREENSHARING, this.toggleScreenSharing.bind(this)
         );
+
+        APP.UI.addListener(UIEvents.UPDATE_SHARED_VIDEO,
+            (url, state, time, volume) => {
+            // send start and stop commands once, and remove any updates
+            // that had left
+            if (state === 'stop' || state === 'start' || state === 'playing') {
+                room.removeCommand(Commands.SHARED_VIDEO);
+                room.sendCommandOnce(Commands.SHARED_VIDEO, {
+                    value: url,
+                    attributes: {
+                        from: APP.conference.localId,
+                        state: state,
+                        time: time,
+                        volume: volume
+                    }
+                });
+            }
+            else {
+                // in case of paused, in order to allow late users to join
+                // paused
+                room.sendCommand(Commands.SHARED_VIDEO, {
+                    value: url,
+                    attributes: {
+                        from: APP.conference.localId,
+                        state: state,
+                        time: time,
+                        volume: volume
+                    }
+                });
+            }
+        });
+        room.addCommandListener(
+            Commands.SHARED_VIDEO, ({value, attributes}) => {
+                if (attributes.state === 'stop') {
+                    APP.UI.stopSharedVideo(attributes);
+                } else if (attributes.state === 'start') {
+                    APP.UI.showSharedVideo(value, attributes);
+                } else if (attributes.state === 'playing'
+                    || attributes.state === 'pause') {
+                    APP.UI.updateSharedVideo(value, attributes);
+                }
+            });
     }
 };

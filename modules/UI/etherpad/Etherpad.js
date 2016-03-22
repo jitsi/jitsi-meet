@@ -110,9 +110,11 @@ class Etherpad extends LargeContainer {
     show () {
         const $iframe = $(this.iframe);
         const $container = $(this.container);
+        let self = this;
 
         return new Promise(resolve => {
             $iframe.fadeIn(300, function () {
+                self.bodyBackground = document.body.style.background;
                 document.body.style.background = '#eeeeee';
                 $iframe.css({visibility: 'visible'});
                 $container.css({zIndex: 2});
@@ -124,6 +126,7 @@ class Etherpad extends LargeContainer {
     hide () {
         const $iframe = $(this.iframe);
         const $container = $(this.container);
+        document.body.style.background = this.bodyBackground;
 
         return new Promise(resolve => {
             $iframe.fadeOut(300, function () {

@@ -11,6 +11,8 @@ import {createDeferred} from '../../util/helpers';
 const avatarSize = interfaceConfig.DOMINANT_SPEAKER_AVATAR_SIZE;
 const FADE_DURATION_MS = 300;
 
+export const VIDEO_CONTAINER_TYPE = "camera";
+
 /**
  * Get stream id.
  * @param {JitsiTrack?} stream
@@ -149,8 +151,6 @@ function getDesktopVideoPosition(videoWidth,
 
     return { horizontalIndent, verticalIndent };
 }
-
-export const VideoContainerType = "camera";
 
 /**
  * Container for user video.
@@ -365,9 +365,10 @@ export default class LargeVideoManager {
     constructor () {
         this.containers = {};
 
-        this.state = VideoContainerType;
-        this.videoContainer = new VideoContainer(() => this.resizeContainer(VideoContainerType));
-        this.addContainer(VideoContainerType, this.videoContainer);
+        this.state = VIDEO_CONTAINER_TYPE;
+        this.videoContainer = new VideoContainer(
+            () => this.resizeContainer(VIDEO_CONTAINER_TYPE));
+        this.addContainer(VIDEO_CONTAINER_TYPE, this.videoContainer);
         // use the same video container to handle and desktop tracks
         this.addContainer("desktop", this.videoContainer);
 
@@ -451,7 +452,12 @@ export default class LargeVideoManager {
             // change the avatar url on large
             this.updateAvatar(Avatar.getAvatarUrl(id));
 
-            let isVideoMuted = stream ? stream.isMuted() : true;
+            // If we the continer is VIDEO_CONTAINER_TYPE, we need to check
+            // its stream whether exist and is muted to set isVideoMuted
+            // in rest of the cases it is false
+            let isVideoMuted = false;
+            if (videoType == VIDEO_CONTAINER_TYPE)
+                isVideoMuted = stream ? stream.isMuted() : true;
 
             // show the avatar on large if needed
             container.showAvatar(isVideoMuted);
@@ -616,7 +622,7 @@ export default class LargeVideoManager {
         }
 
         let oldContainer = this.containers[this.state];
-        if (this.state === VideoContainerType) {
+        if (this.state === VIDEO_CONTAINER_TYPE) {
             this.showWatermark(false);
         }
         oldContainer.hide();
@@ -625,7 +631,7 @@ export default class LargeVideoManager {
         let container = this.getContainer(type);
 
         return container.show().then(() => {
-            if (type === VideoContainerType) {
+            if (type === VIDEO_CONTAINER_TYPE) {
                 this.showWatermark(true);
             }
         });

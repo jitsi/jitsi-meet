@@ -363,14 +363,7 @@ SmallVideo.prototype.updateView = function () {
     }
     setVisibility(avatar, showAvatar);
 
-    var showDisplayName = !showVideo && !showAvatar;
-
-    if (showDisplayName) {
-        this.showDisplayName(this.VideoLayout.isLargeVideoVisible());
-    }
-    else {
-        this.showDisplayName(false);
-    }
+    this.showDisplayName(!showVideo && !showAvatar);
 };
 
 SmallVideo.prototype.avatarChanged = function (avatarUrl) {

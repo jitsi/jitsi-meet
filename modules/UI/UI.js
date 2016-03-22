@@ -13,6 +13,7 @@ import UIUtil from "./util/UIUtil";
 import UIEvents from "../../service/UI/UIEvents";
 import CQEvents from '../../service/connectionquality/CQEvents';
 import EtherpadManager from './etherpad/Etherpad';
+import SharedVideoManager from './shared_video/SharedVideo';
 
 import VideoLayout from "./videolayout/VideoLayout";
 import FilmStrip from "./videolayout/FilmStrip";
@@ -30,6 +31,7 @@ var eventEmitter = new EventEmitter();
 UI.eventEmitter = eventEmitter;
 
 let etherpadManager;
+let sharedVideoManager;
 
 /**
  * Prompt user for nickname.
@@ -260,6 +262,12 @@ function registerListeners() {
         }
     });
 
+    UI.addListener(UIEvents.SHARED_VIDEO_CLICKED, function () {
+        if (sharedVideoManager) {
+            sharedVideoManager.toggleSharedVideo();
+        }
+    });
+
     UI.addListener(UIEvents.FULLSCREEN_TOGGLE, toggleFullScreen);
 
     UI.addListener(UIEvents.TOGGLE_CHAT, UI.toggleChat);
@@ -334,6 +342,7 @@ UI.start = function () {
     ContactList.init(eventEmitter);
 
     bindEvents();
+    sharedVideoManager = new SharedVideoManager(eventEmitter);
     if (!interfaceConfig.filmStripOnly) {
 
         $("#videospace").mousemove(function () {
@@ -481,11 +490,11 @@ UI.addUser = function (id, displayName) {
         config.startAudioMuted > APP.conference.membersCount)
         UIUtil.playSoundNotification('userJoined');
 
-    // Configure avatar
-    UI.setUserAvatar(id);
-
     // Add Peer's container
     VideoLayout.addParticipantContainer(id);
+
+    // Configure avatar
+    UI.setUserAvatar(id);
 };
 
 /**
@@ -530,6 +539,7 @@ UI.updateLocalRole = function (isModerator) {
 
     Toolbar.showSipCallButton(isModerator);
     Toolbar.showRecordingButton(isModerator);
+    Toolbar.showSharedVideoButton(isModerator);
     SettingsMenu.showStartMutedOptions(isModerator);
 
     if (isModerator) {
@@ -1031,6 +1041,14 @@ UI.getLargeVideoID = function () {
 };
 
 /**
+ * Returns the current video shown on large.
+ * Currently used by tests (torture).
+ */
+UI.getLargeVideo = function () {
+    return VideoLayout.getLargeVideo();
+};
+
+/**
  * Shows dialog with a link to FF extension.
  */
 UI.showExtensionRequiredDialog = function (url) {
@@ -1044,6 +1062,35 @@ UI.showExtensionRequiredDialog = function (url) {
 
 UI.updateDevicesAvailability = function (id, devices) {
     VideoLayout.setDeviceAvailabilityIcons(id, devices);
+};
+
+/**
+* Show shared video.
+* @param {string} url video url
+* @param {string} attributes
+*/
+UI.showSharedVideo = function (url, attributes) {
+    if (sharedVideoManager)
+        sharedVideoManager.showSharedVideo(url, attributes);
+};
+
+/**
+ * Update shared video.
+ * @param {string} url video url
+ * @param {string} attributes
+ */
+UI.updateSharedVideo = function (url, attributes) {
+    if (sharedVideoManager)
+        sharedVideoManager.updateSharedVideo(url, attributes);
+};
+
+/**
+ * Stop showing shared video.
+ * @param {string} attributes
+ */
+UI.stopSharedVideo = function (attributes) {
+    if (sharedVideoManager)
+        sharedVideoManager.stopSharedVideo(attributes);
 };
 
 module.exports = UI;
