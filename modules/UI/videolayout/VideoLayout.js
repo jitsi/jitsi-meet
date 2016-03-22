@@ -978,8 +978,19 @@ var VideoLayout = {
             var oldSmallVideo = this.getSmallVideo(currentId);
         }
 
-        // if !show then use default type - large video
-        return largeVideo.showContainer(show ? type : VIDEO_CONTAINER_TYPE)
+        let containerTypeToShow = type;
+        // if we are hiding a container and there is focusedVideo
+        // (pinned remote video) use its video type,
+        // if not then use default type - large video
+        if (!show) {
+            if(focusedVideoResourceJid)
+                containerTypeToShow = this.getRemoteVideoType(
+                    focusedVideoResourceJid);
+            else
+                containerTypeToShow = VIDEO_CONTAINER_TYPE;
+        }
+
+        return largeVideo.showContainer(containerTypeToShow)
             .then(() => {
                 if(oldSmallVideo)
                     oldSmallVideo && oldSmallVideo.updateView();
