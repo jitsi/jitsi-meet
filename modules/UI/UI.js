@@ -12,8 +12,8 @@ import PanelToggler from "./side_pannels/SidePanelToggler";
 import UIUtil from "./util/UIUtil";
 import UIEvents from "../../service/UI/UIEvents";
 import CQEvents from '../../service/connectionquality/CQEvents';
-import PreziManager from './prezi/Prezi';
 import EtherpadManager from './etherpad/Etherpad';
+import SharedVideoManager from './shared_video/SharedVideo';
 
 import VideoLayout from "./videolayout/VideoLayout";
 import FilmStrip from "./videolayout/FilmStrip";
@@ -32,8 +32,8 @@ import FollowMe from "../FollowMe";
 var eventEmitter = new EventEmitter();
 UI.eventEmitter = eventEmitter;
 
-let preziManager;
 let etherpadManager;
+let sharedVideoManager;
 
 /**
  * Prompt user for nickname.
@@ -98,7 +98,6 @@ function setupChat() {
  */
 function setupToolbars() {
     Toolbar.init(eventEmitter);
-    Toolbar.setupButtonsFromConfig();
     BottomToolbar.setupListeners(eventEmitter);
 }
 
@@ -264,13 +263,16 @@ UI.mucJoined = function () {
  * Setup some UI event listeners.
  */
 function registerListeners() {
-    UI.addListener(UIEvents.PREZI_CLICKED, function () {
-        preziManager.handlePreziButtonClicked();
-    });
 
     UI.addListener(UIEvents.ETHERPAD_CLICKED, function () {
         if (etherpadManager) {
             etherpadManager.toggleEtherpad();
+        }
+    });
+
+    UI.addListener(UIEvents.SHARED_VIDEO_CLICKED, function () {
+        if (sharedVideoManager) {
+            sharedVideoManager.toggleSharedVideo();
         }
     });
 
@@ -284,7 +286,10 @@ function registerListeners() {
 
     UI.addListener(UIEvents.TOGGLE_CONTACT_LIST, UI.toggleContactList);
 
-    UI.addListener(UIEvents.TOGGLE_FILM_STRIP, UI.toggleFilmStrip);
+    UI.addListener(UIEvents.TOGGLE_FILM_STRIP, function () {
+        UI.toggleFilmStrip();
+        VideoLayout.resizeVideoArea(PanelToggler.isVisible(), true, false);
+    });
 }
 
 /**
@@ -345,7 +350,7 @@ UI.start = function () {
     ContactList.init(eventEmitter);
 
     bindEvents();
-    preziManager = new PreziManager(eventEmitter);
+    sharedVideoManager = new SharedVideoManager(eventEmitter);
     if (!interfaceConfig.filmStripOnly) {
 
         $("#videospace").mousemove(function () {
@@ -493,11 +498,11 @@ UI.addUser = function (id, displayName) {
         config.startAudioMuted > APP.conference.membersCount)
         UIUtil.playSoundNotification('userJoined');
 
-    // Configure avatar
-    UI.setUserAvatar(id);
-
     // Add Peer's container
     VideoLayout.addParticipantContainer(id);
+
+    // Configure avatar
+    UI.setUserAvatar(id);
 };
 
 /**
@@ -542,6 +547,7 @@ UI.updateLocalRole = function (isModerator) {
 
     Toolbar.showSipCallButton(isModerator);
     Toolbar.showRecordingButton(isModerator);
+    Toolbar.showSharedVideoButton(isModerator);
     SettingsMenu.showStartMutedOptions(isModerator);
 
     if (isModerator) {
@@ -735,6 +741,22 @@ UI.notifyConnectionFailed = function (stropheErrorMsg) {
         message = APP.translation.generateTranslationHTML(
             "dialog.connectError");
     }
+
+    messageHandler.openDialog(
+        title, message, true, {}, function (e, v, m, f) { return false; }
+    );
+};
+
+
+/**
+ * Notify user that maximum users limit has been reached.
+ */
+UI.notifyMaxUsersLimitReached = function () {
+    var title = APP.translation.generateTranslationHTML(
+        "dialog.error");
+
+    var message = APP.translation.generateTranslationHTML(
+            "dialog.maxUsersLimitReached");
 
     messageHandler.openDialog(
         title, message, true, {}, function (e, v, m, f) { return false; }
@@ -1007,26 +1029,6 @@ UI.updateAuthInfo = function (isAuthEnabled, login) {
     }
 };
 
-/**
- * Show Prezi from the user.
- * @param {string} userId user id
- * @param {string} url Prezi url
- * @param {number} slide slide to show
- */
-UI.showPrezi = function (userId, url, slide) {
-    preziManager.showPrezi(userId, url, slide);
-};
-
-/**
- * Stop showing Prezi from the user.
- * @param {string} userId user id
- */
-UI.stopPrezi = function (userId) {
-  if (preziManager.isSharing(userId)) {
-      preziManager.removePrezi(userId);
-  }
-};
-
 UI.onStartMutedChanged = function (startAudioMuted, startVideoMuted) {
     SettingsMenu.updateStartMutedBox(startAudioMuted, startVideoMuted);
 };
@@ -1048,6 +1050,14 @@ UI.getLargeVideoID = function () {
 };
 
 /**
+ * Returns the current video shown on large.
+ * Currently used by tests (torture).
+ */
+UI.getLargeVideo = function () {
+    return VideoLayout.getLargeVideo();
+};
+
+/**
  * Shows dialog with a link to FF extension.
  */
 UI.showExtensionRequiredDialog = function (url) {
@@ -1061,6 +1071,35 @@ UI.showExtensionRequiredDialog = function (url) {
 
 UI.updateDevicesAvailability = function (id, devices) {
     VideoLayout.setDeviceAvailabilityIcons(id, devices);
+};
+
+/**
+* Show shared video.
+* @param {string} url video url
+* @param {string} attributes
+*/
+UI.showSharedVideo = function (url, attributes) {
+    if (sharedVideoManager)
+        sharedVideoManager.showSharedVideo(url, attributes);
+};
+
+/**
+ * Update shared video.
+ * @param {string} url video url
+ * @param {string} attributes
+ */
+UI.updateSharedVideo = function (url, attributes) {
+    if (sharedVideoManager)
+        sharedVideoManager.updateSharedVideo(url, attributes);
+};
+
+/**
+ * Stop showing shared video.
+ * @param {string} attributes
+ */
+UI.stopSharedVideo = function (attributes) {
+    if (sharedVideoManager)
+        sharedVideoManager.stopSharedVideo(attributes);
 };
 
 module.exports = UI;

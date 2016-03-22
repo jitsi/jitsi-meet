@@ -38,4 +38,27 @@ export default class LargeContainer {
      */
     onHoverOut (e) {
     }
+
+    /**
+     * Update video stream.
+     * @param {JitsiTrack?} stream new stream
+     * @param {string} videoType video type
+     */
+    setStream (stream, videoType) {
+    }
+
+    /**
+     * Show or hide user avatar.
+     * @param {boolean} show
+     */
+    showAvatar (show) {
+    }
+
+    /**
+     * Whether current container needs to be switched on dominant speaker event
+     * when the container is on stage.
+     * @return {boolean}
+     */
+    stayOnStage () {
+    }
 }

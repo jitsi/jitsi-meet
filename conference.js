@@ -28,8 +28,7 @@ const Commands = {
     CONNECTION_QUALITY: "stats",
     EMAIL: "email",
     ETHERPAD: "etherpad",
-    PREZI: "prezi",
-    STOP_PREZI: "stop-prezi"
+    SHARED_VIDEO: "shared-video"
 };
 
 /**
@@ -258,6 +257,10 @@ class ConferenceConnector {
             APP.UI.notifyFocusLeft();
             break;
 
+        case ConferenceErrors.CONFERENCE_MAX_USERS:
+            connection.disconnect();
+            APP.UI.notifyMaxUsersLimitReached();
+            break;
         default:
             this._handleConferenceFailed(err, ...params);
         }
@@ -732,7 +735,7 @@ export default {
             console.log('USER %s LEFT', id, user);
             APP.API.notifyUserLeft(id);
             APP.UI.removeUser(id, user.getDisplayName());
-            APP.UI.stopPrezi(id);
+            APP.UI.stopSharedVideo({from: id});
         });
 
 
@@ -911,35 +914,6 @@ export default {
             APP.UI.initEtherpad(value);
         });
 
-        room.addCommandListener(Commands.PREZI, ({value, attributes}) => {
-            APP.UI.showPrezi(attributes.id, value, attributes.slide);
-        });
-
-        room.addCommandListener(Commands.STOP_PREZI, ({attributes}) => {
-            APP.UI.stopPrezi(attributes.id);
-        });
-
-        APP.UI.addListener(UIEvents.SHARE_PREZI, (url, slide) => {
-            console.log('Sharing Prezi %s slide %s', url, slide);
-            room.removeCommand(Commands.PREZI);
-            room.sendCommand(Commands.PREZI, {
-                value: url,
-                attributes: {
-                    id: room.myUserId(),
-                    slide
-                }
-            });
-        });
-
-        APP.UI.addListener(UIEvents.STOP_SHARING_PREZI, () => {
-            room.removeCommand(Commands.PREZI);
-            room.sendCommandOnce(Commands.STOP_PREZI, {
-                attributes: {
-                    id: room.myUserId()
-                }
-            });
-        });
-
         APP.UI.addListener(UIEvents.EMAIL_CHANGED, (email = '') => {
             email = email.trim();
 
@@ -1085,5 +1059,47 @@ export default {
         APP.UI.addListener(
             UIEvents.TOGGLE_SCREENSHARING, this.toggleScreenSharing.bind(this)
         );
+
+        APP.UI.addListener(UIEvents.UPDATE_SHARED_VIDEO,
+            (url, state, time, volume) => {
+            // send start and stop commands once, and remove any updates
+            // that had left
+            if (state === 'stop' || state === 'start' || state === 'playing') {
+                room.removeCommand(Commands.SHARED_VIDEO);
+                room.sendCommandOnce(Commands.SHARED_VIDEO, {
+                    value: url,
+                    attributes: {
+                        from: APP.conference.localId,
+                        state: state,
+                        time: time,
+                        volume: volume
+                    }
+                });
+            }
+            else {
+                // in case of paused, in order to allow late users to join
+                // paused
+                room.sendCommand(Commands.SHARED_VIDEO, {
+                    value: url,
+                    attributes: {
+                        from: APP.conference.localId,
+                        state: state,
+                        time: time,
+                        volume: volume
+                    }
+                });
+            }
+        });
+        room.addCommandListener(
+            Commands.SHARED_VIDEO, ({value, attributes}) => {
+                if (attributes.state === 'stop') {
+                    APP.UI.stopSharedVideo(attributes);
+                } else if (attributes.state === 'start') {
+                    APP.UI.showSharedVideo(value, attributes);
+                } else if (attributes.state === 'playing'
+                    || attributes.state === 'pause') {
+                    APP.UI.updateSharedVideo(value, attributes);
+                }
+            });
     }
 };

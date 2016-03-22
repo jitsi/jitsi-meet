@@ -11,14 +11,13 @@ function RemoteVideo(id, VideoLayout, emitter) {
     this.id = id;
     this.emitter = emitter;
     this.videoSpanId = `participant_${id}`;
-    this.VideoLayout = VideoLayout;
+    SmallVideo.call(this, VideoLayout);
     this.addRemoteVideoContainer();
     this.connectionIndicator = new ConnectionIndicator(this, id);
     this.setDisplayName();
     this.bindHoverHandler();
     this.flipX = false;
     this.isLocal = false;
-    SmallVideo.call(this);
 }
 
 RemoteVideo.prototype = Object.create(SmallVideo.prototype);

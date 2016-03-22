@@ -122,13 +122,13 @@ const buttonHandlers = {
         AnalyticsAdapter.sendEvent('toolbar.chat.toggled');
         emitter.emit(UIEvents.TOGGLE_CHAT);
     },
-    "toolbar_button_prezi": function () {
-        AnalyticsAdapter.sendEvent('toolbar.prezi.clicked');
-        emitter.emit(UIEvents.PREZI_CLICKED);
-    },
     "toolbar_button_etherpad": function () {
         AnalyticsAdapter.sendEvent('toolbar.etherpad.clicked');
         emitter.emit(UIEvents.ETHERPAD_CLICKED);
+    },
+    "toolbar_button_sharedvideo": function () {
+        AnalyticsAdapter.sendEvent('toolbar.sharedvideo.clicked');
+        emitter.emit(UIEvents.SHARED_VIDEO_CLICKED);
     },
     "toolbar_button_desktopsharing": function () {
         if (APP.conference.isSharingScreen) {
@@ -188,7 +188,6 @@ const defaultToolbarButtons = {
     'security':   '#toolbar_button_security',
     'invite':     '#toolbar_button_link',
     'chat':       '#toolbar_button_chat',
-    'prezi':      '#toolbar_button_prezi',
     'etherpad':   '#toolbar_button_etherpad',
     'fullscreen': '#toolbar_button_fullScreen',
     'settings':   '#toolbar_button_settings',
@@ -247,15 +246,6 @@ const Toolbar = {
     },
 
     /**
-     * Disables and enables some of the buttons.
-     */
-    setupButtonsFromConfig () {
-        if (!UIUtil.isButtonEnabled('prezi')) {
-            $("#toolbar_button_prezi").css({display: "none"});
-        }
-    },
-
-    /**
      * Unlocks the lock button state.
      */
     unlockLockButton () {
@@ -295,6 +285,15 @@ const Toolbar = {
             $('#toolbar_button_record').css({display: "inline-block"});
         } else {
             $('#toolbar_button_record').css({display: "none"});
+        }
+    },
+
+    // Shows or hides the 'shared video' button.
+    showSharedVideoButton (show) {
+        if (UIUtil.isButtonEnabled('sharedvideo') && show) {
+            $('#toolbar_button_sharedvideo').css({display: "inline-block"});
+        } else {
+            $('#toolbar_button_sharedvideo').css({display: "none"});
         }
     },
 

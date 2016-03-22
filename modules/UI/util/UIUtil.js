@@ -124,9 +124,7 @@
 
     isButtonEnabled: function (name) {
         var isEnabled = interfaceConfig.TOOLBAR_BUTTONS.indexOf(name) !== -1;
-        if (name === 'prezi') {
-            return isEnabled && !config.disablePrezi;
-        } else if (name === 'recording') {
+        if (name === 'recording') {
             return isEnabled && config.enableRecording;
         }
         return isEnabled;
