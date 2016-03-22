@@ -27,7 +27,7 @@ export default {
      * Where url is the video link, state is stop/start/pause and time is the
      * current video playing time.
      */
-    UPDATE_SHARED_VIDEO: "UI.update-shared-video",
+    UPDATE_SHARED_VIDEO: "UI.update_shared_video",
     ROOM_LOCK_CLICKED: "UI.room_lock_clicked",
     USER_INVITED: "UI.user_invited",
     USER_KICKED: "UI.user_kicked",
