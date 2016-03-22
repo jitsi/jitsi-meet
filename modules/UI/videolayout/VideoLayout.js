@@ -93,6 +93,11 @@ var VideoLayout = {
     init (emitter) {
         eventEmitter = emitter;
         localVideoThumbnail = new LocalVideo(VideoLayout, emitter);
+        // sets default video type of local video
+        localVideoThumbnail.setVideoType(VIDEO_CONTAINER_TYPE);
+        // if we do not resize the thumbs here, if there is no video device
+        // the local video thumb maybe one pixel
+        this.resizeThumbnails(false, true, false);
 
         emitter.addListener(UIEvents.CONTACT_CLICKED, onContactClicked);
         this.lastNCount = config.channelLastN;
