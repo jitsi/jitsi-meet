@@ -452,7 +452,12 @@ export default class LargeVideoManager {
             // change the avatar url on large
             this.updateAvatar(Avatar.getAvatarUrl(id));
 
-            let isVideoMuted = stream ? stream.isMuted() : true;
+            // If we the continer is VIDEO_CONTAINER_TYPE, we need to check
+            // its stream whether exist and is muted to set isVideoMuted
+            // in rest of the cases it is false
+            let isVideoMuted = false;
+            if (videoType == VIDEO_CONTAINER_TYPE)
+                isVideoMuted = stream ? stream.isMuted() : true;
 
             // show the avatar on large if needed
             container.showAvatar(isVideoMuted);

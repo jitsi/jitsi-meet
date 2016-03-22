@@ -124,13 +124,15 @@ export default class SharedVideoManager {
 
             self.isSharedVideoShown = true;
 
+            // If we are sending the command and we are starting the player
+            // we need to continuously send the player current time position
             if(APP.conference.isLocalId(self.from)) {
                 self.intervalId = setInterval(
                     self.updateCheck.bind(self),
                     self.updateInterval);
             }
 
-            // set initial state
+            // set initial state of the player if there is enough information
             if(attributes.state === 'pause')
                 player.pauseVideo();
             else if(attributes.time > 0) {
@@ -334,7 +336,7 @@ function SharedVideoThumb (url)
     this.videoSpanId = "sharedVideoContainer";
     this.container = this.createContainer(this.videoSpanId);
     this.container.onclick = this.videoClick.bind(this);
-    //this.bindHoverHandler();
+    this.bindHoverHandler();
 
     SmallVideo.call(this, VideoLayout);
     this.isVideoMuted = true;
@@ -371,7 +373,6 @@ SharedVideoThumb.prototype.createContainer = function (spanId) {
  */
 SharedVideoThumb.prototype.videoClick = function () {
     VideoLayout.handleVideoThumbClicked(true, this.url);
-    VideoLayout.showLargeVideoContainer(this.videoType, true);
 };
 
 /**
