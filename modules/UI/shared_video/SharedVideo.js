@@ -96,9 +96,19 @@ export default class SharedVideoManager {
                 });
             };
 
+        // whether we should pause the player as initial status
+        // sometimes if we try to pause the player before it starts playing
+        // we can end up with player in buffering mode
+        this.initialPause = false;
         window.onPlayerStateChange = function(event) {
             if (event.data == YT.PlayerState.PLAYING) {
                 self.playerPaused = false;
+
+                // check for initial pause
+                if(self.initialPause) {
+                    self.initialPause = false;
+                    self.player.pauseVideo();
+                }
                 self.updateCheck();
             } else if (event.data == YT.PlayerState.PAUSED) {
                 self.playerPaused = true;
@@ -134,7 +144,7 @@ export default class SharedVideoManager {
 
             // set initial state of the player if there is enough information
             if(attributes.state === 'pause')
-                player.pauseVideo();
+                self.initialPause = true;
             else if(attributes.time > 0) {
                 console.log("Player seekTo:", attributes.time);
                 player.seekTo(attributes.time);
