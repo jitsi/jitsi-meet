@@ -13,7 +13,7 @@ ul.popupmenu {
     width: 100px;
     background-color: rgba(0,0,0,0.9);
     border: 1px solid rgba(256, 256, 256, 0.2);
-    border-radius:8px;
+    border-radius:3px;
 }
 
 ul.popupmenu:after {
@@ -31,7 +31,7 @@ ul.popupmenu li {
 
 ul.popupmenu li:hover {
     background-color: rgba(256, 256, 256, .2);
-    border-radius:6px;
+    border-radius:3px;
 }
 
 /*Link Appearance*/

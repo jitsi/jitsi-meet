@@ -2,7 +2,7 @@
 
 import UIUtil from "../util/UIUtil";
 
-const thumbAspectRatio = 16.0 / 9.0;
+const thumbAspectRatio = 1 / 1;
 
 const FilmStrip = {
     init () {
@@ -44,11 +44,7 @@ const FilmStrip = {
      * that we want to take into account when calculating the film strip width.
      */
      calculateThumbnailSize (isSideBarVisible) {
-        // Calculate the available height, which is the inner window height
-        // minus 39px for the header minus 2px for the delimiter lines on the
-        // top and bottom of the large video, minus the 36px space inside the
-        // remoteVideos container used for highlighting shadow.
-        let availableHeight = 100;
+        let availableHeight = interfaceConfig.FILM_STRIP_MAX_HEIGHT;
 
         let numvids = this.getThumbs(true).length;
 
@@ -80,17 +76,17 @@ const FilmStrip = {
         let maxHeight
             // If the MAX_HEIGHT property hasn't been specified
             // we have the static value.
-            = Math.min( interfaceConfig.FILM_STRIP_MAX_HEIGHT || 160,
+            = Math.min( interfaceConfig.FILM_STRIP_MAX_HEIGHT || 120,
                         availableHeight);
 
         availableHeight
-            = Math.min( maxHeight,
-            availableWidth / thumbAspectRatio,
-            window.innerHeight - 18);
+            = Math.min( maxHeight, window.innerHeight - 18);
 
-        if (availableHeight < availableWidth / thumbAspectRatio) {
-            availableWidth = Math.floor(availableHeight * thumbAspectRatio);
+        if (availableHeight < availableWidth) {
+            availableWidth = availableHeight;
         }
+        else
+            availableHeight = availableWidth;
 
         return {
             thumbWidth: availableWidth,

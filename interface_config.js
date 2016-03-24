@@ -1,6 +1,6 @@
 var interfaceConfig = {
     CANVAS_EXTRA: 104,
-    CANVAS_RADIUS: 7,
+    CANVAS_RADIUS: 0,
     SHADOW_COLOR: '#ffffff',
     INITIAL_TOOLBAR_TIMEOUT: 20000,
     TOOLBAR_TIMEOUT: 4000,
@@ -14,7 +14,6 @@ var interfaceConfig = {
     GENERATE_ROOMNAMES_ON_WELCOME_PAGE: true,
     APP_NAME: "Jitsi Meet",
     INVITATION_POWERED_BY: true,
-    DOMINANT_SPEAKER_AVATAR_SIZE: 100,
     TOOLBAR_BUTTONS: ['authentication', 'microphone', 'camera', 'desktop',
         'recording', 'security', 'invite', 'chat', 'etherpad', 'sharedvideo',
         'fullscreen', 'sip', 'dialpad', 'settings', 'hangup', 'filmstrip',
@@ -30,5 +29,5 @@ var interfaceConfig = {
     filmStripOnly: false,
     RANDOM_AVATAR_URL_PREFIX: false,
     RANDOM_AVATAR_URL_SUFFIX: false,
-    FILM_STRIP_MAX_HEIGHT: 160
+    FILM_STRIP_MAX_HEIGHT: 120
 };
