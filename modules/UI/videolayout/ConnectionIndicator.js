@@ -376,7 +376,7 @@ ConnectionIndicator.prototype.updateResolutionIndicator = function () {
             let resolutions = this.resolution || {};
             Object.keys(resolutions).map(function (ssrc) {
                     let {width, height} = resolutions[ssrc];
-                    if (height >= config.minHDResolution)
+                    if (height >= config.minHDHeight)
                         showResolutionLabel = true;
                 });
         }

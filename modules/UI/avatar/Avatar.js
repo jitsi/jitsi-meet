@@ -44,7 +44,6 @@ export default {
         if (!avatarId) {
             console.warn(
                 `No avatar stored yet for ${userId} - using ID as avatar ID`);
-            console.log("USER ID ", userId);
             avatarId = userId;
         }
         avatarId = MD5.hexdigest(avatarId.trim().toLowerCase());

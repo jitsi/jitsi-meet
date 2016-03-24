@@ -47,7 +47,7 @@ html, body{
     position: relative;
     color: #FFFFFF;
     top:0px;
-    padding-top: 9px;
+    padding-top: 10px;
     width: 38px;
     height: 28px;
     cursor: pointer;
@@ -55,6 +55,7 @@ html, body{
     text-shadow: 0 1px 0 rgba(255,255,255,.3), 0 -1px 0 rgba(0,0,0,.6);
     z-index: 1;
     font-size: 1.22em !important;
+    vertical-align: middle;
 }
 
 .toolbar_span>span {
