@@ -384,7 +384,7 @@ var VideoLayout = {
             !currentDominantSpeaker &&
             this.isLargeContainerTypeVisible(VIDEO_CONTAINER_TYPE)) ||
             pinnedId === resourceJid ||
-            (resourceJid &&
+            (!pinnedId && resourceJid &&
                 currentDominantSpeaker === resourceJid)) {
             this.updateLargeVideo(resourceJid, true);
         }
