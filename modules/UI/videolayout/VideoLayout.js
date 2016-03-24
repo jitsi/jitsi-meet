@@ -215,7 +215,6 @@ var VideoLayout = {
             newId = currentDominantSpeaker;
         else // Otherwise select last visible video
             newId = this.electLastVisibleVideo();
-        }
 
         this.updateLargeVideo(newId);
     },
@@ -982,9 +981,8 @@ var VideoLayout = {
         // (pinned remote video) use its video type,
         // if not then use default type - large video
         if (!show) {
-            if(focusedVideoResourceJid)
-                containerTypeToShow = this.getRemoteVideoType(
-                    focusedVideoResourceJid);
+            if(pinnedId)
+                containerTypeToShow = this.getRemoteVideoType(pinnedId);
             else
                 containerTypeToShow = VIDEO_CONTAINER_TYPE;
         }
