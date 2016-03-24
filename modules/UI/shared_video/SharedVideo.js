@@ -392,7 +392,7 @@ SharedVideoThumb.prototype.remove = function () {
 
     // Make sure that the large video is updated if are removing its
     // corresponding small video.
-    this.VideoLayout.updateRemovedVideo(this.id);
+    this.VideoLayout.updateAfterThumbRemoved(this.id);
 
     // Remove whole container
     if (this.container.parentNode) {

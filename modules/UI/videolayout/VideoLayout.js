@@ -199,23 +199,22 @@ var VideoLayout = {
     /**
      * Checks if removed video is currently displayed and tries to display
      * another one instead.
+     * Uses focusedID if any or dominantSpeakerID if any,
+     * otherwise elects new video, in this order.
      */
-    updateRemovedVideo (id) {
+    updateAfterThumbRemoved (id) {
         if (!this.isCurrentlyOnLarge(id)) {
             return;
         }
 
         let newId;
 
-        // We'll show user's avatar if he is the dominant speaker or if
-        // his video thumbnail is pinned
-        if (remoteVideos[id] && (id === pinnedId
-                                || id === currentDominantSpeaker)) {
-            newId = id;
-        } else {
-            // Otherwise select last visible video
+        if (pinnedId)
+            newId = pinnedId;
+        else if (currentDominantSpeaker)
+            newId = currentDominantSpeaker;
+        else // Otherwise select last visible video
             newId = this.electLastVisibleVideo();
-        }
 
         this.updateLargeVideo(newId);
     },
@@ -304,8 +303,7 @@ var VideoLayout = {
      */
     handleVideoThumbClicked (id) {
         if(pinnedId) {
-            var oldSmallVideo
-                    = VideoLayout.getSmallVideo(pinnedId);
+            var oldSmallVideo = VideoLayout.getSmallVideo(pinnedId);
             if (oldSmallVideo && !interfaceConfig.filmStripOnly)
                 oldSmallVideo.focus(false);
         }
@@ -978,8 +976,18 @@ var VideoLayout = {
             var oldSmallVideo = this.getSmallVideo(currentId);
         }
 
-        // if !show then use default type - large video
-        return largeVideo.showContainer(show ? type : VIDEO_CONTAINER_TYPE)
+        let containerTypeToShow = type;
+        // if we are hiding a container and there is focusedVideo
+        // (pinned remote video) use its video type,
+        // if not then use default type - large video
+        if (!show) {
+            if(pinnedId)
+                containerTypeToShow = this.getRemoteVideoType(pinnedId);
+            else
+                containerTypeToShow = VIDEO_CONTAINER_TYPE;
+        }
+
+        return largeVideo.showContainer(containerTypeToShow)
             .then(() => {
                 if(oldSmallVideo)
                     oldSmallVideo && oldSmallVideo.updateView();
