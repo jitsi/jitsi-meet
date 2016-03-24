@@ -1,16 +1,44 @@
 /* global $, APP, interfaceConfig, config*/
 
+import UIEvents from "../../../service/UI/UIEvents";
 import UIUtil from "../util/UIUtil";
 
 const thumbAspectRatio = 1 / 1;
 
 const FilmStrip = {
-    init () {
+    /**
+     *
+     * @param eventEmitter the {EventEmitter} through which {FilmStrip} is to
+     * emit/fire {UIEvents} (such as {UIEvents.TOGGLED_FILM_STRIP}).
+     */
+    init (eventEmitter) {
         this.filmStrip = $('#remoteVideos');
+        this.eventEmitter = eventEmitter;
     },
 
-    toggleFilmStrip () {
+    /**
+     * Toggles the visibility of the film strip.
+     *
+     * @param visible optional {Boolean} which specifies the desired visibility
+     * of the film strip. If not specified, the visibility will be flipped
+     * (i.e. toggled); otherwise, the visibility will be set to the specified
+     * value.
+     */
+    toggleFilmStrip (visible) {
+        if (typeof visible === 'boolean'
+                && this.isFilmStripVisible() == visible) {
+            return;
+        }
+
         this.filmStrip.toggleClass("hidden");
+
+        // Emit/fire UIEvents.TOGGLED_FILM_STRIP.
+        var eventEmitter = this.eventEmitter;
+        if (eventEmitter) {
+            eventEmitter.emit(
+                    UIEvents.TOGGLED_FILM_STRIP,
+                    this.isFilmStripVisible());
+        }
     },
 
     isFilmStripVisible () {

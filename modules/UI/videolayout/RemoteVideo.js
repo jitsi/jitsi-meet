@@ -220,7 +220,7 @@ RemoteVideo.prototype.addRemoteStreamElement = function (stream) {
 
         // ignore click if it was done in popup menu
         if ($(source).parents('.popupmenu').length === 0) {
-            this.VideoLayout.handleVideoThumbClicked(false, this.id);
+            this.VideoLayout.handleVideoThumbClicked(this.id);
         }
 
         // On IE we need to populate this handler on video <object>

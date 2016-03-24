@@ -120,7 +120,7 @@ export default class SharedVideoManager {
 
             VideoLayout.addLargeVideoContainer(
                 SHARED_VIDEO_CONTAINER_TYPE, self.sharedVideo);
-            VideoLayout.handleVideoThumbClicked(true, self.url);
+            VideoLayout.handleVideoThumbClicked(self.url);
 
             self.isSharedVideoShown = true;
 
@@ -372,7 +372,7 @@ SharedVideoThumb.prototype.createContainer = function (spanId) {
  * The thumb click handler.
  */
 SharedVideoThumb.prototype.videoClick = function () {
-    VideoLayout.handleVideoThumbClicked(true, this.url);
+    VideoLayout.handleVideoThumbClicked(this.url);
 };
 
 /**

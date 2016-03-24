@@ -89,6 +89,14 @@ export default {
             );
         });
 
+        // FOLLOW ME
+        $("#followMeOptions").change(function () {
+            let isFollowMeEnabled = $("#followMeCheckBox").is(":checked");
+            emitter.emit(
+                UIEvents.FOLLOW_ME_ENABLED,
+                isFollowMeEnabled
+            );
+        });
 
         // LANGUAGES BOX
         let languagesBox = $("#languages_selectbox");
@@ -133,6 +141,19 @@ export default {
     updateStartMutedBox (startAudioMuted, startVideoMuted) {
         $("#startAudioMuted").attr("checked", startAudioMuted);
         $("#startVideoMuted").attr("checked", startVideoMuted);
+    },
+
+    /**
+     * Shows/hides the follow me options in the settings dialog.
+     *
+     * @param {boolean} show {true} to show those options, {false} to hide them
+     */
+    showFollowMeOptions (show) {
+        if (show) {
+            $("#followMeOptions").css("display", "block");
+        } else {
+            $("#followMeOptions").css("display", "none");
+        }
     },
 
     /**

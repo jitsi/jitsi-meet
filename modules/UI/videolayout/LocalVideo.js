@@ -158,7 +158,7 @@ LocalVideo.prototype.changeVideo = function (stream) {
         if (event.stopPropagation) {
             event.stopPropagation();
         }
-        this.VideoLayout.handleVideoThumbClicked(true, this.id);
+        this.VideoLayout.handleVideoThumbClicked(this.id);
     };
 
     let localVideoContainerSelector = $('#localVideoContainer');

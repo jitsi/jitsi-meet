@@ -86,7 +86,8 @@
         "startAudioMuted": "start without audio",
         "startVideoMuted": "start without video",
         "selectCamera": "select camera",
-        "selectMic": "select microphone"
+        "selectMic": "select microphone",
+        "followMe": "Enable follow me"
     },
     "videothumbnail":
     {

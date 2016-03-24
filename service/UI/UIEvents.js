@@ -37,14 +37,39 @@ export default {
     TOGGLE_CHAT: "UI.toggle_chat",
     TOGGLE_SETTINGS: "UI.toggle_settings",
     TOGGLE_CONTACT_LIST: "UI.toggle_contact_list",
+    /**
+     * Notifies that a command to toggle the film strip has been issued. The
+     * event may optionally specify a {Boolean} (primitive) value to assign to
+     * the visibility of the film strip (i.e. the event may act as a setter).
+     * The very toggling of the film strip may or may not occurred at the time
+     * of the receipt of the event depending on the position of the receiving
+     * event listener in relation to the event listener which carries out the
+     * command to toggle the film strip.
+     *
+     * @see {TOGGLED_FILM_STRIP}
+     */
     TOGGLE_FILM_STRIP: "UI.toggle_film_strip",
+    /**
+     * Notifies that the film strip was (actually) toggled. The event supplies
+     * a {Boolean} (primitive) value indicating the visibility of the film
+     * strip after the toggling (at the time of the event emission).
+     *
+     * @see {TOGGLE_FILM_STRIP}
+     */
+    TOGGLED_FILM_STRIP: "UI.toggled_film_strip",
     TOGGLE_SCREENSHARING: "UI.toggle_screensharing",
+    TOGGLED_SHARED_DOCUMENT: "UI.toggled_shared_document",
     CONTACT_CLICKED: "UI.contact_clicked",
     HANGUP: "UI.hangup",
     LOGOUT: "UI.logout",
     RECORDING_TOGGLE: "UI.recording_toggle",
     SIP_DIAL: "UI.sip_dial",
-    SUBEJCT_CHANGED: "UI.subject_changed",
+    SUBJECT_CHANGED: "UI.subject_changed",
     VIDEO_DEVICE_CHANGED: "UI.video_device_changed",
-    AUDIO_DEVICE_CHANGED: "UI.audio_device_changed"
+    AUDIO_DEVICE_CHANGED: "UI.audio_device_changed",
+    /**
+     * Notifies interested listeners that the follow-me feature is enabled or
+     * disabled.
+     */
+    FOLLOW_ME_ENABLED: "UI.follow_me_enabled"
 };
