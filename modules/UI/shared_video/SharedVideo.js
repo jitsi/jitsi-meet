@@ -50,10 +50,11 @@ export default class SharedVideoManager {
     /**
      * Shows the player component and starts the checking function
      * that will be sending updates, if we are the one shared the video
+     * @param id the id of the sender of the command
      * @param url the video url
      * @param attributes
      */
-    showSharedVideo (url, attributes) {
+    showSharedVideo (id, url, attributes) {
         if (this.isSharedVideoShown)
             return;
 
@@ -61,7 +62,7 @@ export default class SharedVideoManager {
         this.url = url;
 
         // the owner of the video
-        this.from = attributes.from;
+        this.from = id;
 
         // This code loads the IFrame Player API code asynchronously.
         var tag = document.createElement('script');
@@ -184,10 +185,11 @@ export default class SharedVideoManager {
     /**
      * Updates video, if its not playing and needs starting or
      * if its playing and needs to be paysed
+     * @param id the id of the sender of the command
      * @param url the video url
      * @param attributes
      */
-    updateSharedVideo (url, attributes) {
+    updateSharedVideo (id, url, attributes) {
         // if we are sending the event ignore
         if(APP.conference.isLocalId(this.from)) {
             return;
@@ -196,7 +198,7 @@ export default class SharedVideoManager {
         if (attributes.state == 'playing') {
 
             if(!this.isSharedVideoShown) {
-                this.showSharedVideo(url, attributes);
+                this.showSharedVideo(id, url, attributes);
                 return;
             }
 
@@ -239,22 +241,23 @@ export default class SharedVideoManager {
             else {
                 // if not shown show it, passing attributes so it can
                 // be shown paused
-                this.showSharedVideo(url, attributes);
+                this.showSharedVideo(id, url, attributes);
             }
         }
     }
 
     /**
      * Stop shared video if it is currently showed. If the user started the
-     * shared video is the one in the attributes.from (called when user
+     * shared video is the one in the id (called when user
      * left and we want to remove video if the user sharing it left).
+     * @param id the id of the sender of the command
      * @param attributes
      */
-    stopSharedVideo (attributes) {
+    stopSharedVideo (id, attributes) {
         if (!this.isSharedVideoShown)
             return;
 
-        if(this.from !== attributes.from)
+        if(this.from !== id)
             return;
 
         if(this.intervalId) {

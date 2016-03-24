@@ -270,7 +270,12 @@ class FollowMe {
         if (this._conference.isLocalId(id))
             return;
 
-        // TODO Don't obey commands issued by non-moderators.
+        if (!this._conference.isParticipantModerator(id))
+        {
+            console.warn('Received follow-me command ' +
+                'not from moderator');
+            return;
+        }
 
         // Applies the received/remote command to the user experience/interface
         // of the local participant.

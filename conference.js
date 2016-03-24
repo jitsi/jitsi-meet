@@ -403,6 +403,15 @@ export default {
         return room.getParticipants().map(p => p.getId());
     },
     /**
+     * Checks whether the participant identified by id is a moderator.
+     * @id id to search for participant
+     * @return {boolean} whether the participant is moderator
+     */
+    isParticipantModerator (id) {
+        let user = room.getParticipantById(id);
+        return user && user.isModerator();
+    },
+    /**
      * Check if SIP is supported.
      * @returns {boolean}
      */
@@ -737,7 +746,7 @@ export default {
             console.log('USER %s LEFT', id, user);
             APP.API.notifyUserLeft(id);
             APP.UI.removeUser(id, user.getDisplayName());
-            APP.UI.stopSharedVideo({from: id});
+            APP.UI.stopSharedVideo(id);
         });
 
 
@@ -1083,7 +1092,6 @@ export default {
                 room.sendCommandOnce(Commands.SHARED_VIDEO, {
                     value: url,
                     attributes: {
-                        from: APP.conference.localId,
                         state: state,
                         time: time,
                         volume: volume
@@ -1096,7 +1104,6 @@ export default {
                 room.sendCommand(Commands.SHARED_VIDEO, {
                     value: url,
                     attributes: {
-                        from: APP.conference.localId,
                         state: state,
                         time: time,
                         volume: volume
@@ -1105,14 +1112,25 @@ export default {
             }
         });
         room.addCommandListener(
-            Commands.SHARED_VIDEO, ({value, attributes}) => {
+            Commands.SHARED_VIDEO, ({value, attributes}, id) => {
+
+                // if we are not the moderator or
+                // the command is coming from a user which is not the moderator
+                if (!(this.isLocalId(id) && room.isModerator())
+                    && !this.isParticipantModerator(id))
+                {
+                    console.warn('Received shared video command ' +
+                        'not from moderator');
+                    return;
+                }
+
                 if (attributes.state === 'stop') {
-                    APP.UI.stopSharedVideo(attributes);
+                    APP.UI.stopSharedVideo(id, attributes);
                 } else if (attributes.state === 'start') {
-                    APP.UI.showSharedVideo(value, attributes);
+                    APP.UI.showSharedVideo(id, value, attributes);
                 } else if (attributes.state === 'playing'
                     || attributes.state === 'pause') {
-                    APP.UI.updateSharedVideo(value, attributes);
+                    APP.UI.updateSharedVideo(id, value, attributes);
                 }
             });
     }
