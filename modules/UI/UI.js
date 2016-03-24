@@ -1107,32 +1107,35 @@ UI.updateDevicesAvailability = function (id, devices) {
 };
 
 /**
-* Show shared video.
-* @param {string} url video url
-* @param {string} attributes
+ * Show shared video.
+ * @param {string} id the id of the sender of the command
+ * @param {string} url video url
+ * @param {string} attributes
 */
-UI.showSharedVideo = function (url, attributes) {
+UI.showSharedVideo = function (id, url, attributes) {
     if (sharedVideoManager)
-        sharedVideoManager.showSharedVideo(url, attributes);
+        sharedVideoManager.showSharedVideo(id, url, attributes);
 };
 
 /**
  * Update shared video.
+ * @param {string} id the id of the sender of the command
  * @param {string} url video url
  * @param {string} attributes
  */
-UI.updateSharedVideo = function (url, attributes) {
+UI.updateSharedVideo = function (id, url, attributes) {
     if (sharedVideoManager)
-        sharedVideoManager.updateSharedVideo(url, attributes);
+        sharedVideoManager.updateSharedVideo(id, url, attributes);
 };
 
 /**
  * Stop showing shared video.
+ * @param {string} id the id of the sender of the command
  * @param {string} attributes
  */
-UI.stopSharedVideo = function (attributes) {
+UI.stopSharedVideo = function (id, attributes) {
     if (sharedVideoManager)
-        sharedVideoManager.stopSharedVideo(attributes);
+        sharedVideoManager.stopSharedVideo(id, attributes);
 };
 
 module.exports = UI;
