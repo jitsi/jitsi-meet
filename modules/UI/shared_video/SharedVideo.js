@@ -296,8 +296,11 @@ class SharedVideoContainer extends LargeContainer {
     }
 
     show () {
+        let self = this;
         return new Promise(resolve => {
             this.$iframe.fadeIn(300, () => {
+                self.bodyBackground = document.body.style.background;
+                document.body.style.background = 'black';
                 this.$iframe.css({opacity: 1});
                 resolve();
             });
@@ -305,8 +308,10 @@ class SharedVideoContainer extends LargeContainer {
     }
 
     hide () {
+        let self = this;
         return new Promise(resolve => {
             this.$iframe.fadeOut(300, () => {
+                document.body.style.background = self.bodyBackground;
                 this.$iframe.css({opacity: 0});
                 resolve();
             });
