@@ -922,7 +922,8 @@ var VideoLayout = {
         let currentId = largeVideo.id;
 
         if (!isOnLarge || forceUpdate) {
-            if (id !== currentId) {
+            let videoType = this.getRemoteVideoType(id);
+            if (id !== currentId && videoType === VIDEO_CONTAINER_TYPE) {
                 eventEmitter.emit(UIEvents.SELECTED_ENDPOINT, id);
             }
             if (currentId) {
@@ -931,7 +932,6 @@ var VideoLayout = {
 
             let smallVideo = this.getSmallVideo(id);
 
-            let videoType = this.getRemoteVideoType(id);
             largeVideo.updateLargeVideo(
                 id,
                 smallVideo.videoStream,
