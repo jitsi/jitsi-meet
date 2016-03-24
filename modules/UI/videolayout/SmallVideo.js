@@ -20,6 +20,14 @@ function setVisibility(selector, show) {
     }
 }
 
+/**
+ * Returns the identifier of this small video.
+ *
+ * @returns the identifier of this small video
+ */
+SmallVideo.prototype.getId = function () {
+    return this.id;
+};
 
 /* Indicates if this small video is currently visible.
  *

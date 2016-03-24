@@ -56,14 +56,20 @@ export default {
      *
      * @see {TOGGLE_FILM_STRIP}
      */
-    TOGGLED_FILM_STRIP: "UI.toggled_fim_strip",
+    TOGGLED_FILM_STRIP: "UI.toggled_film_strip",
     TOGGLE_SCREENSHARING: "UI.toggle_screensharing",
+    TOGGLED_SHARED_DOCUMENT: "UI.toggled_shared_document",
     CONTACT_CLICKED: "UI.contact_clicked",
     HANGUP: "UI.hangup",
     LOGOUT: "UI.logout",
     RECORDING_TOGGLE: "UI.recording_toggle",
     SIP_DIAL: "UI.sip_dial",
-    SUBEJCT_CHANGED: "UI.subject_changed",
+    SUBJECT_CHANGED: "UI.subject_changed",
     VIDEO_DEVICE_CHANGED: "UI.video_device_changed",
-    AUDIO_DEVICE_CHANGED: "UI.audio_device_changed"
+    AUDIO_DEVICE_CHANGED: "UI.audio_device_changed",
+    /**
+     * Notifies interested listeners that the follow-me feature is enabled or
+     * disabled.
+     */
+    FOLLOW_ME_ENABLED: "UI.follow_me_enabled"
 };

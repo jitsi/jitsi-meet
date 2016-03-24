@@ -31,6 +31,8 @@ const Commands = {
     SHARED_VIDEO: "shared-video"
 };
 
+import {VIDEO_CONTAINER_TYPE} from "./modules/UI/videolayout/LargeVideo";
+
 /**
  * Open Connection. When authentication failed it shows auth dialog.
  * @param roomName the room name to use
@@ -1030,8 +1032,20 @@ export default {
         APP.UI.addListener(UIEvents.SELECTED_ENDPOINT, (id) => {
             room.selectParticipant(id);
         });
-        APP.UI.addListener(UIEvents.PINNED_ENDPOINT, (id) => {
-            room.pinParticipant(id);
+
+        APP.UI.addListener(UIEvents.PINNED_ENDPOINT, (smallVideo, isPinned) => {
+            var smallVideoId = smallVideo.getId();
+
+            if (smallVideo.getVideoType() === VIDEO_CONTAINER_TYPE
+                && !APP.conference.isLocalId(smallVideoId))
+                if (isPinned)
+                    room.pinParticipant(smallVideoId);
+                // When the library starts supporting multiple pins we would
+                // pass the isPinned parameter together with the identifier,
+                // but currently we send null to indicate that we unpin the
+                // last pinned.
+                else
+                    room.pinParticipant(null);
         });
 
         APP.UI.addListener(

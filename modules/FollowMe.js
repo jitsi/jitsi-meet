@@ -1,27 +1,29 @@
-/*                                                                              
- * Copyright @ 2015 Atlassian Pty Ltd                                           
- *                                                                              
- * Licensed under the Apache License, Version 2.0 (the "License");              
- * you may not use this file except in compliance with the License.             
- * You may obtain a copy of the License at                                      
- *                                                                              
- *     http://www.apache.org/licenses/LICENSE-2.0                               
- *                                                                              
- * Unless required by applicable law or agreed to in writing, software          
- * distributed under the License is distributed on an "AS IS" BASIS,            
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.     
- * See the License for the specific language governing permissions and          
- * limitations under the License.                                               
+/*
+ * Copyright @ 2015 Atlassian Pty Ltd
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 import UIEvents from '../service/UI/UIEvents';
+import VideoLayout from './UI/videolayout/VideoLayout';
+import FilmStrip from './UI/videolayout/FilmStrip';
 
 /**
  * The (name of the) command which transports the state (represented by
  * {State} for the local state at the time of this writing) of a {FollowMe}
  * (instance) between participants.
  */
-/* private */ const _COMMAND = "follow-me";
+const _COMMAND = "follow-me";
 
 /**
  * Represents the set of {FollowMe}-related states (properties and their
@@ -29,7 +31,7 @@ import UIEvents from '../service/UI/UIEvents';
  * will send {_COMMAND} whenever a property of {State} changes (if the local
  * participant is in her right to issue such a command, of course).
  */
-/* private */ class State {
+class State {
     /**
      * Initializes a new {State} instance.
      *
@@ -39,17 +41,37 @@ import UIEvents from '../service/UI/UIEvents';
      * the property, the old value of the property before the change, and the
      * new value of the property after the change.
      */
-    /* public */ constructor (propertyChangeCallback) {
-        /* private*/ this._propertyChangeCallback = propertyChangeCallback;
+    constructor (propertyChangeCallback) {
+        this._propertyChangeCallback = propertyChangeCallback;
     }
 
-    /* public */ get filmStripVisible () { return this._filmStripVisible; }
+    get filmStripVisible () { return this._filmStripVisible; }
 
-    /* public */ set filmStripVisible (b) {
+    set filmStripVisible (b) {
         var oldValue = this._filmStripVisible;
         if (oldValue !== b) {
             this._filmStripVisible = b;
             this._firePropertyChange('filmStripVisible', oldValue, b);
+        }
+    }
+
+    get nextOnStage() { return this._nextOnStage; }
+
+    set nextOnStage(id) {
+        var oldValue = this._nextOnStage;
+        if (oldValue !== id) {
+            this._nextOnStage = id;
+            this._firePropertyChange('nextOnStage', oldValue, id);
+        }
+    }
+
+    get sharedDocumentVisible () { return this._sharedDocumentVisible; }
+
+    set sharedDocumentVisible (b) {
+        var oldValue = this._sharedDocumentVisible;
+        if (oldValue !== b) {
+            this._sharedDocumentVisible = b;
+            this._firePropertyChange('sharedDocumentVisible', oldValue, b);
         }
     }
 
@@ -62,7 +84,7 @@ import UIEvents from '../service/UI/UIEvents';
      * @param oldValue the value of {property} before the change
      * @param newValue the value of {property} after the change
      */
-    /* private */ _firePropertyChange (property, oldValue, newValue) {
+    _firePropertyChange (property, oldValue, newValue) {
         var propertyChangeCallback = this._propertyChangeCallback;
         if (propertyChangeCallback)
             propertyChangeCallback(property, oldValue, newValue);
@@ -74,9 +96,9 @@ import UIEvents from '../service/UI/UIEvents';
  * (partially) control the user experience/interface (e.g. film strip
  * visibility) of (other) non-moderator particiapnts.
  *
- * @author Lyubomir Marinov 
+ * @author Lyubomir Marinov
  */
-/* public */ class FollowMe {
+class FollowMe {
     /**
      * Initializes a new {FollowMe} instance.
      *
@@ -87,15 +109,14 @@ import UIEvents from '../service/UI/UIEvents';
      * destination (model/state) to receive from the remote moderator if the
      * local participant is not the moderator
      */
-    /* public */ constructor (conference, UI) {
-        /* private */ this._conference = conference;
-        /* private */ this._UI = UI;
+    constructor (conference, UI) {
+        this._conference = conference;
+        this._UI = UI;
 
         // The states of the local participant which are to be followed (by the
         // remote participants when the local participant is in her right to
         // issue such commands).
-        /* private */ this._local
-            = new State(this._localPropertyChange.bind(this));
+        this._local = new State(this._localPropertyChange.bind(this));
 
         // Listen to "Follow Me" commands. I'm not sure whether a moderator can
         // (in lib-jitsi-meet and/or Meet) become a non-moderator. If that's
@@ -104,18 +125,57 @@ import UIEvents from '../service/UI/UIEvents';
         conference.commands.addCommandListener(
                 _COMMAND,
                 this._onFollowMeCommand.bind(this));
-        // Listen to (user interface) states of the local participant which are
-        // to be followed (by the remote participants). A non-moderator (very
-        // likely) can become a moderator so it may be easiest to always track
-        // the states of interest.
-        UI.addListener(
-                UIEvents.TOGGLED_FILM_STRIP,
-                this._filmStripToggled.bind(this));
-        // TODO Listen to changes in the moderator role of the local
-        // participant. When the local participant is granted the moderator
-        // role, it may need to start sending "Follow Me" commands. Obviously,
-        // this depends on how we decide to enable the feature at runtime as
-        // well.
+    }
+
+    /**
+     * Adds listeners for the UI states of the local participant which are
+     * to be followed (by the remote participants). A non-moderator (very
+     * likely) can become a moderator so it may be easiest to always track
+     * the states of interest.
+     * @private
+     */
+    _addFollowMeListeners () {
+        this.filmStripEventHandler = this._filmStripToggled.bind(this);
+        this._UI.addListener(UIEvents.TOGGLED_FILM_STRIP,
+                            this.filmStripEventHandler);
+
+        var self = this;
+        this.pinnedEndpointEventHandler = function (smallVideo, isPinned) {
+            self._nextOnStage(smallVideo, isPinned);
+        };
+        this._UI.addListener(UIEvents.PINNED_ENDPOINT,
+                            this.pinnedEndpointEventHandler);
+
+        this.sharedDocEventHandler = this._sharedDocumentToggled.bind(this);
+        this._UI.addListener( UIEvents.TOGGLED_SHARED_DOCUMENT,
+                            this.sharedDocEventHandler);
+    }
+
+    /**
+     * Removes all follow me listeners.
+     * @private
+     */
+    _removeFollowMeListeners () {
+        this._UI.removeListener(UIEvents.TOGGLED_FILM_STRIP,
+                                this.filmStripEventHandler);
+        this._UI.removeListener(UIEvents.TOGGLED_SHARED_DOCUMENT,
+                                this.sharedDocEventHandler);
+        this._UI.removeListener(UIEvents.PINNED_ENDPOINT,
+                                this.pinnedEndpointEventHandler);
+    }
+
+    /**
+     * Enables or disabled the follow me functionality
+     *
+     * @param enable {true} to enable the follow me functionality, {false} -
+     * to disable it
+     */
+    enableFollowMe (enable) {
+        this.isEnabled = enable;
+        if (this.isEnabled)
+            this._addFollowMeListeners();
+        else
+            this._removeFollowMeListeners();
     }
 
     /**
@@ -125,11 +185,49 @@ import UIEvents from '../service/UI/UIEvents';
      * @param filmStripVisible {Boolean} {true} if the film strip was shown (as
      * a result of the toggle) or {false} if the film strip was hidden
      */
-    /* private */ _filmStripToggled (filmStripVisible) {
+    _filmStripToggled (filmStripVisible) {
         this._local.filmStripVisible = filmStripVisible;
     }
 
-    /* private */ _localPropertyChange (property, oldValue, newValue) {
+    /**
+     * Notifies this instance that the (visibility of the) shared document was
+     * toggled (in the user interface of the local participant).
+     *
+     * @param sharedDocumentVisible {Boolean} {true} if the shared document was
+     * shown (as a result of the toggle) or {false} if it was hidden
+     */
+    _sharedDocumentToggled (sharedDocumentVisible) {
+        this._local.sharedDocumentVisible = sharedDocumentVisible;
+    }
+
+    /**
+     * Changes the nextOnPage property value.
+     *
+     * @param smallVideo the {SmallVideo} that was pinned or unpinned
+     * @param isPinned indicates if the given {SmallVideo} was pinned or
+     * unpinned
+     * @private
+     */
+    _nextOnStage (smallVideo, isPinned) {
+        if (!this._conference.isModerator)
+            return;
+
+        var nextOnStage = null;
+        if(isPinned)
+            nextOnStage = smallVideo.getId();
+
+        this._local.nextOnStage = nextOnStage;
+    }
+
+    /**
+     * Sends the follow-me command, when a local property change occurs.
+     *
+     * @param property the property name
+     * @param oldValue the old value
+     * @param newValue the new value
+     * @private
+     */
+    _localPropertyChange (property, oldValue, newValue) {
         // Only a moderator is allowed to send commands.
         var conference = this._conference;
         if (!conference.isModerator)
@@ -141,12 +239,14 @@ import UIEvents from '../service/UI/UIEvents';
         // sendCommand!
         commands.removeCommand(_COMMAND);
         var self = this;
-        commands.sendCommand(
+        commands.sendCommandOnce(
                 _COMMAND,
                 {
                     attributes: {
                         filmStripVisible: self._local.filmStripVisible,
-                    },
+                        nextOnStage: self._local.nextOnStage,
+                        sharedDocumentVisible: self._local.sharedDocumentVisible
+                    }
                 });
     }
 
@@ -159,7 +259,7 @@ import UIEvents from '../service/UI/UIEvents';
      * notable idiosyncrasy of the Command(s) API to be mindful of here is that
      * the command may be issued by the local participant.
      */
-    /* private */ _onFollowMeCommand ({ attributes }, id) {
+    _onFollowMeCommand ({ attributes }, id) {
         // We require to know who issued the command because (1) only a
         // moderator is allowed to send commands and (2) a command MUST be
         // issued by a defined commander.
@@ -169,26 +269,58 @@ import UIEvents from '../service/UI/UIEvents';
         // to act upon them.
         if (this._conference.isLocalId(id))
             return;
+
         // TODO Don't obey commands issued by non-moderators.
 
-        // Apply the received/remote command to the user experience/interface
+        // Applies the received/remote command to the user experience/interface
         // of the local participant.
+        this._onFilmStripVisible(attributes.filmStripVisible);
+        this._onNextOnStage(attributes.nextOnStage);
+        this._onSharedDocumentVisible(attributes.sharedDocumentVisible);
+    }
 
-        // filmStripVisible
-        var filmStripVisible = attributes.filmStripVisible;
+    _onFilmStripVisible(filmStripVisible) {
         if (typeof filmStripVisible !== 'undefined') {
             // XXX The Command(s) API doesn't preserve the types (of
             // attributes, at least) at the time of this writing so take into
             // account that what originated as a Boolean may be a String on
             // receipt.
             filmStripVisible = (filmStripVisible == 'true');
+
             // FIXME The UI (module) very likely doesn't (want to) expose its
             // eventEmitter as a public field. I'm not sure at the time of this
             // writing whether calling UI.toggleFilmStrip() is acceptable (from
             // a design standpoint) either.
-            this._UI.eventEmitter.emit(
+            if (filmStripVisible !== FilmStrip.isFilmStripVisible())
+                this._UI.eventEmitter.emit(
                     UIEvents.TOGGLE_FILM_STRIP,
                     filmStripVisible);
+        }
+    }
+
+    _onNextOnStage(id) {
+
+        var clickId = null;
+        if(typeof id !== 'undefined' && !VideoLayout.isPinned(id))
+            clickId = id;
+        else if (typeof id == 'undefined')
+            clickId = VideoLayout.getPinnedId();
+
+        if (clickId !== null)
+            VideoLayout.handleVideoThumbClicked(clickId);
+    }
+
+    _onSharedDocumentVisible(sharedDocumentVisible) {
+        if (typeof sharedDocumentVisible !== 'undefined') {
+            // XXX The Command(s) API doesn't preserve the types (of
+            // attributes, at least) at the time of this writing so take into
+            // account that what originated as a Boolean may be a String on
+            // receipt.
+            sharedDocumentVisible = (sharedDocumentVisible == 'true');
+
+            if (sharedDocumentVisible
+                !== this._UI.getSharedDocumentManager().isVisible())
+                this._UI.getSharedDocumentManager().toggleEtherpad();
         }
     }
 }

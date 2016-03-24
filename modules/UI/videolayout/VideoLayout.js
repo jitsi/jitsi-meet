@@ -31,7 +31,7 @@ var eventEmitter = null;
  * Currently focused video jid
  * @type {String}
  */
-var focusedVideoResourceJid = null;
+var pinnedId = null;
 
 /**
  * On contact list item clicked.
@@ -49,7 +49,7 @@ function onContactClicked (id) {
         if (remoteVideo.hasVideoStarted()) {
             // We have a video src, great! Let's update the large video
             // now.
-            VideoLayout.handleVideoThumbClicked(false, id);
+            VideoLayout.handleVideoThumbClicked(id);
         } else {
 
             // If we don't have a video src for jid, there's absolutely
@@ -63,7 +63,7 @@ function onContactClicked (id) {
             // picked up later by the lastN changed event handler.
 
             lastNPickupId = id;
-            eventEmitter.emit(UIEvents.PINNED_ENDPOINT, id);
+            eventEmitter.emit(UIEvents.PINNED_ENDPOINT, remoteVideo, true);
         }
     }
 }
@@ -209,7 +209,7 @@ var VideoLayout = {
 
         // We'll show user's avatar if he is the dominant speaker or if
         // his video thumbnail is pinned
-        if (remoteVideos[id] && (id === focusedVideoResourceJid
+        if (remoteVideos[id] && (id === pinnedId
                                 || id === currentDominantSpeaker)) {
             newId = id;
         } else {
@@ -289,20 +289,33 @@ var VideoLayout = {
         return smallVideo ? smallVideo.getVideoType() : null;
     },
 
-    handleVideoThumbClicked (noPinnedEndpointChangedEvent,
-                                          resourceJid) {
-        if(focusedVideoResourceJid) {
+    isPinned (id) {
+        return (pinnedId) ? (id === pinnedId) : false;
+    },
+
+    getPinnedId () {
+        return pinnedId;
+    },
+
+    /**
+     * Handles the click on a video thumbnail.
+     *
+     * @param id the identifier of the video thumbnail
+     */
+    handleVideoThumbClicked (id) {
+        if(pinnedId) {
             var oldSmallVideo
-                    = VideoLayout.getSmallVideo(focusedVideoResourceJid);
+                    = VideoLayout.getSmallVideo(pinnedId);
             if (oldSmallVideo && !interfaceConfig.filmStripOnly)
                 oldSmallVideo.focus(false);
         }
 
-        var smallVideo = VideoLayout.getSmallVideo(resourceJid);
-        // Unlock current focused.
-        if (focusedVideoResourceJid === resourceJid)
+        var smallVideo = VideoLayout.getSmallVideo(id);
+
+        // Unpin if currently pinned.
+        if (pinnedId === id)
         {
-            focusedVideoResourceJid = null;
+            pinnedId = null;
             // Enable the currently set dominant speaker.
             if (currentDominantSpeaker) {
                 if(smallVideo && smallVideo.hasVideo()) {
@@ -310,26 +323,23 @@ var VideoLayout = {
                 }
             }
 
-            if (!noPinnedEndpointChangedEvent) {
-                eventEmitter.emit(UIEvents.PINNED_ENDPOINT);
-            }
+            eventEmitter.emit(UIEvents.PINNED_ENDPOINT, smallVideo, false);
+
             return;
         }
 
         // Lock new video
-        focusedVideoResourceJid = resourceJid;
+        pinnedId = id;
 
         // Update focused/pinned interface.
-        if (resourceJid) {
+        if (id) {
             if (smallVideo && !interfaceConfig.filmStripOnly)
                 smallVideo.focus(true);
 
-            if (!noPinnedEndpointChangedEvent) {
-                eventEmitter.emit(UIEvents.PINNED_ENDPOINT, resourceJid);
-            }
+            eventEmitter.emit(UIEvents.PINNED_ENDPOINT, smallVideo, true);
         }
 
-        this.updateLargeVideo(resourceJid);
+        this.updateLargeVideo(id);
     },
 
     /**
@@ -372,10 +382,10 @@ var VideoLayout = {
         // Update the large video to the last added video only if there's no
         // current dominant, focused speaker or update it to
         // the current dominant speaker.
-        if ((!focusedVideoResourceJid &&
+        if ((!pinnedId &&
             !currentDominantSpeaker &&
             this.isLargeContainerTypeVisible(VIDEO_CONTAINER_TYPE)) ||
-            focusedVideoResourceJid === resourceJid ||
+            pinnedId === resourceJid ||
             (resourceJid &&
                 currentDominantSpeaker === resourceJid)) {
             this.updateLargeVideo(resourceJid, true);
@@ -531,7 +541,7 @@ var VideoLayout = {
         // since we don't want to switch to local video.
         // Update the large video if the video source is already available,
         // otherwise wait for the "videoactive.jingle" event.
-        if (!focusedVideoResourceJid
+        if (!pinnedId
             && remoteVideo.hasVideoStarted()
             && !this.getCurrentlyOnLargeContainer().stayOnStage()) {
             this.updateLargeVideo(id);
@@ -650,11 +660,7 @@ var VideoLayout = {
                         // Clean up the lastN pickup id.
                         lastNPickupId = null;
 
-                        // Don't fire the events again, they've already
-                        // been fired in the contact list click handler.
-                        VideoLayout.handleVideoThumbClicked(
-                            false,
-                            resourceJid);
+                        VideoLayout.handleVideoThumbClicked(resourceJid);
 
                         updateLargeVideo = false;
                     }
@@ -741,9 +747,9 @@ var VideoLayout = {
 
     removeParticipantContainer (id) {
         // Unlock large video
-        if (focusedVideoResourceJid === id) {
+        if (pinnedId === id) {
             console.info("Focused video owner has left the conference");
-            focusedVideoResourceJid = null;
+            pinnedId = null;
         }
 
         if (currentDominantSpeaker === id) {

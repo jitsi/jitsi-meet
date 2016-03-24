@@ -3,6 +3,7 @@
 import VideoLayout from "../videolayout/VideoLayout";
 import LargeContainer from '../videolayout/LargeContainer';
 import UIUtil from "../util/UIUtil";
+import UIEvents from "../../../service/UI/UIEvents";
 import SidePanelToggler from "../side_pannels/SidePanelToggler";
 import FilmStrip from '../videolayout/FilmStrip';
 
@@ -58,6 +59,7 @@ const ETHERPAD_CONTAINER_TYPE = "etherpad";
  * Container for Etherpad iframe.
  */
 class Etherpad extends LargeContainer {
+
     constructor (domain, name) {
         super();
 
@@ -149,18 +151,23 @@ class Etherpad extends LargeContainer {
  * Manager of the Etherpad frame.
  */
 export default class EtherpadManager {
-    constructor (domain, name) {
+    constructor (domain, name, eventEmitter) {
         if (!domain || !name) {
             throw new Error("missing domain or name");
         }
 
         this.domain = domain;
         this.name = name;
+        this.eventEmitter = eventEmitter;
         this.etherpad = null;
     }
 
     get isOpen () {
         return !!this.etherpad;
+    }
+
+    isVisible() {
+        return VideoLayout.isLargeContainerTypeVisible(ETHERPAD_CONTAINER_TYPE);
     }
 
     /**
@@ -183,11 +190,12 @@ export default class EtherpadManager {
             this.openEtherpad();
         }
 
-        let isVisible = VideoLayout.isLargeContainerTypeVisible(
-            ETHERPAD_CONTAINER_TYPE
-        );
+        let isVisible = this.isVisible();
 
         VideoLayout.showLargeVideoContainer(
             ETHERPAD_CONTAINER_TYPE, !isVisible);
+
+        this.eventEmitter
+            .emit(UIEvents.TOGGLED_SHARED_DOCUMENT, !isVisible);
     }
 }

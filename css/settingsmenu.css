@@ -43,29 +43,25 @@
     cursor: pointer;
 }
 
-
-#startMutedOptions {
+#startMutedOptions,
+#followMeOptions {
     padding-left: 10%;
     text-indent: -10%;
-
     margin-top: 10px;
-
     display: none; /* hide by default */
-
     /* clearfix */
     overflow: auto;
     zoom: 1;
 }
 
-#startAudioMuted {
+#startAudioMuted,
+#startVideoMuted,
+#followMeCheckBox {
     width: 13px !important;
 }
 
-#startVideoMuted {
-    width: 13px !important;
-}
-
-.startMutedLabel {
+.startMutedLabel,
+.followMeLabel {
     width: 94%;
     float: left;
     cursor: pointer;

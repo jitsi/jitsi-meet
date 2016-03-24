@@ -35,6 +35,8 @@ UI.eventEmitter = eventEmitter;
 let etherpadManager;
 let sharedVideoManager;
 
+let followMeHandler;
+
 /**
  * Prompt user for nickname.
  */
@@ -252,7 +254,7 @@ UI.initConference = function () {
     // other participants' UI. Consequently, it needs (1) read and write access
     // to the UI (depending on the moderator role of the local participant) and
     // (2) APP.conference as means of communication between the participants.
-    new FollowMe(APP.conference, UI);
+    followMeHandler = new FollowMe(APP.conference, UI);
 };
 
 UI.mucJoined = function () {
@@ -289,6 +291,11 @@ function registerListeners() {
     UI.addListener(UIEvents.TOGGLE_FILM_STRIP, function () {
         UI.toggleFilmStrip();
         VideoLayout.resizeVideoArea(PanelToggler.isVisible(), true, false);
+    });
+
+    UI.addListener(UIEvents.FOLLOW_ME_ENABLED, function (isEnabled) {
+        if (followMeHandler)
+            followMeHandler.enableFollowMe(isEnabled);
     });
 }
 
@@ -478,8 +485,17 @@ UI.initEtherpad = function (name) {
         return;
     }
     console.log('Etherpad is enabled');
-    etherpadManager = new EtherpadManager(config.etherpad_base, name);
+    etherpadManager
+        = new EtherpadManager(config.etherpad_base, name, eventEmitter);
     Toolbar.showEtherpadButton();
+};
+
+/**
+ * Returns the shared document manager object.
+ * @return {EtherpadManager} the shared document manager object
+ */
+UI.getSharedDocumentManager = function () {
+    return etherpadManager;
 };
 
 /**
@@ -549,6 +565,7 @@ UI.updateLocalRole = function (isModerator) {
     Toolbar.showRecordingButton(isModerator);
     Toolbar.showSharedVideoButton(isModerator);
     SettingsMenu.showStartMutedOptions(isModerator);
+    SettingsMenu.showFollowMeOptions(isModerator);
 
     if (isModerator) {
         messageHandler.notify(null, "notify.me", 'connected', "notify.moderator");
@@ -686,8 +703,24 @@ UI.setVideoMuted = function (id, muted) {
     }
 };
 
+/**
+ * Adds a listener that would be notified on the given type of event.
+ *
+ * @param type the type of the event we're listening for
+ * @param listener a function that would be called when notified
+ */
 UI.addListener = function (type, listener) {
     eventEmitter.on(type, listener);
+};
+
+/**
+ * Removes the given listener for the given type of event.
+ *
+ * @param type the type of the event we're listening for
+ * @param listener the listener we want to remove
+ */
+UI.removeListener = function (type, listener) {
+    eventEmitter.removeListener(type, listener);
 };
 
 UI.clickOnVideo = function (videoNumber) {
