@@ -308,10 +308,10 @@ class FollowMe {
         var clickId = null;
         if(typeof id !== 'undefined' && !VideoLayout.isPinned(id))
             clickId = id;
-        else if (typeof id == 'undefined')
+        else if (typeof id == 'undefined' && VideoLayout.getPinnedId())
             clickId = VideoLayout.getPinnedId();
 
-        if (clickId !== null)
+        if (clickId)
             VideoLayout.handleVideoThumbClicked(clickId);
     }
 
