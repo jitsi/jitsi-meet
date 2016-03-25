@@ -17,7 +17,7 @@ export const SHARED_VIDEO_CONTAINER_TYPE = "sharedvideo";
  * @type {string}
  */
 const defaultSharedVideoLink = "https://www.youtube.com/watch?v=xNXN7CZk8X0";
-
+const updateInterval = 5000; // milliseconds
 /**
  * Manager of shared video.
  */
@@ -26,7 +26,6 @@ export default class SharedVideoManager {
         this.emitter = emitter;
         this.isSharedVideoShown = false;
         this.isPlayerAPILoaded = false;
-        this.updateInterval = 5000; // milliseconds
     }
 
     /**
@@ -71,6 +70,13 @@ export default class SharedVideoManager {
         var firstScriptTag = document.getElementsByTagName('script')[0];
         firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
+        // sometimes we receive errors like player not defined
+        // or player.pauseVideo is not a function
+        // we need to operate with player after start playing
+        // self.player will be defined once it start playing
+        // and will process any initial attributes if any
+        this.initialAttributes = null;
+
         var self = this;
         if(self.isPlayerAPILoaded)
             window.onYouTubeIframeAPIReady();
@@ -78,14 +84,14 @@ export default class SharedVideoManager {
             window.onYouTubeIframeAPIReady = function() {
                 self.isPlayerAPILoaded = true;
                 let showControls = APP.conference.isLocalId(self.from) ? 1 : 0;
-                self.player = new YT.Player('sharedVideoIFrame', {
+                new YT.Player('sharedVideoIFrame', {
                     height: '100%',
                     width: '100%',
                     videoId: self.url,
                     playerVars: {
                         'origin': location.origin,
                         'fs': '0',
-                        'autoplay': 1,
+                        'autoplay': 0,
                         'controls': showControls,
                         'rel' : 0
                     },
@@ -97,19 +103,19 @@ export default class SharedVideoManager {
                 });
             };
 
-        // whether we should pause the player as initial status
-        // sometimes if we try to pause the player before it starts playing
-        // we can end up with player in buffering mode
-        this.initialPause = false;
         window.onPlayerStateChange = function(event) {
             if (event.data == YT.PlayerState.PLAYING) {
                 self.playerPaused = false;
 
-                // check for initial pause
-                if(self.initialPause) {
-                    self.initialPause = false;
-                    self.player.pauseVideo();
+                self.player = event.target;
+
+                if(self.initialAttributes)
+                {
+                    self.processAttributes(
+                        self.player, self.initialAttributes, self.playerPaused);
+                    self.initialAttributes = null;
                 }
+
                 self.updateCheck();
             } else if (event.data == YT.PlayerState.PAUSED) {
                 self.playerPaused = true;
@@ -119,6 +125,8 @@ export default class SharedVideoManager {
 
         window.onPlayerReady = function(event) {
             let player = event.target;
+            // do not relay on autoplay as it is not sending all of the events
+            // in onPlayerStateChange
             player.playVideo();
 
             let thumb = new SharedVideoThumb(self.url);
@@ -140,15 +148,14 @@ export default class SharedVideoManager {
             if(APP.conference.isLocalId(self.from)) {
                 self.intervalId = setInterval(
                     self.updateCheck.bind(self),
-                    self.updateInterval);
+                    updateInterval);
             }
 
-            // set initial state of the player if there is enough information
-            if(attributes.state === 'pause')
-                self.initialPause = true;
-            else if(attributes.time > 0) {
-                console.log("Player seekTo:", attributes.time);
-                player.seekTo(attributes.time);
+            if(self.player)
+                self.processAttributes(
+                    self.player, attributes, self.playerPaused);
+            else {
+                self.initialAttributes = attributes;
             }
         };
 
@@ -158,12 +165,54 @@ export default class SharedVideoManager {
     }
 
     /**
+     * Process attributes, whether player needs to be paused or seek.
+     * @param player the player to operate over
+     * @param attributes the attributes with the player state we want
+     * @param playerPaused current saved state for the player
+     */
+    processAttributes (player, attributes, playerPaused)
+    {
+        if(!attributes)
+            return;
+
+        if (attributes.state == 'playing') {
+
+            // check received time and current time
+            let currentPosition = player.getCurrentTime();
+            let diff = Math.abs(attributes.time - currentPosition);
+
+            // if we drift more than the interval for checking
+            // sync, the interval is in milliseconds
+            if(diff > updateInterval/1000) {
+                console.info("DDD Player seekTo:", attributes.time,
+                    " current time is:", currentPosition, " diff:", diff);
+                player.seekTo(attributes.time);
+            }
+
+            // lets check the volume
+            if (attributes.volume !== undefined &&
+                player.getVolume() != attributes.volume) {
+                player.setVolume(attributes.volume);
+                console.info("Player change of volume:" + attributes.volume);
+            }
+
+            if(playerPaused)
+                player.playVideo();
+
+        } else if (attributes.state == 'pause') {
+            // if its not paused, pause it
+            player.pauseVideo();
+        }
+    }
+
+    /**
      * Checks current state of the player and fire an event with the values.
      */
     updateCheck(sendPauseEvent)
     {
         // ignore update checks if we are not the owner of the video
-        if(!APP.conference.isLocalId(this.from))
+        // or there is still no player defined
+        if(!APP.conference.isLocalId(this.from) || !this.player)
             return;
 
         let state = this.player.getPlayerState();
@@ -195,54 +244,15 @@ export default class SharedVideoManager {
             return;
         }
 
-        if (attributes.state == 'playing') {
+        if(!this.isSharedVideoShown) {
+            this.showSharedVideo(id, url, attributes);
+            return;
+        }
 
-            if(!this.isSharedVideoShown) {
-                this.showSharedVideo(id, url, attributes);
-                return;
-            }
-
-            // ocasionally we get this.player.getCurrentTime is not a function
-            // it seems its that player hasn't really loaded
-            if(!this.player || !this.player.getCurrentTime
-                || !this.player.pauseVideo
-                || !this.player.playVideo
-                || !this.player.getVolume
-                || !this.player.seekTo
-                || !this.player.getVolume)
-                return;
-
-            // check received time and current time
-            let currentPosition = this.player.getCurrentTime();
-            let diff = Math.abs(attributes.time - currentPosition);
-
-            // if we drift more than two times of the interval for checking
-            // sync, the interval is in milliseconds
-            if(diff > this.updateInterval*2/1000) {
-                console.log("Player seekTo:", attributes.time,
-                    " current time is:", currentPosition, " diff:", diff);
-                this.player.seekTo(attributes.time);
-            }
-
-            // lets check the volume
-            if (attributes.volume !== undefined &&
-                this.player.getVolume() != attributes.volume) {
-                this.player.setVolume(attributes.volume);
-                console.log("Player change of volume:" + attributes.volume);
-            }
-
-            if(this.playerPaused)
-                this.player.playVideo();
-        } else if (attributes.state == 'pause') {
-            // if its not paused, pause it
-            if(this.isSharedVideoShown) {
-                this.player.pauseVideo();
-            }
-            else {
-                // if not shown show it, passing attributes so it can
-                // be shown paused
-                this.showSharedVideo(id, url, attributes);
-            }
+        if(!this.player)
+            this.initialAttributes = attributes;
+        else {
+            this.processAttributes(this.player, attributes, this.playerPaused);
         }
     }
 
@@ -251,9 +261,8 @@ export default class SharedVideoManager {
      * shared video is the one in the id (called when user
      * left and we want to remove video if the user sharing it left).
      * @param id the id of the sender of the command
-     * @param attributes
      */
-    stopSharedVideo (id, attributes) {
+    stopSharedVideo (id) {
         if (!this.isSharedVideoShown)
             return;
 

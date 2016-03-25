@@ -1125,7 +1125,7 @@ export default {
                 }
 
                 if (attributes.state === 'stop') {
-                    APP.UI.stopSharedVideo(id, attributes);
+                    APP.UI.stopSharedVideo(id);
                 } else if (attributes.state === 'start') {
                     APP.UI.showSharedVideo(id, value, attributes);
                 } else if (attributes.state === 'playing'
