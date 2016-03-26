@@ -289,8 +289,9 @@ const Toolbar = {
     },
 
     // Shows or hides the 'shared video' button.
-    showSharedVideoButton (show) {
-        if (UIUtil.isButtonEnabled('sharedvideo') && show) {
+    showSharedVideoButton () {
+        if (UIUtil.isButtonEnabled('sharedvideo')
+                && config.disableThirdPartyRequests !== true) {
             $('#toolbar_button_sharedvideo').css({display: "inline-block"});
         } else {
             $('#toolbar_button_sharedvideo').css({display: "none"});

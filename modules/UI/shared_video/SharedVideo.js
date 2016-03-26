@@ -43,8 +43,15 @@ export default class SharedVideoManager {
             return;
         }
 
-        showStopVideoPropmpt().then(() =>
-            this.emitter.emit(UIEvents.UPDATE_SHARED_VIDEO, null, 'stop'));
+        if(APP.conference.isLocalId(this.from)) {
+            showStopVideoPropmpt().then(() =>
+                this.emitter.emit(UIEvents.UPDATE_SHARED_VIDEO, null, 'stop'));
+        } else {
+            messageHandler.openMessageDialog(
+                "dialog.shareVideoTitle",
+                "dialog.alreadySharedVideoMsg"
+            );
+        }
     }
 
     /**
