@@ -3,6 +3,7 @@ node_modules
 .idea/
 *.iml
 .*.tmp
+config.js
 deploy-local.sh
 libs/app.bundle.*
 libs/lib-jitsi-meet*

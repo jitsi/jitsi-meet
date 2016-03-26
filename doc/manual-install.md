@@ -159,6 +159,8 @@ Checkout and configure Jitsi Meet:
 cd /srv
 git clone https://github.com/jitsi/jitsi-meet.git
 mv jitsi-meet/ jitsi.example.com
+cd jitsi.example.com/
+cp config.example.js config.js
 ```
 
 Edit host names in `/srv/jitsi.example.com/config.js` (see also the example config file):
