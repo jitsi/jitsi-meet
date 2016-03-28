@@ -1114,16 +1114,6 @@ export default {
         room.addCommandListener(
             Commands.SHARED_VIDEO, ({value, attributes}, id) => {
 
-                // if we are not the moderator or
-                // the command is coming from a user which is not the moderator
-                if (!(this.isLocalId(id) && room.isModerator())
-                    && !this.isParticipantModerator(id))
-                {
-                    console.warn('Received shared video command ' +
-                        'not from moderator');
-                    return;
-                }
-
                 if (attributes.state === 'stop') {
                     APP.UI.stopSharedVideo(id);
                 } else if (attributes.state === 'start') {

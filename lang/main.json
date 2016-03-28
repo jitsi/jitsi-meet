@@ -166,6 +166,7 @@
         "shareVideoLinkError": "Please provide a correct youtube link.",
         "removeSharedVideoTitle": "Remove shared video",
         "removeSharedVideoMsg": "Are you sure you would like to remove your shared video?",
+        "alreadySharedVideoMsg": "Another participant is already sharing video. This conference allows only one shared video at a time.",
         "WaitingForHost": "Waiting for the host ...",
         "WaitForHostMsg": "The conference <b>__room__ </b> has not yet started. If you are the host then please authenticate. Otherwise, please wait for the host to arrive.",
         "IamHost": "I am the host",

@@ -233,6 +233,10 @@ UI.initConference = function () {
     // Add myself to the contact list.
     ContactList.addContact(id);
 
+    //update default button states before showing the toolbar
+    //if local role changes buttons state will be again updated
+    UI.updateLocalRole(false);
+
     // Once we've joined the muc show the toolbar
     ToolbarToggler.showToolbar();
 
