@@ -17,9 +17,12 @@ const ConnectionErrors = JitsiMeetJS.errors.connection;
  * @param {string} [roomName] the name of the conference.
  */
 function checkForAttachParametersAndConnect(id, password, connection) {
-    console.log("call checkForAttachParametersAndConnect");
     if(window.XMPPAttachInfo){
         APP.connect.status = "connecting";
+        // When connection optimization is not deployed or enabled the default
+        // value will be window.XMPPAttachInfo.status = "error"
+        // If the connection optimization is deployed and enabled and there is
+        // a failure the value will be window.XMPPAttachInfo.status = "error" 
         if(window.XMPPAttachInfo.status === "error") {
             connection.connect({id, password});
             return;
