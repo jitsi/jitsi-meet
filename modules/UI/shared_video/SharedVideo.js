@@ -184,17 +184,7 @@ export default class SharedVideoManager {
 
         if (attributes.state == 'playing') {
 
-            // check received time and current time
-            let currentPosition = player.getCurrentTime();
-            let diff = Math.abs(attributes.time - currentPosition);
-
-            // if we drift more than the interval for checking
-            // sync, the interval is in milliseconds
-            if(diff > updateInterval/1000) {
-                console.info("DDD Player seekTo:", attributes.time,
-                    " current time is:", currentPosition, " diff:", diff);
-                player.seekTo(attributes.time);
-            }
+            this.processTime(player, attributes);
 
             // lets check the volume
             if (attributes.volume !== undefined &&
@@ -209,6 +199,28 @@ export default class SharedVideoManager {
         } else if (attributes.state == 'pause') {
             // if its not paused, pause it
             player.pauseVideo();
+
+            this.processTime(player, attributes);
+        }
+    }
+
+    /**
+     * Check for time in attributes and if needed seek in current player
+     * @param player the player to operate over
+     * @param attributes the attributes with the player state we want
+     */
+    processTime (player, attributes)
+    {
+        // check received time and current time
+        let currentPosition = player.getCurrentTime();
+        let diff = Math.abs(attributes.time - currentPosition);
+
+        // if we drift more than the interval for checking
+        // sync, the interval is in milliseconds
+        if(diff > updateInterval/1000) {
+            console.info("Player seekTo:", attributes.time,
+                " current time is:", currentPosition, " diff:", diff);
+            player.seekTo(attributes.time);
         }
     }
 
@@ -226,7 +238,7 @@ export default class SharedVideoManager {
         // if its paused and haven't been pause - send paused
         if (state === YT.PlayerState.PAUSED && sendPauseEvent) {
             this.emitter.emit(UIEvents.UPDATE_SHARED_VIDEO,
-                this.url, 'pause');
+                this.url, 'pause', this.player.getCurrentTime());
         }
         // if its playing and it was paused - send update with time
         // if its playing and was playing just send update with time
