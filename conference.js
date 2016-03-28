@@ -1101,6 +1101,7 @@ export default {
             else {
                 // in case of paused, in order to allow late users to join
                 // paused
+                room.removeCommand(Commands.SHARED_VIDEO);
                 room.sendCommand(Commands.SHARED_VIDEO, {
                     value: url,
                     attributes: {
