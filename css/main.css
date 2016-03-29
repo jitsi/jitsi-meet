@@ -129,21 +129,6 @@ html, body{
     -moz-transition: all .5s ease-in-out;
     transition: all .5s ease-in-out;
 }
-/*#ffde00*/
-#toolbar_button_record.active {
-    -webkit-text-shadow:    -1px 0 10px #00ccff,
-    0 1px 10px #00ccff,
-    1px 0 10px #00ccff,
-    0 -1px 10px #00ccff;
-    -moz-text-shadow:   1px 0 10px #00ccff,
-    0 1px 10px #00ccff,
-    1px 0 10px #00ccff,
-    0 -1px 10px #00ccff;
-    text-shadow:    -1px 0 10px #00ccff,
-    0 1px 10px #00ccff,
-    1px 0 10px #00ccff,
-    0 -1px 10px #00ccff;
-}
 
 a.button:hover,
 a.bottomToolbarButton:hover {
@@ -298,7 +283,7 @@ div.feedbackButton:hover {
 }
 
 .active {
-    color: #00ccff;
+    background-color: #00ccff;
 }
 
 .bottomToolbar_span>span {

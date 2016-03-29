@@ -6,7 +6,6 @@ import AnalyticsAdapter from '../../statistics/AnalyticsAdapter';
 import UIEvents from '../../../service/UI/UIEvents';
 
 let roomUrl = null;
-let recordingToaster = null;
 let emitter = null;
 
 
@@ -43,51 +42,6 @@ function openLinkDialog () {
     );
 }
 
-// Sets the state of the recording button
-function setRecordingButtonState (recordingState) {
-    let selector = $('#toolbar_button_record');
-
-    if (recordingState === 'on') {
-        selector.removeClass("icon-recEnable");
-        selector.addClass("icon-recEnable active");
-
-        $("#largeVideo").toggleClass("videoMessageFilter", true);
-        let recordOnKey = "recording.on";
-        $('#videoConnectionMessage').attr("data-i18n", recordOnKey);
-        $('#videoConnectionMessage').text(APP.translation.translateString(recordOnKey));
-
-        setTimeout(function(){
-            $("#largeVideo").toggleClass("videoMessageFilter", false);
-            $('#videoConnectionMessage').css({display: "none"});
-        }, 1500);
-
-        recordingToaster = messageHandler.notify(
-            null, "recording.toaster", null,
-            null, null,
-            {timeOut: 0, closeButton: null, tapToDismiss: false}
-        );
-    } else if (recordingState === 'off') {
-        selector.removeClass("icon-recEnable active");
-        selector.addClass("icon-recEnable");
-
-        $("#largeVideo").toggleClass("videoMessageFilter", false);
-        $('#videoConnectionMessage').css({display: "none"});
-
-        if (recordingToaster) {
-            messageHandler.remove(recordingToaster);
-        }
-    } else if (recordingState === 'pending') {
-        selector.removeClass("icon-recEnable active");
-        selector.addClass("icon-recEnable");
-
-        $("#largeVideo").toggleClass("videoMessageFilter", true);
-        let recordPendingKey = "recording.pending";
-        $('#videoConnectionMessage').attr("data-i18n", recordPendingKey);
-        $('#videoConnectionMessage').text(APP.translation.translateString(recordPendingKey));
-        $('#videoConnectionMessage').css({display: "block"});
-    }
-}
-
 const buttonHandlers = {
     "toolbar_button_mute": function () {
         if (APP.conference.audioMuted) {
@@ -106,10 +60,6 @@ const buttonHandlers = {
             AnalyticsAdapter.sendEvent('toolbar.video.disabled');
             emitter.emit(UIEvents.VIDEO_MUTED, true);
         }
-    },
-    "toolbar_button_record": function () {
-        AnalyticsAdapter.sendEvent('toolbar.recording.toggled');
-        emitter.emit(UIEvents.RECORDING_TOGGLE);
     },
     "toolbar_button_security": function () {
         emitter.emit(UIEvents.ROOM_LOCK_CLICKED);
@@ -250,7 +200,8 @@ const Toolbar = {
      */
     unlockLockButton () {
         if ($("#toolbar_button_security").hasClass("icon-security-locked"))
-            UIUtil.buttonClick("#toolbar_button_security", "icon-security icon-security-locked");
+            UIUtil.buttonClick("#toolbar_button_security",
+                                "icon-security icon-security-locked");
     },
 
     /**
@@ -258,7 +209,8 @@ const Toolbar = {
      */
     lockLockButton () {
         if ($("#toolbar_button_security").hasClass("icon-security"))
-            UIUtil.buttonClick("#toolbar_button_security", "icon-security icon-security-locked");
+            UIUtil.buttonClick("#toolbar_button_security",
+                                "icon-security icon-security-locked");
     },
 
     /**
@@ -279,29 +231,12 @@ const Toolbar = {
         }
     },
 
-    // Shows or hides the 'recording' button.
-    showRecordingButton (show) {
-        if (UIUtil.isButtonEnabled('recording') && show) {
-            $('#toolbar_button_record').css({display: "inline-block"});
-        } else {
-            $('#toolbar_button_record').css({display: "none"});
-        }
-    },
-
     // Shows or hides the 'shared video' button.
     showSharedVideoButton (show) {
         if (UIUtil.isButtonEnabled('sharedvideo') && show) {
             $('#toolbar_button_sharedvideo').css({display: "inline-block"});
         } else {
             $('#toolbar_button_sharedvideo').css({display: "none"});
-        }
-    },
-
-    // checks whether recording is enabled and whether we have params
-    // to start automatically recording
-    checkAutoRecord () {
-        if (UIUtil.isButtonEnabled('recording') && config.autoRecord) {
-            emitter.emit(UIEvents.RECORDING_TOGGLE, UIUtil.escapeHtml(config.autoRecordToken));
         }
     },
 
@@ -380,10 +315,6 @@ const Toolbar = {
         } else {
             button.removeClass("glow");
         }
-    },
-
-    updateRecordingState (state) {
-        setRecordingButtonState(state);
     },
 
     /**

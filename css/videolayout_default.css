@@ -489,3 +489,33 @@
     color: rgba(255,255,255,.5);
     z-index: 10000;
 }
+
+.centeredVideoLabel {
+    display: none;
+    position: absolute;
+    bottom: 45%;
+    top: auto;
+    right: auto;
+    left: auto;
+    line-height: 28px;
+    height: 28px;
+    width: auto;
+    padding: 5px;
+    margin-right: auto;
+    margin-left: auto;
+    background: rgba(0,0,0,.5);
+    color: #FFF;
+    z-index: 10000;
+    border-radius: 4px;
+    -webkit-transition: all 2s 2s linear;
+    transition: all 2s 2s linear;
+}
+
+.moveToCorner {
+    top: 5px;
+    right: 5px;
+    margin-right: 0px;
+    margin-left: auto;
+    background: rgba(0,0,0,.3);
+    color: rgba(255,255,255,.5);
+}

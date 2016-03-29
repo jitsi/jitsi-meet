@@ -14,6 +14,7 @@ import UIEvents from "../../service/UI/UIEvents";
 import CQEvents from '../../service/connectionquality/CQEvents';
 import EtherpadManager from './etherpad/Etherpad';
 import SharedVideoManager from './shared_video/SharedVideo';
+import Recording from "./recording/Recording";
 
 import VideoLayout from "./videolayout/VideoLayout";
 import FilmStrip from "./videolayout/FilmStrip";
@@ -359,12 +360,16 @@ UI.start = function () {
     bindEvents();
     sharedVideoManager = new SharedVideoManager(eventEmitter);
     if (!interfaceConfig.filmStripOnly) {
-
         $("#videospace").mousemove(function () {
             return ToolbarToggler.showToolbar();
         });
         setupToolbars();
         setupChat();
+
+        // Initialise the recording module.
+        if (config.enableRecording)
+            Recording.init(eventEmitter, config.recordingType);
+
         // Display notice message at the top of the toolbar
         if (config.noticeMessage) {
             $('#noticeText').text(config.noticeMessage);
@@ -562,15 +567,14 @@ UI.updateLocalRole = function (isModerator) {
     VideoLayout.showModeratorIndicator();
 
     Toolbar.showSipCallButton(isModerator);
-    Toolbar.showRecordingButton(isModerator);
-    Toolbar.showSharedVideoButton(isModerator);
+    Recording.showRecordingButton(isModerator);
     SettingsMenu.showStartMutedOptions(isModerator);
     SettingsMenu.showFollowMeOptions(isModerator);
 
     if (isModerator) {
         messageHandler.notify(null, "notify.me", 'connected', "notify.moderator");
 
-        Toolbar.checkAutoRecord();
+        Recording.checkAutoRecord();
     }
 };
 
@@ -973,37 +977,8 @@ UI.requestFeedback = function () {
     });
 };
 
-/**
- * Request recording token from the user.
- * @returns {Promise}
- */
-UI.requestRecordingToken = function () {
-    let msg = APP.translation.generateTranslationHTML("dialog.recordingToken");
-    let token = APP.translation.translateString("dialog.token");
-    return new Promise(function (resolve, reject) {
-        messageHandler.openTwoButtonDialog(
-            null, null, null,
-            `<h2>${msg}</h2>
-             <input name="recordingToken" type="text"
-                    data-i18n="[placeholder]dialog.token"
-                    placeholder="${token}" autofocus>`,
-            false, "dialog.Save",
-            function (e, v, m, f) {
-                if (v && f.recordingToken) {
-                    resolve(UIUtil.escapeHtml(f.recordingToken));
-                } else {
-                    reject();
-                }
-            },
-            null,
-            function () { },
-            ':input:first'
-        );
-    });
-};
-
 UI.updateRecordingState = function (state) {
-    Toolbar.updateRecordingState(state);
+    Recording.updateRecordingState(state);
 };
 
 UI.notifyTokenAuthFailed = function () {
