@@ -513,7 +513,7 @@
 
 .moveToCorner {
     top: 5px;
-    right: 5px;
+    right: 50px; /*leave free space for the HD label*/
     margin-right: 0px;
     margin-left: auto;
     background: rgba(0,0,0,.3);
