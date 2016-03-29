@@ -32,27 +32,73 @@ function _isRecordingButtonEnabled() {
  * @returns {Promise}
  */
 function _requestLiveStreamId() {
-    let msg = APP.translation.generateTranslationHTML("dialog.liveStreaming");
-    let token = APP.translation.translateString("dialog.streamKey");
+    const msg = APP.translation.generateTranslationHTML("dialog.liveStreaming");
+    const token = APP.translation.translateString("dialog.streamKey");
+    const cancelButton
+        = APP.translation.generateTranslationHTML("dialog.Cancel");
+    const backButton = APP.translation.generateTranslationHTML("dialog.Back");
+    const startStreamingButton
+        = APP.translation.generateTranslationHTML("dialog.startLiveStreaming");
+    const streamIdRequired
+        = APP.translation.generateTranslationHTML(
+            "liveStreaming.streamIdRequired");
+
     return new Promise(function (resolve, reject) {
-        APP.UI.messageHandler.openTwoButtonDialog(
-            null, null, null,
-            `<h2>${msg}</h2>
-             <input name="streamId" type="text"
+        let dialog = APP.UI.messageHandler.openDialogWithStates({
+            state0: {
+                html:
+                    `<h2>${msg}</h2>
+                    <input name="streamId" type="text"
                     data-i18n="[placeholder]dialog.streamKey"
                     placeholder="${token}" autofocus>`,
-            false, "dialog.startLiveStreaming",
-            function (e, v, m, f) {
-                if (v && f.streamId) {
-                    resolve(UIUtil.escapeHtml(f.streamId));
-                } else {
-                    reject();
+                persistent: false,
+                buttons: [
+                    {title: cancelButton, value: false},
+                    {title: startStreamingButton, value: true}
+                ],
+                focus: ':input:first',
+                defaultButton: 1,
+                submit: function (e, v, m, f) {
+                    e.preventDefault();
+
+                    if (v) {
+                        if (f.streamId && f.streamId.length > 0) {
+                            resolve(UIUtil.escapeHtml(f.streamId));
+                            dialog.close();
+                            return;
+                        }
+                        else {
+                            dialog.goToState('state1');
+                            return false;
+                        }
+                    } else {
+                        reject();
+                        dialog.close();
+                        return false;
+                    }
                 }
             },
-            null,
-            function () { },
-            ':input:first'
-        );
+
+            state1: {
+                html: `<h2>${msg}</h2> ${streamIdRequired}`,
+                persistent: false,
+                buttons: [
+                    {title: cancelButton, value: false},
+                    {title: backButton, value: true}
+                ],
+                focus: ':input:first',
+                defaultButton: 1,
+                submit: function (e, v, m, f) {
+                    e.preventDefault();
+                    if (v === 0) {
+                        reject();
+                        dialog.close();
+                    } else {
+                        dialog.goToState('state0');
+                    }
+                }
+            }
+        });
     });
 }
 
@@ -129,12 +175,22 @@ function moveToCorner(selector, move) {
         selector.removeClass(moveToCornerClass);
 }
 
+var Status = {
+    ON: "on",
+    OFF: "off",
+    AVAILABLE: "available",
+    UNAVAILABLE: "unavailable",
+    PENDING: "pending"
+};
+
 var Recording = {
     /**
      * Initializes the recording UI.
      */
     init (emitter, recordingType) {
         this.eventEmitter = emitter;
+        // Use recorder states directly from the library.
+        this.currentState = Status.UNAVAILABLE;
 
         this.initRecordingButton(recordingType);
     },
@@ -148,6 +204,7 @@ var Recording = {
             this.recordingOffKey = "liveStreaming.off";
             this.recordingPendingKey = "liveStreaming.pending";
             this.failedToStartKey = "liveStreaming.failedToStart";
+            this.recordingButtonTooltip = "liveStreaming.buttonTooltip";
         }
         else {
             this.baseClass = "icon-recEnable";
@@ -155,21 +212,25 @@ var Recording = {
             this.recordingOffKey = "recording.off";
             this.recordingPendingKey = "recording.pending";
             this.failedToStartKey = "recording.failedToStart";
+            this.recordingButtonTooltip = "recording.buttonTooltip";
         }
 
         selector.addClass(this.baseClass);
+        selector.attr("data-i18n", "[content]" + this.recordingButtonTooltip);
+        selector.attr("content",
+            APP.translation.translateString(this.recordingButtonTooltip));
 
         var self = this;
         selector.click(function () {
-            console.log("BUTTON CLICKED", self.currentState);
             switch (self.currentState) {
-                case "on": {
+                case Status.ON:
+                case Status.PENDING: {
                     _showStopRecordingPrompt(recordingType).then(() =>
                         self.eventEmitter.emit(UIEvents.RECORDING_TOGGLED));
-                }
                     break;
-                case "available":
-                case "off": {
+                }
+                case Status.AVAILABLE:
+                case Status.OFF: {
                     if (recordingType === 'jibri')
                         _requestLiveStreamId().then((streamId) => {
                             self.eventEmitter.emit( UIEvents.RECORDING_TOGGLED,
@@ -187,8 +248,8 @@ var Recording = {
                                 {token: token});
                         });
                     }
-                }
                     break;
+                }
                 default: {
                     APP.UI.messageHandler.openMessageDialog(
                         "dialog.liveStreaming",
@@ -222,7 +283,7 @@ var Recording = {
         let labelSelector = $('#recordingLabel');
 
         // TODO: handle recording state=available
-        if (recordingState === 'on') {
+        if (recordingState === Status.ON) {
 
             buttonSelector.removeClass(this.baseClass);
             buttonSelector.addClass(this.baseClass + " active");
@@ -231,13 +292,13 @@ var Recording = {
             moveToCorner(labelSelector, true, 3000);
             labelSelector
                 .text(APP.translation.translateString(this.recordingOnKey));
-        } else if (recordingState === 'off'
-                    || recordingState === 'unavailable') {
+        } else if (recordingState === Status.OFF
+                    || recordingState === Status.UNAVAILABLE) {
 
             // We don't want to do any changes if this is
             // an availability change.
-            if (this.currentState === "available"
-                || this.currentState === "unavailable")
+            if (this.currentState !== Status.ON
+                && this.currentState !== Status.PENDING)
                 return;
 
             buttonSelector.removeClass(this.baseClass + " active");
@@ -245,7 +306,7 @@ var Recording = {
 
             moveToCorner(labelSelector, false);
             let messageKey;
-            if (this.currentState === "pending")
+            if (this.currentState === Status.PENDING)
                 messageKey = this.failedToStartKey;
             else
                 messageKey = this.recordingOffKey;
@@ -257,7 +318,7 @@ var Recording = {
                 $('#recordingLabel').css({display: "none"});
             }, 5000);
         }
-        else if (recordingState === 'pending') {
+        else if (recordingState === Status.PENDING) {
 
             buttonSelector.removeClass(this.baseClass + " active");
             buttonSelector.addClass(this.baseClass);
@@ -272,7 +333,9 @@ var Recording = {
 
         this.currentState = recordingState;
 
-        if (!labelSelector.is(":visible"))
+        // We don't show the label for available state.
+        if (recordingState !== Status.AVAILABLE
+            && !labelSelector.is(":visible"))
             labelSelector.css({display: "inline-block"});
     },
     // checks whether recording is enabled and whether we have params

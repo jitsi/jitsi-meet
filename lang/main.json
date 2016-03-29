@@ -51,7 +51,6 @@
         "mute": "Mute / Unmute",
         "videomute": "Start / stop camera",
         "authenticate": "Authenticate",
-        "record": "Toggle recording",
         "lock": "Lock / unlock room",
         "invite": "Invite others",
         "chat": "Open / close chat",
@@ -265,7 +264,8 @@
         "pending": "Recording waiting for a participant to join...",
         "on": "Recording",
         "off": "Recording stopped",
-        "failedToStart": "Recording failed to start"
+        "failedToStart": "Recording failed to start",
+        "buttonTooltip": "Start / stop recording"
     },
     "liveStreaming":
     {
@@ -273,6 +273,8 @@
         "on": "Live Streaming",
         "off": "Live Streaming Stopped",
         "unavailable": "The live streaming service is currently unavailable. Please try again later.",
-        "failedToStart": "Live streaming failed to start"
+        "failedToStart": "Live streaming failed to start",
+        "buttonTooltip": "Start / stop live stream",
+        "streamIdRequired": "Please fill in the stream id in order to launch the live streaming."
     }
 }
