@@ -333,6 +333,7 @@ class SharedVideoContainer extends LargeContainer {
                 self.bodyBackground = document.body.style.background;
                 document.body.style.background = 'black';
                 this.$iframe.css({opacity: 1});
+                ToolbarToggler.dockToolbar(true);
                 resolve();
             });
         });
@@ -340,6 +341,7 @@ class SharedVideoContainer extends LargeContainer {
 
     hide () {
         let self = this;
+        ToolbarToggler.dockToolbar(false);
         return new Promise(resolve => {
             this.$iframe.fadeOut(300, () => {
                 document.body.style.background = self.bodyBackground;
