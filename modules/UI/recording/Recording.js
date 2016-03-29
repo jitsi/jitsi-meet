@@ -209,6 +209,10 @@ var Recording = {
     },
 
     updateRecordingState(recordingState) {
+        // If there's no state change, we ignore the update.
+        if (this.currentState === recordingState)
+            return;
+
         this.setRecordingButtonState(recordingState);
     },
 
@@ -227,7 +231,14 @@ var Recording = {
             moveToCorner(labelSelector, true, 3000);
             labelSelector
                 .text(APP.translation.translateString(this.recordingOnKey));
-        } else if (recordingState === 'off') {
+        } else if (recordingState === 'off'
+                    || recordingState === 'unavailable') {
+
+            // We don't want to do any changes if this is
+            // an availability change.
+            if (this.currentState === "available"
+                || this.currentState === "unavailable")
+                return;
 
             buttonSelector.removeClass(this.baseClass + " active");
             buttonSelector.addClass(this.baseClass);
@@ -245,7 +256,8 @@ var Recording = {
             setTimeout(function(){
                 $('#recordingLabel').css({display: "none"});
             }, 5000);
-        } else if (recordingState === 'pending') {
+        }
+        else if (recordingState === 'pending') {
 
             buttonSelector.removeClass(this.baseClass + " active");
             buttonSelector.addClass(this.baseClass);
