@@ -567,6 +567,7 @@ UI.updateLocalRole = function (isModerator) {
     VideoLayout.showModeratorIndicator();
 
     Toolbar.showSipCallButton(isModerator);
+    Toolbar.showRecordingButton(isModerator);
     Recording.showRecordingButton(isModerator);
     SettingsMenu.showStartMutedOptions(isModerator);
     SettingsMenu.showFollowMeOptions(isModerator);
