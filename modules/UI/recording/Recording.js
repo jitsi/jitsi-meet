@@ -18,10 +18,11 @@ import UIEvents from "../../../service/UI/UIEvents";
 import UIUtil from '../util/UIUtil';
 
 /**
- * Recording.
+ * Indicates if the recording button should be enabled.
+ *
+ * @returns {boolean} {true} if the
+ * @private
  */
-let recordingToaster = null;
-
 function _isRecordingButtonEnabled() {
     return interfaceConfig.TOOLBAR_BUTTONS.indexOf("recording") !== -1
             && config.enableRecording;
@@ -270,6 +271,10 @@ var Recording = {
     },
 
     updateRecordingState(recordingState) {
+        // I'm the recorder, so I don't want to see any UI related to states.
+        if (config.iAmRecorder)
+            return;
+
         // If there's no state change, we ignore the update.
         if (this.currentState === recordingState)
             return;
