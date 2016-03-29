@@ -567,7 +567,7 @@ export default {
 
     _getConferenceOptions() {
         let options = config;
-        if(config.enableRecording) {
+        if(config.enableRecording && !config.recordingType) {
             options.recordingType = (config.hosts &&
                 (typeof config.hosts.jirecon != "undefined"))?
                 "jirecon" : "colibri";
@@ -848,7 +848,8 @@ export default {
             APP.UI.changeDisplayName(id, displayName);
         });
 
-        room.on(ConferenceEvents.RECORDING_STATE_CHANGED, (status, error) => {
+        room.on(ConferenceEvents.RECORDER_STATE_CHANGED, (status, error) => {
+            console.log("Received recorder status change: ", status, error);
             if(status == "error") {
                 console.error(error);
                 return;
@@ -1008,15 +1009,8 @@ export default {
 
 
         // Starts or stops the recording for the conference.
-        APP.UI.addListener(UIEvents.RECORDING_TOGGLE, (predefinedToken) => {
-            if (predefinedToken) {
-                room.toggleRecording({token: predefinedToken});
-                return;
-            }
-            APP.UI.requestRecordingToken().then((token) => {
-                room.toggleRecording({token: token});
-            });
-
+        APP.UI.addListener(UIEvents.RECORDING_TOGGLED, (options) => {
+            room.toggleRecording(options);
         });
 
         APP.UI.addListener(UIEvents.SUBJECT_CHANGED, (topic) => {

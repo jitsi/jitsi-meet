@@ -51,7 +51,7 @@
         "mute": "Mute / Unmute",
         "videomute": "Start / stop camera",
         "authenticate": "Authenticate",
-        "record": "Record",
+        "record": "Toggle recording",
         "lock": "Lock / unlock room",
         "invite": "Invite others",
         "chat": "Open / close chat",
@@ -179,6 +179,7 @@
         "joinAgain": "Join again",
         "Share": "Share",
         "Save": "Save",
+        "recording": "Recording",
         "recordingToken": "Enter recording token",
         "Dial": "Dial",
         "sipMsg": "Enter SIP number",
@@ -206,7 +207,14 @@
         "firefoxExtensionPrompt": "You need to install a Firefox extension in order to use screen sharing. Please try again after you <a href='__url__'>get it from here</a>!",
         "feedbackQuestion": "How was your call?",
         "thankYou": "Thank you for using __appName__!",
-        "sorryFeedback": "We're sorry to hear that. Would you like to tell us more?"
+        "sorryFeedback": "We're sorry to hear that. Would you like to tell us more?",
+        "liveStreaming": "Live Streaming",
+        "streamKey": "Stream name/key",
+        "startLiveStreaming": "Start live streaming",
+        "stopStreamingWarning": "Are you sure you would like to stop the live streaming?",
+        "stopRecordingWarning": "Are you sure you would like to stop the recording?",
+        "stopLiveStreaming": "Stop live streaming",
+        "stopRecording": "Stop recording"
     },
     "email":
     {
@@ -254,8 +262,17 @@
     },
     "recording":
     {
-        "toaster": "Currently recording!",
-        "pending": "Your recording will start as soon as another participant joins",
-        "on": "Recording has been started"
+        "pending": "Recording waiting for a participant to join...",
+        "on": "Recording",
+        "off": "Recording stopped",
+        "failedToStart": "Recording failed to start"
+    },
+    "liveStreaming":
+    {
+        "pending": "Starting Live Stream...",
+        "on": "Live Streaming",
+        "off": "Live Streaming Stopped",
+        "unavailable": "The live streaming service is currently unavailable. Please try again later.",
+        "failedToStart": "Live streaming failed to start"
     }
 }

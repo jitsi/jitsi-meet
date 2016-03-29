@@ -123,11 +123,7 @@
     },
 
     isButtonEnabled: function (name) {
-        var isEnabled = interfaceConfig.TOOLBAR_BUTTONS.indexOf(name) !== -1;
-        if (name === 'recording') {
-            return isEnabled && config.enableRecording;
-        }
-        return isEnabled;
+        return interfaceConfig.TOOLBAR_BUTTONS.indexOf(name) !== -1;
     },
 
     hideDisabledButtons: function (mappings) {
