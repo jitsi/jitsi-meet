@@ -181,7 +181,7 @@ var Status = {
     AVAILABLE: "available",
     UNAVAILABLE: "unavailable",
     PENDING: "pending"
-}
+};
 
 var Recording = {
     /**
@@ -297,8 +297,8 @@ var Recording = {
 
             // We don't want to do any changes if this is
             // an availability change.
-            if (this.currentState === Status.AVAILABLE
-                || this.currentState === Status.UNAVAILABLE)
+            if (this.currentState !== Status.ON
+                && this.currentState !== Status.PENDING)
                 return;
 
             buttonSelector.removeClass(this.baseClass + " active");
@@ -333,7 +333,9 @@ var Recording = {
 
         this.currentState = recordingState;
 
-        if (!labelSelector.is(":visible"))
+        // We don't show the label for available state.
+        if (recordingState !== Status.AVAILABLE
+            && !labelSelector.is(":visible"))
             labelSelector.css({display: "inline-block"});
     },
     // checks whether recording is enabled and whether we have params
