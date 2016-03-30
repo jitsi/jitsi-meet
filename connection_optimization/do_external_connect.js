@@ -42,7 +42,8 @@ function buildToken(){
     }
 
     function error_callback(error){
-        console.warn(error);
+        if(error) //error=undefined if external connect is disabled.
+            console.warn(error);
         // Sets that global variable to be used later by connect method in
         // connection.js
         window.XMPPAttachInfo = {
