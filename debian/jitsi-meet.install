@@ -9,3 +9,4 @@ sounds					/usr/share/jitsi-meet/
 fonts					/usr/share/jitsi-meet/
 images					/usr/share/jitsi-meet/
 lang					/usr/share/jitsi-meet/
+connection_optimization	/usr/share/jitsi-meet/
