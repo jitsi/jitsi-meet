@@ -506,7 +506,7 @@
     background: rgba(0,0,0,.5);
     color: #FFF;
     z-index: 10000;
-    border-radius: 4px;
+    border-radius: 2px;
     -webkit-transition: all 2s 2s linear;
     transition: all 2s 2s linear;
 }
