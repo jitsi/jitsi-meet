@@ -162,6 +162,8 @@ export default class SharedVideoManager {
 
         window.onPlayerError = function(event) {
             console.error("Error in the player:", event.data);
+            // store the error player, so we can remove it
+            self.errorInPlayer = event.target;
         };
     }
 
@@ -293,8 +295,12 @@ export default class SharedVideoManager {
             return;
 
         if(!this.player){
-            this.initialAttributes = attributes;
-            return;
+            // if there is no error in the player till now,
+            // store the initial attributes
+            if (!this.errorInPlayer) {
+                this.initialAttributes = attributes;
+                return;
+            }
         }
 
         if(this.intervalId) {
@@ -309,12 +315,19 @@ export default class SharedVideoManager {
                 VideoLayout.removeLargeVideoContainer(
                     SHARED_VIDEO_CONTAINER_TYPE);
 
-                this.player.destroy();
-                this.player = null;
+                if(this.player) {
+                    this.player.destroy();
+                    this.player = null;
+                }//
+                else if (this.errorInPlayer) {
+                    this.errorInPlayer.destroy();
+                    this.errorInPlayer = null;
+                }
         });
 
         this.url = null;
         this.isSharedVideoShown = false;
+        this.initialAttributes = null;
     }
 }
 
