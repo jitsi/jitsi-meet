@@ -119,6 +119,10 @@ export default class SharedVideoManager {
 
                 self.player = event.target;
 
+                // add listener for volume changes
+                self.player.addEventListener(
+                    "onVolumeChange", "onVolumeChange");
+
                 if(self.initialAttributes)
                 {
                     self.processAttributes(
@@ -131,6 +135,17 @@ export default class SharedVideoManager {
                 self.playerPaused = true;
                 self.updateCheck(true);
             }
+        };
+
+        /**
+         * Gets notified for volume state changed.
+         * @param event
+         */
+        window.onVolumeChange = function (event) {
+            if(!self.player)
+                return;
+
+            self.updateCheck();
         };
 
         window.onPlayerReady = function(event) {
