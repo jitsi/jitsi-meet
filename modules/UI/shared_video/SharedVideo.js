@@ -64,6 +64,8 @@ export default class SharedVideoManager {
         if (this.isSharedVideoShown)
             return;
 
+        this.isSharedVideoShown = true;
+
         // the video url
         this.url = url;
 
@@ -148,8 +150,6 @@ export default class SharedVideoManager {
                 SHARED_VIDEO_CONTAINER_TYPE, self.sharedVideo);
             VideoLayout.handleVideoThumbClicked(self.url);
 
-            self.isSharedVideoShown = true;
-
             // If we are sending the command and we are starting the player
             // we need to continuously send the player current time position
             if(APP.conference.isLocalId(self.from)) {
@@ -167,7 +167,7 @@ export default class SharedVideoManager {
         };
 
         window.onPlayerError = function(event) {
-            console.error("Error in the player:" + event.data);
+            console.error("Error in the player:", event.data);
         };
     }
 
