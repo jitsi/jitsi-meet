@@ -184,7 +184,7 @@ export default class SharedVideoManager {
 
         if (attributes.state == 'playing') {
 
-            this.processTime(player, attributes);
+            this.processTime(player, attributes, playerPaused);
 
             // lets check the volume
             if (attributes.volume !== undefined &&
@@ -200,7 +200,7 @@ export default class SharedVideoManager {
             // if its not paused, pause it
             player.pauseVideo();
 
-            this.processTime(player, attributes);
+            this.processTime(player, attributes, !playerPaused);
         }
     }
 
@@ -208,9 +208,15 @@ export default class SharedVideoManager {
      * Check for time in attributes and if needed seek in current player
      * @param player the player to operate over
      * @param attributes the attributes with the player state we want
+     * @param forceSeek whether seek should be forced
      */
-    processTime (player, attributes)
+    processTime (player, attributes, forceSeek)
     {
+        if(forceSeek) {
+            player.seekTo(attributes.time);
+            return;
+        }
+
         // check received time and current time
         let currentPosition = player.getCurrentTime();
         let diff = Math.abs(attributes.time - currentPosition);
