@@ -44,7 +44,8 @@ export default class SharedVideoManager {
 
         if(APP.conference.isLocalId(this.from)) {
             showStopVideoPropmpt().then(() =>
-                this.emitter.emit(UIEvents.UPDATE_SHARED_VIDEO, null, 'stop'));
+                this.emitter.emit(
+                    UIEvents.UPDATE_SHARED_VIDEO, this.url, 'stop'));
         } else {
             messageHandler.openMessageDialog(
                 "dialog.shareVideoTitle",
@@ -64,6 +65,8 @@ export default class SharedVideoManager {
         if (this.isSharedVideoShown)
             return;
 
+        this.isSharedVideoShown = true;
+
         // the video url
         this.url = url;
 
@@ -82,7 +85,7 @@ export default class SharedVideoManager {
         // we need to operate with player after start playing
         // self.player will be defined once it start playing
         // and will process any initial attributes if any
-        this.initialAttributes = null;
+        this.initialAttributes = attributes;
 
         var self = this;
         if(self.isPlayerAPILoaded)
@@ -148,8 +151,6 @@ export default class SharedVideoManager {
                 SHARED_VIDEO_CONTAINER_TYPE, self.sharedVideo);
             VideoLayout.handleVideoThumbClicked(self.url);
 
-            self.isSharedVideoShown = true;
-
             // If we are sending the command and we are starting the player
             // we need to continuously send the player current time position
             if(APP.conference.isLocalId(self.from)) {
@@ -157,17 +158,12 @@ export default class SharedVideoManager {
                     self.updateCheck.bind(self),
                     updateInterval);
             }
-
-            if(self.player)
-                self.processAttributes(
-                    self.player, attributes, self.playerPaused);
-            else {
-                self.initialAttributes = attributes;
-            }
         };
 
         window.onPlayerError = function(event) {
-            console.error("Error in the player:" + event.data);
+            console.error("Error in the player:", event.data);
+            // store the error player, so we can remove it
+            self.errorInPlayer = event.target;
         };
     }
 
@@ -184,7 +180,7 @@ export default class SharedVideoManager {
 
         if (attributes.state == 'playing') {
 
-            this.processTime(player, attributes);
+            this.processTime(player, attributes, playerPaused);
 
             // lets check the volume
             if (attributes.volume !== undefined &&
@@ -200,7 +196,9 @@ export default class SharedVideoManager {
             // if its not paused, pause it
             player.pauseVideo();
 
-            this.processTime(player, attributes);
+            this.processTime(player, attributes, !playerPaused);
+        } else if (attributes.state == 'stop') {
+            this.stopSharedVideo(this.from);
         }
     }
 
@@ -208,9 +206,15 @@ export default class SharedVideoManager {
      * Check for time in attributes and if needed seek in current player
      * @param player the player to operate over
      * @param attributes the attributes with the player state we want
+     * @param forceSeek whether seek should be forced
      */
-    processTime (player, attributes)
+    processTime (player, attributes, forceSeek)
     {
+        if(forceSeek) {
+            player.seekTo(attributes.time);
+            return;
+        }
+
         // check received time and current time
         let currentPosition = player.getCurrentTime();
         let diff = Math.abs(attributes.time - currentPosition);
@@ -230,8 +234,10 @@ export default class SharedVideoManager {
     updateCheck(sendPauseEvent)
     {
         // ignore update checks if we are not the owner of the video
-        // or there is still no player defined
-        if(!APP.conference.isLocalId(this.from) || !this.player)
+        // or there is still no player defined or we are stopped
+        // (in a process of stopping)
+        if(!APP.conference.isLocalId(this.from) || !this.player
+            || !this.isSharedVideoShown)
             return;
 
         let state = this.player.getPlayerState();
@@ -281,12 +287,21 @@ export default class SharedVideoManager {
      * left and we want to remove video if the user sharing it left).
      * @param id the id of the sender of the command
      */
-    stopSharedVideo (id) {
+    stopSharedVideo (id, attributes) {
         if (!this.isSharedVideoShown)
             return;
 
         if(this.from !== id)
             return;
+
+        if(!this.player){
+            // if there is no error in the player till now,
+            // store the initial attributes
+            if (!this.errorInPlayer) {
+                this.initialAttributes = attributes;
+                return;
+            }
+        }
 
         if(this.intervalId) {
             clearInterval(this.intervalId);
@@ -300,12 +315,19 @@ export default class SharedVideoManager {
                 VideoLayout.removeLargeVideoContainer(
                     SHARED_VIDEO_CONTAINER_TYPE);
 
-                this.player.destroy();
-                this.player = null;
+                if(this.player) {
+                    this.player.destroy();
+                    this.player = null;
+                }//
+                else if (this.errorInPlayer) {
+                    this.errorInPlayer.destroy();
+                    this.errorInPlayer = null;
+                }
         });
 
         this.url = null;
         this.isSharedVideoShown = false;
+        this.initialAttributes = null;
     }
 }
 

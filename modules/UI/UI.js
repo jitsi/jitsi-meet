@@ -1115,7 +1115,7 @@ UI.updateSharedVideo = function (id, url, attributes) {
  */
 UI.stopSharedVideo = function (id, attributes) {
     if (sharedVideoManager)
-        sharedVideoManager.stopSharedVideo(id);
+        sharedVideoManager.stopSharedVideo(id, attributes);
 };
 
 module.exports = UI;
