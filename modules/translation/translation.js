@@ -24,7 +24,7 @@ var defaultOptions = {
     fallbackOnEmpty: true,
     useDataAttrOptions: true,
     app: interfaceConfig.APP_NAME,
-    getAsync: false,
+    getAsync: true,
     defaultValueFromContent: false,
     customLoad: function(lng, ns, options, done) {
         var resPath = "lang/__ns__-__lng__.json";
