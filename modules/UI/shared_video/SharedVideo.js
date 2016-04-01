@@ -98,7 +98,7 @@ export default class SharedVideoManager {
             window.onYouTubeIframeAPIReady = function() {
                 self.isPlayerAPILoaded = true;
                 let showControls = APP.conference.isLocalId(self.from) ? 1 : 0;
-                new YT.Player('sharedVideoIFrame', {
+                let p = new YT.Player('sharedVideoIFrame', {
                     height: '100%',
                     width: '100%',
                     videoId: self.url,
@@ -114,8 +114,19 @@ export default class SharedVideoManager {
                         'onStateChange': onPlayerStateChange,
                         'onError': onPlayerError
                     }
-                }).addEventListener(// add listener for volume changes
+                });
+
+                // add listener for volume changes
+                p.addEventListener(
                     "onVolumeChange", "onVolumeChange");
+
+                if (APP.conference.isLocalId(self.from)){
+                    // adds progress listener that will be firing events
+                    // while we are paused and we change the progress of the
+                    // video (seeking forward or backward on the video)
+                    p.addEventListener(
+                        "onVideoProgress", "onVideoProgress");
+                }
             };
 
         window.onPlayerStateChange = function(event) {
@@ -134,6 +145,17 @@ export default class SharedVideoManager {
                 self.updateCheck();
             } else if (event.data == YT.PlayerState.PAUSED) {
                 self.playerPaused = true;
+                self.updateCheck(true);
+            }
+        };
+
+        /**
+         * Track player progress while paused.
+         * @param event
+         */
+        window.onVideoProgress = function (event) {
+            let state = event.target.getPlayerState();
+            if (state == YT.PlayerState.PAUSED) {
                 self.updateCheck(true);
             }
         };
@@ -218,7 +240,7 @@ export default class SharedVideoManager {
             // if its not paused, pause it
             player.pauseVideo();
 
-            this.processTime(player, attributes, !playerPaused);
+            this.processTime(player, attributes, true);
         } else if (attributes.state == 'stop') {
             this.stopSharedVideo(this.from);
         }
@@ -233,6 +255,7 @@ export default class SharedVideoManager {
     processTime (player, attributes, forceSeek)
     {
         if(forceSeek) {
+            console.info("Player seekTo:", attributes.time);
             player.seekTo(attributes.time);
             return;
         }
