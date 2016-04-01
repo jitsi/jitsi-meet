@@ -16,7 +16,6 @@
 
 import UIEvents from '../service/UI/UIEvents';
 import VideoLayout from './UI/videolayout/VideoLayout';
-import FilmStrip from './UI/videolayout/FilmStrip';
 
 /**
  * The (name of the) command which transports the state (represented by
@@ -138,6 +137,29 @@ class FollowMe {
     }
 
     /**
+     * Sets the current state of all follow-me properties, which will fire a
+     * localPropertyChangeEvent and trigger a send of the follow-me command.
+     * @private
+     */
+    _setFollowMeInitialState() {
+        this._filmStripToggled.bind(this, this._UI.isFilmStripVisible());
+
+        var pinnedId = VideoLayout.getPinnedId();
+        var isPinned = false;
+        var smallVideo;
+        if (pinnedId) {
+            isPinned = true;
+            smallVideo = VideoLayout.getSmallVideo(pinnedId);
+        }
+
+        this._nextOnStage(smallVideo, isPinned);
+
+        this._sharedDocumentToggled
+            .bind(this, this._UI.getSharedDocumentManager().isVisible());
+
+    }
+
+    /**
      * Adds listeners for the UI states of the local participant which are
      * to be followed (by the remote participants). A non-moderator (very
      * likely) can become a moderator so it may be easiest to always track
@@ -181,9 +203,10 @@ class FollowMe {
      * to disable it
      */
     enableFollowMe (enable) {
-        this.isEnabled = enable;
-        if (this.isEnabled)
+        if (enable) {
+            this._setFollowMeInitialState();
             this._addFollowMeListeners();
+        }
         else
             this._removeFollowMeListeners();
     }
@@ -211,7 +234,7 @@ class FollowMe {
     }
 
     /**
-     * Changes the nextOnPage property value.
+     * Changes the nextOnStage property value.
      *
      * @param smallVideo the {SmallVideo} that was pinned or unpinned
      * @param isPinned indicates if the given {SmallVideo} was pinned or
@@ -295,6 +318,13 @@ class FollowMe {
         this._onSharedDocumentVisible(attributes.sharedDocumentVisible);
     }
 
+    /**
+     * Process a film strip open / close event received from FOLLOW-ME
+     * command.
+     * @param filmStripVisible indicates if the film strip has been shown or
+     * hidden
+     * @private
+     */
     _onFilmStripVisible(filmStripVisible) {
         if (typeof filmStripVisible !== 'undefined') {
             // XXX The Command(s) API doesn't preserve the types (of
@@ -307,11 +337,18 @@ class FollowMe {
             // eventEmitter as a public field. I'm not sure at the time of this
             // writing whether calling UI.toggleFilmStrip() is acceptable (from
             // a design standpoint) either.
-            if (filmStripVisible !== FilmStrip.isFilmStripVisible())
+            if (filmStripVisible !== this._UI.isFilmStripVisible())
                 this._UI.eventEmitter.emit(UIEvents.TOGGLE_FILM_STRIP);
         }
     }
 
+    /**
+     * Process the id received from a FOLLOW-ME command.
+     * @param id the identifier of the next participant to show on stage or
+     * undefined if we're clearing the stage (we're unpining all pined and we
+     * rely on dominant speaker events)
+     * @private
+     */
     _onNextOnStage(id) {
         var clickId = null;
         var pin;
@@ -328,6 +365,13 @@ class FollowMe {
             this._pinVideoThumbnailById(clickId, pin);
     }
 
+    /**
+     * Process a shared document open / close event received from FOLLOW-ME
+     * command.
+     * @param sharedDocumentVisible indicates if the shared document has been
+     * opened or closed
+     * @private
+     */
     _onSharedDocumentVisible(sharedDocumentVisible) {
         if (typeof sharedDocumentVisible !== 'undefined') {
             // XXX The Command(s) API doesn't preserve the types (of
