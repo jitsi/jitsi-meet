@@ -1,4 +1,5 @@
 #settingsmenu {
+    display: none;
     background: black;
     color: #00ccff;
     overflow-y: auto;
