@@ -73,6 +73,10 @@ export default class SharedVideoManager {
         // the owner of the video
         this.from = id;
 
+        //listen for local audio mute events
+        this.localAudioMutedListener = this.localAudioMuted.bind(this);
+        this.emitter.on(UIEvents.AUDIO_MUTED, this.localAudioMutedListener);
+
         // This code loads the IFrame Player API code asynchronously.
         var tag = document.createElement('script');
 
@@ -94,7 +98,7 @@ export default class SharedVideoManager {
             window.onYouTubeIframeAPIReady = function() {
                 self.isPlayerAPILoaded = true;
                 let showControls = APP.conference.isLocalId(self.from) ? 1 : 0;
-                new YT.Player('sharedVideoIFrame', {
+                let p = new YT.Player('sharedVideoIFrame', {
                     height: '100%',
                     width: '100%',
                     videoId: self.url,
@@ -111,6 +115,18 @@ export default class SharedVideoManager {
                         'onError': onPlayerError
                     }
                 });
+
+                // add listener for volume changes
+                p.addEventListener(
+                    "onVolumeChange", "onVolumeChange");
+
+                if (APP.conference.isLocalId(self.from)){
+                    // adds progress listener that will be firing events
+                    // while we are paused and we change the progress of the
+                    // video (seeking forward or backward on the video)
+                    p.addEventListener(
+                        "onVideoProgress", "onVideoProgress");
+                }
             };
 
         window.onPlayerStateChange = function(event) {
@@ -133,6 +149,32 @@ export default class SharedVideoManager {
             }
         };
 
+        /**
+         * Track player progress while paused.
+         * @param event
+         */
+        window.onVideoProgress = function (event) {
+            let state = event.target.getPlayerState();
+            if (state == YT.PlayerState.PAUSED) {
+                self.updateCheck(true);
+            }
+        };
+
+        /**
+         * Gets notified for volume state changed.
+         * @param event
+         */
+        window.onVolumeChange = function (event) {
+            self.updateCheck();
+
+            // let's check, if player is not muted lets mute locally
+            if(event.data.volume > 0 && !event.data.muted
+                && !APP.conference.isLocalAudioMuted()){
+                self.emitter.emit(UIEvents.AUDIO_MUTED, true);
+                self.notifyUserComfortableMicMute(true);
+            }
+        };
+
         window.onPlayerReady = function(event) {
             let player = event.target;
             // do not relay on autoplay as it is not sending all of the events
@@ -146,6 +188,12 @@ export default class SharedVideoManager {
             let iframe = player.getIframe();
             self.sharedVideo = new SharedVideoContainer(
                 {url, iframe, player});
+
+            //prevents pausing participants not sharing the video
+            // to pause the video
+            if (!APP.conference.isLocalId(self.from)) {
+                $("#sharedVideo").css("pointer-events","none");
+            }
 
             VideoLayout.addLargeVideoContainer(
                 SHARED_VIDEO_CONTAINER_TYPE, self.sharedVideo);
@@ -184,9 +232,11 @@ export default class SharedVideoManager {
 
             // lets check the volume
             if (attributes.volume !== undefined &&
-                player.getVolume() != attributes.volume) {
+                player.getVolume() != attributes.volume
+                && APP.conference.isLocalAudioMuted()) {
                 player.setVolume(attributes.volume);
                 console.info("Player change of volume:" + attributes.volume);
+                this.notifyUserComfortableVideoMute(false);
             }
 
             if(playerPaused)
@@ -196,7 +246,7 @@ export default class SharedVideoManager {
             // if its not paused, pause it
             player.pauseVideo();
 
-            this.processTime(player, attributes, !playerPaused);
+            this.processTime(player, attributes, true);
         } else if (attributes.state == 'stop') {
             this.stopSharedVideo(this.from);
         }
@@ -211,6 +261,7 @@ export default class SharedVideoManager {
     processTime (player, attributes, forceSeek)
     {
         if(forceSeek) {
+            console.info("Player seekTo:", attributes.time);
             player.seekTo(attributes.time);
             return;
         }
@@ -308,6 +359,10 @@ export default class SharedVideoManager {
             this.intervalId = null;
         }
 
+        this.emitter.removeListener(UIEvents.AUDIO_MUTED,
+            this.localAudioMutedListener);
+        this.localAudioMutedListener = null;
+
         VideoLayout.removeParticipantContainer(this.url);
 
         VideoLayout.showLargeVideoContainer(SHARED_VIDEO_CONTAINER_TYPE, false)
@@ -318,16 +373,65 @@ export default class SharedVideoManager {
                 if(this.player) {
                     this.player.destroy();
                     this.player = null;
-                }//
+                } // if there is an error in player, remove that instance
                 else if (this.errorInPlayer) {
                     this.errorInPlayer.destroy();
                     this.errorInPlayer = null;
                 }
+                // revert to original behavior (prevents pausing
+                // for participants not sharing the video to pause it)
+                $("#sharedVideo").css("pointer-events","auto");
         });
 
         this.url = null;
         this.isSharedVideoShown = false;
         this.initialAttributes = null;
+    }
+
+    /**
+     * Receives events for local audio mute/unmute by local user.
+     * @param muted boolena whether it is muted or not.
+     */
+    localAudioMuted (muted) {
+        if(!this.player)
+            return;
+
+        if(muted)
+            return;
+
+        // if we are un-muting and player is not muted, lets muted
+        // to not pollute the conference
+        if(this.player.getVolume() > 0 || !this.player.isMuted()){
+            this.player.setVolume(0);
+            this.notifyUserComfortableVideoMute(true);
+        }
+    }
+
+    /**
+     * Notifies user for muting its audio due to video is unmuted.
+     * @param show boolean, show or hide the notification
+     */
+    notifyUserComfortableMicMute (show) {
+        if(show) {
+            this.notifyUserComfortableVideoMute(false);
+            console.log("Your audio was muted to enjoy the video");
+        }
+        else
+            console.log("Hide notification local audio muted");
+    }
+
+    /**
+     * Notifies user for muting the video due to audio is unmuted.
+     * @param show boolean, show or hide the notification
+     */
+    notifyUserComfortableVideoMute (show) {
+        if(show) {
+            this.notifyUserComfortableMicMute(false);
+            console.log(
+                "Your shared video was muted in order to speak freely!");
+        }
+        else
+            console.log("Hide notification share video muted");
     }
 }
 
