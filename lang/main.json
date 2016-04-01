@@ -82,10 +82,10 @@
         "title": "SETTINGS",
         "update": "Update",
         "name": "Name",
-        "startAudioMuted": "start without audio",
-        "startVideoMuted": "start without video",
-        "selectCamera": "select camera",
-        "selectMic": "select microphone",
+        "startAudioMuted": "Start without audio",
+        "startVideoMuted": "Start without video",
+        "selectCamera": "Select camera",
+        "selectMic": "Select microphone",
         "followMe": "Enable follow me"
     },
     "videothumbnail":
