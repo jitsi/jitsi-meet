@@ -141,8 +141,10 @@ SmallVideo.createStreamElement = function (stream) {
     element.id = SmallVideo.getStreamElementID(stream);
 
     element.onplay = function () {
+        var now = APP.performanceTimes["video.render"]
+            = window.performance.now();
         console.log("(TIME) Render " + (isVideo ? 'video' : 'audio') + ":\t",
-                    window.performance.now());
+                    now);
     };
 
     element.oncontextmenu = function () { return false; };

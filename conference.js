@@ -328,7 +328,7 @@ export default {
             ]);
         }).then(([tracks, con]) => {
             console.log('initialized with %s local tracks', tracks.length);
-            connection = con;
+            APP.connection = connection = con;
             this._createRoom(tracks);
             this.isDesktopSharingEnabled =
                 JitsiMeetJS.isDesktopSharingEnabled();
