@@ -189,6 +189,12 @@ export default class SharedVideoManager {
             self.sharedVideo = new SharedVideoContainer(
                 {url, iframe, player});
 
+            //prevents pausing participants not sharing the video
+            // to pause the video
+            if (!APP.conference.isLocalId(self.from)) {
+                $("#sharedVideo").css("pointer-events","none");
+            }
+
             VideoLayout.addLargeVideoContainer(
                 SHARED_VIDEO_CONTAINER_TYPE, self.sharedVideo);
             VideoLayout.handleVideoThumbClicked(self.url);
@@ -372,6 +378,9 @@ export default class SharedVideoManager {
                     this.errorInPlayer.destroy();
                     this.errorInPlayer = null;
                 }
+                // revert to original behavior (prevents pausing
+                // for participants not sharing the video to pause it)
+                $("#sharedVideo").css("pointer-events","auto");
         });
 
         this.url = null;
