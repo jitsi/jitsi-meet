@@ -1,4 +1,5 @@
 /* global $, APP, config, interfaceConfig */
+import UIEvents from "../../service/UI/UIEvents";
 
 /*
  * Created by Yana Stamcheva on 2/10/15.
@@ -61,6 +62,14 @@ var constructDetailedFeedbackHtml = function() {
 var feedbackWindowCallback = null;
 
 /**
+ * Shows / hides the feedback button.
+ * @private
+ */
+function _toggleFeedbackIcon() {
+    $('#feedbackButtonDiv').toggleClass("hidden");
+}
+
+/**
  * Defines all methods in connection to the Feedback window.
  *
  * @type {{feedbackScore: number, openFeedbackWindow: Function,
@@ -73,16 +82,22 @@ var Feedback = {
     feedbackScore: -1,
     /**
      * Initialise the Feedback functionality.
+     * @param emitter the EventEmitter to associate with the Feedback.
      */
-    init: function () {
+    init: function (emitter) {
         // CallStats is the way we send feedback, so we don't have to initialise
         // if callstats isn't enabled.
         if (!APP.conference.isCallstatsEnabled())
             return;
-
-        $("div.feedbackButton").css("display", "block");
+        $("#feedbackButtonDiv").css("display", "block");
         $("#feedbackButton").click(function (event) {
             Feedback.openFeedbackWindow();
+        });
+
+        // Show / hide the feedback button whenever the film strip is
+        // shown / hidden.
+        emitter.addListener(UIEvents.TOGGLE_FILM_STRIP, function () {
+            _toggleFeedbackIcon();
         });
     },
     /**

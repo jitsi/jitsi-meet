@@ -142,15 +142,6 @@ a.bottomToolbarButton:hover {
     color: #636363;
 }
 
-.header_button_separator {
-    display: inline-block;
-    position:relative;
-    top: 5px;
-    width: 1px;
-    height: 20px;
-    background: #373737;
-}
-
 .bottom_button_separator {
     display: inline-block;
     position: relative;
@@ -235,7 +226,7 @@ form {
     color: rgba(255,255,255,.50);
 }
 
-div.feedbackButton {
+#feedbackButtonDiv {
     display: none;
     position: absolute;
     background-color: rgba(0,0,0,.50);
@@ -246,7 +237,11 @@ div.feedbackButton {
     left: -50px;
     z-index: 100;
     overflow: hidden;
-    transition: all .2s ease-in-out;
+    transition: all 2s ease-in-out;
+}
+
+#feedbackButtonDiv.hidden {
+    bottom: -246px;
 }
 
 div.feedbackButton:hover {

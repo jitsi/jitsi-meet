@@ -252,7 +252,7 @@ UI.initConference = function () {
 
     Toolbar.checkAutoEnableDesktopSharing();
     if(!interfaceConfig.filmStripOnly) {
-        Feedback.init();
+        Feedback.init(eventEmitter);
     }
 
     // FollowMe attempts to copy certain aspects of the moderator's UI into the
