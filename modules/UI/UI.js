@@ -628,6 +628,14 @@ UI.toggleFilmStrip = function () {
 };
 
 /**
+ * Indicates if the film strip is currently visible or not.
+ * @returns {true} if the film strip is currently visible, otherwise
+ */
+UI.isFilmStripVisible = function () {
+    return FilmStrip.isFilmStripVisible();
+};
+
+/**
  * Toggles chat panel.
  */
 UI.toggleChat = function () {
