@@ -1,4 +1,5 @@
 #contactlist {
+    display: none;
     background-color: black;
     cursor: default;
 }
