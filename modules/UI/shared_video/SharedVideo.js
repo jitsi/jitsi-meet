@@ -73,6 +73,10 @@ export default class SharedVideoManager {
         // the owner of the video
         this.from = id;
 
+        //listen for local audio mute events
+        this.localAudioMutedListener = this.localAudioMuted.bind(this);
+        this.emitter.on(UIEvents.AUDIO_MUTED, this.localAudioMutedListener);
+
         // This code loads the IFrame Player API code asynchronously.
         var tag = document.createElement('script');
 
@@ -110,7 +114,8 @@ export default class SharedVideoManager {
                         'onStateChange': onPlayerStateChange,
                         'onError': onPlayerError
                     }
-                });
+                }).addEventListener(// add listener for volume changes
+                    "onVolumeChange", "onVolumeChange");
             };
 
         window.onPlayerStateChange = function(event) {
@@ -118,10 +123,6 @@ export default class SharedVideoManager {
                 self.playerPaused = false;
 
                 self.player = event.target;
-
-                // add listener for volume changes
-                self.player.addEventListener(
-                    "onVolumeChange", "onVolumeChange");
 
                 if(self.initialAttributes)
                 {
@@ -142,10 +143,14 @@ export default class SharedVideoManager {
          * @param event
          */
         window.onVolumeChange = function (event) {
-            if(!self.player)
-                return;
-
             self.updateCheck();
+
+            // let's check, if player is not muted lets mute locally
+            if(event.data.volume > 0 && !event.data.muted
+                && !APP.conference.isLocalAudioMuted()){
+                self.emitter.emit(UIEvents.AUDIO_MUTED, true);
+                self.notifyUserComfortableMicMute(true);
+            }
         };
 
         window.onPlayerReady = function(event) {
@@ -199,9 +204,11 @@ export default class SharedVideoManager {
 
             // lets check the volume
             if (attributes.volume !== undefined &&
-                player.getVolume() != attributes.volume) {
+                player.getVolume() != attributes.volume
+                && APP.conference.isLocalAudioMuted()) {
                 player.setVolume(attributes.volume);
                 console.info("Player change of volume:" + attributes.volume);
+                this.notifyUserComfortableVideoMute(false);
             }
 
             if(playerPaused)
@@ -323,6 +330,10 @@ export default class SharedVideoManager {
             this.intervalId = null;
         }
 
+        this.emitter.removeListener(UIEvents.AUDIO_MUTED,
+            this.localAudioMutedListener);
+        this.localAudioMutedListener = null;
+
         VideoLayout.removeParticipantContainer(this.url);
 
         VideoLayout.showLargeVideoContainer(SHARED_VIDEO_CONTAINER_TYPE, false)
@@ -333,7 +344,7 @@ export default class SharedVideoManager {
                 if(this.player) {
                     this.player.destroy();
                     this.player = null;
-                }//
+                } // if there is an error in player, remove that instance
                 else if (this.errorInPlayer) {
                     this.errorInPlayer.destroy();
                     this.errorInPlayer = null;
@@ -343,6 +354,52 @@ export default class SharedVideoManager {
         this.url = null;
         this.isSharedVideoShown = false;
         this.initialAttributes = null;
+    }
+
+    /**
+     * Receives events for local audio mute/unmute by local user.
+     * @param muted boolena whether it is muted or not.
+     */
+    localAudioMuted (muted) {
+        if(!this.player)
+            return;
+
+        if(muted)
+            return;
+
+        // if we are un-muting and player is not muted, lets muted
+        // to not pollute the conference
+        if(this.player.getVolume() > 0 || !this.player.isMuted()){
+            this.player.setVolume(0);
+            this.notifyUserComfortableVideoMute(true);
+        }
+    }
+
+    /**
+     * Notifies user for muting its audio due to video is unmuted.
+     * @param show boolean, show or hide the notification
+     */
+    notifyUserComfortableMicMute (show) {
+        if(show) {
+            this.notifyUserComfortableVideoMute(false);
+            console.log("Your audio was muted to enjoy the video");
+        }
+        else
+            console.log("Hide notification local audio muted");
+    }
+
+    /**
+     * Notifies user for muting the video due to audio is unmuted.
+     * @param show boolean, show or hide the notification
+     */
+    notifyUserComfortableVideoMute (show) {
+        if(show) {
+            this.notifyUserComfortableMicMute(false);
+            console.log(
+                "Your shared video was muted in order to speak freely!");
+        }
+        else
+            console.log("Hide notification share video muted");
     }
 }
 
