@@ -51,9 +51,14 @@ const APP = {
         status: "initialized",
         handler: null
     },
+    // Used for automated performance tests
+    performanceTimes: {
+        "index.loaded": window.indexLoadedTime
+    },
     UI,
     settings,
     conference,
+    connection: null,
     API,
     init () {
         this.keyboardshortcut =
@@ -98,8 +103,9 @@ function obtainConfigAndInit() {
             // Get config result callback
             function(success, error) {
                 if (success) {
-                    console.log("(TIME) configuration fetched:\t",
-                                window.performance.now());
+                    var now = APP.performanceTimes["configuration.fetched"] =
+                        window.performance.now();
+                    console.log("(TIME) configuration fetched:\t", now);
                     init();
                 } else {
                     // Show obtain config error,
@@ -118,7 +124,8 @@ function obtainConfigAndInit() {
 
 
 $(document).ready(function () {
-    console.log("(TIME) document ready:\t", window.performance.now());
+    var now = APP.performanceTimes["document.ready"] = window.performance.now();
+    console.log("(TIME) document ready:\t", now);
 
     URLProcessor.setConfigParametersFromUrl();
     APP.init();

@@ -1,7 +1,10 @@
 <html itemscope itemtype="http://schema.org/Product" prefix="og: http://ogp.me/ns#" xmlns="http://www.w3.org/1999/html">
   <head>
     <!--#include virtual="title.html" -->
-    <script>console.log("(TIME) index.html loaded:\t", window.performance.now());</script>
+    <script>
+        window.indexLoadedTime = window.performance.now();
+        console.log("(TIME) index.html loaded:\t", indexLoadedTime);
+    </script>
     <script src="config.js?v=15"></script><!-- adapt to your needs, i.e. set hosts and bosh path -->
     <script src="utils.js?v=1"></script>
     <!--#include virtual="connection_optimization/connection_optimization.html" -->
