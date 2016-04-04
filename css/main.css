@@ -129,21 +129,6 @@ html, body{
     -moz-transition: all .5s ease-in-out;
     transition: all .5s ease-in-out;
 }
-/*#ffde00*/
-#toolbar_button_record.active {
-    -webkit-text-shadow:    -1px 0 10px #00ccff,
-    0 1px 10px #00ccff,
-    1px 0 10px #00ccff,
-    0 -1px 10px #00ccff;
-    -moz-text-shadow:   1px 0 10px #00ccff,
-    0 1px 10px #00ccff,
-    1px 0 10px #00ccff,
-    0 -1px 10px #00ccff;
-    text-shadow:    -1px 0 10px #00ccff,
-    0 1px 10px #00ccff,
-    1px 0 10px #00ccff,
-    0 -1px 10px #00ccff;
-}
 
 a.button:hover,
 a.bottomToolbarButton:hover {
@@ -155,15 +140,6 @@ a.bottomToolbarButton:hover {
 
 .no-fa-video-camera, .fa-microphone-slash {
     color: #636363;
-}
-
-.header_button_separator {
-    display: inline-block;
-    position:relative;
-    top: 5px;
-    width: 1px;
-    height: 20px;
-    background: #373737;
 }
 
 .bottom_button_separator {
@@ -248,19 +224,24 @@ form {
     position: absolute;
 }
 
-div.feedbackButton {
-    background-color: rgba(0, 0, 0, 0.5);
+#feedbackButtonDiv {
+    display: none;
+    position: absolute;
+    background-color: rgba(0,0,0,.50);
     border-radius: 50%;
     bottom: 0;
     font-size: 1em;
     height: 3em;
     left: 0;
     overflow: hidden;
-    position: absolute;
     text-align: center;
-    transition: all 0.2s ease-in-out 0s;
     width: 3em;
     z-index: 100;
+    transition: all 2s ease-in-out;
+}
+
+#feedbackButtonDiv.hidden {
+    bottom: -246px;
 }
 
 div.feedbackButton:hover {
@@ -299,7 +280,7 @@ div.feedbackButton:hover {
 }
 
 .active {
-    color: #00ccff;
+    background-color: #00ccff;
 }
 
 .bottomToolbar_span>span {

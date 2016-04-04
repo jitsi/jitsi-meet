@@ -141,8 +141,10 @@ SmallVideo.createStreamElement = function (stream) {
     element.id = SmallVideo.getStreamElementID(stream);
 
     element.onplay = function () {
+        var now = APP.performanceTimes["video.render"]
+            = window.performance.now();
         console.log("(TIME) Render " + (isVideo ? 'video' : 'audio') + ":\t",
-                    window.performance.now());
+                    now);
     };
 
     element.oncontextmenu = function () { return false; };
@@ -315,11 +317,21 @@ SmallVideo.prototype.selectVideoElement = function () {
     return $(RTCUIHelper.findVideoElement($('#' + this.videoSpanId)[0]));
 };
 
+/**
+ * Enables / disables the css responsible for focusing/pinning a video
+ * thumbnail.
+ *
+ * @param isFocused indicates if the thumbnail should be focused/pinned or not
+ */
 SmallVideo.prototype.focus = function(isFocused) {
-    if(!isFocused) {
-        this.container.classList.remove("videoContainerFocused");
-    } else {
-        this.container.classList.add("videoContainerFocused");
+    var focusedCssClass = "videoContainerFocused";
+    var isFocusClassEnabled = $(this.container).hasClass(focusedCssClass);
+
+    if (!isFocused && isFocusClassEnabled) {
+        $(this.container).removeClass(focusedCssClass);
+    }
+    else if (isFocused && !isFocusClassEnabled) {
+        $(this.container).addClass(focusedCssClass);
     }
 };
 

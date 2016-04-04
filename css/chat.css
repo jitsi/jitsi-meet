@@ -1,4 +1,5 @@
 #chatspace {
+    display: none;
     background-color: black;
     border-left: 1px solid #424242;
 }

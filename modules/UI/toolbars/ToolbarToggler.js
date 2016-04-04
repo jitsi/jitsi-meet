@@ -59,7 +59,8 @@ const ToolbarToggler = {
      * Shows the main toolbar.
      */
     showToolbar () {
-        if (interfaceConfig.filmStripOnly) {
+        // if we are a recorder we do not want to show the toolbar
+        if (interfaceConfig.filmStripOnly || config.iAmRecorder) {
             return;
         }
         let header = $("#header");

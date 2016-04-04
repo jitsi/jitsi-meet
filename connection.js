@@ -6,6 +6,42 @@ const ConnectionEvents = JitsiMeetJS.events.connection;
 const ConnectionErrors = JitsiMeetJS.errors.connection;
 
 /**
+ * Checks if we have data to use attach instead of connect. If we have the data
+ * executes attach otherwise check if we have to wait for the data. If we have
+ * to wait for the attach data we are setting handler to APP.connect.handler
+ * which is going to be called when the attach data is received otherwise
+ * executes connect.
+ *
+ * @param {string} [id] user id
+ * @param {string} [password] password
+ * @param {string} [roomName] the name of the conference.
+ */
+function checkForAttachParametersAndConnect(id, password, connection) {
+    if(window.XMPPAttachInfo){
+        APP.connect.status = "connecting";
+        // When connection optimization is not deployed or enabled the default
+        // value will be window.XMPPAttachInfo.status = "error"
+        // If the connection optimization is deployed and enabled and there is
+        // a failure the value will be window.XMPPAttachInfo.status = "error" 
+        if(window.XMPPAttachInfo.status === "error") {
+            connection.connect({id, password});
+            return;
+        }
+
+        var attachOptions = window.XMPPAttachInfo.data;
+        if(attachOptions) {
+            connection.attach(attachOptions);
+        } else {
+            connection.connect({id, password});
+        }
+    } else {
+        APP.connect.status = "ready";
+        APP.connect.handler = checkForAttachParametersAndConnect.bind(null,
+            id, password, connection);
+    }
+}
+
+/**
  * Try to open connection using provided credentials.
  * @param {string} [id]
  * @param {string} [password]
@@ -18,7 +54,8 @@ function connect(id, password, roomName) {
     let connectionConfig = config;
 
     connectionConfig.bosh += '?room=' + roomName;
-    let connection = new JitsiMeetJS.JitsiConnection(null, null, config);
+    let connection
+        = new JitsiMeetJS.JitsiConnection(null, config.token, config);
 
     return new Promise(function (resolve, reject) {
         connection.addEventListener(
@@ -50,7 +87,7 @@ function connect(id, password, roomName) {
             reject(err);
         }
 
-        connection.connect({id, password});
+        checkForAttachParametersAndConnect(id, password, connection);
     });
 }
 

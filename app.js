@@ -1,4 +1,4 @@
-/* global $, JitsiMeetJS, config */
+/* global $, JitsiMeetJS, config, getRoomName */
 /* application specific logic */
 
 import "babel-polyfill";
@@ -23,43 +23,42 @@ import API from './modules/API/API';
 
 import UIEvents from './service/UI/UIEvents';
 
-
+/**
+ * Builds and returns the room name.
+ */
 function buildRoomName () {
-    let path = window.location.pathname;
-    let roomName;
+    let roomName = getRoomName();
 
-    // determinde the room node from the url
-    // TODO: just the roomnode or the whole bare jid?
-    if (config.getroomnode && typeof config.getroomnode === 'function') {
-        // custom function might be responsible for doing the pushstate
-        roomName = config.getroomnode(path);
-    } else {
-        /* fall back to default strategy
-         * this is making assumptions about how the URL->room mapping happens.
-         * It currently assumes deployment at root, with a rewrite like the
-         * following one (for nginx):
-         location ~ ^/([a-zA-Z0-9]+)$ {
-         rewrite ^/(.*)$ / break;
-         }
-        */
-        if (path.length > 1) {
-            roomName = path.substr(1).toLowerCase();
-        } else {
-            let word = RoomnameGenerator.generateRoomWithoutSeparator();
-            roomName = word.toLowerCase();
-            window.history.pushState(
-                'VideoChat', `Room: ${word}`, window.location.pathname + word
-            );
-        }
+    if(!roomName) {
+        let word = RoomnameGenerator.generateRoomWithoutSeparator();
+        roomName = word.toLowerCase();
+        window.history.pushState(
+            'VideoChat', `Room: ${word}`, window.location.pathname + word
+        );
     }
 
     return roomName;
 }
 
 const APP = {
+    // Used by do_external_connect.js if we receive the attach data after
+    // connect was already executed. status property can be "initialized",
+    // "ready" or "connecting". We are interested in "ready" status only which
+    // means that connect was executed but we have to wait for the attach data.
+    // In status "ready" handler property will be set to a function that will
+    // finish the connect process when the attach data or error is received.
+    connect: {
+        status: "initialized",
+        handler: null
+    },
+    // Used for automated performance tests
+    performanceTimes: {
+        "index.loaded": window.indexLoadedTime
+    },
     UI,
     settings,
     conference,
+    connection: null,
     API,
     init () {
         this.keyboardshortcut =
@@ -104,8 +103,9 @@ function obtainConfigAndInit() {
             // Get config result callback
             function(success, error) {
                 if (success) {
-                    console.log("(TIME) configuration fetched:\t",
-                                window.performance.now());
+                    var now = APP.performanceTimes["configuration.fetched"] =
+                        window.performance.now();
+                    console.log("(TIME) configuration fetched:\t", now);
                     init();
                 } else {
                     // Show obtain config error,
@@ -124,7 +124,8 @@ function obtainConfigAndInit() {
 
 
 $(document).ready(function () {
-    console.log("(TIME) document ready:\t", window.performance.now());
+    var now = APP.performanceTimes["document.ready"] = window.performance.now();
+    console.log("(TIME) document ready:\t", now);
 
     URLProcessor.setConfigParametersFromUrl();
     APP.init();

@@ -16,7 +16,6 @@
 
 import UIEvents from '../service/UI/UIEvents';
 import VideoLayout from './UI/videolayout/VideoLayout';
-import FilmStrip from './UI/videolayout/FilmStrip';
 
 /**
  * The (name of the) command which transports the state (represented by
@@ -24,6 +23,15 @@ import FilmStrip from './UI/videolayout/FilmStrip';
  * (instance) between participants.
  */
 const _COMMAND = "follow-me";
+
+/**
+ * The timeout after which a follow-me command that has been received will be
+ * ignored if not consumed.
+ *
+ * @type {number} in seconds
+ * @private
+ */
+const _FOLLOW_ME_RECEIVED_TIMEOUT = 30;
 
 /**
  * Represents the set of {FollowMe}-related states (properties and their
@@ -112,6 +120,7 @@ class FollowMe {
     constructor (conference, UI) {
         this._conference = conference;
         this._UI = UI;
+        this.nextOnStageTimer = 0;
 
         // The states of the local participant which are to be followed (by the
         // remote participants when the local participant is in her right to
@@ -125,6 +134,29 @@ class FollowMe {
         conference.commands.addCommandListener(
                 _COMMAND,
                 this._onFollowMeCommand.bind(this));
+    }
+
+    /**
+     * Sets the current state of all follow-me properties, which will fire a
+     * localPropertyChangeEvent and trigger a send of the follow-me command.
+     * @private
+     */
+    _setFollowMeInitialState() {
+        this._filmStripToggled.bind(this, this._UI.isFilmStripVisible());
+
+        var pinnedId = VideoLayout.getPinnedId();
+        var isPinned = false;
+        var smallVideo;
+        if (pinnedId) {
+            isPinned = true;
+            smallVideo = VideoLayout.getSmallVideo(pinnedId);
+        }
+
+        this._nextOnStage(smallVideo, isPinned);
+
+        this._sharedDocumentToggled
+            .bind(this, this._UI.getSharedDocumentManager().isVisible());
+
     }
 
     /**
@@ -171,9 +203,10 @@ class FollowMe {
      * to disable it
      */
     enableFollowMe (enable) {
-        this.isEnabled = enable;
-        if (this.isEnabled)
+        if (enable) {
+            this._setFollowMeInitialState();
             this._addFollowMeListeners();
+        }
         else
             this._removeFollowMeListeners();
     }
@@ -201,7 +234,7 @@ class FollowMe {
     }
 
     /**
-     * Changes the nextOnPage property value.
+     * Changes the nextOnStage property value.
      *
      * @param smallVideo the {SmallVideo} that was pinned or unpinned
      * @param isPinned indicates if the given {SmallVideo} was pinned or
@@ -265,6 +298,7 @@ class FollowMe {
         // issued by a defined commander.
         if (typeof id === 'undefined')
             return;
+
         // The Command(s) API will send us our own commands and we don't want
         // to act upon them.
         if (this._conference.isLocalId(id))
@@ -284,6 +318,13 @@ class FollowMe {
         this._onSharedDocumentVisible(attributes.sharedDocumentVisible);
     }
 
+    /**
+     * Process a film strip open / close event received from FOLLOW-ME
+     * command.
+     * @param filmStripVisible indicates if the film strip has been shown or
+     * hidden
+     * @private
+     */
     _onFilmStripVisible(filmStripVisible) {
         if (typeof filmStripVisible !== 'undefined') {
             // XXX The Command(s) API doesn't preserve the types (of
@@ -296,25 +337,41 @@ class FollowMe {
             // eventEmitter as a public field. I'm not sure at the time of this
             // writing whether calling UI.toggleFilmStrip() is acceptable (from
             // a design standpoint) either.
-            if (filmStripVisible !== FilmStrip.isFilmStripVisible())
-                this._UI.eventEmitter.emit(
-                    UIEvents.TOGGLE_FILM_STRIP,
-                    filmStripVisible);
+            if (filmStripVisible !== this._UI.isFilmStripVisible())
+                this._UI.eventEmitter.emit(UIEvents.TOGGLE_FILM_STRIP);
         }
     }
 
+    /**
+     * Process the id received from a FOLLOW-ME command.
+     * @param id the identifier of the next participant to show on stage or
+     * undefined if we're clearing the stage (we're unpining all pined and we
+     * rely on dominant speaker events)
+     * @private
+     */
     _onNextOnStage(id) {
-
         var clickId = null;
-        if(typeof id !== 'undefined' && !VideoLayout.isPinned(id))
+        var pin;
+        if(typeof id !== 'undefined' && !VideoLayout.isPinned(id)) {
             clickId = id;
-        else if (typeof id == 'undefined' && VideoLayout.getPinnedId())
+            pin = true;
+        }
+        else if (typeof id == 'undefined' && VideoLayout.getPinnedId()) {
             clickId = VideoLayout.getPinnedId();
+            pin = false;
+        }
 
         if (clickId)
-            VideoLayout.handleVideoThumbClicked(clickId);
+            this._pinVideoThumbnailById(clickId, pin);
     }
 
+    /**
+     * Process a shared document open / close event received from FOLLOW-ME
+     * command.
+     * @param sharedDocumentVisible indicates if the shared document has been
+     * opened or closed
+     * @private
+     */
     _onSharedDocumentVisible(sharedDocumentVisible) {
         if (typeof sharedDocumentVisible !== 'undefined') {
             // XXX The Command(s) API doesn't preserve the types (of
@@ -326,6 +383,41 @@ class FollowMe {
             if (sharedDocumentVisible
                 !== this._UI.getSharedDocumentManager().isVisible())
                 this._UI.getSharedDocumentManager().toggleEtherpad();
+        }
+    }
+
+    /**
+     * Pins / unpins the video thumbnail given by clickId.
+     *
+     * @param clickId the identifier of the video thumbnail to pin or unpin
+     * @param pin {true} to pin, {false} to unpin
+     * @private
+     */
+    _pinVideoThumbnailById(clickId, pin) {
+        var self = this;
+        var smallVideo = VideoLayout.getSmallVideo(clickId);
+
+        // If the SmallVideo for the given clickId exists we proceed with the
+        // pin/unpin.
+        if (smallVideo) {
+            this.nextOnStageTimer = 0;
+            clearTimeout(this.nextOnStageTimout);
+            if (pin && !VideoLayout.isPinned(clickId)
+                || !pin && VideoLayout.isPinned(clickId))
+                VideoLayout.handleVideoThumbClicked(clickId);
+        }
+        // If there's no SmallVideo object for the given id, lets wait and see
+        // if it's going to be created in the next 30sec.
+        else {
+            this.nextOnStageTimout = setTimeout(function () {
+                if (self.nextOnStageTimer > _FOLLOW_ME_RECEIVED_TIMEOUT) {
+                    self.nextOnStageTimer = 0;
+                    return;
+                }
+
+                this.nextOnStageTimer++;
+                self._pinVideoThumbnailById(clickId, pin);
+            }, 1000);
         }
     }
 }

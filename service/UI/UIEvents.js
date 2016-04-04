@@ -62,7 +62,7 @@ export default {
     CONTACT_CLICKED: "UI.contact_clicked",
     HANGUP: "UI.hangup",
     LOGOUT: "UI.logout",
-    RECORDING_TOGGLE: "UI.recording_toggle",
+    RECORDING_TOGGLED: "UI.recording_toggled",
     SIP_DIAL: "UI.sip_dial",
     SUBJECT_CHANGED: "UI.subject_changed",
     VIDEO_DEVICE_CHANGED: "UI.video_device_changed",

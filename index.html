@@ -4,6 +4,17 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
     <!--#include virtual="title.html" -->
+    <script>
+        window.indexLoadedTime = window.performance.now();
+        console.log("(TIME) index.html loaded:\t", indexLoadedTime);
+    </script>
+    <script src="config.js?v=15"></script><!-- adapt to your needs, i.e. set hosts and bosh path -->
+    <script src="utils.js?v=1"></script>
+    <!--#include virtual="connection_optimization/connection_optimization.html" -->
+    <script src="connection_optimization/do_external_connect.js?v=1"></script>
+    <script src="interface_config.js?v=6"></script>
+    <script src="libs/lib-jitsi-meet.min.js?v=139"></script>
+    <script src="libs/app.bundle.min.js?v=139"></script>
     <link rel="icon" type="image/png" href="/images/favicon.ico?v=1"/>
     <meta property="og:title" content="Jitsi Meet"/>
     <meta property="og:image" content="/images/jitsilogo.png?v=1"/>
@@ -14,11 +25,6 @@
     <meta itemprop="image" content="/images/jitsilogo.png?v=1"/>
     <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="css/all.css"/>
-    <script>console.log("(TIME) index.html loaded:\t", window.performance.now());</script>
-    <script src="config.js?v=15"></script><!-- adapt to your needs, i.e. set hosts and bosh path -->
-    <script src="interface_config.js?v=6"></script>
-    <script src="libs/lib-jitsi-meet.min.js?v=139"></script>
-    <script src="libs/app.bundle.min.js?v=139"></script>
     <!--#include virtual="plugin.head.html" -->
   </head>
   <body>
@@ -138,14 +144,14 @@
                     </span>
                     <a class="button icon-microphone" id="toolbar_button_mute" data-container="body" data-toggle="popover" data-placement="bottom" shortcut="mutePopover" data-i18n="[content]toolbar.mute" content="Mute / Unmute"></a>
                     <a class="button icon-camera" id="toolbar_button_camera" data-container="body" data-toggle="popover" data-placement="bottom" shortcut="toggleVideoPopover" data-i18n="[content]toolbar.videomute" content="Start / stop camera"></a>
-                    <a class="button icon-recEnable" id="toolbar_button_record" data-container="body" data-toggle="popover" data-placement="bottom" data-i18n="[content]toolbar.record" content="Record" style="display: none"></a>
+                    <a class="button" id="toolbar_button_record" data-container="body" data-toggle="popover" data-placement="bottom" style="display: none"></a>
                     <a class="button icon-security" id="toolbar_button_security" data-container="body" data-toggle="popover" data-placement="bottom" data-i18n="[content]toolbar.lock" content="Lock / unlock room"></a>
                     <a class="button icon-link" id="toolbar_button_link" data-container="body" data-toggle="popover" data-placement="bottom" data-i18n="[content]toolbar.invite" content="Invite others"></a>
                     <a class="button icon-chat" id="toolbar_button_chat" data-container="body" data-toggle="popover" shortcut="toggleChatPopover" data-placement="bottom" data-i18n="[content]toolbar.chat" content="Open / close chat">
                         <span id="unreadMessages"></span>
                     </a>
                     <a class="button icon-share-doc" id="toolbar_button_etherpad" data-container="body" data-toggle="popover" data-placement="bottom" content="Shared document" data-i18n="[content]toolbar.etherpad"></a>
-                    <a class="button fa fa-share-alt-square" id="toolbar_button_sharedvideo" data-container="body" data-toggle="popover" data-placement="bottom" content="Shared Video" data-i18n="[content]toolbar.sharedvideo" style="display: none"></a>
+                    <a class="button fa fa-share-alt-square" id="toolbar_button_sharedvideo" data-container="body" data-toggle="popover" data-placement="bottom" content="Share a YouTube video" data-i18n="[content]toolbar.sharedvideo" style="display: none"></a>
                     <a class="button icon-share-desktop" id="toolbar_button_desktopsharing" data-container="body" data-toggle="popover" data-placement="bottom" shortcut="toggleDesktopSharingPopover" content="Share screen" data-i18n="[content]toolbar.sharescreen" style="display: none"></a>
                     <a class="button icon-full-screen" id="toolbar_button_fullScreen" data-container="body" data-toggle="popover" data-placement="bottom" content="Enter / Exit Full Screen" data-i18n="[content]toolbar.fullscreen"></a>
                     <a class="button icon-telephone" id="toolbar_button_sip" data-container="body" data-toggle="popover" data-placement="bottom" content="Call SIP number" data-i18n="[content]toolbar.sip" style="display: none"></a>
@@ -176,6 +182,7 @@
                 </div>
                 <span id="videoConnectionMessage"></span>
                 <span id="videoResolutionLabel">HD</span>
+                <span id="recordingLabel" class="centeredVideoLabel"></span>
             </div>
 
             <div id="remoteVideos">
@@ -271,7 +278,7 @@
             </div>
             <a id="downloadlog" data-container="body" data-toggle="popover" data-placement="right" data-i18n="[data-content]downloadlogs" ><i class="fa fa-cloud-download"></i></a>
         </div>
-        <div class="feedbackButton">
+        <div id="feedbackButtonDiv">
             <a id="feedbackButton" data-container="body" data-toggle="popover" data-placement="right" data-i18n="[data-content]feedback"><i class="fa fa-heart"></i></a>
         </div>
     </div>
