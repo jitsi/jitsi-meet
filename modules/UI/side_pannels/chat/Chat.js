@@ -35,7 +35,7 @@ function setVisualNotification(show) {
         var leftIndent = (UIUtil.getTextWidth(chatButtonElement) -
             UIUtil.getTextWidth(unreadMsgElement)) / 2;
         var topIndent = (UIUtil.getTextHeight(chatButtonElement) -
-            UIUtil.getTextHeight(unreadMsgElement)) / 2 - 3;
+            UIUtil.getTextHeight(unreadMsgElement)) / 2 - 5;
 
         unreadMsgElement.setAttribute(
             'style',

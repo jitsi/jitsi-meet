@@ -1,16 +1,44 @@
 /* global $, APP, interfaceConfig, config*/
 
+import UIEvents from "../../../service/UI/UIEvents";
 import UIUtil from "../util/UIUtil";
 
-const thumbAspectRatio = 16.0 / 9.0;
+const thumbAspectRatio = 1 / 1;
 
 const FilmStrip = {
-    init () {
+    /**
+     *
+     * @param eventEmitter the {EventEmitter} through which {FilmStrip} is to
+     * emit/fire {UIEvents} (such as {UIEvents.TOGGLED_FILM_STRIP}).
+     */
+    init (eventEmitter) {
         this.filmStrip = $('#remoteVideos');
+        this.eventEmitter = eventEmitter;
     },
 
-    toggleFilmStrip () {
+    /**
+     * Toggles the visibility of the film strip.
+     *
+     * @param visible optional {Boolean} which specifies the desired visibility
+     * of the film strip. If not specified, the visibility will be flipped
+     * (i.e. toggled); otherwise, the visibility will be set to the specified
+     * value.
+     */
+    toggleFilmStrip (visible) {
+        if (typeof visible === 'boolean'
+                && this.isFilmStripVisible() == visible) {
+            return;
+        }
+
         this.filmStrip.toggleClass("hidden");
+
+        // Emit/fire UIEvents.TOGGLED_FILM_STRIP.
+        var eventEmitter = this.eventEmitter;
+        if (eventEmitter) {
+            eventEmitter.emit(
+                    UIEvents.TOGGLED_FILM_STRIP,
+                    this.isFilmStripVisible());
+        }
     },
 
     isFilmStripVisible () {
@@ -44,11 +72,7 @@ const FilmStrip = {
      * that we want to take into account when calculating the film strip width.
      */
      calculateThumbnailSize (isSideBarVisible) {
-        // Calculate the available height, which is the inner window height
-        // minus 39px for the header minus 2px for the delimiter lines on the
-        // top and bottom of the large video, minus the 36px space inside the
-        // remoteVideos container used for highlighting shadow.
-        let availableHeight = 100;
+        let availableHeight = interfaceConfig.FILM_STRIP_MAX_HEIGHT;
 
         let numvids = this.getThumbs(true).length;
 
@@ -80,17 +104,17 @@ const FilmStrip = {
         let maxHeight
             // If the MAX_HEIGHT property hasn't been specified
             // we have the static value.
-            = Math.min( interfaceConfig.FILM_STRIP_MAX_HEIGHT || 160,
+            = Math.min( interfaceConfig.FILM_STRIP_MAX_HEIGHT || 120,
                         availableHeight);
 
         availableHeight
-            = Math.min( maxHeight,
-            availableWidth / thumbAspectRatio,
-            window.innerHeight - 18);
+            = Math.min( maxHeight, window.innerHeight - 18);
 
-        if (availableHeight < availableWidth / thumbAspectRatio) {
-            availableWidth = Math.floor(availableHeight * thumbAspectRatio);
+        if (availableHeight < availableWidth) {
+            availableWidth = availableHeight;
         }
+        else
+            availableHeight = availableWidth;
 
         return {
             thumbWidth: availableWidth,

@@ -8,8 +8,9 @@ import FilmStrip from './FilmStrip';
 import Avatar from "../avatar/Avatar";
 import {createDeferred} from '../../util/helpers';
 
-const avatarSize = interfaceConfig.DOMINANT_SPEAKER_AVATAR_SIZE;
 const FADE_DURATION_MS = 300;
+
+export const VIDEO_CONTAINER_TYPE = "camera";
 
 /**
  * Get stream id.
@@ -150,8 +151,6 @@ function getDesktopVideoPosition(videoWidth,
     return { horizontalIndent, verticalIndent };
 }
 
-export const VideoContainerType = "video";
-
 /**
  * Container for user video.
  */
@@ -174,6 +173,8 @@ class VideoContainer extends LargeContainer {
 
         this.$avatar = $('#dominantSpeaker');
         this.$wrapper = $('#largeVideoWrapper');
+
+        this.avatarHeight = $("#dominantSpeakerAvatar").height();
 
         // This does not work with Temasys plugin - has to be a property to be
         // copied between new <object> elements
@@ -245,7 +246,7 @@ class VideoContainer extends LargeContainer {
                                     containerWidth, containerHeight);
 
         // update avatar position
-        let top = containerHeight / 2 - avatarSize / 4 * 3;
+        let top = containerHeight / 2 - this.avatarHeight / 4 * 3;
 
         this.$avatar.css('top', top);
 
@@ -332,6 +333,10 @@ class VideoContainer extends LargeContainer {
     }
 
     hide () {
+        // as the container is hidden/replaced by another container
+        // hide its avatar
+        this.showAvatar(false);
+
         // its already hidden
         if (!this.isVisible) {
             return Promise.resolve();
@@ -345,6 +350,13 @@ class VideoContainer extends LargeContainer {
             });
         });
     }
+
+    /**
+     * @return {boolean} switch on dominant speaker event if on stage.
+     */
+    stayOnStage () {
+        return false;
+    }
 }
 
 /**
@@ -354,9 +366,13 @@ export default class LargeVideoManager {
     constructor () {
         this.containers = {};
 
-        this.state = VideoContainerType;
-        this.videoContainer = new VideoContainer(() => this.resizeContainer(VideoContainerType));
-        this.addContainer(VideoContainerType, this.videoContainer);
+        this.state = VIDEO_CONTAINER_TYPE;
+        this.videoContainer = new VideoContainer(
+            () => this.resizeContainer(VIDEO_CONTAINER_TYPE));
+        this.addContainer(VIDEO_CONTAINER_TYPE, this.videoContainer);
+
+        // use the same video container to handle and desktop tracks
+        this.addContainer("desktop", this.videoContainer);
 
         this.width = 0;
         this.height = 0;
@@ -368,22 +384,26 @@ export default class LargeVideoManager {
         });
 
         if (interfaceConfig.SHOW_JITSI_WATERMARK) {
-            let leftWatermarkDiv = this.$container.find("div.watermark.leftwatermark");
+            let leftWatermarkDiv
+                = this.$container.find("div.watermark.leftwatermark");
 
             leftWatermarkDiv.css({display: 'block'});
 
-            leftWatermarkDiv.parent().attr('href', interfaceConfig.JITSI_WATERMARK_LINK);
+            leftWatermarkDiv.parent().attr(
+                'href', interfaceConfig.JITSI_WATERMARK_LINK);
         }
 
         if (interfaceConfig.SHOW_BRAND_WATERMARK) {
-            let rightWatermarkDiv = this.$container.find("div.watermark.rightwatermark");
+            let rightWatermarkDiv
+                = this.$container.find("div.watermark.rightwatermark");
 
             rightWatermarkDiv.css({
                 display: 'block',
                 backgroundImage: 'url(images/rightwatermark.png)'
             });
 
-            rightWatermarkDiv.parent().attr('href', interfaceConfig.BRAND_WATERMARK_LINK);
+            rightWatermarkDiv.parent().attr(
+                'href', interfaceConfig.BRAND_WATERMARK_LINK);
         }
 
         if (interfaceConfig.SHOW_POWERED_BY) {
@@ -413,7 +433,8 @@ export default class LargeVideoManager {
     }
 
     get id () {
-        return this.videoContainer.id;
+        let container = this.getContainer(this.state);
+        return container.id;
     }
 
     scheduleLargeVideoUpdate () {
@@ -430,16 +451,22 @@ export default class LargeVideoManager {
             this.newStreamData = null;
 
             console.info("hover in %s", id);
-            this.state = VideoContainerType;
-            this.videoContainer.setStream(stream, videoType);
+            this.state = videoType;
+            let container = this.getContainer(this.state);
+            container.setStream(stream, videoType);
 
             // change the avatar url on large
             this.updateAvatar(Avatar.getAvatarUrl(id));
 
-            let isVideoMuted = stream ? stream.isMuted() : true;
+            // If we the continer is VIDEO_CONTAINER_TYPE, we need to check
+            // its stream whether exist and is muted to set isVideoMuted
+            // in rest of the cases it is false
+            let isVideoMuted = false;
+            if (videoType == VIDEO_CONTAINER_TYPE)
+                isVideoMuted = stream ? stream.isMuted() : true;
 
             // show the avatar on large if needed
-            this.videoContainer.showAvatar(isVideoMuted);
+            container.showAvatar(isVideoMuted);
 
             let promise;
 
@@ -449,7 +476,7 @@ export default class LargeVideoManager {
                 this.showWatermark(true);
                 promise = Promise.resolve();
             } else {
-                promise = this.videoContainer.show();
+                promise = container.show();
             }
 
             // resolve updateLargeVideo promise after everything is done
@@ -457,7 +484,8 @@ export default class LargeVideoManager {
 
             return promise;
         }).then(() => {
-            // after everything is done check again if there are any pending new streams.
+            // after everything is done check again if there are any pending
+            // new streams.
             this.updateInProcess = false;
             this.scheduleLargeVideoUpdate();
         });
@@ -529,7 +557,8 @@ export default class LargeVideoManager {
      * @param enable <tt>true</tt> to enable, <tt>false</tt> to disable
      */
     enableVideoProblemFilter (enable) {
-        this.videoContainer.$video.toggleClass("videoProblemFilter", enable);
+        let container = this.getContainer(this.state);
+        container.$video.toggleClass("videoProblemFilter", enable);
     }
 
     /**
@@ -600,7 +629,7 @@ export default class LargeVideoManager {
         }
 
         let oldContainer = this.containers[this.state];
-        if (this.state === VideoContainerType) {
+        if (this.state === VIDEO_CONTAINER_TYPE) {
             this.showWatermark(false);
         }
         oldContainer.hide();
@@ -609,7 +638,7 @@ export default class LargeVideoManager {
         let container = this.getContainer(type);
 
         return container.show().then(() => {
-            if (type === VideoContainerType) {
+            if (type === VIDEO_CONTAINER_TYPE) {
                 this.showWatermark(true);
             }
         });

@@ -5,12 +5,13 @@ import UIUtil from "../util/UIUtil";
 
 const RTCUIHelper = JitsiMeetJS.util.RTCUIHelper;
 
-function SmallVideo() {
+function SmallVideo(VideoLayout) {
     this.isMuted = false;
     this.hasAvatar = false;
     this.isVideoMuted = false;
     this.videoStream = null;
     this.audioStream = null;
+    this.VideoLayout = VideoLayout;
 }
 
 function setVisibility(selector, show) {
@@ -19,6 +20,14 @@ function setVisibility(selector, show) {
     }
 }
 
+/**
+ * Returns the identifier of this small video.
+ *
+ * @returns the identifier of this small video
+ */
+SmallVideo.prototype.getId = function () {
+    return this.id;
+};
 
 /* Indicates if this small video is currently visible.
  *
@@ -362,14 +371,7 @@ SmallVideo.prototype.updateView = function () {
     }
     setVisibility(avatar, showAvatar);
 
-    var showDisplayName = !showVideo && !showAvatar;
-
-    if (showDisplayName) {
-        this.showDisplayName(this.VideoLayout.isLargeVideoVisible());
-    }
-    else {
-        this.showDisplayName(false);
-    }
+    this.showDisplayName(!showVideo && !showAvatar);
 };
 
 SmallVideo.prototype.avatarChanged = function (avatarUrl) {

@@ -9,15 +9,14 @@ import UIEvents from "../../../service/UI/UIEvents";
 import UIUtil from "../util/UIUtil";
 
 import RemoteVideo from "./RemoteVideo";
-import LargeVideoManager, {VideoContainerType} from "./LargeVideo";
-import {PreziContainerType} from '../prezi/Prezi';
+import LargeVideoManager, {VIDEO_CONTAINER_TYPE} from "./LargeVideo";
+import {SHARED_VIDEO_CONTAINER_TYPE} from '../shared_video/SharedVideo';
 import LocalVideo from "./LocalVideo";
 import PanelToggler from "../side_pannels/SidePanelToggler";
 
 const RTCUIUtil = JitsiMeetJS.util.RTCUIHelper;
 
 var remoteVideos = {};
-var remoteVideoTypes = {};
 var localVideoThumbnail = null;
 
 var currentDominantSpeaker = null;
@@ -32,7 +31,7 @@ var eventEmitter = null;
  * Currently focused video jid
  * @type {String}
  */
-var focusedVideoResourceJid = null;
+var pinnedId = null;
 
 /**
  * On contact list item clicked.
@@ -50,7 +49,7 @@ function onContactClicked (id) {
         if (remoteVideo.hasVideoStarted()) {
             // We have a video src, great! Let's update the large video
             // now.
-            VideoLayout.handleVideoThumbClicked(false, id);
+            VideoLayout.handleVideoThumbClicked(id);
         } else {
 
             // If we don't have a video src for jid, there's absolutely
@@ -64,7 +63,7 @@ function onContactClicked (id) {
             // picked up later by the lastN changed event handler.
 
             lastNPickupId = id;
-            eventEmitter.emit(UIEvents.PINNED_ENDPOINT, id);
+            eventEmitter.emit(UIEvents.PINNED_ENDPOINT, remoteVideo, true);
         }
     }
 }
@@ -94,6 +93,11 @@ var VideoLayout = {
     init (emitter) {
         eventEmitter = emitter;
         localVideoThumbnail = new LocalVideo(VideoLayout, emitter);
+        // sets default video type of local video
+        localVideoThumbnail.setVideoType(VIDEO_CONTAINER_TYPE);
+        // if we do not resize the thumbs here, if there is no video device
+        // the local video thumb maybe one pixel
+        this.resizeThumbnails(false, true, false);
 
         emitter.addListener(UIEvents.CONTACT_CLICKED, onContactClicked);
         this.lastNCount = config.channelLastN;
@@ -195,23 +199,22 @@ var VideoLayout = {
     /**
      * Checks if removed video is currently displayed and tries to display
      * another one instead.
+     * Uses focusedID if any or dominantSpeakerID if any,
+     * otherwise elects new video, in this order.
      */
-    updateRemovedVideo (id) {
+    updateAfterThumbRemoved (id) {
         if (!this.isCurrentlyOnLarge(id)) {
             return;
         }
 
         let newId;
 
-        // We'll show user's avatar if he is the dominant speaker or if
-        // his video thumbnail is pinned
-        if (remoteVideos[id] && (id === focusedVideoResourceJid
-                                || id === currentDominantSpeaker)) {
-            newId = id;
-        } else {
-            // Otherwise select last visible video
+        if (pinnedId)
+            newId = pinnedId;
+        else if (currentDominantSpeaker)
+            newId = currentDominantSpeaker;
+        else // Otherwise select last visible video
             newId = this.electLastVisibleVideo();
-        }
 
         this.updateLargeVideo(newId);
     },
@@ -278,26 +281,39 @@ var VideoLayout = {
     /**
      * Return the type of the remote video.
      * @param id the id for the remote video
-     * @returns the video type video or screen.
+     * @returns {String} the video type video or screen.
      */
     getRemoteVideoType (id) {
-        return remoteVideoTypes[id];
+        let smallVideo = VideoLayout.getSmallVideo(id);
+        return smallVideo ? smallVideo.getVideoType() : null;
     },
 
-    handleVideoThumbClicked (noPinnedEndpointChangedEvent,
-                                          resourceJid) {
-        if(focusedVideoResourceJid) {
-            var oldSmallVideo
-                    = VideoLayout.getSmallVideo(focusedVideoResourceJid);
+    isPinned (id) {
+        return (pinnedId) ? (id === pinnedId) : false;
+    },
+
+    getPinnedId () {
+        return pinnedId;
+    },
+
+    /**
+     * Handles the click on a video thumbnail.
+     *
+     * @param id the identifier of the video thumbnail
+     */
+    handleVideoThumbClicked (id) {
+        if(pinnedId) {
+            var oldSmallVideo = VideoLayout.getSmallVideo(pinnedId);
             if (oldSmallVideo && !interfaceConfig.filmStripOnly)
                 oldSmallVideo.focus(false);
         }
 
-        var smallVideo = VideoLayout.getSmallVideo(resourceJid);
-        // Unlock current focused.
-        if (focusedVideoResourceJid === resourceJid)
+        var smallVideo = VideoLayout.getSmallVideo(id);
+
+        // Unpin if currently pinned.
+        if (pinnedId === id)
         {
-            focusedVideoResourceJid = null;
+            pinnedId = null;
             // Enable the currently set dominant speaker.
             if (currentDominantSpeaker) {
                 if(smallVideo && smallVideo.hasVideo()) {
@@ -305,44 +321,45 @@ var VideoLayout = {
                 }
             }
 
-            if (!noPinnedEndpointChangedEvent) {
-                eventEmitter.emit(UIEvents.PINNED_ENDPOINT);
-            }
+            eventEmitter.emit(UIEvents.PINNED_ENDPOINT, smallVideo, false);
+
             return;
         }
 
         // Lock new video
-        focusedVideoResourceJid = resourceJid;
+        pinnedId = id;
 
         // Update focused/pinned interface.
-        if (resourceJid) {
+        if (id) {
             if (smallVideo && !interfaceConfig.filmStripOnly)
                 smallVideo.focus(true);
 
-            if (!noPinnedEndpointChangedEvent) {
-                eventEmitter.emit(UIEvents.PINNED_ENDPOINT, resourceJid);
-            }
+            eventEmitter.emit(UIEvents.PINNED_ENDPOINT, smallVideo, true);
         }
 
-        this.updateLargeVideo(resourceJid);
+        this.updateLargeVideo(id);
     },
 
-
     /**
-     * Checks if container for participant identified by given id exists
-     * in the document and creates it eventually.
-     *
-     * @return Returns <tt>true</tt> if the peer container exists,
-     * <tt>false</tt> - otherwise
+     * Creates a remote video for participant for the given id.
+     * @param id the id of the participant to add
+     * @param {SmallVideo} smallVideo optional small video instance to add as a
+     * remote video, if undefined RemoteVideo will be created
      */
-    addParticipantContainer (id) {
-        let remoteVideo = new RemoteVideo(id, VideoLayout, eventEmitter);
+    addParticipantContainer (id, smallVideo) {
+        let remoteVideo;
+        if(smallVideo)
+            remoteVideo = smallVideo;
+        else
+            remoteVideo = new RemoteVideo(id, VideoLayout, eventEmitter);
         remoteVideos[id] = remoteVideo;
 
-        let videoType = remoteVideoTypes[id];
-        if (videoType) {
-            remoteVideo.setVideoType(videoType);
+        let videoType = VideoLayout.getRemoteVideoType(id);
+        if (!videoType) {
+            // make video type the default one (camera)
+            videoType = VIDEO_CONTAINER_TYPE;
         }
+        remoteVideo.setVideoType(videoType);
 
         // In case this is not currently in the last n we don't show it.
         if (localLastNCount && localLastNCount > 0 &&
@@ -361,13 +378,13 @@ var VideoLayout = {
             false, false, false, function() {$(videoelem).show();});
 
         // Update the large video to the last added video only if there's no
-        // current dominant, focused speaker or prezi playing or update it to
+        // current dominant, focused speaker or update it to
         // the current dominant speaker.
-        if ((!focusedVideoResourceJid &&
+        if ((!pinnedId &&
             !currentDominantSpeaker &&
-             !this.isLargeContainerTypeVisible(PreziContainerType)) ||
-            focusedVideoResourceJid === resourceJid ||
-            (resourceJid &&
+            this.isLargeContainerTypeVisible(VIDEO_CONTAINER_TYPE)) ||
+            pinnedId === resourceJid ||
+            (!pinnedId && resourceJid &&
                 currentDominantSpeaker === resourceJid)) {
             this.updateLargeVideo(resourceJid, true);
         }
@@ -522,7 +539,9 @@ var VideoLayout = {
         // since we don't want to switch to local video.
         // Update the large video if the video source is already available,
         // otherwise wait for the "videoactive.jingle" event.
-        if (!focusedVideoResourceJid && remoteVideo.hasVideoStarted()) {
+        if (!pinnedId
+            && remoteVideo.hasVideoStarted()
+            && !this.getCurrentlyOnLargeContainer().stayOnStage()) {
             this.updateLargeVideo(id);
         }
     },
@@ -639,11 +658,7 @@ var VideoLayout = {
                         // Clean up the lastN pickup id.
                         lastNPickupId = null;
 
-                        // Don't fire the events again, they've already
-                        // been fired in the contact list click handler.
-                        VideoLayout.handleVideoThumbClicked(
-                            false,
-                            resourceJid);
+                        VideoLayout.handleVideoThumbClicked(resourceJid);
 
                         updateLargeVideo = false;
                     }
@@ -730,9 +745,9 @@ var VideoLayout = {
 
     removeParticipantContainer (id) {
         // Unlock large video
-        if (focusedVideoResourceJid === id) {
+        if (pinnedId === id) {
             console.info("Focused video owner has left the conference");
-            focusedVideoResourceJid = null;
+            pinnedId = null;
         }
 
         if (currentDominantSpeaker === id) {
@@ -754,12 +769,11 @@ var VideoLayout = {
     },
 
     onVideoTypeChanged (id, newVideoType) {
-        if (remoteVideoTypes[id] === newVideoType) {
+        if (VideoLayout.getRemoteVideoType(id) === newVideoType) {
             return;
         }
 
         console.info("Peer video type changed: ", id, newVideoType);
-        remoteVideoTypes[id] = newVideoType;
 
         var smallVideo;
         if (APP.conference.isLocalId(id)) {
@@ -773,8 +787,8 @@ var VideoLayout = {
         } else {
             return;
         }
-
         smallVideo.setVideoType(newVideoType);
+
         if (this.isCurrentlyOnLarge(id)) {
             this.updateLargeVideo(id, true);
         }
@@ -793,10 +807,6 @@ var VideoLayout = {
         }
     },
 
-    addRemoteVideoContainer (id) {
-        return RemoteVideo.createContainer(id);
-    },
-
     /**
      * Resizes the video area.
      *
@@ -804,10 +814,11 @@ var VideoLayout = {
      * @param forceUpdate indicates that hidden thumbnails will be shown
      * @param completeFunction a function to be called when the video area is
      * resized.
-     */resizeVideoArea (isSideBarVisible,
-                        forceUpdate = false,
-                        animate = false,
-                        completeFunction = null) {
+     */
+    resizeVideoArea (isSideBarVisible,
+                    forceUpdate = false,
+                    animate = false,
+                    completeFunction = null) {
 
         if (largeVideo) {
             largeVideo.updateContainerSize(isSideBarVisible);
@@ -888,7 +899,15 @@ var VideoLayout = {
     },
 
     isLargeVideoVisible () {
-        return this.isLargeContainerTypeVisible(VideoContainerType);
+        return this.isLargeContainerTypeVisible(VIDEO_CONTAINER_TYPE);
+    },
+
+    /**
+     * @return {LargeContainer} the currently displayed container on large
+     * video.
+     */
+    getCurrentlyOnLargeContainer () {
+        return largeVideo.getContainer(largeVideo.state);
     },
 
     isCurrentlyOnLarge (id) {
@@ -903,7 +922,8 @@ var VideoLayout = {
         let currentId = largeVideo.id;
 
         if (!isOnLarge || forceUpdate) {
-            if (id !== currentId) {
+            let videoType = this.getRemoteVideoType(id);
+            if (id !== currentId && videoType === VIDEO_CONTAINER_TYPE) {
                 eventEmitter.emit(UIEvents.SELECTED_ENDPOINT, id);
             }
             if (currentId) {
@@ -912,7 +932,6 @@ var VideoLayout = {
 
             let smallVideo = this.getSmallVideo(id);
 
-            let videoType = this.getRemoteVideoType(id);
             largeVideo.updateLargeVideo(
                 id,
                 smallVideo.videoStream,
@@ -952,8 +971,27 @@ var VideoLayout = {
             return Promise.resolve();
         }
 
-        // if !show then use default type - large video
-        return largeVideo.showContainer(show ? type : VideoContainerType);
+        let currentId = largeVideo.id;
+        if(currentId) {
+            var oldSmallVideo = this.getSmallVideo(currentId);
+        }
+
+        let containerTypeToShow = type;
+        // if we are hiding a container and there is focusedVideo
+        // (pinned remote video) use its video type,
+        // if not then use default type - large video
+        if (!show) {
+            if(pinnedId)
+                containerTypeToShow = this.getRemoteVideoType(pinnedId);
+            else
+                containerTypeToShow = VIDEO_CONTAINER_TYPE;
+        }
+
+        return largeVideo.showContainer(containerTypeToShow)
+            .then(() => {
+                if(oldSmallVideo)
+                    oldSmallVideo && oldSmallVideo.updateView();
+            });
     },
 
     isLargeContainerTypeVisible (type) {
@@ -962,10 +1000,31 @@ var VideoLayout = {
 
     /**
      * Returns the id of the current video shown on large.
-     * Currently used by tests (troture).
+     * Currently used by tests (torture).
      */
     getLargeVideoID () {
         return largeVideo.id;
+    },
+
+    /**
+     * Returns the the current video shown on large.
+     * Currently used by tests (torture).
+     */
+    getLargeVideo () {
+        return largeVideo;
+    },
+
+    /**
+     * Updates the resolution label, indicating to the user that the large
+     * video stream is currently HD.
+     */
+    updateResolutionLabel(isResolutionHD) {
+        let videoResolutionLabel = $("#videoResolutionLabel");
+
+        if (isResolutionHD && !videoResolutionLabel.is(":visible"))
+            videoResolutionLabel.css({display: "block"});
+        else if (!isResolutionHD && videoResolutionLabel.is(":visible"))
+            videoResolutionLabel.css({display: "none"});
     }
 };
 

@@ -12,8 +12,8 @@ import PanelToggler from "./side_pannels/SidePanelToggler";
 import UIUtil from "./util/UIUtil";
 import UIEvents from "../../service/UI/UIEvents";
 import CQEvents from '../../service/connectionquality/CQEvents';
-import PreziManager from './prezi/Prezi';
 import EtherpadManager from './etherpad/Etherpad';
+import SharedVideoManager from './shared_video/SharedVideo';
 
 import VideoLayout from "./videolayout/VideoLayout";
 import FilmStrip from "./videolayout/FilmStrip";
@@ -27,11 +27,15 @@ var messageHandler = UI.messageHandler;
 var JitsiPopover = require("./util/JitsiPopover");
 var Feedback = require("./Feedback");
 
+import FollowMe from "../FollowMe";
+
 var eventEmitter = new EventEmitter();
 UI.eventEmitter = eventEmitter;
 
-let preziManager;
 let etherpadManager;
+let sharedVideoManager;
+
+let followMeHandler;
 
 /**
  * Prompt user for nickname.
@@ -96,7 +100,6 @@ function setupChat() {
  */
 function setupToolbars() {
     Toolbar.init(eventEmitter);
-    Toolbar.setupButtonsFromConfig();
     BottomToolbar.setupListeners(eventEmitter);
 }
 
@@ -230,6 +233,10 @@ UI.initConference = function () {
     // Add myself to the contact list.
     ContactList.addContact(id);
 
+    //update default button states before showing the toolbar
+    //if local role changes buttons state will be again updated
+    UI.updateLocalRole(false);
+
     // Once we've joined the muc show the toolbar
     ToolbarToggler.showToolbar();
 
@@ -246,6 +253,12 @@ UI.initConference = function () {
     if(!interfaceConfig.filmStripOnly) {
         Feedback.init();
     }
+
+    // FollowMe attempts to copy certain aspects of the moderator's UI into the
+    // other participants' UI. Consequently, it needs (1) read and write access
+    // to the UI (depending on the moderator role of the local participant) and
+    // (2) APP.conference as means of communication between the participants.
+    followMeHandler = new FollowMe(APP.conference, UI);
 };
 
 UI.mucJoined = function () {
@@ -256,13 +269,16 @@ UI.mucJoined = function () {
  * Setup some UI event listeners.
  */
 function registerListeners() {
-    UI.addListener(UIEvents.PREZI_CLICKED, function () {
-        preziManager.handlePreziButtonClicked();
-    });
 
     UI.addListener(UIEvents.ETHERPAD_CLICKED, function () {
         if (etherpadManager) {
             etherpadManager.toggleEtherpad();
+        }
+    });
+
+    UI.addListener(UIEvents.SHARED_VIDEO_CLICKED, function () {
+        if (sharedVideoManager) {
+            sharedVideoManager.toggleSharedVideo();
         }
     });
 
@@ -276,7 +292,15 @@ function registerListeners() {
 
     UI.addListener(UIEvents.TOGGLE_CONTACT_LIST, UI.toggleContactList);
 
-    UI.addListener(UIEvents.TOGGLE_FILM_STRIP, UI.toggleFilmStrip);
+    UI.addListener(UIEvents.TOGGLE_FILM_STRIP, function () {
+        UI.toggleFilmStrip();
+        VideoLayout.resizeVideoArea(PanelToggler.isVisible(), true, false);
+    });
+
+    UI.addListener(UIEvents.FOLLOW_ME_ENABLED, function (isEnabled) {
+        if (followMeHandler)
+            followMeHandler.enableFollowMe(isEnabled);
+    });
 }
 
 /**
@@ -326,7 +350,7 @@ UI.start = function () {
     registerListeners();
 
     BottomToolbar.init();
-    FilmStrip.init();
+    FilmStrip.init(eventEmitter);
 
     VideoLayout.init(eventEmitter);
     if (!interfaceConfig.filmStripOnly) {
@@ -337,7 +361,7 @@ UI.start = function () {
     ContactList.init(eventEmitter);
 
     bindEvents();
-    preziManager = new PreziManager(eventEmitter);
+    sharedVideoManager = new SharedVideoManager(eventEmitter);
     if (!interfaceConfig.filmStripOnly) {
 
         $("#videospace").mousemove(function () {
@@ -465,8 +489,17 @@ UI.initEtherpad = function (name) {
         return;
     }
     console.log('Etherpad is enabled');
-    etherpadManager = new EtherpadManager(config.etherpad_base, name);
+    etherpadManager
+        = new EtherpadManager(config.etherpad_base, name, eventEmitter);
     Toolbar.showEtherpadButton();
+};
+
+/**
+ * Returns the shared document manager object.
+ * @return {EtherpadManager} the shared document manager object
+ */
+UI.getSharedDocumentManager = function () {
+    return etherpadManager;
 };
 
 /**
@@ -485,11 +518,11 @@ UI.addUser = function (id, displayName) {
         config.startAudioMuted > APP.conference.membersCount)
         UIUtil.playSoundNotification('userJoined');
 
-    // Configure avatar
-    UI.setUserAvatar(id);
-
     // Add Peer's container
     VideoLayout.addParticipantContainer(id);
+
+    // Configure avatar
+    UI.setUserAvatar(id);
 };
 
 /**
@@ -534,7 +567,9 @@ UI.updateLocalRole = function (isModerator) {
 
     Toolbar.showSipCallButton(isModerator);
     Toolbar.showRecordingButton(isModerator);
+    Toolbar.showSharedVideoButton(isModerator);
     SettingsMenu.showStartMutedOptions(isModerator);
+    SettingsMenu.showFollowMeOptions(isModerator);
 
     if (isModerator) {
         messageHandler.notify(null, "notify.me", 'connected', "notify.moderator");
@@ -583,7 +618,8 @@ UI.toggleSmileys = function () {
  * Toggles film strip.
  */
 UI.toggleFilmStrip = function () {
-    FilmStrip.toggleFilmStrip();
+    var self = FilmStrip;
+    self.toggleFilmStrip.apply(self, arguments);
 };
 
 /**
@@ -671,8 +707,24 @@ UI.setVideoMuted = function (id, muted) {
     }
 };
 
+/**
+ * Adds a listener that would be notified on the given type of event.
+ *
+ * @param type the type of the event we're listening for
+ * @param listener a function that would be called when notified
+ */
 UI.addListener = function (type, listener) {
     eventEmitter.on(type, listener);
+};
+
+/**
+ * Removes the given listener for the given type of event.
+ *
+ * @param type the type of the event we're listening for
+ * @param listener the listener we want to remove
+ */
+UI.removeListener = function (type, listener) {
+    eventEmitter.removeListener(type, listener);
 };
 
 UI.clickOnVideo = function (videoNumber) {
@@ -726,6 +778,22 @@ UI.notifyConnectionFailed = function (stropheErrorMsg) {
         message = APP.translation.generateTranslationHTML(
             "dialog.connectError");
     }
+
+    messageHandler.openDialog(
+        title, message, true, {}, function (e, v, m, f) { return false; }
+    );
+};
+
+
+/**
+ * Notify user that maximum users limit has been reached.
+ */
+UI.notifyMaxUsersLimitReached = function () {
+    var title = APP.translation.generateTranslationHTML(
+        "dialog.error");
+
+    var message = APP.translation.generateTranslationHTML(
+            "dialog.maxUsersLimitReached");
 
     messageHandler.openDialog(
         title, message, true, {}, function (e, v, m, f) { return false; }
@@ -998,26 +1066,6 @@ UI.updateAuthInfo = function (isAuthEnabled, login) {
     }
 };
 
-/**
- * Show Prezi from the user.
- * @param {string} userId user id
- * @param {string} url Prezi url
- * @param {number} slide slide to show
- */
-UI.showPrezi = function (userId, url, slide) {
-    preziManager.showPrezi(userId, url, slide);
-};
-
-/**
- * Stop showing Prezi from the user.
- * @param {string} userId user id
- */
-UI.stopPrezi = function (userId) {
-  if (preziManager.isSharing(userId)) {
-      preziManager.removePrezi(userId);
-  }
-};
-
 UI.onStartMutedChanged = function (startAudioMuted, startVideoMuted) {
     SettingsMenu.updateStartMutedBox(startAudioMuted, startVideoMuted);
 };
@@ -1039,6 +1087,14 @@ UI.getLargeVideoID = function () {
 };
 
 /**
+ * Returns the current video shown on large.
+ * Currently used by tests (torture).
+ */
+UI.getLargeVideo = function () {
+    return VideoLayout.getLargeVideo();
+};
+
+/**
  * Shows dialog with a link to FF extension.
  */
 UI.showExtensionRequiredDialog = function (url) {
@@ -1052,6 +1108,38 @@ UI.showExtensionRequiredDialog = function (url) {
 
 UI.updateDevicesAvailability = function (id, devices) {
     VideoLayout.setDeviceAvailabilityIcons(id, devices);
+};
+
+/**
+ * Show shared video.
+ * @param {string} id the id of the sender of the command
+ * @param {string} url video url
+ * @param {string} attributes
+*/
+UI.showSharedVideo = function (id, url, attributes) {
+    if (sharedVideoManager)
+        sharedVideoManager.showSharedVideo(id, url, attributes);
+};
+
+/**
+ * Update shared video.
+ * @param {string} id the id of the sender of the command
+ * @param {string} url video url
+ * @param {string} attributes
+ */
+UI.updateSharedVideo = function (id, url, attributes) {
+    if (sharedVideoManager)
+        sharedVideoManager.updateSharedVideo(id, url, attributes);
+};
+
+/**
+ * Stop showing shared video.
+ * @param {string} id the id of the sender of the command
+ * @param {string} attributes
+ */
+UI.stopSharedVideo = function (id, attributes) {
+    if (sharedVideoManager)
+        sharedVideoManager.stopSharedVideo(id);
 };
 
 module.exports = UI;

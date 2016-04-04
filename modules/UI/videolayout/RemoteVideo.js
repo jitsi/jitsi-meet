@@ -11,14 +11,13 @@ function RemoteVideo(id, VideoLayout, emitter) {
     this.id = id;
     this.emitter = emitter;
     this.videoSpanId = `participant_${id}`;
-    this.VideoLayout = VideoLayout;
+    SmallVideo.call(this, VideoLayout);
     this.addRemoteVideoContainer();
     this.connectionIndicator = new ConnectionIndicator(this, id);
     this.setDisplayName();
     this.bindHoverHandler();
     this.flipX = false;
     this.isLocal = false;
-    SmallVideo.call(this);
 }
 
 RemoteVideo.prototype = Object.create(SmallVideo.prototype);
@@ -157,8 +156,10 @@ RemoteVideo.prototype.removeRemoteStreamElement = function (stream) {
     console.info((isVideo ? "Video" : "Audio") +
                  " removed " + this.id, select);
 
-    if (isVideo)
-        this.VideoLayout.updateRemovedVideo(this.id);
+    // when removing only the video element and we are on stage
+    // update the stage
+    if (isVideo && this.VideoLayout.isCurrentlyOnLarge(this.id))
+        this.VideoLayout.updateLargeVideo(this.id);
 };
 
 /**
@@ -169,7 +170,7 @@ RemoteVideo.prototype.remove = function () {
     this.removeConnectionIndicator();
     // Make sure that the large video is updated if are removing its
     // corresponding small video.
-    this.VideoLayout.updateRemovedVideo(this.id);
+    this.VideoLayout.updateAfterThumbRemoved(this.id);
     // Remove whole container
     if (this.container.parentNode) {
         this.container.parentNode.removeChild(this.container);
@@ -221,7 +222,7 @@ RemoteVideo.prototype.addRemoteStreamElement = function (stream) {
 
         // ignore click if it was done in popup menu
         if ($(source).parents('.popupmenu').length === 0) {
-            this.VideoLayout.handleVideoThumbClicked(false, this.id);
+            this.VideoLayout.handleVideoThumbClicked(this.id);
         }
 
         // On IE we need to populate this handler on video <object>

@@ -13,7 +13,6 @@ function LocalVideo(VideoLayout, emitter) {
     this.videoSpanId = "localVideoContainer";
     this.container = $("#localVideoContainer").get(0);
     this.bindHoverHandler();
-    this.VideoLayout = VideoLayout;
     this.flipX = true;
     this.isLocal = true;
     this.emitter = emitter;
@@ -22,7 +21,7 @@ function LocalVideo(VideoLayout, emitter) {
             return APP.conference.localId;
         }
     });
-    SmallVideo.call(this);
+    SmallVideo.call(this, VideoLayout);
 }
 
 LocalVideo.prototype = Object.create(SmallVideo.prototype);
@@ -159,7 +158,7 @@ LocalVideo.prototype.changeVideo = function (stream) {
         if (event.stopPropagation) {
             event.stopPropagation();
         }
-        this.VideoLayout.handleVideoThumbClicked(true, this.id);
+        this.VideoLayout.handleVideoThumbClicked(this.id);
     };
 
     let localVideoContainerSelector = $('#localVideoContainer');
@@ -192,7 +191,10 @@ LocalVideo.prototype.changeVideo = function (stream) {
 
     let endedHandler = () => {
         localVideoContainer.removeChild(localVideo);
-        this.VideoLayout.updateRemovedVideo(this.id);
+        // when removing only the video element and we are on stage
+        // update the stage
+        if(this.VideoLayout.isCurrentlyOnLarge(this.id))
+            this.VideoLayout.updateLargeVideo(this.id);
         stream.off(TrackEvents.LOCAL_TRACK_STOPPED, endedHandler);
     };
     stream.on(TrackEvents.LOCAL_TRACK_STOPPED, endedHandler);

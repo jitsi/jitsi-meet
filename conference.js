@@ -28,9 +28,10 @@ const Commands = {
     CONNECTION_QUALITY: "stats",
     EMAIL: "email",
     ETHERPAD: "etherpad",
-    PREZI: "prezi",
-    STOP_PREZI: "stop-prezi"
+    SHARED_VIDEO: "shared-video"
 };
+
+import {VIDEO_CONTAINER_TYPE} from "./modules/UI/videolayout/LargeVideo";
 
 /**
  * Open Connection. When authentication failed it shows auth dialog.
@@ -258,6 +259,10 @@ class ConferenceConnector {
             APP.UI.notifyFocusLeft();
             break;
 
+        case ConferenceErrors.CONFERENCE_MAX_USERS:
+            connection.disconnect();
+            APP.UI.notifyMaxUsersLimitReached();
+            break;
         default:
             this._handleConferenceFailed(err, ...params);
         }
@@ -398,6 +403,15 @@ export default {
         return room.getParticipants().map(p => p.getId());
     },
     /**
+     * Checks whether the participant identified by id is a moderator.
+     * @id id to search for participant
+     * @return {boolean} whether the participant is moderator
+     */
+    isParticipantModerator (id) {
+        let user = room.getParticipantById(id);
+        return user && user.isModerator();
+    },
+    /**
      * Check if SIP is supported.
      * @returns {boolean}
      */
@@ -506,6 +520,51 @@ export default {
 
         this._setupListeners();
     },
+
+    /**
+     * Exposes a Command(s) API on this instance. It is necessitated by (1) the
+     * desire to keep room private to this instance and (2) the need of other
+     * modules to send and receive commands to and from participants.
+     * Eventually, this instance remains in control with respect to the
+     * decision whether the Command(s) API of room (i.e. lib-jitsi-meet's
+     * JitsiConference) is to be used in the implementation of the Command(s)
+     * API of this instance.
+     */
+    commands: {
+        /**
+         * Receives notifications from other participants about commands aka
+         * custom events (sent by sendCommand or sendCommandOnce methods).
+         * @param command {String} the name of the command
+         * @param handler {Function} handler for the command
+         */
+        addCommandListener () {
+            room.addCommandListener.apply(room, arguments);
+        },
+        /**
+         * Removes command.
+         * @param name {String} the name of the command.
+         */
+        removeCommand () {
+            room.removeCommand.apply(room, arguments);
+        },
+        /**
+         * Sends command.
+         * @param name {String} the name of the command.
+         * @param values {Object} with keys and values that will be sent.
+         */
+        sendCommand () {
+            room.sendCommand.apply(room, arguments);
+        },
+        /**
+         * Sends command one time.
+         * @param name {String} the name of the command.
+         * @param values {Object} with keys and values that will be sent.
+         */
+        sendCommandOnce () {
+            room.sendCommandOnce.apply(room, arguments);
+        },
+    },
+
     _getConferenceOptions() {
         let options = config;
         if(config.enableRecording) {
@@ -687,7 +746,7 @@ export default {
             console.log('USER %s LEFT', id, user);
             APP.API.notifyUserLeft(id);
             APP.UI.removeUser(id, user.getDisplayName());
-            APP.UI.stopPrezi(id);
+            APP.UI.stopSharedVideo(id);
         });
 
 
@@ -866,35 +925,6 @@ export default {
             APP.UI.initEtherpad(value);
         });
 
-        room.addCommandListener(Commands.PREZI, ({value, attributes}) => {
-            APP.UI.showPrezi(attributes.id, value, attributes.slide);
-        });
-
-        room.addCommandListener(Commands.STOP_PREZI, ({attributes}) => {
-            APP.UI.stopPrezi(attributes.id);
-        });
-
-        APP.UI.addListener(UIEvents.SHARE_PREZI, (url, slide) => {
-            console.log('Sharing Prezi %s slide %s', url, slide);
-            room.removeCommand(Commands.PREZI);
-            room.sendCommand(Commands.PREZI, {
-                value: url,
-                attributes: {
-                    id: room.myUserId(),
-                    slide
-                }
-            });
-        });
-
-        APP.UI.addListener(UIEvents.STOP_SHARING_PREZI, () => {
-            room.removeCommand(Commands.PREZI);
-            room.sendCommandOnce(Commands.STOP_PREZI, {
-                attributes: {
-                    id: room.myUserId()
-                }
-            });
-        });
-
         APP.UI.addListener(UIEvents.EMAIL_CHANGED, (email = '') => {
             email = email.trim();
 
@@ -1011,8 +1041,20 @@ export default {
         APP.UI.addListener(UIEvents.SELECTED_ENDPOINT, (id) => {
             room.selectParticipant(id);
         });
-        APP.UI.addListener(UIEvents.PINNED_ENDPOINT, (id) => {
-            room.pinParticipant(id);
+
+        APP.UI.addListener(UIEvents.PINNED_ENDPOINT, (smallVideo, isPinned) => {
+            var smallVideoId = smallVideo.getId();
+
+            if (smallVideo.getVideoType() === VIDEO_CONTAINER_TYPE
+                && !APP.conference.isLocalId(smallVideoId))
+                if (isPinned)
+                    room.pinParticipant(smallVideoId);
+                // When the library starts supporting multiple pins we would
+                // pass the isPinned parameter together with the identifier,
+                // but currently we send null to indicate that we unpin the
+                // last pinned.
+                else
+                    room.pinParticipant(null);
         });
 
         APP.UI.addListener(
@@ -1040,5 +1082,47 @@ export default {
         APP.UI.addListener(
             UIEvents.TOGGLE_SCREENSHARING, this.toggleScreenSharing.bind(this)
         );
+
+        APP.UI.addListener(UIEvents.UPDATE_SHARED_VIDEO,
+            (url, state, time, volume) => {
+            // send start and stop commands once, and remove any updates
+            // that had left
+            if (state === 'stop' || state === 'start' || state === 'playing') {
+                room.removeCommand(Commands.SHARED_VIDEO);
+                room.sendCommandOnce(Commands.SHARED_VIDEO, {
+                    value: url,
+                    attributes: {
+                        state: state,
+                        time: time,
+                        volume: volume
+                    }
+                });
+            }
+            else {
+                // in case of paused, in order to allow late users to join
+                // paused
+                room.removeCommand(Commands.SHARED_VIDEO);
+                room.sendCommand(Commands.SHARED_VIDEO, {
+                    value: url,
+                    attributes: {
+                        state: state,
+                        time: time,
+                        volume: volume
+                    }
+                });
+            }
+        });
+        room.addCommandListener(
+            Commands.SHARED_VIDEO, ({value, attributes}, id) => {
+
+                if (attributes.state === 'stop') {
+                    APP.UI.stopSharedVideo(id);
+                } else if (attributes.state === 'start') {
+                    APP.UI.showSharedVideo(id, value, attributes);
+                } else if (attributes.state === 'playing'
+                    || attributes.state === 'pause') {
+                    APP.UI.updateSharedVideo(id, value, attributes);
+                }
+            });
     }
 };

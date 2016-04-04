@@ -70,4 +70,5 @@ var config = {
     'During that time service will not be available. ' +
     'Apologise for inconvenience.',*/
     disableThirdPartyRequests: false,
+    minHDHeight: 540
 };

@@ -3,6 +3,7 @@
 import VideoLayout from "../videolayout/VideoLayout";
 import LargeContainer from '../videolayout/LargeContainer';
 import UIUtil from "../util/UIUtil";
+import UIEvents from "../../../service/UI/UIEvents";
 import SidePanelToggler from "../side_pannels/SidePanelToggler";
 import FilmStrip from '../videolayout/FilmStrip';
 
@@ -52,12 +53,13 @@ const DEFAULT_WIDTH = 640;
  */
 const DEFAULT_HEIGHT = 480;
 
-const EtherpadContainerType = "etherpad";
+const ETHERPAD_CONTAINER_TYPE = "etherpad";
 
 /**
  * Container for Etherpad iframe.
  */
 class Etherpad extends LargeContainer {
+
     constructor (domain, name) {
         super();
 
@@ -110,9 +112,11 @@ class Etherpad extends LargeContainer {
     show () {
         const $iframe = $(this.iframe);
         const $container = $(this.container);
+        let self = this;
 
         return new Promise(resolve => {
             $iframe.fadeIn(300, function () {
+                self.bodyBackground = document.body.style.background;
                 document.body.style.background = '#eeeeee';
                 $iframe.css({visibility: 'visible'});
                 $container.css({zIndex: 2});
@@ -124,6 +128,7 @@ class Etherpad extends LargeContainer {
     hide () {
         const $iframe = $(this.iframe);
         const $container = $(this.container);
+        document.body.style.background = this.bodyBackground;
 
         return new Promise(resolve => {
             $iframe.fadeOut(300, function () {
@@ -133,24 +138,36 @@ class Etherpad extends LargeContainer {
             });
         });
     }
+
+    /**
+     * @return {boolean} do not switch on dominant speaker event if on stage.
+     */
+    stayOnStage () {
+        return true;
+    }
 }
 
 /**
  * Manager of the Etherpad frame.
  */
 export default class EtherpadManager {
-    constructor (domain, name) {
+    constructor (domain, name, eventEmitter) {
         if (!domain || !name) {
             throw new Error("missing domain or name");
         }
 
         this.domain = domain;
         this.name = name;
+        this.eventEmitter = eventEmitter;
         this.etherpad = null;
     }
 
     get isOpen () {
         return !!this.etherpad;
+    }
+
+    isVisible() {
+        return VideoLayout.isLargeContainerTypeVisible(ETHERPAD_CONTAINER_TYPE);
     }
 
     /**
@@ -159,7 +176,7 @@ export default class EtherpadManager {
     openEtherpad () {
         this.etherpad = new Etherpad(this.domain, this.name);
         VideoLayout.addLargeVideoContainer(
-            EtherpadContainerType,
+            ETHERPAD_CONTAINER_TYPE,
             this.etherpad
         );
     }
@@ -173,10 +190,12 @@ export default class EtherpadManager {
             this.openEtherpad();
         }
 
-        let isVisible = VideoLayout.isLargeContainerTypeVisible(
-            EtherpadContainerType
-        );
+        let isVisible = this.isVisible();
 
-        VideoLayout.showLargeVideoContainer(EtherpadContainerType, !isVisible);
+        VideoLayout.showLargeVideoContainer(
+            ETHERPAD_CONTAINER_TYPE, !isVisible);
+
+        this.eventEmitter
+            .emit(UIEvents.TOGGLED_SHARED_DOCUMENT, !isVisible);
     }
 }

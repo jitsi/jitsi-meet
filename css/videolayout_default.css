@@ -21,6 +21,7 @@
     width: auto;
     height: auto !important;
     z-index: 5;
+    font-size: 0pt; /*!!!Removes the gap between the local video container and the remote videos.*/
 }
 
 #remoteVideos.hidden {
@@ -30,18 +31,21 @@
 
 .videocontainer {
     position: relative;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
 }
 
 #remoteVideos .videocontainer {
     display: none;
     background-color: black;
     background-size: contain;
-    border-radius:8px;
-    border: 2px solid #212425;
-    margin-right: 3px;
+    border-radius:1px;
+    border: 1px solid #212425;
+    /*margin-right: 1px;*/
 }
 
-#remoteVideos .videocontainer:hover,
+/*#remoteVideos .videocontainer:hover,*/
 #remoteVideos .videocontainer.videoContainerFocused {
     cursor: hand;
     /* transform:scale(1.08, 1.08);
@@ -55,25 +59,21 @@
 }
 
 #remoteVideos .videocontainer:hover {
-    box-shadow:  inset 0 0 10px #FFFFFF, 0 0 10px #FFFFFF;
-    border: 2px solid #FFFFFF;
+    border: 1px solid #c1c1c1;
 }
 
 #remoteVideos .videocontainer.videoContainerFocused {
     box-shadow: inset 0 0 28px #006d91;
-    border: 2px solid #006d91;
+    border: 1px solid #006d91;
 }
 
 #remoteVideos .videocontainer.videoContainerFocused:hover {
-    box-shadow: inset 0 0 5px #FFFFFF, 0 0 10px #FFFFFF, inset 0 0 60px #006d91;
-    border: 2px solid #FFFFFF;
+    box-shadow: inset 0 0 5px #c1c1c1, 0 0 10px #c1c1c1, inset 0 0 60px #006d91;
+    border: 1px solid #c1c1c1;
 }
 
 #localVideoWrapper {
     display:inline-block;
-    -webkit-mask-box-image: url(../images/videomask.svg);
-    border-radius:4px !important;
-    border: 0px !important;
 }
 
 /* With TemasysWebRTC plugin <object/> element is used
@@ -81,7 +81,8 @@
 #remoteVideos .videocontainer>video,
 #remoteVideos .videocontainer>object {
     cursor: hand;
-    border-radius:4px;
+    border-radius:1px;
+    object-fit: cover;
 }
 
 .flipVideoX {
@@ -94,7 +95,8 @@
 #localVideoWrapper>video,
 #localVideoWrapper>object {
     cursor: hand;
-    border-radius:4px !important;
+    border-radius:1px !important;
+    object-fit: cover;
 }
 
 #largeVideo,
@@ -111,6 +113,7 @@
 }
 
 #presentation,
+#sharedVideo,
 #etherpad,
 #localVideoWrapper>video,
 #localVideoWrapper>object,
@@ -173,7 +176,7 @@
     overflow: hidden;
     white-space: nowrap;
     z-index: 2;
-    border-radius:20px;
+    border-radius:3px;
 }
 
 .videocontainer>span.status {
@@ -192,7 +195,7 @@
     overflow: hidden;
     white-space: nowrap;
     z-index: 2;
-    border-radius:20px;
+    border-radius:3px;
 }
 
 .connectionindicator
@@ -390,14 +393,14 @@
     display: inline-block;
     position: absolute;
     z-index: 0;
-    border-radius:10px;
+    border-radius:1px;
     pointer-events: none;
 }
 
 #dominantSpeaker {
     visibility: hidden;
-    width: 150px;
-    height: 150px;
+    width: 300px;
+    height: 300px;
     margin: auto;
     overflow: hidden;
     position: relative;
@@ -416,21 +419,28 @@
 }
 
 #dominantSpeakerAvatar {
-    width: 100px;
-    height: 100px;
-    top: 25px;
+    width: 200px;
+    height: 200px;
+    top: 50px;
     margin: auto;
     position: relative;
-    border-radius: 50px;
+    border-radius: 100px;
     z-index: 3;
     visibility: inherit;
+    background-color: #000000;
 }
 
 .userAvatar {
     height: 100%;
     position: absolute;
-    left: 35px;
-    border-radius: 200px;
+    left: 0;
+    border-radius: 2px;
+}
+
+.sharedVideoAvatar {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
 }
 
 .noMic {
@@ -482,4 +492,15 @@
                     0px 1px 1px rgba(0,0,0,0.3),
                     1px 0px 1px rgba(0,0,0,0.3),
                     0px 0px 1px rgba(0,0,0,0.3);
+}
+
+#videoResolutionLabel {
+    display: none;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: rgba(0,0,0,.5);
+    padding: 10px;
+    color: rgba(255,255,255,.5);
+    z-index: 10000;
 }
