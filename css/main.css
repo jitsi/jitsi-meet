@@ -111,19 +111,6 @@ html, body{
     color: #00ccff;
 }
 
-#toolbar {
-    display:inline-block;
-    position:relative;
-    top:5px;
-    margin-left:auto;
-    margin-right:auto;
-    height:38px;
-    width:auto;
-    background-color: rgba(0,0,0,0.5);
-    border-radius: 1px;
-    pointer-events: auto;
-}
-
 #toolbar_button_record {
     -webkit-transition: all .5s ease-in-out;
     -moz-transition: all .5s ease-in-out;
