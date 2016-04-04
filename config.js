@@ -54,7 +54,7 @@ var config = {
     disableAudioLevels: false,
     channelLastN: -1, // The default value of the channel attribute last-n.
     adaptiveLastN: false,
-    adaptiveSimulcast: false,
+    //disableAdaptiveSimulcast: false,
     enableRecording: false,
     enableWelcomePage: true,
     disableSimulcast: false,
