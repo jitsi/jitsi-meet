@@ -1,5 +1,6 @@
 /*Initialize*/
 ul.loginmenu {
+    font-family:'Helvetica Neue', Helvetica, sans-serif;
     display:none;
     position: absolute;
     margin: 0;
@@ -15,12 +16,10 @@ ul.loginmenu {
 ul.loginmenu li {
     list-style-type: none;
     padding: 7px;
-}
-
-ul.loginmenu li.identity {
     color: #fff;
     font-size: 11pt;
     cursor: default;
+    white-space: pre;
 }
 
 ul.loginmenu:after {
@@ -38,8 +37,6 @@ li a.authButton{
     padding-left: 29px;
     padding-right: 29px;
     border-radius: 4px;
-    color: #fff;
-    font-size: 11pt;
     cursor: pointer;
 }
 

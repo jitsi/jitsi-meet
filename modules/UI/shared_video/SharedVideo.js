@@ -171,7 +171,7 @@ export default class SharedVideoManager {
             if(event.data.volume > 0 && !event.data.muted
                 && !APP.conference.isLocalAudioMuted()){
                 self.emitter.emit(UIEvents.AUDIO_MUTED, true);
-                self.notifyUserComfortableMicMute(true);
+                self.showMicMutedPopup(true);
             }
         };
 
@@ -236,7 +236,7 @@ export default class SharedVideoManager {
                 && APP.conference.isLocalAudioMuted()) {
                 player.setVolume(attributes.volume);
                 console.info("Player change of volume:" + attributes.volume);
-                this.notifyUserComfortableVideoMute(false);
+                this.showSharedVideoMutedPopup(false);
             }
 
             if(playerPaused)
@@ -363,6 +363,8 @@ export default class SharedVideoManager {
             this.localAudioMutedListener);
         this.localAudioMutedListener = null;
 
+        this.showSharedVideoMutedPopup(false);
+
         VideoLayout.removeParticipantContainer(this.url);
 
         VideoLayout.showLargeVideoContainer(SHARED_VIDEO_CONTAINER_TYPE, false)
@@ -403,35 +405,73 @@ export default class SharedVideoManager {
         // to not pollute the conference
         if(this.player.getVolume() > 0 || !this.player.isMuted()){
             this.player.setVolume(0);
-            this.notifyUserComfortableVideoMute(true);
+            this.showSharedVideoMutedPopup(true);
         }
     }
 
     /**
-     * Notifies user for muting its audio due to video is unmuted.
+     * Shows a popup under the microphone toolbar icon that notifies the user
+     * of automatic mute after a shared video has started.
      * @param show boolean, show or hide the notification
      */
-    notifyUserComfortableMicMute (show) {
+    showMicMutedPopup (show) {
+        var micMutedPopupSelector = $("#micMutedPopup");
         if(show) {
-            this.notifyUserComfortableVideoMute(false);
-            console.log("Your audio was muted to enjoy the video");
+            this.showSharedVideoMutedPopup(false);
+
+            if (!micMutedPopupSelector.is(":visible"))
+                micMutedPopupSelector.css("display", "inline-block");
+
+            // FIXME: we need an utility method for that.
+            micMutedPopupSelector.fadeIn(300,
+                () => {micMutedPopupSelector.css({opacity: 1});}
+            );
+
+            setTimeout(
+                function () {
+                    micMutedPopupSelector.fadeOut(300,
+                        () => {micMutedPopupSelector.css({opacity: 0});}
+                    );
+                }, 5000);
         }
-        else
-            console.log("Hide notification local audio muted");
+        else {
+            micMutedPopupSelector.fadeOut(300,
+                () => {micMutedPopupSelector.css({opacity: 0});}
+            );
+        }
     }
 
     /**
-     * Notifies user for muting the video due to audio is unmuted.
+     * Shows a popup under the shared video toolbar icon that notifies the user
+     * of automatic mute of the shared video after the user has unmuted their
+     * mic.
      * @param show boolean, show or hide the notification
      */
-    notifyUserComfortableVideoMute (show) {
+    showSharedVideoMutedPopup (show) {
+        var sharedVideoMutedPopupSelector = $("#sharedVideoMutedPopup");
         if(show) {
-            this.notifyUserComfortableMicMute(false);
-            console.log(
-                "Your shared video was muted in order to speak freely!");
+            this.showMicMutedPopup(false);
+
+            if (!sharedVideoMutedPopupSelector.is(":visible"))
+                sharedVideoMutedPopupSelector.css("display", "inline-block");
+
+            // FIXME: we need an utility method for that.
+            sharedVideoMutedPopupSelector.fadeIn(300,
+                () => {sharedVideoMutedPopupSelector.css({opacity: 1});}
+            );
+
+            setTimeout(
+                function () {
+                    sharedVideoMutedPopupSelector.fadeOut(300,
+                        () => {sharedVideoMutedPopupSelector.css({opacity: 0});}
+                    );
+                }, 5000);
         }
-        else
-            console.log("Hide notification share video muted");
+        else {
+            sharedVideoMutedPopupSelector.fadeOut(300,
+                () => {sharedVideoMutedPopupSelector.css({opacity: 0});}
+            );
+        }
     }
 }
 
