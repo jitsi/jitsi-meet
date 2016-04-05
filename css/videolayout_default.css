@@ -357,6 +357,7 @@
     right:0;
     z-index:10;
     pointer-events: none;
+    min-height: 100px;
 }
 
 #subject {
