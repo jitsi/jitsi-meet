@@ -38,13 +38,18 @@ function toggle (object, selector, onOpenComplete,
             queue: false,
             duration: 500
         });
+
         $(selector).hide("slide", {
             direction: "right",
             queue: false,
-            duration: 500
+            duration: 500,
+            // Set the size to 0 at the end of the animation to ensure that
+            // the is(":visible") function on this selector will return {false}
+            // when the element is hidden.
+            complete: function() {$(selector).css("width", "0");}
         });
 
-        resizeVideoArea(isSideBarVisible, onVideoResizeComplete);
+        resizeVideoArea(false, onVideoResizeComplete);
 
         if(typeof onClose === "function") {
             onClose();
@@ -52,7 +57,7 @@ function toggle (object, selector, onOpenComplete,
 
         currentlyOpen = null;
     } else {
-        resizeVideoArea(isSideBarVisible, onVideoResizeComplete);
+        resizeVideoArea(true, onVideoResizeComplete);
 
         // Undock the toolbar when the chat is shown and if we're in a
         // video mode.
@@ -76,6 +81,12 @@ function toggle (object, selector, onOpenComplete,
             queue: false,
             duration: 500
         });
+        // Set the size dynamically (not in the css), so that we're sure that
+        // when is(":visible") is called on this selector the result is {false}
+        // before it's actually visible.
+        // (Chrome seems to return {true} for an element which is in the DOM and
+        // has non-null size set).
+        $(selector).css("width", "20%");
         $(selector).show("slide", {
             direction: "right",
             queue: false,
@@ -91,9 +102,9 @@ function toggle (object, selector, onOpenComplete,
 }
 
 function resizeVideoArea(isSidePanelVisible, completeFunction) {
-    VideoLayout.resizeVideoArea(!isSidePanelVisible,
-        false,
-        false,
+    VideoLayout.resizeVideoArea(isSidePanelVisible,
+        false,//don't force thumbnail count update
+        true, //animate
         completeFunction);
 }
 
