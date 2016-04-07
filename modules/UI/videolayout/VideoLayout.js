@@ -197,6 +197,25 @@ var VideoLayout = {
     },
 
     /**
+     * Enables/disables device availability icons for the given participant id.
+     * The default value is {true}.
+     * @param id the identifier of the participant
+     * @param enable {true} to enable device availability icons
+     */
+    enableDeviceAvailabilityIcons (id, enable) {
+        let video;
+        if (APP.conference.isLocalId(id)) {
+            video = localVideoThumbnail;
+        }
+        else if (remoteVideos[id]) {
+            video = remoteVideos[id];
+        }
+
+        if (video)
+            video.enableDeviceAvailabilityIcons(enable);
+    },
+
+    /**
      * Checks if removed video is currently displayed and tries to display
      * another one instead.
      * Uses focusedID if any or dominantSpeakerID if any,

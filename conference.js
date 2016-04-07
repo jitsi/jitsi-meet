@@ -21,16 +21,6 @@ const TrackErrors = JitsiMeetJS.errors.track;
 
 let room, connection, localAudio, localVideo, roomLocker;
 
-/**
- * Known custom conference commands.
- */
-const Commands = {
-    CONNECTION_QUALITY: "stats",
-    EMAIL: "email",
-    ETHERPAD: "etherpad",
-    SHARED_VIDEO: "shared-video"
-};
-
 import {VIDEO_CONTAINER_TYPE} from "./modules/UI/videolayout/LargeVideo";
 
 /**
@@ -52,10 +42,11 @@ function connect(roomName) {
 
 /**
  * Share email with other users.
+ * @param emailCommand the email command
  * @param {string} email new email
  */
-function sendEmail (email) {
-    room.sendCommand(Commands.EMAIL, {
+function sendEmail (emailCommand, email) {
+    room.sendCommand(emailCommand, {
         value: email,
         attributes: {
             id: room.myUserId()
@@ -494,6 +485,61 @@ export default {
     getLogs () {
         return room.getLogs();
     },
+
+    /**
+     * Exposes a Command(s) API on this instance. It is necessitated by (1) the
+     * desire to keep room private to this instance and (2) the need of other
+     * modules to send and receive commands to and from participants.
+     * Eventually, this instance remains in control with respect to the
+     * decision whether the Command(s) API of room (i.e. lib-jitsi-meet's
+     * JitsiConference) is to be used in the implementation of the Command(s)
+     * API of this instance.
+     */
+    commands: {
+        /**
+         * Known custom conference commands.
+         */
+        defaults: {
+            CONNECTION_QUALITY: "stats",
+            EMAIL: "email",
+            ETHERPAD: "etherpad",
+            SHARED_VIDEO: "shared-video",
+            CUSTOM_ROLE: "custom-role"
+        },
+        /**
+         * Receives notifications from other participants about commands aka
+         * custom events (sent by sendCommand or sendCommandOnce methods).
+         * @param command {String} the name of the command
+         * @param handler {Function} handler for the command
+         */
+            addCommandListener () {
+            room.addCommandListener.apply(room, arguments);
+        },
+        /**
+         * Removes command.
+         * @param name {String} the name of the command.
+         */
+            removeCommand () {
+            room.removeCommand.apply(room, arguments);
+        },
+        /**
+         * Sends command.
+         * @param name {String} the name of the command.
+         * @param values {Object} with keys and values that will be sent.
+         */
+            sendCommand () {
+            room.sendCommand.apply(room, arguments);
+        },
+        /**
+         * Sends command one time.
+         * @param name {String} the name of the command.
+         * @param values {Object} with keys and values that will be sent.
+         */
+            sendCommandOnce () {
+            room.sendCommandOnce.apply(room, arguments);
+        }
+    },
+
     _createRoom (localTracks) {
         room = connection.initJitsiConference(APP.conference.roomName,
             this._getConferenceOptions());
@@ -509,7 +555,7 @@ export default {
         this._room = room; // FIXME do not use this
 
         let email = APP.settings.getEmail();
-        email && sendEmail(email);
+        email && sendEmail(this.commands.defaults.EMAIL, email);
 
         let nick = APP.settings.getDisplayName();
         if (config.useNicks && !nick) {
@@ -519,50 +565,6 @@ export default {
         nick && room.setDisplayName(nick);
 
         this._setupListeners();
-    },
-
-    /**
-     * Exposes a Command(s) API on this instance. It is necessitated by (1) the
-     * desire to keep room private to this instance and (2) the need of other
-     * modules to send and receive commands to and from participants.
-     * Eventually, this instance remains in control with respect to the
-     * decision whether the Command(s) API of room (i.e. lib-jitsi-meet's
-     * JitsiConference) is to be used in the implementation of the Command(s)
-     * API of this instance.
-     */
-    commands: {
-        /**
-         * Receives notifications from other participants about commands aka
-         * custom events (sent by sendCommand or sendCommandOnce methods).
-         * @param command {String} the name of the command
-         * @param handler {Function} handler for the command
-         */
-        addCommandListener () {
-            room.addCommandListener.apply(room, arguments);
-        },
-        /**
-         * Removes command.
-         * @param name {String} the name of the command.
-         */
-        removeCommand () {
-            room.removeCommand.apply(room, arguments);
-        },
-        /**
-         * Sends command.
-         * @param name {String} the name of the command.
-         * @param values {Object} with keys and values that will be sent.
-         */
-        sendCommand () {
-            room.sendCommand.apply(room, arguments);
-        },
-        /**
-         * Sends command one time.
-         * @param name {String} the name of the command.
-         * @param values {Object} with keys and values that will be sent.
-         */
-        sendCommandOnce () {
-            room.sendCommandOnce.apply(room, arguments);
-        },
     },
 
     _getConferenceOptions() {
@@ -721,6 +723,8 @@ export default {
      * Setup interaction between conference and UI.
      */
     _setupListeners () {
+        var self = this;
+
         // add local streams when joined to the conference
         room.on(ConferenceEvents.CONFERENCE_JOINED, () => {
             APP.UI.mucJoined();
@@ -903,7 +907,8 @@ export default {
                 APP.UI.updateLocalStats(percent, stats);
 
                 // send local stats to other users
-                room.sendCommandOnce(Commands.CONNECTION_QUALITY, {
+                room.sendCommandOnce(self.commands.defaults.CONNECTION_QUALITY,
+                {
                     children: ConnectionQuality.convertToMUCStats(stats),
                     attributes: {
                         xmlns: 'http://jitsi.org/jitmeet/stats'
@@ -913,8 +918,9 @@ export default {
         );
 
         // listen to remote stats
-        room.addCommandListener(Commands.CONNECTION_QUALITY,(values, from) => {
-            ConnectionQuality.updateRemoteStats(from, values);
+        room.addCommandListener(self.commands.defaults.CONNECTION_QUALITY,
+            (values, from) => {
+                ConnectionQuality.updateRemoteStats(from, values);
         });
 
         ConnectionQuality.addListener(CQEvents.REMOTESTATS_UPDATED,
@@ -922,7 +928,7 @@ export default {
                 APP.UI.updateRemoteStats(id, percent, stats);
             });
 
-        room.addCommandListener(Commands.ETHERPAD, ({value}) => {
+        room.addCommandListener(self.commands.defaults.ETHERPAD, ({value}) => {
             APP.UI.initEtherpad(value);
         });
 
@@ -935,9 +941,9 @@ export default {
 
             APP.settings.setEmail(email);
             APP.UI.setUserAvatar(room.myUserId(), email);
-            sendEmail(email);
+            sendEmail(self.commands.defaults.EMAIL, email);
         });
-        room.addCommandListener(Commands.EMAIL, (data) => {
+        room.addCommandListener(self.commands.defaults.EMAIL, (data) => {
             APP.UI.setUserAvatar(data.attributes.id, data.value);
         });
 
@@ -1082,8 +1088,8 @@ export default {
             // send start and stop commands once, and remove any updates
             // that had left
             if (state === 'stop' || state === 'start' || state === 'playing') {
-                room.removeCommand(Commands.SHARED_VIDEO);
-                room.sendCommandOnce(Commands.SHARED_VIDEO, {
+                room.removeCommand(self.commands.defaults.SHARED_VIDEO);
+                room.sendCommandOnce(self.commands.defaults.SHARED_VIDEO, {
                     value: url,
                     attributes: {
                         state: state,
@@ -1095,8 +1101,8 @@ export default {
             else {
                 // in case of paused, in order to allow late users to join
                 // paused
-                room.removeCommand(Commands.SHARED_VIDEO);
-                room.sendCommand(Commands.SHARED_VIDEO, {
+                room.removeCommand(self.commands.defaults.SHARED_VIDEO);
+                room.sendCommand(self.commands.defaults.SHARED_VIDEO, {
                     value: url,
                     attributes: {
                         state: state,
@@ -1107,7 +1113,7 @@ export default {
             }
         });
         room.addCommandListener(
-            Commands.SHARED_VIDEO, ({value, attributes}, id) => {
+            self.commands.defaults.SHARED_VIDEO, ({value, attributes}, id) => {
 
                 if (attributes.state === 'stop') {
                     APP.UI.stopSharedVideo(id, attributes);

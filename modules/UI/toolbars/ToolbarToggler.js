@@ -2,6 +2,7 @@
 
 import UIUtil from '../util/UIUtil';
 import BottomToolbar from './BottomToolbar';
+import Toolbar from './Toolbar';
 import FilmStrip from '../videolayout/FilmStrip.js';
 
 let toolbarTimeoutObject;
@@ -16,10 +17,6 @@ function showDesktopSharingButton() {
     }
 }
 
-function isToolbarVisible () {
-    return $('#header').is(':visible');
-}
-
 /**
  * Hides the toolbar.
  */
@@ -28,25 +25,13 @@ function hideToolbar() {
         return;
     }
 
-    let header = $("#header");
-    let isToolbarHover = false;
-    header.find('*').each(function () {
-        let id = $(this).attr('id');
-        if ($(`#${id}:hover`).length > 0) {
-            isToolbarHover = true;
-        }
-    });
-    if ($("#bottomToolbar:hover").length > 0) {
-        isToolbarHover = true;
-    }
-
     clearTimeout(toolbarTimeoutObject);
     toolbarTimeoutObject = null;
 
-    if (isToolbarHover) {
+    if (Toolbar.isHovered()) {
         toolbarTimeoutObject = setTimeout(hideToolbar, toolbarTimeout);
     } else {
-        header.hide("slide", { direction: "up", duration: 300});
+        Toolbar.hide();
         $('#subject').animate({top: "-=40"}, 300);
         if (!FilmStrip.isFilmStripVisible()) {
             BottomToolbar.hide(true);
@@ -59,18 +44,23 @@ const ToolbarToggler = {
      * Shows the main toolbar.
      */
     showToolbar () {
-        // if we are a recorder we do not want to show the toolbar
-        if (interfaceConfig.filmStripOnly || config.iAmRecorder) {
+        if (interfaceConfig.filmStripOnly) {
             return;
         }
-        let header = $("#header");
-        if (!header.is(':visible') || !BottomToolbar.isVisible()) {
-            header.show("slide", { direction: "up", duration: 300});
-            $('#subject').animate({top: "+=40"}, 300);
-            if (!BottomToolbar.isVisible()) {
-                BottomToolbar.show(true);
-            }
 
+        var updateTimeout = false;
+        if (Toolbar.isEnabled() && !Toolbar.isVisible()) {
+            Toolbar.show();
+            $('#subject').animate({top: "+=40"}, 300);
+            updateTimeout = true;
+        }
+
+        if (BottomToolbar.isEnabled() && !BottomToolbar.isVisible()) {
+            BottomToolbar.show(true);
+            updateTimeout = true;
+        }
+
+        if (updateTimeout) {
             if (toolbarTimeoutObject) {
                 clearTimeout(toolbarTimeoutObject);
                 toolbarTimeoutObject = null;
@@ -89,13 +79,13 @@ const ToolbarToggler = {
      * @param isDock indicates what operation to perform
      */
     dockToolbar (isDock) {
-        if (interfaceConfig.filmStripOnly) {
+        if (interfaceConfig.filmStripOnly || !Toolbar.isEnabled()) {
             return;
         }
 
         if (isDock) {
             // First make sure the toolbar is shown.
-            if (!isToolbarVisible()) {
+            if (!Toolbar.isVisible()) {
                 this.showToolbar();
             }
 
@@ -103,7 +93,7 @@ const ToolbarToggler = {
             clearTimeout(toolbarTimeoutObject);
             toolbarTimeoutObject = null;
         } else {
-            if (isToolbarVisible()) {
+            if (Toolbar.isVisible()) {
                 toolbarTimeoutObject = setTimeout(hideToolbar, toolbarTimeout);
             } else {
                 this.showToolbar();
