@@ -171,6 +171,9 @@ function showSipNumberInput () {
 const Toolbar = {
     init (eventEmitter) {
         emitter = eventEmitter;
+        // The toolbar is enabled by default.
+        this.enabled = true;
+        this.toolbarSelector = $("#header");
 
         UIUtil.hideDisabledButtons(defaultToolbarButtons);
 
@@ -178,14 +181,31 @@ const Toolbar = {
             buttonId => $(`#${buttonId}`).click(buttonHandlers[buttonId])
         );
     },
-
+    /**
+     * Enables / disables the toolbar.
+     * @param {e} set to {true} to enable the toolbar or {false}
+     * to disable it
+     */
+    enable (e) {
+        this.enabled = e;
+        if (!e && this.isVisible())
+            this.hide(false);
+    },
+    /**
+     * Indicates if the bottom toolbar is currently enabled.
+     * @return {this.enabled}
+     */
+    isEnabled() {
+        return this.enabled;
+    },
     /**
      * Updates the room invite url.
      */
     updateRoomUrl (newRoomUrl) {
         roomUrl = newRoomUrl;
 
-        // If the invite dialog has been already opened we update the information.
+        // If the invite dialog has been already opened we update the
+        // information.
         let inviteLink = document.getElementById('inviteLinkRef');
         if (inviteLink) {
             inviteLink.value = roomUrl;
@@ -244,14 +264,16 @@ const Toolbar = {
     // checks whether desktop sharing is enabled and whether
     // we have params to start automatically sharing
     checkAutoEnableDesktopSharing () {
-        if (UIUtil.isButtonEnabled('desktop') && config.autoEnableDesktopSharing) {
+        if (UIUtil.isButtonEnabled('desktop')
+            && config.autoEnableDesktopSharing) {
             emitter.emit(UIEvents.TOGGLE_SCREENSHARING);
         }
     },
 
     // Shows or hides SIP calls button
     showSipCallButton (show) {
-        if (APP.conference.sipGatewayEnabled() && UIUtil.isButtonEnabled('sip') && show) {
+        if (APP.conference.sipGatewayEnabled()
+            && UIUtil.isButtonEnabled('sip') && show) {
             $('#toolbar_button_sip').css({display: "inline-block"});
         } else {
             $('#toolbar_button_sip').css({display: "none"});
@@ -331,7 +353,51 @@ const Toolbar = {
      * @param {boolean} muted if icon should look like muted or not
      */
     markAudioIconAsMuted (muted) {
-        $('#toolbar_button_mute').toggleClass("icon-microphone", !muted).toggleClass("icon-mic-disabled", muted);
+        $('#toolbar_button_mute').toggleClass("icon-microphone",
+            !muted).toggleClass("icon-mic-disabled", muted);
+    },
+
+    /**
+     * Indicates if the toolbar is currently hovered.
+     * @return {true} if the toolbar is currently hovered, {false} otherwise
+     */
+    isHovered() {
+        this.toolbarSelector.find('*').each(function () {
+            let id = $(this).attr('id');
+            if ($(`#${id}:hover`).length > 0) {
+                return true;
+            }
+        });
+        if ($("#bottomToolbar:hover").length > 0) {
+            return true;
+        }
+        return false;
+    },
+
+    /**
+     * Returns true if this toolbar is currently visible, or false otherwise.
+     * @return <tt>true</tt> if currently visible, <tt>false</tt> - otherwise
+     */
+    isVisible() {
+        return this.toolbarSelector.is(":visible");
+    },
+
+    /**
+     * Hides the toolbar with animation or not depending on the animate
+     * parameter.
+     */
+    hide() {
+        this.toolbarSelector.hide(
+            "slide", { direction: "up", duration: 300});
+    },
+
+    /**
+     * Shows the toolbar with animation or not depending on the animate
+     * parameter.
+     */
+    show() {
+        this.toolbarSelector.show(
+            "slide", { direction: "up", duration: 300});
     }
 };
 

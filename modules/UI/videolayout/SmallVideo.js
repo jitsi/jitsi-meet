@@ -50,7 +50,25 @@ SmallVideo.prototype.showDisplayName = function(isShow) {
     }
 };
 
+/**
+ * Enables / disables the device availability icons for this small video.
+ * @param {enable} set to {true} to enable and {false} to disable
+ */
+SmallVideo.prototype.enableDeviceAvailabilityIcons = function (enable) {
+    if (typeof enable === "undefined")
+        return;
+
+    this.deviceAvailabilityIconsEnabled = enable;
+};
+
+/**
+ * Sets the device "non" availability icons.
+ * @param devices the devices, which will be checked for availability
+ */
 SmallVideo.prototype.setDeviceAvailabilityIcons = function (devices) {
+    if (!this.deviceAvailabilityIconsEnabled)
+        return;
+
     if(!this.container)
         return;
 
