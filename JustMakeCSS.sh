@@ -1,2 +1,0 @@
-#! /bin/sh
-(cd css; cat font.css toastr.css main.css videolayout_default.css font-awesome.css jquery-impromptu.css modaldialog.css notice.css popup_menu.css login_menu.css popover.css jitsi_popover.css contact_list.css chat.css welcome_page.css settingsmenu.css feedback.css) | ./node_modules/.bin/cleancss > css/all.css
