@@ -316,6 +316,19 @@ export default {
         this.roomName = options.roomName;
         JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.TRACE);
 
+        // attaches global error handler, if there is already one, respect it
+        if(JitsiMeetJS.getGlobalOnErrorHandler){
+            var oldOnErrorHandler = window.onerror;
+            window.onerror = function (message, source, lineno, colno, error) {
+
+                JitsiMeetJS.getGlobalOnErrorHandler(
+                    message, source, lineno, colno, error);
+
+                if(oldOnErrorHandler)
+                    oldOnErrorHandler(message, source, lineno, colno, error);
+            };
+        }
+
         return JitsiMeetJS.init(config).then(() => {
             return Promise.all([
                 // try to retrieve audio and video
