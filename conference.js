@@ -723,8 +723,6 @@ export default {
      * Setup interaction between conference and UI.
      */
     _setupListeners () {
-        var self = this;
-
         // add local streams when joined to the conference
         room.on(ConferenceEvents.CONFERENCE_JOINED, () => {
             APP.UI.mucJoined();
@@ -907,7 +905,7 @@ export default {
                 APP.UI.updateLocalStats(percent, stats);
 
                 // send local stats to other users
-                room.sendCommandOnce(self.commands.defaults.CONNECTION_QUALITY,
+                room.sendCommandOnce(this.commands.defaults.CONNECTION_QUALITY,
                 {
                     children: ConnectionQuality.convertToMUCStats(stats),
                     attributes: {
@@ -918,7 +916,7 @@ export default {
         );
 
         // listen to remote stats
-        room.addCommandListener(self.commands.defaults.CONNECTION_QUALITY,
+        room.addCommandListener(this.commands.defaults.CONNECTION_QUALITY,
             (values, from) => {
                 ConnectionQuality.updateRemoteStats(from, values);
         });
@@ -928,7 +926,7 @@ export default {
                 APP.UI.updateRemoteStats(id, percent, stats);
             });
 
-        room.addCommandListener(self.commands.defaults.ETHERPAD, ({value}) => {
+        room.addCommandListener(this.commands.defaults.ETHERPAD, ({value}) => {
             APP.UI.initEtherpad(value);
         });
 
@@ -941,9 +939,9 @@ export default {
 
             APP.settings.setEmail(email);
             APP.UI.setUserAvatar(room.myUserId(), email);
-            sendEmail(self.commands.defaults.EMAIL, email);
+            sendEmail(this.commands.defaults.EMAIL, email);
         });
-        room.addCommandListener(self.commands.defaults.EMAIL, (data) => {
+        room.addCommandListener(this.commands.defaults.EMAIL, (data) => {
             APP.UI.setUserAvatar(data.attributes.id, data.value);
         });
 
@@ -1088,8 +1086,8 @@ export default {
             // send start and stop commands once, and remove any updates
             // that had left
             if (state === 'stop' || state === 'start' || state === 'playing') {
-                room.removeCommand(self.commands.defaults.SHARED_VIDEO);
-                room.sendCommandOnce(self.commands.defaults.SHARED_VIDEO, {
+                room.removeCommand(this.commands.defaults.SHARED_VIDEO);
+                room.sendCommandOnce(this.commands.defaults.SHARED_VIDEO, {
                     value: url,
                     attributes: {
                         state: state,
@@ -1101,8 +1099,8 @@ export default {
             else {
                 // in case of paused, in order to allow late users to join
                 // paused
-                room.removeCommand(self.commands.defaults.SHARED_VIDEO);
-                room.sendCommand(self.commands.defaults.SHARED_VIDEO, {
+                room.removeCommand(this.commands.defaults.SHARED_VIDEO);
+                room.sendCommand(this.commands.defaults.SHARED_VIDEO, {
                     value: url,
                     attributes: {
                         state: state,
@@ -1113,7 +1111,7 @@ export default {
             }
         });
         room.addCommandListener(
-            self.commands.defaults.SHARED_VIDEO, ({value, attributes}, id) => {
+            this.commands.defaults.SHARED_VIDEO, ({value, attributes}, id) => {
 
                 if (attributes.state === 'stop') {
                     APP.UI.stopSharedVideo(id, attributes);
