@@ -86,7 +86,7 @@ function toggle (object, selector, onOpenComplete,
         // before it's actually visible.
         // (Chrome seems to return {true} for an element which is in the DOM and
         // has non-null size set).
-        $(selector).css("width", "20%");
+        $(selector).css("width", "200px");
         $(selector).show("slide", {
             direction: "right",
             queue: false,
