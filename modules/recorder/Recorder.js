@@ -33,7 +33,6 @@ class Recorder {
      * local participant is not the moderator
      */
     constructor (conference, UI) {
-        var self = this;
         this._conference = conference;
         this._UI = UI;
 
