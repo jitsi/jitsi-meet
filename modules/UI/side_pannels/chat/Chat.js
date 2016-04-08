@@ -315,7 +315,7 @@ var Chat = {
      * Indicates if the chat is currently visible.
      */
     isVisible () {
-        return $('#chatspace').is(":visible");
+        return UIUtil.isVisible(document.getElementById("chatspace"));
     },
     /**
      * Shows and hides the window with the smileys

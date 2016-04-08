@@ -161,7 +161,7 @@ export default {
      * @returns {boolean}
      */
     isVisible () {
-        return $('#settingsmenu').is(':visible');
+        return UIUtil.isVisible(document.getElementById("settingsmenu"));
     },
 
     /**
