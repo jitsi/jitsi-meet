@@ -155,7 +155,18 @@
          return Object.keys(attrs).map(
              key => ` ${key}="${attrs[key]}"`
          ).join(' ');
-     }
+     },
+
+    /**
+     * Checks if the given DOM element is currently visible. The offsetParent
+     * will be null if the "display" property of the element or any of its
+     * parent containers is set to "none". This method will NOT check the
+     * visibility property though.
+     * @param {el} The DOM element we'd like to check for visibility
+     */
+    isVisible(el) {
+        return (el.offsetParent !== null);
+    }
 };
 
 export default UIUtil;
