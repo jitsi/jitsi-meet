@@ -6,11 +6,12 @@ server {
     root /srv/jitsi.example.com;
     index index.html;
 
-    location ~ ^/([a-zA-Z0-9=\?]+)$ {
-        rewrite ^/(.*)$ / break;
-        }
-
     location / {
+        try_files $uri /;
+    }
+
+    # only enable ssi on '/' (index.html)
+    location = / {
         ssi on;
     }
 

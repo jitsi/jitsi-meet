@@ -25,11 +25,12 @@ server {
         alias /etc/jitsi/meet/jitsi-meet.example.com-config.js;
     }
 
-    location ~ ^/([a-zA-Z0-9=\?]+)$ {
-        rewrite ^/(.*)$ / break;
+    location / {
+        try_files $uri /;
     }
 
-    location / {
+    # only enable ssi on '/' (index.html)
+    location = / {
         ssi on;
     }
 
