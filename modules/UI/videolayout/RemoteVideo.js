@@ -357,7 +357,9 @@ RemoteVideo.prototype.setDisplayName = function(displayName, key) {
     // If we already have a display name for this video.
     if (nameSpan.length > 0) {
         if (displayName && displayName.length > 0) {
-            $('#' + this.videoSpanId + '_name').text(displayName);
+            var displaynameSpan = $('#' + this.videoSpanId + '_name');
+            if (displaynameSpan.text() !== displayName)
+                displaynameSpan.text(displayName);
         }
         else if (key && key.length > 0) {
             var nameHtml = APP.translation.generateTranslationHTML(key);

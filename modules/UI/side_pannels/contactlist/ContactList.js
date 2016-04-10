@@ -153,12 +153,14 @@ var ContactList = {
     },
 
     onDisplayNameChange (id, displayName) {
+        if(!displayName)
+            return;
         if (id === 'localVideoContainer') {
             id = APP.conference.localId;
         }
         let contactName = $(`#contacts #${id}>p`);
 
-        if (displayName) {
+        if (contactName.text() !== displayName) {
             contactName.text(displayName);
         }
     },
