@@ -160,7 +160,7 @@ SmallVideo.createStreamElement = function (stream) {
 
     element.onplay = function () {
         var type = (isVideo ? 'video' : 'audio');
-        var now = APP.performanceTimes[type + ".render"]
+        var now = APP.connectionTimes[type + ".render"]
             = window.performance.now();
         console.log("(TIME) Render " + type + ":\t",
                     now);
