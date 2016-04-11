@@ -537,6 +537,10 @@ UI.addUser = function (id, displayName) {
 
     // Configure avatar
     UI.setUserAvatar(id);
+
+    // set initial display name
+    if(displayName)
+        UI.changeDisplayName(id, displayName);
 };
 
 /**
