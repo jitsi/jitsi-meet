@@ -52,7 +52,7 @@ const APP = {
         handler: null
     },
     // Used for automated performance tests
-    performanceTimes: {
+    connectionTimes: {
         "index.loaded": window.indexLoadedTime
     },
     UI,
@@ -103,7 +103,7 @@ function obtainConfigAndInit() {
             // Get config result callback
             function(success, error) {
                 if (success) {
-                    var now = APP.performanceTimes["configuration.fetched"] =
+                    var now = APP.connectionTimes["configuration.fetched"] =
                         window.performance.now();
                     console.log("(TIME) configuration fetched:\t", now);
                     init();
@@ -124,7 +124,7 @@ function obtainConfigAndInit() {
 
 
 $(document).ready(function () {
-    var now = APP.performanceTimes["document.ready"] = window.performance.now();
+    var now = APP.connectionTimes["document.ready"] = window.performance.now();
     console.log("(TIME) document ready:\t", now);
 
     URLProcessor.setConfigParametersFromUrl();
