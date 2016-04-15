@@ -27,14 +27,9 @@ class Recorder {
      *
      * @param conference the {conference} which is to transport
      * {Recorder}-related information between participants
-     * @param UI the {UI} which is the source (model/state) to be sent to
-     * remote participants if the local participant is the moderator or the
-     * destination (model/state) to receive from the remote moderator if the
-     * local participant is not the moderator
      */
-    constructor (conference, UI) {
+    constructor (conference) {
         this._conference = conference;
-        this._UI = UI;
 
         // If I am a recorder then I publish my recorder custom role to notify
         // everyone.
