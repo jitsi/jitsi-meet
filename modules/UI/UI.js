@@ -31,7 +31,6 @@ var Feedback = require("./Feedback");
 import FollowMe from "../FollowMe";
 import Recorder from "../recorder/Recorder";
 
-
 var eventEmitter = new EventEmitter();
 UI.eventEmitter = eventEmitter;
 
@@ -245,7 +244,7 @@ UI.initConference = function () {
     // Initialise the recorder handler. We're doing this explicitly before
     // calling showToolbar, because the recorder may want to disable all
     // toolbars.
-    new Recorder(APP.conference, UI);
+    new Recorder(APP.conference);
 
     // Once we've joined the muc show the toolbar
     ToolbarToggler.showToolbar();
@@ -260,6 +259,7 @@ UI.initConference = function () {
     UI.setUserAvatar(id, Settings.getEmail());
 
     Toolbar.checkAutoEnableDesktopSharing();
+
     if(!interfaceConfig.filmStripOnly) {
         Feedback.init(eventEmitter);
     }

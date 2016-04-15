@@ -100,15 +100,18 @@ var Feedback = {
      * @param emitter the EventEmitter to associate with the Feedback.
      */
     init: function (emitter) {
-        // Initialise to enabled.
-        this.enabled = true;
-
         // CallStats is the way we send feedback, so we don't have to initialise
         // if callstats isn't enabled.
         if (!APP.conference.isCallstatsEnabled())
             return;
 
-        _showFeedbackButton(true);
+        // If enabled property is still undefined, i.e. it hasn't been set from
+        // some other module already, we set it to true by default.
+        if (typeof this.enabled == "undefined")
+            this.enabled = true;
+
+        _showFeedbackButton(this.enabled);
+
         $("#feedbackButton").click(function (event) {
             Feedback.openFeedbackWindow();
         });
