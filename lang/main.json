@@ -8,7 +8,7 @@
     "participant": "Participant",
     "me": "me",
     "speaker": "Speaker",
-    "defaultNickname": "ex. __name__",
+    "defaultNickname": "ex. Jane Pink",
     "defaultLink": "e.g. __url__",
     "welcomepage":{
         "go": "GO",
@@ -204,7 +204,7 @@
         "userPassword": "user password",
         "token": "token",
         "tokenAuthFailed": "Failed to authenticate with XMPP server: invalid token",
-        "displayNameRequired": "Please enter your display name:",
+        "displayNameRequired": "Please enter your display name",
         "extensionRequired": "Extension required:",
         "firefoxExtensionPrompt": "You need to install a Firefox extension in order to use screen sharing. Please try again after you <a href='__url__'>get it from here</a>!",
         "feedbackQuestion": "How was your call?",

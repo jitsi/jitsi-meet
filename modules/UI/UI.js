@@ -45,31 +45,32 @@ let followMeHandler;
 function promptDisplayName() {
     let nickRequiredMsg
         = APP.translation.translateString("dialog.displayNameRequired");
-    let defaultNickMsg = APP.translation.translateString(
-        "defaultNickname", {name: "Jane Pink"}
-    );
+    let defaultNickMsg = APP.translation.translateString("defaultNickname");
     let message = `
         <h2 data-i18n="dialog.displayNameRequired">${nickRequiredMsg}</h2>
         <input name="displayName" type="text"
                data-i18n="[placeholder]defaultNickname"
                placeholder="${defaultNickMsg}" autofocus>`;
 
-    let buttonTxt = APP.translation.generateTranslationHTML("dialog.Ok");
-    let buttons = [{title: buttonTxt, value: "ok"}];
+    // Don't use a translation string, because we're too early in the call and
+    // the translation may not be initialised.
+    let buttons = {Ok:true};
 
-    messageHandler.openDialog(
-        null, message,
+    let dialog = messageHandler.openDialog(
+        null,
+        message,
         true,
         buttons,
         function (e, v, m, f) {
-            if (v == "ok") {
+            e.preventDefault();
+            if (v) {
                 let displayName = f.displayName;
                 if (displayName) {
                     UI.inputDisplayNameHandler(displayName);
-                    return true;
+                    dialog.close();
+                    return;
                 }
             }
-            e.preventDefault();
         },
         function () {
             let form  = $.prompt.getPrompt();
