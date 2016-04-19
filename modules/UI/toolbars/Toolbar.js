@@ -44,12 +44,25 @@ function openLinkDialog () {
 
 const buttonHandlers = {
     "toolbar_button_mute": function () {
+        let sharedVideoManager = APP.UI.getSharedVideoManager();
+
         if (APP.conference.audioMuted) {
-            AnalyticsAdapter.sendEvent('toolbar.audio.unmuted');
-            emitter.emit(UIEvents.AUDIO_MUTED, false);
+            // If there's a shared video with the volume "on" and we aren't
+            // the video owner, we warn the user
+            // that currently it's not possible to unmute.
+            if (sharedVideoManager
+                && sharedVideoManager.isSharedVideoVolumeOn()
+                && !sharedVideoManager.isSharedVideoOwner()) {
+                UIUtil.animateShowElement(
+                    $("#unableToUnmutePopup"), true, 5000);
+            }
+            else {
+                AnalyticsAdapter.sendEvent('toolbar.audio.unmuted');
+                emitter.emit(UIEvents.AUDIO_MUTED, false, true);
+            }
         } else {
             AnalyticsAdapter.sendEvent('toolbar.audio.muted');
-            emitter.emit(UIEvents.AUDIO_MUTED, true);
+            emitter.emit(UIEvents.AUDIO_MUTED, true, true);
         }
     },
     "toolbar_button_camera": function () {

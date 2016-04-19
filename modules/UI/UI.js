@@ -332,6 +332,14 @@ function bindEvents() {
 }
 
 /**
+ * Returns the shared document manager object.
+ * @return {EtherpadManager} the shared document manager object
+ */
+UI.getSharedVideoManager = function () {
+    return sharedVideoManager;
+};
+
+/**
  * Starts the UI module and initializes all related components.
  *
  * @returns {boolean} true if the UI is ready and the conference should be
