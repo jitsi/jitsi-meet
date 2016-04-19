@@ -125,12 +125,11 @@ function muteLocalVideo (muted) {
 function hangup (requestFeedback = false) {
     APP.conference._room.leave().then(() => {
         connection.disconnect();
-        let promise = Promise.resolve();
-
         if (requestFeedback) {
-            promise = APP.UI.requestFeedback();
+            return APP.UI.requestFeedback();
+        } else {
+            return Promise.resolve();
         }
-        return promise;
     }).then(function () {
         if (!config.enableWelcomePage) {
             return;
