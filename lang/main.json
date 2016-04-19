@@ -66,7 +66,7 @@
         "dialpad": "Show dialpad",
         "sharedVideoMutedPopup": "Your shared video has been muted so<br/>that you can talk to the other participants.",
         "micMutedPopup": "Your microphone has been muted so that you<br/>would fully enjoy your shared video.",
-        "unableToUnmutePopup": "You're not able to un-mute while the shared video is on."
+        "unableToUnmutePopup": "You cannot un-mute while the shared video is on."
     },
     "bottomtoolbar": {
         "chat": "Open / close chat",
