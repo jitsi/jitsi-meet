@@ -166,6 +166,39 @@
      */
     isVisible(el) {
         return (el.offsetParent !== null);
+    },
+
+    /**
+     * Shows / hides the element given by {selector} and sets a timeout if the
+     * {hideDelay} is set to a value > 0.
+     * @param selector the jquery selector of the element to show/hide.
+     * @param show a {boolean} that indicates if the element should be shown or
+     * hidden
+     * @param hideDelay the value in milliseconds to wait before hiding the
+     * element
+     */
+    animateShowElement(selector, show, hideDelay) {
+        if(show) {
+            if (!selector.is(":visible"))
+                selector.css("display", "inline-block");
+
+            selector.fadeIn(300,
+                () => {selector.css({opacity: 1});}
+            );
+
+            if (hideDelay && hideDelay > 0)
+                setTimeout(
+                    function () {
+                        selector.fadeOut(300,
+                        () => {selector.css({opacity: 0});}
+                    );
+                }, hideDelay);
+        }
+        else {
+            selector.fadeOut(300,
+                () => {selector.css({opacity: 0});}
+            );
+        }
     }
 };
 

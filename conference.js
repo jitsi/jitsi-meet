@@ -73,8 +73,11 @@ function getDisplayName (id) {
 /**
  * Mute or unmute local audio stream if it exists.
  * @param {boolean} muted if audio stream should be muted or unmuted.
+ * @param {boolean} indicates if this local audio mute was a result of user
+ * interaction
+ *
  */
-function muteLocalAudio (muted) {
+function muteLocalAudio (muted, userInteraction) {
     if (!localAudio) {
         return;
     }
