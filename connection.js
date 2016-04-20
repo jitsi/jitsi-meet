@@ -137,12 +137,10 @@ export function openConnection({id, password, retry, roomName}) {
 
     if (!id && predefinedLogin && predefinedLogin.length > 0) {
         id = predefinedLogin;
-        window.localStorage.removeItem("xmpp_login");
     }
 
     if (!password && predefinedPassword && predefinedPassword.length > 0) {
         password = predefinedPassword;
-        window.localStorage.removeItem("xmpp_password");
     }
 
     return connect(id, password, roomName).catch(function (err) {
