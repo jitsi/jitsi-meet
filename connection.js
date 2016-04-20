@@ -22,7 +22,7 @@ function checkForAttachParametersAndConnect(id, password, connection) {
         // When connection optimization is not deployed or enabled the default
         // value will be window.XMPPAttachInfo.status = "error"
         // If the connection optimization is deployed and enabled and there is
-        // a failure the value will be window.XMPPAttachInfo.status = "error" 
+        // a failure the value will be window.XMPPAttachInfo.status = "error"
         if(window.XMPPAttachInfo.status === "error") {
             connection.connect({id, password});
             return;
@@ -131,6 +131,20 @@ function requestAuth() {
  * @returns {Promise<JitsiConnection>}
  */
 export function openConnection({id, password, retry, roomName}) {
+
+    let predefinedLogin = window.localStorage.getItem("xmpp_login");
+    let predefinedPassword = window.localStorage.getItem("xmpp_password");
+
+    if (!id && predefinedLogin && predefinedLogin.length > 0) {
+        id = predefinedLogin;
+        window.localStorage.removeItem("xmpp_login");
+    }
+
+    if (!password && predefinedPassword && predefinedPassword.length > 0) {
+        password = predefinedPassword;
+        window.localStorage.removeItem("xmpp_password");
+    }
+
     return connect(id, password, roomName).catch(function (err) {
         if (!retry) {
             throw err;
