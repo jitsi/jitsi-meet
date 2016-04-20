@@ -23,7 +23,7 @@ local function _verify_token(token, appId, appSecret, roomName)
 
 	local issClaim = claims["iss"];
 	if issClaim == nil then
-		return nil, "Issuer field is missing";
+		return nil, "'iss' claim is missing";
 	end
 	if issClaim ~= appId then
 		return nil, "Invalid application ID('iss' claim)";
@@ -31,7 +31,7 @@ local function _verify_token(token, appId, appSecret, roomName)
 
 	local roomClaim = claims["room"];
 	if roomClaim == nil then
-		return nil, "Room field is missing";
+		return nil, "'room' claim is missing";
 	end
 	if roomName ~= nil and roomName ~= roomClaim then
 		return nil, "Invalid room name('room' claim)";
