@@ -126,15 +126,14 @@ function muteLocalVideo (muted) {
  * @param {boolean} [requestFeedback=false] if user feedback should be requested
  */
 function hangup (requestFeedback = false) {
-    let promise = Promise.resolve();
-
-    if (requestFeedback) {
-        promise = APP.UI.requestFeedback();
-    }
-
-    promise.then(function () {
+    APP.conference._room.leave().then(() => {
         connection.disconnect();
-
+        if (requestFeedback) {
+            return APP.UI.requestFeedback();
+        } else {
+            return Promise.resolve();
+        }
+    }).then(function () {
         if (!config.enableWelcomePage) {
             return;
         }
