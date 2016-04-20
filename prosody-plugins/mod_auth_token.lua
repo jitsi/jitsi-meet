@@ -80,6 +80,9 @@ function provider.get_sasl_handler(session)
 		-- here we check if 'room' claim exists
 		local room, roomErr = token_util.get_room_name(token, appSecret);
 		if room == nil then
+            if roomErr == nil then
+                roomErr = "'room' claim is missing";
+            end
 			return false, "not-allowed", roomErr;
 		end
 
