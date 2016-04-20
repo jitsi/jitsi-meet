@@ -270,6 +270,17 @@ ConnectionIndicator.prototype.create = function () {
             APP.translation.translateString("connectionindicator.na") + "</div>",
             skin: "black"});
 
+    // override popover show method to make sure we will update the content
+    // before showing the popover
+    var origShowFunc = this.popover.show;
+    this.popover.show = function () {
+        // update content by forcing it, to finish even if popover
+        // is not visible
+        this.updatePopoverData(true);
+        // call the original show, passing its actual this
+        origShowFunc.call(this.popover);
+    }.bind(this);
+
     this.emptyIcon = this.connectionIndicatorContainer.appendChild(
         createIcon(["connection", "connection_empty"]));
     this.fullIcon = this.connectionIndicatorContainer.appendChild(
@@ -335,13 +346,18 @@ ConnectionIndicator.prototype.updateResolution = function (resolution) {
 };
 
 /**
- * Updates the content of the popover
+ * Updates the content of the popover if its visible
+ * @param force to work even if popover is not visible
  */
-ConnectionIndicator.prototype.updatePopoverData = function () {
-    this.popover.updateContent(
-        `<div class="connection_info">${this.generateText()}</div>`
-    );
-    APP.translation.translateElement($(".connection_info"));
+ConnectionIndicator.prototype.updatePopoverData = function (force) {
+    // generate content, translate it and add it to document only if
+    // popover is visible or we force to do so.
+    if(this.popover.popoverShown || force) {
+        this.popover.updateContent(
+            `<div class="connection_info">${this.generateText()}</div>`
+        );
+        APP.translation.translateElement($(".connection_info"));
+    }
 };
 
 /**

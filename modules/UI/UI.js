@@ -29,6 +29,7 @@ var JitsiPopover = require("./util/JitsiPopover");
 var Feedback = require("./Feedback");
 
 import FollowMe from "../FollowMe";
+import Recorder from "../recorder/Recorder";
 
 var eventEmitter = new EventEmitter();
 UI.eventEmitter = eventEmitter;
@@ -42,32 +43,34 @@ let followMeHandler;
  * Prompt user for nickname.
  */
 function promptDisplayName() {
-    let nickRequiredMsg = APP.translation.translateString("dialog.displayNameRequired");
-    let defaultNickMsg = APP.translation.translateString(
-        "defaultNickname", {name: "Jane Pink"}
-    );
+    let nickRequiredMsg
+        = APP.translation.translateString("dialog.displayNameRequired");
+    let defaultNickMsg = APP.translation.translateString("defaultNickname");
     let message = `
         <h2 data-i18n="dialog.displayNameRequired">${nickRequiredMsg}</h2>
         <input name="displayName" type="text"
                data-i18n="[placeholder]defaultNickname"
                placeholder="${defaultNickMsg}" autofocus>`;
 
-    let buttonTxt = APP.translation.generateTranslationHTML("dialog.Ok");
-    let buttons = [{title: buttonTxt, value: "ok"}];
+    // Don't use a translation string, because we're too early in the call and
+    // the translation may not be initialised.
+    let buttons = {Ok:true};
 
-    messageHandler.openDialog(
-        null, message,
+    let dialog = messageHandler.openDialog(
+        null,
+        message,
         true,
         buttons,
         function (e, v, m, f) {
-            if (v == "ok") {
+            e.preventDefault();
+            if (v) {
                 let displayName = f.displayName;
                 if (displayName) {
                     UI.inputDisplayNameHandler(displayName);
-                    return true;
+                    dialog.close();
+                    return;
                 }
             }
-            e.preventDefault();
         },
         function () {
             let form  = $.prompt.getPrompt();
@@ -110,8 +113,8 @@ function setupToolbars() {
  * @see https://developer.mozilla.org/en-US/docs/Web/API/Fullscreen_API
  */
 function toggleFullScreen () {
-    let isNotFullScreen = !document.fullscreenElement &&    // alternative standard method
-
+                            // alternative standard method
+    let isNotFullScreen = !document.fullscreenElement &&
             !document.mozFullScreenElement && // current working methods
         !document.webkitFullscreenElement &&
         !document.msFullscreenElement;
@@ -124,7 +127,8 @@ function toggleFullScreen () {
         } else if (document.documentElement.mozRequestFullScreen) {
             document.documentElement.mozRequestFullScreen();
         } else if (document.documentElement.webkitRequestFullscreen) {
-            document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+            document.documentElement
+                .webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
         }
     } else {
         if (document.exitFullscreen) {
@@ -238,6 +242,11 @@ UI.initConference = function () {
     //if local role changes buttons state will be again updated
     UI.updateLocalRole(false);
 
+    // Initialise the recorder handler. We're doing this explicitly before
+    // calling showToolbar, because the recorder may want to disable all
+    // toolbars.
+    new Recorder(APP.conference);
+
     // Once we've joined the muc show the toolbar
     ToolbarToggler.showToolbar();
 
@@ -251,6 +260,7 @@ UI.initConference = function () {
     UI.setUserAvatar(id, Settings.getEmail());
 
     Toolbar.checkAutoEnableDesktopSharing();
+
     if(!interfaceConfig.filmStripOnly) {
         Feedback.init(eventEmitter);
     }
@@ -321,6 +331,14 @@ function bindEvents() {
 
     $(window).resize(onResize);
 }
+
+/**
+ * Returns the shared document manager object.
+ * @return {EtherpadManager} the shared document manager object
+ */
+UI.getSharedVideoManager = function () {
+    return sharedVideoManager;
+};
 
 /**
  * Starts the UI module and initializes all related components.
@@ -528,6 +546,10 @@ UI.addUser = function (id, displayName) {
 
     // Configure avatar
     UI.setUserAvatar(id);
+
+    // set initial display name
+    if(displayName)
+        UI.changeDisplayName(id, displayName);
 };
 
 /**

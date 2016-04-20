@@ -1,6 +1,7 @@
 /* global $, APP */
 import Avatar from '../../avatar/Avatar';
 import UIEvents from '../../../../service/UI/UIEvents';
+import UIUtil from '../../util/UIUtil';
 
 let numberOfContacts = 0;
 let notificationInterval;
@@ -87,7 +88,7 @@ var ContactList = {
      * otherwise
      */
     isVisible () {
-        return $('#contactlist').is(":visible");
+        return UIUtil.isVisible(document.getElementById("contactlist"));
     },
 
     /**
@@ -152,12 +153,14 @@ var ContactList = {
     },
 
     onDisplayNameChange (id, displayName) {
+        if(!displayName)
+            return;
         if (id === 'localVideoContainer') {
             id = APP.conference.localId;
         }
         let contactName = $(`#contacts #${id}>p`);
 
-        if (displayName) {
+        if (contactName.text() !== displayName) {
             contactName.text(displayName);
         }
     },

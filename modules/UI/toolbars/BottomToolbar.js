@@ -12,8 +12,27 @@ const defaultBottomToolbarButtons = {
 const BottomToolbar = {
     init () {
         this.toolbar = $('#bottomToolbar');
-    },
 
+        // The bottom toolbar is enabled by default.
+        this.enabled = true;
+    },
+    /**
+     * Enables / disables the bottom toolbar.
+     * @param {e} set to {true} to enable the bottom toolbar or {false}
+     * to disable it
+     */
+    enable (e) {
+        this.enabled = e;
+        if (!e && this.isVisible())
+            this.hide(false);
+    },
+    /**
+     * Indicates if the bottom toolbar is currently enabled.
+     * @return {this.enabled}
+     */
+    isEnabled() {
+        return this.enabled;
+    },
     setupListeners (emitter) {
         UIUtil.hideDisabledButtons(defaultBottomToolbarButtons);
 

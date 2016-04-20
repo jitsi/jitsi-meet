@@ -70,6 +70,21 @@ function _toggleFeedbackIcon() {
 }
 
 /**
+ * Shows / hides the feedback button.
+ * @param {show} set to {true} to show the feedback button or to  {false}
+ * to hide it
+ * @private
+ */
+function _showFeedbackButton (show) {
+    var feedbackButton = $("#feedbackButtonDiv");
+
+    if (show)
+        feedbackButton.css("display", "block");
+    else
+        feedbackButton.css("display", "none");
+}
+
+/**
  * Defines all methods in connection to the Feedback window.
  *
  * @type {{feedbackScore: number, openFeedbackWindow: Function,
@@ -89,7 +104,14 @@ var Feedback = {
         // if callstats isn't enabled.
         if (!APP.conference.isCallstatsEnabled())
             return;
-        $("#feedbackButtonDiv").css("display", "block");
+
+        // If enabled property is still undefined, i.e. it hasn't been set from
+        // some other module already, we set it to true by default.
+        if (typeof this.enabled == "undefined")
+            this.enabled = true;
+
+        _showFeedbackButton(this.enabled);
+
         $("#feedbackButton").click(function (event) {
             Feedback.openFeedbackWindow();
         });
@@ -101,12 +123,21 @@ var Feedback = {
         });
     },
     /**
+     * Enables/ disabled the feedback feature.
+     */
+    enableFeedback: function (enable) {
+        if (this.enabled !== enable)
+            _showFeedbackButton(enable);
+        this.enabled = enable;
+    },
+
+    /**
      * Indicates if the feedback functionality is enabled.
      *
      * @return true if the feedback functionality is enabled, false otherwise.
      */
     isEnabled: function() {
-        return APP.conference.isCallstatsEnabled();
+        return this.enabled && APP.conference.isCallstatsEnabled();
     },
     /**
      * Opens the feedback window.

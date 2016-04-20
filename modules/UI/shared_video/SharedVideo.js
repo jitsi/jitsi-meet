@@ -26,6 +26,24 @@ export default class SharedVideoManager {
         this.emitter = emitter;
         this.isSharedVideoShown = false;
         this.isPlayerAPILoaded = false;
+        this.mutedWithUserInteraction = false;
+    }
+
+    /**
+     * Indicates if the player volume is currently on.
+     *
+     * @returns {*|player|boolean}
+     */
+    isSharedVideoVolumeOn() {
+        return (this.player && this.player.getVolume() > 0);
+    }
+
+    /**
+     * Indicates if the local user is the owner of the shared video.
+     * @returns {*|boolean}
+     */
+    isSharedVideoOwner() {
+        return this.from && APP.conference.isLocalId(this.from);
     }
 
     /**
@@ -169,9 +187,14 @@ export default class SharedVideoManager {
 
             // let's check, if player is not muted lets mute locally
             if(event.data.volume > 0 && !event.data.muted
-                && !APP.conference.isLocalAudioMuted()){
-                self.emitter.emit(UIEvents.AUDIO_MUTED, true);
+                && !APP.conference.isLocalAudioMuted()) {
+                self.emitter.emit(UIEvents.AUDIO_MUTED, true, false);
                 self.showMicMutedPopup(true);
+            }
+            else if (!self.mutedWithUserInteraction
+                        && (event.data.volume <=0 || event.data.muted)
+                        && APP.conference.isLocalAudioMuted()) {
+                self.emitter.emit(UIEvents.AUDIO_MUTED, false, false);
             }
         };
 
@@ -231,9 +254,11 @@ export default class SharedVideoManager {
             this.processTime(player, attributes, playerPaused);
 
             // lets check the volume
-            if (attributes.volume !== undefined &&
-                player.getVolume() != attributes.volume
-                && APP.conference.isLocalAudioMuted()) {
+            if (attributes.volume !== undefined
+                && player.getVolume() != attributes.volume
+                && (APP.conference.isLocalAudioMuted()
+                    || !this.mutedWithUserInteraction)) {
+
                 player.setVolume(attributes.volume);
                 console.info("Player change of volume:" + attributes.volume);
                 this.showSharedVideoMutedPopup(false);
@@ -393,17 +418,21 @@ export default class SharedVideoManager {
     /**
      * Receives events for local audio mute/unmute by local user.
      * @param muted boolena whether it is muted or not.
+     * @param {boolean} indicates if this mute was a result of user interaction,
+     * i.e. pressing the mute button or it was programatically triggerred
      */
-    localAudioMuted (muted) {
+    localAudioMuted (muted, userInteraction) {
         if(!this.player)
             return;
 
-        if(muted)
+        if (muted) {
+            this.mutedWithUserInteraction = userInteraction;
             return;
+        }
 
         // if we are un-muting and player is not muted, lets muted
         // to not pollute the conference
-        if(this.player.getVolume() > 0 || !this.player.isMuted()){
+        if (this.player.getVolume() > 0 || !this.player.isMuted()) {
             this.player.setVolume(0);
             this.showSharedVideoMutedPopup(true);
         }
@@ -415,30 +444,10 @@ export default class SharedVideoManager {
      * @param show boolean, show or hide the notification
      */
     showMicMutedPopup (show) {
-        var micMutedPopupSelector = $("#micMutedPopup");
-        if(show) {
+        if(show)
             this.showSharedVideoMutedPopup(false);
 
-            if (!micMutedPopupSelector.is(":visible"))
-                micMutedPopupSelector.css("display", "inline-block");
-
-            // FIXME: we need an utility method for that.
-            micMutedPopupSelector.fadeIn(300,
-                () => {micMutedPopupSelector.css({opacity: 1});}
-            );
-
-            setTimeout(
-                function () {
-                    micMutedPopupSelector.fadeOut(300,
-                        () => {micMutedPopupSelector.css({opacity: 0});}
-                    );
-                }, 5000);
-        }
-        else {
-            micMutedPopupSelector.fadeOut(300,
-                () => {micMutedPopupSelector.css({opacity: 0});}
-            );
-        }
+        UIUtil.animateShowElement($("#micMutedPopup"), show, 5000);
     }
 
     /**
@@ -448,30 +457,10 @@ export default class SharedVideoManager {
      * @param show boolean, show or hide the notification
      */
     showSharedVideoMutedPopup (show) {
-        var sharedVideoMutedPopupSelector = $("#sharedVideoMutedPopup");
-        if(show) {
+        if(show)
             this.showMicMutedPopup(false);
 
-            if (!sharedVideoMutedPopupSelector.is(":visible"))
-                sharedVideoMutedPopupSelector.css("display", "inline-block");
-
-            // FIXME: we need an utility method for that.
-            sharedVideoMutedPopupSelector.fadeIn(300,
-                () => {sharedVideoMutedPopupSelector.css({opacity: 1});}
-            );
-
-            setTimeout(
-                function () {
-                    sharedVideoMutedPopupSelector.fadeOut(300,
-                        () => {sharedVideoMutedPopupSelector.css({opacity: 0});}
-                    );
-                }, 5000);
-        }
-        else {
-            sharedVideoMutedPopupSelector.fadeOut(300,
-                () => {sharedVideoMutedPopupSelector.css({opacity: 0});}
-            );
-        }
+        UIUtil.animateShowElement($("#sharedVideoMutedPopup"), show, 5000);
     }
 }
 

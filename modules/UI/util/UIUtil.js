@@ -152,7 +152,51 @@
          return Object.keys(attrs).map(
              key => ` ${key}="${attrs[key]}"`
          ).join(' ');
-     }
+     },
+
+    /**
+     * Checks if the given DOM element is currently visible. The offsetParent
+     * will be null if the "display" property of the element or any of its
+     * parent containers is set to "none". This method will NOT check the
+     * visibility property though.
+     * @param {el} The DOM element we'd like to check for visibility
+     */
+    isVisible(el) {
+        return (el.offsetParent !== null);
+    },
+
+    /**
+     * Shows / hides the element given by {selector} and sets a timeout if the
+     * {hideDelay} is set to a value > 0.
+     * @param selector the jquery selector of the element to show/hide.
+     * @param show a {boolean} that indicates if the element should be shown or
+     * hidden
+     * @param hideDelay the value in milliseconds to wait before hiding the
+     * element
+     */
+    animateShowElement(selector, show, hideDelay) {
+        if(show) {
+            if (!selector.is(":visible"))
+                selector.css("display", "inline-block");
+
+            selector.fadeIn(300,
+                () => {selector.css({opacity: 1});}
+            );
+
+            if (hideDelay && hideDelay > 0)
+                setTimeout(
+                    function () {
+                        selector.fadeOut(300,
+                        () => {selector.css({opacity: 0});}
+                    );
+                }, hideDelay);
+        }
+        else {
+            selector.fadeOut(300,
+                () => {selector.css({opacity: 0});}
+            );
+        }
+    }
 };
 
 export default UIUtil;

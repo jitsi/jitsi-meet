@@ -133,6 +133,13 @@ function _requestRecordingToken () {
     });
 }
 
+/**
+ * Shows a prompt dialog to the user when they have toggled off the recording.
+ *
+ * @param recordingType the recording type
+ * @returns {Promise}
+ * @private
+ */
 function _showStopRecordingPrompt (recordingType) {
     var title;
     var message;
@@ -167,6 +174,12 @@ function _showStopRecordingPrompt (recordingType) {
     });
 }
 
+/**
+ * Moves the element given by {selector} to the top right corner of the screen.
+ * @param selector the selector for the element to move
+ * @param move {true} to move the element, {false} to move it back to its intial
+ * position
+ */
 function moveToCorner(selector, move) {
     let moveToCornerClass = "moveToCorner";
 
@@ -176,6 +189,12 @@ function moveToCorner(selector, move) {
         selector.removeClass(moveToCornerClass);
 }
 
+/**
+ * The status of the recorder.
+ * FIXME: Those constants should come from the library.
+ * @type {{ON: string, OFF: string, AVAILABLE: string,
+ * UNAVAILABLE: string, PENDING: string}}
+ */
 var Status = {
     ON: "on",
     OFF: "off",
@@ -184,6 +203,11 @@ var Status = {
     PENDING: "pending"
 };
 
+/**
+ * Manages the recording user interface and user experience.
+ * @type {{init, initRecordingButton, showRecordingButton, updateRecordingState,
+ * setRecordingButtonState, checkAutoRecord}}
+ */
 var Recording = {
     /**
      * Initializes the recording UI.
@@ -196,6 +220,9 @@ var Recording = {
         this.initRecordingButton(recordingType);
     },
 
+    /**
+     * Initialise the recording button.
+     */
     initRecordingButton(recordingType) {
         let selector = $('#toolbar_button_record');
 
@@ -261,7 +288,10 @@ var Recording = {
         });
     },
 
-    // Shows or hides the 'recording' button.
+    /**
+     * Shows or hides the 'recording' button.
+     * @param show {true} to show the recording button, {false} to hide it
+     */
     showRecordingButton (show) {
         if (_isRecordingButtonEnabled() && show) {
             $('#toolbar_button_record').css({display: "inline-block"});
@@ -270,6 +300,10 @@ var Recording = {
         }
     },
 
+    /**
+     * Updates the recording state UI.
+     * @param recordingState gives us the current recording state
+     */
     updateRecordingState(recordingState) {
         // I'm the recorder, so I don't want to see any UI related to states.
         if (config.iAmRecorder)
@@ -282,7 +316,10 @@ var Recording = {
         this.setRecordingButtonState(recordingState);
     },
 
-    // Sets the state of the recording button
+    /**
+     * Sets the state of the recording button.
+     * @param recordingState gives us the current recording state
+     */
     setRecordingButtonState (recordingState) {
         let buttonSelector = $('#toolbar_button_record');
         let labelSelector = $('#recordingLabel');

@@ -50,7 +50,25 @@ SmallVideo.prototype.showDisplayName = function(isShow) {
     }
 };
 
+/**
+ * Enables / disables the device availability icons for this small video.
+ * @param {enable} set to {true} to enable and {false} to disable
+ */
+SmallVideo.prototype.enableDeviceAvailabilityIcons = function (enable) {
+    if (typeof enable === "undefined")
+        return;
+
+    this.deviceAvailabilityIconsEnabled = enable;
+};
+
+/**
+ * Sets the device "non" availability icons.
+ * @param devices the devices, which will be checked for availability
+ */
 SmallVideo.prototype.setDeviceAvailabilityIcons = function (devices) {
+    if (!this.deviceAvailabilityIconsEnabled)
+        return;
+
     if(!this.container)
         return;
 
@@ -141,9 +159,10 @@ SmallVideo.createStreamElement = function (stream) {
     element.id = SmallVideo.getStreamElementID(stream);
 
     element.onplay = function () {
-        var now = APP.performanceTimes["video.render"]
+        var type = (isVideo ? 'video' : 'audio');
+        var now = APP.connectionTimes[type + ".render"]
             = window.performance.now();
-        console.log("(TIME) Render " + (isVideo ? 'video' : 'audio') + ":\t",
+        console.log("(TIME) Render " + type + ":\t",
                     now);
     };
 
