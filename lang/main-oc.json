@@ -1,0 +1,282 @@
+{
+    "contactlist": "Lista de contactes",
+    "connectionsettings": "Paramètres de connexion",
+    "poweredby": "propulsat per",
+    "downloadlogs": "Telecargament de jornals de connexion",
+    "feedback": "Mandatz nos vòstre vejaire",
+    "roomUrlDefaultMsg": "Vòstra conferéncia es a se crear...",
+    "participant": "Participant",
+    "me": "ieu",
+    "speaker": "Nautparlaire",
+    "defaultNickname": "ex : __name__",
+    "defaultLink": "e.g. __url__",
+    "welcomepage": {
+        "go": "Crear",
+        "roomname": "Picatz un nom per la sala",
+        "disable": "Afichar pas aquesta pagina lo còp que ven",
+        "feature1": {
+            "title": "De bon utilizar",
+            "content": "Cap de telecargament es pas requesit. __app__ s'emplega dirèctament dempuèi vòstre navigador. Cal simplament que partegetz l'URL amb lo mond per començar."
+        },
+        "feature2": {
+            "title": "La capacitat de la connexion es febla",
+            "content": "Las videoconferéncias amb mai d'un participant an besonh d'almens 128 kbps. Lo partiment d'ecran e las conferéncias amb solament l'àudio son possibles amb fòrça mens de debit..."
+        },
+        "feature3": {
+            "title": "Logicial liure",
+            "content": "__app__ es jos licéncia MIT. Sètz liures de lo telecargar, de l'emplegar, de lo modificar e de lo partejar jos aquesta licéncia."
+        },
+        "feature4": {
+            "title": "Nombre d'utilizaire illimitat",
+            "content": "I a pas cap de restriccions artificialas pel nombre d'utilizaires o de participants a una conferéncia. La poténcia del servidor e la qualitat del ligam Internet son los sols factors que limitan."
+        },
+        "feature5": {
+            "title": "Partiment d'ecan",
+            "content": "Aquò's aisit de partejar vòstre ecran amb qualqu'un mai. __app__ es ideal per las presentacions en linha, los corses, e las activitats d'assisténcia tecnica."
+        },
+        "feature6": {
+            "title": "Salas securizadas",
+            "content": "Avètz besonh de confidencialitat ? Las salas de conferéncia __app__ pòdon èsser securizadas amb un senhal pels convidats indesirables, e evitar las interrupcions."
+        },
+        "feature7": {
+            "title": "Nòtas partejadas",
+            "content": "__app__ ofrís Etherpad, un editor de tèxte collaboratiu en dirècte qu'es perfièch pels procèsses verbals, l'edicion d'articles e plan mai encara."
+        },
+        "feature8": {
+            "title": "Estatisticas d'utilizacion",
+            "content": "Per melhor conéisser vòstres utilizaires utilizatz l'integracion facila de Piwik, Google Analytics e de sistèmas d'estatisticas e supervision d'utilizacion mai."
+        }
+    },
+    "toolbar": {
+        "mute": "Mut / Actiu",
+        "videomute": "Aviar / Arrestar la camèra",
+        "authenticate": "Autentificar",
+        "lock": "Clavar / desclavar la sala",      
+        "invite": "Convidar de participants",
+        "chat": "chat",
+        "etherpad": "Partejar un document",
+        "sharedvideo": "Partejar una vidèo YouTube",
+        "sharescreen": "Partejar mon ecran",
+        "fullscreen": "Activar / Desactivar l'ecran complet",
+        "sip": "Apelar un numèro SIP",
+        "Settings": "Paramètres",
+        "hangup": "Copar",
+        "login": "Se connectar",
+        "logout": "Se desconnectar",
+        "dialpad": "Mostrar lo clavièr telefonic",
+        "sharedVideoMutedPopup": "Vòstra vidèo partejada es estada renduda muda per<br/> que poscatz parlar als autres participants.",
+        "micMutedPopup": "Vòstre micrò es estat rendut mut per<br/>qu'aprofitetz plenament de vòstra vidèo partejada."
+    },
+    "bottomtoolbar": {
+        "chat": "Dobrir / tampar lo chat",
+        "filmstrip": "Mostrar / amagar ma vidèo pichona",
+        "contactlist": "Dobrir / tampar ma lista de contactes"
+    },
+    "chat": {
+        "nickname": {
+            "title": "Picatz un escai-nom dins lo camp çai-jos",
+            "popover": "Causissètz un escai-nom"
+        },
+        "messagebox": "Picatz vòstre tèxte..."
+    },
+    "settings":
+    {
+        "title": "PARAMÈTRES",
+        "update": "Mesa a jorn",
+        "name": "Nom",
+        "startAudioMuted": "Començar sens lo son",
+        "startVideoMuted": "Començar sens la vidèo",
+        "selectCamera": "Seleccionar la camèra",
+        "selectMic": "Seleccionar lo micrò",
+        "followMe": "Activar la foncion per sègre"
+    },
+    "videothumbnail":
+    {
+        "editnickname": "Clicatz per modificar<br/>vòstre nom",
+        "moderator": "Lp proprietari d'<br/>aquesta conferéncia",
+        "videomute": "Un participant a<br/>arrestat sa camerà.",
+        "mute": "Un participant a rendut mut son micrò",
+        "kick": "Exclure",
+        "muted": "Mut",
+        "domute": "Rendre mut lo son"
+
+    },
+    "connectionindicator":
+    {
+        "bitrate": "Debit",
+        "packetloss": "Pèrda  de paquets : ",
+        "resolution": "Resolucion : ",
+        "less": "Amagar lo detalh",
+        "more": "Mostrar lo detalh",
+        "address": "Adreça : ",
+        "remoteport": "Pòrt alunhat : ",
+        "remoteport_plural": "Pòrts alunhats : ",
+        "localport": "Pòrt local : ",
+        "localport_plural": "Pòrts locals : ",
+        "localaddress": "Adreça locala : ",
+        "localaddress_plural": "Adreças localas : ",
+        "remoteaddress": "Adreça alunhada : ",
+        "remoteaddress_plural": "Adreças alunhadas : ",
+        "transport": "Transpòrt : ",
+        "bandwidth": "Debit estimat : ",
+        "na": "Tornatz aquí per afichar las informacions de connexion un còp la conferéncia començada"
+    },
+    "notify": {
+        "disconnected": "Desconnectat",
+        "moderator": "Dreches moderador concedits !",
+        "connected": "Connectat",
+        "somebody": "Qualqu'un",
+        "me": "Ieu",
+        "focus": "Conferéncia",
+        "focusFail": "__component__ es pas disponible - tornatz ensajar dins __ms__ sec",
+        "grantedTo": "Dreches de moderador concedits a __to__ !",
+        "grantedToUnknown": "Dreches de moderador concedits a $t(somebody)!",
+        "muted": "Avètz començat la charradissa coma mut.",
+        "mutedTitle": "Sètz mut !"
+    },
+    "dialog": {
+       "kickMessage": "Oi ! Sètz estat bandit de la conferéncia !",
+        "popupError": "Vòstre navigador blòca las fenèstras popup d'aquesta site. Mercés d'activar los popus en los paramètres de seguretat de vòstre navigador e d'ensajar tornamai.",
+        "passwordError": "Aquesta conversacion es protegida amb un senhal pel moment. Sol lo proprietari de la conferéncia pòt configurar un senhal.",
+        "passwordError2": "Aquesta conversacion es pas protegida amb un senhal pel moment. Sol lo proprietari de la conferéncia pòt configurar un senhal.",
+        "connectError": "Damne ! Quicòm a trucat e avèm pas pogut vos connectar a la conferéncia.",
+        "connectErrorWithMsg": "Damne ! Quicòm a trucat e avèm pas pogut vos connectar a la conferéncia : __msg__",
+        "connecting": "Connexion en cors",
+        "error": "Error",
+        "detectext": "Error al moment d'ensajar de detectar una extension de partiment de burèu.",
+        "failtoinstall": "Fracàs al moment d'installar l'extension de partiment de burèu",
+        "failedpermissions": "Fracàs al moment d'obtenir las permissions d'emplegar lo micrò e/o la camerà local-a-s",
+        "bridgeUnavailable": "Jitsi Videobridge es pas disponible pel moment. Mercés de tornar ensajar mai tard !",
+        "jicofoUnavailable": "Jicofo es pas disponible pel moment. Mercés de tornar ensajar mai tard !",
+        "maxUsersLimitReached": "La limita maximum de participants a la conferéncia es estada atencha. La conferéncia es completa. Mercés de tornar ensajar mai tard !",
+        "lockTitle": "Clavament fracassat",
+        "lockMessage": "Fracàs al moment de clavar la conferéncia.",
+        "warning": "Atencion",
+        "passwordNotSupported": "Los senhals per las salas son pas encara acceptats.",
+        "sorry": "O planhem",
+        "internalError": "Error intèrna de l'aplicacion [setRemoteDescription]",
+        "unableToSwitch": "Pas possible de cambiar lo flux vidèo.",
+        "SLDFailure": "Damne ! Quicòm a trucat e avèm pas pogut mudejar lo son ! (Fracàs de SLD)",
+        "SRDFailure": "Damne ! Quicòm a trucat e avèm pas pogut arrestar la vidèo ! (Fracàs de SRD)",
+        "oops": "Zut !",
+        "defaultError": "I a agut una error",
+        "passwordRequired": "Senhal requesit",
+        "Ok": "D'acòrd",
+        "Remove": "Levar",
+        "shareVideoTitle": "Partejar una vidèo",
+        "shareVideoLinkError": "Mercés de fornir un ligam youtube corrècte.",
+        "removeSharedVideoTitle": "Levar la vidèo partejada",
+        "removeSharedVideoMsg": "Sètz segur que volètz levar la vidèo qu'avètz partejada ?",
+        "alreadySharedVideoMsg": "Un participant mai es ja a partejar una vidèo. Aquesta conferéncia autoriza pas qu'un partiment de vidèo al còp.",
+        "WaitingForHost": "En espèra de l'òste...",
+        "WaitForHostMsg": "La conferéncia <b>__room__ </b> a pas encara començat. Se sètz l'òste alara mercés de vos autentifiar. Senon, mercés d'esperar l'arribada de l'òste.",
+        "IamHost": "Soi l'òste",
+        "Cancel": "Anullar",
+        "retry": "Tornar ensajar",
+        "logoutTitle" : "Se desconnectar",
+        "logoutQuestion" : "Sètz segur que volètz vos desconnectar e arrestar la conferéncia ?",
+        "sessTerminated": "Session acabada",
+        "hungUp": "You hung up",
+        "joinAgain": "Join again",
+        "Share": "Partejar",
+        "Save": "Enregistrar",
+        "recording": "Enregistrament en cors",
+        "recordingToken": "Picatz un geton per l'enregistrament",
+        "Dial": "Marcar",
+        "sipMsg": "Picatz un numèro SIP",
+        "passwordCheck": "Sètz segur que volètz levar lo senhal ?",
+        "Remove": "Levar",
+        "passwordMsg": "Picatz un senhal per clavar la sala",
+        "Invite": "Convidat",
+        "shareLink": "Partejatz aqueste ligam amb lo mond que volètz convidar",
+        "settings1": "Configuratz vòstra conferéncia",
+        "settings2": "Los participants arriban muts",
+        "settings3": "Escai-noms necessaris<br/><br/>Picatz un senhal per clavar vòstra sala : ",
+        "yourPassword": "vòstre senhal",
+        "Back": "Tornar",
+        "serviceUnavailable": "Servici pas disponible",
+        "gracefulShutdown": "Nòstres servicis son fòra servici per manteniment. Mercés de tornar ensajar mai tard.",
+        "Yes": "Òc",
+        "reservationError": "Error del sistèma de reservacion",
+        "reservationErrorMsg": "Error còdi : __code__, messatge : __msg__",
+        "password": "senhal",
+        "userPassword": "senhal de l'utilizaire",
+        "token": "geton",
+        "tokenAuthFailed": "Fracàs de l'autentificacion amb lo servidor XMPP : invalide geton",
+        "displayNameRequired": "Mercés de picar vòstre nom a afichar : ",
+        "extensionRequired": "Extension requesida : ",
+        "firefoxExtensionPrompt": "Vos cal installar l'extension de Firefox per utilizar lo partiment d'ecran. Mercés de tornar ensajar aprèp<a href='__url__'>l'aver obtenguda aquí</a> !",
+        "feedbackQuestion": "Cossí èra vòstre apèl ?",
+        "thankYou": "Mercés d'utilizar __appName__ !",
+        "sorryFeedback": "O planhem. Volètz nos en dire mai ?",
+        "liveStreaming": "Live Streaming",
+        "streamKey": "Stream nom/clau",
+        "startLiveStreaming": "Començar lo live streaming",
+        "stopStreamingWarning": "Sètz segur que volètz arrestar lo live streaing ?",
+        "stopRecordingWarning": "Sètz segur que volètz arrestar l'enregistrament ?",
+        "stopLiveStreaming": "Arrestar lo live streaming",
+        "stopRecording": "Arrestar l'enregistrament"
+    },
+    "email": {
+        "sharedKey": [
+            "Aquesta conferéncia es protegida per un senhal. Utilizatz aqueste còdi per la rejónher : ",
+            "",
+            "",
+            "__sharedKey__",
+            "",
+            ""
+        ],
+        "subject": "Invitacion a la conferéncia __appName__ : __conferenceName__",
+        "body": [
+            "Bonjors, vos convidi a la conferéncia __appName__ que veni de crear.",
+            "",
+            "",
+            "Clicatz sul ligam seguent per rejónher la conferéncia.",
+            "",
+            "",
+            "__roomUrl__",
+            "",
+            "",
+            "__sharedKeyText__",
+            "   Notatz que __appName__ es solament compatible amb  __supportedBrowsers__ pel moment, alara vos cal emplegar un d'aqueles navigadors.",
+            "",
+            "",
+            "A lèu lèu dins la conferéncia !"
+        ],
+        "and": "e"
+    },
+    "connection":
+    {
+        "ERROR": "Error",
+        "CONNECTING": "La connexion es a se realizar...",
+        "RECONNECTING": "A network problem occurred. Reconnecting...",
+        "CONNFAIL": "Fracàs de la connexion",
+        "AUTHENTICATING": "Autentificacion en cors...",
+        "AUTHFAIL": "Fracàs de l'autentificacion",
+        "CONNECTED": "Connectat",
+        "DISCONNECTED": "Desconnectat",
+        "DISCONNECTING": "La desconnexion es a se realizar...",
+        "ATTACHED": "Atrapada",
+        "FETCH_SESSION_ID": "Obtencion de session-id...",
+        "GOT_SESSION_ID": "Obtencion de session-id... Fach",
+        "GET_SESSION_ID_ERROR": "Get session-id error : "
+    },
+    "recording":
+    {
+        "pending": "En espèra d'un participant per enregistrar...",
+        "on": "L'enregistrament en cors",
+        "off": "L'enregistrament es estat arrestat",
+        "failedToStart": "Fracàs de l'aviada de l'enregistrament",
+        "buttonTooltip": "Començar / arrestar l'enregistrament"
+    },
+    "liveStreaming":
+    {
+        "pending": "Començament del Live Stream...",
+        "on": "Lo Live Streaming es en cors",
+        "off": "Lo Live Streaming es estat arrestat",
+        "unavailable": "Lo servici de live streaming es pas disponible pel moment. Mercés de tornar ensajar mai tard.",
+        "failedToStart": "Fracàs de l'aviada del Live streaming",
+        "buttonTooltip": "Començar / arrestar lo live stream",
+        "streamIdRequired": "Mercés d'emplenar l'id del stream per lançar lo live streaming."
+    }
+}
