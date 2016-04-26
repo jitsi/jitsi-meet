@@ -1,4 +1,5 @@
 /* global $, JitsiMeetJS, config, getRoomName */
+
 /* application specific logic */
 
 import "babel-polyfill";
