@@ -557,6 +557,9 @@ export default {
                 this.useAudioStream(track);
             } else if (track.isVideoTrack()) {
                 this.useVideoStream(track);
+            } else {
+                console.error(
+                    "Ignored not an audio nor a video track: ", track);
             }
         });
         roomLocker = createRoomLocker(room);
