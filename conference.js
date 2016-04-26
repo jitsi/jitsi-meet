@@ -474,20 +474,13 @@ export default {
         return this.audioLevelsMap[id];
     },
     /**
-     * Will check for number of remote particiapnts that have at least one
-     * remote track.
-     * @return {boolean} whether we have enough participants with remote streams
+     * @return {number} the number of participants in the conference with at
+     * least one track.
      */
-    checkEnoughParticipants (number) {
-        var participants = this._room.getParticipants();
-
-        var foundParticipants = 0;
-        for (var i = 0; i < participants.length; i += 1) {
-            if (participants[i].getTracks().length > 0) {
-                foundParticipants++;
-            }
-        }
-        return foundParticipants >= number;
+    getNumberOfParticipantsWithTracks() {
+        return this._room.getParticipants()
+            .filter((p) => p.getTracks().length > 0)
+            .length;
     },
     /**
      * Returns the stats.
