@@ -31,12 +31,6 @@ function initShortcutHandlers() {
                 APP.conference.toggleAudioMuted();
             }
         },
-        84: {
-            character: "T",
-            function: function() {
-                APP.conference.muteAudio(true);
-            }
-        },
         86: {
             character: "V",
             id: "toggleVideoPopover",
@@ -73,10 +67,6 @@ var KeyboardShortcut = {
             if(!($(":focus").is("input[type=text]") ||
                 $(":focus").is("input[type=password]") ||
                 $(":focus").is("textarea"))) {
-                if(e.which === "T".charCodeAt(0)) {
-                    if(APP.conference.isLocalAudioMuted())
-                        APP.conference.muteAudio(false);
-                }
             }
         };
         var self = this;
