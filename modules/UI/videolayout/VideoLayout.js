@@ -404,7 +404,11 @@ var VideoLayout = {
             this.isLargeContainerTypeVisible(VIDEO_CONTAINER_TYPE)) ||
             pinnedId === resourceJid ||
             (!pinnedId && resourceJid &&
-                currentDominantSpeaker === resourceJid)) {
+                currentDominantSpeaker === resourceJid) ||
+            /* Playback started while we're on the stage - may need to update
+               video source with the new stream */
+            this.isCurrentlyOnLarge(resourceJid)) {
+
             this.updateLargeVideo(resourceJid, true);
         }
     },
