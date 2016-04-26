@@ -155,7 +155,6 @@ export default class SharedVideoManager {
 
         window.onPlayerStateChange = function(event) {
             if (event.data == YT.PlayerState.PLAYING) {
-                self.playerPaused = false;
 
                 self.player = event.target;
 
@@ -164,14 +163,13 @@ export default class SharedVideoManager {
                     self.processAttributes(
                         self.player,
                         self.initialAttributes,
-                        self.playerPaused);
+                        false);
 
                     self.initialAttributes = null;
                 }
                 self.smartMute();
                 self.updateCheck();
             } else if (event.data == YT.PlayerState.PAUSED) {
-                self.playerPaused = true;
                 self.smartUnmute();
                 self.updateCheck(true);
             }
@@ -372,7 +370,8 @@ export default class SharedVideoManager {
         if(!this.player)
             this.initialAttributes = attributes;
         else {
-            this.processAttributes(this.player, attributes, this.playerPaused);
+            this.processAttributes(this.player, attributes,
+                (this.player.getPlayerState() === YT.PlayerState.PAUSED));
         }
     }
 
@@ -446,7 +445,7 @@ export default class SharedVideoManager {
         if (muted) {
             this.mutedWithUserInteraction = userInteraction;
         }
-        else if (!this.playerPaused) {
+        else if (this.player.getPlayerState() !== YT.PlayerState.PAUSED) {
             this.mutePlayer(true);
         }
     }
