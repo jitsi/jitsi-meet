@@ -320,6 +320,16 @@ export default {
                 if(oldOnErrorHandler)
                     oldOnErrorHandler(message, source, lineno, colno, error);
             };
+
+            var oldOnUnhandledRejection = window.onunhandledrejection;
+            window.onunhandledrejection = function(event) {
+
+            JitsiMeetJS.getGlobalOnErrorHandler(
+                    null, null, null, null, event.reason);
+
+                if(oldOnUnhandledRejection)
+                    oldOnUnhandledRejection(event);
+            };
         }
 
         return JitsiMeetJS.init(config).then(() => {
