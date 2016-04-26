@@ -29,7 +29,6 @@ var JitsiPopover = require("./util/JitsiPopover");
 var Feedback = require("./Feedback");
 
 import FollowMe from "../FollowMe";
-import Recorder from "../recorder/Recorder";
 
 var eventEmitter = new EventEmitter();
 UI.eventEmitter = eventEmitter;
@@ -241,11 +240,6 @@ UI.initConference = function () {
     //update default button states before showing the toolbar
     //if local role changes buttons state will be again updated
     UI.updateLocalRole(false);
-
-    // Initialise the recorder handler. We're doing this explicitly before
-    // calling showToolbar, because the recorder may want to disable all
-    // toolbars.
-    new Recorder(APP.conference);
 
     // Once we've joined the muc show the toolbar
     ToolbarToggler.showToolbar();

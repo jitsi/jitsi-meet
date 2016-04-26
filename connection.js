@@ -132,15 +132,17 @@ function requestAuth() {
  */
 export function openConnection({id, password, retry, roomName}) {
 
-    let predefinedLogin = window.localStorage.getItem("xmpp_login");
-    let predefinedPassword = window.localStorage.getItem("xmpp_password");
+    let usernameOverride
+        = window.localStorage.getItem("xmpp_username_override");
+    let passwordOverride
+        = window.localStorage.getItem("xmpp_password_override");
 
-    if (!id && predefinedLogin && predefinedLogin.length > 0) {
-        id = predefinedLogin;
+    if (usernameOverride && usernameOverride.length > 0) {
+        id = usernameOverride;
     }
 
-    if (!password && predefinedPassword && predefinedPassword.length > 0) {
-        password = predefinedPassword;
+    if (passwordOverride && passwordOverride.length > 0) {
+        password = passwordOverride;
     }
 
     return connect(id, password, roomName).catch(function (err) {

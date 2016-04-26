@@ -753,11 +753,14 @@ export default {
 
 
         room.on(ConferenceEvents.USER_JOINED, (id, user) => {
+            if (user.isHidden())
+                return;
+
             console.log('USER %s connnected', id, user);
             APP.API.notifyUserJoined(id);
             APP.UI.addUser(id, user.getDisplayName());
 
-            // chek the roles for the new user and reflect them
+            // check the roles for the new user and reflect them
             APP.UI.updateUserRole(user);
         });
         room.on(ConferenceEvents.USER_LEFT, (id, user) => {
