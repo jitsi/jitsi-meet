@@ -438,13 +438,17 @@ var VideoLayout = {
 
         APP.conference.listMembers().forEach(function (member) {
             let id = member.getId();
+            let remoteVideo = remoteVideos[id];
+            if (!remoteVideo)
+                return;
+
             if (member.isModerator()) {
-                remoteVideos[id].removeRemoteVideoMenu();
-                remoteVideos[id].createModeratorIndicatorElement();
+                remoteVideo.removeRemoteVideoMenu();
+                remoteVideo.createModeratorIndicatorElement();
             } else if (isModerator) {
                 // We are moderator, but user is not - add menu
                 if ($(`#remote_popupmenu_${id}`).length <= 0) {
-                    remoteVideos[id].addRemoteVideoMenu();
+                    remoteVideo.addRemoteVideoMenu();
                 }
             }
         });
