@@ -277,7 +277,12 @@ var VideoLayout = {
 
     onRemoteStreamAdded (stream) {
         let id = stream.getParticipantId();
-        remoteVideos[id].addRemoteStreamElement(stream);
+        let remoteVideo = remoteVideos[id];
+
+        if (!remoteVideo)
+            return;
+
+        remoteVideo.addRemoteStreamElement(stream);
 
         // if track is muted make sure we reflect that
         if(stream.isMuted())
@@ -360,7 +365,8 @@ var VideoLayout = {
     },
 
     /**
-     * Creates a remote video for participant for the given id.
+     * Creates a participant container for the given id and smallVideo.
+     *
      * @param id the id of the participant to add
      * @param {SmallVideo} smallVideo optional small video instance to add as a
      * remote video, if undefined RemoteVideo will be created

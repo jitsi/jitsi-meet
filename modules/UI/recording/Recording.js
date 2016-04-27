@@ -16,6 +16,11 @@
  */
 import UIEvents from "../../../service/UI/UIEvents";
 import UIUtil from '../util/UIUtil';
+import VideoLayout from '../videolayout/VideoLayout';
+import Feedback from '../Feedback.js';
+import Toolbar from '../toolbars/Toolbar';
+import BottomToolbar from '../toolbars/BottomToolbar';
+
 
 /**
  * Indicates if the recording button should be enabled.
@@ -218,6 +223,16 @@ var Recording = {
         this.currentState = Status.UNAVAILABLE;
 
         this.initRecordingButton(recordingType);
+
+        // If I am a recorder then I publish my recorder custom role to notify
+        // everyone.
+        if (config.iAmRecorder) {
+            VideoLayout.enableDeviceAvailabilityIcons(
+                APP.conference.localId, true);
+            Feedback.enableFeedback(false);
+            Toolbar.enable(false);
+            BottomToolbar.enable(false);
+        }
     },
 
     /**
