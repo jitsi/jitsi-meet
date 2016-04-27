@@ -446,7 +446,15 @@ export default class LargeVideoManager {
 
         let container = this.getContainer(this.state);
 
-        container.hide().then(() => {
+        // Include hide()/fadeOut only if we're switching between users
+        let preUpdate;
+        if (this.newStreamData.id != this.id) {
+            preUpdate = container.hide();
+        } else {
+            preUpdate = Promise.resolve();
+        }
+        
+        preUpdate.then(() => {
             let {id, stream, videoType, resolve} = this.newStreamData;
             this.newStreamData = null;
 
