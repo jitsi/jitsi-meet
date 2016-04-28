@@ -12,23 +12,13 @@
  * exrnal_connect.js.
  */
 
-
-
- /**
-  * Gets the token from the URL.
-  */
-function buildToken(){
-    var params = getConfigParamsFromUrl();
-    return params["config.token"] || config.token;
-}
-
 /**
  * Executes createConnectionExternally function.
  */
 (function () {
-    // FIXME: Add implementation for changing that config from the url for
-    // consistency
-    var url = config.externalConnectUrl;
+    var params = getConfigParamsFromUrl();
+
+    var url = params["config.externalConnectUrl"] || config.externalConnectUrl;
 
     /**
      * Check if connect from connection.js was executed and executes the handler
@@ -64,7 +54,7 @@ function buildToken(){
 
     url += "?room=" + room_name;
 
-    var token = buildToken();
+    var token = params["config.token"] || config.token;
     if(token)
         url += "&token=" + token;
 
