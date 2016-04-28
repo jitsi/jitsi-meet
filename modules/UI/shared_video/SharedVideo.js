@@ -98,6 +98,8 @@ export default class SharedVideoManager {
         // the owner of the video
         this.from = id;
 
+        this.mutedWithUserInteraction = APP.conference.isLocalAudioMuted();
+
         //listen for local audio mute events
         this.localAudioMutedListener = this.onLocalAudioMuted.bind(this);
         this.emitter.on(UIEvents.AUDIO_MUTED, this.localAudioMutedListener);
@@ -447,7 +449,6 @@ export default class SharedVideoManager {
             this.smartPlayerMute(true, false);
             // Check if we need to update other participants
             this.fireSharedVideoEvent();
-
         }
     }
 
