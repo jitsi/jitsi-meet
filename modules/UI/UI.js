@@ -1116,9 +1116,9 @@ UI.updateDevicesAvailability = function (id, devices) {
  * @param {string} url video url
  * @param {string} attributes
 */
-UI.showSharedVideo = function (id, url, attributes) {
+UI.onSharedVideoStart = function (id, url, attributes) {
     if (sharedVideoManager)
-        sharedVideoManager.showSharedVideo(id, url, attributes);
+        sharedVideoManager.onSharedVideoStart(id, url, attributes);
 };
 
 /**
@@ -1127,9 +1127,9 @@ UI.showSharedVideo = function (id, url, attributes) {
  * @param {string} url video url
  * @param {string} attributes
  */
-UI.updateSharedVideo = function (id, url, attributes) {
+UI.onSharedVideoUpdate = function (id, url, attributes) {
     if (sharedVideoManager)
-        sharedVideoManager.updateSharedVideo(id, url, attributes);
+        sharedVideoManager.onSharedVideoUpdate(id, url, attributes);
 };
 
 /**
@@ -1137,9 +1137,9 @@ UI.updateSharedVideo = function (id, url, attributes) {
  * @param {string} id the id of the sender of the command
  * @param {string} attributes
  */
-UI.stopSharedVideo = function (id, attributes) {
+UI.onSharedVideoStop = function (id, attributes) {
     if (sharedVideoManager)
-        sharedVideoManager.stopSharedVideo(id, attributes);
+        sharedVideoManager.onSharedVideoStop(id, attributes);
 };
 
 module.exports = UI;

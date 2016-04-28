@@ -762,7 +762,7 @@ export default {
             console.log('USER %s LEFT', id, user);
             APP.API.notifyUserLeft(id);
             APP.UI.removeUser(id, user.getDisplayName());
-            APP.UI.stopSharedVideo(id);
+            APP.UI.onSharedVideoStop(id);
         });
 
 
@@ -1130,14 +1130,14 @@ export default {
             this.commands.defaults.SHARED_VIDEO, ({value, attributes}, id) => {
 
                 if (attributes.state === 'stop') {
-                    APP.UI.stopSharedVideo(id, attributes);
+                    APP.UI.onSharedVideoStop(id, attributes);
                 }
                 else if (attributes.state === 'start') {
-                    APP.UI.showSharedVideo(id, value, attributes);
+                    APP.UI.onSharedVideoStart(id, value, attributes);
                 }
                 else if (attributes.state === 'playing'
                     || attributes.state === 'pause') {
-                    APP.UI.updateSharedVideo(id, value, attributes);
+                    APP.UI.onSharedVideoUpdate(id, value, attributes);
                 }
             });
     },
