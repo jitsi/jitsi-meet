@@ -30,12 +30,18 @@ export default class SharedVideoManager {
     }
 
     /**
-     * Indicates if the player volume is currently on.
+     * Indicates if the player volume is currently on. This will return true if
+     * we have an available player, which is currently in a PLAYING state,
+     * which isn't muted and has it's volume greater than 0.
      *
-     * @returns {*|player|boolean}
+     * @returns {boolean} indicating if the volume of the shared video is
+     * currently on.
      */
     isSharedVideoVolumeOn() {
-        return (this.player && this.player.getVolume() > 0);
+        return (this.player
+                && this.player.getPlayerState() === YT.PlayerState.PLAYING
+                && !this.player.isMuted()
+                && this.player.getVolume() > 0);
     }
 
     /**
@@ -92,7 +98,7 @@ export default class SharedVideoManager {
         this.from = id;
 
         //listen for local audio mute events
-        this.localAudioMutedListener = this.localAudioMuted.bind(this);
+        this.localAudioMutedListener = this.onLocalAudioMuted.bind(this);
         this.emitter.on(UIEvents.AUDIO_MUTED, this.localAudioMutedListener);
 
         // This code loads the IFrame Player API code asynchronously.
@@ -149,20 +155,22 @@ export default class SharedVideoManager {
 
         window.onPlayerStateChange = function(event) {
             if (event.data == YT.PlayerState.PLAYING) {
-                self.playerPaused = false;
 
                 self.player = event.target;
 
                 if(self.initialAttributes)
                 {
                     self.processAttributes(
-                        self.player, self.initialAttributes, self.playerPaused);
+                        self.player,
+                        self.initialAttributes,
+                        false);
+
                     self.initialAttributes = null;
                 }
-
+                self.smartMute();
                 self.updateCheck();
             } else if (event.data == YT.PlayerState.PAUSED) {
-                self.playerPaused = true;
+                self.smartUnmute();
                 self.updateCheck(true);
             }
         };
@@ -186,15 +194,11 @@ export default class SharedVideoManager {
             self.updateCheck();
 
             // let's check, if player is not muted lets mute locally
-            if(event.data.volume > 0 && !event.data.muted
-                && !APP.conference.isLocalAudioMuted()) {
-                self.emitter.emit(UIEvents.AUDIO_MUTED, true, false);
-                self.showMicMutedPopup(true);
+            if(event.data.volume > 0 && !event.data.muted) {
+                self.smartMute();
             }
-            else if (!self.mutedWithUserInteraction
-                        && (event.data.volume <=0 || event.data.muted)
-                        && APP.conference.isLocalAudioMuted()) {
-                self.emitter.emit(UIEvents.AUDIO_MUTED, false, false);
+            else if (event.data.volume <=0 || event.data.muted) {
+                self.smartUnmute();
             }
         };
 
@@ -253,18 +257,30 @@ export default class SharedVideoManager {
 
             this.processTime(player, attributes, playerPaused);
 
-            // lets check the volume
-            if (attributes.volume !== undefined
-                && player.getVolume() != attributes.volume
-                && (APP.conference.isLocalAudioMuted()
-                    || !this.mutedWithUserInteraction)) {
+            let isAttrMuted = (attributes.muted === "true");
+
+            // Process player unmute
+            if (player.isMuted() && !isAttrMuted) {
+                console.log("Process player unmute and smart mike mute.");
+                this.mutePlayer(false);
+            }
+            // Process player mute
+            else if (!player.isMuted() && isAttrMuted) {
+                console.log("Process player mute and smart mike unmute.");
+                this.mutePlayer(true);
+            }
+
+            // Process volume
+            if (!isAttrMuted
+                && attributes.volume !== undefined
+                && player.getVolume() != attributes.volume) {
 
                 player.setVolume(attributes.volume);
                 console.info("Player change of volume:" + attributes.volume);
                 this.showSharedVideoMutedPopup(false);
             }
 
-            if(playerPaused)
+            if (playerPaused)
                 player.playVideo();
 
         } else if (attributes.state == 'pause') {
@@ -328,7 +344,8 @@ export default class SharedVideoManager {
             this.emitter.emit(UIEvents.UPDATE_SHARED_VIDEO,
                 this.url, 'playing',
                 this.player.getCurrentTime(),
-                this.player.isMuted() ? 0 : this.player.getVolume());
+                this.player.isMuted(),
+                this.player.getVolume());
         }
     }
 
@@ -353,7 +370,8 @@ export default class SharedVideoManager {
         if(!this.player)
             this.initialAttributes = attributes;
         else {
-            this.processAttributes(this.player, attributes, this.playerPaused);
+            this.processAttributes(this.player, attributes,
+                (this.player.getPlayerState() === YT.PlayerState.PAUSED));
         }
     }
 
@@ -370,7 +388,7 @@ export default class SharedVideoManager {
         if(this.from !== id)
             return;
 
-        if(!this.player){
+        if(!this.player) {
             // if there is no error in the player till now,
             // store the initial attributes
             if (!this.errorInPlayer) {
@@ -388,8 +406,6 @@ export default class SharedVideoManager {
             this.localAudioMutedListener);
         this.localAudioMutedListener = null;
 
-        this.showSharedVideoMutedPopup(false);
-
         VideoLayout.removeParticipantContainer(this.url);
 
         VideoLayout.showLargeVideoContainer(SHARED_VIDEO_CONTAINER_TYPE, false)
@@ -405,6 +421,7 @@ export default class SharedVideoManager {
                     this.errorInPlayer.destroy();
                     this.errorInPlayer = null;
                 }
+                this.smartUnmute();
                 // revert to original behavior (prevents pausing
                 // for participants not sharing the video to pause it)
                 $("#sharedVideo").css("pointer-events","auto");
@@ -421,20 +438,63 @@ export default class SharedVideoManager {
      * @param {boolean} indicates if this mute was a result of user interaction,
      * i.e. pressing the mute button or it was programatically triggerred
      */
-    localAudioMuted (muted, userInteraction) {
+    onLocalAudioMuted (muted, userInteraction) {
         if(!this.player)
             return;
 
         if (muted) {
             this.mutedWithUserInteraction = userInteraction;
-            return;
+        }
+        else if (this.player.getPlayerState() !== YT.PlayerState.PAUSED) {
+            this.mutePlayer(true);
+        }
+    }
+
+    /**
+     * Mutes / unmutes the player.
+     * @param mute true to mute the shared video, false - otherwise.
+     */
+    mutePlayer(mute) {
+        if (!this.player.isMuted() && mute) {
+            this.player.mute();
+            this.smartUnmute();
+        }
+        else if (this.player.isMuted() && !mute) {
+            this.player.unMute();
+            this.smartMute();
         }
 
-        // if we are un-muting and player is not muted, lets muted
-        // to not pollute the conference
-        if (this.player.getVolume() > 0 || !this.player.isMuted()) {
-            this.player.setVolume(0);
-            this.showSharedVideoMutedPopup(true);
+        // Check if we need to update other participants
+        this.updateCheck();
+
+        this.showSharedVideoMutedPopup(mute);
+    }
+
+    /**
+     * Smart mike unmute. If the mike is currently muted and it wasn't muted
+     * by the user via the mike button and the volume of the shared video is on
+     * we're unmuting the mike automatically.
+     */
+    smartUnmute() {
+        if (APP.conference.isLocalAudioMuted()
+            && !this.mutedWithUserInteraction
+            && !this.isSharedVideoVolumeOn()) {
+
+            this.emitter.emit(UIEvents.AUDIO_MUTED, false, false);
+            this.showMicMutedPopup(false);
+        }
+    }
+
+    /**
+     * Smart mike mute. If the mike isn't currently muted and the shared video
+     * volume is on we mute the mike.
+     */
+    smartMute() {
+        if (!APP.conference.isLocalAudioMuted()
+            && this.isSharedVideoVolumeOn()) {
+
+            this.emitter.emit(UIEvents.AUDIO_MUTED, true, false);
+            this.showMicMutedPopup(true);
         }
     }
 

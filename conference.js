@@ -1096,7 +1096,7 @@ export default {
         );
 
         APP.UI.addListener(UIEvents.UPDATE_SHARED_VIDEO,
-            (url, state, time, volume) => {
+            (url, state, time, isMuted, volume) => {
             // send start and stop commands once, and remove any updates
             // that had left
             if (state === 'stop' || state === 'start' || state === 'playing') {
@@ -1106,6 +1106,7 @@ export default {
                     attributes: {
                         state: state,
                         time: time,
+                        muted: isMuted,
                         volume: volume
                     }
                 });
@@ -1119,6 +1120,7 @@ export default {
                     attributes: {
                         state: state,
                         time: time,
+                        muted: isMuted,
                         volume: volume
                     }
                 });
@@ -1129,12 +1131,22 @@ export default {
 
                 if (attributes.state === 'stop') {
                     APP.UI.stopSharedVideo(id, attributes);
-                } else if (attributes.state === 'start') {
+                }
+                else if (attributes.state === 'start') {
                     APP.UI.showSharedVideo(id, value, attributes);
-                } else if (attributes.state === 'playing'
+                }
+                else if (attributes.state === 'playing'
                     || attributes.state === 'pause') {
                     APP.UI.updateSharedVideo(id, value, attributes);
                 }
             });
+    },
+    /**
+     * Adss any room listener.
+     * @param eventName one of the ConferenceEvents
+     * @param callBack the function to be called when the event occurs
+     */
+     addConferenceListener(eventName, callBack) {
+        room.on(eventName, callBack);
     }
 };
