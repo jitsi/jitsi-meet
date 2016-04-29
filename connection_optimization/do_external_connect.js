@@ -17,8 +17,11 @@
  */
 (function () {
     var params = getConfigParamsFromUrl();
-
-    var url = params["config.externalConnectUrl"] || config.externalConnectUrl;
+    
+    //Url params have higher proirity than config params
+    var url = config.externalConnectUrl;
+    if(params.hasOwnProperty('config.externalConnectUrl'))
+        url = params["config.externalConnectUrl"];
 
     /**
      * Check if connect from connection.js was executed and executes the handler
