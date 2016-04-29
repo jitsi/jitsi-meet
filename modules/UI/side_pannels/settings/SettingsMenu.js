@@ -33,7 +33,7 @@ function generateLanguagesOptions(items, currentLang) {
  * @returns {string}
  */
 function generateDevicesOptions(items, selectedId) {
-    return items.map(function (item) {
+    let options = items.map(function (item) {
         let attrs = {
             value: item.deviceId
         };
@@ -44,7 +44,10 @@ function generateDevicesOptions(items, selectedId) {
 
         let attrsStr = UIUtil.attrsToString(attrs);
         return `<option ${attrsStr}>${item.label}</option>`;
-    }).join('\n');
+    });
+    options.unshift('<option label=" "></option>');
+
+    return options.join('\n');
 }
 
 
@@ -111,7 +114,6 @@ export default {
 
 
         // DEVICES LIST
-        this.changeDevicesList([]);
         $('#selectCamera').change(function () {
             let cameraDeviceId = $(this).val();
             if (cameraDeviceId !== Settings.getCameraDeviceId()) {
@@ -185,22 +187,24 @@ export default {
      * no devices available.
      * @param {{ deviceId, label, kind }[]} devices list of available devices
      */
-    changeDevicesList (devices) {
-        if (!devices.length) {
-            $('#devicesOptions').hide();
-            return;
+    changeDevicesList ({ audio = [], video = []}) {
+        let audioSelect = $('#selectMic');
+        if (audio.length) {
+            audioSelect.html(
+                generateDevicesOptions(audio, Settings.getMicDeviceId())
+            );
         }
+        audioSelect.parent().toggle(!!audio.length);
 
-        let audio = devices.filter(device => device.kind === 'audioinput');
-        let video = devices.filter(device => device.kind === 'videoinput');
 
-        $('#selectCamera').html(
-            generateDevicesOptions(video, Settings.getCameraDeviceId())
-        );
-        $('#selectMic').html(
-            generateDevicesOptions(audio, Settings.getMicDeviceId())
-        );
+        let videoSelect = $('#selectCamera');
+        if (video.length) {
+            videoSelect.html(
+                generateDevicesOptions(video, Settings.getCameraDeviceId())
+            );
+        }
+        videoSelect.parent().toggle(!!video.length);
 
-        $('#devicesOptions').show();
+        $('#devicesOptions').toggle(!!(audio.length || video.length));
     }
 };

@@ -10,6 +10,8 @@ import ConnectionQuality from './modules/connectionquality/connectionquality';
 import CQEvents from './service/connectionquality/CQEvents';
 import UIEvents from './service/UI/UIEvents';
 
+const LibraryEvents = JitsiMeetJS.events.library;
+
 const ConnectionEvents = JitsiMeetJS.events.connection;
 const ConnectionErrors = JitsiMeetJS.errors.connection;
 
@@ -340,12 +342,14 @@ export default {
                 JitsiMeetJS.isDesktopSharingEnabled();
 
             // update list of available devices
-            if (JitsiMeetJS.isDeviceListAvailable() &&
-                JitsiMeetJS.isDeviceChangeAvailable()) {
-                JitsiMeetJS.enumerateDevices(
-                    devices => APP.UI.onAvailableDevicesChanged(devices)
-                );
-            }
+            APP.UI.updateDevicesList(JitsiMeetJS.getDevicesList());
+            JitsiMeetJS.on(
+                LibraryEvents.DEVICES_LIST_CHANGED,
+                function () {
+                    APP.UI.updateDevicesList(JitsiMeetJS.getDevicesList());
+                }
+            );
+
             // XXX The API will take care of disconnecting from the XMPP server
             // (and, thus, leaving the room) on unload.
             return new Promise((resolve, reject) => {

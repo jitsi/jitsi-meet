@@ -35,7 +35,7 @@
     "browserify": "11.1.x",
     "browserify-shim": "^3.8.10",
     "exorcist": "*",
-    "jshint": "2.8.0",
+    "jshint": "2.9.1",
     "precommit-hook": "3.0.0",
     "uglify-js": "2.4.24",
     "clean-css": "*",
