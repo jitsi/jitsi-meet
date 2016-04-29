@@ -30,6 +30,13 @@ During the installation, you will be asked to enter the hostname of the Jitsi Me
 
 This hostname (or IP address) will be used for virtualhost configuration inside the Jitsi Meet and also, you and your correspondents will be using it to access the web conferences.
 
+#### Note
+Don't forget to open the ports 10000 - 20000 udp on your firewall.
+For ufw execute as root or use sudo:
+```sh
+ufw allow 10000:20000/udp
+```
+
 ### Open a conference
 
 Launch a web browser (Chrome, Chromium or latest Opera) and enter in the URL bar the hostname (or IP address) you used in the previous step.
