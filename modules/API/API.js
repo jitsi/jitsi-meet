@@ -107,7 +107,10 @@ function processMessage(event) {
     var message;
     try {
         message = JSON.parse(event.data);
-    } catch (e) {}
+    } catch (e) {
+        console.error("Could not parse event data.");
+        return;
+    }
 
     if(!message.type)
         return;
