@@ -199,6 +199,15 @@
                 () => {selector.css({opacity: 0});}
             );
         }
+    },
+
+    /**
+     * Parses the given cssValue as an Integer. If the value is not a number
+     * we return 0 instead of NaN.
+     * @param cssValue the string value we obtain when querying css properties
+     */
+    parseCssInt(cssValue) {
+        return parseInt(cssValue) || 0;
     }
 };
 

@@ -228,7 +228,8 @@ var Recording = {
         // everyone.
         if (config.iAmRecorder) {
             VideoLayout.enableDeviceAvailabilityIcons(
-                APP.conference.localId, true);
+                APP.conference.localId, false);
+            VideoLayout.setLocalVideoVisible(false);
             Feedback.enableFeedback(false);
             Toolbar.enable(false);
             BottomToolbar.enable(false);

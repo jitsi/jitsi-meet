@@ -216,6 +216,14 @@ var VideoLayout = {
     },
 
     /**
+     * Shows/hides local video.
+     * @param {boolean} true to make the local video visible, false - otherwise
+     */
+    setLocalVideoVisible(visible) {
+        localVideoThumbnail.setVisible(visible);
+    },
+
+    /**
      * Checks if removed video is currently displayed and tries to display
      * another one instead.
      * Uses focusedID if any or dominantSpeakerID if any,

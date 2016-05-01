@@ -1,4 +1,4 @@
-/* global $, interfaceConfig, APP, JitsiMeetJS */
+/* global $, config, interfaceConfig, APP, JitsiMeetJS */
 import ConnectionIndicator from "./ConnectionIndicator";
 import UIUtil from "../util/UIUtil";
 import UIEvents from "../../../service/UI/UIEvents";
@@ -198,6 +198,28 @@ LocalVideo.prototype.changeVideo = function (stream) {
         stream.off(TrackEvents.LOCAL_TRACK_STOPPED, endedHandler);
     };
     stream.on(TrackEvents.LOCAL_TRACK_STOPPED, endedHandler);
+};
+
+/**
+ * Shows or hides the local video container.
+ * @param {boolean} true to make the local video container visible, false
+ * otherwise
+ */
+LocalVideo.prototype.setVisible = function(visible) {
+
+    // We toggle the hidden class as an indication to other interested parties
+    // that this container has been hidden on purpose.
+    $("#localVideoContainer").toggleClass("hidden");
+
+    // We still show/hide it as we need to overwrite the style property if we
+    // want our action to take effect. Toggling the display property through
+    // the above css class didn't succeed in overwriting the style.
+    if (visible) {
+        $("#localVideoContainer").show();
+    }
+    else {
+        $("#localVideoContainer").hide();
+    }
 };
 
 export default LocalVideo;
