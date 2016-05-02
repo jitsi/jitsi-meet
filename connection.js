@@ -31,6 +31,7 @@ function checkForAttachParametersAndConnect(id, password, connection) {
         var attachOptions = window.XMPPAttachInfo.data;
         if(attachOptions) {
             connection.attach(attachOptions);
+            delete window.XMPPAttachInfo.data;
         } else {
             connection.connect({id, password});
         }
