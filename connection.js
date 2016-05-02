@@ -52,11 +52,11 @@ function checkForAttachParametersAndConnect(id, password, connection) {
  */
 function connect(id, password, roomName) {
 
-    let connectionConfig = config;
+    let connectionConfig = Object.assign({}, config);
 
     connectionConfig.bosh += '?room=' + roomName;
     let connection
-        = new JitsiMeetJS.JitsiConnection(null, config.token, config);
+        = new JitsiMeetJS.JitsiConnection(null, config.token, connectionConfig);
 
     return new Promise(function (resolve, reject) {
         connection.addEventListener(
