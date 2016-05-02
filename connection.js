@@ -96,13 +96,14 @@ function connect(id, password, roomName) {
  * Show Authentication Dialog and try to connect with new credentials.
  * If failed to connect because of PASSWORD_REQUIRED error
  * then ask for password again.
+ * @param {string} [roomName]
  * @returns {Promise<JitsiConnection>}
  */
-function requestAuth() {
+function requestAuth(roomName) {
     return new Promise(function (resolve, reject) {
         let authDialog = LoginDialog.showAuthDialog(
             function (id, password) {
-                connect(id, password).then(function (connection) {
+                connect(id, password, roomName).then(function (connection) {
                     authDialog.close();
                     resolve(connection);
                 }, function (err) {
@@ -156,7 +157,7 @@ export function openConnection({id, password, retry, roomName}) {
             if (config.token) {
                 throw err;
             } else {
-                return requestAuth();
+                return requestAuth(roomName);
             }
         } else {
             throw err;
