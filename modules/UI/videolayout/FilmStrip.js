@@ -85,20 +85,32 @@ const FilmStrip = {
          */
         let videoAreaAvailableWidth
             = UIUtil.getAvailableVideoWidth(isSideBarVisible)
-                - parseInt(this.filmStrip.css('right'), 10)
-                - parseInt(this.filmStrip.css('paddingLeft'), 10)
-                - parseInt(this.filmStrip.css('paddingRight'), 10)
-                - parseInt(this.filmStrip.css('borderLeftWidth'), 10)
-                - parseInt(this.filmStrip.css('borderRightWidth'), 10) - 5;
+                - UIUtil.parseCssInt(this.filmStrip.css('right'), 10)
+                - UIUtil.parseCssInt(this.filmStrip.css('paddingLeft'), 10)
+                - UIUtil.parseCssInt(this.filmStrip.css('paddingRight'), 10)
+                - UIUtil.parseCssInt(this.filmStrip.css('borderLeftWidth'), 10)
+                - UIUtil.parseCssInt(this.filmStrip.css('borderRightWidth'), 10)
+            - 5;
 
-        let availableWidth = Math.floor(
+        let availableWidth = videoAreaAvailableWidth;
+
+        // If the number of videos is 0 or undefined we don't need to calculate
+        // further.
+        if (numvids)
+            availableWidth = Math.floor(
                 (videoAreaAvailableWidth - numvids * (
-                parseInt(localVideoContainer.css('borderLeftWidth'), 10)
-                + parseInt(localVideoContainer.css('borderRightWidth'), 10)
-                + parseInt(localVideoContainer.css('paddingLeft'), 10)
-                + parseInt(localVideoContainer.css('paddingRight'), 10)
-                + parseInt(localVideoContainer.css('marginLeft'), 10)
-                + parseInt(localVideoContainer.css('marginRight'), 10)))
+                UIUtil.parseCssInt(
+                    localVideoContainer.css('borderLeftWidth'), 10)
+                + UIUtil.parseCssInt(
+                    localVideoContainer.css('borderRightWidth'), 10)
+                + UIUtil.parseCssInt(
+                    localVideoContainer.css('paddingLeft'), 10)
+                + UIUtil.parseCssInt(
+                    localVideoContainer.css('paddingRight'), 10)
+                + UIUtil.parseCssInt(
+                    localVideoContainer.css('marginLeft'), 10)
+                + UIUtil.parseCssInt(
+                    localVideoContainer.css('marginRight'), 10)))
                 / numvids);
 
         let maxHeight
@@ -155,7 +167,12 @@ const FilmStrip = {
             selector += ':visible';
         }
 
-        return this.filmStrip.children(selector);
+        // Exclude the local video container if it has been hidden.
+        if ($("#localVideoContainer").hasClass("hidden"))
+            return this.filmStrip.children(selector)
+                    .not("#localVideoContainer");
+        else
+            return this.filmStrip.children(selector);
     }
 };
 

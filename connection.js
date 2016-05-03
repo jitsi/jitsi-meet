@@ -22,7 +22,7 @@ function checkForAttachParametersAndConnect(id, password, connection) {
         // When connection optimization is not deployed or enabled the default
         // value will be window.XMPPAttachInfo.status = "error"
         // If the connection optimization is deployed and enabled and there is
-        // a failure the value will be window.XMPPAttachInfo.status = "error" 
+        // a failure the value will be window.XMPPAttachInfo.status = "error"
         if(window.XMPPAttachInfo.status === "error") {
             connection.connect({id, password});
             return;
@@ -31,6 +31,7 @@ function checkForAttachParametersAndConnect(id, password, connection) {
         var attachOptions = window.XMPPAttachInfo.data;
         if(attachOptions) {
             connection.attach(attachOptions);
+            delete window.XMPPAttachInfo.data;
         } else {
             connection.connect({id, password});
         }
@@ -51,11 +52,11 @@ function checkForAttachParametersAndConnect(id, password, connection) {
  */
 function connect(id, password, roomName) {
 
-    let connectionConfig = config;
+    let connectionConfig = Object.assign({}, config);
 
     connectionConfig.bosh += '?room=' + roomName;
     let connection
-        = new JitsiMeetJS.JitsiConnection(null, config.token, config);
+        = new JitsiMeetJS.JitsiConnection(null, config.token, connectionConfig);
 
     return new Promise(function (resolve, reject) {
         connection.addEventListener(
@@ -95,13 +96,14 @@ function connect(id, password, roomName) {
  * Show Authentication Dialog and try to connect with new credentials.
  * If failed to connect because of PASSWORD_REQUIRED error
  * then ask for password again.
+ * @param {string} [roomName]
  * @returns {Promise<JitsiConnection>}
  */
-function requestAuth() {
+function requestAuth(roomName) {
     return new Promise(function (resolve, reject) {
         let authDialog = LoginDialog.showAuthDialog(
             function (id, password) {
-                connect(id, password).then(function (connection) {
+                connect(id, password, roomName).then(function (connection) {
                     authDialog.close();
                     resolve(connection);
                 }, function (err) {
@@ -131,6 +133,20 @@ function requestAuth() {
  * @returns {Promise<JitsiConnection>}
  */
 export function openConnection({id, password, retry, roomName}) {
+
+    let usernameOverride
+        = window.localStorage.getItem("xmpp_username_override");
+    let passwordOverride
+        = window.localStorage.getItem("xmpp_password_override");
+
+    if (usernameOverride && usernameOverride.length > 0) {
+        id = usernameOverride;
+    }
+
+    if (passwordOverride && passwordOverride.length > 0) {
+        password = passwordOverride;
+    }
+
     return connect(id, password, roomName).catch(function (err) {
         if (!retry) {
             throw err;
@@ -141,7 +157,7 @@ export function openConnection({id, password, retry, roomName}) {
             if (config.token) {
                 throw err;
             } else {
-                return requestAuth();
+                return requestAuth(roomName);
             }
         } else {
             throw err;

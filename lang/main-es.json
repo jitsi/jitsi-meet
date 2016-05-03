@@ -1,0 +1,246 @@
+{
+    "contactlist": "LISTA DE CONTACTOS",
+    "connectionsettings": "Ajustes de la conexión",
+    "poweredby": "impulsado por",
+    "downloadlogs": "Descargar bitácora",
+    "feedback": "Danos tu opinión",
+    "roomUrlDefaultMsg": "Tu conferencia está siendo creada...",
+    "participant": "Participante",
+    "me": "yo",
+    "speaker": "Orador",
+    "defaultNickname": "ej. __name__",
+    "defaultPreziLink": "ej. __url__",
+    "welcomepage": {
+        "go": "IR",
+        "roomname": "Introduzca un nombre de sala:",
+        "disable": "No mostrar esta página en el próximo acceso ",
+        "feature1": {
+            "title": "Sencillo de usar",
+            "content": "No se requiere descargar nada. __app__  funciona directamente con tu navegador. Solo comparte el URL de tu conferencia con otros para comenzar."
+        },
+        "feature2": {
+            "title": "Bajo Ancho de Banda",
+            "content": "Videoconferencias con múltiples participantes con tan poco como 128 Kbps. Conferencias compartiendo pantalla y audio  con mucho menos."
+        },
+        "feature3": {
+            "title": "Código abierto",
+            "content": "__app__ está licenciado bajo la licencia Apache. Eres libre de descargar, usar, modificar, y compartirlo conforme a esta licencia libre."
+        },
+        "feature4": {
+            "title": "Usuarios ilimitados",
+            "content": "No hay restricciones artificiales en el número de usuarios o participantes de la conferencia. La capacidad del servidor y ancho de banda son los únicos factores limitantes."
+        },
+        "feature5": {
+            "title": "Compartir pantalla",
+            "content": "Es fácil de compartir su pantalla con otros. __app__ es ideal para presentaciones en línea, conferencias y sesiones de soporte técnico.  "
+        },
+        "feature6": {
+            "title": "Salas seguras",
+            "content": "¿Necesita un poco de privacidad? Las salas de conferencias   __app__  se pueden asegurar con una contraseña con el fin de excluir a los invitados no deseados y evitar interrupciones."
+        },
+        "feature7": {
+            "title": "Notas compartidas",
+            "content": "__app__  incluye Etherpad, un editor de texto colaborativo, en tiempo real, que es genial para minutas de junta, redactar artículos, y más."
+        },
+        "feature8": {
+            "title": "Estadísticas de uso",
+            "content": "Conozca acerca de sus usuarios a través de una fácil integración con Piwik, Google Analytics, y otros sistemas de seguimiento y análisis de uso."
+        }
+    },
+    "toolbar": {
+        "mute": "Silenciar / Activar",
+        "videomute": "Iniciar / detener cámara",
+        "authenticate": "Autenticar",
+        "record": "Grabar",
+        "lock": "Bloquear / desbloquear sala",
+        "invite": "Invitar a otros",
+        "chat": "",
+        "prezi": "Compartir Prezi",
+        "etherpad": "Compartir Documento",
+        "sharescreen": "Compartir pantalla",
+        "fullscreen": "Entrar / Salir de Pantalla completa",
+        "sip": "Llamar a un número SIP",
+        "Settings": "Ajustes",
+        "hangup": "Colgar",
+        "login": "Inicio de sesión",
+        "logout": "",
+        "dialpad": "Mostrar teclado de llamada"
+    },
+    "bottomtoolbar": {
+        "chat": "Abrir / cerrar chat",
+        "filmstrip": "Mostrar / ocultar film",
+        "contactlist": "Abrir / cerrar lista de contactos"
+    },
+    "chat": {
+        "nickname": {
+            "title": "Indique un nombre en la caja inferior",
+            "popover": "Seleccione un nombre"
+        },
+        "messagebox": "Introduzca texto..."
+    },
+    "settings": {
+        "title": "CONFIGURAR",
+        "update": "Actualizar",
+        "name": "Nombre",
+        "startAudioMuted": "iniciar sin audio",
+        "startVideoMuted": "iniciar sin video"
+    },
+    "videothumbnail": {
+        "editnickname": "Pica para editar tu <br/>nombre",
+        "moderator": "El dueño de<br/>esta conferencia",
+        "videomute": "Participante ha<br/>detenido la cámara.",
+        "mute": "Participante está silenciado",
+        "kick": "Expulsar",
+        "muted": "Silenciado",
+        "domute": "Silenciar"
+    },
+    "connectionindicator": {
+        "bitrate": "Frecuencia de bits:",
+        "packetloss": "Pérdida de paquetes:",
+        "resolution": "Resolución:",
+        "less": "Mostrar menos",
+        "more": "Ver más",
+        "address": "Dirección:",
+        "remoteport": "Puerto remoto:",
+        "remoteport_plural": "Puertos remotos:",
+        "localport": "Puerto local:",
+        "localport_plural": "Puertos locales:",
+        "localaddress": "Dirección local:",
+        "localaddress_plural": "Direcciones locales:",
+        "remoteaddress": "Dirección remota:",
+        "remoteaddress_plural": "Direcciones remotas:",
+        "transport": "Transporte:",
+        "bandwidth": "Ancho de banda estimado:",
+        "na": "Volver aquí por información de la conexión, una vez que se inicia la conferencia"
+    },
+    "notify": {
+        "disconnected": "desconectado",
+        "moderator": "¡Otorgados derechos de moderador! ",
+        "connected": "conectado",
+        "somebody": "Alguien",
+        "me": "Yo",
+        "focus": "Foco de conferencia",
+        "focusFail": "__component__ not available - retry en __ms__ sec",
+        "grantedTo": "¡Derechos de moderador otorgados a __to__!",
+        "grantedToUnknown": "¡Derechos de moderador otorgados a $t(somebody)!",
+        "muted": "Haz iniciado la conversación silenciado.",
+        "mutedTitle": "¡Estás silenciado!"
+    },
+    "dialog": {
+        "kickMessage": "¡Auch! ¡Haz sido expulsado de la reunión!",
+        "popupError": "Tu navegador está bloqueando las ventanas emergentes de este sitio. Por favor, activa las ventanas emergentes en la configuración de seguridad de su navegador y vuelva a intentarlo.",
+        "passwordError": "Esta conversación está protegido con una contraseña. Sólo el propietario de la conferencia puede establecer una contraseña.",
+        "passwordError2": "Esta conversación está protegido con una contraseña. Sólo el propietario de la conferencia puede establecer una contraseña.",
+        "connectError": "¡Uups! Algo salió mal y no pudimos conectarnos a la conferencia.",
+        "connectErrorWithMsg": "¡Uups! Algo salió mal y no pudimos conectarnos a la conferencia: __msg__",
+        "connecting": "",
+        "error": "",
+        "detectext": "Error al tratar de detectar la extensión de compartir escritorio.",
+        "failtoinstall": "Fallo al instalar la extensión de compartir escritorio",
+        "failedpermissions": "Fallo al obtener permisos para utilizar el micrófono y/o cámara de tu equipo.",
+        "bridgeUnavailable": "Videobridge Jitsi no está actualmente disponible. ¡Por favor intente después!",
+        "lockTitle": "Fallo al bloquear",
+        "lockMessage": "No se pudo bloquear la conferencia.",
+        "warning": "Advertencia",
+        "passwordNotSupported": "No se soportan contraseñas para la sala. ",
+        "sorry": "¡Perdón!",
+        "internalError": "Error interno de la aplicación [setRemoteDescription]",
+        "unableToSwitch": "No se puede activar transmisión de video",
+        "SLDFailure": "¡Ups! Algo salió mal y  no se logró silenciar! (Falla de SLD)",
+        "SRDFailure": "¡Ups! ¡Algo salió mal y  no se logró detener el video! (Falla SRD)",
+        "oops": "¡Ups!",
+        "defaultError": "Hubo algún tipo de error",
+        "passwordRequired": "Se necesita contraseña",
+        "Ok": "Aceptar",
+        "removePreziTitle": "Eliminar Prezi",
+        "removePreziMsg": "¿Estas seguro que deseas eliminar tu Prezi?",
+        "sharePreziTitle": "Compartir un Prezi",
+        "sharePreziMsg": "Otro participante ya está compartiendo un Prezi. Esta conferencia permite  sólo un Prezi a la vez.",
+        "Remove": "Eliminar",
+        "WaitingForHost": "Esperando al anfitrión...",
+        "WaitForHostMsg": "La conferencia <b>__room__ </b> aún no inicia. Si usted es el anfitrión, por favor autentíquese. De lo contrario, por favor espere a que el anfitrión llegue.",
+        "IamHost": "Yo soy el anfitrión",
+        "Cancel": "Cancelar",
+        "retry": "Reintentar",
+        "logoutTitle": "Cerrar sesión",
+        "logoutQuestion": "¿Está seguro que quiere salir y detener la conferencia?",
+        "sessTerminated": "Sesión finalizada",
+        "hungUp": "Colgaste",
+        "joinAgain": "Unirse de nuevo",
+        "Share": "Compartir",
+        "preziLinkError": "Por favor indique una liga Prezi correcta. ",
+        "Save": "Guardar",
+        "recordingToken": "Introduzca el token de grabación",
+        "Dial": "Marcar",
+        "sipMsg": "Introduzca número SIP",
+        "passwordCheck": "¿Realmente quieres eliminar tu contraseña?",
+        "passwordMsg": "Indica una contraseña para bloquear tu sala",
+        "Invite": "Invitar",
+        "shareLink": "Comparte este enlace con las personas que deseas invitar",
+        "settings1": "Configure su conferencia",
+        "settings2": "Los participantes se unieron silenciados",
+        "settings3": "Solicita nombres <br/> <br/>Establecer una contraseña para bloquear la sala:",
+        "yourPassword": "tu contraseña",
+        "Back": "Atrás",
+        "serviceUnavailable": "Servicio no disponible",
+        "gracefulShutdown": "Nuestro servicio está detenido por mantenimiento. Por favor, inténtelo de nuevo más tarde.",
+        "Yes": "Sí",
+        "reservationError": "Error de sistema de reservación",
+        "reservationErrorMsg": "Código de error: __code__, message: __msg__",
+        "password": "contraseña",
+        "userPassword": "contraseña de usuario",
+        "token": "token",
+        "tokenAuthFailed": "Error al autenticar con el servidor XMPP:  token inválido",
+        "displayNameRequired": "Por favor escriba su nombre",
+        "extensionRequired": "Extensión requerida",
+        "firefoxExtensionPrompt": "Es necesario instalar una extensión para Firefox con el fin de utilizar la pantalla compartida. Por favor, inténtelo de nuevo después de que  lo obtenga de aquí <a href='__url__'> </a>!",
+        "feedbackQuestion": "¿Como fue su llamada?",
+        "thankYou": "Gracias por usar __appName__!",
+        "sorryFeedback": " Sentimos escuchar eso. ¿Quieres decirnos algo más?"
+    },
+    "email": {
+        "sharedKey": [
+            "Esta conferencia está protegida con contraseña. Utiliza el siguiente pin cuando te unas: ",
+            "",
+            "",
+            "__sharedKey__",
+            "",
+            ""
+        ],
+        "subject": "Invitación a a __appName__ (__conferenceName__)",
+        "body": [
+            "Ey allí, quiero invitarte a una  a conferencia __appName__  que acabo de crear.",
+            "",
+            "",
+            "Por favor pica en la liga siguiente para unirte a la conferencia.",
+            "",
+            "",
+            "__roomUrl__",
+            "",
+            "",
+            "__sharedKeyText__",
+            "Nota que __appName__ es soportada solo por  __supportedBrowsers__, por lo que debes usar uno de esos navegadores.",
+            "",
+            "",
+            "Talk to you in a sec!"
+        ],
+        "and": "y"
+    },
+    "connection": {
+        "ERROR": "Error",
+        "CONNECTING": "Conectando",
+        "RECONNECTING": "Ocurrió un problema en la red. Reconectando ...",
+        "CONNFAIL": "Conexión fallida",
+        "AUTHENTICATING": "Autenticando",
+        "AUTHFAIL": "Falló la autenticación",
+        "CONNECTED": "Conectado",
+        "DISCONNECTED": "Desconectado",
+        "DISCONNECTING": "Desconectando",
+        "ATTACHED": "Adjunto"
+    },
+    "recording": {
+        "toaster": "¡Actualmente Grabando! ",
+        "pending": "Tu grabación se iniciará tan pronto como otro participante se una",
+        "on": "La grabación ha iniciado"
+    }
+}

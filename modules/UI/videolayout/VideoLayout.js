@@ -207,12 +207,20 @@ var VideoLayout = {
         if (APP.conference.isLocalId(id)) {
             video = localVideoThumbnail;
         }
-        else if (remoteVideos[id]) {
+        else {
             video = remoteVideos[id];
         }
 
         if (video)
             video.enableDeviceAvailabilityIcons(enable);
+    },
+
+    /**
+     * Shows/hides local video.
+     * @param {boolean} true to make the local video visible, false - otherwise
+     */
+    setLocalVideoVisible(visible) {
+        localVideoThumbnail.setVisible(visible);
     },
 
     /**
@@ -277,7 +285,12 @@ var VideoLayout = {
 
     onRemoteStreamAdded (stream) {
         let id = stream.getParticipantId();
-        remoteVideos[id].addRemoteStreamElement(stream);
+        let remoteVideo = remoteVideos[id];
+
+        if (!remoteVideo)
+            return;
+
+        remoteVideo.addRemoteStreamElement(stream);
 
         // if track is muted make sure we reflect that
         if(stream.isMuted())
@@ -360,7 +373,8 @@ var VideoLayout = {
     },
 
     /**
-     * Creates a remote video for participant for the given id.
+     * Creates a participant container for the given id and smallVideo.
+     *
      * @param id the id of the participant to add
      * @param {SmallVideo} smallVideo optional small video instance to add as a
      * remote video, if undefined RemoteVideo will be created
@@ -404,7 +418,11 @@ var VideoLayout = {
             this.isLargeContainerTypeVisible(VIDEO_CONTAINER_TYPE)) ||
             pinnedId === resourceJid ||
             (!pinnedId && resourceJid &&
-                currentDominantSpeaker === resourceJid)) {
+                currentDominantSpeaker === resourceJid) ||
+            /* Playback started while we're on the stage - may need to update
+               video source with the new stream */
+            this.isCurrentlyOnLarge(resourceJid)) {
+
             this.updateLargeVideo(resourceJid, true);
         }
     },
@@ -413,7 +431,9 @@ var VideoLayout = {
      * Shows the presence status message for the given video.
      */
     setPresenceStatus (id, statusMsg) {
-        remoteVideos[id].setPresenceStatus(statusMsg);
+        let remoteVideo = remoteVideos[id];
+        if (remoteVideo)
+            remoteVideo.setPresenceStatus(statusMsg);
     },
 
     /**
@@ -428,13 +448,17 @@ var VideoLayout = {
 
         APP.conference.listMembers().forEach(function (member) {
             let id = member.getId();
+            let remoteVideo = remoteVideos[id];
+            if (!remoteVideo)
+                return;
+
             if (member.isModerator()) {
-                remoteVideos[id].removeRemoteVideoMenu();
-                remoteVideos[id].createModeratorIndicatorElement();
+                remoteVideo.removeRemoteVideoMenu();
+                remoteVideo.createModeratorIndicatorElement();
             } else if (isModerator) {
                 // We are moderator, but user is not - add menu
                 if ($(`#remote_popupmenu_${id}`).length <= 0) {
-                    remoteVideos[id].addRemoteVideoMenu();
+                    remoteVideo.addRemoteVideoMenu();
                 }
             }
         });
@@ -482,9 +506,13 @@ var VideoLayout = {
         if (APP.conference.isLocalId(id)) {
             localVideoThumbnail.showAudioIndicator(isMuted);
         } else {
-            remoteVideos[id].showAudioIndicator(isMuted);
+            let remoteVideo = remoteVideos[id];
+            if (!remoteVideo)
+                return;
+
+            remoteVideo.showAudioIndicator(isMuted);
             if (APP.conference.isModerator) {
-                remoteVideos[id].updateRemoteVideoMenu(isMuted);
+                remoteVideo.updateRemoteVideoMenu(isMuted);
             }
         }
     },
@@ -496,8 +524,9 @@ var VideoLayout = {
         if (APP.conference.isLocalId(id)) {
             localVideoThumbnail.setMutedView(value);
         } else {
-            var remoteVideo = remoteVideos[id];
-            remoteVideo.setMutedView(value);
+            let remoteVideo = remoteVideos[id];
+            if (remoteVideo)
+                remoteVideo.setMutedView(value);
         }
 
         if (this.isCurrentlyOnLarge(id)) {
@@ -514,7 +543,9 @@ var VideoLayout = {
             APP.conference.isLocalId(id)) {
             localVideoThumbnail.setDisplayName(displayName);
         } else {
-            remoteVideos[id].setDisplayName(displayName, status);
+            let remoteVideo = remoteVideos[id];
+            if (remoteVideo)
+                remoteVideo.setDisplayName(displayName, status);
         }
     },
 
@@ -636,9 +667,13 @@ var VideoLayout = {
                     console.error("No remote video for: " + resourceJid);
                 isReceived = false;
             } else if (resourceJid &&
+                //TOFIX: smallVideo may be undefined
                 smallVideo.isVisible() &&
                 lastNEndpoints.indexOf(resourceJid) < 0 &&
                 localLastNSet.indexOf(resourceJid) >= 0) {
+
+                // TOFIX: if we're here we already know that the smallVideo
+                // exists. Look at the previous FIX above.
                 if (smallVideo)
                     smallVideo.showPeerContainer('avatar');
                 else if (!APP.conference.isLocalId(resourceJid))
@@ -739,8 +774,9 @@ var VideoLayout = {
      * @param object the stats data
      */
     updateConnectionStats (id, percent, object) {
-        if (remoteVideos[id]) {
-            remoteVideos[id].updateStatsIndicator(percent, object);
+        let remoteVideo = remoteVideos[id];
+        if (remoteVideo) {
+            remoteVideo.updateStatsIndicator(percent, object);
         }
     },
 
@@ -749,15 +785,19 @@ var VideoLayout = {
      * @param id
      */
     hideConnectionIndicator (id) {
-        remoteVideos[id].hideConnectionIndicator();
+        let remoteVideo = remoteVideos[id];
+        if (remoteVideo)
+            remoteVideo.hideConnectionIndicator();
     },
 
     /**
      * Hides all the indicators
      */
     hideStats () {
-        for(var video in remoteVideos) {
-            remoteVideos[video].hideIndicator();
+        for (var video in remoteVideos) {
+            let remoteVideo = remoteVideos[video];
+            if (remoteVideo)
+                remoteVideo.hideIndicator();
         }
         localVideoThumbnail.hideIndicator();
     },

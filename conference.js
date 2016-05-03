@@ -126,15 +126,14 @@ function muteLocalVideo (muted) {
  * @param {boolean} [requestFeedback=false] if user feedback should be requested
  */
 function hangup (requestFeedback = false) {
-    let promise = Promise.resolve();
-
-    if (requestFeedback) {
-        promise = APP.UI.requestFeedback();
-    }
-
-    promise.then(function () {
+    APP.conference._room.leave().then(() => {
         connection.disconnect();
-
+        if (requestFeedback) {
+            return APP.UI.requestFeedback();
+        } else {
+            return Promise.resolve();
+        }
+    }).then(function () {
         if (!config.enableWelcomePage) {
             return;
         }
@@ -475,20 +474,13 @@ export default {
         return this.audioLevelsMap[id];
     },
     /**
-     * Will check for number of remote particiapnts that have at least one
-     * remote track.
-     * @return {boolean} whether we have enough participants with remote streams
+     * @return {number} the number of participants in the conference with at
+     * least one track.
      */
-    checkEnoughParticipants (number) {
-        var participants = this._room.getParticipants();
-
-        var foundParticipants = 0;
-        for (var i = 0; i < participants.length; i += 1) {
-            if (participants[i].getTracks().length > 0) {
-                foundParticipants++;
-            }
-        }
-        return foundParticipants >= number;
+    getNumberOfParticipantsWithTracks() {
+        return this._room.getParticipants()
+            .filter((p) => p.getTracks().length > 0)
+            .length;
     },
     /**
      * Returns the stats.
@@ -565,6 +557,9 @@ export default {
                 this.useAudioStream(track);
             } else if (track.isVideoTrack()) {
                 this.useVideoStream(track);
+            } else {
+                console.error(
+                    "Ignored not an audio nor a video track: ", track);
             }
         });
         roomLocker = createRoomLocker(room);
@@ -753,18 +748,21 @@ export default {
 
 
         room.on(ConferenceEvents.USER_JOINED, (id, user) => {
+            if (user.isHidden())
+                return;
+
             console.log('USER %s connnected', id, user);
             APP.API.notifyUserJoined(id);
             APP.UI.addUser(id, user.getDisplayName());
 
-            // chek the roles for the new user and reflect them
+            // check the roles for the new user and reflect them
             APP.UI.updateUserRole(user);
         });
         room.on(ConferenceEvents.USER_LEFT, (id, user) => {
             console.log('USER %s LEFT', id, user);
             APP.API.notifyUserLeft(id);
             APP.UI.removeUser(id, user.getDisplayName());
-            APP.UI.stopSharedVideo(id);
+            APP.UI.onSharedVideoStop(id);
         });
 
 
@@ -1098,7 +1096,7 @@ export default {
         );
 
         APP.UI.addListener(UIEvents.UPDATE_SHARED_VIDEO,
-            (url, state, time, volume) => {
+            (url, state, time, isMuted, volume) => {
             // send start and stop commands once, and remove any updates
             // that had left
             if (state === 'stop' || state === 'start' || state === 'playing') {
@@ -1108,6 +1106,7 @@ export default {
                     attributes: {
                         state: state,
                         time: time,
+                        muted: isMuted,
                         volume: volume
                     }
                 });
@@ -1121,6 +1120,7 @@ export default {
                     attributes: {
                         state: state,
                         time: time,
+                        muted: isMuted,
                         volume: volume
                     }
                 });
@@ -1130,13 +1130,23 @@ export default {
             this.commands.defaults.SHARED_VIDEO, ({value, attributes}, id) => {
 
                 if (attributes.state === 'stop') {
-                    APP.UI.stopSharedVideo(id, attributes);
-                } else if (attributes.state === 'start') {
-                    APP.UI.showSharedVideo(id, value, attributes);
-                } else if (attributes.state === 'playing'
+                    APP.UI.onSharedVideoStop(id, attributes);
+                }
+                else if (attributes.state === 'start') {
+                    APP.UI.onSharedVideoStart(id, value, attributes);
+                }
+                else if (attributes.state === 'playing'
                     || attributes.state === 'pause') {
-                    APP.UI.updateSharedVideo(id, value, attributes);
+                    APP.UI.onSharedVideoUpdate(id, value, attributes);
                 }
             });
+    },
+    /**
+     * Adss any room listener.
+     * @param eventName one of the ConferenceEvents
+     * @param callBack the function to be called when the event occurs
+     */
+     addConferenceListener(eventName, callBack) {
+        room.on(eventName, callBack);
     }
 };

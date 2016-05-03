@@ -130,7 +130,7 @@ function processMessage(event) {
  */
 function isEnabled () {
     let hash = location.hash;
-    return hash && hash.indexOf("external") > -1 && window.postMessage;
+    return hash && hash.indexOf("external=true") > -1 && window.postMessage;
 }
 
 /**

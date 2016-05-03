@@ -29,7 +29,6 @@ var JitsiPopover = require("./util/JitsiPopover");
 var Feedback = require("./Feedback");
 
 import FollowMe from "../FollowMe";
-import Recorder from "../recorder/Recorder";
 
 var eventEmitter = new EventEmitter();
 UI.eventEmitter = eventEmitter;
@@ -241,11 +240,6 @@ UI.initConference = function () {
     //update default button states before showing the toolbar
     //if local role changes buttons state will be again updated
     UI.updateLocalRole(false);
-
-    // Initialise the recorder handler. We're doing this explicitly before
-    // calling showToolbar, because the recorder may want to disable all
-    // toolbars.
-    new Recorder(APP.conference);
 
     // Once we've joined the muc show the toolbar
     ToolbarToggler.showToolbar();
@@ -1122,9 +1116,9 @@ UI.updateDevicesAvailability = function (id, devices) {
  * @param {string} url video url
  * @param {string} attributes
 */
-UI.showSharedVideo = function (id, url, attributes) {
+UI.onSharedVideoStart = function (id, url, attributes) {
     if (sharedVideoManager)
-        sharedVideoManager.showSharedVideo(id, url, attributes);
+        sharedVideoManager.onSharedVideoStart(id, url, attributes);
 };
 
 /**
@@ -1133,9 +1127,9 @@ UI.showSharedVideo = function (id, url, attributes) {
  * @param {string} url video url
  * @param {string} attributes
  */
-UI.updateSharedVideo = function (id, url, attributes) {
+UI.onSharedVideoUpdate = function (id, url, attributes) {
     if (sharedVideoManager)
-        sharedVideoManager.updateSharedVideo(id, url, attributes);
+        sharedVideoManager.onSharedVideoUpdate(id, url, attributes);
 };
 
 /**
@@ -1143,9 +1137,9 @@ UI.updateSharedVideo = function (id, url, attributes) {
  * @param {string} id the id of the sender of the command
  * @param {string} attributes
  */
-UI.stopSharedVideo = function (id, attributes) {
+UI.onSharedVideoStop = function (id, attributes) {
     if (sharedVideoManager)
-        sharedVideoManager.stopSharedVideo(id, attributes);
+        sharedVideoManager.onSharedVideoStop(id, attributes);
 };
 
 module.exports = UI;
