@@ -30,7 +30,7 @@ import BottomToolbar from '../toolbars/BottomToolbar';
  */
 function _isRecordingButtonEnabled() {
     return interfaceConfig.TOOLBAR_BUTTONS.indexOf("recording") !== -1
-            && config.enableRecording;
+            && config.enableRecording && APP.conference.isRecordingSupported();
 }
 
 /**
@@ -211,7 +211,7 @@ var Status = {
 /**
  * Manages the recording user interface and user experience.
  * @type {{init, initRecordingButton, showRecordingButton, updateRecordingState,
- * setRecordingButtonState, checkAutoRecord}}
+ * updateRecordingUI, checkAutoRecord}}
  */
 var Recording = {
     /**
@@ -219,8 +219,8 @@ var Recording = {
      */
     init (emitter, recordingType) {
         this.eventEmitter = emitter;
-        // Use recorder states directly from the library.
-        this.currentState = Status.UNAVAILABLE;
+
+        this.updateRecordingState(APP.conference.getRecordingState());
 
         this.initRecordingButton(recordingType);
 
@@ -326,17 +326,17 @@ var Recording = {
             return;
 
         // If there's no state change, we ignore the update.
-        if (this.currentState === recordingState)
+        if (!recordingState || this.currentState === recordingState)
             return;
 
-        this.setRecordingButtonState(recordingState);
+        this.updateRecordingUI(recordingState);
     },
 
     /**
      * Sets the state of the recording button.
      * @param recordingState gives us the current recording state
      */
-    setRecordingButtonState (recordingState) {
+    updateRecordingUI (recordingState) {
         let buttonSelector = $('#toolbar_button_record');
         let labelSelector = $('#recordingLabel');
 
