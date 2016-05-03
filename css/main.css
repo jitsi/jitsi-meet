@@ -8,6 +8,7 @@ html, body{
     height:100%;
     color: #424242;
     font-family:'Helvetica Neue', Helvetica, sans-serif;
+    font-size: 16px;
     font-weight: 400;
     background: #000000;
     overflow-x: hidden;
@@ -53,7 +54,7 @@ a {
     top:0px;
     padding-top: 10px;
     width: 38px;
-    height: 28px;
+    height: 38px;
     cursor: pointer;
     text-align: center;
     text-shadow: 0 1px 0 rgba(255,255,255,.3), 0 -1px 0 rgba(0,0,0,.6);

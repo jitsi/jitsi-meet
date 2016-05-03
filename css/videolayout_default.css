@@ -364,12 +364,9 @@
     margin-top:5px;
     margin-left:auto;
     margin-right:auto;
-    padding-left:2px;
-    padding-right:2px;
     width:auto;
-    background-color: rgba(0,0,0,0.8);
-    border: 1px solid rgba(256, 256, 256, 0.2);
-    border-radius: 6px;
+    background-color: rgba(0,0,0,0.5);
+    border-radius: 1px;
     pointer-events: auto;
 }
 
