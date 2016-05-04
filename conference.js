@@ -461,6 +461,18 @@ export default {
             && this._room.myUserId();
     },
     /**
+     * Indicates if recording is supported in this conference.
+     */
+    isRecordingSupported() {
+        return this._room && this._room.isRecordingSupported();
+    },
+    /**
+     * Returns the recording state or undefined if the room is not defined.
+     */
+    getRecordingState() {
+        return (this._room) ? this._room.getRecordingState() : undefined;
+    },
+    /**
      * Will be filled with values only when config.debug is enabled.
      * Its used by torture to check audio levels.
      */
