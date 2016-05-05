@@ -1104,6 +1104,43 @@ export default {
         );
 
         APP.UI.addListener(
+            UIEvents.AUDIO_OUTPUT_DEVICE_CHANGED,
+            (audioOutputDeviceId) => {
+                APP.settings.setAudioOutputDeviceId(audioOutputDeviceId);
+
+                let promises = [],
+                    track;
+
+                for (let key in room.rtc.remoteTracks) {
+                    track = room.rtc.remoteTracks[key].video;
+
+                    if (track && track.containers.length) {
+                        promises.push(
+                            track.changeAudioOutput(audioOutputDeviceId));
+                    }
+
+                    track = room.rtc.remoteTracks[key].audio;
+
+                    if (track && track.containers.length) {
+                        promises.push(
+                            track.changeAudioOutput(audioOutputDeviceId));
+                    }
+                }
+
+                room.rtc.localTracks.forEach((track) => {
+                    if (track.containers.length) {
+                        promises.push(
+                            track.changeAudioOutput(audioOutputDeviceId));
+                    }
+                });
+
+                Promise.all(promises).then(
+                    () => console.log('audio devices switched'),
+                    (err) => console.error(err));
+            }
+        );
+
+        APP.UI.addListener(
             UIEvents.TOGGLE_SCREENSHARING, this.toggleScreenSharing.bind(this)
         );
 

@@ -124,6 +124,13 @@ export default {
                 emitter.emit(UIEvents.AUDIO_DEVICE_CHANGED, micDeviceId);
             }
         });
+        $('#selectAudioOutput').change(function () {
+            let audioOutputDeviceId = $(this).val();
+            if (audioOutputDeviceId !== Settings.getAudioOutputDeviceId()) {
+                emitter.emit(UIEvents.AUDIO_OUTPUT_DEVICE_CHANGED,
+                    audioOutputDeviceId);
+            }
+        });
     },
 
     /**
@@ -186,21 +193,40 @@ export default {
      * @param {{ deviceId, label, kind }[]} devices list of available devices
      */
     changeDevicesList (devices) {
+        let $devicesOptions =  $('#devicesOptions');
+
         if (!devices.length) {
-            $('#devicesOptions').hide();
+            $devicesOptions.hide();
             return;
         }
 
+        let $selectCamera= $('#selectCamera'),
+            $selectMic = $('#selectMic'),
+            $selectAudioOutput = $('#selectAudioOutput');
+
         let audio = devices.filter(device => device.kind === 'audioinput');
         let video = devices.filter(device => device.kind === 'videoinput');
+        let audioOutput = devices
+            .filter(device => device.kind === 'audiooutput');
 
-        $('#selectCamera').html(
+        $selectCamera.html(
             generateDevicesOptions(video, Settings.getCameraDeviceId())
         );
-        $('#selectMic').html(
+        $selectMic.html(
             generateDevicesOptions(audio, Settings.getMicDeviceId())
         );
 
-        $('#devicesOptions').show();
+        if (audioOutput.length) {
+            $selectAudioOutput.html(
+                generateDevicesOptions(audioOutput,
+                    Settings.getAudioOutputDeviceId())
+            ).show();
+        } else {
+            // if we have no audiooutput devices, that means current browser
+            // doesn't support it, so don't show the select box at all
+            $selectAudioOutput.hide();
+        }
+
+        $devicesOptions.show();
     }
 };

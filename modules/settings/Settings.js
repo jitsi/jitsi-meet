@@ -5,6 +5,7 @@ let displayName = '';
 let language = null;
 let cameraDeviceId = '';
 let micDeviceId = '';
+let audioOutputDeviceId = '';
 let welcomePageDisabled = false;
 
 function supportsLocalStorage() {
@@ -121,6 +122,24 @@ export default {
     setMicDeviceId: function (newId = '') {
         micDeviceId = newId;
         window.localStorage.micDeviceId = newId;
+    },
+
+    /**
+     * Get device id of the audio output device which is currently in use.
+     * Empty string stands for default device.
+     * @returns {String}
+     */
+    getAudioOutputDeviceId: function () {
+        return audioOutputDeviceId;
+    },
+    /**
+     * Set device id of the audio output device which is currently in use.
+     * Empty string stands for default device.
+     * @param {string} newId new audio output device id
+     */
+    setAudioOutputDeviceId: function (newId = '') {
+        audioOutputDeviceId = newId;
+        window.localStorage.audioOutputDeviceId = newId;
     },
 
     /**
