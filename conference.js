@@ -7,6 +7,8 @@ import AuthHandler from './modules/UI/authentication/AuthHandler';
 
 import ConnectionQuality from './modules/connectionquality/connectionquality';
 
+import Recorder from './modules/recorder/Recorder';
+
 import CQEvents from './service/connectionquality/CQEvents';
 import UIEvents from './service/UI/UIEvents';
 
@@ -346,6 +348,9 @@ export default {
                     devices => APP.UI.onAvailableDevicesChanged(devices)
                 );
             }
+            if (config.iAmRecorder)
+                this.recorder = new Recorder();
+
             // XXX The API will take care of disconnecting from the XMPP server
             // (and, thus, leaving the room) on unload.
             return new Promise((resolve, reject) => {
@@ -532,14 +537,14 @@ export default {
          * @param command {String} the name of the command
          * @param handler {Function} handler for the command
          */
-            addCommandListener () {
+        addCommandListener () {
             room.addCommandListener.apply(room, arguments);
         },
         /**
          * Removes command.
          * @param name {String} the name of the command.
          */
-            removeCommand () {
+        removeCommand () {
             room.removeCommand.apply(room, arguments);
         },
         /**
@@ -547,7 +552,7 @@ export default {
          * @param name {String} the name of the command.
          * @param values {Object} with keys and values that will be sent.
          */
-            sendCommand () {
+        sendCommand () {
             room.sendCommand.apply(room, arguments);
         },
         /**
@@ -555,7 +560,7 @@ export default {
          * @param name {String} the name of the command.
          * @param values {Object} with keys and values that will be sent.
          */
-            sendCommandOnce () {
+        sendCommandOnce () {
             room.sendCommandOnce.apply(room, arguments);
         }
     },
@@ -878,10 +883,6 @@ export default {
 
         room.on(ConferenceEvents.RECORDER_STATE_CHANGED, (status, error) => {
             console.log("Received recorder status change: ", status, error);
-            if(status == "error") {
-                console.error(error);
-                return;
-            }
             APP.UI.updateRecordingState(status);
         });
 

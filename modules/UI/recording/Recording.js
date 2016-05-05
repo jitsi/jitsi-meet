@@ -205,7 +205,8 @@ var Status = {
     OFF: "off",
     AVAILABLE: "available",
     UNAVAILABLE: "unavailable",
-    PENDING: "pending"
+    PENDING: "pending",
+    ERROR: "error"
 };
 
 /**
@@ -248,6 +249,7 @@ var Recording = {
             this.recordingOffKey = "liveStreaming.off";
             this.recordingPendingKey = "liveStreaming.pending";
             this.failedToStartKey = "liveStreaming.failedToStart";
+            this.recordingErrorKey = "liveStreaming.error";
             this.recordingButtonTooltip = "liveStreaming.buttonTooltip";
         }
         else {
@@ -256,6 +258,7 @@ var Recording = {
             this.recordingOffKey = "recording.off";
             this.recordingPendingKey = "recording.pending";
             this.failedToStartKey = "recording.failedToStart";
+            this.recordingErrorKey = "recording.error";
             this.recordingButtonTooltip = "recording.buttonTooltip";
         }
 
@@ -338,7 +341,6 @@ var Recording = {
      */
     updateRecordingUI (recordingState) {
         let buttonSelector = $('#toolbar_button_record');
-        let labelSelector = $('#recordingLabel');
 
         // TODO: handle recording state=available
         if (recordingState === Status.ON) {
@@ -346,12 +348,10 @@ var Recording = {
             buttonSelector.removeClass(this.baseClass);
             buttonSelector.addClass(this.baseClass + " active");
 
-            labelSelector.attr("data-i18n", this.recordingOnKey);
-            moveToCorner(labelSelector, true, 3000);
-            labelSelector
-                .text(APP.translation.translateString(this.recordingOnKey));
-        } else if (recordingState === Status.OFF
-                    || recordingState === Status.UNAVAILABLE) {
+            this._updateStatusLabel(this.recordingOnKey, false);
+        }
+        else if (recordingState === Status.OFF
+                || recordingState === Status.UNAVAILABLE) {
 
             // We don't want to do any changes if this is
             // an availability change.
@@ -362,15 +362,13 @@ var Recording = {
             buttonSelector.removeClass(this.baseClass + " active");
             buttonSelector.addClass(this.baseClass);
 
-            moveToCorner(labelSelector, false);
             let messageKey;
             if (this.currentState === Status.PENDING)
                 messageKey = this.failedToStartKey;
             else
                 messageKey = this.recordingOffKey;
 
-            labelSelector.attr("data-i18n", messageKey);
-            labelSelector.text(APP.translation.translateString(messageKey));
+            this._updateStatusLabel(messageKey, true);
 
             setTimeout(function(){
                 $('#recordingLabel').css({display: "none"});
@@ -381,15 +379,18 @@ var Recording = {
             buttonSelector.removeClass(this.baseClass + " active");
             buttonSelector.addClass(this.baseClass);
 
-            moveToCorner(labelSelector, false);
-            labelSelector
-                .attr("data-i18n", this.recordingPendingKey);
-            labelSelector
-                .text(APP.translation.translateString(
-                    this.recordingPendingKey));
+            this._updateStatusLabel(this.recordingPendingKey, true);
+        }
+        else if (recordingState === Status.ERROR) {
+            buttonSelector.removeClass(this.baseClass + " active");
+            buttonSelector.addClass(this.baseClass);
+
+            this._updateStatusLabel(this.recordingErrorKey, true);
         }
 
         this.currentState = recordingState;
+
+        let labelSelector = $('#recordingLabel');
 
         // We don't show the label for available state.
         if (recordingState !== Status.AVAILABLE
@@ -404,6 +405,20 @@ var Recording = {
             this.eventEmitter.emit(UIEvents.RECORDING_TOGGLED,
                                     this.predefinedToken);
         }
+    },
+    /**
+     * Updates the status label.
+     * @param textKey the text to show
+     * @param isCentered indicates if the label should be centered on the window
+     * or moved to the top right corner.
+     */
+    _updateStatusLabel(textKey, isCentered) {
+        let labelSelector = $('#recordingLabel');
+
+        moveToCorner(labelSelector, !isCentered);
+
+        labelSelector.attr("data-i18n", textKey);
+        labelSelector.text(APP.translation.translateString(textKey));
     }
 };
 

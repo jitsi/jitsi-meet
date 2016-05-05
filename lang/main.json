@@ -268,7 +268,8 @@
         "on": "Recording",
         "off": "Recording stopped",
         "failedToStart": "Recording failed to start",
-        "buttonTooltip": "Start / stop recording"
+        "buttonTooltip": "Start / stop recording",
+        "error": "Recording failed. Please try again."
     },
     "liveStreaming":
     {
@@ -278,6 +279,7 @@
         "unavailable": "The live streaming service is currently unavailable. Please try again later.",
         "failedToStart": "Live streaming failed to start",
         "buttonTooltip": "Start / stop live stream",
-        "streamIdRequired": "Please fill in the stream id in order to launch the live streaming."
+        "streamIdRequired": "Please fill in the stream id in order to launch the live streaming.",
+        "error": "Live streaming failed. Please try again"
     }
 }
