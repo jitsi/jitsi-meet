@@ -122,29 +122,48 @@ function muteLocalVideo (muted) {
 }
 
 /**
+ * Check if the welcome page is enabled and redirects to it.
+ */
+function maybeRedirectToWelcomePage() {
+    if (!config.enableWelcomePage) {
+        return;
+    }
+    // redirect to welcome page
+    setTimeout(() => {
+        APP.settings.setWelcomePageEnabled(true);
+        window.location.pathname = "/";
+    }, 3000);
+}
+
+/**
+ * Executes connection.disconnect and shows the feedback dialog
+ * @param {boolean} [requestFeedback=false] if user feedback should be requested
+ * @returns Promise.
+ */
+function disconnectAndShowFeedback(requestFeedback) {
+    connection.disconnect();
+    if (requestFeedback) {
+        return APP.UI.requestFeedback();
+    } else {
+        return Promise.resolve();
+    }
+}
+
+/**
  * Disconnect from the conference and optionally request user feedback.
  * @param {boolean} [requestFeedback=false] if user feedback should be requested
  */
 function hangup (requestFeedback = false) {
-    APP.conference._room.leave().then(() => {
-        connection.disconnect();
-        if (requestFeedback) {
-            return APP.UI.requestFeedback();
-        } else {
-            return Promise.resolve();
-        }
-    }).then(function () {
-        if (!config.enableWelcomePage) {
-            return;
-        }
-        // redirect to welcome page
-        setTimeout(() => {
-            APP.settings.setWelcomePageEnabled(true);
-            window.location.pathname = "/";
-        }, 3000);
-    }, function (err) {
-        console.error('Failed to hangup the call:', err);
-    });
+    const errCallback = (f, err) => {
+        console.error('Error occurred during hanging up: ', err);
+        return f();
+    };
+    const disconnect = disconnectAndShowFeedback.bind(null, requestFeedback);
+    APP.conference._room.leave()
+    .then(disconnect)
+    .catch(errCallback.bind(null, disconnect))
+    .then(maybeRedirectToWelcomePage)
+    .catch(errCallback.bind(null, maybeRedirectToWelcomePage));
 }
 
 /**
