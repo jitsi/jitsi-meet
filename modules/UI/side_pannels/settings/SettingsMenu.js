@@ -1,4 +1,4 @@
-/* global APP, $ */
+/* global APP, $, JitsiMeetJS */
 import UIUtil from "../../util/UIUtil";
 import UIEvents from "../../../../service/UI/UIEvents";
 import languages from "../../../../service/translation/languages";
@@ -202,7 +202,8 @@ export default {
 
         let $selectCamera= $('#selectCamera'),
             $selectMic = $('#selectMic'),
-            $selectAudioOutput = $('#selectAudioOutput');
+            $selectAudioOutput = $('#selectAudioOutput'),
+            $selectAudioOutputParent = $selectAudioOutput.parent();
 
         let audio = devices.filter(device => device.kind === 'audioinput');
         let video = devices.filter(device => device.kind === 'videoinput');
@@ -216,15 +217,15 @@ export default {
             generateDevicesOptions(audio, Settings.getMicDeviceId())
         );
 
-        if (audioOutput.length) {
+        if (audioOutput.length &&
+            JitsiMeetJS.isAudioOutputDeviceChangeAvailable()) {
             $selectAudioOutput.html(
                 generateDevicesOptions(audioOutput,
-                    Settings.getAudioOutputDeviceId())
-            ).show();
+                    Settings.getAudioOutputDeviceId()));
+
+            $selectAudioOutputParent.show();
         } else {
-            // if we have no audiooutput devices, that means current browser
-            // doesn't support it, so don't show the select box at all
-            $selectAudioOutput.hide();
+            $selectAudioOutputParent.hide();
         }
 
         $devicesOptions.show();
