@@ -99,7 +99,8 @@
         "mute": "Participant is muted",
         "kick": "Kick out",
         "muted": "Muted",
-        "domute": "Mute"
+        "domute": "Mute",
+        "flip": "Flip"
 
     },
     "connectionindicator":

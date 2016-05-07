@@ -24,6 +24,7 @@
     "jquery": "~2.1.1",
     "jQuery-Impromptu": "git+https://github.com/trentrichardson/jQuery-Impromptu.git#v6.0.0",
     "lib-jitsi-meet": "jitsi/lib-jitsi-meet",
+    "jquery-contextmenu": "*",
     "jquery-ui": "^1.10.5",
     "jssha": "1.5.0",
     "retry": "0.6.1",
@@ -97,6 +98,9 @@
     },
     "jQuery-Impromptu": {
       "depends": "jquery:jQuery"
+    },
+    "jquery-contextmenu": {
+        "depends": "jquery:jQuery"
     },
     "autosize": {
       "depends": "jquery:jQuery"

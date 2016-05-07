@@ -71,5 +71,9 @@ export default {
      * Notifies interested listeners that the follow-me feature is enabled or
      * disabled.
      */
-    FOLLOW_ME_ENABLED: "UI.follow_me_enabled"
+    FOLLOW_ME_ENABLED: "UI.follow_me_enabled",
+    /**
+     * Notifies that flipX property of the local video is changed.
+     */
+    LOCAL_FLIPX_CHANGED: "UI.local_flipx_changed"
 };

@@ -6,6 +6,7 @@ let language = null;
 let cameraDeviceId = '';
 let micDeviceId = '';
 let welcomePageDisabled = false;
+let localFlipX = null;
 
 function supportsLocalStorage() {
     try {
@@ -31,6 +32,7 @@ if (supportsLocalStorage()) {
     }
 
     email = UIUtil.unescapeHtml(window.localStorage.email || '');
+    localFlipX = JSON.parse(window.localStorage.localFlipX || true);
     displayName = UIUtil.unescapeHtml(window.localStorage.displayname || '');
     language = window.localStorage.language;
     cameraDeviceId = window.localStorage.cameraDeviceId || '';
@@ -85,6 +87,23 @@ export default {
     setLanguage: function (lang) {
         language = lang;
         window.localStorage.language = lang;
+    },
+
+    /**
+     * Sets new flipX state of local video and saves it to the local storage.
+     * @param {string} val flipX state of local video
+     */
+    setLocalFlipX: function (val) {
+        localFlipX = val;
+        window.localStorage.localFlipX = val;
+    },
+
+    /**
+     * Returns flipX state of local video.
+     * @returns {string} flipX
+     */
+    getLocalFlipX: function () {
+        return localFlipX;
     },
 
     /**
