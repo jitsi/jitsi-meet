@@ -12,7 +12,8 @@ function LocalVideo(VideoLayout, emitter) {
     this.container = $("#localVideoContainer").get(0);
     this.localVideoId = null;
     this.bindHoverHandler();
-    this._buildContextMenu();
+    if(config.enableLocalVideoFlip)
+        this._buildContextMenu();
     this.isLocal = true;
     this.emitter = emitter;
     Object.defineProperty(this, 'id', {
