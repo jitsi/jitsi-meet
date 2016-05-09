@@ -166,7 +166,7 @@
         "removeSharedVideoMsg": "Voulez-vous vraiment supprimer votre vidéo partagée ?",
         "alreadySharedVideoMsg": "Un autre participant partage déjà une vidéo. Cette conférence ne permet qu'une seule vidéo partagée à la fois.",
         "WaitingForHost": "En attente de l'hôte ...",
-        "WaitForHostMsg": "La conférence <b> __ room__ </b> n'a pas encore commencé. Si vous êtes l'hôte, merci de vous authentifier. Sinon, merci d'attendre que l'hôte arrive.",
+        "WaitForHostMsg": "La conférence <b>__room__</b> n'a pas encore commencé. Si vous êtes l'hôte, merci de vous authentifier. Sinon, merci d'attendre que l'hôte arrive.",
         "IamHost": "Je suis l’hôte",
         "Cancel": "Annuler",
         "retry": "Réessayer",
