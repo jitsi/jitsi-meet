@@ -27,11 +27,13 @@ deploy-init:
 
 deploy-appbundle:
 	cp $(OUTPUT_DIR)/app.bundle.min.js $(OUTPUT_DIR)/app.bundle.min.map \
+	$(OUTPUT_DIR)/app.bundle.js \
 	$(DEPLOY_DIR)
 
 deploy-lib-jitsi-meet:
 	cp $(LIBJITSIMEET_DIR)/lib-jitsi-meet.min.js \
 	$(LIBJITSIMEET_DIR)/lib-jitsi-meet.min.map \
+	$(LIBJITSIMEET_DIR)/lib-jitsi-meet.js \
 	$(LIBJITSIMEET_DIR)/connection_optimization/external_connect.js \
 	$(DEPLOY_DIR)
 deploy-css:
