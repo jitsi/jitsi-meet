@@ -4,16 +4,15 @@ import UIUtil from "../util/UIUtil";
 import UIEvents from "../../../service/UI/UIEvents";
 import SmallVideo from "./SmallVideo";
 
-var LargeVideo = require("./LargeVideo");
-
 const RTCUIUtils = JitsiMeetJS.util.RTCUIHelper;
 const TrackEvents = JitsiMeetJS.events.track;
 
 function LocalVideo(VideoLayout, emitter) {
     this.videoSpanId = "localVideoContainer";
     this.container = $("#localVideoContainer").get(0);
+    this.localVideoId = null;
     this.bindHoverHandler();
-    this.flipX = true;
+    this._buildContextMenu();
     this.isLocal = true;
     this.emitter = emitter;
     Object.defineProperty(this, 'id', {
@@ -165,9 +164,8 @@ LocalVideo.prototype.changeVideo = function (stream) {
     localVideoContainerSelector.off('click');
     localVideoContainerSelector.on('click', localVideoClick);
 
-    this.flipX = stream.videoType != "desktop";
     let localVideo = document.createElement('video');
-    localVideo.id = 'localVideo_' + stream.getId();
+    localVideo.id = this.localVideoId = 'localVideo_' + stream.getId();
 
     RTCUIUtils.setAutoPlay(localVideo, true);
     RTCUIUtils.setVolume(localVideo, 0);
@@ -182,9 +180,9 @@ LocalVideo.prototype.changeVideo = function (stream) {
     // onclick has to be used with Temasys plugin
     localVideo.onclick = localVideoClick;
 
-    if (this.flipX) {
-        $(localVideo).addClass("flipVideoX");
-    }
+    let isVideo = stream.videoType != "desktop";
+    this._enableDisableContextMenu(isVideo);
+    this.setFlipX(isVideo? APP.settings.getLocalFlipX() : false);
 
     // Attach WebRTC stream
     localVideo = stream.attach(localVideo);
@@ -220,6 +218,56 @@ LocalVideo.prototype.setVisible = function(visible) {
     else {
         $("#localVideoContainer").hide();
     }
+};
+
+/**
+ * Sets the flipX state of the video.
+ * @param val {boolean} true for flipped otherwise false;
+ */
+LocalVideo.prototype.setFlipX = function (val) {
+    this.emitter.emit(UIEvents.LOCAL_FLIPX_CHANGED, val);
+    if(!this.localVideoId)
+        return;
+    if(val) {
+        this.selectVideoElement().addClass("flipVideoX");
+    } else {
+        this.selectVideoElement().removeClass("flipVideoX");
+    }
+};
+
+/**
+ * Builds the context menu for the local video.
+ */
+LocalVideo.prototype._buildContextMenu = function () {
+    $.contextMenu({
+        selector: '#' + this.videoSpanId,
+        zIndex: 10000,
+        items: {
+            flip: {
+                name: "Flip",
+                callback: () => {
+                    let val = !APP.settings.getLocalFlipX();
+                    this.setFlipX(val);
+                    APP.settings.setLocalFlipX(val);
+                }
+            }
+        },
+        events: {
+            show : function(options){
+                options.items.flip.name =
+                    APP.translation.translateString("videothumbnail.flip");
+            }
+        }
+    });
+};
+
+/**
+ * Enables or disables the context menu for the local video.
+ * @param enable {boolean} true for enable, false for disable
+ */
+LocalVideo.prototype._enableDisableContextMenu = function (enable) {
+    if($('#' + this.videoSpanId).contextMenu)
+        $('#' + this.videoSpanId).contextMenu(enable);
 };
 
 export default LocalVideo;

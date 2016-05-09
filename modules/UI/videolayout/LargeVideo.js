@@ -168,6 +168,7 @@ class VideoContainer extends LargeContainer {
         super();
         this.stream = null;
         this.videoType = null;
+        this.localFlipX = true;
 
         this.isVisible = false;
 
@@ -284,10 +285,22 @@ class VideoContainer extends LargeContainer {
         }
 
         stream.attach(this.$video[0]);
-
-        let flipX = stream.isLocal() && !this.isScreenSharing();
+        let flipX = stream.isLocal() && this.localFlipX;
         this.$video.css({
             transform: flipX ? 'scaleX(-1)' : 'none'
+        });
+    }
+
+    /**
+     * Changes the flipX state of the local video.
+     * @param val {boolean} true if flipped.
+     */
+    setLocalFlipX(val) {
+        this.localFlipX = val;
+        if(!this.$video || !this.stream || !this.stream.isLocal())
+            return;
+        this.$video.css({
+            transform: this.localFlipX ? 'scaleX(-1)' : 'none'
         });
     }
 
@@ -453,7 +466,7 @@ export default class LargeVideoManager {
         } else {
             preUpdate = Promise.resolve();
         }
-        
+
         preUpdate.then(() => {
             let {id, stream, videoType, resolve} = this.newStreamData;
             this.newStreamData = null;
@@ -650,5 +663,13 @@ export default class LargeVideoManager {
                 this.showWatermark(true);
             }
         });
+    }
+
+    /**
+     * Changes the flipX state of the local video.
+     * @param val {boolean} true if flipped.
+     */
+    onLocalFlipXChange(val) {
+        this.videoContainer.setLocalFlipX(val);
     }
 }

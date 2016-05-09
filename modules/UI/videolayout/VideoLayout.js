@@ -34,6 +34,11 @@ var eventEmitter = null;
 var pinnedId = null;
 
 /**
+ * flipX state of the localVideo
+ */
+let localFlipX = null;
+
+/**
  * On contact list item clicked.
  */
 function onContactClicked (id) {
@@ -92,6 +97,11 @@ let largeVideo;
 var VideoLayout = {
     init (emitter) {
         eventEmitter = emitter;
+        eventEmitter.addListener(UIEvents.LOCAL_FLIPX_CHANGED, function (val) {
+                localFlipX = val;
+                if(largeVideo)
+                    largeVideo.onLocalFlipXChange(val);
+            });
         localVideoThumbnail = new LocalVideo(VideoLayout, emitter);
         // sets default video type of local video
         localVideoThumbnail.setVideoType(VIDEO_CONTAINER_TYPE);
@@ -105,6 +115,9 @@ var VideoLayout = {
 
     initLargeVideo (isSideBarVisible) {
         largeVideo = new LargeVideoManager();
+        if(localFlipX) {
+            largeVideo.onLocalFlipXChange(localFlipX);
+        }
         largeVideo.updateContainerSize(isSideBarVisible);
         AudioLevels.init();
     },
@@ -1084,6 +1097,15 @@ var VideoLayout = {
             videoResolutionLabel.css({display: "block"});
         else if (!isResolutionHD && videoResolutionLabel.is(":visible"))
             videoResolutionLabel.css({display: "none"});
+    },
+
+    /**
+     * Sets the flipX state of the local video.
+     * @param {boolean} true for flipped otherwise false;
+     */
+    setLocalFlipX: function (val) {
+        this.localFlipX = val;
+
     }
 };
 

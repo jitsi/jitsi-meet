@@ -165,9 +165,6 @@ SmallVideo.createStreamElement = function (stream) {
         console.log("(TIME) Render " + type + ":\t",
                     now);
     };
-
-    element.oncontextmenu = function () { return false; };
-
     return element;
 };
 
