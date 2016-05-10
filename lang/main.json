@@ -89,6 +89,7 @@
         "startVideoMuted": "Start without video",
         "selectCamera": "Select camera",
         "selectMic": "Select microphone",
+        "selectAudioOutput": "Select audio output",
         "followMe": "Enable follow me"
     },
     "videothumbnail":

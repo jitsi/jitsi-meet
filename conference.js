@@ -1134,6 +1134,17 @@ export default {
         );
 
         APP.UI.addListener(
+            UIEvents.AUDIO_OUTPUT_DEVICE_CHANGED,
+            (audioOutputDeviceId) => {
+                APP.settings.setAudioOutputDeviceId(audioOutputDeviceId)
+                    .then(() => console.log('changed audio output device'))
+                    .catch((err) => {
+                        console.error('failed to set audio output device', err);
+                    });
+            }
+        );
+
+        APP.UI.addListener(
             UIEvents.TOGGLE_SCREENSHARING, this.toggleScreenSharing.bind(this)
         );
 

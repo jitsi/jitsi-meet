@@ -1,3 +1,5 @@
+/* global JitsiMeetJS */
+
 import UIUtil from '../UI/util/UIUtil';
 
 let email = '';
@@ -40,6 +42,17 @@ if (supportsLocalStorage()) {
     welcomePageDisabled = JSON.parse(
         window.localStorage.welcomePageDisabled || false
     );
+
+    var audioOutputDeviceId = window.localStorage.audioOutputDeviceId;
+
+    if (typeof audioOutputDeviceId !== 'undefined' &&
+        audioOutputDeviceId !== JitsiMeetJS.getAudioOutputDevice()) {
+        JitsiMeetJS.setAudioOutputDevice(
+            window.localStorage.audioOutputDeviceId).catch((ex) => {
+                console.error('failed to set audio output device from local ' +
+                    'storage', ex);
+            });
+    }
 } else {
     console.log("local storage is not supported");
 }
@@ -140,6 +153,25 @@ export default {
     setMicDeviceId: function (newId = '') {
         micDeviceId = newId;
         window.localStorage.micDeviceId = newId;
+    },
+
+    /**
+     * Get device id of the audio output device which is currently in use.
+     * Empty string stands for default device.
+     * @returns {String}
+     */
+    getAudioOutputDeviceId: function () {
+        return JitsiMeetJS.getAudioOutputDevice();
+    },
+    /**
+     * Set device id of the audio output device which is currently in use.
+     * Empty string stands for default device.
+     * @param {string} newId new audio output device id
+     * @returns {Promise}
+     */
+    setAudioOutputDeviceId: function (newId = '') {
+        return JitsiMeetJS.setAudioOutputDevice(newId)
+            .then(() => window.localStorage.audioOutputDeviceId = newId);
     },
 
     /**
