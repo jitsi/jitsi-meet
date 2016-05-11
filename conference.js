@@ -371,11 +371,14 @@ export default {
                 JitsiMeetJS.isDesktopSharingEnabled();
 
             // update list of available devices
-            if (JitsiMeetJS.isDeviceListAvailable() &&
-                JitsiMeetJS.isDeviceChangeAvailable()) {
-                JitsiMeetJS.enumerateDevices(
-                    devices => APP.UI.onAvailableDevicesChanged(devices)
-                );
+            if (JitsiMeetJS.mediaDevices.isDeviceListAvailable() &&
+                JitsiMeetJS.mediaDevices.isDeviceChangeAvailable()) {
+                JitsiMeetJS.mediaDevices.enumerateDevices(
+                    APP.UI.onAvailableDevicesChanged);
+
+                JitsiMeetJS.mediaDevices.addEventListener(
+                    JitsiMeetJS.events.mediaDevices.DEVICE_LIST_CHANGED,
+                    APP.UI.onAvailableDevicesChanged);
             }
             if (config.iAmRecorder)
                 this.recorder = new Recorder();

@@ -45,9 +45,9 @@ if (supportsLocalStorage()) {
 
     var audioOutputDeviceId = window.localStorage.audioOutputDeviceId;
 
-    if (typeof audioOutputDeviceId !== 'undefined' &&
-        audioOutputDeviceId !== JitsiMeetJS.getAudioOutputDevice()) {
-        JitsiMeetJS.setAudioOutputDevice(
+    if (typeof audioOutputDeviceId !== 'undefined' && audioOutputDeviceId !==
+            JitsiMeetJS.mediaDevices.getAudioOutputDevice()) {
+        JitsiMeetJS.mediaDevices.setAudioOutputDevice(
             window.localStorage.audioOutputDeviceId).catch((ex) => {
                 console.error('failed to set audio output device from local ' +
                     'storage', ex);
@@ -161,7 +161,7 @@ export default {
      * @returns {String}
      */
     getAudioOutputDeviceId: function () {
-        return JitsiMeetJS.getAudioOutputDevice();
+        return JitsiMeetJS.mediaDevices.getAudioOutputDevice();
     },
     /**
      * Set device id of the audio output device which is currently in use.
@@ -170,7 +170,7 @@ export default {
      * @returns {Promise}
      */
     setAudioOutputDeviceId: function (newId = '') {
-        return JitsiMeetJS.setAudioOutputDevice(newId)
+        return JitsiMeetJS.mediaDevices.setAudioOutputDevice(newId)
             .then(() => window.localStorage.audioOutputDeviceId = newId);
     },
 
