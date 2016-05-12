@@ -218,7 +218,7 @@ export default {
         );
 
         if (audioOutput.length &&
-            JitsiMeetJS.isDeviceChangeAvailable('output')) {
+            JitsiMeetJS.mediaDevices.isDeviceChangeAvailable('output')) {
             $selectAudioOutput.html(
                 generateDevicesOptions(audioOutput,
                     Settings.getAudioOutputDeviceId()));
