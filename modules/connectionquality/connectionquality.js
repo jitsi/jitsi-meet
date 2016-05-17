@@ -19,6 +19,16 @@ var stats = {};
 var remoteStats = {};
 
 /**
+ * Quality percent( 100% - good, 0% - bad.) for the local user.
+ */
+var localConnectionQuality = 100;
+
+/**
+ * Quality percent( 100% - good, 0% - bad.) stored per id.
+ */
+var remoteConnectionQuality = {};
+
+/**
  * Converts statistics to format used by VideoLayout
  * @param stats
  * @returns {{bitrate: {download: *, upload: *}, packetLoss: {total: *, download: *, upload: *}}}
@@ -51,6 +61,15 @@ function parseMUCStats(stats) {
     };
 }
 
+/**
+ * Calculates the quality percent based on passed new and old value.
+ * @param newVal the new value
+ * @param oldVal the old value
+ */
+function calculateQuality(newVal, oldVal) {
+    return (newVal <= oldVal) ? newVal : (9*oldVal + newVal) / 10;
+}
+
 export default {
     /**
      * Updates the local statistics
@@ -58,7 +77,11 @@ export default {
      */
     updateLocalStats: function (data) {
         stats = data;
-        eventEmitter.emit(CQEvents.LOCALSTATS_UPDATED, 100 - stats.packetLoss.total, stats);
+        var newVal = 100 - stats.packetLoss.total;
+        localConnectionQuality =
+            calculateQuality(newVal, localConnectionQuality);
+        eventEmitter.emit(CQEvents.LOCALSTATS_UPDATED, localConnectionQuality,
+            stats);
     },
 
     /**
@@ -74,9 +97,13 @@ export default {
         }
         remoteStats[id] = data;
 
+        var newVal = 100 - data.packetLoss.total;
+        var oldVal = remoteConnectionQuality[id];
+        remoteConnectionQuality[id] = calculateQuality(newVal, oldVal);
+
         eventEmitter.emit(
-            CQEvents.REMOTESTATS_UPDATED, id, 100 - data.packetLoss_total, remoteStats[id]
-        );
+            CQEvents.REMOTESTATS_UPDATED, id, remoteConnectionQuality[id],
+            remoteStats[id]);
     },
 
     /**
