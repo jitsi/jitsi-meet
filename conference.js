@@ -484,12 +484,17 @@ export default {
     sendFeedback (overallFeedback, detailedFeedback) {
         return room.sendFeedback (overallFeedback, detailedFeedback);
     },
-    // used by torture currently
-    isJoined () {
+    /**
+     * Checks whether the MUC is joined.
+     */
+    isMucJoined () {
         return this._room
             && this._room.isJoined();
     },
-    getConnectionState () {
+    /**
+     * Returns the ICE connection state of the PeerConnection.
+     */
+    getIceConnectionState () {
         return this._room
             && this._room.getConnectionState();
     },
