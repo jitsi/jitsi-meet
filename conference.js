@@ -22,6 +22,7 @@ const TrackEvents = JitsiMeetJS.events.track;
 const TrackErrors = JitsiMeetJS.errors.track;
 
 let room, connection, localAudio, localVideo, roomLocker;
+let currentAudioInputDevices, currentVideoInputDevices;
 
 import {VIDEO_CONTAINER_TYPE} from "./modules/UI/videolayout/LargeVideo";
 
@@ -170,22 +171,42 @@ function hangup (requestFeedback = false) {
 
 /**
  * Create local tracks of specified types.
- * @param {string[]} devices required track types ('audio', 'video' etc.)
+ * @param {string[]} devices - required track types ('audio', 'video' etc.)
+ * @param {string|null} [cameraDeviceId] - camera device id, if undefined - one
+ *      from settings will be used
+ * @param {string|null} [micDeviceId] - microphone device id, if undefined - one
+ *      from settings will be used
  * @returns {Promise<JitsiLocalTrack[]>}
  */
-function createLocalTracks (...devices) {
+function createLocalTracks (devices, cameraDeviceId, micDeviceId) {
     return JitsiMeetJS.createLocalTracks({
         // copy array to avoid mutations inside library
         devices: devices.slice(0),
         resolution: config.resolution,
-        cameraDeviceId: APP.settings.getCameraDeviceId(),
-        micDeviceId: APP.settings.getMicDeviceId(),
+        cameraDeviceId: typeof cameraDeviceId === 'undefined'
+            || cameraDeviceId === null
+                ? APP.settings.getCameraDeviceId()
+                : cameraDeviceId,
+        micDeviceId: typeof micDeviceId === 'undefined' || micDeviceId === null
+            ? APP.settings.getMicDeviceId()
+            : micDeviceId,
         // adds any ff fake device settings if any
         firefox_fake_device: config.firefox_fake_device
     }).catch(function (err) {
         console.error('failed to create local tracks', ...devices, err);
         return Promise.reject(err);
     });
+}
+
+/**
+ * Stores lists of current 'audioinput' and 'videoinput' devices
+ * @param {MediaDeviceInfo[]} devices
+ */
+function setCurrentMediaDevices(devices) {
+    currentAudioInputDevices = devices.filter(
+        d => d.kind === 'audioinput');
+    currentVideoInputDevices = devices.filter(
+        d => d.kind === 'videoinput');
 }
 
 class ConferenceConnector {
@@ -327,6 +348,7 @@ export default {
      * @returns {Promise}
      */
     init(options) {
+        let self = this;
         this.roomName = options.roomName;
         JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.TRACE);
 
@@ -356,9 +378,9 @@ export default {
         return JitsiMeetJS.init(config).then(() => {
             return Promise.all([
                 // try to retrieve audio and video
-                createLocalTracks('audio', 'video')
+                createLocalTracks(['audio', 'video'])
                 // if failed then try to retrieve only audio
-                    .catch(() => createLocalTracks('audio'))
+                    .catch(() => createLocalTracks(['audio']))
                 // if audio also failed then just return empty array
                     .catch(() => []),
                 connect(options.roomName)
@@ -370,15 +392,53 @@ export default {
             this.isDesktopSharingEnabled =
                 JitsiMeetJS.isDesktopSharingEnabled();
 
+            // if user didn't give access to mic or camera or doesn't have
+            // them at all, we disable corresponding toolbar buttons
+            if (!tracks.find((t) => t.isAudioTrack())) {
+                APP.UI.disableMicrophoneButton();
+            }
+
+            if (!tracks.find((t) => t.isVideoTrack())) {
+                APP.UI.disableCameraButton();
+            }
+
             // update list of available devices
             if (JitsiMeetJS.mediaDevices.isDeviceListAvailable() &&
                 JitsiMeetJS.mediaDevices.isDeviceChangeAvailable()) {
-                JitsiMeetJS.mediaDevices.enumerateDevices(
-                    APP.UI.onAvailableDevicesChanged);
+                JitsiMeetJS.mediaDevices.enumerateDevices(function(devices) {
+                    // Ugly way to synchronize real device IDs with local
+                    // storage and settings menu. This is a workaround until
+                    // getConstraints() method will be implemented in browsers.
+                    if (localAudio) {
+                        localAudio._setRealDeviceIdFromDeviceList(devices);
+                        APP.settings.setMicDeviceId(localAudio.getDeviceId());
+                    }
+
+                    if (localVideo) {
+                        localVideo._setRealDeviceIdFromDeviceList(devices);
+                        APP.settings.setCameraDeviceId(
+                            localVideo.getDeviceId());
+                    }
+
+                    setCurrentMediaDevices(devices);
+
+                    APP.UI.onAvailableDevicesChanged(devices);
+                });
 
                 JitsiMeetJS.mediaDevices.addEventListener(
                     JitsiMeetJS.events.mediaDevices.DEVICE_LIST_CHANGED,
-                    APP.UI.onAvailableDevicesChanged);
+                    (devices) => {
+                        // Just defer callback until other event callbacks are
+                        // processed.
+                        window.setTimeout(() => {
+                            checkLocalDevicesAfterDeviceListChanged(devices)
+                                .then(() => {
+                                    setCurrentMediaDevices(devices);
+
+                                    APP.UI.onAvailableDevicesChanged(devices);
+                                });
+                        }, 0);
+                    });
             }
             if (config.iAmRecorder)
                 this.recorder = new Recorder();
@@ -388,6 +448,180 @@ export default {
             return new Promise((resolve, reject) => {
                 (new ConferenceConnector(resolve, reject)).connect();
             });
+
+            function checkAudioOutputDeviceAfterDeviceListChanged(newDevices) {
+                if (!JitsiMeetJS.mediaDevices
+                        .isDeviceChangeAvailable('output')) {
+                    return;
+                }
+
+                var selectedAudioOutputDeviceId =
+                        APP.settings.getAudioOutputDeviceId(),
+                    availableAudioOutputDevices = newDevices.filter(d => {
+                        return d.kind === 'audiooutput';
+                    });
+
+                if (selectedAudioOutputDeviceId !== 'default' &&
+                    !availableAudioOutputDevices.find(d =>
+                    d.deviceId === selectedAudioOutputDeviceId)) {
+                    APP.settings.setAudioOutputDeviceId('default');
+                }
+            }
+
+            function checkLocalDevicesAfterDeviceListChanged(newDevices) {
+                // Event handler can be fire before direct enumerateDevices()
+                // call, so handle this situation here.
+                if (!currentAudioInputDevices && !currentVideoInputDevices) {
+                    setCurrentMediaDevices(newDevices);
+                }
+
+                checkAudioOutputDeviceAfterDeviceListChanged(newDevices);
+
+                let availableAudioInputDevices = newDevices.filter(
+                        d => d.kind === 'audioinput'),
+                    availableVideoInputDevices = newDevices.filter(
+                        d => d.kind === 'videoinput'),
+                    selectedAudioInputDeviceId = APP.settings.getMicDeviceId(),
+                    selectedVideoInputDeviceId =
+                        APP.settings.getCameraDeviceId(),
+                    selectedAudioInputDevice = availableAudioInputDevices.find(
+                        d => d.deviceId === selectedAudioInputDeviceId),
+                    selectedVideoInputDevice = availableVideoInputDevices.find(
+                        d => d.deviceId === selectedVideoInputDeviceId),
+                    tracksToCreate = [],
+                    micIdToUse = null,
+                    cameraIdToUse = null;
+
+                // Here we handle case when no device was initially plugged, but
+                // then it's connected OR new device was connected when previous
+                // track has ended.
+                if (!localAudio || localAudio.disposed || localAudio.isEnded()){
+                    if (availableAudioInputDevices.length
+                        && availableAudioInputDevices[0].label !== '') {
+                        tracksToCreate.push('audio');
+                        micIdToUse = availableAudioInputDevices[0].deviceId;
+                    } else {
+                        APP.UI.disableMicrophoneButton();
+                    }
+                }
+
+                if ((!localVideo || localVideo.disposed || localVideo.isEnded())
+                    && !self.isSharingScreen){
+                    if (availableVideoInputDevices.length
+                        && availableVideoInputDevices[0].label !== '') {
+                        tracksToCreate.push('video');
+                        cameraIdToUse = availableVideoInputDevices[0].deviceId;
+                    } else {
+                        APP.UI.disableCameraButton();
+                    }
+                }
+
+                if (localAudio && !localAudio.disposed && !localAudio.isEnded()
+                    && selectedAudioInputDevice
+                    && selectedAudioInputDeviceId !== localAudio.getDeviceId()
+                    && tracksToCreate.indexOf('audio') === -1) {
+                    tracksToCreate.push('audio');
+                    micIdToUse = selectedAudioInputDeviceId;
+                }
+
+                if (localVideo && !localVideo.disposed && !localVideo.isEnded()
+                    && selectedVideoInputDevice
+                    && selectedVideoInputDeviceId !== localVideo.getDeviceId()
+                    && tracksToCreate.indexOf('video') === -1
+                    && !self.isSharingScreen) {
+                    tracksToCreate.push('video');
+                    cameraIdToUse = selectedVideoInputDeviceId;
+                }
+
+                if (tracksToCreate.length) {
+                    return createNewTracks(
+                        tracksToCreate, cameraIdToUse, micIdToUse);
+                } else {
+                    return Promise.resolve();
+                }
+
+                function createNewTracks(type, cameraDeviceId, micDeviceId) {
+                    return createLocalTracks(type, cameraDeviceId, micDeviceId)
+                        .then(onTracksCreated)
+                        .catch(() => {
+                            // if we tried to create both audio and video tracks
+                            // at once and failed, let's try again only with
+                            // audio. Such situation may happen in case if we
+                            // granted access only to microphone, but not to
+                            // camera.
+                            if (type.indexOf('audio') !== -1
+                                && type.indexOf('video') !== -1) {
+                                return createLocalTracks(['audio'], null,
+                                    micDeviceId);
+                            }
+
+                        })
+                        .then(onTracksCreated)
+                        .catch(() => {
+                            // if we tried to create both audio and video tracks
+                            // at once and failed, let's try again only with
+                            // video. Such situation may happen in case if we
+                            // granted access only to camera, but not to
+                            // microphone.
+                            if (type.indexOf('audio') !== -1
+                                && type.indexOf('video') !== -1) {
+                                return createLocalTracks(['video'],
+                                    cameraDeviceId,
+                                    null);
+                            }
+                        })
+                        .then(onTracksCreated)
+                        .catch(() => {
+                            // can't do anything in this case, so just ignore;
+                        });
+                }
+
+                function onTracksCreated(tracks) {
+                    return Promise.all((tracks || []).map(track => {
+                        if (track.isAudioTrack()) {
+                            let audioWasMuted = self.audioMuted;
+
+                            return self.useAudioStream(track).then(() => {
+                                console.log('switched local audio');
+
+                                // If we plugged-in new device (and switched to
+                                // it), but video was muted before, or we
+                                // unplugged current device and selected new
+                                // one, then mute new video track.
+                                if (audioWasMuted ||
+                                    currentAudioInputDevices.length >
+                                    availableAudioInputDevices.length) {
+                                    muteLocalAudio(true);
+                                }
+                            });
+                        } else if (track.isVideoTrack()) {
+                            let videoWasMuted = self.videoMuted;
+
+                            return self.useVideoStream(track).then(() => {
+                                console.log('switched local video');
+
+                                // TODO: maybe make video large if we
+                                // are not in conference yet
+
+                                // If we plugged-in new device (and switched to
+                                // it), but video was muted before, or we
+                                // unplugged current device and selected new
+                                // one, then mute new video track.
+                                if (videoWasMuted ||
+                                    (currentVideoInputDevices.length >
+                                    availableVideoInputDevices.length)) {
+                                    muteLocalVideo(true);
+                                }
+                            });
+                        } else {
+                            console.error("Ignored not an audio nor a "
+                                + "video track: ", track);
+
+                            return Promise.resolve();
+                        }
+                    }));
+                }
+            }
         });
     },
     /**
@@ -667,6 +901,8 @@ export default {
                 this.isSharingScreen = false;
             }
 
+            stream.videoType === 'camera' && APP.UI.enableCameraButton();
+
             APP.UI.setVideoMuted(this.localId, this.videoMuted);
 
             APP.UI.updateDesktopSharingButtons();
@@ -701,6 +937,7 @@ export default {
                 this.audioMuted = false;
             }
 
+            APP.UI.enableMicrophoneButton();
             APP.UI.setAudioMuted(this.localId, this.audioMuted);
         });
     },
@@ -719,7 +956,7 @@ export default {
         this.videoSwitchInProgress = true;
 
         if (shareScreen) {
-            createLocalTracks('desktop').then(([stream]) => {
+            createLocalTracks(['desktop']).then(([stream]) => {
                 stream.on(
                     TrackEvents.LOCAL_TRACK_STOPPED,
                     () => {
@@ -767,7 +1004,7 @@ export default {
                 );
             });
         } else {
-            createLocalTracks('video').then(
+            createLocalTracks(['video']).then(
                 ([stream]) => this.useVideoStream(stream)
             ).then(() => {
                 this.videoSwitchInProgress = false;
@@ -1118,7 +1355,7 @@ export default {
             UIEvents.VIDEO_DEVICE_CHANGED,
             (cameraDeviceId) => {
                 APP.settings.setCameraDeviceId(cameraDeviceId);
-                createLocalTracks('video').then(([stream]) => {
+                createLocalTracks(['video']).then(([stream]) => {
                     this.useVideoStream(stream);
                     console.log('switched local video device');
                 });
@@ -1129,7 +1366,7 @@ export default {
             UIEvents.AUDIO_DEVICE_CHANGED,
             (micDeviceId) => {
                 APP.settings.setMicDeviceId(micDeviceId);
-                createLocalTracks('audio').then(([stream]) => {
+                createLocalTracks(['audio']).then(([stream]) => {
                     this.useAudioStream(stream);
                     console.log('switched local audio device');
                 });

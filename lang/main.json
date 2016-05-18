@@ -66,7 +66,9 @@
         "dialpad": "Show dialpad",
         "sharedVideoMutedPopup": "Your shared video has been muted so<br/>that you can talk to the other participants.",
         "micMutedPopup": "Your microphone has been muted so that you<br/>would fully enjoy your shared video.",
-        "unableToUnmutePopup": "You cannot un-mute while the shared video is on."
+        "unableToUnmutePopup": "You cannot un-mute while the shared video is on.",
+        "cameraDisabled": "Camera is not available",
+        "micDisabled": "Microphone is not available"
     },
     "bottomtoolbar": {
         "chat": "Open / close chat",
@@ -90,7 +92,9 @@
         "selectCamera": "Select camera",
         "selectMic": "Select microphone",
         "selectAudioOutput": "Select audio output",
-        "followMe": "Enable follow me"
+        "followMe": "Enable follow me",
+        "noDevice": "None",
+        "noPermission": "Permission to use device is not granted"
     },
     "videothumbnail":
     {

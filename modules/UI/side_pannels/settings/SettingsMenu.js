@@ -30,10 +30,16 @@ function generateLanguagesOptions(items, currentLang) {
  * Generate html select options for available physical devices.
  * @param {{ deviceId, label }[]} items available devices
  * @param {string} [selectedId] id of selected device
+ * @param {boolean} permissionGranted if permission to use selected device type
+ *      is granted
  * @returns {string}
  */
-function generateDevicesOptions(items, selectedId) {
-    return items.map(function (item) {
+function generateDevicesOptions(items, selectedId, permissionGranted) {
+    if (!permissionGranted && items.length) {
+        return '<option data-i18n="settings.noPermission"></option>';
+    }
+
+    var options = items.map(function (item) {
         let attrs = {
             value: item.deviceId
         };
@@ -44,7 +50,13 @@ function generateDevicesOptions(items, selectedId) {
 
         let attrsStr = UIUtil.attrsToString(attrs);
         return `<option ${attrsStr}>${item.label}</option>`;
-    }).join('\n');
+    });
+
+    if (!items.length) {
+        options.unshift('<option data-i18n="settings.noDevice"></option>');
+    }
+
+    return options.join('');
 }
 
 
@@ -111,26 +123,30 @@ export default {
 
 
         // DEVICES LIST
-        this.changeDevicesList([]);
-        $('#selectCamera').change(function () {
-            let cameraDeviceId = $(this).val();
-            if (cameraDeviceId !== Settings.getCameraDeviceId()) {
-                emitter.emit(UIEvents.VIDEO_DEVICE_CHANGED, cameraDeviceId);
-            }
-        });
-        $('#selectMic').change(function () {
-            let micDeviceId = $(this).val();
-            if (micDeviceId !== Settings.getMicDeviceId()) {
-                emitter.emit(UIEvents.AUDIO_DEVICE_CHANGED, micDeviceId);
-            }
-        });
-        $('#selectAudioOutput').change(function () {
-            let audioOutputDeviceId = $(this).val();
-            if (audioOutputDeviceId !== Settings.getAudioOutputDeviceId()) {
-                emitter.emit(UIEvents.AUDIO_OUTPUT_DEVICE_CHANGED,
-                    audioOutputDeviceId);
-            }
-        });
+        if (JitsiMeetJS.mediaDevices.isDeviceListAvailable() &&
+            JitsiMeetJS.mediaDevices.isDeviceChangeAvailable()) {
+            this.changeDevicesList([]);
+
+            $('#selectCamera').change(function () {
+                let cameraDeviceId = $(this).val();
+                if (cameraDeviceId !== Settings.getCameraDeviceId()) {
+                    emitter.emit(UIEvents.VIDEO_DEVICE_CHANGED, cameraDeviceId);
+                }
+            });
+            $('#selectMic').change(function () {
+                let micDeviceId = $(this).val();
+                if (micDeviceId !== Settings.getMicDeviceId()) {
+                    emitter.emit(UIEvents.AUDIO_DEVICE_CHANGED, micDeviceId);
+                }
+            });
+            $('#selectAudioOutput').change(function () {
+                let audioOutputDeviceId = $(this).val();
+                if (audioOutputDeviceId !== Settings.getAudioOutputDeviceId()) {
+                    emitter.emit(UIEvents.AUDIO_OUTPUT_DEVICE_CHANGED,
+                        audioOutputDeviceId);
+                }
+            });
+        }
     },
 
     /**
@@ -193,41 +209,58 @@ export default {
      * @param {{ deviceId, label, kind }[]} devices list of available devices
      */
     changeDevicesList (devices) {
-        let $devicesOptions =  $('#devicesOptions');
-
-        if (!devices.length) {
-            $devicesOptions.hide();
-            return;
-        }
-
         let $selectCamera= $('#selectCamera'),
             $selectMic = $('#selectMic'),
             $selectAudioOutput = $('#selectAudioOutput'),
             $selectAudioOutputParent = $selectAudioOutput.parent();
 
-        let audio = devices.filter(device => device.kind === 'audioinput');
-        let video = devices.filter(device => device.kind === 'videoinput');
-        let audioOutput = devices
-            .filter(device => device.kind === 'audiooutput');
+        let audio = devices.filter(device => device.kind === 'audioinput'),
+            video = devices.filter(device => device.kind === 'videoinput'),
+            audioOutput = devices
+                .filter(device => device.kind === 'audiooutput'),
+            selectedAudioDevice = audio.find(
+                d => d.deviceId === Settings.getMicDeviceId()) || audio[0],
+            selectedVideoDevice = video.find(
+                d => d.deviceId === Settings.getCameraDeviceId()) || video[0],
+            selectedAudioOutputDevice = audioOutput.find(
+                    d => d.deviceId === Settings.getAudioOutputDeviceId()),
+            videoPermissionGranted =
+                JitsiMeetJS.mediaDevices.isDevicePermissionGranted('video'),
+            audioPermissionGranted =
+                JitsiMeetJS.mediaDevices.isDevicePermissionGranted('audio');
 
-        $selectCamera.html(
-            generateDevicesOptions(video, Settings.getCameraDeviceId())
-        );
-        $selectMic.html(
-            generateDevicesOptions(audio, Settings.getMicDeviceId())
-        );
+        $selectCamera
+            .html(generateDevicesOptions(
+                video,
+                selectedVideoDevice ? selectedVideoDevice.deviceId : '',
+                videoPermissionGranted))
+            .prop('disabled', !video.length || !videoPermissionGranted);
 
-        if (audioOutput.length &&
-            JitsiMeetJS.mediaDevices.isDeviceChangeAvailable('output')) {
-            $selectAudioOutput.html(
-                generateDevicesOptions(audioOutput,
-                    Settings.getAudioOutputDeviceId()));
+        $selectMic
+            .html(generateDevicesOptions(
+                audio,
+                selectedAudioDevice ? selectedAudioDevice.deviceId : '',
+                audioPermissionGranted))
+            .prop('disabled', !audio.length || !audioPermissionGranted);
+
+        if (JitsiMeetJS.mediaDevices.isDeviceChangeAvailable('output')) {
+            $selectAudioOutput
+                .html(generateDevicesOptions(
+                    audioOutput,
+                    selectedAudioOutputDevice
+                        ? selectedAudioOutputDevice.deviceId
+                        : 'default',
+                    videoPermissionGranted || audioPermissionGranted))
+                .prop('disabled', !audioOutput.length ||
+                    (!videoPermissionGranted && !audioPermissionGranted));
 
             $selectAudioOutputParent.show();
         } else {
             $selectAudioOutputParent.hide();
         }
 
-        $devicesOptions.show();
+        $('#devicesOptions').show();
+
+        APP.translation.translateElement($('#settingsmenu option'));
     }
 };

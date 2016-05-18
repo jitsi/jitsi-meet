@@ -191,7 +191,9 @@ const Toolbar = {
         UIUtil.hideDisabledButtons(defaultToolbarButtons);
 
         Object.keys(buttonHandlers).forEach(
-            buttonId => $(`#${buttonId}`).click(buttonHandlers[buttonId])
+            buttonId => $(`#${buttonId}`).click(function(event) {
+                !$(this).prop('disabled') && buttonHandlers[buttonId](event);
+            })
         );
     },
     /**
@@ -362,12 +364,58 @@ const Toolbar = {
     },
 
     /**
+     * Marks video icon as disabled or not.
+     * @param {boolean} disabled if icon should look like disabled or not
+     */
+    markVideoIconAsDisabled (disabled) {
+        var $btn = $('#toolbar_button_camera');
+
+        $btn
+            .prop("disabled", disabled)
+            .attr("data-i18n", disabled
+                ? "[content]toolbar.cameraDisabled"
+                : "[content]toolbar.videomute")
+            .attr("shortcut", disabled ? "" : "toggleVideoPopover");
+
+        disabled
+            ? $btn.attr("disabled", "disabled")
+            : $btn.removeAttr("disabled");
+
+        APP.translation.translateElement($btn);
+
+        disabled && this.markVideoIconAsMuted(disabled);
+    },
+
+    /**
      * Marks audio icon as muted or not.
      * @param {boolean} muted if icon should look like muted or not
      */
     markAudioIconAsMuted (muted) {
         $('#toolbar_button_mute').toggleClass("icon-microphone",
             !muted).toggleClass("icon-mic-disabled", muted);
+    },
+
+    /**
+     * Marks audio icon as disabled or not.
+     * @param {boolean} disabled if icon should look like disabled or not
+     */
+    markAudioIconAsDisabled (disabled) {
+        var $btn = $('#toolbar_button_mute');
+
+        $btn
+            .prop("disabled", disabled)
+            .attr("data-i18n", disabled
+                ? "[content]toolbar.micDisabled"
+                : "[content]toolbar.mute")
+            .attr("shortcut", disabled ? "" : "mutePopover");
+
+        disabled
+            ? $btn.attr("disabled", "disabled")
+            : $btn.removeAttr("disabled");
+
+        APP.translation.translateElement($btn);
+
+        disabled && this.markAudioIconAsMuted(disabled);
     },
 
     /**

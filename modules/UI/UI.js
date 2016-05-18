@@ -1142,4 +1142,32 @@ UI.onSharedVideoStop = function (id, attributes) {
         sharedVideoManager.onSharedVideoStop(id, attributes);
 };
 
+/**
+ * Disables camera toolbar button.
+ */
+UI.disableCameraButton = function () {
+    Toolbar.markVideoIconAsDisabled(true);
+};
+
+/**
+ * Enables camera toolbar button.
+ */
+UI.enableCameraButton = function () {
+    Toolbar.markVideoIconAsDisabled(false);
+};
+
+/**
+ * Disables microphone toolbar button.
+ */
+UI.disableMicrophoneButton = function () {
+    Toolbar.markAudioIconAsDisabled(true);
+};
+
+/**
+ * Enables microphone toolbar button.
+ */
+UI.enableMicrophoneButton = function () {
+    Toolbar.markAudioIconAsDisabled(false);
+};
+
 module.exports = UI;
