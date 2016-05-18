@@ -22,6 +22,7 @@ const TrackEvents = JitsiMeetJS.events.track;
 const TrackErrors = JitsiMeetJS.errors.track;
 
 let room, connection, localAudio, localVideo, roomLocker;
+let currentAudioInputDevices, currentVideoInputDevices;
 
 import {VIDEO_CONTAINER_TYPE} from "./modules/UI/videolayout/LargeVideo";
 
@@ -195,6 +196,17 @@ function createLocalTracks (devices, cameraDeviceId, micDeviceId) {
         console.error('failed to create local tracks', ...devices, err);
         return Promise.reject(err);
     });
+}
+
+/**
+ * Stores lists of current 'audioinput' and 'videoinput' devices
+ * @param {MediaDeviceInfo[]} devices
+ */
+function setCurrentMediaDevices(devices) {
+    currentAudioInputDevices = devices.filter(
+        d => d.kind === 'audioinput');
+    currentVideoInputDevices = devices.filter(
+        d => d.kind === 'videoinput');
 }
 
 class ConferenceConnector {
@@ -408,6 +420,8 @@ export default {
                             localVideo.getDeviceId());
                     }
 
+                    setCurrentMediaDevices(devices);
+
                     APP.UI.onAvailableDevicesChanged(devices);
                 });
 
@@ -419,6 +433,8 @@ export default {
                         window.setTimeout(() => {
                             checkLocalDevicesAfterDeviceListChanged(devices)
                                 .then(() => {
+                                    setCurrentMediaDevices(devices);
+
                                     APP.UI.onAvailableDevicesChanged(devices);
                                 });
                         }, 0);
@@ -453,6 +469,12 @@ export default {
             }
 
             function checkLocalDevicesAfterDeviceListChanged(newDevices) {
+                // Event handler can be fire before direct enumerateDevices()
+                // call, so handle this situation here.
+                if (!currentAudioInputDevices && !currentVideoInputDevices) {
+                    setCurrentMediaDevices(newDevices);
+                }
+
                 checkAudioOutputDeviceAfterDeviceListChanged(newDevices);
 
                 let availableAudioInputDevices = newDevices.filter(
@@ -555,39 +577,49 @@ export default {
                 }
 
                 function onTracksCreated(tracks) {
-                    tracks && tracks.forEach(track => {
+                    return Promise.all((tracks || []).map(track => {
                         if (track.isAudioTrack()) {
-                            self.useAudioStream(track).then(() => {
+                            let audioWasMuted = self.audioMuted;
+
+                            return self.useAudioStream(track).then(() => {
                                 console.log('switched local audio');
 
-                                // If we have more than 1 device - mute.
-                                // We check with 2 for audio, because
-                                // it always has 'default' if device is
-                                // available at all.
-                                // TODO: this is not 100% solution - need
-                                // to investigate more
-                                if (availableAudioInputDevices.length > 2) {
+                                // If we plugged-in new device (and switched to
+                                // it), but video was muted before, or we
+                                // unplugged current device and selected new
+                                // one, then mute new video track.
+                                if (audioWasMuted ||
+                                    currentAudioInputDevices.length >
+                                    availableAudioInputDevices.length) {
                                     muteLocalAudio(true);
                                 }
                             });
                         } else if (track.isVideoTrack()) {
-                            self.useVideoStream(track).then(() => {
+                            let videoWasMuted = self.videoMuted;
+
+                            return self.useVideoStream(track).then(() => {
                                 console.log('switched local video');
 
                                 // TODO: maybe make video large if we
                                 // are not in conference yet
-                                // If we have more than 1 device - mute.
-                                // TODO: this is not 100% solution - need
-                                // to investigate more
-                                if (availableVideoInputDevices.length > 1) {
+
+                                // If we plugged-in new device (and switched to
+                                // it), but video was muted before, or we
+                                // unplugged current device and selected new
+                                // one, then mute new video track.
+                                if (videoWasMuted ||
+                                    (currentVideoInputDevices.length >
+                                    availableVideoInputDevices.length)) {
                                     muteLocalVideo(true);
                                 }
                             });
                         } else {
                             console.error("Ignored not an audio nor a "
                                 + "video track: ", track);
+
+                            return Promise.resolve();
                         }
-                    });
+                    }));
                 }
             }
         });
