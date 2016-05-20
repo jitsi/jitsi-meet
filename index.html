@@ -5,7 +5,7 @@
         window.indexLoadedTime = window.performance.now();
         console.log("(TIME) index.html loaded:\t", indexLoadedTime);
     </script>
-    <script src="config.js?v=15"></script><!-- adapt to your needs, i.e. set hosts and bosh path -->
+    <script><!--#include virtual="config.js" --></script><!-- adapt to your needs, i.e. set hosts and bosh path -->
     <script src="utils.js?v=1"></script>
     <!--#include virtual="connection_optimization/connection_optimization.html" -->
     <script src="connection_optimization/do_external_connect.js?v=1"></script>
