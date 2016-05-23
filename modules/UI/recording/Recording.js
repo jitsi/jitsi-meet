@@ -78,7 +78,7 @@ function _requestLiveStreamId() {
                             return false;
                         }
                     } else {
-                        reject();
+                        reject(APP.UI.messageHandler.CANCEL);
                         dialog.close();
                         return false;
                     }
@@ -97,7 +97,7 @@ function _requestLiveStreamId() {
                 submit: function (e, v, m, f) {
                     e.preventDefault();
                     if (v === 0) {
-                        reject();
+                        reject(APP.UI.messageHandler.CANCEL);
                         dialog.close();
                     } else {
                         dialog.goToState('state0');
@@ -128,7 +128,7 @@ function _requestRecordingToken () {
                 if (v && f.recordingToken) {
                     resolve(UIUtil.escapeHtml(f.recordingToken));
                 } else {
-                    reject();
+                    reject(APP.UI.messageHandler.CANCEL);
                 }
             },
             null,
@@ -282,7 +282,12 @@ var Recording = {
                         _requestLiveStreamId().then((streamId) => {
                             self.eventEmitter.emit( UIEvents.RECORDING_TOGGLED,
                                 {streamId: streamId});
-                        });
+                        }).catch(
+                            reason => {
+                                if (reason !== APP.UI.messageHandler.CANCEL)
+                                    console.error(reason);
+                            }
+                        );
                     else {
                         if (self.predefinedToken) {
                             self.eventEmitter.emit( UIEvents.RECORDING_TOGGLED,
@@ -293,7 +298,12 @@ var Recording = {
                         _requestRecordingToken().then((token) => {
                             self.eventEmitter.emit( UIEvents.RECORDING_TOGGLED,
                                 {token: token});
-                        });
+                        }).catch(
+                            reason => {
+                                if (reason !== APP.UI.messageHandler.CANCEL)
+                                    console.error(reason);
+                            }
+                        );
                     }
                     break;
                 }
