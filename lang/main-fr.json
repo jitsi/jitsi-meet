@@ -31,7 +31,7 @@
             "content": "Il n'y a pas de restrictions artificielles concernant le nombre d'utilisateurs ou de participants à une conférence. La puissance du serveur et la bande passante sont les seuls facteurs limitants."
         },
         "feature5": {
-            "title": "Partage d'écan",
+            "title": "Partage d'écran",
             "content": "C'est facile de partager votre écran avec d'autres personnes. __app__ est idéal pour les présentations en ligne, les cours, et les sessions de support technique."
         },
         "feature6": {
@@ -201,7 +201,7 @@
         "tokenAuthFailed": "Échec de l'authentification avec le serveur XMPP : jeton non valide",
         "displayNameRequired": "Veuillez saisir votre nom",
         "extensionRequired": "Extension requise :",
-        "firefoxExtensionPrompt": "Vous devez installer une extension Firefox pour utiliser le partage d'écran. Merci essayer de nouveau après l'installation <a href='__url__'>depuis ce lien</a> !",
+        "firefoxExtensionPrompt": "Vous devez installer une extension Firefox pour utiliser le partage d'écran. Merci d'essayer de nouveau après l'installation <a href='__url__'>depuis ce lien</a> !",
         "feedbackQuestion": "Comment était votre conférence ?",
         "thankYou": "Merci d'avoir utilisé __appName__ !",
         "sorryFeedback": "Nous sommes désolés d'apprendre cela. Voulez-vous nous en dire plus ?",
