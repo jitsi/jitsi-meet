@@ -10,7 +10,8 @@ import UIUtil from './UIUtil';
 var notificationsEnabled = true;
 
 var messageHandler = (function(my) {
-
+    my.OK = "dialog.OK",
+    my.CANCEL = "dialog.Cancel",
     /**
      * Shows a message to the user.
      *

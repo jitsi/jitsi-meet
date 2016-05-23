@@ -25,8 +25,9 @@ function askForNewPassword () {
             function (e, v, m, f) {
                 if (v && f.lockKey) {
                     resolve(UIUtil.escapeHtml(f.lockKey));
-                } else {
-                    reject();
+                }
+                else {
+                    reject(messageHandler.CANCEL);
                 }
             },
             null, null, 'input:first'
@@ -58,7 +59,7 @@ function askForPassword () {
                 if (v && f.lockKey) {
                     resolve(UIUtil.escapeHtml(f.lockKey));
                 } else {
-                    reject();
+                    reject(messageHandler.CANCEL);
                 }
             },
             ':input:first'
@@ -79,7 +80,7 @@ function askToUnlock () {
                 if (v) {
                     resolve();
                 } else {
-                    reject();
+                    reject(messageHandler.CANCEL);
                 }
             }
         );
@@ -146,11 +147,16 @@ export default function createRoomLocker (room) {
          * @returns {Promise}
          */
         askToUnlock () {
-            return askToUnlock().then(function () {
-                return lock();
-            }).then(function () {
+            return askToUnlock().then(
+                () => { return lock(); }
+            ).then(function () {
                 AnalyticsAdapter.sendEvent('toolbar.lock.disabled');
-            });
+            }).catch(
+                reason => {
+                    if (reason !== messageHandler.CANCEL)
+                        console.error(reason);
+                }
+            );
         },
 
         /**
@@ -159,20 +165,30 @@ export default function createRoomLocker (room) {
          * @returns {Promise}
          */
         askToLock () {
-            return askForNewPassword().then(function (newPass) {
-                return lock(newPass);
-            }).then(function () {
+            return askForNewPassword().then(
+                newPass => { return lock(newPass);}
+            ).then(function () {
                 AnalyticsAdapter.sendEvent('toolbar.lock.enabled');
-            });
+            }).catch(
+                reason => {
+                    if (reason !== messageHandler.CANCEL)
+                        console.error(reason);
+                }
+            );
         },
 
         /**
          * Asks user for required conference password.
          */
         requirePassword () {
-            return askForPassword().then(function (newPass) {
-                password = newPass;
-            });
+            return askForPassword().then(
+                newPass => { password = newPass; }
+            ).catch(
+                reason => {
+                    if (reason !== messageHandler.CANCEL)
+                        console.error(reason);
+                }
+            );
         },
 
         /**
