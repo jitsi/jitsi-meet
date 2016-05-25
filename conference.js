@@ -977,17 +977,20 @@ export default {
                 this.videoSwitchInProgress = false;
                 this.toggleScreenSharing(false);
 
-                if(err === TrackErrors.CHROME_EXTENSION_USER_CANCELED)
+                if (err.name === TrackErrors.CHROME_EXTENSION_USER_CANCELED) {
                     return;
+                }
 
                 console.error('failed to share local desktop', err);
 
-                if (err === TrackErrors.FIREFOX_EXTENSION_NEEDED) {
+                if (err.name === TrackErrors.FIREFOX_EXTENSION_NEEDED) {
                     APP.UI.showExtensionRequiredDialog(
                         config.desktopSharingFirefoxExtensionURL
                     );
                     return;
                 }
+
+                // TODO: handle Permission error
 
                 // Handling:
                 // TrackErrors.CHROME_EXTENSION_INSTALLATION_ERROR
