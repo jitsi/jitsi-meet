@@ -1,4 +1,4 @@
-/* global APP, $, config, interfaceConfig, toastr */
+/* global APP, JitsiMeetJS, $, config, interfaceConfig, toastr */
 /* jshint -W101 */
 var UI = {};
 
@@ -37,6 +37,32 @@ let etherpadManager;
 let sharedVideoManager;
 
 let followMeHandler;
+
+const TrackErrors = JitsiMeetJS.errors.track;
+
+const JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP = {
+    microphone: {},
+    camera: {}
+};
+
+JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.camera[TrackErrors.UNSUPPORTED_RESOLUTION]
+    = "dialog.cameraUnsupportedResolutionError";
+JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.camera[TrackErrors.GENERAL]
+    = "dialog.cameraUnknownError";
+JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.camera[TrackErrors.PERMISSION_DENIED]
+    = "dialog.cameraPermissionDeniedError";
+JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.camera[TrackErrors.NOT_FOUND]
+    = "dialog.cameraNotFoundError";
+JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.camera[TrackErrors.CONSTRAINT_FAILED]
+    = "dialog.cameraConstraintFailedError";
+JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.microphone[TrackErrors.GENERAL]
+    = "dialog.micUnknownError";
+JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.microphone[TrackErrors.PERMISSION_DENIED]
+    = "dialog.micPermissionDeniedError";
+JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.microphone[TrackErrors.NOT_FOUND]
+    = "dialog.micNotFoundError";
+JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.microphone[TrackErrors.CONSTRAINT_FAILED]
+    = "dialog.micConstraintFailedError";
 
 /**
  * Prompt user for nickname.
@@ -1079,6 +1105,28 @@ UI.onAvailableDevicesChanged = function (devices) {
 };
 
 /**
+ * Sets microphone's <select> element to select microphone ID from settings.
+ */
+UI.setSelectedMicFromSettings = function () {
+    SettingsMenu.setSelectedMicFromSettings();
+};
+
+/**
+ * Sets camera's <select> element to select camera ID from settings.
+ */
+UI.setSelectedCameraFromSettings = function () {
+    SettingsMenu.setSelectedCameraFromSettings();
+};
+
+/**
+ * Sets audio outputs's <select> element to select audio output ID from
+ * settings.
+ */
+UI.setSelectedAudioOutputFromSettings = function () {
+    SettingsMenu.setSelectedAudioOutputFromSettings();
+};
+
+/**
  * Returns the id of the current video shown on large.
  * Currently used by tests (torture).
  */
@@ -1104,6 +1152,51 @@ UI.showExtensionRequiredDialog = function (url) {
         null,
         APP.translation.generateTranslationHTML(
             "dialog.firefoxExtensionPrompt", {url: url}));
+};
+
+/**
+ * Shows dialog with information about camera or microphone error.
+ * @param {'microphone'|'camera'} type
+ * @param {JitsiTrackError} error
+ */
+UI.showDeviceErrorDialog = function (type, error) {
+    if (type !== "microphone" && type !== "camera") {
+        throw new Error("Invalid device type");
+    }
+
+    if (window.localStorage[type + "DoNotShowErrorAgain-" + error.name]
+        === "true") {
+        return;
+    }
+
+    let titleKey = error.name === TrackErrors.PERMISSION_DENIED
+            ? "dialog.permissionDenied"
+            : "dialog.error",
+        errorMsg = JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP[type][error.name],
+        doNotShowAgainMsg = "dialog.doNotShowWarningAgain",
+        title = `<span data-i18n="${titleKey}"></span>`,
+        message = `
+            <h4 data-i18n="${errorMsg}"></h4>
+            <label>
+                <input type="checkbox" id="doNotShowWarningAgain">
+                <span data-i18n="${doNotShowAgainMsg}"></span>
+            </label>`;
+
+    messageHandler.openDialog(
+        title,
+        message,
+        false,
+        {Ok: true},
+        function () {
+            let form  = $.prompt.getPrompt(),
+                input = form.find("#doNotShowWarningAgain");
+
+            window.localStorage[type + "DoNotShowErrorAgain-" + error.name]
+                = input.prop("checked");
+        }
+    );
+
+    APP.translation.translateElement($(".jqibox"));
 };
 
 UI.updateDevicesAvailability = function (id, devices) {
