@@ -245,7 +245,7 @@ var Chat = {
 
         var messageContainer =
             '<div class="chatmessage">'+
-                '<img src="../images/chatArrow.svg" class="chatArrow">' +
+                '<img src="images/chatArrow.svg" class="chatArrow">' +
                 '<div class="username ' + divClassName +'">' + escDisplayName +
                 '</div>' + '<div class="timestamp">' + getCurrentTime(stamp) +
                 '</div>' + '<div class="usermessage">' + message + '</div>' +
