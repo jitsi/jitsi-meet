@@ -399,12 +399,12 @@ export default {
                     // If both requests for 'audio' + 'video' and 'audio' only
                     // failed, we assume that there is some problems with user's
                     // microphone and show corresponding dialog.
-                    APP.UI.showDeviceErrorDialog('microphone', audioOnlyError);
+                    APP.UI.showDeviceErrorDialog(audioOnlyError, null);
                 } else {
                     // If request for 'audio' + 'video' failed, but request for
                     // 'audio' only was OK, we assume that we had problems with
                     // camera and show corresponding dialog.
-                    APP.UI.showDeviceErrorDialog('camera', audioAndVideoError);
+                    APP.UI.showDeviceErrorDialog(null, audioAndVideoError);
                 }
             }
 
@@ -563,56 +563,78 @@ export default {
                 }
 
                 function createNewTracks(type, cameraDeviceId, micDeviceId) {
-                    let audioOnlyError, videoOnlyError;
+                    let audioTrackCreationError;
+                    let videoTrackCreationError;
+                    let audioRequested = type.indexOf('audio') !== -1;
+                    let videoRequested = type.indexOf('video') !== -1;
+                    let promise;
 
-                    return createLocalTracks(type, cameraDeviceId, micDeviceId)
-                        .then(onTracksCreated)
-                        .catch((err) => {
-                            // if we tried to create both audio and video tracks
-                            // at once and failed, let's try again only with
-                            // audio. Such situation may happen in case if we
-                            // granted access only to microphone, but not to
-                            // camera.
-                            if (type.indexOf('audio') !== -1
-                                && type.indexOf('video') !== -1) {
-                                return createLocalTracks(['audio'], null,
-                                    micDeviceId);
-                            } else if (type.indexOf('audio') !== -1) {
-                                audioOnlyError = err;
-                            } else if (type.indexOf('video') !== -1) {
-                                videoOnlyError = err;
-                            }
+                    if (audioRequested && micDeviceId !== null) {
+                        if (videoRequested && cameraDeviceId !== null) {
+                            promise = createLocalTracks(
+                                type, cameraDeviceId, micDeviceId)
+                                .catch(() => {
+                                    return Promise.all([
+                                        createAudioTrack(false),
+                                        createVideoTrack(false)]);
+                                })
+                                .then((audioTracks, videoTracks) => {
+                                    if (audioTrackCreationError) {
+                                        if (videoTrackCreationError) {
+                                            APP.UI.showDeviceErrorDialog(
+                                                audioTrackCreationError,
+                                                videoTrackCreationError);
+                                        } else {
+                                            APP.UI.showDeviceErrorDialog(
+                                                audioTrackCreationError,
+                                                null);
+                                        }
+                                    } else if (videoTrackCreationError) {
+                                        APP.UI.showDeviceErrorDialog(
+                                            null,
+                                            videoTrackCreationError);
+                                    }
 
-                        })
-                        .then(onTracksCreated)
-                        .catch((err) => {
-                            // if we tried to create both audio and video tracks
-                            // at once and failed, let's try again only with
-                            // video. Such situation may happen in case if we
-                            // granted access only to camera, but not to
-                            // microphone.
-                            audioOnlyError = err;
-                            if (type.indexOf('audio') !== -1
-                                && type.indexOf('video') !== -1) {
-                                return createLocalTracks(['video'],
-                                    cameraDeviceId,
-                                    null);
-                            }
-                        })
-                        .then(onTracksCreated)
-                        .catch((err) => {
-                            videoOnlyError = err;
+                                    return audioTracks.concat(videoTracks);
+                                });
+                        } else {
+                            promise = createAudioTrack();
+                        }
+                    } else if (videoRequested && cameraDeviceId !== null) {
+                        promise = createVideoTrack();
+                    } else {
+                        promise = Promise.resolve([]);
+                    }
 
-                            if (videoOnlyError) {
-                                APP.UI.showDeviceErrorDialog(
-                                    'camera', videoOnlyError);
-                            }
+                    return promise
+                        .then(onTracksCreated);
 
-                            if (audioOnlyError) {
-                                APP.UI.showDeviceErrorDialog(
-                                    'microphone', audioOnlyError);
-                            }
-                        });
+                    function createAudioTrack(showError) {
+                        return createLocalTracks(['audio'], null, micDeviceId)
+                            .catch(err => {
+                                audioTrackCreationError = err;
+
+                                if (showError) {
+                                    APP.UI.showDeviceErrorDialog(err, null);
+                                }
+
+                                return [];
+                            });
+                    }
+
+                    function createVideoTrack(showError) {
+                        return createLocalTracks(
+                                ['video'], cameraDeviceId, null)
+                            .catch(err => {
+                                videoTrackCreationError = err;
+
+                                if (showError) {
+                                    APP.UI.showDeviceErrorDialog(null, err);
+                                }
+
+                                return [];
+                            });
+                    }
                 }
 
                 function onTracksCreated(tracks) {
@@ -1034,15 +1056,20 @@ export default {
                 // TrackErrors.CHROME_EXTENSION_INSTALLATION_ERROR
                 // TrackErrors.GENERAL
                 // and any other
-                let dialogTxt = APP.translation.generateTranslationHTML(
-                    err.name === TrackErrors.PERMISSION_DENIED
-                        ? "dialog.screenSharingPermissionDeniedError"
-                        : "dialog.failtoinstall");
+                let dialogTxt;
+                let dialogTitle;
 
-                let dialogTitle = APP.translation.generateTranslationHTML(
-                    err.name === TrackErrors.PERMISSION_DENIED
-                        ? "dialog.permissionDenied"
-                        : "dialog.error");
+                if (err.name === TrackErrors.PERMISSION_DENIED) {
+                    dialogTxt = APP.translation.generateTranslationHTML(
+                        "dialog.screenSharingPermissionDeniedError");
+                    dialogTitle = APP.translation.generateTranslationHTML(
+                        "dialog.error");
+                } else {
+                    dialogTxt = APP.translation.generateTranslationHTML(
+                        "dialog.failtoinstall");
+                    dialogTitle = APP.translation.generateTranslationHTML(
+                        "dialog.permissionDenied");
+                }
 
                 APP.UI.messageHandler.openDialog(dialogTitle, dialogTxt, false);
             });
@@ -1404,7 +1431,7 @@ export default {
                         APP.settings.setCameraDeviceId(cameraDeviceId);
                     })
                     .catch((err) => {
-                        APP.UI.showDeviceErrorDialog('camera', err);
+                        APP.UI.showDeviceErrorDialog(null, err);
                         APP.UI.setSelectedCameraFromSettings();
                     });
             }
@@ -1420,7 +1447,7 @@ export default {
                         APP.settings.setMicDeviceId(micDeviceId);
                     })
                     .catch((err) => {
-                        APP.UI.showDeviceErrorDialog('microphone', err);
+                        APP.UI.showDeviceErrorDialog(err, null);
                         APP.UI.setSelectedMicFromSettings();
                     });
             }

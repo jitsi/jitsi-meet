@@ -1155,41 +1155,93 @@ UI.showExtensionRequiredDialog = function (url) {
 };
 
 /**
- * Shows dialog with information about camera or microphone error.
- * @param {'microphone'|'camera'} type
- * @param {JitsiTrackError} error
+ * Shows dialog with combined information about camera and microphone errors.
+ * @param {JitsiTrackError} micError
+ * @param {JitsiTrackError} cameraError
  */
-UI.showDeviceErrorDialog = function (type, error) {
-    if (type !== "microphone" && type !== "camera") {
-        throw new Error("Invalid device type");
+UI.showDeviceErrorDialog = function (micError, cameraError) {
+    let localStoragePropName = "doNotShowErrorAgain";
+    let isMicJitsiTrackErrorAndHasName = micError && micError.name &&
+        micError instanceof JitsiMeetJS.JitsiTrackError;
+    let isCameraJitsiTrackErrorAndHasName = cameraError && cameraError.name &&
+        cameraError instanceof JitsiMeetJS.JitsiTrackError;
+    let showDoNotShowWarning = false;
+
+    if (micError && cameraError && isMicJitsiTrackErrorAndHasName &&
+        isCameraJitsiTrackErrorAndHasName) {
+        showDoNotShowWarning =  true;
+    } else if (micError && isMicJitsiTrackErrorAndHasName && !cameraError) {
+        showDoNotShowWarning =  true;
+    } else if (cameraError && isCameraJitsiTrackErrorAndHasName && !micError) {
+        showDoNotShowWarning =  true;
     }
 
-    if (error.name && error instanceof JitsiMeetJS.JitsiTrackError &&
-        window.localStorage[type + "DoNotShowErrorAgain-" + error.name]
-            === "true") {
-        return;
+    if (micError) {
+        localStoragePropName += "-mic-" + micError.name;
     }
 
-    let titleKey = error.name === TrackErrors.PERMISSION_DENIED
-            ? "dialog.permissionDenied"
-            : "dialog.error",
-        errorMsg = JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP[type][error.name] ||
-            JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP[type][TrackErrors.GENERAL],
-        title = `<span data-i18n="${titleKey}"></span>`,
-        message = "<h4 data-i18n='" + errorMsg + "'></h4>" +
-            (!JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP[type][error.name]
-            && error.message
-                ? "<div>" + error.message + "</div>"
-                : "") +
-            "<label>" +
-                "<input type='checkbox' id='doNotShowWarningAgain'> " +
-                (error instanceof JitsiMeetJS.JitsiTrackError && error.name
-                    ? "<span data-i18n='dialog.doNotShowWarningAgain'></span>"
-                    : "") +
-            "</label>";
+    if (cameraError) {
+        localStoragePropName += "-camera-" + cameraError.name;
+    }
+
+    if (showDoNotShowWarning) {
+        if (window.localStorage[localStoragePropName] === "true") {
+            return;
+        }
+    }
+
+    let title = getTitleKey();
+    let titleMsg = `<span data-i18n="${title}"></span>`;
+    let cameraJitsiTrackErrorMsg = cameraError
+        ? JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.camera[cameraError.name]
+        : undefined;
+    let micJitsiTrackErrorMsg = micError
+        ? JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.microphone[micError.name]
+        : undefined;
+    let cameraErrorMsg = cameraError
+        ? cameraJitsiTrackErrorMsg ||
+            JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.camera[TrackErrors.GENERAL]
+        : "";
+    let micErrorMsg = micError
+        ? micJitsiTrackErrorMsg ||
+            JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.microphone[TrackErrors.GENERAL]
+        : "";
+    let additionalCameraErrorMsg = !cameraJitsiTrackErrorMsg && cameraError &&
+        cameraError.message
+            ? `<div>${cameraError.message}</div>`
+            : ``;
+    let additionalMicErrorMsg = !micJitsiTrackErrorMsg && micError &&
+        micError.message
+            ? `<div>${micError.message}</div>`
+            : ``;
+    let doNotShowWarningAgainSection = showDoNotShowWarning
+        ? `<label>
+            <input type='checkbox' id='doNotShowWarningAgain'> 
+            <span data-i18n='dialog.doNotShowWarningAgain'></span>
+           </label>`
+        : ``;
+    let message = '';
+
+    if (micError) {
+        message = `
+            ${message}
+            <h3 data-i18n='dialog.micErrorPresent'></h3>
+            <h4 data-i18n='${micErrorMsg}'></h4>
+            ${additionalMicErrorMsg}`;
+    }
+
+    if (cameraError) {
+        message = `
+            ${message}
+            <h3 data-i18n='dialog.cameraErrorPresent'></h3>
+            <h4 data-i18n='${cameraErrorMsg}'></h4>
+            ${additionalCameraErrorMsg}`;
+    }
+
+    message = `${message}${doNotShowWarningAgainSection}`;
 
     messageHandler.openDialog(
-        title,
+        titleMsg,
         message,
         false,
         {Ok: true},
@@ -1200,14 +1252,31 @@ UI.showDeviceErrorDialog = function (type, error) {
                 let input = form.find("#doNotShowWarningAgain");
 
                 if (input.length) {
-                    window.localStorage[type + "DoNotShowErrorAgain-"
-                        + error.name] = input.prop("checked");
+                    window.localStorage[localStoragePropName] =
+                        input.prop("checked");
                 }
             }
         }
     );
 
     APP.translation.translateElement($(".jqibox"));
+
+    function getTitleKey() {
+        let title = "dialog.error";
+
+        if (micError && micError.name === TrackErrors.PERMISSION_DENIED) {
+            if (cameraError && cameraError.name === TrackErrors.PERMISSION_DENIED) {
+                title = "dialog.permissionDenied";
+            } else if (!cameraError) {
+                title = "dialog.permissionDenied";
+            }
+        } else if (cameraError &&
+            cameraError.name === TrackErrors.PERMISSION_DENIED) {
+            title = "dialog.permissionDenied";
+        }
+
+        return title;
+    }
 };
 
 UI.updateDevicesAvailability = function (id, devices) {

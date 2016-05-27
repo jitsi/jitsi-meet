@@ -226,6 +226,8 @@
         "doNotShowWarningAgain": "Don't show this warning again",
         "permissionDenied": "Permission Denied",
         "screenSharingPermissionDeniedError": "You have not granted permission to share your screen.",
+        "micErrorPresent": "There was an error connecting to your microphone.",
+        "cameraErrorPresent": "There was an error connecting to your camera.",
         "cameraUnsupportedResolutionError": "Your camera does not support required video resolution.",
         "cameraUnknownError": "Cannot use camera for a unknown reason.",
         "cameraPermissionDeniedError": "You have not granted permission to use your camera.",
