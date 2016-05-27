@@ -1056,8 +1056,6 @@ export default {
                 this.useVideoStream(null);
                 this.videoSwitchInProgress = false;
                 console.error('failed to share local video', err);
-
-                APP.UI.showDeviceErrorDialog('camera', err);
             });
         }
     },

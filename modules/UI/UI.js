@@ -1164,23 +1164,29 @@ UI.showDeviceErrorDialog = function (type, error) {
         throw new Error("Invalid device type");
     }
 
-    if (window.localStorage[type + "DoNotShowErrorAgain-" + error.name]
-        === "true") {
+    if (error.name && error instanceof JitsiMeetJS.JitsiTrackError &&
+        window.localStorage[type + "DoNotShowErrorAgain-" + error.name]
+            === "true") {
         return;
     }
 
     let titleKey = error.name === TrackErrors.PERMISSION_DENIED
             ? "dialog.permissionDenied"
             : "dialog.error",
-        errorMsg = JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP[type][error.name],
-        doNotShowAgainMsg = "dialog.doNotShowWarningAgain",
+        errorMsg = JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP[type][error.name] ||
+            JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP[type][TrackErrors.GENERAL],
         title = `<span data-i18n="${titleKey}"></span>`,
-        message = `
-            <h4 data-i18n="${errorMsg}"></h4>
-            <label>
-                <input type="checkbox" id="doNotShowWarningAgain">
-                <span data-i18n="${doNotShowAgainMsg}"></span>
-            </label>`;
+        message = "<h4 data-i18n='" + errorMsg + "'></h4>" +
+            (!JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP[type][error.name]
+            && error.message
+                ? "<div>" + error.message + "</div>"
+                : "") +
+            "<label>" +
+                "<input type='checkbox' id='doNotShowWarningAgain'> " +
+                (error instanceof JitsiMeetJS.JitsiTrackError && error.name
+                    ? "<span data-i18n='dialog.doNotShowWarningAgain'></span>"
+                    : "") +
+            "</label>";
 
     messageHandler.openDialog(
         title,
@@ -1188,11 +1194,16 @@ UI.showDeviceErrorDialog = function (type, error) {
         false,
         {Ok: true},
         function () {
-            let form  = $.prompt.getPrompt(),
-                input = form.find("#doNotShowWarningAgain");
+            let form  = $.prompt.getPrompt();
 
-            window.localStorage[type + "DoNotShowErrorAgain-" + error.name]
-                = input.prop("checked");
+            if (form) {
+                let input = form.find("#doNotShowWarningAgain");
+
+                if (input.length) {
+                    window.localStorage[type + "DoNotShowErrorAgain-"
+                        + error.name] = input.prop("checked");
+                }
+            }
         }
     );
 
