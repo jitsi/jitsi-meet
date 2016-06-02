@@ -21,8 +21,6 @@ const ConferenceErrors = JitsiMeetJS.errors.conference;
 const TrackEvents = JitsiMeetJS.events.track;
 const TrackErrors = JitsiMeetJS.errors.track;
 
-const RecorderErrors = JitsiMeetJS.errors.recorder;
-
 let room, connection, localAudio, localVideo, roomLocker;
 let currentAudioInputDevices, currentVideoInputDevices;
 
