@@ -275,7 +275,8 @@
         "off": "Recording stopped",
         "failedToStart": "Recording failed to start",
         "buttonTooltip": "Start / stop recording",
-        "error": "Recording failed. Please try again."
+        "error": "Recording failed. Please try again.",
+        "unavailable": "The recording service is currently unavailable. Please try again later."
     },
     "liveStreaming":
     {
@@ -286,6 +287,7 @@
         "failedToStart": "Live streaming failed to start",
         "buttonTooltip": "Start / stop live stream",
         "streamIdRequired": "Please fill in the stream id in order to launch the live streaming.",
-        "error": "Live streaming failed. Please try again"
+        "error": "Live streaming failed. Please try again.",
+        "busy": "All recorders are currently busy. Please try again later."
     }
 }

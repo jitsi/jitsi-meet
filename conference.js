@@ -21,6 +21,8 @@ const ConferenceErrors = JitsiMeetJS.errors.conference;
 const TrackEvents = JitsiMeetJS.events.track;
 const TrackErrors = JitsiMeetJS.errors.track;
 
+const RecorderErrors = JitsiMeetJS.errors.recorder;
+
 let room, connection, localAudio, localVideo, roomLocker;
 let currentAudioInputDevices, currentVideoInputDevices;
 
@@ -356,7 +358,6 @@ export default {
         if(JitsiMeetJS.getGlobalOnErrorHandler){
             var oldOnErrorHandler = window.onerror;
             window.onerror = function (message, source, lineno, colno, error) {
-
                 JitsiMeetJS.getGlobalOnErrorHandler(
                     message, source, lineno, colno, error);
 
@@ -1152,7 +1153,7 @@ export default {
 
         room.on(ConferenceEvents.RECORDER_STATE_CHANGED, (status, error) => {
             console.log("Received recorder status change: ", status, error);
-            APP.UI.updateRecordingState(status);
+            APP.UI.updateRecordingState(status, error);
         });
 
         room.on(ConferenceEvents.USER_STATUS_CHANGED, function (id, status) {
