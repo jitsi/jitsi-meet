@@ -356,7 +356,6 @@ export default {
         if(JitsiMeetJS.getGlobalOnErrorHandler){
             var oldOnErrorHandler = window.onerror;
             window.onerror = function (message, source, lineno, colno, error) {
-
                 JitsiMeetJS.getGlobalOnErrorHandler(
                     message, source, lineno, colno, error);
 
