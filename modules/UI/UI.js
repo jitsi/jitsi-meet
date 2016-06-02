@@ -1006,8 +1006,8 @@ UI.requestFeedback = function () {
     });
 };
 
-UI.updateRecordingState = function (state, error) {
-    Recording.updateRecordingState(state, error);
+UI.updateRecordingState = function (state) {
+    Recording.updateRecordingState(state);
 };
 
 UI.notifyTokenAuthFailed = function () {

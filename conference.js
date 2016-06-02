@@ -1151,7 +1151,7 @@ export default {
 
         room.on(ConferenceEvents.RECORDER_STATE_CHANGED, (status, error) => {
             console.log("Received recorder status change: ", status, error);
-            APP.UI.updateRecordingState(status, error);
+            APP.UI.updateRecordingState(status);
         });
 
         room.on(ConferenceEvents.USER_STATUS_CHANGED, function (id, status) {

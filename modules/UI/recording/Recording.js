@@ -348,7 +348,7 @@ var Recording = {
      * Updates the recording state UI.
      * @param recordingState gives us the current recording state
      */
-    updateRecordingState(recordingState, error) {
+    updateRecordingState(recordingState) {
         // I'm the recorder, so I don't want to see any UI related to states.
         if (config.iAmRecorder)
             return;
@@ -357,14 +357,14 @@ var Recording = {
         if (!recordingState || this.currentState === recordingState)
             return;
 
-        this.updateRecordingUI(recordingState, error);
+        this.updateRecordingUI(recordingState);
     },
 
     /**
      * Sets the state of the recording button.
      * @param recordingState gives us the current recording state
      */
-    updateRecordingUI (recordingState, error) {
+    updateRecordingUI (recordingState) {
         let buttonSelector = $('#toolbar_button_record');
 
         let oldState = this.currentState;
@@ -417,7 +417,6 @@ var Recording = {
             buttonSelector.addClass(this.baseClass);
 
             this._updateStatusLabel(this.recordingErrorKey, true);
-            console.log("Recording failed for the following reason: ", error);
         }
 
         let labelSelector = $('#recordingLabel');
