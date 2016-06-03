@@ -374,17 +374,39 @@ export default {
             };
         }
 
+        let audioAndVideoError, audioOnlyError;
+
         return JitsiMeetJS.init(config).then(() => {
             return Promise.all([
                 // try to retrieve audio and video
                 createLocalTracks(['audio', 'video'])
                 // if failed then try to retrieve only audio
-                    .catch(() => createLocalTracks(['audio']))
+                    .catch(err => {
+                        audioAndVideoError = err;
+                        return createLocalTracks(['audio']);
+                    })
                 // if audio also failed then just return empty array
-                    .catch(() => []),
+                    .catch(err => {
+                        audioOnlyError = err;
+                        return [];
+                    }),
                 connect(options.roomName)
             ]);
         }).then(([tracks, con]) => {
+            if (audioAndVideoError) {
+                if (audioOnlyError) {
+                    // If both requests for 'audio' + 'video' and 'audio' only
+                    // failed, we assume that there is some problems with user's
+                    // microphone and show corresponding dialog.
+                    APP.UI.showDeviceErrorDialog(audioOnlyError, null);
+                } else {
+                    // If request for 'audio' + 'video' failed, but request for
+                    // 'audio' only was OK, we assume that we had problems with
+                    // camera and show corresponding dialog.
+                    APP.UI.showDeviceErrorDialog(null, audioAndVideoError);
+                }
+            }
+
             console.log('initialized with %s local tracks', tracks.length);
             APP.connection = connection = con;
             this._createRoom(tracks);
@@ -540,39 +562,78 @@ export default {
                 }
 
                 function createNewTracks(type, cameraDeviceId, micDeviceId) {
-                    return createLocalTracks(type, cameraDeviceId, micDeviceId)
-                        .then(onTracksCreated)
-                        .catch(() => {
-                            // if we tried to create both audio and video tracks
-                            // at once and failed, let's try again only with
-                            // audio. Such situation may happen in case if we
-                            // granted access only to microphone, but not to
-                            // camera.
-                            if (type.indexOf('audio') !== -1
-                                && type.indexOf('video') !== -1) {
-                                return createLocalTracks(['audio'], null,
-                                    micDeviceId);
-                            }
+                    let audioTrackCreationError;
+                    let videoTrackCreationError;
+                    let audioRequested = type.indexOf('audio') !== -1;
+                    let videoRequested = type.indexOf('video') !== -1;
+                    let promise;
 
-                        })
-                        .then(onTracksCreated)
-                        .catch(() => {
-                            // if we tried to create both audio and video tracks
-                            // at once and failed, let's try again only with
-                            // video. Such situation may happen in case if we
-                            // granted access only to camera, but not to
-                            // microphone.
-                            if (type.indexOf('audio') !== -1
-                                && type.indexOf('video') !== -1) {
-                                return createLocalTracks(['video'],
-                                    cameraDeviceId,
-                                    null);
-                            }
-                        })
-                        .then(onTracksCreated)
-                        .catch(() => {
-                            // can't do anything in this case, so just ignore;
-                        });
+                    if (audioRequested && micDeviceId !== null) {
+                        if (videoRequested && cameraDeviceId !== null) {
+                            promise = createLocalTracks(
+                                type, cameraDeviceId, micDeviceId)
+                                .catch(() => {
+                                    return Promise.all([
+                                        createAudioTrack(false),
+                                        createVideoTrack(false)]);
+                                })
+                                .then((audioTracks, videoTracks) => {
+                                    if (audioTrackCreationError) {
+                                        if (videoTrackCreationError) {
+                                            APP.UI.showDeviceErrorDialog(
+                                                audioTrackCreationError,
+                                                videoTrackCreationError);
+                                        } else {
+                                            APP.UI.showDeviceErrorDialog(
+                                                audioTrackCreationError,
+                                                null);
+                                        }
+                                    } else if (videoTrackCreationError) {
+                                        APP.UI.showDeviceErrorDialog(
+                                            null,
+                                            videoTrackCreationError);
+                                    }
+
+                                    return audioTracks.concat(videoTracks);
+                                });
+                        } else {
+                            promise = createAudioTrack();
+                        }
+                    } else if (videoRequested && cameraDeviceId !== null) {
+                        promise = createVideoTrack();
+                    } else {
+                        promise = Promise.resolve([]);
+                    }
+
+                    return promise
+                        .then(onTracksCreated);
+
+                    function createAudioTrack(showError) {
+                        return createLocalTracks(['audio'], null, micDeviceId)
+                            .catch(err => {
+                                audioTrackCreationError = err;
+
+                                if (showError) {
+                                    APP.UI.showDeviceErrorDialog(err, null);
+                                }
+
+                                return [];
+                            });
+                    }
+
+                    function createVideoTrack(showError) {
+                        return createLocalTracks(
+                                ['video'], cameraDeviceId, null)
+                            .catch(err => {
+                                videoTrackCreationError = err;
+
+                                if (showError) {
+                                    APP.UI.showDeviceErrorDialog(null, err);
+                                }
+
+                                return [];
+                            });
+                    }
                 }
 
                 function onTracksCreated(tracks) {
@@ -895,12 +956,12 @@ export default {
                 this.isSharingScreen = stream.videoType === 'desktop';
 
                 APP.UI.addLocalStream(stream);
+
+                stream.videoType === 'camera' && APP.UI.enableCameraButton();
             } else {
                 this.videoMuted = false;
                 this.isSharingScreen = false;
             }
-
-            stream.videoType === 'camera' && APP.UI.enableCameraButton();
 
             APP.UI.setVideoMuted(this.localId, this.videoMuted);
 
@@ -976,12 +1037,13 @@ export default {
                 this.videoSwitchInProgress = false;
                 this.toggleScreenSharing(false);
 
-                if(err === TrackErrors.CHROME_EXTENSION_USER_CANCELED)
+                if (err.name === TrackErrors.CHROME_EXTENSION_USER_CANCELED) {
                     return;
+                }
 
                 console.error('failed to share local desktop', err);
 
-                if (err === TrackErrors.FIREFOX_EXTENSION_NEEDED) {
+                if (err.name === TrackErrors.FIREFOX_EXTENSION_NEEDED) {
                     APP.UI.showExtensionRequiredDialog(
                         config.desktopSharingFirefoxExtensionURL
                     );
@@ -989,18 +1051,26 @@ export default {
                 }
 
                 // Handling:
+                // TrackErrors.PERMISSION_DENIED
                 // TrackErrors.CHROME_EXTENSION_INSTALLATION_ERROR
                 // TrackErrors.GENERAL
                 // and any other
-                let dialogTxt = APP.translation
-                    .generateTranslationHTML("dialog.failtoinstall");
-                let dialogTitle = APP.translation
-                    .generateTranslationHTML("dialog.error");
-                APP.UI.messageHandler.openDialog(
-                    dialogTitle,
-                    dialogTxt,
-                    false
-                );
+                let dialogTxt;
+                let dialogTitle;
+
+                if (err.name === TrackErrors.PERMISSION_DENIED) {
+                    dialogTxt = APP.translation.generateTranslationHTML(
+                        "dialog.screenSharingPermissionDeniedError");
+                    dialogTitle = APP.translation.generateTranslationHTML(
+                        "dialog.error");
+                } else {
+                    dialogTxt = APP.translation.generateTranslationHTML(
+                        "dialog.failtoinstall");
+                    dialogTitle = APP.translation.generateTranslationHTML(
+                        "dialog.permissionDenied");
+                }
+
+                APP.UI.messageHandler.openDialog(dialogTitle, dialogTxt, false);
             });
         } else {
             createLocalTracks(['video']).then(
@@ -1353,22 +1423,32 @@ export default {
         APP.UI.addListener(
             UIEvents.VIDEO_DEVICE_CHANGED,
             (cameraDeviceId) => {
-                APP.settings.setCameraDeviceId(cameraDeviceId);
-                createLocalTracks(['video']).then(([stream]) => {
-                    this.useVideoStream(stream);
-                    console.log('switched local video device');
-                });
+                createLocalTracks(['video'])
+                    .then(([stream]) => {
+                        this.useVideoStream(stream);
+                        console.log('switched local video device');
+                        APP.settings.setCameraDeviceId(cameraDeviceId);
+                    })
+                    .catch((err) => {
+                        APP.UI.showDeviceErrorDialog(null, err);
+                        APP.UI.setSelectedCameraFromSettings();
+                    });
             }
         );
 
         APP.UI.addListener(
             UIEvents.AUDIO_DEVICE_CHANGED,
             (micDeviceId) => {
-                APP.settings.setMicDeviceId(micDeviceId);
-                createLocalTracks(['audio']).then(([stream]) => {
-                    this.useAudioStream(stream);
-                    console.log('switched local audio device');
-                });
+                createLocalTracks(['audio'])
+                    .then(([stream]) => {
+                        this.useAudioStream(stream);
+                        console.log('switched local audio device');
+                        APP.settings.setMicDeviceId(micDeviceId);
+                    })
+                    .catch((err) => {
+                        APP.UI.showDeviceErrorDialog(err, null);
+                        APP.UI.setSelectedMicFromSettings();
+                    });
             }
         );
 
@@ -1381,6 +1461,7 @@ export default {
                         console.warn('Failed to change audio output device. ' +
                             'Default or previously set audio output device ' +
                             'will be used instead.', err);
+                        APP.UI.setSelectedAudioOutputFromSettings();
                     });
             }
         );

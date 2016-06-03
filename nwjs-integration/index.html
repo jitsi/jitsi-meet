@@ -36,7 +36,10 @@
                         };
                         navigator.webkitGetUserMedia({
                             audio: false, video: vid_constraint
-                        }, callback, errorCallback);
+                        }, callback, function (error) {
+                            errorCallback &&
+                                errorCallback(error, vid_constraint);
+                        });
                     }
                 );
             }
