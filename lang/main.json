@@ -222,7 +222,21 @@
         "stopStreamingWarning": "Are you sure you would like to stop the live streaming?",
         "stopRecordingWarning": "Are you sure you would like to stop the recording?",
         "stopLiveStreaming": "Stop live streaming",
-        "stopRecording": "Stop recording"
+        "stopRecording": "Stop recording",
+        "doNotShowWarningAgain": "Don't show this warning again",
+        "permissionDenied": "Permission Denied",
+        "screenSharingPermissionDeniedError": "You have not granted permission to share your screen.",
+        "micErrorPresent": "There was an error connecting to your microphone.",
+        "cameraErrorPresent": "There was an error connecting to your camera.",
+        "cameraUnsupportedResolutionError": "Your camera does not support required video resolution.",
+        "cameraUnknownError": "Cannot use camera for a unknown reason.",
+        "cameraPermissionDeniedError": "You have not granted permission to use your camera.",
+        "cameraNotFoundError": "Requested camera was not found.",
+        "cameraConstraintFailedError": "Yor camera does not satisfy some of required constraints.",
+        "micUnknownError": "Cannot use microphone for a unknown reason.",
+        "micPermissionDeniedError": "You have not granted permission to use your microphone.",
+        "micNotFoundError": "Requested microphone was not found.",
+        "micConstraintFailedError": "Yor microphone does not satisfy some of required constraints."
     },
     "email":
     {
