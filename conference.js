@@ -1379,7 +1379,9 @@ export default {
                 APP.settings.setAudioOutputDeviceId(audioOutputDeviceId)
                     .then(() => console.log('changed audio output device'))
                     .catch((err) => {
-                        console.error('failed to set audio output device', err);
+                        console.warn('Failed to change audio output device. ' +
+                            'Default or previously set audio output device ' +
+                            'will be used instead.', err);
                     });
             }
         );
