@@ -51,14 +51,9 @@ function buildRoomName () {
     if(!roomName) {
         let word = RoomnameGenerator.generateRoomWithoutSeparator();
         roomName = word.toLowerCase();
-        let historyURL = window.location.pathname + word;
-        //Trying to push state with URL "/" + roomName
-        var err = pushHistoryState(word, historyURL);
-        //If URL "/" + roomName is not good, trying with explicitly adding the
-        //domain name.
-        if(err && config.hosts.domain) {
-            pushHistoryState(word, "//" + config.hosts.domain + historyURL);
-        }
+        let historyURL = window.location.href + word;
+        //Trying to push state with current URL + roomName
+        pushHistoryState(word, historyURL);
     }
 
     return roomName;
