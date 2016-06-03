@@ -52,8 +52,9 @@ if (supportsLocalStorage()) {
         JitsiMeetJS.mediaDevices.getAudioOutputDevice()) {
         JitsiMeetJS.mediaDevices.setAudioOutputDevice(audioOutputDeviceId)
             .catch((ex) => {
-                console.error('failed to set audio output device from local ' +
-                    'storage', ex);
+                console.warn('Failed to set audio output device from local ' +
+                    'storage. Default audio output device will be used' +
+                    'instead.', ex);
             });
     }
 } else {
