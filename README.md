@@ -81,3 +81,5 @@ Please use the [Jitsi dev mailing list](http://lists.jitsi.org/pipermail/dev/) t
 
 Jitsi Meet started out as a sample conferencing application using Jitsi Videobridge. It was originally developed by then ESTOS' developer Philipp Hancke who then contributed it to the community where development continues with joint forces!
 
+
+
