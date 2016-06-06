@@ -90,6 +90,7 @@ case "$1" in
             echo "org.jitsi.videobridge.rest.jetty.ResourceHandler.alias./config.js=/etc/jitsi/meet/$JVB_HOSTNAME-config.js" >> $JVB_CONFIG
             echo "org.jitsi.videobridge.rest.jetty.RewriteHandler.regex=^/([a-zA-Z0-9]+)$" >> $JVB_CONFIG
             echo "org.jitsi.videobridge.rest.jetty.RewriteHandler.replacement=/" >> $JVB_CONFIG
+            echo "org.jitsi.videobridge.rest.jetty.SSIResourceHandler.paths=/" >> $JVB_CONFIG
             echo "org.jitsi.videobridge.rest.jetty.tls.port=443" >> $JVB_CONFIG
             echo "org.jitsi.videobridge.TCP_HARVESTER_PORT=443" >> $JVB_CONFIG
             echo "org.jitsi.videobridge.rest.jetty.sslContextFactory.keyStorePath=/etc/jitsi/videobridge/$JVB_HOSTNAME.jks" >> $JVB_CONFIG

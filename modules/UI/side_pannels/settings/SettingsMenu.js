@@ -204,6 +204,28 @@ export default {
     },
 
     /**
+     * Sets microphone's <select> element to select microphone ID from settings.
+     */
+    setSelectedMicFromSettings () {
+        $('#selectMic').val(Settings.getMicDeviceId());
+    },
+
+    /**
+     * Sets camera's <select> element to select camera ID from settings.
+     */
+    setSelectedCameraFromSettings () {
+        $('#selectCamera').val(Settings.getCameraDeviceId());
+    },
+
+    /**
+     * Sets audio outputs's <select> element to select audio output ID from
+     * settings.
+     */
+    setSelectedAudioOutputFromSettings () {
+        $('#selectAudioOutput').val(Settings.getAudioOutputDeviceId());
+    },
+
+    /**
      * Change available cameras/microphones or hide selects completely if
      * no devices available.
      * @param {{ deviceId, label, kind }[]} devices list of available devices

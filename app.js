@@ -25,6 +25,24 @@ import API from './modules/API/API';
 import UIEvents from './service/UI/UIEvents';
 
 /**
+ * Tries to push history state with the following parameters:
+ * 'VideoChat', `Room: ${roomName}`, URL. If fail, prints the error and returns
+ * it.
+ */
+function pushHistoryState(roomName, URL) {
+    try {
+        window.history.pushState(
+            'VideoChat', `Room: ${roomName}`, URL
+        );
+    } catch (e) {
+        console.warn("Push history state failed with parameters:",
+            'VideoChat', `Room: ${roomName}`, URL, e);
+        return e;
+    }
+    return null;
+}
+
+/**
  * Builds and returns the room name.
  */
 function buildRoomName () {
@@ -33,9 +51,9 @@ function buildRoomName () {
     if(!roomName) {
         let word = RoomnameGenerator.generateRoomWithoutSeparator();
         roomName = word.toLowerCase();
-        window.history.pushState(
-            'VideoChat', `Room: ${word}`, window.location.pathname + word
-        );
+        let historyURL = window.location.href + word;
+        //Trying to push state with current URL + roomName
+        pushHistoryState(word, historyURL);
     }
 
     return roomName;
