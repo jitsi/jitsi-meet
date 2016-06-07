@@ -154,9 +154,10 @@ class FollowMe {
 
         this._nextOnStage(smallVideo, isPinned);
 
-        this._sharedDocumentToggled
-            .bind(this, this._UI.getSharedDocumentManager().isVisible());
-
+        // check whether shared document is enabled/initialized
+        if(this._UI.getSharedDocumentManager())
+            this._sharedDocumentToggled
+                .bind(this, this._UI.getSharedDocumentManager().isVisible());
     }
 
     /**
