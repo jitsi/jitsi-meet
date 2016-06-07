@@ -78,7 +78,7 @@ function _requestLiveStreamId() {
                             return false;
                         }
                     } else {
-                        reject();
+                        reject(APP.UI.messageHandler.CANCEL);
                         dialog.close();
                         return false;
                     }
@@ -97,7 +97,7 @@ function _requestLiveStreamId() {
                 submit: function (e, v, m, f) {
                     e.preventDefault();
                     if (v === 0) {
-                        reject();
+                        reject(APP.UI.messageHandler.CANCEL);
                         dialog.close();
                     } else {
                         dialog.goToState('state0');
@@ -128,7 +128,7 @@ function _requestRecordingToken () {
                 if (v && f.recordingToken) {
                     resolve(UIUtil.escapeHtml(f.recordingToken));
                 } else {
-                    reject();
+                    reject(APP.UI.messageHandler.CANCEL);
                 }
             },
             null,
@@ -206,7 +206,9 @@ var Status = {
     AVAILABLE: "available",
     UNAVAILABLE: "unavailable",
     PENDING: "pending",
-    ERROR: "error"
+    ERROR: "error",
+    FAILED: "failed",
+    BUSY: "busy"
 };
 
 /**
@@ -245,21 +247,27 @@ var Recording = {
 
         if (recordingType === 'jibri') {
             this.baseClass = "fa fa-play-circle";
+            this.recordingTitle = "dialog.liveStreaming";
             this.recordingOnKey = "liveStreaming.on";
             this.recordingOffKey = "liveStreaming.off";
             this.recordingPendingKey = "liveStreaming.pending";
             this.failedToStartKey = "liveStreaming.failedToStart";
             this.recordingErrorKey = "liveStreaming.error";
             this.recordingButtonTooltip = "liveStreaming.buttonTooltip";
+            this.recordingUnavailable = "liveStreaming.unavailable";
+            this.recordingBusy = "liveStreaming.busy";
         }
         else {
             this.baseClass = "icon-recEnable";
+            this.recordingTitle = "dialog.recording";
             this.recordingOnKey = "recording.on";
             this.recordingOffKey = "recording.off";
             this.recordingPendingKey = "recording.pending";
             this.failedToStartKey = "recording.failedToStart";
             this.recordingErrorKey = "recording.error";
             this.recordingButtonTooltip = "recording.buttonTooltip";
+            this.recordingUnavailable = "recording.unavailable";
+            this.recordingBusy = "liveStreaming.busy";
         }
 
         selector.addClass(this.baseClass);
@@ -282,7 +290,12 @@ var Recording = {
                         _requestLiveStreamId().then((streamId) => {
                             self.eventEmitter.emit( UIEvents.RECORDING_TOGGLED,
                                 {streamId: streamId});
-                        });
+                        }).catch(
+                            reason => {
+                                if (reason !== APP.UI.messageHandler.CANCEL)
+                                    console.error(reason);
+                            }
+                        );
                     else {
                         if (self.predefinedToken) {
                             self.eventEmitter.emit( UIEvents.RECORDING_TOGGLED,
@@ -293,14 +306,26 @@ var Recording = {
                         _requestRecordingToken().then((token) => {
                             self.eventEmitter.emit( UIEvents.RECORDING_TOGGLED,
                                 {token: token});
-                        });
+                        }).catch(
+                            reason => {
+                                if (reason !== APP.UI.messageHandler.CANCEL)
+                                    console.error(reason);
+                            }
+                        );
                     }
+                    break;
+                }
+                case Status.BUSY: {
+                    APP.UI.messageHandler.openMessageDialog(
+                        self.recordingTitle,
+                        self.recordingBusy
+                    );
                     break;
                 }
                 default: {
                     APP.UI.messageHandler.openMessageDialog(
-                        "dialog.liveStreaming",
-                        "liveStreaming.unavailable"
+                        self.recordingTitle,
+                        self.recordingUnavailable
                     );
                 }
             }
@@ -342,6 +367,9 @@ var Recording = {
     updateRecordingUI (recordingState) {
         let buttonSelector = $('#toolbar_button_record');
 
+        let oldState = this.currentState;
+        this.currentState = recordingState;
+
         // TODO: handle recording state=available
         if (recordingState === Status.ON) {
 
@@ -351,19 +379,21 @@ var Recording = {
             this._updateStatusLabel(this.recordingOnKey, false);
         }
         else if (recordingState === Status.OFF
-                || recordingState === Status.UNAVAILABLE) {
+                || recordingState === Status.UNAVAILABLE
+                || recordingState === Status.BUSY
+                || recordingState === Status.FAILED) {
 
             // We don't want to do any changes if this is
             // an availability change.
-            if (this.currentState !== Status.ON
-                && this.currentState !== Status.PENDING)
+            if (oldState !== Status.ON
+                && oldState !== Status.PENDING)
                 return;
 
             buttonSelector.removeClass(this.baseClass + " active");
             buttonSelector.addClass(this.baseClass);
 
             let messageKey;
-            if (this.currentState === Status.PENDING)
+            if (oldState === Status.PENDING)
                 messageKey = this.failedToStartKey;
             else
                 messageKey = this.recordingOffKey;
@@ -381,14 +411,13 @@ var Recording = {
 
             this._updateStatusLabel(this.recordingPendingKey, true);
         }
-        else if (recordingState === Status.ERROR) {
+        else if (recordingState === Status.ERROR
+                    || recordingState === Status.FAILED) {
             buttonSelector.removeClass(this.baseClass + " active");
             buttonSelector.addClass(this.baseClass);
 
             this._updateStatusLabel(this.recordingErrorKey, true);
         }
-
-        this.currentState = recordingState;
 
         let labelSelector = $('#recordingLabel');
 

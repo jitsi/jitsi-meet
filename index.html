@@ -3,12 +3,13 @@
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+    <!--#include virtual="base.html" -->
     <!--#include virtual="title.html" -->
     <script>
         window.indexLoadedTime = window.performance.now();
         console.log("(TIME) index.html loaded:\t", indexLoadedTime);
     </script>
-    <script src="config.js?v=15"></script><!-- adapt to your needs, i.e. set hosts and bosh path -->
+    <script><!--#include virtual="config.js" --></script><!-- adapt to your needs, i.e. set hosts and bosh path -->
     <script src="utils.js?v=1"></script>
     <!--#include virtual="connection_optimization/connection_optimization.html" -->
     <script src="connection_optimization/do_external_connect.js?v=1"></script>
@@ -279,6 +280,10 @@
                 <label className="devicesOptionsLabel">
                     <span data-i18n="settings.selectMic"></span>
                     <select id="selectMic"></select>
+                </label>
+                <label className="devicesOptionsLabel">
+                    <span data-i18n="settings.selectAudioOutput"></span>
+                    <select id="selectAudioOutput"></select>
                 </label>
             </div>
             <div id="followMeOptions">

@@ -1,3 +1,5 @@
+/* global JitsiMeetJS */
+
 import UIUtil from '../UI/util/UIUtil';
 
 let email = '';
@@ -40,6 +42,21 @@ if (supportsLocalStorage()) {
     welcomePageDisabled = JSON.parse(
         window.localStorage.welcomePageDisabled || false
     );
+
+    // Currently audio output device change is supported only in Chrome and
+    // default output always has 'default' device ID
+    var audioOutputDeviceId = window.localStorage.audioOutputDeviceId
+        || 'default';
+
+    if (audioOutputDeviceId !==
+        JitsiMeetJS.mediaDevices.getAudioOutputDevice()) {
+        JitsiMeetJS.mediaDevices.setAudioOutputDevice(audioOutputDeviceId)
+            .catch((ex) => {
+                console.warn('Failed to set audio output device from local ' +
+                    'storage. Default audio output device will be used' +
+                    'instead.', ex);
+            });
+    }
 } else {
     console.log("local storage is not supported");
 }
@@ -140,6 +157,25 @@ export default {
     setMicDeviceId: function (newId = '') {
         micDeviceId = newId;
         window.localStorage.micDeviceId = newId;
+    },
+
+    /**
+     * Get device id of the audio output device which is currently in use.
+     * Empty string stands for default device.
+     * @returns {String}
+     */
+    getAudioOutputDeviceId: function () {
+        return JitsiMeetJS.mediaDevices.getAudioOutputDevice();
+    },
+    /**
+     * Set device id of the audio output device which is currently in use.
+     * Empty string stands for default device.
+     * @param {string} newId='default' - new audio output device id
+     * @returns {Promise}
+     */
+    setAudioOutputDeviceId: function (newId = 'default') {
+        return JitsiMeetJS.mediaDevices.setAudioOutputDevice(newId)
+            .then(() => window.localStorage.audioOutputDeviceId = newId);
     },
 
     /**

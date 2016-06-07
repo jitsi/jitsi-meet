@@ -63,6 +63,10 @@ a {
     vertical-align: middle;
 }
 
+.button[disabled] {
+    opacity: 0.5;
+}
+
 .toolbar_span>span {
     display: inline-block;
     position: absolute;
