@@ -1178,7 +1178,8 @@ export default {
             if(config.debug)
             {
                 this.audioLevelsMap[id] = lvl;
-                console.log("AudioLevel:" + id + "/" + lvl);
+                if(config.debugAudioLevels)
+                    console.log("AudioLevel:" + id + "/" + lvl);
             }
 
             APP.UI.setAudioLevel(id, lvl);
