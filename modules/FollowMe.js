@@ -154,9 +154,10 @@ class FollowMe {
 
         this._nextOnStage(smallVideo, isPinned);
 
-        this._sharedDocumentToggled
-            .bind(this, this._UI.getSharedDocumentManager().isVisible());
-
+        // check whether shared document is enabled/initialized
+        if(this._UI.getSharedDocumentManager())
+            this._sharedDocumentToggled
+                .bind(this, this._UI.getSharedDocumentManager().isVisible());
     }
 
     /**
@@ -352,10 +353,13 @@ class FollowMe {
     _onNextOnStage(id) {
         var clickId = null;
         var pin;
+        // if there is an id which is not pinned we schedule it for pin only the
+        // first time
         if(typeof id !== 'undefined' && !VideoLayout.isPinned(id)) {
             clickId = id;
             pin = true;
         }
+        // if there is no id, but we have a pinned one, let's unpin
         else if (typeof id == 'undefined' && VideoLayout.getPinnedId()) {
             clickId = VideoLayout.getPinnedId();
             pin = false;

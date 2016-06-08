@@ -25,10 +25,11 @@ var JitsiMeetExternalAPI = (function()
      * @param parent_node the node that will contain the iframe
      * @param filmStripOnly if the value is true only the small videos will be
      * visible.
+     * @param noSsl if the value is true https won't be used
      * @constructor
      */
     function JitsiMeetExternalAPI(domain, room_name, width, height, parentNode,
-        configOverwrite, interfaceConfigOverwrite) {
+        configOverwrite, interfaceConfigOverwrite, noSsl) {
         if (!width || width < MIN_WIDTH)
             width = MIN_WIDTH;
         if (!height || height < MIN_HEIGHT)
@@ -50,7 +51,7 @@ var JitsiMeetExternalAPI = (function()
         if(height)
             this.iframeHolder.style.height = height + "px";
         this.frameName = "jitsiConferenceFrame" + JitsiMeetExternalAPI.id;
-        this.url = "//" + domain + "/";
+        this.url = (noSsl) ? "http" : "https" +"://" + domain + "/";
         if(room_name)
             this.url += room_name;
         this.url += "#external=true";

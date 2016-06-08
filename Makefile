@@ -48,7 +48,7 @@ uglify:
 
 source-package:
 	mkdir -p source_package/jitsi-meet/css && \
-	cp -r *.js connection_optimization favicon.ico fonts images index.html libs plugin.*html sounds title.html unsupported_browser.html LICENSE lang source_package/jitsi-meet && \
+	cp -r *.js *.html connection_optimization favicon.ico fonts images libs sounds LICENSE lang source_package/jitsi-meet && \
 	cp css/all.css source_package/jitsi-meet/css && \
 	cp css/unsupported_browser.css source_package/jitsi-meet/css && \
 	(cd source_package ; tar cjf ../jitsi-meet.tar.bz2 jitsi-meet) && \
