@@ -1,7 +1,5 @@
 /* global $, APP, config*/
 
-var messageHandler = require('../util/MessageHandler');
-
 /**
  * Build html for "password required" dialog.
  * @returns {string} html string
@@ -123,7 +121,7 @@ function LoginDialog(successCallback, cancelCallback) {
         }
     };
 
-    var connDialog = messageHandler.openDialogWithStates(
+    var connDialog = APP.UI.messageHandler.openDialogWithStates(
         states, { persistent: true, closeText: '' }, null
     );
 
@@ -182,14 +180,14 @@ export default {
      * @returns auth dialog
      */
     showExternalAuthDialog: function (url, callback) {
-        var dialog = messageHandler.openCenteredPopup(
+        var dialog = APP.UI.messageHandler.openCenteredPopup(
             url, 910, 660,
             // On closed
             callback
         );
 
         if (!dialog) {
-            messageHandler.openMessageDialog(null, "dialog.popupError");
+            APP.UI.messageHandler.openMessageDialog(null, "dialog.popupError");
         }
 
         return dialog;

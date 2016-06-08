@@ -1,5 +1,4 @@
 /* global APP, JitsiMeetJS */
-import messageHandler from '../util/MessageHandler';
 import UIUtil from '../util/UIUtil';
 //FIXME:
 import AnalyticsAdapter from '../../statistics/AnalyticsAdapter';
@@ -19,7 +18,7 @@ function askForNewPassword () {
     `;
 
     return new Promise(function (resolve, reject) {
-        messageHandler.openTwoButtonDialog(
+        APP.UI.messageHandler.openTwoButtonDialog(
             null, null, null,
             msg, false, "dialog.Save",
             function (e, v, m, f) {
@@ -27,7 +26,7 @@ function askForNewPassword () {
                     resolve(UIUtil.escapeHtml(f.lockKey));
                 }
                 else {
-                    reject(messageHandler.CANCEL);
+                    reject(APP.UI.messageHandler.CANCEL);
                 }
             },
             null, null, 'input:first'
@@ -51,7 +50,7 @@ function askForPassword () {
                placeholder="${passMsg}" autofocus>
     `;
     return new Promise(function (resolve, reject) {
-        messageHandler.openTwoButtonDialog(
+        APP.UI.messageHandler.openTwoButtonDialog(
             null, null, null, msg,
             true, "dialog.Ok",
             function (e, v, m, f) {}, null,
@@ -59,7 +58,7 @@ function askForPassword () {
                 if (v && f.lockKey) {
                     resolve(UIUtil.escapeHtml(f.lockKey));
                 } else {
-                    reject(messageHandler.CANCEL);
+                    reject(APP.UI.messageHandler.CANCEL);
                 }
             },
             ':input:first'
@@ -73,14 +72,14 @@ function askForPassword () {
  */
 function askToUnlock () {
     return new Promise(function (resolve, reject) {
-        messageHandler.openTwoButtonDialog(
+        APP.UI.messageHandler.openTwoButtonDialog(
             null, null, "dialog.passwordCheck",
             null, false, "dialog.Remove",
             function (e, v) {
                 if (v) {
                     resolve();
                 } else {
-                    reject(messageHandler.CANCEL);
+                    reject(APP.UI.messageHandler.CANCEL);
                 }
             }
         );
@@ -93,7 +92,8 @@ function askToUnlock () {
  */
 function notifyPasswordNotSupported () {
     console.warn('room passwords not supported');
-    messageHandler.showError("dialog.warning", "dialog.passwordNotSupported");
+    APP.UI.messageHandler.showError(
+        "dialog.warning", "dialog.passwordNotSupported");
 }
 
 /**
@@ -102,7 +102,8 @@ function notifyPasswordNotSupported () {
  */
 function notifyPasswordFailed(err) {
     console.warn('setting password failed', err);
-    messageHandler.showError("dialog.lockTitle", "dialog.lockMessage");
+    APP.UI.messageHandler.showError(
+        "dialog.lockTitle", "dialog.lockMessage");
 }
 
 const ConferenceErrors = JitsiMeetJS.errors.conference;
@@ -153,7 +154,7 @@ export default function createRoomLocker (room) {
                 AnalyticsAdapter.sendEvent('toolbar.lock.disabled');
             }).catch(
                 reason => {
-                    if (reason !== messageHandler.CANCEL)
+                    if (reason !== APP.UI.messageHandler.CANCEL)
                         console.error(reason);
                 }
             );
@@ -171,7 +172,7 @@ export default function createRoomLocker (room) {
                 AnalyticsAdapter.sendEvent('toolbar.lock.enabled');
             }).catch(
                 reason => {
-                    if (reason !== messageHandler.CANCEL)
+                    if (reason !== APP.UI.messageHandler.CANCEL)
                         console.error(reason);
                 }
             );
@@ -185,7 +186,7 @@ export default function createRoomLocker (room) {
                 newPass => { password = newPass; }
             ).catch(
                 reason => {
-                    if (reason !== messageHandler.CANCEL)
+                    if (reason !== APP.UI.messageHandler.CANCEL)
                         console.error(reason);
                 }
             );
@@ -196,9 +197,11 @@ export default function createRoomLocker (room) {
          */
         notifyModeratorRequired () {
             if (password) {
-                messageHandler.openMessageDialog(null, "dialog.passwordError");
+                APP.UI.messageHandler
+                    .openMessageDialog(null, "dialog.passwordError");
             } else {
-                messageHandler.openMessageDialog(null, "dialog.passwordError2");
+                APP.UI.messageHandler
+                    .openMessageDialog(null, "dialog.passwordError2");
             }
         }
     };

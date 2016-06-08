@@ -1,11 +1,6 @@
 /* global $, APP, config, interfaceConfig */
 import UIEvents from "../../service/UI/UIEvents";
 
-/*
- * Created by Yana Stamcheva on 2/10/15.
- */
-var messageHandler = require("./util/MessageHandler");
-
 /**
  * Constructs the html for the overall feedback window.
  *

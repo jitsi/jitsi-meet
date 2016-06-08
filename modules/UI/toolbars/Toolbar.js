@@ -1,6 +1,5 @@
 /* global APP, $, config, interfaceConfig */
 /* jshint -W101 */
-import messageHandler from '../util/MessageHandler';
 import UIUtil from '../util/UIUtil';
 import AnalyticsAdapter from '../../statistics/AnalyticsAdapter';
 import UIEvents from '../../../service/UI/UIEvents';
@@ -21,7 +20,7 @@ function openLinkDialog () {
     } else {
         inviteAttributes = "value=\"" + encodeURI(roomUrl) + "\"";
     }
-    messageHandler.openTwoButtonDialog(
+    APP.UI.messageHandler.openTwoButtonDialog(
         "dialog.shareLink", null, null,
         `<input id="inviteLinkRef" type="text" ${inviteAttributes} onclick="this.select();" readonly>`,
         false, "dialog.Invite",
@@ -129,7 +128,7 @@ const buttonHandlers = {
     "toolbar_button_logout": function () {
         AnalyticsAdapter.sendEvent('toolbar.authenticate.logout.clicked');
         // Ask for confirmation
-        messageHandler.openTwoButtonDialog(
+        APP.UI.messageHandler.openTwoButtonDialog(
             "dialog.logoutTitle",
             null,
             "dialog.logoutQuestion",
@@ -167,7 +166,7 @@ function showSipNumberInput () {
         : '';
 
     let sipMsg = APP.translation.generateTranslationHTML("dialog.sipMsg");
-    messageHandler.openTwoButtonDialog(
+    APP.UI.messageHandler.openTwoButtonDialog(
         null, null, null,
         `<h2>${sipMsg}</h2>
             <input name="sipNumber" type="text" value="${defaultNumber}" autofocus>`,
