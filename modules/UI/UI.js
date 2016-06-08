@@ -430,7 +430,7 @@ UI.start = function () {
         $("#downloadlog").css("display", "none");
         BottomToolbar.hide();
         FilmStrip.setupFilmStripOnly();
-        messageHandler.disableNotifications();
+        messageHandler.enableNotifications(false);
         $('body').popover("disable");
         JitsiPopover.enabled = false;
     }
