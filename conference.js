@@ -594,7 +594,8 @@ export default {
                                             videoTrackCreationError);
                                     }
 
-                                    return audioTracks.concat(videoTracks);
+                                    return (audioTracks || [])
+                                        .concat(videoTracks || []);
                                 });
                         } else {
                             promise = createAudioTrack();
