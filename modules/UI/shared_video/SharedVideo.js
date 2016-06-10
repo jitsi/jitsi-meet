@@ -1,6 +1,5 @@
 /* global $, APP, YT, onPlayerReady, onPlayerStateChange, onPlayerError */
 
-import messageHandler from '../util/MessageHandler';
 import UIUtil from '../util/UIUtil';
 import UIEvents from '../../../service/UI/UIEvents';
 
@@ -71,7 +70,7 @@ export default class SharedVideoManager {
                 this.emitter.emit(
                     UIEvents.UPDATE_SHARED_VIDEO, this.url, 'stop'));
         } else {
-            messageHandler.openMessageDialog(
+            APP.UI.messageHandler.openMessageDialog(
                 "dialog.shareVideoTitle",
                 "dialog.alreadySharedVideoMsg"
             );
@@ -701,7 +700,7 @@ function getYoutubeLink(url) {
  */
 function showStopVideoPropmpt() {
     return new Promise(function (resolve, reject) {
-        messageHandler.openTwoButtonDialog(
+        APP.UI.messageHandler.openTwoButtonDialog(
             "dialog.removeSharedVideoTitle",
             null,
             "dialog.removeSharedVideoMsg",
@@ -736,7 +735,7 @@ function requestVideoLink() {
     const defaultUrl = i18n.translateString("defaultLink", i18nOptions);
 
     return new Promise(function (resolve, reject) {
-        let dialog = messageHandler.openDialogWithStates({
+        let dialog = APP.UI.messageHandler.openDialogWithStates({
             state0: {
                 html:  `
                     <h2>${title}</h2>

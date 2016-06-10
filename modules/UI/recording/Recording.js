@@ -236,6 +236,8 @@ var Recording = {
             Feedback.enableFeedback(false);
             Toolbar.enable(false);
             BottomToolbar.enable(false);
+            APP.UI.messageHandler.enableNotifications(false);
+            APP.UI.messageHandler.enablePopups(false);
         }
     },
 

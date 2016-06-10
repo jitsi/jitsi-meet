@@ -594,7 +594,8 @@ export default {
                                             videoTrackCreationError);
                                     }
 
-                                    return audioTracks.concat(videoTracks);
+                                    return (audioTracks || [])
+                                        .concat(videoTracks || []);
                                 });
                         } else {
                             promise = createAudioTrack();
@@ -1178,7 +1179,8 @@ export default {
             if(config.debug)
             {
                 this.audioLevelsMap[id] = lvl;
-                console.log("AudioLevel:" + id + "/" + lvl);
+                if(config.debugAudioLevels)
+                    console.log("AudioLevel:" + id + "/" + lvl);
             }
 
             APP.UI.setAudioLevel(id, lvl);
