@@ -1379,10 +1379,17 @@ UI.showRingOverLay = function () {
 };
 
 UI.hideRingOverLay = function () {
-    if(!RingOverlay.hide())
+    if (!RingOverlay.hide())
         return;
     ToolbarToggler.resetAlwaysVisibleToolbar();
     FilmStrip.toggleFilmStrip(true);
+};
+
+/**
+ * Shows or hides the keyboard shortcuts panel.'
+ */
+UI.toggleKeyboardShortcutsPanel = function() {
+    $('#keyboard-shortcuts').toggle();
 };
 
 module.exports = UI;

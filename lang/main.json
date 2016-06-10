@@ -11,6 +11,19 @@
     "defaultNickname": "ex. Jane Pink",
     "defaultLink": "e.g. __url__",
     "calling": "Calling __name__ ...",
+    "keyboardShortcuts": {
+        "keyboardShortcuts": "Keyboard shortcuts:",
+        "raiseHand": "Raise your hand.",
+        "pushToTalk": "Push to talk.",
+        "toggleScreensharing": "Switch between camera and screensharing.",
+        "toggleFilmstrip": "Show or hide the filmstrip.",
+        "toggleShortcuts": "Show or hide this help menu.",
+        "focusLocal": "Focus on the local video.",
+        "focusRemote": "Focus on one of the remote videos.",
+        "toggleChat": "Open or close the chat panel.",
+        "mute": "Mute or unmute the microphone.",
+        "videoMute": "Stop or start the local video."
+    },
     "welcomepage":{
         "go": "GO",
         "roomname": "Enter room name",
