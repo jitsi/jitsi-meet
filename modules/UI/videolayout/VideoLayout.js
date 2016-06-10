@@ -577,9 +577,9 @@ var VideoLayout = {
             if(oldSpeakerRemoteVideo)
             {
                 oldSpeakerRemoteVideo.updateDominantSpeakerIndicator(false);
-                localVideoThumbnail.updateDominantSpeakerIndicator(true);
                 currentDominantSpeaker = null;
             }
+            localVideoThumbnail.updateDominantSpeakerIndicator(true);
             return;
         }
 
