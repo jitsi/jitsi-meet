@@ -12,7 +12,7 @@ LIBJITSIMEET_DIR = node_modules/lib-jitsi-meet/
 all: update-deps compile uglify deploy clean
 
 update-deps:
-	$(NPM) update
+	$(NPM) install
 
 compile:
 	$(BROWSERIFY) $(BROWSERIFY_FLAGS) -e app.js -s APP | $(EXORCIST) $(OUTPUT_DIR)/app.bundle.js.map > $(OUTPUT_DIR)/app.bundle.js
