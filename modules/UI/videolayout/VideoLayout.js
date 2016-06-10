@@ -590,9 +590,10 @@ var VideoLayout = {
             if(oldSpeakerRemoteVideo)
             {
                 oldSpeakerRemoteVideo.showDominantSpeakerIndicator(false);
-                localVideoThumbnail.showDominantSpeakerIndicator(true);
+                // XXX Why do we not set this to id?
                 currentDominantSpeaker = null;
             }
+            localVideoThumbnail.showDominantSpeakerIndicator(true);
             return;
         }
 
