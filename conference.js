@@ -341,6 +341,14 @@ export default {
     videoMuted: false,
     isSharingScreen: false,
     isDesktopSharingEnabled: false,
+    /*
+     * Whether the "raisedHand" flag is on.
+     */
+    isHandRaised: false,
+    /*
+     * Whether the local participant is the dominant speaker in the conference.
+     */
+    isDominantSpeaker: false,
     /**
      * Open new connection and join to the conference.
      * @param {object} options
@@ -1199,6 +1207,16 @@ export default {
             APP.UI.handleLastNEndpoints(ids, enteringIds);
         });
         room.on(ConferenceEvents.DOMINANT_SPEAKER_CHANGED, (id) => {
+            if (this.isLocalId(id)) {
+                this.isDominantSpeaker = true;
+                this.setRaisedHand(false);
+            } else {
+                this.isDominantSpeaker = false;
+                var participant = room.getParticipantById(id);
+                if (participant) {
+                    APP.UI.setRaisedHandStatus(participant, false);
+                }
+            }
             APP.UI.markDominantSpeaker(id);
         });
 
@@ -1219,6 +1237,11 @@ export default {
         room.on(ConferenceEvents.DISPLAY_NAME_CHANGED, (id, displayName) => {
             APP.API.notifyDisplayNameChanged(id, displayName);
             APP.UI.changeDisplayName(id, displayName);
+        });
+
+        room.on(ConferenceEvents.RAISED_HAND_STATUS_CHANGED,
+                (participant, raisedHandStatus) => {
+            APP.UI.setRaisedHandStatus(participant, raisedHandStatus);
         });
 
         room.on(ConferenceEvents.RECORDER_STATE_CHANGED, (status, error) => {
@@ -1525,5 +1548,29 @@ export default {
      */
      addConferenceListener(eventName, callBack) {
         room.on(eventName, callBack);
+    },
+
+    /**
+     * Toggle the "raised hand" status, if the current state allows toggling
+     */
+    maybeToggleRaisedHand() {
+        // If we are the dominant speaker, we don't enable "raise hand".
+        if (this.isHandRaised || !this.dominantSpeaker) {
+            this.setRaisedHand(!this.isHandRaised);
+        }
+    },
+
+    /**
+     * Sets the "raised hand" status to a particular value.
+     */
+    setRaisedHand(raisedHand) {
+        if (raisedHand !== this.isHandRaised)
+        {
+            this.isHandRaised = raisedHand;
+            // Advertise the updated status
+            room.setRaisedHand(raisedHand);
+            // Update the view
+            APP.UI.setLocalRaisedHandStatus(raisedHand);
+        }
     }
 };

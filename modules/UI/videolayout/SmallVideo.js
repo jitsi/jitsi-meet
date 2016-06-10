@@ -422,37 +422,69 @@ SmallVideo.prototype.avatarChanged = function (avatarUrl) {
 };
 
 /**
- * Updates the Indicator for dominant speaker.
- *
- * @param isSpeaker indicates the current indicator state
+ * Shows or hides the dominant speaker indicator.
+ * @param show whether to show or hide.
  */
-SmallVideo.prototype.updateDominantSpeakerIndicator = function (isSpeaker) {
-
+SmallVideo.prototype.showDominantSpeakerIndicator = function (show) {
     if (!this.container) {
         console.warn( "Unable to set dominant speaker indicator - "
             + this.videoSpanId + " does not exist");
         return;
     }
 
-    var indicatorSpan
-        = $('#' + this.videoSpanId + '>span.dominantspeakerindicator');
+    var indicatorSpanId = "dominantspeakerindicator";
+    var indicatorSpan = this.getIndicatorSpan(indicatorSpanId);
 
-    // If we do not have an indicator for this video.
-    if (indicatorSpan.length <= 0) {
-        indicatorSpan = document.createElement('span');
+    indicatorSpan.innerHTML
+        = "<i id='indicatoricon' class='fa fa-bullhorn'></i>";
+    // adds a tooltip
+    UIUtil.setTooltip(indicatorSpan, "speaker", "left");
+    APP.translation.translateElement($(indicatorSpan));
 
-        indicatorSpan.innerHTML
-            = "<i id='speakerindicatoricon' class='fa fa-bullhorn'></i>";
-        indicatorSpan.className = 'dominantspeakerindicator';
+    $(indicatorSpan).css("visibility", show ? "visible" : "hidden");
+};
 
-        $('#' + this.videoSpanId)[0].appendChild(indicatorSpan);
-
-        // adds a tooltip
-        UIUtil.setTooltip(indicatorSpan, "speaker", "left");
-        APP.translation.translateElement($(indicatorSpan));
+/**
+ * Shows or hides the raised hand indicator.
+ * @param show whether to show or hide.
+ */
+SmallVideo.prototype.showRaisedHandIndicator = function (show) {
+    if (!this.container) {
+        console.warn( "Unable to raised hand indication - "
+            + this.videoSpanId + " does not exist");
+        return;
     }
 
-    $(indicatorSpan).css("visibility", isSpeaker ? "visible" : "hidden");
+    var indicatorSpanId = "raisehandindicator";
+    var indicatorSpan = this.getIndicatorSpan(indicatorSpanId);
+
+    indicatorSpan.style.background = "#D6D61E";
+    indicatorSpan.innerHTML
+        = "<i id='indicatoricon' class='fa fa-hand-paper-o'></i>";
+
+    // adds a tooltip
+    UIUtil.setTooltip(indicatorSpan, "raisedHand", "left");
+    APP.translation.translateElement($(indicatorSpan));
+
+    $(indicatorSpan).css("visibility", show ? "visible" : "hidden");
+};
+
+/**
+ * Gets (creating if necessary) the "indicator" span for this SmallVideo
+  identified by an ID.
+ */
+SmallVideo.prototype.getIndicatorSpan = function(id) {
+    var indicatorSpan;
+    var spans = $(`#${this.videoSpanId}>[id=${id}`);
+    if (spans.length <= 0) {
+        indicatorSpan = document.createElement('span');
+        indicatorSpan.id = id;
+        indicatorSpan.className = "indicator";
+        $('#' + this.videoSpanId)[0].appendChild(indicatorSpan);
+    } else {
+        indicatorSpan = spans[0];
+    }
+    return indicatorSpan;
 };
 
 export default SmallVideo;
