@@ -215,16 +215,19 @@ var messageHandler = {
     },
 
     /**
-     * Displayes notification.
-     * @param displayName display name of the participant that is associated with the notification.
-     * @param displayNameKey the key from the language file for the display name.
+     * Displays a notification.
+     * @param displayName the display name of the participant that is
+     * associated with the notification.
+     * @param displayNameKey the key from the language file for the display
+     * name. Only used if displayName i not provided.
      * @param cls css class for the notification
-     * @param messageKey the key from the language file for the text of the message.
+     * @param messageKey the key from the language file for the text of the
+     * message.
      * @param messageArguments object with the arguments for the message.
      * @param options object with language options.
      */
-    notify: function(displayName, displayNameKey,
-                         cls, messageKey, messageArguments, options) {
+    notify: function(displayName, displayNameKey, cls, messageKey,
+                     messageArguments, options) {
 
         if(!notificationsEnabled)
             return;

@@ -310,7 +310,7 @@
     z-index: 3;
 }
 
-.videocontainer>span.dominantspeakerindicator {
+.videocontainer>span.indicator {
     bottom: 0px;
     left: 0px;
     width: 25px;
@@ -327,7 +327,7 @@
     border: 0px;
 }
 
-#speakerindicatoricon {
+#indicatoricon {
     padding-top: 5px;
 }
 
