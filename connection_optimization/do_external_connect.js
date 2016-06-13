@@ -16,12 +16,13 @@
  * Executes createConnectionExternally function.
  */
 (function () {
-    var params = getConfigParamsFromUrl();
-    
+    var hashParams = getConfigParamsFromUrl("hash", true);
+    var searchParams = getConfigParamsFromUrl("search", true);
+
     //Url params have higher proirity than config params
     var url = config.externalConnectUrl;
-    if(params.hasOwnProperty('config.externalConnectUrl'))
-        url = params["config.externalConnectUrl"];
+    if(hashParams.hasOwnProperty('config.externalConnectUrl'))
+        url = hashParams["config.externalConnectUrl"];
 
     /**
      * Check if connect from connection.js was executed and executes the handler
@@ -57,7 +58,8 @@
 
     url += "?room=" + room_name;
 
-    var token = params["config.token"] || config.token;
+    var token = hashParams["config.token"] || config.token ||
+        searchParams.jwt;
     if(token)
         url += "&token=" + token;
 

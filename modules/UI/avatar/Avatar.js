@@ -3,6 +3,19 @@
 let users = {};
 
 export default {
+    /**
+     * Sets prop in users object.
+     * @param id {string} user id
+     * @param prop {string} name of the prop
+     * @param val {string} value to be set
+     */
+    _setUserProp: function (id, prop, val) {
+        if(!val || (users[id] && users[id][prop] === val))
+            return;
+        if(!users[id])
+            users[id] = {};
+        users[id][prop] = val;
+    },
 
     /**
      * Sets the user's avatar in the settings menu(if local user), contact list
@@ -10,13 +23,18 @@ export default {
      * @param id id of the user
      * @param email email or nickname to be used as a hash
      */
-    setUserAvatar: function (id, email) {
-        if (email) {
-            if (users[id] === email) {
-                return;
-            }
-            users[id] = email;
-        }
+    setUserEmail: function (id, email) {
+        this._setUserProp(id, "email", email);
+    },
+
+    /**
+     * Sets the user's avatar in the settings menu(if local user), contact list
+     * and thumbnail
+     * @param id id of the user
+     * @param url the url for the avatar
+     */
+    setUserAvatarUrl: function (id, url) {
+        this._setUserProp(id, "url", url);
     },
 
     /**
@@ -34,7 +52,15 @@ export default {
             return null;
         }
 
-        let avatarId = users[userId];
+        let avatarId = null;
+        const user = users[userId];
+
+        if(user) {
+            if(user.url)
+                return users[userId].url;
+
+            avatarId = users[userId].email;
+        }
 
         // If the ID looks like an email, we'll use gravatar.
         // Otherwise, it's a random avatar, and we'll use the configured

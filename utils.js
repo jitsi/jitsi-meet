@@ -36,17 +36,32 @@ function getRoomName () {
 }
 
 /**
- * Parses the hash parameters from the URL and returns them as a JS object.
+ * Parses the parameters from the URL and returns them as a JS object.
+ * @param source {string} values - "hash"/"search" if "search" the parameters
+ * will parsed from location.search otherwise from location.hash
+ * @param dontParse if false or undefined some transformations
+ * (for parsing the value as JSON) are going to be executed
  */
-function getConfigParamsFromUrl() {
-    if (!location.hash)
+function getConfigParamsFromUrl(source, dontParse) {
+    var paramStr = (source === "search")? location.search : location.hash;
+    if (!paramStr)
         return {};
-    var hash = location.hash.substr(1);
+    paramStr = paramStr.substr(1);
     var result = {};
-    hash.split("&").forEach(function (part) {
+    paramStr.split("&").forEach(function (part) {
         var item = part.split("=");
-        result[item[0]] = JSON.parse(
-            decodeURIComponent(item[1]).replace(/\\&/, "&"));
+        var value;
+        try {
+            value = (dontParse)? item[1] : JSON.parse(
+                decodeURIComponent(item[1]).replace(/\\&/, "&"));
+        } catch (e) {
+            console.warn("Failed to parse URL argument", e);
+            if(window.onerror)
+                window.onerror("Failed to parse URL argument", null, null,
+                    null, e);
+            return;
+        }
+        result[item[0]] = value;
     });
     return result;
 }

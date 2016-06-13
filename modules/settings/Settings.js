@@ -9,6 +9,7 @@ let cameraDeviceId = '';
 let micDeviceId = '';
 let welcomePageDisabled = false;
 let localFlipX = null;
+let avatarUrl = '';
 
 function supportsLocalStorage() {
     try {
@@ -34,6 +35,7 @@ if (supportsLocalStorage()) {
     }
 
     email = UIUtil.unescapeHtml(window.localStorage.email || '');
+    avatarUrl = UIUtil.unescapeHtml(window.localStorage.avatarUrl || '');
     localFlipX = JSON.parse(window.localStorage.localFlipX || true);
     displayName = UIUtil.unescapeHtml(window.localStorage.displayname || '');
     language = window.localStorage.language;
@@ -97,6 +99,24 @@ export default {
     getEmail: function () {
         return email;
     },
+
+    /**
+     * Sets new avatarUrl for local user and saves it to the local storage.
+     * @param {string} newAvatarUrl new avatarUrl for the local user
+     */
+    setAvatarUrl: function (newAvatarUrl) {
+        avatarUrl = newAvatarUrl;
+        window.localStorage.avatarUrl = UIUtil.escapeHtml(newAvatarUrl);
+    },
+
+    /**
+     * Returns avatarUrl address of the local user.
+     * @returns {string} avatarUrl
+     */
+    getAvatarUrl: function () {
+        return avatarUrl;
+    },
+
 
     getLanguage () {
         return language;

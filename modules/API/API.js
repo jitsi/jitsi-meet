@@ -5,6 +5,8 @@
  * applications that embed Jitsi Meet
  */
 
+ import postis from 'postis';
+
 /**
  * List of the available commands.
  * @type {{
@@ -16,7 +18,28 @@
  *              toggleContactList: toggleContactList
  *          }}
  */
-var commands = {};
+let commands = {};
+
+/**
+ * Object that will execute sendMessage
+ */
+let target = window.opener ? window.opener : window.parent;
+
+/**
+ * Array of functions that are going to receive the objects passed to this
+ * window
+ */
+let messageListeners = [];
+
+/**
+ * Current status (enabled/disabled) of Postis.
+ */
+let enablePostis = false;
+
+/**
+ * Current status (enabled/disabled) of Post Message API.
+ */
+let enablePostMessage = false;
 
 function initCommands() {
     commands = {
@@ -92,14 +115,6 @@ function processEvent(event) {
 }
 
 /**
- * Sends message to the external application.
- * @param object
- */
-function sendMessage(object) {
-    window.parent.postMessage(JSON.stringify(object), "*");
-}
-
-/**
  * Processes a message event from the external application
  * @param event the message event
  */
@@ -107,10 +122,11 @@ function processMessage(event) {
     var message;
     try {
         message = JSON.parse(event.data);
-    } catch (e) {}
-
-    if(!message.type)
+    } catch (e) {
+        console.error("Cannot parse data", event.data);
         return;
+    }
+
     switch (message.type) {
         case "command":
             processCommand(message);
@@ -119,9 +135,17 @@ function processMessage(event) {
             processEvent(message);
             break;
         default:
-            console.error("Unknown type of the message");
-            return;
+            console.warn("Unknown message type");
     }
+}
+
+/**
+ * Sends message to the external application.
+ * @param object {object} the object that will be sent as JSON string
+ */
+function sendMessage(object) {
+    if(enablePostMessage)
+        target.postMessage(JSON.stringify(object), "*");
 }
 
 /**
@@ -130,7 +154,7 @@ function processMessage(event) {
  */
 function isEnabled () {
     let hash = location.hash;
-    return hash && hash.indexOf("external=true") > -1 && window.postMessage;
+    return !!(hash && hash.indexOf("external=true") > -1 && window.postMessage);
 }
 
 /**
@@ -149,7 +173,7 @@ function isEventEnabled (name) {
  * @param object data associated with the event
  */
 function triggerEvent (name, object) {
-    if (isEnabled() && isEventEnabled(name)) {
+    if (isEventEnabled(name) && enablePostMessage) {
         sendMessage({
             type: "event",
             action: "result",
@@ -165,18 +189,34 @@ export default {
      * receive information from external applications that embed Jitsi Meet.
      * It also sends a message to the external application that APIConnector
      * is initialized.
+     * @param options {object}
+     * @param enablePostis {boolean} if true the postis npm
+     * package for comminication with the parent window will be enabled.
+     * @param enablePostMessage {boolean} if true the postMessageAPI for
+     * comminication with the parent window will be enabled.
      */
-    init: function () {
-        if (!isEnabled()) {
+    init: function (options = {}) {
+        options.enablePostMessage = options.enablePostMessage || isEnabled();
+        if (!options.enablePostis &&
+            !options.enablePostMessage) {
             return;
         }
-        initCommands();
-        if (window.addEventListener) {
-            window.addEventListener('message', processMessage, false);
-        } else {
-            window.attachEvent('onmessage', processMessage);
+        enablePostis = options.enablePostis;
+        enablePostMessage = options.enablePostMessage;
+
+        if(enablePostMessage) {
+            initCommands();
+            if (window.addEventListener) {
+                window.addEventListener('message', processMessage, false);
+            } else {
+                window.attachEvent('onmessage', processMessage);
+            }
+            sendMessage({type: "system", loaded: true});
         }
-        sendMessage({type: "system", loaded: true});
+
+        if(enablePostis) {
+            this.postis = postis({window: target});
+        }
     },
 
     /**
@@ -185,6 +225,27 @@ export default {
      */
     notifySendingChatMessage (body) {
         triggerEvent("outgoingMessage", {"message": body});
+    },
+
+    /**
+     * Sends message to the external application.
+     * @param options {object}
+     * @param method {string}
+     * @param params {object} the object that will be sent as JSON string
+     */
+    sendPostisMessage(options) {
+        if(enablePostis)
+            this.postis.send(options);
+    },
+
+    /**
+     * Adds listener for Postis messages.
+     * @param method {string} postis mehtod
+     * @param listener {function}
+     */
+    addPostisMessageListener (method, listener) {
+        if(enablePostis)
+            this.postis.listen(method, listener);
     },
 
     /**
@@ -238,14 +299,14 @@ export default {
      * Removes the listeners.
      */
     dispose: function () {
-        if (!isEnabled()) {
-            return;
+        if (enablePostMessage) {
+            if (window.removeEventListener) {
+                window.removeEventListener("message", processMessage, false);
+            } else {
+                window.detachEvent('onmessage', processMessage);
+            }
         }
-
-        if (window.removeEventListener) {
-            window.removeEventListener("message", processMessage, false);
-        } else {
-            window.detachEvent('onmessage', processMessage);
-        }
+        if(enablePostis)
+            this.postis.destroy();
     }
 };

@@ -21,6 +21,7 @@ import FilmStrip from "./videolayout/FilmStrip";
 import SettingsMenu from "./side_pannels/settings/SettingsMenu";
 import Settings from "./../settings/Settings";
 import { reload } from '../util/helpers';
+import RingOverlay from "./ring_overlay/RingOverlay";
 
 var EventEmitter = require("events");
 UI.messageHandler = require("./util/MessageHandler");
@@ -277,7 +278,7 @@ UI.initConference = function () {
     }
 
     // Make sure we configure our avatar id, before creating avatar for us
-    UI.setUserAvatar(id, Settings.getEmail());
+    UI.setUserEmail(id, Settings.getEmail());
 
     Toolbar.checkAutoEnableDesktopSharing();
 
@@ -470,6 +471,10 @@ UI.start = function () {
         SettingsMenu.init(eventEmitter);
     }
 
+    if(APP.tokenData.callee) {
+        UI.showRingOverLay();
+    }
+
     // Return true to indicate that the UI has been fully started and
     // conference ready.
     return true;
@@ -551,6 +556,7 @@ UI.getSharedDocumentManager = function () {
  * @param {string} displayName user nickname
  */
 UI.addUser = function (id, displayName) {
+    UI.hideRingOverLay();
     ContactList.addContact(id);
 
     messageHandler.notify(
@@ -565,7 +571,7 @@ UI.addUser = function (id, displayName) {
     VideoLayout.addParticipantContainer(id);
 
     // Configure avatar
-    UI.setUserAvatar(id);
+    UI.setUserEmail(id);
 
     // set initial display name
     if(displayName)
@@ -800,21 +806,41 @@ UI.dockToolbar = function (isDock) {
 };
 
 /**
- * Update user avatar.
+ * Updates the avatar for participant.
  * @param {string} id user id
- * @param {stirng} email user email
+ * @param {stirng} avatarUrl the URL for the avatar
  */
-UI.setUserAvatar = function (id, email) {
-    // update avatar
-    Avatar.setUserAvatar(id, email);
-
-    var avatarUrl = Avatar.getAvatarUrl(id);
-
+function changeAvatar(id, avatarUrl) {
     VideoLayout.changeUserAvatar(id, avatarUrl);
     ContactList.changeUserAvatar(id, avatarUrl);
     if (APP.conference.isLocalId(id)) {
         SettingsMenu.changeAvatar(avatarUrl);
     }
+}
+
+/**
+ * Update user email.
+ * @param {string} id user id
+ * @param {stirng} email user email
+ */
+UI.setUserEmail = function (id, email) {
+    // update avatar
+    Avatar.setUserEmail(id, email);
+
+    changeAvatar(id, Avatar.getAvatarUrl(id));
+};
+
+
+/**
+ * Update user avatar URL.
+ * @param {string} id user id
+ * @param {stirng} url user avatar url
+ */
+UI.setUserAvatarUrl = function (id, url) {
+    // update avatar
+    Avatar.setUserAvatarUrl(id, url);
+
+    changeAvatar(id, Avatar.getAvatarUrl(id));
 };
 
 /**
@@ -1216,7 +1242,7 @@ UI.showDeviceErrorDialog = function (micError, cameraError) {
             : ``;
     let doNotShowWarningAgainSection = showDoNotShowWarning
         ? `<label>
-            <input type='checkbox' id='doNotShowWarningAgain'> 
+            <input type='checkbox' id='doNotShowWarningAgain'>
             <span data-i18n='dialog.doNotShowWarningAgain'></span>
            </label>`
         : ``;
@@ -1341,6 +1367,21 @@ UI.disableMicrophoneButton = function () {
  */
 UI.enableMicrophoneButton = function () {
     Toolbar.markAudioIconAsDisabled(false);
+};
+
+let bottomToolbarEnabled = null;
+
+UI.showRingOverLay = function () {
+    RingOverlay.show(APP.tokenData.callee);
+    ToolbarToggler.setAlwaysVisibleToolbar(true);
+    FilmStrip.toggleFilmStrip(false);
+};
+
+UI.hideRingOverLay = function () {
+    if(!RingOverlay.hide())
+        return;
+    ToolbarToggler.resetAlwaysVisibleToolbar();
+    FilmStrip.toggleFilmStrip(true);
 };
 
 module.exports = UI;

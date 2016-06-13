@@ -27,6 +27,18 @@ let currentAudioInputDevices, currentVideoInputDevices;
 import {VIDEO_CONTAINER_TYPE} from "./modules/UI/videolayout/LargeVideo";
 
 /**
+ * Known custom conference commands.
+ */
+const commands = {
+    CONNECTION_QUALITY: "stats",
+    EMAIL: "email",
+    AVATAR_URL: "avatar-url",
+    ETHERPAD: "etherpad",
+    SHARED_VIDEO: "shared-video",
+    CUSTOM_ROLE: "custom-role"
+};
+
+/**
  * Open Connection. When authentication failed it shows auth dialog.
  * @param roomName the room name to use
  * @returns Promise<JitsiConnection>
@@ -44,17 +56,13 @@ function connect(roomName) {
 }
 
 /**
- * Share email with other users.
- * @param emailCommand the email command
- * @param {string} email new email
+ * Share data to other users.
+ * @param command the command
+ * @param {string} value new value
  */
-function sendEmail (emailCommand, email) {
-    room.sendCommand(emailCommand, {
-        value: email,
-        attributes: {
-            id: room.myUserId()
-        }
-    });
+function sendData (command, value) {
+    room.removeCommand(command);
+    room.sendCommand(command, {value: value});
 }
 
 /**
@@ -144,7 +152,12 @@ function maybeRedirectToWelcomePage() {
  * @returns Promise.
  */
 function disconnectAndShowFeedback(requestFeedback) {
+    APP.UI.hideRingOverLay();
     connection.disconnect();
+    APP.API.sendPostisMessage({
+        method: 'video-conference-left',
+        params: {roomName: APP.conference.roomName}
+    });
     if (requestFeedback) {
         return APP.UI.requestFeedback();
     } else {
@@ -209,6 +222,55 @@ function setCurrentMediaDevices(devices) {
         d => d.kind === 'videoinput');
 }
 
+/**
+ * Changes the email for the local user
+ * @param email {string} the new email
+ */
+function changeLocalEmail(email = '') {
+    email = email.trim();
+
+    if (email === APP.settings.getEmail()) {
+        return;
+    }
+
+    APP.settings.setEmail(email);
+    APP.UI.setUserEmail(room.myUserId(), email);
+    sendData(commands.EMAIL, email);
+}
+
+
+/**
+ * Changes the local avatar url for the local user
+ * @param avatarUrl {string} the new avatar url
+ */
+function changeLocalAvatarUrl(avatarUrl = '') {
+    avatarUrl = avatarUrl.trim();
+
+    if (avatarUrl === APP.settings.getAvatarUrl()) {
+        return;
+    }
+
+    APP.settings.setAvatarUrl(avatarUrl);
+    APP.UI.setUserAvatarUrl(room.myUserId(), avatarUrl);
+    sendData(commands.AVATAR_URL, avatarUrl);
+}
+
+/**
+ * Changes the display name for the local user
+ * @param nickname {string} the new display name
+ */
+function changeLocalDisplayName(nickname = '') {
+    nickname = nickname.trim();
+
+    if (nickname === APP.settings.getDisplayName()) {
+        return;
+    }
+
+    APP.settings.setDisplayName(nickname);
+    room.setDisplayName(nickname);
+    APP.UI.changeDisplayName(APP.conference.localId, nickname);
+}
+
 class ConferenceConnector {
     constructor(resolve, reject) {
         this._resolve = resolve;
@@ -227,6 +289,7 @@ class ConferenceConnector {
     }
     _onConferenceFailed(err, ...params) {
         console.error('CONFERENCE FAILED:', err, ...params);
+        APP.UI.hideRingOverLay();
         switch (err) {
             // room is locked by the password
         case ConferenceErrors.PASSWORD_REQUIRED:
@@ -412,6 +475,9 @@ export default {
             this._createRoom(tracks);
             this.isDesktopSharingEnabled =
                 JitsiMeetJS.isDesktopSharingEnabled();
+            if(this.isDesktopSharingEnabled)
+                APP.API.addPostisMessageListener('toggle-share-screen',
+                    () => this.toggleScreenSharing());
 
             // if user didn't give access to mic or camera or doesn't have
             // them at all, we disable corresponding toolbar buttons
@@ -851,13 +917,7 @@ export default {
         /**
          * Known custom conference commands.
          */
-        defaults: {
-            CONNECTION_QUALITY: "stats",
-            EMAIL: "email",
-            ETHERPAD: "etherpad",
-            SHARED_VIDEO: "shared-video",
-            CUSTOM_ROLE: "custom-role"
-        },
+        defaults: commands,
         /**
          * Receives notifications from other participants about commands aka
          * custom events (sent by sendCommand or sendCommandOnce methods).
@@ -910,7 +970,11 @@ export default {
         this._room = room; // FIXME do not use this
 
         let email = APP.settings.getEmail();
-        email && sendEmail(this.commands.defaults.EMAIL, email);
+        email && sendData(this.commands.defaults.EMAIL, email);
+
+        let avatarUrl = APP.settings.getAvatarUrl();
+        avatarUrl && sendData(this.commands.defaults.AVATAR_URL,
+            avatarUrl);
 
         let nick = APP.settings.getDisplayName();
         if (config.useNicks && !nick) {
@@ -1093,6 +1157,10 @@ export default {
         // add local streams when joined to the conference
         room.on(ConferenceEvents.CONFERENCE_JOINED, () => {
             APP.UI.mucJoined();
+            APP.API.sendPostisMessage({
+              method: 'video-conference-joined',
+              params: {roomName: APP.conference.roomName}
+            });
         });
 
         room.on(
@@ -1297,32 +1365,19 @@ export default {
             APP.UI.initEtherpad(value);
         });
 
-        APP.UI.addListener(UIEvents.EMAIL_CHANGED, (email = '') => {
-            email = email.trim();
-
-            if (email === APP.settings.getEmail()) {
-                return;
-            }
-
-            APP.settings.setEmail(email);
-            APP.UI.setUserAvatar(room.myUserId(), email);
-            sendEmail(this.commands.defaults.EMAIL, email);
-        });
-        room.addCommandListener(this.commands.defaults.EMAIL, (data) => {
-            APP.UI.setUserAvatar(data.attributes.id, data.value);
+        APP.UI.addListener(UIEvents.EMAIL_CHANGED, changeLocalEmail);
+        room.addCommandListener(this.commands.defaults.EMAIL, (data, from) => {
+            APP.UI.setUserEmail(from, data.value);
         });
 
-        APP.UI.addListener(UIEvents.NICKNAME_CHANGED, (nickname = '') => {
-            nickname = nickname.trim();
+        APP.UI.addListener(UIEvents.AVATAR_URL_CHANGED, changeLocalAvatarUrl);
 
-            if (nickname === APP.settings.getDisplayName()) {
-                return;
-            }
-
-            APP.settings.setDisplayName(nickname);
-            room.setDisplayName(nickname);
-            APP.UI.changeDisplayName(APP.conference.localId, nickname);
+        room.addCommandListener(this.commands.defaults.AVATAR_URL,
+        (data, from) => {
+            APP.UI.setUserAvatarUrl(from, data.value);
         });
+
+        APP.UI.addListener(UIEvents.NICKNAME_CHANGED, changeLocalDisplayName);
 
         APP.UI.addListener(UIEvents.START_MUTED_CHANGED,
             (startAudioMuted, startVideoMuted) => {

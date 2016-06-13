@@ -67,8 +67,8 @@ case "$1" in
                 sed -i 's/ --modules_enabled = { "token_verification" }/ modules_enabled = { "token_verification" }/g' $PROSODY_HOST_CONFIG
 
                 # Install luajwt
-                if ! luarocks install luajwt; then
-                   echo "Failed to install luajwt - try installing it manually"
+                if ! luarocks install jwt; then
+                   echo "Failed to install jwt - try installing it manually"
                 fi
 
                 if [ -x "/etc/init.d/prosody" ]; then
@@ -85,7 +85,7 @@ case "$1" in
         else
             echo "Prosody config not found at $PROSODY_HOST_CONFIG - unable to auto-configure token authentication"
         fi
-	
+
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)

@@ -7,6 +7,10 @@ import FilmStrip from '../videolayout/FilmStrip.js';
 
 let toolbarTimeoutObject;
 let toolbarTimeout = interfaceConfig.INITIAL_TOOLBAR_TIMEOUT;
+/**
+ * If true the toolbar will be always displayed
+ */
+let alwaysVisibleToolbar = (config.alwaysVisibleToolbar === true);
 
 function showDesktopSharingButton() {
     if (APP.conference.isDesktopSharingEnabled &&
@@ -21,7 +25,7 @@ function showDesktopSharingButton() {
  * Hides the toolbar.
  */
 function hideToolbar() {
-    if (config.alwaysVisibleToolbar) {
+    if (alwaysVisibleToolbar) {
         return;
     }
 
@@ -40,6 +44,19 @@ function hideToolbar() {
 }
 
 const ToolbarToggler = {
+    /**
+     * Sets the value of alwaysVisibleToolbar variable.
+     * @param value {boolean} the new value of alwaysVisibleToolbar variable
+     */
+    setAlwaysVisibleToolbar(value) {
+        alwaysVisibleToolbar = value;
+    },
+    /**
+     * Resets the value of alwaysVisibleToolbar variable to the default one.
+     */
+    resetAlwaysVisibleToolbar() {
+        alwaysVisibleToolbar = (config.alwaysVisibleToolbar === true);
+    },
     /**
      * Shows the main toolbar.
      */

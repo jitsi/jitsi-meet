@@ -1,0 +1,116 @@
+/* global  getConfigParamsFromUrl, config */
+
+/**
+ * Parses and handles JWT tokens. Sets config.token.
+ */
+
+import * as jws from "jws";
+
+/**
+ * Get the JWT token from the URL.
+ */
+let params = getConfigParamsFromUrl("search", true);
+let jwt = params.jwt;
+
+/**
+ * Implements a user of conference.
+ */
+class User {
+    /**
+     * @param name {string} the name of the user.
+     * @param email {string} the email of the user.
+     * @param avatarUrl {string} the URL for the avatar of the user.
+     */
+    constructor(name, email, avatarUrl) {
+        this._name = name;
+        this._email = email;
+        this._avatarUrl = avatarUrl;
+    }
+
+    /**
+     * GETERS START.
+     */
+
+    /**
+     * Returns the name property
+     */
+    getName() {
+        return this._name;
+    }
+
+    /**
+     * Returns the email property
+     */
+    getEmail() {
+        return this._email;
+    }
+
+    /**
+     * Returns the URL of the avatar
+     */
+    getAvatarUrl() {
+        return this._avatarUrl;
+    }
+
+    /**
+     * GETERS END.
+     */
+}
+
+/**
+ * Represent the data parsed from the JWT token
+ */
+class TokenData{
+    /**
+     * @param {string} the JWT token
+     */
+    constructor(jwt) {
+        if(!jwt)
+            return;
+        //Use jwt param as token if there is not other token set
+        if(!config.token)
+            config.token = jwt;
+        this.jwt = jwt;
+
+        //External API settings
+        this.externalAPISettings = {
+            enablePostis: true
+        };
+        this._decode();
+    }
+
+    /**
+     * Decodes the JWT token and sets the decoded data to properties.
+     */
+    _decode() {
+        this.decodedJWT = jws.decode(jwt);
+        if(!this.decodedJWT || !this.decodedJWT.payload)
+            return;
+        this.payload = this.decodedJWT.payload;
+        if(!this.payload.context)
+            return;
+        let callerData = this.payload.context.user;
+        let calleeData = this.payload.context.callee;
+        if(callerData)
+            this.caller = new User(callerData.name, callerData.email,
+                callerData.avatarUrl);
+        if(calleeData)
+            this.callee = new User(calleeData.name, calleeData.email,
+                calleeData.avatarUrl);
+    }
+}
+
+/**
+ * Stores the TokenData instance.
+ */
+let data = null;
+
+/**
+ * Returns the data variable. Creates new TokenData instance if <tt>data</tt>
+ * variable is null.
+ */
+export default function getTokenData() {
+    if(!data)
+        data = new TokenData(jwt);
+    return data;
+}
