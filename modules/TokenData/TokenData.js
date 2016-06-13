@@ -67,9 +67,7 @@ class TokenData{
     constructor(jwt) {
         if(!jwt)
             return;
-        //Use jwt param as token if there is not other token set
-        if(!config.token)
-            config.token = jwt;
+
         this.jwt = jwt;
 
         //External API settings
@@ -77,6 +75,12 @@ class TokenData{
             enablePostis: true
         };
         this._decode();
+        // Use JWT param as token if there is not other token set and if the
+        // iss field is not anonymous. If you want to pass data with JWT token
+        // but you don't want to pass the JWT token for verification the iss
+        // field should be set to "anonymous"
+        if(!config.token && this.payload && this.payload.iss !== "anonymous")
+            config.token = jwt;
     }
 
     /**
