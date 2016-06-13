@@ -1,0 +1,54 @@
+#keyboard-shortcuts {
+    display: none;
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    overflow: hidden;
+    z-index: 1;
+    opacity: .85;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    border-bottom-right-radius: 15px;
+    border-bottom-left-radius: 15px;
+    background-color: rgb(0, 0, 0);
+    background-image: none;
+    background-repeat: repeat;
+    background-attachment: scroll;
+    background-position: 0px center;
+    background-clip: border-box;
+    background-origin: padding-box;
+    background-size: auto auto;
+}
+
+#keyboard-shortcuts.header {
+    font-size: 15pt; 
+}
+
+#keyboard-shortcuts.content {
+    font-size: 10pt; 
+    color: #ffffff;
+}
+
+#keyboard-shortcuts.item {
+    color: #ffffff;
+    font-size: 10pt; 
+}
+#keyboard-shortcuts.item-details {
+    color: #ffffff;
+    font-size: 10pt; 
+}
+
+#keyboard-shortcuts.item-action {
+    color: #ffffff;
+    font-size: 10pt; 
+}
+
+#keyboard-shortcuts.item-description {
+    color: #ffffff;
+    font-size: 10pt; 
+}
+
+#keyboard-shortcuts.regular-key {
+    color: #ffffff;
+    font-size: 10pt; 
+}

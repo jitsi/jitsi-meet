@@ -1343,4 +1343,11 @@ UI.enableMicrophoneButton = function () {
     Toolbar.markAudioIconAsDisabled(false);
 };
 
+/**
+ * Shows or hides the keyboard shortcuts panel.'
+ */
+UI.toggleKeyboardShortcutsPanel = function() {
+    $('#keyboard-shortcuts').toggle();
+};
+
 module.exports = UI;

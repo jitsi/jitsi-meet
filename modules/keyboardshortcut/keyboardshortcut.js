@@ -3,6 +3,15 @@
 var shortcuts = {};
 function initShortcutHandlers() {
     shortcuts = {
+        191: {
+            character: "/",
+            function: function(e) {
+                // Only trigger on "?", not on "/".
+                if (e.shiftKey) {
+                    APP.UI.toggleKeyboardShortcutsPanel();
+                }
+            }
+        },
         67: {
             character: "C",
             id: "toggleChatPopover",
@@ -56,7 +65,7 @@ var KeyboardShortcut = {
                 $(":focus").is("input[type=password]") ||
                 $(":focus").is("textarea"))) {
                 if (typeof shortcuts[keycode] === "object") {
-                    shortcuts[keycode].function();
+                    shortcuts[keycode].function(e);
                 }
                 else if (keycode >= "0".charCodeAt(0) &&
                     keycode <= "9".charCodeAt(0)) {
