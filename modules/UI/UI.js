@@ -389,6 +389,7 @@ UI.start = function () {
 
     registerListeners();
 
+    ToolbarToggler.init();
     BottomToolbar.init();
     FilmStrip.init(eventEmitter);
 

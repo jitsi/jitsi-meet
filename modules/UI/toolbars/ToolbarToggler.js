@@ -10,7 +10,7 @@ let toolbarTimeout = interfaceConfig.INITIAL_TOOLBAR_TIMEOUT;
 /**
  * If true the toolbar will be always displayed
  */
-let alwaysVisibleToolbar = (config.alwaysVisibleToolbar === true);
+let alwaysVisibleToolbar = false;
 
 function showDesktopSharingButton() {
     if (APP.conference.isDesktopSharingEnabled &&
@@ -44,6 +44,12 @@ function hideToolbar() {
 }
 
 const ToolbarToggler = {
+    /**
+     * Initializes the ToolbarToggler
+     */
+    init() {
+        alwaysVisibleToolbar = (config.alwaysVisibleToolbar === true);
+    },
     /**
      * Sets the value of alwaysVisibleToolbar variable.
      * @param value {boolean} the new value of alwaysVisibleToolbar variable
