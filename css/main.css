@@ -38,6 +38,10 @@ a {
     display:none;
 }
 
+#header_container {
+    z-index: 1014;
+}
+
 .toolbar_span {
     display: inline-block;
     position: relative;

@@ -15,6 +15,7 @@ local host = module.host;
 local appId = module:get_option_string("app_id");
 local appSecret = module:get_option_string("app_secret");
 local allowEmptyToken = module:get_option_boolean("allow_empty_token");
+local disableRoomNameConstraints = module:get_option_boolean("disable_room_name_constraints");
 
 if allowEmptyToken == true then
 	module:log("warn", "WARNING - empty tokens allowed");
@@ -79,7 +80,7 @@ function provider.get_sasl_handler(session)
 
 		-- here we check if 'room' claim exists
 		local room, roomErr = token_util.get_room_name(token, appSecret);
-		if room == nil then
+		if room == nil and disableRoomNameConstraints ~= true then
             if roomErr == nil then
                 roomErr = "'room' claim is missing";
             end
@@ -88,7 +89,7 @@ function provider.get_sasl_handler(session)
 
 		-- now verify the whole token
 		local result, msg
-		= token_util.verify_token(token, appId, appSecret, room);
+		= token_util.verify_token(token, appId, appSecret, room, disableRoomNameConstraints);
 		if result == true then
 			-- Binds room name to the session which is later checked on MUC join
 			session.jitsi_meet_room = room;
@@ -121,4 +122,3 @@ local function anonymous(self, message)
 end
 
 sasl.registerMechanism("ANONYMOUS", {"anonymous"}, anonymous);
-
