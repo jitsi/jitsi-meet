@@ -1480,7 +1480,7 @@ export default {
         APP.UI.addListener(
             UIEvents.VIDEO_DEVICE_CHANGED,
             (cameraDeviceId) => {
-                createLocalTracks(['video'])
+                createLocalTracks(['video'], cameraDeviceId)
                     .then(([stream]) => {
                         this.useVideoStream(stream);
                         console.log('switched local video device');
@@ -1496,7 +1496,7 @@ export default {
         APP.UI.addListener(
             UIEvents.AUDIO_DEVICE_CHANGED,
             (micDeviceId) => {
-                createLocalTracks(['audio'])
+                createLocalTracks(['audio'], null, micDeviceId)
                     .then(([stream]) => {
                         this.useAudioStream(stream);
                         console.log('switched local audio device');
