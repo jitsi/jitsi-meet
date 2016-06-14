@@ -1,7 +1,7 @@
 -- Token authentication
 -- Copyright (C) 2015 Atlassian
 
-local jwt = require "luajwt";
+local jwt = require "jwt";
 
 local _M = {};
 
@@ -14,7 +14,7 @@ local function _get_room_name(token, appSecret)
 	end
 end
 
-local function _verify_token(token, appId, appSecret, roomName)
+local function _verify_token(token, appId, appSecret, roomName, disableRoomNameConstraints)
 
 	local claims, err = jwt.decode(token, appSecret, true);
 	if claims == nil then
@@ -30,18 +30,18 @@ local function _verify_token(token, appId, appSecret, roomName)
 	end
 
 	local roomClaim = claims["room"];
-	if roomClaim == nil then
+	if roomClaim == nil and disableRoomNameConstraints ~= true then
 		return nil, "'room' claim is missing";
 	end
-	if roomName ~= nil and roomName ~= roomClaim then
+	if roomName ~= nil and roomName ~= roomClaim and disableRoomNameConstraints ~= true then
 		return nil, "Invalid room name('room' claim)";
 	end
 
 	return true;
 end
 
-function _M.verify_token(token, appId, appSecret, roomName)
-	return _verify_token(token, appId, appSecret, roomName);
+function _M.verify_token(token, appId, appSecret, roomName, disableRoomNameConstraints)
+	return _verify_token(token, appId, appSecret, roomName, disableRoomNameConstraints);
 end
 
 function _M.get_room_name(token, appSecret)

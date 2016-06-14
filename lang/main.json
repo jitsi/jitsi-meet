@@ -10,6 +10,7 @@
     "speaker": "Speaker",
     "defaultNickname": "ex. Jane Pink",
     "defaultLink": "e.g. __url__",
+    "calling": "Calling __name__ ...",
     "welcomepage":{
         "go": "GO",
         "roomname": "Enter room name",
@@ -94,7 +95,8 @@
         "selectAudioOutput": "Select audio output",
         "followMe": "Enable follow me",
         "noDevice": "None",
-        "noPermission": "Permission to use device is not granted"
+        "noPermission": "Permission to use device is not granted",
+        "avatarUrl": "Avatar URL"
     },
     "videothumbnail":
     {
