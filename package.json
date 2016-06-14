@@ -29,7 +29,7 @@
     "jssha": "1.5.0",
     "retry": "0.6.1",
     "strophe": "^1.2.2",
-    "strophejs-plugins": "strophe/strophejs-plugins",
+    "strophejs-plugins": "^0.0.6",
     "toastr": "^2.0.3",
     "postis": "^2.2.0",
     "jws": "*"
