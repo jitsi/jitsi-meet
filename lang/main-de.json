@@ -10,6 +10,20 @@
     "speaker": "Sprecher",
     "defaultNickname": "Bsp: Heidi Blau",
     "defaultLink": "Bsp.: __url__",
+    "calling": "Rufe __name__ an...",
+    "keyboardShortcuts": {
+        "keyboardShortcuts": "Tastaturkürzel:",
+        "raiseHand": "Heben Sie Ihre Hand.",
+        "pushToTalk": "Drücken um zu sprechen.",
+        "toggleScreensharing": "Zwischen Kamera und Bildschirmfreigabe wechseln.",
+        "toggleFilmstrip": "Videovorschau anzeigen oder verstecken.",
+        "toggleShortcuts": "Hilfe-Menu anzeigen oder verdecken.",
+        "focusLocal": "Lokales Video fokussieren.",
+        "focusRemote": "Andere Videos fokussieren.",
+        "toggleChat": "Chat öffnen oder schliessen.",
+        "mute": "Stummschaltung aktivieren oder deaktivieren.",
+        "videoMute": "Eigenes Video starten oder stoppen."
+    },
     "welcomepage": {
         "go": "Los",
         "roomname": "Raumnamen eingeben",
@@ -66,7 +80,9 @@
         "dialpad": "Tastenblock anzeigen",
         "sharedVideoMutedPopup": "Das geteilte Video wurde stumm geschaltet damit mit <br/>den anderen Teilnehmern gesprochen werden kann.",
         "micMutedPopup": "Ihr Mikrofon wurde stumm geschaltet damit das<br/>geteilte Video genossen werden kann.",
-        "unableToUnmutePopup": "Die Stummschaltung kann nicht aufgehoben werden während das geteilte Video abgespielt wird."
+        "unableToUnmutePopup": "Die Stummschaltung kann nicht aufgehoben werden während das geteilte Video abgespielt wird.",
+        "cameraDisabled": "Keine Kamera verfügbar",
+        "micDisabled": "Kein Mikrofon verfügbar"
     },
     "bottomtoolbar": {
         "chat": "Chat öffnen / schließen",
@@ -88,7 +104,11 @@
         "startVideoMuted": "Ohne Video beitreten",
         "selectCamera": "Kamera auswählen",
         "selectMic": "Mikrofon auswählen",
-        "followMe": "Follow-me aktivieren"
+        "selectAudioOutput": "Audio-Ausgabe auswählen",
+        "followMe": "Follow-me aktivieren",
+        "noDevice": "Kein",
+        "noPermission": "Keine Berechtigung um das Gerät zu verwenden",
+        "avatarUrl": "Avatar URL"
     },
     "videothumbnail": {
         "editnickname": "Klicken, um den Anzeigenamen zu bearbeiten",
@@ -97,7 +117,8 @@
         "mute": "Teilnehmer ist stumm geschaltet",
         "kick": "Hinauswerfen",
         "muted": "Stummgeschaltet",
-        "domute": "Stummschalten"
+        "domute": "Stummschalten",
+        "flip": "Spiegeln"
     },
     "connectionindicator": {
         "bitrate": "Bitrate:",
@@ -177,7 +198,7 @@
         "joinAgain": "Erneut beitreten",
         "Share": "Teilen",
         "Save": "Speichern",
-        "recording": "",
+        "recording": "Aufnahme",
         "recordingToken": "Aufnahme-Token eingeben",
         "Dial": "Wählen",
         "sipMsg": "Geben Sie eine SIP Nummer ein",
@@ -205,13 +226,27 @@
         "feedbackQuestion": "Wie war der Anruf?",
         "thankYou": "Danke für die Verwendung von __appName__!",
         "sorryFeedback": "Tut uns leid. Möchten Sie uns mehr mitteilen?",
-        "liveStreaming": "",
+        "liveStreaming": "Live-Streaming",
         "streamKey": "Streamname/-schlüssel",
         "startLiveStreaming": "Live-Streaming starten",
         "stopStreamingWarning": "Sind Sie sicher dass Sie das Live-Streaming stoppen möchten?",
         "stopRecordingWarning": "Sind Sie sicher dass Sie die Aufnahme stoppen möchten?",
         "stopLiveStreaming": "Live-Streaming stoppen",
-        "stopRecording": "Aufnahme stoppen"
+        "stopRecording": "Aufnahme stoppen",
+        "doNotShowWarningAgain": "Diesen Hinweis nicht mehr anzeigen",
+        "permissionDenied": "Zugriff verweigert",
+        "screenSharingPermissionDeniedError": "Sie haben die Berechtigung für die Bildschirmfreigabe nicht erteilt.",
+        "micErrorPresent": "Fehler beim Verbinden zum Mikrofon.",
+        "cameraErrorPresent": "Fehler beim Verbinden zur Kamera.",
+        "cameraUnsupportedResolutionError": "Die Kamera unterstützt die erforderliche Auflösung nicht.",
+        "cameraUnknownError": "Die Kamera kann aus einem unbekannten Grund nicht verwendet werden.",
+        "cameraPermissionDeniedError": "Sie haben die Berechtigung für die Benutzung der Kamera nicht erteilt.",
+        "cameraNotFoundError": "Die angeforderte Kamera konnte nicht gefunden werden.",
+        "cameraConstraintFailedError": "Ihre Kamera erfüllt die notwendigen Anforderungen nicht.",
+        "micUnknownError": "Das Mikrofon kann aus einem unbekannten Grund nicht verwendet werden.",
+        "micPermissionDeniedError": "Sie haben die Berechtigung für die Benutzung des Mikrofons nicht erteilt.",
+        "micNotFoundError": "Das angeforderte Mikrofon konnte nicht gefunden werden.",
+        "micConstraintFailedError": "Ihr Mikrofon erfüllt die notwendigen Anforderungen nicht."
     },
     "\u0005dialog": {},
     "email": {
@@ -262,7 +297,9 @@
         "on": "Aufnahme",
         "off": "Aufnahme gestoppt",
         "failedToStart": "Die Aufnahme konnte nicht gestartet werden",
-        "buttonTooltip": "Aufnahme starten / stoppen"
+        "buttonTooltip": "Aufnahme starten / stoppen",
+        "error": "Die Aufzeichnung ist fehlgeschlagen. Bitte versuchen Sie es erneut.",
+        "unavailable": "Der Aufnahmedienst steht momentan nicht zur Verfügung. Bitte versuchen Sie es später noch einmal."
     },
     "liveStreaming": {
         "pending": "Live-Stream wird gestartet...",
@@ -271,6 +308,8 @@
         "unavailable": "Der Live-Streaming Dienst ist momentan nicht verfügbar. Bitte versuchen Sie es später noch einmal.",
         "failedToStart": "Live-Streaming konnte nicht gestartet werden",
         "buttonTooltip": "Live-Stream starten / stoppen",
-        "streamIdRequired": "Bitte Stream-ID eingeben um das Live-Streaming zu starten."
+        "streamIdRequired": "Bitte Stream-ID eingeben um das Live-Streaming zu starten.",
+        "error": "Das Live-Streaming ist fehlgeschlagen. Bitte versuchen Sie es erneut.",
+        "busy": "All Aufnahmegeräte sind momentan ausgelastet. Bitte versuchen Sie es später noch einmal."
     }
 }
