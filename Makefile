@@ -8,8 +8,9 @@ DEPLOY_DIR = libs
 BROWSERIFY_FLAGS = -d
 OUTPUT_DIR = .
 LIBJITSIMEET_DIR = node_modules/lib-jitsi-meet/
+IFRAME_API_DIR = ./modules/API/external
 
-all: update-deps compile uglify deploy clean
+all: update-deps compile compile-iframe-api uglify  uglify-iframe-api deploy clean
 
 update-deps:
 	$(NPM) install
@@ -17,8 +18,11 @@ update-deps:
 compile:
 	$(BROWSERIFY) $(BROWSERIFY_FLAGS) -e app.js -s APP | $(EXORCIST) $(OUTPUT_DIR)/app.bundle.js.map > $(OUTPUT_DIR)/app.bundle.js
 
+compile-iframe-api:
+	$(BROWSERIFY) $(BROWSERIFY_FLAGS) -e $(IFRAME_API_DIR)/external_api.js -s JitsiMeetExternalAPI | $(EXORCIST) $(OUTPUT_DIR)/external_api.js.map > $(OUTPUT_DIR)/external_api.js
+
 clean:
-	rm -f $(OUTPUT_DIR)/app.bundle.*
+	rm -f $(OUTPUT_DIR)/app.bundle.* $(OUTPUT_DIR)/external_api.*
 
 deploy: deploy-init deploy-appbundle deploy-lib-jitsi-meet deploy-css deploy-local
 
@@ -28,6 +32,8 @@ deploy-init:
 deploy-appbundle:
 	cp $(OUTPUT_DIR)/app.bundle.min.js $(OUTPUT_DIR)/app.bundle.min.map \
 	$(OUTPUT_DIR)/app.bundle.js $(OUTPUT_DIR)/app.bundle.js.map \
+	$(OUTPUT_DIR)/external_api.js.map $(OUTPUT_DIR)/external_api.js \
+	$(OUTPUT_DIR)/external_api.min.map $(OUTPUT_DIR)/external_api.min.js \
 	$(DEPLOY_DIR)
 
 deploy-lib-jitsi-meet:
@@ -45,6 +51,9 @@ deploy-local:
 
 uglify:
 	$(UGLIFYJS) -p relative $(OUTPUT_DIR)/app.bundle.js -o $(OUTPUT_DIR)/app.bundle.min.js --source-map $(OUTPUT_DIR)/app.bundle.min.map --in-source-map $(OUTPUT_DIR)/app.bundle.js.map
+
+uglify-iframe-api:
+	$(UGLIFYJS) -p relative $(OUTPUT_DIR)/external_api.js -o $(OUTPUT_DIR)/external_api.min.js --source-map $(OUTPUT_DIR)/external_api.min.map --in-source-map $(OUTPUT_DIR)/external_api.js.map
 
 
 source-package:

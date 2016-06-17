@@ -1,11 +1,11 @@
-/* global APP */
+/* global APP, getConfigParamsFromUrl */
 /**
  * Implements API class that communicates with external api class
  * and provides interface to access Jitsi Meet features by external
  * applications that embed Jitsi Meet
  */
 
- import postis from 'postis';
+import postisInit from 'postis';
 
 /**
  * List of the available commands.
@@ -20,36 +20,41 @@
  */
 let commands = {};
 
+let hashParams = getConfigParamsFromUrl();
+
+/**
+ * JitsiMeetExternalAPI id - unique for a webpage.
+ */
+let jitsi_meet_external_api_id = hashParams.jitsi_meet_external_api_id;
+
 /**
  * Object that will execute sendMessage
  */
 let target = window.opener ? window.opener : window.parent;
 
 /**
- * Array of functions that are going to receive the objects passed to this
- * window
+ * Postis instance. Used to communicate with the external application.
  */
-let messageListeners = [];
+let postis;
 
 /**
- * Current status (enabled/disabled) of Postis.
+ * Current status (enabled/disabled) of API.
  */
-let enablePostis = false;
-
-/**
- * Current status (enabled/disabled) of Post Message API.
- */
-let enablePostMessage = false;
+let enabled = false;
 
 function initCommands() {
     commands = {
-        displayName: APP.UI.inputDisplayNameHandler,
-        toggleAudio: APP.conference.toggleAudioMuted,
-        toggleVideo: APP.conference.toggleVideoMuted,
-        toggleFilmStrip: APP.UI.toggleFilmStrip,
-        toggleChat: APP.UI.toggleChat,
-        toggleContactList: APP.UI.toggleContactList
+        "display-name": APP.UI.inputDisplayNameHandler,
+        "toggle-audio": APP.conference.toggleAudioMuted,
+        "toggle-video": APP.conference.toggleVideoMuted,
+        "toggle-film-strip": APP.UI.toggleFilmStrip,
+        "toggle-chat": APP.UI.toggleChat,
+        "toggle-contact-list": APP.UI.toggleContactList,
+        "toggle-share-screen": APP.conference.toggleScreenSharing
     };
+    Object.keys(commands).forEach(function (key) {
+        postis.listen(key, commands[key]);
+    });
 }
 
 
@@ -57,95 +62,34 @@ function initCommands() {
  * Maps the supported events and their status
  * (true it the event is enabled and false if it is disabled)
  * @type {{
- *              incomingMessage: boolean,
- *              outgoingMessage: boolean,
- *              displayNameChange: boolean,
- *              participantJoined: boolean,
- *              participantLeft: boolean
+ *              incoming-message: boolean,
+ *              outgoing-message: boolean,
+ *              display-name-change: boolean,
+ *              participant-left: boolean,
+ *              participant-joined: boolean,
+ *              video-conference-left: boolean,
+ *              video-conference-joined: boolean
  *      }}
  */
 const events = {
-    incomingMessage: false,
-    outgoingMessage:false,
-    displayNameChange: false,
-    participantJoined: false,
-    participantLeft: false
+    "incoming-message": false,
+    "outgoing-message":false,
+    "display-name-change": false,
+    "participant-joined": false,
+    "participant-left": false,
+    "video-conference-joined": false,
+    "video-conference-left": false
 };
 
 /**
- * Processes commands from external application.
- * @param message the object with the command
- */
-function processCommand(message) {
-    if (message.action != "execute") {
-        console.error("Unknown action of the message");
-        return;
-    }
-    for (var key in message) {
-        if(commands[key])
-            commands[key].apply(null, message[key]);
-    }
-}
-
-/**
- * Processes events objects from external applications
- * @param event the event
- */
-function processEvent(event) {
-    if (!event.action) {
-        console.error("Event with no action is received.");
-        return;
-    }
-
-    var i = 0;
-    switch(event.action) {
-        case "add":
-            for (; i < event.events.length; i++) {
-                events[event.events[i]] = true;
-            }
-            break;
-        case "remove":
-            for (; i < event.events.length; i++) {
-                events[event.events[i]] = false;
-            }
-            break;
-        default:
-            console.error("Unknown action for event.");
-    }
-}
-
-/**
- * Processes a message event from the external application
- * @param event the message event
- */
-function processMessage(event) {
-    var message;
-    try {
-        message = JSON.parse(event.data);
-    } catch (e) {
-        console.error("Cannot parse data", event.data);
-        return;
-    }
-
-    switch (message.type) {
-        case "command":
-            processCommand(message);
-            break;
-        case "event":
-            processEvent(message);
-            break;
-        default:
-            console.warn("Unknown message type");
-    }
-}
-
-/**
  * Sends message to the external application.
- * @param object {object} the object that will be sent as JSON string
+ * @param message {object}
+ * @param method {string}
+ * @param params {object} the object that will be sent as JSON string
  */
-function sendMessage(object) {
-    if(enablePostMessage)
-        target.postMessage(JSON.stringify(object), "*");
+function sendMessage(message) {
+    if(enabled)
+        postis.send(message);
 }
 
 /**
@@ -153,8 +97,7 @@ function sendMessage(object) {
  * @returns {boolean}
  */
 function isEnabled () {
-    let hash = location.hash;
-    return !!(hash && hash.indexOf("external=true") > -1 && window.postMessage);
+    return (typeof jitsi_meet_external_api_id === "number");
 }
 
 /**
@@ -173,13 +116,25 @@ function isEventEnabled (name) {
  * @param object data associated with the event
  */
 function triggerEvent (name, object) {
-    if (isEventEnabled(name) && enablePostMessage) {
-        sendMessage({
-            type: "event",
-            action: "result",
-            event: name,
-            result: object
-        });
+    if(isEventEnabled(name))
+        sendMessage({method: name, params: object});
+}
+
+/**
+ * Handles system messages. (for example: enable/disable events)
+ * @param message {object} the message
+ */
+function onSystemMessage(message) {
+    switch (message.type) {
+        case "eventStatus":
+            if(!message.name || !message.value) {
+                console.warn("Unknown system message format", message);
+                break;
+            }
+            events[message.name] = message.value;
+            break;
+        default:
+            console.warn("Unknown system message type", message);
     }
 }
 
@@ -190,33 +145,27 @@ export default {
      * It also sends a message to the external application that APIConnector
      * is initialized.
      * @param options {object}
-     * @param enablePostis {boolean} if true the postis npm
-     * package for comminication with the parent window will be enabled.
-     * @param enablePostMessage {boolean} if true the postMessageAPI for
-     * comminication with the parent window will be enabled.
+     * @param forceEnable {boolean} if true the module will be enabled.
+     * @param enabledEvents {array} array of events that should be enabled.
      */
-    init: function (options = {}) {
-        options.enablePostMessage = options.enablePostMessage || isEnabled();
-        if (!options.enablePostis &&
-            !options.enablePostMessage) {
+    init (options = {}) {
+        if(!isEnabled() && !options.forceEnable)
             return;
-        }
-        enablePostis = options.enablePostis;
-        enablePostMessage = options.enablePostMessage;
 
-        if(enablePostMessage) {
-            initCommands();
-            if (window.addEventListener) {
-                window.addEventListener('message', processMessage, false);
-            } else {
-                window.attachEvent('onmessage', processMessage);
-            }
-            sendMessage({type: "system", loaded: true});
-        }
-
-        if(enablePostis) {
-            this.postis = postis({window: target});
-        }
+        enabled = true;
+        if(options.enabledEvents)
+            options.enabledEvents.forEach(function (eventName) {
+                events[eventName] = true;
+            });
+        let postisOptions = {
+            window: target
+        };
+        if(typeof jitsi_meet_external_api_id === "number")
+            postisOptions.scope
+                = "jitsi_meet_external_api_" + jitsi_meet_external_api_id;
+        postis = postisInit(postisOptions);
+        postis.listen("jitsiSystemMessage", onSystemMessage);
+        initCommands();
     },
 
     /**
@@ -224,28 +173,7 @@ export default {
      * @param {string} body message body
      */
     notifySendingChatMessage (body) {
-        triggerEvent("outgoingMessage", {"message": body});
-    },
-
-    /**
-     * Sends message to the external application.
-     * @param options {object}
-     * @param method {string}
-     * @param params {object} the object that will be sent as JSON string
-     */
-    sendPostisMessage(options) {
-        if(enablePostis)
-            this.postis.send(options);
-    },
-
-    /**
-     * Adds listener for Postis messages.
-     * @param method {string} postis mehtod
-     * @param listener {function}
-     */
-    addPostisMessageListener (method, listener) {
-        if(enablePostis)
-            this.postis.listen(method, listener);
+        triggerEvent("outgoing-message", {"message": body});
     },
 
     /**
@@ -262,7 +190,7 @@ export default {
         }
 
         triggerEvent(
-            "incomingMessage",
+            "incoming-message",
             {"from": id, "nick": nick, "message": body, "stamp": ts}
         );
     },
@@ -273,7 +201,7 @@ export default {
      * @param {string} id user id
      */
     notifyUserJoined (id) {
-        triggerEvent("participantJoined", {id});
+        triggerEvent("participant-joined", {id});
     },
 
     /**
@@ -282,7 +210,7 @@ export default {
      * @param {string} id user id
      */
     notifyUserLeft (id) {
-        triggerEvent("participantLeft", {id});
+        triggerEvent("participant-left", {id});
     },
 
     /**
@@ -292,21 +220,34 @@ export default {
      * @param {string} displayName user nickname
      */
     notifyDisplayNameChanged (id, displayName) {
-        triggerEvent("displayNameChange", {id, displayname: displayName});
+        triggerEvent("display-name-change", {id, displayname: displayName});
+    },
+
+    /**
+     * Notify external application (if API is enabled) that
+     * user changed their nickname.
+     * @param {string} id user id
+     * @param {string} displayName user nickname
+     */
+    notifyConferenceJoined (room) {
+        triggerEvent("video-conference-joined", {roomName: room});
+    },
+
+    /**
+     * Notify external application (if API is enabled) that
+     * user changed their nickname.
+     * @param {string} id user id
+     * @param {string} displayName user nickname
+     */
+    notifyConferenceLeft (room) {
+        triggerEvent("video-conference-left", {roomName: room});
     },
 
     /**
      * Removes the listeners.
      */
     dispose: function () {
-        if (enablePostMessage) {
-            if (window.removeEventListener) {
-                window.removeEventListener("message", processMessage, false);
-            } else {
-                window.detachEvent('onmessage', processMessage);
-            }
-        }
-        if(enablePostis)
-            this.postis.destroy();
+        if(enabled)
+            postis.destroy();
     }
 };

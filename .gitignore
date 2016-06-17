@@ -7,5 +7,6 @@ deploy-local.sh
 libs/app.bundle.*
 libs/lib-jitsi-meet*
 libs/external_connect.js
+libs/external_api.*
 all.css
 .remote-sync.json

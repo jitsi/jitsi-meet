@@ -155,10 +155,7 @@ function maybeRedirectToWelcomePage() {
 function disconnectAndShowFeedback(requestFeedback) {
     APP.UI.hideRingOverLay();
     connection.disconnect();
-    APP.API.sendPostisMessage({
-        method: 'video-conference-left',
-        params: {roomName: APP.conference.roomName}
-    });
+    APP.API.notifyConferenceLeft(APP.conference.roomName);
     if (requestFeedback) {
         return APP.UI.requestFeedback();
     } else {
@@ -465,9 +462,6 @@ export default {
             this._createRoom(tracks);
             this.isDesktopSharingEnabled =
                 JitsiMeetJS.isDesktopSharingEnabled();
-            if(this.isDesktopSharingEnabled)
-                APP.API.addPostisMessageListener('toggle-share-screen',
-                    () => this.toggleScreenSharing());
 
             // if user didn't give access to mic or camera or doesn't have
             // them at all, we disable corresponding toolbar buttons
@@ -908,10 +902,7 @@ export default {
         // add local streams when joined to the conference
         room.on(ConferenceEvents.CONFERENCE_JOINED, () => {
             APP.UI.mucJoined();
-            APP.API.sendPostisMessage({
-              method: 'video-conference-joined',
-              params: {roomName: APP.conference.roomName}
-            });
+            APP.API.notifyConferenceJoined(APP.conference.roomName);
         });
 
         room.on(
