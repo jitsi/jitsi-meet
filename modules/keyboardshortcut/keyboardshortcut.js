@@ -40,6 +40,13 @@ function initShortcutHandlers() {
                 APP.conference.toggleAudioMuted();
             }
         },
+        82: {
+            character: "R",
+            function: function() {
+                APP.conference.maybeToggleRaisedHand();
+            }
+
+        },
         84: {
             character: "T",
             function: function() {

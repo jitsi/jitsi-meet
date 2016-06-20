@@ -563,6 +563,18 @@ var VideoLayout = {
     },
 
     /**
+     * Sets the "raised hand" status for a participant identified by 'id'.
+     */
+    setRaisedHandStatus(id, raisedHandStatus) {
+        var video
+            = APP.conference.isLocalId(id)
+                ? localVideoThumbnail : remoteVideos[id];
+        if (video) {
+            video.showRaisedHandIndicator(raisedHandStatus);
+        }
+    },
+
+    /**
      * On dominant speaker changed event.
      */
     onDominantSpeakerChanged (id) {
@@ -576,10 +588,10 @@ var VideoLayout = {
         if (APP.conference.isLocalId(id)) {
             if(oldSpeakerRemoteVideo)
             {
-                oldSpeakerRemoteVideo.updateDominantSpeakerIndicator(false);
+                oldSpeakerRemoteVideo.showDominantSpeakerIndicator(false);
                 currentDominantSpeaker = null;
             }
-            localVideoThumbnail.updateDominantSpeakerIndicator(true);
+            localVideoThumbnail.showDominantSpeakerIndicator(true);
             return;
         }
 
@@ -589,12 +601,12 @@ var VideoLayout = {
         }
 
         // Update the current dominant speaker.
-        remoteVideo.updateDominantSpeakerIndicator(true);
-        localVideoThumbnail.updateDominantSpeakerIndicator(false);
+        remoteVideo.showDominantSpeakerIndicator(true);
+        localVideoThumbnail.showDominantSpeakerIndicator(false);
 
         // let's remove the indications from the remote video if any
         if (oldSpeakerRemoteVideo) {
-            oldSpeakerRemoteVideo.updateDominantSpeakerIndicator(false);
+            oldSpeakerRemoteVideo.showDominantSpeakerIndicator(false);
         }
         currentDominantSpeaker = id;
 
