@@ -27,6 +27,8 @@ let room, connection, localAudio, localVideo, roomLocker;
 
 import {VIDEO_CONTAINER_TYPE} from "./modules/UI/videolayout/LargeVideo";
 
+const USER_MEDIA_PERMISSIONS_GUIDANCE_OVERLAY_TIMEOUT = 500;
+
 /**
  * Known custom conference commands.
  */
@@ -427,25 +429,42 @@ export default {
             };
         }
 
-        let audioAndVideoError, audioOnlyError;
+        let audioAndVideoError,
+            audioOnlyError,
+            tracksCreated;
 
         return JitsiMeetJS.init(config).then(() => {
-            return Promise.all([
+            let tryCreateLocalTracks =
                 // try to retrieve audio and video
                 createLocalTracks(['audio', 'video'])
-                // if failed then try to retrieve only audio
+                    // if failed then try to retrieve only audio
                     .catch(err => {
                         audioAndVideoError = err;
                         return createLocalTracks(['audio']);
                     })
-                // if audio also failed then just return empty array
+                    // if audio also failed then just return empty array
                     .catch(err => {
                         audioOnlyError = err;
                         return [];
-                    }),
+                    })
+                    .then(tracks => {
+                        tracksCreated = true;
+                        return tracks;
+                    });
+
+            window.setTimeout(() => {
+                if (!audioAndVideoError && !audioOnlyError && !tracksCreated) {
+                    APP.UI.showUserMediaPermissionsGuidanceOverlay();
+                }
+            }, USER_MEDIA_PERMISSIONS_GUIDANCE_OVERLAY_TIMEOUT);
+
+            return Promise.all([
+                tryCreateLocalTracks,
                 connect(options.roomName)
             ]);
         }).then(([tracks, con]) => {
+            APP.UI.hideUserMediaPermissionsGuidanceOverlay();
+
             if (audioAndVideoError) {
                 if (audioOnlyError) {
                     // If both requests for 'audio' + 'video' and 'audio' only

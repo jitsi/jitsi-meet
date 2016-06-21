@@ -11,6 +11,15 @@
     "defaultNickname": "ex. Jane Pink",
     "defaultLink": "e.g. __url__",
     "calling": "Calling __name__ ...",
+    "userMedia": {
+      "react-nativeGrantPermissions": "Please grant permissions to use your camera and microphone by pressing <i>Allow</i> button",
+      "chromeGrantPermissions": "Please grant permissions to use your camera and microphone by pressing <i>Allow</i> button",
+      "firefoxGrantPermissions": "Please grant permissions to use your camera and microphone by pressing <i>Share Selected Device</i> button",
+      "operaGrantPermissions": "Please grant permissions to use your camera and microphone by pressing <i>Allow</i> button",
+      "iexplorerGrantPermissions": "Please grant permissions to use your camera and microphone by pressing <i>OK</i> button",
+      "safariGrantPermissions": "Please grant permissions to use your camera and microphone by pressing <i>OK</i> button",
+      "nwjsGrantPermissions": "Please grant permissions to use your camera and microphone"
+    },
     "keyboardShortcuts": {
         "keyboardShortcuts": "Keyboard shortcuts:",
         "raiseHand": "Raise your hand.",
@@ -245,11 +254,11 @@
         "cameraErrorPresent": "There was an error connecting to your camera.",
         "cameraUnsupportedResolutionError": "Your camera does not support required video resolution.",
         "cameraUnknownError": "Cannot use camera for a unknown reason.",
-        "cameraPermissionDeniedError": "You have not granted permission to use your camera.",
+        "cameraPermissionDeniedError": "You have not granted permission to use your camera. You can still join the conference but others won't see you. Use the camera button in the address bar to fix this.",
         "cameraNotFoundError": "Requested camera was not found.",
         "cameraConstraintFailedError": "Yor camera does not satisfy some of required constraints.",
         "micUnknownError": "Cannot use microphone for a unknown reason.",
-        "micPermissionDeniedError": "You have not granted permission to use your microphone.",
+        "micPermissionDeniedError": "You have not granted permission to use your microphone. You can still join the conference but others won't hear you. Use the camera button in the address bar to fix this.",
         "micNotFoundError": "Requested microphone was not found.",
         "micConstraintFailedError": "Yor microphone does not satisfy some of required constraints."
     },
