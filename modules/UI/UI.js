@@ -1289,6 +1289,12 @@ UI.showDeviceErrorDialog = function (micError, cameraError) {
                         input.prop("checked");
                 }
             }
+        },
+        null,
+        function () {
+            // Reset dialog reference to null to avoid memory leaks when
+            // user closed the dialog manually.
+            deviceErrorDialog = null;
         }
     );
 
