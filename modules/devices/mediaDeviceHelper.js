@@ -194,15 +194,17 @@ export default {
             return createLocalTracks(
                     ['audio', 'video'], cameraDeviceId, micDeviceId)
                     // If we fail to do this, try to create them separately.
-                    .catch(() => Promise.all(
-                        [createAudioTrack(false), createVideoTrack(false)]))
-                    .then((audioTracks, videoTracks) => {
+                    .catch(() => Promise.all([
+                        createAudioTrack(false).then(([stream]) => stream),
+                        createVideoTrack(false).then(([stream]) => stream)
+                    ]))
+                    .then(tracks => {
                         if (audioTrackError || videoTrackError) {
                             APP.UI.showDeviceErrorDialog(
                                 audioTrackError, videoTrackError);
                         }
 
-                        return (audioTracks || []).concat(videoTracks || []);
+                        return tracks.filter(t => typeof t !== 'undefined');
                     });
         } else if (videoRequested && !audioRequested) {
             return createVideoTrack();

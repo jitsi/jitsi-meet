@@ -113,9 +113,10 @@ var messageHandler = {
      * @param submitFunction function to be called on submit
      * @param loadedFunction function to be called after the prompt is fully
      *        loaded
+     * @param closeFunction function to be called on dialog close
      */
     openDialog: function (titleString, msgString, persistent, buttons,
-                              submitFunction, loadedFunction) {
+                              submitFunction, loadedFunction, closeFunction) {
         if (!popupEnabled)
             return;
 
@@ -125,11 +126,14 @@ var messageHandler = {
             buttons: buttons,
             defaultButton: 1,
             loaded: loadedFunction,
-            submit: submitFunction
+            submit: submitFunction,
+            close: closeFunction
         };
+
         if (persistent) {
             args.closeText = '';
         }
+        
         return new Impromptu(msgString, args);
     },
 
