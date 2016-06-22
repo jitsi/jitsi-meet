@@ -4,9 +4,6 @@ node_modules
 *.iml
 .*.tmp
 deploy-local.sh
-libs/app.bundle.*
-libs/lib-jitsi-meet*
-libs/external_connect.js
-libs/external_api.*
+libs/
 all.css
 .remote-sync.json
