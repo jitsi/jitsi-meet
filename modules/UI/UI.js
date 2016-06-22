@@ -1398,10 +1398,21 @@ UI.hideRingOverLay = function () {
 };
 
 /**
- * Shows or hides the keyboard shortcuts panel.'
+ * Shows or hides the keyboard shortcuts panel, depending on the current state.'
  */
 UI.toggleKeyboardShortcutsPanel = function() {
     $('#keyboard-shortcuts').toggle();
+};
+
+/**
+ * Shows or hides the keyboard shortcuts panel.'
+ */
+UI.showKeyboardShortcutsPanel = function(show) {
+    if (show) {
+        $('#keyboard-shortcuts').show();
+    } else {
+        $('#keyboard-shortcuts').hide();
+    }
 };
 
 module.exports = UI;
