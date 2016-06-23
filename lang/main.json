@@ -13,13 +13,13 @@
     "defaultLink": "e.g. __url__",
     "calling": "Calling __name__ ...",
     "userMedia": {
-      "react-nativeGrantPermissions": "Please grant permissions to use your camera and microphone by pressing <i>Allow</i> button",
-      "chromeGrantPermissions": "Please grant permissions to use your camera and microphone by pressing <i>Allow</i> button",
-      "androidGrantPermissions": "Please grant permissions to use your camera and microphone by pressing <i>Allow</i> button",
-      "firefoxGrantPermissions": "Please grant permissions to use your camera and microphone by pressing <i>Share Selected Device</i> button",
-      "operaGrantPermissions": "Please grant permissions to use your camera and microphone by pressing <i>Allow</i> button",
-      "iexplorerGrantPermissions": "Please grant permissions to use your camera and microphone by pressing <i>OK</i> button",
-      "safariGrantPermissions": "Please grant permissions to use your camera and microphone by pressing <i>OK</i> button",
+      "react-nativeGrantPermissions": "Please grant permissions to use your camera and microphone by pressing <b><i>Allow</i></b> button",
+      "chromeGrantPermissions": "Please grant permissions to use your camera and microphone by pressing <b><i>Allow</i></b> button",
+      "androidGrantPermissions": "Please grant permissions to use your camera and microphone by pressing <b><i>Allow</i></b> button",
+      "firefoxGrantPermissions": "Please grant permissions to use your camera and microphone by pressing <b><i>Share Selected Device</i></b> button",
+      "operaGrantPermissions": "Please grant permissions to use your camera and microphone by pressing <b><i>Allow</i></b> button",
+      "iexplorerGrantPermissions": "Please grant permissions to use your camera and microphone by pressing <b><i>OK</i></b> button",
+      "safariGrantPermissions": "Please grant permissions to use your camera and microphone by pressing <b><i>OK</i></b> button",
       "nwjsGrantPermissions": "Please grant permissions to use your camera and microphone"
     },
     "keyboardShortcuts": {

@@ -1,6 +1,6 @@
 /*Initialize*/
 ul.loginmenu {
-    font-family:'Helvetica Neue', Helvetica, sans-serif;
+    font-family: inherit;
     display:none;
     position: absolute;
     margin: 0;
