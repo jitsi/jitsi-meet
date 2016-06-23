@@ -59,6 +59,64 @@ function connect(roomName) {
 }
 
 /**
+ * Creates local media tracks and connects to room. Will show error
+ * dialogs in case if accessing local microphone and/or camera failed. Will
+ * show guidance overlay for users on how to give access to camera and/or
+ * microphone,
+ * @param {string} roomName
+ * @returns {Promise.<JitsiLocalTrack[], JitsiConnection>}
+ */
+function createInitialLocalTracksAndConnect(roomName) {
+    let audioAndVideoError,
+        audioOnlyError,
+        tracksCreated;
+
+    // First try to retrieve both audio and video.
+    let tryCreateLocalTracks = createLocalTracks(['audio', 'video'])
+        .catch(err => {
+            // If failed then try to retrieve only audio.
+            audioAndVideoError = err;
+            return createLocalTracks(['audio']);
+        })
+        .catch(err => {
+            // If audio failed too then just return empty array for tracks.
+            audioOnlyError = err;
+            return [];
+        })
+        .then(tracks => {
+            tracksCreated = true;
+            return tracks;
+        });
+
+    window.setTimeout(() => {
+        if (!audioAndVideoError && !audioOnlyError && !tracksCreated) {
+            APP.UI.showUserMediaPermissionsGuidanceOverlay();
+        }
+    }, USER_MEDIA_PERMISSIONS_GUIDANCE_OVERLAY_TIMEOUT);
+
+    return Promise.all([ tryCreateLocalTracks, connect(roomName) ])
+        .then(([tracks, con]) => {
+            APP.UI.hideUserMediaPermissionsGuidanceOverlay();
+
+            if (audioAndVideoError) {
+                if (audioOnlyError) {
+                    // If both requests for 'audio' + 'video' and 'audio' only
+                    // failed, we assume that there is some problems with user's
+                    // microphone and show corresponding dialog.
+                    APP.UI.showDeviceErrorDialog(audioOnlyError, null);
+                } else {
+                    // If request for 'audio' + 'video' failed, but request for
+                    // 'audio' only was OK, we assume that we had problems with
+                    // camera and show corresponding dialog.
+                    APP.UI.showDeviceErrorDialog(null, audioAndVideoError);
+                }
+            }
+
+            return [tracks, con];
+        });
+}
+
+/**
  * Share data to other users.
  * @param command the command
  * @param {string} value new value
@@ -403,7 +461,6 @@ export default {
      * @returns {Promise}
      */
     init(options) {
-        let self = this;
         this.roomName = options.roomName;
         JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.TRACE);
 
@@ -429,85 +486,38 @@ export default {
             };
         }
 
-        let audioAndVideoError,
-            audioOnlyError,
-            tracksCreated;
+        return JitsiMeetJS.init(config)
+            .then(() => createInitialLocalTracksAndConnect(options.roomName))
+            .then(([tracks, con]) => {
+                console.log('initialized with %s local tracks', tracks.length);
+                APP.connection = connection = con;
+                this._createRoom(tracks);
+                this.isDesktopSharingEnabled =
+                    JitsiMeetJS.isDesktopSharingEnabled();
+                if(this.isDesktopSharingEnabled)
+                    APP.API.addPostisMessageListener('toggle-share-screen',
+                        () => this.toggleScreenSharing());
 
-        return JitsiMeetJS.init(config).then(() => {
-            let tryCreateLocalTracks =
-                // try to retrieve audio and video
-                createLocalTracks(['audio', 'video'])
-                    // if failed then try to retrieve only audio
-                    .catch(err => {
-                        audioAndVideoError = err;
-                        return createLocalTracks(['audio']);
-                    })
-                    // if audio also failed then just return empty array
-                    .catch(err => {
-                        audioOnlyError = err;
-                        return [];
-                    })
-                    .then(tracks => {
-                        tracksCreated = true;
-                        return tracks;
-                    });
-
-            window.setTimeout(() => {
-                if (!audioAndVideoError && !audioOnlyError && !tracksCreated) {
-                    APP.UI.showUserMediaPermissionsGuidanceOverlay();
+                // if user didn't give access to mic or camera or doesn't have
+                // them at all, we disable corresponding toolbar buttons
+                if (!tracks.find((t) => t.isAudioTrack())) {
+                    APP.UI.disableMicrophoneButton();
                 }
-            }, USER_MEDIA_PERMISSIONS_GUIDANCE_OVERLAY_TIMEOUT);
 
-            return Promise.all([
-                tryCreateLocalTracks,
-                connect(options.roomName)
-            ]);
-        }).then(([tracks, con]) => {
-            APP.UI.hideUserMediaPermissionsGuidanceOverlay();
-
-            if (audioAndVideoError) {
-                if (audioOnlyError) {
-                    // If both requests for 'audio' + 'video' and 'audio' only
-                    // failed, we assume that there is some problems with user's
-                    // microphone and show corresponding dialog.
-                    APP.UI.showDeviceErrorDialog(audioOnlyError, null);
-                } else {
-                    // If request for 'audio' + 'video' failed, but request for
-                    // 'audio' only was OK, we assume that we had problems with
-                    // camera and show corresponding dialog.
-                    APP.UI.showDeviceErrorDialog(null, audioAndVideoError);
+                if (!tracks.find((t) => t.isVideoTrack())) {
+                    APP.UI.disableCameraButton();
                 }
-            }
 
-            console.log('initialized with %s local tracks', tracks.length);
-            APP.connection = connection = con;
-            this._createRoom(tracks);
-            this.isDesktopSharingEnabled =
-                JitsiMeetJS.isDesktopSharingEnabled();
-            if(this.isDesktopSharingEnabled)
-                APP.API.addPostisMessageListener('toggle-share-screen',
-                    () => this.toggleScreenSharing());
+                this._initDeviceList();
 
-            // if user didn't give access to mic or camera or doesn't have
-            // them at all, we disable corresponding toolbar buttons
-            if (!tracks.find((t) => t.isAudioTrack())) {
-                APP.UI.disableMicrophoneButton();
-            }
+                if (config.iAmRecorder)
+                    this.recorder = new Recorder();
 
-            if (!tracks.find((t) => t.isVideoTrack())) {
-                APP.UI.disableCameraButton();
-            }
-
-            this._initDeviceList();
-
-            if (config.iAmRecorder)
-                this.recorder = new Recorder();
-
-            // XXX The API will take care of disconnecting from the XMPP server
-            // (and, thus, leaving the room) on unload.
-            return new Promise((resolve, reject) => {
-                (new ConferenceConnector(resolve, reject)).connect();
-            });
+                // XXX The API will take care of disconnecting from the XMPP
+                // server (and, thus, leaving the room) on unload.
+                return new Promise((resolve, reject) => {
+                    (new ConferenceConnector(resolve, reject)).connect();
+                });
         });
     },
     /**
