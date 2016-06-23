@@ -257,7 +257,25 @@ UI.changeDisplayName = function (id, displayName) {
 };
 
 /**
- * Intitialize conference UI.
+ * Sets the "raised hand" status for a participant.
+ */
+UI.setRaisedHandStatus = (participant, raisedHandStatus) => {
+    VideoLayout.setRaisedHandStatus(participant.getId(), raisedHandStatus);
+    if (raisedHandStatus) {
+        messageHandler.notify(participant.getDisplayName(), 'notify.somebody',
+                          'connected', 'notify.raisedHand');
+    }
+};
+
+/**
+ * Sets the local "raised hand" status.
+ */
+UI.setLocalRaisedHandStatus = (raisedHandStatus) => {
+    VideoLayout.setRaisedHandStatus(APP.conference.localId, raisedHandStatus);
+};
+
+/**
+ * Initialize conference UI.
  */
 UI.initConference = function () {
     let id = APP.conference.localId;

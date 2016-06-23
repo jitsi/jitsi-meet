@@ -391,6 +391,14 @@ export default {
     videoMuted: false,
     isSharingScreen: false,
     isDesktopSharingEnabled: false,
+    /*
+     * Whether the local "raisedHand" flag is on.
+     */
+    isHandRaised: false,
+    /*
+     * Whether the local participant is the dominant speaker in the conference.
+     */
+    isDominantSpeaker: false,
     /**
      * Open new connection and join to the conference.
      * @param {object} options
@@ -1009,6 +1017,16 @@ export default {
             APP.UI.handleLastNEndpoints(ids, enteringIds);
         });
         room.on(ConferenceEvents.DOMINANT_SPEAKER_CHANGED, (id) => {
+            if (this.isLocalId(id)) {
+                this.isDominantSpeaker = true;
+                this.setRaisedHand(false);
+            } else {
+                this.isDominantSpeaker = false;
+                var participant = room.getParticipantById(id);
+                if (participant) {
+                    APP.UI.setRaisedHandStatus(participant, false);
+                }
+            }
             APP.UI.markDominantSpeaker(id);
         });
 
@@ -1029,6 +1047,13 @@ export default {
         room.on(ConferenceEvents.DISPLAY_NAME_CHANGED, (id, displayName) => {
             APP.API.notifyDisplayNameChanged(id, displayName);
             APP.UI.changeDisplayName(id, displayName);
+        });
+
+        room.on(ConferenceEvents.PARTICIPANT_PROPERTY_CHANGED,
+                (participant, name, oldValue, newValue) => {
+            if (name === "raisedHand") {
+                APP.UI.setRaisedHandStatus(participant, newValue);
+            }
         });
 
         room.on(ConferenceEvents.RECORDER_STATE_CHANGED, (status, error) => {
@@ -1423,5 +1448,30 @@ export default {
                 mediaDeviceHelper.setCurrentMediaDevices(devices);
                 APP.UI.onAvailableDevicesChanged(devices);
             });
+    },
+
+    /**
+     * Toggles the local "raised hand" status, if the current state allows
+     * toggling.
+     */
+    maybeToggleRaisedHand() {
+        // If we are the dominant speaker, we don't enable "raise hand".
+        if (this.isHandRaised || !this.isDominantSpeaker) {
+            this.setRaisedHand(!this.isHandRaised);
+        }
+    },
+
+    /**
+     * Sets the local "raised hand" status to a particular value.
+     */
+    setRaisedHand(raisedHand) {
+        if (raisedHand !== this.isHandRaised)
+        {
+            this.isHandRaised = raisedHand;
+            // Advertise the updated status
+            room.setLocalParticipantProperty("raisedHand", raisedHand);
+            // Update the view
+            APP.UI.setLocalRaisedHandStatus(raisedHand);
+        }
     }
 };
