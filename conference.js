@@ -21,7 +21,8 @@ const ConferenceEvents = JitsiMeetJS.events.conference;
 const ConferenceErrors = JitsiMeetJS.errors.conference;
 
 const TrackEvents = JitsiMeetJS.events.track;
-const TrackErrors = JitsiMeetJS.errors.track;
+
+const MediaDevicesErrors = JitsiMeetJS.errors.mediaDevices;
 
 let room, connection, localAudio, localVideo, roomLocker;
 
@@ -855,13 +856,14 @@ export default {
                 this.videoSwitchInProgress = false;
                 this.toggleScreenSharing(false);
 
-                if (err.name === TrackErrors.CHROME_EXTENSION_USER_CANCELED) {
+                if (err.name ===
+                    MediaDevicesErrors.CHROME_EXTENSION_USER_CANCELED) {
                     return;
                 }
 
                 console.error('failed to share local desktop', err);
 
-                if (err.name === TrackErrors.FIREFOX_EXTENSION_NEEDED) {
+                if (err.name === MediaDevicesErrors.FIREFOX_EXTENSION_NEEDED) {
                     APP.UI.showExtensionRequiredDialog(
                         config.desktopSharingFirefoxExtensionURL
                     );
@@ -869,14 +871,14 @@ export default {
                 }
 
                 // Handling:
-                // TrackErrors.PERMISSION_DENIED
-                // TrackErrors.CHROME_EXTENSION_INSTALLATION_ERROR
-                // TrackErrors.GENERAL
+                // MediaDevicesErrors.PERMISSION_DENIED
+                // MediaDevicesErrors.CHROME_EXTENSION_INSTALLATION_ERROR
+                // MediaDevicesErrors.GENERAL
                 // and any other
                 let dialogTxt;
                 let dialogTitle;
 
-                if (err.name === TrackErrors.PERMISSION_DENIED) {
+                if (err.name === MediaDevicesErrors.PERMISSION_DENIED) {
                     dialogTxt = APP.translation.generateTranslationHTML(
                         "dialog.screenSharingPermissionDeniedError");
                     dialogTitle = APP.translation.generateTranslationHTML(
