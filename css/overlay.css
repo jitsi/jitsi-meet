@@ -11,6 +11,10 @@
     display: block;
 }
 
+.overlay_transparent {
+    background: none;
+}
+
 .overlay_container {
     width: 100%;
     height: 100%;
@@ -48,4 +52,15 @@
     z-index: 1013;
     margin-top: 20px;
     float: left;
+}
+
+.overlay_text_small {
+    font-size: 18px;
+}
+
+.overlay_icon {
+    position: relative;
+    z-index: 1013;
+    float: none;
+    font-size: 100px;
 }

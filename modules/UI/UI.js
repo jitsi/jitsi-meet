@@ -15,6 +15,7 @@ import CQEvents from '../../service/connectionquality/CQEvents';
 import EtherpadManager from './etherpad/Etherpad';
 import SharedVideoManager from './shared_video/SharedVideo';
 import Recording from "./recording/Recording";
+import GumPermissionsOverlay from './gum_overlay/UserMediaPermissionsGuidanceOverlay';
 
 import VideoLayout from "./videolayout/VideoLayout";
 import FilmStrip from "./videolayout/FilmStrip";
@@ -1413,6 +1414,22 @@ UI.hideRingOverLay = function () {
         return;
     ToolbarToggler.resetAlwaysVisibleToolbar();
     FilmStrip.toggleFilmStrip(true);
+};
+
+/**
+ * Shows browser-specific overlay with guidance how to proceed with gUM prompt.
+ * @param {string} browser - name of browser for which to show the guidance
+ *      overlay.
+ */
+UI.showUserMediaPermissionsGuidanceOverlay = function (browser) {
+    GumPermissionsOverlay.show(browser);
+};
+
+/**
+ * Hides browser-specific overlay with guidance how to proceed with gUM prompt.
+ */
+UI.hideUserMediaPermissionsGuidanceOverlay = function () {
+    GumPermissionsOverlay.hide();
 };
 
 /**

@@ -57,6 +57,58 @@ function connect(roomName) {
 }
 
 /**
+ * Creates local media tracks and connects to room. Will show error
+ * dialogs in case if accessing local microphone and/or camera failed. Will
+ * show guidance overlay for users on how to give access to camera and/or
+ * microphone,
+ * @param {string} roomName
+ * @returns {Promise.<JitsiLocalTrack[], JitsiConnection>}
+ */
+function createInitialLocalTracksAndConnect(roomName) {
+    let audioAndVideoError,
+        audioOnlyError;
+
+    JitsiMeetJS.mediaDevices.addEventListener(
+        JitsiMeetJS.events.mediaDevices.PERMISSION_PROMPT_IS_SHOWN,
+        browser => APP.UI.showUserMediaPermissionsGuidanceOverlay(browser));
+
+    // First try to retrieve both audio and video.
+    let tryCreateLocalTracks = createLocalTracks(
+            { devices: ['audio', 'video'] }, true)
+        .catch(err => {
+            // If failed then try to retrieve only audio.
+            audioAndVideoError = err;
+            return createLocalTracks({ devices: ['audio'] }, true);
+        })
+        .catch(err => {
+            // If audio failed too then just return empty array for tracks.
+            audioOnlyError = err;
+            return [];
+        });
+
+    return Promise.all([ tryCreateLocalTracks, connect(roomName) ])
+        .then(([tracks, con]) => {
+            APP.UI.hideUserMediaPermissionsGuidanceOverlay();
+
+            if (audioAndVideoError) {
+                if (audioOnlyError) {
+                    // If both requests for 'audio' + 'video' and 'audio' only
+                    // failed, we assume that there is some problems with user's
+                    // microphone and show corresponding dialog.
+                    APP.UI.showDeviceErrorDialog(audioOnlyError, null);
+                } else {
+                    // If request for 'audio' + 'video' failed, but request for
+                    // 'audio' only was OK, we assume that we had problems with
+                    // camera and show corresponding dialog.
+                    APP.UI.showDeviceErrorDialog(null, audioAndVideoError);
+                }
+            }
+
+            return [tracks, con];
+        });
+}
+
+/**
  * Share data to other users.
  * @param command the command
  * @param {string} value new value
@@ -182,32 +234,42 @@ function hangup (requestFeedback = false) {
 
 /**
  * Create local tracks of specified types.
- * @param {string[]} devices - required track types ('audio', 'video' etc.)
- * @param {string|null} [cameraDeviceId] - camera device id, if undefined - one
- *      from settings will be used
- * @param {string|null} [micDeviceId] - microphone device id, if undefined - one
- *      from settings will be used
+ * @param {Object} options
+ * @param {string[]} options.devices - required track types
+ *      ('audio', 'video' etc.)
+ * @param {string|null} (options.cameraDeviceId) - camera device id, if
+ *      undefined - one from settings will be used
+ * @param {string|null} (options.micDeviceId) - microphone device id, if
+ *      undefined - one from settings will be used
+ * @param {boolean} (checkForPermissionPrompt) - if lib-jitsi-meet should check
+ *      for gUM permission prompt
  * @returns {Promise<JitsiLocalTrack[]>}
  */
-function createLocalTracks (devices, cameraDeviceId, micDeviceId) {
-    return JitsiMeetJS.createLocalTracks({
-        // copy array to avoid mutations inside library
-        devices: devices.slice(0),
-        resolution: config.resolution,
-        cameraDeviceId: typeof cameraDeviceId === 'undefined'
-            || cameraDeviceId === null
+function createLocalTracks (options, checkForPermissionPrompt) {
+    options || (options = {});
+
+    return JitsiMeetJS
+        .createLocalTracks({
+            // copy array to avoid mutations inside library
+            devices: options.devices.slice(0),
+            resolution: config.resolution,
+            cameraDeviceId: typeof options.cameraDeviceId === 'undefined' ||
+                    options.cameraDeviceId === null
                 ? APP.settings.getCameraDeviceId()
-                : cameraDeviceId,
-        micDeviceId: typeof micDeviceId === 'undefined' || micDeviceId === null
-            ? APP.settings.getMicDeviceId()
-            : micDeviceId,
-        // adds any ff fake device settings if any
-        firefox_fake_device: config.firefox_fake_device
-    }).catch(function (err) {
-        console.error('failed to create local tracks', ...devices, err);
-        return Promise.reject(err);
-    });
-}
+                : options.cameraDeviceId,
+            micDeviceId: typeof options.micDeviceId === 'undefined' ||
+                    options.micDeviceId === null
+                ? APP.settings.getMicDeviceId()
+                : options.micDeviceId,
+            // adds any ff fake device settings if any
+            firefox_fake_device: config.firefox_fake_device
+        }, checkForPermissionPrompt)
+        .catch(function (err) {
+            console.error(
+                'failed to create local tracks', options.devices, err);
+            return Promise.reject(err);
+        });
+    }
 
 /**
  * Changes the email for the local user
@@ -406,7 +468,6 @@ export default {
      * @returns {Promise}
      */
     init(options) {
-        let self = this;
         this.roomName = options.roomName;
         JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.TRACE);
 
@@ -432,65 +493,35 @@ export default {
             };
         }
 
-        let audioAndVideoError, audioOnlyError;
+        return JitsiMeetJS.init(config)
+            .then(() => createInitialLocalTracksAndConnect(options.roomName))
+            .then(([tracks, con]) => {
+                console.log('initialized with %s local tracks', tracks.length);
+                APP.connection = connection = con;
+                this._createRoom(tracks);
+                this.isDesktopSharingEnabled =
+                    JitsiMeetJS.isDesktopSharingEnabled();
 
-        return JitsiMeetJS.init(config).then(() => {
-            return Promise.all([
-                // try to retrieve audio and video
-                createLocalTracks(['audio', 'video'])
-                // if failed then try to retrieve only audio
-                    .catch(err => {
-                        audioAndVideoError = err;
-                        return createLocalTracks(['audio']);
-                    })
-                // if audio also failed then just return empty array
-                    .catch(err => {
-                        audioOnlyError = err;
-                        return [];
-                    }),
-                connect(options.roomName)
-            ]);
-        }).then(([tracks, con]) => {
-            if (audioAndVideoError) {
-                if (audioOnlyError) {
-                    // If both requests for 'audio' + 'video' and 'audio' only
-                    // failed, we assume that there is some problems with user's
-                    // microphone and show corresponding dialog.
-                    APP.UI.showDeviceErrorDialog(audioOnlyError, null);
-                } else {
-                    // If request for 'audio' + 'video' failed, but request for
-                    // 'audio' only was OK, we assume that we had problems with
-                    // camera and show corresponding dialog.
-                    APP.UI.showDeviceErrorDialog(null, audioAndVideoError);
+                // if user didn't give access to mic or camera or doesn't have
+                // them at all, we disable corresponding toolbar buttons
+                if (!tracks.find((t) => t.isAudioTrack())) {
+                    APP.UI.disableMicrophoneButton();
                 }
-            }
 
-            console.log('initialized with %s local tracks', tracks.length);
-            APP.connection = connection = con;
-            this._createRoom(tracks);
-            this.isDesktopSharingEnabled =
-                JitsiMeetJS.isDesktopSharingEnabled();
+                if (!tracks.find((t) => t.isVideoTrack())) {
+                    APP.UI.disableCameraButton();
+                }
 
-            // if user didn't give access to mic or camera or doesn't have
-            // them at all, we disable corresponding toolbar buttons
-            if (!tracks.find((t) => t.isAudioTrack())) {
-                APP.UI.disableMicrophoneButton();
-            }
+                this._initDeviceList();
 
-            if (!tracks.find((t) => t.isVideoTrack())) {
-                APP.UI.disableCameraButton();
-            }
+                if (config.iAmRecorder)
+                    this.recorder = new Recorder();
 
-            this._initDeviceList();
-
-            if (config.iAmRecorder)
-                this.recorder = new Recorder();
-
-            // XXX The API will take care of disconnecting from the XMPP server
-            // (and, thus, leaving the room) on unload.
-            return new Promise((resolve, reject) => {
-                (new ConferenceConnector(resolve, reject)).connect();
-            });
+                // XXX The API will take care of disconnecting from the XMPP
+                // server (and, thus, leaving the room) on unload.
+                return new Promise((resolve, reject) => {
+                    (new ConferenceConnector(resolve, reject)).connect();
+                });
         });
     },
     /**
@@ -834,7 +865,7 @@ export default {
         this.videoSwitchInProgress = true;
 
         if (shareScreen) {
-            createLocalTracks(['desktop']).then(([stream]) => {
+            createLocalTracks({ devices: ['desktop'] }).then(([stream]) => {
                 stream.on(
                     TrackEvents.LOCAL_TRACK_STOPPED,
                     () => {
@@ -891,7 +922,7 @@ export default {
                 APP.UI.messageHandler.openDialog(dialogTitle, dialogTxt, false);
             });
         } else {
-            createLocalTracks(['video']).then(
+            createLocalTracks({ devices: ['video'] }).then(
                 ([stream]) => this.useVideoStream(stream)
             ).then(() => {
                 this.videoSwitchInProgress = false;
@@ -1247,32 +1278,40 @@ export default {
         APP.UI.addListener(
             UIEvents.VIDEO_DEVICE_CHANGED,
             (cameraDeviceId) => {
-                createLocalTracks(['video'], cameraDeviceId, null)
-                    .then(([stream]) => {
-                        this.useVideoStream(stream);
-                        console.log('switched local video device');
-                        APP.settings.setCameraDeviceId(cameraDeviceId);
-                    })
-                    .catch((err) => {
-                        APP.UI.showDeviceErrorDialog(null, err);
-                        APP.UI.setSelectedCameraFromSettings();
-                    });
+                createLocalTracks({
+                    devices: ['video'],
+                    cameraDeviceId: cameraDeviceId,
+                    micDeviceId: null
+                })
+                .then(([stream]) => {
+                    this.useVideoStream(stream);
+                    console.log('switched local video device');
+                    APP.settings.setCameraDeviceId(cameraDeviceId);
+                })
+                .catch((err) => {
+                    APP.UI.showDeviceErrorDialog(null, err);
+                    APP.UI.setSelectedCameraFromSettings();
+                });
             }
         );
 
         APP.UI.addListener(
             UIEvents.AUDIO_DEVICE_CHANGED,
             (micDeviceId) => {
-                createLocalTracks(['audio'], null, micDeviceId)
-                    .then(([stream]) => {
-                        this.useAudioStream(stream);
-                        console.log('switched local audio device');
-                        APP.settings.setMicDeviceId(micDeviceId);
-                    })
-                    .catch((err) => {
-                        APP.UI.showDeviceErrorDialog(err, null);
-                        APP.UI.setSelectedMicFromSettings();
-                    });
+                createLocalTracks({
+                    devices: ['audio'],
+                    cameraDeviceId: null,
+                    micDeviceId: micDeviceId
+                })
+                .then(([stream]) => {
+                    this.useAudioStream(stream);
+                    console.log('switched local audio device');
+                    APP.settings.setMicDeviceId(micDeviceId);
+                })
+                .catch((err) => {
+                    APP.UI.showDeviceErrorDialog(err, null);
+                    APP.UI.setSelectedMicFromSettings();
+                });
             }
         );
 
