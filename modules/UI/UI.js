@@ -40,6 +40,8 @@ let sharedVideoManager;
 
 let followMeHandler;
 
+let deviceErrorDialog;
+
 const TrackErrors = JitsiMeetJS.errors.track;
 
 const JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP = {
@@ -256,7 +258,25 @@ UI.changeDisplayName = function (id, displayName) {
 };
 
 /**
- * Intitialize conference UI.
+ * Sets the "raised hand" status for a participant.
+ */
+UI.setRaisedHandStatus = (participant, raisedHandStatus) => {
+    VideoLayout.setRaisedHandStatus(participant.getId(), raisedHandStatus);
+    if (raisedHandStatus) {
+        messageHandler.notify(participant.getDisplayName(), 'notify.somebody',
+                          'connected', 'notify.raisedHand');
+    }
+};
+
+/**
+ * Sets the local "raised hand" status.
+ */
+UI.setLocalRaisedHandStatus = (raisedHandStatus) => {
+    VideoLayout.setRaisedHandStatus(APP.conference.localId, raisedHandStatus);
+};
+
+/**
+ * Initialize conference UI.
  */
 UI.initConference = function () {
     let id = APP.conference.localId;
@@ -1268,7 +1288,11 @@ UI.showDeviceErrorDialog = function (micError, cameraError) {
 
     message = `${message}${doNotShowWarningAgainSection}`;
 
-    messageHandler.openDialog(
+    // To make sure we don't have multiple error dialogs open at the same time,
+    // we will just close the previous one if we are going to show a new one.
+    deviceErrorDialog && deviceErrorDialog.close();
+
+    deviceErrorDialog = messageHandler.openDialog(
         titleMsg,
         message,
         false,
@@ -1284,6 +1308,12 @@ UI.showDeviceErrorDialog = function (micError, cameraError) {
                         input.prop("checked");
                 }
             }
+        },
+        null,
+        function () {
+            // Reset dialog reference to null to avoid memory leaks when
+            // user closed the dialog manually.
+            deviceErrorDialog = null;
         }
     );
 
@@ -1403,10 +1433,21 @@ UI.hideUserMediaPermissionsGuidanceOverlay = function () {
 };
 
 /**
- * Shows or hides the keyboard shortcuts panel.'
+ * Shows or hides the keyboard shortcuts panel, depending on the current state.'
  */
 UI.toggleKeyboardShortcutsPanel = function() {
     $('#keyboard-shortcuts').toggle();
+};
+
+/**
+ * Shows or hides the keyboard shortcuts panel.'
+ */
+UI.showKeyboardShortcutsPanel = function(show) {
+    if (show) {
+        $('#keyboard-shortcuts').show();
+    } else {
+        $('#keyboard-shortcuts').hide();
+    }
 };
 
 module.exports = UI;

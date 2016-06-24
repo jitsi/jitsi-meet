@@ -116,10 +116,7 @@ function init() {
             APP.keyboardshortcut.init();
         }).catch(function (err) {
             APP.UI.hideRingOverLay();
-            APP.API.sendPostisMessage({
-                method: 'video-conference-left',
-                params: {roomName: APP.conference.roomName}
-            });
+            APP.API.notifyConferenceLeft(APP.conference.roomName);
             console.error(err);
         });
     }

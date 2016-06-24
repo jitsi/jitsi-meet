@@ -8,6 +8,7 @@
     "participant": "Participant",
     "me": "me",
     "speaker": "Speaker",
+    "raisedHand": "Would like to speak",
     "defaultNickname": "ex. Jane Pink",
     "defaultLink": "e.g. __url__",
     "calling": "Calling __name__ ...",
@@ -164,7 +165,8 @@
         "grantedTo": "Moderator rights granted to __to__!",
         "grantedToUnknown": "Moderator rights granted to $t(somebody)!",
         "muted": "You have started the conversation muted.",
-        "mutedTitle": "You're muted!"
+        "mutedTitle": "You're muted!",
+        "raisedHand": "Would like to speak."
     },
     "dialog": {
         "kickMessage": "Ouch! You have been kicked out of the meet!",

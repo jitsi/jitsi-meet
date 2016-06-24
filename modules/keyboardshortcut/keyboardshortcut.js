@@ -3,13 +3,10 @@
 var shortcuts = {};
 function initShortcutHandlers() {
     shortcuts = {
-        191: {
-            character: "/",
-            function: function(e) {
-                // Only trigger on "?", not on "/".
-                if (e.shiftKey) {
-                    APP.UI.toggleKeyboardShortcutsPanel();
-                }
+        27: {
+            character: "Esc",
+            function: function() {
+                APP.UI.showKeyboardShortcutsPanel(false);
             }
         },
         67: {
@@ -40,6 +37,13 @@ function initShortcutHandlers() {
                 APP.conference.toggleAudioMuted();
             }
         },
+        82: {
+            character: "R",
+            function: function() {
+                APP.conference.maybeToggleRaisedHand();
+            }
+
+        },
         84: {
             character: "T",
             function: function() {
@@ -51,6 +55,15 @@ function initShortcutHandlers() {
             id: "toggleVideoPopover",
             function: function() {
                 APP.conference.toggleVideoMuted();
+            }
+        },
+        191: {
+            character: "/",
+            function: function(e) {
+                // Only trigger on "?", not on "/".
+                if (e.shiftKey) {
+                    APP.UI.toggleKeyboardShortcutsPanel();
+                }
             }
         }
     };
