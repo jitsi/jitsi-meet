@@ -6,13 +6,13 @@
     width: 100%;
     height: 100%;
     z-index: 1013;
-    background: #000000; /* Old browsers */
+    background: #21B9FC; /* Old browsers */
     opacity: 0.75;
     display: block;
 }
 
 .overlay_transparent {
-    background: none;
+    background: rgba(22, 185, 252, .9);
 }
 
 .overlay_container {
@@ -50,7 +50,7 @@
     position: relative;
     width: 400px;
     z-index: 1013;
-    margin-top: 20px;
+    margin-top: 50px;
     float: left;
 }
 
