@@ -1388,9 +1388,11 @@ UI.hideRingOverLay = function () {
 
 /**
  * Shows browser-specific overlay with guidance how to proceed with gUM prompt.
+ * @param {string} browser - name of browser for which to show the guidance
+ *      overlay.
  */
-UI.showUserMediaPermissionsGuidanceOverlay = function () {
-    GumPermissionsOverlay.show();
+UI.showUserMediaPermissionsGuidanceOverlay = function (browser) {
+    GumPermissionsOverlay.show(browser);
 };
 
 /**

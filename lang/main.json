@@ -14,6 +14,7 @@
     "userMedia": {
       "react-nativeGrantPermissions": "Please grant permissions to use your camera and microphone by pressing <i>Allow</i> button",
       "chromeGrantPermissions": "Please grant permissions to use your camera and microphone by pressing <i>Allow</i> button",
+      "androidGrantPermissions": "Please grant permissions to use your camera and microphone by pressing <i>Allow</i> button",
       "firefoxGrantPermissions": "Please grant permissions to use your camera and microphone by pressing <i>Share Selected Device</i> button",
       "operaGrantPermissions": "Please grant permissions to use your camera and microphone by pressing <i>Allow</i> button",
       "iexplorerGrantPermissions": "Please grant permissions to use your camera and microphone by pressing <i>OK</i> button",

@@ -5,11 +5,10 @@ let $overlay;
 /**
  * Internal function that constructs overlay with guidance how to proceed with
  * gUM prompt.
+ * @param {string} browser - name of browser for which to construct the
+ *      guidance overlay.
  */
-function buildOverlayHtml() {
-    let browser = JitsiMeetJS.environment.getBrowserType()
-            .split('rtc_browser.')[1] || 'chrome';
-
+function buildOverlayHtml(browser) {
     $overlay = $(`
         <div class='overlay_container'>
             <div class='overlay overlay_transparent' />
@@ -28,11 +27,13 @@ export default {
     /**
      * Shows browser-specific overlay with guidance how to proceed with
      * gUM prompt.
+     * @param {string} browser - name of browser for which to show the
+     *      guidance overlay.
      */
-    show() {
-        !$overlay && buildOverlayHtml();
+    show(browser) {
+        !$overlay && buildOverlayHtml(browser);
 
-        $overlay && $overlay.appendTo('body');
+        !$overlay.parents('body').length && $overlay.appendTo('body');
     },
 
     /**
