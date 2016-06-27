@@ -1,6 +1,7 @@
 /* global APP, JitsiMeetJS, config */
 //FIXME:
 import LoginDialog from './modules/UI/authentication/LoginDialog';
+import UIUtil from './modules/UI/util/UIUtil';
 
 const ConnectionEvents = JitsiMeetJS.events.connection;
 const ConnectionErrors = JitsiMeetJS.errors.connection;
@@ -50,13 +51,7 @@ function checkForAttachParametersAndConnect(id, password, connection) {
  * @returns {Promise<JitsiConnection>} connection if
  * everything is ok, else error.
  */
-function connect(id, password, roomName) {
-
-    let connectionConfig = Object.assign({}, config);
-
-    connectionConfig.bosh += '?room=' + roomName;
-    let connection
-        = new JitsiMeetJS.JitsiConnection(null, config.token, connectionConfig);
+function connect(id, password, roomName, connection) {
 
     return new Promise(function (resolve, reject) {
         connection.addEventListener(
@@ -147,7 +142,13 @@ export function openConnection({id, password, retry, roomName}) {
         password = passwordOverride;
     }
 
-    return connect(id, password, roomName).catch(function (err) {
+    let connectionConfig = Object.assign({}, config);
+
+    connectionConfig.bosh += '?room=' + roomName;
+    let connection
+        = new JitsiMeetJS.JitsiConnection(null, config.token, connectionConfig);
+
+    return connect(id, password, roomName, connection).catch(function (err) {
         if (!retry) {
             throw err;
         }
@@ -156,6 +157,10 @@ export function openConnection({id, password, retry, roomName}) {
             // do not retry if token is not valid
             if (config.token) {
                 throw err;
+            } else if (config.tokenAuthUrl) {
+                var tokenAuthUrl = connection.getTokenAuthUrl(roomName);
+                console.info("Will redirect to: " + tokenAuthUrl);
+                UIUtil.redirect(tokenAuthUrl);
             } else {
                 return requestAuth(roomName);
             }
