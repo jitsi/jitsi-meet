@@ -471,6 +471,8 @@ export default {
         this.roomName = options.roomName;
         JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.TRACE);
 
+        this._initJWTTokenListener(options);
+
         // attaches global error handler, if there is already one, respect it
         if(JitsiMeetJS.getGlobalOnErrorHandler){
             var oldOnErrorHandler = window.onerror;
@@ -1511,6 +1513,68 @@ export default {
             room.setLocalParticipantProperty("raisedHand", raisedHand);
             // Update the view
             APP.UI.setLocalRaisedHandStatus(raisedHand);
+        }
+    },
+    
+    /**
+     * When there is anonymous domain enabled together with JWT authentication
+     * binds window message listener, which will wait for JWT token to be
+     * received from the login service opened in a popup window.
+     * @param options config.js
+     * @private
+     */
+    _initJWTTokenListener(options) {
+        if (!options.tokenAuthUrl) {
+            return;
+        }
+        var self = this;
+        var listener = function (event) {
+            if (event.data && event.data.jwtToken) {
+                // FIXME implement origin verification ?
+                //if (event.origin !== window.location.origin) {
+                //    logger.warn("Ignoring JWT token from different origin: " +
+                //        event.origin);
+                //    return;
+                //}
+                config.token = event.data.jwtToken;
+                console.info("Received JWT token:", config.token);
+                var roomName = options.roomName;
+                openConnection({retry: false, roomName: roomName })
+                    .then(function (connection) {
+                        // Start new connection
+                        let newRoom = connection.initJitsiConference(
+                            roomName, self._getConferenceOptions());
+                        // Authenticate from the new connection to get
+                        // the session-ID from the focus, which wil then be used
+                        // to upgrade current connection's user role
+                        newRoom.room.moderator.authenticate().then(function () {
+                            connection.disconnect();
+                            // At this point we'll have session-ID stored in
+                            // the settings. It wil be used in the call below
+                            // to upgrade user's role
+                            room.room.moderator.authenticate()
+                                .then(function () {
+                                console.info("User role upgrade done !");
+                            }).catch(function (err, errCode) {
+                                console.error(
+                                    "Authentication failed: ", err, errCode);
+                            });
+                        }).catch(function (error, code) {
+                            connection.disconnect();
+                            console.error(
+                                'Authentication failed on the new connection',
+                                error, code);
+                        });
+                    }, function (err) {
+                        console.error("Failed to open new connection", err);
+                    });
+            }
+        };
+        // Register
+        if (window.addEventListener) {
+            window.addEventListener("message", listener, false);
+        } else {
+            window.attachEvent("onmessage", listener);
         }
     }
 };
