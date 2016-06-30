@@ -99,7 +99,7 @@ export default {
 
         var newVal = 100 - data.packetLoss.total;
         var oldVal = remoteConnectionQuality[id];
-        remoteConnectionQuality[id] = calculateQuality(newVal, oldVal);
+        remoteConnectionQuality[id] = calculateQuality(newVal, oldVal || 100);
 
         eventEmitter.emit(
             CQEvents.REMOTESTATS_UPDATED, id, remoteConnectionQuality[id],

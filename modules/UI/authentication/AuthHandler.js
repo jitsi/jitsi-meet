@@ -52,7 +52,8 @@ function doXmppAuth (room, lockPassword) {
         // (this will store sessionId in the localStorage)
         // 3. close new connection
         // 4. reallocate focus in current room
-        openConnection({id, password}).then(function (connection) {
+        openConnection({id, password, roomName: room.getName()}).then(
+        function (connection) {
             // open room
             let newRoom = connection.initJitsiConference(
                 room.getName(), APP.conference._getConferenceOptions()

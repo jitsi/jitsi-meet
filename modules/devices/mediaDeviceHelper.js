@@ -191,8 +191,11 @@ export default {
 
         if (audioRequested && videoRequested) {
             // First we try to create both audio and video tracks together.
-            return createLocalTracks(
-                    ['audio', 'video'], cameraDeviceId, micDeviceId)
+            return createLocalTracks({
+                        devices: ['audio', 'video'],
+                        cameraDeviceId: cameraDeviceId,
+                        micDeviceId: micDeviceId
+                    })
                     // If we fail to do this, try to create them separately.
                     .catch(() => Promise.all([
                         createAudioTrack(false).then(([stream]) => stream),
@@ -215,7 +218,11 @@ export default {
         }
 
         function createAudioTrack(showError) {
-            return createLocalTracks(['audio'], null, micDeviceId)
+            return createLocalTracks({
+                    devices: ['audio'],
+                    cameraDeviceId: null,
+                    micDeviceId: micDeviceId
+                })
                 .catch(err => {
                     audioTrackError = err;
                     showError && APP.UI.showDeviceErrorDialog(err, null);
@@ -224,7 +231,11 @@ export default {
         }
 
         function createVideoTrack(showError) {
-            return createLocalTracks(['video'], cameraDeviceId, null)
+            return createLocalTracks({
+                    devices: ['video'],
+                    cameraDeviceId: cameraDeviceId,
+                    micDeviceId: null
+                })
                 .catch(err => {
                     videoTrackError = err;
                     showError && APP.UI.showDeviceErrorDialog(null, err);
