@@ -5,7 +5,8 @@
     overflow-y: auto;
 }
 
-#settingsmenu input, select {
+#settingsmenu input,
+#settingsmenu select {
     margin-top: 10px;
     margin-left: 10%;
     width: 80%;
