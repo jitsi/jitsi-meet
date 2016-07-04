@@ -42,30 +42,30 @@ let followMeHandler;
 
 let deviceErrorDialog;
 
-const TrackErrors = JitsiMeetJS.errors.track;
+const JitsiMediaDevicesErrors = JitsiMeetJS.errors.mediaDevices;
 
-const JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP = {
+const JITSI_MEDIA_DEVICES_ERROR_TO_MESSAGE_KEY_MAP = {
     microphone: {},
     camera: {}
 };
 
-JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.camera[TrackErrors.UNSUPPORTED_RESOLUTION]
+JITSI_MEDIA_DEVICES_ERROR_TO_MESSAGE_KEY_MAP.camera[JitsiMediaDevicesErrors.UNSUPPORTED_RESOLUTION]
     = "dialog.cameraUnsupportedResolutionError";
-JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.camera[TrackErrors.GENERAL]
+JITSI_MEDIA_DEVICES_ERROR_TO_MESSAGE_KEY_MAP.camera[JitsiMediaDevicesErrors.GENERAL]
     = "dialog.cameraUnknownError";
-JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.camera[TrackErrors.PERMISSION_DENIED]
+JITSI_MEDIA_DEVICES_ERROR_TO_MESSAGE_KEY_MAP.camera[JitsiMediaDevicesErrors.PERMISSION_DENIED]
     = "dialog.cameraPermissionDeniedError";
-JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.camera[TrackErrors.NOT_FOUND]
+JITSI_MEDIA_DEVICES_ERROR_TO_MESSAGE_KEY_MAP.camera[JitsiMediaDevicesErrors.NOT_FOUND]
     = "dialog.cameraNotFoundError";
-JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.camera[TrackErrors.CONSTRAINT_FAILED]
+JITSI_MEDIA_DEVICES_ERROR_TO_MESSAGE_KEY_MAP.camera[JitsiMediaDevicesErrors.CONSTRAINT_FAILED]
     = "dialog.cameraConstraintFailedError";
-JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.microphone[TrackErrors.GENERAL]
+JITSI_MEDIA_DEVICES_ERROR_TO_MESSAGE_KEY_MAP.microphone[JitsiMediaDevicesErrors.GENERAL]
     = "dialog.micUnknownError";
-JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.microphone[TrackErrors.PERMISSION_DENIED]
+JITSI_MEDIA_DEVICES_ERROR_TO_MESSAGE_KEY_MAP.microphone[JitsiMediaDevicesErrors.PERMISSION_DENIED]
     = "dialog.micPermissionDeniedError";
-JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.microphone[TrackErrors.NOT_FOUND]
+JITSI_MEDIA_DEVICES_ERROR_TO_MESSAGE_KEY_MAP.microphone[JitsiMediaDevicesErrors.NOT_FOUND]
     = "dialog.micNotFoundError";
-JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.microphone[TrackErrors.CONSTRAINT_FAILED]
+JITSI_MEDIA_DEVICES_ERROR_TO_MESSAGE_KEY_MAP.microphone[JitsiMediaDevicesErrors.CONSTRAINT_FAILED]
     = "dialog.micConstraintFailedError";
 
 /**
@@ -1204,23 +1204,26 @@ UI.showExtensionRequiredDialog = function (url) {
 
 /**
  * Shows dialog with combined information about camera and microphone errors.
- * @param {JitsiTrackError} micError
- * @param {JitsiTrackError} cameraError
+ * @param {JitsiMediaDevicesError} micError
+ * @param {JitsiMediaDevicesError} cameraError
  */
 UI.showDeviceErrorDialog = function (micError, cameraError) {
     let localStoragePropName = "doNotShowErrorAgain";
-    let isMicJitsiTrackErrorAndHasName = micError && micError.name &&
-        micError instanceof JitsiMeetJS.JitsiTrackError;
-    let isCameraJitsiTrackErrorAndHasName = cameraError && cameraError.name &&
-        cameraError instanceof JitsiMeetJS.JitsiTrackError;
+    let isMicJitsiMediaDevicesErrorAndHasName = micError && micError.name &&
+        micError instanceof JitsiMeetJS.errorTypes.JitsiMediaDevicesError;
+    let isCameraJitsiMediaDevicesErrorAndHasName = cameraError &&
+        cameraError.name &&
+        cameraError instanceof JitsiMeetJS.errorTypes.JitsiMediaDevicesError;
     let showDoNotShowWarning = false;
 
-    if (micError && cameraError && isMicJitsiTrackErrorAndHasName &&
-        isCameraJitsiTrackErrorAndHasName) {
+    if (micError && cameraError && isMicJitsiMediaDevicesErrorAndHasName &&
+        isCameraJitsiMediaDevicesErrorAndHasName) {
         showDoNotShowWarning =  true;
-    } else if (micError && isMicJitsiTrackErrorAndHasName && !cameraError) {
+    } else if (micError && isMicJitsiMediaDevicesErrorAndHasName &&
+        !cameraError) {
         showDoNotShowWarning =  true;
-    } else if (cameraError && isCameraJitsiTrackErrorAndHasName && !micError) {
+    } else if (cameraError && isCameraJitsiMediaDevicesErrorAndHasName &&
+        !micError) {
         showDoNotShowWarning =  true;
     }
 
@@ -1240,25 +1243,27 @@ UI.showDeviceErrorDialog = function (micError, cameraError) {
 
     let title = getTitleKey();
     let titleMsg = `<span data-i18n="${title}"></span>`;
-    let cameraJitsiTrackErrorMsg = cameraError
-        ? JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.camera[cameraError.name]
+    let cameraJitsiMediaDevicesErrorMsg = cameraError
+        ? JITSI_MEDIA_DEVICES_ERROR_TO_MESSAGE_KEY_MAP.camera[cameraError.name]
         : undefined;
-    let micJitsiTrackErrorMsg = micError
-        ? JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.microphone[micError.name]
+    let micJitsiMediaDevicesErrorMsg = micError
+        ? JITSI_MEDIA_DEVICES_ERROR_TO_MESSAGE_KEY_MAP.microphone[micError.name]
         : undefined;
     let cameraErrorMsg = cameraError
-        ? cameraJitsiTrackErrorMsg ||
-            JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.camera[TrackErrors.GENERAL]
+        ? cameraJitsiMediaDevicesErrorMsg ||
+            JITSI_MEDIA_DEVICES_ERROR_TO_MESSAGE_KEY_MAP.
+                camera[JitsiMediaDevicesErrors.GENERAL]
         : "";
     let micErrorMsg = micError
-        ? micJitsiTrackErrorMsg ||
-            JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.microphone[TrackErrors.GENERAL]
+        ? micJitsiMediaDevicesErrorMsg ||
+            JITSI_MEDIA_DEVICES_ERROR_TO_MESSAGE_KEY_MAP.microphone[
+                JitsiMediaDevicesErrors.GENERAL]
         : "";
-    let additionalCameraErrorMsg = !cameraJitsiTrackErrorMsg && cameraError &&
-        cameraError.message
+    let additionalCameraErrorMsg = !cameraJitsiMediaDevicesErrorMsg &&
+        cameraError && cameraError.message
             ? `<div>${cameraError.message}</div>`
             : ``;
-    let additionalMicErrorMsg = !micJitsiTrackErrorMsg && micError &&
+    let additionalMicErrorMsg = !micJitsiMediaDevicesErrorMsg && micError &&
         micError.message
             ? `<div>${micError.message}</div>`
             : ``;
@@ -1322,14 +1327,14 @@ UI.showDeviceErrorDialog = function (micError, cameraError) {
     function getTitleKey() {
         let title = "dialog.error";
 
-        if (micError && micError.name === TrackErrors.PERMISSION_DENIED) {
-            if (cameraError && cameraError.name === TrackErrors.PERMISSION_DENIED) {
+        if (micError && micError.name === JitsiMediaDevicesErrors.PERMISSION_DENIED) {
+            if (cameraError && cameraError.name === JitsiMediaDevicesErrors.PERMISSION_DENIED) {
                 title = "dialog.permissionDenied";
             } else if (!cameraError) {
                 title = "dialog.permissionDenied";
             }
         } else if (cameraError &&
-            cameraError.name === TrackErrors.PERMISSION_DENIED) {
+            cameraError.name === JitsiMediaDevicesErrors.PERMISSION_DENIED) {
             title = "dialog.permissionDenied";
         }
 
