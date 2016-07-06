@@ -41,7 +41,7 @@ var messageHandler = {
      * @return the prompt that was created, or null
      */
     openMessageDialog: function(titleKey, messageKey, title, message,
-                                closedFunction) {
+                                closeFunction) {
         if (!popupEnabled)
             return null;
 
@@ -55,8 +55,9 @@ var messageHandler = {
         return $.prompt(message, {
             title: title,
             persistent: false,
-            close: function () {
-                if(closedFunction) closedFunction();
+            close: function (e, v, m, f) {
+                if(closeFunction)
+                    closeFunction(e, v, m, f);
             }
         });
     },
@@ -114,10 +115,10 @@ var messageHandler = {
                 if (submitFunction)
                     submitFunction(e, v, m, f);
             },
-            close: function () {
+            close: function (e, v, m, f) {
                 twoButtonDialog = null;
                 if (closeFunction)
-                    closeFunction();
+                    closeFunction(e, v, m, f);
             }
         });
         return twoButtonDialog;
