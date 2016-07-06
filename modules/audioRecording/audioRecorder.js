@@ -12,7 +12,7 @@ var audioRecorder= {
 
 
 /**
- * Adds an eventListener to the TRACK_ADDED event
+ * Adds an eventListener to the TRACK_ADDED event 
  * so that any newly created track gets added to our recorder
  */
 audioRecorder.initListener = function(streams) {
