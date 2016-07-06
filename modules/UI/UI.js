@@ -1210,9 +1210,9 @@ UI.showExtensionRequiredDialog = function (url) {
 UI.showDeviceErrorDialog = function (micError, cameraError) {
     let localStoragePropName = "doNotShowErrorAgain";
     let isMicJitsiTrackErrorAndHasName = micError && micError.name &&
-        micError instanceof JitsiMeetJS.JitsiTrackError;
+        micError instanceof JitsiMeetJS.errorTypes.JitsiTrackError;
     let isCameraJitsiTrackErrorAndHasName = cameraError && cameraError.name &&
-        cameraError instanceof JitsiMeetJS.JitsiTrackError;
+        cameraError instanceof JitsiMeetJS.errorTypes.JitsiTrackError;
     let showDoNotShowWarning = false;
 
     if (micError && cameraError && isMicJitsiTrackErrorAndHasName &&
