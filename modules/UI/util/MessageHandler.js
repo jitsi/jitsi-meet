@@ -15,6 +15,12 @@ let notificationsEnabled = true;
  */
 let popupEnabled = true;
 
+/**
+ * Currently displayed two button dialog.
+ * @type {null}
+ */
+let twoButtonDialog = null;
+
 var messageHandler = {
     OK: "dialog.OK",
     CANCEL: "dialog.Cancel",
@@ -68,7 +74,7 @@ var messageHandler = {
         persistent, leftButtonKey, submitFunction, loadedFunction,
         closeFunction, focus, defaultButton) {
 
-        if (!popupEnabled)
+        if (!popupEnabled || twoButtonDialog)
             return;
 
         var buttons = [];
@@ -87,15 +93,23 @@ var messageHandler = {
         if (msgKey) {
             message = APP.translation.generateTranslationHTML(msgKey);
         }
-        $.prompt(message, {
+        twoButtonDialog = $.prompt(message, {
             title: title,
             persistent: false,
             buttons: buttons,
             defaultButton: defaultButton,
             focus: focus,
             loaded: loadedFunction,
-            submit: submitFunction,
-            close: closeFunction
+            submit: function (e, v, m, f) {
+                twoButtonDialog = null;
+                if (submitFunction)
+                    submitFunction(e, v, m, f);
+            },
+            close: function () {
+                twoButtonDialog = null;
+                if (closeFunction)
+                    closeFunction();
+            }
         });
     },
 
@@ -133,7 +147,7 @@ var messageHandler = {
         if (persistent) {
             args.closeText = '';
         }
-        
+
         return new Impromptu(msgString, args);
     },
 
