@@ -21,6 +21,7 @@ import UI from "./modules/UI/UI";
 import settings from "./modules/settings/Settings";
 import conference from './conference';
 import API from './modules/API/API';
+import audioRecording from './modules/audioRecording/audioRecorder';
 
 import UIEvents from './service/UI/UIEvents';
 import getTokenData from "./modules/TokenData/TokenData";
@@ -80,6 +81,7 @@ const APP = {
     conference,
     connection: null,
     API,
+    audioRecording,
     init () {
         this.keyboardshortcut =
             require("./modules/keyboardshortcut/keyboardshortcut");
