@@ -7,7 +7,7 @@ const NEW_TRACK_EVENT = JitsiMeetJS.events.conference.TRACK_ADDED;
  * so that any newly created track gets added to our converter
  */
 function initListener(streams) {
-    TrackEvents.TRACK_ADDED.addEventListener(function (name, event) {
+    NEW_TRACK_EVENT.addEventListener(function (name, event) {
         console.log("new track got added: " + event);
         //streams.push(event.GETSTREAMSSOMEHOW); // FIXME
     })
@@ -17,14 +17,19 @@ function initListener(streams) {
  *
  * @constructor constructs an Recorder object which
  */
-function Recorder() {
+var AudioRecorder = function() {
     //new streams get added to the array
     let streams = [];
     initListener(streams);
     console.log("successfully initialised the listener!");
-}
 
+};
 
+AudioRecorder.prototype.startAudioRecording = function () {
+    console.log("started recording of the audio (not really :( )");
+};
+
+module.exports = AudioRecorder;
 
 
 
