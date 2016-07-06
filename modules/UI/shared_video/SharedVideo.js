@@ -17,6 +17,13 @@ export const SHARED_VIDEO_CONTAINER_TYPE = "sharedvideo";
  */
 const defaultSharedVideoLink = "https://www.youtube.com/watch?v=xNXN7CZk8X0";
 const updateInterval = 5000; // milliseconds
+
+/**
+ * The dialog for user input (video link).
+ * @type {null}
+ */
+let dialog = null;
+
 /**
  * Manager of shared video.
  */
@@ -56,11 +63,14 @@ export default class SharedVideoManager {
      * asks whether the user wants to stop sharing the video.
      */
     toggleSharedVideo () {
+        if (dialog)
+            return;
+
         if(!this.isSharedVideoShown) {
             requestVideoLink().then(
                     url => this.emitter.emit(
                                 UIEvents.UPDATE_SHARED_VIDEO, url, 'start'),
-                    err => console.error('SHARED VIDEO CANCELED', err)
+                    err => console.log('SHARED VIDEO CANCELED', err)
             );
             return;
         }
@@ -68,11 +78,16 @@ export default class SharedVideoManager {
         if(APP.conference.isLocalId(this.from)) {
             showStopVideoPropmpt().then(() =>
                 this.emitter.emit(
-                    UIEvents.UPDATE_SHARED_VIDEO, this.url, 'stop'));
+                    UIEvents.UPDATE_SHARED_VIDEO, this.url, 'stop'),
+                () => {});
         } else {
-            APP.UI.messageHandler.openMessageDialog(
+            dialog = APP.UI.messageHandler.openMessageDialog(
                 "dialog.shareVideoTitle",
-                "dialog.alreadySharedVideoMsg"
+                "dialog.alreadySharedVideoMsg",
+                null, null,
+                function () {
+                    dialog = null;
+                }
             );
         }
     }
@@ -700,7 +715,7 @@ function getYoutubeLink(url) {
  */
 function showStopVideoPropmpt() {
     return new Promise(function (resolve, reject) {
-        APP.UI.messageHandler.openTwoButtonDialog(
+        dialog = APP.UI.messageHandler.openTwoButtonDialog(
             "dialog.removeSharedVideoTitle",
             null,
             "dialog.removeSharedVideoMsg",
@@ -713,6 +728,10 @@ function showStopVideoPropmpt() {
                 } else {
                     reject();
                 }
+            },
+            null,
+            function () {
+                dialog = null;
             }
         );
 
@@ -735,7 +754,7 @@ function requestVideoLink() {
     const defaultUrl = i18n.translateString("defaultLink", i18nOptions);
 
     return new Promise(function (resolve, reject) {
-        let dialog = APP.UI.messageHandler.openDialogWithStates({
+        dialog = APP.UI.messageHandler.openDialogWithStates({
             state0: {
                 html:  `
                     <h2>${title}</h2>
@@ -794,6 +813,10 @@ function requestVideoLink() {
                         dialog.goToState('state0');
                     }
                 }
+            }
+        }, {
+            close: function () {
+                dialog = null;
             }
         });
 

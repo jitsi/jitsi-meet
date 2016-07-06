@@ -21,6 +21,10 @@ import Feedback from '../Feedback.js';
 import Toolbar from '../toolbars/Toolbar';
 import BottomToolbar from '../toolbars/BottomToolbar';
 
+/**
+ * The dialog for user input.
+ */
+let dialog = null;
 
 /**
  * Indicates if the recording button should be enabled.
@@ -50,7 +54,7 @@ function _requestLiveStreamId() {
             "liveStreaming.streamIdRequired");
 
     return new Promise(function (resolve, reject) {
-        let dialog = APP.UI.messageHandler.openDialogWithStates({
+        dialog = APP.UI.messageHandler.openDialogWithStates({
             state0: {
                 html:
                     `<h2>${msg}</h2>
@@ -104,6 +108,10 @@ function _requestLiveStreamId() {
                     }
                 }
             }
+        }, {
+            close: function () {
+                dialog = null;
+            }
         });
     });
 }
@@ -117,7 +125,7 @@ function _requestRecordingToken () {
     let token = APP.translation.translateString("dialog.token");
 
     return new Promise(function (resolve, reject) {
-        APP.UI.messageHandler.openTwoButtonDialog(
+        dialog = APP.UI.messageHandler.openTwoButtonDialog(
             null, null, null,
             `<h2>${msg}</h2>
              <input name="recordingToken" type="text"
@@ -132,7 +140,9 @@ function _requestRecordingToken () {
                 }
             },
             null,
-            function () { },
+            function () {
+                dialog = null;
+            },
             ':input:first'
         );
     });
@@ -161,7 +171,7 @@ function _showStopRecordingPrompt (recordingType) {
     }
 
     return new Promise(function (resolve, reject) {
-        APP.UI.messageHandler.openTwoButtonDialog(
+        dialog = APP.UI.messageHandler.openTwoButtonDialog(
             title,
             null,
             message,
@@ -174,6 +184,10 @@ function _showStopRecordingPrompt (recordingType) {
                 } else {
                     reject();
                 }
+            },
+            null,
+            function () {
+                dialog = null;
             }
         );
     });
@@ -279,11 +293,15 @@ var Recording = {
 
         var self = this;
         selector.click(function () {
+            if (dialog)
+                return;
+
             switch (self.currentState) {
                 case Status.ON:
                 case Status.PENDING: {
                     _showStopRecordingPrompt(recordingType).then(() =>
-                        self.eventEmitter.emit(UIEvents.RECORDING_TOGGLED));
+                        self.eventEmitter.emit(UIEvents.RECORDING_TOGGLED),
+                        () => {});
                     break;
                 }
                 case Status.AVAILABLE:
@@ -318,16 +336,24 @@ var Recording = {
                     break;
                 }
                 case Status.BUSY: {
-                    APP.UI.messageHandler.openMessageDialog(
+                    dialog = APP.UI.messageHandler.openMessageDialog(
                         self.recordingTitle,
-                        self.recordingBusy
+                        self.recordingBusy,
+                        null, null,
+                        function () {
+                            dialog = null;
+                        }
                     );
                     break;
                 }
                 default: {
-                    APP.UI.messageHandler.openMessageDialog(
+                    dialog = APP.UI.messageHandler.openMessageDialog(
                         self.recordingTitle,
-                        self.recordingUnavailable
+                        self.recordingUnavailable,
+                        null, null,
+                        function () {
+                            dialog = null;
+                        }
                     );
                 }
             }

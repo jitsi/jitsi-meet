@@ -15,6 +15,12 @@ let notificationsEnabled = true;
  */
 let popupEnabled = true;
 
+/**
+ * Currently displayed two button dialog.
+ * @type {null}
+ */
+let twoButtonDialog = null;
+
 var messageHandler = {
     OK: "dialog.OK",
     CANCEL: "dialog.Cancel",
@@ -30,10 +36,14 @@ var messageHandler = {
      * titleKey will be used to get a title via the translation API.
      * @param message the message to show. If a falsy value is provided,
      * messageKey will be used to get a message via the translation API.
+     * @param closeFunction function to be called after
+     * the prompt is closed (optional)
+     * @return the prompt that was created, or null
      */
-    openMessageDialog: function(titleKey, messageKey, title, message) {
+    openMessageDialog: function(titleKey, messageKey, title, message,
+                                closeFunction) {
         if (!popupEnabled)
-            return;
+            return null;
 
         if (!title) {
             title = APP.translation.generateTranslationHTML(titleKey);
@@ -42,9 +52,14 @@ var messageHandler = {
             message = APP.translation.generateTranslationHTML(messageKey);
         }
 
-        $.prompt(message,
-            {title: title, persistent: false}
-        );
+        return $.prompt(message, {
+            title: title,
+            persistent: false,
+            close: function (e, v, m, f) {
+                if(closeFunction)
+                    closeFunction(e, v, m, f);
+            }
+        });
     },
     /**
      * Shows a message to the user with two buttons: first is given as a
@@ -63,13 +78,14 @@ var messageHandler = {
      *        the dialog is opened
      * @param defaultButton index of default button which will be activated when
      *        the user press 'enter'. Indexed from 0.
+     * @return the prompt that was created, or null
      */
     openTwoButtonDialog: function(titleKey, titleString, msgKey, msgString,
         persistent, leftButtonKey, submitFunction, loadedFunction,
         closeFunction, focus, defaultButton) {
 
-        if (!popupEnabled)
-            return;
+        if (!popupEnabled || twoButtonDialog)
+            return null;
 
         var buttons = [];
 
@@ -87,16 +103,25 @@ var messageHandler = {
         if (msgKey) {
             message = APP.translation.generateTranslationHTML(msgKey);
         }
-        $.prompt(message, {
+        twoButtonDialog = $.prompt(message, {
             title: title,
             persistent: false,
             buttons: buttons,
             defaultButton: defaultButton,
             focus: focus,
             loaded: loadedFunction,
-            submit: submitFunction,
-            close: closeFunction
+            submit: function (e, v, m, f) {
+                twoButtonDialog = null;
+                if (submitFunction)
+                    submitFunction(e, v, m, f);
+            },
+            close: function (e, v, m, f) {
+                twoButtonDialog = null;
+                if (closeFunction)
+                    closeFunction(e, v, m, f);
+            }
         });
+        return twoButtonDialog;
     },
 
     /**
@@ -133,7 +158,7 @@ var messageHandler = {
         if (persistent) {
             args.closeText = '';
         }
-        
+
         return new Impromptu(msgString, args);
     },
 
