@@ -517,6 +517,11 @@ export default {
                 if (config.iAmRecorder)
                     this.recorder = new Recorder();
 
+                //add the local audio track to the audio recording //fixme
+                tracks.forEach(function(track) {
+                    APP.audioRecording.giveTrack(track);
+                });
+
                 // XXX The API will take care of disconnecting from the XMPP
                 // server (and, thus, leaving the room) on unload.
                 return new Promise((resolve, reject) => {
@@ -992,6 +997,8 @@ export default {
                 APP.UI.onPeerVideoTypeChanged(track.getParticipantId(), type);
             });
             APP.UI.addRemoteStream(track);
+            //give the track to the audio recording module
+            APP.audioRecording.giveTrack(track);
         });
 
         room.on(ConferenceEvents.TRACK_REMOVED, (track) => {
