@@ -1,38 +1,110 @@
-/* global $, JitsiMeetJs */
-
-const NEW_TRACK_EVENT = JitsiMeetJS.events.conference.TRACK_ADDED;
+/* global $, JitsiMeetJs, MediaRecorder*/
 
 /**
- * main variable
+ * options passed along when the MediaRecorder gets created
+ */
+const MEDIA_RECORDING_OPTIONS = {mimeType: "audio/webm"};
+
+/**
+ * File type to convert data into when it's downloaded
+ */
+const FILE_TYPE = {type: 'audio/webm'};
+
+/**
+ * Object holding all the information needed for recording a single track
+ */
+var TrackRecorder = function(track){
+    // The JitsiTrack holding the stream
+    this.track = track;
+    // The MediaRecorder recording the stream
+    this.recorder = null;
+    // The array of data chunks recorded from the stream
+    this.data = null;
+};
+
+/**
+ * main exported object of the file, holding all
+ * relevant functions and variables for the outside world
  */
 var audioRecorder= {
-    //audio streams get added to the array
-    streams: []
-};
-
-
-/**
- * Adds an eventListener to the TRACK_ADDED event 
- * so that any newly created track gets added to our recorder
- */
-audioRecorder.initListener = function(streams) {
-    NEW_TRACK_EVENT.addEventListener(function (name, event) {
-        console.log("new track got added: " + event);
-        //streams.push(event.GETSTREAMSSOMEHOW); // FIXME
-    })
+    // array of TrackRecorders, where each trackRecorder
+    // holds the JitsiTrack, MediaRecorder and recorder data
+    recorders: []
 };
 
 /**
+ * Adds a new TrackRecorder object to the array.
  *
+ * @param track the track potentially holding an audio stream
+ */
+audioRecorder.giveTrack = function (track) {
+    if(track.isAudioTrack()) {
+        console.log("added a track to the audioRecorder module");
+        audioRecorder.recorders.push(new TrackRecorder(track));
+    }
+};
+
+/**
+ * Starts the audio recording of every local and remote track
  */
 audioRecorder.startAudioRecording = function () {
-    console.log("started recording of the audio (not really :( )");
+    //loop through all stored tracks and create a mediaRecorder for each stream
+    audioRecorder.recorders.forEach(function(trackRecorder){
+        //creates the recorder if not already created
+        if(!trackRecorder.recorder) {
+            trackRecorder.recorder =
+                new MediaRecorder(trackRecorder.track.getOriginalStream(),
+                    MEDIA_RECORDING_OPTIONS);
+            //function handling a dataEvent, e.g the stream gets new data
+            trackRecorder.recorder.ondataavailable = function (dataEvent) {
+                if(dataEvent.data.size > 0) {
+                    trackRecorder.data.push(event.data);
+                }
+            };
+
+        }
+        //array for holding the recorder data. Resets it when
+        //audio already has been recorder once
+        trackRecorder.data = [];
+    });
+
+    //start all the mediaRecorders
+    audioRecorder.recorders.forEach(function(trackRecorder){
+        trackRecorder.recorder.start();
+    });
+
+    //log that recording has started
+    console.log("Started the recording of the audio. There are currently " +
+        audioRecorder.recorders.length + " recorders active.");
 };
 
 /**
- * export the main variable auoRecorder
+ * Stops the audio recording of every local and remote track
+ */
+audioRecorder.stopAudioRecording = function() {
+   audioRecorder.recorders.forEach(function(trackRecorder){
+       trackRecorder.recorder.stop();
+   });
+};
+
+/**
+ * link hacking to download all recorded audio streams
+ */
+audioRecorder.download = function () {
+    audioRecorder.recorders.forEach(function (trackRecorder) {
+        var blob = new Blob(trackRecorder.data, FILE_TYPE);
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        document.body.appendChild(a);
+        a.style = "display: none";
+        a.href = url;
+        a.download = 'test.webm';
+        a.click();
+        window.URL.revokeObjectURL(url);
+    });
+};
+
+/**
+ * export the main object audioRecorder
  */
 module.exports = audioRecorder;
-
-
-
