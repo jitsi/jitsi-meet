@@ -329,6 +329,16 @@ SmallVideo.prototype.createModeratorIndicatorElement = function () {
     APP.translation.translateElement($('#' + this.videoSpanId + ' .focusindicator'));
 };
 
+/**
+ * This is an especially interesting function. A naive reader might think that
+ * it returns this SmallVideo's "video" element. But it is much more exciting.
+ * It first finds this video's parent element using jquery, then uses a utility
+ * from lib-jitsi-meet to extract the video element from it (with two more
+ * jquery calls), and finally uses jquery again to encapsulate the video element
+ * in an array. This last step allows (some might prefer "forces") users of
+ * this function to access the video element via the 0th element of the returned
+ * array (after checking its length of course!).
+ */
 SmallVideo.prototype.selectVideoElement = function () {
     return $(RTCUIHelper.findVideoElement($('#' + this.videoSpanId)[0]));
 };
