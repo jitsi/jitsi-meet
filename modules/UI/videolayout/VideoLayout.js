@@ -1010,11 +1010,16 @@ var VideoLayout = {
             if (id !== currentId && videoType === VIDEO_CONTAINER_TYPE) {
                 eventEmitter.emit(UIEvents.SELECTED_ENDPOINT, id);
             }
-            if (currentId) {
-                var oldSmallVideo = this.getSmallVideo(currentId);
-            }
 
             let smallVideo = this.getSmallVideo(id);
+            let oldSmallVideo;
+            if (currentId) {
+                oldSmallVideo = this.getSmallVideo(currentId);
+            }
+
+            smallVideo.waitForResolutionChange();
+            if (oldSmallVideo)
+                oldSmallVideo.waitForResolutionChange();
 
             largeVideo.updateLargeVideo(
                 id,
@@ -1118,7 +1123,9 @@ var VideoLayout = {
     setLocalFlipX: function (val) {
         this.localFlipX = val;
 
-    }
+    },
+
+    getEventEmitter: () => {return eventEmitter;}
 };
 
 export default VideoLayout;
