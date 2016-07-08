@@ -80,5 +80,8 @@ export default {
     /**
      * Notifies that flipX property of the local video is changed.
      */
-    LOCAL_FLIPX_CHANGED: "UI.local_flipx_changed"
+    LOCAL_FLIPX_CHANGED: "UI.local_flipx_changed",
+    // An event which indicates that the resolution of a remote video has
+    // changed.
+    RESOLUTION_CHANGED: "UI.resolution_changed"
 };

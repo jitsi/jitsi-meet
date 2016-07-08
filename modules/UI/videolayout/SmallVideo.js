@@ -2,6 +2,7 @@
 /* jshint -W101 */
 import Avatar from "../avatar/Avatar";
 import UIUtil from "../util/UIUtil";
+import UIEvents from "../../../service/UI/UIEvents";
 
 const RTCUIHelper = JitsiMeetJS.util.RTCUIHelper;
 
@@ -495,6 +496,39 @@ SmallVideo.prototype.getIndicatorSpan = function(id) {
         indicatorSpan = spans[0];
     }
     return indicatorSpan;
+};
+
+/**
+ * Adds a listener for onresize events for this video, which will monitor for
+ * resolution changes, will calculate the delay since the moment the listened
+ * is added, and will fire a RESOLUTION_CHANGED event.
+ */
+SmallVideo.prototype.waitForResolutionChange = function() {
+    let self = this;
+    let beforeChange = window.performance.now();
+    let videos = this.selectVideoElement();
+    if (!videos || !videos.length || videos.length <= 0)
+        return;
+    let video = videos[0];
+    let oldWidth = video.videoWidth;
+    let oldHeight = video.videoHeight;
+    video.onresize = (event) => {
+        if (video.videoWidth != oldWidth || video.videoHeight != oldHeight) {
+            // Only run once.
+            video.onresize = null;
+
+            let delay = window.performance.now() - beforeChange;
+            let emitter = self.VideoLayout.getEventEmitter();
+            if (emitter) {
+                emitter.emit(
+                        UIEvents.RESOLUTION_CHANGED,
+                        self.getId(),
+                        oldWidth + "x" + oldHeight,
+                        video.videoWidth + "x" + video.videoHeight,
+                        delay);
+            }
+        }
+    };
 };
 
 export default SmallVideo;
