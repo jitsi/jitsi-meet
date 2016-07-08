@@ -1232,6 +1232,12 @@ export default {
             room.dial(sipNumber);
         });
 
+        APP.UI.addListener(UIEvents.RESOLUTION_CHANGED,
+            (id, oldResolution, newResolution, delay) => {
+            room.sendApplicationLog("Resolution change id=" + id
+                + " old=" + oldResolution + " new=" + newResolution
+                + " delay=" + delay);
+        });
 
         // Starts or stops the recording for the conference.
         APP.UI.addListener(UIEvents.RECORDING_TOGGLED, (options) => {
