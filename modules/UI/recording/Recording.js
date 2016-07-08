@@ -201,10 +201,11 @@ function _showStopRecordingPrompt (recordingType) {
  */
 function moveToCorner(selector, move) {
     let moveToCornerClass = "moveToCorner";
+    let containsClass = selector.hasClass(moveToCornerClass);
 
-    if (move && !selector.hasClass(moveToCornerClass))
+    if (move && !containsClass)
         selector.addClass(moveToCornerClass);
-    else
+    else if (!move && containsClass)
         selector.removeClass(moveToCornerClass);
 }
 
