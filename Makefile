@@ -13,7 +13,7 @@ IFRAME_API_DIR = ./modules/API/external
 all: update-deps compile compile-iframe-api uglify uglify-iframe-api deploy clean
 
 update-deps:
-	$(NPM) install
+	$(NPM) update
 
 compile:
 	$(BROWSERIFY) $(BROWSERIFY_FLAGS) -e app.js -s APP | $(EXORCIST) $(OUTPUT_DIR)/app.bundle.js.map > $(OUTPUT_DIR)/app.bundle.js
