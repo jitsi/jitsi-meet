@@ -245,7 +245,7 @@ var Recording = {
         // everyone.
         if (config.iAmRecorder) {
             VideoLayout.enableDeviceAvailabilityIcons(
-                APP.conference.localId, false);
+                APP.conference.getMyUserId(), false);
             VideoLayout.setLocalVideoVisible(false);
             Feedback.enableFeedback(false);
             Toolbar.enable(false);

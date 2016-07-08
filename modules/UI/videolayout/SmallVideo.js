@@ -299,9 +299,6 @@ SmallVideo.prototype.updateIconPositions = function () {
 
 /**
  * Creates the element indicating the moderator(owner) of the conference.
- *
- * @param parentElement the parent element where the owner indicator will
- * be added
  */
 SmallVideo.prototype.createModeratorIndicatorElement = function () {
     // Show moderator indicator
@@ -327,6 +324,13 @@ SmallVideo.prototype.createModeratorIndicatorElement = function () {
 
     //translates text in focus indicators
     APP.translation.translateElement($('#' + this.videoSpanId + ' .focusindicator'));
+};
+
+/**
+ * Removes the element indicating the moderator(owner) of the conference.
+ */
+SmallVideo.prototype.removeModeratorIndicatorElement = function () {
+    $('#' + this.videoSpanId + ' .focusindicator').remove();
 };
 
 SmallVideo.prototype.selectVideoElement = function () {
@@ -376,7 +380,7 @@ SmallVideo.prototype.updateView = function () {
 
     let video = this.selectVideoElement();
 
-    let avatar = $(`#avatar_${this.id}`);
+    let avatar = $('#' + this.videoSpanId + ' .userAvatar');
 
     var isCurrentlyOnLarge = this.VideoLayout.isCurrentlyOnLarge(this.id);
 
@@ -404,7 +408,7 @@ SmallVideo.prototype.updateView = function () {
 
 SmallVideo.prototype.avatarChanged = function (avatarUrl) {
     var thumbnail = $('#' + this.videoSpanId);
-    var avatar = $('#avatar_' + this.id);
+    var avatar = $('#' + this.videoSpanId + ' .userAvatar');
     this.hasAvatar = true;
 
     // set the avatar in the thumbnail
@@ -413,7 +417,6 @@ SmallVideo.prototype.avatarChanged = function (avatarUrl) {
     } else {
         if (thumbnail && thumbnail.length > 0) {
             avatar = document.createElement('img');
-            avatar.id = 'avatar_' + this.id;
             avatar.className = 'userAvatar';
             avatar.src = avatarUrl;
             thumbnail.append(avatar);

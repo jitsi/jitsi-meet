@@ -209,7 +209,7 @@ const AudioLevels = {
         drawContext.drawImage(canvasCache, 0, 0);
 
         if (id === LOCAL_LEVEL) {
-            id = APP.conference.localId;
+            id = APP.conference.getMyUserId();
             if (!id) {
                 return;
             }
